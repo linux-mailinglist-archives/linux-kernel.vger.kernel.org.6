@@ -1,199 +1,155 @@
-Return-Path: <linux-kernel+bounces-210096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E950903F3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:52:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4201C903F42
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB6328813E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8C1F1F22F95
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6BD14F6C;
-	Tue, 11 Jun 2024 14:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AFA14F6C;
+	Tue, 11 Jun 2024 14:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2qn/9SC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="pyRIbY2t"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD96C8FB;
-	Tue, 11 Jun 2024 14:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A3B1CF90;
+	Tue, 11 Jun 2024 14:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718117555; cv=none; b=bcbWtq8HQUHLW3PL9DO0abhISoEkxhbIuzjtvHWgTYyiSqdOqz4WLRNHRFw3NTSd5zddfklDmf0i/HEk5PykDSuu22tOYzGdOLJ7qdT4mJvhaN3YaSjnMhg5MzhJMjZOgSTCyhRNhYVaqgrj9eu5FvpHTwD2JbRgVknAiqILIYg=
+	t=1718117592; cv=none; b=kzZvxfDRTKJm3/yzceLx6zYXsAYh2odqlswAKDkjdriXvSgkH1CcpyVavDSgKeei06F+SfVHcdkdmLzJ5u+DTSgCZm7BDvvWjbD4N5MTf0AlTJ/hX5gbFlv2f53kvCWq0mrmkvMiqy5X78fH47c+7K810m7IC2676H21fYvJCDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718117555; c=relaxed/simple;
-	bh=eNbDNNAuqp/CblfbjmFVWsYldsOh15uvWduPZlV6ox8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=T1mu/eaWsxM203A6Wq83YlP1ZcTDtMr86Dn6JDYDXfLjWtOiUuJveaqs16qEZqhedWfVFq9Hp6eu35nHv+IvwYPUIxcNrYdqf6R8gDNn9iaY332lDpEK4FwxwFsGcimGOsAZgHAge/9q9wdzgwb+WPLkseiDWFn8V6m39ccdzvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2qn/9SC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B910AC2BD10;
-	Tue, 11 Jun 2024 14:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718117555;
-	bh=eNbDNNAuqp/CblfbjmFVWsYldsOh15uvWduPZlV6ox8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l2qn/9SCNKz5QiFJF3cuiRWVAiq7wohguBn/+HKH9qTEJM9mcCyryzZbX1TWn4ueL
-	 JQrONN4x9Y4FJsXo+jBueCQ24Ue+hUAnsvMQ/s0EAreatREGoa+8ULUUC1gwHNlrpR
-	 APlERx/0NXqxllIYB9JHmrqNeyvn20Bm2Tw6ttKEq5wObrqrVPj3i2Cl+ooPDw1nJl
-	 bVnDYobae5KjehxTsG+HHK2eMDl9nnmYze3I9XyBGFZ6VoMt7lMoi1yAWvx68UCmMh
-	 iU/vdfvuT5HPxLeVJfP2qa6XtzapOiNg0Xwar4kZvQMkgXxV3CNowj7YCZy1pbIAnV
-	 h+iyFGMwJx7Mw==
-Date: Tue, 11 Jun 2024 23:52:28 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-man@vger.kernel.org, x86@kernel.org,
- bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song
- <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra
- <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
- Andy Lutomirski <luto@kernel.org>, "Edgecombe, Rick P"
- <rick.p.edgecombe@intel.com>, Deepak Gupta <debug@rivosinc.com>
-Subject: Re: [PATCHv8 bpf-next 0/9] uprobe: uretprobe speed up
-Message-Id: <20240611235228.f70de698f8e43a3c177a15b8@kernel.org>
-In-Reply-To: <20240611112158.40795-1-jolsa@kernel.org>
-References: <20240611112158.40795-1-jolsa@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718117592; c=relaxed/simple;
+	bh=H+bRJvzcbI+nOZCWhjjmp5dz3lA5xGhHR1HFZDaDQdg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TddY9g/IPYrnXwudazizJshdQbbtxgn4SH02PUyDPTthaZI2Dqe/9eBBZE0+LckNOWh/uBukyrk6CEOi8VLC7poQuf2fSsusA4jkfn9Xhb6ESVzLHvXo3sduJxrKxqHBSmYkdpzSVRCo5mZdxpWj86Ykp35AGu2zsv5GW8Pi2EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=pyRIbY2t reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.1.0)
+ id 9960b2112a539cf6; Tue, 11 Jun 2024 16:53:07 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 3E95F7F46D3;
+	Tue, 11 Jun 2024 16:53:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1718117587;
+	bh=H+bRJvzcbI+nOZCWhjjmp5dz3lA5xGhHR1HFZDaDQdg=;
+	h=From:To:Cc:Subject:Date;
+	b=pyRIbY2tDtPj0t2ejlh6GQWA46yQBmZLmtL5BpYFuIkBj9x6htHEUMz3X3phkSjLO
+	 Smcfo3Jqyo/s8iKcDrDoo38sE1Xq9rLzDqhhaTGNbOmL3XP1xGXSOfjhlVkoLWTPZ2
+	 hcUkdUkSzx0jmHmeKJOliqBPn6WB7nRb/6wMtM0QKRCEjJKcWF39uQ/wB/VBJBSKH/
+	 9uoOC7oznGbq9huLlt22eKWaDZIhl/yF7+dBd/91WTtLfHUnJxcMGZhwUjcpqsF09G
+	 4yFBwMZpjxpyCLV42xuHstx2Z4bPJejo0gQ83L3iib49ipL1bSZpHTKZqYtxLLBi1i
+	 Xvxb1z1Urqjeg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Xi Ruoyao <xry111@xry111.site>
+Subject:
+ [PATCH v1] cpufreq: intel_pstate: Check turbo_is_disabled() in
+ store_no_turbo()
+Date: Tue, 11 Jun 2024 16:53:06 +0200
+Message-ID: <6061905.lOV4Wx5bFT@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfeduvddgkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeegpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopeigrhih
+ udduudesgihrhiduuddurdhsihhtvg
+X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
 
-On Tue, 11 Jun 2024 13:21:49 +0200
-Jiri Olsa <jolsa@kernel.org> wrote:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> hi,
-> as part of the effort on speeding up the uprobes [0] coming with
-> return uprobe optimization by using syscall instead of the trap
-> on the uretprobe trampoline.
-> 
-> The speed up depends on instruction type that uprobe is installed
-> and depends on specific HW type, please check patch 1 for details.
-> 
-> Patches 1-8 are based on bpf-next/master, but patch 2 and 3 are
-> apply-able on linux-trace.git tree probes/for-next branch.
-> Patch 9 is based on man-pages master.
-> 
-> v8 changes:
-> - rebased (another new syscall got merged)
-> - added acks
-> 
-> Also available at:
->   https://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
->   uretprobe_syscall
+After recent changes in intel_pstate, global.turbo_disabled is only set
+at the initialization time and never changed.  However, it turns out
+that on some systems the "turbo disabled" bit in MSR_IA32_MISC_ENABLE,
+the initial state of which is reflected by global.turbo_disabled, can be
+flipped later and there should be a way to take that into account (other
+than checking that MSR every time the driver runs which is costly and
+useless overhead on the vast majority of systems).
 
-Applied patch [1/9] - [8/9] on probes/for-next in 
- git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+For this purpose, notice that before the changes in question,
+store_no_turbo() contained a turbo_is_disabled() check that was used
+for updating global.turbo_disabled is the "turbo disabled" bit in
+MSR_IA32_MISC_ENABLE had been flipped and that functionality can be
+restored.  This way, users will be able to reset global.turbo_disabled
+by writing 0 to no_turbo which used to work before.
 
-Thank you!
+This guarantees the driver state to remain in sync, but READ_ONCE()
+annotations need to be added in two places where global.turbo_disabled
+is accessed locklessly, so modify the driver to make that happen.
 
-> 
-> thanks,
-> jirka
-> 
-> 
-> Notes to check list items in Documentation/process/adding-syscalls.rst:
-> 
-> - System Call Alternatives
->   New syscall seems like the best way in here, because we need
->   just to quickly enter kernel with no extra arguments processing,
->   which we'd need to do if we decided to use another syscall.
-> 
-> - Designing the API: Planning for Extension
->   The uretprobe syscall is very specific and most likely won't be
->   extended in the future.
-> 
->   At the moment it does not take any arguments and even if it does
->   in future, it's allowed to be called only from trampoline prepared
->   by kernel, so there'll be no broken user.
-> 
-> - Designing the API: Other Considerations
->   N/A because uretprobe syscall does not return reference to kernel
->   object.
-> 
-> - Proposing the API
->   Wiring up of the uretprobe system call is in separate change,
->   selftests and man page changes are part of the patchset.
-> 
-> - Generic System Call Implementation
->   There's no CONFIG option for the new functionality because it
->   keeps the same behaviour from the user POV.
-> 
-> - x86 System Call Implementation
->   It's 64-bit syscall only.
-> 
-> - Compatibility System Calls (Generic)
->   N/A uretprobe syscall has no arguments and is not supported
->   for compat processes.
-> 
-> - Compatibility System Calls (x86)
->   N/A uretprobe syscall is not supported for compat processes.
-> 
-> - System Calls Returning Elsewhere
->   N/A.
-> 
-> - Other Details
->   N/A.
-> 
-> - Testing
->   Adding new bpf selftests and ran ltp on top of this change.
-> 
-> - Man Page
->   Attached.
-> 
-> - Do not call System Calls in the Kernel
->   N/A.
-> 
-> 
-> [0] https://lore.kernel.org/bpf/ZeCXHKJ--iYYbmLj@krava/
-> ---
-> Jiri Olsa (8):
->       x86/shstk: Make return uprobe work with shadow stack
->       uprobe: Wire up uretprobe system call
->       uprobe: Add uretprobe syscall to speed up return probe
->       selftests/x86: Add return uprobe shadow stack test
->       selftests/bpf: Add uretprobe syscall test for regs integrity
->       selftests/bpf: Add uretprobe syscall test for regs changes
->       selftests/bpf: Add uretprobe syscall call from user space test
->       selftests/bpf: Add uretprobe shadow stack test
-> 
->  arch/x86/entry/syscalls/syscall_64.tbl                      |   1 +
->  arch/x86/include/asm/shstk.h                                |   4 +
->  arch/x86/kernel/shstk.c                                     |  16 ++++
->  arch/x86/kernel/uprobes.c                                   | 124 ++++++++++++++++++++++++++++-
->  include/linux/syscalls.h                                    |   2 +
->  include/linux/uprobes.h                                     |   3 +
->  include/uapi/asm-generic/unistd.h                           |   5 +-
->  kernel/events/uprobes.c                                     |  24 ++++--
->  kernel/sys_ni.c                                             |   2 +
->  tools/include/linux/compiler.h                              |   4 +
->  tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c       | 123 ++++++++++++++++++++++++++++-
->  tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c     | 385 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  tools/testing/selftests/bpf/progs/uprobe_syscall.c          |  15 ++++
->  tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c |  17 ++++
->  tools/testing/selftests/x86/test_shadow_stack.c             | 145 ++++++++++++++++++++++++++++++++++
->  15 files changed, 860 insertions(+), 10 deletions(-)
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
->  create mode 100644 tools/testing/selftests/bpf/progs/uprobe_syscall.c
->  create mode 100644 tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c
-> 
-> Jiri Olsa (1):
->       man2: Add uretprobe syscall page
-> 
->  man/man2/uretprobe.2 | 56 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 man/man2/uretprobe.2
+Fixes: 0940f1a8011f ("cpufreq: intel_pstate: Do not update global.turbo_disabled after initialization")
+Closes: https://lore.kernel.org/linux-pm/bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site
+Suggested-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Reported-by: Xi Ruoyao <xry111@xry111.site>
+Tested-by: Xi Ruoyao <xry111@xry111.site>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpufreq/intel_pstate.c |   19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
+
+Index: linux-pm/drivers/cpufreq/intel_pstate.c
+===================================================================
+--- linux-pm.orig/drivers/cpufreq/intel_pstate.c
++++ linux-pm/drivers/cpufreq/intel_pstate.c
+@@ -1302,12 +1302,17 @@ static ssize_t store_no_turbo(struct kob
+ 
+ 	no_turbo = !!clamp_t(int, input, 0, 1);
+ 
+-	if (no_turbo == global.no_turbo)
+-		goto unlock_driver;
+-
+-	if (global.turbo_disabled) {
+-		pr_notice_once("Turbo disabled by BIOS or unavailable on processor\n");
++	WRITE_ONCE(global.turbo_disabled, turbo_is_disabled());
++	if (global.turbo_disabled && !no_turbo) {
++		pr_notice("Turbo disabled by BIOS or unavailable on processor\n");
+ 		count = -EPERM;
++		if (global.no_turbo)
++			goto unlock_driver;
++		else
++			no_turbo = 1;
++	}
++
++	if (no_turbo == global.no_turbo) {
+ 		goto unlock_driver;
+ 	}
+ 
+@@ -1762,7 +1767,7 @@ static u64 atom_get_val(struct cpudata *
+ 	u32 vid;
+ 
+ 	val = (u64)pstate << 8;
+-	if (READ_ONCE(global.no_turbo) && !global.turbo_disabled)
++	if (READ_ONCE(global.no_turbo) && !READ_ONCE(global.turbo_disabled))
+ 		val |= (u64)1 << 32;
+ 
+ 	vid_fp = cpudata->vid.min + mul_fp(
+@@ -1927,7 +1932,7 @@ static u64 core_get_val(struct cpudata *
+ 	u64 val;
+ 
+ 	val = (u64)pstate << 8;
+-	if (READ_ONCE(global.no_turbo) && !global.turbo_disabled)
++	if (READ_ONCE(global.no_turbo) && !READ_ONCE(global.turbo_disabled))
+ 		val |= (u64)1 << 32;
+ 
+ 	return val;
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
 
