@@ -1,123 +1,107 @@
-Return-Path: <linux-kernel+bounces-209416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C78B903450
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:50:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E63FD903451
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA20B287F17
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:50:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02B2B1C216A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFD8172BCD;
-	Tue, 11 Jun 2024 07:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68515172798;
+	Tue, 11 Jun 2024 07:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUeCMwrv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ydZZW2oR"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3132172798;
-	Tue, 11 Jun 2024 07:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27425130ADA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 07:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718092223; cv=none; b=Hx8UIO4V/c74qQZe6OCSWZkLh6TOIcDWcTqkhVjFGjni4GQHQxxhDSMpNhpMLq0/N5U/ZmQc0MDbmgDvG85k2V7AhvoOXwbHW4F+ecWStbdMSLILcKQ9x5RBC0weLHImBcEVcRcqA4JbVEzqgxRJ6CKGgrQRbnFt9NZfPfNvkKE=
+	t=1718092243; cv=none; b=CYNErD/7cTrOrZ9JKEJQ0jF0sxDdc4bCvuJ7UNF3PWke49hD+WSvpxZ7EXCDmPLuKYRs4We5aW6ERlH3SuoI6635hK8lG+Ope3w1HSGNcfxhEw5V1XFQ/vCJUkHIUtkTj39YxDeZirSRsMybNphyyHO+ko9Bsbt/sLfM7oM0vto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718092223; c=relaxed/simple;
-	bh=/tWfB59NEBN9boSZX0IDoiDx1xvzNUOL2J/WjwuRFWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XKqkAnnQIlV/IuMzcO464pgeFWTelL7R2KH+HiHwe/nuKhcSW6lxoXRiA5aejOj3tqCE6cmBq5iJiDK0++kT3j5IUT0080m+/VQJArf/yNX0aKmrPJkpdbc2buyrpkxq3QKvuiOOpQjGYt0ibVyv5DTtz8p0cXLXtMj4CvUp29c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SUeCMwrv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9EEC2BD10;
-	Tue, 11 Jun 2024 07:50:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718092222;
-	bh=/tWfB59NEBN9boSZX0IDoiDx1xvzNUOL2J/WjwuRFWw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SUeCMwrvxhqLlr0zpe5+fL9/zDEf8PGGNw7RCcB9OJoYjzN5vPWFyRda0mxoRNL29
-	 F4zzdGCfeUkfbC5hrqArj1FZjH6sIVWG5mzBSiopy99vzybrrz5nOx7TS7CZC6gFtt
-	 IlVPh4zTopZrqTkE06ntXQRp4V1Docol8KJjXPqj7j0YvAxeG2TnrhuDiUDcc14Yk4
-	 gEZDCexr94ccaj1vjBcqwDoc4OVzguuV2bwby0QFQVKTVcdwUCJRTZpLXZlvnB3bLZ
-	 J+Jx2EjSqDBSKWtcI/cBa0wDMGi8ZOTyz17UdwZBMiPB0dRbvxCzXCxD7h6KyVHBj7
-	 /bUS4bUEUPUQg==
-Date: Tue, 11 Jun 2024 09:50:16 +0200
-From: Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v0] net: dsa: mv88e6xxx: Add FID map cache
-Message-ID: <20240611095016.7804b091@dellmb>
-In-Reply-To: <20240610050724.2439780-1-aryan.srivastava@alliedtelesis.co.nz>
-References: <20240610050724.2439780-1-aryan.srivastava@alliedtelesis.co.nz>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718092243; c=relaxed/simple;
+	bh=9kS5Uofgz9pE3ajhh7ZndiNreDJxiZdrDGSyL6Ts7Ns=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=d+lqGwKU5RhIXvVu/yXuGpr4QrSeqY6db/sfnMU/pQSHUf2hHDILJUkmpJBDvGTti8HsC9bI8cM0H/8BBL2qOalH2eeBoTPkJKBmeoKY11gfQ3sHszeQUv+JXSlj5wbfL+Lf4a+y54yrOLFLXCUqc3O2b5XUOy8PoVLIjF2Tdgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ydZZW2oR; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-57c6979daf7so415911a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 00:50:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718092240; x=1718697040; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sOJq0SNxfCF/3ET8RSl5nDiW02JEujt8+S8ncUXlnV4=;
+        b=ydZZW2oRuNtgK4DDQtBX78Rw0Tbs5ZP+Lf9AM0//BahFo7Id76VUEjs8MIgwykTozD
+         esjDAfSiAoHzBTsZsabVAG3PhWz+PQ2DIqtUJrTUwEmcOHoR3VFaARrrmaTI0s41Dsah
+         Uhuy91L4GfxDynUK+I1GE2jtDTOvUDry1W6CFRgsRo9PWiVphcaZRG/HYCpPqVZ2SgX+
+         ZxyTJb1DpL8Qy9FDItZ9pu9H8pRH+kNEtck1WlOj43BP/KG6xADhnqtVjXh3v46JpEHB
+         sYKGn/Qk2QepnSdDgxVnXw0a+wOIC1iP50ZMJcPRNszh599mEzqZ+drok7mAC+98gerT
+         R4YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718092240; x=1718697040;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sOJq0SNxfCF/3ET8RSl5nDiW02JEujt8+S8ncUXlnV4=;
+        b=i0KgaFekwjsVvjYLmqvko13jbpxvo+O9O73fbn4xKLlc/F/qsjTCUWGaAigFjzfwnD
+         5C56PutLJfyrQXSWUkd32HgyxSy+N3TZcEDEIsmAdQGcxHUHhVkWUnaXQD3o24JTX+UT
+         kwUlPYD7MqC/ReusXuZK5EUrA4uzE3nhKh9vC9rRSgAt8Tn/fCa/AEhyVgbOjPq4/9Tv
+         k1wysZwvAi5X9pOkRPRlcTSwbi4BEbTI9EB0a/YE/H8471a5xyNkCbexmbPyMSW5ZSwR
+         aroVcH6rTbmY4RbNkjv4JrAuDI7TIfRMIV56DrsoGHFUW8TuUTXkWcHp3b8lNJO1FQfU
+         I+lA==
+X-Gm-Message-State: AOJu0Yx1zCYkrtG7D1/WMhw8deehk4SAZhynOU6PzEMIh8aXDRFahtnY
+	hlJLZMdRfpo0xdkRoi4tVGHwStIP4AaUTIf6rej4Jb838PGKL968Sg4k8dwF5hY+ezhsF8ltuZp
+	v6Tgyhg==
+X-Google-Smtp-Source: AGHT+IErv6rLmt4s+gZnrQEdHCzuqotk0DcGGpQ1w+M3MZRAjUH6t0BNbskn5HJq98usgW4q46tMyDMXwWPd
+X-Received: from dvyukov-desk.muc.corp.google.com ([2a00:79e0:9c:201:ecf:76a8:5d44:6e8b])
+ (user=dvyukov job=sendgmr) by 2002:a05:6402:548c:b0:57a:8b21:a587 with SMTP
+ id 4fb4d7f45d1cf-57c506bfe91mr13190a12.0.1718092240035; Tue, 11 Jun 2024
+ 00:50:40 -0700 (PDT)
+Date: Tue, 11 Jun 2024 09:50:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <cover.1718092070.git.dvyukov@google.com>
+Subject: [PATCH v2 0/4] KCOV fixes
+From: Dmitry Vyukov <dvyukov@google.com>
+To: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, syzkaller@googlegroups.com, elver@google.com, 
+	glider@google.com, nogikh@google.com, tarasmadan@google.com, 
+	Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 10 Jun 2024 17:07:23 +1200
-Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz> wrote:
+Fix spurious KCOV coverage from interrupts and add a test.
+Ignore some additional files that lead to large amounts
+of uninteresting coverage.
+As a reference point, tracing a simple open system call
+produces ~10K PCs with these changes instead of ~45K PCs.
 
-> Add a cached FID bitmap. This mitigates the need to
-> walk all VTU entries to find the next free FID.
-> 
-> Walk VTU once, then store read FID map into bitmap. Use
-> and manipulate this bitmap from now on, instead of re-reading
-> HW for the FID map.
-> 
-> The repeatedly VTU walks are costly can result in taking ~40 mins
-> if ~4000 vlans are added. Caching the FID map reduces this time
-> to <2 mins.
-> 
-> Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-> ---
->  drivers/net/dsa/mv88e6xxx/chip.c | 25 +++++++++++++++++++------
->  drivers/net/dsa/mv88e6xxx/chip.h |  4 ++++
->  2 files changed, 23 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-> index e5bac87941f6..91816e3e35ed 100644
-> --- a/drivers/net/dsa/mv88e6xxx/chip.c
-> +++ b/drivers/net/dsa/mv88e6xxx/chip.c
-> @@ -1815,14 +1815,17 @@ int mv88e6xxx_fid_map(struct mv88e6xxx_chip *chip, unsigned long *fid_bitmap)
->  
->  static int mv88e6xxx_atu_new(struct mv88e6xxx_chip *chip, u16 *fid)
->  {
-> -	DECLARE_BITMAP(fid_bitmap, MV88E6XXX_N_FID);
->  	int err;
->  
-> -	err = mv88e6xxx_fid_map(chip, fid_bitmap);
-> -	if (err)
-> -		return err;
-> +	if (!chip->fid_populated) {
-> +		err = mv88e6xxx_fid_map(chip, chip->fid_bitmap);
-> +		if (err)
-> +			return err;
->  
-> -	*fid = find_first_zero_bit(fid_bitmap, MV88E6XXX_N_FID);
-> +		chip->fid_populated = true;
-> +	}
-> +
-> +	*fid = find_first_zero_bit(chip->fid_bitmap, MV88E6XXX_N_FID);
->  	if (unlikely(*fid >= mv88e6xxx_num_databases(chip)))
->  		return -ENOSPC;
->  
-> @@ -2529,6 +2532,9 @@ static int mv88e6xxx_port_vlan_join(struct mv88e6xxx_chip *chip, int port,
->  			 port, vid);
->  	}
->  
-> +	/* Record FID used in SW FID map */
-> +	bitmap_set(chip->fid_bitmap, vlan.fid, 1);
-> +
+Dmitry Vyukov (4):
+  x86/entry: Remove unwanted instrumentation in common_interrupt()
+  kcov: add interrupt handling self test
+  module: Fix KCOV-ignored file name
+  x86: Ignore stack unwinding in KCOV
 
-wouldn't it make more sense to do this bit setting in
-mv88e6xxx_atu_new() and clearingin a new function
-mv88e6xxx_atu_delete/drop() ?
+ arch/x86/include/asm/hardirq.h  |  8 ++++++--
+ arch/x86/include/asm/idtentry.h |  6 +++---
+ arch/x86/kernel/Makefile        |  8 ++++++++
+ kernel/kcov.c                   | 31 +++++++++++++++++++++++++++++++
+ kernel/module/Makefile          |  2 +-
+ lib/Kconfig.debug               |  8 ++++++++
+ 6 files changed, 57 insertions(+), 6 deletions(-)
+
+
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+-- 
+2.45.2.505.gda0bf45e8d-goog
+
 
