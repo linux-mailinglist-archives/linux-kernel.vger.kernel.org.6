@@ -1,184 +1,169 @@
-Return-Path: <linux-kernel+bounces-209195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F0A5902E8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:45:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AEF9902E89
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 159761F23580
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:45:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63C52B213E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD3F16F912;
-	Tue, 11 Jun 2024 02:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB0216F8EB;
+	Tue, 11 Jun 2024 02:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mh8MjxvG"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufYhnMNL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335A416F85D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C5E15B0E2;
+	Tue, 11 Jun 2024 02:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718073924; cv=none; b=TkbTsbh73mR30XIg35zMow506ZOD044MBJWKYn7p0vdhYS1ZMlzPOqDVu17Ohv8NZez75svWbzeSa1lwwTxKDxn4jB2VpWNG9iE7KfnbkcBDQ5FvnkbWua+wOcRF8zRigKTjDVi0o261gPypWkpKzRPl9fkmqBm6eJsa2P3izfk=
+	t=1718073691; cv=none; b=YP0mFpOK5ygcq7bQvN30E3m7VfwymquT67eqybPVBW47M62JVcAM33PXxqkB11pcdoQWjVL0ctrK9J6EiepvoM2iPzUnQlpHQ0js0Ws/uIHMN/ihlqUmgJCabERINWgWwVmj0A7E759opeWc2H9g1uGUMwlHDXjQTkke0SqMa7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718073924; c=relaxed/simple;
-	bh=s1lLl3668ohS/zArb10DiTjhPJcDIyj3wMOKa5jJbp8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AB9K02Rf6ff8DL4h5AWhEaMtovS0BN7V0uPWFn7SLIl7hB2DMX2xkeJMzOEbXVJcplkSRHi/EK36oXQ1NYoDmJJ/4Vv6DhNb0mKNxs5Fs9d3mZ+aR/rE25pOA9sopscjxWL5mWQB6sYkQ11AuNNhalcYVB5OJOm2KO7+XoU7Zfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Mh8MjxvG; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-627f43bec13so12806307b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:45:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718073922; x=1718678722; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DJ8+7Sej2fxglO9eGa2Al3jrHJVakXZUpIE0ICxQvWE=;
-        b=Mh8MjxvGaD2AAiBhlvp58+JW6/PMg1Y4p02sIcju/q8N1gCtJXvUXAokt3XzombDn3
-         6IGBClyzpy7a1WI01vvIYX9l/FTK6HBjUP4spMnr7Mexf7fjOaDSyPJIaNF1022Gieap
-         DUfOrPVdvju/XJw4juEmTCcVysK7A3636NchWIibOaLMafvwvptb/Db8vcPdMwCIRTRo
-         mZbgF0OQ7iiF8ejvtov8RU6CKRrLc8LPugb5wPvzetLO0A+QWYR0Wm/epzRIbSqPeoa+
-         4X5w8mjW7MZyej/Eu+6jJhuJAmGy1OXa5OC2rFSs+gC8PUlmhsoaALs5OaISa7Gysoej
-         DYRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718073922; x=1718678722;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DJ8+7Sej2fxglO9eGa2Al3jrHJVakXZUpIE0ICxQvWE=;
-        b=P1DwznxK4Dp5m75pQ0RpsHFk5t0U/e+nkkjGgeZSOtJcRLz00ZA8D3VHNqbAMWnTjm
-         0OhzyUnGfHAR8iYUO8+/6MW4KIcBu725JNPt8B3Vkbn0ZOBV/ES0vpmEx+o+1ss2LMK3
-         OLTTUiahXh45yfvMIQ62MyBGDT3dT3yGa2y3Gd3pamnBRBjd7rgT6iHS6cRmC1Akj50C
-         HX1vsHMHlEWJNXWNYTdmwlpeH/KZUlljFYmi+XiNmS5mb+E5yi10cKnOMWCvYudC0vSq
-         IKS2P9+Ky/oWctsVA6lxI0jXOoJ0dinXh7UP+r0R9O7Tdk/QgNVfCy1iJoMBjYNZKHQG
-         TjVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXebfUxR1QyjQje2Qb/isQYoGNTslG470ne7QGEhL5yhP1N6JaahnktJhtRybrD3SoBj5858aL/atFKehuZ6TfuL2KSJKOOD6KQNZ3B
-X-Gm-Message-State: AOJu0Yy5isUDW+BrL+oI2VW3iex7+xKLNj7OwcRmXgDRWUqUcRDSmlwl
-	e/YUCuYLkMCD3E3PhPaZ5UIyquoyf8NEUvBF9Zy10JMKyT8G6RB47Hnp0j1nxBWMK8KC1f7pIYt
-	drIsrQWhqNfG+g+iJIQ==
-X-Google-Smtp-Source: AGHT+IHtYmI8LX2B/xV/AC9td52B03t1CfMg6KtVozISqQ0BN5dfCT/e0kwwihIlshNhQ0RkMgS6l3jwEeA+wlLO
-X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
- (user=yosryahmed job=sendgmr) by 2002:a05:690c:10:b0:61d:4701:5e66 with SMTP
- id 00721157ae682-62cd5570599mr43233527b3.2.1718073922123; Mon, 10 Jun 2024
- 19:45:22 -0700 (PDT)
-Date: Tue, 11 Jun 2024 02:45:16 +0000
-In-Reply-To: <20240611024516.1375191-1-yosryahmed@google.com>
+	s=arc-20240116; t=1718073691; c=relaxed/simple;
+	bh=ngSu0hl09RV+E8XRDs8cHoJzfg925aoWxQhKadjgzKo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fMPgpFqFt0VQKJP3z6YgdtJYSBHvxLB7d63j/7z3Goi2a+xt05TR7IQ5sIkx/p9I0bC8WzdQeY5Gc2ORMfTxED2NlR5dUJQGqdYD8xFYtmJetV6b9p71G9f6QsW9mzGBlEBdxecpNtvRXWMXRsowqxhQw1LNNcFjMQim8BAc41o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufYhnMNL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02361C2BBFC;
+	Tue, 11 Jun 2024 02:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718073690;
+	bh=ngSu0hl09RV+E8XRDs8cHoJzfg925aoWxQhKadjgzKo=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ufYhnMNLWqbW9ijJzuDGnG6ObssMrGf/RmZVa8M7p5NRA14ZDAjH47XEipL/Iwr83
+	 +1RERdjXcI/SM/NL4f2G98FIZ2PeRpclDue9teOQcFQHjyYbLUuWLB0pqGMgas0uMg
+	 24S5C1UMIxgb+6VFnBMPvK8qgVvcSfsuWYYpruWOoUE2QAiF85GhX/g7Js3nGWnUEI
+	 y4j8yaOpY7Ago1EnjzcY4MdRecGnvI8FHn+P7gWa+OTLxlKHx3pQvYQuHwwU4IZQAc
+	 1gHpdv25JOdhL7VoXSs6NJFuGsVVl7rXskUW8yYQSdYn4APpRP4gyQuMDTSd6Pvq6n
+	 ns743Nh3M5snw==
+From: Bjorn Andersson <andersson@kernel.org>
+Date: Mon, 10 Jun 2024 19:46:27 -0700
+Subject: [PATCH v2] dt-bindings: usb: qcom,dwc3: Add SC8180X compatibles
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240611024516.1375191-1-yosryahmed@google.com>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240611024516.1375191-3-yosryahmed@google.com>
-Subject: [PATCH v3 3/3] mm: zswap: handle incorrect attempts to load large folios
-From: Yosry Ahmed <yosryahmed@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Barry Song <21cnbao@gmail.com>, 
-	Chris Li <chrisl@kernel.org>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Yosry Ahmed <yosryahmed@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240610-sc8180x-dwc3-binding-compatible-v2-1-c7d5db9702a2@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAIK6Z2YC/z2NSw6CMBQAr0K69pl+EVx5D8OitAVeIgVbQAzh7
+ lZMXM4sZjYSXUAXyTXbSHALRhx8An7KiOm0bx2gTUw45ZLmjEI0BSvoCvZlBNToLfoWzNCPesL
+ 64cA1SpRa8uaiLUmVMbgG1+NwrxJ3GKchvI/hwr7211Zc/dtzrKEfYWGgIKe6pFKUXIri9pzRo
+ Dfn9CPVvu8fFQHElL8AAAA=
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bjorn Andersson <quic_bjorande@quicinc.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2665;
+ i=quic_bjorande@quicinc.com; h=from:subject:message-id;
+ bh=4pCsrXGH6ET4igc6QE7tpvtvcfisF38chpMSor9ddc8=;
+ b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmZ7qGkjHz2zOVGsS8ukF12DSyki+wLYa2VsqpK
+ DDaq6Ohr5aJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZme6hhUcYW5kZXJzc29u
+ QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcXBiA/+Lf9MkeQrm2AYlt4JU41fT+8HMz50a4oK2fHqcFp
+ /7CCRd0+DBzNDeX4avL3rp5AVmw84pvluA2mMcsa+fbe/CxzOKoBhRWkiNBj2sR57LtzB1q3YcB
+ MRQ5FvFmzDWv/ufEPvA2zTCSfrZmHSKsH9GeQ5SW8UALIWUsdXV2sbf0xGsFeejA/ND7Txl/alg
+ zEfgoZyOljmpblzSkBReeypIhV8QTqvHmuBq8yB5QhTH34nZAW4Vl7LVu2FtT4dMV3rJAfISL31
+ 5j1C8D2dwGEDaEOxn2h6NgXnpdYID9rmrihuPHIoz00EEmzDLqTNc+LGx99IBnHSuL/cUbQy1mb
+ VtLV3wVuTitXEZ56+hY2CqFLBGTCaIer3rvmipl+QKr74IYSGOWVWzWQP9ZB//1g7iENjmDgkxT
+ crsSS45ZhaGkxauAeBnYSWvDjvxTjTKb6Bt0whie170wUD5PndggyNbHSl0tR/WVbSYtJCVyL58
+ 714T82eEqv00lpwcUMeM/6orMwn4KQi/E3oKB1L3LOVKGiVn2avfAVJmdY0aIVCZoZ8L/y11GwF
+ lmOvU83C6hENUDSrk7VR38c0VsPpCwPw9Gv+NfVaVTuxbjiQ/4P9R6Abh3KBIvN9XkWxiX4Ss0k
+ iSee0X9FwKSopwr5IadbYy9x7phcsRcK7TpoosKZw+QI=
+X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
+ fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
 
-Zswap does not support storing or loading large folios. Until proper
-support is added, attempts to load large folios from zswap are a bug.
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
 
-For example, if a swapin fault observes that contiguous PTEs are
-pointing to contiguous swap entries and tries to swap them in as a large
-folio, swap_read_folio() will pass in a large folio to zswap_load(), but
-zswap_load() will only effectively load the first page in the folio. If
-the first page is not in zswap, the folio will be read from disk, even
-though other pages may be in zswap.
+The SC8180X platform has two single port DWC3 instances and a two-port
+DWC3 instance. Add compatibles for these to the binding.
 
-In both cases, this will lead to silent data corruption. Proper support
-needs to be added before large folio swapins and zswap can work
-together.
-
-Looking at callers of swap_read_folio(), it seems like they are either
-allocated from __read_swap_cache_async() or do_swap_page() in the
-SWP_SYNCHRONOUS_IO path. Both of which allocate order-0 folios, so
-everything is fine for now.
-
-However, there is ongoing work to add to support large folio swapins
-[1]. To make sure new development does not break zswap (or get broken by
-zswap), add minimal handling of incorrect loads of large folios to
-zswap.
-
-First, move the call folio_mark_uptodate() inside zswap_load().
-
-If a large folio load is attempted, and zswap was ever enabled on the
-system, return 'true' without calling folio_mark_uptodate(). This will
-prevent the folio from being read from disk, and will emit an IO error
-because the folio is not uptodate (e.g. do_swap_fault() will return
-VM_FAULT_SIGBUS). It may not be reliable recovery in all cases, but it
-is better than nothing.
-
-This was tested by hacking the allocation in __read_swap_cache_async()
-to use order 2 and __GFP_COMP.
-
-In the future, to handle this correctly, the swapin code should:
-(a) Fallback to order-0 swapins if zswap was ever used on the machine,
-because compressed pages remain in zswap after it is disabled.
-(b) Add proper support to swapin large folios from zswap (fully or
-partially).
-
-Probably start with (a) then followup with (b).
-
-[1]https://lore.kernel.org/linux-mm/20240304081348.197341-6-21cnbao@gmail.com/
-
-Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 ---
- mm/page_io.c |  1 -
- mm/zswap.c   | 12 ++++++++++++
- 2 files changed, 12 insertions(+), 1 deletion(-)
+Changes in v2:
+- Pick up Krzysztof's r-b and resubmit separate from the dts changes
+- Link to v1: https://lore.kernel.org/r/20240525-sc8180x-usb-mp-v1-5-60a904392438@quicinc.com
+---
+ .../devicetree/bindings/usb/qcom,dwc3.yaml         | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/mm/page_io.c b/mm/page_io.c
-index f1a9cfab6e748..8f441dd8e109f 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -517,7 +517,6 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
- 	delayacct_swapin_start();
+diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+index cf633d488c3f..efde47a5b145 100644
+--- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
++++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+@@ -30,6 +30,8 @@ properties:
+           - qcom,sa8775p-dwc3
+           - qcom,sc7180-dwc3
+           - qcom,sc7280-dwc3
++          - qcom,sc8180x-dwc3
++          - qcom,sc8180x-dwc3-mp
+           - qcom,sc8280xp-dwc3
+           - qcom,sc8280xp-dwc3-mp
+           - qcom,sdm660-dwc3
+@@ -334,6 +336,8 @@ allOf:
+           contains:
+             enum:
+               - qcom,qcm2290-dwc3
++              - qcom,sc8180x-dwc3
++              - qcom,sc8180x-dwc3-mp
+               - qcom,sm6115-dwc3
+               - qcom,sm6125-dwc3
+               - qcom,sm8150-dwc3
+@@ -448,6 +452,7 @@ allOf:
+               - qcom,sa8775p-dwc3
+               - qcom,sc7180-dwc3
+               - qcom,sc7280-dwc3
++              - qcom,sc8180x-dwc3
+               - qcom,sc8280xp-dwc3
+               - qcom,sdm670-dwc3
+               - qcom,sdm845-dwc3
+@@ -475,6 +480,30 @@ allOf:
+             - const: dm_hs_phy_irq
+             - const: ss_phy_irq
  
- 	if (zswap_load(folio)) {
--		folio_mark_uptodate(folio);
- 		folio_unlock(folio);
- 	} else if (data_race(sis->flags & SWP_FS_OPS)) {
- 		swap_read_folio_fs(folio, plug);
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 7fcd751e847d6..505f4b9812891 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -1566,6 +1566,17 @@ bool zswap_load(struct folio *folio)
- 	if (zswap_never_enabled())
- 		return false;
- 
-+	/*
-+	 * Large folios should not be swapped in while zswap is being used, as
-+	 * they are not properly handled. Zswap does not properly load large
-+	 * folios, and a large folio may only be partially in zswap.
-+	 *
-+	 * Return true without marking the folio uptodate so that an IO error is
-+	 * emitted (e.g. do_swap_page() will sigbus).
-+	 */
-+	if (WARN_ON_ONCE(folio_test_large(folio)))
-+		return true;
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,sc8180x-dwc3-mp
++    then:
++      properties:
++        interrupts:
++          minItems: 10
++          maxItems: 10
++        interrupt-names:
++          items:
++            - const: pwr_event_1
++            - const: pwr_event_2
++            - const: hs_phy_1
++            - const: hs_phy_2
++            - const: dp_hs_phy_1
++            - const: dm_hs_phy_1
++            - const: dp_hs_phy_2
++            - const: dm_hs_phy_2
++            - const: ss_phy_1
++            - const: ss_phy_2
 +
- 	/*
- 	 * When reading into the swapcache, invalidate our entry. The
- 	 * swapcache can be the authoritative owner of the page and
-@@ -1600,6 +1611,7 @@ bool zswap_load(struct folio *folio)
- 		folio_mark_dirty(folio);
- 	}
- 
-+	folio_mark_uptodate(folio);
- 	return true;
- }
- 
+   - if:
+       properties:
+         compatible:
+
+---
+base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+change-id: 20240610-sc8180x-dwc3-binding-compatible-ef539a42f7ad
+
+Best regards,
 -- 
-2.45.2.505.gda0bf45e8d-goog
+Bjorn Andersson <quic_bjorande@quicinc.com>
 
 
