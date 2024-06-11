@@ -1,159 +1,173 @@
-Return-Path: <linux-kernel+bounces-210402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 971F0904335
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:10:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7226C90433B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C071C21C6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:10:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1199B2566C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5525F870;
-	Tue, 11 Jun 2024 18:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D947374079;
+	Tue, 11 Jun 2024 18:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8tNwlcK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MfbDL/sC"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5926843AD5;
-	Tue, 11 Jun 2024 18:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04356F301;
+	Tue, 11 Jun 2024 18:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718129445; cv=none; b=p1/r/3qfN04LX0SVgW0dccsKEsaQrumjnOWDUHL9B77jxvIfUZGlXCZe/Ct4YUuwwPetgdm/1dd07oyYPJQ9DiXEz0nASuOs+CQSWLWbBtrLKkkGtRjBaw+67a1nUNvwBfnLfdRlCE6OQG1JUpbnBZ54esmcB1mUlAb5Mks8Fec=
+	t=1718129466; cv=none; b=fySkpygTHB90phzCdU/vEOpYje5VUW+P3WWYjRjZjyTq1XBPPYFi+1Wk1HIMtf2FkNVya6ZMmLunJkp2GrtHNEM2x8rU53YgZ9AMNGykprvo+9mVaseTmI/GzwS8HhT+oOn5+Lyqs642ZzLMzMwpqIS06Q7mtHc8q4QL645KzbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718129445; c=relaxed/simple;
-	bh=TjzdMfhIprBIYXA1Ded7MQ848LN5/jfRqWbIpulmQvQ=;
+	s=arc-20240116; t=1718129466; c=relaxed/simple;
+	bh=/xKGhKlVtckIy/7F23998tEUprsrx5eNTrMKCF2kraE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AXRbHJJYig7oi2045dySM1I+6R2qgS/4YkyjcrlLF5lWfjkexLy766WZd+JJa9O9k0Z/A5F7QH8VN8XPbNykxT2ONUp3J9VzTk8AdWsWnlwumC3C3PetVHCVwevlXG0Ff4Y9oTNBShVFb1z+JwwCV1QbQwmSj0/uex7OfXRcxPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8tNwlcK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4745C2BD10;
-	Tue, 11 Jun 2024 18:10:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718129445;
-	bh=TjzdMfhIprBIYXA1Ded7MQ848LN5/jfRqWbIpulmQvQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p8tNwlcKIt1/wAXVS5HNNI/G+aDoD+Cy+B+GzOC7ogR+dsbMBzRZbp/0A1sAsXeRP
-	 WYTHIkKi3hMbzKEJqCOqJyC+sosflnqJmszos6oMHQSg2vtqnr2FY8sse1g2e5W0+H
-	 AeR8PR1iXxAQwBm9sQdjCkyEjqGepvnEvaS3vawHoioswWRdx/GXHO4RFf3q3m4hTI
-	 zlvxZhb0yDfDRLb+XHdgQy8w+8OQ3mmlxkSAovU6m+NCT9dI/Ox9kCOgkicNXK85as
-	 Klr5HC5t3x1ML/lwytCzyTf248TqKivtJ82ZpzlxdhkqTDjDnfGwWKC/Mqw8vhGeKQ
-	 lANhMUqeLhBzQ==
-Date: Tue, 11 Jun 2024 19:10:40 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Aniket <aniketmaurya@google.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Jeremy Kerr <jk@codeconstruct.com.au>,
-	Joel Stanley <joel@jms.id.au>,
-	Billy Tsai <billy_tsai@aspeedtech.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: i3c: dw: Add clock binding
-Message-ID: <20240611-alphabet-dubbed-d6c3a56e7208@spud>
-References: <20240611171600.1105124-1-aniketmaurya@google.com>
- <20240611171600.1105124-2-aniketmaurya@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UD8P4WRudq0qg6Ss616OJIapaxG65Q/bieHZIfhFG6VxHjgAJIPLqgUrc/8i7J0l1lT4HxPRqT9wGpB9oBeb8UWBGTlE+bkP2LN0O78OaS9dzix1bvZedgBbO6pTYpMUtmqjf9ldUaVLj44V7K6ymYaHqVrI3ZTonW0BEUpE4hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MfbDL/sC; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f480624d0fso11486855ad.1;
+        Tue, 11 Jun 2024 11:11:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718129464; x=1718734264; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6yx/QSwtRUfzJxtU0mEMF/+Zp84UMg5zsjelSYKknQk=;
+        b=MfbDL/sCQptPLKB1qjR5CHtcba1aJHmifFXazh1NnlqUE502ROiOgqDAvBX/bGV0tX
+         fMV8kSKFWkKa58okiGqz0cljaVVkVCTvtby55vCFK1XpBMzApZFk6AqIvba5eBhfm6RV
+         OmkgyYaRhgLGsIJf14SbUixDexr/wM1DMtnYOriRLJoaF8P7wXwhi/S+utt/UAMzfN/v
+         QYdManooHChT/vDS5EqE6mwI48m+4cG8uRydRLh4ZWAOQ9Ks9ui1qxDUiD2y1qjuSs+4
+         d+dqGMuGn9OBRMsN0J8kbAjW0vjIRonHC2BC3LVL2xfkcsEjg6neS2IYhGR5qpPCXDE6
+         deAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718129464; x=1718734264;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6yx/QSwtRUfzJxtU0mEMF/+Zp84UMg5zsjelSYKknQk=;
+        b=o7/cHQMt95j58dOWctLOcQ44RFgrcU9tulGOZlTF1QhiOr6ztbDxOqCxy+yF/BQfjF
+         FD9NbS7Y9b+3mO8KttG0W/b/p30uyPuScvTYX1hgzNfu+RdJnbRGGDzzh0nK0SLOrPtv
+         I39zS4ASnX3nayfWfNX0e4NObFDwYzO9wOMUQumDhhEr/99lNUFGXuK2JRvHSuDDoS11
+         YL0vsp6CfDNdOsTm8DnGpCdCl1bONfh+Mg+KnEzvPskNYexReIGOBrafRbOqNDcuKHIc
+         xGoJrcymobHPc7hPH1v5K8AfEljw85bFbEtWYUAh5f9ezSHuik10DKeXpTs3aCD7IHF7
+         UDNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQPZa7WWKVgTI1qPsXRD5f4HhaFiyd9S8XgLWEQIEB8ng+RvUnyzf5+8WueWNUA7+upohtXGppoqmpcW7M6puUBgEIill7E5zCwTY5oFhp5IHc6ushaYcao1/rtnlfSjspXGgUaxQ7nWjX4p1A/rMuRRy4OTJ4RWt8bNgdu+DX4YoAoNOa
+X-Gm-Message-State: AOJu0YwOGbVWkLcSl19DYizL67YuSftXwKZOfkmYYlm7hphIoDSDakdY
+	zmp/Gk1tifYYtzeHfIGuVnnZk1r5XLtO4huQXdv49Q4ZhVcUsTTLwzHllg==
+X-Google-Smtp-Source: AGHT+IGCIHAzQY/mnDlVo5lnk26RTRbDcrjvObXR8MxjwovVfl11tONs9+ylnI51Lr9jyeCjcjK5IQ==
+X-Received: by 2002:a17:902:ea0e:b0:1f7:2dca:ea42 with SMTP id d9443c01a7336-1f72dcaf4acmr29493525ad.60.1718129463715;
+        Tue, 11 Jun 2024 11:11:03 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:d73f:b49c:626c:fac7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6ed8ee0f1sm71482315ad.124.2024.06.11.11.11.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 11:11:03 -0700 (PDT)
+Date: Tue, 11 Jun 2024 11:11:00 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Daisuke Nojiri <dnojiri@chromium.org>
+Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+	Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Reka Norman <rekanorman@chromium.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Pavan Holla <pholla@chromium.org>,
+	Gwendal Grignou <gwendal@chromium.org>,
+	Lukasz Majczak <lma@chromium.org>,
+	Ching-Kang Yen <chingkang@chromium.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] platform/chrome: Add struct
+ ec_response_get_next_event_v3
+Message-ID: <ZmiTNEjxE-ZCotNu@google.com>
+References: <cover.1717779167.git.dnojiri@chromium.org>
+ <979b1fdaa5b3d3165e53f5429470c42581394d14.1717779167.git.dnojiri@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="AJEiS4jL6BfZv+VG"
-Content-Disposition: inline
-In-Reply-To: <20240611171600.1105124-2-aniketmaurya@google.com>
-
-
---AJEiS4jL6BfZv+VG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <979b1fdaa5b3d3165e53f5429470c42581394d14.1717779167.git.dnojiri@chromium.org>
 
-On Tue, Jun 11, 2024 at 05:15:59PM +0000, Aniket wrote:
-> Add dt binding for optional apb clock.
-> Core clock is mandatory. Also add
-> an example.
+Hi Daisuke,
 
-Please fix your line wrapping here.
-
-> Signed-off-by: Aniket <aniketmaurya@google.com>
-
-Full name please.
-
+On Fri, Jun 07, 2024 at 10:02:56AM -0700, Daisuke Nojiri wrote:
+> Add struct ec_response_get_next_event_v3 to upgrade
+> EC_CMD_GET_NEXT_EVENT to version 3.
+> 
+> Signed-off-by: Daisuke Nojiri <dnojiri@chromium.org>
 > ---
->  .../bindings/i3c/snps,dw-i3c-master.yaml      | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yam=
-l b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
-> index c0e805e531be..7e3d4f308477 100644
-> --- a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
-> +++ b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
-> @@ -20,7 +20,16 @@ properties:
->      maxItems: 1
-> =20
->    clocks:
-> -    maxItems: 1
-> +    minItems: 1
-> +    items:
-> +      - description: Core interface clock
-
-s/interface //.
-
-> +      - description: APB interface clock
+>  .../linux/platform_data/cros_ec_commands.h    | 34 +++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/include/linux/platform_data/cros_ec_commands.h b/include/linux/platform_data/cros_ec_commands.h
+> index 070e49c5381e..fff191a8d413 100644
+> --- a/include/linux/platform_data/cros_ec_commands.h
+> +++ b/include/linux/platform_data/cros_ec_commands.h
+> @@ -3527,6 +3527,34 @@ union __ec_align_offset1 ec_response_get_next_data_v1 {
+>  };
+>  BUILD_ASSERT(sizeof(union ec_response_get_next_data_v1) == 16);
+>  
+> +union __ec_align_offset1 ec_response_get_next_data_v3 {
+> +	uint8_t key_matrix[18];
 > +
-> +  clock-names:
-> +    minItems: 1
-> +    items:
-> +      - const: core_clk
-> +      - const: pclk
+> +	/* Unaligned */
+> +	uint32_t host_event;
+> +	uint64_t host_event64;
+> +
+> +	struct __ec_todo_unpacked {
+> +		/* For aligning the fifo_info */
+> +		uint8_t reserved[3];
+> +		struct ec_response_motion_sense_fifo_info info;
+> +	} sensor_fifo;
+> +
+> +	uint32_t buttons;
+> +
+> +	uint32_t switches;
+> +
+> +	uint32_t fp_events;
+> +
+> +	uint32_t sysrq;
+> +
+> +	/* CEC events from enum mkbp_cec_event */
+> +	uint32_t cec_events;
+> +
+> +	uint8_t cec_message[16];
+> +};
+> +BUILD_ASSERT(sizeof(union ec_response_get_next_data_v3) == 18);
+> +
+>  struct ec_response_get_next_event {
+>  	uint8_t event_type;
+>  	/* Followed by event data if any */
+> @@ -3539,6 +3567,12 @@ struct ec_response_get_next_event_v1 {
+>  	union ec_response_get_next_data_v1 data;
+>  } __ec_align1;
+>  
+> +struct ec_response_get_next_event_v3 {
+> +	uint8_t event_type;
+> +	/* Followed by event data if any */
+> +	union ec_response_get_next_data_v3 data;
+> +} __ec_align1;
+> +
 
-Why not name them "core" and "apb"? Putting "clk" in both names is
-redundant infomration, we already know they're clocks.
+It is not really obvious that ec_response_get_next_event and
+ec_response_get_next_event_v3 are layout compatible. I would simply
+extend the union and add key_matrix_v3 field instead of defining
+a brand new union.
 
-> =20
->    interrupts:
->      maxItems: 1
-> @@ -49,4 +58,12 @@ examples:
->              pagesize =3D <0x8>;
->          };
->      };
-> +  - |
-> +    i3c@10400 {
+And I would drop ec_response_get_next_event_v1 and added missing fields
+to the original union as well...
 
-No need for an extra example for this.
+Thanks.
 
-Thanks,
-Conor.
-
-> +      compatible =3D "snps,dw-i3c-master-1.00a";
-> +      reg =3D <0x10400 0x1000>;
-> +      interrupts =3D <8>;
-> +      clocks =3D <&i3c0_cclk>,<&i3c0_pclk>;
-                              ^^
-			missing a space here.
-
-> +      clock-names =3D "core_clk", "pclk";
-> +    };
->  ...
-> --=20
-> 2.45.2.505.gda0bf45e8d-goog
->=20
->=20
-
---AJEiS4jL6BfZv+VG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmiTIAAKCRB4tDGHoIJi
-0vecAQC9e41GbhP5Enju1g8aTW6hHW9ASQpnsTQWipyRbCAcGAEAry2a4LactviZ
-jCwkwT8BlTp06IV6M5Mh7kQR13zwJgE=
-=/2we
------END PGP SIGNATURE-----
-
---AJEiS4jL6BfZv+VG--
+-- 
+Dmitry
 
