@@ -1,59 +1,78 @@
-Return-Path: <linux-kernel+bounces-210449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AAAE9043CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:38:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE5DD9043CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92F53287DCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:38:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89CCB1F25C13
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204145731B;
-	Tue, 11 Jun 2024 18:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53DB7691F;
+	Tue, 11 Jun 2024 18:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XjLISa1L"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JUi0MIis"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD91C14A96
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E58757F6;
+	Tue, 11 Jun 2024 18:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718131103; cv=none; b=R3nNV5Jz6rdR9UYKRmyZec6JrA+yucyNs1JwxPA8lIpQXWWpb3vfn/fXn+JVm1y0G8n61An66Gv6RKEmbnX4FEFm295On7ZXd/ORyWU+wFLvMpCiN1GYcB9vjGQtJJGzso/zQ6iw/F9oTRRbmmvWcX2hu5JDMATBiQd2mmpXgmk=
+	t=1718131143; cv=none; b=nhl2gbXdvrNl9KxA0tz9kETkuBqcfkU3lpHSDcziXO1nLo7ypYaVzNDjJxdocHXW+GyNJ7jZCirwupUOIOe3Jp3nlj0sK8fIZ2PXKytzVwWWF1e1WBxkRbt0Cb2TvkHEIyWIben7uOBm2W7Qqw8m1h1br/w5QGujtFXJL862XzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718131103; c=relaxed/simple;
-	bh=nfvRHoWp/rIu9lvl3GRugnjsTVVcJGUzIvVMQ8fMiCM=;
+	s=arc-20240116; t=1718131143; c=relaxed/simple;
+	bh=ohppsjWPjJRyFtFqckt/hYnonCHoM/wgvmO6lrk5vdw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XwgKQcX6qZsePrcGio8VlxuKxDS6jrfucI3nho4YqZspD5tSF39YeYAHb9k5WRZGvX3ERbQan1pNQTdqfTKFrUhUWvOQsrL9hDZ78UdrfoL3dzG2fIIWerpgZZUxfACc/tLALc2+2jDG+r2sIDSEdclVHtueBHLuZ7fc0/5aB1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XjLISa1L; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=83fNU0MNwSzqwgtODf62MkYz4vEm6mlTKKVUN+RH0+A=; b=XjLISa1LThAiAx3lUDwhs3Ss3i
-	dWlWf1j4YKPl/1/MwvgyjN2tlFh57JMkYEVGByLyMU+FMPDv/xP2ojwcLogbVFg1D7d5S1MQDkfSN
-	rE65RHZJQLOl6O/ClYDW/aUpdLddEoxbKb4w2KmRwWIEItNu81LTESRbGSx2Fxdswa/Yaahxym1wF
-	mKL5TqAyTcnmdOtTXyEkq9X58TY/+lCM/kyu91vzcsVmlptpG1yZSrVKem9MPLZ+ifhmekTxJ7x5D
-	nydnevREER8UpdqARMQgIElDAlwFMEsJ/b5VDczG4OznOJ9sCZOx09EFxDOgKYEKS3wfwU9X9M9VN
-	iQXg1eug==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sH6Nu-0000000DxX4-0IGK;
-	Tue, 11 Jun 2024 18:38:18 +0000
-Date: Tue, 11 Jun 2024 19:38:17 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrew Bresticker <abrestic@rivosinc.com>,
-	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/memory: Don't require head page for do_set_pmd()
-Message-ID: <ZmiZmX_yR4wDHR1h@casper.infradead.org>
-References: <20240611153216.2794513-1-abrestic@rivosinc.com>
- <ZmiRcUYxrZ5NQQX8@casper.infradead.org>
- <20240611112131.25925b8ee5198668b88de35f@linux-foundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ULDcR0olqw+vNtIAztCXFTB3HREquciIVbt8J9EJDEBNd2LUZO9IdSWccHga/I90GLjBoHalpYhMKCfJZDIX6aJOMROyoBYupEnSxtNTXenRqU2N18A7CEx7x8e1OErhefupuW4BjzWupDbIMB7FJAsezgMdvjpk4bIzWyIN6k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JUi0MIis; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718131141; x=1749667141;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ohppsjWPjJRyFtFqckt/hYnonCHoM/wgvmO6lrk5vdw=;
+  b=JUi0MIisWy/kvQ1qa5MALMjIN7qtJ/OXGB9bPgYGgKqbuwhLnXW7C6ud
+   SNE6EFXxG+5+hBZ1egBVu7fytOPzqjKO1orAkjYnzBK/QVmEMK8CFWwQT
+   ZMZ+zA6nfIqs4FGLx9pn0nRBsZ4DRhVZzA0+hNEbTXr7IlaNSrm15rXyL
+   dCK6uOxFPffqH7LkMuv5l00DiBpSVpv1T9x9wSGDbHP2Oc7oCHL8KGhRX
+   jDFRwxnezk+NAT0KZ6KSTTNGeqjWJpR6E5BeiKoz4CWOUhfmUMl7/hW4v
+   4tKpEeUD1X74UCAiZE3Wrwdl+h9x+fe3/AOTUYTivqn9Po2OzhH1LIe0J
+   A==;
+X-CSE-ConnectionGUID: N705jKijR1mMIBKx/ITPeg==
+X-CSE-MsgGUID: NSK1CjKpRg+5X+6ainA99A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14587440"
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="14587440"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 11:39:00 -0700
+X-CSE-ConnectionGUID: wm7c0nIRRHiga9+KZhrnwg==
+X-CSE-MsgGUID: Nqw0HRHOQOWT9fRxOWk9FA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="39631801"
+Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 11 Jun 2024 11:38:58 -0700
+Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sH6OV-0000mY-1r;
+	Tue, 11 Jun 2024 18:38:55 +0000
+Date: Wed, 12 Jun 2024 02:38:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
+Cc: oe-kbuild-all@lists.linux.dev, arulponn@cisco.com, djhawar@cisco.com,
+	gcboffa@cisco.com, mkai2@cisco.com, satishkh@cisco.com,
+	jejb@linux.ibm.com, martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Karan Tilak Kumar <kartilak@cisco.com>
+Subject: Re: [PATCH 03/14] scsi: fnic: Add support for fabric based solicited
+ requests and responses
+Message-ID: <202406120201.VakI9Dly-lkp@intel.com>
+References: <20240610215100.673158-4-kartilak@cisco.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,46 +81,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240611112131.25925b8ee5198668b88de35f@linux-foundation.org>
+In-Reply-To: <20240610215100.673158-4-kartilak@cisco.com>
 
-On Tue, Jun 11, 2024 at 11:21:31AM -0700, Andrew Morton wrote:
-> On Tue, 11 Jun 2024 19:03:29 +0100 Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > On Tue, Jun 11, 2024 at 08:32:16AM -0700, Andrew Bresticker wrote:
-> > > -	if (page != &folio->page || folio_order(folio) != HPAGE_PMD_ORDER)
-> > > +	if (folio_order(folio) != HPAGE_PMD_ORDER)
-> > >  		return ret;
-> > > +	page = &folio->page;
-> > 
-> > This works today, but in about six months time it's going to be a pain.
-> > 
-> > +	page = folio_page(folio, 0);
-> > 
-> > is the one which works today and in the future.
-> 
-> I was wondering about that.
-> 
-> hp2:/usr/src/25> fgrep "&folio->page" mm/*.c | wc -l
-> 84
-> hp2:/usr/src/25> fgrep "folio_page(" mm/*.c | wc -l 
-> 35
-> 
-> Should these all be converted?  What's the general rule here?
+Hi Karan,
 
-The rule is ...
+kernel test robot noticed the following build warnings:
 
- - If we haven't thought about it, use &folio->page to indicate that
-   somebody needs to think about it.
- - If the code needs to be modified to split folio and page apart, use
-   &folio->page.
- - If the code is part of compat code which is going to have to be
-   removed, use &folio->page (eg do_read_cache_page()).
+[auto build test WARNING on mkp-scsi/for-next]
+[also build test WARNING on jejb-scsi/for-next linus/master v6.10-rc3 next-20240611]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-To *think* about it, and use folio_page() or folio_file_page(), don't
-just blindly pass 0 as the second argument.  Think about which page
-within the folio is expected by the function you're working on.
-Often that is "the first one!" and so folio_page(folio, 0) is the
-right answer.  But that should be justified.
+url:    https://github.com/intel-lab-lkp/linux/commits/Karan-Tilak-Kumar/scsi-fnic-Replace-shost_printk-with-pr_info-pr_err/20240611-060227
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20240610215100.673158-4-kartilak%40cisco.com
+patch subject: [PATCH 03/14] scsi: fnic: Add support for fabric based solicited requests and responses
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240612/202406120201.VakI9Dly-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240612/202406120201.VakI9Dly-lkp@intel.com/reproduce)
 
-It might be the right answer is "Oh, that function should take a folio".
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406120201.VakI9Dly-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/scsi/fnic/fnic_fcs.c:21:
+   drivers/scsi/fnic/fnic_fcs.c: In function 'fdls_send_fcoe_frame':
+>> drivers/scsi/fnic/fnic.h:159:33: warning: format '%ld' expects argument of type 'long int', but argument 7 has type 'unsigned int' [-Wformat=]
+     159 |                                 "fnic<%d>: %s: %d: " fmt, fnic_num,\
+         |                                 ^~~~~~~~~~~~~~~~~~~~
+   drivers/scsi/fnic/fnic.h:146:25: note: in definition of macro 'FNIC_CHECK_LOGGING'
+     146 |                         CMD;                                    \
+         |                         ^~~
+   include/scsi/scsi_host.h:738:9: note: in expansion of macro 'dev_printk'
+     738 |         dev_printk(prefix, &(shost)->shost_gendev, fmt, ##a)
+         |         ^~~~~~~~~~
+   drivers/scsi/fnic/fnic.h:158:26: note: in expansion of macro 'shost_printk'
+     158 |                          shost_printk(kern_level, host,                 \
+         |                          ^~~~~~~~~~~~
+   drivers/scsi/fnic/fnic_fcs.c:1228:25: note: in expansion of macro 'FNIC_FCS_DBG'
+    1228 |                         FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
+         |                         ^~~~~~~~~~~~
+
+
+vim +159 drivers/scsi/fnic/fnic.h
+
+5df6d737dd4b0fe Abhijeet Joglekar 2009-04-17  149  
+3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  150  #define FNIC_MAIN_DBG(kern_level, host, fnic_num, fmt, args...)		\
+5df6d737dd4b0fe Abhijeet Joglekar 2009-04-17  151  	FNIC_CHECK_LOGGING(FNIC_MAIN_LOGGING,			\
+3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  152  			 shost_printk(kern_level, host,			\
+3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  153  				"fnic<%d>: %s: %d: " fmt, fnic_num,\
+3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  154  				__func__, __LINE__, ##args);)
+5df6d737dd4b0fe Abhijeet Joglekar 2009-04-17  155  
+3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  156  #define FNIC_FCS_DBG(kern_level, host, fnic_num, fmt, args...)		\
+5df6d737dd4b0fe Abhijeet Joglekar 2009-04-17  157  	FNIC_CHECK_LOGGING(FNIC_FCS_LOGGING,			\
+3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  158  			 shost_printk(kern_level, host,			\
+3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11 @159  				"fnic<%d>: %s: %d: " fmt, fnic_num,\
+3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  160  				__func__, __LINE__, ##args);)
+5df6d737dd4b0fe Abhijeet Joglekar 2009-04-17  161  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
