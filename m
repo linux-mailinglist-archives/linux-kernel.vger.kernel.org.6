@@ -1,171 +1,135 @@
-Return-Path: <linux-kernel+bounces-210172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD8490405D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:45:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7E390406B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3B81F25DD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:45:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACC8C1F25E22
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC7039FFE;
-	Tue, 11 Jun 2024 15:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D740F38FA0;
+	Tue, 11 Jun 2024 15:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Em6r9Li6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bYkp1Kud"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7523839C;
-	Tue, 11 Jun 2024 15:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58C51D556;
+	Tue, 11 Jun 2024 15:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718120721; cv=none; b=k8dDiLxjUVTQhqgbI4Ylwup1VFMw2tfssqT9KNST+pPNydLo4EPYyKLMCdUpl1HvVUu6OwhHRS4aNhEDhJN6Zx7AN2joZOVS9CCg8Lw20e+0quw3Emx3o72rPkK4+5OFxcye/UBJ1QRKmj/kRnP/8BA1QfmObOWr0l3/8MT6B9s=
+	t=1718120835; cv=none; b=YcfTAQ/uVMw9J1rmksWExg8LuWusjes5kQZr0ORHSUvROQc0iraboB+mxJMRxSazKr+RkkIvIVWubx4pMiIN1g1fyzj7jhJj6IvgOHXxTj8WJX7ZrQiaHjQyKI3pqVzHPlE5PT51b5J/wPkann++ydf4j+wpIz+W620N+zqI7m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718120721; c=relaxed/simple;
-	bh=alWpFRyGJPPxpA/qvEhIVLYBDfG5gKLw2O2vjFdIXBU=;
+	s=arc-20240116; t=1718120835; c=relaxed/simple;
+	bh=TX63nz8clG540zRkwgoV3FmdB4+YRQdt53SWeHOoP00=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=czunXMBSo9nYx1wQ169rUewIPe+WhxELmLSBnbIUgixTW/sVe7I6qhI1aAF0uciXWUg232p8cLB0KOjEPQDbkbEbw11eFheeDqVOgIqbhlr/N+3QwN4pqKnaqvG+ainypWLtptADGcMITxAVlEi6HdbrOqnvCKqlGIuyUy4hy0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Em6r9Li6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06EE2C2BD10;
-	Tue, 11 Jun 2024 15:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718120719;
-	bh=alWpFRyGJPPxpA/qvEhIVLYBDfG5gKLw2O2vjFdIXBU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Em6r9Li64MS4dfA1Fm6Omrjb4w5oyfw2XsNlofj9qeCLh5G5cxfGwuZ4yQPTUgZzW
-	 6kxO2WwG1YbfeA57p9rgmFg6DOXF7B/o2lriNTV968OIdIJj6h+vJ28mFcLCklf+8k
-	 loMrtXfftGiWNK48qosW/nixEPYc2CM6BDV0pD+OBtk1iB7sMjJs6yl/UgKehavFC0
-	 ucx5PHa+Nq4Qc5SPa5Zz1cwEjWeiDWr0yVMVZnqrufT33mec/2ulkMu2y2JlMDYEFe
-	 LOKNY2IV8maq2WwEhsDrM6P7s8EXMvED5vtpoqf+uru1kkwcRDd4cMFZ+KsLRjANr5
-	 5MbGSb9lFaR2g==
-Date: Tue, 11 Jun 2024 18:45:15 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: "Zeng, Oak" <oak.zeng@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Christoph Hellwig <hch@lst.de>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	"Brost, Matthew" <matthew.brost@intel.com>,
-	"Hellstrom, Thomas" <thomas.hellstrom@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	"Tian, Kevin" <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"Williams, Dan J" <dan.j.williams@intel.com>,
-	"jack@suse.com" <jack@suse.com>, Zhu Yanjun <zyjzyj2000@gmail.com>,
-	"Bommu, Krishnaiah" <krishnaiah.bommu@intel.com>,
-	"Ghimiray, Himal Prasad" <himal.prasad.ghimiray@intel.com>
-Subject: Re: [RFC RESEND 00/16] Split IOMMU DMA mapping operation to two steps
-Message-ID: <20240611154515.GC4966@unreal>
-References: <cover.1709635535.git.leon@kernel.org>
- <SA1PR11MB6991CB2B1398948F4241E51992182@SA1PR11MB6991.namprd11.prod.outlook.com>
- <20240503164239.GB901876@ziepe.ca>
- <PH7PR11MB70047236290DC1CFF9150B8592C62@PH7PR11MB7004.namprd11.prod.outlook.com>
- <20240610161826.GA4966@unreal>
- <PH7PR11MB7004A071F27B4CF45740B87E92C62@PH7PR11MB7004.namprd11.prod.outlook.com>
- <20240610172501.GJ791043@ziepe.ca>
- <PH7PR11MB7004DDE9816D92F690A5C0B692C62@PH7PR11MB7004.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DMfhowaNVU3Fy847tLnr54eRenfKZWgkhZP53pQNeBqt7vixjiwpQXbmeRDTE/sekd4u/We14ZIfxsIxM9uWQyWOlbUst5Rzt9DrWwrykowWFnAcGfO11wJyniWoXjLq2WJ1KlkgxGced+aoWOmD7JkyNTb81N69LQnJai/GFG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bYkp1Kud; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718120834; x=1749656834;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TX63nz8clG540zRkwgoV3FmdB4+YRQdt53SWeHOoP00=;
+  b=bYkp1KudJS2Qqo7E7IicJWoTwk0wIalcy9qCBLjjzk5G8nZ2YC64NBEm
+   8pIRwburt9oeHMhBifWeDACPkMr0eQ5USk9TQr5lHbOzc7nFK94eFoXj9
+   Flx1dkZL1M3Zv8d6EmeDMCX05GQzjMMpnO+gJDpPkar0MQSijajmH0cti
+   74gwPQrCXrQRgNGf6ooILN/gfO/tG8tlJxrPZlxEgQdlLGL1XGjjR5bVP
+   JmfaOgvxWegS1zO59kW7AFSyjOR/1RVaS2/tnoksGfBvrGHDJV3XH4Qbl
+   41pOkjVu5JqtrA8Q4Qpf1q8HjMWyoBMowu9q53V7KeDf4ZcCn96KwUOSE
+   w==;
+X-CSE-ConnectionGUID: ndKEnYFsR+mkUHqF193RJw==
+X-CSE-MsgGUID: nG4uWHBFRHiW49YIdqCkPA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="25419712"
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="25419712"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 08:47:13 -0700
+X-CSE-ConnectionGUID: MtakBbo6Q/Wi2hPQzssvAQ==
+X-CSE-MsgGUID: 9gL7YP+hS4+lRn7WhutdGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="76942409"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 11 Jun 2024 08:47:07 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 6E61F169; Tue, 11 Jun 2024 18:47:05 +0300 (EEST)
+Date: Tue, 11 Jun 2024 18:47:05 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Elena Reshetova <elena.reshetova@intel.com>, 
+	Jun Nakajima <jun.nakajima@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, "Kalra, Ashish" <ashish.kalra@amd.com>, 
+	Sean Christopherson <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	kexec@lists.infradead.org, linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv11 18/19] x86/acpi: Add support for CPU offlining for
+ ACPI MADT wakeup method
+Message-ID: <nh7cihzlsjtoddtec6m62biqdn62k3ka5svs6m64qekhpebu5z@dkplwad2urgp>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-19-kirill.shutemov@linux.intel.com>
+ <20240603083930.GNZl2BQk2lQ8WtcE4o@fat_crate.local>
+ <icu4yecqfwhmbexupo4zzei4lbe5sgavsfkm27jd6t6gyjynul@c2wap3jhtik7>
+ <20240610134020.GCZmcCRFxuObyv1W_d@fat_crate.local>
+ <hidvykk3yan5rtlhum6go7j3lwgrcfcgxlwyjug3osfakw2x6f@4ohvo23zaesv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PH7PR11MB7004DDE9816D92F690A5C0B692C62@PH7PR11MB7004.namprd11.prod.outlook.com>
+In-Reply-To: <hidvykk3yan5rtlhum6go7j3lwgrcfcgxlwyjug3osfakw2x6f@4ohvo23zaesv>
 
-On Mon, Jun 10, 2024 at 09:28:04PM +0000, Zeng, Oak wrote:
-> Hi Jason, Leon,
-> 
-> I was able to fix the issue from my side. Things work fine now. I got two questions though:
-> 
-> 1) The value returned from dma_link_range function is not contiguous, see below print. The "linked pa" is the function return.
-> I think dma_map_sgtable API would return some contiguous dma address. Is the dma-map_sgtable api is more efficient regarding the iommu page table? i.e., try to use bigger page size, such as use 2M page size when it is possible. With your new API, does it also have such consideration? I vaguely remembered Jason mentioned such thing, but my print below doesn't look like so. Maybe I need to test bigger range (only 16 pages range in the test of below printing). Comment?
-
-My API gives you the flexibility to use any page size you want. You can
-use 2M pages instead of 4K pages. The API doesn't enforce any page size.
-
-> 
-> [17584.665126] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 18ef3f000
-> [17584.665146] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 190d00000
-> [17584.665150] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 190024000
-> [17584.665153] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 178e89000
-> 
-> 2) in the comment of dma_link_range function, it is said: " @dma_offset needs to be advanced by the caller with the size of previous page that was linked + DMA address returned for the previous page".
-> Is this description correct? I don't understand the part "+ DMA address returned for the previous page ".
-> In my codes, let's say I call this function to link 10 pages, the first dma_offset is 0, second is 4k, third 8k. This worked for me. I didn't add the previously returned dma address.
-> Maybe I need more test. But any comment?
-
-You did it perfectly right. This is the correct way to advance dma_offset.
-
-Thanks
-
-> 
-> Thanks,
-> Oak
-> 
-> > -----Original Message-----
-> > From: Jason Gunthorpe <jgg@ziepe.ca>
-> > Sent: Monday, June 10, 2024 1:25 PM
-> > To: Zeng, Oak <oak.zeng@intel.com>
-> > Cc: Leon Romanovsky <leon@kernel.org>; Christoph Hellwig <hch@lst.de>;
-> > Robin Murphy <robin.murphy@arm.com>; Marek Szyprowski
-> > <m.szyprowski@samsung.com>; Joerg Roedel <joro@8bytes.org>; Will
-> > Deacon <will@kernel.org>; Chaitanya Kulkarni <chaitanyak@nvidia.com>;
-> > Brost, Matthew <matthew.brost@intel.com>; Hellstrom, Thomas
-> > <thomas.hellstrom@intel.com>; Jonathan Corbet <corbet@lwn.net>; Jens
-> > Axboe <axboe@kernel.dk>; Keith Busch <kbusch@kernel.org>; Sagi
-> > Grimberg <sagi@grimberg.me>; Yishai Hadas <yishaih@nvidia.com>;
-> > Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>; Tian, Kevin
-> > <kevin.tian@intel.com>; Alex Williamson <alex.williamson@redhat.com>;
-> > Jérôme Glisse <jglisse@redhat.com>; Andrew Morton <akpm@linux-
-> > foundation.org>; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > linux-block@vger.kernel.org; linux-rdma@vger.kernel.org;
-> > iommu@lists.linux.dev; linux-nvme@lists.infradead.org;
-> > kvm@vger.kernel.org; linux-mm@kvack.org; Bart Van Assche
-> > <bvanassche@acm.org>; Damien Le Moal
-> > <damien.lemoal@opensource.wdc.com>; Amir Goldstein
-> > <amir73il@gmail.com>; josef@toxicpanda.com; Martin K. Petersen
-> > <martin.petersen@oracle.com>; daniel@iogearbox.net; Williams, Dan J
-> > <dan.j.williams@intel.com>; jack@suse.com; Zhu Yanjun
-> > <zyjzyj2000@gmail.com>; Bommu, Krishnaiah
-> > <krishnaiah.bommu@intel.com>; Ghimiray, Himal Prasad
-> > <himal.prasad.ghimiray@intel.com>
-> > Subject: Re: [RFC RESEND 00/16] Split IOMMU DMA mapping operation to
-> > two steps
+On Mon, Jun 10, 2024 at 05:01:55PM +0300, Kirill A. Shutemov wrote:
+> On Mon, Jun 10, 2024 at 03:40:20PM +0200, Borislav Petkov wrote:
+> > On Fri, Jun 07, 2024 at 06:14:28PM +0300, Kirill A. Shutemov wrote:
+> > >   I was able to address this issue by switching cpa_lock to a mutex.
+> > >   However, this solution will only work if the callers for set_memory
+> > >   interfaces are not called from an atomic context. I need to verify if
+> > >   this is the case.
 > > 
-> > On Mon, Jun 10, 2024 at 04:40:19PM +0000, Zeng, Oak wrote:
-> > > Thanks Leon and Yanjun for the reply!
-> > >
-> > > Based on the reply, we will continue use the current version for
-> > > test (as it is tested for vfio and rdma). We will switch to v1 once
-> > > it is fully tested/reviewed.
+> > Dunno, I'd be nervous about this. Althouth from looking at
 > > 
-> > I'm glad you are finding it useful, one of my interests with this work
-> > is to improve all the HMM users.
+> >    ad5ca55f6bdb ("x86, cpa: srlz cpa(), global flush tlb after splitting big page and before doing cpa")
 > > 
-> > Jason
+> > I don't see how "So that we don't allow any other cpu" can't be done
+> > with a mutex. Perhaps the set_memory* interfaces should be usable in as
+> > many contexts as possible.
+> > 
+> > Have you run this with lockdep enabled?
+> 
+> Yes, it booted to the shell just fine. However, that doesn't prove
+> anything. The set_memory_* function has many obscured cases.
+> 
+> > > - The function __flush_tlb_all() in kernel_(un)map_pages_in_pgd() must be
+> > >   called with preemption disabled. Once again, I am unsure why this has
+> > >   not caused issues in the EFI case.
+> > 
+> > It could be because EFI does all that setup on the BSP only before the
+> > others have arrived but I don't remember anymore... It is more than
+> > a decade ago when I did this...
+> 
+> Are you okay with this? Disabling preemption looks strange, but I don't
+> see a better option.
+
+Borislav, given this code deduplication effort is not trivial, maybe we
+can do it as a separate patchset on top of this one?
+
+I also wounder if it makes sense to combine ident_map.c and set_memory.c.
+There's some overlap between the two.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
