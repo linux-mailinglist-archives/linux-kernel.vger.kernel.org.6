@@ -1,155 +1,101 @@
-Return-Path: <linux-kernel+bounces-209821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B3D903B4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:01:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6BCA903B50
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9F6128A06E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:01:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A73C1F20F1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2146517BB35;
-	Tue, 11 Jun 2024 11:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8421791FC;
+	Tue, 11 Jun 2024 12:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K2Kg2GHp"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OjrT0zA6"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36D917B4E7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705F114F9E4;
+	Tue, 11 Jun 2024 12:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718107192; cv=none; b=HMw1K0Hjtttz9ME7H6aJJwPxCSHWWu7nhbVFiEg6CnMVvqS9HJvzqwCp+7Vd/0zd51cmVpsDiqRcEQAkNEEva8ZGaJPy+SJbkV+TSUbI4GJhMfJztvndtRl17s4TXVjMHMeYLjbVgqt1VU1qNsOYrmwGcgIXFwOshlQbEcB8WYI=
+	t=1718107286; cv=none; b=gYP/MEXwLKuGzBOj4nDIC8hbeBX7Pm3zGjUouzjAgjmAKHiG+QpX5EViZmKGU28Lsms1NYb9hUdAKmpwV/vXwdvfmMvobA8MRxbP4JbXjPUJa6vkXn1s4czYWhlPB9GuPhcYX70jD+L/bb2EZ8cMa5K0o0uZ3yXArsWahF8QKLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718107192; c=relaxed/simple;
-	bh=4iGuE74BDxwLQsO249KSKAU+HX6bPKIAwO4Q+EsyiZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MlJATmDAiDgCT8FmAXvQZLNfXN7YG8wUjJJc7EoAU7Mmx+LCWgOmswydwVt4TOu1KCFTCPI80VZzK632hkxvO0h1mum4qMD1QI7jZNLaDajH0m7T6lwbcwJQcqHdR+qg8HKf8zbZJpvWcqaO5SiZuTf0MtMd9oP5TmpQOeZkjLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K2Kg2GHp; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ebeefb9a6eso11356381fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718107189; x=1718711989; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CQzSwJnKjLuXJbZmjfDwPRrFFzgmeR6RnIyFdcSdy0E=;
-        b=K2Kg2GHpeYuymdgXBf9/uJaDx8sip9eOLWbD0qz0e3YWtikORR6f9eBVIADnFuM3TZ
-         5Cyib8l8MGEleG6Mk5bRNBUBtEEBxEZ8yVgcVpDmacNDrbWRnqlBAV/tCWpocD0691Dh
-         0xMYdfPJYPl+4mq7SXQycxcZXuPDh5Tz4wwrfLNZeScJ3em1QdLw6rPWcqTQxaSfAE2D
-         LOSbHcA9/pSIQ5gGt/6fCO1KWfjhQtJUQployMKNgyR9KyNu+5g+tdCWD4VzuZhUW5T5
-         kjkX4e8S/ehecwgKbnIxUEYQL8Vnt/Z99KBrXQy93sa/LGD+smoqUXIOYHoXHA1kLm3X
-         JFEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718107189; x=1718711989;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CQzSwJnKjLuXJbZmjfDwPRrFFzgmeR6RnIyFdcSdy0E=;
-        b=gWP1ATinjb24CBjp1REtTQMdksydEO8rk5abMeiTSMaaAPOnr0iCKHcvyx/7TYjBAB
-         QdNcpnNkl9ZviM5zsWSt+wdkaqa2ViXK+tnwzhDnSN7YzMRWKV2cSJGk22ywwO4JXb/x
-         99ZyAEe8KoMUP67sHBBxTVS3wHboKQ7s5i70LD09pZ4KFrlESmjHCJ1PegB9fDLgu2cJ
-         UQxgmBeboF1XscqqCs3AA66yQV/zQ2GyqnzqFOXECh1dyG3wkAoPwUSR/KpP1xGXfVsx
-         GwkL9Plc/r/p+ZjpW37URteXk60UTRZH5cTJZlYDb6qSsHaXYt0nAMcXvYQUF9pI1emD
-         z0Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCXupZl5bqWy0ojfncPSjDbbPN3qidQqQc6Y4JODdVPHIeKmPF0zsFlLP7+ACVOyDj7B3bnKwjV64ByZrmJhH9hIIxcZVGA/8bazFKhq
-X-Gm-Message-State: AOJu0YyWxBnn9jFrzg4cHtmdcp78iJCmRvVltVidg+MXGYPqM/+7V8UU
-	qQQi4TWn2LI+bRM+wZfllpPbsM5QQSZTxSixeTq9WgPw/cooVf8Ku/x5V2yYSak=
-X-Google-Smtp-Source: AGHT+IEiG6bWGoC6W+LaRwRWxsSHZi70nYVqL1c15B6JskQ3SX5MbNBNkF6Y9FVXqPDvhRbcmv3nnA==
-X-Received: by 2002:a2e:7207:0:b0:2ea:e5ae:8ffb with SMTP id 38308e7fff4ca-2eae5ae90d3mr57066381fa.47.1718107188773;
-        Tue, 11 Jun 2024 04:59:48 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ead41b05a8sm21198371fa.86.2024.06.11.04.59.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 04:59:48 -0700 (PDT)
-Date: Tue, 11 Jun 2024 14:59:46 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, stable <stable@kernel.org>
-Subject: Re: [PATCH v5 6/7] misc: fastrpc: Fix ownership reassignment of
- remote heap
-Message-ID: <xc2ys75plbtrenastitqafadfrtolpd3bjdqcrl3wnozpc6kdo@e6e73ousyea7>
-References: <20240611103442.27198-1-quic_ekangupt@quicinc.com>
- <20240611103442.27198-7-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1718107286; c=relaxed/simple;
+	bh=Zix90JJZPkY0LLrFX9F0TYZzTEx6XBUzy2tS9s+6vZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JDObJLpx3BN/i5B5ePXoZS5oDPs7Buu72PyNQtivz+E7vHqTEU/7GHnIcRkzCPjTxpfNvFxFccS2AenfyZT20h8qcJQe2eUfUf88AQoLNMPvaCqBFejJzRSw5VEnO608cfhX7kbXCHrAyYL2rq3UtvX0xNRjaprnFv7S/i/PkfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OjrT0zA6; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F24A41C0005;
+	Tue, 11 Jun 2024 12:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718107276;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zix90JJZPkY0LLrFX9F0TYZzTEx6XBUzy2tS9s+6vZo=;
+	b=OjrT0zA6QibB5CusNH85occjMBlrP6MQKaCMNyIoKNt05KrYw2oRXDKkXX7nlW3/H97wm/
+	8tWXFFiTzcjy4LL8I5HJCP80rBkyYlDOYHIZI+/9/58+MNDrxosShqzMx7fRBwiiXXUreb
+	zhj0eowSnq1BJY4lpZDTendl8jk5r3D/flE6RBDYRy0Sj6qstnxVGCWbdR8oJlJdWEp5dm
+	ZyQiYocC5cLciRPgyWaB7R2D2XeaNlkq0ftCY7b0grhixvojDBn77hSZHJ/qMW3fbdTGP7
+	ckZwfe0vKBOvL3yQMTz81rdIedkCpoy+9ocjynct4iyNvUrGSRVM4qhnGmSV+g==
+Date: Tue, 11 Jun 2024 14:01:15 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dent Project
+ <dentproject@linuxfoundation.org>, kernel@pengutronix.de
+Subject: Re: [PATCH net-next v2 2/8] net: ethtool: pse-pd: Expand C33 PSE
+ status with class, power and extended state
+Message-ID: <20240611140115.4e857e46@kmaincent-XPS-13-7390>
+In-Reply-To: <ZmgFLlWscicJmnxX@pengutronix.de>
+References: <20240607-feature_poe_power_cap-v2-0-c03c2deb83ab@bootlin.com>
+ <20240607-feature_poe_power_cap-v2-2-c03c2deb83ab@bootlin.com>
+ <ZmaMGWMOvILHy8Iu@pengutronix.de>
+ <20240610112559.57806b8c@kmaincent-XPS-13-7390>
+ <ZmgFLlWscicJmnxX@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611103442.27198-7-quic_ekangupt@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Tue, Jun 11, 2024 at 04:04:39PM +0530, Ekansh Gupta wrote:
-> Audio PD daemon will allocate memory for audio PD dynamic loading
+On Tue, 11 Jun 2024 10:05:02 +0200
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-What is Audio PD daemon? Is it something running on the CPU or on the
-DSP? Is it adsprpcd or some other daemon?
+> On Mon, Jun 10, 2024 at 11:25:59AM +0200, Kory Maincent wrote:
+=20
+> > The enum errors I wrote is a bit subjective and are taken from the PD69=
+2x0
+> > port status list. Go ahead to purpose any change, I have tried to make
+> > categories that make sense but I might have made wrong choice. =20
+>=20
+> Here is my proposal aligned with IEEE 802.3-2022 33.2.4.4:
 
-> usage when it is attaching for the first time to audio PD. As
-> part of this, the memory ownership is moved to the VM where
+Hello Oleksij,
 
-Which VM?
+Wow! You fully rewrite the netlink UAPI.
+Thanks, this is more standard complaint than my proposal!
+I will remove the PD692x0 specific description and update my patch series
+accordingly.
 
-> audio PD can use it. In case daemon process is killed without any
-> impact to DSP audio PD, the daemon process will retry to attach to
-> audio PD and in this case memory won't be reallocated. If the invoke
-> fails due to any reason, as part of err_invoke, the memory ownership
-> is getting reassigned to HLOS even when the memory was not allocated.
-> At this time the audio PD might still be using the memory and an
-> attemp of ownership reassignment would result in memory issue.
-
-What kind of 'memory issues'? Is it even possible to reclaim the memory
-back?
-
-> 
-> Fixes: 0871561055e6 ("misc: fastrpc: Add support for audiopd")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
->  drivers/misc/fastrpc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 1ba85c70e3ff..24dc1cba40e9 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -1238,6 +1238,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  	struct fastrpc_phy_page pages[1];
->  	char *name;
->  	int err;
-> +	bool scm_done = false;
->  	struct {
->  		int pgid;
->  		u32 namelen;
-> @@ -1289,6 +1290,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  					fl->cctx->remote_heap->phys, fl->cctx->remote_heap->size, err);
->  				goto err_map;
->  			}
-> +			scm_done = true;
->  		}
->  	}
->  
-> @@ -1324,7 +1326,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
->  
->  	return 0;
->  err_invoke:
-> -	if (fl->cctx->vmcount) {
-> +	if (fl->cctx->vmcount && scm_done) {
->  		u64 src_perms = 0;
->  		struct qcom_scm_vmperm dst_perms;
->  		u32 i;
-> -- 
-> 2.43.0
-> 
-
--- 
-With best wishes
-Dmitry
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
