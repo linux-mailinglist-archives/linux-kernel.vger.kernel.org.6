@@ -1,75 +1,154 @@
-Return-Path: <linux-kernel+bounces-210678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1988904735
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:53:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C813E904736
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D9A1C23497
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B31B1F22EA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676DA155726;
-	Tue, 11 Jun 2024 22:52:58 +0000 (UTC)
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E88155C92;
+	Tue, 11 Jun 2024 22:53:06 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B665E15532C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2719475;
+	Tue, 11 Jun 2024 22:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718146378; cv=none; b=HpN73S1jW0GCxdC2Bvu9mRdwc84l06MJjZ77JvTI9sGkQh+9HCOhU8/+LNzH9QhMleOOk2VSPw02+YTjqXn3rXd4wPUjXgpnSyAiAajVLmwiosdHXQNTMPtFbNX5ru/o8E4fea/1oHRyt+NgKD22pLf+Cp1QyiPAAQY6gcD/H1g=
+	t=1718146386; cv=none; b=QwZn8khqsm7/WtnZEyCzp64hdKk0UxgyVGMZMRd+2lYli/4YmJ32nWxrICswyHpKmgqRCs5/DnA6GATO4M2xStMrha932xhUbuvcwSc2Eq8Z+7oG3BoE+l3LgOnnEzSZlf7WHIlxRpHkswfuh89odf0vLk3PU3adg8OKlDxamMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718146378; c=relaxed/simple;
-	bh=SIT2jXM8IDEMsc9d2jfo+rlecAxKwI0P7aHxOSr5QnA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ofrFg/Ms4DZLUpJ3QrxMmslSHAAiuvVkCXP94tbKOq9jgTOhla2QghNfCX9gvgxOt2Dhygt1AJZNBUMxivmnJd98nLFXrs0wrUDlLJUTdHepvoQw+JJbJDAUbi4QaFNYMTGGhf2oXhnuLa4zjpgan/LCk30uj0HfMDfVywlPhJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=fail smtp.mailfrom=linux.com; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=linux.com
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 41D2640B10; Tue, 11 Jun 2024 15:52:49 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 40D6A4093E;
-	Tue, 11 Jun 2024 15:52:49 -0700 (PDT)
-Date: Tue, 11 Jun 2024 15:52:49 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@linux.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-cc: Chengming Zhou <chengming.zhou@linux.dev>, 
-    Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-    Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>, 
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-    zhouchengming@bytedance.com, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v3 1/3] slab: make check_object() more consistent
-In-Reply-To: <8b844d71-01f1-472b-a63a-4c9cdb26e9ef@suse.cz>
-Message-ID: <e93fc5a6-434f-376c-a819-353124da053d@linux.com>
-References: <20240607-b4-slab-debug-v3-0-bb2a326c4ceb@linux.dev> <20240607-b4-slab-debug-v3-1-bb2a326c4ceb@linux.dev> <63da08b7-7aa3-3fad-55e6-9fc3928a49de@gentwo.org> <8b844d71-01f1-472b-a63a-4c9cdb26e9ef@suse.cz>
+	s=arc-20240116; t=1718146386; c=relaxed/simple;
+	bh=fhgz9IAmeJpMQtd4lfMk0iOiZf+Dwg8y0PO7LZ0iNAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E/OeDK2x7dX90S19+OB6Jlc6JnLavNZ21CXYPGZHbeIJsJyvTNKvxQGoIWp3J4oVzkdQgFAzpqaElkq5anWF912Z6drxH6kxWK2K+k7qrStBT4g9SFh7jvKGrcJyUCNpCospTs4ISRUl06906yRlCFHqS2CjqepaMP/y8J/bFXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 200E2C2BD10;
+	Tue, 11 Jun 2024 22:53:03 +0000 (UTC)
+Date: Tue, 11 Jun 2024 18:53:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Vincent Donnefort <vdonnefort@google.com>,
+ Joel Fernandes <joel@joelfernandes.org>, Daniel Bristot de Oliveira
+ <bristot@redhat.com>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, suleiman@google.com, Thomas Gleixner
+ <tglx@linutronix.de>, Vineeth Pillai <vineeth@bitbyteword.org>, Youssef
+ Esmat <youssefesmat@google.com>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, "Paul E. McKenney" <paulmck@kernel.org>, David
+ Howells <dhowells@redhat.com>, Mike Rapoport <rppt@kernel.org>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>, Ross
+ Zwisler <zwisler@google.com>, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v4 01/13] ring-buffer: Allow mapped field to be set
+ without mapping
+Message-ID: <20240611185319.58a52a1b@gandalf.local.home>
+In-Reply-To: <5178e22b-0c00-48d2-8a6e-85510706f145@roeck-us.net>
+References: <20240611192828.691638177@goodmis.org>
+	<20240611192907.402447387@goodmis.org>
+	<5178e22b-0c00-48d2-8a6e-85510706f145@roeck-us.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 10 Jun 2024, Vlastimil Babka wrote:
+On Tue, 11 Jun 2024 15:43:59 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-> Even if some security people enable parts of slub debugging for security
-> people it is my impression they would rather panic/reboot or have memory
-> leaked than trying to salvage the slab page? (CC Kees)
+> On 6/11/24 12:28, Steven Rostedt wrote:
+> > From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> > 
+> > In preparation for having the ring buffer mapped to a dedicated location,
+> > which will have the same restrictions as user space memory mapped buffers,
+> > allow it to use the "mapped" field of the ring_buffer_per_cpu structure
+> > without having the user space meta page mapping.
+> > 
+> > When this starts using the mapped field, it will need to handle adding a
+> > user space mapping (and removing it) from a ring buffer that is using a
+> > dedicated memory range.
+> > 
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > ---
+> >   kernel/trace/ring_buffer.c | 11 ++++++++---
+> >   1 file changed, 8 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+> > index 28853966aa9a..78beaccf9c8c 100644
+> > --- a/kernel/trace/ring_buffer.c
+> > +++ b/kernel/trace/ring_buffer.c
+> > @@ -5224,6 +5224,9 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
+> >   {
+> >   	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
+> >   
+> > +	if (!meta)
+> > +		return;
+> > +
+> >   	meta->reader.read = cpu_buffer->reader_page->read;
+> >   	meta->reader.id = cpu_buffer->reader_page->id;
+> >   	meta->reader.lost_events = cpu_buffer->lost_events;
+> > @@ -6167,7 +6170,7 @@ rb_get_mapped_buffer(struct trace_buffer *buffer, int cpu)
+> >   
+> >   	mutex_lock(&cpu_buffer->mapping_lock);
+> >   
+> > -	if (!cpu_buffer->mapped) {
+> > +	if (!cpu_buffer->mapped || !cpu_buffer->meta_page) {
+> >   		mutex_unlock(&cpu_buffer->mapping_lock);
+> >   		return ERR_PTR(-ENODEV);
+> >   	}
+> > @@ -6359,12 +6362,13 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
+> >   	 */
+> >   	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+> >   	rb_setup_ids_meta_page(cpu_buffer, subbuf_ids);
+> > +  
+> 
+> Picky again. Is that a leftover from something ? I don't see an immediate reason
+> for the added newline.
 
-In the past these resilience features have been used to allow the 
-continued operation of a broken kernel.
+Hmm, I could remove it.
 
-So first the Kernel crashed with some obscure oops in the allocator due 
-to metadata corruption.
+> 
+> >   	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+> >   
+> >   	err = __rb_map_vma(cpu_buffer, vma);
+> >   	if (!err) {
+> >   		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+> > -		cpu_buffer->mapped = 1;
+> > +		cpu_buffer->mapped++;
+> >   		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+> >   	} else {
+> >   		kfree(cpu_buffer->subbuf_ids);
+> > @@ -6403,7 +6407,8 @@ int ring_buffer_unmap(struct trace_buffer *buffer, int cpu)
+> >   	mutex_lock(&buffer->mutex);
+> >   	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+> >   
+> > -	cpu_buffer->mapped = 0;
+> > +	WARN_ON_ONCE(!cpu_buffer->mapped);
+> > +	cpu_buffer->mapped--;  
+> 
+> This will wrap to UINT_MAX if it was 0. Is that intentional ?
 
-One can then put a slub_debug option on the kernel command line which will 
-result in detailed error reports on what caused the corruption. It will 
-also activate resilience measures that will often allow the continued 
-operation until a fix becomes available.
+If mapped is non zero, it limits what it can do. If it enters here as zero,
+we are really in a unknown state, so yeah, wrapping will just keep it
+limited. Which is a good thing.
+
+Do you want me to add a comment there?
+
+-- Steve
+
+
+> 
+> >   
+> >   	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+> >     
+
 
