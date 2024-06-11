@@ -1,201 +1,155 @@
-Return-Path: <linux-kernel+bounces-210090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E62903F30
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:50:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1581B903F81
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1179D1C232E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:50:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95F04B226EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023D91EEE3;
-	Tue, 11 Jun 2024 14:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11DB2D058;
+	Tue, 11 Jun 2024 15:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="frgUxWWB"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="f42GHxX+"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6021D55D;
-	Tue, 11 Jun 2024 14:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904F02868D;
+	Tue, 11 Jun 2024 15:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718117422; cv=none; b=pJyd1cfAnzPA7fhgFQAITXHTb58yDHyFFssrufkUsDwRZLs9Ka//pebTfsGCa7qIkM9uhqjWQlBoZaXHRmD/3ZIbf8CL54r8z5BVD/djm2lsUUloJ7W32gce5Lv0CtL1AN1iJt/SZdjawaDONiw3YJw6zsOHImWlalNE6qzTQ/8=
+	t=1718118176; cv=none; b=IWH98dlPHrDmttp2UEYPgq8QUWUzm4ElUBhOaO5oKQp8wkuaqMdzOEccqiHrkczg9o4SR5Tq83pSgEst2wCsWvv/22Dq1YT1g5l/1atU6ouTZ1VCrNyuNYPZSSIZdZfVYH3toUHu7PSIUJV18Z8Isc3L9CMbw+CCaqnamCMLWr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718117422; c=relaxed/simple;
-	bh=fW0OUd3l3X6VCU+uy+ikOdkB9oHd5fhTSpWL92/meHI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g1UbF1OYza8OTZfnMvsrWNIUVTG2B0cIKKlIolmYFoNPV3IKMTRFnwkrsFtVPE4nveF0RmeGNolrYr7d0JpORkjcCP4Owl5v5V96FGaBW+Fi3SjxOB5bQPTCIhgvZuHkKF79Itpkub9bGFSpNVa5LqS1ECxAIsTob0OF6sWr9GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=frgUxWWB; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dfb05bcc50dso1031043276.0;
-        Tue, 11 Jun 2024 07:50:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718117419; x=1718722219; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=i1hblv3agIvwTk/x1XoXFXapGpQD81CwVBOihZsPGt8=;
-        b=frgUxWWBEQ64cHWEuQhax4VTnrKHL2EjFyIiUY2sgqkgGNcgkxu93H4w3IHhsQBsX6
-         Ebb9D/zJkly2s9TugLPsks8lfHu0XIVEkXDxVAy34zMKrkEeYGlwdg1T3JqpujfsxS3b
-         O+I+gkHdovprfgJf7HnnWFXL3l7lOlnJnYCUppAwAntZtgydTHpOAG0iP84XAWJGWP0i
-         D0BWd/WxC9Gc5D1CLNE8TDrxTAlVlTKWvKTDdLotvqvJRpVOPg6H/k+FxaISGFDhq1w2
-         MozgH5wDffVyGmmf1nInHfLmszoykwFR6mMmzz8BSyg6VVgrsm4fGHbZCcRRz301wYDy
-         88yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718117419; x=1718722219;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i1hblv3agIvwTk/x1XoXFXapGpQD81CwVBOihZsPGt8=;
-        b=rnkgjaVSpaCWrvnxb9bDcmWfDPcJbgy4ZVfx9TfMbmRJxaQd5O1eVXV5QQcsPDuY19
-         Urqh9lYKnPIp6RKvnAGcantsempiqKEcOwjWhLZt6KxIkcvwRYgvt9pDkl0YcNNTHsUj
-         w6WRtVB9THXv9qXZWk3ihNpYHIiwlTlbykEDrSZuRpCI+XA13qxG2yy9l0Sq+FXtoRtD
-         RoGHrvJlaiBycwej3HfwtXTPKrMO/q2GSrYgfaUcTGPp0TxgqosobkMRQOVpaJ8HTeP0
-         sBpihI2D9FEwLba1KblPSx6RrvUhbtmT7eemeXHVXMrmm3j5VdAsznj6uaXUx65C1ybg
-         Caig==
-X-Forwarded-Encrypted: i=1; AJvYcCVofZr6bv4icu5P8SWXaIwNED/zKpCAEmMvua1v4GZFhh3Bh3skDOyQq3hNOk3LOCRyRwqu+wzyIJWPftnyZIrMNrFWyQuwyawbpSl8svalxNJcptlbtTdLNr7VrjbmYXaLSAJ3m4gA
-X-Gm-Message-State: AOJu0YztwRgBjWa6dFK/YwvO7WoadaApoqVWgqPSC+aJeNm/IgiiRL/E
-	geQ9Hjrbt1Ii+0ZSlLRuF3r/9gJo/EqBAXGlwX9Z1kH94+dxO/iw6RV6ktdEiTbfEMFolsz1inj
-	Q3lO48X9f90krAh0od08ZaHTQXbw=
-X-Google-Smtp-Source: AGHT+IEb3wyhuol+lxmZz3nl7yKGiwmyQfS5wDx2sbDZU27ZRE9oyfdLN5TTOen6rp6hy+UZ15vYv+tX187CVJMxKLA=
-X-Received: by 2002:a25:ae96:0:b0:df4:d9ba:2b6a with SMTP id
- 3f1490d57ef6-dfaf658dd97mr11330173276.14.1718117419380; Tue, 11 Jun 2024
- 07:50:19 -0700 (PDT)
+	s=arc-20240116; t=1718118176; c=relaxed/simple;
+	bh=SD9Ox2uEgLQshHdPNaSlBqTcE1dEXOGR6zfPNYTOHgQ=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=gRg0h3g8AMpgDt+iiNFVrobDSQs7LXwU0Y4T73GRULf9WYk67jSoOMk1Ylqx/8w7/Oj/dudX+2LaTgid8DbTDg2aYLWJjMYFRR4wkVZtNbiu5iID89hHTVDrRqCYNNNoCNvXqEbeplWvNaKLppCcsLdwNnQuA7ixG5KkfELJxD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=f42GHxX+; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718118165; bh=EYZJeMpHWJRkQqovyVl3G5DqtUj1NtUFyItaVN67Ogk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=f42GHxX+j+2EYRXI3DgQqOOzhfCb1/4MUj2V49+H5LEvRrxnPjG9SJL3EvyuQGROY
+	 fHxwfiQK+gIAouaqOYeYLQHeI2KmfWjrix+fUP3lVf20Kql43B4glSyVYJZvV29OxT
+	 Kfmena5swtfEepp8mvkTVJ6CmbqvqzhGj2tp8EBs=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id C9107ACF; Tue, 11 Jun 2024 22:50:17 +0800
+X-QQ-mid: xmsmtpt1718117417tpy0idpsl
+Message-ID: <tencent_0CCE4C90A7C306FCD2EE466AC9882EFFAE06@qq.com>
+X-QQ-XMAILINFO: MB5+LsFw85NotV1rPa9aT9fXzjVDRjmoVre1tPCLpk+PR3dw+8o/OClgcieWx/
+	 Z+J5aQb0hcyNQhrKegLlWcSOX1GZT+vxFZChIuE9eoFfdg8zrOdWFS45YmTJ1zxgm49m2a5Yv597
+	 ayyBDbo595mOsHMJG253NmqW2lX91Y1WXnha9C1NdTJ9+aT5y8rrRGataNf1TqhDOVqC8YC5EBvg
+	 j8Rh1bP5ieC+tMEDRD9jogUAKLrFFnS4/Xiy4XoZPQ5ukc22+2YfjFoNofsOe07X//cghIuYcUkG
+	 1QgFad5EkH57Nhoa2lukc8qcxFFH4CnSrB5Fx/v11Pi1BUwj6TZ1/7irlxVF3BsfAlCSMmiFnZIA
+	 weQoZ88Y6+NjeMyqKbnL6NHmEvTMo5aBfq2Gt25MZSPBBhuGBZNiRDhm9YhZqbbGVS7oslzoHvdL
+	 CpI0MUeQzrTJNFVNuYO+CmuEVgtIeZp/RdWW2ATCXFf+BPHJk5fL5kHQv3hS8OYTlHRmmyqVzYQC
+	 bOeHuPDBrQI9h0oT6+NP4h92rTJCfmeHvW5BUMW6ItkgUhiZhINnrnRFM7qIMHcajXPY6K1WLtOx
+	 mgH3/Vx32vYLjMyK7H+2EY3uWDCOhqiExPVKfLnM7QljgC7RnRob6nIVL+nUKcZBaaFVgjsLukiR
+	 OmY9M9eRpQlzLuKoPdaE9+t5yysAT9cZmOkj6A4st8wCsSRv5JJTmEMn1eYFqvGk06yl6+tDrnD7
+	 omiAWwxi7fdqAL/Q31TAT4PeMzl6NUoYGKRg8HVv/JyIi9GwJcO2Z6WeowkdGoTtFAiOD1BZx8CD
+	 FgKuiaL+FnsEJ9xhgYPruS3mJFuvxXbVPxvDX9adD+bRDJ+MdtCWHzs2yeTXElhe2U0/QqAhNvZ5
+	 +/RF+6PmJ4ubmXwi2AXDmDrr9LhAXrIhE1TG5oHOn0tE/q/X8ecCrIcw/xT1U2uAMtsvipmo2K
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com
+Cc: johan.hedberg@gmail.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	luiz.dentz@gmail.com,
+	marcel@holtmann.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] bluetooth/l2cap: sync sock recv cb and release
+Date: Tue, 11 Jun 2024 22:50:17 +0800
+X-OQ-MSGID: <20240611145016.2085712-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000b0906d061a468b93@google.com>
+References: <000000000000b0906d061a468b93@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608155316.451600-1-flintglass@gmail.com> <20240608155316.451600-2-flintglass@gmail.com>
- <CAJD7tkaKaMpni2tA_G6DhiRLdV+O3AmXE81JyKY=PEN54o=aAw@mail.gmail.com>
-In-Reply-To: <CAJD7tkaKaMpni2tA_G6DhiRLdV+O3AmXE81JyKY=PEN54o=aAw@mail.gmail.com>
-From: Takero Funaki <flintglass@gmail.com>
-Date: Tue, 11 Jun 2024 23:50:08 +0900
-Message-ID: <CAPpodddsnOF7nKX-ijsujAcnjvLHB2UTyyZknc6uTgb3UWXY2g@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] mm: zswap: fix global shrinker memcg iteration
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On 2024/06/11 4:16, Yosry Ahmed wrote:
->
-> I am really finding it difficult to understand what the diff is trying
-> to do. We are holding a lock that protects zswap_next_shrink. We
-> always access it with the lock held. Why do we need all of this?
->
-> Adding READ_ONCE() and WRITE_ONCE() where they are not needed is just
-> confusing imo.
+The problem occurs between the system call to close the sock and hci_rx_work,
+where the former releases the sock and the latter accesses it without lock protection.
 
-I initially thought that reading new values from external variables
-inside a loop required protection from compiler optimization. I will
-remove the access macros in v2.
+           CPU0                       CPU1
+           ----                       ----
+           sock_close                 hci_rx_work
+	   l2cap_sock_release         hci_acldata_packet
+	   l2cap_sock_kill            l2cap_recv_frame
+	   sk_free                    l2cap_conless_channel
+	                              l2cap_sock_recv_cb
 
-> 'memcg' will always be NULL on the first iteration, so we will always
-> start by shrinking 'zswap_next_shrink' for a second time before moving
-> the iterator.
->
->> +               } else {
->> +                       /* advance cursor */
->> +                       memcg = mem_cgroup_iter(NULL, memcg, NULL);
->> +                       WRITE_ONCE(zswap_next_shrink, memcg);
-> Again, I don't see what this is achieving. The first iteration will
-> always set 'memcg' to 'zswap_next_shrink', and then we will always
-> move the iterator forward. The only difference I see is that we shrink
-> 'zswap_next_shrink' twice in a row now (last 'memcg' in prev call, and
-> first 'memcg' in this call).
+If hci_rx_work processes the data that needs to be received before the sock is
+closed, then everything is normal; Otherwise, the work thread may access the
+released sock when receiving data.
 
-The reason for checking if `memcg != next_memcg` was to ensure that we
-do not skip memcg that might be modified by the cleaner.  For example,
-say we get memcg A and save it. When the cleaner advances the cursor
-from A to B, we then advance from B to C, shrink C. We have to check
-that A in the zswap_next_shrink is untouched before advancing the
-cursor.
+Add a chan mutex in the rx callback of the sock to achieve synchronization between
+the sock release and recv cb.
 
-If this approach is overly complicated and ignoring B is acceptable,
-the beginning of the loop can be simplified to:
+Reported-and-tested-by: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ net/bluetooth/l2cap_sock.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-        do {
-+iternext:
-                spin_lock(&zswap_shrink_lock);
+diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+index 6db60946c627..f3e9236293e1 100644
+--- a/net/bluetooth/l2cap_sock.c
++++ b/net/bluetooth/l2cap_sock.c
+@@ -1413,6 +1413,8 @@ static int l2cap_sock_release(struct socket *sock)
+ 	l2cap_chan_hold(chan);
+ 	l2cap_chan_lock(chan);
+ 
++	if (refcount_read(&sk->sk_refcnt) == 1)
++		chan->data = NULL;
+ 	sock_orphan(sk);
+ 	l2cap_sock_kill(sk);
+ 
+@@ -1481,12 +1483,22 @@ static struct l2cap_chan *l2cap_sock_new_connection_cb(struct l2cap_chan *chan)
+ 
+ static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *skb)
+ {
+-	struct sock *sk = chan->data;
+-	struct l2cap_pinfo *pi = l2cap_pi(sk);
++	struct sock *sk;
++	struct l2cap_pinfo *pi;
+ 	int err;
+ 
+-	lock_sock(sk);
++	l2cap_chan_hold(chan);
++	l2cap_chan_lock(chan);
++	sk = chan->data;
++
++	if (!sk) {
++		l2cap_chan_unlock(chan);
++		l2cap_chan_put(chan);
++		return -ENXIO;
++	}
+ 
++	pi = l2cap_pi(sk);
++	lock_sock(sk);
+ 	if (chan->mode == L2CAP_MODE_ERTM && !list_empty(&pi->rx_busy)) {
+ 		err = -ENOMEM;
+ 		goto done;
+@@ -1535,6 +1547,8 @@ static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *skb)
+ 
+ done:
+ 	release_sock(sk);
++	l2cap_chan_unlock(chan);
++	l2cap_chan_put(chan);
+ 
+ 	return err;
+ }
+-- 
+2.43.0
 
-                zswap_next_shrink = mem_cgroup_iter(NULL,
-zswap_next_shrink, NULL);
-                memcg = zswap_next_shrink;
-
-
-
->> @@ -1434,16 +1468,25 @@ static void shrink_worker(struct work_struct *w)
->>                 }
->>
->>                 if (!mem_cgroup_tryget_online(memcg)) {
->> -                       /* drop the reference from mem_cgroup_iter() */
->> -                       mem_cgroup_iter_break(NULL, memcg);
->> -                       zswap_next_shrink = NULL;
->> +                       /*
->> +                        * It is an offline memcg which we cannot shrink
->> +                        * until its pages are reparented.
->> +                        *
->> +                        * Since we cannot determine if the offline cleaner has
->> +                        * been already called or not, the offline memcg must be
->> +                        * put back unconditonally. We cannot abort the loop while
->> +                        * zswap_next_shrink has a reference of this offline memcg.
->> +                        */
-> You actually deleted the code that actually puts the ref to the
-> offline memcg above.
->
-> Why don't you just replace mem_cgroup_iter_break(NULL, memcg) with
-> mem_cgroup_iter(NULL, memcg, NULL) here? I don't understand what the
-> patch is trying to do to be honest. This patch is a lot more confusing
-> than it should be.
-
-
->>                         spin_unlock(&zswap_shrink_lock);
->> -
->> -                       if (++failures == MAX_RECLAIM_RETRIES)
->> -                               break;
->> -
->> -                       goto resched;
->> +                       goto iternext;
->>                 }
-
-Removing the `break` on max failures from the if-offline branch is
-required to not leave the reference of the next memcg.
-
-If we just replace the mem_cgroup_iter_break with `memcg =
-zswap_next_shrink = mem_cgroup_iter(NULL, memcg, NULL);` and break the
-loop on failure, the next memcg will be left in zswap_next_shrink. If
-zswap_next_shrink is also offline, the reference will be held
-indefinitely.
-
-When we get offline memcg, we cannot determine if the cleaner has
-already been called or will be called later. We have to put back the
-offline memcg reference before returning from the worker function.
-This potential memcg leak is the reason why I think we cannot break
-the loop here.
-In this patch, the `goto iternext` ensures the offline memcg is
-released in the next iteration (or by cleaner waiting for our unlock).
-
->
-> Also, I would like Nhat to weigh in here. Perhaps the decision to
-> reset the iterator instead of advancing it in this case was made for a
-> reason that we should honor. Maybe cgroups are usually offlined
-> together so we will keep running into offline cgroups here if we
-> continue? I am not sure.
-
-From comment I removed,
-
->> -                * We need to retry if we have gone through a full round trip, or if we
->> -                * got an offline memcg (or else we risk undoing the effect of the
->> -                * zswap memcg offlining cleanup callback). This is not catastrophic
->> -                * per se, but it will keep the now offlined memcg hostage for a while.
-
-I think this mentioned the potential memcg leak, which is now resolved
-by this patch modifying the offline memcg case.
 
