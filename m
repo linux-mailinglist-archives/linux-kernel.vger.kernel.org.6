@@ -1,136 +1,112 @@
-Return-Path: <linux-kernel+bounces-210704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348359047B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:34:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135269047B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:34:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA54C284AAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:34:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5134B2300E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E40A155CB1;
-	Tue, 11 Jun 2024 23:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF28E156228;
+	Tue, 11 Jun 2024 23:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AJtP07Xr"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okXRkvGd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CC04594C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 23:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E667FBD2;
+	Tue, 11 Jun 2024 23:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718148887; cv=none; b=a11AiX0Zm4nXmSF1lCdmtT3yCm9iN5J0hUzfllLpE9aAUBx12W4CjSTYNKFSDMl+YtwdHdk2nJx6LSou6L1xjkfW5ySyLrf/dQ3XI/4iWpntnGw1G+IDBoA78J9dcWtHufH425rqYgPRHhEgo9ygF8HRVufyOUyaKjFAC+YbTMg=
+	t=1718148833; cv=none; b=iMOsVjUoBOEQxy7CZ+1mL+qUeOzMYH/SDkNOJN5pKWHDllcCIvOwHuJ2Rp8rwYaKRMs83imnkZ8W+IBFcJCfOM//uAtpVxeg+SmdXV4Nd5t6cs3svVa29U5J5T+N8+RtDk3Jiq7c/3WIV6MaMPPrk6CNDk0xsbZQyjAog1m4Vvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718148887; c=relaxed/simple;
-	bh=vnTp5C1q32ULDWsVgiiLtkZ6zL+dpM1Y6tx5qcG0Wgs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lPvVEqKc2Z8d0YKTPUvoEpBJYMuinbujOzRBrj2n/DyrYR38QuZuBAC9fEK3qVW2otppc3JkrX6DT+rfm93SSYKjb2/P6P+qfhlmy6cci4XSyR/tHydOkikpr7QBRhZbjvgFA+I7D1ilzqC8e8VpbehTP4qLWXxGbGX/P3dQGJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AJtP07Xr; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52c525257feso4697269e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718148883; x=1718753683; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=C6aiBpkg+Y6Isx66NjusATX/r6xtB4QNiCkHibX6jkg=;
-        b=AJtP07Xr9yMP5NR24k5e6v8nVybI7DVvM60OgCR4N0O4Zj4zBv4T5zoA5ynW6RhLNG
-         +HC+C2CjB0bNPgnMtocPXp49JYpFx5Y1CRiMDPRqfTAbetmW1tt0JNbQBgDzpepaBh9l
-         vfpGzyxFn651vw1tjzFwbflR+X7kcvySNZoUs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718148883; x=1718753683;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C6aiBpkg+Y6Isx66NjusATX/r6xtB4QNiCkHibX6jkg=;
-        b=aYgMAfqaO9rnUB5GT4rEgo6MqljdUnYXgn9uRNNOTt3rqYCftJLoSWa99hcmDugqov
-         pNBnFy0J0vD6LnF+3aeWUEc15VG4tW0UH/osNtFK+WAxhp1y/zvdiDG6W8Sr+6oT+MEk
-         cc+nKpt+8ka1EOXekocZZLf6bc3IwdyZrAUvKWKjpg5e6rspaJB14p31Y5JbZeRAvHOu
-         5cwBmNDC8ZR94zcdNMSvuNd7KzcXy6uZNGoYzERMRX7HILvSvNmawf80ldTIqKth6Znm
-         ObKnoA2QTLIeWm+DXGg2I3pm/+6LezrS9OpoEYLOOg1qtzsHanmcFZ5PtpZlUYY6TO3h
-         2muA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3LRPzeT1kJRrTIXjWad+eYkXU3UpmzmsFjLttVfRwHniWG/zNLfb/dxs9kzMly3+o6SHFNY7xtmbl9Az/Slhb9pcNmH3oB2jWyhg7
-X-Gm-Message-State: AOJu0YzHF2TzaeY+IRKWheEK4p8HG+qzgw7/7s5fj++lE6WS0pnefp41
-	azNCgh/chGVlGoKeUZ1a3ATi0aIWxK9w9obYAgHzbrxU0KL66MAybDcN2IJX/Ie7cWA38jGsW3j
-	3Q39PZw==
-X-Google-Smtp-Source: AGHT+IFPlFPiofL+SxUSX0m3+zlL4o86iydOQP/g43k1Ke4iwgMmVBuhoSopl92MtEnMAsm791GLcQ==
-X-Received: by 2002:a05:6512:1599:b0:52c:988c:6e6e with SMTP id 2adb3069b0e04-52c9a3d9604mr114665e87.30.1718148882995;
-        Tue, 11 Jun 2024 16:34:42 -0700 (PDT)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f1c0fe610sm349340266b.91.2024.06.11.16.34.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 16:34:42 -0700 (PDT)
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-35f1bc2ab37so2850837f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:34:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQ4ETX1ScQTKK/PiwdTrDO5AxsN6OuAzjU+J/0u+ZVESoYcwMb7MGRXs/ygw+GCeUwEc5uwSKQQm/xBVwa9YT3Jjl2jqf005vxhlrs
-X-Received: by 2002:a05:6512:3b9d:b0:52c:82d9:66b8 with SMTP id
- 2adb3069b0e04-52c9a3e0935mr101179e87.36.1718148574257; Tue, 11 Jun 2024
- 16:29:34 -0700 (PDT)
+	s=arc-20240116; t=1718148833; c=relaxed/simple;
+	bh=PAJmKNOlaPn4rqZ+atyu5CwMxZWPwxMlxuC2B34gYBA=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=TqclPGIESqc8yFEyrksGHF9RI6GnzS1rp0Tcoah7mZgORQteC8CNSyGzZ4hrJWCw0N5+Ig8D2LH0wXUoYAS+HD3pNEYFrJPVMQGLFhL2rSoTJNzEci1hw5NsS06MeNGqNM1we0NvmQZql18UViZrZhVHnwGa5MJOwckd8MnS2vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okXRkvGd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40878C2BD10;
+	Tue, 11 Jun 2024 23:33:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718148832;
+	bh=PAJmKNOlaPn4rqZ+atyu5CwMxZWPwxMlxuC2B34gYBA=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=okXRkvGdCe1XdVvPJ/B3x/XBUJKvAc+c/+bwlGU9W54Ab5gmcbKJWX54Capoo60sJ
+	 3QJpZ6tJLCd7givRILbxl7GVREwZBJF2P2jjEmADI+Vi1fGbX+C4Pz5QjmtFVx6LnR
+	 tkSHlgGrGviOwJM8a+FTVMXUf2Vug5BgOkX9Hvya/CwSqYlg0+QF1+oBMP2Kj1vezv
+	 KPd96BvLwpWBsrA/Lk4rZB1wgSSvy/p7HRu16yNadwVx6cQWnEQEr9GWv15M089tmr
+	 JnypYQy2nt56nHqiJiWGGgY94FyfmXO6AQcp5MdIi/No12URTEXg+jLJC2MLOP1NwB
+	 f9bkuf23XdKjw==
+Date: Tue, 11 Jun 2024 17:33:51 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610204821.230388-1-torvalds@linux-foundation.org>
- <20240610204821.230388-7-torvalds@linux-foundation.org> <20240611215556.GA3021057@thelio-3990X>
-In-Reply-To: <20240611215556.GA3021057@thelio-3990X>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 11 Jun 2024 16:29:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg4mwfbUQwEVDhEsA9MxZKTdTyOKTQa7n8M68_6fxo5Aw@mail.gmail.com>
-Message-ID: <CAHk-=wg4mwfbUQwEVDhEsA9MxZKTdTyOKTQa7n8M68_6fxo5Aw@mail.gmail.com>
-Subject: Re: [PATCH 6/7] arm64: start using 'asm goto' for put_user() when available
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	"the arch/x86 maintainers" <x86@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Danila Tikhonov <danila@jiaxyga.com>
+Cc: tzimmermann@suse.de, konrad.dybcio@linaro.org, 
+ dmitry.baryshkov@linaro.org, krzk+dt@kernel.org, mripard@kernel.org, 
+ daniel@ffwll.ch, robdclark@gmail.com, dri-devel@lists.freedesktop.org, 
+ quic_rmccann@quicinc.com, freedreno@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, airlied@gmail.com, quic_abhinavk@quicinc.com, 
+ sean@poorly.run, marijn.suijten@somainline.org, conor+dt@kernel.org, 
+ swboyd@chromium.org, neil.armstrong@linaro.org, 
+ linux-kernel@vger.kernel.org, quic_khsieh@quicinc.com, 
+ quic_jesszhan@quicinc.com, linux-arm-msm@vger.kernel.org, jonathan@marek.ca, 
+ maarten.lankhorst@linux.intel.com
+In-Reply-To: <20240611223743.113223-4-danila@jiaxyga.com>
+References: <20240611223743.113223-1-danila@jiaxyga.com>
+ <20240611223743.113223-4-danila@jiaxyga.com>
+Message-Id: <171814883103.3303009.2789653537051980409.robh@kernel.org>
+Subject: Re: [PATCH 3/4] dt-bindings: display/msm: Add SM7150 DPU
 
-On Tue, 11 Jun 2024 at 14:56, Nathan Chancellor <nathan@kernel.org> wrote:
->
-> > +#ifdef CONFIG_CC_HAS_ASM_GOTO
->
-> This symbol was eliminated two years ago with commit a0a12c3ed057 ("asm
-> goto: eradicate CC_HAS_ASM_GOTO") since all supported compilers have
-> support for it.
 
-Hah. And I was trying to be a good boy and keep the old setup working.
+On Wed, 12 Jun 2024 01:37:42 +0300, Danila Tikhonov wrote:
+> Document the DPU hardware found on the Qualcomm SM7150 platform.
+> 
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> ---
+>  .../bindings/display/msm/qcom,sm7150-dpu.yaml | 145 ++++++++++++++++++
+>  1 file changed, 145 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.yaml
+> 
 
-Instead - because the HAS_ASM_GOTO config variable no longer exists -
-I didn't actually test the new case at all, and it only worked because
-the old case did in fact work.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Because fixing the broken #ifdef also showed that the
+yamllint warnings/errors:
 
-  +       _ASM_EXTABLE_##type##ACCESS_ZERO(1b, %l2)
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.example.dts:24:18: fatal error: dt-bindings/clock/qcom,sm7150-dispcc.h: No such file or directory
+   24 |         #include <dt-bindings/clock/qcom,sm7150-dispcc.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
+make: *** [Makefile:240: __sub-make] Error 2
 
-line was wrong and was a copy-and-paste error from the get_user case
-(that zeroes the result register on error).
+doc reference errors (make refcheckdocs):
 
-It should be just
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240611223743.113223-4-danila@jiaxyga.com
 
-  +       _ASM_EXTABLE_##type##ACCESS(1b, %l2)
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-and to make the nasty copy_to_kernel_nofault_loop() build I also need
-to do the proper _ASM_EXTABLE_KACCESS macro without the zeroing that
-didn't exist.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-Oops.
+pip3 install dtschema --upgrade
 
-It would be nice to get rid of the CC_HAS_ASM_GOTO_OUTPUT thing too,
-but that's probably a decade away ;(
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
-But at least  this made me now go and actually test the _actual_ old
-compiler case (no asm goto output). Perhaps ironically, I did get
-*that* one right. That's the case where I had actually checked the new
-code for get_user().
-
-             Linus
 
