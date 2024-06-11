@@ -1,381 +1,334 @@
-Return-Path: <linux-kernel+bounces-209503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8D439036F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:47:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4439036EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE84282C51
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:47:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1E528C2B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98134176221;
-	Tue, 11 Jun 2024 08:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B3217554A;
+	Tue, 11 Jun 2024 08:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d4FdCRO0"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="ZVem9Jal"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA09117084B;
-	Tue, 11 Jun 2024 08:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718095637; cv=none; b=T9lhHORiPGH3RCaitwIXMRMTiZmVcbJ1Kdd0Ok87jECLHbfSJLEZSA4hcwLPDv2d63/qZmARXerkaczxkVcexgMVzJQt/FLa3J3E0ZtCkDoBrIU4wk0n45Z52HmEci1v0LWf/X04TIfcsaBWGKV6h7mN0efYcS1YEC1AZqZWrSo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718095637; c=relaxed/simple;
-	bh=5AKYSoK3q8lHYSskDDKGHFDKukD5n4LrrTJAooL+9Kk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uWPgxfhBJROK1x1JYdvFvtSFml0YTDZWRZ17AFdFWayos/YMO0Tdb21njBPg2MGqYP+kozJAE3mkqpKuiiv3dpBkCm6m9pJT7FUhINij67uajI1W/wcpZ6SbglT/OYMPEO4DjR8gHhHveTD2q1PUmeetK5yVHrC5RbmqSbXnWFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d4FdCRO0; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B8Skr5009691;
-	Tue, 11 Jun 2024 08:44:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	tSa5UPBBChj3EY3dtDdAR4DbwLb+5+iA0PlzRfVyBwc=; b=d4FdCRO0ax/RCJ8X
-	vOS7D5U8N9ErN79bE8wK/n5ZPTahSeCTsbvnGPhSOeo8t6UQ9QbX1/6ul7ua7BQw
-	1/vJG9QV/tM/8McK2BgWOnS+qn8PGWhgKXY3ohge7Qvs1Vf5WZZIV6+g5dxWVlBm
-	z/go+8KJERWPxSLxbKAVB0R/OkoNnBHGbMcEGWKUb2aoe5HMRkm+XpJ4rj1Mk6Am
-	adp753dnAEZSoay5TU/ed/ELzpXlAP5vFAIs1/sB/ymGoKyUcQIdJHWxrD0wgMTT
-	W+OX+qNc4GF4tTkmUUIKXb72oxkviKqQiONbNiAGDG86POBOfsNeZdP4iyI8/kIx
-	VNyG8A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ypk3wg1gr-1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22377E772;
+	Tue, 11 Jun 2024 08:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.135.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718095508; cv=fail; b=pNQ5fWYh79z+EImQ5cHs3jmSDMJXLY5KKYS3k9sL0LFzypR3+At1pWUZt/4LYcnS+LpmqfaGLseEZZMrQsYT96Fco4KOeDj2FE1kSut2aJyH4SmlO3u9eJWzys7y6GYF3T+1wg01L4HDBQl7opp2B38N3zhB0gnpCx/Djagtp3A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718095508; c=relaxed/simple;
+	bh=HYk21XGnHJiB7HouCNixOE9F1lt0U/KJX+3nKakK4Eg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QIvYMiQwt73bnjQ4+djRKeFcbA0ICOqlBAjrRWyc7p0A8HiRiBaJ1tvcoQw43z457oNJ14QmDfn+mH3hvT3zaWNy8GW+43NyRz62YC/OmGSs6leng8wIT8wUehSs3UM8aZCDmlt02Jz7oPSbT7Ni/g2vB2CRL+oC2R/9kDYZn2s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=ZVem9Jal; arc=fail smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B7Ju9b028017;
+	Tue, 11 Jun 2024 04:45:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=x8/rQ
+	SuAMTEA+UgbrSghGJGK0DzKe+UkwcLKAy6+vvU=; b=ZVem9JalOX2cbqgcPoyEr
+	VNhREPk2XyzlXNiBICyCs5YEyqrV+wGRo6u+rPKMaZDm/7b6/5kKyCAyHga4Ojnl
+	v0KJty5SR1MlfVTO9Ef4+KcurnA9JJiUZM3GAO5ixFybxzBzpFLCVHvIyJgfL6f5
+	PDf9pa+2C3qAGiBPITgAiKXyH+1niO3+pXa0Lk3f0cz0c5Ip61m5hHF0dSoJGqqJ
+	BnbqNZ6+4a2762G5rsl8FEGe2KVNgIuMat5wi5OvIsopVSviiClmQ9JnezdBJ1gU
+	mJlfmBzvLFynrzR/tNEOXXf0vII1vcU8fEdVzsGsxr9mUVXP6RXxCQ20PYVIBtdN
+	g==
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2040.outbound.protection.outlook.com [104.47.56.40])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3ypdu894wp-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 08:44:58 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45B8iwqX004480;
-	Tue, 11 Jun 2024 08:44:58 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ypk3wg1gm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 08:44:58 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45B77Wpc003898;
-	Tue, 11 Jun 2024 08:44:56 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn2mpmufn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 08:44:56 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45B8isOQ15073902
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Jun 2024 08:44:56 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7626C5805B;
-	Tue, 11 Jun 2024 08:44:54 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 165A858055;
-	Tue, 11 Jun 2024 08:44:46 +0000 (GMT)
-Received: from [9.43.4.139] (unknown [9.43.4.139])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 11 Jun 2024 08:44:45 +0000 (GMT)
-Message-ID: <dd2d1e43-8928-4205-9fdb-88208f18c495@linux.ibm.com>
-Date: Tue, 11 Jun 2024 14:14:43 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf sched map: Add command-name, fuzzy-name options
- to filter the output map
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Athira Rajeev
- <atrajeev@linux.vnet.ibm.com>,
-        Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20240608124915.33860-1-vineethr@linux.ibm.com>
- <ZmeET1yhxU1-D7hy@google.com>
+	Tue, 11 Jun 2024 04:45:04 -0400 (EDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QsUcwajXpmN/ZRoLPKGwWqxEUrYA0q7OpOwZg3sDTWKiK/q51FMD5rhMebGMOXsiL3zeER2WuI0spsFmYLXm8kUeiZKICZunB75kNi4AuKSpj6wrLXAaTBREpCImhixLl+o3nJ195gwp+LXkmidQBDbaImvSsWGAeyOwRIaLvnO4t7MBnEl36ziU7q284mtOzHstSQJ3Mbn8O0nr8MmJgpBSuRKplDTIyh5KR7aW4EyHRR8j9/HyHQCXqd8cgvz8ZvWx5N9iu1NSFjIPqt9DoW7u343ousiZETcFKWvhSUWA3fHUo22SMVrAfcb3jG8fY6OyYG6MtlFUZUc0JNaM4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x8/rQSuAMTEA+UgbrSghGJGK0DzKe+UkwcLKAy6+vvU=;
+ b=bL2uGH5md8uSKczSl6C1lwtcXhtDfg+X7+tP62gQfN5suLDryQ/ETwngqwub8fYTuUFt9SRb6Cv5vGtSmwt0qzkUMiFiFUuP+r+Dpso9hx9lNSHfQPbI4WrsE7b9XzkMeuY6F3ROHnp8NS4AYv2oS5/eOFGnZDW/LI3UmAs26kduQ2vDuAmsICY6W7Uu/HZy90Vbrlkn1G35+CdQoM0Veqf6Q1ix9dZZRPX7+4exdPME4LLbswjKh73piyyNr7psxfxaXFGVB59/vgIRnN+UjuOp0AifpwIqsU4b/x470YQmoC8cm7Es2PoG/nvHFccccIgwYiQL83/uOi2u03h4jA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+Received: from PH0PR03MB6512.namprd03.prod.outlook.com (2603:10b6:510:be::5)
+ by PH7PR03MB7196.namprd03.prod.outlook.com (2603:10b6:510:247::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
+ 2024 08:45:02 +0000
+Received: from PH0PR03MB6512.namprd03.prod.outlook.com
+ ([fe80::c8b5:7953:eec1:cb28]) by PH0PR03MB6512.namprd03.prod.outlook.com
+ ([fe80::c8b5:7953:eec1:cb28%5]) with mapi id 15.20.7633.037; Tue, 11 Jun 2024
+ 08:45:02 +0000
+From: "Hennerich, Michael" <Michael.Hennerich@analog.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>,
+        "Sa, Nuno" <Nuno.Sa@analog.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 1/4] Input: adxl34x - use device core to create
+ driver-specific device attributes
+Thread-Topic: [PATCH v2 1/4] Input: adxl34x - use device core to create
+ driver-specific device attributes
+Thread-Index: AQHau1VHoUP6sdn6nk20zqnTQKtPUrHCQI2A
+Date: Tue, 11 Jun 2024 08:45:02 +0000
+Message-ID: 
+ <PH0PR03MB65124C79F46C7300DA8074088EC72@PH0PR03MB6512.namprd03.prod.outlook.com>
+References: <20240610164301.1048482-1-dmitry.torokhov@gmail.com>
+In-Reply-To: <20240610164301.1048482-1-dmitry.torokhov@gmail.com>
+Accept-Language: en-US, de-DE
 Content-Language: en-US
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <ZmeET1yhxU1-D7hy@google.com>
-Content-Type: text/plain; charset=UTF-8
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: UpZwDsxkhGlNKdAkHdy-KwFehsUxXGC7
-X-Proofpoint-GUID: 0Vcazh0XfVzYQpQi6wqH_U8KH-4CQxsI
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: 
+ =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcbWhlbm5lcmlc?=
+ =?us-ascii?Q?YXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRi?=
+ =?us-ascii?Q?YTI5ZTM1Ylxtc2dzXG1zZy1lYzRiZjhlYi0yN2NlLTExZWYtYjhlNi1iY2Yx?=
+ =?us-ascii?Q?NzFjNDc2MTlcYW1lLXRlc3RcZWM0YmY4ZWQtMjdjZS0xMWVmLWI4ZTYtYmNm?=
+ =?us-ascii?Q?MTcxYzQ3NjE5Ym9keS50eHQiIHN6PSI4MzkwIiB0PSIxMzM2MjU2OTExNjMw?=
+ =?us-ascii?Q?ODAyNzEiIGg9IjRRSmQxWDhKUjlBV1ZHV1RMOVpSbzhkZEJ2cz0iIGlkPSIi?=
+ =?us-ascii?Q?IGJsPSIwIiBibz0iMSIgY2k9ImNBQUFBRVJIVTFSU1JVRk5DZ1VBQUVvQ0FB?=
+ =?us-ascii?Q?QlBOcVN1Mjd2YUFhcEZ6VzhybnJUT3FrWE5ieXVldE00REFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFIQUFBQURhQVFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFFQUFRQUJBQUFBM0xoU2ZnQUFBQUFBQUFBQUFBQUFBSjRBQUFCaEFHUUFh?=
+ =?us-ascii?Q?UUJmQUhNQVpRQmpBSFVBY2dCbEFGOEFjQUJ5QUc4QWFnQmxBR01BZEFCekFG?=
+ =?us-ascii?Q?OEFaZ0JoQUd3QWN3QmxBRjhBWmdCdkFITUFhUUIwQUdrQWRnQmxBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBR0VBWkFCcEFGOEFjd0JsQUdNQWRR?=
+ =?us-ascii?Q?QnlBR1VBWHdCd0FISUFid0JxQUdVQVl3QjBBSE1BWHdCMEFHa0FaUUJ5QURF?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FB?=
+ =?us-ascii?Q?QUFBQUNlQUFBQVlRQmtBR2tBWHdCekFHVUFZd0IxQUhJQVpRQmZBSEFBY2dC?=
+ =?us-ascii?Q?dkFHb0FaUUJqQUhRQWN3QmZBSFFBYVFCbEFISUFNZ0FBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFBPT0iLz48L21l?=
+ =?us-ascii?Q?dGE+?=
+x-dg-rorf: true
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR03MB6512:EE_|PH7PR03MB7196:EE_
+x-ms-office365-filtering-correlation-id: 68fd24ca-5097-4822-2426-08dc89f2c900
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?pwgRzl3kGxIbOOt28XnuojZ8jsSlj0HxTWwtCUi9kYVwZ8eh5pzRNLURHsIu?=
+ =?us-ascii?Q?v9bT8mN2wjg5WN0q5vqjJBKOzNYxC8tGOR6pJ9ztewPXcCoiX+QiSeyu5u1t?=
+ =?us-ascii?Q?C2NGOuEezjLAKPnHcGjNXV/av8JiOzbbncn1NvT2e8DdZ/p1ReGydvc13UZy?=
+ =?us-ascii?Q?lip9D4dF6zKDZhCioBWeOyPmLswASKcekIcJNbC5SQozOBVMWoxahwMe0wU4?=
+ =?us-ascii?Q?9OPyVFb/lFf8rK6IwD0eugtm2G2OC/Quc/PjxHhEmb/nQSyp+1ay5Ty2pf6I?=
+ =?us-ascii?Q?OaVzSYokR8kck7dK5NVyPEsmMEn2jZU/p4gkgzbCzx8XGzNhDDOyTZQc6e7M?=
+ =?us-ascii?Q?zrYCxquMUTIhE3BIVQm0dGq00SDetSH+XI5YjjAGNXK4NKGSZTQ3WPJhHe8b?=
+ =?us-ascii?Q?0hYVcDg6tWctCs70HL1F1HEikgU6zr4dbwoJuttgbENo7bETynbkDYv+im8Q?=
+ =?us-ascii?Q?hLPeXoODq/H70NbGqgsUjgdVZ/IRfcZtcTBI1nE8Hoq8tHBh3JW87L2QuxpP?=
+ =?us-ascii?Q?hS0ib1EgRPJV4OQMZ4/EseoIBcjwcBxK+shVMURH5bmEe69dN6OI0tKtYr4L?=
+ =?us-ascii?Q?Qca0+oabTMgaQH60Q56N2xz6rjSiwc60DwvMqPk8BM4fLuhtDKmZ8soKqxGm?=
+ =?us-ascii?Q?K8Kvve6nZQAavAKMlp67DvEx6VTxKLkuDLsGbC+vTq1NoyzUNb9plZ9+CCWy?=
+ =?us-ascii?Q?3CkpbUbjiALRsWrSg0k1GB4yKpfWC0DXVkKTlM2yZylhGRwCfP0lwSjMgSMA?=
+ =?us-ascii?Q?J3sTN7OU6bRsITzT0ZbaJdADnY0fYTjsIPwcqDbKt2SbvXrMZ0+Gvy/E1A+t?=
+ =?us-ascii?Q?HzaAuRhRFboX+qVSG53NaQQcmc7GGAxCE1b+3BMU0wyiCD6GSRQocQa06vmI?=
+ =?us-ascii?Q?AVJlzB5LVjIDsCpWc+Iq8xt/FltxTBgcunK385nVgUhKKIiogs73w45W5lbe?=
+ =?us-ascii?Q?5ug9nG7j9/EEHFeHDdncO15FobdmF1lUS/VhRK/x5oVy7L1CJiiYDoTxMDci?=
+ =?us-ascii?Q?LWfLjw02vSWQ9ZfU6mG4FowNpd73SUjUCRHgLiE10TQf3M6EYEa7fRLGhBw8?=
+ =?us-ascii?Q?KgjDrK7xyTR1Zu5cDOb7NDJfyefkVhrDQ5iDdIuQCm9pxZ6GazjDoXF4QMSc?=
+ =?us-ascii?Q?q65TVyHwe4VBINSz0e/lB6vz4iQZd7rP2kSjaGXZD6uiERfxyYfR57Lhvnw8?=
+ =?us-ascii?Q?YgZ8dm6A0diLVAqa3klLSpign4BpM2n624E8MlBCLZqIxSf0pTnjrk5KJ5OO?=
+ =?us-ascii?Q?fY+t0wA1fhYYGLKs2UwGohA7jvxpyGCtOrki6vC/LM8r46BIgJhxw4ib0wu+?=
+ =?us-ascii?Q?wCAcE1x0ledDDtJIYHUx1sTDX7XEueKcHLuo/clw3jljpZ50XDusMUAozsuQ?=
+ =?us-ascii?Q?k6w/N4Y=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB6512.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?31IAuuKeJZ0Qv7MOhWVXY/eEGs6R3KpY5INngvsHh/VhPgMnNDj0m2V6o5MO?=
+ =?us-ascii?Q?U40x7QK1+aBnOpQrYGuaDlICjn9vvZy4jyh6OavEJDlD/k3WSPfo95tpALIf?=
+ =?us-ascii?Q?6p49WRRQaBmEfkSTE2VSUDeRgmmIEFqKCeUfXzeEL3JMq8jGwAXwhg1adb6M?=
+ =?us-ascii?Q?0fa4rDFjesFSprw5/TqmslXBxcrIaMBnHqrq8kg2d2oMpWBHL8y8kGBbgDJm?=
+ =?us-ascii?Q?JP4OeCSLgCGvlHsTMyFFCNXK+tnlrSQ/nmsVStVQoBWgaYLxQFJvNbuXcbFk?=
+ =?us-ascii?Q?pj/OeA7pEsOjWbC2Jmj7pxvbRGHz75KFnq4qwPkTFdf017Y3NYrUGxx+dbee?=
+ =?us-ascii?Q?EucxKrV9Y0+wGKIvbW4jbFn3NZU+woUEFDtFRbjXuDwoTUQzjqNagYsDbHSm?=
+ =?us-ascii?Q?d7/aEfvYtDzGIOZVfzXCXeRzEwl68s60JyALFU4jSO1JPdMevggkv6I+mWj/?=
+ =?us-ascii?Q?V0uMi4iUhmNHEq1goQV4VvnxzB6764DKKJUILApC3e22UG6U0XWkfTC50rY+?=
+ =?us-ascii?Q?6YYvOxkG18qCSEIxXx4W31gpBA4mmrJeZmBwl9mJj24nz/cdsPVAtdZ0sZK1?=
+ =?us-ascii?Q?6OBpJtDB1+7PbwcuYJ2osnhO0j4PVFqroGe52SX10w5ZlYOmTZXjNjfcEyf7?=
+ =?us-ascii?Q?fmqKwIsp7GrYL88UrBbIeSolzCWID3MuibDmWavk5seRPoDK2AsE1H19qg1U?=
+ =?us-ascii?Q?hIuvfYH3+WbVUmfwEgnooqzFLGMQ/oB+3Q/7MLPrL5daV5TXKZUfxBvaXPVa?=
+ =?us-ascii?Q?1BXjNy/1n6Kds3NhENwMxE5GJqXO88h1DLUOD2PBnEAV28elf2R7R5H1kYDo?=
+ =?us-ascii?Q?QKrdg2ygpJVyM7sZJEBE+FQuATeNd+qWjc2HuUGpXQZ9csN4MRcP/Heto7jm?=
+ =?us-ascii?Q?4r3OA23YEJaKpHghzspMqpK1km3W6prb2OK28TMDvXo1a0Po6PK9PraL7TnR?=
+ =?us-ascii?Q?GYLCbzRgj+hUVVMNlMJ7jxTp01TUDH4klENDKB6eibWsSYbqsDJt6kWVoEO0?=
+ =?us-ascii?Q?cOfZ0DxqsPiPd5khjGU15lHQmX0g4I+VRmAkaWgnyFw89LK5mzoCDi4JfHyL?=
+ =?us-ascii?Q?IB90eJjAzL3ohi11TKrUOexjnptnxPkMaQ/KGE0aG0aMq9wdL0XKYL3YCKIG?=
+ =?us-ascii?Q?TEnyQgMkIbMbIDlXO7270erY3a9xmJ9vsilm4P78WCjvBTPIQLV4AwvwnXFk?=
+ =?us-ascii?Q?MYQ2TYxgaVXjUJlvwDttCaPTDTYDuyipKclrx5v1NmpUc/YbQXykO8sv32kG?=
+ =?us-ascii?Q?rOPWmHemq5GEgQEY76x/4tQctkbgImD1yJgKUYUI0AGhsb88v4TYlM9vUUmd?=
+ =?us-ascii?Q?cZko+Pg3TY5Jj7LJm6CKk/5fRMqsdMS7eXDJPEW7mPoCG5yqFABBlthV3FCR?=
+ =?us-ascii?Q?OCGKkG9qXDbR3CVMo5TTcIFWGSRJTy+74JDSxjSyeAICB6skjydexM2YBcX1?=
+ =?us-ascii?Q?VkG5ucg2+IfX/ru7mM/8fOxVIHly2Wj5tjnWl4uH3MR42x3V0WEF6w1vJdjs?=
+ =?us-ascii?Q?vqLFEjJI8QPsUd5+F1sNsObigr1qGyAB2akq8lXXkl/hNYBDhYRbcEQHF2E2?=
+ =?us-ascii?Q?ePk4ju1LOQ3fUOhZ7KlRzVQeN73egio4PtJCa/fAnNmxJGrDxsYbJxYVCABi?=
+ =?us-ascii?Q?hQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB6512.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68fd24ca-5097-4822-2426-08dc89f2c900
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2024 08:45:02.6627
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /lP3lF0IlgunxPFwsimR+ROAxjXqeeH3Cp37dY01aI9FHp9zMjpXpKK0TVl/hb18SzEg3Tsi6OJ/uC2mraNGbqnFEGtr/zrofoMi5GoLeRk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR03MB7196
+X-Proofpoint-GUID: zhvLmmeZuzXE8bl00Dgd6hVoD4w3Ll4k
+X-Proofpoint-ORIG-GUID: zhvLmmeZuzXE8bl00Dgd6hVoD4w3Ll4k
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-11_04,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 phishscore=0 impostorscore=0
- priorityscore=1501 mlxlogscore=999 mlxscore=0 suspectscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406110062
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 mlxscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 phishscore=0 impostorscore=0 clxscore=1011 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110065
 
-Hi Namhyung,
 
-On 11/06/24 04:25, Namhyung Kim wrote:
-> Hello,
-> 
-> On Sat, Jun 08, 2024 at 06:18:29PM +0530, Madadi Vineeth Reddy wrote:
->> By default, perf sched map prints sched-in events for all the tasks
->> which may not be required all the time as it prints lot of symbols
->> and rows to the terminal.
->>
->> With --command-name option, one could specify the specific command(s)
->> for which the map has to be shown. This would help in analyzing the
->> CPU usage patterns easier for that specific command(s). Since multiple
->> PID's might have the same command name, using command-name filter
->> would be more useful for debugging.
->>
->> Multiple command names can be given with a comma separator without
->> whitespace.
->>
->> The --fuzzy-name option can be used if fuzzy name matching is required.
->> For example, "taskname" can be matched to any string that contains
->> "taskname" as its substring.
->>
->> For other tasks, instead of printing the symbol, ** is printed and
->> the same . is used to represent idle. ** is used instead of symbol
->> for other tasks because it helps in clear visualization of command(s)
->> of interest and secondly the symbol itself doesn't mean anything
->> because the sched-in of that symbol will not be printed(first sched-in
->> contains pid and the corresponding symbol).
->>
->> 6.10.0-rc1
->> ==========
->>   *A0                   213864.670142 secs A0 => migration/0:18
->>   *.                    213864.670148 secs .  => swapper:0
->>    .  *B0               213864.670217 secs B0 => migration/1:21
->>    .  *.                213864.670223 secs
->>    .   .  *C0           213864.670247 secs C0 => migration/2:26
->>    .   .  *.            213864.670252 secs
->>
->> 6.10.0-rc1 + patch (--command-name = schbench)
->> =============
->>    **  .   ** *A0       213864.671055 secs A0 => schbench:104834
->>   *B0  .   .   A0       213864.671156 secs B0 => schbench:104835
->>   *C0  .   .   A0       213864.671187 secs C0 => schbench:104836
-> 
-> I still think some people are interested in sched-out time.  For
-> example, we don't know when B0 was scheduled out in the above.  There
-> could be other tasks between B0 and C0 on the CPU 0.
 
-Yes, you are right. When using the --command-name filter, there can be
-other tasks in between. This won't be a problem without the --command-name
-filtering, as no task will be missed, and we can be sure that the C0 sched-in
-time is the B0 sched-out time.
+> -----Original Message-----
+> From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Sent: Monday, June 10, 2024 6:43 PM
+> To: linux-input@vger.kernel.org; Sa, Nuno <Nuno.Sa@analog.com>
+> Cc: Hennerich, Michael <Michael.Hennerich@analog.com>; linux-
+> kernel@vger.kernel.org
+> Subject: [PATCH v2 1/4] Input: adxl34x - use device core to create driver=
+-
+> specific device attributes
+>=20
+>=20
+> Instead of creating driver-specific device attributes with
+> sysfs_create_group() have device core do this by setting up dev_groups
+> pointer in the driver structure.
+>=20
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-I will add the sched-out time when using the --command-name option in v3.
+Acked-by: Michael Hennerich <michael.hennerich@analog.com>
 
-> 
-> 
->>   *D0  .   .   A0       213864.671219 secs D0 => schbench:104837
->>   *E0  .   .   A0       213864.671250 secs E0 => schbench:104838
->>    E0  .  *D0  A0
->>
->> This helps in visualizing how a benchmark like schbench is spread over
->> the available cpus while also knowing which cpus are idle(.) and which
->> are not(**). This will be more useful as number of CPUs increase.
->>
->> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
->> Reviewed-and-tested-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com <mailto:atrajeev@linux.vnet.ibm.com>>
->>
->> ---
->> Changes in v2:
->> - Add support for giving multiple command-names in CSV. (Namhyung Kim)
->> - Add fuzzy name matching option. (Chen Yu)
->> - Add Reviewed-and-tested-by tag from Athira Rajeev.
->> - Rebase against perf-tools-next commit d2307fd4f989 ("perf maps: Add/use
->>   a sorted insert for fixup overlap and insert")
->> - Link to v1: https://lore.kernel.org/lkml/20240417152521.80340-1-vineethr@linux.ibm.com/
->> ---
->>  tools/perf/Documentation/perf-sched.txt |  8 +++++
->>  tools/perf/builtin-sched.c              | 41 +++++++++++++++++++++++--
->>  2 files changed, 46 insertions(+), 3 deletions(-)
->>
->> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
->> index a216d2991b19..6901c192eb6f 100644
->> --- a/tools/perf/Documentation/perf-sched.txt
->> +++ b/tools/perf/Documentation/perf-sched.txt
->> @@ -130,6 +130,14 @@ OPTIONS for 'perf sched map'
->>  --color-pids::
->>  	Highlight the given pids.
->>  
->> +--command-name::
->> +	Map output only for the given command name(s). Separate the
->> +	command names with a comma (without whitespace).
->> +	(** indicates other tasks while . is idle).
->> +
->> +--fuzzy-name::
->> +	Given command name can be partially matched (fuzzy matching).
->> +
->>  OPTIONS for 'perf sched timehist'
->>  ---------------------------------
->>  -k::
->> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
->> index 5977c49ae2c7..364f48170e65 100644
->> --- a/tools/perf/builtin-sched.c
->> +++ b/tools/perf/builtin-sched.c
->> @@ -156,6 +156,8 @@ struct perf_sched_map {
->>  	const char		*color_pids_str;
->>  	struct perf_cpu_map	*color_cpus;
->>  	const char		*color_cpus_str;
->> +	const char		*command;
->> +	bool			fuzzy;
->>  	struct perf_cpu_map	*cpus;
->>  	const char		*cpus_str;
->>  };
->> @@ -1538,6 +1540,26 @@ map__findnew_thread(struct perf_sched *sched, struct machine *machine, pid_t pid
->>  	return thread;
->>  }
->>  
->> +static bool command_matches(const char *comm_str, const char *commands, bool fuzzy_match)
->> +{
->> +	char *commands_copy = strdup(commands);
->> +	char *token = strtok(commands_copy, ",");
-> 
-> Hmm.. copying and parsing the commands whenever it compares the task
-> comm looks inefficient.  I think you can parse the input string once and
-> keep the list of names.
-
-Sure, I will do that.
-
-> 
->> +
->> +	bool match_found = false;
->> +
->> +	while (token != NULL) {
->> +		if ((fuzzy_match && strstr(comm_str, token) != NULL) ||
->> +					strcmp(comm_str, token) == 0) {
->> +			match_found = true;
->> +			break;
->> +		}
->> +	token = strtok(NULL, ",");
->> +	}
-> 
-> It could be:
-> 
->     while (token != NULL && !match_found) {
->         if (fuzzy_match)
->             match_found = !!strstr(comm_str, token);
->         else
->             match_found = !strcmp(comm_str, token);
-> 
->         token = strtok(NULL, ",");
->     }
-
-This looks much better, will change it in v3. Thank you!
-
-> 
-> But as I said, it'd better not to call strtok() here.
-> 
-
-Yes, understood.
-
->> +
->> +	free(commands_copy);
->> +	return match_found;
->> +}
->> +
->>  static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->>  			    struct perf_sample *sample, struct machine *machine)
->>  {
->> @@ -1594,8 +1616,6 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->>  
->>  	sched->curr_thread[this_cpu.cpu] = thread__get(sched_in);
->>  
->> -	printf("  ");
->> -
->>  	new_shortname = 0;
->>  	if (!tr->shortname[0]) {
->>  		if (!strcmp(thread__comm_str(sched_in), "swapper")) {
->> @@ -1605,7 +1625,8 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->>  			 */
->>  			tr->shortname[0] = '.';
->>  			tr->shortname[1] = ' ';
->> -		} else {
->> +		} else if (!sched->map.command || command_matches(thread__comm_str(sched_in),
->> +							sched->map.command, sched->map.fuzzy)) {
-> 
-> We usually align the indentation using the open parenthesis.
-> Maybe you can rename the function and pass the sched pointer directly
-> to reduce the argument.
-
-Sure, got it.
-
-> 
->   bool sched_match_task(struct perf_sched *sched, const char *comm_str)
->   {
->       ...
->   }
-> 
-> Or you could pass thread instead of comm_str and possibly support
-> matching with TID too.
-
-Do you want me to add another command line option to support matching
-with TID?
-
-Thanks for all the suggestions. Will implement them and send v3.
-
-Thanks and Regards
-Madadi Vineeth Reddy
-
-> 
-> Thanks,
-> Namhyung
-> 
-> 
->>  			tr->shortname[0] = sched->next_shortname1;
->>  			tr->shortname[1] = sched->next_shortname2;
->>  
->> @@ -1618,10 +1639,19 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->>  				else
->>  					sched->next_shortname2 = '0';
->>  			}
->> +		} else {
->> +			tr->shortname[0] = '*';
->> +			tr->shortname[1] = '*';
->>  		}
->>  		new_shortname = 1;
->>  	}
->>  
->> +	if (sched->map.command && !command_matches(thread__comm_str(sched_in), sched->map.command,
->> +										sched->map.fuzzy))
->> +		goto skip;
->> +
->> +	printf("  ");
->> +
->>  	for (i = 0; i < cpus_nr; i++) {
->>  		struct perf_cpu cpu = {
->>  			.cpu = sched->map.comp ? sched->map.comp_cpus[i].cpu : i,
->> @@ -1678,6 +1708,7 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->>  out:
->>  	color_fprintf(stdout, color, "\n");
->>  
->> +skip:
->>  	thread__put(sched_in);
->>  
->>  	return 0;
->> @@ -3560,6 +3591,10 @@ int cmd_sched(int argc, const char **argv)
->>                      "highlight given CPUs in map"),
->>  	OPT_STRING(0, "cpus", &sched.map.cpus_str, "cpus",
->>                      "display given CPUs in map"),
->> +	OPT_STRING(0, "command-name", &sched.map.command, "command",
->> +		"map output only for the given command name(s)"),
->> +	OPT_BOOLEAN(0, "fuzzy-name", &sched.map.fuzzy,
->> +		"given command name can be partially matched (fuzzy matching)"),
->>  	OPT_PARENT(sched_options)
->>  	};
->>  	const struct option timehist_options[] = {
->> -- 
->> 2.31.1
->>
+> ---
+>=20
+> v2: added Nono's ACK
+>=20
+>  drivers/input/misc/adxl34x-i2c.c |  1 +  drivers/input/misc/adxl34x-spi.=
+c |  1
+> +
+>  drivers/input/misc/adxl34x.c     | 15 +++++++--------
+>  drivers/input/misc/adxl34x.h     |  1 +
+>  4 files changed, 10 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/input/misc/adxl34x-i2c.c b/drivers/input/misc/adxl34=
+x-
+> i2c.c
+> index d4014e367c77..7531c7b2d657 100644
+> --- a/drivers/input/misc/adxl34x-i2c.c
+> +++ b/drivers/input/misc/adxl34x-i2c.c
+> @@ -132,6 +132,7 @@ MODULE_DEVICE_TABLE(of, adxl34x_of_id);  static
+> struct i2c_driver adxl34x_driver =3D {
+>  	.driver =3D {
+>  		.name =3D "adxl34x",
+> +		.dev_groups =3D adxl34x_groups,
+>  		.pm =3D pm_sleep_ptr(&adxl34x_pm),
+>  		.of_match_table =3D adxl34x_of_id,
+>  	},
+> diff --git a/drivers/input/misc/adxl34x-spi.c b/drivers/input/misc/adxl34=
+x-
+> spi.c
+> index f1094a8ccdd5..2befcc4df0be 100644
+> --- a/drivers/input/misc/adxl34x-spi.c
+> +++ b/drivers/input/misc/adxl34x-spi.c
+> @@ -97,6 +97,7 @@ static void adxl34x_spi_remove(struct spi_device *spi)
+> static struct spi_driver adxl34x_driver =3D {
+>  	.driver =3D {
+>  		.name =3D "adxl34x",
+> +		.dev_groups =3D adxl34x_groups,
+>  		.pm =3D pm_sleep_ptr(&adxl34x_pm),
+>  	},
+>  	.probe   =3D adxl34x_spi_probe,
+> diff --git a/drivers/input/misc/adxl34x.c b/drivers/input/misc/adxl34x.c =
+index
+> a3f45e0ee0c7..fbe5a56c19d1 100644
+> --- a/drivers/input/misc/adxl34x.c
+> +++ b/drivers/input/misc/adxl34x.c
+> @@ -664,6 +664,12 @@ static const struct attribute_group
+> adxl34x_attr_group =3D {
+>  	.attrs =3D adxl34x_attributes,
+>  };
+>=20
+> +const struct attribute_group *adxl34x_groups[] =3D {
+> +	&adxl34x_attr_group,
+> +	NULL
+> +};
+> +EXPORT_SYMBOL_GPL(adxl34x_groups);
+> +
+>  static int adxl34x_input_open(struct input_dev *input)  {
+>  	struct adxl34x *ac =3D input_get_drvdata(input); @@ -823,13 +829,9
+> @@ struct adxl34x *adxl34x_probe(struct device *dev, int irq,
+>  		goto err_free_mem;
+>  	}
+>=20
+> -	err =3D sysfs_create_group(&dev->kobj, &adxl34x_attr_group);
+> -	if (err)
+> -		goto err_free_irq;
+> -
+>  	err =3D input_register_device(input_dev);
+>  	if (err)
+> -		goto err_remove_attr;
+> +		goto err_free_irq;
+>=20
+>  	AC_WRITE(ac, OFSX, pdata->x_axis_offset);
+>  	ac->hwcal.x =3D pdata->x_axis_offset;
+> @@ -889,8 +891,6 @@ struct adxl34x *adxl34x_probe(struct device *dev, int
+> irq,
+>=20
+>  	return ac;
+>=20
+> - err_remove_attr:
+> -	sysfs_remove_group(&dev->kobj, &adxl34x_attr_group);
+>   err_free_irq:
+>  	free_irq(ac->irq, ac);
+>   err_free_mem:
+> @@ -903,7 +903,6 @@ EXPORT_SYMBOL_GPL(adxl34x_probe);
+>=20
+>  void adxl34x_remove(struct adxl34x *ac)  {
+> -	sysfs_remove_group(&ac->dev->kobj, &adxl34x_attr_group);
+>  	free_irq(ac->irq, ac);
+>  	input_unregister_device(ac->input);
+>  	dev_dbg(ac->dev, "unregistered accelerometer\n"); diff --git
+> a/drivers/input/misc/adxl34x.h b/drivers/input/misc/adxl34x.h index
+> f9272a2e7a96..67e0ddc5c3eb 100644
+> --- a/drivers/input/misc/adxl34x.h
+> +++ b/drivers/input/misc/adxl34x.h
+> @@ -26,5 +26,6 @@ struct adxl34x *adxl34x_probe(struct device *dev, int
+> irq,  void adxl34x_remove(struct adxl34x *ac);
+>=20
+>  extern const struct dev_pm_ops adxl34x_pm;
+> +extern const struct attribute_group *adxl34x_groups[];
+>=20
+>  #endif
+> --
+> 2.45.2.505.gda0bf45e8d-goog
 
 
