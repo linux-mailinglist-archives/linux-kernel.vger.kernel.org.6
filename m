@@ -1,204 +1,110 @@
-Return-Path: <linux-kernel+bounces-209590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439D6903817
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:43:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91FDC90381E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C63F1C232A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:43:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 522A4B22FC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAA8176FAB;
-	Tue, 11 Jun 2024 09:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5872D178361;
+	Tue, 11 Jun 2024 09:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VoHZg1zn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VMTuscMD"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71759176AB8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499DC79C8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718098985; cv=none; b=lc8HpRJ0Gn/Gdr/25bZ6cljbiXVhRRkNzn4S5WDg1i5lvgg02RIJ1RGD7GV8I6YG6rWCsnMp5QBv917iX2Am90t/BkC/ok+aACLHWTReZFLY/aExIlaBbTtKhTvG2D4DFLwwXWli7GfiJcLcvINa0F19+vMs1yPMcVcchQsO2dI=
+	t=1718099131; cv=none; b=Bi4n6sJD46UbwA0A9q/3mTI2HIo9g4velCye6OnslPhRUYvRutILfvU5Acq6taKlRiF78i3yN3cX2w5+JVk4z08ji2Cy78ADzzw2Dh5bZLdFi93PWnIXBedXT/2Ju1udYzFcHIT9g1JjrnliD9/jrM+qRHK5K5AU/MJXCf8G+IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718098985; c=relaxed/simple;
-	bh=PjgyDSFoWWSLuBYP8YRI3EDHBqV5H/aqSV8Hc10U6vY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pzZJ/XTooTwG6WF4wfFXsLnCUWZwj3A63YjNg2lSt3zU6NxJBhBuHVAuukobzTpgNqPtaoTYIrckkl4IVpS4/5c0o+wjSmkUQWVhTkPRWEJjbMefSVfRpKRFj5qbUAZeMEKh1WdT7FRk3/BBnZQ48H2Nvtp5kVB1OHtPjHiemww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VoHZg1zn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718098982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4Fvo4snqjmjLL5YGwAq7AoShRlEWBSMshPzLS47jMwA=;
-	b=VoHZg1znVK/cl+rVxGgbKZSJrnsSjR91CMf3R2+8nErj0PiudsniIqgxkriipkFapVFboa
-	i+O82qe/sNr2pJAlM+C2D7Vb+V8ZDvXi5k3YLZP+h7kiRMd7yuGeTO/9Y1RlNmOsWHO+Oq
-	BvW5Ilo7O0465bHZxKbQ5akzc452q/I=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-35-ZYYgmKksPQy4oqnHwvRo7A-1; Tue, 11 Jun 2024 05:43:00 -0400
-X-MC-Unique: ZYYgmKksPQy4oqnHwvRo7A-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52c0bfd6a89so2798040e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:43:00 -0700 (PDT)
+	s=arc-20240116; t=1718099131; c=relaxed/simple;
+	bh=fbPWO3YfCn4a8mPc1CLdohG853Qm/IYnmQ0t3FyvGCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bP+0uZHiGTLCEkrizGT8cLjyFT2lWn/AGNxt2E6e7xoxQzVWcuiXqdNwYjH1fK5wQHdb2wUoCTQKxOf99GSkvUkBnEz2c8bcaaquiFX9WDhgG0jNJ9de30AMOrF+mOYmg03E3VhsoJl5AslGIbcAY/12a1O6n3wLvQ95S2LhviM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VMTuscMD; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-6c4926bf9baso4077553a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:45:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718099129; x=1718703929; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bIJkK36cZLCR3+8x62O5WUTDL6JbubsX52HQ4wOONjY=;
+        b=VMTuscMD/O2sBizR1isvjBHpnHbx91vWs/WaSKyl68Arkf+zCHKas2+P0/ekUBUdYn
+         efc86+0y505NsvYy46D3DJPVndyjgKQ+DInqHoLx0HwMQgzuD5vTLmhExyw5sO0LmgZS
+         KLNvTfVXYWReMMW2hJKhAdPVYO8lGpjlkdh4giuX7I5K2XDMjA6OJ0RhHRQ1ciMTcLZM
+         jtzBsA+1pcWe8yNt04dx3gsFwwPgO4asFOUMp5vBeG/Nvilv+hJtGnI1PoSZGJisDj0y
+         DVrTcnPAC8k4MhxsPbJ1CiuLQNxyMasgt+J0R+ERxwJAAnOx0vxRCym89PPe3IeuhGb8
+         RoXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718098979; x=1718703779;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4Fvo4snqjmjLL5YGwAq7AoShRlEWBSMshPzLS47jMwA=;
-        b=fuL2Ksbpvgo5I+0IGXMQjY9faMN8y9hXth64PV2EkpcFeypDWDEYzjRiDy3LYLogCg
-         jTD9zrTI1WohGDyl/PS/XeDcq2L6s0uyQ+Ohz0bYyvKzDCO+Zl5py3HhLQVdWH/ZYtKj
-         +5q+dX7JpNbLqNFCaB3B8jrwP2PE9jnek/sJMAadrrxjlYquRnftbW4lyWCaVk6/2qaw
-         /0/AXcz6W/7TJuWz192szsFGI+WzG6OeMa4pNoZWuVVQucdRmSx1QCKGVl7Grfe9BlA/
-         Z1mUTSzGA7Ka0zJlA1+RAtpD/Qd5q6WR7KwRH0/hivo5yJznunMUqq8itMBUSWvfTpGR
-         jjvw==
-X-Gm-Message-State: AOJu0Yz99K5KiaVYdj/XRBMvr4y5/MXJqGrNfr/ZK4+fZjMZs+kVlizx
-	hhsFTDjeMBZ2vnsG3kyh9n8bDhqa51IDpNBCSQUT59JOXnFbs28HCZ7RXw/wUdwzxE1v/lYUUwB
-	alcrXNus9MNtNhEkfY4qthJ00ZARDOzrKnAFFMWel+9IShge6T8Yj6AtU7vgz4ixQCGBaqGmdUn
-	3OJBDlwuAHxxK61h92HDBEDzFISCkI5fX620eO0xYxOA==
-X-Received: by 2002:ac2:5a43:0:b0:52b:e7ff:4eb7 with SMTP id 2adb3069b0e04-52be7ff4ed8mr5513996e87.59.1718098979228;
-        Tue, 11 Jun 2024 02:42:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGXolbyC1nt04woF61IXkeFzl40jH1amuFwhtMdKb0jcnAeO4WTr7EvpCOinxTpGFsUzHiFKA==
-X-Received: by 2002:ac2:5a43:0:b0:52b:e7ff:4eb7 with SMTP id 2adb3069b0e04-52be7ff4ed8mr5513958e87.59.1718098978571;
-        Tue, 11 Jun 2024 02:42:58 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2cd247sm176185215e9.40.2024.06.11.02.42.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 02:42:57 -0700 (PDT)
-Message-ID: <824c319a-530e-4153-80f5-20e2c463fa81@redhat.com>
-Date: Tue, 11 Jun 2024 11:42:56 +0200
+        d=1e100.net; s=20230601; t=1718099129; x=1718703929;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bIJkK36cZLCR3+8x62O5WUTDL6JbubsX52HQ4wOONjY=;
+        b=Bj3aLZEVaOKTP5l3RpjNR2KW1457UJNPQAezM39ek4QZN2CZz72OJuP/oSpLgLJROA
+         2eB9+d7QYvv3R8altJTkT1+yJbw8Y4ibv7/wa6vl4drmgoz9x65qFTDLplgRjfUZWyo/
+         NIsq8SK2BVRIN5rEAhuSSc4HMVXb/dI54AolYkWi2IFD5UvWez4QL/kswA7lPvdFdAwx
+         AK8YeSv+qxxTeP3PTcoATtol2/v5NdcESEtpsHxfgqcUfHRkGKgDur3lia3PGoBYYtwK
+         ijnSSGeIKyZ3Chk5vxSc0kysMsrtUISS24RtXAOy+1+X2SAG4Ef5S7Q9+bjUnTAbvNGp
+         mSjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOe+B3pqY43KK77E/xrDvgWIi8lrvOYm2nsykeEoB1APhxQEONoBalLM5m9wP9xVH8zKZdos4Z1w9wrIgB0Wby77840C4BGh+OShGu
+X-Gm-Message-State: AOJu0Yx6zTntaR7fTqQRi0kxonUwLQMG+Img+ieLuS4Wl8OKSwke2Izh
+	tL9DuvlWFvbgiG87Mx0TDBsl6QqsiFY6XfM59oDETQrDNgl6wXu9hMMx3cC1GVI=
+X-Google-Smtp-Source: AGHT+IEmsG5w7EV84VzvtaKLkgCKOyPN+sJs7UP3kUKtfjVdo8RcV1PVr5lthNZSAPmr7d7a2PViJA==
+X-Received: by 2002:a17:90b:4f90:b0:2bf:8fbf:e4c7 with SMTP id 98e67ed59e1d1-2c2bcafac1bmr11290982a91.16.1718099129480;
+        Tue, 11 Jun 2024 02:45:29 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c3092b4bacsm3790663a91.24.2024.06.11.02.45.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 02:45:29 -0700 (PDT)
+Date: Tue, 11 Jun 2024 15:15:26 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ionela Voinescu <ionela.voinescu@arm.com>
+Cc: "liwei (JK)" <liwei728@huawei.com>,
+	Beata Michalska <beata.michalska@arm.com>,
+	Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
+	rafael@kernel.org, al.stone@linaro.org, ashwin.chaugule@linaro.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	liwei391@huawei.com, liaoyu15@huawei.com
+Subject: Re: [PATCH] cpufreq/cppc: changing highest_perf to nominal_perf in
+ cppc_cpufreq_cpu_init()
+Message-ID: <20240611094526.vcirawlsdefbkuhf@vireshk-i7>
+References: <20240428092852.1588188-1-liwei728@huawei.com>
+ <20240429104945.esdukn6ayudgyumc@vireshk-i7>
+ <ZjoBrF4bAK5ukm7H@arm.com>
+ <be312b75-eede-44f5-b7f3-b50f50c6fb56@huawei.com>
+ <ZmB1qKucR5fXk100@arm.com>
+ <20240606072031.lxr7tykl7sdgjwva@vireshk-i7>
+ <ZmgbRh+m9MmEaopK@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] mm/memory_hotplug: initialize memmap of
- !ZONE_DEVICE with PageOffline() instead of PageReserved()
-To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-hyperv@vger.kernel.org,
- virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
- kasan-dev@googlegroups.com, Mike Rapoport <rppt@kernel.org>,
- Oscar Salvador <osalvador@suse.de>, "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
- Dmitry Vyukov <dvyukov@google.com>
-References: <20240607090939.89524-1-david@redhat.com>
- <20240607090939.89524-3-david@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240607090939.89524-3-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmgbRh+m9MmEaopK@arm.com>
 
-On 07.06.24 11:09, David Hildenbrand wrote:
-> We currently initialize the memmap such that PG_reserved is set and the
-> refcount of the page is 1. In virtio-mem code, we have to manually clear
-> that PG_reserved flag to make memory offlining with partially hotplugged
-> memory blocks possible: has_unmovable_pages() would otherwise bail out on
-> such pages.
-> 
-> We want to avoid PG_reserved where possible and move to typed pages
-> instead. Further, we want to further enlighten memory offlining code about
-> PG_offline: offline pages in an online memory section. One example is
-> handling managed page count adjustments in a cleaner way during memory
-> offlining.
-> 
-> So let's initialize the pages with PG_offline instead of PG_reserved.
-> generic_online_page()->__free_pages_core() will now clear that flag before
-> handing that memory to the buddy.
-> 
-> Note that the page refcount is still 1 and would forbid offlining of such
-> memory except when special care is take during GOING_OFFLINE as
-> currently only implemented by virtio-mem.
-> 
-> With this change, we can now get non-PageReserved() pages in the XEN
-> balloon list. From what I can tell, that can already happen via
-> decrease_reservation(), so that should be fine.
-> 
-> HV-balloon should not really observe a change: partial online memory
-> blocks still cannot get surprise-offlined, because the refcount of these
-> PageOffline() pages is 1.
-> 
-> Update virtio-mem, HV-balloon and XEN-balloon code to be aware that
-> hotplugged pages are now PageOffline() instead of PageReserved() before
-> they are handed over to the buddy.
-> 
-> We'll leave the ZONE_DEVICE case alone for now.
-> 
+On 11-06-24, 10:39, Ionela Voinescu wrote:
+> Makes sense! But maybe we should no longer update policy->cur to the
+> current/hardware frequency once a request comes through from a
+> governor, and we have a first actually requested value.
 
-@Andrew, can we add here:
-
-"Note that self-hosted vmemmap pages will no longer be marked as 
-reserved. This matches ordinary vmemmap pages allocated from the buddy 
-during memory hotplug. Now, really only vmemmap pages allocated from 
-memblock during early boot will be marked reserved. Existing 
-PageReserved() checks seem to be handling all relevant cases correctly 
-even after this change."
+Hmm, not sure I understood that. When the request comes from governor,
+we only update policy->cur to the requested frequency and not the
+actual hardware frequency. And it is very much required. policy->cur
+needs to be up to date all the times, it is an important part of the
+entire working of the cpufreq core..
 
 -- 
-Cheers,
-
-David / dhildenb
-
+viresh
 
