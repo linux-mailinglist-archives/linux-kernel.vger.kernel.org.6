@@ -1,245 +1,135 @@
-Return-Path: <linux-kernel+bounces-210608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00BEB904631
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:19:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80206904633
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61EEFB2333E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:19:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F4F2886C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5203E153510;
-	Tue, 11 Jun 2024 21:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA47153580;
+	Tue, 11 Jun 2024 21:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OeIOsShS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="ZZXTUq5D"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA0D152780;
-	Tue, 11 Jun 2024 21:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4054A1534EC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718140752; cv=none; b=b5yedKImMlB3PsqkHDLN8deu6c59c9/Fwz+y+OawNjWYZXmxrnwU/YTRkjBTBOIvegO18ue2+ryIfgAUwLWhv7aeHfZ2QogIuUhvFhM8CPR7jeUeGVMmxQqvg0YozrtLtAUwGXLHP1lFPRlg+ezx6AUoMM73YzWULSyEyV4uVhY=
+	t=1718140777; cv=none; b=LOhEIjHcMviPUOP/CLbn7mFWPYb0OT75BvmTxz2k+RJjYX1uIlq8P+SM+4ZI8TEzzR19dSdZgGIwZRWv0TKRv9HKO3T7ro9KzoBHtcSrZO68HFsVczdmB+PXf2CXJ1Ukt2ipUskzwcZIZVru8oOy9ldtdWfCb5h2qdZQ7khaKag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718140752; c=relaxed/simple;
-	bh=0YwnHVeYnnYkqsFj5yR3rkt1qZKqz5UK80yyjBNKra4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kPk5nfcT6WnWaYkRrlj+YPezBBYerd8f65e1tBe3TbxbxMy+B/760Ylfo5uvUedOW0yumGeaxd4cM+Kq+UEuMhXqjE6KoH0LD732OBLGJnzfVV2POyOCWZqHxb09fmNiofYAtd82DIoB87A7LLU7vGub+Wbh1tU27ERDxZDByJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OeIOsShS; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718140749; x=1749676749;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0YwnHVeYnnYkqsFj5yR3rkt1qZKqz5UK80yyjBNKra4=;
-  b=OeIOsShSj+OmhtvYIRCMmBhWq8pLH6YgqLcHptYNstuR1hp2dB+kqFFF
-   bxZbMzrvkE+VImNZQ74EiWWaLgeAdbU2+jTQSXUxqwOQT9o02lw4TxZuZ
-   lmrhNyoVgUwB8KB9NhzWJjATEL6xxEHnn5jQ00CIpRDFDnmtx3Jb84GkS
-   NoHQtpNp+JyiUGmu0miHrdyC+UxUex9OXtH8WMTkxnf8fFstLd0VUsA2b
-   8/7Oc/CgytTk8coP5hBW0IMG7MxcQy4BrXUAgnQOEqknM25zUOebbwS4E
-   BoT5mIpsF+4zMpB73KVzs6j7zqvhFGQLJVJAZjOi20bq1ekN5FXEXrM3T
-   g==;
-X-CSE-ConnectionGUID: EaKROKOgSXWvky4+cumGBA==
-X-CSE-MsgGUID: AHEUNgXvSpWH8O2BEzc94Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="18712984"
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="18712984"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 14:19:09 -0700
-X-CSE-ConnectionGUID: dV/LxXVrT/uRvw9vFAqaKA==
-X-CSE-MsgGUID: x64uxm5cS6KQn0xEwm3WFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="44517960"
-Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 11 Jun 2024 14:19:08 -0700
-Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sH8tV-0000uM-1h;
-	Tue, 11 Jun 2024 21:19:05 +0000
-Date: Wed, 12 Jun 2024 05:18:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH 06/16] kconfig: refactor choice value calculation
-Message-ID: <202406120445.P5QmPYgD-lkp@intel.com>
-References: <20240611175536.3518179-7-masahiroy@kernel.org>
+	s=arc-20240116; t=1718140777; c=relaxed/simple;
+	bh=ELCydqjpdFo4e5YLr2TqZB1sj47Z8XFwUvs0m0bOxMk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JPhAWSoUZQ039rm/zbKTp0a80Fli4xda2B7abcsDUj2qMPT7NoW314BFD27f9zf/EGkBAy2M141FqlEksX68nebM6MedUiX1ruzu75WmxTCGXFEgkZ3IHxItebIUw+bwPJPUoLZScjiW1k5TOieRJDHF1Ctr8LHM8RbKGt54nWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=ZZXTUq5D; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-254c22faf4cso1202514fac.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kali.org; s=google; t=1718140775; x=1718745575; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kIrp8qzhxU8e7FrceQyxypKcph7vNSgb2Uumfdyvzas=;
+        b=ZZXTUq5DSYPqKc7X1syAQURklKwKIu4veTOWNmvnbazNSr/X9ggmYT7UHia8VThni9
+         gp0nMJKuTUCzZRQfJ71ZcREljadWQmYHCRcT2XU3Vnx7a6tFM5YzjeE1iQCYsAkblqd7
+         BIpggKAVtm0kg+cs34nYT4QDKfk1pSFFoOTdGeITrcGWKiO3zErCyy4KDqKyh++lt7J1
+         eVocFQPMou+TB79OuyIcXuTwzwQGKwOYnhlIpXdxswQRvvoSuL9s1h3efoWBFGnx3gE4
+         gAwtNNFuublJxvw2FTiNdi/39vALV8DbVInxv+nA4aUzY0wlDKH3I1mTF6INSkswXvZ5
+         IpOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718140775; x=1718745575;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kIrp8qzhxU8e7FrceQyxypKcph7vNSgb2Uumfdyvzas=;
+        b=WozLBKvoewIzKt7RPvjfQyLYL+lzdg11fEPxe04ni88AcJlyLN/vbYGgVhLMN07ssw
+         IX+RboxIv9be4vpQVtnj2sJ8I2ogNJLFe+1dYrOTUz9nk3sEEamXyf8qWKeKVeIMC8bu
+         Y2KgtdFh47PuZk8wll3M5jHqSQZehgnZx3y5eSmNl/O+g/AQXj+xPVRZqzj3J2+YhVTw
+         yUpBuvnFf8KW7EftluhZ34pZAApt+OtAPqwBQwNAGHHf4kUWcY2+khToq+LOeovImDgK
+         pH1hgOsW6p+tooNotUTbkBqdA0j4boXFjkqpJHtZPw+eH3SRGC7mNUaQIHl3gcZB+6ts
+         NOgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuBDWQDKQ/rwvAljeNPEKGa2RUt06ct6SDTOsDJHTxqAJf5zs17IjilY8FZAGRSKfyruhdwFNvgPxFYeL8yxATjAVC3ukoyhdFSknx
+X-Gm-Message-State: AOJu0YxdtSXMLQJgFEgvkafwTa5gzHYhHgqTUFahg6JuYNW/4s3LcfDL
+	sIueqe7TaD2kiDnDNvXZKWwoDvIwNkj2gtPrx+krLYmaoPUMhdtIl3dzN9T0YNE=
+X-Google-Smtp-Source: AGHT+IEspAynUq6bEDt0FQbYW3uXgAn4JXj6JpZ/+Vmr9hn7HqhaGFU2dhDx1yYp9Pq3vY+Wts3Rlw==
+X-Received: by 2002:a05:6870:f113:b0:24f:c7cf:17fb with SMTP id 586e51a60fabf-25514c037f9mr50908fac.22.1718140775044;
+        Tue, 11 Jun 2024 14:19:35 -0700 (PDT)
+Received: from [192.168.1.98] (104-48-214-220.lightspeed.snantx.sbcglobal.net. [104.48.214.220])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f9d9a98e74sm616426a34.72.2024.06.11.14.19.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 14:19:34 -0700 (PDT)
+Message-ID: <f288cbb9-af88-4c4e-94d4-60b0829bd0dc@kali.org>
+Date: Tue, 11 Jun 2024 16:19:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611175536.3518179-7-masahiroy@kernel.org>
-
-Hi Masahiro,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on masahiroy-kbuild/kbuild]
-[also build test WARNING on masahiroy-kbuild/for-next next-20240611]
-[cannot apply to masahiroy-kbuild/fixes linus/master v6.10-rc3]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Masahiro-Yamada/kconfig-remove-unneeded-code-in-expr_compare_type/20240612-020202
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git kbuild
-patch link:    https://lore.kernel.org/r/20240611175536.3518179-7-masahiroy%40kernel.org
-patch subject: [PATCH 06/16] kconfig: refactor choice value calculation
-reproduce: (https://download.01.org/0day-ci/archive/20240612/202406120445.P5QmPYgD-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406120445.P5QmPYgD-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> scripts/kconfig/symbol.c:448:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-     448 |                 struct menu *choice_menu = sym_get_choice_menu(sym);
-         |                 ^
-   1 warning generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: cpufreq/thermal regression in 6.10
+To: Johan Hovold <johan@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@lists.linux.dev
+References: <ZmVfcEOxmjUHZTSX@hovoldconsulting.com>
+ <CAJZ5v0gVnjVyd_O6KgXy2sXr3b3M3vyTLyUCasyxP0GrAXro4Q@mail.gmail.com>
+ <CAJZ5v0iz7gwhpvT53CH0ZEA_q3U=dnn6XR8HdLk6LpP3ye4Zkg@mail.gmail.com>
+ <Zmg8x6JXQW1dqOr4@hovoldconsulting.com>
+Content-Language: en-US
+From: Steev Klimaszewski <steev@kali.org>
+In-Reply-To: <Zmg8x6JXQW1dqOr4@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-vim +448 scripts/kconfig/symbol.c
+On 6/11/24 7:02 AM, Johan Hovold wrote:
+> On Tue, Jun 11, 2024 at 12:54:25PM +0200, Rafael J. Wysocki wrote:
+>> On Mon, Jun 10, 2024 at 1:17 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>>> On Sun, Jun 9, 2024 at 9:53 AM Johan Hovold <johan@kernel.org> wrote:
+>>>> Steev reported to me off-list that the CPU frequency of the big cores on
+>>>> the Lenovo ThinkPad X13s sometimes appears to get stuck at a low
+>>>> frequency with 6.10-rc2.
+>>>>
+>>>> I just confirmed that once the cores are fully throttled (using the
+>>>> stepwise thermal governor) due to the skin temperature reaching the
+>>>> first trip point, scaling_max_freq gets stuck at the next OPP:
+>>>>
+>>>>          cpu4/cpufreq/scaling_max_freq:940800
+>>>>          cpu5/cpufreq/scaling_max_freq:940800
+>>>>          cpu6/cpufreq/scaling_max_freq:940800
+>>>>          cpu7/cpufreq/scaling_max_freq:940800
+>>>>
+>>>> when the temperature drops again.
+>> If this is the step-wise governor, the problem might have been
+>> introduced by commit
+>>
+>> 042a3d80f118 thermal: core: Move passive polling management to the core
+>>
+>> which removed passive polling count updates from that governor, so if
+>> the thermal zone in question has passive polling only and no regular
+>> polling, temperature updates may stop coming before the governor drops
+>> the cooling device states to the "no target" level.
+>>
+>> So please test the attached partial revert of the above commit when you can.
+> Thanks for the quick fix. The partial revert seems to do the trick:
+>
+> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+>
+> Johan
 
-   398	
-   399	void sym_calc_value(struct symbol *sym)
-   400	{
-   401		struct symbol_value newval, oldval;
-   402		struct property *prop;
-   403	
-   404		if (!sym)
-   405			return;
-   406	
-   407		if (sym->flags & SYMBOL_VALID)
-   408			return;
-   409	
-   410		sym->flags |= SYMBOL_VALID;
-   411	
-   412		oldval = sym->curr;
-   413	
-   414		newval.tri = no;
-   415	
-   416		switch (sym->type) {
-   417		case S_INT:
-   418			newval.val = "0";
-   419			break;
-   420		case S_HEX:
-   421			newval.val = "0x0";
-   422			break;
-   423		case S_STRING:
-   424			newval.val = "";
-   425			break;
-   426		case S_BOOLEAN:
-   427		case S_TRISTATE:
-   428			newval.val = "n";
-   429			break;
-   430		default:
-   431			sym->curr.val = sym->name;
-   432			sym->curr.tri = no;
-   433			return;
-   434		}
-   435		sym->flags &= ~SYMBOL_WRITE;
-   436	
-   437		sym_calc_visibility(sym);
-   438	
-   439		if (sym->visible != no)
-   440			sym->flags |= SYMBOL_WRITE;
-   441	
-   442		/* set default if recursively called */
-   443		sym->curr = newval;
-   444	
-   445		switch (sym_get_type(sym)) {
-   446		case S_BOOLEAN:
-   447		case S_TRISTATE:
- > 448			struct menu *choice_menu = sym_get_choice_menu(sym);
-   449	
-   450			if (choice_menu) {
-   451				sym_calc_choice(choice_menu);
-   452				newval.tri = sym->curr.tri;
-   453			} else {
-   454				if (sym->visible != no) {
-   455					/* if the symbol is visible use the user value
-   456					 * if available, otherwise try the default value
-   457					 */
-   458					if (sym_has_value(sym)) {
-   459						newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri,
-   460								      sym->visible);
-   461						goto calc_newval;
-   462					}
-   463				}
-   464				if (sym->rev_dep.tri != no)
-   465					sym->flags |= SYMBOL_WRITE;
-   466				if (!sym_is_choice(sym)) {
-   467					prop = sym_get_default_prop(sym);
-   468					if (prop) {
-   469						newval.tri = EXPR_AND(expr_calc_value(prop->expr),
-   470								      prop->visible.tri);
-   471						if (newval.tri != no)
-   472							sym->flags |= SYMBOL_WRITE;
-   473					}
-   474					if (sym->implied.tri != no) {
-   475						sym->flags |= SYMBOL_WRITE;
-   476						newval.tri = EXPR_OR(newval.tri, sym->implied.tri);
-   477						newval.tri = EXPR_AND(newval.tri,
-   478								      sym->dir_dep.tri);
-   479					}
-   480				}
-   481			calc_newval:
-   482				if (sym->dir_dep.tri < sym->rev_dep.tri)
-   483					sym_warn_unmet_dep(sym);
-   484				newval.tri = EXPR_OR(newval.tri, sym->rev_dep.tri);
-   485			}
-   486			if (newval.tri == mod && sym_get_type(sym) == S_BOOLEAN)
-   487				newval.tri = yes;
-   488			break;
-   489		case S_STRING:
-   490		case S_HEX:
-   491		case S_INT:
-   492			if (sym->visible != no && sym_has_value(sym)) {
-   493				newval.val = sym->def[S_DEF_USER].val;
-   494				break;
-   495			}
-   496			prop = sym_get_default_prop(sym);
-   497			if (prop) {
-   498				struct symbol *ds = prop_get_symbol(prop);
-   499				if (ds) {
-   500					sym->flags |= SYMBOL_WRITE;
-   501					sym_calc_value(ds);
-   502					newval.val = ds->curr.val;
-   503				}
-   504			}
-   505			break;
-   506		default:
-   507			;
-   508		}
-   509	
-   510		sym->curr = newval;
-   511		sym_validate_range(sym);
-   512	
-   513		if (memcmp(&oldval, &sym->curr, sizeof(oldval))) {
-   514			sym_set_changed(sym);
-   515			if (modules_sym == sym) {
-   516				sym_set_all_changed();
-   517				modules_val = modules_sym->curr.tri;
-   518			}
-   519		}
-   520	
-   521		if (sym_is_choice(sym))
-   522			sym->flags &= ~SYMBOL_WRITE;
-   523	}
-   524	
+I can also confirm that it's working here!
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Tested-by: Steev Klimaszewski <steev@kali.org>
+
 
