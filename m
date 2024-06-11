@@ -1,353 +1,197 @@
-Return-Path: <linux-kernel+bounces-209406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD6D903430
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E27903425
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1CA2876C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:47:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25DF62820D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6965F172BD0;
-	Tue, 11 Jun 2024 07:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A896172BAD;
+	Tue, 11 Jun 2024 07:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GRYymlpi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u5mEgWuS";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Vs4QnX1R";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="beS+LyS4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="blQE/fLA"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3152172BA5;
-	Tue, 11 Jun 2024 07:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBC616F85B;
+	Tue, 11 Jun 2024 07:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718092024; cv=none; b=JrMDLMI8L6pho+XocVqRgJWA/wXDHQlxsKRZ+VaK0uipTIp/AFVjDEvMvdluaDjg0pXde97ClgrhIoWkIWIjxWc2s/X1Ld9Vy7elZzearUEPUQewFNsxMZaC+x1vOASz13m4QQQEj/qGCFdtHFre35qWgMkiUrWh4/AT4hC/dbs=
+	t=1718091961; cv=none; b=Y6sTi11zo/u6ZT8ms/P3pAxKxKMAl+tGc3cRIbeZosm2EPSna7FQR/HD1fZCPTeoqhugvIisTUT+c2rcsxM1IwVRASd2A1QCrJte8vsaYfxRy8Wl8LYmc3AYHUS1lJZfaN+xKVez4gcgX/6g1eJc40dkJiYwVrX7io8q5tAzB+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718092024; c=relaxed/simple;
-	bh=/A3ym9pXWGkOLvRopdzIUPqfCO8dZ4aqy/ZVag7X6Y4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gL387YoDNunervuMtRSIQnlKTGwn6f9aSdtzLQaD9pCsO5q7qvDHSGsBtQtlz1pM2qA+w/IyD66EPOjtLk5mByOyIuwcnynkmIjy+QFj8EOEi0KpAPoFQlxXTbtYsJD1rssqvvFb3kOMBQLlK2M+f5t+DEzPR4U7cOoHbDe5JD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GRYymlpi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B4i6LP010138;
-	Tue, 11 Jun 2024 07:46:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	w5r3nuxKMn4IEQjsU9v0s0B9+kiIBB+Z1yf5UeMBzZo=; b=GRYymlpiQLL0ftbJ
-	ERI9dLaAs1q9bI6RkpwzPwibwZ1k30WyWUyc3PW1WNuk484YcfE6YFqizmCuBo08
-	I0sG2+kWzBF5w4CsmKU776zPRlYHPj9NAHtQR9JDuKiuJhtu8xJeN06QqaAppX8f
-	4OGEFyABI4S557iXhD6pS/P9jEilHa3dQAFM7qwwCyCl8Trcm2WW/pkXctqmIN/J
-	MMe6F3DTe1HmBDTgOH5+epm+lxRzOOfNPTks1Y1Hea7IocjIl6T/EBhh2y5m2Qg8
-	YxjfsHo1HS83x55ykcHqvZ6xKvoD6OZNcNWJUqx+m144o5SiygxFIDbxC7Fqo7AQ
-	kENqiQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymfp7dceq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 07:46:51 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45B7koHS025255
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 07:46:50 GMT
-Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 11 Jun 2024 00:46:40 -0700
-From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami
-	<bgoswami@quicinc.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela
-	<perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>
-CC: <alsa-devel@alsa-project.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_rohkumar@quicinc.com>,
-        <quic_pkumpatl@quicinc.com>, Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Subject: [PATCH v6 4/7] ASoC: codecs: wcd937x: add basic controls
-Date: Tue, 11 Jun 2024 13:15:54 +0530
-Message-ID: <20240611074557.604250-5-quic_mohs@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240611074557.604250-1-quic_mohs@quicinc.com>
-References: <20240611074557.604250-1-quic_mohs@quicinc.com>
+	s=arc-20240116; t=1718091961; c=relaxed/simple;
+	bh=mp2IL7MdmeQ+2HOU+/QV+QdLYLJxOsq9VsJKxybVlgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qSXORAKkCqdRWIT9oYVdC1AH1KnpddTZKFaSxK8fbZNZumBjJTN4IZIWfjssoE+pWgzU+8f6ViC8rT26R7oi2FDi/ojcNc2fXNXRt1seVaqYx8/gEeIzunPl4oMyE7OR9VkyWeX3GrMRRuME0CridmGEMf9sHbZBCtJVDAcWZZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u5mEgWuS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Vs4QnX1R; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=beS+LyS4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=blQE/fLA; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0B24722CCD;
+	Tue, 11 Jun 2024 07:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718091958; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVao4QsDP4Z+JAjo5dOzj5sxwVNV/Y4USEllUqua+SQ=;
+	b=u5mEgWuSpunEORDd99KB+qYCCofPeL9U0D+nligMM1u7MVYkAsDQ4tHD3Kx6+UbLLoWb9Q
+	ZKLtpOD0A7zMaX96b5O0y7p1jSfvfiouCBinzY0ukzGsQHISDNnZX5BxP7yYnZl30CXRvD
+	XUtm+fRniwugupRUTF0pqvUJ6aUhHeI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718091958;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVao4QsDP4Z+JAjo5dOzj5sxwVNV/Y4USEllUqua+SQ=;
+	b=Vs4QnX1RXzMMer0yUJ/gnSrGDlsxSJRsNXNkxuY1DjYdWEK4c26NAw8fho5r6ae0TqbKkl
+	TducIsP3PboEO4DQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718091957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVao4QsDP4Z+JAjo5dOzj5sxwVNV/Y4USEllUqua+SQ=;
+	b=beS+LyS4FBWnwGXe6a5zd/EhBO0SySrgPbqyL6f5aR8KILqXrR2/CI5lDKJ80NRBdN/pSq
+	JbySBQlifQRqEKrIl1R/jcgrzWFcaHlw0Fl6CIKXrfrMDA8Ys0+B7INFr6lrOOFwfTr1iS
+	ef8d3ylhBReZsLmY5KbBBlD/myYBhkQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718091957;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVao4QsDP4Z+JAjo5dOzj5sxwVNV/Y4USEllUqua+SQ=;
+	b=blQE/fLATW0heDMQ1LEDrIBV+gvCQOtxZiUyMLRgeESKGRSW5JNnkJ/TCLcUuKPV7v/6M6
+	dbtt7phZc0CzDZBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D8AB213A55;
+	Tue, 11 Jun 2024 07:45:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4MdfMrMAaGYMUQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 11 Jun 2024 07:45:55 +0000
+Date: Tue, 11 Jun 2024 09:45:54 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
+	xen-devel@lists.xenproject.org, kasan-dev@googlegroups.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH v1 2/3] mm/memory_hotplug: initialize memmap of
+ !ZONE_DEVICE with PageOffline() instead of PageReserved()
+Message-ID: <ZmgAsolx7SAHeDW7@localhost.localdomain>
+References: <20240607090939.89524-1-david@redhat.com>
+ <20240607090939.89524-3-david@redhat.com>
+ <ZmZ_3Xc7fdrL1R15@localhost.localdomain>
+ <5d9583e1-3374-437d-8eea-6ab1e1400a30@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: nPk_hCMLvVFkzysEBe6xqi35QtqygEj8
-X-Proofpoint-ORIG-GUID: nPk_hCMLvVFkzysEBe6xqi35QtqygEj8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_03,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=933 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
- priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406110056
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d9583e1-3374-437d-8eea-6ab1e1400a30@redhat.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	SUBJECT_HAS_EXCLAIM(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+On Mon, Jun 10, 2024 at 10:56:02AM +0200, David Hildenbrand wrote:
+> There are fortunately not that many left.
+> 
+> I'd even say marking them (vmemmap) reserved is more wrong than right: note
+> that ordinary vmemmap pages after memory hotplug are not reserved! Only
+> bootmem should be reserved.
 
-This patch adds basic controls found in WCD9370/WCD9375 codec.
+Ok, that is a very good point that I missed.
+I thought that hotplugged-vmemmap pages (not selfhosted) were marked as
+Reserved, that is why I thought this would be inconsistent.
+But then, if that is the case, I think we are safe as kernel can already
+encounter vmemmap pages that are not reserved and it deals with them
+somehow.
 
-Co-developed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Co-developed-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
----
- sound/soc/codecs/wcd937x.c | 201 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 201 insertions(+)
+> Let's take at the relevant core-mm ones (arch stuff is mostly just for MMIO
+> remapping)
+> 
+... 
+> Any PageReserved user that I am missing, or why we should handle these
+> vmemmap pages differently than the ones allocated during ordinary memory
+> hotplug?
 
-diff --git a/sound/soc/codecs/wcd937x.c b/sound/soc/codecs/wcd937x.c
-index 4470ee0ecae6..293a84a53918 100644
---- a/sound/soc/codecs/wcd937x.c
-+++ b/sound/soc/codecs/wcd937x.c
-@@ -120,6 +120,10 @@ struct wcd937x_priv {
- 	atomic_t ana_clk_count;
- };
+No, I cannot think of a reason why normal vmemmap pages should behave
+different than self-hosted.
+
+I was also confused because I thought that after this change
+pfn_to_online_page() would be different for self-hosted vmemmap pages,
+because I thought that somehow we relied on PageOffline(), but it is not
+the case.
+
+> In the future, we might want to consider using a dedicated page type for
+> them, so we can stop using a bit that doesn't allow to reliably identify
+> them. (we should mark all vmemmap with that type then)
+
+Yes, a all-vmemmap pages type would be a good thing, so we do not have
+to special case.
+
+Just one last thing.
+Now self-hosted vmemmap pages will have the PageOffline cleared, and that
+will still remain after the memory-block they belong to has gone
+offline, which is ok because those vmemmap pages lay around until the
+chunk of memory gets removed.
+
+Ok, just wanted to convince myself that there will no be surprises.
+
+Thanks David for claryfing.
  
-+static const SNDRV_CTL_TLVD_DECLARE_DB_MINMAX(ear_pa_gain, 600, -1800);
-+static const DECLARE_TLV_DB_SCALE(line_gain, 0, 7, 1);
-+static const DECLARE_TLV_DB_SCALE(analog_gain, 0, 25, 1);
-+
- struct wcd937x_mbhc_zdet_param {
- 	u16 ldo_ctl;
- 	u16 noff;
-@@ -476,6 +480,157 @@ static int wcd937x_connect_port(struct wcd937x_sdw_priv *wcd, u8 port_idx, u8 ch
- 	return 0;
- }
- 
-+static int wcd937x_rx_hph_mode_get(struct snd_kcontrol *kcontrol,
-+				   struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
-+	struct wcd937x_priv *wcd937x = snd_soc_component_get_drvdata(component);
-+
-+	ucontrol->value.integer.value[0] = wcd937x->hph_mode;
-+	return 0;
-+}
-+
-+static int wcd937x_rx_hph_mode_put(struct snd_kcontrol *kcontrol,
-+				   struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component =
-+				snd_soc_kcontrol_component(kcontrol);
-+	struct wcd937x_priv *wcd937x = snd_soc_component_get_drvdata(component);
-+	u32 mode_val;
-+
-+	mode_val = ucontrol->value.enumerated.item[0];
-+
-+	if (!mode_val)
-+		mode_val = CLS_AB;
-+
-+	if (mode_val == wcd937x->hph_mode)
-+		return 0;
-+
-+	switch (mode_val) {
-+	case CLS_H_NORMAL:
-+	case CLS_H_HIFI:
-+	case CLS_H_LP:
-+	case CLS_AB:
-+	case CLS_H_LOHIFI:
-+	case CLS_H_ULP:
-+	case CLS_AB_LP:
-+	case CLS_AB_HIFI:
-+		wcd937x->hph_mode = mode_val;
-+		return 1;
-+	}
-+
-+	dev_dbg(component->dev, "%s: Invalid HPH Mode\n", __func__);
-+	return -EINVAL;
-+}
-+
-+static int wcd937x_get_compander(struct snd_kcontrol *kcontrol,
-+				 struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
-+	struct wcd937x_priv *wcd937x = snd_soc_component_get_drvdata(component);
-+	struct soc_mixer_control *mc;
-+	bool hphr;
-+
-+	mc = (struct soc_mixer_control *)(kcontrol->private_value);
-+	hphr = mc->shift;
-+
-+	ucontrol->value.integer.value[0] = hphr ? wcd937x->comp2_enable :
-+						  wcd937x->comp1_enable;
-+	return 0;
-+}
-+
-+static int wcd937x_set_compander(struct snd_kcontrol *kcontrol,
-+				 struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
-+	struct wcd937x_priv *wcd937x = snd_soc_component_get_drvdata(component);
-+	struct wcd937x_sdw_priv *wcd = wcd937x->sdw_priv[AIF1_PB];
-+	int value = ucontrol->value.integer.value[0];
-+	struct soc_mixer_control *mc;
-+	int portidx;
-+	bool hphr;
-+
-+	mc = (struct soc_mixer_control *)(kcontrol->private_value);
-+	hphr = mc->shift;
-+
-+	if (hphr) {
-+		if (value == wcd937x->comp2_enable)
-+			return 0;
-+
-+		wcd937x->comp2_enable = value;
-+	} else {
-+		if (value == wcd937x->comp1_enable)
-+			return 0;
-+
-+		wcd937x->comp1_enable = value;
-+	}
-+
-+	portidx = wcd->ch_info[mc->reg].port_num;
-+
-+	if (value)
-+		wcd937x_connect_port(wcd, portidx, mc->reg, true);
-+	else
-+		wcd937x_connect_port(wcd, portidx, mc->reg, false);
-+
-+	return 1;
-+}
-+
-+static int wcd937x_get_swr_port(struct snd_kcontrol *kcontrol,
-+				struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mixer = (struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *comp = snd_soc_kcontrol_component(kcontrol);
-+	struct wcd937x_priv *wcd937x = snd_soc_component_get_drvdata(comp);
-+	struct wcd937x_sdw_priv *wcd;
-+	int dai_id = mixer->shift;
-+	int ch_idx = mixer->reg;
-+	int portidx;
-+
-+	wcd = wcd937x->sdw_priv[dai_id];
-+	portidx = wcd->ch_info[ch_idx].port_num;
-+
-+	ucontrol->value.integer.value[0] = wcd->port_enable[portidx];
-+
-+	return 0;
-+}
-+
-+static int wcd937x_set_swr_port(struct snd_kcontrol *kcontrol,
-+				struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mixer = (struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *comp = snd_soc_kcontrol_component(kcontrol);
-+	struct wcd937x_priv *wcd937x = snd_soc_component_get_drvdata(comp);
-+	struct wcd937x_sdw_priv *wcd;
-+	int dai_id = mixer->shift;
-+	int ch_idx = mixer->reg;
-+	int portidx;
-+	bool enable;
-+
-+	wcd = wcd937x->sdw_priv[dai_id];
-+
-+	portidx = wcd->ch_info[ch_idx].port_num;
-+
-+	enable = ucontrol->value.integer.value[0];
-+
-+	if (enable == wcd->port_enable[portidx]) {
-+		wcd937x_connect_port(wcd, portidx, ch_idx, enable);
-+		return 0;
-+	}
-+
-+	wcd->port_enable[portidx] = enable;
-+	wcd937x_connect_port(wcd, portidx, ch_idx, enable);
-+
-+	return 1;
-+}
-+
-+static const char * const rx_hph_mode_mux_text[] = {
-+	"CLS_H_NORMAL", "CLS_H_INVALID", "CLS_H_HIFI", "CLS_H_LP", "CLS_AB",
-+	"CLS_H_LOHIFI", "CLS_H_ULP", "CLS_AB_LP", "CLS_AB_HIFI",
-+};
-+
-+static const struct soc_enum rx_hph_mode_mux_enum =
-+	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(rx_hph_mode_mux_text), rx_hph_mode_mux_text);
-+
- /* MBHC related */
- static void wcd937x_mbhc_clk_setup(struct snd_soc_component *component,
- 				   bool enable)
-@@ -1150,6 +1305,50 @@ static void wcd937x_mbhc_deinit(struct snd_soc_component *component)
- 
- /* END MBHC */
- 
-+static const struct snd_kcontrol_new wcd937x_snd_controls[] = {
-+	SOC_SINGLE_TLV("EAR_PA Volume", WCD937X_ANA_EAR_COMPANDER_CTL,
-+		       2, 0x10, 0, ear_pa_gain),
-+	SOC_ENUM_EXT("RX HPH Mode", rx_hph_mode_mux_enum,
-+		     wcd937x_rx_hph_mode_get, wcd937x_rx_hph_mode_put),
-+
-+	SOC_SINGLE_EXT("HPHL_COMP Switch", SND_SOC_NOPM, 0, 1, 0,
-+		       wcd937x_get_compander, wcd937x_set_compander),
-+	SOC_SINGLE_EXT("HPHR_COMP Switch", SND_SOC_NOPM, 1, 1, 0,
-+		       wcd937x_get_compander, wcd937x_set_compander),
-+
-+	SOC_SINGLE_TLV("HPHL Volume", WCD937X_HPH_L_EN, 0, 20, 1, line_gain),
-+	SOC_SINGLE_TLV("HPHR Volume", WCD937X_HPH_R_EN, 0, 20, 1, line_gain),
-+	SOC_SINGLE_TLV("ADC1 Volume", WCD937X_ANA_TX_CH1, 0, 20, 0, analog_gain),
-+	SOC_SINGLE_TLV("ADC2 Volume", WCD937X_ANA_TX_CH2, 0, 20, 0, analog_gain),
-+	SOC_SINGLE_TLV("ADC3 Volume", WCD937X_ANA_TX_CH3, 0, 20, 0, analog_gain),
-+
-+	SOC_SINGLE_EXT("HPHL Switch", WCD937X_HPH_L, 0, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+	SOC_SINGLE_EXT("HPHR Switch", WCD937X_HPH_R, 0, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+
-+	SOC_SINGLE_EXT("ADC1 Switch", WCD937X_ADC1, 1, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+	SOC_SINGLE_EXT("ADC2 Switch", WCD937X_ADC2, 1, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+	SOC_SINGLE_EXT("ADC3 Switch", WCD937X_ADC3, 1, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+	SOC_SINGLE_EXT("DMIC0 Switch", WCD937X_DMIC0, 1, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+	SOC_SINGLE_EXT("DMIC1 Switch", WCD937X_DMIC1, 1, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+	SOC_SINGLE_EXT("MBHC Switch", WCD937X_MBHC, 1, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+	SOC_SINGLE_EXT("DMIC2 Switch", WCD937X_DMIC2, 1, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+	SOC_SINGLE_EXT("DMIC3 Switch", WCD937X_DMIC3, 1, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+	SOC_SINGLE_EXT("DMIC4 Switch", WCD937X_DMIC4, 1, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+	SOC_SINGLE_EXT("DMIC5 Switch", WCD937X_DMIC5, 1, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+};
-+
- static int wcd937x_set_micbias_data(struct wcd937x_priv *wcd937x)
- {
- 	int vout_ctl[3];
-@@ -1316,6 +1515,8 @@ static const struct snd_soc_component_driver soc_codec_dev_wcd937x = {
- 	.name = "wcd937x_codec",
- 	.probe = wcd937x_soc_codec_probe,
- 	.remove = wcd937x_soc_codec_remove,
-+	.controls = wcd937x_snd_controls,
-+	.num_controls = ARRAY_SIZE(wcd937x_snd_controls),
- 	.set_jack = wcd937x_codec_set_jack,
- 	.endianness = 1,
- };
+
 -- 
-2.25.1
-
+Oscar Salvador
+SUSE Labs
 
