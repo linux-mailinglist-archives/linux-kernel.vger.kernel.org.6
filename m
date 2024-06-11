@@ -1,104 +1,92 @@
-Return-Path: <linux-kernel+bounces-209643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ECE79038D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5270F9038D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 416041C220F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FFC71C23059
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69EC178364;
-	Tue, 11 Jun 2024 10:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F53178364;
+	Tue, 11 Jun 2024 10:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T1wzQjsn"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUdalGxi"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877FD54750;
-	Tue, 11 Jun 2024 10:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380FF54750;
+	Tue, 11 Jun 2024 10:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718101630; cv=none; b=E7wnskbiykMLbhdp3RrlGHE/1J92edCTm4sdRFCzRWcN4oXuIKcjDx90lcduWGpuPybA0xXpx6SllEusz3dxoAMouUmAscIQho5I92ypBsV187kjW/Cx/KrMRWIZJ5yiAczKf1Eoq+pTgsWnC9mjpxjspRGFuOLcraDjyn666qI=
+	t=1718101680; cv=none; b=FC7eHpw1Q2cw6fIy2c+gZI0b4zLHoD8Qh6Y3rh60GqFJStWIm0GO+QDfTxcs+CIOa4VsDF9+v9EMGk6oVwwPFh+Br62HE1AWQgwfHmUjTbikwBpDdNCJJsigVMu2F1nhjvj1+wFIIRmGNG8OyBQgZW2zNKwUdczsZWn5i+b6xIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718101630; c=relaxed/simple;
-	bh=YjCgBc+r+06nJ6IVpW13RFBeFFzWdG5LhXvUogE3Vjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CT6oQbADF0EHrAbdcxlYjQFZVQkFm1t/87ZlMl4VT8QjLtEkgB0mYF0KfHLVapYz3sLdewTjKArt4rIkcvYJeX7q6uFc2s3YEcLKd8nabg1XFBwhNROC6WgxdicQX2RbvDFhv853w3eSj0OcDb/QZFfqxoxfaYtF5oKT0NJnUc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T1wzQjsn; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718101626;
-	bh=YjCgBc+r+06nJ6IVpW13RFBeFFzWdG5LhXvUogE3Vjo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T1wzQjsnI/PhpuS+7t5fBwGZr6+q2ZAxBqLXqQMriXE7BFH57QT/sDcseACk0hDbf
-	 mHUK99ISk7TYaw9IvJz4Xm7/Msho3y10Pk6CMVUBQYEqCG+1Ej59FukA/UQ5wJFC8I
-	 oVoWIgnJte49b4dtn9P85C2PivUVwZocQfrRDJ97i8rroBx750ogE3mmEFdPUBqUjJ
-	 i/LBCZuyz+fTPYHH1Ff1dXDOYKvtyP418oMSiCapdk2sHf7eX/KpklshnpPfaOlRlU
-	 C8MdxapQvg9t/dnqMlIFQZwAoQOn2tna9za2GKGJjRbmIruV1oX/VQrIVf6Pc9G1yr
-	 T45pI9gg3cHSA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D799237804C6;
-	Tue, 11 Jun 2024 10:27:04 +0000 (UTC)
-Message-ID: <6d4173cd-ffe1-427d-ac04-bb9374b4b8d8@collabora.com>
-Date: Tue, 11 Jun 2024 12:27:04 +0200
+	s=arc-20240116; t=1718101680; c=relaxed/simple;
+	bh=3mGLzsS8AyWAzjKPROk6RZKNifdTYAVWZr3yk26LwWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JpDLav+2gI1QYSy0IEsZpeXounzIC48SZEoms+PrptPzLyhibZw5yvmoegXogmATPqiA3VkFes1zEoY8gnZCdokJvRjEV8e/YgKFUawitwcSc+Svej+QCElbpToC0sSAkuarzK8IIhMvJNuL3dbrgVgc6aCaN1ksrgmfuAiwIsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUdalGxi; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f1dc06298so104794266b.1;
+        Tue, 11 Jun 2024 03:27:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718101677; x=1718706477; darn=vger.kernel.org;
+        h=content-transfer-encoding:tested-by:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3mGLzsS8AyWAzjKPROk6RZKNifdTYAVWZr3yk26LwWo=;
+        b=QUdalGxiU1wVaBLdFaJbhKunxCVfs18gsA+xFrpqRl6KTCc872zh9ut4xF4BOI9/vw
+         9yR0qLCxNhCYqP4l8067OFGqskYmGrN0b9ZchnoV/ibcPGyol+cAqg01QoqaDvIwK/rz
+         ix/VKvocXuTCFrPWmgG75WPvm4v/n8IT416THwBtGAtuW9BJhrrB2eGEZgzbzixsl3Hm
+         4teVhwRQ3BNya2NJvcuni7yOIg7OEtvBH2YWDy07snBmvOH8v6rA6I8WJ3SXY0tHxHFG
+         WuV24NMjzKCvq2wOzcL/LSi/Hw/Wmiq5apTrhqU5QV7I2l/bBIhdnHpsP/QJelSJexmL
+         NLCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718101677; x=1718706477;
+        h=content-transfer-encoding:tested-by:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3mGLzsS8AyWAzjKPROk6RZKNifdTYAVWZr3yk26LwWo=;
+        b=Y2UaHcsdSs0f61ZVS7K1JHT0Y7yoVowl5gKftyzilCDbmSTCteKRWWC6xNHwQrCCwQ
+         Rwuojwhm3rtlP88gWVu3PEXHsSVfZQq3gzWe990dqa4STDgdjZfbXQyCM2AX4ZJESrqW
+         f6uVl/YnCeTSeTEboAIdPkaKFviWLfB944989n3pI5mTclZlYyW18dJ2iFuYKKXfmc1u
+         wnF5qogDTB4/FtrfUnysLsDtG8FF5Vo+kn118OR8tb8vz3xyGmWNdv0OqNn0kJJ7ubJ2
+         A2FD7dZ00SmiuGrb2xgHWs9n4j3/nh0oxryRg5RQWUrSsg7OIzbDI4f7nNojGfVuqIFD
+         3Efg==
+X-Forwarded-Encrypted: i=1; AJvYcCWg86xvgMhIWWuGN0CPLZ0MHCX4qdYmY3peQOMGGBllRT42ng2zv8sJGF0TZsg00OQcNodIKzZ9AEJ+xFQA0igTS/2GFAr16NB0KKR717EAmvUYRmpQl3xsFj+tvONGFRRuMWi5aNtxYlAMjXc1cw4rdNbmRaaNjmQA1slBw8NABVt2SkyIqZ4=
+X-Gm-Message-State: AOJu0YyFK+/UdIDKcG+ey8sv20XTq5/TIKrXHMi2ulsO9qrexpkskt/D
+	ADaqyuvil8rB/q4kseDcpHR/LKz8MTnTCLH9g7HANxyZhf0EGCOL
+X-Google-Smtp-Source: AGHT+IFRNCDtyL/Af4ehroEydEl43cOldnihNyAhV1ss3teSJsc2ehyXf6yqeG0Sbf9RDPQM+z/1Eg==
+X-Received: by 2002:a17:906:1394:b0:a6f:2153:855b with SMTP id a640c23a62f3a-a6f215385d1mr274858066b.26.1718101677247;
+        Tue, 11 Jun 2024 03:27:57 -0700 (PDT)
+Received: from michal-Latitude-5420.. ([178.217.115.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f0fbfaf0bsm391105866b.7.2024.06.11.03.27.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 03:27:56 -0700 (PDT)
+From: =?UTF-8?q?Sebastian=20=C5=BB=C3=B3=C5=82tek?= <sebek.zoltek@gmail.com>
+To: syzbot+4fec412f59eba8c01b77@syzkaller.appspotmail.com
+Cc: jack@suse.com,
+	linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Testing if issue still reproduces
+Date: Tue, 11 Jun 2024 12:27:46 +0200
+Message-ID: <20240611102746.620599-1-sebek.zoltek@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000009dcd7705f5776af6@google.com>
+References: <0000000000009dcd7705f5776af6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: controller: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Will Deacon <will@kernel.org>,
- Joyce Ooi <joyce.ooi@intel.com>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Marc Zyngier <maz@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
- Jianjun Wang <jianjun.wang@mediatek.com>,
- Sergio Paracuellos <sergio.paracuellos@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Nirmal Patel <nirmal.patel@linux.intel.com>,
- Jonathan Derrick <jonathan.derrick@linux.dev>
-Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-References: <20240610-md-drivers-pci-controller-v1-1-b998c242df55@quicinc.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240610-md-drivers-pci-controller-v1-1-b998c242df55@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Tested-by: Sebastian Zoltek sebek.zoltek@gmail.com
+Content-Transfer-Encoding: 8bit
 
-Il 11/06/24 03:04, Jeff Johnson ha scritto:
-> When ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/dwc/pci-exynos.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pci-host-generic.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-altera.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-altera-msi.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mediatek.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mediatek-gen3.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/vmd.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-apple.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mt7621.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-
-For MediaTek
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-
+#sys test
 
