@@ -1,107 +1,112 @@
-Return-Path: <linux-kernel+bounces-210223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DAA904106
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:18:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50388904110
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAE91F23C81
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:18:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4891C2378F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E1B3CF7E;
-	Tue, 11 Jun 2024 16:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C0C3D966;
+	Tue, 11 Jun 2024 16:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohSHEeJv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="e28medZ8"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D791CFB2;
-	Tue, 11 Jun 2024 16:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251783B2A2;
+	Tue, 11 Jun 2024 16:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718122707; cv=none; b=NdJ1DHcDyheXpwUtyIoQhVfMNlO0ltOsQfxs/K9nRZ2M5DYpTunbPXJeDhukBlBDGu2NWQWGo0YukI1Cs3GTzRe0EkJZ5duRxt+CFi62UP7uB3QK18ctmpIesSKoe8knrG16QQHvxXPpGciOLp/rLTy1bS+tlt+pDZz+PdVHp38=
+	t=1718122880; cv=none; b=XNMrR0Qh024m7nI34EFec9PiSlvcftFj0WYMcMWK9W21zyLvEl+RDSOE38iTiIPTba4cDlBABIh8xS68E405EvSByyWkgIza8oikIxmdmjYcGN3+VbiQf+5dzlzSeT52lzA1iQQ3GCIyuFMmcx54neSHZpQDmDvuZxAsW9XzPHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718122707; c=relaxed/simple;
-	bh=BXCo5tYRXnp4nFR9iSjOtaso98PV85SmlYISucj3UX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W+wLV5ACLh/DPbPR1CpssyZQsHY7se+Z/nXaawAlqyC4keNKfUgD2buGRIqSecQ7uDTUA2AwjJLOUS8k3e7Je5z+upvTfrAYLZESPMl5QuxG6hd+hGL8gqBtMmfQjeKVKjIgJ+U0BhxFsv4rK93PXnZr/hn62GFuPDHQJ5hyMJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohSHEeJv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19E1EC32789;
-	Tue, 11 Jun 2024 16:18:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718122705;
-	bh=BXCo5tYRXnp4nFR9iSjOtaso98PV85SmlYISucj3UX4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ohSHEeJvbrchG5opz8XOjoL5wWczUKYg/j0J10BezKCKdWUHh+2BGYj+2R2VF18Mi
-	 XxjPWUSuAVLzYTuQ4L1Id7Wk/3W+3mvM8csSpYEc2KuP9ce/ryb2HxUA1lkkXJbnAk
-	 ycthwzrpLuDUuTuRkh4XlaBNI7nC+cxs+PpO8vDpg/C5wHFcqKDsn8W16QnZi0tH5Z
-	 DIW824tseUEYQgmEu7R2mIUAN258cQpMsEFlGEu5cwIdxRTn3rfzKktZUsav89+1o0
-	 AvPQP/2fbiglHKN++jvchzmV0lV14dKFjLkz9KQ4wYWeH0PdcZS9myKs7/inZQrZC/
-	 7oaaF+7qiwjyw==
-Date: Tue, 11 Jun 2024 17:18:23 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
-	quic_pkumpatl@quicinc.com
-Subject: Re: [PATCH v5 0/7] ASoC: codecs: wcd937x: add wcd937x audio codec
- support
-Message-ID: <Zmh4z2F6Q0Z5tWnz@finisterre.sirena.org.uk>
-References: <20240524035535.3119208-1-quic_mohs@quicinc.com>
- <171810116692.177725.17513047102055843084.b4-ty@kernel.org>
- <9a14cb7b-8d6a-14b3-1d3a-b61086e4d4a9@quicinc.com>
+	s=arc-20240116; t=1718122880; c=relaxed/simple;
+	bh=vB1Z8owwQFnccUD4CBUpS3sE/qzWmtYubLamM2KiaQ8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pVZ5JKuvOF414TmmFGkmysI9VRE4Iy3Teq5lm0rSkp0Et+92cXN7iG8lUKyGRc7nbZeNSNc89yfCSnyoCRJFimO3txd+E8oWNji2mWzRQRotjEk6q0QRZg/6UuUdyt73obMxesumJMYaLpqfFteAz4+YpLc01B/uheLCGwwqmzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=e28medZ8; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BC0Q6m016205;
+	Tue, 11 Jun 2024 18:20:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=yyuPGJTfdCHwwLsvwEMk87
+	kB7VvmjgA9WbN3NWRLHL4=; b=e28medZ86wJBqEN9AjMftTIgb0FGGRqFkp7FKN
+	ap64/W+Iz1LtR1p4hKeZcYdsZNjWh8A3VcPJ37BnSLvEYQQuVFUWPOvUAd8flQek
+	IDZP6Tos+Zmpp4yO+wAxyvgSkEaypvW1xePzxscQaWqU5cgXNdZUh0UU/DL2qSZs
+	wO26bJ+ngO9Z/jlyN9RmV4roITWcvrsWO3MGvWT9tRLzJuOUw5CbmI275qlKgb8D
+	MiHV97TaXHrElR8uUIWSI4QGSaRygDSxVNrgqfDG/t64Qmjqge+ZuP89zuGN/Caq
+	vpaFUBlM0jd+jhhlo1cAfbIH6zkUJH7668uisSv24NFC3uXw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ypbp4kusv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 18:20:55 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7C75F4002D;
+	Tue, 11 Jun 2024 18:20:48 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8CEFA21B503;
+	Tue, 11 Jun 2024 18:20:11 +0200 (CEST)
+Received: from localhost (10.48.86.111) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 11 Jun
+ 2024 18:20:11 +0200
+From: Valentin Caron <valentin.caron@foss.st.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+CC: <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Valentin Caron <valentin.caron@foss.st.com>
+Subject: [PATCH 0/2] rtc: stm32: introduce new st,stm32mp25-rtc compatible
+Date: Tue, 11 Jun 2024 18:19:56 +0200
+Message-ID: <20240611161958.469209-1-valentin.caron@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9kuz/Ng8fSpME3+T"
-Content-Disposition: inline
-In-Reply-To: <9a14cb7b-8d6a-14b3-1d3a-b61086e4d4a9@quicinc.com>
-X-Cookie: Your love life will be... interesting.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
 
+Introduce new st,stm32mp25-rtc compatible. It is based on st,stm32mp1-rtc.
 
---9kuz/Ng8fSpME3+T
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Difference is that stm32mp25 SoC implements a triple protection on RTC
+registers:
+- Secure bit based protection
+- Privileged context based protection
+- Compartment ID filtering based protection
+This driver will now check theses configurations before probing to avoid
+exceptions and fake reads on register.
 
-On Tue, Jun 11, 2024 at 05:43:19PM +0530, Mohammad Rafi Shaik wrote:
-> On 6/11/2024 3:49 PM, Mark Brown wrote:
+Link: https://www.st.com/resource/en/reference_manual/rm0457-stm32mp25xx-advanced-armbased-3264bit-mpus-stmicroelectronics.pdf#page=4081
 
-> > If any updates are required or you are submitting further changes they
-> > should be sent as incremental updates against current git, existing
-> > patches will not be replaced.
+Valentin Caron (2):
+  dt-bindings: rtc: stm32: introduce new st,stm32mp25-rtc compatible
+  rtc: stm32: add new st,stm32mp25-rtc compatible and check RIF
+    configuration
 
-> if possible please revert v5 and pick new v6 patch set.
+ .../devicetree/bindings/rtc/st,stm32-rtc.yaml |  5 +-
+ drivers/rtc/rtc-stm32.c                       | 78 +++++++++++++++++++
+ 2 files changed, 82 insertions(+), 1 deletion(-)
 
-As mentioned above please send incremental fixes for any issues, there's
-already other changes on top of these.
+-- 
+2.25.1
 
---9kuz/Ng8fSpME3+T
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZoeM4ACgkQJNaLcl1U
-h9Cnawf/fREWTBnC0LJb0pWn2slZjuzkeDdemDwGEzINKR+3GWRSgkj7g8EfveZZ
-uhpb4kMAETtZZFdqNipbdCdCn0rykBEAg1htIkvk8aCKlDiMKw18vomFlGCHuMyL
-OJU3W0Bdj7gK/9It4OcoR5niYSCX8Qga0y+lanU+7yBgVX/tBlJCWduiQamUwig7
-tzbtQB+/w+rIFk8hOTD7YDN2L3meLPqHqLxZxAf2VGFwti3ZazGFdDcQTPwFEGgL
-uIPG39uCwDr3g1tmX0mcNgg2mOBnWNLreXER2BxaduXePl3qacANXkFpwD3BxNvn
-sC6Abb/j+iurQFMG0e5eZVdgLBc3Pg==
-=qvv7
------END PGP SIGNATURE-----
-
---9kuz/Ng8fSpME3+T--
 
