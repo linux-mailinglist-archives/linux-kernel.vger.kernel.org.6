@@ -1,138 +1,92 @@
-Return-Path: <linux-kernel+bounces-209340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C55869032FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:49:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF9E1903300
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDA711C226CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:49:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 584481F22590
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6F9172777;
-	Tue, 11 Jun 2024 06:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B506171E4C;
+	Tue, 11 Jun 2024 06:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUs5Qk+Y"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UyR1qZfx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAF1171095;
-	Tue, 11 Jun 2024 06:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897BA171E43;
+	Tue, 11 Jun 2024 06:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718088540; cv=none; b=H6TPP9hNOuzv9EbjGBa5pszaJtmlaDWfpvUE1cwuggT7525ML/4zIq3SZDWcWRpbI1QpxFS7tMOVnmemtXHHNKa9qvvzUPPFHWdXo5OWRlsmqLPiTGv6Pp/Psm04EWuC+W69Y9iMguNk1W3GFJn6l7JhDifXekvBqsdrOhy8c58=
+	t=1718088559; cv=none; b=Lc0atIvva4U4vrUlladamy+zTNnvbvC2LOWsuNNeAVe6LnUKZP2F04OQoZEtyYQWhtk2B5QDIrMt/sqWU0KRsUs1sTDpTaydA2csN6AcILlw2TfWtRE0ucxN91swkYLHru9zQS9Z+N08W7tyEOvUXx25mxLTEzl1Ul9/Q4gT2/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718088540; c=relaxed/simple;
-	bh=sqdcRAJXLMtoR6ZfeQzx4vqpaxxnFspu874lptV9+pY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c88ITcHntbM5P5kpKGQdMpC/TeENSSpnY1ozA7KqAfLKCfAR7ZF2NypH3OrY4fjQXhJw3+C8pyy1C9C6MB+UKvCQ7ul8VQKOiqKSwg46MZ5EH+8ShE9ZkOs6S+uJW7fDNB6Bfycw9d/r1uHF08kMfzNmVDGZ5Kysak1Wt14mKTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUs5Qk+Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E177C4AF1C;
-	Tue, 11 Jun 2024 06:48:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718088539;
-	bh=sqdcRAJXLMtoR6ZfeQzx4vqpaxxnFspu874lptV9+pY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YUs5Qk+Yaubr73cmZXJR9lN3ujUwrzci0KsvphW/8w8KOLdsYa0dVG4XGH5Mlsf51
-	 l8DfalUMOMh+g1j9FG27z+ugbUGCJXopzedze/MMAD0qjbu2hHENn/GJcRFsz0Aiiy
-	 BmDZOG2yn8lSJqJvxmm8JtUegxuGx/KQ8yMJ6twL9X/MdnbPFQcif483OhOT6x7TAD
-	 l7Nh8w34eSN/Fa4YJyXl+M2arNHHF4X8x/t4Id13P46imrCTt82s5PTA99d/a1MH8M
-	 sM/LnYafQgFRfDKCYLVgVmses8YTTMNGU2bT9obVN+Skqn/nlTqWepsSSlNm7vnx2X
-	 6A0fCwBjYNurA==
-Message-ID: <5ad52f32-658f-4ae9-902a-9a696973d2ce@kernel.org>
-Date: Tue, 11 Jun 2024 08:48:54 +0200
+	s=arc-20240116; t=1718088559; c=relaxed/simple;
+	bh=Oo9VKE6v5A+22PRpPP/3nDTU91SX8xn3rk0fzBYXti4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eLi1AcNmpey7iI57yRTKLer53TAjQ8X0gnbtYYthyW7ki2utSm5gD2z5KRPqVXlJmfsoQ/K8hj9iTcxIhSyT1GhIwDLvLy0ff8QDY5YuraAbI9inYLwLeqDkmGrDLKOJsVZeelMz5u/EnwyqLObUaMzdhu9QK5+MO/b4w1UZ8fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UyR1qZfx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7777AC2BD10;
+	Tue, 11 Jun 2024 06:49:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718088559;
+	bh=Oo9VKE6v5A+22PRpPP/3nDTU91SX8xn3rk0fzBYXti4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UyR1qZfx0zeP3q/o5r7vOs6rKdHpQX0ggw2JWdLfuiFALrdd+ZNzWvve1MjmAXdGW
+	 PEK5b0+AByNnrW/hyq8A7VBBtB1u2TapmJB0AjI/b9QMNCbrgiT9umpfAUoMON3MBn
+	 q/Cjy/V7XvDyMmxVazAr6n6hbCyHB+VHRvP6A+/c=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: masahiroy@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danny Lin <danny@kdrag0n.dev>,
+	=?UTF-8?q?=C3=8D=C3=B1igo=20Huguet?= <ihuguet@redhat.com>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Subject: [PATCH] .editorconfig: move to Documentation/ directory
+Date: Tue, 11 Jun 2024 08:49:13 +0200
+Message-ID: <2024061112-kilogram-poker-bacf@gregkh>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] media: vgxy61: Add MODULE_ALIAS()
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240610150815.228790-1-benjamin.mugnier@foss.st.com>
- <20240610150815.228790-4-benjamin.mugnier@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240610150815.228790-4-benjamin.mugnier@foss.st.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Lines: 27
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1110; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=Oo9VKE6v5A+22PRpPP/3nDTU91SX8xn3rk0fzBYXti4=; b=owGbwMvMwCRo6H6F97bub03G02pJDGnpnzN6b3E3lGSu9U99/nVp6cSnTBnzNHmdVuy9NEnke mLjJIW2jlgWBkEmBlkxRZYv23iO7q84pOhlaHsaZg4rE8gQBi5OAZjIFWeG+VV/Yt8/+no4lNO5 fYpe91W5v+zZDQwL5nHUFrvvbGMoWPfksfCMvWfffhG5AQA=
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 
-On 10/06/2024 17:08, Benjamin Mugnier wrote:
-> Preserve user space retro compatibility after the device rename.
-> 
-> Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-> ---
->  drivers/media/i2c/vgxy61.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/i2c/vgxy61.c b/drivers/media/i2c/vgxy61.c
-> index ca3b43608dad..c85f356946ca 100644
-> --- a/drivers/media/i2c/vgxy61.c
-> +++ b/drivers/media/i2c/vgxy61.c
-> @@ -1898,3 +1898,4 @@ MODULE_AUTHOR("Mickael Guene <mickael.guene@st.com>");
->  MODULE_AUTHOR("Sylvain Petinot <sylvain.petinot@foss.st.com>");
->  MODULE_DESCRIPTION("VGXY61 camera subdev driver");
->  MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:st-vgxy61");
+Some editors (like the vim variants), when seeing "trim_whitespace"
+decide to do just that for all of the whitespace in the file you are
+saving, even if it is not on a line that you have modified.  This plays
+havoc with diffs and is NOT something that should be intended.
 
-Why? Isn't this autoloated by OF alias? There was never here platform
-alias so no functionality is lost.
+As the "only trim whitespace on modified files" is not part of the
+editorconfig standard, just move the whole thing off to the
+Documentation/ directory so that those that wish to use such a thing can
+pick it up from there.
 
-NAK
+Cc: Danny Lin <danny@kdrag0n.dev>
+Cc: Íñigo Huguet <ihuguet@redhat.com>
+Cc: Mickaël Salaün <mic@digikod.net>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ .editorconfig => Documentation/.editorconfig | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename .editorconfig => Documentation/.editorconfig (100%)
 
-Best regards,
-Krzysztof
+diff --git a/.editorconfig b/Documentation/.editorconfig
+similarity index 100%
+rename from .editorconfig
+rename to Documentation/.editorconfig
+-- 
+2.45.2
 
 
