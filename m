@@ -1,154 +1,142 @@
-Return-Path: <linux-kernel+bounces-209748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8123F903A32
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:33:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8246C903A3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A79271C23084
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:33:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0D3281E89
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B621317C7AB;
-	Tue, 11 Jun 2024 11:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E51C17C7D1;
+	Tue, 11 Jun 2024 11:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e1FKzCg9"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="q6Y3sQ30"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B7017C20D;
-	Tue, 11 Jun 2024 11:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099F017BB0A;
+	Tue, 11 Jun 2024 11:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718105544; cv=none; b=iYXVVGMD7LPM9LaIfX44ZPH4YQzeIxpkZxZzT4Hpj8fkoQ8v4X0L2zFpz0OryPOuU3mZlXNimpp/KQcmvEdrfOvy3yN5UiI/S2pip2PhrAy9iGZgHjaaFPDPT8V6U41yV7hQzyNU/hjceRkr3ePpjiy2f61FGZONXWwwO1j1vec=
+	t=1718105577; cv=none; b=m8AiaQTy9ErKimKmTrpcNlCzvD7P+kuLOUZfvKgjoPfup/EefBI+dH5AY1ogVcZUHN8o61O6scamB+08ht5KWTMQ4pR/JaEr6FtSv9Jn2aVku4gGpK1ZiyGMxksbZXHH8ZZ00W/k3JPxUfOBx7WOentbYaYzWlHNeRUcWZdeYxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718105544; c=relaxed/simple;
-	bh=wTDGlpwvDV/tYVSnvnYnjRhtXn8bRII9NTQtrKlKeew=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lphvQ3xbuC11kojOypYP/rqcMWJDpuECWY8XWwZFomFmX37o2V9B0HlUYaTiqHCZmr2rmLeQ+4sl3z9zjuOgL3yt9wyOlC5/pbiGwO7eHgbocksap/apzfdhuW00gLbz3WCBTOdO5J+duFPAdPfMS6JQRNhI7/CH0MLsSWpmFck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e1FKzCg9; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4217926991fso29620705e9.3;
-        Tue, 11 Jun 2024 04:32:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718105541; x=1718710341; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DUr5nSYv5tY7HQINi2nTpc/x5kG6Ztbr9RxJD3fNnUU=;
-        b=e1FKzCg99nHZM03/ks5kViLDnq+mSXthPv//GiKV99qg/c6A8WQanVHTgvZCyigUyl
-         JwCHmMBY6WYpsd6qYvrPWwOShSMy3TzfakI3My0tZSep63smFuOUX5dSzlMG71Q7pG+E
-         pkAQytPoZ00jJJcgQLRo7B5sOl4U1M14JX9Xsq+vLk7BzMmFcNHhwqb5NaYqn2wVTZVa
-         9SDqCgFK6gG3o+muAP7YSUG+etXt8mXUIwk0rN3osO8s1qiU6BOR71WJ+x6MES1T6lz6
-         dMuGp53teUUE5f8AlwjcVfKcrKOw1YxgvnFTQgWihsJQ5NzUvOtSLAEa2p+z5JRoX8Go
-         iAIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718105541; x=1718710341;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DUr5nSYv5tY7HQINi2nTpc/x5kG6Ztbr9RxJD3fNnUU=;
-        b=kcl+u3F1slM3f15GB/WWedOlgKJWJ1W5xa3FFUTYMYIKgCE8SBzeP8vWVYzt5ixE+n
-         u1eTp8kTsDpjovYfdTUpLNroJHxqgzDf84SWVH5DV3owb+k6T6FXEpYDTiXAYnLR/ZrZ
-         t0SuWrh8BKhWGdng2tudUfy/u7cgdlbJ9ztZmGgAkVSBabok6HugL21VseIOrPBFUxFZ
-         mFsZXaTthEBdynKNvcroM9qk2XEqXKIrJ4sgsxVyy5YZNEFBTaBcChG7bjgWmiPWlsNJ
-         xE8Gs2d+yv95nLxD7fcMARjt8DQ4RmrhiHcJ+LmPWmjaYhdrvn0Ee9BOI8NPzpUaNj+C
-         cqRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWubeiJYvaYBnJHXRuZmGC+1y4d8Y81Re5MAQ79pDQD4l9IgJmjSWLmrDNhUzF7YBikSum2A81exLlPBJGpn5i8p4PaQ6OimgEtPwKzTl+oxTOVDI2SZBUmqkqDtwBj+6P0Xv9q2pnionKeYCGap6t44aSSjlJS9DYKpIdQUTMR6yG8hEU=
-X-Gm-Message-State: AOJu0YxlScOsFH0Fp6m3TICM9juZp1xSXZqFIgnGd4I8CNQPuxq3EAjh
-	Z3n5yER+hKJonSaCcF22nHpV9sOKrwnghaByGBgPdZjXbE/CSOMjco/SqQ==
-X-Google-Smtp-Source: AGHT+IHknZho3WwfJIZcfYix14c2tO11q1f1ovDFm6NviLABNMYl+fM8KHPpVL5yeiD3xRWqRerNiQ==
-X-Received: by 2002:a05:600c:1d1d:b0:422:5a9c:fdb7 with SMTP id 5b1f17b1804b1-4225a9cffc6mr13062365e9.29.1718105540603;
-        Tue, 11 Jun 2024 04:32:20 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4227467990csm2473505e9.1.2024.06.11.04.32.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 04:32:20 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	=?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>,
-	linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Daniel=20Gonz=C3=A1lez=20Cabanelas?= <dgcbueu@gmail.com>
-Subject: [PATCH v6 5/5] mips: bmips: enable RAC on BMIPS4350
-Date: Tue, 11 Jun 2024 13:32:08 +0200
-Message-ID: <20240611113209.8142-6-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240611113209.8142-1-ansuelsmth@gmail.com>
-References: <20240611113209.8142-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1718105577; c=relaxed/simple;
+	bh=05kfyfA+1HW/19R9nKDQLxLwlI0VDXCoagdozz8+RPk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nNvdtQzDwwSec4000oQTEznMPGq2Qq5saowuZ9vYQDsMn0Bce/2R95ppLF4x878ERpz9wF66eq9t2KgrMXUGhNFNGW/kDdUiElq5Dp9YmcsGXCSpeW7JBeAXXKg/TFxn9+VHi51IkGtZNfIKAqtXsZnrVcdLJkNFgzcQkJxgYQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=q6Y3sQ30; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 548e59ce27e611efa22eafcdcd04c131-20240611
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=gZ+L3w0QZv+3dXASpa8etsuHp4Ejgx7CTnrEsKA4Jck=;
+	b=q6Y3sQ30CzbVjSHSA+CcuxnWOaUDK+FValPmlYnrAGxiU47Co32KUp7XnFf+7n10+85xWkWRCj9dFNa99aiOpJm1H6QBoRYjyEdIdv644DAmnSxX8nyTOxrZsXODnLAvwRpwFwOkZTtGoCUPDnvd6WiuZI+dgArJbhZRgm5115s=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:5c3d9a77-a3ce-4b5c-bbfa-d1b192fb7d8d,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:393d96e,CLOUDID:0532db93-e2c0-40b0-a8fe-7c7e47299109,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 548e59ce27e611efa22eafcdcd04c131-20240611
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <zhi.mao@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1356379596; Tue, 11 Jun 2024 19:32:48 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 11 Jun 2024 19:32:47 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 11 Jun 2024 19:32:46 +0800
+From: Zhi Mao <zhi.mao@mediatek.com>
+To: <mchehab@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <sakari.ailus@linux.intel.com>
+CC: <laurent.pinchart@ideasonboard.com>, <shengnan.wang@mediatek.com>,
+	<yaya.chang@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, <yunkec@chromium.org>,
+	<conor+dt@kernel.org>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <jacopo.mondi@ideasonboard.com>,
+	<zhi.mao@mediatek.com>, <10572168@qq.com>, <hverkuil-cisco@xs4all.nl>,
+	<heiko@sntech.de>, <jernej.skrabec@gmail.com>, <macromorgan@hotmail.com>,
+	<linus.walleij@linaro.org>, <hdegoede@redhat.com>,
+	<tomi.valkeinen@ideasonboard.com>, <gerald.loacker@wolfvision.net>,
+	<andy.shevchenko@gmail.com>, <bingbu.cao@intel.com>,
+	<dan.scally@ideasonboard.com>, <linux-media@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: [PATCH v6 0/3] media: i2c: Add support for GC05A2 sensor
+Date: Tue, 11 Jun 2024 19:32:33 +0800
+Message-ID: <20240611113236.16513-1-zhi.mao@mediatek.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-From: Daniel González Cabanelas <dgcbueu@gmail.com>
 
-The data RAC is left disabled by the bootloader in some SoCs, at least in
-the core it boots from.
-Enabling this feature increases the performance up to +30% depending on the
-task.
+This series adds YAML DT binding and V4L2 sub-device driver for Galaxycore's
+GC05A2 5-megapixel 10-bit RAW CMOS 1/5" sensor, with an MIPI CSI-2 image data
+interface and the I2C control bus.
 
-Signed-off-by: Daniel González Cabanelas <dgcbueu@gmail.com>
-Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
-[ rework code and reduce code duplication ]
-Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- arch/mips/kernel/smp-bmips.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+The driver is implemented with V4L2 framework.
+ - Async registered as a V4L2 sub-device.
+ - As the first component of camera system including Seninf, ISP pipeline.
+ - A media entity that provides one source pad in common.
+ - Used in camera features on ChromeOS application.
 
-diff --git a/arch/mips/kernel/smp-bmips.c b/arch/mips/kernel/smp-bmips.c
-index 20e2fb10022d..e30342af8d91 100644
---- a/arch/mips/kernel/smp-bmips.c
-+++ b/arch/mips/kernel/smp-bmips.c
-@@ -598,6 +598,7 @@ asmlinkage void __weak plat_wired_tlb_setup(void)
- void bmips_cpu_setup(void)
- {
- 	void __iomem __maybe_unused *cbr = bmips_cbr_addr;
-+	u32 __maybe_unused rac_addr;
- 	u32 __maybe_unused cfg;
- 
- 	switch (current_cpu_type()) {
-@@ -626,6 +627,23 @@ void bmips_cpu_setup(void)
- 		__raw_readl(cbr + BMIPS_RAC_ADDRESS_RANGE);
- 		break;
- 
-+	case CPU_BMIPS4350:
-+		rac_addr = BMIPS_RAC_CONFIG_1;
-+
-+		if (!(read_c0_brcm_cmt_local() & (1 << 31)))
-+			rac_addr = BMIPS_RAC_CONFIG;
-+
-+		/* Enable data RAC */
-+		cfg = __raw_readl(cbr + rac_addr);
-+		__raw_writel(cfg | 0xf, cbr + rac_addr);
-+		__raw_readl(cbr + rac_addr);
-+
-+		/* Flush stale data out of the readahead cache */
-+		cfg = __raw_readl(cbr + BMIPS_RAC_CONFIG);
-+		__raw_writel(cfg | 0x100, cbr + BMIPS_RAC_CONFIG);
-+		__raw_readl(cbr + BMIPS_RAC_CONFIG);
-+		break;
-+
- 	case CPU_BMIPS4380:
- 		/* CBG workaround for early BMIPS4380 CPUs */
- 		switch (read_c0_prid()) {
+Also this driver supports following features:
+ - manual exposure and analog gain control support
+ - vertical blanking control support
+ - test pattern support
+ - media controller support
+ - runtime PM support
+ - support resolution: 2592x1944@30fps, 1280x720@60fps
+
+Previous versions of this patch-set can be found here:
+v5:https://lore.kernel.org/all/20240605105540.17937-1-zhi.mao@mediatek.com/ 
+v4:https://lore.kernel.org/all/20240427052233.8915-1-zhi.mao@mediatek.com/
+v3:https://lore.kernel.org/linux-media/20240403033825.9072-1-zhi.mao@mediatek.com/
+v2:https://lore.kernel.org/linux-media/20240323014751.4989-1-zhi.mao@mediatek.com/
+v1:https://lore.kernel.org/linux-media/20240316025253.2300-1-zhi.mao@mediatek.com/
+v0:https://lore.kernel.org/linux-media/20240313054409.8073-1-zhi.mao@mediatek.com/
+
+This series is based on linux-next, tag: next-20240611
+Changes in v6:
+- use "dev_err_probe" API in probe function 
+
+Thanks
+
+Zhi Mao (3):
+  media: dt-bindings: i2c: add GalaxyCore GC05A2 image sensor
+  media: i2c: Add GC05A2 image sensor driver
+  MAINTAINERS: Add entry for GC05A2 image sensor
+
+ .../bindings/media/i2c/galaxycore,gc05a2.yaml |  112 ++
+ MAINTAINERS                                   |    7 +
+ drivers/media/i2c/Kconfig                     |   10 +
+ drivers/media/i2c/Makefile                    |    1 +
+ drivers/media/i2c/gc05a2.c                    | 1359 +++++++++++++++++
+ 5 files changed, 1489 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/galaxycore,gc05a2.yaml
+ create mode 100644 drivers/media/i2c/gc05a2.c
+
 -- 
-2.43.0
+2.25.1
+
+
+
 
 
