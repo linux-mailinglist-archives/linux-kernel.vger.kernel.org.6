@@ -1,76 +1,322 @@
-Return-Path: <linux-kernel+bounces-209998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB88903DE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:48:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 108E5903DE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CED1C23579
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:48:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C9D91F24544
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5267717D36E;
-	Tue, 11 Jun 2024 13:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mywbSxRw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87DD17D377;
+	Tue, 11 Jun 2024 13:48:15 +0000 (UTC)
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898221E4AF;
-	Tue, 11 Jun 2024 13:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F16017D34A;
+	Tue, 11 Jun 2024 13:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718113672; cv=none; b=tKL7z2bW3pamCGBlQ00z1YK+bhAnui9PMtgK0E8t1gdR0hW9Vw+lSXDH/DC/5ta4kta4eZ5+aAZd3DABrqvwCBJkSWdoNbc2LaQ4X62/fp8/y9Ic7OngoeSN1tFVNzsNgrSIUv+Mzt1+ZYkkHx6n9aSfQgQr5FLZFSO9MI1ZvUA=
+	t=1718113695; cv=none; b=mazWHyyid9TafYr6liN61IsCPX6Mx21XBEzVzf30ZFA2cOlgZ79ISCfcfNb25vSO5r+lad+Wx+95eLnuV+h8nBDJRPadBD/UU9d8i5z3qNdQmTfz1HOHWd6LsqsF/t9E8ksD+Qay3Q2ceMvTTVi+hx3sNjnY3LQWMUunNGfyZD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718113672; c=relaxed/simple;
-	bh=vziXDxPFWpaRQe9ayJKRHJKfaw7h6fZZuPvRk72BT/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YaSuDtrb7cEfdDYDBVxt4zFHtuDstC4bzFGGIHbpPJwYlU+j/wKeDAwcY6ZKtUtnvtJQDX3h9zE+StIZgtG3v9OQ7HMNyMEZsc27GwcGhKN0hOe1xLEdptYwyI+53/vXaOY/qh3ge20LKRT1M4YMo0wIMvHA8MoaUEj22JwP8i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mywbSxRw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA408C2BD10;
-	Tue, 11 Jun 2024 13:47:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718113672;
-	bh=vziXDxPFWpaRQe9ayJKRHJKfaw7h6fZZuPvRk72BT/c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mywbSxRwEZN69ovXG9suAFZtgFowPVp9WB5S8xnTenWiFUmXTRT8f/7kNpkB8k0YF
-	 xCdGdbM2PbejW2Y/RXbbXjkItLfadQMzcwnyjHSoEQXSZjrgkKAeYdOySqvF98L9CZ
-	 JhCnyG6jH1lHCF/1txD7AWQdxz0zbcypzABVj/380+GPi1NyCqRzQBXscviNVhvkGM
-	 4LlJrYZ5TN83Nl23YTF7y4kZuo5Gl32PZwrctRiYZh5pIX9qw/HI+XE0znX+LuudPY
-	 gN4cXmRmPFar40ZDRAM12EXybrblNsAcKdJZelMGM9XJPdG94grvR19esazdVVgaNJ
-	 tvG77IVrFWf4A==
-Date: Tue, 11 Jun 2024 07:47:50 -0600
-From: Rob Herring <robh@kernel.org>
-To: Rohit Agarwal <quic_rohiagar@quicinc.com>
-Cc: vkoul@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andersson@kernel.org, konrad.dybcio@linaro.org,
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: dma: qcom,gpi: document the SDX75 GPI
- DMA Engine
-Message-ID: <20240611134750.GA1800425-robh@kernel.org>
-References: <20240517100423.2006022-1-quic_rohiagar@quicinc.com>
- <20240517100423.2006022-2-quic_rohiagar@quicinc.com>
+	s=arc-20240116; t=1718113695; c=relaxed/simple;
+	bh=5OH2VUSWHdHfbk+E0E/gtdS5XtLsKAfAOAuqUYVEUXk=;
+	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
+	 References:Message-ID; b=ZQoggJBEeEm5PK7TA6wSdblPXolfHIBUhRGiwXA4UMxM7zTqGMAHWVGXe+YDt3F9Uxb/6E8q//p09Ct6928F15hQH/iWIxB4XYf1VycFV8cIEoZnpr4ymbzqSeZpIlZTAVszEUGBsD7VxiOXdc5VRpDmed5BKsJjmMK0HHVT8Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
+Received: from [127.0.0.1] (helo=localhost)
+	by relay.expurgate.net with smtp (Exim 4.92)
+	(envelope-from <prvs=9906f4c1d5=ms@dev.tdt.de>)
+	id 1sH1r8-000ya6-Kt; Tue, 11 Jun 2024 15:48:10 +0200
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ms@dev.tdt.de>)
+	id 1sH1r7-00FFzX-TY; Tue, 11 Jun 2024 15:48:09 +0200
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+	by securemail.tdt.de (Postfix) with ESMTP id 75A5C240053;
+	Tue, 11 Jun 2024 15:48:09 +0200 (CEST)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+	by securemail.tdt.de (Postfix) with ESMTP id 04B7F240050;
+	Tue, 11 Jun 2024 15:48:09 +0200 (CEST)
+Received: from mail.dev.tdt.de (localhost [IPv6:::1])
+	by mail.dev.tdt.de (Postfix) with ESMTP id 6DD0D30F70;
+	Tue, 11 Jun 2024 15:48:08 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517100423.2006022-2-quic_rohiagar@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 11 Jun 2024 15:48:08 +0200
+From: Martin Schiller <ms@dev.tdt.de>
+To: Rob Herring <robh@kernel.org>
+Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
+ f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org,
+ conor+dt@kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v4 01/13] dt-bindings: net: dsa: lantiq,gswip:
+ convert to YAML schema
+Organization: TDT AG
+In-Reply-To: <20240611132730.GA1683993-robh@kernel.org>
+References: <20240611114027.3136405-1-ms@dev.tdt.de>
+ <20240611114027.3136405-2-ms@dev.tdt.de>
+ <20240611132730.GA1683993-robh@kernel.org>
+Message-ID: <e0eea99badf86544b7d45a5eec7feee3@dev.tdt.de>
+X-Sender: ms@dev.tdt.de
+User-Agent: Roundcube Webmail/1.3.17
+X-purgate: clean
+X-purgate-type: clean
+X-purgate-ID: 151534::1718113690-1ECDD522-8C2CEC4A/0/0
 
-On Fri, May 17, 2024 at 03:34:22PM +0530, Rohit Agarwal wrote:
-> Document the GPI DMA Engine on the SDX75 Platform.
+On 2024-06-11 15:27, Rob Herring wrote:
+> On Tue, Jun 11, 2024 at 01:40:15PM +0200, Martin Schiller wrote:
+>> Convert the lantiq,gswip bindings to YAML format.
+>> 
+>> Also add this new file to the MAINTAINERS file.
+>> 
+>> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+>> ---
+>>  .../bindings/net/dsa/lantiq,gswip.yaml        | 195 
+>> ++++++++++++++++++
+>>  .../bindings/net/dsa/lantiq-gswip.txt         | 146 -------------
+>>  MAINTAINERS                                   |   1 +
+>>  3 files changed, 196 insertions(+), 146 deletions(-)
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+>>  delete mode 100644 
+>> Documentation/devicetree/bindings/net/dsa/lantiq-gswip.txt
+>> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml 
+>> b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+>> new file mode 100644
+>> index 000000000000..14ef48d6a0ee
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+>> @@ -0,0 +1,195 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/net/dsa/lantiq,gswip.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Lantiq GSWIP Ethernet switches
+>> +
+>> +allOf:
+>> +  - $ref: dsa.yaml#/$defs/ethernet-ports
+>> +
+>> +maintainers:
+>> +  - Hauke Mehrtens <hauke@hauke-m.de>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - lantiq,xrx200-gswip
+>> +      - lantiq,xrx300-gswip
+>> +      - lantiq,xrx330-gswip
+>> +
+>> +  reg:
+>> +    minItems: 3
+>> +    maxItems: 3
 > 
-> Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/dma/qcom,gpi.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> blank line
+> 
+>> +  reg-names:
+>> +    items:
+>> +      - const: switch
+>> +      - const: mdio
+>> +      - const: mii
+>> +
+>> +  mdio:
+>> +    $ref: /schemas/net/mdio.yaml#
+>> +    unevaluatedProperties: false
+>> +
+>> +    properties:
+>> +      compatible:
+>> +        const: lantiq,xrx200-mdio
+>> +
+>> +    required:
+>> +      - compatible
+>> +
+>> +  gphy-fw:
+>> +    type: object
+>> +    properties:
+>> +      '#address-cells':
+>> +        const: 1
+> 
+> blank line
+> 
+>> +      '#size-cells':
+>> +        const: 0
+>> +
+>> +      compatible:
+>> +        allOf:
+> 
+> Don't need allOf.
+> 
+>> +          - items:
+>> +              - enum:
+>> +                  - lantiq,xrx200-gphy-fw
+>> +                  - lantiq,xrx300-gphy-fw
+>> +                  - lantiq,xrx330-gphy-fw
+>> +              - const: lantiq,gphy-fw
+>> +
+>> +      lantiq,rcu:
+>> +        $ref: /schemas/types.yaml#/definitions/phandle
+>> +        description: phandle to the RCU syscon
+>> +
+>> +    patternProperties:
+>> +      "^gphy@[0-9a-f]+$":
+> 
+> "^gphy@[0-9a-f]{1,2]$"
+> 
+>> +        type: object
+>> +
+>> +        properties:
+>> +          reg:
+>> +            minimum: 0
+>> +            maximum: 255
+>> +            description:
+>> +              Offset of the GPHY firmware register in the RCU 
+>> register range
+>> +
+>> +          resets:
+>> +            items:
+>> +              - description: GPHY reset line
+>> +
+>> +          reset-names:
+>> +            items:
+>> +              - const: gphy
+>> +
+>> +        required:
+>> +          - reg
+>> +
+>> +        additionalProperties: false
+> 
+> For indented cases, it is preferred to put this before 'properties'.
+> 
+>> +
+>> +    required:
+>> +      - compatible
+>> +      - lantiq,rcu
+>> +
+>> +    additionalProperties: false
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    switch@e108000 {
+>> +            compatible = "lantiq,xrx200-gswip";
+>> +            reg = <0xe108000 0x3100>,  /* switch */
+>> +                  <0xe10b100 0xd8>,    /* mdio */
+>> +                  <0xe10b1d8 0x130>;   /* mii */
+>> +            dsa,member = <0 0>;
+>> +
+>> +            ports {
+>> +                    #address-cells = <1>;
+>> +                    #size-cells = <0>;
+>> +
+>> +                    port@0 {
+>> +                            reg = <0>;
+>> +                            label = "lan3";
+>> +                            phy-mode = "rgmii";
+>> +                            phy-handle = <&phy0>;
+>> +                    };
+>> +
+>> +                    port@1 {
+>> +                            reg = <1>;
+>> +                            label = "lan4";
+>> +                            phy-mode = "rgmii";
+>> +                            phy-handle = <&phy1>;
+>> +                    };
+>> +
+>> +                    port@2 {
+>> +                            reg = <2>;
+>> +                            label = "lan2";
+>> +                            phy-mode = "internal";
+>> +                            phy-handle = <&phy11>;
+>> +                    };
+>> +
+>> +                    port@4 {
+>> +                            reg = <4>;
+>> +                            label = "lan1";
+>> +                            phy-mode = "internal";
+>> +                            phy-handle = <&phy13>;
+>> +                    };
+>> +
+>> +                    port@5 {
+>> +                            reg = <5>;
+>> +                            label = "wan";
+>> +                            phy-mode = "rgmii";
+>> +                            phy-handle = <&phy5>;
+>> +                    };
+>> +
+>> +                    port@6 {
+>> +                            reg = <0x6>;
+>> +                            ethernet = <&eth0>;
+>> +                    };
+>> +            };
+>> +
+>> +            mdio {
+>> +                    #address-cells = <1>;
+>> +                    #size-cells = <0>;
+>> +                    compatible = "lantiq,xrx200-mdio";
+>> +
+>> +                    phy0: ethernet-phy@0 {
+>> +                            reg = <0x0>;
+>> +                    };
+>> +                    phy1: ethernet-phy@1 {
+>> +                            reg = <0x1>;
+>> +                    };
+>> +                    phy5: ethernet-phy@5 {
+>> +                            reg = <0x5>;
+>> +                    };
+>> +                    phy11: ethernet-phy@11 {
+>> +                            reg = <0x11>;
+>> +                    };
+>> +                    phy13: ethernet-phy@13 {
+>> +                            reg = <0x13>;
+>> +                    };
+>> +            };
+>> +
+>> +            gphy-fw {
+>> +                    #address-cells = <1>;
+>> +                    #size-cells = <0>;
+>> +                    compatible = "lantiq,xrx200-gphy-fw", 
+>> "lantiq,gphy-fw";
+>> +                    lantiq,rcu = <&rcu0>;
+>> +
+>> +                    gphy@20 {
+>> +                            reg = <0x20>;
+>> +
+>> +                            resets = <&reset0 31 30>;
+>> +                            reset-names = "gphy";
+>> +                    };
+>> +
+>> +                    gphy@68 {
+>> +                            reg = <0x68>;
+>> +
+>> +                            resets = <&reset0 29 28>;
+>> +                            reset-names = "gphy";
+>> +                    };
+>> +            };
+>> +    };
 
-Looks like this was missed, so I've applied it.
-
-Rob
+OK, thanks for the review. I will send a v5 with these improvements
+included and the two dt-bindings patches merged to satisfy the
+'make dt_binding_check'.
 
