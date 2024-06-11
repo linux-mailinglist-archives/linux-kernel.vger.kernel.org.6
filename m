@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-209679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F9790394D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:51:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71197903950
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67CCD286EB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:51:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED23C1F243F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D7617967F;
-	Tue, 11 Jun 2024 10:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00000179203;
+	Tue, 11 Jun 2024 10:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fwlDQo2n"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="THmFfIos"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4863C178397
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D464114F9CD
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718103053; cv=none; b=oxkeld/mmmVT3WwNnWeD6VakBpNf3bA7HIh9AAIKZa5ajeFpI3S+/uYb3eYuVjCJ3CUDc2pM8qiVBAomEift03/mfLxWJ4wi+7bkRTpDd251Ua15PPBS1TQrpDoNtNMZZZMNLh1/gR0E0L9BtIMXohT7T2M4kzG8c56hr6liqQY=
+	t=1718103095; cv=none; b=TT6bnZXZ5gABeGGNwcp3JTy5Ho14IkwrSECvQzst0aAO+UtNAEHCMnWrWr6ZXysNBfQ3TxoUFm6KnKvXDFr8X4YP0zGlrkwdgz5dbhFYxb2D+MTEF835M7FyLyH7OPt2saOK5EzfvGOKUNc5VKZpVT2bE//9ulxqZFxeaEIjG64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718103053; c=relaxed/simple;
-	bh=gEu3DeLm/Cj4KzSje6vtm9+JuOx5buAoruQTENtwymU=;
+	s=arc-20240116; t=1718103095; c=relaxed/simple;
+	bh=5jokJu+77cTy9PlFn2+XS0YSs6Y+O/ThgQSZEKuYE/E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a05AIJBvLH9VGPXlFQPqmK6TO7139BAUrFNojBDdLN/rFUoi0QFQ4RMS+g5AHm5sFgtaqb+PXPE9B0PsnqmlL7lVHUa5/FSNQvd0dr7WhiDyPuxZ2WjIibFe1rxUmKcSbH1Rm7hsKBJD3SJ7bEWqiFdRxgYKsSPmoH5JwHXxJv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fwlDQo2n; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=pb6z1Ws9azyb/4+STW9sGYilfEoCfrrZbDKNIm1l2bmdhDdPqNK+QAqsMrR+VU1LFASgTzLCtq8vDESD8gwDxaPVmEU1MRYUGXab2AA//dr6Aj723eQD4sOD/gyKmhJ3ULgJFFNvLY9ZbkH0vzbmDPMLjYToK57fzeCwy6t/HxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=THmFfIos; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718103051;
+	s=mimecast20190719; t=1718103092;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3ysdFsrtDcDxrPLWReLHv5ssrGeZHQvSPRbBF339uAA=;
-	b=fwlDQo2n354FCwVJLEo+hK85AsqxtkHoU1/+Oo9HseEAyXc5qr6NAf1PVHK5/YTFza6wxr
-	uAuytm9Hlu6JrAPk3mrmNXFfnStpJrhyuhKeAZa+iKmUuaEhvn0uJBllzWzbIqrlCeHGTg
-	7NtlRu2KNM1aj+6T51T2nDH1Y8eFfwI=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=xJzyOstj03OACQiOW3AK8lHNiLSnxNoCbEIihZoOnH0=;
+	b=THmFfIosxHn1ld/5HpdKltPzh6Mu1hQRya5P+GoZfHpIgijemIklyfcWpOXpp01s17URf3
+	drx/aoEh4SqAxycNRww1kNbYBjdA97z6f0f9PiirNZttnU39JuAFCnGkG9wnEGUWbnYBPl
+	CN/8j2iQl8T/Jm022dp8DOD8uX0zovk=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-224-UgstHSRtOniHj4Y6EombNw-1; Tue, 11 Jun 2024 06:50:50 -0400
-X-MC-Unique: UgstHSRtOniHj4Y6EombNw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-35f27bfa618so957747f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:50:49 -0700 (PDT)
+ us-mta-662-HvPzFMcGP868UhHiGk14nQ-1; Tue, 11 Jun 2024 06:51:31 -0400
+X-MC-Unique: HvPzFMcGP868UhHiGk14nQ-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ebf0863242so7790171fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:51:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718103049; x=1718707849;
+        d=1e100.net; s=20230601; t=1718103090; x=1718707890;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=3ysdFsrtDcDxrPLWReLHv5ssrGeZHQvSPRbBF339uAA=;
-        b=K5C8cPYVuYNbRytaZf1oLM2Pg5xm05zboQqn0b7G5hS2pZANQnTbZgips8nBrMOnep
-         fyplbvL41VvXtku6tP8QXGQVGliJvPjNMjhtOSMTe0mqf1/Y7TuRnmbVu913DXhUq0BL
-         3bFiTb5OEcPHA8Sbe2GIDO7x3ulYmjjV3gh/wg61VO1N96Iy9m7pox8KKu5piL4wUi6z
-         9GZG5QbYhnm3eZH1tvUq03uj5J72wJiKfYckuUo6GA58bqsBD1odrT0Ol66Pt2qctGY6
-         BVtJSPLl1K67gYCK214JxFZvVBvKEXkz1PGbjTsssl2bMsbD6ErXIbaxzghcXHywX2+w
-         rzIQ==
-X-Gm-Message-State: AOJu0Yxt7SVz6iMqlGslbAtEGNj+wxNky3KtDOUhbOhIvfr8/c80Sq/W
-	ybEZv1IX+v31CAZzC+e/YT3HKW7QAiWAf2Dk9iloTQavcoIjh/KF+7sfIGIFahPVop4UVpn9Ij8
-	VD3edpeuhclzCcvuGqEbMrE0RO8Gw3VHHawAUS0776QceNtVVdRQ5nTrGIvFTEQ==
-X-Received: by 2002:a5d:5254:0:b0:35f:159e:5ec2 with SMTP id ffacd0b85a97d-35f159e6186mr5609433f8f.39.1718103048823;
-        Tue, 11 Jun 2024 03:50:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXDhdkA/eYdpilHthDuW6/sqyY7YL810c3QO5B5dWAJ2pffJ1e96n0xCMflbdVhb7aOmh/NA==
-X-Received: by 2002:a5d:5254:0:b0:35f:159e:5ec2 with SMTP id ffacd0b85a97d-35f159e6186mr5609419f8f.39.1718103048419;
-        Tue, 11 Jun 2024 03:50:48 -0700 (PDT)
+        bh=xJzyOstj03OACQiOW3AK8lHNiLSnxNoCbEIihZoOnH0=;
+        b=B/a/C+h+aQPEqQzWroKQIyLrr6d7zsCdbJIPDdL18NlvXbxFRRM5CdIi0B757xWVaE
+         kcrodC7LsgjSSX1sDt0c8npiS3Gxdy/EUke0IpuHjpnWWsEfpEHeE3lesuRgEmmPbAQP
+         k9fyqgZLcq62HlPlY5/+xPAAUV/QVPu10vHpBz4WdRZd4+0lOG0oQU787hBhhD/86nqo
+         q6QYh5PZJcRAbsgWc5ohjMGHrUh8HJ3V5+GNKoJtRp4i3ASwvihUSASXGELWq8eAF7m3
+         /rkCwDk7tVj/vLUsFNEe4oBNYle0kXx0GDVs65aQYJHRIWmsXiesngi6grweSXxe42gy
+         Y4Xw==
+X-Gm-Message-State: AOJu0Yz0x09Wwu5R3wSSK9DdnUM38gnlOGqd9KAF3oRmf1cGgMidibBH
+	vW3cj3wMJGDignWaHTlr7R0FT8meX7eGKqtuZV4gdGUl1/G6lIkbmqGywTWfutQ3XJfh1LK2qTN
+	XDuNQa5mZUQtfi/EJDUa7IbU1BZDSYrlAyyk/MPUKMoWfLDwa7ek4fOiQW+rxkI2hPicj1Q==
+X-Received: by 2002:a2e:968e:0:b0:2ea:eb13:daca with SMTP id 38308e7fff4ca-2eaeb13dc4bmr56084711fa.47.1718103089992;
+        Tue, 11 Jun 2024 03:51:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEI8M5WVGO1DoLzk1IMAmgEjhphAqPWfsq/oAwYotOI1b9XdZDhhbZgyW9zoL+yWdPtjk0DYA==
+X-Received: by 2002:a2e:968e:0:b0:2ea:eb13:daca with SMTP id 38308e7fff4ca-2eaeb13dc4bmr56084601fa.47.1718103089490;
+        Tue, 11 Jun 2024 03:51:29 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d2e73dsm13674969f8f.16.2024.06.11.03.50.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1b1cc3e6sm7980702f8f.34.2024.06.11.03.51.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 03:50:48 -0700 (PDT)
-Message-ID: <2b912e12-8289-4ce8-99bb-103a289a23cb@redhat.com>
-Date: Tue, 11 Jun 2024 12:50:46 +0200
+        Tue, 11 Jun 2024 03:51:25 -0700 (PDT)
+Message-ID: <48d71064-b9a4-49dd-b933-e9891982e1c2@redhat.com>
+Date: Tue, 11 Jun 2024 12:51:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,7 +89,8 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>
 References: <20240607122357.115423-1-david@redhat.com>
  <20240607122357.115423-3-david@redhat.com>
- <ZmaFxfQX3AVMIVkp@localhost.localdomain>
+ <ZmaDSQZlAl7Jb-wi@localhost.localdomain>
+ <Zmf5NdeKewGEhYLI@localhost.localdomain>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -137,48 +138,21 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <ZmaFxfQX3AVMIVkp@localhost.localdomain>
+In-Reply-To: <Zmf5NdeKewGEhYLI@localhost.localdomain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10.06.24 06:49, Oscar Salvador wrote:
-> On Fri, Jun 07, 2024 at 02:23:53PM +0200, David Hildenbrand wrote:
->> Relying on the mapcount for non-present PTEs that reference pages
->> doesn't make any sense: they are not accounted in the mapcount, so
->> page_mapcount() == 1 won't return the result we actually want to know.
->>
->> While we don't check the mapcount for migration entries already, we
->> could end up checking it for swap, hwpoison, device exclusive, ...
->> entries, which we really shouldn't.
->>
->> There is one exception: device private entries, which we consider
->> fake-present (e.g., incremented the mapcount). But we won't care about
->> that for now for PM_MMAP_EXCLUSIVE, because indicating PM_SWAP for them
->> although they are fake-present already sounds suspiciously wrong.
->>
->> Let's never indicate PM_MMAP_EXCLUSIVE without PM_PRESENT.
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
+On 11.06.24 09:13, Oscar Salvador wrote:
+> On Mon, Jun 10, 2024 at 06:38:33AM +0200, Oscar Salvador wrote:
+>> Signed-off-by: Oscar Salvador <osalvador@suse.de>
 > 
-> Forgot to comment on something:
+> Uh, I spaced out here, sorry.
 > 
->> @@ -1517,14 +1514,13 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
->>   			if (pmd_swp_uffd_wp(pmd))
->>   				flags |= PM_UFFD_WP;
->>   			VM_BUG_ON(!is_pmd_migration_entry(pmd));
->> -			migration = is_migration_entry(entry);
->>   			page = pfn_swap_entry_to_page(entry);
-> 
-> We do not really need to get the page anymore here as that is the non-present
-> part.
-> 
-> Then we could get away without checking the flags as only page != NULL
-> would mean a present pmd.
-> 
-> Not that we gain much as this is far from being a hot-path, but just
-> saying..
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-I *think* we still want that for indicating PM_FILE after patch #1.
+:)
+
+Thanks!
 
 -- 
 Cheers,
