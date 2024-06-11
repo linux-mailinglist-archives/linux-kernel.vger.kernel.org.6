@@ -1,112 +1,117 @@
-Return-Path: <linux-kernel+bounces-210555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EB9904585
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73467904588
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395C0286780
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:07:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4177E286589
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0176C1420B8;
-	Tue, 11 Jun 2024 20:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E97A7F49B;
+	Tue, 11 Jun 2024 20:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Thu2Lc5g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JjJRGOyU"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FEA1879
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8DA2628D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718136450; cv=none; b=HAwX2TbLR2vAiUu8VHU5oCM4KIGO3zqcDNtA8v/5E7lpNSQ8x1xyw4TUX5DHkEc20t/ZR3mE3igFFECdSOpq/UKGFLbqmsDCX07pj4GM1BANOvUpzkFMj/R3BsrOqhXeet14iOvaOpIls83pfX8eHXJXNK0hZKr5cW7ZcArfHUk=
+	t=1718136465; cv=none; b=LNyHIznWcQ696S7rWIRI5WOkHAHeAAOYXRDk1DfsqRxYqAVkHjYE6SaN8xi0IUvV1/Vxgd2U4xYWAOdQh29XvcysadFxk6tpvgg3ubjBWIJMGAG/FFFp2Irlt5nUZMs+bZDCeW+RHHvVLEM+x7Wq93cvZD3ND2BWAD+3R8o1FJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718136450; c=relaxed/simple;
-	bh=DG9vo/TGCvMC6IRGF/KFN1oVAg3uKyYRvrG//+CxZaU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=dd3YGTvRpM4btRann1F50w4yGGKzOImvaHEbisQ5+o3koC+cCLLbdFQifidFDJUXGSconeoKEENU9KM9Ej+gJ1jhu6WJJ24D+pW1IMvT1Z4Zw3QnWMaYByqOVifchysxHANkXSG4nU5ImbvvJSeuFFeWMHICKP99nIQQntpLcMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Thu2Lc5g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9921C2BD10;
-	Tue, 11 Jun 2024 20:07:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1718136449;
-	bh=DG9vo/TGCvMC6IRGF/KFN1oVAg3uKyYRvrG//+CxZaU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Thu2Lc5gQVhk9sw9DKVi+PFqf5BEYPlIHGic73ofQJ/f65R9OYtoAh8p5nGgW6f2g
-	 Prjd4WzfOw+X7iK4Aoeqj7B4R86dlrJbqAOZQp3hszmBs7d1vT/i52ufuzBCoqF98A
-	 NxfRYSXeRcrwBfQy701uL6t9cpzE6IEHcY3UAOAc=
-Date: Tue, 11 Jun 2024 13:07:29 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: David Hildenbrand <david@redhat.com>, Andrew Bresticker
- <abrestic@rivosinc.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/memory: Don't require head page for do_set_pmd()
-Message-Id: <20240611130729.d53cbcd1767f917b47540cca@linux-foundation.org>
-In-Reply-To: <ZmiVy8iE93HGkBWv@casper.infradead.org>
-References: <20240611153216.2794513-1-abrestic@rivosinc.com>
-	<8040793f-e9e9-4a2e-807c-afcb310a48f5@redhat.com>
-	<20240611110622.8e9892e92618ddc36bca11b7@linux-foundation.org>
-	<ZmiVy8iE93HGkBWv@casper.infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718136465; c=relaxed/simple;
+	bh=uReg+kfZth5tCK460EQJnSZ/+0Rb0enkBQQFyijfOd4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QPuRP4QsAFLN52KMk2gljKshbvx6BZJSqXmZ5/SMixbm2xzkRPpkD4DAjWwD6xm39o1ajstIf9xucClNTjZl0OpJ/8I7fs7qH6hqRM8Z04SPumcAJUk+Vqb6+3kC7q6g0WH0Ubi1Hghx3qApAJoap8SaywJKA18pUxfC59MBYeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JjJRGOyU; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-354be94c874so1087589f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:07:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718136463; x=1718741263; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dp0SmRihTKvCwUxjNzXPLTei6TKKBMfz5Eth2lbQK94=;
+        b=JjJRGOyU/hYfzxIUW2CWR7Va/LY7E0yRivBhjC4rpIvttPrnvL5/l5xSFkS5VhFA6m
+         snDNXnkDToWPpYzBtbxdh4nZiYsNV2bID9GlaaZ/Q65630pgG1XGFUWxUSRErudWLWgN
+         1fskKtVvIgxCIG8UHa3h3vuhAEwFTvNc6EEZfVKBew647s9hr1JtzDQ/3+AWY2hjeBm6
+         sZxXlff1s1jl8emZv+34HI3Ds2yyt2PBNfg7UuvrVZMVi5xcfzD4aJ8Mnxf9LDcbXnsc
+         VEN9mRJxFTaoYCUHeRuUIoSdSlX/vbabiUbzPDnZC55ko0EFVUxcbLf582vHlLFWDRVn
+         X3+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718136463; x=1718741263;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dp0SmRihTKvCwUxjNzXPLTei6TKKBMfz5Eth2lbQK94=;
+        b=BxvS2wZ1tSkhbjBjvGOfofA8JCd3cwIuo4n5bqDqEGi6OKF6eE3FlonC0NxOatbkki
+         no2Z+bUJEIF3zxBPK8MPH4knAXp2fCqQeEotEL761QWG2fXIufvaH6gWwb7ROH5prSxF
+         wIa+yyDNy6X1fMq8KJmN37XRqYQTyQe78yeZAnN8qrzqOoqtUMDmnxaBi8uEsS0lTFJy
+         34YGtAT+45fe+WRehUtjvMaffSdv3QkakAU7fv/zhPFuwSV2uh3+OaRCyZcH36KdXgVc
+         R/HiM8CBLqjPML0hy2JzlT35OQWlZ5Wj0jQFvR3+riTIhoAjaRHqpr+C4rIHaBnn64UP
+         /DTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7V3Ev/v+2FFxxewUfRHPUWu14klVnjTHhUzX1T6lFwvJ8C+OVdUEqTSH6Y4QM0fvVOoo3NAT8a+m4CFIB2vvj5vWOCCcObDI78CIy
+X-Gm-Message-State: AOJu0Ywqhn9L6xHqjmOW+m5o49KyvEvEREEDxvBvBiu3kLTkOFZhZvno
+	CC9XHhoOpvJz0QqkwnnOVyyTEOsXJO4PdVkGUVe8g2L0WdUzYcalEePQKQuyq48=
+X-Google-Smtp-Source: AGHT+IEoQVgdK2bkmsXiS1d4mTtefIV7rHj4TW1pDs5MtgccfcO59X76nJJ3KtYzp7W9fGwE8bVGRg==
+X-Received: by 2002:a5d:67c6:0:b0:35f:c8d:3a25 with SMTP id ffacd0b85a97d-35f0c8d3b63mr8979277f8f.30.1718136462904;
+        Tue, 11 Jun 2024 13:07:42 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:38d:e428:e1bc:56b7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2f67b5b8sm1919562f8f.12.2024.06.11.13.07.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 13:07:42 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Johan Hovold <johan@kernel.org>,
+	Alex Elder <elder@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Davis <afd@ti.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	greybus-dev@lists.linaro.org
+Subject: Re: [PATCH] gpiolib: Remove data-less gpiochip_add() function
+Date: Tue, 11 Jun 2024 22:07:40 +0200
+Message-ID: <171813645457.70902.8503975086996719219.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240610135313.142571-1-afd@ti.com>
+References: <20240610135313.142571-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Jun 2024 19:22:03 +0100 Matthew Wilcox <willy@infradead.org> wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> On Tue, Jun 11, 2024 at 11:06:22AM -0700, Andrew Morton wrote:
-> > On Tue, 11 Jun 2024 17:33:17 +0200 David Hildenbrand <david@redhat.com> wrote:
-> > 
-> > > On 11.06.24 17:32, Andrew Bresticker wrote:
-> > > > The requirement that the head page be passed to do_set_pmd() was added
-> > > > in commit ef37b2ea08ac ("mm/memory: page_add_file_rmap() ->
-> > > > folio_add_file_rmap_[pte|pmd]()") and prevents pmd-mapping in the
-> > > > finish_fault() and filemap_map_pages() paths if the page to be inserted
-> > > > is anything but the head page for an otherwise suitable vma and pmd-sized
-> > > > page.
-> > > > 
-> > > > Fixes: ef37b2ea08ac ("mm/memory: page_add_file_rmap() -> folio_add_file_rmap_[pte|pmd]()")
-> > > > Signed-off-by: Andrew Bresticker <abrestic@rivosinc.com>
-> > > > ---
-> > > >   mm/memory.c | 3 ++-
-> > > >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/mm/memory.c b/mm/memory.c
-> > > > index 0f47a533014e..a1fce5ddacb3 100644
-> > > > --- a/mm/memory.c
-> > > > +++ b/mm/memory.c
-> > > > @@ -4614,8 +4614,9 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
-> > > >   	if (!thp_vma_suitable_order(vma, haddr, PMD_ORDER))
-> > > >   		return ret;
-> > > >   
-> > > > -	if (page != &folio->page || folio_order(folio) != HPAGE_PMD_ORDER)
-> > > > +	if (folio_order(folio) != HPAGE_PMD_ORDER)
-> > > >   		return ret;
-> > > > +	page = &folio->page;
-> > > >   
-> > > >   	/*
-> > > >   	 * Just backoff if any subpage of a THP is corrupted otherwise
-> > > 
-> > > Acked-by: David Hildenbrand <david@redhat.com>
-> > 
-> > You know what I'm going to ask ;) I'm assuming that the runtime effects
-> > are "small performance optimization" and that "should we backport the
-> > fix" is "no".
+
+On Mon, 10 Jun 2024 08:53:13 -0500, Andrew Davis wrote:
+> GPIO chips should be added with driver-private data associated with the
+> chip. If none is needed, NULL can be used. All users already do this
+> except one, fix that here. With no more users of the base gpiochip_add()
+> we can drop this function so no more users show up later.
 > 
-> We're going to stop using PMDs to map large folios unless the fault is
-> within the first 4KiB of the PMD.  No idea how many workloads that
-> affects, but it only needs to be backported as far as v6.8, so we
-> may as well backport it.
+> 
 
-OK, thanks, I pasted the above text and added the cc:stable.
+Applied, thanks!
 
-I didn't move it into the hotfixes queue - it's a non-trivial
-behavioral change and extra test time seems prudent(?).
+[1/1] gpiolib: Remove data-less gpiochip_add() function
+      commit: 3ff1180a39fbc43ae69d4238e6922c57e3278910
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
