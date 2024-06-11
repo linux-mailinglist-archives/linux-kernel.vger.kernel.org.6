@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-209472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F946903664
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:28:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E58DF903674
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0955D1F25F60
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:28:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9512B28668
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BBD174ED7;
-	Tue, 11 Jun 2024 08:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="Kd07t7jM"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA0A174EC6;
+	Tue, 11 Jun 2024 08:27:28 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57044152178;
-	Tue, 11 Jun 2024 08:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64103F8C7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718094466; cv=none; b=hCPcLR8y1oSPLG+Gjv/3REPdg8GDhtztPOQvRR3FMbERA6ft38SjUMrPk+cGFgcBPQ02AkbsPSkcPGAQK9Gsljy+KL+x4VCW8XcPtzuhzWQYpLvt0QFnYdSFnR930/8Qffm6KIQi+511bF1hXajpfI8owVqIOClmgLOM6+++w9o=
+	t=1718094448; cv=none; b=M7HpYL3OA9f5ifasqERdwCl0Vv8baD6ZwQn7bF+y0qYlKrcKq3U6Z5s82yO9xSUrzw8pbiV2XS+aqNtObGhiliKDAWViekrguL6dOjAoCVBCvZ4TsA3PaDiS3vgDMTEagNgn6MRuy7XXaVhVq4uitLqH1zOWv491uaz1kOMhuho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718094466; c=relaxed/simple;
-	bh=S9etYCrjDhnD286GdZJel9VZyLYtyY1IIfEvrHkgZdk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UAdXdh8/ekI9CUs1XQO4tVV2YNE/MtgfNy2c/Td0LWs9rMtD6KwkMdMz9tm5BykP+gi6jwWR/bq7lkcXgC9sCD+w+WRYlLhFSBr9uB97BFBFk2SHnqhxFUk6GJx02PrzUck8VhAxs3qmDcjVUoJ632hPG1mAASbcar8979ZE6dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=Kd07t7jM; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id C2600100002;
-	Tue, 11 Jun 2024 11:27:16 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1718094436; bh=oFr2YS8xOkbzW4Son0Mqyup2AFLMMw+xc2c2p9yDb7s=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=Kd07t7jMBRIFed/W7eTPu1CdgJuCtfVSQNreUt0PqSJ1O3Ih5aRM3+1+MRpb4WnLr
-	 ukcuhYepphPn0jHijbkF9R9uwDgEUfD6xftTW2KsmpARvacqeP+a/hVlc+flbvxekL
-	 bMGvXEIoFMpCdJd0XF6jbb8hR6kAhErW5X2kyOKf4PcFNZLoW+1eEPYERvewqHcOXW
-	 wrqKPg68KIwfsC9KxL2NfNFv9iuIV1jfG77AXDhrzqbIoJR+hTg9MzN86LtAkcO5or
-	 nl1jZEq9sq+5FhoWbFko22nDCEbvz8pAK4UrxeN8ZBahfaoJ/WFRHVP5DIkrDKZdVi
-	 ZfGAcYcAeh2qQ==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Tue, 11 Jun 2024 11:26:15 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
- 2024 11:25:54 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Edwin Peer <edwin.peer@broadcom.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Michael Chan
-	<michael.chan@broadcom.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Wojciech
- Drewek <wojciech.drewek@intel.com>
-Subject: [PATCH net v3] bnxt_en: Adjust logging of firmware messages in case of released token in __hwrm_send()
-Date: Tue, 11 Jun 2024 11:25:46 +0300
-Message-ID: <20240611082547.12178-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1718094448; c=relaxed/simple;
+	bh=4846dXCi+LLa+oRqvFIzMnMlIKpDWNszKOj8xaC2DZY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YS1AdLMzaXJOow+LHu4y6gskPvrpmuuKGAf3HX00iQYxFfkEjNbutLtPcW+8TBGkWTp2kJRz9lNQM8P/ytrtaVaPcubs+SY6qD8r+K7GAWyhKlSAlWGofl4NnWqr1hgJSNuvKLW3VQYsN1RWcLRaeR8eAaJ++k2/zF4MEbmXke4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3737ee417baso44814485ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 01:27:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718094446; x=1718699246;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i5XKnkHLsIoqOGAS3OERR6bhoari0fo/c4MqVHhGMVA=;
+        b=N5Z6ME8wmHLT+J6ZwFkpZXJaomCcQRLNoZEe1X0smi6v3fSBVYk01/FVF5FWqTV1T+
+         nRX8vPTZ22HnNqikpWQ64gz4ARWz5MSKafurxcJUqKxJEgjrLQaIYxUN0kDsQHYdsy4X
+         CDyYn/r6mfBZFnMaAB2BkuTGiKEzDRTjNw8BovG8djBmYA2bqunC0pGKFvaR3Rk0ikkn
+         Qjb5X0k7CI/ghfkKHC7nz/zSB9c2ApST0nszfjaeEU8p6Xt4dQQM765aSpN7H5yrCLOp
+         m7lTfKEgxFGT571HRTF5yhh+tUIN0ycXphAgYQwyEsmuE9WmbNsHs+GHDkUoPIaynNp1
+         sXrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcni2GjQGoPFFonj7sYlWAW7hViP2Ko7boH9KaJ3nlzrxVYy6j7bmvSn1F+W5WruZt2mdVq9UJpSBtTcQDLo/SraM3Rzw5uHkifdsp
+X-Gm-Message-State: AOJu0Yyy0zshoWb+1cgKvd33Nl7zcRfEP57BlUyVd+xuu79LF5obU99Y
+	7hjKcnvKYQH7axBDKMz76l1+G37Ot/yTVVhb3Ei/xAAVg82hO+xM+uCCH4Kcnh6N9IsuaSeoHHY
+	ERXHFFErx5+b7Y51udTT9pe98RiOwCsnY+LTY4Cqlk5TG8xwKXZ/R3yQ=
+X-Google-Smtp-Source: AGHT+IHNQFjX7nXtcEGVrCfUjJQTGAwh53HEqyZkAYPKF01NcC8BWO2SzrSRycYpJoEOKitThluVmUtW2DwOM/ljmxzKGAzvXeKU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185852 [Jun 11 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;t-argos.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mx1.t-argos.ru.ru:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/06/11 07:24:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/11 05:58:00 #25560715
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-Received: by 2002:a05:6e02:214a:b0:373:8d04:28b2 with SMTP id
+ e9e14a558f8ab-375b30d379dmr1024555ab.0.1718094445998; Tue, 11 Jun 2024
+ 01:27:25 -0700 (PDT)
+Date: Tue, 11 Jun 2024 01:27:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002502d7061a9909cf@google.com>
+Subject: [syzbot] Monthly bcachefs report (Jun 2024)
+From: syzbot <syzbot+liste26a67e46fe73e904149@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-In case of token is released due to token->state == BNXT_HWRM_DEFERRED,
-released token (set to NULL) is used in log messages. This issue is
-expected to be prevented by HWRM_ERR_CODE_PF_UNAVAILABLE error code. But
-this error code is returned by recent firmware. So some firmware may not
-return it. This may lead to NULL pointer dereference.
-Adjust this issue by adding token pointer check.
+Hello bcachefs maintainers/developers,
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+This is a 31-day syzbot report for the bcachefs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/bcachefs
 
-Fixes: 8fa4219dba8e ("bnxt_en: add dynamic debug support for HWRM messages")
-Suggested-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
-Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
+During the period, 37 new issues were detected and 15 were fixed.
+In total, 59 issues are still open and 30 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  2800    No    WARNING in cleanup_srcu_struct (4)
+                   https://syzkaller.appspot.com/bug?extid=6cf577c8ed4e23fe436b
+<2>  1722    Yes   WARNING in bch2_trans_srcu_unlock
+                   https://syzkaller.appspot.com/bug?extid=1e515cab343dbe5aa38a
+<3>  1620    Yes   INFO: task hung in __closure_sync
+                   https://syzkaller.appspot.com/bug?extid=7bf808f7fe4a6549f36e
+<4>  1070    Yes   KMSAN: uninit-value in bch2_inode_v3_invalid
+                   https://syzkaller.appspot.com/bug?extid=d3803303d5b280e059d8
+<5>  578     Yes   BUG: MAX_LOCK_DEPTH too low! (4)
+                   https://syzkaller.appspot.com/bug?extid=46405fa9afa07e6c8c40
+<6>  221     Yes   kernel BUG in gc_bucket
+                   https://syzkaller.appspot.com/bug?extid=246b47da27f8e7e7d6fb
+<7>  187     No    INFO: task hung in bch2_readahead
+                   https://syzkaller.appspot.com/bug?extid=a6060114362257e9798a
+<8>  185     Yes   KMSAN: uninit-value in bch2_alloc_v4_invalid
+                   https://syzkaller.appspot.com/bug?extid=3b2968fa4953885dd66a
+<9>  148     Yes   kernel BUG in bch2_fs_journal_stop
+                   https://syzkaller.appspot.com/bug?extid=10b936c5eaee2819b49b
+<10> 104     Yes   INFO: task hung in bch2_fs_read_only_work
+                   https://syzkaller.appspot.com/bug?extid=8996d8f176cf946ef641
+
 ---
-v1->v2: Preserve the error message by replacing 'token' with 'ctx->req->seq_id' as suggested by Michael.
- As the patch didn't change significantly, add Wojciech's Reviewed-by tag from the previous version.
-v2->v3: Fix missing alignment.
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
- drivers/net/ethernet/broadcom/bnxt/bnxt_hwrm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_hwrm.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_hwrm.c
-index 1df3d56cc4b5..d2fd2d04ed47 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_hwrm.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_hwrm.c
-@@ -680,7 +680,7 @@ static int __hwrm_send(struct bnxt *bp, struct bnxt_hwrm_ctx *ctx)
- 			    req_type);
- 	else if (rc && rc != HWRM_ERR_CODE_PF_UNAVAILABLE)
- 		hwrm_err(bp, ctx, "hwrm req_type 0x%x seq id 0x%x error 0x%x\n",
--			 req_type, token->seq_id, rc);
-+			 req_type, le16_to_cpu(ctx->req->seq_id), rc);
- 	rc = __hwrm_to_stderr(rc);
- exit:
- 	if (token)
--- 
-2.30.2
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
+You may send multiple commands in a single email message.
 
