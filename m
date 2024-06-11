@@ -1,180 +1,260 @@
-Return-Path: <linux-kernel+bounces-210297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89836904203
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:58:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCCFF904218
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C0381F25BF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46EF51F2153A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEC446444;
-	Tue, 11 Jun 2024 16:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bkSgyzZm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E72A446AC;
+	Tue, 11 Jun 2024 17:02:19 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E437440861;
-	Tue, 11 Jun 2024 16:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F56B1EB31;
+	Tue, 11 Jun 2024 17:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718124949; cv=none; b=VIaSMBXZaQPjW5KK2WXzTTgfaYUMcWgEjIoAeoWqUVySNmxkLKd6RUOamKr207nAfsTjNLG1Jsf7bnkyjcQ1JrW7YWOe4kCh+RG9AtWBTutHXU2EXr4UHTh9LR3S7A00NjO3OXxdSo9nEQkbawok9NlGeGmyV7Qf4gFpM4MWRgE=
+	t=1718125338; cv=none; b=GocXEXtQ3dUaYNDFPkZivFRq5eHsrWoSb+0zFS6U6Gy4g4i1wM3+IYUkH/VdqCHLAo1f7jjJM6eG6s7SHAlKzJOanV9Lk3gIQHO/+bEEuLGEjubJBbnS1XuMSXo1ZLF7BzLo0Ff+PAKd65hZnn9AYhpfo/smu9QuMe27SdsrKsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718124949; c=relaxed/simple;
-	bh=5ERFtRjM8yegnkIXt+aiMFY0d7KS90qT1YmOd8VczYc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XdT2bisF6/fZClKbPQTzampvB6wQXLAx+Z99apq1kxaQQnSj8PfN/yQr4DtJyW60RVrJc8wV5he4f1l3MvbPFac0PajS/sMmMmvN0WbZqpD7LOzdTBjH8HTo8czVAgMeshtqTCVhpdgRQk6IHsD104g38Z/ZXQiFqeTRTjSmu3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bkSgyzZm; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718124947; x=1749660947;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=5ERFtRjM8yegnkIXt+aiMFY0d7KS90qT1YmOd8VczYc=;
-  b=bkSgyzZmCLrxnUi6bsaWV5SvI7U2DbjEmCVq5oYRsGu35Fh0EAZmhVYi
-   CEAMbwR7jYNp4lsza/GN/SeMHx3xudvrMUbYVA3wo+3ZaMh6ixc9MHtmW
-   h6R0CrY9cu79EWnbxHqHaYxp/sYpKufhf+jUR5HY6KHbtSEJiu+ajg5GH
-   oKA/dXO/US84rpQEZn0iIcy6gDPo7Oiz9ucxX6GR5IOv8SwEg4LT8Kl6C
-   XzHQKFdK6EHg/umiKlNy6TFoRbHt/Lb4JwOtOsKpIAtmdSIvpaiPhhB7R
-   Zrtsm0EcFGBWRLfA5TstiJQ1QP6iZJ2dtfQ1WBv3CzZunk7C2BYHefkwq
-   g==;
-X-CSE-ConnectionGUID: Knj/QHz7Ts2gPKjN6D5YSA==
-X-CSE-MsgGUID: 7UY5LepnT2KRh76YzbwOeA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="15076535"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208,223";a="15076535"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 09:55:44 -0700
-X-CSE-ConnectionGUID: RMHZ/v6RTYOQA3ifLydOEw==
-X-CSE-MsgGUID: mwUi/uFsScip/MaHellHOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208,223";a="70299105"
-Received: from jacob-builder.jf.intel.com ([10.54.39.125])
-  by orviesa002.jf.intel.com with ESMTP; 11 Jun 2024 09:55:44 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: X86 Kernel <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Ingo Molnar" <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>,
-	linux-perf-users@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <andi.kleen@intel.com>,
-	"Xin Li" <xin3.li@intel.com>
-Subject: 
-Date: Tue, 11 Jun 2024 10:00:46 -0700
-Message-Id: <20240611170046.156806-1-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718125338; c=relaxed/simple;
+	bh=vqJwh1ZTKRcGC6rpPG/75qkN5daDxSCuDaDr2116EpM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=paZ1zJOQxYvuLygofhLZ3ydUls4Rgs4FojUc7liooR4juyggExZSiba9+9W9cnYsuLuHZvxeXRVuTxqSO52EnEvLBGdm9UWuZYYILKJmyxdhTy83j2LijeA+CaYAv5nyoRjYt5i3aFftCYBAnsOQqEEPM4imWrBcv0EQEaZT6ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VzFGS2VWmz6J9x8;
+	Wed, 12 Jun 2024 00:57:36 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 337E0140516;
+	Wed, 12 Jun 2024 01:02:12 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Jun
+ 2024 18:02:11 +0100
+Date: Tue, 11 Jun 2024 18:02:10 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Petar Stoykov <pd.pstoykov@gmail.com>
+CC: Jonathan Cameron <jic23@kernel.org>, <linux-iio@vger.kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Lars-Peter Clausen
+	<lars@metafoo.de>, Rob Herring <robh+dt@kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Angel Iglesias
+	<ang.iglesiasg@gmail.com>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] iio: pressure: Add driver for Sensirion SDP500
+Message-ID: <20240611180210.00006f23@Huawei.com>
+In-Reply-To: <CADFWO8FGqD5GyrRtvFptjMdYBhfFFwOzgZ1XnVVEPeY3E8CZPg@mail.gmail.com>
+References: <CADFWO8EQUkGcbE=RXjxXbub2tZge9+ss=gB-Q6wngFAvwFygRg@mail.gmail.com>
+	<20240505181829.49864540@jic23-huawei>
+	<CADFWO8FGqD5GyrRtvFptjMdYBhfFFwOzgZ1XnVVEPeY3E8CZPg@mail.gmail.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-From e52010df700cde894633c45c0b364847e63a9819 Mon Sep 17 00:00:00 2001
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Date: Tue, 11 Jun 2024 09:49:17 -0700
-Subject: [PATCH v2 0/6] Add support for NMI source reporting
+On Mon, 10 Jun 2024 10:58:35 +0200
+Petar Stoykov <pd.pstoykov@gmail.com> wrote:
 
-Hi Thomas and all,
+> On Sun, May 5, 2024 at 7:18=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> >
+> > On Tue, 30 Apr 2024 17:27:24 +0200
+> > Petar Stoykov <pd.pstoykov@gmail.com> wrote:
+> > =20
+> > > From 6ae7537517f551540121ca6fb3b99080b7580410 Mon Sep 17 00:00:00 2001
+> > > From: Petar Stoykov <pd.pstoykov@gmail.com>
+> > > Date: Mon, 15 Jan 2024 12:21:26 +0100
+> > > Subject: [PATCH 2/3] iio: pressure: Add driver for Sensirion SDP500
+> > >
+> > > Sensirion SDP500 is a digital differential pressure sensor. The senso=
+r is
+> > > accessed over I2C.
+> > >
+> > > Signed-off-by: Petar Stoykov <pd.pstoykov@gmail.com> =20
+> > Hi Petar
+> >
+> > Ignoring the patch formatting which others have already given feedback =
+on,
+> > a few minor comments inline.
+> >
+> > Also, I'd expect some regulator handling to turn the power on.
+> > Obviously on your particular board there may be nothing to do but good =
+to
+> > have the support in place anyway and it will be harmless if the power
+> > is always on.
+> >
+> > Jonathan
+> > =20
+> Hi Jonathan,
+>=20
+> Thank you for looking past the formatting!
+>=20
+> I wrongly assumed the power regulator would be handled automatically :)
+> I see examples of how to do it in other pressure drivers now.
+>=20
+> > >  st_pressure-$(CONFIG_IIO_BUFFER) +=3D st_pressure_buffer.o
+> > > diff --git a/drivers/iio/pressure/sdp500.c b/drivers/iio/pressure/sdp=
+500.c
+> > > new file mode 100644
+> > > index 000000000000..7efcc69e829c
+> > > --- /dev/null
+> > > +++ b/drivers/iio/pressure/sdp500.c
+> > > @@ -0,0 +1,144 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +#include <linux/i2c.h>
+> > > +#include <linux/crc8.h>
+> > > +#include <linux/iio/iio.h>
+> > > +#include <asm/unaligned.h>
+> > > +
+> > > +#define SDP500_CRC8_POLYNOMIAL  0x31   // x8 + x5 + x4 + 1 (normaliz=
+ed to 0x31)
+> > > +#define SDP500_READ_SIZE        3
+> > > +#define SDP500_CRC8_WORD_LENGTH 2 =20
+> >
+> > As below. I'd establish these off the data the are the lengths of by us=
+ing
+> > a structure definition.  That will be more obvious and less fragile than
+> > defines hiding up here.
+> >
+> > =20
+> > > +#define SDP500_CRC8_INIT        0x00 =20
+> >
+> > I'd just use the number inline.  Can't see what the define is adding. =
+=20
+>=20
+> I've been taught to avoid magic numbers as much as possible.
+> Giving it a define directly explains what the number is, even if it's use=
+d once.
+> But I'll follow the community (in this case, you) for this.
 
-(resend cover letter)
+Normally I agree with the magic number case, but this
+is an actual value.  We are saying continue the CRC from
+0 (i.e. nothing). It's kind of the logical default value
+so seeing it in line makes it clear we aren't continuing form
+a prior crc etc.
 
-Non-Maskable Interrupts (NMIs) are routed to the local Advanced Programmable
-Interrupt Controller (APIC) using vector #2. Before the advent of the
-Flexible Return and Event Delivery (FRED)[1], the vector information set by
-the NMI initiator was disregarded or lost within the hardware, compelling
-system software to poll every registered NMI handler to pinpoint the source
-of the NMI[2]. This approach led to several issues:
+...
 
-1.	Inefficiency due to the CPU's time spent polling all handlers.
-2.	Increased latency from the additional time taken to poll all handlers.
-3.	The occurrence of unnecessary NMIs if they are triggered shortly
-	after being processed by a different source.
+> > =20
+> > > +    },
+> > > +};
+> > > +
+> > > +static int sdp500_read_raw(struct iio_dev *indio_dev,
+> > > +              struct iio_chan_spec const *chan,
+> > > +              int *val, int *val2, long mask)
+> > > +{
+> > > +    int ret;
+> > > +    u8 rxbuf[SDP500_READ_SIZE]; =20
+> > You could define this as a struct so all the data types are obvious.
+> >
+> >         struct {
+> >                 __be16 data;
+> >                 u8 crc;
+> >         } __packed rxbuf;
+> > The  __packed let's you use sizeof(rxbuf) for the transfer size.
+> > Beware though as IIRC that will mean data is not necessarily aligned
+> > so you'll still need the unaligned accessors.
+> > =20
+>=20
+> I know, but I prefer to receive data in simple arrays and then deal with =
+it.
+The disadvantage is you loose the readability a structure brings, but
+meh, I don't care that much.=20
 
-To tackle these challenges, Intel introduced NMI source reporting as a part
-of the FRED specification (detailed in Chapter 9). This CPU feature ensures
-that while all NMI sources are still aggregated into NMI vector (#2) for
-delivery, the source of the NMI is now conveyed through FRED event data
-(a 16-bit bitmap on the stack). This allows for the selective dispatch
-of the NMI source handler based on the bitmap, eliminating the need to
-invoke all NMI source handlers indiscriminately.
+>=20
+> > > +    u8 rec_crc, calculated_crc;
+> > > +    s16 dec_value;
+> > > +    struct sdp500_data *data =3D iio_priv(indio_dev);
+> > > +    struct i2c_client *client =3D to_i2c_client(data->dev);
+> > > +
+> > > +    switch (mask) {
+> > > +    case IIO_CHAN_INFO_PROCESSED:
+> > > +        ret =3D i2c_master_recv(client, rxbuf, SDP500_READ_SIZE);
+> > > +        if (ret < 0) {
+> > > +            dev_err(indio_dev->dev.parent, "Failed to receive data");
+> > > +            return ret;
+> > > +        }
+> > > +        if (ret !=3D SDP500_READ_SIZE) {
+> > > +            dev_err(indio_dev->dev.parent, "Data is received wrongly=
+"); =20
+> >
+> > I'd guess indio_dev->dev.parent =3D=3D data->dev
+> > If so use data->dev as more compact and that's where you are getting the
+> > i2c_client from.
+> > =20
+>=20
+> Makes sense.
+>=20
+> > > +            return -EIO;
+> > > +        }
+> > > +
+> > > +        rec_crc =3D rxbuf[2];
+> > > +        calculated_crc =3D crc8(sdp500_crc8_table, rxbuf,
+> > > SDP500_CRC8_WORD_LENGTH, =20
+> >
+> > I'd use the number 2 for length directly as it's useful to know this is=
+ the
+> > __be16 only, or sizeof(__be16)
+> > What is the point in rec_crc local variable? =20
+>=20
+> Ok, I will use sizeof(rxbuff) - 1 instead of the define.
+That's obscure and another reason I'd rather see a structure so this
+becomes sizeof(a.data)
 
-In line with the hardware architecture, various interrupt sources can
-generate NMIs by encoding an NMI delivery mode. However, this patchset
-activates only the local NMI sources that are currently utilized by the
-Linux kernel, which includes:
+> The rec_crc is again for readability, like the SDP500_CRC8_INIT define.
+> I will change it to "received_crc" which is clearer though.
+The fact you compare it with the crc makes that pretty obvious, but
+fair enough I guess if you think it helps.
 
-1.	Performance monitoring.
-2.	Inter-Processor Interrupts (IPIs) for functions like CPU backtrace,
-	machine check, Kernel GNU Debugger (KGDB), reboot, panic stop, and
-	self-test.
+>=20
+> > =20
+> > > +            SDP500_CRC8_INIT);
+> > > +        if (rec_crc !=3D calculated_crc) {
+> > > +            dev_err(indio_dev->dev.parent, "calculated crc =3D 0x%.2=
+X,
+> > > received 0x%.2X",
+> > > +                calculated_crc, rec_crc);
+> > > +            return -EIO;
+> > > +        }
+> > > +
+> > > +        dec_value =3D get_unaligned_be16(rxbuf);
+> > > +        dev_dbg(indio_dev->dev.parent, "dec value =3D %d", dec_value=
+); =20
+> >
 
-Other NMI sources will continue to be handled as previously when the NMI
-source is not utilized or remains unidentified.
+>=20
+> > > +};
+> > > +module_i2c_driver(sdp500_driver);
+> > > +
+> > > +MODULE_AUTHOR("Thomas Sioutas <thomas.sioutas@prodrive-technologies.=
+com>");
+> > > +MODULE_DESCRIPTION("Driver for Sensirion SDP500 differential pressur=
+e sensor");
+> > > +MODULE_LICENSE("GPL"); =20
+> > =20
+>=20
+> I will test the driver with the suggested changes as soon as I get the
+> hardware again
+> and I will try using the b4 tool with "web submission endpoint". Thanks a=
+gain!
+>=20
+Good luck! (it should be fine but I've never tried it :)
 
-Next steps:
-1. KVM support
-2. Optimization to reuse IDT NMI vector 2 as NMI source for "known" source.
-Link:https://lore.kernel.org/lkml/746fecd5-4c79-42f9-919e-912ec415e73f@zytor.com/
+Jonathan
 
-
-[1] https://www.intel.com/content/www/us/en/content-details/779982/flexible-return-and-event-delivery-fred-specification.html
-[2] https://lore.kernel.org/lkml/171011362209.2468526.15187874627966416701.tglx@xen13/
-
-
-Thanks,
-
-Jacob
-
----
-Change logs are in individual patches.
-
-Jacob Pan (6):
-  x86/irq: Add enumeration of NMI source reporting CPU feature
-  x86/irq: Extend NMI handler registration interface to include source
-  x86/irq: Factor out common NMI handling code
-  x86/irq: Process nmi sources in NMI handler
-  perf/x86: Enable NMI source reporting for perfmon
-  x86/irq: Enable NMI source on IPIs delivered as NMI
-
- arch/x86/Kconfig                         |  9 +++
- arch/x86/events/amd/ibs.c                |  2 +-
- arch/x86/events/core.c                   | 11 ++-
- arch/x86/events/intel/core.c             |  6 +-
- arch/x86/include/asm/apic.h              |  1 +
- arch/x86/include/asm/cpufeatures.h       |  1 +
- arch/x86/include/asm/disabled-features.h |  8 +-
- arch/x86/include/asm/irq_vectors.h       | 38 +++++++++
- arch/x86/include/asm/nmi.h               |  4 +-
- arch/x86/kernel/apic/hw_nmi.c            |  5 +-
- arch/x86/kernel/apic/ipi.c               |  4 +-
- arch/x86/kernel/apic/local.h             | 18 +++--
- arch/x86/kernel/cpu/mce/inject.c         |  4 +-
- arch/x86/kernel/cpu/mshyperv.c           |  2 +-
- arch/x86/kernel/kgdb.c                   |  6 +-
- arch/x86/kernel/nmi.c                    | 99 +++++++++++++++++++++---
- arch/x86/kernel/nmi_selftest.c           |  7 +-
- arch/x86/kernel/reboot.c                 |  4 +-
- arch/x86/kernel/smp.c                    |  4 +-
- arch/x86/kernel/traps.c                  |  4 +-
- arch/x86/platform/uv/uv_nmi.c            |  4 +-
- drivers/acpi/apei/ghes.c                 |  2 +-
- drivers/char/ipmi/ipmi_watchdog.c        |  2 +-
- drivers/edac/igen6_edac.c                |  2 +-
- drivers/watchdog/hpwdt.c                 |  6 +-
- 25 files changed, 200 insertions(+), 53 deletions(-)
-
--- 
-2.25.1
 
 
