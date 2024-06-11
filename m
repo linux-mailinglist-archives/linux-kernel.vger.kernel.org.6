@@ -1,151 +1,95 @@
-Return-Path: <linux-kernel+bounces-210567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA3D9045A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99119045A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20978B238FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:16:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD8C1F23EED
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F0013D615;
-	Tue, 11 Jun 2024 20:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4437F1509A7;
+	Tue, 11 Jun 2024 20:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="O4UuX8Jx"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfmV+4HT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F8612E61;
-	Tue, 11 Jun 2024 20:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6F212E61;
+	Tue, 11 Jun 2024 20:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718136979; cv=none; b=O84KcacIsUWi7Hb3HUeWUgoU8WpoMFj2Yu1KBqZKe0OzI3mcljMZ3NohJ5fgczkiXtGcCvUAfyUPZw5C/buD2FR5F5hRC+FLPvoOh+KWLO/iKcfd/g4sxUfuwh17QmId8BALwTVTUzds9ROVir3Dar7OOVa80PA3vQmMvhXUfp0=
+	t=1718136993; cv=none; b=n7nH/t4d60Eb7XaQz/PlzuYU2F6FAH+xWqKlU4NCsXjkGEsvHzX6SOuPBI9FxpC69cIQcI88RULL+RMsIksnopLwE0Nwl/o6fBVR/aY2B4x7xiZ2yCfP+g2h6iD47HDW6Vhgpxn6WM3iP2/JAmNswSFfcRq1BZh74dTicEVl3jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718136979; c=relaxed/simple;
-	bh=HAK2OHutCS/Lj87z2/N+VGndKX2mskGP86pdblWyp2w=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=eVQdZjdKYWwDw1kYllGc9YHhavqydKMXq79PFqqBcj+TOAvxxLlx9vShDrio+g2w2hPOyMC05LCZBIcOYYx9Ttmmm+gcuLxPYOigpsBxRN576CDMJIvonZfK5eD9RUFXMAUzTED+d4uxGkOE0QWwTgvgIOnt1fEgJ5dqK7ht+/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=O4UuX8Jx; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([99.8.153.148])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45BKFlxc3470245
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 11 Jun 2024 13:15:48 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45BKFlxc3470245
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024051501; t=1718136948;
-	bh=WhP585hb/L47fJhChNfJiVXpMXU0QH1KtWBu/UgVVp4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=O4UuX8JxWZ947o1nr0MB5zU/V06HeNWKwliayCcDZnsAHeOrt4o2lUoSETF6zXMJS
-	 4Vk3TDyfCmEuxcaIBmO8HV2zutSuK1IC06IQGhMhPMoXOfv9CeQiFNFzlnoQ2kMyuX
-	 ZaFnylG5wmSmOEZ/XkYdAqpBFXiQIhiT7XYs+h+8W88/KXyOVTz9OzMSjXz7M7bneA
-	 fTPuP5G9l5DhfrQBXIFZToLzbt6VFaQurfP2keJN6BGHm2kxFzbuLPhFlHgXz+KVNm
-	 YlvUobF5pCM+xy1q/jT7FfyO8+2APpYo+fJ9dSLjzUph5utoiEx6n5gchN6vzeP6O2
-	 8bWk8Q9JcO62g==
-Date: Tue, 11 Jun 2024 13:15:43 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC: Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-User-Agent: K-9 Mail for Android
-In-Reply-To: <8eb5960f-17f9-4d94-9b52-dea8b475e9dc@zytor.com>
-References: <20240608193504.429644-2-torvalds@linux-foundation.org> <20240610104352.GT8774@noisy.programming.kicks-ass.net> <f967d835-d26e-47af-af35-c3c79746f7d9@rasmusvillemoes.dk> <8eb5960f-17f9-4d94-9b52-dea8b475e9dc@zytor.com>
-Message-ID: <BFD0AF77-C95E-4B8B-B475-DCBD808CA5C0@zytor.com>
+	s=arc-20240116; t=1718136993; c=relaxed/simple;
+	bh=ypjaG6RRmQ019AQrSCd6Tnv5zFqudupklgD00PZTb0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTSF4ermusMn23Lt0V8Q2u0quQToSZY0zTVlp7FxVHIHYvHoz/gbzE1DxttVj49YwQVdv4LfUbGGuhV1Fm9QAF2VYGCvG7n+uM9sYH8KoLWz27D/ym+n51Op0YmBfsNuoYjoAe5QcL2XZgTlulAesqtCXoVhmOBGpCy3PcE5smM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfmV+4HT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE569C2BD10;
+	Tue, 11 Jun 2024 20:16:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718136993;
+	bh=ypjaG6RRmQ019AQrSCd6Tnv5zFqudupklgD00PZTb0o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QfmV+4HTAuNi17zzOZZge2d9OmlcazjXGzXNMsh+/nlePzdP8VpoBL1cnX6bZM1RC
+	 D5PHW76sSoUHMIQL/oBIBI9MJTKO6e34DKpHW22nJzBzdhpo1Ts/f4mmjcsVyNFr9P
+	 Zkqfq561aJ56e2xqYyEho8w7Yk0iPpRTxhwUZmDhVqJ+UZ/i1Zf+wn/MOE33yGP3Ld
+	 NxtzY0h8fps8+Rh4BuQAC4pP1DyzAbeK+P+XWqEvCwutXCn30xSsd8vIwqfdXtGedM
+	 Ne6RQivU2UPhCD//IunnJUa+f+RIlxUnLY+7FRv8X6G7OcUvEfJd5x7fQDU9qMQ0Uw
+	 RbG0kXapbLEdA==
+Date: Tue, 11 Jun 2024 14:16:31 -0600
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v4 0/8] arm64: dts: convert fsl,esdhc.txt to yaml and fix
+ layerscape dts warning
+Message-ID: <20240611201631.GA3003237-robh@kernel.org>
+References: <20240611-ls_waring_esdhc-v4-0-d0d8a5b3f3cb@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611-ls_waring_esdhc-v4-0-d0d8a5b3f3cb@nxp.com>
 
-On June 11, 2024 12:43:02 PM PDT, "H=2E Peter Anvin" <hpa@zytor=2Ecom> wrot=
-e:
->On 6/10/24 06:38, Rasmus Villemoes wrote:
->> On 10/06/2024 12=2E43, Peter Zijlstra wrote:
->>> On Sat, Jun 08, 2024 at 12:35:05PM -0700, Linus Torvalds wrote:
->>=20
->>>> Comments?
->>>=20
->>> It obviously has the constraint of never running the code before the
->>> corresponding runtime_const_init() has been done, otherwise things wil=
-l
->>> go sideways in a hurry, but this also makes the whole thing a *lot*
->>> simpler=2E
->>>=20
->>> The only thing I'm not sure about is it having a section per symbol,
->>> given how jump_label and static_call took off, this might not be
->>> scalable=2E
->>>=20
->>> Yes, the approach is super simple and straight forward, but imagine
->>> there being like a 100 symbols soon :/
->>>=20
->>> The below hackery -- it very much needs cleanup and is only compiled o=
-n
->>> x86_64 and does not support modules, boots for me=2E
->>=20
->> As can be seen in my other reply, yes, I'm also worried about the
->> scalability and would like to see this applied to more stuff=2E
->>=20
->> But if we do this, surely that's what scripts/sorttable is for, right?
->>=20
->> Alternatively, if we just keep emitting to per-symbol
->> __runtime_const_##sym sections but collect them in one __runtime_const,
->> just using __runtime_const { *(SORT_BY_NAME(__runtime_const_*)) } in th=
-e
->> linker script should already be enough to allow that binary search to
->> work (with whatever : AT(ADDR() =2E=2E=2E ) magic is also required), wi=
-th no
->> post-processing at build or runtime required=2E
->>=20
->
->As far as one section per symbol, this is *exactly* what the linker table=
- infrastructure was intended to make clean and scalable=2E
->
->I think rejecting it was a big mistake=2E It is really a very useful gene=
-ral piece of infrastructure, and IMNSHO the whole notion of "oh, we won't e=
-ver need that many such tables" is just plain wrong (as evidenced here=2E)
->
->Either way, the problem isn't that hard; you end up doing something like:
->
->struct runtime_const {
->	unsigned int size;
->	reladdr_t entries[0];
->};
->
->#define DECLARE_RUNTIME_CONST(sym,type) \
->extern struct runtime_const sym;\
->asm("=2Epushsection \"runtime_const_" #sym "=2EStart\",\"a\"\n\t"
->    "=2Eglobl " #sym "\n"
->    #sym ": =2Eint 2f - 1f\n\t"
->    "1:\n"
->    "=2Epopsection\n\t"
->    "=2Epushsection \"runtime_const_" #sym "=2E_end\",\"a\"\n\t"
->    "2:\n"
->    "=2Epopsection\n\t");
->
->=2E=2E=2E and add a common suffix, say, "=2Eentry", for the entry section=
- names=2E Then SORT_BY_NAME() will handle the rest=2E
->
->	-hpa
->
+On Tue, Jun 11, 2024 at 12:01:45PM -0400, Frank Li wrote:
+> Start from v4 because fsl.esdhc.txt to yaml already sent out as v3.
+> 
+> Change from v3 to v4
+> - Add dts warning fixes
+> - Add mmc-spi-slot's voltage range fix, (not sure why it apply to
+> layserscape's dts file.
+> - clock-frequency is not required property
+> - add dma-conherence: true in binding doc
+> 
+> Now only "bit-endian" proptery warning left.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Frank Li (8):
+>       dt-bindings: mmc: Convert fsl-esdhc.txt to yaml
+>       dt-bindings: mmc: mmc-spi-slot: Change voltage-ranges to uint32-matrix
 
-Ok, the section naming is obviously bogus, but=2E=2E=2E
+>       arm64: dts: ls1012a: Chang node name from 'esdhc' to 'mmc'
+>       arm64: dts: ls1043a: Chang node name from 'esdhc' to 'mmc'
+>       arm64: dts: ls1046a: Chang node name from 'esdhc' to 'mmc'
+>       arm64: dts: ls1088a: Chang node name from 'esdhc' to 'mmc'
+>       arm64: dts: ls208ax: Chang node name from 'esdhc' to 'mmc'
+>       arm64: dts: lx2160a: Chang node name from 'esdhc' to 'mmc'
 
-I just had an idea how to clearly make this type-safe as a benefit=2E I'm =
-at a school event right now but I'll hack up a demo as soon as I get home=
-=2E
+It is all the same change to the same maintainer, so these can be just 
+one patch. Then you just have 1 typo to fix.
+
+Rob
 
