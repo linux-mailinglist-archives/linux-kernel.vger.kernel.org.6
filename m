@@ -1,267 +1,238 @@
-Return-Path: <linux-kernel+bounces-210384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 824CD904309
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C07790430F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB5551F21B30
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:02:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB661F22BBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B7759162;
-	Tue, 11 Jun 2024 18:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924975F870;
+	Tue, 11 Jun 2024 18:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L1XfzG8e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="K12AloHO";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="g+0PS4Ga"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0260482D7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718128922; cv=none; b=RTw0mCIoX61RGTIBC1jEGPCbXsAP1OVQ1T/QHVAqza6rFGtd5rDHYsOHdpdXtP0mmOWhRJjbn4saVQhhm5HOR3g99GvSKe9MiGE9VSCj2sgEsAitplZaYBub5jo6Qh1obMQBmcf2VWU4vk7MM5DbCG/MWfECHQpiw7MRrwDCzC0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718128922; c=relaxed/simple;
-	bh=OWF7nEj5DBu3q8/A/HxsLgxKjxJne8cXVcKM/+gUA6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qsa3KaL2/ua2MNBj4MpKLN9O+D7YBDiG09gT0+/T+D9dw99N9o/mxwztd/YgcnBacYH4bw/NDabvKx9ycIk6XfyhcM3xGB9b3mGquseJKxE5Sx718pbJwMB5+FhE5DzOppy6PObZ2frzJHxQITrCGcbin5NHxteU2Gj4ewFId7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L1XfzG8e; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718128919;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=boT4WhMfNiG1uf94oCjXPXPBcHUmJoyRMB9nHGWn29M=;
-	b=L1XfzG8eQpfFkUpwZCzZRuMYNqmjjixC4YAxk7dI2AgsACyHZ2R3acP2R5gtHox75pqcOB
-	9tyoZENpVOEi6fsupIZuy6dcOL1gmEhsFL+/4qJZyyszZn7TJM/VWKDJOtkcjJLQj7QX/Y
-	d7MEREn27mkLxh3L/+Z9hsQwojBljhs=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-532-1QbIF7p3MVCq-fXVdzBBpA-1; Tue,
- 11 Jun 2024 14:01:56 -0400
-X-MC-Unique: 1QbIF7p3MVCq-fXVdzBBpA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2C450195606E;
-	Tue, 11 Jun 2024 18:01:53 +0000 (UTC)
-Received: from [10.22.33.230] (unknown [10.22.33.230])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6089C1956087;
-	Tue, 11 Jun 2024 18:01:51 +0000 (UTC)
-Message-ID: <360b7a0c-6f70-42eb-b41d-b0d1325b0586@redhat.com>
-Date: Tue, 11 Jun 2024 14:01:50 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B848959162
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718128951; cv=fail; b=AIYQrVySA8QFLoebYnTF3MOr/+daYoErFGXIU8J7In/4I9VAOOef7E0KGW5CQ+RA8OCeAnAkO1jpCOkejL32q8xKzQpCn9V8g6FWK2usGy5VaVjkILtwOxUuWyAccBPxbAOnPiV/wm+OOhqDy+SSkZnrFxFRY3OBanNdB82xFo8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718128951; c=relaxed/simple;
+	bh=icEF52ZBLcxfPutDh/uPC+ieNIWtNDxjQKeUnpxVZ9o=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=c3oJGbs1TfFMaCjvKg/otl5c0leHgDVVUuDE0Vuxvfy/PnsT0P0PY0yySa1iEdAR0Nq9NcfqSo4LoIPL10XqmrAheB7xWmvniFCC5i4MJlOhROX05U0HkFvHAjYq4U2KPwzVmzabE+J3hWvyIc7uH17FtHL26ILsD0xyj/ldHHw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=K12AloHO; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=g+0PS4Ga; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BFtBmf011751;
+	Tue, 11 Jun 2024 18:02:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:content-transfer-encoding
+	:content-type:mime-version; s=corp-2023-11-20; bh=xssR9pF+Epp3EU
+	4dzuGiILc3cQF5UCYv07lngULU5fk=; b=K12AloHOqWaif7X5QbyfgeSruIxJGm
+	ibrNF6h/mK7KLkTpbgt/ggk2+6hdYdnJ8U9tLlUr4Wx5GoiZOhWtUsn8Ugvnur6O
+	bywrtJOj1dh01nIozTQlHQoI8CB9lJ/2x4JrcZTfGHRSP/txmU5EsxfHCBGEGx3w
+	7W133mOxuVD0jWZtL8LtWoaRFwMbwalsEHOtOC9sQOBkqIYxR/+TijI5I5ezU1Vf
+	UJU7Y3qRtaOXLAXMUUgXGrs7XqPcFc618vVwhCBmnp3Gjk/B/r2e8Z9gfLbyaikE
+	/2mbdr+a41fux9rdF4jSfp3yVLyat4tR2ecWlO/t59NeqK3RMhxsKdXw==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymhf1depx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Jun 2024 18:02:19 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45BHw49w036562;
+	Tue, 11 Jun 2024 18:02:18 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yncdwm7x9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Jun 2024 18:02:18 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ea6bupxxM3zA0NiwKVj3VmKR2NgIKj1h5+RyL7C+ZjRu3bzYSrCwFSW72bGHeTnmjeBmK+HzdgWDzY1Hp0tYZWpPzqJkEUeu8mYHXVF4gr/X+qmirngNleJOJSMoNRIk1IqFSeUNG0/UB2q13+tTH9RVXSFk35QBR6g2K/47CX6aSgRr0YIN+l/6Xhpw6myZv8QgQwr/VJPaaNLqDXJXSyjeTxqYH4pbkFG9ymlm2UVKWPLjtmv0Iu4PCaesNpabyayDUaFNe2RYTq2Wz+mSx2iBKLwoPkMILVETuKrxP4/Y3NHkG6eo5/83lTEejsH9KkyVKFfAmUdvu+A5OgY1uA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xssR9pF+Epp3EU4dzuGiILc3cQF5UCYv07lngULU5fk=;
+ b=EAxuE+JE9c4MiLSHlSEaQ0d1aIqozN2wSr61I9XLayF8mPGH9KMPRc5qvcUW42xa+SD41Pr0jzs4E8UrO41zJN+vh9puViscg8bVB7bXgxPtCedLSs2KVGc1c62mUxhiyed4Uu7mN/mjdYR6Iv1zYhK4MlW/3oia5kv/viEaiz/Te9H2jT+CmSvTCLOTqvJzihf0VjaJ3cC7xcqQ2Iy6OK7N8g1JUlw3RnrlBiwW838zxk/Hr75ijq7RlZlhqNC+jkEeNKdZF5YWCwQDTczLafUZRROX2hSD14TH0VPr8IoLqYS6onnB2sibjMTF9+QVmDI++t66wnwbvyA1j2Y6iw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xssR9pF+Epp3EU4dzuGiILc3cQF5UCYv07lngULU5fk=;
+ b=g+0PS4Ga8Tr8vlh5D+DxAHUURlFVwSD3YKxjhujZeJkNn4GnWU9nxaESE2jFB5E2U+FmrxjYS3RqJNWkDtfop21TbOGyKPGoJgYP4zLgQ7dcou6Mm5gE0JSA1YGGEqdeiLcQL+0c0FsKDtBYjymnbrLe0kJxLMlvvEIrYQX5rGg=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by PH7PR10MB6154.namprd10.prod.outlook.com (2603:10b6:510:1f5::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Tue, 11 Jun
+ 2024 18:02:12 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.7633.037; Tue, 11 Jun 2024
+ 18:02:12 +0000
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: [PATCH 0/8] Avoid MAP_FIXED gap exposure
+Date: Tue, 11 Jun 2024 14:01:52 -0400
+Message-ID: <20240611180200.711239-1-Liam.Howlett@oracle.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: YT4PR01CA0366.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:fd::11) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH-cgroup 1/2] cgroup/cpuset: Fix remote root partition
- creation problem
-To: ghostxavier@sina.com
-Cc: cgroups <cgroups@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, tj <tj@kernel.org>,
- "lizefan.x" <lizefan.x@bytedance.com>, hannes <hannes@cmpxchg.org>
-References: <6661b33c7f1670.55086514.d793e57a@m1.mail.sina.com.cn>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <6661b33c7f1670.55086514.d793e57a@m1.mail.sina.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|PH7PR10MB6154:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ad352a3-83d3-4d0a-d840-08dc8a409e70
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230032|1800799016|366008|376006;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?Lji04tj67jCAFwQQXxnubln0V3JRqisPplXARTSyJxLfSwUT30i3UYtRUDkp?=
+ =?us-ascii?Q?ppcOB0rIuiS62/LWnFkUbnbDe/cvwHS1GPrertv1WrkH5+c6CmoR59rDC3T3?=
+ =?us-ascii?Q?SXNEefIAwdreKCXW+3seUq2P8KlnA8tKBdBmqQROBn6Gcnci251PNsuFY5wC?=
+ =?us-ascii?Q?fTo1rf/gJp/0o0U3XlKVeVtf1UgZ5eDCIBcrY2PhLympTyn1SsLcjxHtSK0K?=
+ =?us-ascii?Q?cEAIKHgmgSwGCt8G1JAoqCHq6+aHPKhqZ8jEdaWuLmsBUT85Jp6wRXhj4eZ+?=
+ =?us-ascii?Q?q6UJFxrz3LtYbO1yUoKp2uiY32BpgjrjNk5RS8ZLH94SgVoY98XkkUwwLwUg?=
+ =?us-ascii?Q?GwIuS7oKYvoFciCzfwyEpQ7FXlcZU57e72NrsefWTmqfoL1uMjDn0MTZiZcO?=
+ =?us-ascii?Q?lAK7ax1seKiPyTnxB/lwtbbAa8H5HYRPBft+ooWr0+jKMMPlSKTzXRylVXvB?=
+ =?us-ascii?Q?n8cOPG+w7VmzvgI3l4zjVzdjF52NQnjLI4Tg6FIYnHKIAoX5YBqR9lQsZfpE?=
+ =?us-ascii?Q?0NbbocnsqUgnhqjvPJTThaqkj0N7PaKFAWOMnd9bNMvhoFAClapx7Uf20K/S?=
+ =?us-ascii?Q?rgvrFrsPjGU5d58pNIbacKWVcsdgJdLN4nnwsY5r19Iwl75/Y/ZPOxnl13SD?=
+ =?us-ascii?Q?y3hOMJhj03+0h9vYf2rtySB/0V1lhCIZxeajgr3AAZ/HhPbipC1xatzg7M+U?=
+ =?us-ascii?Q?lewHgTQXQjvTmjQcBAOr+FVlzKGY0vyDR5n9EltjnjD9RFcL43M/6zD3PuHB?=
+ =?us-ascii?Q?O+7/iBiZvEb6jyX7uPaPppvFTyXRVxwqtK3VD10cWvHbptuHJ8NwAOe+onT0?=
+ =?us-ascii?Q?b6AYmtYSNC5b3NcBI5m6o0z5a7utFFyyycf/9Jr8+jycVJsf2h6Sgiwo21Ss?=
+ =?us-ascii?Q?ZyiOC+oSBRThAUO87O44RAx5laAOE2WhqFqQXY2FVjgMAof5ClL4idSPrbF/?=
+ =?us-ascii?Q?LO/ue3iFd+UiEQxIGOUbiToZ+/hvDXIfQKq1xjiiOl54jlZ9G/i8ea5MxU8K?=
+ =?us-ascii?Q?QjguGWDNS7Um86hu+CW2uGJ7sMtPnZ9T6SfxtU2A6M7DdCQ3/zJPu7is8r8b?=
+ =?us-ascii?Q?cWN+V5qtg7+Qt6rUM8V0c0jTYBkSy8gkK2ZoR5VBUh648rIgDKgul7js5cLw?=
+ =?us-ascii?Q?xKrn/QiO5pP1AsvURmiDIGSRZkwJDkGjpcBZBbtp8CcDEY4/StKkCrzQ0uBB?=
+ =?us-ascii?Q?gXepv1R8hsEaC5tDi1h/1ViE/B2kZX+Z1x8PCYSfWhvs5FwKUEEI4DFHH4WL?=
+ =?us-ascii?Q?LK1JEgsjrhOCnpmALmArlLor/BL3ycY2c2C7AFDGRENJgKQnUb+eYdyygnDt?=
+ =?us-ascii?Q?Qxd3VhV0MlVs+SsASB/hapRf?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230032)(1800799016)(366008)(376006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?Ys0u8qXLaJc8iaPaR/x6gBjjcV7KhHlVTi2bLGsNbp0Fil51GtCc+5HMcCjj?=
+ =?us-ascii?Q?VkGzAQaCsX3M7+m5Ugqc8lATnMfabTN6TqJc5BO6jFATU2HFpMvoYttd+uJn?=
+ =?us-ascii?Q?a8UFqxbSTrRJbz3gZVGFR6qeiNPh+sR0WRhOXZQBF/SbQRDTvmnrn0C4w/wK?=
+ =?us-ascii?Q?WCNGKyyTmBf+QjkM89mfssOt3NYN2NB0D/E3MzM5AmARbNZ398MWmRayPuIL?=
+ =?us-ascii?Q?0M+f6hUsyT8ZwmzTvRPOoS+nZSKTUz+KJs20J1/W8m7ceACfMxu1LfERWb4X?=
+ =?us-ascii?Q?TVFIoUp37jzADO4GkVVuuTLVYVs526R/W8uXKCbhYmTG4Ki0VDoht7Nalfw5?=
+ =?us-ascii?Q?McACLtKftSbSuGaf9Ft0QIR5dwNwY1LXXXVOErqqkrWVKKaGdl0wfQBrww+v?=
+ =?us-ascii?Q?XSg5AR59Eo0AWRUqoMtFOfUY+6Pud0RRBybiBaJgueQii28Buc4WtUkrqLBn?=
+ =?us-ascii?Q?L9FWY3BjR0erfkP1sX/ehuSb0Vu4UOq3S/5o8vsRPCkttTlyUkSSmcPLG30c?=
+ =?us-ascii?Q?Vk8lUVYm8XV2CPHrithyqWum5XmlT1S4ErYzOSYf9xgxvd3Fcn6E3rt859eg?=
+ =?us-ascii?Q?2xgLaehzMvIieN7RDx3orGlfYnaC2+/6Z0R5pemfXRMCneC0YeiHBSRkA7+p?=
+ =?us-ascii?Q?b1ZVa8CJ4om/haj8haTLzVbuKm6SG0vQBNDzX/qsp3cuqUD68ReaHncD1oc2?=
+ =?us-ascii?Q?5+ANiwZhNdq987M+9ILiHp2nH7dlqrixDQEuHaI87o4PautcXlbRQ2fuhGZT?=
+ =?us-ascii?Q?pR+QeS3N6JXEqz4DoJJOmxaTev0zLKtdlg2ob/Rn9yj0AG9oNqljbh5b4EpP?=
+ =?us-ascii?Q?kscJD1ZsK706w2opQR8mY8/WytHiVHfLNn/WS/JK1sT1O6HuMRk4+E87IDzA?=
+ =?us-ascii?Q?uMeZaoylmM/mX970eWaRf4HM+cCliFtR/JZL+mJ+rthV5YWsyjp3KitN/Z80?=
+ =?us-ascii?Q?KpNqkWVJUJSlzCHjS9HOUAVoEaa8h0wrJFH2n1GqFkbd77u0L+ayhlwhYFm8?=
+ =?us-ascii?Q?2eFXpYT33XaIHzuwW8cEor90OWPDDPpqH8Sz+CFPJlJG8xvH/PRKYFdbtomb?=
+ =?us-ascii?Q?Fr8IcL8Q5kYa+GHzXPHuv3h63Bd8HSVzCvIAyY0wW2/D3ev0orcK7DEqbtkZ?=
+ =?us-ascii?Q?Ijh+omph9A1b73FAJ/m0mYZp1XQff66DpDpZVgHEvWts4MRyNmQikzQwn54n?=
+ =?us-ascii?Q?kw8VHMiudzylxv20seDlVhPGNiGTnYXXaZ3j/S060sJvLManGkSGGCPoXDkI?=
+ =?us-ascii?Q?Reto5prtisAIlpw48ywcVC+ZNQXZy8xKRKhC5KfbganjUptW9C8Io6diapXE?=
+ =?us-ascii?Q?YdDYIg+V9+mPR15ft85gfeX+WZd1BgGhSJpJ46O2AGo9hQIxQs8Yos5LS1IO?=
+ =?us-ascii?Q?yW0/JSEsozR3tEneCxJIaAZe9p/F1yFK042A0JfVrlvCqEGVHIqAnLHzTw98?=
+ =?us-ascii?Q?iWhzDUNTyFZj5kdMiRkRU/VDMP2mD2eOTxzy27mHjTcFS8aKaKMU7MKv6lz/?=
+ =?us-ascii?Q?N1m3TBXr1zXp7nzeLH3W2RMSWVoZJxKL+wtbDERIQkQYyp67LhtfFNnX88dg?=
+ =?us-ascii?Q?mb1IcXBSkTVRSWB18hqcMV0oF8YpYpL/kxUa2HUa?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	O2iUZDrUSqoadf2vEQ2c9+cMS5WfhnCXVVMSZmEdg+SzMLyUr4M/ToVNgvQL+ucEae1Xpq1nQ1ER4bTJy3aAcRsMWBIP3ivs63vU5YqsUvS91bUJ8DPGBH4qcI9vBW7bw5h7uDQIT+3n5kJUOC9cxyGBU2mJIga4rmKYPHis6g5G7DbKfwqpp23jRXk0+3z7gW9WR1Q4QtxLDbQf/J/428G/X+O28cVdMf6iLBLIuC2CTEqDCeOYcsKNl1VYib1pfSPmyo5/muihegtCz5TVtuNJ9jz/nJG7ZPL574sEYOQmnF8uNc+364CkbK19KBtcJ7OMeJOkLiHgILjzNiUxpaA4anQv1iKp+neafqwtgVZuT4TEWvP4LdsvZ4ZyOrMzZr0eRF5sNDMmJMdtIDRzxYOdWAIOKgDkGZ8fh6sLFcr0lgTN4vzMReMspIGGOWQRayfLnlqjRJjsQJtn2/oCA3FRNRCbnZvco8N9Ux/jzNK01HW/do5blTdWPmo+3+3lVIcFpRg+WPxu8zZFhc9ePVtXz5EjF8MPBnjinUe2HDhY+noBd3+kUcCu5vyO9uJrKwQ9m8lcVw8wPi22wLmAcXu/SE5p8JbHRUAiqFRiAek=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ad352a3-83d3-4d0a-d840-08dc8a409e70
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 18:02:12.1564
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BD/UoemPrRqFXoX7eWYIR2JSiOkmsaEWbTZf58nG2wMhEcYjL4ptzwR+e7hLAGBtdIs4gxAtxk/TxGwHmydicw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6154
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 adultscore=0
+ mlxscore=0 bulkscore=0 malwarescore=0 mlxlogscore=920 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406110123
+X-Proofpoint-ORIG-GUID: HCkbwLsS4uWeTtarT9W2oJvBZUvLI9Xo
+X-Proofpoint-GUID: HCkbwLsS4uWeTtarT9W2oJvBZUvLI9Xo
 
-On 6/6/24 09:01, Xavier wrote:
-> Hi Longman,
->
-> I have a small question about your new patch.
-> I wonder that in cgroup v2,  will there be any overlap between valid partition roots and top_cpuset? If it is not, the section starting with 'restart:' that searches for overlapping cpusets can be skipped for cgroup v2. Otherwise, if there are any overlap, then the assignment to 'dom' may need perform an cpumask_or operation?
+It is now possible to walk the vma tree using the rcu read locks and is
+beneficial to do so to reduce lock contention.  Doing so while a
+MAP_FIXED mapping is executing means that a reader may see a gap in the
+vma tree that should never logically exist - and does not when using the
+mmap lock in read mode.  The temporal gap exists because mmap_region()
+calls munmap() prior to installing the new mapping.
 
-In cgroup v2, the top_cpuset is a non-isolating partition root by itself 
-and its partition root state cannot be changed.
+This patch set stops rcu readers from seeing the temporal gap by
+splitting up the munmap() function into two parts.  The first part
+prepares the vma tree for modifications by doing the necessary splits
+and tracks the vmas marked for removal in a side tree.  The second part
+completes the munmapping of the vmas after the vma tree has been
+overwritten (either by a MAP_FIXED replacement vma or by a NULL in the
+munmap() case).
 
-The reason for the introduction of the partition feature in cgroup v2 
-was to support the creation of a separate sched domain. cgroup v1 
-supports that indirectly via clever use of the cpuset.sched_load_balance 
-flag. So by definition, the presence of a non-isolating partition root 
-defines a new sched domain.
+Please note that rcu walkers will still be able to see a temporary state
+of split vmas that may be in the process of being removed, but the
+temporal gap will not be exposed.  vma_start_write() are called on both
+parts of the split vma, so this state is detectable.
 
-Cheers,
-Longman
+RFC: https://lore.kernel.org/linux-mm/20240531163217.1584450-1-Liam.Howlett@oracle.com/
 
-> Best regards,
-> Xavier
->
->> ----- Original Message -----
->> From: Waiman Long <longman@redhat.com>
->> To: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>
->> Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, Xavier <ghostxavier@sina.com>, Waiman Long <longman@redhat.com>
->> Subject: [PATCH-cgroup 1/2] cgroup/cpuset: Fix remote root partition creation problem
->> Date: 2024-06-06 01:19
->>
->> Since commit 181c8e091aae ("cgroup/cpuset: Introduce remote partition"),
->> a remote partition can be created underneath a non-partition root cpuset
->> as long as its exclusive_cpus are set to distribute exclusive CPUs down
->> to its children. The generate_sched_domains() function, however, doesn't
->> take into account this new behavior and hence will fail to create the
->> sched domain needed for a remote root (non-isolated) partition.
->> There are two issues related to remote partition support. First of
->> all, generate_sched_domains() has a fast path that is activated if
->> root_load_balance is true and top_cpuset.nr_subparts is non-zero. The
->> later condition isn't quite correct for remote partitions as nr_subparts
->> just shows the number of local child partitions underneath it. There
->> can be no local child partition under top_cpuset even if there are
->> remote partitions further down the hierarchy. Fix that by checking
->> for subpartitions_cpus which contains exclusive CPUs allocated to both
->> local and remote partitions.
->> Secondly, the valid partition check for subtree skipping in the csa[]
->> generation loop isn't enough as remote partition does not need to
->> have a partition root parent. Fix this problem by breaking csa[] array
->> generation loop of generate_sched_domains() into v1 and v2 specific parts
->> and checking a cpuset's exclusive_cpus before skipping its subtree in
->> the v2 case.
->> Also simplify generate_sched_domains() for cgroup v2 as only
->> non-isolating partition roots should be included in building the cpuset
->> array and none of the v1 scheduling attributes other than a different
->> way to create an isolated partition are supported.
->> Fixes: 181c8e091aae ("cgroup/cpuset: Introduce remote partition")
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->> kernel/cgroup/cpuset.c | 55 ++++++++++++++++++++++++++++++++----------
->> 1 file changed, 42 insertions(+), 13 deletions(-)
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index f9b97f65e204..fb71d710a603 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -169,7 +169,7 @@ struct cpuset {
->> 	/* for custom sched domain */
->> 	int relax_domain_level;
->>
->> -	/* number of valid sub-partitions */
->> +	/* number of valid local child partitions */
->> 	int nr_subparts;
->>
->> 	/* partition root state */
->> @@ -957,13 +957,14 @@ static int generate_sched_domains(cpumask_var_t **domains,
->> 	int nslot;		/* next empty doms[] struct cpumask slot */
->> 	struct cgroup_subsys_state *pos_css;
->> 	bool root_load_balance = is_sched_load_balance(&top_cpuset);
->> +	bool cgrpv2 = cgroup_subsys_on_dfl(cpuset_cgrp_subsys);
->>
->> 	doms = NULL;
->> 	dattr = NULL;
->> 	csa = NULL;
->>
->> 	/* Special case for the 99% of systems with one, full, sched domain */
->> -	if (root_load_balance && !top_cpuset.nr_subparts) {
->> +	if (root_load_balance && cpumask_empty(subpartitions_cpus)) {
->> single_root_domain:
->> 		ndoms = 1;
->> 		doms = alloc_sched_domains(ndoms);
->> @@ -992,16 +993,18 @@ static int generate_sched_domains(cpumask_var_t **domains,
->> 	cpuset_for_each_descendant_pre(cp, pos_css, &top_cpuset) {
->> 		if (cp == &top_cpuset)
->> 			continue;
->> +
->> +		if (cgrpv2)
->> +			goto v2;
->> +
->> 		/*
->> +		 * v1:
->> 		 * Continue traversing beyond @cp iff @cp has some CPUs and
->> 		 * isn't load balancing.  The former is obvious.  The
->> 		 * latter: All child cpusets contain a subset of the
->> 		 * parent's cpus, so just skip them, and then we call
->> 		 * update_domain_attr_tree() to calc relax_domain_level of
->> 		 * the corresponding sched domain.
->> -		 *
->> -		 * If root is load-balancing, we can skip @cp if it
->> -		 * is a subset of the root's effective_cpus.
->> 		 */
->> 		if (!cpumask_empty(cp->cpus_allowed) &&
->> 		    !(is_sched_load_balance(cp) &&
->> @@ -1009,16 +1012,28 @@ static int generate_sched_domains(cpumask_var_t **domains,
->> 					 housekeeping_cpumask(HK_TYPE_DOMAIN))))
->> 			continue;
->>
->> -		if (root_load_balance &&
->> -		    cpumask_subset(cp->cpus_allowed, top_cpuset.effective_cpus))
->> -			continue;
->> -
->> 		if (is_sched_load_balance(cp) &&
->> 		    !cpumask_empty(cp->effective_cpus))
->> 			csa[csn++] = cp;
->>
->> -		/* skip @cp's subtree if not a partition root */
->> -		if (!is_partition_valid(cp))
->> +		/* skip @cp's subtree */
->> +		pos_css = css_rightmost_descendant(pos_css);
->> +		continue;
->> +
->> +v2:
->> +		/*
->> +		 * Only valid partition roots that are not isolated and with
->> +		 * non-empty effective_cpus will be saved into csn[].
->> +		 */
->> +		if ((cp->partition_root_state == PRS_ROOT) &&
->> +		    !cpumask_empty(cp->effective_cpus))
->> +			csa[csn++] = cp;
->> +
->> +		/*
->> +		 * Skip @cp's subtree if not a partition root and has no
->> +		 * exclusive CPUs to be granted to child cpusets.
->> +		 */
->> +		if (!is_partition_valid(cp) && cpumask_empty(cp->exclusive_cpus))
->> 			pos_css = css_rightmost_descendant(pos_css);
->> 	}
->> 	rcu_read_unlock();
->> @@ -1072,6 +1087,20 @@ static int generate_sched_domains(cpumask_var_t **domains,
->> 	dattr = kmalloc_array(ndoms, sizeof(struct sched_domain_attr),
->> 			      GFP_KERNEL);
->>
->> +	/*
->> +	 * Cgroup v2 doesn't support domain attributes, just set all of them
->> +	 * to SD_ATTR_INIT. Also non-isolating partition root CPUs are a
->> +	 * subset of HK_TYPE_DOMAIN housekeeping CPUs.
->> +	 */
->> +	if (cgrpv2) {
->> +		for (i = 0; i < ndoms; i++) {
->> +			cpumask_copy(doms[i], csa[i]->effective_cpus);         /*****************************************/
->> +			if (dattr)
->> +				dattr[i] = SD_ATTR_INIT;
->> +		}
->> +		goto done;
->> +	}
->> +
->> 	for (nslot = 0, i = 0; i < csn; i++) {
->> 		struct cpuset *a = csa[i];
->> 		struct cpumask *dp;
->> @@ -1231,7 +1260,7 @@ static void rebuild_sched_domains_locked(void)
->> 	 * root should be only a subset of the active CPUs.  Since a CPU in any
->> 	 * partition root could be offlined, all must be checked.
->> 	 */
->> -	if (top_cpuset.nr_subparts) {
->> +	if (!cpumask_empty(subpartitions_cpus)) {
->> 		rcu_read_lock();
->> 		cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
->> 			if (!is_partition_valid(cs)) {
->> @@ -4575,7 +4604,7 @@ static void cpuset_handle_hotplug(void)
->> 	 * In the rare case that hotplug removes all the cpus in
->> 	 * subpartitions_cpus, we assumed that cpus are updated.
->> 	 */
->> -	if (!cpus_updated && top_cpuset.nr_subparts)
->> +	if (!cpus_updated && !cpumask_empty(subpartitions_cpus))
->> 		cpus_updated = true;
->>
->> 	/* For v1, synchronize cpus_allowed to cpu_active_mask */
->> -- 
->> 2.39.3
+Changes since RFC:
+- Fixed comment on __split_vma() - Thanks Lorenzo & Suren
+- Split out abort & complete stages of munmap_vmas() to reduce
+  complexity of review - Thanks Suren
+- Correct accidental removal of validate_mm() and split the extraction
+  of the validate_mm() to its own patch - Thanks Suren
+- Fixed merge error in comments - Thanks Lorenzo
+- Added reviewers, but I didn't add Suren's review of patch 2 as it
+  significantly changed into 3 patches to make reviewing easier as he
+  suggested.
+
+
+Liam R. Howlett (8):
+  mm/mmap: Correctly position vma_iterator in __split_vma()
+  mm/mmap: Introduce abort_munmap_vmas()
+  mm/mmap: Introduce vmi_complete_munmap_vmas()
+  mm/mmap: Extract the gathering of vmas from do_vmi_align_munmap()
+  mm/mmap: Introduce vma_munmap_struct for use in munmap operations
+  mm/mmap: Change munmap to use vma_munmap_struct() for accounting and
+    surrounding vmas
+  mm/mmap: Extract validate_mm() from vma_complete()
+  mm/mmap: Use split munmap calls for MAP_FIXED
+
+ mm/internal.h |  22 +++
+ mm/mmap.c     | 399 +++++++++++++++++++++++++++++++-------------------
+ 2 files changed, 270 insertions(+), 151 deletions(-)
+
+-- 
+2.43.0
 
 
