@@ -1,136 +1,116 @@
-Return-Path: <linux-kernel+bounces-210647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4EE69046AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:03:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FAD39046C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7501E28592B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:03:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 134231F263A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D131552E1;
-	Tue, 11 Jun 2024 22:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1550A155310;
+	Tue, 11 Jun 2024 22:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pzfp13xJ"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/NzRHHA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BE41527B3
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A4E3A8E4;
+	Tue, 11 Jun 2024 22:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718143397; cv=none; b=DFI36DH+sAUGDqqsqwIDmSPxEBmWgw0tOC101e+q9ASZuFJ+ZsviEgeV/eBWqYVOEGCK1uqZUr+22x/HLWWQPPAZXcDeDi3H9aoTb9O1nQ7UqknxcJfQOT5aU2Etr5Ooq3iuLx7T3OdIjUFOBxkHXDFUpOHvmhp8baM1FEU4Z3Y=
+	t=1718143605; cv=none; b=dZ2H7wVx+7FMTggyFkL9Zpj4tWo2gy1Njvxi2Bwa4F77MjWCOVjNqtpGgT4PFhEff+7QzO0gemdqk7zKuH+4ObT+p+XWFiZjz7Lqx8yZNFzZZCRYByHN2hN0tOljyBGyM3nXe8W2QmLY3P0wxkZdopXisLZWBnbGqSQy21xBUtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718143397; c=relaxed/simple;
-	bh=Ey4dpn+f1UTvaOx0gUOY+eQ9wwdUJpZk5SoYV20o088=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eTp3KDeCZXHNwQtln6SieWNPQOLeEdcN4bmXws/b4fPw7hzqlqljUIYvxlMY5Fzdiiq+hlJZfk9z0izVKXzEBn/MUeDo10n+S+jKC0v1vTOvr0APlKP9D3JOqZYL56ZLgCXneZGLRq6w7kyk/RrtYYT75nX54iFTMZt1nAeXfCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pzfp13xJ; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62f46f56353so8373867b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718143393; x=1718748193; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KeC1/70he5CQ79E8jYxK5W/LoMc72KfRPBd07uT+cuY=;
-        b=pzfp13xJgS4PrMgr8eebFpdqon9XpjtuiiSunvsOv79NWb1mBwZL/k+sTbiz2FB6NB
-         /X1X3LWw1TPj6w5qDUh8WVXnNvR265QOTBi18YzRyOplSSV0C/CVWB3SDsGm2u59XBeL
-         CK/JgZVeh0faOENI/V7ZI/wdUQXf7YrJVciyplIgAnOisIgTsGYu1JUlalCTZZYAI4KY
-         c/I+h4hb6zXubWue6dYhishxiqsCIr1PSTxdW6/cF16uBq8P5qZ+VAmHZ7bAzUClX4sN
-         SvjLPvvxWPA5kPiFUvS1K33h2hBsePMcEqsdABwkE8HNsX3G5RPn9c4ThHVXPPw/M3i9
-         rOdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718143393; x=1718748193;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KeC1/70he5CQ79E8jYxK5W/LoMc72KfRPBd07uT+cuY=;
-        b=OQzb6q7jjU7uOp35clGsCHyg4GAZf3Ilh7pGhj45Gk3Re85uQzdcU1zSNQhPdykaYK
-         PJtIWEgt6TtkwErmCng6tzBFiyF+MtYIIb/xbifIhYsDIr7pVkG+UVeF4M55ZNzwHhT3
-         1lOcgN5WHIrOPpfWej7yWO5tjfaUb2fs6WXa/Cdhi5m4OGSW75DpAWavdGZNKH5+MzEm
-         EuXohhLR5zWroeCb9vWKedIMWh3saE+F//QtSGbzxEuy/sZf3Eyx2Lj+Ja/E1HjWCmES
-         4riJoZ7bAUI3hWjUs8N5vUvkLUnXWqkCDMHiUWVjFKnz4WNoSvQSTuu34q8r2kdMlXt/
-         uKtA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8g6XTvjX/0mzqtHaTJO5ArZsCYFRb61dOvWT7aws2iKqDue7URvwK2Qn0WGnekXE+0NWymItCHf43++UslDyPUIhOcMjXFXcC82mG
-X-Gm-Message-State: AOJu0Yy4/zOzHciNEUJ9e5wjo0IUPlT4QN9k5tHglYKpL4vx0j4vWI6N
-	cc77/Nbf/lUmG3rrEEexKgc+Z4Io1a6zS2YBwpbVYY8sUKm4cHYGJVM9/nOmOVyEAV5icHk0bQ9
-	UhA==
-X-Google-Smtp-Source: AGHT+IEgj86esgclw1q8kzIIbHibvWuASiwr8am2UV+qPS22vwZD9KxmZ6peui4uE5upeZ1rOL+uSOW+Dn4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:c17:b0:627:a961:caee with SMTP id
- 00721157ae682-62fba27ded9mr55487b3.4.1718143393450; Tue, 11 Jun 2024 15:03:13
- -0700 (PDT)
-Date: Tue, 11 Jun 2024 15:03:11 -0700
-In-Reply-To: <a44d4534-3ba1-4bee-b06d-bb2a77fe3856@intel.com>
+	s=arc-20240116; t=1718143605; c=relaxed/simple;
+	bh=2z2T09bcbzfwexUZ5T7jD1TkbLjspNsoiYHpZ3OkpCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=S3oQDUOGk9ZUWoUr6usYvNZjGQtGPO6sNTAj+Xg+jFLvMuzH6aXbihOC4v6Y+usGqpSbnLhYQv6s666tSpPXHa2dRrL6crJOu4M0CFgHbcOyKFnsh2KJj1URau+wzmv5Zweg4XoBnug4aF5r96qXPetcw4egG77mjcBDX7TPRpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/NzRHHA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDC81C2BD10;
+	Tue, 11 Jun 2024 22:06:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718143604;
+	bh=2z2T09bcbzfwexUZ5T7jD1TkbLjspNsoiYHpZ3OkpCI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=a/NzRHHA81Kr/n5nwF8wLMmpSxDwQFBG1tf3wJl/ZX5qrZu3LoF/n38c1RQWAS3to
+	 9PF0iBa1/cYKwSVYTUUEyS/nclJFBX6lIO5eO0x1Az0PTI0ZwlAsdX/khbFtfebn6E
+	 YXiFVo4lds+SLiDkmm+nUPE/ZqefCzy2l8jaKYjZeHRpo24owJwxwC2tQwf1lgcI1s
+	 jSWMaN02nOnAzTwxwp8JNo1/Rsd/DRVvo/SgDh50CtfMf0VE9bi5/DnHDINTWd02UU
+	 HtDL2EuqVAPEfbwNIt35YzWTA4zlII6G6PiSRavH22Rynv/chO+GKlSJqnxKZZ2/Mp
+	 +OmyobALds0Jg==
+Date: Tue, 11 Jun 2024 17:06:40 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	mhi@lists.linux.dev, Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH 2/5] PCI: endpoint: Introduce 'epc_deinit' event and
+ notify the EPF drivers
+Message-ID: <20240611220640.GA1001976@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1718043121.git.reinette.chatre@intel.com>
- <ad03cb58323158c1ea14f485f834c5dfb7bf9063.1718043121.git.reinette.chatre@intel.com>
- <ZmeYp8Sornz36ZkO@google.com> <a44d4534-3ba1-4bee-b06d-bb2a77fe3856@intel.com>
-Message-ID: <ZmjJnzBkOe58fFL6@google.com>
-Subject: Re: [PATCH V8 1/2] KVM: selftests: Add x86_64 guest udelay() utility
-From: Sean Christopherson <seanjc@google.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: isaku.yamahata@intel.com, pbonzini@redhat.com, erdemaktas@google.com, 
-	vkuznets@redhat.com, vannapurve@google.com, jmattson@google.com, 
-	mlevitsk@redhat.com, xiaoyao.li@intel.com, chao.gao@intel.com, 
-	rick.p.edgecombe@intel.com, yuan.yao@intel.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
 
-On Tue, Jun 11, 2024, Reinette Chatre wrote:
-> > Heh, the docs are stale.  KVM hasn't returned an error since commit cc578287e322
-> > ("KVM: Infrastructure for software and hardware based TSC rate scaling"), which
-> > again predates selftests by many years (6+ in this case).  To make our lives
-> > much simpler, I think we should assert that KVM_GET_TSC_KHZ succeeds, and maybe
-> > throw in a GUEST_ASSERT(thz_khz) in udelay()?
+On Thu, Jun 06, 2024 at 12:56:35PM +0530, Manivannan Sadhasivam wrote:
+> As like the 'epc_init' event, that is used to signal the EPF drivers about
+> the EPC initialization, let's introduce 'epc_deinit' event that is used to
+> signal EPC deinitialization.
 > 
-> I added the GUEST_ASSERT() but I find that it comes with a caveat (more below).
+> The EPC deinitialization applies only when any sort of fundamental reset
+> is supported by the endpoint controller as per the PCIe spec.
 > 
-> I plan an assert as below that would end up testing the same as what a
-> GUEST_ASSERT(tsc_khz) would accomplish:
+> Reference: PCIe Base spec v5.0, sections 4.2.4.9.1 and 6.6.1.
+
+PCIe r6.0, sec 4.2.5.9.1 and 6.6.1.
+
+(Not 4.2.4.9.1, which no longer exists in r6.x)
+
+> Currently, some EPC drivers like pcie-qcom-ep and pcie-tegra194 support
+> PERST# as the fundamental reset. So the 'deinit' event will be notified to
+> the EPF drivers when PERST# assert happens in the above mentioned EPC
+> drivers.
 > 
-> 	r = __vm_ioctl(vm, KVM_GET_TSC_KHZ, NULL);
-> 	TEST_ASSERT(r > 0, "KVM_GET_TSC_KHZ did not provide a valid TSC freq.");
-> 	tsc_khz = r;
+> The EPF drivers, on receiving the event through the epc_deinit() callback
+> should reset the EPF state machine and also cleanup any configuration that
+> got affected by the fundamental reset like BAR, DMA etc...
 > 
+> This change also warrants skipping the cleanups in unbind() if already done
+> in epc_deinit().
 > 
-> Caveat is: the additional GUEST_ASSERT() requires all tests that use udelay() in
-> the guest to now subtly be required to implement a ucall (UCALL_ABORT) handler.
-> I did a crude grep check to see and of the 69 x86_64 tests there are 47 that do
-> indeed have a UCALL_ABORT handler. If any of the other use udelay() then the
-> GUEST_ASSERT() will of course still trigger, but will be quite cryptic. For
-> example, "Unhandled exception '0xe' at guest RIP '0x0'" vs. "tsc_khz".
-
-Yeah, we really need to add a bit more infrastructure, there is way, way, waaaay
-too much boilerplate needed just to run a guest and handle the basic ucalls.
-Reporting guest asserts should Just Work for 99.9% of tests.
-
-Anyways, is it any less cryptic if ucall_assert() forces a failure?  I forget if
-the problem with an unhandled GUEST_ASSERT() is that the test re-enters the guest,
-or if it's something else.
-
-I don't think we need a perfect solution _now_, as tsc_khz really should never
-be 0, just something to not make life completely miserable for future developers.
-
-diff --git a/tools/testing/selftests/kvm/lib/ucall_common.c b/tools/testing/selftests/kvm/lib/ucall_common.c
-index 42151e571953..1116bce5cdbf 100644
---- a/tools/testing/selftests/kvm/lib/ucall_common.c
-+++ b/tools/testing/selftests/kvm/lib/ucall_common.c
-@@ -98,6 +98,8 @@ void ucall_assert(uint64_t cmd, const char *exp, const char *file,
- 
-        ucall_arch_do_ucall((vm_vaddr_t)uc->hva);
- 
-+       ucall_arch_do_ucall(GUEST_UCALL_FAILED);
-+
-        ucall_free(uc);
- }
-
+> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
