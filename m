@@ -1,139 +1,86 @@
-Return-Path: <linux-kernel+bounces-210033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D7C1903E5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:06:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 396EC903E5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431371F22041
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:06:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C08E1C24301
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC15417D37F;
-	Tue, 11 Jun 2024 14:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Wt+tDmjI"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB5017DE1C;
+	Tue, 11 Jun 2024 14:06:08 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13FC1DDF4
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FAB17B437
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718114757; cv=none; b=gJfV7fnAF0h0K9SfyPqekS80+AKJuGPggI8ZC0dZXl52XUOMVG6c8fbLja+gY/GVSpWPGmyU6r6xi7nM4wPcuFj8bzxyxV2pRxBKB5O3UU7hR442W4jsasJEPEvT7rDHnVaVKw9MSNDfjqX23Cia3bVqLJkIUh1rn+HhSrcKR5U=
+	t=1718114768; cv=none; b=FDJtamx+OADnublcddCUj48zkdOllONjj/S1iXl6x9w0IfocoMpe4O7yE3OeI5CKEmrKzEy0Ngq7kRS5+FJ/vltA23gZ8KPIyhw+3GER0e0JafcO8683k08LVDVYA9IuVChSdaOPGQd1pUYx0T+Di/FaLcxJFUwjxMxZTJeabY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718114757; c=relaxed/simple;
-	bh=fb9h/s1OdFP7eRPaSrSo2uGC1HXvmDGSTyWKkCdOi0E=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Q9BuPKCBHB2+MVyaNurtgiOp9OgaiSnM2/JMooDL/gxqAZ7dKdGG1idr8E9fPNdmgaGtEqJCv/hmNxm6s81quEQH7VF9GxMbMzn+Q8F7ep5LceOApduAgHb+eVwLJU4raHHzMkO4aE2LQ8Js/+vD3Qrkmk42LWb0+3GP0rU4UwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Wt+tDmjI; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 999EA40E0176;
-	Tue, 11 Jun 2024 14:05:53 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Bh3dWK00moCE; Tue, 11 Jun 2024 14:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718114748; bh=H70qKEsyywdGIzZyFtIxa1Xk8eZnGnp/jCfVMLZyi+M=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Wt+tDmjIyG6q3owvFDUPoVEa9ZbwTDyr1D2mpF1518ZWSZZwKRBrvsKVJqXd/VYZ8
-	 kJOXKE6Rf2o4tkP0obr+nkETGmxwP6Npre5LVuuyxL9InE0UMp26SKOpO7i1QX0xwh
-	 FNqXLVU+vvDhZ1qLqX4cvZ7mDEtzLza/icSMmIHn2eKhsNPG6C+rQlw5j9R5pMa74W
-	 ojKSkzewEg3yYuOA9014cJLI3ZDa2vxY7SgUhTtmeXi9g2IityNt1ueAEPM0sxk1sX
-	 nZOhLIaYDm8lAcRteCOnyWhVxjevHu+xT9Je9k8XaJCtrxwLcTejPI2xpCVGpfSlKg
-	 0Eqh6wtUGzjkadoqRSaOZBS4Ql2OWImEomCqXKvwoqQqBHLL9Z9CgjcrrhLpc2MyFL
-	 Ru2R/HC5TAskSXea1DQqzhU3c3hb4A1BXu8u+4sNY+haTVRKhK/deofj8/qpx32cEk
-	 JAbC3dqYmutceJi9XZnxryiFthPz2qYLcjy2CLdbdeymbq1Cq8146Vx6VqWHSDz3rS
-	 8gO1MlHic1aswffJk2gMmqB7D54Kz1OqzmOLiXMnO4ojHCFyYH5wYacV8nU1Rx8qBG
-	 d5ju0zslFgnaeKcmDoZjiZNCinVFtpopsrIRIwO2Tu9IENot+BlFEEBbUuDpQ3S+ts
-	 GITEAm9xcrLa0A6DtCh0kWDE=
-Received: from [IPv6:::1] (unknown [IPv6:2a02:3038:204:3eef:78c3:4ef6:d0a7:2ead])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DB91240E0081;
-	Tue, 11 Jun 2024 14:05:43 +0000 (UTC)
-Date: Tue, 11 Jun 2024 16:05:39 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@kernel.org>
-CC: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 00/14] x86/alternatives: Nest them
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240611132609.GH8774@noisy.programming.kicks-ass.net>
-References: <20240607111701.8366-1-bp@kernel.org> <20240611132609.GH8774@noisy.programming.kicks-ass.net>
-Message-ID: <7C4F08B2-70C1-4A63-B901-33D197A2BDC4@alien8.de>
+	s=arc-20240116; t=1718114768; c=relaxed/simple;
+	bh=vnPkA8fhIo06qxbVMv91q0v4j+dElkSKKNBq14Jget0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iCLi2nZJMSPcjbktEwsJ3N9gDImIholXnk7ovSXWt+u1dye/BCCjYW3Vkof7myD4AnwaraOcjPvwFNo2AYKKbQ5Sq10pZdHeJRymuDcGPiuuidlfnmLqe2z7vZe6KmkIRXIliFCbiJTgtDQznNZpzWvU59qmh+ruMFiauHSjyEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7ea8fc6bd4dso693995839f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 07:06:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718114766; x=1718719566;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+2d3J5X0vIWXXvbpLI1PIKb2skYNl4t0Lg5fOvtdrEU=;
+        b=qeszUY/asXPcekqXDGngebBu/W0Dd6mv7tdkE4jW1xxQHtxCrdaChj7Q1R1Sh0nBJB
+         GaaftuWbSLIMZ/aRlEod0pJqI40OlDdsELVaDONRavfeEkz7TxDWvdOQ4n39/ZR2U6bz
+         2a75+P+MbtsZUQjOZoBIf+g4sBxt9UZyOCyMKziTV2kWypXQGy4nL+eYEXg9kBaJ03Ww
+         O7UTJ0KmfJETn3CK0l06yt3BzVkZmQM0LB8fOQazqRflBWb2MfGpoy9QR7vBd8DaPw+B
+         YJBHJ5bQ5Fwt0DuNygG6b+Eljqxon5t9itC4LAvDCjKaHtBuZnP1M1iRQWMdtxk6eGHe
+         ZtOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAOeAuoJSgMQg1aVgr3a0g6cZDkWwJtNzl4K/zcHHM4LbBLlgXQHVbYsdlCe0knis6s0TdzJgS0zgGDAn/udfxS18lMzXJEK8eatLs
+X-Gm-Message-State: AOJu0YzJhbbi2v449PEGqxEmFk9dSTNytRxCZa6I4N24+vAZe94tW8Qa
+	CJDS+uOpgIVlScycwYdyYDUmeotq/qpeKZo7gSPVIohpynAkRYblDC3QfEtvJtC0hQJOUnjBYb5
+	y+qFjwBBpyt7pANBIa1IlBLXc6lDBqrGB65FDxUT12qxlo2eGQZzzARs=
+X-Google-Smtp-Source: AGHT+IFhUXLztk2ihDkkpRpHr+i1y5PcHBFgk42SqM5tmWv32uRRnMSu7awQnEjsqE8i2mw9G5+i6uKPyaG/pPjhR2cPtYCM8lVO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1488:b0:36c:5c1b:2051 with SMTP id
+ e9e14a558f8ab-3758046d0bamr11464875ab.6.1718114766014; Tue, 11 Jun 2024
+ 07:06:06 -0700 (PDT)
+Date: Tue, 11 Jun 2024 07:06:05 -0700
+In-Reply-To: <tencent_A26D4970C3B204575761576126CCF3696305@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004fda69061a9dc4ee@google.com>
+Subject: Re: [syzbot] [bluetooth?] general protection fault in l2cap_sock_recv_cb
+From: syzbot <syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On June 11, 2024 3:26:09 PM GMT+02:00, Peter Zijlstra <peterz@infradead=2Eo=
-rg> wrote:
->On Fri, Jun 07, 2024 at 01:16:47PM +0200, Borislav Petkov wrote:
->
->> Borislav Petkov (AMD) (13):
->>   x86/alternative: Zap alternative_ternary()
->>   x86/alternative: Convert alternative()
->>   x86/alternative: Convert alternative_2()
->>   x86/alternative: Convert alternative_input()
->>   x86/alternative: Convert alternative_io()
->>   x86/alternative: Convert alternative_call()
->>   x86/alternative: Convert alternative_call_2()
->>   x86/alternative: Convert ALTERNATIVE_TERNARY()
->>   x86/alternative: Convert ALTERNATIVE_3()
->>   x86/alternative: Convert the asm ALTERNATIVE() macro
->>   x86/alternative: Convert the asm ALTERNATIVE_2() macro
->>   x86/alternative: Convert the asm ALTERNATIVE_3() macro
->>   x86/alternative: Replace the old macros
->>=20
->> Peter Zijlstra (1):
->>   x86/alternatives: Add nested alternatives macros
->>=20
->>  arch/x86/include/asm/alternative=2Eh | 225 +++++++++------------------=
---
->>  arch/x86/kernel/alternative=2Ec      |  20 ++-
->>  arch/x86/kernel/fpu/xstate=2Eh       |  14 +-
->>  tools/objtool/arch/x86/special=2Ec   |  23 +++
->>  tools/objtool/special=2Ec            |  16 +-
->>  5 files changed, 125 insertions(+), 173 deletions(-)
->
->The whole back and forth with the n_foo things ia weird, but sure, have
->at=2E
->
->Acked-by: Peter Zijlstra (Intel) <peterz@infradead=2Eorg>
+Hello,
 
-Thanks, yeah it is in the 0th mail:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-"For ease of bisection, the old macros are converted to the new, nested
-variants in a step-by-step manner so that in case an issue is
-encountered during testing, one can pinpoint the place where it fails
-easier=2E Because debugging alternatives is a serious pain=2E"
+Reported-and-tested-by: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com
 
-If you remember, your original patch had this issue where it would confuse=
- two back-to-back =2Ealtinstr entries for nested because you were comparing=
- only the offsets and they happened to be equal, by l
+Tested on:
 
-Now debugging *that* was insane and I managed to find the issue only when =
-I started converting each place one-by-one and booting each one step=2E
+commit:         cc8ed4d0 Merge tag 'drm-fixes-2024-06-01' of https://g..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ae3bf6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
+dashboard link: https://syzkaller.appspot.com/bug?extid=b7f6f8c9303466e16c8a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1716a4da980000
 
-That's why this superficial split is all about=2E We will appreciate it la=
-ter=2E I hope not but if something explodes, bisection will be a lot easier=
- this way=2E
-
-I hope this makes sense=2E
-
-
---=20
-Sent from a small device: formatting sucks and brevity is inevitable=2E 
+Note: testing is done by a robot and is best-effort only.
 
