@@ -1,104 +1,98 @@
-Return-Path: <linux-kernel+bounces-210570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE46A9045AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:19:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3B09045B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82D00281F69
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:19:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01E051C22DCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D19014535A;
-	Tue, 11 Jun 2024 20:19:09 +0000 (UTC)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE831534FB
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0E614F135;
+	Tue, 11 Jun 2024 20:22:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBFD639;
+	Tue, 11 Jun 2024 20:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718137149; cv=none; b=PK4C0RtfKUuAEMBZsdb4xBqSmQCXPatdZq4Ahiac5QY2B0oxuaFOTpZ3IdyG0QMT51nwiNTp6NmQpnr17jdgJf6d2pMbr7Y0iXibFYqR26CFV2pymy8gmmRzaa1w+4B4wRGrOH1ZodU/+FfJq0zfbMDdQ59qdlZqxA/335+PYvY=
+	t=1718137358; cv=none; b=j7cGGXcgk79cW7XU7JuPzmIkz7LOhGZH+lp/HtsmuicatAeez8INYXIV36gga0CRJAO0H4xuDK3YSObGVzk6E0TCbM0u/j8Ey994D/BqZgMYpUCOicwIu3jSir+UCHJdjNQRPh0ZeE6AhF05qbC42HZiuW6nmLvhvTmyYDowG5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718137149; c=relaxed/simple;
-	bh=RudqBTNT9j5reE6QOukW7HQMsv1XXfJYtnbSnLSsNd8=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=eDqQhXdwidCADaosK7tuRYoYYNcuSI2P8ij8QnxtXieiorbRBUynKVdSbwp6R1u2/Cvcnog3+a2mLomQ2dE4ohV3LE68uWHR7kROQoiPZCHMMaLFSScbbs7L9buuyYD73G0cgJqNUgEtFl3bh89YXOcejyIOrHlOELMP2Bedrp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id AF47061966B5;
-	Tue, 11 Jun 2024 22:19:03 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id X-qeMHHyOscx; Tue, 11 Jun 2024 22:19:02 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id C464D61966BF;
-	Tue, 11 Jun 2024 22:19:02 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id y9093tRPmx8Q; Tue, 11 Jun 2024 22:19:02 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id A1B3F61966B8;
-	Tue, 11 Jun 2024 22:19:02 +0200 (CEST)
-Date: Tue, 11 Jun 2024 22:19:02 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Hongbo Li <lihongbo22@huawei.com>, 
-	anton ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, 
-	linux-um <linux-um@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <2144113714.220205.1718137142446.JavaMail.zimbra@nod.at>
-In-Reply-To: <20240611-hostfs-fix-mount-api-conversion-v1-1-ef75bbc77f44@kernel.org>
-References: <20240611-hostfs-fix-mount-api-conversion-v1-1-ef75bbc77f44@kernel.org>
-Subject: Re: [PATCH] hostfs: Add const qualifier to host_root in
- hostfs_fill_super()
+	s=arc-20240116; t=1718137358; c=relaxed/simple;
+	bh=ADVyi3gtsxEt8iNfxhJM26ydN47s4hPau4g5PTZylJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p76LrqndlMBRZDRXs8YkXY4o90y4nXJWhopgIEWO4gP8g0X3uHRiU+WdvOtpJ572fTFZ2ju46LXWFH0x6vhMjiIoR4vDwEjGmogRPY8nJN3XzHoGruq6EPXTJgKjQVY2fvmCEGSIFM6QEzK0hYCNmx4KKbJPc7e5Ue88+NQCYFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B03E1152B;
+	Tue, 11 Jun 2024 13:22:59 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED8483F5A1;
+	Tue, 11 Jun 2024 13:22:32 -0700 (PDT)
+Date: Tue, 11 Jun 2024 21:22:27 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH 4/7] arm64: add 'runtime constant' support
+Message-ID: <ZmiyA3ASwk7PV3Rq@J2N7QTR9R3>
+References: <20240610204821.230388-1-torvalds@linux-foundation.org>
+ <20240610204821.230388-5-torvalds@linux-foundation.org>
+ <ZmhfNRViOhyn-Dxi@J2N7QTR9R3>
+ <CAHk-=wiHp60JjTs=qZDboGnQxKSzv=hLyjEp+8StqvtjOKY64w@mail.gmail.com>
+ <ZmiN_7LMp2fbKhIw@J2N7QTR9R3>
+ <CAHk-=wipw+_LKyXpuq9X7suf1VDUX4wD6iCuxFJKm9g2+ntFkQ@mail.gmail.com>
+ <CAHk-=wgq4kMyeyhSm-Hrw1cQMi81=2JGznyVugeCejJoy1QSwg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: hostfs: Add const qualifier to host_root in hostfs_fill_super()
-Thread-Index: y+ZRrqRbHMaINlAXXO3Imv4O2bKOCA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgq4kMyeyhSm-Hrw1cQMi81=2JGznyVugeCejJoy1QSwg@mail.gmail.com>
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Nathan Chancellor" <nathan@kernel.org>
-> An: "Christian Brauner" <brauner@kernel.org>
-> CC: "Hongbo Li" <lihongbo22@huawei.com>, "richard" <richard@nod.at>, "ant=
-on ivanov" <anton.ivanov@cambridgegreys.com>,
-> "Johannes Berg" <johannes@sipsolutions.net>, "linux-um" <linux-um@lists.i=
-nfradead.org>, "linux-kernel"
-> <linux-kernel@vger.kernel.org>, "Nathan Chancellor" <nathan@kernel.org>
-> Gesendet: Dienstag, 11. Juni 2024 21:58:41
-> Betreff: [PATCH] hostfs: Add const qualifier to host_root in hostfs_fill_=
-super()
+On Tue, Jun 11, 2024 at 11:59:21AM -0700, Linus Torvalds wrote:
+> On Tue, 11 Jun 2024 at 10:59, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > So I'll look at doing this for x86 and see how it works.
+> 
+> Oh - and when I started looking at it, I immediately remembered why I
+> didn't want to use alternatives originally.
+> 
+> The alternatives are finalized much too early for this. By the time
+> the dcache code works, the alternatives have already been applied.
+> 
+> I guess all the arm64 alternative callbacks are basically finalized
+> very early, basically when the CPU models etc have been setup.
 
-> After the recent conversion to the new mount API, there is a warning
-> when building hostfs (which may be upgraded to an error via
-> CONFIG_WERROR=3Dy):
->=20
->  fs/hostfs/hostfs_kern.c: In function 'hostfs_fill_super':
->  fs/hostfs/hostfs_kern.c:942:27: warning: initialization discards 'const'
->  qualifier from pointer target type [-Wdiscarded-qualifiers]
->    942 |         char *host_root =3D fc->source;
->        |                           ^~
->=20
-> Add the 'const' qualifier, as host_root will not be modified after its
-> assignment. Move the assignment to keep the existing reverse Christmas
-> tree order intact.
->=20
-> Fixes: cd140ce9f611 ("hostfs: convert hostfs to use the new mount API")
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+On arm64 we have early ("boot") and late ("system-wide") alternatives.
+We apply the system-wide alternatives in apply_alternatives_all(), a few
+callees deep under smp_cpus_done(), after secondary CPUs are brought up,
+since that has to handle mismatched features in big.LITTLE systems.
 
-Acked-by: Richard Weinberger <richard@nod.at>
+I had assumed that we could use late/system-wide alternatives here, since
+those get applied after vfs_caches_init_early(), but maybe that's too
+late?
 
-Thanks,
-//richard
+> We could do a "late alternatives", I guess, but now it's even more
+> infrastructure just for the constants.
+
+Fair enough; thanks for taking a look.
+
+Mark.
 
