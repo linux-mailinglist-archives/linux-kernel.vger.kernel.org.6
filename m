@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-210577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E02A19045C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:29:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 495CE9045C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EA71282C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:29:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE742283421
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B53F152503;
-	Tue, 11 Jun 2024 20:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECDA15219E;
+	Tue, 11 Jun 2024 20:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4XUo7dd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bW7O3OV8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472F780607;
-	Tue, 11 Jun 2024 20:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B5E63CB;
+	Tue, 11 Jun 2024 20:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718137775; cv=none; b=XFLI3ZOEtZuL0BLJM+qq9HzbbCpXpgjFk/E9aBR2vhvWmhcN6QCbl4qOQmpWsj53V+aq4FRaSJZglbcLxyrUOio9ao/9QsXEhP1yuRjLSwWFMUc6iBQ5ri5VKr4KczBYOiE+T6gZmO5dmEVwh3vjSJ8qxC/QqfQrdbXINh/gEhM=
+	t=1718137846; cv=none; b=fEYUxzFbLoyhJYz5cqNMstLkQgG3H+sv318ZEtFTfyt+BU+KpBoP4bxoPgCohhcpEgBLUKmSUOCJ2CP8+wRclUdBKGGsRrSPvBk0q5ohBvSrM/d0l/BXDabVS/r0Wy0Zdn22A7N26ORO7P9WTReBrLsYRLMC2Rjh5+w8/iwOpuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718137775; c=relaxed/simple;
-	bh=8BI1xx2e+o4FKuQzNAeMZSKMyiuD5XBATLHA+ojBjAs=;
+	s=arc-20240116; t=1718137846; c=relaxed/simple;
+	bh=QJUAl/HXNGAn4ey6eyXBFTC8hrQJC413PQTjAxPjThk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VuVObsC2jV+I3crwh/oUk2aXHDD+sALLyTNQFK5AqQjG4WFiXvkbFj7GBbVJoGB/rNnd6AbtvlVRFYoBqVGtdWXssMnH12STz7hHcZT8LeLALMsWPudlOAITAIodzRpLbHfgQsXONeAkuHDviczDUBQ8P1db6Jmhgy0V9goC31E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4XUo7dd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6862CC2BD10;
-	Tue, 11 Jun 2024 20:29:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dzspR0eMCdqVDv3FcRJo6LQcTWbq0/SFoo/LqsnabL0F1eEVwa4Qf45zJaHqE9XLp2AgmXG27miZV/Gz0phBuglzW7OM7OOB7dwx04o+hZNEsL2hWfArjR6bB3dBuydPu8SX3e4ImIhM6BUqSbZ1CfpZ1AsRn6AvltbuQCBhqAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bW7O3OV8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43329C2BD10;
+	Tue, 11 Jun 2024 20:30:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718137774;
-	bh=8BI1xx2e+o4FKuQzNAeMZSKMyiuD5XBATLHA+ojBjAs=;
+	s=k20201202; t=1718137845;
+	bh=QJUAl/HXNGAn4ey6eyXBFTC8hrQJC413PQTjAxPjThk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a4XUo7ddVWPEhCwtdYYKRs6QFki1++vEmmmJIGqZXQD16BlhaBMZcVUlSWHJiJzrk
-	 cLQdAztqBBEylRbh6bQXF6sq0QiZJAKxgpuXIhRYIHi+YIhmigC5EaFnVWEHTogixa
-	 mqw2dE6r6M/PyBBneGrZI/MhYnxgdK7oJygu68/2MBdlZ5SVulNNnM+MWhod/uKMbr
-	 aTSeYhKVjO+SCRI32kFgjKs+VxgE/EqP9CdIQCT3M9QPofhn6M7C8Ziq+Gc05D725R
-	 JD1URJQ6H3AbS6PJvEMGdDLEfEAVVKc0iQXV7kdqFTFkBZtUAcUymE/lMxb1RlNeXJ
-	 VxPHGjVNTEYAA==
-Date: Tue, 11 Jun 2024 14:29:33 -0600
+	b=bW7O3OV8ugvr4+2JAkhQRVVzKvCrCFkqU+WdGxvW1Yl4oov2GnUwYBSXitB6a5fe7
+	 hwXyKd3MnF4wByIvv+LG9Ha9IMKjtGDamPJuoATnfPbXaFkim/vfaPDAcQx4wD0CW1
+	 +eh5xmSQAHaALYTYF0lHEHD47WgaiuioP8u+96T46uIOBNvLf5zSTKKh74MPoqnnkh
+	 FAQEbPyBS50fjHOvID67kjMxJy6kxtruxSL6z/twRdhflXJbGYIkScG6NjBvqCooKE
+	 V/LP+gY8sZWzuaTvuDVR9iwYmm4W7sbJJS7cEg4WMH0tqKE1Uzeb/TncwvmVIxwLum
+	 H1CTNT0/ch8GQ==
+Date: Tue, 11 Jun 2024 14:30:43 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Mark Brown <broonie@kernel.org>, patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org
-Subject: Re: [PATCH] ASoC: dt-bindings: wlf,wm8804: Convert to dtschema
-Message-ID: <171813777009.3019521.993719611004916573.robh@kernel.org>
-References: <20240611122258.47406-1-animeshagarwal28@gmail.com>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: netdev@vger.kernel.org, krzk+dt@kernel.org, davem@davemloft.net,
+	edumazet@google.com, olteanv@gmail.com, conor+dt@kernel.org,
+	kuba@kernel.org, devicetree@vger.kernel.org, pabeni@redhat.com,
+	hauke@hauke-m.de, martin.blumenstingl@googlemail.com,
+	f.fainelli@gmail.com, andrew@lunn.ch, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 01/12] dt-bindings: net: dsa: lantiq,gswip:
+ convert to YAML schema
+Message-ID: <171813784153.3020916.2558169964634930233.robh@kernel.org>
+References: <20240611135434.3180973-1-ms@dev.tdt.de>
+ <20240611135434.3180973-2-ms@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,20 +61,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240611122258.47406-1-animeshagarwal28@gmail.com>
+In-Reply-To: <20240611135434.3180973-2-ms@dev.tdt.de>
 
 
-On Tue, 11 Jun 2024 17:52:51 +0530, Animesh Agarwal wrote:
-> Convert the WM8804 audio codec bindings to DT schema.
+On Tue, 11 Jun 2024 15:54:23 +0200, Martin Schiller wrote:
+> Convert the lantiq,gswip bindings to YAML format.
 > 
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> Also add this new file to the MAINTAINERS file.
+> 
+> Furthermore, the CPU port has to specify a phy-mode and either a phy or
+> a fixed-link. Since GSWIP is connected using a SoC internal protocol
+> there's no PHY involved. Add phy-mode = "internal" and a fixed-link to
+> the example code to describe the communication between the PMAC
+> (Ethernet controller) and GSWIP switch.
+> 
+> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
 > ---
->  .../devicetree/bindings/sound/wlf,wm8804.yaml | 58 +++++++++++++++++++
->  .../devicetree/bindings/sound/wm8804.txt      | 25 --------
->  2 files changed, 58 insertions(+), 25 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8804.yaml
->  delete mode 100644 Documentation/devicetree/bindings/sound/wm8804.txt
+>  .../bindings/net/dsa/lantiq,gswip.yaml        | 202 ++++++++++++++++++
+>  .../bindings/net/dsa/lantiq-gswip.txt         | 146 -------------
+>  MAINTAINERS                                   |   1 +
+>  3 files changed, 203 insertions(+), 146 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/net/dsa/lantiq-gswip.txt
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
