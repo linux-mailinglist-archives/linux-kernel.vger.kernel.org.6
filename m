@@ -1,134 +1,167 @@
-Return-Path: <linux-kernel+bounces-209640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861BE9038C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:24:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39519038CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567581C21BDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:24:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7088C28514E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A22117334F;
-	Tue, 11 Jun 2024 10:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C18175548;
+	Tue, 11 Jun 2024 10:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K60imDxG"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lexina.in header.i=@lexina.in header.b="JDHn4zCx"
+Received: from mx.adeep.su (mx.adeep.su [185.250.0.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4B154750;
-	Tue, 11 Jun 2024 10:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F022314F9F0;
+	Tue, 11 Jun 2024 10:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.250.0.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718101452; cv=none; b=tbjEcoi0YVr55m2zODiHZaqArv0xzlp1NH3JTxPlo3x2ZMMli+b1pUIYgshqn1zxcR6qTZv59as4Pn+QyCQv6ZtV3pBTK0henU0yiepQ4+mlmM7fdcdK7O547DPKaODKSWzkOEwnFG0VL54ZGP3DBE65tVb9z8TtwmQL1Ae5fDc=
+	t=1718101545; cv=none; b=DEVux3wLL3kQOiOYb4X10sESIMU9VRiT8tHIfpxrJmJ7ZTaK6WY0FxUFad6gW2TRj5thbaf/3rqzUUtAOMaP+IXeR7CQaSLhCOJmkxd23PdoraUyzyOkWZa+9tLJSjpqNkNc/UOqn3zIJbn1uxVuuXQovmIA0GW6cHnWAJgow5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718101452; c=relaxed/simple;
-	bh=rS4Lc1OnZtSXD73LoxWr41swx5eOanIZrCW+Tnjwa2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dV1qH8rq68mDJPNsRJDdzeETxSWWlVOkvxaalZ6XVMCGiQTQvxUOsmDV4MtIu6PkhUXvCBGG60NvHnJgO9YxHVkYmKYOmr6AJ2DtQ2duv8pu94gx1Hy1xqrclNCL2TfKjp4zBPMWrnN9248BOyNHQ+unbF2BGSzBy5Vzf2mwtpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K60imDxG; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so16821871fa.2;
-        Tue, 11 Jun 2024 03:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718101449; x=1718706249; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TuXsJaF8TTlzJOvjlDFq2MCLBqc2IGjgSWzZHxQCqBs=;
-        b=K60imDxGGi07zI92EpZPNv4br1lG5zmmQbaEflcXULOdgKSV9kEMXL3PQO6j+fRVIC
-         DyE5cV6zi7Z1ax3AJjYnK/KXOLfCJ3I8USnv1Y2OlyeX230mbvyx8sGeLAZR9z+mwSnB
-         CjngX9YNVIYcG+DobPvYhLKBPoVaJXW2R07krs+Zo5nyaX/WBfGxBRhpU89x3xG2C/Mh
-         egeua0ZY9wgQrXuM8gFyLjagkzcNveD4F57lR4aA2dKRNIItg0WTnVe+V404m8vDjcH6
-         cJ+c3zbBxMUjwT9tIbwZh0jV5ujb7nMZ7quU0hUb4ILhIeam0DYV5KhsGaQajVhq3w+A
-         T0HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718101449; x=1718706249;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TuXsJaF8TTlzJOvjlDFq2MCLBqc2IGjgSWzZHxQCqBs=;
-        b=B+4oizE1PMQJDFUnU9btB40nzsn9NXdNEKwr1p1QJFmURdKhhlSCYy88F+15DAyvGf
-         YRNtt4AbyYyEVKl9K15OPM+h6+Bpow7yjpXhqTXI+2hDk9Xh2mc7CViQl4sK3YxNMo9E
-         boGXKfx4pTiCEcIAlBW3reMjOS2p2RC/SyvIXpYuo8dSXIAfnZH0rRYCGEZbI5XhrmL/
-         n6HVx8phqArhNp7FIjG2Z4goG/dJymBsMIW63UCewmzaNCChaNpb5JQZOWVgMB1XrJGD
-         TcoN26uOsWf/7VwTyT+uk62l7/48v5vqq+UHNZVTH+5gW7VYcp0bNb79hb/fDHFxMRwS
-         FzpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPRqflJw9A0xByxLz796LeQhXVHieRFVjWjYVq5cgMHLZ/vXHVZgjYWYlIK/IbYrg+GacdvXnUUv+Jxs1kudYhxG7DVdUCB63xNLJtSxcBjAPgMLw1YIf9JLSxMrgntXqKCsOssuvi6fHcXA==
-X-Gm-Message-State: AOJu0YyDWChCE4Q6OQhkOot/n+9mqvz57kdHYyapYSUTA3fmWbmgFeYw
-	dF4mc5E6sWV9yNQfzRk4iwg1sY8Z01YGQQR40TkhSn8Q0Zg2ayh7f+OoKQ==
-X-Google-Smtp-Source: AGHT+IGY57VwKx0yADjfisTVufxhi3uNlLLs7D+06YhPfz7MMOCWr6sKhHf0xjMzwM2tmWpPJxv2YQ==
-X-Received: by 2002:a2e:a78f:0:b0:2eb:eb87:5504 with SMTP id 38308e7fff4ca-2ebeb87560dmr31493521fa.27.1718101448965;
-        Tue, 11 Jun 2024 03:24:08 -0700 (PDT)
-Received: from f (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42274379b83sm627385e9.28.2024.06.11.03.24.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 03:24:08 -0700 (PDT)
-Date: Tue, 11 Jun 2024 12:23:59 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, david@fromorbit.com, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: partially sanitize i_state zeroing on inode creation
-Message-ID: <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
-References: <20240611041540.495840-1-mjguzik@gmail.com>
- <20240611100222.htl43626sklgso5p@quack3>
+	s=arc-20240116; t=1718101545; c=relaxed/simple;
+	bh=qyQC/+nHWKRiwRIjTlFbMH4bzMl2g+3evAo+vGkwdOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MB3bg5BgxCHu/8AIkHn+RSvw+vuwBgecifD+WmHA7bhYDSaRT+710lv/d6niBYe8kbrL+91UmOvoZB5H6Sp/If+g/PL5L2CN/WauF3PFJdIeA4cvVBss4uSkLYiuRNLDEcEOPXsby3Cdz8lg7TKgkeZpbXBW/yWKQUy8KgpodAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lexina.in; spf=pass smtp.mailfrom=lexina.in; dkim=pass (2048-bit key) header.d=lexina.in header.i=@lexina.in header.b=JDHn4zCx; arc=none smtp.client-ip=185.250.0.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lexina.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lexina.in
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 703C81CE260;
+	Tue, 11 Jun 2024 13:25:13 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lexina.in; s=dkim;
+	t=1718101531; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
+	bh=MEdCQgjM3nOB37rAToIyGZH6oxZZXWG+KBwDS6+xGt4=;
+	b=JDHn4zCxz7fjwFmmRTyuplQ6iWIukT2rjvhLsh46T/+wWRBfRLt0wzV93kHjxOhnNZm/tK
+	MuoQi0A847lVu3zOVC1kmfhWRLEdVOTnUBTa8WGkScxk4VaLPgCIbOoSgbxhNBSDMvjuWp
+	P4pqi7BIfY6K5yUbGcXHsCMcY7unXN3j/s5b6pj7xRR78218KROk0whZizGhjDPziGM5Gl
+	EGh9laBchUFBJoob4tyjDsJCVHmDfb627bsWY6Kekkwi9gfs0z7TvjAd002nqPqt/usXzi
+	+AG3/h0NrU3INMLUzx8DgbaohLbmJg/VGHo4Mg8LSvNwsH5IvW0bNUraHy0y1g==
+Message-ID: <4866f6d4-2e3c-40c7-a8cb-ba4e422ffef6@lexina.in>
+Date: Tue, 11 Jun 2024 13:25:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240611100222.htl43626sklgso5p@quack3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/4] dt-bindings: arm: amlogic:
+ amlogic,meson-gx-ao-secure: add secure-monitor property
+To: Conor Dooley <conor@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org
+References: <20240610084032.3096614-1-adeep@lexina.in>
+ <20240610084032.3096614-4-adeep@lexina.in>
+ <20240610-dropout-compress-6d6a9b749524@spud>
+Content-Language: en-US, ru-RU
+From: Viacheslav <adeep@lexina.in>
+Autocrypt: addr=adeep@lexina.in; keydata=
+ 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
+In-Reply-To: <20240610-dropout-compress-6d6a9b749524@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Jun 11, 2024 at 12:02:22PM +0200, Jan Kara wrote:
-> On Tue 11-06-24 06:15:40, Mateusz Guzik wrote:
-> > new_inode used to have the following:
-> > 	spin_lock(&inode_lock);
-> > 	inodes_stat.nr_inodes++;
-> > 	list_add(&inode->i_list, &inode_in_use);
-> > 	list_add(&inode->i_sb_list, &sb->s_inodes);
-> > 	inode->i_ino = ++last_ino;
-> > 	inode->i_state = 0;
-> > 	spin_unlock(&inode_lock);
-> > 
-> > over time things disappeared, got moved around or got replaced (global
-> > inode lock with a per-inode lock), eventually this got reduced to:
-> > 	spin_lock(&inode->i_lock);
-> > 	inode->i_state = 0;
-> > 	spin_unlock(&inode->i_lock);
-> > 
-> > But the lock acquire here does not synchronize against anyone.
-> > 
-> > Additionally iget5_locked performs i_state = 0 assignment without any
-> > locks to begin with and the two combined look confusing at best.
-> > 
-> > It looks like the current state is a leftover which was not cleaned up.
-> > 
-> > Ideally it would be an invariant that i_state == 0 to begin with, but
-> > achieving that would require dealing with all filesystem alloc handlers
-> > one by one.
-> > 
-> > In the meantime drop the misleading locking and move i_state zeroing to
-> > alloc_inode so that others don't need to deal with it by hand.
-> > 
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Hi!
+
+10/06/2024 19.08, Conor Dooley wrote:
+> On Mon, Jun 10, 2024 at 11:39:49AM +0300, Viacheslav Bocharov wrote:
+>> Add secure-monitor property to schema for meson-gx-socinfo-sm driver.
 > 
-> Good point. But the initialization would seem more natural in
-> inode_init_always(), wouldn't it? And that will also address your "FIXME"
-> comment.
+> "bindings are for hardware, not drivers". Why purpose does the "secure
+> monitor" serve that the secure firmware needs a reference to it?
+
+This driver is an extension to the meson-gx-socinfo driver: it 
+supplements information obtained from the register with information from 
+the SM_GET_CHIP_ID secure monitor call. Due to the specifics of the 
+module loading order, we cannot do away with meson-gx-socinfo, as it is 
+used for platform identification in some drivers. Therefore, the 
+extended information is formatted as a separate driver, which is loaded 
+after the secure-monitor driver.
+
+The ability to obtain additional information depends on the support for 
+the call in the secure-monitor, which can be described by an additional 
+link from the amlogic,meson-gx-ao-secure node to the secure-monitor 
+node, similar to how it is done for amlogic,meson-gxbb-efuse.
+
 > 
+> Thanks,
+> Conor.
+> 
+>>
+>> Signed-off-by: Viacheslav Bocharov <adeep@lexina.in>
+>> ---
+>>   .../bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml      | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml
+>> index 7dff32f373cb..1128a794ec89 100644
+>> --- a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml
+>> @@ -32,6 +32,10 @@ properties:
+>>     reg:
+>>       maxItems: 1
+>>   
+>> +  secure-monitor:
+> 
+> Missing a vendor prefix.
+> 
+>> +    description: phandle to the secure-monitor node
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +
+>>     amlogic,has-chip-id:
+>>       description: |
+>>         A firmware register encodes the SoC type, package and revision
+>> -- 
+>> 2.45.2
+>>
+>>
+>> _______________________________________________
+>> linux-amlogic mailing list
+>> linux-amlogic@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-amlogic
 
-My point is that by the time the inode is destroyed some of the fields
-like i_state should be set to a well-known value, this one preferably
-plain 0.
-
-I did not patch inode_init_always because it is exported and xfs uses it
-in 2 spots, only one of which zeroing the thing immediately after.
-Another one is a little more involved, it probably would not be a
-problem as the value is set altered later anyway, but I don't want to
-mess with semantics of the func if it can be easily avoided.
+--
+with regards,
+Viacheslav
 
