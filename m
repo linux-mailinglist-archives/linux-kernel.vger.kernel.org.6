@@ -1,383 +1,281 @@
-Return-Path: <linux-kernel+bounces-209446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FBD9034CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:06:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B5F9034D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 675BD282C63
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:06:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 116381C20BC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA7E17334D;
-	Tue, 11 Jun 2024 08:05:31 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68613173324;
+	Tue, 11 Jun 2024 08:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="YkMNQXvL";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="dbWqff6c"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF9A17333F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718093130; cv=none; b=IFukPnbNwLHfPImR/v3cvyDF0TaZHoU0H0va8jiMDie+qkY8sIcP5NDZZWzjoVOt5HwUpA4yLZL9xnflkD6HvhD46/XSMI/XWDnWgGwDZ0yQu4Cr2ZEsXjkUlVSueopTht5qkMOc4834G1lrzVs97KalQ9tOJaeylRWcruiZfVg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718093130; c=relaxed/simple;
-	bh=/rJt/udw3YbvokwsNpUMuCAs8+ILQGffES8ZR7uMCDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lZJ1uETD5dfXkUpt9tugaw3qyTOnVvgxxEZX/8pnDQXGmReqVM+y1VZ8vuF5cNgUu/KjZQ9xDcjNcw9JnULlmAa9xfT22PFo31x0aJhG1OdcpLM5rPV+q8DBcOAcsDa5+cgT+od2kXQ2k9epyw/pq8AM+g9hxzvCAdZuwUUiIYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sGwV6-0001tD-9Q; Tue, 11 Jun 2024 10:05:04 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sGwV4-001Urr-Ip; Tue, 11 Jun 2024 10:05:02 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sGwV4-004c1D-1Y;
-	Tue, 11 Jun 2024 10:05:02 +0200
-Date: Tue, 11 Jun 2024 10:05:02 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de
-Subject: Re: [PATCH net-next v2 2/8] net: ethtool: pse-pd: Expand C33 PSE
- status with class, power and extended state
-Message-ID: <ZmgFLlWscicJmnxX@pengutronix.de>
-References: <20240607-feature_poe_power_cap-v2-0-c03c2deb83ab@bootlin.com>
- <20240607-feature_poe_power_cap-v2-2-c03c2deb83ab@bootlin.com>
- <ZmaMGWMOvILHy8Iu@pengutronix.de>
- <20240610112559.57806b8c@kmaincent-XPS-13-7390>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AE02AF11
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718093215; cv=fail; b=eDBCSSPsu0MAwEk4BDo3lSicqsOVkTT8RhOcH4txCcbvL7QnFYnFBRdjEhqQ1SZ02ZjNjXOwVmpm+O3G7W2ehu3HdTjw6sblK7xY/h9us/R/cDl2bVciLvvDiMaeK9Anv6WE3VSOwjGF5tUOzSgqtN1x9OedHZvSNkjAQjMsKJE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718093215; c=relaxed/simple;
+	bh=SLPGR5GcoZe+Fsvr9GZxLInuszW3Mtvgaz2UztMpYS0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gp0HQ6wmd3BxFDcx3zgMeDBVXprhS42DXRvoVELVhm0SBGNC3ux14ISblxKo7ZMNeofiZYy/Zcqloqt0WyydhrbVO1q77wq7l7+w274bWpaIKthilSoRTcvrUjkqlNTdwG4Kuoo+LKS+6ylkqjGN5WldzsUN3cSAB8FM3Y79y6E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=YkMNQXvL; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=dbWqff6c; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 8ca84be827c911efa54bbfbb386b949c-20240611
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=SLPGR5GcoZe+Fsvr9GZxLInuszW3Mtvgaz2UztMpYS0=;
+	b=YkMNQXvLg1wLjWoHN7QqZkxXYdG7H381LJzEwpnQLm3FDjpLFlqd/fTj0YhNkN4YU3zWO9tE6Kjysf5uBnCqdplBzVHGQQRRZJDqY6MJswdPfp38UQsRb1AU1SiHAq/Be7n3vfe3Pt6jIsRQnyw+iff1Ls5zxRsKWpt8C/2rwjk=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:5a3e8a91-966a-4822-99f5-d930fa7903c9,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:393d96e,CLOUDID:993cf284-4f93-4875-95e7-8c66ea833d57,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 8ca84be827c911efa54bbfbb386b949c-20240611
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 601774282; Tue, 11 Jun 2024 16:06:47 +0800
+Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 11 Jun 2024 16:06:45 +0800
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 11 Jun 2024 16:06:45 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lsrZnVNPm+/SCbTXHnZSY3ggr1HDdIRbajjxRPrVFhMzRr+n0zaqGr1x8VMmTUph1l27i1GdillMYQ1nO18g1HHMzCBaCBnLA132XaLtVo7j9U0ITlsPPbLDORgZXBuibf+WUy7FoJosCRpiKt1tv0KkA1Wl/DXuJq503QDly4Wb8RxLLwUQUGl2EgMUteN1CVTy4TpPm7knJeg1Tgu1RQ7hjlsKaCKxESO8GiBAbvxoIEXhdrqt8p+f/ZVw4YFpggOYBOzgNE3aZxzzTY/jumtnO9QZ+k/7ipUtvdjHpe/q6UXodfWNvf2fOp6wafZhaM34PoITYWSYp3UFsAKekQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SLPGR5GcoZe+Fsvr9GZxLInuszW3Mtvgaz2UztMpYS0=;
+ b=LC3XKsRoZ8jBkL1WQ0artaZmDoFHOh6ceHUyW3hJa+BQsCb4O267vLId9g6o4bwNP0lqBmdEuG4K2OF4K0SSHMrIaYwbKV/9sh963eIgPwYTRkwQsRNFqsXJ0lpxsx/GI91UV0IMYScfHAIg/VdQb84vKj3lkOtT9XH0oQ+49GqOPT/wWra0F9T+LA9V/dUzyCu5a1iV9jqP1f7oCcs90bIH+Ut69cVUj/oudszdLAMraMYJkrrlDs/qO0FZY8TC2rQD/7CKvONN4hEZFfQVrV4o46+ER+Kr2Amwxoj0R+mG4MYk/7wJq6quybqtcf/ZV5dzcXkDluIELa3AP4Jh8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SLPGR5GcoZe+Fsvr9GZxLInuszW3Mtvgaz2UztMpYS0=;
+ b=dbWqff6cyWfH9Lz0VHhQomsHnkRDI9URL0AbHtM+r0FfCFr/xOAxxy1wUjEVoa8quVzkvpghuCc9vR+7QQ9gWdpO//FXGsLJCsElrOG89VnA2RoZ0mNntI1svFNUOz08gRQjmCklmtOH69GAIEMXGI8sbRVG3s/ITZefyf7P5HY=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by TYZPR03MB8092.apcprd03.prod.outlook.com (2603:1096:400:464::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.17; Tue, 11 Jun
+ 2024 08:06:43 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%6]) with mapi id 15.20.7677.014; Tue, 11 Jun 2024
+ 08:06:43 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: =?utf-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+CC: "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	=?utf-8?B?QmliYnkgSHNpZWggKOisnea/n+mBoCk=?= <Bibby.Hsieh@mediatek.com>,
+	"jason-ch.chen@mediatek.corp-partner.google.com"
+	<jason-ch.chen@mediatek.corp-partner.google.com>,
+	=?utf-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "airlied@gmail.com" <airlied@gmail.com>,
+	"sean@poorly.run" <sean@poorly.run>, "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>, "fshao@chromium.org" <fshao@chromium.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v8 09/16] drm/mediatek: Support "None" blending in OVL
+Thread-Topic: [PATCH v8 09/16] drm/mediatek: Support "None" blending in OVL
+Thread-Index: AQHat/PALChUuen/mkGE9n7i39ajD7HCPK4A
+Date: Tue, 11 Jun 2024 08:06:43 +0000
+Message-ID: <24cc46e14e96d425acaf165be65220ae6e32f5d3.camel@mediatek.com>
+References: <20240606092635.27981-1-shawn.sung@mediatek.com>
+	 <20240606092635.27981-10-shawn.sung@mediatek.com>
+In-Reply-To: <20240606092635.27981-10-shawn.sung@mediatek.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|TYZPR03MB8092:EE_
+x-ms-office365-filtering-correlation-id: 6ce8dfa7-9dd0-4ceb-fc3c-08dc89ed6e6e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|376005|366007|1800799015|7416005|38070700009;
+x-microsoft-antispam-message-info: =?utf-8?B?UTg0VjEvS0VhVmhTQ0J6cnAwNkpicVQ3bkVUYysvdzJyb05kdk1YUktxc0Jz?=
+ =?utf-8?B?WlgxREZKeHNpNWdOcHpLU002QTUxcHhQY3VXbDRUZTBqYnFwMVRRc1FhN1VT?=
+ =?utf-8?B?ZDlydm41QUFxREtzV0plUEpUVlZDRkY1Z3pHbW41cHRCeVhuWVFvTklQQU5w?=
+ =?utf-8?B?andHa3RmSDlkbGNuUTZYbnFXSlpZOGYwc09XaEEwb2gwNmRaUzc3UkNkbHJX?=
+ =?utf-8?B?OGtiWUtkQk9VNTR4alplVm9kUDlCTENnblExWmJRYzJmQkhCSzY4ZGV0MU82?=
+ =?utf-8?B?K1ZYL0NyRzAvR01sQzZzYlNEZHhkRm5ZS2dDYk1aUUxIQm03Wit3TjlacFhw?=
+ =?utf-8?B?YVljTzJ0TXNGdHlKU0ptOFZuTnovazNtVURXVE43V002NTZNZER5NmVuREF6?=
+ =?utf-8?B?WTIxQmlDQ1puZFdYYTZvN0MzenVHc2pyaUtSYUpxYWZwYnlCK2xUUnFKTUF0?=
+ =?utf-8?B?d0h6aHZKYUhvN0tXMG1wOVhrTXE3UDlWRVZBcGtBWEJOTncyQ3lpcC9EeHdU?=
+ =?utf-8?B?Q1pNQnUzYW4wczMxVHp3S1ptVUN2WC9NbmdCOU5RVmI3NDdRSDh1TE9Ga2s3?=
+ =?utf-8?B?dmpTdXBmeGxPd0xwMEIrRTh1aVBsUDU0NXExWCtFR1NxNzgyRWZwWmNGY29G?=
+ =?utf-8?B?STh4enc5ZmJoNnc4Z2NBazV1Y0NDRyt0MzBFb2F1M2Z1cWMrdEVQMFZpaG5M?=
+ =?utf-8?B?MzVlSHhXUy9sTGdEWDVoenJSb0ZENUxBTDJFbHNxeS9GM1VhRXN4RFhINjV2?=
+ =?utf-8?B?NXQ0SXdqZEFFenBScktTUWxFeEQzUGdpN2N3a2JmbUJ2NXdPQmk4UmorbkFX?=
+ =?utf-8?B?Mk0xNy9waXFTSzRvN1kxZ1krVEU3Tm9PanRKZkZvZ09Sa1JseFNGdWlXOStr?=
+ =?utf-8?B?cXdrVmdiQWU5K1hzUzgvOHFsSkdIQTE3eFRtTGQvNFJQTEhJN0xiNTRhTmt5?=
+ =?utf-8?B?S3JubE9OaGhoUHY0KzhHWW1PQlpoQmJPTWN2cHVGME5aYnVxam5NRjg1K1Yy?=
+ =?utf-8?B?dytjMEdONjM4TUROMFdzTUpNVjh0ZWtaRWZZb3ZEemk3R3RDVkd5MmR2QWpk?=
+ =?utf-8?B?U1NhMjNqODRyc3NmaHRJeE5YYU5iMzlaeTdkcXkvYzRWeGVuVmR5NHZMZXBT?=
+ =?utf-8?B?d2JMRUlKaTd2R2FySkFyMGVUNnM3TVNvN3JHUTM3U1lpUTd4U0NNSTBEVm1w?=
+ =?utf-8?B?RzFpdktrS3Y4TlU0alUzY3VVL0ZJRTdSZ3lQTmpkN2ZkbC9GeEVtdnNuT25D?=
+ =?utf-8?B?S3ZybmtXaGxvektMb21VM3F0bmpmdDNDcGo3aVcza2ZxbDluWkdNWUY3Wmdh?=
+ =?utf-8?B?Y0d5N0NGbVBJcE50MUdCbWViNUpqeUt0Z3lVN244OFcrRWFnQTVXUkpYWU9J?=
+ =?utf-8?B?ampGaG5tNnJGSlFKYUlYY1N4bmp4L2tEbEo2eVl4STVOMXAvR2wwdytnVm96?=
+ =?utf-8?B?NFlremtSTUpsTzNCajJjNFo5TGNvYUdleXdNaUZ3Tmh4UjIvNm42dXZGME82?=
+ =?utf-8?B?b2NBLzdCd1JxZW1aaVl1em1JKzQrQUppSEJIdHJNMWh5aGRTT3FsbVJJLzFh?=
+ =?utf-8?B?a1RCdk9rVkxUdzNoR0dvMGlCckQxRjJXVHdBT3VmUXdFYTNCN2J1ZTRDT200?=
+ =?utf-8?B?NklhREgxYUhyUHNyeVp4aFh3N0JidUJ2K1o5Nml1bCs4R3JkbDcyTllZMG1O?=
+ =?utf-8?B?NjBRczhPU1hiVmdvVUY5OEM5bDlzVllBY0JtdktGMi8yS2tSMVVWam03M1p5?=
+ =?utf-8?B?bkVjWGpldnlycHpNd1cxRmdyUDgwSVZLT1pUZ00wRU5qZlJwdm13NmNDc25B?=
+ =?utf-8?Q?My/Pd05RAIs3uAukJl4Hk9RcHNKZNvcJx2ITQ=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(7416005)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TWhzdWIxUll0T1huZ0R0SzVncE1BRWk1dWxZSGVxUjJkY24wbGdKS29QYVdk?=
+ =?utf-8?B?UWUrOGpXNFhHV1dXV2VUQVhlZGowdEYvOTBpRFpsUlJ3UENwL2Zlci9PSDNP?=
+ =?utf-8?B?VXI3TkhhMDZZRzBIVGFOTVY0czFRRG9hUHIybng4Q2Q2U3FsU0dOdVlQV21h?=
+ =?utf-8?B?cy8yd1VGTEI0cWZrNXVLUEQzaU9zUjFoVFFIOU5ZQ21iaitkRFpGd3BLY3FS?=
+ =?utf-8?B?R3dISlFSSHN0M2pBUWh2MmhncDdWZklVRXFvNmg1b0phbTJVN1lCK2swUUN3?=
+ =?utf-8?B?cm9VbUExM1ZiNkRUYmtWdzlpZGxQdG51cjNySlNLa1lJYnlaNEtSZzBna1Zs?=
+ =?utf-8?B?V1djYWRtVzJjYWp0dVpTV2VHejR5eTRlYk1QNitYT3kvaTVOV2FLbFJwajlv?=
+ =?utf-8?B?WkE5alJTYWZXYkxFNjZUVWNSbE1kRkVqS016RXdrbnQ1QnVocytDK2dsb1o0?=
+ =?utf-8?B?UzV1eDB3aG8zSWFVMkFTZXJIbVZHTmpVOVJQY240Mlg2UUFCMWFKeHp2bUVv?=
+ =?utf-8?B?dW91SzRJWmh5WjdNaG5Fa3g4dzNuQ1djVFBYNUZ4ODhvS0lFRyt3OFBWVmZR?=
+ =?utf-8?B?SVQyWW56UDRxM283ZHk4N1BocWRUUlR2OE9lOXNUTmVsd0VQOXBGbi8wSmJw?=
+ =?utf-8?B?aG9KeGJObHE1ZkFQdmRkN1lSUUY4MXhiSDRTdEI2S2doRTBWUWw4bmY2VTI4?=
+ =?utf-8?B?dEg5UjJVNFp6NXlDbmxXMmwrbXNUOGJVQUdzN2RCbVZaRmVxSWE0ODBOWVNZ?=
+ =?utf-8?B?allqYUxWTmt6TmxodEYyWDRxQW9jQ2ZVVm5BRVp4Tzd1MW0rdzloWlFIQkd5?=
+ =?utf-8?B?OVZ6VTgzOVJpQWFyU2NzeVJaMFJRZ2sybmZKY0d0a0Ztd2gzcHlpNm11cTE1?=
+ =?utf-8?B?N0h3d3hnZHlIM1dzUk4vdzNqSTljb3ZoNUw2dS9OSWlVdDRaenZpc0VRM1FI?=
+ =?utf-8?B?akxtaDliRXJZSjFTVHQyZGJ3dTh2ZTd5VGpTR3k0Znc0enhUcm1MWjFIWHJC?=
+ =?utf-8?B?bkFtRFRxMFRDbU11R2tiSkFIdUtEQ1dsSDdqZkQ4N0FORTBsdExrVUZiQ3k3?=
+ =?utf-8?B?Q2V1SkVmYW84cWM2dlNBTFZSd29TRWs2bitQRzBTMnU4a2ovaTlQcUViME5k?=
+ =?utf-8?B?alVwMXB1dVFOS2UwY01HZ2p1ZityYU5lUUtlbHRxTkl1NlNONEpuNXNLNERj?=
+ =?utf-8?B?SzhpbHRzOEZOSmJjcHFIWXFUMUdJZXlTb2FTM21hL0theXdBVHVMWENDSk12?=
+ =?utf-8?B?bHcwaUkzbkhJZ21EbkVMKzVOclBIQm9kRnFwSVhwQ3EvVmRJN29sazAySHBK?=
+ =?utf-8?B?UW1XNW44YU5zWVp0cXVYMTRkZUlVY3VtbmJRQkVmYS9XNW5mMldCZTJ6QkRC?=
+ =?utf-8?B?WVlTOG5jNktmVU9ucmdiYUJkZTQ2TmcySUhpNE82eThTQ2ZvcnNLaVZEK0lu?=
+ =?utf-8?B?OGQ5OUphQWd5VGhaNENkRG4wT1J2MzJCMmEwQjNQa1d5cFRYNWtNTkd1RlB3?=
+ =?utf-8?B?bFNiUWtOYTFNN0VlQThQWUZ6Qkg0S0E4UEh3UEY0ZmhBLzZOc0N0dkhjbTZU?=
+ =?utf-8?B?TzZMMGhXbmJTeTdmeFN5N1RHdXlUVFkzTTVsMGYzeHgwZDdlY3dvL1BxTzJ1?=
+ =?utf-8?B?MlZhN2R6NFZxOWVRZTVmV1A3ZUxnc2N3TWsyaUdOMWs2YXZxK3d0UExqTzN6?=
+ =?utf-8?B?QmlaUk15WGlscE9qUVczRkp3U1hicThPZU5nWnl4eDUzdEU4MlFSdDNkSEly?=
+ =?utf-8?B?NFVXbm0zZFdCYi92dWlwdEhOZjYvdDF1cU9rSURuZGcySUZWMmliQmNicElt?=
+ =?utf-8?B?SlpaVENwN280M3h2enFuMTNXTHhOMjcyNFVObm8yQWd1b2owV1B5OHZzaytp?=
+ =?utf-8?B?SDloTDFrdGFmaWVlWHkwWkFNbGZnRUliSE42K24wa2o3TTFBdis4Y2RlcE9q?=
+ =?utf-8?B?YUZMU0tPQlRKQjBJNUdjc1ZhbjBPaWlRVUFIWVg3amNNcjFjYWZBSi9zZXpZ?=
+ =?utf-8?B?NUplSG0zbVhYREJhYVN6N3VBRmlFTFByYjJpb3QzSUtlUWNneU9VeFpaUXVz?=
+ =?utf-8?B?SXBQRG9uNjZKN3hZb0xmWjA3OHF5b3NzU0l2bHBnd2RhNWRJTG9pdmg1a1Nu?=
+ =?utf-8?Q?G12HdozMJniE/69YT7oXB18a8?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AE9F3285CC3CC944A1524BCFBBD3C1BE@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240610112559.57806b8c@kmaincent-XPS-13-7390>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ce8dfa7-9dd0-4ceb-fc3c-08dc89ed6e6e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2024 08:06:43.2200
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hbpoUKCbQJHvIg5y//itKCI/s8DbBzUBHkOBRcI7+54E50wSBsrvUvIA4xlSBXA7NvV0us4E7HmkqjRO8B4cmA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB8092
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--17.359200-8.000000
+X-TMASE-MatchedRID: scwq2vQP8OEOwH4pD14DsPHkpkyUphL9X4GSJGyYc34E6M1YtcX6vMQG
+	d7R3BXX6Pkn/V88HF8sSqo3ZUfrHh25/NyTKlG69y7TSWcbz49aH7D1bP/FcOmI4wQ1Yq/d0ixZ
+	NU2JZ49urXy/3bY8ejWlSWihAdtZ+XKopuL8DJvCzI1v7J4hECri8G4TZfQeV2+mPn502VC9H2P
+	FX3Comq3egRv0CLAHIsWx8eTKGeuIM8jMXjBF+sNIFVVzYGjNKWQy9YC5qGvz6APa9i04WGCq2r
+	l3dzGQ1v22/FeMyuDoTeeDCCefa2HyVPRVYbwNRxjC1EZVk5eOLFlBQaQU2hg==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--17.359200-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	A728D416D98E64FCE7F26A59AE6E2EE08EC738DD866153C57582419F9D6406E32000:8
 
-On Mon, Jun 10, 2024 at 11:25:59AM +0200, Kory Maincent wrote:
-> Hello Oleksij,
-> 
-> On Mon, 10 Jun 2024 07:16:09 +0200
-> Oleksij Rempel <o.rempel@pengutronix.de> wrote:
-> 
-> > Hi Köry,
-> > 
-> > Thank you for your work.
-> > 
-> > On Fri, Jun 07, 2024 at 09:30:19AM +0200, Kory Maincent wrote:
-> > > From: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>  
-> > 
-> > ...
-> > 
-> > >  /**
-> > > diff --git a/include/uapi/linux/ethtool.h b/include/uapi/linux/ethtool.h
-> > > index 8733a3117902..ef65ad4612d2 100644
-> > > --- a/include/uapi/linux/ethtool.h
-> > > +++ b/include/uapi/linux/ethtool.h
-> > > @@ -752,6 +752,47 @@ enum ethtool_module_power_mode {
-> > >  	ETHTOOL_MODULE_POWER_MODE_HIGH,
-> > >  };
-> > >  
-> > > +/* C33 PSE extended state */
-> > > +enum ethtool_c33_pse_ext_state {
-> > > +	ETHTOOL_C33_PSE_EXT_STATE_UNKNOWN = 1,  
-> > 
-> > I assume, In case the state is unknown, better to set it to 0 and not
-> > report it to the user space in the first place. Do we really need it?
-> 
-> The pd692x0 report this for the unknown state: "Port is not mapped to physical
-> port, port is in unknown state, or PD692x0 fails to communicate with PD69208
-> device allocated for this port."
-> Also it has a status for open port (not connected) state.
-> (ETHTOOL_C33_PSE_EXT_SUBSTATE_V_OPEN)
-> Do you prefer to use the same error for both state?
->  
-> > > +	ETHTOOL_C33_PSE_EXT_STATE_DETECTION,
-> > > +	ETHTOOL_C33_PSE_EXT_STATE_CLASSIFICATION_FAILURE,
-> > > +	ETHTOOL_C33_PSE_EXT_STATE_HARDWARE_ISSUE,
-> > > +	ETHTOOL_C33_PSE_EXT_STATE_VOLTAGE_ISSUE,
-> > > +	ETHTOOL_C33_PSE_EXT_STATE_CURRENT_ISSUE,
-> > > +	ETHTOOL_C33_PSE_EXT_STATE_POWER_BUDGET_EXCEEDED,  
-> > 
-> > What is the difference between POWER_BUDGET_EXCEEDED and
-> > STATE_CURRENT_ISSUE->CRT_OVERLOAD? If there is some difference, it
-> > should be commented.
-> 
-> Current overload seems to be describing the "Overload current detection range
-> (Icut)" As described in the IEEE standard.
-> Not sure If budget exceeded should use the same error.
-> 
-> > Please provide comments describing how all of this states and substates
-> > should be used.
-> 
-> The enum errors I wrote is a bit subjective and are taken from the PD692x0
-> port status list. Go ahead to purpose any change, I have tried to make
-> categories that make sense but I might have made wrong choice.
-
-Here is my proposal aligned with IEEE 802.3-2022 33.2.4.4:
-
-/**                                                                                  
- * enum ethtool_c33_pse_ext_state - groups of PSE extended states                    
- *      functions. IEEE 802.3-2022 33.2.4.4 Variables                                
- *                                                                                  
- * @ETHTOOL_C33_PSE_EXT_STATE_ERROR_CONDITION: Group of error_condition states       
- * @ETHTOOL_C33_PSE_EXT_STATE_MR_PSE_ENABLE: Group of mr_pse_enable states              
- * @ETHTOOL_C33_PSE_EXT_STATE_OPTION_VPORT_LIM: Group of option_vport_lim states          
- * @ETHTOOL_C33_PSE_EXT_STATE_OVLD_DETECTED: Group of ovld_detected states       
- * @ETHTOOL_C33_PSE_EXT_STATE_PD_DLL_POWER_TYPE: Group of pd_dll_power_type states   
- * @ETHTOOL_C33_PSE_EXT_STATE_POWER_NOT_AVAILABLE: Group of power_not_available states
- * @ETHTOOL_C33_PSE_EXT_STATE_SHORT_DETECTED: Group of short_detected states         
- * @ETHTOOL_C33_PSE_EXT_STATE_TINRUSH_TIMER: Group of tinrush_timer states            
- */ 
-enum ethtool_c33_pse_ext_state {
-    ETHTOOL_C33_PSE_EXT_STATE_ERROR_CONDITION,
-    ETHTOOL_C33_PSE_EXT_STATE_MR_PSE_ENABLE,
-    ETHTOOL_C33_PSE_EXT_STATE_OPTION_VPORT_LIM,
-    ETHTOOL_C33_PSE_EXT_STATE_OVLD_DETECTED,
-    ETHTOOL_C33_PSE_EXT_STATE_PD_DLL_POWER_TYPE,
-    ETHTOOL_C33_PSE_EXT_STATE_POWER_NOT_AVAILABLE,
-    ETHTOOL_C33_PSE_EXT_STATE_SHORT_DETECTED,
-    ETHTOOL_C33_PSE_EXT_STATE_TINRUSH_TIMER,
-};
-
-/**                                                                                  
- * enum ethtool_c33_pse_ext_substate_error_condition - error_condition states        
- *      functions. IEEE 802.3-2022 33.2.4.4 Variables                                
- *                                                                                  
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_NON_EXISTING_PORT: Non-existing port number (PD692x0 0x0C)                  
- *      "Port is off: Non-existing port number. Fewer ports are available than the maximum number of ports that the Controller can support. Unavailable ports are considered 'off'. Currently not used."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_UNDEFINED_PORT: Undefined port (PD692x0 0x11)                                
- *      "Port is yet undefined. Port is not mapped to physical port or port is in unknown state or PD69200 failed to communicate with PD69208 device allocated for this port."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_INTERNAL_HW_FAULT: Internal hardware fault (PD692x0 0x12)                   
- *      "Port is off: Internal hardware fault. Port does not respond. Hardware fault, system initialization or PD69200 lost communication with PD69208 device allocated for this port. (Part of refresh function)."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_INTERNAL_HW_FAULT_2: Internal hardware fault (PD692x0 0x21)                 
- *      "Port is off: Internal hardware fault. Hardware problems preventing port operation. Currently not used. Used for 4P mapping with PD39208 device."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_COMM_ERROR_AFTER_FORCE_ON: Communication error after force on (PD692x0 0x33) 
- *      "Port is off: Communication error with PoE devices after Force On. This error appears only after port is forced on."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_UNKNOWN_PORT_STATUS: Unknown port status (PD692x0 0x37)                     
- *      "Port is off: Unknown device port status. The device returns an unknown port status for the software. Currently not used."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_HOST_CRASH_TURN_OFF: Host crash turn off (PD692x0 0x44)                     
- *      "Port is off: Turn off during host crash. Port is off - After host crash the port is off and waits for host command to proceed with new detection cycles. The port was delivering power before host crash but was configured to be forced shut when host crashes."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_HOST_CRASH_FORCE_SHUTDOWN: Host crash force shutdown (PD692x0 0x46)         
- *      "Port is off: An enabled port was forced to be shut down at host crash. Port is off - after host crash the port is off and waits for host command to proceed with new detection cycles. The port was enabled and not delivering power before host crash and was configured to be forced shut when host crashes."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_RECOVERY_UDL: Recovery UDL (PD692x0 0x48)                                    
- *      "Port is off: Recovery UDL. During crash a recovery port delivering power was disconnected due to UDL."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_RECOVERY_PG_EVENT: Recovery PG Event (PD692x0 0x49)                          
- *      "Port is off: Recovery PG Event. During crash a recovery port delivering power was disconnected due to PG event."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_RECOVERY_OVL: Recovery OVL (PD692x0 0x4A)                                    
- *      "Port is off: Recovery OVL. During crash a recovery port delivering power was disconnected due to OVL."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_DVDT_FAIL_STARTUP: DVDT fail during startup (PD692x0 0x4D)                   
- *      "Port is off: DVDT fail during startup. DVDT algorithm that checks power up sequence failed to power up the port."
-
- **error_condition**  
-  A variable indicating the status of implementation-specific fault conditions or optionally other
-  system faults that prevent the PSE from meeting the specifications in Table 33–11 and that require
-  the PSE not to source power. These error conditions are different from those monitored by the state
-  diagrams in Figure 33–10.  
-  Values:  
-  FALSE: No fault indication.  
-  TRUE: A fault indication exists.
- */ 
-enum ethtool_c33_pse_ext_substate_error_condition {
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_NON_EXISTING_PORT,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_UNDEFINED_PORT,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_INTERNAL_HW_FAULT,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_INTERNAL_HW_FAULT_2,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_COMM_ERROR_AFTER_FORCE_ON,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_UNKNOWN_PORT_STATUS,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_HOST_CRASH_TURN_OFF,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_HOST_CRASH_FORCE_SHUTDOWN,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_RECOVERY_UDL,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_RECOVERY_PG_EVENT,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_RECOVERY_OVL,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_DVDT_FAIL_STARTUP,
-};
-
-/**                                                                                  
- * enum ethtool_c33_pse_ext_substate_mr_pse_enable - mr_pse_enable states               
- *      functions. IEEE 802.3-2022 33.2.4.4 Variables                                
- *                                                                                  
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_MR_PSE_ENABLE_DISABLE_PIN_ACTIVE: Disable pin active (PD692x0 0x08)                           
- *      "Port is off: 'Disable all ports' pin is active. Hardware pin disables all ports."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_MR_PSE_ENABLE_DISABLE_PDU_FLAG_FORCE_ON: Disable PDU flag during force on (PD692x0 0x2F)      
- *      "Port is off: Disable PDU flag raised during Force On."
-
- **mr_pse_enable**  
-  A control variable that selects PSE operation and test functions. This variable is provided by a
-  management interface that may be mapped to the PSE Control register PSE Enable bits (11.1:0), as
-  described below, or other equivalent functions.  
-  Values:  
-  disable: All PSE functions disabled (behavior is as if there was no PSE functionality).  
-  enable: Normal PSE operation.  
-  force_power: Test mode selected that causes the PSE to apply power to the PI when there are no detected error conditions.
- */ 
-enum ethtool_c33_pse_ext_substate_mr_pse_enable {
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_MR_PSE_ENABLE_DISABLE_PIN_ACTIVE,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_MR_PSE_ENABLE_DISABLE_PDU_FLAG_FORCE_ON,
-};
-
-/**                                                                                  
- * enum ethtool_c33_pse_ext_substate_option_vport_lim - option_vport_lim states           
- *      functions. IEEE 802.3-2022 33.2.4.4 Variables                                
- *                                                                                  
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_HIGH_VOLTAGE: Main supply voltage is high (PD692x0 0x06)                     
- *      "Port is off: Main supply voltage is high. Mains voltage is higher than Max Voltage limit."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_HIGH_VOLTAGE_FORCED: Supply voltage higher than settings (PD692x0 0x2D)     
- *      "Port is off: Supply voltage higher than settings. These errors appear only after port is in Force On."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_LOW_VOLTAGE: Main supply voltage is low (PD692x0 0x07)                       
- *      "Port is off: Main supply voltage is low. Mains voltage is lower than Min Voltage limit."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_LOW_VOLTAGE_FORCED: Supply voltage lower than settings (PD692x0 0x2E)       
- *      "Port is off: Supply voltage lower than settings."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_RECOVERY_VOLTAGE_INJECTION: Recovery voltage injection (PD692x0 0x4C)       
- *      "Port is off: Recovery Voltage injection. Voltage was applied to the port from external source, during or before crash."
-
- **option_vport_lim**  
-  This optional variable indicates if VPSE is out of the operating range during normal operating state.  
-  Values:  
-  FALSE: VPSE is within the VPort_PSE operating range as defined in Table 33–11.  
-  TRUE: VPSE is outside of the VPort_PSE operating range as defined in Table 33–11.
- */ 
-enum ethtool_c33_pse_ext_substate_option_vport_lim {
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_HIGH_VOLTAGE,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_HIGH_VOLTAGE_FORCED,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_LOW_VOLTAGE,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_LOW_VOLTAGE_FORCED,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_RECOVERY_VOLTAGE_INJECTION,
-};
-
-/**                                                                                  
- * enum ethtool_c33_pse_ext_substate_ovld_detected - ovld_detected states        
- *      functions. IEEE 802.3-2022 33.2.4.4 Variables                                
- *                                                                                  
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OVLD_DETECTED_OVERLOAD: Overload state (PD692x0 0x1F)                                          
- *      "Port is off: Overload state. Overload state according to 802.3AF/AT (current is above Icut) OR (PM3 != 0 and (PD class report > user predefined power value))."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OVLD_DETECTED_OVERLOAD_FORCED: Forced power error due to overload (PD692x0 0x31)              
- *      "Port is off: Forced power error due to Overload. Overload condition according to 802.3AF/AT during Force On."
-
- **ovld_detected**  
-  A variable indicating if the PSE output current has been in an overload condition (see 33.2.7.6) for at least TCUT of a one-second sliding time.  
-  Values:  
-  FALSE: The PSE has not detected an overload condition.  
-  TRUE: The PSE has detected an overload condition.
- */ 
-enum ethtool_c33_pse_ext_substate_ovld_detected {
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_OVLD_DETECTED_OVERLOAD,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_OVLD_DETECTED_OVERLOAD_FORCED,
-};
-
-/**                                                                                  
- * enum ethtool_c33_pse_ext_substate_pd_dll_power_type - pd_dll_power_type states    
- *      functions. IEEE 802.3-2022 33.2.4.4 Variables                                
- *                                                                                  
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_PD_DLL_POWER_TYPE_NON_802_3AF_AT_DEVICE: Non-802.3AF/AT powered device (PD692x0 0x1C)           
- *      "Port is off: Non-802.3AF/AT powered device. Non-standard PD connected."
-
- **pd_dll_power_type**  
-  A control variable initially output by the PSE power control state diagram (Figure 33–27), which can be updated by LLDP (see Table 33–26), that indicates the type of PD as advertised through Data Link Layer classification.  
-  Values:  
-  1: PD is a Type 1 PD (default)  
-  2: PD is a Type 2 PD
- */ 
-enum ethtool_c33_pse_ext_substate_pd_dll_power_type {
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_PD_DLL_POWER_TYPE_NON_802_3AF_AT_DEVICE,
-};
-
-/**                                                                                  
- * enum ethtool_c33_pse_ext_substate_power_not_available - power_not_available states
- *      functions. IEEE 802.3-2022 33.2.4.4 Variables                                
- *                                                                                  
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_BUDGET_EXCEEDED: Power budget exceeded (PD692x0 0x20)                     
- *      "Port is off: Power budget exceeded. Power Management function shuts down port, due to lack of power. Port is shut down or remains off."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_PM_STATIC: Power Management-Static (PD692x0 0x3C)                         
- *      "Power Management-Static. Calculated power > power limit."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_PM_STATIC_OVL: Power Management-Static-ovl (PD692x0 0x3D)                 
- *      "Power Management-Static-ovl. Port Power up was denied due to (PD class report power > user predefined power value). Note: Power denied counter will advance."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_ERROR_MANAGEMENT_STATIC: Force Power Error Management Static (PD692x0 0x3E)
- *      "Force Power Error Management Static. Calculated power > power limit during Force On."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_ERROR_MANAGEMENT_STATIC_OVL: Force Power Error Management Static-ovl (PD692x0 0x3F)
- *      "Force Power Error Management Static-ovl. PD class report > user predefined power value during Force On. Note: Power denied counter will advance."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_INSUFFICIENT_POWER_FORCE_ON: Port is not ON during Force On due to exceeded max power level or insufficient power (PD692x0 0x32)
- *      "Port is not ON during Force On due to exceeded max power level or insufficient power."
-
- **power_not_available**  
-  Variable that is asserted in an implementation-dependent manner when the PSE is no longer capable of sourcing sufficient power to support the attached PD. Sufficient power is defined by classification; see 33.2.6.  
-  Values:  
-  FALSE: PSE is capable to continue to source power to a PD.  
-  TRUE: PSE is no longer capable of sourcing power to a PD.
- */ 
-enum ethtool_c33_pse_ext_substate_power_not_available {
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_BUDGET_EXCEEDED,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_PM_STATIC,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_PM_STATIC_OVL,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_ERROR_MANAGEMENT_STATIC,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_ERROR_MANAGEMENT_STATIC_OVL,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_INSUFFICIENT_POWER_FORCE_ON,
-};
-
-/**                                                                                  
- * enum ethtool_c33_pse_ext_substate_short_detected - short_detected states          
- *      functions. IEEE 802.3-2022 33.2.4.4 Variables                                
- *                                                                                  
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_SHORT_DETECTED_SHORT_CIRCUIT_FORCED: Force Power Error Short Circuit (PD692x0 0x38)             
- *      "Force Power Error Short Circuit. Short condition during Force On."
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_SHORT_DETECTED_RECOVERY_SC: Recovery short circuit (PD692x0 0x4B)                              
- *      "Recovery SC. During crash a recovery port delivering power was disconnected due to SC."
-
- **short_detected**  
-  A variable indicating if the PSE output current has been in a short circuit condition for TLIM within
-  a sliding window (see 33.2.7.7).  
-  Values:  
-  FALSE: The PSE has not detected a short circuit condition.  
-  TRUE: The PSE has detected qualified short circuit condition.
- */ 
-enum ethtool_c33_pse_ext_substate_short_detected {
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_SHORT_DETECTED_SHORT_CIRCUIT_FORCED,
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_SHORT_DETECTED_RECOVERY_SC,
-};
-
-/**                                                                                  
- * enum ethtool_c33_pse_ext_substate_tinrush_timer - tinrush_timer states             
- *      functions. IEEE 802.3-2022 33.2.4.5 Timers                                   
- *                                                                                  
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_TINRUSH_TIMER_FAIL_STARTUP: DVDT fail during startup (PD692x0 0x4D)                            
- *      "Port is off: DVDT fail during startup. DVDT algorithm that checks power up sequence failed to power up the port."
-
- **tinrush_timer**  
-  A timer used to monitor the duration of the inrush event; see TInrush in Table 33–11.
- */ 
-enum ethtool_c33_pse_ext_substate_tinrush_timer {
-    ETHTOOL_C33_PSE_EXT_SUBSTATE_TINRUSH_TIMER_FAIL_STARTUP,
-};
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+SGksIFNoYXduOg0KDQpPbiBUaHUsIDIwMjQtMDYtMDYgYXQgMTc6MjYgKzA4MDAsIFNoYXduIFN1
+bmcgd3JvdGU6DQo+IEZyb206IEhzaWFvIENoaWVuIFN1bmcgPHNoYXduLnN1bmdAbWVkaWF0ZWsu
+Y29tPg0KPiANCj4gU3VwcG9ydCAiTm9uZSIgYWxwaGEgYmxlbmRpbmcgbW9kZSBvbiBNZWRpYVRl
+aydzIGNoaXBzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogSHNpYW8gQ2hpZW4gU3VuZyA8c2hhd24u
+c3VuZ0BtZWRpYXRlay5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
+a19kaXNwX292bC5jIHwgMTYgKysrKysrKysrKysrKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDE0
+IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL21lZGlhdGVrL210a19kaXNwX292bC5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlh
+dGVrL210a19kaXNwX292bC5jDQo+IGluZGV4IDczODI0NGE2MTY0ZS4uNTRhNmYxMWFhODY3IDEw
+MDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3Bfb3ZsLmMNCj4g
+KysrIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kaXNwX292bC5jDQo+IEBAIC0zOCw2
+ICszOCw3IEBADQo+ICAjZGVmaW5lIERJU1BfUkVHX09WTF9QSVRDSF9NU0IobikJCSgweDAwNDAg
+KyAweDIwICogKG4pKQ0KPiAgI2RlZmluZSBPVkxfUElUQ0hfTVNCXzJORF9TVUJCVUYJCQlCSVQo
+MTYpDQo+ICAjZGVmaW5lIERJU1BfUkVHX09WTF9QSVRDSChuKQkJCSgweDAwNDQgKyAweDIwICog
+KG4pKQ0KPiArI2RlZmluZSBPVkxfQ09OU1RfQkxFTkQJCQkJCUJJVCgyOCkNCj4gICNkZWZpbmUg
+RElTUF9SRUdfT1ZMX1JETUFfQ1RSTChuKQkJKDB4MDBjMCArIDB4MjAgKiAobikpDQo+ICAjZGVm
+aW5lIERJU1BfUkVHX09WTF9SRE1BX0dNQyhuKQkJKDB4MDBjOCArIDB4MjAgKiAobikpDQo+ICAj
+ZGVmaW5lIERJU1BfUkVHX09WTF9BRERSX01UMjcwMQkJMHgwMDQwDQo+IEBAIC00MjgsNiArNDI5
+LDggQEAgdm9pZCBtdGtfb3ZsX2xheWVyX2NvbmZpZyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHVuc2ln
+bmVkIGludCBpZHgsDQo+ICAJdW5zaWduZWQgaW50IGZtdCA9IHBlbmRpbmctPmZvcm1hdDsNCj4g
+IAl1bnNpZ25lZCBpbnQgb2Zmc2V0ID0gKHBlbmRpbmctPnkgPDwgMTYpIHwgcGVuZGluZy0+eDsN
+Cj4gIAl1bnNpZ25lZCBpbnQgc3JjX3NpemUgPSAocGVuZGluZy0+aGVpZ2h0IDw8IDE2KSB8IHBl
+bmRpbmctPndpZHRoOw0KPiArCXVuc2lnbmVkIGludCBibGVuZF9tb2RlID0gc3RhdGUtPmJhc2Uu
+cGl4ZWxfYmxlbmRfbW9kZTsNCj4gKwl1bnNpZ25lZCBpbnQgaWdub3JlX3BpeGVsX2FscGhhID0g
+MDsNCj4gIAl1bnNpZ25lZCBpbnQgY29uOw0KPiAgCWJvb2wgaXNfYWZiYyA9IHBlbmRpbmctPm1v
+ZGlmaWVyICE9IERSTV9GT1JNQVRfTU9EX0xJTkVBUjsNCj4gIAl1bmlvbiBvdmVybGF5X3BpdGNo
+IHsNCj4gQEAgLTQ0OSw2ICs0NTIsMTUgQEAgdm9pZCBtdGtfb3ZsX2xheWVyX2NvbmZpZyhzdHJ1
+Y3QgZGV2aWNlICpkZXYsIHVuc2lnbmVkIGludCBpZHgsDQo+ICAJaWYgKHN0YXRlLT5iYXNlLmZi
+ICYmIHN0YXRlLT5iYXNlLmZiLT5mb3JtYXQtPmhhc19hbHBoYSkNCj4gIAkJY29uIHw9IE9WTF9D
+T05fQUVOIHwgT1ZMX0NPTl9BTFBIQTsNCj4gDQo+ICsJLyogQ09OU1RfQkxEIG11c3QgYmUgZW5h
+YmxlZCBmb3IgWFJHQiBmb3JtYXRzIGFsdGhvdWdoIHRoZSBhbHBoYSBjaGFubmVsDQo+ICsJICog
+Y2FuIGJlIGlnbm9yZWQsIG9yIE9WTCB3aWxsIHN0aWxsIHJlYWQgdGhlIHZhbHVlIGZyb20gbWVt
+b3J5Lg0KPiArCSAqIEZvciBSR0I4ODggcmVsYXRlZCBmb3JtYXRzLCB3aGV0aGVyIENPTlNUX0JM
+RCBpcyBlbmFibGVkIG9yIG5vdCB3b24ndA0KPiArCSAqIGFmZmVjdCB0aGUgcmVzdWx0LiBUaGVy
+ZWZvcmUgd2UgdXNlICFoYXNfYWxwaGEgYXMgdGhlIGNvbmRpdGlvbi4NCj4gKwkgKi8NCg0KVGhp
+cyBwYXRjaCBsb29rcyBnb29kIHRvIG1lLCBidXQgT1ZMIGRyaXZlciBoYXMgYWxyZWFkeSBkZWNs
+YXJlIHNvbWUgWCBmb3JtYXQuDQpTbyBJIHdvdWxkIGxpa2UgdG8gc2VwYXJhdGUgWCBmb3JtYXQg
+cmVsYXRlZCBwYXJ0IHRvIGEgZml4IHBhdGNoLg0KDQpSZWdhcmRzLA0KQ0sNCg0KPiArCWlmIChi
+bGVuZF9tb2RlID09IERSTV9NT0RFX0JMRU5EX1BJWEVMX05PTkUgfHwNCj4gKwkgICAgKHN0YXRl
+LT5iYXNlLmZiICYmICFzdGF0ZS0+YmFzZS5mYi0+Zm9ybWF0LT5oYXNfYWxwaGEpKQ0KPiArCQlp
+Z25vcmVfcGl4ZWxfYWxwaGEgPSBPVkxfQ09OU1RfQkxFTkQ7DQo+ICsNCj4gIAlpZiAocGVuZGlu
+Zy0+cm90YXRpb24gJiBEUk1fTU9ERV9SRUZMRUNUX1kpIHsNCj4gIAkJY29uIHw9IE9WTF9DT05f
+VklSVF9GTElQOw0KPiAgCQlhZGRyICs9IChwZW5kaW5nLT5oZWlnaHQgLSAxKSAqIHBlbmRpbmct
+PnBpdGNoOw0KPiBAQCAtNDY0LDggKzQ3Niw4IEBAIHZvaWQgbXRrX292bF9sYXllcl9jb25maWco
+c3RydWN0IGRldmljZSAqZGV2LCB1bnNpZ25lZCBpbnQgaWR4LA0KPiANCj4gIAltdGtfZGRwX3dy
+aXRlX3JlbGF4ZWQoY21kcV9wa3QsIGNvbiwgJm92bC0+Y21kcV9yZWcsIG92bC0+cmVncywNCj4g
+IAkJCSAgICAgIERJU1BfUkVHX09WTF9DT04oaWR4KSk7DQo+IC0JbXRrX2RkcF93cml0ZV9yZWxh
+eGVkKGNtZHFfcGt0LCBvdmVybGF5X3BpdGNoLnNwbGl0X3BpdGNoLmxzYiwgJm92bC0+Y21kcV9y
+ZWcsIG92bC0+cmVncywNCj4gLQkJCSAgICAgIERJU1BfUkVHX09WTF9QSVRDSChpZHgpKTsNCj4g
+KwltdGtfZGRwX3dyaXRlX3JlbGF4ZWQoY21kcV9wa3QsIG92ZXJsYXlfcGl0Y2guc3BsaXRfcGl0
+Y2gubHNiIHwgaWdub3JlX3BpeGVsX2FscGhhLA0KPiArCQkJICAgICAgJm92bC0+Y21kcV9yZWcs
+IG92bC0+cmVncywgRElTUF9SRUdfT1ZMX1BJVENIKGlkeCkpOw0KPiAgCW10a19kZHBfd3JpdGVf
+cmVsYXhlZChjbWRxX3BrdCwgc3JjX3NpemUsICZvdmwtPmNtZHFfcmVnLCBvdmwtPnJlZ3MsDQo+
+ICAJCQkgICAgICBESVNQX1JFR19PVkxfU1JDX1NJWkUoaWR4KSk7DQo+ICAJbXRrX2RkcF93cml0
+ZV9yZWxheGVkKGNtZHFfcGt0LCBvZmZzZXQsICZvdmwtPmNtZHFfcmVnLCBvdmwtPnJlZ3MsDQo+
+IC0tDQo+IDIuMTguMA0KPiANCg==
 
