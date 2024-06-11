@@ -1,311 +1,280 @@
-Return-Path: <linux-kernel+bounces-209974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB292903D91
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:36:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3694903D93
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 117A6B266E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:36:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47B5DB236AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B6D17D884;
-	Tue, 11 Jun 2024 13:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAEB17CA19;
+	Tue, 11 Jun 2024 13:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VmPMlWNT"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hdMk31pY"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0593617CA0A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBCC1E535
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718112927; cv=none; b=RcK0hQe1hI0DwcvmHv+xAvCqO8Y527bfMo9hzybh3pEtW2ZzrFBV4520IUMvEWsnZ04zfCp4GZsHnSeSpjakIKvbDyYOMKU8v3C/p1y9EuSBdTN3FHjY506/KV5VL32cm8AwEcnU7APAwQ0B8vgAyu1J2Wt7oZlX+Z8onhFcgt0=
+	t=1718113047; cv=none; b=gCfBVGzI2Ga3e09FL4YUIri5XHJjySKc/TC+zneAhdICNWy2fRwt1FkOlQe1Riutv4gYeVdbDbCX/DoNibelIVXUhU8zTAefnr+tUq06q+Lfl/wykn+Q3uHSljJ4tgLWsjRpX0aywxg2wksRWb0VvGcIGdEeV4hbdYIXeqPmqEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718112927; c=relaxed/simple;
-	bh=4a3scLvYXkuJsnLKn89qlgPibWnIiRsl52VCCdkhGOM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fuXKspKyPfibQu6EYhn7Br9UqcF9Tdmn630YKrmxu46lcSWZiyxPpgp1JgQ0rsmd4U7OlBbyGj4CKBARwIxdGFIjHqj0cAKGHq7jDxP3IJITnUE3c9j9Xup8KQFwszSvZ2id44moFjE+UbPg2ifPtHwMyrgFiNj6/NOTsaQtJPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VmPMlWNT; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebdfe26242so29312411fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 06:35:23 -0700 (PDT)
+	s=arc-20240116; t=1718113047; c=relaxed/simple;
+	bh=uClWVkm9RxsLs+EfbggJIY5JpBEtxoQIUWpWC/sz2K0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MBSswj7Y1/TpaeXH0zI/j93vdznX/BK3V8UEbxKKOZ8crNlVI+5jFCDRa2sQ7/gGM9fMsghhDHv6ff6VRpbuIf5ApACXPa/OpASrtlpnG00iDgmCv6cMP+c0fM4MNA+De19vPsjIY8C588eJlq0nh80YQJpkBSWQ8jOe4D8eW1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hdMk31pY; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6e9f52e99c2so2170655a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 06:37:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718112922; x=1718717722; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H8QDeS52Z8AMlWRKMLQ8N+MaKcddL0RJGmQ+tlm1Cp0=;
-        b=VmPMlWNTvkcDqEHjZvvlvmXueamzUl+JB3YGgZn1cT7xBrT6AHrcOrkClxTdlMLbf3
-         QlhcAl5IIhueqqdjK20O3lePfclzKfoIRSwS963WD7Bl0DA+XGriHy3Q+o9JwoPGcHuB
-         Kq52eEx1SFiapMD037JMDBe22rqkyuf3vHrSl2rpbl4W6RBcDqCaCoVOswRg8qZ3f8G8
-         CyzeVozM+m0/aq3KVYN8Vs9D2ZqukGduCZJqMlmsP5v9xsmz5Jf3irdI+dJN/9tm08Yb
-         NR5SL05qaBFf8MoA41EQWX0o239aDyA/lPlIR5YA75e+RHXZ3b5tpHnGAcYgNyODeI4X
-         3fFw==
+        d=linaro.org; s=google; t=1718113044; x=1718717844; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MAcDNalbfcX/SooAz1XjppInJxW8mD6aEySBf2LPSno=;
+        b=hdMk31pYtLGSlgRi7MR3YBa6zWjH0WJRD7vPxC1b+83+jWvfGz0EaJsnRpjbUETTQS
+         rUYbzhVppsG7ZZfEarzZ+QyC5tqf+SZtRlqIOoJivYURivTH2knTHfaCEw5UU8VCDpNi
+         NRhtZUoe5bcCLoh0I+HzpLya63BuT118p3+rImAKQW+Q7h+DO/8aYGjWrI4nW9QoDTo9
+         CpL7eOTvkTx2X+ZnLGNwcYTyEzgj/sSJkGoS/sQslc05OUJfNwGvLnSk++tz7XNiQjvT
+         xycnwr3G3GuwTaU8KhRavJK3gkErjJcHP6GSphk9nVzk4w7lU+f/bmfGm5OwC8l9130d
+         cVHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718112922; x=1718717722;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1718113044; x=1718717844;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=H8QDeS52Z8AMlWRKMLQ8N+MaKcddL0RJGmQ+tlm1Cp0=;
-        b=QVeXUI1BfSb+1PiRwn/PxjCQQTMHVvyqhTvy3wM9VUEPqtDlB4RZUpTU+Ez2mET3iE
-         /cpj4G8WRjMvQ+sadDKgTaU8PQlZrBX4ZN54x0J5EoWvizWxC+RGKQ8CsVwU1sq3PCkj
-         B+vi/9E/TfXosw+Hv6tQLEAIoKmpPP9E91L9SRHeVauRxT27eOVPZN6ocnKDCht47+gM
-         LX3bv77L03nSIgYLteg+rBGRIwDtSEU/ZRUKjZu/yNtThDIe8oQyZOwl9WNTLclmUwgL
-         QigkCKb2OUih+AuDLYNqZVx3dvDkzSywdEkCU6RSHo2WmrixRe5nAMgdnLhRKTp7YYru
-         SXlg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqu6dgjHhbBTwWfkLn+binLUTxKEWT2JYhpme3+4TRgVEGjAZo619uOUPMFoTTIjjIuaRVr/843fNKZlG0L0jHlSxI1YRxjhEmcTE1
-X-Gm-Message-State: AOJu0YzAkNjT+IBeq25AEXMyAezlAPUatySF1rpl3XrLaLw8P+CYw4l/
-	u0STfjRhYmvaeIw/32Y03ISvDDlCGvRjIesuxJuu1/0o8yCc09BU1HFftRJdDcrIeEjE4EGOWKo
-	Y
-X-Google-Smtp-Source: AGHT+IFYXJL8gSHUGZhhV7TvyGBajrxwHaxnUpJkWCNrjteJ0gG8Kk8wjsEIGqil2U66IxgDoS/SNA==
-X-Received: by 2002:a2e:7a06:0:b0:2eb:dba0:6772 with SMTP id 38308e7fff4ca-2ebdba071a5mr53285941fa.37.1718112922031;
-        Tue, 11 Jun 2024 06:35:22 -0700 (PDT)
-Received: from toaster.lan ([2a01:e0a:3c5:5fb1:6945:4110:d128:827])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4215c1aa1desm179497315e9.11.2024.06.11.06.35.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 06:35:21 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: [PATCH] clk: meson: add missing MODULE_DESCRIPTION() macros
-Date: Tue, 11 Jun 2024 15:35:08 +0200
-Message-ID: <20240611133512.341817-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.43.0
+        bh=MAcDNalbfcX/SooAz1XjppInJxW8mD6aEySBf2LPSno=;
+        b=n3Rx95UBiR+8vO44CqhU+vIIxjgXsf5p+C8kwdfYm2tlsQjDz0HV6IJ3I1uHtoEnmf
+         Z18SgwEv4uOdBZSaK1nVmRtBGCchjqGixcrvv182g1xc398bat7HnP6JewwwmqJVyjR9
+         whRBOTlxJ6FrTQWy47R6GjAhplneWRbFeYHul9Gdx+scaAN/SY9nXVh2ehyM7zDU3EIW
+         yDF1uKPkHQZAKxCl3rVAKzAIbdZN8ujkeCOaL+Un+85Fxm0LippiSPLG46Ev4fXxVVGG
+         hGMDguGUGOowpS+1/lxy73jnKXurabtX0+jyqn73N7yli1GfAsMQEpzOjzJqoG5P7+5c
+         8nqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVz0eJZp1OAK3k75EwnRT5tMO3odcivonA0unimzWeI1I308lgq6b2Y4lSdHVMeSH2gFyiBnxBoq+ZrOgm8sFSYEwXf/E3DSdJOC7tP
+X-Gm-Message-State: AOJu0Yxd826FJRiXqMDVUMc+oAcOt9Vy/nIL89HF2vPigyvti5QQiErf
+	zMNwo+uuOLyo/t1lbEkL1OZoSC9lIvw6bFwtEOqwuSCzPdaGdjEWdZ7QMrfdPnVcsBEqxgawxGJ
+	d/ldR7zFYiWwwnu9tFfqx+hO3Y6D3lj9WfSwW2Q==
+X-Google-Smtp-Source: AGHT+IFs979EGmIWLmkusI/d7SBFQhTqweYDqCK3mffDdw6Ftoj9EB//VarfNSLmbqnD3uT08/vi0tbvTUuy9HnmxdI=
+X-Received: by 2002:a17:90a:d397:b0:2c2:bd1a:4f84 with SMTP id
+ 98e67ed59e1d1-2c2bd1a4fb0mr11352008a91.10.1718113044480; Tue, 11 Jun 2024
+ 06:37:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+References: <20240611112413.1241352-1-christian.loehle@arm.com> <20240611112413.1241352-2-christian.loehle@arm.com>
+In-Reply-To: <20240611112413.1241352-2-christian.loehle@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 11 Jun 2024 15:37:12 +0200
+Message-ID: <CAKfTPtC4GZ1LJsGZJ7wie9tus=+hmg1Rg=RaBtwXZxKGL17N9A@mail.gmail.com>
+Subject: Re: [PATCHv2 1/3] Revert: "cpuidle: teo: Introduce util-awareness"
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org, 
+	qyousef@layalina.io, peterz@infradead.org, daniel.lezcano@linaro.org, 
+	ulf.hansson@linaro.org, anna-maria@linutronix.de, kajetan.puchalski@arm.com, 
+	lukasz.luba@arm.com, dietmar.eggemann@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add the missing MODULE_DESCRIPTION() in the Amlogic clock modules missing
-it.
+On Tue, 11 Jun 2024 at 13:24, Christian Loehle <christian.loehle@arm.com> wrote:
+>
+> This reverts commit 9ce0f7c4bc64d820b02a1c53f7e8dba9539f942b.
+>
+> Util-awareness was reported to be too aggressive in selecting shallower
+> states. Additionally a single threshold was found to not be suitable
+> for reasoning about sleep length as, for all practical purposes,
+> almost arbitrary sleep lengths are still possible for any load value.
+>
+> Fixes: 9ce0f7c4bc64 ("cpuidle: teo: Introduce util-awareness")
+> Reported-by: Qais Yousef <qyousef@layalina.io>
+> Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Reported-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-Closes: https://lore.kernel.org/linux-clk/964210f1-671f-4ecc-bdb7-3cf53089c327@quicinc.com
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/a1-peripherals.c   | 3 ++-
- drivers/clk/meson/a1-pll.c           | 3 ++-
- drivers/clk/meson/axg-aoclk.c        | 3 ++-
- drivers/clk/meson/axg.c              | 3 ++-
- drivers/clk/meson/c3-peripherals.c   | 3 ++-
- drivers/clk/meson/c3-pll.c           | 3 ++-
- drivers/clk/meson/g12a-aoclk.c       | 3 ++-
- drivers/clk/meson/g12a.c             | 3 ++-
- drivers/clk/meson/gxbb-aoclk.c       | 2 ++
- drivers/clk/meson/gxbb.c             | 3 ++-
- drivers/clk/meson/meson-aoclk.c      | 2 ++
- drivers/clk/meson/meson-clkc-utils.c | 1 +
- drivers/clk/meson/meson-eeclk.c      | 2 ++
- drivers/clk/meson/s4-peripherals.c   | 3 ++-
- drivers/clk/meson/s4-pll.c           | 3 ++-
- 15 files changed, 29 insertions(+), 11 deletions(-)
+The spurious wakeups that I reported on my rb5, are gone with this patchset
 
-diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
-index 621af1e6e4b2..99b5bc450446 100644
---- a/drivers/clk/meson/a1-peripherals.c
-+++ b/drivers/clk/meson/a1-peripherals.c
-@@ -2240,8 +2240,9 @@ static struct platform_driver a1_periphs_clkc_driver = {
- 		.of_match_table = a1_periphs_clkc_match_table,
- 	},
- };
--
- module_platform_driver(a1_periphs_clkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic A1 Peripherals Clock Controller driver");
- MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
- MODULE_AUTHOR("Dmitry Rokosov <ddrokosov@sberdevices.ru>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
-index 90b0aeeb049c..a16e537d139a 100644
---- a/drivers/clk/meson/a1-pll.c
-+++ b/drivers/clk/meson/a1-pll.c
-@@ -354,8 +354,9 @@ static struct platform_driver a1_pll_clkc_driver = {
- 		.of_match_table = a1_pll_clkc_match_table,
- 	},
- };
--
- module_platform_driver(a1_pll_clkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic S4 PLL Clock Controller driver");
- MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
- MODULE_AUTHOR("Dmitry Rokosov <ddrokosov@sberdevices.ru>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-index e4d0f46f47f5..fa1dcb7f91e4 100644
---- a/drivers/clk/meson/axg-aoclk.c
-+++ b/drivers/clk/meson/axg-aoclk.c
-@@ -338,6 +338,7 @@ static struct platform_driver axg_aoclkc_driver = {
- 		.of_match_table = axg_aoclkc_match_table,
- 	},
- };
--
- module_platform_driver(axg_aoclkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic AXG Always-ON Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 52d610110e44..065b5f198297 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -2183,6 +2183,7 @@ static struct platform_driver axg_driver = {
- 		.of_match_table = clkc_match_table,
- 	},
- };
--
- module_platform_driver(axg_driver);
-+
-+MODULE_DESCRIPTION("Amlogic AXG Main Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
-index ff17abe6a999..56b33d23c317 100644
---- a/drivers/clk/meson/c3-peripherals.c
-+++ b/drivers/clk/meson/c3-peripherals.c
-@@ -2359,7 +2359,8 @@ static struct platform_driver c3_peripherals_driver = {
- 		.of_match_table = c3_peripherals_clkc_match_table,
- 	},
- };
--
- module_platform_driver(c3_peripherals_driver);
-+
-+MODULE_DESCRIPTION("Amlogic C3 Peripherals Clock Controller driver");
- MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
-index 44b20bf4deac..6d5271c61d14 100644
---- a/drivers/clk/meson/c3-pll.c
-+++ b/drivers/clk/meson/c3-pll.c
-@@ -740,7 +740,8 @@ static struct platform_driver c3_pll_driver = {
- 		.of_match_table = c3_pll_clkc_match_table,
- 	},
- };
--
- module_platform_driver(c3_pll_driver);
-+
-+MODULE_DESCRIPTION("Amlogic C3 PLL Clock Controller driver");
- MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
-index 58976ed8b92a..a5f4d15d8396 100644
---- a/drivers/clk/meson/g12a-aoclk.c
-+++ b/drivers/clk/meson/g12a-aoclk.c
-@@ -473,6 +473,7 @@ static struct platform_driver g12a_aoclkc_driver = {
- 		.of_match_table = g12a_aoclkc_match_table,
- 	},
- };
--
- module_platform_driver(g12a_aoclkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic G12A Always-ON Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 56e66ecc306e..4647e84d2502 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -5612,6 +5612,7 @@ static struct platform_driver g12a_driver = {
- 		.of_match_table = clkc_match_table,
- 	},
- };
--
- module_platform_driver(g12a_driver);
-+
-+MODULE_DESCRIPTION("Amlogic G12/SM1 Main Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index dbda563729db..33fafbdf65c4 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -300,4 +300,6 @@ static struct platform_driver gxbb_aoclkc_driver = {
- 	},
- };
- module_platform_driver(gxbb_aoclkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic GXBB Always-ON Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 29507b8c4304..d3175e4335bb 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -3567,6 +3567,7 @@ static struct platform_driver gxbb_driver = {
- 		.of_match_table = clkc_match_table,
- 	},
- };
--
- module_platform_driver(gxbb_driver);
-+
-+MODULE_DESCRIPTION("Amlogic GXBB Main Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
-index b8a9d59e6726..2dd064201fae 100644
---- a/drivers/clk/meson/meson-aoclk.c
-+++ b/drivers/clk/meson/meson-aoclk.c
-@@ -89,4 +89,6 @@ int meson_aoclkc_probe(struct platform_device *pdev)
- 	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
- }
- EXPORT_SYMBOL_GPL(meson_aoclkc_probe);
-+
-+MODULE_DESCRIPTION("Amlogic Always-ON Clock Controller helpers");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/meson-clkc-utils.c b/drivers/clk/meson/meson-clkc-utils.c
-index 7370644e8092..4dd5948b7ae4 100644
---- a/drivers/clk/meson/meson-clkc-utils.c
-+++ b/drivers/clk/meson/meson-clkc-utils.c
-@@ -22,4 +22,5 @@ struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_da
- }
- EXPORT_SYMBOL_GPL(meson_clk_hw_get);
- 
-+MODULE_DESCRIPTION("Amlogic Clock Controller Utilities");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
-index 3cbc7f233bba..570992eece86 100644
---- a/drivers/clk/meson/meson-eeclk.c
-+++ b/drivers/clk/meson/meson-eeclk.c
-@@ -58,4 +58,6 @@ int meson_eeclkc_probe(struct platform_device *pdev)
- 	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
- }
- EXPORT_SYMBOL_GPL(meson_eeclkc_probe);
-+
-+MODULE_DESCRIPTION("Amlogic Main Clock Controller Helpers");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index 73340c7e815e..130c50554290 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -3809,7 +3809,8 @@ static struct platform_driver s4_driver = {
- 		.of_match_table = clkc_match_table,
- 	},
- };
--
- module_platform_driver(s4_driver);
-+
-+MODULE_DESCRIPTION("Amlogic S4 Peripherals Clock Controller driver");
- MODULE_AUTHOR("Yu Tu <yu.tu@amlogic.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
-index 707c107a5291..c2afade24f9f 100644
---- a/drivers/clk/meson/s4-pll.c
-+++ b/drivers/clk/meson/s4-pll.c
-@@ -868,7 +868,8 @@ static struct platform_driver s4_driver = {
- 		.of_match_table = clkc_match_table,
- 	},
- };
--
- module_platform_driver(s4_driver);
-+
-+MODULE_DESCRIPTION("Amlogic S4 PLL Clock Controller driver");
- MODULE_AUTHOR("Yu Tu <yu.tu@amlogic.com>");
- MODULE_LICENSE("GPL");
--- 
-2.43.0
+Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
 
+> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> ---
+>  drivers/cpuidle/governors/teo.c | 100 --------------------------------
+>  1 file changed, 100 deletions(-)
+>
+> diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
+> index 7244f71c59c5..d8554c20cf10 100644
+> --- a/drivers/cpuidle/governors/teo.c
+> +++ b/drivers/cpuidle/governors/teo.c
+> @@ -104,56 +104,16 @@
+>   *      select the given idle state instead of the candidate one.
+>   *
+>   * 3. By default, select the candidate state.
+> - *
+> - * Util-awareness mechanism:
+> - *
+> - * The idea behind the util-awareness extension is that there are two distinct
+> - * scenarios for the CPU which should result in two different approaches to idle
+> - * state selection - utilized and not utilized.
+> - *
+> - * In this case, 'utilized' means that the average runqueue util of the CPU is
+> - * above a certain threshold.
+> - *
+> - * When the CPU is utilized while going into idle, more likely than not it will
+> - * be woken up to do more work soon and so a shallower idle state should be
+> - * selected to minimise latency and maximise performance. When the CPU is not
+> - * being utilized, the usual metrics-based approach to selecting the deepest
+> - * available idle state should be preferred to take advantage of the power
+> - * saving.
+> - *
+> - * In order to achieve this, the governor uses a utilization threshold.
+> - * The threshold is computed per-CPU as a percentage of the CPU's capacity
+> - * by bit shifting the capacity value. Based on testing, the shift of 6 (~1.56%)
+> - * seems to be getting the best results.
+> - *
+> - * Before selecting the next idle state, the governor compares the current CPU
+> - * util to the precomputed util threshold. If it's below, it defaults to the
+> - * TEO metrics mechanism. If it's above, the closest shallower idle state will
+> - * be selected instead, as long as is not a polling state.
+>   */
+>
+>  #include <linux/cpuidle.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/kernel.h>
+> -#include <linux/sched.h>
+>  #include <linux/sched/clock.h>
+> -#include <linux/sched/topology.h>
+>  #include <linux/tick.h>
+>
+>  #include "gov.h"
+>
+> -/*
+> - * The number of bits to shift the CPU's capacity by in order to determine
+> - * the utilized threshold.
+> - *
+> - * 6 was chosen based on testing as the number that achieved the best balance
+> - * of power and performance on average.
+> - *
+> - * The resulting threshold is high enough to not be triggered by background
+> - * noise and low enough to react quickly when activity starts to ramp up.
+> - */
+> -#define UTIL_THRESHOLD_SHIFT 6
+> -
+>  /*
+>   * The PULSE value is added to metrics when they grow and the DECAY_SHIFT value
+>   * is used for decreasing metrics on a regular basis.
+> @@ -188,7 +148,6 @@ struct teo_bin {
+>   * @next_recent_idx: Index of the next @recent_idx entry to update.
+>   * @recent_idx: Indices of bins corresponding to recent "intercepts".
+>   * @tick_hits: Number of "hits" after TICK_NSEC.
+> - * @util_threshold: Threshold above which the CPU is considered utilized
+>   */
+>  struct teo_cpu {
+>         s64 time_span_ns;
+> @@ -198,28 +157,10 @@ struct teo_cpu {
+>         int next_recent_idx;
+>         int recent_idx[NR_RECENT];
+>         unsigned int tick_hits;
+> -       unsigned long util_threshold;
+>  };
+>
+>  static DEFINE_PER_CPU(struct teo_cpu, teo_cpus);
+>
+> -/**
+> - * teo_cpu_is_utilized - Check if the CPU's util is above the threshold
+> - * @cpu: Target CPU
+> - * @cpu_data: Governor CPU data for the target CPU
+> - */
+> -#ifdef CONFIG_SMP
+> -static bool teo_cpu_is_utilized(int cpu, struct teo_cpu *cpu_data)
+> -{
+> -       return sched_cpu_util(cpu) > cpu_data->util_threshold;
+> -}
+> -#else
+> -static bool teo_cpu_is_utilized(int cpu, struct teo_cpu *cpu_data)
+> -{
+> -       return false;
+> -}
+> -#endif
+> -
+>  /**
+>   * teo_update - Update CPU metrics after wakeup.
+>   * @drv: cpuidle driver containing state data.
+> @@ -386,7 +327,6 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>         int constraint_idx = 0;
+>         int idx0 = 0, idx = -1;
+>         bool alt_intercepts, alt_recent;
+> -       bool cpu_utilized;
+>         s64 duration_ns;
+>         int i;
+>
+> @@ -411,32 +351,6 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>         if (!dev->states_usage[0].disable)
+>                 idx = 0;
+>
+> -       cpu_utilized = teo_cpu_is_utilized(dev->cpu, cpu_data);
+> -       /*
+> -        * If the CPU is being utilized over the threshold and there are only 2
+> -        * states to choose from, the metrics need not be considered, so choose
+> -        * the shallowest non-polling state and exit.
+> -        */
+> -       if (drv->state_count < 3 && cpu_utilized) {
+> -               /*
+> -                * If state 0 is enabled and it is not a polling one, select it
+> -                * right away unless the scheduler tick has been stopped, in
+> -                * which case care needs to be taken to leave the CPU in a deep
+> -                * enough state in case it is not woken up any time soon after
+> -                * all.  If state 1 is disabled, though, state 0 must be used
+> -                * anyway.
+> -                */
+> -               if ((!idx && !(drv->states[0].flags & CPUIDLE_FLAG_POLLING) &&
+> -                   teo_state_ok(0, drv)) || dev->states_usage[1].disable) {
+> -                       idx = 0;
+> -                       goto out_tick;
+> -               }
+> -               /* Assume that state 1 is not a polling one and use it. */
+> -               idx = 1;
+> -               duration_ns = drv->states[1].target_residency_ns;
+> -               goto end;
+> -       }
+> -
+>         /* Compute the sums of metrics for early wakeup pattern detection. */
+>         for (i = 1; i < drv->state_count; i++) {
+>                 struct teo_bin *prev_bin = &cpu_data->state_bins[i-1];
+> @@ -560,18 +474,6 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>         if (idx > constraint_idx)
+>                 idx = constraint_idx;
+>
+> -       /*
+> -        * If the CPU is being utilized over the threshold, choose a shallower
+> -        * non-polling state to improve latency, unless the scheduler tick has
+> -        * been stopped already and the shallower state's target residency is
+> -        * not sufficiently large.
+> -        */
+> -       if (cpu_utilized) {
+> -               i = teo_find_shallower_state(drv, dev, idx, KTIME_MAX, true);
+> -               if (teo_state_ok(i, drv))
+> -                       idx = i;
+> -       }
+> -
+>         /*
+>          * Skip the timers check if state 0 is the current candidate one,
+>          * because an immediate non-timer wakeup is expected in that case.
+> @@ -667,11 +569,9 @@ static int teo_enable_device(struct cpuidle_driver *drv,
+>                              struct cpuidle_device *dev)
+>  {
+>         struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
+> -       unsigned long max_capacity = arch_scale_cpu_capacity(dev->cpu);
+>         int i;
+>
+>         memset(cpu_data, 0, sizeof(*cpu_data));
+> -       cpu_data->util_threshold = max_capacity >> UTIL_THRESHOLD_SHIFT;
+>
+>         for (i = 0; i < NR_RECENT; i++)
+>                 cpu_data->recent_idx[i] = -1;
+> --
+> 2.34.1
+>
 
