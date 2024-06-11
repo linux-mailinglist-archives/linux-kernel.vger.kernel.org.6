@@ -1,166 +1,108 @@
-Return-Path: <linux-kernel+bounces-210094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE06903F36
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:51:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199D8903F3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AF1E284E3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:51:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB18728757A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E481862A;
-	Tue, 11 Jun 2024 14:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358AA134A8;
+	Tue, 11 Jun 2024 14:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="fSZ7DrEn"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD21D1AACC;
-	Tue, 11 Jun 2024 14:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="nXrwlDwr"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F498C8FB;
+	Tue, 11 Jun 2024 14:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718117494; cv=none; b=MNxHT92iDUBLBB2p/C9tCGOPrTFWamptnMSqc1XZfgtkz3fOtCWe9GIoUMOL2NW0w7EmqspQ9sZm9A83LaBsiNe4RSxxJPYzlr6ab02r7Y/ZWCJ2jrif6KaG6zIko+htpeMnirdce60o+z1VZKaQCtBRWhpSWY4WYW3WftT3JmA=
+	t=1718117510; cv=none; b=BMRm3bmQFfN5BuzcnXEVkXH+5P1FNGsCcc7tHhOWCibnwCvQyfQCuIdc4aA+VWPw03sIS97plN/Q506LwXoI8qayXSFPHpwe8IafRepwu0AiwTHDnrbPA53JIExMNeqa/g8Vu61JGNWG9PhUWu+6zRbAZaTWmilaF+VLku342XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718117494; c=relaxed/simple;
-	bh=kxw6FNZ6sZ3ddv1CP5tIqd/k6ancUNeVg3HhsR4Dapk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uRzz7woGU0CT/P09mm1waIb2IYJkqLmF8xMA/EMZvvsUfZLLKxzVlKuTrbEcLrHpYNAlpYYWcP+BeUdR0mQScge96j9YGrHAly5mZl+5NEv0Tr5NWXzp56KTNGFa6vTcLMrvtHL183qHN2M+kpKpxYT/P1boJe9S+5aRs+d+PYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=fSZ7DrEn; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.1.0)
- id 2654bdd0c242fc7a; Tue, 11 Jun 2024 16:51:24 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B18E87F46D3;
-	Tue, 11 Jun 2024 16:51:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1718117484;
-	bh=kxw6FNZ6sZ3ddv1CP5tIqd/k6ancUNeVg3HhsR4Dapk=;
-	h=From:To:Cc:Subject:Date;
-	b=fSZ7DrEnAvBxDMBYFQAdb88D11pP3POjdemG/yLpr8FUQ5WZC5SeVRJyOk8vh4JL4
-	 9iquczrORaF2kER82LthvSOsQYcw3Ozv06ixhiCDSLvUV84ZRwA2SvxERpZWcKXcJb
-	 uEXpFBh22FMB2crTl3pl0KxQr2+fGKqt05SB0ijpojfReh05o75G5MFkuCYmwyA6Sy
-	 76WbfviQWGfRY4WBt1ybnAia/CTnmj2ye0mWLOMqbvKozHw+My/OkXl7VkCWv/C2Ko
-	 N8JJW4ha3jeP5dmcQU5M/hEWjX4a8FCkSpwH/y4CsU1mZhHPgG5YsB7Ou0MU8um8BQ
-	 MVG6+OSizRJ8w==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>, Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH v1] thermal: gov_step_wise: Restore passive polling management
-Date: Tue, 11 Jun 2024 16:51:23 +0200
-Message-ID: <12462322.O9o76ZdvQC@kreacher>
+	s=arc-20240116; t=1718117510; c=relaxed/simple;
+	bh=cm03x+RBmnfPa2LDYFByAa2NHN0RjhBscn0RaLP8YqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QNaogcMA4mO7OsjXdY3WlsYKwjmOyVpnpnk1hPZtmrwcqQjmOQgV8KVKzg2QzkT1qzsfYoQxHtgevv36oL4zOOUGVprQRaZxoJ27Sr7xHGTbBo4VR5Ud6IxnHzN3GFHL/xMmAG7IrRMs4vHRsSGreQy/94OpZ2O6U4chHeuCips=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=nXrwlDwr; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A007A20B915A;
+	Tue, 11 Jun 2024 07:51:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A007A20B915A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1718117508;
+	bh=CX3LM0zn1cL7JnOIqMQ9YrKLCw9NH+PTMmWHE/mZ478=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=nXrwlDwrpLxVgQEtVyg0XSwepN2uNMhyczU0NvN8MODFrNYNKt9+KwjwJ+F/VvmhG
+	 v7o8RfM4wmse43zFUFkPc5jBcLJ7u3HS6MrY9aGG4KOe9BoE3enpN20HiPVCQ1D5XG
+	 wkadud+2xqk7ubzmkI5yKPmmwcnLtxOWZT7pgdVE=
+Message-ID: <226804eb-af9d-4a56-aef5-e3045e83b551@linux.microsoft.com>
+Date: Tue, 11 Jun 2024 07:51:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfeduvddgjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegr
- rhhmrdgtohhmpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Consider a thermal zone with one passive trip point, a cooling device
-with 3 states (0, 1, 2) bound to it, passive polling enabled (nonzero
-passive_delay_jiffies) and no regular polling (polling_delay_jiffies
-equal to 0) that is managed by the Step-Wise governor.  Suppose that
-the initial state of the cooling device is 0 and the zone temperature
-is below the trip point to start with.
-
-When the trip point is crossed, tz->passive is incremented by the
-thermal core and the governor's .manage() callback is invoked.  It
-sets 'throttle' to 'true' for the trip in question and
-get_target_state() returns 1 for the instance corresponding to the
-cooling device (say that 'upper' and 'lower' are set to 2 and 0 for
-it, respectively), so its state changes to 1.
-
-Passive polling is still active for the zone, so next time the
-temperature is updated, the governor's .manage() callback will be
-invoked again.  If the temperature is still rising, it will change
-the state of the cooling device to 2.
-
-Now suppose that next time the zone temperature is updated, it falls
-below the trip point, so tz->passive is decremented for the zone (say
-it becomes 0 then) and the governor's .manage() callbacks runs.
-
-It finds that the temperature trend for the zone is 'falling' and
-'throttle' will be set to 'false' for the trip in question, so the
-cooling device's state will be changed to 1.  However, because
-tz->polling is 0 for the zone, the governor's .manage() callback
-may not be invoked again for a long time and the cooling device's
-state will not be reset back to 0.
-
-This can happen because commit 042a3d80f118 ("thermal: core: Move
-passive polling management to the core") removed passive polling
-management from the Step-Wise governor.
-
-Before that change, thermal_zone_trip_update() would bump up
-tz->passive when changing the target state for a thermal instance
-from "no target" to a specific value and it would drop tz->passive
-when changing it back to "no target" which would cause passive
-polling to be active for the zone until the governor has reset the
-states of all cooling devices.  In particular, in the example above
-tz->passive would be incremented when changing the state of the
-cooling device from 0 to 1 and then it would be still nonzero when
-the state of the cooling device was changed from 2 to 1.
-
-To prevent this problem from occurring, restore the passive polling
-management in the Step-Wise governor by partially reverting the
-commit in question and update the comment in the restored code
-to explain its role more clearly.
-
-Fixes: 042a3d80f118 ("thermal: core: Move passive polling management to the core")
-Closes: https://lore.kernel.org/linux-pm/ZmVfcEOxmjUHZTSX@hovoldconsulting.com
-Reported-by: Johan Hovold <johan+linaro@kernel.org>
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/gov_step_wise.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-Index: linux-pm/drivers/thermal/gov_step_wise.c
-===================================================================
---- linux-pm.orig/drivers/thermal/gov_step_wise.c
-+++ linux-pm/drivers/thermal/gov_step_wise.c
-@@ -93,6 +93,23 @@ static void thermal_zone_trip_update(str
- 		if (instance->initialized && old_target == instance->target)
- 			continue;
- 
-+		if (trip->type == THERMAL_TRIP_PASSIVE) {
-+			/*
-+			 * If the target state for this thermal instance
-+			 * changes from THERMAL_NO_TARGET to something else,
-+			 * ensure that the zone temperature will be updated
-+			 * (assuming enabled passive cooling) until it becomes
-+			 * THERMAL_NO_TARGET again, or the cooling device may
-+			 * not be reset to its initial state.
-+			 */
-+			if (old_target == THERMAL_NO_TARGET &&
-+			    instance->target != THERMAL_NO_TARGET)
-+				tz->passive++;
-+			else if (old_target != THERMAL_NO_TARGET &&
-+				 instance->target == THERMAL_NO_TARGET)
-+				tz->passive--;
-+		}
-+
- 		instance->initialized = true;
- 
- 		mutex_lock(&instance->cdev->lock);
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] x86/hyperv: Set X86_FEATURE_TSC_KNOWN_FREQ when
+ Hyper-V provides frequency
+To: mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ hpa@zytor.com, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240606025559.1631-1-mhklinux@outlook.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <20240606025559.1631-1-mhklinux@outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
+On 6/5/2024 7:55 PM, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
+> 
+> A Linux guest on Hyper-V gets the TSC frequency from a synthetic MSR, if
+> available. In this case, set X86_FEATURE_TSC_KNOWN_FREQ so that Linux
+> doesn't unnecessarily do refined TSC calibration when setting up the TSC
+> clocksource.
+> 
+> With this change, a message such as this is no longer output during boot
+> when the TSC is used as the clocksource:
+> 
+> [    1.115141] tsc: Refined TSC clocksource calibration: 2918.408 MHz
+> 
+> Furthermore, the guest and host will have exactly the same view of the
+> TSC frequency, which is important for features such as the TSC deadline
+> timer that are emulated by the Hyper-V host.
+> 
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> ---
+>   arch/x86/kernel/cpu/mshyperv.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+> index e0fd57a8ba84..c3e38eaf6d2f 100644
+> --- a/arch/x86/kernel/cpu/mshyperv.c
+> +++ b/arch/x86/kernel/cpu/mshyperv.c
+> @@ -424,6 +424,7 @@ static void __init ms_hyperv_init_platform(void)
+>   	    ms_hyperv.misc_features & HV_FEATURE_FREQUENCY_MSRS_AVAILABLE) {
+>   		x86_platform.calibrate_tsc = hv_get_tsc_khz;
+>   		x86_platform.calibrate_cpu = hv_get_tsc_khz;
+> +		setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
+>   	}
+>   
+>   	if (ms_hyperv.priv_high & HV_ISOLATION) {
+
+LGTM
+
+Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+
+-- 
+Thank you,
+Roman
 
