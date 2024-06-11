@@ -1,116 +1,101 @@
-Return-Path: <linux-kernel+bounces-209204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E356F902ECE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:59:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82C2902ED3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54D69284B67
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E14F1F22686
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B3B44C64;
-	Tue, 11 Jun 2024 02:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2537716F902;
+	Tue, 11 Jun 2024 03:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ERtlFG9u"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MocUnV5q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3203B15AD96
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F01341A84;
+	Tue, 11 Jun 2024 03:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718074780; cv=none; b=XZu4VUELTvkktJ2CfqEP77Mzh52jhAJVsDZ0kq1JVXG0gHCR/SRI0zmX1FPWJCAfHjjyeTDhh1AHY1i2RRDhB9EGOFZXGOOGEHU78G6dVUYJ0B+Xt2By+x5J4XOnhzIhLeWpSBSiqh5IFjDBTP+XIxMyFteUIUKqkvbK7O1VmMI=
+	t=1718074833; cv=none; b=e1marn4jn6s9YlS4JR9LGVEc58OojRANibHSw6/7+WJxpAheZkJjR9+nVH2foAkV53YIfPiw9OuameUyLUnUxZxerTasSDt1TYlboxQwdATatD6cjdjjyUGo2SOhZPkwHYv3FB/ByCUURz4mNdmP1mDV19LutzHF/hya1FQYwJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718074780; c=relaxed/simple;
-	bh=PmpLdm2+8aspNsynmC96eXf7FxM1IiPeXPaNJKf0cOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o8kKqDPa+wRR3X4ZPecLvSA06S377b8ZZ1XJ8/SGqWVb76m1G2WvgjeR/FOubnG/W21t7bWN6X/3yEbRgijg2NbPTNiAJa13Cmym5obRp9eRg1J/qjmPG54tBUe1BDaJsCyPyumnOq57xG8J5jkrzYEfJnnYEyD89180oEVjoX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ERtlFG9u; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718074770; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=jqbfjcIqKsbhmmZ6dLRwAkOAJpLyJkndAwkDmIiGK+Q=;
-	b=ERtlFG9uV6bNB/b1qGH2wt3sFOgvp3WiadMjJMsF4XP2P+JD5xFg+PVzmN3jzJINrlQR2cIlPhHQ/9OkmOHn0fSQ4+WiFd0m+PZ5/dT9ASpOfPiZ6a2BSDQyv2lZiLK+hT+36lFXPmQdqH1vGaWLynOr9f0WQGVncwe6IznMeIw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W8Ekx9h_1718074767;
-Received: from 30.97.56.68(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8Ekx9h_1718074767)
-          by smtp.aliyun-inc.com;
-          Tue, 11 Jun 2024 10:59:28 +0800
-Message-ID: <7c834335-9872-4de3-9e53-179356826c93@linux.alibaba.com>
-Date: Tue, 11 Jun 2024 10:59:27 +0800
+	s=arc-20240116; t=1718074833; c=relaxed/simple;
+	bh=pSvn6OcHpnhBY6s0/2yfy61tKQC/zFK2p4HFOCECfr0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=kEXV5LLyrvSyY1mF6U3o4DHuYPWqB/kEmKkuPs2baMvEmUzi+WDV+M+NWTk946CR1drWQIYka5MIG7G4T2tFHYAshsROBqNUHklGsgsJGHFbfFnw1ELFp3nF/clmV4mwCznH54H7zV2i4ywdu+kItG1opHQJRGuF3V0rnSAKIYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MocUnV5q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C5ACAC4AF1A;
+	Tue, 11 Jun 2024 03:00:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718074832;
+	bh=pSvn6OcHpnhBY6s0/2yfy61tKQC/zFK2p4HFOCECfr0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=MocUnV5qoySoc/QFMiOWq8PTOLuEDhWCiDxxBMWVezCFzsKJ9sPalLg9CGowmVtKI
+	 Zh/hdw56oGBIk2TS9zoDUZVQEtcwoaaveEpd02k/sYuYFZ6JLVkQEiQHNhdCsHEwG8
+	 MjXxXeviK8Of+dVuy/8QnmRO/9H0PVxFaXWfUyvphSTXE5AIQ85mgF/j3yXQnXKyDV
+	 sqAu69UoPhXoXJ+5DR4dDyp89ruLzt/HUpAW5kruRStNQKmVRit747UXviMEMjlAn0
+	 kkwyO/kefGtttQK32Z4bdC1bpvelLMwFSLNJ+tp9o8wUr9FsRb3OSIudDeY3/6dLwE
+	 QjU/dTwpIjfSw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id ADC87E7C76F;
+	Tue, 11 Jun 2024 03:00:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] mm: shmem: extend shmem_partial_swap_usage() to
- support large folio swap
-To: Daniel Gomez <da.gomez@samsung.com>
-Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "hughd@google.com" <hughd@google.com>,
- "willy@infradead.org" <willy@infradead.org>,
- "david@redhat.com" <david@redhat.com>,
- "wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
- "chrisl@kernel.org" <chrisl@kernel.org>,
- "ying.huang@intel.com" <ying.huang@intel.com>,
- "21cnbao@gmail.com" <21cnbao@gmail.com>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
- <ziy@nvidia.com>, "ioworker0@gmail.com" <ioworker0@gmail.com>,
- Pankaj Raghav <p.raghav@samsung.com>, "linux-mm@kvack.org"
- <linux-mm@kvack.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1717673614.git.baolin.wang@linux.alibaba.com>
- <358924679107339e6b17a5d8b1b2e10ae6306227.1717673614.git.baolin.wang@linux.alibaba.com>
- <CGME20240610145327eucas1p1bb32a985f8eaddf8cdda0b5415c1868c@eucas1p1.samsung.com>
- <qlk2dpg2fmro5vzjks45ciwt3qk6nzlurfmlqnjr4ecskgg7ln@w5ba55tgtcsb>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <qlk2dpg2fmro5vzjks45ciwt3qk6nzlurfmlqnjr4ecskgg7ln@w5ba55tgtcsb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 0/4] mptcp: various fixes
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171807483270.24718.9377090151074860472.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Jun 2024 03:00:32 +0000
+References: <20240607-upstream-net-20240607-misc-fixes-v1-0-1ab9ddfa3d00@kernel.org>
+In-Reply-To: <20240607-upstream-net-20240607-misc-fixes-v1-0-1ab9ddfa3d00@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ dcaratti@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ stable@vger.kernel.org, cpaasch@apple.com, liyonglong@chinatelecom.cn
 
+Hello:
 
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 2024/6/10 22:53, Daniel Gomez wrote:
-> Hi Baolin,
-> On Thu, Jun 06, 2024 at 07:58:54PM +0800, Baolin Wang wrote:
->> To support shmem large folio swapout in the following patches, using
->> xa_get_order() to get the order of the swap entry to calculate the swap
->> usage of shmem.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   mm/shmem.c | 7 +++++--
->>   1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index eefdf5c61c04..0ac71580decb 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -865,13 +865,16 @@ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
->>   	struct page *page;
->>   	unsigned long swapped = 0;
->>   	unsigned long max = end - 1;
->> +	int order;
->>   
->>   	rcu_read_lock();
->>   	xas_for_each(&xas, page, max) {
->>   		if (xas_retry(&xas, page))
->>   			continue;
->> -		if (xa_is_value(page))
->> -			swapped++;
->> +		if (xa_is_value(page)) {
->> +			order = xa_get_order(xas.xa, xas.xa_index);
->> +			swapped += 1 << order;
+On Fri, 07 Jun 2024 17:01:47 +0200 you wrote:
+> The different patches here are some unrelated fixes for MPTCP:
 > 
-> I'd get rid of order and simply do:
+> - Patch 1 ensures 'snd_una' is initialised on connect in case of MPTCP
+>   fallback to TCP followed by retransmissions before the processing of
+>   any other incoming packets. A fix for v5.9+.
 > 
-> 	swapped += 1UL << xa_get_order()
+> - Patch 2 makes sure the RmAddr MIB counter is incremented, and only
+>   once per ID, upon the reception of a RM_ADDR. A fix for v5.10+.
+> 
+> [...]
 
-OK. Will do.
+Here is the summary with links:
+  - [net,1/4] mptcp: ensure snd_una is properly initialized on connect
+    https://git.kernel.org/netdev/net/c/8031b58c3a9b
+  - [net,2/4] mptcp: pm: inc RmAddr MIB counter once per RM_ADDR ID
+    https://git.kernel.org/netdev/net/c/6a09788c1a66
+  - [net,3/4] mptcp: pm: update add_addr counters after connect
+    https://git.kernel.org/netdev/net/c/40eec1795cc2
+  - [net,4/4] mailmap: map Geliang's new email address
+    https://git.kernel.org/netdev/net/c/74acb250e103
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
