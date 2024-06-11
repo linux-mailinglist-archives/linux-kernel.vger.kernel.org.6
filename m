@@ -1,210 +1,110 @@
-Return-Path: <linux-kernel+bounces-209897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837DB903CA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:04:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51832903C98
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1866C284388
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:04:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE799B212DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6C217CA1D;
-	Tue, 11 Jun 2024 13:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708DA17D884;
+	Tue, 11 Jun 2024 13:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6TtpdRdR"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ExpJfHUt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5187017BB24;
-	Tue, 11 Jun 2024 13:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B892D17D357
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718111035; cv=none; b=RKVuJguOEAgFWVWNM/tKKMsXdtv6kmKaAwJCrH6XX163Oi7Rbr26NJjva+1MP1njmy29t9soiqUn9Tixbhgsj6Tz0bkVx8U8nu7x0lIPNPnuG5sjSqmALV7EnKirrWtE4IojN9DGbMWG9kVx0TNOEvQGJdyrVxeyIafSA7XMKpg=
+	t=1718110887; cv=none; b=basxfu0v9mavOiJT7+4fHPEdRfAk/rCXJc5aRZSWY7oICdpGbC2naPAvwIityI7sfuc4gDkkyEIPSUPXhd1s3CAOjeTRCGQZ7QCtk95UYJfKLaNSInXg9+9OSmB1BBrmYF/IGjECyW87eg5mMY1G7m7W3Eo1wHSb2d30i8Yj8Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718111035; c=relaxed/simple;
-	bh=ICnc1KXfD2g+aoE84jzeA7K7+OGtB3QsDULeRLa3BQQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r2ThEb0kmfDNpvtw4H2JVeBiV+meV+5cslzoG1I9/ThJpORqn7wMZo6JzU4q8AVfXXYv+jDEe55TqLaESn8vb9eFcNRLZmiznsxjeKKvOt5qfndMzTACfJ/VAqKIrBHafkZzezOr/zVkQ6tx3Owhprx0Iw+pOW7BIT6UYRswUIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6TtpdRdR; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BBd5oY027852;
-	Tue, 11 Jun 2024 15:03:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	rzB8FDfqH/5o0JaJks8+M9T6Lw8YHBZ4Oeie2tNtBWI=; b=6TtpdRdRzXuyADNg
-	ZQzSjNUu2YytkLMkfn0r6yHZPlBjx8FOyTizU6HB7jJy6whwESEkEAWq94WAVBrh
-	MzeESaqrGVTjFVIJ2PJbkWtr+FrpDsRmKpS/hN1Af0ldvbJJNqIRe6v9GPdCcaNd
-	uYp3Xs4SN4HuqzfghTQ1d8fi4iVD+tZqGabxhKvxHlaNK9gizxrUiGLBq4rLOYh5
-	pxSHWzIsPn0TQckunX7gPi03EoqNpc2JZ9Fc6rVKEfNXntIvumvqSmbUUgmw3YO7
-	n8s+qjgLNFAtYRdATMtinonykkemfQmgZ2u8CdX+rdZ4Dz+iHlRQYmet8JDZj/64
-	+UKKWg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ypbp2b054-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 15:03:17 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6154C4004C;
-	Tue, 11 Jun 2024 15:03:13 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EC6E1216833;
-	Tue, 11 Jun 2024 15:01:59 +0200 (CEST)
-Received: from localhost (10.48.86.164) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 11 Jun
- 2024 15:01:57 +0200
-From: Christophe Roullier <christophe.roullier@foss.st.com>
-To: "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark
- Brown <broonie@kernel.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>,
-        Marek Vasut <marex@denx.de>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 1/3] ARM: dts: stm32: add ethernet1 and ethernet2 support on stm32mp13
+	s=arc-20240116; t=1718110887; c=relaxed/simple;
+	bh=Ewiq4xx5eBrJ6zT/nXIgeEyinKpoSQ+oZEBy9wIt8XA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hLNu3fTp8wkW+CZdsDjeRToQU1ZwIUI9wOCoCXHqfZPOVY9n+KGvEuKiwJU0XMYw/oeYop3tKP0ah2Iiavvkn4ONJWqSNJeVRJZWjVQZqqNR6ZNYXqnAdSz6myb0qmcRKgTAJ5OpmC0Q2ISSk5QwD3/EV0i/K+px2KWtucLk728=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ExpJfHUt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E71EAC2BD10;
+	Tue, 11 Jun 2024 13:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718110886;
+	bh=Ewiq4xx5eBrJ6zT/nXIgeEyinKpoSQ+oZEBy9wIt8XA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ExpJfHUtZVpo3xPrxe61mCjd28c9S6PDLKJqYjBXt549dNl0JuXG+A9ETEYZ3ta92
+	 JzrZw476EKyMXQfqqCdAlk0dRuoEYbghtku5f6cWP0S8HI343QjzVnDthp+MdeXteB
+	 iHoLdn9dHMhEZqy2tumDYd2T5qggqibr8tL98/dQ=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH 5/6] driver core: make driver_detach() take a const *
 Date: Tue, 11 Jun 2024 15:01:08 +0200
-Message-ID: <20240611130110.841591-2-christophe.roullier@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240611130110.841591-1-christophe.roullier@foss.st.com>
-References: <20240611130110.841591-1-christophe.roullier@foss.st.com>
+Message-ID: <20240611130103.3262749-11-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240611130103.3262749-7-gregkh@linuxfoundation.org>
+References: <20240611130103.3262749-7-gregkh@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1951; i=gregkh@linuxfoundation.org; h=from:subject; bh=Ewiq4xx5eBrJ6zT/nXIgeEyinKpoSQ+oZEBy9wIt8XA=; b=owGbwMvMwCRo6H6F97bub03G02pJDGkZXpN+35bSqHKum7PbhdOlpW1hzOmu3/+s+tebTTjaz vLt8cvFHbEsDIJMDLJiiixftvEc3V9xSNHL0PY0zBxWJpAhDFycAjARv9cM82sTD9ulR9Wo3Nnj Ib9YM+iy+YXHvgwL9gs8fZelM3nJpR06Z62aFimrKF4IAwA=
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
 
-Both instances ethernet based on GMAC SNPS IP on stm32mp13.
-GMAC IP version is SNPS 4.20.
+driver_detach() does not modify the driver itself, so make the pointer
+constant.  In doing so, the function driver_allows_async_probing() also
+needs to be changed so that the pointer type passes through to that
+function properly.
 
-Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/st/stm32mp131.dtsi | 38 ++++++++++++++++++++++++++++
- arch/arm/boot/dts/st/stm32mp133.dtsi | 31 +++++++++++++++++++++++
- 2 files changed, 69 insertions(+)
+ drivers/base/base.h | 2 +-
+ drivers/base/dd.c   | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/st/stm32mp131.dtsi b/arch/arm/boot/dts/st/stm32mp131.dtsi
-index 6704ceef284d3..f41508195eb51 100644
---- a/arch/arm/boot/dts/st/stm32mp131.dtsi
-+++ b/arch/arm/boot/dts/st/stm32mp131.dtsi
-@@ -979,6 +979,12 @@ ts_cal1: calib@5c {
- 			ts_cal2: calib@5e {
- 				reg = <0x5e 0x2>;
- 			};
-+			ethernet_mac1_address: mac1@e4 {
-+				reg = <0xe4 0x6>;
-+			};
-+			ethernet_mac2_address: mac2@ea {
-+				reg = <0xea 0x6>;
-+			};
- 		};
+diff --git a/drivers/base/base.h b/drivers/base/base.h
+index d332b87cde9e..9df8028c3201 100644
+--- a/drivers/base/base.h
++++ b/drivers/base/base.h
+@@ -158,7 +158,7 @@ void bus_remove_driver(struct device_driver *drv);
+ void device_release_driver_internal(struct device *dev, const struct device_driver *drv,
+ 				    struct device *parent);
  
- 		etzpc: bus@5c007000 {
-@@ -1505,6 +1511,38 @@ sdmmc2: mmc@58007000 {
- 				status = "disabled";
- 			};
+-void driver_detach(struct device_driver *drv);
++void driver_detach(const struct device_driver *drv);
+ void driver_deferred_probe_del(struct device *dev);
+ void device_set_deferred_probe_reason(const struct device *dev, struct va_format *vaf);
+ static inline int driver_match_device(struct device_driver *drv,
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index c24eca917d41..76b26096b033 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -863,7 +863,7 @@ static int __init save_async_options(char *buf)
+ }
+ __setup("driver_async_probe=", save_async_options);
  
-+			ethernet1: ethernet@5800a000 {
-+				compatible = "st,stm32mp13-dwmac", "snps,dwmac-4.20a";
-+				reg = <0x5800a000 0x2000>;
-+				reg-names = "stmmaceth";
-+				interrupts-extended = <&intc GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-+						      <&exti 68 1>;
-+				interrupt-names = "macirq", "eth_wake_irq";
-+				clock-names = "stmmaceth",
-+					      "mac-clk-tx",
-+					      "mac-clk-rx",
-+					      "ethstp",
-+					      "eth-ck";
-+				clocks = <&rcc ETH1MAC>,
-+					 <&rcc ETH1TX>,
-+					 <&rcc ETH1RX>,
-+					 <&rcc ETH1STP>,
-+					 <&rcc ETH1CK_K>;
-+				snps,axi-config = <&stmmac_axi_config_1>;
-+				snps,mixed-burst;
-+				snps,pbl = <2>;
-+				snps,tso;
-+				st,syscon = <&syscfg 0x4 0xff0000>;
-+				access-controllers = <&etzpc 48>;
-+				status = "disabled";
-+
-+				stmmac_axi_config_1: stmmac-axi-config {
-+					snps,blen = <0 0 0 0 16 8 4>;
-+					snps,rd_osr_lmt = <0x7>;
-+					snps,wr_osr_lmt = <0x7>;
-+				};
-+			};
-+
- 			usbphyc: usbphyc@5a006000 {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/st/stm32mp133.dtsi b/arch/arm/boot/dts/st/stm32mp133.dtsi
-index 3e394c8e58b92..ae2fbc09e93b9 100644
---- a/arch/arm/boot/dts/st/stm32mp133.dtsi
-+++ b/arch/arm/boot/dts/st/stm32mp133.dtsi
-@@ -68,4 +68,35 @@ channel@18 {
- 			};
- 		};
- 	};
-+
-+	ethernet2: ethernet@5800e000 {
-+		compatible = "st,stm32mp13-dwmac", "snps,dwmac-4.20a";
-+		reg = <0x5800e000 0x2000>;
-+		reg-names = "stmmaceth";
-+		interrupts-extended = <&intc GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "macirq";
-+		clock-names = "stmmaceth",
-+			      "mac-clk-tx",
-+			      "mac-clk-rx",
-+			      "ethstp",
-+			      "eth-ck";
-+		clocks = <&rcc ETH2MAC>,
-+			 <&rcc ETH2TX>,
-+			 <&rcc ETH2RX>,
-+			 <&rcc ETH2STP>,
-+			 <&rcc ETH2CK_K>;
-+		snps,axi-config = <&stmmac_axi_config_2>;
-+		snps,mixed-burst;
-+		snps,pbl = <2>;
-+		snps,tso;
-+		st,syscon = <&syscfg 0x4 0xff000000>;
-+		access-controllers = <&etzpc 49>;
-+		status = "disabled";
-+
-+		stmmac_axi_config_2: stmmac-axi-config {
-+			snps,blen = <0 0 0 0 16 8 4>;
-+			snps,rd_osr_lmt = <0x7>;
-+			snps,wr_osr_lmt = <0x7>;
-+		};
-+	};
- };
+-static bool driver_allows_async_probing(struct device_driver *drv)
++static bool driver_allows_async_probing(const struct device_driver *drv)
+ {
+ 	switch (drv->probe_type) {
+ 	case PROBE_PREFER_ASYNCHRONOUS:
+@@ -1333,7 +1333,7 @@ void device_driver_detach(struct device *dev)
+  * driver_detach - detach driver from all devices it controls.
+  * @drv: driver.
+  */
+-void driver_detach(struct device_driver *drv)
++void driver_detach(const struct device_driver *drv)
+ {
+ 	struct device_private *dev_prv;
+ 	struct device *dev;
 -- 
-2.25.1
+2.45.2
 
 
