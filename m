@@ -1,142 +1,198 @@
-Return-Path: <linux-kernel+bounces-209810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB5EE903B32
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:55:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470F3903B34
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59FDE288FC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:55:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E8CCB2824E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7669417C20A;
-	Tue, 11 Jun 2024 11:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1FC176237;
+	Tue, 11 Jun 2024 11:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xEug2285"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="X3IdD+L9";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Ctr3kmAL"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFDE17B514
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE2314F9E4
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718106865; cv=none; b=Ob+GqYyExlN0y/XF8UhkK4Mf2daRQiQq/7Molb5TDCliRPuYOQsyQA6/UjKtBdLKoN8igcZCfko1T5z4iLZC+3tILlY/urcXl/9b8RtoKX+BnvXW9jJibXXhuT0hbpfI5jxE28MpwZhGGGGDYpbsKN/aCBJRRAL4ND/rALI5sAY=
+	t=1718106917; cv=none; b=DoUmxufFMFcs31Q6u7dydPPyBs0RkUBzp0WEpcMYxfsM24sb7TAXwoqoGCDYCbMe5aneTPMIB+lIoGN6aYNFknJLLe8+Mk7F/unSuu99mRQa0lmfCpzpf68KvaNK4m6zyHHDX1HvIe0Z2DEH2mRmExvpk5FCI9/Filv3xJY1t0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718106865; c=relaxed/simple;
-	bh=TPskSCV1ByN6PwkEkrDCakDuKheDqbde4+cyZylMKeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WDpzZEmaOIDwkQbmsoL9Xw11OsyAnhEbJprINlnZa6Ce1YmMSKd28eUze1bamfyIKcipjdHxQcfdQGAnuXp3eX1UVZSz4piYPomiOxPAc28whyfUKQG/kCmbQpR6FXiarBH2GMFRIMVE8MhvRBrTeHcmO8NQbFp3Ot1yXbxgKts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xEug2285; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f09b457fdso266705366b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:54:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718106862; x=1718711662; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EUpzl6wit0+FDgfySZXvlg7FvtOLZgcqhU3pCudAFIc=;
-        b=xEug2285HymjnQsfp7xJ7L8rTWI7csVRr1/GI5GmL/+LojWsIWqEB/+sEO3+aBzwJG
-         ZEg18GhOgI0vswfzKOH5xpXLlGrq6uORv8l+GVpB6EVYDzFmFrAUvieqj4p1/9+npyD4
-         qapxsbI9HwyjWjZsEP16jiPGfIhYHwSkAYl8qbevo9JPKkb8f0ArpxrM1ACsx/DGHdzY
-         G1fAZGVCBS66zW2iyV7m06JMKDEyiUT9A/czfUzNkYMBhRSADotNIiYJzsv4/AOnIXDM
-         IxKGk3l59DZzniy/NSJv+SJZNIfWmA5xm2F1tpdqnGePM1vPE+sAn7BlqrJ2332+jZF+
-         +ugw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718106862; x=1718711662;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EUpzl6wit0+FDgfySZXvlg7FvtOLZgcqhU3pCudAFIc=;
-        b=o29VFTi9s8imdcWLiACgEvZn+uUs0EIDlVhzOqId35P1u2DNtW8PzxGkOrCnQSLfWn
-         AmbvneN4YEB6DdrNpqhWOKPQkX952Cou9l4JbBzB/FCb9V6smPQpjYExQELPG+GXuFSN
-         eUdX12/m84P5u5pks2ieUJYTavU7fgGtp4wyfNvAVJb9J6x7ZvjCADJmOIBKdK6NPv/D
-         r3l6fzSLkWfS4qjoLEKChBO0pc3nQUp1CyWciUe8a6uyW3N0W/yMocJQ1NFQg/q2KD6V
-         F+Hl812XIF0XHQUJ6j0wQ0kf019M1JgtDKf4yZtYvPDC15S0LilBhWSNxjB0IxLO1NR9
-         jDtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEGMWHDVL0sBnc+iJR1KAx9/cNxydwedOrh0mwjPcOKw5UYqFdN1y/7/wwEysKCkU7xulVDtKa47HUka+EbA162E43uSrtimTa/2Ni
-X-Gm-Message-State: AOJu0Yz+T3cAz87lvTRLK4rbf3JZID6mD6Wn5+Gf0ue5LOJFP93+rV0+
-	O/GK7izvdmEDBDNyqkAyD2tVrOLEWQDDz3Jsmf3519n7y2pF1OxnZWgRwyMlQ5Y=
-X-Google-Smtp-Source: AGHT+IH5LvLNYVJ1vtJY2LPpr/3oSUYfVlUUAbWo90Ke7DbNTiGbM8niRjZiJ5XYcOsq9yELzeB5nQ==
-X-Received: by 2002:a17:906:579a:b0:a6f:16c7:9130 with SMTP id a640c23a62f3a-a6f16c79640mr368006266b.28.1718106862182;
-        Tue, 11 Jun 2024 04:54:22 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a6f2706d8ebsm180513766b.114.2024.06.11.04.54.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 04:54:21 -0700 (PDT)
-Message-ID: <9518804b-a231-40db-82ae-5f8a44edf88f@linaro.org>
-Date: Tue, 11 Jun 2024 12:54:21 +0100
+	s=arc-20240116; t=1718106917; c=relaxed/simple;
+	bh=/+JrJoekAVsPdbGaxdVip5r4w6VlQHb8XeTF4tqiCvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R426/zAgn8TfRxNV8fdyZvgDOqLjIquoNNCVnSbAwiOo7Qlezg9tL3LDSRyWBEYEu15W2ZShgxfx6pyNbDBU+KAGT6PpoEiU4X23JZA4giZJNml0v95M7cM8tyfL2k58IptW3DD/t06Dw8DF/fAby/FewHfRTwDhDOqhTsJRIzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=X3IdD+L9; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Ctr3kmAL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DCCBE3373A;
+	Tue, 11 Jun 2024 11:55:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718106914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8itFnZLoGjChMJJ6y4EBv6LeuFDHeLJfvExupX7tDis=;
+	b=X3IdD+L9Upk/xRzoYtKahqgAfQqEo37+NQCvJxidht45A0mGOCVOEjN1jx3Y3hyHdRG5CY
+	n2oaYxRubnGNP5vou2a5PB1tEA6h5X2IMjwoB6kfRI5ivAVAo7hkpokBqcyi8BKRAMuexv
+	lXFNATndfe2vPQepM1oc3k4D0CkPhoQ=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=Ctr3kmAL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718106913; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8itFnZLoGjChMJJ6y4EBv6LeuFDHeLJfvExupX7tDis=;
+	b=Ctr3kmALNlU8j4/GHYTNIxsZa+1UHOr8WaPkI1vRV2bGtqnr2jcbk1LBfObKNqKj3WUUwe
+	rN2yL+OG5ah1cj4a7FbhNgvxCB14Kx6QUz/0z++1d/w8JI5TgYEIMSRVQsNGV04orpNiJb
+	AQWL22jlwXIO4rqGmcyx9OSvlQajfWs=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D17A213A55;
+	Tue, 11 Jun 2024 11:55:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kDgcMyE7aGY9IQAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Tue, 11 Jun 2024 11:55:13 +0000
+Date: Tue, 11 Jun 2024 13:55:05 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Byungchul Park <lkml.byungchul.park@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com, akpm@linux-foundation.org,
+	ying.huang@intel.com, vernhao@tencent.com,
+	mgorman@techsingularity.net, hughd@google.com, peterz@infradead.org,
+	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, rjgolo@gmail.com
+Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
+ tlb flush when folios get unmapped
+Message-ID: <Zmg7GXK1SGFJNdge@tiehlicka>
+References: <f17f33e8-1c1f-460f-8c5a-713476f524a3@intel.com>
+ <26dc4594-430b-483c-a26c-7e68bade74b0@redhat.com>
+ <20240603093505.GA12549@system.software.com>
+ <d650c29b-129f-4fac-9a9d-ea1fbdae2c3a@intel.com>
+ <35866f91-7d96-462a-aa0a-ac8a6b8cbcf8@redhat.com>
+ <196481bb-b86d-4959-b69b-21fda4daae77@intel.com>
+ <Zl320dWODSYw-PgV@casper.infradead.org>
+ <20240604003448.GA26609@system.software.com>
+ <Zmb-ZZHbeNNjcs68@tiehlicka>
+ <20240611005523.GA4384@system.software.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/7] Add missing fixes to FastRPC driver
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>, linux-arm-msm@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
- linux-kernel@vger.kernel.org, quic_chennak@quicinc.com
-References: <20240611103442.27198-1-quic_ekangupt@quicinc.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20240611103442.27198-1-quic_ekangupt@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611005523.GA4384@system.software.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[infradead.org,intel.com,redhat.com,gmail.com,vger.kernel.org,kvack.org,skhynix.com,linux-foundation.org,tencent.com,techsingularity.net,google.com,kernel.org,linutronix.de,alien8.de,linux.intel.com];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: DCCBE3373A
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -2.51
 
-Thanks for Patches,
+On Tue 11-06-24 09:55:23, Byungchul Park wrote:
+> On Mon, Jun 10, 2024 at 03:23:49PM +0200, Michal Hocko wrote:
+> > On Tue 04-06-24 09:34:48, Byungchul Park wrote:
+> > > On Mon, Jun 03, 2024 at 06:01:05PM +0100, Matthew Wilcox wrote:
+> > > > On Mon, Jun 03, 2024 at 09:37:46AM -0700, Dave Hansen wrote:
+> > > > > Yeah, we'd need some equivalent of a PTE marker, but for the page cache.
+> > > > >  Presumably some xa_value() that means a reader has to go do a
+> > > > > luf_flush() before going any farther.
+> > > > 
+> > > > I can allocate one for that.  We've got something like 1000 currently
+> > > > unused values which can't be mistaken for anything else.
+> > > > 
+> > > > > That would actually have a chance at fixing two issues:  One where a new
+> > > > > page cache insertion is attempted.  The other where someone goes to look
+> > > > > in the page cache and takes some action _because_ it is empty (I think
+> > > > > NFS is doing some of this for file locks).
+> > > > > 
+> > > > > LUF is also pretty fundamentally built on the idea that files can't
+> > > > > change without LUF being aware.  That model seems to work decently for
+> > > > > normal old filesystems on normal old local block devices.  I'm worried
+> > > > > about NFS, and I don't know how seriously folks take FUSE, but it
+> > > > > obviously can't work well for FUSE.
+> > > > 
+> > > > I'm more concerned with:
+> > > > 
+> > > >  - page goes back to buddy
+> > > >  - page is allocated to slab
+> > > 
+> > > At this point, tlb flush needed will be performed in prep_new_page().
+> > 
+> > But that does mean that an unaware caller would get an additional
+> > overhead of the flushing, right? I think it would be just a matter of
+> 
+> pcp for locality is already a better source of side channel attack.  FYI,
+> tlb flush gets barely performed only if pending tlb flush exists.
 
-Please send the patches in correct order, fixes will follow enhancements.
+Right but rare and hard to predict latencies are much worse than
+consistent once. 
 
+> > time before somebody can turn that into a side channel attack, not to
+> > mention unexpected latencies introduced.
+> 
+> Nope.  The pending tlb flush performed in prep_new_page() is the one
+> that would've done already with the vanilla kernel.  It's not additional
+> tlb flushes but it's subset of all the skipped ones.
 
+But those skipped once could have happened in a completely different
+context (e.g. a different process or even a diffrent security domain),
+right?
 
---srini
+> It's worth noting all the existing mm reclaim mechaisms have already
+> introduced worse unexpected latencies.
 
-On 11/06/2024 11:34, Ekansh Gupta wrote:
-> This patch series adds the listed bug fixes that have been missing
-> in upstream fastRPC driver.
-> - Fix DSP capabilities request.
-> - Fix issues in audio daemon attach operation.
-> - Restrict untrusted app to attach to privilegeded PD.
-> 
-> Changes in v2:
-> - Added separate patch to add newlines in dev_err.
-> - Added a bug fix in fastrpc capability function.
-> - Added a new patch to save and restore interrupted context.
-> - Fixed config dependency for PDR support.
-> 
-> Changes in v3:
-> - Dropped interrupted context patch.
-> - Splitted few of the bug fix patches.
-> - Added Fixes tag wherever applicable.
-> - Updated proper commit message for few of the patches.
-> 
-> Changes in v4:
-> - Dropped untrusted process and system unsigned PD patches.
-> - Updated proper commit message for few of the patches.
-> - Splitted patches in more meaningful way.
-> - Added helped functions for fastrpc_req_mmap.
-> 
-> Changes in v5:
-> - Dropped PDR patch. It will be shared in a separate patch series.
-> - Dropped fastrpc_req_mmap and remote_heap specific changes from this
->    series. These patches will be shared separately as a new patch series.
-> - Changed patch series subject as this series is no longer carrying any
->    new feature changes.
-> 
-> Ekansh Gupta (7):
->    misc: fastrpc: Add missing dev_err newlines
->    misc: fastrpc: Fix DSP capabilities request
->    misc: fastrpc: Copy the complete capability structure to user
->    misc: fastrpc: Avoid updating PD type for capability request
->    misc: fastrpc: Fix memory leak in audio daemon attach operation
->    misc: fastrpc: Fix ownership reassignment of remote heap
->    misc: fastrpc: Restrict untrusted app to attach to privileged PD
-> 
->   drivers/misc/fastrpc.c      | 51 +++++++++++++++++++++++++++----------
->   include/uapi/misc/fastrpc.h |  3 +++
->   2 files changed, 40 insertions(+), 14 deletions(-)
-> 
+Right, but a reclaim, especially direct reclaim, are expected to be
+slow. It is much different to see spike latencies on system with a lot
+of memory.
+-- 
+Michal Hocko
+SUSE Labs
 
