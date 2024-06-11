@@ -1,100 +1,125 @@
-Return-Path: <linux-kernel+bounces-209506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B02F9036FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:49:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2604B90375A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B1DD284D17
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:49:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CDD4B271F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE22176247;
-	Tue, 11 Jun 2024 08:49:13 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7339174EE4;
-	Tue, 11 Jun 2024 08:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03FD175561;
+	Tue, 11 Jun 2024 08:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KH3+LNx4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C40A171D2;
+	Tue, 11 Jun 2024 08:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718095753; cv=none; b=ky1FlFOc5SceimSafshiSNbdGIeGAImdO0czrhfzLjypojyp+/cG7X+oGIVZCbdhsTnJ1OTqLMfcLEbKKE1Rhl034VJEyrn2AxBxy+BAULvOvJ38UPtcHdf7O9gNOefN8mzUSX8j+c7GLM8TNcXNXsrzI90G/+5NDM3AQmWh3P8=
+	t=1718095717; cv=none; b=mO/vLtTHyvqrbwPBEJOhNh7/+y6i8mNWf6yXJZUgfaV6klIJM02BHH3eX4MGQ8dqXyfWP8Hb1XGg2jmucve8sXkEl+/M4LnUH1sxKZ/+pID2YhoAXrQUhWphO+6I79zKZXkmX0PtMwB6iyBkoFye97iWbR4AOmAyjZY48r7EtMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718095753; c=relaxed/simple;
-	bh=QFDtUcbFUqxfMhI1iWqTziSSZsRbXT9IPUS2qPxjXAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E6mnOsgahNAcDDY6tDBmegGe1k1qGsrLC5pMJGqdlMNv5ME4ODSa4N1GqwP9GdaZT9AivDC0pt4oSyzaL0UpsCkB5AmrHMijmVmKIWBEa5bEWXkYflk6J3bvKRNb88OscqDtj8fMQCe6VUPj8mzr+ttC6LbCOIFEawc3bHz6oko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sGxBU-0000Nm-00; Tue, 11 Jun 2024 10:48:52 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 0FAC9C0A35; Tue, 11 Jun 2024 10:47:16 +0200 (CEST)
-Date: Tue, 11 Jun 2024 10:47:16 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Daniel =?iso-8859-1?Q?Gonz=E1lez?= Cabanelas <dgcbueu@gmail.com>,
-	=?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>
-Subject: Re: [PATCH v5 4/4] mips: bmips: enable RAC on BMIPS4350
-Message-ID: <ZmgPFLSCxjed2EGZ@alpha.franken.de>
-References: <20240511130349.23409-1-ansuelsmth@gmail.com>
- <20240511130349.23409-5-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1718095717; c=relaxed/simple;
+	bh=vw4F7rAYyNJsPgHNYwOaTOJCnWFIYhHkmubXp1Mluew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VpUwHNY0QFaz8W3xpwvVaV+0NJ9bOJbi8XhcrlXt9gQ75FWFNa3R7pBNT+esujpvRxcMC/1FXUHGTLx8SFr4Y7C6GJs1Qgx6GkDgUtAvd/PXTfsdFMAMBY+2/sdyYhWZ7qtk10AaGMluZ/6tShfJqzgCxUfuNLsis1ghNtpKyJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KH3+LNx4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17C51C2BD10;
+	Tue, 11 Jun 2024 08:48:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718095716;
+	bh=vw4F7rAYyNJsPgHNYwOaTOJCnWFIYhHkmubXp1Mluew=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KH3+LNx4AJ+dJ+NZbcMxlI2XBGenY674UIdHMA1K49I/0zghSQyMCPu1QegDfvOXv
+	 Phjg7m1YCs7/uAUeiaSLw1kWNELgQLJ/AEBK5Bzhcg9Ta7osNvzrCP0KpwlVIgAYmV
+	 w0bmlQkhPU4ZZF/ITciEZzVfhNnpPRRrjliF4njAqPDWEeeOqAZByOz5gVXiijHxRc
+	 OxVIxH8JyILHjEH6K4ZkhjOY+8EU35qAmkBbB2VrcstnzT4jHPDWgtgMl2P6iUx0Aa
+	 ly1vp3tLQrRj97/bUNO8sYod0k2Jfm04BAfnVqk1LXA9MU9PcxcIMKNBLgTNRFUAq/
+	 P7RkBW+lJHuvw==
+Message-ID: <7d6582f6-9f0d-4e5e-9a01-1da2c4acfa56@kernel.org>
+Date: Tue, 11 Jun 2024 10:48:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240511130349.23409-5-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: Drop Li Yang as maintainer for all
+ bindings
+To: Michael Walle <mwalle@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+References: <20240604142249.1957762-1-mwalle@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240604142249.1957762-1-mwalle@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 11, 2024 at 03:03:48PM +0200, Christian Marangi wrote:
-> From: Daniel González Cabanelas <dgcbueu@gmail.com>
+On 04/06/2024 16:22, Michael Walle wrote:
+> Remove Li Yang from all device tree bindings because mails to this
+> address are bouncing.
 > 
-> The data RAC is left disabled by the bootloader in some SoCs, at least in
-> the core it boots from.
-> Enabling this feature increases the performance up to +30% depending on the
-> task.
+> Commit fbdd90334a62 ("MAINTAINERS: Drop Li Yang as their email address
+> stopped working") already removed the entry from the MAINTAINERS but
+> didn't address all the in-file entries of the device tree bindings.
 > 
-> Signed-off-by: Daniel González Cabanelas <dgcbueu@gmail.com>
-> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
-> [ rework code and reduce code duplication ]
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  arch/mips/kernel/smp-bmips.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/arch/mips/kernel/smp-bmips.c b/arch/mips/kernel/smp-bmips.c
-> index 20e2fb10022d..52324738cbb3 100644
-> --- a/arch/mips/kernel/smp-bmips.c
-> +++ b/arch/mips/kernel/smp-bmips.c
-> @@ -626,6 +626,23 @@ void bmips_cpu_setup(void)
->  		__raw_readl(cbr + BMIPS_RAC_ADDRESS_RANGE);
->  		break;
->  
-> +	case CPU_BMIPS4350:
-> +		u32 rac_addr = BMIPS_RAC_CONFIG_1;
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
 
-my gcc 10.2.1 doesn't like the declaration here:
 
-/local/tbogendoerfer/korg/linux/arch/mips/kernel/smp-bmips.c:630:3: error: a label can only be part of a statement and a declaration is not a statement
-  630 |   u32 rac_addr = BMIPS_RAC_CONFIG_1;
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thomas.
+Best regards,
+Krzysztof
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
 
