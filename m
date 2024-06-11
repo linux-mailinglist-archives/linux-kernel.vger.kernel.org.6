@@ -1,122 +1,135 @@
-Return-Path: <linux-kernel+bounces-210585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D6B9045E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:41:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2949045E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18002852A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:41:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E311F234C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1451527B3;
-	Tue, 11 Jun 2024 20:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D295CDF0;
+	Tue, 11 Jun 2024 20:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="AizaDfic"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYcbithW"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25917152194
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD74152189;
+	Tue, 11 Jun 2024 20:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718138506; cv=none; b=Dg5pM5VgVqq7UXLGQyGZ4TQXQQw/vyqMMIcEySDPTw6CaFV575srFXKyWacVkRPAsdkGBkrtXcsKpjJenL35PcNNRL46xakNtpatZI96QBvZAt8BDpxFI9LrEuuBApviwqcQVsVE+UrED2jdX/Zx579IletOWYOg+zmjLiBUp8Y=
+	t=1718138534; cv=none; b=E8liHkgZbZsZEEzAWhjOrmjnxERbV9nFENO10M8oGfH3taJE2pFGjafR0TLTeJMNdXYLpVA5uj0GpgTmySZutGal+7EEWZPJ6jF/ZJnfq34fEs/eRHLEmfKQKxiHJaaz9VIH0hEnw6B3++2a00OJW/uRCQEqz2bZE5F2mU8CsUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718138506; c=relaxed/simple;
-	bh=1C1JVN7pV8bQ/ukxRKGwFFcRQWzZiVMRqNTNB3nnmYU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BcbH70Iwu/xjU8BIik8RgG4apR87x0dl+1IM2alWGjyQ9SEv5I2BumEwzaW5JnSCRl6NbI0c1rzA+oXSAGD7K9qcydyhlbHnoM/WJexI2pOcg2gjrnC1ifUFb0K0tib/lTGwHDPToTBeEefCUN2WgQSByad6kmGScs+YXhdZmqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=AizaDfic; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 9EFC42C0659;
-	Wed, 12 Jun 2024 08:41:40 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1718138500;
-	bh=1C1JVN7pV8bQ/ukxRKGwFFcRQWzZiVMRqNTNB3nnmYU=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=AizaDficE02ikCvs0EuYIZaM0Shi1sfLTFYFn+auleSMZAhl1grTGqdzmYUdsKQ7s
-	 ZFBUF1GTVQzx3gggEn4lDwUaCNYjqMeEzegN2vRecpa6LqDWGDLXNNganE5vhrZ6y3
-	 DcD9wJ6kqHgpLDdyjkwHXpi9MJDarpkxnn8Ri0XdiZRs03EzzJrEcGskwKuJIuVgzF
-	 PB/M38NjlTMNG0FGwauOdxmdYr11Z1Epw0bOkA0eFLNG+Om+eglWIcCFLTIjCAMJow
-	 f14B8gE04luFLYd3vBosikDHs0mJDbTdByW/CL5UBdq9UEZ7KmHjTa+bkbQzjGGFNt
-	 90Asa5E4T833Q==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6668b6840001>; Wed, 12 Jun 2024 08:41:40 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Wed, 12 Jun 2024 08:41:40 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1497.48; Wed, 12 Jun 2024 08:41:40 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Wed, 12 Jun 2024 08:41:40 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: "hkallweit1@gmail.com" <hkallweit1@gmail.com>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH next-next] net: phy: realtek: add support for rtl8224
- 2.5Gbps PHY
-Thread-Topic: [PATCH next-next] net: phy: realtek: add support for rtl8224
- 2.5Gbps PHY
-Thread-Index: AQHau8ECnGOzFCFnUUe89YjWXGoxMrHBw8CAgAB7GIA=
-Date: Tue, 11 Jun 2024 20:41:39 +0000
-Message-ID: <f6f82e0c-5cf5-4a1c-891c-9e772f2403d4@alliedtelesis.co.nz>
-References: <20240611053415.2111723-1-chris.packham@alliedtelesis.co.nz>
- <243d5e27-522d-408d-a551-d11073cf330b@lunn.ch>
-In-Reply-To: <243d5e27-522d-408d-a551-d11073cf330b@lunn.ch>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6330DE92D0E9DB4A877E219CC31048C1@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1718138534; c=relaxed/simple;
+	bh=LCCVZTF4VC4CuaRx97FoQAd69nXUhy8dxTqPn8RrFPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EvQRGNgidVbfqDt6ugSX7xYC/PzFOMcA1kFGVfHpjwsmPCYb0RD4w5om+JgK9VUTnk0CvZasucd7X//z1C6tQhRxsmwyKy2Pv9qd+3h88kfR3QtUFjMhGSDVQx5t2mZ19f+dgOYpkiUMmJhdZOEydFBXnd9xIJo/lhJsKCCa7LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYcbithW; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6c702226b0aso168205a12.1;
+        Tue, 11 Jun 2024 13:42:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718138533; x=1718743333; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XkvFZ46cvbbRHaDGLxMnYMySUoXXzqZFujDfaujbw+I=;
+        b=CYcbithWa5I545w1ezdv1bLB1WV15NZGGkFJXZJtdO9lMvJ6wCjgZPRS/GUnpWUNjK
+         MCv3/S+bODAHN5EFG8RiB/FJKtm+1LAyYr5yF6L+A6Ss/gZNKqvFI4z1vD0OABRjJp+o
+         56CC2L/gHlyGz/ZsnJfceUnHJsnpFbuxfMkBtICmf1z9yVd+lWaEqhtYEy6P5DU1on84
+         x/Nltd4p+vbPwHFGctLe/K3M7V5OnKUIUzn6JpuuBB0IKknFhYHfdzqMfQVxoMLBNse7
+         X8jvRuy+JNNNdBG6O6HfhB3BwO9w+o7p4v42lFHCuEGEFzPTSdpkU0P7zaNld3o8B8Fu
+         Zobw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718138533; x=1718743333;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XkvFZ46cvbbRHaDGLxMnYMySUoXXzqZFujDfaujbw+I=;
+        b=w8+usMwZtS3p/1knGjiqNNCi8RN2f2Jo5a1+bAMilDt6oNxjzNq6E+G/JaLaPEe3/b
+         gl/0ZxbmBgOmM1nfoXmgTIXCRMHaZX+W4sojcSIhM/eNVg6POkhNp0YEs+cvmrdPjr4J
+         SqYbBfH74d7aA/y4bsOC8xQpIUFJHAfM78VRji6B0gH5GbZfJwTepfr710UuTEBcYcQT
+         jWeYpVMVU5SHtlbfzVZnNcjeNaJDGDiqhzvGYvC19SNlf+tFXMvdgWxCyzxVquSHGbZU
+         jhI+WgJsHQwizYRrXWJ8M7Y5aM75R2j+dI13UuZc2U4QsirnfpAHoBjrr2KHTbmk2AE6
+         LbFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXi6dIMGAOCn4qZpAawk4Egjtfhl4CKw0EShifeQNZo7+AUCc1/NfI4DAH3mngTCRyLiZncHGddMzMmdNrRfQf0DE753gCQd71ujmoKDb5GlD70DwW/CDVHi8kWGj+IcFQICJ7Z7o69CoQ0cT22
+X-Gm-Message-State: AOJu0YxSbx4YVYqX1dButlzIFnBxBaLiltT5TnYnLLPRcPLgoX0aMpi+
+	2ang5U2r0CSp3mqXx5NNvZUYNCuk5dkMm0e6+acODseLD2ot7O8R
+X-Google-Smtp-Source: AGHT+IF3TmoYIpSB6sGQyGS7GhdVbPilupJFPymlbUC4zyoHtECg83TvXZhj9FHm1TQd6wd0F15VUg==
+X-Received: by 2002:a17:902:bb8a:b0:1f2:fcc0:66f with SMTP id d9443c01a7336-1f83b1b3195mr658475ad.31.1718138532493;
+        Tue, 11 Jun 2024 13:42:12 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f7029b7d02sm55008415ad.197.2024.06.11.13.42.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 13:42:11 -0700 (PDT)
+Date: Tue, 11 Jun 2024 13:42:09 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] bitops: Add a comment explaining the double underscore
+ macros
+Message-ID: <Zmi2oUOjh5elr57T@yury-ThinkPad>
+References: <5a970f32-25c0-4955-b480-a4738bf86153@kili.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=F9L0dbhN c=1 sm=1 tr=0 ts=6668b684 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=tzSt9rU13RPaQMf4fiUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a970f32-25c0-4955-b480-a4738bf86153@kili.mountain>
 
-DQpPbiAxMi8wNi8yNCAwMToyMSwgQW5kcmV3IEx1bm4gd3JvdGU6DQo+IE9uIFR1ZSwgSnVuIDEx
-LCAyMDI0IGF0IDA1OjM0OjE0UE0gKzEyMDAsIENocmlzIFBhY2toYW0gd3JvdGU6DQo+PiBUaGUg
-UmVhbHRlayBSVEw4MjI0IFBIWSBpcyBhIDIuNUdicHMgY2FwYWJsZSBQSFkuIEl0IG9ubHkgdXNl
-cyB0aGUNCj4+IGNsYXVzZSA0NSBNRElPIGludGVyZmFjZSBhbmQgY2FuIGxldmVyYWdlIHRoZSBz
-dXBwb3J0IHRoYXQgaGFzIGFscmVhZHkNCj4+IGJlZW4gYWRkZWQgZm9yIHRoZSBvdGhlciA4MjJ4
-IFBIWXMuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hh
-bUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0KPiBZb3UgcHJvYmFibHkgc2hvdWxkIENjOiBFcmljIFdv
-dWRzdHJhIGFuZCBNYXJlayBCZWjDum4gd2hvIGhhdmUgYm90aA0KPiB3b3JrZWQgb24gMi41RyB2
-YXJpYW50cyBvZiB0aGlzIFBIWS4NCj4NCkhtbSBnZXRfbWFpbnRhaW5lci5wbCBkaWRuJ3QgcGlj
-ayB0aGVtIHVwIGJ1dCBkb2VzIHdpdGggdGhlIC0tZ2l0IA0Kb3B0aW9uLiBEaWQgc29tZXRoaW5n
-IGNoYW5nZSB3aXRoIHRoYXQgcmVjZW50bHk/IE9yIG1heWJlIEknbSBqdXN0IA0KcnVubmluZyBp
-dCB3cm9uZy4gSSdsbCBhZGQgQ2MgdGhlbSBvbiB0aGUgb3JpZ2luYWwgcGF0Y2ggYW5kIGluY2x1
-ZGUgDQp0aGVtIGlmIHRoZXJlIGlzIGEgdjIuDQoNCj4+IE5vdGVzOg0KPj4gICAgICBJJ20gY3Vy
-cmVudGx5IHRlc3RpbmcgdGhpcyBvbiBhbiBvbGRlciBrZXJuZWwgYmVjYXVzZSB0aGUgYm9hcmQg
-SSdtDQo+PiAgICAgIHVzaW5nIGhhcyBhIFNPQy9EU0Egc3dpdGNoIHRoYXQgaGFzIGEgZHJpdmVy
-IGluIG9wZW53cnQgZm9yIExpbnV4IDUuMTUuDQo+PiAgICAgIEkgaGF2ZSB0cmllZCB0byBzZWxl
-Y3RpdmVseSBiYWNrIHBvcnQgdGhlIGJpdHMgSSBuZWVkIGZyb20gdGhlIG90aGVyDQo+PiAgICAg
-IHJ0bDgyMnggd29yayBzbyB0aGlzIHNob3VsZCBiZSBhbGwgdGhhdCBpcyByZXF1aXJlZCBmb3Ig
-dGhlIHJ0bDgyMjQuDQo+PiAgICAgIA0KPj4gICAgICBUaGVyZSdzIHF1aXRlIGEgbG90IHRoYXQg
-d291bGQgbmVlZCBmb3J3YXJkIHBvcnRpbmcgZ2V0IGEgd29ya2luZyBzeXN0ZW0NCj4+ICAgICAg
-YWdhaW5zdCBhIGN1cnJlbnQga2VybmVsIHNvIGhvcGVmdWxseSB0aGlzIGlzIHNtYWxsIGVub3Vn
-aCB0aGF0IGl0IGNhbg0KPj4gICAgICBsYW5kIHdoaWxlIEknbSB0cnlpbmcgdG8gZmlndXJlIG91
-dCBob3cgdG8gdW50YW5nbGUgYWxsIHRoZSBvdGhlciBiaXRzLg0KPiAgICAgICANCj4gSSBkb24n
-dCBzZWUgdGhpcyBhcyBiZWluZyBhIHByb2JsZW0uIEl0IHNob3VsZCBub3QgYmUgcG9zc2libGUg
-dG8NCj4gY2F1c2UgcmVncmVzc2lvbnMgYnkgYWRkaW5nIGEgbmV3IGRldmljZSBsaWtlIHRoaXMu
-IElmIGl0IHR1cm5zIG91dCB0bw0KPiBiZSBicm9rZW4sIHlvdSBjYW4gZml4IGl0IHVwIGxhdGVy
-Lg0KPg0KPiAJQW5kcmV3
+On Tue, Jun 11, 2024 at 03:38:12PM +0300, Dan Carpenter wrote:
+> Linus Walleij pointed out that a new comer might be confused about the
+> difference between set_bit() and __set_bit().  Add a comment explaining
+> the difference.
+> 
+> Link: https://lore.kernel.org/all/CACRpkdZFPG_YLici-BmYfk9HZ36f4WavCN3JNotkk8cPgCODCg@mail.gmail.com/
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: re-word the comment, put it right next to the macros and add a blank
+>     line in front of the test_bit() macros so it's not mixed in with the
+>     non-atomic macros
+> 
+>  include/linux/bitops.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> index 46d4bdc634c0..ba35bbf07798 100644
+> --- a/include/linux/bitops.h
+> +++ b/include/linux/bitops.h
+> @@ -47,12 +47,17 @@ extern unsigned long __sw_hweight64(__u64 w);
+>  	  __builtin_constant_p(*(const unsigned long *)(addr))) ?	\
+>  	 const##op(nr, addr) : op(nr, addr))
+>  
+> +/*
+> + * The following macros are non-atomic versions of their non-underscored
+> + * counterparts.
+> + */
+>  #define __set_bit(nr, addr)		bitop(___set_bit, nr, addr)
+>  #define __clear_bit(nr, addr)		bitop(___clear_bit, nr, addr)
+>  #define __change_bit(nr, addr)		bitop(___change_bit, nr, addr)
+>  #define __test_and_set_bit(nr, addr)	bitop(___test_and_set_bit, nr, addr)
+>  #define __test_and_clear_bit(nr, addr)	bitop(___test_and_clear_bit, nr, addr)
+>  #define __test_and_change_bit(nr, addr)	bitop(___test_and_change_bit, nr, addr)
+> +
+>  #define test_bit(nr, addr)		bitop(_test_bit, nr, addr)
+>  #define test_bit_acquire(nr, addr)	bitop(_test_bit_acquire, nr, addr)
+>  
+> -- 
+> 2.39.2
+
+Applied in bitmap-for-next. For the next time please make the subject
+prefix [PATCH v2], then [PATCH v3], and so on. The motivation is to
+avoid sending emails with identical subjects as some (not mine) email
+clients consider one as a reply to another.
+
+Thanks,
+Yury
 
