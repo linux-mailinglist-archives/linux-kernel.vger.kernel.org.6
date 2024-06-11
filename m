@@ -1,63 +1,82 @@
-Return-Path: <linux-kernel+bounces-209319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA0F903281
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:26:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C63C90322E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C20287350
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:26:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 481F6B2396E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4254617165E;
-	Tue, 11 Jun 2024 06:26:03 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2100.outbound.protection.partner.outlook.cn [139.219.146.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97249171093;
+	Tue, 11 Jun 2024 06:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FUAlq5Jd"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2059.outbound.protection.outlook.com [40.107.92.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2756B6116;
-	Tue, 11 Jun 2024 06:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.219.146.100
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718087162; cv=none; b=gqWLNMunjOFSyvcAhZ9YSxPaivUdZVEj1TjFGqrZbbbd3uFLzuxJ9pL+2Az3icl64LjFDctqLK4utdej8doTFI9WLtgEIqxkx+Q/L0bJ590uG9Kq07G7DaP7Fjklv44c0jJast1+Q5p93QFmMNJtX+sYeLziZUHJeRnUXwp0o1w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718087162; c=relaxed/simple;
-	bh=OgJyNscB6Zl3qoOHKw5z04aGFUiXSGJAoSWyAh6LG7U=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=BM20tbI3+ZbZs0+y9WEwcp2rACY2di+kARu5+IyaOYIjllzv4I0DRQw6gNTETsW8i0Pt9MjxLtG84T0RLBiZdlQ830pBcZUSR6E6npUP9gphTYP2dAWDnlXJo8zqlQW+TnUvW5QBmAI9P3PQlw8Ge39uVHfZ2JFhu72HH6pXju0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=none smtp.client-ip=139.219.146.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A30143742;
+	Tue, 11 Jun 2024 06:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718085920; cv=fail; b=Osm0R3FYiozZWJZYUDUhtRbcIywHTgShwGvdNuDheMu8W/Rjj7UXbT+UgzuAaEvmAsvx2a9ev9nBUlBGF8xlPTARn7ZePGBYilks7QFRoC0x3JtchEkm8Jygpfmn04403wSGm3H21nJNl/DlUmR9J1AvKk85eJ/BAS0rqhtTIBI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718085920; c=relaxed/simple;
+	bh=RWqaHblr+jaZ1xoTA/e0yuS1Nnf1GSOOZa+fsp/eMDs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fCWqw/gHO53kikoNuXUvm6FkNRpRSwZd05Y8EVZYYxyxlCW/m/sZZySTid+QkfuRPo6p7IaSAJbO/Vh0QaC+HA91IoJ2iQTr4lkrBiGAtQTSCmF3pQZkhb0idZ+d1W0xk0/g0qavft4UFlu/hH2wclS3Q8ebFuhm7ep7WsvDayE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FUAlq5Jd; arc=fail smtp.client-ip=40.107.92.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kYmSDbUGiFfFtaUfuk3VimMCursU+wV1A29Nd9uTa0h+Hnani6gOl8OTMmbe+gl9zRKdPFrP0oHwNU2fzCE2giV92Ezv7mpTvdBNyYcb1ZIAq3krOrmDJyFZAL9TiJynXa+qzBiXVMm+XAuWBaEpywz1S2OENm7ZW8Uxw+fM/qA0tHOFtMmdiVTF6b1arX6RUIq6+Tvl/t24cZhYxU26casvL3o6EyTuviWFxC/xmwPOjnNbik1FrkMdcJYq9dTcnj7JPErQ11mszaXC3GRzxDNKDQcgtjOcLg8L8eer6i1XngUPsTIrv9pNM7wo0Hf5eiAyeMNfSWSFE5palbEJnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fMgEFAGwHA/GIaBR8PjTHslt8a4NaOzCTPZoDAfCOrc=;
+ b=R935cgENxVL4yOsMTxe8ttEhHAXAkQpBTy4k73L+f91zLJltZHuAI3AD+h+jPvzNl8NySs7FiV9LatE+hbvPlOD+OY31knZNyfUeNeXK6Vqp5PZ1xhzLOeNioaA05BIhx/tDjfj/sGvU4rXG7gq6S07F4NN5d+97rWpUFf08vFgr701brcrN8N6dPYBT29GDbQW3QETNgMfTCUQqnFqEz9hEWLPRT1t2b5XUpJSDJ6dG5j6tORTMEHw8tvhhC/NhzIetYQKfJUQup93LoplOg1EMSsLPLeLjmWV3PLAWzm6JQKTTvcJ2dZUBKjfdrEUV3OhOEKQeMCdnMPTJgZ8Zfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fMgEFAGwHA/GIaBR8PjTHslt8a4NaOzCTPZoDAfCOrc=;
+ b=FUAlq5JdvHvUoUNeaZ2FsFCeLrflcQ2Nau1g+NmbEkD14VuYs8meYjHTvC/F1rcOmfa1eMZ6vvmUKkvYvaEPGMDzGnoT8iVl+EZ/7WplvQruyehljetv2Mt79/xgY0IDK4i0qof86QE1eAVWADOHoK9EWKrdwL4GUrTYV1E1uS0=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:25::15) by SHXPR01MB0861.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:26::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.39; Tue, 11 Jun
- 2024 01:52:09 +0000
-Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
- ([fe80::358e:d57d:439f:4e8a]) by
- SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn ([fe80::358e:d57d:439f:4e8a%7])
- with mapi id 15.20.7611.039; Tue, 11 Jun 2024 01:52:08 +0000
-From: Minda Chen <minda.chen@starfivetech.com>
-To: Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Minda Chen <minda.chen@starfivetech.com>
-Subject: [PATCH v1] riscv: dts: starfive: add PCIe dts configuration for JH7110
-Date: Tue, 11 Jun 2024 09:52:00 +0800
-Message-Id: <20240611015200.40996-1-minda.chen@starfivetech.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: BJXPR01CA0057.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c211:12::24) To SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:25::15)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5946.namprd12.prod.outlook.com (2603:10b6:208:399::8)
+ by DS0PR12MB8527.namprd12.prod.outlook.com (2603:10b6:8:161::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
+ 2024 06:05:16 +0000
+Received: from BL1PR12MB5946.namprd12.prod.outlook.com
+ ([fe80::dd32:e9e3:564e:a527]) by BL1PR12MB5946.namprd12.prod.outlook.com
+ ([fe80::dd32:e9e3:564e:a527%5]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
+ 06:05:15 +0000
+Message-ID: <6c01bed7-580e-4f1a-9986-39c20f063e67@amd.com>
+Date: Tue, 11 Jun 2024 11:35:03 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 3/4] net: macb: Add ARP support to WOL
+Content-Language: en-GB
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, linux@armlinux.org.uk, vadim.fedorenko@linux.dev,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, git@amd.com
+References: <20240610053936.622237-1-vineeth.karumanchi@amd.com>
+ <20240610053936.622237-4-vineeth.karumanchi@amd.com>
+ <b46427d8-2b8c-4b26-b53a-6dcc3d0ea27f@lunn.ch>
+From: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+In-Reply-To: <b46427d8-2b8c-4b26-b53a-6dcc3d0ea27f@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR03CA0132.apcprd03.prod.outlook.com
+ (2603:1096:4:91::36) To BL1PR12MB5946.namprd12.prod.outlook.com
+ (2603:10b6:208:399::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,245 +84,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SHXPR01MB0863:EE_|SHXPR01MB0861:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1a2ddf48-8132-4d83-5fbb-08dc89b91a99
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5946:EE_|DS0PR12MB8527:EE_
+X-MS-Office365-Filtering-Correlation-Id: a33a571e-6999-4683-4e23-08dc89dc766f
+X-LD-Processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|52116005|366007|7416005|1800799015|41320700004|38350700005;
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
 X-Microsoft-Antispam-Message-Info:
-	+3utUktzHM014MfBSU4gdBxZnQ6xCLt3JYVjv2KT3gWQPiKWqaGUDdW7rdc4+zsOeB9RVcHQYwFJT3aNHva0/0VqKOnfvYo/JZ6ttfwLffWRRZ4H7oHLzvyh0rrlhrmxKixRgYEBFRHyW/1Q9A12nYSozWJlckNuDaFFzKn8/IFx7DUpEP8FtgPK29YDr43/e3gQKeKK1YTg4BV5TENy75GqU/L5rcxT03JvdxDQU//xDcFe5soMnCssHwmE40LNXdJhUasYjfX6+hWK5FHCdIbKNp8+dA7iGBJ0VKo2SquYGs0jaffzJcJPvAwwLVfUURCkSfhBCCGLH0aBHRspGH/QUaeKqP66UWwXzcLqevfkmNoLo+f8wMtesUeht9tyJMg0okCP6bS8ZpMcbrJuIqfVMnYpMQRkH2M9EQGZ3QUyy0zb6jmGCvD1WAh1uzJp+YssjVqfE87nJAVl0vMm3VYmD4PsDSKgkC5Zoz8zNRYjwfVIFiu5j/tNO48sG+vxgxu0E/Jz0b1395P3oR5UtlR6Q/zbnW6wnn3IgFpADbNgNdmgY9NE1lmLm2MK77opTrz90EqlG2ojSLax/3Ne3289Izk9ZQfFc02wAe1oNj7CjtPLIrJNN4ommTGML8B/
+	=?utf-8?B?MjBsVGhnZ0NFTWRrRHcya2pqWGw2Z3dSbm1lbDFWZW1MU0diT0VMUDQ4M3gy?=
+ =?utf-8?B?bmU2VUY5WDl2N2wwTndMUE9vTFFQTWZyc3FFZDJ0VWZNZG1mc3FnQ2N2Nmdt?=
+ =?utf-8?B?OTlNeVR3VlN4OXh5WkcwNVJpajdTOXBVN05yemx4djNkbUJZNzlIWXN5YTRS?=
+ =?utf-8?B?RTFpbnV5ZzFpNFJhdzNXMERQbjlkR1BHdXV0dU5UdWdrWWtLUmxTNmcyU092?=
+ =?utf-8?B?b3BIQ0d3VFpjUU5mQlh2dnQvS2pDR3JQbTJZWnFJV2hpcGJHWXk4WXNmMEtZ?=
+ =?utf-8?B?d0syM1c3QWZRb1RHeENFQkFITGFYWGlNNmxIWGthbkh3N0dkY1lFcThQZ0Fo?=
+ =?utf-8?B?ZkpRVXo0dnFTY1NXUUdGMlQ4cm5idGJUemFDUGcxeDFTdTF4R3JhdEFPWnlU?=
+ =?utf-8?B?ZG00M0sxeHBObzVSS1JlNG1aSmdISlV0VnQxTndYM1FnRXZxWWxWWjdhNG1r?=
+ =?utf-8?B?elUxZzB3TUkwVXBzUklHT29Bd3RBNU5wa0pEK2hjeDlhUDhmenRmNlFtczhK?=
+ =?utf-8?B?RENXdFVFek8zdFljRGhFWUtPbGs0UC9kQ2FxUnRQZHhCWHlCbFNlcUlzZlRs?=
+ =?utf-8?B?Wnp6anVlUTVJVEljTHJhRXVVa1RYS0E3eHI3YlZESDVZV0F1aW9qWlFaem1p?=
+ =?utf-8?B?L2R5QStnNzlnVDl5TkxzTGE3TG5hRUlaaEdLOUNnZWNLRmlKYTN6U3h6cXQy?=
+ =?utf-8?B?eWJzeGF3SUdwcWdDRWJ6WTZlN3ZSM2pDb0VqWGFYTGtIa09NanFwdDFsUUhh?=
+ =?utf-8?B?ZCt1d29IbkxYOGxYU3c2em5uYXVNZ2xyZTVqTGZCNUtpUkpyRUVwZDIvcm1k?=
+ =?utf-8?B?cmJGYVhubzQwWkZydmI5b2VKdkZ1SGsrdS9Wa0tkSERvOVlJVnpuQytXNys1?=
+ =?utf-8?B?YWF4WEFFMVdkdkFReDVjaWNIb2ZSQXpqbi9qOGw4VC90dW84Ukp3ZXFQQi9X?=
+ =?utf-8?B?QnJVdklaak5sOEtHKy9nbXA2dUhHMG10UHZZZGd6bE9wdUc1aWZzeGZWVHJx?=
+ =?utf-8?B?S0Y0dUUvV2xOUWV6UTZ1WWRxRVo5ZzdZMFh3ekVxWk83cmRUTlRCcFFHYXl2?=
+ =?utf-8?B?a2ZOVDRheXdJQVdPemlUZkV0cXFDWmdEQ3lPNC90Nm9VWkExd0VXdVRUZE5k?=
+ =?utf-8?B?OEkrOTg3TllwSWZTbDdLaGtiL3NteFVEWnhaSG4vMDRwSnIrcEt4ZnFEdzBt?=
+ =?utf-8?B?ME9VRHEwQnJWNzE2bUp5cTJmTzVld2tRUmNYSTFJRVJTdzQxR2w4Zk03NjJv?=
+ =?utf-8?B?MHZOYVhRb1UxTE10cllWOSsrTnZHdFFqd1EyR1R1QWlaWTh5cmg0RXp6R1M4?=
+ =?utf-8?B?eTZLcENhZTFQeTVHVSttQmVEZ1VwV25VM3NqUG9GeTdZcVdqNVBrQytZWUZ1?=
+ =?utf-8?B?Zkdvc2dEdDA4bzcwWHZNQnRITVRPNGEyekFIdHRaMnBCVVdFR1p6T05tTmp5?=
+ =?utf-8?B?TmVOYmY2L0dQZTBiMkx4V0ZHWEZIRUZlNEhBcEFhZE9SQ0FoTGlQeFpVOE9D?=
+ =?utf-8?B?Y05GaC8xeHNDeXcvb0U1U1ZVUDdnMG56bUdnTldHbDVQYkh3N0hiOURQS2Iw?=
+ =?utf-8?B?Zy9hUzZlbHFrVG5yUU8veVhnRGNMRWhYWGc3NnBDWnEvWTBzUmFoVWkyYXV4?=
+ =?utf-8?B?OVcvcURrcXJnNW9kZ1c1dXdkeGExWVhvdEpkN2xaNko1RjhjZi8vc29lRjBB?=
+ =?utf-8?B?NDJLU2FzZFJDQ1JUNEs1VWxucmVrWG9SSGsrMFFZenJoaWVCeWUvVkpaSjhr?=
+ =?utf-8?Q?SXjk27hpL/539y6PepUYxh7AMKGdJcBOGlEzlUG?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(52116005)(366007)(7416005)(1800799015)(41320700004)(38350700005);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5946.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BKkxR6eqOWpwmUs+z74VoRMvP65jZ1X7nBYvJxZiOZXSeP0Iao2SQvs5y/HE?=
- =?us-ascii?Q?ntClBOhlE9FTc6C9yg84wEelXxbrGZ6tBNmA018TaEEs7djVjHI7GJ1u+vzX?=
- =?us-ascii?Q?hY3/9ikIEN14vwHhH0Gm7OBCQqHnizQfNPMQ3MEtF9FFTMPuEu3ClXlymqRd?=
- =?us-ascii?Q?mrBlG2eYkganO9vlvNkEm7c+Vfh8tCiK+S2K9KzZdNaNjqOJy206DCxVExVG?=
- =?us-ascii?Q?fN1+uPLLHZ5Oyl3CYlghDVmPzhoNUzzP6M/KfIJpxMxwqwtzXUDmt6i7E/WB?=
- =?us-ascii?Q?FdkliHzNkEq4veTLlnQeyr91c+yvlnluelf0TKYlLovFax23Lhr2wWZRhshg?=
- =?us-ascii?Q?ZV8j4cLB4eaEtI7SNJa5E8I7FEyDNSErZrC1qGVslhbTvPQ6xvCXj5eF9A5P?=
- =?us-ascii?Q?2SYbEQgO1LNhWs8JYs5mgo2gWGrjoVoEBEB8ZpZZQBWFnHPb/iS4xm8cz1PG?=
- =?us-ascii?Q?QpAqp5uyHx0/2S5DQManTArfs1t9aAZ7s5CWQVhtaWz3mJptkBwNACvyuieJ?=
- =?us-ascii?Q?DVeQdolog4DK/NO38a/wpRiaNQapuM67u3iXv6edQs/HDqPRyYQc/5GKWscB?=
- =?us-ascii?Q?ZYjBcnz5var9arY2+v980OSdgzIN6gwt36Rsx7uFs9UVepFYH+NfzktTRp90?=
- =?us-ascii?Q?RiDq4YtctiPwGhCOmtgVgDsrK417k0oOXgkafW7G8KhBmRXGmwv1bHiZKITp?=
- =?us-ascii?Q?xbgPfprmV5vtLgvAKi5C0qU32Ho/4pctTw8P+qKemPR4lEQaK6DJgeEPxL3y?=
- =?us-ascii?Q?VEI/zXzq8/5K8sMcSK3nOD55YQD0So3QX6V6FdMYZUeYGi7ZUNaZh8KDki4Q?=
- =?us-ascii?Q?yzRjyx2cZFZ5XTVq5GueJqgYjQjGc8IDwg446xbef8NhqtFd8X4ggL903ThF?=
- =?us-ascii?Q?PEBTmBp7LQOvYB9poEX7qwwAxgaLIR1VigD0GVQ8B4bgPtDje20f+Wib+rpZ?=
- =?us-ascii?Q?XTI9l5EjGy94X0TZyWkOcB7iz3JnQ1BQGkFNazfqzN/02tLP08ygyqNUmCF7?=
- =?us-ascii?Q?1c7iTLv9kVgT2Ov1iRmZlOOLcmzZJZ08mp2HAYENDOKbTApoHfA6kbPcNfSQ?=
- =?us-ascii?Q?m7y35nsZI3FxNoGqErJtM2eGWliH5Ll7//YP7cL1PfQORyhoZ+IX2iltmk/c?=
- =?us-ascii?Q?A/YJIxuRu0oT6TZmItkZAGls9Jij1phqsimK5YZrNbEKK5XHhQcZ+PfbWQU6?=
- =?us-ascii?Q?2vCVVXolroIjA1UyBKa/1qZAH7OWRXVxD6NssvtEwqObE3534L3+KYf8KfUC?=
- =?us-ascii?Q?StYPYue2PQI7dOt3S6+z08nhMpc1gNAsnMxsOY8jPzoGr6wDGWi/e35FHhWR?=
- =?us-ascii?Q?muL6B6rcQNG9dRC7Z/qxx/G4YLoqWkGw8gL3Oj1E7rzeZXJWpChfC9eNDu9T?=
- =?us-ascii?Q?sLHA33DaY9arc8xVQWtaCMe/2MZ/AYiBJq7ucowS6E7Ez9QFlvdX5KYqVGhg?=
- =?us-ascii?Q?ZVHJMb8p3Io+KGO8F4MxcITWn62EAnh0IViSWR/NtQskHdHwVLvVChF5ewE0?=
- =?us-ascii?Q?W7CDRR9H/pEkORUZAbDoYVyk8fSysrMbhKHs9XvtLJFnaerSnRou7jwENJB1?=
- =?us-ascii?Q?ImKpZUAmimZFjJxNlEe4RHLTmezbLQyEXryk/Nc/+RvYkxkiiDSqFcN8bZ3T?=
- =?us-ascii?Q?cw=3D=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a2ddf48-8132-4d83-5fbb-08dc89b91a99
-X-MS-Exchange-CrossTenant-AuthSource: SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+	=?utf-8?B?a0Z0cGFpajFIQWJ6TEJiTCtyWUhTeCtrSnNjaUlMS1F0QnU5MjlPZTFDNzJP?=
+ =?utf-8?B?WHlKeFFIWDdFL1h3RFRSS3ppRytZNEpTWE0rRms5eTM4T1gwcVYzNENkMDRw?=
+ =?utf-8?B?dG1jQ1Rvb0MvYzZ0TmZId3BidFdzSC9ZR202dDc2bjdxZkVBTE1QMkdQUWNr?=
+ =?utf-8?B?QWlQc2hNcHhORStTcWNOSjFmdHJleEVKUlpxYTdTdzJtMjVUZysxTHVWdHNU?=
+ =?utf-8?B?UXF3dmttS1QrcVplTFVXRHgrZ0ZmN0ZqUUd6a3dwTER3MjZwYitrdlRiRk9w?=
+ =?utf-8?B?aFlodHBWWnJlNDdXVlI2MCtCekZoMGZiTW1kL01mZmZBVzgva2RBNFZFYTJZ?=
+ =?utf-8?B?dzIwTFRnUGdrazR4MStadTJ1K1JRNnVmb1N0K1VzSW83OWVqSWVvN0x4RTFi?=
+ =?utf-8?B?MTFqTkNkcitWNkszVVZtc3FDeHBsMFc0QWxPUW5OQ1QxTDNvbTdJVEhieTU2?=
+ =?utf-8?B?b1gyU1JTUUtUQS84Sk1wY0VCS0NtdGxKaFRUK3hEdFZ6ckJ4RW0yQi81NkJN?=
+ =?utf-8?B?ME1sM0ZBb0NvYVZ1YklTU3pNOU4xbVdJUWtvbGQ3WjRjVm1yTXljaXFsVzZ0?=
+ =?utf-8?B?dXUya2dqMzFlTkZUM1BJeDFEOEZkNitqOE0yTHBndXpPTjNUV3FLc2tqUW5o?=
+ =?utf-8?B?TnN0eDNQa2d0aDVaRlJuRC9iRGR3L0ZhdkFGNVNJalh4NlJ4NytHRmpoNXFP?=
+ =?utf-8?B?eFltd0FjRE1XblpxZUFtS0JqWkJISjk5TWFPNXJmb0hZaW0vYjJEZDJWVmxn?=
+ =?utf-8?B?bXBiVlZKSDVERXM1NTJ4Vmd2NXJ4dEM0T1ljNm5tV3pDR1RrRjc0S2RvT1p2?=
+ =?utf-8?B?ZmVOYkR6OFQxa0M4TE5mUUhkQzJMNngxOWxZVExmZzU3b0lZNGpnVTc1ZFBX?=
+ =?utf-8?B?ZDdFcyttemNCUitmbVovWWtXbXAyUkdvNW4xL2t0SkswWkJab3FQVmVIZVQy?=
+ =?utf-8?B?ZDl4UFFvQmlMTEUzb2ozcU5zbWxZTEhBeHZiSVdCZWR5YXpMcTl6cE96S1BO?=
+ =?utf-8?B?bFkyRjU0dmcrQUxjMTRzMEJRbHE2WW9CL2lGbGo5VEFBTU1pU2IybloxUXVq?=
+ =?utf-8?B?R3JqSVhYUld0clBXWTQ2VEwyZmJ4U1IzcUdMcnBuK2RUejFtNUl3QWhQRHFu?=
+ =?utf-8?B?WHdneUhiZTc1K2VvVmJKdFpLanJvM0haTXk4L1l4SGcxMHV4UW1Malc4NmRx?=
+ =?utf-8?B?ZlBHMTZzU3dhZ1NUamovV2FiT1pyOGo4bHNlQzdlL3dIV0pXTksxelZKVmx0?=
+ =?utf-8?B?TXZkbHFZYmlFTzM0UmNrcURXd0tnV2EzMUh2eFhPYzkrL1gvZGxhSENMdyt2?=
+ =?utf-8?B?a2ZNVHN0Kzh3ZkRCWVdLa3FESktWSWxrYm02Q3ZQVG5ra0xDbTRSV3hXWmMy?=
+ =?utf-8?B?LytEYjJpdmkwTjhxOXZHRTRicGdTYmFDVzVPaWdldTI3WGM5bkZucmJIRGpt?=
+ =?utf-8?B?TGhyOEhkV3hnSGNzckdwV1J3cnhudGgySmtONmhtYm8wTUNBOG43cm9FTVk0?=
+ =?utf-8?B?VS9PakJsd2diOU5HRHEzbVFSUkRpVmdWVjR4N2pyYTJIdkthclFIVVg2VmdR?=
+ =?utf-8?B?MG9XaFB3RzhRV2RrcU9TcTRuaENmbi9oTTFkU1ZiM3kzUEJEZHpRRUkyLzJH?=
+ =?utf-8?B?KzA1eWlibytnNDYwc3kzZEtYVWRJQm1NVlZXUndPSE1Ua3lPdzhxUFZ4ZDlk?=
+ =?utf-8?B?TkZzbmFOSSs1T2RJVWdxZlhkZThCNjUzT0tnalo1YjEweU1JY0pXV3NCYVJx?=
+ =?utf-8?B?VXFpQUhmTGwxSjFpY1prR2hCTTBsRDlISlZ3UEkvYWs3Z2FkSkZLN1BjYm8x?=
+ =?utf-8?B?anQwM0puUXM0TW1yUnRPdG03WjRDMml5bnF3YmpwWi9VNUVNNVBjMkVJbFJZ?=
+ =?utf-8?B?VmtWRGtLQzVaWTdQK0tPMHNiYkxOUm5wMGVGK0RwSXc1ZVRjTU5DUEh3bUVP?=
+ =?utf-8?B?QXppQzBYMFZUU3JNY0ZQazNheDI1WFhqVVN2WjlUN3VRcms3OStMS3JveWRt?=
+ =?utf-8?B?V2IvVFIwcDFqTGpyUExGaWxtUFVVYUpWQnNoL0tidHRnRjRWVFhhVmRURkQr?=
+ =?utf-8?B?TEluZ3RFVHhaN0ROeGkzRUNNWVhoYmREK2loeWJmNXYrUDdSWGlsd002SlVO?=
+ =?utf-8?Q?VZm/GztMa03c3lFAS91vC/EoB?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a33a571e-6999-4683-4e23-08dc89dc766f
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5946.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 01:52:08.9234
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 06:05:15.5698
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d7zRagDnojUb6vxejiHQIX4blRLeLRVC1yjWsYiMK/bi7jSKY5RUvEbbqJS4XDaFQyrWjbsZ03em9wOhHLqHuuk1Av8eoBllV+SDspz5Izc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SHXPR01MB0861
+X-MS-Exchange-CrossTenant-UserPrincipalName: USJ8jqTDV8QhepCnLpKB4nb0kU2gX6GMaqFSjHLzSGemT1uLGOgQGya5ArET81Gi
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8527
 
-Add PCIe dts configuraion for JH7110 SoC platform.
+Hi Andrew,
 
-Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
-Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
----
- .../boot/dts/starfive/jh7110-common.dtsi      | 64 ++++++++++++++
- arch/riscv/boot/dts/starfive/jh7110.dtsi      | 86 +++++++++++++++++++
- 2 files changed, 150 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-index 8ff6ea64f048..1da7379f4e08 100644
---- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-@@ -294,6 +294,22 @@
- 	status = "okay";
- };
- 
-+&pcie0 {
-+	perst-gpios = <&sysgpio 26 GPIO_ACTIVE_LOW>;
-+	phys = <&pciephy0>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie0_pins>;
-+	status = "okay";
-+};
-+
-+&pcie1 {
-+	perst-gpios = <&sysgpio 28 GPIO_ACTIVE_LOW>;
-+	phys = <&pciephy1>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie1_pins>;
-+	status = "okay";
-+};
-+
- &pwmdac {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pwmdac_pins>;
-@@ -476,6 +492,54 @@
- 		};
- 	};
- 
-+	pcie0_pins: pcie0-0 {
-+		clkreq-pins {
-+			pinmux = <GPIOMUX(27, GPOUT_LOW,
-+					      GPOEN_DISABLE,
-+					      GPI_NONE)>;
-+			bias-pull-down;
-+			drive-strength = <2>;
-+			input-enable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+
-+		wake-pins {
-+			pinmux = <GPIOMUX(32, GPOUT_LOW,
-+					      GPOEN_DISABLE,
-+					      GPI_NONE)>;
-+			bias-pull-up;
-+			drive-strength = <2>;
-+			input-enable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	pcie1_pins: pcie1-0 {
-+		clkreq-pins {
-+			pinmux = <GPIOMUX(29, GPOUT_LOW,
-+					      GPOEN_DISABLE,
-+					      GPI_NONE)>;
-+			bias-pull-down;
-+			drive-strength = <2>;
-+			input-enable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+
-+		wake-pins {
-+			pinmux = <GPIOMUX(21, GPOUT_LOW,
-+				      GPOEN_DISABLE,
-+					      GPI_NONE)>;
-+			bias-pull-up;
-+			drive-strength = <2>;
-+			input-enable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
- 	pwmdac_pins: pwmdac-0 {
- 		pwmdac-pins {
- 			pinmux = <GPIOMUX(33, GPOUT_SYS_PWMDAC_LEFT,
-diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-index 18047195c600..5ac70759e0ab 100644
---- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-@@ -1214,5 +1214,91 @@
- 			#reset-cells = <1>;
- 			power-domains = <&pwrc JH7110_PD_VOUT>;
- 		};
-+
-+		pcie0: pcie@940000000 {
-+			compatible = "starfive,jh7110-pcie";
-+			reg = <0x9 0x40000000 0x0 0x1000000>,
-+			      <0x0 0x2b000000 0x0 0x100000>;
-+			reg-names = "cfg", "apb";
-+			linux,pci-domain = <0>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			ranges = <0x82000000  0x0 0x30000000  0x0 0x30000000 0x0 0x08000000>,
-+				 <0xc3000000  0x9 0x00000000  0x9 0x00000000 0x0 0x40000000>;
-+			interrupts = <56>;
-+			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
-+			interrupt-map = <0x0 0x0 0x0 0x1 &pcie_intc0 0x1>,
-+					<0x0 0x0 0x0 0x2 &pcie_intc0 0x2>,
-+					<0x0 0x0 0x0 0x3 &pcie_intc0 0x3>,
-+					<0x0 0x0 0x0 0x4 &pcie_intc0 0x4>;
-+			msi-controller;
-+			device_type = "pci";
-+			starfive,stg-syscon = <&stg_syscon>;
-+			bus-range = <0x0 0xff>;
-+			clocks = <&syscrg JH7110_SYSCLK_NOC_BUS_STG_AXI>,
-+				 <&stgcrg JH7110_STGCLK_PCIE0_TL>,
-+				 <&stgcrg JH7110_STGCLK_PCIE0_AXI_MST0>,
-+				 <&stgcrg JH7110_STGCLK_PCIE0_APB>;
-+			clock-names = "noc", "tl", "axi_mst0", "apb";
-+			resets = <&stgcrg JH7110_STGRST_PCIE0_AXI_MST0>,
-+				 <&stgcrg JH7110_STGRST_PCIE0_AXI_SLV0>,
-+				 <&stgcrg JH7110_STGRST_PCIE0_AXI_SLV>,
-+				 <&stgcrg JH7110_STGRST_PCIE0_BRG>,
-+				 <&stgcrg JH7110_STGRST_PCIE0_CORE>,
-+				 <&stgcrg JH7110_STGRST_PCIE0_APB>;
-+			reset-names = "mst0", "slv0", "slv", "brg",
-+				      "core", "apb";
-+			status = "disabled";
-+
-+			pcie_intc0: interrupt-controller {
-+				#address-cells = <0>;
-+				#interrupt-cells = <1>;
-+				interrupt-controller;
-+			};
-+		};
-+
-+		pcie1: pcie@9c0000000 {
-+			compatible = "starfive,jh7110-pcie";
-+			reg = <0x9 0xc0000000 0x0 0x1000000>,
-+			      <0x0 0x2c000000 0x0 0x100000>;
-+			reg-names = "cfg", "apb";
-+			linux,pci-domain = <1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			ranges = <0x82000000  0x0 0x38000000  0x0 0x38000000 0x0 0x08000000>,
-+				 <0xc3000000  0x9 0x80000000  0x9 0x80000000 0x0 0x40000000>;
-+			interrupts = <57>;
-+			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
-+			interrupt-map = <0x0 0x0 0x0 0x1 &pcie_intc1 0x1>,
-+					<0x0 0x0 0x0 0x2 &pcie_intc1 0x2>,
-+					<0x0 0x0 0x0 0x3 &pcie_intc1 0x3>,
-+					<0x0 0x0 0x0 0x4 &pcie_intc1 0x4>;
-+			msi-controller;
-+			device_type = "pci";
-+			starfive,stg-syscon = <&stg_syscon>;
-+			bus-range = <0x0 0xff>;
-+			clocks = <&syscrg JH7110_SYSCLK_NOC_BUS_STG_AXI>,
-+				 <&stgcrg JH7110_STGCLK_PCIE1_TL>,
-+				 <&stgcrg JH7110_STGCLK_PCIE1_AXI_MST0>,
-+				 <&stgcrg JH7110_STGCLK_PCIE1_APB>;
-+			clock-names = "noc", "tl", "axi_mst0", "apb";
-+			resets = <&stgcrg JH7110_STGRST_PCIE1_AXI_MST0>,
-+				 <&stgcrg JH7110_STGRST_PCIE1_AXI_SLV0>,
-+				 <&stgcrg JH7110_STGRST_PCIE1_AXI_SLV>,
-+				 <&stgcrg JH7110_STGRST_PCIE1_BRG>,
-+				 <&stgcrg JH7110_STGRST_PCIE1_CORE>,
-+				 <&stgcrg JH7110_STGRST_PCIE1_APB>;
-+			reset-names = "mst0", "slv0", "slv", "brg",
-+				      "core", "apb";
-+			status = "disabled";
-+
-+			pcie_intc1: interrupt-controller {
-+				#address-cells = <0>;
-+				#interrupt-cells = <1>;
-+				interrupt-controller;
-+			};
-+		};
- 	};
- };
--- 
-2.17.1
+
+On 10/06/24 6:16 pm, Andrew Lunn wrote:
+>> @@ -3294,22 +3292,15 @@ static int macb_set_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)
+>>   
+>>   	/* Pass the order to phylink layer */
+>>   	ret = phylink_ethtool_set_wol(bp->phylink, wol);
+>> -	/* Don't manage WoL on MAC if handled by the PHY
+>> -	 * or if there's a failure in talking to the PHY
+>> -	 */
+>> -	if (!ret || ret != -EOPNOTSUPP)
+>> +	/* Don't manage WoL on MAC if there's a failure in talking to the PHY */
+>> +	if (!!ret && ret != -EOPNOTSUPP)
+>>   		return ret;
+> 
+> The comment is wrong. You could be happily talking to the PHY, it just
+> does not support what you asked it to do.
+> 
+
+
+These are the 3 possible return scenarios
+
+1. -EOPNOTSUPP. : When there is no PHY or no set_wol() in PHY driver.
+2. 0 : Success
+3. any error (-EINVAL, ... ) from set_wol()
+
+we are returning in case 3.
+
+The comment can be "Don't manage WoL on MAC, if PHY set_wol() fails"
+
+please let me know your thoughts/comments.
+
+
+🙏 vineeth
+
 
 
