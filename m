@@ -1,186 +1,153 @@
-Return-Path: <linux-kernel+bounces-210601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B158C904611
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:09:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 533B5904614
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82CAD1C2346A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C13EB2821C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5450C152E12;
-	Tue, 11 Jun 2024 21:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4C3152E12;
+	Tue, 11 Jun 2024 21:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cxm9zCv1"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mgCEP1iu"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF4C763F2
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6258A15217D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718140135; cv=none; b=GLwwF80FWav0vLFgdXZ0D/lAftcMu2djFWncFOQEJJZcF4KaPS3mjzkUmozXOSi97J2jwNUDprn1iF+P+Sbshn6IoizaUM4+43ofbQejgG4r2jMqGXr0vLx/RPumwtSV2WewTfCfdR0khPk8cGJVrFChDRcCwNFzcgeUIMe4IDI=
+	t=1718140219; cv=none; b=FiNIajWEQ4PGNxrwbNkv6Dfih8KPGXAadRcPx2lwlOtIR6LtokkzarzXktwVFTbFUxHdAcdqCcdKA8aWvEdOn3GMYOHbwxvQGn+csGmLR+zW8Gmk3ErptcXNwOsCbp3AwahE2R5stJAmSrb6w4238TGht6KBm1unshlZ6clTJbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718140135; c=relaxed/simple;
-	bh=s73kx/qkmllyoFJabQ4swMZUTOUEOOuq9/NOP0odZQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DCURsK/0g4ZIPgMsGXvO66XzxgyF0C/p6x1TNdr6qveE7zsbcSf2jkpN8185fB75gYyA3zzJFx6fa45DWL6n2hJUir6zpHuFoNj4dnmDcgNqtnkPbBd/h9V3V/wJXWBUOgtZ54F919ez4vRQS5ZNTkfy6ZvY1yOANZqDhuZ5xKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cxm9zCv1; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57c5c51cb89so2144317a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:08:53 -0700 (PDT)
+	s=arc-20240116; t=1718140219; c=relaxed/simple;
+	bh=H2bjtgyCCTGP9h/g8cK79eMCtM0/pm01XHMByNU5ISA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ueh/eYOq9yXV2Qv4D1zFC/NiSffdmZNLmZUwKuykBYl5hMf5j9zDXSZ+01rk/OwD3HUgqYfAjnJSWx5tsBB3vfl+h8Zv68hayZPKQe0RfFGOWrKxzmM26P1QJbvSzvOW8N9XLoufBjLVQ0LilKtHntgZ3X/TT05phku0u0Njdak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mgCEP1iu; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52bc0a9cea4so255406e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:10:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718140132; x=1718744932; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=alDbuvqzhZBPPdXqSWlCg+9FBjnZcAzHPWh0nIeAhME=;
-        b=cxm9zCv1WDbislCMFQE64XdroGAxxRXKzYQhEVJsRDxKFk6dF1yssrLK3YNHf69cJA
-         pZrMKyGVB6+VxBVnUuzUkUzJD+3QrJtcxZWrAgG6Py5tejj5TEDm86UmfZ0kuwobxqOc
-         bg9hqIjPLgAMxy0tn5Hyjo9gL6l7MgRV93r3I=
+        d=linaro.org; s=google; t=1718140215; x=1718745015; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vvb72CkTXBjOFPbVlT36y7EQaQLAOeTkMGyEG4xcuiM=;
+        b=mgCEP1iu652SbUlKV/PQMG/ggbQJ9vCM1H+lz26OcNPuo7a6JCtgWcfYO2MIj3uhsC
+         OV0LTvn13wNlHlwOi7myjBrgMeXeLEdq1S+PTwEACbcVxhCM9M9jFx1/A0eQDN86JN7Q
+         jRs7GTwcgqND85hUL73Rh1JI3RYwXsW1I9WdHok1p1Nd4FaZI3JKgt1Lv2cbFvzTdzPb
+         MoW3MHbCJo4/T+OYkYkNEnmbCzAvjlBtL0h6pG6P2cD6WjPr+mf4pGYb54UKOHCs+E/J
+         ysulI3QDjTwIoH/rOLySSZIJjrum1QNSnw6q+VKPDLGkTd0oIN54+EUn4uD1eDCxvL3a
+         mzXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718140132; x=1718744932;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=alDbuvqzhZBPPdXqSWlCg+9FBjnZcAzHPWh0nIeAhME=;
-        b=ciLy41V2mAapiZVgD8KrDQxSCBwZXW0M2ry2+H2CSuxUBR2yxrmFUS10TdY8k1YjXs
-         uMJyIJNiLYWacVNaNKSERdRHV9J+rJXmXT41gh59PcH23DoqozcPCkmo8DBSsDzB873w
-         r2ERBvKyGmKSUhALrYuThs2Ks/tFSu7GdKRiorQ/sQOSNhG65fQqQHcJ8BD+DZm4mnfz
-         PuzfvK42iMeWFfjw5vdY5ze+cYMEl44+ll2wmt3gLCPhzN0tABC8kEPAImpHvYytkjPw
-         yR/e5b3UBMTfmvVBUJYMIKIucvuEEM+R8bHLaam8qcLOml/MHcfrsil38khs/1b078ae
-         vxWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWha50hHP11YkN5qHbeZowH/LzSdHiZ+JkL/IAQZSrydk6q7A0z+bLloP3+KdRadXk/DQDE3xUwYaRtZYzlTUJsBvylr2vfIt/nVdIN
-X-Gm-Message-State: AOJu0Yzo+x5C5rqmxwt0wdz8hDKXSzXC7hEn/pTSdNz2IHTRiIFCFgG5
-	AYn+t392qOUaJVcSwM8v1j86C9Sl8GdCHpF1xb/VZjR+XhowJuhDaJ1Gy2ovShWUng9y7ZzhRZ0
-	fm+kC+Q==
-X-Google-Smtp-Source: AGHT+IFeGDO0YDqRUAw3SuT4Zp6vXKgylnvvo4B8TxiiqytK/3hmkIeCk+7JtDfnHROb/yK/ULhmdw==
-X-Received: by 2002:a50:9989:0:b0:57c:6461:9981 with SMTP id 4fb4d7f45d1cf-57ca9751860mr54531a12.17.1718140131777;
-        Tue, 11 Jun 2024 14:08:51 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c855b959bsm3660348a12.38.2024.06.11.14.08.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 14:08:50 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f253a06caso175030666b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:08:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXy2I0REU/Jjc7PPkj0xd9P65IH0Pz5kp5B5wkE8zAEEYRmxAJC2hnKd3FQpydKzntjYjk+78KpPUvVI/aUWs0B0RvaOQ/S5X1WuUB9
-X-Received: by 2002:a17:906:f191:b0:a6f:37b7:52e6 with SMTP id
- a640c23a62f3a-a6f37b75431mr247440966b.2.1718140129865; Tue, 11 Jun 2024
- 14:08:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718140215; x=1718745015;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vvb72CkTXBjOFPbVlT36y7EQaQLAOeTkMGyEG4xcuiM=;
+        b=AE9XUTPJyy2oAez+4e8EDO0vM36ldWPFUWy9B/0aA412cIpKhnH3tgyP8XT45+JSqU
+         Wk3yQHBBcBpe2390Sfpzb6E6DKENN1wnYcKQx6eT6ImfjaE4CDCMZQtyugiMRRpjIbfA
+         erwwZEU7ttYlCkfQ8vAq4ksC8xKqxOiQ+5KhHzO6fBOVTcMIQd1VhfNsL/qGYp/TRD7X
+         4rf8vZA6isyk8qebiTFtM7oA/fer3TWRPYn6DfFXLX/reJYDHlXL7WUhVJqdMYNxG2ll
+         TD8XTLyw/QRGQ5huqGhc2U4zLF388Y537JU2TINA7xSyhbeiXVKzl5Q/B5xbfOd1Afo/
+         ew9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVx4+1vS0STVtPuS0QV9f+xz3hrQqZHRpEiF5mQk9eReF1t9PrajC+3Tn82j5Up2I/Rg4FmFMkK82KIv7JxkblcL0I6c6ueLiMSY0qp
+X-Gm-Message-State: AOJu0YzZwJm2cDLzEP3O8o3iTaz46Eyu+CZqJpEYWSuTfEynARlU6b/A
+	mnTzW2Xwj3D+eaEzlBbcHqGm7aayX7LlfguIZ7StbMZKgfKEVv2ZZOC4q+G7uBg=
+X-Google-Smtp-Source: AGHT+IHqsaavvJAW1+fikYT/YA1pmPPdv6h5QRKcLuBt8Q4exkTuAhKfJX1A7n0hfkuySR9Qi31/2A==
+X-Received: by 2002:ac2:43ab:0:b0:52b:92b0:8015 with SMTP id 2adb3069b0e04-52c9a0c59cdmr28658e87.9.1718140215393;
+        Tue, 11 Jun 2024 14:10:15 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c8ebd0572sm899430e87.166.2024.06.11.14.10.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 14:10:14 -0700 (PDT)
+Date: Wed, 12 Jun 2024 00:10:12 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Tejas Vipin <tejasvipin76@gmail.com>, neil.armstrong@linaro.org, 
+	quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/panel : truly-nt35521: transition to mipi_dsi
+ wrapped functions
+Message-ID: <uhnjrzii3ydzdsnhc54sbglpy46drzwg2m6if5ymid7gjabcvd@ppzdg6xz4xx7>
+References: <3288287d-8344-4b37-a333-722cf12fef13@gmail.com>
+ <CAD=FV=XRuU=eh0HzbDCwFrr5h9s-rOdB5dbANAd-BmMhiHR6Ww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610204821.230388-1-torvalds@linux-foundation.org>
- <20240610204821.230388-5-torvalds@linux-foundation.org> <ZmhfNRViOhyn-Dxi@J2N7QTR9R3>
- <CAHk-=wiHp60JjTs=qZDboGnQxKSzv=hLyjEp+8StqvtjOKY64w@mail.gmail.com>
- <ZmiN_7LMp2fbKhIw@J2N7QTR9R3> <CAHk-=wipw+_LKyXpuq9X7suf1VDUX4wD6iCuxFJKm9g2+ntFkQ@mail.gmail.com>
- <CAHk-=wgq4kMyeyhSm-Hrw1cQMi81=2JGznyVugeCejJoy1QSwg@mail.gmail.com> <ZmiyA3ASwk7PV3Rq@J2N7QTR9R3>
-In-Reply-To: <ZmiyA3ASwk7PV3Rq@J2N7QTR9R3>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 11 Jun 2024 14:08:32 -0700
-X-Gmail-Original-Message-ID: <CAHk-=widPe38fUNjUOmX11ByDckaeEo9tN4Eiyke9u1SAtu9sA@mail.gmail.com>
-Message-ID: <CAHk-=widPe38fUNjUOmX11ByDckaeEo9tN4Eiyke9u1SAtu9sA@mail.gmail.com>
-Subject: Re: [PATCH 4/7] arm64: add 'runtime constant' support
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	"the arch/x86 maintainers" <x86@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=XRuU=eh0HzbDCwFrr5h9s-rOdB5dbANAd-BmMhiHR6Ww@mail.gmail.com>
 
-On Tue, 11 Jun 2024 at 13:22, Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On arm64 we have early ("boot") and late ("system-wide") alternatives.
-> We apply the system-wide alternatives in apply_alternatives_all(), a few
-> callees deep under smp_cpus_done(), after secondary CPUs are brought up,
-> since that has to handle mismatched features in big.LITTLE systems.
+On Tue, Jun 11, 2024 at 08:57:48AM -0700, Doug Anderson wrote:
+> Hi,
+> 
+> On Tue, Jun 11, 2024 at 7:44 AM Tejas Vipin <tejasvipin76@gmail.com> wrote:
+> >
+> > Use functions introduced in commit 966e397e4f60 ("drm/mipi-dsi: Introduce
+> > mipi_dsi_*_write_seq_multi()") and commit f79d6d28d8fe
+> > ("drm/mipi-dsi: wrap more functions for streamline handling") for the
+> > sony tulip truly nt35521 panel.
+> >
+> > Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> > ---
+> >
+> > Changes in v2:
+> >     - Fix patch format
+> >     - Fix code style
+> >
+> > v1: https://lore.kernel.org/all/485eef24-ddad-466a-a89f-f9f226801bb7@gmail.com/
+> >
+> > ---
+> >  .../panel/panel-sony-tulip-truly-nt35521.c    | 435 +++++++++---------
+> >  1 file changed, 209 insertions(+), 226 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/panel/panel-sony-tulip-truly-nt35521.c b/drivers/gpu/drm/panel/panel-sony-tulip-truly-nt35521.c
+> > index 6d44970dccd9..5a050352c207 100644
+> > --- a/drivers/gpu/drm/panel/panel-sony-tulip-truly-nt35521.c
+> > +++ b/drivers/gpu/drm/panel/panel-sony-tulip-truly-nt35521.c
+> > @@ -44,248 +44,231 @@ static void truly_nt35521_reset(struct truly_nt35521 *ctx)
+> >  static int truly_nt35521_on(struct truly_nt35521 *ctx)
+> >  {
+> >         struct mipi_dsi_device *dsi = ctx->dsi;
+> > -       struct device *dev = &dsi->dev;
+> > -       int ret;
+> > +
+> > +       struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+> 
+> It's not a huge deal, but normally in the kernel all the variable
+> declarations are cuddled together. AKA no blank line between the
+> declaration of "dsi" and the declaration of "dsi_ctx". It would be
+> awesome if you could send a v3 fixing that. When you send v3, feel
+> free to add this above your own Signed-off-by:
+> 
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> 
+> ...with that, the patch will probably sit on the mailing lists for a
+> week or two and then get applied. Neil may want to apply it, but if
+> he's busy I can do it too.
+> 
+> I believe you were planning on tackling some more of the panels. Since
+> you're still getting started sending patches, maybe keep it to a
+> smaller batch for now and send another 10 or so? Probably best to keep
+> it as one panel driver per patch.
+> 
+> -Doug
 
-Annoyingly, we don't have any generic model for this. Maybe that would
-be a good thing regardless, but your point that you have big.LITTLE
-issues does kind of reinforce the thing that different architectures
-have different requirements for the alternatives patching.
+Do we want to delay this until the mipi_dsi_msleep() is fixed?
 
-On arm64, the late alternatives seem to be in
 
-  kernel_init() ->
-    kernel_init_freeable() ->
-      smp_init() ->
-        smp_cpus_done() ->
-          setup_system_features() ->
-            setup_system_capabilities() ->
-              apply_alternatives_all()
-
-which is nice and late - that's when the system is fully initialized,
-and kernel_init() is already running as the first real thread.
-
-On x86, the alternatives are finalized much earlier in
-
-  start_kernel() ->
-    arch_cpu_finalize_init ->
-      alternative_instructions()
-
-which is quite early, much closer to the early arm64 case.
-
-Now, even that early x86 timing is good enough for vfs_caches_early(),
-which is also done from start_kernel() fairly early on - and before
-the arch_cpu_finalize_init() code is run.
-
-But ...
-
-> I had assumed that we could use late/system-wide alternatives here, since
-> those get applied after vfs_caches_init_early(), but maybe that's too
-> late?
-
-So vfs_caches_init_early() is *one* case for the dcache init, but for
-the NUMA case, we delay the dcache init until after the MM setup has
-been completed, and do it relatively later in the init sequence at
-vfs_caches_init().
-
-See that horribly named 'hashdist' variable ('dist' is not 'distance',
-it's 'distribute'). It's not dcache-specific, btw. There's a couple of
-other hashes that do that whole "NUMA distribution or not" thing..
-
-Annoying, yes. I'm not sure that the dual init makes any actual sense
-- I think it's entirely a historical oddity.
-
-But that "done conditionally in two different places" may be ugly, but
-even if we fixed it, we'd fix it by doing it in just once, and it
-would be that later "NUMA has been initialized" vfs_caches_init()
-case.
-
-Which is too late for the x86 alternatives.
-
-The arm64 late case would seem to work fine. It's late enough to be
-after all "core kernel init", but still early enough to be before the
-"generic" initcalls that will start initializing filesystems etc (that
-then need the vfs code to have been initialized).
-
-So that "smp_init()" placement that arm64 has is actually a very good
-place for at least the dcache case. It's just not what x86 does.
-
-Note that my "just replace the constants" model avoids all the
-ordering issues because it just does the constant initialization
-synchronously when the constant is initialized.
-
-So it doesn't depend on any other ordering at all, and there is no
-worry about subtle differences in when alternatives are applied, or
-when the uses happen.
-
-(It obviously does have the same ordering requirement that the
-variable initialization itself has: the dcache init itself has to
-happen before any dcache use, but that's neither surprising nor a new
-ordering imposed by the runtime constant case).
-
-There's an advantage to just being self-sufficient and not tying into
-random other subsystems that have random other constraints.
-
-              Linus
+-- 
+With best wishes
+Dmitry
 
