@@ -1,119 +1,132 @@
-Return-Path: <linux-kernel+bounces-209315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B7F903268
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:23:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3CCE90326D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03C4A1C22729
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:23:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0871F25014
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A38171653;
-	Tue, 11 Jun 2024 06:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52F6171661;
+	Tue, 11 Jun 2024 06:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="18Jf531q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YKmetdZ2"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F0C6116;
-	Tue, 11 Jun 2024 06:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD0A6116;
+	Tue, 11 Jun 2024 06:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718086994; cv=none; b=FOUyCgZlxYGO13+VioCuwA2B5lYxQJLiH6OM1Am97hhdNtrJ0ox4Lk2NPx2TNtO6BRhm9cFO6hE3nLsC7AH26HPkgKrCCTtD9JEi0el/Hlp7WmP/D+Yh2fiwH/pLTwUgQedcal0/IuBFV+OOyT+MvI5jlIeF/8pNHjYOnjtMb58=
+	t=1718087027; cv=none; b=SYpUJsqxXdCaEAMvx9hljjIE2cmWXOXX0mQsi/VEcjYSUjzUWAmEdamMJsx3CpJwWZ7ZgiGsecwAUUgAYtF4C+SJuAu13maUw6rVSsXN/BC7JOXIBL6/ljPZVxitD+3BvXYPb3cmD8y7egvV76LKT0XX8pxsoDwFVo2JxPHhKGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718086994; c=relaxed/simple;
-	bh=ve4gT6CyxU4E2TQ43WtxEhXL8/ATKIHsYr3UXy4cHyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iJN18xxn2YK+qzeAAygyEuuxXrsV9vZgxvYJnafQS9Bv8ODq6W5b1xSyvjCIJ3asSs7Rb5gBLPFJkmx+Sc4AdZh6rMS0RoVzLxoDG7o99Z3ZEAOTsnmYS9GXyiH9pq6wFaWXxrW9p9fb9Kg2XCpkjGr5l4Bx2/ulIYWbWHwn/6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=18Jf531q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BFC3C2BD10;
-	Tue, 11 Jun 2024 06:23:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718086994;
-	bh=ve4gT6CyxU4E2TQ43WtxEhXL8/ATKIHsYr3UXy4cHyA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=18Jf531qULxA/w23HwCUdkd/2Y3nJjWIdgleWTellkonv3YQTG0F1QG0wlv7DzTdW
-	 SrvqlNIF0jkDgNfIVHsbIhRqxh0YFLAYsjfSXfHUs9RH/SH5tZBk3lwxcOEK7pNReM
-	 f1GLVwOyOPoxXC+2uL+/vb+ZybUC97FNph2f4/6w=
-Date: Tue, 11 Jun 2024 08:23:11 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	kernel-janitors@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	"workflows@vger.kernel.org" <workflows@vger.kernel.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <2024061143-transfer-jalapeno-afa0@gregkh>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240609082726.32742-6-Julia.Lawall@inria.fr>
- <20240610112223.151faf65@rorschach.local.home>
- <b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
- <20240610163606.069d552a@gandalf.local.home>
- <70c093a5-df9c-4665-b9c9-90345c7f2139@suse.cz>
+	s=arc-20240116; t=1718087027; c=relaxed/simple;
+	bh=3oXdERrdrPMLo1HeKQtJpAcKacaGUYfSyX7rnaT/4fs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LXwt6Dzuc9fcE3r1WiFoO7J+d1qquPEX3vmWuRkOExOJe7KaRQfuYKov9bjP8Dnf5zk9JCi+P2gjM8dPdcqX+7iG9WavxBZTD54ZBsVoYQHittZAzAgCcm5zoKvC5m2EmnKoBY5KyHyzBmpnHQummdqrIDR+DV0+Xu/fOQsXRHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YKmetdZ2; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6f124e97d31so263075a34.1;
+        Mon, 10 Jun 2024 23:23:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718087025; x=1718691825; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bwu883SfM/0WsE+oHlOP/+rRWsvAVxgU1/13gdyKygQ=;
+        b=YKmetdZ2Iyg089nOhHk/IieAz9Me6kUM5KDiMbymc528y9gdH60t/MQ+YPTMmA3Ifq
+         6UKYffQLGUynZcIsyQIro6RQJFUC6IXhcrabJOLnSXocWat/arnZurUE6zeuDnVqlffc
+         UP5L52VoYTyDMoSorMU375ibTZ+5cd9g2PGoMmZz57ShvHNRmMJDzBp1yKl2Ih2VfPFy
+         pr0TQwpXkeurmVwPvFP3FlFV4OBLlbpCGhndQIb43fcfsqwJUTXemfUDGuNidqLZVP+M
+         S7FPguLDmmgTcCBsYWO892u+J3dEEXhAJsthRbte9/gfeBXGQxOPbnywV9EbYMAxvPVk
+         bblQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718087025; x=1718691825;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bwu883SfM/0WsE+oHlOP/+rRWsvAVxgU1/13gdyKygQ=;
+        b=gu7A986FBDB/NZV8Q/Em5YJ8R1+SRGQwaZ9Eb+h1/5hMQaubNgXIf+7axO+ONzKsDf
+         nxaEGK9LrKQq2dNDZpOwW1Fsb5kpL0D6t9OVGvNwpqC1Qv2gdCKqjpTrJRkK+F4xdso4
+         bR3L6Pa0OAk3fYBJmhtg7RwoNFQhRyaORvRL1o0lCwSUKc4GF8qLc9j3C8fN895R9avr
+         eEjAHpu7e6g2pwhH+gKQIu/TUhh654sGOGPTHMXI34vMKlEnBjF/NEMIhaMt9zWk/7/9
+         juSdZ90bt1sEymAzzfBIjozKUAigrZEfhEGTOt3eaX+RmYy5UDcuoXqdh3FSdV5ZcopY
+         epJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXuXSeiKxnverMsxwM/f7QaZBpLc3hWsb/8coTpKJhHP8okBKnfW466WAsgOKWotsXQ/6LZlb6lXlOIQ3WbsZo1mHu4AC/XJ/sxIR2kGp7vYScCxxaFQ2M02JQ5cyZ1aX5PZEaVeEdOZ7ttf91R++V1nq12xRR8TfrZYd9e8lSQ7Th4RBQ7Qc/wOt3kPscd3k17xLXRElxMz/ASwTUq4JZSS28I1Um1CvCIQkM=
+X-Gm-Message-State: AOJu0YyTtk0rBtQL2fT9C0RwNCtFc5Spo+jmq4oebA9XNHbErvU6Z+EM
+	gc2WA2Q+hbyhZtb1TBG1BS2P/UgVbbM+0+VI5H1xBN55UesHQHntCrbkm6iVPGtyqK1q2kTA+9z
+	2rgGhGCzPJntZiszX2Q77bsMcP4E=
+X-Google-Smtp-Source: AGHT+IG7GKYBdo2VQZhbz/IlnZW6BFSpt7hnt+JU/XtiKDIa2WhrA7tPm5LdNleABOooM/PxMePl1/qMK1HEmDC+JC8=
+X-Received: by 2002:a05:6870:1719:b0:254:c512:88c6 with SMTP id
+ 586e51a60fabf-254c5129526mr5243184fac.51.1718087024789; Mon, 10 Jun 2024
+ 23:23:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <70c093a5-df9c-4665-b9c9-90345c7f2139@suse.cz>
+References: <20240610-md-drivers-pci-controller-v1-1-b998c242df55@quicinc.com>
+In-Reply-To: <20240610-md-drivers-pci-controller-v1-1-b998c242df55@quicinc.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Tue, 11 Jun 2024 08:23:33 +0200
+Message-ID: <CAMhs-H--0tbqhQzsA0sEzYKET4uJADZyLPNhRBHUL8BGFvjcSA@mail.gmail.com>
+Subject: Re: [PATCH] PCI: controller: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Will Deacon <will@kernel.org>, 
+	Joyce Ooi <joyce.ooi@intel.com>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	Marc Zyngier <maz@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
+	Jianjun Wang <jianjun.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Nirmal Patel <nirmal.patel@linux.intel.com>, 
+	Jonathan Derrick <jonathan.derrick@linux.dev>, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 11:40:54PM +0200, Vlastimil Babka wrote:
-> On 6/10/24 10:36 PM, Steven Rostedt wrote:
-> > On Mon, 10 Jun 2024 08:46:42 -0700
-> > "Paul E. McKenney" <paulmck@kernel.org> wrote:
-> > 
-> >> > > index 7c29f4afc23d..338c52168e61 100644
-> >> > > --- a/fs/tracefs/inode.c
-> >> > > +++ b/fs/tracefs/inode.c
-> >> > > @@ -53,14 +53,6 @@ static struct inode *tracefs_alloc_inode(struct super_block *sb)
-> >> > >  	return &ti->vfs_inode;
-> >> > >  }
-> >> > >  
-> >> > > -static void tracefs_free_inode_rcu(struct rcu_head *rcu)
-> >> > > -{
-> >> > > -	struct tracefs_inode *ti;
-> >> > > -
-> >> > > -	ti = container_of(rcu, struct tracefs_inode, rcu);
-> >> > > -	kmem_cache_free(tracefs_inode_cachep, ti);  
-> >> > 
-> >> > Does this work?
-> >> > 
-> >> > tracefs needs to be freed via the tracefs_inode_cachep. Does
-> >> > kfree_rcu() handle specific frees for objects that were not allocated
-> >> > via kmalloc()?  
-> >> 
-> >> A recent change to kfree() allows it to correctly handle memory allocated
-> >> via kmem_cache_alloc().  News to me as of a few weeks ago.  ;-)
-> > 
-> > If that's the case then:
-> > 
-> > Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> > 
-> > Do we have a way to add a "Depends-on" tag so that anyone backporting this
-> > will know that it requires the change to whatever allowed that to happen?
-> 
-> Looks like people use that tag, although no grep hits in Documentation, so
-> Cc'ing workflows@ and Thorsten.
-> 
-> In this case it would be
-> 
-> Depends-on: c9929f0e344a ("mm/slob: remove CONFIG_SLOB")
+Hi,
 
-Ick, no, use the documented way of handling this as described in the
-stable kernel rules file.
+On Tue, Jun 11, 2024 at 3:04=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
+.com> wrote:
+>
+> When ARCH=3Dx86, make allmodconfig && make W=3D1 C=3D1 reports:
 
-thanks,
+[snip]
 
-greg k-h
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/=
+pcie-mt7621.o
+>
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+
+[snip]
+
+> diff --git a/drivers/pci/controller/pcie-mt7621.c b/drivers/pci/controlle=
+r/pcie-mt7621.c
+> index d97b956e6e57..9989e5e614b9 100644
+> --- a/drivers/pci/controller/pcie-mt7621.c
+> +++ b/drivers/pci/controller/pcie-mt7621.c
+> @@ -549,4 +549,5 @@ static struct platform_driver mt7621_pcie_driver =3D =
+{
+>  };
+>  builtin_platform_driver(mt7621_pcie_driver);
+>
+> +MODULE_DESCRIPTION("MediaTek MT7621 PCIe controller");
+>  MODULE_LICENSE("GPL v2");
+>
+
+Acked-by: Sergio Paracuellos <sergio.paracuellos@gmail.com> # MT7621
+
+Best regards,
+   Sergio Paracuellos
 
