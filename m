@@ -1,162 +1,205 @@
-Return-Path: <linux-kernel+bounces-209686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD94D903964
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:56:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5C7903967
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17ED8B20C6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62E7A1F237C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D82E179957;
-	Tue, 11 Jun 2024 10:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA28417967A;
+	Tue, 11 Jun 2024 10:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="c1weGvuO"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K0Dbvq0h"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07238178385
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903B654750
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718103406; cv=none; b=AxtkWERpBE3i5MtdFbJdbMcjPYknmBJwvKPU1QUtaTSQ+D3dGNxBnWvslz3aXW3BXcAHQtfDplN5qEE21Wfo9PltbwrEwRcMMF4PlqRGF04mYyI5QZhBhy0MQcRuQUWzW8jEMCAFaKKtlE6tjwWJTQkK5DAM4YdOmPUjvefITqU=
+	t=1718103572; cv=none; b=q56dx2Qw6qK5Fy3bJsGDf0FmpLeJ29XF7+v37MeH3UmsGtk/QfTc3vTOpIhJ1TeeywgssplkuOAt0DB5y4dr3MH1sDbXFHYaCPrKdVJqryB/5d7s6isB/uvNf4EXqMZnrVlo8KP9RFzH7OxDDgImYsQfD7EtAgJvJu6b5fzDrg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718103406; c=relaxed/simple;
-	bh=VS52WzltTszbYB/0AuS6XbIVZSd6jF210Ln2FEwF98Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkxfLThUAGDyeAYLvhj6lC3Gqj8LpLtOFnE7x8VAs1OfpRA4nOKo1uuqd6bkqNkEZ+V1AtJpxmbuTMwbqb2hTwnOYP2edEznn1KcOl6VvnIeUf+09JShEMpVFvrLRnW/sPORSGzZDNrbJf5JroYjcl1CazmM42+A25nRHbDCjPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=c1weGvuO; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6e54287a719so710496a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:56:43 -0700 (PDT)
+	s=arc-20240116; t=1718103572; c=relaxed/simple;
+	bh=26mD7gFcrlTrCcZaeSPSv2aaUfvx6qeHtXPe10BW/Xw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BuAvw5ZokVj5R8l5bqWVSlpNmeAlG7loWqUY05v0j09SBpW/BiUZki+LFuVkg7qOj+iSWLjAgMCm6YIgmaI3OxumhPDzmYgG6n1ZYql8CdG2mKh5lm3DuocNyM/92qpYa0ERxDPRnUKoqU66O9uGD9yU8mmc44Tmq0JzygwVOt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K0Dbvq0h; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-60585faa69fso3756796a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:59:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1718103403; x=1718708203; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mXKCVYj/en67A5jojR7ZOsNjCFi9wMZegvGM7Xga/QY=;
-        b=c1weGvuOhkgH6T8P2IUfWxB75718lNZNTsEpzWY3NPoGV2GDM2M79UtUIhuHhFOukY
-         cu1JcQ3QW6v46IslS2T96lw9+o5EcCZrBqdl5nyo3Krhc1jZVBF80bSocz+dIu9wNOdr
-         IFPDx9s+QwZgJFN12fBqsW+Im9bP86LwndPDgorbRNU4pQkvUILGiqvWsfu5a92HIJcY
-         1haQcUC8MIMkt/HDU+eKdawPU/cOb+Tlbm0Ueh2b8j97AX8ixbb9m6PxWSK6hqLsT2zl
-         8J/EMdT9XKOgonVEOgiMMKGKybargDKpiAGx/Msyv7SfvsmyGl75po5S4x8SsTCjysch
-         ML9g==
+        d=linaro.org; s=google; t=1718103570; x=1718708370; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gU/oXOU/myRviSexRf2kOSn+x6mea7RInjfMG2luRA4=;
+        b=K0Dbvq0hzE/HWq/vLPPTLYpDMa+Teavw71dVCtwPO6HFysR886gV5zid+Jxn2qGjNO
+         2XKC3YGtu2Z2iqzlrsVtb92qt5AGBsvDp66PAMZsV2nKUnO2vKlVJsQu2ucIUl8BLzMf
+         Xbysje6wzz4Hw5U51FOsiBydoKvuF4M0GrCMtAoEcjYi7sArIczSRQkNCDMrEFZcWJVR
+         Y/Nt0pz1LnK43y89oHGFDbqOXGFn7oqlcqMY8QrVX9lIDt8Xsfpm+Wfnrxb3ML2krUrF
+         ZGiUZI89kZ/Gy3oVAi8TeE6+eNkmLOmW7KGgnRITqKYdUZ2pAKb9bBp6a+w2QsPqxe4D
+         KREw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718103403; x=1718708203;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mXKCVYj/en67A5jojR7ZOsNjCFi9wMZegvGM7Xga/QY=;
-        b=K+goUdiRg8BurACRy+zBwBeMsGoXyNtRNLL+ese6bbqABPBI545nU5RlrCzDwGS8eM
-         8tL4JQlIEDQrxK2WtDH+1C8pMv6PQ4wbv2+0aiHa2W5cfeJOQc473viYxf3dy9uvqXxX
-         CRtSyeb04f4uEB3mjWGdNkOVhl6CssoIQdn4nNxcG9wINlhigLYQV4KR6xJg1A98LXEg
-         tttmVeoI+REGkkU4XMWMBdRp+KLxcmSHSC1Q4D9pHbLy+qwDnn9cl2VvPBLQ4ZMrAgWO
-         317HlESEApAzRlQuE6utiCRRmc9Sut4mxtx94fFkuvvEX5tE3jMDbvPDBlHtbIy9/y2d
-         9ExA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyvhjeLN+ayCbOr7BpKl+iMGVJVAM5i8AlJ36CXG/ieKJsxPRccSDPFSZrOrMJ+ZFpbGiJXFRq+O3Kq7cO98uTvb5TnKZmDYTNdOkp
-X-Gm-Message-State: AOJu0YyPfQmF/49iYoi4Ga84kbGEcDlDbiHdEN0IaYJXT1DI4debUu6b
-	BE2/Kt7MNyDEdPc0yzwkj2+TpUHfAe/3sGtWhmEhAof8BlcPkygj7vDithcU/Yg=
-X-Google-Smtp-Source: AGHT+IHK8K2V7kQymm38HJCYaowY5rCw46Jeqv5NKPUtVcg9MLXbwyJNHKJq2OnyYuNzXkS/aVN5kQ==
-X-Received: by 2002:a05:6a20:4310:b0:1b7:406c:1086 with SMTP id adf61e73a8af0-1b85ac05febmr3167116637.6.1718103403178;
-        Tue, 11 Jun 2024 03:56:43 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7042f5584e9sm4812995b3a.12.2024.06.11.03.56.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 03:56:42 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sGzBA-00C5re-0c;
-	Tue, 11 Jun 2024 20:56:40 +1000
-Date: Tue, 11 Jun 2024 20:56:40 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: partially sanitize i_state zeroing on inode creation
-Message-ID: <ZmgtaGglOL33Wkzr@dread.disaster.area>
-References: <20240611041540.495840-1-mjguzik@gmail.com>
- <20240611100222.htl43626sklgso5p@quack3>
- <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
+        d=1e100.net; s=20230601; t=1718103570; x=1718708370;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gU/oXOU/myRviSexRf2kOSn+x6mea7RInjfMG2luRA4=;
+        b=fVR1k3tiUWlwIL+4xWFsiE8A1dOAu93/iZ2kMv3eTb3YeeVgpxrqvVpcQg5FbS9mTV
+         7WYqHNZ/+ScTffFNvhbjpQdEnwkQzkCI/tSSWlkIjomCSw5mDmVcpqnSZLiNkmib2INe
+         vceHkUUHSiA/iw4OeMF42Q37Vh2qm+aa1Wunsn9LsqANSE56MJEqvWF3u3gsoYlBNvkJ
+         bJWiImqL1MNvO7kmOzRtghxnZIVNsl/L3I8dVJwDm4LvMPgZxnexHkQKlY3b8KcuRj7U
+         wmSGNUCtykFEG41E0C0AOQHtc86S5KxBus9mJ66KMR4VnWkdTL3yRPc85zOivvB1NeYJ
+         WUIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUg/neAhP1U0rv5sP6myzvexu3+KcHiC/UvSDfzZ3BMNBx1pn0sDisp4Ck1UEiIpmyGm/eMpvpPCGyTJYfiu3yHw8Seo8G6yTJLnyz6
+X-Gm-Message-State: AOJu0YycElJHRbAJOjRoB7Tu7wNpI4+MOP1eMxKLWsddllCIwdT01yEB
+	EHpRFA6dDZDthjWbjtl1b8JHxI8auD1fsL3j7OW/m6OYAYYxLs6+4A4rmFLMydA44wYT56HAiKL
+	BF002Kdz46y3QlBgLcAErj+aEgqozot8Ai/tgpQ==
+X-Google-Smtp-Source: AGHT+IHPXUILkyGlnDrQSaaPt8UY4FCwHEwdN/m1hSCIe9CM6m7znS0ZCiuxAj3BPHYoDfeY/dm7N5Z8A9KdtSm/6X8=
+X-Received: by 2002:a17:90a:4ce3:b0:2bd:801f:dabd with SMTP id
+ 98e67ed59e1d1-2c32b476e5amr3227898a91.3.1718103569740; Tue, 11 Jun 2024
+ 03:59:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
+References: <20240603091805.858-1-pugaowei@oppo.com>
+In-Reply-To: <20240603091805.858-1-pugaowei@oppo.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 11 Jun 2024 12:59:18 +0200
+Message-ID: <CAKfTPtDhXVc4HVeRJzgf9o1n9nOrXM=SgKSru3cynLngFPdxSg@mail.gmail.com>
+Subject: Re: [PATCH_V2] sched/fair: updates weight of cfs_rq before
+ update_cfs_group() in enqueue_entity()
+To: "Gaowei.Pu" <pugaowei@oppo.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 11, 2024 at 12:23:59PM +0200, Mateusz Guzik wrote:
-> On Tue, Jun 11, 2024 at 12:02:22PM +0200, Jan Kara wrote:
-> > On Tue 11-06-24 06:15:40, Mateusz Guzik wrote:
-> > > new_inode used to have the following:
-> > > 	spin_lock(&inode_lock);
-> > > 	inodes_stat.nr_inodes++;
-> > > 	list_add(&inode->i_list, &inode_in_use);
-> > > 	list_add(&inode->i_sb_list, &sb->s_inodes);
-> > > 	inode->i_ino = ++last_ino;
-> > > 	inode->i_state = 0;
-> > > 	spin_unlock(&inode_lock);
-> > > 
-> > > over time things disappeared, got moved around or got replaced (global
-> > > inode lock with a per-inode lock), eventually this got reduced to:
-> > > 	spin_lock(&inode->i_lock);
-> > > 	inode->i_state = 0;
-> > > 	spin_unlock(&inode->i_lock);
-> > > 
-> > > But the lock acquire here does not synchronize against anyone.
-> > > 
-> > > Additionally iget5_locked performs i_state = 0 assignment without any
-> > > locks to begin with and the two combined look confusing at best.
-> > > 
-> > > It looks like the current state is a leftover which was not cleaned up.
-> > > 
-> > > Ideally it would be an invariant that i_state == 0 to begin with, but
-> > > achieving that would require dealing with all filesystem alloc handlers
-> > > one by one.
-> > > 
-> > > In the meantime drop the misleading locking and move i_state zeroing to
-> > > alloc_inode so that others don't need to deal with it by hand.
-> > > 
-> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > 
-> > Good point. But the initialization would seem more natural in
-> > inode_init_always(), wouldn't it? And that will also address your "FIXME"
-> > comment.
-> > 
-> 
-> My point is that by the time the inode is destroyed some of the fields
-> like i_state should be set to a well-known value, this one preferably
-> plain 0.
+On Mon, 3 Jun 2024 at 11:18, Gaowei.Pu <pugaowei@oppo.com> wrote:
 >
-> I did not patch inode_init_always because it is exported and xfs uses it
-> in 2 spots, only one of which zeroing the thing immediately after.
-> Another one is a little more involved, it probably would not be a
-> problem as the value is set altered later anyway, but I don't want to
-> mess with semantics of the func if it can be easily avoided.
+> From: pugaowei <pugaowei@oppo.com>
+>
+> we should update the weight of cfs_rq before update_cfs_group().
 
-Better to move the zeroing to inode_init_always(), do the basic
-save/restore mod to xfs_reinit_inode(), and let us XFS people worry
-about whether inode_init_always() is the right thing to be calling
-in their code...
+update_cfs_group() updates the weight of se that is about to be
+enqueued on cfs_rq so the current order looks good for me:
 
-All you'd need to do in xfs_reinit_inode() is this
+update_cfs_group()
+  reweight_entity(cfs_rq, se, shares); //se->on_rq == 0
+    update_load_set(&se->load, weight);
+      se->load.weight = weight
 
-+	unsigned long	state = inode->i_state;
+account_entity_enqueue(cfs_rq, se);
+  update_load_add(&cfs_rq->load, se->load.weight);
+    cfs_rq->load.weight += se->load.weight
 
-	.....
-	error = inode_init_always(mp->m_super, inode);
-	.....
-+	inode->i_state = state;
-	.....
+Have you faced some problems in particular ?
 
-And it should behave as expected.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> Ensure that we can get accurate shares of the cfs_rq when its
+> weights changes. we can find this work was done correctly in
+> dequeue_entity(). so fix it.
+>
+> patch_V1 :
+> https://lore.kernel.org/lkml/20240531030833.3375-1-pugaowei@oppo.com/T/#u
+> trigger a warnning below because of the changing order of
+> account_entity_enqueue().
+>
+> [ 0.400603][ T0] ? __warn (kernel/panic.c:693)
+>
+> [ 0.400603][ T0] ? place_entity (kernel/sched/fair.c:5256 (discriminator 1))
+>
+> [ 0.400603][ T0] ? report_bug (lib/bug.c:180 lib/bug.c:219)
+>
+> [ 0.400603][ T0] ? handle_bug (arch/x86/kernel/traps.c:239)
+>
+> [ 0.400603][ T0] ? exc_invalid_op (arch/x86/kernel/traps.c:260 (discriminator 1))
+>
+> [ 0.400603][ T0] ? asm_exc_invalid_op (arch/x86/include/asm/idtentry.h:621)
+>
+> [ 0.400603][ T0] ? place_entity (kernel/sched/fair.c:5256 (discriminator 1))
+>
+> [ 0.400603][ T0] ? place_entity (kernel/sched/fair.c:5182)
+>
+> [ 0.400603][ T0] enqueue_entity (kernel/sched/fair.c:5328)
+>
+> [ 0.400603][ T0] enqueue_task_fair (kernel/sched/fair.c:6785)
+>
+> V2 fix the warnning and keep the lag without inflating it when it is
+> the first sched_entity queued on the cfs_rq.
+>
+> Signed-off-by: pugaowei <pugaowei@oppo.com>
+> ---
+>  kernel/sched/fair.c | 24 ++++++++++++++++--------
+>  1 file changed, 16 insertions(+), 8 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 8a5b1ae0aa55..2fb1fbcfdda3 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5190,12 +5190,12 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>          *
+>          * EEVDF: placement strategy #1 / #2
+>          */
+> -       if (sched_feat(PLACE_LAG) && cfs_rq->nr_running) {
+> +       if (sched_feat(PLACE_LAG)) {
+>                 struct sched_entity *curr = cfs_rq->curr;
+> -               unsigned long load;
+> +               unsigned long load, se_load;
+>
+>                 lag = se->vlag;
+> -
+> +               se_load = scale_load_down(se->load.weight);
+>                 /*
+>                  * If we want to place a task and preserve lag, we have to
+>                  * consider the effect of the new entity on the weighted
+> @@ -5252,9 +5252,13 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>                 if (curr && curr->on_rq)
+>                         load += scale_load_down(curr->load.weight);
+>
+> -               lag *= load + scale_load_down(se->load.weight);
+> -               if (WARN_ON_ONCE(!load))
+> -                       load = 1;
+> +               lag *= load + se_load;
+> +               /*
+> +                * we just need to keep the lag whithout inflating it when the se is
+> +                * the first sched_entity queued on cfs_rq.
+> +                */
+> +               if (!load)
+> +                       load = se_load;
+>                 lag = div_s64(lag, load);
+>         }
+>
+> @@ -5304,6 +5308,12 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>          */
+>         update_load_avg(cfs_rq, se, UPDATE_TG | DO_ATTACH);
+>         se_update_runnable(se);
+> +
+> +       /*
+> +        * we should update the weight of cfs_rq before update_cfs_group.
+> +        * Ensure we can get accurate shares of the cfs_rq when its weights changes.
+> +        */
+> +       account_entity_enqueue(cfs_rq, se);
+>         /*
+>          * XXX update_load_avg() above will have attached us to the pelt sum;
+>          * but update_cfs_group() here will re-adjust the weight and have to
+> @@ -5318,8 +5328,6 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>         if (!curr)
+>                 place_entity(cfs_rq, se, flags);
+>
+> -       account_entity_enqueue(cfs_rq, se);
+> -
+>         /* Entity has migrated, no longer consider this task hot */
+>         if (flags & ENQUEUE_MIGRATED)
+>                 se->exec_start = 0;
+> --
+> 2.17.1
+>
 
