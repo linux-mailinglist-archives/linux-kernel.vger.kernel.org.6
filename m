@@ -1,152 +1,182 @@
-Return-Path: <linux-kernel+bounces-209424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DEAA903460
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:53:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B86290345C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D68A2B2765B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:52:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F041C20D04
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F668172BCE;
-	Tue, 11 Jun 2024 07:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCA6172BCA;
+	Tue, 11 Jun 2024 07:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RNHsKZWS"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LzrnMumW"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE38172BBA
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 07:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1F116F8E7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 07:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718092337; cv=none; b=DmNbSSRumeX9onNJVUBuYlbmc+rGQp20l8X+2SDio8LYi9SJWcrTKWXqT0LNDXtokcZ50sjqaIVq217WtQa2dYlWaZpeV9h5KvdhEJqQJTtqF4g11oEVyB4nHF5lnpKhuTYvXSI6Tz8rXoGVeix40++QIqn/rg8kXBWuv2EPILc=
+	t=1718092362; cv=none; b=gDyl4O1tNfiNrDtusjporTwrLHM8P3bc3D1EUBt4qBEUr4KpMTzXpal17jy9Is9Zg5HRZTQcjBj2at2QLL1ghfce+TdwflVCwGQinvgSsIp2cTdnHwubRyiH6ZVsNnfYa2EcZaiq5hpPfYsL42dTZsb6n9OyXSVCPhLGWXviXVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718092337; c=relaxed/simple;
-	bh=PFaOu9a7fmvg2U7EnD3zWTxtEnuwCCoBOOXnykWuskw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CczOQ2pbhYaZIXnkVpOohm5UqzvTG9NcOO6hixfm/M4eEQAwMG3GsSPDqMtQKM3tCqUZNc6QWe3k8gHkjBE1urN9lJ0SFdqG6emFmDJz/lHU/lPddI6mkahHeH27lo2WixVDI2w2CgoAdIMXFNYAlmIXso+DgW3V/JNOGdm/PUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RNHsKZWS; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f223e7691so1271680f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 00:52:15 -0700 (PDT)
+	s=arc-20240116; t=1718092362; c=relaxed/simple;
+	bh=R9689AWK2VT1E2GNaFBcGwbJD3MjPbJkPIxVo4rmoWo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S2L8+NfpxgORlU+kg4xrowfOvzuRBH5E3PDFjJvkQA+VcV8R+mHC4THn+DsJLQVO+hDK+lDe+VqhEbQILMPY/S3lGR5itECTgK/pk+L1aBIsUtq+5Ecb1T16L3qqIJ0qfZ3RZpO+tTJJfgadTkHileqX/HFK3qhpKDNxLmUNlkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LzrnMumW; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso11449a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 00:52:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718092334; x=1718697134; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E+i/Z/3ch3+r0A2KLwIIY0Ok9e/HC8f36K3FJuJKx2E=;
-        b=RNHsKZWS+Fg3XQh5GpzTB3COY51MrUK1LrQCeb3TfeEskI4R4MZbZLhu4rSK/iqGmR
-         WraNLBU7RTu/mOQoF00YMa7KaeUnuW2JR3PuYnNjASp7LBFGN2IRTlZlNGBNrMVmbWCR
-         ZjgtdMPwPUih8EkPP8InyHfkiiRi6u05TCIXy+zPSi9TQh+SAM0aaRp6xNWueM8ETyQ8
-         6doZkdXq6XM6NXMQrm55TsWx3f5+GQNn2+nD9ZloiGPxQ66DiF3gNGJvlOhVG8eUQ3d2
-         I2Ld0TPT815pPk/p6V6gyyKW3aey84A9hxnjjmf1tMJb0vg9skuKYwS5PzjSxDu1d4cK
-         oT9w==
+        d=google.com; s=20230601; t=1718092359; x=1718697159; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KXsEPPKIKyv8GnY5/uiOiRnN/zPjlFd4WtDRbKwFxcA=;
+        b=LzrnMumWUgTFUey8o4ouf81q8rLv/ur0hAgTrJCZx51lA/+Jlq83Veo1rg9szMmrtv
+         tqnZjtXj1TD9GuDMniLdp9XVMbGjfNPJ/PeVQ4/doJ7TvmIciZe8Y79qSMgJW8f39BzJ
+         Jgq+FoCdPFjz+vrM7QgDscKrZOvSv+mtI3UrdYgi/+wLIIcxx6sZXtQLTZuOvYZjyv+D
+         6KJNq9D/sBIfxaZwCavvwRCy2mIEYSp4D0df8WQB3j5zPFbXt2ysX+kEZWW+Sw/GrU25
+         jeLKnPnnbYDWhEphfoKzddZmnxfJZ9823ARJhnZM7PmG71qtAFC1Gf514jqPm3qrFUOf
+         Od/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718092334; x=1718697134;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=E+i/Z/3ch3+r0A2KLwIIY0Ok9e/HC8f36K3FJuJKx2E=;
-        b=E/f4Z/UwUyr1WFYDrYRNr+FY0k2N6EkDwQrShSTdTqRGMwrvPV/fRVZoJeoCTPpAeZ
-         oFZjv0WkYOtTWzt/Rq+an6m3I58/sL/AvwWeKwYCU66USbniAFk97S8exy2+ftRY8+TS
-         0UwK0siLdlbBHcZjGHa6edAKxlU+AegzMCRNQok5Jsc5qvRMcPWUyF050oN1sQTxmtPZ
-         oZ7UDZLj2eUmgvp7/RvabToNwT5G9qUt3c2b/M9jRGF3jqoIOBSW3WwNhij9W3tkp9u1
-         tLGJZv1EdtxgxSzYOPUeYLsS6USvFa9Ll3y13YXTZYlYhZwxhTR3j6dFRSiyyWQ6Cl3r
-         ip3g==
-X-Forwarded-Encrypted: i=1; AJvYcCU9yQH8fNco8R6DxWekWfNcbMMYgytQg3pd03uEFItCdwvSnmB8aSUFhK5iAmdVAQLns+fAuL3UhcWXYNX7J5cTclb3Y7n6j9deqwRW
-X-Gm-Message-State: AOJu0Yw11ZSrrKWwfL155N4OBvW46nkDPjq2CpJldg87bkU5I3/LcPVO
-	QPNUf7m0LCfOtEkcuWz8kJQeQqWN7GOFxCIYNBJDWWgtW15hSzxopvhKY+sIJKY=
-X-Google-Smtp-Source: AGHT+IHbpFLNyHr0v8Vs+79JJ833765mxE2qEwYh61HH/guFxEXNMCK4FT13xTiK8JTlcmdmZO1t1g==
-X-Received: by 2002:a05:6000:2cc:b0:35f:2d7b:2e30 with SMTP id ffacd0b85a97d-35f2d7b2efdmr929217f8f.34.1718092334519;
-        Tue, 11 Jun 2024 00:52:14 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:5a4:3b2:c750:ef5c? ([2a01:e0a:982:cbb0:5a4:3b2:c750:ef5c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5fc0a0dsm13055898f8f.91.2024.06.11.00.52.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 00:52:14 -0700 (PDT)
-Message-ID: <35fc64da-1f2b-4aa8-841a-7a311a918894@linaro.org>
-Date: Tue, 11 Jun 2024 09:52:13 +0200
+        d=1e100.net; s=20230601; t=1718092359; x=1718697159;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KXsEPPKIKyv8GnY5/uiOiRnN/zPjlFd4WtDRbKwFxcA=;
+        b=q4WTBpHhLmUZJmdsnQ01J4wupQcaR481R//Ysh27ILb82ekT/PEvJWkCChR81zD1BU
+         x3kVLfYTTrwNQ65OtUqlfAzc3ZQItmwHnkCbS3XUH5T35lX5gymLuEwXuicjvhCAX0My
+         jlgBOENdNv+4tQXGTG+ZgAErxL1PBAqGHvqs217KsBa0CGMI1FyPaBR3ekropIYn8bW4
+         rBuSXJmzo2PgA6bG3NV/5pNuRj1qS220KK1myNpIWP+xPJmS9dlbyMDjt6QBTLEKO3Kx
+         UfsmHQ4XZa6K3FRSIGlVQ1kYAPX1cKvYZqw+pdn4kXcw7tSSrivXNIPDqIMBrUobtn9T
+         udfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0n6useOBD3wIhmRbKhLtCJmvXYJb7B4JJxqClq6iI/x8CSz4xSbxkMF/M/cihfbWZI0FtNM03xcRp1RX/L/86WwFrT5058s+fVaeH
+X-Gm-Message-State: AOJu0YyYWd3keIn++lu4V9Epk9TODIe8C7Z2xkp5STJlQA9QCn2cH3Jp
+	tlcPSImJMBjTZwP7KSWwpbeQiHkHJr0IjhZczQzc8GRtI1r5+d41F3yo6wUtzTnYby1F+2ttqp4
+	+ozxRElGnxXL+lNJfhUn4owIVh2oqiIjhADgH
+X-Google-Smtp-Source: AGHT+IFI/T2q/eK35WjX/VFdJhBJ6J1CfgnQuT5+uijnGKKbi+2QyueptTikovm8q0UzXz96tTdiFyJ04Dp1KrFBM/o=
+X-Received: by 2002:aa7:cb44:0:b0:57c:9d50:d129 with SMTP id
+ 4fb4d7f45d1cf-57c9d50df62mr7465a12.0.1718092358782; Tue, 11 Jun 2024 00:52:38
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm/panel : himax-hx83102: fix incorrect argument to
- mipi_dsi_msleep
-To: Tejas Vipin <tejasvipin76@gmail.com>, quic_jesszhan@quicinc.com
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <d9f4546f-c2f9-456d-ba75-85cc195dd9b8@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <d9f4546f-c2f9-456d-ba75-85cc195dd9b8@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1717507310.git.dvyukov@google.com> <80972769ad2ebebc7ab0c39bd48f31ce080f0394.1717507310.git.dvyukov@google.com>
+ <CANpmjNO4PX94DSVn_ndjsNqzr3Dw5Lc_nVUEu4oc6RK-iny16g@mail.gmail.com>
+ <CACT4Y+bT+D41NopXN4rFbxqgC--mqYL=xCQOje0jDssjncKY+A@mail.gmail.com> <CANpmjNNPbS4V7Pf3SgUCAKX8xKwbMqWdz+h2cirAAd7XdNmJqA@mail.gmail.com>
+In-Reply-To: <CANpmjNNPbS4V7Pf3SgUCAKX8xKwbMqWdz+h2cirAAd7XdNmJqA@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 11 Jun 2024 09:52:26 +0200
+Message-ID: <CACT4Y+bWa_hPhU4RcVhqkH+-S+-R=FFDS3WV2Fa-RK5besUCFg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] kcov: add interrupt handling self test
+To: Marco Elver <elver@google.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller@googlegroups.com, glider@google.com, nogikh@google.com, 
+	tarasmadan@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 08/06/2024 11:17, Tejas Vipin wrote:
-> 
-> From: Tejas Vipin <tejasvipin76@gmail.com>
-> Subject: [PATCH] drm/panel : himax-hx83102: fix incorrect argument to
->   mipi_dsi_msleep
-> 
-> mipi_dsi_msleep expects struct mipi_dsi_multi_context to be passed as a
-> value and not as a reference.
-> 
+On Wed, 5 Jun 2024 at 11:33, Marco Elver <elver@google.com> wrote:
+>
+> On Wed, 5 Jun 2024 at 11:18, Dmitry Vyukov <dvyukov@google.com> wrote:
+> >
+> > On Wed, 5 Jun 2024 at 11:10, Marco Elver <elver@google.com> wrote:
+> > >
+> > > > Add a boot self test that can catch sprious coverage from interrupts.
+> > > > The coverage callback filters out interrupt code, but only after the
+> > > > handler updates preempt count. Some code periodically leaks out
+> > > > of that section and leads to spurious coverage.
+> > > > Add a best-effort (but simple) test that is likely to catch such bugs.
+> > > > If the test is enabled on CI systems that use KCOV, they should catch
+> > > > any issues fast.
+> > > >
+> > > > Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+> > > > Cc: x86@kernel.org
+> > > > Cc: linux-kernel@vger.kernel.org
+> > > > Cc: syzkaller@googlegroups.com
+> > > >
+> > > > ---
+> > > >
+> > > > In my local testing w/o the previous fix,
+> > > > it immidiatly produced the following splat:
+> > > >
+> > > > kcov: running selftest
+> > > > BUG: TASK stack guard page was hit at ffffc90000147ff8
+> > > > Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN PTI
+> > > > ...
+> > > >  kvm_set_cpu_l1tf_flush_l1d+0x5/0x20
+> > > >  sysvec_call_function+0x15/0xb0
+> > > >  asm_sysvec_call_function+0x1a/0x20
+> > > >  kcov_init+0xe4/0x130
+> > > >  do_one_initcall+0xbc/0x470
+> > > >  kernel_init_freeable+0x4fc/0x930
+> > > >  kernel_init+0x1c/0x2b0
+> > > > ---
+> > > >  kernel/kcov.c     | 28 ++++++++++++++++++++++++++++
+> > > >  lib/Kconfig.debug |  9 +++++++++
+> > > >  2 files changed, 37 insertions(+)
+> > > >
+> > > > diff --git a/kernel/kcov.c b/kernel/kcov.c
+> > > > index c3124f6d5536..04136f80042f 100644
+> > > > --- a/kernel/kcov.c
+> > > > +++ b/kernel/kcov.c
+> > > > @@ -1057,6 +1057,30 @@ u64 kcov_common_handle(void)
+> > > >  }
+> > > >  EXPORT_SYMBOL(kcov_common_handle);
+> > > >
+> > > > +#ifdef CONFIG_KCOV_TEST
+> > > > +static void __init selftest(void)
+> > > > +{
+> > > > +       volatile int i;
+> > > > +
+> > > > +       pr_err("running self test\n");
+> > > > +       /*
+> > > > +        * Test that interrupts don't produce spurious coverage.
+> > > > +        * The coverage callback filters out interrupt code, but only
+> > > > +        * after the handler updates preempt count. Some code periodically
+> > > > +        * leaks out of that section and leads to spurious coverage.
+> > > > +        * It's hard to call the actual interrupt handler directly,
+> > > > +        * so we just loop here for ~400 ms waiting for a timer interrupt.
+> > >
+> > > Where do the 400 ms come from? I only see that it loops a long time,
+> > > but that the timing is entirely dependent on how fast the CPU executes
+> > > the loop.
+> > >
+> > > > +        * We set kcov_mode to enable tracing, but don't setup the area,
+> > > > +        * so any attempt to trace will crash.
+> > > > +        */
+> > > > +       current->kcov_mode = KCOV_MODE_TRACE_PC;
+> > > > +       for (i = 0; i < (1 << 28); i++)
+> > > > +               ;
+> > >
+> > > Can't you check jiffies, and e.g. check that actual ~100-500ms have elapsed?
+> > >
+> > > timeout = jiffies + msecs_to_jiffies(300);
+> > > while (!time_after(jiffies, timeout)) {
+> > >   cpu_relax();
+> > > }
+> >
+> > We can't call any functions. If anything is instrumented, the kernel crashes.
+> >
+> > But just reading jiffies should be fine, so we can do:
+> >
+> > unsigned long start = jiffies;
+> > while ((jiffies - start) * MSEC_PER_SEC / HZ < 500)
+> > ;
+>
+> I'm quite sure that those helpers are macros, but who knows if that
+> will ever change.
+>
+> The above open-coded version looks reasonable.
 
-Please add a Fixes tag
-
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
-> ---
->   drivers/gpu/drm/panel/panel-himax-hx83102.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-himax-hx83102.c b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-> index 6009a3fe1b8f..ab00fd92cce0 100644
-> --- a/drivers/gpu/drm/panel/panel-himax-hx83102.c
-> +++ b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-> @@ -479,7 +479,7 @@ static int hx83102_disable(struct drm_panel *panel)
->   	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
->   	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
->   
-> -	mipi_dsi_msleep(&dsi_ctx, 150);
-> +	mipi_dsi_msleep(dsi_ctx, 150);
->   
->   	return dsi_ctx.accum_err;
->   }
-
-Thanks,
-Neil
+Sent v2 with fixes, PTAL.
+https://lore.kernel.org/all/cover.1718092070.git.dvyukov@google.com/T/#t
 
