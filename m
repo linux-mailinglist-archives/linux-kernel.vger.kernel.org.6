@@ -1,178 +1,165 @@
-Return-Path: <linux-kernel+bounces-210148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF79903FED
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:24:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386CE903FE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61EC21F2457C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 347911C23DC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B473B23774;
-	Tue, 11 Jun 2024 15:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6422574F;
+	Tue, 11 Jun 2024 15:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evISkj++"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KoCMf8Bv"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAF52C69B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED212110F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718119441; cv=none; b=JWaRXB3pi4IpoWLSwDhMKh2Z9/wzi9ilsxqi5gclBAFokHQLc99+0iJdyOu91x2MasSfN4rO7/0qAWB6fTO/JcrlKo+10JKx+HihpvIoJRrlGT0RWDihHJGPqpne5LFLcBF6ePXRrY+DAluOMDFLmSE9Y0VJgAByVS5kyplj04o=
+	t=1718119402; cv=none; b=ZCOrZxNAi99OW+tuPm1zXySXVp8MLzSQ+jJmxYiBXC4BiIY9YvI4LpukT3/lPvXuMuvQstr0VOkUjz1rnY6sav9F5AmCTDIH/vmbaeOkusZLBx+FXL730Fbir+ftWEGfAvyXiUcOA9wleMt98TwJMsFDz/GHoEiS7aE1Zslz8oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718119441; c=relaxed/simple;
-	bh=B49BfP/n62cC5L3T8DG2DbtbA+R5iyv8rVdtsI/Ab6E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PxRjLTOub3nQmMgj9ah4KCwSHT9PpN2o43BDqEbt4OzPj+22cKi7Vhkv+xIjm+zw7taN3SwGjxk3SsLWJui1hWvWOZuPf08q7NNK9ttvXFvSYJXMozRDq/2GviAxjMht2JkfF9SIVYMakETmatfJwLnpThvonWnwEGtnfkBORx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evISkj++; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35f090093d8so3090992f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:23:59 -0700 (PDT)
+	s=arc-20240116; t=1718119402; c=relaxed/simple;
+	bh=ZEJOzWLv67Lt9koj3wAP6SNyrkJMfABaIM3Sukt+QDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lUpGBu0frxjZ23rXt1z6u+/9n79d9lRhDNBT+6o5l8zQ6oysjkZJymv6KTPwOHEcN8eXQ2abrqdVvHrLmdbiPGT7edCcuWZJ3tgsTILp0IWnAqOZ+DJZna+S+20+eO8t49D8tO08Knd8KMFoURMzV0FkV9h+L7MnTpyrQkEvYak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KoCMf8Bv; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dfb1ac0f03cso231002276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:23:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718119438; x=1718724238; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qqhHKqu8J5x8pyYIaPsNCcIOlIn0KQ56jThNjIBi0ic=;
-        b=evISkj++5UnmDaolLHiNXLOOMEqHgDi8gaDw1Wel1pgRotfyXJqeDOptKX/tPHVehE
-         ge8NTBs1Ti73FE+M5CRBpZK9qOnDQk6WzlFkdr9yScvPKDdsh/OwedN+rHlsIZCj/s0e
-         WzhLv0xJjxjgzAyYWMZiIDrSMAUf0MX7yQGlmGA9CwZRr4XKnT5R+nk6VJncPphCz5AK
-         rtTOc7ppwpAD4NvzjrNT5WQ/wRyagbsuETbL+UAb/ddIgMAWAvl+5+eopnXe58rFzttW
-         eQcx4sDlKWBxtYk0FU8m6jj+hIui972cEdNekYsQDx9h//1NemFt54HjVdew/7669uif
-         U0Ww==
+        d=linuxfoundation.org; s=google; t=1718119400; x=1718724200; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HdCqb4jwOd5pvnTn6Ox/jiqyDLoaZHnkqS07QEcqzS8=;
+        b=KoCMf8BvvVkBBxeWOcoScOs/UWAWHnNp8zu801CsFL/f9NUM3eW/fhXwJVCUe+gcEC
+         AZjZ5W+mUPaZyZyxfXcQTjHmR2K3Bth4FFMGTDGAu+4F2l3WDYf3y++XuIQcwGBkm9Fs
+         LNJC79ntThtW9/bEvE3vz0oPT//eF8Dbyepww=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718119438; x=1718724238;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qqhHKqu8J5x8pyYIaPsNCcIOlIn0KQ56jThNjIBi0ic=;
-        b=lL/D3E6FFBOX0Fr/tXdo8leL7GDwAc3lB69pg92Fe7gJhCnFEGPHCyNwnlUf695vLW
-         XGb49mLxWNlW/NSnnNVvra3ZD8iuALihFLlaD8NQvXlWUx7XjAtFWPgQlLLFGO9//+PQ
-         HYgZ+BUqFdDgIAGzRLJ36HAGHUuUf1Xc1LpdU3iG3nlvBiz7H5XrLKaad7bhEQFstgRE
-         nSw3IK3fMf0XKXJAxmC3sgf7W/UBpzTh5TLx682Xrf08xvOZkT8MewR9bn/lJfdVAP4b
-         4UUCFy/VUa/Xzk7EoxZRgp76XSE0lOnjq76WNIAu+HyvSONpUnoK+ttYYlKc3A+6IgGx
-         1r+g==
-X-Forwarded-Encrypted: i=1; AJvYcCX7dJeMDlqcEUoyDxT1OnZD/PJMqc/2ZlRsz4it/9Kpm1UaPnwzcFqFXvyH3eAxX3syW8C5i0WDts3b+ajcKyaoMqcfidGYKd2dk1Bl
-X-Gm-Message-State: AOJu0YyLiDd6Z/WBVCdyxGlwKIvpAM8nR2Q4kOTLf0fvG5T+HRd4Ke0Q
-	ZeICLKuo3jtx8PX5CNxElByW2vBK9tG2bhlUi4yNweII7jqm7O9m
-X-Google-Smtp-Source: AGHT+IHcFnG6/IspHE0p3GMElQnHHuNm9W//aQQuoYBzkQbmaxLJxzn8ycr9NDfb+FwJsULVkcyrrQ==
-X-Received: by 2002:a5d:4010:0:b0:35f:1d13:c843 with SMTP id ffacd0b85a97d-35f21254c37mr4445617f8f.11.1718119437544;
-        Tue, 11 Jun 2024 08:23:57 -0700 (PDT)
-Received: from localhost.localdomain ([31.120.167.14])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f301dfc52sm1167545f8f.82.2024.06.11.08.23.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 08:23:56 -0700 (PDT)
-From: Teddy Engel <engel.teddy@gmail.com>
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Teddy Engel <engel.teddy@gmail.com>
-Subject: [PATCH] staging: vt6656: Fix checkpatch unnecessary parentheses
-Date: Tue, 11 Jun 2024 16:22:56 +0100
-Message-Id: <20240611152256.24563-1-engel.teddy@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1718119400; x=1718724200;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HdCqb4jwOd5pvnTn6Ox/jiqyDLoaZHnkqS07QEcqzS8=;
+        b=jhxHu+qv/38mZpr9s1836p9jUO9GdJzfTbE4JF5uEtxNwBWrEL0SEnPu+4JwUXK9IG
+         IKSzSQcGgH/WqvwgqkDUhMKKnRk9V66GUa1ZSZdhzGreWmFS+mEFvrlyfnt5+uJc5t0q
+         5tBQJ15pmf5XzRJeqDI3AEiM19m/xWrUZBEXWzESlY/wlFHiXKwynifSNGo2pPE2U32p
+         r9cJiC0vNNeWqgO6jRi+wXFXFj8/mBCLIbEGV3tjAilef5JMx7cBcTpZKB5dDExjGxrE
+         8K8YswTeUey9nLw6kx4bJyFUI2S0LzzRpT098ZqX9kY08wYQJg54fg9z1EL8ZCVoc70E
+         K8cw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2ZHObIJxYRH+xzZtVVaKraseTaLzfPrAOJrJetE863hdmgwjqJrb7FhoA+DvaEZ9qxVh2vWPEUWzKxbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVIPg1b2e78uo6aEZTVAQhNuN/jG7y4AKfHBVptZqmH2Wq7Zk8
+	vV+QBo0f9Cuc0llH5R76Sgr6AERRHKyREuVd78ePvMegYhQGu4nkJGRS9vnP27I=
+X-Google-Smtp-Source: AGHT+IForU65yRH2mMmwK2Lm8iJCItX19a8sBLN/kbwf7a2g2EOmV4suGjU+wzNEWJkCVA6F0nsC2g==
+X-Received: by 2002:a25:ab2d:0:b0:dfa:fcb9:8201 with SMTP id 3f1490d57ef6-dfafcb983admr10061824276.6.1718119399856;
+        Tue, 11 Jun 2024 08:23:19 -0700 (PDT)
+Received: from ?IPV6:2607:fb91:213b:a129:544a:cc06:ea0:4045? ([2607:fb91:213b:a129:544a:cc06:ea0:4045])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfb0823b4f8sm1469795276.47.2024.06.11.08.23.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 08:23:19 -0700 (PDT)
+Message-ID: <61f322f5-8b4b-4f5b-8226-e44846e10c09@linuxfoundation.org>
+Date: Tue, 11 Jun 2024 09:23:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: filesystems: fix warn_unused_result build
+ warnings
+To: Amer Al Shanawany <amer.shanawany@gmail.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
+ Miklos Szeredi <mszeredi@redhat.com>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240417184913.74734-1-amer.shanawany@gmail.com>
+ <58e0539d-423e-42e0-9ee4-8fc8e1eed94f@collabora.com>
+ <0910d537-c2e8-4932-8b0e-b5ce381e1ee1@gmail.com>
+ <5dfdfa17-d3b3-408e-a8a6-b8dc0756eac3@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <5dfdfa17-d3b3-408e-a8a6-b8dc0756eac3@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Remove unnecessary parentheses - according to checkpatch.pl strict
+On 6/3/24 05:17, Amer Al Shanawany wrote:
+> On 5/4/24 19:17, Amer Al Shanawany wrote:
+>> On 4/19/24 18:41, Muhammad Usama Anjum wrote:
+>>> On 4/17/24 11:49 PM, Amer Al Shanawany wrote:
+>>>> Fix the following warnings by adding return check and error messages.
+>>>>
+>>>> statmount_test.c: In function ‘cleanup_namespace’:
+>>>> statmount_test.c:128:9: warning: ignoring return value of ‘fchdir’
+>>>> declared with attribute ‘warn_unused_result’ [-Wunused-result]
+>>>>    128 |         fchdir(orig_root);
+>>>>        |         ^~~~~~~~~~~~~~~~~
+>>>> statmount_test.c:129:9: warning: ignoring return value of ‘chroot’
+>>>> declared with attribute ‘warn_unused_result’ [-Wunused-result]
+>>>>    129 |         chroot(".");
+>>>>        |         ^~~~~~~~~~~
+>>>>
+>>>> Signed-off-by: Amer Al Shanawany <amer.shanawany@gmail.com>
+>>> Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>>>
+>>>> ---
+>>>>   .../selftests/filesystems/statmount/statmount_test.c | 12 ++++++++++--
+>>>>   1 file changed, 10 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/tools/testing/selftests/filesystems/statmount/statmount_test.c b/tools/testing/selftests/filesystems/statmount/statmount_test.c
+>>>> index e6d7c4f1c85b..e8c019d72cbf 100644
+>>>> --- a/tools/testing/selftests/filesystems/statmount/statmount_test.c
+>>>> +++ b/tools/testing/selftests/filesystems/statmount/statmount_test.c
+>>>> @@ -125,8 +125,16 @@ static uint32_t old_root_id, old_parent_id;
+>>>>   
+>>>>   static void cleanup_namespace(void)
+>>>>   {
+>>>> -	fchdir(orig_root);
+>>>> -	chroot(".");
+>>>> +	int ret;
+>>>> +
+>>>> +	ret = fchdir(orig_root);
+>>>> +	if (ret == -1)
+>>>> +		ksft_perror("fchdir to original root");
+>>>> +
+>>>> +	ret = chroot(".");
+>>>> +	if (ret == -1)
+>>>> +		ksft_perror("chroot to original root");
+>>>> +
+>>>>   	umount2(root_mntpoint, MNT_DETACH);
+>>>>   	rmdir(root_mntpoint);
+>>>>   }
+>> Hi,
+>>
+>> Can you please consider this patch?
+>>
+>> Thank  you
+>>
+>> Amer
+>>
+>>
+>>
+> Hello,
+> 
+> Could you please consider this simple patch for fixing build warnings for kselftest ?
+> 
+> Thank you
+> 
+> Amer
 
-Signed-off-by: Teddy Engel <engel.teddy@gmail.com>
----
- drivers/staging/vt6656/TODO       | 2 +-
- drivers/staging/vt6656/baseband.c | 8 ++++----
- drivers/staging/vt6656/main_usb.c | 4 ++--
- drivers/staging/vt6656/usbpipe.c  | 8 ++++----
- 4 files changed, 11 insertions(+), 11 deletions(-)
+Applied to linux-kselftest fixes branch for the next rc.
 
-diff --git a/drivers/staging/vt6656/TODO b/drivers/staging/vt6656/TODO
-index e154b2f3b247..507b7aec9f14 100644
---- a/drivers/staging/vt6656/TODO
-+++ b/drivers/staging/vt6656/TODO
-@@ -11,7 +11,7 @@ TODO:
- - switch to use LIB80211
- - switch to use MAC80211
- - use kernel coding style
--- checkpatch.pl fixes
-+- checkpatch.pl fixes -- done
- - sparse fixes
- - integrate with drivers/net/wireless
- 
-diff --git a/drivers/staging/vt6656/baseband.c b/drivers/staging/vt6656/baseband.c
-index ad7b963f0d98..c981fc75a030 100644
---- a/drivers/staging/vt6656/baseband.c
-+++ b/drivers/staging/vt6656/baseband.c
-@@ -230,8 +230,8 @@ int vnt_vt3184_init(struct vnt_private *priv)
- 
- 	dev_dbg(&priv->usb->dev, "RF Type %d\n", priv->rf_type);
- 
--	if ((priv->rf_type == RF_AL2230) ||
--	    (priv->rf_type == RF_AL2230S)) {
-+	if (priv->rf_type == RF_AL2230 ||
-+	    priv->rf_type == RF_AL2230S) {
- 		priv->bb_rx_conf = vnt_vt3184_al2230[10];
- 		length = sizeof(vnt_vt3184_al2230);
- 		addr = vnt_vt3184_al2230;
-@@ -275,8 +275,8 @@ int vnt_vt3184_init(struct vnt_private *priv)
- 	if (ret)
- 		goto end;
- 
--	if ((priv->rf_type == RF_VT3226) ||
--	    (priv->rf_type == RF_VT3226D0)) {
-+	if (priv->rf_type == RF_VT3226 ||
-+	    priv->rf_type == RF_VT3226D0) {
- 		data = (priv->rf_type == RF_VT3226D0) ? 0x11 : 0x23;
- 
- 		ret = vnt_control_out_u8(priv, MESSAGE_REQUEST_MACREG,
-diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-index 7bbed462f062..86085f3674c1 100644
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -339,8 +339,8 @@ static int vnt_init_registers(struct vnt_private *priv)
- 
- 	/* load vt3266 calibration parameters in EEPROM */
- 	if (priv->rf_type == RF_VT3226D0) {
--		if ((priv->eeprom[EEP_OFS_MAJOR_VER] == 0x1) &&
--		    (priv->eeprom[EEP_OFS_MINOR_VER] >= 0x4)) {
-+		if (priv->eeprom[EEP_OFS_MAJOR_VER] == 0x1 &&
-+		    priv->eeprom[EEP_OFS_MINOR_VER] >= 0x4) {
- 			calib_tx_iq = priv->eeprom[EEP_OFS_CALIB_TX_IQ];
- 			calib_tx_dc = priv->eeprom[EEP_OFS_CALIB_TX_DC];
- 			calib_rx_iq = priv->eeprom[EEP_OFS_CALIB_RX_IQ];
-diff --git a/drivers/staging/vt6656/usbpipe.c b/drivers/staging/vt6656/usbpipe.c
-index d505b4b69ba4..42b2e0a0a431 100644
---- a/drivers/staging/vt6656/usbpipe.c
-+++ b/drivers/staging/vt6656/usbpipe.c
-@@ -287,7 +287,7 @@ static int vnt_rx_data(struct vnt_private *priv, struct vnt_rcb *ptr_rcb,
- 		return false;
- 	}
- 
--	if ((bytes_received > 2372) || (bytes_received <= 40)) {
-+	if (bytes_received > 2372 || bytes_received <= 40) {
- 		/* Frame Size error drop this packet.*/
- 		dev_dbg(&priv->usb->dev, "------ WRONG Length 2\n");
- 		return false;
-@@ -299,9 +299,9 @@ static int vnt_rx_data(struct vnt_private *priv, struct vnt_rcb *ptr_rcb,
- 	/* if SQ3 the range is 24~27, if no SQ3 the range is 20~23 */
- 
- 	/*Fix hardware bug => PLCP_Length error */
--	if (((bytes_received - head->pay_load_len) > 27) ||
--	    ((bytes_received - head->pay_load_len) < 24) ||
--	    (bytes_received < head->pay_load_len)) {
-+	if ((bytes_received - head->pay_load_len) > 27 ||
-+	    (bytes_received - head->pay_load_len) < 24 ||
-+	    bytes_received < head->pay_load_len) {
- 		dev_dbg(&priv->usb->dev, "Wrong PLCP Length %x\n",
- 			head->pay_load_len);
- 		return false;
--- 
-2.39.2
+thanks,
+-- Shuah
+
+
 
 
