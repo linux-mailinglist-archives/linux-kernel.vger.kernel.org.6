@@ -1,186 +1,85 @@
-Return-Path: <linux-kernel+bounces-210580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF90E9045CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:33:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA59E9045D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 308271F220ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:33:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E4432858BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8E4152533;
-	Tue, 11 Jun 2024 20:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE708152516;
+	Tue, 11 Jun 2024 20:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C3XQxoy0"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxrc8EQj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BBF12E61
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FA712E61;
+	Tue, 11 Jun 2024 20:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718138011; cv=none; b=OoBRloOZnxBPsK+fk1y/YanN66kUrG3oVAYw+khl3IAZ/PzZW2TDFSkdYOQbhcQclhigk+o/l4QIG5zcQlJLN7sxIaCWFhCCd0d114yVlB+//Xoe1zp9eARj6QpF2EOZ8+zbIeCAzonk4LhZr069qQwbiKNN/KpYU7ECB5BLxEw=
+	t=1718138125; cv=none; b=gzGU9SZy2EvaGsVxDWbmx0cla5q3GroG4DXjSO8OUdd/WrgOvruLchy+FwOlaZlXHTbKTVW6aDST5KxgN7MmC6v0VNlhbxhwYDijKF2naaVybnISLnu0WBolIt8ULzJbmmNv9v+wsMnGLIbVugRHZj9lN1lrLQBQMOUPKZiOxWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718138011; c=relaxed/simple;
-	bh=XC4w7FqUQ2wQZKdU5omXsL3G30oQ0DhgQCJ4Jv1zZ0E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fuQsB139FgR6w5pfPzQd4X72sb4UPmLIjhC8+otX36VXb7l9749bN/clshvYGcnIIYf3Cs3qtpeT7rW0++k/1ig64z4tdlpcOufdNcZ/0mpZysFlviTk4RMOAWCi4+BXrHxYsGASoMduhp691wXhcs1lZPbIRrNaSpiUOewH+YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C3XQxoy0; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57c8bd6b655so4543a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:33:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718138008; x=1718742808; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y1oMY5Ka+Igm5IVLZ0jHXnRZ7u2UNpiSxg2NGEZJXKY=;
-        b=C3XQxoy0X3wzvzMtLynriEWutEal5Ejs5qOIs/UNKdTUtMWAtt0qvfTF36hx+DWBVS
-         DmfMdjB3mlP8LAf35YMQm6MMhsXTSYyynwMOMmpB9JWyPsux+KG8Td+/ddehDnq9GLyP
-         +5I+Dz5z7PFQTY1EkicLZiBPBQfwya6ENmIYqJzoEa7HLeKk5qToa6SSLI6UMgrNK63v
-         oxi5HH0HcebF/8/3SzF9qRn3GcBktSBpi1aCgoL4up6loBpt6Je8bLP1i9roTxmQzRmk
-         ztboi13Zpx+qSGkR6m27/BfIiGP0JfsJMAqRpVojSR8aFbLXXnQmbR9u4uUID7z2E07p
-         b7DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718138008; x=1718742808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y1oMY5Ka+Igm5IVLZ0jHXnRZ7u2UNpiSxg2NGEZJXKY=;
-        b=SF5A7WvMsmNQsx+nL4Q+Brca5xN3kXli8QC9wjchnqFk6lAzA8GdXIpXDuYoG0w9fB
-         4CrILwOhLFdzL+D0S/rkx7QvNW5HoQdErluwZivaT54jdBl8C4HBmmOz0ZUCZ5FHbkgL
-         8kCF8qb4xBUp57EscnDPRLr8izv36SzXe3fItAQf+3km2Sl12wIu6Yu0oCuTtd/swWk/
-         D3YI76OfQ6JOPMYPuYupS6BL0v/24It5Wj2FBVJH2Tb9eHV1hac9m6KbrGg6B+qHUrU2
-         uD4IgkOlmghI35qcHEIftm43TOtaGs2keZ1DqR8CNWsKP3Y63R1tKtU9Nn/1xU+mixUX
-         Y1Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/rt8C/Q75AD6ody/VvY3ivdHt3Ez9qT9iDJ0pj+MKw1czw36Ls846/U6i/DYSEoE+lIsJsft2jG13XkCAsUz4ZFIshxOMVF31N8lC
-X-Gm-Message-State: AOJu0YwsV5ojZH/IQ2rYMbmD/CJ7w7xT29b8e+R+i07RN8+0wJpN2pmQ
-	Mtq5sRgTxNk4lDgp0fNlSShplmIT8YikD7P7HwI41jdHBEvzLT/0lYBVJjJUkYSzVj6zUA4WfRb
-	bdoz6CKwKPuZ9sc/VnUWtncNK7abFuC/yqgE=
-X-Google-Smtp-Source: AGHT+IEJZSZPp5uDEJF66yku2G52k7zoY/A/fEWKARj7DqwB4Q9rt6zOLddjPGDLpteJ63WCdIVY0NriCA360ZVJwkE=
-X-Received: by 2002:aa7:cd17:0:b0:572:988f:2f38 with SMTP id
- 4fb4d7f45d1cf-57ca7fd71e8mr38069a12.6.1718138008253; Tue, 11 Jun 2024
- 13:33:28 -0700 (PDT)
+	s=arc-20240116; t=1718138125; c=relaxed/simple;
+	bh=Jt8rKRPa7/P92ZHQ4z+Vuw/hztGwjZGN29K72DrkOnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CT+8/1VmWmWt7yM+2UBabVYk6goAuKwUsJVCkSz5k+Ly1mHO3uYtg+A4yTkLkELfNlqOFwT1N/AV7whH2+t3aGatIE+y/NyR8ZGTQHQDsL2aVEuIdWcEZnZHTgeuBkYiPyLnQLZy5j7kIYKHvlTO8BKCeA6xlG7YZnFiVxNfp70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxrc8EQj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52CDDC2BD10;
+	Tue, 11 Jun 2024 20:35:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718138124;
+	bh=Jt8rKRPa7/P92ZHQ4z+Vuw/hztGwjZGN29K72DrkOnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sxrc8EQjAq+8MBvImItsoM0G+Tf5SH5qNCLJGe0orXVS1NZbHlk0vSzg8b1xNX0mF
+	 /mpGb4sEYTCtXy6DnCKTdw7LII5hA/5gAqSHUxX4hZXTQWZ9m3+tjLYPMIzqNwNoE2
+	 wa7+FAzkZn3kdfUbrlM2r98Fcm5kIGzh7UstCuOHUvmkyg8w8YUlIm1hc1wm+gtS5A
+	 7BkVVX3Z2dPfDmRzAzML2kOjYJP3RUmNJ2xvEwz48iNNwz/b8dKnxeBH/2T2xKa/Uy
+	 3HhRrGHZSFgm5zgl6iKP0seToMKTkrNr+03ICB73bYnvuNYIlC3SmWJjyWZr2IkIn4
+	 qLvRA/Znfzbtw==
+Date: Tue, 11 Jun 2024 14:35:22 -0600
+From: Rob Herring <robh@kernel.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: gpio: lsi,zevio-gpio: convert to YAML
+Message-ID: <20240611203522.GA3021149-robh@kernel.org>
+References: <20240611140034.24685-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240515193610.2350456-1-yabinc@google.com> <CAM9d7cjmJHC91Q-_V7trfW-LtQVbraSHzm--iDiBi7LgNwD2DA@mail.gmail.com>
- <CALJ9ZPML-QNcsJfo6tBMfmJzb=wF1qQsMFTbNvtRwH-++J1a2g@mail.gmail.com>
-In-Reply-To: <CALJ9ZPML-QNcsJfo6tBMfmJzb=wF1qQsMFTbNvtRwH-++J1a2g@mail.gmail.com>
-From: Yabin Cui <yabinc@google.com>
-Date: Tue, 11 Jun 2024 13:33:15 -0700
-Message-ID: <CALJ9ZPNkO=_OKPDwdSY9tJw+AETaAVC2m-1UcWScZ0TaFmHRkw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] perf/core: Check sample_type in sample data saving
- helper functions
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611140034.24685-1-afd@ti.com>
 
-On Tue, May 28, 2024 at 10:59=E2=80=AFAM Yabin Cui <yabinc@google.com> wrot=
-e:
->
-> On Wed, May 22, 2024 at 9:27=E2=80=AFAM Namhyung Kim <namhyung@kernel.org=
-> wrote:
-> >
-> > Hello,
-> >
-> > On Wed, May 15, 2024 at 12:36=E2=80=AFPM Yabin Cui <yabinc@google.com> =
-wrote:
-> > >
-> > > Hello,
-> > >
-> > > We use helper functions to save raw data, callchain and branch stack =
-in
-> > > perf_sample_data. These functions update perf_sample_data->dyn_size w=
-ithout
-> > > checking event->attr.sample_type, which may result in unused space
-> > > allocated in sample records. To prevent this from happening, this pat=
-chset
-> > > enforces checking sample_type of an event in these helper functions.
-> > >
-> > > Thanks,
-> > > Yabin
-> > >
-> > >
-> > > Changes since v1:
-> > >  - Check event->attr.sample_type & PERF_SAMPLE_RAW before
-> > >    calling perf_sample_save_raw_data().
-> > >  - Subject has been changed to reflect the change of solution.
-> > >
-> > > Changes since v2:
-> > >  - Move sample_type check into perf_sample_save_raw_data().
-> > >  - (New patch) Move sample_type check into perf_sample_save_callchain=
-().
-> > >  - (New patch) Move sample_type check into perf_sample_save_brstack()=
-.
-> > >
-> > > Changes since v3:
-> > >  - Fix -Werror=3Dimplicit-function-declaration by moving has_branch_s=
-tack().
-> > >
-> > > Changes since v4:
-> > >  - Give a warning if data->sample_flags is already set when calling t=
-he
-> > >    helper functions.
-> > >
-> > > Original commit message from v1:
-> > >   perf/core: Trim dyn_size if raw data is absent
-> > >
-> > > Original commit message from v2/v3:
-> > >   perf/core: Save raw sample data conditionally based on sample type
-> > >
-> > >
-> > > Yabin Cui (3):
-> > >   perf/core: Save raw sample data conditionally based on sample type
-> > >   perf/core: Check sample_type in perf_sample_save_callchain
-> > >   perf/core: Check sample_type in perf_sample_save_brstack
-> >
-> > Acked-by: Namhyung Kim <namhyung@kernel.org>
-> >
-> > Thanks,
-> > Namhyung
-> >
->
-> Hi performance events subsystem maintainers,
->
-> The v5 patches were modified based on Peter's comments on the v4
-> patches. I'd be grateful if you could take a look when you have a
-> moment.
-> Thank you for your time and consideration.
->
-> Thanks,
-> Yabin
->
+On Tue, Jun 11, 2024 at 09:00:34AM -0500, Andrew Davis wrote:
+> Convert Zevio GPIO controller bindings to DT schema.
+> 
+> Changes during conversion:
+>  - Add used but undocumented interrupts property
 
-Hi, friendly ping again for review?
+An interrupt on a GPIO controller generally means it is also an 
+interrupt-controller. Do you need to add those properties too?
 
-> > >
-> > >  arch/s390/kernel/perf_cpum_cf.c    |  2 +-
-> > >  arch/s390/kernel/perf_pai_crypto.c |  2 +-
-> > >  arch/s390/kernel/perf_pai_ext.c    |  2 +-
-> > >  arch/x86/events/amd/core.c         |  3 +--
-> > >  arch/x86/events/amd/ibs.c          |  5 ++---
-> > >  arch/x86/events/core.c             |  3 +--
-> > >  arch/x86/events/intel/ds.c         |  9 +++-----
-> > >  include/linux/perf_event.h         | 26 +++++++++++++++++-----
-> > >  kernel/events/core.c               | 35 +++++++++++++++-------------=
---
-> > >  kernel/trace/bpf_trace.c           | 11 +++++-----
-> > >  10 files changed, 55 insertions(+), 43 deletions(-)
-> > >
-> > > --
-> > > 2.45.0.rc1.225.g2a3ae87e7f-goog
-> > >
+> 
+> Signed-off-by: Andrew Davis <afd@ti.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-zevio.txt   | 16 -------
+>  .../bindings/gpio/lsi,zevio-gpio.yaml         | 46 +++++++++++++++++++
+>  2 files changed, 46 insertions(+), 16 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.txt
+>  create mode 100644 Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
+
+Otherwise,
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
