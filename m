@@ -1,110 +1,160 @@
-Return-Path: <linux-kernel+bounces-210414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30FD90435F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:17:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B029B904365
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2FAF1C210BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:17:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14CF1C21E86
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5656EB68;
-	Tue, 11 Jun 2024 18:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC426EB68;
+	Tue, 11 Jun 2024 18:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MdRVe9iW"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C+svuxMk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9FC4F5F9;
-	Tue, 11 Jun 2024 18:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B64249E5;
+	Tue, 11 Jun 2024 18:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718129800; cv=none; b=n7j2Ve/WLwpMok+hXuNPcVuT1Qt82sbke38y21JM0KjgtIj3/WLl9LHbZ7MsalavyR8tZZPE7KxyqfCMwrn3gba9XL5WdJUqHEUTTg1kBDRq7EZ8qxMEdfDcHs8GZyWQvhdQG6gPCXkwHiTjjRMMOyO6vmorKE3Le7n1gFg2IhM=
+	t=1718129873; cv=none; b=Qd0TEVJ7tDJ2zLmIIbIbGR6Ak+YbWXy4RSf1fwkaOy1oq2MnISKUjOHZ10Rl/bMpDI5rO8V6nBUBfPGWx2EQx3J7Mmaq/LmvIWll+njbMvirBM6V4uB4aBfi3QtHPMJh6WaAabFQMfLNp5sAJTgx+eNg4UCNbVSuHjGsnCDYbAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718129800; c=relaxed/simple;
-	bh=negaQ/p+8fqZUjRXlmaCtcM1w1qY4k12PHGOfjjOEjc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cdEIYPPTst+o/o5SEJIhvCDzr5WS263tyNAzvtEBUoDv2qCOkQ/j8oLkt1ojiwVk0EhUq7dbn2uX/zS8BVEGWj87GHKQyuzz6H7oTyzRVmUDKN7j0Srgf9nVBYCqy0kd8Fbs1WD2XYr6pJGiWGxBUdeQginET51q34X5SP69FpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MdRVe9iW; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52961b77655so6545155e87.2;
-        Tue, 11 Jun 2024 11:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718129797; x=1718734597; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZtI1lbTsgVOULKjRJR67YoxzveH1+C7OsnELRZ7Iie4=;
-        b=MdRVe9iWiOkNvpQBqi8YLVT4mdLf1GfGmck9JyfkNx/10CAv72sit3ro2efYnyMNZx
-         jTiN4mtD0Ez7PTkDSw9wTiCC+UwWMTV7IU3pAU9MxLbC+RJHMB+01CoG4jrhUO7fzN9G
-         qfHeEVbcRiD8r+ngaj97ynSaYRmb9ijedNJ7fB5slavvhtZ0MsjCIw6I8gX5gycvKZu9
-         eEwKqEiTV3VeX0fczfTExSRAL//gnKcTIcc5U2/8MdAY0nAUoKycsCRzvNa/qNx1MV5J
-         UfuYWuLiLAvbN5E5bA8t5N35I5SeeY2XHc8hqUhWRXfAhF+yUR/eBnQlr5eMOLc4JWol
-         kPYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718129797; x=1718734597;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZtI1lbTsgVOULKjRJR67YoxzveH1+C7OsnELRZ7Iie4=;
-        b=F3ErGad3FDZ9OrD1Yv5JpeBLTDqJyClLBd/pdUzeffpRW55iBwnb4aFarT4FAR0XaJ
-         wXFfminQXqxaen8VdlCmYAYRGLZBcXMpnL8mypbV4QxL9fJ8GnyJxUS9kia8aDT0OMR7
-         rFj8+b2R4vFHXkE5X3QtDtehyONd1rclb1eMDhw7ylklJgWmwfgEaHn/zhy+w6/dJdVM
-         a/R+fzdC1faFlmiGXzlZSEqndnkkdkfQjl93aUXkedk8nNZWlpk9e3kGojnWB1/NWE3j
-         p7OvA+U5OoqxYCh1HtaQcxHqtAPSzI8kRCganD5RFgIrUTQDRcJOccHF7TH8UL4vh1Dy
-         WU5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ2bXruaEKy13g2YnnRAPb13p0z5i+kNtjF5IbU12Cy/2lQvFrikfZJtYm1NEaSVRYvYIaahwqMpTNqEbwnDnx2Gcy+7nquK0EnIVNlzLzaWnM7fwUmPaEWJWS+vsL7qqzjzAl
-X-Gm-Message-State: AOJu0YySOkcIsylbJ3bDyyquRIwFXYlComBaHtRimt16b88a7FR+xK+h
-	tN306IMiS+ZSzOWpiHg4gxb/FECtTfH5fODdc4G0stsLsFW6N+u+
-X-Google-Smtp-Source: AGHT+IE3kIR4oIWOtR2uu9NQ6KUNP1rrWOPn4O1UFuBvCoPt7OCj8NMv26WIc3U9S+N4+tQX7M05Zw==
-X-Received: by 2002:a19:2d19:0:b0:52c:8c5b:b7d8 with SMTP id 2adb3069b0e04-52c8c5bb9d5mr3324453e87.30.1718129795674;
-        Tue, 11 Jun 2024 11:16:35 -0700 (PDT)
-Received: from pc636 (host-90-233-193-23.mobileonline.telia.com. [90.233.193.23])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c85accab0sm1334842e87.106.2024.06.11.11.16.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 11:16:35 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 11 Jun 2024 20:16:32 +0200
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	hailong liu <hailong.liu@oppo.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	steve.kang@unisoc.com
-Subject: Re: [Resend PATCHv4 1/1] mm: fix incorrect vbq reference in
- purge_fragmented_block
-Message-ID: <ZmiUgPDjzI32Cqr9@pc636>
-References: <20240607023116.1720640-1-zhaoyang.huang@unisoc.com>
- <CAGWkznEODMbDngM3toQFo-bgkezEpmXf_qE=SpuYcqsjEJk1DQ@mail.gmail.com>
- <CAGWkznE-HcYBia2HDcHt6trM9oeJ2x6KdyFzR3Jd_-L5HyPxSA@mail.gmail.com>
+	s=arc-20240116; t=1718129873; c=relaxed/simple;
+	bh=V5fJccGY35et0mUYl+GhicFanbbKht8a+d+z4VF4jDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=P2mlIiH7YKdCwWm0uRchtD9AiYKoN5VA9IwlLiYBFD2EbJFZ8TYiiII0h58pLwINeiBTp7B6R/8P5BP5DVM8MzRKfGMAOUqJ6MHgq11cfYIfpHm/6vwsqLOVAy3DR4J1/p00y9vrBVlo+/jAdc0hluIvmbQAFITsiBp7V4BZw00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C+svuxMk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BHHro0001180;
+	Tue, 11 Jun 2024 18:17:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4YJ8Lhmst0xeBjIowrNmTmfZV+TnLyVmo1as+S8SgFY=; b=C+svuxMkIqhB8zZ3
+	183Rlp9fuUZ6I7kdtURu6bfJS4WEfNOw/Hu1Rl//5uzHFBH5bUpvfgdCMUZFTzOm
+	yMSLO+X0r12z4mTnk3zk9y9Yul7uqlyVMIGWLr0QCr2SJFoS0HBLDIyn/YNQhRpr
+	czS23QHR/5ykEiA4iVCq6F9ET7bHMJwbJAg9B2jip6pK26pu6zdXmOdVB/XtoddF
+	hRl8v0WCAOu+lL2ImHHj+fnDMfBTYBER4gcEK/7BMGmwC8rthNUmEoIb7EEBjmx5
+	BTJMNTMvzgMwv/IO9QY/kKGdddNiM3vlhy2G3e4/BH30Yyz1mQ7CCjjfgtXRbDQQ
+	zJdVKQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yptuy04dn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 18:17:41 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BIHe84007704
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 18:17:40 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
+ 2024 11:17:39 -0700
+Message-ID: <c47cbab1-a971-4562-a603-d612ec533730@quicinc.com>
+Date: Tue, 11 Jun 2024 11:17:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGWkznE-HcYBia2HDcHt6trM9oeJ2x6KdyFzR3Jd_-L5HyPxSA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/14] drm/msm/hdmi: switch to
+ atomic_pre_enable/post_disable
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
+ <20240522-fd-hdmi-hpd-v2-3-c30bdb7c5c7e@linaro.org>
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240522-fd-hdmi-hpd-v2-3-c30bdb7c5c7e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: VPH_2qNgrISS_e7enANlTEWbXDd9PAbD
+X-Proofpoint-ORIG-GUID: VPH_2qNgrISS_e7enANlTEWbXDd9PAbD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 mlxlogscore=999 phishscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110125
 
->
-> Sorry to bother you again. Are there any other comments or new patch
-> on this which block some test cases of ANDROID that only accept ACKed
-> one on its tree.
+
+
+On 5/22/2024 3:50 AM, Dmitry Baryshkov wrote:
+> In preparation of reworking the HDMI mode setting, switch pre_enable and
+> post_disable callbacks to their atomic variants.
 > 
-I have just returned from vacation. Give me some time to review your
-patch. Meanwhile, do you have a reproducer? So i would like to see how
-i can trigger an issue that is in question.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Thanks!
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 
---
-Uladzislau Rezki
+> ---
+>   drivers/gpu/drm/msm/hdmi/hdmi_bridge.c | 15 +++++++++++----
+>   1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> index 9eb4d06bdc0e..3c6121c57b01 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> @@ -120,7 +120,8 @@ static void msm_hdmi_config_avi_infoframe(struct hdmi *hdmi)
+>   	hdmi_write(hdmi, REG_HDMI_INFOFRAME_CTRL1, val);
+>   }
+>   
+> -static void msm_hdmi_bridge_pre_enable(struct drm_bridge *bridge)
+> +static void msm_hdmi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
+> +					      struct drm_bridge_state *old_bridge_state)
+>   {
+>   	struct hdmi_bridge *hdmi_bridge = to_hdmi_bridge(bridge);
+>   	struct hdmi *hdmi = hdmi_bridge->hdmi;
+> @@ -146,7 +147,8 @@ static void msm_hdmi_bridge_pre_enable(struct drm_bridge *bridge)
+>   		msm_hdmi_hdcp_on(hdmi->hdcp_ctrl);
+>   }
+>   
+> -static void msm_hdmi_bridge_post_disable(struct drm_bridge *bridge)
+> +static void msm_hdmi_bridge_atomic_post_disable(struct drm_bridge *bridge,
+> +						struct drm_bridge_state *old_bridge_state)
+>   {
+>   	struct hdmi_bridge *hdmi_bridge = to_hdmi_bridge(bridge);
+>   	struct hdmi *hdmi = hdmi_bridge->hdmi;
+> @@ -292,8 +294,13 @@ static enum drm_mode_status msm_hdmi_bridge_mode_valid(struct drm_bridge *bridge
+>   }
+>   
+>   static const struct drm_bridge_funcs msm_hdmi_bridge_funcs = {
+> -	.pre_enable = msm_hdmi_bridge_pre_enable,
+> -	.post_disable = msm_hdmi_bridge_post_disable,
+> +	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+> +	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+> +	.atomic_reset = drm_atomic_helper_bridge_reset,
+> +
+> +	.atomic_pre_enable = msm_hdmi_bridge_atomic_pre_enable,
+> +	.atomic_post_disable = msm_hdmi_bridge_atomic_post_disable,
+> +
+>   	.mode_set = msm_hdmi_bridge_mode_set,
+>   	.mode_valid = msm_hdmi_bridge_mode_valid,
+>   	.edid_read = msm_hdmi_bridge_edid_read,
+> 
+> -- 
+> 2.39.2
+> 
 
