@@ -1,82 +1,143 @@
-Return-Path: <linux-kernel+bounces-210335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275AD90426F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:32:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 467E4904277
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF80AB22B4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:32:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40DAD1C250C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784204D131;
-	Tue, 11 Jun 2024 17:32:01 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A557750279;
+	Tue, 11 Jun 2024 17:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IWxr0+Mf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F0029429;
-	Tue, 11 Jun 2024 17:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5871F43AD5;
+	Tue, 11 Jun 2024 17:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718127121; cv=none; b=YoJaJvspfVouqFLiY2YIgFRq6fC9e3IBEVFNgZHntMvXkKRPs04uvYe6tH/UVs7WF0MPFKNYnnexvzx1UenlUqD4PgJ5xmARAtrzY+tlGBSAa38UFdKTxBHHJRPLFNwHAVRmEeU5YdjYRH5azX24oL3ztLit6VJq6fSc5iqsows=
+	t=1718127257; cv=none; b=CoSPrEGIy6gqi7mp1bbO2PZS/0Tz+jGxpBKrdnDM7rtFiytKwTJqTfUxo6XiSC3JWKy9q/ECUkPw3bjiXjHXubwEPbk4gtenFA5/pez4v8rADUFCDFN3gGHuwiwJibh7s2Q6yqDBcEYQaIT7ck8AU0i/8zlJMa21ocN082RUwgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718127121; c=relaxed/simple;
-	bh=CrNGOTYh6R/63u6KWmkKpoCdC3WNSHRNIBN1JbMpBPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IOMtwtAMGlLTgoO7fkkFkGe8rMidosL6LF9hKPA2SUJRmWCNF6nRlW+ma+A+CUOcO1o6I03JMin4wliwTrW5Rb0jltrgi8/A2ci8wg8xkFaZkikysblqiMztM5LqyaX64JRhzfc33Bc42I+JbtyJNBg0Q5yfegNHVY03k6qZPhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27332C2BD10;
-	Tue, 11 Jun 2024 17:31:59 +0000 (UTC)
-Date: Tue, 11 Jun 2024 13:32:14 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Dongliang Cui <dongliang.cui@unisoc.com>, axboe@kernel.dk,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, ebiggers@kernel.org,
- ke.wang@unisoc.com, hongyu.jin.cn@gmail.com, niuzhiguo84@gmail.com,
- hao_hao.wang@unisoc.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, akailash@google.com,
- cuidongliang390@gmail.com
-Subject: Re: [PATCH v4] block: Add ioprio to block_rq tracepoint
-Message-ID: <20240611133214.3ab0c1a5@gandalf.local.home>
-In-Reply-To: <20240611131737.564b6655@gandalf.local.home>
-References: <20240611073519.323680-1-dongliang.cui@unisoc.com>
-	<86eb3dd0-77a1-4d1d-8e62-38c46bd7563a@acm.org>
-	<20240611125440.6d095270@gandalf.local.home>
-	<be0dc105-e205-4b0e-9bd4-49690249fd26@acm.org>
-	<20240611131737.564b6655@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718127257; c=relaxed/simple;
+	bh=IGWRkyXrapW7OPOE9BiYZCSGgeR9F5qaCexXoS2vqgY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BROvmCZ3qIDsW6r7Q7DymJvWaFQoOI7mXAGHRJ3B5XqhVWwzjJuyYeDD/7jwNDMN42go4trT9NvqLH/Vb7ZcrLNf94AGoP2LGbBogXhJa69Zh3HGOn5gnsoJuBHN6RLQ1go2ZTzAOwfOj9Rzq3FZ5jFT25B+lF1R0yFeQHKAoBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IWxr0+Mf; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718127255; x=1749663255;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=IGWRkyXrapW7OPOE9BiYZCSGgeR9F5qaCexXoS2vqgY=;
+  b=IWxr0+MfehaHIxuOjWMe69fO9ZqzV4rzujSkl9SUglZbvqjTsp8NY4wU
+   SHUFwZafOFLtFkVLRyQCZcD19M/ocwPIMI10z90noim+kYzh2EO2Xe2++
+   8YBSgtjyHOZDFt6u+FO43SdNfR57rtB+UWbR1Zd/u9AN6bDNKL4KvzDA0
+   5jcufOhjel+O2/DpkmT62wYA7yptTySWyD9J8q4aUQclj938AugOnuqBS
+   ysP82TPD5ihUyfvGm71dHvWDy59By9fz9reOqMVWlIXr4IdYeeduOKJiN
+   uksP9mxTU3NJ3wozjZQowPri2CeaSKOknECCsNEoB9CizaSLwRhYnsYM1
+   Q==;
+X-CSE-ConnectionGUID: kGs3ls+oThWhMWdnkYiAXw==
+X-CSE-MsgGUID: d0Rr2RmqTsG2cVjyV3EouQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="18685823"
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="18685823"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 10:34:14 -0700
+X-CSE-ConnectionGUID: DNfh+BcqTou8u9tShGZuKQ==
+X-CSE-MsgGUID: Zb35i7RcREybUQmYmRkGUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="39486007"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 10:34:13 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Cc: linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: [PATCH v6 05/49 RESEND] media: atomisp: Switch to new Intel CPU model defines
+Date: Tue, 11 Jun 2024 10:34:06 -0700
+Message-ID: <20240611173406.352874-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Jun 2024 13:17:37 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+New CPU #defines encode vendor and family as well as model.
 
-> > Hmm ... if the above array is terminated with a { -1, NULL } sentinel and if
-> > __print_symbolic() is changed into trace_print_symbols_seq(p, ...) then the above
-> > array can be moved into a C file, isn't it?
-> >   
-> 
-> Then it breaks user space parsing. The reason for __print_symbolic() is
-> that libtraceevent knows how to parse it. If you put the array into a C
-> file, the above mappings will not show up in the tracefs format file for
-> the event, and you'll just get "[FAILED TO PARSE]" output from the user
-> space tracing tooling.
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+---
 
-Note, the trace headers are not normal headers. They are included multiple
-times (when TRACE_HEADER_MULTI_READ is defined). Only one C file will
-include this header with CREATE_TRACE_POINTS defined and these headers will
-then build global C functions and variables.
+Mauro, Hans, Greg: Which one of you owns this one. Can you take
+a look please. Let me know if changes are needed.
 
-So technically, this "array" is in C file and not in a header, as it will
-not be created unless a C file includes it with CREATE_TRACE_POINTS, and
-only one C file may do that (otherwise the kernel will fail to build).
+ .../atomisp/include/linux/atomisp_platform.h  | 27 ++++++++-----------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
--- Steve
+diff --git a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
+index 0e3f6fb78483..fdeb247036b0 100644
+--- a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
++++ b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
+@@ -18,7 +18,7 @@
+ #ifndef ATOMISP_PLATFORM_H_
+ #define ATOMISP_PLATFORM_H_
+ 
+-#include <asm/intel-family.h>
++#include <asm/cpu_device_id.h>
+ #include <asm/processor.h>
+ 
+ #include <linux/i2c.h>
+@@ -178,22 +178,17 @@ void atomisp_unregister_subdev(struct v4l2_subdev *subdev);
+ int v4l2_get_acpi_sensor_info(struct device *dev, char **module_id_str);
+ 
+ /* API from old platform_camera.h, new CPUID implementation */
+-#define __IS_SOC(x) (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL && \
+-		     boot_cpu_data.x86 == 6 &&                       \
+-		     boot_cpu_data.x86_model == (x))
+-#define __IS_SOCS(x,y) (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL && \
+-		        boot_cpu_data.x86 == 6 &&                       \
+-		        (boot_cpu_data.x86_model == (x) || \
+-		         boot_cpu_data.x86_model == (y)))
+-
+-#define IS_MFLD	__IS_SOC(INTEL_FAM6_ATOM_SALTWELL_MID)
+-#define IS_BYT	__IS_SOC(INTEL_FAM6_ATOM_SILVERMONT)
+-#define IS_CHT	__IS_SOC(INTEL_FAM6_ATOM_AIRMONT)
+-#define IS_MRFD	__IS_SOC(INTEL_FAM6_ATOM_SILVERMONT_MID)
+-#define IS_MOFD	__IS_SOC(INTEL_FAM6_ATOM_AIRMONT_MID)
++#define __IS_SOC(x) (boot_cpu_data.x86_vfm == x)
++#define __IS_SOCS(x, y) (boot_cpu_data.x86_vfm == x || boot_cpu_data.x86_vfm == y)
++
++#define IS_MFLD	__IS_SOC(INTEL_ATOM_SALTWELL_MID)
++#define IS_BYT	__IS_SOC(INTEL_ATOM_SILVERMONT)
++#define IS_CHT	__IS_SOC(INTEL_ATOM_AIRMONT)
++#define IS_MRFD	__IS_SOC(INTEL_ATOM_SILVERMONT_MID)
++#define IS_MOFD	__IS_SOC(INTEL_ATOM_AIRMONT_MID)
+ 
+ /* Both CHT and MOFD come with ISP2401 */
+-#define IS_ISP2401 __IS_SOCS(INTEL_FAM6_ATOM_AIRMONT, \
+-			     INTEL_FAM6_ATOM_AIRMONT_MID)
++#define IS_ISP2401 __IS_SOCS(INTEL_ATOM_AIRMONT, \
++			     INTEL_ATOM_AIRMONT_MID)
+ 
+ #endif /* ATOMISP_PLATFORM_H_ */
+-- 
+2.45.0
+
 
