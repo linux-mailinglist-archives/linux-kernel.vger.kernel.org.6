@@ -1,173 +1,243 @@
-Return-Path: <linux-kernel+bounces-209673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D341903930
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:46:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6E5903934
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CD6C1C23A4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:46:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B0AF283F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8821E52F;
-	Tue, 11 Jun 2024 10:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21414178385;
+	Tue, 11 Jun 2024 10:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hOU2iZ71"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MBd2tuLi"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C4A174EC1;
-	Tue, 11 Jun 2024 10:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23307174EC1
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718102778; cv=none; b=h89lVU5C+v9AQBZKbEq20Uooveaqko1k+yARan47IKd8r2iFdJ3mV+HzYBwjV2lXO9zucvO1Tqixk00h+JU28mwkUgvwEY7Lmpq3JzmjAfN+ALRdM8ln6a9POo70lh0byZxaFUZhDvHqONoL9zWv5FyizXKXAhVeCmd3xXRofxM=
+	t=1718102822; cv=none; b=owPvMdPhR2DNk54Y4DA0KWUTCofJFmr9Er1XgR5jNpc39aXcphB91/cAz6c6w7wyuq0sA0Dbe+dB2huPfh3jRrMDYAhJLjMIZvXB69Xo+zfZHLFeaVzL4a0P05ehTjB22QmqepAeM1t1FGs3YT0wR3F+Iusmj0hIWAnRro60+as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718102778; c=relaxed/simple;
-	bh=4TSoFH28pB7Lu+/lE2dCqcs0oPJH8qkuGmHC1tVnGC4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcNpgZQPBxsgIP77meq8NQ+KlcK5xakNQkrmkTzSUajqvp5+vkpOfd7mLeP3DEP0x5k8SvwqQHt2BF2n1HiH2jos2rzK5PqGIgibcEwoeyEi35gA4rnQw9oCe3geTsqQitpIUpQ52e1O8nz924QdFmfl5R91kTQcRLfCZCQr8CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hOU2iZ71; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718102776; x=1749638776;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4TSoFH28pB7Lu+/lE2dCqcs0oPJH8qkuGmHC1tVnGC4=;
-  b=hOU2iZ716RHX4AcynPgbl7r92GYBAhcl1ze0vwp6vg5IOcUpFZ/oqs2j
-   0xRpG+wIVpiKXvckHJcNQtSNX7B6wyWFadSoey4EqIM+CiB+uzLVqq/9Z
-   YSmubeKmKZRr0G/qltKJP06YNpQfBKJXHk0WD1P1jAtv5h+H7npcmG60o
-   NUPj5//xvXu6R/+LXpzNv2nUgITXUFBenVarXv3SoMJgNj1//+zzEgqxn
-   EAZx1/RUO6OergVrRmKPyD8M4jGMVykLhKUowyGNEttdiLNiQRCFJYXAR
-   Bkqu82J3GiihZsx62DTYxdv/RkaRLH6tPMP4z1uMk35tx5IhHSTzqJEdj
-   w==;
-X-CSE-ConnectionGUID: HKNdurkMQ2Ggz/eZHEil9w==
-X-CSE-MsgGUID: QrJi9OqDTUWo+/GXWEgcCg==
-X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
-   d="scan'208";a="27263922"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Jun 2024 03:46:15 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 11 Jun 2024 03:45:44 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 11 Jun 2024 03:45:44 -0700
-Date: Tue, 11 Jun 2024 12:45:44 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-CC: <lkp@intel.com>, <UNGLinuxDriver@microchip.com>, <andrew@lunn.ch>,
-	<bryan.whitehead@microchip.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <hkallweit1@gmail.com>, <hmehrtens@maxlinear.com>,
-	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <linux@armlinux.org.uk>,
-	<lxu@maxlinear.com>, <netdev@vger.kernel.org>,
-	<oe-kbuild-all@lists.linux.dev>, <pabeni@redhat.com>, <sbauer@blackbox.su>,
-	Wojciech Drewek <wojciech.drewek@intel.com>
-Subject: Re: [PATCH net V3 0/3] net: lan743x: Fixes for multiple WOL related
- issues
-Message-ID: <20240611104544.pjtqkx4dhdnngpaq@DEN-DL-M31836.microchip.com>
-References: <202406052200.w3zuc32H-lkp@intel.com>
- <20240611062753.12020-1-Raju.Lakkaraju@microchip.com>
- <20240611071051.65e5n3bn7e4zm7lq@DEN-DL-M31836.microchip.com>
- <ZmgEUrA6xM9vtDxD@HYD-DK-UNGSW21.microchip.com>
+	s=arc-20240116; t=1718102822; c=relaxed/simple;
+	bh=9v70XV5y4GSnRmoIx0HSZWYeUnRaDfB3X/utGcfIfWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=JPK0Er4iNAGmHlKc/FXELkbWr+gSoBiLbAHugqfeZRUJNpHAnNsRqzmz7uHt1sXNdEmRHWpOkbf7RSLAJb/g0jVcyz0dfPmB5kA5S2JIQBUPAOrAe6ecUletk7MHAZxpfeKfLQIyhZR1FZSkxILFlo27MeXr/5E3i8wfLL8nwrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MBd2tuLi; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52bbf73f334so3748972e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:46:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718102818; x=1718707618; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fp+D+Ajoxcp8Oj4mR/rcn2WCT+/k1rl0VG3rX/u5T2Q=;
+        b=MBd2tuLiHRwAKtrcqn9GqsnRRNl3nrk6DUSuECUgfdDdXs8CG2ngPxcUVTuULh/VsR
+         eu1bY+Tg+Anpxr0qgbd/+lFcv9+CLE6xeQZsI9ak0b15SyaObL8qb6JHRrw79JLQyPsk
+         LMR/XhZPAKVSANmvgzcMU8+7waP+WcpyLS01Zw9InGh9wF3E5OdzEpqOwiTtX/w3sLL7
+         Kc3XwCawSfVY1jlJEfCzOjhzRiLaGNWXJhtPZuFupMoZmQXf8BX8+0SmAhdGqq5teMvF
+         5V/hMwgf/a4l/xavhZrd+UhkCbXNNmp60UD5Kb+mVJhmibuBuQz0Mj2bLfeQagFH92u8
+         3tNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718102818; x=1718707618;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fp+D+Ajoxcp8Oj4mR/rcn2WCT+/k1rl0VG3rX/u5T2Q=;
+        b=iELo3hptQITjfoQanMcL5SRkOrOvabV9eeO/vI4vWn2m9OR9vPx725ItdCFViTB90a
+         zjWL0wfHHJGjr7nXdZ5bCmYQ4xKpUKIl0CJ4OJW4TZMWau8jBMqZVef/fComf0TJka0n
+         pvhyf8tF8Cw1M50M7cWZiuqh4s3Z9tGzq0tEDbjmm6y1MODjxaEvvi5zybTrfX1l9BIl
+         E9/T7OptCrql+hrE6LfzH8C0Zp2aHvL4jdtOpqAYY9K/OILwrium36iW3I3jgXfj7gzZ
+         2nxG4jrC6zQbv51A+vDpsZXoRC+Q/zZxl+xv6DiDlstzxE7UMrok+WJ6P5LAjsssq+fH
+         7Ftw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1sM5Mfa9PnZ8qbKaHWE9B513mfJoaTg0P7/DAFZU8txWbrzbnDiWMpsedAQXw70N/75TZ37CmLM97d2NbQcs/uPV+epZ4qj+ZPewt
+X-Gm-Message-State: AOJu0YwWCazZ3SPuPfmDciyDIKo2l8GN8JYfErUamsArOv3g1sJDVVyC
+	hlHNTYhsdJrkqzaRjojg5+iQMiUCxvQ/89Cb8oxs7aXyJGWkrJUgP1NgU7YMhME=
+X-Google-Smtp-Source: AGHT+IHtdFqo/9J5gcont3xPpGuqzTIC4OsBhAx07391LfaeWl+GPgTqM/ZWZg+Gl6i65g9CyLwSng==
+X-Received: by 2002:a05:6512:318e:b0:52c:9528:55d1 with SMTP id 2adb3069b0e04-52c952856f6mr1061801e87.4.1718102818138;
+        Tue, 11 Jun 2024 03:46:58 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2583bdedsm4755135f8f.72.2024.06.11.03.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 03:46:57 -0700 (PDT)
+Date: Tue, 11 Jun 2024 13:46:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Artur Rojek <contact@artur-rojek.eu>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: adc-joystick - move axes data into the main
+ structure
+Message-ID: <0c098606-aba1-4cc0-9a33-6a68c67b1157@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZmgEUrA6xM9vtDxD@HYD-DK-UNGSW21.microchip.com>
+In-Reply-To: <ZmYlfKDm5sgB44EU@google.com>
 
-The 06/11/2024 13:31, Raju Lakkaraju wrote:
-> Hi Horatiu,
-> 
-> There is no new changes except "kernel test robot" reported issue.
+Hi Dmitry,
 
-So there is no change in the code, you just added the tags between this
-version and the previous one where the robot complained?
-Because to me it looks like you added an extra #ifdef in 2/3 patch.
+kernel test robot noticed the following build warnings:
 
-> 
-> I fix the issue and sent the patch along with other old patches.
-> Also add "Reported-by" and "Closes" tags to all patches and
-> --in-reply-to=202406052200.w3zuc32H-lkp@intel.com.
-> i.e.
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406052200.w3zuc32H-lkp@intel.com/
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-It doesn't say to add only if you fix the issue in a separate patch and
-not just for a new version of the patch/commit.
-Or I miss reading this?
+url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Torokhov/Input-adc-joystick-move-axes-data-into-the-main-structure/20240610-060124
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
+patch link:    https://lore.kernel.org/r/ZmYlfKDm5sgB44EU%40google.com
+patch subject: [PATCH] Input: adc-joystick - move axes data into the main structure
+config: x86_64-randconfig-161-20240611 (https://download.01.org/0day-ci/archive/20240611/202406111750.AXBfJUS3-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
 
-> 
-> Is it sufficient? or
-> Do you need to generete new version of patches ?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202406111750.AXBfJUS3-lkp@intel.com/
 
-Every time when you do a change in your patch until is accepted, you
-will need to generate a new version.
-Don't forget about 24h rule. That you need to wait 24h before you can
-send a new version.
+smatch warnings:
+drivers/input/joystick/adc-joystick.c:166 adc_joystick_set_axes() error: uninitialized symbol 'axes'.
+drivers/input/joystick/adc-joystick.c:241 adc_joystick_probe() error: uninitialized symbol 'joy'.
+drivers/input/joystick/adc-joystick.c:241 adc_joystick_probe() warn: passing zero to 'PTR_ERR'
 
-> 
-> Thanks,
-> Raju
-> The 06/11/2024 09:10, Horatiu Vultur wrote:
-> > Hi Raju,
-> > 
-> > Is this not supposed to be v4?
-> > Because I can see v3 here:
-> > https://www.spinics.net/lists/netdev/msg1002225.html
-> > 
-> > The 06/11/2024 11:57, Raju Lakkaraju wrote:
-> > > This patch series implement the following fixes:
-> > > 1. Disable WOL upon resume in order to restore full data path operation
-> > > 2. Support WOL at both the PHY and MAC appropriately 
-> > > 3. Remove interrupt mask clearing from config_init 
-> > > 
-> > > Patch-3 was sent seperately earlier. Review comments in link: 
-> > > https://lore.kernel.org/lkml/4a565d54-f468-4e32-8a2c-102c1203f72c@lunn.ch/T/
-> > > 
-> > > Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>                        
-> > > Reported-by: kernel test robot <lkp@intel.com>                                  
-> > > Closes: https://lore.kernel.org/oe-kbuild-all/202406052200.w3zuc32H-lkp@intel.com/
-> > 
-> > I think you should drop the 'Reported-by' and 'Closes' tags because the
-> > issue that is getting closed is the one that you introduced in one of
-> > your previous version of the patch series.
-> > 
-> > > 
-> > > Raju Lakkaraju (3):
-> > >   net: lan743x: disable WOL upon resume to restore full data path
-> > >     operation
-> > >   net: lan743x: Support WOL at both the PHY and MAC appropriately
-> > >   net: phy: mxl-gpy: Remove interrupt mask clearing from config_init
-> > > 
-> > >  .../net/ethernet/microchip/lan743x_ethtool.c  | 44 ++++++++++++--
-> > >  drivers/net/ethernet/microchip/lan743x_main.c | 46 ++++++++++++---
-> > >  drivers/net/ethernet/microchip/lan743x_main.h | 28 +++++++++
-> > >  drivers/net/phy/mxl-gpy.c                     | 58 ++++++++++++-------
-> > >  4 files changed, 144 insertions(+), 32 deletions(-)
-> > > 
-> > > -- 
-> > > 2.34.1
-> > > 
-> > > 
-> > 
-> > -- 
-> > /Horatiu
-> 
-> -- 
-> Thanks,                                                                         
-> Raju
+vim +/axes +166 drivers/input/joystick/adc-joystick.c
+
+2c2b364fddd551 Artur Rojek     2020-09-28  131  
+2c2b364fddd551 Artur Rojek     2020-09-28  132  static int adc_joystick_set_axes(struct device *dev, struct adc_joystick *joy)
+2c2b364fddd551 Artur Rojek     2020-09-28  133  {
+2c2b364fddd551 Artur Rojek     2020-09-28  134  	struct adc_joystick_axis *axes;
+2c2b364fddd551 Artur Rojek     2020-09-28  135  	struct fwnode_handle *child;
+815b74328f141f Dmitry Torokhov 2024-06-09  136  	s32 range[2], fuzz, flat;
+815b74328f141f Dmitry Torokhov 2024-06-09  137  	unsigned int num_axes;
+815b74328f141f Dmitry Torokhov 2024-06-09  138  	int error, i;
+2c2b364fddd551 Artur Rojek     2020-09-28  139  
+2c2b364fddd551 Artur Rojek     2020-09-28  140  	num_axes = device_get_child_node_count(dev);
+2c2b364fddd551 Artur Rojek     2020-09-28  141  	if (!num_axes) {
+2c2b364fddd551 Artur Rojek     2020-09-28  142  		dev_err(dev, "Unable to find child nodes\n");
+2c2b364fddd551 Artur Rojek     2020-09-28  143  		return -EINVAL;
+2c2b364fddd551 Artur Rojek     2020-09-28  144  	}
+2c2b364fddd551 Artur Rojek     2020-09-28  145  
+2c2b364fddd551 Artur Rojek     2020-09-28  146  	if (num_axes != joy->num_chans) {
+2c2b364fddd551 Artur Rojek     2020-09-28  147  		dev_err(dev, "Got %d child nodes for %d channels\n",
+2c2b364fddd551 Artur Rojek     2020-09-28  148  			num_axes, joy->num_chans);
+2c2b364fddd551 Artur Rojek     2020-09-28  149  		return -EINVAL;
+2c2b364fddd551 Artur Rojek     2020-09-28  150  	}
+2c2b364fddd551 Artur Rojek     2020-09-28  151  
+2c2b364fddd551 Artur Rojek     2020-09-28  152  	device_for_each_child_node(dev, child) {
+2c2b364fddd551 Artur Rojek     2020-09-28  153  		error = fwnode_property_read_u32(child, "reg", &i);
+2c2b364fddd551 Artur Rojek     2020-09-28  154  		if (error) {
+2c2b364fddd551 Artur Rojek     2020-09-28  155  			dev_err(dev, "reg invalid or missing\n");
+2c2b364fddd551 Artur Rojek     2020-09-28  156  			goto err_fwnode_put;
+2c2b364fddd551 Artur Rojek     2020-09-28  157  		}
+2c2b364fddd551 Artur Rojek     2020-09-28  158  
+2c2b364fddd551 Artur Rojek     2020-09-28  159  		if (i >= num_axes) {
+2c2b364fddd551 Artur Rojek     2020-09-28  160  			error = -EINVAL;
+2c2b364fddd551 Artur Rojek     2020-09-28  161  			dev_err(dev, "No matching axis for reg %d\n", i);
+2c2b364fddd551 Artur Rojek     2020-09-28  162  			goto err_fwnode_put;
+2c2b364fddd551 Artur Rojek     2020-09-28  163  		}
+2c2b364fddd551 Artur Rojek     2020-09-28  164  
+2c2b364fddd551 Artur Rojek     2020-09-28  165  		error = fwnode_property_read_u32(child, "linux,code",
+2c2b364fddd551 Artur Rojek     2020-09-28 @166  						 &axes[i].code);
+
+axes is unitialized.
+
+2c2b364fddd551 Artur Rojek     2020-09-28  167  		if (error) {
+2c2b364fddd551 Artur Rojek     2020-09-28  168  			dev_err(dev, "linux,code invalid or missing\n");
+2c2b364fddd551 Artur Rojek     2020-09-28  169  			goto err_fwnode_put;
+2c2b364fddd551 Artur Rojek     2020-09-28  170  		}
+2c2b364fddd551 Artur Rojek     2020-09-28  171  
+2c2b364fddd551 Artur Rojek     2020-09-28  172  		error = fwnode_property_read_u32_array(child, "abs-range",
+815b74328f141f Dmitry Torokhov 2024-06-09  173  						       range, 2);
+2c2b364fddd551 Artur Rojek     2020-09-28  174  		if (error) {
+2c2b364fddd551 Artur Rojek     2020-09-28  175  			dev_err(dev, "abs-range invalid or missing\n");
+2c2b364fddd551 Artur Rojek     2020-09-28  176  			goto err_fwnode_put;
+2c2b364fddd551 Artur Rojek     2020-09-28  177  		}
+2c2b364fddd551 Artur Rojek     2020-09-28  178  
+815b74328f141f Dmitry Torokhov 2024-06-09  179  		if (range[0] > range[1]) {
+6560cfcfb46511 Chris Morgan    2024-01-19  180  			dev_dbg(dev, "abs-axis %d inverted\n", i);
+6560cfcfb46511 Chris Morgan    2024-01-19  181  			axes[i].inverted = true;
+815b74328f141f Dmitry Torokhov 2024-06-09  182  			swap(range[0], range[1]);
+6560cfcfb46511 Chris Morgan    2024-01-19  183  		}
+6560cfcfb46511 Chris Morgan    2024-01-19  184  
+815b74328f141f Dmitry Torokhov 2024-06-09  185  		fwnode_property_read_u32(child, "abs-fuzz", &fuzz);
+815b74328f141f Dmitry Torokhov 2024-06-09  186  		fwnode_property_read_u32(child, "abs-flat", &flat);
+2c2b364fddd551 Artur Rojek     2020-09-28  187  
+2c2b364fddd551 Artur Rojek     2020-09-28  188  		input_set_abs_params(joy->input, axes[i].code,
+815b74328f141f Dmitry Torokhov 2024-06-09  189  				     range[0], range[1], fuzz, flat);
+2c2b364fddd551 Artur Rojek     2020-09-28  190  	}
+2c2b364fddd551 Artur Rojek     2020-09-28  191  
+2c2b364fddd551 Artur Rojek     2020-09-28  192  	return 0;
+2c2b364fddd551 Artur Rojek     2020-09-28  193  
+2c2b364fddd551 Artur Rojek     2020-09-28  194  err_fwnode_put:
+2c2b364fddd551 Artur Rojek     2020-09-28  195  	fwnode_handle_put(child);
+2c2b364fddd551 Artur Rojek     2020-09-28  196  	return error;
+2c2b364fddd551 Artur Rojek     2020-09-28  197  }
+2c2b364fddd551 Artur Rojek     2020-09-28  198  
+815b74328f141f Dmitry Torokhov 2024-06-09  199  
+815b74328f141f Dmitry Torokhov 2024-06-09  200  /*
+815b74328f141f Dmitry Torokhov 2024-06-09  201   * Count how many channels we got. NULL terminated.
+815b74328f141f Dmitry Torokhov 2024-06-09  202   * Do not check the storage size if using polling.
+815b74328f141f Dmitry Torokhov 2024-06-09  203   */
+815b74328f141f Dmitry Torokhov 2024-06-09  204  static int adc_joystick_count_channels(struct device *dev,
+815b74328f141f Dmitry Torokhov 2024-06-09  205  				       const struct iio_channel *chans,
+815b74328f141f Dmitry Torokhov 2024-06-09  206  				       bool polled,
+815b74328f141f Dmitry Torokhov 2024-06-09  207  				       unsigned int *num_chans)
+815b74328f141f Dmitry Torokhov 2024-06-09  208  {
+815b74328f141f Dmitry Torokhov 2024-06-09  209  	int bits;
+815b74328f141f Dmitry Torokhov 2024-06-09  210  	int i;
+815b74328f141f Dmitry Torokhov 2024-06-09  211  
+815b74328f141f Dmitry Torokhov 2024-06-09  212  	for (i = 0; chans[i].indio_dev; i++) {
+815b74328f141f Dmitry Torokhov 2024-06-09  213  		if (polled)
+815b74328f141f Dmitry Torokhov 2024-06-09  214  			continue;
+815b74328f141f Dmitry Torokhov 2024-06-09  215  		bits = chans[i].channel->scan_type.storagebits;
+815b74328f141f Dmitry Torokhov 2024-06-09  216  		if (!bits || bits > 16) {
+815b74328f141f Dmitry Torokhov 2024-06-09  217  			dev_err(dev, "Unsupported channel storage size\n");
+815b74328f141f Dmitry Torokhov 2024-06-09  218  			return -EINVAL;
+815b74328f141f Dmitry Torokhov 2024-06-09  219  		}
+815b74328f141f Dmitry Torokhov 2024-06-09  220  		if (bits != chans[0].channel->scan_type.storagebits) {
+815b74328f141f Dmitry Torokhov 2024-06-09  221  			dev_err(dev, "Channels must have equal storage size\n");
+815b74328f141f Dmitry Torokhov 2024-06-09  222  			return -EINVAL;
+815b74328f141f Dmitry Torokhov 2024-06-09  223  		}
+815b74328f141f Dmitry Torokhov 2024-06-09  224  	}
+815b74328f141f Dmitry Torokhov 2024-06-09  225  
+815b74328f141f Dmitry Torokhov 2024-06-09  226  	return i;
+815b74328f141f Dmitry Torokhov 2024-06-09  227  }
+815b74328f141f Dmitry Torokhov 2024-06-09  228  
+2c2b364fddd551 Artur Rojek     2020-09-28  229  static int adc_joystick_probe(struct platform_device *pdev)
+2c2b364fddd551 Artur Rojek     2020-09-28  230  {
+2c2b364fddd551 Artur Rojek     2020-09-28  231  	struct device *dev = &pdev->dev;
+815b74328f141f Dmitry Torokhov 2024-06-09  232  	struct iio_channel *chans;
+2c2b364fddd551 Artur Rojek     2020-09-28  233  	struct adc_joystick *joy;
+2c2b364fddd551 Artur Rojek     2020-09-28  234  	struct input_dev *input;
+815b74328f141f Dmitry Torokhov 2024-06-09  235  	unsigned int poll_interval = 0;
+815b74328f141f Dmitry Torokhov 2024-06-09  236  	unsigned int num_chans;
+2c2b364fddd551 Artur Rojek     2020-09-28  237  	int error;
+2c2b364fddd551 Artur Rojek     2020-09-28  238  
+815b74328f141f Dmitry Torokhov 2024-06-09  239  	chans = devm_iio_channel_get_all(dev);
+815b74328f141f Dmitry Torokhov 2024-06-09  240  	if (IS_ERR(chans)) {
+2c2b364fddd551 Artur Rojek     2020-09-28 @241  		error = PTR_ERR(joy->chans);
+
+s/joy->chans/chans/
+
+2c2b364fddd551 Artur Rojek     2020-09-28  242  		if (error != -EPROBE_DEFER)
+2c2b364fddd551 Artur Rojek     2020-09-28  243  			dev_err(dev, "Unable to get IIO channels");
+2c2b364fddd551 Artur Rojek     2020-09-28  244  		return error;
+2c2b364fddd551 Artur Rojek     2020-09-28  245  	}
+2c2b364fddd551 Artur Rojek     2020-09-28  246  
+24c06e000e8fa2 Chris Morgan    2022-08-16  247  	error = device_property_read_u32(dev, "poll-interval", &poll_interval);
 
 -- 
-/Horatiu
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
