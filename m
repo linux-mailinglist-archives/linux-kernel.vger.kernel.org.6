@@ -1,115 +1,155 @@
-Return-Path: <linux-kernel+bounces-209161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C990902E0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:46:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA71902E0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80CD1F233B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:46:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C644CB210A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC14111A8;
-	Tue, 11 Jun 2024 01:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5207FAD49;
+	Tue, 11 Jun 2024 01:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="gyUcWiZT"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647ACEDF;
-	Tue, 11 Jun 2024 01:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fw5u6aKf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DCDEDF;
+	Tue, 11 Jun 2024 01:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718070362; cv=none; b=OR2spRcgSRPwb4YxWf8qGg+4AoPshN4BLD69l8Hv36QFjB2EfU1jkGwo337zKGLYNeU9ptiw/QLl4DNTE79aT084Oa/D+A3vmwLCpJJN4VxK0DO8hYNjK5k3oMki55cq07KhJvUySBMG9V+xZ+ZSHkGZg0o21IeY5i4PU85Cl+A=
+	t=1718070350; cv=none; b=D2Lf7ZoIAhodGlO7Ogbg1N/X2i634r1jcTREQaV76EG3B/F8Iw548Uw/hzd6pF6nKyLvVA9OBJu85fTD6a1ncaa6NEAOL/19yQOD07cs0rKsq3OtdEGFMu9Nf4cObi+MkY3ko52Awl/pOWftRMQGLnMORJjDuCjOF5HKnkt7rn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718070362; c=relaxed/simple;
-	bh=5NSs9Jq/IvH6M6vdRrx8v4GnhYUK/xctGT7pD5vm7pY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=or1D8MRu/QI4zt72z41w1bwWz4konq6YyX63A9XQ2FE2jxWtLFcz40SwgETonB5DSjakAoKnnhr8/CnDa7zyPVW21j97jK9iwJzBNix0dkKEfV8Z/olyWYJEi7Ql75roT+D7pAsg0IQ4fUqd7Uq6IxZxCva035C2hrsCZzcmcG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=gyUcWiZT reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=NiZJDbT9jVgqyuAx6P1B7YmnJGfqCIgvfvp//rQmMEY=; b=g
-	yUcWiZTa2qhFdSUSW7OtifoR92AbFpeLwGcBKAV47OUyGhLviPPCj72EPff9HuAK
-	lXjLINh4tKZaJBJIfhvGay5gR29D+mpw0RfJT5eakYm4sg+9627kdMg+YwVU7raE
-	NdtffVBKU5jujxKXbbqdJNxY+TkVvZqP0a4UTCC45o=
-Received: from slark_xiao$163.com ( [223.104.68.135] ) by
- ajax-webmail-wmsvr-40-148 (Coremail) ; Tue, 11 Jun 2024 09:45:20 +0800
- (CST)
-Date: Tue, 11 Jun 2024 09:45:20 +0800 (CST)
-From: "Slark Xiao" <slark_xiao@163.com>
-To: "Jeffrey Hugo" <quic_jhugo@quicinc.com>, 
-	"Sergey Ryazanov" <ryazanov.s.a@gmail.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: manivannan.sadhasivam@linaro.org, loic.poulain@linaro.org, 
-	quic_qianyu@quicinc.com, mhi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:Re:Re: [PATCH v1 1/2] bus: mhi: host: Import link_id item
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <38a9c3af.1408.19004e530de.Coremail.slark_xiao@163.com>
-References: <20240607100114.452979-1-slark_xiao@163.com>
- <4370ae55-9521-d2da-62b9-42d26b6fbece@quicinc.com>
- <38a9c3af.1408.19004e530de.Coremail.slark_xiao@163.com>
-X-NTES-SC: AL_Qu2aCvycv0sp5imebekfmk8Sg+84W8K3v/0v1YVQOpF8jCHrxgkRXXVJP2bq0du3MRiqkxKdVzhnxtxTR5BccI0hvN8Yy7J6Xqoxkno3YY5DAA==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1718070350; c=relaxed/simple;
+	bh=Rt1ouXIhwMJ1m4R+0fkOGUiXqAnmFxrVnekcV4kzSic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YtZlWnyIf6HfzidSMIU84yI2TkozgvWFDsAx+cOQnw8YU5iJr8YNzQchoA0YWoEJCEA9bFWT+dkaXKBFw80qkE9yBkKwYCh8eLi7GLuSWTtnrIyc0bO8OpYQi7uofwT/ffrisSqXzElEhLqt0b0uZ7uccVBe0ppoVozpLE7mV8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fw5u6aKf; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718070349; x=1749606349;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Rt1ouXIhwMJ1m4R+0fkOGUiXqAnmFxrVnekcV4kzSic=;
+  b=fw5u6aKfws35Ha6YagemycgDrotzxtP0M/BVEVxIsnuO4nhhXni/ZK4P
+   46lqrUBy01zTf7N+M4/qoKWdWn12It0DHlsOLRbJ13pSe+7+a7/1bEyLy
+   cBBCLymZqS2FZZiC7/9OfGWP5dLA5Z4FsooD2AKStaesLFBJZxqNIrtAr
+   UfI6YxxGMvF0jQVucQiLXKbFD3gPJPNJf0EWN9+k6hlwrNrcQ79gmtvA8
+   2ku/2C0IaiYwE7z4D5l7K+OgZ2tWI10vkt1ZqiV4jjYFbQNIg+/HRca27
+   RHKqa1vwhty7DuP2ZcGwckScKvUTOv//pUf6sCFcA6H44zP66kb+uxuGA
+   w==;
+X-CSE-ConnectionGUID: OcIKM/j4Tv+b6xFCd3MMrQ==
+X-CSE-MsgGUID: anDxSpH9RtiiCDgrsZrJAw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="25333946"
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="25333946"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 18:45:48 -0700
+X-CSE-ConnectionGUID: 5P26nJYeSCS1oWvCtWsn+A==
+X-CSE-MsgGUID: CBle/kBxRFyglXbu/R/q2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,227,1712646000"; 
+   d="scan'208";a="44202807"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.239.60]) ([10.124.239.60])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 18:45:48 -0700
+Message-ID: <e41fd2bc-26f0-4811-927b-3e94d13d5dac@linux.intel.com>
+Date: Tue, 11 Jun 2024 09:45:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <402e5117.1cb4.19004f89f4f.Coremail.slark_xiao@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3X3gzrGdmVcg3AA--.39728W
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiRwP5ZGV4JtK1gQAGsC
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: x86/pmu: Add a helper to enable bits in
+ FIXED_CTR_CTRL
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240608000819.3296176-1-seanjc@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20240608000819.3296176-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-CgpBdCAyMDI0LTA2LTExIDA5OjI0OjA3LCAiU2xhcmsgWGlhbyIgPHNsYXJrX3hpYW9AMTYzLmNv
-bT4gd3JvdGU6Cj4KPitNb3JlIG1haW50YWluZXIgdG8gdGhpcyBmaXJzdCBwYXRjaCBsaXN0Lgo+
-Cj5BdCAyMDI0LTA2LTA3IDIzOjAxOjAwLCAiSmVmZnJleSBIdWdvIiA8cXVpY19qaHVnb0BxdWlj
-aW5jLmNvbT4gd3JvdGU6Cj4+JFN1YmplY3Qgc2F5cyB0aGlzIGlzIHBhdGNoIDEgb2YgMiwgYnV0
-IEkgZG9uJ3Qgc2VlIGEgc2Vjb25kIHBhdGNoIG5vciBhIAo+PmNvdmVyIGxldHRlci4KPj4KSGkg
-SmVmZnJleSwKSSBhZGRlZCB5b3UgaW4gYW5vdGhlciBwYXRjaCBqdXN0IG5vdy4gUGxlYXNlIGhl
-bHAgdGFrZSBhIHZpZXcgb24gdGhhdC4KVGhhbmtzLgoKPj5PbiA2LzcvMjAyNCA0OjAxIEFNLCBT
-bGFyayBYaWFvIHdyb3RlOgo+Pj4gRm9yIFNEWDcyIE1CSU0gbW9kZSwgaXQgc3RhcnRzIGRhdGEg
-bXV4IGlkIGZyb20gMTEyIGluc3RlYWQgb2YgMC4KPj4+IFRoaXMgd291bGQgbGVhZCB0byBkZXZp
-Y2UgY2FuJ3QgcGluZyBvdXRzaWRlIHN1Y2Nlc3NmdWxseS4KPj4+IEFsc28gTUJJTSBzaWRlIHdv
-dWxkIHJlcG9ydCAiYmFkIHBhY2tldCBzZXNzaW9uICgxMTIpIi4KPj4+IFNvIHdlIGFkZCBhIGxp
-bmsgaWQgZGVmYXVsdCB2YWx1ZSBmb3IgU0RYNzIuCj4+PiAKPj4+IFNpZ25lZC1vZmYtYnk6IFNs
-YXJrIFhpYW8gPHNsYXJrX3hpYW9AMTYzLmNvbT4KPj4+IC0tLQo+Pj4gICBkcml2ZXJzL2J1cy9t
-aGkvaG9zdC9wY2lfZ2VuZXJpYy5jIHwgMyArKysKPj4+ICAgaW5jbHVkZS9saW51eC9taGkuaCAg
-ICAgICAgICAgICAgICB8IDEgKwo+Pj4gICAyIGZpbGVzIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygr
-KQo+Pj4gCj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMu
-YyBiL2RyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPj4+IGluZGV4IDBiNDgzYzdj
-NzZhMS4uMWY5ZGUyNzMwNzY2IDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9idXMvbWhpL2hvc3Qv
-cGNpX2dlbmVyaWMuYwo+Pj4gKysrIGIvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMu
-Ywo+Pj4gQEAgLTUzLDYgKzUzLDcgQEAgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gewo+Pj4gICAJ
-dW5zaWduZWQgaW50IGRtYV9kYXRhX3dpZHRoOwo+Pj4gICAJdW5zaWduZWQgaW50IG1ydV9kZWZh
-dWx0Owo+Pj4gICAJYm9vbCBzaWRlYmFuZF93YWtlOwo+Pj4gKwl1bnNpZ25lZCBpbnQgbGlua19k
-ZWZhdWx0Owo+Pj4gICB9Owo+Pj4gICAKPj4+ICAgI2RlZmluZSBNSElfQ0hBTk5FTF9DT05GSUdf
-VUwoY2hfbnVtLCBjaF9uYW1lLCBlbF9jb3VudCwgZXZfcmluZykgXAo+Pj4gQEAgLTQ2OSw2ICs0
-NzAsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5f
-c2R4NzJfaW5mbyA9IHsKPj4+ICAgCS5kbWFfZGF0YV93aWR0aCA9IDMyLAo+Pj4gICAJLm1ydV9k
-ZWZhdWx0ID0gMzI3NjgsCj4+PiAgIAkuc2lkZWJhbmRfd2FrZSA9IGZhbHNlLAo+Pj4gKwkubGlu
-a19kZWZhdWx0ID0gMTEyLAo+Pj4gICB9Owo+Pj4gICAKPj4+ICAgc3RhdGljIGNvbnN0IHN0cnVj
-dCBtaGlfY2hhbm5lbF9jb25maWcgbWhpX212M3hfY2hhbm5lbHNbXSA9IHsKPj4+IEBAIC0xMDM1
-LDYgKzEwMzcsNyBAQCBzdGF0aWMgaW50IG1oaV9wY2lfcHJvYmUoc3RydWN0IHBjaV9kZXYgKnBk
-ZXYsIGNvbnN0IHN0cnVjdCBwY2lfZGV2aWNlX2lkICppZCkKPj4+ICAgCW1oaV9jbnRybC0+cnVu
-dGltZV9nZXQgPSBtaGlfcGNpX3J1bnRpbWVfZ2V0Owo+Pj4gICAJbWhpX2NudHJsLT5ydW50aW1l
-X3B1dCA9IG1oaV9wY2lfcnVudGltZV9wdXQ7Cj4+PiAgIAltaGlfY250cmwtPm1ydSA9IGluZm8t
-Pm1ydV9kZWZhdWx0Owo+Pj4gKwltaGlfY250cmwtPmxpbmtfaWQgPSBpbmZvLT5saW5rX2RlZmF1
-bHQ7Cj4+PiAgIAo+Pj4gICAJaWYgKGluZm8tPmVkbF90cmlnZ2VyKQo+Pj4gICAJCW1oaV9jbnRy
-bC0+ZWRsX3RyaWdnZXIgPSBtaGlfcGNpX2dlbmVyaWNfZWRsX3RyaWdnZXI7Cj4+PiBkaWZmIC0t
-Z2l0IGEvaW5jbHVkZS9saW51eC9taGkuaCBiL2luY2x1ZGUvbGludXgvbWhpLmgKPj4+IGluZGV4
-IGI1NzNmMTU3NjJmOC4uNGRhMTBiOTljOTZlIDEwMDY0NAo+Pj4gLS0tIGEvaW5jbHVkZS9saW51
-eC9taGkuaAo+Pj4gKysrIGIvaW5jbHVkZS9saW51eC9taGkuaAo+Pj4gQEAgLTQ0NSw2ICs0NDUs
-NyBAQCBzdHJ1Y3QgbWhpX2NvbnRyb2xsZXIgewo+Pj4gICAJYm9vbCB3YWtlX3NldDsKPj4+ICAg
-CXVuc2lnbmVkIGxvbmcgaXJxX2ZsYWdzOwo+Pj4gICAJdTMyIG1ydTsKPj4+ICsJdTMyIGxpbmtf
-aWQ7Cj4+PiAgIH07Cj4+PiAgIAo+Pj4gICAvKioKPj4KPj5Ob25lIG9mIHRoaXMgaXMgYWN0dWFs
-bHkgdXNlZC4gIERlYWQgY29kZSBpcyBnZW5lcmFsbHkgbm90IGFjY2VwdGVkLgo+Pgo+Pi1KZWZm
-Cg==
+
+On 6/8/2024 8:08 AM, Sean Christopherson wrote:
+> Add a helper, intel_pmu_enable_fixed_counter_bits(), to dedup code that
+> enables fixed counter bits, i.e. when KVM clears bits in the reserved mask
+> used to detect invalid MSR_CORE_PERF_FIXED_CTR_CTRL values.
+>
+> No functional change intended.
+>
+> Cc: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/vmx/pmu_intel.c | 22 ++++++++++++----------
+>  1 file changed, 12 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
+> index e01c87981927..fb5cbd6cbeff 100644
+> --- a/arch/x86/kvm/vmx/pmu_intel.c
+> +++ b/arch/x86/kvm/vmx/pmu_intel.c
+> @@ -448,6 +448,14 @@ static __always_inline u64 intel_get_fixed_pmc_eventsel(unsigned int index)
+>  	return eventsel;
+>  }
+>  
+> +static void intel_pmu_enable_fixed_counter_bits(struct kvm_pmu *pmu, u64 bits)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < pmu->nr_arch_fixed_counters; i++)
+> +		pmu->fixed_ctr_ctrl_rsvd &= ~intel_fixed_bits_by_idx(i, bits);
+> +}
+> +
+>  static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
+>  {
+>  	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+> @@ -457,7 +465,6 @@ static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
+>  	union cpuid10_edx edx;
+>  	u64 perf_capabilities;
+>  	u64 counter_rsvd;
+> -	int i;
+>  
+>  	memset(&lbr_desc->records, 0, sizeof(lbr_desc->records));
+>  
+> @@ -501,12 +508,9 @@ static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
+>  			((u64)1 << edx.split.bit_width_fixed) - 1;
+>  	}
+>  
+> -	for (i = 0; i < pmu->nr_arch_fixed_counters; i++)
+> -		pmu->fixed_ctr_ctrl_rsvd &=
+> -			 ~intel_fixed_bits_by_idx(i,
+> -						  INTEL_FIXED_0_KERNEL |
+> -						  INTEL_FIXED_0_USER |
+> -						  INTEL_FIXED_0_ENABLE_PMI);
+> +	intel_pmu_enable_fixed_counter_bits(pmu, INTEL_FIXED_0_KERNEL |
+> +						 INTEL_FIXED_0_USER |
+> +						 INTEL_FIXED_0_ENABLE_PMI);
+>  
+>  	counter_rsvd = ~(((1ull << pmu->nr_arch_gp_counters) - 1) |
+>  		(((1ull << pmu->nr_arch_fixed_counters) - 1) << KVM_FIXED_PMC_BASE_IDX));
+> @@ -551,10 +555,8 @@ static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
+>  		if (perf_capabilities & PERF_CAP_PEBS_BASELINE) {
+>  			pmu->pebs_enable_rsvd = counter_rsvd;
+>  			pmu->reserved_bits &= ~ICL_EVENTSEL_ADAPTIVE;
+> -			for (i = 0; i < pmu->nr_arch_fixed_counters; i++)
+> -				pmu->fixed_ctr_ctrl_rsvd &=
+> -					~intel_fixed_bits_by_idx(i, ICL_FIXED_0_ADAPTIVE);
+>  			pmu->pebs_data_cfg_rsvd = ~0xff00000full;
+> +			intel_pmu_enable_fixed_counter_bits(pmu, ICL_FIXED_0_ADAPTIVE);
+>  		} else {
+>  			pmu->pebs_enable_rsvd =
+>  				~((1ull << pmu->nr_arch_gp_counters) - 1);
+>
+> base-commit: b9adc10edd4e14e66db4f7289a88fdbfa45ae7a8
+
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+
 
