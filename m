@@ -1,101 +1,193 @@
-Return-Path: <linux-kernel+bounces-209635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED3F9038B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:18:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6629038B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E1691F272E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:18:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17359285C14
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617601791FC;
-	Tue, 11 Jun 2024 10:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDEF172BBF;
+	Tue, 11 Jun 2024 10:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ow67sxJ5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GszAPfMi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F6214F109;
-	Tue, 11 Jun 2024 10:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C5B54750;
+	Tue, 11 Jun 2024 10:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718101100; cv=none; b=qSjykhW6ulN5fkVFwMGRel8Jse4+hf5BFgYmGb35XuXJn4DoN+TJBA+zaOIuGHqcLkZzJF4uMhU4DVXBrNzuMaJ8v+MBx9hpgRQELlXT0itZ3Yf89ZaHeiEPCfiiS2BzaaNXfAtf1pDPsg23S5OlvrPyrQ5M5QPo1r4eiONNNgU=
+	t=1718101134; cv=none; b=QizaKsoHu5yul35d0EyrtzvMbpMm7o6UEQ02ezEMV4LeE6dgOEAtPghfs5lbeM+hpvNhPWF92GdM60vr+RoiT8RJOyKj4GTyeUHEUClJl7xvRM9aLa4ODyH4jwIM4hmTgwJGCCNMRYHd3UgS6736CWcoVNwJYRhhBebprbvaEuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718101100; c=relaxed/simple;
-	bh=XtJLIL7jPMpbcm9Tef/+8eEhoO8iAr3puk5IcVpVt9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bkli9VSWNmw3TuB4ZrPqewgAnLoS/OamGW43us1iFN3LCtyzwfJbkl9I5yCwmCsEXJX9yrABUj9K0QPDcxiDqhYnxEwM5BgPO5qsXCjytpgD2LVs378giqmI1lRHjw2h2NzEBod7IZKMyCmT9yf7ULtMqKT+nYxq0Bcrb1WOEgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ow67sxJ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE600C2BD10;
-	Tue, 11 Jun 2024 10:18:19 +0000 (UTC)
+	s=arc-20240116; t=1718101134; c=relaxed/simple;
+	bh=nZYcxCQw0Vog3/Jgd9nlPsyVhRyTxGPKpWXmdnqLNZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=unIWFTYOyCQJY1FDXw6vw+iGO0HmFsW7n34tG4uh1DApmfWVVMiLMBKzbvdCgTEoxj1r7ReNtJZf+UYr6GSBW+KupSO861EFX76/tkNMmpPFMq+prfJrg9wwlKCaKVUuEnL8FEiU1Xm8iNomUpa1o1rIGb5P2bwqF3WigGtf0gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GszAPfMi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17F37C2BD10;
+	Tue, 11 Jun 2024 10:18:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718101100;
-	bh=XtJLIL7jPMpbcm9Tef/+8eEhoO8iAr3puk5IcVpVt9I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ow67sxJ5/f2z53fjdF8sbUz9aNzfy7r0V3x4F2IkNEA9FxfG2I6YOxddj0CrEWB8q
-	 aIr8o7oPdXcMLmFf7l6LaYlnmWeD7C8MrGDLY4M0Aa/000N3VAX7c4KAXz792peW2C
-	 TuFLr9Vz/5ZBT7Iy6mN1tACvSxp+hhJFU6utVjZKgeDupSOxaq0Bl5tNuHrloZjLKb
-	 FnNuPnoHxQMLQusHz2HGgZWOmNyOYnczCtoJ6HNF4N8HBHLSHnwps1r9gBNle546Yl
-	 NNfVvRQWx7JiUvJdTzoJxfSHONR/6RJGi1uNJWR+Ta79j37/+tzclYAUmNRaJXHVN5
-	 N2+YF1B6acgjw==
-Date: Tue, 11 Jun 2024 11:17:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alper Nebi Yasak <alpernebiyasak@gmail.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH RFT] ASoC: mediatek: mt8183-da7219-max98357: Fix kcontrol
- name collision
-Message-ID: <ZmgkRWLmZpGnpv9A@finisterre.sirena.org.uk>
-References: <20240531-da7219-v1-1-ac3343f3ae6a@chromium.org>
- <171762153256.557520.12011428649748199502.b4-ty@kernel.org>
- <CAHc4DNJ3q=a8Wts_q12=R34eMbMq+d4PSEFe7YR+DDs=C_Og9g@mail.gmail.com>
+	s=k20201202; t=1718101134;
+	bh=nZYcxCQw0Vog3/Jgd9nlPsyVhRyTxGPKpWXmdnqLNZ4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GszAPfMi4c2zfqB9wJUCZxYc8YRtFSO5yUfh+wFKYpJRk+qrTcVmXai5lB+TgAJJR
+	 cS1Zdp7tdU1ZThwOMY1lB6R0KkkFzp8InHZaqFq+Io3aQ3m84YLen3wBKIOr9eoeai
+	 PB2DkbKR6Uom2EkOIpf3iHPcmKDBvuGJilw5tKvVRyxBHOA6bM4y1eVxrRKiawAoT+
+	 B61zyQd1a5pUguchcNsUcCmDbseyhTrNUUa4Ohi0kGbf8DAF8mZgELZS6amOQwv3/n
+	 Se8DfmJqE5M40lhMVT1RS4jnUzaohMEql0bBXPDLXwWrDvPmTKn2IDSERNU3tDlCNA
+	 +9fwfOBTmUhUg==
+Message-ID: <1ea92ff0-7e2d-4a9f-bef4-d50fc93b86e6@kernel.org>
+Date: Tue, 11 Jun 2024 12:18:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bkH1k6DCw9W/Nv6X"
-Content-Disposition: inline
-In-Reply-To: <CAHc4DNJ3q=a8Wts_q12=R34eMbMq+d4PSEFe7YR+DDs=C_Og9g@mail.gmail.com>
-X-Cookie: Your love life will be... interesting.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 2/2] ASoC: dt-bindings: lpc32xx: Add lpc32xx i2s DT
+ binding
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
+ Russell King <linux@armlinux.org.uk>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+ Chancel Liu <chancel.liu@nxp.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
+References: <[PATCH] ASoC: fsl: Add i2s and pcm drivers for LPC32xx CPUs>
+ <20240611094810.27475-1-piotr.wojtaszczyk@timesys.com>
+ <20240611094810.27475-2-piotr.wojtaszczyk@timesys.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240611094810.27475-2-piotr.wojtaszczyk@timesys.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 11/06/2024 11:47, Piotr Wojtaszczyk wrote:
+> Add nxp,lpc3220-i2s DT binding documentation.
+> 
+> Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+> ---
 
 
---bkH1k6DCw9W/Nv6X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> +
+> +maintainers:
+> +  - Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,lpc3220-i2s
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: input clock of the peripheral.
+> +
 
-On Tue, Jun 11, 2024 at 04:02:08PM +0800, Hsin-Te Yuan wrote:
+I do not see my comment about DAI being addressed.
 
-> I accidentally added a Change-Id field in the commit message. Can you
-> help remove it before sending it to Linus?
+<form letter>
+This is a friendly reminder during the review process.
 
-Sorry, there's other commits on top of it now - one commit ID won't do
-any harm, it'll be fine.
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
+</<form letter>
 
---bkH1k6DCw9W/Nv6X
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZoJEEACgkQJNaLcl1U
-h9Ci4gf/d/71SbUXpDvPRJoSpeImEZWIPsiA8SA2T5BH5zAUcOop4zMzkVAS9auB
-AU1R6pD56doyzyk70uaz9A2esxyo0UxEM806duF97+XI40l5cNBEVEYzKIzQNN2C
-e8wgdlu0DhOG611zGRq9YKhd9b4E2DKMnXDvpnM6iL18J1w2sc8DxYFj0t8zWUwY
-niVYdugY2ys8IyxX6mMEHVbp9m7OrtXjx7Jmzo62lWQUybJ/A6zKGoEzxclgLK5i
-nKA3a2toztPt2a4jTNHL9KdVdkk1AZwc0/15MyR8gsRveGNlr9bEaSDtjhCZ3mDp
-GNf8YUONs+MTlBtCtRyRrjXK/C8oPg==
-=uH5n
------END PGP SIGNATURE-----
+Drop
 
---bkH1k6DCw9W/Nv6X--
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/lpc32xx-clock.h>
+> +
+> +    i2s0: i2s@20094000 {
+
+Drop label, not used.
+
+> +      compatible = "nxp,lpc3220-i2s";
+> +      reg = <0x20094000 0x1000>;
+> +      clocks = <&clk LPC32XX_CLK_I2S0>;
+> +      clock-names = "i2s_clk";
+
+Not tested. Drop.
+
+> +      status = "disabled";
+
+Then what is the point of example? Drop.
+
+Your DTS was also not tested.
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+
+Best regards,
+Krzysztof
+
 
