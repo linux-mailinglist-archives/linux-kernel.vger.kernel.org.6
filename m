@@ -1,57 +1,91 @@
-Return-Path: <linux-kernel+bounces-209762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37194903A65
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB67903A25
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 495D61C23473
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C241F1C22B68
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D4A17E46D;
-	Tue, 11 Jun 2024 11:33:35 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0F017E45B;
-	Tue, 11 Jun 2024 11:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7DC17B51F;
+	Tue, 11 Jun 2024 11:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAc5JQ78"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A3C17545;
+	Tue, 11 Jun 2024 11:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718105615; cv=none; b=cdpWAHIP1rFweSZ3NjTKMf+ahAU4BzqukddPdDQshInIox09FVrHEr3U9P0US5FIwX1V2JfU0MvwMWxTFR/f5qiI9Fil0hzflezS8AwUxCQ4f4f8tgUjrKwXeRe3AUUf6VMPxHO81UH2V3UcJHVGSFvs5bbi5qZ3lDqSTJ1xzEo=
+	t=1718105538; cv=none; b=OOetfJeuBNr5sCU3q1ej+2FzCnClaDwmomtt/qCkdzH26Yn9anJX4NWHkAj9TeBQNGGkGL5p6U+vM9tJEbQWFPKIP9HzweFaMLadxD5CGdbigsJy+XlbyrdNKrWWLgHg3WHF7/vmLWA+fKekrzHf6ZoYnp2IP3Khuym+WJKcF1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718105615; c=relaxed/simple;
-	bh=PZ/qgo1iYhsepWwiQ2x0fwZsLK3jpsjhbyJ39AjPBF4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XBuLEVCfIuRTTpqw/uFzj9EoF5D1mzgCboAs7wwV9hXHS8owN0AmVoMESvft1NxoquWEM598xJXxnNhflUZC2YtU9ZZ089r4KBHV+JDTdHWwRiecVaPbuGKVM/pP8Thl/JTxPVM2eQng9Q1YC092F9zJXKR8ulJhPSFST7n2Zfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.08,229,1712588400"; 
-   d="scan'208";a="207491491"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Jun 2024 20:33:32 +0900
-Received: from renesas-deb12.mshome.net (unknown [10.226.92.82])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D5BEC4008C4F;
-	Tue, 11 Jun 2024 20:33:27 +0900 (JST)
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
+	s=arc-20240116; t=1718105538; c=relaxed/simple;
+	bh=KYM3RpgXB+bRDfX9kBzzB6kmbYZ7NlFFZJ/83yFFCno=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AiEaRW1W58WOyWvL22E8itiBBO7/lNifl/JnFlsB0F2H9yS9xOXvq6jYSwVXzC5GpAikQybFRsBiIiB2fObLeza3CCsK+EbJtRHt8Dt/BXu8DWc1j4yl7sx0dLOSkN7pUvhqnxk/JYky6wCKBrFpjyS4cNNlW9aAjNuwzcn2ZcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FAc5JQ78; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42133f8432aso6788635e9.3;
+        Tue, 11 Jun 2024 04:32:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718105535; x=1718710335; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=clrALCvP0Lnnrc9ChxXlKIuUYraQmBIpiwyzFSMJ4E0=;
+        b=FAc5JQ78H4IKd4zPPq9+X3TuRBwduBAW9SHyNpMbDJN9ddmePRBb4YCfkj7P/rT5Mj
+         J0gwqOEnHidAJ2edTh69YPac0DyE+sCUoNtGTYWpc0VVF1UNsBdiZDyBoW1PX+3uTZCh
+         RXAAqeqC/HSBraBA/8h4DeigXQXYJjCnnMKgFbrlQLzz0N0W4RJQHwLIzNrJJGMTnAWq
+         3jfBq6T0r26vXl9H4AFtPx1x6BJFB7am8lu0pySqpEvl1gFn0lUCB9VeqFKN4ksPbKlp
+         oLjPnPp0FIbJxvmv1b1pWdtxdlBTLHKSzw3LzJ0mr5w6py7+YeyyA4ymmiGaD+l7A1OV
+         Md8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718105535; x=1718710335;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=clrALCvP0Lnnrc9ChxXlKIuUYraQmBIpiwyzFSMJ4E0=;
+        b=u0BvGVKqn8d2l1mPKBMeDrhCx+u/2WkcnFnKT+5SHEEIlcy1RseC30wyEjWi19IU1J
+         J/JZBd49Zqj02CFHXMwfLR4XRRKDPAEbvth4m8zMycSrzneyOSbF6B826IbbEdHFYZJd
+         ZWZ3gJQYv0iUprQt6RlSTpcJ0kuSh5DAqJAv5UZ6T1OaFlTS1OEkBga51GCCegMVOlAM
+         aB0C0J+8Be4GpF/zK/hwQouOxxN48we1riak2sEzFUGCXItvgl5pR5+xcMAIZkNwcvYv
+         4X8Hhsj3FZ/o/5Egwa5s+G+ymmeGK+ehuZoyegs94N5NZRqsVrH80oqM1UNhpLDj6KE9
+         qrng==
+X-Forwarded-Encrypted: i=1; AJvYcCXwiiZvkkSbfABQSYV9vXVou0wSlvSUf1TXNr63MUJNVmrV3RzBMY/SgQa/KT2vbnBPDg4K7jMRu7PfvuVgxQZfFCh8NrRdyrQIP+DBOyW3p7a0EPNs5UKEvUdFQWQqgAVqwEq2DQ/0PUX6OKKHvxvXG5hwYh4SkaA/NbqYVqqVCFHF2Zg=
+X-Gm-Message-State: AOJu0YxHS7Y4UYb8K7WDvnw5++Qa2zv6KGFjj9H79KwjdXrvjWcko1Lu
+	r1XoeFhbafVq4ZxP543ANS0VKPsOb5tRxUBHCys/DNbsIZ9ecqiG
+X-Google-Smtp-Source: AGHT+IF+Sk9O/o2G+14IsflJT/qS0GW5V1JplYzYscWpyvFgu3n0dSPLYPpPIR8X135O1QOsOuxJ4Q==
+X-Received: by 2002:a05:600c:500e:b0:421:81b8:13e5 with SMTP id 5b1f17b1804b1-42218313ademr34350675e9.3.1718105535244;
+        Tue, 11 Jun 2024 04:32:15 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4227467990csm2473505e9.1.2024.06.11.04.32.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 04:32:14 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: Paul Barker <paul.barker.ct@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	=?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>,
+	linux-mips@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 9/9] arm64: dts: renesas: rzg2ul: Set Ethernet PVDD to 1.8V
-Date: Tue, 11 Jun 2024 12:32:03 +0100
-Message-Id: <20240611113204.3004-10-paul.barker.ct@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240611113204.3004-1-paul.barker.ct@bp.renesas.com>
-References: <20240611113204.3004-1-paul.barker.ct@bp.renesas.com>
+Subject: [PATCH v6 1/5] mips: bmips: BCM6358: make sure CBR is correctly set
+Date: Tue, 11 Jun 2024 13:32:04 +0200
+Message-ID: <20240611113209.8142-2-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240611113209.8142-1-ansuelsmth@gmail.com>
+References: <20240611113209.8142-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,73 +94,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On the RZ/G2UL & RZ/Five SMARC SOMs, the RGMII interface between the SoC
-and the Ethernet PHY operates at 1.8V.
+It was discovered that some device have CBR address set to 0 causing
+kernel panic when arch_sync_dma_for_cpu_all is called.
 
-The power supply for this interface may be correctly configured in
-u-boot, but the kernel should not be relying on this. Now that the
-RZ/G2L pinctrl driver supports configuring the Ethernet power supply
-voltage, we can simply specify the desired voltage in the device tree.
+This was notice in situation where the system is booted from TP1 and
+BMIPS_GET_CBR() returns 0 instead of a valid address and
+!!(read_c0_brcm_cmt_local() & (1 << 31)); not failing.
 
-Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The current check whether RAC flush should be disabled or not are not
+enough hence lets check if CBR is a valid address or not.
+
+Fixes: ab327f8acdf8 ("mips: bmips: BCM6358: disable RAC flush for TP1")
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
 ---
-Changes v1->v2:
-  * Picked up Geert's Reviewed-by tag.
+ arch/mips/bmips/setup.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- .../boot/dts/renesas/rzg2ul-smarc-som.dtsi     | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-index 417f49090b15..79443fb3f581 100644
---- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-@@ -144,6 +144,7 @@ adc_pins: adc {
- 	eth0_pins: eth0 {
- 		txc {
- 			pinmux = <RZG2L_PORT_PINMUX(1, 0, 1)>; /* ET0_TXC */
-+			power-source = <1800>;
- 			output-enable;
- 		};
+diff --git a/arch/mips/bmips/setup.c b/arch/mips/bmips/setup.c
+index ec180ab92eaa..66a8ba19c287 100644
+--- a/arch/mips/bmips/setup.c
++++ b/arch/mips/bmips/setup.c
+@@ -110,7 +110,8 @@ static void bcm6358_quirks(void)
+ 	 * RAC flush causes kernel panics on BCM6358 when booting from TP1
+ 	 * because the bootloader is not initializing it properly.
+ 	 */
+-	bmips_rac_flush_disable = !!(read_c0_brcm_cmt_local() & (1 << 31));
++	bmips_rac_flush_disable = !!(read_c0_brcm_cmt_local() & (1 << 31)) ||
++				  !!BMIPS_GET_CBR();
+ }
  
-@@ -161,14 +162,19 @@ mux {
- 				 <RZG2L_PORT_PINMUX(3, 2, 1)>, /* ET0_RXD0 */
- 				 <RZG2L_PORT_PINMUX(3, 3, 1)>, /* ET0_RXD1 */
- 				 <RZG2L_PORT_PINMUX(4, 0, 1)>, /* ET0_RXD2 */
--				 <RZG2L_PORT_PINMUX(4, 1, 1)>, /* ET0_RXD3 */
--				 <RZG2L_PORT_PINMUX(5, 1, 7)>; /* IRQ2 */
-+				 <RZG2L_PORT_PINMUX(4, 1, 1)>; /* ET0_RXD3 */
-+			power-source = <1800>;
-+		};
-+
-+		irq {
-+			pinmux = <RZG2L_PORT_PINMUX(5, 1, 7)>; /* IRQ2 */
- 		};
- 	};
- 
- 	eth1_pins: eth1 {
- 		txc {
- 			pinmux = <RZG2L_PORT_PINMUX(7, 0, 1)>; /* ET1_TXC */
-+			power-source = <1800>;
- 			output-enable;
- 		};
- 
-@@ -186,8 +192,12 @@ mux {
- 				 <RZG2L_PORT_PINMUX(9, 1, 1)>, /* ET1_RXD0 */
- 				 <RZG2L_PORT_PINMUX(9, 2, 1)>, /* ET1_RXD1 */
- 				 <RZG2L_PORT_PINMUX(9, 3, 1)>, /* ET1_RXD2 */
--				 <RZG2L_PORT_PINMUX(10, 0, 1)>, /* ET1_RXD3 */
--				 <RZG2L_PORT_PINMUX(18, 5, 1)>; /* IRQ7 */
-+				 <RZG2L_PORT_PINMUX(10, 0, 1)>; /* ET1_RXD3 */
-+			power-source = <1800>;
-+		};
-+
-+		irq {
-+			pinmux = <RZG2L_PORT_PINMUX(18, 5, 1)>; /* IRQ7 */
- 		};
- 	};
- 
+ static void bcm6368_quirks(void)
 -- 
-2.39.2
+2.43.0
 
 
