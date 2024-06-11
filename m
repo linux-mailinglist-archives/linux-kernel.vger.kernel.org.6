@@ -1,168 +1,188 @@
-Return-Path: <linux-kernel+bounces-209112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D98902D7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:18:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D296902D79
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1AE7283EAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:18:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18A111C2199A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B466015A5;
-	Tue, 11 Jun 2024 00:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFY/djF6"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC08AEDF;
+	Tue, 11 Jun 2024 00:18:05 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35C5816;
-	Tue, 11 Jun 2024 00:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C4E803;
+	Tue, 11 Jun 2024 00:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718065109; cv=none; b=PDkL6gYph2la4IG/gM+N8T/qjdRTxVU4f/JeMEI9YmbDwe3h3gYMW4ROZ81QrG07L+/djsszCU8zq8oTdXVrN6R/Pc6BqpyaTlefM8wTOK906FsaiCJe+EsPHTRA//06kAysd1Lisf/jsR8GfsY7zXRlzp+opAtGdmWY4er3Od4=
+	t=1718065085; cv=none; b=TdXBZkYPziEDQX9wpQOPP8zG/F/iD+bWlc7XFvOvRM9Ln980nGjiprV9UES6pyH01p9zF6kIa7g83RJTqGRlpZvqY7wv5X2H8pTz7hvh6Awnt9HyIOLHMfleheJ8ISyalXr6VAG0kW7liYq8y+IjoI4FJUEqT1WPgVsUtZXrZgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718065109; c=relaxed/simple;
-	bh=nMrmdxH2krB9TNtdBkPh3f0n33LvkwFYa6vLckHWB6g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DoAHpU9xABVdG9/advCF80VZNUT153Yd17escALdZjdInaUmwq5jWgcvMAghU12evf5CRrX20OTRRgOuc6/3afiFxBtpVX9PvJEYwGTvrxqJBwuCT++wbT6JxBok8qDi0Ikndn5/3mmRXPBChOL63y04GtSvIeDE1aouAJs/AxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HFY/djF6; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c2c9199568so2749315a91.0;
-        Mon, 10 Jun 2024 17:18:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718065107; x=1718669907; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7fSYaAf9r3FBONbZVYpTG+GGCmR1/EAf+YALJ9whtTk=;
-        b=HFY/djF69zWZmKEPs877Gzh2aPa1g/nBLVr/dXPKsN6jRUnHB3LMTBF0h5Iwodhr7c
-         PLWWVToS3lLJ/l1ZH2bu1q6gaTNABP6OPM08L6eZxu0Ki0fzIblKUJROT3GqsCoPuB10
-         iapKjEPgQpys3WpBXaVLO2FR43iZrT+OM8NHEtyv+gojQuzDfINYWsRx/m+BHqoZqgOw
-         SFHz80dxkzsocqddR5vWOTw7mV8THru2Lc9uufEUU8H0LYfksnjqi545VF56qlgrAgAQ
-         MIRypYYFtwzjp3eSDQp+X8fb0p/mUzVx0PTi5yAHRbcl2yY3TWxtJaDQDafBqtPF7YNa
-         yJLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718065107; x=1718669907;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7fSYaAf9r3FBONbZVYpTG+GGCmR1/EAf+YALJ9whtTk=;
-        b=Fulhr+QXef75D3LBt6G16B3RnfVD0YIAM+kQGB1sUi8CFQBWtnrHQOeOQ0vjXV3PKV
-         LQI6e2sNPoHikquYp/CFA8zDIyZ0PcZFyTLBAPGAXslHWOXMASuiVSBfQdSvrdUjinlO
-         RVZRf8jT+4oT9UdJaQEZijtHqOSx45SOcYvKf5pJU9G1k3tPo82H3HIC3c5ldblmc0d0
-         Fig7VJUeHwWh6uehe2wnEshWjNEsjrdgPTRVxvv4vwn7WQXuEcHBYVMb1o2axJxavg3k
-         K2mJyQFaqEDwRyf+ihJFKk2rA1EDBd71LgQAmFIH3GAj5A5fkWugEXvj6vpG8YB0e6A8
-         lVHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUIJGwP6XpbE4R66n99N/MsenQ5Y+hnqZ1ZFtEn15wDuDT6vkjC2x/Xz5qheE2PbI7a442/8gWfaiq07UnuAlzNclQLktaAEvfZ7gapAe0pZSwb9Hq9mCK3/ePadSiqji8QssRq9Lnuw==
-X-Gm-Message-State: AOJu0YxoFOQNByEFbKkbdl7e+gAQtxBWzIzFvTGyxRRE66UvduXZkJBE
-	cqRp1RLknHogbN/7iAiS38BEOHRF9fUGCkGHtfh46PdAs5ygJXBT
-X-Google-Smtp-Source: AGHT+IFrBqNcje/3jAquFBaQ9JR15hWOcJpeEYREpF3zM173bx+0pTRw68iouNl4w0H0l0uNQC3leg==
-X-Received: by 2002:a17:90a:688d:b0:2c3:725:a376 with SMTP id 98e67ed59e1d1-2c30725a46emr3950743a91.11.1718065106725;
-        Mon, 10 Jun 2024 17:18:26 -0700 (PDT)
-Received: from mari.. ([2804:431:cfd3:42f5:c7f2:2bf:5df8:1d46])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2e638edfesm5141526a91.26.2024.06.10.17.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 17:18:26 -0700 (PDT)
-From: Marilene A Garcia <marilene.agarcia@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Julia Lawall <julia.lawall@inria.fr>
-Cc: Marilene A Garcia <marilene.agarcia@gmail.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH linux-next] leds: tlc591xx: Replace of_node_put to __free
-Date: Mon, 10 Jun 2024 21:17:40 -0300
-Message-Id: <20240611001740.10490-1-marilene.agarcia@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718065085; c=relaxed/simple;
+	bh=GyghYEv0X82cGi7Oik5zQ6/zwcOSNDNjHdgQcuZoQpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HZI8MATrS3pSpw1YdxKNVjleZFA8pQD9bTm9ddlg2jn7J5lWFV3HpTeglpRXZMb6IE2aANv1h5hxBaWKWWZ/DlLBVpHyQv7cR1gFx7jbiEk+oHeIpTMXLpB5OfTThY5Y5aBS0Pib4Gkhx26hYa5o6SwbW3g4rdb+S1cAG8ly/Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F12C2BBFC;
+	Tue, 11 Jun 2024 00:18:02 +0000 (UTC)
+Date: Mon, 10 Jun 2024 20:18:13 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Tom Zanussi <zanussi@kernel.org>
+Subject: Re: [PATCH 2/3] tracing/kprobe: Remove unneeded WARN_ON_ONCE() in
+ selftests
+Message-ID: <20240610201813.319d6500@gandalf.local.home>
+In-Reply-To: <171805480405.52471.13982671291270977479.stgit@devnote2>
+References: <171805478534.52471.6269290579314514778.stgit@devnote2>
+	<171805480405.52471.13982671291270977479.stgit@devnote2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Use __free() for device_node values, and thus drop calls to
-of_node_put().
+On Tue, 11 Jun 2024 06:26:44 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
-The variable attribute __free() adds a scope based cleanup to
-the device node. The goal is to reduce memory management issues
-in the kernel code.
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Since the kprobe-events selftest shows OK or NG with the reason, the
+> WARN_ON_ONCE()s for each place are redundant. Let's remove it.
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  kernel/trace/trace_kprobe.c |   26 +++++++++++++-------------
+>  1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+> index 16383247bdbf..4abed36544d0 100644
+> --- a/kernel/trace/trace_kprobe.c
+> +++ b/kernel/trace/trace_kprobe.c
+> @@ -2023,18 +2023,18 @@ static __init int kprobe_trace_self_tests_init(void)
+>  	pr_info("Testing kprobe tracing: ");
+>  
+>  	ret = create_or_delete_trace_kprobe("p:testprobe kprobe_trace_selftest_target $stack $stack0 +0($stack)");
+> -	if (WARN_ON_ONCE(ret)) {
+> +	if (ret) {
+>  		pr_warn("error on probing function entry.\n");
 
-The for_each_available_child_of_node() was replaced to the equivalent 
-for_each_available_child_of_node_scoped() which uses the __free().
+Actually, you can consolidate this to:
 
-Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-Signed-off-by: Marilene A Garcia <marilene.agarcia@gmail.com>
----
-Hello,
-These are the changes related to adding the new __free cleanup 
-in the tlc591xx led driver.
+	if (WARN_ONCE(ret, "error on probing function entry."))
 
-Thank you.
+>  		warn++;
+>  	} else {
+>  		/* Enable trace point */
+>  		tk = find_trace_kprobe("testprobe", KPROBE_EVENT_SYSTEM);
+> -		if (WARN_ON_ONCE(tk == NULL)) {
+> +		if (tk == NULL) {
+>  			pr_warn("error on getting new probe.\n");
 
- drivers/leds/leds-tlc591xx.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+And this to:
 
-diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
-index 945e831ef4ac..6605e08a042a 100644
---- a/drivers/leds/leds-tlc591xx.c
-+++ b/drivers/leds/leds-tlc591xx.c
-@@ -146,7 +146,7 @@ MODULE_DEVICE_TABLE(of, of_tlc591xx_leds_match);
- static int
- tlc591xx_probe(struct i2c_client *client)
- {
--	struct device_node *np, *child;
-+	struct device_node *np;
- 	struct device *dev = &client->dev;
- 	const struct tlc591xx *tlc591xx;
- 	struct tlc591xx_priv *priv;
-@@ -182,22 +182,20 @@ tlc591xx_probe(struct i2c_client *client)
- 	if (err < 0)
- 		return err;
- 
--	for_each_available_child_of_node(np, child) {
-+	for_each_available_child_of_node_scoped(np, child) {
- 		struct tlc591xx_led *led;
- 		struct led_init_data init_data = {};
- 
- 		init_data.fwnode = of_fwnode_handle(child);
- 
- 		err = of_property_read_u32(child, "reg", &reg);
--		if (err) {
--			of_node_put(child);
-+		if (err)
- 			return err;
--		}
-+
- 		if (reg < 0 || reg >= tlc591xx->max_leds ||
--		    priv->leds[reg].active) {
--			of_node_put(child);
-+		    priv->leds[reg].active)
- 			return -EINVAL;
--		}
-+
- 		led = &priv->leds[reg];
- 
- 		led->active = true;
-@@ -207,12 +205,10 @@ tlc591xx_probe(struct i2c_client *client)
- 		led->ldev.max_brightness = TLC591XX_MAX_BRIGHTNESS;
- 		err = devm_led_classdev_register_ext(dev, &led->ldev,
- 						     &init_data);
--		if (err < 0) {
--			of_node_put(child);
-+		if (err < 0)
- 			return dev_err_probe(dev, err,
- 					     "couldn't register LED %s\n",
- 					     led->ldev.name);
--		}
- 	}
- 	return 0;
- }
--- 
-2.34.1
+		if (WARN_ONCE(tk == NULL, "error on getting new probe."))
+
+end so on.
+
+-- Steve
+
+>  			warn++;
+>  		} else {
+>  			file = find_trace_probe_file(tk, top_trace_array());
+> -			if (WARN_ON_ONCE(file == NULL)) {
+> +			if (file == NULL) {
+>  				pr_warn("error on getting probe file.\n");
+>  				warn++;
+>  			} else
+> @@ -2044,18 +2044,18 @@ static __init int kprobe_trace_self_tests_init(void)
+>  	}
+>  
+>  	ret = create_or_delete_trace_kprobe("r:testprobe2 kprobe_trace_selftest_target $retval");
+> -	if (WARN_ON_ONCE(ret)) {
+> +	if (ret) {
+>  		pr_warn("error on probing function return.\n");
+>  		warn++;
+>  	} else {
+>  		/* Enable trace point */
+>  		tk = find_trace_kprobe("testprobe2", KPROBE_EVENT_SYSTEM);
+> -		if (WARN_ON_ONCE(tk == NULL)) {
+> +		if (tk == NULL) {
+>  			pr_warn("error on getting 2nd new probe.\n");
+>  			warn++;
+>  		} else {
+>  			file = find_trace_probe_file(tk, top_trace_array());
+> -			if (WARN_ON_ONCE(file == NULL)) {
+> +			if (file == NULL) {
+>  				pr_warn("error on getting probe file.\n");
+>  				warn++;
+>  			} else
+> @@ -2079,7 +2079,7 @@ static __init int kprobe_trace_self_tests_init(void)
+>  
+>  	/* Disable trace points before removing it */
+>  	tk = find_trace_kprobe("testprobe", KPROBE_EVENT_SYSTEM);
+> -	if (WARN_ON_ONCE(tk == NULL)) {
+> +	if (tk == NULL) {
+>  		pr_warn("error on getting test probe.\n");
+>  		warn++;
+>  	} else {
+> @@ -2089,7 +2089,7 @@ static __init int kprobe_trace_self_tests_init(void)
+>  		}
+>  
+>  		file = find_trace_probe_file(tk, top_trace_array());
+> -		if (WARN_ON_ONCE(file == NULL)) {
+> +		if (file == NULL) {
+>  			pr_warn("error on getting probe file.\n");
+>  			warn++;
+>  		} else
+> @@ -2098,7 +2098,7 @@ static __init int kprobe_trace_self_tests_init(void)
+>  	}
+>  
+>  	tk = find_trace_kprobe("testprobe2", KPROBE_EVENT_SYSTEM);
+> -	if (WARN_ON_ONCE(tk == NULL)) {
+> +	if (tk == NULL) {
+>  		pr_warn("error on getting 2nd test probe.\n");
+>  		warn++;
+>  	} else {
+> @@ -2108,7 +2108,7 @@ static __init int kprobe_trace_self_tests_init(void)
+>  		}
+>  
+>  		file = find_trace_probe_file(tk, top_trace_array());
+> -		if (WARN_ON_ONCE(file == NULL)) {
+> +		if (file == NULL) {
+>  			pr_warn("error on getting probe file.\n");
+>  			warn++;
+>  		} else
+> @@ -2117,20 +2117,20 @@ static __init int kprobe_trace_self_tests_init(void)
+>  	}
+>  
+>  	ret = create_or_delete_trace_kprobe("-:testprobe");
+> -	if (WARN_ON_ONCE(ret)) {
+> +	if (ret) {
+>  		pr_warn("error on deleting a probe.\n");
+>  		warn++;
+>  	}
+>  
+>  	ret = create_or_delete_trace_kprobe("-:testprobe2");
+> -	if (WARN_ON_ONCE(ret)) {
+> +	if (ret) {
+>  		pr_warn("error on deleting a probe.\n");
+>  		warn++;
+>  	}
+>  
+>  end:
+>  	ret = dyn_events_release_all(&trace_kprobe_ops);
+> -	if (WARN_ON_ONCE(ret)) {
+> +	if (ret) {
+>  		pr_warn("error on cleaning up probes.\n");
+>  		warn++;
+>  	}
 
 
