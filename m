@@ -1,243 +1,399 @@
-Return-Path: <linux-kernel+bounces-209674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D6E5903934
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:47:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E88903936
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B0AF283F46
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04DD91F24B9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21414178385;
-	Tue, 11 Jun 2024 10:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8860178CD9;
+	Tue, 11 Jun 2024 10:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MBd2tuLi"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FFNyhPnj"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23307174EC1
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED6917836F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718102822; cv=none; b=owPvMdPhR2DNk54Y4DA0KWUTCofJFmr9Er1XgR5jNpc39aXcphB91/cAz6c6w7wyuq0sA0Dbe+dB2huPfh3jRrMDYAhJLjMIZvXB69Xo+zfZHLFeaVzL4a0P05ehTjB22QmqepAeM1t1FGs3YT0wR3F+Iusmj0hIWAnRro60+as=
+	t=1718102846; cv=none; b=hJL7mVSMyGvG0drNTmdCgpco2Vqj5koDh3jHjBXKJETqzSr2v9yOkkpBV1VOGRKFV1VBYQniQVlz038lxAs/TQhnYyQOv7Y1nDXbqrC0lVDc9wKWABiyd47RngjhNZCZKNDYHZfb/DWitkbYXt5NsTLm3YR4YiDTth+0oCxTzgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718102822; c=relaxed/simple;
-	bh=9v70XV5y4GSnRmoIx0HSZWYeUnRaDfB3X/utGcfIfWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JPK0Er4iNAGmHlKc/FXELkbWr+gSoBiLbAHugqfeZRUJNpHAnNsRqzmz7uHt1sXNdEmRHWpOkbf7RSLAJb/g0jVcyz0dfPmB5kA5S2JIQBUPAOrAe6ecUletk7MHAZxpfeKfLQIyhZR1FZSkxILFlo27MeXr/5E3i8wfLL8nwrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MBd2tuLi; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52bbf73f334so3748972e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718102818; x=1718707618; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fp+D+Ajoxcp8Oj4mR/rcn2WCT+/k1rl0VG3rX/u5T2Q=;
-        b=MBd2tuLiHRwAKtrcqn9GqsnRRNl3nrk6DUSuECUgfdDdXs8CG2ngPxcUVTuULh/VsR
-         eu1bY+Tg+Anpxr0qgbd/+lFcv9+CLE6xeQZsI9ak0b15SyaObL8qb6JHRrw79JLQyPsk
-         LMR/XhZPAKVSANmvgzcMU8+7waP+WcpyLS01Zw9InGh9wF3E5OdzEpqOwiTtX/w3sLL7
-         Kc3XwCawSfVY1jlJEfCzOjhzRiLaGNWXJhtPZuFupMoZmQXf8BX8+0SmAhdGqq5teMvF
-         5V/hMwgf/a4l/xavhZrd+UhkCbXNNmp60UD5Kb+mVJhmibuBuQz0Mj2bLfeQagFH92u8
-         3tNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718102818; x=1718707618;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fp+D+Ajoxcp8Oj4mR/rcn2WCT+/k1rl0VG3rX/u5T2Q=;
-        b=iELo3hptQITjfoQanMcL5SRkOrOvabV9eeO/vI4vWn2m9OR9vPx725ItdCFViTB90a
-         zjWL0wfHHJGjr7nXdZ5bCmYQ4xKpUKIl0CJ4OJW4TZMWau8jBMqZVef/fComf0TJka0n
-         pvhyf8tF8Cw1M50M7cWZiuqh4s3Z9tGzq0tEDbjmm6y1MODjxaEvvi5zybTrfX1l9BIl
-         E9/T7OptCrql+hrE6LfzH8C0Zp2aHvL4jdtOpqAYY9K/OILwrium36iW3I3jgXfj7gzZ
-         2nxG4jrC6zQbv51A+vDpsZXoRC+Q/zZxl+xv6DiDlstzxE7UMrok+WJ6P5LAjsssq+fH
-         7Ftw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1sM5Mfa9PnZ8qbKaHWE9B513mfJoaTg0P7/DAFZU8txWbrzbnDiWMpsedAQXw70N/75TZ37CmLM97d2NbQcs/uPV+epZ4qj+ZPewt
-X-Gm-Message-State: AOJu0YwWCazZ3SPuPfmDciyDIKo2l8GN8JYfErUamsArOv3g1sJDVVyC
-	hlHNTYhsdJrkqzaRjojg5+iQMiUCxvQ/89Cb8oxs7aXyJGWkrJUgP1NgU7YMhME=
-X-Google-Smtp-Source: AGHT+IHtdFqo/9J5gcont3xPpGuqzTIC4OsBhAx07391LfaeWl+GPgTqM/ZWZg+Gl6i65g9CyLwSng==
-X-Received: by 2002:a05:6512:318e:b0:52c:9528:55d1 with SMTP id 2adb3069b0e04-52c952856f6mr1061801e87.4.1718102818138;
-        Tue, 11 Jun 2024 03:46:58 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2583bdedsm4755135f8f.72.2024.06.11.03.46.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 03:46:57 -0700 (PDT)
-Date: Tue, 11 Jun 2024 13:46:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Artur Rojek <contact@artur-rojek.eu>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: adc-joystick - move axes data into the main
- structure
-Message-ID: <0c098606-aba1-4cc0-9a33-6a68c67b1157@moroto.mountain>
+	s=arc-20240116; t=1718102846; c=relaxed/simple;
+	bh=AIOvoETcREtcXKprqFNgMdTLKkzlhBa6Oxq0QjP/g+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OqPV1CFhN4h3LzyMOf5wo15vWq7ssa11Fja/43INYc7mgSIH74JedkLMfQfo3qV8lyfnnVfCdUBmbWFgcj8jWdc3Jzu5hAkAeNYTwgTNt0zpY11mg5KBnVNXr6CRdiRKYwqsMT9Qe5Jq+/Y91wNa3GTQe9pXBm3b9pKQ9xXvLhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FFNyhPnj; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718102842;
+	bh=AIOvoETcREtcXKprqFNgMdTLKkzlhBa6Oxq0QjP/g+Y=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=FFNyhPnjfIadsBXv5rmdyKkQ5jjoocyjQfoeMf9MS9E6SkaJXl5aDkS77P/quvXHB
+	 zDXMLxCro/OKmqjmazHpSM9GKfvZqv7cm+JXF7s3G3Ijj1CoBSeOB+QMvyJSZ66kkS
+	 XfQgVybJeDMft3NhnOV0bJBNBEQWx4Q3ux12wRlhFm9uF/nBj6yQbzLoZZWogN+RT5
+	 Cu33sdiLqp1L20CkwXfyrEo6RJTZKfo6yBQFsi13eEoxu+h3zIgGh1v1sbWwANKstJ
+	 Pj1muNTj3EzqWGsLypMtXkDvP5qzYdXguPz4rXKE9au88YVMN+79Mrq0WilLXvZlL5
+	 tI52ONJplD2ng==
+Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id CD23637804C6;
+	Tue, 11 Jun 2024 10:47:19 +0000 (UTC)
+Message-ID: <4e9ce9fb-426b-431b-81db-9e960b0aab91@collabora.com>
+Date: Tue, 11 Jun 2024 16:17:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmYlfKDm5sgB44EU@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] drm/ci: add tests on vkms
+Content-Language: en-US
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: dri-devel@lists.freedesktop.org
+Cc: airlied@gmail.com, daniel@ffwll.ch, rodrigosiqueiramelo@gmail.com,
+ melissa.srw@gmail.com, mairacanal@riseup.net, hamohammed.sa@gmail.com,
+ robdclark@gmail.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, daniels@collabora.com, helen.koike@collabora.com,
+ guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
+ linux-kernel@vger.kernel.org
+References: <20240611091037.558969-1-vignesh.raman@collabora.com>
+In-Reply-To: <20240611091037.558969-1-vignesh.raman@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Dmitry,
+Hi,
 
-kernel test robot noticed the following build warnings:
+Successful pipeline link,
+https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1198487
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Regards,
+Vignesh
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Torokhov/Input-adc-joystick-move-axes-data-into-the-main-structure/20240610-060124
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
-patch link:    https://lore.kernel.org/r/ZmYlfKDm5sgB44EU%40google.com
-patch subject: [PATCH] Input: adc-joystick - move axes data into the main structure
-config: x86_64-randconfig-161-20240611 (https://download.01.org/0day-ci/archive/20240611/202406111750.AXBfJUS3-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202406111750.AXBfJUS3-lkp@intel.com/
-
-smatch warnings:
-drivers/input/joystick/adc-joystick.c:166 adc_joystick_set_axes() error: uninitialized symbol 'axes'.
-drivers/input/joystick/adc-joystick.c:241 adc_joystick_probe() error: uninitialized symbol 'joy'.
-drivers/input/joystick/adc-joystick.c:241 adc_joystick_probe() warn: passing zero to 'PTR_ERR'
-
-vim +/axes +166 drivers/input/joystick/adc-joystick.c
-
-2c2b364fddd551 Artur Rojek     2020-09-28  131  
-2c2b364fddd551 Artur Rojek     2020-09-28  132  static int adc_joystick_set_axes(struct device *dev, struct adc_joystick *joy)
-2c2b364fddd551 Artur Rojek     2020-09-28  133  {
-2c2b364fddd551 Artur Rojek     2020-09-28  134  	struct adc_joystick_axis *axes;
-2c2b364fddd551 Artur Rojek     2020-09-28  135  	struct fwnode_handle *child;
-815b74328f141f Dmitry Torokhov 2024-06-09  136  	s32 range[2], fuzz, flat;
-815b74328f141f Dmitry Torokhov 2024-06-09  137  	unsigned int num_axes;
-815b74328f141f Dmitry Torokhov 2024-06-09  138  	int error, i;
-2c2b364fddd551 Artur Rojek     2020-09-28  139  
-2c2b364fddd551 Artur Rojek     2020-09-28  140  	num_axes = device_get_child_node_count(dev);
-2c2b364fddd551 Artur Rojek     2020-09-28  141  	if (!num_axes) {
-2c2b364fddd551 Artur Rojek     2020-09-28  142  		dev_err(dev, "Unable to find child nodes\n");
-2c2b364fddd551 Artur Rojek     2020-09-28  143  		return -EINVAL;
-2c2b364fddd551 Artur Rojek     2020-09-28  144  	}
-2c2b364fddd551 Artur Rojek     2020-09-28  145  
-2c2b364fddd551 Artur Rojek     2020-09-28  146  	if (num_axes != joy->num_chans) {
-2c2b364fddd551 Artur Rojek     2020-09-28  147  		dev_err(dev, "Got %d child nodes for %d channels\n",
-2c2b364fddd551 Artur Rojek     2020-09-28  148  			num_axes, joy->num_chans);
-2c2b364fddd551 Artur Rojek     2020-09-28  149  		return -EINVAL;
-2c2b364fddd551 Artur Rojek     2020-09-28  150  	}
-2c2b364fddd551 Artur Rojek     2020-09-28  151  
-2c2b364fddd551 Artur Rojek     2020-09-28  152  	device_for_each_child_node(dev, child) {
-2c2b364fddd551 Artur Rojek     2020-09-28  153  		error = fwnode_property_read_u32(child, "reg", &i);
-2c2b364fddd551 Artur Rojek     2020-09-28  154  		if (error) {
-2c2b364fddd551 Artur Rojek     2020-09-28  155  			dev_err(dev, "reg invalid or missing\n");
-2c2b364fddd551 Artur Rojek     2020-09-28  156  			goto err_fwnode_put;
-2c2b364fddd551 Artur Rojek     2020-09-28  157  		}
-2c2b364fddd551 Artur Rojek     2020-09-28  158  
-2c2b364fddd551 Artur Rojek     2020-09-28  159  		if (i >= num_axes) {
-2c2b364fddd551 Artur Rojek     2020-09-28  160  			error = -EINVAL;
-2c2b364fddd551 Artur Rojek     2020-09-28  161  			dev_err(dev, "No matching axis for reg %d\n", i);
-2c2b364fddd551 Artur Rojek     2020-09-28  162  			goto err_fwnode_put;
-2c2b364fddd551 Artur Rojek     2020-09-28  163  		}
-2c2b364fddd551 Artur Rojek     2020-09-28  164  
-2c2b364fddd551 Artur Rojek     2020-09-28  165  		error = fwnode_property_read_u32(child, "linux,code",
-2c2b364fddd551 Artur Rojek     2020-09-28 @166  						 &axes[i].code);
-
-axes is unitialized.
-
-2c2b364fddd551 Artur Rojek     2020-09-28  167  		if (error) {
-2c2b364fddd551 Artur Rojek     2020-09-28  168  			dev_err(dev, "linux,code invalid or missing\n");
-2c2b364fddd551 Artur Rojek     2020-09-28  169  			goto err_fwnode_put;
-2c2b364fddd551 Artur Rojek     2020-09-28  170  		}
-2c2b364fddd551 Artur Rojek     2020-09-28  171  
-2c2b364fddd551 Artur Rojek     2020-09-28  172  		error = fwnode_property_read_u32_array(child, "abs-range",
-815b74328f141f Dmitry Torokhov 2024-06-09  173  						       range, 2);
-2c2b364fddd551 Artur Rojek     2020-09-28  174  		if (error) {
-2c2b364fddd551 Artur Rojek     2020-09-28  175  			dev_err(dev, "abs-range invalid or missing\n");
-2c2b364fddd551 Artur Rojek     2020-09-28  176  			goto err_fwnode_put;
-2c2b364fddd551 Artur Rojek     2020-09-28  177  		}
-2c2b364fddd551 Artur Rojek     2020-09-28  178  
-815b74328f141f Dmitry Torokhov 2024-06-09  179  		if (range[0] > range[1]) {
-6560cfcfb46511 Chris Morgan    2024-01-19  180  			dev_dbg(dev, "abs-axis %d inverted\n", i);
-6560cfcfb46511 Chris Morgan    2024-01-19  181  			axes[i].inverted = true;
-815b74328f141f Dmitry Torokhov 2024-06-09  182  			swap(range[0], range[1]);
-6560cfcfb46511 Chris Morgan    2024-01-19  183  		}
-6560cfcfb46511 Chris Morgan    2024-01-19  184  
-815b74328f141f Dmitry Torokhov 2024-06-09  185  		fwnode_property_read_u32(child, "abs-fuzz", &fuzz);
-815b74328f141f Dmitry Torokhov 2024-06-09  186  		fwnode_property_read_u32(child, "abs-flat", &flat);
-2c2b364fddd551 Artur Rojek     2020-09-28  187  
-2c2b364fddd551 Artur Rojek     2020-09-28  188  		input_set_abs_params(joy->input, axes[i].code,
-815b74328f141f Dmitry Torokhov 2024-06-09  189  				     range[0], range[1], fuzz, flat);
-2c2b364fddd551 Artur Rojek     2020-09-28  190  	}
-2c2b364fddd551 Artur Rojek     2020-09-28  191  
-2c2b364fddd551 Artur Rojek     2020-09-28  192  	return 0;
-2c2b364fddd551 Artur Rojek     2020-09-28  193  
-2c2b364fddd551 Artur Rojek     2020-09-28  194  err_fwnode_put:
-2c2b364fddd551 Artur Rojek     2020-09-28  195  	fwnode_handle_put(child);
-2c2b364fddd551 Artur Rojek     2020-09-28  196  	return error;
-2c2b364fddd551 Artur Rojek     2020-09-28  197  }
-2c2b364fddd551 Artur Rojek     2020-09-28  198  
-815b74328f141f Dmitry Torokhov 2024-06-09  199  
-815b74328f141f Dmitry Torokhov 2024-06-09  200  /*
-815b74328f141f Dmitry Torokhov 2024-06-09  201   * Count how many channels we got. NULL terminated.
-815b74328f141f Dmitry Torokhov 2024-06-09  202   * Do not check the storage size if using polling.
-815b74328f141f Dmitry Torokhov 2024-06-09  203   */
-815b74328f141f Dmitry Torokhov 2024-06-09  204  static int adc_joystick_count_channels(struct device *dev,
-815b74328f141f Dmitry Torokhov 2024-06-09  205  				       const struct iio_channel *chans,
-815b74328f141f Dmitry Torokhov 2024-06-09  206  				       bool polled,
-815b74328f141f Dmitry Torokhov 2024-06-09  207  				       unsigned int *num_chans)
-815b74328f141f Dmitry Torokhov 2024-06-09  208  {
-815b74328f141f Dmitry Torokhov 2024-06-09  209  	int bits;
-815b74328f141f Dmitry Torokhov 2024-06-09  210  	int i;
-815b74328f141f Dmitry Torokhov 2024-06-09  211  
-815b74328f141f Dmitry Torokhov 2024-06-09  212  	for (i = 0; chans[i].indio_dev; i++) {
-815b74328f141f Dmitry Torokhov 2024-06-09  213  		if (polled)
-815b74328f141f Dmitry Torokhov 2024-06-09  214  			continue;
-815b74328f141f Dmitry Torokhov 2024-06-09  215  		bits = chans[i].channel->scan_type.storagebits;
-815b74328f141f Dmitry Torokhov 2024-06-09  216  		if (!bits || bits > 16) {
-815b74328f141f Dmitry Torokhov 2024-06-09  217  			dev_err(dev, "Unsupported channel storage size\n");
-815b74328f141f Dmitry Torokhov 2024-06-09  218  			return -EINVAL;
-815b74328f141f Dmitry Torokhov 2024-06-09  219  		}
-815b74328f141f Dmitry Torokhov 2024-06-09  220  		if (bits != chans[0].channel->scan_type.storagebits) {
-815b74328f141f Dmitry Torokhov 2024-06-09  221  			dev_err(dev, "Channels must have equal storage size\n");
-815b74328f141f Dmitry Torokhov 2024-06-09  222  			return -EINVAL;
-815b74328f141f Dmitry Torokhov 2024-06-09  223  		}
-815b74328f141f Dmitry Torokhov 2024-06-09  224  	}
-815b74328f141f Dmitry Torokhov 2024-06-09  225  
-815b74328f141f Dmitry Torokhov 2024-06-09  226  	return i;
-815b74328f141f Dmitry Torokhov 2024-06-09  227  }
-815b74328f141f Dmitry Torokhov 2024-06-09  228  
-2c2b364fddd551 Artur Rojek     2020-09-28  229  static int adc_joystick_probe(struct platform_device *pdev)
-2c2b364fddd551 Artur Rojek     2020-09-28  230  {
-2c2b364fddd551 Artur Rojek     2020-09-28  231  	struct device *dev = &pdev->dev;
-815b74328f141f Dmitry Torokhov 2024-06-09  232  	struct iio_channel *chans;
-2c2b364fddd551 Artur Rojek     2020-09-28  233  	struct adc_joystick *joy;
-2c2b364fddd551 Artur Rojek     2020-09-28  234  	struct input_dev *input;
-815b74328f141f Dmitry Torokhov 2024-06-09  235  	unsigned int poll_interval = 0;
-815b74328f141f Dmitry Torokhov 2024-06-09  236  	unsigned int num_chans;
-2c2b364fddd551 Artur Rojek     2020-09-28  237  	int error;
-2c2b364fddd551 Artur Rojek     2020-09-28  238  
-815b74328f141f Dmitry Torokhov 2024-06-09  239  	chans = devm_iio_channel_get_all(dev);
-815b74328f141f Dmitry Torokhov 2024-06-09  240  	if (IS_ERR(chans)) {
-2c2b364fddd551 Artur Rojek     2020-09-28 @241  		error = PTR_ERR(joy->chans);
-
-s/joy->chans/chans/
-
-2c2b364fddd551 Artur Rojek     2020-09-28  242  		if (error != -EPROBE_DEFER)
-2c2b364fddd551 Artur Rojek     2020-09-28  243  			dev_err(dev, "Unable to get IIO channels");
-2c2b364fddd551 Artur Rojek     2020-09-28  244  		return error;
-2c2b364fddd551 Artur Rojek     2020-09-28  245  	}
-2c2b364fddd551 Artur Rojek     2020-09-28  246  
-24c06e000e8fa2 Chris Morgan    2022-08-16  247  	error = device_property_read_u32(dev, "poll-interval", &poll_interval);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+On 11/06/24 14:40, Vignesh Raman wrote:
+> Add job that runs igt on top of vkms.
+> 
+> Acked-by: Maíra Canal <mcanal@igalia.com>
+> Acked-by: Helen Koike <helen.koike@collabora.com>
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+> Acked-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> Tested-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> Acked-by: Maxime Ripard <mripard@kernel.org>
+> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+> ---
+> 
+> v2:
+> - do not mv modules to /lib/modules in the job definition, leave it to
+>    crosvm-runner.sh
+> 
+> v3:
+> - Enable CONFIG_DRM_VKMS in x86_64.config and update xfails
+> 
+> v4:
+> - Build vkms as module and test with latest IGT.
+>    This patch depends on https://lore.kernel.org/dri-devel/20240130150340.687871-1-vignesh.raman@collabora.com/
+> 
+> v5:
+> - Test with the updated IGT and update xfails
+> 
+> ---
+>   MAINTAINERS                                   |  1 +
+>   drivers/gpu/drm/ci/build.sh                   |  1 -
+>   drivers/gpu/drm/ci/gitlab-ci.yml              |  1 +
+>   drivers/gpu/drm/ci/igt_runner.sh              |  6 +-
+>   drivers/gpu/drm/ci/image-tags.yml             |  2 +-
+>   drivers/gpu/drm/ci/test.yml                   | 24 ++++++-
+>   drivers/gpu/drm/ci/x86_64.config              |  1 +
+>   drivers/gpu/drm/ci/xfails/vkms-none-fails.txt | 57 ++++++++++++++++
+>   .../gpu/drm/ci/xfails/vkms-none-flakes.txt    | 15 +++++
+>   drivers/gpu/drm/ci/xfails/vkms-none-skips.txt | 67 +++++++++++++++++++
+>   10 files changed, 169 insertions(+), 6 deletions(-)
+>   create mode 100644 drivers/gpu/drm/ci/xfails/vkms-none-fails.txt
+>   create mode 100644 drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt
+>   create mode 100644 drivers/gpu/drm/ci/xfails/vkms-none-skips.txt
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8aee861d18f9..94065f5028cf 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7036,6 +7036,7 @@ L:	dri-devel@lists.freedesktop.org
+>   S:	Maintained
+>   T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+>   F:	Documentation/gpu/vkms.rst
+> +F:	drivers/gpu/drm/ci/xfails/vkms*
+>   F:	drivers/gpu/drm/vkms/
+>   
+>   DRM DRIVER FOR VIRTUALBOX VIRTUAL GPU
+> diff --git a/drivers/gpu/drm/ci/build.sh b/drivers/gpu/drm/ci/build.sh
+> index a67871fdcd3f..e938074ac8e7 100644
+> --- a/drivers/gpu/drm/ci/build.sh
+> +++ b/drivers/gpu/drm/ci/build.sh
+> @@ -157,7 +157,6 @@ fi
+>   
+>   mkdir -p artifacts/install/lib
+>   mv install/* artifacts/install/.
+> -rm -rf artifacts/install/modules
+>   ln -s common artifacts/install/ci-common
+>   cp .config artifacts/${CI_JOB_NAME}_config
+>   
+> diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
+> index 1b29c3b6406b..80fb0f57ae46 100644
+> --- a/drivers/gpu/drm/ci/gitlab-ci.yml
+> +++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+> @@ -123,6 +123,7 @@ stages:
+>     - msm
+>     - rockchip
+>     - virtio-gpu
+> +  - software-driver
+>   
+>   # YAML anchors for rule conditions
+>   # --------------------------------
+> diff --git a/drivers/gpu/drm/ci/igt_runner.sh b/drivers/gpu/drm/ci/igt_runner.sh
+> index d49ad434b580..79f41d7da772 100755
+> --- a/drivers/gpu/drm/ci/igt_runner.sh
+> +++ b/drivers/gpu/drm/ci/igt_runner.sh
+> @@ -30,10 +30,10 @@ case "$DRIVER_NAME" in
+>               export IGT_FORCE_DRIVER="panfrost"
+>           fi
+>           ;;
+> -    amdgpu)
+> +    amdgpu|vkms)
+>           # Cannot use HWCI_KERNEL_MODULES as at that point we don't have the module in /lib
+> -        mv /install/modules/lib/modules/* /lib/modules/.
+> -        modprobe amdgpu
+> +        mv /install/modules/lib/modules/* /lib/modules/. || true
+> +        modprobe --first-time $DRIVER_NAME
+>           ;;
+>   esac
+>   
+> diff --git a/drivers/gpu/drm/ci/image-tags.yml b/drivers/gpu/drm/ci/image-tags.yml
+> index 60323ebc7304..13eda37bdf05 100644
+> --- a/drivers/gpu/drm/ci/image-tags.yml
+> +++ b/drivers/gpu/drm/ci/image-tags.yml
+> @@ -4,7 +4,7 @@ variables:
+>      DEBIAN_BASE_TAG: "${CONTAINER_TAG}"
+>   
+>      DEBIAN_X86_64_BUILD_IMAGE_PATH: "debian/x86_64_build"
+> -   DEBIAN_BUILD_TAG: "2023-10-08-config"
+> +   DEBIAN_BUILD_TAG: "2024-06-10-vkms"
+>   
+>      KERNEL_ROOTFS_TAG: "2023-10-06-amd"
+>   
+> diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
+> index 322cce714657..ee908b66aad2 100644
+> --- a/drivers/gpu/drm/ci/test.yml
+> +++ b/drivers/gpu/drm/ci/test.yml
+> @@ -338,7 +338,7 @@ meson:g12b:
+>       RUNNER_TAG: mesa-ci-x86-64-lava-meson-g12b-a311d-khadas-vim3
+>   
+>   virtio_gpu:none:
+> -  stage: virtio-gpu
+> +  stage: software-driver
+>     variables:
+>       CROSVM_GALLIUM_DRIVER: llvmpipe
+>       DRIVER_NAME: virtio_gpu
+> @@ -358,3 +358,25 @@ virtio_gpu:none:
+>       - debian/x86_64_test-gl
+>       - testing:x86_64
+>       - igt:x86_64
+> +
+> +vkms:none:
+> +  stage: software-driver
+> +  variables:
+> +    DRIVER_NAME: vkms
+> +    GPU_VERSION: none
+> +  extends:
+> +    - .test-gl
+> +    - .test-rules
+> +  tags:
+> +    - kvm
+> +  script:
+> +    - ln -sf $CI_PROJECT_DIR/install /install
+> +    - mv install/bzImage /lava-files/bzImage
+> +    - mkdir -p /lib/modules
+> +    - mkdir -p $CI_PROJECT_DIR/results
+> +    - ln -sf $CI_PROJECT_DIR/results /results
+> +    - ./install/crosvm-runner.sh ./install/igt_runner.sh
+> +  needs:
+> +    - debian/x86_64_test-gl
+> +    - testing:x86_64
+> +    - igt:x86_64
+> diff --git a/drivers/gpu/drm/ci/x86_64.config b/drivers/gpu/drm/ci/x86_64.config
+> index 1cbd49a5b23a..8eaba388b141 100644
+> --- a/drivers/gpu/drm/ci/x86_64.config
+> +++ b/drivers/gpu/drm/ci/x86_64.config
+> @@ -24,6 +24,7 @@ CONFIG_DRM=y
+>   CONFIG_DRM_PANEL_SIMPLE=y
+>   CONFIG_PWM_CROS_EC=y
+>   CONFIG_BACKLIGHT_PWM=y
+> +CONFIG_DRM_VKMS=m
+>   
+>   # Strip out some stuff we don't need for graphics testing, to reduce
+>   # the build.
+> diff --git a/drivers/gpu/drm/ci/xfails/vkms-none-fails.txt b/drivers/gpu/drm/ci/xfails/vkms-none-fails.txt
+> new file mode 100644
+> index 000000000000..691c383b21a0
+> --- /dev/null
+> +++ b/drivers/gpu/drm/ci/xfails/vkms-none-fails.txt
+> @@ -0,0 +1,57 @@
+> +core_hotunplug@hotrebind,Fail
+> +core_hotunplug@hotrebind-lateclose,Fail
+> +core_hotunplug@hotreplug,Fail
+> +core_hotunplug@hotreplug-lateclose,Fail
+> +core_hotunplug@hotunbind-rebind,Fail
+> +core_hotunplug@hotunplug-rescan,Fail
+> +core_hotunplug@unbind-rebind,Fail
+> +core_hotunplug@unplug-rescan,Fail
+> +device_reset@cold-reset-bound,Fail
+> +device_reset@reset-bound,Fail
+> +device_reset@unbind-cold-reset-rebind,Fail
+> +device_reset@unbind-reset-rebind,Fail
+> +dumb_buffer@invalid-bpp,Fail
+> +kms_content_protection@atomic,Crash
+> +kms_content_protection@atomic-dpms,Crash
+> +kms_content_protection@content-type-change,Crash
+> +kms_content_protection@lic-type-0,Crash
+> +kms_content_protection@lic-type-1,Crash
+> +kms_content_protection@srm,Crash
+> +kms_content_protection@type1,Crash
+> +kms_content_protection@uevent,Crash
+> +kms_cursor_crc@cursor-rapid-movement-128x128,Fail
+> +kms_cursor_crc@cursor-rapid-movement-128x42,Fail
+> +kms_cursor_crc@cursor-rapid-movement-256x256,Fail
+> +kms_cursor_crc@cursor-rapid-movement-256x85,Fail
+> +kms_cursor_crc@cursor-rapid-movement-32x10,Fail
+> +kms_cursor_crc@cursor-rapid-movement-32x32,Fail
+> +kms_cursor_crc@cursor-rapid-movement-512x170,Fail
+> +kms_cursor_crc@cursor-rapid-movement-512x512,Fail
+> +kms_cursor_crc@cursor-rapid-movement-64x21,Fail
+> +kms_cursor_crc@cursor-rapid-movement-64x64,Fail
+> +kms_cursor_legacy@basic-flip-before-cursor-atomic,Fail
+> +kms_cursor_legacy@basic-flip-before-cursor-legacy,Fail
+> +kms_cursor_legacy@cursor-vs-flip-atomic,Fail
+> +kms_cursor_legacy@cursor-vs-flip-legacy,Fail
+> +kms_cursor_legacy@cursor-vs-flip-toggle,Fail
+> +kms_cursor_legacy@cursor-vs-flip-varying-size,Fail
+> +kms_cursor_legacy@flip-vs-cursor-atomic,Fail
+> +kms_cursor_legacy@flip-vs-cursor-crc-atomic,Fail
+> +kms_cursor_legacy@flip-vs-cursor-crc-legacy,Fail
+> +kms_cursor_legacy@flip-vs-cursor-legacy,Fail
+> +kms_flip@flip-vs-modeset-vs-hang,Fail
+> +kms_flip@flip-vs-panning-vs-hang,Fail
+> +kms_flip@flip-vs-suspend,Timeout
+> +kms_flip@flip-vs-suspend-interruptible,Timeout
+> +kms_flip@plain-flip-fb-recreate,Fail
+> +kms_lease@lease-uevent,Fail
+> +kms_pipe_crc_basic@nonblocking-crc,Fail
+> +kms_pipe_crc_basic@nonblocking-crc-frame-sequence,Fail
+> +kms_writeback@writeback-check-output,Fail
+> +kms_writeback@writeback-check-output-XRGB2101010,Fail
+> +kms_writeback@writeback-fb-id,Fail
+> +kms_writeback@writeback-fb-id-XRGB2101010,Fail
+> +kms_writeback@writeback-invalid-parameters,Fail
+> +kms_writeback@writeback-pixel-formats,Fail
+> +perf@i915-ref-count,Fail
+> +tools_test@tools_test,Fail
+> diff --git a/drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt b/drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt
+> new file mode 100644
+> index 000000000000..56484a30aff5
+> --- /dev/null
+> +++ b/drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt
+> @@ -0,0 +1,15 @@
+> +# Board Name: vkms
+> +# Bug Report: https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
+> +# Failure Rate: 50
+> +# IGT Version: 1.28-g0df7b9b97
+> +# Linux Version: 6.9.0-rc7
+> +kms_cursor_legacy@long-nonblocking-modeset-vs-cursor-atomic
+> +kms_flip@basic-flip-vs-wf_vblank
+> +kms_flip@flip-vs-expired-vblank-interruptible
+> +kms_flip@flip-vs-wf_vblank-interruptible
+> +kms_flip@plain-flip-fb-recreate-interruptible
+> +kms_flip@plain-flip-ts-check
+> +kms_flip@plain-flip-ts-check-interruptible
+> +kms_flip@flip-vs-absolute-wf_vblank
+> +kms_flip@flip-vs-absolute-wf_vblank-interruptible
+> +kms_flip@flip-vs-blocking-wf-vblank
+> diff --git a/drivers/gpu/drm/ci/xfails/vkms-none-skips.txt b/drivers/gpu/drm/ci/xfails/vkms-none-skips.txt
+> new file mode 100644
+> index 000000000000..5a9093ddb613
+> --- /dev/null
+> +++ b/drivers/gpu/drm/ci/xfails/vkms-none-skips.txt
+> @@ -0,0 +1,67 @@
+> +# keeps printing vkms_vblank_simulate: vblank timer overrun and never ends
+> +kms_invalid_mode@int-max-clock
+> +
+> +# Kernel panic
+> +kms_cursor_crc@cursor-rapid-movement-32x10
+> +# Oops: 0000 [#1] PREEMPT SMP NOPTI
+> +# CPU: 0 PID: 2635 Comm: kworker/u8:13 Not tainted 6.9.0-rc7-g40935263a1fd #1
+> +# Hardware name: ChromiumOS crosvm, BIOS 0
+> +# Workqueue: vkms_composer vkms_composer_worker [vkms]
+> +# RIP: 0010:compose_active_planes+0x1c7/0x4e0 [vkms]
+> +# Code: c9 0f 84 6a 01 00 00 8b 42 30 2b 42 28 41 39 c5 0f 8c 6f 01 00 00 49 83 c7 01 49 39 df 74 3b 4b 8b 34 fc 48 8b 96 48 01 00 00 <8b> 42 78 89 c1 83 e1 0a a8 20 74 b1 45 89 f5 41 f7 d5 44 03 6a 34
+> +# RSP: 0018:ffffbb4700c17d58 EFLAGS: 00010246
+> +# RAX: 0000000000000400 RBX: 0000000000000002 RCX: 0000000000000002
+> +# RDX: 0000000000000000 RSI: ffffa2ad0788c000 RDI: 00000000fff479a8
+> +# RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
+> +# R10: ffffa2ad0bb14000 R11: 0000000000000000 R12: ffffa2ad03e21700
+> +# R13: 0000000000000003 R14: 0000000000000004 R15: 0000000000000000
+> +# FS:  0000000000000000(0000) GS:ffffa2ad2bc00000(0000) knlGS:0000000000000000
+> +# CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> +# CR2: 0000000000000078 CR3: 000000010bd30000 CR4: 0000000000350ef0
+> +# Call Trace:
+> +#  <TASK>
+> +#  ? __die+0x1e/0x60
+> +#  ? page_fault_oops+0x17b/0x490
+> +#  ? exc_page_fault+0x6d/0x230
+> +#  ? asm_exc_page_fault+0x26/0x30
+> +#  ? compose_active_planes+0x1c7/0x4e0 [vkms]
+> +#  ? compose_active_planes+0x2a3/0x4e0 [vkms]
+> +#  ? srso_return_thunk+0x5/0x5f
+> +#  vkms_composer_worker+0x205/0x240 [vkms]
+> +#  process_one_work+0x1f4/0x6b0
+> +#  ? lock_is_held_type+0x9e/0x110
+> +#  worker_thread+0x17e/0x350
+> +#  ? __pfx_worker_thread+0x10/0x10
+> +#  kthread+0xce/0x100
+> +#  ? __pfx_kthread+0x10/0x10
+> +#  ret_from_fork+0x2f/0x50
+> +#  ? __pfx_kthread+0x10/0x10
+> +#  ret_from_fork_asm+0x1a/0x30
+> +#  </TASK>
+> +# Modules linked in: vkms
+> +# CR2: 0000000000000078
+> +# ---[ end trace 0000000000000000 ]---
+> +# RIP: 0010:compose_active_planes+0x1c7/0x4e0 [vkms]
+> +# Code: c9 0f 84 6a 01 00 00 8b 42 30 2b 42 28 41 39 c5 0f 8c 6f 01 00 00 49 83 c7 01 49 39 df 74 3b 4b 8b 34 fc 48 8b 96 48 01 00 00 <8b> 42 78 89 c1 83 e1 0a a8 20 74 b1 45 89 f5 41 f7 d5 44 03 6a 34
+> +# RSP: 0018:ffffbb4700c17d58 EFLAGS: 00010246
+> +# RAX: 0000000000000400 RBX: 0000000000000002 RCX: 0000000000000002
+> +# RDX: 0000000000000000 RSI: ffffa2ad0788c000 RDI: 00000000fff479a8
+> +# RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
+> +# R10: ffffa2ad0bb14000 R11: 0000000000000000 R12: ffffa2ad03e21700
+> +# R13: 0000000000000003 R14: 0000000000000004 R15: 0000000000000000
+> +# FS:  0000000000000000(0000) GS:ffffa2ad2bc00000(0000) knlGS:0000000000000000
+> +# CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> +
+> +# Skip driver specific tests
+> +^amdgpu.*
+> +msm_.*
+> +nouveau_.*
+> +panfrost_.*
+> +^v3d.*
+> +^vc4.*
+> +^vmwgfx*
+> +
+> +# Skip intel specific tests
+> +gem_.*
+> +i915_.*
+> +xe_.*
 
