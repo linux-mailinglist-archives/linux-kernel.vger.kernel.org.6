@@ -1,130 +1,154 @@
-Return-Path: <linux-kernel+bounces-209455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29FA90350A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:13:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 705AD90352F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64BD2288C00
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD21B1F22A54
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B86717623E;
-	Tue, 11 Jun 2024 08:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFC1171E48;
+	Tue, 11 Jun 2024 08:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nStDVCZe"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+5lu3N4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60CC17555C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8DA2AF11;
+	Tue, 11 Jun 2024 08:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718093537; cv=none; b=dUsd/48QXFYxawAEUgnZsrC9KUCVxGkbHfg9gkD2qq9kXaP5nN7am0Jwo3aqwv7FfKk4nHkHhOXXHJt98QXXwBDbc9+OIgGgNKyslZY3ZTYTnXdO/5hSFOUHzB+Jo8Au2pldybXY3rP79RuTMJ0udHOd4HaNDGuGESsv2GYKPEM=
+	t=1718093660; cv=none; b=uQNLUWOzW4cvlW+aOVZwg3ScCqu95AJkh62vr6i12CN2FiRLxuRSLQnWGVixYttB566MAcP039iCwoMyp9vjDNz8ARiPTZbkWlOHq06P/zS0423ArMZO03OOtaGEzSPP7z2f7KnQkSdiI8DE11oS/u3HrilUKtTz72+xg60pAos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718093537; c=relaxed/simple;
-	bh=lM/AUoiIFm5wy7ofM3hcaSkgrO99OY8cJt9TzA0Mu0s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f4YY9OLqK/89nppk5OY78hGQK8Oqgaf5n8s6+xiM36/QKdhb9w21fHrdNK6rOSbjjltSh3WYGXdWns94Xm7MpyxARd23c6z5S8SWc5RSBYqob/FxKF0u0yM9BkU+5qzd9b4wCMtctPflRPrhy2AZvB+WphvblpEvCsBLgwk0cec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nStDVCZe; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-79776e3e351so100852685a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 01:12:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718093535; x=1718698335; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8IVYq4GaETsYJZvHz4dUOl+klY8inCplH9StLoFX6IE=;
-        b=nStDVCZevNT9SyOrBoB7mnUoLKiiwGVSD2F0TwP1bKY+x2bwmBZN/GpYSeH03U0bqH
-         dL45y9NWX4S2Fn1TUpxlwCFbvZpa+taWRc2SIaixMEOhP5OdQ8MvBN2qmAEC5LEcGL1G
-         qky0ntj2rb3YUpHQS4/NzdBz79DmVpUNmQ1YE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718093535; x=1718698335;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8IVYq4GaETsYJZvHz4dUOl+klY8inCplH9StLoFX6IE=;
-        b=fReXVuX2EifIFJNV52bhOvhHQ2juTih7oAoEuIp2QZ91jRL5oJ8cxcvJ3TfwY5UHNd
-         yzJFCfjCzqQIBoqhXtwKwkzg6Y0Qt7lTQd0lTkw3HjScz+LHXj35d39OjFIqnNh7w4H0
-         GPp1gDdOzg8iYsdZly/XbYs5xoRaBcdbxRP76dqIPykwp3ROsOerthRdxxtP1cmtllCg
-         myZ8vAoz1NvF2zOZiQ0tKatC1K15cVr+HdHmugZcDnva+JdMRz9Qdf7esDdYn+CtUcyT
-         dHd4EfpaBZMvHaV95enTHj/ZWEp9p2KeOdwzQoctpvQZ2WJ9VflDL2hB5HpFTF3NtkBA
-         g1dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQxpXqAi6z4CvYdAP5hUJiKdAiicj2NH5Zx0FQRevlek1KvP8tRd6QAWikgjnlDaMTF3cL3fgU0s1QUHbxWcPOkXZKPQVnZoOGw2xo
-X-Gm-Message-State: AOJu0YzH2tpD3igOn254H3hkAnH4Qmo3ZPmK6vahxlDZevk5sG4+ZtJf
-	dmscYhDRVeMzCeeW2p0wI3pUklHVZlJz3M+kW3owuUqPKXM2Im8y1gv8LzSxtw==
-X-Google-Smtp-Source: AGHT+IEjrTQrxUo5zhixs+9k+Fjq2LfdHnJzlQOexh9ApNRRB0qiNKvKRrFodyQbd3JFr46awJRgPA==
-X-Received: by 2002:a05:6214:319b:b0:6b0:8e1d:f71b with SMTP id 6a1803df08f44-6b08e1dfafcmr6921546d6.49.1718093534519;
-        Tue, 11 Jun 2024 01:12:14 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b09039c2b9sm1548886d6.28.2024.06.11.01.12.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 01:12:13 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 11 Jun 2024 08:12:09 +0000
-Subject: [PATCH v5 4/4] media: uvcvideo: Exit early if there is not int_urb
+	s=arc-20240116; t=1718093660; c=relaxed/simple;
+	bh=qKklO2/0IzUpWC2mnVvYrITg/AldogrbkQZ0Zp4CLew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JD6kU1Rmhd68YYVtGB7gq8mqVvRYbNV+vTXOmQf+TucwJVpLmYz+OIQixk11Nc7xcCQoHi4MCXi1gx/H6ameu0cmccvSF64eUFCWD2tQV6TcffqGd7UbI1KIGlR+9Fv5fkYR/z3rNVpz2/OeIgFprRfMe3kGE9RJhJm7hubVhDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+5lu3N4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F47EC2BD10;
+	Tue, 11 Jun 2024 08:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718093659;
+	bh=qKklO2/0IzUpWC2mnVvYrITg/AldogrbkQZ0Zp4CLew=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p+5lu3N4W/oVf25Zb7MPEW8VaDrMztoBFQQ0O2BQuDCHj86dEKHcavAO9EcR7f67p
+	 P3DJRiZTHdSnLGlRaVEsFp1V3GcexyQzMMC/91Gak9jqERu8jN0G4eHPnyDylTi6JM
+	 Vq/PWL0Mp79l5kauUoMhaxZ3n4Mfbc9L4LfS9lyfuFG8RtrZ3knkLPPmUKlsFfkzxS
+	 RrINqRaeSc5E/HExpjv6OvcTrBgI4GUFlntsSMUzjU23lKk6NMMgzG+sM8bRLu/uYY
+	 TVsIRLfbvfqirXMabb7IcSrGvzyjfA3uUBsBUz5O5uHpgRWUu5a/L7aGOIDcje2E/C
+	 iNYcXZBK7mjcQ==
+Message-ID: <f669ccf9-8a69-4d2b-a8b1-f486d97413fe@kernel.org>
+Date: Tue, 11 Jun 2024 10:14:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240611-guenter-mini-v5-4-047b6fe5d08b@chromium.org>
-References: <20240611-guenter-mini-v5-0-047b6fe5d08b@chromium.org>
-In-Reply-To: <20240611-guenter-mini-v5-0-047b6fe5d08b@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Tomasz Figa <tfiga@chromium.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Alan Stern <stern@rowland.harvard.edu>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sean Paul <seanpaul@chromium.org>, 
- Ricardo Ribalda <ribalda@chromium.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: reset: brcm,bcm63138-pmb: convert to yaml
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, William Zhang <william.zhang@broadcom.com>,
+ Anand Gore <anand.gore@broadcom.com>, Kursad Oney
+ <kursad.oney@broadcom.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Kanak Shilledar <kanakshilledar111@protonmail.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240611035329.33648-2-kanakshilledar@gmail.com>
+ <398ee3a7-513e-4dd6-8ff9-b7585f005d28@kernel.org>
+ <CAGLn_=u9jnKL1Y=-+d2-A6BrO7xDZJS4VHtwO=mBHnww6qOaew@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAGLn_=u9jnKL1Y=-+d2-A6BrO7xDZJS4VHtwO=mBHnww6qOaew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-If there is no int_urb there is no need to do a clean stop.
+On 11/06/2024 09:23, Kanak Shilledar wrote:
+> On Tue, Jun 11, 2024 at 12:28 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 11/06/2024 05:53, Kanak Shilledar wrote:
+>>> Convert the Broadcom BCM63138 Processor Monitor Bus to newer DT
+>>> schema. Created DT schema based on the .txt file which had `compatible`,
+>>> `reg` and `"#reset-cells" as required properties.
+>>> Added one line description which was missing in the original .txt file.
+>>> Added Philipp Zabel as the maintainer (took from MAINTAINERS file).
+>>
+>> One of the necessary steps EVERYTIME you make conversion of some random
+>> binding is to grep. git grep. You grep for stale paths and usage of
+>> compatible in DTS. Sometimes you find nothing, sometimes you would find
+>> something.
+>>
+>> `git grep bcm63138-pmb` gives you:
+>> 1. stale path which you did not fix,
+>> 2. duplicated schema...
+> 
+> There is `brcm,bcm63138-pmb` defined in "/power/brcm,bcm-pmb.yaml" and
+> "/reset/brcm,bcm63138-pmb.txt" but they both are for different purposes.
 
-Also we avoid calling usb_kill_urb(NULL). It is properly handled by the
-usb framework, but it is not polite.
+What do you mean by "different purposes"? It is the same device. You
+cannot have same device with same compatible and two different bindings.
+Testing also told you that: warnings.
 
-Now that we are at it, fix the code style in uvc_status_start() for
-consistency.
+> By stale path are you referring that I will need to convert
+> "/arm/bcm/brcm,bcm63138.txt"
+> to DT Schema as well?
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_status.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+No, I mean each wrong/stale path needs to be fixed. E.g. dropped or
+updated, depending on the case.
 
-diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
-index 8fd8250110e2..9108522beea6 100644
---- a/drivers/media/usb/uvc/uvc_status.c
-+++ b/drivers/media/usb/uvc/uvc_status.c
-@@ -308,7 +308,7 @@ static int __uvc_status_start(struct uvc_device *dev, gfp_t flags)
- {
- 	lockdep_assert_held(&dev->status_lock);
- 
--	if (dev->int_urb == NULL)
-+	if (!dev->int_urb)
- 		return 0;
- 
- 	return usb_submit_urb(dev->int_urb, flags);
-@@ -320,6 +320,9 @@ static void __uvc_status_stop(struct uvc_device *dev)
- 
- 	lockdep_assert_held(&dev->status_lock);
- 
-+	if (!dev->int_urb)
-+		return;
-+
- 	/*
- 	 * Prevent the asynchronous control handler from requeing the URB. The
- 	 * barrier is needed so the flush_status change is visible to other
-
--- 
-2.45.2.505.gda0bf45e8d-goog
+Best regards,
+Krzysztof
 
 
