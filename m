@@ -1,165 +1,187 @@
-Return-Path: <linux-kernel+bounces-209139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6879902DC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:56:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C98D902DCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08131C2177E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:56:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42B01F22727
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D83763B8;
-	Tue, 11 Jun 2024 00:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD89163CB;
+	Tue, 11 Jun 2024 01:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gS2WFbgv"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UMQOJgmC"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2071.outbound.protection.outlook.com [40.107.20.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55434C81
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 00:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718067401; cv=none; b=F4CGS1sIR+xLO5K99/5tjzJKNwl+GBH4j2kLufmzVEudTmEVecXjD9dm9jp4GOwX2O4LrGo6qw9mm1RxSlg1M9ZAeNAfw2xwgfukWUVp4qa5W1fZ7EMc4aRIiPC9fNkBBoX65bCR4phuyESfVEt1CCajEgjFw6MPWVXh8YkGMOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718067401; c=relaxed/simple;
-	bh=pWf61BOW6LDJhVR+p7Jr3ddwtK37jvFhbQjHtR1senQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HPABuDF3EoSA5lFFcB0dko94RUcxxQQ7/oBiymbLT4YBogTWIipGP2OuyFq7bAqEhF3rZ74jm49/Z1Eh8TfZw7ajwOlRLOF5u4fXiZZoj0LAjlte0xm07c3MvrW4J1xW6RGSEfP4VW0X+RXCb4zh9i871pyCUJt3vNh4JbqE7Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gS2WFbgv; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6f1c4800easo194048366b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 17:56:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718067398; x=1718672198; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JsnMWiRsFgyQvUVQ9cK3PkkXIy3mFEoHC4cpzhwBfS0=;
-        b=gS2WFbgvNuFMST0ySHSNykEdjMWiaMnYhEr0nmdeYt77xXxrq9CFUWMHxnFoCLn00H
-         nsMy+9JwH4YOXY45x3s+KFK+CPKMHNFiXxfeuJ8a0+BzhSm0xTqijEn7bZvm7DF/ca43
-         1V17Qkz2XXv2mAzOKIjHHJnPy99IQKQDu9WLcEq63fUG8cp5CScPWezjD9R0x1Ju1JNu
-         dpievKpoHp8ttgIqTw2gzo73/DUaOIuMBJTwOrc2i4UYHCYALMn5xuwHmATOv/k+y+pD
-         MY5htcIfk/PyQIi8Ep2OI3LhiS1m2x6+oWMRwseOsRII2JJ9i1cAS4A9sxmjMpiRtEuU
-         xMoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718067398; x=1718672198;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JsnMWiRsFgyQvUVQ9cK3PkkXIy3mFEoHC4cpzhwBfS0=;
-        b=PMEWGEAJvsq5JXZYIA0fzMhy4qgAtDkiURl/kQ+6xD82Dv0xKZxKsaRfn6sXSCUUyV
-         i0TUk4whqjyXG5CH0QiOL9wp8G4sd2c8lj7upN1H8VuBaocbh89AUGoXANKBLucjutzY
-         sASpL9KgVNaOQNx5z6z+DtOTCA+PI9y67sF8OcExNrTaGUWpM0SsWIagA/5hvuIOlH6U
-         ICskt+ejtLRcv48hEPRZIUxzvEmZbq4x6s0pylJH5f+Eio5E06ero+siYtQPKhyyql0W
-         VazyiT3V7KGwUnlzqk11HvXHZ6HIafXXoXNK+lDYtDWtwKbThD8HC3lUxgkps4LkstjD
-         H+dg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKX4Gs9OHohvWVW8noDT0vwLM+tRLM1z1xKvyCT4pLBokQzHpUH8KEG60wyIAvAts+lLc1kJq7QrphimkCaxcXEQwcawh5xM8CjVxq
-X-Gm-Message-State: AOJu0YyHqYti5sb+UQNr6ZJKlKcTVTBCveahcLWP9/cO+rGMuc9kpEsb
-	OmOjuWHxwKmjqgGFSo52Of6Kss5ZiHb3vyRf3zhyrFLAwhlidmy3EE7wWy9/
-X-Google-Smtp-Source: AGHT+IGZIQqjy50dC/ZcZUGCR1hSV1V7Qo3MXBqgDQ4ubjDi1o9VqVgSC+CY9Zbw3GKbOrOTJAAOCQ==
-X-Received: by 2002:a17:906:b4d:b0:a6f:238:85c8 with SMTP id a640c23a62f3a-a6f02389247mr472356466b.71.1718067397868;
-        Mon, 10 Jun 2024 17:56:37 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f1226c190sm309544166b.93.2024.06.10.17.56.37
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Jun 2024 17:56:37 -0700 (PDT)
-Date: Tue, 11 Jun 2024 00:56:36 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Oscar Salvador <osalvador@suse.de>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Wei Yang <richard.weiyang@gmail.com>
-Subject: Re: [PATCH v1 2/2] mm/highmem: make nr_free_highpages() return
- "unsigned long"
-Message-ID: <20240611005636.g6525rkqpos43yds@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240607083711.62833-1-david@redhat.com>
- <20240607083711.62833-3-david@redhat.com>
- <ZmZ1x6QQYPFSOd7O@localhost.localdomain>
- <99073d55-5b18-4ed2-b860-8c09e056f585@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D6719B
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 01:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718067633; cv=fail; b=TMN7kagJX9+NEdh4QP0pSDJ+CGxU6neX60gWTG3c3Jq1OnB0Q0dA7LJli/Lc1oLkLy1ZNZ670shjcXkBQvsSw52/+sGPHEvYCHwd/QcX1+yhZOc3cXNVfbqOyxrzgBF0UjFLveGhBwZVveszsevb1tRyD3gk/GHnGpkDcp+pf5w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718067633; c=relaxed/simple;
+	bh=gQ41AQpXKUtXWliN9eAJ/J4JG/ogD/gDh6Q1WBGk0tE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lqqOrDdp/4ARqcfktwTVagUpybGSnRMtgFoBAB/6dBaf7q6zo+zHcR0e1s5WTQlY0LvjGe0bK5Zks8u275EiS9jyhGRyOLQuAHe/c53qe4lZhja8OOl5xFPTdujkyxqgf7vQv8hAY3qSony90Hw6n+catZFjW+WCza8Jrpbgbx4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=UMQOJgmC; arc=fail smtp.client-ip=40.107.20.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=igUv++4ebtGQzwdBLJx7t3mZ/GsXJ5Qbt3RRwEFj3Qw6Ovh8A8BoGtwP60Wm0eih1hjhjowZJ1suOcmJjF+n3dM20vxirK4rxwdePd5zpUKenEqC2GOO7GEhi9ED1Xca+ga6LAmKabY4WW/6ffgRsDUE2TTS/WGZGiJovrLFtK/hGrdmCFG3sQBgU1o5eZkDvsotwdrUb4l4d/o1VNX49EsfkGNGT91og+3s222V2Kixjw2avxh6e3Ks3NIX4dGLESU/ThpnUjnr+7+J/t6laj3fbBmiI8sTJHeU9nRjxkENXya+gy3/FZgYaIm35EFuoFmTcTnsrXUgC4+Ej3rwjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gQ41AQpXKUtXWliN9eAJ/J4JG/ogD/gDh6Q1WBGk0tE=;
+ b=Nl6sxspFbfRfebxnlwSFi71ySlO3EtzXxZ97SzVLUcuFkSfQuYf1un31Hn1poi/uoNkCs1nHSLszw7V2lgm4nYTh8nUsAyqXvQCUpB6YnlJO/oyd+fn8EJ9wp1a7QTB6C6b9eScjf92e7rQ6v9MWlnOkqPiF3VTnc37tLPKnfo2pcwxT4MfF6wexnYh4akPJEQT3FoL1ZVuQqUEcg70iP7EdNKcvxlo+qX/4HcAUIGrKmqvH2OrWxkt3fofXy7iJFc1TF/tyZh9iK4CgrCUEL9+2f91J3R7dREjT6n52hx9WbsUkFjEjMX+IJyqlmaE0cB7ssPfbnaFzPyM3Omz1pQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gQ41AQpXKUtXWliN9eAJ/J4JG/ogD/gDh6Q1WBGk0tE=;
+ b=UMQOJgmCuhrFkkL7IRlHS5LhALyuP+lmYQTv4C48cx/7I14zezTr1oQVOWFmI1nEeK1RPKA3IiytTvbeFL4sQCZgKTOtaCjXUzduXkpZBFjV5ouJVr/9VE8ycYYYv6puRK+zv3rPiEOyVWXMSTRvnYnDurf1wPPxSbU3SwUWTL0=
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
+ by VI1PR04MB6816.eurprd04.prod.outlook.com (2603:10a6:803:12d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Tue, 11 Jun
+ 2024 01:00:28 +0000
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256%5]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
+ 01:00:27 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Javier
+ Martinez Canillas <javierm@redhat.com>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] drm/fbdev-dma: fix getting smem_start
+Thread-Topic: [PATCH] drm/fbdev-dma: fix getting smem_start
+Thread-Index: AQHatlRsnflkb+VoOkyefveVeXhwwbHAuO+AgAEPeGA=
+Date: Tue, 11 Jun 2024 01:00:27 +0000
+Message-ID:
+ <AM6PR04MB59415B3F01D02024A255BFB988C72@AM6PR04MB5941.eurprd04.prod.outlook.com>
+References: <20240604080328.4024838-1-peng.fan@oss.nxp.com>
+ <8f4a6d80-dd3e-422f-88af-d26f50c973ff@suse.de>
+In-Reply-To: <8f4a6d80-dd3e-422f-88af-d26f50c973ff@suse.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|VI1PR04MB6816:EE_
+x-ms-office365-filtering-correlation-id: 48bc13d1-c491-4680-eddc-08dc89b1e257
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|366007|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?R05YUlEvNDIvM2VZS1Q1RDg5UFIySHc3cURmYjl5aDBPL0dTS2JLQmxMWEps?=
+ =?utf-8?B?R0xhZ2tuWXoyNXJuQzVOZ1puWDlXejdIOU5oRy9jK3F4dG0rZGp6R3ErVmNi?=
+ =?utf-8?B?eXNJK3FZMHZmbmJQVGxiMlJ4cDBLb2hYeEhCZkN2Q1JMdHVWSEVjVHlJVTht?=
+ =?utf-8?B?L0tqZWM5cDI2bUF5dy95WlB0d3cvelZ5NDY0bEplbSs4WVJ5bTRuYldtdElK?=
+ =?utf-8?B?NFQ4d3FnMGhzbFl4aGFZelNjME1UVEJNenhIdDhDb0hPMGFYa1dMTnZkdDNj?=
+ =?utf-8?B?MmJWQnowSWJRRFdLREhmYXpQSCswcldGNlBVZ2J0b0hDMXgxTG1sS0M3Rmlw?=
+ =?utf-8?B?STN1d0NKbkd1NGdTaHJpcWdlVHZBamx6b0dnY0krZFdRRE54OUVjOHdsV1Zy?=
+ =?utf-8?B?RmpnV05XVCtwbEh6cjhwZzdlcHVZWWpsV01pdlFIUmUxYkdSbkRyaGtMWlFk?=
+ =?utf-8?B?MlpLVTVsOHM1TTdFd2tGMlRDb0J1aExxWTdZU1cram0zVGdPcG5YUkkwamV3?=
+ =?utf-8?B?OWZSMVlGYzZ5WnMyV0hsQkEwRHg3Qlh0cUNpc2xMYmhFNHJSeTErQmUxdUlx?=
+ =?utf-8?B?V1k3R2k4S1NUTDM4MitEenRkR1FHYTVIbTZDd1drZFlqajdxS3VPZ1N0aWgy?=
+ =?utf-8?B?UFVwZEpJNjlJeklqZURTV2NPY2NtOTFnclJLMGt4eWZPVUJBYm9KMjFmT0ZI?=
+ =?utf-8?B?bkRLQ2krODN4NXcvK2w5cW9ncmY0cGhjazAwSVkzTUtjZ0NOWVBUMUFwMHhn?=
+ =?utf-8?B?SFlHMVJldEFqa3VGNXZrSFEwdDM5c21Vd2k5N0xqK0pIdEtyYS8yZ0IyWTBO?=
+ =?utf-8?B?YkxLdVRhV0VQMjdlSkR4RnhPOSsyM1JHdGdxQVFXMFFralhaRklzL2dHMjVI?=
+ =?utf-8?B?RVNuYUpRLzJTNURtYkhVcWE0cVZwb2RjOHc3MUJneUI4b1U2a2tlRGhQUjQ0?=
+ =?utf-8?B?d3hrbmdndExqcFZRanl2ZHg0a0RxUC9IN1lOVmZIWEJRRGFzaFJNdE5pU2RH?=
+ =?utf-8?B?YjNiWEFVaW9DdmEvTkFyeDczaDJiUGx1OW1jb25EY1F0RHo4bjdXcEJCT0gy?=
+ =?utf-8?B?bFZWT2VtMWd0TzJKMkQ5aC9aQ2pPczlCNyttbDhFcWUyNGs2OFhqSXg3K0Jr?=
+ =?utf-8?B?SVpYQzZvbXJrK09wSFlRT0crR1RLVlMzQkRHeklCdlNOVElsYTRHY0R2ODA3?=
+ =?utf-8?B?cCtUQWVwcW00WDdvRWljTlZPM3hEWm5EUFJLZHNmUCtJNnVRY1pYdzUya1Fj?=
+ =?utf-8?B?bitiaWRBTCt5czlybWQ0U1ZSOXIvdlo2aFJqSjRkY2xmeFlyWEo0Y09FTXRU?=
+ =?utf-8?B?U25CMS9CRFBvTTBxVE9CMnVuY28rOGVReGROeXROSVZRNTdmRlJVMnEraW5Z?=
+ =?utf-8?B?N25taGJhK0R2aUNLN2g1OEhkVzlvME8vdWJXRWRHTE50VnRtUEExWXcwRktF?=
+ =?utf-8?B?LzlCcUhlanFIWFJpaXdJUGt3cUFBWithdU0razNGZmNZcTFQS3JkWlpCMVlL?=
+ =?utf-8?B?WXFWVEQ0M2lJN0pma3RjZFdKZ1BCQk0wVE5lVVkvelo3WnBJKzNmaWZtZzd1?=
+ =?utf-8?B?ZUhleGh2QkhRSUVHT0x6RWJiYzFGcE9hcXpSK05KcDZhUVBrN29NSTlVdkM0?=
+ =?utf-8?B?NStyamcyWTRYdlF4d0tnV1FZRHlndU5qU0IxNk00L3lzSU42SlFRVTFiZS9H?=
+ =?utf-8?B?WGl6aThGNUd0ZGI3aC9NLzkwc2N2OTJlODlhN29EeWFHaW04MGk0RzZ4b21V?=
+ =?utf-8?B?R2dBRWIyczdjWXVYS2tzVGJEd3lqWHJ6MnZsSkQvc1ZaWFpsYzJQRWFzK08y?=
+ =?utf-8?Q?s4BYcE0Wm4azULTvszsjm5NfQDB5MLSxjMWok=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?TGRXbk5pMXFuSTY5UVFsdm9IajEydlhnOERqZnhsdWM4SksxVThjRDd6ZTRT?=
+ =?utf-8?B?NldWRHN3M040eTlyZXN4aWlYRWdKRW9uSjVtdGN4WHhvRjNrNHNmWUZRNlhs?=
+ =?utf-8?B?cEdGUWN4RjhPbE9nVmN5UXpmanFYWnhONGs1WFFieWVUSklYdUh3dm5DUjlq?=
+ =?utf-8?B?cm41eEl5L3JnSTJlYWFUSzk3V08wVFpWclhSS1RVWXdmRWxMQjlqMXh5ZkJs?=
+ =?utf-8?B?eS9lMk0yREgxZkJrRWRzSkZtV3VLRHI0QWg1SUpBUUJtSHZib041Nk45cC9E?=
+ =?utf-8?B?clV4Y2xwbkp4TDdHSklNQVlneDIvbjM1QWgvNmFmdHVTNExONkhLekxVSTFp?=
+ =?utf-8?B?eVhyYXM4UXJlOGwvazhranY5enRTWmFPK2NFUU9IRitQREx5MEZ1RnRqRS9J?=
+ =?utf-8?B?Rjh0VVhuN05rZGp4cEVvUzU2K3gzWElvbU1mckpBUXgwZEJIVmJXeU0zenBI?=
+ =?utf-8?B?TWNOUjJQdXVFa3oxUFJqYkQ0WEt3SXY5N2NMbHBzS3BMS2QreXQzZE5wN2NE?=
+ =?utf-8?B?QUd4dTNNRm5JeDE1VjliUzVQRkZYVHg3QkNVcmt0YzBpaVlWN3JrY3pyZU1x?=
+ =?utf-8?B?WXUvbk5Ib1ZXNTczYnpteVdTcmw3T3FNKzI3elRHZ05UNWVIeS81VExwNkZu?=
+ =?utf-8?B?UmwxUFYvYnJUd2RxSmRMZ0NNU1N2V3BGc2UrZlkrZ09jekVSVzhVVGtYcVVh?=
+ =?utf-8?B?ZCtSd1g3bEdYaGdhZkJsbC9aYU5ZcjFDK2lRVUVDNGRMZlgvMG1JNyt3V2xO?=
+ =?utf-8?B?TWYxemFnbitTT0RmcytJL2lLM3BQUVArdDR4eWVTYjJMUmNXdlZpT0MvYW1l?=
+ =?utf-8?B?TXBVdEtBVERTSVRhKzB3bWhsLzRQTTlSMFpkTWJCZktRREVKZUZGL0YzU0pY?=
+ =?utf-8?B?VEVOTk5za3VybTF3WGtKWXJxRm1iV2tmVWduNFhKNUwxNkVMYVhVZ0Z2MFF6?=
+ =?utf-8?B?OVFaNmhtN2o0Znk0blZQUSt0dkRaaUlKTXNYWnBLc2FvbXZzcXl3c3YxSWJS?=
+ =?utf-8?B?elJLb2hYcVltZnpQKzF6V1lGalpsQ2FYQnB0dTVEQnRsdmRFNjFycCtGcXdQ?=
+ =?utf-8?B?aUVxcmUvOGlVTGE3SkkyNGRJejFYZ1V5NUVseU5KSFF3TTgySGtUSkZTVHNT?=
+ =?utf-8?B?YUlEcW8vQk9QVU4zQkZLQUVacVRJVlpweFNRQTRXMHA4REVicHhVVWRVKy9F?=
+ =?utf-8?B?N2MyN0hwMmwrbTJCOFk2Z200TmJGQ3ZCYWllejkrNDBjY3k3VGN2U05VNjZx?=
+ =?utf-8?B?RUdqMmNhQkw1WVFEanpxNWhPTExUVGRzVSs3cjFsUU1SY1hNenRUVDlxa3ZC?=
+ =?utf-8?B?QW5JdEp3ZUJKbldDeEwrMEdNUGNqc3dsc0xTUjFsem5kR1RPNzNSSmxGNFEw?=
+ =?utf-8?B?dTh6aXFtZFRMNzVRZUZtTjlFeDYzSkpoaTFEWjBRRG1DZkFmK0p2ZkxYUlZY?=
+ =?utf-8?B?UGdJMTZVRlJIV3lMR2NaWWMvWW5BeEtXYWt1Q0JCNmZHY1krR3RhRXF1UWVR?=
+ =?utf-8?B?Y0t0SGE4VEVhZ1B3aU9EVngzUi9SOEc3dlAvZCtpeVhLZzdCdjJNLzh3cTZp?=
+ =?utf-8?B?RW45UThVZFlmRkh1S3RpeVNaUjcwZFZrOXJNUHB3RkJuaWVDd2dHMVpLc1ly?=
+ =?utf-8?B?VDVWZ0JiSURYMHhyenMwNzVkWDd4VmhRTG45Yk9yblVwM254alZqZllBVlVh?=
+ =?utf-8?B?ZnZ5ZmZ4ekZwWXNuTVdhZTEyb21mVnp5VzdOeEVjZWx6bW9MUHl3T0Q0bzgv?=
+ =?utf-8?B?Nkx1b3I2TmJCSzhTNHNrQjdKODRvMHozRXpsei9yeUV4WUF3bE5oSTd1dVVF?=
+ =?utf-8?B?T2c1STJ1dzZGbDNaMEtzUEVRQkRHWUpOZithZnAzbnYvK1hoWGMrS3lwWkhN?=
+ =?utf-8?B?NzJTWm9HRzlVZmVheldJT08vckhuRHRRQ2hsQkk2TzB5Qk5TbGExMDRNbUpq?=
+ =?utf-8?B?TGdwYXI0TktNUHJEUW1SS2VOYmtYRmZoQUVLK25YdENkSWxDSmQxWXQ4ekZ1?=
+ =?utf-8?B?ZHVmOG5HelVmMEdzUlZuSmJiZ2JjV0RhM2VwbGxDZjRFd291bUdRSy85VzhT?=
+ =?utf-8?B?TUIxTElLaWY1RGVCZWplUXhNdXpjR0cxUW51eUkrZDMxTWdDdW1PWXIyYWxr?=
+ =?utf-8?Q?BJEw=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99073d55-5b18-4ed2-b860-8c09e056f585@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48bc13d1-c491-4680-eddc-08dc89b1e257
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2024 01:00:27.9248
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: HU++gMQu1vSO65jdQwN+NLmBkD336bEjJyQTp2vRdzt2q+XpU0Qd8MA3jACBFMh9Dw3ge7OQFByZjVcExk2P3w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6816
 
-On Mon, Jun 10, 2024 at 10:22:49AM +0200, David Hildenbrand wrote:
->On 10.06.24 05:40, Oscar Salvador wrote:
->> On Fri, Jun 07, 2024 at 10:37:11AM +0200, David Hildenbrand wrote:
->> > It looks rather weird that totalhigh_pages() returns an
->> > "unsigned long" but nr_free_highpages() returns an "unsigned int".
->> > 
->> > Let's return an "unsigned long" from nr_free_highpages() to be
->> > consistent.
->> > 
->> > While at it, use a plain "0" instead of a "0UL" in the !CONFIG_HIGHMEM
->> > totalhigh_pages() implementation, to make these look alike as well.
->> > 
->> > Signed-off-by: David Hildenbrand <david@redhat.com>
->> ...
->> > -static inline unsigned int nr_free_highpages(void) { return 0; }
->> > -static inline unsigned long totalhigh_pages(void) { return 0UL; }
->> > +static inline unsigned long nr_free_highpages(void) { return 0; }
->> > +static inline unsigned long totalhigh_pages(void) { return 0; }
->> 
->> Although I doubt it has any consequences, I would just leave them both with UL,
->> so the return type is consistent with what we are returning.
->
->These suffixes are only required when using constants that would not fit
->into the native (int) type, or converting from that native (int) type to
->something else automatically by the compiler would mess things up (for example,
->undesired sign extension). For 0 that is certainly impossible :)
->
->
->That's also the reason why in include/linux we now have:
->
->t14s: ~/git/linux/include/linux $ git grep "return 0UL;"
->skbuff.h:       return 0UL;
->uaccess.h:static inline unsigned long user_access_save(void) { return 0UL; }
->t14s: ~/git/linux/include/linux $ git grep "0UL;"
->bitmap.h:               *dst = ~0UL;
->dax.h:          return ~0UL;
->mtd/map.h:                      r.x[i] = ~0UL;
->netfilter.h:    return ((ul1[0] ^ ul2[0]) | (ul1[1] ^ ul2[1])) == 0UL;
->skbuff.h:       return 0UL;
->uaccess.h:static inline unsigned long user_access_save(void) { return 0UL; }
->
->
->... compared to a long list if "unsigned long" functions that simply "return 0;"
->
-
-Seems this is the current status. 
-
-Then my question is do we have a guide line for this? Or 0 is the special
-case? Sounds positive value has no sign extension problem. If we need to
-return 1, we suppose to use 1 or 1UL? I found myself confused.
-
-I grepped "return 1" and do find some cases without UL:
-
-backing-dev.h: wb_stat_error() return 1 for unsigned long.
-pgtable.h: pte_batch_hint() return 1 for unsigned int.
-
-So the guide line is for positive value, it is not necessary to use UL?
-
->
->So I prefer to just drop it.
->
->Thanks!
->
->-- 
->Cheers,
->
->David / dhildenb
-
--- 
-Wei Yang
-Help you, Help me
+PiBTdWJqZWN0OiBSZTogW1BBVENIXSBkcm0vZmJkZXYtZG1hOiBmaXggZ2V0dGluZyBzbWVtX3N0
+YXJ0DQo+IA0KPiBIaQ0KPiANCj4gQW0gMDQuMDYuMjQgdW0gMTA6MDMgc2NocmllYiBQZW5nIEZh
+biAoT1NTKToNCj4gPiBGcm9tOiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4NCj4gPg0KPiA+
+IElmICdpbmZvLT5zY3JlZW5fYnVmZmVyJyBsb2NhdGVzIGluIHZtYWxsb2MgYWRkcmVzcyBzcGFj
+ZSwNCj4gPiB2aXJ0X3RvX3BhZ2Ugd2lsbCBub3QgYmUgYWJsZSB0byBnZXQgY29ycmVjdCByZXN1
+bHRzLiBXaXRoDQo+ID4gQ09ORklHX0RFQlVHX1ZNIGFuZCBDT05GSUdfREVCVUdfVklSVFVBTCBl
+bmFibGVkIG9uIEFSTTY0LA0KPiB0aGVyZSBpcyBkdW1wIGJlbG93Og0KPiANCj4gV2hpY2ggZ3Jh
+cGhpY3MgZHJpdmVyIHRyaWdnZXJzIHRoaXMgYnVnPw0KDQpJdCBpcyBOWFAgaS5NWDk1IERQVSBk
+cml2ZXIgd2hpY2ggaXMgc3RpbGwgaW4gTlhQIGRvd25zdHJlYW0gcmVwby4NCg0KVGhhbmtzLA0K
+UGVuZy4NCg==
 
