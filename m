@@ -1,132 +1,190 @@
-Return-Path: <linux-kernel+bounces-210575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF769045BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:28:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC179045BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35619B21907
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:28:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B335282D33
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6201514D8;
-	Tue, 11 Jun 2024 20:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E483D152189;
+	Tue, 11 Jun 2024 20:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KXdwrwqc"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqkVo+uV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2E514F9F7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE5880607;
+	Tue, 11 Jun 2024 20:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718137677; cv=none; b=mSi0tUenvpDIBfOpueajASw+KhotvzgFc9hCipuajTOhEieVnBpTyJrdai6CaP4WSwrw3lEB7T035oeJKVTZaLnJo0RgXKL1Zb9GR2PD3any/uwllu9JIR5cFN6JdOhDzJEvh4Oibgq3Nvq1+dRBfLs+V9L4wCxYoXv3vR6AXyg=
+	t=1718137722; cv=none; b=P1VdPRNzbDBhQr8onqf929LLPoRn66etALie6RzKUH0R8C0+1WtgB2KIl7SGHwqtGoxBerX/cp3q9LPLLgBivVTt2KYHin6OdRt7+GrfP9J3YpqX2jjyIOgCR0FvHUsrvyPW9RI1sDfIQhCXPNDqts/67NLgi6dF9voLlB/bZjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718137677; c=relaxed/simple;
-	bh=ugUCm9Yr68u8EX9EKbsRWgLfIOOy1JUUSq6pq9fS/gc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VJ6dXj38P5Q0mNSNG6F8YYzUk7i2YfIdgwTvlbmdd1ab+JeEcu7ExZpoQ3030+0zWYXldESm+4ggnDvbE+0ddDWo/AmXVjg0XR2jCpWzKwfTPSmTx6TeopQPqrTXUTR7R0IKPeo9kaUWJjVbT+86IOPe1n9pqhLGQn/K79rLm3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KXdwrwqc; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dfb16f9b047so359887276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:27:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1718137674; x=1718742474; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=th6eKAq/LATBnFfZ8l1OQ1G8HtkktsMhv2cX9FNr94k=;
-        b=KXdwrwqcCk5M6iChGThNz+ZKUxbkCpNfhpt17o6xLSYtIVnfdMW0SmceNSwOmSeFI1
-         a1F48Q1Rqa6qvDfCyeJ4oLySMBN5LyIaRs5B5jsIQF3SYuU636z5E5tMUIBXuTW/c9oG
-         pA/jpipkotPZcy5RcG3cOukp//cCtHuzaiFEk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718137674; x=1718742474;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=th6eKAq/LATBnFfZ8l1OQ1G8HtkktsMhv2cX9FNr94k=;
-        b=rLIyqUtEmoDGzrc+KhqoMBiVp20ntVH9f8WYr2Vm7g3eQm/saUL/wPyYHm7ZCQDAJy
-         D3dESgsZg90wo9Ui6T1CP69ekKNh5XBQG/jeYQJw5RUPoJEUr/ADfZcki/WKIFcqeNzm
-         34HaBRGCb8opd9DZnSoicKgU0sj+kHZxVJzrD8gPBF52IAk2N6h/SuiQtj0M6B8FTdEK
-         UGyAcdHCH+HBY5AXWYu+GfPGmlFSxuKmih5DTmMflXFPad4ryYFAYJ+fmTgF9pWeRnck
-         T9UAhPPc0souWA5dsvJX0nTCwlIRh2vmu7ko2L3cRjunDXx/dHz0x4lyumzDdr6lS5kf
-         S0mw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYmBihi+GEHYMrXCuHS/ObEsc81Jwco6vxBSScPTOc+gE9porBaDhkKC+PRvXw6G+NFjjWED3wsRpLpX7zp8m6UVZSm85rz3iFwinh
-X-Gm-Message-State: AOJu0YykfQqh/AjGweA3eTEzoeF3+4KkkZ93eYD3Rya1e63cUb5NKxMl
-	KS+v8aJFVclz6GXX3XhyIEE1gqxuj4lmyNyA29E7x8EmDPLNE9AhKdxl/XYIqR0=
-X-Google-Smtp-Source: AGHT+IGTW02Hlw4hL7bwC4c8R5pzfb1VoGT9mdqeIkhRdG7AQbO2+vTAHG0mI8vT422bk0QHPx7l6w==
-X-Received: by 2002:a05:6902:b27:b0:dfa:6f65:f068 with SMTP id 3f1490d57ef6-dfaf64befe7mr10269563276.2.1718137673572;
-        Tue, 11 Jun 2024 13:27:53 -0700 (PDT)
-Received: from [172.20.14.19] (ool-6c3a3e1d.static.optonline.net. [108.58.62.29])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b06cd275b7sm38092216d6.62.2024.06.11.13.27.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 13:27:53 -0700 (PDT)
-Message-ID: <1f46ef8d-2435-4c73-88b0-f954d685d1a9@linuxfoundation.org>
-Date: Tue, 11 Jun 2024 14:27:52 -0600
+	s=arc-20240116; t=1718137722; c=relaxed/simple;
+	bh=luJqMwS1juyB7P9FhCZ/2se2iPbzDsWfhWxvaQJ4Lx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jY7xrrlBLIu0hlXmmEgov1yhD3xdK0Ogf6s8GS9B6tnpt3LTlV28/cL0CznrLqlbeF5BCSfT84w+Dhjxte+pnQt5MzF/EeU2F0QyldT+yurPxsrInf6F0Pg2PwtlSfG9/g4WI2YzOy6Fm/iclwm8MQLG6KJAA+kHlAwwOeCKnr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqkVo+uV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68795C2BD10;
+	Tue, 11 Jun 2024 20:28:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718137721;
+	bh=luJqMwS1juyB7P9FhCZ/2se2iPbzDsWfhWxvaQJ4Lx8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pqkVo+uVymCiP3JT77u6WNfcHkvoxjkXutcuhekMKo20I1IoAblmmG/t9e9X4vmFX
+	 0HOxijcjlxHswh2xFpVEwfqvkjTt0s8Yb0mrXcxhfUrp9ph2N1/3DCOPcfNBEBdwew
+	 E0D/mFVERXxwZCPUQhvL+Ddlje9dku/CLAAGAfA5U0ACrZGbSsm9EscwN4ItitVA/c
+	 9zzcYv2ZwPv3bRQkeWtS9f4RyRJhGllD9sa6dM06ZcjqKvWyDaT/v8MPgi9nEsAGp8
+	 FXHNQxmNRwSkXwG6Oou+HM5B78ZhyR/rXY064HEyyhKmIkdUIwnyXdMBJ53NTJ3VZd
+	 u9tKcAXmG9tGQ==
+Date: Tue, 11 Jun 2024 14:28:40 -0600
+From: Rob Herring <robh@kernel.org>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kanak Shilledar <kanakshilledar111@protonmail.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: serial: vt8500-uart: convert to json-schema
+Message-ID: <20240611202840.GA3013140-robh@kernel.org>
+References: <20240611121048.225887-1-kanakshilledar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: Add information about TAP conformance in tests
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: kernel@collabora.com, linux-kselftest@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240610083245.1938001-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240610083245.1938001-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611121048.225887-1-kanakshilledar@gmail.com>
 
-On 6/10/24 02:32, Muhammad Usama Anjum wrote:
-> Although "TAP" word is being used already in documentation, but it hasn't
-> been defined in informative way for developers that how to write TAP
-> conformant tests and what are the benefits. Write a short brief about it.
+On Tue, Jun 11, 2024 at 05:40:43PM +0530, Kanak Shilledar wrote:
+> Convert the VIA VT8500 and WonderMedia WM8xxx UART Controller to
+> newer DT schema. Created DT schema based on the .txt file which had
+> `compatible`, `reg`, `interrupts` and `clocks` as required properties.
 > 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Additions to the original binding
+> - changed the file name from vt8500-uart to via,vt8500-uart.yaml
+> - removed unnecessary alias from the example.
+> - added Greg and Jiri as maintainers (referred MAINTAINERS file).
+> 
+> Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
 > ---
->   Documentation/dev-tools/kselftest.rst | 8 ++++++++
->   1 file changed, 8 insertions(+)
+>  .../bindings/serial/via,vt8500-uart.yaml      | 52 +++++++++++++++++++
+>  .../bindings/serial/vt8500-uart.txt           | 27 ----------
+>  2 files changed, 52 insertions(+), 27 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/serial/vt8500-uart.txt
 > 
-> diff --git a/Documentation/dev-tools/kselftest.rst b/Documentation/dev-tools/kselftest.rst
-> index dcf634e411bd9..b579f491f3e97 100644
-> --- a/Documentation/dev-tools/kselftest.rst
-> +++ b/Documentation/dev-tools/kselftest.rst
-> @@ -228,6 +228,14 @@ In general, the rules for selftests are
->    * Don't cause the top-level "make run_tests" to fail if your feature is
->      unconfigured.
->   
-> + * The output of tests must conform to the TAP standard to ensure high
-> +   testing quality and to capture failures/errors with specific details.
-> +   The kselftest.h and kselftest_harness.h headers provide wrappers for
-> +   outputting test results such as pass, fail, or skip etc. These wrappers
-> +   should be used instead of reinventing the wheel or using raw printf and
+> diff --git a/Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml b/Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml
+> new file mode 100644
+> index 000000000000..b38925ab23a1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/serial/via,vt8500-uart.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: VIA VT8500 and WonderMedia WM8xxx UART Controller
+> +
+> +maintainers:
+> +  - Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> +  - Jiri Slaby <jirislaby@kernel.org>
 
-When there are multiple tests supported by a test suite, it doesn't
-make sense to convert every single print statement. That is the reason
-why we have the run_tests wrapper that prints the summary in TAP format.
+Don't put subsystem maintainers here. It should be someone with h/w. 
+(The VT8500 maintainer if there is one?). If you can't come up with 
+anyone, you can put me.
 
-I would rephrase this to say "should be used for pass, fail, exit, and
-skip messages".
+> +  - Kanak Shilledar <kanakshilledar111@protonmail.com>
+> +
+> +allOf:
+> +  - $ref: serial.yaml
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - via,vt8500-uart
+> +      - wm,wm8880-uart
+> +
+> +    description: |
 
-This rule is applicable to only the tests that are in the selftests Makefile
-and included in the default run.
+Don't need '|' if no formatting.
 
-There is no need to convert every single print statement in tests.
+> +      Should be "via,vt8500-uart" (for VIA/WonderMedia chips up to and
+> +      including WM8850/WM8950), or "wm,wm8880-uart" (for WM8880 and later)
 
-> +   exit statements. CI systems can easily parse TAP output messages to
-> +   detect test failures.
+Just add a comment after the compatible strings (e.g. "# up 
+to WM8850/WM8950") and drop this.
 
-I would rather see people spending energy writing new tests and fixing
-warnings. TAP conversions need to be focused if they add value.
-
-thanks,
--- Shuah
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - interrupts
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    serial@d8200000 {
+> +        compatible = "via,vt8500-uart";
+> +        reg = <0xd8200000 0x1040>;
+> +        interrupts = <32>;
+> +        clocks = <&clkuart0>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/serial/vt8500-uart.txt b/Documentation/devicetree/bindings/serial/vt8500-uart.txt
+> deleted file mode 100644
+> index 2b64e6107fb3..000000000000
+> --- a/Documentation/devicetree/bindings/serial/vt8500-uart.txt
+> +++ /dev/null
+> @@ -1,27 +0,0 @@
+> -* VIA VT8500 and WonderMedia WM8xxx UART Controller
+> -
+> -Required properties:
+> -- compatible: should be "via,vt8500-uart" (for VIA/WonderMedia chips up to and
+> -	including WM8850/WM8950), or "wm,wm8880-uart" (for WM8880 and later)
+> -
+> -- reg: base physical address of the controller and length of memory mapped
+> -	region.
+> -
+> -- interrupts: hardware interrupt number
+> -
+> -- clocks: shall be the input parent clock phandle for the clock. This should
+> -	be the 24Mhz reference clock.
+> -
+> -Aliases may be defined to ensure the correct ordering of the uarts.
+> -
+> -Example:
+> -	aliases {
+> -		serial0 = &uart0;
+> -	};
+> -
+> -	uart0: serial@d8200000 {
+> -		compatible = "via,vt8500-uart";
+> -		reg = <0xd8200000 0x1040>;
+> -		interrupts = <32>;
+> -		clocks = <&clkuart0>;
+> -	};
+> -- 
+> 2.45.2
+> 
 
