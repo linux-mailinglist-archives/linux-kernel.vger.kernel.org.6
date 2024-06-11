@@ -1,181 +1,143 @@
-Return-Path: <linux-kernel+bounces-210441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5F39043B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:33:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A269043B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10C3528B233
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:33:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3811F23224
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9092374416;
-	Tue, 11 Jun 2024 18:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFC78564A;
+	Tue, 11 Jun 2024 18:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dN+2suD1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hkjeBnER"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECC36E612
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614D381723
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718130599; cv=none; b=mvXRZTj/XP8XlNRDmuWxiyvH9ygYMxlSwraKjzqQEVYztwfOWUdX65osIQz1DvANnbtXkptAi87XHTcgWsCenVhrm4tNTQnkC1vhfmXqyv81dGUrrkIOdyCGclwvfdmNDIjazMNf0JkLUVU7anlMJd3nxUKIOSZwLfGXTOUGuso=
+	t=1718130607; cv=none; b=T8lhHwCDfzJcmjukWlHN//Tu/Zub7A+UkanlMou1HCj/fNLZ3srTcuLEZX+9B6qzZvaLdRFotBV/VVJCKYTwpTrNNfEBpiqZ0tM92te+Q25suLCyTylVRkF0QSvbelnkN1j0cWGdg73OF3e6tQ+dz/c1ahtwn6P4kwWC+N+44x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718130599; c=relaxed/simple;
-	bh=ktUxzUbRCFBsZxIJV1R0ORx6+3d3l6L+nqvxUC52Pxw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=KL5eBlsKFEuFnHwEnvB/JM+rQg6vKDzxvjeXY4XXSFmn7UBtKjaiShKgPaDPnAClRD7qXLNNWmzvfSG4ppW8T3xBzfrEHMiYgbalLFvJHxtxzjj6FZdjXAb8WQPZ/mV4bMlf5a5I423YusfCJ+eLAjTXnPPQpRTkcKUz/0n7NMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dN+2suD1; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718130598; x=1749666598;
-  h=date:from:to:cc:subject:message-id;
-  bh=ktUxzUbRCFBsZxIJV1R0ORx6+3d3l6L+nqvxUC52Pxw=;
-  b=dN+2suD1wjsOa7zwNEeahq11CogL0tI5kUo+hua23Zg0iwj1bQ79BD2/
-   UcJANEYGhh1giqHtO9BYR36vCGVjsDG8tGemHUhYJ3rwkksUvQntg0ZZL
-   Dd/57qGoHa2evsfyMfp/S5aJXgom1LC9eRc9+bso4hpbFYFPAFv2WU0sM
-   vGnyz27InYaOS8yiIv+0hbKxJw8d8f8E3WwKGyqiSp5cXtKzN7JE1mzaW
-   smBwiGDQfhyeBf8DUVtEc89YOuPXY/VM611Y2nffckoA39d4q3Vo+pX8Q
-   kV0ftbTcsPD/t6raIrnMlfp8vMRTwKozPTEY0qjBr45CSPvOc5rzTge/Q
-   Q==;
-X-CSE-ConnectionGUID: sqUnYpjmQASFaSjp9e7bNQ==
-X-CSE-MsgGUID: FYrQbU/sSL2bdSfeIE+dWQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="32401165"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="32401165"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 11:29:57 -0700
-X-CSE-ConnectionGUID: dFCb+9biTaarbWznO6h50g==
-X-CSE-MsgGUID: wsO6iW0nRcSg2U1gcMacAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="39631353"
-Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 11 Jun 2024 11:29:56 -0700
-Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sH6Fm-0000lq-01;
-	Tue, 11 Jun 2024 18:29:54 +0000
-Date: Wed, 12 Jun 2024 02:29:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:timers/urgent] BUILD SUCCESS
- 07c54cc5988f19c9642fd463c2dbdac7fc52f777
-Message-ID: <202406120205.dAR6GsT2-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1718130607; c=relaxed/simple;
+	bh=vmJlB5Vx85oOAvr/aM38OCLvx/FPwgawAx4TV4XmcSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=APMBmpuZbRYlMq8VarjtU4CglcHhncQbmkMLHhgzmJQ9XqxtQZdcg7nimsuzkBZkjefD5vc/FrO1tsFKu7hEzYemQyLLYkvmtiDo1RB8AQs0ikfI60fUcfz4wbZRc16RGYiHHE9JIoePJJDVQ4VAdZCWFGOoXl+6Y6HVS/tPXDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hkjeBnER; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f8395a530dso36845ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:30:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718130606; x=1718735406; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XE4BOZRZpuQSDr/bb7Z6GCdUYJnxu9albyuBquTmaIo=;
+        b=hkjeBnERHHqamfY8VO6wgZRrPlkbNCuMfpVHGoVs2jIRDMpGPTWKwEP9fn15ViaurN
+         vEE8Jx0d11lUxsmq4+HG42RX8yhrL7yAw88LwcKo3z0F3eTwC/hyHL194B8jGp69F4Do
+         gwzpMcRJpbbkI0x6+o0aV6dzz71qkZvWEIy9PY3Y6IKTZnOR2rdL3ZnQDw/Qt2QS9QPy
+         FaIs77vCOodeeqKPRoBq7u0iSKVxYM2kHT6+e+KDbiHYfAdVv6+L5xZQ4kvB2OdzuSP+
+         aKbpGl5ulcXMQlfcDdUBrs6e6l0yu02y66nqHM/W/K6NoARta9ET4/L34Tst8rB7l3Yn
+         FO6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718130606; x=1718735406;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XE4BOZRZpuQSDr/bb7Z6GCdUYJnxu9albyuBquTmaIo=;
+        b=d4gH1vUybMeKzrYOUxLbzYVAUB8hL9KAUyYzRQt+B+uYeTTqIyB4mcZWJRKFfG2K2m
+         vt76YqJXbLK9R81v3TWO9+bb5bHudfpvPGZwApaTXiPM/SvhOlHhPOTPbYSRxAczF+bs
+         SyXFjkqrc+v8q1EMf+0NdXDwZUNBJMBwm4z4xe3U6DYkXKaz8zkV7+0uGoy8J0WnhDIU
+         MSNQwFckVHTA3g4BiFSSSCaKlLX010QdTBcTTYXnWLgp37hVrZlsqbVUhIg12jSSTm9a
+         rqwI+ir+uns15FlazXnzVl6pl32Koyin4jJP1JQCem1zmh1XCwnVx3UGbyBD39T3uAjt
+         e2Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2Nmr1wBRm/nRJGhMfEhSboF/25jd1/uF8d5InSHvnz/pxsFQRa0CIOc+cGboshqpvX8sibXHwpEaJ6Wn6X7Tgw3l+K9+Qq2hXMAPl
+X-Gm-Message-State: AOJu0YwpFGp0lK4iut+1H2ii3zQXtLoVTQ0rt+vsPEwxAoBpNBSloFZ/
+	JAAyW0glSaAtqWgA59BdMncRwzE9S/ySL+DuWxnC2aOXOYsDPQtHugJ0m+9tSQ==
+X-Google-Smtp-Source: AGHT+IEUxjBQ03FSwMcOa7Q1C9oBhVDpqO23pvs6QZZKLHfe2UWqfYR6fTAzVkLY2GOOR2DFyw1XZA==
+X-Received: by 2002:a17:902:f54d:b0:1f7:340e:71ac with SMTP id d9443c01a7336-1f7340e7491mr23223975ad.50.1718130604876;
+        Tue, 11 Jun 2024 11:30:04 -0700 (PDT)
+Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f72110e4b5sm30490685ad.125.2024.06.11.11.30.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 11:30:04 -0700 (PDT)
+Date: Tue, 11 Jun 2024 18:30:00 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Shuah Khan <shuah@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kselftest@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
+Subject: Re: [PATCH v2] selftests/vDSO: fix clang build errors and warnings
+Message-ID: <ZmiXqOHYaLLX557z@google.com>
+References: <20240527211622.290635-1-jhubbard@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527211622.290635-1-jhubbard@nvidia.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/urgent
-branch HEAD: 07c54cc5988f19c9642fd463c2dbdac7fc52f777  tick/nohz_full: Don't abuse smp_call_function_single() in tick_setup_device()
+On Mon, May 27, 2024 at 02:16:22PM -0700, John Hubbard wrote:
+> When building with clang, via:
+> 
+>     make LLVM=1 -C tools/testing/selftests
+> 
+> ...there are several warnings, and an error. This fixes all of those and
+> allows these tests to run and pass.
 
-elapsed time: 1446m
+It might be best to split the 4 _different_ fixes into separate patches.
 
-configs tested: 89
-configs skipped: 4
+> 
+> 1. Fix linker error (undefined reference to memcpy) by providing a local
+>    version of memcpy.
+> 
+> 2. clang complains about using this form:
+> 
+>     if (g = h & 0xf0000000)
+> 
+> ...so factor out the assignment into a separate step.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+There has been multiple attempts to fix this. I can see these two:
+https://lore.kernel.org/all/20211206102931.1433871-1-anders.roxell@linaro.org/
+https://lore.kernel.org/all/20240501002150.1370861-1-edliaw@google.com/
 
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                             allnoconfig   gcc-13.2.0
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-alpha                               defconfig   gcc-13.2.0
-arc                               allnoconfig   gcc  
-arc                               allnoconfig   gcc-13.2.0
-arc                                 defconfig   gcc  
-arc                                 defconfig   gcc-13.2.0
-arm                               allnoconfig   clang
-arm                                 defconfig   clang
-arm64                             allnoconfig   gcc  
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc  
-arm64                               defconfig   gcc-13.2.0
-csky                              allnoconfig   gcc  
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc  
-csky                                defconfig   gcc-13.2.0
-hexagon                          allmodconfig   clang-19
-hexagon                           allnoconfig   clang
-hexagon                          allyesconfig   clang-19
-hexagon                             defconfig   clang
-i386         buildonly-randconfig-003-20240611   clang
-i386                  randconfig-001-20240611   clang
-i386                  randconfig-004-20240611   clang
-i386                  randconfig-006-20240611   clang
-i386                  randconfig-011-20240611   clang
-i386                  randconfig-013-20240611   clang
-i386                  randconfig-015-20240611   clang
-i386                  randconfig-016-20240611   clang
-loongarch                        allmodconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc  
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc  
-m68k                             allmodconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc  
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-13.2.0
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc-13.2.0
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc-13.2.0
-nios2                            allmodconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc-13.2.0
-nios2                               defconfig   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                          allnoconfig   gcc-13.2.0
-openrisc                            defconfig   gcc  
-openrisc                            defconfig   gcc-13.2.0
-parisc                            allnoconfig   gcc  
-parisc                            allnoconfig   gcc-13.2.0
-parisc                              defconfig   gcc  
-parisc                              defconfig   gcc-13.2.0
-parisc64                            defconfig   gcc  
-parisc64                            defconfig   gcc-13.2.0
-powerpc                           allnoconfig   gcc  
-powerpc                           allnoconfig   gcc-13.2.0
-riscv                             allnoconfig   gcc  
-riscv                             allnoconfig   gcc-13.2.0
-riscv                               defconfig   clang
-s390                             allmodconfig   clang-19
-s390                              allnoconfig   clang
-s390                             allyesconfig   gcc-13.2.0
-s390                                defconfig   clang
-sh                               allmodconfig   gcc-13.2.0
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc-13.2.0
-sh                                  defconfig   gcc  
-sparc                            allmodconfig   gcc-13.2.0
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc-13.2.0
-sparc64                          allyesconfig   gcc-13.2.0
-sparc64                             defconfig   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   gcc  
-um                               allyesconfig   gcc-13
-um                                  defconfig   clang
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   clang
-x86_64                            allnoconfig   clang-18
-x86_64                              defconfig   gcc-13
-xtensa                            allnoconfig   gcc  
+... I guess we somehow missed those?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> 3. The code is passing a signed const char* to elf_hash(), which expects
+>    a const unsigned char *. There are several callers, so fix this at
+>    the source by allowing the function to accept a signed argument, and
+>    then converting to unsigned operations, once inside the function.
+> 
+
+There is also a v4 fix for this item that was sent out here:
+https://lore.kernel.org/all/20240506181951.1804451-1-edliaw@google.com/
+
+> 4. clang doesn't have __attribute__((externally_visible)) and generates
+>    a warning to that effect. Fortunately, gcc 12 and gcc 13 do not seem
+>    to require that attribute in order to build, run and pass tests here,
+>    so remove it.
+> 
+> [1] https://lore.kernel.org/all/20240329-selftests-libmk-llvm-rfc-v1-1-2f9ed7d1c49f@valentinobst.de/
+
+What is this about? Left over from v1 maybe?
+
+> 
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+
+I would prefer to pick up the fixes from folks who sent out the patches
+first but I'm fine either way.
+
+Reviewed-by: Carlos Llamas <cmllamas@google.com>
 
