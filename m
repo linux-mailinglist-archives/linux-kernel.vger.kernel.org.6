@@ -1,125 +1,86 @@
-Return-Path: <linux-kernel+bounces-209825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39142903B57
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:04:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594BD903B6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C60CE285BEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:03:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D5641C20FF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E863717B505;
-	Tue, 11 Jun 2024 12:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="v4UzXkw7"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F0817B43A;
+	Tue, 11 Jun 2024 12:05:07 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23234171E60;
-	Tue, 11 Jun 2024 12:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7666C17623D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 12:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718107429; cv=none; b=JzSwVYetZYhZdQVoEKoB55570RtMIKx1ECeFOr0lkeToq9siLIjoF4RymkLsoLc7gEh3Ihy3RgbKzHFLBXRHU7K9asCzm4e4GI0pbq7cKvbOmND4nwGsvCGdgtgKacx57LsISgKpJM7VF+4cq5eWDasg+8bn+bvX7rPU2BLnM7E=
+	t=1718107506; cv=none; b=g0jFEDVYErgeSEJ3WrQxmahS9fwF2bGgISrkaI2ao+nzPfKiKDlckTgTEStCAwLq7q9/Tlum/XbwvQZFb/KkqoQdZmsP9A7OCVTQVJqYpiBNkCCcS1AxKpoEi6vMpqMdAzGgnBMRpTxYHQG8hMGJeehwzSlFt6GPzhLxopADe/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718107429; c=relaxed/simple;
-	bh=6iL5d5+TpVoppRR7mPjEQaHzLpdbiQSHhhT9BJKLh3I=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=NvvxSbtX9/7l6oyWZko3P0joa/f+1FXFszmF5krQRnj43rjXqMdnxOx0TxbXQMS7H6G+yYqWyoMyPoTfO05WGd45cDId0u4zwZUyxSq59r1CONz4BDHX9SGNdGFzoNx304OQ49Xljqfj9ot8qoWT8V8Zuq3UVo03iSCfT5x0u8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=v4UzXkw7; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718107378; x=1718712178; i=markus.elfring@web.de;
-	bh=v4MG0q9MnuPY4++cJH4EjME8ABWNsolzfGyYD+ZIsYU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=v4UzXkw7bizGPdAA35we5ZahpMfu+ZtwZNGftCytLLW7WsytaCSWwTVnydrGfkf1
-	 oK/ZgNXHm3vpMwOwPNJaTR1ozrYCotWRwmkEjkvwqSxaKtXnFCdvWl7BWkUzIqFCS
-	 gIZagFE4szymyPe2/f4PTzw8l/ZSBWTr6Javsc6tAMAUPJBNgae9OxCZAV80jPYbh
-	 NaigegF64eXlcvvhNoh0riYBNQAcs9DfWfqcn5GNVlVHnCuc6XKWXtoPFQveEsvl2
-	 ywNmQI4Yqagr0EUDQODHk9pq5lLKLP27RCYJ1ytTAQJG7IzSDUY5u0ZSF4xH3Od3g
-	 ph0NW7vK707lcLT9gQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mc1ZT-1sq3Jt0QsJ-00jIxb; Tue, 11
- Jun 2024 14:02:58 +0200
-Message-ID: <32303d99-c5ba-4fec-8981-9b9966dc3291@web.de>
-Date: Tue, 11 Jun 2024 14:02:52 +0200
+	s=arc-20240116; t=1718107506; c=relaxed/simple;
+	bh=vJtIQxrOjPK/seQBXP1MximNtpkbqymdaRoKMc6WPOw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UtKYoDBVXSFq9EMmr8vKHpkgiFcLPxyOSi6l2oHyIILTag0r4HsgghHNqcafAS4C+YSyXTy80tab4j1dPSFlzmw8d5JYxNUJ6ihGFihoagZXQ8NDfPMvOvXKtMCsLdeB2Zs10kv9Q5Zj1HnqABXRHrnKH+18U6l4B2ws37YMLas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7eb9bf4d07aso155619639f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 05:05:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718107504; x=1718712304;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u3Aj3QIi88q6O1dyQgyG4l3bsXb4vPIG6BuRMI8mhrk=;
+        b=JU7oyGMBKngHuV2W1eA9ezpU9lw8y7/p6YUDVzyWAHMxfEkGb9Ohc+S8ZYDIquixii
+         IoQbFL4KG78Eg2KVN+GtT6g6N758iSLGkrYaOsL+qVJDJB0P9eCej7+lDbXl5S/2J/wb
+         w4/xFkni9aDenJ8WsQIWTM1zXmAu5CHIx540+zMBQ5Xry0JmpkRcN8Qol1DWhQ4F7s2t
+         KZ4+Ji/j89HH6LdoqAiiCtfqH3Imfsl0gLdsAYFXG1LEic+GpKMUK8UijbKDtgtvxrd7
+         GguZZPLNQaHUk9mvy/nYTrMk+zwXH7AsfJxLZ4whHJwrg13FYCK3+lKYGhs7cxhMUXV7
+         ofXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxhuPBuqnnoo7z0hU3I9wz0dG/FQvI1WISgCXqnoWDX0iaAZb4HZc3Y5ZyuHBirqb5dH5yDbCz1k6k0rSw5Ko2vpP4Xsyj65iG+KXU
+X-Gm-Message-State: AOJu0Yy0e7Rq5oyE9Uc2QpkBfqBINwYR9xl2ScZ3hzKsaZTWv1dkI+lo
+	XiPO0fXurloA2zlgGOvpKG3f1wWxmwaZgmzLhD1WwXkpyL1BLAkPljoTFRs7TyMtc4SNoOAn7mo
+	5sj5cLG6HOMLEBWiKw7n2IUGmxQSeev3xxLzNWQ7DeK2k2Zf9/83W0bI=
+X-Google-Smtp-Source: AGHT+IGSorHGH1T/rtTz4mbVCoJOziZDWwzUYlkzDMySqv1fc3bxny7Hrue3JJ7i9U2dIZtKC6WAWs6oBTp08DmiP9jBS8hjXxwT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Kamlesh Gurudasani <kamlesh@ti.com>, devicetree@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com,
- Herbert Xu <herbert@gondor.apana.org.au>, Tero Kristo <kristo@kernel.org>,
- Will Deacon <will@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
- <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, Rob Herring <robh@kernel.org>,
- Vignesh Raghavendra <vigneshr@ti.com>
-References: <20240524-mcrc64-upstream-v3-4-24b94d8e8578@ti.com>
-Subject: Re: [PATCH v3 4/6] crypto: ti - add driver for MCRC64 engine
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240524-mcrc64-upstream-v3-4-24b94d8e8578@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TJ+M3A+ZwHBv8zbRqkd8DEM7qjVhITuWZRUhZtq7FNJIWGkAGBW
- 3CoM26cD78kPrZKl9pVWI0m31RFhWOtge/YrCgXqxxV5jOYOmntQo7ZymX+uPbr1E54hC4g
- 2xYdC00lN417YXdoybmTuYwz5Fszf18GbPLT86PKnchC2KQ7FeKSSpyNPzVqFKprfp7WCKK
- iS3XbhLEABKTBCzWlaBZw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YogUS1Yz1Ys=;phEEUBQ3iH6xYdFv8skbZzBR14h
- X+6Sz3DaRZye53CTBaNq5iAc3w2zfBrL0OMLLDI7LbCNNbCdBr/D4WTeCEoTtVjJ6Xg3Cz636
- yXCpyBv1pv97bbuTZMENguGkw8NMIl0r1j3svqVgPM9Ga5wOd+gLLqhscwaPD0vi2gyTrWBqj
- w2ONOFtEUdjQx7Vj3gpWrxfNDbqVklHCu5zaZX5b9OKbpKyRI5JIx0rJ5JNGRYqhC4qidhpTb
- zQj2fIl/nIJd7l9KmtF4gvONU3TndNcRrwkGf0Vof27i6MienOPKxS4ds+a7nZ73MBIyXb/R2
- 1w391fKmFkSuaRPjaYn8Lt1xC0NRVXS8w7j3nYT2DvEf8Yp+7i7PcE3/zYwBXBfQOo2RvKFyT
- 3s7OHuqCJygN0ECVZ57Aiat6FL2evaSmaAvpl46VGhruRblcmRIvwNMdmo3hCz3SRlQf3VDnP
- aO59pXvfXJvR2DbVUWPtCaCKbyww/Fi/lRfMS/J0rKEOxOz8qJ6gzaErPnBn1VZHDJUdi2KVG
- wDHqn9Y8MKbM3GHjUv289hSAXlWFLdkND2BnKcFdoMYLAo7T2L2vVeSOgK0SYgh+cPtTrCL9u
- Pg/A2En23qftgKq6bluP9KC1QKm3Zbj4g3azip3R2avn8d51eaMrR3S/9jhOiDvhPFctnQAD3
- Yy3WkRkUk6KgmJAIMH+PDeZpLRObzXy+N5DUqgnXbaZwNVRh30u+GjhvAODjj10La3DRLkxOq
- 6qN1/0vPgbsSgGmnPVzYQtiL1+WEjnexyZ+u6mBa5/KDVF9MA+AzYPfIbS7+erBP0mYnvA4zG
- Eez1Dz4hRxH5b4QSa6kObgEBkhBJI0lV9uv4wEB1k1EmY=
+X-Received: by 2002:a05:6e02:1c26:b0:375:ae47:ba62 with SMTP id
+ e9e14a558f8ab-375ae47bd99mr2171375ab.1.1718107504566; Tue, 11 Jun 2024
+ 05:05:04 -0700 (PDT)
+Date: Tue, 11 Jun 2024 05:05:04 -0700
+In-Reply-To: <tencent_554425A5BAF0BB7633499ED51B7D4BEF1B08@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007ef5a1061a9c13a6@google.com>
+Subject: Re: [syzbot] [bluetooth?] general protection fault in l2cap_sock_recv_cb
+From: syzbot <syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-=E2=80=A6
-> +++ b/drivers/crypto/ti/mcrc64.c
-=E2=80=A6
-> +static int mcrc64_probe(struct platform_device *pdev)
-> +{
-=E2=80=A6
-> +	platform_set_drvdata(pdev, dev_data);
-> +
-> +	spin_lock(&mcrc64_dev_list.lock);
-> +	list_add(&dev_data->list, &mcrc64_dev_list.dev_list);
-> +	spin_unlock(&mcrc64_dev_list.lock);
-> +
-> +	mutex_lock(&refcnt_lock);
-> +	if (!refcnt) {
-> +		ret =3D crypto_register_shashes(algs, ARRAY_SIZE(algs));
-=E2=80=A6
-> +	}
-> +	refcnt++;
-> +	mutex_unlock(&refcnt_lock);
-=E2=80=A6
+Hello,
 
-Would you become interested to apply lock guards?
-https://elixir.bootlin.com/linux/v6.10-rc2/source/include/linux/cleanup.h#=
-L124
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Regards,
-Markus
+Reported-and-tested-by: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         cc8ed4d0 Merge tag 'drm-fixes-2024-06-01' of https://g..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f536e2980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
+dashboard link: https://syzkaller.appspot.com/bug?extid=b7f6f8c9303466e16c8a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16ddd8da980000
+
+Note: testing is done by a robot and is best-effort only.
 
