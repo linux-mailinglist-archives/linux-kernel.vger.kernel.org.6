@@ -1,191 +1,81 @@
-Return-Path: <linux-kernel+bounces-209256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F79902F9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:46:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A345902FA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32C201C22889
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:46:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2761F22005
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A59616FF4E;
-	Tue, 11 Jun 2024 04:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CA717082A;
+	Tue, 11 Jun 2024 04:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mhBihUmp"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVDnOIBP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6537273FD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF37273FD;
+	Tue, 11 Jun 2024 04:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718081172; cv=none; b=D1APYof7FpgOFBUp88+C59WaT5nUNhtauMEBYaJMMTwctNo6QF88hEFWAO456OA71vkLyPqJPtvPj8oyLvVnG/1FergFjwLZTSX3wMvbANHVR8risU1NOw0OM8xd5FSlpI6QhpAFf/6FbAuqWQOQoELHqVrKGGv8OXkadIaAsSY=
+	t=1718081406; cv=none; b=K8D5nqle0sq9sU1+up7r1hpGCfQlYrYw3xF/PnFP92Gc/l6r+yDjqSz7oHrPGlzDYiF9SniEmC0/2QkOLyP+rkeKlhOBbqVVJM9Uj2ek39KFaM6GEAoR2E+lQAwsS5W87gCk+i8A+bgp5vWlpHNuB937KDH0LyOm6WguPgVzCy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718081172; c=relaxed/simple;
-	bh=yuDAWE5/MJ7uLyZqxDy3EYvOR6RL7CZjGGAfPr0n8k4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NzWBhGAGq62h3/nmb1tjvQxogo50obLqpR28Rv+zN6RSUOCEqfmcTr67wF5NbNgQRzXM0sHWDQtD6yXzmExiC+SQ0j8CthrhIo2qRAqbiq6qqbGm5lXckvG9CitaI5pb5wdEXp41sz6Gv1MWL6vO9QCWtOJVelj5sw7DlYxojmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mhBihUmp; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5b96b249d56so2775366eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 21:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718081170; x=1718685970; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CIoabIczz86lr8Q01sQG2GhLk5y0SCRcj0MaX6R+rEA=;
-        b=mhBihUmpK9vukRlvoTBZOZfDvNlvUBtHtXWK9SkAE3pUDUxvGyKNQfSP8nACCdaL0Z
-         KurGcMladYQSSW8biNt1qpl9a15GSfCTA8Oc3L3tQK+jTrWNODH7TKGbbnGg8QeftddI
-         r1igUEEKy5JgfFwJNTedZnXwAAjJVNgp1U6Mw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718081170; x=1718685970;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CIoabIczz86lr8Q01sQG2GhLk5y0SCRcj0MaX6R+rEA=;
-        b=upKtzU70sSS2hrYuo7b88MSrobg4HUCF9qmr0zJL1JoXXQdLZsqZDe5gjPlvgbep8Q
-         1BLG6oy2DqfMz5S0I4FSfPyeOv4UytEvGxLeOqH/qmnHrAAf52y+/YEjs1dt4viDP49e
-         3W5Y5yhrf2F7Yxz4OjKD5Rxr4GDOIUUdrJJbKSdWGDa/8wV3gFBjeHmjKxWP4mChwrKU
-         XlP1Jm/N/tKvd08SKRYxTYxkNumlBb9eO5AnMdIT9O6uSxLY+eWemkIVZqOKSQOyfowJ
-         wYIQ0kwpOoACmcNdIwnmXhPh2/Xm/G+Rqz3aoZg3eCnEYer/bqZnxgK0ioBTA8JJb/Qy
-         JdoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVReZJ+DdLGFVKZIRpQyyDZwSUyVy9JHF63DcMBqEA/vtAXu/izKrRfw8lMdpF7/GQw5sIfyrHRlboZkbxiXcYkgKESDtF2vP88ynhH
-X-Gm-Message-State: AOJu0YyKCwDsrq35fWrV/7FYObMTDk58CIAm8DDCsrCwY45Uay6QWGnr
-	MeZUALhL2IT29Soumg8ZHseCow4ggRZLvxYqtrrrke+Quvv+/YXSd5BWh5bUVy+4+P1eYwOrvE0
-	uYomwGyIdSQREb/Oi8YePFYBLlf61T0+HNaf1
-X-Google-Smtp-Source: AGHT+IHByfiAPO14fNnx4REFTehCbJqqMb4IdmeoDY4CQXPTK8vbG/tux2eHQk3D4fZ3pX6WwvizBlreo/EtSzC41/M=
-X-Received: by 2002:a05:6870:350c:b0:254:ba68:a6d2 with SMTP id
- 586e51a60fabf-254ecf7b04emr745965fac.25.1718081169944; Mon, 10 Jun 2024
- 21:46:09 -0700 (PDT)
+	s=arc-20240116; t=1718081406; c=relaxed/simple;
+	bh=fhiqhwMweK+/4ZbARswR9y0qIPwLtuAc6LuQokfQbd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TgFnVhwEk2FX9HBhLQ31PbMZI6ctVbfead2tm1IZW7EhGPBxGm9Gcb/f+azeakZH2rGZ0x3fBYanZ34uS7QfWn1C3X5KAuGEDfL3QfdwG8i8cPAQjLf+INgbLw/Bt64GSFychnHp1i7VCfzrUL8vWoUnYvHlxQ3VSEEf/1Ilc8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVDnOIBP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC387C2BD10;
+	Tue, 11 Jun 2024 04:50:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718081405;
+	bh=fhiqhwMweK+/4ZbARswR9y0qIPwLtuAc6LuQokfQbd0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EVDnOIBPvdzyROc47k68wnBIflyy4I5rxC1SZq5uXTypCAf1LL+V91T+6qzZnviAB
+	 pAr+zOgw5FEo73bLbAYD92lx+rrYnTmKfnCDE1sHGg9eZLGmFOTBSEP3JjA+Zjdzf1
+	 H6oqON40Fz8ZAlQNT2EMjCOgOq18jKUeJYP6L1xi5DWC3EaOHemMtlqpaPk3zfI7Ij
+	 VhL93ssqa6WrNMElgNXcl+aB81QX26UOColiALVrmWW9v4yqElIwfE7MGb+/xcog79
+	 y9MBQ92ZzYnnbeRglzVuxehP0oFUF4KXGHeIMRO6gFd2xi8AiTq+aYZpd4OAfN8Gnv
+	 uU+5JhgSywt0Q==
+Date: Tue, 11 Jun 2024 04:50:02 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Julius Werner <jwerner@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] firmware: google: add missing MODULE_DESCRIPTION() macros
+Message-ID: <ZmfXeqCIt91OY1i0@google.com>
+References: <20240605-md-drivers-firmware-google-v1-1-18878de97fa5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608021023.176027-1-jhubbard@nvidia.com> <CABi2SkVoNyXLrfU71gnv1qVUAADpUmFXiDoKKPc54MLb5JpB+Q@mail.gmail.com>
- <a8f9d4e2-8a12-4e5d-bd22-9c92955135f4@nvidia.com>
-In-Reply-To: <a8f9d4e2-8a12-4e5d-bd22-9c92955135f4@nvidia.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Mon, 10 Jun 2024 21:45:58 -0700
-Message-ID: <CABi2SkU8=tjWhD-e=OdiVr+YeU+BZZLB_vMfkNb-VWpbP2xcng@mail.gmail.com>
-Subject: Re: [PATCH 0/5] cleanups, fixes, and progress towards avoiding "make headers"
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
-	Andrei Vagin <avagin@google.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Christian Brauner <brauner@kernel.org>, David Hildenbrand <david@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, Peter Xu <peterx@redhat.com>, 
-	Rich Felker <dalias@libc.org>, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605-md-drivers-firmware-google-v1-1-18878de97fa5@quicinc.com>
 
-On Mon, Jun 10, 2024 at 9:34=E2=80=AFPM John Hubbard <jhubbard@nvidia.com> =
-wrote:
->
-> On 6/10/24 9:21 PM, Jeff Xu wrote:
-> > Hi
-> >
-> >
-> > On Fri, Jun 7, 2024 at 7:10=E2=80=AFPM John Hubbard <jhubbard@nvidia.co=
-m> wrote:
-> >>
-> >> Eventually, once the build succeeds on a sufficiently old distro, the
-> >> idea is to delete $(KHDR_INCLUDES) from the selftests/mm build, and th=
-en
-> >> after that, from selftests/lib.mk and all of the other selftest builds=
-.
-> >>
-> >> For now, this series merely achieves a clean build of selftests/mm on =
-a
-> >> not-so-old distro: Ubuntu 23.04:
-> >>
-> >> 1. Add __NR_mseal.
-> >>
-> >> 2. Add fs.h, taken as usual from a snapshot of ./usr/include/linux/fs.=
-h
-> >> after running "make headers". This is how we have agreed to do this so=
-rt
-> >> of thing, see [1].
-> >>
-> > What is the "official" way to build selftests/mm ?
->
->  From Documentation/dev-tools/kselftest.rst, it is:
->
->    $ make headers
->    $ make -C tools/testing/selftests
->
-> > I tried a few ways, but it never worked, i.e. due to head missing.
->
-> You are correct. Today's rules require "make headers" first. But
-> I'm working on getting rid of that requirement, because it causes
-> problems for some people and situations.
->
-> (Even worse is the follow-up rule, in today's documentation,
-> that tells us to *run* the selftests from within Make! This
-> is just madness.
+On Wed, Jun 05, 2024 at 03:07:21PM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/gsmi.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/coreboot_table.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/framebuffer-coreboot.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/memconsole.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/memconsole-coreboot.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/memconsole-x86-legacy.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/cbmem.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/vpd-sysfs.o
+> 
+> [...]
 
-That is hilarious! :)
+Applied to
 
->  Because the tests need to run as root in
-> many cases. And Make will try to rebuild if necessary...thus
-> filling your tree full of root-owned files...but that's for
-> another time.)
->
-> >
-> > 1>
-> > cd tools/testing/selftests/mm
-> > make
-> >
-> > migration.c:10:10: fatal error: numa.h: No such file or directory
-> >     10 | #include <numa.h>
-> >        |          ^~~~~~~~
-> > compilation terminated.
-> >
-> > 2>
-> > make headers
-> > make -C tools/testing/selftests
-> >
-> > make[1]: Entering directory
-> > '/usr/local/google/home/jeffxu/mm/tools/testing/selftests/mm'
-> >    CC       migration
-> > migration.c:10:10: fatal error: numa.h: No such file or directory
-> >     10 | #include <numa.h>
-> >
->
-> Well, actually, for these, one should install libnuma-dev and
-> numactl (those are Ubuntu package names. Arch Linux would be:
-> numactl).
->
-> I think. The idea is: use system headers if they are there, and
-> local kernel tree header files if the items are so new that they
-> haven't made it to $OLDEST_DISTO_REASONABLE.
->
-> Something like that.
->
-But I don't want to install random packages if possible.
+    https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-firmware-next
 
-Can makefile rule continue to the next target in case of failure though ?
-right now it stopped  at migration.c , if it continues to the next target, =
-then
-I don't  need to use gcc to manually build mseal_test.
-
-> So if you systematically install various packages on your machine,
-> then apply the various patches that I have floating around, then
-> you will be able to build selftests/mm without "make headers", at
-> this point. Or so I claim.
->
-> thanks,
-> --
-> John Hubbard
-> NVIDIA
->
-
-Thanks
--Jeff
+Thanks!
 
