@@ -1,142 +1,147 @@
-Return-Path: <linux-kernel+bounces-209312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB11C90325D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:21:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A5A903263
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C570287DE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:21:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490212867A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8F1171646;
-	Tue, 11 Jun 2024 06:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hHgFOx36"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8959B171656;
+	Tue, 11 Jun 2024 06:21:27 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3774617108B;
-	Tue, 11 Jun 2024 06:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919AB171641
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 06:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718086870; cv=none; b=kFdsgTOgD6LR3toEytuv//umwi4Zo6eVhI39pqtYXdEi8tHiFTvknL0J46a8Yt7o9wZ1LhHB6TkvQBoaRWK5qSn4E6rU7OCLK59DeEY2GYENXM+ps1Ljgi1H3H97Pi6fy9CFaYCYI4sqMr8WZsJPTCH76lhJt8QETGgUv0hLedM=
+	t=1718086887; cv=none; b=UIuUVb6qaK/sEXV6ILoyoQXvDqGU+9edt9XlcID8KpJeq0FinLlhtCFqj64nSKiPzA+ieMFswQfNBIzj9tm1znQXL86C84EDftPUYrOKETs+Sm6IypUfPKLUoDxMo3745LSsze3cIq+5FmVyECkdt4yep4y4theR7e9K7gipNAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718086870; c=relaxed/simple;
-	bh=FdvcjugTQA5eN+YNmowO2Lsa9ldk4+jwb0PaqWtLnDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qWIymFHrYObKxx/0I+2gKd8mG8sinlk+BVj/45H3J9WdyeQpfD1vdpOUXN4bIVMYX6lFJ4rgV6DCmGagi9w1qAitJ7jgs0vlG3I2FHoan9UmgwOEc8wXRfnhGjkJ1f5cGm/IirD3faVWJOzJCiuTTTRnhA8XQxVKKw8xyy232mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hHgFOx36; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23157C4AF1C;
-	Tue, 11 Jun 2024 06:21:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718086869;
-	bh=FdvcjugTQA5eN+YNmowO2Lsa9ldk4+jwb0PaqWtLnDI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hHgFOx36G/kLrMsYBTD7TQ/ywAxmxhutm3HV5b0+lVSJafHpbrPySk5hTWlZGyuY/
-	 Ff7RODDMdRHmZpaI/WcB3yBKFgDjuVv8NrCoXvWxWyzFEYdDF4j4crAyXg3itbz4QS
-	 /c2ufIcz0HgIwm/46toJAPdOwWoUrJKu6Ew4lda8=
-Date: Tue, 11 Jun 2024 08:21:06 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, David Gow <davidgow@google.com>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Nadav Amit <nadav.amit@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] x86/uaccess: Fix missed zeroing of ia32 u64 get_user()
- range checking
-Message-ID: <2024061151-flinch-storage-fe08@gregkh>
-References: <20240610210213.work.143-kees@kernel.org>
+	s=arc-20240116; t=1718086887; c=relaxed/simple;
+	bh=CqDG1xchg1Zq79fCCwKc00h20hrlWKLSZftL8B9BGjw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZrULgn+BLtH095ywrWKYdr7xxInGrZginF6EOtNBfKAGVkEOT6z9+dVZxWk5T6frmtwj/1oO2WqeslPKhblNCN40hm6PRq33cV4tIqG4nhLhr78RoWg+C4mH1p71xoacBxAzhWHM93WDWBNypfNSw652yXddzbsAsISl70gB2cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7ead7796052so600357839f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 23:21:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718086885; x=1718691685;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=whMQVx6Q5ysbxz2YokejrIpBQ9YrjYHYSvOnrc+a8nU=;
+        b=hj2iyMLKb/Ae6L/5/DvMihUP3y+Zu+1iQH1JL64c2I3rnd91P84cuWPODM/0njDyCD
+         RhJ7tJmmO+wV8OvAQaNOGjAWSsaoHR00toJDaexuBywYc8ZQUt98LbdMSMIlEsOb6Nad
+         vEfAXz3nI2h/lmbnafvJWX+0WMYtFjMHw4DVXStqZRBQ0n4EfMFW2fd7DNjPcdVN0tUL
+         OjWpoh9p9eQGu/YsROEFYoXYdOsO6Xghn2AwEphSdchVRxt1T5rDHmsoT3iwcDJP/HL9
+         XYV1Zy1WlczwrEZsqQFg/rEHxC7fW5A5O9sWQxSQaRjgVQ/fmt0z4vxuWx/oX0/ZRxjg
+         ycgg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtjXnnnoCnTjA/H/sqTRkzrhE8ex6wadrXPegHmBS3QKDqwf+4b4UGUrPZaxpaFQNRmmT2dlXOJ6HjuCHL0VhgDYVOYZgmGMKoDYel
+X-Gm-Message-State: AOJu0YyqcjmRiPGR0kFcxE9hJC0i/jHJliO2pinPO9B3RmWYoZtCZODK
+	olB8xhuyzX5kwhBYz8qGYlaWL5yKDZ6jhLgteFHPtfkDQaAJSBU0zezbuvr92QiNxbi2uZGjNkE
+	JVGsFO8oK7781VfJrpg5q4jrfNtdrRX6V/SdycLVkKBkcKhrkQ963aIk=
+X-Google-Smtp-Source: AGHT+IFiJVAiUuTxM+9cXTrftF/vHy6bHN93ftxoWMdzTUJhAtHXBrvIE94R/4DXYeRCnJ0k8T7gGz2A5W7tQg46DFl6EbITv9hE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610210213.work.143-kees@kernel.org>
+X-Received: by 2002:a05:6638:8320:b0:4b7:c9b5:675c with SMTP id
+ 8926c6da1cb9f-4b7c9b56e75mr450968173.6.1718086884682; Mon, 10 Jun 2024
+ 23:21:24 -0700 (PDT)
+Date: Mon, 10 Jun 2024 23:21:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000747dd6061a974686@google.com>
+Subject: [syzbot] [net?] [nfc?] KMSAN: uninit-value in nci_rx_work (2)
+From: syzbot <syzbot+3da70a0abd7f5765b6ea@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, krzk@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 10, 2024 at 02:02:27PM -0700, Kees Cook wrote:
-> When reworking the range checking for get_user(), the get_user_8() case
-> on 32-bit wasn't zeroing the high register. (The jump to bad_get_user_8
-> was accidentally dropped.) Restore the correct error handling
-> destination (and rename the jump to using the expected ".L" prefix).
-> 
-> While here, switch to using a named argument ("size") for the call
-> template ("%c4" to "%c[size]") as already used in the other call
-> templates in this file.
-> 
-> Found after moving the usercopy selftests to KUnit:
-> 
->       # usercopy_test_invalid: EXPECTATION FAILED at
->       lib/usercopy_kunit.c:278
->       Expected val_u64 == 0, but
->           val_u64 == -60129542144 (0xfffffff200000000)
-> 
-> Reported-by: David Gow <davidgow@google.com>
-> Closes: https://lore.kernel.org/all/CABVgOSn=tb=Lj9SxHuT4_9MTjjKVxsq-ikdXC4kGHO4CfKVmGQ@mail.gmail.com
-> Fixes: b19b74bc99b1 ("x86/mm: Rework address range check in get_user() and put_user()")
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: x86@kernel.org
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Sean Christopherson <seanjc@google.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-> Cc: Nadav Amit <nadav.amit@gmail.com>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> ---
->  arch/x86/include/asm/uaccess.h | 4 ++--
->  arch/x86/lib/getuser.S         | 6 +++++-
->  2 files changed, 7 insertions(+), 3 deletions(-)
-> 
+Hello,
 
-Hi,
+syzbot found the following issue on:
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=128ef202980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+dashboard link: https://syzkaller.appspot.com/bug?extid=3da70a0abd7f5765b6ea
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1095a80a980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a9179a980000
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3da70a0abd7f5765b6ea@syzkaller.appspotmail.com
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+=====================================================
+BUG: KMSAN: uninit-value in nci_rx_work+0x35a/0x5d0 net/nfc/nci/core.c:1519
+ nci_rx_work+0x35a/0x5d0 net/nfc/nci/core.c:1519
+ process_one_work kernel/workqueue.c:3267 [inline]
+ process_scheduled_works+0xa81/0x1bd0 kernel/workqueue.c:3348
+ worker_thread+0xea5/0x1560 kernel/workqueue.c:3429
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-thanks,
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3877 [inline]
+ slab_alloc_node mm/slub.c:3918 [inline]
+ kmem_cache_alloc_node+0x622/0xc90 mm/slub.c:3961
+ kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:577
+ __alloc_skb+0x35b/0x7a0 net/core/skbuff.c:668
+ alloc_skb include/linux/skbuff.h:1319 [inline]
+ virtual_ncidev_write+0x6d/0x290 drivers/nfc/virtual_ncidev.c:120
+ vfs_write+0x497/0x14d0 fs/read_write.c:588
+ ksys_write+0x20f/0x4c0 fs/read_write.c:643
+ __do_sys_write fs/read_write.c:655 [inline]
+ __se_sys_write fs/read_write.c:652 [inline]
+ __x64_sys_write+0x93/0xe0 fs/read_write.c:652
+ x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-greg k-h's patch email bot
+CPU: 0 PID: 1079 Comm: kworker/u8:6 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Workqueue: nfc2_nci_rx_wq nci_rx_work
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
