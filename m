@@ -1,100 +1,108 @@
-Return-Path: <linux-kernel+bounces-209663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FA190390F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:38:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72688903911
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2801F2248E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:38:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A2411C22745
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A6F178385;
-	Tue, 11 Jun 2024 10:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329FF178CD2;
+	Tue, 11 Jun 2024 10:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YJfaEyfs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XjPFo+Si"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4520E176AD4
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EE7176AD4;
+	Tue, 11 Jun 2024 10:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718102327; cv=none; b=oqqP3l2INUeo3MRcfhYOMlOlJuagyN1T2yJErlyVGNG2G9C4W+wc3I+A7OYfqh094nhf0oI0RZyLQQSg1G2NHvPjNYxR8VX/K4rcOUSO/MSD9/5qN6Qoz2BtNB8TlikmQTVvx6PgQ/iOpFkR0KOc9WE4E/jPZXdxWlIFCts2q+k=
+	t=1718102356; cv=none; b=rkQejE7/Hpb8eTf2eenQ8IK5KLaje438vazzTbFSiybMC+I392h/UmKnL4+zaa+2b8s7b6m1MkjF1wDB9YP0sm7GhRIZPA3/+6vPvIsoxB29eXdBsjESiOmP2GkYHjLd0Rhvu3AbTJrkmhqnmHdppq3rbl3db/twi3og6ncQHNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718102327; c=relaxed/simple;
-	bh=LpVxpVVK9dZ9VsGBtZI3gqo7kMi2srf+dwknjVIo3Ek=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=mcwreJOP+OXnQ5jjk4uFriD7fbizQc0BUwflI39Z290CCQzEnDBy2KlJBe+DlPvAibO6dunYpf99zoy7SqUrLLnKdidnhzDvFfedQALG5T9g/9wnqXvE5SMcOc37odidzx2OqC7Jq23or1q8MNzA8KD9EbYZs3l8hbolsHIN/X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YJfaEyfs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718102325;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LpVxpVVK9dZ9VsGBtZI3gqo7kMi2srf+dwknjVIo3Ek=;
-	b=YJfaEyfsXBE4J4bvJeCJn5iOJtYwaJ13naOnln5JcrhWfvBDZ7LGlFugzVOpnM89+mJr0L
-	6uuOI676RdbmXlA1h6z+OJaGm2GdJS+GUEF/PDYNGqyBSq8uOdUf+z9PeJUIxo+UMdjFzI
-	iI8AsoRdhBFjgk2aEnYPIQF1Bf4oMn0=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-272-T-JetmPGMtShwvrWWaEAUw-1; Tue, 11 Jun 2024 06:38:44 -0400
-X-MC-Unique: T-JetmPGMtShwvrWWaEAUw-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-795cce8b773so106553885a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 03:38:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718102324; x=1718707124;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LpVxpVVK9dZ9VsGBtZI3gqo7kMi2srf+dwknjVIo3Ek=;
-        b=b/UNyOfzQ0mXLHRS5S+u+PCKrQAvPmsC6b3xrogaqPhWNsX7No7t/isN7XHSw5Tuqj
-         4m2cMXYdhf6buMSN2dRZ7n7dgflQ7qrCkBSgfieqxNi2p5ngeAugeLd6sfR9ofdpUpKo
-         GlTJSUPI6u2PMu/eaQHfMAa2WqXO10Lf6BR+Db0cHEkYcqHEnsEXcw/9bIwRY+Zy3Peg
-         AlaiG8pZlwm5BBj8PNoyh8oeGjYCvQIhZUWBfqnO5HmEdSYRQCRx0nniuahd3UyS6xZl
-         Y3w+EHx2AwuOmKSyZEpCRTdrUdlYqVy2KgM+iCjsenSNCqU9nw8ou2+vMksrsKylXGnM
-         n83Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ4AfigfRGiwfjNOqTq1EXC0aYMyKLtNhFQaHuFY35q35nWcGPRCqgFYQr5zlDoUGQlvYW/OME4fxy6ZYoyXKsD/co1Sm8DzGn9Y5C
-X-Gm-Message-State: AOJu0Yzsr1rqb2ZkXbVU6nCfc30rNsn+oyQKm1o9d/21cbPDL8PgvTpo
-	LqIMSavoVOl4iWUmhoHzD1neUs3vnP+hnW6YcUZJ1c2vF/gg+Uw8yVahmez2tOkEXsGW+3bVOmY
-	dzrXnZrxDSsopyvLSBZzXrkP+1I6eQCgd/f4Sp7pXR1e7DYRU5lC2TRj5HXz+jQ==
-X-Received: by 2002:a05:620a:3951:b0:795:4c65:fe39 with SMTP id af79cd13be357-7954c660a0amr1230871185a.58.1718102323520;
-        Tue, 11 Jun 2024 03:38:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEWH8vSQU7iczW/0/WLKHfejbsoDwghIq9TNpqFLbKxfZBhFgK72IviX2gClBpKbMjxLDGMkA==
-X-Received: by 2002:a05:620a:3951:b0:795:4c65:fe39 with SMTP id af79cd13be357-7954c660a0amr1230867885a.58.1718102322807;
-        Tue, 11 Jun 2024 03:38:42 -0700 (PDT)
-Received: from rh (p200300c93f02d1004c157eb0f018dd01.dip0.t-ipconnect.de. [2003:c9:3f02:d100:4c15:7eb0:f018:dd01])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4405daf10a4sm27135961cf.13.2024.06.11.03.38.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 03:38:42 -0700 (PDT)
-Date: Tue, 11 Jun 2024 12:38:37 +0200 (CEST)
-From: Sebastian Ott <sebott@redhat.com>
-To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-    James Morse <james.morse@arm.com>, 
-    Suzuki K Poulose <suzuki.poulose@arm.com>, 
-    Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-    Shaoqin Huang <shahuang@redhat.com>, Eric Auger <eric.auger@redhat.com>
-Subject: Re: [PATCH v4 0/6] KVM: arm64: emulation for CTR_EL0
-In-Reply-To: <20240603130507.17597-1-sebott@redhat.com>
-Message-ID: <693a8742-c40c-dcb1-6b4a-43798959b10a@redhat.com>
-References: <20240603130507.17597-1-sebott@redhat.com>
+	s=arc-20240116; t=1718102356; c=relaxed/simple;
+	bh=48QYdfypmjq2I+QLwjJDC0+p53AFnmSrM5vjdg5plFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CztuyHslzX2jpTdI2V8JXuAhyScDszI7jLpVDk/11mQTOputyrSFlSzzJISHs7j7MMCObzgucMjuKfj22moePFIOTUgr/EixMpc0VFXr1T0IASRxapFQN2vRogQIwwxptcf1A3XxIo72m6MUdOhjHBAF0MgGj3EEaxy8dGPEwUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XjPFo+Si; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D08BC2BD10;
+	Tue, 11 Jun 2024 10:39:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718102356;
+	bh=48QYdfypmjq2I+QLwjJDC0+p53AFnmSrM5vjdg5plFU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XjPFo+SiEAm33bKHZdR9iuweZnZ2aj6cxv5hKjUdp2BH9FaBF68enEWGF9xXrQJ7n
+	 2vjEGYoiTUd6xZvBjaIXHrCNc9UK92PN9yKShbbpbCIpMtg2tRnUyqoiKdiqcnIvb+
+	 f/bU2XIXsIgFtWt1reDzv+ZRi+Q1anlnmqCqlmz7nxpOAR7JgWMUPWA8lWArSauHZH
+	 vs9zAp4gEI9i3arrLtcMj3GyyCMyaz0AZhrMw2nvFeDqqRCmbikshLFXqybQkfZ0e1
+	 Wi6XpN02fFvFO8+U70U5YAjO3Bl7MBk0jYjH2rp26r5PWyxnYofB6y2euhBRNPrzKx
+	 zePYONOgIOCZg==
+Date: Tue, 11 Jun 2024 11:39:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Jai Luthra <j-luthra@ti.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org, Devarsh Thakkar <devarsht@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Jayesh Choudhary <j-choudhary@ti.com>
+Subject: Re: [PATCH v2 1/2] ALSA: dmaengine: Synchronize dma channel in
+ prepare()
+Message-ID: <ZmgpUFy5-_5n_zyd@finisterre.sirena.org.uk>
+References: <20240610-asoc_next-v2-0-b52aaf5d67c4@ti.com>
+ <20240610-asoc_next-v2-1-b52aaf5d67c4@ti.com>
+ <3557bd0f-86b4-4dce-90dd-59303f4f1154@metafoo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0TfXp5NDpMNDG3Z7"
+Content-Disposition: inline
+In-Reply-To: <3557bd0f-86b4-4dce-90dd-59303f4f1154@metafoo.de>
+X-Cookie: Your love life will be... interesting.
 
-Hi Marc, Oliver
 
-anything else I should change here?
+--0TfXp5NDpMNDG3Z7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sebastian
+On Mon, Jun 10, 2024 at 05:45:52PM -0700, Lars-Peter Clausen wrote:
+> On 6/10/24 03:56, Jai Luthra wrote:
 
+> > Sometimes the stream may be stopped due to XRUN events, in which case
+> > the userspace can call snd_pcm_drop() and snd_pcm_prepare() to stop and
+> > start the stream again.
+
+> > In these cases, we must wait for the DMA channel to synchronize before
+> > marking the stream as prepared for playback, as the DMA channel gets
+> > stopped by snd_pcm_drop() without any synchronization.
+
+> We should really implement the sync_stop() PCM callback and let the ALSA
+> core let care of the sync.
+
+Good point, that's a better idea.
+
+--0TfXp5NDpMNDG3Z7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZoKU8ACgkQJNaLcl1U
+h9BedQf+LgwsDPZ2r9hVlvRNDyt6JZgIXzyPghbWNXb2jndRsTN0kXDZlyMRdPtN
+iljCdWcV193flVjp3ZMX7IsVtIEDiMtwNuspJjIU2nXEqEgQE4FcfSkLv5Q8uIcQ
+jSp1zqxvo8AFrEKQrySdNdc5iysKN265nBFq3Q7KfAVvpndZL1ZYnCbJ738EoNhx
+3RgYTlvAuOIoux34F/bXbrYPsEfQseB6Z9JvxvwtKoVDcDUcTUkQv2mwlN6zzqwO
+Vk8fk1bIjPmf304blTqV3T53LPtTTOQvRIFu1xeFI61zpMRRq79wIHSSBUtiaxcs
+Ijdg6xeeM0a9FfxfcH5bm3UKiRhKdA==
+=pWL3
+-----END PGP SIGNATURE-----
+
+--0TfXp5NDpMNDG3Z7--
 
