@@ -1,147 +1,123 @@
-Return-Path: <linux-kernel+bounces-209415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA03390344E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:50:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C78B903450
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FE131F29902
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:50:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA20B287F17
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CDA172BC6;
-	Tue, 11 Jun 2024 07:50:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C385C130ADA;
-	Tue, 11 Jun 2024 07:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFD8172BCD;
+	Tue, 11 Jun 2024 07:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUeCMwrv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3132172798;
+	Tue, 11 Jun 2024 07:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718092205; cv=none; b=NHntA6s+XTUX2dNrEBFAv2wEgmFCfSybUzQRimUSVdtL7AqLocro6eDvHTzIHsRWqVnIQK7ThmLvju67Tq3yriA327Tf89A9y6u/N5e5EmLAFJ+q0ZNHRc6JPwk4rnEkQfwAC6mxtNWho55TAmPp0dV406AccE3pDpJ/ShHcJiU=
+	t=1718092223; cv=none; b=Hx8UIO4V/c74qQZe6OCSWZkLh6TOIcDWcTqkhVjFGjni4GQHQxxhDSMpNhpMLq0/N5U/ZmQc0MDbmgDvG85k2V7AhvoOXwbHW4F+ecWStbdMSLILcKQ9x5RBC0weLHImBcEVcRcqA4JbVEzqgxRJ6CKGgrQRbnFt9NZfPfNvkKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718092205; c=relaxed/simple;
-	bh=th9CP8dFoILsp10CMt+4CogoR9Emy+DQtuz9AQyf/ZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lfN+PDr59l7h6LitWlxDVB2azpwi6p9g2CVCgykxyFNuYQUYlIIjITlo8k5EGY8s+GbSZ43O7QxHjD9EC8V8KW5maE8kCScBxwuyu6rO26gfV4uZsvqTfz0SgfgW1GfoJ/m8WCp+VUlAINVXNnQr5dxQS7qEGonZnTZFpqSaWbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D0E71688;
-	Tue, 11 Jun 2024 00:50:27 -0700 (PDT)
-Received: from [10.162.41.16] (e116581.arm.com [10.162.41.16])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAF473F64C;
-	Tue, 11 Jun 2024 00:49:58 -0700 (PDT)
-Message-ID: <8918a555-1ed4-46da-bd63-4c5e324a9284@arm.com>
-Date: Tue, 11 Jun 2024 13:19:52 +0530
+	s=arc-20240116; t=1718092223; c=relaxed/simple;
+	bh=/tWfB59NEBN9boSZX0IDoiDx1xvzNUOL2J/WjwuRFWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XKqkAnnQIlV/IuMzcO464pgeFWTelL7R2KH+HiHwe/nuKhcSW6lxoXRiA5aejOj3tqCE6cmBq5iJiDK0++kT3j5IUT0080m+/VQJArf/yNX0aKmrPJkpdbc2buyrpkxq3QKvuiOOpQjGYt0ibVyv5DTtz8p0cXLXtMj4CvUp29c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SUeCMwrv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9EEC2BD10;
+	Tue, 11 Jun 2024 07:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718092222;
+	bh=/tWfB59NEBN9boSZX0IDoiDx1xvzNUOL2J/WjwuRFWw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SUeCMwrvxhqLlr0zpe5+fL9/zDEf8PGGNw7RCcB9OJoYjzN5vPWFyRda0mxoRNL29
+	 F4zzdGCfeUkfbC5hrqArj1FZjH6sIVWG5mzBSiopy99vzybrrz5nOx7TS7CZC6gFtt
+	 IlVPh4zTopZrqTkE06ntXQRp4V1Docol8KJjXPqj7j0YvAxeG2TnrhuDiUDcc14Yk4
+	 gEZDCexr94ccaj1vjBcqwDoc4OVzguuV2bwby0QFQVKTVcdwUCJRTZpLXZlvnB3bLZ
+	 J+Jx2EjSqDBSKWtcI/cBa0wDMGi8ZOTyz17UdwZBMiPB0dRbvxCzXCxD7h6KyVHBj7
+	 /bUS4bUEUPUQg==
+Date: Tue, 11 Jun 2024 09:50:16 +0200
+From: Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v0] net: dsa: mv88e6xxx: Add FID map cache
+Message-ID: <20240611095016.7804b091@dellmb>
+In-Reply-To: <20240610050724.2439780-1-aryan.srivastava@alliedtelesis.co.nz>
+References: <20240610050724.2439780-1-aryan.srivastava@alliedtelesis.co.nz>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Add test to distinguish between thread's signal
- mask and ucontext_t
-To: shuah@kernel.org, oleg@redhat.com, stsp2@yandex.ru
-Cc: mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
- ryan.roberts@arm.com, broonie@kernel.org, suzuki.poulose@arm.com,
- Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
- AneeshKumar.KizhakeVeetil@arm.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240611074307.812939-1-dev.jain@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20240611074307.812939-1-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Sorry, please ignore this email thread; I am sending another one.
+On Mon, 10 Jun 2024 17:07:23 +1200
+Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz> wrote:
 
-On 6/11/24 13:13, Dev Jain wrote:
-> This patch series is motivated by the following observation:
->
-> Raise a signal, jump to signal handler. The ucontext_t structure dumped
-> by kernel to userspace has a uc_sigmask field having the mask of blocked
-> signals. If you run a fresh minimalistic program doing this, this field
-> is empty, even if you block some signals while registering the handler
-> with sigaction().
->
-> Here is what the man-pages have to say:
->
-> sigaction(2): "sa_mask specifies a mask of signals which should be blocked
-> (i.e., added to the signal mask of the thread in which the signal handler
-> is invoked) during execution of the signal handler. In addition, the
-> signal which triggered the handler will be blocked, unless the SA_NODEFER
-> flag is used."
->
-> signal(7): Under "Execution of signal handlers", (1.3) implies:
->
-> "The thread's current signal mask is accessible via the ucontext_t
-> object that is pointed to by the third argument of the signal handler."
->
-> But, (1.4) states:
->
-> "Any signals specified in act->sa_mask when registering the handler with
-> sigprocmask(2) are added to the thread's signal mask.  The signal being
-> delivered is also added to the signal mask, unless SA_NODEFER was
-> specified when registering the handler.  These signals are thus blocked
-> while the handler executes."
->
-> There clearly is no distinction being made in the man pages between
-> "Thread's signal mask" and ucontext_t; this logically should imply
-> that a signal blocked by populating struct sigaction should be visible
-> in ucontext_t.
->
-> Here is what the kernel code does (for Aarch64):
->
-> do_signal() -> handle_signal() -> sigmask_to_save(), which returns
-> &current->blocked, is passed to setup_rt_frame() -> setup_sigframe() ->
-> __copy_to_user(). Hence, &current->blocked is copied to ucontext_t
-> exposed to userspace. Returning back to handle_signal(),
-> signal_setup_done() -> signal_delivered() -> sigorsets() and
-> set_current_blocked() are responsible for using information from
-> struct ksignal ksig, which was populated through the sigaction()
-> system call in kernel/signal.c:
-> copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)),
-> to update &current->blocked; hence, the set of blocked signals for the
-> current thread is updated AFTER the kernel dumps ucontext_t to
-> userspace.
->
-> Assuming that the above is indeed the intended behaviour, because it
-> semantically makes sense, since the signals blocked using sigaction()
-> remain blocked only till the execution of the handler, and not in the
-> context present before jumping to the handler (but nothing can be
-> confirmed from the man-pages), the series introduces a test for
-> mangling with uc_sigmask. I will send a separate series to fix the
-> man-pages.
->
-> The proposed selftest has been tested out on Aarch32, Aarch64 and x86_64.
->
-> Changes in v2:
-> - Replace all occurrences of SIGPIPE with SIGSEGV
-> - Add a testcase: Raise the same signal again; it must not be queued
-> - Remove unneeded <assert.h>, <unistd.h>
-> - Give a detailed test description in the comments; also describe the
->    exact meaning of delivered and blocked
-> - Handle errors for all libc functions/syscalls
-> - Mention tests in Makefile and .gitignore in alphabetical order
->
-> Dev Jain (2):
->    selftests: Rename sigaltstack to generic signal
->    selftests: Add a test mangling with uc_sigmask
->
->   tools/testing/selftests/Makefile              |   2 +-
->   .../{sigaltstack => signal}/.gitignore        |   3 +-
->   .../{sigaltstack => signal}/Makefile          |   3 +-
->   .../current_stack_pointer.h                   |   0
->   .../selftests/signal/mangle_uc_sigmask.c      | 194 ++++++++++++++++++
->   .../sas.c => signal/sigaltstack.c}            |   0
->   6 files changed, 199 insertions(+), 3 deletions(-)
->   rename tools/testing/selftests/{sigaltstack => signal}/.gitignore (57%)
->   rename tools/testing/selftests/{sigaltstack => signal}/Makefile (53%)
->   rename tools/testing/selftests/{sigaltstack => signal}/current_stack_pointer.h (100%)
->   create mode 100644 tools/testing/selftests/signal/mangle_uc_sigmask.c
->   rename tools/testing/selftests/{sigaltstack/sas.c => signal/sigaltstack.c} (100%)
->
+> Add a cached FID bitmap. This mitigates the need to
+> walk all VTU entries to find the next free FID.
+> 
+> Walk VTU once, then store read FID map into bitmap. Use
+> and manipulate this bitmap from now on, instead of re-reading
+> HW for the FID map.
+> 
+> The repeatedly VTU walks are costly can result in taking ~40 mins
+> if ~4000 vlans are added. Caching the FID map reduces this time
+> to <2 mins.
+> 
+> Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+> ---
+>  drivers/net/dsa/mv88e6xxx/chip.c | 25 +++++++++++++++++++------
+>  drivers/net/dsa/mv88e6xxx/chip.h |  4 ++++
+>  2 files changed, 23 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
+> index e5bac87941f6..91816e3e35ed 100644
+> --- a/drivers/net/dsa/mv88e6xxx/chip.c
+> +++ b/drivers/net/dsa/mv88e6xxx/chip.c
+> @@ -1815,14 +1815,17 @@ int mv88e6xxx_fid_map(struct mv88e6xxx_chip *chip, unsigned long *fid_bitmap)
+>  
+>  static int mv88e6xxx_atu_new(struct mv88e6xxx_chip *chip, u16 *fid)
+>  {
+> -	DECLARE_BITMAP(fid_bitmap, MV88E6XXX_N_FID);
+>  	int err;
+>  
+> -	err = mv88e6xxx_fid_map(chip, fid_bitmap);
+> -	if (err)
+> -		return err;
+> +	if (!chip->fid_populated) {
+> +		err = mv88e6xxx_fid_map(chip, chip->fid_bitmap);
+> +		if (err)
+> +			return err;
+>  
+> -	*fid = find_first_zero_bit(fid_bitmap, MV88E6XXX_N_FID);
+> +		chip->fid_populated = true;
+> +	}
+> +
+> +	*fid = find_first_zero_bit(chip->fid_bitmap, MV88E6XXX_N_FID);
+>  	if (unlikely(*fid >= mv88e6xxx_num_databases(chip)))
+>  		return -ENOSPC;
+>  
+> @@ -2529,6 +2532,9 @@ static int mv88e6xxx_port_vlan_join(struct mv88e6xxx_chip *chip, int port,
+>  			 port, vid);
+>  	}
+>  
+> +	/* Record FID used in SW FID map */
+> +	bitmap_set(chip->fid_bitmap, vlan.fid, 1);
+> +
+
+wouldn't it make more sense to do this bit setting in
+mv88e6xxx_atu_new() and clearingin a new function
+mv88e6xxx_atu_delete/drop() ?
 
