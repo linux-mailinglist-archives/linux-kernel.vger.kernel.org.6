@@ -1,166 +1,149 @@
-Return-Path: <linux-kernel+bounces-209615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F5790387A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:11:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7763B90387D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CB76281CFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:11:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E661C238D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7000917A92D;
-	Tue, 11 Jun 2024 10:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7342C178381;
+	Tue, 11 Jun 2024 10:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="d5opbIJS"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XF5tygky"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65081178367
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E0517836F;
+	Tue, 11 Jun 2024 10:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718100687; cv=none; b=cMxbWKvsIwxAP8XBltf8G59hqL5ScpKnfV4LOD+IH55E/MDxyoIU0vgHWejY6TDrK2OiD6imICl5yK6G45hdhYq25AEojqxuNKzhIs2e55atSD5bTV5t0DWUVftIiy4z6NPhXIEACdiq0/Q2RRhB6PcsJopqClXCTMX1Te4+oVs=
+	t=1718100768; cv=none; b=OKqE4oTDbcY5yAaf6LIaTZIJRMZ103yU3Wepw9nfw8EOFxsBoHMWEEz7zDJ5QHLW0Sim9Cuoza10jRLdhTvUqbv9xqF+TFQGLsjWlpPBsMjVJH3cGGRpq+XGzZmD51Qk4T9IHGRVveoCpszM63HtGTUYD7I7OlDqhGj7CNQ9Ku4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718100687; c=relaxed/simple;
-	bh=6tVgkjyqOI9itw8lEaekQQOUJebgN5aDPo+xjDJkHX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dcbqkD8Rdx2pIdmKcTnpCyZR0S9weNSvWQmfr+K1kX2r8W/MFOoUseKJxbMypeV6DU6iBqSwFPw8AYfGgamBHfVXlh9LHE2cUpzU6Sgb+haT2PMhhOSbdUBXPuCIr3oxcbt5+GFJtAq2+0yPEezSFl92hsM/PCg+jtXZPnZoc+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=d5opbIJS; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718100683; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=nLj8yUsK2lei34HSlxIopppsBC+abcyB+V/ZUwcOo4A=;
-	b=d5opbIJSkEVOPTNByAOoCdOvKH4mh7epYituqTdWbYVGoHQ9hHZomUp8XWlE6DrOv2wgRAH0xTrbE8cLS6qlm2nYmNYWXsSH6Skc91F6WUUrfO5fFQdgzyDCnz74TRsr2VewIt+rhtgRQB0/n+lECiqwWPSllhVB+9d2QvLmQrY=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W8G7ENT_1718100681;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8G7ENT_1718100681)
-          by smtp.aliyun-inc.com;
-          Tue, 11 Jun 2024 18:11:22 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: willy@infradead.org,
-	david@redhat.com,
-	wangkefeng.wang@huawei.com,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	shy828301@gmail.com,
-	ziy@nvidia.com,
-	ioworker0@gmail.com,
-	da.gomez@samsung.com,
-	p.raghav@samsung.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 6/6] mm: shmem: add mTHP counters for anonymous shmem
-Date: Tue, 11 Jun 2024 18:11:10 +0800
-Message-Id: <4fd9e467d49ae4a747e428bcd821c7d13125ae67.1718090413.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1718100768; c=relaxed/simple;
+	bh=hHq7rsBFDq0EqNnuYPQ1CAP+SGwfC+85cs43Miwvbwk=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AX3cB7kGtIQnyxvTwbWQR+GLDNtN0VYm9jWf6swl1j63tFnrysmsBoDSEKjFG/txv9wIsjeotTQ/dTX1oXCeg6WYAjHrV9oWSJ1Ruw0GobyRMDK4mMcOIvL4YeF2JBPqMp78ubZQItiUOhzJ3L+mxTNo9tdV87iscY7I7gK9Zrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XF5tygky; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ebd95f136bso9059821fa.0;
+        Tue, 11 Jun 2024 03:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718100765; x=1718705565; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2FKak35VIiYwM8SAujbX9oYKzoQLHlkNtzmJ5k52VYs=;
+        b=XF5tygkyT1RbLf0yFFfzpjBEjpmvSHWL6DDTiK6rJt0Gt4Ydgz8ky+FHjPfZk8d7C8
+         a6kLqA+An1P8fXeICCxFJdwyEymX5x/UQfrHhOVaG7Pb92rnNkrfq+FpWoHlFXgYpHiz
+         7HUAknBP/iqc3lf0NfjrrFMQHoAU+ALrd8v4mVXDxdHj1wgQJwXZ04CCMDcC2O0/ACDp
+         7lVyvUPr/WNW0DYQyfnnvTbPGADYbd1KHGt+TH405MU9sgv2sdCjZKhdl/XqZRLbFQh2
+         UvrdAfmK5otvjqLCKqV8zXg26uhTGpNBKZf2Q5mkd/Y/Slmy5vTBuoXPrLCaSxrgVUMY
+         Jw7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718100765; x=1718705565;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2FKak35VIiYwM8SAujbX9oYKzoQLHlkNtzmJ5k52VYs=;
+        b=p2kWx616qP87C7DdC2GCLq6cF6M1Fld7xdRTXEhBphtiEHAlE44zkWIy8aDSPKfUZH
+         MthuKT3GnRNHKnIU9wUeP5XRvelx7VHbV3+Vpduk8d2uBUdhQ3RrelA1h2tedLkLsH18
+         KxwxgTPeR0j3cP0sqS1qL5Ij3ivlJu0cPfOVITBnVpykLtom7LmNoj5c3a+ICjUVCnMC
+         qmgzD26TTwul6y+PgXEeMB1gleGnkAV925rZc19bACZIu63RHpRRs5Sw+xJLS/Mb7Gzq
+         TmjOjXt+jT821r4smQwPxzVpGDZ+CwU72J7+p3slFqqFbbp1ikUTdT1i045pQt2GXtzM
+         hT8A==
+X-Forwarded-Encrypted: i=1; AJvYcCU3YhD4mfgBJTivljzNFgzyr3So6jDQqp2NyX1gKYmh9KB7sJZea84CJiilMQcRHQzcg9fgH6Dymt2u3p6mJhNm9wHuWhtF/art+IGftXBNlAJQWUdnd03aQQBUgis7kZ0z
+X-Gm-Message-State: AOJu0YxF5plPd5rEolu8XON1Zn4LUn9kM0L07wGZ4vtLKcYGb/48bOyy
+	5zX0dElczSWqFZIN/pH1em6Rj5qDXYWOmDgKfvPlW6UyYH3qwIy1
+X-Google-Smtp-Source: AGHT+IFqxkEHeFSRbrMxnPFKPJEiNaoRvYCebSTK4U7KrRNNGFlGxa8V+twgJbUCwSME/kpyvOOKGQ==
+X-Received: by 2002:a2e:3603:0:b0:2e9:6e43:c897 with SMTP id 38308e7fff4ca-2eadce82d72mr71336111fa.48.1718100764800;
+        Tue, 11 Jun 2024 03:12:44 -0700 (PDT)
+Received: from pc636 (host-90-233-193-23.mobileonline.telia.com. [90.233.193.23])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ebee031c95sm6061191fa.101.2024.06.11.03.12.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 03:12:44 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 11 Jun 2024 12:12:41 +0200
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+	Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH rcu 2/9] rcu: Reduce synchronize_rcu() delays when all
+ wait heads are in use
+Message-ID: <ZmgjGdRLCg3tnuBC@pc636>
+References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
+ <20240604222355.2370768-2-paulmck@kernel.org>
+ <ZmBVfpyEZeTIAHJn@localhost.localdomain>
+ <c7d07e5d-34a0-4874-8e7e-1c576c14c8e6@paulmck-laptop>
+ <fbc30c3a-ecd3-4525-9434-307c7769bb4c@amd.com>
+ <a0aa3d5e-006c-475d-bd2f-b15fca47deee@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a0aa3d5e-006c-475d-bd2f-b15fca47deee@paulmck-laptop>
 
-Add mTHP counters for anonymous shmem.
+On Thu, Jun 06, 2024 at 09:49:59AM -0700, Paul E. McKenney wrote:
+> On Thu, Jun 06, 2024 at 09:16:08AM +0530, Neeraj Upadhyay wrote:
+> > 
+> > 
+> > On 6/6/2024 12:08 AM, Paul E. McKenney wrote:
+> > > On Wed, Jun 05, 2024 at 02:09:34PM +0200, Frederic Weisbecker wrote:
+> > >> Le Tue, Jun 04, 2024 at 03:23:48PM -0700, Paul E. McKenney a écrit :
+> > >>> From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> > >>>
+> > >>> When all wait heads are in use, which can happen when
+> > >>> rcu_sr_normal_gp_cleanup_work()'s callback processing
+> > >>> is slow, any new synchronize_rcu() user's rcu_synchronize
+> > >>> node's processing is deferred to future GP periods. This
+> > >>> can result in long list of synchronize_rcu() invocations
+> > >>> waiting for full grace period processing, which can delay
+> > >>> freeing of memory. Mitigate this problem by using first
+> > >>> node in the list as wait tail when all wait heads are in use.
+> > >>> While methods to speed up callback processing would be needed
+> > >>> to recover from this situation, allowing new nodes to complete
+> > >>> their grace period can help prevent delays due to a fixed
+> > >>> number of wait head nodes.
+> > >>>
+> > >>> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> > >>> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > >>
+> > >> IIRC we agreed that this patch could be a step too far that
+> > >> made an already not so simple state machine even less simple,
+> > >> breaking the wait_head based flow.
+> > > 
+> > > True, which is why we agreed not to submit it into the v6.10 merge window.
+> > > 
+> > > And I don't recall us saying what merge window to send it to.
+> > > 
+> > >> Should we postpone this change until it is observed that a workqueue
+> > >> not being scheduled for 5 grace periods is a real issue?
+> > > 
+> > > Neeraj, thoughts?  Or, better yet, test results?  ;-)
+> > 
+> > Yes I agree that we postpone this change until we see it as a real
+> > problem. I had run a test to invoke synchronize_rcu() from all CPUs
+> > on a 96 core system in parallel. I didn't specifically check if this
+> > scenario was hit. Will run RCU torture test with this change.
+> 
+> Very well, I will drop this patch with the expectation that you will
+> re-post it if a problem does arise.
+> 
+Thank you! We discussed it before and came to conclusion that it adds an
+extra complexity. Once we hit an issue with delays, we can introduce it
+and explain a workload which triggers it.
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- include/linux/huge_mm.h |  3 +++
- mm/huge_memory.c        |  6 ++++++
- mm/shmem.c              | 18 +++++++++++++++---
- 3 files changed, 24 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 909cfc67521d..212cca384d7e 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -281,6 +281,9 @@ enum mthp_stat_item {
- 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
- 	MTHP_STAT_SWPOUT,
- 	MTHP_STAT_SWPOUT_FALLBACK,
-+	MTHP_STAT_FILE_ALLOC,
-+	MTHP_STAT_FILE_FALLBACK,
-+	MTHP_STAT_FILE_FALLBACK_CHARGE,
- 	__MTHP_STAT_COUNT
- };
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1360a1903b66..3fbcd77f5957 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -555,6 +555,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
- DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
-+DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
-+DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
-+DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
- 
- static struct attribute *stats_attrs[] = {
- 	&anon_fault_alloc_attr.attr,
-@@ -562,6 +565,9 @@ static struct attribute *stats_attrs[] = {
- 	&anon_fault_fallback_charge_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
-+	&file_alloc_attr.attr,
-+	&file_fallback_attr.attr,
-+	&file_fallback_charge_attr.attr,
- 	NULL,
- };
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index f5469c357be6..99bd3c34f0fb 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1773,6 +1773,9 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
- 
- 			if (pages == HPAGE_PMD_NR)
- 				count_vm_event(THP_FILE_FALLBACK);
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+			count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
-+#endif
- 			order = next_order(&suitable_orders, order);
- 		}
- 	} else {
-@@ -1792,9 +1795,15 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
- 		if (xa_find(&mapping->i_pages, &index,
- 				index + pages - 1, XA_PRESENT)) {
- 			error = -EEXIST;
--		} else if (pages == HPAGE_PMD_NR) {
--			count_vm_event(THP_FILE_FALLBACK);
--			count_vm_event(THP_FILE_FALLBACK_CHARGE);
-+		} else if (pages > 1) {
-+			if (pages == HPAGE_PMD_NR) {
-+				count_vm_event(THP_FILE_FALLBACK);
-+				count_vm_event(THP_FILE_FALLBACK_CHARGE);
-+			}
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK);
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK_CHARGE);
-+#endif
- 		}
- 		goto unlock;
- 	}
-@@ -2168,6 +2177,9 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
- 		if (!IS_ERR(folio)) {
- 			if (folio_test_pmd_mappable(folio))
- 				count_vm_event(THP_FILE_ALLOC);
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
-+#endif
- 			goto alloced;
- 		}
- 		if (PTR_ERR(folio) == -EEXIST)
--- 
-2.39.3
-
+--
+Uladzislau Rezki
 
