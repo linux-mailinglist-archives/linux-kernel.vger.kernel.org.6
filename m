@@ -1,265 +1,216 @@
-Return-Path: <linux-kernel+bounces-209307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 132DA903248
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:13:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1600890324A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B5CC1C23774
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8650E283783
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22863171094;
-	Tue, 11 Jun 2024 06:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13AB171084;
+	Tue, 11 Jun 2024 06:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+EO6Rbh"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z2jDl8Yj"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D0279C2;
-	Tue, 11 Jun 2024 06:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF61171079
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 06:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718086409; cv=none; b=dqYBm2TiC6+dt0sAxGS8rLqO6RMiYzru29llkMwpss4Oyq24ZuamspZ0cuRMdTxJqehpLHd2Y0N2vc7YapMU0s3nfuWhyIurb1akFYpEKOCBGyiL2vDg36HftplyfD2nL/Fseh/H+DrYiRq6hcR9VuqtX7zCW5C+N9BPUnr1X3I=
+	t=1718086464; cv=none; b=XlmIthmsa82PS/Vgo3Qv1Eor9fv0GK+VU59qRbeAfDOBKViyOh5ak7/I3wXV0KdVG3H8wz0M+PjuVwJNNdxKuPH4gmqdCa/4w9wr/DfrSpS8KuR/ceKSXGZdLoDjaECnLVoinQgX6DHEIxhhw448F1WImHAbdS6C3MB9BNfN8zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718086409; c=relaxed/simple;
-	bh=BhtcyIvqWE+n28qEnjT5j9JOWODTzGAKDKliXjssl8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IxYLx2AMUmH331T/2gTww5mABZEpzP4V5hOxqDGEAZqrMgHkkLcqTQF97irzQPRrl/LMNA43fz+ifuHxa6gjbi24M/RH7e9EI9E0KJ14JgSYMbnUvOkOUAvje7U0FydHfBcYH1baGn5uHtjsxN6Whp/dX9Si6wMsbguqkVVGajM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+EO6Rbh; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f70131063cso5376545ad.2;
-        Mon, 10 Jun 2024 23:13:27 -0700 (PDT)
+	s=arc-20240116; t=1718086464; c=relaxed/simple;
+	bh=uzYvnZSrEDJuKRKlcwf09iqGICWoeHIo9Fu+ra0uNRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WIysDNEEHItbhKzk5rW9igFnbfNSik+MUWVWJWKuOdT7qXhV/ucqAXzuwrBMAy95eD7SHhhH8tzj4n4i+3tuJhL8idAvi+pgOFiUIJ/Q0Ml3u4UpgccrXqOaDS2Irr29O4ftZFub7xsYWJDiOXnJDeWK+KYXypikRJJMAtdBm5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z2jDl8Yj; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-44056f72257so219491cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 23:14:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718086407; x=1718691207; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1yHSJPDT6YvnZ2vrJvQyhpHm0Jzqe6QgkdhCGIMJvgQ=;
-        b=B+EO6RbhtqjNonc3p0aLtq6o7DYvDzxiMwOfcrI7uzlg4O0LS0/pHNvhw/nRAvr1qK
-         50jHFfWgD3EpMbts2hCu1T/P/ohYMqrXeKo8O0ffs6j2HX3EsTRPW6u1agtTpz2lczoS
-         H4VRQm/I7Icg/WUvhIqYi5Vl7xVAe5fCwx1+Xe2FrLqDjxl3M+PUzoEgEof8qIhbxEq0
-         BGep9QfSP4bc+gQzDhXwqawEE8GEEbmW3Nu56WYqDZCrWCH9/2Zw7xtC0RoUyHyinfkv
-         HE5ac6fxToqlllDAtBWOKOUCDUqmBGLwpqCHG8+uhFxA/X5hbF2mC3Btz8iLi6LrQBpC
-         Ff0Q==
+        d=google.com; s=20230601; t=1718086461; x=1718691261; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rw0yEybA58oGSenY87FDfNFGMr2HbsNIld+JH0QGeGY=;
+        b=z2jDl8Yjuamq7PN7jLw4fIY+w/5loCb3UGjR0NSNZAqKdlnpDZOZ4aHnjzhmCGUI8j
+         EWdtJnyJrVOg8FHzykY5FsJmrCaQ9xitOfSWwsoIWTU/V1NG85T0gIKZH+ItfRv4s88k
+         dJ43apTwiN2M4hcGdRgyML14oFuqeoMD/5ruIa2WWHDUsnRUikgikQ2AjyZ0vbwZiyj+
+         ZbZzCWSXcsy5+ooh9trEneXMEhtPDaO4DAVgNE8xA6miLLddyCEhSbvNpGyHko/rIqZ7
+         Eos0dQ3IboQ8KnqaqAWffYDqTfyK5TOykiv2EqESyG7CcGyOmyfz7Ei9UbZQW6BSLSJK
+         M17A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718086407; x=1718691207;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1yHSJPDT6YvnZ2vrJvQyhpHm0Jzqe6QgkdhCGIMJvgQ=;
-        b=hln0eaQBeQgFs1OF3rxiHI9I5OUCGnrBZEmWT+FM1fGUAbHocUW45jN1fK4zdQgeRd
-         YFupkLjZvFi4HAi8dNBhofKHboTnFtYiFg1CIbC3o8q7EejiIO5obhhzsb1s0xUPitof
-         /fDSndn4jePXF/jby2+JdIfaq8qk3oP7T+kZrShrP+dAPdwntolFqJ8HkLMCgAnFYVj8
-         +0KQ/oqBsFhC/A1Vzhyz19QP11K/IfugPp0XIq0LSp2Dyb5gMRf9XmWvDRE+ubByOrWJ
-         7H8Mh0r3btSWqZLkyYwlLlaRFHsauankjdg5ftptKyusxTnXSrIjJgrAyZD3h9ZacfJ0
-         kXlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfdXC3dMijcx5X3w8wojwjHL6xoDms8TRNIubDBYjH62T76/cojBd2w4y0XVePd+gjuRHExHxFfmN3oxIAzM/9dpngmcyvuVB5DSlu
-X-Gm-Message-State: AOJu0YwPZMaFTzTzss/65xp3tg39kea7vIssHDDLmptONLI1/x7LD9r4
-	kFXPbT1xHR5uLQOTXpVo5OOtwg0h/ntHXMCQEvWXUT6dgTeuEckA
-X-Google-Smtp-Source: AGHT+IFfWhbReco9SlC1783Sin1SkDuyLLP7p110Xe12N/3vVnJLG1i6cm2xi/eOMfBBg2eOipZAXg==
-X-Received: by 2002:a17:902:db06:b0:1f7:317e:f4e0 with SMTP id d9443c01a7336-1f7317efb36mr7687505ad.12.1718086406442;
-        Mon, 10 Jun 2024 23:13:26 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f7079e48cdsm39645715ad.227.2024.06.10.23.13.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 23:13:24 -0700 (PDT)
-Message-ID: <c4952369-ffb2-45e1-8fe9-f7c920998833@gmail.com>
-Date: Tue, 11 Jun 2024 14:13:21 +0800
+        d=1e100.net; s=20230601; t=1718086461; x=1718691261;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rw0yEybA58oGSenY87FDfNFGMr2HbsNIld+JH0QGeGY=;
+        b=N8RFUpDKWc1/xwdfv1ldwZ7bw55UuPfb8j9Mr0MRlyny7gtOoga855EUBZJzria01C
+         NEathqxLpJMzac1JIyZL2anWpeOmhqoi7ngNL/Bb9d7EEeD6X0M9HKoz3LlUk41xZVYG
+         11mkegC9QSoHm9MSeuvIDtAxY3p+Yxqr7uXF578jdPrzvT1WR5BF+yzyWDBSNq2dWg6z
+         7XWwo72tBRsDqSp9EvBwF8+/vkTk5e5/m26ComZ6NihFDcFZ9iamsa4JWJ/n6OJXMBfq
+         2q9Uw8oNnR9JAk7lbRbPSV2IPTYlTGISm1byD2fyKW+UycqH0GlBY0bwoyCpplZPs9Me
+         jkvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjG48faw2JrdPum6t+GsDoQWmbDpYO4vWQsK7rb7Rgao8TXz1IvjpVt/2I1wVnLpR6/q/HwexfR3wMp0eVSk+EIzJ+g1T9+TzNLrEQ
+X-Gm-Message-State: AOJu0Yyl19VTbYzeLszOz0mRqh9ZTFzjvBpovlxeQMMxNosQoSAJAaV2
+	pBV28YYj7RDIuiEf4lVaTTy+lNDLZmPqOoHrHRFMx4BKTdusR65PHwzVof+ag36UZ08TWwzHRWy
+	8FsPtn2PRUSBbV3aMULhQfhmwSVZRjZd1ReR6PBfw2S9EGWGtp8p/
+X-Google-Smtp-Source: AGHT+IEfF1ceGCvUIqpRgpGywpoFdhCEjJQ5SBrVnyTH7zFD7fIjC3mxz+EhRnvKT70AxygSJIfPcxTkh+gSBAi2+hs=
+X-Received: by 2002:ac8:6f10:0:b0:43e:cb4:1d10 with SMTP id
+ d75a77b69052e-44140140f5bmr2611541cf.14.1718086461364; Mon, 10 Jun 2024
+ 23:14:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs/zh_CN: add process/researcher-guidelines Chinese
- translation
-To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240611042515.61387-1-dzm91@hust.edu.cn>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <20240611042515.61387-1-dzm91@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240610210213.work.143-kees@kernel.org>
+In-Reply-To: <20240610210213.work.143-kees@kernel.org>
+From: David Gow <davidgow@google.com>
+Date: Tue, 11 Jun 2024 14:14:07 +0800
+Message-ID: <CABVgOSnk3Uq1HjNgV=ATjO455PDv-W6-hDjqGyscp=ybc7U3Qg@mail.gmail.com>
+Subject: Re: [PATCH] x86/uaccess: Fix missed zeroing of ia32 u64 get_user()
+ range checking
+To: Kees Cook <kees@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Arnd Bergmann <arnd@arndb.de>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>, Nadav Amit <nadav.amit@gmail.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	David Howells <dhowells@redhat.com>, Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000404af3061a972dc4"
 
+--000000000000404af3061a972dc4
+Content-Type: text/plain; charset="UTF-8"
 
-
-On 6/11/24 12:25 PM, Dongliang Mu wrote:
-> Finish the translation of researcher-guidelines and add it to the
-> index file.
-> 
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+On Tue, 11 Jun 2024 at 05:02, Kees Cook <kees@kernel.org> wrote:
+>
+> When reworking the range checking for get_user(), the get_user_8() case
+> on 32-bit wasn't zeroing the high register. (The jump to bad_get_user_8
+> was accidentally dropped.) Restore the correct error handling
+> destination (and rename the jump to using the expected ".L" prefix).
+>
+> While here, switch to using a named argument ("size") for the call
+> template ("%c4" to "%c[size]") as already used in the other call
+> templates in this file.
+>
+> Found after moving the usercopy selftests to KUnit:
+>
+>       # usercopy_test_invalid: EXPECTATION FAILED at
+>       lib/usercopy_kunit.c:278
+>       Expected val_u64 == 0, but
+>           val_u64 == -60129542144 (0xfffffff200000000)
+>
+> Reported-by: David Gow <davidgow@google.com>
+> Closes: https://lore.kernel.org/all/CABVgOSn=tb=Lj9SxHuT4_9MTjjKVxsq-ikdXC4kGHO4CfKVmGQ@mail.gmail.com
+> Fixes: b19b74bc99b1 ("x86/mm: Rework address range check in get_user() and put_user()")
+> Signed-off-by: Kees Cook <kees@kernel.org>
 > ---
->  .../translations/zh_CN/process/index.rst      |   2 +-
->  .../zh_CN/process/researcher-guidelines.rst   | 129 ++++++++++++++++++
->  2 files changed, 130 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/translations/zh_CN/process/researcher-guidelines.rst
-> 
-> diff --git a/Documentation/translations/zh_CN/process/index.rst b/Documentation/translations/zh_CN/process/index.rst
-> index 5c6c8ccdd50d..5a5cd7c01c62 100644
-> --- a/Documentation/translations/zh_CN/process/index.rst
-> +++ b/Documentation/translations/zh_CN/process/index.rst
-> @@ -64,6 +64,7 @@ TODOLIST:
->     management-style
->     stable-kernel-rules
->     submit-checklist
-> +   researcher-guidelines
->  
->  TODOLIST:
->  
-> @@ -71,7 +72,6 @@ TODOLIST:
->  * kernel-docs
->  * deprecated
->  * maintainers
-> -* researcher-guidelines
->  * contribution-maturity-model
->  
->  
-> diff --git a/Documentation/translations/zh_CN/process/researcher-guidelines.rst b/Documentation/translations/zh_CN/process/researcher-guidelines.rst
-> new file mode 100644
-> index 000000000000..462b5aeef184
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/process/researcher-guidelines.rst
-> @@ -0,0 +1,129 @@
-> +.. SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +.. _cn_submittingpatches:
-> +
-> +:Original: Documentation/process/researcher-guidelines.rst
-> +
-> +:译者:
-> + - 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
-> +
-> +研究人员指南
-> ++++++++++++++++++++++
-> +
-> +Linux 内核社区欢迎对 Linux 内核及其开发过程中涉及的活动与任何其他副产品
-> +进行透明的研究。Linux 从这种研究中受益匪浅，其多方面均由某种形式的研究所推动。
-> +
-> +社区非常感谢研究人员在公开研究结果之前能分享初步发现，特别是涉及安全的研究。
-> +早期参与有助于提高研究质量并使 Linux 受益。无论如何，推荐研究人员与社区分享
-> +已发表研究的开放访问副本。
-> +
-> +本文旨在澄清研究开展过程中 Linux 内核社区认可与不认可的一些做法。至少，这类
-> +研究及相关活动应遵循标准的研究伦理规则。有关研究伦理、技术伦理以及开发者社区
-> +研究的更多背景信息，请查阅：
-> +
-> +* `研究伦理史 <https://www.unlv.edu/research/ORI-HSR/history-ethics>`_
-> +* `IEEE 伦理 <https://www.ieee.org/about/ethics/index.html>`_
-> +* `开发者和研究人员对开源项目实验伦理的看法 <https://arxiv.org/pdf/2112.13217.pdf>`_
-> +
-> +Linux 内核社区期望与项目互动的每个人都是真诚地为了使 Linux 变得更好。
-> +对 Linux 内核社区产生的任何公开可用的成果（包括但不限于源代码）的研究
-> +是受欢迎的，但对开发者的研究必须明确选择加入。
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: x86@kernel.org
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Sean Christopherson <seanjc@google.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> Cc: Nadav Amit <nadav.amit@gmail.com>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 
-“但对开发者的研究必须明确选择加入” 这里“加入”具体是指谁加入什么？
+Thanks: this fixes it here, both under qemu and on real hardware.
 
-Thanks
-Alex
-> +
-> +完全基于公开可用资源（包括公共邮件列表的帖子和公开代码库的提交）的被动研究
-> +显然是允许的。不过，和任何研究一样，仍需遵循标准伦理。
-> +
-> +然而，针对开发者行为的主动研究必须在获得相关开发者的明确同意和完全披露的情况下进行。
-> +未经同意，不得与开发者互动或对其进行实验；这也是标准的研究伦理。
-> +
-> +调查
-> +=======
-> +
-> +研究通常采用调查问卷的形式发送给维护者或贡献者。然而，内核社区通常从这些调查问卷中获益
-> +甚少。内核开发过程之所以有效，是因为每个开发者都从中受益，即使与目标不同的人一起工作。
-> +而回应调查则是对繁忙开发者的单向需求，对他们自己或整个内核社区没有相应的好处。因此，
-> +这种研究方法不被鼓励。
-> +
-> +内核社区成员已经收到过多的电子邮件，可能会将调查请求视为对他们时间的又一要求。发送
-> +此类请求会剥夺社区宝贵的贡献者时间，且不太可能产生有统计意义的回应。
-> +
-> +作为替代，研究人员应考虑参加开发者活动，举办研讨会来介绍研究项目及其对参与者的益处，
-> +并直接与社区互动。该方式获得的信息将比电子邮件调查问卷丰富得多，且社区也能从中学习
-> +到您的见解。
-> +
-> +补丁
-> +=======
-> +
-> +澄清：向开发者发送补丁**是**与他们互动，但他们已经同意接收**善意贡献**。故意发送有缺陷/
-> +有漏洞的补丁或在讨论中提供误导信息是不被同意的。这种交流会对开发者造成损害
-> +（例如，消耗时间、精力和士气），并通过破坏整个开发者社区对贡献者（及其所在组织）
-> +的信任而损害项目，削弱为贡献者提供建设性反馈的努力，并使最终用户面临软件缺陷的风险。
-> +
-> +研究人员参与 Linux 本身的开发与其他人一样受到欢迎和鼓励。研究 Linux 代码是常见
-> +做法，尤其是在开发或运行可产生可操作结果的分析工具时。
-> +
-> +在与开发者社区互动时，发送补丁历来是产生影响的最佳方式。Linux 已经有很多已知的
-> +漏洞 -- 更有帮助的是经过审核的修复。在贡献之前，请仔细阅读相关文档：
-> +
-> +* Documentation/process/development-process.rst
-> +* Documentation/process/submitting-patches.rst
-> +* Documentation/admin-guide/reporting-issues.rst
-> +* Documentation/process/security-bugs.rst
-> +
-> +然后发送补丁（包括所有如下详细信息的提交日志）并跟进其他开发者的任何反馈。
-> +
-> +当发送因研究而产生的补丁时，提交日志应至少包含以下详细信息，以便开发者有适当的上下文
-> +来理解贡献。回答：
-> +
-> +* 找到了什么具体问题？
-> +* 在运行系统上如何触发这个问题？
-> +* 遇到这个问题对系统会有什么影响？
-> +* 如何发现这个问题？具体包括任何测试、静态或动态分析程序及其他用于执行工作的工具或方法的详细信息。
-> +* 在哪个版本的 Linux 上发现了这个问题？强烈推荐使用最新的发布版本或最近的 linux-next 分支（参见 Documentation/process/howto.rst）。
-> +* 进行了哪些更改来修复这个问题，为什么认为这些更改是正确的？
-> +* 如何进行构建测试和运行时测试？
-> +* 此更改修复了哪个先前的提交？这应该在 "Fixes:" 标签中，如文档所述。
-> +* 还有谁审查了这个补丁？这应该在适当的 "Reviewed-by:" 标签中注明；见下文。
-> +
-> +例如::
-> +
-> +  From: Author <author@email>
-> +  Subject: [PATCH] drivers/foo_bar: Add missing kfree()
-> +
-> +  The error path in foo_bar driver does not correctly free the allocated
-> +  struct foo_bar_info. This can happen if the attached foo_bar device
-> +  rejects the initialization packets sent during foo_bar_probe(). This
-> +  would result in a 64 byte slab memory leak once per device attach,
-> +  wasting memory resources over time.
-> +
-> +  This flaw was found using an experimental static analysis tool we are
-> +  developing, LeakMagic[1], which reported the following warning when
-> +  analyzing the v5.15 kernel release:
-> +
-> +   path/to/foo_bar.c:187: missing kfree() call?
-> +
-> +  Add the missing kfree() to the error path. No other references to
-> +  this memory exist outside the probe function, so this is the only
-> +  place it can be freed.
-> +
-> +  x86_64 and arm64 defconfig builds with CONFIG_FOO_BAR=y using GCC
-> +  11.2 show no new warnings, and LeakMagic no longer warns about this
-> +  code path. As we don't have a FooBar device to test with, no runtime
-> +  testing was able to be performed.
-> +
-> +  [1] https://url/to/leakmagic/details
-> +
-> +  Reported-by: Researcher <researcher@email>
-> +  Fixes: aaaabbbbccccdddd ("Introduce support for FooBar")
-> +  Signed-off-by: Author <author@email>
-> +  Reviewed-by: Reviewer <reviewer@email>
-> +
-> +如果您是第一次参与贡献，建议在补丁在发布到公共列表前请其他人私下进行审核。（如果明确
-> +告诉您补丁需要更仔细的内部审查，则这是必需的。）这些人预计会在最终的补丁中包含他们的
-> +"Reviewed-by" 标签。找到熟悉 Linux 贡献的其他开发者，特别是您自己组织内的开发者，
-> +并在将补丁发送到公共邮件列表前请他们帮助审核，往往会显著提高补丁的质量，从而减少
-> +其他开发者的负担。
-> +
-> +如果你找不到人内部审核补丁且需要帮助找到这样的人，或者如果您对本文档和开发者社区的期望
-> +有任何其他问题，请联系技术咨询委员会私有邮件列表：<tech-board@groups.linuxfoundation.org>。
-> \ No newline at end of file
+Tested-by: David Gow <davidgow@google.com>
+
+-- David
+
+--000000000000404af3061a972dc4
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
+BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
+BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
+Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
+FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
+YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
+AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
+DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
+4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
+GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
+kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
+MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
+IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
+hvcNAQkEMSIEIGGf0FbWQBXElxXhKcACOdaBZboCNMX8T93QLr1mK4jiMBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDYxMTA2MTQyMVowaQYJKoZIhvcNAQkPMVww
+WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAq9IW1
+PsS5RyRm+2iPrCTuWhSycsSm08uCE+WwPo47gYpNjU01ypNIjFGlm/VNmP6qGRAQmM+sUcQ4SoFm
+/3elrTkmEbGd5NuUgqKSxt1Ohl9sMMjnK/ENFHY45ucSjeUdRT6ZqvMXdxMyZx41xjggXW+FS95k
+u/F9B9KBhZe9ZOmVkn97jXJoxqdmqScXNUD02xBE0WxbEwxMLfO7RbEXSPWxUCb1oUDj6yhRkYWx
+4+1SY2sHyF/4LA9lyx0B31Dl9nZw2uvQ47LPoUYdbFGdmp5rzsFbcWSofvCcjcbNOJ+QtxRqyicy
+Axhwp8FbT34Snz4/XeHUv15qaA71XviC
+--000000000000404af3061a972dc4--
 
