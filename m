@@ -1,57 +1,77 @@
-Return-Path: <linux-kernel+bounces-209497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599169036D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:42:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D66890370E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FF351C2337F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:42:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86921F261A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B74174EFF;
-	Tue, 11 Jun 2024 08:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmziEpvV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91296171070;
-	Tue, 11 Jun 2024 08:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCB6176239;
+	Tue, 11 Jun 2024 08:50:31 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1FA174EEB;
+	Tue, 11 Jun 2024 08:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718095253; cv=none; b=mNeF7mp5wgIRMIrtmW2lawzxX+1PFh9qYROpdSgLa+S1K+/PjYv42mzWYELD5javkcHFQDlXusp5bl5AGnFgyLdDvplP9E7ms6GA+PhbXDnj4lwmeJnfs+GrLsOgQObfpUa69iglmkTHK9hXG++Z70ztV1c4gH9UA8q+93SHBdc=
+	t=1718095831; cv=none; b=hftt5o8OoXxG0wRv+b4a2GsF8RMjDSgffuOyscDRNOrUGtLBm30S80K26QiLZjxKcIFTcOCs5+tuRWvRFCmxpMfJlmcmteY0noWb82bpOg05qAMzhGe/VdV2tLS3IyS89CPmOUmsHeS0+yZWNbmevkns0tPIVXlSjYFrhW1osz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718095253; c=relaxed/simple;
-	bh=3RHFDRFQ2fBe11TJd37EQZmdJ2dcrT7TBQWPPzeHKiQ=;
+	s=arc-20240116; t=1718095831; c=relaxed/simple;
+	bh=Tz0c5VcTfHJlV2uX+Q+nERoAMIrZpPDtHjcTjqCCVNo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e8X8e7xty1XDiWiwV/rd6bl192QmlXBA6k8zI94B3XKeS1ue2XYi/m+KeFD45pIa3gl8phOANKx4xNpoGZCnIDEgvIIXqMpoYZzYTL7B2efktNVUlAqIDa4NJuyTMcV9ibDKEXoCW/KFD4Lv5ZJx2/SdihS734v8h8hn36aN8MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmziEpvV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B9DAC2BD10;
-	Tue, 11 Jun 2024 08:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718095253;
-	bh=3RHFDRFQ2fBe11TJd37EQZmdJ2dcrT7TBQWPPzeHKiQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dmziEpvVoBiTc6obitVD6iaEUXpJ9QyIi6DS8GzorQC8IhhmpGbJXJTNO9clOOdGl
-	 B9Ry9d7h6yFRcRXSyQ9FPXFonA5GoTVxgWN9FOCaj7ZtdUF921V5cJgNb4unJ7LrrN
-	 1XPNEHYrnrvjH5PJkqpnZW912nFXf0lNeCHIPZjziGcUTkp6GVyMNBzjrkYp1ySnu7
-	 dMZxjS4S6113ywdEPr5vL6ZJkimtlIpJDqAl6GxwhR64ON9GvPwL+7i2cVIvGIH5IU
-	 CjT23fcVCMuou1K1yl98dwYI5Gfiu0H5oUkh1fML4jNp5DYLd6dyTXUMWat6HnnDpp
-	 kXjMeZh2LX15Q==
-Date: Tue, 11 Jun 2024 10:40:48 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: TJ Adams <tadamsjr@google.com>
-Cc: Jack Wang <jinpu.wang@cloud.ionos.com>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Igor Pylypiv <ipylypiv@google.com>
-Subject: Re: [PATCH 2/3] scsi: pm80xx: Do not issue hard reset before NCQ EH
-Message-ID: <ZmgNkK8haUisJ5-b@ryzen.lan>
-References: <20240607175743.3986625-1-tadamsjr@google.com>
- <20240607175743.3986625-3-tadamsjr@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQRRWfFz6L6s0kLyXKc9BmOMdc47vbR+qybGa8fJTsQbdvLRzy7RxSXmVwswpODEt94iXHqHqRFdD2IOd+00usbny3R70LO5Gflv8ldR2vzTLN5QMj63v563YOSiO3dlfi8CdqENGjh0e5ir2xN/b8/j24WvDh7M6brRmsT2CLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sGxBT-0000Ne-00; Tue, 11 Jun 2024 10:48:51 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 023C9C0120; Tue, 11 Jun 2024 10:41:16 +0200 (CEST)
+Date: Tue, 11 Jun 2024 10:41:16 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Celeste Liu <coelacanthushex@gmail.com>
+Cc: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+	Anup Patel <anup@brainfault.org>, Guo Ren <guoren@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+	Sven Joachim <svenjoac@gmx.de>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Arnd Bergmann <arnd@arndb.de>, Mykola Lysenko <mykolal@fb.com>,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+	linux-tegra@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-sh@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lennart Poettering <lennart@poettering.net>,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: Re: [PATCH 3/6] mips: defconfig: drop RT_GROUP_SCHED=y from
+ generic/db1xxx/eyeq5
+Message-ID: <ZmgNrOr1nalSTeja@alpha.franken.de>
+References: <20240530111947.549474-8-CoelacanthusHex@gmail.com>
+ <20240530111947.549474-11-CoelacanthusHex@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,61 +80,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607175743.3986625-3-tadamsjr@google.com>
+In-Reply-To: <20240530111947.549474-11-CoelacanthusHex@gmail.com>
 
-Hello Igor, TJ,
-
-On Fri, Jun 07, 2024 at 05:57:42PM +0000, TJ Adams wrote:
-> From: Igor Pylypiv <ipylypiv@google.com>
+On Thu, May 30, 2024 at 07:19:51PM +0800, Celeste Liu wrote:
+> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
+> needs an RT budget assigned, otherwise the processes in it will not be able to
+> get RT at all. The problem with RT group scheduling is that it requires the
+> budget assigned but there's no way we could assign a default budget, since the
+> values to assign are both upper and lower time limits, are absolute, and need to
+> be sum up to < 1 for each individal cgroup. That means we cannot really come up
+> with values that would work by default in the general case.[1]
 > 
-> v6.2 commit 811be570a9a8 ("scsi: pm8001: Use sas_ata_device_link_abort()
+> For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
+> can only be enabled when all RT processes are in the root cgroup. But it will
+> lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
+> 
+> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
+> support it.[2]
+> 
+> [1]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
+> [2]: https://github.com/systemd/systemd/issues/13781#issuecomment-549164383
+> 
+> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+> ---
+>  arch/mips/configs/db1xxx_defconfig  | 1 -
+>  arch/mips/configs/eyeq5_defconfig   | 1 -
+>  arch/mips/configs/generic_defconfig | 1 -
+>  3 files changed, 3 deletions(-)
 
-Do not specify kernel version (it is irrelevant), SHA1 is enough.
+applied to mips-next.
 
+Thomas.
 
-> to handle NCQ errors") removed duplicate NCQ EH from the pm80xx driver
-> and started relying on libata to handle the NCQ errors. The PM8006
-> controller has a special EH sequence that was added in v4.15 commit
-> 869ddbdcae3b ("scsi: pm80xx: corrected SATA abort handling sequence.").
-
-Do not specify kernel version (it is irrelevant), SHA1 is enough.
-
-Since the code added in 869ddbdcae3b still exists in the pm80xx driver,
-I think that you should mention the commits in chronological order.
-(Right now you mention the oldest still existing code last, which seems
-a bit backwards.)
-
-
-> The special EH sequence issues a hard reset to a drive before libata EH
-> has a chance to read the NCQ log page. Libata EH gets confused by empty
-> NCQ log page which results in HSM violation. The failed command gets
-> retried a few times and each time fails with the same HSM violation.
-> Finally, libata decides to disable NCQ due to subsequent HSM vioaltions.
-
-s/vioaltions/violations/
-
-I'm not an expert in libsas EH, but I think that your commit message fails
-to explain why this change actually fixes anything. You do not mention the
-relationship between the code that you add pm8001_work_fn() and the
-existing code in pm8001_abort_task(), and the order in which the functions
-get executed.
-
-Does calling sas_execute_internal_abort_dev() from pm8001_work_fn() ensure
-that the libsas EH is never invoked? Or does it cancel the hard reset that
-is part of the "special EH sequence" in pm8001_abort_task() ?
-
-Wouldn't it be better if this was fixed in pm8001_abort_task() or similar
-instead? It appears that the code you add to pm8001_work_fn() (that has a
-very ugly if (pm8006)) is only there to undo or avoid the hard reset that
-is done in pm8001_abort_task() (which also has a very ugly if (pm8006)).
-
-Now we have this ugly if (pm8006) in two different functions... which
-makes my "this could be solved in a nicer way" detector go off.
-
-If this patch (as is) is really the way to go, then I think there should
-be a more detailed reasoning why this change is the most sensible one.
-
-
-Kind regards,
-Niklas
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
