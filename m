@@ -1,169 +1,152 @@
-Return-Path: <linux-kernel+bounces-210606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870F190462C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:13:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C5390462F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73E851C23482
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572471F250A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AF11534EC;
-	Tue, 11 Jun 2024 21:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9A3152E17;
+	Tue, 11 Jun 2024 21:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V4ecS30I"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xBJFypon"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D53738DC8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56453101E2
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718140398; cv=none; b=cJGL+kGC7EfkVoSF0GcezaSOaom35rit9iISKRgGhSvDZaIK6mWej4zQmWYRKkRuwMdPHOpbcba6+D5dR9PXKKyX6/RFpGExED5CoYwmufMGR9Xwk68nRx9A8jk9kwByNszQC6/4dJ5bumbvv5OnZc3xZYfRApzUCZUexR4Kw30=
+	t=1718140722; cv=none; b=u9RDQedNLPqEoEYCIFzhoEEts7XnrmqJHRYu2c6jH21ZRYZ1Qo4oGFmqk9tSS286gtlOHpun1QOG+AaKQCFOjIg8bbtnuiGEo2uIktlPbHhMtKVz2BaKeXWC3LlmVzpxhy5Tav0RpH/RlMBtGR2qc/UKR4hqMCqSH09l1FoEzY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718140398; c=relaxed/simple;
-	bh=7MlrQe8t42aRQ9g2eud96LFaz2KjoHsmxlhySd78PJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SRnTm+c64Q0QiW73YL/bhT2WqPDx5ZjAazFIIH9mKv00iQ2dRlfX6DQX4adUES/sULN/9dYiXsZAypx8mXw1HsDXNjC9AmZhgZJa3585xoTzCslg7kn9UQlGaz+OS/fr/JWmOdRYQnDTm1sgENdz9XyWOXkBp4FsWMWqcyuH+rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=V4ecS30I; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dfa48f505dfso6703249276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:13:16 -0700 (PDT)
+	s=arc-20240116; t=1718140722; c=relaxed/simple;
+	bh=zu3/9zQK0TUjqXDR0TedIcN8aVtw+181ffBvhey+mLk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rulKTfjyQ3CurvUFtONfmWAhSBfN/a6TGMYOxATrmBcUmFR0SujBvyv/TW+cncsigq30RAVvQUFkt2ey1YfhgRBv9nGd3bwtKp5lt3ncgCILTmxlSPlMMJP3n7ZLmsYROILoMXJa4WLKspMr70KqXS5Hd4AQzlu0rjAv/Ul0imU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xBJFypon; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6f8ffe1b65dso142301a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:18:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718140394; x=1718745194; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bnsIoTs1uwuDmQ5vPMUGoGCQwLbqdaM9DFuaa81UGRo=;
-        b=V4ecS30IefRIgN3V0GKy++RsSE7+xI0XBcfU2nudFyhj2g6AXPf7s1GBGC87K1IWYo
-         9/q7yzin0PkJglh7/t0+ZV80jcmEvhZWfbsVggFVWKiH0e8N9gRpiJVcoQtoKEF6S2Q3
-         Dq3ZIAmS3ZspMCg1PDkcKEkvrAlq3ATK9b6z4=
+        d=google.com; s=20230601; t=1718140720; x=1718745520; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fvB+gfoJoXeVl+lhhEV3yEXvt6h862UlHHqZzX45oE4=;
+        b=xBJFypon7q+lRRpL7krxix6LrO6rhYRT0c1cGbnlJkP11KTzi/Vuu4b2qRT0lxvzLC
+         otFnKF2Cp0WCBsKgb/qUM9j0cQJRSoB7wM9JJjbOxTADnxQ4k3y3URAP3ITngy66Byil
+         7jqeoCPNAwAEjAwe/uLkoxcRRwnkWlwleGClqvRyXCJc2+oU3+y92SibcVUt48NwKSWG
+         bqwW98btsjTDcBvslalGNgq8pBui0VJDr6AadWD/5p7I2wYWo9afxqV7gc7vQymW2HwA
+         cSOjgquA9XZUud2iHZlKxvCBhGZpUgM7yqzWt1fEVsILSDj+7wnxImmmzxghk0hjryqG
+         pHBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718140394; x=1718745194;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bnsIoTs1uwuDmQ5vPMUGoGCQwLbqdaM9DFuaa81UGRo=;
-        b=Vxu0jfuumSsiZ06XYBCOrBK3cq7Nw23F7h3/hCB09Riut1N3qyrPOO/uw0TgfuajGV
-         jftkuDx/aCfEb1JQX4sls5zl+94MSc/zIsqF866Hya5dqsejd4U0Uq/0+U7LCgvambpc
-         rB1ibFSziNOmXK2tPR80wJLboe93+5hAcurhhPQfVVHJw22E7ZwZwndW/7GuZN/VuWls
-         jOQKQDz8Dol3T2MID5RYJhE23WzOFW0CU7vkCbhvo7x49YvGXlP0XO1aCqyzR9hwkIbj
-         VccTnoK7l+ycPoIuo4Q80NVIN9IxyxOQjFczG/RSEntMzYIlbhwaoFeP321ft3qx4kvf
-         zuqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyzE08QvLAYeIcQ+u3OZlLHGmrxOa/AUlOitb+T66/6ItF0qnwHIIzw0gPmqy6Xbg4BdtWCrlmZr7Je12Ugp7+oJ6UtlpW/u5n26Q1
-X-Gm-Message-State: AOJu0YyZD0EPC2HvORPIhupN4VNDwxpn6egPPevqd9LKTV445rSZ6wCs
-	Kij2oYwKjenrogJgIlxXbSJYWpjT1pJejgiPf5JIGO/wF2zEwFpdpAHxJWgHqxrjINvKAqSVZLE
-	=
-X-Google-Smtp-Source: AGHT+IEHLDRPTzJLa4+9GZQXSMqEyqrGjzRuT2PoYHk1Bg6MYeIjljUcaM5UdGK/5o+m0ArzhOASIA==
-X-Received: by 2002:a05:6902:218e:b0:df1:d0ec:32cb with SMTP id 3f1490d57ef6-dfaf64ed26emr15557674276.23.1718140393660;
-        Tue, 11 Jun 2024 14:13:13 -0700 (PDT)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b04f9b4377sm59456966d6.105.2024.06.11.14.13.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 14:13:13 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4400cc0dad1so130361cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 14:13:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMrn4B2//JTNQxs3T8oHvIx1+0qFlKtTSa2czy+NxcIAPtInQpr7QcFiyQ9MfVQgtWu12S9H7VJ0H5/tu2MnHUwG+z9WyD31ea5sBr
-X-Received: by 2002:ac8:6f16:0:b0:43f:f227:8df7 with SMTP id
- d75a77b69052e-44159ce374amr122811cf.3.1718140391298; Tue, 11 Jun 2024
- 14:13:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718140720; x=1718745520;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fvB+gfoJoXeVl+lhhEV3yEXvt6h862UlHHqZzX45oE4=;
+        b=q0pZhNzBJhKfFtPh30DfmWMXP3WHGf9m5y3ZyQ/CGDKI9Jjl8Kv1FPVAw/FhrXBw3o
+         r5mB9Rg+FxwQaabg36FV7i5zZ7tJsR2Nsaj7TDlRYpN6RzggsSgwhKkkt5CWQu5l3s3Z
+         JtIJzM3Gw6UsueFajZ5b9nhAe+iRcVifjTvBcE2B+T+VtduwyzRzChpkL5j1WuSrUZ8L
+         OJmjyiweolo+CxnGZrbqivp3rO3r8zRtstJQCVNnTBG5HjBDRM120P2VjwqyE3D0FgCf
+         IwC/5f8XBDQFDxhjUBqFE/FFBoDV2G7wkagAl8kFi9HrvCl4fifkAB/LZuw7PfXDPkSP
+         0W3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV+hiTfB2vBeeATvdAkqgfPt2uLuBSqpqCkuMJisMop8CwwMi3sQJnaxHc14D0SUroHjFFcLm99MBsFc8ZO/F8XvEiE6bMp95HiA/16
+X-Gm-Message-State: AOJu0Yy/n/1miRFvbweBD8wOphP+VoDyfclz630ISYOnyNz1zhgLw20h
+	ndLO4WuWX4nVe2VeNJBbsQ3hh29TfmvoyRAQDk/VBpVp39zM6nwX/B4tvW55bA==
+X-Google-Smtp-Source: AGHT+IHtI6HyTJGjUFNRinlcNeOITCqdXEyYKuxKDcRqQ0rmDDupDA0s7u85tzBm1kDjKvsJ+e+YQw==
+X-Received: by 2002:a9d:6e08:0:b0:6f9:afdc:8554 with SMTP id 46e09a7af769-6fa19a0d88cmr76471a34.15.1718140720107;
+        Tue, 11 Jun 2024 14:18:40 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f9c7f4572csm769491a34.10.2024.06.11.14.18.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 14:18:39 -0700 (PDT)
+Date: Tue, 11 Jun 2024 14:18:27 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, 
+    Andrew Bresticker <abrestic@rivosinc.com>, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/memory: Don't require head page for do_set_pmd()
+In-Reply-To: <20240611130729.d53cbcd1767f917b47540cca@linux-foundation.org>
+Message-ID: <1786b46a-ab24-6032-6a60-93b3e3870c7c@google.com>
+References: <20240611153216.2794513-1-abrestic@rivosinc.com> <8040793f-e9e9-4a2e-807c-afcb310a48f5@redhat.com> <20240611110622.8e9892e92618ddc36bca11b7@linux-foundation.org> <ZmiVy8iE93HGkBWv@casper.infradead.org>
+ <20240611130729.d53cbcd1767f917b47540cca@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3288287d-8344-4b37-a333-722cf12fef13@gmail.com>
- <CAD=FV=XRuU=eh0HzbDCwFrr5h9s-rOdB5dbANAd-BmMhiHR6Ww@mail.gmail.com> <uhnjrzii3ydzdsnhc54sbglpy46drzwg2m6if5ymid7gjabcvd@ppzdg6xz4xx7>
-In-Reply-To: <uhnjrzii3ydzdsnhc54sbglpy46drzwg2m6if5ymid7gjabcvd@ppzdg6xz4xx7>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 11 Jun 2024 14:12:59 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WJdp0btifYjGLN5_bfGSEwcEM5nPv8M7872190T3uMRA@mail.gmail.com>
-Message-ID: <CAD=FV=WJdp0btifYjGLN5_bfGSEwcEM5nPv8M7872190T3uMRA@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/panel : truly-nt35521: transition to mipi_dsi
- wrapped functions
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Tejas Vipin <tejasvipin76@gmail.com>, neil.armstrong@linaro.org, 
-	quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-Hi,
+On Tue, 11 Jun 2024, Andrew Morton wrote:
+> On Tue, 11 Jun 2024 19:22:03 +0100 Matthew Wilcox <willy@infradead.org> wrote:
+> > On Tue, Jun 11, 2024 at 11:06:22AM -0700, Andrew Morton wrote:
+> > > On Tue, 11 Jun 2024 17:33:17 +0200 David Hildenbrand <david@redhat.com> wrote:
+> > > 
+> > > > On 11.06.24 17:32, Andrew Bresticker wrote:
+> > > > > The requirement that the head page be passed to do_set_pmd() was added
+> > > > > in commit ef37b2ea08ac ("mm/memory: page_add_file_rmap() ->
+> > > > > folio_add_file_rmap_[pte|pmd]()") and prevents pmd-mapping in the
+> > > > > finish_fault() and filemap_map_pages() paths if the page to be inserted
+> > > > > is anything but the head page for an otherwise suitable vma and pmd-sized
+> > > > > page.
+> > > > > 
+> > > > > Fixes: ef37b2ea08ac ("mm/memory: page_add_file_rmap() -> folio_add_file_rmap_[pte|pmd]()")
+> > > > > Signed-off-by: Andrew Bresticker <abrestic@rivosinc.com>
+> > > > > ---
+> > > > >   mm/memory.c | 3 ++-
+> > > > >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/mm/memory.c b/mm/memory.c
+> > > > > index 0f47a533014e..a1fce5ddacb3 100644
+> > > > > --- a/mm/memory.c
+> > > > > +++ b/mm/memory.c
+> > > > > @@ -4614,8 +4614,9 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
+> > > > >   	if (!thp_vma_suitable_order(vma, haddr, PMD_ORDER))
+> > > > >   		return ret;
+> > > > >   
+> > > > > -	if (page != &folio->page || folio_order(folio) != HPAGE_PMD_ORDER)
+> > > > > +	if (folio_order(folio) != HPAGE_PMD_ORDER)
+> > > > >   		return ret;
+> > > > > +	page = &folio->page;
+> > > > >   
+> > > > >   	/*
+> > > > >   	 * Just backoff if any subpage of a THP is corrupted otherwise
+> > > > 
+> > > > Acked-by: David Hildenbrand <david@redhat.com>
 
-On Tue, Jun 11, 2024 at 2:10=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Tue, Jun 11, 2024 at 08:57:48AM -0700, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Tue, Jun 11, 2024 at 7:44=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail=
-.com> wrote:
-> > >
-> > > Use functions introduced in commit 966e397e4f60 ("drm/mipi-dsi: Intro=
-duce
-> > > mipi_dsi_*_write_seq_multi()") and commit f79d6d28d8fe
-> > > ("drm/mipi-dsi: wrap more functions for streamline handling") for the
-> > > sony tulip truly nt35521 panel.
-> > >
-> > > Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
-> > > ---
-> > >
-> > > Changes in v2:
-> > >     - Fix patch format
-> > >     - Fix code style
-> > >
-> > > v1: https://lore.kernel.org/all/485eef24-ddad-466a-a89f-f9f226801bb7@=
-gmail.com/
-> > >
-> > > ---
-> > >  .../panel/panel-sony-tulip-truly-nt35521.c    | 435 +++++++++-------=
---
-> > >  1 file changed, 209 insertions(+), 226 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/panel/panel-sony-tulip-truly-nt35521.c b=
-/drivers/gpu/drm/panel/panel-sony-tulip-truly-nt35521.c
-> > > index 6d44970dccd9..5a050352c207 100644
-> > > --- a/drivers/gpu/drm/panel/panel-sony-tulip-truly-nt35521.c
-> > > +++ b/drivers/gpu/drm/panel/panel-sony-tulip-truly-nt35521.c
-> > > @@ -44,248 +44,231 @@ static void truly_nt35521_reset(struct truly_nt=
-35521 *ctx)
-> > >  static int truly_nt35521_on(struct truly_nt35521 *ctx)
-> > >  {
-> > >         struct mipi_dsi_device *dsi =3D ctx->dsi;
-> > > -       struct device *dev =3D &dsi->dev;
-> > > -       int ret;
-> > > +
-> > > +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D dsi };
-> >
-> > It's not a huge deal, but normally in the kernel all the variable
-> > declarations are cuddled together. AKA no blank line between the
-> > declaration of "dsi" and the declaration of "dsi_ctx". It would be
-> > awesome if you could send a v3 fixing that. When you send v3, feel
-> > free to add this above your own Signed-off-by:
-> >
-> > Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> >
-> > ...with that, the patch will probably sit on the mailing lists for a
-> > week or two and then get applied. Neil may want to apply it, but if
-> > he's busy I can do it too.
-> >
-> > I believe you were planning on tackling some more of the panels. Since
-> > you're still getting started sending patches, maybe keep it to a
-> > smaller batch for now and send another 10 or so? Probably best to keep
-> > it as one panel driver per patch.
-> >
-> > -Doug
->
-> Do we want to delay this until the mipi_dsi_msleep() is fixed?
+Acked-by: Hugh Dickins <hughd@google.com>
 
-Yeah, that's a good point. I saw the mipi_dsi_msleep() problem after I
-reviewed this patch, but you're right that it should be fixed first.
+> > > 
+> > > You know what I'm going to ask ;) I'm assuming that the runtime effects
+> > > are "small performance optimization" and that "should we backport the
+> > > fix" is "no".
+> > 
+> > We're going to stop using PMDs to map large folios unless the fault is
+> > within the first 4KiB of the PMD.  No idea how many workloads that
+> > affects, but it only needs to be backported as far as v6.8, so we
+> > may as well backport it.
+> 
+> OK, thanks, I pasted the above text and added the cc:stable.
 
--Doug
+Yes please. My interest in this being that yesterday I discovered
+the large drop in ShmemPmdMapped between v6.7 and v6.8, bisected,
+and was testing overnight with a patch very much like this one of
+Andrew's. I'd been hoping to send mine today, but now no need.
+
+> 
+> I didn't move it into the hotfixes queue - it's a non-trivial
+> behavioral change and extra test time seems prudent(?).
+
+It is certainly worth some test soak time, and the bug might have
+been masking other issues which may now emerge; but the fix is
+just reverting to the old pre-v6.8 behaviour.
+
+Thanks,
+Hugh
 
