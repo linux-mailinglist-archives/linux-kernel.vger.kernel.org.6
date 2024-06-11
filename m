@@ -1,158 +1,193 @@
-Return-Path: <linux-kernel+bounces-209172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7AF902E38
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:07:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7423902E3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A05A282068
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:07:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00A001C22084
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CEBBA42;
-	Tue, 11 Jun 2024 02:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CD6BA5E;
+	Tue, 11 Jun 2024 02:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/yN6w78"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J/AGzViK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A314C8488;
-	Tue, 11 Jun 2024 02:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B929733D8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718071668; cv=none; b=FrdLUSXByIoF7mWrs/Zh5eoA/DDPGreAlVsK702J3xfTu3A438VkL9gAO8ICLq7ESlBPLPLM+Bc4pZQpUhysrGNdMp2yevrSezNNBBKZdLeUJ4dmYBl+CiDVLuwWhn/mqGmcg3VM1BlULJmtsPVABOEHGfQlGxZTw1tP4dJDZj0=
+	t=1718071934; cv=none; b=RnUL3vR2atTX5j7QOJu/t7kqoZ3xJHd5YvKmCp2poLXvSIPhS6HmM2BZ+Fnv1Mcuj4SzbsJV5DpRpnZBtgVA9DPQ1qPgZH7j9y2v7s3WJjePkf+vPlnsdhKPJhsKVn4DQ0bZbdA3qgtaWtf9F7QEzhqUgwSFZTCmYGUHVzWDxdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718071668; c=relaxed/simple;
-	bh=t+FQJsYag++4WO2qxLXgPpQ0EMcj6jfCuoNIA7zG5a8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sho0n4QNIgpcUqwcL5a0fpN1zmVNT3eK0AJxYf3cm5hSeaodlpv5lrPHSpAWYReqTgyKAEnzUZ3ileiWzLyoprFlP0XKeF9FUS6LlhgooY0LoKZ5DIA1cl19lhEZzBuhvL4Kx/HtYgLYrzzBpHGdososLRw+FHADvT7oBDFvK1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M/yN6w78; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b96a781b63so1817760eaf.1;
-        Mon, 10 Jun 2024 19:07:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718071665; x=1718676465; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V7K602fz4gBHUWwZgz6PtHdWhG4F3fJUQgT9uMqHP2k=;
-        b=M/yN6w78Uzs9Wzo3QV21NtxxdI1QUeYTn6RVAN/XpHKW6CwFUiHYzWLvlFj2Q+Yk52
-         R8Rt5Dt6MjKyOYk/+36oQaPS5z+C4boBygL8zbRlDPTQA6ABpyVd9KXhsJ59jAjAc9Ip
-         LzGiwu4ZC+Wyz0DOCMj/s51bjjfGGorfege8fJHt+CqqAUNM00HGxfISTswAlqPKBpIJ
-         FtTirLOQZuJjYJA05GZ00ev3RRfsNNrWK6qk4J8Rt9KgyrKHPZpIkNkc1LPMHU50+yMi
-         5r9/B+Kx14qzOzBmACCMbkcePLBgycdQMgtIOgME9voHpsxs7YbniGoz+5CLAPp96Om0
-         V1hw==
+	s=arc-20240116; t=1718071934; c=relaxed/simple;
+	bh=6xP1ei76jr5aHAJqlhhcWItU2AXyK4KV8+AWVUgjv+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QK02aYxz/kRhJiABFGNQbLSbVTtVT7QggA8HY3OI37ugT8kLJZl8sx+16pydA0z8d7ZZ/T1izH3FMAnGRmRzAuFB9zglhgsuljfscDYl7EiWIEIRknsXlvGp46VWRODBEI9MXoZPZ/MeZoMIZ0n4UH5kSUuM5GGizZ4XSPTfh+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J/AGzViK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718071931;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rl1gGO4UgKTAEFs1CZF/0wGX2Tf6+LMOtr2l88VGC+Q=;
+	b=J/AGzViKK2rqqivt1Gj1TUFGyadTksiNXYii3+u4xg0Li/aLLttmi1SqvY5PGpy1CLDSNr
+	uoIANqrX3Ju/uL2SaR4mYs2dq81JO1bWtJXq9e77IGuUwhO0tspeAvltFXw5t2MYs1bAzQ
+	tOi0k1nq42E3RYkQficUOY8sHRuyLKk=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-77-qpqaSwZ9N4S0SXqrw_1BPw-1; Mon, 10 Jun 2024 22:12:06 -0400
+X-MC-Unique: qpqaSwZ9N4S0SXqrw_1BPw-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2bf5bb2a414so4783441a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:12:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718071665; x=1718676465;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V7K602fz4gBHUWwZgz6PtHdWhG4F3fJUQgT9uMqHP2k=;
-        b=dbXxF61RDS5cb+QbGXZJXEwLbgWKjeXEgpttHTtgADoap039VWv4RiXhp3SpECqx1P
-         Lek7MQvx+RyFbn6j0LXUMKKBligAW24bfzLa+7P7t4Qbl2UgACL5CY1+mKZd9G8K3cxw
-         hYzq21Om/FQ8Okd1YFOS05OzCWhsBhBLqVIfMOVt3aDXEt8TgzUio0HTkgeU1erZTQUV
-         TzslK6TjV4FtVKMMrgy6+uokKLg+iBjtsk09WJV0JJdjc9OKA60po+8U7SSx4tBNEHS/
-         THaF6mNZOHKk2puFltHCjz9+7CRjngsNsSCtMhstId2H1qTc5FpoJyknE9Zs5SxeJNs+
-         zCfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoeGjvMQQMVa3QHyaXwUZzd5sIoHugfmYxnvtFVoPBzAfOoy0RsnQa8sg5hoLUiXiT/EaQM11h1WSgn/0BfMFSmvNvxVKS7flDJwJBcQHrourykTvsGg+RVmxgMGJhQpYM3X15BMrx
-X-Gm-Message-State: AOJu0Yyr7kpj5MXOyjMs5v8lLTsyI5TYfCrlziJcBwpr43zggpMLsDU4
-	pCcFE615DvBFBXAoKisZi6U6QlU9rm+Dcrj5eDgUf7j+Reu65fHr6wJ1cvKu8IkebEdc2viz53z
-	wiEPfjS+CuAc21g7op/UG0WAGXD8=
-X-Google-Smtp-Source: AGHT+IF5NJP+cpN1QZ14dVDvRLKhqj/JIMm3OyP45URA0uC4Hs/4MNcrZV5+u6AtOEjVEtzm+FJweysb15RclHZy/3E=
-X-Received: by 2002:a05:6820:1c9f:b0:5ba:e5c3:4fa6 with SMTP id
- 006d021491bc7-5bae5c35072mr6628691eaf.6.1718071665549; Mon, 10 Jun 2024
- 19:07:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718071926; x=1718676726;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rl1gGO4UgKTAEFs1CZF/0wGX2Tf6+LMOtr2l88VGC+Q=;
+        b=OqDhNprzmcsNDtj+Ocv3Xul0o85oZMa3fp4FWwahEX2/zuonL2FkXsjNiFyA/DMHWx
+         yagJ2lRjWUHB53dm9pZj5pqwmFQ+o7+RZC69sVibOgyA91UNpRrzCkQ87G69k6bPoYB+
+         FtL1Zq5Xq/NLgjx8mohizCRTYSV8e91dZCcCjgKveHHXes3YAW8mkdnPmIXNCGFpgGlL
+         o2chaGezvENu7YZLiN71AeGujVZQ7GY3mBvlgl5bmAmeXqTkfuuEtzinIbIv9DFzH8ad
+         +cdMNXUWgAZzfqlnBlgGc9j8XzVd/2x7QbhI75Z3CwRxUNubL2IY5olVS4mk0hqV7QoW
+         pXjA==
+X-Gm-Message-State: AOJu0YzMmAl0/HDha614eaz0L3YMsJAw+Qd71WDqjOmIFb8J5Su3IzqL
+	fpT8IvWPrKbH317Wyz5jNUioXsJ+oR1Dxmbbg6ENugWgLbdaUnx5kw9PDXso7wpXbG/XtePd4Uk
+	1ZXlJY1FqgJDIAeMblAqweKv4px/r2JORpK4IMu56IITVdPdzvcSomKCmcZCEYQ==
+X-Received: by 2002:a17:902:d2c8:b0:1f2:fc8b:ebfe with SMTP id d9443c01a7336-1f6d0389353mr119517825ad.48.1718071925837;
+        Mon, 10 Jun 2024 19:12:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHdprNhnBBG8Q7R+GJT6+3TiYFLUc4wINGfuZT0vXuCOjJzIKH6fw+aACuUgHH/+RFZfCiNQ==
+X-Received: by 2002:a17:902:d2c8:b0:1f2:fc8b:ebfe with SMTP id d9443c01a7336-1f6d0389353mr119517745ad.48.1718071925468;
+        Mon, 10 Jun 2024 19:12:05 -0700 (PDT)
+Received: from [10.72.116.2] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd778fc2sm89270965ad.119.2024.06.10.19.12.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 19:12:05 -0700 (PDT)
+Message-ID: <a72e754a-3e72-491c-935c-ca5c1f21a8f7@redhat.com>
+Date: Tue, 11 Jun 2024 10:11:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610003520.33839-1-dzm91@hust.edu.cn> <202406100911.QBMVtIpz-lkp@intel.com>
-In-Reply-To: <202406100911.QBMVtIpz-lkp@intel.com>
-From: Dongliang Mu <mudongliangabcd@gmail.com>
-Date: Tue, 11 Jun 2024 10:07:19 +0800
-Message-ID: <CAD-N9QXgU7_iCLmH5z0e78ydCkwgWiz2Mti6zDqQp9jnExiVAw@mail.gmail.com>
-Subject: Re: [PATCH v2] docs/zh_CN: update the translation of security-bugs
-To: kernel test robot <lkp@intel.com>
-Cc: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>, 
-	Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>, 
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>, Hu Haowen <2023002089@link.tyut.edu.cn>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, oe-kbuild-all@lists.linux.dev, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/ceph/mds_client: use cap_wait_list only if debugfs is
+ enabled
+To: Max Kellermann <max.kellermann@ionos.com>, idryomov@gmail.com,
+ ceph-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <20240606164157.3765143-1-max.kellermann@ionos.com>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20240606164157.3765143-1-max.kellermann@ionos.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 10, 2024 at 10:07=E2=80=AFAM kernel test robot <lkp@intel.com> =
-wrote:
->
-> Hi Dongliang,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on lwn/docs-next]
-> [also build test WARNING on linus/master v6.10-rc3 next-20240607]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Dongliang-Mu/docs-=
-zh_CN-update-the-translation-of-security-bugs/20240610-083729
-> base:   git://git.lwn.net/linux.git docs-next
-> patch link:    https://lore.kernel.org/r/20240610003520.33839-1-dzm91%40h=
-ust.edu.cn
-> patch subject: [PATCH v2] docs/zh_CN: update the translation of security-=
-bugs
-> reproduce: (https://download.01.org/0day-ci/archive/20240610/202406100911=
-.QBMVtIpz-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406100911.QBMVtIpz-lkp=
-@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
->    Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`rt_link<../=
-../networking/netlink_spec/rt_link>`
->    Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`tc<../../ne=
-tworking/netlink_spec/tc>`
->    Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`tc<../../ne=
-tworking/netlink_spec/tc>`
->    Warning: Documentation/devicetree/bindings/power/wakeup-source.txt ref=
-erences a file that doesn't exist: Documentation/devicetree/bindings/input/=
-qcom,pm8xxx-keypad.txt
->    Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm57=
-03-regulator.yaml references a file that doesn't exist: Documentation/devic=
-etree/bindings/mfd/siliconmitus,sm5703.yaml
-> >> Warning: Documentation/translations/zh_TW/admin-guide/reporting-issues=
-.rst references a file that doesn't exist: Documentation/translations/zh_CN=
-/admin-guide/security-bugs.rst
-> >> Warning: Documentation/translations/zh_TW/admin-guide/reporting-issues=
-.rst references a file that doesn't exist: Documentation/translations/zh_CN=
-/admin-guide/security-bugs.rst
-> >> Warning: Documentation/translations/zh_TW/process/submitting-patches.r=
-st references a file that doesn't exist: Documentation/translations/zh_CN/a=
-dmin-guide/security-bugs.rst
 
-Thanks for the report. I've sent a v3 patch with this issue fixed.
+On 6/7/24 00:41, Max Kellermann wrote:
+> Only debugfs uses this list.  By omitting it, we save some memory and
+> reduce lock contention on `caps_list_lock`.
+>
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> ---
+>   fs/ceph/caps.c       | 6 ++++++
+>   fs/ceph/mds_client.c | 2 ++
+>   fs/ceph/mds_client.h | 6 ++++++
+>   3 files changed, 14 insertions(+)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index c4941ba245ac..772879aa26ee 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -3067,10 +3067,13 @@ int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
+>   				       flags, &_got);
+>   		WARN_ON_ONCE(ret == -EAGAIN);
+>   		if (!ret) {
+> +#ifdef CONFIG_DEBUG_FS
+>   			struct ceph_mds_client *mdsc = fsc->mdsc;
+>   			struct cap_wait cw;
+> +#endif
+>   			DEFINE_WAIT_FUNC(wait, woken_wake_function);
+>   
+> +#ifdef CONFIG_DEBUG_FS
+>   			cw.ino = ceph_ino(inode);
+>   			cw.tgid = current->tgid;
+>   			cw.need = need;
+> @@ -3079,6 +3082,7 @@ int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
+>   			spin_lock(&mdsc->caps_list_lock);
+>   			list_add(&cw.list, &mdsc->cap_wait_list);
+>   			spin_unlock(&mdsc->caps_list_lock);
+> +#endif // CONFIG_DEBUG_FS
+>   
+>   			/* make sure used fmode not timeout */
+>   			ceph_get_fmode(ci, flags, FMODE_WAIT_BIAS);
+> @@ -3097,9 +3101,11 @@ int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
+>   			remove_wait_queue(&ci->i_cap_wq, &wait);
+>   			ceph_put_fmode(ci, flags, FMODE_WAIT_BIAS);
+>   
+> +#ifdef CONFIG_DEBUG_FS
+>   			spin_lock(&mdsc->caps_list_lock);
+>   			list_del(&cw.list);
+>   			spin_unlock(&mdsc->caps_list_lock);
+> +#endif
+>   
+>   			if (ret == -EAGAIN)
+>   				continue;
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index c2157f6e0c69..62238f3e6e19 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -5505,7 +5505,9 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+>   	INIT_DELAYED_WORK(&mdsc->delayed_work, delayed_work);
+>   	mdsc->last_renew_caps = jiffies;
+>   	INIT_LIST_HEAD(&mdsc->cap_delay_list);
+> +#ifdef CONFIG_DEBUG_FS
+>   	INIT_LIST_HEAD(&mdsc->cap_wait_list);
+> +#endif
+>   	spin_lock_init(&mdsc->cap_delay_lock);
+>   	INIT_LIST_HEAD(&mdsc->cap_unlink_delay_list);
+>   	INIT_LIST_HEAD(&mdsc->snap_flush_list);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index cfa18cf915a0..13dd83f783ec 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -416,6 +416,8 @@ struct ceph_quotarealm_inode {
+>   	struct inode *inode;
+>   };
+>   
+> +#ifdef CONFIG_DEBUG_FS
+> +
+>   struct cap_wait {
+>   	struct list_head	list;
+>   	u64			ino;
+> @@ -424,6 +426,8 @@ struct cap_wait {
+>   	int			want;
+>   };
+>   
+> +#endif // CONFIG_DEBUG_FS
+> +
+>   enum {
+>   	CEPH_MDSC_STOPPING_BEGIN = 1,
+>   	CEPH_MDSC_STOPPING_FLUSHING = 2,
+> @@ -512,7 +516,9 @@ struct ceph_mds_client {
+>   	spinlock_t	caps_list_lock;
+>   	struct		list_head caps_list; /* unused (reserved or
+>   						unreserved) */
+> +#ifdef CONFIG_DEBUG_FS
+>   	struct		list_head cap_wait_list;
+> +#endif
+>   	int		caps_total_count;    /* total caps allocated */
+>   	int		caps_use_count;      /* in use */
+>   	int		caps_use_max;	     /* max used caps */
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
->    Warning: Documentation/userspace-api/netlink/index.rst references a fi=
-le that doesn't exist: Documentation/networking/netlink_spec/index.rst
->    Warning: Documentation/userspace-api/netlink/specs.rst references a fi=
-le that doesn't exist: Documentation/networking/netlink_spec/index.rst
->    Warning: MAINTAINERS references a file that doesn't exist: Documentati=
-on/devicetree/bindings/reserved-memory/qcom
->    Warning: MAINTAINERS references a file that doesn't exist: Documentati=
-on/devicetree/bindings/display/exynos/
->    Using alabaster theme
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
->
 
