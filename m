@@ -1,235 +1,186 @@
-Return-Path: <linux-kernel+bounces-210579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DADE9045CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:32:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF90E9045CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D9B31C22DCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:32:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 308271F220ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E630915216C;
-	Tue, 11 Jun 2024 20:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8E4152533;
+	Tue, 11 Jun 2024 20:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SlB9vBuj"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C3XQxoy0"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C844D8A8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BBF12E61
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718137970; cv=none; b=Q2rqu6nXTj/I5FcSo5e90U3XddkCswDBWbEm4rd1FYDD5V0DIe8gaVHPkflYaHRUdXdYcSfPyZk4Vkk/XWt2Awe9KBboDnkhCWSkIYhABPYPXkZcWHYhUYR8asrN68bkbrDWPDsRry2/HBhkEwFCywCnJzxp65kAJ+Dzqt1LgmM=
+	t=1718138011; cv=none; b=OoBRloOZnxBPsK+fk1y/YanN66kUrG3oVAYw+khl3IAZ/PzZW2TDFSkdYOQbhcQclhigk+o/l4QIG5zcQlJLN7sxIaCWFhCCd0d114yVlB+//Xoe1zp9eARj6QpF2EOZ8+zbIeCAzonk4LhZr069qQwbiKNN/KpYU7ECB5BLxEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718137970; c=relaxed/simple;
-	bh=b0tnxRk55JpxblBUjsK3yCQEBPWg1TI02Rgcr11aIaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t9mPw59cb3SevlEX0TI5aD8EoEiZFtkpA+GtvyPbPDTmm8VReHBwGHm+n+tlLdqdAjYISQfW7d0vNNrycuXQUF9ugIJAS0y7JAK6UTKSsio763YQN4GjFIgXq+TyirCY9tf8pl/N4HQfWT8UNEh2/+WYtWs5v48v6RtbcJS2NJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SlB9vBuj; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-43fc0967e3eso2897501cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:32:47 -0700 (PDT)
+	s=arc-20240116; t=1718138011; c=relaxed/simple;
+	bh=XC4w7FqUQ2wQZKdU5omXsL3G30oQ0DhgQCJ4Jv1zZ0E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fuQsB139FgR6w5pfPzQd4X72sb4UPmLIjhC8+otX36VXb7l9749bN/clshvYGcnIIYf3Cs3qtpeT7rW0++k/1ig64z4tdlpcOufdNcZ/0mpZysFlviTk4RMOAWCi4+BXrHxYsGASoMduhp691wXhcs1lZPbIRrNaSpiUOewH+YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C3XQxoy0; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57c8bd6b655so4543a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:33:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1718137966; x=1718742766; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ru7+Mgfc7mgl94OE4z4ZFlKjJ2kecSG9/ABayWePB4U=;
-        b=SlB9vBujG8ve0QJONkYwv8kT93mNalMsGz0SFR7q3I2CV2BzjXYzqc1+QCZ/I+uNa7
-         AdOltfKGYNl32UpVa/RjXdWDBEBoMjzythHfc3LzOsFpicjxETieC/z7XJZmm7+7aN4g
-         MfGanPigNnR8jenowp3We426bgI8w5bvOUW/c=
+        d=google.com; s=20230601; t=1718138008; x=1718742808; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y1oMY5Ka+Igm5IVLZ0jHXnRZ7u2UNpiSxg2NGEZJXKY=;
+        b=C3XQxoy0X3wzvzMtLynriEWutEal5Ejs5qOIs/UNKdTUtMWAtt0qvfTF36hx+DWBVS
+         DmfMdjB3mlP8LAf35YMQm6MMhsXTSYyynwMOMmpB9JWyPsux+KG8Td+/ddehDnq9GLyP
+         +5I+Dz5z7PFQTY1EkicLZiBPBQfwya6ENmIYqJzoEa7HLeKk5qToa6SSLI6UMgrNK63v
+         oxi5HH0HcebF/8/3SzF9qRn3GcBktSBpi1aCgoL4up6loBpt6Je8bLP1i9roTxmQzRmk
+         ztboi13Zpx+qSGkR6m27/BfIiGP0JfsJMAqRpVojSR8aFbLXXnQmbR9u4uUID7z2E07p
+         b7DQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718137966; x=1718742766;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ru7+Mgfc7mgl94OE4z4ZFlKjJ2kecSG9/ABayWePB4U=;
-        b=poszRV6sb9VCq1Oe7vpLB0IMm8ATulNQEYf0oojHp9wQeUXriQ3Ie2QJY5f2ox5qy5
-         ZDNpSnbOO4Qyj/52jkxDwyQqp+5Ux39OeUD8dBLJZqJslT3JqxeK5156BreduEC3u0pR
-         jQbCop8FaowzgUvn91YsllizkDbcuBCLrLXkewWmyTh/fr4md+/p934W/pXOCqEEERh0
-         7yR2uh6ZSHAiYrZ1m1lT6hg2qvqa4LeqD/VaV9LiH1eu5JZ4yeDJyL8kWIAHcbIa/IWT
-         d1g23qlqSK9oiv4RTCG503UplI8Mgkx7d9u9GgEKbA3FW+go2RW/m80/FzgbcF7Tu6lQ
-         LIVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjyc3nRBf/eWq3NPs2tyEZDoeG/vH9d/fl9hRbJl03ODfpcK914cthZLwTyFV+Zt7jeZ+E2RUHe2KyBKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyag35gjRv0YAmyY7wIqNZJsUnBkoCUxu/AnD06pVPqTMSYGk56
-	Mv9CapWO+K/P+Nd53jyvrffgg17h7D02xhijAdx0jfozqQa5IXiYe3JVVB8HXL8=
-X-Google-Smtp-Source: AGHT+IFK7jjopDEBt4JLGnF3rHXBONyzbPrLCNN+4zYVs0NdvsF3aGRSpzJArJhiRJnBqwM0V4BQ7A==
-X-Received: by 2002:ad4:4425:0:b0:6b0:6e0a:4da8 with SMTP id 6a1803df08f44-6b06e0a5003mr101070236d6.1.1718137966447;
-        Tue, 11 Jun 2024 13:32:46 -0700 (PDT)
-Received: from [172.20.14.19] (ool-6c3a3e1d.static.optonline.net. [108.58.62.29])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b091d46280sm4945606d6.94.2024.06.11.13.32.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 13:32:46 -0700 (PDT)
-Message-ID: <7b020209-3b20-48f4-92fb-099d80aee625@linuxfoundation.org>
-Date: Tue, 11 Jun 2024 14:32:45 -0600
+        d=1e100.net; s=20230601; t=1718138008; x=1718742808;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y1oMY5Ka+Igm5IVLZ0jHXnRZ7u2UNpiSxg2NGEZJXKY=;
+        b=SF5A7WvMsmNQsx+nL4Q+Brca5xN3kXli8QC9wjchnqFk6lAzA8GdXIpXDuYoG0w9fB
+         4CrILwOhLFdzL+D0S/rkx7QvNW5HoQdErluwZivaT54jdBl8C4HBmmOz0ZUCZ5FHbkgL
+         8kCF8qb4xBUp57EscnDPRLr8izv36SzXe3fItAQf+3km2Sl12wIu6Yu0oCuTtd/swWk/
+         D3YI76OfQ6JOPMYPuYupS6BL0v/24It5Wj2FBVJH2Tb9eHV1hac9m6KbrGg6B+qHUrU2
+         uD4IgkOlmghI35qcHEIftm43TOtaGs2keZ1DqR8CNWsKP3Y63R1tKtU9Nn/1xU+mixUX
+         Y1Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/rt8C/Q75AD6ody/VvY3ivdHt3Ez9qT9iDJ0pj+MKw1czw36Ls846/U6i/DYSEoE+lIsJsft2jG13XkCAsUz4ZFIshxOMVF31N8lC
+X-Gm-Message-State: AOJu0YwsV5ojZH/IQ2rYMbmD/CJ7w7xT29b8e+R+i07RN8+0wJpN2pmQ
+	Mtq5sRgTxNk4lDgp0fNlSShplmIT8YikD7P7HwI41jdHBEvzLT/0lYBVJjJUkYSzVj6zUA4WfRb
+	bdoz6CKwKPuZ9sc/VnUWtncNK7abFuC/yqgE=
+X-Google-Smtp-Source: AGHT+IEJZSZPp5uDEJF66yku2G52k7zoY/A/fEWKARj7DqwB4Q9rt6zOLddjPGDLpteJ63WCdIVY0NriCA360ZVJwkE=
+X-Received: by 2002:aa7:cd17:0:b0:572:988f:2f38 with SMTP id
+ 4fb4d7f45d1cf-57ca7fd71e8mr38069a12.6.1718138008253; Tue, 11 Jun 2024
+ 13:33:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] kselftests: vdso: vdso_test_clock_getres: conform
- test to TAP output
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>, Vincenzo Frascino
- <vincenzo.frascino@arm.com>, Tiezhu Yang <yangtiezhu@loongson.cn>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240610054129.1527389-1-usama.anjum@collabora.com>
- <20240610054129.1527389-2-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240610054129.1527389-2-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240515193610.2350456-1-yabinc@google.com> <CAM9d7cjmJHC91Q-_V7trfW-LtQVbraSHzm--iDiBi7LgNwD2DA@mail.gmail.com>
+ <CALJ9ZPML-QNcsJfo6tBMfmJzb=wF1qQsMFTbNvtRwH-++J1a2g@mail.gmail.com>
+In-Reply-To: <CALJ9ZPML-QNcsJfo6tBMfmJzb=wF1qQsMFTbNvtRwH-++J1a2g@mail.gmail.com>
+From: Yabin Cui <yabinc@google.com>
+Date: Tue, 11 Jun 2024 13:33:15 -0700
+Message-ID: <CALJ9ZPNkO=_OKPDwdSY9tJw+AETaAVC2m-1UcWScZ0TaFmHRkw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] perf/core: Check sample_type in sample data saving
+ helper functions
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/9/24 23:41, Muhammad Usama Anjum wrote:
-> Conform the layout, informational and status messages to TAP. No
-> functional change is intended other than the layout of output messages.
-> Use kselftest_harness.h to conform to TAP as the number of tests depend
-> on the available options at build time. The kselftest_harness makes the
+On Tue, May 28, 2024 at 10:59=E2=80=AFAM Yabin Cui <yabinc@google.com> wrot=
+e:
+>
+> On Wed, May 22, 2024 at 9:27=E2=80=AFAM Namhyung Kim <namhyung@kernel.org=
+> wrote:
+> >
+> > Hello,
+> >
+> > On Wed, May 15, 2024 at 12:36=E2=80=AFPM Yabin Cui <yabinc@google.com> =
+wrote:
+> > >
+> > > Hello,
+> > >
+> > > We use helper functions to save raw data, callchain and branch stack =
+in
+> > > perf_sample_data. These functions update perf_sample_data->dyn_size w=
+ithout
+> > > checking event->attr.sample_type, which may result in unused space
+> > > allocated in sample records. To prevent this from happening, this pat=
+chset
+> > > enforces checking sample_type of an event in these helper functions.
+> > >
+> > > Thanks,
+> > > Yabin
+> > >
+> > >
+> > > Changes since v1:
+> > >  - Check event->attr.sample_type & PERF_SAMPLE_RAW before
+> > >    calling perf_sample_save_raw_data().
+> > >  - Subject has been changed to reflect the change of solution.
+> > >
+> > > Changes since v2:
+> > >  - Move sample_type check into perf_sample_save_raw_data().
+> > >  - (New patch) Move sample_type check into perf_sample_save_callchain=
+().
+> > >  - (New patch) Move sample_type check into perf_sample_save_brstack()=
+.
+> > >
+> > > Changes since v3:
+> > >  - Fix -Werror=3Dimplicit-function-declaration by moving has_branch_s=
+tack().
+> > >
+> > > Changes since v4:
+> > >  - Give a warning if data->sample_flags is already set when calling t=
+he
+> > >    helper functions.
+> > >
+> > > Original commit message from v1:
+> > >   perf/core: Trim dyn_size if raw data is absent
+> > >
+> > > Original commit message from v2/v3:
+> > >   perf/core: Save raw sample data conditionally based on sample type
+> > >
+> > >
+> > > Yabin Cui (3):
+> > >   perf/core: Save raw sample data conditionally based on sample type
+> > >   perf/core: Check sample_type in perf_sample_save_callchain
+> > >   perf/core: Check sample_type in perf_sample_save_brstack
+> >
+> > Acked-by: Namhyung Kim <namhyung@kernel.org>
+> >
+> > Thanks,
+> > Namhyung
+> >
+>
+> Hi performance events subsystem maintainers,
+>
+> The v5 patches were modified based on Peter's comments on the v4
+> patches. I'd be grateful if you could take a look when you have a
+> moment.
+> Thank you for your time and consideration.
+>
+> Thanks,
+> Yabin
+>
 
+Hi, friendly ping again for review?
 
-How does converting to kselftest_harness help with available options ay
-build time? Can you explain?
-
-I am not seeing any value in converting this test to the harness? I want
-to see a better justification.
-
-> test easy to convert and presents better maintainability.
-> 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
-> Changes since v1:
-> - Update commit message to include that kselftest_harness has been used
->    to conform to TAP and why
-> ---
->   .../selftests/vDSO/vdso_test_clock_getres.c   | 68 +++++++++----------
->   1 file changed, 33 insertions(+), 35 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
-> index 38d46a8bf7cba..c1ede40521f05 100644
-> --- a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
-> +++ b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
-> @@ -25,7 +25,7 @@
->   #include <unistd.h>
->   #include <sys/syscall.h>
->   
-> -#include "../kselftest.h"
-> +#include "../kselftest_harness.h"
->   
->   static long syscall_clock_getres(clockid_t _clkid, struct timespec *_ts)
->   {
-> @@ -54,18 +54,8 @@ const char *vdso_clock_name[12] = {
->   /*
->    * This function calls clock_getres in vdso and by system call
->    * with different values for clock_id.
-> - *
-> - * Example of output:
-> - *
-> - * clock_id: CLOCK_REALTIME [PASS]
-> - * clock_id: CLOCK_BOOTTIME [PASS]
-> - * clock_id: CLOCK_TAI [PASS]
-> - * clock_id: CLOCK_REALTIME_COARSE [PASS]
-> - * clock_id: CLOCK_MONOTONIC [PASS]
-> - * clock_id: CLOCK_MONOTONIC_RAW [PASS]
-> - * clock_id: CLOCK_MONOTONIC_COARSE [PASS]
->    */
-> -static inline int vdso_test_clock(unsigned int clock_id)
-> +static inline void vdso_test_clock(struct __test_metadata *_metadata, unsigned int clock_id)
->   {
->   	struct timespec x, y;
->   
-> @@ -73,52 +63,60 @@ static inline int vdso_test_clock(unsigned int clock_id)
->   	clock_getres(clock_id, &x);
->   	syscall_clock_getres(clock_id, &y);
->   
-> -	if ((x.tv_sec != y.tv_sec) || (x.tv_nsec != y.tv_nsec)) {
-> -		printf(" [FAIL]\n");
-> -		return KSFT_FAIL;
-> -	}
-> -
-> -	printf(" [PASS]\n");
-> -	return KSFT_PASS;
-> +	ASSERT_EQ(0, ((x.tv_sec != y.tv_sec) || (x.tv_nsec != y.tv_nsec)));
->   }
->   
-> -int main(int argc, char **argv)
-> -{
-> -	int ret = 0;
-> -
->   #if _POSIX_TIMERS > 0
->   
->   #ifdef CLOCK_REALTIME
-> -	ret += vdso_test_clock(CLOCK_REALTIME);
-> +TEST(clock_realtime)
-> +{
-> +	vdso_test_clock(_metadata, CLOCK_REALTIME);
-> +}
->   #endif
->   
->   #ifdef CLOCK_BOOTTIME
-> -	ret += vdso_test_clock(CLOCK_BOOTTIME);
-> +TEST(clock_boottime)
-> +{
-> +	vdso_test_clock(_metadata, CLOCK_BOOTTIME);
-> +}
->   #endif
->   
->   #ifdef CLOCK_TAI
-> -	ret += vdso_test_clock(CLOCK_TAI);
-> +TEST(clock_tai)
-> +{
-> +	vdso_test_clock(_metadata, CLOCK_TAI);
-> +}
->   #endif
->   
->   #ifdef CLOCK_REALTIME_COARSE
-> -	ret += vdso_test_clock(CLOCK_REALTIME_COARSE);
-> +TEST(clock_realtime_coarse)
-> +{
-> +	vdso_test_clock(_metadata, CLOCK_REALTIME_COARSE);
-> +}
->   #endif
->   
->   #ifdef CLOCK_MONOTONIC
-> -	ret += vdso_test_clock(CLOCK_MONOTONIC);
-> +TEST(clock_monotonic)
-> +{
-> +	vdso_test_clock(_metadata, CLOCK_MONOTONIC);
-> +}
->   #endif
->   
->   #ifdef CLOCK_MONOTONIC_RAW
-> -	ret += vdso_test_clock(CLOCK_MONOTONIC_RAW);
-> +TEST(clock_monotonic_raw)
-> +{
-> +	vdso_test_clock(_metadata, CLOCK_MONOTONIC_RAW);
-> +}
->   #endif
->   
->   #ifdef CLOCK_MONOTONIC_COARSE
-> -	ret += vdso_test_clock(CLOCK_MONOTONIC_COARSE);
-> +TEST(clock_monotonic_coarse)
-> +{
-> +	vdso_test_clock(_metadata, CLOCK_MONOTONIC_COARSE);
-> +}
->   #endif
->   
-> -#endif
-> -	if (ret > 0)
-> -		return KSFT_FAIL;
-> +#endif /* _POSIX_TIMERS > 0 */
->   
-> -	return KSFT_PASS;
-> -}
-> +TEST_HARNESS_MAIN
-
-thanks,
--- Shuah
-
+> > >
+> > >  arch/s390/kernel/perf_cpum_cf.c    |  2 +-
+> > >  arch/s390/kernel/perf_pai_crypto.c |  2 +-
+> > >  arch/s390/kernel/perf_pai_ext.c    |  2 +-
+> > >  arch/x86/events/amd/core.c         |  3 +--
+> > >  arch/x86/events/amd/ibs.c          |  5 ++---
+> > >  arch/x86/events/core.c             |  3 +--
+> > >  arch/x86/events/intel/ds.c         |  9 +++-----
+> > >  include/linux/perf_event.h         | 26 +++++++++++++++++-----
+> > >  kernel/events/core.c               | 35 +++++++++++++++-------------=
+--
+> > >  kernel/trace/bpf_trace.c           | 11 +++++-----
+> > >  10 files changed, 55 insertions(+), 43 deletions(-)
+> > >
+> > > --
+> > > 2.45.0.rc1.225.g2a3ae87e7f-goog
+> > >
 
