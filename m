@@ -1,113 +1,86 @@
-Return-Path: <linux-kernel+bounces-209268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB999902FD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:18:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC71903094
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF1061C232D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:18:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88021F27477
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2367117085A;
-	Tue, 11 Jun 2024 05:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97BB17B51F;
+	Tue, 11 Jun 2024 05:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vi2fgt6n"
-Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4iRpIfn/"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2569A170844;
-	Tue, 11 Jun 2024 05:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC598178CC1;
+	Tue, 11 Jun 2024 05:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718083123; cv=none; b=K083jOWjL3/1IIdEllhjhuSIwj6FBLhotr0+TMn+pzYwvKCxlf5plNcD+B8iJRVe5RKU8ry4jt5bi9udNOqcBH+jQj1ZOyzcogb/Fos0owRwb/QfgaUsCJuClcImR7ak4V76fWJoPALZtNVxWfi+w2hT13/KFHc5IUzohpFpjPc=
+	t=1718083237; cv=none; b=aeAincvsaw4hw2v1B84H0S6K8/AueQq75W6iACKaQEgKl++J/3DNb9Ix/Dm/vlVj89b08MiORda+0KAxOtCsJs1hsP8nMGK6l5X+fqBPqdxsv30fouXoJLJLBXL0HHXzJI3xfpnjQgh6CfJXJjD57BQMeCGfti+xpwWGasfKGhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718083123; c=relaxed/simple;
-	bh=YstzfgNOOOBumGQqgNHf30RBk+xS5QlP/PqWB/aeQBg=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=kpFGc+L4kGJFpLPhVSj5V5JF9SbIQ9wYUPEOYnc+kFcDsv1ahQ5+iiDX7ES/+3bW7UpFlTn/pGbHToPom4F6OtJ5+yusvyEzRBVviEqEHG5mpKQOA8D6hyrvtrQEPunsQYxkUmH44/nY/hTy0W+SDRdWsKScY2DuxXzfLQOjlGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vi2fgt6n; arc=none smtp.client-ip=209.85.216.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-2c2db1fc31fso470123a91.0;
-        Mon, 10 Jun 2024 22:18:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718083121; x=1718687921; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AAqq1AZbfLB4KlIns+O0fAjIRvY03AK8sH1SBKEy40M=;
-        b=Vi2fgt6nZlvedK6wiIMda/kVj54J4gzCegSM+ZAn3e7zSoIqF0qmzRbsmu9Z/wUCDN
-         vuqyw0JxomCr61QJtq8U4zZcW4fCSZRTHLGMphq5zlVqzPHYq5zvI59RgeTGhLIQOFTJ
-         pdbyRj00dsKrgWm841RgK23viTxAg0n9rKYhMF6nmXjT95klxlOPKe6y/tkUDmCDjEHM
-         Q+JSguLQhImo/Pp9CqvdgkmAEHqKPuaj5uo3umDrXuRaqf1netfe66xtmKZwL/S0IZ2w
-         VUhZ9k4mwSA2d4n2kxEBgYW5++s9J55KjQJTPbGjGoBLwdUNnEWd9xlmXbHazHkbMZnv
-         8wIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718083121; x=1718687921;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AAqq1AZbfLB4KlIns+O0fAjIRvY03AK8sH1SBKEy40M=;
-        b=OUixWXHi7T/NR3D5JVgfrvIDAnoTruu+lQ4ohmDgOcZalK2LIjJlT8+cIb6C//8m8f
-         kgorUTkGe8mVnq+W7ZNJPlRGHtKNOcKqnCqrBXPqfzRVXrdy5k8VqeHAU3wLKH55vcuR
-         vll5b1I+EMUf9pO2lAhg7hK8ED5JrMm39N29BVjtpaOsnliwmsPvsfhuvqxXET4fhFri
-         4yqnHk92az1A04BcZIKY+ZMT+BCnG6X8oKUrV1xPk7i6Rtl8/JiiKlAqikuxGnhYdUhp
-         /s/sxWIu/O5pHnU1fmznQ3DVNrOp4ZF1L2BC+ldZiKC7h7P9jo8Fo+AGcunntxB5MlDV
-         AZtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1AvlsNuiexjkQj+s8kpmSoi7MPjklA6HfLxmCpy0RsAyGw+MoJozTc/aTM7Ht7OsXMjba2JIt2n+72gk+EU2+eFfBvlPDdjyLnNN2
-X-Gm-Message-State: AOJu0YwugJtsEIA5KZ+efytaSrAdl91WQ59CvmHb4RkprE+I50thtl2A
-	uHbFOEFFdW5MoKiJ7+5HiPCZbQs40GLqkICPsp7HDv0Q90/HW77RIhrhJPWhkKM97Q==
-X-Google-Smtp-Source: AGHT+IHhiwb2Z1ce+DjKS+OfZ1A/APv6F1fEZZXYhFtflxOoMOPSDYKSt0oNuUd0F4WbiJo8xGdaqQ==
-X-Received: by 2002:a17:902:d503:b0:1f3:10e8:1e0 with SMTP id d9443c01a7336-1f6d02e22d3mr124228485ad.2.1718083121094;
-        Mon, 10 Jun 2024 22:18:41 -0700 (PDT)
-Received: from localhost.localdomain ([117.147.90.53])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f7171ea36esm26564005ad.114.2024.06.10.22.18.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 22:18:40 -0700 (PDT)
-From: aigourensheng <shechenglong001@gmail.com>
-To: shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	aigourensheng <shechenglong001@gmail.com>
-Subject: [PATCH] selftests/sched: fix code format issues
-Date: Tue, 11 Jun 2024 01:18:34 -0400
-Message-Id: <20240611051834.2885-1-shechenglong001@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1718083237; c=relaxed/simple;
+	bh=ZOUeS/PR2L/uW+xmI1S+bIdUmqKIstkjRfWtLDTdo5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cqZs8NUPMub5QcCFtkS8p82dcRaJaylCjO/9nK2VfIwhCVxhRU3ZMopRoYS3aZ7mN+kwz4c3AIxqeJ972iZg8SLk4KC4xINu6J7BLzLVz+NoVOqxIvHb9dXt6hdHhco8b1MfStI20L8Tw/fa+F39zjDzeNIcSHQLLJFvgY9mmQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4iRpIfn/; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Bju2IWg2b3ngXQXJYtweoQU0NbygugkuJZTn5GHJegs=; b=4iRpIfn/MpEKpUPbH7KhBNKlHt
+	YDdCClNS4oO4JkxIRPiuXJmZXgpjCII610Wbryjt2AOuSbddOM9JQ24zM4PKkiyGZ49z7SHISytcs
+	pTgg9/I4wWwwapkglwufUbmr0qoL1L3ljX7hObjnmpl9SXQFhEA2aQBUcb9Mc7+bC3bEYC8niDse+
+	IpmBv/26u2m4WB0Ib8uBqHVBxKOcRJIxknxzCkhAD9L+7xfGN1JwboKVtfVei812wk7ptsWN2ckn2
+	8zr21EErCtTqaIk5HpA8nSFk/6TdbtEZolO6kCRTmK7RnTk3Cd6++QpbVjyMEP7l/UY871k8XewZu
+	D7scP1Gg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sGtvm-00000007RPg-2UTv;
+	Tue, 11 Jun 2024 05:20:26 +0000
+Date: Mon, 10 Jun 2024 22:20:26 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	josef@toxicpanda.com
+Subject: Re: [PATCH v2 1/2] vfs: add rcu-based find_inode variants for iget
+ ops
+Message-ID: <ZmfemrY9ZPnvmocu@infradead.org>
+References: <20240610195828.474370-1-mjguzik@gmail.com>
+ <20240610195828.474370-2-mjguzik@gmail.com>
+ <ZmfZukP3a2atzQma@infradead.org>
+ <CAGudoHE12-7c0kmVpKz8HyBeHt8jX8hOQ7zQxZNJ0Re7FF8r6g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHE12-7c0kmVpKz8HyBeHt8jX8hOQ7zQxZNJ0Re7FF8r6g@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-There are extra spaces in the middle of #define. It is recommended
-to delete the spaces to make the code look more comfortable.
+On Tue, Jun 11, 2024 at 07:17:41AM +0200, Mateusz Guzik wrote:
+> 
+> I agree, but this is me just copying and modifying an existing line.
+> 
+> include/linux/fs.h is chock full of extern-prefixed func declarations,
+> on top of that some name the arguments while the rest does not.
+> 
+> Someone(tm) should definitely clean it up, but I'm not interested in
+> bikeshedding about it.
 
-Signed-off-by: aigourensheng <shechenglong001@gmail.com>
----
- tools/testing/selftests/sched/cs_prctl_test.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+No one asked you to clean the mess up, but don't add any in changed
+or added lines.  Without that:
 
-diff --git a/tools/testing/selftests/sched/cs_prctl_test.c b/tools/testing/selftests/sched/cs_prctl_test.c
-index 62fba7356af2..52d97fae4dbd 100644
---- a/tools/testing/selftests/sched/cs_prctl_test.c
-+++ b/tools/testing/selftests/sched/cs_prctl_test.c
-@@ -42,11 +42,11 @@ static pid_t gettid(void)
- 
- #ifndef PR_SCHED_CORE
- #define PR_SCHED_CORE			62
--# define PR_SCHED_CORE_GET		0
--# define PR_SCHED_CORE_CREATE		1 /* create unique core_sched cookie */
--# define PR_SCHED_CORE_SHARE_TO		2 /* push core_sched cookie to pid */
--# define PR_SCHED_CORE_SHARE_FROM	3 /* pull core_sched cookie to pid */
--# define PR_SCHED_CORE_MAX		4
-+#define PR_SCHED_CORE_GET		0
-+#define PR_SCHED_CORE_CREATE		1 /* create unique core_sched cookie */
-+#define PR_SCHED_CORE_SHARE_TO		2 /* push core_sched cookie to pid */
-+#define PR_SCHED_CORE_SHARE_FROM	3 /* pull core_sched cookie to pid */
-+#define PR_SCHED_CORE_MAX		4
- #endif
- 
- #define MAX_PROCESSES 128
--- 
-2.17.1
+Nacked-by: Christoph Hellwig <hch@lst.de>
 
 
