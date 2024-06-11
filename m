@@ -1,171 +1,171 @@
-Return-Path: <linux-kernel+bounces-210171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB2A904058
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:44:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD8490405D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75586282D19
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:44:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3B81F25DD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08474383BF;
-	Tue, 11 Jun 2024 15:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC7039FFE;
+	Tue, 11 Jun 2024 15:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pb3XMvIf"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Em6r9Li6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11BB376E9;
-	Tue, 11 Jun 2024 15:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7523839C;
+	Tue, 11 Jun 2024 15:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718120649; cv=none; b=L7Wxzn+xWmYtY/GSxx7afSiundFTZAbbJvm7OYiIt1ZiOkBNG+6quVhSSzVqQ56IY51VAqPY/SwRk90lUwDGc5MCDLu0CWlh9RU2DaqswSBSx+Vi7cptoMDCzELVZwX4myqL+2j9SEn3XEq4VN96vLzF9JWxX7Kqq1P6n25nCu4=
+	t=1718120721; cv=none; b=k8dDiLxjUVTQhqgbI4Ylwup1VFMw2tfssqT9KNST+pPNydLo4EPYyKLMCdUpl1HvVUu6OwhHRS4aNhEDhJN6Zx7AN2joZOVS9CCg8Lw20e+0quw3Emx3o72rPkK4+5OFxcye/UBJ1QRKmj/kRnP/8BA1QfmObOWr0l3/8MT6B9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718120649; c=relaxed/simple;
-	bh=DBNsg1rC/jcnLIlq0lcqjsD/lY864vvTgshgHj3EhX8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LHuBzem9IMAyjA988gFOJmEIyMDfJiZfWHlg81Yx2roMZEhVDW59RT705V+YdOkvCnjBkBkLDB9DR/GSHTiwUnu9Q11HgvAcatlYNIuMWPW7WFYFZr1RGuxaACya32jdHQpGadZACKWyZzWjpsQfpPs8tmjduq04Dk6EI/1SWxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pb3XMvIf; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-62f39fcb010so3401097b3.1;
-        Tue, 11 Jun 2024 08:44:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718120646; x=1718725446; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tW82GS7eKzLFVwObKnP68TgmFv9WSJzEe3Ta59uYnqo=;
-        b=Pb3XMvIf9GGTFJR/2aZRpFaQVH+nkJCh3iOZw1Yf/4/n12VodcGYzyOazahX29BLmx
-         j/jx5091DYexpKYE2uC5cEoYeEpdYuYQmiwu2dHV9BNCJG0EtfKwAcWC8pgy+g6YlKBx
-         e/olUyQkfjT174sJ8tr9btR1mStSglvKSW3F81TlyRrES30GXJxni0bi1x+rxVrBsycQ
-         kwLydi+zOl9uM7sZQKVCgS+ScSdmREzbkou+Zg7CdpTMppqcW7cEtwwHGYoBO9sP3ws4
-         arQ+u9eF1MIRT2kCDNQexNWDfvycwVhGa4T35eViHS+f6+Npx7ddTLCjZfgxAaFewZxa
-         z4eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718120646; x=1718725446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tW82GS7eKzLFVwObKnP68TgmFv9WSJzEe3Ta59uYnqo=;
-        b=YI6hBGTw+pJhlU7tMydTseDawYP0EJ4uPppUT++emzb6AKOzyUQPPjSPYGo5fuNt/G
-         s44uSFnlPI++dub1a+gqjL3uQF4pQieYuaHKlhC1XymayLrQq3wTDgUOr6ATnzWgAa+L
-         yWx6mpi63eeQ1mZqC7buY6CwbX4SAXlQd/Ls8+QkBzE25y6Kc3p6SXYNyZdewkxtzyJh
-         ZNt6W7fTjzSIbcOgi7J32jWEaL3SZ5E3bC1kfsQbd04JiApFpet6INMUKlPn3prpWeKZ
-         ewxgv/gLHO3wZLd9Ayv9QVpNzudL70bVtq5vYnfYTikNLAt/4DRo5OsGet/wHu02no7F
-         U0sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrosTkNyec4BYGMB55COiCY4+ny33TW7QQ0a9X0ZnQKmeONgbfI85Zi4UoRjdTAgiYc66k8k+8ifBKWti86Gv5VWcAmCPePfC+TFmCuaGoH/Pm1qLFmIEe+tiLkUp/ZgbvoDLi9447EQu+q1PJKV48Klu/2HNkDh7w174EhOcI/aUhHpeLxGRrBduF5a/3gt1hgwN6x1bmPxniRfMgUpxeul550dONYzD+jA==
-X-Gm-Message-State: AOJu0YzrFoAICRhtCeWKX3Ejd3fEiPfE/zyo9RMYaQN8WmhwX4T78G7C
-	+LrasnCaG301nrom/LFqlFZvu5xrTnSFXUNtNTOLUzJGCzjehkDwFuHA25Ae8i30q/IZEqHghLo
-	vW+10Ij5xP9d0wOgi1Bqgj7gG6s4=
-X-Google-Smtp-Source: AGHT+IEX4PzRD1dBxbDuGigjdmHln9Tl2mPoHztJwq9MnPvO5Dd0wDH6xrTg1HRNfm9dWlWi4CgSMC/BYpMxCtDn600=
-X-Received: by 2002:a81:52d7:0:b0:61b:3356:d28c with SMTP id
- 00721157ae682-62cd5571b37mr125787047b3.2.1718120646450; Tue, 11 Jun 2024
- 08:44:06 -0700 (PDT)
+	s=arc-20240116; t=1718120721; c=relaxed/simple;
+	bh=alWpFRyGJPPxpA/qvEhIVLYBDfG5gKLw2O2vjFdIXBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=czunXMBSo9nYx1wQ169rUewIPe+WhxELmLSBnbIUgixTW/sVe7I6qhI1aAF0uciXWUg232p8cLB0KOjEPQDbkbEbw11eFheeDqVOgIqbhlr/N+3QwN4pqKnaqvG+ainypWLtptADGcMITxAVlEi6HdbrOqnvCKqlGIuyUy4hy0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Em6r9Li6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06EE2C2BD10;
+	Tue, 11 Jun 2024 15:45:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718120719;
+	bh=alWpFRyGJPPxpA/qvEhIVLYBDfG5gKLw2O2vjFdIXBU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Em6r9Li64MS4dfA1Fm6Omrjb4w5oyfw2XsNlofj9qeCLh5G5cxfGwuZ4yQPTUgZzW
+	 6kxO2WwG1YbfeA57p9rgmFg6DOXF7B/o2lriNTV968OIdIJj6h+vJ28mFcLCklf+8k
+	 loMrtXfftGiWNK48qosW/nixEPYc2CM6BDV0pD+OBtk1iB7sMjJs6yl/UgKehavFC0
+	 ucx5PHa+Nq4Qc5SPa5Zz1cwEjWeiDWr0yVMVZnqrufT33mec/2ulkMu2y2JlMDYEFe
+	 LOKNY2IV8maq2WwEhsDrM6P7s8EXMvED5vtpoqf+uru1kkwcRDd4cMFZ+KsLRjANr5
+	 5MbGSb9lFaR2g==
+Date: Tue, 11 Jun 2024 18:45:15 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: "Zeng, Oak" <oak.zeng@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Christoph Hellwig <hch@lst.de>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+	"Brost, Matthew" <matthew.brost@intel.com>,
+	"Hellstrom, Thomas" <thomas.hellstrom@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	"Tian, Kevin" <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"Williams, Dan J" <dan.j.williams@intel.com>,
+	"jack@suse.com" <jack@suse.com>, Zhu Yanjun <zyjzyj2000@gmail.com>,
+	"Bommu, Krishnaiah" <krishnaiah.bommu@intel.com>,
+	"Ghimiray, Himal Prasad" <himal.prasad.ghimiray@intel.com>
+Subject: Re: [RFC RESEND 00/16] Split IOMMU DMA mapping operation to two steps
+Message-ID: <20240611154515.GC4966@unreal>
+References: <cover.1709635535.git.leon@kernel.org>
+ <SA1PR11MB6991CB2B1398948F4241E51992182@SA1PR11MB6991.namprd11.prod.outlook.com>
+ <20240503164239.GB901876@ziepe.ca>
+ <PH7PR11MB70047236290DC1CFF9150B8592C62@PH7PR11MB7004.namprd11.prod.outlook.com>
+ <20240610161826.GA4966@unreal>
+ <PH7PR11MB7004A071F27B4CF45740B87E92C62@PH7PR11MB7004.namprd11.prod.outlook.com>
+ <20240610172501.GJ791043@ziepe.ca>
+ <PH7PR11MB7004DDE9816D92F690A5C0B692C62@PH7PR11MB7004.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608172147.2779890-1-howardchu95@gmail.com> <ZmhsSF1UPcNZX8E_@x1>
-In-Reply-To: <ZmhsSF1UPcNZX8E_@x1>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Tue, 11 Jun 2024 23:43:56 +0800
-Message-ID: <CAH0uvoj94J_1BX6H3kpCbw9Djrqf5BTG7XPsDbQSkg=ZBz27-Q@mail.gmail.com>
-Subject: Re: [PATCH] perf trace: Fix syscall untraceable bug
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	mic@digikod.net, gnoack@google.com, brauner@kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PH7PR11MB7004DDE9816D92F690A5C0B692C62@PH7PR11MB7004.namprd11.prod.outlook.com>
 
-Hello Arnaldo,
+On Mon, Jun 10, 2024 at 09:28:04PM +0000, Zeng, Oak wrote:
+> Hi Jason, Leon,
+> 
+> I was able to fix the issue from my side. Things work fine now. I got two questions though:
+> 
+> 1) The value returned from dma_link_range function is not contiguous, see below print. The "linked pa" is the function return.
+> I think dma_map_sgtable API would return some contiguous dma address. Is the dma-map_sgtable api is more efficient regarding the iommu page table? i.e., try to use bigger page size, such as use 2M page size when it is possible. With your new API, does it also have such consideration? I vaguely remembered Jason mentioned such thing, but my print below doesn't look like so. Maybe I need to test bigger range (only 16 pages range in the test of below printing). Comment?
 
-On Tue, Jun 11, 2024 at 11:25=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Sun, Jun 09, 2024 at 01:21:46AM +0800, Howard Chu wrote:
-> > as for the perf trace output:
-> >
-> > before
-> >
-> > perf $ perf trace -e faccessat2 --max-events=3D1
-> > [no output]
-> >
-> > after
-> >
-> > perf $ ./perf trace -e faccessat2 --max-events=3D1
-> >      0.000 ( 0.037 ms): waybar/958 faccessat2(dfd: 40, filename: "ueven=
-t")                               =3D 0
->
-> Yeah, before there is no output, after, with the following test case:
->
-> =E2=AC=A2[acme@toolbox c]$ cat faccessat2.c
-> #include <fcntl.h>            /* Definition of AT_* constants */
-> #include <sys/syscall.h>      /* Definition of SYS_* constants */
-> #include <unistd.h>
-> #include <stdio.h>
->
-> /* Provide own perf_event_open stub because glibc doesn't */
-> __attribute__((weak))
-> int faccessat2(int dirfd, const char *pathname, int mode, int flags)
-> {
->         return syscall(SYS_faccessat2, dirfd, pathname, mode, flags);
-> }
->
-> int main(int argc, char *argv[])
-> {
->         int err =3D faccessat2(123, argv[1], X_OK, AT_EACCESS | AT_SYMLIN=
-K_NOFOLLOW);
->
->         printf("faccessat2(123, %s, X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLO=
-W) =3D %d\n", argv[1], err);
->         return err;
-> }
-> =E2=AC=A2[acme@toolbox c]$ make faccessat2
-> cc     faccessat2.c   -o faccessat2
-> =E2=AC=A2[acme@toolbox c]$ ./faccessat2 bla
-> faccessat2(123, bla, X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLOW) =3D -1
-> =E2=AC=A2[acme@toolbox c]$
->
-> In the other terminal, as root:
->
-> root@number:~# perf trace --call-graph dwarf -e faccessat2 --max-events=
-=3D1
->      0.000 ( 0.034 ms): bash/62004 faccessat2(dfd: 123, filename: "bla", =
-mode: X, flags: EACCESS|SYMLINK_NOFOLLOW) =3D -1 EBADF (Bad file descriptor=
-)
->                                        syscall (/usr/lib64/libc.so.6)
->                                        faccessat2 (/home/acme/c/faccessat=
-2)
->                                        main (/home/acme/c/faccessat2)
->                                        __libc_start_call_main (/usr/lib64=
-/libc.so.6)
->                                        __libc_start_main@@GLIBC_2.34 (/us=
-r/lib64/libc.so.6)
->                                        _start (/home/acme/c/faccessat2)
-> root@number:~#
->
-> Now to write another test case, this time for the landlock syscall, to
-> test your btf_enum patch.
->
-> In the future please add the test case so that one can quickly reproduce
-> your testing steps.
+My API gives you the flexibility to use any page size you want. You can
+use 2M pages instead of 4K pages. The API doesn't enforce any page size.
 
-Thank you for testing this patch, sorry for the inconvenience, I will
-attach tests to speed up reproduction in the future. Also, your
-simplification looks good, thank you so much.
+> 
+> [17584.665126] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 18ef3f000
+> [17584.665146] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 190d00000
+> [17584.665150] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 190024000
+> [17584.665153] drm_svm_hmmptr_map_dma_pages iova.dma_addr = 0x0, linked pa = 178e89000
+> 
+> 2) in the comment of dma_link_range function, it is said: " @dma_offset needs to be advanced by the caller with the size of previous page that was linked + DMA address returned for the previous page".
+> Is this description correct? I don't understand the part "+ DMA address returned for the previous page ".
+> In my codes, let's say I call this function to link 10 pages, the first dma_offset is 0, second is 4k, third 8k. This worked for me. I didn't add the previously returned dma address.
+> Maybe I need more test. But any comment?
 
-Thanks,
-Howard
+You did it perfectly right. This is the correct way to advance dma_offset.
 
->
-> - Arnaldo
+Thanks
+
+> 
+> Thanks,
+> Oak
+> 
+> > -----Original Message-----
+> > From: Jason Gunthorpe <jgg@ziepe.ca>
+> > Sent: Monday, June 10, 2024 1:25 PM
+> > To: Zeng, Oak <oak.zeng@intel.com>
+> > Cc: Leon Romanovsky <leon@kernel.org>; Christoph Hellwig <hch@lst.de>;
+> > Robin Murphy <robin.murphy@arm.com>; Marek Szyprowski
+> > <m.szyprowski@samsung.com>; Joerg Roedel <joro@8bytes.org>; Will
+> > Deacon <will@kernel.org>; Chaitanya Kulkarni <chaitanyak@nvidia.com>;
+> > Brost, Matthew <matthew.brost@intel.com>; Hellstrom, Thomas
+> > <thomas.hellstrom@intel.com>; Jonathan Corbet <corbet@lwn.net>; Jens
+> > Axboe <axboe@kernel.dk>; Keith Busch <kbusch@kernel.org>; Sagi
+> > Grimberg <sagi@grimberg.me>; Yishai Hadas <yishaih@nvidia.com>;
+> > Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>; Tian, Kevin
+> > <kevin.tian@intel.com>; Alex Williamson <alex.williamson@redhat.com>;
+> > Jérôme Glisse <jglisse@redhat.com>; Andrew Morton <akpm@linux-
+> > foundation.org>; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > linux-block@vger.kernel.org; linux-rdma@vger.kernel.org;
+> > iommu@lists.linux.dev; linux-nvme@lists.infradead.org;
+> > kvm@vger.kernel.org; linux-mm@kvack.org; Bart Van Assche
+> > <bvanassche@acm.org>; Damien Le Moal
+> > <damien.lemoal@opensource.wdc.com>; Amir Goldstein
+> > <amir73il@gmail.com>; josef@toxicpanda.com; Martin K. Petersen
+> > <martin.petersen@oracle.com>; daniel@iogearbox.net; Williams, Dan J
+> > <dan.j.williams@intel.com>; jack@suse.com; Zhu Yanjun
+> > <zyjzyj2000@gmail.com>; Bommu, Krishnaiah
+> > <krishnaiah.bommu@intel.com>; Ghimiray, Himal Prasad
+> > <himal.prasad.ghimiray@intel.com>
+> > Subject: Re: [RFC RESEND 00/16] Split IOMMU DMA mapping operation to
+> > two steps
+> > 
+> > On Mon, Jun 10, 2024 at 04:40:19PM +0000, Zeng, Oak wrote:
+> > > Thanks Leon and Yanjun for the reply!
+> > >
+> > > Based on the reply, we will continue use the current version for
+> > > test (as it is tested for vfio and rdma). We will switch to v1 once
+> > > it is fully tested/reviewed.
+> > 
+> > I'm glad you are finding it useful, one of my interests with this work
+> > is to improve all the HMM users.
+> > 
+> > Jason
 
