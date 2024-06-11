@@ -1,187 +1,193 @@
-Return-Path: <linux-kernel+bounces-210142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CFF903FDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:21:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19948903FDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:21:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BEEA1C23597
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:21:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217861C238E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43CA22F1E;
-	Tue, 11 Jun 2024 15:21:02 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id C270B17554
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F94224C9;
+	Tue, 11 Jun 2024 15:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/1sVA1o"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70FC1EEE9;
+	Tue, 11 Jun 2024 15:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718119262; cv=none; b=oSIRwWW5a+DDCVLFbbz6US0sKcRstXvG2fMQ2USpk3n/kj+kaU/4hikU9NPIDVIF+VwOoyDnaAuKMJWM7AV+1J4K6E5Vz1mabq4aYMLv/GUIjNIOO1/29VG1Yzoe3WVd2TMv0+hCh7JUq8CAKlH6dIA5HGBnlNXD3QysT3H2BOY=
+	t=1718119287; cv=none; b=Z/+V3Hg/btA9BaXj0D3cn3C+5wz2p9kiDhXMSauAnxCGg8Yd3HfYPz716dqFtFWWB49SWnIPf/TFvZMIUf7ptZtElHYpdbCFiKs56CXuCD+jn39zdwH5E7Z68i26JZv2Hevd/oiGjvxdCUKEQF0MyO4mSt4MyerrMERlt6i4KbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718119262; c=relaxed/simple;
-	bh=Er6PA3/Modh6YaGC9UL3eMxeB6uHpwFIoxsNj22/flE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H69r7s4kaK6u3erC9TMDL8cLLAy8RmwNXPNP42sWFr9u59Z4blY5k0mEe5oATdp9E1+z7g73AjCSoKOBOeVforv/PgWrt8nyKN3nIJzbcAz5+vq8JizYukPgEr0Z/CCwYj+7dahP/eiSngPF4KtnxcdqNqqxt72xT8JIMBYZz6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 189524 invoked by uid 1000); 11 Jun 2024 11:20:57 -0400
-Date: Tue, 11 Jun 2024 11:20:57 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-  linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in raw_ioctl
-Message-ID: <23b1962c-044d-4dbd-a705-58754f0914cb@rowland.harvard.edu>
-References: <c3073a8c-bdaa-4123-ae27-9143d916a701@rowland.harvard.edu>
- <000000000000386b64061a8ec33d@google.com>
+	s=arc-20240116; t=1718119287; c=relaxed/simple;
+	bh=RKdGsIGcMB+U3eh22pDCIx5Wyp3C7YRCx+y0o3pEol0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B9qPbXKDey6nHc6UiR+RVZ9i3NVW0GmUxSi+MgRB9d8GR2MW3RXELDOio3/gcopxPEXNdsGdPp0jQZ4ewMRVl6L1ouFgnhtTTCgIJKlGFEuWzNbnukerigwRruVHuexwK3xytYWWWQP77jnwJll+PxSVljgT1IU2tl7H1TIMTtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/1sVA1o; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-df481bf6680so1220354276.3;
+        Tue, 11 Jun 2024 08:21:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718119284; x=1718724084; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=J1kYTsVFHvV3hNTS3A7aiLsXfJGmt9YdVx0hwX8mjlg=;
+        b=k/1sVA1ojkqDICVAcgp941dpM5JDIqEB4eFZINTuA/iBm6oGunf+X4zy+q7IowaxiE
+         xW01CDLSeHYsxmbXmPLg1fw4Vot03E2hnikvdHLfhdEw/0LyyN25tkR/cbKYs42L4EZ5
+         E/OEwX83pZjClPgbccvWZ6fasO1/Pu/dPRd0uPnaNr874bBgpz6PV8Ii6Z2cfU/emS4c
+         I9h6AE2fNcas9SVnPI/f7TlLAS2FhPKkZtIc+ZkcFZZWNyixQrJtRWYyaKnSPvVyDHcv
+         cV1QyzN/+QJ4I2JVZafKJ0hOdh5nqm8HatEjcm15X+DuiA3aw+32/qi3gRplIq0Ro1Sp
+         epLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718119284; x=1718724084;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J1kYTsVFHvV3hNTS3A7aiLsXfJGmt9YdVx0hwX8mjlg=;
+        b=aOfMg1ayhiYm6BJmFxEouPdoBMcCk7yIlp1kB+E/Dpr/YE7sGRH+B/rNaHDiGEkoir
+         s+IzvNq58ut4MOYLCXLdhwMzd7CvrFr8hhoT+9A+yDy+CrnHYheUbXFltu2U1WDREyJw
+         a/oMeIZ7wMTMY7po7M/UH4tCO1Ln6s1YSyuk7BR1iofBaav3eRmleH9FxLm0AUoiW4+B
+         KtPWdqUt2lEJTFWJoCTcT/Vt9A+Wx5ps4x5g2TfIKY0eygmoeOElO5rDuD7YQAwihnCp
+         GiT4eJytZ6H5wIORXt1vfJVMTuLgV8+3X6i4JZ8T8CWNafix120m7rWKqsxXUYsioH1/
+         wo/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUHSvOaE4CTHdirHQt3OLqMSvHOPVO2+RoctXUn1dSzStVpCfRLtRRcdkCpOzEyA2dOcxwWr3DFl1r5G/MgMiIPou2fd+hdSHNwIexaGBZ43xrQ/x8vAvg8o41FdIlgSpAfhGTP7Sdg
+X-Gm-Message-State: AOJu0YxE6LOXtYiS5xf3cYC3eOKmH6d/Ggb0ndli53168DM2l0efKaJO
+	POZY/xBATn6x5vK9nk0nk70xWqCT+6BOeQ/I3CCXYMobq7HGcUu4nPpdDZiTBZDRPsIHUqCdHRA
+	tc44+PlxfDHlwEsr7kNIhnCafWw2NySVy66qITA==
+X-Google-Smtp-Source: AGHT+IFqOX8dyvxGqZZ4ezrnpN/DGORkRIJkUVTMjkZlrD7I9/dvJuLZhiP27fCx9HyGLrYhprvuvCKtFYnXNJoSX8I=
+X-Received: by 2002:a25:660d:0:b0:dfb:1460:b5b1 with SMTP id
+ 3f1490d57ef6-dfb1460b9e3mr7565693276.1.1718119284571; Tue, 11 Jun 2024
+ 08:21:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000386b64061a8ec33d@google.com>
+References: <20240608155316.451600-1-flintglass@gmail.com> <20240608155316.451600-3-flintglass@gmail.com>
+ <CAJD7tkZAkzUfbXY3C0QOGqCyjQZeiuGzkZac4hmogOoh=yoZsw@mail.gmail.com>
+In-Reply-To: <CAJD7tkZAkzUfbXY3C0QOGqCyjQZeiuGzkZac4hmogOoh=yoZsw@mail.gmail.com>
+From: Takero Funaki <flintglass@gmail.com>
+Date: Wed, 12 Jun 2024 00:21:13 +0900
+Message-ID: <CAPpoddf0ysCG=s5ixbOZkXjmcB0t_eqLOs9xhdqZHiWnYY4_Wg@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] mm: zswap: fix global shrinker error handling logic
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 10, 2024 at 01:12:03PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-> 
-> Reported-and-tested-by: syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com
-> 
-> Tested on:
-> 
-> commit:         8867bbd4 mm: arm64: Fix the out-of-bounds issue in con..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15f51bce980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5f996b83575ef4058638
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: arm64
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=151b5fce980000
-> 
-> Note: testing is done by a robot and is best-effort only.
+Thanks a lot for your comments.
 
-That's not much use.  Let's see what happens without all the error 
-messages filling up the log, and let's test how well the timer emulation 
-works.
 
-The kernel config has CONFIG_HZ set to 100, which is not a very good 
-value for dummy-hcd although it should still work.  But the 
-multiple-millisecond intervals between timer interrupts are worrisome.
+On 2024/06/11 5:27, Yosry Ahmed wrote:
+>>                 unsigned long nr_to_walk = 1;
+>>
+>> +               if (!list_lru_count_one(&zswap_list_lru, nid, memcg))
+>> +                       continue;
+>> +               ++stored;
+>>                 shrunk += list_lru_walk_one(&zswap_list_lru, nid, memcg,
+>>                                             &shrink_memcg_cb, NULL, &nr_to_walk);
+>>         }
+>> +
+>> +       if (!stored)
+>> +               return -ENOENT;
+>> +
+>
+> Can't we just check nr_to_walk here and return -ENOENT if it remains as 1?
+>
+> Something like:
+>
+> if (nr_to_walk)
+>     return -ENOENT;
+> if (!shrunk)
+>     return -EAGAIN;
+> return 0;
+>
 
-Alan Stern
+ah, the counting step can be removed. I will change it in v2.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git 8867bbd4a056
+>>         return shrunk ? 0 : -EAGAIN;
+>>  }
+>>
+>> @@ -1418,12 +1425,18 @@ static void shrink_worker(struct work_struct *w)
+>>  {
+>>         struct mem_cgroup *memcg = NULL;
+>>         struct mem_cgroup *next_memcg;
+>> -       int ret, failures = 0;
+>> +       int ret, failures = 0, progress;
+>>         unsigned long thr;
+>>
+>>         /* Reclaim down to the accept threshold */
+>>         thr = zswap_accept_thr_pages();
+>>
+>> +       /*
+>> +        * We might start from the last memcg.
+>> +        * That is not a failure.
+>> +        */
+>> +       progress = 1;
+>> +
+>>         /* global reclaim will select cgroup in a round-robin fashion.
+>>          *
+>>          * We save iteration cursor memcg into zswap_next_shrink,
+>> @@ -1461,9 +1474,12 @@ static void shrink_worker(struct work_struct *w)
+>>                  */
+>>                 if (!memcg) {
+>>                         spin_unlock(&zswap_shrink_lock);
+>> -                       if (++failures == MAX_RECLAIM_RETRIES)
+>> +
+>> +                       /* tree walk completed but no progress */
+>> +                       if (!progress && ++failures == MAX_RECLAIM_RETRIES)
+>>                                 break;
+>
+> It seems like we may keep iterating the entire hierarchy a lot of
+> times as long as we are making any type of progress. This doesn't seem
+> right.
+>
 
-Index: usb-devel/drivers/usb/class/cdc-wdm.c
-===================================================================
---- usb-devel.orig/drivers/usb/class/cdc-wdm.c
-+++ usb-devel/drivers/usb/class/cdc-wdm.c
-@@ -265,18 +265,11 @@ static void wdm_int_callback(struct urb
- 			set_bit(WDM_INT_STALL, &desc->flags);
- 			dev_err(&desc->intf->dev, "Stall on int endpoint\n");
- 			goto sw; /* halt is cleared in work */
--		default:
--			dev_err(&desc->intf->dev,
--				"nonzero urb status received: %d\n", status);
--			break;
- 		}
- 	}
- 
--	if (urb->actual_length < sizeof(struct usb_cdc_notification)) {
--		dev_err(&desc->intf->dev, "wdm_int_callback - %d bytes\n",
--			urb->actual_length);
-+	if (urb->actual_length < sizeof(struct usb_cdc_notification))
- 		goto exit;
--	}
- 
- 	switch (dr->bNotificationType) {
- 	case USB_CDC_NOTIFY_RESPONSE_AVAILABLE:
-Index: usb-devel/drivers/usb/gadget/legacy/raw_gadget.c
-===================================================================
---- usb-devel.orig/drivers/usb/gadget/legacy/raw_gadget.c
-+++ usb-devel/drivers/usb/gadget/legacy/raw_gadget.c
-@@ -596,8 +596,6 @@ static int raw_ioctl_run(struct raw_dev
- 
- 	spin_lock_irqsave(&dev->lock, flags);
- 	if (ret) {
--		dev_err(dev->dev,
--			"fail, usb_gadget_register_driver returned %d\n", ret);
- 		dev->state = STATE_DEV_FAILED;
- 		goto out_unlock;
- 	}
-Index: usb-devel/drivers/usb/gadget/udc/core.c
-===================================================================
---- usb-devel.orig/drivers/usb/gadget/udc/core.c
-+++ usb-devel/drivers/usb/gadget/udc/core.c
-@@ -1699,8 +1699,6 @@ int usb_gadget_register_driver_owner(str
- 	mutex_lock(&udc_lock);
- 	if (!driver->is_bound) {
- 		if (driver->match_existing_only) {
--			pr_warn("%s: couldn't find an available UDC or it's busy\n",
--					driver->function);
- 			ret = -EBUSY;
- 		} else {
- 			pr_info("%s: couldn't find an available UDC\n",
-Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-===================================================================
---- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
-+++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -989,12 +989,42 @@ static DEVICE_ATTR_RO(function);
-  * for each driver that registers:  just add to a big root hub.
-  */
- 
-+static struct timer_list	alan_timer;
-+static int			alan_count;
-+#define ALAN_MAX		20
-+
-+static void alan_callback(struct timer_list *t)
-+{
-+	if (++alan_count >= ALAN_MAX)
-+		return;
-+	mod_timer(&alan_timer, jiffies + msecs_to_jiffies(1));
-+}
-+
-+static void test_alan_timer(void)
-+{
-+	int	alan_prev;
-+
-+	alan_prev = alan_count = 0;
-+	mod_timer(&alan_timer, jiffies + msecs_to_jiffies(1));
-+	for (;;) {
-+		if (alan_prev != alan_count) {
-+			alan_prev = alan_count;
-+			pr_info("alan_count %d\n", alan_prev);
-+			if (alan_prev >= ALAN_MAX)
-+				break;
-+		}
-+		cpu_relax();
-+	}
-+}
-+
- static int dummy_udc_start(struct usb_gadget *g,
- 		struct usb_gadget_driver *driver)
- {
- 	struct dummy_hcd	*dum_hcd = gadget_to_dummy_hcd(g);
- 	struct dummy		*dum = dum_hcd->dum;
- 
-+	test_alan_timer();
-+
- 	switch (g->speed) {
- 	/* All the speeds we support */
- 	case USB_SPEED_LOW:
-@@ -2769,6 +2799,8 @@ static int __init dummy_hcd_init(void)
- 	int	i;
- 	struct	dummy *dum[MAX_NUM_UDC] = {};
- 
-+	timer_setup(&alan_timer, alan_callback, TIMER_PINNED);
-+
- 	if (usb_disabled())
- 		return -ENODEV;
- 
+Since shrink_worker evicts only one page per tree walk when there is
+only one memcg using zswap, I believe this is the intended behavior.
+Even if we choose to break the loop more aggressively, it would only
+be postponing the problem because pool_limit_hit will trigger the
+worker again.
+
+I agree the existing approach is inefficient. It might be better to
+change the 1 page in a round-robin strategy.
+
+>>
+>> +                       progress = 0;
+>>                         goto resched;
+>>                 }
+>>
+>> @@ -1493,10 +1509,15 @@ static void shrink_worker(struct work_struct *w)
+>>                 /* drop the extra reference */
+>>                 mem_cgroup_put(memcg);
+>>
+>> -               if (ret == -EINVAL)
+>> -                       break;
+>> +               /* not a writeback candidate memcg */
+>> +               if (ret == -EINVAL || ret == -ENOENT)
+>> +                       continue;
+>> +
+>
+> We should probably return -ENOENT for memcg with writeback disabled as well.
+>
+>>                 if (ret && ++failures == MAX_RECLAIM_RETRIES)
+>>                         break;
+>> +
+>> +               ++progress;
+>> +               /* reschedule as we performed some IO */
+>>  resched:
+>>                 cond_resched();
+>>         } while (zswap_total_pages() > thr);
+>> --
+>> 2.43.0
+>>
 
