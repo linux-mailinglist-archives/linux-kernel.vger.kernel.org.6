@@ -1,86 +1,102 @@
-Return-Path: <linux-kernel+bounces-210131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9575903FBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:07:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E33903FBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BC411F25DC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580EE1F25FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35B03838A;
-	Tue, 11 Jun 2024 15:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F241AACC;
+	Tue, 11 Jun 2024 15:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b="a4arpJEG"
-Received: from mail.eh5.me (mail.eh5.me [45.76.111.223])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FRFMNOCB"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D97E38385;
-	Tue, 11 Jun 2024 15:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.76.111.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ECB2110F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718118362; cv=none; b=AiEYTsP2U8G1L/DPe03hGjuYW1VItq+ju5NopBUdrY4IQoszYsyYUFHLOFHNhTlNuMY+cmAkmlineLhJm4IHugDOOkW1JnZ7u3CP6mQ9vD1k0sRAqBLxatzvFtrZb4tv07/EL0XV2k/t6NuMScrI6DHJ0gDFrqRqHq5MTMwO/Tw=
+	t=1718118389; cv=none; b=Ncy4LA4mySM0tFnTpLIQuY9p04VBg5UokvuxX3dBcGWZU5/XDzJ+xaw1+tmUlR3ickMTSp6IQtxyDa3BrCbPXQ4y47+A3mUNW2zEOBXqIrtaMljg1Wb/1PVB7hlKf592q3gsnwbaQAO4CsvsQHjAFP5E70kUn2Lg33t6T2VNDQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718118362; c=relaxed/simple;
-	bh=wAw9e/wozQOw8i+ERsap3osfC9F9UUvcpRornS+m3eY=;
+	s=arc-20240116; t=1718118389; c=relaxed/simple;
+	bh=nOt5urHZ6YolUIcMwNLT/hdMPG5CeiZgEvDlqVxEjdA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rBn+a2RKBBirNqLZaMs/IRSB+qXmP2Jfn7VsL/ql+ej45p+cSqviiLIqHdCCH0Xes1B5uZxeD3a4D36uNv8f6x1RoeyHoZU9nxJST3p3AsXfVM0jwBDJaNYy1dWDBChQtxkdJ54UdUGMUS7iV1DUhKHUsIVY7im+/IN9wsiG/Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=eh5.me; spf=pass smtp.mailfrom=eh5.me; dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b=a4arpJEG; arc=none smtp.client-ip=45.76.111.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=eh5.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eh5.me
-Message-ID: <5a194e14-f578-4a6c-998c-e025d3a65486@eh5.me>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=eh5.me; s=dkim;
-	t=1718118351;
+	 In-Reply-To:Content-Type; b=lZw1BOH/ZyUiTJK2V8gGPAOHwBGkKE0VKegKfSH5EmR3KA+zRi2gik7x+gLV/EfydEnpytEvL7kry7lm2Wv9FZn4gIfw2zyxREwv+LiNGFZ9CXfplm4/kGQ7L/8Q3NE3ZKRL/KNKPgOVSkL1hue2CxsM9byj0D1fEQXzxSdDM4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FRFMNOCB; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: andrew@lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718118385;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WXk1g2VHkQi76mFdTqCSmMpVfZZE8Ut2KmIPAo1Mpgo=;
-	b=a4arpJEG/60zpKH0zF6lPjtaHbUHMEQhhK/KRX82XXPJ1ie5uqn4GM3Bkd1JfNrTZzrhNs
-	dExHMqKhm6qa3mgOPyNSXajF4lpl4DZmyF9B1VQfrdRBP6Ttuc+QGxzm3EmlqasUOP66fC
-	m45FaYmD82jYZgsTdDGQCv2ppQVGO6E=
-Date: Tue, 11 Jun 2024 23:05:43 +0800
+	bh=B0aa0B8ChIF+mHezAp/R9HTe7kWW9pZH2yyyhrXiFF0=;
+	b=FRFMNOCBURkGgNiRwdQjskn6JC0c3uRW0W52Sszed5ab4rK3EMuOb2lX1zLJw+gZ4/f4Oi
+	WblrkxY5Q8yAx838JJ5gvifUL1VI54QrRA7IXFlHRSNoprkWuE5BgRyNftiNJgx6drVdyo
+	tTtzOHtRFOCKwwI7UOuEiy5939UO/g0=
+X-Envelope-To: radhey.shyam.pandey@amd.com
+X-Envelope-To: netdev@vger.kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: michal.simek@amd.com
+X-Envelope-To: kuba@kernel.org
+X-Envelope-To: linux@armlinux.org.uk
+X-Envelope-To: pabeni@redhat.com
+X-Envelope-To: edumazet@google.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: davem@davemloft.net
+Message-ID: <68c47426-f459-4b83-9cf9-b38cd9d65a94@linux.dev>
+Date: Tue, 11 Jun 2024 11:06:19 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/4] pinctrl: rockchip: fix pinmux bits for RK3328
- GPIO3-B pins
-To: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240606125755.53778-1-i@eh5.me>
- <20240606125755.53778-3-i@eh5.me>
+Subject: Re: [PATCH net-next 1/3] net: xilinx: axienet: Use NL_SET_ERR_MSG
+ instead of netdev_err
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Michal Simek <michal.simek@amd.com>, Jakub Kicinski <kuba@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Paolo Abeni <pabeni@redhat.com>,
+ Eric Dumazet <edumazet@google.com>, linux-kernel@vger.kernel.org,
+ "David S . Miller" <davem@davemloft.net>
+References: <20240610231022.2460953-1-sean.anderson@linux.dev>
+ <20240610231022.2460953-2-sean.anderson@linux.dev>
+ <42fff229-ee8c-4738-854b-6093f254408f@lunn.ch>
 Content-Language: en-US
-From: Huang-Huang Bao <i@eh5.me>
-In-Reply-To: <20240606125755.53778-3-i@eh5.me>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <42fff229-ee8c-4738-854b-6093f254408f@lunn.ch>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 6/6/24 20:57, Huang-Huang Bao wrote:
-> The pinmux bits for GPIO3-B1 to GPIO3-B6 pins are not explicitly
-> specified in RK3328 TRM, however we can get hint from pad name and its
-> correspinding IOMUX setting for pins in interface descriptions. The
-> correspinding IOMIX settings for these pins can be found in the same
-> row next to occurrences of following pad names in RK3328 TRM.
+On 6/10/24 19:49, Andrew Lunn wrote:
+> On Mon, Jun 10, 2024 at 07:10:20PM -0400, Sean Anderson wrote:
+>> This error message can be triggered by userspace. Use NL_SET_ERR_MSG so
+>> the message is returned to the user and to avoid polluting the kernel
+>> logs.
 > 
-> GPIO3-B1:  IO_TSPd5m0_CIFdata5m0_GPIO3B1vccio6
-> GPIO3-B2: IO_TSPd6m0_CIFdata6m0_GPIO3B2vccio6
-> GPIO3-B3: IO_TSPd7m0_CIFdata7m0_GPIO3B3vccio6
-> GPIO3-B4: IO_CARDclkm0_GPIO3B4vccio6
-> GPIO3-B5: IO_CARDrstm0_GPIO3B5vccio6
-> GPIO3-B6: IO_CARDdetm0_GPIO3B6vccio6
-> 
-> Add pinmux data to rk3328_mux_recalced_data as mux register offset for
-> these pins does not follow rockchip convention.
-> 
-> Signed-off-by: Huang-Huang Bao <i@eh5.me>
+> This has nothing to do with statistics. So it would be better to post
+> it as a standalone patch. It is the sort of trivial patch that should
+> get merged quickly.
 
-This is also
+I included it in the series since patch 3 touches lines near it. But
+upon reviewing that patch, it seems that these lines are not in that
+patch's context. So I will resumbit this separately.
 
-Fixes: 3818e4a7678e ("pinctrl: rockchip: Add rk3328 pinctrl support")
+> I would also comment about the change from EFAULT to EBUSY in the
+> commit message.
+
+OK.
+
+--Sean
 
