@@ -1,165 +1,173 @@
-Return-Path: <linux-kernel+bounces-209439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC279034B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:03:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5C19034BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52255B25C53
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:03:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29FC1F2370E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BA2173323;
-	Tue, 11 Jun 2024 08:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0957A17334E;
+	Tue, 11 Jun 2024 08:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HfPW/2f8"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="mZQbjnu5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CSZrK0Kd"
+Received: from wflow1-smtp.messagingengine.com (wflow1-smtp.messagingengine.com [64.147.123.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0698F2AF11
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8680F2AF11;
+	Tue, 11 Jun 2024 08:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718092962; cv=none; b=fuAiYVCgYC9BhcvRT4vobfCYlACltIf0Rs3mfEyQOkF6PRXuEfwkOFuCvHppBxs5tZRp/GXVC7ku2Lmm+k9avJVPiJpN/3p/EE6Isch1VP7v3T4wO3KFRlP4mBnFYIOOeye2sQCuRGkEr1dSvMoOLDAyYiXfgWeRuxjaqztawq8=
+	t=1718093058; cv=none; b=LpRQaluXdGoY9wdkM0LDCP2nWoyRcndKsrHuryRKk/9BpO26aPUQcJsshSSGXdaZspDc97Dg/GhP3aftLokTGPDCgWfi3uoenQZWotQitOda0av5MHwuVXxgzXf02rk/LqgCNc1caiakLGW2QuH1BlD5PRSZUlUZL3GUFS9GwwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718092962; c=relaxed/simple;
-	bh=DAEccbuaKAHH6mMPYkOFYIrhVLVM3wTJ1cQBj8Iqxa8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WKwHIfdKHYUrHgd2SXqjlLq1WPAvGkwzgaBmAN1/bIrtfZwYHQ2aFGsqA92x4P2u1LUvaHa+shLw1bq2pv4x67ULOLSGRUhfg3oE7g9Do6sDq3fQopVY1q0BTLuL48hVyywSCtIqMm1LcWNK6iBdhfqMo4TKPwweettMU+0vZ4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HfPW/2f8; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-421d32fda86so18007505e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 01:02:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718092959; x=1718697759; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xaQ5c2kG2ytdMjulncJeOQcMPePJzL39OYVmshUn2sU=;
-        b=HfPW/2f8bVXGGJcmzDzdszQlKo7Z8ihBfyBLlSESwhnjs2GqYLwXOajao3KfGVZh+S
-         8hVZ40IYqpq2O32nKG7qJdNqqV/sS1FSufusXi2lcAojjMdjRKF4w7gCoknFB5ZLDzsw
-         +6bJI9DveTn5tLi2ASUgyXm+0dl6P5trcZM7oFVIXBcOjaSOMP6esLmA+wHJ25REjphI
-         jcNBDIi5T5Rt3vfEPAkDCjgm1Rq7NbCKMfwIFoMCd1MpYTbgcLt0XzQAaNcYcVT2DThN
-         X0MihFkXuVNqPN0SFJQcJlBQyCDP9aqChSMNpkyiaePhftVX0knB6eNqkrWaXhnnfJfr
-         vbFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718092959; x=1718697759;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xaQ5c2kG2ytdMjulncJeOQcMPePJzL39OYVmshUn2sU=;
-        b=jxzlwoOLD0JQNLfJjUtCT00/6TC+WGgYbJ+Z/NxtVPB7mlyC8sNtTI++ZaL82F223/
-         1rhVOpa6YBfJOdLLygwfpzwPFjOQwIlu1mlRRVk3zwJJmGHveuIpgPz7MgUavfyht+Dk
-         PW1/hrDhoix00JUPfXBovaLvBfXgA790GJfPQnwvy96hiCObzbCdPXbpz+VdmI0eNnIV
-         cwWmlWyvtiqjuRli122UlTwyqFwNClvqDTw1c6YqeGJt0X0cYtKK2Jvn73O5it9cyH1u
-         isBfWLXbxgVUW2eQzSbZ9QCn+TSB8PyeKM5hwAo2/48T8tFo/gZdjhevzsil+nmIj9ia
-         PfaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvhjfkLHbtK8GtIH4O2viScc7Fty4B5rH6oZy1Z24kIqEgmeqZ3HePmBCy3Q78xzO/0YaT2C4fElt1b0yIuYbxQY84sYQTp0uQIZ00
-X-Gm-Message-State: AOJu0YyCiu76fb7M+zjmccgkaqp0rtr9RQwweVgwMgR2qsxSUxIV9TmZ
-	sNEmEKjPghT6cBTe0nvFU3VeGRF4CnG/JBiSai7ipymhnzfSRU93gBl9QFCtULs=
-X-Google-Smtp-Source: AGHT+IGN24Aa+RfBIcyXuUKjwh6U0g7ybW6UT5cPP0P3069MO/9Je7HQzSudTLcIQu+deT23iTKWJA==
-X-Received: by 2002:a05:600c:45c4:b0:421:29cd:5c95 with SMTP id 5b1f17b1804b1-421649fba60mr129661095e9.10.1718092958704;
-        Tue, 11 Jun 2024 01:02:38 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421727aac08sm126706925e9.43.2024.06.11.01.02.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 01:02:38 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- Douglas Anderson <dianders@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
- Chris Morgan <macromorgan@hotmail.com>, 
- Yuran Pereira <yuran.pereira@hotmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
- Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, Jonathan Corbet <corbet@lwn.net>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Robert Chiras <robert.chiras@nxp.com>, Stefan Mavrodiev <stefan@olimex.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, 
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-In-Reply-To: <20240605002401.2848541-1-dianders@chromium.org>
-References: <20240605002401.2848541-1-dianders@chromium.org>
-Subject: Re: (subset) [PATCH v3 00/24] drm/panel: Remove most
- store/double-check of prepared/enabled state
-Message-Id: <171809295768.4173405.17800575669800599285.b4-ty@linaro.org>
-Date: Tue, 11 Jun 2024 10:02:37 +0200
+	s=arc-20240116; t=1718093058; c=relaxed/simple;
+	bh=i5PCbp0/q6PWz4TVWQpu/XHWdtU4gQtsM/eIXXS5bCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ndaXJxABZVuXLCM7HDiVozNF3AcEvkenzxNJktu9GPWi5pNyxrhh/Z0cJ0cv6bJgTbW09F3os1xaPZ+kMeEQg3S54G/hR7e3meuB6edA/LcQu9eK+iEdINOcass02d2GF55W6Ezj8UdgVrWOfebkwfhxvQ3ESqrANUImEp2FsKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=mZQbjnu5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CSZrK0Kd; arc=none smtp.client-ip=64.147.123.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailflow.west.internal (Postfix) with ESMTP id 282092CC0167;
+	Tue, 11 Jun 2024 04:04:12 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 11 Jun 2024 04:04:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1718093051;
+	 x=1718096651; bh=T/+yVl2zv0+WWZAFjJjZWDjIEaS6BfN4J4jIExynF6o=; b=
+	mZQbjnu5j3Y6c5s3NSn+f0d3nDl8PoIpV2J7xwyMi9/WvD/RY1kTze8DRKg5Ob/9
+	qdcDzg8z1JIHwDnn25DSApXsXTn6/bVuJosk8d9RnWp8rWzskRXM9PaWfzjSQcbO
+	L/pICtn0oU8vqHYGhaUI1WhxzlfiEW2Clz2RiIucnveZEE0r7ic4GSTumjSm/+sx
+	TwBH7RXzTN8uCCs8xL8Sbb4/3Mi1fvUv0uRTk5azsCKbpc82kY8WVMIrYDFbESmz
+	tAKWOi8hA8Yb3/3nHam8loFLXet5LCOSdm5CHxishmCypoFw7WMqzrS6+GZqpoKW
+	KSv/GyUZaUeeojOfo+9Vzg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718093051; x=
+	1718096651; bh=T/+yVl2zv0+WWZAFjJjZWDjIEaS6BfN4J4jIExynF6o=; b=C
+	SZrK0KdQEkfShTQPNyvj4mlnKZ0Xbt96wH2Bk8SLgKtBosrmcGOS62Nxz2GgpRKh
+	RM+s1SmAOHc8jwTQYcbXY4HfhyvA1X/BpdzYexyb3voF546hIMFrftL6byx/8Gq5
+	CyxDkiIDN9oLRqT0Nf/LaUiqqX05eT1btd9UsyUmbwFpTvbGTA6DT3DuQvwfUBKc
+	qA52qqMKRKtPR/9fjA9TbeDBTjsdN+FQxV3vQB7Zo6Dn7FU+V32DBRBd2xsUo4KD
+	epx9fxt2GbDP3IDJj7N9Sx6AiW6gmuCXgkH2QW1AZX1ds1Dhu6HORajf9Tf9GL0+
+	Sd5Mo8tvMorsvB3tmZk0Q==
+X-ME-Sender: <xms:-wRoZpXrMrwrS2LBoRUf1CscHpzfEOrNAJKNPFtQhnL2ou4ekXBebw>
+    <xme:-wRoZplIqIz-jLey3ypWwohXbLo_axCWylNtXJSop0FrUIU_rmjonZ32jdlWwBPFT
+    iyChc6HdYd2moNtCsY>
+X-ME-Received: <xmr:-wRoZla3TKdjigG_1iaNu_jfnqUKH-kmyaTaQ8PEpjIy_KzdOf026xrOdaJZbZ3hsIKHSjAW1_0YIc-XzHE-Kz8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduuddguddvfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtugfgjgestheksfdttddtjeenucfhrhhomheplfho
+    nhgrthhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqne
+    cuggftrfgrthhtvghrnhepleekffehueelieehveekjeeggfdufefffeeuvdetkeeigefg
+    veekvedtfeegffegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdplhgruhhntghhph
+    grugdrnhgvthenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
+X-ME-Proxy: <xmx:-wRoZsW_jAS-81zAUR-g6jdd9E8ilJENs9OUd1rRv-1c8UA21Ym8_A>
+    <xmx:-wRoZjlpGEBpk6d50L2m4A98pvBaAsuSdPz6BQm4X_y5dld9sd84LA>
+    <xmx:-wRoZpefYCike81RvCyTXCdE9YDoVGo62yxfwbbeJ0ekaL6W3FmwhA>
+    <xmx:-wRoZtEuV4QOEfDqcw9_xN4BTBgS0yEpp8zMtZ8VcYlL1hMBle_ObQ>
+    <xmx:-wRoZtmBixysWk2mkeQa9y_IPYYypQgmdhR9RwxVXuUx8F-uV7TEZXxX>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Jun 2024 04:04:07 -0400 (EDT)
+Date: Tue, 11 Jun 2024 01:09:18 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: brauner@kernel.org, ebiederm@xmission.com,
+ 	Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>,
+ 	"Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
+ 	Matt Bobrowski <mattbobrowski@google.com>,
+ Alexei Starovoitov <ast@kernel.org>,
+ 	Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ 	Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ 	Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>,
+ 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
+ John Johansen <john.johansen@canonical.com>,
+ 	David Howells <dhowells@redhat.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>,
+ 	Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, 	Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev,
+ 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, 	linux-security-module@vger.kernel.org,
+ bpf@vger.kernel.org, apparmor@lists.ubuntu.com,
+ 	keyrings@vger.kernel.org, selinux@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM
+ hooks
+Message-ID: <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
+References: <20240609104355.442002-1-jcalmels@3xx0.net>
+ <20240609104355.442002-5-jcalmels@3xx0.net>
+ <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
 
-Hi,
-
-On Tue, 04 Jun 2024 17:22:46 -0700, Douglas Anderson wrote:
-> As talked about in commit d2aacaf07395 ("drm/panel: Check for already
-> prepared/enabled in drm_panel"), we want to remove needless code from
-> panel drivers that was storing and double-checking the
-> prepared/enabled state. Even if someone was relying on the
-> double-check before, that double-check is now in the core and not
-> needed in individual drivers.
+On Sun, Jun 09, 2024 at 08:18:48PM GMT, Paul Moore wrote:
+> On Sun, Jun 9, 2024 at 6:40 AM Jonathan Calmels <jcalmels@3xx0.net> wrote:
+> >
+> > This patch allows modifying the various capabilities of the struct cred
+> > in BPF-LSM hooks. More specifically, the userns_create hook called
+> > prior to creating a new user namespace.
+> >
+> > With the introduction of userns capabilities, this effectively provides
+> > a simple way for LSMs to control the capabilities granted to a user
+> > namespace and all its descendants.
+> >
+> > Update the selftests accordingly by dropping CAP_SYS_ADMIN in
+> > namespaces and checking the resulting task's bounding set.
+> >
+> > Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
+> > ---
+> >  include/linux/lsm_hook_defs.h                 |  2 +-
+> >  include/linux/security.h                      |  4 +-
+> >  kernel/bpf/bpf_lsm.c                          | 55 +++++++++++++++++++
+> >  security/apparmor/lsm.c                       |  2 +-
+> >  security/security.c                           |  6 +-
+> >  security/selinux/hooks.c                      |  2 +-
+> >  .../selftests/bpf/prog_tests/deny_namespace.c | 12 ++--
+> >  .../selftests/bpf/progs/test_deny_namespace.c |  7 ++-
+> >  8 files changed, 76 insertions(+), 14 deletions(-)
 > 
-> [...]
+> I'm not sure we want to go down the path of a LSM modifying the POSIX
+> capabilities of a task, other than the capabilities/commoncap LSM.  It
+> sets a bad precedent and could further complicate issues around LSM
+> ordering.
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+Well unless I'm misunderstanding, this does allow modifying the
+capabilities/commoncap LSM through BTF. The reason for allowing
+`userns_create` to be modified is that it is functionally very similar
+to `cred_prepare` in that it operates with new creds (but specific to
+user namespaces because of reasons detailed in [1]). 
 
-[01/24] drm/panel: boe-himax8279d: Stop tracking prepared/enabled
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/12866fdcfb9ebbe1b175804390195b99a234d5e7
-[02/24] drm/panel: boe-himax8279d: Don't call unprepare+disable at shutdown/remove
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/2ccc698c68333256621abc1146de0d3fb0cc6ebd
-[03/24] drm/panel: khadas-ts050: Stop tracking prepared/enabled
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/2469cb5c41b4774a6fb5ed799ae53ad16b407a9a
-[04/24] drm/panel: khadas-ts050: Don't call unprepare+disable at shutdown/remove
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/6ac427c0cd21c7260d6b5133a70084aa35267a72
-[05/24] drm/panel: olimex-lcd-olinuxino: Stop tracking prepared/enabled
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/db45a6991d9e33e852419f8bb0bb8d70b8d633ac
-[06/24] drm/panel: olimex-lcd-olinuxino: Don't call unprepare+disable at remove
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/16661a0dd54168826edb2fe5a7b9a183cff0c69b
-[07/24] drm/panel: osd-osd101t2587-53ts: Stop tracking prepared/enabled
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/9a3f7eb7811a4c5f36eee93b83bbd72bf6adeac8
-[08/24] drm/panel: osd-osd101t2587-53ts: Don't call unprepare+disable at shutdown/remove
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/c99e387afed197c3f22d73d8649c54f7c8da30ec
-[09/24] drm/panel: tdo-tl070wsh30: Stop tracking prepared
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/7c9526e58f74e9d725a9607b1ec24ba675f5b00b
-[10/24] drm/panel: tdo-tl070wsh30: Don't call unprepare+disable at shutdown/remove
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/2098604605adf35c9a0936355252d676f4cbc38b
-[11/24] drm/panel: jdi-lt070me05000: Stop tracking prepared/enabled
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/698acd40aee3ab2dfff4472ec3c16ce42e70e4f3
-[12/24] drm/panel: jdi-lt070me05000: Don't call disable at shutdown/remove
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/c8f67cd1d931f2e61a3456d0122ffdeb90b699f7
-[13/24] drm/panel: panasonic-vvx10f034n00: Stop tracking prepared/enabled
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/e9864996b44e8add09fd612cb7d00d9b54cd9ef1
-[14/24] drm/panel: panasonic-vvx10f034n00: Don't call disable at shutdown/remove
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/f10b4577da3e8c8e457016c77ce2c2fb8d2d5023
-[15/24] drm/panel: seiko-43wvf1g: Stop tracking prepared/enabled
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/155739579969d9653f9c2e69141129a824cbd6b8
-[16/24] drm/panel: seiko-43wvf1g: Don't call disable at shutdown/remove
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/728290006afba80108b3ce9dd33018f05e454cf0
-[17/24] drm/panel: sharp-lq101r1sx01: Stop tracking prepared/enabled
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/316bb1473c78f415a99a10d3c903ed70e0014ae3
-[18/24] drm/panel: sharp-lq101r1sx01: Don't call disable at shutdown/remove
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/d7d473d8464e7b9931c0b19f68ea0df807e01b4c
-[19/24] drm/panel: sharp-ls043t1le01: Stop tracking prepared
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/804c4d0a20437bca3f017aaf96416f3cec7951c9
-[20/24] drm/panel: sharp-ls043t1le01: Don't call disable at shutdown/remove
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b3494ccb04124ab3ae08fcd01f9571d209ce97f2
-[21/24] drm/panel: raydium-rm67191: Stop tracking enabled
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b7c906d68078f235c1d017a5a820fbeac5a53904
-[22/24] drm/panel: raydium-rm67191: Don't call unprepare+disable at shutdown
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/78f15847bdb8fe04b1753b1fed4984c183661ef5
-[23/24] drm/panel: Update TODO list item for cleaning up prepared/enabled tracking
-        https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/8e11b23c96c694d4cb0fb6595b38d77ee5edb296
+There were some concerns in previous threads that the userns caps by
+themselves wouldn't be granular enough, hence the LSM integration.
+Ubuntu for example, currently has to resort to a hardcoded profile
+transition to achieve this [2].
 
--- 
-Neil
-
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7cd4c5c2101cb092db00f61f69d24380cf7a0ee8
+[2] https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble/commit/?id=43a6c29532f517179fea8c94949d657d71f4fc13
 
