@@ -1,101 +1,150 @@
-Return-Path: <linux-kernel+bounces-210106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91785903F60
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:59:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A46B903F6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DEF8284737
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:59:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E62CF1F2499F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CD9179AD;
-	Tue, 11 Jun 2024 14:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FE41BC5C;
+	Tue, 11 Jun 2024 15:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TXBL+HqZ"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lK++gawO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45ACD12E61;
-	Tue, 11 Jun 2024 14:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129FFA94C;
+	Tue, 11 Jun 2024 15:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718117955; cv=none; b=BNj2BkXNeFA/E940HTP30jCIGKo1TwvuoZZY0xzKoPvA1IrrOp/vcnUh4TGn91j9aHxfdsXk8xsqYH+DXDujH/xzIIeM5xVJWIsd4r6yzsTUB/cXFB5h43OftHpZV3VAjU9c+d/Pq0wzqmyWYNmDmsdfa7i2/63cAAd4wlmZGnk=
+	t=1718118056; cv=none; b=MPMEzKpqGTxu1iCKK90uII6G98Mj2N38wiKjzFnB9x+SKRoMCfM4ShK7RhWBve69odV1vtvp5BWZsqU+CqtIDE1P+5SKcJnkB9yBLYjPKxK1yTPi9IYaYcb1LSfllF0rvgTyovj8wozD6vXlJOklG0xSv8YUUatC3lNciYUBL8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718117955; c=relaxed/simple;
-	bh=sy1v37dTQAOugfjUcXUFJL/CtJgCG26TLqkvTQl1784=;
+	s=arc-20240116; t=1718118056; c=relaxed/simple;
+	bh=6AxpCQRp4CcCzGPTkvMdBUk76WhbB3R46k9hHy1H/X0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jFUitpiMRWIjYw7tYl8p9h4y5JNc1X473KNPDqZ0Fi20VrObMohWzg3VdvNsdmD/VEXfJHoWt0nPrZV//3z6SY6VbZkjq0UTLuDtYsgD762Ee4XBAngxtaNQmlte7aeTt3OtxhZIKcj/cu+uGVWLLvLQs8T/dESRKB2n57OWVAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TXBL+HqZ; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2c30a527479so413150a91.3;
-        Tue, 11 Jun 2024 07:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718117954; x=1718722754; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sy1v37dTQAOugfjUcXUFJL/CtJgCG26TLqkvTQl1784=;
-        b=TXBL+HqZRY9n3eSA6Y074Zk/6c0rQ0zxn0QectTL/q2aY2XGe/E3lAlBNWhsH4hkXa
-         5XVDGM2wujlMvyLfKA/72FdDDXoz8K0GwZ2dDaZTHurQZHJBu2VBctuo0PJJD666wFSD
-         zw8O0FwHGIPrQvoi+2AYocpId4TTDixQzSqQYwf8H94eG1c+PXGMziMU0GXSexJaT9G2
-         SLFFtX0s6u1c1e9GlPC9p6Cbuwsfyy/70Umlw11e34CeAdwQqG+TIgG/n69xe+FIc9WZ
-         /jjTgQ6CQw3EoM8Itrc74OPKQk8uBo/DFx5J6dvSEK4j4QnhSFz0PTZA/ObroJ+vb5w0
-         LLjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718117954; x=1718722754;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sy1v37dTQAOugfjUcXUFJL/CtJgCG26TLqkvTQl1784=;
-        b=J/8O3DLdJ8G1T7bAoACq7/pDNjBxeTtygOR5T0QmLM46pVGhiILrbsuZbeO8Z/UTk/
-         a+pFk/JylyNm6w/A/rJMEmKvhwERYtm4nOt/67BHV5hi407XzEaSHh0h3bwvlr7HMxJJ
-         T9A/6/NAwp0Qz/CDMP2pKe9p0uRGVmaVqiQejG9B0awokhPve0IKzQJE6gdBwMXuwqD0
-         1ErvqiaEjFqjapvoCaimVDCp7o5v2VVL3D1SyUjwL8eQLW/oalyXLeoeAKOz0evywOiq
-         Y+PVXQWycwoHtDDmkKEURNHfQOInkMJ3YZtKulwaP2z+0rxZHQojZz7e0CQbVkhcJ3I/
-         uKxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUROqJkb1xOnCRUASaAQSGuU/XTwgwtVwtxZ8zznJ8AykktE2i60OjsPIlpdNhFCoJVzD7V4xvTipKBEPRJ1bc=@vger.kernel.org, AJvYcCVN8KqwZv2XRFj5QZZbhipZIJZSYdeIPiRcrNpxX8UtyTfst7ApCR2tAgxh0z87xgi0AjUKyfS6LDZJsVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztrIrWf/jzT0fUGFHqvI7Px5wukPKiTeKbCztGkcxw3KN7lKw/
-	kGfQzI1x9nFtcaYnGnDqn/5HpD2tb+ZBWMQDDDCq4v9NNavpAbHj/SW2V/E5Yb07WcncTz+4JJg
-	MhuXTk9K2H8PTWLMLj2gjYWQuQ9Q=
-X-Google-Smtp-Source: AGHT+IEEa2qRt46GzuqPa4X2/ITWYiu+vjUvlGqM2l49WAQuZPD09hPvJ8hdcgzut7Q5IOFdaITkFIqNDkHMBtlwwFA=
-X-Received: by 2002:a17:90a:bb82:b0:2c2:f042:d96d with SMTP id
- 98e67ed59e1d1-2c2f042da4cmr7648103a91.4.1718117953572; Tue, 11 Jun 2024
- 07:59:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=k+1Rw1eBj0X1wMaNBBo7PLpWftl0G9/hLKbgKPcYHHStRs/nNSCuSaB8Ea60wyQrA3OZGr0JHcqtLPOKefYrchQLmysYA8RhFe1lOQBmqkFmVNtVNeDpB5+JKh2loYnGPD0ZRBcuQ7uOXCiqX1OijiYpEbro5vcOHScCPjwbVWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lK++gawO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ADADC2BD10;
+	Tue, 11 Jun 2024 15:00:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718118055;
+	bh=6AxpCQRp4CcCzGPTkvMdBUk76WhbB3R46k9hHy1H/X0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lK++gawOAE6NEeUaxXIDX1T+5GPz34SU9iKWri2aDHHa3CmTKMrOp2okkSwkADM9S
+	 JmKpnWzCct8hWUkOXbieudG/cbwiXYqgbYWUSxJC9lyeshc1Aun1yBc6RTao6Ma+bs
+	 BxZyiZD0Q+evT1i5rc2eTh0jzQfwGzc+eT/6nKvN81H+YNRcDQoEmu0EJlE9TfrO0N
+	 MKtsBhhyOwixBOL51EmvBqayqIzO5qfWRNLtDUclcivUJuBDUXMX+VELO/t8SpX1wS
+	 TPN8DiwtAmYMqWFMFDIkuwzRDxXMimOaMjPDQNGd4SdkEX0l7MEHvMJRkHlF79xOy+
+	 a88HWDgcLa0tg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52bc3130ae6so4242459e87.3;
+        Tue, 11 Jun 2024 08:00:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVowPU0khFPiMVTqCRWWRoYOiTYibzZF/duiL48hW1fWMVPrmVraJR16TNZWebJJYYDPCfRrmM0mm3pyd2pCgIOiIXDQoQW1823ItPU
+X-Gm-Message-State: AOJu0Yyf/+zQ3X9O0Vga1XngHC5FfFHEtRyKsKIaUgGtti5Juocgs7Mz
+	GAaUENWLh7qPhDbpxHcXVgCSZ6hJSD9tWTLl84a2HMz+MNmNj1CBn3eTDS5G+188j3GSDLiryZa
+	cSsUgUBKs+yLC95eBGBG513YGAfE=
+X-Google-Smtp-Source: AGHT+IGINOhzeZws/aQKQHJqJY9w+n3IdAFpdhvjtBhtXsixm0FIWnPZLcRWpo+Bp75TAg7lqZxIpftnFcVM+mT3aWY=
+X-Received: by 2002:a05:6512:1191:b0:52c:856d:dd18 with SMTP id
+ 2adb3069b0e04-52c856debdfmr5745187e87.4.1718118054270; Tue, 11 Jun 2024
+ 08:00:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOMZO5A7+nxACoBPY0k8cOpVQByZtEV_N1489MK5wETHF_RXWA@mail.gmail.com>
- <3fbb5317d9ff33ef1b60ca8297537335ce86a79d.camel@sipsolutions.net>
- <CAOMZO5Aufe7zAE7TFVprvRreamYd9=RHjybjaEz2O9WaPksV=Q@mail.gmail.com>
- <95163ee547da95964c16f87a38d3326ae4da3253.camel@sipsolutions.net>
- <CAOMZO5CYDsh70u3To7HYXVki_MzzhFyCCHkigt_Es7o_+XG3oA@mail.gmail.com> <7a8e220d77d7e30a0cfaf984404ef2f57eaa785f.camel@sipsolutions.net>
-In-Reply-To: <7a8e220d77d7e30a0cfaf984404ef2f57eaa785f.camel@sipsolutions.net>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 11 Jun 2024 11:59:02 -0300
-Message-ID: <CAOMZO5BktgtaSPzCf3WOOnkD2n+fj3FeQEfHeT7CYFL+tCHeaw@mail.gmail.com>
-Subject: Re: iwlwifi: Regression after migrating to 6.6.32
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: miriam.rachel.korenblit@intel.com, kvalo@kernel.org, 
-	Jakub Kicinski <kuba@kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
+References: <20240610163856.693110-1-aquini@redhat.com>
+In-Reply-To: <20240610163856.693110-1-aquini@redhat.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 12 Jun 2024 00:00:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASe0q4W2cuLnLnpJbWtyoOoZ6Gi+wJw=JiRyZrT9KdNEQ@mail.gmail.com>
+Message-ID: <CAK7LNASe0q4W2cuLnLnpJbWtyoOoZ6Gi+wJw=JiRyZrT9KdNEQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: rpm-pkg: fix rpmbuild warnings for kernel.spec
+To: Rafael Aquini <aquini@redhat.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 11:50=E2=80=AFAM Johannes Berg
-<johannes@sipsolutions.net> wrote:
-
-> It should be an address (so that's fine), but I don't see how it ends up
-> not being page-aligned if we request to map a page and 4096 bytes??
+On Tue, Jun 11, 2024 at 1:39=E2=80=AFAM Rafael Aquini <aquini@redhat.com> w=
+rote:
 >
-> Is that platform "weird" with strange page size, or something?
+> Newer revisions of rpmbuild are throwing warnings about the current
+> kernel.spec template having an unversioned kernel-headers in the
+> 'Obsoletes:' field and not being able to source the epoch's date from
+> the spec's missing '%changelog' section:
+>
+>   $ make srcrpm-pkg
+>     UPD     include/config/kernel.release
+>     GEN     rpmbuild/SPECS/kernel.spec
+>     UPD     .tmp_HEAD
+>     ARCHIVE linux.tar.gz
+>   rpmbuild -bs rpmbuild/SPECS/kernel.spec --define=3D'_topdir /mnt/nfs/wo=
+rk/kernel/linux/rpmbuild'
+>   warning: line 34: It's not recommended to have unversioned Obsoletes: O=
+bsoletes: kernel-headers
+>   warning: source_date_epoch_from_changelog set but %changelog is missing
+>   Wrote: /mnt/nfs/work/kernel/linux/rpmbuild/SRPMS/kernel-6.10.0_rc3-1.sr=
+c.rpm
+>
+>   RPM build warnings:
+>       line 34: It's not recommended to have unversioned Obsoletes: Obsole=
+tes: kernel-headers
+>       source_date_epoch_from_changelog set but %changelog is missing
+>
+> This patch addresses both RPM build warnings.
+>
+> Signed-off-by: Rafael Aquini <aquini@redhat.com>
+> ---
+>  scripts/package/kernel.spec | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/scripts/package/kernel.spec b/scripts/package/kernel.spec
+> index e095eb1e290e..4d58b29c03ad 100644
+> --- a/scripts/package/kernel.spec
+> +++ b/scripts/package/kernel.spec
+> @@ -1,3 +1,5 @@
+> +%global source_date_epoch_from_changelog 0
+>
 
-It is an NXP i.MX8MM, which is ARM64 with a 4KB page size.
 
-Thanks
+Another possibility might be to add %changelog section.
+
+In Debian packaging, debian/changelog is a requirement.
+
+scripts/package/mkdebian generates a very small
+debian/changelog with a single log entry.
+
+
+
+
+>  # _arch is undefined if /usr/lib/rpm/platform/*/macros was not included.
+>  %{!?_arch: %define _arch dummy}
+>  %{!?make: %define make make}
+> @@ -27,7 +29,7 @@ The Linux Kernel, the operating system core itself
+>  %package headers
+>  Summary: Header files for the Linux kernel for use by glibc
+>  Group: Development/System
+> -Obsoletes: kernel-headers
+> +Obsoletes: kernel-headers < %{version}
+
+
+No objection to this fix.
+
+
+
+>  Provides: kernel-headers =3D %{version}
+>  %description headers
+>  Kernel-headers includes the C header files that specify the interface
+> --
+> 2.45.1
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
