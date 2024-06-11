@@ -1,328 +1,254 @@
-Return-Path: <linux-kernel+bounces-210466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641129043FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:50:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E3E904401
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEE20282FD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:50:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A578282FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611E17CF34;
-	Tue, 11 Jun 2024 18:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D79C81ACA;
+	Tue, 11 Jun 2024 18:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhHgsjEt"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uQ1ZN2xf"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2068.outbound.protection.outlook.com [40.107.220.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1C057CAE
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718131817; cv=none; b=QthK61x9Fzwq1/RelaBzg7GX1K2cXBRpBSeIIwN1j9XS0pTZ+GlN68trbiddymnlnsgJWy5HOT7ciYV5l8i32Dxz89oJvInQK4yNJU4qodTMRV9pbtcJ4snkDojL7M75UwD1PstU3WADUHcg/+F3kLj7Q3ix5og/5O9oBlUl2pY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718131817; c=relaxed/simple;
-	bh=bvvfSUQSOvS++oMTg0GbnTARLncjJamXVC71St74WYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ecA3/OmQd6Gd4xzYCmwgid3XTI3EBnLoT3u478lUCNByfvODnJLS8eMCRwZFYhQ+gt2elvarTm8LnIhKVeLqhcZD7nB1WgA+ZV2AG2eM3vS2S73ckgIUzniZ3yvjXrZAVknJNt/3U+Q3rrJYAcZwp2kugOq7ZNk68KI98yuq9bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhHgsjEt; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57c714a1e24so1697792a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:50:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718131814; x=1718736614; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bqmR2CwNzfC5dY9c/qTiO9vjLhQkJvchWeugaaFTjFI=;
-        b=OhHgsjEt9jdwE01mABP/+8GV7uqS0WVYmxeMpkbiX1AXdcViR3k1OCSbt0QCWohiI1
-         J4Uwl2Cc7tDRoP/t0y1YL6NpFtRcnzvJ4UF+oFPfmbd2TbHSgjWPQg4JogP8Z1vBIgHD
-         6C/RU9Zh8ZNdA+Y9hrujxlcBh5iGQ/p6TNeuJ4pET/nUpoM7khTKzgs2SoDcvwBYrk4X
-         z5LAsmsnelNUbUm5n5P55BJ/ROIab0LZyD4ilb7uNEAb9fV50dY1bz4MiI7pnRC5m+AC
-         Vqd/3pf0l3y4ThYeQx+Q7Q2781xzVunKN9jUgypaSQX2W6NHW5C5M+lfHfYev+KFl/IM
-         ybHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718131814; x=1718736614;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bqmR2CwNzfC5dY9c/qTiO9vjLhQkJvchWeugaaFTjFI=;
-        b=laNpjbYjU8IT3AXX3O3HXkM9044zOCQUmwcn/UACj0isYDQ9OXr4aPyBBnO2zc4Cgv
-         +LWxo2+T2vI4Q0eWtinaDLQikqCOHuFCDnGekYBIH5PZkjb4q15PF+WtMnzjAeOPRIcO
-         KlvUz2MbZhfITTAcGEDK6QaHqvNF/aehUO1orXjLad9c2Z4gELmUOnc0DKoy1oHlFOv8
-         AMO7WIbmWqFXDWHaZS8wcWFDyck1s0yFLZhRDe0wGwKWWcTidO1e9wuV08yqI7fA5Njt
-         zNng92RzXYuwZU5NG8K5K6PVwmynm6G01DnIZX1LFeui1UjQhL/3RsX9PfRSblbUPhqI
-         jOlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLb2+fQ8peTAR2NOtvyTHjoqsJystRS0eIzGSqpdMEhB/Mtf1z6ezcjEm16D+4wdWxj4RscQAWKbHSb+eHCw73mga1kKP1b6I6ieNI
-X-Gm-Message-State: AOJu0YylNfKh3LV7iFXRvTZ1JnnIqzTaBj1R9+uU+kPZK885229zvoFs
-	iGKjhW4E44DeRp5NuLQ5EKaTNVDy2vlNNRRG0evS4mwczYc7nCeJ
-X-Google-Smtp-Source: AGHT+IEeooKv++9An6Cw6IMTAU8dmlKCFHrUWYtn1Wz5iEjaM8TvXLcJ2Toq5qJyX1d/4MC9+ATYCA==
-X-Received: by 2002:a50:a685:0:b0:578:72d4:e3b0 with SMTP id 4fb4d7f45d1cf-57c509a6080mr8137283a12.36.1718131813239;
-        Tue, 11 Jun 2024 11:50:13 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::7:57b4])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c6c95bb33sm6522695a12.8.2024.06.11.11.50.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 11:50:12 -0700 (PDT)
-Message-ID: <d6088fb2-58d8-4ed1-8d3b-83ea34657db7@gmail.com>
-Date: Tue, 11 Jun 2024 19:50:11 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE74F57CAE;
+	Tue, 11 Jun 2024 18:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718131827; cv=fail; b=KKE5uq/cQ91VF0zGqBnrKXN4/2fefY13S6XkfuTf+e2CfWAa9AP/HKqb9l3BUOxSLRmiSJWBd3oOlex5fSaxdLWC+YLQb8mJizu8uj5xk2oY3YBRu7U0/GRaBWGJrplj8ey1UVlzzCbuHdwHqnj1jAakXhsbflWZwad5mxY5MH8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718131827; c=relaxed/simple;
+	bh=zftxwze457lgJI2v+CLxjoKZIQryROeWm1WOoVQU4lw=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XesjAk2gfGQ0iVrv0wExBGrGpKxOPSA2aXxU3RaJXiGtsat327YCXp3eDXq+pb5ZjK61M9hlX6lcQkr3dJatZR33J2Q2tlOQDN0RXw2JkR63kWTX4VDF4To8I7ULEdFgfwUuA7aKYnj19Ubs/eWHowifi+wCoLrBgjhC/6a1paI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uQ1ZN2xf; arc=fail smtp.client-ip=40.107.220.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RHfydlOp4GbML1TixUIHOIKvYvisIsnxOOwzLxE/MSSvOF8Io/ANZW9Qphinuqq1BAA7ran2MJxIblkADEemYBKSCZIOcPWpXcnUKOVm2rmfDijBiJ6AzTCMXZEwz38M+n8HpwQcmQvRaOgCogv7IM04Jy1UAO3D/s1htdrReTkRZ+BeV6Hbj9O2CFypetjCb11339E895Dw5qfwWfz9PYfkMpZKRvLMKSsZZbiKAJ3ld5LQ3doBkUQ7ZoqXW4x2MbAjBUrcq7FbOnOpjiUBhL4Y8X5uX4WTvHbvgyoErNrWIx8bYJkTWXlNe9/7Bdyl8UT4+VHpU9UHt3LFCRomwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ERprZy03tr/pSUXLmd45v5YwUGkAoyGeDtZ4SpVQ/5E=;
+ b=lpCrA1FZExEMkQplj/t88hrGeTwlIkBU2Dmn5DgQSfLOW++4y3F2Cd8dZLEIU7wm6cJ4E2vQnkwAsD2N3C5ASnjZnxiv8srx3NnD/MHrQczihzY931kjAXGyiJAOBDoqqwInspmp6wHm4WmUIw2r4LjvDDiYerAS9KYFwgWKBkrZj873pztO/lyG0NaGhSLLrjhoa7/eMJMkR5eHKyoEqo9HvJ6pN6OfQYEqLaYquJ33t0X++4CasgJz2n3xA+4VV5TVNtD+Vh8Y+k8tBFToJ5vF5Og/u88b+EUNS4vUxklf1OOqYXNdzFAC9QTGsytklGkUvvNKW/ETYxa3L/LfCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ERprZy03tr/pSUXLmd45v5YwUGkAoyGeDtZ4SpVQ/5E=;
+ b=uQ1ZN2xf2ubluvBZEcOGFVynxw5q9sIqjDDa9ElgErMziM672vL0OFlJTgHva+x3ndFTDZgEiKVuFO+y2iLngJKVSpJBOjknEBmCpJwItTwoJgv3IVekJJJ3L50PmZKwRQ+mBkuFyipAf4QEl+nP+heEfZCMwZbsNlDK5mpxzZw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by CY5PR12MB6551.namprd12.prod.outlook.com (2603:10b6:930:41::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
+ 2024 18:50:18 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
+ 18:50:18 +0000
+Message-ID: <37e3477c-db6c-4fa2-9799-f23a0f37d20c@amd.com>
+Date: Tue, 11 Jun 2024 13:50:15 -0500
+User-Agent: Mozilla Thunderbird
+From: Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v3 01/10] cpufreq: amd-pstate: optimize the initial
+ frequency values verification
+To: Perry Yuan <perry.yuan@amd.com>, gautham.shenoy@amd.com
+Cc: rafael.j.wysocki@intel.com, viresh.kumar@linaro.org, Ray.Huang@amd.com,
+ Borislav.Petkov@amd.com, Alexander.Deucher@amd.com, Xinmei.Huang@amd.com,
+ Xiaojian.Du@amd.com, Li.Meng@amd.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1718095377.git.perry.yuan@amd.com>
+ <c3e867be691b6fdb3d34e378199b297256aeebff.1718095377.git.perry.yuan@amd.com>
+Content-Language: en-US
+In-Reply-To: <c3e867be691b6fdb3d34e378199b297256aeebff.1718095377.git.perry.yuan@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR11CA0185.namprd11.prod.outlook.com
+ (2603:10b6:806:1bc::10) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, david@redhat.com,
- ying.huang@intel.com, hughd@google.com, willy@infradead.org,
- yosryahmed@google.com, chengming.zhou@linux.dev, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-team@meta.com,
- Shakeel Butt <shakeel.butt@linux.dev>
-References: <20240610121820.328876-1-usamaarif642@gmail.com>
- <20240610121820.328876-2-usamaarif642@gmail.com>
- <CAKEwX=PnwjmZKPLX2=ubD6+-+ZAqpXnczkHe4=1QY1hizOE8WQ@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAKEwX=PnwjmZKPLX2=ubD6+-+ZAqpXnczkHe4=1QY1hizOE8WQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CY5PR12MB6551:EE_
+X-MS-Office365-Filtering-Correlation-Id: fae03404-f81a-4178-3aa3-08dc8a47567b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230032|376006|366008|1800799016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MENNcEFLcVdMaDBQRSs4YVM5d3RCVnJNUDZBZ2drSzZVMWFlV3MreG1ocVBn?=
+ =?utf-8?B?c1o2c3NQVThnQ3h3OTkrZVprdWJNSElqc0dIbmUxMDNnOUU2ak9BQW5ObjZi?=
+ =?utf-8?B?Myt2RlVkK1lBRk9LNEVPVUlrWEVTN1VEVXcybE5Vbm1SK2ZaRCtiYWVCSy8v?=
+ =?utf-8?B?Q3FwN2Zjcnp3dXBESU8rN0JoaDZkK0hXZUxuNkVFOGdXVXpKNHhxT2lMbzBK?=
+ =?utf-8?B?Y3h3MTlhVTd2dGYwMVdoQ3g1UzlHb2RDMjdXbGlUdzhvQ1A2YklXRmpzaXl4?=
+ =?utf-8?B?cVV6bzhmdVZ4Y2NiZUNMRE5RS3B5TGhtbVFRVzdzUXl4YWtuTGFDSGhWd2dJ?=
+ =?utf-8?B?UUc1Q1dVMkY0RysrRUo3S09TVktlc0RUOGxNR1dmdlFDNlhjRDBFMlVMT0ZB?=
+ =?utf-8?B?dGJoSjJRTUxRVjVaaDMrOVBpRUxmNmxwd05nM2ZBVUxkeW5rQVhUTit2Tk14?=
+ =?utf-8?B?UW9VZytMUWVSR3VZWWdTbksvNGF1aXhUMVJkSVp4bGdIY2RESkl2REpHYzlB?=
+ =?utf-8?B?SUd0S3YxUDhKcWF3azQrMWgvL0pqVnZ0OEV6MGF1ZGQ3ZGc1VUgrT3orUldO?=
+ =?utf-8?B?d2JmYXQ3N0k5SGJhdmpwMzEycmlnc3d1U25ZWWhGQkNUTjJuM1JvdVQ0U1A0?=
+ =?utf-8?B?bUM1L2lIZ2RQNnB1a3I4azZwS1pJcG83VnZwS2hhN3NQR3ViVnhZL1ZNZ2N2?=
+ =?utf-8?B?ekt5a3FLeFM1S0szUFVZQjFNbzNOMmZxak9leHlwYVpoM3NuK21WNnRJNlpL?=
+ =?utf-8?B?Z1ZmVnFMZmR3a2pCNGJCUUVramNJdC9HMGM2WUxLY1kyWVBjQlA5aEFZcFRo?=
+ =?utf-8?B?NHBpYlJRSEJQQThFVVZHUG9POElqUldpZTl4T3ZIM2Q3OEcyTkZwdTVpa055?=
+ =?utf-8?B?R3R0NXgxTWZ0dlZNSXFHb0pYVkZ4M3JRTlNNNVpPY1ZjN0t0elpvNk5Pc29W?=
+ =?utf-8?B?MWFLR0xZZXdENkh2SlgyN1huMzA3RTR2K0MzRkExRWQybU1pc2ZJTzdHeW9H?=
+ =?utf-8?B?bGdnU0g4ZUZrbTNBdFFiKzZPRDVFK2NkOWR4WW10R2oyOVRadW4xeXg1dFND?=
+ =?utf-8?B?VnVyTFVKK2F0UDhzOFZLYXJoWmlBT014YitvYmF2ZmlZeGVtQmtReFBZU2xo?=
+ =?utf-8?B?WnhGNXdKTk44U0p4a3d4aENOWUlpUnB2Q1BOQkFLdG5HZEduMFV1TTFva0VT?=
+ =?utf-8?B?S0FKMk11ckVzWUovUjJJYnZNeHVWYlovU2hwRHRFUmJvYkNMaHN5NmxsMml5?=
+ =?utf-8?B?UUkrbWpSMFVDa3FYTnpmOUhYTC9KT3hOMHIzU1FwSVZwUlp3N2hEQ1MrTThm?=
+ =?utf-8?B?OUhrWjF4aUl3TFh6cjJJeUZmbXRPVERJZEh1cU1lcUdrOUNzTkxqR0FNdXVl?=
+ =?utf-8?B?TmZEZm0vaFNsQ3VzWTV1d3JoQjVwUnVjdHhudkU0SXA3WDUrQ1ZQSllhL0dh?=
+ =?utf-8?B?UjBXVjRPbmhaMXlCbG8reEhJQjE0MlBRb0srL081azUyV0NUcm1UcXBTcWsr?=
+ =?utf-8?B?RG1KODB1RHFvZkViRk1jQzJTQXhxSzA1NWRDdTRPQS9xMFBDSjRIaUdnTEVx?=
+ =?utf-8?B?RjBFRlphenN0MFpOWFRoMFBwK3ZZN1d0WUJqNG5PTUM5QmxYNSticDZURVNN?=
+ =?utf-8?B?NzZPZnBDUUM5SS9md1RBVVVpU2pFMjk5VkZMWWZmcXNyQkJDQjA4UTZuMnJm?=
+ =?utf-8?B?MzltR2hyeHd5OVlPTEMyS1hGUk5Wb045MmdJV0Rodm9zN1NMQzNUOW5KQ01O?=
+ =?utf-8?Q?sMnFGuwnPQPwDQqiLwcKOUvo/Rvz6Lw8aRIQCuA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230032)(376006)(366008)(1800799016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VXoxSVpnbTNHcFJDV2pVL24wRnU4eHZHYnNPT29pS2lBcHFpSU5tK0dZUktu?=
+ =?utf-8?B?citxSlhidVJnMmdwSm9UQWVlYy9JamU5N0NYY29CSG9wN1BrcVo0ZUJCSXVq?=
+ =?utf-8?B?MXNXb3BaSWd3bEd3S0JuakpUUTB0Y05rODRMZXVpZHVGdmlHeWF1ZDV2YXgw?=
+ =?utf-8?B?OWkvYjRzdlUwYzdGN2tOa3RIc3hGRzNJOU5NNlFwdks3TFBUdTRFV29OcE82?=
+ =?utf-8?B?dklDVWE3YWJidG4yTGt3UjBwT0h3eHpOWC9BTlhBM0ZLSW9rdDJBVVBESVBP?=
+ =?utf-8?B?UDFXaERTS1p6NXh2SkRRUU56L0l2ZGYvQzZERUVXWmsvWUZSYklITXpJLytR?=
+ =?utf-8?B?NG1NYUFMZ1p3ZmZFNHdJYys4YVplY0hoRFlRTTJEREx0N2czamFRSjE0UnFp?=
+ =?utf-8?B?U2FoeFhhbWRSMXlDdEZnbkdaR0FqR1V3d21GSDFSclpxWTBrZXZjK1dWdG5M?=
+ =?utf-8?B?WU5UZkpEaU9WQVN6TDhuUnFPcWRGNm9weTZXN0RSbGFJcVdkQjNaMVFWVTNy?=
+ =?utf-8?B?eUIwbTNLenBVdzhtY2gwd002VjdyK2Vob2VmMTdYOHdkOU1ZcXZKWWJTaXU4?=
+ =?utf-8?B?dEorcTZFbDkzWFlqZGpmUGdUY3V5Z2g2TmhJS1JNeXJzZ2ZVU2tKbFFOTG9u?=
+ =?utf-8?B?UzZmZnJYYWFBNTVKZ0RPY25wQlBtZ0JsNmM2dGlscDIxNHFXL0M5Q2xYR0VK?=
+ =?utf-8?B?NjNNa1c5Q0M4azhiZ0pDbHdWNkRGamdDMlNHdUZheTdxN2ZhcHVVUzI0ekRL?=
+ =?utf-8?B?MXBNQlEzVGxoZkhKZGR1M01qT2dXOHduakw3bVVHVFM4RjVHZkNScDdsOVpl?=
+ =?utf-8?B?ekROby9Gd3pVSFJPamdyeDJLVXUwQTVvTkt4UUdqbEtiRzRCNW1oYWNUczJz?=
+ =?utf-8?B?dnBqMm1JWVpackhOQ3B2NUVvdDRibEZ2UG5wTHNIOHcvcUhhMEpLZlFCVkhU?=
+ =?utf-8?B?R3JVMTF4U1IwRWp6d2tDUFQycmlNWlBVTitoS2tOMGxkWjRIaUN0NURZb2hh?=
+ =?utf-8?B?WVcyQnBUQXhsSVFMdlpVZXR6TTZUQ0RhOGVHVlJ1RG9oZzhQMzEzU0VSNGdM?=
+ =?utf-8?B?RkxkY3pRWW1yZzBUSFFIUWRKMmQvWm4wcVZiQmhlYjRyY0ptb0RkT1N0Uzhv?=
+ =?utf-8?B?SGphWUxjZDl4YU53bVNsTFRCR0hzczZNZDJLKzlrNUFyZFNLUE1pd3JZYTN5?=
+ =?utf-8?B?UEVoQUo2YnBFVTA1alRBam9kSDBhZFpEVm1iMTlzaldMeGNkV2ZoS2crV2tJ?=
+ =?utf-8?B?bWt4QXdvMi9BYnhDQ0xzUGhEL0FyZy95bW5SeVZRSlo4Z05zZnkxRzFKTlJz?=
+ =?utf-8?B?em15Q3VRTEd5YjhEQVQxK1pLVTN1cFg2RWR6REcxcU10S1NuSmExcVNBVnJC?=
+ =?utf-8?B?UjVTTVdweGxhbm43V3ZBUzVnOXdwOXJvRjZCTll2aDRFaC9ERFdmczZSNDY2?=
+ =?utf-8?B?QjFNam1Cck5FVVVjZWdaYWZiUHhiZU9zeCsyOFVqcHl6cFJWRGZTSzI2dEdj?=
+ =?utf-8?B?RHo1VHdKWWJJcjRQdTZVNk1MS2wrM1k5WHphUlNoZVp4QXVINnNNY25tVXZF?=
+ =?utf-8?B?ck9sdXNkcVZHTWpZYm5kMzhQaml4cURMenM5cWJtaXRkVHd3RmRia1ZZSzdl?=
+ =?utf-8?B?QmFVQ1JpMGpaRzl0aGRGTDh2b0xad0xJclI4Nmw0RThGOVdqb0JJMHBNbnBQ?=
+ =?utf-8?B?ZlJpOTBqVVR3ZmgxNTZpb1dqcnY5bk0rbEJaNldYTUVhRzZ6amFuVkMyY29W?=
+ =?utf-8?B?UW9HOThUaElrVFBZK21Zd3phL0FKaUZ3dGtGRTdVMnBwVjlTMFhTWDZuTXdE?=
+ =?utf-8?B?WGhRZVpKcmpkU25yTmVhb21OeVJIa0M3ei83SS93dEdpall4cTA5c09NOGIy?=
+ =?utf-8?B?SU5HZDdmd3NTYVExVDVSMzV0aG92R3NPVW1LMFJMRG5FSTJnS29IeHdERmZh?=
+ =?utf-8?B?cTRna0VPTjBHSU1NTXJReFBORXBuNUJBaXE0NmJWUUpZZkVWVkpGOGJyS1Vp?=
+ =?utf-8?B?S3gwRHE2cEdBN0gwWnNvT2FYT0wwN05LeEoxL3loVkhSTWUyOENQekY4c3Jw?=
+ =?utf-8?B?Qi9pZXR1ZUNLOXU5UzNNNDB3NlFGKzh5M2pGRFl3VlVBcmZpRDFuSGxrMkFT?=
+ =?utf-8?Q?3579Zvq14lQNQdwHlwpH2v1ec?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fae03404-f81a-4178-3aa3-08dc8a47567b
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 18:50:17.9632
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DaEBA7KCqX97Ebmj8MmpuR6krvA0YpubwPpMHe09L/h4GjhTFHcvQXCb77ZqINcULxP1DuYhIj232S4fR+YIpg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6551
 
+On 6/11/2024 03:52, Perry Yuan wrote:
+> To enhance the debugging capability of the driver loading failure for
+> broken CPPC ACPI tables, it can optimize the expression by moving the
+> verification of `min_freq`, `nominal_freq`, and other dependency values
+> to the `amd_pstate_init_freq()` function where they are initialized.
+> If any of these values are incorrect, the `amd-pstate` driver will not be registered.
+> 
+> By ensuring that these values are correct before they are used, it will facilitate
+> the debugging process when encountering driver loading failures due to faulty CPPC
+> ACPI tables from BIOS
+> 
+> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+> Acked-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
 
-On 11/06/2024 19:39, Nhat Pham wrote:
-> On Mon, Jun 10, 2024 at 5:18 AM Usama Arif <usamaarif642@gmail.com> wrote:
->> Approximately 10-20% of pages to be swapped out are zero pages [1].
->> Rather than reading/writing these pages to flash resulting
->> in increased I/O and flash wear, a bitmap can be used to mark these
->> pages as zero at write time, and the pages can be filled at
->> read time if the bit corresponding to the page is set.
->> With this patch, NVMe writes in Meta server fleet decreased
->> by almost 10% with conventional swap setup (zswap disabled).
->>
->> [1]https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d1344dde9fce0@epcms5p1/
->>
->> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->> ---
->>   include/linux/swap.h |  1 +
->>   mm/page_io.c         | 92 +++++++++++++++++++++++++++++++++++++++++++-
->>   mm/swapfile.c        | 21 +++++++++-
->>   3 files changed, 111 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/swap.h b/include/linux/swap.h
->> index a11c75e897ec..e88563978441 100644
->> --- a/include/linux/swap.h
->> +++ b/include/linux/swap.h
->> @@ -299,6 +299,7 @@ struct swap_info_struct {
->>          signed char     type;           /* strange name for an index */
->>          unsigned int    max;            /* extent of the swap_map */
->>          unsigned char *swap_map;        /* vmalloc'ed array of usage counts */
->> +       unsigned long *zeromap;         /* vmalloc'ed bitmap to track zero pages */
->>          struct swap_cluster_info *cluster_info; /* cluster info. Only for SSD */
->>          struct swap_cluster_list free_clusters; /* free clusters list */
->>          unsigned int lowest_bit;        /* index of first free in swap_map */
->> diff --git a/mm/page_io.c b/mm/page_io.c
->> index a360857cf75d..2cac1e11fb85 100644
->> --- a/mm/page_io.c
->> +++ b/mm/page_io.c
->> @@ -172,6 +172,82 @@ int generic_swapfile_activate(struct swap_info_struct *sis,
->>          goto out;
->>   }
->>
->> +static bool is_folio_page_zero_filled(struct folio *folio, int i)
->> +{
->> +       unsigned long *data;
->> +       unsigned int pos, last_pos = PAGE_SIZE / sizeof(*data) - 1;
->> +       bool ret = false;
->> +
->> +       data = kmap_local_folio(folio, i * PAGE_SIZE);
->> +       if (data[last_pos])
->> +               goto out;
->> +       for (pos = 0; pos < PAGE_SIZE / sizeof(*data); pos++) {
->> +               if (data[pos])
->> +                       goto out;
->> +       }
->> +       ret = true;
->> +out:
->> +       kunmap_local(data);
->> +       return ret;
->> +}
->> +
->> +static bool is_folio_zero_filled(struct folio *folio)
->> +{
->> +       unsigned int i;
->> +
->> +       for (i = 0; i < folio_nr_pages(folio); i++) {
->> +               if (!is_folio_page_zero_filled(folio, i))
->> +                       return false;
->> +       }
->> +       return true;
->> +}
->> +
->> +static void folio_zero_fill(struct folio *folio)
->> +{
->> +       unsigned int i;
->> +
->> +       for (i = 0; i < folio_nr_pages(folio); i++)
->> +               clear_highpage(folio_page(folio, i));
->> +}
->> +
->> +static void swap_zeromap_folio_set(struct folio *folio)
->> +{
->> +       struct swap_info_struct *sis = swp_swap_info(folio->swap);
->> +       swp_entry_t entry;
->> +       unsigned int i;
->> +
->> +       for (i = 0; i < folio_nr_pages(folio); i++) {
->> +               entry = page_swap_entry(folio_page(folio, i));
->> +               set_bit(swp_offset(entry), sis->zeromap);
->> +       }
->> +}
->> +
->> +static void swap_zeromap_folio_clear(struct folio *folio)
->> +{
->> +       struct swap_info_struct *sis = swp_swap_info(folio->swap);
->> +       swp_entry_t entry;
->> +       unsigned int i;
->> +
->> +       for (i = 0; i < folio_nr_pages(folio); i++) {
->> +               entry = page_swap_entry(folio_page(folio, i));
->> +               clear_bit(swp_offset(entry), sis->zeromap);
->> +       }
->> +}
->> +
->> +static bool swap_zeromap_folio_test(struct folio *folio)
->> +{
->> +       struct swap_info_struct *sis = swp_swap_info(folio->swap);
->> +       swp_entry_t entry;
->> +       unsigned int i;
->> +
->> +       for (i = 0; i < folio_nr_pages(folio); i++) {
->> +               entry = page_swap_entry(folio_page(folio, i));
->> +               if (!test_bit(swp_offset(entry), sis->zeromap))
->> +                       return false;
->> +       }
->> +       return true;
->> +}
->> +
->>   /*
->>    * We may have stale swap cache pages in memory: notice
->>    * them here and get rid of the unnecessary final write.
->> @@ -195,6 +271,15 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
->>                  folio_unlock(folio);
->>                  return ret;
->>          }
->> +
->> +       if (is_folio_zero_filled(folio)) {
->> +               swap_zeromap_folio_set(folio);
->> +               folio_start_writeback(folio);
->> +               folio_unlock(folio);
->> +               folio_end_writeback(folio);
->> +               return 0;
->> +       }
->> +       swap_zeromap_folio_clear(folio);
->>          if (zswap_store(folio)) {
->>                  folio_start_writeback(folio);
->>                  folio_unlock(folio);
->> @@ -515,8 +600,11 @@ void swap_read_folio(struct folio *folio, bool synchronous,
->>                  psi_memstall_enter(&pflags);
->>          }
->>          delayacct_swapin_start();
->> -
->> -       if (zswap_load(folio)) {
->> +       if (swap_zeromap_folio_test(folio)) {
->> +               folio_zero_fill(folio);
->> +               folio_mark_uptodate(folio);
->> +               folio_unlock(folio);
->> +       } else if (zswap_load(folio)) {
->>                  folio_mark_uptodate(folio);
->>                  folio_unlock(folio);
->>          } else if (data_race(sis->flags & SWP_FS_OPS)) {
->> diff --git a/mm/swapfile.c b/mm/swapfile.c
->> index f1e559e216bd..90451174fe34 100644
->> --- a/mm/swapfile.c
->> +++ b/mm/swapfile.c
->> @@ -453,6 +453,8 @@ static unsigned int cluster_list_del_first(struct swap_cluster_list *list,
->>   static void swap_cluster_schedule_discard(struct swap_info_struct *si,
->>                  unsigned int idx)
->>   {
->> +       unsigned int i;
->> +
->>          /*
->>           * If scan_swap_map_slots() can't find a free cluster, it will check
->>           * si->swap_map directly. To make sure the discarding cluster isn't
->> @@ -461,6 +463,13 @@ static void swap_cluster_schedule_discard(struct swap_info_struct *si,
->>           */
->>          memset(si->swap_map + idx * SWAPFILE_CLUSTER,
->>                          SWAP_MAP_BAD, SWAPFILE_CLUSTER);
->> +       /*
->> +        * zeromap can see updates from concurrent swap_writepage() and swap_read_folio()
->> +        * call on other slots, hence use atomic clear_bit for zeromap instead of the
->> +        * non-atomic bitmap_clear.
->> +        */
->> +       for (i = 0; i < SWAPFILE_CLUSTER; i++)
->> +               clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
->>
->>          cluster_list_add_tail(&si->discard_clusters, si->cluster_info, idx);
->>
->> @@ -482,7 +491,7 @@ static void __free_cluster(struct swap_info_struct *si, unsigned long idx)
->>   static void swap_do_scheduled_discard(struct swap_info_struct *si)
->>   {
->>          struct swap_cluster_info *info, *ci;
->> -       unsigned int idx;
->> +       unsigned int idx, i;
->>
->>          info = si->cluster_info;
->>
->> @@ -498,6 +507,8 @@ static void swap_do_scheduled_discard(struct swap_info_struct *si)
->>                  __free_cluster(si, idx);
->>                  memset(si->swap_map + idx * SWAPFILE_CLUSTER,
->>                                  0, SWAPFILE_CLUSTER);
->> +               for (i = 0; i < SWAPFILE_CLUSTER; i++)
->> +                       clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
->>                  unlock_cluster(ci);
->>          }
->>   }
->> @@ -1336,6 +1347,7 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
->>          count = p->swap_map[offset];
->>          VM_BUG_ON(count != SWAP_HAS_CACHE);
->>          p->swap_map[offset] = 0;
->> +       clear_bit(offset, p->zeromap);
-> Hmm so clear_bit() is done at the swap_entry_free() point. I wonder if
-> we can have a problem, where:
->
-> 1. The swap entry has its zeromap bit set, and is freed to the swap
-> slot cache (free_swap_slot() in mm/swap_slots.c). For instance, it is
-> reclaimed from the swap cache, and all the processes referring to it
-> are terminated, which decrements the swap count to 0 (swap_free() ->
-> __swap_entry_free() -> free_swap_slots())
->
-> 2. The swap slot is then re-used in swap space allocation
-> (add_to_swap()) - its zeromap bit is never cleared.
->
-> 3. swap_writepage() writes that non-zero page to swap
+Acked-by: Mario Limonciello <mario.limonciello@amd.com>
 
-In swap_writepage, with this patch you have:
+> ---
+>   drivers/cpufreq/amd-pstate.c | 35 ++++++++++++++++++-----------------
+>   1 file changed, 18 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 9ad62dbe8bfb..37fce0569d06 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -921,6 +921,24 @@ static int amd_pstate_init_freq(struct amd_cpudata *cpudata)
+>   	WRITE_ONCE(cpudata->nominal_freq, nominal_freq);
+>   	WRITE_ONCE(cpudata->max_freq, max_freq);
+>   
+> +	/**
+> +	 * Below values need to be initialized correctly, otherwise driver will fail to load
+> +	 * max_freq is calculated according to (nominal_freq * highest_perf)/nominal_perf
+> +	 * lowest_nonlinear_freq is a value between [min_freq, nominal_freq]
+> +	 * Check _CPC in ACPI table objects if any values are incorrect
+> +	 */
+> +	if (min_freq <= 0 || max_freq <= 0 || nominal_freq <= 0 || min_freq > max_freq) {
+> +		pr_err("min_freq(%d) or max_freq(%d) or nominal_freq(%d) value is incorrect\n",
+> +			min_freq, max_freq, nominal_freq * 1000);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (lowest_nonlinear_freq <= min_freq || lowest_nonlinear_freq > nominal_freq * 1000) {
+> +		pr_err("lowest_nonlinear_freq(%d) value is out of range [min_freq(%d), nominal_freq(%d)]\n",
+> +			lowest_nonlinear_freq, min_freq, nominal_freq * 1000);
+> +		return -EINVAL;
+> +	}
+> +
+>   	return 0;
+>   }
+>   
+> @@ -959,15 +977,6 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
+>   	max_freq = READ_ONCE(cpudata->max_freq);
+>   	nominal_freq = READ_ONCE(cpudata->nominal_freq);
+>   
+> -	if (min_freq <= 0 || max_freq <= 0 ||
+> -	    nominal_freq <= 0 || min_freq > max_freq) {
+> -		dev_err(dev,
+> -			"min_freq(%d) or max_freq(%d) or nominal_freq (%d) value is incorrect, check _CPC in ACPI tables\n",
+> -			min_freq, max_freq, nominal_freq);
+> -		ret = -EINVAL;
+> -		goto free_cpudata1;
+> -	}
+> -
+>   	policy->cpuinfo.transition_latency = amd_pstate_get_transition_latency(policy->cpu);
+>   	policy->transition_delay_us = amd_pstate_get_transition_delay_us(policy->cpu);
+>   
+> @@ -1420,14 +1429,6 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
+>   	min_freq = READ_ONCE(cpudata->min_freq);
+>   	max_freq = READ_ONCE(cpudata->max_freq);
+>   	nominal_freq = READ_ONCE(cpudata->nominal_freq);
+> -	if (min_freq <= 0 || max_freq <= 0 ||
+> -	    nominal_freq <= 0 || min_freq > max_freq) {
+> -		dev_err(dev,
+> -			"min_freq(%d) or max_freq(%d) or nominal_freq(%d) value is incorrect, check _CPC in ACPI tables\n",
+> -			min_freq, max_freq, nominal_freq);
+> -		ret = -EINVAL;
+> -		goto free_cpudata1;
+> -	}
+>   
+>   	policy->cpuinfo.min_freq = min_freq;
+>   	policy->cpuinfo.max_freq = max_freq;
 
-     if (is_folio_zero_filled(folio)) {
-         swap_zeromap_folio_set(folio);
-         folio_unlock(folio);
-         return 0;
-     }
-     swap_zeromap_folio_clear(folio);
-
-i.e. if folio is not zero filled, swap_zeromap_folio_clear will be 
-called and the bit is cleared, so I think it would take care of this 
-scenario? swap_read_folio will see the bit cleared in step 4.
-
-> 4. swap_read_folio() checks the bitmap, sees that the zeromap bit for
-> the entry is set, so populates a zero page for it.
->
-> zswap in the past has to carefully invalidate these leftover entries
-> quite carefully. Chengming then move the invalidation point to
-> free_swap_slot(), massively simplifying the logic.
->
-> I wonder if we need to do the same here?
 
