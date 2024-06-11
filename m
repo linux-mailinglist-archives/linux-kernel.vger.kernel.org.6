@@ -1,161 +1,133 @@
-Return-Path: <linux-kernel+bounces-210158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8489C90401D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:36:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7CAC90402E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D32B1284E50
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:36:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5001F23C0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F4E38FA3;
-	Tue, 11 Jun 2024 15:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD2139FD0;
+	Tue, 11 Jun 2024 15:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hCgWR8ew"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pcPuA6Fp"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9872D05D;
-	Tue, 11 Jun 2024 15:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D902338FA0
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718120157; cv=none; b=XuscDZHhK3KGA68Pq3Qol+qvbQjemXlHeahf+wFHtQt/KfDv1q5mv1jSXL6WrmuQ61nrf6svKVhWwu5nTxOt2EFKrT/sR3vsLVCXEYaj+7xDqXkfPTGFUfP4ZYBqNK6NPUum9R/1k4H0hjkcn3hZVJpV1FF9OMtQJLZq1bxiX+k=
+	t=1718120200; cv=none; b=sU8seZB9rdDsXRwUX+43RMevgjsmoATCvu1WeCJXXcvQCFf4zIP6pzHauGW0LWGSO7iNUv+fHp6NG3qNCpj8ohaJhgOTQhTOaTces/I9G/AT9s2L5d60UdbV2+H/rON0nE/5S6hEG3wFMKfBb2FUatmM76vexSyXftRXsWQNlzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718120157; c=relaxed/simple;
-	bh=hnAvc10FT35qHL9JjkLYDA/CoQIaDGbohFelgn1Dq0Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=sK8k0W6pJf7A/VIVVNwwujd/NXLXiDl3m9iiYIla17YLLtbBo4ABD4v15LuCE0xS1aM7QyPiEsBWU6dYNaFaFRLOEh5zCTA/YGI8Cw8cATwdtfrnxUuK7yqPDIbEH554waQI13+nZ1lkmpJbAYTdXJ6XXhDpazZctfJBKGqnwnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hCgWR8ew; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B9gaw0018706;
-	Tue, 11 Jun 2024 15:35:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Zh7hRH/t/TFXOcDbW1kHqQU0HKEImm5ajDRSuU566vg=; b=hCgWR8ewdh0XcTwE
-	Qt+gEwGIOVAG0y2I2bWswITb2LACHDar9Sxe9BuCCKSsQ9I9vVwJtmHTSj1wGC8N
-	FowixMNVyfywDaUT9EhagjUDMVBsslucYH8kVNpq9GVNHeQ37vvwlwARL+W1lDyB
-	nRxQP0M/w9X2KVjZGyZV2TQOMkcFu4HYjptLudruUwVjgp2hG1Z4KWJtjtbVeKqc
-	OEuvEXcu7tewe8zIFsW2RJE9Jh3EUlqcj2W3jAwo7k8qH7TL+NASeRyyqUEPczV1
-	+NgP/cOH/2jlnVI/TKSoCcWd5+zQyUG6sV7NRr5yD32x86oUYfCfd6TgnIEE67om
-	o+ZF1A==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm6b8xce-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 15:35:33 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BFZWFT009152
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 15:35:32 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 11 Jun 2024 08:35:31 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-Date: Tue, 11 Jun 2024 08:35:16 -0700
-Subject: [PATCH v4 4/4] arm64: dts: qcom: Add PSCI SYSTEM_RESET2 types for
- qcm6490-idp
+	s=arc-20240116; t=1718120200; c=relaxed/simple;
+	bh=r57qrLhmwHMKnHrFKmWypm9nE6+c8sNnIXim4c8y74s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kT5TIDOym3GydS5ugPPq1gSsyAN/J2kHkZunmTEDgDAJJGGSXGGhQ0TOV1xkY4tUHjfbZRxPGB/zDpvcDDv+Oc3dhOFwSH+7wgqsHx0Sn3HeZycq/djwmWJYozu5u6TNU6MKNDSLyEPmUBVuC9tuSvj8y0wUJj7UITEn3zHCj4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pcPuA6Fp; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: andrew@lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718120196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CDf/Var0If69rFPJqIDSKQIuhIfmeNAqiQ/6ESKmNKs=;
+	b=pcPuA6FptuahJYYDigDXzfvPCr9O1DORzHlUYC4NlO5Oie8SCuI7zLrkehHQs6qOGO0tuj
+	M+ht37ApsnW65T4u6kNmUAEV6yrjciG6KskOq39MuD+Loq5n8kgJ3i/YFWZiSq/6i3xPkl
+	STUEy3q1USjAcA/DBpzO/x+hUKG72Hw=
+X-Envelope-To: radhey.shyam.pandey@amd.com
+X-Envelope-To: netdev@vger.kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: michal.simek@amd.com
+X-Envelope-To: kuba@kernel.org
+X-Envelope-To: linux@armlinux.org.uk
+X-Envelope-To: pabeni@redhat.com
+X-Envelope-To: edumazet@google.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: davem@davemloft.net
+Message-ID: <4d3871c1-afa1-4402-ad62-2fdb9d58dc3c@linux.dev>
+Date: Tue, 11 Jun 2024 11:36:31 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH net-next 3/3] net: xilinx: axienet: Add statistics support
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Michal Simek <michal.simek@amd.com>, Jakub Kicinski <kuba@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Paolo Abeni <pabeni@redhat.com>,
+ Eric Dumazet <edumazet@google.com>, linux-kernel@vger.kernel.org,
+ "David S . Miller" <davem@davemloft.net>
+References: <20240610231022.2460953-1-sean.anderson@linux.dev>
+ <20240610231022.2460953-4-sean.anderson@linux.dev>
+ <40cff9a6-bad3-4f85-8cbc-6d4bc72f9b9f@lunn.ch>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <40cff9a6-bad3-4f85-8cbc-6d4bc72f9b9f@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240611-arm-psci-system_reset2-vendor-reboots-v4-4-98f55aa74ae8@quicinc.com>
-References: <20240611-arm-psci-system_reset2-vendor-reboots-v4-0-98f55aa74ae8@quicinc.com>
-In-Reply-To: <20240611-arm-psci-system_reset2-vendor-reboots-v4-0-98f55aa74ae8@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Andy Yan
-	<andy.yan@rock-chips.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        "Mark
- Rutland" <mark.rutland@arm.com>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-CC: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>,
-        Shivendra Pratap <quic_spratap@quicinc.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        Elliot Berman <quic_eberman@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: UvPybJV7kFcRDd2tp1i6692A33506-VC
-X-Proofpoint-GUID: UvPybJV7kFcRDd2tp1i6692A33506-VC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- mlxlogscore=782 impostorscore=0 spamscore=0 priorityscore=1501
- lowpriorityscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406110110
+X-Migadu-Flow: FLOW_OUT
 
-Add nodes for the vendor-defined system resets. "bootloader" will cause
-device to reboot and stop in the bootloader's fastboot mode. "edl" will
-cause device to reboot into "emergency download mode", which permits
-loading images via the Firehose protocol.
+On 6/10/24 20:26, Andrew Lunn wrote:
+>> +static u64 axienet_stat(struct axienet_local *lp, enum temac_stat stat)
+>> +{
+>> +	return u64_stats_read(&lp->hw_stats[stat]);
+>> +}
+>> @@ -1695,6 +1760,35 @@ axienet_get_stats64(struct net_device *dev, struct rtnl_link_stats64 *stats)
+>>  		stats->tx_packets = u64_stats_read(&lp->tx_packets);
+>>  		stats->tx_bytes = u64_stats_read(&lp->tx_bytes);
+>>  	} while (u64_stats_fetch_retry(&lp->tx_stat_sync, start));
+>> +
+>> +	if (!(lp->features & XAE_FEATURE_STATS))
+>> +		return;
+>> +
+>> +	do {
+>> +		start = u64_stats_fetch_begin(&lp->hw_stat_sync);
+>> +		stats->rx_length_errors =
+>> +			axienet_stat(lp, STAT_RX_LENGTH_ERRORS);
+> 
+> I'm i reading this correctly. You are returning the counters from the
+> last refresh period. What is that? 2.5Gbps would wrapper around a 32
+> byte counter in 13 seconds. I hope these statistics are not 13 seconds
+> out of date?
 
-Co-developed-by: Shivendra Pratap <quic_spratap@quicinc.com>
-Signed-off-by: Shivendra Pratap <quic_spratap@quicinc.com>
-Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 7 +++++++
- arch/arm64/boot/dts/qcom/sc7280.dtsi     | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+By default we use a 1 Hz refresh period. You can of course configure this
+up to 13 seconds, but we refuse to raise it further since we risk missing
+a wrap-around. It's configurable by userspace so they can determine how
+out-of-date they like their stats (vs how often they want to wake up the
+CPU).
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-index e4bfad50a669..fd0a7dd14483 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-@@ -448,6 +448,13 @@ led@3 {
- 	};
- };
- 
-+&psci {
-+	reset-types {
-+		mode-bootloader = <0x10001 0x2>;
-+		mode-edl = <0 0x1>;
-+	};
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index 7e7f0f0fb41b..da25a3089419 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -848,7 +848,7 @@ pmu {
- 		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
- 	};
- 
--	psci {
-+	psci: psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
- 
+> Since axienet_stats_update() also uses the lp->hw_stat_sync, i don't
+> see why you cannot read the hardware counter value and update to the
+> latest value.
 
--- 
-2.34.1
+We would need to synchronize against updates to hw_last_counter. Imagine
+a scenario like
 
+CPU 1					CPU 2
+__axienet_device_reset()
+	axienet_stats_update()
+					axienet_stat()
+						u64_stats_read()
+						axienet_ior()
+	/* device reset */
+	hw_last_counter = 0
+						stats->foo = ... - hw_last_counter[...]
+
+and now we have a glitch in the counter values, since we effectively are
+double-counting the current counter value. Alternatively, we could read
+the counter after reset but before hw_last_counter was updated and get a
+glitch due to underflow.
+
+--Sean
 
