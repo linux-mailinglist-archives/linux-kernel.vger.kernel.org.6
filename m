@@ -1,114 +1,114 @@
-Return-Path: <linux-kernel+bounces-209815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A98903B3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:56:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A76C903B38
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB101C20DE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33EEC1F21DDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A5517C204;
-	Tue, 11 Jun 2024 11:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BE017BB02;
+	Tue, 11 Jun 2024 11:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZGBVHT0"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gL1IKhVf"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3983176FB7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9F114F9EE
 	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718106993; cv=none; b=pgMwxkLNCdSJW9UmyzIkmnxFvqAY/j2SAQWHY2oW9RUbr6s0uxbcGcTKB4nSVyJWNJ0ssXx0U/HHUpW2NZD2k83s7EgIRBXSpKN/z6g3itcvuts0BpDUWXLzTXBz4c9QYeAq0xqvS1OjeNLRNKKr1U3NsCbakvM7MzSB8FK3YfU=
+	t=1718106992; cv=none; b=sjBbeqcdyvLbfs4bvUcARVTYcZbS3wk3WMOow9qoSTqZ19paa331vk4nbOUQ4q+I2JX3VGuBvKcx/br/q20+eT/Xn7S5RopnqR40p8BtOSxm7A+U/qes7/cmZ7vUJVjikFuCCuuBCX6Ta6sWoEb4EfJi/4+7UcfZooYJ+SDLi3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718106993; c=relaxed/simple;
-	bh=W1uTW0uou/2g/48D5Fc/QCRPCK1v20x3VE4SAKIKhHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iv0MuHSGW3j+wr0myP+XLW/oX3Fy3sDCEhSk7yuoh3uJ6gbOInLgqEcxJ2ykvm6E0VBCDNOYRqwJ3tigLtwkTIQta4jZACaMeaEDm6H42jBxu6mwrEjtTrb2nco6Qf8TbP3zVGjx260pWk5fqz3BmVaNgjeQsiCmEqRnDZhtgaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LZGBVHT0; arc=none smtp.client-ip=209.85.208.179
+	s=arc-20240116; t=1718106992; c=relaxed/simple;
+	bh=5/w1fxjjLpUaMAtqSgUdQY44foBz0hFdDn8lECfTnxA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=O4mOdxJkrHk0+Zr6/wwti1GwXk4oIoQJWAWKEFEgXqZVvFPB5LYsj7/yobQ0/QvJ424eXXB7+jRFJVAzKB2ikhQ5o75c0Jjj/0l69veapPMPR5omG08ISRlvUbw3tKyZovTlE74wHJFcg9pfNlzY2ev/gzYb9He+fPLS4Ztsm9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gL1IKhVf; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebeefb9b56so11683401fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:56:31 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57c778b5742so3099883a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:56:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718106990; x=1718711790; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UCtSkX41R6sJ1nBhx8bB86pNgXlKqe3D1DzJJjI5VBA=;
-        b=LZGBVHT0CXX+Ipz0pCZP08A9F+InzuwioupJovvC4jQJwqaVpi5dnveZrewIDyLpVp
-         umGs6t3TxjFv6/s9GSJcSrQ6U7XpduECh50+Cu76KAcDXTXFdMLJk0WAEWumaIY/ErmZ
-         tlTz6z6cf9LegOoGj1kyOl3iYV1TYsxCYeTInvIMgUyNbltezG3IPs940imupRtvY/WX
-         ilE/fhT+fYyhxAQEWHBnmVCBWRb+k6Zr2fc1A9TA/5D0JNCBJMZdmf+TE6qoIRXE05F5
-         4nBF2LJnKDMyQ2oX11dXimbsvjgJ83ZcxXB3YvFuH/o6/sq+HiELoLSMymdPz5I2cs4w
-         guAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718106990; x=1718711790;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1718106989; x=1718711789; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UCtSkX41R6sJ1nBhx8bB86pNgXlKqe3D1DzJJjI5VBA=;
-        b=uvA+MmfzVxahbuwLwr048kxObsCN+pdrUuw87z7OqkEXvosHoWGakfcDZ8AvjVBkqN
-         em4bTs7KP8RjO7Qj4McvofFU4sXMgWEOEQJROfwvaAK8U1UktdrZbBgrA5CF+MKCTopF
-         v5x1O9ZR4MvIc61UsdV1VIqG9+Z+Mn2mAX+Q4PhUUzc/rbZFyG7HlSEAkY13kTnrmxxo
-         bKGPRSOYM8Nv6q48D4VsbIF+NdSoa8QQ1DncXSPV/XtQNJWnJJfLyBs8WiSOZ+ATM+WF
-         AQB1IOMrBEs9xFeNnbSiz8s+DImCybOr5+pfiOjp3oRQcCMokFVjeMVU5rt0pfJ8nc2W
-         9CyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIickJwqlAABNoEOtNCbPK+BSGdxoXRqph2ChZWkpr8Af5IFo/C6CE3Naqafa+5xIW++v+vOD62SRMtsrCK5S/6XHVHntHRw5L0CcE
-X-Gm-Message-State: AOJu0YxVW2IRzypbd928PFOzPDYsNRv/Qh3LKdqNISuQ+UxOQ+5fgDm2
-	RYTaWJoFqxH70Y/F/l1EYJNXOymjhPtm2tlsOjfC6uDEfIdC5DhCwQEnvGr5rx4=
-X-Google-Smtp-Source: AGHT+IFNtdJSAv2AvYvNCQCWgYsYSG5yVjWDjp3ColP0ww+Rnj66j7tn3npEM2iuvVYpscst9Hb2sQ==
-X-Received: by 2002:a2e:b615:0:b0:2eb:d77a:850c with SMTP id 38308e7fff4ca-2ebd77a88b7mr69409961fa.4.1718106989081;
+        bh=bOddwMpzJW/6gs70n9pWk7Fv9UPxutUQ3E6BTp5E4Gc=;
+        b=gL1IKhVf1434YxCzyjM83ISTNUSfhG78ftSMQzNQq5M0G0YJOMQrLldmBD3yH//dkH
+         XWckLOV1x7t+pNfDkd5AQEwbD3CojK6r3bc3XeebmYyOOp1M87VjQh7/jtakorpZ2HaW
+         KtujXfu4jFDgHoxp5yMj37HFxhXt1dTIh26XhA5UKUuBe7KITXnr/gu2eXNqYBAHs7sC
+         w1OE/JxMQa047JtANSHod2oVZnPCg0FJFX6r5a46KwyWMvPeII1T9N4AlLDSD2+enPF0
+         WUEtX828eq8q1UGrRbOtbYpqs2ut/MVl6S4Rol3CJSqVd9oJQPYRJ+i54aZp5ws86I/Y
+         6ELg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718106989; x=1718711789;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bOddwMpzJW/6gs70n9pWk7Fv9UPxutUQ3E6BTp5E4Gc=;
+        b=quVXFdqBxX33aXSnmY+x1GzJeeS8LZM/QEoor2yX9XBCDWiKYWbdmPySpUGWJV3UAv
+         0jaR1JNX32/i2NpLO5tHDUOj+1BXgq4suXLh2VqKjAz8UvY+nTVY6CIQewww7/29/QTb
+         p0IHg9ob1/ZSIbL6eUvxt1h7YuEUYXTn1a0C9DVtItzICzIxFIXDOA2V/eaVzjGS6njm
+         5vW/JJf/CGd9Hxk66hdcC9DtnoO/qJh/CQufp/eT52TBLr2k/IdSNpCQ3mz6k7NZlkDW
+         PK1QcgM+9D7aubKRzGgUacEp5tCT30RayDKhnoscNrQ78J80bmfNzc7fH1EUFQ3a8MRE
+         fFEw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1z1/Hh2SB3gZiu7qOuEzTwEXQud1TamyNwucpP1P1B/9AssDY7IJ6DxvIDy5kAkHDxURu49TsqQTka3NUoRi0iY2Dn5aGy6I3fXeS
+X-Gm-Message-State: AOJu0Yx7dDDVSofhD3TPsDabGmfvCuBQivS/+09KlBW1/JUdtGeDuBpJ
+	KzNk11MAjBP584y1Zlu7xEilFOBma6rvZ14uDNwtDK7dg5+TJGZiNTTCIIDHoNZ0BNnyTXzgzBi
+	p93s=
+X-Google-Smtp-Source: AGHT+IFP4m28hl48ttcEQ8P2FYios026SYXaYffz8UvYZieOHmYVy4+wRns1OxyElbht8qv1wrV7rA==
+X-Received: by 2002:a50:d602:0:b0:57c:84fe:1acf with SMTP id 4fb4d7f45d1cf-57c84fe1b0fmr2543110a12.17.1718106989655;
         Tue, 11 Jun 2024 04:56:29 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ebd4c83217sm15268501fa.109.2024.06.11.04.56.28
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c960e677asm851632a12.62.2024.06.11.04.56.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 11 Jun 2024 04:56:28 -0700 (PDT)
-Date: Tue, 11 Jun 2024 14:56:27 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, stable <stable@kernel.org>, 
-	Caleb Connolly <caleb.connolly@linaro.org>
-Subject: Re: [PATCH v5 4/7] misc: fastrpc: Avoid updating PD type for
- capability request
-Message-ID: <lmygcblukqlrobkdnwadgatwf2ldum6tfbcxjr2ooi4thbv4bo@qjxv4fo7tluu>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: linux-arm-msm@vger.kernel.org, Ekansh Gupta <quic_ekangupt@quicinc.com>
+Cc: gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, 
+ linux-kernel@vger.kernel.org, quic_chennak@quicinc.com
+In-Reply-To: <20240611103442.27198-1-quic_ekangupt@quicinc.com>
 References: <20240611103442.27198-1-quic_ekangupt@quicinc.com>
- <20240611103442.27198-5-quic_ekangupt@quicinc.com>
+Subject: Re: (subset) [PATCH v5 0/7] Add missing fixes to FastRPC driver
+Message-Id: <171810698822.68529.11340532030579148495.b4-ty@linaro.org>
+Date: Tue, 11 Jun 2024 12:56:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611103442.27198-5-quic_ekangupt@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.2
 
-On Tue, Jun 11, 2024 at 04:04:37PM +0530, Ekansh Gupta wrote:
-> When user is requesting for DSP capability, the process pd type is
-> getting updated to USER_PD which is incorrect as DSP will assume the
-> process which is making the request is a user PD and this will never
-> get updated back to the original value. The actual PD type should not
-> be updated for capability request and it should be serviced by the
-> respective PD on DSP side. Don't change process's PD type for DSP
-> capability request.
+
+On Tue, 11 Jun 2024 16:04:33 +0530, Ekansh Gupta wrote:
+> This patch series adds the listed bug fixes that have been missing
+> in upstream fastRPC driver.
+> - Fix DSP capabilities request.
+> - Fix issues in audio daemon attach operation.
+> - Restrict untrusted app to attach to privilegeded PD.
 > 
-> Fixes: 6c16fd8bdd40 ("misc: fastrpc: Add support to get DSP capabilities")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> Reviewed-by: Caleb Connolly <caleb.connolly@linaro.org>
-> ---
->  drivers/misc/fastrpc.c | 1 -
->  1 file changed, 1 deletion(-)
+> Changes in v2:
+> - Added separate patch to add newlines in dev_err.
+> - Added a bug fix in fastrpc capability function.
+> - Added a new patch to save and restore interrupted context.
+> - Fixed config dependency for PDR support.
 > 
+> [...]
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Applied, thanks!
 
+[1/7] misc: fastrpc: Add missing dev_err newlines
+      commit: 372eb825c2040b81b6c20b8ff662a6a551f236f9
 
+Best regards,
 -- 
-With best wishes
-Dmitry
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
 
