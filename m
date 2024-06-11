@@ -1,57 +1,79 @@
-Return-Path: <linux-kernel+bounces-209645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE209038DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:29:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B710A9038DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B7C284C02
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:29:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 687D71F21D8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF907175548;
-	Tue, 11 Jun 2024 10:29:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2607D54750;
-	Tue, 11 Jun 2024 10:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F84174EE2;
+	Tue, 11 Jun 2024 10:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CAehGxzI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102A754750;
+	Tue, 11 Jun 2024 10:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718101754; cv=none; b=I9AUI5lWMT8zHWSJKKjVMLI+FMB+yyK/NBZgxlO5KlAVqOIHOQ8Img8QnYlWgY6YgXtC4rf1GgXCXs3y2e6cj4LTxVqMXbRLDQL5ml+1z2KSfQSUaMyponLzRUgn3v6KdZ101GnnkLI+92sy27N0edZSWOvFlEjaE2zzFZEO6qI=
+	t=1718101790; cv=none; b=JnMYHR+BjZlzceqoiuoFFoJbDy4MeBCQsUW3azRVfqG93jj+loxwV8Guut113YWjjEztefg35n7TfI+/JC5dwdY4xoHxHe1NZ8NmStv+nAv8HB3cqWytDPPkU2ep81XBI5yr5dw18ljz6Bgp6OpTDaNTLBfqxgdJI6ZNaz8Z62Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718101754; c=relaxed/simple;
-	bh=spQe+xwhZKKiF/RCCKP3Pjjjdr5YBWx9tejQ73rOtyc=;
+	s=arc-20240116; t=1718101790; c=relaxed/simple;
+	bh=3IQbt4it4ImkcGkHuHt9E1rYBbY3+c+RxiD8Z9kk89A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgq19yUl97nkzmJJTe5LyC/6lCLYuKhwegV84mpTwjT73rNLkvHo7QV2fFC1kXjkwPxjIMjVbA9S+ztU43EWWNZuctSR6hhcgXm9m37kLxhZkwlRLhLgY3akTiclS3k9JXrSEM4+4gcOXlLQmG4xU+EwUb69Z83Vf4p4N/UUdQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 090BF1424;
-	Tue, 11 Jun 2024 03:29:36 -0700 (PDT)
-Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 275103F5A1;
-	Tue, 11 Jun 2024 03:29:11 -0700 (PDT)
-Date: Tue, 11 Jun 2024 11:29:09 +0100
-From: Ionela Voinescu <ionela.voinescu@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "liwei (JK)" <liwei728@huawei.com>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	rafael@kernel.org, al.stone@linaro.org, ashwin.chaugule@linaro.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	liwei391@huawei.com, liaoyu15@huawei.com
-Subject: Re: [PATCH] cpufreq/cppc: changing highest_perf to nominal_perf in
- cppc_cpufreq_cpu_init()
-Message-ID: <Zmgm9Rf0piqFqnrI@arm.com>
-References: <20240428092852.1588188-1-liwei728@huawei.com>
- <20240429104945.esdukn6ayudgyumc@vireshk-i7>
- <ZjoBrF4bAK5ukm7H@arm.com>
- <be312b75-eede-44f5-b7f3-b50f50c6fb56@huawei.com>
- <ZmB1qKucR5fXk100@arm.com>
- <20240606072031.lxr7tykl7sdgjwva@vireshk-i7>
- <ZmgbRh+m9MmEaopK@arm.com>
- <20240611094526.vcirawlsdefbkuhf@vireshk-i7>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dhknk6ewaP2gNlPEZF1+5BxllqAQdB1b0kXL7ti2D8pXJeccCBSG4zbfvr6+EGylqTuM3tfUmpECbfs5mlvvEBTNfLBpb32WPIy08aXjECodFf/ga+E85Hvq8GOIahqYx0It1g5uvnf3YfkFVkijFJfmJ3ImRVAPR1Sw1NDRg4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CAehGxzI; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718101789; x=1749637789;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3IQbt4it4ImkcGkHuHt9E1rYBbY3+c+RxiD8Z9kk89A=;
+  b=CAehGxzIjW8BahYT0u42xj+eNSy6HGlV8uk8zX0/tuxBlHERjv15CVHC
+   r6o7zccg/5gs3qsqbh6BrsZ2Ai+/HqRCyNB/vJ1A1mRwzJ25nvDGDCkwE
+   QvufOgCCV4d+oTWFCyqrsvcm7iQUGl1v0r1ASok+A1+w2S1CQKLWdjEJ6
+   pr9zbKXy7IzWxHi8zUKV6FCcYxDczF75o4sv2NVuCLw8PThGkSaB6p6QR
+   RSX+FOTxKar4lYT8XgId8wZL1kBiQHuVEq2CQYHPDRadGQY9yia5ToL0b
+   jgJxoX/SP/hA7JKKzc2JFYKDgb/8KRvfhWsDaddMA+SStiPkk3PVhSp2t
+   g==;
+X-CSE-ConnectionGUID: c61aBkcmRP6p5AJZHkMwmw==
+X-CSE-MsgGUID: sQaxj3EYRSypUXQlm4Sg2w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14643048"
+X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
+   d="scan'208";a="14643048"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 03:29:48 -0700
+X-CSE-ConnectionGUID: qsHIMAWiSo6idkCelO7K9Q==
+X-CSE-MsgGUID: +hurPCjwTl+/jLW96WvImA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
+   d="scan'208";a="43949295"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP; 11 Jun 2024 03:29:44 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id F00B4268; Tue, 11 Jun 2024 13:29:42 +0300 (EEST)
+Date: Tue, 11 Jun 2024 13:29:42 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, David Gow <davidgow@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Sean Christopherson <seanjc@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>, 
+	Nadav Amit <nadav.amit@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
+	Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] x86/uaccess: Fix missed zeroing of ia32 u64 get_user()
+ range checking
+Message-ID: <ttkmgaktcgw4ryf5ohvydbvi7cpu6xgdc2kregrd2s52ip7d7r@ltgaob6dwl4p>
+References: <20240610210213.work.143-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,45 +82,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240611094526.vcirawlsdefbkuhf@vireshk-i7>
+In-Reply-To: <20240610210213.work.143-kees@kernel.org>
 
-On Tuesday 11 Jun 2024 at 15:15:26 (+0530), Viresh Kumar wrote:
-> On 11-06-24, 10:39, Ionela Voinescu wrote:
-> > Makes sense! But maybe we should no longer update policy->cur to the
-> > current/hardware frequency once a request comes through from a
-> > governor, and we have a first actually requested value.
-> 
-> Hmm, not sure I understood that. When the request comes from governor,
-> we only update policy->cur to the requested frequency and not the
-> actual hardware frequency. And it is very much required. policy->cur
+On Mon, Jun 10, 2024 at 02:02:27PM -0700, Kees Cook wrote:
+> When reworking the range checking for get_user(), the get_user_8() case
+> on 32-bit wasn't zeroing the high register. (The jump to bad_get_user_8
+> was accidentally dropped.) Restore the correct error handling
+> destination (and rename the jump to using the expected ".L" prefix).
 
-Yes, I mean we should only update policy->cur to a requested frequency
-from a governor, after we start it (cpufreq_start_governor()).
+Oh. My bad.
 
-But currently policy->cur gets updated to the .get() returned value in
-multiple places, via cpufreq_verify_current_freq() (for example from 
-show_cpuinfo_cur_freq() or cpufreq_get().
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-.get() is meant to return the current frequency of the hardware and that
-can opportunistically be different from the last request made.
-
-(+ we probably should force the first request from a governor to go
-through to the driver to make sure the policy->cur obtained before,
-via .get(), did not just happen to coincide with the governor request,
-therefore making the request no longer go through to the driver: see
-__cpufreq_driver_target)
-
-> needs to be up to date all the times, it is an important part of the
-> entire working of the cpufreq core..
-> 
-
-When you say that "policy->cur must be kept up to date at all times",
-I suppose you mean that it should be kept up to date with any frequency
-change requests not with any changes happening in hardware?
-
-Thanks,
-Ionela.
-
-> -- 
-> viresh
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
