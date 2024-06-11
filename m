@@ -1,195 +1,225 @@
-Return-Path: <linux-kernel+bounces-210133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE0F903FBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:09:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D9C903FC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F05291F263F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:09:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49F2A1F269E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378C51BF3F;
-	Tue, 11 Jun 2024 15:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218751CD2B;
+	Tue, 11 Jun 2024 15:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="amiGg5pX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RM8TGgBP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="n9yimVyw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="60FqZ/E0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PnL+4OxQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EBB18E1E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB09F249E5
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718118536; cv=none; b=L6k77Deg9hfcvLtkaW2eWjAF9xbcGWSUZ7Iw/zCqJ/LigEhOO0+sj05zw6o3cpuYb8lRPJxTagZColoiDjIzsMALm0Cz8qGPYWkkQwZvlLV/SYWklrPShEptaol/LXAGhgkVpoRZ9DIPH4cvehFu7qq9a5UF7EcbrqZu+QxYBQA=
+	t=1718118648; cv=none; b=fZQy1dO/bolOatx60Lg4NKZ/zJyspMAs4Ev7xywpIj2ZBmAHqyr3fCxKf6O3QbMdVlbr2bTjbRNFQxnHBgvGnSujsOcPP5HBbMpO4+5DlAEm0MSnzZyCi5T6658P/czaobVclMOkBxDwQxyLXH4JMU2BjVG8WBB96bwUoX5KHEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718118536; c=relaxed/simple;
-	bh=Dv6mW4SpJSIZgCdXcBj1UMQiEcYIQxloJc4cdnFnR8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Et78UDfZHD2L3nvYY3YlqBSoFt1UI3tljGefqkK7TGcEeoMqyfdaGc1c9h8HbkM5NauvBq1eYAKg6rJtuA/4T+fcI+rvA7kboWYZ/BVXr6MzIxg7eMUGqdUzl05yjg8dK+3apNeabodSgGdoup/d7hOsI0OfamRge88oaPceVcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=amiGg5pX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RM8TGgBP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=n9yimVyw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=60FqZ/E0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3D50420812;
-	Tue, 11 Jun 2024 15:08:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718118532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s4BYFzX/+X9ca054SpVdmOqNg7k/NngZVUqS7vudtYE=;
-	b=amiGg5pXx+ZWkXQuJ0pvVDX+REW1GEP+EiPrTGnzbbEbGSubmQSi7EqhGl6loZKuNuTo41
-	AAgA6gHVAyg4pw29IKVF6w5+7lxtSoCJ0U9eraO1ZprDFRB7+j+h3VZ95z/iF0t/vb39eq
-	f2XkdBjIHOiQ3KqH2uDK5u0SFRTqrrI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718118532;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s4BYFzX/+X9ca054SpVdmOqNg7k/NngZVUqS7vudtYE=;
-	b=RM8TGgBPhfBP5SdPI5FXfUgPrJgths3IZankUWWEWWS9eXX03ez+GkFV+wNHIYNpR6zUUd
-	4Xvxl+ePj3Ob1LCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718118531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s4BYFzX/+X9ca054SpVdmOqNg7k/NngZVUqS7vudtYE=;
-	b=n9yimVywfNO7ayn002mzdzBkcdRTSue3Ns/qWgRhIKCqXZXWzSLGf5lz5VXD85d9ChsVNu
-	k2aRUvD5CcMrC/VPhHe5yYbpLpo9E7ayP2VzTETp1pnp8AM5HFaj0VLXpNKkRnMEn/vk1F
-	Z5Vo52WN1+sglJOAQV7SV2vzdRQEUtw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718118531;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s4BYFzX/+X9ca054SpVdmOqNg7k/NngZVUqS7vudtYE=;
-	b=60FqZ/E0iS7JJlNd2pLs1pnwC306tkeiXBIehBMTrto/DvKrdaf4YFoh/otgH6iy0n6EIJ
-	PY25FEjsBAlR0IBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B8AF7137DF;
-	Tue, 11 Jun 2024 15:08:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LH+fKoJoaGaTXAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 11 Jun 2024 15:08:50 +0000
-Date: Tue, 11 Jun 2024 17:08:45 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Peter Xu <peterx@redhat.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v5 02/18] mm: Define __pte_leaf_size() to also take a PMD
- entry
-Message-ID: <ZmhofWIiMC3I0aMF@localhost.localdomain>
-References: <cover.1717955558.git.christophe.leroy@csgroup.eu>
- <172b11c93e0de7a84937af2da9f80bd17c56b8c9.1717955558.git.christophe.leroy@csgroup.eu>
- <ZmgaHyS0izhtKbx6@localhost.localdomain>
- <ZmhcepJrkDpJ7mSC@x1n>
+	s=arc-20240116; t=1718118648; c=relaxed/simple;
+	bh=briBpK83cDGPp7/CKKBn6E63aO3fFCh3IZvqZzqE4OM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DJyPCN1i4YNx2Vl/mPj5/s6duTd1XdddtSUHYSW+j6QI5B15cx4BnyyTMJCF3X8Awjw7Sebj/E0V7KHetxzXhXqDmQOeeXDswjdws0HxBzlmjeYk6mPWwhkWpimJtfPz0BTcLZ+26TWFvAAFYyaQxi6kfjDi2pvcVi3sUzFKiB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PnL+4OxQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718118645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4vdM7TamML/kX4VK5+rE3ksUPBMgTbRQXL+B9FDVFAs=;
+	b=PnL+4OxQ+rQn7G/B/LjSOp8KNa5swhTgJ2/MAJeieiimz/HTdPCtHY1ow8I9HVo2f7RYFL
+	n+L7R56dZ+NLfJQODNFdbyYzlOzexmdnmLuvZrnAbc66a1haG/IFKO0cFUcG2tPj01RPBQ
+	+CQJnxz+Xuycz86Ijy45dMUMj5rNT5Y=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-33-STzztBrGOsSO-LeufriO6w-1; Tue, 11 Jun 2024 11:10:44 -0400
+X-MC-Unique: STzztBrGOsSO-LeufriO6w-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4217104c425so26041545e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:10:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718118642; x=1718723442;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4vdM7TamML/kX4VK5+rE3ksUPBMgTbRQXL+B9FDVFAs=;
+        b=ubEKeXvvEve/Bzn7ESCd0G3/CMET2J7hmkMUEPn3a4YgufIiOMjJQ1coeq8WwvUM8h
+         w8zRFlVURknR/MVlQUQcnMvZhGvSHHutpZKtgkQd2gjiBGqGX93yjyWvE/waunt3yaEp
+         zIPXCG787yqSkdCtQo12TADewWmZulqAO+vNGDeSWMEqvDF6iJ0FG+wFtFyYRcEGiB4s
+         iXWJcuEkxwlvP0ODX3WHB5cqcmXSwaDz2gXUmhCy52vMZZEeLpsT9cTGwejOnpqnj/uw
+         jC2TjVuSPVgG8FM/FiriGhDupORxeFaCzZhKvFGSZkaI/kL9TSXz6aPfVkfu93aAVoG+
+         M5lA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEhHq78DiX2SJ1N1g9fE+mPCw62SPHCReelSk+Aahy2R8deU5UiJoEW5iVlaYNO3hcQzSFLkTvwbsW/3f/qGnCBpNbC4jFFJT/G4ri
+X-Gm-Message-State: AOJu0Yxt2iDcLB2bMnbY+pKwatOZFsJkyFSjcuPnzjOrcsllOHhegYo0
+	zmTqDEFl/Hq6Pkm+O9DxdVA76C4HGad7MyEfJFjGZZkzNztx5+gQO1ELIlIkIaaX29wlt1h7eqA
+	XHZLWPpGhl/fMWruh1rMovCWIwGs9LkVaDM+8741OHvKY5xeH4b4n9P3I/6sDdw==
+X-Received: by 2002:a05:600c:1e16:b0:418:c2af:ab83 with SMTP id 5b1f17b1804b1-42164a4deadmr109221155e9.36.1718118642726;
+        Tue, 11 Jun 2024 08:10:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE+vuPs87Vn6YkMZLYM0+8+aIz9Dp/EsB0J5TZgJ4aICLMtEzQoNtuhITD+34Ng/NE0wnofjw==
+X-Received: by 2002:a05:600c:1e16:b0:418:c2af:ab83 with SMTP id 5b1f17b1804b1-42164a4deadmr109220865e9.36.1718118642269;
+        Tue, 11 Jun 2024 08:10:42 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158149008sm214019245e9.29.2024.06.11.08.10.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 08:10:41 -0700 (PDT)
+Message-ID: <89c74380-6a60-4091-ba57-93c75d9a37d7@redhat.com>
+Date: Tue, 11 Jun 2024 17:10:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmhcepJrkDpJ7mSC@x1n>
-X-Spam-Score: -8.30
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-8.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[csgroup.eu,linux-foundation.org,nvidia.com,ellerman.id.au,gmail.com,vger.kernel.org,kvack.org,lists.ozlabs.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] s390/pci: Fix s390_mmio_read/write syscall page
+ fault handling
+To: Niklas Schnelle <schnelle@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Gerd Bayer <gbayer@linux.ibm.com>, Matthew Rosato <mjrosato@linux.ibm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Suren Baghdasaryan <surenb@google.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
+ <20240529-vfio_pci_mmap-v3-1-cd217d019218@linux.ibm.com>
+ <98de56b1ba37f51639b9a2c15a745e19a45961a0.camel@linux.ibm.com>
+ <30ecb17b7a3414aeb605c51f003582c7f2cf6444.camel@linux.ibm.com>
+ <db10735e74d5a89aed73ad3268e0be40394efc31.camel@linux.ibm.com>
+ <ce7b9655-aaeb-4a13-a3ac-bd4a70bbd173@redhat.com>
+ <32b515269a31e177779f4d2d4fe2c05660beccc4.camel@linux.ibm.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <32b515269a31e177779f4d2d4fe2c05660beccc4.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 11, 2024 at 10:17:30AM -0400, Peter Xu wrote:
-> Oscar,
+>>
+>> which checks mmap_assert_write_locked().
+>>
+>> Setting VMA flags would be racy with the mmap lock in read mode.
+>>
+>>
+>> remap_pfn_range() documents: "this is only safe if the mm semaphore is
+>> held when called." which doesn't spell out if it needs to be held in
+>> write mode (which I think it does) :)
 > 
-> On Tue, Jun 11, 2024 at 11:34:23AM +0200, Oscar Salvador wrote:
-> > Which means that they would be caught in the following code:
-> > 
-> >         ptl = pmd_huge_lock(pmd, vma);
-> >         if (ptl) {
-> > 	        - 8MB hugepages will be handled here
-> >                 smaps_pmd_entry(pmd, addr, walk);
-> >                 spin_unlock(ptl);
-> >         }
-> > 	/* pte stuff */
-> > 	...
+> Logically this makes sense to me. At the same time it looks like
+> fixup_user_fault() expects the caller to only hold mmap_read_lock() as
+> I do here. In there it even retakes mmap_read_lock(). But then wouldn't
+> any fault handling by its nature need to hold the write lock?
+
+Well, if you're calling remap_pfn_range() right now the expectation is 
+that we hold it in write mode. :)
+
+Staring at some random users, they all call it from mmap(), where you 
+hold the mmap lock in write mode.
+
+
+I wonder why we are not seeing that splat with vfio all of the time?
+
+That mmap lock check was added "recently". In 1c71222e5f23 we started 
+using vm_flags_set(). That (including the mmap_assert_write_locked()) 
+check was added via bc292ab00f6c almost 1.5 years ago.
+
+Maybe vfio is a bit special and was never really run with lockdep?
+
 > 
-> Just one quick comment: I think there's one challenge though as this is
-> also not a generic "pmd leaf", but a pgtable page underneath.  I think it
-> means smaps_pmd_entry() won't trivially work here, e.g., it will start to
-> do this:
+>>
+>>
+>> My best guess is: if you are using remap_pfn_range() from a fault
+>> handler (not during mmap time) you are doing something wrong, that's why
+>> you get that report.
 > 
-> 	if (pmd_present(*pmd)) {
-> 		page = vm_normal_page_pmd(vma, addr, *pmd);
+> @Alex: I guess so far the vfio_pci_mmap_fault() handler is only ever
+> triggered by "normal"/"actual" page faults where this isn't a problem?
+> Or could it be a problem there too?
 > 
-> Here vm_normal_page_pmd() will only work if pmd_leaf() satisfies its
-> definition as:
-> 
->  * - It should contain a huge PFN, which points to a huge page larger than
->  *   PAGE_SIZE of the platform.  The PFN format isn't important here.
-> 
-> But now it's a pgtable page, containing cont-ptes.  Similarly, I think most
-> pmd_*() helpers will stop working there if we report it as a leaf.
 
-Heh, I think I managed to confuse myself.
-I do not why but I thought that
+I think we should see it there as well, unless I am missing something.
 
- static inline pte_t huge_ptep_get(struct mm_struct *mm, unsigned long addr, pte_t *ptep)
- {
-        if (ptep_is_8m_pmdp(mm, addr, ptep))
-             ptep = pte_offset_kernel((pmd_t *)ptep, 0);
-        return ptep_get(ptep);
- }
+>>
+>> vmf_insert_pfn() and friends might be better alternatives, that make
+>> sure that the VMA already received the proper VMA flags at mmap time.
+>>
 
-would return the address of the pmd for 8MB hugepages, but it will
-return the address of the first pte?
 
-Then yeah, this will not work as I thought.
+There would be ways of silencing that check: for example, making sure at 
+mmap time that these flags are already set, and skipping modifications 
+if the flags are already set.
 
-The problem is that we do not have spare bits for 8xx to mark these ptes
-as cont-ptes or mark them pte as 8MB, so I do not see a clear path on how
-we could remove huge_ptep_get for 8xx.
+But, we'll run into more similar checks in x86 VM_PAT code, where we 
+would do vm_flags_set(vma, VM_PAT) from track_pfn_remap. Some of that 
+code really doesn't want to be called concurrently (e.g., "vma->vm_pgoff 
+= pfn;").
 
-I am really curious though how we handle that for THP? Or THP on 8xx
-does not support that size?
- 
+I thought that we silenced some of these warnings in the past using 
+__vm_flags_mod(). But it sounds hacky.
+
+CCing Sureen.
 
 -- 
-Oscar Salvador
-SUSE Labs
+Cheers,
+
+David / dhildenb
+
 
