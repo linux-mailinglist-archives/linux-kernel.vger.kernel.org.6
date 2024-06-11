@@ -1,145 +1,135 @@
-Return-Path: <linux-kernel+bounces-209967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6036F903D7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:34:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49CFF903D6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8DB1C22E7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9BA282158
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807FA17CA1F;
-	Tue, 11 Jun 2024 13:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C750F17D341;
+	Tue, 11 Jun 2024 13:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="p/Rld3O2"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AH+2No0V"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144F51E535;
-	Tue, 11 Jun 2024 13:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E6F17D346
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718112846; cv=none; b=ZE0OyG6qVdvTpFX2g5odxl/oB+L5SXtW08TIGBVy8KzaPmaN98OKyJMIEDkkuPVrPOmdts8/SuNTW3NK6iH8sF/WOhD9KtnM1CmPV0pRJ/h/O5h7FvVKCrZ/8qcPWTcqoCiPfZYQVdjnHlZWa4Xn4xYFLNFL/YaJ7tGLmIbLNgk=
+	t=1718112756; cv=none; b=MYFsg0PvAjq8SIbmJ5GBRgrwiTKNbe9T1yKu5CxMbp34l7/9YmKy9jpy3j+XrckcAMtXC21Er30rVJVnqR6PAycpHkRVcu0jxeUaUsJEIIb0u5oeUkxpPBjgnytr9yvzqMXl7fMN6PlByQpfMylEXU0P0A1hXln91ri7N1b7wEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718112846; c=relaxed/simple;
-	bh=a43EvLdzT3hjNYienRevQQ9EadCb/AzgEwa5kSDbq5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ozO8d52efrDxH86+7AffPFqvweDGWMYW/Gk/r5D75NFrY0u7famjd3vc7WXxJ/DNU/afxGMMoPVEh6jvme8RbaXfS0FBRmqcUiOhv2No5KdZKKEN9AHAJz+jRljzfMGXxVayEZHh92UwqeejMhhHOIvQVEe3s/TIAXZU3b4Jg+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=p/Rld3O2; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BCI3c7027544;
-	Tue, 11 Jun 2024 15:33:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	yc4KsdWifRz6rWcxt8D4eZPRcwDWS3GJ2TG1rWFVqRo=; b=p/Rld3O29KvUSLHb
-	0AWiU0UliT8PMxuaA7PA2/iLR8IHkBHkNlHlYjW0rxLicuqwGztFOBW6/MbtznWv
-	frCWj/2YKwxc48GTk7YWziKkUzNZIa3J37VIGy/xjS019Vq/ThQ/e3ex1inRWSob
-	ur9A7Vn76oAR0Ko6jMcCXJ70ZsI9pbXDAFJlyTzuS8uLHmBq5PdrrN3fXLtAMaUQ
-	ZgoAl/f3XszurgUOI3Ko0RjXImVNYxJ/jxAf4RLKUHivcsNc3gglawMJkGc9RU+m
-	ZWlY1CeDcTFnOGM4/E8tsQSxumiA6mCVL7g8rEG5vitiJ245RESCn2lfjfSiGJ64
-	/dNMiw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ypbp432sq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 15:33:21 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id ADC9140044;
-	Tue, 11 Jun 2024 15:33:16 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A5298215BEA;
-	Tue, 11 Jun 2024 15:32:11 +0200 (CEST)
-Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 11 Jun
- 2024 15:32:10 +0200
-Message-ID: <7999f3df-da1e-4902-b58a-6bb58546a634@foss.st.com>
-Date: Tue, 11 Jun 2024 15:32:10 +0200
+	s=arc-20240116; t=1718112756; c=relaxed/simple;
+	bh=AjfnKmSBKF1H0bkdDVE5AzBTFJqttfCK9emE7wy2T/o=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=o2dK006P+4RqGpPPV4ro1k8IkGIXYXFA9PnCQ+F625J9TioL8lqfolIiMzo+/WZrNSldCgK0R1cOkyne3K/aBapGRF2sZ0J5F+Wtdq9hLFm/qDN0G/eKGpl4KUNm4TvVYEzcSk/sKhb/mMdDs8vaN7dA+7sxdDa2NMsCtF8JLNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--nogikh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AH+2No0V; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--nogikh.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-df7a6530373so10306519276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 06:32:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718112753; x=1718717553; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CczDrlzQ7X9eqfdK0+v+uqDqKtRnCLBrcF8URyssx0A=;
+        b=AH+2No0Vk+VXpBCzm+L3NbWwg/16v5i81RplCnC/VX3Pt37wmAd1ywrA3IyrQBLjgh
+         q8gu8tV8jEIuLIYdsUBtICEw9znu5s3DqxRt9dZUHsPDuJVGCmRj95Im9PLkQcuuhReh
+         fYlFcE7vIdyWHHkMKDas2J7fy/RExXY61WtRYrGj1bwW37mV39uFvLRi4rP4jqGNAeJf
+         1V7dl6YPs05/BsDrx1nXwV4dlv3gaWVPYIYJ5elwkDoViCOy4T23OsWZ3q9GhuD7xDLL
+         Wmcdsrwro96TuM3wE8xOyYJX2f6n96IZmiVnwsR+dFESxpaZ4MU1IDRFLY4FrAMAqAZU
+         AYUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718112753; x=1718717553;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CczDrlzQ7X9eqfdK0+v+uqDqKtRnCLBrcF8URyssx0A=;
+        b=Hhv45wKgoM6+Dp00Duz+EL+/hQyWDo/B+SlHbYAsRJnspcCbqFE76DGYpaa5FWPVMZ
+         YgXZkyVBq+2UUxIb4yWsjZM9W4xL/MTv34mjBimWji63oqq9/Qvr1aEjzu2T1tH8k0hV
+         Em8oVHeK5TFGP/owJ1fswd9PvscqNH9rOZhtahf3RXSz0ayN5d226wdBDetQUjgOOis+
+         4G702l7sVkAng7up+H/J8B67DXSKWPt4ZxYNvIMrPTF5opTxlQzMD7D1INgUxqCbiNGX
+         5tBsuECxSNLcw5QkgkiFYWq0Vyh+GpPiMj5VqKn4EeJTP2smbF5VZFLGleeU6T4uM0mz
+         WNqg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Kcf2BnpVqy7l+jrSVemYBKj4JYNs4eTRQifrNUrSxJ3/81IM5+2k3Fx9/7GlS3qRhT/S+TFSl6PZ82/awyJq40svLPeMc3T6jP/v
+X-Gm-Message-State: AOJu0Yz00BuIRlEPDjXCJ7yWypBcxUx/uk44eGAh91W0eGZdQWhWtMUy
+	0M9Z0L80BfiGiC3W0jopwP8SMJ9UDhMm8NSIvtmfLgLaIShkKxGQVFDRGi0/YANYeEqYAfU0qoF
+	KBw==
+X-Google-Smtp-Source: AGHT+IFFhHwAThESi5lnx2MoAAXjIEDBUPhcXxjiflTxgo8L4rhg6+LIiU1xgIBisb/pLrJtZeBlk5y4vAQ=
+X-Received: from nogikhp920.muc.corp.google.com ([2a00:79e0:9c:201:4221:fb00:2718:295d])
+ (user=nogikh job=sendgmr) by 2002:a05:6902:1547:b0:dfb:5bd:178a with SMTP id
+ 3f1490d57ef6-dfd9fc66fa9mr704907276.1.1718112753540; Tue, 11 Jun 2024
+ 06:32:33 -0700 (PDT)
+Date: Tue, 11 Jun 2024 15:32:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next,PATCH v7 7/8] net: stmmac: dwmac-stm32: Mask support
- for PMCR configuration
-To: Marek Vasut <marex@denx.de>, "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>,
-        Richard Cochran
-	<richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240611083606.733453-1-christophe.roullier@foss.st.com>
- <20240611083606.733453-8-christophe.roullier@foss.st.com>
- <ee101ca5-4444-4610-9473-1a725a542c91@denx.de>
-Content-Language: en-US
-From: Christophe ROULLIER <christophe.roullier@foss.st.com>
-In-Reply-To: <ee101ca5-4444-4610-9473-1a725a542c91@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240611133229.527822-1-nogikh@google.com>
+Subject: [PATCH] kcov: don't lose track of remote references during softirqs
+From: Aleksandr Nogikh <nogikh@google.com>
+To: dvyukov@google.com, andreyknvl@gmail.com, arnd@arndb.de, 
+	akpm@linux-foundation.org
+Cc: elver@google.com, glider@google.com, syzkaller@googlegroups.com, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	Aleksandr Nogikh <nogikh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+In kcov_remote_start()/kcov_remote_stop(), we swap the previous KCOV
+metadata of the current task into a per-CPU variable. However, the
+kcov_mode_enabled(mode) check is not sufficient in the case of remote
+KCOV coverage: current->kcov_mode always remains KCOV_MODE_DISABLED
+for remote KCOV objects.
 
-On 6/11/24 15:07, Marek Vasut wrote:
-> On 6/11/24 10:36 AM, Christophe Roullier wrote:
->
-> [...]
->
->>   static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac, bool 
->> suspend)
->> @@ -348,8 +352,15 @@ static int stm32_dwmac_parse_data(struct 
->> stm32_dwmac *dwmac,
->>           return PTR_ERR(dwmac->regmap);
->>         err = of_property_read_u32_index(np, "st,syscon", 1, 
->> &dwmac->mode_reg);
->> -    if (err)
->> +    if (err) {
->>           dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
->> +        return err;
->> +    }
->> +
->> +    dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
->> +    err = of_property_read_u32_index(np, "st,syscon", 2, 
->> &dwmac->mode_mask);
->> +    if (err)
->> +        dev_dbg(dev, "Warning sysconfig register mask not set\n");
->
-> My comment on V6 was not addressed I think ?
+If the original task that has invoked the KCOV_REMOTE_ENABLE ioctl
+happens to get interrupted and kcov_remote_start() is called, it
+ultimately leads to kcov_remote_stop() NOT restoring the original
+KCOV reference. So when the task exits, all registered remote KCOV
+handles remain active forever.
 
-Hi Marek,
+Fix it by introducing a special kcov_mode that is assigned to the
+task that owns a KCOV remote object. It makes kcov_mode_enabled()
+return true and yet does not trigger coverage collection in
+__sanitizer_cov_trace_pc() and write_comp_data().
 
-I put the modification in patch which introduce MP13 (V7 8/8) ;-)
+Signed-off-by: Aleksandr Nogikh <nogikh@google.com>
+Fixes: 5ff3b30ab57d ("kcov: collect coverage from interrupts")
+---
+ include/linux/kcov.h | 2 ++
+ kernel/kcov.c        | 1 +
+ 2 files changed, 3 insertions(+)
 
-  	err = of_property_read_u32_index(np, "st,syscon", 2, &dwmac->mode_mask);
--	if (err)
--		dev_dbg(dev, "Warning sysconfig register mask not set\n");
-+	if (err) {
-+		if (dwmac->ops->is_mp13)
-+			dev_err(dev, "Sysconfig register mask must be set (%d)\n", err);
-+		else
-+			dev_dbg(dev, "Warning sysconfig register mask not set\n");
-+	}
+diff --git a/include/linux/kcov.h b/include/linux/kcov.h
+index b851ba415e03..3b479a3d235a 100644
+--- a/include/linux/kcov.h
++++ b/include/linux/kcov.h
+@@ -21,6 +21,8 @@ enum kcov_mode {
+ 	KCOV_MODE_TRACE_PC = 2,
+ 	/* Collecting comparison operands mode. */
+ 	KCOV_MODE_TRACE_CMP = 3,
++	/* The process owns a KCOV remote reference. */
++	KCOV_MODE_REMOTE = 4,
+ };
+ 
+ #define KCOV_IN_CTXSW	(1 << 30)
+diff --git a/kernel/kcov.c b/kernel/kcov.c
+index c3124f6d5536..5371d3f7b5c3 100644
+--- a/kernel/kcov.c
++++ b/kernel/kcov.c
+@@ -632,6 +632,7 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+ 			return -EINVAL;
+ 		kcov->mode = mode;
+ 		t->kcov = kcov;
++		WRITE_ONCE(t->kcov_mode, KCOV_MODE_REMOTE);
+ 		kcov->t = t;
+ 		kcov->remote = true;
+ 		kcov->remote_size = remote_arg->area_size;
+-- 
+2.45.2.505.gda0bf45e8d-goog
 
 
