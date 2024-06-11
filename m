@@ -1,189 +1,155 @@
-Return-Path: <linux-kernel+bounces-209874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB620903C1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:44:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E6D903C22
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B23241C227EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:44:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CEE11F23C4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D1017C226;
-	Tue, 11 Jun 2024 12:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATlhLdVb"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412C817C213;
+	Tue, 11 Jun 2024 12:45:36 +0000 (UTC)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E3517994D;
-	Tue, 11 Jun 2024 12:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50A238DC0;
+	Tue, 11 Jun 2024 12:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718109863; cv=none; b=hGn3rBDx1I4id2MpIX8uSTKV4q6+QGj+wynvsSe4zII/yUixKbm3xV4BrSVqI3vEgWBWXvCjBDeQm333eW6UaSrKQ06AoR/TT85VSWXp5B44sIQot8yeU7yVdxHX+3j2AZW/sZX3dWf7kTFrE3EjCIbX2UL3GyqldSfPjjLBP2g=
+	t=1718109935; cv=none; b=ZWkMLT2Y1TG8OFn3PAIyP2JxvFaYWakGp4XHccRBvfKxdpkr9b5aibqQtSdH8tRx8vWx1gvhT4ckjqwwND5obg3L+4VGVkhPJdfIAua3L8QAyJPI0Fs8mkI5o+oXTpbBWbSmQ/QRLLfxEMMrbLbI3mWA4VW7Sr+XQX6W2RqegFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718109863; c=relaxed/simple;
-	bh=wvAyPUBns/uNl9S66bSDSvxN3bhNbvQLJE39DQGbjLI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kG1b7O6rUVxPaKIE6lyAZP03FNYPRSMrvnwe4MTy1PM3f5EIQSjcBeFjUQfvVo21Lu+woaXHnIKViJCDBCMqWA5cIttNux+j321L8xnES2XycAMrWlyFZ7PK7Z/kxQR8TcOQ7kxVHqtcRcryfBIenansexIBHUJSqaL1V0K+UhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATlhLdVb; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1718109935; c=relaxed/simple;
+	bh=nY8+G6+Wc+iKEOD8LIKa0F5xqH0+KD8ciWBL2bCrMIw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IpuMAQeI9gZUvZZkC9ovyCpYrWO8EZN2KjL3z7hxJ5PoFWnwaCabC1tGXd4hNQD/UC4njdguYpoVI1xah1mmj9yD2+/HjG2L2FUILUTXuIAbfeIec37h9K6FJGjYqSIGg/WO2nEQiDg4NPNzH136WrV9qmZ+IhT2KQlRwuY6xNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-6e3ff7c4cc8so2920571a12.3;
-        Tue, 11 Jun 2024 05:44:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718109861; x=1718714661; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AVwIlcHjQo8eh6OrUJ43oxF3efWtPUA/bK44QL6w+l8=;
-        b=ATlhLdVbV024YS0KFj1k5uUqAx5cYTIIzEhumjeWvgx2U7KqaHuSTgIqA5KXik71Bf
-         MH3V/WzRnN81ZArlvusjX/H9vCqnMdibCiBSyn1shcHHZtcUIR4Liap81uUYVSpxDvr2
-         +q11TFO/5AIyh5fycVfBPzPf8VZWCnkrZp99FtusEFfo5lSVkXF0Mjd8tbsUmthRpbow
-         CIws7g/N5I8L548NYtQkJ7gc6eXAmdNhpuRSt2xjkYbb53ypz8AOPi61oYv/MSkhLK6B
-         xlpOkASgVcgNJgb7xS+XOsgdI1BCKWeVvM1+6XtB+WxRH8LvY1NKFqqJgx8l1Q1YHzD8
-         pt6Q==
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dfb3ff45c06so1154303276.3;
+        Tue, 11 Jun 2024 05:45:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718109861; x=1718714661;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AVwIlcHjQo8eh6OrUJ43oxF3efWtPUA/bK44QL6w+l8=;
-        b=KPZY4IWqBrn/anLtqosb3w/yR3rp0V2WD0DbOJDgWhpMro5fXwKWHd/La2ZpwLXpdE
-         Au+MQAobK922XJmO7ykeyQuiSeJWELRe7ZyW+Thvnt7GGuFrqt68famEQqibzjKKdTk0
-         HCISi3SMK/L6bJn9oUnu2G4bk97rbpIMk/xA4DFh2wixSQc7T3696JiJ8Tg3wOU6iKFZ
-         HJqmc6Bl9exq1vvn7jXJCPBDMyXwDoOwnN/8gNWleGg0Rdl2E4QVP1wH/l1S+6aQavBz
-         U4KiRLLMqxdgswKeE1qI8V4yq/cSxIpoMG/YGcG93F+N3QRUmwnplJ40mkSuZ/hfgqsn
-         acbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMVEmIbs5lKyED+RUCJo1UwFyu7q0GCeNDO3DjXdTgCkFCzkxJeBbD/z+BOdTZsGKTjrfGmU2QAciBnydkkM8i9wUWt58Qdz106eQ/OmfW1j/4D6xprmctNhGooCOMc4XRexXpmjkGrwXcpH5FUq7iLO3v4dP71FMHmoxXMBlfQK9KvND8
-X-Gm-Message-State: AOJu0YzHcBae5pviPJVwoOnET2xXe4gV/T58uf+/6zIIA0D7scItlUIo
-	vGMRwILl0E5rhuhZ1XVejBt32PWk1TNJf6/ZezguOnrWJG1SQgdeKKwapI6g
-X-Google-Smtp-Source: AGHT+IGxYFQHUxLPouK/1ioV0eCRyouOGRoF0w2WN75pt0GtljsQjw6+Rf0APD0pqim83/wxnkvyUw==
-X-Received: by 2002:a05:6a20:72a3:b0:1b7:82b4:a380 with SMTP id adf61e73a8af0-1b782b4a72amr5655759637.29.1718109861271;
-        Tue, 11 Jun 2024 05:44:21 -0700 (PDT)
-Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6eac1dea8b2sm3950627a12.63.2024.06.11.05.44.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 05:44:20 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: animeshagarwal28@gmail.com,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	patches@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: wlf,wm8782: Convert to dtschema
-Date: Tue, 11 Jun 2024 18:14:00 +0530
-Message-ID: <20240611124405.63427-1-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.1
+        d=1e100.net; s=20230601; t=1718109930; x=1718714730;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LA50fIPVA2O1q5A6lERTjC6jOEdlOMiNnypF6hx5p6s=;
+        b=YTOWC8DsqEjvA4YgO02pMEUt+TNjeDZPbhGRq2F5DJN6qz1x1t+wNd69uYd00YwbRE
+         0F100BW+6RW/mCbvlgqcJ0W/2XEw1V1ZZIb3vyv+6IsE5N3czc7xVsOxl/CMTkA0yNqH
+         dK+0yNrxONddK8C8tvOEYElpHTDkiX0B3Rch/F3ZlxYySLSJGndEJwd52EowZifRKUI7
+         orMvPA91GCAL6tWL/XS2hmeRnGGjcpgQZ+Emd9GcSo5qjYFIjjCe1AMoCmrjPqJGPsfq
+         W320Pd5gKYx2QWBXqodpxnPApRNWbT3uWe0G02S3pRFtEZXuV9TMhZf0K5zhluacuxcx
+         H3xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbdw4AHKzPp0OWazSWHKNuV4VSShYfOLsjm2NG6AQ/g6isqB2FQgNXHixETqaPl6hAHP4Po3l1uHR/uJuB5F360EaCecW91g5F2afAb6LKB30N0aeE4UUyciTnP0ss3W6BQyxH7gzw3gaFdeOosqg=
+X-Gm-Message-State: AOJu0YzzFyYBycmF3dFyxOcKigDtV3qwRoymKLPS1OxCWiWz2LZkVc4U
+	gNmkS6pXkrjkUfmy3jpf0Thm+V0vFiKHkLqhW4ZKNLuQlAOTTv1TfddVLCQ/
+X-Google-Smtp-Source: AGHT+IEaZi1qP8PiLgXfz3IwsNbouC/zw/oGMEkqXMbGzcSbS+tOupwYkTAfSrC9cre8t+5N/59xOw==
+X-Received: by 2002:a25:bfc8:0:b0:df4:d29a:6897 with SMTP id 3f1490d57ef6-dfaf65c55aemr11105864276.35.1718109929625;
+        Tue, 11 Jun 2024 05:45:29 -0700 (PDT)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfb0138fd2bsm1512911276.51.2024.06.11.05.45.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 05:45:28 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfb3ff45c06so1154178276.3;
+        Tue, 11 Jun 2024 05:45:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXPH8wW/2DKVkKayODXxO6QHartBiuUNLNIUxIBXW0u2rZuFHEcDZNggNTbSKxXkyp8lKkndgDfoVcnpOwlpt5iom6eNCQEVhE0FJZLuSGgnVgxKwRYVMlDFoIIbjf9JSMgX/0WO+leYQil8Gwj4sE=
+X-Received: by 2002:a25:744d:0:b0:dfa:528d:e8f4 with SMTP id
+ 3f1490d57ef6-dfaf65c01c4mr11427597276.33.1718109927736; Tue, 11 Jun 2024
+ 05:45:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240316023932.700685-1-liuyuntao12@huawei.com>
+In-Reply-To: <20240316023932.700685-1-liuyuntao12@huawei.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 11 Jun 2024 14:45:14 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWMAg59p+hzeLG9Uc3X55Vt9ccNy5BRoPX0RJbxrMOFLA@mail.gmail.com>
+Message-ID: <CAMuHMdWMAg59p+hzeLG9Uc3X55Vt9ccNy5BRoPX0RJbxrMOFLA@mail.gmail.com>
+Subject: Re: [PATCH-next v4] arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION
+To: Yuntao Liu <liuyuntao12@huawei.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	arnd@arndb.de, ardb@kernel.org, linux@armlinux.org.uk, afd@ti.com, 
+	akpm@linux-foundation.org, kirill.shutemov@linux.intel.com, corbet@lwn.net, 
+	rppt@kernel.org, robh@kernel.org, tglx@linutronix.de, 
+	linus.walleij@linaro.org, maskray@google.com, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Chris Brandt <Chris.Brandt@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the WM8782 audio codec bindings to DT schema.
+Hi Yuntao,
 
-Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
----
- .../devicetree/bindings/sound/wlf,wm8782.yaml | 47 +++++++++++++++++++
- .../devicetree/bindings/sound/wm8782.txt      | 24 ----------
- 2 files changed, 47 insertions(+), 24 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8782.yaml
- delete mode 100644 Documentation/devicetree/bindings/sound/wm8782.txt
+On Sat, Mar 16, 2024 at 3:44=E2=80=AFAM Yuntao Liu <liuyuntao12@huawei.com>=
+ wrote:
+> The current arm32 architecture does not yet support the
+> HAVE_LD_DEAD_CODE_DATA_ELIMINATION feature. arm32 is widely used in
+> embedded scenarios, and enabling this feature would be beneficial for
+> reducing the size of the kernel image.
+>
+> In order to make this work, we keep the necessary tables by annotating
+> them with KEEP, also it requires further changes to linker script to KEEP
+> some tables and wildcard compiler generated sections into the right place=
+.
+> When using ld.lld for linking, KEEP is not recognized within the OVERLAY
+> command, and Ard proposed a concise method to solve this problem.
+>
+> It boots normally with defconfig, vexpress_defconfig and tinyconfig.
+>
+> The size comparison of zImage is as follows:
+> defconfig       vexpress_defconfig      tinyconfig
+> 5137712         5138024                 424192          no dce
+> 5032560         4997824                 298384          dce
+> 2.0%            2.7%                    29.7%           shrink
+>
+> When using smaller config file, there is a significant reduction in the
+> size of the zImage.
+>
+> We also tested this patch on a commercially available single-board
+> computer, and the comparison is as follows:
+> a15eb_config
+> 2161384         no dce
+> 2092240         dce
+> 3.2%            shrink
+>
+> The zImage size has been reduced by approximately 3.2%, which is 70KB on
+> 2.1M.
+>
+> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+> Tested-by: Arnd Bergmann <arnd@arndb.de>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/Documentation/devicetree/bindings/sound/wlf,wm8782.yaml b/Documentation/devicetree/bindings/sound/wlf,wm8782.yaml
-new file mode 100644
-index 000000000000..d0bbdc9f9ced
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/wlf,wm8782.yaml
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/wlf,wm8782.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Wolfson Microelectromics WM8782 audio CODEC
-+
-+maintainers:
-+  - patches@opensource.cirrus.com
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+properties:
-+  compatible:
-+    const: wlf,wm8782
-+
-+  Vdda-supply:
-+    description: Regulator for the analog power supply (2.7V - 5.5V)
-+
-+  Vdd-supply:
-+    description: Regulator for the digital power supply (2.7V - 3.6V)
-+
-+  wlf,fsampen:
-+    description: FSAMPEN pin value, 0 for low, 1 for high, 2 for disconnected.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
-+
-+  "#sound-dai-cells":
-+    const: 0
-+
-+required:
-+  - compatible
-+  - Vdda-supply
-+  - Vdd-supply
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    wm8782: codec {
-+        compatible = "wlf,wm8782";
-+        Vdda-supply = <&vdda_supply>;
-+        Vdd-supply = <&vdd_supply>;
-+        wlf,fsampen = <2>;
-+    };
-diff --git a/Documentation/devicetree/bindings/sound/wm8782.txt b/Documentation/devicetree/bindings/sound/wm8782.txt
-deleted file mode 100644
-index 1a28f3280972..000000000000
---- a/Documentation/devicetree/bindings/sound/wm8782.txt
-+++ /dev/null
-@@ -1,24 +0,0 @@
--WM8782 stereo ADC
--
--This device does not have any control interface or reset pins.
--
--Required properties:
--
-- - compatible  : "wlf,wm8782"
-- - Vdda-supply : phandle to a regulator for the analog power supply (2.7V - 5.5V)
-- - Vdd-supply  : phandle to a regulator for the digital power supply (2.7V - 3.6V)
--
--Optional properties:
--
-- - wlf,fsampen:
--   FSAMPEN pin value, 0 for low, 1 for high, 2 for disconnected.
--   Defaults to 0 if left unspecified.
--
--Example:
--
--wm8782: stereo-adc {
--	compatible = "wlf,wm8782";
--	Vdda-supply = <&vdda_supply>;
--	Vdd-supply = <&vdd_supply>;
--	wlf,fsampen = <2>; /* 192KHz */
--};
--- 
-2.45.1
+Thanks for your patch, which is now commit ed0f941022515ff4 ("ARM:
+9404/1: arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION") in
+arm/for-next (next-20240611).
 
+I gave this a try on my custom configs for RSK+RZA1 (RZ/A1H)
+and RZA2MEVB (RZ/A2M).  According to bloat-o-meter, enabling
+HAVE_LD_DEAD_CODE_DATA_ELIMINATION reduced kernel size by almost
+500 KiB (-8.3%).  The figures reported in "Memory: ... available"
+were even more impressive: 1032 KiB more free memory than before.
+
+As these boards have only 32 resp. 64 MiB of RAM, and some products
+even use RZ/A1H with just the 10 MiB of on-chip SRAM, this is a good
+improvement to have!
+Thanks!
+
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
