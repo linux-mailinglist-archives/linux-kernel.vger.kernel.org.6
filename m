@@ -1,175 +1,193 @@
-Return-Path: <linux-kernel+bounces-210409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8A790434C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:15:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08AB904352
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6455E28D4BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:15:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18891C21D16
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77FD5F47D;
-	Tue, 11 Jun 2024 18:15:32 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF766F301;
+	Tue, 11 Jun 2024 18:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="cohNJ7To"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D0E1CAA4
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9235249E5;
+	Tue, 11 Jun 2024 18:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718129732; cv=none; b=DdjQSDGwZ+67NnyT1RZxZ/sgpkAlpY+sL2p6GKTEwEoefoShDiBgR0XvpbJhp/YxUeffzm41XU9f3WCRww4VJc1L5wmprvk7BJBgwEAt66qbo1SZssp4gr8fvdzqnReJCrtqNhUIanHCO10tUkJq33OQCYzZRySDZK+QvmH5/VU=
+	t=1718129762; cv=none; b=GXzCAObZLkfzdUEmisQyNMKTWUD8scn4dPdU+zWYodm6OiHxHkGW9QhKd/quthWVqzOWjMZbeBIehhsgwZJxPXMSQmem1BRYdw50moqJYjIZjDJ/eqSOFnDRWrKbCT/LfAK8LXS0WI+kEmpLEyxXaW3BW/Jb1NgXOF57TCqOcN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718129732; c=relaxed/simple;
-	bh=o661/g0MT1kUaXwnCHXeEjcPMPWhzYllXTFSTkxGUlM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nmaREbOGC9+MxoGHhmQcHOcD+1hbT6/3n9p2p2uDxf3VnQXFNJnleSrZlDHUmw8kEvAgF07qaPy6ppLXG54fyv517GlkBEu90UpvYRxNEK6VLHGboX9KAVAY6nvEFPb+6gd+zFeY5qJPhRW1r2gHcGjIQQ9gt21rvCsFHsI5FFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7e8dc9db8deso7028939f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:15:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718129730; x=1718734530;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TuhS77VD3Lms9crhQdWUS/VbA+XXLv7Cp5Bum/O7DGQ=;
-        b=uNYexTtkLmWP8QpcO9gLn+hF9pQVoC8KwXDXFklpElNK3HL2Txmms3P2GjEXTwdSIt
-         VoKcWUIt+fSG52EgbEK69S/U111vj+KsFLTs+KSMH4GxS8dEkUWf1tN3ZU4rhIVnOFtJ
-         PHDA4OjsoeA4zd02o329aSkRaQlDYTO4+Zuat9+YPcn6lRRWoVY0DS5IQpmkhVRxpDtG
-         z8iQ7ps4k5AsyADSrKqmFgcSAb829tLoGg9jsH/+rumm+r6wYPA73N9hLFXIQh/SpNSo
-         7rl72HPf6OIKnqkqww8BEPKKpmoU74/P12vE+GsoOnMEzTf5bqZinz81sg7JtrVoAomv
-         Aolg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIzYuFoGzw2uxhR+LL+zk3JNcHRbLEsvlZnNzssjGJuWh+U70CMXIpl6sIH5Xo0X5VZ55/vJNlgRnJ0+Q95yfFE1EUEcPCPwZv0OmB
-X-Gm-Message-State: AOJu0YylO0lIlJYjrM2UFCGuLXpZGY4uTcKWkDHT5qc9VJO6K1idpsuY
-	ICL4q6KzbWM5VU434vsHnqjuIIWsAJ9pZzfzlgA+aIXE1e1v5UVFX/lqOeMIazINWwOxETrT1Xu
-	oCwTFHHS3Al3T/4XsFfNyqG7UVR2LMlvCHqk0F+oGlzYEeigj3DmUvDM=
-X-Google-Smtp-Source: AGHT+IE7XzY3MNnxoMX9Jgf8zlSJ1iMLxc3tOanwogjYXZnkkJm4UlWRFqt9le0Io1IVfGOJRWs5o5YnGUFHE1pyPPOQU0CIGO21
+	s=arc-20240116; t=1718129762; c=relaxed/simple;
+	bh=WSVt5TuM3v51vEobXM6W+vqUjan4uWl+GRpcWofmP8k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=AxjEzwr5qahr4iEPr/wiooZ+XO5l7dvhp2cABAzcDa/pkIoDAfjXo3ExDW/C10trJ1A7cOBbuzHxd/IjVvI3d+oMLKs81opUnM/aplTfC42BL7Iz0n7SnFH79edYe4UCN93dbqyQNMouzAeYtKREIp/JwzyGw5gLqYwzLN+tBZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=cohNJ7To; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9AD7C20007;
+	Tue, 11 Jun 2024 18:15:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
+	t=1718129758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rg+NohawaTXFK1Fhif7XHyzzS0tstlbs6exoV45k748=;
+	b=cohNJ7ToVC/jNm/iqicKhPbz/PNrGQEIPHhKIYDkQHrpkEGTrnxRJbtoKNWrItNX1hmGSR
+	kJiAdD4eaTgg4NYHz36ovV9RrM7t51okkaXVRtNvWrOrmFCf/kUq+e2yP2Xybaoa/32kDV
+	hLBJgdXie0o4AqSqzhMcUWFUtiDINqUQblTDQx7noZwEUwsvGNsMZlVBgdWJWCc4Qnb/8m
+	ID9lDKfgzvLHmeCM8U/LJzsVaGh+HY9HfguxTKKCOCa5CzQyGnOTKrwef75j3b5Z+1chaL
+	3r+nuBdBPYnTI0krgM6l3H1ZlyJY+ZjIgdE1loo2B+P689i6B9j+e41ErgLphQ==
+Message-ID: <4416ef22-78cc-4ce5-b61d-69ff0903811e@arinc9.com>
+Date: Tue, 11 Jun 2024 21:15:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:6286:b0:4b9:c9e:2aa2 with SMTP id
- 8926c6da1cb9f-4b92ba720cdmr196209173.0.1718129729902; Tue, 11 Jun 2024
- 11:15:29 -0700 (PDT)
-Date: Tue, 11 Jun 2024 11:15:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003aacfb061aa140ad@google.com>
-Subject: [syzbot] [bcachefs?] WARNING in bch2_fs_ioctl
-From: syzbot <syzbot+9757fdbdabd69eae08ad@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Thorsten Leemhuis <regressions@leemhuis.info>, Rob Herring
+ <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Frank Wunderlich <linux@fw-web.de>, Paolo Abeni <pabeni@redhat.com>
+References: <20240516204847.171029-1-linux@fw-web.de>
+ <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
+ <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
+ <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
+ <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
+ <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
+ <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
+ <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
+ <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
+ <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
+ <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
+ <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
+ <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
+ <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
+Content-Language: en-US
+In-Reply-To: <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: arinc.unal@arinc9.com
 
-Hello,
+On 11/06/2024 16:03, AngeloGioacchino Del Regno wrote:
+> Il 11/06/24 14:56, Arınç ÜNAL ha scritto:
+>> On 11/06/2024 15:28, AngeloGioacchino Del Regno wrote:
+>>> Il 11/06/24 13:38, Arınç ÜNAL ha scritto:
+>>>> On 11/06/2024 14:30, Thorsten Leemhuis wrote:
+>>>>> On 07.06.24 16:15, Thorsten Leemhuis wrote:
+>>>>>> On 07.06.24 16:03, Paolo Abeni wrote:
+>>>>>>> On Thu, 2024-06-06 at 10:26 +0200, Thorsten Leemhuis wrote:
+>>>>>>>> On 31.05.24 08:10, Arınç ÜNAL wrote:
+>>>>>>>>> On 31/05/2024 08.40, Thorsten Leemhuis wrote:
+>>>>>>>>>> [adding Paolo, who committed the culprit]
+>>>>>>>> 
+>>>>>>>> /me slowly wonders if the culprit should be reverted for now (see below)
+>>>>>>>> and should be reapplied later together with the matching changes from
+>>>>>>>> Arınç ÜNAL.
+>>>>>>> 
+>>>>>>> FWIS I think a revert should be avoided, given that a fix is available
+>>>>>>> and nicely small.
+>>>>>> 
+>>>>>> Yeah, on one hand I agree; but on the other it seems that the
+>>>>>> maintainers that would have to take care of the dt changes to fix this
+>>>>>> until now remained silent in this thread, apart from Rob who sent the
+>>>>>> mail regarding the warnings.
+>>>>>> 
+>>>>>> I put those maintainers in the To: field of this mail, maybe that might
+>>>>>> lead to some reaction.
+>>>>> 
+>>>>> Still no reply from the DRS folks or any other progress I noticed. Guess
+>>>>> that means I will soon have no other choice than to get Linus involved,
+>>>>> as this looks stuck. :-( #sigh
+>>>> 
+>>>> Does it have to be Linus that needs to apply "[PATCH 0/2] Set PHY address
+>>>> of MT7531 switch to 0x1f on MediaTek arm64 boards"? Aren't there any other
+>>>> ARM maintainers that can apply the fix to their tree?
+>>>> 
+>>>> Arınç
+>>> 
+>>> You have feedback from two people on the series that you mentioned, and noone
+>>> is going to apply something that needs to be fixed.
+>>> 
+>>> I'm giving you the possibility of addressing the comments in your patch, but
+>>> I don't want to see any mention of the driver previously ignoring this or that
+>>> as this is irrelevant for a hardware description. Devicetree only describes HW.
+>>> 
+>>> Adding up, in commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of switch from device tree"),
+>>> you have created a regression.
+>>> 
+>>> Regressions should be fixed - as in - if the driver did work before with the old
+>>> devicetrees, it shall still work. You can't break ABI. Any changes that you do
+>>> to your driver must not break functionality with old devicetrees.
+>>> 
+>>> So...
+>>> 
+>>> ------> Fix the driver that you broke <------
+>> 
+>> The device tree ABI before the change on the driver:
+>> 
+>> The reg value represents the PHY address of the switch.
+>> 
+>> The device tree ABI after the change on the driver:
+>> 
+>> The reg value represents the PHY address of the switch.
+>> 
+>> I see no device tree ABI breakage. What I see instead is the driver
+>> starting enforcing the device tree ABI. No change had been made on the
+>> device tree ABI so any non-Linux driver that controls this switch continues
+>> to work.
+>> 
+>> These old device tree source files in question did not abide by the device
+>> tree ABI in the first place, which is why they don't work anymore as the
+>> Linux driver now enforces the ABI. Device tree source files not conforming
+>> to the ABI is not something to maintain but to fix. The patch series that
+>> fixes them are already submitted.
+> 
+> As I said, the devicetree MUST describe the hardware correctly, and on that I do
+> agree, and I, again, said that I want to take the devicetree fix.
+> 
+> However, the driver regressed, and this broke functionality with old device trees.
+> Old device trees might have been wrong (and they are, yes), but functionality was
+> there and the switch was working.
+> 
+> I repeat, driver changes MUST be retro-compatible with older device trees, and your
+> driver changes ARE NOT; otherwise, this wouldn't be called *regression*.
 
-syzbot found the following issue on:
+I'm going to argue that what caused the regression is the broken device
+tree. The recent change on the driver only worked towards exposing the
+broken device tree. The device tree files hosted on the Linux repository is
+not only for use with the Linux drivers. Other projects use these device
+tree files as well, as hardware description is not supposed to differ by
+project. And for any non-Linux driver that would use this broken device
+tree, there would be a regression.
 
-HEAD commit:    83a7eefedc9b Linux 6.10-rc3
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=116b64de980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c79815c08cc14227
-dashboard link: https://syzkaller.appspot.com/bug?extid=9757fdbdabd69eae08ad
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109726ee980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f2c4fe980000
+So I don't understand why you demand a change on a Linux driver to be made
+before applying the fix for a broken device tree.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b45273014a8f/disk-83a7eefe.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/94cd5708292e/vmlinux-83a7eefe.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a89698812e8b/bzImage-83a7eefe.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2b8f6b18fd8a/mount_0.gz
+That said, I don't understand the old device tree sentiment here. The
+driver, after the change, still does support old device trees. Never in the
+existence of this switch bindings, the PHY address was supposed to be
+described a value other than the PHY address the switch listens on. Yes,
+the driver now doesn't work with old and broken device trees. Which is why
+we're fixing the said device trees. I don't see why it is necessary to make
+the driver support broken device trees just because they used to work for a
+certain range of time. This isn't about preserving ABI.
 
-The issue was bisected to:
-
-commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Sep 23 22:41:51 2023 +0000
-
-    bcachefs: Ignore unknown mount options
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1538cd96980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1738cd96980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1338cd96980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9757fdbdabd69eae08ad@syzkaller.appspotmail.com
-Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5079 at mm/page_alloc.c:4654 __alloc_pages_noprof+0x36a/0x6c0 mm/page_alloc.c:4654
-Modules linked in:
-CPU: 0 PID: 5079 Comm: syz-executor354 Not tainted 6.10.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:__alloc_pages_noprof+0x36a/0x6c0 mm/page_alloc.c:4654
-Code: a9 00 00 08 00 0f 85 12 01 00 00 44 89 e9 81 e1 7f ff ff ff a9 00 00 04 00 44 0f 45 e9 e9 02 01 00 00 c6 05 82 e5 aa 0d 01 90 <0f> 0b 90 83 fb 0a 0f 86 6c fd ff ff 45 31 ed 48 c7 44 24 20 0e 36
-RSP: 0018:ffffc900032feea0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000013 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc900032fef28
-RBP: ffffc900032fefb8 R08: ffffc900032fef27 R09: 0000000000000000
-R10: ffffc900032fef00 R11: fffff5200065fde5 R12: 1ffff9200065fddc
-R13: 0000000000040dc0 R14: dffffc0000000000 R15: 1ffff9200065fdd8
-FS:  0000555582725380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 00000000779b6000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- __kmalloc_large_node+0x8b/0x1d0 mm/slub.c:4067
- __do_kmalloc_node mm/slub.c:4110 [inline]
- __kmalloc_noprof+0x2aa/0x400 mm/slub.c:4135
- kmalloc_noprof include/linux/slab.h:664 [inline]
- kzalloc_noprof include/linux/slab.h:778 [inline]
- bch2_ioctl_fs_usage fs/bcachefs/chardev.c:517 [inline]
- bch2_fs_ioctl+0xf67/0x37d0 fs/bcachefs/chardev.c:889
- bch2_fs_file_ioctl+0x827/0x27a0 fs/bcachefs/fs-ioctl.c:539
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f142b4429b9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff3b1922b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fff3b192498 RCX: 00007f142b4429b9
-RDX: 0000000020000000 RSI: 00000000c040bc0b RDI: 0000000000000004
-RBP: 00007f142b4c8610 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000004 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff3b192488 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Arınç
 
