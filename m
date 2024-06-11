@@ -1,241 +1,117 @@
-Return-Path: <linux-kernel+bounces-209177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB46902E46
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:21:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8748A902E47
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69D5A2835DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:21:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318F11F20FC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F41BE78;
-	Tue, 11 Jun 2024 02:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F04BA5E;
+	Tue, 11 Jun 2024 02:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NjeOmRux"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="y7aNDApD"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374A411712;
-	Tue, 11 Jun 2024 02:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D765A94C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718072460; cv=none; b=sHxcPKTzIvaX0uQVlvVxqE0zKgYt95e2OuUqRrfY6aaRaM+4iDqyWlE7ru0L7utsf3bk92WrsKGoNWCAtaKblmj3A0Q/feJad2TrRLQ2r169TyrR2TJcI5r8TKTTwQvlT4erKWyPths3iV4sAupEa6k9D5FBqyGCxmV3pBdhYBY=
+	t=1718072564; cv=none; b=D0nP/jBUgP7hLF/2ThWsYODiWEj2z0vNwPyjjHbTwLa23cv3FL/9fEmbyVDfnjabxp3aHYQB5K/Ge3SAeVFJC6k830lAnYxKbatGMfZ33xpytZCf9tVVxJbX9xv2/9lNzniT3EAl3qerM60ZoB/7Ghk2UrIGvOtjZFm6bRbqi3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718072460; c=relaxed/simple;
-	bh=V/PNTQDmYRnF9nQiLdiCEupgRkUujKPkEQVHPU+HxQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QARuKi0Za15KjRoUplK0M4HJmhmeHsR+RgqitsUwgXG1B2VOz4FAahx11ssp0zdPbN6iZqjKh8JxO9pJ+oH8vppvdgKboIar7NQBz57D18NFurxluRxQ5lzDOL5eGzh+dpQAZFFqgE92ZaO7rGPsPeRDaFNLN8CMEZ1nkkq2BTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NjeOmRux; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=d2cLskHqQK8hk38s4/1iX9SZkTIRIUV1aAaRQUth+3s=; b=NjeOmRuxVwrN8/kyK0fzcbla/G
-	gjIVdM91KO0RO2HMnkLvsGdSplTE4NWKp/Zhtxnp/p3r6Wz+IOmusIr+z/iY0Lr7Te7xrTsEglxRF
-	yzQVbMjWtDb3qZLjxt/PhBdJWcpSHAcgBJsIqGCJ0r4KipCq44vOuYeQa5FFH3Vj80hs26sCv8Z+M
-	+i1jQLamzvjPcoxIBOKlNhumX61Mmpk26pWgDffWFH/HpERgm2xjAy2kG18mA7Kz/nFm+ZhuCVpcw
-	trLo88MRF1Pv+0JwdwKJ+5G3N+e+owWfVtBUcAgONcWn9nFZtu1wBVT0Og+W1Sv9u6+mIS9shpmui
-	ClLZNo9w==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sGr7x-000000078R6-2y2o;
-	Tue, 11 Jun 2024 02:20:49 +0000
-Message-ID: <0988dfae-69d0-4fbf-b145-15f6e853cbcc@infradead.org>
-Date: Mon, 10 Jun 2024 19:20:48 -0700
+	s=arc-20240116; t=1718072564; c=relaxed/simple;
+	bh=cGVfdVYeHoF7ee8gZPI99lAdeF1Ov4eltP6J+pZI2UY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pOXbMMkEfmHgY+m5CSjgaJwbPon80JcPSJGUbYi9BXLAXdsrlz77dl53W81PeC9B85Z9OKtMNeDBeDu1nDy5sjUaGYMzJZJuDfshlWYCLFpM/WFfCnysIw9n2OBQ5o5a6CYxUyMWHR5NDcYnWZ8SreIBfKlIpziqgKwOPEmNg7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=y7aNDApD; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3c9cc681ee4so298668b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 19:22:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1718072562; x=1718677362; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rOWiDGoZ3cg9dnynIRWTsyteioX53Ouu76F3VV4WZDg=;
+        b=y7aNDApDJ7bHaeBXXcBXwUjPat8I2+0gcbCkgNPIE6YTZI/dwp+fvGjy9qjZamkt4v
+         jWvmwm/EMBBb1qfvPSW9HedLqj1gmqXQ8BI0JrmA7te9SEBEKrHL8V3zZcVFPA9PWZCB
+         SoYgYFgaED9NmBDFnuGgFOIjaUT/2cFV4cPLJRVdNuKvDhpy5JAccycMsFL1WBEtP3kq
+         gqRXl0YyxcMivI1pCNXbw9yMNuz+qF7LMZfxjynzdbrXloRg0d9aGvfKO1qW2zXsRNgl
+         nCRTI6Sc9MoGEmJRavPuI41AjapJoh6ypwgHvM5S1yD/XL74MFE+kZLJMfzoZaNqkSMz
+         +MtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718072562; x=1718677362;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rOWiDGoZ3cg9dnynIRWTsyteioX53Ouu76F3VV4WZDg=;
+        b=RMY6m+ClIDNZoFgMh18q+S1jpiZnZibXp/LeaFAXIqcLUY3AXUCjujEpoks9w5l6ig
+         Tm6ChmzL/E04hp4xJThLI75TcCj0gm0u8VIgpv8HZxdEYeBTIuqk4+d1M8q13b9L4bZz
+         0ZoCknh+8xrB95+9ijS9wd+N2KaTXeFDOurO0lAV2K9ibINpQSgfm5lFYSruEReoooeR
+         5DBUUDAHz3BMqaIt6aDnmKkjQS7LCSLIizwCyuL3H/4tTPiFMomk5a5VUyE0hUNBL6Ma
+         NdOwDh/y/UpHU/5GkBTIdHFjYQqIkCgVqDv79uQCznAUYKJ8yPjV8XDgyo5fw0K3xc5G
+         mCVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGzfruNeTKvjif1CPgjGyZdCdUavV0i7PVaVbdu78MsPfXbcLbWluzfDkQMnx0H8sJHc2vAkAWTbCDuwHRwxveoWR6Idn/mXgAEePC
+X-Gm-Message-State: AOJu0Yzk+uanI3z/4J6RdxygIGtXK3soSJ8BrxNRa1eC0Bc0EkPtIqCI
+	DNWbSKnJozbWL9BYkuMG+9ObDfkZJtaSIlGXK0ny0arrLeM5A0zrkQtWRatszKg=
+X-Google-Smtp-Source: AGHT+IH54UnImHOBfDjxg/a/aqysYcwTv7IDKcLuDx7VweoZ916Hrr9pYkdYYvKpgl1/Gy1pVhimIw==
+X-Received: by 2002:a05:6808:218f:b0:3d2:1f88:3e7a with SMTP id 5614622812f47-3d21f88464bmr9449264b6e.39.1718072562390;
+        Mon, 10 Jun 2024 19:22:42 -0700 (PDT)
+Received: from zhou.. ([101.78.151.194])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7042f5584e9sm3953561b3a.12.2024.06.10.19.22.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 19:22:42 -0700 (PDT)
+From: Rui Zhou <zhourui@huaqin.corp-partner.google.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	trevor.wu@mediatek.com,
+	allen-kh.cheng@mediatek.com,
+	kuninori.morimoto.gx@renesas.com
+Cc: maso.huang@mediatek.com,
+	linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Rui Zhou <zhourui@huaqin.corp-partner.google.com>
+Subject: [PATCH v1] ASoC:  support machine driver with TAS2781
+Date: Tue, 11 Jun 2024 10:22:27 +0800
+Message-Id: <20240611022227.2508354-1-zhourui@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] mm/memfd: add documentation for MFD_NOEXEC_SEAL
- MFD_EXEC
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, cyphar@cyphar.com, david@readahead.eu,
- dmitry.torokhov@gmail.com, dverkamp@chromium.org, hughd@google.com,
- jeffxu@google.com, jorgelo@chromium.org, keescook@chromium.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, pobrn@protonmail.com, skhan@linuxfoundation.org,
- stable@vger.kernel.org
-References: <20240607203543.2151433-1-jeffxu@google.com>
- <20240607203543.2151433-2-jeffxu@google.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240607203543.2151433-2-jeffxu@google.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi--
+Support amp TAS2781 for mt8188 platform
 
-On 6/7/24 1:35 PM, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@chromium.org>
-> 
-> Add documentation for memfd_create flags: FMD_NOEXEC_SEAL
+Signed-off-by: Rui Zhou <zhourui@huaqin.corp-partner.google.com>
+---
+ sound/soc/mediatek/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-s/FMD/MFD/
-
-> and MFD_EXEC
-> 
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> ---
->  Documentation/userspace-api/index.rst      |  1 +
->  Documentation/userspace-api/mfd_noexec.rst | 86 ++++++++++++++++++++++
->  2 files changed, 87 insertions(+)
->  create mode 100644 Documentation/userspace-api/mfd_noexec.rst
-> 
-> diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
-> index 5926115ec0ed..8a251d71fa6e 100644
-> --- a/Documentation/userspace-api/index.rst
-> +++ b/Documentation/userspace-api/index.rst
-> @@ -32,6 +32,7 @@ Security-related interfaces
->     seccomp_filter
->     landlock
->     lsm
-> +   mfd_noexec
->     spec_ctrl
->     tee
->  
-> diff --git a/Documentation/userspace-api/mfd_noexec.rst b/Documentation/userspace-api/mfd_noexec.rst
-> new file mode 100644
-> index 000000000000..0d2c840f37e1
-> --- /dev/null
-> +++ b/Documentation/userspace-api/mfd_noexec.rst
-> @@ -0,0 +1,86 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +==================================
-> +Introduction of non executable mfd
-
-                   non-executable mfd
-
-> +==================================
-> +:Author:
-> +    Daniel Verkamp <dverkamp@chromium.org>
-> +    Jeff Xu <jeffxu@chromium.org>
-> +
-> +:Contributor:
-> +	Aleksa Sarai <cyphar@cyphar.com>
-> +
-> +Since Linux introduced the memfd feature, memfd have always had their
-
-                                             memfds
-i.e., plural
-
-> +execute bit set, and the memfd_create() syscall doesn't allow setting
-> +it differently.
-> +
-> +However, in a secure by default system, such as ChromeOS, (where all
-
-                 secure-by-default
-
-> +executables should come from the rootfs, which is protected by Verified
-> +boot), this executable nature of memfd opens a door for NoExec bypass
-> +and enables “confused deputy attack”.  E.g, in VRP bug [1]: cros_vm
-> +process created a memfd to share the content with an external process,
-> +however the memfd is overwritten and used for executing arbitrary code
-> +and root escalation. [2] lists more VRP in this kind.
-
-                                           of this kind.
-
-> +
-> +On the other hand, executable memfd has its legit use, runc uses memfd’s
-
-                                                     use:
-
-> +seal and executable feature to copy the contents of the binary then
-> +execute them, for such system, we need a solution to differentiate runc's
-
-           them. For such a system,
-
-> +use of  executable memfds and an attacker's [3].
-> +
-> +To address those above.
-
-                    above:
-
-> + - Let memfd_create() set X bit at creation time.
-> + - Let memfd be sealed for modifying X bit when NX is set.
-> + - A new pid namespace sysctl: vm.memfd_noexec to help applications to
-
-    - Add a new                                           applications in
-
-> +   migrating and enforcing non-executable MFD.
-> +
-> +User API
-> +========
-> +``int memfd_create(const char *name, unsigned int flags)``
-> +
-> +``MFD_NOEXEC_SEAL``
-> +	When MFD_NOEXEC_SEAL bit is set in the ``flags``, memfd is created
-> +	with NX. F_SEAL_EXEC is set and the memfd can't be modified to
-> +	add X later. MFD_ALLOW_SEALING is also implied.
-> +	This is the most common case for the application to use memfd.
-> +
-> +``MFD_EXEC``
-> +	When MFD_EXEC bit is set in the ``flags``, memfd is created with X.
-> +
-> +Note:
-> +	``MFD_NOEXEC_SEAL`` implies ``MFD_ALLOW_SEALING``. In case that
-> +	app doesn't want sealing, it can add F_SEAL_SEAL after creation.
-
-        an app
-
-> +
-> +
-> +Sysctl:
-> +========
-> +``pid namespaced sysctl vm.memfd_noexec``
-> +
-> +The new pid namespaced sysctl vm.memfd_noexec has 3 values:
-> +
-> + - 0: MEMFD_NOEXEC_SCOPE_EXEC
-> +	memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL acts like
-> +	MFD_EXEC was set.
-> +
-> + - 1: MEMFD_NOEXEC_SCOPE_NOEXEC_SEAL
-> +	memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL acts like
-> +	MFD_NOEXEC_SEAL was set.
-> +
-> + - 2: MEMFD_NOEXEC_SCOPE_NOEXEC_ENFORCED
-> +	memfd_create() without MFD_NOEXEC_SEAL will be rejected.
-> +
-> +The sysctl allows finer control of memfd_create for old-software that
-
-                                                       old software
-
-> +doesn't set the executable bit, for example, a container with
-
-                              bit;
-
-> +vm.memfd_noexec=1 means the old-software will create non-executable memfd
-
-                               old software
-
-> +by default while new-software can create executable memfd by setting
-
-                    new software
-
-> +MFD_EXEC.
-> +
-> +The value of vm.memfd_noexec is passed to child namespace at creation
-> +time, in addition, the setting is hierarchical, i.e. during memfd_create,
-
-   time. In addition,
-
-> +we will search from current ns to root ns and use the most restrictive
-> +setting.
-> +
-> +[1] https://crbug.com/1305267
-> +
-> +[2] https://bugs.chromium.org/p/chromium/issues/list?q=type%3Dbug-security%20memfd%20escalation&can=1
-> +
-> +[3] https://lwn.net/Articles/781013/
-
+diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
+index 5a8476e1ecca..07f67f96c889 100644
+--- a/sound/soc/mediatek/Kconfig
++++ b/sound/soc/mediatek/Kconfig
+@@ -233,6 +233,7 @@ config SND_SOC_MT8188_MT6359
+ 	select SND_SOC_HDMI_CODEC
+ 	select SND_SOC_DMIC
+ 	select SND_SOC_MAX98390
++	select SND_SOC_TAS2781_I2C
+ 	select SND_SOC_NAU8315
+ 	select SND_SOC_NAU8825
+ 	select SND_SOC_RT5682S
 -- 
-~Randy
+2.34.1
+
 
