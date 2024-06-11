@@ -1,129 +1,132 @@
-Return-Path: <linux-kernel+bounces-209278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7AEC903124
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:32:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95596903129
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85BFE1F2235A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:32:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E91BB26EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 05:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80D417557E;
-	Tue, 11 Jun 2024 05:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D0C171662;
+	Tue, 11 Jun 2024 05:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="erUY1Ey8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xthhKOTJ"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEE4174ECA;
-	Tue, 11 Jun 2024 05:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD21171651
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 05:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718083452; cv=none; b=mcIYZOPoAryccl5Jo6bSZGv198Zdx0h1XhMaekZhVByVZ+yGQTfYtV/vxmp/DHqNs31nz5S9oQKr9wt6xvASF2m5W8U9h00xYPLh8px0rl/wm1KhC+7lYdU145d1uAzbRELEv/KF4WjMgZ1/muo+nrFU5cM5FG5F4wuaxr1BN10=
+	t=1718083706; cv=none; b=WC+70C5l688lPFVV1xoX+Vh9/SXD1K+5kbk+CbbPdE6yOh+/Q+U3ZTNv+OmGmCku8892MMPLg0jR1tVXUEkQ2qgtpUz1NeRosSR78F3le2sYf3aXdpMWdRhd0XLQki0O7RCkmOQiG+iQt71sul7QEusF6GnrZZaRfvQXTbY0hPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718083452; c=relaxed/simple;
-	bh=9rfkw6btWnuXeXgwlnlhpR/TPnJa6+KlRHAa2N3kdwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rZ2ClyHXI8g1EsrHGS7tRi55y84wztYbBclMo8JKioKBTdUH1HEROqaE7eqKj/aoDKUjfeetrVwoqr8VveCYASNg/xN1L5YzBOWvdsyf0Sccr2cPlwlMgx129kqDOzXENkB+jPmC4hBzPteYUWrPubsJhaDd7MUIN6plL/m+MMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=erUY1Ey8; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718083450; x=1749619450;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9rfkw6btWnuXeXgwlnlhpR/TPnJa6+KlRHAa2N3kdwo=;
-  b=erUY1Ey801haGp6Rd596TALdZtRnVbYOqIoP2/KPXhf3FVvPQ4vbzGgJ
-   pxbvbD7YTfl0l1r9uhb5qtlR7IbJ5CQXr6+IX+kO3sIokfsqsThxg7Ox2
-   qn8gsZkNvlnNyFmu8Kzs/X5qPc6VRFUOFWC1Y8bSNgMkBjJUYPxRy1bIu
-   /2Q8e+2+693KsH6Tr3sU46pUkpGzf/zSrIPL8WeWITq29KnRasSwq9MG+
-   ANLhjE1oTb1E0pH7jU9Z+1PYhThS4FP9lBvX1hjfQk11fx1mo+5uY1JAj
-   jU+y02d71NcZJlfUjwR8e2Y3mJMVUORWD5v90h0AJ+AjNuFmcDh1KLsjl
-   A==;
-X-CSE-ConnectionGUID: 4SZvCM27SZiaRXBIS4ldxQ==
-X-CSE-MsgGUID: BlGf2WdGT9ySHIR2C3+RWg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14651158"
-X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
-   d="scan'208";a="14651158"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2024 22:24:04 -0700
-X-CSE-ConnectionGUID: +iOstIDST+a/9CsVe1bLeA==
-X-CSE-MsgGUID: zpTAIMa0QfOplUwsnNIuTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
-   d="scan'208";a="44441213"
-Received: from fl31ca102ks0602.deacluster.intel.com (HELO gnr-bkc.deacluster.intel.com) ([10.75.133.163])
-  by orviesa004.jf.intel.com with ESMTP; 10 Jun 2024 22:24:05 -0700
-From: weilin.wang@intel.com
-To: weilin.wang@intel.com,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Perry Taylor <perry.taylor@intel.com>,
-	Samantha Alt <samantha.alt@intel.com>,
-	Caleb Biggers <caleb.biggers@intel.com>
-Subject: [RFC PATCH v12 8/8] perf test: Add test for Intel TPEBS counting mode
-Date: Tue, 11 Jun 2024 01:23:27 -0400
-Message-ID: <20240611052331.85715-9-weilin.wang@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240611052331.85715-1-weilin.wang@intel.com>
-References: <20240611052331.85715-1-weilin.wang@intel.com>
+	s=arc-20240116; t=1718083706; c=relaxed/simple;
+	bh=fzzc4a0DkDZ++C6R6CbvYeBpAZ2JN/F4aJ4Q2fbckzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sswR2Q4oLs1w/0fJYyRFBrLFD2EltXuq+E869zv3mqwqBjm1vnhDoy3F1Lqxma3gn8qCNGXsQ0ZyfURfHxDbcc9gsY/C9xxU1p/eGtqSXd3X1jVn6eM5ArIEX4S5UtDU5pkO/owDSRRKrWYrp9bgx/PPouqYT5vV90cCifZWofw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xthhKOTJ; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70255d5ddc7so640068b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 22:28:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718083703; x=1718688503; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ET389+UsQicSdzgw907HZAI0unQUJK7qvcjpNI2Srro=;
+        b=xthhKOTJT9DMob+wWExahzjmugZS1M0ey/hP69BcKsohfluMexz9yjqsJvtv5qBHvK
+         wEhC0aZDySjAqgiV/qC1d3ZtRxEIYP7tVOfEOZHdSa0qnhSCZd688vxBMN/A2NQk1eoO
+         qzhcfTI/jU3Eun7hLwnF2aAfhF3Eccg41A80/csDQ1CLVil9p2UV12UuD5TSpuS1voDT
+         oBym1Qv/AvZ/TOo9C8x3kCDRJg9Hg5Zf8bvRpY+3zLRVZqBk1WIovRqi1FwZ4eAZkUDs
+         KHBN+0Pj+xohlhpUDeAOV5e4ubAdn05bHlkcFBPZoY6wQ0LTVvDtmDFRKLwq46OjECaB
+         Rlhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718083703; x=1718688503;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ET389+UsQicSdzgw907HZAI0unQUJK7qvcjpNI2Srro=;
+        b=KxvuWy78RfKBMmXbZa57AXc1VFAc16HMTt2ZzsC28iwEEakBZgNaloY5eVjdkdCcPB
+         PevUWLA8CIzTgGWZeOOMjwGLrV/OuCYj1l30jP2HQk3TY25x6nOqvBHezdgLBP3ZVhRD
+         YdXedT4qe8htVzV1+I2c6B4N4ivCSJSAFmpDvGbLqDx8Zby1eKq75SqAMK8VMShJLF4u
+         sYEGg3+261dbMdHgm2YWBhYwuDD9l+Hu72jmjHTBrwHCeZh/Jqoq7CcGpHbZc7rRkRWg
+         QIxUwEW8vAumNknfogfKkC9zwwYq1Aq6oKEblxwR1jzjfAygJNhVpzljs2IW9QEt0R5o
+         8h4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVBvPFPcKeYMPq9VsogtaWVXk4pfvogBu1JhhdV6mIIuIBLLH7E0/o2KzCiKQNfQRjsDQ1WXwuKPlCJkahRmELXUlYvAGP0lNYLkoej
+X-Gm-Message-State: AOJu0YyQYyogEOyByGH4a9DllUdNw8aqtIwOoAkICUi03vGPoXxkM3Le
+	0F0iTAS5OO8OJa4UB9PG6Eu27jyI/FcoPMJX4qDTxBpxpVFrBtXbwGlt4ADhbJU=
+X-Google-Smtp-Source: AGHT+IGslTY/MyTNkwyuNBJxnlo/Ryv8vu5GPAcF1G65MjaD9DB6hguFFliFiR+QJg5FnTot23/BVg==
+X-Received: by 2002:a05:6a20:3d8f:b0:1b0:3190:96d6 with SMTP id adf61e73a8af0-1b2f9a61073mr11385614637.34.1718083703368;
+        Mon, 10 Jun 2024 22:28:23 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6f96f18e8sm48765795ad.230.2024.06.10.22.28.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 22:28:22 -0700 (PDT)
+Date: Tue, 11 Jun 2024 10:58:20 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Primoz Fiser <primoz.fiser@norik.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
+Subject: Re: [PATCH 2/2] OPP: ti: Use devm_pm_opp_set_config_regulators
+Message-ID: <20240611052820.tp3xoto5fbd7figr@vireshk-i7>
+References: <20240606113334.396693-1-primoz.fiser@norik.com>
+ <20240606113334.396693-2-primoz.fiser@norik.com>
+ <20240610042250.xccda2pr277v6asf@vireshk-i7>
+ <00ec4120-19ca-4b20-85d0-754c05bdc669@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00ec4120-19ca-4b20-85d0-754c05bdc669@norik.com>
 
-From: Weilin Wang <weilin.wang@intel.com>
+On 10-06-24, 13:39, Primoz Fiser wrote:
+> I didn't because of:
+> 
+> config ARM_TI_CPUFREQ
+> 
+>         bool "Texas Instruments CPUFreq support"
+> 
+> 
+> is a built-in driver.
 
-Intel TPEBS sampling mode is supported through perf record. The counting mode
-code uses perf record to capture retire_latency value and use it in metric
-calculation. This test checks the counting mode code.
+This driver has confused me so many times.. The driver looks like a module,
+since it declares all module properties but is builtin only :(
 
-Signed-off-by: Weilin Wang <weilin.wang@intel.com>
----
- .../perf/tests/shell/test_stat_intel_tpebs.sh  | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
- create mode 100755 tools/perf/tests/shell/test_stat_intel_tpebs.sh
+> Anyway, I guess one could trigger this also with:
+> 
+> $ cd /sys/devices/platform/ocp/4a003b20.opp-supply/driver
+> $ echo 4a003b20.opp-supply > unbind
+> $ echo 4a003b20.opp-supply > bind
 
-diff --git a/tools/perf/tests/shell/test_stat_intel_tpebs.sh b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
-new file mode 100755
-index 000000000000..3c8763b39bd4
---- /dev/null
-+++ b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
-@@ -0,0 +1,18 @@
-+#!/bin/bash
-+# test Intel TPEBS counting mode
-+# SPDX-License-Identifier: GPL-2.0
-+
-+set e
-+
-+# Use this event for testing because it should exist in all platforms
-+e=cache-misses:R
-+
-+# Without this cmd option, default value or zero is returned
-+echo "Testing without --enable-tpebs-recording"
-+result=$(perf stat -e "$e" true 2>&1)
-+[[ "$result" =~ "$e" ]] || exit 1
-+
-+# In platforms that do not support TPEBS, it should execute without error.
-+echo "Testing with --enable-tpebs-recording"
-+result=$(perf stat -e "$e" --enable-tpebs-recording -a sleep 0.01 2>&1)
-+[[ "$result" =~ "perf record" && "$result" =~ "$e" ]] || exit 1
+> -sh: echo: write error: Device or resource busy
+> 
+> so the error comes from drivers/opp/core.c block:
+> 
+> 	/* This should be called before OPPs are initialized */
+> 	if (WARN_ON(!list_empty(&opp_table->opp_list))) {
+> 		ret = -EBUSY;
+> 		goto err;
+> 	}
+
+This is a different issue, which is unrelated to what we are discussing here. It
+happens as the driver has registered the cpufreq device from init() callback
+instead of probe() and remove() doesn't undo that.
+ 
+> > The only way to get this solved is probably by introducing a remove()
+> > method, which clears the OPP config and stores the token returned by
+> > dev_pm_opp_set_config_regulators().
+
+I will apply the V1 patch itself now. That is probably the best we can do for
+now.
+
 -- 
-2.43.0
-
+viresh
 
