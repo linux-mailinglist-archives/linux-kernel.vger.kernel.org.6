@@ -1,141 +1,292 @@
-Return-Path: <linux-kernel+bounces-209887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C713F903C89
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:57:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D17B903C95
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9B21F23B5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:57:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D5F1C23C08
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B85F17C7A8;
-	Tue, 11 Jun 2024 12:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8249E17CA0B;
+	Tue, 11 Jun 2024 13:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hu/MGY9J"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ewCcNeFy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E2917C7D7;
-	Tue, 11 Jun 2024 12:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689B517C7D7;
+	Tue, 11 Jun 2024 13:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718110648; cv=none; b=MryCXVErrDiCR4Dl+pUZmlZXuKWjVRdmnNND1RrznIukuuQveidevleUe7z78MJLHmE1jPqu3FNJ76Ao23S8/MSbc/uFumbsLmvazNreWotJmhjwLPvCygkdZdvDpmG47fx80y/EZULlo23yL9mbJtvph1pmspF6bX7ZOWfmWrc=
+	t=1718110876; cv=none; b=T8fSuv0X1pin51g13pIMlT9G7fgqs1fkpj5gPcvD+Q1EbIXFreZ6PptQy3KTLOyRsqZB5csTe+GcMbLT9+apU0+FWf1Hx8m++2Vu+NKLYd3KjDPLSkTLjnJQxcXyTutKh5MIQzJX32lU61nKRzzB9smnpoielCBS5GcBb2A3Ajw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718110648; c=relaxed/simple;
-	bh=PWWDzfSWd9/nnb5y9vXREzc9L1U6HRcjY2NFT0Ig/jc=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=F/wlv7t/nw4Pg+ZPrALTGQ0Vuye9t9tN87hsJMO9vS7bmnO0MYr7daAE5Q27lMYvbpaTS9gAZQ39wZEPGdvAUlxiL76WeH/2ZLXy4LilbglRRd0rIm+kEnxgLD3QPBnDGSCCFarBMuDvtyMthlrWSZ7Sx0XCIl4WtZU7NXvX4As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hu/MGY9J; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718110647; x=1749646647;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=PWWDzfSWd9/nnb5y9vXREzc9L1U6HRcjY2NFT0Ig/jc=;
-  b=Hu/MGY9JUVZ7bnAJHD2025Nr+90F9l/VsfQoQZw+pBz4jM8rSMXHtdoo
-   nKg9Nur70Z0p1aJ+qOOPYhppE45vrMwF4/WFLsPUcefKIbU7wm0mnhL4N
-   abWvQ1V22+2yfWcIxYZQuQtZpt5P1ZNeBFF13wMitfiQpuyoY1ufuD5Ey
-   E/ZV2TFssbxzX/t3WV9ETEXigcnPozmbau6LTDQTWoF+wXomgCYhVS8+L
-   v0Yr1+1B8H3uzb//pXaN5H3fuPRob5qBXLhmMoAzNu55wZwB0IQ53Ovnb
-   It7IL0rnOtKp8eXOLfu4g6NRAEQe1CQX6inSZ2bgGS8HliO2AYbJJdJM9
-   Q==;
-X-CSE-ConnectionGUID: h4O02/GxRHWqF0L1kkuwvg==
-X-CSE-MsgGUID: bAUu1fkzTbeO1m7zbF19HQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="26219143"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="26219143"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 05:57:25 -0700
-X-CSE-ConnectionGUID: NnBFlailT9O0S07Mk3/UCg==
-X-CSE-MsgGUID: NGR1aXFPQ6uJAXlJl2f/Bw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="44377196"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.92.17.168])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 11 Jun 2024 05:57:22 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "tj@kernel.org" <tj@kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "x86@kernel.org"
- <x86@kernel.org>, "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
- <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com"
- <hpa@zytor.com>, "Mehta, Sohil" <sohil.mehta@intel.com>,
- "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>, "Jarkko Sakkinen"
- <jarkko@kernel.org>, "Huang, Kai" <kai.huang@intel.com>
-Cc: "Li, Zhiquan1" <zhiquan1.li@intel.com>, "kristen@linux.intel.com"
- <kristen@linux.intel.com>, "seanjc@google.com" <seanjc@google.com>, "Zhang,
- Bo" <zhanb@microsoft.com>, "anakrish@microsoft.com" <anakrish@microsoft.com>,
- "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
- "yangjie@microsoft.com" <yangjie@microsoft.com>, "chrisyan@microsoft.com"
- <chrisyan@microsoft.com>
-Subject: Re: [PATCH v14 14/14] selftests/sgx: Add scripts for EPC cgroup
- testing
-References: <20240531222630.4634-1-haitao.huang@linux.intel.com>
- <20240531222630.4634-15-haitao.huang@linux.intel.com>
- <D1RKK8CENNXI.1KMNDADV9C1YM@kernel.org>
- <op.2owf5xiwwjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <D1SOT40TEXMI.A5J72PR5IWSP@kernel.org>
- <op.2ox4ccz7wjvjmi@hhuan26-mobl.amr.corp.intel.com>
- <eb36980a-2a81-426b-82fb-7f598f7a0037@intel.com>
-Date: Tue, 11 Jun 2024 07:57:19 -0500
+	s=arc-20240116; t=1718110876; c=relaxed/simple;
+	bh=0JZaCXW+n6H3OOec6ZC4VzANYpWXLrydYTlRC21cNoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N+VPNxhPwld8iu9SoAEvlAvJVRXlT7aRnqE0pgErMQAcHuGh2r9gIRhsHAFbAffuq/ELM9p8+RlEuOzbDi+gZ0gSJjERUxuBUX2h1s7J2PcQ6BRGEX5D+NDqF2wngKCdaFzISjzJU3t9aQH4a6K7s3zCyvZhV7vN/vzS1oLZyDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ewCcNeFy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56AA5C4AF48;
+	Tue, 11 Jun 2024 13:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718110875;
+	bh=0JZaCXW+n6H3OOec6ZC4VzANYpWXLrydYTlRC21cNoM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ewCcNeFyq/mkicN6HAoGxWW/7T93ZP4/IaputgZrzcjWFj9c2HBxYUhcfAQqoX31C
+	 UREfUSsaHshnuvVSUQbtPqJfdYurZf09CNnL7JSwdtKwwGJMsqTHWi7kntu2DvpL5c
+	 1pujHXfcrKtbc/IIPXwCcZcZ+iE3XWEUiZXBR390=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Michael Chan <michael.chan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-media@vger.kernel.org,
+	netdev@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	linux-rdma@vger.kernel.org,
+	sound-open-firmware@alsa-project.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH 1/6] auxbus: make to_auxiliary_drv accept and return a constant pointer
+Date: Tue, 11 Jun 2024 15:01:04 +0200
+Message-ID: <20240611130103.3262749-7-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2o7cxtg8wjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <eb36980a-2a81-426b-82fb-7f598f7a0037@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8097; i=gregkh@linuxfoundation.org; h=from:subject; bh=0JZaCXW+n6H3OOec6ZC4VzANYpWXLrydYTlRC21cNoM=; b=owGbwMvMwCRo6H6F97bub03G02pJDGkZXv377+23kF/wqELi4uFeuzsHjbJvzz76ZW5qgbOMi OnP0GzvjlgWBkEmBlkxRZYv23iO7q84pOhlaHsaZg4rE8gQBi5OAZjIBnaGBZM3XlC5buT2tvrZ 5hvTphh0fv18aQPDPMU/y30a3d71FF3fpOdu/J5pptniLAA=
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 
-On Mon, 10 Jun 2024 17:39:53 -0500, Huang, Kai <kai.huang@intel.com> wrote:
+In the quest to make struct device constant, start by making
+to_auziliary_drv() return a constant pointer so that drivers that call
+this can be fixed up before the driver core changes.
 
->
->> --- a/arch/x86/kernel/cpu/sgx/main.c
->> +++ b/arch/x86/kernel/cpu/sgx/main.c
->> @@ -1045,7 +1045,7 @@ static int __init sgx_init(void)
->>        if (!sgx_page_cache_init())
->>            return -ENOMEM;
->>  -    if (!sgx_page_reclaimer_init()) {
->> +    if (!sgx_page_reclaimer_init() || !sgx_cgroup_init()) {
->>            ret = -ENOMEM;
->>            goto err_page_cache;
->>        }
->
-> Does it make more sense to move the sgx_cgroup_init() to the  
-> sgx_drv_init()?  The SGX cgroup only works for the driver side anyway.  
-> In this case, if something went wrong in sgx_cgroup_init(), the  
-> sgx_vepc_init() could still have a chance to work.
->
+As the return type previously was not constant, also fix up all callers
+that were assuming that the pointer was not going to be a constant one
+in order to not break the build.
 
-vepc reclamation is not done by cgroup/ksgxd but try_charge() won't work  
-if user expecting cgroup to limit vepc allocation. Would it be more  
-consistent to just disable vepc, i.e., on system with MISC, sgx/vepc  
-always go with cgroup enabled?
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dave Ertman <david.m.ertman@intel.com>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Bingbu Cao <bingbu.cao@intel.com>
+Cc: Tianshu Qiu <tian.shu.qiu@intel.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Michael Chan <michael.chan@broadcom.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>
+Cc: Leon Romanovsky <leon@kernel.org>
+Cc: Tariq Toukan <tariqt@nvidia.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+Cc: Bard Liao <yung-chuan.liao@linux.intel.com>
+Cc: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: linux-media@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: intel-wired-lan@lists.osuosl.org
+Cc: linux-rdma@vger.kernel.org
+Cc: sound-open-firmware@alsa-project.org
+Cc: linux-sound@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/base/auxiliary.c                      | 8 ++++----
+ drivers/media/pci/intel/ipu6/ipu6-bus.h       | 2 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c | 4 ++--
+ drivers/net/ethernet/intel/ice/ice_ptp.c      | 2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/dev.c | 4 ++--
+ include/linux/auxiliary_bus.h                 | 2 +-
+ sound/soc/sof/sof-client.c                    | 4 ++--
+ 7 files changed, 13 insertions(+), 13 deletions(-)
 
-> And IIUC we need to reset the "capacity" to 0 if sgx_cgroup_init()  
-> fails, no matter it is called inside sgx_drv_init() or sgx_init(),  
-> otherwise the "epc" would appear in the cgroup hierarchy as a misc  
-> cgroup resource.
->
-> Another option is to defer setting the capacity to the point where we  
-> have made sure sgx_drv_init() and sgx_cgroup_init() cannot fail.
->
+diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+index d3a2c40c2f12..5832e31bb77b 100644
+--- a/drivers/base/auxiliary.c
++++ b/drivers/base/auxiliary.c
+@@ -180,7 +180,7 @@ static const struct auxiliary_device_id *auxiliary_match_id(const struct auxilia
+ static int auxiliary_match(struct device *dev, struct device_driver *drv)
+ {
+ 	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
+-	struct auxiliary_driver *auxdrv = to_auxiliary_drv(drv);
++	const struct auxiliary_driver *auxdrv = to_auxiliary_drv(drv);
+ 
+ 	return !!auxiliary_match_id(auxdrv->id_table, auxdev);
+ }
+@@ -203,7 +203,7 @@ static const struct dev_pm_ops auxiliary_dev_pm_ops = {
+ 
+ static int auxiliary_bus_probe(struct device *dev)
+ {
+-	struct auxiliary_driver *auxdrv = to_auxiliary_drv(dev->driver);
++	const struct auxiliary_driver *auxdrv = to_auxiliary_drv(dev->driver);
+ 	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
+ 	int ret;
+ 
+@@ -222,7 +222,7 @@ static int auxiliary_bus_probe(struct device *dev)
+ 
+ static void auxiliary_bus_remove(struct device *dev)
+ {
+-	struct auxiliary_driver *auxdrv = to_auxiliary_drv(dev->driver);
++	const struct auxiliary_driver *auxdrv = to_auxiliary_drv(dev->driver);
+ 	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
+ 
+ 	if (auxdrv->remove)
+@@ -232,7 +232,7 @@ static void auxiliary_bus_remove(struct device *dev)
+ 
+ static void auxiliary_bus_shutdown(struct device *dev)
+ {
+-	struct auxiliary_driver *auxdrv = NULL;
++	const struct auxiliary_driver *auxdrv = NULL;
+ 	struct auxiliary_device *auxdev;
+ 
+ 	if (dev->driver) {
+diff --git a/drivers/media/pci/intel/ipu6/ipu6-bus.h b/drivers/media/pci/intel/ipu6/ipu6-bus.h
+index b26c6aee1621..bb4926dfdf08 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6-bus.h
++++ b/drivers/media/pci/intel/ipu6/ipu6-bus.h
+@@ -21,7 +21,7 @@ struct ipu6_buttress_ctrl;
+ 
+ struct ipu6_bus_device {
+ 	struct auxiliary_device auxdev;
+-	struct auxiliary_driver *auxdrv;
++	const struct auxiliary_driver *auxdrv;
+ 	const struct ipu6_auxdrv_data *auxdrv_data;
+ 	struct list_head list;
+ 	void *pdata;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
+index ba3fa1c2e5d9..b9e7d3e7b15d 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
+@@ -239,7 +239,7 @@ void bnxt_ulp_stop(struct bnxt *bp)
+ 
+ 		adev = &aux_priv->aux_dev;
+ 		if (adev->dev.driver) {
+-			struct auxiliary_driver *adrv;
++			const struct auxiliary_driver *adrv;
+ 			pm_message_t pm = {};
+ 
+ 			adrv = to_auxiliary_drv(adev->dev.driver);
+@@ -277,7 +277,7 @@ void bnxt_ulp_start(struct bnxt *bp, int err)
+ 
+ 		adev = &aux_priv->aux_dev;
+ 		if (adev->dev.driver) {
+-			struct auxiliary_driver *adrv;
++			const struct auxiliary_driver *adrv;
+ 
+ 			adrv = to_auxiliary_drv(adev->dev.driver);
+ 			edev->en_state = bp->state;
+diff --git a/drivers/net/ethernet/intel/ice/ice_ptp.c b/drivers/net/ethernet/intel/ice/ice_ptp.c
+index 0f17fc1181d2..7341e7c4ef24 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ptp.c
++++ b/drivers/net/ethernet/intel/ice/ice_ptp.c
+@@ -2784,7 +2784,7 @@ static struct ice_pf *
+ ice_ptp_aux_dev_to_owner_pf(struct auxiliary_device *aux_dev)
+ {
+ 	struct ice_ptp_port_owner *ports_owner;
+-	struct auxiliary_driver *aux_drv;
++	const struct auxiliary_driver *aux_drv;
+ 	struct ice_ptp *owner_ptp;
+ 
+ 	if (!aux_dev->dev.driver)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/dev.c b/drivers/net/ethernet/mellanox/mlx5/core/dev.c
+index 47e7c2639774..9a79674d27f1 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/dev.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/dev.c
+@@ -349,7 +349,7 @@ int mlx5_attach_device(struct mlx5_core_dev *dev)
+ {
+ 	struct mlx5_priv *priv = &dev->priv;
+ 	struct auxiliary_device *adev;
+-	struct auxiliary_driver *adrv;
++	const struct auxiliary_driver *adrv;
+ 	int ret = 0, i;
+ 
+ 	devl_assert_locked(priv_to_devlink(dev));
+@@ -406,7 +406,7 @@ void mlx5_detach_device(struct mlx5_core_dev *dev, bool suspend)
+ {
+ 	struct mlx5_priv *priv = &dev->priv;
+ 	struct auxiliary_device *adev;
+-	struct auxiliary_driver *adrv;
++	const struct auxiliary_driver *adrv;
+ 	pm_message_t pm = {};
+ 	int i;
+ 
+diff --git a/include/linux/auxiliary_bus.h b/include/linux/auxiliary_bus.h
+index de21d9d24a95..bdff7b85f2ae 100644
+--- a/include/linux/auxiliary_bus.h
++++ b/include/linux/auxiliary_bus.h
+@@ -203,7 +203,7 @@ static inline struct auxiliary_device *to_auxiliary_dev(struct device *dev)
+ 	return container_of(dev, struct auxiliary_device, dev);
+ }
+ 
+-static inline struct auxiliary_driver *to_auxiliary_drv(struct device_driver *drv)
++static inline const struct auxiliary_driver *to_auxiliary_drv(const struct device_driver *drv)
+ {
+ 	return container_of(drv, struct auxiliary_driver, driver);
+ }
+diff --git a/sound/soc/sof/sof-client.c b/sound/soc/sof/sof-client.c
+index 99f74def4ab6..5d6005a88e79 100644
+--- a/sound/soc/sof/sof-client.c
++++ b/sound/soc/sof/sof-client.c
+@@ -357,7 +357,7 @@ EXPORT_SYMBOL_NS_GPL(sof_client_ipc4_find_module, SND_SOC_SOF_CLIENT);
+ 
+ int sof_suspend_clients(struct snd_sof_dev *sdev, pm_message_t state)
+ {
+-	struct auxiliary_driver *adrv;
++	const struct auxiliary_driver *adrv;
+ 	struct sof_client_dev *cdev;
+ 
+ 	mutex_lock(&sdev->ipc_client_mutex);
+@@ -380,7 +380,7 @@ EXPORT_SYMBOL_NS_GPL(sof_suspend_clients, SND_SOC_SOF_CLIENT);
+ 
+ int sof_resume_clients(struct snd_sof_dev *sdev)
+ {
+-	struct auxiliary_driver *adrv;
++	const struct auxiliary_driver *adrv;
+ 	struct sof_client_dev *cdev;
+ 
+ 	mutex_lock(&sdev->ipc_client_mutex);
+-- 
+2.45.2
 
-Yes agree we need do this.
-> Btw, I plan to review the rest from late of this week or next week  
-> because this week I have some other staff needs to be finished first.
->
-
-Sure. Thanks
-Haitao
 
