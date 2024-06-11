@@ -1,90 +1,107 @@
-Return-Path: <linux-kernel+bounces-210453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417A69043D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:41:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4525D9043DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D51DC1C24D2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:41:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBE791F220A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B7C6FE16;
-	Tue, 11 Jun 2024 18:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CACC7350E;
+	Tue, 11 Jun 2024 18:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOrgfbbG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QjDrUy5t"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAB114A96;
-	Tue, 11 Jun 2024 18:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED24A4644C;
+	Tue, 11 Jun 2024 18:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718131277; cv=none; b=SFjC7x4XRbmITaYKtKNBKfv08uFlgtONf92b0guojGKwfYAmT8ysBIvwM/fyrw7sXBIlScSQAwmXtTozDV7eSXayXER/+LpBUPwrimxV+0MhbofLnIAtUDx+ecHLE+WK5c07DJRHnzO/Kgfs89OSe+t16kevTb6jFAhbTk/Iuvc=
+	t=1718131413; cv=none; b=YNZHTWr4punb2RwUmbN1W5IPJJrivWqND3q96WF7z9qT2N84C1AxODcXQ8oNwdtrhQQD4b4dn5FbSS9sLA0SQ0Oglm/V65Zn3RcTa4ywK7N6tth81RIiCPgFgcGSkOJfX81asbYISmA0u87vt/FaYj8RKwknXAfG0bxbh24ADKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718131277; c=relaxed/simple;
-	bh=P0+kbGBViPVlXWHNujnSAalb1rK+KEqJYTwnL+IIEfQ=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=DniS/24ZoeYWyz5CMWNnubirzEEVKd2wRBPlA4pSPKYUPi5PP+1uOZiQ5SfwGaxMipJ1Xebh8ZmY2c3Xa2IZVwieiq20sE2bNRIXdM1Yu85gWm9V+cMNY/BFmJDPmYEP2Ph2E+/rkE24wa00VzJuTtIWXf9zsNmfyaC5ew25kSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOrgfbbG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EE79C2BD10;
-	Tue, 11 Jun 2024 18:41:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718131276;
-	bh=P0+kbGBViPVlXWHNujnSAalb1rK+KEqJYTwnL+IIEfQ=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=FOrgfbbGeCvpAnkAhL/PCPu/D+j2PnA/UhagF/dWDyEsiNt6Hs295i2fBilB8jTlT
-	 rt+TFahXScTYiZKR9BBiQal7BvBkIXpTsWAKUv+yXRIgTDz5Zxk9POqcL+/iugn+9g
-	 r/QBlzWgNcf/HG+Z8UyI2kWX9yCDd6my8FWB7/DntU+hWi7spuFWvk8413cC5J+IIK
-	 YH/PySHue4hED+9UF4f7nSjJFOHfQUaRUYAFFNCs2J5ElpMlzsHXmTltfjUAroNPgB
-	 7Cuvt9siTM3am8CMU0eCE5nsuqNuXPEkftfGkyXHeaZFiWT48MusSGf+lypHRNZXFb
-	 /WcMP62Jflfcw==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718131413; c=relaxed/simple;
+	bh=HMyc4bT6r/w2n7Js+X6N54BUQhZ/E9ivt4CcJuMZ9qs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uJQZMqRkmuQ5PQzzNNQdAlv4bYwpB5En7Fy4eF5iQkujqNFsKZB9hPcJZFClfAXs0I70Ar0yiEpXYHY9w1X/pi0EZwf46klS6Zsj2049xd2N/sB4HP6gadOrwbBXKakfXv+h9DGIQ6d/f5HIzWiW/QMiOq+O7btjNDpN5b+hN4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QjDrUy5t; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ebeefb9a6eso14739731fa.1;
+        Tue, 11 Jun 2024 11:43:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718131410; x=1718736210; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HMyc4bT6r/w2n7Js+X6N54BUQhZ/E9ivt4CcJuMZ9qs=;
+        b=QjDrUy5tVwBRkmvOXv+IC1Zv3EROLz3PbbToIk2Twud34vLPRaqrwGagMjByBc7/e6
+         8k2nFatesYHaMDRJS50PYresPzzNB6qyxw5I7faerv1x6skQ2JKWbGSMD89uVnVTOCTx
+         QYubWa7pg3nI8LpLsVV8dwZT3UzRDdpiuoWqbbrKzCK/bj92htSIPFm+O7lOJWeCd+4b
+         +LH1E1bZr0NH+q6LmFtJoaAq2SbQBWVLMZCk98Y+hu5TF4SnHSHia5gFGW9iEhDc3xCJ
+         GDQL4Ia2/sddI6yUbvRgEgDIGrjIlmpeKmu5RAAyIexTZ+cx2heuuwfpciv3npOI9Cye
+         W1pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718131410; x=1718736210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HMyc4bT6r/w2n7Js+X6N54BUQhZ/E9ivt4CcJuMZ9qs=;
+        b=FE67VUkNAxD9QNsjyA8qL17SVVxqef6IizyOIYByF3lF+B1YT+qV3uNJAhVZpXsmvu
+         eH0RupYgAXNuOnIUkDA1EYZ2a29n4cZbi8v9FJqVc51xVBit/na4vb8AdBFYKO44200b
+         pkrMQ1sYTE+rnkBpFQ7cMp0c9G/uIP17Bjizhvp+hQTofQHQiCUuCFBalf4H2evB+B5y
+         BqTGBWZ39jvtBe514aLBM5y73fZ5tj3TJRfckq84mhOQyxUofPTtMZtJzRCKkp7RS/k6
+         93LUAOUFiLeumSm8+88hP/uu3rzLh4nz1wrnKJ8qWsEpvQtcASLfWWwtOHxBjf1pKJ7k
+         p8gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwDBKQ6rmzrjlhoLfsGjrqvIOs41av5fsc0WnrufkCqewc2JJQpgBXgefZ8VV//pCJjVPgdYJL43stg/eGCVRpzXFbpb85mrJq96GNQ0vV/58YJVW+7tdpPTX4UlAWGnGYxU+k1ZyvXd6YsNy5ARQh1tauYwpFu8K+jqdIf0NPCSHDT0M=
+X-Gm-Message-State: AOJu0Yyrj4irLytVGmCtgTxVHIGRYLcQBZ+ceKnwZRUfO2iJuP6oE2l4
+	J0oHx7kFut1TaNq79tW+3RlFwWMdINNjAn/5WaQBejvg6GUXH2A5xd79rBonpmxV7mQhUY72K0X
+	6jAELrMTXbQ1QLSDqj73ud1HsiGo=
+X-Google-Smtp-Source: AGHT+IFR0HuBjjtBpGUGnC1n8m5LaRH75CZMOZaWTsBvsZhf+ocdgG8M7BZDoCW1o62xIr7F/2JeXPylHz+px3w6XMw=
+X-Received: by 2002:a2e:7d11:0:b0:2ea:9300:e136 with SMTP id
+ 38308e7fff4ca-2eadce7a513mr76072841fa.42.1718131409773; Tue, 11 Jun 2024
+ 11:43:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 1/6] wifi: ath11k: use 'time_left' variable with
- wait_event_timeout()
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240603091541.8367-2-wsa+renesas@sang-engineering.com>
-References: <20240603091541.8367-2-wsa+renesas@sang-engineering.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org,
- ath11k@lists.infradead.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <171813127345.3564613.1259429079165785453.kvalo@kernel.org>
-Date: Tue, 11 Jun 2024 18:41:15 +0000 (UTC)
+References: <20240611132134.31269-1-bavishimithil@gmail.com> <20240611164951.51754ffc@aktux>
+In-Reply-To: <20240611164951.51754ffc@aktux>
+From: Mithil <bavishimithil@gmail.com>
+Date: Wed, 12 Jun 2024 00:13:16 +0530
+Message-ID: <CAGzNGRmoSawz7yHGzHS8PeQwRAsnnORLMPrrNBLupNdaOkUeHw@mail.gmail.com>
+Subject: Re: [PATCH v1] ARM: dts: twl6032: Add DTS file for TWL6032 PMIC
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, 
+	Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-omap@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+On Tue, Jun 11, 2024 at 8:19=E2=80=AFPM Andreas Kemnade <andreas@kemnade.in=
+fo> wrote:
+> hmm, that might be board specific stuff, maybe keep them as they are in t=
+he
+> twl6030.dtsi and override them in board specific dts files if needed.
+We could do that, since we have no datasheet publicly available for
+6032, I thought it would be better to stick to values which are known
+to be working hence using downstream values. Anything mentioned in the
+BT200 kernel, we could update it with those values.
 
-> There is a confusing pattern in the kernel to use a variable named 'timeout' to
-> store the result of wait_event_timeout() causing patterns like:
-> 
->         timeout = wait_event_timeout(...)
->         if (!timeout) return -ETIMEDOUT;
-> 
-> with all kinds of permutations. Use 'time_left' as a variable to make the code
-> self explaining.
-> 
-> Fix to the proper variable type 'long' while here.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+> And is there any reason why you left out the pwm stuff?
+Didn't need it for espresso, but will add in v2.
 
-Patch applied to ath-next branch of ath.git, thanks.
+> I think the twl6030.dtsi and twl6032.dtsi should be as similar as possibl=
+e.
+Agreed. But same min/max values as well?
 
-65a8368bf34e wifi: ath11k: use 'time_left' variable with wait_event_timeout()
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240603091541.8367-2-wsa+renesas@sang-engineering.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+--=20
+Best Regards,
+Mithil
 
