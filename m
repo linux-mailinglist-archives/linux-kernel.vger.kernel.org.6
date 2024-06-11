@@ -1,260 +1,113 @@
-Return-Path: <linux-kernel+bounces-210302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCCFF904218
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:02:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E42D90421B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46EF51F2153A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266EB1F2394D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E72A446AC;
-	Tue, 11 Jun 2024 17:02:19 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE7F4502B;
+	Tue, 11 Jun 2024 17:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdyZk8sc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F56B1EB31;
-	Tue, 11 Jun 2024 17:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F75B3FB83;
+	Tue, 11 Jun 2024 17:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718125338; cv=none; b=GocXEXtQ3dUaYNDFPkZivFRq5eHsrWoSb+0zFS6U6Gy4g4i1wM3+IYUkH/VdqCHLAo1f7jjJM6eG6s7SHAlKzJOanV9Lk3gIQHO/+bEEuLGEjubJBbnS1XuMSXo1ZLF7BzLo0Ff+PAKd65hZnn9AYhpfo/smu9QuMe27SdsrKsw=
+	t=1718125453; cv=none; b=TUf5/DpDaiFCnQAcTrw0EaQOJHqz8Qid1uD58Qnsf9IffkcpsBMIbOXnqNJZvt+cbFJMqVFQ9olsoQCnoedyxmliLS3cGm7w2HPkyrBHVtSfKfmnt9FzP4xisw4P9RtM0WUY6bwVyWey/qcq22+/a+jBNKdTC1dWlb9cMcZmJxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718125338; c=relaxed/simple;
-	bh=vqJwh1ZTKRcGC6rpPG/75qkN5daDxSCuDaDr2116EpM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=paZ1zJOQxYvuLygofhLZ3ydUls4Rgs4FojUc7liooR4juyggExZSiba9+9W9cnYsuLuHZvxeXRVuTxqSO52EnEvLBGdm9UWuZYYILKJmyxdhTy83j2LijeA+CaYAv5nyoRjYt5i3aFftCYBAnsOQqEEPM4imWrBcv0EQEaZT6ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VzFGS2VWmz6J9x8;
-	Wed, 12 Jun 2024 00:57:36 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 337E0140516;
-	Wed, 12 Jun 2024 01:02:12 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Jun
- 2024 18:02:11 +0100
-Date: Tue, 11 Jun 2024 18:02:10 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Petar Stoykov <pd.pstoykov@gmail.com>
-CC: Jonathan Cameron <jic23@kernel.org>, <linux-iio@vger.kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Lars-Peter Clausen
-	<lars@metafoo.de>, Rob Herring <robh+dt@kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Angel Iglesias
-	<ang.iglesiasg@gmail.com>, Conor Dooley <conor+dt@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] iio: pressure: Add driver for Sensirion SDP500
-Message-ID: <20240611180210.00006f23@Huawei.com>
-In-Reply-To: <CADFWO8FGqD5GyrRtvFptjMdYBhfFFwOzgZ1XnVVEPeY3E8CZPg@mail.gmail.com>
-References: <CADFWO8EQUkGcbE=RXjxXbub2tZge9+ss=gB-Q6wngFAvwFygRg@mail.gmail.com>
-	<20240505181829.49864540@jic23-huawei>
-	<CADFWO8FGqD5GyrRtvFptjMdYBhfFFwOzgZ1XnVVEPeY3E8CZPg@mail.gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718125453; c=relaxed/simple;
+	bh=D7nsRPRmxIs0jY7N1vqy4P7tamwNORJta5X6eAl1P1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Bc5tk1+zklMFl5r/KRP/Hbrwuhp1kTjU1sL7p4joXZiyZ7koBM45EFj4SS9oIB0GqpKWyoKeO2BWM5wIwOKxNO4IJsREaO1lxePAaUX11v1VoHvP8VJFSmiqK2Xrl1MBwBhu7u5zZqu/qwrVtddLI/kstqQKfPTpJaXKfkPe6vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdyZk8sc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62977C2BD10;
+	Tue, 11 Jun 2024 17:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718125452;
+	bh=D7nsRPRmxIs0jY7N1vqy4P7tamwNORJta5X6eAl1P1E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=pdyZk8scEe3XbhVlanhkDHhDlGCT6hFwwfx2X7Z/YREiPn2gXlWFWnWxVHg+wKQ5W
+	 3ZVwmblInsG8/Tdaf4L+u9azaV1zjmjATCizQqPiEfTjdE4aVTejjigcISknSy8xoU
+	 gWSf4jTZIYypzX7WSw5I+wlK+PLB11jA6qcy1+4FlrJULQ5BHlJch79iH9WzBdUjR5
+	 FygURBx42o293b5CIdfVWcdXZY5wqX58HgIqWxvuawbTXwVUaRVj1HIe33VG5nKcn6
+	 psvsAxLoiAql6T8/lKqhu2N/7oK/We7jmC8ZzTdHtFr+lYZJ34nh1549FW04+r+lrR
+	 X/PylG3G4OfUw==
+Date: Tue, 11 Jun 2024 12:04:10 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: matthew.gerlach@linux.intel.com
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, joyce.ooi@intel.com, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] PCI: altera: support dt binding update
+Message-ID: <20240611170410.GA989554@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611163525.4156688-2-matthew.gerlach@linux.intel.com>
 
-On Mon, 10 Jun 2024 10:58:35 +0200
-Petar Stoykov <pd.pstoykov@gmail.com> wrote:
+On Tue, Jun 11, 2024 at 11:35:25AM -0500, matthew.gerlach@linux.intel.com wrote:
+> From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> 
+> Add support for the device tree binding update. As part of
+> converting the binding document from text to yaml, with schema
+> validation, a device tree subnode was added to properly map
+> legacy interrupts. Maintain backward compatibility with previous binding.
 
-> On Sun, May 5, 2024 at 7:18=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
-> wrote:
-> >
-> > On Tue, 30 Apr 2024 17:27:24 +0200
-> > Petar Stoykov <pd.pstoykov@gmail.com> wrote:
-> > =20
-> > > From 6ae7537517f551540121ca6fb3b99080b7580410 Mon Sep 17 00:00:00 2001
-> > > From: Petar Stoykov <pd.pstoykov@gmail.com>
-> > > Date: Mon, 15 Jan 2024 12:21:26 +0100
-> > > Subject: [PATCH 2/3] iio: pressure: Add driver for Sensirion SDP500
-> > >
-> > > Sensirion SDP500 is a digital differential pressure sensor. The senso=
-r is
-> > > accessed over I2C.
-> > >
-> > > Signed-off-by: Petar Stoykov <pd.pstoykov@gmail.com> =20
-> > Hi Petar
-> >
-> > Ignoring the patch formatting which others have already given feedback =
-on,
-> > a few minor comments inline.
-> >
-> > Also, I'd expect some regulator handling to turn the power on.
-> > Obviously on your particular board there may be nothing to do but good =
-to
-> > have the support in place anyway and it will be harmless if the power
-> > is always on.
-> >
-> > Jonathan
-> > =20
-> Hi Jonathan,
->=20
-> Thank you for looking past the formatting!
->=20
-> I wrongly assumed the power regulator would be handled automatically :)
-> I see examples of how to do it in other pressure drivers now.
->=20
-> > >  st_pressure-$(CONFIG_IIO_BUFFER) +=3D st_pressure_buffer.o
-> > > diff --git a/drivers/iio/pressure/sdp500.c b/drivers/iio/pressure/sdp=
-500.c
-> > > new file mode 100644
-> > > index 000000000000..7efcc69e829c
-> > > --- /dev/null
-> > > +++ b/drivers/iio/pressure/sdp500.c
-> > > @@ -0,0 +1,144 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +#include <linux/i2c.h>
-> > > +#include <linux/crc8.h>
-> > > +#include <linux/iio/iio.h>
-> > > +#include <asm/unaligned.h>
-> > > +
-> > > +#define SDP500_CRC8_POLYNOMIAL  0x31   // x8 + x5 + x4 + 1 (normaliz=
-ed to 0x31)
-> > > +#define SDP500_READ_SIZE        3
-> > > +#define SDP500_CRC8_WORD_LENGTH 2 =20
-> >
-> > As below. I'd establish these off the data the are the lengths of by us=
-ing
-> > a structure definition.  That will be more obvious and less fragile than
-> > defines hiding up here.
-> >
-> > =20
-> > > +#define SDP500_CRC8_INIT        0x00 =20
-> >
-> > I'd just use the number inline.  Can't see what the define is adding. =
-=20
->=20
-> I've been taught to avoid magic numbers as much as possible.
-> Giving it a define directly explains what the number is, even if it's use=
-d once.
-> But I'll follow the community (in this case, you) for this.
+If something was *added* to the binding, I think it would be helpful
+to split that into two patches: (1) convert to YAML with zero
+functional changes, (2) add the new stuff.  Adding something at the
+same time as changing the format makes it hard to review.
 
-Normally I agree with the magic number case, but this
-is an actual value.  We are saying continue the CRC from
-0 (i.e. nothing). It's kind of the logical default value
-so seeing it in line makes it clear we aren't continuing form
-a prior crc etc.
+Then we could have a more specific subject and commit log for *this*
+patch.
 
-...
-
-> > =20
-> > > +    },
-> > > +};
-> > > +
-> > > +static int sdp500_read_raw(struct iio_dev *indio_dev,
-> > > +              struct iio_chan_spec const *chan,
-> > > +              int *val, int *val2, long mask)
-> > > +{
-> > > +    int ret;
-> > > +    u8 rxbuf[SDP500_READ_SIZE]; =20
-> > You could define this as a struct so all the data types are obvious.
-> >
-> >         struct {
-> >                 __be16 data;
-> >                 u8 crc;
-> >         } __packed rxbuf;
-> > The  __packed let's you use sizeof(rxbuf) for the transfer size.
-> > Beware though as IIRC that will mean data is not necessarily aligned
-> > so you'll still need the unaligned accessors.
-> > =20
->=20
-> I know, but I prefer to receive data in simple arrays and then deal with =
-it.
-The disadvantage is you loose the readability a structure brings, but
-meh, I don't care that much.=20
-
->=20
-> > > +    u8 rec_crc, calculated_crc;
-> > > +    s16 dec_value;
-> > > +    struct sdp500_data *data =3D iio_priv(indio_dev);
-> > > +    struct i2c_client *client =3D to_i2c_client(data->dev);
-> > > +
-> > > +    switch (mask) {
-> > > +    case IIO_CHAN_INFO_PROCESSED:
-> > > +        ret =3D i2c_master_recv(client, rxbuf, SDP500_READ_SIZE);
-> > > +        if (ret < 0) {
-> > > +            dev_err(indio_dev->dev.parent, "Failed to receive data");
-> > > +            return ret;
-> > > +        }
-> > > +        if (ret !=3D SDP500_READ_SIZE) {
-> > > +            dev_err(indio_dev->dev.parent, "Data is received wrongly=
-"); =20
-> >
-> > I'd guess indio_dev->dev.parent =3D=3D data->dev
-> > If so use data->dev as more compact and that's where you are getting the
-> > i2c_client from.
-> > =20
->=20
-> Makes sense.
->=20
-> > > +            return -EIO;
-> > > +        }
-> > > +
-> > > +        rec_crc =3D rxbuf[2];
-> > > +        calculated_crc =3D crc8(sdp500_crc8_table, rxbuf,
-> > > SDP500_CRC8_WORD_LENGTH, =20
-> >
-> > I'd use the number 2 for length directly as it's useful to know this is=
- the
-> > __be16 only, or sizeof(__be16)
-> > What is the point in rec_crc local variable? =20
->=20
-> Ok, I will use sizeof(rxbuff) - 1 instead of the define.
-That's obscure and another reason I'd rather see a structure so this
-becomes sizeof(a.data)
-
-> The rec_crc is again for readability, like the SDP500_CRC8_INIT define.
-> I will change it to "received_crc" which is clearer though.
-The fact you compare it with the crc makes that pretty obvious, but
-fair enough I guess if you think it helps.
-
->=20
-> > =20
-> > > +            SDP500_CRC8_INIT);
-> > > +        if (rec_crc !=3D calculated_crc) {
-> > > +            dev_err(indio_dev->dev.parent, "calculated crc =3D 0x%.2=
-X,
-> > > received 0x%.2X",
-> > > +                calculated_crc, rec_crc);
-> > > +            return -EIO;
-> > > +        }
-> > > +
-> > > +        dec_value =3D get_unaligned_be16(rxbuf);
-> > > +        dev_dbg(indio_dev->dev.parent, "dec value =3D %d", dec_value=
-); =20
-> >
-
->=20
-> > > +};
-> > > +module_i2c_driver(sdp500_driver);
-> > > +
-> > > +MODULE_AUTHOR("Thomas Sioutas <thomas.sioutas@prodrive-technologies.=
-com>");
-> > > +MODULE_DESCRIPTION("Driver for Sensirion SDP500 differential pressur=
-e sensor");
-> > > +MODULE_LICENSE("GPL"); =20
-> > =20
->=20
-> I will test the driver with the suggested changes as soon as I get the
-> hardware again
-> and I will try using the b4 tool with "web submission endpoint". Thanks a=
-gain!
->=20
-Good luck! (it should be fine but I've never tried it :)
-
-Jonathan
-
-
+> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> ---
+>  drivers/pci/controller/pcie-altera.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
+> index a9536dc4bf96..88511fa2f078 100644
+> --- a/drivers/pci/controller/pcie-altera.c
+> +++ b/drivers/pci/controller/pcie-altera.c
+> @@ -667,11 +667,20 @@ static void altera_pcie_isr(struct irq_desc *desc)
+>  static int altera_pcie_init_irq_domain(struct altera_pcie *pcie)
+>  {
+>  	struct device *dev = &pcie->pdev->dev;
+> -	struct device_node *node = dev->of_node;
+> +	struct device_node *node, *child;
+>  
+>  	/* Setup INTx */
+> +	child = of_get_next_child(dev->of_node, NULL);
+> +	if (child)
+> +		node = child;
+> +	else
+> +		node = dev->of_node;
+> +
+>  	pcie->irq_domain = irq_domain_add_linear(node, PCI_NUM_INTX,
+> -					&intx_domain_ops, pcie);
+> +						 &intx_domain_ops, pcie);
+> +	if (child)
+> +		of_node_put(child);
+> +
+>  	if (!pcie->irq_domain) {
+>  		dev_err(dev, "Failed to get a INTx IRQ domain\n");
+>  		return -ENOMEM;
+> -- 
+> 2.34.1
+> 
 
