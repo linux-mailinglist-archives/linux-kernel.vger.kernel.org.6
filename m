@@ -1,328 +1,499 @@
-Return-Path: <linux-kernel+bounces-209348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40CD4903316
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:54:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C69D903319
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B691F28C75F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:54:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CCBB1F27483
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82760172790;
-	Tue, 11 Jun 2024 06:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCCC171E5C;
+	Tue, 11 Jun 2024 06:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iiLcw0kA"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQrM8oq8"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89877171E66;
-	Tue, 11 Jun 2024 06:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48FD171095;
+	Tue, 11 Jun 2024 06:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718088860; cv=none; b=P0KF9Gi1UD/54Z80RTg2jx6NoVqhzftRUMnv312y9b98dHGaXZGzOzOgiA+g4wvbh9+WkFqZi0NIUnvwuCvd9nHrhUYsWpluGOZQd0EwWShz2hUt8JV3c/W1DYDPIpJrIb0DLpINxtkJs4YyhFO+3Un7mTHBwe5Wj7uMAzmCm58=
+	t=1718088971; cv=none; b=nsfr/j2z6gMn0J+4o1JaRt7Gi4DZJXLZcp2pF1DH7M44elNOo7uB7gyi51jVFQih8YlbqQ3EP/K5kRG6loSDzQdj+GtokxVJrKxeGWsMxz/yybXcxzU4VcHw7iqifoEgS6zOmHdh5UAzFOqp5Z8G8Obo8iYNV2gwTRxclI6CFOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718088860; c=relaxed/simple;
-	bh=L2glcEBJPqTLQO8Gdi0zVPEY8C63eL0dUxrZNc/ueBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=taDeY1YKH9XKlCxGD52QfuAgYEGQbvbd3Ub6JYNBljnCa2iMV4H6P/Fj/dMzm9Lmc0D+DGrfKaM1EZBqshS7jBK110nUxGj8CSsOcJ/m0b2E32riF682MegYXyiqeR8z5u84TNsyhk71KrnUjUWRwOU8RLWRpPUUzHid6m0xiWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iiLcw0kA; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718088850;
-	bh=L2glcEBJPqTLQO8Gdi0zVPEY8C63eL0dUxrZNc/ueBk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iiLcw0kA6mk7hFiX5Y1591cgeb/Ga9Ubf84v4VB0213cIV28cEdq4NBAvhLWFK73B
-	 aYC9owce1ydMJEuVlGqL0CObz/YJrGP3bO5N9r2c9SnNSJ9dQ/SITzarkyyslqv0BM
-	 mqv0JIN6AF7+7hwmh3Tn5ekQ5ZzRwiyAcnyMLXr3DiINpryoOz3/JpW8YN5SONFoPe
-	 YvibWtk5xpnjTCLamTVnnSEFfxiyZWqGa/bDNLP/XUPYcWECSNvKO9BkPblf8e8NdG
-	 oIJoGQNPcWTCuYU4Md5FoWCDXktCwmdliD7TCiRQFV9Xh5y1WmpXVyBODcJRIkxgPP
-	 NgnFa+18pgHHA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9070A3780EC6;
-	Tue, 11 Jun 2024 06:54:09 +0000 (UTC)
-Message-ID: <aa991aa4-7e9e-4cc6-b6ae-69539700691f@collabora.com>
-Date: Tue, 11 Jun 2024 08:54:08 +0200
+	s=arc-20240116; t=1718088971; c=relaxed/simple;
+	bh=B+Gy8SEtqx9t6ms371lgzQbEfArEErMx5gqAWNsl6SQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZTe/WRcQgoo98isw41PIyy7rcu2pGNUPNOsaT5WrWq2aGrlgznXQaHxemZ2wWdhVAFTrJ46ZzcLTgADUcsua9c90yM16atsVqM4lJJKg4jN4NxdmM+iRolZ5Hb/xCgVl2280MqLWgtaqw2lTfV4oAh2vVo7PaWLVCA911yk/q/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQrM8oq8; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-7eb9e7f3da2so34607939f.1;
+        Mon, 10 Jun 2024 23:56:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718088968; x=1718693768; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uIV8kEyDfbkOpTN/DX1sgcJeZ6eCveBn7lNpOasAGh4=;
+        b=XQrM8oq8eve8zoaomQoR0PMjVmPb+NKc2FFvfZCHAxSe0AUfJEV7TckDpulvNGWdTd
+         15T+lywEAZjwiJJina/SKjR0hPz+hJY6QGmtzpMx/05RZJPEYndNVSRK7VrXgBD6e7RQ
+         XR6Hukx4u2MgwS9ExPUnYUaaxGZozZIY/rVw+aQLwyuSODFBb4ejrBaMfDIJ+Wc6O3JK
+         Aa9ZlaGxXckV2WmZGqFVg+W++Cfv+LYrEtsygQddSiADZcrBAu+xK5NK40jGnYbx2DpI
+         AK9hmjJV314FV8hcbvHNx9SHbNtjZCEAnKSb+L1CLbq4hSds7j+qoMXnzBfQ2nhHtv9v
+         e9KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718088968; x=1718693768;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uIV8kEyDfbkOpTN/DX1sgcJeZ6eCveBn7lNpOasAGh4=;
+        b=var67mX1l+A+1a2lu1ZLQ8/X3xqQ5HFNmUcOwCz8C12asbQ4X1+WCV/nzEn7SXcUOS
+         fRa3wR9qlfMN5bc45pUm5nJytqrskqj+hEEkrbt7nlAbuLju4/C+SrPsBrwh+gZ/3AMY
+         yQ8PPp5xP+BEZiZxKHgNAFmPEkh+/dkZyOPmd9UXAoN8yZLbkDjhtIn3Qdqojzq1n08n
+         xcdfdyWOyuj8vBSnAK665vK5IUP9R8AGSFYR62YNuaBZuEuIls7ejr9sLTtI9kRr500w
+         mnVIzWcbibYjOkPoouyKhMJtEUTFcUh1WuVQxvdpIbg1mb+rhJBqiRRGqiFVQDGGYi1d
+         lAvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQQyEh8735TTg2eWeBNDBOA7d0pNkp65f4o685U4722LMMdHBzoDRrClC+gJZcy4C4bvhUfLW9zccv+PTFHWb67rrUPExyevI8ad8bEkHtaj/BHgWk4U8yyuumq/GGiLVckCDSlNQKDOjRHOm2J7uXYtHEIpxuTB8WidjRwx2Z7wYqyQ==
+X-Gm-Message-State: AOJu0Yx413igOBOmIO9J2L0gkoj9USr7sO5MeK6mDZR4HvXodTmEedG3
+	fETjgsCOLLmw+GbTHDyCQp8HbZsdZnUz2h913gkiwEvtskLYmKT1AA8ibnidrrqJp0fHTS9xbXM
+	MthDv2EJTrQdqBqX7flB3nan5M1s=
+X-Google-Smtp-Source: AGHT+IF/aIbFJgENwccISyiDw4ED2Yu2mF1rJ9k3fpVdGgufmmvg4Nqe+PWlVb+q3Py3N5/NblY7j5GfNMfnA8pHx5A=
+X-Received: by 2002:a92:c047:0:b0:375:86c9:9ec9 with SMTP id
+ e9e14a558f8ab-37586c9a260mr97466115ab.11.1718088967543; Mon, 10 Jun 2024
+ 23:56:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] dt-bindings: arm: mediatek: mmsys: Add OF graph
- support for board path
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "wenst@chromium.org" <wenst@chromium.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= <Yu-chang.Lee@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "amergnat@baylibre.com" <amergnat@baylibre.com>
-References: <20240521075717.50330-1-angelogioacchino.delregno@collabora.com>
- <20240521075717.50330-3-angelogioacchino.delregno@collabora.com>
- <e7845300fa822413f6308cb6297222cde89c39e0.camel@mediatek.com>
- <0e0fe86c-92da-43f5-89d7-8084274a908a@collabora.com>
- <0f20214ab3a86f68669ad1392398b16228e699ee.camel@mediatek.com>
- <47f05439-815e-4ca1-b20d-8e427fef0a2a@collabora.com>
- <ee0209dac731b36ffe2ee20a2ff537ce7758b01f.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <ee0209dac731b36ffe2ee20a2ff537ce7758b01f.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <1717036278-3515-1-git-send-email-shengjiu.wang@nxp.com>
+ <1717036278-3515-4-git-send-email-shengjiu.wang@nxp.com> <20240530090558.53reobf2zea22oi2@pengutronix.de>
+ <Zlig/Z7u4nxvKLoQ@lizhi-Precision-Tower-5810> <20240530164510.fyznsyzvqrbu4a4e@pengutronix.de>
+ <ZljGi+VPGgDxVYKf@lizhi-Precision-Tower-5810>
+In-Reply-To: <ZljGi+VPGgDxVYKf@lizhi-Precision-Tower-5810>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Tue, 11 Jun 2024 14:55:55 +0800
+Message-ID: <CAA+D8AOnoRouTmtv7VMXan=k9i8yQkBJvmWDEqtCTDizMJyDDA@mail.gmail.com>
+Subject: Re: [PATCH v6 3/5] reset: imx-aux: Add i.MX auxiliary reset driver
+To: Frank Li <Frank.li@nxp.com>
+Cc: Marco Felsch <m.felsch@pengutronix.de>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
+	p.zabel@pengutronix.de, abelvesa@kernel.org, peng.fan@nxp.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 11/06/24 08:48, CK Hu (胡俊光) ha scritto:
-> On Mon, 2024-06-10 at 10:28 +0200, AngeloGioacchino Del Regno wrote:
->> Il 06/06/24 07:29, CK Hu (胡俊光) ha scritto:
->>> Hi, Angelo:
->>>
->>> On Wed, 2024-06-05 at 13:15 +0200, AngeloGioacchino Del Regno wrote:
->>>> Il 05/06/24 03:38, CK Hu (胡俊光) ha scritto:
->>>>> Hi, Angelo:
->>>>>
->>>>> On Tue, 2024-05-21 at 09:57 +0200, AngeloGioacchino Del Regno wrote:
->>>>>> Document OF graph on MMSYS/VDOSYS: this supports up to three DDP paths
->>>>>> per HW instance (so potentially up to six displays for multi-vdo SoCs).
->>>>>>
->>>>>> The MMSYS or VDOSYS is always the first component in the DDP pipeline,
->>>>>> so it only supports an output port with multiple endpoints - where each
->>>>>> endpoint defines the starting point for one of the (currently three)
->>>>>> possible hardware paths.
->>>>>>
->>>>>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->>>>>> Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
->>>>>> Tested-by: Alexandre Mergnat <amergnat@baylibre.com>
->>>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>>>> ---
->>>>>>     .../bindings/arm/mediatek/mediatek,mmsys.yaml | 28 +++++++++++++++++++
->>>>>>     1 file changed, 28 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->>>>>> index b3c6888c1457..0ef67ca4122b 100644
->>>>>> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->>>>>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->>>>>> @@ -93,6 +93,34 @@ properties:
->>>>>>       '#reset-cells':
->>>>>>         const: 1
->>>>>>     
->>>>>> +  port:
->>>>>> +    $ref: /schemas/graph.yaml#/properties/port
->>>>>> +    description:
->>>>>> +      Output port node. This port connects the MMSYS/VDOSYS output to
->>>>>> +      the first component of one display pipeline, for example one of
->>>>>> +      the available OVL or RDMA blocks.
->>>>>> +      Some MediaTek SoCs support multiple display outputs per MMSYS.
->>>>>
->>>>> This patch looks good to me. Just want to share another information for you.
->>>>> Here is an example that mmsys/vdosys could point to the display interface node.
->>>>>
->>>>> vdosys0: syscon@1c01a000 {
->>>>>              mmsys-display-interface = <&dsi0>, <&dsi1>, <&dp_intf0>;
->>>>> };
->>>>>     
->>>>> vdosys1: syscon@1c100000 {
->>>>>              mmsys-display-interface = <&dp_intf1>;
->>>>> };
->>>>>
->>>>> There is no conflict that mmsys/vdosys point to first component of one display pipeline or point to display interface.
->>>>> Both could co-exist.
->>>>>
->>>>
->>>> Hey CK,
->>>>
->>>> yes, this could be an alternative to the OF graphs, and I'm sure that it'd work,
->>>> even though this kind of solution would still require partial hardcoding of the
->>>> display paths up until mmsys-display-interface (so, up until DSI0, or DSI1, etc).
->>>>
->>>> The problem with a solution like this is that, well, even though it would work,
->>>> even if we ignore the suboptimal partial hardcoding, OF graphs are something
->>>> generic, while the mmsys-display-interface would be a MediaTek specific/custom
->>>> property.
->>>>
->>>> In the end, reusing generic kernel apis/interfaces/etc is always preferred
->>>> compared to custom solutions, especially in this case, in which the generic
->>>> stuff is on-par (or actually, depending purely on personal opinions, superior).
->>>>
->>>> As for the two to co-exist, I'm not sure that this is actually needed, as the
->>>> OF graphs are already (at the end of the graph) pointing to the display interface.
->>>>
->>>> In any case, just as a reminder: if there will be any need to add any custom
->>>> MediaTek specific properties later, it's ok and we can do that at any time.
->>>
->>> The alternative solution is using OF graphs to point display interface and use MediaTek specific property to first component:
->>>
->>> vdosys0: syscon@1c01a000 {
->>>             ports {
->>>                      port@0 {
->>>                                endpoint {
->>>                                         remote-endpoint = <&dsi0_endpoint>;
->>>                                };
->>>                      };
->>>    
->>>                      port@1 {
->>>                                endpoint {
->>>                                         remote-endpoint = <&dsi1_endpoint>;
->>>                                };
->>>                      };
->>>    
->>>                      port@2 {
->>>                                endpoint {
->>>                                         remote-endpoint = <&dp_intf0_endpoint>;
->>>                                };
->>>                      };
->>>             };
->>>    
->>>             display-first-component = <&ovl0>;
->>> };
->>>
->>> And I agree to it's better to keep only OF graphs property, so it would be
->>>
->>> vdosys0: syscon@1c01a000 {
->>>             ports {
->>>                      port@0 {
->>>                                endpoint {
->>>                                         remote-endpoint = <&dsi0_endpoint>;
->>>                     
->>>              };
->>>                      };
->>>    
->>>                      port@1 {
->>>                                endpoint {
->>>                                         remote-endpoint = <&dsi1_endpoint>;
->>>                             
->>>      };
->>>                      };
->>>    
->>>                      port@2 {
->>>                                endpoint {
->>>                                         remote-endpoint = <&dp_intf0_endpoint>;
->>>                                }
->>> ;
->>>                      };
->>>             };
->>> };
->>>
->>> Maybe we could use OF graphs for both first component and display interface and drop using MediaTek specific property.
->>>
->>
->> We could, or we can simply walk through the OF Graph in the driver and get the
->> display interface like that, as it's board-specific ;-)
->>
->> ...but anyway, let's see that later: after getting this series upstreamed, I will
->> convert all MediaTek boards (including Chromebooks) to use the graphs instead, and
->> you'll see that, at least for the currently supported boards, there's no need for
->> any custom property.
->>
->> Also, setting the DSI0/1/dpintf endpoint to VDO0 is technically wrong, as that is
->> supposed to be the last one, and a graph is conceptually supposed to go from the
->> first to the last in sequence.
->>
->> *if* we will ever need (probably not) to get the VDO0 node to point directly to
->> the last node for whatever reason, the right way would be the first one you said,
->> so, mediatek,mmsys-display-interface = <&dsi0>, <&dsi1>, etc etc
->>
->> ...or mediatek,mmsys-possible-displays = < ... phandles >
->>
->> ...or anyway, many other solutions are possible - but again, I think this is not
->> the right time to think about that. Knowing that there are eventual solutions for
->> any need that might arise in the future is enough, IMO :-)
-> 
-> This is one routing of display pipeline and the relation of VDOSYS0 with display pipeline.
-> 
->                 +-- VDOSYS0 ---------------------------------------------+
->                 |                                                        |
->                 |                                                        |
-> DRAM -> IOMMU ---> OVL0 -> RDMA0 -> ... -> DSC0 -> MERGE0 -> DP_INTF0 ---->
->                 |                                                        |
->                 |                                                        |
->                 +--------------------------------------------------------+
-> 
-> Video data is read by IOMMU from DRAM and send to display pipeline. Then video data travel through first component to display interface.
-> VDOSYS0 manage each component in the pipeline include first component and display interface.
-> The management include clock gating, reset, video data input/output routing.
-> The relationship of VDOSYTS0 with first component is the same as the relationship of VDOSYS0 with display interface.
-> If VDOSYS0 is not suitable using OF graph point to display interface, VDOSYS0 is also not suitable using OF graph point to first component.
+On Fri, May 31, 2024 at 2:34=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Thu, May 30, 2024 at 06:45:10PM +0200, Marco Felsch wrote:
+> > On 24-05-30, Frank Li wrote:
+> > > On Thu, May 30, 2024 at 11:05:58AM +0200, Marco Felsch wrote:
+> > > > Hi,
+> > > >
+> > > > On 24-05-30, Shengjiu Wang wrote:
+> > > > > Add support for the resets on i.MX8MP Audio Block Control module,
+> > > > > which includes the EARC PHY software reset and EARC controller
+> > > > > software reset. The reset controller is created using the auxilia=
+ry
+> > > > > device framework and set up in the clock driver.
+> > > > >
+> > > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > > > ---
+> > > > >  drivers/reset/Kconfig         |   8 ++
+> > > > >  drivers/reset/Makefile        |   1 +
+> > > > >  drivers/reset/reset-imx-aux.c | 217 ++++++++++++++++++++++++++++=
+++++++
+> > > >                       ^
+> > > > You make use of the auxiliary bus but this isn't a aux driver, it's=
+ the
+> > > > i.MX8MP EARC reset driver. According the TRM only the EARC reset bi=
+ts
+> > > > are covered by the AUDIOMIX blk-ctrl.
+> > > >
+> > > > >  3 files changed, 226 insertions(+)
+> > > > >  create mode 100644 drivers/reset/reset-imx-aux.c
+> > > > >
+> > > > > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> > > > > index 7112f5932609..38fdf05b326b 100644
+> > > > > --- a/drivers/reset/Kconfig
+> > > > > +++ b/drivers/reset/Kconfig
+> > > > > @@ -91,6 +91,14 @@ config RESET_IMX7
+> > > > >         help
+> > > > >           This enables the reset controller driver for i.MX7 SoCs=
+.
+> > > > >
+> > > > > +config RESET_IMX_AUX
+> > > > > +       tristate "i.MX Auxiliary Reset Driver"
+> > > >                   ^
+> > > >               Same applies here
+> > > >
+> > > > > +       depends on CLK_IMX8MP
+> > > > > +       select AUXILIARY_BUS
+> > > > > +       default CLK_IMX8MP
+> > > > > +       help
+> > > > > +         This enables the auxiliary reset controller driver for =
+i.MX.
+> > > > > +
+> > > > >  config RESET_INTEL_GW
+> > > > >         bool "Intel Reset Controller Driver"
+> > > > >         depends on X86 || COMPILE_TEST
+> > > > > diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> > > > > index fd8b49fa46fc..f078da14c327 100644
+> > > > > --- a/drivers/reset/Makefile
+> > > > > +++ b/drivers/reset/Makefile
+> > > > > @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_BRCMSTB_RESCAL) +=3D reset-b=
+rcmstb-rescal.o
+> > > > >  obj-$(CONFIG_RESET_GPIO) +=3D reset-gpio.o
+> > > > >  obj-$(CONFIG_RESET_HSDK) +=3D reset-hsdk.o
+> > > > >  obj-$(CONFIG_RESET_IMX7) +=3D reset-imx7.o
+> > > > > +obj-$(CONFIG_RESET_IMX_AUX) +=3D reset-imx-aux.o
+> > > > >  obj-$(CONFIG_RESET_INTEL_GW) +=3D reset-intel-gw.o
+> > > > >  obj-$(CONFIG_RESET_K210) +=3D reset-k210.o
+> > > > >  obj-$(CONFIG_RESET_LANTIQ) +=3D reset-lantiq.o
+> > > > > diff --git a/drivers/reset/reset-imx-aux.c b/drivers/reset/reset-=
+imx-aux.c
+> > > > > new file mode 100644
+> > > > > index 000000000000..61c353abc84e
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/reset/reset-imx-aux.c
+> > > > > @@ -0,0 +1,217 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > > > > +/*
+> > > > > + * Copyright 2024 NXP
+> > > > > + */
+> > > > > +
+> > > > > +#include <linux/auxiliary_bus.h>
+> > > > > +#include <linux/device.h>
+> > > > > +#include <linux/io.h>
+> > > > > +#include <linux/module.h>
+> > > > > +#include <linux/of.h>
+> > > > > +#include <linux/of_address.h>
+> > > > > +#include <linux/of_platform.h>
+> > > > > +#include <linux/platform_device.h>
+> > > > > +#include <linux/reset-controller.h>
+> > > > > +
+> > > > > +/*
+> > > > > + * The reset does not support the feature and corresponding
+> > > > > + * values are not valid
+> > > > > + */
+> > > > > +#define ASSERT_NONE     BIT(0)
+> > > > > +#define DEASSERT_NONE   BIT(1)
+> > > > > +#define STATUS_NONE     BIT(2)
+> > > > > +
+> > > > > +/* When set this function is activated by setting(vs clearing) t=
+his bit */
+> > > > > +#define ASSERT_SET      BIT(3)
+> > > > > +#define DEASSERT_SET    BIT(4)
+> > > > > +#define STATUS_SET      BIT(5)
+> > > > > +
+> > > > > +/* The following are the inverse of the above and are added for =
+consistency */
+> > > > > +#define ASSERT_CLEAR    (0 << 3)
+> > > > > +#define DEASSERT_CLEAR  (0 << 4)
+> > > > > +#define STATUS_CLEAR    (0 << 5)
+> > > > > +
+> > > > > +/**
+> > > > > + * struct imx_reset_ctrl - reset control structure
+> > > > > + * @assert_offset: reset assert control register offset
+> > > > > + * @assert_bit: reset assert bit in the reset assert control reg=
+ister
+> > > > > + * @deassert_offset: reset deassert control register offset
+> > > > > + * @deassert_bit: reset deassert bit in the reset deassert contr=
+ol register
+> > > > > + * @status_offset: reset status register offset
+> > > > > + * @status_bit: reset status bit in the reset status register
+> > > > > + * @flags: reset flag indicating how the (de)assert and status a=
+re handled
+> > > > > + */
+> > > > > +struct imx_reset_ctrl {
+> > > > > +       u32 assert_offset;
+> > > > > +       u32 assert_bit;
+> > > > > +       u32 deassert_offset;
+> > > > > +       u32 deassert_bit;
+> > > > > +       u32 status_offset;
+> > > > > +       u32 status_bit;
+> > > > > +       u32 flags;
+> > > > > +};
+> > > >
+> > > > Why do we make it this compicated for an simple EARC module reset? =
+I
+> > > > understand that you want to provide a generic driver which can be
+> > > > re-used but there is actual no other user and may will get no other=
+ user
+> > > > in the future too. Therefore I would like to keep it simple at the
+> > > > begin and adapt the code on-demand.
+> > >
+> > > There are many similar cases. such as
+> > > https://elixir.bootlin.com/linux/v6.10-rc1/source/drivers/pci/control=
+ler/dwc/pci-layerscape.c#L251
+> > >
+> > > Previously it use syscon and regmap to a global register space region=
+ and
+> > > direct operate the register. Now this way will not preferred. It need=
+s
+> > > export as reset driver. but actually, it just write some bits.
+> >
+> > It depends, if your reset-controller is part of an complete different
+> > device like this EARC reset you're right else you can write to the rese=
+t
+> > directly within you driver.
+>
+> These reset bits allocated a global register regions. Such as bit0 for
+> pcie0, bit1 for pci1, bit2 for usb0, bit3 for usb1. Hardware pack these
+> to misc mmio region.
+>
+> >
+> > > We face the similar problem at difference driver when do upstream.
+> > >
+> > > One on going a discussion about sim module reset
+> > > https://lore.kernel.org/imx/131e46b1-61d9-41de-a225-853b09c765d1@gmai=
+l.com/
+> > >
+> > > We hope an unified and simple method to handle these cases.
+> >
+> > An unified driver for non-unified reset modules? This makes no sense to
+> > me. When it comes to possible quirk handling for different reset module=
+s
+> > your code gets even more complex.
+> >
+> > I'm fine with a common code base (driver) if NXP has an common reset
+> > controller IP which is added to several SoC. There should be no common
+> > code base if this isn't the case.
+>
+> Some chip have common reset controller IP. Some chip simple packed reset
+> bits to one global misc mmio region with other misc control bit, such pow=
+er
+> on/off / clock source choose / enable debug features.
+>
+> Here we just consider the second case. Anyway we need handle these case a=
+t
+> somewhere. 99% case just write bit<n> to register offset. Only difference
+> is bit posstion and register offset. If write difference driver for these
+> just because bit posstion or offset, there will be many duplicated codes
+> under driver/reset.
+>
+> For example:
+> Misc: 0x1000
+>       bit0: pcie0 reset
+>       bit2: usb0 reset
+>       bit3-bit4: pcie clk source select
+>       bit5-bit6: usb0 clk source select
+>       bit7: pcie0 phy power on
+>       bit8: usb0 phy power on.
+>
+> The difference chip, bit possition will be changed.
+> How handle this case corporately?
 
-In the cases in which VDO goes directly to the display, it *is* possible to make it
-point directly to the display.
+What's the conclusion for this topic?
+Should be the driver general for other cases or specific
+for i.MX8MP AudioMIX?
 
-In the cases in which the pipeline is larger, VDO still points to the display, but
-only later in the pipeline.
-
-> The job of the component in display pipeline is to process the video data,
-> but the job of VDOSYS0 is to manage (clock gating, reset, routing) the pipeline.
-> If the OF graph is to show the video data travel path, VDOSYS0 should not exist in the OF graph.
-> 
-> Regards,
-> CK
-> 
->>
->> Cheers,
->> Angelo
->>
->>> Regards,
->>> CK
->>>
->>>>
->>>> Cheers!
->>>> Angelo
->>>>
->>>>> Regards,
->>>>> CK
->>>>>
->>>>>> +    properties:
->>>>>> +      endpoint@0:
->>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>>>> +        description: Output to the primary display pipeline
->>>>>> +
->>>>>> +      endpoint@1:
->>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>>>> +        description: Output to the secondary display pipeline
->>>>>> +
->>>>>> +      endpoint@2:
->>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>>>> +        description: Output to the tertiary display pipeline
->>>>>> +
->>>>>> +    anyOf:
->>>>>> +      - required:
->>>>>> +          - endpoint@0
->>>>>> +      - required:
->>>>>> +          - endpoint@1
->>>>>> +      - required:
->>>>>> +          - endpoint@2
->>>>>> +
->>>>>>     required:
->>>>>>       - compatible
->>>>>>       - reg
->>>>
->>>>
->>
->>
-
-
-
+Best regards
+Shengjiu Wang
+>
+> >
+> > Regards,
+> >   Marco
+> >
+> >
+> > >
+> > > Frank
+> > >
+> > > >
+> > > > Regards,
+> > > >   Marco
+> > > >
+> > > > > +struct imx_reset_data {
+> > > > > +       const struct imx_reset_ctrl *rst_ctrl;
+> > > > > +       size_t rst_ctrl_num;
+> > > > > +};
+> > > > > +
+> > > > > +struct imx_aux_reset_priv {
+> > > > > +       struct reset_controller_dev rcdev;
+> > > > > +       void __iomem *base;
+> > > > > +       const struct imx_reset_data *data;
+> > > > > +};
+> > > > > +
+> > > > > +static int imx_aux_reset_assert(struct reset_controller_dev *rcd=
+ev,
+> > > > > +                               unsigned long id)
+> > > > > +{
+> > > > > +       struct imx_aux_reset_priv *priv =3D container_of(rcdev,
+> > > > > +                                       struct imx_aux_reset_priv=
+, rcdev);
+> > > > > +       const struct imx_reset_data *data =3D priv->data;
+> > > > > +       void __iomem *reg_addr =3D priv->base;
+> > > > > +       const struct imx_reset_ctrl *ctrl;
+> > > > > +       unsigned int mask, value, reg;
+> > > > > +
+> > > > > +       if (id >=3D data->rst_ctrl_num)
+> > > > > +               return -EINVAL;
+> > > > > +
+> > > > > +       ctrl =3D &data->rst_ctrl[id];
+> > > > > +
+> > > > > +       /* assert not supported for this reset */
+> > > > > +       if (ctrl->flags & ASSERT_NONE)
+> > > > > +               return -EOPNOTSUPP;
+> > > > > +
+> > > > > +       mask =3D BIT(ctrl->assert_bit);
+> > > > > +       value =3D (ctrl->flags & ASSERT_SET) ? mask : 0x0;
+> > > > > +
+> > > > > +       reg =3D readl(reg_addr + ctrl->assert_offset);
+> > > > > +       writel(reg | value, reg_addr + ctrl->assert_offset);
+> > > > > +
+> > > > > +       return 0;
+> > > > > +}
+> > > > > +
+> > > > > +static int imx_aux_reset_deassert(struct reset_controller_dev *r=
+cdev,
+> > > > > +                                 unsigned long id)
+> > > > > +{
+> > > > > +       struct imx_aux_reset_priv *priv =3D container_of(rcdev,
+> > > > > +                                       struct imx_aux_reset_priv=
+, rcdev);
+> > > > > +       const struct imx_reset_data *data =3D priv->data;
+> > > > > +       void __iomem *reg_addr =3D priv->base;
+> > > > > +       const struct imx_reset_ctrl *ctrl;
+> > > > > +       unsigned int mask, value, reg;
+> > > > > +
+> > > > > +       if (id >=3D data->rst_ctrl_num)
+> > > > > +               return -EINVAL;
+> > > > > +
+> > > > > +       ctrl =3D &data->rst_ctrl[id];
+> > > > > +
+> > > > > +       /* deassert not supported for this reset */
+> > > > > +       if (ctrl->flags & DEASSERT_NONE)
+> > > > > +               return -EOPNOTSUPP;
+> > > > > +
+> > > > > +       mask =3D BIT(ctrl->deassert_bit);
+> > > > > +       value =3D (ctrl->flags & DEASSERT_SET) ? mask : 0x0;
+> > > > > +
+> > > > > +       reg =3D readl(reg_addr + ctrl->deassert_offset);
+> > > > > +       writel(reg | value, reg_addr + ctrl->deassert_offset);
+> > > > > +
+> > > > > +       return 0;
+> > > > > +}
+> > > > > +
+> > > > > +static int imx_aux_reset_status(struct reset_controller_dev *rcd=
+ev,
+> > > > > +                               unsigned long id)
+> > > > > +{
+> > > > > +       struct imx_aux_reset_priv *priv =3D container_of(rcdev,
+> > > > > +                                       struct imx_aux_reset_priv=
+, rcdev);
+> > > > > +       const struct imx_reset_data *data =3D priv->data;
+> > > > > +       void __iomem *reg_addr =3D priv->base;
+> > > > > +       const struct imx_reset_ctrl *ctrl;
+> > > > > +       unsigned int reset_state;
+> > > > > +
+> > > > > +       if (id >=3D data->rst_ctrl_num)
+> > > > > +               return -EINVAL;
+> > > > > +
+> > > > > +       ctrl =3D &data->rst_ctrl[id];
+> > > > > +
+> > > > > +       /* status not supported for this reset */
+> > > > > +       if (ctrl->flags & STATUS_NONE)
+> > > > > +               return -EOPNOTSUPP;
+> > > > > +
+> > > > > +       reset_state =3D readl(reg_addr + ctrl->status_offset);
+> > > > > +
+> > > > > +       return !(reset_state & BIT(ctrl->status_bit)) =3D=3D
+> > > > > +               !(ctrl->flags & STATUS_SET);
+> > > > > +}
+> > > > > +
+> > > > > +static const struct reset_control_ops imx_aux_reset_ops =3D {
+> > > > > +       .assert   =3D imx_aux_reset_assert,
+> > > > > +       .deassert =3D imx_aux_reset_deassert,
+> > > > > +       .status   =3D imx_aux_reset_status,
+> > > > > +};
+> > > > > +
+> > > > > +static int imx_aux_reset_probe(struct auxiliary_device *adev,
+> > > > > +                              const struct auxiliary_device_id *=
+id)
+> > > > > +{
+> > > > > +       struct imx_reset_data *data =3D (struct imx_reset_data *)=
+(id->driver_data);
+> > > > > +       struct imx_aux_reset_priv *priv;
+> > > > > +       struct device *dev =3D &adev->dev;
+> > > > > +
+> > > > > +       priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > > > > +       if (!priv)
+> > > > > +               return -ENOMEM;
+> > > > > +
+> > > > > +       priv->rcdev.owner     =3D THIS_MODULE;
+> > > > > +       priv->rcdev.nr_resets =3D data->rst_ctrl_num;
+> > > > > +       priv->rcdev.ops       =3D &imx_aux_reset_ops;
+> > > > > +       priv->rcdev.of_node   =3D dev->parent->of_node;
+> > > > > +       priv->rcdev.dev       =3D dev;
+> > > > > +       priv->rcdev.of_reset_n_cells =3D 1;
+> > > > > +       priv->base            =3D of_iomap(dev->parent->of_node, =
+0);
+> > > > > +       priv->data            =3D data;
+> > > > > +
+> > > > > +       return devm_reset_controller_register(dev, &priv->rcdev);
+> > > > > +}
+> > > > > +
+> > > > > +#define EARC  0x200
+> > > > > +
+> > > > > +static const struct imx_reset_ctrl imx8mp_audiomix_rst_ctrl[] =
+=3D {
+> > > > > +       {
+> > > > > +               .assert_offset =3D EARC,
+> > > > > +               .assert_bit =3D 0,
+> > > > > +               .deassert_offset =3D EARC,
+> > > > > +               .deassert_bit =3D 0,
+> > > > > +               .flags  =3D ASSERT_CLEAR | DEASSERT_SET | STATUS_=
+NONE,
+> > > > > +       },
+> > > > > +       {
+> > > > > +               .assert_offset =3D EARC,
+> > > > > +               .assert_bit =3D 1,
+> > > > > +               .deassert_offset =3D EARC,
+> > > > > +               .deassert_bit =3D 1,
+> > > > > +               .flags  =3D ASSERT_CLEAR | DEASSERT_SET | STATUS_=
+NONE,
+> > > > > +       },
+> > > > > +};
+> > > > > +
+> > > > > +static const struct imx_reset_data imx8mp_audiomix_rst_data =3D =
+{
+> > > > > +       .rst_ctrl =3D imx8mp_audiomix_rst_ctrl,
+> > > > > +       .rst_ctrl_num =3D ARRAY_SIZE(imx8mp_audiomix_rst_ctrl),
+> > > > > +};
+> > > > > +
+> > > > > +static const struct auxiliary_device_id imx_aux_reset_ids[] =3D =
+{
+> > > > > +       {
+> > > > > +               .name =3D "clk_imx8mp_audiomix.reset",
+> > > > > +               .driver_data =3D (kernel_ulong_t)&imx8mp_audiomix=
+_rst_data,
+> > > > > +       },
+> > > > > +       { }
+> > > > > +};
+> > > > > +MODULE_DEVICE_TABLE(auxiliary, imx_aux_reset_ids);
+> > > > > +
+> > > > > +static struct auxiliary_driver imx_aux_reset_driver =3D {
+> > > > > +       .probe          =3D imx_aux_reset_probe,
+> > > > > +       .id_table       =3D imx_aux_reset_ids,
+> > > > > +};
+> > > > > +
+> > > > > +module_auxiliary_driver(imx_aux_reset_driver);
+> > > > > +
+> > > > > +MODULE_AUTHOR("Shengjiu Wang <shengjiu.wang@nxp.com>");
+> > > > > +MODULE_DESCRIPTION("Freescale i.MX auxiliary reset driver");
+> > > > > +MODULE_LICENSE("GPL");
+> > > > > --
+> > > > > 2.34.1
+> > > > >
+> > > > >
+> > > > >
+> > >
 
