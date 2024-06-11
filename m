@@ -1,178 +1,122 @@
-Return-Path: <linux-kernel+bounces-209895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736A8903C9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F143903D3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B6B31C2322B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:03:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8300A1C23F71
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EF817C7AC;
-	Tue, 11 Jun 2024 13:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C521317D369;
+	Tue, 11 Jun 2024 13:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="tFwhCDBG"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dFVmWUBC"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3A41E49E;
-	Tue, 11 Jun 2024 13:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D14217C7DA;
+	Tue, 11 Jun 2024 13:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718111027; cv=none; b=Ue26LZ1zcypmuMtH8J2yJLo/vyT70Y2rLi3j9lGt9cEA/fba5iK801aHzGcMBHWgCGxMywIHrl63Ap/XuQuGNcOaSl47b9CKhgh8V5v27dhyaafeQtfICNDoYabYQ7KLK32YEDWZrZbwTJaVX1XGLspZVup23IDHHwN9qpsxMeE=
+	t=1718112318; cv=none; b=kEVjrZrKeyr55X8LzTajfthJ266iDzpXsSPQ56PTfM8oPstyoCxPdLCfBpEWOj78a5z4lbyazsIc8ysVWBpdg+zscH9eLCjYaEA80NXhgurtGo8yH/A95yJikFbBozKhIycC6Iilw0ivkUrol7X6STrkHQ/gG79CKiFzqA6G2B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718111027; c=relaxed/simple;
-	bh=YtubtMWGl2Yed1GgQDFbE96aD7YOsI5Qp0uLEo/VlJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sU2iapKDSWupuVadBWPluxCg743baLHkUkhemJvvoJUIlECnszNkH3/AKxbjcALPGvuFuSh33Z3K31J1Rz8kRDtt9LJctrZxFidsrIgQijsDY/4wKcZQ4eagCi2mHbZYGI3W1d9p6ceSxmtA+QBksIhIjLGPzxzSPPilRV4s8pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=tFwhCDBG; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718111024;
-	bh=YtubtMWGl2Yed1GgQDFbE96aD7YOsI5Qp0uLEo/VlJ0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tFwhCDBGCecv6e/W5ENWZI/G3LMam9i91URDV5HSLtuk7yCy/pUEP/59A5AWhdU4C
-	 WZ6Cn5/nW5ibUclGrxScCbJ0yUO3MzLYDG6VlaTZvbY8OERcqqlH7f8A3SqsFDrC3Z
-	 6LFEYmSz6Jb+DoSIWeKL33On4RqsrCE8t5Pgmge8KZXdt0INiMielvMyv+epWGjF9S
-	 2HOVQAVTsKWxK/hw+BEEl9Mi6nl6sV2MtHBkTP9mMCK0NyauTZJjrR35obmd2Jxrcs
-	 +dKL5wnoY43IM5sV3ZKVWCWTzSIGKJe8KloDAkDie4WQ+UowikMn/KctXWHkAWhMqq
-	 lAFq/QVbywiCA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 7B60E3780EC6;
-	Tue, 11 Jun 2024 13:03:43 +0000 (UTC)
-Message-ID: <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
-Date: Tue, 11 Jun 2024 15:03:42 +0200
+	s=arc-20240116; t=1718112318; c=relaxed/simple;
+	bh=X9NOyfa3dCkNY/khSuIWPRLy8MQpw99WaTLQn6NkI+4=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PV1yRT2oxCGbe8GMxWvas2QfSzxHBX5GXmQ6Ib5ojpaRUtrqsuvnFJq7XYGM4V4BUxx9UXTxoTJVi3gLSee5sNr2684n1GZQagqNpbjITHl2EBUbtyZ450Ufn9GfOYDXvyIrqMvGkeK41abPkOybtG5TEcyVugJhskzoKfp2+o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dFVmWUBC; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42138eadf64so9293315e9.3;
+        Tue, 11 Jun 2024 06:25:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718112315; x=1718717115; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=DVSiTE2jXaVjooef1DJVlsNyZqL8Li0jr778TTTgFg0=;
+        b=dFVmWUBCXjmhnlk1Ve7H6IbmVZzL8EG53GYMy8vuMbzQ8JZnBOJnX7a898LEsqQX5v
+         pUfICFaMuVc0eehtfbo+DcqLlrifxnJq+YaX++9naOGyWo3SgE4NGtPjZyPBBzBsnome
+         1xzf5sLRW8DprL4W3Q36hAakF1JtlSFfTc7FFeuElJEQblyCYwOwnKsTMCw/9vlvlBKi
+         ExZFs9NqmUxiBmdsdPLmBLbXSLPE6sPFZDsqnGIeRZ0h+JXQHmoMAcvElyjYW1PjzYhZ
+         9Mhf0ZQ0Ouk2iemXWync2YkAhZ1U4CBZMEPoc0VC52NDy/GkTdX5OmC9mkl28Bzw7Ufs
+         3F3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718112315; x=1718717115;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DVSiTE2jXaVjooef1DJVlsNyZqL8Li0jr778TTTgFg0=;
+        b=AFbDXOPuUeOlZPNSHppQcSUcdOMvXVtusiRBQFKdi14Hu4oakZM1dUm4FQi8DPb3p5
+         841K7d2GGnhngn2JlNdMXKTmJZPWsmhWWEFPv90/IFLZh1aU4nlZ6IaxUyOeH6Mk+vbp
+         5CQj8t3b9PwrHR37DjnrSMl8OFiqnBV2hFA4OzThh+nwgWGbE/e6BtvoKJ+H27Omc10m
+         U6qg+0+tbhoOMrLzk7SOL1R4t+goI37AKT3AhAJytbdUSAZCHxcfHxy/moZLVkrPAt70
+         a1Z2ZQuFlKHRNMz+fRu4EDZeQTYKqjf1AGw/jVn+i7vV6nKVbH+eTRz7r/cwKwBcsQDN
+         mhjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkJ/t2BUVgOtfPgYDimzzpP/Wpgilaspr9Vm0YL4wIgEMHMSa+218YzKnGSajPNIXyMV6dF3Uayu+VmD0K33B/EWLY+J12H1+tFiXczdbTNajhe787BOaLMEUrXs8qnU2pQE6y2jaGcoou3m4jDT2pzfwU1dVErDSdw2ViAmymcuxcRIM=
+X-Gm-Message-State: AOJu0Yy+GcU10qp1+06FYE7wXAcX5CMcjS6ZVKfK8XyczUg3hr2oQY7k
+	5CjxUIPGi/Px8yMSaA74b7BHg9YDpf7BrZ6WIh/PUU5v6+S+nXT3
+X-Google-Smtp-Source: AGHT+IECMD93HO+GmAXhNnlQnO+eaYd8hT0OqylueO/63i6F59InbXdQi0b0Dn4jtzIuSUMlaydaoA==
+X-Received: by 2002:a05:600c:4ec9:b0:41a:821b:37f7 with SMTP id 5b1f17b1804b1-42164a328a6mr88416085e9.27.1718112314570;
+        Tue, 11 Jun 2024 06:25:14 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42212f0723dsm50446335e9.34.2024.06.11.06.25.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 06:25:14 -0700 (PDT)
+Message-ID: <6668503a.050a0220.9ec4a.4777@mx.google.com>
+X-Google-Original-Message-ID: <ZmhLZEJMStmh8bDs@Ansuel-XPS.>
+Date: Tue, 11 Jun 2024 15:04:36 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	=?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/5] mips: bmips: BCM6358: make sure CBR is correctly
+ set
+References: <20240611113538.9004-1-ansuelsmth@gmail.com>
+ <20240611113538.9004-2-ansuelsmth@gmail.com>
+ <ZmhHw5QZCQ6G6EbK@alpha.franken.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-To: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
- Thorsten Leemhuis <regressions@leemhuis.info>, Rob Herring
- <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Frank Wunderlich <linux@fw-web.de>, Paolo Abeni <pabeni@redhat.com>
-References: <20240516204847.171029-1-linux@fw-web.de>
- <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
- <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
- <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
- <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
- <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
- <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
- <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
- <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
- <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
- <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
- <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
- <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmhHw5QZCQ6G6EbK@alpha.franken.de>
 
-Il 11/06/24 14:56, Arınç ÜNAL ha scritto:
-> On 11/06/2024 15:28, AngeloGioacchino Del Regno wrote:
->> Il 11/06/24 13:38, Arınç ÜNAL ha scritto:
->>> On 11/06/2024 14:30, Thorsten Leemhuis wrote:
->>>> On 07.06.24 16:15, Thorsten Leemhuis wrote:
->>>>> On 07.06.24 16:03, Paolo Abeni wrote:
->>>>>> On Thu, 2024-06-06 at 10:26 +0200, Thorsten Leemhuis wrote:
->>>>>>> On 31.05.24 08:10, Arınç ÜNAL wrote:
->>>>>>>> On 31/05/2024 08.40, Thorsten Leemhuis wrote:
->>>>>>>>> [adding Paolo, who committed the culprit]
->>>>>>>
->>>>>>> /me slowly wonders if the culprit should be reverted for now (see below)
->>>>>>> and should be reapplied later together with the matching changes from
->>>>>>> Arınç ÜNAL.
->>>>>>
->>>>>> FWIS I think a revert should be avoided, given that a fix is available
->>>>>> and nicely small.
->>>>>
->>>>> Yeah, on one hand I agree; but on the other it seems that the
->>>>> maintainers that would have to take care of the dt changes to fix this
->>>>> until now remained silent in this thread, apart from Rob who sent the
->>>>> mail regarding the warnings.
->>>>>
->>>>> I put those maintainers in the To: field of this mail, maybe that might
->>>>> lead to some reaction.
->>>>
->>>> Still no reply from the DRS folks or any other progress I noticed. Guess
->>>> that means I will soon have no other choice than to get Linus involved,
->>>> as this looks stuck. :-( #sigh
->>>
->>> Does it have to be Linus that needs to apply "[PATCH 0/2] Set PHY address
->>> of MT7531 switch to 0x1f on MediaTek arm64 boards"? Aren't there any other
->>> ARM maintainers that can apply the fix to their tree?
->>>
->>> Arınç
->>
->> You have feedback from two people on the series that you mentioned, and noone
->> is going to apply something that needs to be fixed.
->>
->> I'm giving you the possibility of addressing the comments in your patch, but
->> I don't want to see any mention of the driver previously ignoring this or that
->> as this is irrelevant for a hardware description. Devicetree only describes HW.
->>
->> Adding up, in commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of 
->> switch from device tree"),
->> you have created a regression.
->>
->> Regressions should be fixed - as in - if the driver did work before with the old
->> devicetrees, it shall still work. You can't break ABI. Any changes that you do
->> to your driver must not break functionality with old devicetrees.
->>
->> So...
->>
->> ------> Fix the driver that you broke <------
+On Tue, Jun 11, 2024 at 02:49:07PM +0200, Thomas Bogendoerfer wrote:
+> On Tue, Jun 11, 2024 at 01:35:33PM +0200, Christian Marangi wrote:
+> > It was discovered that some device have CBR address set to 0 causing
+> > kernel panic when arch_sync_dma_for_cpu_all is called.
+> > 
+> > This was notice in situation where the system is booted from TP1 and
+> > BMIPS_GET_CBR() returns 0 instead of a valid address and
+> > !!(read_c0_brcm_cmt_local() & (1 << 31)); not failing.
+> > 
+> > The current check whether RAC flush should be disabled or not are not
+> > enough hence lets check if CBR is a valid address or not.
+> > 
+> > Fixes: ab327f8acdf8 ("mips: bmips: BCM6358: disable RAC flush for TP1")
 > 
-> The device tree ABI before the change on the driver:
-> 
-> The reg value represents the PHY address of the switch.
-> 
-> The device tree ABI after the change on the driver:
-> 
-> The reg value represents the PHY address of the switch.
-> 
-> I see no device tree ABI breakage. What I see instead is the driver
-> starting enforcing the device tree ABI. No change had been made on the
-> device tree ABI so any non-Linux driver that controls this switch continues
-> to work.
-> 
-> These old device tree source files in question did not abide by the device
-> tree ABI in the first place, which is why they don't work anymore as the
-> Linux driver now enforces the ABI. Device tree source files not conforming
-> to the ABI is not something to maintain but to fix. The patch series that
-> fixes them are already submitted.
+> should I apply it to mips-fixes ? If not could you just ammend
+> it with the following patch, where this is changed again ?
+>
 
-As I said, the devicetree MUST describe the hardware correctly, and on that I do
-agree, and I, again, said that I want to take the devicetree fix.
+Ideally this should be backported to stable kernel since it does cause
+kernel panic. This is why it's split and it's the first patch of the
+series.
 
-However, the driver regressed, and this broke functionality with old device trees.
-Old device trees might have been wrong (and they are, yes), but functionality was
-there and the switch was working.
-
-I repeat, driver changes MUST be retro-compatible with older device trees, and your
-driver changes ARE NOT; otherwise, this wouldn't be called *regression*.
-
-Again, please fix the driver to be retro-compatible with old device trees.
-
-Regards,
-Angelo
-
+-- 
+	Ansuel
 
