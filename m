@@ -1,188 +1,171 @@
-Return-Path: <linux-kernel+bounces-210170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E51904051
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:43:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB2A904058
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D227CB2175E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:43:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75586282D19
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C8439FD0;
-	Tue, 11 Jun 2024 15:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08474383BF;
+	Tue, 11 Jun 2024 15:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jpB0vpMO"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pb3XMvIf"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B847381B9
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11BB376E9;
+	Tue, 11 Jun 2024 15:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718120615; cv=none; b=X1/COWuIA84DjsKgk5PCs4Gjmeqcdchj9nRWFZON0kHwTaV+Cgt7Q9T/5MMt09mNoPAJRmM0jJMAeDTsUjfGtFJL2xurFMU/hgLxDdeLv1s82VALVY7vTZdMX2Ds1UsGSJxGHBZH8jY01/KVSDuooWpINtp1rz0bo+Roax0QVZE=
+	t=1718120649; cv=none; b=L7Wxzn+xWmYtY/GSxx7afSiundFTZAbbJvm7OYiIt1ZiOkBNG+6quVhSSzVqQ56IY51VAqPY/SwRk90lUwDGc5MCDLu0CWlh9RU2DaqswSBSx+Vi7cptoMDCzELVZwX4myqL+2j9SEn3XEq4VN96vLzF9JWxX7Kqq1P6n25nCu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718120615; c=relaxed/simple;
-	bh=JwLqZcboxVgJz+tsk/GUzQB6OGX4m3yEHKScXnDMpJk=;
+	s=arc-20240116; t=1718120649; c=relaxed/simple;
+	bh=DBNsg1rC/jcnLIlq0lcqjsD/lY864vvTgshgHj3EhX8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SMyzBgW4PsIojc5iQFaZZ6J7lETy5zTbm797igLoTt3cdzfot2CkNT2c57hxw/8fCZhoaLRWYHj5j9VkartPvsHdaV4uq1JRsoK2Zcxsu+/vp9uQClEpc8Bbbbcrros2S965YRm57lY2aOmbIAk3577QrmJxVKXzFcq/zRgUtfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jpB0vpMO; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52bc27cfb14so5237013e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:43:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=LHuBzem9IMAyjA988gFOJmEIyMDfJiZfWHlg81Yx2roMZEhVDW59RT705V+YdOkvCnjBkBkLDB9DR/GSHTiwUnu9Q11HgvAcatlYNIuMWPW7WFYFZr1RGuxaACya32jdHQpGadZACKWyZzWjpsQfpPs8tmjduq04Dk6EI/1SWxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pb3XMvIf; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-62f39fcb010so3401097b3.1;
+        Tue, 11 Jun 2024 08:44:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718120609; x=1718725409; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718120646; x=1718725446; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VtoYh4khLsFmK6WU0BTex1tBaCSDZcazUnln/dzNt8c=;
-        b=jpB0vpMOhLoRpeDgPDjvzOzRbTwZdpIw6OhiTSdbUWY+AmB7R1+X8bu4KBURL6k8cI
-         Dvhaao2OsNJ/9YCiErP1mEGlmKaIOJtzuc6B5uNZtwYksJiX+jybnDK40scaWAkXfegP
-         NCuL5xbrkT39w81p6Ruh1URajRjHEN+fjp/kr1yaQaMXD5rNH7ddYwzB1CJuiguUU7nJ
-         VY7oIEY73sGIO69MeIJkkJdBmDsfNaiKWquusOmfn33uQlFBIMOBxUriCIep63pLt6a4
-         terGWFGFXB+lDHnrBx3OMqL89qminrSpa2JFMuYPgm4WtDHfupgp/zt63/dpAsZM59KJ
-         aQ6A==
+        bh=tW82GS7eKzLFVwObKnP68TgmFv9WSJzEe3Ta59uYnqo=;
+        b=Pb3XMvIf9GGTFJR/2aZRpFaQVH+nkJCh3iOZw1Yf/4/n12VodcGYzyOazahX29BLmx
+         j/jx5091DYexpKYE2uC5cEoYeEpdYuYQmiwu2dHV9BNCJG0EtfKwAcWC8pgy+g6YlKBx
+         e/olUyQkfjT174sJ8tr9btR1mStSglvKSW3F81TlyRrES30GXJxni0bi1x+rxVrBsycQ
+         kwLydi+zOl9uM7sZQKVCgS+ScSdmREzbkou+Zg7CdpTMppqcW7cEtwwHGYoBO9sP3ws4
+         arQ+u9eF1MIRT2kCDNQexNWDfvycwVhGa4T35eViHS+f6+Npx7ddTLCjZfgxAaFewZxa
+         z4eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718120609; x=1718725409;
+        d=1e100.net; s=20230601; t=1718120646; x=1718725446;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VtoYh4khLsFmK6WU0BTex1tBaCSDZcazUnln/dzNt8c=;
-        b=ClszM/9LZqnJYVW/HtkNZNSeXAwecGM2eZdbjm4NScejHAHtrBH2MNHKBMJZQh0Fej
-         QnVi3L8vNz4Sy/z21JFoSobnAQfwmZftRV75sJUUd+AKGdcykPbVW5c154OwNdQWobiO
-         uC1/GnCrCAPsvxVEVlwu28o4m8Aqr02fGAAi2KlUKaqiauAaiOvpt9wni0X10kvxD1Ae
-         iaAc9HN8qpwRY0ECF0op5dav0HvPvuLoYLBfHoMUwsTmxnQs0dtFom9tWNAvK4XCdeGD
-         fUOvmdVKKou4E+lT9woHCDN/CIjm2taYXwOyDpKi81Q3nuxmJgnVTbGDcE9AthN7fpKf
-         Tuww==
-X-Forwarded-Encrypted: i=1; AJvYcCXG24ZIn1Q8UHhjKbzfo2qijA2K6NvBz+d09gv2RNCioiEZPuMtubzL2jcjOGt7a6+F7WGztcn2VgcZEjOqf57sLw8F0Jq5men8FZqB
-X-Gm-Message-State: AOJu0YwFVrAMD3TND1E1p2AL6cMVL2GQdDoZ7FKx6LzVVTgbppFKHPYQ
-	b21+l8zJQMyWILTOklDW+i0FEP1B2WgVSzLoUGkN9xkX9TNYfqYQqN5ggU7lDkSDJfQqw0UXI3o
-	coV8S+SlEr89wLaiE5ng6b6QC9E/qcWYApEOj
-X-Google-Smtp-Source: AGHT+IG3HG7sJETAPhIUdddPCLOjWaSEHzbToxKs2II+yrkoBEyxRoeaXdMHulT8rNexKPFYuuEU6QJ0wxUA2xvG4LY=
-X-Received: by 2002:ac2:42c4:0:b0:52c:826f:f3f1 with SMTP id
- 2adb3069b0e04-52c82700c52mr5705373e87.2.1718120609166; Tue, 11 Jun 2024
- 08:43:29 -0700 (PDT)
+        bh=tW82GS7eKzLFVwObKnP68TgmFv9WSJzEe3Ta59uYnqo=;
+        b=YI6hBGTw+pJhlU7tMydTseDawYP0EJ4uPppUT++emzb6AKOzyUQPPjSPYGo5fuNt/G
+         s44uSFnlPI++dub1a+gqjL3uQF4pQieYuaHKlhC1XymayLrQq3wTDgUOr6ATnzWgAa+L
+         yWx6mpi63eeQ1mZqC7buY6CwbX4SAXlQd/Ls8+QkBzE25y6Kc3p6SXYNyZdewkxtzyJh
+         ZNt6W7fTjzSIbcOgi7J32jWEaL3SZ5E3bC1kfsQbd04JiApFpet6INMUKlPn3prpWeKZ
+         ewxgv/gLHO3wZLd9Ayv9QVpNzudL70bVtq5vYnfYTikNLAt/4DRo5OsGet/wHu02no7F
+         U0sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrosTkNyec4BYGMB55COiCY4+ny33TW7QQ0a9X0ZnQKmeONgbfI85Zi4UoRjdTAgiYc66k8k+8ifBKWti86Gv5VWcAmCPePfC+TFmCuaGoH/Pm1qLFmIEe+tiLkUp/ZgbvoDLi9447EQu+q1PJKV48Klu/2HNkDh7w174EhOcI/aUhHpeLxGRrBduF5a/3gt1hgwN6x1bmPxniRfMgUpxeul550dONYzD+jA==
+X-Gm-Message-State: AOJu0YzrFoAICRhtCeWKX3Ejd3fEiPfE/zyo9RMYaQN8WmhwX4T78G7C
+	+LrasnCaG301nrom/LFqlFZvu5xrTnSFXUNtNTOLUzJGCzjehkDwFuHA25Ae8i30q/IZEqHghLo
+	vW+10Ij5xP9d0wOgi1Bqgj7gG6s4=
+X-Google-Smtp-Source: AGHT+IEX4PzRD1dBxbDuGigjdmHln9Tl2mPoHztJwq9MnPvO5Dd0wDH6xrTg1HRNfm9dWlWi4CgSMC/BYpMxCtDn600=
+X-Received: by 2002:a81:52d7:0:b0:61b:3356:d28c with SMTP id
+ 00721157ae682-62cd5571b37mr125787047b3.2.1718120646450; Tue, 11 Jun 2024
+ 08:44:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610121820.328876-1-usamaarif642@gmail.com>
- <20240610121820.328876-2-usamaarif642@gmail.com> <CAJD7tkbpXjg00CRSrXU_pbaHwEaW1b3k8AQgu8y2PAh7EkTOug@mail.gmail.com>
- <d822ec8b-3b7d-4e5c-ac96-b6fda63da5d4@gmail.com> <CAJD7tkZoaM=dWim7GPqEERDZyxp3PqMNctzXQCPDMO=8kQSwfw@mail.gmail.com>
- <9ddfe544-636d-4638-ae0e-053674e47322@gmail.com>
-In-Reply-To: <9ddfe544-636d-4638-ae0e-053674e47322@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 11 Jun 2024 08:42:51 -0700
-Message-ID: <CAJD7tkY0F-Tczq4j861HxKATzEOfkVv=76m8zFcJHuh8E3VMEw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: 21cnbao@gmail.com, akpm@linux-foundation.org, hannes@cmpxchg.org, 
-	david@redhat.com, ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	Shakeel Butt <shakeel.butt@linux.dev>
+References: <20240608172147.2779890-1-howardchu95@gmail.com> <ZmhsSF1UPcNZX8E_@x1>
+In-Reply-To: <ZmhsSF1UPcNZX8E_@x1>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Tue, 11 Jun 2024 23:43:56 +0800
+Message-ID: <CAH0uvoj94J_1BX6H3kpCbw9Djrqf5BTG7XPsDbQSkg=ZBz27-Q@mail.gmail.com>
+Subject: Re: [PATCH] perf trace: Fix syscall untraceable bug
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	mic@digikod.net, gnoack@google.com, brauner@kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 4:49=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
- wrote:
+Hello Arnaldo,
+
+On Tue, Jun 11, 2024 at 11:25=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
 >
-> @@ -515,8 +600,11 @@ void swap_read_folio(struct folio *folio, bool
-> synchronous,
-> >>>>                   psi_memstall_enter(&pflags);
-> >>>>           }
-> >>>>           delayacct_swapin_start();
-> >>>> -
-> >>>> -       if (zswap_load(folio)) {
-> >>>> +       if (swap_zeromap_folio_test(folio)) {
-> >>>> +               folio_zero_fill(folio);
-> >>>> +               folio_mark_uptodate(folio);
-> >>>> +               folio_unlock(folio);
-> >>> We don't currently support swapping in large folios, but it is a work
-> >>> in progress, and this will break once we have it.
-> >>> swap_zeromap_folio_test() will return false even if parts of the foli=
-o
-> >>> are in fact zero-filled. Then, we will go read those from disk swap,
-> >>> essentially corrupting data.
-> >> So yes, with this patch I tested swap out of large zero folio, but whe=
-n
-> >> swapping in it was page by page. My assumption was that swap_read_foli=
-o
-> >> (when support is added) would only pass a large folio that was earlier
-> >> swapped out as a large folio. So if a zero filled large folio was
-> >> swapped out, the zeromap will be set for all the pages in that folio,
-> >> and at large folio swap in (when it is supported), it will see that al=
-l
-> >> the bits in the zeromap for that folio are set,  and will just
-> >> folio_zero_fill.
-> >>
-> >> If even a single page in large folio has non-zero data then zeromap wi=
-ll
-> >> not store it and it will go to either zswap or disk, and at read time =
-as
-> >> all the bits in zeromap are not set, it will still goto either zswap o=
-r
-> >> disk, so I think this works?
-> >>
-> >> Is my assumption wrong that only large folios can be swapped in only i=
-f
-> >> they were swapped out as large? I think this code works in that case.
-> > I think the assumption is incorrect. I think we would just check if
-> > contiguous PTEs have contiguous swap entries and swapin the folio as a
-> > large folio in this case. It is likely that the swap entries are
-> > contiguous because it was swapped out as a large folio, but I don't
-> > think it's guaranteed.
->
-> Yes, makes sense. Thanks for explaining this.
->
+> On Sun, Jun 09, 2024 at 01:21:46AM +0800, Howard Chu wrote:
+> > as for the perf trace output:
 > >
-> > For example, here is a patch that implements large swapin support for
-> > the synchronous swapin case, and I think it just checks that the PTEs
-> > have contiguous swap entries:
-> > https://lore.kernel.org/linux-mm/20240304081348.197341-6-21cnbao@gmail.=
-com/
+> > before
 > >
-> > This makes a lot of sense because otherwise you'd have to keep track
-> > of how the folios were composed at the time of swapout, to be able to
-> > swap the same folios back in.
+> > perf $ perf trace -e faccessat2 --max-events=3D1
+> > [no output]
+> >
+> > after
+> >
+> > perf $ ./perf trace -e faccessat2 --max-events=3D1
+> >      0.000 ( 0.037 ms): waybar/958 faccessat2(dfd: 40, filename: "ueven=
+t")                               =3D 0
 >
-> I think the solution to large folio swap-in for this optimization and
-> zswap is not in swap_read_folio in this patch-series or any call further
-> down the stack, as its too late by the time you reach here, but in
-> Barrys' patch. This needs to happen much earlier when deciding the size
-> of the folio at folio creation in alloc_swap_folio, after Barry checks
+> Yeah, before there is no output, after, with the following test case:
 >
->      if (is_zswap_enabled())
->          goto fallback;
+> =E2=AC=A2[acme@toolbox c]$ cat faccessat2.c
+> #include <fcntl.h>            /* Definition of AT_* constants */
+> #include <sys/syscall.h>      /* Definition of SYS_* constants */
+> #include <unistd.h>
+> #include <stdio.h>
 >
-> once the order is decided, we would need to check the indexes in the
-> zeromap array starting from swap_offset(entry) and ending at
-> swap_offset(entry) + 2^order are set. If no bits are set, or all bits
-> are set, then we allocate large folio. Otherwise, we goto fallback.
+> /* Provide own perf_event_open stub because glibc doesn't */
+> __attribute__((weak))
+> int faccessat2(int dirfd, const char *pathname, int mode, int flags)
+> {
+>         return syscall(SYS_faccessat2, dirfd, pathname, mode, flags);
+> }
 >
-> I think its better to handle this in Barrys patch. I feel this series is
-> close to its final state, i.e. the only diff I have for the next
-> revision is below to remove start/end_writeback for zer_filled case. I
-> will comment on Barrys patch once the I send out the next revision of thi=
-s.
+> int main(int argc, char *argv[])
+> {
+>         int err =3D faccessat2(123, argv[1], X_OK, AT_EACCESS | AT_SYMLIN=
+K_NOFOLLOW);
+>
+>         printf("faccessat2(123, %s, X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLO=
+W) =3D %d\n", argv[1], err);
+>         return err;
+> }
+> =E2=AC=A2[acme@toolbox c]$ make faccessat2
+> cc     faccessat2.c   -o faccessat2
+> =E2=AC=A2[acme@toolbox c]$ ./faccessat2 bla
+> faccessat2(123, bla, X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLOW) =3D -1
+> =E2=AC=A2[acme@toolbox c]$
+>
+> In the other terminal, as root:
+>
+> root@number:~# perf trace --call-graph dwarf -e faccessat2 --max-events=
+=3D1
+>      0.000 ( 0.034 ms): bash/62004 faccessat2(dfd: 123, filename: "bla", =
+mode: X, flags: EACCESS|SYMLINK_NOFOLLOW) =3D -1 EBADF (Bad file descriptor=
+)
+>                                        syscall (/usr/lib64/libc.so.6)
+>                                        faccessat2 (/home/acme/c/faccessat=
+2)
+>                                        main (/home/acme/c/faccessat2)
+>                                        __libc_start_call_main (/usr/lib64=
+/libc.so.6)
+>                                        __libc_start_main@@GLIBC_2.34 (/us=
+r/lib64/libc.so.6)
+>                                        _start (/home/acme/c/faccessat2)
+> root@number:~#
+>
+> Now to write another test case, this time for the landlock syscall, to
+> test your btf_enum patch.
+>
+> In the future please add the test case so that one can quickly reproduce
+> your testing steps.
 
-Sorry I did not make myself clearer. I did not mean that you should
-handle the large folio swapin here. This needs to be handled at a
-higher level because as you mentioned, a large folio may be partially
-in the zeromap, zswap, swapcache, disk, etc.
+Thank you for testing this patch, sorry for the inconvenience, I will
+attach tests to speed up reproduction in the future. Also, your
+simplification looks good, thank you so much.
 
-What I meant is that we should probably have a debug check to make
-sure this doesn't go unhandled. For zswap, I am trying to add a
-warning and fail the swapin operation if a large folio slips through
-to zswap. We can do something similar here if folks agree this is the
-right way in the interim:
-https://lore.kernel.org/lkml/20240611024516.1375191-3-yosryahmed@google.com=
-/.
+Thanks,
+Howard
 
-Maybe I am too paranoid, but I think it's easy to mess up these things
-when working on large folio swapin imo.
+>
+> - Arnaldo
 
