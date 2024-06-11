@@ -1,296 +1,131 @@
-Return-Path: <linux-kernel+bounces-210573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B6C9045B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:26:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183DB9045B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EECF2861AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:26:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934A71F24A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DD71509A6;
-	Tue, 11 Jun 2024 20:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F61150992;
+	Tue, 11 Jun 2024 20:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mwLnkTKy"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cd0nQ7H7"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A61980607;
-	Tue, 11 Jun 2024 20:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7143380607
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718137573; cv=none; b=XwR1iljKS03PCDCjlvF7tJm8mYfta/QuRNc/s21Ho8XvOTAdSgcXqs+2X9Z46KrRQ7hiWdBI0/TfCH37ae/mSeStZl44Txt+3Z2JL61F6S0x2ytatb913wVvRYpUZc8vymfSzZ3RuC8TUW++3/OJQXWJUQtGCQstUq/03ZlvJsE=
+	t=1718137622; cv=none; b=WrcXiXjl0xNtJ1kfxy3olBH5+Npg9rNRslPPVHAslPJw3fKFZTE84D15lNO0eUbvnZQsUL4KOH3uSLo2/ffaqkyeaeX/qFxqUdh1aMGPMOZjKQUU8ArdJ4ZPfoAHZ9iVpHd7FHy6Q5Ey0rJ5/t7CnDYJ36vi7HLNXQ+4IHz5QXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718137573; c=relaxed/simple;
-	bh=JMTFgY1cI+CthfUehxwtujjdODCqPHwELag77EPhroQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gaZTu3fS7zdTfGRg6dezi6uxPAv2q28BD1qwFB35c4LSMf739GoMfTWD2pz+5APOp1O/eU877L3R3JfXfdVQ6x0XnQuTOHamq7P1RLURRBOB66qMTwRve75lwkrJMhGZBQ/E9GY6u4HkMNeiptr3xGI5SnpcRU+pqALCHGpdfT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mwLnkTKy; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f44b594deeso51305345ad.2;
-        Tue, 11 Jun 2024 13:26:11 -0700 (PDT)
+	s=arc-20240116; t=1718137622; c=relaxed/simple;
+	bh=m6u0TEW+to/kS5lz7pac+0GlCH2b5cvGTQl95Wz9HHY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yaoc+wfizOkk6HmV3J88jcy7QSR5JVXtUJh5npreXSToKWm5C/Z5+MbQm0DQ6IEOVGRlczNAICF4e169RCxnsFc1S8LymUNRgknxC9a5CxXVvs8tFoHuM81OjppT65Ebzb/Pti7tAjPdWknBtSViJJUJk3ObFiwsPTMrjTypJeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cd0nQ7H7; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bbf73f334so4511626e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:27:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718137571; x=1718742371; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LiuNTA4whcExw8Dugs1FyNFiaWA9GU3jWb1r5NfBRAE=;
-        b=mwLnkTKy3fVDnDbOOJFS685XlQ/LfcDjpulcGFJag+bozWTn/yk13QP+XCTOgoGe7L
-         Ke54KcsVffFDOTx2au7fOAgsLWyEA4X+621qkyBrLm7zC2LSq+PJnit5ZVNwE+UfI39a
-         s8pfLXH1weBMGE+YegQdNlkePq8jWB213j9I1Q7tszLAmil1fByLETJDzxQVL0OLhE3E
-         B+Hc9PEnqYN/UCauxDfemflJ7OJcVI5d1zt3Q1M+B7QnQJbeEojaMYnoFy7fNmV6nMm8
-         +MPVD6qJctdpvI2LIih5OgyoreqC1pGxEjX6stOfWBwDSwl6pcrndLF7ZK5LVIM35AzZ
-         P6LQ==
+        d=linux-foundation.org; s=google; t=1718137618; x=1718742418; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fwLXpsWWWKNNMe2wfaY/7uDw2Z9xjWpxzliXTIklXvE=;
+        b=cd0nQ7H7JbhmUgWVkcDjzJ7JTA13XhoCmern7cYCwG8/s7dObmEonhahA9jaSMx4tE
+         o5qXl0CAfYV0FXLOarXH2ZuhzOge3eSjznKzt5Lq0KvpXaeSCNWIsYzgSj+IY3DTu7mb
+         ZDzfEe2oI0h3O0TP10tXcQWSdSPe8ad/KKk5o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718137571; x=1718742371;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LiuNTA4whcExw8Dugs1FyNFiaWA9GU3jWb1r5NfBRAE=;
-        b=XWeT/ZpUib8c+Jcmo3MNM+NUlx3bj96tT5l0KjKqeAwZnqLNIwpShqN0xCyteEOMql
-         MnAyWnjc0nlbRNaFDfjDuPvRDRwG/TUK6O1o6UnxB/Ud4aWX8KVq/4r9GuR9f0RpMye6
-         kdERGjPdfAeJKrPZ8epBP7doVG0bTmyg0MEsSUBIClXX6uhZhCPMneVLtIM2GOIV1PTf
-         IKGZnvmH+Xsa27juyxfafRerH7RIgkMeitYdLoUc/5vl0LE02dsrvm4cTpECRG4WNxBi
-         WMGkrpjz4KDSPhZzj79GqY7EJcJ3448LwBVp2IAOtlzNs4fdJ1xfo0BraMybV5R5qSIU
-         5u2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUQM/QoliXkybGqF6eXiu98dpa4L++5EJWRGjZ476b0Dve3xsboOrPnrxJVobcYGA4swE5j/jm3IEWaMbBw+mp0sc1mkTE7uql4ce7V4ZxZA0OQEvgYqLuVAN8sXKY9s4+k5O/mehosG26rUdDs
-X-Gm-Message-State: AOJu0Yw/MvuYr4xmsZOb1gysPf8uGK1aVIvvrOM0c69RaYxGAHpKN6WY
-	Wit0FSymr+G8LTdD5YKiIkZKuAOohEOFhIpcePFH1RjiOYa9fHU9
-X-Google-Smtp-Source: AGHT+IHRUebSOuRjYylz+iYw16FfFlE7lh1Z9+3AMBtz4Z/gYW5lDsZSM5550YCv4ScVk5JKJrZ6mQ==
-X-Received: by 2002:a17:903:1212:b0:1f6:6dc9:615c with SMTP id d9443c01a7336-1f6d02f4e65mr152389785ad.35.1718137571295;
-        Tue, 11 Jun 2024 13:26:11 -0700 (PDT)
-Received: from Gatlins-MacBook-Pro.local ([131.252.49.243])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f72d450697sm20488005ad.168.2024.06.11.13.26.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 13:26:10 -0700 (PDT)
-Date: Tue, 11 Jun 2024 13:26:09 -0700
-From: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Kees Cook <keescook@chromium.org>, Marco Elver <elver@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Baoquan He <bhe@redhat.com>, Changbin Du <changbin.du@huawei.com>, 
-	Pengfei Xu <pengfei.xu@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Xin Li <xin3.li@intel.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Tina Zhang <tina.zhang@intel.com>, 
-	Uros Bizjak <ubizjak@gmail.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org, 
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2] x86/traps: Enable UBSAN traps on x86
-Message-ID: <7bthvkp3kitmmxwdywyeyexajedlxxf6rqx4zxwco6bzuyx5eq@ihpax3jffuz6>
-References: <20240601031019.3708758-1-gatlin.newhouse@gmail.com>
- <878qzm6m2m.ffs@tglx>
+        d=1e100.net; s=20230601; t=1718137618; x=1718742418;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fwLXpsWWWKNNMe2wfaY/7uDw2Z9xjWpxzliXTIklXvE=;
+        b=gIofWK+iilbrYH78oaWtuY4P8hSWOCtTX1jmqUq0Rs+OnMHq/wZaXiVYOAiQJjvV+W
+         iTNdsmUvx7/abW75HcYKiEnp6sWadKuAVi8e+11qFod+U0qKTRqAk8pWQqRy7S8V04d8
+         M6mrwBmRkTLL+AnUoG63ygWBvWwB9P4MrxF/CDeHOVISMQTDXrNqZGqX8pFvuy5eHp3W
+         P7XEsEbnNPw7xrUoXs5mpdgOc/zmDBxHDJ4o7XvSr7MJYgdd5Kq5uvViIHqpWOfVKFaT
+         5dR7kcCldK105QItXhXma2iaZMqG0A8qiT98O788IoHUKH4ZltulgYPdY8N50r/bn7F0
+         lFKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF0fB5CZVOgLi7qQpzTSiymtbwqpQ8uJU8tKOgtMj8Fd3pj3B2b5HMgyGHsJGt+NnZYkNmbLr2C1XBPiPHxtzjjKgwEzKmVGb1G8xI
+X-Gm-Message-State: AOJu0Yw/9ZIkkUCbmZHI+fMQrWfSNjnB5+T/hgQaM7uLt2cnHGrqWYBa
+	pU28szjr4G5MeErEayvcc1qjebBGRr0HKuIsCTTYutHmKrBmV+O6sT/73k3SEJxvU2TV7MTQrHU
+	ch6mfsg==
+X-Google-Smtp-Source: AGHT+IH2FOirSSch5FcGEGDoCjFKs74e4uclTkdsjyahRh+/pCJTXsu9Ub6OnV81qa7/VvgIt16JMg==
+X-Received: by 2002:ac2:5607:0:b0:52c:8a88:54c with SMTP id 2adb3069b0e04-52c8a88077emr3697613e87.7.1718137618393;
+        Tue, 11 Jun 2024 13:26:58 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c84a258e0sm1387726e87.98.2024.06.11.13.26.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 13:26:57 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ebdfe262feso34867831fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:26:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUfTE+wWSgIuDI0DtPdgAkCPKkG/kgnAm8UGtIol1EZ201+iaJhxkRLY+mR3YN/FYAFopFogB5lAaAUN290i+j8MzHJO3ZgL/5xRm48
+X-Received: by 2002:a05:6512:b9f:b0:52c:785f:ae23 with SMTP id
+ 2adb3069b0e04-52c785faf05mr7126558e87.24.1718137616651; Tue, 11 Jun 2024
+ 13:26:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878qzm6m2m.ffs@tglx>
+References: <20240608193504.429644-2-torvalds@linux-foundation.org>
+ <20240610104352.GT8774@noisy.programming.kicks-ass.net> <f967d835-d26e-47af-af35-c3c79746f7d9@rasmusvillemoes.dk>
+ <8eb5960f-17f9-4d94-9b52-dea8b475e9dc@zytor.com> <BFD0AF77-C95E-4B8B-B475-DCBD808CA5C0@zytor.com>
+In-Reply-To: <BFD0AF77-C95E-4B8B-B475-DCBD808CA5C0@zytor.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 11 Jun 2024 13:26:39 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj+1kOrg3H7wDBEVG2nw2xeB0F_YBqrw=bMBo0nRNtCKw@mail.gmail.com>
+Message-ID: <CAHk-=wj+1kOrg3H7wDBEVG2nw2xeB0F_YBqrw=bMBo0nRNtCKw@mail.gmail.com>
+Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
+	linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 03, 2024 at 06:13:53PM UTC, Thomas Gleixner wrote:
-> On Sat, Jun 01 2024 at 03:10, Gatlin Newhouse wrote:
-> 
-> > Bring x86 to parity with arm64, similar to commit 25b84002afb9
-> > ("arm64: Support Clang UBSAN trap codes for better reporting").
-> > Enable the output of UBSAN type information on x86 architectures
-> > compiled with clang when CONFIG_UBSAN_TRAP=y. Currently ARM
-> > architectures output which specific sanitizer caused the trap,
-> > via the encoded data in the trap instruction. Clang on x86
-> > currently encodes the same data in ud1 instructions but the x86
-> > handle_bug() and is_valid_bugaddr() functions currently only look
-> > at ud2s.
-> 
-> Please structure your change log properly instead of one paragraph of
-> unstructured word salad. See:
-> 
->   https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
->   
-> > +/*
-> > + * Check for UD1, UD2, with or without Address Size Override Prefixes instructions.
-> > + */
-> >  __always_inline int is_valid_bugaddr(unsigned long addr)
-> >  {
-> >  	if (addr < TASK_SIZE_MAX)
-> > @@ -88,7 +92,13 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
-> >  	 * We got #UD, if the text isn't readable we'd have gotten
-> >  	 * a different exception.
-> >  	 */
-> > -	return *(unsigned short *)addr == INSN_UD2;
-> > +	if (*(u16 *)addr == INSN_UD2)
-> > +		return INSN_UD2;
-> > +	if (*(u16 *)addr == INSN_UD1)
-> > +		return INSN_UD1;
-> > +	if (*(u8 *)addr == INSN_ASOP && *(u16 *)(addr + 1) == INSN_UD1)
-> 
-> 	s/1/LEN_ASOP/ ?
-> 
-> > +		return INSN_ASOP;
-> > +	return 0;
-> 
-> I'm not really a fan of the reuse of the INSN defines here. Especially
-> not about INSN_ASOP. Also 0 is just lame.
-> 
-> Neither does the function name make sense anymore. is_valid_bugaddr() is
-> clearly telling that it's a boolean check (despite the return value
-> being int for hysterical raisins). But now you turn it into a
-> non-boolean integer which returns a instruction encoding. That's
-> hideous. Programming should result in obvious code and that should be
-> pretty obvious to people who create tools to validate code.
-> 
-> Also all UBSAN cares about is the actual failure type and not the
-> instruction itself:
-> 
-> #define INSN_UD_MASK		0xFFFF
-> #define INSN_ASOP_MASK		0x00FF
-> 
-> #define BUG_UD_NONE		0xFFFF
-> #define BUG_UD2			0xFFFE
-> 
-> __always_inline u16 get_ud_type(unsigned long addr)
-> {
-> 	u16 insn;
-> 
-> 	if (addr < TASK_SIZE_MAX)
->         	return BUD_UD_NONE;
-> 
->         insn = *(u16 *)addr;
->         if ((insn & INSN_UD_MASK) == INSN_UD2)
->         	return BUG_UD2;
-> 
-> 	if ((insn & INSN_ASOP_MASK) == INSN_ASOP)
->         	insn = *(u16 *)(++addr);
-> 
-> 	// UBSAN encodes the failure type in the two bytes after UD1
->         if ((insn & INSN_UD_MASK) == INSN_UD1)
->         	return *(u16 *)(addr + LEN_UD1);
-> 
-> 	return BUG_UD_NONE;
-> }
-> 
-> No?
+On Tue, 11 Jun 2024 at 13:16, H. Peter Anvin <hpa@zytor.com> wrote:
+>
+> I just had an idea how to clearly make this type-safe as a benefit.
 
-Thanks for the feedback.
+You mean exactly like my patch already is, because I use the section name?
 
-It seems that is_valid_bugaddr() needs to be implemented on all architectures
-and the function get_ud_type() replaces it here. So how should the patch handle
-is_valid_bugaddr()? Should the function remain as-is in traps.c despite no
-longer being used?
+Christ people. I am throwing down the gauntlet: if you can't make a
+patch that actually *improves* on what I already posted, don't even
+bother.
 
-> 
-> >  static nokprobe_inline int
-> > @@ -216,6 +226,7 @@ static inline void handle_invalid_op(struct pt_regs *regs)
-> >  static noinstr bool handle_bug(struct pt_regs *regs)
-> >  {
-> >  	bool handled = false;
-> > +	int insn;
-> >  
-> >  	/*
-> >  	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
-> > @@ -223,7 +234,8 @@ static noinstr bool handle_bug(struct pt_regs *regs)
-> >  	 * irqentry_enter().
-> >  	 */
-> >  	kmsan_unpoison_entry_regs(regs);
-> > -	if (!is_valid_bugaddr(regs->ip))
-> > +	insn = is_valid_bugaddr(regs->ip);
-> > +	if (insn == 0)
-> 
-> Sigh.
-> 
-> But with the above sanitized (pun intended) this becomes obvious by
-> itself:
-> 
->         ud_type = get_ud_type(regs->ip);
->         if (ud_type == BUG_UD_NONE)
->         	return false;
-> 
-> See?
-> 
-> >  		return handled;
-> >  
-> >  	/*
-> > @@ -236,10 +248,15 @@ static noinstr bool handle_bug(struct pt_regs *regs)
-> >  	 */
-> >  	if (regs->flags & X86_EFLAGS_IF)
-> >  		raw_local_irq_enable();
-> > -	if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> > -	    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> > -		regs->ip += LEN_UD2;
-> > -		handled = true;
-> > +
-> > +	if (insn == INSN_UD2) {
-> > +		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> > +		handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> 
-> Please indent the second condition properly:
-> 
->        if (a ||
->            b) {
-> 
-> I know you just added another tab, but when touching code, then please
-> do it right.
-> 
-> > +			regs->ip += LEN_UD2;
-> > +			handled = true;
-> 
-> > +/*
-> > + * Checks for the information embedded in the UD1 trap instruction
-> > + * for the UB Sanitizer in order to pass along debugging output.
-> > + */
-> > +void handle_ubsan_failure(struct pt_regs *regs, int insn)
-> > +{
-> > +	u32 type = 0;
-> 
-> Pointless initialization.
-> 
-> > +	if (insn == INSN_ASOP) {
-> > +		type = (*(u16 *)(regs->ip + LEN_ASOP + LEN_UD1));
-> > +		if ((type & 0xFF) == 0x40)
-> 
-> No magic constants please. What does 0x40 mean?
-> 
-> > +			type = (type >> 8) & 0xFF;
-> 
-> That mask is pointless as u16 is zero extended when assigned to u32, but
-> why not using u16 in the first place to make it clear?
-> 
-> > +	} else {
-> > +		type = (*(u16 *)(regs->ip + LEN_UD1));
-> > +		if ((type & 0xFF) == 0x40)
-> > +			type = (type >> 8) & 0xFF;
-> > +	}
-> 
-> Copy & pasta rules!
-> 
-> 	unsigned long addr = regs->ip + LEN_UD1;
-> 	u16 type;
-> 
->         type = insn == INSN_UD1 ? *(u16 *)addr : *(u16 *)(addr + LEN_ASOP);
-> 
-> 	if ((type & 0xFF) == UBSAN_MAGICALLY_USE_2ND_BYTE)
-> 		type >>= 8;
-> 	pr_crit("%s\n", report_ubsan_failure(regs, type));
-> 
-> I don't see the point for printing regs->ip as this is followed by a
-> stack trace anyway, but I don't have a strong opinion about it either.
-> 
-> Though with the above get_ud_type() variant this becomes even simpler:
-> 
-> void handle_ubsan_failure(struct pt_regs *regs, u16 type)
-> {
-> 	if ((type & 0xFF) == UBSAN_MAGICALLY_USE_2ND_BYTE)
-> 		type >>= 8;
-> 	pr_crit("%s\n", report_ubsan_failure(regs, type));
-> }
-> 
-> Thanks,
-> 
->         tglx
+The whole "it doesn't scale" is crazy talk. We don't want hundreds -
+much less thousands - of these things. Using one named section for
+each individual constant is a *good* thing.
+
+So really: take a good hard look at that final
+
+  [PATCH 3/7] x86: add 'runtime constant' support
+
+at
+
+  https://lore.kernel.org/lkml/20240610204821.230388-4-torvalds@linux-foundation.org/
+
+and only if you can *improve* on it by making it smaller or somehow
+actually better.
+
+Seriously. There's one line in that patch that really says it all:
+
+ 2 files changed, 64 insertions(+)
+
+and that's with basically optimal code generation. Improve on *THAT*.
+
+No more of this pointless bikeshedding with arguments that make no
+actual technical sense.
+
+             Linus
 
