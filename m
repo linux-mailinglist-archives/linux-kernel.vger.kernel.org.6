@@ -1,196 +1,158 @@
-Return-Path: <linux-kernel+bounces-210668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7919A904712
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:36:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F73904720
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CED01F243F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:36:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEC23286143
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16AB1553B4;
-	Tue, 11 Jun 2024 22:36:30 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE68155CAA;
+	Tue, 11 Jun 2024 22:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="bv2SiIEe";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="Rvlu9iNV"
+Received: from fallback20.i.mail.ru (fallback20.i.mail.ru [79.137.243.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6587B15278E;
-	Tue, 11 Jun 2024 22:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F36155C98;
+	Tue, 11 Jun 2024 22:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718145390; cv=none; b=QvqWY8o4LD+R9K536C8FBySfbkMh+CZQI0x+9VLb+ox32XZFH1IHMDaz+F0cjF5mMezFupaR5Tb0lk032RHn0ys05r36CiyB7Z0A9EiEkv9OqPyUue2zXgv3SLKqEBb7YYdXKnndSceHqwX11AdGqgWoHmpwdzdkZy6RBYKP0lA=
+	t=1718145495; cv=none; b=KMFvP1CUUfM0rLZG5WbM9tgNsTyOxwTp7jkaIXPToDx3mdF41QL2WQISTv79hJ6aZv4dxksBensdP47GLu5x3VA2WuVeLFwpyGnTnM33OC8iBAAhgMdaY5NWC2i9neKB/EMUU7gohvyr0WKB0stZQgG0lJbm+gmpd8ETWhmAGNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718145390; c=relaxed/simple;
-	bh=oz2WDd+8rgQTA6tAKBoiy2olZlmCeF6niFRohD0MmbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E0XhJKvPyJw5iLnbc45REMKpieL6CYNwqEWOp5vdcR8v+GdAtZrrTFcSsTciu35UW7OegBeTMW985PTGoC9QsZh5HOopMfWfFjvydDZM1dXYTR3Ubf8rgFVi6oVPoe9rqtU6/TeFxQ0dVKZFBs7ga1LwjDHO32Nc5A3PHj9HTDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E625CC2BD10;
-	Tue, 11 Jun 2024 22:36:26 +0000 (UTC)
-Date: Tue, 11 Jun 2024 18:36:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
- linux-mm@kvack.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Kees Cook
- <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>, "Guilherme G.
- Piccoli" <gpiccoli@igalia.com>, linux-hardening@vger.kernel.org, Ross
- Zwisler <zwisler@google.com>, wklin@google.com, Vineeth Remanan Pillai
- <vineeth@bitbyteword.org>, Joel Fernandes <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Linus Torvalds
- <torvalds@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Mike
- Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH v4 1/2] mm/memblock: Add "reserve_mem" to reserved named
- memory at boot up
-Message-ID: <20240611183643.0327ef5b@gandalf.local.home>
-In-Reply-To: <d6c55ff7-91ac-4505-b821-1416d57edda9@roeck-us.net>
-References: <20240611215610.548854415@goodmis.org>
-	<20240611215801.443593152@goodmis.org>
-	<d6c55ff7-91ac-4505-b821-1416d57edda9@roeck-us.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718145495; c=relaxed/simple;
+	bh=eCirVEtTsKoiePRMrgevxkTnLA9UJknvoo+AeL9fK94=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AzcjmhliP5+Yd+6Jm/9UAd/8SRngAzyYeR6oPSbRWDg9Gj2fx1sfq77jlBenSXo1o8YVMOLU06kny2R1FZAz7GoedKJ4ztmaMK8QWMty+CkO5pVs59wA5Q5hL93KJOXPVOYdiwMsP007wHDSxs/4LJa4rAnlsr2leihtzmDW5Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=bv2SiIEe; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=Rvlu9iNV; arc=none smtp.client-ip=79.137.243.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com; s=mailru;
+	h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=q465KjNLlaqfXehHF1lQ3qSlJHHi1ol1302Tu4eHISs=;
+	t=1718145494;x=1718235494; 
+	b=bv2SiIEeu8aUOp0+qdboQIoohtJwzD0QcO4sxoAgna+y7VYbul278ZqCDFaLhHhobQfeGBUGuB9FvtVy9hzQmZ1yV1CtCyecEf41xpAEXV9TGwFD10jUu73ZfbRRMBEkpPku1FlcSgjhvkbfumHOIQ+5jVUy3ycXtEf9vUFlY50=;
+Received: from [10.12.4.16] (port=49598 helo=smtp47.i.mail.ru)
+	by fallback20.i.mail.ru with esmtp (envelope-from <danila@jiaxyga.com>)
+	id 1sHA7y-0082KG-3B; Wed, 12 Jun 2024 01:38:06 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
+	; s=mailru; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
+	X-Cloud-Ids:Disposition-Notification-To;
+	bh=q465KjNLlaqfXehHF1lQ3qSlJHHi1ol1302Tu4eHISs=; t=1718145486; x=1718235486; 
+	b=Rvlu9iNV0vhFVphvYz7cT4TqNOcoc7SfI5hN/rQ2DwNBIfjPZfJCF4Lw4xwlxVwRcO0Cm1kMW86
+	3ywjA6jUFSDUWyR+VZ49FmOuEy1FAJU9OL3DyaepGSGlyPJDLn7Zgie2rS/RmDz+VAlquGfn8nN7E
+	Zk6arxQDaaDH7mfzoeU=;
+Received: by smtp47.i.mail.ru with esmtpa (envelope-from <danila@jiaxyga.com>)
+	id 1sHA7g-00000000PfZ-34et; Wed, 12 Jun 2024 01:37:49 +0300
+From: Danila Tikhonov <danila@jiaxyga.com>
+To: robdclark@gmail.com,
+	quic_abhinavk@quicinc.com,
+	dmitry.baryshkov@linaro.org,
+	sean@poorly.run,
+	marijn.suijten@somainline.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	quic_rmccann@quicinc.com,
+	konrad.dybcio@linaro.org,
+	neil.armstrong@linaro.org,
+	jonathan@marek.ca,
+	swboyd@chromium.org,
+	quic_khsieh@quicinc.com,
+	quic_jesszhan@quicinc.com
+Cc: linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danila Tikhonov <danila@jiaxyga.com>
+Subject: [PATCH 0/4] Add MDSS and DPU support for QCOM SM7150 SoC
+Date: Wed, 12 Jun 2024 01:37:39 +0300
+Message-ID: <20240611223743.113223-1-danila@jiaxyga.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Mailru-Src: smtp
+X-7564579A: 646B95376F6C166E
+X-77F55803: 4F1203BC0FB41BD9AC8CA0B4439200FA19AE3EA0235AE0E7243ECEBF822142BF00894C459B0CD1B9054E99E2303B0F4206104296DCCA83D23ADDAAA15180D00842442993E2508E0AED199C4BD4F2E418
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE76F334650EE2FF367EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637D4360D888D8F9BE48638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D8C830C08864248EFF408FF9FAEF290F8B959B0FD907FC7628CC7F00164DA146DAFE8445B8C89999728AA50765F790063767B9C6E70FBE8DD8389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC8D166953D3EA3826BF6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA73AA81AA40904B5D9A18204E546F3947C81F3E54FD4568659040F9FF01DFDA4A84AD6D5ED66289B523666184CF4C3C14F6136E347CC761E07725E5C173C3A84C342AF7BC6F74C2E4EBA3038C0950A5D36B5C8C57E37DE458B330BD67F2E7D9AF16D1867E19FE14079C09775C1D3CA48CFCF36E64A7E3F8E581DD303D21008E298D5E8D9A59859A8B6E5E764EB5D94DBD475ECD9A6C639B01B78DA827A17800CE7A2A9C9A00CC75FB0731C566533BA786AA5CC5B56E945C8DA
+X-C1DE0DAB: 0D63561A33F958A551121299F6AF5FC35002B1117B3ED6967FE38823A68FEDEB19AC5B239BAD4335823CB91A9FED034534781492E4B8EEAD3C056C6FCE5AFF8EC79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF2C982FF745AD991C757DF1C1EB24435DF5EB9327AD5597441B72035E72316101BA297A5F7262141F04A26A3878DC1330B3CABD56E102364DE3725B7D062D8D432F718A81146ACCDC54A6BD6C3A9AE7E002C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojbL9S8ysBdXjGnEhxYo9Dy2v5g1r6TYqA
+X-Mailru-Sender: 9EB879F2C80682A09F26F806C73949810CCDD7C2C42388EEEDE2FBCE1621770A210F76142C63B1F9E007F3DA729AB7E52C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
+X-7564579A: 78E4E2B564C1792B
+X-77F55803: 6242723A09DB00B4D68C2164A06637339A6B427C6964551950E2488A9AE31CF1049FFFDB7839CE9E30D7A70BAF70B54938887F26BBCF9E746A249D9C47DC5DA7B54F5986990BB350
+X-7FA49CB5: 0D63561A33F958A5495DF175377E5151B83B1CCCC43D4C00E95ECE4F6ADB247E8941B15DA834481FA18204E546F3947CB6837AF49FA6FBC5F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F79006376C0B0C0B9C247A4E389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C3FCABA7B5202078F435872C767BF85DA2F004C90652538430E4A6367B16DE6309
+X-87b9d050: 1
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2bioj7p5wIdCuWKPNVJvlberUSw==
+X-Mailru-MI: 8000000000000800
+X-Mras: Ok
 
-On Tue, 11 Jun 2024 15:26:05 -0700
-Guenter Roeck <linux@roeck-us.net> wrote:
+This series adds MDSS and DPU support for SM7150.
 
-> > diff --git a/mm/memblock.c b/mm/memblock.c
-> > index d09136e040d3..044ddce8f085 100644
-> > --- a/mm/memblock.c
-> > +++ b/mm/memblock.c
-> > @@ -2244,6 +2244,121 @@ void __init memblock_free_all(void)
-> >   	totalram_pages_add(pages);
-> >   }
-> >   
-> > +/* Keep a table to reserve named memory */
-> > +#define RESERVE_MEM_MAX_ENTRIES		8
-> > +#define RESERVE_MEM_NAME_SIZE		16
-> > +struct reserve_mem_table {
-> > +	char			name[RESERVE_MEM_NAME_SIZE];
-> > +	phys_addr_t		start;
-> > +	phys_addr_t		size;
-> > +};
-> > +static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRIES];
-> > +static int reserved_mem_count;
-> > +
-> > +/* Add wildcard region with a lookup name */
-> > +static int __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
-> > +				   const char *name)
-> > +{
-> > +	struct reserve_mem_table *map;
-> > +
-> > +	if (!name || !name[0] || strlen(name) >= RESERVE_MEM_NAME_SIZE)
-> > +		return -EINVAL;
-> > +  
-> 
-> I know I am picky, but name is never NULL, and strlen(name) is guaranteed to be > 0.
-> Personally I'd suggest to check for strlen(name) >= RESERVE_MEM_NAME_SIZE together
-> with !strlen(name) and drop the duplicate checks here (and, as side effect, avoid
-> the pointless memory allocation if the name is invalid).
+To: Rob Clark <robdclark@gmail.com>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sean Paul <sean@poorly.run>
+To: Marijn Suijten <marijn.suijten@somainline.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Ryan McCann <quic_rmccann@quicinc.com>
+To: Stephen Boyd <swboyd@chromium.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jonathan Marek <jonathan@marek.ca>
+To: Kuogee Hsieh <quic_khsieh@quicinc.com>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
 
-Yeah, it's now checked before hand. I'll remove it for v5.
+Danila Tikhonov (4):
+  dt-bindings: display/msm: Add SM7150 MDSS
+  drm/msm: mdss: Add SM7150 support
+  dt-bindings: display/msm: Add SM7150 DPU
+  drm/msm/dpu: Add SM7150 support
 
-> 
-> > +	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
-> > +		return -1;
-> > +
-> > +	map = &reserved_mem_table[reserved_mem_count++];
-> > +	map->start = start;
-> > +	map->size = size;
-> > +	strscpy(map->name, name);
-> > +	return 0;
-> > +}
-> > +
+ .../bindings/display/msm/qcom,sm7150-dpu.yaml | 145 ++++++
+ .../display/msm/qcom,sm7150-mdss.yaml         | 460 ++++++++++++++++++
+ .../msm/disp/dpu1/catalog/dpu_5_2_sm7150.h    | 349 +++++++++++++
+ .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c    |   1 +
+ .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h    |   1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |   1 +
+ drivers/gpu/drm/msm/msm_mdss.c                |   8 +
+ 7 files changed, 965 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sm7150-mdss.yaml
+ create mode 100644 drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
 
-
-> > +/*
-> > + * Parse reserve_mem=nn:align:name
-> > + */
-> > +static int __init reserve_mem(char *p)
-> > +{
-> > +	phys_addr_t start, size, align;
-> > +	char *name;
-> > +	char *oldp;
-> > +	int err;
-> > +
-> > +	if (!p)
-> > +		return -EINVAL;
-> > +
-> > +	oldp = p;
-> > +	size = memparse(p, &p);
-> > +	if (!size || p == oldp)
-> > +		return -EINVAL;
-> > +
-> > +	if (*p != ':')
-> > +		return -EINVAL;
-> > +
-> > +	align = memparse(p+1, &p);
-> > +	if (*p != ':')
-> > +		return -EINVAL;
-> > +
-> > +	/*
-> > +	 * memblock_phys_alloc() doesn't like a zero size align,
-> > +	 * but it is OK for this command to have it.
-> > +	 */
-> > +	if (align <= SMP_CACHE_BYTES)  
-> 
-> Any reason for using <= instead of < ?
-
-Nope. Not sure why I did that. :-/
-
-I'll fix that too.
-
-Thanks,
-
--- Steve
-
-> 
-> Guenter
-> 
-> > +		align = SMP_CACHE_BYTES;
-> > +
-> > +	name = p + 1;
-> > +	if (!strlen(name))
-> > +		return -EINVAL;
-> > +
-> > +	/* Make sure that name has text */
-> > +	for (p = name; *p; p++) {
-> > +		if (!isspace(*p))
-> > +			break;
-> > +	}
-> > +	if (!*p)
-> > +		return -EINVAL;
-> > +
-> > +	start = memblock_phys_alloc(size, align);
-> > +	if (!start)
-> > +		return -ENOMEM;
-> > +
-> > +	err = reserved_mem_add(start, size, name);
-> > +	if (err) {
-> > +		memblock_phys_free(start, size);
-> > +		return err;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +__setup("reserve_mem=", reserve_mem);
-> > +
-> >   #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
-> >   static const char * const flagname[] = {
-> >   	[ilog2(MEMBLOCK_HOTPLUG)] = "HOTPLUG",  
+-- 
+2.45.2
 
 
