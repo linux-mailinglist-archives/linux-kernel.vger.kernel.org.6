@@ -1,111 +1,222 @@
-Return-Path: <linux-kernel+bounces-209445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A409E9034C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:06:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 909AE9034C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37709B29AF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:05:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 261C52829CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA86176224;
-	Tue, 11 Jun 2024 08:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFB8173326;
+	Tue, 11 Jun 2024 08:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="ihrH9Hfe"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XKBGw0Xr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7AD174ED2;
-	Tue, 11 Jun 2024 08:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD0B172BD0
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718093089; cv=none; b=FGUwOCgqGaECJG9Rc52ofFr/OzOyTSapkMPetQIp65eIrgqCM/aid59tinBcxkoXgTGbpgCuus51Iv/Fu+zWyLlm2sBy1VpoP/EmPTfmcFxdBYR8c3dal6rBzXvqRzEBUXpMuzSqIrG7oEejfuLZ9jVVDK3Bk9+OB3UUktXyJ2c=
+	t=1718093071; cv=none; b=JUmjLpspZPeYOmwVMtY1ivEWbZm2pLX1Oe/VIh2E9yMKuDUYNlXB+77iERUEEItAS7NiJcyZPcoHMzpJG3KEPg+x7vW3v7uvaa2VvCJV251Sn5scuVKxtDyzXpV5sM3YzaTryPauyJnghcpiBsTdYsG/It+o4FODG2uhqJxTUaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718093089; c=relaxed/simple;
-	bh=yYgTt6VYlpyrsw+D+VczHVk7t9so6lEWB9yYmW1KwQk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Oi6ZufArZi282/JfGKTFIcRWFq650TNw55qSZaO5XSbEsJ9OW+1OqeVtKg80XiWQGp1t6dBVhzOO53Z0latccbFUKMpyMRAVX8pOuXlcN1nicH5vUQEpjgBXsIzbhLyzc+xtxQ9R6rMSq5eHlj7nQzEYexU3AouzAZAGDRM3Cgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=ihrH9Hfe; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 98DC9A06AD;
-	Tue, 11 Jun 2024 10:04:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=Izsbb6raQToVG/aAGBJ/FcHgN/EZ3prel7zQ0hy+F3I=; b=
-	ihrH9HfemSg2O2YmL0yzx+eQQ1a+OmA9Ar9/h5Aw57XoQdR8rtGI7xbhIQHJlQFd
-	N7foldjGv8XBW8UeywUQksm7S/Wm9rKOJcmBIEaWNp5PfE8m2FhAqg+vamfH9gq6
-	Jr6Oih/CsMN6xIeZb/IBwYV+WY7I7/eCxgm7gxlhDKBfNsut5SL7FaWYEsggI5n+
-	2m9wpAm15zFknc2k3WCB9KK1A/WkEWIylO/PkAOI1l0zRiI1gFncQTAJrH8YBwja
-	mLfM1vGpr6f/s/2EUFhHIL9KDkVVOiA37+oGnh+0R874fH4UzunDac7RgusG0Wdg
-	7AlubpKjZ3Qr2UEFVjwm8yNltReLE9SWsSUx3oWwaO9SbQeO+ZbWEDZcnXs0Mr0V
-	aFeYG3Zgdm9V9m4JqYHGrKIziSp8yQUkyqvelHxteVqp4asftkavj8dKzsFXeHYf
-	jMlEhVM4CQR8jvSKjye7nDjO4MHx8OTsLUC/j5NaYXoo7s18o/LgsLYcYz0yRCtk
-	Tpj9RxrALUhobuzo8b9WRthmla3OE7FgpAG+7EH2wHFRXWWpwOq9iLAA0++GT3Pd
-	Xak1zv5ZDoU0aS2WplR7KdmmTwVbgLZIp+gHcZg3JLUT+WyBzfCQLYWyr9CTw6Ik
-	PLPIOhbLYLO1pYCt1SyFS5S2SUyWm847xx4+2/JBbh0=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: Frank Li <Frank.Li@freescale.com>, "David S. Miller"
-	<davem@davemloft.net>, <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Richard
- Cochran" <richardcochran@gmail.com>, Wei Fang <wei.fang@nxp.com>, Shenwei
- Wang <shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>
-Subject: [PATCH resubmit 2] net: fec: Fix FEC_ECR_EN1588 being cleared on link-down
-Date: Tue, 11 Jun 2024 10:04:05 +0200
-Message-ID: <20240611080405.673431-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.45.2.437.gf7de8c0566
+	s=arc-20240116; t=1718093071; c=relaxed/simple;
+	bh=IGkPU0Scjshr8UBWNnXfhsHmwWKbEoHOCDVcv+syyFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o7fuHr2QfmU4EAdbnef2oW5BddQBJ0KbXWKPkyIMP2N2YrOLYg/hpsOC+jveDSQ55F4OZG7o/AYI/90AnkSBQRBLEKIA37bxjUAywSz8tcqqr0V6QSpVDBhcTsFJ9zSApTpRKZc98uptHhbawzK+cvQlEU/VkiP8Xsdw0ZQ4KFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XKBGw0Xr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718093069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hqXBYKFMfHuGo/oWXFTKDIQ0hmdU9g1oFp9QTADLe9k=;
+	b=XKBGw0XrWYUCsq2mdo5zolp5K6UuLivCO3tOFB40IbvdgtDgmFj0yiXxa2GYGdZ1006pAp
+	oOtxj1SanBXDrBrSCESUgJ7f9RNmTOgBOYc+mrqiRL/FWacBs7HTeOmk5IkiuV9E8KhIkP
+	9XITJXfoGN5Bvc9nlATiDSDNRsXJS20=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-609-UwfAC1--PBCuGftdbUhiLA-1; Tue, 11 Jun 2024 04:04:19 -0400
+X-MC-Unique: UwfAC1--PBCuGftdbUhiLA-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ebe77b877eso15124911fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 01:04:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718093058; x=1718697858;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hqXBYKFMfHuGo/oWXFTKDIQ0hmdU9g1oFp9QTADLe9k=;
+        b=GgbIEtJH55GXPs0Van7AhbjzgH7ziua8OmoLvsbuxOxkXQCGk6n/iqcJ6YQoh/AI1y
+         /puk+Ftt4RD9FJ2Fv4eXzpG/vbe2rFF8zIVf3YC3N1UqAitMdq8pO/IHFeIT47TeETLn
+         xPXDbw3p8HsEMpuYvmd9t/Oo3HjAfRdoi/wCFgnJqZ3K3B7sGYDCrav5i5t/2E3D5Fye
+         ztt5OfW3xlFSC71iXrCYshUs35CTaB7D2GZRRA3SJmcGARKwQpAwQrbYr6i8DxntNme0
+         Rq3mn6kutoL1SraxC4eqp9t6AUD+DRVcpC4bHEd5/1dnTrgyPa0pgo83UaXtNpADjlzz
+         MSLQ==
+X-Gm-Message-State: AOJu0YxX4g3/N7katzVAdQNf5st0XSBQW6k/LJ2ggj2QPAgsYQrd7+/m
+	XE/9rsZl4U2soQOOU08iiYGgAevQuUL6KP/7+b33boDtBixx4lg04qMxrHx/wlwoPids8hHBwTN
+	HPAwfFgs5af/15mFFqA6CXYqsrU1j7zoNBh/IppJ/gFSFMi6CjFiXUZwhOmX/tA==
+X-Received: by 2002:a2e:87cb:0:b0:2eb:f82a:d8d2 with SMTP id 38308e7fff4ca-2ebf82adfe7mr159451fa.41.1718093058327;
+        Tue, 11 Jun 2024 01:04:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFKToayglVvfmqXbbZxIgMw6bY+YaaS9CFQLQWFoPjFHVHH1W6TdHfgwTXUw4yHKqwXuMGUGQ==
+X-Received: by 2002:a2e:87cb:0:b0:2eb:f82a:d8d2 with SMTP id 38308e7fff4ca-2ebf82adfe7mr159231fa.41.1718093057647;
+        Tue, 11 Jun 2024 01:04:17 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42182ed2b23sm75337235e9.18.2024.06.11.01.04.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 01:04:17 -0700 (PDT)
+Message-ID: <30b5d493-b7c2-4e63-86c1-dcc73d21dc15@redhat.com>
+Date: Tue, 11 Jun 2024 10:04:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1718093086;VERSION=7972;MC=1588675963;ID=228453;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2945A12957627C61
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] mm/memory_hotplug: initialize memmap of
+ !ZONE_DEVICE with PageOffline() instead of PageReserved()
+To: Oscar Salvador <osalvador@suse.de>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
+ xen-devel@lists.xenproject.org, kasan-dev@googlegroups.com,
+ Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>
+References: <20240607090939.89524-1-david@redhat.com>
+ <20240607090939.89524-3-david@redhat.com>
+ <ZmZ_3Xc7fdrL1R15@localhost.localdomain>
+ <5d9583e1-3374-437d-8eea-6ab1e1400a30@redhat.com>
+ <ZmgAsolx7SAHeDW7@localhost.localdomain>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZmgAsolx7SAHeDW7@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-FEC_ECR_EN1588 bit gets cleared after MAC reset in `fec_stop()`, which
-makes all 1588 functionality shut down, and all the extended registers
-disappear, on link-down, making the adapter fall back to compatibility
-"dumb mode". However, some functionality needs to be retained (e.g. PPS)
-even without link.
+On 11.06.24 09:45, Oscar Salvador wrote:
+> On Mon, Jun 10, 2024 at 10:56:02AM +0200, David Hildenbrand wrote:
+>> There are fortunately not that many left.
+>>
+>> I'd even say marking them (vmemmap) reserved is more wrong than right: note
+>> that ordinary vmemmap pages after memory hotplug are not reserved! Only
+>> bootmem should be reserved.
+> 
+> Ok, that is a very good point that I missed.
+> I thought that hotplugged-vmemmap pages (not selfhosted) were marked as
+> Reserved, that is why I thought this would be inconsistent.
+> But then, if that is the case, I think we are safe as kernel can already
+> encounter vmemmap pages that are not reserved and it deals with them
+> somehow.
+> 
+>> Let's take at the relevant core-mm ones (arch stuff is mostly just for MMIO
+>> remapping)
+>>
+> ...
+>> Any PageReserved user that I am missing, or why we should handle these
+>> vmemmap pages differently than the ones allocated during ordinary memory
+>> hotplug?
+> 
+> No, I cannot think of a reason why normal vmemmap pages should behave
+> different than self-hosted.
+> 
+> I was also confused because I thought that after this change
+> pfn_to_online_page() would be different for self-hosted vmemmap pages,
+> because I thought that somehow we relied on PageOffline(), but it is not
+> the case.
 
-Fixes: 6605b730c061 ("FEC: Add time stamping code and a PTP hardware clock")
-Cc: Richard Cochran <richardcochran@gmail.com>
+Fortunately not :) PageFakeOffline() or PageLogicallyOffline()  might be 
+clearer, but I don't quite like these names. If you have a good idea, 
+please let me know.
 
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
- drivers/net/ethernet/freescale/fec_main.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> 
+>> In the future, we might want to consider using a dedicated page type for
+>> them, so we can stop using a bit that doesn't allow to reliably identify
+>> them. (we should mark all vmemmap with that type then)
+> 
+> Yes, a all-vmemmap pages type would be a good thing, so we do not have
+> to special case.
+> 
+> Just one last thing.
+> Now self-hosted vmemmap pages will have the PageOffline cleared, and that
+> will still remain after the memory-block they belong to has gone
+> offline, which is ok because those vmemmap pages lay around until the
+> chunk of memory gets removed.
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 881ece735dcf..fb19295529a2 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1361,6 +1361,12 @@ fec_stop(struct net_device *ndev)
- 		writel(FEC_ECR_ETHEREN, fep->hwp + FEC_ECNTRL);
- 		writel(rmii_mode, fep->hwp + FEC_R_CNTRL);
- 	}
-+
-+	if (fep->bufdesc_ex) {
-+		val = readl(fep->hwp + FEC_ECNTRL);
-+		val |= FEC_ECR_EN1588;
-+		writel(val, fep->hwp + FEC_ECNTRL);
-+	}
- }
- 
- static void
+Yes, and that memmap might even get poisoned in debug kernels to catch 
+any wrong access.
+
+> 
+> Ok, just wanted to convince myself that there will no be surprises.
+> 
+> Thanks David for claryfing.
+
+Thanks for the review and raising that. I'll add more details to the 
+patch description!
+
 -- 
-2.34.1
+Cheers,
 
+David / dhildenb
 
 
