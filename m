@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-210385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9CAE90430D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:02:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8537904535
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 21:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895321F23B73
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:02:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991861F26708
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE70E6EB74;
-	Tue, 11 Jun 2024 18:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B750514B96C;
+	Tue, 11 Jun 2024 19:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="DTqnmkq3"
-Received: from msa.smtpout.orange.fr (msa-211.smtpout.orange.fr [193.252.23.211])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="PGt6yIav"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4A9482D7;
-	Tue, 11 Jun 2024 18:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E9B1CD06;
+	Tue, 11 Jun 2024 19:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718128933; cv=none; b=b7QCWdEYTbrrnvJvV4+K3kKIvl5CnYgODNP/GYFmKJxZNI3rPcAYMzNbu5rysRTQfk++2VkNqAjRuJZOiNXFGRsPw/+wZIB4u0rXenS3v98DsLjKDoQapB0Yw7uHTM5eeGyhHm6eg4E5QIBCDGFF44XsE1/K8Pfjq+b7tNwXdSk=
+	t=1718135457; cv=none; b=MPZ0l7SOw0IOav9rXxX3um7wBF2cq439/Rtg4HFRaGa5VaiHQcU8X56s4zmUz5WICJJE67Qe2XznWQudYDNXpFHtsQ7TEkePNkXXrZ9iMPWsc5gOL9l6iNJZ0nHqhaxF3oYW/EcALy0THD+sAF1FjN8bF2WWQf436SpY0fb+TU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718128933; c=relaxed/simple;
-	bh=YUHiodGpp73sqvczyecHAhYKXtDOOc3TzympJjSgnQI=;
+	s=arc-20240116; t=1718135457; c=relaxed/simple;
+	bh=bBcXJRMWXXxKsR9BQ8+HwxQJVJqVPsLxdGAD6l/y1zs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YcFS7PYTkX74Mp/Zv7B/p3MIvymXtODK72p9nZTH5wOcZ+UMgjv6uyC0j1ASqprY6SFO/kEzdXu30gZ1fDnNm/4wMwIBjOJJs7V/iuVv1oDPeTY9cqPV0NeEVT0NIBC/XeS8Mu/NtJ/coU6YFKwrZ1GqsW5J/ZTO7Y8DVY5bjH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=DTqnmkq3; arc=none smtp.client-ip=193.252.23.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id H5olsL40AaOgCH5olse2pO; Tue, 11 Jun 2024 20:02:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1718128922;
-	bh=LfOZxncwwf6XREq5b9IL5FbGRIjBFwt+UfYI2IfGiqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=DTqnmkq3oHxGUc3HJf1P3fO9wTa2aXnPdpyzGtzCVR9euIO0UUlxZiUGHlVPrkHHs
-	 LH+hO+FaXddLE5a+/V/o/UuBlmC1a06k54T83/GOyqjzcTQDuC5zAiQlncL6uI/PDq
-	 1YqRAFY9S9fTFL+LL3RmQSGZRMlBfsg9Axu3DhlyjLNxtlzhchB4zD0RHEcS319iLE
-	 PgIgfm+T0mrDH//O4rcTjenuUXRtkAo8LvliZlpSFFgdLc/ljIfU1vBWkffCrIpXvO
-	 icOl4YqmCTiY+/Xpjy3wnKXh68fSeiwEw+JquSPdOyieb9uNR5zO2AfSER3Zx7315j
-	 XC+F/pXTEycpA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 11 Jun 2024 20:02:02 +0200
-X-ME-IP: 86.243.222.230
-Message-ID: <81006407-cfbd-47b7-8050-3a455f9654dd@wanadoo.fr>
-Date: Tue, 11 Jun 2024 20:01:59 +0200
+	 In-Reply-To:Content-Type; b=hBOzzx5N9DBSb6xV8aO2JBX1vrxmgrounOBUVEFBTA/NjDXu8U7UGhXxJJXoBJJqHAftvJ+LcxWPJE9MAEvlEPnlZiI4o53lyY/LAjJbKCnwNkTPf8dc66EAsGkHCoGpBi08vI4ayC/SL3TmM7bfSB6koc9AYfl48AD0RayDxXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=PGt6yIav; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 3A504883CF;
+	Tue, 11 Jun 2024 21:50:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1718135452;
+	bh=npnYqV9J2WoKJ9LDtrzlpjRBywAdFkb0PaBEMohzQpg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PGt6yIavQt96y3TUxCeFwwWxA9EbReZ4eHCEu4QB66aznmJItlmSV+FKjI9y6rLmr
+	 qgXJlbHxmbCN/zefXX7dVlBtv4XySbs3gxd52feZikASCbD55TJmg1Oq1SjQjR/DtF
+	 30arv7jOgCGQooNWJ+Bxezm0f9PyYP0bRJ4UvAKsLCTDT0RGkl1S33QBPB7vuwEvaC
+	 nmAzH3rLw8Tfnb4d/qyj1BSujK4MyUBkbqjm6lVvQExC9fOPbXFodcy4vOa9DpTjOp
+	 u+2wfT3EwXfyGytHZ/2TS/79XyrjgVgP+CPyNhMBVaBM5jtRun07nw4gM2qnj0msTd
+	 wCf73U/Gxq96Q==
+Message-ID: <e0b9b074-3aad-4b2d-9f4e-99ad2eebbb6b@denx.de>
+Date: Tue, 11 Jun 2024 18:16:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,105 +55,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/7] i2c: mux: add the ability to share mux address
- with child nodes
-To: Farouk Bouabid <farouk.bouabid@cherry.de>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>,
+Subject: Re: [net-next,PATCH v7 7/8] net: stmmac: dwmac-stm32: Mask support
+ for PMCR configuration
+To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Quentin Schulz
- <quentin.schulz@cherry.de>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-References: <20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de>
- <20240611-dev-mule-i2c-mux-v3-1-08d26a28e001@cherry.de>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240611-dev-mule-i2c-mux-v3-1-08d26a28e001@cherry.de>
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240611083606.733453-1-christophe.roullier@foss.st.com>
+ <20240611083606.733453-8-christophe.roullier@foss.st.com>
+ <ee101ca5-4444-4610-9473-1a725a542c91@denx.de>
+ <7999f3df-da1e-4902-b58a-6bb58546a634@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <7999f3df-da1e-4902-b58a-6bb58546a634@foss.st.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Le 11/06/2024 à 13:43, Farouk Bouabid a écrit :
-> Allow the mux (if it's an I2C device) to have the same address as a child
-> device. This is useful when the mux can only use an I2C address that is
-> used by a child device because no other addresses are free to use.
-> eg. the mux can only use address 0x18 which is used by amc6821 connected
-> to the mux.
+On 6/11/24 3:32 PM, Christophe ROULLIER wrote:
 > 
-> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
-> ---
+> On 6/11/24 15:07, Marek Vasut wrote:
+>> On 6/11/24 10:36 AM, Christophe Roullier wrote:
+>>
+>> [...]
+>>
+>>>   static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac, bool 
+>>> suspend)
+>>> @@ -348,8 +352,15 @@ static int stm32_dwmac_parse_data(struct 
+>>> stm32_dwmac *dwmac,
+>>>           return PTR_ERR(dwmac->regmap);
+>>>         err = of_property_read_u32_index(np, "st,syscon", 1, 
+>>> &dwmac->mode_reg);
+>>> -    if (err)
+>>> +    if (err) {
+>>>           dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
+>>> +        return err;
+>>> +    }
+>>> +
+>>> +    dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
+>>> +    err = of_property_read_u32_index(np, "st,syscon", 2, 
+>>> &dwmac->mode_mask);
+>>> +    if (err)
+>>> +        dev_dbg(dev, "Warning sysconfig register mask not set\n");
+>>
+>> My comment on V6 was not addressed I think ?
+> 
+> Hi Marek,
+> 
+> I put the modification in patch which introduce MP13 (V7 8/8) ;-)
+> 
+>       err = of_property_read_u32_index(np, "st,syscon", 2, 
+> &dwmac->mode_mask);
+> -    if (err)
+> -        dev_dbg(dev, "Warning sysconfig register mask not set\n");
+> +    if (err) {
+> +        if (dwmac->ops->is_mp13)
+> +            dev_err(dev, "Sysconfig register mask must be set (%d)\n", 
+> err);
+> +        else
+> +            dev_dbg(dev, "Warning sysconfig register mask not set\n");
+> +    }
 
-Hi,
+That isn't right, is it ?
 
-2 nitpicks below.
-
-> --- a/drivers/i2c/i2c-mux.c
-> +++ b/drivers/i2c/i2c-mux.c
-> @@ -334,7 +334,53 @@ int i2c_mux_add_adapter(struct i2c_mux_core *muxc,
->   	priv->adap.dev.parent = &parent->dev;
->   	priv->adap.retries = parent->retries;
->   	priv->adap.timeout = parent->timeout;
-> -	priv->adap.quirks = parent->quirks;
-> +
-> +	struct i2c_adapter_quirks *quirks;
-
-Should this be at the beginning of the function?
-
-> +	/*
-> +	 * When creating the adapter, the node devices are checked for I2C address
-> +	 * match with other devices on the parent adapter, among which is the mux itself.
-> +	 * If a match is found the node device is not probed successfully.
-> +	 * Allow the mux to have the same address as a child device by skipping this check.
-> +	 */
-> +	if (muxc->share_addr_with_children) {
-> +		struct i2c_client *client = to_i2c_client(muxc->dev);
-> +
-> +		if (muxc->dev->type != &i2c_client_type)
-> +			dev_warn_once(muxc->dev, "Mux is not an I2C device\n");
-> +
-> +		quirks = devm_kzalloc(muxc->dev, sizeof(*quirks), GFP_KERNEL);
-> +		if (!quirks)
-> +			return -ENOMEM;
-> +
-> +		if (parent->quirks)
-> +			memcpy(quirks, parent->quirks, sizeof(*quirks));
-> +
-> +		quirks->flags |= I2C_AQ_SKIP_ADDR_CHECK;
-> +		quirks->skip_addr_in_parent = client->addr;
-> +		priv->adap.quirks = quirks;
-> +
-> +	} else if (parent->quirks &&
-> +		   parent->quirks->flags & I2C_AQ_SKIP_ADDR_CHECK) {
-> +		/*
-> +		 * Another I2C mux device can be a child of the Mule I2C mux.
-> +		 * The former could probably not allow address conflict between
-> +		 * its address and its own children addresses.
-> +		 *
-> +		 * For this purpose, do not propagate this flag unless
-> +		 * share_addr_with_children is set.
-> +		 */
-> +		quirks = devm_kzalloc(muxc->dev, sizeof(*quirks), GFP_KERNEL);
-
-devm_kmemdup()? (not sure it is a win)
-
-> +		if (!quirks)
-> +			return -ENOMEM;
-> +
-> +		memcpy(quirks, parent->quirks, sizeof(*quirks));
-> +		quirks->flags &= ~I2C_AQ_SKIP_ADDR_CHECK;
-> +		priv->adap.quirks = quirks;
-> +
-> +	} else {
-> +		priv->adap.quirks = parent->quirks;
-> +	}
-> +
->   	if (muxc->mux_locked)
->   		priv->adap.lock_ops = &i2c_mux_lock_ops;
->   	else
-
-...
-
-CJ
+For MP2 , this still checks the presence of syscon , which shouldn't be 
+checked at all for MP2 as far as I understand it ?
 
