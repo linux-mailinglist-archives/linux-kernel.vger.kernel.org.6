@@ -1,300 +1,141 @@
-Return-Path: <linux-kernel+bounces-210472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF61C90440C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:53:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2543C90440E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E21EA1C24C8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E70281AF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959B1770FF;
-	Tue, 11 Jun 2024 18:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6477757E8;
+	Tue, 11 Jun 2024 18:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KooZRoO4"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBOBuaCC"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AA44D8BB
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819764D8BB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718131994; cv=none; b=F4ONcLVX+xG1GCJ/GmZ7V8jygEzrx+/T/xQ+/9dMy6iBnf3Dyb5k7CJ4qvEvNFpf/EnpBlz/k3FoNgRRMNWXf1bltKCYnZcliePEnU04u6bzaO0c4KKDhXu/YQOmXPq0Cq/Xo9efsN/EJQj5itj5bYROAsha57H/fbk+QRQN6+U=
+	t=1718132005; cv=none; b=PNxI0dd0byNgWOjM0J9lWUDnruGu2j3ztWQYSlszCLSELIWY459/Q7dji3rhLYXSrg+ZK+DeWuuB09bNoyf+Pji1ANIgmjZWNHW8GHmiw35/8gnyUQQXpoev1f/9fR9BSh5pe3bhRNBI0Dv8HJ4HOj2+P6hHmIHHRRtl6FtSVRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718131994; c=relaxed/simple;
-	bh=IoJGDw3ipM6CUVGb6VwBIdLm+gMQrczvUDDBnXBa/LQ=;
+	s=arc-20240116; t=1718132005; c=relaxed/simple;
+	bh=XqxL1YC0KOCmmYd4riI7thr+cPsWLtizgY/IBdBVUlg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dmzxU87XSAy1fbl1AfRYftjQgXz3bjpe0xQORW10zDZFJQGAKE0Sqp2SbQpbNCzbc1TvrZ4K47OKW1v59D/8sTncsUUi+t8cEwNyEmi27mUNLEmb5WpGFfnvkcALUFqv9aTZkrPtkgA+0przOKyygt05yFNJTSBI6/7PgDZ7AIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KooZRoO4; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6efe62f583so133134866b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:53:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=Kyv6qLzaOxQO1x5Xb+CzApfHSXrtxh6mtjx4acMhpKO9NEx5Uv0gHjALes+d8nvXJh8hjVh+eUkmB77zeqpeUQg+44Ulv0aTvLIedlA08oCMTFAa0nxCqulNkw1MbHb0P47aLHhhjWQKuN2u5IVvNxQGnUZ6TDCgUbRMiqIZg0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBOBuaCC; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b06bdbf9fdso8505676d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718131991; x=1718736791; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718132002; x=1718736802; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cSG3Umqgruerq2jdh29mC/sNd8DlLR+TEbhmV9FEvAA=;
-        b=KooZRoO45o7HHaKjv+cuxUnqOqgSF/9xJfw81pPZBN6jn1bOPJtRbQoVlbu7NH7OlK
-         ThgdqL6TXZ/eR8ZtEuEZNL8LazvcEz6N9W8934aSnVQz/TP3lQ5347tzfgcIYCg+e8y+
-         ixaGRQZCxzI5Ya83wwSHXkrJ84hq+iFrWmyazJUvwlGlUjq2o4Ea4uTD9zLYTW/0EBZq
-         6eqFgTTPNFDYHnVPcGiWAlkWU92WvatOGIqp9PMF7bPE+gXHS0in9brs0GwC2RfRwjAd
-         UeIaBSYU0AsTfusRUgJT8MfhxBi62m3rRyGXBhQwMhWJl48JojKOwQxouoSuLgcGLPu7
-         1AGw==
+        bh=QgNfDPKWx5weTgzZ7sQXsFLCPiSrq5i1++lcPqyQBGw=;
+        b=mBOBuaCCzG1QxccEc0dRqslDe3ghA1u1DI5DpAmGopW5oaa83rtfCQ6CF5fRsZ/u/+
+         YSsB0X2Pq3A/6ls0cdl9U0E+kluui5gsloxUg71iIGvl7j38k20IDAIlS3eXv/dcMkUa
+         al5fNfK9oBRj7F37Bb7/+bseQLyx9vX5J9DGebVu5wG7hisejMkzMomYMGAZ97765HYN
+         BNmCQKUPDSE9+GHv4Cz3tZ8mBZOlKUBPvCp7KC+eiCvIk2x8P0QXxCcUFK5MVlxSwfEA
+         kvn2xFacYEJB4Uh04ionpr3LY9PUUU31EjzDBzXIjzTfcifbQy2i3mVS09mb57+hGIKY
+         De/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718131991; x=1718736791;
+        d=1e100.net; s=20230601; t=1718132002; x=1718736802;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cSG3Umqgruerq2jdh29mC/sNd8DlLR+TEbhmV9FEvAA=;
-        b=XiTuMH83GeeKKNnrF2U5s/nWEnswo1oYnG5OmNJp4iHM9x/QhT1w7wcA9rvCmUYv2D
-         D3H1m0Of8/hB+iXTHB0nQ8x0eNmF4k9gZWo9fRW5BvydW+X8Pmt3SW29NxWuVojWNeFH
-         M6e+julbWZIkrvR6wxiXTal/Xw+q8rYqbDqERBTsc+dYKv9N456eJHR9q4G0fF0m+jeg
-         rGnPumyDuEHVs5GJwX3oQn7/YXVJvMGo9LFnDprqBiNoNt8ACRO/hZs2pK8+sfUITv1X
-         RFgylbfHeD2sDvAowTkz/5u69ZgfJ6JGbpsxpwYT7l/8nDzPgkaRV/uHm62UwavcP6hl
-         aeYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqxyePvqkLM4tNYv0R6E4o5pK73mqTxKvsgjmi6GyZzFg/fCl1FMuCpEH4Ef43oe6AnBt2sS0EDfpTW53xvY/Cj90DdT62qJsJyvWG
-X-Gm-Message-State: AOJu0Yw2UnUYuahOV39NJmskqOyxJgHyjpyx+C8c7OktOD/cUQ12hHU8
-	NIvNkSt4p87Y/7ma6Y28pxsLPBAldtD/E/oH++OfRAASW7YvMFPDW+Dul65+/5rINAk9cWbTl1j
-	CWcd0sDNSmj/99ii1IPutNovN41e5GEm5bIko
-X-Google-Smtp-Source: AGHT+IFdfhZ3sbaUQ95DDlCl5zKHMbZ6GdCdWXlk7NCzW7ZoGkb2RWLRTWVwoyW8qlBnmyBW0fVoAhGHrqZ48SkfjjM=
-X-Received: by 2002:a17:906:b1c5:b0:a6c:6fac:f1ff with SMTP id
- a640c23a62f3a-a6cd561b4bemr810535266b.12.1718131990771; Tue, 11 Jun 2024
- 11:53:10 -0700 (PDT)
+        bh=QgNfDPKWx5weTgzZ7sQXsFLCPiSrq5i1++lcPqyQBGw=;
+        b=lIF6e6hiGM0iaONnotTT5dQO8P45Hhn2TONBIgopNiN4Z4/LbH+2kgAen+4Mqn5fXi
+         Ixwk7uLMZE6ZIUAcvPPq9+a6j5OnoxRYB7vWb9N6AjYeH2oyDmyJsbYgfbxMOAjFmlMJ
+         qWTXqEd7hlWCXiszV8Bh5FLgZ7TPeYrWwdFK/TJfiUdNXvVZiHq402hsQLb9/hzS5IOt
+         FHmWseL7rUgaCZnyGmKU5BrkGR51BUyGtetAAg8OxCN3V89rt8HDtya7aa6Gh4I5ZipE
+         AHUga7MFgkhcAQJVx3MVGShDROXXQGG+JbnBHRnKJfSOt9a4pfLakQupHY0snCX+utJt
+         WS7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWUE/Og5dEGhltipH2kLKm5ZOMpFpG81BfWDQB8ZOv+D5zuKL1I37L54l9f0abStDDWJlqu/I0K41RwHrDvj2TBBOPx+IwbK48cZoU0
+X-Gm-Message-State: AOJu0YyMpc+MsVuf6/8IR45fFkpLB+NCqsyoYtiLqEecI8yf6142zk8X
+	luRJtxL3t9CkA0y55o8i3BuGDsH7W1spAexWV6nry+38GT/w6YR22RUSVcC2FXNRqOI9Q3y3cha
+	Ba/deRm42x0ngMLjrcIdiHTtMtwQ=
+X-Google-Smtp-Source: AGHT+IFUZEuzSLrNmU7NYyDINsrLctk7Nvg33ipU/SYmAdYZwIr71Ng1tnpFJiC44maTjzmE3Un6zcawgGpLoULGG7M=
+X-Received: by 2002:a0c:e7c7:0:b0:6b0:6478:ca8d with SMTP id
+ 6a1803df08f44-6b06478cc19mr112256506d6.39.1718132002415; Tue, 11 Jun 2024
+ 11:53:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000d0f165061a6754c3@google.com> <CAJD7tkaTQU1Kxt935fmq+_BJd-VT6vKFj58o7Aq+QhoyrOtCmw@mail.gmail.com>
- <02a21a55-8fe3-a9eb-f54b-051d75ae8335@google.com>
-In-Reply-To: <02a21a55-8fe3-a9eb-f54b-051d75ae8335@google.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 11 Jun 2024 11:52:34 -0700
-Message-ID: <CAJD7tkbGvQyBWdTuE-bojLJNA3c3a8KotzUxkzh6gNb6S1LBSQ@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] KMSAN: uninit-value in zswap_store
-To: Hugh Dickins <hughd@google.com>
-Cc: syzbot <syzbot+9c1fe13fcb51574b249b@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, chengming.zhou@linux.dev, hannes@cmpxchg.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com, 
-	syzkaller-bugs@googlegroups.com, Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org
+References: <20240610121820.328876-1-usamaarif642@gmail.com>
+ <20240610121820.328876-2-usamaarif642@gmail.com> <CAKEwX=PnwjmZKPLX2=ubD6+-+ZAqpXnczkHe4=1QY1hizOE8WQ@mail.gmail.com>
+ <CAJD7tkZdtK3CB_0bt_+EMNCc8+7FF3jPv4VwA2u8PntrC=1jrA@mail.gmail.com>
+In-Reply-To: <CAJD7tkZdtK3CB_0bt_+EMNCc8+7FF3jPv4VwA2u8PntrC=1jrA@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 11 Jun 2024 11:53:11 -0700
+Message-ID: <CAKEwX=OMitioEvWoehnaw2cYRrD5VurkahE1bzwRfZeP_Oy45g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, hannes@cmpxchg.org, 
+	david@redhat.com, ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
+	chengming.zhou@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 2:14=E2=80=AFAM Hugh Dickins <hughd@google.com> wro=
-te:
+On Tue, Jun 11, 2024 at 11:47=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
+> wrote:
 >
-> On Mon, 10 Jun 2024, Yosry Ahmed wrote:
-> > On Sat, Jun 8, 2024 at 2:09=E2=80=AFPM syzbot
-> > <syzbot+9c1fe13fcb51574b249b@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of =
-git:/..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D113f3fd69=
-80000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Df5d2cbf33=
-633f507
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D9c1fe13fcb5=
-1574b249b
-> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for=
- Debian) 2.40
-> > >
-> > > Unfortunately, I don't have any reproducer for this issue yet.
-> > >
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71=
-/disk-614da38e.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vm=
-linux-614da38e.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/839c739391=
-15/bzImage-614da38e.xz
-> > >
-> > > IMPORTANT: if you fix the issue, please add the following tag to the =
-commit:
-> > > Reported-by: syzbot+9c1fe13fcb51574b249b@syzkaller.appspotmail.com
+> [..]
+> > > @@ -1336,6 +1347,7 @@ static void swap_entry_free(struct swap_info_st=
+ruct *p, swp_entry_t entry)
+> > >         count =3D p->swap_map[offset];
+> > >         VM_BUG_ON(count !=3D SWAP_HAS_CACHE);
+> > >         p->swap_map[offset] =3D 0;
+> > > +       clear_bit(offset, p->zeromap);
 > >
-> > This doesn't look like a zswap bug, and perhaps not a bug at all but I
-> > am not sure. Zswap is reading the data in a folio to check if it is
-> > filled with a repeated pattern, and it is encountering uninitialized
-> > data. I am not sure if this is expected behavior or not.
->
-> I agree, it doesn't look like a zswap bug: zswap is just following orders=
-.
->
+> > Hmm so clear_bit() is done at the swap_entry_free() point. I wonder if
+> > we can have a problem, where:
 > >
-> > Could it just be that the size of the data written by syzbot is not
-> > divisible by PAGE_SIZE, so part of the final page is left
-> > uninitialized? Do we keep the unwritten parts of a shmem page
-> > uninitialized by any chance?
+> > 1. The swap entry has its zeromap bit set, and is freed to the swap
+> > slot cache (free_swap_slot() in mm/swap_slots.c). For instance, it is
+> > reclaimed from the swap cache, and all the processes referring to it
+> > are terminated, which decrements the swap count to 0 (swap_free() ->
+> > __swap_entry_free() -> free_swap_slots())
+> >
+> > 2. The swap slot is then re-used in swap space allocation
+> > (add_to_swap()) - its zeromap bit is never cleared.
 >
-> Shmem can keep uninitialized data pages around, but should be zeroing
-> what's still uninitialized before it can reach the outside world -
-> in this case being written to swap.  I don't know of a shmem bug here.
+> I do not think this can happen before swap_entry_free() is called.
+> Note that when a swap entry is freed to the swap slot cache in
+> free_swap_slot(), it is added to cache->slots_ret, not cache->slots.
+> The former are swap entries cached to be later freed using
+> swap_entry_free().
 
-Thanks for taking a look at this and stating that shmem will not pass
-uninitialized memory to swap/zswap.
+Ahhh I see. Good point. Then yeah this should be safe from this POV.
 
 >
 > >
-> > Hugh, do you mind taking a quick look at whether this is a real bug?
+> > 3. swap_writepage() writes that non-zero page to swap
 > >
-> > If this is expected behavior, perhaps there is some annotation we can
-> > use in zswap that it is fine to encounter uninitialized data when
-> > reading the folio.
+> > 4. swap_read_folio() checks the bitmap, sees that the zeromap bit for
+> > the entry is set, so populates a zero page for it.
+> >
+> > zswap in the past has to carefully invalidate these leftover entries
+> > quite carefully. Chengming then move the invalidation point to
+> > free_swap_slot(), massively simplifying the logic.
 >
-> I've not been faced with a KMSAN report before, so I might well be
-> misunderstanding its language: but this looks like an ext4 "bug" to me.
+> I think the main benefit of moving the invalidation point was avoiding
+> leaving the compressed page in zswap until swap_entry_free() is
+> called, which will happen only when the swap slot caches are drained.
 >
-> I think the story that the three KMSAN stacks are telling is this:
-> syzbot has an ext4 filesystem on a loop device on a tmpfs file (I do
-> exactly that too); ext4 is doing some ext4_xattr_inode_write() business,
-> in the course of which it writes back a not-fully-initialized block to
-> the loop device; shmem faithfully copies that data into its pagecache,
-> then later when under memory pressure that page gets "written" out to
-> zswap: where zswap_is_page_same_filled() takes an interest in the data,
-> and KMSAN objects because some of it was not originally initialized.
->
-> If that's a correct interpretation, then it's probably not a big deal:
-> it's probably the uninitialized end of a buffer that's written out,
-> not any part of the "disk" which ext4 would ever show to a user; but
-> I do agree with KMSAN that ext4 would do better to clear that area,
-> rather than accidentally storing someone else's super-secret info.
 
-Interesting, I never saw an ext4 filesystem on a loop device on a
-tmpfs file :) My understanding of the KMSAN stacks seems to match
-yours. Thanks for looping in ext4 folks, hopefully they will shed more
-light on this from their end.
+This is true. In this case yeah there's probably not much difference
+between clearing the bit here vs in swap_entry_free().
 
->
-> Hugh
->
 > >
-> > >
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> > > BUG: KMSAN: uninit-value in zswap_is_page_same_filled mm/zswap.c:1481=
- [inline]
-> > > BUG: KMSAN: uninit-value in zswap_store+0x1008/0x2ca0 mm/zswap.c:1553
-> > >  zswap_is_page_same_filled mm/zswap.c:1481 [inline]
-> > >  zswap_store+0x1008/0x2ca0 mm/zswap.c:1553
-> > >  swap_writepage+0x126/0x4c0 mm/page_io.c:198
-> > >  shmem_writepage+0x1826/0x1f70 mm/shmem.c:1518
-> > >  pageout mm/vmscan.c:660 [inline]
-> > >  shrink_folio_list+0x4a55/0x7910 mm/vmscan.c:1323
-> > >  evict_folios+0x9d7f/0xcc20 mm/vmscan.c:4537
-> > >  try_to_shrink_lruvec+0x160e/0x1a50 mm/vmscan.c:4733
-> > >  shrink_one+0x66f/0xd40 mm/vmscan.c:4772
-> > >  shrink_many mm/vmscan.c:4835 [inline]
-> > >  lru_gen_shrink_node mm/vmscan.c:4935 [inline]
-> > >  shrink_node+0x4856/0x55f0 mm/vmscan.c:5894
-> > >  kswapd_shrink_node mm/vmscan.c:6704 [inline]
-> > >  balance_pgdat mm/vmscan.c:6895 [inline]
-> > >  kswapd+0x1eba/0x4460 mm/vmscan.c:7164
-> > >  kthread+0x3e2/0x540 kernel/kthread.c:389
-> > >  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
-> > >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> > >
-> > > Uninit was stored to memory at:
-> > >  memcpy_from_iter lib/iov_iter.c:73 [inline]
-> > >  iterate_bvec include/linux/iov_iter.h:122 [inline]
-> > >  iterate_and_advance2 include/linux/iov_iter.h:249 [inline]
-> > >  iterate_and_advance include/linux/iov_iter.h:271 [inline]
-> > >  __copy_from_iter lib/iov_iter.c:249 [inline]
-> > >  copy_page_from_iter_atomic+0x12b7/0x2ae0 lib/iov_iter.c:481
-> > >  generic_perform_write+0x4c1/0xc60 mm/filemap.c:3982
-> > >  shmem_file_write_iter+0x2bd/0x2f0 mm/shmem.c:2920
-> > >  do_iter_readv_writev+0x7e6/0x960
-> > >  vfs_iter_write+0x459/0xd00 fs/read_write.c:895
-> > >  lo_write_bvec drivers/block/loop.c:246 [inline]
-> > >  lo_write_simple drivers/block/loop.c:267 [inline]
-> > >  do_req_filebacked drivers/block/loop.c:491 [inline]
-> > >  loop_handle_cmd drivers/block/loop.c:1907 [inline]
-> > >  loop_process_work+0x1502/0x3440 drivers/block/loop.c:1942
-> > >  loop_rootcg_workfn+0x2b/0x40 drivers/block/loop.c:1973
-> > >  process_one_work kernel/workqueue.c:3267 [inline]
-> > >  process_scheduled_works+0xa81/0x1bd0 kernel/workqueue.c:3348
-> > >  worker_thread+0xea5/0x1560 kernel/workqueue.c:3429
-> > >  kthread+0x3e2/0x540 kernel/kthread.c:389
-> > >  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
-> > >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> > >
-> > > Uninit was created at:
-> > >  __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
-> > >  alloc_pages_mpol+0x299/0x990 mm/mempolicy.c:2264
-> > >  alloc_pages mm/mempolicy.c:2335 [inline]
-> > >  folio_alloc+0x1d0/0x230 mm/mempolicy.c:2342
-> > >  filemap_alloc_folio+0xa6/0x440 mm/filemap.c:984
-> > >  __filemap_get_folio+0xa10/0x14b0 mm/filemap.c:1926
-> > >  grow_dev_folio fs/buffer.c:1042 [inline]
-> > >  grow_buffers fs/buffer.c:1108 [inline]
-> > >  __getblk_slow fs/buffer.c:1134 [inline]
-> > >  bdev_getblk+0x39b/0xc80 fs/buffer.c:1429
-> > >  __getblk include/linux/buffer_head.h:355 [inline]
-> > >  sb_getblk include/linux/buffer_head.h:361 [inline]
-> > >  ext4_getblk+0x3da/0xe00 fs/ext4/inode.c:843
-> > >  ext4_xattr_inode_write fs/ext4/xattr.c:1421 [inline]
-> > >  ext4_xattr_inode_lookup_create fs/ext4/xattr.c:1596 [inline]
-> > >  ext4_xattr_set_entry+0x574d/0x6880 fs/ext4/xattr.c:1718
-> > >  ext4_xattr_block_set+0xb94/0x4fb0 fs/ext4/xattr.c:2037
-> > >  ext4_xattr_move_to_block fs/ext4/xattr.c:2654 [inline]
-> > >  ext4_xattr_make_inode_space fs/ext4/xattr.c:2729 [inline]
-> > >  ext4_expand_extra_isize_ea+0x20bd/0x3560 fs/ext4/xattr.c:2821
-> > >  __ext4_expand_extra_isize+0x5dc/0x680 fs/ext4/inode.c:5789
-> > >  ext4_try_to_expand_extra_isize fs/ext4/inode.c:5832 [inline]
-> > >  __ext4_mark_inode_dirty+0x70d/0xa10 fs/ext4/inode.c:5910
-> > >  ext4_delete_inline_entry+0x650/0x7d0 fs/ext4/inline.c:1753
-> > >  ext4_delete_entry+0x13f/0x7d0 fs/ext4/namei.c:2719
-> > >  __ext4_unlink+0x9b8/0x11b0 fs/ext4/namei.c:3273
-> > >  ext4_unlink+0x226/0x630 fs/ext4/namei.c:3321
-> > >  vfs_unlink+0x676/0xa30 fs/namei.c:4343
-> > >  do_unlinkat+0x823/0xe10 fs/namei.c:4407
-> > >  __do_sys_unlinkat fs/namei.c:4450 [inline]
-> > >  __se_sys_unlinkat fs/namei.c:4443 [inline]
-> > >  __x64_sys_unlinkat+0x17c/0x230 fs/namei.c:4443
-> > >  x64_sys_call+0x846/0x3b50 arch/x86/include/generated/asm/syscalls_64=
-.h:264
-> > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >
-> > > CPU: 1 PID: 88 Comm: kswapd1 Not tainted 6.9.0-syzkaller-02707-g614da=
-38e2f7a #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BI=
-OS Google 04/02/2024
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> > >
-> > >
-> > > ---
-> > > This report is generated by a bot. It may contain errors.
-> > > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > >
-> > > syzbot will keep track of this issue. See:
-> > > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > >
-> > > If the report is already addressed, let syzbot know by replying with:
-> > > #syz fix: exact-commit-title
-> > >
-> > > If you want to overwrite report's subsystems, reply with:
-> > > #syz set subsystems: new-subsystem
-> > > (See the list of subsystem names on the web dashboard)
-> > >
-> > > If the report is a duplicate of another one, reply with:
-> > > #syz dup: exact-subject-of-another-report
-> > >
-> > > If you want to undo deduplication, reply with:
-> > > #syz undup
-> >
+> > I wonder if we need to do the same here?
 
