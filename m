@@ -1,132 +1,145 @@
-Return-Path: <linux-kernel+bounces-209473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD9890366E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:28:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1712A9036C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AA251F281E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:28:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBD21C22702
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7E817554E;
-	Tue, 11 Jun 2024 08:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75332178371;
+	Tue, 11 Jun 2024 08:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="osE7N0Wu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZOqPDh57"
-Received: from wflow1-smtp.messagingengine.com (wflow1-smtp.messagingengine.com [64.147.123.136])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="yvWnJiDa"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1533A172764;
-	Tue, 11 Jun 2024 08:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5D4174ED2;
+	Tue, 11 Jun 2024 08:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718094507; cv=none; b=f+M+XkzO3Jc3+enS1o9u6nJSelzb45mEB0XjifF15mMp9+iqqokpjhEb5EyWPaoHvx5vxRRk5paxmIWGpRH655jl6O1zZgAAUn9bGDxhRvo8vN6+FdTd8MiVeZLxqykiwcvniz+uvglvPiN2P+PX1rbGWAcAopy2M2SR3EuPhLc=
+	t=1718095090; cv=none; b=B+zotYmhCsIKYgorgChWCCDOEm3XD9VsNESeogVKUwKLLJITmDEYdXS9Jr5sZi3PF2UjQV16j6Fc6EsoxTZk7e5OLzteFeei/gmo+ywU3gb0gSVwowsVHJc+rMOO+xwh5BY3rnnIhD0WuZXjKEyss+x7dLpzF8UO1Raz57AkvbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718094507; c=relaxed/simple;
-	bh=WlCLV+10vurnCj41WSYI9fw9oRJL9wgxuJfNi2U9UP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDAfADCdJ1dWulLVX1YgpZ5AZ66ACs1AfrExLF3sbG8CLUpPMOGeCM+AG/QcZ4jIkjs/4cWcTT8Vl8mlRtEMzrMSaeu1nB/04Wvu9zEeOdvTMNmu8lr46839CQGPM+uIgUd1W4+X8wwTRrCc+4npCdIVqCFN0feWkUwzIDnepjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=osE7N0Wu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZOqPDh57; arc=none smtp.client-ip=64.147.123.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailflow.west.internal (Postfix) with ESMTP id BAE8E2CC0168;
-	Tue, 11 Jun 2024 04:28:22 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Tue, 11 Jun 2024 04:28:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718094502; x=1718098102; bh=bQpdgobU82
-	YWZriN3d7BiIoR2BmrlzIuuKqmODIu3NA=; b=osE7N0WuCRJ4jr/zq9XEthfsSB
-	JaihG8TMRtsCQYH3e74lkFjSBml+3s1i0xShAwaaxUYVSMbjVGY3pBd6oD9V/xFA
-	4EQhcALk8KlAvXfna0DVEdgCOAgwRrrT0U84FNNmYmgSoQ1eAYZB8pQIE+uKJZTL
-	JBwCXT+3w99jaMOnc5iKeo4Xc/RT9DaxqEcwXKiDL8A31Xl2rs2eHq6cjafmsUko
-	XdVeMrXsMNOYWXX2KVJ8fiRwhqHIWbiajSn5Ff0SlrUUq0vCVusalLSHryvxB/nE
-	naWH9GSK8CH0p6CRpNRg3O95uOWQw0GrLj3Kq2JlsrDkuo0hMXXDxpOpe/EQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718094502; x=1718098102; bh=bQpdgobU82YWZriN3d7BiIoR2Bmr
-	lzIuuKqmODIu3NA=; b=ZOqPDh57FHfBZoeMW5VTOtiPNI5X6qPdO47jp8figGmz
-	rQUBRMnwR8xaLGfRDS/mEc5jYRLplg98K4VVw6rd/IEyvLDiVhXi+d/6x2LpFnIt
-	jKtQvuFLkQS7TXGAfFPv2l0Zvqcg38jpCgfK+HrE/ZvNuQMx2b2waDYQzPyAiHRf
-	zwHElFx3sT7n/kv/GUbWI/KVZlR9UJrB++qghkJUqjqckGq7+ZzecK+mKPPJ8/dJ
-	QLZCU9od/qU2AYLno3ZZXyuEm/cqRZ9+WIvA6ydTL/K/wx2E0OTp2UbklsAygM/Z
-	lrbV70srVgC0egd6MnTWjINW3FB1/DBsBwa4DdwVYg==
-X-ME-Sender: <xms:pgpoZvHNoVLJZbvLBBx9zFSFJzjc3tBW9UvbNLH_EEhz7hUrZ9eJYQ>
-    <xme:pgpoZsVRDa5XD2bB9RpI24nGiyrXg-nm5rbo01f73VnNF46kAmDY4tAdomQp12gSc
-    gcOQgNGh2G4X5djpn8>
-X-ME-Received: <xmr:pgpoZhInH0L3g_lSzDHyFn_04fwDolaKCC-XKra6rrhvqOIupxIfTMIpiszoXDXEEtflWn32cYxoDR8u5AoKrwQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduvddgtdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
-    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
-    ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
-    leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
-X-ME-Proxy: <xmx:pgpoZtE62QlC7KH4a1-Foj7m6SuGeo1__iLpVx3kWrNlKBtZDBGEXw>
-    <xmx:pgpoZlWVRQ_p8fUh5gFYj3sWLfDDqVe2tMDDZAU1gqBXHf7mYlnMMQ>
-    <xmx:pgpoZoOPDeZrLcNPr8SiDMzORypHNbn-VXsYWGSfv1UBbph_1w1i6w>
-    <xmx:pgpoZk1eF3x0f-nXXHLkc3aOXfnwdUUVFZsttwxxSOhu5TFpp2cacg>
-    <xmx:pgpoZqUhWZIGf2kTk6xnb51pDwG2k0o0o69dvVdgwO0G37IIm-rtNfGI>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Jun 2024 04:28:18 -0400 (EDT)
-Date: Tue, 11 Jun 2024 01:33:29 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
- 	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
- 	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- 	KP Singh <kpsingh@kernel.org>,
- Matt Bobrowski <mattbobrowski@google.com>,
- 	Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- 	Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>,
- 	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- 	Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
- John Johansen <john.johansen@canonical.com>,
- 	David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- 	Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, 	Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev,
- 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, 	linux-security-module@vger.kernel.org,
- bpf@vger.kernel.org, apparmor@lists.ubuntu.com,
- 	keyrings@vger.kernel.org, selinux@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] Introduce user namespace capabilities
-Message-ID: <tqvnpbrdmfj3q7rc2m365nxvwgb6hsvipiz7l473cdwyacdb6s@b22nvrk7vbok>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240610201227.GD235772@perftesting>
+	s=arc-20240116; t=1718095090; c=relaxed/simple;
+	bh=pFDxptaxcbYkWba+DnIxIIQCImZP9sF1vdM3XXdG9VY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rxpcvwQpLp7H9Qx8gJYi6qC7YoHcm1qLJubGmnd8SJjNNSLA9tKR9rcWrOnT7bzdc/kONPB6FbOB6nCNdRscuwqMKlukX0mERAKxJUvr2JTxy9qexjqfsbvitUhrwjfbR4+pK+jRTMDiK8SyNzq2p9+Lms59UzfsRq7TOxpD5XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=yvWnJiDa; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B7gFLB011602;
+	Tue, 11 Jun 2024 10:37:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=mKl1FJjv6aNsO+n3RrXdiV
+	rleeoiVRhZbFPafOGKwOc=; b=yvWnJiDax/74lokVBoMoTIwioIsQ+Cuz8v1Bd+
+	z0t/eo31ULnw08Y70XHpDkSXiALLMkp0aGwgk4G62iFOSvI51helcfF1ADiiykuu
+	raVgsw+9q2tEoCcrLF6H2f5z/so61GMObQsGrcrDFjczpnhwrK0E1vzs99xSR6tN
+	ZbBYbIifKMn5cNKQ3eTdMZwjI/kt8NN7YHdZlIQ7qD24xtdy1l3Se2MzNTI68m/W
+	LLeZYFBoGdd/mZYUZcmsNZgKy/HfOaWoiNH+Mle0fDZPiSnLZ9+14l0SfIxYsGYF
+	noI8XXiErUZKPqh0CcT2UOAlreCi3DCV1OuCsLSBJ6txWCwQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ypbp3srxm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 10:37:40 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3D68440044;
+	Tue, 11 Jun 2024 10:37:33 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2522E21072C;
+	Tue, 11 Jun 2024 10:36:19 +0200 (CEST)
+Received: from localhost (10.48.86.164) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 11 Jun
+ 2024 10:36:18 +0200
+From: Christophe Roullier <christophe.roullier@foss.st.com>
+To: "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        Marek Vasut <marex@denx.de>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [net-next,PATCH v7 0/8] Series to deliver Ethernet for STM32MP13
+Date: Tue, 11 Jun 2024 10:35:58 +0200
+Message-ID: <20240611083606.733453-1-christophe.roullier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240610201227.GD235772@perftesting>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_04,2024-06-11_01,2024-05-17_01
 
-On Mon, Jun 10, 2024 at 04:12:27PM GMT, Josef Bacik wrote:
-> Where are the tests for this patchset?  I see you updated the bpf tests for the
-> bpf lsm bits, but there's nothing to validate this new behavior or exercise the
-> new ioctl you've added.  Thanks,
+STM32MP13 is STM32 SOC with 2 GMACs instances
+    GMAC IP version is SNPS 4.20.
+    GMAC IP configure with 1 RX and 1 TX queue.
+    DMA HW capability register supported
+    RX Checksum Offload Engine supported
+    TX Checksum insertion supported
+    Wake-Up On Lan supported
+    TSO supported
+Rework dwmac glue to simplify management for next stm32 (integrate RFC from Marek)
 
-Apologies, I haven't had much time to spend on it so I prioritized the
-rest. But yes, we should certainly update the capabilities selftests
-once we agreed on the different behaviors.
+V2: - Remark from Rob Herring (add Krzysztof's ack in patch 02/11, update in yaml)
+      Remark from Serge Semin (upate commits msg)
+V3: - Remove PHY regulator patch and Ethernet2 DT because need to clarify how to
+      manage PHY regulator (in glue or PHY side)
+    - Integrate RFC from Marek
+    - Remark from Rob Herring in YAML documentation
+V4: - Remark from Marek (remove max-speed, extra space in DT, update commit msg)
+    - Remark from Rasmus (add sign-off, add base-commit)
+    - Remark from Sai Krishna Gajula
+V5: - Fix warning during build CHECK_DTBS
+    - Remark from Marek (glue + DT update)
+    - Remark from Krzysztof about YAML (Make it symmetric)
+V6: - Replace pr_debug by dev_dbg
+    - Split serie driver/DTs separately
+V7: - Remark from Marek (update sysconfig register mask)
+
+Christophe Roullier (3):
+  dt-bindings: net: add STM32MP13 compatible in documentation for stm32
+  net: stmmac: dwmac-stm32: Mask support for PMCR configuration
+  net: stmmac: dwmac-stm32: add management of stm32mp13 for stm32
+
+Marek Vasut (5):
+  net: stmmac: dwmac-stm32: Separate out external clock rate validation
+  net: stmmac: dwmac-stm32: Separate out external clock selector
+  net: stmmac: dwmac-stm32: Extract PMCR configuration
+  net: stmmac: dwmac-stm32: Clean up the debug prints
+  net: stmmac: dwmac-stm32: Fix Mhz to MHz
+
+ .../devicetree/bindings/net/stm32-dwmac.yaml  |  43 ++++-
+ .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 178 ++++++++++++++----
+ 2 files changed, 173 insertions(+), 48 deletions(-)
+
+
+base-commit: bb678f01804ccaa861b012b2b9426d69673d8a84
+-- 
+2.25.1
+
 
