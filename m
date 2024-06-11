@@ -1,154 +1,108 @@
-Return-Path: <linux-kernel+bounces-210679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C813E904736
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:53:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A5B90473E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B31B1F22EA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:53:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D30371C2310C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E88155C92;
-	Tue, 11 Jun 2024 22:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FB7155CA7;
+	Tue, 11 Jun 2024 22:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghY50bs0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2719475;
-	Tue, 11 Jun 2024 22:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAAD9475;
+	Tue, 11 Jun 2024 22:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718146386; cv=none; b=QwZn8khqsm7/WtnZEyCzp64hdKk0UxgyVGMZMRd+2lYli/4YmJ32nWxrICswyHpKmgqRCs5/DnA6GATO4M2xStMrha932xhUbuvcwSc2Eq8Z+7oG3BoE+l3LgOnnEzSZlf7WHIlxRpHkswfuh89odf0vLk3PU3adg8OKlDxamMw=
+	t=1718146471; cv=none; b=FQ+jQDXu25vjg9NlBRPHhoD8RVhujZ991EPaQuILWfX/PfBqo1dYh3FUEQKJxR7M8XJMVhmJ6Mn3Ci7j9IFszoT74DzlKrMdcxP6xgbBRjgSrPYdXgASXsdSSk9eQL2j0IsXT6fBPXzhowFZGw8B4vXPPG9iFjd+3Ub3SOfPm3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718146386; c=relaxed/simple;
-	bh=fhgz9IAmeJpMQtd4lfMk0iOiZf+Dwg8y0PO7LZ0iNAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E/OeDK2x7dX90S19+OB6Jlc6JnLavNZ21CXYPGZHbeIJsJyvTNKvxQGoIWp3J4oVzkdQgFAzpqaElkq5anWF912Z6drxH6kxWK2K+k7qrStBT4g9SFh7jvKGrcJyUCNpCospTs4ISRUl06906yRlCFHqS2CjqepaMP/y8J/bFXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 200E2C2BD10;
-	Tue, 11 Jun 2024 22:53:03 +0000 (UTC)
-Date: Tue, 11 Jun 2024 18:53:19 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Vincent Donnefort <vdonnefort@google.com>,
- Joel Fernandes <joel@joelfernandes.org>, Daniel Bristot de Oliveira
- <bristot@redhat.com>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, suleiman@google.com, Thomas Gleixner
- <tglx@linutronix.de>, Vineeth Pillai <vineeth@bitbyteword.org>, Youssef
- Esmat <youssefesmat@google.com>, Beau Belgrave <beaub@linux.microsoft.com>,
- Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>, Borislav
- Petkov <bp@alien8.de>, "Paul E. McKenney" <paulmck@kernel.org>, David
- Howells <dhowells@redhat.com>, Mike Rapoport <rppt@kernel.org>, Dave Hansen
- <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>, Ross
- Zwisler <zwisler@google.com>, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v4 01/13] ring-buffer: Allow mapped field to be set
- without mapping
-Message-ID: <20240611185319.58a52a1b@gandalf.local.home>
-In-Reply-To: <5178e22b-0c00-48d2-8a6e-85510706f145@roeck-us.net>
-References: <20240611192828.691638177@goodmis.org>
-	<20240611192907.402447387@goodmis.org>
-	<5178e22b-0c00-48d2-8a6e-85510706f145@roeck-us.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718146471; c=relaxed/simple;
+	bh=Qk1xtp+Y0CsC+cGSX2bvsS9KRtEFezREYHk2nrDR1VA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=jnZaeujYSo+BM7lBTaFeI7x+/qLaz+1xkry4NJMZ8Va7ujeNXUB1CPKuW/ES5D3WB/h+1HcwTqoqN/RKyHgfiKNxeFw+lQsLldoxk58cO6PGzUUtXklADTRCdcqGAaHDvSxAXlWGdcB017pEwHTW9BWxoZshyu9z6Ok7ntgiZoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghY50bs0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6207EC3277B;
+	Tue, 11 Jun 2024 22:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718146470;
+	bh=Qk1xtp+Y0CsC+cGSX2bvsS9KRtEFezREYHk2nrDR1VA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ghY50bs0RlmiaNDSZwjEm0OI3iVK0UG5GkXzkYk8Z2fu2SwC23ID3ccJ7KaxqUc7Z
+	 J3MCwzZZrcfHEsyzWIanidlCVT1T7Yu6Ur/Uhrls66GtuXhEdWkHV63z0Ho8HXRJo5
+	 ZhyK1sdLS17ioINSFHQnMZAjfnS5XKlxRUgEsAfGzOpaa+k2Za4sPHbYho0cpJBNWc
+	 LbWRItPHXJHKW0fcccqgY/fcov1umU2R9sNliNvFCHK1eFi+hholPLR0aTYcR9xETD
+	 oW0pnaqqFoYbZjge1UzN6manRXLNxrYbrtjRk851t0ENdwsZUdmcCp4nGCWVaiymqM
+	 kV4e15f3vqfdw==
+Date: Tue, 11 Jun 2024 17:54:28 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+	Rocky Liao <quic_rjliao@quicinc.com>, Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+	Elliot Berman <quic_eberman@quicinc.com>,
+	Caleb Connolly <caleb.connolly@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Alex Elder <elder@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	ath12k@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	kernel@quicinc.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Amit Pundir <amit.pundir@linaro.org>
+Subject: Re: [PATCH v8 00/17] power: sequencing: implement the subsystem and
+ add first users
+Message-ID: <20240611225428.GA1005695@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528-pwrseq-v8-0-d354d52b763c@linaro.org>
 
-On Tue, 11 Jun 2024 15:43:59 -0700
-Guenter Roeck <linux@roeck-us.net> wrote:
-
-> On 6/11/24 12:28, Steven Rostedt wrote:
-> > From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> > 
-> > In preparation for having the ring buffer mapped to a dedicated location,
-> > which will have the same restrictions as user space memory mapped buffers,
-> > allow it to use the "mapped" field of the ring_buffer_per_cpu structure
-> > without having the user space meta page mapping.
-> > 
-> > When this starts using the mapped field, it will need to handle adding a
-> > user space mapping (and removing it) from a ring buffer that is using a
-> > dedicated memory range.
-> > 
-> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> > ---
-> >   kernel/trace/ring_buffer.c | 11 ++++++++---
-> >   1 file changed, 8 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> > index 28853966aa9a..78beaccf9c8c 100644
-> > --- a/kernel/trace/ring_buffer.c
-> > +++ b/kernel/trace/ring_buffer.c
-> > @@ -5224,6 +5224,9 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
-> >   {
-> >   	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
-> >   
-> > +	if (!meta)
-> > +		return;
-> > +
-> >   	meta->reader.read = cpu_buffer->reader_page->read;
-> >   	meta->reader.id = cpu_buffer->reader_page->id;
-> >   	meta->reader.lost_events = cpu_buffer->lost_events;
-> > @@ -6167,7 +6170,7 @@ rb_get_mapped_buffer(struct trace_buffer *buffer, int cpu)
-> >   
-> >   	mutex_lock(&cpu_buffer->mapping_lock);
-> >   
-> > -	if (!cpu_buffer->mapped) {
-> > +	if (!cpu_buffer->mapped || !cpu_buffer->meta_page) {
-> >   		mutex_unlock(&cpu_buffer->mapping_lock);
-> >   		return ERR_PTR(-ENODEV);
-> >   	}
-> > @@ -6359,12 +6362,13 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
-> >   	 */
-> >   	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-> >   	rb_setup_ids_meta_page(cpu_buffer, subbuf_ids);
-> > +  
+On Tue, May 28, 2024 at 09:03:08PM +0200, Bartosz Golaszewski wrote:
+> Note: I am resending this series in its entirety once more for
+> discussions and reviews. If there won't be any major objections, I'll
+> then start sending individual bits and pieces to appropriate trees.
 > 
-> Picky again. Is that a leftover from something ? I don't see an immediate reason
-> for the added newline.
+> Merging strategy: The DT binding and DTS changes are a no-brainer, they
+> can go through the wireless, regulator and arm-msm trees separately. The
+> bluetooth and PCI changes have a build-time dependency on the power
+> sequencing code. The bluetooth changes also have a run-time dependency on
+> the PCI pwrctl part. In order to get it into next I plan to pick up the
+> power sequencing code into my own tree and maintain it. I can then
+> provide an immutable tag for the BT and PCI trees to pull. I wouldn't
+> stress about the BT runtime dependency as it will be fixed once all
+> changes are in next.
 
-Hmm, I could remove it.
-
-> 
-> >   	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
-> >   
-> >   	err = __rb_map_vma(cpu_buffer, vma);
-> >   	if (!err) {
-> >   		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-> > -		cpu_buffer->mapped = 1;
-> > +		cpu_buffer->mapped++;
-> >   		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
-> >   	} else {
-> >   		kfree(cpu_buffer->subbuf_ids);
-> > @@ -6403,7 +6407,8 @@ int ring_buffer_unmap(struct trace_buffer *buffer, int cpu)
-> >   	mutex_lock(&buffer->mutex);
-> >   	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-> >   
-> > -	cpu_buffer->mapped = 0;
-> > +	WARN_ON_ONCE(!cpu_buffer->mapped);
-> > +	cpu_buffer->mapped--;  
-> 
-> This will wrap to UINT_MAX if it was 0. Is that intentional ?
-
-If mapped is non zero, it limits what it can do. If it enters here as zero,
-we are really in a unknown state, so yeah, wrapping will just keep it
-limited. Which is a good thing.
-
-Do you want me to add a comment there?
-
--- Steve
-
-
-> 
-> >   
-> >   	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
-> >     
-
+The PCI changes are very self-contained and any conflicts will be
+trivial, so rather than messing with an immutable tag, how about if I
+just ack them and you can include them in your tree directly?
 
