@@ -1,399 +1,265 @@
-Return-Path: <linux-kernel+bounces-209675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E88903936
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:47:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 812BD90393A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04DD91F24B9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:47:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2104C2845AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8860178CD9;
-	Tue, 11 Jun 2024 10:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD5417967F;
+	Tue, 11 Jun 2024 10:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FFNyhPnj"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IPXFyvIj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED6917836F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718102846; cv=none; b=hJL7mVSMyGvG0drNTmdCgpco2Vqj5koDh3jHjBXKJETqzSr2v9yOkkpBV1VOGRKFV1VBYQniQVlz038lxAs/TQhnYyQOv7Y1nDXbqrC0lVDc9wKWABiyd47RngjhNZCZKNDYHZfb/DWitkbYXt5NsTLm3YR4YiDTth+0oCxTzgw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718102846; c=relaxed/simple;
-	bh=AIOvoETcREtcXKprqFNgMdTLKkzlhBa6Oxq0QjP/g+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OqPV1CFhN4h3LzyMOf5wo15vWq7ssa11Fja/43INYc7mgSIH74JedkLMfQfo3qV8lyfnnVfCdUBmbWFgcj8jWdc3Jzu5hAkAeNYTwgTNt0zpY11mg5KBnVNXr6CRdiRKYwqsMT9Qe5Jq+/Y91wNa3GTQe9pXBm3b9pKQ9xXvLhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FFNyhPnj; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718102842;
-	bh=AIOvoETcREtcXKprqFNgMdTLKkzlhBa6Oxq0QjP/g+Y=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=FFNyhPnjfIadsBXv5rmdyKkQ5jjoocyjQfoeMf9MS9E6SkaJXl5aDkS77P/quvXHB
-	 zDXMLxCro/OKmqjmazHpSM9GKfvZqv7cm+JXF7s3G3Ijj1CoBSeOB+QMvyJSZ66kkS
-	 XfQgVybJeDMft3NhnOV0bJBNBEQWx4Q3ux12wRlhFm9uF/nBj6yQbzLoZZWogN+RT5
-	 Cu33sdiLqp1L20CkwXfyrEo6RJTZKfo6yBQFsi13eEoxu+h3zIgGh1v1sbWwANKstJ
-	 Pj1muNTj3EzqWGsLypMtXkDvP5qzYdXguPz4rXKE9au88YVMN+79Mrq0WilLXvZlL5
-	 tI52ONJplD2ng==
-Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id CD23637804C6;
-	Tue, 11 Jun 2024 10:47:19 +0000 (UTC)
-Message-ID: <4e9ce9fb-426b-431b-81db-9e960b0aab91@collabora.com>
-Date: Tue, 11 Jun 2024 16:17:18 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF0944393;
+	Tue, 11 Jun 2024 10:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718102944; cv=fail; b=EAoP+lUWWLNhjnmHJB3aR8Ig/RWxAItRoE9i/XUr/J2+EOOJzQUv0emEVmqocLOW/W5QMEtOuFf3Wgq1xCRC4MXaFt0FY85+c9rsTG0aWzQN5SLkBSjm3f3zhpk9ZKIDnoK00v7U1aR7gTHwU87ccMEoxhTE8XWSJ8AhqhJ4aXo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718102944; c=relaxed/simple;
+	bh=7PhmJLfj8XHlyg6ONTOeHTLrrYi5Ldl0OLDAidb8TS8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ZM9wmSMVdCWLSFM0BBZc2kyW1Gy6utwiI38psOtk1nqVi5rpxuP9mchjBmu94NdDez1j2WX8Ecp8kbq3QorBnzL/Ke2CrsH++nbHAplGGatVEtqQJdgubpsDsj1S7Z9nCBjWbSZfb0a1qbmpdH/acbZUtqijVhqfVdwM9LikpRk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IPXFyvIj; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718102943; x=1749638943;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=7PhmJLfj8XHlyg6ONTOeHTLrrYi5Ldl0OLDAidb8TS8=;
+  b=IPXFyvIjBUZ1+yHW5qzuZjbVXbaQweauLoRMwx32lZOnd2X7Z2d3M0Hr
+   eJgeVNRKOBcxfsjFKud9/hFD4fxxJAV4flMjAKzMOmdtZWidTH/aKrsyr
+   ghpT0OV47VciUIVfmWBRfXzxmh1s+gNOa7W1/Nh8zqE1a/pEfeKC9v/wR
+   TdHsh74QYBvmYo3eAU1jSYcPtnwf9zl8G+O+5IU3fPHCzl0YArE2mr+wk
+   Z0Am7DFLzcIOfFwhZWSBPcxrzbPI1vVdbnJVwCRfJydEBOUOfUXmoSgsc
+   w8u+Om8kckhuyT/3NLuebsmBckH8wNwpaputbaz12gqAEhkrLIi3h3e9D
+   g==;
+X-CSE-ConnectionGUID: cY5GDTyJTUCcYsc9Kx/W2g==
+X-CSE-MsgGUID: IU1nygX9RJC5mtg3r7QrbA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="37325991"
+X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
+   d="scan'208";a="37325991"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 03:49:02 -0700
+X-CSE-ConnectionGUID: FeARANRfQRuykQQmelhvZg==
+X-CSE-MsgGUID: K+ac2IbpTeyo7OIandq4Jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
+   d="scan'208";a="39338190"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Jun 2024 03:49:03 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 11 Jun 2024 03:49:02 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 11 Jun 2024 03:49:01 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 11 Jun 2024 03:49:01 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.49) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 11 Jun 2024 03:49:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TopWEjNBty/D2gWPg0gQHUcYCnPbPoXgyH6cAy7ce59Rs1ak1vH8U22uyRD+SVw2QrD8OhOBcfnSKAwCbZjQYWPbX3Zpl09eS1ZKUt32DM97psbB37ChI/Ha/Z4wU4ao/dQPLKopqRbKQbdYcs8pWy9MTrWFWbwJt6C20MsBSgrl51vxbW3dEkX3yxJSAKthSF8+EdyQ9r3COKTPCUv8+tUkS2R3mFgiJ+UL6JWnPqPtGj+fbbp1zE9+kyE4gdE6lWPhxlRcQvjvyCvUL+4o8MXhOLhB0Po4EfwwA3FmJy4+jnroOtQ5Ue62Z7THCyRk43DfZ3qq0nSQoCVlb7k+Ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s8jRYijHITn5qNmSI76n3GZdTpicNiSA1YBQjtji8q0=;
+ b=N8/aROTvz8DbVgmZoxvzh8dLjncql5+fLGzl3GsL7GK31a51AaQ/kuqzl2ACJN7A6v5TjDvQC5/12vG9n4eeaa7FRCv7Cg9Yjyc4uG0mUectpJlLcUdwZPMXuW5JybG3r5VJUyDye7l5YAfOI5Xxabjl4D8qxbyl860bYysdRPLrF+y5N687BI6k8FkjDXBB4LySTm68wHEWG6WZqA/RVswU552O2yFNeJ1uPSfWU73H7JN7imdNZ8bgQIk4ELqJ5bIGrWuMaEY1O3EXNnZSSWzVBabmu3d4jMMPOHVxURxIJlNF+QfVgfU93Vndauor/cTMMkUtVDpJ78fggca2pA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by PH8PR11MB8014.namprd11.prod.outlook.com (2603:10b6:510:23a::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
+ 2024 10:48:58 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%5]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
+ 10:48:58 +0000
+Date: Tue, 11 Jun 2024 18:48:48 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<daniel.sneddon@linux.intel.com>, <pawan.kumar.gupta@linux.intel.com>, "Zhang
+ Chen" <chen.zhang@intel.com>, Paolo Bonzini <pbonzini@redhat.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
+ Petkov" <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [RFC PATCH v3 09/10] KVM: VMX: Advertise
+ MITI_CTRL_BHB_CLEAR_SEQ_S_SUPPORT
+Message-ID: <ZmgrkMLuComwPl1X@chao-email>
+References: <20240410143446.797262-1-chao.gao@intel.com>
+ <20240410143446.797262-10-chao.gao@intel.com>
+ <ZmepkZfLIvj_st5W@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZmepkZfLIvj_st5W@google.com>
+X-ClientProxiedBy: SI2PR02CA0052.apcprd02.prod.outlook.com
+ (2603:1096:4:196::18) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] drm/ci: add tests on vkms
-Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-To: dri-devel@lists.freedesktop.org
-Cc: airlied@gmail.com, daniel@ffwll.ch, rodrigosiqueiramelo@gmail.com,
- melissa.srw@gmail.com, mairacanal@riseup.net, hamohammed.sa@gmail.com,
- robdclark@gmail.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, daniels@collabora.com, helen.koike@collabora.com,
- guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
- linux-kernel@vger.kernel.org
-References: <20240611091037.558969-1-vignesh.raman@collabora.com>
-In-Reply-To: <20240611091037.558969-1-vignesh.raman@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|PH8PR11MB8014:EE_
+X-MS-Office365-Filtering-Correlation-Id: 390e0efa-63e8-4d78-102a-08dc8a0418f4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|7416005|366007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Qamw/f1bkExtppcH7ktS2LVoqDrRM/K3XUGVmv+RqwYs2wwdBSrGp2HNxn6x?=
+ =?us-ascii?Q?hBzp38K/AVO9EI+NI+rt/iLFVsXa4MDIlw6PLuyKZFQJDcX22fAn3R7CNyTJ?=
+ =?us-ascii?Q?6e2ciQKjcldk9D4WCOVAuxnKIHmNqHXVb6T0oferxUAPNZkQ2DYumfKld+Ua?=
+ =?us-ascii?Q?NXJR5C79/x3gyVZh6sTT9ycEh55Myyu5Capeyos0S6tqm3kSbho5X9U5Bv5V?=
+ =?us-ascii?Q?F7nj3BheBDCmqUP+O0uCZkz/+4wnIn18EzGvz0KrPWf4edPihlaIBgWtMPOq?=
+ =?us-ascii?Q?GAkG2VFTcwszhhWrBavbV9RxKYC0+TI5eRaQPbnTnqMan6XC22wboi8yD9CP?=
+ =?us-ascii?Q?8zaciWyfR/EHJrxbxGfs6Sk3cxbx5UbHSfnFqM1Vl0qwrFABEFTJLC3LdpKN?=
+ =?us-ascii?Q?XlyYDGQSgkzdhvIYamKehLEgjn06Xs2WV/xN1Bm2sEXTXHxMuOllSpgxyIqd?=
+ =?us-ascii?Q?ve+fOnd0HoV6Q/dpwvRRvrXtWaiLTEXfAK0NVsyxSxGUeVEE/6+YkH2liFfm?=
+ =?us-ascii?Q?N9qOvIcjF1Kr/bYSIAhCRZPdtTK4F+JgZ8QGO+QffK13O2YIpaETyQxHl6hB?=
+ =?us-ascii?Q?GF+8NTWBdVeZoBIXH2aC6RiDoeWAmX3b7W8HyF/c72fFysTjXeB5vQrbYK80?=
+ =?us-ascii?Q?lGIsK83vlM7hRCoHKFhAQFQ8zk40KlmkVQ97QPDOpSCR7i/MiMjXP4Fvy0Yh?=
+ =?us-ascii?Q?SLVsn0mALBDmIewzknFEJBQVClYtMup5iM+V8Dl9Bv1NkV+78L7eQBjM1AaA?=
+ =?us-ascii?Q?pTp2pkIoogQ8M9HhWnSDuehBJXPDVs7s4sG3FsaLWlkuAYHB7FDWFwvGP+nC?=
+ =?us-ascii?Q?1kPjvVpg7N4CzX1UlfJOoDYvpOIdDvsLHdTQ4v0bi7H84ZNnPFuXbePRKUJi?=
+ =?us-ascii?Q?zNpu+FwTeWd8rfp2VN4IthEBOELrG3wZnm/gviLNMzHgxYyvCRwlaXBkdLxQ?=
+ =?us-ascii?Q?xVTyK/Zi1jOM8I5TW98h9ueZrpYbj65V7fhwyto3AJOD3mzmoHOtJ4HjEuDp?=
+ =?us-ascii?Q?lQBZPlG66+QfDuJRWjANvyBBE0WQZD5P80MZJPN0TKPtEWhJLB0LJAlB/Vr7?=
+ =?us-ascii?Q?FQvuEgY37uv4cb/p5NZO+P+fNp2Nc8YznOC1SJD6lFmhaBZQeRsdCX9ikxp3?=
+ =?us-ascii?Q?3npyFnqMnV418uspkt1KBtDo/0gCnIdmz/TcttOo8DQh3ty/N2DczWu8w4dS?=
+ =?us-ascii?Q?mMZzDDemOrWVc4k/UFZIwKy+0u37qMBCNIRpTUs4WrX5nb9Pr6FefCoAEBib?=
+ =?us-ascii?Q?RaGN8lLTMoX0T3oNE5X49ZTx6a20i7qlbnW6eHHxRWr8g0wmG88y26EitZF+?=
+ =?us-ascii?Q?PMfDu+RepKwnPoqr0TnAPwj/?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?x0XMXqEPqbEiDx78DbbW0qCYhoos1/Rn3YsEO9WUVF0AVlfUpUsKAU/yi+xH?=
+ =?us-ascii?Q?VmKqJbaGEJDrkFswbDvK/wzQxvmgzlNS4dOKxHqDZoPn9EHjl2gZJ727RQfX?=
+ =?us-ascii?Q?pZO1RzKMFLUgqKdk1XfBBVE0ptE2dSwJvN/vZ0Omjt9ZucyAlLzN8OeSORDs?=
+ =?us-ascii?Q?KBeJST6zFItlX6vLr8KW3hIdZovTMe8RhPbAou/eZPAYDfb0NiB443pujoXA?=
+ =?us-ascii?Q?w6LY86u/1L/9sqa6VP101axpC/rfGbc5rNSBULwPK1GkKIV/QPRIKIrhy8Q/?=
+ =?us-ascii?Q?Jqok8pBZ+FYy5o5+Kz17aFhC6tbMry/wOMm57eDfIbFMskUHYt2q3dcdB0BF?=
+ =?us-ascii?Q?DKKJledEqMV2+xKXQ/si/JZoQSJfWCzsyJoopEPIKEiIFC71Liixz4GjyrE3?=
+ =?us-ascii?Q?eSsQJaXkjWVxDOyvwcUvBR1CrQou6nJ2/ekIlWMS9u5S0m+TT+s8w+ELuE10?=
+ =?us-ascii?Q?2/ZXJk0d0s6eAnj6RlHKyEpmSIRQVjL3RakFVk8RfRKupIqeLxafrpHiY2aM?=
+ =?us-ascii?Q?Vg8Hz4dwlhnMCB0afFF08Ern4raJxD0BqSUYXvjShshXM6mfkl4HxE60WgVU?=
+ =?us-ascii?Q?sEK8PrpT+wihLpLPpBCxXhiBC0Xa1bC/0lE665+H0qYDUBDReMZXKo5cMi9V?=
+ =?us-ascii?Q?qaj8kBemBv2XTd/sHqqY45gH/DzUjo+svVbXtPeFGlJrrDetBIxDsbhE6XOs?=
+ =?us-ascii?Q?TgMzskN1Flgq+n259134FeV+vaTxE1cGWCjf2W1vQXvo4RazTWz2phkLlzkd?=
+ =?us-ascii?Q?+JfQDIjCZ2O1I4KxSsvlGaq32W3Pe3yxbdsgFwlkclJq1tf6j7VyiH1ZKNlU?=
+ =?us-ascii?Q?ie0x8R87tWtz4ol+lq7Y874yBXSgJmly2QdDblruRUkAUcW8dFydofJLqHZa?=
+ =?us-ascii?Q?DGlBOPsv+eZ7wJ8rADql5GUTT6qDLN3XYBw7jeGXE02s+TLbyIzSNvVeySlB?=
+ =?us-ascii?Q?v8thhYPaB5L5rYaMlkpvM8JO+fD1B4M6aUrQhUw5ccnWVCj7aRqmPxx5PkT3?=
+ =?us-ascii?Q?FjxqKEAY7jP8kQAOFUSgLuGHfErcmnXwF57Rc57lFgctaoJhCNawv26pj35+?=
+ =?us-ascii?Q?Ijo7wHyDEAtnQNQ5ejUcGiW5mx7KfgP4xU+B/mXoMr6ZxD20qY2Bw3PrjemZ?=
+ =?us-ascii?Q?1xVIkWlbxcIG60Gw90XyP9NUsxNJ3R6fo0kh3Gn8kFVmIWVsV/mw3jIMKG3E?=
+ =?us-ascii?Q?mdMJbrwG6Pk0JTi4m2deG6xEf06rOAa8JSZbcI+4V++jEi8qw6SI6DPpn5+B?=
+ =?us-ascii?Q?WRsrePQIxJ/u3fEV72F3quyATU/IQSldlcfl0BN+EmSKqAUYwjRDhp/x0s/o?=
+ =?us-ascii?Q?Lzodgso5Xo5sjK6aYavN5pbJwriOFl5pNlo2al+zfWFMW1Yo9w1kUGW1auT/?=
+ =?us-ascii?Q?0zGtx1+Z/zu2bHfWit2WreVAv0WVL313VDlBPnhmATttlm0x8T/BjUBjyH6d?=
+ =?us-ascii?Q?7OkUS7/7sM0DmA3oVmLqDA6OZ+jt+tmosngDxy2piF6bN1AKOms8qGPBZAWP?=
+ =?us-ascii?Q?cwIwa0SwumqOx8LKTX1DJi5Iofd7hE7xBzYboV3NnFR4Yk45Atq8njRb1SEf?=
+ =?us-ascii?Q?nymiVGJUyWuboPrjMiQs9f/a1wskGZHhuRWKRexs?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 390e0efa-63e8-4d78-102a-08dc8a0418f4
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 10:48:58.6390
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l3464oinAUriFL3XI2f4IqIlLDFJxynm6YUy0tKKQNLqLssXb/r67blwT40ur2WBQaknhf2fi6DJYrTXzbsrGw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8014
+X-OriginatorOrg: intel.com
 
-Hi,
+>> +		if (data & MITI_CTRL_BHB_CLEAR_SEQ_S_USED &&
+>> +		    kvm_cpu_cap_has(X86_FEATURE_BHI_CTRL) &&
+>> +		    !(host_arch_capabilities & ARCH_CAP_BHI_NO))
+>> +			spec_ctrl_mask |= SPEC_CTRL_BHI_DIS_S;
+>> +
+>> +		/*
+>> +		 * Intercept IA32_SPEC_CTRL to disallow guest from changing
+>> +		 * certain bits if "virtualize IA32_SPEC_CTRL" isn't supported
+>> +		 * e.g., in nested case.
+>> +		 */
+>> +		if (spec_ctrl_mask && !cpu_has_spec_ctrl_shadow())
+>> +			vmx_enable_intercept_for_msr(vcpu, MSR_IA32_SPEC_CTRL, MSR_TYPE_RW);
+>> +
+>> +		/*
+>> +		 * KVM_CAP_FORCE_SPEC_CTRL takes precedence over
+>> +		 * MSR_VIRTUAL_MITIGATION_CTRL.
+>> +		 */
+>> +		spec_ctrl_mask &= ~vmx->vcpu.kvm->arch.force_spec_ctrl_mask;
+>> +
+>> +		vmx->force_spec_ctrl_mask = vmx->vcpu.kvm->arch.force_spec_ctrl_mask |
+>> +					    spec_ctrl_mask;
+>> +		vmx->force_spec_ctrl_value = vmx->vcpu.kvm->arch.force_spec_ctrl_value |
+>> +					    spec_ctrl_mask;
+>> +		vmx_set_spec_ctrl(&vmx->vcpu, vmx->spec_ctrl_shadow);
+>> +
+>>  		vmx->msr_virtual_mitigation_ctrl = data;
+>>  		break;
+>
+>I continue find all of this unpalatable.  The guest tells KVM what software
+>mitigations the guest is using, and then KVM is supposed to translate that into
+>some hardware functionality?  And merge that with userspace's own overrides?
 
-Successful pipeline link,
-https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1198487
+Yes. It is ugly. I will drop all Intel-defined stuff from KVM. Actually, I
+wanted to punt to userspace ...
 
-Regards,
-Vignesh
+>
+>Blech.
+>
+>With KVM_CAP_FORCE_SPEC_CTRL, I don't see any reason for KVM to support the
+>Intel-defined virtual MSRs.  If the userspace VMM wants to play nice with the
+>Intel-defined stuff, then userspace can advertise the MSRs and use an MSR filter
+>to intercept and "emulate" the MSRs.  They should be set-and-forget MSRs, so
+>there's no need for KVM to handle them for performance reasons.
 
-On 11/06/24 14:40, Vignesh Raman wrote:
-> Add job that runs igt on top of vkms.
-> 
-> Acked-by: Maíra Canal <mcanal@igalia.com>
-> Acked-by: Helen Koike <helen.koike@collabora.com>
-> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
-> Acked-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> Tested-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> Acked-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Helen Koike <helen.koike@collabora.com>
-> ---
-> 
-> v2:
-> - do not mv modules to /lib/modules in the job definition, leave it to
->    crosvm-runner.sh
-> 
-> v3:
-> - Enable CONFIG_DRM_VKMS in x86_64.config and update xfails
-> 
-> v4:
-> - Build vkms as module and test with latest IGT.
->    This patch depends on https://lore.kernel.org/dri-devel/20240130150340.687871-1-vignesh.raman@collabora.com/
-> 
-> v5:
-> - Test with the updated IGT and update xfails
-> 
-> ---
->   MAINTAINERS                                   |  1 +
->   drivers/gpu/drm/ci/build.sh                   |  1 -
->   drivers/gpu/drm/ci/gitlab-ci.yml              |  1 +
->   drivers/gpu/drm/ci/igt_runner.sh              |  6 +-
->   drivers/gpu/drm/ci/image-tags.yml             |  2 +-
->   drivers/gpu/drm/ci/test.yml                   | 24 ++++++-
->   drivers/gpu/drm/ci/x86_64.config              |  1 +
->   drivers/gpu/drm/ci/xfails/vkms-none-fails.txt | 57 ++++++++++++++++
->   .../gpu/drm/ci/xfails/vkms-none-flakes.txt    | 15 +++++
->   drivers/gpu/drm/ci/xfails/vkms-none-skips.txt | 67 +++++++++++++++++++
->   10 files changed, 169 insertions(+), 6 deletions(-)
->   create mode 100644 drivers/gpu/drm/ci/xfails/vkms-none-fails.txt
->   create mode 100644 drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt
->   create mode 100644 drivers/gpu/drm/ci/xfails/vkms-none-skips.txt
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8aee861d18f9..94065f5028cf 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7036,6 +7036,7 @@ L:	dri-devel@lists.freedesktop.org
->   S:	Maintained
->   T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
->   F:	Documentation/gpu/vkms.rst
-> +F:	drivers/gpu/drm/ci/xfails/vkms*
->   F:	drivers/gpu/drm/vkms/
->   
->   DRM DRIVER FOR VIRTUALBOX VIRTUAL GPU
-> diff --git a/drivers/gpu/drm/ci/build.sh b/drivers/gpu/drm/ci/build.sh
-> index a67871fdcd3f..e938074ac8e7 100644
-> --- a/drivers/gpu/drm/ci/build.sh
-> +++ b/drivers/gpu/drm/ci/build.sh
-> @@ -157,7 +157,6 @@ fi
->   
->   mkdir -p artifacts/install/lib
->   mv install/* artifacts/install/.
-> -rm -rf artifacts/install/modules
->   ln -s common artifacts/install/ci-common
->   cp .config artifacts/${CI_JOB_NAME}_config
->   
-> diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
-> index 1b29c3b6406b..80fb0f57ae46 100644
-> --- a/drivers/gpu/drm/ci/gitlab-ci.yml
-> +++ b/drivers/gpu/drm/ci/gitlab-ci.yml
-> @@ -123,6 +123,7 @@ stages:
->     - msm
->     - rockchip
->     - virtio-gpu
-> +  - software-driver
->   
->   # YAML anchors for rule conditions
->   # --------------------------------
-> diff --git a/drivers/gpu/drm/ci/igt_runner.sh b/drivers/gpu/drm/ci/igt_runner.sh
-> index d49ad434b580..79f41d7da772 100755
-> --- a/drivers/gpu/drm/ci/igt_runner.sh
-> +++ b/drivers/gpu/drm/ci/igt_runner.sh
-> @@ -30,10 +30,10 @@ case "$DRIVER_NAME" in
->               export IGT_FORCE_DRIVER="panfrost"
->           fi
->           ;;
-> -    amdgpu)
-> +    amdgpu|vkms)
->           # Cannot use HWCI_KERNEL_MODULES as at that point we don't have the module in /lib
-> -        mv /install/modules/lib/modules/* /lib/modules/.
-> -        modprobe amdgpu
-> +        mv /install/modules/lib/modules/* /lib/modules/. || true
-> +        modprobe --first-time $DRIVER_NAME
->           ;;
->   esac
->   
-> diff --git a/drivers/gpu/drm/ci/image-tags.yml b/drivers/gpu/drm/ci/image-tags.yml
-> index 60323ebc7304..13eda37bdf05 100644
-> --- a/drivers/gpu/drm/ci/image-tags.yml
-> +++ b/drivers/gpu/drm/ci/image-tags.yml
-> @@ -4,7 +4,7 @@ variables:
->      DEBIAN_BASE_TAG: "${CONTAINER_TAG}"
->   
->      DEBIAN_X86_64_BUILD_IMAGE_PATH: "debian/x86_64_build"
-> -   DEBIAN_BUILD_TAG: "2023-10-08-config"
-> +   DEBIAN_BUILD_TAG: "2024-06-10-vkms"
->   
->      KERNEL_ROOTFS_TAG: "2023-10-06-amd"
->   
-> diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
-> index 322cce714657..ee908b66aad2 100644
-> --- a/drivers/gpu/drm/ci/test.yml
-> +++ b/drivers/gpu/drm/ci/test.yml
-> @@ -338,7 +338,7 @@ meson:g12b:
->       RUNNER_TAG: mesa-ci-x86-64-lava-meson-g12b-a311d-khadas-vim3
->   
->   virtio_gpu:none:
-> -  stage: virtio-gpu
-> +  stage: software-driver
->     variables:
->       CROSVM_GALLIUM_DRIVER: llvmpipe
->       DRIVER_NAME: virtio_gpu
-> @@ -358,3 +358,25 @@ virtio_gpu:none:
->       - debian/x86_64_test-gl
->       - testing:x86_64
->       - igt:x86_64
-> +
-> +vkms:none:
-> +  stage: software-driver
-> +  variables:
-> +    DRIVER_NAME: vkms
-> +    GPU_VERSION: none
-> +  extends:
-> +    - .test-gl
-> +    - .test-rules
-> +  tags:
-> +    - kvm
-> +  script:
-> +    - ln -sf $CI_PROJECT_DIR/install /install
-> +    - mv install/bzImage /lava-files/bzImage
-> +    - mkdir -p /lib/modules
-> +    - mkdir -p $CI_PROJECT_DIR/results
-> +    - ln -sf $CI_PROJECT_DIR/results /results
-> +    - ./install/crosvm-runner.sh ./install/igt_runner.sh
-> +  needs:
-> +    - debian/x86_64_test-gl
-> +    - testing:x86_64
-> +    - igt:x86_64
-> diff --git a/drivers/gpu/drm/ci/x86_64.config b/drivers/gpu/drm/ci/x86_64.config
-> index 1cbd49a5b23a..8eaba388b141 100644
-> --- a/drivers/gpu/drm/ci/x86_64.config
-> +++ b/drivers/gpu/drm/ci/x86_64.config
-> @@ -24,6 +24,7 @@ CONFIG_DRM=y
->   CONFIG_DRM_PANEL_SIMPLE=y
->   CONFIG_PWM_CROS_EC=y
->   CONFIG_BACKLIGHT_PWM=y
-> +CONFIG_DRM_VKMS=m
->   
->   # Strip out some stuff we don't need for graphics testing, to reduce
->   # the build.
-> diff --git a/drivers/gpu/drm/ci/xfails/vkms-none-fails.txt b/drivers/gpu/drm/ci/xfails/vkms-none-fails.txt
-> new file mode 100644
-> index 000000000000..691c383b21a0
-> --- /dev/null
-> +++ b/drivers/gpu/drm/ci/xfails/vkms-none-fails.txt
-> @@ -0,0 +1,57 @@
-> +core_hotunplug@hotrebind,Fail
-> +core_hotunplug@hotrebind-lateclose,Fail
-> +core_hotunplug@hotreplug,Fail
-> +core_hotunplug@hotreplug-lateclose,Fail
-> +core_hotunplug@hotunbind-rebind,Fail
-> +core_hotunplug@hotunplug-rescan,Fail
-> +core_hotunplug@unbind-rebind,Fail
-> +core_hotunplug@unplug-rescan,Fail
-> +device_reset@cold-reset-bound,Fail
-> +device_reset@reset-bound,Fail
-> +device_reset@unbind-cold-reset-rebind,Fail
-> +device_reset@unbind-reset-rebind,Fail
-> +dumb_buffer@invalid-bpp,Fail
-> +kms_content_protection@atomic,Crash
-> +kms_content_protection@atomic-dpms,Crash
-> +kms_content_protection@content-type-change,Crash
-> +kms_content_protection@lic-type-0,Crash
-> +kms_content_protection@lic-type-1,Crash
-> +kms_content_protection@srm,Crash
-> +kms_content_protection@type1,Crash
-> +kms_content_protection@uevent,Crash
-> +kms_cursor_crc@cursor-rapid-movement-128x128,Fail
-> +kms_cursor_crc@cursor-rapid-movement-128x42,Fail
-> +kms_cursor_crc@cursor-rapid-movement-256x256,Fail
-> +kms_cursor_crc@cursor-rapid-movement-256x85,Fail
-> +kms_cursor_crc@cursor-rapid-movement-32x10,Fail
-> +kms_cursor_crc@cursor-rapid-movement-32x32,Fail
-> +kms_cursor_crc@cursor-rapid-movement-512x170,Fail
-> +kms_cursor_crc@cursor-rapid-movement-512x512,Fail
-> +kms_cursor_crc@cursor-rapid-movement-64x21,Fail
-> +kms_cursor_crc@cursor-rapid-movement-64x64,Fail
-> +kms_cursor_legacy@basic-flip-before-cursor-atomic,Fail
-> +kms_cursor_legacy@basic-flip-before-cursor-legacy,Fail
-> +kms_cursor_legacy@cursor-vs-flip-atomic,Fail
-> +kms_cursor_legacy@cursor-vs-flip-legacy,Fail
-> +kms_cursor_legacy@cursor-vs-flip-toggle,Fail
-> +kms_cursor_legacy@cursor-vs-flip-varying-size,Fail
-> +kms_cursor_legacy@flip-vs-cursor-atomic,Fail
-> +kms_cursor_legacy@flip-vs-cursor-crc-atomic,Fail
-> +kms_cursor_legacy@flip-vs-cursor-crc-legacy,Fail
-> +kms_cursor_legacy@flip-vs-cursor-legacy,Fail
-> +kms_flip@flip-vs-modeset-vs-hang,Fail
-> +kms_flip@flip-vs-panning-vs-hang,Fail
-> +kms_flip@flip-vs-suspend,Timeout
-> +kms_flip@flip-vs-suspend-interruptible,Timeout
-> +kms_flip@plain-flip-fb-recreate,Fail
-> +kms_lease@lease-uevent,Fail
-> +kms_pipe_crc_basic@nonblocking-crc,Fail
-> +kms_pipe_crc_basic@nonblocking-crc-frame-sequence,Fail
-> +kms_writeback@writeback-check-output,Fail
-> +kms_writeback@writeback-check-output-XRGB2101010,Fail
-> +kms_writeback@writeback-fb-id,Fail
-> +kms_writeback@writeback-fb-id-XRGB2101010,Fail
-> +kms_writeback@writeback-invalid-parameters,Fail
-> +kms_writeback@writeback-pixel-formats,Fail
-> +perf@i915-ref-count,Fail
-> +tools_test@tools_test,Fail
-> diff --git a/drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt b/drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt
-> new file mode 100644
-> index 000000000000..56484a30aff5
-> --- /dev/null
-> +++ b/drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt
-> @@ -0,0 +1,15 @@
-> +# Board Name: vkms
-> +# Bug Report: https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9df2-d1ee319f3fb0@collabora.com/T/#u
-> +# Failure Rate: 50
-> +# IGT Version: 1.28-g0df7b9b97
-> +# Linux Version: 6.9.0-rc7
-> +kms_cursor_legacy@long-nonblocking-modeset-vs-cursor-atomic
-> +kms_flip@basic-flip-vs-wf_vblank
-> +kms_flip@flip-vs-expired-vblank-interruptible
-> +kms_flip@flip-vs-wf_vblank-interruptible
-> +kms_flip@plain-flip-fb-recreate-interruptible
-> +kms_flip@plain-flip-ts-check
-> +kms_flip@plain-flip-ts-check-interruptible
-> +kms_flip@flip-vs-absolute-wf_vblank
-> +kms_flip@flip-vs-absolute-wf_vblank-interruptible
-> +kms_flip@flip-vs-blocking-wf-vblank
-> diff --git a/drivers/gpu/drm/ci/xfails/vkms-none-skips.txt b/drivers/gpu/drm/ci/xfails/vkms-none-skips.txt
-> new file mode 100644
-> index 000000000000..5a9093ddb613
-> --- /dev/null
-> +++ b/drivers/gpu/drm/ci/xfails/vkms-none-skips.txt
-> @@ -0,0 +1,67 @@
-> +# keeps printing vkms_vblank_simulate: vblank timer overrun and never ends
-> +kms_invalid_mode@int-max-clock
-> +
-> +# Kernel panic
-> +kms_cursor_crc@cursor-rapid-movement-32x10
-> +# Oops: 0000 [#1] PREEMPT SMP NOPTI
-> +# CPU: 0 PID: 2635 Comm: kworker/u8:13 Not tainted 6.9.0-rc7-g40935263a1fd #1
-> +# Hardware name: ChromiumOS crosvm, BIOS 0
-> +# Workqueue: vkms_composer vkms_composer_worker [vkms]
-> +# RIP: 0010:compose_active_planes+0x1c7/0x4e0 [vkms]
-> +# Code: c9 0f 84 6a 01 00 00 8b 42 30 2b 42 28 41 39 c5 0f 8c 6f 01 00 00 49 83 c7 01 49 39 df 74 3b 4b 8b 34 fc 48 8b 96 48 01 00 00 <8b> 42 78 89 c1 83 e1 0a a8 20 74 b1 45 89 f5 41 f7 d5 44 03 6a 34
-> +# RSP: 0018:ffffbb4700c17d58 EFLAGS: 00010246
-> +# RAX: 0000000000000400 RBX: 0000000000000002 RCX: 0000000000000002
-> +# RDX: 0000000000000000 RSI: ffffa2ad0788c000 RDI: 00000000fff479a8
-> +# RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
-> +# R10: ffffa2ad0bb14000 R11: 0000000000000000 R12: ffffa2ad03e21700
-> +# R13: 0000000000000003 R14: 0000000000000004 R15: 0000000000000000
-> +# FS:  0000000000000000(0000) GS:ffffa2ad2bc00000(0000) knlGS:0000000000000000
-> +# CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> +# CR2: 0000000000000078 CR3: 000000010bd30000 CR4: 0000000000350ef0
-> +# Call Trace:
-> +#  <TASK>
-> +#  ? __die+0x1e/0x60
-> +#  ? page_fault_oops+0x17b/0x490
-> +#  ? exc_page_fault+0x6d/0x230
-> +#  ? asm_exc_page_fault+0x26/0x30
-> +#  ? compose_active_planes+0x1c7/0x4e0 [vkms]
-> +#  ? compose_active_planes+0x2a3/0x4e0 [vkms]
-> +#  ? srso_return_thunk+0x5/0x5f
-> +#  vkms_composer_worker+0x205/0x240 [vkms]
-> +#  process_one_work+0x1f4/0x6b0
-> +#  ? lock_is_held_type+0x9e/0x110
-> +#  worker_thread+0x17e/0x350
-> +#  ? __pfx_worker_thread+0x10/0x10
-> +#  kthread+0xce/0x100
-> +#  ? __pfx_kthread+0x10/0x10
-> +#  ret_from_fork+0x2f/0x50
-> +#  ? __pfx_kthread+0x10/0x10
-> +#  ret_from_fork_asm+0x1a/0x30
-> +#  </TASK>
-> +# Modules linked in: vkms
-> +# CR2: 0000000000000078
-> +# ---[ end trace 0000000000000000 ]---
-> +# RIP: 0010:compose_active_planes+0x1c7/0x4e0 [vkms]
-> +# Code: c9 0f 84 6a 01 00 00 8b 42 30 2b 42 28 41 39 c5 0f 8c 6f 01 00 00 49 83 c7 01 49 39 df 74 3b 4b 8b 34 fc 48 8b 96 48 01 00 00 <8b> 42 78 89 c1 83 e1 0a a8 20 74 b1 45 89 f5 41 f7 d5 44 03 6a 34
-> +# RSP: 0018:ffffbb4700c17d58 EFLAGS: 00010246
-> +# RAX: 0000000000000400 RBX: 0000000000000002 RCX: 0000000000000002
-> +# RDX: 0000000000000000 RSI: ffffa2ad0788c000 RDI: 00000000fff479a8
-> +# RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
-> +# R10: ffffa2ad0bb14000 R11: 0000000000000000 R12: ffffa2ad03e21700
-> +# R13: 0000000000000003 R14: 0000000000000004 R15: 0000000000000000
-> +# FS:  0000000000000000(0000) GS:ffffa2ad2bc00000(0000) knlGS:0000000000000000
-> +# CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> +
-> +# Skip driver specific tests
-> +^amdgpu.*
-> +msm_.*
-> +nouveau_.*
-> +panfrost_.*
-> +^v3d.*
-> +^vc4.*
-> +^vmwgfx*
-> +
-> +# Skip intel specific tests
-> +gem_.*
-> +i915_.*
-> +xe_.*
+... I had this idea of implementing policy-related stuff in userspace, and I wrote
+in the cover-letter:
+
+	"""
+	1. the KVM<->userspace ABI defined in patch 1
+
+	I am wondering if we can allow the userspace to configure the mask
+	and the shadow value during guest's lifetime and do it on a vCPU basis.
+	this way, in conjunction with "virtual MSRs" or any other interfaces,
+	the usespace can adjust hardware mitigations applied to the guest during
+	guest's lifetime e.g., for the best performance.
+	"""
+
+As said, this requires some tweaks to KVM_CAP_FORCE_SPEC_CTRL, such as making
+the mask and shadow values adjustable and applicable on a per-vCPU basis. The
+tweaks are not necessarily for Intel-defined virtual MSRs; if there were other
+preferable interfaces, they could also benefit from these changes.
+
+Any objections to these tweaks to KVM_CAP_FORCE_SPEC_CTRL?
+
+>
+>That way KVM doesn't need to deal with the the virtual MSRs, userspace can make
+>an informed decision when deciding how to set KVM_CAP_FORCE_SPEC_CTRL, and as a
+>bonus, rollouts for new mitigation thingies should be faster as updating userspace
+>is typically easier than updating the kernel/KVM.
+
+Good point!
 
