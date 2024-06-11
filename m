@@ -1,111 +1,150 @@
-Return-Path: <linux-kernel+bounces-209560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A7C9037BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:22:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0379037A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30281288E6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:22:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15939B21605
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2CD17BB17;
-	Tue, 11 Jun 2024 09:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FftRtfIl"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA8D176ABA;
+	Tue, 11 Jun 2024 09:18:30 +0000 (UTC)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6057176FA7;
-	Tue, 11 Jun 2024 09:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1BD18EAB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718097639; cv=none; b=i3l2uVij7Ng5VHAaCRmlKwDovVRCdlhLTmbX4aTD7rT4ydfMIbAd99rOB+2vo0uOZhPAtT8uOktCoPDCuUItB4u0ZRkoZfYNWi9fY1275rahcdH91H/bb8vPO4jyZJWbpK/b99zvhrajWz4p2PpZ3xADo6mLwZPDdMldgWbe9RQ=
+	t=1718097510; cv=none; b=J3EnmE7VXEcRJ6fDnX866jjiCmK2CibCKPconUoIeIN55pZffLaj0hVhQQh55bAAwZbe0wpS1wUleu5mXQMjODTvF/2tqL0vjMPrO77UdSQDeTKLCxLzbZWqlgioRam1oEr5rMPNMs5XTPaC8rconcaZJQf5PyUXVENlnJ8r6TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718097639; c=relaxed/simple;
-	bh=eO/SU6/Ukvz9yz53+xanZdbexobUG1/nTCp0LPHQuOw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=O5Q4nkm2zIhQDslcjU1TkFdq/+qeduTMSBILKrYn4P6H5fXWj7eMNipF5/lPaAF+LBosLZclbhUQZSUlge66JB+9cMaQxIAd3B19Xb6/RLvA0h9jyRFrTTuNwkO3YhzIg/vvmSuz0Q5XdNz3cpHuwoQ5/RNMon1ZBVPWxuBZhfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FftRtfIl; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718097309; x=1718702109; i=markus.elfring@web.de;
-	bh=SSWdIHLeK6c5qkRxJRQIzSFopdFgLqZQ5bZ8370mvc4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=FftRtfIlHxGUAI3vCcm4yTpn/7z8WsjG+Em5dB5ND9N5eedR+QTMfkd+w7F2Zs2i
-	 WI1Yj0slkHGiDMKMlDkpOiP/MjEK/B6R2dAiV03zMK6+t4kT7xBeCDDQ888uoe/W3
-	 HMJ+HG6g52cDLWKEcQbr6xXdD9cRTtNwHwz+bFZPPzkQ7TcZrvW0MggwyEXpoOwch
-	 F1SP/+OJXN2UQv0MqjXDYRgbkFIKPiQyMGI39/lLF6bCcLm4PLaCKaVl0+whiFMsB
-	 SB0PgbV6ShDjyXNFTfm7jH/gkRm4xnMBSXmDKl3ZdmJohCKk1XemhGUQoO6np/E5N
-	 r5idNtThZcYbX7sxNg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MSqTK-1rq7cJ2zhW-00J0sU; Tue, 11
- Jun 2024 11:15:09 +0200
-Message-ID: <0e1ac9ca-c241-4b48-a219-d1aaef2a752a@web.de>
-Date: Tue, 11 Jun 2024 11:15:06 +0200
+	s=arc-20240116; t=1718097510; c=relaxed/simple;
+	bh=KPwuqfSpNK86sOvToMTffnmdTe84nUBsS/zRgbmUI+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oKbXPXQY9CkxljlnkJDbQtMh4trfZ92CHn5WoIs9YITENPN5OFc+lUJCCxJG1G0trlld8wXPMugOkXBP1kR3T9LvIPeTk6sEBwX1DqKV8iaCh9l1STC43FdcS9zaAqgNaXc898V34OA+YWMfQiBcXoje3SUYx9ZCuLxXYJ1v74M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63947so1095310a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:18:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718097507; x=1718702307;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=unNW1YfnsaX8elroU8v0R2WEg0yWYBLeS91QyqdcBnc=;
+        b=NrRAoXaybEEIAFwZIaha2Y0HbqkoTexRcf4koVNlS7MUsCsaSUMDtdR7kipCKbkfTE
+         UrDRFlJxHI2F6u6x2aiZqD3cuCABSF4+pkQw9NUFepYS6QyiCH0z7/YusFyt7vc6GLmQ
+         VTZFP1pPF4/+OGLbMHypVjLTSrNKFYApWgF72g/8Ep4xTSRuOu8Tfw3LzjV0cjcd3cz6
+         fsiR8iMpxX4mAAsc/cdPzXbnJwZC7M/VYYeovmcl4WXBNyLLuycJktvHD7YPUK21m/kU
+         MUc3Zd8/xaaa1dqkA6W1gYU8aBMdUo0skbNOP1ZKCu0EUVDW7CsPW1kw8aIqrYp+nrxv
+         spiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgT3qddBJ6oA2XfD7YFU0OqDOyY4FYPSKmyZ0KPz5/zSDl8pyJasyEnLY+HtAx3spAdUeN0qJ8nlO55pVZDkgHAsu8a2TXi+Po0Fy+
+X-Gm-Message-State: AOJu0YyyTB8DEbkfEEsygwzhncTgpygbZiCtzRfkiFRCADFTk9rzzBKw
+	94WeZ+SHjEmSZs4Bd5ANgwHbczlQaDi0tHarT9H9iwotv+U8Y9c59JCHmg==
+X-Google-Smtp-Source: AGHT+IHC2a+81FeMVtEzNeh1GlQggyJJiY8PrAxmPpj/WGJ/r+Nl/m6oMo3eCgMEEsFVQVbZylUyug==
+X-Received: by 2002:a50:f614:0:b0:57c:713c:cdbf with SMTP id 4fb4d7f45d1cf-57c713ccff3mr4926811a12.38.1718097506767;
+        Tue, 11 Jun 2024 02:18:26 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c7650b371sm4502356a12.76.2024.06.11.02.18.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 02:18:26 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: paulmck@kernel.org,
+	linux-kernel@vger.kernel.org (open list:DEBUGOBJECTS:)
+Subject: [PATCH v2] [PATCH] debugobjects: Annotate racy debug variables
+Date: Tue, 11 Jun 2024 02:18:12 -0700
+Message-ID: <20240611091813.1189860-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ye Bin <yebin10@huawei.com>, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org, Jens Axboe <axboe@kernel.dk>
-Cc: LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig
- <hch@infradead.org>, Ming Lei <ming.lei@redhat.com>
-References: <20240606062655.2185006-1-yebin@huaweicloud.com>
-Subject: Re: [PATCH] block: bio-integrity: fix potential null-ptr-deref in
- bio_integrity_free
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240606062655.2185006-1-yebin@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:GHmc89SQ4Td/zPwUg//USd5islR+tdgleigB+jmBeZEuq6FZ7Dy
- fkE7CjeiMfQNvzY0YK08nYlilwmnduxqbtLEXlZPIHy8TtJwqsAsxfDMtv1kVgp7vN7HY3T
- IALqM09md0BMzdXXkahjw/wqc3/g/o4um3hx2fvO5m4g3LdePf+xlz9QuKO0YSskYbKSlDW
- ouYkrcSzcG4LaTCOdkrZg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:w3g6y7385Ok=;4OLDESrn0lp0xrLZI+q1mYjtpDC
- 9L4XwYlMGBU/2knpMHxRGtTguQQPeZkUn9hbbhdJEbPFwKVuasnXIFwsFPPZMJWGF9Gyi5AdU
- p2/eh5PYU7JjePGFXBpZuGx5XzQAULZfIJqL3J5wx0xVh8v4k18N+f/UiMmgqVRhUdafKaK5A
- Vjuvpu5YRwyP4ZaoiHmzSaLZxFMm8rAaGBoCp24NpeW8eOYXiBufOe+roIN7J+3U0i1RO20M5
- ibiygZB/TDIGdrs9L4FzHsK0UZvGL93mO/3aLCDIdHIZtml9pvBSI9vMWtqOaQ1lZwN9GWrnn
- XVz0VFlULaG85q/vFA2450eAeTuFWrQ+f0wPCIZ54LPwyy/bGCMqhtVdjGFY+/LHyZeMD3R6a
- dqQytdUotZXhiS5/f3pfvC3DcWQZFmjSAJed9btt0ovvy25dK/EJiQMLyGp7ZS/w4i7TfZ5Sf
- RpsDfzZ65tCEBD+iWOM2HkNTcH91z5c7FAQeclUgQeN/Fen8vAr2eZ5OMj7hPPJHya9BbL6rQ
- JoiO5Gu3MYgjmhHYVNqdPaLjh1TLMVOvgth8ETDFRpS4sBh2VWPFhatcBaZYvOdP8eXxM8sjK
- ftgSY1q05gPDkmgL3kVTG+xpDRT5wG/zQgS/gOcuzl5Bq6iGmjmXjyXVuqsQ2iYEhAOmZpXue
- gCx8qIA+QByymh0Zwrxr4B+hHfguxyA3d1JmrVMKmS9XzrIsEbSBj0Uer8v/MBbU9k7tNblRI
- FX09N3GphcrQdp2SBs4/aZi6w0LFVeRdWqpYu9CJhwdHpyxPlLEDJ9wjmNcyq9xiRm199crh4
- h2dGqmiwCRC1yvvmWZpUy52+P348tLJ7LBdy0p3mQiSDo=
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> The root cause of this issue is the concurrency between the write proces=
-s
-> and the block size update process. However, this concurrency does not ex=
-ist
-> in actual production environments. To solve above issue, Verify if the
-> segments of BIO are aligned with integrity intervals.
+KCSAN has identified a potential data race in debugobjects, where the
+global variable debug_objects_maxchain is accessed for both reading and
+writing simultaneously in separate and parallel data paths. This results
+in the following splat printed by KCSAN:
 
-* Please improve the change description with an imperative wording.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc2#n94
+       	BUG: KCSAN: data-race in debug_check_no_obj_freed / debug_object_activate
 
-* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+       	write to 0xffffffff847ccfc8 of 4 bytes by task 734 on cpu 41:
+       	debug_object_activate (lib/debugobjects.c:199
+                               lib/debugobjects.c:564 lib/debugobjects.c:710)
+       	call_rcu (kernel/rcu/rcu.h:227
+                  kernel/rcu/tree.c:2719 kernel/rcu/tree.c:2838)
+       	security_inode_free (security/security.c:1626)
+       	__destroy_inode (./include/linux/fsnotify.h:222 fs/inode.c:287)
+<snip>
 
-* How do you think about to use the summary phrase =E2=80=9CAvoid null poi=
-nter dereference
-  in bio_integrity_free()=E2=80=9D?
+       	read to 0xffffffff847ccfc8 of 4 bytes by task 384 on cpu 31:
+       	debug_check_no_obj_freed (lib/debugobjects.c:1000
+				  lib/debugobjects.c:1019)
+       	kfree (mm/slub.c:2081 mm/slub.c:4280 mm/slub.c:4390)
+       	percpu_ref_exit (lib/percpu-refcount.c:147)
+       	css_free_rwork_fn (kernel/cgroup/cgroup.c:5357)
+<snip>
+       	value changed: 0x00000070 -> 0x00000071
 
+The data race is actually harmless as this is just used for debugfs
+statistics, as all other debug variables.
 
-Regards,
-Markus
+Annotate the debug variables as racy explicitly, since these variables
+are known to be racy and harmless.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changelog:
+
+v2:
+	* Annotate all the debug variables instead of only
+	  debug_objects_maxchain, as suggested by Thomas Gleixner
+v1:
+	* https://lore.kernel.org/all/20240509110612.768196-1-leitao@debian.org/
+---
+ lib/debugobjects.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index fb12a9bacd2f..7cea91e193a8 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -78,16 +78,17 @@ static bool			obj_freeing;
+ /* The number of objs on the global free list */
+ static int			obj_nr_tofree;
+ 
+-static int			debug_objects_maxchain __read_mostly;
+-static int __maybe_unused	debug_objects_maxchecked __read_mostly;
+-static int			debug_objects_fixups __read_mostly;
+-static int			debug_objects_warnings __read_mostly;
+-static int			debug_objects_enabled __read_mostly
+-				= CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
+-static int			debug_objects_pool_size __read_mostly
+-				= ODEBUG_POOL_SIZE;
+-static int			debug_objects_pool_min_level __read_mostly
+-				= ODEBUG_POOL_MIN_LEVEL;
++static int __data_racy			debug_objects_maxchain __read_mostly;
++static int __data_racy __maybe_unused	debug_objects_maxchecked __read_mostly;
++static int __data_racy			debug_objects_fixups __read_mostly;
++static int __data_racy			debug_objects_warnings __read_mostly;
++static int __data_racy			debug_objects_enabled __read_mostly
++					= CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
++static int __data_racy			debug_objects_pool_size __read_mostly
++					= ODEBUG_POOL_SIZE;
++static int __data_racy			debug_objects_pool_min_level __read_mostly
++					= ODEBUG_POOL_MIN_LEVEL;
++
+ static const struct debug_obj_descr *descr_test  __read_mostly;
+ static struct kmem_cache	*obj_cache __ro_after_init;
+ 
+-- 
+2.43.0
+
 
