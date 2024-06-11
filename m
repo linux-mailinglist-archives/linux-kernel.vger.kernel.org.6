@@ -1,181 +1,165 @@
-Return-Path: <linux-kernel+bounces-209327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A809032AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:32:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC3A9032B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C79BE1C23483
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:32:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B5B2B2809E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64E5171E4A;
-	Tue, 11 Jun 2024 06:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3671171E6A;
+	Tue, 11 Jun 2024 06:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0JPPfuGX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uzXiX4mK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DCxs2I3x";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uzXiX4mK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DCxs2I3x"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F5A13F43E;
-	Tue, 11 Jun 2024 06:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F10152178;
+	Tue, 11 Jun 2024 06:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718087510; cv=none; b=anKaPje5ltc9Afwpp08kMI4mh7rC55nvugidmJxXqreNpgXUMQ9Y/YxzBthpMgP6/x6MF3PNSFV3XDW/orH++5Ws8DsCwS1U8f+6ZAhz+qMsVrzid5SMgrCNJXlfLsndZZ5cqKhcj+lSJT40KW8zopOgGkPnzO+3qRjAL2Qsut0=
+	t=1718087530; cv=none; b=USsoVYww1NYmDbZB5gH62oUrMOT+b671JBL32aJQm/7HIOWFBq+gHvbbB5UaObew2bFGWq5zIq3+6FlmGeZ8PSbE/Tm9eTeEOBvHdwkhItlwdY3Xaf8z4QKPSWE2L4NERHTpPhYUeB7DyKiOFOCz5QdOSsWhmcV6tUOhb+qvhVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718087510; c=relaxed/simple;
-	bh=2ZPT3S+8HRYZ+/M0fqX0hFmUPpAO06wEJb3duJQkoAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PclHaKvNWwoYsdycEaaPUxteTty+JiaYoj7G7sVYL2Y1RnmbeOK21mkUV/wllPqGau1vvgbJR4B4WEoVJ3GvtgvNHvSs1y6L2SIxVHqOmIZHVQy7P1EOPU4oMVKquihc5RUOihD5XUiyZHUkxdvsPyObW3RAV5jZRtDsjwlIhEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0JPPfuGX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F72BC2BD10;
-	Tue, 11 Jun 2024 06:31:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718087509;
-	bh=2ZPT3S+8HRYZ+/M0fqX0hFmUPpAO06wEJb3duJQkoAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0JPPfuGXCrZ6lXFH3MNQIVzydNYC1Ez7pLYaDlhmGhBeO/gQR1uq6ZpiIXlVW1wLP
-	 q9KJ+LIe/vdCP1qGQllOpuwHaFTakhpNIBKfjpoGkbscZ04wjb0Updauu86oFlq54B
-	 95DRMaFmFRTTD1b9Il4u9ZK7C1TpnQdnL9brKK1M=
-Date: Tue, 11 Jun 2024 08:31:46 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, mcgrof@kernel.org, russell.h.weight@intel.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: add firmware abstractions
-Message-ID: <2024061128-provolone-coyness-1d3c@gregkh>
-References: <20240610180318.72152-1-dakr@redhat.com>
- <20240610180318.72152-3-dakr@redhat.com>
+	s=arc-20240116; t=1718087530; c=relaxed/simple;
+	bh=m3v7bIMelWgUVf/DUN5U+U1w4YoGz1ZSZwp2WgkLTZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SSrZegZxIBT6Rw3RaMRN+MaVkd6NssD0VC+aHz4Vdt9FSIk4aEjVRpcg2CXxuyqdX59T4ktqBusLGS0XtNgaXCknJHgtunMiFxThYb7vgSrqoUzGObvqNfBAxNbDWYe7mDFhB5fPkAdOwi/vo0iBAPat5+FHHo1veQIt19I+/2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uzXiX4mK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DCxs2I3x; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uzXiX4mK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DCxs2I3x; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5E693204CE;
+	Tue, 11 Jun 2024 06:32:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718087526; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OSlvump8vgDt5bVm8NtMN8OD3zkBrU5FGwgSKAAEgWU=;
+	b=uzXiX4mKsM0zqjTErBbgMK6Ks6lVn90NdO16U34e7uRA82uY6Tyy372MI/L0WApUMNEv66
+	y1EaS/UhK6Ukau+BLldBOMTFmAWkYfVDNZOmo26K61hIvPy5LrFo+0q2JovyqKdPjpDN9m
+	axwQMQzuHDnp4hd9tJVOM7XXNirtmlE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718087526;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OSlvump8vgDt5bVm8NtMN8OD3zkBrU5FGwgSKAAEgWU=;
+	b=DCxs2I3x2Ke+KIjFHUdTu/5FmcTBN7CR3Hb7De4MRs6/ccs9yBdu8+zeE+chYY8752szh0
+	gT7kVRkFGHCKfzBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=uzXiX4mK;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=DCxs2I3x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718087526; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OSlvump8vgDt5bVm8NtMN8OD3zkBrU5FGwgSKAAEgWU=;
+	b=uzXiX4mKsM0zqjTErBbgMK6Ks6lVn90NdO16U34e7uRA82uY6Tyy372MI/L0WApUMNEv66
+	y1EaS/UhK6Ukau+BLldBOMTFmAWkYfVDNZOmo26K61hIvPy5LrFo+0q2JovyqKdPjpDN9m
+	axwQMQzuHDnp4hd9tJVOM7XXNirtmlE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718087526;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OSlvump8vgDt5bVm8NtMN8OD3zkBrU5FGwgSKAAEgWU=;
+	b=DCxs2I3x2Ke+KIjFHUdTu/5FmcTBN7CR3Hb7De4MRs6/ccs9yBdu8+zeE+chYY8752szh0
+	gT7kVRkFGHCKfzBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9D6E0137DF;
+	Tue, 11 Jun 2024 06:32:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id b7AKJGXvZ2ZnOgAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 11 Jun 2024 06:32:05 +0000
+Message-ID: <6b5e96e6-8c57-44ee-a763-3b91791813af@suse.de>
+Date: Tue, 11 Jun 2024 08:32:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610180318.72152-3-dakr@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/14] scsi: fnic: Replace shost_printk with
+ pr_info/pr_err
+Content-Language: en-US
+To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
+Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
+ mkai2@cisco.com, satishkh@cisco.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240610215100.673158-1-kartilak@cisco.com>
+ <20240610215100.673158-2-kartilak@cisco.com>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240610215100.673158-2-kartilak@cisco.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -6.50
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 5E693204CE
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-6.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
 
-On Mon, Jun 10, 2024 at 08:02:28PM +0200, Danilo Krummrich wrote:
-> Add an abstraction around the kernels firmware API to request firmware
-> images. The abstraction provides functions to access the firmware's size
-> and backing buffer.
+On 6/10/24 23:50, Karan Tilak Kumar wrote:
+> Sending host information to shost_printk
+> prior to host initialization in fnic is unnecessary.
+> Replace shost_printk and a printk prior to this
+> initialization with pr_info and pr_err accordingly.
 > 
-> The firmware is released once the abstraction instance is dropped.
-> 
-> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> ---
->  rust/bindings/bindings_helper.h |   1 +
->  rust/kernel/firmware.rs         | 107 ++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs              |   1 +
->  3 files changed, 109 insertions(+)
->  create mode 100644 rust/kernel/firmware.rs
-> 
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index ddb5644d4fd9..18a3f05115cb 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -9,6 +9,7 @@
->  #include <kunit/test.h>
->  #include <linux/errname.h>
->  #include <linux/ethtool.h>
-> +#include <linux/firmware.h>
->  #include <linux/jiffies.h>
->  #include <linux/mdio.h>
->  #include <linux/phy.h>
-> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> new file mode 100644
-> index 000000000000..7ff4c325f670
-> --- /dev/null
-> +++ b/rust/kernel/firmware.rs
-> @@ -0,0 +1,107 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Firmware abstraction
-> +//!
-> +//! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h")
-> +
-> +use crate::{bindings, device::Device, error::Error, error::Result, str::CStr};
-> +use core::ptr::NonNull;
-> +
-> +// One of the following: `bindings::request_firmware`, `bindings::firmware_request_nowarn`,
-> +// `firmware_request_platform`, `bindings::request_firmware_direct`
-> +type FwFunc =
-> +    unsafe extern "C" fn(*mut *const bindings::firmware, *const i8, *mut bindings::device) -> i32;
-> +
-> +/// Abstraction around a C `struct firmware`.
-> +///
-> +/// This is a simple abstraction around the C firmware API. Just like with the C API, firmware can
-> +/// be requested. Once requested the abstraction provides direct access to the firmware buffer as
-> +/// `&[u8]`. The firmware is released once [`Firmware`] is dropped.
-> +///
-> +/// # Invariants
-> +///
-> +/// The pointer is valid, and has ownership over the instance of `struct firmware`.
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// use kernel::firmware::Firmware;
-> +///
-> +/// let fw = Firmware::request("path/to/firmware.bin", dev.as_ref())?;
-> +/// driver_load_firmware(fw.data());
-> +/// ```
-> +pub struct Firmware(NonNull<bindings::firmware>);
-> +
-> +impl Firmware {
-> +    fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
-> +        let mut fw: *mut bindings::firmware = core::ptr::null_mut();
-> +        let pfw: *mut *mut bindings::firmware = &mut fw;
-> +
-> +        // SAFETY: `pfw` is a valid pointer to a NULL initialized `bindings::firmware` pointer.
-> +        // `name` and `dev` are valid as by their type invariants.
-> +        let ret = unsafe { func(pfw as _, name.as_char_ptr(), dev.as_raw()) };
-> +        if ret != 0 {
-> +            return Err(Error::from_errno(ret));
-> +        }
-> +
-> +        // SAFETY: `func` not bailing out with a non-zero error code, guarantees that `fw` is a
-> +        // valid pointer to `bindings::firmware`.
-> +        Ok(Firmware(unsafe { NonNull::new_unchecked(fw) }))
-> +    }
-> +
-> +    /// Send a firmware request and wait for it. See also `bindings::request_firmware`.
-> +    pub fn request(name: &CStr, dev: &Device) -> Result<Self> {
-> +        Self::request_internal(name, dev, bindings::request_firmware)
-> +    }
+Please use 'dev_info' and 'dev_err' instead.
+pr_info/pr_err have the problem that they don't reference
+the device generating the message, making tracking of
+related messages in a large message log problematic.
 
-How does this handle when CONFIG_FW_LOADER is not enabled?  Why are you
-building these bindings if that option is not checked?
+Cheers,
 
-> +
-> +    /// Send a request for an optional firmware module. See also
-> +    /// `bindings::firmware_request_nowarn`.
-> +    pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Self> {
-> +        Self::request_internal(name, dev, bindings::firmware_request_nowarn)
-> +    }
-> +
-> +    /// Send a request for a firmware with platform-fw fallback. See also
-> +    /// `bindings::firmware_request_platform`.
-> +    pub fn request_platform(name: &CStr, dev: &Device) -> Result<Self> {
-> +        Self::request_internal(name, dev, bindings::firmware_request_platform)
-> +    }
-> +
-> +    /// Send a request for a firmware directly without usermode helper. See also
-> +    /// `bindings::request_firmware_direct`.
-> +    pub fn request_direct(name: &CStr, dev: &Device) -> Result<Self> {
-> +        Self::request_internal(name, dev, bindings::request_firmware_direct)
-> +    }
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
-Why just these variants?  Why not just add the ones that people actually
-need instead of a random assortment like you choose here :)
-
-thanks,
-
-greg k-h
 
