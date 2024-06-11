@@ -1,139 +1,125 @@
-Return-Path: <linux-kernel+bounces-209924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A53903CFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:20:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CAE903D01
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C4031C237DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:20:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8BB81C238EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541BD17C9F4;
-	Tue, 11 Jun 2024 13:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437CC17C9F7;
+	Tue, 11 Jun 2024 13:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQesdpJe"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bwJyvK17"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1B41E49E;
-	Tue, 11 Jun 2024 13:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AC01E49E;
+	Tue, 11 Jun 2024 13:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718112003; cv=none; b=iRf/sPFH7NVaAJyHGKrExZuffYIjgeXHSl5MvrhIKdM6CXb2lnhfHuGIJ8ihBihqhxZngTLlBNBQbQoTrWq/nzrXnioqfzTSUPn6GckOVkEhWTherhX6a+DpRDL4CQWXsm9TjT4MY+R1o/SYgcqFT90od/OZWQ32gtbuc4Vv6pk=
+	t=1718112014; cv=none; b=pUtqI6y+E48EaD1G5Uzzvt4nmzbsjAngf/pw/upWTTAcZcpkTJRfAjmxr96HYeuvgJ8cZViwRrbcJmu6r1zG6CDe/tTsN8yhBmUGtdLjcHXSIrLHUXdgxzQ5EB1gOA/CQXWvjkd2h5z1doet08k/BlxsgKQxgh6ULQPLm747S5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718112003; c=relaxed/simple;
-	bh=sdPLfiowNbYg6TIhZYX/HLOnceUJA2pderFfCXtAaeM=;
+	s=arc-20240116; t=1718112014; c=relaxed/simple;
+	bh=scYseydD4W86mLHD0NXDGiB61t/F+N3UuYzCRNJji34=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u8VNcoHgE4qBAzxMY7V86Vtam6UhR/tO/iM3nota30C8v/pZDv2TqH9eMpg9VSNSJaCKQ376XWzBXxkQYsAJpDod2o98TbXAyVmjxKB+WxK6GIqYrke3+OR4J1d4xTwJI9YdA3FIEJnmBIWsllO4NeEwPoxlpZtU/bVLn15v9+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQesdpJe; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c327a0d4c9so880910a91.1;
-        Tue, 11 Jun 2024 06:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718112001; x=1718716801; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o0DqNIZ2fkLo6z8QESOonTasJoXWxjg6TNbDof5tmJA=;
-        b=SQesdpJe9KRKeRITSrcNLSevjGAlNZ8pV5KsdkmnMpUJj6DoBwGET78wQVyDSt+rTF
-         MwxAwG5z1io1U9GWq5ZPb83/Rmq4ZoYNlIAYWSKq7KsgBRvTbBf8gP6X+Nxyiqvwrtco
-         8f4yxi0zxxECVBU6YziSlsq3ikLX1faot8wnvyYvnDm2O68nU1vmkaKloT6dSaEok/X6
-         IedNnCB1vXlkv7XmZI0ZM7aPinT4gjxpjJeYheGG0RyoETfxJYalOoWdA0SHFn47CWu4
-         umqGvgqIKvtryl1/dEGTAmO/IfmLtxohVptQWnz3m//gU6GVTmF/SvsNL+d17XjsUBkq
-         iHmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718112001; x=1718716801;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o0DqNIZ2fkLo6z8QESOonTasJoXWxjg6TNbDof5tmJA=;
-        b=UWEDezV8VyEUgx2SaiNhEW2Y1um3EYQz3msIn9/gc3jSWfSFZv6kVisy2kNGllp6ee
-         ktVX5jInkjO6mnX0eYzcGK1Vp5wRNAhTZrU8zD2diOA4MVR1BnkaV0jF6bJhMb12zURI
-         3RBUmxmoGBZTkDUzFnU8ukR7ICgk4a0rO8l0yF0khWM7DjykepEpp9dKCHshWkVq1IgU
-         /T3b5LEsmsBCqOxM37I7BJMnXGzN7zWuNMW1d1/H0dDJAF55jpw52YrLpfZzY81McuTO
-         c7+YAD+TBrfTpxMHUwbKeU7ZllJ05JIupkrL/4cd4bz7y7lR0il6JgAY27il1vwtHXV6
-         ootw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmp2gLJBbAiHWI6MQ3l7Ripx029pLXo3UCb/T76+NGYP7CiUKgGN3IBPDxNOjqO8hwA4vBgc0oqfliImrJ/9JbSGhJ8lrwnq2hIcoYPtjLpNxiA/jzFUasgyJ2jVWFddvLPofb
-X-Gm-Message-State: AOJu0Yy7FDils2HuYOwd9f4QW2lHwKppKTN7/eI5o9uDKgz0JXv3xnyH
-	/ovWmNmXll872exiRnNlMUVyam5APZddmgNZ7iZeoo24zo5QFw6X
-X-Google-Smtp-Source: AGHT+IGxAyGrqEkm1Bhw5VMCLG2lCoQAaYzBkoR1AFtPozvd93R9xhFHzL0rANhkNtT7vnbJfUSN0A==
-X-Received: by 2002:a17:90b:19d2:b0:2c3:2f5a:17d4 with SMTP id 98e67ed59e1d1-2c32f5a2ae7mr2962806a91.4.1718112001471;
-        Tue, 11 Jun 2024 06:20:01 -0700 (PDT)
-Received: from iZj6chx1xj0e0buvshuecpZ ([47.75.1.235])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c304fe9622sm4536521a91.18.2024.06.11.06.19.59
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Jun 2024 06:20:00 -0700 (PDT)
-Date: Tue, 11 Jun 2024 21:19:57 +0800
-From: Peng Liu <iwtbavbm@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, maz@kernel.org, iwtbavbm@gmail.com
-Subject: Re: [PATCH] genirq: Keep handle_nested_irq() from touching desc->threads_active
-Message-ID: <20240611131957.GA16967@iZj6chx1xj0e0buvshuecpZ>
-References: <20240609183046.GA14050@iZj6chx1xj0e0buvshuecpZ>
- <877cewwtbm.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOnXIREqUEEe7jhq5cGh3J1b2fE5ax7DGSgbeUxYuztJBXatbbJicWR1pAfMRoO5jJW9Hzj9ThNUFWTkQqUAdGcCWeanehHSe8aHxl7oMadHz3VbbNfvQSyrRhv/Q2rNeBTN6Dv5Xyg1OOkWHr6vcfwaZh2drGFMNbGkQu2Sv9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bwJyvK17; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718112014; x=1749648014;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=scYseydD4W86mLHD0NXDGiB61t/F+N3UuYzCRNJji34=;
+  b=bwJyvK17+Gd5T4QlDVTkPbhz8s/LSoxCHBTQucdXHzW7x7HVnE1AsLsc
+   XpYb3yYh/UmNZjZqO3eBSDOonroClXQzKIypPOlJ1KzqHinoQr/EoRQVf
+   08AhZzWEO62VGWfcriDlXS3jQLVUEDeB+R1fh0Nki7u0aqv+nMxayWQXS
+   vPCiC9ngeF1PsjGO+2toGvWKyyHliVwjh+G7SDC/ofORP+0QHMaCJ/VJb
+   wg03ZMhvyNUkVQknaBAeePyn5C2YkyRcDkON3zG1r7BT6PmH7TmvZ0du6
+   RB5gVb6Jn6beWWtcQq/0KAsZNzfQ0FVhxdhmZUBd58/1sZOv+vRS1i6nj
+   w==;
+X-CSE-ConnectionGUID: nc6+Zm4cRd+Y9El4S4bEUg==
+X-CSE-MsgGUID: Ti6hXySQROaAixZciQJPdg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14661980"
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="14661980"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 06:20:13 -0700
+X-CSE-ConnectionGUID: yvfEdXfwTOGfTOhvmakTUQ==
+X-CSE-MsgGUID: 1s2C84kRRhKD11GcAk+tbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="40022762"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 06:20:09 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sH1Py-0000000FXuW-0YY5;
+	Tue, 11 Jun 2024 16:20:06 +0300
+Date: Tue, 11 Jun 2024 16:20:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: Re: [PATCH v1 2/4] clk: rockchip: Switch to use kmemdup_array()
+Message-ID: <ZmhPBccSC0Uc2fjQ@smile.fi.intel.com>
+References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
+ <20240606161028.2986587-3-andriy.shevchenko@linux.intel.com>
+ <8182279.JRmrKFJ9eK@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <877cewwtbm.ffs@tglx>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8182279.JRmrKFJ9eK@diego>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Jun 10, 2024 at 08:23:09PM +0200, Thomas Gleixner wrote:
-> On Mon, Jun 10 2024 at 02:30, Peng Liu wrote:
-> > handle_nested_irq() is supposed to be running inside the parent thread
-> > handler context. It per se has no dedicated kernel thread, thus shouldn't
-> > touch desc->threads_active. The parent kernel thread has already taken
-> > care of this.
-> 
-> No it has not. The parent thread has marked itself in the parent threads
-> interrupt descriptor.
-> 
-> How does that help synchronizing the nested interrupt, which has a
-> separate interrupt descriptor?
+On Fri, Jun 07, 2024 at 10:13:04AM +0200, Heiko Stübner wrote:
+> Am Donnerstag, 6. Juni 2024, 18:09:32 CEST schrieb Andy Shevchenko:
 
-Right, I never thought there would be more than one interrupt
-descriptors involved which is quite common.
+...
 
+> > -		cpuclk->rate_table = kmemdup(rates,
+> > -					     sizeof(*rates) * nrates,
+> > -					     GFP_KERNEL);
+> > +		cpuclk->rate_table = kmemdup_array(rates, nrates, sizeof(*rates),
+> > +						   GFP_KERNEL);
 > 
-> > Fixes: e2c12739ccf7 ("genirq: Prevent nested thread vs synchronize_hardirq() deadlock")
-> > Cc: stable@vger.kernel.org
+> are you sure the param order is correct?
 > 
-> There is nothing to fix.
-> 
-> > Signed-off-by: Peng Liu <iwtbavbm@gmail.com>
-> > ---
-> >
-> > Despite of its correctness, I'm afraid the testing on my only PC can't
-> > cover the affected code path. So the patch may be totally -UNTESTED-.
-> 
-> Which correctness?
-> 
-> The change log of the commit you want to "fix" says:
-> 
->     Remove the incorrect usage in the nested threaded interrupt case and
->     instead re-use the threads_active / wait_for_threads mechanism to
->     wait for nested threaded interrupts to complete.
-> 
-> It's very clearly spelled out, no?
+> According to [0], it's (src, element_size, count, gfp), while above
+> (and below) element_size and count seems switched in the
+> kmemdup_array calls.
 
-Indeed, due to my ignorance, I never thought there might be more
-descriptors involved. Now think about it, I never really understood
-the meaning of the above change log.
+I'm glad you asked. The parameter order is going to be fixed [1].
 
-Thanks for your time and concise explanation.
+> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/util.c#n149
 
-Peng
+[1]: 0ee14725471c ("mm/util: Swap kmemdup_array() arguments")
 
->
-> Thanks,
-> 
->         tglx
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
