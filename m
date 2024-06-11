@@ -1,145 +1,142 @@
-Return-Path: <linux-kernel+bounces-209729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D0D9039FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E00469039FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189751C219D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:25:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EE551C212F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FF517C7AB;
-	Tue, 11 Jun 2024 11:24:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7533F17C22B;
-	Tue, 11 Jun 2024 11:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E9B17B42F;
+	Tue, 11 Jun 2024 11:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0aRx+U8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0018B3F8C7;
+	Tue, 11 Jun 2024 11:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718105081; cv=none; b=AOk7FE1Hd8VStnxvmFcDuWcX8j0/8jJqK3QEbSYNh/i78tNp1cD2kBQWq7blPSGrwXxi/AznM4hKddB2GuHAP8vLidjtdYYkKzK1JP0NagY/j/gWSG7V8CuizKnTFBIJKC2AaGqI3fhNnt969KTztH54jE9uzo/tHXExKcR8q3Y=
+	t=1718105118; cv=none; b=D+dx7cP/oCeEsVRU6er4Wt3+hv4TOY7141LuJ2Gct++N/H1XzOlwYsN0Q79YWdqvILbhMEhDwIQGyKqBF9Vf1TtJ9LLTqX2QOZTq7lyxDyXhgs7M71IVP8U1MoHVkt6HimriS7ziOG4t2xHRkl8p87Z/SDuJp3uR1XPewUpw/ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718105081; c=relaxed/simple;
-	bh=fHD5oPENUsfVgGeH0bAFr+9+RB6uqV+WC51G1sQTKQk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=po8IyVNuuE9Y34eE83MQ5uOSljenUW9fNCpGuIxvWU5T6D0JxmmzYDYFsmPsOGi+cLP0po+tOY36tQOoUKsKY85SvKP3BIftkDmJFDfn7nYTzYcAONN69berK6EcWq6jMfF8E6ujrZVjrKyEO1M625wKY4hnCTWbw0RwzypxktA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F265152B;
-	Tue, 11 Jun 2024 04:25:03 -0700 (PDT)
-Received: from e127648.cambridge.arm.com (e127648.arm.com [10.1.32.59])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AB22F3F64C;
-	Tue, 11 Jun 2024 04:24:35 -0700 (PDT)
-From: Christian Loehle <christian.loehle@arm.com>
-To: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rafael@kernel.org
-Cc: vincent.guittot@linaro.org,
-	qyousef@layalina.io,
-	peterz@infradead.org,
-	daniel.lezcano@linaro.org,
-	ulf.hansson@linaro.org,
-	anna-maria@linutronix.de,
-	kajetan.puchalski@arm.com,
-	lukasz.luba@arm.com,
-	dietmar.eggemann@arm.com,
-	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCHv2 3/3] cpuidle: teo: Don't count non-existent intercepts
-Date: Tue, 11 Jun 2024 12:24:13 +0100
-Message-Id: <20240611112413.1241352-4-christian.loehle@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240611112413.1241352-1-christian.loehle@arm.com>
-References: <20240611112413.1241352-1-christian.loehle@arm.com>
+	s=arc-20240116; t=1718105118; c=relaxed/simple;
+	bh=BB4/Mq5HYdHy8VoLpfc6Vh32CzpFgIB+PwO07ji7t6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UN8vGGMWdItXr1hHxEiCg82Zp2k9jMkD0cTXxJ7xCt/Q1Fc0ta8juribz3OhntQlIh3bWggGmihDcCfBQeLDPxSsN5SQ3m2jjbT3IThADSofopZHSRkyVmHASCIpbSQLhLqE2/Tt+DYLUAnDqro+VV0CRj4g0wKq/ZZ9TwY5gug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0aRx+U8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24CD0C2BD10;
+	Tue, 11 Jun 2024 11:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718105117;
+	bh=BB4/Mq5HYdHy8VoLpfc6Vh32CzpFgIB+PwO07ji7t6g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E0aRx+U8vMBKW82C2FRAZISfBa0LMWzbKfzc1LJj6RFcOUkstbor++ALIY/JtGCvj
+	 9soHVBz1M7NJY+UWisWaAKjXYvAUEWaxD8++vOtGIOXd8kGvu9RVhAj42lJBnfanqA
+	 S7/L6jDsPSbYgAtFZeiJkO46FxUmxJCo3nkhbvnjW4ZMpyKXjGvPPbhzq6xwuXE6zd
+	 qXsmQQo/nsWEQwufjYB5RwzV84KJ6qHLe6riHqNi8noyuQOBP4U3eLtf+G5xRxHGMg
+	 lZ+70E0D3qNIkskB0O6UET0pXfDLPo/6CmnbDSUiQy4SHl1mp9uiFme138gRPXQPY4
+	 TTcanXiWBiKxQ==
+Date: Tue, 11 Jun 2024 12:25:14 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: shuah@kernel.org, oleg@redhat.com, stsp2@yandex.ru, mingo@kernel.org,
+	tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com,
+	suzuki.poulose@arm.com, Anshuman.Khandual@arm.com,
+	DeepakKumar.Mishra@arm.com, AneeshKumar.KizhakeVeetil@arm.com,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] selftests: Add a test mangling with uc_sigmask
+Message-ID: <Zmg0GoGnJFbPysfK@finisterre.sirena.org.uk>
+References: <20240611075650.814397-1-dev.jain@arm.com>
+ <20240611075650.814397-3-dev.jain@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="A2hm2y1BJ1qa3PqU"
+Content-Disposition: inline
+In-Reply-To: <20240611075650.814397-3-dev.jain@arm.com>
+X-Cookie: Your love life will be... interesting.
 
-When bailing out early, teo will not query the sleep length anymore
-since commit 6da8f9ba5a87 ("cpuidle: teo:
-Skip tick_nohz_get_sleep_length() call in some cases") with an
-expected sleep_length_ns value of KTIME_MAX.
-This lead to state0 accumulating lots of 'intercepts' because
-the actually measured sleep length was < KTIME_MAX, so count KTIME_MAX
-as a hit (we have to count them as something otherwise we are stuck)
-and therefore teo taking too long to recover from intercept-heavy
-scenarios.
 
-Fundamentally we can only do one of the two:
-1. Skip sleep_length_ns query when we think intercept is likely
-2. Have accurate data if sleep_length_ns is actually intercepted when
-we believe it is currently intercepted.
+--A2hm2y1BJ1qa3PqU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch chooses the latter as I've found the additional time it
-takes to query the sleep length to be negligible and the variants of
-option 1 (count all unknowns as misses or count all unknown as hits)
-had significant regressions (as misses had lots of too shallow idle
-state selections and as hits had terrible performance in
-intercept-heavy workloads).
+On Tue, Jun 11, 2024 at 01:26:50PM +0530, Dev Jain wrote:
 
-Fixes: 6da8f9ba5a87 ("cpuidle: teo: Skip tick_nohz_get_sleep_length() call in some cases")
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
- drivers/cpuidle/governors/teo.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+> + * A signal is said to be delivered, when the program takes action on the
+> + * signal: such action may involve termination of the process, ignoring the
+> + * signal, terminating with core dump, stopping the process, or continuing the
+> + * process if it was currently stopped. A signal is said to be blocked when the
+> + * program refuses to take any of the above actions; note that, this is not the
+> + * same as ignoring the signal. At a later time, the program may unblock the
+> + * signal and then it will have to take one of the five actions
+> + * described above.
 
-diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
-index cc7df59f488d..1e4b40474f49 100644
---- a/drivers/cpuidle/governors/teo.c
-+++ b/drivers/cpuidle/governors/teo.c
-@@ -231,8 +231,13 @@ static void teo_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
- 	 * length, this is a "hit", so update the "hits" metric for that bin.
- 	 * Otherwise, update the "intercepts" metric for the bin fallen into by
- 	 * the measured idle duration.
-+	 * If teo_select() bailed out early, we have to count this as a hit as
-+	 * we don't know what the true sleep length would've been. Otherwise
-+	 * we accumulate lots of intercepts at the shallower state (especially
-+	 * state0) even though there weren't any intercepts due to us
-+	 * anticipating one.
- 	 */
--	if (idx_timer == idx_duration)
-+	if (idx_timer == idx_duration || cpu_data->sleep_length_ns == KTIME_MAX)
- 		cpu_data->state_bins[idx_timer].hits += PULSE;
- 	else
- 		cpu_data->state_bins[idx_duration].intercepts += PULSE;
-@@ -292,7 +297,7 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 	unsigned int hit_sum = 0;
- 	int constraint_idx = 0;
- 	int idx0 = 0, idx = -1;
--	bool alt_intercepts, alt_recent;
-+	int prev_intercept_idx;
- 	s64 duration_ns;
- 	int i;
- 
-@@ -370,6 +375,7 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 	 * all of the deeper states a shallower idle state is likely to be a
- 	 * better choice.
- 	 */
-+	prev_intercept_idx = idx;
- 	if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum) {
- 		int first_suitable_idx = idx;
- 
-@@ -421,6 +427,14 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 			first_suitable_idx = i;
- 		}
- 	}
-+	if (!idx && prev_intercept_idx) {
-+		/*
-+		 * We have to query the sleep length here otherwise we don't
-+		 * know after wakeup if our guess was correct.
-+		 */
-+		duration_ns = tick_nohz_get_sleep_length(&delta_tick);
-+		cpu_data->sleep_length_ns = duration_ns;
-+	}
- 
- 	/*
- 	 * If there is a latency constraint, it may be necessary to select an
--- 
-2.34.1
+I'm not sure that's what my understanding of a blocked signal is, I
+would interpret "blocked" as a signal being masked (this usage can be
+seen in for example sigaction(2)).  I'd also interpret delivery of the
+signal as happening when the signal handler is invoked rather than
+something that the handler has control over (the comment later on says
+that so I think it's just an issue here).  Perhaps I'm confused about
+terminology though, this is just usage I've picked up and ICBW.
 
+> + * For standard signals (also see real-time signals in the man page), multiple
+> + * blocked instances of the same signal are not queued; such a signal will
+> + * be delivered just once.
+
+See also SA_NODEFER.
+
+> +	/* SEGV has been blocked in sa_mask, but ucontext is invariant */
+> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGSEGV);
+> +	ksft_test_result(ret == 0, "SEGV not blocked in ucontext\n");
+> +
+> +	/* USR1 has been blocked, but ucontext is invariant */
+> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGUSR1);
+> +	ksft_test_result(ret == 0, "USR1 not blocked in ucontext\n");
+
+We're not manipulating the masks outside of main() so it's a bit unclear
+what the mention of ucontext being invariant is all about here?
+
+> +	/* Mangled ucontext implies USR2 is blocked for current thread */
+> +	if (raise(SIGUSR2))
+> +		ksft_exit_fail_perror("raise");
+> +
+> +	ksft_print_msg("USR2 bypassed successfully\n");
+> +
+> +	act.sa_sigaction = &handler_verify_ucontext;
+> +	if (sigaction(SIGUSR1, &act, NULL))
+> +		ksft_exit_fail_perror("Cannot install handler");
+> +
+> +	if (raise(SIGUSR1))
+> +		ksft_exit_fail_perror("raise");
+> +
+> +	ksft_print_msg("USR2 still blocked on return from handler\n");
+
+But we just raised SIGUSR1 rather than SIGUSR2?  If nothing else this
+bit is a little unclear.
+
+--A2hm2y1BJ1qa3PqU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZoNBkACgkQJNaLcl1U
+h9B9qQf+Iaz95T4ZrcXyk/EoddifPmCyDYbb1mz4TrQEknVIMBwwWCvczzuST0K1
+v/cTJQLIYlfs+0Re2vg2R9W3dsyuVO7TGpuvG6ovnEUys98RS+2vhtCl367VUR5E
+2bkmSvuedTSCkKlw+HoXF4nPnFuD2+KJqrvXRRNhV343J57uiDYi+Co8sI78+tH9
+gR4bijyAAtKGDze2UwhHvtGVn3zAdov4o/rzlDGzpyjMO4W6dbB5d19kZ7rhgY0m
+lZ2kTGYMxC6C+7MqgKK44iJolIJVDMmUhekN+zvJHxFgJN42FjgXnJgN8K8pmK/Q
+M/j144QaRMb7d6QBDM5xmaxzH+pPqQ==
+=+KZa
+-----END PGP SIGNATURE-----
+
+--A2hm2y1BJ1qa3PqU--
 
