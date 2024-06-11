@@ -1,188 +1,145 @@
-Return-Path: <linux-kernel+bounces-209963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A957903D68
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:32:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6036F903D7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB112B21B55
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:32:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8DB1C22E7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD4C17D37C;
-	Tue, 11 Jun 2024 13:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807FA17CA1F;
+	Tue, 11 Jun 2024 13:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jElkHqQU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="p/Rld3O2"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E512C1EA71;
-	Tue, 11 Jun 2024 13:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144F51E535;
+	Tue, 11 Jun 2024 13:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718112730; cv=none; b=jyU6ukmG7Sb+SXhCFBTbWnVxXgzNZREFivZCYLJnpIrlNQ12z7WFW6qNqjw2fuJlE5Q1Lb665a3ixYyMxDEIT4DJbAlECeZz1vAuIsaPCEK5+UZZuJ43scm0DS9th9Ha5lMNazrCx9UzbehxRTGM0loGB1Hgg7/Y4IPHFXmLj70=
+	t=1718112846; cv=none; b=ZE0OyG6qVdvTpFX2g5odxl/oB+L5SXtW08TIGBVy8KzaPmaN98OKyJMIEDkkuPVrPOmdts8/SuNTW3NK6iH8sF/WOhD9KtnM1CmPV0pRJ/h/O5h7FvVKCrZ/8qcPWTcqoCiPfZYQVdjnHlZWa4Xn4xYFLNFL/YaJ7tGLmIbLNgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718112730; c=relaxed/simple;
-	bh=4Ecmaz+tOqycgV8YUD4eHo7O50NZPOPSrgUB34T1RJ4=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=VL99mLtCCx7PpoicN71uye07BeL4YO9lvyD905/NQM2eXVK4nDgTwQvLmkSMyLsE+uFH1DqsjThV4xjWDppZbYKoIFpQYLSrqtPr3fe+wZ5dR1vNx3UQ4AIKA4v2IpL+naCbmELUFWWNJHn10FsLoqK/7r/n5kBDOQHqbIwBg9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jElkHqQU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFDCC4AF48;
-	Tue, 11 Jun 2024 13:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718112729;
-	bh=4Ecmaz+tOqycgV8YUD4eHo7O50NZPOPSrgUB34T1RJ4=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=jElkHqQUFHlVRUi7T7S/jhRumOqUf0ZwvAPaaYe06sfGivntg1J3V8Gjtsmz2KSFx
-	 0g3pg3U+JkJLSS8SkvqQeMvlTw3mMYgSOmhlJw+t7bgacBYVScxt0H3O+nlgG5NYKl
-	 HRZXUrjOAriySKK/GxXWQ0X50z+2j/5Thaa6Owey7qeWS+fLf/JPb0uvcLEe7Wga9M
-	 njjVB00G/4nbw8YfPKGZA8h99V+TVP0GQJjzWry1Z26Fp7fStDJNJl1X3AftYSLNEe
-	 2UxS+D/hpF8nDNm0+SmsYwSElBOclJ93gEvH0i9ectiZYLXk0R56UqV1529lXvctiX
-	 qhyvjSF0tmnGA==
-Date: Tue, 11 Jun 2024 07:32:08 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1718112846; c=relaxed/simple;
+	bh=a43EvLdzT3hjNYienRevQQ9EadCb/AzgEwa5kSDbq5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ozO8d52efrDxH86+7AffPFqvweDGWMYW/Gk/r5D75NFrY0u7famjd3vc7WXxJ/DNU/afxGMMoPVEh6jvme8RbaXfS0FBRmqcUiOhv2No5KdZKKEN9AHAJz+jRljzfMGXxVayEZHh92UwqeejMhhHOIvQVEe3s/TIAXZU3b4Jg+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=p/Rld3O2; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BCI3c7027544;
+	Tue, 11 Jun 2024 15:33:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	yc4KsdWifRz6rWcxt8D4eZPRcwDWS3GJ2TG1rWFVqRo=; b=p/Rld3O29KvUSLHb
+	0AWiU0UliT8PMxuaA7PA2/iLR8IHkBHkNlHlYjW0rxLicuqwGztFOBW6/MbtznWv
+	frCWj/2YKwxc48GTk7YWziKkUzNZIa3J37VIGy/xjS019Vq/ThQ/e3ex1inRWSob
+	ur9A7Vn76oAR0Ko6jMcCXJ70ZsI9pbXDAFJlyTzuS8uLHmBq5PdrrN3fXLtAMaUQ
+	ZgoAl/f3XszurgUOI3Ko0RjXImVNYxJ/jxAf4RLKUHivcsNc3gglawMJkGc9RU+m
+	ZWlY1CeDcTFnOGM4/E8tsQSxumiA6mCVL7g8rEG5vitiJ245RESCn2lfjfSiGJ64
+	/dNMiw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ypbp432sq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 15:33:21 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id ADC9140044;
+	Tue, 11 Jun 2024 15:33:16 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A5298215BEA;
+	Tue, 11 Jun 2024 15:32:11 +0200 (CEST)
+Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 11 Jun
+ 2024 15:32:10 +0200
+Message-ID: <7999f3df-da1e-4902-b58a-6bb58546a634@foss.st.com>
+Date: Tue, 11 Jun 2024 15:32:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Farouk Bouabid <farouk.bouabid@cherry.de>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-rockchip@lists.infradead.org, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Quentin Schulz <quentin.schulz@cherry.de>, Heiko Stuebner <heiko@sntech.de>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- linux-i2c@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>, 
- Peter Rosin <peda@axentia.se>, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de>
-References: <20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de>
-Message-Id: <171811267304.1781724.4665185672258305049.robh@kernel.org>
-Subject: Re: [PATCH v3 0/7] Add Mule I2C multiplexer support
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next,PATCH v7 7/8] net: stmmac: dwmac-stm32: Mask support
+ for PMCR configuration
+To: Marek Vasut <marex@denx.de>, "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240611083606.733453-1-christophe.roullier@foss.st.com>
+ <20240611083606.733453-8-christophe.roullier@foss.st.com>
+ <ee101ca5-4444-4610-9473-1a725a542c91@denx.de>
+Content-Language: en-US
+From: Christophe ROULLIER <christophe.roullier@foss.st.com>
+In-Reply-To: <ee101ca5-4444-4610-9473-1a725a542c91@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
 
 
-On Tue, 11 Jun 2024 13:43:51 +0200, Farouk Bouabid wrote:
-> Mule is an mcu that emulates a set of I2C devices which are reachable
-> through an I2C-mux.
-> 
-> The emulated devices share a single I2C address with the mux itself
-> where the requested register is what determines which logic is executed
-> (muxing logic or device logic):
-> 
-> 1- The devices on the mux can be selected (muxing functionality) by
-> writing the appropriate device number to an I2C config register (0xff)
-> that is not used by any device logic.
-> 
-> 2- Any access to a register other than the config register will be
-> handled by the previously selected device.
-> 
->       +-------------------------------------------------------+
->       |  Mule                                                 |
->       |        +---------------+                              |
->     ----+-(1)->|Config register|-----+                        |
->       | |      +---------------+     |                        |
->       | |                            V_                       |
->       | |                            |  \          +--------+ |
->       | |                            |   \-------->| dev #0 | |
->       | |                            |   |         +--------+ |
->       | |                            | M |-------->| dev #1 | |
->       | +-----------(2)------------->| U |         +--------+ |
->       |                              | X |-------->| dev #2 | |
->       |                              |   |         +--------+ |
->       |                              |   /-------->| dev #3 | |
->       |                              |__/          +--------+ |
->       +-------------------------------------------------------+
-> 
-> The current I2C-mux implementation does not allow the mux to use the
-> I2C address of a child device. As a workaround, A new I2C-adapter quirk is
-> introduced to skip the check for conflict between a child device and the
-> mux core I2C address when adding the child device.
-> 
-> This patch-series adds support for this multiplexer. Mule is integrated
-> as part of rk3399-puma, px30-ringneck, rk3588-tiger and rk3588-jaguar
-> boards.
-> 
-> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
-> 
-> Changes in v3:
-> - Change "i2c" in comments/commit-logs to "I2C"
-> - Fix long line-length
-> - Warn when "share_addr_with_children" is set and the Mux is not an I2C device
-> - Fix/stop propagating "I2C_AQ_SKIP_ADDR_CHECK" flag if "share_addr_with_children"
->   is not set.
-> - Fix "old_fw" variable is used to indicate the reversed meaning.
-> 
-> - Link to v2: https://lore.kernel.org/r/20240506-dev-mule-i2c-mux-v2-0-a91c954f65d7@cherry.de
-> 
-> Changes in v2:
-> - Add i2c-adapter quirks to skip checking for conflict between the mux core
->   and a child device address.
-> - Rename dt-binding to "tsd,mule-i2c-mux.yaml"
-> - Add Mule description to kconfig
-> - Fix indentation
-> - Move device table after probe
-> 
-> - Link to v1: https://lore.kernel.org/r/20240426-dev-mule-i2c-mux-v1-0-045a482f6ffb@theobroma-systems.com
-> 
-> ---
-> Farouk Bouabid (7):
->       i2c: mux: add the ability to share mux address with child nodes
->       dt-bindings: i2c: mux: mule: add dt-bindings for mule i2c multiplexer
->       i2c: muxes: add support for mule i2c multiplexer
->       arm64: dts: rockchip: add mule i2c mux (0x18) on rk3399-puma
->       arm64: dts: rockchip: add mule i2c mux (0x18) on rk3588-tiger
->       arm64: dts: rockchip: add mule i2c mux (0x18) on px30-ringneck
->       arm64: dts: rockchip: add mule i2c mux (0x18) on rk3588-jaguar
-> 
->  .../devicetree/bindings/i2c/tsd,mule-i2c-mux.yaml  |  80 +++++++++++
->  arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi    |  20 ++-
->  arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi      |  20 ++-
->  arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts     |  19 ++-
->  arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi     |  19 ++-
->  drivers/i2c/i2c-core-base.c                        |   6 +-
->  drivers/i2c/i2c-mux.c                              |  48 ++++++-
->  drivers/i2c/muxes/Kconfig                          |  18 +++
->  drivers/i2c/muxes/Makefile                         |   1 +
->  drivers/i2c/muxes/i2c-mux-mule.c                   | 157 +++++++++++++++++++++
->  include/linux/i2c-mux.h                            |   1 +
->  include/linux/i2c.h                                |   7 +
->  12 files changed, 384 insertions(+), 12 deletions(-)
-> ---
-> base-commit: 79c1f584335af42ce359ee3ff0f4e9cc324296ed
-> change-id: 20240404-dev-mule-i2c-mux-9103cde07021
-> 
-> Best regards,
-> --
-> Farouk Bouabid <farouk.bouabid@cherry.de>
-> 
-> 
-> 
+On 6/11/24 15:07, Marek Vasut wrote:
+> On 6/11/24 10:36 AM, Christophe Roullier wrote:
+>
+> [...]
+>
+>>   static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac, bool 
+>> suspend)
+>> @@ -348,8 +352,15 @@ static int stm32_dwmac_parse_data(struct 
+>> stm32_dwmac *dwmac,
+>>           return PTR_ERR(dwmac->regmap);
+>>         err = of_property_read_u32_index(np, "st,syscon", 1, 
+>> &dwmac->mode_reg);
+>> -    if (err)
+>> +    if (err) {
+>>           dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
+>> +        return err;
+>> +    }
+>> +
+>> +    dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
+>> +    err = of_property_read_u32_index(np, "st,syscon", 2, 
+>> &dwmac->mode_mask);
+>> +    if (err)
+>> +        dev_dbg(dev, "Warning sysconfig register mask not set\n");
+>
+> My comment on V6 was not addressed I think ?
 
+Hi Marek,
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+I put the modification in patch which introduce MP13 (V7 8/8) ;-)
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y rockchip/rk3588-jaguar.dtb' for 20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de:
-
-arch/arm64/boot/dts/rockchip/rk3588-jaguar.dtb: fan@18: '#cooling-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-
-
-
-
+  	err = of_property_read_u32_index(np, "st,syscon", 2, &dwmac->mode_mask);
+-	if (err)
+-		dev_dbg(dev, "Warning sysconfig register mask not set\n");
++	if (err) {
++		if (dwmac->ops->is_mp13)
++			dev_err(dev, "Sysconfig register mask must be set (%d)\n", err);
++		else
++			dev_dbg(dev, "Warning sysconfig register mask not set\n");
++	}
 
 
