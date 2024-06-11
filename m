@@ -1,112 +1,91 @@
-Return-Path: <linux-kernel+bounces-209900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED24903CAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6C2903D54
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 761531F23D43
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6583A1F21BB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C885417C9EA;
-	Tue, 11 Jun 2024 13:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018FB17D350;
+	Tue, 11 Jun 2024 13:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsdymXZt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="acRpc38v"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103FA1E49E;
-	Tue, 11 Jun 2024 13:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AD517CA01;
+	Tue, 11 Jun 2024 13:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718111098; cv=none; b=YjraRxFMcgggJj86r5nFKqMfhEtx8h9dd9uAhNEZ1CqpPNgFiep5TGJowrDLIgy2DEpgDTbGXIHYzWcVoHvuNNxpmX35zUehngEFA4FJaJLhL538FVlfibCIhe8DFoYVO77AGakCBrokdBGRjMOaivFOSpHeV+5kkcmahUDJioU=
+	t=1718112550; cv=none; b=CHL382og7xomiUgM8vmwPP3rh7B7Mgx4DJVmhcVMGx3YKFAAFhsgk/d0x2qx5mimklL0I3p6PPFFHl1SH4pHWoZ4JHFm34E+eMkGz+mh8042qwJmrQ4WznPGFfHp8uvpTWy4qwgFXl94qtKvs3MEz3JTyGg2v3TvWe9eqa7VbL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718111098; c=relaxed/simple;
-	bh=76BCTRyqFXDeGfhknZZgHm1a0wKEQG9KA+oh14PJzi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PsHu/dOUrlGw8DCEEwAhscdOL0SxME/4Szy083nCkCAfOUthBZ40A/4uy/41UW6bDkLaY+9wfTIuyvl1JJ+hgBv6oC0KukrQrYqWlnJrdwrPRy+z4yarBuhtxzAipQQif9YqDcyKZhwlK0aCu1VYnWT3Qv8+zpBclnNRU2ZT19g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsdymXZt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9F6C2BD10;
-	Tue, 11 Jun 2024 13:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718111097;
-	bh=76BCTRyqFXDeGfhknZZgHm1a0wKEQG9KA+oh14PJzi8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OsdymXZt/rgPWQil0J70ydCqqc4BUfDkyOiH0PZO8IBJze8JxeV9kBZMlKOs1z7JL
-	 gZrMB5AM6bzTjfKkaUUy2DL1nlRuHS1TmLjqs/V5V6dRTlqdxgseupMMUHdBEMWKa1
-	 4q8JmBsIYBO7J2T3n610ZSFCuaNM37uoZc1fUUcA6zrnZMdZknEocA6yYyWPIwkfMt
-	 WsXrbIoqcgOO6kd/dUM1purmaWM4nxG1IWwUh4fEnlBAHeZPOJdWz8lmGigRdfh4gz
-	 JUCU7QEWW4npBt351PbZdHDM1/gKliz+apBN0b8M2NlcYLQ0vWOCU0J9yBotEenCNz
-	 cv1YTZxs7dF5A==
-Date: Tue, 11 Jun 2024 15:04:52 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	josef@toxicpanda.com, hch@infradead.org
-Subject: Re: [PATCH v3 1/2] vfs: add rcu-based find_inode variants for iget
- ops
-Message-ID: <20240611-zwirn-zielbereich-9457b18177de@brauner>
-References: <20240611101633.507101-1-mjguzik@gmail.com>
- <20240611101633.507101-2-mjguzik@gmail.com>
- <20240611105011.ofuqtmtdjddskbrt@quack3>
- <2aoxtcshqzrrqfvjs2xger5omq2fjkfifhkdjzvscrtybisca7@eoisrrcki2vw>
+	s=arc-20240116; t=1718112550; c=relaxed/simple;
+	bh=BMP9w47+jx4M2agblJj0+ixb5r1r7O+4fLzBZBqWW3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TDG+Z24v3htYvB0rj/w7uz5YzY5+GvVSeBgirNgDpzLuzxCbHZTjiCE4/LNkNz1OpNum7dHnMpd/L9l38rIVOnbJmDAS9IIzYyzwvOaDkDS33GiKqyqBwDwvDd7Es0aH6UfI0qAQIhWURM2KgSTTAx/ZHBBkEg0Y9Dz7Ib5hKW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=acRpc38v; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 4364C886AE;
+	Tue, 11 Jun 2024 15:28:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1718112541;
+	bh=HemWINfH/epw+LZFgUcstNjd+LDPJilMaixFK22+03Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=acRpc38vKy22z8IOCx6o/g1Z8cXPaHREocz/f0ymJuu/zSVZ/NdhDO1t0LhouEEPc
+	 rp6XJBfvRdHSTfxOR0kaB5mGKoT7CxxzIBcXMmH+LuMeqMzPDJPWDa5Jv/Bl9/buEH
+	 2IRH9fHbaP9iaDmE26pCk+2KAdeqI2yW8uU6kiSGZSyN4m/U1andbOEe6dM8dIjlLi
+	 35fbfnglEeWiYNXyf/uL7HgN5Fq+YYAlh/MnZ4QRJLshxBWVtIBGlVDH8LMFQh7zfD
+	 u8bN0jDc7qBRuIzi4Zs+mzs+UGguNDtZduItpB8pizQfnS82yd9EZ11PJs31X9QvL0
+	 hKofLqcYUCxSQ==
+Message-ID: <de1625ea-1ba8-4ebd-9442-59c7d9a6d04c@denx.de>
+Date: Tue, 11 Jun 2024 15:05:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2aoxtcshqzrrqfvjs2xger5omq2fjkfifhkdjzvscrtybisca7@eoisrrcki2vw>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] ARM: dts: stm32: add ethernet1 and ethernet2
+ support on stm32mp13
+To: Christophe Roullier <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240611130110.841591-1-christophe.roullier@foss.st.com>
+ <20240611130110.841591-2-christophe.roullier@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240611130110.841591-2-christophe.roullier@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Tue, Jun 11, 2024 at 01:40:37PM +0200, Mateusz Guzik wrote:
-> On Tue, Jun 11, 2024 at 12:50:11PM +0200, Jan Kara wrote:
-> > On Tue 11-06-24 12:16:31, Mateusz Guzik wrote:
-> > > +/**
-> > > + * ilookup5 - search for an inode in the inode cache
-> >       ^^^ ilookup5_rcu
-> > 
+On 6/11/24 3:01 PM, Christophe Roullier wrote:
+> Both instances ethernet based on GMAC SNPS IP on stm32mp13.
+> GMAC IP version is SNPS 4.20.
 > 
-> fixed in my branch
-> 
-> > > + * @sb:		super block of file system to search
-> > > + * @hashval:	hash value (usually inode number) to search for
-> > > + * @test:	callback used for comparisons between inodes
-> > > + * @data:	opaque data pointer to pass to @test
-> > > + *
-> > > + * This is equivalent to ilookup5, except the @test callback must
-> > > + * tolerate the inode not being stable, including being mid-teardown.
-> > > + */
-> > ...
-> > > +struct inode *ilookup5_nowait_rcu(struct super_block *sb, unsigned long hashval,
-> > > +		int (*test)(struct inode *, void *), void *data);
-> > 
-> > I'd prefer wrapping the above so that it fits into 80 columns.
-> > 
-> 
-> the last comma is precisely at 80, but i can wrap it if you insist
-> 
-> > Otherwise feel free to add:
-> > 
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> > 
-> 
-> thanks
-> 
-> I'm going to wait for more feedback, tweak the commit message to stress
-> that this goes from 2 hash lock acquires to 1, maybe fix some typos and
-> submit a v4.
-> 
-> past that if people want something faster they are welcome to implement
-> or carry it over the finish line themselves.
+> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
 
-I'm generally fine with this but I would think that we shouldn't add all
-these helpers without any users. I'm not trying to make this a chicken
-and egg problem though. Let's get the blessing from Josef to convert
-btrfs to that *_rcu variant and then we can add that helper. Additional
-helpers can follow as needed? @Jan, thoughts?
+Reviewed-by: Marek Vasut <marex@denx.de>
 
