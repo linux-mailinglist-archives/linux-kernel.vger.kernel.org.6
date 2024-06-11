@@ -1,152 +1,124 @@
-Return-Path: <linux-kernel+bounces-210140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2E2903FD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B9D903FD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449CE1F2460D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:19:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 364C61F2479F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4C622334;
-	Tue, 11 Jun 2024 15:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89728208AF;
+	Tue, 11 Jun 2024 15:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="G1I5g/of"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TVkJdpBQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2258614A96
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691A614A96
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718119153; cv=none; b=onN7UJjyY2bMefNKyMoudJXzHkGIU1B/sYvQfNsGqOr81sLVsHC4d8XR0ElmtRyaXIwOl84sl/ySI/7kijdVDA986CUg9uZNoor8c7Jm+50uZOHe1ZyF8q43/ezbFrjHuP0QYgeN0gg47TadyYMentVWeNaKKHrrq13sQZ4f2eo=
+	t=1718119216; cv=none; b=VutV0PZQZvcdM9wRZhyWA2UNNv/PdA9Ph/grFtCnn3a6OZIDnnYCzUQ3RoHDONE3/V2+k8xHwOfx3Ub7FmLuZeHvYYrEayKQgOZNZxYHioiPwqhQsmcaDJolmCm6eJQjv+hDtayBE5gxJ9wU72Lmj5qIV80sFjfDxem4nwrouAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718119153; c=relaxed/simple;
-	bh=nZBnie7/9yW63lBsCc3eXsSO8y38QNlz/K+eQllR9WI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ll1H3Z/ZZL7ihyiAvYtM7HDQKYPGUNzN7V3XrY+Fej97yfCcK5jBsCZ5HEKUrDZA0ee+EtcPNmyXCsSy7SbZLXQymBECzO9/5sCzI6qXnfIZ2B7QFO6a1jA99QDYTZlvWEC0SeLSWXfftqd/46Ij/mIXL9ZsX3WG6TtjWHqCTSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=G1I5g/of; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-627f3265898so61485207b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:19:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1718119150; x=1718723950; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M10CbUZmXB7Dee3D7sJ9T+X7/UYDjZpP4+Wii7wbA+4=;
-        b=G1I5g/ofopLBTUnpl6cUM9rW6fDK11dJ03MW6Qd44pfsMa2i38oGeG2gy8jz94cHvz
-         YihGr3NM7pu0Fc5Jjr8T3hYhZ/a7ANLU95XTqlq0Ep1D+uQsyDYk0pPSyk9dOpKM28M6
-         VHwG+fjoaUJVuvdnTJVFSA+IGimTenrZwnqZVHlv7W3CXYDls6CUnz57Ulyug/3FggeT
-         SAud/Cu4nGPJr2PyC9K951ZIRfvaUwNtA3Ib7ZLpAYSBpR2MZS+m5xpN2CFQr4Ks8qom
-         dGo5sH9z4w15EbWzFZ+3Igvs36CSgcAEZ/CsrqSj7Rrz1TxWSpjclSmj4Y5KSH7M9b43
-         F1Xg==
+	s=arc-20240116; t=1718119216; c=relaxed/simple;
+	bh=ygpd/NUM0MXtrTTCxV9OZ1XYVALSgdgXlPbB77lA7QY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HvqiWkcue5uLUeOcZSOOxLvn+bP9j3Bv9FoECsLjR5tg6MS1U7xsL6VOJEoTMDAvFb/+FUvsp6rUi6+fbnMaKe+3zj53e1b6BECRfxiYOAIVIKRvXMoCr9q6Ts4pxII8A1puCEnTLoaX3rScb9DzQy/7YNJm9cb7FNVw371jmvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TVkJdpBQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718119214;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T5mvQKuhxaeQQofAs6C4gb9DRnHzKICw8L5tE3p1+hQ=;
+	b=TVkJdpBQxc4zrzyL7aanp31I68opJrtFrApUz9b+UvKY9KEDkUTLN9F3KA2hI1EZMlU8cV
+	+BEh7APWZ5X/tbgvxoQtrkiraXlvgRNds0P0BAYShahtLocmFZM075CjDEaehuOGJ9Obex
+	2qmD+qudl87fnRiuzLJOjSGKl/4H0K8=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-136-x-tXif45M-2lVpOzXvGoKA-1; Tue, 11 Jun 2024 11:20:11 -0400
+X-MC-Unique: x-tXif45M-2lVpOzXvGoKA-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6b07a472e83so5729326d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 08:20:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718119150; x=1718723950;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M10CbUZmXB7Dee3D7sJ9T+X7/UYDjZpP4+Wii7wbA+4=;
-        b=UoVL03/Px6IaZq0pBwi/8VREAdnsPDqkTgC7znZB1OqNn1WGAhUQW8MOtQjqShvUhc
-         sPlVeT0nQ9bOTL4ROa+j+2nfwxb9aNKQilHUdHs/mAM+v0hdJvd81m8Nha+5iCaZiPrr
-         FpB487M5iKqVQQJebYtWDhW3ZE9dbmgUCw3a6P7pgncNb6f06cqvnjGvy51uvYj8qOXt
-         brK0+Q05S1gtTfpRkmdKTPR0rWzDXXB+OTFhdM7NKajdAe4ScvV+36gU41uFKUE7EG8i
-         X77Qnnl5sEwR+J9ea2BzqsnDZAg3Z/8d7i+P0DXxuV3BwNcZ120KBE52Ce/25Yap9T/Y
-         si8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXMfj42Y0ISslRTo4c279fQSazipkS5nCBtlPgK8QqZih+OT3h0kounPgTaLCrF6iqYEypd2JlMNJIVT9cPH7clpXlc/+MAe7jWDH7F
-X-Gm-Message-State: AOJu0YzrgJP8eCcQWYHTT5pd803nVanyJgSmSCLoQV5gqAJkt0EoF1Ya
-	f+A6vlITGQQ2RayEbtHMNVSC7ul00On991Gpf8DGTnSLn2JK7yBLCIoF7n3acMxH+9qTxH0JN5W
-	P6O+mXYQvHCpH4XSy3tC2I/kqKMYlAxYgHTB6yg==
-X-Google-Smtp-Source: AGHT+IGZktdb+mXNwm5zMn5WZrRMM33fN6s00SSt7So0FNfjBJkDtcWY/jhchu4Ql1yDEY/OiyCWdDlQcY7P67hPaog=
-X-Received: by 2002:a25:4982:0:b0:dfd:b3bb:ac11 with SMTP id
- 3f1490d57ef6-dfdb3bbaedamr816466276.59.1718119149436; Tue, 11 Jun 2024
- 08:19:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718119211; x=1718724011;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T5mvQKuhxaeQQofAs6C4gb9DRnHzKICw8L5tE3p1+hQ=;
+        b=cnl2qWd2Kz3d3J6XTvBg35bC2niEnL2ZQ61JKdVrJWEMM6MEBcPy7FNW5oQdD87OEm
+         8CaCIJDb1j8xVfw6NM36+N+33E0ccph+MOmGu8CW28nGpYroP0rV6R41Kcj1IQxLZY5w
+         TbRl5Uoj1NViUvSZHT6TOuUSsxnyR+R1oebGKaSKN0Exkmis2OsKH3IfAvMYvKdGHu1Y
+         z/n/MyR/srsNThLtlOhn3vvqkkzuEVwXdSYG7NaOpSPca+VqpMbp1ygWqru00ABkWeo8
+         vkcQ8TyOmQOKGaSPQIQTWgWdTrS6hQy6eDSPb+4fwPd6yGK2TB1nhSKXUCZTIy/SnBDS
+         nKww==
+X-Forwarded-Encrypted: i=1; AJvYcCVCbcsDXRdIolkgpLheT/nHq3zVdqmiIWodsT/P5RpLSuUjqVspxQlAPtRQjifNyF4SFkRC6RHczm32v67cb+lnZwOjz+jzOMfJhZej
+X-Gm-Message-State: AOJu0YxYgKXv1oVPOevIZotNwqXDzHLp86JPs5z25RHlKdsbkszKB34j
+	+cfjHJBNhTaz1+IT4NJZ8JB8qY/IeU6q0kWZ7ikNBlX/4Rpc5ShLlnV5qTUnHb6HZ4KQRkynRo2
+	1E5v4420YlP6E4D8VQMwtHxTjWD2YdjT8NpMvMmyCmZVNOqGcUGzhUJEXLqHX9g==
+X-Received: by 2002:a0c:f2c4:0:b0:6b0:6a38:e01d with SMTP id 6a1803df08f44-6b06a38e41dmr101257536d6.0.1718119211077;
+        Tue, 11 Jun 2024 08:20:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGp29M2m3Z9CcVJeoqe5Y30dylVGZ7dKwW4YVbu6zPqN2ZAsi/IG1oHRYe8ljnYJ2xhhs21CQ==
+X-Received: by 2002:a0c:f2c4:0:b0:6b0:6a38:e01d with SMTP id 6a1803df08f44-6b06a38e41dmr101257016d6.0.1718119210384;
+        Tue, 11 Jun 2024 08:20:10 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4406203775bsm25557621cf.72.2024.06.11.08.20.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 08:20:09 -0700 (PDT)
+Date: Tue, 11 Jun 2024 11:20:01 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Oscar Salvador <osalvador@suse.de>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v5 02/18] mm: Define __pte_leaf_size() to also take a PMD
+ entry
+Message-ID: <ZmhrIdh3PLzvZU07@x1n>
+References: <cover.1717955558.git.christophe.leroy@csgroup.eu>
+ <172b11c93e0de7a84937af2da9f80bd17c56b8c9.1717955558.git.christophe.leroy@csgroup.eu>
+ <ZmgaHyS0izhtKbx6@localhost.localdomain>
+ <ZmhcepJrkDpJ7mSC@x1n>
+ <ZmhofWIiMC3I0aMF@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510100324.5961-1-abdulrasaqolawani@gmail.com>
-In-Reply-To: <20240510100324.5961-1-abdulrasaqolawani@gmail.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Tue, 11 Jun 2024 16:18:53 +0100
-Message-ID: <CAPY8ntCWoq6UMns04W6-BmYtCHggVr4xqZjOX1bcZtwyO-2EEg@mail.gmail.com>
-Subject: Re: [PATCH] media: i2c: replacing of_node_put with __free(device_node)
-To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-Cc: sakari.ailus@linux.intel.com, jacopo@jmondi.org, mchehab@kernel.org, 
-	julia.lawall@inria.fr, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	javier.carrasco.cruz@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZmhofWIiMC3I0aMF@localhost.localdomain>
 
-Hi
+On Tue, Jun 11, 2024 at 05:08:45PM +0200, Oscar Salvador wrote:
+> The problem is that we do not have spare bits for 8xx to mark these ptes
+> as cont-ptes or mark them pte as 8MB, so I do not see a clear path on how
+> we could remove huge_ptep_get for 8xx.
 
-Thanks for the patch.
+Right, I remember I thought about this too when I initially looked at one
+previous version of the series, I didn't come up yet with a good solution,
+but I guess we probably need to get rid of hugepd first anyway.  We may
+somehow still need to identify this is a 8M large leaf, and I guess this is
+again the only special case where contpte can go over >1 pmds.
 
-The subject should be "media: i2c: ov5647:" or just "media: ov5647" as
-you're only touching the one driver.
+> 
+> I am really curious though how we handle that for THP? Or THP on 8xx
+> does not support that size?
 
-On Fri, 10 May 2024 at 11:11, Abdulrasaq Lawani
-<abdulrasaqolawani@gmail.com> wrote:
->
-> Replaced instance of of_node_put with __free(device_node)
-> to protect against any memory leaks due to future changes
-> in control flow.
->
-> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-> Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-> ---
->  drivers/media/i2c/ov5647.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-> index 7e1ecdf2485f..d593dba092e3 100644
-> --- a/drivers/media/i2c/ov5647.c
-> +++ b/drivers/media/i2c/ov5647.c
-> @@ -1360,23 +1360,19 @@ static int ov5647_parse_dt(struct ov5647 *sensor, struct device_node *np)
->         struct v4l2_fwnode_endpoint bus_cfg = {
->                 .bus_type = V4L2_MBUS_CSI2_DPHY,
->         };
-> -       struct device_node *ep;
-> +       struct device_node *ep __free(device_node) = of_graph_get_endpoint_by_regs(np, 0, -1);
+I'll leave this to Christophe, but IIUC thp is only PMD_ORDER sized, so
+shouldn't apply to the 8MB pages.
 
-The media subsystem still requests a max line length of 80.
-https://github.com/torvalds/linux/blob/master/Documentation/driver-api/media/maintainer-entry-profile.rst#coding-style-addendum
-Break the line after the =
+Thanks,
 
->         int ret;
->
-> -       ep = of_graph_get_endpoint_by_regs(np, 0, -1);
->         if (!ep)
->                 return -EINVAL;
->
->         ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &bus_cfg);
->         if (ret)
-> -               goto out;
-> +               return ret;
->
->         sensor->clock_ncont = bus_cfg.bus.mipi_csi2.flags &
->                               V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK;
->
-> -out:
-> -       of_node_put(ep);
-> -
->         return ret;
+-- 
+Peter Xu
 
-This could be "return 0;" as you've already returned if it was non-zero.
-
-I know very little of this new mechanism, but it looks reasonable, and
-Sakari has given it a basic blessing in a previous patch set.
-With the above 3 comments addressed:
-Acked-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-
->  }
-
->
-> --
-> 2.34.1
->
 
