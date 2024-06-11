@@ -1,138 +1,163 @@
-Return-Path: <linux-kernel+bounces-210382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75B8904306
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:00:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A44F904308
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BD33B226DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:00:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE978286168
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A8464A98;
-	Tue, 11 Jun 2024 18:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192675B5B6;
+	Tue, 11 Jun 2024 18:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UiLZmZ1A"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="kvXB5kpZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kHrnGfVd"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026D15FB8A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481991CD06;
+	Tue, 11 Jun 2024 18:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718128819; cv=none; b=iD8YoZur93EXzGnRMbayaaW6Iq3SH5O0hvzAdaN2ltagLJ75lTbzaoCIAIioAluRr/8NKKkO1gljV5qIyFriew0Gqz+WjjDVXCtD6P3OPZ1fWFxMdopTngq1xEZ3VG2CihowDcPNK89aML3JECXJyre30e/bfitz7kor2hq2Kw0=
+	t=1718128870; cv=none; b=VRIFj20N3pGIau7RblRiEKcGQqlyH8ogqBiPZ4NmbgDZYZgUrl9jmI3db8hzlvMoY62cma0AvIAby/OPbu9UmVH30pgADTK9pjn4gbqJ7HBRO6K5I/NNQwyVpk0HJM85KzsQZuWhH8Qt8n0GPT/bdhcg+6c7VvvwkTa487Wpi1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718128819; c=relaxed/simple;
-	bh=nwpZTn8pFzGOwf4ZB/VvlBs8EE7Mx/yz85WdIMLghPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HGyPP50KKkYKB3sgRRilzuEEK6OE2naZZBOpvEL4m4XD8acLngprXO31BqS2Zb/4zGvS/aL9yLq9/oF4QPAG2THrBib2wIHDfE7qo+W92zdTlNz9P2FdqKZ97S9IKP1EwaENwhllpVWezyTw36PY5vgl1+md8iOFdUBVwuANnZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UiLZmZ1A; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52c94cf4c9bso1242250e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:00:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718128815; x=1718733615; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dfppZ4J9iItfp/zeqA6eCwjM7fUz1YkqRKfl9RCRvzw=;
-        b=UiLZmZ1ABvT2swqdEKyDedzRudERfQm8u9YYGQJPaC1dsQVNtdDHmZQp88I1GCIwmK
-         U3LfuiDtCRWao/fW8QlAoCxk55G14pR5wHdJsMEYxLDGR8JK2YkDy7DhorQ3EEERJOi3
-         dBa8np3BTsZpUqLTv8bHYhGAoZ/GOlgZ7Bobc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718128815; x=1718733615;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dfppZ4J9iItfp/zeqA6eCwjM7fUz1YkqRKfl9RCRvzw=;
-        b=RaD2ZwuvQTVI5vMM7GCWCMig9ZhOOABa5SCwqALqb/ddLwbhY9GqzO4z6Q5+uD/kax
-         R6erpLWpuRUvmCwqF+4rry/0uPg/OzKfaYreBdxvhEZS+IZA1aK9n+GmJ3tY0Wuf+9ZX
-         rIqAVjaJRrQoyzs8iq84BxkJCYzIBb5PiRyAN+ftiu9jjLBlN0UH5ZlsQuyLArL9+9hg
-         TW4rWNMnUlWy7bWmBYTCVUIQxo1DEJI4/q/pM45Zoc2AYEcmFmneiqBYwEYoCoONsJuV
-         ghMVfKd/bEgEYesBvHDH7kIh2ihqg+cngcPwjYzCKSkyAEvv20TVDojhTvGegnuoB5VA
-         vweQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWEuAcNZ/oWXOAZ9Uq3sYf119/xJ7I9xACOqukm3QgrkY8nQNHsJBEMStJRHOml0enxIbYe9sJw/PzGWglExI8s90VRiBMUHu2/rRP
-X-Gm-Message-State: AOJu0Yzji6v3ALJ6/RHxWDDCqKFQFwZFt93K898VngxJPtiyyNHCyvnZ
-	Uadpsc60HzLuIrjUL54eN6PFdLMHVudqaVmO7UoY4wd49A5SXeh4qSrcRlQlpwV7yxqzdpkestm
-	akB4=
-X-Google-Smtp-Source: AGHT+IH4uKB3qd+yxQPA01T38eIpFoTiWsk5CmQhyL55Cv3PU9JLLz06GLvMK73/MNE57kThKKoDWw==
-X-Received: by 2002:a19:5e45:0:b0:52c:890e:bf23 with SMTP id 2adb3069b0e04-52c890ebff7mr5540802e87.21.1718128815002;
-        Tue, 11 Jun 2024 11:00:15 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f4108d502sm35464366b.135.2024.06.11.11.00.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 11:00:13 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57c68c3f8adso1777182a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:00:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV5sfqWm5pjyu6CwJEQQzsp3uNIKM9+zFo5IolEoHlFU0meM0BJ499xr7/AkXx1ZN71e6WfU0/AOvA+Bu3zDISvSjhuSPRCgzQRK2/g
-X-Received: by 2002:a50:d69c:0:b0:57c:5f7e:d0f1 with SMTP id
- 4fb4d7f45d1cf-57c5f7ed498mr8641041a12.38.1718128812554; Tue, 11 Jun 2024
- 11:00:12 -0700 (PDT)
+	s=arc-20240116; t=1718128870; c=relaxed/simple;
+	bh=8QWtb6pcKPnWcVLg2JzrAry10KmxCU8luPjLBJwvgjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tsWr/8hIsmZgzXUu/LI/9ZymOOl6ioGzPIGhdQHKG5AEoThOqVCFrmCOLEnGp/10I5Jike+Iz+nBR6l29mzkeP9pGbQT10JrJjF5latqOh2zJ98lV/ZxGxNfkQSHfwlu6CPNcSbiXCTVvpsMoHbLmWx2B+/1OewJU6giACxyZho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=kvXB5kpZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kHrnGfVd; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 42EF61380087;
+	Tue, 11 Jun 2024 14:01:07 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 11 Jun 2024 14:01:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1718128867;
+	 x=1718215267; bh=3TsTy4miANTIONNoIvT1RtaTHJWrsau+L4RJ3v/4SRY=; b=
+	kvXB5kpZt5ftlNR+NOZR2zGB46PyiXp4NYl/4hlvTr4JkKAl7g/d9Gf/xaS09Sbd
+	2q+bUizUBO+r9l31TNHh24BNa0tsKtsdKUfp3Q6TavlOb6bADTioee7wCt6rqzYI
+	YuQ2wcErEU79wY1uNWM02UVeu7djV0XWLZBj5FzDco5kDjhdJGOzh8ZmJYhg4SSq
+	uz+TRzWlmhMMQzYKclUcxd1lPCX+Y0kexOQlQnPJLgrr3j8nhCdA5/AD2BnnFQk8
+	zYAoxIBCWHAJuaUUFP1TW8kK6RoLahxK1qw94NBXHY+cETka+0yoMoLW4mfgtGwn
+	gbM+uKOoe/JGQkAyzmJ94g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718128867; x=
+	1718215267; bh=3TsTy4miANTIONNoIvT1RtaTHJWrsau+L4RJ3v/4SRY=; b=k
+	HrnGfVd8lxcs207atytWSbFMwCys3wj1s8VJDOV3q3dIIR5NXVlzVCTxBAk3dChc
+	ZRYXcuhHLdAbHtTDq6zl8/vc2xQQtpBVEtezY+YWxvMXB4LG8KqWM6ycgj6tVXvq
+	aeSqRIfqhQ2lKdMGrI5Fu+npXmi5bTilQeBUgUZZiIBrv+l67Tw4PNK6TIFwKvyy
+	tCfKzGiKqkkv/+WDQoYlxP39desrRUeYIz0TTS98++pwdLf+2YafR8K/028YWVm0
+	iCAZX9FJW0N9Qga+LC6Y2ibhSSA1ZvPgnntcjDCnrvaGjLGr4GJY0T+ocSh8y5ze
+	5eoSXL5G4Ym16cYYwCMiQ==
+X-ME-Sender: <xms:4pBoZiQemXit2yGSgoxA5qfe4hfknYfWVNNlNBwIHgM8C-bCOFyqdQ>
+    <xme:4pBoZnxJbDPJXwC7E4AxTPcVaI6A8PyhC9sdd-IWw60P_iMh7_zlAXvFCNdhILjr5
+    qWwy_Di35h96jvOcg>
+X-ME-Received: <xmr:4pBoZv0J0Wz-o6WhYtx-DicycDXrufNgjihD-yiV7lWUQx7pR8a5UPhKX2rvTv4ELshDjlXaHFf28_wOwXOaUmMjumv61BSkeQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduvddguddujecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enfghrlhcuvffnffculdejtddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkefs
+    tddttdejnecuhfhrohhmpeffrghnihgvlhcuighuuceougiguhesugiguhhuuhdrgiihii
+    eqnecuggftrfgrthhtvghrnheptdfgueeuueekieekgfeiueekffelteekkeekgeegffev
+    tddvjeeuheeuueelfeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepugiguhesugiguhhuuhdrgiihii
+X-ME-Proxy: <xmx:4pBoZuD6GQSymjTm-MhH1MPoFT8r6tpqgneQkK1MOP7Ye29r1P7JuA>
+    <xmx:4pBoZrjVONmYdkVuh-Hi7DIFIxuAk2qntLK1vNEL8AFASZaVnxo4GA>
+    <xmx:4pBoZqrrvKOtx_HUWdw0J2-A4QjTUbMLq2_hCJ8gqhyFvZGJT_ODCA>
+    <xmx:4pBoZuikgJI4WNQewUCATbQkt2wtYgP-zCpDNMSYLZo1z1TSiSLDWA>
+    <xmx:45BoZuik6MDwrig-XTVp9PE013217hcG7qyUastD498nG7a2GKTIGmgT>
+Feedback-ID: i6a694271:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Jun 2024 14:01:05 -0400 (EDT)
+Date: Tue, 11 Jun 2024 12:01:03 -0600
+From: Daniel Xu <dxu@dxuuu.xyz>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Jiri Olsa <olsajiri@gmail.com>, Quentin Monnet <quentin@isovalent.com>, 
+	Alan Maguire <alan.maguire@oracle.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Eddy Z <eddyz87@gmail.com>, John Fastabend <john.fastabend@gmail.com>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>
+Subject: Re: [PATCH bpf-next v4 08/12] bpf: verifier: Relax caller
+ requirements for kfunc projection type args
+Message-ID: <3ys25qg63cfuxjclqjlagsasvp5bpu6oqzjeia32kg2seistbv@5t24bsw5jtij>
+References: <cover.1717881178.git.dxu@dxuuu.xyz>
+ <e172bf47f32c6e716322bc85bb84d78b1398bd7c.1717881178.git.dxu@dxuuu.xyz>
+ <CAADnVQLE=XcpZ4SnW=NARG0D5Ya6iU1-1CayTVmArnxpSzWSFA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610204821.230388-1-torvalds@linux-foundation.org>
- <20240610204821.230388-5-torvalds@linux-foundation.org> <ZmhfNRViOhyn-Dxi@J2N7QTR9R3>
- <CAHk-=wiHp60JjTs=qZDboGnQxKSzv=hLyjEp+8StqvtjOKY64w@mail.gmail.com> <ZmiN_7LMp2fbKhIw@J2N7QTR9R3>
-In-Reply-To: <ZmiN_7LMp2fbKhIw@J2N7QTR9R3>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 11 Jun 2024 10:59:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wipw+_LKyXpuq9X7suf1VDUX4wD6iCuxFJKm9g2+ntFkQ@mail.gmail.com>
-Message-ID: <CAHk-=wipw+_LKyXpuq9X7suf1VDUX4wD6iCuxFJKm9g2+ntFkQ@mail.gmail.com>
-Subject: Re: [PATCH 4/7] arm64: add 'runtime constant' support
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	"the arch/x86 maintainers" <x86@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQLE=XcpZ4SnW=NARG0D5Ya6iU1-1CayTVmArnxpSzWSFA@mail.gmail.com>
 
-On Tue, 11 Jun 2024 at 10:48, Mark Rutland <mark.rutland@arm.com> wrote:
->
-> Fair enough if that's a pain on x86, but we already have them on arm64, and
-> hence using them is a smaller change there. We already have a couple of cases
-> which uses MOVZ;MOVK;MOVK;MOVK sequence, e.g.
->
->         // in __invalidate_icache_max_range()
->         asm volatile(ALTERNATIVE_CB("movz %0, #0\n"
->                                     "movk %0, #0, lsl #16\n"
->                                     "movk %0, #0, lsl #32\n"
->                                     "movk %0, #0, lsl #48\n",
->                                     ARM64_ALWAYS_SYSTEM,
->                                     kvm_compute_final_ctr_el0)
->                      : "=r" (ctr));
->
-> ... which is patched via the callback:
->
->         void kvm_compute_final_ctr_el0(struct alt_instr *alt,
->                                        __le32 *origptr, __le32 *updptr, int nr_inst)
->         {
->                 generate_mov_q(read_sanitised_ftr_reg(SYS_CTR_EL0),
->                                origptr, updptr, nr_inst);
->         }
->
-> ... where the generate_mov_q() helper does the actual instruction generation.
->
-> So if we only care about a few specific constants, we could give them their own
-> callbacks, like kvm_compute_final_ctr_el0() above.
+On Mon, Jun 10, 2024 at 11:30:31AM GMT, Alexei Starovoitov wrote:
+> On Sat, Jun 8, 2024 at 2:16 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
+> >
+> > Currently, if a kfunc accepts a projection type as an argument (eg
+> > struct __sk_buff *), the caller must exactly provide exactly the same
+> > type with provable provenance.
+> >
+> > However in practice, kfuncs that accept projection types _must_ cast to
+> > the underlying type before use b/c projection type layouts are
+> > completely made up. Thus, it is ok to relax the verifier rules around
+> > implicit conversions.
+> >
+> > We will use this functionality in the next commit when we align kfuncs
+> > to user-facing types.
+> >
+> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> > ---
+> >  kernel/bpf/verifier.c | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index 81a3d2ced78d..0808beca3837 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
+> > @@ -11257,6 +11257,8 @@ static int process_kf_arg_ptr_to_btf_id(struct bpf_verifier_env *env,
+> >         bool strict_type_match = false;
+> >         const struct btf *reg_btf;
+> >         const char *reg_ref_tname;
+> > +       bool taking_projection;
+> > +       bool struct_same;
+> >         u32 reg_ref_id;
+> >
+> >         if (base_type(reg->type) == PTR_TO_BTF_ID) {
+> > @@ -11300,7 +11302,13 @@ static int process_kf_arg_ptr_to_btf_id(struct bpf_verifier_env *env,
+> >
+> >         reg_ref_t = btf_type_skip_modifiers(reg_btf, reg_ref_id, &reg_ref_id);
+> >         reg_ref_tname = btf_name_by_offset(reg_btf, reg_ref_t->name_off);
+> > -       if (!btf_struct_ids_match(&env->log, reg_btf, reg_ref_id, reg->off, meta->btf, ref_id, strict_type_match)) {
+> > +       struct_same = btf_struct_ids_match(&env->log, reg_btf, reg_ref_id, reg->off, meta->btf, ref_id, strict_type_match);
+> > +       /* If kfunc is accepting a projection type (ie. __sk_buff), it cannot
+> > +        * actually use it -- it must cast to the underlying type. So we allow
+> > +        * caller to pass in the underlying type.
+> > +        */
+> > +       taking_projection = !strcmp(ref_tname, "__sk_buff") && !strcmp(reg_ref_tname, "sk_buff");
+> 
+> xdp_md/buff probably as well?
+> 
+> And with that share the code with btf_is_prog_ctx_type() ?
 
-I'll probably only have another day until my mailbox starts getting
-more pull requests (Mon-Tue outside the merge window is typically my
-quiet time when I have time to go through old emails and have time for
-private projects).
-
-So I'll look at doing this for x86 and see how it works.
-
-I do suspect that even then it's possibly more code with a
-site-specific callback for each case, but maybe it would be worth it
-just for the flexibility.
-
-                   Linus
+Ack - will do.
 
