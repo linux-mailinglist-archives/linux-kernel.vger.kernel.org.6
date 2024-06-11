@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-209866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 667A6903C0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:37:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94326903C0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187A51F25D98
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BEF6281575
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C1A17C7AC;
-	Tue, 11 Jun 2024 12:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FF717C210;
+	Tue, 11 Jun 2024 12:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yoblyMP9"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dDDlRDhS"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A9A17C207;
-	Tue, 11 Jun 2024 12:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947144CDE0;
+	Tue, 11 Jun 2024 12:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718109421; cv=none; b=czENhQJNXivd8ad/2P7VqOEIuO/NBQWltIvpU3v6Ypqe8/y1Al26COLqk0pamEXJWkNa1ma6SDGkcHyQUqPzn8RYt4qabcKpCK6pwdDzmgZXuqFCzq/2ORLSLaelG6VkeenI0jj0tDkzWNYhksCURiLL63DeGx7OYRun01H/Cv8=
+	t=1718109419; cv=none; b=XpEFNIsZs7RzYqxN/VD8ugU6GlybgLEs80tXOrSCjVvFawcz/CAWcpvL/bk+QMKFWcV8SwMRVjts0K+Sx5F8Crhj7eHLgpg48n+F1cpvJjDMf6picPsdMSThohjeJ8hiDw+NxZgbX4i2KMNw0UM+487YAY8F/qAh4ukh7u+GPmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718109421; c=relaxed/simple;
-	bh=/JEDUExWQNwoOi5zUT9iDtsEq0qd3E0WRFsxqoJeC4U=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=QiiXL69PTHUlOXWWaU2MJA0ksHMW20weyUK/ZF9q+GgwxtLrdM6E6bf1lorAVIQt+1MT2HzDw9XdrwRZ5GharKXEcSqqdS3N4Xb5+rZY0Wq5BE+fdhXjUgSSv900RTZNW8dyvO+sCl8Wue1x5wa4hG2aTJJOWq7EJbKEAYKUJLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yoblyMP9; arc=none smtp.client-ip=198.47.19.141
+	s=arc-20240116; t=1718109419; c=relaxed/simple;
+	bh=fvFhI53dTK9iqQDVo32UnwFWX6dUsSzcHoVloVVQ3U0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=qKDQEsToOZFIc9LmlvG65mNO1gge297oRLppUbpHvxtkp8ANwE1AR2J+Na9xJXIJ0kg+sc8ARrxmomGP4BgmLdppcFW48KrlaXSj+mK5r+/L53lCyD8khoXHHOXw0nScZn9MRx4Jy9mUXpnd0sfJHGPz36agW6abLYwRdMvOQzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dDDlRDhS; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45BCaXmU005559;
-	Tue, 11 Jun 2024 07:36:33 -0500
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45BCaYr1048160;
+	Tue, 11 Jun 2024 07:36:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718109393;
-	bh=u9cSUoRXmcbaPFPP8IaI0DTi4v+PCdOKv9htFxq5zTQ=;
-	h=From:Subject:Date:To:CC;
-	b=yoblyMP9xH97T8N+JtpU/JiOxCggmwr8F2wIvPc2jThc/rvTOZ8PdU8PQORyvVLyj
-	 p67JvHtqY1BGGuCd0EEAzYbnJ+qY/VYxRhZOj+XjIotuspDYSH62alHqQRED9lIBmP
-	 wULMQqOI0aKxRTWKBD8nDItmbNr3+JitqpGBt9AA=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45BCaXxP007135
+	s=ti-com-17Q1; t=1718109394;
+	bh=JbmIH2ytin76u0iZ2JCQK6vEjj144c5OCWcTe8D7XfM=;
+	h=From:Date:Subject:References:In-Reply-To:To:CC;
+	b=dDDlRDhSQ+6eSNrye+1m5ob6Vnf/EePEg+JsGeynJut74HnOt0ublERZJ1hz4Wbxj
+	 gC/wwcA8s8q++kBpgIPjNQuSDBpBCdZC9uKAef+Eh74kASqZKf8rnFv+47aE/dtvYj
+	 vGalZpY/yfXqn0oJRBC5IumNjO1zmyuNOL9C6CDE=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45BCaYKp007146
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 11 Jun 2024 07:36:33 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 11 Jun 2024 07:36:34 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
- Jun 2024 07:36:32 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2024 07:36:34 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 11 Jun 2024 07:36:32 -0500
+ Frontend Transport; Tue, 11 Jun 2024 07:36:34 -0500
 Received: from localhost (jluthra.dhcp.ti.com [172.24.227.116])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45BCaWTR105880;
-	Tue, 11 Jun 2024 07:36:32 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45BCaX6H123484;
+	Tue, 11 Jun 2024 07:36:34 -0500
 From: Jai Luthra <j-luthra@ti.com>
-Subject: [PATCH v3 0/2] Fixes for McASP and dmaengine_pcm
-Date: Tue, 11 Jun 2024 18:02:54 +0530
-Message-ID: <20240611-asoc_next-v3-0-fcfd84b12164@ti.com>
+Date: Tue, 11 Jun 2024 18:02:55 +0530
+Subject: [PATCH v3 1/2] ALSA: dmaengine: Synchronize dma channel after
+ drop()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,10 +67,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPZDaGYC/22MQQ6CMBBFr2Jmbc20lAKuvIcxpg6DdCE1LWkwh
- LtbWBgWLt/Pf2+GyMFxhPNhhsDJReeHDMXxANTb4cnCtZlBodJoUAsbPd0HnkZBaIqOSDZIBvL
- /Hbhz09a63jL3Lo4+fLZ0kuv6r5KkQMF1U1Jdc6V1exndifwL1kRSO03iXlNZe5TK2q5sTUX6p
- y3L8gVCtZUR1gAAAA==
+Message-ID: <20240611-asoc_next-v3-1-fcfd84b12164@ti.com>
+References: <20240611-asoc_next-v3-0-fcfd84b12164@ti.com>
+In-Reply-To: <20240611-asoc_next-v3-0-fcfd84b12164@ti.com>
 To: Lars-Peter Clausen <lars@metafoo.de>, Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
         Mark
@@ -82,59 +82,109 @@ CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Jayesh Choudhary <j-choudhary@ti.com>, Jai
  Luthra <j-luthra@ti.com>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1335; i=j-luthra@ti.com;
- h=from:subject:message-id; bh=/JEDUExWQNwoOi5zUT9iDtsEq0qd3E0WRFsxqoJeC4U=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBmaETM0yRfcun3sNNj794JLE6yj7x6Th/YOdUPV
- xDqladjUQWJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZmhEzAAKCRBD3pH5JJpx
- RSITD/0bh6UNfq2ZtG62Xu+6cYsJBp3BUUSSosjkD4IovEKizbuhi4Ph/oTBi0BYCOAM62ZEkGf
- saPiGlg0EfdlmcTnlvY7IXpPvZUUcvFdmF77/3yYSSX1ugbbn7RvTWzHDI1ws9BMaiZXGv6typB
- EAA6coMsNiCz/OQnxLINAlXs3FNoYauWgI56PIb5Z+vwyKpeAc4KUzdfYZzaYiYNO16u3i53HKn
- DOV1Cim2D3WWq0admLs+IhkVZ2NfU7BxR2NzvGOfp4FcyVNqt0EyEGrk5czZ+b1KEHgNmr8s3uG
- AYbN1rHEO3fgUbGYQHLrSdVR0GeQxZJQU8hT2ybWqvAPUD/Esft8oHNWYXNqH7Y3bFw3GxMQULk
- xD8I9TVa65s8OMOeOVxo/Z5uRn8G8lYF2BV760bS6GZncGJ7/wQWX51yXVMGSI3OSfbLzqskUbw
- 2ZHYeZk4jNAXiE88jbKfi+QtrgRTL53srS905TTFwO7m0ngIqP6/voj2jEMkufUe2UAvfCMoC/h
- BgNX5pBm4/9QsaPDCQFnWFYsSGHViPUqNxZWmLk/nRRtf7u5nZmJQQ6hs/XUjr5L3aNS155WN6m
- c7XSNG3O1rS2SFn4ZiPKgQ6WkVluUIhmr/u9o8zWxXNDNlhcKqnuH6+y2LhS0a6lAXF0PhimZMR
- 8jQVrhh9zSxKTgQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3460; i=j-luthra@ti.com;
+ h=from:subject:message-id; bh=fvFhI53dTK9iqQDVo32UnwFWX6dUsSzcHoVloVVQ3U0=;
+ b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBmaETNG9S7+0ODFUMsfnXellmz1gcZX3Q6zKftx
+ Ut3QmLKhh2JAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZmhEzQAKCRBD3pH5JJpx
+ Rcl5EACdUKrqsvcM7ouIqAzpy2KzQcHFoK7Fu8GPaD4waODCc+r2jFi3yC/Cq9L2AKV74Hy6JHt
+ thw1+UEtO+HtoYNHHzdq0JOxiUkLpsdgABAhj2WLw8cFXGoUTosj4kE6ntM1TGViymXdd4P6I1m
+ CAOzIPy3hSe8TV4tdZ6qtaSp/8S+NaFia7jyExaZ82seYAqvTZa63Ze89f9xUI256CyVpIuAYmu
+ OPr5OjI/axJJQ8DFCzm6i/Tn5JzKaQIDpdn0wCAj5zUTOYY1CYDDIianHWotDpcgoGuovaOq97y
+ gYgu/XOMT/0dzYTQWEL4ybuQXphanjjV5CEOOCwZWbPkpHFQIEvU3uuVjokudHidLNNr1nuNRR8
+ BEd4TC5zOfuFPFKhrKKGmJfUiExoR+xEQ37KdXwSS+OzVXpi+/HrVftB8ZqR2eQdKYcVZ9hWsR/
+ kodMUcQbtGmmzev8YHPDij9OYpnyzTKev1jGeyhLnQ0YOr7mQwmWhRAEnz18v0gMwEgBXwfUS7V
+ HpmI13yKK/+8QLBIsrzbPn3tSVZFet4CkUQ/PpSqaiIrTNAuXkkjh3YzXSuHbzkMhVTixAwGOYr
+ 6zUidr9wFpTPS0lVkEgtVMbQgEFIBvC+BMgp+ea9l6JkQXMW1u6ytcLIgPAtLihNgfGxusa2I6r
+ t/sYjwBsz9YBoIw==
 X-Developer-Key: i=j-luthra@ti.com; a=openpgp;
  fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-This series fixes two patches:
+Sometimes the stream may be stopped due to XRUN events, in which case
+the userspace can call snd_pcm_drop() and snd_pcm_prepare() to stop and
+start the stream again.
 
-1. Fix the dmaengine API usage by calling dmaengine_synchronize() after
-   dmaengine_terminate_async() when xrun events occur in application
-2. Use the McASP AFIFO property from DT to refine the period size,
-   instead of hardcoding minimum to 64 samples
+In these cases, we must wait for the DMA channel to synchronize before
+marking the stream as prepared for playback, as the DMA channel gets
+stopped by drop() without any synchronization. Make sure the ALSA core
+synchronizes the DMA channel by adding a sync_stop() hook.
 
+Reviewed-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
 Signed-off-by: Jai Luthra <j-luthra@ti.com>
 ---
-Changes in v3:
-- Use sync_stop() hook instead of a prepare() hook for the DMA channel
-  synchronization
-- Link to v2: https://lore.kernel.org/r/20240610-asoc_next-v2-0-b52aaf5d67c4@ti.com
-
-Changes in v2:
-- Fix compiler warning for prepare callback by marking it static
-- Pass numevt directly to hw_rule_min_periodsize()
-- Link to v1: https://lore.kernel.org/r/20240604-asoc_next-v1-0-e895c88e744d@ti.com
-
----
-Jai Luthra (2):
-      ALSA: dmaengine: Synchronize dma channel after drop()
-      ASoC: ti: davinci-mcasp: Set min period size using FIFO config
-
  include/sound/dmaengine_pcm.h         |  1 +
  sound/core/pcm_dmaengine.c            | 10 ++++++++++
  sound/soc/soc-generic-dmaengine-pcm.c |  8 ++++++++
- sound/soc/ti/davinci-mcasp.c          |  9 +++++++--
- 4 files changed, 26 insertions(+), 2 deletions(-)
----
-base-commit: a957267fa7e9159d3d2ee1421359ebf228570c68
-change-id: 20240604-asoc_next-c063fcc190c6
+ 3 files changed, 19 insertions(+)
 
-Best regards,
+diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
+index c11aaf8079fb..f6baa9a01868 100644
+--- a/include/sound/dmaengine_pcm.h
++++ b/include/sound/dmaengine_pcm.h
+@@ -36,6 +36,7 @@ snd_pcm_uframes_t snd_dmaengine_pcm_pointer_no_residue(struct snd_pcm_substream
+ int snd_dmaengine_pcm_open(struct snd_pcm_substream *substream,
+ 	struct dma_chan *chan);
+ int snd_dmaengine_pcm_close(struct snd_pcm_substream *substream);
++int snd_dmaengine_pcm_sync_stop(struct snd_pcm_substream *substream);
+ 
+ int snd_dmaengine_pcm_open_request_chan(struct snd_pcm_substream *substream,
+ 	dma_filter_fn filter_fn, void *filter_data);
+diff --git a/sound/core/pcm_dmaengine.c b/sound/core/pcm_dmaengine.c
+index 12aa1cef11a1..ed07fa5693d2 100644
+--- a/sound/core/pcm_dmaengine.c
++++ b/sound/core/pcm_dmaengine.c
+@@ -349,6 +349,16 @@ int snd_dmaengine_pcm_open_request_chan(struct snd_pcm_substream *substream,
+ }
+ EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_open_request_chan);
+ 
++int snd_dmaengine_pcm_sync_stop(struct snd_pcm_substream *substream)
++{
++	struct dmaengine_pcm_runtime_data *prtd = substream_to_prtd(substream);
++
++	dmaengine_synchronize(prtd->dma_chan);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_sync_stop);
++
+ /**
+  * snd_dmaengine_pcm_close - Close a dmaengine based PCM substream
+  * @substream: PCM substream
+diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
+index ea3bc9318412..a63e942fdc0b 100644
+--- a/sound/soc/soc-generic-dmaengine-pcm.c
++++ b/sound/soc/soc-generic-dmaengine-pcm.c
+@@ -318,6 +318,12 @@ static int dmaengine_copy(struct snd_soc_component *component,
+ 	return 0;
+ }
+ 
++static int dmaengine_pcm_sync_stop(struct snd_soc_component *component,
++				   struct snd_pcm_substream *substream)
++{
++	return snd_dmaengine_pcm_sync_stop(substream);
++}
++
+ static const struct snd_soc_component_driver dmaengine_pcm_component = {
+ 	.name		= SND_DMAENGINE_PCM_DRV_NAME,
+ 	.probe_order	= SND_SOC_COMP_ORDER_LATE,
+@@ -327,6 +333,7 @@ static const struct snd_soc_component_driver dmaengine_pcm_component = {
+ 	.trigger	= dmaengine_pcm_trigger,
+ 	.pointer	= dmaengine_pcm_pointer,
+ 	.pcm_construct	= dmaengine_pcm_new,
++	.sync_stop	= dmaengine_pcm_sync_stop,
+ };
+ 
+ static const struct snd_soc_component_driver dmaengine_pcm_component_process = {
+@@ -339,6 +346,7 @@ static const struct snd_soc_component_driver dmaengine_pcm_component_process = {
+ 	.pointer	= dmaengine_pcm_pointer,
+ 	.copy		= dmaengine_copy,
+ 	.pcm_construct	= dmaengine_pcm_new,
++	.sync_stop	= dmaengine_pcm_sync_stop,
+ };
+ 
+ static const char * const dmaengine_pcm_dma_channel_names[] = {
+
 -- 
-Jai Luthra <j-luthra@ti.com>
+2.43.0
 
 
