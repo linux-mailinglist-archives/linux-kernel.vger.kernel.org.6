@@ -1,116 +1,88 @@
-Return-Path: <linux-kernel+bounces-210295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2EB9041FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:57:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50008904202
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8AA1F26217
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066C11F23AAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C592F152E12;
-	Tue, 11 Jun 2024 16:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GDbXgr5l";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dj00EASL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034585F873;
+	Tue, 11 Jun 2024 16:54:29 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8DF82D66;
-	Tue, 11 Jun 2024 16:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894853BBED;
+	Tue, 11 Jun 2024 16:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718124846; cv=none; b=CxzDu0MJ+/RQ77c14r+Na5SFr26SgVzn7P1kKSYsNL/ady2SYaF5bXCgoSfWgeX1DToh6oHZc6wBypaRW326SVBFf4+tBEWu/HCRwUcV4wSs47m9hs/itFbZnRRuWPZbLLWzyMIp4G7n8j+LQ7hmpEeBXRML3OgUGwdHAaevUUI=
+	t=1718124868; cv=none; b=afRVQV6h3qyX8MwRhUSqIhLtngxmr6SJ5D96NKlFfuOylaQR7ojvDXQTBVxdGYZltfpNgtblO/uV9c+YIDTXg1uvCggE/b/DtOlq4a0C/Ay0ivkIHFrmqdjW/tSPI//OSwBzWpG60j58a2b98nFZfr24ui8SL7gGwxd8awqzKw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718124846; c=relaxed/simple;
-	bh=CRERkj6WgPUsR368J3IJOemdqqOO3tozL1LGGGbTx9M=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=RQ+NWPhZJpRy74QxhafZgAsKDHT36tiQhZQKXEggAy9oD/knTHA2fVwechACkW0yprEt8jHHwLhXtBJV0n62ykLvpHGX5N77ZXaonFeN4oEcF6eb1nWJfYkQRrzM4W+x1Aw8iDULABJ/iSVwvQURaYfovrqeg1V+YmqFYtblPvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GDbXgr5l; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dj00EASL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 11 Jun 2024 16:53:50 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718124830;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5S6fyhG98EbOM3o6+wYbOKJDsqgPwBdkUMei3wr4p64=;
-	b=GDbXgr5lABvYI1C5wNlkz6p4EyhXKi4lI33CnwjMK+w4YFd3aLBzNmse6HMJA/KE37a9n7
-	5OEWE2xroaJ7p2d2Tnddxi+ivPLbjyyV8Hs+SjTQ3YWLmETc0H539hBb01aLke8YfZ2emC
-	ign1LeS8hpLFQ7VUO/SLklRaIFJc4Jp9APDEkGbmAGCLUlHWO9PscDfKpJDOib9R+jmoEb
-	AoSThjDvfTHjgXkqmTEKNhJmOG8YxPtk6DUqkEZ+Ys2YN9/zHKonyfkOF1DiUdwWrpIV29
-	Tap8dM5Y1dmlhaKtfD53XTWxEulAngukaeqyob1iWhRXRGKob4cZ4A5QGTItxg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718124830;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5S6fyhG98EbOM3o6+wYbOKJDsqgPwBdkUMei3wr4p64=;
-	b=dj00EASLpknYwdX+80y2ssMgr54e9EDrE5IHUcaOBudO1L0H8MWCn222gUcKR4kYRa2qYf
-	2oDIU0NhvsD4fLCg==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/alternatives] x86/alternative: Zap alternative_ternary()
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240607111701.8366-2-bp@kernel.org>
-References: <20240607111701.8366-2-bp@kernel.org>
+	s=arc-20240116; t=1718124868; c=relaxed/simple;
+	bh=k1/dmpbynMnrbBscn/VmbNjjSCbrZOi5ZMoFxGslAcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aSsa/U/gWR4dRLWZVStOUkVi6UGM7phEQwb7ZXZa20s4Q16+NmhXne5CX780yctOkARlswUgT6m/UobC/RwIcxWDkDIO+J1IZ9d2WXfW9dlRRqrWkDAVJyAPU15Dtbr94IFiqFQFrTKbQUG79JSifDWADF/kljIORks0wBkqSjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D4A4C2BD10;
+	Tue, 11 Jun 2024 16:54:25 +0000 (UTC)
+Date: Tue, 11 Jun 2024 12:54:40 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Dongliang Cui <dongliang.cui@unisoc.com>, axboe@kernel.dk,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, ebiggers@kernel.org,
+ ke.wang@unisoc.com, hongyu.jin.cn@gmail.com, niuzhiguo84@gmail.com,
+ hao_hao.wang@unisoc.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, akailash@google.com,
+ cuidongliang390@gmail.com
+Subject: Re: [PATCH v4] block: Add ioprio to block_rq tracepoint
+Message-ID: <20240611125440.6d095270@gandalf.local.home>
+In-Reply-To: <86eb3dd0-77a1-4d1d-8e62-38c46bd7563a@acm.org>
+References: <20240611073519.323680-1-dongliang.cui@unisoc.com>
+	<86eb3dd0-77a1-4d1d-8e62-38c46bd7563a@acm.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171812483021.10875.10862182365499163698.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/alternatives branch of tip:
+On Tue, 11 Jun 2024 09:26:54 -0700
+Bart Van Assche <bvanassche@acm.org> wrote:
 
-Commit-ID:     9cbf2643b3ec7866e688df35d5b28c8b07ecbe6c
-Gitweb:        https://git.kernel.org/tip/9cbf2643b3ec7866e688df35d5b28c8b07ecbe6c
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Fri, 07 Jun 2024 13:16:48 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Tue, 11 Jun 2024 17:07:35 +02:00
+> On 6/11/24 12:35 AM, Dongliang Cui wrote:
+> > +#define IOPRIO_CLASS_STRINGS \
+> > +	{ IOPRIO_CLASS_NONE,	"none" }, \
+> > +	{ IOPRIO_CLASS_RT,	"rt" }, \
+> > +	{ IOPRIO_CLASS_BE,	"be" }, \
+> > +	{ IOPRIO_CLASS_IDLE,	"idle" }, \
+> > +	{ IOPRIO_CLASS_INVALID,	"invalid"}  
+> 
+> Shouldn't this array be defined in a C file instead of in a header file?
 
-x86/alternative: Zap alternative_ternary()
+The way the TRACE_EVENT() macro works, this will not work in a C file.
 
-Unused.
+> -	TP_printk("%d,%d %s (%s) %llu + %u [%d]",
+> +	TP_printk("%d,%d %s (%s) %llu + %u %s,%u,%u [%d]",
+>  		  MAJOR(__entry->dev), MINOR(__entry->dev),
+>  		  __entry->rwbs, __get_str(cmd),
+> -		  (unsigned long long)__entry->sector,
+> -		  __entry->nr_sector, 0)
+> +		  (unsigned long long)__entry->sector, __entry->nr_sector,
+> +		  __print_symbolic(IOPRIO_PRIO_CLASS(__entry->ioprio),
+> +				   IOPRIO_CLASS_STRINGS),
+> +		  IOPRIO_PRIO_HINT(__entry->ioprio),
+> +		  IOPRIO_PRIO_LEVEL(__entry->ioprio),  0)
+>  );
+>  
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20240607111701.8366-2-bp@kernel.org
----
- arch/x86/include/asm/alternative.h | 3 ---
- 1 file changed, 3 deletions(-)
+It's used for __print_symbolic() which the TRACE_EVENT() macro logic (using
+header files) will expand it to something useful.
 
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index ba99ef7..6db7890 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -271,9 +271,6 @@ static inline int alternatives_text_reserved(void *start, void *end)
- #define alternative_2(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2) \
- 	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2) ::: "memory")
- 
--#define alternative_ternary(oldinstr, ft_flags, newinstr_yes, newinstr_no) \
--	asm_inline volatile(ALTERNATIVE_TERNARY(oldinstr, ft_flags, newinstr_yes, newinstr_no) ::: "memory")
--
- /*
-  * Alternative inline assembly with input.
-  *
+-- Steve
 
