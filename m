@@ -1,271 +1,178 @@
-Return-Path: <linux-kernel+bounces-210226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E8E904111
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:21:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870B3904118
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B6791F24E2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:21:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D93F2B2341D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D003F9FB;
-	Tue, 11 Jun 2024 16:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B783C092;
+	Tue, 11 Jun 2024 16:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="fI3ojaRt"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gHJCxLgj"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201B41CFB2;
-	Tue, 11 Jun 2024 16:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B873B2A2
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718122880; cv=none; b=J0b0RdAmw3yuHl+UldG4TaxBASEuaX70EsrNNFrmAuzVkCAEFXfK3utCCj1ufPq53MtF4nweXV/sZrUXBpQIkMZHTVucHaL8Fm33vkcI48yz6iQ+1+HkT5r8n8n9IS4kPwOJ5k1LG+kglk/QngijMJtxDulMK/KOoBUd+I1iyqc=
+	t=1718122933; cv=none; b=DpEhgftZk6z+Hx8yXrV3RqYxTTLYVd65T5kjWleyiwoEg9pUF/WlE9kz7cyLHG44RvZnMGXSeHYLdBr2B0ig80jvA10ZsUap0RQSO/klW8MS7GV5DgkBpsol3qHncLhpkrKnX6tMA7jasOQuKQ+4oqfy+AqKlOWmTx6OLS4CQLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718122880; c=relaxed/simple;
-	bh=086cs3rDOJZA+tS8ei+FSh6VRACYFkL9P8d8pDmnxP4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C+4qGCad5T3hA4S46ZVPLv2+JXvpEXRRkRng/xaH3gPakbmn9YS4NP4XSMWIDZbxpjJyMKZiZ6dZQFolIX4DNwwsJiWqx8o685pSUjDhCLPs8QyV4zMYkKDU5y4ZZvMUmZWD+TL2v66J6iik1rma0Ac4B9YMe512UovgFmY2cC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=fI3ojaRt; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BCQ3UC011467;
-	Tue, 11 Jun 2024 18:20:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	j6c4lQaic8dX7LI3dKOWpESN5/QshcvuWyFXYHDId8U=; b=fI3ojaRtvPeQHRzL
-	5xmMC6ZAHU06ZIeOYKpI6OSGptcslKmYlWi958iMYLLbKgwdhF5aEf6LMbIVB6c2
-	/fTdP+J6osw/cZUGLZbSnxvDTTww9LhW5bf/ZZYEKJD9fW6lxGFXhye6QpQ5ADg4
-	9rLyBOdobDcypj9SpdkVtprTbyVWjxQYLlNunywU1DQMbv8bR+v/QYnFVIFTvUr5
-	2BcBRQJZNIxDR4h3Lpw+Z/lAy+IApv/90phl/FsV/ME4bL95LHwDTYQhazMAeyGy
-	RMa6XbDvq3+lJtUxRkeun7GmxPUaRUfA1A160CuL4+s4kbFne+fVSdeBcMCW6N+1
-	ua9thQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ypbp3uqsk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 18:20:55 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CF1C940045;
-	Tue, 11 Jun 2024 18:20:50 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 13A8D21B506;
-	Tue, 11 Jun 2024 18:20:13 +0200 (CEST)
-Received: from localhost (10.48.86.111) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 11 Jun
- 2024 18:20:12 +0200
-From: Valentin Caron <valentin.caron@foss.st.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Valentin Caron <valentin.caron@foss.st.com>
-Subject: [PATCH 2/2] rtc: stm32: add new st,stm32mp25-rtc compatible and check RIF configuration
-Date: Tue, 11 Jun 2024 18:19:58 +0200
-Message-ID: <20240611161958.469209-3-valentin.caron@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240611161958.469209-1-valentin.caron@foss.st.com>
-References: <20240611161958.469209-1-valentin.caron@foss.st.com>
+	s=arc-20240116; t=1718122933; c=relaxed/simple;
+	bh=Za4eT6Zh4nstNKeeM5l0obbQ8cEcGiiwE8dcwpGXF/A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HpxAxC5KJTQaU58kfd1QTBBMXPb+dNgUXLaMyfxttIRdMCRylXCQvl6VXx4x7CcFTLTGQdUqDs7KZ8Q6LnGPEVA0pGkIjHh34ctZCanKuVO6mgMkXxwrdG3xhe3x8Ak8j3W1CL+Z3AfVGu9KeVn/eROsCP+fbrACYkDnq3LOw4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gHJCxLgj; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfa6e0add60so5753305276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:22:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718122928; x=1718727728; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JQxvDf5UzR5oDkZoOHfjVzcIFa7H1tAgUbuPebpZYkA=;
+        b=gHJCxLgj8t4sOzuFnGRcfsurUmL+7orfz/FW49AGQo85qlY/ITEo7FG+fBQ00Me9VQ
+         t+27sgf6TZTPEj7SQBx8TzEGWTNo2LxCMSaCRStFqLOuKmr79h1YAlp315DxMGsR5CxY
+         a8+eXhGNhf4uouX+udhAh6+Q3mxutkuGuYCnw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718122928; x=1718727728;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JQxvDf5UzR5oDkZoOHfjVzcIFa7H1tAgUbuPebpZYkA=;
+        b=EYVSmyLWBGuWOk46m7QJBEMGT/romqmBfQ6thsPTrw0aPTRHHSBM0lAROg9TIbe0cL
+         SlYtS2wHMo3tK8jRRjcYHMr0X2aI4ziS6O+FBYGxJ6e23+cB3XTFU/z9Dse70QabV8yh
+         cFEDbm3N7ImTxL8xiiDJP3ZdcZSIyDkib8xEsuKrxU7etNgHzgFPyT3/ak7YvPw6WF7s
+         VZKIE0a3XLO5tHt0fk1bcVqe/9d79wAX++h9MtYBDPCmITxrTBjXFxQAJdP9lzwxxb6k
+         hLoT/yutYi8oZAr2Q6bngQHh3tG2zRBUsuhM2TPjPVBxvQsgi5zauZFOsaY6AOOsw3K+
+         WSZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXd1M/urQ6F+wIp4ABmBms9agTRmrpQt713XpqI7lepOsVrU0gzr6020T76oBSWkGY6ZuJhX9loL0T5uYkjBj05n7yziXEs3Wz02tmv
+X-Gm-Message-State: AOJu0Yx15etZDkUt+fGyodr7CRork/bvUHfJhc/hCnIQ8BgS3vkXwF+d
+	k+Q1oC46plLkCii3SWyZN8HzoKpUthT+S5Setm0W6Ydzga61mQmCASkR1ul4VjBVfP/cQNgdrXM
+	=
+X-Google-Smtp-Source: AGHT+IFNe6HaKZ3Vobj1O3N4mOvAjyFE0e0N2ssdCCSdyWVRYwpbrs0+1q8KfqJ9vfF7D8HTGV3QOA==
+X-Received: by 2002:a25:d347:0:b0:dfa:febf:5a72 with SMTP id 3f1490d57ef6-dfafebf5d04mr10870275276.38.1718122927930;
+        Tue, 11 Jun 2024 09:22:07 -0700 (PDT)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com. [209.85.160.171])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44155eec71fsm3041671cf.57.2024.06.11.09.22.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 09:22:07 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4405dffca81so218191cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:22:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWRGr3j/JiYuTN7vjRFSVFjd+CMih2IN87FC/usbTr+F3VPyh6k/Ao6svqDjr8c4c9Zn/PryB6uBZb+D6v38HS8JvXSGK3qlXsTU/4Z
+X-Received: by 2002:a05:622a:2b47:b0:441:5420:6d3b with SMTP id
+ d75a77b69052e-44154206e67mr2028121cf.2.1718122925584; Tue, 11 Jun 2024
+ 09:22:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
+References: <1b7c19ec-536f-4f28-a68f-b03c1b51b99b@gmail.com>
+In-Reply-To: <1b7c19ec-536f-4f28-a68f-b03c1b51b99b@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 11 Jun 2024 09:21:54 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VPQWUy4n75sPSxnzFi9RMTR2THmsL+VOd1PPG5paZN_w@mail.gmail.com>
+Message-ID: <CAD=FV=VPQWUy4n75sPSxnzFi9RMTR2THmsL+VOd1PPG5paZN_w@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/panel : himax-hx83102: fix incorrect argument to mipi_dsi_msleep
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Introduce new st,stm32mp25-rtc compatible. It is based on st,stm32mp1-rtc.
+Hi,
 
-Difference is that stm32mp25 soc implements a triple protection on RTC
-registers:
-- Secure bit based protection
-- Privileged context based protection
-- Compartment ID filtering based protection
-This driver will now check theses configurations before probing to avoid
-exceptions and fake reads on register.
+On Tue, Jun 11, 2024 at 7:05=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.com=
+> wrote:
+>
+> mipi_dsi_msleep expects struct mipi_dsi_multi_context to be passed as a
+> value and not as a reference.
+>
+> Fixes: a2ab7cb169da ("drm/panel: himax-hx83102: use wrapped MIPI DCS func=
+tions")
+>
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
 
-At this time, driver needs only to check two resources: INIT and ALARM_A.
-Other resources are not used.
+Should be no blank line between "Fixes" and "Signed-off-by"
 
-Resource isolation framework (RIF) is a comprehensive set of hardware
-blocks designed to enforce and manage isolation of STM32 hardware
-resources, like memory and peripherals.
+> ---
+>
+> Changes in v2:
+>     - Add Fixes tag
+>
+> v1: https://lore.kernel.org/all/d9f4546f-c2f9-456d-ba75-85cc195dd9b8@gmai=
+l.com/
+>
+> ---
+>  drivers/gpu/drm/panel/panel-himax-hx83102.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Link: https://www.st.com/resource/en/reference_manual/rm0457-stm32mp25xx-advanced-armbased-3264bit-mpus-stmicroelectronics.pdf#page=4081
-Signed-off-by: Valentin Caron <valentin.caron@foss.st.com>
----
- drivers/rtc/rtc-stm32.c | 78 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
+I notice you didn't CC me, even though I authored the broken commit.
+Presumably get_maintainer should have suggested you CC me?
 
-diff --git a/drivers/rtc/rtc-stm32.c b/drivers/rtc/rtc-stm32.c
-index 76753c71d92ee..98b07969609d2 100644
---- a/drivers/rtc/rtc-stm32.c
-+++ b/drivers/rtc/rtc-stm32.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <linux/bcd.h>
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/errno.h>
- #include <linux/iopoll.h>
-@@ -83,6 +84,18 @@
- #define STM32_RTC_VERR_MAJREV_SHIFT	4
- #define STM32_RTC_VERR_MAJREV		GENMASK(7, 4)
- 
-+/* STM32_RTC_SECCFGR bit fields */
-+#define STM32_RTC_SECCFGR		0x20
-+#define STM32_RTC_SECCFGR_ALRA_SEC	BIT(0)
-+#define STM32_RTC_SECCFGR_INIT_SEC	BIT(14)
-+#define STM32_RTC_SECCFGR_SEC		BIT(15)
-+
-+/* STM32_RTC_RXCIDCFGR bit fields */
-+#define STM32_RTC_RXCIDCFGR(x)		(0x80 + 0x4 * (x))
-+#define STM32_RTC_RXCIDCFGR_CFEN	BIT(0)
-+#define STM32_RTC_RXCIDCFGR_CID		GENMASK(6, 4)
-+#define STM32_RTC_RXCIDCFGR_CID1	1
-+
- /* STM32_RTC_WPR key constants */
- #define RTC_WPR_1ST_KEY			0xCA
- #define RTC_WPR_2ND_KEY			0x53
-@@ -120,6 +133,7 @@ struct stm32_rtc_data {
- 	bool has_pclk;
- 	bool need_dbp;
- 	bool need_accuracy;
-+	bool rif_protected;
- };
- 
- struct stm32_rtc {
-@@ -134,6 +148,14 @@ struct stm32_rtc {
- 	int irq_alarm;
- };
- 
-+struct stm32_rtc_rif_resource {
-+	unsigned int num;
-+	u32 bit;
-+};
-+
-+static const struct stm32_rtc_rif_resource STM32_RTC_RES_ALRA = {0, STM32_RTC_SECCFGR_ALRA_SEC};
-+static const struct stm32_rtc_rif_resource STM32_RTC_RES_INIT = {5, STM32_RTC_SECCFGR_INIT_SEC};
-+
- static void stm32_rtc_wpr_unlock(struct stm32_rtc *rtc)
- {
- 	const struct stm32_rtc_registers *regs = &rtc->data->regs;
-@@ -553,6 +575,7 @@ static const struct stm32_rtc_data stm32_rtc_data = {
- 	.has_pclk = false,
- 	.need_dbp = true,
- 	.need_accuracy = false,
-+	.rif_protected = false,
- 	.regs = {
- 		.tr = 0x00,
- 		.dr = 0x04,
-@@ -575,6 +598,7 @@ static const struct stm32_rtc_data stm32h7_rtc_data = {
- 	.has_pclk = true,
- 	.need_dbp = true,
- 	.need_accuracy = false,
-+	.rif_protected = false,
- 	.regs = {
- 		.tr = 0x00,
- 		.dr = 0x04,
-@@ -606,6 +630,7 @@ static const struct stm32_rtc_data stm32mp1_data = {
- 	.has_pclk = true,
- 	.need_dbp = false,
- 	.need_accuracy = true,
-+	.rif_protected = false,
- 	.regs = {
- 		.tr = 0x00,
- 		.dr = 0x04,
-@@ -624,14 +649,57 @@ static const struct stm32_rtc_data stm32mp1_data = {
- 	.clear_events = stm32mp1_rtc_clear_events,
- };
- 
-+static const struct stm32_rtc_data stm32mp25_data = {
-+	.has_pclk = true,
-+	.need_dbp = false,
-+	.need_accuracy = true,
-+	.rif_protected = true,
-+	.regs = {
-+		.tr = 0x00,
-+		.dr = 0x04,
-+		.cr = 0x18,
-+		.isr = 0x0C, /* named RTC_ICSR on stm32mp25 */
-+		.prer = 0x10,
-+		.alrmar = 0x40,
-+		.wpr = 0x24,
-+		.sr = 0x50,
-+		.scr = 0x5C,
-+		.verr = 0x3F4,
-+	},
-+	.events = {
-+		.alra = STM32_RTC_SR_ALRA,
-+	},
-+	.clear_events = stm32mp1_rtc_clear_events,
-+};
-+
- static const struct of_device_id stm32_rtc_of_match[] = {
- 	{ .compatible = "st,stm32-rtc", .data = &stm32_rtc_data },
- 	{ .compatible = "st,stm32h7-rtc", .data = &stm32h7_rtc_data },
- 	{ .compatible = "st,stm32mp1-rtc", .data = &stm32mp1_data },
-+	{ .compatible = "st,stm32mp25-rtc", .data = &stm32mp25_data },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, stm32_rtc_of_match);
- 
-+static int stm32_rtc_check_rif(struct stm32_rtc *stm32_rtc,
-+			       struct stm32_rtc_rif_resource res)
-+{
-+	u32 rxcidcfgr = readl_relaxed(stm32_rtc->base + STM32_RTC_RXCIDCFGR(res.num));
-+	u32 seccfgr;
-+
-+	/* Check if RTC available for our CID */
-+	if ((rxcidcfgr & STM32_RTC_RXCIDCFGR_CFEN) &&
-+	    (FIELD_GET(STM32_RTC_RXCIDCFGR_CID, rxcidcfgr) != STM32_RTC_RXCIDCFGR_CID1))
-+		return -EACCES;
-+
-+	/* Check if RTC available for non secure world */
-+	seccfgr = readl_relaxed(stm32_rtc->base + STM32_RTC_SECCFGR);
-+	if ((seccfgr & STM32_RTC_SECCFGR_SEC) | (seccfgr & res.bit))
-+		return -EACCES;
-+
-+	return 0;
-+}
-+
- static int stm32_rtc_init(struct platform_device *pdev,
- 			  struct stm32_rtc *rtc)
- {
-@@ -787,6 +855,16 @@ static int stm32_rtc_probe(struct platform_device *pdev)
- 		regmap_update_bits(rtc->dbp, rtc->dbp_reg,
- 				   rtc->dbp_mask, rtc->dbp_mask);
- 
-+	if (rtc->data->rif_protected) {
-+		ret = stm32_rtc_check_rif(rtc, STM32_RTC_RES_INIT);
-+		if (!ret)
-+			ret = stm32_rtc_check_rif(rtc, STM32_RTC_RES_ALRA);
-+		if (ret) {
-+			dev_err(&pdev->dev, "Failed to probe RTC due to RIF configuration\n");
-+			goto err;
-+		}
-+	}
-+
- 	/*
- 	 * After a system reset, RTC_ISR.INITS flag can be read to check if
- 	 * the calendar has been initialized or not. INITS flag is reset by a
--- 
-2.25.1
 
+> diff --git a/drivers/gpu/drm/panel/panel-himax-hx83102.c b/drivers/gpu/dr=
+m/panel/panel-himax-hx83102.c
+> index 6009a3fe1b8f..ab00fd92cce0 100644
+> --- a/drivers/gpu/drm/panel/panel-himax-hx83102.c
+> +++ b/drivers/gpu/drm/panel/panel-himax-hx83102.c
+> @@ -479,7 +479,7 @@ static int hx83102_disable(struct drm_panel *panel)
+>         mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
+>         mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+>
+> -       mipi_dsi_msleep(&dsi_ctx, 150);
+> +       mipi_dsi_msleep(dsi_ctx, 150);
+
+So while your fix is correct, it's not really enough. I swore that I
+compile tested my change and, sure enough, the bad code compile tests
+fine. This is because the macro mipi_dsi_msleep() fell into a macro
+trap. :( Specifically, we have:
+
+#define mipi_dsi_msleep(ctx, delay)        \
+        do {                               \
+                if (!ctx.accum_err)        \
+                        msleep(delay);     \
+        } while (0)
+
+Let's look at "if (!ctx.accum_err)". Before your patch, that translated to:
+
+if (!&dsi_ctx.accum_err)
+
+...adding extra parentheses for order of operations, that is:
+
+ if (!&(dsi_ctx.accum_err))
+
+...in other words it's testing whether the address of the "accum_err"
+is NULL. That's not a syntax error, but _really_ not what was meant.
+
+We really need to fix the macro trap by changing it like this:
+
+-               if (!ctx.accum_err)     \
++               if (!(ctx).accum_err)   \
+
+When you do that, though, you find that half the users of the macro
+were using it wrong since every other "_multi_" function passes the
+address. IMO while fixing the macro trap we should just change this to
+pass the address and then fix up all the callers.
+
+This is a serious enough problem (thanks for noticing it) that I'm
+happy to send out patches, but also I'm fine if you want to tackle it.
+If I don't see anything from you in a day or two I'll send out
+patches.
+
+Thanks!
+
+-Doug
 
