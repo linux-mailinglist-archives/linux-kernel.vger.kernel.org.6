@@ -1,114 +1,100 @@
-Return-Path: <linux-kernel+bounces-209547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B98D903784
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:11:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40BBC903773
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FF3B1C22F6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:11:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6772F1C2146A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34D617625F;
-	Tue, 11 Jun 2024 09:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B353F17624F;
+	Tue, 11 Jun 2024 09:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HMpdwsnn"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kdTTWjAW"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C078517622E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4F479C8;
+	Tue, 11 Jun 2024 09:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718097054; cv=none; b=LtMatviI7eJCjbQd8JmHiwoNhqoa0Cc4orGF+GtrMV03sICOvWnIgVo00TRxDc6Gkmwny9VwJsEebqzidInUnRrkbejovARL1/OJ8lPSjKm/oBAFO/+LuYbmMQau65QP7q3OL+0StSYnk6HfcntvygpUTggPw3m3sgLSSpw2liE=
+	t=1718096841; cv=none; b=KRe5gm79chGnQOwkFuvsgto77KJoLE5qYaEYKo8NGwVOWXsira2FE3LXkHfKHW7bLba5Sbbw7DyuGU7RsnBWkRIvIhfC0oZE4akCs4kXqIpLd6qrMprdAwGMh8PNPak1i5zhfLmsM4YPIwwpc/G25MOAEibuW2Sxn5dSmMc5uoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718097054; c=relaxed/simple;
-	bh=71WRNLupKDV/d72CgVNQIoqiZLm/+4VOI9x5CzO+QYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0n0pZcLC+1ar+/OjYhi3g7iX0z41d23tJNRr2SQ9NcUe8QlT4oUHbD8skcdqFKuTSF+PmiUs7PHh4nD6dJOTfjx2TBXwx1bUmuhR5scodv97k9eQ3KPcto6jTmv8buR8prLJRRHWHDqZLKrnn/S3rYws7gSA9S/lbqE/XpohmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HMpdwsnn; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f7028196f2so16701925ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:10:52 -0700 (PDT)
+	s=arc-20240116; t=1718096841; c=relaxed/simple;
+	bh=fta3eaWJ2teFy38tCw6loz+bdsnwvfr48UgRw05OSpk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OaSoAqkMm3vUd9X4Rn2fp4+BJXl1I96qyJ1j6lvWKqGqA6FtQaMbWW7sHh3R9BYaFxAJlh9JGOITwGPRg83t5BpUsLBcoj6PUm1g5oxbnvIWDCtYQM7auU+jqVHa3qo7QjZZXSkMMueAfq3G2IqD1QSvlfRdgd0Jn3d3NN6CeOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kdTTWjAW; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57a52dfd081so963180a12.2;
+        Tue, 11 Jun 2024 02:07:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718097052; x=1718701852; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nrXliMWOrqknI7uqoiUvdZlF8/ofaRo4zJPs4buL2/I=;
-        b=HMpdwsnnmbZGheaWKxHSCi9G1WXBbnlwYLH/JJIyDga1ghxZMuIwW6VdDoTEf1IHpC
-         Q0ve1Zpkc+hAgc5HijXUMELCRCUyiVPWHKHTGRoxrpIK2Xx9NLvDEON4khGLQugFXizp
-         YUQYRyD4+HTPB9IH5zQlbfKylnTVGKAvRuNXujtWtd2Wyl8gVzBTl3Y/+Y99eIoZCn8x
-         bLkL3ZKh8piiGgGtA6MRLw254yvsBz27reFG4IRWLEzAJWxYFBv67c3nEedbNeU1lIt7
-         OYp3DlUY8fSqy1tGpFsRQ5hXs3EtDEXYihAgERSmmU+gdFSk1KswYS8dYW6fS9Usmy7P
-         W2PA==
+        d=gmail.com; s=20230601; t=1718096838; x=1718701638; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fta3eaWJ2teFy38tCw6loz+bdsnwvfr48UgRw05OSpk=;
+        b=kdTTWjAWBmHnAOT9GgQrJHQq5MbCkdKX0yfOy2h0EVCADSLCj7gzJvTjgczddy3xgK
+         +jY3nK52aaWyWhoH+vQhCGYXHPqYjdCiz32eF0/wn3dNEFgPNGtzOeehK1UIBkyjzv5I
+         djNlLur3NFXq1AbdR+V2G6OQ33AU8HST3teD+0Ca9mGOg2VdL1hmaKfxhUQ6BaBO0TbV
+         5Nv8D21THccSklPUAhKi5LJBPzzgsrcrqirC8zIBGk6k2wGdYOfFXFRcG1gRz79Fo/ab
+         Gt3pAYV5PZdnKBWu+VwzWInHA8m0teKieBpPthvVy0L5a4LEbxjQr027iW5ylpZUUnvl
+         SJZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718097052; x=1718701852;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nrXliMWOrqknI7uqoiUvdZlF8/ofaRo4zJPs4buL2/I=;
-        b=QITpswxMRA+xZbKXU1dUjU8jFwa39YPWk8AuHJucJBuIOyrXwRyR1AlK6MEOOzWTmp
-         u2yjFGk8wNotDS3aM1w852U3QZUuHUKU4HFP2bPc2Q4UEMk6EmkAEuFgKsJyXfPrVSUk
-         mVYVxRf0C20CFvGpXTWnW7lKD5oI5EeyNorBvYEoBluqkX07MuHW6OaP1YIuOlnqeBnG
-         Ei1o2yqv6EvzRj9cS8DR1pwIzAUXEHvHjj78PM0534awgJBjN2HitrXVjyTZX5S2YkUc
-         GSSGjJPhn6vJ4gp5TjBc0ycCteGylG7EG4moqY+Vq0/Fb/ukAcGm/QA/noaQ5KTaeLO4
-         m0jg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUGGCtUZRhFHFveQ42GiLUVAx5X6+SMTADn/m3RK3anidHMTAd6JvItdc3VKCqUv9eNu01dwzfp3FBk+mxbUaDmXxtwOPfXleGcW7f
-X-Gm-Message-State: AOJu0Yzs/gwz2gwNP01CbhFG1jftheq/6du+SXHqCRxF3iKUpWLAee0F
-	Pb2KcDscooT0/NcQpsKfmQCfxZakphlgOUIdEA7Dg6qGts6eYdtPXgXvsSj0qtw=
-X-Google-Smtp-Source: AGHT+IFuWtHsxsNkowJj6t+MiMcPN73fgLC497E9oO/gME1qLmBFPmn8qc4KrhwiAWg79db28w0yGQ==
-X-Received: by 2002:a17:902:e881:b0:1f7:171e:5264 with SMTP id d9443c01a7336-1f7171e5534mr47675485ad.4.1718097051862;
-        Tue, 11 Jun 2024 02:10:51 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7fdd53sm97158645ad.293.2024.06.11.02.10.50
+        d=1e100.net; s=20230601; t=1718096838; x=1718701638;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fta3eaWJ2teFy38tCw6loz+bdsnwvfr48UgRw05OSpk=;
+        b=P7Ia8YTBRR2U9nxQzxVJrVJ7mjBohYabJQclH2R7qYNxPIc0pT4nF7E/5wLIrj7ydp
+         7U7Omm5299cmRy2fDUI6h4ir1TCMgM/T6bfpEc/FF2DWrNgGrtFtFfhTsgsXo3JL6BLn
+         turjvWccJjd+1+mWE4/+/tJFVKJVpx5pcDTnin1DTvn08El8XKWVs1oleiaqu0Lf38Q/
+         BzQymdNJwGukiXJWGICMqtIW0GPURySoyOUsM0te+rzKqEBp2Ezm6LmtcXbQGs1L4lT4
+         SIzPtvz4gdBUv2bssSdnJGie4loklX4eSj9iwWyp6LDcDrCSUqbxD/GiNUwZbN0UERJm
+         ytjg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1OW41LAVnNoNUlQxBN63YYRANMGsQStwCSkaEEs2nKieJOILGC4LJ3yPKv90/P1Koq42TZj/8fqWjpLXgwQJCjyT2+L2ShtnzFSfnkqdPSoMGg9bmThuYf6fFnBNFAM4XBeOZucuy7zU=
+X-Gm-Message-State: AOJu0Ywa49lyclvLRJVrlwRhuyJSiAXTwuRBVfpKJ4JsVCMdb6ogDaOM
+	oqVMGHgTacOBmURUK+dbgKYV3CYW5QDJy6hzrkVPVx7AALD9p2QpAsDgQPDVLz0=
+X-Google-Smtp-Source: AGHT+IFUG54eePiUGu+zBFQ9ykY4fx6D6aNk81Mi2rRwydImahZroEtP48tgfbOvruK25oCFTblRQQ==
+X-Received: by 2002:a50:a68e:0:b0:57a:3424:b36e with SMTP id 4fb4d7f45d1cf-57c508eeee7mr7948768a12.13.1718096837577;
+        Tue, 11 Jun 2024 02:07:17 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c8bb27687sm2334450a12.15.2024.06.11.02.07.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 02:10:51 -0700 (PDT)
-Date: Tue, 11 Jun 2024 14:40:49 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ionela Voinescu <ionela.voinescu@arm.com>
-Cc: Riwen Lu <luriwen@hotmail.com>, beata.michalska@arm.com,
-	rafael@kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hotran@apm.com,
-	Riwen Lu <luriwen@kylinos.cn>
-Subject: Re: [PATCH v3] cpufreq/cppc: Remove the desired_perf compare when
- set target
-Message-ID: <20240611091049.lrypvvluntf37uff@vireshk-i7>
-References: <20240530061621.36byo5a2iqc6o2az@vireshk-i7>
- <OS3P286MB249076187B3497D1EDD70988B1F32@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
- <20240606090737.z3qenphikjs5ijj4@vireshk-i7>
- <ZmgQ06jtJBPh5wat@arm.com>
+        Tue, 11 Jun 2024 02:07:17 -0700 (PDT)
+Message-ID: <1f7a529ddf64179bd8892b74f7bf7dfe9947b143.camel@gmail.com>
+Subject: Re: [PATCH v2 3/4] Input: adxl34x - switch to using managed
+ resources
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ linux-input@vger.kernel.org,  Nuno Sa <nuno.sa@analog.com>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 11 Jun 2024 11:11:05 +0200
+In-Reply-To: <20240610164301.1048482-3-dmitry.torokhov@gmail.com>
+References: <20240610164301.1048482-1-dmitry.torokhov@gmail.com>
+	 <20240610164301.1048482-3-dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmgQ06jtJBPh5wat@arm.com>
 
-On 11-06-24, 09:54, Ionela Voinescu wrote:
-> It's alright with me.
+On Mon, 2024-06-10 at 09:42 -0700, Dmitry Torokhov wrote:
+> Switch the driver to use managed resources to simplify error handling.
+>=20
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
 
-Great.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-> Some "nits":
->  - the "desired_perf" local variable could be removed in this case.
 
-Riwen, please fix this and resend.
-
->  - [note] while this change helps, we'd still need policy->cur to always
->    have the latest request value (see details at [1]) for this check to
->    be made obsolete by the comparison between target_freq and policy->cur,
->    as mentioned in the commit message. But this is/can be a separate
->    matter.
-> 
->    [1] https://lore.kernel.org/lkml/ZmB1qKucR5fXk100@arm.com/
-
-Yeah, lets discuss that in the other thread only.
-
--- 
-viresh
 
