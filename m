@@ -1,170 +1,112 @@
-Return-Path: <linux-kernel+bounces-210027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513EE903E49
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:01:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C813A903E50
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFBD28A77F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52339282D41
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A748917D8BE;
-	Tue, 11 Jun 2024 14:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D048017D8BC;
+	Tue, 11 Jun 2024 14:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H1evq0Dq"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F9TKxwLt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44361176ABA;
-	Tue, 11 Jun 2024 14:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781881E4AF;
+	Tue, 11 Jun 2024 14:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718114444; cv=none; b=ghcsUAI0Ki/tTzQPvyUTQkRe9WSMeKfMDHUmlBhkYeyivhSQQnpr9dpWa8PSd/gtK49esLrbIBio3BFRC/RtgNW4IMyv0cDJsrbe6ANxS7qqMm+8YWBRyoW3qUpLyksbirBz3aS01CNzG3WdMYfpV0S+w0kMRSPsiDSez4UQcPM=
+	t=1718114510; cv=none; b=GkG+gWodqvobWW+BRypLMfADNXZZK4i4Q3x15c4z6Cl8LK3FtbLZP2ppdt3hUyGim5dwJDYu7Vkn4T5zv5OnP7Qvx7TrMsK3PbqJP26CKXzSuuqMa2dHGTikg1LIeYcoIl5/HrEBrZSZlHUyuDIFx80yZp5Gj0HnD+8eFZZ6bOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718114444; c=relaxed/simple;
-	bh=Nn4o4q+BV9qqo5+3JXOfWLj3V0S/VMi7dVbqAdD7kd0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TkINHqSrjKcX/XxBH02DwpBy0BzZE053MuDdHg/3x2dIIKE53psgNUaokCoE37nyJ95/Tdsu7MlHFyY3/0+pxZhXU/fuu9i0bsvkS5mGJVOG0MP1n6y7LCXgo8sJ4TrORQGVOXpJ9xlnEcqVd4u2W3+sY+75Z9Q4DV0CzTDF1o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=H1evq0Dq; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45BE0aVY077223;
-	Tue, 11 Jun 2024 09:00:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718114436;
-	bh=UksPvX2iT5jFoUevaSSujIFfKusReYrJlUO5ZImZzJE=;
-	h=From:To:CC:Subject:Date;
-	b=H1evq0Dq7+r1lVU+TBUsSZjRTmrtz/7ql5n8LTuhfc1+wJg2fvZ/qHiyYHjfVZtIt
-	 sMrC2Kfz2395Weq+epIIQtiGNT5L2i448dffVg8VghhWO4thcybUMoPCrGtlQ5eAOm
-	 CL28OAs1Y8bgTaxRSp7vIth/7Gviqp18CTyE2QYU=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45BE0aIl055885
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 11 Jun 2024 09:00:36 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
- Jun 2024 09:00:35 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 11 Jun 2024 09:00:35 -0500
-Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45BE0Zc9102178;
-	Tue, 11 Jun 2024 09:00:35 -0500
-From: Andrew Davis <afd@ti.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski
-	<brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH] dt-bindings: gpio: lsi,zevio-gpio: convert to YAML
-Date: Tue, 11 Jun 2024 09:00:34 -0500
-Message-ID: <20240611140034.24685-1-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1718114510; c=relaxed/simple;
+	bh=/eF3+dH82g2GsNZ69rvGK6Tn+zGBo8LFU2rgwfQ7mrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NU9z2MmN2CMMhmxL1w8fRa/AkJpVXK4/JeAnm9k+M27PETnHYz2c30l+VZ1sadwIWjCO1YtPNprCTv8t2SIiRR7sROVdiDpVKwda3JF/nv6eyWHpp+3UZMqQtq9DmNwbS9RLWsM8Ri+rMIpfA/c+kqw5qKNxl7/HdipRjG7hPiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F9TKxwLt; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718114508; x=1749650508;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/eF3+dH82g2GsNZ69rvGK6Tn+zGBo8LFU2rgwfQ7mrw=;
+  b=F9TKxwLtyWL5t9WTobKHi9gENHN4nA0DlpbUXjOKgeyotMvGfw0XDCwU
+   h9SJKrooSbBkifbXYuGUdy6sPs9Wbl8wlktd+rX+0XNGSBk03XuszIDvu
+   6+9ebPz4rN9myVlunSYDA1SLn1wjksEVHFHBfcEijnbfTazWCNFD38QEU
+   eUuHl+LGIE7Oq+1d6XY2Hf7ctSIUueAZMMfttbz1c2K1mQih/iAGkyUU8
+   VI0hovu++K1b2J2cO2CsZBFJmJoqRunS0Bfc2QpCGzxpVivnQ5s+GpcHD
+   vLEcXld3D2+tY21pJCqEMVSA8XZdo6I5NBwcr27K95F0LnuubA3YYxNGG
+   w==;
+X-CSE-ConnectionGUID: ZIjt1dg5Qr6xT+wu8ZH4Nw==
+X-CSE-MsgGUID: UL0ssncyT6SeAcB++5VK9w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="25450374"
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="25450374"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 07:01:47 -0700
+X-CSE-ConnectionGUID: 1Yt1XmWOTa2EL5X4tuahZw==
+X-CSE-MsgGUID: 3SllhWrMTDKcAHtIii7CYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="44348659"
+Received: from unknown (HELO tlindgre-MOBL1) ([10.245.247.195])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 07:01:41 -0700
+Date: Tue, 11 Jun 2024 17:01:05 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Petr Mladek <pmladek@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] printk: Track command line console positions to fix
+ console order
+Message-ID: <ZmhYoV4ZrNwmIDS4@tlindgre-MOBL1>
+References: <20240606114149.118633-1-tony.lindgren@linux.intel.com>
+ <ZmgIB2lQaW9oqn3O@pathway.suse.cz>
+ <ZmgfZr5ccHATnkAA@tlindgre-MOBL1>
+ <ZmhM1VPWhuTggsgf@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmhM1VPWhuTggsgf@smile.fi.intel.com>
 
-Convert Zevio GPIO controller bindings to DT schema.
+On Tue, Jun 11, 2024 at 04:10:45PM +0300, Andy Shevchenko wrote:
+> On Tue, Jun 11, 2024 at 12:56:54PM +0300, Tony Lindgren wrote:
+> > On Tue, Jun 11, 2024 at 10:17:11AM +0200, Petr Mladek wrote:
+> > >     I would expect:
+> > > 
+> > > 	serial8250:0.0	-> ttyS0
+> > > 	serial8250:0.1	-> ttyS1
+> > > 	serial8250:0.2	-> ttyS2
+> > > 	[...]
+> >  
+> > I believe this would be the situation if you make CONFIG_ACPI is not set
+> > in the .config.
+> 
+> This is interesting. So, we still have the DEVNAME differences depending on
+> the kernel configuration? OTOH, I can't imagine either how we can get the
+> device names more stable as long as some drivers instantiate the platform
+> device instead of using 8250 core parts (port, base, core) directly.
 
-Changes during conversion:
- - Add used but undocumented interrupts property
+Seems we can add translation as needed though. For example, we could add
+console=serial8250:0.0 translation to the PNP port. Or console=0x3f8,115200.
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- .../devicetree/bindings/gpio/gpio-zevio.txt   | 16 -------
- .../bindings/gpio/lsi,zevio-gpio.yaml         | 46 +++++++++++++++++++
- 2 files changed, 46 insertions(+), 16 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.txt
- create mode 100644 Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
+Regards,
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-zevio.txt b/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
-deleted file mode 100644
-index a37bd9ae27307..0000000000000
---- a/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
-+++ /dev/null
-@@ -1,16 +0,0 @@
--Zevio GPIO controller
--
--Required properties:
--- compatible: Should be "lsi,zevio-gpio"
--- reg: Address and length of the register set for the device
--- #gpio-cells: Should be two. The first cell is the pin number and the
--  second cell is used to specify optional parameters (currently unused).
--- gpio-controller: Marks the device node as a GPIO controller.
--
--Example:
--	gpio: gpio@90000000 {
--		compatible = "lsi,zevio-gpio";
--		reg = <0x90000000 0x1000>;
--		gpio-controller;
--		#gpio-cells = <2>;
--	};
-diff --git a/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml b/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
-new file mode 100644
-index 0000000000000..542b5f9a495d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
-@@ -0,0 +1,46 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/lsi,zevio-gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Zevio GPIO controller
-+
-+maintainers:
-+  - Andrew Davis <afd@ti.com>
-+
-+properties:
-+  compatible:
-+    const: lsi,zevio-gpio
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    description: The first cell is the pin number and the second cell is used
-+      to specify optional parameters (currently unused).
-+    const: 2
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - gpio-controller
-+  - "#gpio-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    gpio: gpio@90000000 {
-+        compatible = "lsi,zevio-gpio";
-+        reg = <0x90000000 0x1000>;
-+        interrupts = <7>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+    };
--- 
-2.39.2
-
+Tony
 
