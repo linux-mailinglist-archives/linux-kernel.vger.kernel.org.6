@@ -1,225 +1,136 @@
-Return-Path: <linux-kernel+bounces-210648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C3889046AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:03:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4EE69046AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 272BB1C23B77
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:03:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7501E28592B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3261415533C;
-	Tue, 11 Jun 2024 22:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D131552E1;
+	Tue, 11 Jun 2024 22:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="j2383kz4"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pzfp13xJ"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DA52D611;
-	Tue, 11 Jun 2024 22:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BE41527B3
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718143398; cv=none; b=B9OYPFvjBFgE1hXWhZIPsjmehgUbE90p+kNkI4Y+BKgWMljfxKF0dwgOudMb2cZk42co26T4zbWLMYWgC6yrho5D3arJWyjCz/Wd3qgkvkyPj5IfXCD9fbv3t1W92GycHBHagCMx399AouAfJJVV78Xa9S0HtJ5Pg6FTAoptiVA=
+	t=1718143397; cv=none; b=DFI36DH+sAUGDqqsqwIDmSPxEBmWgw0tOC101e+q9ASZuFJ+ZsviEgeV/eBWqYVOEGCK1uqZUr+22x/HLWWQPPAZXcDeDi3H9aoTb9O1nQ7UqknxcJfQOT5aU2Etr5Ooq3iuLx7T3OdIjUFOBxkHXDFUpOHvmhp8baM1FEU4Z3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718143398; c=relaxed/simple;
-	bh=3rPUdKbtViSdk09zudZD2AmmmcopXye5JepDpAK3whE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GREQWS4e6dxIcRWFToJk+IEsPrlQhIj/4pqD7FCCVqnr5STrj3Fgknzppu2ZqeR/6A4X5iic9W+ryD6+KzQNJk809pc8nDOOa35B3NExfqNqfKaQu7A5p7fmeFOih3Gvwmi6kOoGvFP32a1BmlfR1q6HU+7WUixjUv7qPKbHqoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=j2383kz4; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=C5mPl2mcX1d8g/QBmFMcrKFqEz6OxAEd1x9a71sf7NE=; b=j2383kz4wu5qKoA1zTomzxQj5D
-	VFcTwQZ78UCVmOsfWyPtdk50P7UEz6nhKtZxdoG9SNEF7ldl0uomRqKrLM43JmPAcbJ4CCeK8yqew
-	h/c2zeRGcuvjGImKkr4N3TpWyJt1aIMlZBxvi5O83fPjb/1h+B41/2mQQQbOD8YCBDX4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sH9a0-00HQgJ-T3; Wed, 12 Jun 2024 00:03:00 +0200
-Date: Wed, 12 Jun 2024 00:03:00 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, corbet@lwn.net, rogerq@kernel.org,
-	danishanwar@ti.com, vladimir.oltean@nxp.com, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, vigneshr@ti.com,
-	misael.lopez@ti.com, srk@ti.com
-Subject: Re: [RFC PATCH net-next 01/28] docs: networking: ti: add driver doc
- for CPSW Proxy Client
-Message-ID: <b5d9f1ff-0b0f-4c97-9d1c-4ba4468ce6e3@lunn.ch>
-References: <20240518124234.2671651-1-s-vadapalli@ti.com>
- <20240518124234.2671651-2-s-vadapalli@ti.com>
- <642c8217-49fe-4c54-8d62-9550202c02c9@lunn.ch>
- <6e520ad0-0f9b-4fee-87fe-44477b01912b@ti.com>
- <287322d3-d3ee-4de6-9189-97067bc4835c@lunn.ch>
- <3586d2d1-1f03-47b0-94c0-258e48525a9d@ti.com>
+	s=arc-20240116; t=1718143397; c=relaxed/simple;
+	bh=Ey4dpn+f1UTvaOx0gUOY+eQ9wwdUJpZk5SoYV20o088=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eTp3KDeCZXHNwQtln6SieWNPQOLeEdcN4bmXws/b4fPw7hzqlqljUIYvxlMY5Fzdiiq+hlJZfk9z0izVKXzEBn/MUeDo10n+S+jKC0v1vTOvr0APlKP9D3JOqZYL56ZLgCXneZGLRq6w7kyk/RrtYYT75nX54iFTMZt1nAeXfCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pzfp13xJ; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62f46f56353so8373867b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:03:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718143393; x=1718748193; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KeC1/70he5CQ79E8jYxK5W/LoMc72KfRPBd07uT+cuY=;
+        b=pzfp13xJgS4PrMgr8eebFpdqon9XpjtuiiSunvsOv79NWb1mBwZL/k+sTbiz2FB6NB
+         /X1X3LWw1TPj6w5qDUh8WVXnNvR265QOTBi18YzRyOplSSV0C/CVWB3SDsGm2u59XBeL
+         CK/JgZVeh0faOENI/V7ZI/wdUQXf7YrJVciyplIgAnOisIgTsGYu1JUlalCTZZYAI4KY
+         c/I+h4hb6zXubWue6dYhishxiqsCIr1PSTxdW6/cF16uBq8P5qZ+VAmHZ7bAzUClX4sN
+         SvjLPvvxWPA5kPiFUvS1K33h2hBsePMcEqsdABwkE8HNsX3G5RPn9c4ThHVXPPw/M3i9
+         rOdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718143393; x=1718748193;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KeC1/70he5CQ79E8jYxK5W/LoMc72KfRPBd07uT+cuY=;
+        b=OQzb6q7jjU7uOp35clGsCHyg4GAZf3Ilh7pGhj45Gk3Re85uQzdcU1zSNQhPdykaYK
+         PJtIWEgt6TtkwErmCng6tzBFiyF+MtYIIb/xbifIhYsDIr7pVkG+UVeF4M55ZNzwHhT3
+         1lOcgN5WHIrOPpfWej7yWO5tjfaUb2fs6WXa/Cdhi5m4OGSW75DpAWavdGZNKH5+MzEm
+         EuXohhLR5zWroeCb9vWKedIMWh3saE+F//QtSGbzxEuy/sZf3Eyx2Lj+Ja/E1HjWCmES
+         4riJoZ7bAUI3hWjUs8N5vUvkLUnXWqkCDMHiUWVjFKnz4WNoSvQSTuu34q8r2kdMlXt/
+         uKtA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8g6XTvjX/0mzqtHaTJO5ArZsCYFRb61dOvWT7aws2iKqDue7URvwK2Qn0WGnekXE+0NWymItCHf43++UslDyPUIhOcMjXFXcC82mG
+X-Gm-Message-State: AOJu0Yy4/zOzHciNEUJ9e5wjo0IUPlT4QN9k5tHglYKpL4vx0j4vWI6N
+	cc77/Nbf/lUmG3rrEEexKgc+Z4Io1a6zS2YBwpbVYY8sUKm4cHYGJVM9/nOmOVyEAV5icHk0bQ9
+	UhA==
+X-Google-Smtp-Source: AGHT+IEgj86esgclw1q8kzIIbHibvWuASiwr8am2UV+qPS22vwZD9KxmZ6peui4uE5upeZ1rOL+uSOW+Dn4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:c17:b0:627:a961:caee with SMTP id
+ 00721157ae682-62fba27ded9mr55487b3.4.1718143393450; Tue, 11 Jun 2024 15:03:13
+ -0700 (PDT)
+Date: Tue, 11 Jun 2024 15:03:11 -0700
+In-Reply-To: <a44d4534-3ba1-4bee-b06d-bb2a77fe3856@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3586d2d1-1f03-47b0-94c0-258e48525a9d@ti.com>
+Mime-Version: 1.0
+References: <cover.1718043121.git.reinette.chatre@intel.com>
+ <ad03cb58323158c1ea14f485f834c5dfb7bf9063.1718043121.git.reinette.chatre@intel.com>
+ <ZmeYp8Sornz36ZkO@google.com> <a44d4534-3ba1-4bee-b06d-bb2a77fe3856@intel.com>
+Message-ID: <ZmjJnzBkOe58fFL6@google.com>
+Subject: Re: [PATCH V8 1/2] KVM: selftests: Add x86_64 guest udelay() utility
+From: Sean Christopherson <seanjc@google.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: isaku.yamahata@intel.com, pbonzini@redhat.com, erdemaktas@google.com, 
+	vkuznets@redhat.com, vannapurve@google.com, jmattson@google.com, 
+	mlevitsk@redhat.com, xiaoyao.li@intel.com, chao.gao@intel.com, 
+	rick.p.edgecombe@intel.com, yuan.yao@intel.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-> System Architecture and Implementation Details
-> ==============================================
+On Tue, Jun 11, 2024, Reinette Chatre wrote:
+> > Heh, the docs are stale.  KVM hasn't returned an error since commit cc578287e322
+> > ("KVM: Infrastructure for software and hardware based TSC rate scaling"), which
+> > again predates selftests by many years (6+ in this case).  To make our lives
+> > much simpler, I think we should assert that KVM_GET_TSC_KHZ succeeds, and maybe
+> > throw in a GUEST_ASSERT(thz_khz) in udelay()?
 > 
-> The CPSW Ethernet Switch has a single Host Port (CPU facing port) through
-> which it can receive data from the Host(s) and transmit data to the
-> Host(s).
-
-So there is a single host port, but it can support multiple hosts,
-each having a subset of the available DMA channels. Maybe it is
-explain later, but why call it a _single_ host port? Apart from the
-DMA channels, are there other things the hosts are sharing?
-
-> The exchange of data occurs via TX/RX DMA Channels (Hardware
-> Queues). These Hardware Queues are a limited resource (8 TX Channels and
-> up to 64 RX Flows). If the Operating System on any of the cores is the
-> sole user of CPSW then all of these Hardware Queues can be claimed by that
-> OS. However, when CPSW has to be shared across the Operating Systems on
-> various cores with the aim of enabling Ethernet Functionality for the
-> Applications running on different cores, it is necessary to share these
-> Hardware Queues in a manner that prevents conflicts. On the control path
-> which corresponds to the configuration of CPSW to get it up and running,
-> since there is no Integrated Processor within CPSW that can be programmed
-> with a startup configuration, either the Operating System or Firmware
-> running on one of the cores has to take the responsibility of setting it.
-> One option in this case happens to be the Ethernet Switch Firmware (EthFw)
-> which is loaded by the Bootloader on a remote core at the same time that
-> Linux and other Operating Systems begin booting. EthFw quickly powers on
-> and configures CPSW getting the Forwarding Path functional.
-
-At some point, a definition of functional will be needed. How does the
-EthFw know what is required? Should Linux care? Can Linux change it?
-
-> Once Linux and
-> other Operating Systems on various cores are ready, they can communicate
-> with EthFw to obtain details of the Hardware Queues allocated to them to
-> exchange data with CPSW.
-
-> With the knowledge of the Hardware Queues that
-> have been allocated, Linux can use the DMA APIs to setup these queues
-> to exchange data with CPSW.
-
-This might be an important point. You communicate with the CPSW. You
-don't communicate transparently through the CPSW to external ports?
-There is no mechanism for a host to say, send this packet out port X?
-It is the CPSW which decides, based on its address tables? The
-destination MAC address decides where a packet goes.
-
-> Setting up the Hardware Queues alone isn't sufficient to exchange data
-> with the external network. Consider the following example:
-> The ethX interface in userspace which has been created to transmit/receive
-> data to/from CPSW has the user-assigned MAC Address of "M". The ping
-> command is run with the destination IP of "D". This results in an ARP
-> request sent from ethX which is transmitted out of all MAC Ports of CPSW
-> since it is a Broadcast request. Assuming that "D" is a valid
-> destination IP, the ARP reply is received on one of the MAC Ports which
-> is now a Unicast reply with the destination MAC Address of "M". The ALE
-> (Address Lookup Engine) in CPSW has learnt that the MAC Address "M"
-> corresponds to the Host Port when the ARP request was sent out. So the
-> Unicast reply isn't dropped. The challenge however is determining which
-> RX DMA Channel (Flow) to send the Unicast reply on. In the case of a
-> single Operating System owning all Hardware Queues, sending it on any of
-> the RX DMA Channels would have worked. In the current case where the RX
-> DMA Channels map to different Hosts (Operating Systems and Applications),
-> the mapping between the MAC Address "M" and the RX DMA Channel has to be
-> setup to ensure that the correct Host receives the ARP reply. This
-> necessitates a method to inform the MAC Address "M" associated with the
-> interface ethX to EthFw so that EthFw can setup the MAC Address "M" to
-> RX DMA Channel map accordingly.
-
-Why not have EthFW also do learning? The broadcast ARP request tells
-you that MAC address M is associated to a TX DMA channel. EthFW should
-know the Rx DMA channel which pairs with it, and can program ALE.
-
-That is how a switch works, it learns what MAC address is where, it is
-not told.
-
-> At this point, Linux can exchange data with the external network via CPSW,
-> but no device on the external network can initiate the communication by
-> itself unless it already has the ARP entry for the IP Address of ethX.
-> That's because CPSW doesn't support packet replication implying that any
-> Broadcast/Multicast packets received on the MAC Ports can only be sent
-> on one of the RX DMA Channels.
-
-That sounds broken.
-
-And this is where we need to be very careful. It is hard to build a
-generic model when the first device using it is broken. Ethernet
-switches have always been able to replicate. Dumb hubs did nothing but
-replicate. Address learning, and forwarding out specific ports came
-later, but multicast and broadcast was always replicated. IGMP
-snooping came later still, which reduced multicast replication.
-
-And your switch cannot do replication....
-
-> So the Broadcast/Multicast packets can
-> only be received by one Host. Consider the following example:
-> A PC on the network tries to ping the IP Address of ethX. In both of the
-> following cases:
-> 1. Linux hasn't yet exchanged data with the PC via ethX.
-> 2. The MAC Address of ethX has changed.
-> the PC sends an ARP request to one of the MAC Ports on CPSW to figure
-> out the MAC Address of ethX. Since the ARP request is a Broadcast
-> request, it is not possible for CPSW to determine the correct Host,
-> since the Broadcast MAC isn't unique to any Host. So CPSW is forced
-> to send the Broadcast request to a preconfigured RX DMA Channel which
-> in this case happens to be the one mapped to EthFw. Thus, if EthFw
-> is aware of the IP Address of ethX, it can generate and send the ARP
-> reply containing the MAC Address "M" of ethX that it was informed of.
-> With this, the PC can initiate communication with Linux as well.
+> I added the GUEST_ASSERT() but I find that it comes with a caveat (more below).
 > 
-> Similarly, in the case of Multicast packets, if Linux wishes to receive
-> certain Multicast packets, it needs to inform the same to EthFw which
-> shall then replicate the Multicast packets it received from CPSW and
-> transmit them via alternate means (Shared Memory for example) to Linux.
+> I plan an assert as below that would end up testing the same as what a
+> GUEST_ASSERT(tsc_khz) would accomplish:
+> 
+> 	r = __vm_ioctl(vm, KVM_GET_TSC_KHZ, NULL);
+> 	TEST_ASSERT(r > 0, "KVM_GET_TSC_KHZ did not provide a valid TSC freq.");
+> 	tsc_khz = r;
+> 
+> 
+> Caveat is: the additional GUEST_ASSERT() requires all tests that use udelay() in
+> the guest to now subtly be required to implement a ucall (UCALL_ABORT) handler.
+> I did a crude grep check to see and of the 69 x86_64 tests there are 47 that do
+> indeed have a UCALL_ABORT handler. If any of the other use udelay() then the
+> GUEST_ASSERT() will of course still trigger, but will be quite cryptic. For
+> example, "Unhandled exception '0xe' at guest RIP '0x0'" vs. "tsc_khz".
 
-This all sounds like you are working around broken behaviour, not
-something generic.
+Yeah, we really need to add a bit more infrastructure, there is way, way, waaaay
+too much boilerplate needed just to run a guest and handle the basic ucalls.
+Reporting guest asserts should Just Work for 99.9% of tests.
 
-What i actually think you need to do is hide all the broken
-behaviour. Trap all multicast/broadcast to EthFw. It can run a
-software bridge, and do learning. It will see the outgoing ARP request
-from a host and learn the host MAC address. It can then flood the
-packet out the external ports, working around the CSPW brokeness. It
-can also program the ALE, so the reply goes straight to the
-host. Incoming broadcast and multicast is also trapped to the EthFW
-and it can use its software bridge to flood the packet to all the
-hosts. It can also perform IGMP snooping, and learn which hosts are
-interested in Multicast. 
+Anyways, is it any less cryptic if ucall_assert() forces a failure?  I forget if
+the problem with an unhandled GUEST_ASSERT() is that the test re-enters the guest,
+or if it's something else.
 
-Your switch then functions as a switch.
+I don't think we need a perfect solution _now_, as tsc_khz really should never
+be 0, just something to not make life completely miserable for future developers.
 
-And you are then the same as the RealTek and Samsung device. Linux is
-just a plain boring host connect to a switch, which somebody else is
-managing. No new model needed.
+diff --git a/tools/testing/selftests/kvm/lib/ucall_common.c b/tools/testing/selftests/kvm/lib/ucall_common.c
+index 42151e571953..1116bce5cdbf 100644
+--- a/tools/testing/selftests/kvm/lib/ucall_common.c
++++ b/tools/testing/selftests/kvm/lib/ucall_common.c
+@@ -98,6 +98,8 @@ void ucall_assert(uint64_t cmd, const char *exp, const char *file,
+ 
+        ucall_arch_do_ucall((vm_vaddr_t)uc->hva);
+ 
++       ucall_arch_do_ucall(GUEST_UCALL_FAILED);
++
+        ucall_free(uc);
+ }
 
-> All data between Linux (Or any Operating System) and EthFw is exchanged
-> via the Hardware Mailboxes with the help of the RPMsg framework. Since
-> all the resource allocation information comes from EthFw, the
-> vendor-specific implementation in the Linux Client is limited to the DMA
-> APIs used to setup the Hardware Queues and to transmit/receive data with
-> the Ethernet Switch. Therefore, it might be possible to move most of the
-> vendor specific implementation to the Switch Configuration Firmware
-> (similar to EthFw), to make the Linux Client implementation as generic
-> and vendor agnostic as possible. I believe that this series more or less
-> does the same, just using custom terminology which can be made generic.
-
-This is actually very similar to what your college is doing:
-
-https://lore.kernel.org/netdev/20240531064006.1223417-1-y-mallik@ti.com/
-
-The only real difference is shared memory vs DMA.
-
-	Andrew
 
