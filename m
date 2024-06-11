@@ -1,60 +1,82 @@
-Return-Path: <linux-kernel+bounces-210187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0064A904097
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:55:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B91904099
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58E85281A97
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:55:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C91731C234A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE50839AFD;
-	Tue, 11 Jun 2024 15:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A37D3A27B;
+	Tue, 11 Jun 2024 15:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="p8+9jCWL"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eyixXqAO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C0E1EB31;
-	Tue, 11 Jun 2024 15:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E36B38F82;
+	Tue, 11 Jun 2024 15:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718121323; cv=none; b=p4fZBQhu4AGG4AsNjnU65gkskb9+ngRhftsfmhXuqbfW+//vIbG59mJfQc2KhO2/3lJckYUjvkvI0CspzoTBhF6DjLZIAvX8mXnqtAqkzgkny544OL7iY+5/S8BQIslyp/V9+VQ3mnndiPcKxVZDW+bmPp1Lsyk0e7yx3Dojfx8=
+	t=1718121325; cv=none; b=CXRFxfAduX9Ub1yQzP1GvfKp6nX6xNkeMCHgMEynlDdf6uScsXX4RufMZiqbGtPYP33Vq6qOGOvYI6dZsAwa1Xh33iqsygQz8dnLFAnIQnWHM9G0Q/oXbMCMVcRxdbWmnid7Z2Rs1Edsr2fFojfPFU5wRFfG4wTnJFLqorsst0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718121323; c=relaxed/simple;
-	bh=xDDj3IA8z91sfAPS3SuuNuK4ZRTdYmydM2gvEY9GTh0=;
+	s=arc-20240116; t=1718121325; c=relaxed/simple;
+	bh=I5aTgCAVxVL8odAbeMufOk8gtJT03Lg4Q5scCLrbQUo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a0uxQvV875djFqu9tDP4B36zvJBaDEdgfOELPczP32CkOLbg/KIJxzBHa1fl9wCNcblJyPXF/uz7S7LP7aou17NTtGjOVq4fzA5X54U5iY+VOmlPZcLIO5r13xyHMs0YSYYSq4p1Pl0wvjZR74f2E8ZEREKZj4HhAHKPcz+gQ2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=p8+9jCWL; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=gTBCsfT/FoEZjfkp+/88uvPEW9jcevZaStmZIljnz28=; b=p8+9jCWLUAlDHl8wNaDONdQrIm
-	q6q8bfJKklSncqLW2rB9ZyY1x+WqjIyWjNu0aQh4GhJgCWe2EhoD1tHb+qBjad44aYQ958Jh4fPAp
-	cBLKyhlz6aAomd82N9LxZrtuHNDeLYVJHtWeurVziwr+bVgZrxa8R0UI9Pjh3lzA1hV4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sH3q4-00HOxJ-6R; Tue, 11 Jun 2024 17:55:12 +0200
-Date: Tue, 11 Jun 2024 17:55:12 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-	Michal Simek <michal.simek@amd.com>,
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next v2] net: xilinx: axienet: Use NL_SET_ERR_MSG
- instead of netdev_err
-Message-ID: <49b57b18-c7ba-4059-ab1d-b337017ea8e4@lunn.ch>
-References: <20240611154116.2643662-1-sean.anderson@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=liaeNLF7rxMGRakZyKn6SA707yx1621IUQ2OHDS80npAkdozBFpyV5TbYhLePsDvZZ/W42wYaqFUNWv3srcm0aAaBz3Ksd5wgfEXUQ1xqv/9OCbVfMrjQdmxgoTnOwfxjy/ciksj+SfkJc1E19LNPCgr68slb3m1BlgIoaXTJzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eyixXqAO; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718121323; x=1749657323;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=I5aTgCAVxVL8odAbeMufOk8gtJT03Lg4Q5scCLrbQUo=;
+  b=eyixXqAOP4SepCnE4VS4n76djgr12eTEGuNRWX/gFWGBGrY8Diopza/q
+   nB/ZJTb1VtK5hYCSBav6XkAGQQ8Y5T6XhbrmWkI1OgNQv68WB1Htd73yw
+   LGFfcClKmJubsDcHEukLBppGwOV0KjHwGNcrAnV3cAOoOXLdKSpJgAzdm
+   GF+t6dAWduQxUboVzbS/uWXaFym5vEY9EBGlTUshj595YOwx+/kQCQ86X
+   euP6x+FLwU3oVsueQoxgjfwdnt58dU07UsNB8ICOPPawsLLQwKOnK130N
+   zJoCNvWeC1eXcjRULJefqgCqu7Gnb5TVVn+kvtyQxikI0oIas9dcMojya
+   g==;
+X-CSE-ConnectionGUID: EZMweBwlQgiv0IBzOZehsQ==
+X-CSE-MsgGUID: Od30050zTCqN6dOqZY/pAg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14641027"
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="14641027"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 08:55:22 -0700
+X-CSE-ConnectionGUID: FcbQqxw8QD6s5D1pjv29SQ==
+X-CSE-MsgGUID: wcgAJGEBSj6EeLS57DUjww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
+   d="scan'208";a="44378471"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 08:55:20 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sH3q8-0000000FaiK-39yV;
+	Tue, 11 Jun 2024 18:55:16 +0300
+Date: Tue, 11 Jun 2024 18:55:16 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: kernel test robot <lkp@intel.com>,
+	Youling Tang <tangyouling@loongson.cn>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v1 1/1] serial: 8250_platform: Explicitly show we
+ initialise ISA ports only once
+Message-ID: <ZmhzZJdK9IgBYauE@smile.fi.intel.com>
+References: <20240606184841.3102545-1-andriy.shevchenko@linux.intel.com>
+ <202406072102.SGp8FYYi-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,17 +85,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240611154116.2643662-1-sean.anderson@linux.dev>
+In-Reply-To: <202406072102.SGp8FYYi-lkp@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Jun 11, 2024 at 11:41:16AM -0400, Sean Anderson wrote:
-> This error message can be triggered by userspace. Use NL_SET_ERR_MSG so
-> the message is returned to the user and to avoid polluting the kernel
-> logs. Additionally, change the return value from EFAULT to EBUSY to
-> better reflect the error (which has nothing to do with addressing).
++Cc: initial authors of Loongarch64 jump table implementation and people who touched that code.
+
+On Fri, Jun 07, 2024 at 09:48:51PM +0800, kernel test robot wrote:
+> Hi Andy,
 > 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on tty/tty-testing]
+> [also build test WARNING on tty/tty-next next-20240607]
+> [cannot apply to tty/tty-linus linus/master v6.10-rc2]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/serial-8250_platform-Explicitly-show-we-initialise-ISA-ports-only-once/20240607-025109
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
+> patch link:    https://lore.kernel.org/r/20240606184841.3102545-1-andriy.shevchenko%40linux.intel.com
+> patch subject: [PATCH v1 1/1] serial: 8250_platform: Explicitly show we initialise ISA ports only once
+> config: loongarch-defconfig (https://download.01.org/0day-ci/archive/20240607/202406072102.SGp8FYYi-lkp@intel.com/config)
+> compiler: loongarch64-linux-gcc (GCC) 13.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240607/202406072102.SGp8FYYi-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406072102.SGp8FYYi-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+> >> drivers/tty/serial/8250/8250_platform.o: warning: objtool: __jump_table+0x0: special: can't find orig instruction
+> 
+> objdump-func vmlinux.o __jump_table:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Folks, can you look into it? It sounds like jump table is misimplemented for
+this architecture (but I'm quite unsure). Similar issue LKP reported here:
+https://lore.kernel.org/all/202405290629.oaN9XxEz-lkp@intel.com/
 
-    Andrew
+P.S. Is it objtool issue or kernel issue? (Just thinking/questioning loudly)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
