@@ -1,179 +1,263 @@
-Return-Path: <linux-kernel+bounces-210211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758C49040DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:06:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F9F9040DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56A5D1C21D16
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:06:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8DB1C23898
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D975F3A28D;
-	Tue, 11 Jun 2024 16:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8690A3A28D;
+	Tue, 11 Jun 2024 16:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mCNKSnt2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZOnkZBxI"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87002383B2;
-	Tue, 11 Jun 2024 16:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE46A94C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718122007; cv=none; b=tW11jfZdI49vSdx6krd2zl51AQ6mnCb1WMyAmx3+8q/xbL6V/mwokunTth4ldmtbsj7c1xl76rfKqFrazK0hqrhy/laCieacfQ+UwvCdmH+0XxJaZNKeH0G1UegcmVuqZtefPH6QkWAlZT3K2In6Lw9C0StvB9zSADPS86ilMUo=
+	t=1718122084; cv=none; b=DXBWvXM8N6WGHRfva0R/PIBWCzMdZcanIwc0qnViTGjAHOsbNmCseIDEKcliEk4SuB2rfIyNplzAvBKITvA/t9dtADlW+rVfN4ksK5dZDdVBTSgpGXP9YLU1MlIfi86lyw6q2s7PUjSXssgoSruBXlh6ShnKGUrzQcAQf7LUzjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718122007; c=relaxed/simple;
-	bh=ScPhGOCO3bV0NanOK0AuSPnSG3scE/Ty0BObPsnla4Y=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g++Q1+NLeRJlpPapMy6FFyw2HImEEuq1Ih5dUlrH27eaXlz2EZlR0XBTFGfa+ybY6oBkCistMpqsFc9GlpyTngKODXgoY6RsOkcTFPImW6Y5gsbH+WFa00kIht90NQ+sEc4UyZb5Gh1U2uTFKO3HnKPtA0/njiEL7dgIyZOuM4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mCNKSnt2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BF2Uaa006245;
-	Tue, 11 Jun 2024 16:06:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=vB9b8QKV3SVGrr7bVXaqXKJ2
-	pGDDkhNCdZ1weSNZecg=; b=mCNKSnt2TFzL55c2N8JLz6ygtLTFTmGfeRDjsgA1
-	gNx2cakRa4HVjVmgq0zmvh7jg0lX4MDyeIx6bfQxJC7Osgc1RU0w3aqlzL/zI9Fe
-	l66A8gOuptaisXuEGKHVFQTWwEFA/wd2VMhBpHRPzDeypnmqM1HWuyY1mcqEeEEv
-	rg/O9vXgKNrQtYlVD0aCFbw00ipdUbM3UdLM4E0UxX0yXnX8AJP8SmeqUe3gqtgb
-	ud2TFJ9Mj4IUbStIGkao6jZbwunyUN2U6sRukYiopV9FGw/AxkjpFbhCKmn/J6wH
-	XTQmZtyRkJIt13a+kf3w9UDSJy97PuqEPeHlL8Oq3FfNFQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmxt9n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 16:06:40 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BG6bu5021825
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 16:06:37 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 11 Jun 2024 09:06:37 -0700
-Date: Tue, 11 Jun 2024 09:06:35 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
-CC: <andersson@kernel.org>, <quic_clew@quicinc.com>,
-        <mathieu.poirier@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <quic_deesin@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH V2 1/2] soc: qcom: smp2p: Add remote name into smp2p irq
- devname
-Message-ID: <Zmh2CzGpJrmzs+6K@hu-bjorande-lv.qualcomm.com>
-References: <20240611123351.3813190-1-quic_sudeepgo@quicinc.com>
- <20240611123351.3813190-2-quic_sudeepgo@quicinc.com>
+	s=arc-20240116; t=1718122084; c=relaxed/simple;
+	bh=OSxpykUCDOtz4FP2u13GeoHJw2xF6TOx7thtDiW8Q7M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=acB0CSAgUzVQ2SDPd9XdXsaSgR9MH3XZqOSW7jU6Q9XfPPHwpgR7f3BP3Nyh7o/0Nk+8j7xM7bW0bD+nMX3BNQ9y7MgAwnLqoHBVIq/UDYYXAFnZ5cHwEH3HB8mLihJVo7tnuSoG//8WTIplW+U5tlcnz6zDTkNZap7OpGmCnmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZOnkZBxI; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57c7440876bso1720812a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718122080; x=1718726880; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Usr3iQr9P44DbTK5za8+K7ebuiDZp91g0I8Srd02vj4=;
+        b=ZOnkZBxIBrIizyaYP9WQLL+f5hWy1BcBFw39Orbly/61pDYIVrcf+kp8AOXhRfVp4O
+         hn1gZu30D8643v1XiKCgwD8kveLVlmNgZNwxbuC7QRr4/m2OCTDJBN6TV50DUQVkxWw4
+         WogAretDDshWN1PzWgE6X/4CgLa7a9m/rAy17s1+IDG8B+wnsfNSjCH1HcLZGzjLmc4v
+         ab7R83h/RAILIdajwk3gYlO+RqxjNDP5GWl1L7d7bpgeTR6Rl3kOpcATHDqkbBvhAF9N
+         f81zszQGsdBU1sFxrS2bAEnHCtlZzl1mvoJ+tJkl4EqLGT5QFzArwXRZh4UEsYekL00S
+         YjWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718122080; x=1718726880;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Usr3iQr9P44DbTK5za8+K7ebuiDZp91g0I8Srd02vj4=;
+        b=KluznQUuS5KzcBpRl7ZpdFDZPnWZQceGNG1K9j0uuzzhRovDgPpB/MTvFdRJN0WYgB
+         FkVSMfq1jQJn9GVS0h/SQ4kbBW2pUoRbseG2Slk4AnYzGuwUAK1xUBphB+K/BKsPFM3O
+         /hqEJeSEucG4Q9O7bdrZM4nKpUB+dOBQ8zBCvCAC35k9gl6zE/IIq31xhxXFRM+R7yPb
+         Kjfld+prn17maMQuf+9ZTtHt6WtYG4SN6B4SXI8UEkl4mi974D2aJeTsGNrPulRuKQuw
+         zIRWT1eTLTjJrrdpdvnpfW0qB1m4NU3ZJ94DB+5rkHRgMFXhjetpsSjtmzZH1YPVv0XK
+         DsHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOakchcVPwob9Hn92vtfcBv93NXIBg/hv5aRgecZGrPD6Nmis/dg0jxxiKBbYmiehRuf8MQXjO+IV0AvMHIGuz3EK2+oDlu69y4hKs
+X-Gm-Message-State: AOJu0Yyhrecci/eYNcPc89bGu/QkC6eaDgewVVBbtmpk82G6YCsCy15z
+	DqfphI1T3781p/jA8Y/Ig3KjGJJEe5Ibd7nKyr4/j4on1lzMgih83C8h2GZxZeQCX/OQJZoocIr
+	oxhY=
+X-Google-Smtp-Source: AGHT+IEowbwwQtXxbAT06y7Gg7FQMQ53Bw7eHa7p2QqiWVbkjUjQbUvUYPw++jPdElsPq62dNgJEBA==
+X-Received: by 2002:a50:d5da:0:b0:57c:6d9a:914e with SMTP id 4fb4d7f45d1cf-57c6d9a9263mr9092206a12.30.1718122080489;
+        Tue, 11 Jun 2024 09:08:00 -0700 (PDT)
+Received: from puffmais.c.googlers.com (94.189.141.34.bc.googleusercontent.com. [34.141.189.94])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c8492fb96sm3503740a12.11.2024.06.11.09.08.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 09:08:00 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Tue, 11 Jun 2024 17:07:59 +0100
+Subject: [PATCH] arm64: dts: exynos: gs101: reorder properties as per
+ guidelines
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240611123351.3813190-2-quic_sudeepgo@quicinc.com>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mawu2I00unrM5ytr6-6jesIUueA_YenB
-X-Proofpoint-ORIG-GUID: mawu2I00unrM5ytr6-6jesIUueA_YenB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 clxscore=1011 adultscore=0 phishscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406110115
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240611-gs101-dts-cleanup-v1-1-877358cd6536@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAF52aGYC/x2MQQqAIBAAvxJ7TlDJpL4SHUS3WggTtyII/550G
+ ZjDzAuMmZBhbF7IeBPTEauotgG/ubiioFAdtNSdNFKJlVVlOFn4HV28kpDaLn2waui9gdqljAs
+ 9/3OaS/kABH6ev2MAAAA=
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Tue, Jun 11, 2024 at 06:03:50PM +0530, Sudeepgoud Patil wrote:
-> Add smp2p irq devname which fetches remote name from respective
-> smp2p dtsi node, which makes the wakeup source distinguishable
-> in irq wakeup prints.
-> 
-> Signed-off-by: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
-> ---
->  drivers/soc/qcom/smp2p.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-> index a21241cbeec7..a77fee048b38 100644
-> --- a/drivers/soc/qcom/smp2p.c
-> +++ b/drivers/soc/qcom/smp2p.c
-> @@ -122,6 +122,7 @@ struct smp2p_entry {
->   * @ssr_ack_enabled: SMP2P_FEATURE_SSR_ACK feature is supported and was enabled
->   * @ssr_ack: current cached state of the local ack bit
->   * @negotiation_done: whether negotiating finished
-> + * @irq_devname: poniter to the smp2p irq devname
->   * @local_pid:	processor id of the inbound edge
->   * @remote_pid:	processor id of the outbound edge
->   * @ipc_regmap:	regmap for the outbound ipc
-> @@ -146,6 +147,7 @@ struct qcom_smp2p {
->  	bool ssr_ack;
->  	bool negotiation_done;
->  
-> +	char *irq_devname;
->  	unsigned local_pid;
->  	unsigned remote_pid;
->  
-> @@ -614,10 +616,16 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
->  	/* Kick the outgoing edge after allocating entries */
->  	qcom_smp2p_kick(smp2p);
->  
-> +	smp2p->irq_devname = kasprintf(GFP_KERNEL, "%s", pdev->dev.of_node->name);
+* 'interrupts' & 'cpus' & 'clocks' are standard/common properties as
+  per the Devicetree Sources (DTS) Coding Style and therefore should be
+  sorted alphabetically within the standard/common section
+* vendor properties should be last
+* reg / ranges should be 2nd/3rd (after compatible)
+* status should be last
 
-That's a lot of extra instructions for copying a string, which doesn't
-need to be copied because of_node->name is const char and the argument
-to devm_request_threaded_irq() is const char.
+Do so.
 
-So, kstrdup_const() is what you're looking for.
+Note: I've left the cpus{} node untouched to keep the grouping of
+relatedd properties.
 
-You can then go devm_kstrdup_const() and avoid the kfree() (then
-kfree_const()) below.
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts |  2 +-
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       | 22 +++++++++++-----------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+index 5e8ffe065081..b10bde2ec716 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
++++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+@@ -131,9 +131,9 @@ &ufs_0_phy {
+ };
+ 
+ &usbdrd31 {
+-	status = "okay";
+ 	vdd10-supply = <&reg_placeholder>;
+ 	vdd33-supply = <&reg_placeholder>;
++	status = "okay";
+ };
+ 
+ &usbdrd31_dwc3 {
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+index a66e996666b8..eadb8822e6d4 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+@@ -213,9 +213,9 @@ pmu-2 {
+ 
+ 	pmu-3 {
+ 		compatible = "arm,dsu-pmu";
+-		interrupts = <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH 0>;
+ 		cpus = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>,
+ 		       <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
++		interrupts = <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH 0>;
+ 	};
+ 
+ 	psci {
+@@ -288,6 +288,8 @@ timer@10050000 {
+ 			compatible = "google,gs101-mct",
+ 				     "samsung,exynos4210-mct";
+ 			reg = <0x10050000 0x800>;
++			clocks = <&ext_24_5m>, <&cmu_misc CLK_GOUT_MISC_MCT_PCLK>;
++			clock-names = "fin_pll", "mct";
+ 			interrupts = <GIC_SPI 753 IRQ_TYPE_LEVEL_HIGH 0>,
+ 				     <GIC_SPI 754 IRQ_TYPE_LEVEL_HIGH 0>,
+ 				     <GIC_SPI 755 IRQ_TYPE_LEVEL_HIGH 0>,
+@@ -300,17 +302,15 @@ timer@10050000 {
+ 				     <GIC_SPI 762 IRQ_TYPE_LEVEL_HIGH 0>,
+ 				     <GIC_SPI 763 IRQ_TYPE_LEVEL_HIGH 0>,
+ 				     <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH 0>;
+-			clocks = <&ext_24_5m>, <&cmu_misc CLK_GOUT_MISC_MCT_PCLK>;
+-			clock-names = "fin_pll", "mct";
+ 		};
+ 
+ 		watchdog_cl0: watchdog@10060000 {
+ 			compatible = "google,gs101-wdt";
+ 			reg = <0x10060000 0x100>;
+-			interrupts = <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH 0>;
+ 			clocks = <&cmu_misc CLK_GOUT_MISC_WDT_CLUSTER0_PCLK>,
+ 				 <&ext_24_5m>;
+ 			clock-names = "watchdog", "watchdog_src";
++			interrupts = <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH 0>;
+ 			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			samsung,cluster-index = <0>;
+ 			status = "disabled";
+@@ -319,10 +319,10 @@ watchdog_cl0: watchdog@10060000 {
+ 		watchdog_cl1: watchdog@10070000 {
+ 			compatible = "google,gs101-wdt";
+ 			reg = <0x10070000 0x100>;
+-			interrupts = <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH 0>;
+ 			clocks = <&cmu_misc CLK_GOUT_MISC_WDT_CLUSTER1_PCLK>,
+ 				 <&ext_24_5m>;
+ 			clock-names = "watchdog", "watchdog_src";
++			interrupts = <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH 0>;
+ 			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			samsung,cluster-index = <1>;
+ 			status = "disabled";
+@@ -776,12 +776,12 @@ hsi2c_8: i2c@10970000 {
+ 				compatible = "google,gs101-hsi2c",
+ 					     "samsung,exynosautov9-hsi2c";
+ 				reg = <0x10970000 0xc0>;
+-				interrupts = <GIC_SPI 642 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_7>,
+ 					 <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_7>;
+ 				clock-names = "hsi2c", "hsi2c_pclk";
++				interrupts = <GIC_SPI 642 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				pinctrl-0 = <&hsi2c8_bus>;
+ 				pinctrl-names = "default";
+ 				status = "disabled";
+@@ -831,10 +831,10 @@ usi_uart: usi@10a000c0 {
+ 			serial_0: serial@10a00000 {
+ 				compatible = "google,gs101-uart";
+ 				reg = <0x10a00000 0xc0>;
+-				interrupts = <GIC_SPI 634 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_0>,
+ 					 <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_0>;
+ 				clock-names = "uart", "clk_uart_baud0";
++				interrupts = <GIC_SPI 634 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				pinctrl-0 = <&uart0_bus>;
+ 				pinctrl-names = "default";
+ 				samsung,uart-fifosize = <256>;
+@@ -1157,12 +1157,12 @@ hsi2c_12: i2c@10d50000 {
+ 				compatible = "google,gs101-hsi2c",
+ 					     "samsung,exynosautov9-hsi2c";
+ 				reg = <0x10d50000 0xc0>;
+-				interrupts = <GIC_SPI 655 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_5>,
+ 					 <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_5>;
+ 				clock-names = "hsi2c", "hsi2c_pclk";
++				interrupts = <GIC_SPI 655 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				pinctrl-0 = <&hsi2c12_bus>;
+ 				pinctrl-names = "default";
+ 				status = "disabled";
+@@ -1277,13 +1277,14 @@ usbdrd31_phy: phy@11100000 {
+ 				 <&cmu_hsi0 CLK_GOUT_HSI0_UASC_HSI0_CTRL_PCLK>,
+ 				 <&cmu_hsi0 CLK_GOUT_HSI0_USB31DRD_I_USBDPPHY_SCL_APB_PCLK>;
+ 			clock-names = "phy", "ref", "ctrl_aclk", "ctrl_pclk", "scl_pclk";
+-			samsung,pmu-syscon = <&pmu_system_controller>;
+ 			#phy-cells = <1>;
++			samsung,pmu-syscon = <&pmu_system_controller>;
+ 			status = "disabled";
+ 		};
+ 
+ 		usbdrd31: usb@11110000 {
+ 			compatible = "google,gs101-dwusb3";
++			ranges = <0x0 0x11110000 0x10000>;
+ 			clocks = <&cmu_hsi0 CLK_GOUT_HSI0_USB31DRD_BUS_CLK_EARLY>,
+ 				<&cmu_hsi0 CLK_GOUT_HSI0_USB31DRD_I_USB31DRD_SUSPEND_CLK_26>,
+ 				<&cmu_hsi0 CLK_GOUT_HSI0_UASC_HSI0_LINK_ACLK>,
+@@ -1291,14 +1292,13 @@ usbdrd31: usb@11110000 {
+ 			clock-names = "bus_early", "susp_clk", "link_aclk", "link_pclk";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+-			ranges = <0x0 0x11110000 0x10000>;
+ 			status = "disabled";
+ 
+ 			usbdrd31_dwc3: usb@0 {
+ 				compatible = "snps,dwc3";
++				reg = <0x0 0x10000>;
+ 				clocks = <&cmu_hsi0 CLK_GOUT_HSI0_USB31DRD_I_USB31DRD_REF_CLK_40>;
+ 				clock-names = "ref";
+-				reg = <0x0 0x10000>;
+ 				interrupts = <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				phys = <&usbdrd31_phy 0>, <&usbdrd31_phy 1>;
+ 				phy-names = "usb2-phy", "usb3-phy";
 
-That said, looking at /proc/interrupts, I think it would make sense to
-make this devm_kasprintf(..., "smp2p-%s", name);
+---
+base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+change-id: 20240501-gs101-dts-cleanup-027f6d7196c5
 
-Regards,
-Bjorn
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
-> +	if (!smp2p->irq_devname) {
-> +		ret = -ENOMEM;
-> +		goto unwind_interfaces;
-> +	}
-> +
->  	ret = devm_request_threaded_irq(&pdev->dev, irq,
->  					NULL, qcom_smp2p_intr,
->  					IRQF_ONESHOT,
-> -					"smp2p", (void *)smp2p);
-> +					smp2p->irq_devname, (void *)smp2p);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to request interrupt\n");
->  		goto unwind_interfaces;
-> @@ -650,6 +658,8 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
->  	list_for_each_entry(entry, &smp2p->outbound, node)
->  		qcom_smem_state_unregister(entry->state);
->  
-> +	kfree(smp2p->irq_devname);
-> +
->  	smp2p->out->valid_entries = 0;
->  
->  release_mbox:
-> @@ -677,6 +687,8 @@ static void qcom_smp2p_remove(struct platform_device *pdev)
->  
->  	mbox_free_channel(smp2p->mbox_chan);
->  
-> +	kfree(smp2p->irq_devname);
-> +
->  	smp2p->out->valid_entries = 0;
->  }
->  
-> -- 
-> 
 
