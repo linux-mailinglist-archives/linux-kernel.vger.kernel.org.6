@@ -1,218 +1,125 @@
-Return-Path: <linux-kernel+bounces-210457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740FF9043E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:44:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E72B1904371
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010691F220D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F27F41C23AD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD2F73473;
-	Tue, 11 Jun 2024 18:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC2674413;
+	Tue, 11 Jun 2024 18:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="qeF2Gg3q"
-Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4UMuK0h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3597738FA1;
-	Tue, 11 Jun 2024 18:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E25249E5;
+	Tue, 11 Jun 2024 18:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718131456; cv=none; b=I0ILCpgmaNEqJQo9c8iIN3TCsdRtkpGFuiZ8bnWLhgIVFPUd0k0bmXM8hdgkE1mnpiTtlot24VPKck30nbo3EZnTqWsaNRugK//u8ioUHoNDjHVCYp6cnHBJPSDw8jDBkZmTesPh0/H3L80yL7LhUTCG9JtLK3g5odngtgYF6h4=
+	t=1718130323; cv=none; b=fN+W8ROkfNSOVR+9mcONSfE8NrLi2kztVxet3qrMwEL+0sVnVaD1NLWStH756/KVd+bj3kGxVcEWXL8LLA+r3YC2kQVtoHAE6iI6KdXcY62FcgiqxEQbZEaBbcsxXvdGwu/arCSWEBOoHpcJ5/7lz3pzredRKolHPo8fdvgfu44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718131456; c=relaxed/simple;
-	bh=g1Q7qhG14yUPW9rk+97eEEMsOIkCtIcGn38GoRYuZSU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qa569DxaucX2GkIRSX9O+pfUSQhs7tS89ZfI5vJcqoMu9jcsDqXERiOO/O6NFCgIKw/XJvp5d5cagg8w5TttUSmDSg7yt6mzgIs7a7v9xr946T+bHasF2d5kg8yhvJp0rHdNxbghXb281ojc3NXJHOQeZW5zLWFUH588B+jIWJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=qeF2Gg3q; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8002:4640:7285:c2ff:fefb:fd4] ([IPv6:2601:646:8002:4640:7285:c2ff:fefb:fd4])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45BIMaUu3409249
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 11 Jun 2024 11:22:37 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45BIMaUu3409249
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024051501; t=1718130158;
-	bh=3mnT2Bwkk0vQJgnckDkHQNv+VtpPWp5qOEVzxmzIxI4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qeF2Gg3qVflPKKclkjRTOBCOM/fqAUAO37scpIV5HUO7ia+egHSHYeaqjigZtI1Ce
-	 On1u308bBkJB3xoX3lKeU4nz9j0E7Mel0Frwxpbe/x28yKYDsAH5oWeA2bIxQwDgAN
-	 zhVPged9gzWdCPLznRUmnE45KmYRRhgNp6gJSl1Dde1k3qaZOT68jkQVOqhTDZmLaU
-	 uAQywa2fnm+Cp07NacwmXf/d1VihLnGcesvfZK8gqNHzcBCk+kBECEYtZ2an4lKMZA
-	 r19zG8VyHgjCaVUz6CK301py09Ujezshi0i1hUnzOpPoEX32aJKaXGiFmToyCLrD4Z
-	 DZ2eTm8vf068Q==
-Message-ID: <c380a87d-a5b2-4782-8bb0-2a10ed4fb9ad@zytor.com>
-Date: Tue, 11 Jun 2024 11:22:31 -0700
+	s=arc-20240116; t=1718130323; c=relaxed/simple;
+	bh=c9F2EtIWNuw1rAMYXXpe2/dzukpWKAKKc6UMnlXo1yA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OlZxeh92o8KIC90bbztK5uG+jvuyti+fKI/5wOOt6Fffxd0FXhER344TgY6DJ4g9EnKAzU8eE6XVCL54iK02ZLdnsc4mreYLM5UP7j3cU24u2/w6p6bjcnELFh0PKj5US7ZlLabSdmBQ/OF13PJKRR/BMxU3YCto6Y2VLZoKHoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4UMuK0h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6217C2BD10;
+	Tue, 11 Jun 2024 18:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718130323;
+	bh=c9F2EtIWNuw1rAMYXXpe2/dzukpWKAKKc6UMnlXo1yA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=g4UMuK0hjsun2CL+QsWHtAlbLYn68pS9p5E298UbQ0hxwRMwltMpULyidlPm7S67v
+	 bgmZ6Di90NiV/dX+GwWULk2+jMhU63czbp/xP+j8r4LwnHxsFXdZS+gtIn2rpELpS4
+	 koGdJXidu7G9MyFYO7uemzwX2L7UKLBBs5tnskM39C0QpxjLnnvlsEAqLx7NLqxzjy
+	 y4e7iGFjNSFgSufJk0SPatp6EjGeRr7zh9VBKA1BQLBK5WKWXo1fcCGuVR620nXMmq
+	 E2WlbUEMuwdlv3RIpziVa5PR1GVIOnorNTO1IWcyZFZiNgPUrudPNrnDIbqzpT8Wqu
+	 KWxIXqDn4KPkg==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: [PATCH] kbuild: move init/build-version to scripts/
+Date: Wed, 12 Jun 2024 03:24:47 +0900
+Message-ID: <20240611182502.3600062-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-References: <20240608193504.429644-2-torvalds@linux-foundation.org>
- <20240610104352.GT8774@noisy.programming.kicks-ass.net>
- <20240610120201.GAZmbrOYmcA21kD8NB@fat_crate.local>
- <CAHk-=wgb98nSCvJ-gL42mt+jt6Eyp-0QSMJLovmAoJOkQ_G3gQ@mail.gmail.com>
- <71FE7A14-62F6-45D3-9BC4-BE09E06F7863@zytor.com>
- <CAHk-=wjTzFYo2+eQJpb56Df8sNDW7JEV=_6Di2v-M5x2kv06_g@mail.gmail.com>
- <CAHk-=wjdsN=dH41MO+gASWZkexCgrwK6CGT=NvpA3xsVXEhxBw@mail.gmail.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <CAHk-=wjdsN=dH41MO+gASWZkexCgrwK6CGT=NvpA3xsVXEhxBw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/10/24 18:24, Linus Torvalds wrote:
-> On Mon, 10 Jun 2024 at 18:09, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> Doing it in general is actually very very painful. Feel free to try -
->> but I can almost guarantee that you will throw out the "Keep It Simple
->> Stupid" approach and your patch will be twice the size if you do some
->> "rewrite the whole instruction" stuff.
->>
->> I really think there's a fundamental advantage to keeping things simple.
-> 
-> I guess the KISS approach would be to have a debug mode that just adds
-> an 'int3' instruction *after* the constant. And then the constant
-> rewriting rewrites the constant and just changes the 'int3' into the
-> standard single-byte 'nop' instruction.
-> 
-> That wouldn't be complicated, and the cost would be minimal. But I
-> don't see it being worth it, at least not for the current use where
-> the unrewritten constant will just cause an oops on use.
-> 
+At first, I thought this script would be used only in init/Makefile.
 
-A general enough way to do it would be to put an int $3 and replace it 
-with a ds: dummy prefix.
+However, commit 5db8face97f8 ("kbuild: Restore .version auto-increment
+behaviour for Debian packages") and commit 1789fc912541 ("kbuild:
+rpm-pkg: invoke the kernel build from rpmbuild for binrpm-pkg")
+revealed that it was actually needed for scripts/package/mk* as well.
 
-The issue there is "current use". I'm really, really worried about 
-someone in the future putting this where it won't get properly patched 
-and then all hell will be breaking loose.
+After all, scripts/ is a better place for it.
 
-Perhaps a better idea would be to provide the initial value as part of 
-the declaration, so that the value is never "uninitialized" (much like a 
-static variable can be initialized at compile time)?
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-In other words:
+ init/Makefile                   | 2 +-
+ {init => scripts}/build-version | 0
+ scripts/package/mkdebian        | 2 +-
+ scripts/package/mkspec          | 2 +-
+ 4 files changed, 3 insertions(+), 3 deletions(-)
+ rename {init => scripts}/build-version (100%)
 
-runtime_const_ptr(sym,init)
+diff --git a/init/Makefile b/init/Makefile
+index ab71cedc5fd6..10b652d33e87 100644
+--- a/init/Makefile
++++ b/init/Makefile
+@@ -52,7 +52,7 @@ CFLAGS_version.o := -include $(obj)/utsversion-tmp.h
+ # Build version-timestamp.c with final UTS_VERSION
+ #
+ 
+-include/generated/utsversion.h: build-version-auto = $(shell $(src)/build-version)
++include/generated/utsversion.h: build-version-auto = $(shell $(srctree)/scripts/build-version)
+ include/generated/utsversion.h: build-timestamp-auto = $(shell LC_ALL=C date)
+ include/generated/utsversion.h: FORCE
+ 	$(call filechk,uts_version)
+diff --git a/init/build-version b/scripts/build-version
+similarity index 100%
+rename from init/build-version
+rename to scripts/build-version
+diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+index 070149c985fe..b9a5b789c655 100755
+--- a/scripts/package/mkdebian
++++ b/scripts/package/mkdebian
+@@ -150,7 +150,7 @@ version=$KERNELRELEASE
+ if [ -n "$KDEB_PKGVERSION" ]; then
+ 	packageversion=$KDEB_PKGVERSION
+ else
+-	packageversion=$(${srctree}/scripts/setlocalversion --no-local ${srctree})-$($srctree/init/build-version)
++	packageversion=$(${srctree}/scripts/setlocalversion --no-local ${srctree})-$($srctree/scripts/build-version)
+ fi
+ sourcename=${KDEB_SOURCENAME:-linux-upstream}
+ 
+diff --git a/scripts/package/mkspec b/scripts/package/mkspec
+index ce201bfa8377..cffc2567bef2 100755
+--- a/scripts/package/mkspec
++++ b/scripts/package/mkspec
+@@ -24,7 +24,7 @@ fi
+ cat<<EOF
+ %define ARCH ${ARCH}
+ %define KERNELRELEASE ${KERNELRELEASE}
+-%define pkg_release $("${srctree}/init/build-version")
++%define pkg_release $("${srctree}/scripts/build-version")
+ EOF
+ 
+ cat "${srctree}/scripts/package/kernel.spec"
+-- 
+2.43.0
 
-Unfortunately gas doesn't seem to properly implement the {nooptimize} 
-prefix that is documented. This does require some gentle assembly hacking:
-
-- Loading a pointer/long requires using the "movabs" mnemonic on x86-64. 
-Combining that with
-
-  (but not on x86-32 as there are no compacted forms of mov immediate; 
-on x86-32 it is also legit to allow =rm rather than =r, but for an 8-bit 
-immediate "=qm" has to be used.)
-
-A size/type-generic version (one nice thing here is that init also ends 
-up specifying the type):
-
-#define _RUNTIME_CONST(where, sym, size) 				\
-	"\n\t"							\
-	".pushsection \"runtime_const_" #sym "\",\"a\"\n\t"	\
-	".long (" #where ") - (" #size ") - .\n\t"		\
-	".popsection"
-
-extern void __noreturn __runtime_const_bad_size(void);
-
-#define runtime_const(_sym, _init) ({ 				\
-	typeof(_init) __ret; 					\
-	const size_t __sz = sizeof(__ret); 			\
-	switch (__sz) { 					\
-	case 1:							\
-		asm_inline("mov %[init],%[ret]\n1:"		\
-		    _RUNTIME_CONST(1b, _sym, 1)			\
-		    : [ret] "=qm" (__ret)			\
-		    : [init] "i" (_init));			\
-		break;						\
-	case 8:							\
-		asm_inline("movabs %[init],%[ret]\n1:"		\
-		    _RUNTIME_CONST(1b, _sym, 8)			\
-		    : [ret] "=r" (__ret)			\
-		    : [init] "i" (_init));			\
-		break;						\
-	default:						\
-		asm_inline("mov %[init],%[ret]\n1:"		\
-		    _RUNTIME_CONST(1b, _sym, %c[sz])		\
-		    : [ret] "=rm" (__ret)			\
-		    : [init] "i" (_init), [sz] "n" (__sz)));	\
-		break;						\
-	}							\
-	__ret; })
-
-
-- For a shift count, it is unfortunately necessary to explicitly stitch 
-together the instruction using .insn to avoid truncating the case where 
-the operand is 1.
-
-Size- and operand-generic version:
-
-#define _runtime_const_shift(_val, _sym, _init, _op2) ({ 	\
-	typeof(_val) __ret = (_val); 				\
-	switch (sizeof(__ret)) {				\
-	case 1:							\
-		asm_inline(".insn 0xc0/%c[op2],%[ret],%[init]{:u8}\n1:" \
-			_RUNTIME_CONST(1b, _sym, 1)		\
-			: [ret] "+qm" (__ret)			\
-			: [init] "i" ((u8)(_init)),		\
-		 	  [op2] "n" (_op2));			\
-		break; 						\
-	default:						\
-		asm_inline(".insn 0xc1/%c[op2],%[ret],%[init]{:u8}\n1:" \
-			_RUNTIME_CONST(1b, _sym, 1)		\
-			: [ret] "+rm" (__ret)			\
-			: [init] "i" ((u8)(_init)),		\
-		  	  [op2] "n" (_op2));			\
-		break;						\
-	}							\
-	__ret; })						\
-
-#define runtime_const_rol(v,s,i) _runtime_const_shift(v,s,i,0)
-#define runtime_const_ror(v,s,i) _runtime_const_shift(v,s,i,1)
-#define runtime_const_shl(v,s,i) _runtime_const_shift(v,s,i,4)
-#define runtime_const_shr(v,s,i) _runtime_const_shift(v,s,i,5)
-#define runtime_const_sar(v,s,i) _runtime_const_shift(v,s,i,7)
-
-I am not sure if I'm missing something, but there really isn't a reason 
-to use different section names for the shift counts specifically, is there?
-
-NOTE: if we are *not* making these type-generic there is no reason 
-whatsoever to not make these inlines...
-
-	***
-
-
-Also: one thing I would *really* like to see this being used for is 
-cr4_pinned_bits, in which case one can, indeed, safely use a zero value 
-at init time as long as cr4_pinned_mask is patched at the same time, 
-which very much goes along with the above.
-
-Again, this is a slightly less minimal versus what I had which was a 
-maximal solution.
-
-My approach would pretty much have targeted doing this for nearly all 
-instances, which I eventually felt called for compiler support (or C++!) 
-as adding a bunch of static_imm_*() macros all over the kernel really 
-felt unpleasant.
-
-	-hpa
 
