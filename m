@@ -1,176 +1,211 @@
-Return-Path: <linux-kernel+bounces-209658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2386903902
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:36:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDAD3903904
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23DB51F2328C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:36:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1B121C23B9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22CD178397;
-	Tue, 11 Jun 2024 10:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681BE178CF1;
+	Tue, 11 Jun 2024 10:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aRoqCa2X"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gqnSTrD7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D4817BB20;
-	Tue, 11 Jun 2024 10:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9520217625F;
+	Tue, 11 Jun 2024 10:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718102121; cv=none; b=B+8RbqaYUdOcYnj9Jt2dDOck/rAf7gQKxfHwegWFghvT+0L1FHKmXHIwBl4NtrLJSQcRo/Ida16yPxgCeokO+e/WbPOeDcFLgQwt6Wb651TC7mNW/uZAs0Cc9d0OdIm2uLDFnZegr7xqph3kO2XrF/rNtGkmRX0y1SCN/NF0NhQ=
+	t=1718102194; cv=none; b=qL29jm8PYE+DaV6+N2svo3DX5MngJeQy3+EDYX5vJA5MAEpPMyuab5P32FE4zT5a2u/vxJZZmqgdTI63/7Y4jio+6B9tdu9AsteBNxRbobevUwyuNk1ealGmVtrad+u6hhfjJCqrAIKC2HEUwaByjyrafPk1KJumo1it7QT8mGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718102121; c=relaxed/simple;
-	bh=ZKtWvGn6P3J07NEoQMD5qACgrUQ0aPIpJ73FF4VbhNg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fhS71CgFdz5KyDE2QNJ0gIziOqY17wOaLz0kFRtyWP7kEBr4ekEd5fFqclSR9JB22vBUevWlE9hLoHPd7jYp76pj08s1YVRL0FW7dcI5bpvoWss57spPyRBJVbz6PxaKX26Wrf3BGXjVn126afwUrvJ4Y0pkStMZ1co4hAYv0aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aRoqCa2X; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B5B62Q017540;
-	Tue, 11 Jun 2024 10:35:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2yweBcEbii/2mR7LEx0c5DpAxwBxnX6Vq4Zf+uL8uuU=; b=aRoqCa2XHOPYJ5pY
-	IM9VMnTkjMbDiT4NLNSFAfJtBuJwA9NRM5SmP7mftUXLqbPn4lary7BAR1p7lFf4
-	YXRv87koE3ZTMsPtIZADy+GpMhlVWqOUt2evNTTJNSaX76qdZLpKOkRl7u3dbmQt
-	NNNbJ4KtMBs/30Kv0rhBRDR7LJmQK5Rhh7KL1cBSV3PcswmNJOzRJ8EUnqhIB/gz
-	sPJ+BntPW4sr+zgjNTZA2OiUUV72AKsBy7i8uT18QzYozAL/zOr71BiR6ypBggCE
-	SthbW/pvYT7EOqZYZnI3x65XnZQOUHcX7OxfFDGa7pGJ5TV5RH/r+U9rIAzh/ydz
-	SStOvA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymg2ep3fw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 10:35:15 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BAZEbY021450
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 10:35:14 GMT
-Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 11 Jun 2024 03:35:11 -0700
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        stable
-	<stable@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH v5 7/7] misc: fastrpc: Restrict untrusted app to attach to privileged PD
-Date: Tue, 11 Jun 2024 16:04:40 +0530
-Message-ID: <20240611103442.27198-8-quic_ekangupt@quicinc.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240611103442.27198-1-quic_ekangupt@quicinc.com>
-References: <20240611103442.27198-1-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1718102194; c=relaxed/simple;
+	bh=GRiJHJeBxHjjSrVuUZQEjtAnkrsyVP3YUixQ0bIDogY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=egSkc74t/cHzKV2foaGBE7sdeU73j6WaYKm6JZXcwRBnOqR+red11vkVtaLsYutbYTRvoZrGjL2ZpPE09NKZBw+QciWwz/ZUWYUvOdQ6XEiNlH92Rtyz85LgGoX+kuvs/xvkDDZZCE7RGXI+6OJKw8s7jeMR1DybqE1eEPK+Jws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gqnSTrD7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 985F7C2BD10;
+	Tue, 11 Jun 2024 10:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718102194;
+	bh=GRiJHJeBxHjjSrVuUZQEjtAnkrsyVP3YUixQ0bIDogY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gqnSTrD70/+vXgJD/5znDSFJoVnc7K8K6uckcQ3lWeVRuhL/70lTfzEN+6ZMRR5lU
+	 QpQDparoIxqKCPK+ccn2ON/mf/aml+H+R07RM2rKDM74OfVrDpDvb32r1jk0nCddBM
+	 bEfy3OIM2u+OlkNS0DYGtBXRG4SSa3ywLYgv06ekYWDSRayaANzBun4myW4uzyDWYw
+	 4Mx+j0Y5GL1WQv//PFcyjnu7Mzd7jbs82fy0aK74PKm+R1B6eB+DKMasNzMylER/jO
+	 KnUJJ0KBuxv00TT2P5DjcpJSoOIepMikp0zRLYUGJ4KdtBh5MMNf+FY8B/l+0rbXFa
+	 E1M3eM9xJvUEw==
+Date: Tue, 11 Jun 2024 11:36:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Chancel Liu <chancel.liu@nxp.com>, Arnd Bergmann <arnd@arndb.de>,
+	Michael Ellerman <mpe@ellerman.id.au>, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [Patch v2 1/2] ASoC: fsl: Add i2s and pcm drivers for LPC32xx
+ CPUs
+Message-ID: <Zmgor8accyAiUkUO@finisterre.sirena.org.uk>
+References: <[PATCH]ASoC:fsl:Addi2sandpcmdriversforLPC32xxCPUs>
+ <20240611094810.27475-1-piotr.wojtaszczyk@timesys.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _W0etSNzpMbJuNeMtHCaOCXPG8ci3EzM
-X-Proofpoint-GUID: _W0etSNzpMbJuNeMtHCaOCXPG8ci3EzM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_06,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=785
- phishscore=0 bulkscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- clxscore=1015 adultscore=0 lowpriorityscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406110080
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WW949k97zQLQvi69"
+Content-Disposition: inline
+In-Reply-To: <20240611094810.27475-1-piotr.wojtaszczyk@timesys.com>
+X-Cookie: Your love life will be... interesting.
 
-Untrusted application with access to only non-secure fastrpc device
-node can attach to root_pd or static PDs if it can make the respective
-init request. This can cause problems as the untrusted application
-can send bad requests to root_pd or static PDs. Add changes to reject
-attach to privileged PDs if the request is being made using non-secure
-fastrpc device node.
 
-Fixes: 0871561055e6 ("misc: fastrpc: Add support for audiopd")
-Cc: stable <stable@kernel.org>
-Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/misc/fastrpc.c      | 22 +++++++++++++++++++---
- include/uapi/misc/fastrpc.h |  3 +++
- 2 files changed, 22 insertions(+), 3 deletions(-)
+--WW949k97zQLQvi69
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 24dc1cba40e9..9b4dfe152303 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -2087,6 +2087,16 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
- 	return err;
- }
- 
-+static int is_attach_rejected(struct fastrpc_user *fl)
-+{
-+	/* Check if the device node is non-secure */
-+	if (!fl->is_secure_dev) {
-+		dev_dbg(&fl->cctx->rpdev->dev, "untrusted app trying to attach to privileged DSP PD\n");
-+		return -EACCES;
-+	}
-+	return 0;
-+}
-+
- static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
- 				 unsigned long arg)
- {
-@@ -2099,13 +2109,19 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
- 		err = fastrpc_invoke(fl, argp);
- 		break;
- 	case FASTRPC_IOCTL_INIT_ATTACH:
--		err = fastrpc_init_attach(fl, ROOT_PD);
-+		err = is_attach_rejected(fl);
-+		if (!err)
-+			err = fastrpc_init_attach(fl, ROOT_PD);
- 		break;
- 	case FASTRPC_IOCTL_INIT_ATTACH_SNS:
--		err = fastrpc_init_attach(fl, SENSORS_PD);
-+		err = is_attach_rejected(fl);
-+		if (!err)
-+			err = fastrpc_init_attach(fl, SENSORS_PD);
- 		break;
- 	case FASTRPC_IOCTL_INIT_CREATE_STATIC:
--		err = fastrpc_init_create_static_process(fl, argp);
-+		err = is_attach_rejected(fl);
-+		if (!err)
-+			err = fastrpc_init_create_static_process(fl, argp);
- 		break;
- 	case FASTRPC_IOCTL_INIT_CREATE:
- 		err = fastrpc_init_create_process(fl, argp);
-diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
-index f33d914d8f46..91583690bddc 100644
---- a/include/uapi/misc/fastrpc.h
-+++ b/include/uapi/misc/fastrpc.h
-@@ -8,11 +8,14 @@
- #define FASTRPC_IOCTL_ALLOC_DMA_BUFF	_IOWR('R', 1, struct fastrpc_alloc_dma_buf)
- #define FASTRPC_IOCTL_FREE_DMA_BUFF	_IOWR('R', 2, __u32)
- #define FASTRPC_IOCTL_INVOKE		_IOWR('R', 3, struct fastrpc_invoke)
-+/* This ioctl is only supported with secure device nodes */
- #define FASTRPC_IOCTL_INIT_ATTACH	_IO('R', 4)
- #define FASTRPC_IOCTL_INIT_CREATE	_IOWR('R', 5, struct fastrpc_init_create)
- #define FASTRPC_IOCTL_MMAP		_IOWR('R', 6, struct fastrpc_req_mmap)
- #define FASTRPC_IOCTL_MUNMAP		_IOWR('R', 7, struct fastrpc_req_munmap)
-+/* This ioctl is only supported with secure device nodes */
- #define FASTRPC_IOCTL_INIT_ATTACH_SNS	_IO('R', 8)
-+/* This ioctl is only supported with secure device nodes */
- #define FASTRPC_IOCTL_INIT_CREATE_STATIC _IOWR('R', 9, struct fastrpc_init_create_static)
- #define FASTRPC_IOCTL_MEM_MAP		_IOWR('R', 10, struct fastrpc_mem_map)
- #define FASTRPC_IOCTL_MEM_UNMAP		_IOWR('R', 11, struct fastrpc_mem_unmap)
--- 
-2.43.0
+On Tue, Jun 11, 2024 at 11:47:51AM +0200, Piotr Wojtaszczyk wrote:
 
+>  arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi |   4 +
+>  arch/arm/mach-lpc32xx/phy3250.c        |  60 ++++
+
+These architecture changes are separate and should at least be separate
+commits, copied to the architecture maintainers.
+
+> +FREESCALE SOC LPC32XX SOUND DRIVERS
+> +M:	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+> +L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+> +L:	linuxppc-dev@lists.ozlabs.org
+> +S:	Orphan
+> +F:	sound/soc/fsl/lpc3xxx-*
+> +
+
+It seems a bit odd to add yourself as a maintainer while also marking
+the driver as orphan?
+
+> +config SND_SOC_FSL_LPC3XXX
+> +	tristate "SoC Audio for NXP LPC32XX CPUs"
+> +	depends on ARCH_LPC32XX && SND_SOC
+
+On a quick scan I can't see any architecture dependency for build,
+please add an || COMPILE_TEST for improved coverage.  As for all the
+other things enabled in this Kconfig file there is no need to explicitly
+depend on SND_SOC.
+
+> @@ -42,6 +43,7 @@ obj-$(CONFIG_SND_SOC_FSL_XCVR) +=3D snd-soc-fsl-xcvr.o
+>  obj-$(CONFIG_SND_SOC_FSL_AUD2HTX) +=3D snd-soc-fsl-aud2htx.o
+>  obj-$(CONFIG_SND_SOC_FSL_RPMSG) +=3D snd-soc-fsl-rpmsg.o
+>  obj-$(CONFIG_SND_SOC_POWERPC_QMC_AUDIO) +=3D snd-soc-fsl-qmc-audio.o
+> +obj-$(CONFIG_SND_SOC_FSL_LPC3XXX) +=3D snd-soc-fsl-lpc3xxx.o
+> =20
+Please try to keep these files sorted alphabetically (it's not 100% at
+the minute but no need to make it worse).
+
+> --- /dev/null
+> +++ b/sound/soc/fsl/lpc3xxx-i2s.c
+> @@ -0,0 +1,383 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Author: Kevin Wells <kevin.wells@nxp.com>
+> + *
+
+Please make the entire comment a C++ one so things look more
+intentional.
+
+> +static u32 absd32(u32 v1, u32 v2)
+> +{
+> +	if (v1 > v2)
+> +		return v1 - v2;
+> +	return v2 - v1;
+> +}
+
+Just use abs()?
+
+> +static int lpc3xxx_i2s_set_dai_fmt(struct snd_soc_dai *cpu_dai, unsigned=
+ int fmt)
+> +{
+> +	struct lpc3xxx_i2s_info *i2s_info_p =3D snd_soc_dai_get_drvdata(cpu_dai=
+);
+> +	struct device *dev =3D i2s_info_p->dev;
+> +
+> +	if ((fmt & SND_SOC_DAIFMT_FORMAT_MASK) !=3D SND_SOC_DAIFMT_I2S) {
+> +		dev_warn(dev, "unsupported bus format %d\n", fmt);
+> +		return -EINVAL;
+> +	}
+> +	return 0;
+> +}
+
+If we're validating for I2S we should probably validate for clock
+provider too.  Or just remove the function, it's not really needed?
+
+> +	i2s_info_p->clk =3D devm_clk_get(dev, "i2s_clk");
+> +	if (IS_ERR(i2s_info_p->clk))
+> +		return dev_err_probe(dev, PTR_ERR(i2s_info_p->clk), "Can't get clock\n=
+");
+> +
+> +	i2s_info_p->clkrate =3D clk_get_rate(i2s_info_p->clk);
+> +	if (i2s_info_p->clkrate =3D=3D 0)
+> +		return dev_err_probe(dev, -EINVAL, "Invalid returned clock rate\n");
+
+Nothing ever enables this clock.
+
+> +static int lpc32xx_i2s_remove(struct platform_device *pdev)
+> +{
+> +	return 0;
+> +}
+
+Remove empty functions, if they can legitimately be empty the framework
+will support them being absent.
+
+> +#define _SBF(f, v) ((v) << (f))
+
+FIELD_PREP()
+
+> +#define _BIT(n) _SBF(n, 1)
+
+BIT().
+
+> +/* I2S controller register offsets */
+> +#define I2S_DAO		0x00
+> +#define I2S_DAI		0x04
+> +#define I2S_TX_FIFO	0x08
+> +#define I2S_RX_FIFO	0x0C
+> +#define I2S_STAT	0x10
+> +#define I2S_DMA0	0x14
+> +#define I2S_DMA1	0x18
+> +#define I2S_IRQ		0x1C
+> +#define I2S_TX_RATE	0x20
+> +#define I2S_RX_RATE	0x24
+
+Add a prefix to all these I2S_ names in case of collisions.
+
+--WW949k97zQLQvi69
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZoKKsACgkQJNaLcl1U
+h9DNgQf/bVmcCufP8jvhRnYGwhJ74PYfe8uGNqVDcvOPBqyxwbAHEcBkY4os9h6R
+GoQMz21Qh+ZtEks0KjHFDl3Lnd51Kac5YBeyl5s/WRciIBOxe+jSqmW0GpRYZwZ+
+YEMXUIyS6zA8Tik8onJLOtFrl4wLHXafkWOOPulK5v8+mZXYqPypwKq87c43IkrI
+MviOLdW4TB0CVCKvk590+1YPY+ZBBAELM6eO/D9du/AyvN+BkUnZLO/VOwQ4enRQ
+r2xnb2uSXMbDtKZKr4PbNw+9NbNaw9axfSzHbwXCu1Z0y+eOEKS1Vu2613VY9Al0
+VKMHNg0tTYcWMk0XTzihz60mgPSf0A==
+=srbB
+-----END PGP SIGNATURE-----
+
+--WW949k97zQLQvi69--
 
