@@ -1,198 +1,518 @@
-Return-Path: <linux-kernel+bounces-209482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8BB90369C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:35:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD96D903693
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76F49B2A7C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:33:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3A01F22C0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EE6174EF0;
-	Tue, 11 Jun 2024 08:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2D0174EFC;
+	Tue, 11 Jun 2024 08:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="bY850SoV"
-Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="d9sCvDlq"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2041.outbound.protection.outlook.com [40.107.212.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170E4174EE4;
-	Tue, 11 Jun 2024 08:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718094793; cv=none; b=T+gmOwDVeQmGYpHMWA2PhIL7ftGWy7FworP0ZEVLk8MLfoM8Fx2rnRsvbUL+KN7ioGjVvhsqW3ub/+4f3wSfrxW3+5H6AOIrPOG3+KpulLxy8UiWEPY4piZBGZ87o8S6j4ZB9SY4KC2rHHeMnC8Z1wPr3IHqZ2qOngiRSoUm7u4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718094793; c=relaxed/simple;
-	bh=CtnVECJ3Sqv+zIcHzuKNfaum0O8bvOkhLfRsNVVkeVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XuOMX4f/idTgQ10dynkVmxDBfi5FIR6UtIzmni1SoUNYvAVGfk0iNX8rBVAjnGOSpNI9vp7L73+J6HrsTXvEcHFdQxD7XuiF3y5buD/d/jn6wVfQq5nhgaqYASd6+i43RcsZLdH5pQJDMaarJBppaOz2LQJyXZ12ThaDriCb5hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=bY850SoV; arc=none smtp.client-ip=161.97.139.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
-	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sGwwB-0007za-0M;
-	Tue, 11 Jun 2024 10:33:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=uxBtCY19yODZNGkHF7p72TwtLkbwXAYNX7XgY9uZj5E=; b=bY850SoVU4kt1ak7F0R7JsX9QO
-	DdB29QsoOvKrafPCzplJFZTJdsKy1JFENOjrDVwyoJYHEd8vNRSL/KBSdsnpHl/rydwRwOgBieTLC
-	DeSmCQ1iQsjOilOeG+bzK5Gqih3Qq3l2tICIOBxbBFceynZg6wUtJJiby5kxqIKwgk3OPDIqI1ZmU
-	AL0HPjcA/xmWYeSMTyTsT9IEAIgyxIvW5ElKBtEQ3yw3A+MW1jtv+BRqHgRfxttKYEzCko9nijKlJ
-	f/uBX51kv2UL7WRP5Brfxh3O3V2Fc9jsn6xZA3AEJYrfpkkMEw+d0tUpChXY63fD5L7AFmCFYfG83
-	/DOPLVxQ==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sGww6-0031HS-0Z;
-	Tue, 11 Jun 2024 10:32:59 +0200
-Date: Tue, 11 Jun 2024 10:32:56 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Adam Ford <aford173@gmail.com>
-Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, marcel@holtmann.org,
- johan@kernel.org, pmenzel@molgen.mpg.de, jirislaby@kernel.org,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-bluetooth@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
- tomi.valkeinen@ideasonboard.com, =?UTF-8?B?UMOpdGVy?= Ujfalusi
- <peter.ujfalusi@gmail.com>, robh@kernel.org, hns@goldelico.com
-Subject: Re: [PATCH v4 0/4] Bluetooth/gnss: GNSS support for TiWi chips
-Message-ID: <20240611103256.4e64dd16@aktux>
-In-Reply-To: <CAHCN7xLDjnW1gK8DF4codzFLEvC_hDgeACR8wtWF8nxCJ=+RBg@mail.gmail.com>
-References: <20240606183032.684481-1-andreas@kemnade.info>
-	<CABBYNZ+Fz2TLSNa28H3kjVKOSA7C-XOzdQJiHdJs3FKxnq01DA@mail.gmail.com>
-	<20240606221941.333a9704@aktux>
-	<CAHCN7xLhbiqTTOwPZ22KekALDn0KtH6vNQEJpSmSCTiMggX5Qg@mail.gmail.com>
-	<20240608212004.3707d8ea@aktux>
-	<CAHCN7xLDjnW1gK8DF4codzFLEvC_hDgeACR8wtWF8nxCJ=+RBg@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E24714290;
+	Tue, 11 Jun 2024 08:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718094821; cv=fail; b=VvU3gDr5onpf5PRnlGWFwUZv5YoAgQevUUvKSie09i1GA5lUizJaGNb1YxNE7ukIgVhFQJyNT3sVy03g1+muc24XdFUcwk/dooNf5l2mKYtm6rKKvTDm5zZsu4YN0nbJCzqgDaOnDj1H3v9vmv0Anmn1enVGbFsA80+Z60lv9J4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718094821; c=relaxed/simple;
+	bh=jOZfphJPX2XH9GnpOVPnTbrwU4icYKhrICMB+g4GOCI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TfVpjMAlZcWjex/t3I7WLXlaRWihUdAqptJ7cpacuAIzYf+uWRtQlQlt6uZZYM9B3FKaD40MKTMIWytSperkJSs87UEm0ew0Bc+iAwVEfhPlfnguAAjS0NnjPZDy783RvwRxYjWxFx4ok0MRYXHiyF2lbP8O9aaOz0wAdzP6Bxc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=d9sCvDlq; arc=fail smtp.client-ip=40.107.212.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oceV+KSTKejZ6YPGPdPdYfSmxYouEpPRQ+iDN/QX3R6U3qi05CwtZpOQL/I9rqp8c/xbdYv686CaUxLUL7QbNJ/fn5rL67VpffZt2v0d/Q/3YGim9RHiXlsFpV9CH5G2TMRexGAljzhGoDZTMcG8LLkujGT7dnfu8sVq/9aZkaZ0ZL8D7Fb364+r/OOKvlb5V4V3jKQdn6/WO8eDhOk43vBUL6to/xfMknVBP30qJutTXz1HM7wpG/GgedKINJhlJzo2aHBvK+bjDeHieM7vufBVKM/3VF60tJI238bCSx9waJRdTk7fXgzyh+PkgvEBTm0GsVhO+ggh5lzHwOajRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=V5QkSwO1XnZB+C2oneelictqudoEW9INVJwvERqre4I=;
+ b=gDuXKa+IafkeUT2xQW0iBXYZMSDCmP33BN/4mIGIw8nkXFWMGAUieB/ZngB/DrZkd3UdVjt2uqyZI+7XWtdS/yM5v2s5aMtmTa5r7J5GXsuvCqCvEMgRthJnaag4Q5el43MIJuYVJdRyvKJ9OgKMPtMyoojlRhYxWKZbpoPrS5cCrta+PbJiJRnkeQZJqCz4NREADCvx6sDQT/JRo/dElvxF3o6srJZb8CRTd3xCQzRSAttC1RO+uZqdaZZSDIySd/egCq5OV15WRpj3BuP8ct7qNAO7Ipg3jW9xWR84Oi8M6z06tL/CnquwQHue/LELCyd8BFY8Zon7BkBgsj2Rtg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=V5QkSwO1XnZB+C2oneelictqudoEW9INVJwvERqre4I=;
+ b=d9sCvDlqrpVaVcdWJ0iOhH32avgeRcfDM0kS5b+MyZhSYwVg/ug/MgV7Va0xueTYdceYUosjiOEZC5c405RUndt6gpzLdeMI0OK/oRzYDV3C5TK6HA31LZVD8lvXNN3Nyqs9n1sRQQkfb8KE4Ef1QDPKLy2spRPtXyIZPQm8HcA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
+ by SA3PR12MB7783.namprd12.prod.outlook.com (2603:10b6:806:314::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Tue, 11 Jun
+ 2024 08:33:36 +0000
+Received: from LV8PR12MB9207.namprd12.prod.outlook.com
+ ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
+ ([fe80::3a37:4bf4:a21:87d9%6]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
+ 08:33:36 +0000
+Message-ID: <a0397a78-1e75-4bb3-bdc7-d28791c448d4@amd.com>
+Date: Tue, 11 Jun 2024 14:03:20 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] perf/x86/rapl: Rename rapl_pmu variables
+To: "Zhang, Rui" <rui.zhang@intel.com>,
+ "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "Hunter, Adrian" <adrian.hunter@intel.com>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "irogers@google.com" <irogers@google.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "gustavoars@kernel.org" <gustavoars@kernel.org>,
+ "kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
+ "kees@kernel.org" <kees@kernel.org>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "peterz@infradead.org" <peterz@infradead.org>, "bp@alien8.de"
+ <bp@alien8.de>, "acme@kernel.org" <acme@kernel.org>,
+ "jolsa@kernel.org" <jolsa@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+ "namhyung@kernel.org" <namhyung@kernel.org>
+Cc: "ravi.bangoria@amd.com" <ravi.bangoria@amd.com>,
+ "kprateek.nayak@amd.com" <kprateek.nayak@amd.com>,
+ "gautham.shenoy@amd.com" <gautham.shenoy@amd.com>,
+ "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+ "sandipan.das@amd.com" <sandipan.das@amd.com>,
+ "ananth.narayan@amd.com" <ananth.narayan@amd.com>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+References: <20240610100751.4855-1-Dhananjay.Ugwekar@amd.com>
+ <20240610100751.4855-3-Dhananjay.Ugwekar@amd.com>
+ <050bc53625a3da9bceda56f5196d3840a31e8d8c.camel@intel.com>
+Content-Language: en-US
+From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+In-Reply-To: <050bc53625a3da9bceda56f5196d3840a31e8d8c.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA0PR01CA0120.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:11d::9) To LV8PR12MB9207.namprd12.prod.outlook.com
+ (2603:10b6:408:187::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|SA3PR12MB7783:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa3612d4-c5e9-46d9-511d-08dc89f12f56
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|7416005|366007|376005|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S1BCakZaSkorL21RUjB2eThpMlNBelRYd3VPcVZTN3VraFFWdVJ2MVlKVFBO?=
+ =?utf-8?B?ZE1BcVFxY1ZyOE16bU43d3ZrcEl3MnhmTHZkTXV3aCtMNGZsalVCT3JVMURF?=
+ =?utf-8?B?MWY5bG4rS0tkL1dya0ZpUDVrdFIrSktxellGNEJteVN0Y0tNODBuODNoRHpt?=
+ =?utf-8?B?WTBlbk1EdUpEWTNuajRkYmJWMmxwamh2SE9BakF0enI3cFllb29ZZnQzZno1?=
+ =?utf-8?B?M2tWc3NDeXVnY2hJNkNxNjlkaklETVR4TE43QmNpQ1Exd3VSWWNXYUxMTGlH?=
+ =?utf-8?B?T3ZaR0RrWHpxRUN4L01oQnkxQ1hJbmFTQU81dFNkQXBYYk1JZFVVTlBEaDBq?=
+ =?utf-8?B?N2M5WHR1Z3lJYnZjWS9XUTBlR2NDZng4WEY5NUk4NXNIUXROR1d4TFA5UGdB?=
+ =?utf-8?B?dEJSdmFmY2dOajF2NjlaazNkdlFtTXhRbEs4THpWaDZ2M244amZOb2o3c2dB?=
+ =?utf-8?B?amhPb0JKWVhCbVlDMFRsQ3ByY002S3RlQTJ4QlR3ZHJpVmdVMGJENEZBVVgx?=
+ =?utf-8?B?cWJ1MVRCbE1HYmRFM0tVdGVPdU1iSUpFRFQ4bWFTbG1RVS9RaSt0MmZ3RmFm?=
+ =?utf-8?B?QVdVUy9xVkFZTFFCUnpiak0waE9BcCtMUVFFM3ZidWpoaE1GU1p6NE1zT0hM?=
+ =?utf-8?B?Q2V6Tm0rL1JDNlhuWGRXYzBEeDVBUjgrSlFEcVU5NGNvQ0xhY2JRdzNkaWZB?=
+ =?utf-8?B?T2RLQzJpUnp5ck9DaFJacytzMDlSUnlocWZVQ1JHcVYySmc3OWU4dVVPSnlK?=
+ =?utf-8?B?L3VWQUFHUzhTK3NYQk53VGhQZ2tZWmhBSnB6ZzFYUm43SnU5ZHF5ODd2R0R4?=
+ =?utf-8?B?b3hNQ2xjLzFHa2N2VFJFN05SN3MxOHhPeDBnd0cyblRjSndjVUQvWHFFeWNJ?=
+ =?utf-8?B?UktoYzRTQ0JUT3BZZGZJWENlQnBSL0pKcmpBMzRoaTZnWkZBOG9EVzNNRm5S?=
+ =?utf-8?B?RHY5eWg5Qy9jVi8wSjlmb1RzeGsrdWpwRWplQTRCOHM1UytFL2VGNzRHRVdt?=
+ =?utf-8?B?WGJhdlQ1U3JoRitLa1JQd1ZjZHd1RElZcUUzeGdVdXFMRmVHRXMvSzk5YmRI?=
+ =?utf-8?B?czRUdG0yUjdHWDQ4MVJzTHdxbjhDbmpjNE4zNUVrNlc2UVJGZitQN3pDb1hN?=
+ =?utf-8?B?d3VMcjIrd21udUdoNXo1ZmQxZklVL3FLdjNyZnFjNitnbHY3Y1p4MTZGR1N4?=
+ =?utf-8?B?R2tvRllvSnlkWjI4Vk1QTGZTc0dZSGRLZmRoaGxxSTdDS0VQaXRScGNwV1VL?=
+ =?utf-8?B?aElPUjkyUWlmVngvYXVVdCs2Y09ZNGRCR0g5NWlCcGxvdXRyeHc4K0dOMUEv?=
+ =?utf-8?B?N25DOE9uYitMcWtCOGNCbGxnVFVOazNMTnNiY2VKSkU5dnRyU05ML0Rab2E2?=
+ =?utf-8?B?b1FXWjEzdC9GTVhtcWZjNDJTOE5xbWJxRHFvWDVZRktwNHAvem1MRHZhdWhr?=
+ =?utf-8?B?dkNIQ29MR3dBTWd2U1J1UWdEU2RLK1hiWmNMeklHNHFUMDNveWJaYXpQY0JO?=
+ =?utf-8?B?dEpDK3B0Q0JMNzhBbUw0NHBnaEYvYVZhYVJ5MlI3Z1MyblNOYk1ZS0NTbEVs?=
+ =?utf-8?B?bmRoRVhmT2Nyeng4Q01UZ0V4bTIvUVcyeHhzWjBDWnkzaVhCL3cwLzl1VDE1?=
+ =?utf-8?B?NTF2RmVvU0x3bmcwc3ZHNGxmcmRTRS92ajIxclI0SmZtK25reFpoTmxXNFdU?=
+ =?utf-8?B?U3dSdk15dHJqTjJsUVZvR3BjSzdjck1XMUxYVGdlL2dHVVVQa05oM2tEbk5D?=
+ =?utf-8?B?bHRBd2s2elJjUWNSbFhQRkdFUENJelFES3ZpMmh0dW16UXoyMlpXUXVVL3Nz?=
+ =?utf-8?Q?q74tkSEOdtz0QMA9r6ZDO8YOU2OnIYDkOz/Lk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(366007)(376005)(921011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WkJydDhSb09QdDVqOGtPdGR5bElMSlNFb0dSR05SNXdCRnVTTEExS2cxeWRW?=
+ =?utf-8?B?UzZaaVdsUmZsZzNDQjcyNnJmU0FjMzZMdE41UlBwdFhoeU1NaHZ4SFRJSGts?=
+ =?utf-8?B?d01oVUFXMEVlZEZaT2tpd21iOGxTWk5tL3FIMGJUZ0loV1YwN0VJQy9TcWkz?=
+ =?utf-8?B?VHZBMHZSa01HVlRZVHdJd1hNUmlic29KT2ZtWTNtZWxXOTRRQWl2Rmd4V09M?=
+ =?utf-8?B?dFc4Z1VBVWpkYXJtRVlndTkxT2NmOGVWMjVWU0dWeUFQOHAvandWV1ZOSXVy?=
+ =?utf-8?B?N0hDa3hORXJxMmVGOCtHRmNWVWlaT1VsbHU1Wnh3SnFwWXpSOEl4OHVDcVpr?=
+ =?utf-8?B?WHpQK1Vya1NoQmNSVGFWL2c1SWxTMGNsdm82RmpTRHhLNkxkWmNKQlM2K0pI?=
+ =?utf-8?B?OU80Q2t3Q2F3K0lPb0JjaFhQdlhmVHB6TWMzamhjRTNyTFFKSG5TbDZqeGdR?=
+ =?utf-8?B?aHZaTmpEZU8xNXhSdFlPN1BjdXhiRlJ5TUdVZDZZL0YzVnFmSllidjFlRTVt?=
+ =?utf-8?B?UlFOVFQ5SDgveVowSzBlaDNKanFGOTFQNXFlMFJROEYwN2drVUZGSnBXb25B?=
+ =?utf-8?B?VkdtN2xPQ1dCZXBPcU9IU1VINTN1Y2NlRkNJRG9KNyt2V2NoR01qZVhOQkZX?=
+ =?utf-8?B?U0xYYnBxNlM2N2xjZy9SVFM0VGZ3MERXam1QT2ptMTF5dnNFUjMwWXJBbXda?=
+ =?utf-8?B?VFpVK0J1NVhNVzB5RWJQUEJ6blJrSDJOOEM4ZkJGZlNTRGNPQUlRQ1UxN1g5?=
+ =?utf-8?B?Y0ovZVBBOG04ZG12K0M3MzdkT2JrV0N1c09BaDArVCtHMS9qSVZqbUxwd1Er?=
+ =?utf-8?B?OGtXWXNwMkwxYTJUQWhsTW9JZmZqWXBnT2FleWc3VkF5bkdqVU1WNjFjbFlw?=
+ =?utf-8?B?QlVNaHhFK1VZb2hSMkZUZStIemFDZW4vSVk0bHZXSEF4dy95S0NmeEZYTEND?=
+ =?utf-8?B?YTV2MlA0NlRUa1c4V3BIVzZFQ2VVRjFJVFM0R3BVZ3BQSWRqMEM0TXFIR2py?=
+ =?utf-8?B?WmJ3SXp2bm5jY3U4MVFUSy8zZm50TG1mOGJMTHRHbGpKblhoWmFDcDVQVHlI?=
+ =?utf-8?B?Y0FDcEQyei9KSmZvTWNKR25LNDNLTFdOUDJoVUFTYWxybEZCMWJBZkFBR3VO?=
+ =?utf-8?B?blVkT0JDcVpuRHFsblRCbTFwZjJpeldCck9oaXJnUGhXdUttV3ZxZDh4WU1Z?=
+ =?utf-8?B?WWc5OW91YmpEMG81WEZtMG9ldDloQVFmWWovWXNKK3hra0FpN2lJYXFCaEJJ?=
+ =?utf-8?B?WDJEb3BxVlJBTThaaG51T0hNTlE2K3hSTWx1ZHZucnR5dnh5VnNGdk9rUE9u?=
+ =?utf-8?B?dGtucHhtZUNYaTYvQUFqUktCL1RxaDdoaDNZa0I5Z053Si9jMUh1Q3hsYmVH?=
+ =?utf-8?B?Q0xBV0VlTG4yWVpDZ1dNL00yVnlKb0JBTzVyK2ZXckJGRCtJbFRjdG1TZTZQ?=
+ =?utf-8?B?a0tUMStrTmloVmVkY0cyNFJpWnZIZlZGVFg3bU5IcjZZZFNSSVpjZVZJM3pJ?=
+ =?utf-8?B?emIwS285RXh2S05oMkdadys5S3pxUmVxbU8rWFVHOHNuN3VyTlNGMzZCS25K?=
+ =?utf-8?B?bldRVjg5N1F6QnBGYmlJTHNmY2VmaGNIMzdkWG1KRWUyWSs5NStQc0ZqZUs0?=
+ =?utf-8?B?RDA1L0tMSlpFejBWcnJET2t2NjEyenRRSDZJKzlsa2ZTYnQ5S1duNWFFMmN4?=
+ =?utf-8?B?V0tDVmlXaVdCM3ZNS0F5U1JNVE1acy8zM3BsT2E1RjJZMzVyNEs5cUpwMXNs?=
+ =?utf-8?B?K2NjSHU3czdvcFExUDFnVEJDUHVqTTNEWTNxMlBFUTc2enJvVEdod1JqTTZw?=
+ =?utf-8?B?UG5zdEhjSnd0b1FiS0NQVTRIWjIvZDIwSlNGb2xaYmRsaFg2ZTNJb1BkTE13?=
+ =?utf-8?B?NytGcEJOSjBBRTZkVVhrejVHdzVzeC9KZTZlMXdPbU5QYTB6bk9ObjYycmVp?=
+ =?utf-8?B?QkVSNzRzNWZWbkNlelIycVh2SWI0MHBpZVdoYUxLOXZsaXFHbnhFN0M0N3Qr?=
+ =?utf-8?B?QS96WFRxVnUwenozRTlEMnVzMS9sNDM4Ry9Pb0Q3RVVkQ2JlaWc4clI5SVRO?=
+ =?utf-8?B?UzlvS3pYTTJCbHF3RGJzRGV3RWY0S0RzbmdibXIyTlJZd1lodDRIM1d2YUdN?=
+ =?utf-8?Q?biQxu6HDBuTfrZAjLTP63iQW6?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa3612d4-c5e9-46d9-511d-08dc89f12f56
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 08:33:35.7532
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qMkW/VecTx49IIRJ1cKR1iqg3D04HKdY1aTA1/d7xLeg9SRD6nHFp2bz0W9svd4NFrcx8bzC1SFlMRRJpXprcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7783
 
-Hi Adam,
+Hello Rui,
 
-On Mon, 10 Jun 2024 18:17:05 -0500
-Adam Ford <aford173@gmail.com> wrote:
+On 6/11/2024 11:13 AM, Zhang, Rui wrote:
+> On Mon, 2024-06-10 at 10:07 +0000, Dhananjay Ugwekar wrote:
+>> Rename struct rapl_pmu variables from "pmu" to "rapl_pmu", to
+>> avoid any confusion between the variables of two different
+>> structs pmu and rapl_pmu.
+>>  As rapl_pmu also contains a pointer to
+>> struct pmu, which leads to situations in code like pmu->pmu,
+>> which is needlessly confusing. Above scenario is replaced with
+>> much more readable rapl_pmu->pmu with this change.
+>>
+>> Also rename "pmus" member in rapl_pmus struct, for same reason.
+>>
+> 
+> As you are adding a new per_core pmu, can we just rename the current
+> rapl_pmu to something like rapl_pkg_pmus (as I mentioned in the
+> previous email, we can consider the current RAPL MSRs as package scope
+> on Intel platforms as well), and name the new one as rapl_core_pmus?
 
-> On Sat, Jun 8, 2024 at 2:20=E2=80=AFPM Andreas Kemnade <andreas@kemnade.i=
-nfo> wrote:
-> >
-> > Hi Adam,
-> >
-> > On Sat, 8 Jun 2024 14:00:38 -0500
-> > Adam Ford <aford173@gmail.com> wrote:
-> > =20
-> > > On Thu, Jun 6, 2024 at 3:19=E2=80=AFPM Andreas Kemnade <andreas@kemna=
-de.info> wrote: =20
-> > > >
-> > > > Hi Luiz,
-> > > >
-> > > > On Thu, 6 Jun 2024 16:04:10 -0400
-> > > > Luiz Augusto von Dentz <luiz.dentz@gmail.com> wrote:
-> > > > =20
-> > > > > Hi Andreas,
-> > > > >
-> > > > > On Thu, Jun 6, 2024 at 2:30=E2=80=AFPM Andreas Kemnade <andreas@k=
-emnade.info> wrote: =20
-> > > > > >
-> > > > > > Some of these chips have GNSS support. In some vendor kernels
-> > > > > > a driver on top of misc/ti-st can be found providing a /dev/tig=
-ps
-> > > > > > device which speaks the secretive Air Independent Interface (AI=
-2) protocol. =20
-> > >
-> > > I think you may have sent me a file to test, but I can't find the
-> > > e-mail.   Can you tell me what tool you used to test it?  I can get
-> > > gnss0 to enumerate, so I am close.
-> > > =20
-> > hmm, /bin/cat is sufficient. It should spit out nmea now by default.
-> >
-> > For playing around with raw mode, you need the ai2raw parameter
-> > and then you can play around with read-gps from
-> > https://github.com/akemnade/bt200tools
-> > =20
-> > > [   20.759857] hci-ti serial0-0: using DT
-> > > '/ocp@68000000/serial@4806c000/bluetooth-gnss' for 'enable' GPIO
-> > > lookup
-> > > [   20.770263] of_get_named_gpiod_flags: parsed 'enable-gpios'
-> > > property of node '/ocp@68000000/serial@4806c000/bluetooth-gnss[0]' -
-> > > status (0)
-> > > [   29.221588] gnss: GNSS driver registered with major 244
-> > > =20
-> > That is nice. =20
->=20
-> I think I am stuck.  The closed-sourced GPS binary that Logic PD did
-> was done a 3rd party which has since been sold, and Logic PD never had
-> the source code, I just get junk with this driver:
->=20
-Well, the whole thing is kept in secrecy. But the junk you get is just=20
-plain NMEA which I get also when device is indoors, so you got the chip
-into a mode which common user space (like gpsd) understands. So IMHO that i=
-s a
-Tested-By. So thanks a lot. I am happy with that result for the first step.
-
-So first rpc was tested with a Motorola tablet and the BT200, this one now
-with two different devices, so it is a good situation.=20
-
-> $GPGLL,,,,,,V,N*64
-> $GPRMC,,V,,,,,,,,,,N*53
-> $GPGGA,,,,,,0,,,,,,,,*66
-> $GPVTG,,T,,M,,N,,K,N*2C
-> $GPGSA,M,1,,,,,,,,,,,,,,,*12
-> $GPGSV,1,1,00*79
-> $GPGLL,,,,,,V,N*64
-> $GPRMC,,V,,,,,,,,,,N*53
-> $GPGGA,,,,,,0,,,,,,,,*66
-> $GPVTG,,T,,M,,N,,K,N*2C
-> $GPGSA,M,1,,,,,,,,,,,,,,,*12
-> $GPGSV,1,1,00*79
-> $GPGLL,,,,,,V,N*64
-> $GPRMC,,V,,,,,,,,,,N*53
-> $GPGGA,,,,,,0,,,,,,,,*66
-> $GPVTG,,T,,M,,N,,K,N*2C
-> $GPGSA,M,1,,,,,,,,,,,,,,,*12
-> $GPGSV,1,1,00*79
->=20
-A note: contrary to other GPS I have seen, this one does not give
-out satellite reception strength if not much is known about
-position. So this pattern might continue a bit even if antenna
-is there and gps reception is good. Much development of this
-driver was done in a hammock with keyboard in a sleeping bag outside
-so I know a bit...
-
-> I am not 100% positive, but I think the antenna might be required to
-> be powered.  I'll talk with the HW engineer who designed the Torpedo +
-> Wireless SOM and see if he remembers anyhthing about the GPS.  I know
-> for a fact that Logic PD doesn't have the source code for their GPS
-> demo, and I know it doesn't work with modern kernels, so i can't
-> compare the performance.
->=20
-Well, and demo tools are not easily available anywhere...
-Well, I think if there is some special antenna powering stuff,
-that can be done in a second step. Probably just a gpio or something.
-But that would affect both the testing tools and the in-kernel
-solution.
-
-As said, you might use the ai2raw=3D1 parameter and try the read_gps from
-bt200tools. Or the demo might work if you symlink gnss0 to tigps.
-
-> :-(
-
-Well, no, correct is :-)
+Sure this makes sense, will modify the original "rapl_pmus" variable name, 
+but please note the renaming that I refer to in this patch is only 
+limited to the local "struct rapl_pmu" variables used inside functions,
+not the global variable name you mention.
 
 Regards,
-Andreas
+Dhananjay
+
+> 
+> IMO, "rapl_pmus" + "rapl_pmus_per_core" is still confusing.
+> 
+> thanks,
+> rui
+> 
+>> No functional change.
+>>
+>> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+>> ---
+>>  arch/x86/events/rapl.c | 104 ++++++++++++++++++++-------------------
+>> --
+>>  1 file changed, 52 insertions(+), 52 deletions(-)
+>>
+>> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+>> index 73be25e1f4b4..b4e2073a178e 100644
+>> --- a/arch/x86/events/rapl.c
+>> +++ b/arch/x86/events/rapl.c
+>> @@ -120,7 +120,7 @@ struct rapl_pmu {
+>>  struct rapl_pmus {
+>>         struct pmu              pmu;
+>>         unsigned int            nr_rapl_pmu;
+>> -       struct rapl_pmu         *pmus[] __counted_by(nr_rapl_pmu);
+>> +       struct rapl_pmu         *rapl_pmu[]
+>> __counted_by(nr_rapl_pmu);
+>>  };
+>>  
+>>  enum rapl_unit_quirk {
+>> @@ -164,7 +164,7 @@ static inline struct rapl_pmu
+>> *cpu_to_rapl_pmu(unsigned int cpu)
+>>          * The unsigned check also catches the '-1' return value for
+>> non
+>>          * existent mappings in the topology map.
+>>          */
+>> -       return rapl_pmu_idx < rapl_pmus->nr_rapl_pmu ? rapl_pmus-
+>>> pmus[rapl_pmu_idx] : NULL;
+>> +       return rapl_pmu_idx < rapl_pmus->nr_rapl_pmu ? rapl_pmus-
+>>> rapl_pmu[rapl_pmu_idx] : NULL;
+>>  }
+>>  
+>>  static inline u64 rapl_read_counter(struct perf_event *event)
+>> @@ -228,34 +228,34 @@ static void rapl_start_hrtimer(struct rapl_pmu
+>> *pmu)
+>>  
+>>  static enum hrtimer_restart rapl_hrtimer_handle(struct hrtimer
+>> *hrtimer)
+>>  {
+>> -       struct rapl_pmu *pmu = container_of(hrtimer, struct rapl_pmu,
+>> hrtimer);
+>> +       struct rapl_pmu *rapl_pmu = container_of(hrtimer, struct
+>> rapl_pmu, hrtimer);
+>>         struct perf_event *event;
+>>         unsigned long flags;
+>>  
+>> -       if (!pmu->n_active)
+>> +       if (!rapl_pmu->n_active)
+>>                 return HRTIMER_NORESTART;
+>>  
+>> -       raw_spin_lock_irqsave(&pmu->lock, flags);
+>> +       raw_spin_lock_irqsave(&rapl_pmu->lock, flags);
+>>  
+>> -       list_for_each_entry(event, &pmu->active_list, active_entry)
+>> +       list_for_each_entry(event, &rapl_pmu->active_list,
+>> active_entry)
+>>                 rapl_event_update(event);
+>>  
+>> -       raw_spin_unlock_irqrestore(&pmu->lock, flags);
+>> +       raw_spin_unlock_irqrestore(&rapl_pmu->lock, flags);
+>>  
+>> -       hrtimer_forward_now(hrtimer, pmu->timer_interval);
+>> +       hrtimer_forward_now(hrtimer, rapl_pmu->timer_interval);
+>>  
+>>         return HRTIMER_RESTART;
+>>  }
+>>  
+>> -static void rapl_hrtimer_init(struct rapl_pmu *pmu)
+>> +static void rapl_hrtimer_init(struct rapl_pmu *rapl_pmu)
+>>  {
+>> -       struct hrtimer *hr = &pmu->hrtimer;
+>> +       struct hrtimer *hr = &rapl_pmu->hrtimer;
+>>  
+>>         hrtimer_init(hr, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+>>         hr->function = rapl_hrtimer_handle;
+>>  }
+>>  
+>> -static void __rapl_pmu_event_start(struct rapl_pmu *pmu,
+>> +static void __rapl_pmu_event_start(struct rapl_pmu *rapl_pmu,
+>>                                    struct perf_event *event)
+>>  {
+>>         if (WARN_ON_ONCE(!(event->hw.state & PERF_HES_STOPPED)))
+>> @@ -263,39 +263,39 @@ static void __rapl_pmu_event_start(struct
+>> rapl_pmu *pmu,
+>>  
+>>         event->hw.state = 0;
+>>  
+>> -       list_add_tail(&event->active_entry, &pmu->active_list);
+>> +       list_add_tail(&event->active_entry, &rapl_pmu->active_list);
+>>  
+>>         local64_set(&event->hw.prev_count, rapl_read_counter(event));
+>>  
+>> -       pmu->n_active++;
+>> -       if (pmu->n_active == 1)
+>> -               rapl_start_hrtimer(pmu);
+>> +       rapl_pmu->n_active++;
+>> +       if (rapl_pmu->n_active == 1)
+>> +               rapl_start_hrtimer(rapl_pmu);
+>>  }
+>>  
+>>  static void rapl_pmu_event_start(struct perf_event *event, int mode)
+>>  {
+>> -       struct rapl_pmu *pmu = event->pmu_private;
+>> +       struct rapl_pmu *rapl_pmu = event->pmu_private;
+>>         unsigned long flags;
+>>  
+>> -       raw_spin_lock_irqsave(&pmu->lock, flags);
+>> -       __rapl_pmu_event_start(pmu, event);
+>> -       raw_spin_unlock_irqrestore(&pmu->lock, flags);
+>> +       raw_spin_lock_irqsave(&rapl_pmu->lock, flags);
+>> +       __rapl_pmu_event_start(rapl_pmu, event);
+>> +       raw_spin_unlock_irqrestore(&rapl_pmu->lock, flags);
+>>  }
+>>  
+>>  static void rapl_pmu_event_stop(struct perf_event *event, int mode)
+>>  {
+>> -       struct rapl_pmu *pmu = event->pmu_private;
+>> +       struct rapl_pmu *rapl_pmu = event->pmu_private;
+>>         struct hw_perf_event *hwc = &event->hw;
+>>         unsigned long flags;
+>>  
+>> -       raw_spin_lock_irqsave(&pmu->lock, flags);
+>> +       raw_spin_lock_irqsave(&rapl_pmu->lock, flags);
+>>  
+>>         /* mark event as deactivated and stopped */
+>>         if (!(hwc->state & PERF_HES_STOPPED)) {
+>> -               WARN_ON_ONCE(pmu->n_active <= 0);
+>> -               pmu->n_active--;
+>> -               if (pmu->n_active == 0)
+>> -                       hrtimer_cancel(&pmu->hrtimer);
+>> +               WARN_ON_ONCE(rapl_pmu->n_active <= 0);
+>> +               rapl_pmu->n_active--;
+>> +               if (rapl_pmu->n_active == 0)
+>> +                       hrtimer_cancel(&rapl_pmu->hrtimer);
+>>  
+>>                 list_del(&event->active_entry);
+>>  
+>> @@ -313,23 +313,23 @@ static void rapl_pmu_event_stop(struct
+>> perf_event *event, int mode)
+>>                 hwc->state |= PERF_HES_UPTODATE;
+>>         }
+>>  
+>> -       raw_spin_unlock_irqrestore(&pmu->lock, flags);
+>> +       raw_spin_unlock_irqrestore(&rapl_pmu->lock, flags);
+>>  }
+>>  
+>>  static int rapl_pmu_event_add(struct perf_event *event, int mode)
+>>  {
+>> -       struct rapl_pmu *pmu = event->pmu_private;
+>> +       struct rapl_pmu *rapl_pmu = event->pmu_private;
+>>         struct hw_perf_event *hwc = &event->hw;
+>>         unsigned long flags;
+>>  
+>> -       raw_spin_lock_irqsave(&pmu->lock, flags);
+>> +       raw_spin_lock_irqsave(&rapl_pmu->lock, flags);
+>>  
+>>         hwc->state = PERF_HES_UPTODATE | PERF_HES_STOPPED;
+>>  
+>>         if (mode & PERF_EF_START)
+>> -               __rapl_pmu_event_start(pmu, event);
+>> +               __rapl_pmu_event_start(rapl_pmu, event);
+>>  
+>> -       raw_spin_unlock_irqrestore(&pmu->lock, flags);
+>> +       raw_spin_unlock_irqrestore(&rapl_pmu->lock, flags);
+>>  
+>>         return 0;
+>>  }
+>> @@ -343,7 +343,7 @@ static int rapl_pmu_event_init(struct perf_event
+>> *event)
+>>  {
+>>         u64 cfg = event->attr.config & RAPL_EVENT_MASK;
+>>         int bit, ret = 0;
+>> -       struct rapl_pmu *pmu;
+>> +       struct rapl_pmu *rapl_pmu;
+>>  
+>>         /* only look at RAPL events */
+>>         if (event->attr.type != rapl_pmus->pmu.type)
+>> @@ -373,11 +373,11 @@ static int rapl_pmu_event_init(struct
+>> perf_event *event)
+>>                 return -EINVAL;
+>>  
+>>         /* must be done before validate_group */
+>> -       pmu = cpu_to_rapl_pmu(event->cpu);
+>> -       if (!pmu)
+>> +       rapl_pmu = cpu_to_rapl_pmu(event->cpu);
+>> +       if (!rapl_pmu)
+>>                 return -EINVAL;
+>> -       event->cpu = pmu->cpu;
+>> -       event->pmu_private = pmu;
+>> +       event->cpu = rapl_pmu->cpu;
+>> +       event->pmu_private = rapl_pmu;
+>>         event->hw.event_base = rapl_msrs[bit].msr;
+>>         event->hw.config = cfg;
+>>         event->hw.idx = bit;
+>> @@ -560,22 +560,22 @@ static struct perf_msr amd_rapl_msrs[] = {
+>>  static int rapl_cpu_offline(unsigned int cpu)
+>>  {
+>>         const struct cpumask *rapl_pmu_cpumask =
+>> get_rapl_pmu_cpumask(cpu);
+>> -       struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu);
+>> +       struct rapl_pmu *rapl_pmu = cpu_to_rapl_pmu(cpu);
+>>         int target;
+>>  
+>>         /* Check if exiting cpu is used for collecting rapl events */
+>>         if (!cpumask_test_and_clear_cpu(cpu, &rapl_cpu_mask))
+>>                 return 0;
+>>  
+>> -       pmu->cpu = -1;
+>> +       rapl_pmu->cpu = -1;
+>>         /* Find a new cpu to collect rapl events */
+>>         target = cpumask_any_but(rapl_pmu_cpumask, cpu);
+>>  
+>>         /* Migrate rapl events to the new target */
+>>         if (target < nr_cpu_ids) {
+>>                 cpumask_set_cpu(target, &rapl_cpu_mask);
+>> -               pmu->cpu = target;
+>> -               perf_pmu_migrate_context(pmu->pmu, cpu, target);
+>> +               rapl_pmu->cpu = target;
+>> +               perf_pmu_migrate_context(rapl_pmu->pmu, cpu, target);
+>>         }
+>>         return 0;
+>>  }
+>> @@ -584,21 +584,21 @@ static int rapl_cpu_online(unsigned int cpu)
+>>  {
+>>         unsigned int rapl_pmu_idx = get_rapl_pmu_idx(cpu);
+>>         const struct cpumask *rapl_pmu_cpumask =
+>> get_rapl_pmu_cpumask(cpu);
+>> -       struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu);
+>> +       struct rapl_pmu *rapl_pmu = cpu_to_rapl_pmu(cpu);
+>>         int target;
+>>  
+>> -       if (!pmu) {
+>> -               pmu = kzalloc_node(sizeof(*pmu), GFP_KERNEL,
+>> cpu_to_node(cpu));
+>> -               if (!pmu)
+>> +       if (!rapl_pmu) {
+>> +               rapl_pmu = kzalloc_node(sizeof(*rapl_pmu),
+>> GFP_KERNEL, cpu_to_node(cpu));
+>> +               if (!rapl_pmu)
+>>                         return -ENOMEM;
+>>  
+>> -               raw_spin_lock_init(&pmu->lock);
+>> -               INIT_LIST_HEAD(&pmu->active_list);
+>> -               pmu->pmu = &rapl_pmus->pmu;
+>> -               pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
+>> -               rapl_hrtimer_init(pmu);
+>> +               raw_spin_lock_init(&rapl_pmu->lock);
+>> +               INIT_LIST_HEAD(&rapl_pmu->active_list);
+>> +               rapl_pmu->pmu = &rapl_pmus->pmu;
+>> +               rapl_pmu->timer_interval =
+>> ms_to_ktime(rapl_timer_ms);
+>> +               rapl_hrtimer_init(rapl_pmu);
+>>  
+>> -               rapl_pmus->pmus[rapl_pmu_idx] = pmu;
+>> +               rapl_pmus->rapl_pmu[rapl_pmu_idx] = rapl_pmu;
+>>         }
+>>  
+>>         /*
+>> @@ -610,7 +610,7 @@ static int rapl_cpu_online(unsigned int cpu)
+>>                 return 0;
+>>  
+>>         cpumask_set_cpu(cpu, &rapl_cpu_mask);
+>> -       pmu->cpu = cpu;
+>> +       rapl_pmu->cpu = cpu;
+>>         return 0;
+>>  }
+>>  
+>> @@ -679,7 +679,7 @@ static void cleanup_rapl_pmus(void)
+>>         int i;
+>>  
+>>         for (i = 0; i < rapl_pmus->nr_rapl_pmu; i++)
+>> -               kfree(rapl_pmus->pmus[i]);
+>> +               kfree(rapl_pmus->rapl_pmu[i]);
+>>         kfree(rapl_pmus);
+>>  }
+>>  
+>> @@ -699,7 +699,7 @@ static int __init init_rapl_pmus(void)
+>>         if (rapl_pmu_is_pkg_scope())
+>>                 nr_rapl_pmu = topology_max_packages();
+>>  
+>> -       rapl_pmus = kzalloc(struct_size(rapl_pmus, pmus,
+>> nr_rapl_pmu), GFP_KERNEL);
+>> +       rapl_pmus = kzalloc(struct_size(rapl_pmus, rapl_pmu,
+>> nr_rapl_pmu), GFP_KERNEL);
+>>         if (!rapl_pmus)
+>>                 return -ENOMEM;
+>>  
+> 
 
