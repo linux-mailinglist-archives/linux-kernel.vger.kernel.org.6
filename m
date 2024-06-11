@@ -1,167 +1,185 @@
-Return-Path: <linux-kernel+bounces-210651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4739046C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:13:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB6E29046C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 115F8284AF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:13:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0841F25589
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BB8155308;
-	Tue, 11 Jun 2024 22:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED621552F8;
+	Tue, 11 Jun 2024 22:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="C+9rKeQk"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOWgC4Rn"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CC7154C00
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645777711C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718143986; cv=none; b=h/aLHRXmfqpJIwCWkt9FL+wZwOnRm6jTKYHRjTYC78JB79CYST8pvvZz68AEH3ONDJ/IcI2fPFHslEexh7DBT6ccmRKAMozXD9gYJ2PUTzHAdIAYgetoyQ23ywHAGzZB9YPN14KlqsWsM4LwjWSIO6bcyH95vFgklu+jzQxRLNg=
+	t=1718144000; cv=none; b=d6xUCDVUoaRcOtYd1yu3gwBuqFAvIKQG5Skv2caOXml5C9cQEjYrhs4fxCnsvosrh1AFM6FLLGNunYe0XpC7DP4Zc3+vTpofYtY/bZ1WEeEqWIHPzNfdKYsmsgR1Dj1RrlgJdzU81A3K55+aB5HEgvGT080M8kYxfykaPwtoaV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718143986; c=relaxed/simple;
-	bh=ntignwSd5BkQDAoVuBygKbCneHpXi8rp0ewb5JbG+YY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kPdwoKXQxzRsn4bsOXun6z4y6z64Fc19pJg6hKVgfCu6CacKPT540BquKYZpVpNIsEgiVcl9alhcKKRMc9Un370tCxiqR5U7Wd4rjuZXIk5Mrqi3GrO07XjfSf26lj5voPdz/RkuEB4U6mEVTme/AA18lyv+U0YIf9GVqHJ1YQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=C+9rKeQk; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=9IZI
-	pdPzR9DR3MCp+AyrdUtLauredv0OWoF1WwgDZ50=; b=C+9rKeQklbHFCmWU7lCN
-	bd8ThpgmhSUQLC44BUTfUIFi1T9mP5KlAvXOtTzCHelbdlfqPj5hvilEzhXrxgl4
-	hUy75vkRoK1CUGXJx8D4RVm/EI6XGDfe6RftoFbE8H+rEJs5pF1x3fn+4ASgDy1N
-	44u1quA9f3LqtE2ervu7TH49wlNaQfre15O4lJ0btF9sIhbri3Zk+vl+jYPzvbdt
-	u2tELFsDEem2FFj9tLB4pO9RjnpbnSwTllvJNM+B5mb8FMQMwUFLrsyNe/0e1A+2
-	vDv+kywG35AuhNozt5g2fhsz6gcHqf2ntk84/EjuFRVzNMFF/o3ciAcDo7/Lpix+
-	Bw==
-Received: (qmail 574999 invoked from network); 12 Jun 2024 00:12:59 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jun 2024 00:12:59 +0200
-X-UD-Smtp-Session: l3s3148p1@bqWOkaQaeIxehhrL
-Date: Wed, 12 Jun 2024 00:12:59 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Farouk Bouabid <farouk.bouabid@cherry.de>
-Cc: Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Quentin Schulz <quentin.schulz@cherry.de>, 
-	Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 0/7] Add Mule I2C multiplexer support
-Message-ID: <ijj3xp5oacsyhygobi4nynerd6dxgfjxh5uzj6quvzraqrkf7x@eejujooa6odi>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Farouk Bouabid <farouk.bouabid@cherry.de>, Peter Rosin <peda@axentia.se>, 
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Quentin Schulz <quentin.schulz@cherry.de>, Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-References: <20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de>
+	s=arc-20240116; t=1718144000; c=relaxed/simple;
+	bh=cxBhsOvwM8lIkQIy21XPEcwo/O8iEqEX2jWFVpaV6qs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X715tA8YRXc2+ckAM2rMray4R9bWoPQPr4zUVKNfor/2qS+AoiUlQE/jPz+GQw884PmRKSOHYVbF/bmkqxOYO5iWjqjMPnvIMuj8rrq+hQ5KRigUykEBNWrvQ2yOgkHGSyp9uZCYT/EHHMRSFpkC/C66bzlGKX1J5kBlufd0wRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hOWgC4Rn; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-440655e64bdso16658961cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:13:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718143998; x=1718748798; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RPKZqSlAbaQuMLhwthwfzm4L0DNHV7L8sJdV9gURtUM=;
+        b=hOWgC4RnbChzfUMjEZcCb+QyxoRIi3zc+Rwq+lgNtpoYu/NYCIc354ZTIegxqrKPr7
+         8jvnY3YgwYR7/3uWoyZysYAGuZw1JAH2KVBUdTNg5b9DAbsD6pc+E+9RGmbjk30LP6ww
+         Gh6jLRmJNTpr1dyH1TRvqsDeLFUEwuIdTgiEUQu9ZYYa06nKaTxC9y1M5j8/rBFZOru/
+         gcjumTRiIYsr2myqwWElzSa+qbS1uUo2jWDIfxBWbYlO7gadxG+jSaAehKmegVQWsfoI
+         wbCjqB2W0R8C7lpKKjxgtxhGSiTCxdO79GzUDb1v9c8trGnLsCGa22AzGJm6iX1SBvto
+         OX7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718143998; x=1718748798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RPKZqSlAbaQuMLhwthwfzm4L0DNHV7L8sJdV9gURtUM=;
+        b=wkD7Tp+nUFZcKYyH8fqOUsoAYu+wXXSd8lKDyBdc81LN3rI/WeZMpnWbUePPWhqnM+
+         cHOHodOZ8fQkIxZMxADnD8vxdqapR1WmUAdfRMjK2ziDzzYekysC9uFRJAbeLreNRySt
+         XyDZC0zhIbsLjcXQI+cnelqUGxidly5T+zV5kQsJ90S6PVxnwdZSRnFG6eDwfeN3/+J3
+         hh8EkOGyRjAkTrHfse9eUqT5RgoHG1Zw0pOyAyW3WZ8VXZlEKoLUhVZ2w9koRURI0QYN
+         GyalQsZLce7np5oXa7q9rXkohqiwf6b5OcYOpk0WGyPT5PcRVCNQUDlhS22azge8zq98
+         5XBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZyDSAu5Ccl0wae6u4KnAv0mxXh5zYtgOBoyLfyJHVSE/tJSSuetusiJqPWbgPrEYo/mJWpxmFwFuqmu24GJj3tpZk+PSRMavxoSG6
+X-Gm-Message-State: AOJu0YwSl+CQyJBInvMtqnDtaGhfD9uqT2K735MvDToSY6YiiOvvRwRV
+	aDhN8iWRFMeVTVRlxS7CmtYLWSbNe7oQ3BRsB+/0ptxZ5hkrTtX8CBFIepT9Jia0XykwHIgatPx
+	wGzB6dSDbHuEPj/HhT1xzcl03qe8=
+X-Google-Smtp-Source: AGHT+IHRKW+4TAFuiyd6TaF9HhkOMg9tjED6ruWvkwLADjsp/TEZ1jg4S5wZWE6+/Q3li0FjiSMZUY57hDIlWn0R1tY=
+X-Received: by 2002:a05:6214:2e44:b0:6b0:6525:4115 with SMTP id
+ 6a1803df08f44-6b191d472e3mr18116d6.19.1718143998205; Tue, 11 Jun 2024
+ 15:13:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bkvmb62faawxzci5"
-Content-Disposition: inline
-In-Reply-To: <20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de>
+References: <20240304081348.197341-1-21cnbao@gmail.com> <20240304081348.197341-6-21cnbao@gmail.com>
+ <c9702789-5772-4750-a609-e44a5bbd8468@arm.com> <CANzGp4+p3xSo9uX2i7K2bSZ3VKEQQChAVzdmBD3O2qXq_cE2yA@mail.gmail.com>
+ <emvsj7wfy24dzr6uxyac2qotp7nsdi7hnesihaldkvgo3mfzrf@u7fafr7mc3e7>
+ <CAGsJ_4zTpcBj_0uC9v4YOHihx-vEek+Y6rr=M1noijwbhfBw7A@mail.gmail.com> <ly745k53gpkef6ktaoilbib4bzrwyuobli7adlylk5yf24ddhk@l4x2swggwm3f>
+In-Reply-To: <ly745k53gpkef6ktaoilbib4bzrwyuobli7adlylk5yf24ddhk@l4x2swggwm3f>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 12 Jun 2024 10:13:06 +1200
+Message-ID: <CAGsJ_4xVerq0bukCeZgXmjn2uBUviBEBjY6AWM4wm1M4D2N0og@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 5/5] mm: support large folios swapin as a whole
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Chuanhua Han <chuanhuahan@gmail.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	akpm@linux-foundation.org, linux-mm@kvack.org, chengming.zhou@linux.dev, 
+	chrisl@kernel.org, david@redhat.com, hannes@cmpxchg.org, kasong@tencent.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	mhocko@suse.com, nphamcs@gmail.com, shy828301@gmail.com, steven.price@arm.com, 
+	surenb@google.com, wangkefeng.wang@huawei.com, willy@infradead.org, 
+	xiang@kernel.org, ying.huang@intel.com, yosryahmed@google.com, 
+	yuzhao@google.com, Chuanhua Han <hanchuanhua@oppo.com>, 
+	Barry Song <v-songbaohua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jun 12, 2024 at 5:24=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> On Tue, Jun 11, 2024 at 12:23:41PM GMT, Barry Song wrote:
+> > On Tue, Jun 11, 2024 at 8:43=E2=80=AFAM Shakeel Butt <shakeel.butt@linu=
+x.dev> wrote:
+> > >
+> > > On Thu, Mar 14, 2024 at 08:56:17PM GMT, Chuanhua Han wrote:
+> > > [...]
+> > > > >
+> > > > > So in the common case, swap-in will pull in the same size of foli=
+o as was
+> > > > > swapped-out. Is that definitely the right policy for all folio si=
+zes? Certainly
+> > > > > it makes sense for "small" large folios (e.g. up to 64K IMHO). Bu=
+t I'm not sure
+> > > > > it makes sense for 2M THP; As the size increases the chances of a=
+ctually needing
+> > > > > all of the folio reduces so chances are we are wasting IO. There =
+are similar
+> > > > > arguments for CoW, where we currently copy 1 page per fault - it =
+probably makes
+> > > > > sense to copy the whole folio up to a certain size.
+> > > > For 2M THP, IO overhead may not necessarily be large? :)
+> > > > 1.If 2M THP are continuously stored in the swap device, the IO
+> > > > overhead may not be very large (such as submitting bio with one
+> > > > bio_vec at a time).
+> > > > 2.If the process really needs this 2M data, one page-fault may perf=
+orm
+> > > > much better than multiple.
+> > > > 3.For swap devices like zram,using 2M THP might also improve
+> > > > decompression efficiency.
+> > > >
+> > >
+> > > Sorry for late response, do we have any performance data backing the
+> > > above claims particularly for zswap/swap-on-zram cases?
+> >
+> > no need to say sorry. You are always welcome to give comments.
+> >
+> > this, combining with zram modification, not only improves compression
+> > ratio but also reduces CPU time significantly. you may find some data
+> > here[1].
+> >
+> > granularity   orig_data_size   compr_data_size   time(us)
+> > 4KiB-zstd      1048576000       246876055        50259962
+> > 64KiB-zstd     1048576000       199763892        18330605
+> >
+> > On mobile devices, We tested the performance of swapin by running
+> > 100 iterations of swapping in 100MB of data ,and the results were
+> > as follows.the swapin speed increased by about 45%.
+> >
+> >                 time consumption of swapin(ms)
+> > lz4 4k                  45274
+> > lz4 64k                 22942
+> >
+> > zstdn 4k                85035
+> > zstdn 64k               46558
+>
+> Thanks for the response. Above numbers are actually very fascinating and
+> counter intuitive (at least to me). Do you also have numbers for 2MiB
+> THP? I am assuming 64k is the right balance between too small or too
+> large. Did you experiment on server machines as well?
 
---bkvmb62faawxzci5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I don=E2=80=99t possess data on 2MiB, and regrettably, I lack a server mach=
+ine
+for testing. However, I believe that this type of higher compression ratio
+and lower CPU consumption generally holds true for generic anonymous
+memory.
 
-Hi Farouk,
+64KB is a right balance. But nothing can stop THP from using 64KB to
+swapin, compression and decompression. as you can see from the
+zram/zsmalloc series,  we actually have a configuration
+CONFIG_ZSMALLOC_MULTI_PAGES_ORDER
 
-first of all, thanks for the patches and tackling this problem. I have
-to say that I have many concerns on high-level, though. I hope to be
-able to give helpful recommendations.
+The default value is 4.
 
-> Mule is an mcu that emulates a set of I2C devices which are reachable
-> through an I2C-mux.
+That means a 2MB THP can be compressed/decompressed as 32 * 64KB.
+If we use 64KB as the swapin granularity, we still have the balance and
+all the benefits if 2MB is a too large swap-in granularity which might caus=
+e
+memory waste.
 
-I am not 100% convinced this is really a mux. Another possible DT
-representation could be (pseudo-code):
+>
+> >
+> > [1] https://lore.kernel.org/linux-mm/20240327214816.31191-1-21cnbao@gma=
+il.com/
+> >
 
-	i2c-bus {
-		mpu@42 {
-			comptible = "mule";
-			reg = <0x42>;
-
-			subdev@0 {
-				compatible = "subdev"
-				reg = <0x00>;
-			}
-
-			subdev@1 {
-
-			...
-
-		}
-
-	}
-
-Dunno if MFD can handle that. Maybe someone else knows?
-
-If all fails, I think you could write an I2C mux-driver which uses the
-above DT snippet. It should then do:
-
-- write the mule config register according to 'reg' of the subdev
-- replace 'addr' in all 'i2c_msgs' to the addr of the parent mule device
-- i2ctransfer
-- restore 'addr' in all 'i2c_msgs' to the original addr
-
-A little simiar of what i2c-atr.c does, check
-Documentation/i2c/i2c-address-translators.rst
-
-> The emulated devices share a single I2C address with the mux itself
-> where the requested register is what determines which logic is executed
-> (muxing logic or device logic):
-
-This design is... unfortunate, if you ask me. But well, things happen.
-
-> The current I2C-mux implementation does not allow the mux to use the
-> I2C address of a child device. As a workaround, A new I2C-adapter quirk is
-> introduced to skip the check for conflict between a child device and the
-> mux core I2C address when adding the child device.
-
-Not acceptable, sorry. The adapter itself is fine, so this is clearly
-not an adapter quirk. The client is what is quirky. I don't want to
-maintain patch 1 because of this one "creative" design of a client. I
-think we can handle it outside of the I2C core.
-
-So far understandable?
-
-Happy hacking,
-
-   Wolfram
-
---bkvmb62faawxzci5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZoy+cACgkQFA3kzBSg
-Kba3axAAgZhZa5f9hUe4bSz0GKDi69RP0Z8Vz038So0ej0oN/S6UtQikhS+zh1Gb
-ZJqvCEfw2Gzm6dK8QgpLNg8FsUCpiT1m2ZIQItoKUELSzGaL1R3svGj1cZuR268D
-Zr6gdsbFDjZwg+Fa8roHfCB6+dyIyYuvcHPgckpFtNB24knAN7l13wlW+1Z32/xP
-1OEOpThyD+Wq4R6gvJ3Yg0ZnJIJEu+qH+9Pm2ItalPsHgoZNtVTEKkCyLbki2dzZ
-5j+d3sl7avBP6mEeOFSCO+cJtf+D6Z8VPx/SlA7A+iSCJugU4t03u/OJyyDDvmhj
-bynHKAh6CHdzVlNdFvEjP4Hk5wPpqqcvzGDgNt+4zjq1zSf19hlaSS0fVfgT8QsN
-IjRMH/5nsHEadFlOwTkSKIbG5RTM3WFbAdtnWrh6UgYVZyDAClm4AsC1esxgNOOm
-kWCJV8yrc82BFovMQs0fTwZT2fMaLZoQNGGtySg9wtz+SyQfXTAkM59W2QuXzxpb
-S4OUDgdv1lOuW9PG2tG0rdLlwkG0qTYKzwDrdcKoSMNjbWJcRC++/c9++juwPJv0
-fM9oS0/wZjRGiDZkXMbKhdaQ5EoJOZGJxsZylgeHt8G77Rqy06nAkVqZBXRb1CP0
-VWeWBqaEGvpliLkVTp7Psfd6G0TaMza0/geIiOxw/puIBHVMbfU=
-=guh5
------END PGP SIGNATURE-----
-
---bkvmb62faawxzci5--
+Thanks
+Barry
 
