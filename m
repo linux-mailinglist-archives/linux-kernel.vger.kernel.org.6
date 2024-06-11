@@ -1,160 +1,82 @@
-Return-Path: <linux-kernel+bounces-210415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B029B904365
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:18:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7424D904367
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14CF1C21E86
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:18:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3D41F26778
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC426EB68;
-	Tue, 11 Jun 2024 18:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642006EB46;
+	Tue, 11 Jun 2024 18:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C+svuxMk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BlNTob1J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B64249E5;
-	Tue, 11 Jun 2024 18:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF74376E9
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718129873; cv=none; b=Qd0TEVJ7tDJ2zLmIIbIbGR6Ak+YbWXy4RSf1fwkaOy1oq2MnISKUjOHZ10Rl/bMpDI5rO8V6nBUBfPGWx2EQx3J7Mmaq/LmvIWll+njbMvirBM6V4uB4aBfi3QtHPMJh6WaAabFQMfLNp5sAJTgx+eNg4UCNbVSuHjGsnCDYbAw=
+	t=1718130092; cv=none; b=ftBTvaL6FNbYJWjzpEldzRWrGsihSQIrhNAw5JOcFacZqd3CodjuhDONSvTQj6TYBfcJ7opMfYXnS9kTR3t6qtxYmeSz5V7L25rAAbcLvWpN5qkx2HGxgHi0mdTRjk0SrHbw5Tw/7Wjvs2nDkqp3d2H4gPsLZVrmFhECh6/oBt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718129873; c=relaxed/simple;
-	bh=V5fJccGY35et0mUYl+GhicFanbbKht8a+d+z4VF4jDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P2mlIiH7YKdCwWm0uRchtD9AiYKoN5VA9IwlLiYBFD2EbJFZ8TYiiII0h58pLwINeiBTp7B6R/8P5BP5DVM8MzRKfGMAOUqJ6MHgq11cfYIfpHm/6vwsqLOVAy3DR4J1/p00y9vrBVlo+/jAdc0hluIvmbQAFITsiBp7V4BZw00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C+svuxMk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BHHro0001180;
-	Tue, 11 Jun 2024 18:17:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4YJ8Lhmst0xeBjIowrNmTmfZV+TnLyVmo1as+S8SgFY=; b=C+svuxMkIqhB8zZ3
-	183Rlp9fuUZ6I7kdtURu6bfJS4WEfNOw/Hu1Rl//5uzHFBH5bUpvfgdCMUZFTzOm
-	yMSLO+X0r12z4mTnk3zk9y9Yul7uqlyVMIGWLr0QCr2SJFoS0HBLDIyn/YNQhRpr
-	czS23QHR/5ykEiA4iVCq6F9ET7bHMJwbJAg9B2jip6pK26pu6zdXmOdVB/XtoddF
-	hRl8v0WCAOu+lL2ImHHj+fnDMfBTYBER4gcEK/7BMGmwC8rthNUmEoIb7EEBjmx5
-	BTJMNTMvzgMwv/IO9QY/kKGdddNiM3vlhy2G3e4/BH30Yyz1mQ7CCjjfgtXRbDQQ
-	zJdVKQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yptuy04dn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 18:17:41 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BIHe84007704
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 18:17:40 GMT
-Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
- 2024 11:17:39 -0700
-Message-ID: <c47cbab1-a971-4562-a603-d612ec533730@quicinc.com>
-Date: Tue, 11 Jun 2024 11:17:39 -0700
+	s=arc-20240116; t=1718130092; c=relaxed/simple;
+	bh=IkeeZ4IP+hn989ZtzVm7fErRBzJnQu7C1x3BhsI6GKc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=X1oicA/Oe3fDj0iO4yzxJ8aQpRRl0ETWyWXSQbL1G6XWIM5g/owYFvZtTvE4AjnWhV6y46EYklg5kSpuQruETbs5yfChdTMIIxqV7x4Z519ew4LtSzi3YBtDX49Dg0wb6ktP3tCPHjdJQqlUbuuNCKvsKxAioabmXHWCK41wF6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BlNTob1J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B06C0C2BD10;
+	Tue, 11 Jun 2024 18:21:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1718130091;
+	bh=IkeeZ4IP+hn989ZtzVm7fErRBzJnQu7C1x3BhsI6GKc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BlNTob1J/lh6sEaQcarMkth5pJXdUNvMvpAXR956QDl9Hddm0WQTfBbC7EQUos6Pw
+	 Ca2No0QrbKNf2IDtvcnHn4FIv8OqEb++geeQRTHTUZVkYhX+yllpAu2YFJjmMsdm7b
+	 g8NccKFLc+kKiWDh86dv33DsjU91FT1o3ftfLKDw=
+Date: Tue, 11 Jun 2024 11:21:31 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Bresticker <abrestic@rivosinc.com>, David Hildenbrand
+ <david@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/memory: Don't require head page for do_set_pmd()
+Message-Id: <20240611112131.25925b8ee5198668b88de35f@linux-foundation.org>
+In-Reply-To: <ZmiRcUYxrZ5NQQX8@casper.infradead.org>
+References: <20240611153216.2794513-1-abrestic@rivosinc.com>
+	<ZmiRcUYxrZ5NQQX8@casper.infradead.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/14] drm/msm/hdmi: switch to
- atomic_pre_enable/post_disable
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David
- Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
- <20240522-fd-hdmi-hpd-v2-3-c30bdb7c5c7e@linaro.org>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240522-fd-hdmi-hpd-v2-3-c30bdb7c5c7e@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: VPH_2qNgrISS_e7enANlTEWbXDd9PAbD
-X-Proofpoint-ORIG-GUID: VPH_2qNgrISS_e7enANlTEWbXDd9PAbD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- impostorscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 clxscore=1015 mlxlogscore=999 phishscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406110125
 
+On Tue, 11 Jun 2024 19:03:29 +0100 Matthew Wilcox <willy@infradead.org> wrote:
 
-
-On 5/22/2024 3:50 AM, Dmitry Baryshkov wrote:
-> In preparation of reworking the HDMI mode setting, switch pre_enable and
-> post_disable callbacks to their atomic variants.
+> On Tue, Jun 11, 2024 at 08:32:16AM -0700, Andrew Bresticker wrote:
+> > -	if (page != &folio->page || folio_order(folio) != HPAGE_PMD_ORDER)
+> > +	if (folio_order(folio) != HPAGE_PMD_ORDER)
+> >  		return ret;
+> > +	page = &folio->page;
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> This works today, but in about six months time it's going to be a pain.
+> 
+> +	page = folio_page(folio, 0);
+> 
+> is the one which works today and in the future.
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+I was wondering about that.
 
-> ---
->   drivers/gpu/drm/msm/hdmi/hdmi_bridge.c | 15 +++++++++++----
->   1 file changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> index 9eb4d06bdc0e..3c6121c57b01 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> @@ -120,7 +120,8 @@ static void msm_hdmi_config_avi_infoframe(struct hdmi *hdmi)
->   	hdmi_write(hdmi, REG_HDMI_INFOFRAME_CTRL1, val);
->   }
->   
-> -static void msm_hdmi_bridge_pre_enable(struct drm_bridge *bridge)
-> +static void msm_hdmi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
-> +					      struct drm_bridge_state *old_bridge_state)
->   {
->   	struct hdmi_bridge *hdmi_bridge = to_hdmi_bridge(bridge);
->   	struct hdmi *hdmi = hdmi_bridge->hdmi;
-> @@ -146,7 +147,8 @@ static void msm_hdmi_bridge_pre_enable(struct drm_bridge *bridge)
->   		msm_hdmi_hdcp_on(hdmi->hdcp_ctrl);
->   }
->   
-> -static void msm_hdmi_bridge_post_disable(struct drm_bridge *bridge)
-> +static void msm_hdmi_bridge_atomic_post_disable(struct drm_bridge *bridge,
-> +						struct drm_bridge_state *old_bridge_state)
->   {
->   	struct hdmi_bridge *hdmi_bridge = to_hdmi_bridge(bridge);
->   	struct hdmi *hdmi = hdmi_bridge->hdmi;
-> @@ -292,8 +294,13 @@ static enum drm_mode_status msm_hdmi_bridge_mode_valid(struct drm_bridge *bridge
->   }
->   
->   static const struct drm_bridge_funcs msm_hdmi_bridge_funcs = {
-> -	.pre_enable = msm_hdmi_bridge_pre_enable,
-> -	.post_disable = msm_hdmi_bridge_post_disable,
-> +	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
-> +	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
-> +	.atomic_reset = drm_atomic_helper_bridge_reset,
-> +
-> +	.atomic_pre_enable = msm_hdmi_bridge_atomic_pre_enable,
-> +	.atomic_post_disable = msm_hdmi_bridge_atomic_post_disable,
-> +
->   	.mode_set = msm_hdmi_bridge_mode_set,
->   	.mode_valid = msm_hdmi_bridge_mode_valid,
->   	.edid_read = msm_hdmi_bridge_edid_read,
-> 
-> -- 
-> 2.39.2
-> 
+hp2:/usr/src/25> fgrep "&folio->page" mm/*.c | wc -l
+84
+hp2:/usr/src/25> fgrep "folio_page(" mm/*.c | wc -l 
+35
+
+Should these all be converted?  What's the general rule here?
 
