@@ -1,110 +1,151 @@
-Return-Path: <linux-kernel+bounces-210566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5249045A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:14:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA3D9045A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DD0B1F23B8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:14:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20978B238FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F63153505;
-	Tue, 11 Jun 2024 20:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F0013D615;
+	Tue, 11 Jun 2024 20:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="APCG1fyL"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="O4UuX8Jx"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7CC14AD3F;
-	Tue, 11 Jun 2024 20:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F8612E61;
+	Tue, 11 Jun 2024 20:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718136784; cv=none; b=DFR6tehXGeK5DO3OPF75Fq5/kYO7UOyDgJYTCEcWecOcIXWOEC+miiWwAsvRpBuTND/oE7lK6n5h6GhC9PYk5IDTK+uEGMj5cbum3kCtj09IrS8H86EBRNTXoAAHwuM6740VYq7xmVodE0TPJL3utfyNL7PDJbKvAwrzTbTl2Rk=
+	t=1718136979; cv=none; b=O84KcacIsUWi7Hb3HUeWUgoU8WpoMFj2Yu1KBqZKe0OzI3mcljMZ3NohJ5fgczkiXtGcCvUAfyUPZw5C/buD2FR5F5hRC+FLPvoOh+KWLO/iKcfd/g4sxUfuwh17QmId8BALwTVTUzds9ROVir3Dar7OOVa80PA3vQmMvhXUfp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718136784; c=relaxed/simple;
-	bh=N3W/a4Lfz3f8B3FxigKAG79YiP/qLpQxtg00dXAXt08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KQRuN3LiftcwDhYCtGm8Yuceb1I+Anw4oBMpy0g5bXLoIno3k6BrZnrsA+Mm2SX7FGYOHo9cF0jZGev4kkBm3iduB4xOkL+iRxUYYBzpaFZcUsV+YAhpAO0KXkrdYN9C3Z7X5E1rvyYQSEOtDaW7UwZs14KljskfQ5/Qx4BjOjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=APCG1fyL; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=kHAoa/OJkPqP/DFn6fqwfpyDNzhM8R9ekFcSQK7Rigg=; b=APCG1fyLIzuIMJ28F/4ZogT/Ru
-	kOr3vmBpRa6ef0QB73z87iuA6sx5qCC8ZWSfhHYIsu8JkfIB9d4MfJzcOwmxNabgH7S6wAHSqlTNS
-	K0ti0luqp568pq8jnF+i4ZHuu0eYNrUw6XTAirNwFYV6fHECzxtKZk4Rs11j9H9fcICs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sH7rI-00HQBb-VF; Tue, 11 Jun 2024 22:12:44 +0200
-Date: Tue, 11 Jun 2024 22:12:44 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Lizhi Hou <lizhi.hou@amd.com>, clement.leger@bootlin.com,
-	Jeremy Linton <jeremy.linton@arm.com>
-Subject: Re: Raspberry Pi5 - RP1 driver - RFC
-Message-ID: <73e05c77-6d53-4aae-95ac-415456ff0ae4@lunn.ch>
-References: <ZmhvqwnOIdpi7EhA@apocalypse>
- <ba8cdf39-3ba3-4abc-98f5-d394d6867f95@gmx.net>
+	s=arc-20240116; t=1718136979; c=relaxed/simple;
+	bh=HAK2OHutCS/Lj87z2/N+VGndKX2mskGP86pdblWyp2w=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=eVQdZjdKYWwDw1kYllGc9YHhavqydKMXq79PFqqBcj+TOAvxxLlx9vShDrio+g2w2hPOyMC05LCZBIcOYYx9Ttmmm+gcuLxPYOigpsBxRN576CDMJIvonZfK5eD9RUFXMAUzTED+d4uxGkOE0QWwTgvgIOnt1fEgJ5dqK7ht+/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=O4UuX8Jx; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([99.8.153.148])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45BKFlxc3470245
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 11 Jun 2024 13:15:48 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45BKFlxc3470245
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024051501; t=1718136948;
+	bh=WhP585hb/L47fJhChNfJiVXpMXU0QH1KtWBu/UgVVp4=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=O4UuX8JxWZ947o1nr0MB5zU/V06HeNWKwliayCcDZnsAHeOrt4o2lUoSETF6zXMJS
+	 4Vk3TDyfCmEuxcaIBmO8HV2zutSuK1IC06IQGhMhPMoXOfv9CeQiFNFzlnoQ2kMyuX
+	 ZaFnylG5wmSmOEZ/XkYdAqpBFXiQIhiT7XYs+h+8W88/KXyOVTz9OzMSjXz7M7bneA
+	 fTPuP5G9l5DhfrQBXIFZToLzbt6VFaQurfP2keJN6BGHm2kxFzbuLPhFlHgXz+KVNm
+	 YlvUobF5pCM+xy1q/jT7FfyO8+2APpYo+fJ9dSLjzUph5utoiEx6n5gchN6vzeP6O2
+	 8bWk8Q9JcO62g==
+Date: Tue, 11 Jun 2024 13:15:43 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC: Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH] x86: add 'runtime constant' infrastructure
+User-Agent: K-9 Mail for Android
+In-Reply-To: <8eb5960f-17f9-4d94-9b52-dea8b475e9dc@zytor.com>
+References: <20240608193504.429644-2-torvalds@linux-foundation.org> <20240610104352.GT8774@noisy.programming.kicks-ass.net> <f967d835-d26e-47af-af35-c3c79746f7d9@rasmusvillemoes.dk> <8eb5960f-17f9-4d94-9b52-dea8b475e9dc@zytor.com>
+Message-ID: <BFD0AF77-C95E-4B8B-B475-DCBD808CA5C0@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba8cdf39-3ba3-4abc-98f5-d394d6867f95@gmx.net>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 09:05:24PM +0200, Stefan Wahren wrote:
-> Hi Andrea,
-> 
-> i added Jeremy, because AFAIK he was deeply involved in ACPI
-> implementation of the RPi 4.
-> 
-> Am 11.06.24 um 17:39 schrieb Andrea della Porta:
-> > Hi,
-> > I'm on the verge of reworking the RP1 driver from downstream in order for it to be
-> > in good shape for upstream inclusion.
-> > RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting a pletora
-> > of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM, etc.) whose registers
-> > are all reachable starting from an offset from the BAR address.
-> > The main point here is that while the RP1 as an endpoint itself is discoverable via
-> > usual PCI enumeraiton, the devices it contains are not discoverable and must be
-> > declared e.g. via the devicetree. This is an RFC about the correct approach to use
-> > in integrating the driver and registering the subdevices.
-> > 
-> I cannot provide much input into the technical discussion, but i would
-> prefer an approach which works good with DT and ACPI.
+On June 11, 2024 12:43:02 PM PDT, "H=2E Peter Anvin" <hpa@zytor=2Ecom> wrot=
+e:
+>On 6/10/24 06:38, Rasmus Villemoes wrote:
+>> On 10/06/2024 12=2E43, Peter Zijlstra wrote:
+>>> On Sat, Jun 08, 2024 at 12:35:05PM -0700, Linus Torvalds wrote:
+>>=20
+>>>> Comments?
+>>>=20
+>>> It obviously has the constraint of never running the code before the
+>>> corresponding runtime_const_init() has been done, otherwise things wil=
+l
+>>> go sideways in a hurry, but this also makes the whole thing a *lot*
+>>> simpler=2E
+>>>=20
+>>> The only thing I'm not sure about is it having a section per symbol,
+>>> given how jump_label and static_call took off, this might not be
+>>> scalable=2E
+>>>=20
+>>> Yes, the approach is super simple and straight forward, but imagine
+>>> there being like a 100 symbols soon :/
+>>>=20
+>>> The below hackery -- it very much needs cleanup and is only compiled o=
+n
+>>> x86_64 and does not support modules, boots for me=2E
+>>=20
+>> As can be seen in my other reply, yes, I'm also worried about the
+>> scalability and would like to see this applied to more stuff=2E
+>>=20
+>> But if we do this, surely that's what scripts/sorttable is for, right?
+>>=20
+>> Alternatively, if we just keep emitting to per-symbol
+>> __runtime_const_##sym sections but collect them in one __runtime_const,
+>> just using __runtime_const { *(SORT_BY_NAME(__runtime_const_*)) } in th=
+e
+>> linker script should already be enough to allow that binary search to
+>> work (with whatever : AT(ADDR() =2E=2E=2E ) magic is also required), wi=
+th no
+>> post-processing at build or runtime required=2E
+>>=20
+>
+>As far as one section per symbol, this is *exactly* what the linker table=
+ infrastructure was intended to make clean and scalable=2E
+>
+>I think rejecting it was a big mistake=2E It is really a very useful gene=
+ral piece of infrastructure, and IMNSHO the whole notion of "oh, we won't e=
+ver need that many such tables" is just plain wrong (as evidenced here=2E)
+>
+>Either way, the problem isn't that hard; you end up doing something like:
+>
+>struct runtime_const {
+>	unsigned int size;
+>	reladdr_t entries[0];
+>};
+>
+>#define DECLARE_RUNTIME_CONST(sym,type) \
+>extern struct runtime_const sym;\
+>asm("=2Epushsection \"runtime_const_" #sym "=2EStart\",\"a\"\n\t"
+>    "=2Eglobl " #sym "\n"
+>    #sym ": =2Eint 2f - 1f\n\t"
+>    "1:\n"
+>    "=2Epopsection\n\t"
+>    "=2Epushsection \"runtime_const_" #sym "=2E_end\",\"a\"\n\t"
+>    "2:\n"
+>    "=2Epopsection\n\t");
+>
+>=2E=2E=2E and add a common suffix, say, "=2Eentry", for the entry section=
+ names=2E Then SORT_BY_NAME() will handle the rest=2E
+>
+>	-hpa
+>
 
-There is a small and slowly growing interest in using DT overlays on
-ACPI systems. It makes a lot of sense when you have an already working
-set of drivers based on DT, and then need to make them work on ACPI
-systems.
+Ok, the section naming is obviously bogus, but=2E=2E=2E
 
-The Microchip LAN996x is an ARM SoC with lots of peripherals and an
-Ethernet switch. There is a full DT description of it and
-drivers. However, it also has a PCIe interface which allows access to
-all the peripherals and the Ethernet switch. Bootlin are adding
-patches to allow any host with a PCIe bus use all the existing drivers
-and a DT overlay to glue it all together.
-
-https://patchwork.kernel.org/project/linux-pci/cover/20240527161450.326615-1-herve.codina@bootlin.com/
-
-ACPI and DT should not be considered mutually exclusive.
-
-     Andrew
+I just had an idea how to clearly make this type-safe as a benefit=2E I'm =
+at a school event right now but I'll hack up a demo as soon as I get home=
+=2E
 
