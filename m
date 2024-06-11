@@ -1,102 +1,115 @@
-Return-Path: <linux-kernel+bounces-210305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E64E90421E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E00AD904222
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 116641C20862
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:05:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 049981C22AE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC92142067;
-	Tue, 11 Jun 2024 17:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e37o/8pj"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937E04597A;
+	Tue, 11 Jun 2024 17:06:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F0940C03
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 17:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243093FB83;
+	Tue, 11 Jun 2024 17:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718125502; cv=none; b=tzvmNEyzCJB9Mm4r8Q9ipQtGZUa5FOpjM0by+hasNXrbhbMNN0WoRQJkN1GYgT6IRTxxprPPvquwgwoky3RPBsyPUPEeH/5Y7CQJhGW8qW2RvBO55+DN8h1WajBQ3lKoszneoG34GYb2fY4wL1xQdj5+3y0UtQwj6rkL55yEOhI=
+	t=1718125565; cv=none; b=KpcsE9ESOQ97YzABDuK/Pgm1rEdAeugbhw2+r2+oXe0KtkU3l7a6PVGc4rf5z2dAhMfiMNwqEnPQ3JzJ5m5K+zHUAtLT7b5ntrY39fZDBxEkayHrZw4pVfKYOpszvI7DPmwRAtJgK0LybpahLTqG9IAT6Zq5gkD6TRv70J46xo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718125502; c=relaxed/simple;
-	bh=v1ZNq4JwoYhwZQR6SFYW6CMOzV82UJ7h9T7rF03L/88=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R3VSICzjGyqoqwSdhcLw7qMyZO3MM32ez6tRxn7i2ckOjmXBjo7ChfqfzGT0npn0x2RI9Xw1j/vo4VDCoxtah8ZnFyCjRMIot2YzNO+7vSQ+SZd5vntbRo0Gq8GhT0CPUV8LyNz5yzwAdD8jcRKj0ZLRbd1OMKHOl73bj0uBEz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=e37o/8pj; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45BH4wJN077943;
-	Tue, 11 Jun 2024 12:04:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718125498;
-	bh=mIGARfpX1NigkPik0naU8QyBW3hIwD+N3yK6u39Mhv4=;
-	h=From:To:CC:Subject:Date;
-	b=e37o/8pjIBMauMLJgK/QsYUHX8L0Wg6f72XYd1w0lAMkwUzJvFG3lTjQlS17hcuLi
-	 I9+95WtUQxxtnsHCXIqjBrchpg+QDk/bBRl2c+Y0b/RkSX+INuCcZlorLhKPWiR7O5
-	 AW4xcOkAXDUa97IR6zWuns0Pe6O86ZhO6C0D6wkk=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45BH4wgU023609
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 11 Jun 2024 12:04:58 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
- Jun 2024 12:04:58 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 11 Jun 2024 12:04:57 -0500
-Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45BH4v7a039108;
-	Tue, 11 Jun 2024 12:04:57 -0500
-From: Andrew Davis <afd@ti.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Beleswar Padhi <b-padhi@ti.com>,
-        Hari Nagalla <hnagalla@ti.com>
-CC: <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH] mailbox: omap: Fix mailbox interrupt sharing
-Date: Tue, 11 Jun 2024 12:04:56 -0500
-Message-ID: <20240611170456.136795-1-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1718125565; c=relaxed/simple;
+	bh=T1GLK5swXm9ffi3GijVN1uaXajq/zCynYioG+5H0AvA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZOQqhSotp1s42hIg+qXDO/tbUKGLckONXF3/cumZtWr8Lb/vd8eLr55VqObZHpT0WFLohpKFpvhqEyrMDr9Z8qoFGmpFcHgd3ZMTMo5AJOe312EhituYRDWn2NDHnDhSheBy0wBEOS3a5SeRVU5WalT6d16xLAO7pfFgOr2NIjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VzFLT6Db9z6K6tC;
+	Wed, 12 Jun 2024 01:01:05 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id D371C140A70;
+	Wed, 12 Jun 2024 01:06:00 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Jun
+ 2024 18:06:00 +0100
+Date: Tue, 11 Jun 2024 18:05:59 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Nuno =?ISO-8859-1?Q?S=E1?=
+	<noname.nuno@gmail.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	<broonie@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+	<conor+dt@kernel.org>, <nuno.sa@analog.com>, <dlechner@baylibre.com>,
+	<marcelo.schmitt1@gmail.com>, <linux-iio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v3 6/6] iio: adc: Add support for AD4000
+Message-ID: <20240611180559.000052c7@Huawei.com>
+In-Reply-To: <ZmgoNRkso4egGWgJ@surfacebook.localdomain>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+	<e340f48324b0ea3afb1c715cb2fba184c27112a1.1717539384.git.marcelo.schmitt@analog.com>
+	<e92871489d416e4f8a350fd24fc5ed0012b3cf2b.camel@gmail.com>
+	<20240609102354.02aa1128@jic23-huawei>
+	<ZmgoNRkso4egGWgJ@surfacebook.localdomain>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Multiple mailbox users can share one interrupt line. This flag was
-mistakenly dropped as part of the FIFO removal. Mark the IRQ as shared.
+On Tue, 11 Jun 2024 13:34:29 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-Reported-by: Beleswar Padhi <b-padhi@ti.com>
-Fixes: 3f58c1f4206f ("mailbox: omap: Remove kernel FIFO message queuing")
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- drivers/mailbox/omap-mailbox.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Sun, Jun 09, 2024 at 10:23:54AM +0100, Jonathan Cameron kirjoitti:
+> 
+> ...
+> 
+> > > > +	/*
+> > > > +	 * In 4-wire mode, the CNV line is held high for the entire
+> > > > conversion
+> > > > +	 * and acquisition process. In other modes st->cnv_gpio is NULL and
+> > > > is
+> > > > +	 * ignored (CS is wired to CNV in those cases).
+> > > > +	 */
+> > > > +	gpiod_set_value_cansleep(st->cnv_gpio, 1);    
+> > > 
+> > > Not sure it's a good practise to assume internal details as you're going for
+> > > GPIO. I would prefer to have an explicit check for st->cnv_gpio being NULL or
+> > > not.  
+> > 
+> > Hmm. I had it in my head that this was documented behaviour, but
+> > I can't find such in the docs, so agreed checking it makes sense.
+> > 
+> > I would be very surprised if this ever changed as it's one of the
+> > things that makes optional gpios easy to work with but who knows!  
+> 
+> Not Linus and not Bart, but we have tons of drivers that call GPIO APIs
+> unconditionally as long as they want optional GPIO.
+> 
+> What I see here is the comment that should be rewritten to say something like
+> 
+> "if GPIO is defined blablabla, otherwise blablabla."
+> 
+> I.o.w. do not mention that implementation detail (being NULL, i.e. optional).
+> 
 
-diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
-index 46747559b438f..7a87424657a15 100644
---- a/drivers/mailbox/omap-mailbox.c
-+++ b/drivers/mailbox/omap-mailbox.c
-@@ -230,7 +230,8 @@ static int omap_mbox_startup(struct omap_mbox *mbox)
- 	int ret = 0;
- 
- 	ret = request_threaded_irq(mbox->irq, NULL, mbox_interrupt,
--				   IRQF_ONESHOT, mbox->name, mbox);
-+				   IRQF_SHARED | IRQF_ONESHOT, mbox->name,
-+				   mbox);
- 	if (unlikely(ret)) {
- 		pr_err("failed to register mailbox interrupt:%d\n", ret);
- 		return ret;
--- 
-2.39.2
+Good point - handy comment there already and this minor tweak will make it clear.
 
+Thanks Andy!
+
+Jonathan
 
