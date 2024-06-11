@@ -1,97 +1,110 @@
-Return-Path: <linux-kernel+bounces-209902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D125903CB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:06:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7958A903CB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E128F283C8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703721C23373
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD0317C7BB;
-	Tue, 11 Jun 2024 13:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8501217C7CB;
+	Tue, 11 Jun 2024 13:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBBh22W1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oMU7D+Px"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AC61E49E;
-	Tue, 11 Jun 2024 13:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD99A17B406;
+	Tue, 11 Jun 2024 13:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718111195; cv=none; b=O+4o5XlQVCipSwEdV3xIFF11vWz8evySPsOxWEmSd+Ba9vLrl6ONbPYhgbGo0AjxXuj0h5A3vLbJEvQUp6j+p5BA2fLmaSMJ43myZF3KFCIQSkcgFWAe/A1ge7CzK/5/fCZ5kyQFXF2xdzoyNgUs2JwdbShxVcRzJglGveBwXzI=
+	t=1718111216; cv=none; b=r88X3xsjGn+DG7oSCD8qweKyjTirSdOqD1cvU5s2e6VTGwFGKMxO8YK95j95vYzCPsUifyMaRDaeRU0AIX4VHCyTvr3jLF9frgQ5Qa3dvSXslYIss745zKvbMUhT0LIrzOxofoQjRKs918Kd9/YBwTulMza27kB5E6Iw2sId56E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718111195; c=relaxed/simple;
-	bh=fvU0CY1L2x1JaWCOJWpJ1OLFoEenfkxUKtIPoVhrvTk=;
+	s=arc-20240116; t=1718111216; c=relaxed/simple;
+	bh=qeFyIhjyRVr3qLO9JcdFGRIv32av/Bt1hR6Zi26OP68=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDkMnvahIBWmXeIfwLbY7F0Te4O8Dah6m7wLHxA0lZscG72xk6SGdLuxkk/Ar2ELEFm+GyEIWGi9ypM6Mcf95lHSC5FBgeF+WayOLQX/s/PierEXRiTk8iEIFJjNYQfz94NxGSuV3lAa423yogozf0H+q4aDVrkqqACGVwC5LVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XBBh22W1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCA8BC2BD10;
-	Tue, 11 Jun 2024 13:06:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718111195;
-	bh=fvU0CY1L2x1JaWCOJWpJ1OLFoEenfkxUKtIPoVhrvTk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XBBh22W1g1KSbVS5E4IVJYEqbVC9y9s6MkEFDars1HH2A4btEvJPsW1YLGqjvt8av
-	 MnzCmgxblGMTf7d5Y7IPwFIvNeI0GU0iK/mAJMzCaGhGbNgpAz/8CMXhd3QVLLyIeo
-	 vJ7Eof2aH7MLAte+YPvVxeFQNd1mxTNdJDHm2mxDbeKyiMhBMQoD0XuaGE2GDqk+kl
-	 /0zwS+CYOz7JqMiZs7+1bB8beCNGChgnDgNqeCMEM814ExLD1p9tEC8vBpjiPmGWdJ
-	 tHaJ9VpSvGLktOfRi0N60KTyN0uixuZntvsEB/BCx3pVbbbwyaELPgwtd5r75bGqCY
-	 IQpe0pmCfNIvA==
-Date: Tue, 11 Jun 2024 14:06:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: alx@kernel.org, linux-man@vger.kernel.org, mingo@kernel.org,
-	tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com,
-	suzuki.poulose@arm.com, Anshuman.Khandual@arm.com,
-	DeepakKumar.Mishra@arm.com, aneesh.kumar@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] signal.7: Fix wrong mention of sigprocmask
-Message-ID: <ZmhL18D4rGeV_vnJ@finisterre.sirena.org.uk>
-References: <20240611090823.820724-1-dev.jain@arm.com>
- <20240611090823.820724-3-dev.jain@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OWvMvoP1RP4gK6sbgdpIyzqW51D+Rj378YnSdzTqOvx5uMySGPL5Q0wjcRWC2oooVEyNVa0DKBnlmM5RcGo3/cN2ePtrnn2bPXoPcrKR9hNp/qfWYy2skfcV9Bca9qnP/jv1+z/3b801RK6e49I60hEzxplwoHfb8IH4n7T6BKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=oMU7D+Px; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=4RzQfhz9JM3uFuWXMZQu3myfhwQMauJsDyAR+I1tfCg=; b=oM
+	U7D+PxxIgKdbxS9Lf6Rj5kMt/vXWOCXaEvkwqxopuk2siBu53kzjYuhgw6ImVNHLHJqKkydW2z96s
+	CLFnQ19UPSdxPgwJ6v15/zcHHDTrQd/wbqAHFII7CgCHJIq+IeaVLGUhCUDDsFkzqdaw0Xs+WCcNS
+	af2/Zg2U+ZGmwQ4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sH1D9-00HO90-LP; Tue, 11 Jun 2024 15:06:51 +0200
+Date: Tue, 11 Jun 2024 15:06:51 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
+Cc: imx@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Wei Fang <wei.fang@nxp.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>
+Subject: Re: [PATCH v2] net: fec: Add ECR bit macros, fix FEC_ECR_EN1588
+ being cleared on link-down
+Message-ID: <c49a5e28-e030-4fc1-ab30-9afd997f03bc@lunn.ch>
+References: <20240607081855.132741-1-csokas.bence@prolan.hu>
+ <46892275-619c-4dfb-9214-3bbb14b78093@lunn.ch>
+ <d6d6c080-b001-4911-83bc-4aca7701cdff@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b71STQ1Soi1l2fhP"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240611090823.820724-3-dev.jain@arm.com>
-X-Cookie: Your love life will be... interesting.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d6d6c080-b001-4911-83bc-4aca7701cdff@prolan.hu>
 
+On Tue, Jun 11, 2024 at 10:04:39AM +0200, Csókás Bence wrote:
+> Hi!
+> 
+> On 6/10/24 21:13, Andrew Lunn wrote:
+> > On Fri, Jun 07, 2024 at 10:18:55AM +0200, Csókás, Bence wrote:
+> > > FEC_ECR_EN1588 bit gets cleared after MAC reset in `fec_stop()`, which
+> > > makes all 1588 functionality shut down on link-down. However, some
+> > > functionality needs to be retained (e.g. PPS) even without link.
+> > 
+> > I don't know much about PPS. Could you point to some documentation,
+> > list email etc, which indicated PPS without link is expected to work.
+> > 
+> > Please also Cc: Richard Cochran for changes like this.
+> > 
+> > Thanks
+> > 	Andrew
+> 
+> This is what Richard said two years ago on the now-reverted patch:
+> 
+> Link: https://lore.kernel.org/netdev/YvRdTwRM4JBc5RuV@hoboy.vegasvil.org
 
---b71STQ1Soi1l2fhP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks.
 
-On Tue, Jun 11, 2024 at 02:38:23PM +0530, Dev Jain wrote:
-> The handler is registered with sigaction(), not sigprocmask(). Even if the
-> purpose of writing sigprocmask() here was to mention blocked signals, the
-> statement currently concerns the "addition" of blocked signals; signals
-> blocked through sigprocmask() would already be present in the thread
-> context of blocked signals.
+So when you have sync, you have a 1Hz clock, synchronised to the grand
+master. When the link is down, or communication with the grand master
+is lost, you get a free running clock of around 1Hz. I presume that if
+the link does up again and communication to the grand master is
+restored, there is a phase shift in the 1Hz clock, and a frequency
+correction? The hardware has to cope with this.
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+> Plus, this patch doesn't even re-enable PPS or any other 1588 functions, it
+> just prevents the adapter from forgetting it is even 1588-capable. I'll
+> resubmit with more clear wording and appropriate "Fixes:" and "Cc:" tags.
 
---b71STQ1Soi1l2fhP
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZoS9YACgkQJNaLcl1U
-h9CaRAf+MwHLHpDi2GxewiCqYyoxzzEunbDIGGmqQzj8ztNPLOfkQJVeXZ4bEq5y
-ICVeT+1gtKK9vgErBq8HzKAsBkvbpfEP0NP48FeQm0phR25r86OTDqIvmFqblMmZ
-UyC4xMEeSkCEElVDbcnyoll0oObxi1Nz7qFoYWfz2cnVyr0j7t8onJnk8WqwfLdk
-f6H4PZSY4RFm62qjnX3VYiG1tUFcRwCuje7Zo05+coFMPq7Z5ZR/lwYIIZxuP6aj
-M9578e/kBpPHKkwCd1OsmwSXwiOXcQZYZxXyJDLlIABYyMgQTaEnWx0026mGBQGI
-5T9wa6jaLlcwL2gyyHIZ8fObeA47dA==
-=XpcQ
------END PGP SIGNATURE-----
-
---b71STQ1Soi1l2fhP--
+	Andrew
 
