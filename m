@@ -1,149 +1,84 @@
-Return-Path: <linux-kernel+bounces-210451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5DD9043CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:39:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F1149043CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89CCB1F25C13
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:39:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ACBD1F258C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53DB7691F;
-	Tue, 11 Jun 2024 18:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9B76EB68;
+	Tue, 11 Jun 2024 18:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JUi0MIis"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="0+HgQZDn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E58757F6;
-	Tue, 11 Jun 2024 18:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C7914A96;
+	Tue, 11 Jun 2024 18:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718131143; cv=none; b=nhl2gbXdvrNl9KxA0tz9kETkuBqcfkU3lpHSDcziXO1nLo7ypYaVzNDjJxdocHXW+GyNJ7jZCirwupUOIOe3Jp3nlj0sK8fIZ2PXKytzVwWWF1e1WBxkRbt0Cb2TvkHEIyWIben7uOBm2W7Qqw8m1h1br/w5QGujtFXJL862XzQ=
+	t=1718131137; cv=none; b=MeB3SbhvM9NU7l58btt8luUgclJxXHW7Ha+FZzeEQVK2rWlHkpJAChjkBGHeVx5Zex8coJIblwLyP5Zr+bprZwioejZ4st8i2WB9RxHca2Uu3r4HTFLdIWyqrl6baAwys53s7+DCqkCJCdHXBUKNDh3MwewVU2h8/tkMeEbAO9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718131143; c=relaxed/simple;
-	bh=ohppsjWPjJRyFtFqckt/hYnonCHoM/wgvmO6lrk5vdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ULDcR0olqw+vNtIAztCXFTB3HREquciIVbt8J9EJDEBNd2LUZO9IdSWccHga/I90GLjBoHalpYhMKCfJZDIX6aJOMROyoBYupEnSxtNTXenRqU2N18A7CEx7x8e1OErhefupuW4BjzWupDbIMB7FJAsezgMdvjpk4bIzWyIN6k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JUi0MIis; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718131141; x=1749667141;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ohppsjWPjJRyFtFqckt/hYnonCHoM/wgvmO6lrk5vdw=;
-  b=JUi0MIisWy/kvQ1qa5MALMjIN7qtJ/OXGB9bPgYGgKqbuwhLnXW7C6ud
-   SNE6EFXxG+5+hBZ1egBVu7fytOPzqjKO1orAkjYnzBK/QVmEMK8CFWwQT
-   ZMZ+zA6nfIqs4FGLx9pn0nRBsZ4DRhVZzA0+hNEbTXr7IlaNSrm15rXyL
-   dCK6uOxFPffqH7LkMuv5l00DiBpSVpv1T9x9wSGDbHP2Oc7oCHL8KGhRX
-   jDFRwxnezk+NAT0KZ6KSTTNGeqjWJpR6E5BeiKoz4CWOUhfmUMl7/hW4v
-   4tKpEeUD1X74UCAiZE3Wrwdl+h9x+fe3/AOTUYTivqn9Po2OzhH1LIe0J
-   A==;
-X-CSE-ConnectionGUID: N705jKijR1mMIBKx/ITPeg==
-X-CSE-MsgGUID: NSK1CjKpRg+5X+6ainA99A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14587440"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="14587440"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 11:39:00 -0700
-X-CSE-ConnectionGUID: wm7c0nIRRHiga9+KZhrnwg==
-X-CSE-MsgGUID: Nqw0HRHOQOWT9fRxOWk9FA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="39631801"
-Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 11 Jun 2024 11:38:58 -0700
-Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sH6OV-0000mY-1r;
-	Tue, 11 Jun 2024 18:38:55 +0000
-Date: Wed, 12 Jun 2024 02:38:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
-Cc: oe-kbuild-all@lists.linux.dev, arulponn@cisco.com, djhawar@cisco.com,
-	gcboffa@cisco.com, mkai2@cisco.com, satishkh@cisco.com,
-	jejb@linux.ibm.com, martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Karan Tilak Kumar <kartilak@cisco.com>
-Subject: Re: [PATCH 03/14] scsi: fnic: Add support for fabric based solicited
- requests and responses
-Message-ID: <202406120201.VakI9Dly-lkp@intel.com>
-References: <20240610215100.673158-4-kartilak@cisco.com>
+	s=arc-20240116; t=1718131137; c=relaxed/simple;
+	bh=QzoeiAlrGSB0mhE4dTqZ/+X4xvaNKPEqzYovZICDW+0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=uvFgIIb2wKPvBPPKb9flZ1H2wv1NHB/7N/tfedIrrpnouCyPCMI71JXA0xKNSTcc/Ah0YvYkRJOKfCK0z4Q5MbSKkwWfMIE9/CBm6x1mLbfEhp9qP7DaThsWP+eCsrdXJiM9cYqnD59aqAB9auw+JAl55jnKSA+Y7P7hBtcsQwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=0+HgQZDn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD92C2BD10;
+	Tue, 11 Jun 2024 18:38:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1718131136;
+	bh=QzoeiAlrGSB0mhE4dTqZ/+X4xvaNKPEqzYovZICDW+0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=0+HgQZDn/hNWKdnS2pbqsdidfIolhv7J6gSm+5li7h6A2Gq5VWsruKQinCl22rahP
+	 5T52QqTxH2HEQKJNBb3AeE0UNY6r1G1SpAtlxQ/KdDAIwWOuoor0NqRBT4IvfJxL3h
+	 joDUk8eynkn/m8H0L9Ag5sybLEK+0tDEXRusCTJo=
+Date: Tue, 11 Jun 2024 11:38:55 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Thorsten Leemhuis <linux@leemhuis.info>, Andy Whitcroft
+ <apw@canonical.com>, Joe Perches <joe@perches.com>, Dwaipayan Ray
+ <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Kees Cook
+ <keescook@chromium.org>, Sasha Levin <sashal@kernel.org>, Tom Gall
+ <tom.gall@linaro.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v5] checkpatch: check for missing Fixes tags
+Message-Id: <20240611113855.b63a6015b26a0dad49d9f2a7@linux-foundation.org>
+In-Reply-To: <ZmhUgZBKeF_8ixA6@moroto>
+References: <ZmhUgZBKeF_8ixA6@moroto>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610215100.673158-4-kartilak@cisco.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Karan,
+On Tue, 11 Jun 2024 16:43:29 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-kernel test robot noticed the following build warnings:
+> This check looks for common words that probably indicate a patch
+> is a fix.  For now the regex is:
+> 
+> 	(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/)
+> 
+> Why are stable patches encouraged to have a fixes tag?  Some people mark
+> their stable patches as "# 5.10" etc.  This is useful but a Fixes tag is
+> still a good idea.
 
-[auto build test WARNING on mkp-scsi/for-next]
-[also build test WARNING on jejb-scsi/for-next linus/master v6.10-rc3 next-20240611]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I'd say that "# 5.10" is lame and it would be good if checkpatch could
+detect this and warn "hey, use a proper Fixes:".  Because
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Karan-Tilak-Kumar/scsi-fnic-Replace-shost_printk-with-pr_info-pr_err/20240611-060227
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
-patch link:    https://lore.kernel.org/r/20240610215100.673158-4-kartilak%40cisco.com
-patch subject: [PATCH 03/14] scsi: fnic: Add support for fabric based solicited requests and responses
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240612/202406120201.VakI9Dly-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240612/202406120201.VakI9Dly-lkp@intel.com/reproduce)
+> It  helps people to not cherry-pick buggy patches without also
+> cherry-picking the fix.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406120201.VakI9Dly-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/scsi/fnic/fnic_fcs.c:21:
-   drivers/scsi/fnic/fnic_fcs.c: In function 'fdls_send_fcoe_frame':
->> drivers/scsi/fnic/fnic.h:159:33: warning: format '%ld' expects argument of type 'long int', but argument 7 has type 'unsigned int' [-Wformat=]
-     159 |                                 "fnic<%d>: %s: %d: " fmt, fnic_num,\
-         |                                 ^~~~~~~~~~~~~~~~~~~~
-   drivers/scsi/fnic/fnic.h:146:25: note: in definition of macro 'FNIC_CHECK_LOGGING'
-     146 |                         CMD;                                    \
-         |                         ^~~
-   include/scsi/scsi_host.h:738:9: note: in expansion of macro 'dev_printk'
-     738 |         dev_printk(prefix, &(shost)->shost_gendev, fmt, ##a)
-         |         ^~~~~~~~~~
-   drivers/scsi/fnic/fnic.h:158:26: note: in expansion of macro 'shost_printk'
-     158 |                          shost_printk(kern_level, host,                 \
-         |                          ^~~~~~~~~~~~
-   drivers/scsi/fnic/fnic_fcs.c:1228:25: note: in expansion of macro 'FNIC_FCS_DBG'
-    1228 |                         FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-         |                         ^~~~~~~~~~~~
+seems pretty important.
 
 
-vim +159 drivers/scsi/fnic/fnic.h
-
-5df6d737dd4b0fe Abhijeet Joglekar 2009-04-17  149  
-3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  150  #define FNIC_MAIN_DBG(kern_level, host, fnic_num, fmt, args...)		\
-5df6d737dd4b0fe Abhijeet Joglekar 2009-04-17  151  	FNIC_CHECK_LOGGING(FNIC_MAIN_LOGGING,			\
-3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  152  			 shost_printk(kern_level, host,			\
-3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  153  				"fnic<%d>: %s: %d: " fmt, fnic_num,\
-3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  154  				__func__, __LINE__, ##args);)
-5df6d737dd4b0fe Abhijeet Joglekar 2009-04-17  155  
-3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  156  #define FNIC_FCS_DBG(kern_level, host, fnic_num, fmt, args...)		\
-5df6d737dd4b0fe Abhijeet Joglekar 2009-04-17  157  	FNIC_CHECK_LOGGING(FNIC_FCS_LOGGING,			\
-3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  158  			 shost_printk(kern_level, host,			\
-3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11 @159  				"fnic<%d>: %s: %d: " fmt, fnic_num,\
-3df9dd0d51c2e4b Karan Tilak Kumar 2023-12-11  160  				__func__, __LINE__, ##args);)
-5df6d737dd4b0fe Abhijeet Joglekar 2009-04-17  161  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
