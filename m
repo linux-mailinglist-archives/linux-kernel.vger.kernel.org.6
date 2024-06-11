@@ -1,66 +1,41 @@
-Return-Path: <linux-kernel+bounces-210327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4072990425E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:26:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4824B90425F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A97A7282161
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E39941F24A2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0564F215;
-	Tue, 11 Jun 2024 17:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2suFtL5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6006147F5D;
-	Tue, 11 Jun 2024 17:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202C94D131;
+	Tue, 11 Jun 2024 17:26:18 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 808BE376E9
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 17:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718126765; cv=none; b=kfKeGubXX9dkkvYUewMu6qZW943Zv3HTcyf5Keap1xAx6oumHzdP8LcLCXUR6xe6oVtKhkSSjZ40YbeFVcuqzE/lmwx4Ayth8ESP04g0gXnaOgNhcsHAHjOONV9+OKFg7JHyzmKBb8CcKCGtWuVCjVZfXFr9kUz0WCCHrbhcr9o=
+	t=1718126777; cv=none; b=rhvEyNJlb4LrIm3b34Ypcgy9lpWzYGSgmuinTDfuWLELjn6A7VM63cZbYOcjySGLFHlnSil+mslVozga0srCGoDo/Dxo5ymxnzPn4wPswRbktEjVpV8i3/wxs4sn6/oKNh/lUaI/em235NcNVL2vqt5Fh6esE7ZpMKB69AdU5zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718126765; c=relaxed/simple;
-	bh=SQVKiWoMEQlGJzZl2xfryE32TSjR7fWPakYa+xG+jOQ=;
+	s=arc-20240116; t=1718126777; c=relaxed/simple;
+	bh=Bm1Z5h2HDtU+JljYzebjngJn8fDNKlnAEInmNdApScw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c1dG7UpfJDzgAT01vG4M47RuSnTlUpkHxeYpayHXFxdfwUQxl4Sifji/1W8lafjk8PR5v9cJsMsaIXBpiTTjauhu1qdxNlUOWit9q8kDl96kc9VZAbFfBtNHIPbrQMABripC1omNPqmZazJIzBpJ39l+nsN53PDBX6fD2v//QO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2suFtL5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CECECC2BD10;
-	Tue, 11 Jun 2024 17:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718126764;
-	bh=SQVKiWoMEQlGJzZl2xfryE32TSjR7fWPakYa+xG+jOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c2suFtL5Vem76e++QV+lrZeQ7MGiZxVNYh58xkSQi2PPsLfzgMS+DIViYpPHwQIIF
-	 OQsYe+Y8zKrquo+xzNMcQu6lXzyiUATsppSouXRBdVURX2p/4tkeyTY8YA3VjNSpRq
-	 F64+77bYB6rnQpQt6afrIzUOf6dOR6B4sXGhn7UVKtUTB8MLQAEFpwkuEtLMEi5GDu
-	 HRy6oaJUJJdwjklzdWv+LgNpsX8DPiNzS9u2kLYOXfEPTvmV8CzRmlgvdhLcfUbiza
-	 CAmlUqVumeZrj5/6o682Y84/8n7jfxQeLepnQGIcQ1Xm+1hE6nkCG3V6dye3Leykmi
-	 1MBzCTM49UwkA==
-Date: Tue, 11 Jun 2024 10:26:02 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Umang Jain <umang.jain@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v4 2/2] media: i2c: Add imx283 camera sensor driver
-Message-ID: <20240611172602.GA2226028@thelio-3990X>
-References: <20240402-kernel-name-extraversion-v4-0-fb776893e4ec@ideasonboard.com>
- <20240402-kernel-name-extraversion-v4-2-fb776893e4ec@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ly1VK4MNWH0BXimnIZNKY8z2pozmoCYGEdVPEM/ADo3qjq2kz5NpuiA8TFEPRcxF6n6NQqt5nq7Fe3u22WuB+ra1t2uEfVMY8HYgTMtUrhQO1rYKx+uJGS+5BLYnZ8xREJr+tcLnRZBiiq89WDCGt7DSKgRmhM6yblmRUPsjGLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 194347 invoked by uid 1000); 11 Jun 2024 13:26:09 -0400
+Date: Tue, 11 Jun 2024 13:26:09 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+  linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in raw_ioctl
+Message-ID: <684687e4-8be4-42ee-a125-8ef9acc3fec9@rowland.harvard.edu>
+References: <23b1962c-044d-4dbd-a705-58754f0914cb@rowland.harvard.edu>
+ <000000000000c7e169061a9f42e8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,108 +44,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240402-kernel-name-extraversion-v4-2-fb776893e4ec@ideasonboard.com>
+In-Reply-To: <000000000000c7e169061a9f42e8@google.com>
 
-Hi Umang,
-
-On Tue, Apr 02, 2024 at 03:37:51PM +0530, Umang Jain wrote:
-> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+On Tue, Jun 11, 2024 at 08:53:02AM -0700, syzbot wrote:
+> Hello,
 > 
-> Add a v4l2 subdevice driver for the Sony IMX283 image sensor.
+> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 > 
-> The IMX283 is a 20MP Diagonal 15.86 mm (Type 1) CMOS Image Sensor with
-> Square Pixel for Color Cameras.
+> Reported-and-tested-by: syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com
 > 
-> The following features are supported:
-> - Manual exposure an gain control support
-> - vblank/hblank/link freq control support
-> - Test pattern support control
-> - Arbitrary horizontal and vertical cropping
-> - Supported resolution:
->   - 5472x3648 @ 20fps (SRGGB12)
->   - 5472x3648 @ 25fps (SRGGB10)
->   - 2736x1824 @ 50fps (SRGGB12)
+> Tested on:
 > 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+> commit:         8867bbd4 mm: arm64: Fix the out-of-bounds issue in con..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11bcfa36980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5f996b83575ef4058638
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: arm64
+> patch:          https://syzkaller.appspot.com/x/patch.diff?x=17790922980000
+> 
+> Note: testing is done by a robot and is best-effort only.
 
-This change is now in -next as commit ccb4eb4496fa ("media: i2c: Add
-imx283 camera sensor driver").
+The interval between adjacent timer interrupts is consistently 20 ms.  
+Longer than expected, but it shouldn't be deadly.  Perhaps it would have 
+been smaller if I hadn't pinned all the interrupts to the same CPU.
 
-> +++ b/drivers/media/i2c/imx283.c
-...
-> +/* IMX283 native and active pixel array size. */
-> +static const struct v4l2_rect imx283_native_area = {
-> +	.top = 0,
-> +	.left = 0,
-> +	.width = 5592,
-> +	.height = 3710,
-> +};
-> +
-> +static const struct v4l2_rect imx283_active_area = {
-> +	.top = 40,
-> +	.left = 108,
-> +	.width = 5472,
-> +	.height = 3648,
-> +};
-...
-> +#define CENTERED_RECTANGLE(rect, _width, _height)			\
-> +	{								\
-> +		.left = rect.left + ((rect.width - (_width)) / 2),	\
-> +		.top = rect.top + ((rect.height - (_height)) / 2),	\
-> +		.width = (_width),					\
-> +		.height = (_height),					\
-> +	}
-...
-> +		.crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
+Anyway, let's see what happens with the dev_err() calls in the interrupt 
+handler changed to dev_dbg().  That ought to reduce the overhead 
+considerably.
 
-This construct does not work with GCC prior to 7 and Clang prior to 17
-(where certain const structures and variables will be considered
-constant expressions for the sake of initializers and such), resulting
-in:
+Alan Stern
 
-  drivers/media/i2c/imx283.c:443:30: error: initializer element is not constant
-     .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
-                                ^
-  drivers/media/i2c/imx283.c:412:11: note: in definition of macro 'CENTERED_RECTANGLE'
-     .left = rect.left + ((rect.width - (_width)) / 2), \
-             ^~~~
-  drivers/media/i2c/imx283.c:443:30: note: (near initialization for 'supported_modes_12bit[0].crop.left')
-     .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
-                                ^
-  drivers/media/i2c/imx283.c:412:11: note: in definition of macro 'CENTERED_RECTANGLE'
-     .left = rect.left + ((rect.width - (_width)) / 2), \
-             ^~~~
-  drivers/media/i2c/imx283.c:443:30: error: initializer element is not constant
-     .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
-                                ^
-  drivers/media/i2c/imx283.c:413:10: note: in definition of macro 'CENTERED_RECTANGLE'
-     .top = rect.top + ((rect.height - (_height)) / 2), \
-            ^~~~
-  drivers/media/i2c/imx283.c:443:30: note: (near initialization for 'supported_modes_12bit[0].crop.top')
-     .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
-                                ^
-  drivers/media/i2c/imx283.c:413:10: note: in definition of macro 'CENTERED_RECTANGLE'
-     .top = rect.top + ((rect.height - (_height)) / 2), \
-            ^~~~
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git 8867bbd4a056
 
-  drivers/media/i2c/imx283.c:443:30: error: initializer element is not a compile-time constant
-                  .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
-                          ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  drivers/media/i2c/imx283.c:412:11: note: expanded from macro 'CENTERED_RECTANGLE'
-                  .left = rect.left + ((rect.width - (_width)) / 2),      \
-                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  drivers/media/i2c/imx283.c:492:30: error: initializer element is not a compile-time constant
-                  .crop = CENTERED_RECTANGLE(imx283_active_area, 5472, 3648),
-                          ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  drivers/media/i2c/imx283.c:412:11: note: expanded from macro 'CENTERED_RECTANGLE'
-                  .left = rect.left + ((rect.width - (_width)) / 2),      \
-                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  2 errors generated.
+Index: usb-devel/drivers/usb/class/cdc-wdm.c
+===================================================================
+--- usb-devel.orig/drivers/usb/class/cdc-wdm.c
++++ usb-devel/drivers/usb/class/cdc-wdm.c
+@@ -266,14 +266,14 @@ static void wdm_int_callback(struct urb
+ 			dev_err(&desc->intf->dev, "Stall on int endpoint\n");
+ 			goto sw; /* halt is cleared in work */
+ 		default:
+-			dev_err(&desc->intf->dev,
++			dev_dbg(&desc->intf->dev,
+ 				"nonzero urb status received: %d\n", status);
+ 			break;
+ 		}
+ 	}
+ 
+ 	if (urb->actual_length < sizeof(struct usb_cdc_notification)) {
+-		dev_err(&desc->intf->dev, "wdm_int_callback - %d bytes\n",
++		dev_dbg(&desc->intf->dev, "wdm_int_callback - %d bytes\n",
+ 			urb->actual_length);
+ 		goto exit;
+ 	}
 
-with these compiler versions. Usually, the values are just refactored
-with #define macros.
-
-Cheers,
-Nathan
 
