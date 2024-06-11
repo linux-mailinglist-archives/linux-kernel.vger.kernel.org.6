@@ -1,164 +1,236 @@
-Return-Path: <linux-kernel+bounces-210659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A009046DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:20:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66959046D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D032286572
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:20:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66349284F9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E1C1552E1;
-	Tue, 11 Jun 2024 22:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D87F15539A;
+	Tue, 11 Jun 2024 22:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtqLYQEZ"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="Pq9rjGAS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ISNh/oJu"
+Received: from wflow2-smtp.messagingengine.com (wflow2-smtp.messagingengine.com [64.147.123.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4566318EAB
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F87438DC8;
+	Tue, 11 Jun 2024 22:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718144411; cv=none; b=M3S92zmxSjWfdU/boRvNNBQVpFUV5VdwoaH5E8gQqpQEmOFApDoXJD9ekJTWwFBcxptXkAZ3XzyaS/jtKtMgkgz0LdaxrvUoYJXKuY20vvE3AuPcPffr/tKa9b/NTYZfZOwMmx9EOOB4cnZTi0bg4OoUGC8qXvCzZ8n9OQP56ko=
+	t=1718144134; cv=none; b=O0BnY08yVEVn0WAAJx0Tgfo7wIF7syl5/PfW76t90Vh5T0ZVboPxLzyRiBLo6Krze168JGofkzXjuk6nUBtuOxiQA3IGN18RsB9LkjaoXGuoYMgKXumRL2qgZWGnFyOEQ0E8/v5gwOeXbPS1+QzF/qEcKZd1ZDdCS1G5toluK5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718144411; c=relaxed/simple;
-	bh=Luzz8SE63QZXxbCDkOElzpZzSqBJuROxHhvtQ3lKmJo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o0e1j/hs/ZlQn9LepQlPeWfXn2R1CKHxnpmdvwyF8B2tYy88XZf6+Fl6YMmeBGa7HEZ/du7j2DRmBHuqk6aGYIfIgU22m4vGl/tHL3Fp452jiZ5I2fD5RLlbsdQ5eFfYhClpm5LB9x2EWSaTfdP5s4JASh38Fb3ivYEU/g0AQDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtqLYQEZ; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfe41f7852cso170238276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:20:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718144409; x=1718749209; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tWvoilUykDD9/rgz0mp3zLYBtz2E5uf7UCO+Al15jwE=;
-        b=dtqLYQEZxXdTHsxgez4wF7TLPrRwHuk6AJd06eIYPpyzq4rmGuBA6kyD+3UlzdcfcN
-         EXWj9vzPkPX3PYM6Jl1VC/93LrbK/vCVzDAsdcnmOd0sK1yUYhv8DdPkUI4VniI4w34R
-         k0b3KeZ3zNPYxdO+CNnJgSm38VXCBMaNpUq/gx0+nw7jPTsGYlzOuyvNGA7UaZ8JAUAW
-         8N0rqil50993VvKu9AY9mqRXbFW0A7RkOQjznPemN9yxvGGUrjE8tcc7AtDwDOPuC4hd
-         NkYUilaLNNGJNqoCUPWXwCkyfYUcW1IPGOIKgh64UbfPkKcyPDsDUq31SZOD5fjsdYHg
-         kWoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718144409; x=1718749209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tWvoilUykDD9/rgz0mp3zLYBtz2E5uf7UCO+Al15jwE=;
-        b=pegzBL4oFYRgKdmnHSg+DeDr3fVJRAIbyfaR/h/oycVdK+ojqE5SHU7lVK3Cc8KR51
-         f4uCMPTOh4Ce8iNcOcjyOud9+IlRaRzLZEo2+5kY6Bqqd5uv94AhnQ0Z74jdD4JXSkUE
-         cUIFjsa8PzkKUxgsnd9S4bWDmUp1ahZJe42fcgzUt7DyoSr0tMCOjPC30xJ4g2K9+4k7
-         XFUixVDU2IfmJJyLYXk0EhSkdipW/pzZJ6HmBlKuc4WcyDaeHjeHzN+m9YfZHAYSWRDa
-         okuxyjfF5NitY4WSHr9UEboTcKPTC+PbEzh+jwu+haoxzp9sXZog3tCswhoJkDyeKGi2
-         b1Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCV9fcvta2snVdmBgbEuQQM/W8dDv/pN0mSkbU4qg3S2GxHNg9ZKPYMgvqZVk+nqfALLfF0CAwSeW20xGd9+ItVe8Nf1SrX8Uy8tYKFQ
-X-Gm-Message-State: AOJu0Yx3VWMxbXdYKrogYPsZCPaBRA9QVcMem2JVZOssp1140IFo3ho9
-	Pqb2onfLO4MWPJFW7SoivwWa4dd7v+ejW2e+lK46QaWtl9Rtavpr67t3PPpHvcca5CzDhyT7gon
-	Kv0uprQ1MFZN1IEoBND2d8AKqG5g=
-X-Google-Smtp-Source: AGHT+IED8SIQCLlOTJ3/mg4iIlebKngKR0y316II+f7atzv0vSoCaGqhsB7kaH/nn00uvkjSU0JyapO85dSqnBAyLYM=
-X-Received: by 2002:a25:5f4f:0:b0:dfa:7e09:21c4 with SMTP id
- 3f1490d57ef6-dfe66464f86mr72064276.3.1718144409057; Tue, 11 Jun 2024 15:20:09
- -0700 (PDT)
+	s=arc-20240116; t=1718144134; c=relaxed/simple;
+	bh=GdAkFK62RY/EebkDCQaRIl7vglLd8+Mimrq9+Eb15nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhzmLOoOn31Z6acsu8IcW5TFA2ETxenJS4iEYTKdjnONyPHnh1I6GixBrbY0WphqExCjdX0jiXGJyceOYsHDZ7tVDcRtwNT+NND655CM89iHjYe4Eo5RhhgGz97tJ5oZsp/V4l8xz7vZvPLpzn4VnKfLrXWvWzLdx56saFYDGoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=Pq9rjGAS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ISNh/oJu; arc=none smtp.client-ip=64.147.123.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailflow.west.internal (Postfix) with ESMTP id C97482CC0169;
+	Tue, 11 Jun 2024 18:15:27 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 11 Jun 2024 18:15:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1718144127;
+	 x=1718147727; bh=hLoyDphzPvoA7UYBfDpLVZId/MwW/v8vWSAXuFf49/w=; b=
+	Pq9rjGAS1w/Bgo5vWiHK4C9GSmw8UEqW23zxfC6CU+LFTqGfGsPAhKcyrwHoj90O
+	2g7tjpvdho680sZED5/2pEYwnSPHE6Nyuowy4t+liSKxQFrggVMMiqon8nSX9UYe
+	oVBsXm4b6ZW6z97l0uDDa5lkmqrKrNH3jKXI/kXAvkXXFnrHwG6oKoSy/6j3AF1Y
+	8cm9z2VOiKm0Y60hTybScXH/pn1OM/r/TpGNjtGS43aretvWB4MzGA3unImRVifY
+	913jLZ1dcL0oU2fUqcd35OHYcKeVnIiStKNnfKqAViqm85MfWYGX9m8CAyZAGKTa
+	iabR1CZR/u5ovgrtmgo/zg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718144127; x=
+	1718147727; bh=hLoyDphzPvoA7UYBfDpLVZId/MwW/v8vWSAXuFf49/w=; b=I
+	SNh/oJu/e8FBFK91pEhdVzPaxeoy0vJBcCYsFR5dTBa0eTNI52Mh6vmtzoNEnGGo
+	0nk1m7ki7/In22P/dp/EXcSDHlAz5BfLVF+KTy5T2BmEdmd9GgekK0iKTSeHoXrF
+	qgiz+C959oucHJqv+TsGRpUAUjs2GCWmVT1rVLthx5HBkCDuetmM/I23iDS5r0tT
+	W6HmZFu74Tm8QZns/LE00Y7Nh3h6HK7WrxdV+ExaadRJAJwmM9Qv5H0pqfa0EnHA
+	Pq+gmx9IfmHP/NPUS88TJZaod19sMGo6bD1rEZ6UeYk8d3P1h816uGx3p9eTi7ne
+	VZ5GqWvsh5NKbZvAPyg3A==
+X-ME-Sender: <xms:fsxoZqoVnHB2uGoc7C0A7BixBJXGpc11qlCUk3a6hvFctlK7PdBKkA>
+    <xme:fsxoZooRmtozI0oKjoRwzZnuKSw8qtfaYL--1NQiRvpNaw-gFmHdFKZpfzO16EY2q
+    Wz6KAFCvBXQU1xOAYA>
+X-ME-Received: <xmr:fsxoZvPL801GFa0JdYFCAOHyDF4GcEcnIZ4r8mQNRH4NDIvzS9R2KSXWHk7HkTFFGFWEcogO8cqqGrkZ0AEzTiM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedufedgtdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeflohhn
+    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
+    ggtffrrghtthgvrhhnpeetgedutdfggeetleefhfeuhedtheduteekieduvdeigeegvdev
+    vddtieekiedvheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
+X-ME-Proxy: <xmx:f8xoZp6U8TxIwbBdIkAUIulkUDaDRV4oFBo0EBVqjfd1jc3IUfHrRw>
+    <xmx:f8xoZp7_TUBZagIfh40y2sdsDedvT-h5VXVtRjmhUKH4ThdVyvjDuw>
+    <xmx:f8xoZphmbJ-AsduE8UunEraJ_Nu6pDRX9sPBXVa9qb7iygs6fiB0gg>
+    <xmx:f8xoZj7QERyBvlOn4w7jLMGtV-DEUFk1T2Viw9CMO6OeJGkw-uv4eA>
+    <xmx:f8xoZkIrhrrTIB3VBMJkOqlUb0VXeh5tcuzeAhLiHln_J1A0uzp3N8Xe>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Jun 2024 18:15:23 -0400 (EDT)
+Date: Tue, 11 Jun 2024 15:20:33 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: John Johansen <john.johansen@canonical.com>, brauner@kernel.org,
+ 	ebiederm@xmission.com, Jonathan Corbet <corbet@lwn.net>,
+ 	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ 	KP Singh <kpsingh@kernel.org>,
+ Matt Bobrowski <mattbobrowski@google.com>,
+ 	Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ 	Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>,
+ 	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ 	Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>,
+ 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
+ David Howells <dhowells@redhat.com>,
+ 	Jarkko Sakkinen <jarkko@kernel.org>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ 	Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, 	containers@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ 	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
+ bpf@vger.kernel.org, 	apparmor@lists.ubuntu.com,
+ keyrings@vger.kernel.org, selinux@vger.kernel.org,
+ 	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM
+ hooks
+Message-ID: <uuvwcdsy7o4ulmrdzwffr6uywfacmlkjrontmjdj44luantpok@dtatxaa6tzyv>
+References: <20240609104355.442002-1-jcalmels@3xx0.net>
+ <20240609104355.442002-5-jcalmels@3xx0.net>
+ <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
+ <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
+ <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com>
+ <CAHC9VhQFNPJTOct5rUv3HT6Z2S20mYdW75seiG8no5=fZd7JjA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611024516.1375191-1-yosryahmed@google.com>
- <20240611024516.1375191-2-yosryahmed@google.com> <CAGsJ_4w3LDE1OuDiX_LAeTxEGUFPVOwqMxoOF+Dr55bdLUZQ7w@mail.gmail.com>
- <CAJD7tkY6h1RkbYHbaQcTuVXOsY-t=arytf5HtcKfx7A75x06bg@mail.gmail.com>
-In-Reply-To: <CAJD7tkY6h1RkbYHbaQcTuVXOsY-t=arytf5HtcKfx7A75x06bg@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 12 Jun 2024 10:19:58 +1200
-Message-ID: <CAGsJ_4xAHR-fMP6c8w6Xf5cVF2OJYwChiGn5Y66qvM_qiEnEDQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] mm: zswap: add zswap_never_enabled()
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Chris Li <chrisl@kernel.org>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQFNPJTOct5rUv3HT6Z2S20mYdW75seiG8no5=fZd7JjA@mail.gmail.com>
 
-On Wed, Jun 12, 2024 at 9:55=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
-> On Tue, Jun 11, 2024 at 2:53=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
-ote:
+On Tue, Jun 11, 2024 at 03:01:01PM GMT, Paul Moore wrote:
+> On Tue, Jun 11, 2024 at 6:32 AM John Johansen
+> <john.johansen@canonical.com> wrote:
 > >
-> > On Tue, Jun 11, 2024 at 2:45=E2=80=AFPM Yosry Ahmed <yosryahmed@google.=
-com> wrote:
+> > On 6/11/24 01:09, Jonathan Calmels wrote:
+> > > On Sun, Jun 09, 2024 at 08:18:48PM GMT, Paul Moore wrote:
+> > >> On Sun, Jun 9, 2024 at 6:40 AM Jonathan Calmels <jcalmels@3xx0.net> wrote:
+> > >>>
+> > >>> This patch allows modifying the various capabilities of the struct cred
+> > >>> in BPF-LSM hooks. More specifically, the userns_create hook called
+> > >>> prior to creating a new user namespace.
+> > >>>
+> > >>> With the introduction of userns capabilities, this effectively provides
+> > >>> a simple way for LSMs to control the capabilities granted to a user
+> > >>> namespace and all its descendants.
+> > >>>
+> > >>> Update the selftests accordingly by dropping CAP_SYS_ADMIN in
+> > >>> namespaces and checking the resulting task's bounding set.
+> > >>>
+> > >>> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
+> > >>> ---
+> > >>>   include/linux/lsm_hook_defs.h                 |  2 +-
+> > >>>   include/linux/security.h                      |  4 +-
+> > >>>   kernel/bpf/bpf_lsm.c                          | 55 +++++++++++++++++++
+> > >>>   security/apparmor/lsm.c                       |  2 +-
+> > >>>   security/security.c                           |  6 +-
+> > >>>   security/selinux/hooks.c                      |  2 +-
+> > >>>   .../selftests/bpf/prog_tests/deny_namespace.c | 12 ++--
+> > >>>   .../selftests/bpf/progs/test_deny_namespace.c |  7 ++-
+> > >>>   8 files changed, 76 insertions(+), 14 deletions(-)
+> > >>
+> > >> I'm not sure we want to go down the path of a LSM modifying the POSIX
+> > >> capabilities of a task, other than the capabilities/commoncap LSM.  It
+> > >> sets a bad precedent and could further complicate issues around LSM
+> > >> ordering.
 > > >
-> > > Add zswap_never_enabled() to skip the xarray lookup in zswap_load() i=
-f
-> > > zswap was never enabled on the system. It is implemented using static
-> > > branches for efficiency, as enabling zswap should be a rare event. Th=
-is
-> > > could shave some cycles off zswap_load() when CONFIG_ZSWAP is used bu=
-t
-> > > zswap is never enabled.
-> > >
-> > > However, the real motivation behind this patch is two-fold:
-> > > - Incoming large folio swapin work will need to fallback to order-0
-> > >   folios if zswap was ever enabled, because any part of the folio cou=
-ld
-> > >   be in zswap, until proper handling of large folios with zswap is
-> > >   added.
-> > >
-> > > - A warning and recovery attempt will be added in a following change =
-in
-> > >   case the above was not done incorrectly. Zswap will fail the read i=
-f
-> > >   the folio is large and it was ever enabled.
-> > >
-> > > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
-> > > ---
-> > >  mm/zswap.c | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > >
-> > > diff --git a/mm/zswap.c b/mm/zswap.c
-> > > index a8c8dd8cfe6f5..7fcd751e847d6 100644
-> > > --- a/mm/zswap.c
-> > > +++ b/mm/zswap.c
-> > > @@ -83,6 +83,7 @@ static bool zswap_pool_reached_full;
-> > >  static int zswap_setup(void);
-> > >
-> > >  /* Enable/disable zswap */
-> > > +static DEFINE_STATIC_KEY_MAYBE(CONFIG_ZSWAP_DEFAULT_ON, zswap_ever_e=
-nabled);
-> > >  static bool zswap_enabled =3D IS_ENABLED(CONFIG_ZSWAP_DEFAULT_ON);
-> > >  static int zswap_enabled_param_set(const char *,
-> > >                                    const struct kernel_param *);
-> > > @@ -136,6 +137,11 @@ bool zswap_is_enabled(void)
-> > >         return zswap_enabled;
-> > >  }
-> > >
-> > > +static bool zswap_never_enabled(void)
-> > > +{
-> > > +       return !static_branch_maybe(CONFIG_ZSWAP_DEFAULT_ON, &zswap_e=
-ver_enabled);
-> > > +}
+> > > Well unless I'm misunderstanding, this does allow modifying the
+> > > capabilities/commoncap LSM through BTF. The reason for allowing
+> > > `userns_create` to be modified is that it is functionally very similar
+> > > to `cred_prepare` in that it operates with new creds (but specific to
+> > > user namespaces because of reasons detailed in [1]).
 > >
-> > Will we "extern" this one so that mm-core can use it to fallback
-> > to small folios?
-> > or you prefer this to be done within the coming swapin series?
->
-> My intention was to keep it static for now, and expose it in the
-> header when needed (in the swapin series). If others think it's better
-> to do this now to avoid the churn I am happy to do it as well.
+> > yes
+> >
+> > > There were some concerns in previous threads that the userns caps by
+> > > themselves wouldn't be granular enough, hence the LSM integration.
+> >
+> > > Ubuntu for example, currently has to resort to a hardcoded profile
+> > > transition to achieve this [2].
+> > >
+> >
+> > The hard coded profile transition, is because the more generic solution
+> > as part of policy just wasn't ready. The hard coding will go away before
+> > it is upstreamed.
+> >
+> > But yes, updating the cred really is necessary for the flexibility needed
+> > whether it is modifying the POSIX capabilities of the task or the LSM
+> > modifying its own security blob.
+> >
+> > I do share some of Paul's concerns about the LSM modifying the POSIX
+> > capabilities of the task, but also thing the LSM here needs to be
+> > able to modify its own blob.
+> 
+> To be clear, this isn't about a generic LSM needing to update its own
+> blob (LSM state), it is about the BPF LSM updating the capability
+> sets.  While we obviously must support a LSM updating its own state,
+> I'm currently of the opinion that allowing one LSM to update the state
+> of another LSM is only going to lead to problems.  We wouldn't want to
+> allow Smack to update AppArmor state, and from my current perspective
+> allowing the BPF LSM to update the capability state is no different.
+> 
+> It's also important to keep in mind that if we allow one LSM to do
+> something, we need to allow all LSMs to do something.  If we allow
+> multiple LSMs to manipulate the capability sets, how do we reconcile
+> differences in the desired capability state?  Does that resolution
+> change depending on what LSMs are enabled at build time?  Enabled at
+> boot?  Similarly, what about custom LSM ordering?
+> 
+> What about those LSMs that use a task's capabilities as an input to an
+> access control decision?  If those LSMs allow an access based on a
+> given capability set only to have a LSM later in the ordering modify
+> that capability set to something which would have resulted in an
+> access denial, do we risk a security regression?
 
-Personally, I'd vote for exposing it now to avoid one more patch which migh=
-t
-come shortly. And this patchset serves the clear purpose of drawing attenti=
-on
-from mm-core to fallback to small folios.
+I understand the concerns, what I fail to understand however, is how is
+it any different from say the `cred_prepare` hook today?
 
-Thanks
-Barry
+> Our current approach to handling multiple LSMs is that each LSM is
+> limited to modifying its own state, and I'm pretty confident that we
+> stick to this model if we have any hope of preserving the sanity of
+> the LSM layer as a whole.  If you want to modify the capability set
+> you need to do so within the confines of the capability LSM and/or
+> modify the other related kernel subsystems (which I'm guessing will
+> likely necessitate a change in the LSMs, but that avenue is very
+> unclear if such an option even exists).
+
+What do you mean by "within the confines of the capability LSM" here?
+
+Arguably, if we do want fine-grained userns policies, we need LSMs to
+influence the userns capset at some point. Regardless of how or where we
+do this, it will always be subject to some sort of ordering. We could
+come up with some rules to limit surprises (e.g. caps can only be
+dropped, only possible through some hooks, etc), but at the end of the
+day, something needs to have the final word when it comes to deciding
+what the creds should be.
 
