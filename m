@@ -1,106 +1,122 @@
-Return-Path: <linux-kernel+bounces-210042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC153903E72
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:12:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E333903E75
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7731728A997
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:12:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E61A1C22872
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5867617D8A2;
-	Tue, 11 Jun 2024 14:12:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E41A17D899;
+	Tue, 11 Jun 2024 14:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="focMhIO2"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77D617D372;
-	Tue, 11 Jun 2024 14:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F376517D88C;
+	Tue, 11 Jun 2024 14:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718115144; cv=none; b=Mf8eI2aXGRBJSG22oUym2j2p+0laRBWKwds4p3XRLN5P9WxA6X6I65jc/5/I1vt0BBn6U0uu7iQea303zM0wMownMDRfhJFS2rbWcrJbQbqgSdp2Gzo2oO5Ws1n4Ybcyjs01vGjRWwVvfdhg8iuMHPPwYraNe6HH1DW2aCU/9R8=
+	t=1718115168; cv=none; b=Mu811sgH5Y3bzmPtVWiVA4AmgFxOaZE8d/mamR4RH/eB0QxdNlOsk0X4saybmvvwKgBZO1rCSlyaGZgdSJcRh3Zo9JvqGvfg/7A9k0lwSSlb50KXV6dQBKAbJRTOwidOp8/Xqgt//HBcXbCBftdHgpAVvq0GVcPC37skEPluCc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718115144; c=relaxed/simple;
-	bh=YY724BGhiyIEaylXd+UnLjm1nNWqWKv7YVra5OWy9Oo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rXUkUe9FaZwQCHt0/WU0G6Ee6I80yuh9KRzcefGv9lu8Bh4GhDpY2s7tc3qIAZPo29lm8fmFO2Vtmf0MXW/CedsuBE1tEfj2p/WGB0o2CQQ/pGY+PEf88pAPvcXY6RF0Ab5oe/QddvuolH3tDiyJVSbrBnyuQqRqEMgnWndVUiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 305C9C2BD10;
-	Tue, 11 Jun 2024 14:12:23 +0000 (UTC)
-Date: Tue, 11 Jun 2024 10:12:38 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, "Paul E. McKenney"
- <paulmck@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- kernel-janitors@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- "workflows@vger.kernel.org" <workflows@vger.kernel.org>, Thorsten Leemhuis
- <linux@leemhuis.info>
-Subject: Re: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <20240611101238.6db5e4a7@gandalf.local.home>
-In-Reply-To: <2024061143-transfer-jalapeno-afa0@gregkh>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
-	<20240609082726.32742-6-Julia.Lawall@inria.fr>
-	<20240610112223.151faf65@rorschach.local.home>
-	<b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
-	<20240610163606.069d552a@gandalf.local.home>
-	<70c093a5-df9c-4665-b9c9-90345c7f2139@suse.cz>
-	<2024061143-transfer-jalapeno-afa0@gregkh>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718115168; c=relaxed/simple;
+	bh=uwcdBzLuAxEDrNoXrhjSgpM2Fga3hryzixwO3pPxk/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hL+9ei2/c+ju5pMt60e95cGCxpt5VEDEFhYpSL2aU57wfKnAjdXC9Sa8/DBGfRGSyaKT6SXycwWUrKRjgLsr5No0kwuuDYhIC1zFD0/hjVyveoDLgb9rD7b0rdALFnTJvYCpWsTiWSx6UaIYuPFYn0mWDQUzbkDGhPxVNzLRV+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=focMhIO2; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eabd22d441so91054971fa.2;
+        Tue, 11 Jun 2024 07:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718115165; x=1718719965; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RGZsWMQxIR/8a9H8paH0XFiZvIlanvQPzCmlVbwusdU=;
+        b=focMhIO23gjgssmwHEVF36RM3pNmCQ56oJkQPiezfRVIj22rUDggYATELGrvql/TO7
+         8QwVj9g63tULkNfT3WGsOZwmY5xpElCqinacNMNVVd8MY8T2THh7iWWhyY/8/aXfgBBu
+         f+D2x8IUMqgtTFjQDxchwccN/UI2M3SiMMCFiDV4SsjLIfuzuZXojtuSG2O97JGWfkWJ
+         xQOddafsWeNXypYEAej1xo5L3DZUMRoqjUin5nahe1MI2rV/JovdNCCRYqo2KRkPtlFi
+         WPuq3uXELcliLnkB5Bk3hEa0mkybgOTQz6ax55xjtbsyjHD2hvbrtk54hGlcTROV4ZQf
+         dxHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718115165; x=1718719965;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RGZsWMQxIR/8a9H8paH0XFiZvIlanvQPzCmlVbwusdU=;
+        b=R4G78RK+ZAuLyQMXThwcP6mBIFFC7reFlujkDTWfK0GYHkPt/5yOnE2mw/QHbda3Wx
+         x0c88rCvcWimbYeAQaeuYlomyhJT87Qbq/LarS7lYZG/bxxGhUyX1rNklXuHK8mHFjAy
+         toEkbtUn+2O5M/XGInTtbfC8MgyhMGE9hNq4VzR7CbsWmnYisF1LRSIc6kVNrxja1SLd
+         sej+eUNxTJ7sXcB/Gbm+R3UhSBLxaiubdqV/WGuwIzMhWpeqdtN2OUQFOKGrq2PhqYlW
+         WHxqV/xiU5qKnpdeD5/0S4uM/o2iCuCeAPHzFun5SezFIibd6ClF7+zHoYotzO2eXLu6
+         sJpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ7/6/lP+21zoLs4Fyin+KRNAV22X7a7pDOFcgXxz/jDfzVmcaV/P45h9HaUvJXRM8jwCVTZvhOQBhYUYE46aE6jAO0v+/GFzgAlGVvNdkgEeqoz9c97z20vFfo7OeLJyMqqarCQLP1A==
+X-Gm-Message-State: AOJu0YzvPFt0uRNOvHrC7km199wU6z8/bL1r+X/fwhgxFc8s3IX8Hfn8
+	bOl6jFUm4AZAIPz4QxXSJUPMMbdRRwWT5cWZ5TGSVz9ib+vX9TT0
+X-Google-Smtp-Source: AGHT+IGuq4XXKdcSy2MRECTQb8OvnrexiaWWjJespHlYnvTZ0wLoCtN53WXIbcE0kkCOgg4nKbvssA==
+X-Received: by 2002:a2e:3612:0:b0:2eb:17fe:a144 with SMTP id 38308e7fff4ca-2eb17fea1c5mr62244931fa.34.1718115164779;
+        Tue, 11 Jun 2024 07:12:44 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:89c3:827b:2198:62f2? (2a02-8389-41cf-e200-89c3-827b-2198-62f2.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:89c3:827b:2198:62f2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6effb9cd7asm457716466b.208.2024.06.11.07.12.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 07:12:44 -0700 (PDT)
+Message-ID: <233d56de-8d5d-4bad-a380-45321a2d86ac@gmail.com>
+Date: Tue, 11 Jun 2024 16:12:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] leds: mt6360: fix memory leak in
+ mt6360_init_isnk_properties()
+To: Markus Elfring <Markus.Elfring@web.de>, linux-leds@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Pavel Machek <pavel@ucw.cz>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20240611-leds-mt6360-memleak-v1-1-93642eb5011e@gmail.com>
+ <010b1c91-fbde-4b01-a92e-8c14751c7699@web.de>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <010b1c91-fbde-4b01-a92e-8c14751c7699@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Jun 2024 08:23:11 +0200
-Greg KH <gregkh@linuxfoundation.org> wrote:
+On 11/06/2024 16:01, Markus Elfring wrote:
+> …
+>> Add the missing calls to fwnode_handle_put(child) to avoid memory leaks
+>> in the error paths.
+> 
+> I suggest to apply a goto chain for a while.
+> https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resources
+> 
+> Will the application of scope-based resource management become feasible with another delay?
+> https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/cleanup.h#L8
+> 
+> Regards,
+> Markus
 
-> > Depends-on: c9929f0e344a ("mm/slob: remove CONFIG_SLOB")  
-> 
-> Ick, no, use the documented way of handling this as described in the
-> stable kernel rules file.
+I considered that option too, but there is still no _scoped() variant of
+the loop. The scoped version of the _available_ variant is being
+discussed, though. Maybe that one could be used here if there is no need
+to iterate over unavailable nodes.
 
-You mentioned this before, I guess you mean this:
+We could not back port that solution anyway, so I would suggest this
+solution (or the one with a goto), and then a separate patch to used a
+scoped macro if preferred.
 
-> To send additional instructions to the stable team, use a shell-style inline
-> comment to pass arbitrary or predefined notes:
-> 
-> * Specify any additional patch prerequisites for cherry picking::
-> 
->     Cc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
->     Cc: <stable@vger.kernel.org> # 3.3.x: 1b9508f: sched: Rate-limit newidle
->     Cc: <stable@vger.kernel.org> # 3.3.x: fd21073: sched: Fix affinity logic
->     Cc: <stable@vger.kernel.org> # 3.3.x
->     Signed-off-by: Ingo Molnar <mingo@elte.hu>
-> 
->   The tag sequence has the meaning of::
-> 
->     git cherry-pick a1f84a3
->     git cherry-pick 1b9508f
->     git cherry-pick fd21073
->     git cherry-pick <this commit>
-> 
->   Note that for a patch series, you do not have to list as prerequisites the
->   patches present in the series itself. For example, if you have the following
->   patch series::
-> 
->     patch1
->     patch2
-> 
->   where patch2 depends on patch1, you do not have to list patch1 as
->   prerequisite of patch2 if you have already marked patch1 for stable
->   inclusion.
+Best regards,
+Javier Carrasco
 
-What's with the "3.3.x"? Isn't that obsolete? And honestly, I find the
-above much more "ick" than "Depends-on:". That's because I like to read
-human readable tags and not machine processing tags. I'm a human, not a machine.
 
--- Steve
 
