@@ -1,234 +1,85 @@
-Return-Path: <linux-kernel+bounces-209597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC2490382C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:51:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9599903828
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C439C1C21AF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40B302896DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63875178367;
-	Tue, 11 Jun 2024 09:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CxsoHWHs"
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3806A1779BD;
+	Tue, 11 Jun 2024 09:50:48 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D8016F900
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6600EE57E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718099487; cv=none; b=cn6jJctTp3DvsrV0wFHf+1kAd6z4E8VKFAlVSRbbuiOXjbkj1E0BpaCPgR3kijYcsq8epAuzlsFgdyDpv0lkme8LH9RcienR96bq9aenrvBRRuGDuZLs/lKhMm5J+fiFQqYuR/BFohfApkvhbqag/mX1Gn96Sn1OxseJ9blWxb8=
+	t=1718099447; cv=none; b=RmDDGnN8Bsmh6E93tpQVJmRnYUGxlKo0W+HkYyHlWV6Ux5phbCxXc/1MBZusXwuBFDaaNqikVY7/vBeN+g5Xd4jCTgEADrX08Nc/G4ytxFPaEsCv4y9L2iwtcOPgtNIN3imbd/qXZpyCSSnpXeLzi0NNsBuEJcAjRZIaBrum+ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718099487; c=relaxed/simple;
-	bh=M3sP57whPMEKglNBLqbJ/9YfpM3OYVMio9G5VSbZfCM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lKjlj46j5snCbZGnfO/DdjVcS9YEqOsarlWlm5pVifXiF1JWRlAosWVdti06k5CSihfjBq2tS68tD4pp8XrSlMH0/jZkPte5rDZQZH+aOIOsEpTUw4dpSy9ULSqlTogfiVb8dqg1PMYuGdae/V2ZlXSQ51IMdL9WZIhtsElTlRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CxsoHWHs; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=0VI96GF2sRbXga
-	gYVUW48owhEm5vm0nVephK1lZYgUQ=; b=CxsoHWHsP3/5G3kCovWY7mLIE8p2+w
-	nBN7g0a8KUGdcAzSwyNbDtGVAraxJaUY3y0K6FXSw5ZTX+XMZf2JSWKg2IWU2GLG
-	muqwtXfrNMpT/2nvfAcEjTyDic2TumGwTreqLtSWpw/S1uP8F2b+eY4dKIlD9txw
-	DJ0oNKk3oCSjSB2DkxsnAL4ES1y+YciJ+EMPRiRRy8ChLnICWoMFWlNMaLv/Buy7
-	cqk8MFGQS4A2igNS/u1vWqszOdVKc4vSZ5tQ41mYPJZZwvXuGljQ2lkK0WnpRTKF
-	Jo/yIS0TyKquYC1h6QNBELRYCAOVVNdUIIrxr4hpECm25vN265wpVeuQ==
-Received: (qmail 380400 invoked from network); 11 Jun 2024 11:51:13 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jun 2024 11:51:13 +0200
-X-UD-Smtp-Session: l3s3148p1@K8LFNJoaIJZehhrL
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation: i2c: testunit: use proper reST
-Date: Tue, 11 Jun 2024 11:50:31 +0200
-Message-ID: <20240611095108.10639-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718099447; c=relaxed/simple;
+	bh=PTnT7800Zf0dBf4vWv+RMOy353rooukdlsSDSkMJuI0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=goJdqk63gh5QnLH1z+0Cpqzl+KbagTGpGYZgWYrDjAR90otory0X5xil/No1x13H1nMwNaocHG9ixze3oViBf6mpoUHEG8ItFgmabU+2ytadpmMZ2weba1wIjfiQF2jN++tcxTJpUOVPW0eAIOFY4YC0qgCUDxkFNK4dkPr2yfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7eb61de14bbso448484339f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:50:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718099445; x=1718704245;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PTnT7800Zf0dBf4vWv+RMOy353rooukdlsSDSkMJuI0=;
+        b=cvqi0h7OvkYpOhK6Z0XLjpi6MAKFytao/epO8fst0GzdGsqusqaTmty1LcV8S743Es
+         QJ8Bh55jk9DytzI07whPLxhaK4i7wKAW7z+NeBFl9X5/nuImWZAxXYTctDgkHjFQEIIj
+         cun4CbYo+D5QzsZcKtNu0y3pZh6LFNSBkoLpDV7TvGRe8rLoY5jsdWDCDeC38UK5saWc
+         elz5FsyQtwDgHymzB7r/V05tzDglHwbSxeV4uYUWE/JDp74YQMD6a1G2zsOiuup6dn9v
+         7LAzw3AMc59v1Dd4EGvljwXDwnYUjyVrqVtgVLzcX8flnJWXKAxo31kHNSHJLzYDRQOB
+         fhZQ==
+X-Gm-Message-State: AOJu0Yydvbtn8AWTQY/JhyTnZ36AWCrtCxZaKP9VtdWxb50lvkeR0DJ/
+	Tr/GkzLPPCBDZQMKSD6rjXTu/S+WYSq9QnzepCDoKdmf7tujvlA6p0J/fwtLhijJWAc1l+DenOc
+	aeg85hMMf0roImUEgCg9IAZcQw1xpIcVQ0JYTMABO8IqRtTGkB7ZA2js=
+X-Google-Smtp-Source: AGHT+IFIZCb0WPdAXa9CjwZj3aOgmtGjAyphMlWJgvgOaMWZp0hOHjQTMHqrtZ6ubKCfeYOXz6MMZ0AjeQRuVdgWzzF6qCDIZgYZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:2cc1:b0:7eb:7cf2:adb0 with SMTP id
+ ca18e2360f4ac-7eb7cf2bca9mr35324039f.4.1718099445587; Tue, 11 Jun 2024
+ 02:50:45 -0700 (PDT)
+Date: Tue, 11 Jun 2024 02:50:45 -0700
+In-Reply-To: <0000000000008312ad06163b7225@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000024acee061a9a33bf@google.com>
+Subject: Re: [syzbot] [syzbot] [bpf?] KMSAN: uninit-value in htab_lru_percpu_map_lookup_percpu_elem
+From: syzbot <syzbot+1971e47e5210c718db3c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This document is hardly readable when converted to HTML. Mark code
-sections as such and use tables to improve readability a lot. Some
-content has slightly been moved around, but no significant changes were
-made.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+***
 
-This is a preparational patch before adding more features to the
-testunit.
+Subject: [syzbot] [bpf?] KMSAN: uninit-value in htab_lru_percpu_map_lookup_=
+percpu_elem
+Author: wojciech.gladysz@infogain.com
 
- Documentation/i2c/slave-testunit-backend.rst | 122 +++++++++++++------
- 1 file changed, 82 insertions(+), 40 deletions(-)
-
-diff --git a/Documentation/i2c/slave-testunit-backend.rst b/Documentation/i2c/slave-testunit-backend.rst
-index ecfc2abec32d..0df60c7c0be4 100644
---- a/Documentation/i2c/slave-testunit-backend.rst
-+++ b/Documentation/i2c/slave-testunit-backend.rst
-@@ -16,9 +16,9 @@ Note that this is a device for testing and debugging. It should not be enabled
- in a production build. And while there is some versioning and we try hard to
- keep backward compatibility, there is no stable ABI guaranteed!
- 
--Instantiating the device is regular. Example for bus 0, address 0x30:
-+Instantiating the device is regular. Example for bus 0, address 0x30::
- 
--# echo "slave-testunit 0x1030" > /sys/bus/i2c/devices/i2c-0/new_device
-+  # echo "slave-testunit 0x1030" > /sys/bus/i2c/devices/i2c-0/new_device
- 
- After that, you will have a write-only device listening. Reads will just return
- an 8-bit version number of the testunit. When writing, the device consists of 4
-@@ -26,14 +26,17 @@ an 8-bit version number of the testunit. When writing, the device consists of 4
- written to start a testcase, i.e. you usually write 4 bytes to the device. The
- registers are:
- 
--0x00 CMD   - which test to trigger
--0x01 DATAL - configuration byte 1 for the test
--0x02 DATAH - configuration byte 2 for the test
--0x03 DELAY - delay in n * 10ms until test is started
-+.. csv-table::
-+  :header: "Offset", "Name", "Description"
- 
--Using 'i2cset' from the i2c-tools package, the generic command looks like:
-+  0x00, CMD, which test to trigger
-+  0x01, DATAL, configuration byte 1 for the test
-+  0x02, DATAH, configuration byte 2 for the test
-+  0x03, DELAY, delay in n * 10ms until test is started
- 
--# i2cset -y <bus_num> <testunit_address> <CMD> <DATAL> <DATAH> <DELAY> i
-+Using 'i2cset' from the i2c-tools package, the generic command looks like::
-+
-+  # i2cset -y <bus_num> <testunit_address> <CMD> <DATAL> <DATAH> <DELAY> i
- 
- DELAY is a generic parameter which will delay the execution of the test in CMD.
- While a command is running (including the delay), new commands will not be
-@@ -45,44 +48,83 @@ result in the transfer not being acknowledged.
- Commands
- --------
- 
--0x00 NOOP (reserved for future use)
-+0x00 NOOP
-+~~~~~~~~~
-+
-+Reserved for future use.
-+
-+0x01 READ_BYTES
-+~~~~~~~~~~~~~~~
-+
-+.. list-table::
-+  :header-rows: 1
-+
-+  * - CMD
-+    - DATAL
-+    - DATAH
-+    - DELAY
-+
-+  * - 0x01
-+    - address to read data from (lower 7 bits, highest bit currently unused)
-+    - number of bytes to read
-+    - n * 10ms
-+
-+Also needs master mode. This is useful to test if your bus master driver is
-+handling multi-master correctly. You can trigger the testunit to read bytes
-+from another device on the bus. If the bus master under test also wants to
-+access the bus at the same time, the bus will be busy. Example to read 128
-+bytes from device 0x50 after 50ms of delay::
-+
-+  # i2cset -y 0 0x30 0x01 0x50 0x80 0x05 i
-+
-+0x02 SMBUS_HOST_NOTIFY
-+~~~~~~~~~~~~~~~~~~~~~~
-+
-+.. list-table::
-+  :header-rows: 1
-+
-+  * - CMD
-+    - DATAL
-+    - DATAH
-+    - DELAY
- 
--0x01 READ_BYTES (also needs master mode)
--   DATAL - address to read data from (lower 7 bits, highest bit currently unused)
--   DATAH - number of bytes to read
-+  * - 0x02
-+    - low byte of the status word to send
-+    - high byte of the status word to send
-+    - n * 10ms
- 
--This is useful to test if your bus master driver is handling multi-master
--correctly. You can trigger the testunit to read bytes from another device on
--the bus. If the bus master under test also wants to access the bus at the same
--time, the bus will be busy. Example to read 128 bytes from device 0x50 after
--50ms of delay:
-+Also needs master mode. This test will send an SMBUS_HOST_NOTIFY message to the
-+host. Note that the status word is currently ignored in the Linux Kernel.
-+Example to send a notification after 10ms::
- 
--# i2cset -y 0 0x30 0x01 0x50 0x80 0x05 i
-+  # i2cset -y 0 0x30 0x02 0x42 0x64 0x01 i
- 
--0x02 SMBUS_HOST_NOTIFY (also needs master mode)
--   DATAL - low byte of the status word to send
--   DATAH - high byte of the status word to send
-+0x03 SMBUS_BLOCK_PROC_CALL
-+~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--This test will send an SMBUS_HOST_NOTIFY message to the host. Note that the
--status word is currently ignored in the Linux Kernel. Example to send a
--notification after 10ms:
-+.. list-table::
-+  :header-rows: 1
- 
--# i2cset -y 0 0x30 0x02 0x42 0x64 0x01 i
-+  * - CMD
-+    - DATAL
-+    - DATAH
-+    - DELAY
- 
--0x03 SMBUS_BLOCK_PROC_CALL (partial command)
--   DATAL - must be '1', i.e. one further byte will be written
--   DATAH - number of bytes to be sent back
--   DELAY - not applicable, partial command!
-+  * - 0x03
-+    - must be '1', i.e. one further byte will be written
-+    - number of bytes to be sent back
-+    - leave out, partial command!
- 
--This test will respond to a block process call as defined by the SMBus
--specification. The one data byte written specifies how many bytes will be sent
--back in the following read transfer. Note that in this read transfer, the
--testunit will prefix the length of the bytes to follow. So, if your host bus
--driver emulates SMBus calls like the majority does, it needs to support the
--I2C_M_RECV_LEN flag of an i2c_msg. This is a good testcase for it. The returned
--data consists of the length first, and then of an array of bytes from length-1
--to 0. Here is an example which emulates i2c_smbus_block_process_call() using
--i2ctransfer (you need i2c-tools v4.2 or later):
-+Partial command. This test will respond to a block process call as defined by
-+the SMBus specification. The one data byte written specifies how many bytes
-+will be sent back in the following read transfer. Note that in this read
-+transfer, the testunit will prefix the length of the bytes to follow. So, if
-+your host bus driver emulates SMBus calls like the majority does, it needs to
-+support the I2C_M_RECV_LEN flag of an i2c_msg. This is a good testcase for it.
-+The returned data consists of the length first, and then of an array of bytes
-+from length-1 to 0. Here is an example which emulates
-+i2c_smbus_block_process_call() using i2ctransfer (you need i2c-tools v4.2 or
-+later)::
- 
--# i2ctransfer -y 0 w3@0x30 0x03 0x01 0x10 r?
--0x10 0x0f 0x0e 0x0d 0x0c 0x0b 0x0a 0x09 0x08 0x07 0x06 0x05 0x04 0x03 0x02 0x01 0x00
-+  # i2ctransfer -y 0 w3@0x30 0x03 0x01 0x10 r?
-+  0x10 0x0f 0x0e 0x0d 0x0c 0x0b 0x0a 0x09 0x08 0x07 0x06 0x05 0x04 0x03 0x02 0x01 0x00
--- 
-2.43.0
-
+#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux f=
+2d3b30c96861fc12f905040f9e6cd75dc1a0ade
+The information in this email is confidential and may be legally privileged=
+. It is intended solely for the addressee and access to it by anyone else i=
+s unauthorized. If you are not the intended recipient, any disclosure, copy=
+ing, distribution or any action taken or omitted to be taken based on it, i=
+s strictly prohibited and may be unlawful.
 
