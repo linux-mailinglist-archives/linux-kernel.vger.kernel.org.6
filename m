@@ -1,120 +1,146 @@
-Return-Path: <linux-kernel+bounces-210311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D72904234
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:13:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB16E904239
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6E8D28AD70
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:13:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88901B24ADD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DF1482D7;
-	Tue, 11 Jun 2024 17:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYJSgajD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AA4482D7;
+	Tue, 11 Jun 2024 17:14:14 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A5C4207A;
-	Tue, 11 Jun 2024 17:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A6F4779E;
+	Tue, 11 Jun 2024 17:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718125982; cv=none; b=gfZ011fhHXxIN2Q0244ubZx+qf5BV8dy/Q4NQUQACCw5UNqHtXEYv08+98Dv+TXBgxPtw/CcXsA2k+NoKeS71tDjuWeQhKD7E228zzENCyE8VzZvBBaIV927/MBKtyRMlz+sQBNIDKnhll2/emMPrrlj394h6X5YVNnseYNbbTw=
+	t=1718126054; cv=none; b=VR55zCYlFqMnPLIpz6VOd+1r/JZYZmYSXKeC8B2SBxxaTWhAZqTZAO01Dy8NGQLi9vepXAaNzOomITOUeXOkjaYXgJ8g+EFwc3gXMKwL8AQDJLax5ErGK7CgYakn+ktN3iARBgQd9j9IIo13JYfuwpRcGCb7Gbxy5TPF8fmexHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718125982; c=relaxed/simple;
-	bh=VPJiEyN1LjxU1D7rLJKPD/845LAmaZGNHNFrrRwhQ2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Rp4eC+paGV9lMqqhVdyHypTbDVngyesJ6KjpU9KcP7hv56BWVixk9tba0HD489cf1s6zUk2GiYzqvE0uRLIF8eK2FpXy54Mkt0cS61qvl3Kkc87JxmZsMEr4GNFSZNZe9c33nWBzyuknHzqtjQl+yheqPoMYDA0zBltIaLLisR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYJSgajD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AE42C2BD10;
-	Tue, 11 Jun 2024 17:13:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718125981;
-	bh=VPJiEyN1LjxU1D7rLJKPD/845LAmaZGNHNFrrRwhQ2Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=YYJSgajDnEwTI9UWwe+OfG3g4ifsQqHnPYOEk/a5k078qBJvllVmjvPZqyXJMYttu
-	 NzqjT0YViP/tvdgTVpnUYtKbAgLI+DzzVg6PjJ88iELDdgdZfMwXjAE1TzzwvaTI82
-	 4IFdoQBAdDPLzHighuW3XgN1+IL8MBr0ZGTTsfcW2JloXY7AFProGh18NIZGeTLvz6
-	 VvyTIxb7JubsQhcQOSaqoKBH+IQZG0vX+C1UBJkVIh5SnB7lOP0vqSPx8D3jg0dlmt
-	 2Fcc0mN9ZIsfmHmGQneiIjejDxwnEZ8kENbGn/ex+jQigrQabi04W3a/f65I+f/jNn
-	 duZZGW7RwJ5Mw==
-Date: Tue, 11 Jun 2024 12:13:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Sai Krishna Gajula <saikrishnag@marvell.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 17/19] PCI: of_property: Add interrupt-controller
- property in PCI device nodes
-Message-ID: <20240611171300.GA990134@bhelgaas>
+	s=arc-20240116; t=1718126054; c=relaxed/simple;
+	bh=IxlRiz3TtmeLkmRBSx1JGNu4U8ENYe6tAfBUPxcJBgQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WYjNi5TTOrlXdMggcfOpHBwNzhWo5gFElQ2RmusNICuXpzB5qi74HrvINSqvHB/Cc5wjRVm9JQbyubs8Dgf9kFHYsO9mqjJn/ZLBOWrqXTKKyhxIfJ3AA31BCzdt2eShexOdXmI2gPruiW+Pd5U6qhZ47sQ96Lhd7b7wigOZzA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VzFXF1SGsz6J9yR;
+	Wed, 12 Jun 2024 01:09:33 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 14509140516;
+	Wed, 12 Jun 2024 01:14:09 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Jun
+ 2024 18:14:08 +0100
+Date: Tue, 11 Jun 2024 18:14:07 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Mudit Sharma
+	<muditsharma.info@gmail.com>, <lars@metafoo.de>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <robh@kernel.org>, <ivan.orlov0322@gmail.com>,
+	<javier.carrasco.cruz@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 2/2] iio: light: ROHM BH1745 colour sensor
+Message-ID: <20240611181407.00003f61@Huawei.com>
+In-Reply-To: <CANhJrGM9czj0RL3OLCgRHEKc2QOjG9P0AZTrZxvYUk65TCpHRg@mail.gmail.com>
+References: <20240606162948.83903-1-muditsharma.info@gmail.com>
+	<20240606162948.83903-2-muditsharma.info@gmail.com>
+	<20240608172227.17996c75@jic23-huawei>
+	<CANhJrGM9czj0RL3OLCgRHEKc2QOjG9P0AZTrZxvYUk65TCpHRg@mail.gmail.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610213735.GA3112053-robh@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Mon, Jun 10, 2024 at 03:37:35PM -0600, Rob Herring wrote:
-> On Thu, Jun 06, 2024 at 02:26:12PM -0500, Bjorn Helgaas wrote:
-> > On Mon, May 27, 2024 at 06:14:44PM +0200, Herve Codina wrote:
-> > > PCI devices and bridges DT nodes created during the PCI scan are created
-> > > with the interrupt-map property set to handle interrupts.
-> > > 
-> > > In order to set this interrupt-map property at a specific level, a
-> > > phandle to the parent interrupt controller is needed. On systems that
-> > > are not fully described by a device-tree, the parent interrupt
-> > > controller may be unavailable (i.e. not described by the device-tree).
-> > > 
-> > > As mentioned in the [1], avoiding the use of the interrupt-map property
-> > > and considering a PCI device as an interrupt controller itself avoid the
-> > > use of a parent interrupt phandle.
-> > > 
-> > > In that case, the PCI device itself as an interrupt controller is
-> > > responsible for routing the interrupts described in the device-tree
-> > > world (DT overlay) to the PCI interrupts.
-> > > 
-> > > Add the 'interrupt-controller' property in the PCI device DT node.
-> > > 
-> > > [1]: https://lore.kernel.org/lkml/CAL_Jsq+je7+9ATR=B6jXHjEJHjn24vQFs4Tvi9=vhDeK9n42Aw@mail.gmail.com/
-> > > 
-> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > 
-> > No objection from me, but I'd like an ack/review from Rob.
-> 
-> Given it is more DT patches in the series, how about I take them and 
-> this one with your ack instead?
+On Mon, 10 Jun 2024 08:58:44 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-Sure.  There's very little PCI content here, so I didn't plan to take
-them; I just thought this needed at least your ack :)
+> la 8. kes=E4k. 2024 klo 19.22 Jonathan Cameron (jic23@kernel.org) kirjoit=
+ti:
+> >
+> > On Thu,  6 Jun 2024 17:29:42 +0100
+> > Mudit Sharma <muditsharma.info@gmail.com> wrote:
+> > =20
+> > > Add support for BH1745, which is an I2C colour sensor with red, green,
+> > > blue and clear channels. It has a programmable active low interrupt
+> > > pin. Interrupt occurs when the signal from the selected interrupt
+> > > source channel crosses set interrupt threshold high or low level.
+> > >
+> > > This driver includes device attributes to configure the following:
+> > > - Interrupt pin latch: The interrupt pin can be configured to
+> > >   be latched (until interrupt register (0x60) is read or initialized)
+> > >   or update after each measurement.
+> > > - Interrupt source: The colour channel that will cause the interrupt
+> > >   when channel will cross the set threshold high or low level.
+> > >
+> > > This driver also includes device attributes to present valid
+> > > configuration options/values for:
+> > > - Integration time
+> > > - Interrupt colour source
+> > > - Hardware gain
+> > > =20
+>=20
+> > > +
+> > > +#define BH1745_CHANNEL(_colour, _si, _addr)                         =
+          \
+> > > +     {                                                              =
+       \
+> > > +             .type =3D IIO_INTENSITY, .modified =3D 1,              =
+           \
+> > > +             .info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),        =
+         \
+> > > +             .info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_HARDWAR=
+EGAIN) | \ =20
+> >
+> > Provide _SCALE instead of HARDWAREGAIN
+> > As it's an intensity channel (and units are tricky for color sensors gi=
+ven
+> > frequency dependence etc) all you need to do is ensure that if you halve
+> > the _scale and measure the same light source, the computed
+> > _RAW * _SCALE value remains constant. =20
+>=20
+> ...Which is likely to cause also the integration time setting to
+> impact the SCALE.
+>=20
+> You may or may not want to see the GTS-helpers
+> (drivers/iio/industrialio-gts-helper.c) - which have their own tricky
+> corners. I think Jonathan once suggested to me to keep the
+> HARDWAREGAIN as a read-only attribute to ease seeing what is going on.
+> For the last couple of days I've been reworking the BU27034 driver to
+> work with the new sensor variant - and I can definitely see the value
+> of the read-only HARDWAREGAIN when we have per channel gain settings +
+> integration time setting which all contribute to the scale...
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+I'm wondering if that was good advice, but it's definitely better
+than letting userspace control the gain and integration time separately
+as there is no sensible way to know how to control that beyond -
+it's a bit dark and I forgot I can change the integration time,
+crank up the gain!
+
+>=20
+>=20
+> Matti Vaittinen
+> Linux kernel developer at ROHM Semiconductors
+> Oulu Finland
+>=20
+> ~~ When things go utterly wrong vim users can always type :help! ~~
+>=20
+> Discuss - Estimate - Plan - Report and finally accomplish this:
+> void do_work(int time) __attribute__ ((const));
+>=20
+
 
