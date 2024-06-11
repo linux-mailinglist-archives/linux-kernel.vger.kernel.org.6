@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-209419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C001903455
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:51:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD84890345B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B67528B337
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:51:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1E34B2C5D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9A9173357;
-	Tue, 11 Jun 2024 07:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB4A172BC3;
+	Tue, 11 Jun 2024 07:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uooPEM6J"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PuKktv7S"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E07417333C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 07:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA325174EC8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 07:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718092251; cv=none; b=Ddc8rfo4GOfcIVLDS5ohRfB/E/YeYWwszW/qw8BKBRJJtkggInMivkceGj1+GJOKRr2A/60iZ3c0av1ePnHqNhywUnF/DEpMzB9qk3c73o6WpXmo3SdDh8KbLKNavc6NwS6xKmXGNJxqQfCL3w6QuBz0Ka0GuWhcsZ+yCAV6xsQ=
+	t=1718092254; cv=none; b=hHjQe+gkhxnIR/g85vyz5BE8LZXAF0a1CG7mUWUIlE+YiM2dUWEEAJkvF5B8DRS5tb0ofgWXcFmNpHvyaOdxTfcWzp4L6JzL1qkNcn90S9ZP2UKjWa+6EhyXVR4EStPnFv++bqnpGU8gUpPR9aoUs6Od9ML3WTdSa5JNB3X3n7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718092251; c=relaxed/simple;
-	bh=obXNaQKtwmfKs/HeVx3sFOvUFRiQ9zUGMKMIURRICfM=;
+	s=arc-20240116; t=1718092254; c=relaxed/simple;
+	bh=02HaGP+l+/mN8/mDpEA4tyGvp1+RJCe805mHVj9C/Go=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Y2XuexzOZPMHTHhcaJXJvbyEs8FdFOQWNe/NgSmwqDmuXfv5a0/r/OA4/LVjfZSQS+6jWwbHZG2drUnsT1ESE4RkpKa9dDOuznS488fWqHn3Qzg4xlRUmzY1g9RglpBrYPzwgIjqYBnAR3Fi80+OowiPGJsay0BkEKIsTlb61m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uooPEM6J; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=CmX9xmEK38zlsqWHwsArzHctoNeL1wRMnFrWWAkivNg86YF6CVTClJv2+K2THf/OYPPpSYD1NX1/6hB7GxcNWGKbWd9DYCwwu/PwZXfXsHQzwu7BHe7ISaN1QaJwNGBJZhWWH956xFEHA/aV06sj10NTq+64HF6gNEHRlQXkx0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PuKktv7S; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfb17fb0fb6so4905652276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 00:50:49 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-df7a6530373so9867107276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 00:50:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718092248; x=1718697048; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1718092252; x=1718697052; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UAtcOHuRzSGyLislV7ie7CX+oVaiZiFwLMGIqPD6yUY=;
-        b=uooPEM6JEKV0TGjRgjiC/worVz9Od5Nu9q+Wy1YKEV3rtjiUpKhneMZNYTsADg0e3B
-         jIXQIUoLnPm1nHjTfNH24VSy5qwNh5cMMUSELoFId7w3e79rvoj73lomVZs1AE0nHlX+
-         Echx6Z8f1wSqjEIWlekGyeSPvZ4Cvlrl6z6yJ3gDDw6M0RhB1TM/4lywcD3i3UYN037P
-         S7ZsIcokyDmwvWxGLIdmDHc5JnsYaHy7+1f6ugP69vpXcnahXw/Ascq8ggOPH+WthTY5
-         YVJ4jWStpf/0sU2rcgwDCfkRy79bxWmEmE51YssInZk/sKtBy0zyFAexFBLerU2QEyjj
-         M9tQ==
+        bh=rfoi3weCkLJlClMg6zNq5D1+MumBGC9yK+0o7HU3M94=;
+        b=PuKktv7S7zJMHdWhsbx7J9oCyyKijVQk8fDA2ysR41rq9dVWMQ2FYiZqjBPfJ8lHVv
+         ls7RX+OnIt6emzsTYK+X4g2P40OHCBRJSeGeATBHd0C1R3nAR433Ntktb1V+uw8TBEZ4
+         mpSwdDBxSYlnEQeoYmHwkX0p0ujkiU5FfiZ5Q51stCe5RrSxDPlg+1FmMD4e4YhYSy/S
+         01RRBoq3uS/cHYK8ajeJpjgUlO+JaFySUiRmlsUOvwxlKiWMc4B8u2KyGuiyPJmM4yZw
+         zqGEDIDDlKSpHY9TwYNlvv+mMPUwifsbthKC7LgDFZhoV7/wmSiueMBeFm7kmR1DUgxt
+         lYFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718092248; x=1718697048;
+        d=1e100.net; s=20230601; t=1718092252; x=1718697052;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UAtcOHuRzSGyLislV7ie7CX+oVaiZiFwLMGIqPD6yUY=;
-        b=vb+zoL181XwVDK93DoSLhxzsV8g22O1D/xNhZtTEzABY+bTmGbxS+Q0NqnGi+Jtic7
-         3z0Tv212hsfELP1Fhm9UvxC8TDRYMCgl2+r7nyOfPVBxd6yrqUh4ZaOdA9ESgUbOXpiU
-         ElwWWKSF8ufDu9Y9QyUcz0JiUL4z0vmSuBi1MAFXFfvgntDIWlacO+QPoK8jQAZE08ce
-         ifNTVPEBmkZMFfYgIIrFuiRdEbnnp8L38YW4SElF0UtdIabzypOXaDg964N7fY3BDMRD
-         gBcyVidbM4C5A82rzA+Vm5grwaHnx85fxotVgW1b2A5PV5g8ePLVAPc2T8xUS3fRpOpd
-         GbRw==
-X-Gm-Message-State: AOJu0YxF+m/B3e8DsycBA3VlLP0MuMR+xTNjCwJYzM3BBF6gJ0FU54nQ
-	Y7Q2je+pq24T86DZUkoBWYRnvU0d6WQ+CYuvXzCFQFF/krLCKsS1kGP9uDexfktHRnjDplwlLg4
-	16FgGIg==
-X-Google-Smtp-Source: AGHT+IHNlBTt7mAmtq78eZgDXdcijLRtCEKJFBoTv8PY0G/YjnZSBVYglfX4ej9nDG1bI4uRUSG7J1jdy5f1
+        bh=rfoi3weCkLJlClMg6zNq5D1+MumBGC9yK+0o7HU3M94=;
+        b=i/Wl4psoCXbfzOo03xJPeVuQQG+AZ7kK6Ph/AlSNqJSV+PHNVCNc9sSsEK/ezgMl/8
+         T0nWYMNFDL+1SZXGumLiPriyg3uqurbiGLWC5zh8KHgReiDYsVFdsXFgmejdiVK1W62n
+         Jxb2Gb/MROuUkHQbpX0u6lND+qu1vZGjUZmnWotdqv3SbNYVESF5qY8/Jz+6E/Xd67UW
+         8l5MwEqzHMIC8NJCxfMGW7CP8HgJmNOUHOWBPToTbOf14INeYqaa0V/4QUqCJFdwYD0C
+         R6prQQvAvOtRoUEEUuQ2lEn+BW6xLjH7qwlzU2ciVGLgFK7bn5yY8hfoialFbm3rOIs7
+         +qdA==
+X-Gm-Message-State: AOJu0YzLshfNvSkDbIBj98QrBcaNqCk0/fGt7o8a6YBzq3UJsDnnAMlD
+	aiaozSvCOe9aYbvWUt52tTBGR5hoPV5O8Ts878oBPNm1di/fmyEBwZSh/+NjrPXsOVjgqTVYb65
+	mX70z7A==
+X-Google-Smtp-Source: AGHT+IFyDS2BFRLxLxooh9UBy3w3KkWkcsvlCgTBgrd7BbaqQ654Bv5CYB20hXbhl3A9/BI4CqENsgWJLOFC
 X-Received: from dvyukov-desk.muc.corp.google.com ([2a00:79e0:9c:201:ecf:76a8:5d44:6e8b])
- (user=dvyukov job=sendgmr) by 2002:a25:ad91:0:b0:df7:d31b:7a29 with SMTP id
- 3f1490d57ef6-dfaf665abb0mr2530071276.12.1718092248447; Tue, 11 Jun 2024
- 00:50:48 -0700 (PDT)
-Date: Tue, 11 Jun 2024 09:50:31 +0200
+ (user=dvyukov job=sendgmr) by 2002:a05:6902:1003:b0:dd9:20c1:85b6 with SMTP
+ id 3f1490d57ef6-dfd9fcb617bmr539283276.2.1718092251735; Tue, 11 Jun 2024
+ 00:50:51 -0700 (PDT)
+Date: Tue, 11 Jun 2024 09:50:32 +0200
 In-Reply-To: <cover.1718092070.git.dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,131 +72,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1718092070.git.dvyukov@google.com>
 X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <7662127c97e29da1a748ad1c1539dd7b65b737b2.1718092070.git.dvyukov@google.com>
-Subject: [PATCH v2 2/4] kcov: add interrupt handling self test
+Message-ID: <bc0cf790b4839c5e38e2fafc64271f620568a39e.1718092070.git.dvyukov@google.com>
+Subject: [PATCH v2 3/4] module: Fix KCOV-ignored file name
 From: Dmitry Vyukov <dvyukov@google.com>
 To: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
 	dave.hansen@linux.intel.com, x86@kernel.org
 Cc: linux-kernel@vger.kernel.org, syzkaller@googlegroups.com, elver@google.com, 
 	glider@google.com, nogikh@google.com, tarasmadan@google.com, 
-	Dmitry Vyukov <dvyukov@google.com>
+	Dmitry Vyukov <dvyukov@google.com>, Aaron Tomlin <atomlin@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add a boot self test that can catch sprious coverage from interrupts.
-The coverage callback filters out interrupt code, but only after the
-handler updates preempt count. Some code periodically leaks out
-of that section and leads to spurious coverage.
-Add a best-effort (but simple) test that is likely to catch such bugs.
-If the test is enabled on CI systems that use KCOV, they should catch
-any issues fast.
+Module.c was renamed to main.c, but the Makefile directive
+was copy-pasted verbatim with the old file name.
+Fix up the file name.
 
 Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
 Reviewed-by: Alexander Potapenko <glider@google.com>
+Fixes: cfc1d277891e ("module: Move all into module/")
+Cc: Aaron Tomlin <atomlin@redhat.com>
 Cc: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: syzkaller@googlegroups.com
-
 ---
+ kernel/module/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changed since v1:
- - renamed KCOV_TEST to KCOV_SELFTEST
- - improved the config description
- - loop for exactly 300ms in the test
-
-In my local testing w/o the previous fix,
-it immidiatly produced the following splat:
-
-kcov: running selftest
-BUG: TASK stack guard page was hit at ffffc90000147ff8
-Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN PTI
-...
- kvm_set_cpu_l1tf_flush_l1d+0x5/0x20
- sysvec_call_function+0x15/0xb0
- asm_sysvec_call_function+0x1a/0x20
- kcov_init+0xe4/0x130
- do_one_initcall+0xbc/0x470
- kernel_init_freeable+0x4fc/0x930
- kernel_init+0x1c/0x2b0
----
- kernel/kcov.c     | 31 +++++++++++++++++++++++++++++++
- lib/Kconfig.debug |  8 ++++++++
- 2 files changed, 39 insertions(+)
-
-diff --git a/kernel/kcov.c b/kernel/kcov.c
-index c3124f6d5536..72a5bf55107f 100644
---- a/kernel/kcov.c
-+++ b/kernel/kcov.c
-@@ -11,6 +11,7 @@
- #include <linux/fs.h>
- #include <linux/hashtable.h>
- #include <linux/init.h>
-+#include <linux/jiffies.h>
- #include <linux/kmsan-checks.h>
- #include <linux/mm.h>
- #include <linux/preempt.h>
-@@ -1057,6 +1058,32 @@ u64 kcov_common_handle(void)
- }
- EXPORT_SYMBOL(kcov_common_handle);
+diff --git a/kernel/module/Makefile b/kernel/module/Makefile
+index a10b2b9a6fdf..50ffcc413b54 100644
+--- a/kernel/module/Makefile
++++ b/kernel/module/Makefile
+@@ -5,7 +5,7 @@
  
-+#ifdef CONFIG_KCOV_SELFTEST
-+static void __init selftest(void)
-+{
-+	unsigned long start;
-+
-+	pr_err("running self test\n");
-+	/*
-+	 * Test that interrupts don't produce spurious coverage.
-+	 * The coverage callback filters out interrupt code, but only
-+	 * after the handler updates preempt count. Some code periodically
-+	 * leaks out of that section and leads to spurious coverage.
-+	 * It's hard to call the actual interrupt handler directly,
-+	 * so we just loop here for a bit waiting for a timer interrupt.
-+	 * We set kcov_mode to enable tracing, but don't setup the area,
-+	 * so any attempt to trace will crash. Note: we must not call any
-+	 * potentially traced functions in this region.
-+	 */
-+	start = jiffies;
-+	current->kcov_mode = KCOV_MODE_TRACE_PC;
-+	while ((jiffies - start) * MSEC_PER_SEC / HZ < 300)
-+		;
-+	current->kcov_mode = 0;
-+	pr_err("done running self test\n");
-+}
-+#endif
-+
- static int __init kcov_init(void)
- {
- 	int cpu;
-@@ -1076,6 +1103,10 @@ static int __init kcov_init(void)
- 	 */
- 	debugfs_create_file_unsafe("kcov", 0600, NULL, NULL, &kcov_fops);
+ # These are called from save_stack_trace() on slub debug path,
+ # and produce insane amounts of uninteresting coverage.
+-KCOV_INSTRUMENT_module.o := n
++KCOV_INSTRUMENT_main.o := n
  
-+#ifdef CONFIG_KCOV_SELFTEST
-+	selftest();
-+#endif
-+
- 	return 0;
- }
- 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 59b6765d86b8..695a437a52d9 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2171,6 +2171,14 @@ config KCOV_IRQ_AREA_SIZE
- 	  soft interrupts. This specifies the size of those areas in the
- 	  number of unsigned long words.
- 
-+config KCOV_SELFTEST
-+	bool "Perform short selftests on boot"
-+	depends on KCOV
-+	help
-+	  Run short KCOV coverage collection selftests on boot.
-+	  On test failure, causes the kernel to panic. Recommended to be
-+	  enabled, ensuring critical functionality works as intended.
-+
- menuconfig RUNTIME_TESTING_MENU
- 	bool "Runtime Testing"
- 	default y
+ obj-y += main.o
+ obj-y += strict_rwx.o
 -- 
 2.45.2.505.gda0bf45e8d-goog
 
