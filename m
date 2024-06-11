@@ -1,87 +1,82 @@
-Return-Path: <linux-kernel+bounces-210334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1A090426D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:30:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275AD90426F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 542091C25016
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:30:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF80AB22B4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F11855E5B;
-	Tue, 11 Jun 2024 17:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="2MCxWJVL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784204D131;
+	Tue, 11 Jun 2024 17:32:01 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689504F883
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 17:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F0029429;
+	Tue, 11 Jun 2024 17:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718127007; cv=none; b=AsOXkLI5zf+pGavN8SsWEBl42yENKZAtLhVsukbtrfzJh4E6Zz5L9+C6VjTb/KynbFDuIr+UDw8vRtBLFpT+/mqcIWuVOyPiiP84XL0XVGebPDhsydTN8aMtzfbX/hepVjEXLoLBgUutjydqdqwIyWkhJ0i+fBmVJiYHEk9meGc=
+	t=1718127121; cv=none; b=YoJaJvspfVouqFLiY2YIgFRq6fC9e3IBEVFNgZHntMvXkKRPs04uvYe6tH/UVs7WF0MPFKNYnnexvzx1UenlUqD4PgJ5xmARAtrzY+tlGBSAa38UFdKTxBHHJRPLFNwHAVRmEeU5YdjYRH5azX24oL3ztLit6VJq6fSc5iqsows=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718127007; c=relaxed/simple;
-	bh=T3EWslxjAsU7h6lchFAg4Shsv2DXVnhbls8Bv1615MM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Sv3SCiPHxoEF4yncIbJOfLjuilh1O2IhIT/TDHIZcxaVgY+ac7b5f4sEtIZ9CCajqNxd+beVK42lo8XnEQ7DBsKG4RhtheWozIlq2q7dwxgoLF/LUwq6MJ+H/3FYdys8SzPirxnXd+k1U4YzTp7U5M8X90GhqMHyBcMIDaDqUVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=2MCxWJVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D8A7C2BD10;
-	Tue, 11 Jun 2024 17:30:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1718127006;
-	bh=T3EWslxjAsU7h6lchFAg4Shsv2DXVnhbls8Bv1615MM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=2MCxWJVLaV4p9IUJ3yEQKhjBd+GDc+KxqDvDeyLYngyo97242qa6hNuQFycP/1qoG
-	 +zjH3FrCKNXaBPmM93H4M4N4qBjEW4kgUhP7joC/iWwQW9pk/TwWSEbIqDYonKMlZ6
-	 vYGlWstDDrAhGpxdTDiPagwHQBLFZHYDp4FGz/9k=
-Date: Tue, 11 Jun 2024 10:30:05 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: syzbot <syzbot+569ed13f4054f271087b@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, muchun.song@linux.dev,
- syzkaller-bugs@googlegroups.com, Vivek Kasireddy
- <vivek.kasireddy@intel.com>
-Subject: Re: [syzbot] [mm?] general protection fault in
- dequeue_hugetlb_folio_nodemask (2)
-Message-Id: <20240611103005.ae4170608bd15d63adee2492@linux-foundation.org>
-In-Reply-To: <0000000000004f12bb061a9acf07@google.com>
-References: <0000000000004f12bb061a9acf07@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718127121; c=relaxed/simple;
+	bh=CrNGOTYh6R/63u6KWmkKpoCdC3WNSHRNIBN1JbMpBPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IOMtwtAMGlLTgoO7fkkFkGe8rMidosL6LF9hKPA2SUJRmWCNF6nRlW+ma+A+CUOcO1o6I03JMin4wliwTrW5Rb0jltrgi8/A2ci8wg8xkFaZkikysblqiMztM5LqyaX64JRhzfc33Bc42I+JbtyJNBg0Q5yfegNHVY03k6qZPhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27332C2BD10;
+	Tue, 11 Jun 2024 17:31:59 +0000 (UTC)
+Date: Tue, 11 Jun 2024 13:32:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Dongliang Cui <dongliang.cui@unisoc.com>, axboe@kernel.dk,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, ebiggers@kernel.org,
+ ke.wang@unisoc.com, hongyu.jin.cn@gmail.com, niuzhiguo84@gmail.com,
+ hao_hao.wang@unisoc.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, akailash@google.com,
+ cuidongliang390@gmail.com
+Subject: Re: [PATCH v4] block: Add ioprio to block_rq tracepoint
+Message-ID: <20240611133214.3ab0c1a5@gandalf.local.home>
+In-Reply-To: <20240611131737.564b6655@gandalf.local.home>
+References: <20240611073519.323680-1-dongliang.cui@unisoc.com>
+	<86eb3dd0-77a1-4d1d-8e62-38c46bd7563a@acm.org>
+	<20240611125440.6d095270@gandalf.local.home>
+	<be0dc105-e205-4b0e-9bd4-49690249fd26@acm.org>
+	<20240611131737.564b6655@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 11 Jun 2024 03:34:25 -0700 syzbot <syzbot+569ed13f4054f271087b@syzkaller.appspotmail.com> wrote:
+On Tue, 11 Jun 2024 13:17:37 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> Hello,
+> > Hmm ... if the above array is terminated with a { -1, NULL } sentinel and if
+> > __print_symbolic() is changed into trace_print_symbols_seq(p, ...) then the above
+> > array can be moved into a C file, isn't it?
+> >   
 > 
-> syzbot found the following issue on:
+> Then it breaks user space parsing. The reason for __print_symbolic() is
+> that libtraceevent knows how to parse it. If you put the array into a C
+> file, the above mappings will not show up in the tracefs format file for
+> the event, and you'll just get "[FAILED TO PARSE]" output from the user
+> space tracing tooling.
 
-Thanks.
+Note, the trace headers are not normal headers. They are included multiple
+times (when TRACE_HEADER_MULTI_READ is defined). Only one C file will
+include this header with CREATE_TRACE_POINTS defined and these headers will
+then build global C functions and variables.
 
-> Call Trace:
->  <TASK>
->  alloc_hugetlb_folio_nodemask+0xae/0x3f0 mm/hugetlb.c:2603
->  memfd_alloc_folio+0x15e/0x390 mm/memfd.c:75
->  memfd_pin_folios+0x1066/0x1720 mm/gup.c:3864
->  udmabuf_create+0x658/0x11c0 drivers/dma-buf/udmabuf.c:353
->  udmabuf_ioctl_create drivers/dma-buf/udmabuf.c:420 [inline]
->  udmabuf_ioctl+0x304/0x4f0 drivers/dma-buf/udmabuf.c:451
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+So technically, this "array" is in C file and not in a header, as it will
+not be created unless a C file includes it with CREATE_TRACE_POINTS, and
+only one C file may do that (otherwise the kernel will fail to build).
 
-I think we can pretty confidently point at the series "mm/gup:
-Introduce memfd_pin_folios() for pinning memfd folios".  I'll drop the
-v14 series.  
+-- Steve
 
