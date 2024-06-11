@@ -1,121 +1,95 @@
-Return-Path: <linux-kernel+bounces-210594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A42069045F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B6E904601
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182A71F24CF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:49:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57CD41C211C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB07314D2BF;
-	Tue, 11 Jun 2024 20:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7D61534E7;
+	Tue, 11 Jun 2024 20:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HXAtt4Yg"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="AiulmEbX";
+	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="y8bJqY1F"
+Received: from mailrelay5-1.pub.mailoutpod3-cph3.one.com (mailrelay5-1.pub.mailoutpod3-cph3.one.com [46.30.211.244])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADA01CD16
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1481509A7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.244
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718138935; cv=none; b=mnB+wJOTybaAgnc7fqYFRWguaoy7z7UN3AOEos8VyZtRk/B+wq5CVLsEbckI6aGaDl7CMAGQzZGO5uiKpva4vZQhPc/VGSV0uAUujx8T0zs/9AeIHkupRN1U5v3FXX0+dZI8LDlJWzqrf2343kMpcmf4BtaiOrKEVAlXcRPiqpk=
+	t=1718139306; cv=none; b=HiZzsTkYZjcUzA3ooD5OhL4IvL+1PXP99FLc9ylqdgakjxHKN9mN00D9p4Eln8eJy311QPc3kyOF+VmtV67S1SJiTPqtKo0OJwhf2gWpbEIAA9nOYRs2EUCO1mO74GlIEuzDr6BjX79irVcxl8lkPO351IzA/lGW8fmi7GcEXRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718138935; c=relaxed/simple;
-	bh=pJf6oJLRj6fBaf0jbjyNj/7Xde43wr4W4HUXec5nOYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sf/HuPu2CgVvQBidyJjP41JK8KyT+0Gk+KAzrjKEo/bcKqRQe7cac2OKOUQRkVfBHXbTtayB5SbF3GytIsQVKMQkX3jdoa7FFZlCl8TtPLgN7/DdWigt7aEO6eU7/dQIMQ6e6uMf5DBTtUbzmnfOoIiEuI3eI+9g7BKMxfnbJkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HXAtt4Yg; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-43fb8cdb29eso4989631cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:48:53 -0700 (PDT)
+	s=arc-20240116; t=1718139306; c=relaxed/simple;
+	bh=tTiQIOR5fXfoTAL0Ccw5hIwFJl0c8eM1AKdXxiCxyRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nA0DFuztRazEcHKz0fgQEKoZD43eijZL12rdP0PCgh8E+thyIPcEY4ppuuN1HDkERUNSZzmfi+0wpjyD1vn8h914NwYjYAtd8sjgkGU7Zs2bg1fuBcDSlVtkPX78LbuR+9+C7Vlgu8pxO1MnjI8tvDWpa7zUddUxCHegttkQJ5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=AiulmEbX; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=y8bJqY1F; arc=none smtp.client-ip=46.30.211.244
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1718138932; x=1718743732; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y79weTWNeYH3OHuSeVZfaP6Dxpg6/VhmFQcWq0YiWSw=;
-        b=HXAtt4Ygbe7+VefOwfV0otOanwNSQyqJg+uJzzSw5x1Z7kj+7hdUAuwMm0dBr3VWMI
-         cnZAYOA7TUz9FTMBZAQwiDzesbLsPLHfdlQaq4PHYvyNBGYACpkbbOaFuy3OSc1HtkXu
-         wEYIzUQJOSAyEWlVN3PMiYtKOkodP5mv7B2EA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718138932; x=1718743732;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y79weTWNeYH3OHuSeVZfaP6Dxpg6/VhmFQcWq0YiWSw=;
-        b=qiqQ+usPdikus7fkzeOfbPRIbfFX5zm7xXZst7G0N2oC9+U88e5gLNNrOnrkeHMZYD
-         sy/NWZYRYGgPUlyL+fa/fiySZ20Swob0rl6k6RZfNuiqvARWccWXd8ZJfpwB+nGafpZ+
-         siAl/BbYX+C4qFjdbrGR3+5IEuFh/CRFjYyryEkypJbehH+ndHFruQtD4S+H/5YOPoFe
-         5DCu6DRW3oT3qYqJwP60Jm0HiozrTt8g9ORo5tAeVSLXQDryDmvo39SUVd3LFFiDprHZ
-         cdbXqiWGAEtspooy7eAXIbYa7PHFdt9mb1V7sX68jmnGxsCpvJwmekLJ4/9+OuktihPv
-         fDew==
-X-Forwarded-Encrypted: i=1; AJvYcCWV5txGYhxT4SERjqLNnYGExGbEgJBDjd1tl0AjCqJaw2/4Oz3DBzpUCk23K9WvEvfNvGRE5wXuOxmDpIEHJPsvC8adT9lW7uklBwxf
-X-Gm-Message-State: AOJu0YwD8mZbJ80AzlZkIDzeCssdh/UfaVeQ0ZPV9+3+pBBza0jy5dg+
-	2cPWynVohzaJ7B4cr+0NTczqr5C8grISCqww3KUnIxDslRokETdIGHIOllTWmtg=
-X-Google-Smtp-Source: AGHT+IHRldpAykaEnON3fBkB9QBArbrfuwvf1Dd1I+MToHaIlihAs8rpCVdS2ZOXDCs9HpZv/ySYzw==
-X-Received: by 2002:a05:620a:4886:b0:795:6b7b:6923 with SMTP id af79cd13be357-7956b7b6b78mr783398485a.3.1718138932170;
-        Tue, 11 Jun 2024 13:48:52 -0700 (PDT)
-Received: from [172.20.14.19] (ool-6c3a3e1d.static.optonline.net. [108.58.62.29])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79568fc92dasm251822085a.84.2024.06.11.13.48.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 13:48:51 -0700 (PDT)
-Message-ID: <d6c5ba89-065b-43d5-8584-0c1effa50c07@linuxfoundation.org>
-Date: Tue, 11 Jun 2024 14:48:50 -0600
+	d=ravnborg.org; s=rsa1;
+	h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
+	 message-id:subject:cc:to:from:date:from;
+	bh=k3ERBR7pPMabLon7+j+2K3RUQpylljUKVmTxI1gsd+4=;
+	b=AiulmEbX+BwDK4kBlV7SqhmTnhf1udadW8kzRtO+NusdCn3B0+7bNSxasJVkji5utbjqdOuaGK4wE
+	 xVmFjT8tIIykEzVzI2VxaS1dkb8sE3AvuDuIq+eVNCQDkz2L0K6WNxxxeTUAc4JQkytjycnPAZhebB
+	 Tj51a9nw2JPv7eBCcyQ/v2eiwye7uWCnB4BdcCR0Y/IHMEPI1+uTu4N2XFQeBIf6W9XB5In1aS5WBc
+	 0RCMzDvHuXcG1Kq7cDikgZ2Hw6tD0LNI+Ovx839KkLq1jA8GgoKwbc3I4iWwCdfHlCKZY0vmMqETKw
+	 xtQRkfJUYZOi1DufeOO8L2ae7HAipKw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+	d=ravnborg.org; s=ed1;
+	h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
+	 message-id:subject:cc:to:from:date:from;
+	bh=k3ERBR7pPMabLon7+j+2K3RUQpylljUKVmTxI1gsd+4=;
+	b=y8bJqY1FxZO9r/gLtSUOuwA9y9IhgmjIkq1Sqkv/6i/IFYmftufvg+5MUsKotboMU6JDflf/WJ0Wz
+	 B8ZnwiiBQ==
+X-HalOne-ID: b4f7f42f-2834-11ef-97e2-e973630cf47d
+Received: from ravnborg.org (2-105-16-150-cable.dk.customer.tdc.net [2.105.16.150])
+	by mailrelay5.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id b4f7f42f-2834-11ef-97e2-e973630cf47d;
+	Tue, 11 Jun 2024 20:53:54 +0000 (UTC)
+Date: Tue, 11 Jun 2024 22:53:52 +0200
+From: Sam Ravnborg <sam@ravnborg.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org,
+	sparclinux@vger.kernel.org
+Subject: Re: Build regressions/improvements in v6.10-rc3
+Message-ID: <20240611205352.GA557485@ravnborg.org>
+References: <CAHk-=wiK75SY+r3W5hx+Tt_bjhcSKPLdji-Zf_8HjikRPbn9wg@mail.gmail.com>
+ <20240610071049.933142-1-geert@linux-m68k.org>
+ <46c5a25-ea8c-4a1-5241-df88a9848a9@linux-m68k.org>
+ <20240611173739.GB545417@ravnborg.org>
+ <CAMuHMdW__Uak2qkUAJc1b1eK1nOzGy=+cneRrtmj_QgBTanK-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/sched: fix code format issues
-To: aigourensheng <shechenglong001@gmail.com>, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240611051834.2885-1-shechenglong001@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240611051834.2885-1-shechenglong001@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdW__Uak2qkUAJc1b1eK1nOzGy=+cneRrtmj_QgBTanK-Q@mail.gmail.com>
 
-On 6/10/24 23:18, aigourensheng wrote:
-> There are extra spaces in the middle of #define. It is recommended
-> to delete the spaces to make the code look more comfortable.
+On Tue, Jun 11, 2024 at 09:50:41PM +0200, Geert Uytterhoeven wrote:
+> Hi Sam,
 > 
-> Signed-off-by: aigourensheng <shechenglong001@gmail.com>
-> ---
->   tools/testing/selftests/sched/cs_prctl_test.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
+> On Tue, Jun 11, 2024 at 7:37 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+> > On Mon, Jun 10, 2024 at 09:28:25AM +0200, Geert Uytterhoeven wrote:
+> > > On Mon, 10 Jun 2024, Geert Uytterhoeven wrote:
+> > >   + {standard input}: Error: pcrel too far: 1095, 1074, 1022, 1020, 1021, 1096, 1126 => 1074, 1021, 1255, 1096, 1095, 1020, 1022, 1126, 1254
+> > >   + {standard input}: Error: unknown pseudo-op: `.al':  => 1270
+> > Hmm, strange..
 > 
-> diff --git a/tools/testing/selftests/sched/cs_prctl_test.c b/tools/testing/selftests/sched/cs_prctl_test.c
-> index 62fba7356af2..52d97fae4dbd 100644
-> --- a/tools/testing/selftests/sched/cs_prctl_test.c
-> +++ b/tools/testing/selftests/sched/cs_prctl_test.c
-> @@ -42,11 +42,11 @@ static pid_t gettid(void)
->   
->   #ifndef PR_SCHED_CORE
->   #define PR_SCHED_CORE			62
-> -# define PR_SCHED_CORE_GET		0
-> -# define PR_SCHED_CORE_CREATE		1 /* create unique core_sched cookie */
-> -# define PR_SCHED_CORE_SHARE_TO		2 /* push core_sched cookie to pid */
-> -# define PR_SCHED_CORE_SHARE_FROM	3 /* pull core_sched cookie to pid */
-> -# define PR_SCHED_CORE_MAX		4
-> +#define PR_SCHED_CORE_GET		0
-> +#define PR_SCHED_CORE_CREATE		1 /* create unique core_sched cookie */
-> +#define PR_SCHED_CORE_SHARE_TO		2 /* push core_sched cookie to pid */
-> +#define PR_SCHED_CORE_SHARE_FROM	3 /* pull core_sched cookie to pid */
-> +#define PR_SCHED_CORE_MAX		4
->   #endif
->   
->   #define MAX_PROCESSES 128
+> Just in case you missed that: these are not SPARC build issues,
+> but SH build issues (gcc ICE).
 
-Applied to linux-ksleftest next for Linux 6.11-rc1
+Thanks, I saw that as sparc64 issues. Then I will ignore them :-)
 
-thanks,
--- Shuah
+	Sam
 
