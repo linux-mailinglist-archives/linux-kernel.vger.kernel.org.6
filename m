@@ -1,100 +1,138 @@
-Return-Path: <linux-kernel+bounces-210005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5B6903DFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:54:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7681903E08
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93CA1C21F63
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:54:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD2B281E83
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124F617D881;
-	Tue, 11 Jun 2024 13:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="g0320USq"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8AD17D8BC;
+	Tue, 11 Jun 2024 13:55:05 +0000 (UTC)
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E286F17D35F;
-	Tue, 11 Jun 2024 13:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB2217D88C;
+	Tue, 11 Jun 2024 13:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718114062; cv=none; b=im2qvnihqdpsCC0DMIvkfj+TkJGJ7wz+f+DzAcdChkYox5doJv6AZY1XTUlRa1JQxLhf/IEjIIyVc8pEmU+9PZ53owb7xmjtUCdwbNnFxfuQ6Jyw/idw8s7RoWMWmKa4cTqL2uVfsB4PHPJ/H0fCsFyUqxTFhj+G/xu6IX+Tbs0=
+	t=1718114105; cv=none; b=rJhEo42n3SBEDF0vLty1C/9E5w4oRWZgX8/JZJpHhJhra9KYafoR4oJYSUTerB83U1ne/CP4eYpd4Uqr+DaNNq79/5NLSooVD7rPjenqDepR4I3fLPh/3f5C22hfkdXcoDVfs6lvWS2sz3gLIWRsmS24m7xx6PUuK3EykKuP6aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718114062; c=relaxed/simple;
-	bh=2UrUxNi+bMQB1JygFOWiEiOyAXps9fRZhWY9jaLZb8c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bcS52XwRU4L0rvIgNoElXiNIEqYZJGlTHrXCe1rcuH6ewhd56NZrWibVBBDBHS+nzw58XVB5NtrqxFuojXcaR3PEkTObpglE+HbBvBdFyM7EIhzal3Rw62zFOZgeUUia6Ylicele9pmUAdXKXDKUovdgkk90cSvYa3OAPadAvAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=g0320USq; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=tRijnAHcosKtI4xo+uB32Jb7iLe726hGK7jy+SHjT44=;
-	t=1718114061; x=1719323661; b=g0320USqhdrXiF0suv82ucQB0mzvJDPqKEev29gN6jz/C0y
-	P35a2kiQOJlriGy0eacKl0Y0Aq8xc8RsDhtZ0RxWliFV5U6PCExrXGrst2waGq+5E4MQThW4JHP0y
-	pp4BGHpZ2Kzn5okm22aCPfQwWnvyW/jTidkwugJrwn3DRjpCaG4kkTssRm4HhneJYtxcTrHyGi6kn
-	ACMdnePRaQWwyOs2Kk28qB0pbLYL46YoZTYVdKqnY2rfmMk1Lawc80RQOqCmWpitim1Wn+Ytt4NM7
-	fyKcuvbW6Pgpht1QP1hylsWZHQyjjBxlpXvI8/VOk4Ze7uHmK6S/CLx4o9UC8+VA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1sH1x4-00000008h5l-00Ha;
-	Tue, 11 Jun 2024 15:54:18 +0200
-Message-ID: <95163ee547da95964c16f87a38d3326ae4da3253.camel@sipsolutions.net>
-Subject: Re: iwlwifi: Regression after migrating to 6.6.32
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: miriam.rachel.korenblit@intel.com, kvalo@kernel.org, Jakub Kicinski
-	 <kuba@kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, 
- linux-kernel <linux-kernel@vger.kernel.org>
-Date: Tue, 11 Jun 2024 15:54:16 +0200
-In-Reply-To: <CAOMZO5Aufe7zAE7TFVprvRreamYd9=RHjybjaEz2O9WaPksV=Q@mail.gmail.com>
-References: 
-	<CAOMZO5A7+nxACoBPY0k8cOpVQByZtEV_N1489MK5wETHF_RXWA@mail.gmail.com>
-	 <3fbb5317d9ff33ef1b60ca8297537335ce86a79d.camel@sipsolutions.net>
-	 <CAOMZO5Aufe7zAE7TFVprvRreamYd9=RHjybjaEz2O9WaPksV=Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1718114105; c=relaxed/simple;
+	bh=Av0dpoUzWyynrRVpAMK6vpVeWyX93XmNPwzW6KRvJXI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WFJ8eltY4VDK1JUDmDu9v2YMzJl7qB4TSbOONJ3Pud07ir19oZrfBXK8DqAzzxUV2tUvVQJ7Ump3PCyI0ALiRTDhrMoFBbCL1zJXtNmCZ47WZ0730pFm0pO1H64jwiC45jz2+IXKcTANHbkfqs7AJsCrPIrr0jDHJjxPKe+8moY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
+Received: from [127.0.0.1] (helo=localhost)
+	by relay.expurgate.net with smtp (Exim 4.92)
+	(envelope-from <prvs=9906f4c1d5=ms@dev.tdt.de>)
+	id 1sH1xl-00ABDO-F4; Tue, 11 Jun 2024 15:55:01 +0200
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ms@dev.tdt.de>)
+	id 1sH1xk-003Z33-SR; Tue, 11 Jun 2024 15:55:00 +0200
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+	by securemail.tdt.de (Postfix) with ESMTP id 5E244240053;
+	Tue, 11 Jun 2024 15:55:00 +0200 (CEST)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+	by securemail.tdt.de (Postfix) with ESMTP id DA0B8240050;
+	Tue, 11 Jun 2024 15:54:59 +0200 (CEST)
+Received: from mschiller1.dev.tdt.de (unknown [10.2.3.20])
+	by mail.dev.tdt.de (Postfix) with ESMTPSA id 81C76376FA;
+	Tue, 11 Jun 2024 15:54:59 +0200 (CEST)
+From: Martin Schiller <ms@dev.tdt.de>
+To: martin.blumenstingl@googlemail.com,
+	hauke@hauke-m.de,
+	andrew@lunn.ch,
+	f.fainelli@gmail.com,
+	olteanv@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ms@dev.tdt.de
+Subject: [PATCH net-next v5 00/12] net: dsa: lantiq_gswip: code improvements
+Date: Tue, 11 Jun 2024 15:54:22 +0200
+Message-ID: <20240611135434.3180973-1-ms@dev.tdt.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: quoted-printable
+X-purgate-ID: 151534::1718114101-824B2642-E1F57A56/0/0
+X-purgate: clean
+X-purgate-type: clean
 
-Hi Fabio,
+This patchset for the lantiq_gswip driver is a collection of minor fixes
+and coding improvements by Martin Blumenstingl without any real changes
+in the actual functionality.
 
->=20
-> I did as suggested:
->=20
-> --- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-> @@ -266,7 +266,8 @@ static void iwl_pcie_rxmq_restock(struct iwl_trans *t=
-rans,
->                 list_del(&rxb->list);
->                 rxb->invalid =3D false;
->                 /* some low bits are expected to be unset (depending on h=
-w) */
-> -               WARN_ON(rxb->page_dma & trans_pcie->supported_dma_mask);
-> +               WARN_ONCE(rxb->page_dma & trans_pcie->supported_dma_mask,
-> +                         "rxb->offset is %d trans_pcie->rx_buf_bytes
-> is %d\n", rxb->offset, trans_pcie->rx_buf_bytes);
->=20
+=3D=3D=3D Changelog =3D=3D=3D
+From v4:
+- merge dt-bindings patches to satisfy 'make dt_bindings_check' and add
+  some improvements suggested by Rob Herring
 
-> [    5.038174] rxb->offset is 0 trans_pcie->rx_buf_bytes is 4096
+From v3:
+- convert lantiq,gswip bindings to YAML schema
+- Add Hauke's acked-by as mentioned in the cover letter in v1
 
-so that looks pretty normal?
+From v2:
+- removed unused variable max_ports in gswip_add_single_port_br()
 
-Might be useful to see rx->page_dma too, supported_dma_mask should be
-4095 or 2047 depending on the device, but I'm not sure how you could end
-up with a DMA mapping for a page that's not at least 11 bit aligned?
+From v1:
+- signal that we only update example code in dt-bindings
+- don't use the word 'fix' if not appropriate
+- new patch: add terminating '\n' where missing
+- renamed MAC_BRIDGE macros to make it obvious which register field is
+  used
+- new patch: remove dead code from gswip_add_single_port_br()
+- updated error message if FID not found in gswip_port_fdb()
 
-johannes
+Martin Blumenstingl (8):
+  net: dsa: lantiq_gswip: Only allow phy-mode =3D "internal" on the CPU
+    port
+  net: dsa: lantiq_gswip: Use dev_err_probe where appropriate
+  net: dsa: lantiq_gswip: Don't manually call gswip_port_enable()
+  net: dsa: lantiq_gswip: Use dsa_is_cpu_port() in
+    gswip_port_change_mtu()
+  net: dsa: lantiq_gswip: Change literal 6 to ETH_ALEN
+  net: dsa: lantiq_gswip: Consistently use macros for the mac bridge
+    table
+  net: dsa: lantiq_gswip: Update comments in gswip_port_vlan_filtering()
+  net: dsa: lantiq_gswip: Improve error message in gswip_port_fdb()
+
+Martin Schiller (4):
+  dt-bindings: net: dsa: lantiq,gswip: convert to YAML schema
+  net: dsa: lantiq_gswip: add terminating \n where missing
+  net: dsa: lantiq_gswip: do also enable or disable cpu port
+  net: dsa: lantiq_gswip: Remove dead code from
+    gswip_add_single_port_br()
+
+ .../bindings/net/dsa/lantiq,gswip.yaml        | 202 ++++++++++++++++++
+ .../bindings/net/dsa/lantiq-gswip.txt         | 146 -------------
+ MAINTAINERS                                   |   1 +
+ drivers/net/dsa/lantiq_gswip.c                | 123 +++++------
+ 4 files changed, 258 insertions(+), 214 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/dsa/lantiq,gswi=
+p.yaml
+ delete mode 100644 Documentation/devicetree/bindings/net/dsa/lantiq-gswi=
+p.txt
+
+--=20
+2.39.2
+
 
