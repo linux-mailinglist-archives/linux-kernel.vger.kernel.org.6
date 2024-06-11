@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-210306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00AD904222
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:06:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13067904227
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 049981C22AE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:06:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27FB61C240EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937E04597A;
-	Tue, 11 Jun 2024 17:06:05 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA2046444;
+	Tue, 11 Jun 2024 17:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="PXJxWVIS"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243093FB83;
-	Tue, 11 Jun 2024 17:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7201D556;
+	Tue, 11 Jun 2024 17:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718125565; cv=none; b=KpcsE9ESOQ97YzABDuK/Pgm1rEdAeugbhw2+r2+oXe0KtkU3l7a6PVGc4rf5z2dAhMfiMNwqEnPQ3JzJ5m5K+zHUAtLT7b5ntrY39fZDBxEkayHrZw4pVfKYOpszvI7DPmwRAtJgK0LybpahLTqG9IAT6Zq5gkD6TRv70J46xo0=
+	t=1718125761; cv=none; b=Q8rK4QkTpv7yZnDu243TYj7AJ7ijXdaWxKhXb98b5pddQX+gMRDsIiNilneeN9h/7nL11M7SvikLubUMFafCV89Ar5niCkkQO4PMXHbCwtEDytpiPR/bNLg9Mi6iG5IEdoiV4r7tmYURvAJ/JJnFA32o/Ak4t4BHMoWfqzu0dU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718125565; c=relaxed/simple;
-	bh=T1GLK5swXm9ffi3GijVN1uaXajq/zCynYioG+5H0AvA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZOQqhSotp1s42hIg+qXDO/tbUKGLckONXF3/cumZtWr8Lb/vd8eLr55VqObZHpT0WFLohpKFpvhqEyrMDr9Z8qoFGmpFcHgd3ZMTMo5AJOe312EhituYRDWn2NDHnDhSheBy0wBEOS3a5SeRVU5WalT6d16xLAO7pfFgOr2NIjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VzFLT6Db9z6K6tC;
-	Wed, 12 Jun 2024 01:01:05 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id D371C140A70;
-	Wed, 12 Jun 2024 01:06:00 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 11 Jun
- 2024 18:06:00 +0100
-Date: Tue, 11 Jun 2024 18:05:59 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Nuno =?ISO-8859-1?Q?S=E1?=
-	<noname.nuno@gmail.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	<broonie@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-	<conor+dt@kernel.org>, <nuno.sa@analog.com>, <dlechner@baylibre.com>,
-	<marcelo.schmitt1@gmail.com>, <linux-iio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v3 6/6] iio: adc: Add support for AD4000
-Message-ID: <20240611180559.000052c7@Huawei.com>
-In-Reply-To: <ZmgoNRkso4egGWgJ@surfacebook.localdomain>
-References: <cover.1717539384.git.marcelo.schmitt@analog.com>
-	<e340f48324b0ea3afb1c715cb2fba184c27112a1.1717539384.git.marcelo.schmitt@analog.com>
-	<e92871489d416e4f8a350fd24fc5ed0012b3cf2b.camel@gmail.com>
-	<20240609102354.02aa1128@jic23-huawei>
-	<ZmgoNRkso4egGWgJ@surfacebook.localdomain>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718125761; c=relaxed/simple;
+	bh=dYgsw05Lo16Ag/IxvPvdK+EMqjmf3VE9WltXmI0XKMk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eJLVKUbSpdDEkE1wRtzT7nPvg3+cGOVrSb84KuffYS4K2XseOYaAdy5/YCjwTT+GrmofCBMoAZVQHYOpUVpDe7egAEn/2cwk0+Yem0p0B//ZKvb5gLYq+94JsayVScjxFVvUHHvDJHogVTd2D7qzy7Nqnew08V3pCKCiXuoNpws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=PXJxWVIS; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VzFWy4pNsz6CmR07;
+	Tue, 11 Jun 2024 17:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1718125754; x=1720717755; bh=3VVTPR0M/NALXqh4EpubQH9z
+	bsUNZAmwZku1/KglkEk=; b=PXJxWVISEXZjM3Dcrc21AGooxtc1JJQ1Mw6FIDyL
+	XvfoFjvtUNoZFchtRQCezqGc7dsFBBe4d1TP6zj5ApBYmY68rr9tPNsS3OsAVF1b
+	wJg3oJ9qb2vTRNwkeOCQdFy4+ufWuV28dbMUK8xAz33OLSNLGX248x1s2eJVlzo4
+	q4oHLQ1hHwrNobcdU6qp/IoZ9TV8bO7B09CaAmzNq8jg3x0nux2LwlMZL5rl4d9K
+	LdJLK65TBlgipBqRy8onUDMTBmHX+OwPjdhqqTrtnx1oOh2gmByyn9gzGPL975EC
+	cI/qWNFidFMG9XwTVr6mSafPLsMBDAoQFCG5qOzAJOltSw==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ljpgvnq9GFne; Tue, 11 Jun 2024 17:09:14 +0000 (UTC)
+Received: from [100.96.154.26] (unknown [104.132.0.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VzFWr5phWz6Cnv3Q;
+	Tue, 11 Jun 2024 17:09:12 +0000 (UTC)
+Message-ID: <be0dc105-e205-4b0e-9bd4-49690249fd26@acm.org>
+Date: Tue, 11 Jun 2024 10:09:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] block: Add ioprio to block_rq tracepoint
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Dongliang Cui <dongliang.cui@unisoc.com>, axboe@kernel.dk,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, ebiggers@kernel.org,
+ ke.wang@unisoc.com, hongyu.jin.cn@gmail.com, niuzhiguo84@gmail.com,
+ hao_hao.wang@unisoc.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, akailash@google.com, cuidongliang390@gmail.com
+References: <20240611073519.323680-1-dongliang.cui@unisoc.com>
+ <86eb3dd0-77a1-4d1d-8e62-38c46bd7563a@acm.org>
+ <20240611125440.6d095270@gandalf.local.home>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240611125440.6d095270@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, 11 Jun 2024 13:34:29 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On 6/11/24 9:54 AM, Steven Rostedt wrote:
+> On Tue, 11 Jun 2024 09:26:54 -0700
+> Bart Van Assche <bvanassche@acm.org> wrote:
+> 
+>> On 6/11/24 12:35 AM, Dongliang Cui wrote:
+>>> +#define IOPRIO_CLASS_STRINGS \
+>>> +	{ IOPRIO_CLASS_NONE,	"none" }, \
+>>> +	{ IOPRIO_CLASS_RT,	"rt" }, \
+>>> +	{ IOPRIO_CLASS_BE,	"be" }, \
+>>> +	{ IOPRIO_CLASS_IDLE,	"idle" }, \
+>>> +	{ IOPRIO_CLASS_INVALID,	"invalid"}
+>>
+>> Shouldn't this array be defined in a C file instead of in a header file?
+> 
+> The way the TRACE_EVENT() macro works, this will not work in a C file.
 
-> Sun, Jun 09, 2024 at 10:23:54AM +0100, Jonathan Cameron kirjoitti:
-> 
-> ...
-> 
-> > > > +	/*
-> > > > +	 * In 4-wire mode, the CNV line is held high for the entire
-> > > > conversion
-> > > > +	 * and acquisition process. In other modes st->cnv_gpio is NULL and
-> > > > is
-> > > > +	 * ignored (CS is wired to CNV in those cases).
-> > > > +	 */
-> > > > +	gpiod_set_value_cansleep(st->cnv_gpio, 1);    
-> > > 
-> > > Not sure it's a good practise to assume internal details as you're going for
-> > > GPIO. I would prefer to have an explicit check for st->cnv_gpio being NULL or
-> > > not.  
-> > 
-> > Hmm. I had it in my head that this was documented behaviour, but
-> > I can't find such in the docs, so agreed checking it makes sense.
-> > 
-> > I would be very surprised if this ever changed as it's one of the
-> > things that makes optional gpios easy to work with but who knows!  
-> 
-> Not Linus and not Bart, but we have tons of drivers that call GPIO APIs
-> unconditionally as long as they want optional GPIO.
-> 
-> What I see here is the comment that should be rewritten to say something like
-> 
-> "if GPIO is defined blablabla, otherwise blablabla."
-> 
-> I.o.w. do not mention that implementation detail (being NULL, i.e. optional).
-> 
+Hmm ... if the above array is terminated with a { -1, NULL } sentinel and if
+__print_symbolic() is changed into trace_print_symbols_seq(p, ...) then the above
+array can be moved into a C file, isn't it?
 
-Good point - handy comment there already and this minor tweak will make it clear.
+Thanks,
 
-Thanks Andy!
+Bart.
 
-Jonathan
 
