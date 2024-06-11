@@ -1,144 +1,107 @@
-Return-Path: <linux-kernel+bounces-210224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0103F904107
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:18:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79DAA904106
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90C0D286F23
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:18:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAE91F23C81
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888263BB48;
-	Tue, 11 Jun 2024 16:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E1B3CF7E;
+	Tue, 11 Jun 2024 16:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SPKC9XXl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohSHEeJv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928FD1CFB2
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D791CFB2;
+	Tue, 11 Jun 2024 16:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718122713; cv=none; b=ETg4Rijl0jj8znZh1qVP3DZoq0tnlwfP9lyJmX3SQJrK9RbzCOPTHJWp3pLZu9bLl8Xb7IXygWEP/wp4UpxeUGZpmZ6Gx/tiNeXVBTfx5wRfehN14WIRobNXSNc76Bv9To3Z6UEtJkyB8m9S7UsMrvBdm28tpspOf3A59Y7/D98=
+	t=1718122707; cv=none; b=NdJ1DHcDyheXpwUtyIoQhVfMNlO0ltOsQfxs/K9nRZ2M5DYpTunbPXJeDhukBlBDGu2NWQWGo0YukI1Cs3GTzRe0EkJZ5duRxt+CFi62UP7uB3QK18ctmpIesSKoe8knrG16QQHvxXPpGciOLp/rLTy1bS+tlt+pDZz+PdVHp38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718122713; c=relaxed/simple;
-	bh=VkplcyEAK/CqqPuprQXUn75nzjvEwusfyevOKBqtIL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=loSFuaBu/egeMmtue8kp2DvCx54o+wMTSOevw6x1wTT4wmlPgfuaBSg8GKS1EVg3gwOp/ou38NYuhJa1roC96QiAO2F/A13gkgSB11BQhWQS2O4DJo6zIlsO6BpYY/GDBzWNe6hQ+mrrtBF+ODHCJg56SW9DFa6+oLgSlH/JV6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SPKC9XXl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BA7vJR016951;
-	Tue, 11 Jun 2024 16:18:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NbIGTfkXL7QFDB2dDvLKDcIZZq590Hs4Si1rtkYPMcA=; b=SPKC9XXlebuNa6in
-	pO1bOsxvDBh70f/1o7lUDSwFXcl/1p20DsN+FdUgiCwgZrmGeNJIZxiSYzhHwNB5
-	zaqTS2LhCjc14tdZF4LP6K/2z5fdMuNkQmac4AbJKeoMm1GaF3jRJQ+BYRpryOPb
-	OEO8mnGmy6NRW5UDrtDqJz3/Wz6uCxAuYwF9+qI+yOigvbWeeR6sH98cG2EowQhB
-	2l9E5gGuKj+3uw+rGjpk1LWeCWJ7G2cBSuHMZoxpFe331PRUhARu5Ekju9k4bCzG
-	4FfJ4dTm8wzeJzcm6oKAGZ3vQV8c8CetlJnivV1i320hQG75VZd+5Q5rjlogIN46
-	tjytwA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypmjas08h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 16:18:21 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BGIKIv024411
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 16:18:20 GMT
-Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
- 2024 09:18:20 -0700
-Message-ID: <b1ce756e-c9c0-49bd-b5f4-e6db79dc8f1d@quicinc.com>
-Date: Tue, 11 Jun 2024 09:18:19 -0700
+	s=arc-20240116; t=1718122707; c=relaxed/simple;
+	bh=BXCo5tYRXnp4nFR9iSjOtaso98PV85SmlYISucj3UX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W+wLV5ACLh/DPbPR1CpssyZQsHY7se+Z/nXaawAlqyC4keNKfUgD2buGRIqSecQ7uDTUA2AwjJLOUS8k3e7Je5z+upvTfrAYLZESPMl5QuxG6hd+hGL8gqBtMmfQjeKVKjIgJ+U0BhxFsv4rK93PXnZr/hn62GFuPDHQJ5hyMJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohSHEeJv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19E1EC32789;
+	Tue, 11 Jun 2024 16:18:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718122705;
+	bh=BXCo5tYRXnp4nFR9iSjOtaso98PV85SmlYISucj3UX4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ohSHEeJvbrchG5opz8XOjoL5wWczUKYg/j0J10BezKCKdWUHh+2BGYj+2R2VF18Mi
+	 XxjPWUSuAVLzYTuQ4L1Id7Wk/3W+3mvM8csSpYEc2KuP9ce/ryb2HxUA1lkkXJbnAk
+	 ycthwzrpLuDUuTuRkh4XlaBNI7nC+cxs+PpO8vDpg/C5wHFcqKDsn8W16QnZi0tH5Z
+	 DIW824tseUEYQgmEu7R2mIUAN258cQpMsEFlGEu5cwIdxRTn3rfzKktZUsav89+1o0
+	 AvPQP/2fbiglHKN++jvchzmV0lV14dKFjLkz9KQ4wYWeH0PdcZS9myKs7/inZQrZC/
+	 7oaaF+7qiwjyw==
+Date: Tue, 11 Jun 2024 17:18:23 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
+	quic_pkumpatl@quicinc.com
+Subject: Re: [PATCH v5 0/7] ASoC: codecs: wcd937x: add wcd937x audio codec
+ support
+Message-ID: <Zmh4z2F6Q0Z5tWnz@finisterre.sirena.org.uk>
+References: <20240524035535.3119208-1-quic_mohs@quicinc.com>
+ <171810116692.177725.17513047102055843084.b4-ty@kernel.org>
+ <9a14cb7b-8d6a-14b3-1d3a-b61086e4d4a9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/panel : himax-hx83102: fix incorrect argument to
- mipi_dsi_msleep
-Content-Language: en-US
-To: Tejas Vipin <tejasvipin76@gmail.com>, <neil.armstrong@linaro.org>
-CC: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <1b7c19ec-536f-4f28-a68f-b03c1b51b99b@gmail.com>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <1b7c19ec-536f-4f28-a68f-b03c1b51b99b@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7dwBttWeolFO5AeyFJd4qyLAd8mRFZXA
-X-Proofpoint-ORIG-GUID: 7dwBttWeolFO5AeyFJd4qyLAd8mRFZXA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- clxscore=1011 mlxscore=0 impostorscore=0 mlxlogscore=999
- lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406110115
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9kuz/Ng8fSpME3+T"
+Content-Disposition: inline
+In-Reply-To: <9a14cb7b-8d6a-14b3-1d3a-b61086e4d4a9@quicinc.com>
+X-Cookie: Your love life will be... interesting.
 
 
+--9kuz/Ng8fSpME3+T
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 6/11/2024 7:05 AM, Tejas Vipin wrote:
-> mipi_dsi_msleep expects struct mipi_dsi_multi_context to be passed as a
-> value and not as a reference.
-> 
-> Fixes: a2ab7cb169da ("drm/panel: himax-hx83102: use wrapped MIPI DCS functions")
-> 
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+On Tue, Jun 11, 2024 at 05:43:19PM +0530, Mohammad Rafi Shaik wrote:
+> On 6/11/2024 3:49 PM, Mark Brown wrote:
 
-Hi Tejas,
+> > If any updates are required or you are submitting further changes they
+> > should be sent as incremental updates against current git, existing
+> > patches will not be replaced.
 
-(for future reference, you don't need an extra newline between the Fixes 
-and Signed-off-by tags)
+> if possible please revert v5 and pick new v6 patch set.
 
-LGTM,
+As mentioned above please send incremental fixes for any issues, there's
+already other changes on top of these.
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+--9kuz/Ng8fSpME3+T
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
 
-Jessica Zhang
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZoeM4ACgkQJNaLcl1U
+h9Cnawf/fREWTBnC0LJb0pWn2slZjuzkeDdemDwGEzINKR+3GWRSgkj7g8EfveZZ
+uhpb4kMAETtZZFdqNipbdCdCn0rykBEAg1htIkvk8aCKlDiMKw18vomFlGCHuMyL
+OJU3W0Bdj7gK/9It4OcoR5niYSCX8Qga0y+lanU+7yBgVX/tBlJCWduiQamUwig7
+tzbtQB+/w+rIFk8hOTD7YDN2L3meLPqHqLxZxAf2VGFwti3ZazGFdDcQTPwFEGgL
+uIPG39uCwDr3g1tmX0mcNgg2mOBnWNLreXER2BxaduXePl3qacANXkFpwD3BxNvn
+sC6Abb/j+iurQFMG0e5eZVdgLBc3Pg==
+=qvv7
+-----END PGP SIGNATURE-----
 
-> ---
-> 
-> Changes in v2:
->      - Add Fixes tag
-> 
-> v1: https://lore.kernel.org/all/d9f4546f-c2f9-456d-ba75-85cc195dd9b8@gmail.com/
-> 
-> ---
->   drivers/gpu/drm/panel/panel-himax-hx83102.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-himax-hx83102.c b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-> index 6009a3fe1b8f..ab00fd92cce0 100644
-> --- a/drivers/gpu/drm/panel/panel-himax-hx83102.c
-> +++ b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-> @@ -479,7 +479,7 @@ static int hx83102_disable(struct drm_panel *panel)
->   	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
->   	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
->   
-> -	mipi_dsi_msleep(&dsi_ctx, 150);
-> +	mipi_dsi_msleep(dsi_ctx, 150);
->   
->   	return dsi_ctx.accum_err;
->   }
-> -- 
-> 2.45.2
-> 
+--9kuz/Ng8fSpME3+T--
 
