@@ -1,161 +1,151 @@
-Return-Path: <linux-kernel+bounces-210700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279EB90479F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB1A9047A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98BEE282575
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42085281E2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCBE155CAF;
-	Tue, 11 Jun 2024 23:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9AC15622E;
+	Tue, 11 Jun 2024 23:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FGESD/hC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wC3VR5m0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T2FlKVu/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F281015383E;
-	Tue, 11 Jun 2024 23:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DB615383E;
+	Tue, 11 Jun 2024 23:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718148103; cv=none; b=HcpL4Nf+c7hTeDqQnPPor7iKhGOZ7ej+sAqLXAN4Kp2/x0oRnNXBF19Jc5HJMx6elfbPlgCF1MueNgHo/GpNgfmdyasCnXIbNRR5dVqsHZP8FVVdRgyugxIFNpFfJGrwDUuZiOeiE1hjaAo0uDCyoQR0QW6aUIxr0qzksiRyz+Q=
+	t=1718148200; cv=none; b=HKXdRx8YvUao3nnOUTRxz4g5ge3pZYHwgCybUKuTwRBQ9f95FnThPgAAMuV2BdXayl3M27waO73pVlgcweujWV/fhv9BxPBU5F512VVfldk6FrYTqKaoA5mLgb/cRVWgXkqDIziuweTwr8YBZOHdvK9jLMnhfuX5IVlD86VBY6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718148103; c=relaxed/simple;
-	bh=lgcvT1LFguPIGLAYYDYCpNfwqmbxvFvBkVmTRkjKdRI=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=oL8tHfEk2oVOKZlg12uI1eHcmD8i6LY7uW2TzaJzVJYfL9FySxKnE+W1SGFYurwTcKpoIehttjCTG1AMJ3emmh8NMyi+kPIatX4PlEZNI0WkNNv4fhd/rYmk88Qnup3s0unVfKSOqKsCNcULgOE0KgvaQlPmlPmiLAMHVsEgm/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FGESD/hC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wC3VR5m0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 11 Jun 2024 23:21:38 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718148099;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=1nMsl9Pleiu2nnrNLuo1//XOiGGLzSSKOjxP3hiMmcI=;
-	b=FGESD/hCmZSs/Sjl34/TmVYmEpuGeXd7MI1+W7DLIbnm3JhWxAzsEWBI/DIUdEWq0KWc1U
-	9JXi4jYALHOvFTPm4bZY5dIQKN4K3X+AUKGN+PH0lQt53JcvoGP+21BBNiLTsaGb60n8rT
-	FNOiTVYB71ms5sH+6VGNt6vsrHKAAxKuQQiSau6v+12caqPhouOcxE6toaDbf1ymY6Sl8C
-	mOrTwj9gsFrjS6KkenPxHp7stzI/UzQGPZ9UcPXCrw7ifKGramBzQwMeqv4aJ2W0KVWxIj
-	v8NfGuViOFPdZJP+qM5ASVRT1qzLek6sRx+M6A+yHlTR3yABnryd/UEnwVevOg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718148099;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=1nMsl9Pleiu2nnrNLuo1//XOiGGLzSSKOjxP3hiMmcI=;
-	b=wC3VR5m0sH6cKcvUG8FEtbJtZtp5T0d3ci0bMfxRUyWuGx/iH7gwqPgm3/4YdR6/4e8P7t
-	xgagbgvkhwMYcQBw==
-From: "tip-bot2 for Kees Cook" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/uaccess: Fix missed zeroing of ia32 u64
- get_user() range checking
-Cc: David Gow <davidgow@google.com>, Kees Cook <kees@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Qiuxu Zhuo <qiuxu.zhuo@intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1718148200; c=relaxed/simple;
+	bh=YopLwf8pAChenbbtlUjXOJkMg8EoT8uk4YE7aHt3PZk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SXO5PpVQexENY2QOzlJwyhOOoiINVlUPbfdiNMYCBFobDimwFrvuHYCv5Pqprr14yvaXYni21/BUEJ7RaDgbrIpeVOpRiUHFYYdpyvrN84OwiSmOFoRUWXyL4QaVIWH301w1dkWqKvONFOiKe6r68rQqJd3A18Q72wmlDHIbxsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T2FlKVu/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BKi3Mj018553;
+	Tue, 11 Jun 2024 23:23:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=6CCprVtu51dZoYd4pj0Vb+xU
+	0u9s6Y1VE85sCXVJ3/M=; b=T2FlKVu/ivV50BwYv8L3u+dR1aB2GwpSNMg5UTW7
+	Cqpz8TqKmenQz+M/AAhcB5qGhPVHhbQ9fp/cQwE+Ghou7wNnAfJ95dMhVxWeU0vm
+	rZitilUMtK976FfD/SeSANsV21bCQYowoZIYd+EF3E9S/2Nxl6cvTySG8NkNsFQK
+	NNQ4OoeYoVWdnE/KynEmcjh+VRsWpPiC10WVanFgbQL2QjsNKJa4RXQbxdE1SSQX
+	atnYLq0IPfHrb2vt2CkxcAYCxxgpDOphIt4khiVftcrX9sRLirV4Z0c1ofa07/jn
+	YF7sqveeQrnoNS29lBxGIQHc0bOLKLzzexG91AZoukf6FA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm6b9v8h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 23:23:02 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BNN0FN018794
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 23:23:00 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 11 Jun 2024 16:23:00 -0700
+Date: Tue, 11 Jun 2024 16:23:00 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Rob Herring <robh@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Andy Yan
+	<andy.yan@rock-chips.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        "Mark
+ Rutland" <mark.rutland@arm.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Shivendra Pratap <quic_spratap@quicinc.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v4 1/4] dt-bindings: power: reset: Convert mode-.*
+ properties to array
+Message-ID: <20240611160619020-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240611-arm-psci-system_reset2-vendor-reboots-v4-0-98f55aa74ae8@quicinc.com>
+ <20240611-arm-psci-system_reset2-vendor-reboots-v4-1-98f55aa74ae8@quicinc.com>
+ <20240611204001.GA3026541-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171814809836.10875.16192775250585281256.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240611204001.GA3026541-robh@kernel.org>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: nJ_9VLNi8KTGk3bVqfIgDuMlmBQ2EDRl
+X-Proofpoint-GUID: nJ_9VLNi8KTGk3bVqfIgDuMlmBQ2EDRl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_11,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ mlxlogscore=999 impostorscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110158
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Tue, Jun 11, 2024 at 02:40:01PM -0600, Rob Herring wrote:
+> On Tue, Jun 11, 2024 at 08:35:13AM -0700, Elliot Berman wrote:
+> > PSCI reboot mode will map a mode name to multiple magic values instead
+> > of just one. Convert the mode-.* property to an array. Users of the
+> > reboot-mode schema will need to specify the maxItems of the mode-.*
+> > properties. Existing users will all be 1.
+> > 
+> > Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> > ---
+> >  .../devicetree/bindings/power/reset/nvmem-reboot-mode.yaml        | 5 +++++
+> >  Documentation/devicetree/bindings/power/reset/qcom,pon.yaml       | 8 ++++++++
+> >  Documentation/devicetree/bindings/power/reset/reboot-mode.yaml    | 4 ++--
+> >  .../devicetree/bindings/power/reset/syscon-reboot-mode.yaml       | 5 +++++
+> >  4 files changed, 20 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml b/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
+> > index 627f8a6078c2..9b9bbc0f29e7 100644
+> > --- a/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
+> > +++ b/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
+> > @@ -31,6 +31,11 @@ properties:
+> >  allOf:
+> >    - $ref: reboot-mode.yaml#
+> >  
+> > +patternProperties:
+> > +  "^mode-.*$":
+> > +    items:
+> > +      maxItems: 1
+> 
+> Drop 'items'. Otherwise, you are defining constraints of a matrix.
+> 
 
-Commit-ID:     8c860ed825cb85f6672cd7b10a8f33e3498a7c81
-Gitweb:        https://git.kernel.org/tip/8c860ed825cb85f6672cd7b10a8f33e3498a7c81
-Author:        Kees Cook <kees@kernel.org>
-AuthorDate:    Mon, 10 Jun 2024 14:02:27 -07:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Tue, 11 Jun 2024 16:08:43 -07:00
+If I do this, I also have to add $ref: .../uint32-array as well so
+the property can be picked up as an array type. Let me know if this isn't
+right, otherwise I'll send out a fixed version in a few days.
 
-x86/uaccess: Fix missed zeroing of ia32 u64 get_user() range checking
+Thanks,
+Elliot
 
-When reworking the range checking for get_user(), the get_user_8() case
-on 32-bit wasn't zeroing the high register. (The jump to bad_get_user_8
-was accidentally dropped.) Restore the correct error handling
-destination (and rename the jump to using the expected ".L" prefix).
-
-While here, switch to using a named argument ("size") for the call
-template ("%c4" to "%c[size]") as already used in the other call
-templates in this file.
-
-Found after moving the usercopy selftests to KUnit:
-
-      # usercopy_test_invalid: EXPECTATION FAILED at
-      lib/usercopy_kunit.c:278
-      Expected val_u64 == 0, but
-          val_u64 == -60129542144 (0xfffffff200000000)
-
-Closes: https://lore.kernel.org/all/CABVgOSn=tb=Lj9SxHuT4_9MTjjKVxsq-ikdXC4kGHO4CfKVmGQ@mail.gmail.com
-Fixes: b19b74bc99b1 ("x86/mm: Rework address range check in get_user() and put_user()")
-Reported-by: David Gow <davidgow@google.com>
-Signed-off-by: Kees Cook <kees@kernel.org>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Tested-by: David Gow <davidgow@google.com>
-Link: https://lore.kernel.org/all/20240610210213.work.143-kees%40kernel.org
----
- arch/x86/include/asm/uaccess.h | 4 ++--
- arch/x86/lib/getuser.S         | 6 +++++-
- 2 files changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 0f9bab9..3a7755c 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -78,10 +78,10 @@ extern int __get_user_bad(void);
- 	int __ret_gu;							\
- 	register __inttype(*(ptr)) __val_gu asm("%"_ASM_DX);		\
- 	__chk_user_ptr(ptr);						\
--	asm volatile("call __" #fn "_%c4"				\
-+	asm volatile("call __" #fn "_%c[size]"				\
- 		     : "=a" (__ret_gu), "=r" (__val_gu),		\
- 			ASM_CALL_CONSTRAINT				\
--		     : "0" (ptr), "i" (sizeof(*(ptr))));		\
-+		     : "0" (ptr), [size] "i" (sizeof(*(ptr))));		\
- 	instrument_get_user(__val_gu);					\
- 	(x) = (__force __typeof__(*(ptr))) __val_gu;			\
- 	__builtin_expect(__ret_gu, 0);					\
-diff --git a/arch/x86/lib/getuser.S b/arch/x86/lib/getuser.S
-index 10d5ed8..a1cb3a4 100644
---- a/arch/x86/lib/getuser.S
-+++ b/arch/x86/lib/getuser.S
-@@ -44,7 +44,11 @@
- 	or %rdx, %rax
- .else
- 	cmp $TASK_SIZE_MAX-\size+1, %eax
-+.if \size != 8
- 	jae .Lbad_get_user
-+.else
-+	jae .Lbad_get_user_8
-+.endif
- 	sbb %edx, %edx		/* array_index_mask_nospec() */
- 	and %edx, %eax
- .endif
-@@ -154,7 +158,7 @@ SYM_CODE_END(__get_user_handle_exception)
- #ifdef CONFIG_X86_32
- SYM_CODE_START_LOCAL(__get_user_8_handle_exception)
- 	ASM_CLAC
--bad_get_user_8:
-+.Lbad_get_user_8:
- 	xor %edx,%edx
- 	xor %ecx,%ecx
- 	mov $(-EFAULT),%_ASM_AX
 
