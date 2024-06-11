@@ -1,110 +1,108 @@
-Return-Path: <linux-kernel+bounces-209816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB645903B3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:58:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A98E903B49
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D06241C231A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:58:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 548CE1C23261
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0565F17BB34;
-	Tue, 11 Jun 2024 11:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39D817D36C;
+	Tue, 11 Jun 2024 11:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LTXKZQhE"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lAtvbDY5"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B745317BB12
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739CB17C7A2
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718107085; cv=none; b=bNxTMuCnR6AKzJ24+2XyqBVMh+WcUyWP7LJJSnOnEgsiKk2xhxeNmeBqb4H45c51K0+sCRFQ2LtdTMl8+PdkCwQ4rlFdIXBGuF665upWuFENrH1KE/GsZtLWMDezmJU68q8xuZtz3uXKR1N2xa+YMqexFDNKjlCdOdtnxE1/hug=
+	t=1718107133; cv=none; b=H3SwVRJGod850O8ZiIp3l3pKGOhc3zcpji/gNoCqYu/9gdeb8eLHWBeGSTE02CBP8wVeobBBfIb9iwPKMJOVMpZqoC2EczvrSd3eKSMcrY9lgqTseF8WJBQu2O5cKZjfyweVZFMbjG9AWeS5v7exGJtzdlMGZxv3G1JfQXbhJ+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718107085; c=relaxed/simple;
-	bh=KQOQMNe/0O2p5NcAx9Wr8YU3xBI8taSDf2dxsX8eN+U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QWpsv4bKSzlZ/mz8F7N/Nc/fnzYU4D3DFaH4aZ0yKj3YtAghIGYWUcUwaZM4Kqj9R3/IyCElDT8JSL2W3ZbgaRqzVNAgKT9EkOfiC70Vr02qgesHiPbUej35OZUbR7GsyTYTZ/ZcCQKWY2h8wptQHnnCmsf+yuu0fjPQv30moK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LTXKZQhE; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57c61165af6so4590020a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718107082; x=1718711882; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8km0fCrQgO57gFXBsXFIYcrjuKczDYZLAASbYW83aek=;
-        b=LTXKZQhECbbfKv/qkZCqUXiwri9YSZmnMzOpcOcBiGAxiX//EtvEs8CaahYh4Hlavk
-         NdJVYFn6ZRh0wfmkpsI6XgV/oHsQNI87gpiReGDii1AFcIfO2QLPkZTdS92ChNjXUKHU
-         VbVzQ3dHKh8wgXN/OQaLpOKMxiykQBSrW+rDA5aXq7GXDxfnRe1IUBwQlc6F+73JBngb
-         CMdw5KdbQU85kcTzttxuSsCrYRNZbCH2dpkjXcB7Yy2x5ZqQSXjz5Z6KMSUr0cRUJpVk
-         650bUQFLGSG64x653XGcQwCzDwR6azGKRzbHW9sjY+boMPUAGvTZexbMm9avCX7Gkzle
-         uNGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718107082; x=1718711882;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8km0fCrQgO57gFXBsXFIYcrjuKczDYZLAASbYW83aek=;
-        b=iSV0apFVEvwxJERkXNbpAVpILkDLykzJjlCUQzGqot0MKrUHbnl9FqP1Ji/D3txr9x
-         q/q7GWIckXI5f6EeUVMKl85b7yggIzd6c1+MK+vMVEdEioQzS8b3t+HmG7b8gYl9gSmu
-         esbyaly1MB2oXGGZrL7FvCbuzaAKd99HfiawMyyrZeGpXYGIIGtwfuZPJ8Z+mmwbwbkq
-         v8u5AvWhaDgDDss1/hywsceeS03iEFd4SWBYGfwhQ+B3KH3jV39wcxjQTiXm02r3gGTC
-         +E2nN/aXZZoVU01RT4MqWacS5n9sgqo1JKOaijNn9dQmqH/jv9hIzBpeL7joXx9A2hrY
-         rwGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdXu3RGMh8fYf8o4ANCPQVDKIKCIlC1poysbFjwQYpr4ohc4o2VUD/ZQryGF2KltIGwpH0fiL2PCuJCtLLrAvI0/2Q2nApJUtFL4R2
-X-Gm-Message-State: AOJu0Yyj4c/t0tBTxsLX9ESbfJvHlcgyiu5ygqiOUQgRleVtALeHpByk
-	L8O/MidD3xHriL7BlOForGpLRwdWDNjQFQvYuIQBwNvyPWT89LfATx07P14gNDE=
-X-Google-Smtp-Source: AGHT+IFE/E3oXsA/j5Sw46isYeAbfSwDcm+QTBQfzlRN7+BbqOoeqoLghf4L6f7cDyPU3Yb2H/A/fA==
-X-Received: by 2002:a17:906:4eca:b0:a6e:f75f:be04 with SMTP id a640c23a62f3a-a6ef75fc386mr549563966b.38.1718107082022;
-        Tue, 11 Jun 2024 04:58:02 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c6aa014c1sm6226784a12.41.2024.06.11.04.58.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 04:58:01 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Amol Maheshwari <amahesh@qti.qualcomm.com>, 
- Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@quicinc.com, kernel-janitors@vger.kernel.org
-In-Reply-To: <20240603-md-misc-fastrpc-v1-1-6e6d73d08315@quicinc.com>
-References: <20240603-md-misc-fastrpc-v1-1-6e6d73d08315@quicinc.com>
-Subject: Re: (subset) [PATCH] misc: fastrpc: add missing
- MODULE_DESCRIPTION() macro
-Message-Id: <171810708104.74168.2910983617658418174.b4-ty@linaro.org>
-Date: Tue, 11 Jun 2024 12:58:01 +0100
+	s=arc-20240116; t=1718107133; c=relaxed/simple;
+	bh=ldn8LUUtjwGIRVr7G7jJRAIBtTNkjEd0Un8CbsxrI0I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=abidvEvLiF485cb0qQsVmpxBv3TAe0pUvOqqsHI15nGwZT+S93WRKbJqGN1FNsvZtR0bR6kd7yk1eSqGU9vYjdA1c23Hjjl0iqWzEYdigHZuyMQ9eymI7cbODJJ8W+lMo/HPdfV2xY5fntA+YizCz7GtywvVsAfSJW352tK6ktE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lAtvbDY5; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45BBwR7I038176;
+	Tue, 11 Jun 2024 06:58:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718107107;
+	bh=ET59WQAv9RAVHKPtzswW57gWcdNRLaUt0oHMdCRcpYM=;
+	h=From:To:CC:Subject:Date;
+	b=lAtvbDY5XwBeRPacVuDxYlohsJ845Zj61y3ld80fb/xVTaLD6iU+SPhx4ZBAb/UpH
+	 nTZfoo0YsQ51EA34LOV3ftI1HqJQIMsHQY2mTvMbGdNE9kXxAKjkQdDgv63iaf17IU
+	 wQtlpNrUP/sHLuNi50/vLrnpTuCff91x2NIiedcM=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45BBwQgT094732
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 11 Jun 2024 06:58:26 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
+ Jun 2024 06:58:26 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 11 Jun 2024 06:58:26 -0500
+Received: from uda0490681.. ([10.24.69.142])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45BBwLpE065144;
+	Tue, 11 Jun 2024 06:58:22 -0500
+From: Vaishnav Achath <vaishnav.a@ti.com>
+To: <will@kernel.org>, <catalin.marinas@arm.com>
+CC: <m.szyprowski@samsung.com>, <arnd@arndb.de>, <neil.armstrong@linaro.org>,
+        <dmitry.baryshkov@linaro.org>, <konrad.dybcio@linaro.org>,
+        <krzysztof.kozlowski@linaro.org>, <geert+renesas@glider.be>,
+        <quic_bjorande@quicinc.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <nfraprado@collabora.com>,
+        <u-kumar1@ti.com>, <vigneshr@ti.com>, <nm@ti.com>, <vaishnav.a@ti.com>
+Subject: [PATCH] arm64: defconfig: Enable MTD support for Hyperbus
+Date: Tue, 11 Jun 2024 17:28:20 +0530
+Message-ID: <20240611115820.1269805-1-vaishnav.a@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+TI Jacinto 7 SoCs (J721E, J7200) have Hyperbus controllers present
+which can be used to interface with Hyperflash and HyperRAM storage
+devices. Enable the necessary configs for Hyperbus support within
+the MTD subsystem and the specific Hyperbus controller as module.
 
-On Mon, 03 Jun 2024 12:58:08 -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/misc/fastrpc.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> 
+Signed-off-by: Vaishnav Achath <vaishnav.a@ti.com>
+---
 
-Applied, thanks!
+Tested on J721E EVM : https://gist.github.com/vaishnavachath/d8b2c6df43d8c809027d98087cdaa95f
 
-[1/1] misc: fastrpc: add missing MODULE_DESCRIPTION() macro
-      commit: 6814f03445b30f6a136ff043cb54c0a86e3de982
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 05abba0a0209..dfe62d645648 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -281,6 +281,8 @@ CONFIG_MTD_NAND_FSL_IFC=y
+ CONFIG_MTD_NAND_QCOM=y
+ CONFIG_MTD_SPI_NOR=y
+ CONFIG_MTD_UBI=m
++CONFIG_MTD_HYPERBUS=m
++CONFIG_HBMC_AM654=m
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_BLK_DEV_NBD=m
+ CONFIG_VIRTIO_BLK=y
 -- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+2.34.1
 
 
