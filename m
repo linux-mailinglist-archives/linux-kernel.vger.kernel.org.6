@@ -1,193 +1,176 @@
-Return-Path: <linux-kernel+bounces-209402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A681790341E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:45:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C430903429
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD95C1C21D60
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:45:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B122D1F22131
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A56172BD8;
-	Tue, 11 Jun 2024 07:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AC1172BC5;
+	Tue, 11 Jun 2024 07:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZS9uLdIn"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="phl5OF5p"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A5A1E52F;
-	Tue, 11 Jun 2024 07:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17052E620;
+	Tue, 11 Jun 2024 07:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718091889; cv=none; b=Fwws9DLq0FPEGQQM8Q3IhYDEp0bSAZmCuMuPx8NOzLx+geMsiRgagiJJiRR0POondbXOD7xlXla9U7ZZQoqvPVdStggn+eLkrJ8f+4to//iOK9ar5BTTjslb3dW09i6VqRWt6Rj3ZSgoewF8U2BeDg0jnR+hgGa6ZqKoIkfbNSQ=
+	t=1718092003; cv=none; b=q68IAtlD1hWAGn5pz0cJBmNvOX1V9yKMOA/H3g7nwcxN/bJNw+AgGfo/YLBL823lr0c3W4GDX8Ah4B8sgWhnVVikhNEYLTmJujW+KUdaiiUgNMcDlkUOQkhlKNrmdSJ7KK8YVDkhtVcjXR6ORD9zLB2wUXwQA4pujSKrU+87Q+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718091889; c=relaxed/simple;
-	bh=SDqAx+l0Jjbh3zwtEx4gpEmG6LW9mMxqD0J4QCprdCk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XvXaQ+Y5VT+M6PydciBB+z3+ty+Hc20G14CmkR4KTlAn14WPF7jinxCId9FBypJtg/qTEup04Qd82PKN4eTwu0tIqan+9CdiyP3RaPOJGZJtVd+lb+x34fQs12INfDMfzIV1frbJmzvPkIuhVw7Qtz1wV6uvIMZ5mituZV9AS4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZS9uLdIn; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6f0c3d0792so81813566b.3;
-        Tue, 11 Jun 2024 00:44:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718091886; x=1718696686; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hq7VlDHf7pEbFf7v8zZEUyFUewiFD+NWVkc0x5bTvZM=;
-        b=ZS9uLdInbVq4n6as0JN+a6QjMdMMV+ZUKgNDHRWblWBfLXUC9Gjab5edoicc/QqB+g
-         WmPithd7wCU+hHQK9u7sYqg1P60M8bITEgVKJXWIKO5ywemNe3GW6yNuVTUzMSZkpbdf
-         xN6VbCrwQRoC1HxPYekgtO1DkT/xIPzjHIXzME2vFQV+JmcQfkD/PSVaJDFG1dJB0BNQ
-         rKmUwbuzm2b2aVuBKaxX0w8yJMItk+Ks6FmUbaa7s4rXc8u+DbzqLC/QrFiLtDOgF3JY
-         cnFnHm60orjKp5k3ZAYf//IlXpHV3MR6QDE+Nfd7HfrdXRykUa/5vLDB7U+LuJFidj4x
-         bxUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718091886; x=1718696686;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hq7VlDHf7pEbFf7v8zZEUyFUewiFD+NWVkc0x5bTvZM=;
-        b=dAUKwfkDJ1lzO9eH82iVqiUQX/j951/aU53gcLN7ieCevbw9rCwgCOMCaooG1jZkIQ
-         wb9x/qwnNaOG6TON1v0rokR4S2zkMiLZ7Gx2bDCZ7bNOAykJ5YQmcDmvKFrgplSO2wWR
-         Qr4r8ZF/uno9rGWU8TD6KUjSFm98oDxLPgbb2hcaqjksrsfHD3gERhr2KGnrc+wg3mUj
-         wZVsdIOaEcYOv6RfjypEQEG4VxxmRN3ytSOHwp9gYuNd+LCsSBuQ+tcSsjkG9d0JoLXp
-         20s4JQuJPLGBWE54s09y/luO3uT6379DowLfwc86V0fm3bTeAOvdFQxX0apWHktsGYaO
-         Wh3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUIOKAJV9UinP2/pv7F9KWzj5OHuXrmz4ogOSMMXvEwgMoZc+8k95qXtI2wa4KGEYXL2OKtAr7tWyGv4o/FUbEbqaGLY7OuO6R2YoRzqt089ERZoU+GJR3WFIpjxhPz2ZgVvDT+TU0x4ZbkfKG+NJVTrNro7eoXGUsTeT9PCtDD6b1M4MERj2wie9glBgFhAlM2NuXRcaLiiO6D66wbCGeZSKvXs4Wr7MycWZCoowJeizh6q7xHcvafVCOh
-X-Gm-Message-State: AOJu0YyaSeSgsqpDIjhI37eC5pjMGdBodZJ2rQDXGh74rfN43pya3TN9
-	zepOJqG+Wb6N2OzQEQ3yxQ3w8Nh4lSt6+EraifYP6fW7fNEBCgFu
-X-Google-Smtp-Source: AGHT+IHlSFuxcjLt48JBJua/3vo0MpwKdqxWfXLKbeLpZ2nG+r1CWlnSG/xlxAddGeHS3HfvKBYIUQ==
-X-Received: by 2002:a17:906:3c06:b0:a6f:1f5d:4db5 with SMTP id a640c23a62f3a-a6f1f5d4e67mr307274566b.34.1718091886042;
-        Tue, 11 Jun 2024 00:44:46 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f152b0bf9sm316620866b.65.2024.06.11.00.44.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 00:44:45 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 11 Jun 2024 09:44:43 +0200
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org,
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>
-Subject: Re: [PATCHv7 bpf-next 2/9] uprobe: Wire up uretprobe system call
-Message-ID: <ZmgAawOdLZAZynA_@krava>
-References: <20240523121149.575616-1-jolsa@kernel.org>
- <20240523121149.575616-3-jolsa@kernel.org>
- <20240611070521.82da62690e8865ff498327f7@kernel.org>
+	s=arc-20240116; t=1718092003; c=relaxed/simple;
+	bh=KYXwkV7c/bPtlWVVNa3FqDeuCVfhvpj+GgJs/yjEk4M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r/Y3UIpGXcp6ieRWCfPl6Bu4S4QZH3uUU0c+Q5M7FXEi+q0Yb71E2M0hiBD/16EvMogf2n6EMgjMxL1Ca2QuWd04mqJ7YuLy/LRkwR1xIuhW/1PGv9E7Ce1xWJ/GDGH0ndQOntJyyfpnlJqHaKVOzyFbrVjAdt/uHVkVQYpk60k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=phl5OF5p; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B2sEZp004782;
+	Tue, 11 Jun 2024 07:46:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=/oIEzahvZHJr/HDCqTTDLf
+	ktPUFuY2YJdqN+Q9hmrmQ=; b=phl5OF5pWHYtpu5yFa0hh4cdXyaI0sc2DKXS2j
+	U008w7i5ejmYh3vYV5msHX4IKHy/2ONry19c6xQp+BqOvlRu4ATd0tHfo4OVDjOV
+	JzfCu5URe4JGjGrko3vuZbDpFwBqKAMPxVhBFedc0ipnfSPkiEpFCsUOK1Eeb9K3
+	z3IE17vM4yWeUXL04+Gkrn1LXnIAQ2R0LGzi4yfS0z+UF7YSG+2uJkMbaofk09QA
+	QkRna71ZAIEXjepzkwgtPSF0xMXZiggyPnxKC6qBU95uARIEwmV4a+RKykcbwjR3
+	snlGEaAI+hP48FfPho3dbk2k76hsXsY8RHpwEd4l+uPzDocw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymd0ee941-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 07:46:25 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45B7kOYg017491
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 07:46:24 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 11 Jun 2024 00:46:19 -0700
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Banajit Goswami
+	<bgoswami@quicinc.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela
+	<perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>
+CC: <alsa-devel@alsa-project.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_rohkumar@quicinc.com>,
+        <quic_pkumpatl@quicinc.com>,
+        Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Subject: [PATCH v6 0/7] ASoC: codecs: wcd937x: add wcd937x audio codec support
+Date: Tue, 11 Jun 2024 13:15:50 +0530
+Message-ID: <20240611074557.604250-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611070521.82da62690e8865ff498327f7@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _TGTFeKk33Ej8NXuWmF1PDBdaobimq5p
+X-Proofpoint-ORIG-GUID: _TGTFeKk33Ej8NXuWmF1PDBdaobimq5p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_03,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=622
+ lowpriorityscore=15 priorityscore=1501 malwarescore=0 suspectscore=0
+ adultscore=0 spamscore=0 mlxscore=0 clxscore=1015 bulkscore=15
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110058
 
-On Tue, Jun 11, 2024 at 07:05:21AM +0900, Masami Hiramatsu wrote:
-> On Thu, 23 May 2024 14:11:42 +0200
-> Jiri Olsa <jolsa@kernel.org> wrote:
-> 
-> > Wiring up uretprobe system call, which comes in following changes.
-> > We need to do the wiring before, because the uretprobe implementation
-> > needs the syscall number.
-> > 
-> > Note at the moment uretprobe syscall is supported only for native
-> > 64-bit process.
-> > 
-> 
-> BTW, this does not cleanly applied to probes/for-next, based on
-> 6.10-rc1. Which version did you use?
+This patchset adds support for Qualcomm WCD9370/WCD9375 codec.
 
-ah new syscall just got merged, I'll rebase and send new version
+Qualcomm WCD9370/WCD9375 Codec is a standalone Hi-Fi audio codec IC
+connected over SoundWire. This device has two SoundWire devices, RX and
+TX respectively supporting 3 x ADCs, ClassH, Ear, Aux PA, 2xHPH,
+6 DMICs and MBHC.
 
-jirka
+For codec driver to be functional it would need both tx and rx Soundwire devices
+to be up and this is taken care by using device component framework and device-links
+are used to ensure proper pm dependencies. Ex tx does not enter suspend
+before rx or codec is suspended.
 
-> 
-> Thank you,
-> 
-> > Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-> > Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  arch/x86/entry/syscalls/syscall_64.tbl | 1 +
-> >  include/linux/syscalls.h               | 2 ++
-> >  include/uapi/asm-generic/unistd.h      | 5 ++++-
-> >  kernel/sys_ni.c                        | 2 ++
-> >  4 files changed, 9 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-> > index cc78226ffc35..47dfea0a827c 100644
-> > --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> > @@ -383,6 +383,7 @@
-> >  459	common	lsm_get_self_attr	sys_lsm_get_self_attr
-> >  460	common	lsm_set_self_attr	sys_lsm_set_self_attr
-> >  461	common	lsm_list_modules	sys_lsm_list_modules
-> > +462	64	uretprobe		sys_uretprobe
-> >  
-> >  #
-> >  # Due to a historical design error, certain syscalls are numbered differently
-> > diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> > index e619ac10cd23..5318e0e76799 100644
-> > --- a/include/linux/syscalls.h
-> > +++ b/include/linux/syscalls.h
-> > @@ -972,6 +972,8 @@ asmlinkage long sys_lsm_list_modules(u64 *ids, u32 *size, u32 flags);
-> >  /* x86 */
-> >  asmlinkage long sys_ioperm(unsigned long from, unsigned long num, int on);
-> >  
-> > +asmlinkage long sys_uretprobe(void);
-> > +
-> >  /* pciconfig: alpha, arm, arm64, ia64, sparc */
-> >  asmlinkage long sys_pciconfig_read(unsigned long bus, unsigned long dfn,
-> >  				unsigned long off, unsigned long len,
-> > diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> > index 75f00965ab15..8a747cd1d735 100644
-> > --- a/include/uapi/asm-generic/unistd.h
-> > +++ b/include/uapi/asm-generic/unistd.h
-> > @@ -842,8 +842,11 @@ __SYSCALL(__NR_lsm_set_self_attr, sys_lsm_set_self_attr)
-> >  #define __NR_lsm_list_modules 461
-> >  __SYSCALL(__NR_lsm_list_modules, sys_lsm_list_modules)
-> >  
-> > +#define __NR_uretprobe 462
-> > +__SYSCALL(__NR_uretprobe, sys_uretprobe)
-> > +
-> >  #undef __NR_syscalls
-> > -#define __NR_syscalls 462
-> > +#define __NR_syscalls 463
-> >  
-> >  /*
-> >   * 32 bit systems traditionally used different
-> > diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-> > index faad00cce269..be6195e0d078 100644
-> > --- a/kernel/sys_ni.c
-> > +++ b/kernel/sys_ni.c
-> > @@ -391,3 +391,5 @@ COND_SYSCALL(setuid16);
-> >  
-> >  /* restartable sequence */
-> >  COND_SYSCALL(rseq);
-> > +
-> > +COND_SYSCALL(uretprobe);
-> > -- 
-> > 2.45.1
-> > 
-> 
-> 
-> -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+This patchset along with other SoundWire patches on the list
+have been tested on QCM6490 IDP device.
+
+Changes since v5:
+ - Remove the string compare in MIC BIAS widget settings as suggested by Srinivas Kandagatla
+ - Fixed Unbalanced pm_runtime_enable! in wcd937x-sdw soundwire slave.
+
+Changes since v4:
+ - Removed volatile/read-only registers from defaults list
+ - Added wcd939x_volatile_register() with only volatile registers
+ - Added a wcd939x_readable_register() with read-only and read-write registers, so cache does it's job
+ - Fixed Spurious events for mixer controls and validated with mixer selftest tool
+ - Used TLV instead of enum for ear_pa_gain mixer control
+ - Used enum constraints instead of OneOf in dt-binding patch
+ - Added vdd-px supply property as non optional in dt-binding patch
+ - Reworked and done driver cleanup
+ 
+Changes since v3:
+ - Fixed dt binding check errors.
+ - Added constraints on values in v4-0001 binding patch as suggested by Krzysztof
+ - Change the patch sequence soundwire driver first then codec driver
+ - Added missing .remove soundwire driver function
+ - Reworked and done driver cleanup
+
+Changes since v2:
+ - Used common qcom,wcd93xx-common.yaml. removed duplicate properties.
+ - Merged bindings patches "v2-0001" and "v2-0003" in single patch for easy review.
+ - Fixed dt binding check errors.
+ - Added missing "qcom,wcd9375-codec" in v3-0001 dt binding patch.
+ - Added constraints on values in v3-0001 binding patch as suggested by Krzysztof
+ - Fix the typo mistake in v2 cover letter
+ 
+Changes since v1:
+ - Split the patch per driver for easier review as suggested by Krzysztof
+ - Used devm_gpiod_get api to get reset gpio as suggested by Krzysztof
+
+Prasad Kumpatla (7):
+  ASoC: dt-bindings: document wcd937x Audio Codec
+  ASoC: codecs: wcd937x-sdw: add SoundWire driver
+  ASoC: codecs: wcd937x: add wcd937x codec driver
+  ASoC: codecs: wcd937x: add basic controls
+  ASoC: codecs: wcd937x: add playback dapm widgets
+  ASoC: codecs: wcd937x: add capture dapm widgets
+  ASoC: codecs: wcd937x: add audio routing and Kconfig
+
+ .../bindings/sound/qcom,wcd937x-sdw.yaml      |   91 +
+ .../bindings/sound/qcom,wcd937x.yaml          |   82 +
+ sound/soc/codecs/Kconfig                      |   20 +
+ sound/soc/codecs/Makefile                     |    7 +
+ sound/soc/codecs/wcd937x-sdw.c                | 1136 +++++++
+ sound/soc/codecs/wcd937x.c                    | 3011 +++++++++++++++++
+ sound/soc/codecs/wcd937x.h                    |  653 ++++
+ 7 files changed, 5000 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,wcd937x.yaml
+ create mode 100644 sound/soc/codecs/wcd937x-sdw.c
+ create mode 100644 sound/soc/codecs/wcd937x.c
+ create mode 100644 sound/soc/codecs/wcd937x.h
+
+
+base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+-- 
+2.25.1
+
 
