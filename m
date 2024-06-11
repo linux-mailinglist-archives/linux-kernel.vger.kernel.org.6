@@ -1,106 +1,157 @@
-Return-Path: <linux-kernel+bounces-210003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291A8903DF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:52:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41562903DFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A513528642F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:52:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7BE0281CF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB6817D372;
-	Tue, 11 Jun 2024 13:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB09217D37C;
+	Tue, 11 Jun 2024 13:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IISbKsrB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VZiwh1Wv"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEEC17C221
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1229617C221;
+	Tue, 11 Jun 2024 13:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718113948; cv=none; b=lnLMOaCW7zZmee1AknqtKwZtuuM1criTJTMdkJJFhPpbRl0crPJgq4o+waLieSTrVYjpPJHCETAw+M6PS3bAJIYbYIFfMW/5L/K9lyhkQ1pWwvoT9XTvPk1ccfkswJlarxHuRWdvrp4/jfvNAkbwJ14zU3lb/d8s4SC/F5Pzsfo=
+	t=1718114026; cv=none; b=cmxSZi4Wu70aStWiSY7ZIb3A8v/FS6o9vQTFx59ocNRcZWIJXo2Iv2JMqUGz4Vz1u6MXyrDgTpCY+1nDipKdCisjwu28LNgjyBzUf/7nd4c0smbyvQGRQwZMeAeF+jZ6egVp/FFTnZTqeZJlrbj2LVPIvWLZkggcGp09Yu7wBPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718113948; c=relaxed/simple;
-	bh=+xPq7PN8qFotnsXgzZ1PotNLq0Vo1Ezxm2VpjgwIDL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RGy040wrqZcaJcrstg4dn7aaFam3fav2Zgn4quti/CPYXoM9nSCvzUMHoz8fCe4Ywrv3VLtEfhtEPd3+aJWneJf81MRXZpfzNaNN+5pHakGHMVicoNE+BxYpBmUmHElbJqmztxjz3gnoZ589FDGy7B/feKVoKUfLD5xs120xebA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IISbKsrB; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718113947; x=1749649947;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+xPq7PN8qFotnsXgzZ1PotNLq0Vo1Ezxm2VpjgwIDL0=;
-  b=IISbKsrBfA/wrA3G64efqFVCWLYuudLfCQE/DzP8uAdYfHMt5FJjXpq4
-   2RjB8rD6SGaJaJe2Fdw/0amCMDGnHR83KvEtO4HU6xLdugoHuv4mD3So1
-   Rlcv04WDAVeengHsRyqwq0MuZVJ5Z4GmujdOCG7ddf9htMm9WM7UIwhub
-   FCqCV9+fYHMTq+UzVd7c3Ts7CtmY+5Ywu0u97GlQLSfZM91NPSuGWlh5P
-   y3R34oO77abrE9UiqW1o/3FPF1KsRUBNP84Gz4joERU2dQV7qUw/x6i6u
-   K7R8xTEPVXbQAfBqBw4E6y4Gdpal6fT5KE9/DYYcd4S3PnzwxljNmIk6G
-   g==;
-X-CSE-ConnectionGUID: YC+BlbPxSuuRpNSiajitOw==
-X-CSE-MsgGUID: BOk9PTMRQKuxilJ0kujMtg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14548371"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="14548371"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 06:52:27 -0700
-X-CSE-ConnectionGUID: ZfJEIhDxRbaogqIOohkNxg==
-X-CSE-MsgGUID: 9aJmdwhBRaWscwcH7RYvCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="43995280"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 06:52:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sH1vB-0000000FYWK-3iPD;
-	Tue, 11 Jun 2024 16:52:21 +0300
-Date: Tue, 11 Jun 2024 16:52:21 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v1 1/1] drm/mipi-dbi: Add missing MODULE_DESCRIPTION()
-Message-ID: <ZmhWlRC22XQcJVnV@smile.fi.intel.com>
-References: <20240425125627.2275559-1-andriy.shevchenko@linux.intel.com>
- <4e13caf0-c6f5-4df0-82b9-be72ffe06beb@quicinc.com>
+	s=arc-20240116; t=1718114026; c=relaxed/simple;
+	bh=0Q4yHJdDN6fFzURbHUhwnLVXmMBVrY14VDTQpc9SOdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XwGA4+eJAFmrpu7hDlDdPJazssrDC+/j9f19DcCoMeHh9qoFVqTS77ODeBlRfY7cJjZn2xohcG/kHP6/HKTln4x/uvg5VRIFKtx9GMmhCd81OoXEGd78h4W+QKwrLsLgikY9iH3KaNLW9pFh3IEykWXBIqu+j1MV+CGK3jNAQc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VZiwh1Wv; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45BDqmZc020929;
+	Tue, 11 Jun 2024 08:52:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718113969;
+	bh=EtD85aOQjnjw+uq24TpicW0xsz3EbF9jhHpe/YAcGyY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=VZiwh1WvLE0TLnBz3hn2BLqTrP/d4whLjlxgUKs7U1+yRzJsCZbbknoCGGmR1iV1c
+	 CG2ZgbL2xlcdVdNLB/4cX1DByba8dINIqsOn5QSih7aZ2MutT2xpBNHey8lV2+hQNr
+	 isZS/DSzbCleydpbvFWy2pY9MMDH2210HkFdg6DY=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45BDqmAA043441
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 11 Jun 2024 08:52:48 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
+ Jun 2024 08:52:48 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 11 Jun 2024 08:52:48 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45BDqmwV089179;
+	Tue, 11 Jun 2024 08:52:48 -0500
+Message-ID: <3c87646c-a247-4b0e-a052-a294b87aeae1@ti.com>
+Date: Tue, 11 Jun 2024 08:52:48 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4e13caf0-c6f5-4df0-82b9-be72ffe06beb@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/8] dt-bindings: counter: Add new ti,am62-eqep
+ compatible
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Rob
+ Herring <robh@kernel.org>
+CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        David
+ Lechner <david@lechnology.com>, Nishanth Menon <nm@ti.com>,
+        William Breathitt
+ Gray <wbg@kernel.org>
+References: <20240610144637.477954-1-jm@ti.com>
+ <20240610144637.477954-2-jm@ti.com>
+ <5ad5cf7a-c5c6-449e-9ed9-3d9f74959a19@linaro.org>
+ <01433df1-aa19-4abb-9d87-c54e4c0dff17@ti.com>
+ <b72164f9-1b1b-4329-8d4a-66fc626c45fe@linaro.org>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <b72164f9-1b1b-4329-8d4a-66fc626c45fe@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Jun 11, 2024 at 06:46:12AM -0700, Jeff Johnson wrote:
-> On 4/25/24 05:56, Andy Shevchenko wrote:
+Hi,
 
-...
+On 6/11/24 1:51 AM, Krzysztof Kozlowski wrote:
+> On 11/06/2024 00:13, Judith Mendez wrote:
+>>
+>> Hi Krzysztof,
+>>
+>> On 6/10/24 9:58 AM, Krzysztof Kozlowski wrote:
+>>> On 10/06/2024 16:46, Judith Mendez wrote:
+>>>> Add new compatible ti,am62-eqep for TI K3 devices. If a device
+>>>> uses this compatible, require power-domains property.
+>>>>
+>>>> Since there is only one functional and interface clock for eqep,
+>>>> clock-names is not really required, so removed from required
+>>>> section, make it optional for ti,am3352-eqep compatible, and
+>>>> update the example.
+>>>>
+>>>
+>>> ...
+>>>
+>>>
+>>>>            interrupts = <79>;
+>>>>        };
+>>>>    
+>>>> +  - |
+>>>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>>>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>>>> +
+>>>> +    bus {
+>>>> +        #address-cells = <2>;
+>>>> +        #size-cells = <2>;
+>>>> +        eqep1: counter@23210000 {
+>>>
+>>> No need for label
+>>>
+>>>> +          compatible = "ti,am62-eqep";
+>>>> +          reg = <0x00 0x23210000 0x00 0x100>;
+>>>> +          power-domains = <&k3_pds 60 TI_SCI_PD_EXCLUSIVE>;
+>>>> +          clocks = <&k3_clks 60 0>;
+>>>> +          interrupts = <GIC_SPI 117 IRQ_TYPE_EDGE_RISING>;
+>>>> +          status = "disabled";
+>>>
+>>> Drop... which also points to another comment - since this was no-op and
+>>> example is basically the same, then just don't add it. No point.
+>>
+>> Ok, then I will drop the new example, thanks.
+>>
+>> BTW..
+>> In the existing example for ti,am3352-eqep compatible,
+>> do you know if it is appropriate to drop clock-names
+>> from the example if it is no longer required?
+>>
+> 
+> It does not really matter.
+> 
+Understood, thanks.
 
-> I'll remove this from my series
-
-No need, Maxime already applied, and I see
-665415092eca ("drm: add missing MODULE_DESCRIPTION() macros")
-
-> Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-
-But thanks.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+> Best regards,
+> Krzysztof
+> 
 
 
