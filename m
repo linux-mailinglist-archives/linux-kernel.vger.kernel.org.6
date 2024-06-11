@@ -1,59 +1,90 @@
-Return-Path: <linux-kernel+bounces-210572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99AD9045B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:23:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5B6C9045B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A1171F22FEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EECF2861AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE7F1514D8;
-	Tue, 11 Jun 2024 20:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DD71509A6;
+	Tue, 11 Jun 2024 20:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUVtHTD+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mwLnkTKy"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC70F7350E;
-	Tue, 11 Jun 2024 20:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A61980607;
+	Tue, 11 Jun 2024 20:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718137394; cv=none; b=WsMoowsAO/I+REqRoxcN2VSFo9rOt1qvl9KQxIn5L+fxPW+6Rc+A/XQ+MIMBaEiJeB71hksJT2S3JSbxyDqc2+aQKBrPXrVfanrhahz62oxiIkvvk47PUxU2VBEshbK+cO8TaaPOlUmJFVrdMdM2u3z4LFE2C0hhye2BoBYcTww=
+	t=1718137573; cv=none; b=XwR1iljKS03PCDCjlvF7tJm8mYfta/QuRNc/s21Ho8XvOTAdSgcXqs+2X9Z46KrRQ7hiWdBI0/TfCH37ae/mSeStZl44Txt+3Z2JL61F6S0x2ytatb913wVvRYpUZc8vymfSzZ3RuC8TUW++3/OJQXWJUQtGCQstUq/03ZlvJsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718137394; c=relaxed/simple;
-	bh=56NOMgdsoxv7ugc+ao6X6J5QmSuvu4JChgfjXogleMI=;
+	s=arc-20240116; t=1718137573; c=relaxed/simple;
+	bh=JMTFgY1cI+CthfUehxwtujjdODCqPHwELag77EPhroQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fy1J9EBA65DbVrk8il+eIlwN/v32SYVJqWh7dnlDtxbdoBiL+vOVGU5izWpliwLrEmyE0fA2Z1gbqCJt4EoEbVXXuWQRIXvZ/8eP3czz/6LU8uZ+lsFt8hQu5JyWOoagMv+dcWItq9XJM2KH3oehsoE2d7GY9g71FLqUUx9PzU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUVtHTD+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E708AC2BD10;
-	Tue, 11 Jun 2024 20:23:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718137393;
-	bh=56NOMgdsoxv7ugc+ao6X6J5QmSuvu4JChgfjXogleMI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TUVtHTD+w/kTSIrjuW9puv0jtLqV5sx4w5q2Sq5hPhdc/gbV9VUlDReL9JiSnuzXq
-	 Vno81Y9nhfHacE7rS+MKwGs+UAVaTcbHX+ZyoFhmPHlhBh2ZL4qEIdrDj4VDPX4/4J
-	 KxQNFqcKrS6Ds/JYog6j/FJLtwHh24UhhgBQ9lwxkBqZjMF490WVFxoJ4p0lCZhQt4
-	 TIsxSktoFBXqKlhSJFKYr7mwKUXYufcall3mTa/cdnz74amEMeXZd9ReaZZdBtQ/50
-	 dQh+bcge7VuRkTxZbPLYyqzYi+9J/AVNR7MeNWeO4MSZuTTX/i//UtDiCPnSofEMz3
-	 JuTWOdSrUCVgQ==
-Date: Tue, 11 Jun 2024 14:23:11 -0600
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v4 2/8] dt-bindings: mmc: mmc-spi-slot: Change
- voltage-ranges to uint32-matrix
-Message-ID: <20240611202311.GB3003237-robh@kernel.org>
-References: <20240611-ls_waring_esdhc-v4-0-d0d8a5b3f3cb@nxp.com>
- <20240611-ls_waring_esdhc-v4-2-d0d8a5b3f3cb@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gaZTu3fS7zdTfGRg6dezi6uxPAv2q28BD1qwFB35c4LSMf739GoMfTWD2pz+5APOp1O/eU877L3R3JfXfdVQ6x0XnQuTOHamq7P1RLURRBOB66qMTwRve75lwkrJMhGZBQ/E9GY6u4HkMNeiptr3xGI5SnpcRU+pqALCHGpdfT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mwLnkTKy; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f44b594deeso51305345ad.2;
+        Tue, 11 Jun 2024 13:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718137571; x=1718742371; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LiuNTA4whcExw8Dugs1FyNFiaWA9GU3jWb1r5NfBRAE=;
+        b=mwLnkTKy3fVDnDbOOJFS685XlQ/LfcDjpulcGFJag+bozWTn/yk13QP+XCTOgoGe7L
+         Ke54KcsVffFDOTx2au7fOAgsLWyEA4X+621qkyBrLm7zC2LSq+PJnit5ZVNwE+UfI39a
+         s8pfLXH1weBMGE+YegQdNlkePq8jWB213j9I1Q7tszLAmil1fByLETJDzxQVL0OLhE3E
+         B+Hc9PEnqYN/UCauxDfemflJ7OJcVI5d1zt3Q1M+B7QnQJbeEojaMYnoFy7fNmV6nMm8
+         +MPVD6qJctdpvI2LIih5OgyoreqC1pGxEjX6stOfWBwDSwl6pcrndLF7ZK5LVIM35AzZ
+         P6LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718137571; x=1718742371;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LiuNTA4whcExw8Dugs1FyNFiaWA9GU3jWb1r5NfBRAE=;
+        b=XWeT/ZpUib8c+Jcmo3MNM+NUlx3bj96tT5l0KjKqeAwZnqLNIwpShqN0xCyteEOMql
+         MnAyWnjc0nlbRNaFDfjDuPvRDRwG/TUK6O1o6UnxB/Ud4aWX8KVq/4r9GuR9f0RpMye6
+         kdERGjPdfAeJKrPZ8epBP7doVG0bTmyg0MEsSUBIClXX6uhZhCPMneVLtIM2GOIV1PTf
+         IKGZnvmH+Xsa27juyxfafRerH7RIgkMeitYdLoUc/5vl0LE02dsrvm4cTpECRG4WNxBi
+         WMGkrpjz4KDSPhZzj79GqY7EJcJ3448LwBVp2IAOtlzNs4fdJ1xfo0BraMybV5R5qSIU
+         5u2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUQM/QoliXkybGqF6eXiu98dpa4L++5EJWRGjZ476b0Dve3xsboOrPnrxJVobcYGA4swE5j/jm3IEWaMbBw+mp0sc1mkTE7uql4ce7V4ZxZA0OQEvgYqLuVAN8sXKY9s4+k5O/mehosG26rUdDs
+X-Gm-Message-State: AOJu0Yw/MvuYr4xmsZOb1gysPf8uGK1aVIvvrOM0c69RaYxGAHpKN6WY
+	Wit0FSymr+G8LTdD5YKiIkZKuAOohEOFhIpcePFH1RjiOYa9fHU9
+X-Google-Smtp-Source: AGHT+IHRUebSOuRjYylz+iYw16FfFlE7lh1Z9+3AMBtz4Z/gYW5lDsZSM5550YCv4ScVk5JKJrZ6mQ==
+X-Received: by 2002:a17:903:1212:b0:1f6:6dc9:615c with SMTP id d9443c01a7336-1f6d02f4e65mr152389785ad.35.1718137571295;
+        Tue, 11 Jun 2024 13:26:11 -0700 (PDT)
+Received: from Gatlins-MacBook-Pro.local ([131.252.49.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f72d450697sm20488005ad.168.2024.06.11.13.26.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 13:26:10 -0700 (PDT)
+Date: Tue, 11 Jun 2024 13:26:09 -0700
+From: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Kees Cook <keescook@chromium.org>, Marco Elver <elver@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Baoquan He <bhe@redhat.com>, Changbin Du <changbin.du@huawei.com>, 
+	Pengfei Xu <pengfei.xu@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Xin Li <xin3.li@intel.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Tina Zhang <tina.zhang@intel.com>, 
+	Uros Bizjak <ubizjak@gmail.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org, 
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v2] x86/traps: Enable UBSAN traps on x86
+Message-ID: <7bthvkp3kitmmxwdywyeyexajedlxxf6rqx4zxwco6bzuyx5eq@ihpax3jffuz6>
+References: <20240601031019.3708758-1-gatlin.newhouse@gmail.com>
+ <878qzm6m2m.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,58 +93,204 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240611-ls_waring_esdhc-v4-2-d0d8a5b3f3cb@nxp.com>
+In-Reply-To: <878qzm6m2m.ffs@tglx>
 
-On Tue, Jun 11, 2024 at 12:01:47PM -0400, Frank Li wrote:
-> According to common mmc core, voltages-ranges should be matrix.
+On Mon, Jun 03, 2024 at 06:13:53PM UTC, Thomas Gleixner wrote:
+> On Sat, Jun 01 2024 at 03:10, Gatlin Newhouse wrote:
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > Bring x86 to parity with arm64, similar to commit 25b84002afb9
+> > ("arm64: Support Clang UBSAN trap codes for better reporting").
+> > Enable the output of UBSAN type information on x86 architectures
+> > compiled with clang when CONFIG_UBSAN_TRAP=y. Currently ARM
+> > architectures output which specific sanitizer caused the trap,
+> > via the encoded data in the trap instruction. Clang on x86
+> > currently encodes the same data in ud1 instructions but the x86
+> > handle_bug() and is_valid_bugaddr() functions currently only look
+> > at ud2s.
 > 
-> ---
-> Not sure why it impact other mmc yaml's voltage-ranges.
-
-It's a quirk of the tools. When decoding properties, the tools only know 
-all possible types. Types are global, not per binding. Sometimes it can 
-be figured out, but cases like this cannot be.
-
-> ---
->  Documentation/devicetree/bindings/mmc/mmc-spi-slot.yaml | 17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
+> Please structure your change log properly instead of one paragraph of
+> unstructured word salad. See:
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/mmc-spi-slot.yaml b/Documentation/devicetree/bindings/mmc/mmc-spi-slot.yaml
-> index 36acc40c7d181..05815b837219d 100644
-> --- a/Documentation/devicetree/bindings/mmc/mmc-spi-slot.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/mmc-spi-slot.yaml
-> @@ -27,17 +27,20 @@ properties:
->      maxItems: 1
->  
->    voltage-ranges:
-> -    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
->      description: |
->        Two cells are required, first cell specifies minimum slot voltage (mV),
->        second cell specifies maximum slot voltage (mV).
->      items:
-> -      - description: |
-> -          value for minimum slot voltage in mV
-> -        default: 3200
-> -      - description: |
-> -          value for maximum slot voltage in mV
-> -        default: 3400
-> +      items:
-> +        - description: |
-> +            value for minimum slot voltage in mV
-> +          default: 3200
-> +        - description: |
-> +            value for maximum slot voltage in mV
-> +          default: 3400
-> +    minItems: 1
-> +    maxItems: 8
+>   https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+>   
+> > +/*
+> > + * Check for UD1, UD2, with or without Address Size Override Prefixes instructions.
+> > + */
+> >  __always_inline int is_valid_bugaddr(unsigned long addr)
+> >  {
+> >  	if (addr < TASK_SIZE_MAX)
+> > @@ -88,7 +92,13 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
+> >  	 * We got #UD, if the text isn't readable we'd have gotten
+> >  	 * a different exception.
+> >  	 */
+> > -	return *(unsigned short *)addr == INSN_UD2;
+> > +	if (*(u16 *)addr == INSN_UD2)
+> > +		return INSN_UD2;
+> > +	if (*(u16 *)addr == INSN_UD1)
+> > +		return INSN_UD1;
+> > +	if (*(u8 *)addr == INSN_ASOP && *(u16 *)(addr + 1) == INSN_UD1)
+> 
+> 	s/1/LEN_ASOP/ ?
+> 
+> > +		return INSN_ASOP;
+> > +	return 0;
+> 
+> I'm not really a fan of the reuse of the INSN defines here. Especially
+> not about INSN_ASOP. Also 0 is just lame.
+> 
+> Neither does the function name make sense anymore. is_valid_bugaddr() is
+> clearly telling that it's a boolean check (despite the return value
+> being int for hysterical raisins). But now you turn it into a
+> non-boolean integer which returns a instruction encoding. That's
+> hideous. Programming should result in obvious code and that should be
+> pretty obvious to people who create tools to validate code.
+> 
+> Also all UBSAN cares about is the actual failure type and not the
+> instruction itself:
+> 
+> #define INSN_UD_MASK		0xFFFF
+> #define INSN_ASOP_MASK		0x00FF
+> 
+> #define BUG_UD_NONE		0xFFFF
+> #define BUG_UD2			0xFFFE
+> 
+> __always_inline u16 get_ud_type(unsigned long addr)
+> {
+> 	u16 insn;
+> 
+> 	if (addr < TASK_SIZE_MAX)
+>         	return BUD_UD_NONE;
+> 
+>         insn = *(u16 *)addr;
+>         if ((insn & INSN_UD_MASK) == INSN_UD2)
+>         	return BUG_UD2;
+> 
+> 	if ((insn & INSN_ASOP_MASK) == INSN_ASOP)
+>         	insn = *(u16 *)(++addr);
+> 
+> 	// UBSAN encodes the failure type in the two bytes after UD1
+>         if ((insn & INSN_UD_MASK) == INSN_UD1)
+>         	return *(u16 *)(addr + LEN_UD1);
+> 
+> 	return BUG_UD_NONE;
+> }
+> 
+> No?
 
-From what I remember, SPI mode doesn't support voltage changes. 
-Switching to 1.8V came much later in the spec. So it should be 
-'maxItems: 1'. Or better yet, make the outer 'items' a list (of 1 
-entry).
+Thanks for the feedback.
 
-Rob
+It seems that is_valid_bugaddr() needs to be implemented on all architectures
+and the function get_ud_type() replaces it here. So how should the patch handle
+is_valid_bugaddr()? Should the function remain as-is in traps.c despite no
+longer being used?
+
+> 
+> >  static nokprobe_inline int
+> > @@ -216,6 +226,7 @@ static inline void handle_invalid_op(struct pt_regs *regs)
+> >  static noinstr bool handle_bug(struct pt_regs *regs)
+> >  {
+> >  	bool handled = false;
+> > +	int insn;
+> >  
+> >  	/*
+> >  	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
+> > @@ -223,7 +234,8 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+> >  	 * irqentry_enter().
+> >  	 */
+> >  	kmsan_unpoison_entry_regs(regs);
+> > -	if (!is_valid_bugaddr(regs->ip))
+> > +	insn = is_valid_bugaddr(regs->ip);
+> > +	if (insn == 0)
+> 
+> Sigh.
+> 
+> But with the above sanitized (pun intended) this becomes obvious by
+> itself:
+> 
+>         ud_type = get_ud_type(regs->ip);
+>         if (ud_type == BUG_UD_NONE)
+>         	return false;
+> 
+> See?
+> 
+> >  		return handled;
+> >  
+> >  	/*
+> > @@ -236,10 +248,15 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+> >  	 */
+> >  	if (regs->flags & X86_EFLAGS_IF)
+> >  		raw_local_irq_enable();
+> > -	if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+> > -	    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+> > -		regs->ip += LEN_UD2;
+> > -		handled = true;
+> > +
+> > +	if (insn == INSN_UD2) {
+> > +		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+> > +		handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+> 
+> Please indent the second condition properly:
+> 
+>        if (a ||
+>            b) {
+> 
+> I know you just added another tab, but when touching code, then please
+> do it right.
+> 
+> > +			regs->ip += LEN_UD2;
+> > +			handled = true;
+> 
+> > +/*
+> > + * Checks for the information embedded in the UD1 trap instruction
+> > + * for the UB Sanitizer in order to pass along debugging output.
+> > + */
+> > +void handle_ubsan_failure(struct pt_regs *regs, int insn)
+> > +{
+> > +	u32 type = 0;
+> 
+> Pointless initialization.
+> 
+> > +	if (insn == INSN_ASOP) {
+> > +		type = (*(u16 *)(regs->ip + LEN_ASOP + LEN_UD1));
+> > +		if ((type & 0xFF) == 0x40)
+> 
+> No magic constants please. What does 0x40 mean?
+> 
+> > +			type = (type >> 8) & 0xFF;
+> 
+> That mask is pointless as u16 is zero extended when assigned to u32, but
+> why not using u16 in the first place to make it clear?
+> 
+> > +	} else {
+> > +		type = (*(u16 *)(regs->ip + LEN_UD1));
+> > +		if ((type & 0xFF) == 0x40)
+> > +			type = (type >> 8) & 0xFF;
+> > +	}
+> 
+> Copy & pasta rules!
+> 
+> 	unsigned long addr = regs->ip + LEN_UD1;
+> 	u16 type;
+> 
+>         type = insn == INSN_UD1 ? *(u16 *)addr : *(u16 *)(addr + LEN_ASOP);
+> 
+> 	if ((type & 0xFF) == UBSAN_MAGICALLY_USE_2ND_BYTE)
+> 		type >>= 8;
+> 	pr_crit("%s\n", report_ubsan_failure(regs, type));
+> 
+> I don't see the point for printing regs->ip as this is followed by a
+> stack trace anyway, but I don't have a strong opinion about it either.
+> 
+> Though with the above get_ud_type() variant this becomes even simpler:
+> 
+> void handle_ubsan_failure(struct pt_regs *regs, u16 type)
+> {
+> 	if ((type & 0xFF) == UBSAN_MAGICALLY_USE_2ND_BYTE)
+> 		type >>= 8;
+> 	pr_crit("%s\n", report_ubsan_failure(regs, type));
+> }
+> 
+> Thanks,
+> 
+>         tglx
 
