@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-209885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C857903C84
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:56:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0F27903C87
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 805E91F23C21
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:56:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98B321F23BE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D41017C7AD;
-	Tue, 11 Jun 2024 12:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7D017C7BB;
+	Tue, 11 Jun 2024 12:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="dCLceSUs"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Sing4V8c"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337D017C20E;
-	Tue, 11 Jun 2024 12:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F53217C20E;
+	Tue, 11 Jun 2024 12:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718110577; cv=none; b=ScMtuYAMNKMK+2C78EwPuAap0MNkcnrXK7GE4d9jb8cJ28Wa3vqqjfzi9R4FDu+Ntaj//0UucXJ0fTRsaHFcBxbMuxyeYJOf89jtiWCqxGaU6TcGfQ46tYdKVyYUQ0zzWZd+qebLq/xDgdIAiwT9VqhHQWrzEHnrwag9uwYd4ko=
+	t=1718110644; cv=none; b=cnpcmFPmYEApNKbDE/YtCgniNnKkY2U/NZtS7aLQglg9mKxBF/bYj49IcuzHMOVEtLwRQ5gBkqdzmCfx7clUyXURobeVoo0Hm5vmWlp5gHl2aGWbT26dK4c1c5CPqQTQi2uYQJEuq6Kw9Z9OPCSV6l2vRNjn7Jk+GJ4J7Ib2/3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718110577; c=relaxed/simple;
-	bh=0xHND71O47luA8tSgp2PR2pGO/Wvc9q6sb8c6ONUlIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AKZaF9Q03fhszfhTddW6bBDvgPkKGhmgAl8WlUp1WnSuYhWQcBoKn0uuoyl8QXuyARVbUPLkDPzhLan9mMySwYroKHIc09lElwvqDw3NaF2lig4wnmBl70vcuw8Hp33zKIgVx3j95WcDlVLe2fwa+S58dYL1bkIl9ZVTXtlI8Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=dCLceSUs; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 593C51C0005;
-	Tue, 11 Jun 2024 12:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1718110573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gRBXuK79B6qtIkeZB4guCW1GEiypIyRuTLhk26GSAxw=;
-	b=dCLceSUsIr4URAOuKTFnqrPKGy1Ub/ZCASu+Oa83xf4VOOzZmJO3X7kZ7BoC83jXbSttO3
-	GrNLlVGK+4xXZF6+1mOasACZHEOnLVnCcRUf/dx2M28hqKwJWX8Y0kE4rSh80NrEknNu2b
-	YHO1065rVkqvffAvNZTq2yrDobqOlSzgr30E9/nSoAP2W6iZ4XhsCf0J06T5c4Ay4IOtdk
-	OUJPqAlNb5KveKsAYPSJG6bG2TCdqBd2sAf+xIUWxaIw62++ojG5UEJ0Dqjlm1bjIbq5mk
-	2A4fEar7cQma0LNGWIa9jyBnAuDjpKHwsTRH/S30FcgYH/D3f3Uw2wwm5n+ozQ==
-Message-ID: <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
-Date: Tue, 11 Jun 2024 15:56:08 +0300
+	s=arc-20240116; t=1718110644; c=relaxed/simple;
+	bh=Fg4CW2jkBYTXO46zwqsEMmfeMiA7LCyd/nJn4NmShSc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=L/5Qd0Bsz/OfIl065XIq9L2bzkyAICHawEPZeueMXm4w2m/XJ7WosCJTH4YbOuP1n77E0LZ/hcSq/YInoVrO6BTEB/9Q5gCLkoPY2gGE0h7Js9GswMJXcP1+AHZHVALAyi3iWJd7ZZV+b2bqgq1OYIbny9dITRLgvADsGlEDYpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Sing4V8c; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B9cK87013691;
+	Tue, 11 Jun 2024 12:57:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qOLL2w/rzLwNxe2wZERfG6GzBq2EnQrBeXLoklpb1fI=; b=Sing4V8ckagCkoGr
+	/GDe90rn+2JmAXqXBZI9l8m4Bs70RvR+dArM4XRYaMxlVGuFB0MdPJBSSMTm9/uW
+	DrJSJERfkQRVNHfiYhlryETq6wjPiiz5jkxjy/3hllKBw7P1tal4yCf4S4/b+bWQ
+	unH78TsiWxi/PL+kZHJJEhiToFVycT7pJFHRXJlC+ezcBQsAih69nUKvUSMcr5+F
+	oWlvYhZjpkVTrQ+mVE6teYaGAYSpE4mKVZMOeV+F8qyKG10yM45fS5bLcv+kmdPf
+	ta9oX8ya7JpJBdSfmPCbhOW7QCkG+TdEaWRvQMVWhsNzWbpp7Kl8sP66sMZx8P2D
+	/dj1Iw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm458gbj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 12:57:06 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BCv5QS025409
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 12:57:05 GMT
+Received: from [10.216.51.73] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
+ 2024 05:57:01 -0700
+Message-ID: <d05230ee-caa0-4fb5-a076-f0b0fc448574@quicinc.com>
+Date: Tue, 11 Jun 2024 18:27:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,116 +64,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Thorsten Leemhuis <regressions@leemhuis.info>, Rob Herring
- <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Frank Wunderlich <linux@fw-web.de>, Paolo Abeni <pabeni@redhat.com>
-References: <20240516204847.171029-1-linux@fw-web.de>
- <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
- <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
- <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
- <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
- <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
- <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
- <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
- <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
- <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
- <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
- <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
+Subject: Re: [PATCH v5 2/2] misc: fastrpc: use coherent pool for untranslated
+ Compute Banks
 Content-Language: en-US
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+To: Dylan Van Assche <me@dylanvanassche.be>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Caleb Connolly <caleb.connolly@linaro.org>, <phone-devel@vger.kernel.org>,
+        <~postmarketos/upstreaming@lists.sr.ht>
+References: <20240524161423.15392-1-me@dylanvanassche.be>
+ <20240524161423.15392-3-me@dylanvanassche.be>
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <20240524161423.15392-3-me@dylanvanassche.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fZD6-YCRhGrVW2m6aLT6ph-4u8lwh_sc
+X-Proofpoint-ORIG-GUID: fZD6-YCRhGrVW2m6aLT6ph-4u8lwh_sc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 mlxlogscore=999 phishscore=0 malwarescore=0 suspectscore=0
+ bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110094
 
-On 11/06/2024 15:28, AngeloGioacchino Del Regno wrote:
-> Il 11/06/24 13:38, Arınç ÜNAL ha scritto:
->> On 11/06/2024 14:30, Thorsten Leemhuis wrote:
->>> On 07.06.24 16:15, Thorsten Leemhuis wrote:
->>>> On 07.06.24 16:03, Paolo Abeni wrote:
->>>>> On Thu, 2024-06-06 at 10:26 +0200, Thorsten Leemhuis wrote:
->>>>>> On 31.05.24 08:10, Arınç ÜNAL wrote:
->>>>>>> On 31/05/2024 08.40, Thorsten Leemhuis wrote:
->>>>>>>> [adding Paolo, who committed the culprit]
->>>>>>
->>>>>> /me slowly wonders if the culprit should be reverted for now (see below)
->>>>>> and should be reapplied later together with the matching changes from
->>>>>> Arınç ÜNAL.
->>>>>
->>>>> FWIS I think a revert should be avoided, given that a fix is available
->>>>> and nicely small.
->>>>
->>>> Yeah, on one hand I agree; but on the other it seems that the
->>>> maintainers that would have to take care of the dt changes to fix this
->>>> until now remained silent in this thread, apart from Rob who sent the
->>>> mail regarding the warnings.
->>>>
->>>> I put those maintainers in the To: field of this mail, maybe that might
->>>> lead to some reaction.
->>>
->>> Still no reply from the DRS folks or any other progress I noticed. Guess
->>> that means I will soon have no other choice than to get Linus involved,
->>> as this looks stuck. :-( #sigh
->>
->> Does it have to be Linus that needs to apply "[PATCH 0/2] Set PHY address
->> of MT7531 switch to 0x1f on MediaTek arm64 boards"? Aren't there any other
->> ARM maintainers that can apply the fix to their tree?
->>
->> Arınç
-> 
-> You have feedback from two people on the series that you mentioned, and noone
-> is going to apply something that needs to be fixed.
-> 
-> I'm giving you the possibility of addressing the comments in your patch, but
-> I don't want to see any mention of the driver previously ignoring this or that
-> as this is irrelevant for a hardware description. Devicetree only describes HW.
-> 
-> Adding up, in commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of switch from device tree"),
-> you have created a regression.
-> 
-> Regressions should be fixed - as in - if the driver did work before with the old
-> devicetrees, it shall still work. You can't break ABI. Any changes that you do
-> to your driver must not break functionality with old devicetrees.
-> 
-> So...
-> 
-> ------> Fix the driver that you broke <------
 
-The device tree ABI before the change on the driver:
 
-The reg value represents the PHY address of the switch.
+On 5/24/2024 9:44 PM, Dylan Van Assche wrote:
+> Use fastrpc_remote_heap_alloc to allocate from the FastRPC device
+> instead of the Compute Bank when the session ID is 0. This ensures
+> that the allocation is inside the coherent DMA pool which is already
+> accessible to the DSP. This is necessary to support FastRPC devices
+> which do not have dedicated Compute Banks such as the SLPI on the SDM845.
+> The latter uses an allocated CMA region instead of FastRPC Compute Banks.
+>
+> Signed-off-by: Dylan Van Assche <me@dylanvanassche.be>
+> Reviewed-by: Caleb Connolly <caleb.connolly@linaro.org>
+> ---
+Reviewed-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>  drivers/misc/fastrpc.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index c06667b29055..f53d20e2e07e 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -953,7 +953,10 @@ static int fastrpc_get_args(u32 kernel, struct fastrpc_invoke_ctx *ctx)
+>  
+>  	ctx->msg_sz = pkt_size;
+>  
+> -	err = fastrpc_buf_alloc(ctx->fl, dev, pkt_size, &ctx->buf);
+> +	if (ctx->fl->sctx->sid)
+> +		err = fastrpc_buf_alloc(ctx->fl, dev, pkt_size, &ctx->buf);
+> +	else
+> +		err = fastrpc_remote_heap_alloc(ctx->fl, dev, pkt_size, &ctx->buf);
+>  	if (err)
+>  		return err;
+>  
 
-The device tree ABI after the change on the driver:
-
-The reg value represents the PHY address of the switch.
-
-I see no device tree ABI breakage. What I see instead is the driver
-starting enforcing the device tree ABI. No change had been made on the
-device tree ABI so any non-Linux driver that controls this switch continues
-to work.
-
-These old device tree source files in question did not abide by the device
-tree ABI in the first place, which is why they don't work anymore as the
-Linux driver now enforces the ABI. Device tree source files not conforming
-to the ABI is not something to maintain but to fix. The patch series that
-fixes them are already submitted.
-
-> 
-> After you've fixed it - and I repeat - only after, *and* after someone (Frank?)
-> validates that the old devicetrees do work with the fixed driver, I will take
-> the device tree fixes for that MDIO address (as those are, again, fixing a
-> description of the hardware on those boards, so I agree that those must be fixed
-> AS WELL).
-
-Sorry, this approach makes no sense to me.
-
-Arınç
 
