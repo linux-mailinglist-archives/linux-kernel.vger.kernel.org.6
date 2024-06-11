@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-209151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0825D902DEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:21:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B138B902DEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 03:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC20B28407F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:21:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30BAFB2093B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 01:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAAE8493;
-	Tue, 11 Jun 2024 01:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA018C04;
+	Tue, 11 Jun 2024 01:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dS2U8hTX"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O4Np/Qh7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C3A8BF3;
-	Tue, 11 Jun 2024 01:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DB0E574;
+	Tue, 11 Jun 2024 01:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718068856; cv=none; b=DwagazLkwol4mVLnMJ76CFkrpLSGvYYN5EtDPUqPaP7D94HmX7fjr7ilpvia8H2hg4PPAXzNEOXcoDhEH8eumS7VeH86279v5l0yMaA//WO5PdWov9yZt5tnDN3Ri1OfKZLFZZkAqHVmDl4VtcZqV7ksmE369Hq+WQZIgK3OOqU=
+	t=1718068883; cv=none; b=Lm1hgtDgGwijvmZN10QmkXJe0U30tQDt6n+AAuml7Y1PezXdNEZivm3NiD/i46zyOKjr699eWRxz6TEKTX4TFHLKROByjkNoLywi/80oZmTWgO5GYdcVVXTYd9GCy593TFYZdPyr0U6BgyATGUpQvdXUG2sfZFhXdq1MdHRWYEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718068856; c=relaxed/simple;
-	bh=8u3ndo/rkwZjCbSsgSBXuKjRmrEe/4o3yLsA5atomGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Of1kINTMGGMeDYU9VN3nvXYKPIkQgpay9ZgA+WjFpjNWweYGd+M8H4VN6uIWQvxb27j+K48XKe0Sxi8cr3HycnC+x9PlyheMoYPm2m91vjLDK8gmvtuo4YcIRQIR6ZUZKmoCD53hHEKZ44pPruvSabFgLpq/3rnyuj+yvb+SrNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dS2U8hTX; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1718068849;
-	bh=7V+xHlceVSRyiCvHklVocjTe6W2fS9l7R6qcD8yAY/s=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dS2U8hTXLFeelogl0KyURXlx7kZ8+yePMoaPD1Kr+Xc+V9w8cB/K6YeJUGoX1NTwQ
-	 Jy9cMpe0QzcfMMb/VUAW99gUBCRbb4GmbdHOnZ/5iaSxTP7yoU2kVeLW3mYy4P9EvN
-	 JDTRmYdYyYL+tRqabjYJbxP211peDmyXRXqXwTK+D270hcMgRarVMoxW7VDftHY2O1
-	 CgvRgJPq41sZg4S6huxcyGWku6UX92eGsAArseoX4NKYIQ07WDMPIS6iFstKnwbcpJ
-	 UpYkd7G2E5CuGmYH5Y6zxUQj1zW/AUhI8mwDiDcPPz4Nr70QR190ZzVX3i6bWCzuom
-	 T4Ccg0YrJahIA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VyrTX2xMDz4wb2;
-	Tue, 11 Jun 2024 11:20:47 +1000 (AEST)
-Date: Tue, 11 Jun 2024 11:20:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, David Miller
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Networking <netdev@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the tomoyo tree with the net-next tree
-Message-ID: <20240611112046.1d388eae@canb.auug.org.au>
+	s=arc-20240116; t=1718068883; c=relaxed/simple;
+	bh=ziA4GEXPGVP/ZuWwx2ngxGPwva+R10QqvAr0aHW90uM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=nHw/GahfJ+Io4fIYk84Oor3HKQYTfIvDWV1jevED8H7UUV4g0mfrwnWmBXmAQA3EnfY1jfsrjWduLPq5iCb28MXbLrR/mhKnFYclG8QMEsvj0oVIhTDpOn6cSJZQCcvO9maCM95P1jDFd0uXZK1VWHo+bGy8ALcjj3dV+cTaT2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O4Np/Qh7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ADjgRL029937;
+	Tue, 11 Jun 2024 01:21:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=s/LOV7p9oalQRhbSNfugW4
+	CFWJbZeIawxPRY2AK7TQ0=; b=O4Np/Qh71fh0PAZXXGGeyT5pMrP9sbV+0qni31
+	cPW5i8PtFS6bmV3oOuBEsOGSJ0d3/2P20w8SNgDKiPvZcisYJW3/2UttpP/ZxJuA
+	ETc0cbA9IeaYIyPoRfGJQ9y5ne2eU/nSw6MnNpIJPjNe7fvTJ1SiDcI4irwqbz/J
+	kmm4n8Rch1KhPho22pmG+Y08+uBAPqSVBps1nH2JrlBgeUq1cYTVekounjkSHMyR
+	2u3MYpXGA2+GW4pxVnz27M/UwFggXPnPMziK6Nz8u54P6GKQaqjytlN9NYiPJkeS
+	+tFzcWhHcOiWVfhH+SWG2/pqefvFPnXouxEZTV+ynaulubRw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymd0edkev-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 01:21:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45B1LH1K008357
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 01:21:17 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
+ 2024 18:21:17 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 10 Jun 2024 18:21:16 -0700
+Subject: [PATCH] PCI: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/NmrhB/rGJ4ubXrctjEVxLYa";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240610-md-drivers-pci-v1-1-139c135853ea@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAIumZ2YC/x3MwQqDMAyA4VeRnBdodYxurzJ2SNuoAe0kcSKI7
+ 75ux+/w/wcYq7DBozlAeROTd6nwlwbSSGVglFwNrWuv7uYdzhmzysZquCTB0PkUQ9+5QHeo0aL
+ cy/4fPl/VkYwxKpU0/jaTlM+OM9nKCuf5BXiAAr9/AAAA
+To: Bjorn Helgaas <bhelgaas@google.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _EvmJxNROH0H0hv8Lu_sL0nD5LG_bz08
+X-Proofpoint-ORIG-GUID: _EvmJxNROH0H0hv8Lu_sL0nD5LG_bz08
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_08,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=911
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
+ adultscore=0 spamscore=0 mlxscore=0 clxscore=1015 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110009
 
---Sig_/NmrhB/rGJ4ubXrctjEVxLYa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/pci-stub.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/pci-pf-stub.o
 
-Hi all,
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-Today's linux-next merge of the tomoyo tree got a conflict in:
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/pci/pci-pf-stub.c | 1 +
+ drivers/pci/pci-stub.c    | 1 +
+ 2 files changed, 2 insertions(+)
 
-  net/netlink/af_netlink.c
+diff --git a/drivers/pci/pci-pf-stub.c b/drivers/pci/pci-pf-stub.c
+index 45855a5e9fca..04815fcb0ce7 100644
+--- a/drivers/pci/pci-pf-stub.c
++++ b/drivers/pci/pci-pf-stub.c
+@@ -39,4 +39,5 @@ static struct pci_driver pf_stub_driver = {
+ };
+ module_pci_driver(pf_stub_driver);
+ 
++MODULE_DESCRIPTION("Simple stub driver for PCI SR-IOV PF device");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/pci/pci-stub.c b/drivers/pci/pci-stub.c
+index d1f4c1ce7bd1..d4fec791b321 100644
+--- a/drivers/pci/pci-stub.c
++++ b/drivers/pci/pci-stub.c
+@@ -92,5 +92,6 @@ static void __exit pci_stub_exit(void)
+ module_init(pci_stub_init);
+ module_exit(pci_stub_exit);
+ 
++MODULE_DESCRIPTION("Simple stub driver to reserve a PCI device");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Chris Wright <chrisw@sous-sol.org>");
 
-between commits:
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240610-md-drivers-pci-831cb8f308a9
 
-  5380d64f8d76 ("rtnetlink: move rtnl_lock handling out of af_netlink")
-  5fbf57a937f4 ("net: netlink: remove the cb_mutex "injection" from netlink=
- core")
-
-from the net-next tree and commit:
-
-  c2bfadd666b5 ("rtnetlink: print rtnl_mutex holder/waiter for debug purpos=
-e")
-
-from the tomoyo tree.
-
-I fixed it up (I just used the former) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
-It looks like the tomoyo tree commit should just be completely dropped?
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/NmrhB/rGJ4ubXrctjEVxLYa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZnpm4ACgkQAVBC80lX
-0GwiWAf/dZp0iC5CaGqTg+J3jHa+LDyDCAu8r4UJgWEQhFbXy0Xep3Ej8tH+xYZn
-yanA8pQQ7ArdltXNh2d+V9bt9RkeenpgtbojDO2kpWrpAl7C/VN++4wMn5XPy5bV
-WXTxt+Ul5Aeou+qXt2y4UrP8KdTUR6Fxq43MmP3mQFW+rRUtO2/LnI57PEI2Kp1r
-Ekonh+oYIJOvlfn/Z2fbT8y9EzccrYbI/PHXVnPdQGbD9lNLNzDN83B1t38RkXAZ
-9xIRqEkHvb1eVPQwz+2vLUU80vvaIG/fhpX8uIKddf2lBd0cWYpcUUYhrd3U4Gtf
-imG20D+thxMIxOUZ2u4KU0P6BP8qZA==
-=SPO1
------END PGP SIGNATURE-----
-
---Sig_/NmrhB/rGJ4ubXrctjEVxLYa--
 
