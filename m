@@ -1,159 +1,193 @@
-Return-Path: <linux-kernel+bounces-209241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB59902F71
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:14:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00FB3902F73
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C94CB21916
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:14:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F6B91F234F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 04:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D476516FF29;
-	Tue, 11 Jun 2024 04:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D4B16F91A;
+	Tue, 11 Jun 2024 04:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KHDr8GxJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzH4xQIz"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A65216F90D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 04:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DA92570;
+	Tue, 11 Jun 2024 04:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718079267; cv=none; b=OER4jgwewNh5pRikJLFK0NQXyB7Hp5lbaG//3i5LN41WXajtIcE3zWN5sD4PkMlnP3P9Bg76jUs80UmqSkCPZj39Ak0PCt2lDVrIKim9zMlM4VOPP2auDhKabcdhG3FtasuJ7QSMohkEfZ82g+ZPpXoCu209h0iV+lDcAP3nZuk=
+	t=1718079358; cv=none; b=SmuMXwmu5ermsYssFLX32GwO4y+AA7SUO8xL64/NVhdMconMVbBEsk9zidM8vcY6mraskDrClBD3AFBeHy+9o1k8uqSLO00ud+57b40uMgM9GlKAJKFeSDMBLRJH9HW+IRtfJEeapel8JyjnCmLw7WDXCAyY3OvfmDYbSeIyWDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718079267; c=relaxed/simple;
-	bh=aeEhIS1avSYmIOf0SxJ0/PHZgUl1AA2rrwylTjSMvB0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NI118y7h+bYfU9lzJBHObWxEqSz+Rl8JdZw0e+8N+AIBrbdx8rtfFo3rK7MR42JiFvM8sJHNLqzzukbvxVPsiJz7UamO/1JLNRDOtT2rrszA2fpQ619dUBuO7RpTirJV4R2pHWr2IV/EbWajV22x9v16q0yDYiv2HP0kJ2qef+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KHDr8GxJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718079264;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v1a8FseTl06wVgP6A7MAh41W7oTDkozR9kmXYeqUqGQ=;
-	b=KHDr8GxJbJEdVSQ+Vjs2C/Vy/nSQLjjMAfwNSb75EdJmcGsH6Xixsz8eH0wFh+fNsGRI67
-	cD5IIABXx6szUNRF3IbfRzDNKYgzXSzZN5vS4H7ewDbihpmHzdwCSVNc2Ik+QdAhI4Kcze
-	83jYyW0rCq0aKaMN8wdN6J9uQC3ykQ8=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-220-RFYZPsAWMPezvcdTF5hIMQ-1; Tue, 11 Jun 2024 00:14:22 -0400
-X-MC-Unique: RFYZPsAWMPezvcdTF5hIMQ-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ebd982d244so20238511fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2024 21:14:21 -0700 (PDT)
+	s=arc-20240116; t=1718079358; c=relaxed/simple;
+	bh=N5EBSpcZkFiMtrh5336xOXwbPXQGG7sXkoPFqYbcyZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PmZLiDN//PWxFVYH6bHUyPJk/8Wmb/AT0TvN7GMV+co6gkE1T9E78yuQPYAyCI4n64OF/8ukD+NaG4tHChvr3GRpcWmngzpkK3XUQ8Po0YxeZgoOlS9uWwYUfgI/+cdthsllVApFuV1T9iWMkconGTy842A96sPzchnunGoI1l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VzH4xQIz; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42121d27861so45000995e9.0;
+        Mon, 10 Jun 2024 21:15:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718079355; x=1718684155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cuWqGCjonoMFuxbnfFMq9beCr3z21M9jL/dtMf8LQx8=;
+        b=VzH4xQIz0mAY1EP+ubbMyWQaMvwO1D4E46tAja1dShdSiNIX04/iP3Wzf/zzQBgxqd
+         ftbg1MeXHBWvY5HM+EX0RKAGOppie64+c+HCbqP7a8FrpFtoHtNp0Pr1icgbaufF1Evt
+         +jKOmgDTaoy3iEo9rp/KUoq97vgYlHhLRnP7XOw0iVDXwKNuJatpJbNiw2m6CvwCG8QU
+         j6zFd85TL8U9JXbx34mJiQp4fA+Yp/RGUhXC6qz/j1k8ebrqfBWqSSiRkHckpf0wPdAv
+         eAJqwHmssgIfA5PVAbI4KZyqcHxVJ+4SCcwtlU6QhacCtYoNb6S8a3uY10pysD4QhRFZ
+         khMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718079261; x=1718684061;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v1a8FseTl06wVgP6A7MAh41W7oTDkozR9kmXYeqUqGQ=;
-        b=fF7rDD11ThpzKV92f0vbdCcxCBNeBNu1rhjf50FcBFyPM6MXkqDFTImNbQ2nSSxRgi
-         /d8KqTv/XGXpIbg55OT1SbF05/nU/1wTRhqb+21x4g3z2Uq2EAQvmNZ10tipkPp2vg3O
-         4v7vibiYITU9kG/NS8GNtId5igmrBAttOe+CeWZCeeJ3dUySPnPxKgfT737y3576sruD
-         HJvq5bt76HRfoQwSss9EHxAi90jn6caM7u6e+3aKaukUW0mKxce/v1YiwNEyzGxyofuW
-         vT3uPPyjSau3TrC4gJkY+qNjEoQ2wE3FQ0rVA6bT3UDxeirrY7OMp65qOkQ8j0czBXNs
-         Jq4w==
-X-Forwarded-Encrypted: i=1; AJvYcCV1o+SLNiBilbvq4TpTfCg1tWZaMxbFL81R/zHU6bxhE6rpjH+aQ+L5LwsCy/AyG4N3P2Q/OqRskfDGX7L3gYhEFtNs0kiAZlpG48CL
-X-Gm-Message-State: AOJu0YxymSDloQTTssK8symqxmNPqtZaXzqe5sTGCRQ3P6hVml+Lm00R
-	w7qmcIEhwXQE/Hwx2fEstDAg7nygF8p9T+SOAlY1KNhTZ7aG8LlgQnH2WrAqsUy9PusXnus4o4H
-	o54zXj3O5TrJTKPfmQj7/wZbANRLH+kfqEUDrkIQmqaZDlBW37+ofEG8EeetU
-X-Received: by 2002:a2e:984c:0:b0:2eb:dec1:6276 with SMTP id 38308e7fff4ca-2ebdec164f1mr36099211fa.0.1718079260767;
-        Mon, 10 Jun 2024 21:14:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF18U05dfo0rZSYfNFu7sSh3sPoBIH4illqphSfrkMLiBcV/ScEVjN611SrAd51tjNmzYwCRA==
-X-Received: by 2002:a2e:984c:0:b0:2eb:dec1:6276 with SMTP id 38308e7fff4ca-2ebdec164f1mr36099151fa.0.1718079260393;
-        Mon, 10 Jun 2024 21:14:20 -0700 (PDT)
-Received: from [192.168.1.86] (85-23-17-83.bb.dnainternet.fi. [85.23.17.83])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eaeaff2a05sm15898821fa.45.2024.06.10.21.14.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 21:14:19 -0700 (PDT)
-Message-ID: <811778e4-6af4-563a-757e-83fec207e79f@redhat.com>
-Date: Tue, 11 Jun 2024 07:14:19 +0300
+        d=1e100.net; s=20230601; t=1718079355; x=1718684155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cuWqGCjonoMFuxbnfFMq9beCr3z21M9jL/dtMf8LQx8=;
+        b=cdJYdw/ba331nVBd3DAgVl0HqXfbg2BIVliMH7Jac1CTJ9xVxPJNgDHWscQmMv3a2H
+         pPWVV+cHcArdMl6XtKVm5GBd0DQylQ7eBp/MBVDxcCmSMRnrR1PepqMUPK0tbg58qqgX
+         Pf7boO9qNlhIUrKIw4yBIndPKiEeGrxppBi+0ynkLzCi4F0zmApebAD+fhQAoZqSKB43
+         /LK7QEepiIKNKuUNfDSOhOBq4yw9U7uWPAV2S1u/Yfjso9cZ+QSKMk1TeokX2uL9sqjg
+         ZWixo4FIRFH+KSUOqgFpoy4HOgUHRTU7zgg9eqICp7wCcPyuvGkJaQ6yiLepSFkTxPN7
+         bpzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVL6SNyO/G/cHx5Q0oL0JnQhjIeh7OrGNN5REml3oCPp0/R319DG8fRQ9y6L2x9mpqdh7AMNa1n3ft2k7qeBXMtAssis2n7ctRLZIgqbkO3MRJZTVu4emnsnDYM9uqGJnVqA74e59pFu58H/A==
+X-Gm-Message-State: AOJu0YyEOmKocfjblAF5cDlyty+G6YF0iSKIqWeEMm7Mp2sU3t77v//Z
+	WdtfK9PjpO3mItezb2ozPWodJkTbqA2BVMfr+g7zaC9kKeZcD8e7
+X-Google-Smtp-Source: AGHT+IFicW8ljaCkwjAN3Iw/H2Hd7qjENa96RDpVcje1uZV3DonXeyvLiaD7i2wCkHm+DfQMyu+vxA==
+X-Received: by 2002:a05:600c:1ca3:b0:421:6b79:8900 with SMTP id 5b1f17b1804b1-4216b798c9cmr64041135e9.41.1718079354540;
+        Mon, 10 Jun 2024 21:15:54 -0700 (PDT)
+Received: from f.. (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158149008sm194405165e9.29.2024.06.10.21.15.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 21:15:54 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	dave@fromorbit.com,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] vfs: partially sanitize i_state zeroing on inode creation
+Date: Tue, 11 Jun 2024 06:15:40 +0200
+Message-ID: <20240611041540.495840-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2] mm: zswap: handle incorrect attempts to load of large
- folios
-Content-Language: en-US
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
- Chengming Zhou <chengming.zhou@linux.dev>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Barry Song <21cnbao@gmail.com>,
- Chris Li <chrisl@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240608023654.3513385-1-yosryahmed@google.com>
- <2821278f-bc94-c147-d0fe-8cc52dbdccb1@redhat.com>
- <CAJD7tkYepf6z1Q7HiSRAc7-S9OwYCphx=9NcyHxtW0YrkFv0sQ@mail.gmail.com>
-From: =?UTF-8?Q?Mika_Penttil=c3=a4?= <mpenttil@redhat.com>
-In-Reply-To: <CAJD7tkYepf6z1Q7HiSRAc7-S9OwYCphx=9NcyHxtW0YrkFv0sQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+new_inode used to have the following:
+	spin_lock(&inode_lock);
+	inodes_stat.nr_inodes++;
+	list_add(&inode->i_list, &inode_in_use);
+	list_add(&inode->i_sb_list, &sb->s_inodes);
+	inode->i_ino = ++last_ino;
+	inode->i_state = 0;
+	spin_unlock(&inode_lock);
 
-On 6/10/24 20:35, Yosry Ahmed wrote:
-> On Fri, Jun 7, 2024 at 9:08 PM Mika Penttilä <mpenttil@redhat.com> wrote:
->> On 6/8/24 05:36, Yosry Ahmed wrote:
->>> diff --git a/mm/zswap.c b/mm/zswap.c
->>> index b9b35ef86d9be..ebb878d3e7865 100644
->>> --- a/mm/zswap.c
->>> +++ b/mm/zswap.c
->>> @@ -1557,6 +1557,26 @@ bool zswap_load(struct folio *folio)
->>>
->>>       VM_WARN_ON_ONCE(!folio_test_locked(folio));
->>>
->>> +     /*
->>> +      * Large folios should not be swapped in while zswap is being used, as
->>> +      * they are not properly handled. Zswap does not properly load large
->>> +      * folios, and a large folio may only be partially in zswap.
->>> +      *
->>> +      * If any of the subpages are in zswap, reading from disk would result
->>> +      * in data corruption, so return true without marking the folio uptodate
->>> +      * so that an IO error is emitted (e.g. do_swap_page() will sigfault).
->>> +      *
->>> +      * Otherwise, return false and read the folio from disk.
->>> +      */
->>> +     if (folio_test_large(folio)) {
->>> +             if (xa_find(tree, &offset,
->>> +                         offset + folio_nr_pages(folio) - 1, XA_PRESENT)) {
->>> +                     WARN_ON_ONCE(1);
->>> +                     return true;
->>> +             }
->> How does that work? Should it be xa_find_after() to not always find
->> current entry?
-> By "current entry" I believe you mean the entry corresponding to
-> "offset" (i.e. the first subpage of the folio). At this point, we
-> haven't checked if that offset has a corresponding entry in zswap or
-> not. It may be on disk, or zwap may be disabled.
+over time things disappeared, got moved around or got replaced (global
+inode lock with a per-inode lock), eventually this got reduced to:
+	spin_lock(&inode->i_lock);
+	inode->i_state = 0;
+	spin_unlock(&inode->i_lock);
 
-Okay you test if there's any matching offset in zswap for the folio.
+But the lock acquire here does not synchronize against anyone.
 
+Additionally iget5_locked performs i_state = 0 assignment without any
+locks to begin with and the two combined look confusing at best.
 
->> And does it still mean those subsequent entries map to same folio?
-> If I understand correctly, a folio in the swapcache has contiguous
-> swap offsets for its subpages. So I am assuming that the large folio
-> swapin case will adhere to that (i.e. we only swapin a large folio if
-> the swap offsets are contiguous). Did I misunderstand something here?
+It looks like the current state is a leftover which was not cleaned up.
 
-Yes I think that is fair assumption for now. But also saw your v3 which
-doesn't depend on this.
+Ideally it would be an invariant that i_state == 0 to begin with, but
+achieving that would require dealing with all filesystem alloc handlers
+one by one.
 
+In the meantime drop the misleading locking and move i_state zeroing to
+alloc_inode so that others don't need to deal with it by hand.
 
->
->>
->> --Mika
->>
->>
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+I diffed this against fs-next + my inode hash patch as it adds one
+i_state = 0 case. Should that patch not be accepted this bit can be
+easily dropped from this one.
+
+I brought the entire thing up quite some time ago [1] and Dave Chinner
+noted that perhaps the lock has a side effect of providing memory
+barriers which otherwise would not be there and which are needed by
+someone.
+
+For new_inode and alloc_inode consumers all fences are already there
+anyway due to immediate lock usage.
+
+Arguably new_inode_pseudo escape without it but I don't find the code at
+hand to be affected in any meanignful way -- the only 2 consumers
+(get_pipe_inode and sock_alloc) perform numerous other stores to the
+inode immediately after. By the time it gets added to anything looking
+at i_state, flushing that should be handled by whatever thing which adds
+it. Mentioning this just in case.
+
+[1] https://lore.kernel.org/all/CAGudoHF_Y0shcU+AMRRdN5RQgs9L_HHvBH8D4K=7_0X72kYy2g@mail.gmail.com/
+
+ fs/inode.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 149adf8ab0ea..3967e68311a6 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -276,6 +276,10 @@ static struct inode *alloc_inode(struct super_block *sb)
+ 		return NULL;
+ 	}
+ 
++	/*
++	 * FIXME: the code should be able to assert i_state == 0 instead.
++	 */
++	inode->i_state = 0;
+ 	return inode;
+ }
+ 
+@@ -1023,14 +1027,7 @@ EXPORT_SYMBOL(get_next_ino);
+  */
+ struct inode *new_inode_pseudo(struct super_block *sb)
+ {
+-	struct inode *inode = alloc_inode(sb);
+-
+-	if (inode) {
+-		spin_lock(&inode->i_lock);
+-		inode->i_state = 0;
+-		spin_unlock(&inode->i_lock);
+-	}
+-	return inode;
++	return alloc_inode(sb);
+ }
+ 
+ /**
+@@ -1254,7 +1251,6 @@ struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
+ 		struct inode *new = alloc_inode(sb);
+ 
+ 		if (new) {
+-			new->i_state = 0;
+ 			inode = inode_insert5(new, hashval, test, set, data);
+ 			if (unlikely(inode != new))
+ 				destroy_inode(new);
+@@ -1297,7 +1293,6 @@ struct inode *iget5_locked_rcu(struct super_block *sb, unsigned long hashval,
+ 
+ 	new = alloc_inode(sb);
+ 	if (new) {
+-		new->i_state = 0;
+ 		inode = inode_insert5(new, hashval, test, set, data);
+ 		if (unlikely(inode != new))
+ 			destroy_inode(new);
+-- 
+2.43.0
 
 
