@@ -1,261 +1,262 @@
-Return-Path: <linux-kernel+bounces-209575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE679037E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:33:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638A59037E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B862886C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:33:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7F9B1F26AFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6473D17B4E2;
-	Tue, 11 Jun 2024 09:31:41 +0000 (UTC)
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9D117B4F1;
+	Tue, 11 Jun 2024 09:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JU1nHRpj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2746178CE4
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A289317B4EA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718098300; cv=none; b=QxZLFPZ9w0aQi8BhcYVbVcf1bKsPgjpmMTbsxZiPFop54uyxdV4ZWISV8fWPg/lgYGrEduasiQnJInpLJlzw/m6xiEDJsNEqagJ3wHSA6Y5HFcE2oPXgg638G+8267eUfNtQYgfKB2Wr8yBnwjl4JBo/Uc5m+kPvRDso1wFK58U=
+	t=1718098303; cv=none; b=oH5fGR/nfOhwUQzMf8iSGktmqWIoErt9iwWFML6EEYzHi9x82gPjlIY1twEFRDKtanwc7fjq4SXJVNLo/nz39k0rlZtQGF/SMYQCdys9foBgg8yy9fLikqzakyY9B5sdhKRaI5C+eAVZeyrsCoAq4U+nV3MJ68vOnwSbRWNFakU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718098300; c=relaxed/simple;
-	bh=mMVL8afWJZyH/lJQmN80I97zDhgRVPAlN2XpKsFbxs0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JeOfTtycC2m93fZk0ZfM5C45WvWxU82cd33pY4QRl4ZqRori/UMgJyZ680DrUhfou3JrCwD143WrjrqMyI242ofU2ez+RPs6oLR0DZ9ZazjIB7wZbM67rzFEpYZymuV3e+qK8HX96WX+dOlXSxmHc4ghp2170eBkZozo3DFd5Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id 657d3fe3-27d5-11ef-ab0f-005056bdd08f;
-	Tue, 11 Jun 2024 12:31:35 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org
-Cc: Shan-Chun Hung <schung@nuvoton.com>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>,
-	Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH v1 4/4] pinctrl: nuvoton: Reduce use of OF-specific APIs
-Date: Tue, 11 Jun 2024 12:30:25 +0300
-Message-ID: <20240611093127.90210-5-andy.shevchenko@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240611093127.90210-1-andy.shevchenko@gmail.com>
-References: <20240611093127.90210-1-andy.shevchenko@gmail.com>
+	s=arc-20240116; t=1718098303; c=relaxed/simple;
+	bh=Ynpkxfg4RKiWOD6S5grcQZ3o0u+yCzEua8zeUOqbTdw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VaJXFucC/kzyRiQPOvHtn5stbQBr10MFlGyfqM9WvqzOXm1jQJYUm6NsuyrDD3LMNfodhAlqbK9k9LKxEotPGFbWsu2QMlWnNEc/AQS8kVbT11lHaZLKp0WkBGdJpCqlVtz6u1dTIq29ZAHsSZObp6cm5H1c8Go4/hYnNQQU4YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JU1nHRpj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718098300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uG737WfG6Tkr1k/786kxDcpDifeb+2U34yvKgaEkzs0=;
+	b=JU1nHRpj2sFjRPC/+ZBO8otlBo+esCc08l2cpP/pCYxoo9QFqhHdMLTmDuHKVBVqCf+QFH
+	IZxcvW1xe3IOcBZqqi66wc2zeT/vX9O6pFSxIwzqnjIJFgPxi3oM7O/KO4YYMF9u819krl
+	MYj/Y/MoncZWsQWlPCifmR9liQNyVpY=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-15-la6e_X7MOma4nemHXONgTQ-1; Tue, 11 Jun 2024 05:31:34 -0400
+X-MC-Unique: la6e_X7MOma4nemHXONgTQ-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52bc1acf1bdso3137340e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:31:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718098293; x=1718703093;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uG737WfG6Tkr1k/786kxDcpDifeb+2U34yvKgaEkzs0=;
+        b=QDYtj06lDgkH7N2Mga3XPYFa9BYqJKm+509DqrXcP+YUZwLnsFOfqPyKm80i4hNBVO
+         D5j3kmZcARwsvFBS4rWniyucwRZ3oy+xZzdFwufmGHolCNi5/cavren788SjHCEdaicv
+         vGhKUNnDsbRbevepVTZY0M6P16EksvIQSck8aumEDArBxX//j7Fxii8RsgvToOm3NZaX
+         fsfs03lTcR04WT8im8Rd/t0B9s7E+tG+Bc2EXdxQyhJdJg597YWL7mgWS8SnyrgJTTrw
+         ALJlAFSYqQM8uqB7AeOey8XNTpNGDP6qh+FnHWrDUCsEtwQ3h3bS3snTei1SNWHSIK25
+         xQ6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVcG4+B5AcVpDIT5n7ir+C+BMSYe2QvWBRRMkIdh3GRDEJTz0d5lK9Q98dMflt+1VAbrylTnhi6wGQXzrSZmyg2KUjdMVbYbTUlme83
+X-Gm-Message-State: AOJu0Yy+DnS8lrpGZBWVP24s591ibWURoY0st+KDJDH2CES7XlAkpRnh
+	vw6hBwHmCb2fTTI7KplrSbQPTH8evJOiMUzbjaKbBRfkbpRzJX/K7bgtWI0B5J6eosUXTt2uoE1
+	eLCBDCrVdeY4ucFw+ZZ1qREZWoQMmOHoywkpk0JqT4+o6LMdJ6AGiNvHuX+62WQ==
+X-Received: by 2002:a05:6512:33ca:b0:52c:9421:2739 with SMTP id 2adb3069b0e04-52c94212a77mr1128623e87.9.1718098292955;
+        Tue, 11 Jun 2024 02:31:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwY43q16ah4tKmJLasiEw8hEatDj9bDQW7O57GFFvLqtN/5X7hzHWJoq6L0qvv09aAoMGvgA==
+X-Received: by 2002:a05:6512:33ca:b0:52c:9421:2739 with SMTP id 2adb3069b0e04-52c94212a77mr1128603e87.9.1718098292510;
+        Tue, 11 Jun 2024 02:31:32 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c748:ba00:1c00:48ea:7b5a:c12b? (p200300cbc748ba001c0048ea7b5ac12b.dip0.t-ipconnect.de. [2003:cb:c748:ba00:1c00:48ea:7b5a:c12b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2cd247sm175758845e9.40.2024.06.11.02.31.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 02:31:32 -0700 (PDT)
+Message-ID: <6580fccb-cbd8-480b-9405-b6191ae87754@redhat.com>
+Date: Tue, 11 Jun 2024 11:31:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] cleanups, fixes, and progress towards avoiding "make
+ headers"
+To: John Hubbard <jhubbard@nvidia.com>, Jeff Xu <jeffxu@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ Andrei Vagin <avagin@google.com>, Axel Rasmussen <axelrasmussen@google.com>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240608021023.176027-1-jhubbard@nvidia.com>
+ <CABi2SkVoNyXLrfU71gnv1qVUAADpUmFXiDoKKPc54MLb5JpB+Q@mail.gmail.com>
+ <a8f9d4e2-8a12-4e5d-bd22-9c92955135f4@nvidia.com>
+ <CABi2SkU8=tjWhD-e=OdiVr+YeU+BZZLB_vMfkNb-VWpbP2xcng@mail.gmail.com>
+ <95005e7c-3705-48c5-8ee2-3d9b0688fcbc@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <95005e7c-3705-48c5-8ee2-3d9b0688fcbc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Some drivers are using device property APIs along with OF-specific ones.
-At the same time few of the latter can be converted to device property
-calls. Reduce use of OF-specific APIs in order to bring a bit more consistency
-into the drivers.
+On 11.06.24 08:25, John Hubbard wrote:
+> On 6/10/24 9:45 PM, Jeff Xu wrote:
+>> On Mon, Jun 10, 2024 at 9:34 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>>> On 6/10/24 9:21 PM, Jeff Xu wrote:
+>>>> Hi
+>>>>
+>>>>
+>>>> On Fri, Jun 7, 2024 at 7:10 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>>>>>
+>>>>> Eventually, once the build succeeds on a sufficiently old distro, the
+>>>>> idea is to delete $(KHDR_INCLUDES) from the selftests/mm build, and then
+>>>>> after that, from selftests/lib.mk and all of the other selftest builds.
+>>>>>
+>>>>> For now, this series merely achieves a clean build of selftests/mm on a
+>>>>> not-so-old distro: Ubuntu 23.04:
+>>>>>
+>>>>> 1. Add __NR_mseal.
+>>>>>
+>>>>> 2. Add fs.h, taken as usual from a snapshot of ./usr/include/linux/fs.h
+>>>>> after running "make headers". This is how we have agreed to do this sort
+>>>>> of thing, see [1].
+>>>>>
+>>>> What is the "official" way to build selftests/mm ?
+>>>
+>>>    From Documentation/dev-tools/kselftest.rst, it is:
+>>>
+>>>      $ make headers
+>>>      $ make -C tools/testing/selftests
+>>>
+>>>> I tried a few ways, but it never worked, i.e. due to head missing.
+>>>
+>>> You are correct. Today's rules require "make headers" first. But
+>>> I'm working on getting rid of that requirement, because it causes
+>>> problems for some people and situations.
+>>>
+>>> (Even worse is the follow-up rule, in today's documentation,
+>>> that tells us to *run* the selftests from within Make! This
+>>> is just madness.
+>>
+>> That is hilarious! :)
+> 
+> :)
+> 
+>>
+>>>    Because the tests need to run as root in
+>>> many cases. And Make will try to rebuild if necessary...thus
+>>> filling your tree full of root-owned files...but that's for
+>>> another time.)
+>>>
+>>>>
+>>>> 1>
+>>>> cd tools/testing/selftests/mm
+>>>> make
+>>>>
+>>>> migration.c:10:10: fatal error: numa.h: No such file or directory
+>>>>       10 | #include <numa.h>
+>>>>          |          ^~~~~~~~
+>>>> compilation terminated.
+>>>>
+>>>> 2>
+>>>> make headers
+>>>> make -C tools/testing/selftests
+>>>>
+>>>> make[1]: Entering directory
+>>>> '/usr/local/google/home/jeffxu/mm/tools/testing/selftests/mm'
+>>>>      CC       migration
+>>>> migration.c:10:10: fatal error: numa.h: No such file or directory
+>>>>       10 | #include <numa.h>
+>>>>
+>>>
+>>> Well, actually, for these, one should install libnuma-dev and
+>>> numactl (those are Ubuntu package names. Arch Linux would be:
+>>> numactl).
+>>>
+>>> I think. The idea is: use system headers if they are there, and
+>>> local kernel tree header files if the items are so new that they
+>>> haven't made it to $OLDEST_DISTO_REASONABLE.
+>>>
+>>> Something like that.
+>>>
+>> But I don't want to install random packages if possible.
+> 
+> Well...keep in mind that it's not really random. If a test program
+> requires numa.h, it's typically because it also links against libnuma,
+> which *must* be supplied by the distro if you want to build. Because
+> it doesn't come with the kernel, of course.
+> 
+> So what you're really saying is that you'd like to build and run
+> whatever you can at the moment--the build should soldier on past
+> failures as much as possible.
+> 
+>>
+>> Can makefile rule continue to the next target in case of failure though ?
+> 
+> That could be done, in general. The question is if that's really what
+> we want, or should want. Maybe...
 
-Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- drivers/pinctrl/nuvoton/pinctrl-ma35.c    | 35 +++++++++++------------
- drivers/pinctrl/nuvoton/pinctrl-ma35d1.c  |  1 -
- drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c | 16 ++---------
- drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c |  2 +-
- 4 files changed, 21 insertions(+), 33 deletions(-)
+In cow.c, we warn if liburing is not around and build the test without 
+these test cases. check_config.sh senses support.
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-ma35.c b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
-index 7c2b0039d1e4..2bb0bdbc881a 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-ma35.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
-@@ -519,7 +519,6 @@ static int ma35_gpiolib_register(struct platform_device *pdev, struct ma35_pinct
- 		bank->irqtype = 0;
- 		bank->irqinten = 0;
- 		bank->chip.label = bank->name;
--		bank->chip.of_gpio_n_cells = 2;
- 		bank->chip.parent = &pdev->dev;
- 		bank->chip.request = ma35_gpio_core_to_request;
- 		bank->chip.direction_input = ma35_gpio_core_direction_in;
-@@ -976,9 +975,10 @@ static const struct pinconf_ops ma35_pinconf_ops = {
- 	.is_generic = true,
- };
- 
--static int ma35_pinctrl_parse_groups(struct device_node *np, struct group_desc *grp,
-+static int ma35_pinctrl_parse_groups(struct fwnode_handle *fwnode, struct group_desc *grp,
- 				     struct ma35_pinctrl *npctl, u32 index)
- {
-+	struct device_node *np = to_of_node(fwnode);
- 	struct ma35_pin_setting *pin;
- 	unsigned long *configs;
- 	unsigned int nconfigs;
-@@ -990,7 +990,7 @@ static int ma35_pinctrl_parse_groups(struct device_node *np, struct group_desc *
- 	if (ret)
- 		return ret;
- 
--	count = of_property_count_elems_of_size(np, "nuvoton,pins", sizeof(u32));
-+	count = fwnode_property_count_u32(fwnode, "nuvoton,pins");
- 	if (!count || count % 3)
- 		return -EINVAL;
- 
-@@ -1000,7 +1000,7 @@ static int ma35_pinctrl_parse_groups(struct device_node *np, struct group_desc *
- 
- 	grp->grp.name = np->name;
- 
--	ret = of_property_read_u32_array(np, "nuvoton,pins", elems, count);
-+	ret = fwnode_property_read_u32_array(fwnode, "nuvoton,pins", elems, count);
- 	if (ret)
- 		return -EINVAL;
- 	grp->grp.npins = count / 3;
-@@ -1027,10 +1027,11 @@ static int ma35_pinctrl_parse_groups(struct device_node *np, struct group_desc *
- 	return 0;
- }
- 
--static int ma35_pinctrl_parse_functions(struct device_node *np, struct ma35_pinctrl *npctl,
-+static int ma35_pinctrl_parse_functions(struct fwnode_handle *fwnode, struct ma35_pinctrl *npctl,
- 					u32 index)
- {
--	struct device_node *child;
-+	struct device_node *np = to_of_node(fwnode);
-+	struct fwnode_handle *child;
- 	struct pinfunction *func;
- 	struct group_desc *grp;
- 	static u32 grp_index;
-@@ -1050,12 +1051,14 @@ static int ma35_pinctrl_parse_functions(struct device_node *np, struct ma35_pinc
- 	if (!groups)
- 		return -ENOMEM;
- 
--	for_each_child_of_node(np, child) {
--		groups[i] = child->name;
-+	fwnode_for_each_child_node(fwnode, child) {
-+		struct device_node *node = to_of_node(child);
-+
-+		groups[i] = node->name;
- 		grp = &npctl->groups[grp_index++];
- 		ret = ma35_pinctrl_parse_groups(child, grp, npctl, i++);
- 		if (ret) {
--			of_node_put(child);
-+			fwnode_handle_put(child);
- 			return ret;
- 		}
- 	}
-@@ -1066,13 +1069,12 @@ static int ma35_pinctrl_parse_functions(struct device_node *np, struct ma35_pinc
- 
- static int ma35_pinctrl_probe_dt(struct platform_device *pdev, struct ma35_pinctrl *npctl)
- {
-+	struct device *dev = &pdev->dev;
- 	struct fwnode_handle *child;
- 	u32 idx = 0;
- 	int ret;
- 
--	device_for_each_child_node(&pdev->dev, child) {
--		if (fwnode_property_present(child, "gpio-controller"))
--			continue;
-+	for_each_gpiochip_node(dev, child) {
- 		npctl->nfunctions++;
- 		npctl->ngroups += of_get_child_count(to_of_node(child));
- 	}
-@@ -1090,11 +1092,8 @@ static int ma35_pinctrl_probe_dt(struct platform_device *pdev, struct ma35_pinct
- 	if (!npctl->groups)
- 		return -ENOMEM;
- 
--	device_for_each_child_node(&pdev->dev, child) {
--		if (fwnode_property_present(child, "gpio-controller"))
--			continue;
--
--		ret = ma35_pinctrl_parse_functions(to_of_node(child), npctl, idx++);
-+	for_each_gpiochip_node(dev, child) {
-+		ret = ma35_pinctrl_parse_functions(child, npctl, idx++);
- 		if (ret) {
- 			fwnode_handle_put(child);
- 			dev_err(&pdev->dev, "failed to parse function\n");
-@@ -1139,7 +1138,7 @@ int ma35_pinctrl_probe(struct platform_device *pdev, const struct ma35_pinctrl_s
- 	npctl->info = info;
- 	npctl->dev = &pdev->dev;
- 
--	npctl->regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "nuvoton,sys");
-+	npctl->regmap = syscon_regmap_lookup_by_phandle(dev_of_node(dev), "nuvoton,sys");
- 	if (IS_ERR(npctl->regmap))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(npctl->regmap),
- 				     "No syscfg phandle specified\n");
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-ma35d1.c b/drivers/pinctrl/nuvoton/pinctrl-ma35d1.c
-index 8bb9a5a35954..eafa06ca0879 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-ma35d1.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-ma35d1.c
-@@ -9,7 +9,6 @@
- #include <linux/io.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
--#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm.h>
- 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-index c6b11a198c76..d9245aa55d65 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-@@ -7,10 +7,8 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
--#include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/of_irq.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
- #include <linux/regmap.h>
-@@ -1839,15 +1837,7 @@ static int npcm7xx_gpio_of(struct npcm7xx_pinctrl *pctrl)
- 	int id = 0;
- 
- 	for_each_gpiochip_node(dev, child) {
--		struct device_node *np = to_of_node(child);
--
--		ret = of_address_to_resource(np, 0, &res);
--		if (ret < 0) {
--			dev_err(dev, "Resource fail for GPIO bank %u\n", id);
--			return ret;
--		}
--
--		pctrl->gpio_bank[id].base = ioremap(res.start, resource_size(&res));
-+		pctrl->gpio_bank[id].base = fwnode_iomap(child, 0);
- 		if (!pctrl->gpio_bank[id].base)
- 			return -EINVAL;
- 
-@@ -1869,7 +1859,7 @@ static int npcm7xx_gpio_of(struct npcm7xx_pinctrl *pctrl)
- 			return ret;
- 		}
- 
--		ret = irq_of_parse_and_map(np, 0);
-+		ret = fwnode_irq_get(child, 0);
- 		if (!ret) {
- 			dev_err(dev, "No IRQ for GPIO bank %u\n", id);
- 			return -EINVAL;
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-index 7c37d2cda9f1..4410077615df 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-@@ -2421,7 +2421,7 @@ static int npcm8xx_pinctrl_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, pctrl);
- 
- 	pctrl->gcr_regmap =
--		syscon_regmap_lookup_by_phandle(dev->of_node, "nuvoton,sysgcr");
-+		syscon_regmap_lookup_by_phandle(dev_of_node(dev), "nuvoton,sysgcr");
- 	if (IS_ERR(pctrl->gcr_regmap))
- 		return dev_err_probe(dev, PTR_ERR(pctrl->gcr_regmap),
- 				      "Failed to find nuvoton,sysgcr property\n");
+We could do the same for numactl (numa.h), but maybe there would not be 
+any test case to run in there without libnuma (did not check). Some 
+tests also require lcap.
+
 -- 
-2.45.2
+Cheers,
+
+David / dhildenb
 
 
