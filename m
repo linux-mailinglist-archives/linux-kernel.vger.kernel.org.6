@@ -1,161 +1,313 @@
-Return-Path: <linux-kernel+bounces-209867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE38903C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:37:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E902903C2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 14:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EBDF1F25CE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:37:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3095F1C20E27
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACF317C7DB;
-	Tue, 11 Jun 2024 12:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UOVolnY7"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901A717C7A9;
-	Tue, 11 Jun 2024 12:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D278317C221;
+	Tue, 11 Jun 2024 12:51:07 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A9E1E86F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 12:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718109423; cv=none; b=rpgfeJdA57jvVcCvtQDggR1rVytg8DAVtX/1LHV0RohfXcPD1NvdgucxZo/1cFgG5eEU++qW8ggvW87NsKRD+277ps+9U9/BQ2omrN2uAKTbJMsUE9BViQQUSapEqm/3t7UEMJEkzje1rCLD25EW+GYqyEs185qbqjMoKTD7m4I=
+	t=1718110267; cv=none; b=CgUnF63HLh233vNNKgQNbi3NzhkGU23yUC5gpkicRiBvYYtlFexgdHoihuKUriok28f+Cb24MQSUAW068EsJ8JDjS7kny4z7GxXHJR2ndes0XyYXaH0fFDI+HUfYZJCcNcrsrBZRNq4QQscc5x1HbOw13uSGhB/0N+v7R9guSh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718109423; c=relaxed/simple;
-	bh=8jD5Mvn4JnvcGDrCagOrGGZetRPfvF4h/uJysM7SORY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=dHpgaiYEj/PuZOwN1hYCyrn7KMA6f5coXWkfEzmPEAtwXinUmLM61Y4fexq9fnP5Mq9e4o5GsMk62jQgi2JKcmJwqvXn8wppMGkGayspnEHC3M+1fOxmGElCHEPilm6mJIAQcL3YPqpXepSgjyUi1A1mzYzoRDiGyU81TNIAy3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UOVolnY7; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45BCaa6a088100;
-	Tue, 11 Jun 2024 07:36:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718109396;
-	bh=Xi+lXeC9oOPY560HM6ndHndJe00tZZ8g5JUpqfg8mMc=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=UOVolnY7O4t53trTs4QTtefjTo6wP3vqPGib4PgyPlWj8IeWuogyvRFXv90TmBdxt
-	 CbJhXk6Qm63Sy+GCb2d5tsxn+/oNZGO5Xl3UABgBR5imCpyvLfI8PBYrdwqu2WVzgw
-	 k8CQRQN4lRnO6Kd2QdU6HbmfL2DKT6v7nSe5ItCA=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45BCaamY116897
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 11 Jun 2024 07:36:36 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
- Jun 2024 07:36:36 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 11 Jun 2024 07:36:35 -0500
-Received: from localhost (jluthra.dhcp.ti.com [172.24.227.116])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45BCaZcw105946;
-	Tue, 11 Jun 2024 07:36:35 -0500
-From: Jai Luthra <j-luthra@ti.com>
-Date: Tue, 11 Jun 2024 18:02:56 +0530
-Subject: [PATCH v3 2/2] ASoC: ti: davinci-mcasp: Set min period size using
- FIFO config
+	s=arc-20240116; t=1718110267; c=relaxed/simple;
+	bh=SAS5xA1uyYT/aeAKQMvhN0fZ18l+uHHHMzjeFHH2YAQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MFYzCTm36wWp2kxDNK/Sdk2tUZPLItGkkJ8RRHmHeGfU/z4B7HNmGg9CYVcYfI/HgTzG5/9BeI7plpidJoHQL+cPkqnAGau+T4mKPtm+U6ZBmroTsshXGqM2EdQlW32ajm8bReJNJTwARp20o+jqRZt1S0dm8T+lPS5nwKKueO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.185])
+	by gateway (Coremail) with SMTP id _____8Axz+s2SGhmBaoFAA--.7232S3;
+	Tue, 11 Jun 2024 20:51:02 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.185])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Axw8Q0SGhmowQcAA--.57937S2;
+	Tue, 11 Jun 2024 20:51:00 +0800 (CST)
+From: Song Gao <gaosong@loongson.cn>
+To: linux-kernel@vger.kernel.org
+Cc: chenhuacai@kernel.org,
+	jiaxun.yang@flygoat.com,
+	tglx@linutronix.de,
+	maobibo@loongson.cn
+Subject: [PATCH v2] irqchip/loongson-eiointc: Add extioi virt extension support
+Date: Tue, 11 Jun 2024 20:33:48 +0800
+Message-Id: <20240611123348.8374-1-gaosong@loongson.cn>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240611-asoc_next-v3-2-fcfd84b12164@ti.com>
-References: <20240611-asoc_next-v3-0-fcfd84b12164@ti.com>
-In-Reply-To: <20240611-asoc_next-v3-0-fcfd84b12164@ti.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark
- Brown <broonie@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, Devarsh Thakkar <devarsht@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Jayesh Choudhary <j-choudhary@ti.com>, Jai
- Luthra <j-luthra@ti.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2013; i=j-luthra@ti.com;
- h=from:subject:message-id; bh=8jD5Mvn4JnvcGDrCagOrGGZetRPfvF4h/uJysM7SORY=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBmaETOYhZakNd8NUjZCV3kKA2TKaPzDcRwgvD8M
- qVxONW06W+JAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZmhEzgAKCRBD3pH5JJpx
- RSG8D/9sFwAIG62LqXVjYS9r25876+BBOXvMsmJ49kxUk+X5EKAsXm97vxjtGIlIP+88MUuc7CT
- tPKRTE+PH4RSEfGbtL7SsmRg40kUTtXMzu2aUSKF3TE1MbHYqfWX4HnxArhiHv7EL175L84kU+F
- xkHcHo5VBOA+xAvWXA/jxQdY4tLUeLDJJbe5h4d+tjr1jx04melwPcwMgt8kjOSa79xPr23VhJV
- 2E6lUKdotTaonOA0ZLWuNx5vFcSehwG5zj/9lbGLzo+o5texet91cetc856dpwV5iZ7JLVIUvh8
- qVLOpNRL4kwt4zP4Ym7Sx5Or2Pg3P+DGbQ7z6tiZwR1mqWIKvIutfpeRaOByaduLu8n0jB5+/n3
- JsYMUoEH2WHlhWS6nNDu3zb7RpWoyUSP+bz1796Jyxr0j8Szf/7Lwl/2W9OnGNURwP1xmadY+TI
- IrrR20e3oM+SmgPICEV1o1P9GcodfaHr+ALuhWagi41WbQv5AxjkrXepNkpviZNnPm6S8D86j0E
- 0R8ymjNggQcg6pI56GTUtqPPCI1BYTVMQOgQyP2GjV/hSTXbsbaCIwsk0HXqOr6kPRklmo/GPvp
- LcsbmBe0cRjRBBvQ1IuJWpXp9tfCEiI0nk0iPdIkz2mvr9qbLQ3MooLbJETU9TUTAAwn1xFdAzq
- ZgXHztXo8cnQtcA==
-X-Developer-Key: i=j-luthra@ti.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8Axw8Q0SGhmowQcAA--.57937S2
+X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-The minimum period size was enforced to 64 as older devices integrating
-McASP with EDMA used an internal FIFO of 64 samples.
+Interrupts can be routed to maximal four virtual CPUs with one external
+hardware interrupt. Add the extioi virt extension support so that
+Interrupts can be routed to 256 vcpus on hypervior mode.
 
-With UDMA based platforms this internal McASP FIFO is optional, as the
-DMA engine internally does some buffering which is already accounted for
-when registering the platform. So we should read the actual FIFO
-configuration (txnumevt/rxnumevt) instead of hardcoding frames.min to
-64.
-
-Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
-Signed-off-by: Jai Luthra <j-luthra@ti.com>
+Signed-off-by: Song Gao <gaosong@loongson.cn>
 ---
- sound/soc/ti/davinci-mcasp.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+v2:
+- Simplify commit messages and code.
+- Follow the documented tip tree coding style.
+- Add the virtual extended interrupt model to the documentation.
+- Link to v1: https://lore.kernel.org/all/20240605070229.2569875-1-gaosong@loongson.cn/
 
-diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
-index 1e760c315521..2b1ed91a736c 100644
---- a/sound/soc/ti/davinci-mcasp.c
-+++ b/sound/soc/ti/davinci-mcasp.c
-@@ -1472,10 +1472,11 @@ static int davinci_mcasp_hw_rule_min_periodsize(
+ .../arch/loongarch/irq-chip-model.rst         |  28 +++++
+ arch/loongarch/include/asm/irq.h              |   1 +
+ drivers/irqchip/irq-loongson-eiointc.c        | 104 ++++++++++++++----
+ 3 files changed, 113 insertions(+), 20 deletions(-)
+
+diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/arch/loongarch/irq-chip-model.rst
+index 7988f4192363..7c10d070b318 100644
+--- a/Documentation/arch/loongarch/irq-chip-model.rst
++++ b/Documentation/arch/loongarch/irq-chip-model.rst
+@@ -85,6 +85,34 @@ to CPUINTC directly::
+     | Devices |
+     +---------+
+ 
++Virt extended IRQ model
++=======================
++
++This model only work on hypervior mode. In this model, IPI (Inter-Processor Interrupt)
++and CPU Local Timer interrupt go to CPUINTC directly, CPU UARTS interrupts go to
++PCH_PIC, while all other devices interrupts go to PCH-PIC/PCH-LPC/PCH-MSI and
++gathered by V-EIOINTC(Virt Extended I/O Interrupt Controller), and then go to
++CPUINTC directly::
++
++       +-----+    +-------------------+     +-------+
++       | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
++       +-----+    +-------------------+     +-------+
++                            ^
++                            |
++                      +-----------+
++                      | V-EIOINTC |
++                      +-----------+
++                       ^         ^
++                       |         |
++                +---------+ +---------+
++                | PCH-PIC | | PCH-MSI |
++                +---------+ +---------+
++                  ^      ^          ^
++                  |      |          |
++           +--------+ +---------+ +---------+
++           | UARTs  | | Devices | | Devices |
++           +--------+ +---------+ +---------+
++
+ ACPI-related definitions
+ ========================
+ 
+diff --git a/arch/loongarch/include/asm/irq.h b/arch/loongarch/include/asm/irq.h
+index 480418bc5071..c97a7ab0e56f 100644
+--- a/arch/loongarch/include/asm/irq.h
++++ b/arch/loongarch/include/asm/irq.h
+@@ -53,6 +53,7 @@ struct acpi_vector_group {
+ extern struct acpi_vector_group pch_group[MAX_IO_PICS];
+ extern struct acpi_vector_group msi_group[MAX_IO_PICS];
+ 
++#define MAX_CORES_PER_EIO_NODE	256
+ #define CORES_PER_EIO_NODE	4
+ 
+ #define LOONGSON_CPU_UART0_VEC		10 /* CPU UART0 */
+diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
+index c7ddebf312ad..430fda9e8ce5 100644
+--- a/drivers/irqchip/irq-loongson-eiointc.c
++++ b/drivers/irqchip/irq-loongson-eiointc.c
+@@ -23,15 +23,43 @@
+ #define EIOINTC_REG_ISR		0x1800
+ #define EIOINTC_REG_ROUTE	0x1c00
+ 
++#define EXTIOI_VIRT_FEATURES           0x40000000
++#define  EXTIOI_HAS_VIRT_EXTENSION     BIT(0)
++#define  EXTIOI_HAS_ENABLE_OPTION      BIT(1)
++#define  EXTIOI_HAS_INT_ENCODE         BIT(2)
++#define  EXTIOI_HAS_CPU_ENCODE         BIT(3)
++#define EXTIOI_VIRT_CONFIG             0x40000004
++#define  EXTIOI_ENABLE                 BIT(1)
++#define  EXTIOI_ENABLE_INT_ENCODE      BIT(2)
++#define  EXTIOI_ENABLE_CPU_ENCODE      BIT(3)
++
+ #define VEC_REG_COUNT		4
+ #define VEC_COUNT_PER_REG	64
+ #define VEC_COUNT		(VEC_REG_COUNT * VEC_COUNT_PER_REG)
+ #define VEC_REG_IDX(irq_id)	((irq_id) / VEC_COUNT_PER_REG)
+ #define VEC_REG_BIT(irq_id)     ((irq_id) % VEC_COUNT_PER_REG)
+ #define EIOINTC_ALL_ENABLE	0xffffffff
++#define EIOINTC_ALL_ENABLE_VEC_MASK(vector) 	\
++	(EIOINTC_ALL_ENABLE & ~BIT(vector & 0x1F))
++#define EIOINTC_REG_ENABLE_VEC(vector)		\
++	(EIOINTC_REG_ENABLE + ((vector >> 5) << 2))
+ 
+ #define MAX_EIO_NODES		(NR_CPUS / CORES_PER_EIO_NODE)
+ 
++/*
++ * Routing registers contain four vectors and have an offset of four to
++ * the base. The routing information is 8 bit wide.
++ */
++
++#define EIOINTC_REG_ROUTE_VEC(vector)		\
++	(EIOINTC_REG_ROUTE + (vector & ~0x03))
++
++#define EIOINTC_REG_ROUTE_VEC_SHIFT(vector) 	\
++	((vector & 0x03) << 3)
++
++#define EIOINTC_REG_ROUTE_VEC_MASK(vector)	\
++	(0xff << EIOINTC_REG_ROUTE_VEC_SHIFT(vector))
++
+ static int nr_pics;
+ 
+ struct eiointc_priv {
+@@ -41,6 +69,7 @@ struct eiointc_priv {
+ 	cpumask_t		cpuspan_map;
+ 	struct fwnode_handle	*domain_handle;
+ 	struct irq_domain	*eiointc_domain;
++	bool			cpu_encoded;
+ };
+ 
+ static struct eiointc_priv *eiointc_priv[MAX_IO_PICS];
+@@ -56,7 +85,9 @@ static void eiointc_enable(void)
+ 
+ static int cpu_to_eio_node(int cpu)
  {
- 	struct snd_interval *period_size = hw_param_interval(params,
- 						SNDRV_PCM_HW_PARAM_PERIOD_SIZE);
-+	u8 numevt = *((u8 *)rule->private);
- 	struct snd_interval frames;
+-	return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
++	int cores = cpu_has_hypervisor ? MAX_CORES_PER_EIO_NODE : CORES_PER_EIO_NODE;
++
++	return cpu_logical_map(cpu) / cores;
+ }
  
- 	snd_interval_any(&frames);
--	frames.min = 64;
-+	frames.min = numevt;
- 	frames.integer = 1;
+ #ifdef CONFIG_SMP
+@@ -88,6 +119,16 @@ static void eiointc_set_irq_route(int pos, unsigned int cpu, unsigned int mnode,
  
- 	return snd_interval_refine(period_size, &frames);
-@@ -1490,6 +1491,7 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
- 	u32 max_channels = 0;
- 	int i, dir, ret;
- 	int tdm_slots = mcasp->tdm_slots;
-+	u8 *numevt;
+ static DEFINE_RAW_SPINLOCK(affinity_lock);
  
- 	/* Do not allow more then one stream per direction */
- 	if (mcasp->substreams[substream->stream])
-@@ -1589,9 +1591,12 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
- 			return ret;
++static void virt_extioi_set_irq_route(unsigned int vector, unsigned int cpu)
++{
++	unsigned long reg = EIOINTC_REG_ROUTE_VEC(vector);
++	u32 data = iocsr_read32(reg);
++
++	data &= ~EIOINTC_REG_ROUTE_VEC_MASK(vector);
++	data |= cpu_logical_map(cpu) << EIOINTC_REG_ROUTE_VEC_SHIFT(vector);
++	iocsr_write32(data, reg);
++}
++
+ static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpumask *affinity, bool force)
+ {
+ 	unsigned int cpu;
+@@ -104,18 +145,24 @@ static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpumask *af
  	}
  
-+	numevt = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) ?
-+			 &mcasp->txnumevt :
-+			 &mcasp->rxnumevt;
- 	snd_pcm_hw_rule_add(substream->runtime, 0,
- 			    SNDRV_PCM_HW_PARAM_PERIOD_SIZE,
--			    davinci_mcasp_hw_rule_min_periodsize, NULL,
-+			    davinci_mcasp_hw_rule_min_periodsize, numevt,
- 			    SNDRV_PCM_HW_PARAM_PERIOD_SIZE, -1);
+ 	vector = d->hwirq;
+-	regaddr = EIOINTC_REG_ENABLE + ((vector >> 5) << 2);
+-
+-	/* Mask target vector */
+-	csr_any_send(regaddr, EIOINTC_ALL_ENABLE & (~BIT(vector & 0x1F)),
+-			0x0, priv->node * CORES_PER_EIO_NODE);
+-
+-	/* Set route for target vector */
+-	eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
+-
+-	/* Unmask target vector */
+-	csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
+-			0x0, priv->node * CORES_PER_EIO_NODE);
++	regaddr = EIOINTC_REG_ENABLE_VEC(vector);
++
++	if (priv->cpu_encoded) {
++		iocsr_write32(EIOINTC_ALL_ENABLE_VEC_MASK(vector), regaddr);
++		virt_extioi_set_irq_route(vector, cpu);
++		iocsr_write32(EIOINTC_ALL_ENABLE, regaddr);
++	} else {
++		/* Mask target vector */
++		csr_any_send(regaddr, EIOINTC_ALL_ENABLE_VEC_MASK(vector),
++			     0x0, priv->node * CORES_PER_EIO_NODE);
++
++		/* Set route for target vector */
++		eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
++
++		/* Unmask target vector */
++		csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
++			     0x0, priv->node * CORES_PER_EIO_NODE);
++	}
  
- 	return 0;
-
+ 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+ 
+@@ -139,17 +186,20 @@ static int eiointc_index(int node)
+ 
+ static int eiointc_router_init(unsigned int cpu)
+ {
+-	int i, bit;
+-	uint32_t data;
+-	uint32_t node = cpu_to_eio_node(cpu);
+-	int index = eiointc_index(node);
++	uint32_t data, node;
++	int i, bit, cores, index;
++
++	node = cpu_to_eio_node(cpu);
++	index = eiointc_index(node);
+ 
+ 	if (index < 0) {
+ 		pr_err("Error: invalid nodemap!\n");
+-		return -1;
++		return -EINVAL;
+ 	}
+ 
+-	if ((cpu_logical_map(cpu) % CORES_PER_EIO_NODE) == 0) {
++	cores = (cpu_has_hypervisor ? MAX_CORES_PER_EIO_NODE : CORES_PER_EIO_NODE);
++
++	if ((cpu_logical_map(cpu) % cores) == 0) {
+ 		eiointc_enable();
+ 
+ 		for (i = 0; i < eiointc_priv[0]->vec_count / 32; i++) {
+@@ -165,7 +215,9 @@ static int eiointc_router_init(unsigned int cpu)
+ 
+ 		for (i = 0; i < eiointc_priv[0]->vec_count / 4; i++) {
+ 			/* Route to Node-0 Core-0 */
+-			if (index == 0)
++			if (eiointc_priv[index]->cpu_encoded)
++				bit = cpu_logical_map(0);
++			else if (index == 0)
+ 				bit = BIT(cpu_logical_map(0));
+ 			else
+ 				bit = (eiointc_priv[index]->node << 4) | 1;
+@@ -369,6 +421,7 @@ static int __init acpi_cascade_irqdomain_init(void)
+ static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
+ 			       u64 node_map)
+ {
++	u32 val;
+ 	int i;
+ 
+ 	node_map = node_map ? node_map : -1ULL;
+@@ -389,6 +442,17 @@ static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
+ 		return -ENOMEM;
+ 	}
+ 
++	if (cpu_has_hypervisor) {
++		val = iocsr_read32(EXTIOI_VIRT_FEATURES);
++		if (val & BIT(EXTIOI_HAS_CPU_ENCODE)) {
++			val = iocsr_read32(EXTIOI_VIRT_CONFIG);
++			val |= BIT(EXTIOI_ENABLE_CPU_ENCODE);
++			iocsr_write32(val, EXTIOI_VIRT_CONFIG);
++			priv->cpu_encoded = true;
++			pr_info("loongson-extioi: enable cpu encodig \n");
++		}
++	}
++
+ 	eiointc_priv[nr_pics++] = priv;
+ 	eiointc_router_init(0);
+ 	irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch, priv);
 -- 
-2.43.0
+2.39.3
 
 
