@@ -1,147 +1,110 @@
-Return-Path: <linux-kernel+bounces-210412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A8790435A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:16:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A30FD90435F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 20:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52750B22B49
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:16:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2FAF1C210BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758276EB58;
-	Tue, 11 Jun 2024 18:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5656EB68;
+	Tue, 11 Jun 2024 18:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEPxnzB8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MdRVe9iW"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CF274418;
-	Tue, 11 Jun 2024 18:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9FC4F5F9;
+	Tue, 11 Jun 2024 18:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718129789; cv=none; b=RtxiRcypHlQBDILSODBeNGxVRpJBx6dJ+QqRJOzllb605rd8pAnuo3UNrHuxAt3UVfTzpEVzL6xlY81KSNTgcFE8nru28nc1CKfwiG2KZQ/u6lX3yRaz50GMBJKE26bhZn6AklKchjAesvDpuEKcw2GoLCL8Uev83UMWAH5vkKw=
+	t=1718129800; cv=none; b=n7j2Ve/WLwpMok+hXuNPcVuT1Qt82sbke38y21JM0KjgtIj3/WLl9LHbZ7MsalavyR8tZZPE7KxyqfCMwrn3gba9XL5WdJUqHEUTTg1kBDRq7EZ8qxMEdfDcHs8GZyWQvhdQG6gPCXkwHiTjjRMMOyO6vmorKE3Le7n1gFg2IhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718129789; c=relaxed/simple;
-	bh=QhiccRUa8nUsNwUtkF0DHVHRaqAFjgzP5RrKB+6T1JY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bQMvk29cuZ5pdYpRdxHQcNsniITSmJCuGViZluiWpsh8tDE3goO35BMvXwEaHaMsJOVeAhrDnYlJ39OwBvgpVqMNYNe6vCNnfIRLIoPwaEDmeHv7wfAJKku58HLqPzLc3SEKm/eM3cYTc2If0NpugLH9UQTqxwFfJljJeB2uy3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pEPxnzB8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08239C2BD10;
-	Tue, 11 Jun 2024 18:16:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718129789;
-	bh=QhiccRUa8nUsNwUtkF0DHVHRaqAFjgzP5RrKB+6T1JY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pEPxnzB8t7dMfbQEPHmexKo0L4OWfieS9RXtZ4ZFc3/2fSzLcXqPQepAcvTrqtHLd
-	 swqvZEK56Eai0ZNq9HFFFks6VlBoARyn+FIZNySty+FPp2GocnCdVhAkdDnOqpDRQs
-	 wq1MUYKD6OWlM+vNeRH3hkV8OrzY7PU5ZVj/Ywnk0A2sbb0MsoC+LXX9uyoryiqRgg
-	 Z7HVuzfDTubzLDmHXjYRWFW5rqFEtNiHOB3Au83wdMtTIR7+7QxfqhxnmAGVN2GAp3
-	 A1lCO5FZvpfLxspUkn5zrF+iLAmcXC3F/AH7mhrHGwAAyu5UIKGM6C4/DfmLcDArhI
-	 NoX7FEHV+mhuA==
-Date: Tue, 11 Jun 2024 19:16:24 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Valentin Caron <valentin.caron@foss.st.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: rtc: stm32: introduce new
- st,stm32mp25-rtc compatible
-Message-ID: <20240611-sample-remold-a75d6f6515d8@spud>
-References: <20240611161958.469209-1-valentin.caron@foss.st.com>
- <20240611161958.469209-2-valentin.caron@foss.st.com>
+	s=arc-20240116; t=1718129800; c=relaxed/simple;
+	bh=negaQ/p+8fqZUjRXlmaCtcM1w1qY4k12PHGOfjjOEjc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cdEIYPPTst+o/o5SEJIhvCDzr5WS263tyNAzvtEBUoDv2qCOkQ/j8oLkt1ojiwVk0EhUq7dbn2uX/zS8BVEGWj87GHKQyuzz6H7oTyzRVmUDKN7j0Srgf9nVBYCqy0kd8Fbs1WD2XYr6pJGiWGxBUdeQginET51q34X5SP69FpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MdRVe9iW; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52961b77655so6545155e87.2;
+        Tue, 11 Jun 2024 11:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718129797; x=1718734597; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZtI1lbTsgVOULKjRJR67YoxzveH1+C7OsnELRZ7Iie4=;
+        b=MdRVe9iWiOkNvpQBqi8YLVT4mdLf1GfGmck9JyfkNx/10CAv72sit3ro2efYnyMNZx
+         jTiN4mtD0Ez7PTkDSw9wTiCC+UwWMTV7IU3pAU9MxLbC+RJHMB+01CoG4jrhUO7fzN9G
+         qfHeEVbcRiD8r+ngaj97ynSaYRmb9ijedNJ7fB5slavvhtZ0MsjCIw6I8gX5gycvKZu9
+         eEwKqEiTV3VeX0fczfTExSRAL//gnKcTIcc5U2/8MdAY0nAUoKycsCRzvNa/qNx1MV5J
+         UfuYWuLiLAvbN5E5bA8t5N35I5SeeY2XHc8hqUhWRXfAhF+yUR/eBnQlr5eMOLc4JWol
+         kPYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718129797; x=1718734597;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZtI1lbTsgVOULKjRJR67YoxzveH1+C7OsnELRZ7Iie4=;
+        b=F3ErGad3FDZ9OrD1Yv5JpeBLTDqJyClLBd/pdUzeffpRW55iBwnb4aFarT4FAR0XaJ
+         wXFfminQXqxaen8VdlCmYAYRGLZBcXMpnL8mypbV4QxL9fJ8GnyJxUS9kia8aDT0OMR7
+         rFj8+b2R4vFHXkE5X3QtDtehyONd1rclb1eMDhw7ylklJgWmwfgEaHn/zhy+w6/dJdVM
+         a/R+fzdC1faFlmiGXzlZSEqndnkkdkfQjl93aUXkedk8nNZWlpk9e3kGojnWB1/NWE3j
+         p7OvA+U5OoqxYCh1HtaQcxHqtAPSzI8kRCganD5RFgIrUTQDRcJOccHF7TH8UL4vh1Dy
+         WU5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ2bXruaEKy13g2YnnRAPb13p0z5i+kNtjF5IbU12Cy/2lQvFrikfZJtYm1NEaSVRYvYIaahwqMpTNqEbwnDnx2Gcy+7nquK0EnIVNlzLzaWnM7fwUmPaEWJWS+vsL7qqzjzAl
+X-Gm-Message-State: AOJu0YySOkcIsylbJ3bDyyquRIwFXYlComBaHtRimt16b88a7FR+xK+h
+	tN306IMiS+ZSzOWpiHg4gxb/FECtTfH5fODdc4G0stsLsFW6N+u+
+X-Google-Smtp-Source: AGHT+IE3kIR4oIWOtR2uu9NQ6KUNP1rrWOPn4O1UFuBvCoPt7OCj8NMv26WIc3U9S+N4+tQX7M05Zw==
+X-Received: by 2002:a19:2d19:0:b0:52c:8c5b:b7d8 with SMTP id 2adb3069b0e04-52c8c5bb9d5mr3324453e87.30.1718129795674;
+        Tue, 11 Jun 2024 11:16:35 -0700 (PDT)
+Received: from pc636 (host-90-233-193-23.mobileonline.telia.com. [90.233.193.23])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c85accab0sm1334842e87.106.2024.06.11.11.16.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 11:16:35 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 11 Jun 2024 20:16:32 +0200
+To: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	hailong liu <hailong.liu@oppo.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	steve.kang@unisoc.com
+Subject: Re: [Resend PATCHv4 1/1] mm: fix incorrect vbq reference in
+ purge_fragmented_block
+Message-ID: <ZmiUgPDjzI32Cqr9@pc636>
+References: <20240607023116.1720640-1-zhaoyang.huang@unisoc.com>
+ <CAGWkznEODMbDngM3toQFo-bgkezEpmXf_qE=SpuYcqsjEJk1DQ@mail.gmail.com>
+ <CAGWkznE-HcYBia2HDcHt6trM9oeJ2x6KdyFzR3Jd_-L5HyPxSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KKwSS3olauYNtTau"
-Content-Disposition: inline
-In-Reply-To: <20240611161958.469209-2-valentin.caron@foss.st.com>
-
-
---KKwSS3olauYNtTau
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAGWkznE-HcYBia2HDcHt6trM9oeJ2x6KdyFzR3Jd_-L5HyPxSA@mail.gmail.com>
 
-On Tue, Jun 11, 2024 at 06:19:57PM +0200, Valentin Caron wrote:
-> Introduce new st,stm32mp25-rtc compatible. It is based on st,stm32mp1-rtc.
->=20
-> Difference is that stm32mp25 SoC implements a triple protection on RTC
-> registers:
-> - Secure bit based protection
-> - Privileged context based protection
-> - Compartment ID filtering based protection
-> This driver will now check theses configurations before probing to avoid
-> exceptions and fake reads on register.
->=20
-> Link: https://www.st.com/resource/en/reference_manual/rm0457-stm32mp25xx-=
-advanced-armbased-3264bit-mpus-stmicroelectronics.pdf#page=3D4081
-> Signed-off-by: Valentin Caron <valentin.caron@foss.st.com>
-> ---
->  Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml b/Do=
-cumentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
-> index 4703083d1f11f..65a8a93ef5753 100644
-> --- a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
-> +++ b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
-> @@ -15,6 +15,7 @@ properties:
->        - st,stm32-rtc
->        - st,stm32h7-rtc
->        - st,stm32mp1-rtc
-> +      - st,stm32mp25-rtc
-> =20
->    reg:
->      maxItems: 1
-> @@ -90,7 +91,9 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: st,stm32mp1-rtc
-> +            anyOf:
-> +              - const: st,stm32mp1-rtc
+>
+> Sorry to bother you again. Are there any other comments or new patch
+> on this which block some test cases of ANDROID that only accept ACKed
+> one on its tree.
+> 
+I have just returned from vacation. Give me some time to review your
+patch. Meanwhile, do you have a reproducer? So i would like to see how
+i can trigger an issue that is in question.
 
-anyOf:
-  - const: foo
-  - const: bar
+Thanks!
 
-is just the same as using
-enum:
-  - foo
-  - bar
-
-Thanks,
-Conor.
-
-> +              - const: st,stm32mp25-rtc
-> =20
->      then:
->        properties:
-> --=20
-> 2.25.1
->=20
-
---KKwSS3olauYNtTau
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmiUeAAKCRB4tDGHoIJi
-0vaeAP40eEjU5fOjvpKKJDIRxVKhVBgtjG8rxLq1chsBTt6ukQEAoXjCusbWQHYQ
-5OMNChI7TBH/+N8h7CaL9XazCcw9CwY=
-=91pq
------END PGP SIGNATURE-----
-
---KKwSS3olauYNtTau--
+--
+Uladzislau Rezki
 
