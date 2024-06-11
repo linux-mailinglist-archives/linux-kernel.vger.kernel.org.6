@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-210693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD629904786
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CFD9904787
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECD66286EFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE18286F15
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 23:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5490E155A47;
-	Tue, 11 Jun 2024 23:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B468155CA9;
+	Tue, 11 Jun 2024 23:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IRbA7Jtb"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTAkRYBv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEF81553B5
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 23:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAAD1553B5;
+	Tue, 11 Jun 2024 23:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718147454; cv=none; b=cirFaWf12pkv0lYZGRNwu68KXHJUJN0iu0Ztfn5RDjLflMG02P2KB+2w/ZzFas8YlxIhUiIoFgmzBsz7LWtcQVlxPnwViiaIJYpbb0rhgMOMSxQUz+WdjiCtsI30/BpeNKyZKkRh+ejdYa2a4lRBEg6Otx9kqoIfn8r+K0gkOYE=
+	t=1718147469; cv=none; b=WMzZ/qS/aFhH7oz6EY7sI8v1HbBiAwCDzWrqavEqFqnr4GxRLYVYqIOZwRoTfoMPXbL83LT4ybzdGDMpsOzqzZWtAJeZptqUnoi5wmS9lLisYQ9/jE3fIKQzBB/LXEAtCg1DilsbPPS4rzR5jlx7cDg6PXtekqPWvd17P94ip4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718147454; c=relaxed/simple;
-	bh=JyJ2yGZOZ9dEZqkXTQ9wgC284YMUsZat6pw03S0Hv+A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rH5DEY4ef4pqZHdsArbAb0vUenMSHn7W1joMVec0E7RAdyarYws6qcwe+zT+pcTbMMNW5TbkWohfV/uKtybpajjojBE/6dy0DbpmJ0skAQHC2zeulYkbxr4Eo7yCeNTdQ0U+MJrXNLbQn20QRKBAlWo7D1U41ZnpNzqceUc6EAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IRbA7Jtb; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57c8bd6b655so6757a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:10:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718147451; x=1718752251; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fEJ+k84moPXNg3qvePPmZCf7DoIinx6O+aze4nf9Dnk=;
-        b=IRbA7Jtb13bSHtkfTCQY//LyMuip4Y4lxn0imxkgcdTf7lCh62L9rcHzmcRayphD7V
-         y4ibFX51cIultK4MwEQrcaeftW5x8oXQQ8Knof4iGbdN3xFeMxky89HZWYAUu5rQmFk/
-         2ey/a7aQQLZItaK3v4a2M6LCVYh4fLVf/bEyty45DAkFCAQ0fytlsagc8o1OTq3Y3h/1
-         0TbcJBF51FKPEdyqeMiNs4Y6fJ/HTrQq1qK9V6Xo5LeJDDdLfaFLjabYAo/F3pscEYFj
-         124mBgZeJb1ye/q4VCO50dJ5ybRgzpFt50yqX+fIYTHRV+6LBJGHBYBcN8Nrnw6l4Kfj
-         6xBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718147451; x=1718752251;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fEJ+k84moPXNg3qvePPmZCf7DoIinx6O+aze4nf9Dnk=;
-        b=Bl7DAXqDDQDeK0b31BACqPGHd73m4GK0zEJBcBObphFf5mWOLppK1efJbk8odrlmw2
-         tnAwWJnBHQVt9ZwnQhd6iii3TFpytCPJytDm5uox5x9tIMiH/mZEWkNoPlguyq4sVS8F
-         IiY3MH11KEq53Tt0HuDmyweqod6DPzululZih+hpi8d2tOuV7DrVKc0WIJGeA88wm1cf
-         UHUqaJcHVw0JsOWbj8BT776BkgeYn+ILebQ3AvUJRMVZ0m5R/CcSfa2KvuiwCPs+Yd3v
-         IM64CvSUVp1urk+5LowrOTXGxvpEj+0an4Hau6b0gXRGbNxLFGDRY17kc5/41gESpojt
-         h4nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeMUfR9mbUZgN99sCgc/3f7BQppmD32cLxyrN6viXmYXSextggzHZiEgI7601Scn1pbNJ6lQaVP/byEdm01NCoBtNcKTR5VAkAm2Fu
-X-Gm-Message-State: AOJu0Yw6AXT7TNrox1AEqZcM9UJofoSFrj2ja8TTRAJynSHHjZM4aue3
-	BIrpE3wZXOVs2JEf8U16xiQlKonUH4KgAIrZ6Idcwsbe1szfLZKLO8576t7FKI/tm4RirmQytOa
-	XV/BF3fl8E0LyOet6vwMl3HJTcGcejNdpFZIp
-X-Google-Smtp-Source: AGHT+IH/Mh8iRBNHjzst6XyQIWGXcAOiUHzNx/r+Ic+RHr9DMQ5wuKkn9tcaGXdq3WKF1UXCi388R4lG6KVct282WV0=
-X-Received: by 2002:aa7:cd17:0:b0:572:988f:2f38 with SMTP id
- 4fb4d7f45d1cf-57ca7fd71e8mr77923a12.6.1718147451162; Tue, 11 Jun 2024
- 16:10:51 -0700 (PDT)
+	s=arc-20240116; t=1718147469; c=relaxed/simple;
+	bh=xvhHnmrvk2xymlEu8vY7mr2+y/6ekkGuhOrg4CBKlP8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=E9nIV04L8WELH2Mt+0Hrkx3x5vXRqVLlrUx6h3VnZTbCfea0OepLd5AG/hRfYwoi0MfUgTLVfPQRmg4r2txTZMlUpbAUSAF1e5YGjrZJVooVw7Hh1H29bIt5lM6ahZUXGe1hBrkCzw7lKfzulxeRjBIzlTqOK0PR/Jq35eAUoks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTAkRYBv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C3C7C2BD10;
+	Tue, 11 Jun 2024 23:11:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718147468;
+	bh=xvhHnmrvk2xymlEu8vY7mr2+y/6ekkGuhOrg4CBKlP8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XTAkRYBvY4usQZ1W9lbEwH6Oq1EacduyFVbTLlRq8gqTA/md7WwGZYBNd7dXLg3xF
+	 CoK1FlGCIPAeBgbwvECqh/2dp76E8lXcsA/m7uiDW5eMiGZDkHdZ9eA8eulfDr8Ptw
+	 Zoy3iqRjnUj7XcgKwwSneerdLxhRvFO1dk7Sh9k3tkw59G4UKZPtu4lBxW0Py9Qx0M
+	 0NksLUFEMjApmnhlI7DTfzci6KDSJwNFGLa7/yQP6myWaKzBS/jzrYB7vwPcS+uPeQ
+	 Qh2B3DqbwgmQymY5V5zxJ0pLk1PDM7m1wTpjIeXdHQKbO7xR1+oxa0erpUHulgcK6u
+	 apYQlUa3sQ1MQ==
+Date: Wed, 12 Jun 2024 08:11:05 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Tom Zanussi <zanussi@kernel.org>
+Subject: Re: [PATCH v3 3/3] tracing/kprobe: Remove cleanup code unrelated to
+ selftest
+Message-Id: <20240612081105.7fa1280d38e57d2fb0905e80@kernel.org>
+In-Reply-To: <20240611102500.27493dd2@gandalf.local.home>
+References: <171811262833.85078.12421348187962271050.stgit@devnote2>
+	<171811265627.85078.16897867213512435822.stgit@devnote2>
+	<20240611102500.27493dd2@gandalf.local.home>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240103164841.2800183-1-schatzberg.dan@gmail.com>
- <htpurelstaqpswf5nkhtttm3vtbvga7qazs2estwzf2srmg65x@banbo2c5ewzw>
- <20240611124807.aedaa473507150bd65e63426@linux-foundation.org> <mpshgxmd3c3gpxltlvquw7zvhq5rvukcws55yo7womgogjxu7q@4p7dr66ctwxh>
-In-Reply-To: <mpshgxmd3c3gpxltlvquw7zvhq5rvukcws55yo7womgogjxu7q@4p7dr66ctwxh>
-From: Yu Zhao <yuzhao@google.com>
-Date: Tue, 11 Jun 2024 17:10:12 -0600
-Message-ID: <CAOUHufafhx+3QE1CSQpctOm8NjQRuHLT+jyK=mf7c2dgFAn4+g@mail.gmail.com>
-Subject: Re: [PATCH v6 0/2] Add swappiness argument to memory.reclaim
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Yue Zhao <findns94@gmail.com>, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeelb@google.com>, 
-	Muchun Song <muchun.song@linux.dev>, David Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, Hugh Dickins <hughd@google.com>, 
-	Dan Schatzberg <schatzberg.dan@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 11, 2024 at 4:50=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> On Tue, Jun 11, 2024 at 12:48:07PM GMT, Andrew Morton wrote:
-> > On Tue, 11 Jun 2024 12:25:24 -0700 Shakeel Butt <shakeel.butt@linux.dev=
-> wrote:
-> >
-> > > Hi folks,
-> > >
-> > > This series has been in the mm-unstable for several months. Are there
-> > > any remaining concerns here otherwise can we please put this in the
-> > > mm-stable branch to be merged in the next Linux release?
-> >
-> > The review didn't go terribly well so I parked the series awaiting more
-> > clarity.  Although on rereading, it seems that Yu Zhao isn't seeing any
-> > blocking issues?
-> >
->
-> Yu, please share if you have any strong concern in merging this series?
+On Tue, 11 Jun 2024 10:25:00 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-I don't remember I had any strong concerns. In fact, I don't remember
-what I commented on.
+> On Tue, 11 Jun 2024 22:30:56 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > This cleanup all kprobe events code is not related to the selftest
+> > itself, and it can fail by the reason unrelated to this test.
+> > If the test is successful, the generated events are cleaned up.
+> > And if not, we cannot guarantee that the kprobe events will work
+> > correctly. So, anyway, there is no need to clean it up.
+> > 
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Let me go back to the previous discussion and see why it was stalled.
-Will get back to you soon.
+Thanks for review!
+
+> 
+> -- Steve
+> 
+> > ---
+> >  kernel/trace/trace_kprobe.c |    4 ----
+> >  1 file changed, 4 deletions(-)
+> > 
+> > diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+> > index 8c5816c04bd2..7fd0f8576e4c 100644
+> > --- a/kernel/trace/trace_kprobe.c
+> > +++ b/kernel/trace/trace_kprobe.c
+> > @@ -2114,10 +2114,6 @@ static __init int kprobe_trace_self_tests_init(void)
+> >  
+> >  
+> >  end:
+> > -	ret = dyn_events_release_all(&trace_kprobe_ops);
+> > -	if (WARN_ONCE(ret, "error on cleaning up probes."))
+> > -		warn++;
+> > -
+> >  	/*
+> >  	 * Wait for the optimizer work to finish. Otherwise it might fiddle
+> >  	 * with probes in already freed __init text.
+> 
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
