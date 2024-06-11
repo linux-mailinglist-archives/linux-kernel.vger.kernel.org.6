@@ -1,131 +1,196 @@
-Return-Path: <linux-kernel+bounces-209807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F330E903B22
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:53:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6FE903A92
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75E0FB260F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 109E41C238B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE11D17F4E6;
-	Tue, 11 Jun 2024 11:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531E617C23D;
+	Tue, 11 Jun 2024 11:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="ZWat7ZHm"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.7])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D501017C7CA
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 11:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.7
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KIRuJDWc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="W2Czjrfv";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a2XAqvI9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WfrglvM2"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E813717B4F9;
+	Tue, 11 Jun 2024 11:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718106402; cv=none; b=YLeJlRm5W82oKBrX5PnW2irI4auzfzbPXRbICJ3G92+fFgYOAxpjtSi5onWK4EaLQC0XOCpBVb2bi43Nn0OjFDlNr0SulVGWpHiMz/FwgRFnoHj5EhRWIuYiNvmJzjnZ3WOOkR88GlyKiK8wftvY0FOyypeM3fEqBTAvnxkpRvs=
+	t=1718106014; cv=none; b=PsuJNjdW040F9AkQ+/Spi2dY+GNmxqkpzD2tYM3iziO/wmx/r/DB9ISZ5L8CBKfFZr3M8NezG7JvevIHYvHKOle3H/px+oXfxhD0R9rDbpTHPl2sTVFRh3m4ttgGytYUjjuaO51ltLX+UOuKAa7GeODH+bjgSrA4YdWdihZMhnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718106402; c=relaxed/simple;
-	bh=4Iw4fKsDc/U0YUlAj9b61PaJoo45yzZofCFRy/INvHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y7gXTncgY54x16wzWWZrkBqKNApOxaxYYdDsMZVfxd6wUVVpeSdAUGIxDLpv6KXLksdcR00VEcSqfwyaWx6sxPO+gPJ6PEdGREAfND1y3YvwMyfDwnWwsQTq6CCB8Szm0gWd45hn7n0BNy2ofiKb1FtJl54DHL18gescz7GXZKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=ZWat7ZHm; arc=none smtp.client-ip=117.135.210.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=/RlQz+7UKTdFqSfL5oJg7kZuSi4+tMMNoJuBh5KXON8=;
-	b=ZWat7ZHmIlqfR/pMSbiA+WcrAPKPN8Ctg2T10SwHLin8Y644FdQnzS+nF8QDPG
-	APbmkd/18wVax0hlyq0vhlWffbXD6NXyZbeOt8RmfqoSNYrDH14zzCf2XyQlr1zv
-	JuD6tRbae7p18Sm8LykON8RAXRwoSs1NjTsVoc6617irM=
-Received: from [172.24.140.37] (unknown [111.204.182.99])
-	by gzga-smtp-mta-g1-5 (Coremail) with SMTP id _____wDnj_Z+N2hmp0mlDQ--.43517S2;
-	Tue, 11 Jun 2024 19:39:45 +0800 (CST)
-Message-ID: <b596cb41-9c62-4134-a76d-6139ae859b07@126.com>
-Date: Tue, 11 Jun 2024 19:39:42 +0800
+	s=arc-20240116; t=1718106014; c=relaxed/simple;
+	bh=2iEWoOFwjNB/5le8qLnLO2p7knyI+HsxMB0pfPnUwpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c1KJSCRcQGBz6YJoMqhO7VxfcoADUCelDQaLse/O7oJVicZZFRs33tJxp7R09pXn9GiTPIH6qeY6vuMC6Ocw8RX1kDLtN2yBj7uo4QPPZHhSldZqWSSrhdgJvw0fqkW4EOOToohrMcM6Rttk8A0tIhxbS28V7BfFOVhHSD+AE9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KIRuJDWc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=W2Czjrfv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a2XAqvI9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WfrglvM2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D27B63372D;
+	Tue, 11 Jun 2024 11:40:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718106011; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VuNdVP+FE8Ffp4//nCAFUw0S3DEwFjW+72zNAQF/tLI=;
+	b=KIRuJDWcwRSMre8IPCVsgCLpMA4iemriNkNGcH0rXEZdbGIbjOMG06jhMqXrI7LHgjQn8+
+	9WGCh81IAGwWwAQgDT71Bsmr/AF5Nuo+zqCpVDBcMmzp9SB2Vqf24ouZFIlf4ozLMH0AEl
+	bBXZqkeDw2Oq/rSjXoBkWoGexWUeCTo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718106011;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VuNdVP+FE8Ffp4//nCAFUw0S3DEwFjW+72zNAQF/tLI=;
+	b=W2Czjrfv6JWDdnqdNLv3RKyACI0JgSgmxtE3ttmD9XiPGOcEx+XflKRsMBi+O2ufjr8XK5
+	2+ZGvrYsqI5o9lCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=a2XAqvI9;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WfrglvM2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718106010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VuNdVP+FE8Ffp4//nCAFUw0S3DEwFjW+72zNAQF/tLI=;
+	b=a2XAqvI9BR4ZfPmi6rdVQ2W1OagsobpGWZbrEkqPlefvmcscrPTVWDg46CieR4NtpJ+Zr6
+	sv2syeRUO0ptAddgOgyRMa+BocLGhhBRISiKLL61vUxcX+nlv/n4tZnXyOTrgUdmwHaeTc
+	JCSqzQRQNlTGhYBVnE6a5jp4sFcRpww=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718106010;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VuNdVP+FE8Ffp4//nCAFUw0S3DEwFjW+72zNAQF/tLI=;
+	b=WfrglvM2iMHmniAf4NUpxZxoMPETFH6D7BcHhNmxiAXQAOaPcfuFUwEybFX508PHEWAw+/
+	QDRHV0+oVGwa8UBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C7F4A13A55;
+	Tue, 11 Jun 2024 11:40:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RrrKMJo3aGaEHAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 11 Jun 2024 11:40:10 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 688DFA0886; Tue, 11 Jun 2024 13:40:06 +0200 (CEST)
+Date: Tue, 11 Jun 2024 13:40:06 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+	brauner@kernel.org, viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: partially sanitize i_state zeroing on inode creation
+Message-ID: <20240611114006.swwo2o7cldvp2wyy@quack3>
+References: <20240611041540.495840-1-mjguzik@gmail.com>
+ <20240611100222.htl43626sklgso5p@quack3>
+ <kge4tzrxi2nxz7zg3j2qxgvnf4fcaywtlckgsc7d52eubvzmj4@zwmwknndha5y>
+ <ZmgtaGglOL33Wkzr@dread.disaster.area>
+ <q5xcdmugfoccgu2cs5n7ku6asyaslunm2tty6r757cc2jkqjnm@g6cl4rayvxcq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/fair: Reschedule the cfs_rq when current is
- ineligible
-To: Chunxin Zang <spring.cxz@gmail.com>
-Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
- linux-kernel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>,
- yangchen11@lixiang.com, Jerry Zhou <zhouchunhua@lixiang.com>,
- Chunxin Zang <zangchunxin@lixiang.com>, mingo@redhat.com,
- Peter Zijlstra <peterz@infradead.org>, juri.lelli@redhat.com,
- vincent.guittot@linaro.org
-References: <20240524134011.270861-1-spring.cxz@gmail.com>
- <572bef0a-727c-4922-93e9-ad29c385120e@126.com>
- <6AF97701-B8F4-46C6-851E-A8BACE97E8C0@gmail.com>
- <bb43844e-0ef2-44d6-9d98-496865d942b9@126.com>
- <DD2A2CD1-E7F9-4519-82F5-22E769364C55@gmail.com>
-Content-Language: en-US
-From: Honglei Wang <jameshongleiwang@126.com>
-In-Reply-To: <DD2A2CD1-E7F9-4519-82F5-22E769364C55@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDnj_Z+N2hmp0mlDQ--.43517S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww45ZrW8WFyrWr1rWr13XFb_yoW8AF47pr
-	ZxX3WFyw1DC3Z7Ja1Iq3y2qryIyF4fAFZrJryvkry7KanxC3W0gFyfCF43CF9F9F4F9wn0
-	v3s8Aw17AryDZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UC_M-UUUUU=
-X-CM-SenderInfo: 5mdpv2pkrqwzphlzt0bj6rjloofrz/1tbiJAb6rWW-Py04fQAAs4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <q5xcdmugfoccgu2cs5n7ku6asyaslunm2tty6r757cc2jkqjnm@g6cl4rayvxcq>
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: D27B63372D
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
 
+On Tue 11-06-24 13:26:45, Mateusz Guzik wrote:
+> On Tue, Jun 11, 2024 at 08:56:40PM +1000, Dave Chinner wrote:
+> > On Tue, Jun 11, 2024 at 12:23:59PM +0200, Mateusz Guzik wrote:
+> > > I did not patch inode_init_always because it is exported and xfs uses it
+> > > in 2 spots, only one of which zeroing the thing immediately after.
+> > > Another one is a little more involved, it probably would not be a
+> > > problem as the value is set altered later anyway, but I don't want to
+> > > mess with semantics of the func if it can be easily avoided.
+> > 
+> > Better to move the zeroing to inode_init_always(), do the basic
+> > save/restore mod to xfs_reinit_inode(), and let us XFS people worry
+> > about whether inode_init_always() is the right thing to be calling
+> > in their code...
+> > 
+> > All you'd need to do in xfs_reinit_inode() is this
+> > 
+> > +	unsigned long	state = inode->i_state;
+> > 
+> > 	.....
+> > 	error = inode_init_always(mp->m_super, inode);
+> > 	.....
+> > +	inode->i_state = state;
+> > 	.....
+> > 
+> > And it should behave as expected.
+> > 
+> 
+> Ok, so what would be the logistics of submitting this?
+> 
+> Can I submit one patch which includes the above + i_state moved to
+> inode_init_always?
+> 
+> Do I instead ship a two-part patchset, starting with the xfs change and
+> stating it was your idea?
+> 
+> Something else?
 
+Well, I'd do it as 4 patches actually:
 
-On 2024/6/6 20:39, Chunxin Zang wrote:
+1) xfs i_state workaround in xfs_reinit_inode()
+2) add i_state zeroing to inode_init_always(), drop pointless zeroing from
+VFS.
+3) drop now pointless zeroing from xfs
+4) drop now pointless zeroing from bcachefs
 
-> 
-> Hi honglei
-> 
-> Recently, I conducted testing of multiple cgroups using version 2. Version 2 ensures the
-> RUN_TO_PARITY feature, so the test results are somewhat better under the
-> NO_RUN_TO_PARITY feature.
-> https://lore.kernel.org/lkml/20240529141806.16029-1-spring.cxz@gmail.com/T/
-> 
-> The testing environment I used still employed 4 cores,  4 groups of hackbench (160 processes)
-> and 1 cyclictest. If too many cgroups or processes are created on the 4 cores, the test
-> results will fluctuate severely, making it difficult to discern any differences.
-> 
-> The organization of cgroups was in two forms:
-> 1. Within the same level cgroup, 10 sub-cgroups were created, with each cgroup having
->    an average of 16 processes.
-> 
->                                    EEVDF      PATCH  EEVDF-NO_PARITY  PATCH-NO_PARITY
-> 
->     LNICE(-19)    # Avg Latencies: 00572      00347      00502      00218
-> 
->     LNICE(0)      # Avg Latencies: 02262      02225      02442      02321
-> 
->     LNICE(19)     # Avg Latencies: 03132      03422      03333      03489
-> 
-> 2. In the form of a binary tree, 8 leaf cgroups were established, with a depth of 4.
->    On average, each cgroup had 20 processes
-> 
->                                    EEVDF      PATCH  EEVDF-NO_PARITY  PATCH-NO_PARITY
-> 
->     LNICE(-19)    # Avg Latencies: 00601      00592      00510      00400
-> 
->     LNICE(0)      # Avg Latencies: 02703      02170      02381      02126
-> 
->     LNICE(19)     # Avg Latencies: 04773      03387      04478      03611
-> 
-> Based on the test results, there is a noticeable improvement in scheduling latency after
-> applying the patch in scenarios involving multiple cgroups.
-> 
-> 
-> thanks
-> Chunxin
-> 
-Hi Chunxin,
+This way also respective maintainers can easily ack the bits they care about.
+I can live with two as you suggest since the changes are tiny but four is
+IMHO a "proper" way to do things ;).
 
-Thanks for sharing the test result. It looks helpful at least in this 
-cgroups scenario. I'm still curious which point of the two changes helps 
-more in your test, just as mentioned at the very first mail of this thread.
-
-Thanks,
-Honglei
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
