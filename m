@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-209336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3CCC9032F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:46:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6DCD9032F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 08:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1146DB273CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:45:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC7261C2252E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 06:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC9A171E7C;
-	Tue, 11 Jun 2024 06:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B8D171E49;
+	Tue, 11 Jun 2024 06:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6fJAa9U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FU0bKomp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741A017167F;
-	Tue, 11 Jun 2024 06:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F7A18641;
+	Tue, 11 Jun 2024 06:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718088297; cv=none; b=lGzPVMYWi1A1GbJpBbbAxW8C/1oEfvOO/TEYctGY8vAbiE0o2mY0dEYlH/Tv9O+qhPvB5mnVqTbtzNpl68fhPKkveIzjxZ3+2ExUlZB+idMkjrfJe7pTKO6l7xVM/rlaqCZ4K7XlxGUBH6M3iOJjGyT4XRXvDLBIZoQRGz8ylEE=
+	t=1718088441; cv=none; b=IJek5BqIk22aGMj3iZxUbUx25zQBdmJ2Fvj5OW7Zsy7qq0mLxcZ3X+GBYpKTmfX8OInkTaeuWVn6T0STjqxp33n1XQgIZ3O/EgwBH2TovPyZmB2DkAS+7goHszpgbJirLcox8vtDYrjsnB/iBHVYuzAMIao8+zwPpFOe4yb6LHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718088297; c=relaxed/simple;
-	bh=iy1Lrua7h7pyuJRoJuN3UDsLYmIYRnZyzDVImo/6rbg=;
+	s=arc-20240116; t=1718088441; c=relaxed/simple;
+	bh=2HXB5eQC3xMm+Zm9CtyzEAOmLfWV97XhXikgJRPQCWE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QJ26L2AXGwRILOBIPnFMKoqnS1MpGqRl2eBjqrQkIUulcZG8OL8CcMwE6QxZNxp6aG47lIyKQrxyT2yZbAO61xi7GtSC1R3c+I0lnZSESkmzwVGvbzLa/Jk95v+6KzuPdXjg+TSU2QQR/HWFmvsKFRSkxCuk+4wkhaCCyQ8qp38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6fJAa9U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E2A2C2BD10;
-	Tue, 11 Jun 2024 06:44:54 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=oiTe4X+Tnm2bwLvQzyNq+USyFh67eWgVDTh9CftKoWp7KlvwYUEllHFj7Lqt1bRMHxbVXUnWTvNtNJm6dm3meOvBj/Pl2lb8JEeXgXmEjo2I7UkMxejFRamowOxCd2wW6oEM/wz6kTRqRskNN45+RHVOAN5qkjuuFiQOLla/snI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FU0bKomp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18376C2BD10;
+	Tue, 11 Jun 2024 06:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718088297;
-	bh=iy1Lrua7h7pyuJRoJuN3UDsLYmIYRnZyzDVImo/6rbg=;
+	s=k20201202; t=1718088441;
+	bh=2HXB5eQC3xMm+Zm9CtyzEAOmLfWV97XhXikgJRPQCWE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F6fJAa9UopUa4dpJPmy+JW0+x8mDZUlTa7EdyWacRHHOmG/IgfJT12Gw/s5i5LAtl
-	 FZ27OvTTZ8qGqH4PRGYAR1Uyu0MwCiHR4kaNEK7Nu6fyijglSvSeOcM5fGNzNgZpFK
-	 7LJOi6RGMxuKATL4jhIjoeeoZ5MO3Qul3Tt5rXHYb3G4VsF3ge5IcsDSQzNILcWOWQ
-	 2/eNYjaryIXhMnUO7ZdsNJ06P8m6s0wqGwqE+riOGRWDtuBNAvwkRCnbWrhPqRJWs4
-	 AeU0+kSDlWiXuarJUmA+t5GlIyMJEp2z/POMYErrTh2jsXzR/UKpaGdBNSzD+hdHPp
-	 HjfKWLHBJO0mw==
-Message-ID: <1a5144e3-aad6-4a1e-ab9f-4c879b050d45@kernel.org>
-Date: Tue, 11 Jun 2024 08:44:51 +0200
+	b=FU0bKompzepEIXj5dkh5kHbIslBM5yVoeA89A02XJ7wCkDBDNMYIKtjFq9BRyqclZ
+	 xVlCPRtKxkVPxJlXX7wFI0fkrEBIFbqhj8d25Pw82iVg82YpPRyqqmrktUna0koG99
+	 nTzttudklQ+0txqUY6zNq2L+6nUtWQW1NEQh4jfuF771aHHzzPbIj4N3wQU7vuVW6S
+	 PRk2MOcp3lzzIHC/lzbqLwJc4MEldHaYgJ6QQ7wfDbjx51VUSAac/0c9GcjFerw5jx
+	 E9CKKon0hxFrKUPdGTM61DSdpywCOyOgLx6uTen8auwenvaFtHhgAXqSBwNjZiEKth
+	 ERV8nunmx7P4A==
+Message-ID: <1a13587c-28c1-4074-8b0f-7f663b308b65@kernel.org>
+Date: Tue, 11 Jun 2024 08:47:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] dt-bindings: mmc: Convert fsl-esdhc.txt to yaml
-To: Frank Li <Frank.li@nxp.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev,
- krzk+dt@kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- robh@kernel.org, ulf.hansson@linaro.org
-References: <20240605185046.1057877-1-Frank.Li@nxp.com>
- <b1c51acc-441d-4484-adef-1da368571097@kernel.org>
- <8901d498-d30a-43db-bda2-25d3d1d58e8d@kernel.org>
- <ZmcOyVmI5GhRUuVc@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH 1/3] media: vgxy61: Fix driver name
+To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sylvain Petinot <sylvain.petinot@foss.st.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240610150815.228790-1-benjamin.mugnier@foss.st.com>
+ <20240610150815.228790-2-benjamin.mugnier@foss.st.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,39 +105,61 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ZmcOyVmI5GhRUuVc@lizhi-Precision-Tower-5810>
+In-Reply-To: <20240610150815.228790-2-benjamin.mugnier@foss.st.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/06/2024 16:33, Frank Li wrote:
-> On Mon, Jun 10, 2024 at 02:29:57PM +0200, Krzysztof Kozlowski wrote:
->> On 06/06/2024 08:44, Krzysztof Kozlowski wrote:
->>> On 05/06/2024 20:50, Frank Li wrote:
->>>> Convert layerscape fsl-esdhc binding doc from txt to yaml format.
->>>>
->>>> Addtional change during convert:
->>>> - Deprecate "sdhci,wp-inverted", "sdhci,1-bit-only".
->>>> - Add "reg" and "interrupts" property.
->>>> - Change example "sdhci@2e000" to "mmc@2e000".
->>>> - Compatible string require fsl,<chip>-esdhc followed by fsl,esdhc to match
->>>> most existed dts file.
->>>> - Set clock-frequency to 100mhz in example.
->>>>
->>>
->>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> Or not... are you sure that DTS validates? Did you test it? kbuild has a
->> bit different opinion.
+On 10/06/2024 17:08, Benjamin Mugnier wrote:
+> From 'st-vgxy61' to 'vgxy61'.
+> Align with other drivers to not use the vendor prefix.
+> Also the vendor prefix is already mentioned in the device tree
+> compatible string, being 'st,vgxy61', and does not need to be expressed twice.
+
+What bindings have anything to do with driver name?
+
+I think I made it clear last time.
+
+
 > 
-> Need additional patch to fix this DTS warnings. It needs convert to yaml
-> firstly. If you like, I can create big patch set to fix all emmc related
-> warnings.
+> Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+> ---
+>  .../media/i2c/{st,st-vgxy61.yaml => st,vgxy61.yaml}       | 6 +++---
+>  Documentation/userspace-api/media/drivers/index.rst       | 2 +-
+>  .../media/drivers/{st-vgxy61.rst => vgxy61.rst}           | 0
+>  MAINTAINERS                                               | 8 ++++----
+>  drivers/media/i2c/Kconfig                                 | 2 +-
+>  drivers/media/i2c/Makefile                                | 2 +-
+>  drivers/media/i2c/{st-vgxy61.c => vgxy61.c}               | 2 +-
+>  7 files changed, 11 insertions(+), 11 deletions(-)
+>  rename Documentation/devicetree/bindings/media/i2c/{st,st-vgxy61.yaml => st,vgxy61.yaml} (95%)
+>  rename Documentation/userspace-api/media/drivers/{st-vgxy61.rst => vgxy61.rst} (100%)
+>  rename drivers/media/i2c/{st-vgxy61.c => vgxy61.c} (99%)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/st,st-vgxy61.yaml b/Documentation/devicetree/bindings/media/i2c/st,vgxy61.yaml
+> similarity index 95%
+> rename from Documentation/devicetree/bindings/media/i2c/st,st-vgxy61.yaml
+> rename to Documentation/devicetree/bindings/media/i2c/st,vgxy61.yaml
+> index 8c28848b226a..4e4c2c7ad168 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/st,st-vgxy61.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/st,vgxy61.yaml
+> @@ -2,7 +2,7 @@
+>  # Copyright (c) 2022 STMicroelectronics SA.
+>  %YAML 1.2
+>  ---
+> -$id: http://devicetree.org/schemas/media/i2c/st,st-vgxy61.yaml#
+> +$id: http://devicetree.org/schemas/media/i2c/st,vgxy61.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: STMicroelectronics VGxy61 HDR Global Shutter Sensor Family
+> @@ -23,7 +23,7 @@ description: |-
+>  
+>  properties:
+>    compatible:
+> -    const: st,st-vgxy61
+> +    const: st,vgxy61
 
-We kind of been here... I raise the problem and you answer with
-something unspecific requiring me to dig more to prove my point. I am
-not going to play more of that game.
+Why? No. NAK.
 
-Did you analyze the errors?
 
 Best regards,
 Krzysztof
