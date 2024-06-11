@@ -1,74 +1,54 @@
-Return-Path: <linux-kernel+bounces-209553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218079037A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:17:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A7C9037BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E967B29EFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:14:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30281288E6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4645A176AD4;
-	Tue, 11 Jun 2024 09:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2CD17BB17;
+	Tue, 11 Jun 2024 09:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ILY4VEQl"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FftRtfIl"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BC017624A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6057176FA7;
+	Tue, 11 Jun 2024 09:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718097263; cv=none; b=mjogV+1yp5xMhj6kV317eB4obviEz7PX6EPA3TbHCrdqtWHpFCUYmIl3dLX+id8y9zOnsqQPSY5Emuhqo5lOx6O/Suyxne8bbTc2OLQ3NgPnjD4gDaogUwxX3C9cwqrPV2tu7RchJpmthR9EtTTa+eBDES1QRuy0aVWX4zt271o=
+	t=1718097639; cv=none; b=i3l2uVij7Ng5VHAaCRmlKwDovVRCdlhLTmbX4aTD7rT4ydfMIbAd99rOB+2vo0uOZhPAtT8uOktCoPDCuUItB4u0ZRkoZfYNWi9fY1275rahcdH91H/bb8vPO4jyZJWbpK/b99zvhrajWz4p2PpZ3xADo6mLwZPDdMldgWbe9RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718097263; c=relaxed/simple;
-	bh=p3x3s+/tNrym5mIRofuIo7OsTZNSLkXI8ke4t4M7k2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=srH+jkAgnAZHQRjp4KPxOBaFAqy0J7EofYdcuLIyatKLB1GngNArPstsmoN5A1OoCBvVZSBeDE8GwU2n1n1Gz7zaGYno9E8CFVSlfUu/l+PnwH+MyR0v8MpWrCk+rq3CMKyV8Wvv12sVPSrKEuVji9C59OlV3iEUO7iwCeqWudw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ILY4VEQl; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bc1261e8fso4124789e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 02:14:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718097260; x=1718702060; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=/TXwtuKTEZj6Au0WA9Vu6/LZbbPfCoRx0dnIuFjmYP8=;
-        b=ILY4VEQlkihGnyETYtxlQs2GhP/ZIawhy6tNIfLpBOhuIDPlhijiUwBdcjhvMRXp0i
-         UdZJNRNO38SwHs8CCy7256XAoERI4/G/zKcrTdS7zPNMwDUqyZi7zxc3fQJOFfVe6kn1
-         Zii3GfxMkDgWeaA/lF2Wm4+ldJO11zrtZ+cZEHHc6YVQ6d8hGuG+XTGxOC0zvhbQ830Y
-         T71wzXW6YKaeW29lwQ+c4WxUWq1MVAHmMGdTiQ96JP61jzLEuA81xql94HhLy0wbOpew
-         Shu7gPmcA1xqe37rsOTE3NzvLLfjE6I4bMDZjFgMsXdfQlRCxjNpNPLHx3iMKfBAiRIu
-         YBlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718097260; x=1718702060;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/TXwtuKTEZj6Au0WA9Vu6/LZbbPfCoRx0dnIuFjmYP8=;
-        b=bvTOY88ZYi/TTO08lC3I1jDXwYp6AG3x5gQzCOjVLopVCANd1VFZWpEgkjtG4Ec4xz
-         yuPPIceGaZPVUpteq5+6ocJBlrx8N1MYYjkydywmSsLLgYkSz/etc8DQZNpAC7UmrIuK
-         e089+4I0zOA9vXqbtwBkBd2TMSvArzsgTdCHVIsbr30APLuLjz60sj+3hnX7KyYVMtEP
-         sFXizvFBwHes4CvlzDHfiR0ZzP6CT+rlVtvN52vTzj5jdgKnfNajOsV5ukyqhwziOQy0
-         BjyQTAf50BNao36lgSl8IciUCwzcxHD/mLdx4trKD04mm+/nZCHDw7+c4xedm/TU2Q7j
-         Fd9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW0ln+PTCizEn/rhRQoYnqM5rGHnbbYAXjHe8RVis/T3ObRijhBczTX4MztKJk3KBtU33fsudOizfxRNJMhlsnqSYKvkZ9vCbRJrwvW
-X-Gm-Message-State: AOJu0Yy5s3q145Cwk8mSnOnqGKlOAKolEX/VBL2UtQ5PAJToc7Vs4lA9
-	XnKFetRg0FfaZKDSKL0OXDqGSAd/fPx+jV7lXLIZcuIvFUPyJUE+rypQe4RWSwg=
-X-Google-Smtp-Source: AGHT+IEtTVGukRTZfWCidMon/sDVDeg4VJKJjpcsHo2ctc7b2+XZN6hz836P6S+mfu7mdIMK9tQk/w==
-X-Received: by 2002:a05:6512:3d0b:b0:52c:836a:3db8 with SMTP id 2adb3069b0e04-52c836a3e68mr5771381e87.15.1718097260124;
-        Tue, 11 Jun 2024 02:14:20 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2024b1c8sm6114658f8f.39.2024.06.11.02.14.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 02:14:19 -0700 (PDT)
-Message-ID: <170c14c9-e1c7-4252-a550-4f9a8cef3a27@linaro.org>
-Date: Tue, 11 Jun 2024 11:14:18 +0200
+	s=arc-20240116; t=1718097639; c=relaxed/simple;
+	bh=eO/SU6/Ukvz9yz53+xanZdbexobUG1/nTCp0LPHQuOw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=O5Q4nkm2zIhQDslcjU1TkFdq/+qeduTMSBILKrYn4P6H5fXWj7eMNipF5/lPaAF+LBosLZclbhUQZSUlge66JB+9cMaQxIAd3B19Xb6/RLvA0h9jyRFrTTuNwkO3YhzIg/vvmSuz0Q5XdNz3cpHuwoQ5/RNMon1ZBVPWxuBZhfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FftRtfIl; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718097309; x=1718702109; i=markus.elfring@web.de;
+	bh=SSWdIHLeK6c5qkRxJRQIzSFopdFgLqZQ5bZ8370mvc4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FftRtfIlHxGUAI3vCcm4yTpn/7z8WsjG+Em5dB5ND9N5eedR+QTMfkd+w7F2Zs2i
+	 WI1Yj0slkHGiDMKMlDkpOiP/MjEK/B6R2dAiV03zMK6+t4kT7xBeCDDQ888uoe/W3
+	 HMJ+HG6g52cDLWKEcQbr6xXdD9cRTtNwHwz+bFZPPzkQ7TcZrvW0MggwyEXpoOwch
+	 F1SP/+OJXN2UQv0MqjXDYRgbkFIKPiQyMGI39/lLF6bCcLm4PLaCKaVl0+whiFMsB
+	 SB0PgbV6ShDjyXNFTfm7jH/gkRm4xnMBSXmDKl3ZdmJohCKk1XemhGUQoO6np/E5N
+	 r5idNtThZcYbX7sxNg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MSqTK-1rq7cJ2zhW-00J0sU; Tue, 11
+ Jun 2024 11:15:09 +0200
+Message-ID: <0e1ac9ca-c241-4b48-a219-d1aaef2a752a@web.de>
+Date: Tue, 11 Jun 2024 11:15:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,78 +56,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/2] leds: Add a driver for MP3326
-To: Yuxi Wang <Yuxi.Wang@monolithicpower.com>, pavel@ucw.cz, lee@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- wyx137120466@gmail.com
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240611083236.1609-1-Yuxi.Wang@monolithicpower.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240611083236.1609-1-Yuxi.Wang@monolithicpower.com>
+To: Ye Bin <yebin10@huawei.com>, linux-block@vger.kernel.org,
+ linux-nvme@lists.infradead.org, Jens Axboe <axboe@kernel.dk>
+Cc: LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig
+ <hch@infradead.org>, Ming Lei <ming.lei@redhat.com>
+References: <20240606062655.2185006-1-yebin@huaweicloud.com>
+Subject: Re: [PATCH] block: bio-integrity: fix potential null-ptr-deref in
+ bio_integrity_free
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240606062655.2185006-1-yebin@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GHmc89SQ4Td/zPwUg//USd5islR+tdgleigB+jmBeZEuq6FZ7Dy
+ fkE7CjeiMfQNvzY0YK08nYlilwmnduxqbtLEXlZPIHy8TtJwqsAsxfDMtv1kVgp7vN7HY3T
+ IALqM09md0BMzdXXkahjw/wqc3/g/o4um3hx2fvO5m4g3LdePf+xlz9QuKO0YSskYbKSlDW
+ ouYkrcSzcG4LaTCOdkrZg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:w3g6y7385Ok=;4OLDESrn0lp0xrLZI+q1mYjtpDC
+ 9L4XwYlMGBU/2knpMHxRGtTguQQPeZkUn9hbbhdJEbPFwKVuasnXIFwsFPPZMJWGF9Gyi5AdU
+ p2/eh5PYU7JjePGFXBpZuGx5XzQAULZfIJqL3J5wx0xVh8v4k18N+f/UiMmgqVRhUdafKaK5A
+ Vjuvpu5YRwyP4ZaoiHmzSaLZxFMm8rAaGBoCp24NpeW8eOYXiBufOe+roIN7J+3U0i1RO20M5
+ ibiygZB/TDIGdrs9L4FzHsK0UZvGL93mO/3aLCDIdHIZtml9pvBSI9vMWtqOaQ1lZwN9GWrnn
+ XVz0VFlULaG85q/vFA2450eAeTuFWrQ+f0wPCIZ54LPwyy/bGCMqhtVdjGFY+/LHyZeMD3R6a
+ dqQytdUotZXhiS5/f3pfvC3DcWQZFmjSAJed9btt0ovvy25dK/EJiQMLyGp7ZS/w4i7TfZ5Sf
+ RpsDfzZ65tCEBD+iWOM2HkNTcH91z5c7FAQeclUgQeN/Fen8vAr2eZ5OMj7hPPJHya9BbL6rQ
+ JoiO5Gu3MYgjmhHYVNqdPaLjh1TLMVOvgth8ETDFRpS4sBh2VWPFhatcBaZYvOdP8eXxM8sjK
+ ftgSY1q05gPDkmgL3kVTG+xpDRT5wG/zQgS/gOcuzl5Bq6iGmjmXjyXVuqsQ2iYEhAOmZpXue
+ gCx8qIA+QByymh0Zwrxr4B+hHfguxyA3d1JmrVMKmS9XzrIsEbSBj0Uer8v/MBbU9k7tNblRI
+ FX09N3GphcrQdp2SBs4/aZi6w0LFVeRdWqpYu9CJhwdHpyxPlLEDJ9wjmNcyq9xiRm199crh4
+ h2dGqmiwCRC1yvvmWZpUy52+P348tLJ7LBdy0p3mQiSDo=
 
-On 11/06/2024 10:32, Yuxi Wang wrote:
-> Add the binding description and the corresponding driver for
-> the MPS MP3326.
-> 
-> Signed-off-by: Yuxi Wang <Yuxi.Wang@monolithicpower.com>
-> 
-> Changes in V2:
->   - Fix patch format error
+=E2=80=A6
+> The root cause of this issue is the concurrency between the write proces=
+s
+> and the block size update process. However, this concurrency does not ex=
+ist
+> in actual production environments. To solve above issue, Verify if the
+> segments of BIO are aligned with integrity intervals.
 
-Only this? So all other feedback - like 10 comments - were ignored?
+* Please improve the change description with an imperative wording.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.10-rc2#n94
 
-Sorry, please go to previous discussion and implement entire feedback.
-Then document in changelog what did you do.
+* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
 
-Best regards,
-Krzysztof
+* How do you think about to use the summary phrase =E2=80=9CAvoid null poi=
+nter dereference
+  in bio_integrity_free()=E2=80=9D?
 
+
+Regards,
+Markus
 
