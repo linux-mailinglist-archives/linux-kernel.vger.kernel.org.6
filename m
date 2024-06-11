@@ -1,181 +1,193 @@
-Return-Path: <linux-kernel+bounces-209401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8917A903416
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:44:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A681790341E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 09:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9B628BA0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:44:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD95C1C21D60
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 07:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08730172793;
-	Tue, 11 Jun 2024 07:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A56172BD8;
+	Tue, 11 Jun 2024 07:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jMz3hmWE"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZS9uLdIn"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788AB172BD2
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 07:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A5A1E52F;
+	Tue, 11 Jun 2024 07:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718091842; cv=none; b=mDuJN1nN1sWOqc2ddEprHn0MIT7HeG72PHKcorXmK8kTLmVZpx+tE8IcHVX/h/TLQljGUwKktcIaSbluIRQ+my46jleCVVjZITHNWIKUoh491qBkP6uZTtQE/Hgu3V+H+hPTpMuJCsEmLM/hSUlpdvrf8d+Q3YIkZ5H29xBDKSs=
+	t=1718091889; cv=none; b=Fwws9DLq0FPEGQQM8Q3IhYDEp0bSAZmCuMuPx8NOzLx+geMsiRgagiJJiRR0POondbXOD7xlXla9U7ZZQoqvPVdStggn+eLkrJ8f+4to//iOK9ar5BTTjslb3dW09i6VqRWt6Rj3ZSgoewF8U2BeDg0jnR+hgGa6ZqKoIkfbNSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718091842; c=relaxed/simple;
-	bh=8m6jYm+p0unixwgfRSSCm6/2jtFbUYbvXevNZxEqCDQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=T1vJfUqYEcDVCqfjKiGlnly/2aekJjM3+Dt/9aGsDz6u1MLPW6lFouLVYce6yKHG7bTsEplJr6KlAsF+U/TMi8q9V+aCK9IOiVGscTUf081xiOoZRclH8SdT39Z4ppQ4L/Z8w0MB+ghKAxhvx0WiqBxSV2rvIY+ikSD4hvzMRpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jMz3hmWE; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35f23f3da44so1799447f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 00:44:00 -0700 (PDT)
+	s=arc-20240116; t=1718091889; c=relaxed/simple;
+	bh=SDqAx+l0Jjbh3zwtEx4gpEmG6LW9mMxqD0J4QCprdCk=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XvXaQ+Y5VT+M6PydciBB+z3+ty+Hc20G14CmkR4KTlAn14WPF7jinxCId9FBypJtg/qTEup04Qd82PKN4eTwu0tIqan+9CdiyP3RaPOJGZJtVd+lb+x34fQs12INfDMfzIV1frbJmzvPkIuhVw7Qtz1wV6uvIMZ5mituZV9AS4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZS9uLdIn; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6f0c3d0792so81813566b.3;
+        Tue, 11 Jun 2024 00:44:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718091839; x=1718696639; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WsHiHDrwj7KWTlL47RJPPmsPBBAjKyL5RmZO1AaRVKI=;
-        b=jMz3hmWEkEpJS/ULIW0Bl6uyy5IRk7IA2NwyW+aZ6yIKxrYHwrzDHbuLQhxbzIL7lq
-         YDO0Z2YY6z6tt2MqfaX0mZgAXaWz2Hq9imTGtVdiV36lTCveeFk0jrZbQHm+YypR+cxy
-         wO8bEvehOXuZkP1gPuq8X0zoMTfP6N7Vsn4rV8gscIlllhhgFtKnNL1M94WktsZ/0rn5
-         7iTF/ji/Oe2Jk/1MbXhyF+fV6SiJj2Xv8ZVHGXNYMyKS+mcDLcEJOleOgoGda36CLWqg
-         wfgqVwzaSKSYCbSP9zKaM285udWX6/ZKLRBdZnP9ibikuhBwRtKWRY0J52fXLgIDR0S4
-         UH2A==
+        d=gmail.com; s=20230601; t=1718091886; x=1718696686; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hq7VlDHf7pEbFf7v8zZEUyFUewiFD+NWVkc0x5bTvZM=;
+        b=ZS9uLdInbVq4n6as0JN+a6QjMdMMV+ZUKgNDHRWblWBfLXUC9Gjab5edoicc/QqB+g
+         WmPithd7wCU+hHQK9u7sYqg1P60M8bITEgVKJXWIKO5ywemNe3GW6yNuVTUzMSZkpbdf
+         xN6VbCrwQRoC1HxPYekgtO1DkT/xIPzjHIXzME2vFQV+JmcQfkD/PSVaJDFG1dJB0BNQ
+         rKmUwbuzm2b2aVuBKaxX0w8yJMItk+Ks6FmUbaa7s4rXc8u+DbzqLC/QrFiLtDOgF3JY
+         cnFnHm60orjKp5k3ZAYf//IlXpHV3MR6QDE+Nfd7HfrdXRykUa/5vLDB7U+LuJFidj4x
+         bxUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718091839; x=1718696639;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WsHiHDrwj7KWTlL47RJPPmsPBBAjKyL5RmZO1AaRVKI=;
-        b=ErjwpeAU1ET5L3Mci+5eaRcOHtvQLGWKlRl0UDie46GOMt982Gk0O8sOpjGsyCIM9k
-         GRnxONfb2RM1SQHmF7xlW3oAXifp+bfUXjuJy1bgh65amI/YEZbSY28QovuQCCUQELfx
-         bQq77F0vgdYFT4i8HGiZ/dPP4sAvh+UhP+0lhbvDeNt/ZTTRAWxvBAvO6ptkThQlGvgD
-         Vk/POM/uC93jpyW4fLjx75joSORi5/Xdb/VdPQ71IWi7CBidQ3fxkKbj99nvlsIyewXP
-         8xzqtGPwNPiI0plUZTe7A3BS4PeWJ4efPSJ2CMGM/z6ysfiDbCeerWgCVFbLDu1plyZ5
-         VC2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXRE4OsRLROmLpQPC1OnPdF76JzZWHD1ocu0RJ/zy5kfuFAOhdTKXF2Oy5Xxsdo8Ri9M05m3e7P+WLVkb8OWE5iB0ZXBWBuWPaiijQk
-X-Gm-Message-State: AOJu0YwuZ7owMV5/2eA/KAAT4Uzh+Q+5wwwJ/i6qa+HaaMqwkCBZkka9
-	pL0YIUOtpdNOfSD6J6+HCsUPEGWWkWl9XicauO9oRU+yysPend2HHAuqB44c+qk=
-X-Google-Smtp-Source: AGHT+IHVUWQPU0XLKI8clLjC5hscIpVdt5ZDQarh9E7gq2k1Q6gIf/HvwxVroSXFwFVrLN4v0Tr2cg==
-X-Received: by 2002:a05:6000:1291:b0:35f:22d5:da72 with SMTP id ffacd0b85a97d-35f22d5dbbamr3080168f8f.50.1718091838847;
-        Tue, 11 Jun 2024 00:43:58 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:5a4:3b2:c750:ef5c? ([2a01:e0a:982:cbb0:5a4:3b2:c750:ef5c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f25dc3f07sm4013408f8f.79.2024.06.11.00.43.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 00:43:58 -0700 (PDT)
-Message-ID: <c0013295-c7de-4118-99dc-12074002c5fd@linaro.org>
-Date: Tue, 11 Jun 2024 09:43:57 +0200
+        d=1e100.net; s=20230601; t=1718091886; x=1718696686;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hq7VlDHf7pEbFf7v8zZEUyFUewiFD+NWVkc0x5bTvZM=;
+        b=dAUKwfkDJ1lzO9eH82iVqiUQX/j951/aU53gcLN7ieCevbw9rCwgCOMCaooG1jZkIQ
+         wb9x/qwnNaOG6TON1v0rokR4S2zkMiLZ7Gx2bDCZ7bNOAykJ5YQmcDmvKFrgplSO2wWR
+         Qr4r8ZF/uno9rGWU8TD6KUjSFm98oDxLPgbb2hcaqjksrsfHD3gERhr2KGnrc+wg3mUj
+         wZVsdIOaEcYOv6RfjypEQEG4VxxmRN3ytSOHwp9gYuNd+LCsSBuQ+tcSsjkG9d0JoLXp
+         20s4JQuJPLGBWE54s09y/luO3uT6379DowLfwc86V0fm3bTeAOvdFQxX0apWHktsGYaO
+         Wh3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUIOKAJV9UinP2/pv7F9KWzj5OHuXrmz4ogOSMMXvEwgMoZc+8k95qXtI2wa4KGEYXL2OKtAr7tWyGv4o/FUbEbqaGLY7OuO6R2YoRzqt089ERZoU+GJR3WFIpjxhPz2ZgVvDT+TU0x4ZbkfKG+NJVTrNro7eoXGUsTeT9PCtDD6b1M4MERj2wie9glBgFhAlM2NuXRcaLiiO6D66wbCGeZSKvXs4Wr7MycWZCoowJeizh6q7xHcvafVCOh
+X-Gm-Message-State: AOJu0YyaSeSgsqpDIjhI37eC5pjMGdBodZJ2rQDXGh74rfN43pya3TN9
+	zepOJqG+Wb6N2OzQEQ3yxQ3w8Nh4lSt6+EraifYP6fW7fNEBCgFu
+X-Google-Smtp-Source: AGHT+IHlSFuxcjLt48JBJua/3vo0MpwKdqxWfXLKbeLpZ2nG+r1CWlnSG/xlxAddGeHS3HfvKBYIUQ==
+X-Received: by 2002:a17:906:3c06:b0:a6f:1f5d:4db5 with SMTP id a640c23a62f3a-a6f1f5d4e67mr307274566b.34.1718091886042;
+        Tue, 11 Jun 2024 00:44:46 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f152b0bf9sm316620866b.65.2024.06.11.00.44.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 00:44:45 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 11 Jun 2024 09:44:43 +0200
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>
+Subject: Re: [PATCHv7 bpf-next 2/9] uprobe: Wire up uretprobe system call
+Message-ID: <ZmgAawOdLZAZynA_@krava>
+References: <20240523121149.575616-1-jolsa@kernel.org>
+ <20240523121149.575616-3-jolsa@kernel.org>
+ <20240611070521.82da62690e8865ff498327f7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] pmdomain: amlogic: add missing MODULE_DESCRIPTION()
- macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20240610-md-drivers-pmdomain-amlogic-v1-1-b49ddb1a8bdf@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240610-md-drivers-pmdomain-amlogic-v1-1-b49ddb1a8bdf@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611070521.82da62690e8865ff498327f7@kernel.org>
 
-On 11/06/2024 01:13, Jeff Johnson wrote:
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pmdomain/amlogic/meson-ee-pwrc.o
+On Tue, Jun 11, 2024 at 07:05:21AM +0900, Masami Hiramatsu wrote:
+> On Thu, 23 May 2024 14:11:42 +0200
+> Jiri Olsa <jolsa@kernel.org> wrote:
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
+> > Wiring up uretprobe system call, which comes in following changes.
+> > We need to do the wiring before, because the uretprobe implementation
+> > needs the syscall number.
+> > 
+> > Note at the moment uretprobe syscall is supported only for native
+> > 64-bit process.
+> > 
 > 
-> This includes meson-secure-pwrc.c which, although it did not produce a
-> warning with the x86 allmodconfig configuration, may cause this
-> warning with other configurations where CONFIG_MESON_SM is enabled.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->   drivers/pmdomain/amlogic/meson-ee-pwrc.c     | 1 +
->   drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c | 1 +
->   drivers/pmdomain/amlogic/meson-secure-pwrc.c | 1 +
->   3 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/pmdomain/amlogic/meson-ee-pwrc.c b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
-> index fcec6eb610e4..fbb2b4103930 100644
-> --- a/drivers/pmdomain/amlogic/meson-ee-pwrc.c
-> +++ b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
-> @@ -648,4 +648,5 @@ static struct platform_driver meson_ee_pwrc_driver = {
->   	},
->   };
->   module_platform_driver(meson_ee_pwrc_driver);
-> +MODULE_DESCRIPTION("Amlogic Meson Everything-Else Power Domains driver");
->   MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c b/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
-> index 33df520eab95..6028e91664a4 100644
-> --- a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
-> +++ b/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
-> @@ -376,4 +376,5 @@ static struct platform_driver meson_gx_pwrc_vpu_driver = {
->   	},
->   };
->   module_platform_driver(meson_gx_pwrc_vpu_driver);
-> +MODULE_DESCRIPTION("Amlogic Meson GX Power Domains driver");
->   MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> index 4d5bda0d60fc..b50e5678abe3 100644
-> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> @@ -355,4 +355,5 @@ static struct platform_driver meson_secure_pwrc_driver = {
->   	},
->   };
->   module_platform_driver(meson_secure_pwrc_driver);
-> +MODULE_DESCRIPTION("Amlogic Meson Secure Power Domains driver");
->   MODULE_LICENSE("Dual MIT/GPL");
-> 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240610-md-drivers-pmdomain-amlogic-f117930600ea
-> 
+> BTW, this does not cleanly applied to probes/for-next, based on
+> 6.10-rc1. Which version did you use?
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+ah new syscall just got merged, I'll rebase and send new version
 
-Thanks,
-Neil
+jirka
+
+> 
+> Thank you,
+> 
+> > Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> > Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  arch/x86/entry/syscalls/syscall_64.tbl | 1 +
+> >  include/linux/syscalls.h               | 2 ++
+> >  include/uapi/asm-generic/unistd.h      | 5 ++++-
+> >  kernel/sys_ni.c                        | 2 ++
+> >  4 files changed, 9 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> > index cc78226ffc35..47dfea0a827c 100644
+> > --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> > @@ -383,6 +383,7 @@
+> >  459	common	lsm_get_self_attr	sys_lsm_get_self_attr
+> >  460	common	lsm_set_self_attr	sys_lsm_set_self_attr
+> >  461	common	lsm_list_modules	sys_lsm_list_modules
+> > +462	64	uretprobe		sys_uretprobe
+> >  
+> >  #
+> >  # Due to a historical design error, certain syscalls are numbered differently
+> > diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> > index e619ac10cd23..5318e0e76799 100644
+> > --- a/include/linux/syscalls.h
+> > +++ b/include/linux/syscalls.h
+> > @@ -972,6 +972,8 @@ asmlinkage long sys_lsm_list_modules(u64 *ids, u32 *size, u32 flags);
+> >  /* x86 */
+> >  asmlinkage long sys_ioperm(unsigned long from, unsigned long num, int on);
+> >  
+> > +asmlinkage long sys_uretprobe(void);
+> > +
+> >  /* pciconfig: alpha, arm, arm64, ia64, sparc */
+> >  asmlinkage long sys_pciconfig_read(unsigned long bus, unsigned long dfn,
+> >  				unsigned long off, unsigned long len,
+> > diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+> > index 75f00965ab15..8a747cd1d735 100644
+> > --- a/include/uapi/asm-generic/unistd.h
+> > +++ b/include/uapi/asm-generic/unistd.h
+> > @@ -842,8 +842,11 @@ __SYSCALL(__NR_lsm_set_self_attr, sys_lsm_set_self_attr)
+> >  #define __NR_lsm_list_modules 461
+> >  __SYSCALL(__NR_lsm_list_modules, sys_lsm_list_modules)
+> >  
+> > +#define __NR_uretprobe 462
+> > +__SYSCALL(__NR_uretprobe, sys_uretprobe)
+> > +
+> >  #undef __NR_syscalls
+> > -#define __NR_syscalls 462
+> > +#define __NR_syscalls 463
+> >  
+> >  /*
+> >   * 32 bit systems traditionally used different
+> > diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+> > index faad00cce269..be6195e0d078 100644
+> > --- a/kernel/sys_ni.c
+> > +++ b/kernel/sys_ni.c
+> > @@ -391,3 +391,5 @@ COND_SYSCALL(setuid16);
+> >  
+> >  /* restartable sequence */
+> >  COND_SYSCALL(rseq);
+> > +
+> > +COND_SYSCALL(uretprobe);
+> > -- 
+> > 2.45.1
+> > 
+> 
+> 
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
