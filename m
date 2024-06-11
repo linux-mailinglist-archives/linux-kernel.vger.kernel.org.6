@@ -1,92 +1,102 @@
-Return-Path: <linux-kernel+bounces-210304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9639F90421D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:04:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E64E90421E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 19:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16023B227CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:04:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 116641C20862
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 17:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E934502B;
-	Tue, 11 Jun 2024 17:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC92142067;
+	Tue, 11 Jun 2024 17:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0rYQTa/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e37o/8pj"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78503FB83;
-	Tue, 11 Jun 2024 17:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F0940C03
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 17:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718125479; cv=none; b=DxcSsI9y1qBA2aruFY/s5wADJXlEn7wxEsbA9xR7OeYF9M1Y/cN0TI++looVwZR3mE04Qczv7lkxli/DN/Z1Q7ExAvESqW5jhcrloEMj7Eu9LmSEGkHRrvgAYOtA5fWMDmjAcEcHgEov0/AU+zwcRo8R8os4MkXQpPFjJxXar9c=
+	t=1718125502; cv=none; b=tzvmNEyzCJB9Mm4r8Q9ipQtGZUa5FOpjM0by+hasNXrbhbMNN0WoRQJkN1GYgT6IRTxxprPPvquwgwoky3RPBsyPUPEeH/5Y7CQJhGW8qW2RvBO55+DN8h1WajBQ3lKoszneoG34GYb2fY4wL1xQdj5+3y0UtQwj6rkL55yEOhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718125479; c=relaxed/simple;
-	bh=lqJhX3hH76dmmFicVO/WpvcL89wI/1+jJfKME2NrxwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=KqYfGPvAtpXfc9+fOgK+6xJIXqw441W8/Vhx/Of31p2Fp8nV6iJgJnz1YE1P1lDQAD1x/VPxAP9/nKzPNGSwoBuslI2QacYMNDgucZFaRZgaUroBxXt8EEwIPuMMcBOYFoVTCmQcM2VdWyuQ4Z2bBA/DInySxWpKvR6DI9uIPCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0rYQTa/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1179AC2BD10;
-	Tue, 11 Jun 2024 17:04:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718125479;
-	bh=lqJhX3hH76dmmFicVO/WpvcL89wI/1+jJfKME2NrxwY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=t0rYQTa/LRnLznXbAnC8DdbHVFObu+ZoSZRHAQJ5Ug1eaRgslX2Wjc2eYKwylXfhz
-	 2oGVqjTFxRL99WAndDKNEcoNavx0Fss2XtS8jsCAqgcfLYRlXB8l37cNRKmRDxDG4X
-	 Ya/qU12w7G6Uo1zQlAf11YUPG0qWJS1Ozb1jAOTmqlQ3qhodAa2Jt4RHTm1VOFh4nW
-	 1IvAUFCeVQlKMLZl/8EZq+yCGn5kfODAqHlVriMp5Qk/1477eW7SLznjkZMVGM5Whx
-	 78vL5EDdRI96G+ijFSXRrcWJiDdLc5tGoPYcAGvaR6ur1j0ZLFBCBfYNT3RyKmihL4
-	 zeZrWieix19xw==
-Date: Tue, 11 Jun 2024 12:04:37 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] CREDITS: Add Synopsys DesignWare eDMA driver for Gustavo
- Pimentel
-Message-ID: <20240611170437.GA989843@bhelgaas>
+	s=arc-20240116; t=1718125502; c=relaxed/simple;
+	bh=v1ZNq4JwoYhwZQR6SFYW6CMOzV82UJ7h9T7rF03L/88=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R3VSICzjGyqoqwSdhcLw7qMyZO3MM32ez6tRxn7i2ckOjmXBjo7ChfqfzGT0npn0x2RI9Xw1j/vo4VDCoxtah8ZnFyCjRMIot2YzNO+7vSQ+SZd5vntbRo0Gq8GhT0CPUV8LyNz5yzwAdD8jcRKj0ZLRbd1OMKHOl73bj0uBEz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=e37o/8pj; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45BH4wJN077943;
+	Tue, 11 Jun 2024 12:04:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718125498;
+	bh=mIGARfpX1NigkPik0naU8QyBW3hIwD+N3yK6u39Mhv4=;
+	h=From:To:CC:Subject:Date;
+	b=e37o/8pjIBMauMLJgK/QsYUHX8L0Wg6f72XYd1w0lAMkwUzJvFG3lTjQlS17hcuLi
+	 I9+95WtUQxxtnsHCXIqjBrchpg+QDk/bBRl2c+Y0b/RkSX+INuCcZlorLhKPWiR7O5
+	 AW4xcOkAXDUa97IR6zWuns0Pe6O86ZhO6C0D6wkk=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45BH4wgU023609
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 11 Jun 2024 12:04:58 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 11
+ Jun 2024 12:04:58 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 11 Jun 2024 12:04:57 -0500
+Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45BH4v7a039108;
+	Tue, 11 Jun 2024 12:04:57 -0500
+From: Andrew Davis <afd@ti.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Beleswar Padhi <b-padhi@ti.com>,
+        Hari Nagalla <hnagalla@ti.com>
+CC: <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
+Subject: [PATCH] mailbox: omap: Fix mailbox interrupt sharing
+Date: Tue, 11 Jun 2024 12:04:56 -0500
+Message-ID: <20240611170456.136795-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611153059.983667-1-helgaas@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Jun 11, 2024 at 10:30:59AM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Add the Synopsys DesignWare eDMA driver to CREDITS for Gustavo.  See
-> 7e4b8a4fbe2c ("dmaengine: Add Synopsys eDMA IP version 0 support").
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Multiple mailbox users can share one interrupt line. This flag was
+mistakenly dropped as part of the FIFO removal. Mark the IRQ as shared.
 
-Added to pci/for-linus for v6.10.
+Reported-by: Beleswar Padhi <b-padhi@ti.com>
+Fixes: 3f58c1f4206f ("mailbox: omap: Remove kernel FIFO message queuing")
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ drivers/mailbox/omap-mailbox.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> ---
->  CREDITS | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/CREDITS b/CREDITS
-> index 3a331f5fcd7a..8446e60cb78a 100644
-> --- a/CREDITS
-> +++ b/CREDITS
-> @@ -3149,6 +3149,7 @@ S: Germany
->  N: Gustavo Pimentel
->  E: gustavo.pimentel@synopsys.com
->  D: PCI driver for Synopsys DesignWare
-> +D: Synopsys DesignWare eDMA driver
->  D: Synopsys DesignWare xData traffic generator
->  
->  N: Emanuel Pirker
-> -- 
-> 2.34.1
-> 
+diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
+index 46747559b438f..7a87424657a15 100644
+--- a/drivers/mailbox/omap-mailbox.c
++++ b/drivers/mailbox/omap-mailbox.c
+@@ -230,7 +230,8 @@ static int omap_mbox_startup(struct omap_mbox *mbox)
+ 	int ret = 0;
+ 
+ 	ret = request_threaded_irq(mbox->irq, NULL, mbox_interrupt,
+-				   IRQF_ONESHOT, mbox->name, mbox);
++				   IRQF_SHARED | IRQF_ONESHOT, mbox->name,
++				   mbox);
+ 	if (unlikely(ret)) {
+ 		pr_err("failed to register mailbox interrupt:%d\n", ret);
+ 		return ret;
+-- 
+2.39.2
+
 
