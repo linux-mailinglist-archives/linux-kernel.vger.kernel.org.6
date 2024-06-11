@@ -1,185 +1,217 @@
-Return-Path: <linux-kernel+bounces-210652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6E29046C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:13:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3F89046CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0841F25589
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:13:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFC5C1F259F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 22:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED621552F8;
-	Tue, 11 Jun 2024 22:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F76155381;
+	Tue, 11 Jun 2024 22:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOWgC4Rn"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MGNiR/Pv"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645777711C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF9815539A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718144000; cv=none; b=d6xUCDVUoaRcOtYd1yu3gwBuqFAvIKQG5Skv2caOXml5C9cQEjYrhs4fxCnsvosrh1AFM6FLLGNunYe0XpC7DP4Zc3+vTpofYtY/bZ1WEeEqWIHPzNfdKYsmsgR1Dj1RrlgJdzU81A3K55+aB5HEgvGT080M8kYxfykaPwtoaV4=
+	t=1718144006; cv=none; b=UAkzpQjS4U4GJdNv+WqSYMWzERTwKgPekfXF554V2JgmCvxgvGa9k6Efndd/urOMsWB//ofju22yak3coBnX4eCAt24Rs76o1S1L3oTkKVxae6r2Ytk2+ZiuR+kXlqk+dqhnweaPT/94CujHbNDApDfmCSP+O4uZP9nGy/lR9ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718144000; c=relaxed/simple;
-	bh=cxBhsOvwM8lIkQIy21XPEcwo/O8iEqEX2jWFVpaV6qs=;
+	s=arc-20240116; t=1718144006; c=relaxed/simple;
+	bh=hNxV7nUm4BZp3aHzOz33n9VM+ORBdtrunIf7qmuXuXo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X715tA8YRXc2+ckAM2rMray4R9bWoPQPr4zUVKNfor/2qS+AoiUlQE/jPz+GQw884PmRKSOHYVbF/bmkqxOYO5iWjqjMPnvIMuj8rrq+hQ5KRigUykEBNWrvQ2yOgkHGSyp9uZCYT/EHHMRSFpkC/C66bzlGKX1J5kBlufd0wRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hOWgC4Rn; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-440655e64bdso16658961cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:13:19 -0700 (PDT)
+	 To:Cc:Content-Type; b=kUqwT9OWztWhul7cNbVWdjj8WrXp1yxQo4bljMJS5KGjm4KdEH9mP+xx9oHrnIUXuChJd8byf7PDI1A9VRMUnoomDufeYDzqX+frkgoBD7pSBz1pjQI/GAOcJSLg8c6PIAdofZgNGPj8tw8bLSbiFwrixQt3T5wf1+nOO0es6Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MGNiR/Pv; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-254871388d3so2215668fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 15:13:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718143998; x=1718748798; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1718144004; x=1718748804; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RPKZqSlAbaQuMLhwthwfzm4L0DNHV7L8sJdV9gURtUM=;
-        b=hOWgC4RnbChzfUMjEZcCb+QyxoRIi3zc+Rwq+lgNtpoYu/NYCIc354ZTIegxqrKPr7
-         8jvnY3YgwYR7/3uWoyZysYAGuZw1JAH2KVBUdTNg5b9DAbsD6pc+E+9RGmbjk30LP6ww
-         Gh6jLRmJNTpr1dyH1TRvqsDeLFUEwuIdTgiEUQu9ZYYa06nKaTxC9y1M5j8/rBFZOru/
-         gcjumTRiIYsr2myqwWElzSa+qbS1uUo2jWDIfxBWbYlO7gadxG+jSaAehKmegVQWsfoI
-         wbCjqB2W0R8C7lpKKjxgtxhGSiTCxdO79GzUDb1v9c8trGnLsCGa22AzGJm6iX1SBvto
-         OX7g==
+        bh=w/RbUlD9RSy3SmNM3pNSCFE7to3GVSt1XCBQ/rScoWI=;
+        b=MGNiR/Pvz4cL+/fS+FxIYotOq7ol2dhmzPH8ECXONwJbzS5woCdsV0xLD+x9hofEGo
+         N00p0/43qqXOnZtdSBzYfzqTC2NxZ9tYLEJMYizei5N0KcvXtKwO2xVuu17VB3vhXaGA
+         LwoJvpok2QsJsJIZih0pAN5/hpcIEtO3j8URU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718143998; x=1718748798;
+        d=1e100.net; s=20230601; t=1718144004; x=1718748804;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RPKZqSlAbaQuMLhwthwfzm4L0DNHV7L8sJdV9gURtUM=;
-        b=wkD7Tp+nUFZcKYyH8fqOUsoAYu+wXXSd8lKDyBdc81LN3rI/WeZMpnWbUePPWhqnM+
-         cHOHodOZ8fQkIxZMxADnD8vxdqapR1WmUAdfRMjK2ziDzzYekysC9uFRJAbeLreNRySt
-         XyDZC0zhIbsLjcXQI+cnelqUGxidly5T+zV5kQsJ90S6PVxnwdZSRnFG6eDwfeN3/+J3
-         hh8EkOGyRjAkTrHfse9eUqT5RgoHG1Zw0pOyAyW3WZ8VXZlEKoLUhVZ2w9koRURI0QYN
-         GyalQsZLce7np5oXa7q9rXkohqiwf6b5OcYOpk0WGyPT5PcRVCNQUDlhS22azge8zq98
-         5XBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZyDSAu5Ccl0wae6u4KnAv0mxXh5zYtgOBoyLfyJHVSE/tJSSuetusiJqPWbgPrEYo/mJWpxmFwFuqmu24GJj3tpZk+PSRMavxoSG6
-X-Gm-Message-State: AOJu0YwSl+CQyJBInvMtqnDtaGhfD9uqT2K735MvDToSY6YiiOvvRwRV
-	aDhN8iWRFMeVTVRlxS7CmtYLWSbNe7oQ3BRsB+/0ptxZ5hkrTtX8CBFIepT9Jia0XykwHIgatPx
-	wGzB6dSDbHuEPj/HhT1xzcl03qe8=
-X-Google-Smtp-Source: AGHT+IHRKW+4TAFuiyd6TaF9HhkOMg9tjED6ruWvkwLADjsp/TEZ1jg4S5wZWE6+/Q3li0FjiSMZUY57hDIlWn0R1tY=
-X-Received: by 2002:a05:6214:2e44:b0:6b0:6525:4115 with SMTP id
- 6a1803df08f44-6b191d472e3mr18116d6.19.1718143998205; Tue, 11 Jun 2024
- 15:13:18 -0700 (PDT)
+        bh=w/RbUlD9RSy3SmNM3pNSCFE7to3GVSt1XCBQ/rScoWI=;
+        b=LUc4ja7gJpHsrE69Otnw4DxJkXBe5DOl8h+x+086KnSjvAbTmy6m0CNBN7fkNJ3JKB
+         5c7GX1um7C2yaZcn3JhU/mrkzo9HBKe7QYDFq55vzgEVwugTsUFbwGTtDmHHqM5yTS8Z
+         nti7j6jkTvQcfwgZCb2P4vLW77Ae96mDl8XKD5Ld8u3Z9KRymcUUVr0uxVYQOueINdX/
+         33LkR9P+HVvB7mqFzZB1vkg/pdkfNnSBP2Bca2RZ1uC0ppgZGQh1woosRv6K0TJwLCZr
+         9JjlHPYt9CTSfH0oEU2H4CuL3kBF8r/9b2FZKUa18IyTIc7lw5qxiBHXcyctfpEMEwqL
+         OSTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPxRVbixDil37Frz9SRTUDMqx1ny/UwkF349lRsdeH5gGugDzSGFLIZbWWvGRWa8weyVIy8VlURsaCbhinzY/yRHhmu+Ys9E8/w/Gg
+X-Gm-Message-State: AOJu0Yx6kZmGY38N/IhNt/yBxQDMKOFtx5dKVhapPQ3J+R28Y9fcoxSF
+	bbdkpdDKu3VSZTjkK9Bj72gwxCwehW50kaj7yXBk2lw9aWU9hWZLWHEeGMqqAuJznfsNiDSqqEa
+	bkfKh9XzHn+4t2zp8PqtlMTySQxrIdEqJNZHB
+X-Google-Smtp-Source: AGHT+IEJHs/owLDHBz61i5sXWUn8lCoKIE5qfi2LpoqdDH4d52H8W07OJU7MgzfJFQiAbVeL8ORu7ExwgY5tgNYlY6s=
+X-Received: by 2002:a05:6870:c0d1:b0:250:756b:b1ed with SMTP id
+ 586e51a60fabf-25514c17af0mr165271fac.19.1718144003936; Tue, 11 Jun 2024
+ 15:13:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240304081348.197341-1-21cnbao@gmail.com> <20240304081348.197341-6-21cnbao@gmail.com>
- <c9702789-5772-4750-a609-e44a5bbd8468@arm.com> <CANzGp4+p3xSo9uX2i7K2bSZ3VKEQQChAVzdmBD3O2qXq_cE2yA@mail.gmail.com>
- <emvsj7wfy24dzr6uxyac2qotp7nsdi7hnesihaldkvgo3mfzrf@u7fafr7mc3e7>
- <CAGsJ_4zTpcBj_0uC9v4YOHihx-vEek+Y6rr=M1noijwbhfBw7A@mail.gmail.com> <ly745k53gpkef6ktaoilbib4bzrwyuobli7adlylk5yf24ddhk@l4x2swggwm3f>
-In-Reply-To: <ly745k53gpkef6ktaoilbib4bzrwyuobli7adlylk5yf24ddhk@l4x2swggwm3f>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 12 Jun 2024 10:13:06 +1200
-Message-ID: <CAGsJ_4xVerq0bukCeZgXmjn2uBUviBEBjY6AWM4wm1M4D2N0og@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 5/5] mm: support large folios swapin as a whole
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Chuanhua Han <chuanhuahan@gmail.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, chengming.zhou@linux.dev, 
-	chrisl@kernel.org, david@redhat.com, hannes@cmpxchg.org, kasong@tencent.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	mhocko@suse.com, nphamcs@gmail.com, shy828301@gmail.com, steven.price@arm.com, 
-	surenb@google.com, wangkefeng.wang@huawei.com, willy@infradead.org, 
-	xiang@kernel.org, ying.huang@intel.com, yosryahmed@google.com, 
-	yuzhao@google.com, Chuanhua Han <hanchuanhua@oppo.com>, 
-	Barry Song <v-songbaohua@oppo.com>
+References: <20240606224035.3238985-3-aruna.ramakrishna@oracle.com>
+ <20240610213934.3378947-1-jeffxu@chromium.org> <2DB720B0-0921-4912-8C5F-F0EDDF77845D@oracle.com>
+In-Reply-To: <2DB720B0-0921-4912-8C5F-F0EDDF77845D@oracle.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Tue, 11 Jun 2024 15:13:11 -0700
+Message-ID: <CABi2SkVZA0-7_PPbvycaojr0qBPVn7DPW1F1CpNTZwT_Hi0xiQ@mail.gmail.com>
+Subject: Re: Re [PATCH v5 2/5] x86/pkeys: Add helper functions to update PKRU
+ on sigframe
+To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+Cc: "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, Keith Lucas <keith.lucas@oracle.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>, 
+	Andrew Brownsword <andrew.brownsword@oracle.com>, 
+	Matthias Neugschwandtner <matthias.neugschwandtner@oracle.com>, 
+	"jeffxu@google.com" <jeffxu@google.com>, "jannh@google.com" <jannh@google.com>, 
+	"keescook@chromium.org" <keescook@chromium.org>, "sroettger@google.com" <sroettger@google.com>, 
+	"jorgelo@chromium.org" <jorgelo@chromium.org>, 
+	"rick.p.edgecombe@intel.com" <rick.p.edgecombe@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 5:24=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
+On Tue, Jun 11, 2024 at 7:05=E2=80=AFAM Aruna Ramakrishna
+<aruna.ramakrishna@oracle.com> wrote:
 >
-> On Tue, Jun 11, 2024 at 12:23:41PM GMT, Barry Song wrote:
-> > On Tue, Jun 11, 2024 at 8:43=E2=80=AFAM Shakeel Butt <shakeel.butt@linu=
-x.dev> wrote:
-> > >
-> > > On Thu, Mar 14, 2024 at 08:56:17PM GMT, Chuanhua Han wrote:
-> > > [...]
-> > > > >
-> > > > > So in the common case, swap-in will pull in the same size of foli=
-o as was
-> > > > > swapped-out. Is that definitely the right policy for all folio si=
-zes? Certainly
-> > > > > it makes sense for "small" large folios (e.g. up to 64K IMHO). Bu=
-t I'm not sure
-> > > > > it makes sense for 2M THP; As the size increases the chances of a=
-ctually needing
-> > > > > all of the folio reduces so chances are we are wasting IO. There =
-are similar
-> > > > > arguments for CoW, where we currently copy 1 page per fault - it =
-probably makes
-> > > > > sense to copy the whole folio up to a certain size.
-> > > > For 2M THP, IO overhead may not necessarily be large? :)
-> > > > 1.If 2M THP are continuously stored in the swap device, the IO
-> > > > overhead may not be very large (such as submitting bio with one
-> > > > bio_vec at a time).
-> > > > 2.If the process really needs this 2M data, one page-fault may perf=
-orm
-> > > > much better than multiple.
-> > > > 3.For swap devices like zram,using 2M THP might also improve
-> > > > decompression efficiency.
-> > > >
-> > >
-> > > Sorry for late response, do we have any performance data backing the
-> > > above claims particularly for zswap/swap-on-zram cases?
-> >
-> > no need to say sorry. You are always welcome to give comments.
-> >
-> > this, combining with zram modification, not only improves compression
-> > ratio but also reduces CPU time significantly. you may find some data
-> > here[1].
-> >
-> > granularity   orig_data_size   compr_data_size   time(us)
-> > 4KiB-zstd      1048576000       246876055        50259962
-> > 64KiB-zstd     1048576000       199763892        18330605
-> >
-> > On mobile devices, We tested the performance of swapin by running
-> > 100 iterations of swapping in 100MB of data ,and the results were
-> > as follows.the swapin speed increased by about 45%.
-> >
-> >                 time consumption of swapin(ms)
-> > lz4 4k                  45274
-> > lz4 64k                 22942
-> >
-> > zstdn 4k                85035
-> > zstdn 64k               46558
 >
-> Thanks for the response. Above numbers are actually very fascinating and
-> counter intuitive (at least to me). Do you also have numbers for 2MiB
-> THP? I am assuming 64k is the right balance between too small or too
-> large. Did you experiment on server machines as well?
-
-I don=E2=80=99t possess data on 2MiB, and regrettably, I lack a server mach=
-ine
-for testing. However, I believe that this type of higher compression ratio
-and lower CPU consumption generally holds true for generic anonymous
-memory.
-
-64KB is a right balance. But nothing can stop THP from using 64KB to
-swapin, compression and decompression. as you can see from the
-zram/zsmalloc series,  we actually have a configuration
-CONFIG_ZSMALLOC_MULTI_PAGES_ORDER
-
-The default value is 4.
-
-That means a 2MB THP can be compressed/decompressed as 32 * 64KB.
-If we use 64KB as the swapin granularity, we still have the balance and
-all the benefits if 2MB is a too large swap-in granularity which might caus=
-e
-memory waste.
-
 >
+> > On Jun 10, 2024, at 2:39=E2=80=AFPM, jeffxu@chromium.org wrote:
 > >
-> > [1] https://lore.kernel.org/linux-mm/20240327214816.31191-1-21cnbao@gma=
-il.com/
+> > The orig_pkru & init_pkru_value is quite difficult to understand.
 > >
+> > case 1> init_pkru: 00 (allow all)
+> > orig_pkru all cases  =3D> allow all
+> >
+> > case 2> init_pkru: 01 (disable all)
+> > Orig_pkru:
+> > allow all 00 =3D> 00 allow all.
+> > disable all 01 =3D> 01 disable all.
+> > disable write 10 =3D> 00 allow all <--- *** odd ***
+> > disable all 11 =3D> 01 disable all
+> >
+> > case 3> init pkru: 10 (disable write)
+> > allow all 00 =3D> 00 allow all.
+> > disable all 01 =3D> 00 (allow all) <----*** odd ***
+> > disable write 10 =3D> 10 allow all
+> > disable all 11 =3D> 10 disable write <--- *** odd ***
+> >
+> > case 4> init pkru: 11 (disable all)
+> > orig_pkru all cases =3D> unchanged.
+> >
+> > set PKRU(0) seems to be better, easy to understand.
+> >
+>
+> I=E2=80=99m not sure I follow.
+>
+> The default init_pkru is 0x55555554 (enable only pkey 0). Let=E2=80=99s a=
+ssume the application
+> sets up PKRU =3D 0x55555545 (i.e. enable only pkey 2). We want to set up =
+the PKRU
+> to enable both pkey 0 and pkey 2, before the XSAVE, so that both the curr=
+ent stack as
+> well as the alternate signal stack are writable.
+>
+> So with
+> write_pkru(orig_pkru & pkru_get_init_value());
+>
+> It changes PKRU to 0x55555544 - enabling both pkey 0 and pkey 2.
+>
+Consider below examples:
 
-Thanks
-Barry
+1>
+The default init_pkru is 0x55555554 (pkey 0 has all access, 1-15 disable al=
+l)
+and thread has PKRU of 0xaaaaaaa8 (pkey 0 has all access, 1-15 disable writ=
+e)
+init_pkru & curr_pkru will have 0x0
+If altstack is protected by pkey 1, your code will change PKRU to 0,
+so the kernel is able to read/write to altstack.
+
+2>
+However  when the thread's PKRU disable all access to 1-15:
+The default init_pkru is 0x55555554 (pkey 0 has all access, 1-15 disable al=
+l)
+and thread has PKRU of 0x5555554 (pkey 0 has all access, 1-15 disable all)
+init_pkru & curr_pkru will have 0x55555554
+If altstack is protected by pkey 1, kernel doesn't change PKRU, so
+still not able
+to access altstack.
+
+3> This algorithm is stranger if inti_pkru is configured differently:
+The init_pkru is 0xaaaaaaa8 (pkey 0 has all access, and 1-15 disables write=
+.)
+and thread has PKRU of 0x55555554 (pkey 0 has all access, 1-15 disable all)
+init_pkru & curr_pkru will have 0x0 (0-15 has all access).
+
+Overall I think this is a confusing algorithm to decide the new PKRU to use=
+.
+
+> After the XSAVE, it calls update_pkru_in_sigframe(), which overwrites thi=
+s (new)
+> PKRU saved on the sigframe with orig_pkru, which is 0x55555545 in this ex=
+ample.
+>
+> Setting PKRU to 0 would be simpler, it would enable all pkeys - 0 through=
+ 15 - which,
+> as Thomas pointed out, seems unnecessary. The application needs the pkey =
+it
+> enabled for access to its own stack, and we need to enable pkey 0 under t=
+he hood
+> to enable access to the alternate signal stack.
+>
+
+I think you are referring to Thomas's comments in V3, copy here for
+ease of response:
+
+>User space resumes with the default PKRU value and the first thing user
+>space does when entering the signal handler is to push stuff on the
+>signal stack.
+...
+> If user space protects the task stack or the sigalt stack with a key
+> which is not in init_pkru_value then it does not matter at all whether
+> it dies in handle_signal() or later when returning to user space, no?
+
+The userspace could register a custom handler (written in assembly) to
+change PKRU and allow access to the stack, this could be written in such
+that it is before pushing stuff to the stack. So all it requires is
+that the kernel
+doesn't SIGSEGV when preparing the signal frame in sigaltstack, this is
+where PKRU=3D0 inside the kernel  path helps.
+
+Even today, without patch, one can already do following:
+1> use PKEY 1 to protect sigaltstack
+3> let the thread have all access to PKEY 1
+3> send a signal to the thread, kernel will save PKRU to the altstack corre=
+ctly.
+4> kernel set init_pkur before hands over control to userspace
+5> userspace set PKRU to allow access to PKEY 1 as the first thing to do.
+6> on sig_return, threads have PKRU restored correctly from the value
+in sigframe.
+
+That is why I consider "let kernel to modify PKRU to give access to
+altstack" is
+an ABI change, i.e. compare with current behavior that  kernel deny
+such access.
+It might be good to consider adding a new flag in ss_flags.
+
+Thanks.
+-Jeff
 
