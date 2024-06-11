@@ -1,117 +1,255 @@
-Return-Path: <linux-kernel+bounces-209980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16F5903DA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:39:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E277F903DB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 15:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EECD51C23583
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:39:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706CB1F2516F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CBB17D88F;
-	Tue, 11 Jun 2024 13:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD20917DE21;
+	Tue, 11 Jun 2024 13:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fDM5ZIK1"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9V0wJQ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DD017D88E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 13:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF83417D363;
+	Tue, 11 Jun 2024 13:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718113167; cv=none; b=WGO4nSQjx4/4U4JBZ55wNgwESAekbTLDY8lzwk7jMmwsywBAwPtoPQkY02UisAatvq22gv9+VyOyJH/C7aWwGaJsTy6RtopMX/q+3GNK9djLamLdpJ0qLobV89s/KgrAM+GTmJ/t9LpHKS0+6/W3DUtTP2I35IeZibNmFN40mk8=
+	t=1718113180; cv=none; b=jBLneT4BOhUqfD/hm2EY8fuD1pJIn1okD1tuRNx+cMIkq2y3emptk6k6GFNl4xmvcxTYc/Ix7nVzw+tTIbiEbeSD+3zchsVoPKpSs/G9d+836Prpl9v9XXiEVCXRa09cs8tHitkSKlpIavEa0d1HqCBBDXJkowe2JH5IKiq1F08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718113167; c=relaxed/simple;
-	bh=Oxe7PJjgp7An0AFVi5O4Owg2GH2Uw/6+OtjVK2JHGMI=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=dE0LN1GFkBejIhYUDE68e2JiBe4OxGYlPvA8W6eSKU4UgFp6vcjmxhR0Vs1rYccfYX5rPwgd1E5s1Wvq6GbSUoNRhclOUXfzkZfsobuxFogsEoWKTCPVSoAHBScy7EoNYjTPySx2zVRUNSEX6Av6KdPe5n2051uCPe8m5ZuIC50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fDM5ZIK1; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: dzm91@hust.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718113161;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oxe7PJjgp7An0AFVi5O4Owg2GH2Uw/6+OtjVK2JHGMI=;
-	b=fDM5ZIK1eSuXv0KAdEaRTW498x+rXXy3uG8P0EnDPBZb2uhTE9WBMScpMoNmndIK5ceR+9
-	3lcIuL0vrNA2dWW6gqyYKNQkXNR4V5mTUgbqspDswoFIrN7a3s0gZgdoi9T5vllT+fg8yv
-	WXeeGHu2OGABUFNvsSXKa4bfbvlO/PU=
-X-Envelope-To: alexs@kernel.org
-X-Envelope-To: siyanteng@loongson.cn
-X-Envelope-To: corbet@lwn.net
-X-Envelope-To: hust-os-kernel-patches@googlegroups.com
-X-Envelope-To: linux-doc@vger.kernel.org
-X-Envelope-To: chengziqiu@hust.edu.cn
-X-Envelope-To: linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1718113180; c=relaxed/simple;
+	bh=Tn9aGOOYb+LH+bFDSFJ3gb5u4+83blw2N03mcxJkcPo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tCtdHD9c8EYgRwb+XDB2EPMEXdzuZ1i/iJmycKivwFSUvvHgGkr9Vn6Rm6hiOarznTdvQYJywB17s6r0TmqcWSDGa5DhrYpCyACgVE30CJcz+4/SfyUIWgZxrdqLm2VW+kirZvSjnbj/lC7SkhRLPCA5TZoi5XfohKnT3u1q37A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9V0wJQ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61911C32789;
+	Tue, 11 Jun 2024 13:39:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718113180;
+	bh=Tn9aGOOYb+LH+bFDSFJ3gb5u4+83blw2N03mcxJkcPo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=d9V0wJQ0TR4PWiyRJB7suPif/f/9P8jN1s2raC2Yyt/25BVEXZHt3NFTRbAqyV7Kj
+	 UshYLZNhNX7CfT8hSjiHzqKjEISQSgFlX0lloEC6qxlMI9dL8wZIiGeNzQsK8E2mxp
+	 W4rou+XM6DRmGS9lDZCeid961euyOKV0GBsYu8BA/4areCsiGjtAuj4f7KIQRbpyrt
+	 l8yPAI8t25NqyFkyOllFI6O++CFoI7p3yVmboF7mPaCj6K+21YmRJuzr4zDGiT0K4R
+	 FsS3BQdY3pdT8OuGmhkEoryuxLnY62cyzXv6MsTxNUkzIovaA0MyoSFMzuhd+Rier/
+	 s92BhHAKwuhRA==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c9034860dso2007361e87.2;
+        Tue, 11 Jun 2024 06:39:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWKxN8xb9LVp/LCPe5QXcE0CrZCCKh4vZSh/nuKv2PUymb3/qww59I6jPpo36QP4ry7F24vKK5ZpW9uzfPogd3LojowawtRbhhSShPAKcMdLzmiKOcnThKVJhe2dFrWDrU+HTN+RQxpfdEfRMMDGCIHsznkwqDGRYHfHng4iPWzZlHEfO8=
+X-Gm-Message-State: AOJu0YwS2ZdRRTxcC0nKuNbMdzY2ViVOHwrgP71nsQK3HjZd60r+VNsV
+	MXc1CHaopLAt6AZGsOQeKkHqRZQfD9IYZ38mER5xAZVFpUcT6joAVO0vNyyWS8kYcTcJLWN8OBD
+	fEPterh5zVBj8YivsLJF7/QBwhA==
+X-Google-Smtp-Source: AGHT+IGFUiU6exeIzAEFH36DTSIP2uz/FoyVESFoi5eHT5vpw31YK47X/5GhyzpZlDYY7TRlOrRvzOT6Gll+o03Kb2w=
+X-Received: by 2002:a05:6512:3d23:b0:52c:868f:a28d with SMTP id
+ 2adb3069b0e04-52c868fa524mr5757868e87.50.1718113178740; Tue, 11 Jun 2024
+ 06:39:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 11 Jun 2024 13:39:17 +0000
-Content-Type: text/plain; charset="utf-8"
+References: <20240606111611.371463-1-andreas@kemnade.info>
+In-Reply-To: <20240606111611.371463-1-andreas@kemnade.info>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 11 Jun 2024 07:39:25 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+9v0i-6xvPY6cvnJUSLV1d4irqcPv60p+KwC5sx7WDDg@mail.gmail.com>
+Message-ID: <CAL_Jsq+9v0i-6xvPY6cvnJUSLV1d4irqcPv60p+KwC5sx7WDDg@mail.gmail.com>
+Subject: Re: [PATCH v4] dt-bindings: regulator: twl-regulator: convert to yaml
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: lee@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	lgirdwood@gmail.com, broonie@kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: si.yanteng@linux.dev
-Message-ID: <2e4f9b46821d4f40eadca253496816060c862156@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH v2] scripts: add scripts/checktransupdate.py
-To: "Dongliang Mu" <dzm91@hust.edu.cn>, "Alex Shi" <alexs@kernel.org>,
- "Yanteng Si" <siyanteng@loongson.cn>, "Jonathan Corbet" <corbet@lwn.net>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- "Dongliang Mu" <dzm91@hust.edu.cn>, "Cheng Ziqiu"
- <chengziqiu@hust.edu.cn>, linux-kernel@vger.kernel.org
-In-Reply-To: <20240611131723.53515-1-dzm91@hust.edu.cn>
-References: <20240611131723.53515-1-dzm91@hust.edu.cn>
-X-Migadu-Flow: FLOW_OUT
 
-2024=E5=B9=B46=E6=9C=8811=E6=97=A5 21:17, "Dongliang Mu" <dzm91@hust.edu.=
-cn> =E5=86=99=E5=88=B0:
+On Thu, Jun 6, 2024 at 5:16=E2=80=AFAM Andreas Kemnade <andreas@kemnade.inf=
+o> wrote:
+>
+> Convert the regulator bindings to yaml.
+>
+> Drop one twl5030 compatible due to no documentation on mfd side and no
+> users of the twl5030.
+>
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+> Changes in v4:
+> - remove a sentence in the commit message which only applies
+>   to v1 design
+> - add R-by
+>
+> Changes in v3:
+> - define regulator stuff in toplevel
+> - simplified regulator-inital-mode
+> - extended example to contain both regulator-initial-mode and
+>   retain-on-reset
+>
+> Changes in v2:
+> - add regulators directly to ti,twl.yaml
+> - less restrictions on regulator node name
+>
+>  .../devicetree/bindings/mfd/ti,twl.yaml       | 166 +++++++++++++++++-
+>  .../bindings/regulator/twl-regulator.txt      |  80 ---------
+>  2 files changed, 164 insertions(+), 82 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/regulator/twl-regul=
+ator.txt
+>
+> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Document=
+ation/devicetree/bindings/mfd/ti,twl.yaml
+> index c2357fecb56c..2cbdd238f48f 100644
+> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> @@ -22,6 +22,32 @@ allOf:
+>            contains:
+>              const: ti,twl4030
+>      then:
+> +      patternProperties:
+> +        "^regulator-":
+> +          properties:
+> +            compatible:
+> +              enum:
+> +                - ti,twl4030-vaux1
+> +                - ti,twl4030-vaux2
+> +                - ti,twl4030-vaux3
+> +                - ti,twl4030-vaux4
+> +                - ti,twl4030-vmmc1
+> +                - ti,twl4030-vmmc2
+> +                - ti,twl4030-vpll1
+> +                - ti,twl4030-vpll2
+> +                - ti,twl4030-vsim
+> +                - ti,twl4030-vdac
+> +                - ti,twl4030-vintana2
+> +                - ti,twl4030-vio
+> +                - ti,twl4030-vdd1
+> +                - ti,twl4030-vdd2
+> +                - ti,twl4030-vintana1
+> +                - ti,twl4030-vintdig
+> +                - ti,twl4030-vusb1v5
+> +                - ti,twl4030-vusb1v8
+> +                - ti,twl4030-vusb3v1
+> +            ti,retain-on-reset: false
+> +
+>        properties:
+>          madc:
+>            type: object
+> @@ -50,13 +76,34 @@ allOf:
+>            properties:
+>              compatible:
+>                const: ti,twl4030-wdt
+> -
+>    - if:
+>        properties:
+>          compatible:
+>            contains:
+>              const: ti,twl6030
+>      then:
+> +      patternProperties:
+> +        "^regulator-":
+> +          properties:
+> +            compatible:
+> +              enum:
+> +                - ti,twl6030-vaux1
+> +                - ti,twl6030-vaux2
+> +                - ti,twl6030-vaux3
+> +                - ti,twl6030-vmmc
+> +                - ti,twl6030-vpp
+> +                - ti,twl6030-vusim
+> +                - ti,twl6030-vana
+> +                - ti,twl6030-vcxio
+> +                - ti,twl6030-vdac
+> +                - ti,twl6030-vusb
+> +                - ti,twl6030-v1v8
+> +                - ti,twl6030-v2v1
+> +                - ti,twl6030-vdd1
+> +                - ti,twl6030-vdd2
+> +                - ti,twl6030-vdd3
+> +            regulator-initial-mode: false
+> +
+>        properties:
+>          gpadc:
+>            type: object
+> @@ -69,6 +116,25 @@ allOf:
+>            contains:
+>              const: ti,twl6032
+>      then:
+> +      patternProperties:
+> +        "^regulator-":
+> +          properties:
+> +            compatible:
+> +              enum:
+> +                - ti,twl6032-ldo1
+> +                - ti,twl6032-ldo2
+> +                - ti,twl6032-ldo3
+> +                - ti,twl6032-ldo4
+> +                - ti,twl6032-ldo5
+> +                - ti,twl6032-ldo6
+> +                - ti,twl6032-ldo7
+> +                - ti,twl6032-ldoln
+> +                - ti,twl6032-ldousb
+> +                - ti,twl6032-smps3
+> +                - ti,twl6032-smps4
+> +                - ti,twl6032-vio
+> +            regulator-initial-mode: false
+> +
+>        properties:
+>          gpadc:
+>            type: object
+> @@ -112,6 +178,27 @@ properties:
+>        interrupts:
+>          maxItems: 1
+>
+> +patternProperties:
+> +  "^regulator-":
+> +    type: object
+> +    unevaluatedProperties: false
+> +    $ref: /schemas/regulator/regulator.yaml
+> +    properties:
+> +      compatible: true
+> +      regulator-initial-mode:
+> +        enum:
+> +          - 0x08 # Sleep mode, the nominal output voltage is maintained
+> +                 # with low power consumption with low load current capa=
+bility
+> +          - 0x0e # Active mode, the regulator can deliver its nominal ou=
+tput
+> +                 # voltage with full-load current capability
+> +      ti,retain-on-reset:
+> +        description:
+> +          Does not turn off the supplies during warm
+> +          reset. Could be needed for VMMC, as TWL6030
+> +          reset sequence for this signal does not comply
+> +          with the SD specification.
+> +        type: boolean
+> +
+>  unevaluatedProperties: false
+>
+>  required:
+> @@ -131,9 +218,84 @@ examples:
+>          compatible =3D "ti,twl6030";
+>          reg =3D <0x48>;
+>          interrupts =3D <39>; /* IRQ_SYS_1N cascaded to gic */
+> +        interrupt-parent =3D <&gic>;
+>          interrupt-controller;
+>          #interrupt-cells =3D <1>;
+> -        interrupt-parent =3D <&gic>;
+> +
+> +        gpadc {
+> +          compatible =3D "ti,twl6030-gpadc";
+> +          interrupts =3D <6>;
 
+Now a warning in linux-next:
 
-
->=20
->=20The checktransupdate.py script helps track the translation status of
->=20
->=20the documentation in different locales, e.g., zh_CN and verify if
->=20
->=20these documenation is up-to-date. More specially, it uses `git log`
->=20
->=20commit to find the latest english commit from the translation commit
->=20
->=20(order by author date) and the latest english commits from HEAD. If
->=20
->=20differences occur, report the file and commits that need to be update=
-d.
->=20
->=20Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
->=20
->=20Signed-off-by: Cheng Ziqiu <chengziqiu@hust.edu.cn>
->=20
->=20---
->=20
->=20v1->v2: revise the output format of git commits
->=20
->=20 add some description and usage of this script
->=20
->=20 scripts/checktransupdate.py | 203 ++++++++++++++++++++++++++++++++++=
-++
->=20
->=20 1 file changed, 203 insertions(+)
->=20
->=20 create mode 100755 scripts/checktransupdate.py
->=20
-
-
-Reviewed-by:=20Yanteng Si <siyanteng@loongson.cn>
-
-
-Thanks,
-Yanteng
+Documentation/devicetree/bindings/mfd/ti,twl.example.dtb: gpadc:
+'#io-channel-cells' is a required property
+        from schema $id:
+http://devicetree.org/schemas/iio/adc/ti,twl6030-gpadc.yaml#
 
