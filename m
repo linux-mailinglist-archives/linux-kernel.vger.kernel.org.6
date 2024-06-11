@@ -1,270 +1,134 @@
-Return-Path: <linux-kernel+bounces-209132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA791902DB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:34:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D23902DB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 02:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 413381F22119
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:34:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ABA1282F1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 00:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911CD6138;
-	Tue, 11 Jun 2024 00:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B52DA933;
+	Tue, 11 Jun 2024 00:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="mTkir/+Q"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2110.outbound.protection.outlook.com [40.107.255.110])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e+XrQ59I"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D524430;
-	Tue, 11 Jun 2024 00:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.110
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718066044; cv=fail; b=FptVTtqlAl85QHUOFs1ekYVTDAy+vBYoPwwngVX/Mck01f0nEhOfkzFzRsFLwZwM6957o230buTEHUcNeiISrvHDtuFBWYIDvWxbPdDqIASJv0famzVMa6Kubiz87LZi20J9N/EGC7s+phpiDi7wIxXs2Q87WAJ9AxRkQ63ALn0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718066044; c=relaxed/simple;
-	bh=VylGxGqxZOWi+1a0H2AHW3qw5g8D7Few+DQPXTTP9Hc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mRUKMFW0R+alC5eNRpURBjlZvU56x7HLrtCWb1rlPzJihBD7V5FYc0+Wm+JCY1XraBMS7zn8J2pCwzz0gmWXKBsrxjC4jT2baTxr5q5aACB4dPIruvDc1mNsRUQRDNuIMJ22pZ0wOMcDY42qPQlTljdGANF3CHNqQDyTXqR2oAI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=mTkir/+Q; arc=fail smtp.client-ip=40.107.255.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JjZe20hLpXg9zBIgiejhxm6p2bCuJKptckZ0ZXHrOL7a8rN7zAl28eaM6CRjGYuH5ydoR2Jjcf1CQlkus0CI2SlF98HzaCaMchinoEVPb9SqqyptjgU0yUPN7gT8ZpINCBir+ocn/ObYHnBK5UlapbbuGhjI2WmmQVGh+ZRWP8anv2Vlb2Unl4tFa8Gn/rMnLxdPCk/A7vekEHHK+qsWeoeunP6aJI32X/kDLdv7KsOkdR3M/mr3qQK/eA1YuOlVXLpimMjgPe+zcryg5qu0w6LFk+4XQWLjKi1FOOp50e8C3aFlPSjCM0+pAXdTd6+qeIZuVHy6nEbwGJwEHzSEpw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=65tq8HCRxnWnu8/ZbAKN1V1DC4hzc4Hz02V3fipdovI=;
- b=XnfC1KZBzCjzQKtAX18MfRv65fBKqx+VuOgodTkx4H4P/99/1dlghrchD1b0rp+koPM2UAI2rIurE2YyzqKGKZDRJHRSg0AAU8Doi8++3tqEM4RAnc84u6sYhPYL5wmYAo2UVrYI4GMnLN0V0wPlF36qC4uevzCaMdon9fFqVmRfjrzBIuI6AhdZomZinDyjKBPooMgJRgN7sJIGOUJVYBR+6SmWGOTj/2mQ54kXV48Wk9EWckkNYiPy1+M/0Wrg/CRrtWQcpb2Y3RuvyJxKpn420vkIuWPwn1coMWRd/0lHdoGrA7MVWBncZZf+0JmdbMLr8rP5fS8SvLN27JxoSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=65tq8HCRxnWnu8/ZbAKN1V1DC4hzc4Hz02V3fipdovI=;
- b=mTkir/+Qb4f87E6REDK9pOJkHXm3weTQ3kMYXc1YMOFwSKet+bCivZlFDaCPcOgG1fBe1WIfhip15EwV8bgPJoFVhQSZsyCDXdBcEZR8tJlB1p8MBRcD88UxjZF63LnS554XHmpFw6M5xBL3uxFQYMMO6OT2T9eZpkyiHPFPO9BvK5LATI3++NB/Yk6t/C092kLehai2M28Qckt8DzAdurBVdeKiNiwUhsH4Z7bpXu/H9WYSJV6EYHeG7XNFqnSOO39rW3V5oUiHsTPNjNouiPxxH48Qp6tj2+vKEHTR3+LyH77oAZgpcEnVwkURp+aWCLxfbW95+VcuUKl+AZo5XQ==
-Received: from TYZPR06MB6191.apcprd06.prod.outlook.com (2603:1096:400:33d::12)
- by SEYPR06MB6635.apcprd06.prod.outlook.com (2603:1096:101:177::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Tue, 11 Jun
- 2024 00:33:50 +0000
-Received: from TYZPR06MB6191.apcprd06.prod.outlook.com
- ([fe80::cc07:35e3:9143:c8e2]) by TYZPR06MB6191.apcprd06.prod.outlook.com
- ([fe80::cc07:35e3:9143:c8e2%5]) with mapi id 15.20.7633.036; Tue, 11 Jun 2024
- 00:33:50 +0000
-From: Tommy Huang <tommy_huang@aspeedtech.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-CC: "brendan.higgins@linux.dev" <brendan.higgins@linux.dev>,
-	"benh@kernel.crashing.org" <benh@kernel.crashing.org>, "joel@jms.id.au"
-	<joel@jms.id.au>, "andrew@codeconstruct.com.au"
-	<andrew@codeconstruct.com.au>, "wsa@kernel.org" <wsa@kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>
-Subject: RE: [PATCH] i2c: aspeed: Update the stop sw state when the bus
- recovry occurs
-Thread-Topic: [PATCH] i2c: aspeed: Update the stop sw state when the bus
- recovry occurs
-Thread-Index: AQHasl/7kNWQnBw5T0ayJZ/33ciwnbG5/HuAgANZ04CABHIQ4A==
-Date: Tue, 11 Jun 2024 00:33:50 +0000
-Message-ID:
- <TYZPR06MB61918DCE07E61B6FB9D3BCD1E1C72@TYZPR06MB6191.apcprd06.prod.outlook.com>
-References: <20240530070656.3841066-1-tommy_huang@aspeedtech.com>
- <kts7ib2rxq4g26ayumcyaohs37zl43qo66gok3vae3reyabobe@nbbborkf2eow>
- <TYZPR06MB6191C0769400FF03412E56F2E1C42@TYZPR06MB6191.apcprd06.prod.outlook.com>
-In-Reply-To:
- <TYZPR06MB6191C0769400FF03412E56F2E1C42@TYZPR06MB6191.apcprd06.prod.outlook.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR06MB6191:EE_|SEYPR06MB6635:EE_
-x-ms-office365-filtering-correlation-id: eba0cc6d-9940-4193-0b3c-08dc89ae2a44
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230031|376005|366007|1800799015|7416005|38070700009;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?y3anJAzoWdiBB3OILlvy77kjKLVLcYTUOlUoJk6jYudFS/xV8GyBDWJN8eA9?=
- =?us-ascii?Q?M9/lxHkZ78SDCAm3Lt1FyKW7e/iC4bt7xoe5uy6ho0RF1xehVTeYUScgewmf?=
- =?us-ascii?Q?uQvyXpycYCy0eY2AlWRrj4oS4oBOSClbME1cmU/PK9nhP7RiXG36RXnfy0yv?=
- =?us-ascii?Q?Lt1vS7pPtZ+mau2FkQqVui/zVLz3ByIUDpmXmWp9JLoVkPyNSwK+fmslXrtz?=
- =?us-ascii?Q?9N++/9Y+V1DEz93A7yZaY3kc+v1hJRKXviKPZbblQyApdcNjUQiCZRreJC74?=
- =?us-ascii?Q?kmjV2UQB8aelHfHJCZwZlq2GmUYPA66gw9HkxwelZomsYfGtOPqT0AHq89FX?=
- =?us-ascii?Q?PI4s5vv1j3Wtf9sKaIRbjVkDBk69Mssb1B8oHjmCLFs22NyuJDNMQZi21W06?=
- =?us-ascii?Q?ZJ7ZaRj4YWO5mhuNyuzXgsQn4nPk+/yCLMHjpG5yVazsHTJOw06Zzdv6+igv?=
- =?us-ascii?Q?JycEXkkJ8PbYEusxhel6QwjPYbJTBdCJYB/SbJYlZs6EAT2en/ltoNqwY3RT?=
- =?us-ascii?Q?fxe6gl6eKKcZI5i/bIU2wveclaa8sAa4ybYL9rJ5B5xJHzziJkN7nxfaeRaC?=
- =?us-ascii?Q?WpMgN8iYnX0/iNJt10CPg0QYBVxA/RPiAE1CVUGTMYqtof9mKECDX/rjesjg?=
- =?us-ascii?Q?RRDozjbkOjqB23f0F8JZsJ1gWL+z/H5mGFToeFDzNmj0ffMBb/RRhYOFB0Xz?=
- =?us-ascii?Q?DqfNVoVes7kx+GAKcIc2wgJr9FuBwfRmPGx4fQAuSfe+nUkhu40k3x/3ShGK?=
- =?us-ascii?Q?C37/5GBYhCPanA1gNGRBdAiwK3a+oSpc624AsP76BfrYiB2suTXZxDTGgR0k?=
- =?us-ascii?Q?EPQVydQhX/2dzLhoNoazcr0zZdmZ9o8kEDKq/qMntWwCF4loAzNOKxkzzoT6?=
- =?us-ascii?Q?ArBbn8dDWovFRAay+BQtOLRsDHwa6m8xw83kySlDbO8HK3nzvLnll225Rxbi?=
- =?us-ascii?Q?uRi2VzGUkk1KJn0pgOuxfH4uBkjhdt1+IicAI9NlfMAKlmF/2KFHSkYOl5a1?=
- =?us-ascii?Q?336ifcqhZjR0Jcxi6CppPjeUjr4c0AOOlXy/GNiKl+yxj4E1evrTArhcr8XU?=
- =?us-ascii?Q?jFzBfAJ/tpchQDsvJ3imdCjkKIkxgbuUu3vxBbpauO5gJCyf5WI5nAnaZVR9?=
- =?us-ascii?Q?VtRjrk7o07b30gZi2qoxCKmG7lbS743JudwYaN6/A9FhST5nxZeYMhczsRky?=
- =?us-ascii?Q?LOu56LAgMykQ6aw9ham0i5XVEBce2ykkFT61Z/v5Hu0iaMQtWth5pMiyjhuS?=
- =?us-ascii?Q?VAVngoRLuAygBP4rxC2CDf2un6QV94qjlg7yvVgcTcxmj9Mu5lBj5zN1Kxjg?=
- =?us-ascii?Q?gyCvaieRMnFGAkU8AtsFQq/IyayIp1edyOElyQ8ezadQZCMruaCL8b9zGwes?=
- =?us-ascii?Q?1SRTg4o=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6191.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(7416005)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?XJcmNePDsP/Ki2SSoguvQKitkUo10mR3AHkRFUrOvuxjld/y27bhpT+NzjFa?=
- =?us-ascii?Q?+JGXiTDzq528se1aBJ1yYUsz1rkd8P57s5GLoXH0PTotY+dm4z9LJnGYGeyI?=
- =?us-ascii?Q?x6+Rd+uyCdVDbmlm9uqhhA810mKaL+laTPCk+b04kTLBZMvwvhy8jQSyR/s+?=
- =?us-ascii?Q?QY3cYeO18LAIu7Ocnnoh7v2Bam/cZpFkSfakZ7BlRG2Bn9jEeyD2ZFHKbFA6?=
- =?us-ascii?Q?qJ8/oiKnXC4DNHz8BP6MaNPjXMNAU73c0MxYwFrvNu5t0BhrF5V6CEVjO/2b?=
- =?us-ascii?Q?P8fVihfGpkWYgSjn+s+H2Yz52oHXcQZLX78Ca1MwLl7qaTVE4SP0GWfWbUig?=
- =?us-ascii?Q?d82bOHvUae4S0WvIGcoUxT8QBpA7as4vtv33z6f2bBQoL+tYyOe9srBJ6Wx6?=
- =?us-ascii?Q?5hXkWAjQEVTw55FADVOKPFRbe5qXv+g6sYNQYfLE1b0S7UkF+slssqOHhnyq?=
- =?us-ascii?Q?LtRHh8QFCq5ZzItbdhmPz47O4d4E2hnmfDSWjLdBld2Hb7oYOEAnSM1dJBa6?=
- =?us-ascii?Q?2S1dSbfG91jZAVgLMDJm4RneXUMrb2cYhT7cf9ORxjXqaSz3e9gQHP3boq/I?=
- =?us-ascii?Q?gvn7bjVRfD6kEkjTDoVbILUrlJjj41vWP/ue4sw4G8aaONrdjL1Ow3fOKCqE?=
- =?us-ascii?Q?PnD7a4jCV41xIkg6/FtMkfR0f5yuGJN2YMUFnB2eBE/um1oyhp9EGQJXDbjm?=
- =?us-ascii?Q?Vb5kGOtRg/h26DbzpycZjUeVBcvcwWcrQk1OBzxpi4rH+lWXZp1st1sz4HTm?=
- =?us-ascii?Q?lB5HEzyVIGBRSJ7hKbiNSB/bO/XnYMeC5d5Viw4hRgeSwkKaTe+xsn5iuBY2?=
- =?us-ascii?Q?v6JH9mPEU3nbv062VbxCZQlwzDF6x3uqzuA2UnHl38ZKuxJQEc4ls6C+JMtW?=
- =?us-ascii?Q?YkapThWgF1G3vL0OWH9RiN+7zMLsOqF3iVvGNT4j3yPN0efPd4lMGdA7Ell4?=
- =?us-ascii?Q?5i9aa15tLPMKke0k7iIfam0OJisOT+sGdA5QVr8c20uP/kEoYXIN/RDohN3y?=
- =?us-ascii?Q?ijrqj10K/aTjkntC4U1SevkR+hlEzXRrCpmhRn0v0ArWV71Gd79uz6WrrF2o?=
- =?us-ascii?Q?H8GsiJ3ggWwwj0w6I0iXCoL9JNJV169HrnUi8dnS6fPxH1qXTgEGaQgmN9Ow?=
- =?us-ascii?Q?YoOjgXvEoz07LIt5Rns6ljfpxxWqoocuHzMWBYIpZW7USJBozLGV+MnWsMRb?=
- =?us-ascii?Q?kbS0uVzvMqRWyGvp0sQmMrBa7qdkE9tbUkUFqDyro17cSLXbI+h1xJpQkv38?=
- =?us-ascii?Q?zeivrLBxscnZni2OTOXl3QbmnOCJ0+hMEegIR6CEFIBQWbrjmjWoyAHbpHMH?=
- =?us-ascii?Q?EweihtOr+RxsHhcu8Enp+AltO16L3vgokYjjoY4Ntlv59z0fjVgfSWK/xnQF?=
- =?us-ascii?Q?xt6zz5/hA9Fy7px5WdPysiAPpnT+NQ5ovug38iww1u16x7pdcX5xJhRTL+c0?=
- =?us-ascii?Q?kd6lUHYfo8i2oZSugWG1zu7ICvgudUucGgHHhKkDmv9G+omam4KgZSFMSY6S?=
- =?us-ascii?Q?EmASPRpjkGQ4gLhp9owQuao57ZEJgtrnjfIPIk9qjUswdA2+A1kt6zQiit3e?=
- =?us-ascii?Q?mhe04AYI+h39Y2LYoFpsFshiK9PoKWx4+n89sJ5bPpKuCuP4NZgUNOPows1w?=
- =?us-ascii?Q?SQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EFA53AC;
+	Tue, 11 Jun 2024 00:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718066056; cv=none; b=e3uoYm23xgsWWdR4yJ0ZtCB+HFN0yFW7v7RfVnIECclE7FRIJe7zNOglSHnM7XSF8FOecUYGIRpQhBvc/3vtSblpxW8/cG5LcQ7QfKfBmCcUw1bcR7ybMAzKHi3mQs4I1gfaAUxLlvVFOmRFlUuiyYuauWNnSG/P9QbzBoaohLA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718066056; c=relaxed/simple;
+	bh=79fJgOxZtcXyPa6OgEmZDeaD6RtJaM+wLkGgHqhRM5Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Ux3K+pN7DQcfdVMvUSmT+twqWUGFwLRkgXCAO1DlkYYBybvCClVZZyUbSr+YKp90MVuQCfF61VRl7XIAGVtevSxS66caHV9bvZDvQ5YQch99YiUdCWMZCURaaX68TrEq1ofZh1QwzR4L62yf94pNl4T1oCkSJ6gDJy7R2bEND6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e+XrQ59I; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AF4JMB032269;
+	Tue, 11 Jun 2024 00:34:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=UAZ+xFcsCAyG0ICt6RL4Ks
+	a2LDr82/VZhkYd0dIl8cQ=; b=e+XrQ59Is7rLhTgqFfIwplZpStxGnetKBbKLMC
+	O/WufKgERlMnokB/GiZi6nktSRXQNguIG4/kBUG3KdOcfSMS4HgDqa54dSEWjOCK
+	4dQobDJSRYJZlngD1FjoN+zFh0YAz84laNRLnQSC1LtBGYggeIsA6/WV+CP+SkmC
+	2pQ4Ysx72SIjze3HRKRHjIuHvcdZppQRN4mYmVvq01KBkhd8lKjD6AwM2E7OSAP1
+	sYMcuKgVSZyKVisLt85DU2GSz+ER7B5FQx9vHRlS+R3qYZQcY7bgwRl/wn01adG7
+	K44jP/wTXkkqXc1FJKYwFtTtG8dEEcbbdeXlk4HIj3XHPRIw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymgk8w2ab-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 00:34:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45B0Y5R2002219
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 00:34:05 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
+ 2024 17:34:05 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 10 Jun 2024 17:34:04 -0700
+Subject: [PATCH] media: atomisp: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6191.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eba0cc6d-9940-4193-0b3c-08dc89ae2a44
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2024 00:33:50.6114
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /oj8X3aVMHSQV1/H8Mv26wtlqRzu8sQDwbaUw74v9cs/98wCBMg524Yzn+enAkVAdXjkykta3G0LjTAAa0EbZzcxXExyI3Yr91jLaaeBY8g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6635
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240610-md-drivers-staging-media-atomisp-i2c-v1-1-c7b63464fae5@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAHubZ2YC/x3NwQqDMAyA4VeRnBdonWxlrzJ2iDbWwFolcSKI7
+ 75ux+/y/wcYq7DBozlAeROTuVT4SwPDRCUxSqyG1rWdu3mHOWJU2VgNbaUkJWHmKIS0zllsQWk
+ H9IHu1I0hXLmHmlqUR9n/m+eruidj7JXKMP3ibymfHTPZygrn+QXESnCIlQAAAA==
+To: Hans de Goede <hdegoede@redhat.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC: <linux-media@vger.kernel.org>, <linux-staging@lists.linux.dev>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: HAPNUcTVtz4z3m9vX4c3dWGL041bcXsy
+X-Proofpoint-ORIG-GUID: HAPNUcTVtz4z3m9vX4c3dWGL041bcXsy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-10_07,2024-06-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=997 mlxscore=0 adultscore=0 malwarescore=0
+ priorityscore=1501 suspectscore=0 spamscore=0 bulkscore=0 clxscore=1015
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110002
 
-Hi Andi,
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/media/atomisp/i2c/atomisp-mt9m114.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/media/atomisp/i2c/atomisp-libmsrlisthelper.o
 
-	There is a problem to move aspeed_i2c_do_stop() on top.
-	This function is like with aspeed_i2c_reset function needs the aspeed_i2c_=
-bus structure definition.
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-	BR,
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/staging/media/atomisp/i2c/atomisp-libmsrlisthelper.c | 1 +
+ drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c          | 1 +
+ 2 files changed, 2 insertions(+)
 
-	By Tommy
+diff --git a/drivers/staging/media/atomisp/i2c/atomisp-libmsrlisthelper.c b/drivers/staging/media/atomisp/i2c/atomisp-libmsrlisthelper.c
+index 7a20d918a9d5..3499353f8ea5 100644
+--- a/drivers/staging/media/atomisp/i2c/atomisp-libmsrlisthelper.c
++++ b/drivers/staging/media/atomisp/i2c/atomisp-libmsrlisthelper.c
+@@ -207,4 +207,5 @@ module_init(init_msrlisthelper);
+ module_exit(exit_msrlisthelper);
+ 
+ MODULE_AUTHOR("Jukka Kaartinen <jukka.o.kaartinen@intel.com>");
++MODULE_DESCRIPTION("Helper library to load, parse and apply large register lists");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c b/drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c
+index 23b1001c2a55..918ea4fa9f6b 100644
+--- a/drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c
++++ b/drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c
+@@ -1614,4 +1614,5 @@ static struct i2c_driver mt9m114_driver = {
+ module_i2c_driver(mt9m114_driver);
+ 
+ MODULE_AUTHOR("Shuguang Gong <Shuguang.gong@intel.com>");
++MODULE_DESCRIPTION("Aptina mt9m114 sensor support module");
+ MODULE_LICENSE("GPL");
 
-> -----Original Message-----
-> From: Tommy Huang <tommy_huang@aspeedtech.com>
-> Sent: Saturday, June 8, 2024 12:38 PM
-> To: Andi Shyti <andi.shyti@kernel.org>
-> Cc: brendan.higgins@linux.dev; benh@kernel.crashing.org; joel@jms.id.au;
-> andrew@codeconstruct.com.au; wsa@kernel.org; linux-i2c@vger.kernel.org;
-> openbmc@lists.ozlabs.org; linux-arm-kernel@lists.infradead.org;
-> linux-aspeed@lists.ozlabs.org; linux-kernel@vger.kernel.org; BMC-SW
-> <BMC-SW@aspeedtech.com>
-> Subject: RE: [PATCH] i2c: aspeed: Update the stop sw state when the bus
-> recovry occurs
->=20
-> Hi Andi,
->=20
-> > -----Original Message-----
-> > From: Andi Shyti <andi.shyti@kernel.org>
-> > Sent: Thursday, June 6, 2024 9:27 AM
-> > To: Tommy Huang <tommy_huang@aspeedtech.com>
-> > Cc: brendan.higgins@linux.dev; benh@kernel.crashing.org;
-> > joel@jms.id.au; andrew@codeconstruct.com.au; wsa@kernel.org;
-> > linux-i2c@vger.kernel.org; openbmc@lists.ozlabs.org;
-> > linux-arm-kernel@lists.infradead.org;
-> > linux-aspeed@lists.ozlabs.org; linux-kernel@vger.kernel.org; BMC-SW
-> > <BMC-SW@aspeedtech.com>
-> > Subject: Re: [PATCH] i2c: aspeed: Update the stop sw state when the
-> > bus recovry occurs
-> >
-> > Hi Tommy,
-> >
-> > On Thu, May 30, 2024 at 03:06:56PM +0800, Tommy Huang wrote:
-> > > When the i2c bus recovey occurs, driver will send i2c stop command
-> > > in the scl low condition. In this case the sw state will still keep
-> > > original situation. Under multi-master usage, i2c bus recovery will
-> > > be called when i2c transfer timeout occurs. Update the stop command
-> > > calling with aspeed_i2c_do_stop function to update master_state.
-> > >
-> > > Fixes: f327c686d3ba ("i2c: aspeed: added driver for Aspeed I2C")
-> > >
-> > > Signed-off-by: Tommy Huang <tommy_huang@aspeedtech.com>
-> >
-> > Can you please add:
-> >
-> > Cc: <stable@vger.kernel.org> # v4.13+
->=20
-> Got it. I will add it.
->=20
-> >
-> > > ---
-> > >  drivers/i2c/busses/i2c-aspeed.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/i2c/busses/i2c-aspeed.c
-> > > b/drivers/i2c/busses/i2c-aspeed.c index ce8c4846b7fa..32f8b0c1c174
-> > > 100644
-> > > --- a/drivers/i2c/busses/i2c-aspeed.c
-> > > +++ b/drivers/i2c/busses/i2c-aspeed.c
-> > > @@ -169,6 +169,7 @@ struct aspeed_i2c_bus {  };
-> > >
-> > >  static int aspeed_i2c_reset(struct aspeed_i2c_bus *bus);
-> > > +static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus);
-> >
-> > Can you please move aspeed_i2c_do_stop() on top? Doesn't make much
-> > sense to add the prototype here as there is no dependencies.
->=20
-> Sure. I will update it.
->=20
-> >
-> > It's different the case of aspeed_i2c_reset() because it needs
-> aspeed_i2c_init().
-> >
-> > >  static int aspeed_i2c_recover_bus(struct aspeed_i2c_bus *bus)  { @@
-> > > -187,7 +188,7 @@ static int aspeed_i2c_recover_bus(struct
-> > > aspeed_i2c_bus
-> > *bus)
-> > >  			command);
-> > >
-> > >  		reinit_completion(&bus->cmd_complete);
-> > > -		writel(ASPEED_I2CD_M_STOP_CMD, bus->base +
-> > ASPEED_I2C_CMD_REG);
-> > > +		aspeed_i2c_do_stop(bus);
-> >
-> > The patch is good, though!
-> >
->=20
-> Thanks for your commects.
->=20
-> > Thanks,
-> > Andi
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240610-md-drivers-staging-media-atomisp-i2c-18a7a4f883eb
+
 
