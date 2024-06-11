@@ -1,296 +1,434 @@
-Return-Path: <linux-kernel+bounces-209711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765859039C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:13:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BDE9039C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 13:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA161F2330C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:13:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AF041C219E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 11:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3535717B402;
-	Tue, 11 Jun 2024 11:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B82B17A93A;
+	Tue, 11 Jun 2024 11:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSFaFRfc"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="pyeJevoR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="cMy3t+t2"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8FC46525;
-	Tue, 11 Jun 2024 11:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0EE14F9EE;
+	Tue, 11 Jun 2024 11:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718104409; cv=none; b=gpO6lLjak5ZuG3wCX/BzObxqq/s8PWl3As1w9egNUOjL9nA4L37ViE3KUkJOuXlhRjJGFOGsz1d26SqI3TtKG4Cc1n15AA9ailvBWQ9NsG3Z4QM6T/EF40iH9VgQvfn1TiILxzNdjaU2cTII45khI+xFhCcisZmh6ErCBVA1+Jk=
+	t=1718104475; cv=none; b=VvaZFoSasFLllUXXhaI7kjFUk5fYlNwl1wH50hk99lK/D/Cga7+47qCJGrGM/PbBsOv6nt+P6WW38rcDEZNZgM7fqQy03QxU2xCj4EIeGNoB9iVEC+9UrDLOfiij+mJAk5x5ebri1hPe1NFQLp+dv8oXRi6EALqI5FK5Pj6Z+Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718104409; c=relaxed/simple;
-	bh=uGB5GUqDbU3shTYJyUbSitl55+MFpoGvmfgJsPwSyzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oJMsG5HPwRiESOVuXfZX6d2IFq66tPmU8Q5JYfVvjsN1IOhkTIz0FxrfdJRFWNBjFQoP+0IfIovEXg8BlJE1iDXq+vvHQ96/ZZxy4WRkXG1Lu7lCIK+vZUEsc7UKFRIowQZ/jTUND8KzMEaQN/hE9pUvcp0NjfnIiUX2LOGXVtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSFaFRfc; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-35f1c490c13so2959707f8f.3;
-        Tue, 11 Jun 2024 04:13:27 -0700 (PDT)
+	s=arc-20240116; t=1718104475; c=relaxed/simple;
+	bh=CkiMqKxPiGR645vdpz18V4Euqo7gdC1GDpwS0frfJ08=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AzeKPVbhEvU62hvCChRbGAAoOBIhrYWigtRE4+B0ZcqHutlhDBwIcRQJMbL0pe+B5t6TZl03fq7GvgiwUezzR4GQ3HBpQOGME8x/kqpX5NHUfQ1rzID909dhMia8z0v/uLUo7WSpLd2/A3tlglh31EiTM+vSW0nIXV78/IGuNi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=pyeJevoR; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=cMy3t+t2 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718104406; x=1718709206; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wcyzKAO/IuM07Iw8vOtrpHPcZD7TewKdhTyFnYxXKuQ=;
-        b=aSFaFRfcV1rsOCzdoaj9LPtTnSGHqMzX3RS8D+YKf/tJJGEMe8NdjrIycCcqhnYLGi
-         CyCR+mU7gk2xNmKe7BWnMgPjr+7N6h3KGkcsf4L1dU+cfDWBK2qxqpiTs2l+KbAnk03m
-         C3yM4ay0NQRLhUEaGw2yWoGhVtydYdQl7Yr0wRm72PBMs0/6NTcrRAn66Cd1KQ5ijWZY
-         S3SYKU72l+zvapfnwT2XgUrcnbZmjO+2/djm+uMbC5x5/XAXOih2e4WUTIPDZ8g8+uNi
-         rhzbs59SaXRyys5jQm8FbqTlzjI7MG0b1+9+b9sJZD8x15bXo5Yr9D1Ei9SvJ6uBdRdB
-         pPMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718104406; x=1718709206;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wcyzKAO/IuM07Iw8vOtrpHPcZD7TewKdhTyFnYxXKuQ=;
-        b=huGEcNHRQfLufqSs/CPec71cUaltV5dGqN9SGCQxcuRc2N4qO+Nqb3sdEGuD5qyUx3
-         2tx/CRlDB2ScCI4JsnSwORhhSYKqThAbnNLVAsolkN6nSHP20KizSsXc+yC8XTjAvROY
-         mG1wFti/hyfC5yKdigWu0uZiWWmks8eMAX94rhDs+YBxteWC5AhR6cQw31/HQz3o+QnL
-         5b3zrwYEEO8p5qWKf+bDcq9kt79YkzRzX3dYWpQjuz60dzr327IsKFmKt1oQzgP1NK9f
-         Wy/MO04UA5biAD/zU/RUtJmFINIuOGVgrmjblutmbTEeNBgNtrwo3vWQHIS3NV8gSYS7
-         YgWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZu0tCDSZkDxUdsvxZmdJXfoaZlBNURXerFbrU/6PchzatnIt1iRH89+1C00w47l0s7uBcd5hVWnCNi0hyvQGLt0oEfVQk7d684+0639YpSACzgs7ZkBeB1PZudoi5Hz6IDNS8ev/QFwIq4A==
-X-Gm-Message-State: AOJu0YxK7FjMqliSQ9zwZjCh1+SSWjcBXbtlEOrZZaWrpUBRBd0SdZs5
-	SrfyACEDBLldww4dvDIhndLNFSXpdRcIHrhOkao0YbJ/OwMVNMHW4NwEhg==
-X-Google-Smtp-Source: AGHT+IGqDyIFNOXzPPzcxX0qjnr2dc3NM6/CmEQWBh5IJiaKCPUwZQMSI8/6pKtLZClNwJRvUVrZqQ==
-X-Received: by 2002:a5d:5f96:0:b0:351:b56e:8bc3 with SMTP id ffacd0b85a97d-35efedd7dcamr11584415f8f.53.1718104405501;
-        Tue, 11 Jun 2024 04:13:25 -0700 (PDT)
-Received: from f (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f27600519sm4026251f8f.32.2024.06.11.04.13.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 04:13:24 -0700 (PDT)
-Date: Tue, 11 Jun 2024 13:13:17 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
-Message-ID: <bfmwwxmpmu6t2tkj2aexalhfyrcjwb6alxongp4mftqrigotcv@nhipbhchji3z>
-References: <20240606140515.216424-1-mjguzik@gmail.com>
- <ZmJqyrgPXXjY2Iem@dread.disaster.area>
- <bujynmx7n32tzl2xro7vz6zddt5p7lf5ultnaljaz2p2ler64c@acr7jih3wad7>
- <ZmgkLHa6LoV8yzab@dread.disaster.area>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1718104471; x=1749640471;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=4PjT/MrSudGoxdl+OLVToOZpc+RsOaj2dmxQ6UUv+H0=;
+  b=pyeJevoR5A+9rPWGJz0OEHmiBRPSMXq2dVPh/ewPmSDCDTiSnw2WcU9S
+   c3586IkFiV7FaTRm9dJR3XhV5xNe92j/2lislvkU0wLCFaHyfFx9sXiWm
+   LjLy5Uv4CJehynLCc80rnDXWeBSj70HOPTEIHa4ak8x3ANn/T7fZdH7Bv
+   wQcLiEgisAknfrBbmXBolrPDvOndiTGIEmYCXC0ExxyC1rL7GlQhf3F5B
+   C2mKuRA1FgVgP25wO8vP5bPTfk5r7ode+pOJr3Gil0GSRr7ELwmwQHweO
+   +E5hyXey6gUCau4mX7jdhARspyzK6SUa00gjhQYb5aWVv2q49vumQpsSv
+   g==;
+X-CSE-ConnectionGUID: CE35JlwyRz6QaDhcyCEtxg==
+X-CSE-MsgGUID: 23UtiwDmR8+YUI0+AI/E6Q==
+X-IronPort-AV: E=Sophos;i="6.08,229,1712613600"; 
+   d="scan'208";a="37330923"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 11 Jun 2024 13:14:29 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8FC6916372F;
+	Tue, 11 Jun 2024 13:14:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1718104464;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=4PjT/MrSudGoxdl+OLVToOZpc+RsOaj2dmxQ6UUv+H0=;
+	b=cMy3t+t2kqcsAjGSDPgcLesGLRvKqfzy69dRWYhppH/FYAy7q4na2UyjOiBR2dXRFRMsnq
+	qgeRYhWh+0T8ez79sWqsr5AtoNxnbQTowCeUdqNLaB3C9Ws8/8K5lsFadlns31nOrz9Qan
+	kR42h8wYXIOHoUdvfLR+8iKSAzE0qSGoJlHWybIyQgdDCbh1PGUmlfWSH5MqaM8EeOniDN
+	ihIhyOUq10mcg69SDmmsy5uk2l2/Pxea4c2YMDviTtYg+rrcKk4SZIBuWclXKQuj5TGxMm
+	xaMFyvAumCv/hcRv6650oKnFqeRalSoNf1mYRbdY3TDyJKN9DFp55CygWvK+Rg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>, linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v2 3/9] arm64: dts: imx8: add basic mipi subsystem
+Date: Tue, 11 Jun 2024 13:14:20 +0200
+Message-ID: <13535816.uLZWGnKmhe@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240610-imx8qm-dts-usb-v2-3-788417116fb1@nxp.com>
+References: <20240610-imx8qm-dts-usb-v2-0-788417116fb1@nxp.com> <20240610-imx8qm-dts-usb-v2-3-788417116fb1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZmgkLHa6LoV8yzab@dread.disaster.area>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Jun 11, 2024 at 08:17:16PM +1000, Dave Chinner wrote:
-> On Fri, Jun 07, 2024 at 09:51:51AM +0200, Mateusz Guzik wrote:
-> > On Fri, Jun 07, 2024 at 12:04:58PM +1000, Dave Chinner wrote:
-> > > On Thu, Jun 06, 2024 at 04:05:15PM +0200, Mateusz Guzik wrote:
-> > > > Instantiating a new inode normally takes the global inode hash lock
-> > > > twice:
-> > > > 1. once to check if it happens to already be present
-> > > > 2. once to add it to the hash
-> > > > 
-> > > > The back-to-back lock/unlock pattern is known to degrade performance
-> > > > significantly, which is further exacerbated if the hash is heavily
-> > > > populated (long chains to walk, extending hold time). Arguably hash
-> > > > sizing and hashing algo need to be revisited, but that's beyond the
-> > > > scope of this patch.
-> > > > 
-> > > > A long term fix would introduce fine-grained locking, this was attempted
-> > > > in [1], but that patchset was already posted several times and appears
-> > > > stalled.
-> > > 
-> > > Why not just pick up those patches and drive them to completion?
-> > > 
-> > 
-> > Time constraints on my end aside.
-> > 
-> > From your own e-mail [1] last year problems are:
-> > 
-> > > - A lack of recent validation against ext4, btrfs and other
-> > > filesystems.
-> > > - the loss of lockdep coverage by moving to bit locks
-> > > - it breaks CONFIG_PREEMPT_RT=y because we nest other spinlocks
-> > >   inside the inode_hash_lock and we can't do that if we convert the
-> > >   inode hash to bit locks because RT makes spinlocks sleeping locks.
-> > > - There's been additions for lockless RCU inode hash lookups from
-> > >   AFS and ext4 in weird, uncommon corner cases and I have no idea
-> > >   how to validate they still work correctly with hash-bl. I suspect
-> > >   they should just go away with hash-bl, but....
-> > 
-> > > There's more, but these are the big ones.
-> > 
-> > I did see the lockdep and preempt_rt problem were patched up in a later
-> > iteration ([2]).
-> > 
-> > What we both agree on is that the patchset adds enough complexity that
-> > it needs solid justification. I assumed one was there on your end when
-> > you posted it.
-> > 
-> > For that entire patchset I don't have one. I can however justify the
-> > comparatively trivial thing I posted in this thread.
-> 
-> I didn't suggest you pick up the entire patchset, I suggested you
-> pull the inode cache conversion to hash-bl from it and use that
-> instead of hacking RCU lookups into the inode cache.
-> 
+Am Montag, 10. Juni 2024, 22:46:20 CEST schrieb Frank Li:
+> ********************
+> Achtung externe E-Mail: =D6ffnen Sie Anh=E4nge und Links nur, wenn Sie wi=
+ssen, dass diese aus einer sicheren Quelle stammen und sicher sind. Leiten =
+Sie die E-Mail im Zweifelsfall zur Pr=FCfung an den IT-Helpdesk weiter.
+> Attention external email: Open attachments and links only if you know tha=
+t they are from a secure source and are safe. In doubt forward the email to=
+ the IT-Helpdesk to check it.
+> ********************
+>=20
+> Add basic mipi subsystem for imx8qm and imx8qxp.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8-ss-mipi0.dtsi | 138 +++++++++++++++++=
+++++++
+>  arch/arm64/boot/dts/freescale/imx8-ss-mipi1.dtsi | 138 +++++++++++++++++=
+++++++
+>  2 files changed, 276 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-mipi0.dtsi b/arch/arm6=
+4/boot/dts/freescale/imx8-ss-mipi0.dtsi
+> new file mode 100644
+> index 0000000000000..6b56315e8c434
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/imx8-ss-mipi0.dtsi
+> @@ -0,0 +1,138 @@
+> +// SPDX-License-Identifier: GPL-2.0-only and MIT
+> +
+> +/*
+> + * Copyright 2024 NXP
+> + */
+> +
+> +mipi0_subsys: bus@56220000 {
+> +	compatible =3D "simple-bus";
+> +	interrupt-parent =3D <&irqsteer_mipi0>;
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <1>;
+> +	ranges =3D <0x56220000 0x0 0x56220000 0x10000>;
+> +
+> +	irqsteer_mipi0: interrupt-controller@56220000 {
+> +		compatible =3D "fsl,imx8qxp-irqsteer", "fsl,imx-irqsteer";
+> +		reg =3D <0x56220000 0x1000>;
+> +		interrupts =3D <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		interrupt-parent =3D <&gic>;
+> +		#interrupt-cells =3D <1>;
+> +		clocks =3D <&mipi0_lis_lpcg IMX_LPCG_CLK_0>;
+> +		clock-names =3D "ipg";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_0>;
+> +		fsl,channel =3D <0>;
+> +		fsl,num-irqs =3D <32>;
+> +	};
+> +
+> +	mipi0_lis_lpcg: clock-controller@56223000 {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x56223000 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&dsi_ipg_clk>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
 
-That's still a significantly more complicated change than my proposal.
+That's LPCG_DI_LVDS_LPCG_0 for imx8qxp, no? So clock-indices and
+clock-output-names should be split similar to patch.
 
-> > That aside if I had to make the entire thing scale I would approach
-> > things differently, most notably in terms of locking granularity. Per
-> > your own statement things can be made to look great in microbenchmarks,
-> > but that does not necessarily mean they help. A lot of it is a tradeoff
-> > and making everything per-cpu for this particular problem may be taking
-> > it too far.
-> 
-> The hash-bl conversion doesn't make anything per-cpu, so I don't
-> know what you are complaining about here.
-> 
+> +		clock-output-names =3D "mipi0_lis_lpcg_ipg_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_0>;
+> +	};
+> +
+> +	mipi0_pwm_lpcg: clock-controller@5622300c {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x5622300c 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&clk IMX_SC_R_MIPI_0_PWM_0 IMX_SC_PM_CLK_PER>,
+> +			 <&dsi_ipg_clk>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
+> +		clock-output-names =3D "mipi0_pwm_lpcg_clk",
+> +				     "mipi0_pwm_lpcg_ipg_clk";
 
-I crossed the wires with another patchset and wrote some garbage here,
-but it is not hard to error-correct to what I meant given the context:
-per-chain locking is not necessarily warranted, in which case bitlocks
-and associated trouble can be avoided.
+That's LPCG_DI_MIPI_LPCG_12, no? imx8qm RM Rev 0 just lists one clock.
+Also it's different on imx8qxp.
 
-> > For the inode hash it may be the old hack of having a lock array would
-> > do it more than well enough -- say 32 locks (or some other number
-> > dependent on hash size) each covering a dedicated subset.
-> 
-> No, that's a mid 1990s-era hack that was done because we didn't know
-> any better ways to scale global algorithms back then. 
-> It's not a scalable algorithm, it's a global algorithm that
-> has been sharded a few times to try to keep global scope operations
-> apart. The moment you have subset collisions because of a specific
-> workload pattern, then the scalability problem comes straight back.
-> 
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_0_PWM_0>;
+> +	};
+> +
+> +	mipi0_i2c0_lpcg_ipg_clk: clock-controller@56223014 {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x56223014 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&mipi0_i2c0_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
 
-It is a tradeoff, as I said. Avoidance of bitlock-associated trouble is
-the only reason I considered it.
+Just 0 instead of IMX_LPCG_CLK_0.
 
-> Your patch, however, just converts *some* of the lookup API
-> operations to use RCU. It adds complexity for things like inserts
-> which are going to need inode hash locking if the RCU lookup fails,
-> anyway.
-> 
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi0_i2c0_lpcg_ipg_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
+> +	};
+> +
+> +	mipi0_i2c0_lpcg_ipg_s_clk: clock-controller@56223018 {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x56223018 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&dsi_ipg_clk>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi0_i2c0_lpcg_ipg_s_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
+> +	};
+> +
+> +	mipi0_i2c0_lpcg_clk: clock-controller@5622301c {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x5622301c 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&clk IMX_SC_R_MIPI_0_I2C_0 IMX_SC_PM_CLK_MISC2>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi0_i2c0_lpcg_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
+> +	};
+> +
+> +	mipi0_i2c1_lpcg_ipg_clk: clock-controller@56223024 {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x56223024 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&mipi0_i2c1_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi0_i2c1_lpcg_ipg_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_1>;
+> +	};
+> +
+> +	mipi0_i2c1_lpcg_clk: clock-controller@5622302c {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x5622302c 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&clk IMX_SC_R_MIPI_0_I2C_1 IMX_SC_PM_CLK_MISC2>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi0_i2c1_lpcg_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_1>;
+> +	};
+> +
+> +	mipi0_i2c1_lpcg_ipg_s_clk: clock-controller@56223028 {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x56223028 0x4>;
 
-You may notice the patch only trivially alters insertion code because
-rcu awaraness in the hash was already present.
+Order nodes by base address please.
 
-> Hence your patch optimises the case where the inode is in cache but
-> the dentry isn't, but we'll still get massive contention on lookup
-> when the RCU lookup on the inode cache and inserts are always going
-> to be required.
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&dsi_ipg_clk>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi0_i2c1_lpcg_ipg_s_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_1>;
+> +	};
+> +
+> +	pwm_mipi0: pwm@56224000 {
+> +		compatible =3D "fsl,imx8qxp-pwm", "fsl,imx27-pwm";
+> +		reg =3D <0x56224000 0x1000>;
+> +		clocks =3D <&mipi0_pwm_lpcg IMX_LPCG_CLK_4>,
+> +			 <&mipi0_pwm_lpcg IMX_LPCG_CLK_0>;
 
-While it is true that the particular case gets sped up, that's not the
-only thing that happens and should you take a look at the synthethic
-benchmark I'm running you will see it does not even test that -- it is
-very heavily cache busting.
+I don't think that's correct. IMX_LPCG_CLK_4 evaluates to 16.
+'mipi0_pwm_lpcg' only has 2 clocks, so you should use just '1' and '0'.
 
-The win comes from going from back-to-back lock acquire (a well known
-terribly performing pattern) to just one.
+> +		clock-names =3D "ipg", "per";
+> +		assigned-clocks =3D <&clk IMX_SC_R_MIPI_0_PWM_0 IMX_SC_PM_CLK_PER>;
+> +		assigned-clock-rates =3D <24000000>;
+> +		#pwm-cells =3D <3>;
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_0_PWM_0>;
+> +		status =3D "disabled";
+> +	};
+> +
+> +	i2c0_mipi0: i2c@56226000 {
+> +		compatible =3D "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
+> +		reg =3D <0x56226000 0x1000>;
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +		interrupts =3D <8>;
+> +		clocks =3D <&mipi0_i2c0_lpcg_clk IMX_LPCG_CLK_0>,
+> +			 <&mipi0_i2c0_lpcg_ipg_clk IMX_LPCG_CLK_0>;
 
-> IOWs, even RCU lookups are not going to prevent inode hash lock
-> contention for parallel cold cache lookups. Hence, with RCU,
-> applications are going to see unpredictable contention behaviour
-> dependent on the memory footprint of the caches at the time of the
-> lookup. Users will have no way of predicting when the behaviour will
-> change, let alone have any way of mitigating it. Unpredictable
-> variable behaviour is the thing we want to avoid the most with core
-> OS caches.
+Just use 0 instead of IMX_LPCG_CLK_0.
 
-Of course it's still contended, I just claim it happens less.
+> +		clock-names =3D "per", "ipg";
+> +		assigned-clocks =3D <&mipi0_i2c0_lpcg_clk IMX_LPCG_CLK_0>;
+> +		assigned-clock-rates =3D <24000000>;
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_0_I2C_0>;
+> +		status =3D "disabled";
+> +	};
+> +};
+> +
+> diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-mipi1.dtsi b/arch/arm6=
+4/boot/dts/freescale/imx8-ss-mipi1.dtsi
+> new file mode 100644
+> index 0000000000000..5b1f08e412b24
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/imx8-ss-mipi1.dtsi
 
-> 
-> IOWs, the hash-bl solution is superior to RCU lookups for many
-> reasons. RCU lookups might be fast, but it's not the best solution
-> to every problem that requires scalable behaviour.
-> 
+This is only for imx8qm, no?
 
-Of course hash-bl is faster, I never claimed otherwise.
+It maybe makes sense to rename this file to imx8qm-ss-mipi1.dtsi
 
-I did claim my patch is trivial and provides a nice win for little work
-in exchange. See below for a continuation.
+Best regards,
+Alexander
 
-> > All that said, if someone(tm) wants to pick up your patchset and even
-> > commit it the way it is right now I'm not going to protest anything.
-> >
-> > I don't have time nor justification to do full work My Way(tm).
-> 
-> You *always* say this sort of thing when someone asks you to do
-> something different.
-> 
-> If you don't agree with the reviewer's comments, you make some
-> statement about how you "don't care enough to fix it properly" or
-> that you don't have time to fix it properly, or that you think the
-> reviewing is asking you to "fix everything" rather than just one
-> line in your patch so you reject all the reviewers comment, or you
-> say "if the maintainers want something" as a way of saying "you
-> don't have any authority, so I'm not going to listen to you at all",
-> or ....
-> 
+> @@ -0,0 +1,138 @@
+> +// SPDX-License-Identifier: GPL-2.0-only and MIT
+> +
+> +/*
+> + * Copyright 2024 NXP
+> + */
+> +
+> +mipi1_subsys: bus@57220000 {
+> +	compatible =3D "simple-bus";
+> +	interrupt-parent =3D <&irqsteer_mipi1>;
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <1>;
+> +	ranges =3D <0x57220000 0x0 0x57220000 0x10000>;
+> +
+> +	irqsteer_mipi1: interrupt-controller@57220000 {
+> +		compatible =3D "fsl,imx8qm-irqsteer", "fsl,imx-irqsteer";
+> +		reg =3D <0x57220000 0x1000>;
+> +		interrupts =3D <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		interrupt-parent =3D <&gic>;
+> +		#interrupt-cells =3D <1>;
+> +		clocks =3D <&mipi1_lis_lpcg IMX_LPCG_CLK_0>;
+> +		clock-names =3D "ipg";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_1>;
+> +		fsl,channel =3D <0>;
+> +		fsl,num-irqs =3D <32>;
+> +	};
+> +
+> +	mipi1_lis_lpcg: clock-controller@57223000 {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x57223000 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&dsi_ipg_clk>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi1_lis_lpcg_ipg_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_1>;
+> +	};
+> +
+> +	mipi1_pwm_lpcg: clock-controller@5722300c {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x5722300c 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&clk IMX_SC_R_MIPI_1_PWM_0 IMX_SC_PM_CLK_PER>,
+> +			 <&dsi_ipg_clk>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
+> +		clock-output-names =3D "mipi1_pwm_lpcg_clk",
+> +				     "mipi1_pwm_lpcg_ipg_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_PWM_0>;
+> +	};
+> +
+> +	mipi1_i2c0_lpcg_clk: clock-controller@5722301c {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x5722301c 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&clk IMX_SC_R_MIPI_1_I2C_0 IMX_SC_PM_CLK_MISC2>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi1_i2c0_lpcg_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
+> +	};
+> +
+> +	mipi1_i2c0_lpcg_ipg_clk: clock-controller@57223014 {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x57223014 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&mipi1_i2c0_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi1_i2c0_lpcg_ipg_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
+> +	};
+> +
+> +	mipi1_i2c0_lpcg_ipg_s_clk: clock-controller@57223018 {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x57223018 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&dsi_ipg_clk>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi1_i2c0_lpcg_ipg_s_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
+> +	};
+> +
+> +	mipi1_i2c1_lpcg_ipg_clk: clock-controller@57223024 {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x57223024 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&mipi1_i2c1_lpcg_ipg_s_clk IMX_LPCG_CLK_0>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi1_i2c1_lpcg_ipg_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_1>;
+> +	};
+> +
+> +	mipi1_i2c1_lpcg_ipg_s_clk: clock-controller@57223028 {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x57223028 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&dsi_ipg_clk>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi1_i2c1_lpcg_ipg_s_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_1>;
+> +	};
+> +
+> +	mipi1_i2c1_lpcg_clk: clock-controller@5722302c {
+> +		compatible =3D "fsl,imx8qxp-lpcg";
+> +		reg =3D <0x5722302c 0x4>;
+> +		#clock-cells =3D <1>;
+> +		clocks =3D <&clk IMX_SC_R_MIPI_1_I2C_1 IMX_SC_PM_CLK_MISC2>;
+> +		clock-indices =3D <IMX_LPCG_CLK_0>;
+> +		clock-output-names =3D "mipi1_i2c1_lpcg_clk";
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_1>;
+> +	};
+> +
+> +	pwm_mipi1: pwm@57224000 {
+> +		compatible =3D "fsl,imx8qxp-pwm", "fsl,imx27-pwm";
+> +		reg =3D <0x57224000 0x1000>;
+> +		clocks =3D <&mipi1_pwm_lpcg IMX_LPCG_CLK_4>,
+> +			 <&mipi1_pwm_lpcg IMX_LPCG_CLK_0>;
+> +		clock-names =3D "ipg", "per";
+> +		assigned-clocks =3D <&clk IMX_SC_R_MIPI_1_PWM_0 IMX_SC_PM_CLK_PER>;
+> +		assigned-clock-rates =3D <24000000>;
+> +		#pwm-cells =3D <3>;
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_PWM_0>;
+> +		status =3D "disabled";
+> +	};
+> +
+> +	i2c0_mipi1: i2c@57226000 {
+> +		compatible =3D "fsl,imx8qm-lpi2c", "fsl,imx7ulp-lpi2c";
+> +		reg =3D <0x57226000 0x1000>;
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +		interrupts =3D <8>;
+> +		interrupt-parent =3D <&irqsteer_mipi1>;
+> +		clocks =3D <&mipi1_i2c0_lpcg_clk IMX_LPCG_CLK_0>,
+> +			 <&mipi1_i2c0_lpcg_ipg_clk IMX_LPCG_CLK_0>;
+> +		clock-names =3D "per", "ipg";
+> +		assigned-clocks =3D <&mipi1_i2c0_lpcg_clk IMX_LPCG_CLK_0>;
+> +		assigned-clock-rates =3D <24000000>;
+> +		power-domains =3D <&pd IMX_SC_R_MIPI_1_I2C_0>;
+> +		status =3D "disabled";
+> +	};
+> +};
+>=20
+>=20
 
-By any chance is your idea of me claiming the reviewer is asking to "fix
-everything" based on my exchange with Christopher Hellwing concerning v2
-of the patch? Because I pretty clearly did not say anything of the sort,
-even though he might have taken it that way.
 
-Anyhow, you do understand I'm not getting paid to do this work?
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
-So here how I see it: the inode hash is a problem, there is one patchset
-which solves it but is stalled. Seeing how nobody is working on the
-problem and that there is an easy to code speed up, I hack it up, bench
-and submit.
 
-This is where you come in suggesting I carry hash-bl across the finish
-line instead, despite my submission explicitly stating limited interest
-in devoting time to the area.
-
-I write an explicit explanation why I'm not interested in doing it.
-
-This is where you should stop instead of complaining I'm not picking up
-your thing.
-
-> > I did have time to hack up the initial rcu lookup, which imo does not
-> > require much to justify inclusion and does help the case I'm interested
-> > in.
-> 
-> I thin kit requires a lot more justification than you have given,
-> especially given the fact changing memory pressure, access patterns
-> and cache balance will have a great impact on whether the RCU path
-> makes any different to inode hash lock contention at all.
-> 
-
-Per my explanation above the win is not from iget getting away without
-taking the hash lock, but from only taking it once instead of twice. The
-commit message starts with explicitly stating it.
-
-New inodes continuously land in the hash in my benchmark.
-
-> The hash-bl conversion is a much a better solution and the
-> work is mostly done. If you want your workload case to perform
-> better, then please pick up the inode hash lock conversion to
-> hash-bl.
-> 
-
-It is a much faster thing, but also requiring much more work to get in.
-I am not interested in putting in that work at this moment.
-
-That aside, one mailing list over there is another person arguing the
-hash in its current form needs to be eliminated altogether in favor of
-rhashtables and they very well may be right. Whoever picks this up will
-have probably have to argue against that too.
-
-All that said, my wilingness to touch the ordeal for the time being is
-limited to maybe one round of cosmetic fixups to post a v4 of my thing.
-
-If the patch is not wanted, someone decides to get hash-bl in, or
-rshashtable or something completely different, and my patch is whacked,
-I'm going to have 0 complains. I can't stress enough how side-questy
-this particular thing is at the moment.
 
