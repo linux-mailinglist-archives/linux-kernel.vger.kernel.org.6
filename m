@@ -1,178 +1,196 @@
-Return-Path: <linux-kernel+bounces-210228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870B3904118
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:22:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C4490411B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 18:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D93F2B2341D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:22:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E8EB1C23317
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 16:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B783C092;
-	Tue, 11 Jun 2024 16:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0C93F9F9;
+	Tue, 11 Jun 2024 16:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gHJCxLgj"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="UFlnfVXa"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B873B2A2
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 16:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FB03BB47;
+	Tue, 11 Jun 2024 16:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718122933; cv=none; b=DpEhgftZk6z+Hx8yXrV3RqYxTTLYVd65T5kjWleyiwoEg9pUF/WlE9kz7cyLHG44RvZnMGXSeHYLdBr2B0ig80jvA10ZsUap0RQSO/klW8MS7GV5DgkBpsol3qHncLhpkrKnX6tMA7jasOQuKQ+4oqfy+AqKlOWmTx6OLS4CQLo=
+	t=1718122960; cv=none; b=t1dVni8MenXfr0D5Hfzvyf9FjvoA6qJF6rsKPBwiqgXzkUDbdEZlB3gAMHnYol2QbyvkIRkKNjmrTpxgAiItuzbxOavQqaGC8IIOjyVk6Lsi3UnbT3/7BQ3oKy3yfCl+OgHDh6MgPTCyPUE3LUUfRttM8a5uLCURpjR+3TOvPQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718122933; c=relaxed/simple;
-	bh=Za4eT6Zh4nstNKeeM5l0obbQ8cEcGiiwE8dcwpGXF/A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HpxAxC5KJTQaU58kfd1QTBBMXPb+dNgUXLaMyfxttIRdMCRylXCQvl6VXx4x7CcFTLTGQdUqDs7KZ8Q6LnGPEVA0pGkIjHh34ctZCanKuVO6mgMkXxwrdG3xhe3x8Ak8j3W1CL+Z3AfVGu9KeVn/eROsCP+fbrACYkDnq3LOw4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gHJCxLgj; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfa6e0add60so5753305276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718122928; x=1718727728; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JQxvDf5UzR5oDkZoOHfjVzcIFa7H1tAgUbuPebpZYkA=;
-        b=gHJCxLgj8t4sOzuFnGRcfsurUmL+7orfz/FW49AGQo85qlY/ITEo7FG+fBQ00Me9VQ
-         t+27sgf6TZTPEj7SQBx8TzEGWTNo2LxCMSaCRStFqLOuKmr79h1YAlp315DxMGsR5CxY
-         a8+eXhGNhf4uouX+udhAh6+Q3mxutkuGuYCnw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718122928; x=1718727728;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JQxvDf5UzR5oDkZoOHfjVzcIFa7H1tAgUbuPebpZYkA=;
-        b=EYVSmyLWBGuWOk46m7QJBEMGT/romqmBfQ6thsPTrw0aPTRHHSBM0lAROg9TIbe0cL
-         SlYtS2wHMo3tK8jRRjcYHMr0X2aI4ziS6O+FBYGxJ6e23+cB3XTFU/z9Dse70QabV8yh
-         cFEDbm3N7ImTxL8xiiDJP3ZdcZSIyDkib8xEsuKrxU7etNgHzgFPyT3/ak7YvPw6WF7s
-         VZKIE0a3XLO5tHt0fk1bcVqe/9d79wAX++h9MtYBDPCmITxrTBjXFxQAJdP9lzwxxb6k
-         hLoT/yutYi8oZAr2Q6bngQHh3tG2zRBUsuhM2TPjPVBxvQsgi5zauZFOsaY6AOOsw3K+
-         WSZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXd1M/urQ6F+wIp4ABmBms9agTRmrpQt713XpqI7lepOsVrU0gzr6020T76oBSWkGY6ZuJhX9loL0T5uYkjBj05n7yziXEs3Wz02tmv
-X-Gm-Message-State: AOJu0Yx15etZDkUt+fGyodr7CRork/bvUHfJhc/hCnIQ8BgS3vkXwF+d
-	k+Q1oC46plLkCii3SWyZN8HzoKpUthT+S5Setm0W6Ydzga61mQmCASkR1ul4VjBVfP/cQNgdrXM
-	=
-X-Google-Smtp-Source: AGHT+IFNe6HaKZ3Vobj1O3N4mOvAjyFE0e0N2ssdCCSdyWVRYwpbrs0+1q8KfqJ9vfF7D8HTGV3QOA==
-X-Received: by 2002:a25:d347:0:b0:dfa:febf:5a72 with SMTP id 3f1490d57ef6-dfafebf5d04mr10870275276.38.1718122927930;
-        Tue, 11 Jun 2024 09:22:07 -0700 (PDT)
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com. [209.85.160.171])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44155eec71fsm3041671cf.57.2024.06.11.09.22.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 09:22:07 -0700 (PDT)
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4405dffca81so218191cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 09:22:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWRGr3j/JiYuTN7vjRFSVFjd+CMih2IN87FC/usbTr+F3VPyh6k/Ao6svqDjr8c4c9Zn/PryB6uBZb+D6v38HS8JvXSGK3qlXsTU/4Z
-X-Received: by 2002:a05:622a:2b47:b0:441:5420:6d3b with SMTP id
- d75a77b69052e-44154206e67mr2028121cf.2.1718122925584; Tue, 11 Jun 2024
- 09:22:05 -0700 (PDT)
+	s=arc-20240116; t=1718122960; c=relaxed/simple;
+	bh=MgactolaIdpGcjmgH7OIRRjjL3+YU8h6IrcvfyAargg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m53nwcyIoWogbeTMdeYQ7IV2IjmPhv8Nw+sq/le1afFDjhd+yWSnWLYLPgs6zLWSCe3nKzloVl9ATQmMYr0H6QJbzoB77Z3s4aO/Ramk93rjyhGBrLs9e5nZOJjgjYky54ICtRS25PDUmtJnxT7JsZQg8DobsIvold4Dt8/2syw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=UFlnfVXa; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BGJQIf024087;
+	Tue, 11 Jun 2024 09:22:19 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	pfpt0220; bh=Vg0o5dm9gSJYgIE/EdiacMPVzyOGczj3iM50NWszi6U=; b=UFl
+	nfVXad4el9ga66RARVyxpGnWh6FS6I6uv1w5x4dQB7uyW4S4CS1tsGSichooINQl
+	nf9efn1m+C2U9+qGMwWaVfXo28DACob085d3LF54Ajaws+nEWgJ+6LX3+zSosnkQ
+	dV31JlsPSMpbP2f0WEdotd9VRa+jmuFyFSygtvMI+CU4jyb/+FWzqqUYU/kzqlSp
+	cRfBzOReqmEPeDh2p6AnCl1DoJMZUGzsclXgvX8oegNPl/JeDfiMHdrXVmCODpyR
+	WFz01xVVdsl9bWdpXYfBmd1xFDsg/UcBumpf4cYcTvhtFbD6g3vDAU5Vhn4qa39L
+	AYnplOcQ46DBnvCpGiw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ympthay7v-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 09:22:18 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 11 Jun 2024 09:22:18 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 11 Jun 2024 09:22:18 -0700
+Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
+	by maili.marvell.com (Postfix) with ESMTP id ECB813F7059;
+	Tue, 11 Jun 2024 09:22:14 -0700 (PDT)
+From: Geetha sowjanya <gakula@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
+        <edumazet@google.com>, <sgoutham@marvell.com>, <gakula@marvell.com>,
+        <sbhatta@marvell.com>, <hkelam@marvell.com>
+Subject: [net-next PATCH v5 00/10] Introduce RVU representors  
+Date: Tue, 11 Jun 2024 21:52:03 +0530
+Message-ID: <20240611162213.22213-1-gakula@marvell.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1b7c19ec-536f-4f28-a68f-b03c1b51b99b@gmail.com>
-In-Reply-To: <1b7c19ec-536f-4f28-a68f-b03c1b51b99b@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 11 Jun 2024 09:21:54 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VPQWUy4n75sPSxnzFi9RMTR2THmsL+VOd1PPG5paZN_w@mail.gmail.com>
-Message-ID: <CAD=FV=VPQWUy4n75sPSxnzFi9RMTR2THmsL+VOd1PPG5paZN_w@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/panel : himax-hx83102: fix incorrect argument to mipi_dsi_msleep
-To: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Proofpoint-GUID: rWElOTpmOwwvUSj9jjhEV3y2T7pBd-ds
+X-Proofpoint-ORIG-GUID: rWElOTpmOwwvUSj9jjhEV3y2T7pBd-ds
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
 
-Hi,
+This series adds representor support for each rvu devices.
+When switchdev mode is enabled, representor netdev is registered
+for each rvu device. In implementation of representor model, 
+one NIX HW LF with multiple SQ and RQ is reserved, where each
+RQ and SQ of the LF are mapped to a representor. A loopback channel
+is reserved to support packet path between representors and VFs.
+CN10K silicon supports 2 types of MACs, RPM and SDP. This
+patch set adds representor support for both RPM and SDP MAC
+interfaces.
 
-On Tue, Jun 11, 2024 at 7:05=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.com=
-> wrote:
->
-> mipi_dsi_msleep expects struct mipi_dsi_multi_context to be passed as a
-> value and not as a reference.
->
-> Fixes: a2ab7cb169da ("drm/panel: himax-hx83102: use wrapped MIPI DCS func=
-tions")
->
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+- Patch 1: Refactors and exports the shared service functions.
+- Patch 2: Implements basic representor driver.
+- Patch 3: Add devlink support to create representor netdevs that
+  can be used to manage VFs.
+- Patch 4: Implements basec netdev_ndo_ops.
+- Patch 5: Installs tcam rules to route packets between representor and
+	   VFs.
+- Patch 6: Enables fetching VF stats via representor interface
+- Patch 7: Adds support to sync link state between representors and VFs .
+- Patch 8: Enables configuring VF MTU via representor netdevs.
+- Patch 9: Add representors for sdp MAC.
+- Patch 10: Add devlink port support.
 
-Should be no blank line between "Fixes" and "Signed-off-by"
+Command to create VF representor
+#devlink dev eswitch set pci/0002:1c:00.0 mode switchdev
+VF representors are created for each VF when switch mode is set switchdev on representor PCI device
+# devlink dev eswitch set pci/0002:1c:00.0  mode switchdev 
+# ip link show
+25: r0p1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 32:0f:0f:f0:60:f1 brd ff:ff:ff:ff:ff:ff
+26: r1p1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 3e:5d:9a:4d:e7:7b brd ff:ff:ff:ff:ff:ff
 
-> ---
->
-> Changes in v2:
->     - Add Fixes tag
->
-> v1: https://lore.kernel.org/all/d9f4546f-c2f9-456d-ba75-85cc195dd9b8@gmai=
-l.com/
->
-> ---
->  drivers/gpu/drm/panel/panel-himax-hx83102.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+#devlink dev
+pci/0002:01:00.0
+pci/0002:02:00.0
+pci/0002:03:00.0
+pci/0002:04:00.0
+pci/0002:05:00.0
+pci/0002:06:00.0
+pci/0002:07:00.0
 
-I notice you didn't CC me, even though I authored the broken commit.
-Presumably get_maintainer should have suggested you CC me?
+~# devlink port
+pci/0002:1c:00.0/0: type eth netdev r0p1v0 flavour pcipf controller 0 pfnum 1 vfnum 0 external false splittable false
+pci/0002:1c:00.0/1: type eth netdev r1p1v1 flavour pcivf controller 0 pfnum 1 vfnum 1 external false splittable false
+pci/0002:1c:00.0/2: type eth netdev r2p1v2 flavour pcivf controller 0 pfnum 1 vfnum 2 external false splittable false
+pci/0002:1c:00.0/3: type eth netdev r3p1v3 flavour pcivf controller 0 pfnum 1 vfnum 3 external false splittable false
 
+-----------
+v1-v2:
+ -Fixed build warnings.
+ -Address review comments provided by "Kalesh Anakkur Purayil".
 
-> diff --git a/drivers/gpu/drm/panel/panel-himax-hx83102.c b/drivers/gpu/dr=
-m/panel/panel-himax-hx83102.c
-> index 6009a3fe1b8f..ab00fd92cce0 100644
-> --- a/drivers/gpu/drm/panel/panel-himax-hx83102.c
-> +++ b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-> @@ -479,7 +479,7 @@ static int hx83102_disable(struct drm_panel *panel)
->         mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
->         mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
->
-> -       mipi_dsi_msleep(&dsi_ctx, 150);
-> +       mipi_dsi_msleep(dsi_ctx, 150);
+v2-v3:
+ - Used extack for error messages.
+ - As suggested reworked commit messages.
+ - Fixed sparse warning.
 
-So while your fix is correct, it's not really enough. I swore that I
-compile tested my change and, sure enough, the bad code compile tests
-fine. This is because the macro mipi_dsi_msleep() fell into a macro
-trap. :( Specifically, we have:
+v3-v4: 
+ - Patch 2 & 3: Fixed coccinelle reported warnings.
+ - Patch 10: Added devlink port support as suggested by "Jiri Pirko".
 
-#define mipi_dsi_msleep(ctx, delay)        \
-        do {                               \
-                if (!ctx.accum_err)        \
-                        msleep(delay);     \
-        } while (0)
+v4-v5:
+  - Patch 3: Removed devm_* usage in rvu_rep_create()
+  - Addressed review comments by "Simon Horman".
+  - Patch 9: As suggested by "Jakub Kicinski" reworked commit message.
 
-Let's look at "if (!ctx.accum_err)". Before your patch, that translated to:
+Geetha sowjanya (10):
+  octeontx2-pf: Refactoring RVU driver
+  octeontx2-pf: RVU representor driver
+  octeontx2-pf: Create representor netdev
+  octeontx2-pf: Add basic net_device_ops
+  octeontx2-af: Add packet path between representor and VF
+  octeontx2-pf: Get VF stats via representor
+  octeontx2-pf: Add support to sync link state between representor and
+    VFs
+  octeontx2-pf: Configure VF mtu via representor
+  octeontx2-pf: Add representors for sdp MAC
+  octeontx2-pf: Add devlink port support
 
-if (!&dsi_ctx.accum_err)
+ .../net/ethernet/marvell/octeontx2/Kconfig    |   8 +
+ .../ethernet/marvell/octeontx2/af/Makefile    |   3 +-
+ .../ethernet/marvell/octeontx2/af/common.h    |   2 +
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  74 ++
+ .../net/ethernet/marvell/octeontx2/af/npc.h   |   1 +
+ .../net/ethernet/marvell/octeontx2/af/rvu.c   |   9 +
+ .../net/ethernet/marvell/octeontx2/af/rvu.h   |  30 +-
+ .../marvell/octeontx2/af/rvu_debugfs.c        |  27 -
+ .../marvell/octeontx2/af/rvu_devlink.c        |   6 +
+ .../ethernet/marvell/octeontx2/af/rvu_nix.c   |  77 +-
+ .../marvell/octeontx2/af/rvu_npc_fs.c         |   5 +
+ .../ethernet/marvell/octeontx2/af/rvu_reg.h   |   1 +
+ .../ethernet/marvell/octeontx2/af/rvu_rep.c   | 463 ++++++++++++
+ .../marvell/octeontx2/af/rvu_struct.h         |  26 +
+ .../marvell/octeontx2/af/rvu_switch.c         |  20 +-
+ .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +
+ .../ethernet/marvell/octeontx2/nic/cn10k.c    |   4 +-
+ .../ethernet/marvell/octeontx2/nic/cn10k.h    |   2 +-
+ .../marvell/octeontx2/nic/otx2_common.c       |  56 +-
+ .../marvell/octeontx2/nic/otx2_common.h       |  84 ++-
+ .../marvell/octeontx2/nic/otx2_devlink.c      |  49 ++
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 305 +++++---
+ .../ethernet/marvell/octeontx2/nic/otx2_reg.h |   1 +
+ .../marvell/octeontx2/nic/otx2_txrx.c         |  36 +-
+ .../marvell/octeontx2/nic/otx2_txrx.h         |   3 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  19 +-
+ .../net/ethernet/marvell/octeontx2/nic/rep.c  | 676 ++++++++++++++++++
+ .../net/ethernet/marvell/octeontx2/nic/rep.h  |  53 ++
+ 28 files changed, 1817 insertions(+), 225 deletions(-)
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/rep.h
 
-...adding extra parentheses for order of operations, that is:
+-- 
+2.25.1
 
- if (!&(dsi_ctx.accum_err))
-
-...in other words it's testing whether the address of the "accum_err"
-is NULL. That's not a syntax error, but _really_ not what was meant.
-
-We really need to fix the macro trap by changing it like this:
-
--               if (!ctx.accum_err)     \
-+               if (!(ctx).accum_err)   \
-
-When you do that, though, you find that half the users of the macro
-were using it wrong since every other "_multi_" function passes the
-address. IMO while fixing the macro trap we should just change this to
-pass the address and then fix up all the callers.
-
-This is a serious enough problem (thanks for noticing it) that I'm
-happy to send out patches, but also I'm fine if you want to tackle it.
-If I don't see anything from you in a day or two I'll send out
-patches.
-
-Thanks!
-
--Doug
 
