@@ -1,57 +1,78 @@
-Return-Path: <linux-kernel+bounces-209661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-209662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA9890390B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:37:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9816390390E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 12:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00C6B282506
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:37:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82A21B2366F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2024 10:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2CB178395;
-	Tue, 11 Jun 2024 10:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A3D178397;
+	Tue, 11 Jun 2024 10:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Xae1nHkV"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Peyterti"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CB214F13F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FB714F13F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 10:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718102269; cv=none; b=k3vhOPMuaHpGblIJMjpwwZlHtXuHCCZN0QlMz6Fu2EEQ9EGjhvt2rT1Y80zgk2IORGipYyifytWX4bx9Z0VJMlFOL7YVQsFVXyrZvbsqGYcBmX7Gf3xIrRTq2IMVocoVItRSceFfC517QUAj3QqILLP4z3xn8hVCVM6MTWMpYZg=
+	t=1718102301; cv=none; b=gf5bhrj/pH7XKcWYe65XQYfOpZjcBFfNMhkikGxmYcbIHqvRHwTRfcD6vRm1SN668000cuqzJZCzdNUPkb+a9n8C9klYIo0oBWlIc87Z53EFZ2DBAVn3jD/Fm7SkK1dos3+ADKwgVCccEvrMzHz4VPGfLaLHf7b15t07zPK98bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718102269; c=relaxed/simple;
-	bh=q9DRe2L7BaTpw3s+dFxYjrnov2ho+fHZiPpUFdoj/3U=;
+	s=arc-20240116; t=1718102301; c=relaxed/simple;
+	bh=J21BSaq0b6iUfubvOJ45H+bg9QBB0htBk1F9s7SFr+I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hjh04vkk1U3w3P8GF3yUgh0x0iwVeCVcKOO2yt7SxvZQNyVgPJS9JsmXpZpCbPyKlMEYbd7Q3gn6siyI7bt8nIHEnwxlh9yT3CXy+YY0I/gHweVNeW1Smmh6Qjb9ZtJ2+UPFUgxZZzQeoiO+2tifcAILhqiuUlr8dRDsv0W/IZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Xae1nHkV; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=RJEjwUTNqxARRNi+A8Omlry3cWQer/5aK7szXPhq1oE=; b=Xae1nHkVIBr4AJjv
-	Tg/tcKEZ3do6YJRnY/vmjK6quHsH4TrVpocgmXHoOnW3d5KRWVRGisngBN7bX3Yb4c5x/QrzqpFW8
-	XIIBYG49XKCAoDk7Z2SSu70R+ENQ2DsJohrS6abpCdnZqMhdNRvLwMuXS1kqdyMo3CyyEXz8GTURO
-	yLBD8Ye+7BMxjEFcEQpgNdXXGNvO+mcmf5NE+/HgzJR+nBlfMqTPfNNDv96VnkQSyvM7kJEP3F669
-	tjqAZ1eRsttZvlBt4jY/2rF+inQMJTBzRIbxswrwsAxAJOYTdYMOHabK3JrJwxlNV6JI6hZUiKL/o
-	BS0er4lRBbAZCqGL1A==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sGysk-005X9R-13;
-	Tue, 11 Jun 2024 10:37:38 +0000
-Date: Tue, 11 Jun 2024 10:37:38 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: daniel@ffwll.ch, nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kherbst@redhat.com, lyude@redhat.com
-Subject: Re: [PATCH 2/6] drm/nouveau: remove unused struct 'init_exec'
-Message-ID: <Zmgo8leSWpsjVVBS@gallifrey>
-References: <20240517232617.230767-1-linux@treblig.org>
- <de79f41d-3a9b-4f15-b270-246af8b4c5b0@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s+AnbP86toVKZdcWStC7lQGG8IGtEepAgpZeW2DilxtxTuPFCzMtQNd4b+bgomd76snT11iDILr9BqAeVGkqBdDKc7JPQx4RrUM7IyfcolEsCY0hGvl6V4E6APZbhlTegUMuKYttXKg5u0ghPdY9Wjc2CKLJZdvMc3RDEXNAxmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Peyterti; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718102298; x=1749638298;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=J21BSaq0b6iUfubvOJ45H+bg9QBB0htBk1F9s7SFr+I=;
+  b=PeytertihQ62Eury0cPEKlvHQWJfX1JVBfrB95HTSljoJNZ7vTaeO67o
+   UI5cKY71LDFA+JpmLf9ttG7+WM30aZX8+ejk7+yoYZBPmCBLR+PifbU59
+   /YIOO+OYlTcGNFS6N3JX4+xTthIAhqjdyescoKyb94Qfyfd5v9chQv8Qb
+   azHHQn6GCfVeFZMnBcunWl2HXaG3GDwUDQ3WmT+YTZ2YMdghQ8sKGpJjx
+   VoQb+XUKv/q+lXHIbVEBGgiaZBcQ5tQagO8UIMCJMEBUKCRQog2v+P8H8
+   jp3ct+L1XsOfRJFbsorcpUWNh9LLjKhj1q4nPFOkQoRawv6779KTO2BKN
+   w==;
+X-CSE-ConnectionGUID: aCHaMi53SlmG+MkffQFyhw==
+X-CSE-MsgGUID: DukAq3bpSdSIneUIFU2u8g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="40205332"
+X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
+   d="scan'208";a="40205332"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 03:38:18 -0700
+X-CSE-ConnectionGUID: jqf/2a6DQWGM4+s8zoSg3w==
+X-CSE-MsgGUID: /cDX3UYMRzWuWf4DdaKvqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,229,1712646000"; 
+   d="scan'208";a="39980371"
+Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 11 Jun 2024 03:38:15 -0700
+Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sGytJ-0000Jq-02;
+	Tue, 11 Jun 2024 10:38:13 +0000
+Date: Tue, 11 Jun 2024 18:37:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Jos=E9?= Roberto de Souza <jose.souza@intel.com>,
+	linux-kernel@vger.kernel.org, intel-xe@lists.freedesktop.org
+Cc: oe-kbuild-all@lists.linux.dev, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Mukesh Ojha <quic_mojha@quicinc.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jonathan Cavitt <jonathan.cavitt@intel.com>,
+	=?iso-8859-1?Q?Jos=E9?= Roberto de Souza <jose.souza@intel.com>
+Subject: Re: [PATCH v5 1/2] devcoredump: Add dev_coredumpm_timeout()
+Message-ID: <202406111852.SdIM9NWt-lkp@intel.com>
+References: <20240610161133.156566-1-jose.souza@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,63 +81,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <de79f41d-3a9b-4f15-b270-246af8b4c5b0@redhat.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 10:36:34 up 33 days, 21:50,  1 user,  load average: 0.07, 0.02, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240610161133.156566-1-jose.souza@intel.com>
 
-* Danilo Krummrich (dakr@redhat.com) wrote:
-> On 5/18/24 01:26, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > 'init_exec' is unused since
-> > commit cb75d97e9c77 ("drm/nouveau: implement devinit subdev, and new
-> > init table parser")
-> > Remove it.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> 
-> Acked-by: Danilo Krummrich <dakr@redhat.com>
-> 
-> To which series does this patch belong?
+Hi José,
 
-Actually all of them were independent patches on drm
-some of which are all in, so it can be taken by itself.
+kernel test robot noticed the following build errors:
 
-> Need me to apply it?
+[auto build test ERROR on drm-xe/drm-xe-next]
+[also build test ERROR on wireless-next/main wireless/main linus/master v6.10-rc3 next-20240611]
+[cannot apply to driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Yes please!
+url:    https://github.com/intel-lab-lkp/linux/commits/Jos-Roberto-de-Souza/drm-xe-Increase-devcoredump-timeout/20240611-001400
+base:   https://gitlab.freedesktop.org/drm/xe/kernel.git drm-xe-next
+patch link:    https://lore.kernel.org/r/20240610161133.156566-1-jose.souza%40intel.com
+patch subject: [PATCH v5 1/2] devcoredump: Add dev_coredumpm_timeout()
+config: i386-randconfig-141-20240611 (https://download.01.org/0day-ci/archive/20240611/202406111852.SdIM9NWt-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240611/202406111852.SdIM9NWt-lkp@intel.com/reproduce)
 
-Thanks,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406111852.SdIM9NWt-lkp@intel.com/
 
-Dave
+All errors (new ones prefixed by >>):
 
-> - Danilo
-> 
-> > ---
-> >   drivers/gpu/drm/nouveau/nouveau_bios.c | 5 -----
-> >   1 file changed, 5 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_bios.c b/drivers/gpu/drm/nouveau/nouveau_bios.c
-> > index 79cfab53f80e..8c3c1f1e01c5 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_bios.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_bios.c
-> > @@ -43,11 +43,6 @@
-> >   #define BIOSLOG(sip, fmt, arg...) NV_DEBUG(sip->dev, fmt, ##arg)
-> >   #define LOG_OLD_VALUE(x)
-> > -struct init_exec {
-> > -	bool execute;
-> > -	bool repeat;
-> > -};
-> > -
-> >   static bool nv_cksum(const uint8_t *data, unsigned int length)
-> >   {
-> >   	/*
-> 
+   In file included from drivers/gpu/drm/xe/xe_devcoredump.c:9:
+>> include/linux/devcoredump.h:79:6: error: no previous prototype for function 'dev_coredumpm_timeout' [-Werror,-Wmissing-prototypes]
+      79 | void dev_coredumpm_timeout(struct device *dev, struct module *owner,
+         |      ^
+   include/linux/devcoredump.h:79:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      79 | void dev_coredumpm_timeout(struct device *dev, struct module *owner,
+         | ^
+         | static 
+   1 error generated.
+
+
+vim +/dev_coredumpm_timeout +79 include/linux/devcoredump.h
+
+    78	
+  > 79	void dev_coredumpm_timeout(struct device *dev, struct module *owner,
+    80				   void *data, size_t datalen, gfp_t gfp,
+    81				   ssize_t (*read)(char *buffer, loff_t offset,
+    82						   size_t count, void *data,
+    83						   size_t datalen),
+    84				   void (*free)(void *data),
+    85				   unsigned long timeout)
+    86	{
+    87		free(data);
+    88	}
+    89	
+
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
