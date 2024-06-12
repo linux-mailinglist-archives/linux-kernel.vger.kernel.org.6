@@ -1,79 +1,146 @@
-Return-Path: <linux-kernel+bounces-211695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB39905587
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:45:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B5E905596
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23F3C1F23A37
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:45:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FAA3B2276E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A3B17E91C;
-	Wed, 12 Jun 2024 14:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89BF1802C3;
+	Wed, 12 Jun 2024 14:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vWxb2qoQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQ8P34F7"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A65B17E46F;
-	Wed, 12 Jun 2024 14:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A0A10E3;
+	Wed, 12 Jun 2024 14:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718203546; cv=none; b=ljVtdQglRXlS5Mt67AXaq5vT01fW0ODcU3xNWu0ywwvk6S8AVaDfHO3cq7kG1sqgvX4Z2QfKTgAdfilk70ZLfMDAT7sjuWBCpGH4MfwIAfKRJbI8pzzSSEjbRF8l+Yol7MI4vltT4b5tW2YfDmucNCWbZT9exJd7mGaRukB7Y00=
+	t=1718203564; cv=none; b=lE4mhgp+C0uZXUoUV/7A1FuZcMawPkhtu+aW8bmIuh+F5MuJK733JjOEWrcbka8slmuUHOeH2jWkgbyhwckVX3U0cuYkU4gYrkYOVWnWR/rlvL7qJ1LYk6ksdiJv4pdcXiN4sTZhn59MfGn+ukCYNDO7dvsySN4NRLuAG+aJIGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718203546; c=relaxed/simple;
-	bh=gyrNWe9KzLBAJMK5rRHPXMaZ3/0hf4xbjg1wOTVTEEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nllKzhPnoQYt8+AnZ24giad9U0MJjGHj2mrqGKNqbkUPr5lZDrZNpjsCw9K0U8UIOYW1kWZFU2QERU9Mpu7RXAlXdP/JmYWga00nUGMzeA9/pnHBUJpjLNCSVGCKqi+vjFw75DQbIiHVxCmIWRB8MxFNtOyvrSpahaSsQZRxIG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vWxb2qoQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB693C3277B;
-	Wed, 12 Jun 2024 14:45:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718203545;
-	bh=gyrNWe9KzLBAJMK5rRHPXMaZ3/0hf4xbjg1wOTVTEEI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vWxb2qoQZKs/68gSQtchZahCUcBhYXM+pIELKkjbWZlrVX4GC2xf/wYNHnMHI9uz7
-	 S/mw5Axnhz8MJ/06gffXEvbC/w8c7E/bKt1L1/HThZS4C8dchJJLGvKthv5hosda40
-	 Rle0fbwg4I+ExecB+tMyckMnh73Q859EJa+M9HVg=
-Date: Wed, 12 Jun 2024 16:45:42 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Cheng Ming Lin <linchengming884@gmail.com>
-Cc: miquel.raynal@bootlin.com, dwmw2@infradead.org,
-	computersforpeace@gmail.com, marek.vasut@gmail.com, vigneshr@ti.com,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	richard@nod.at, alvinzhou@mxic.com.tw, leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] mtd: spinand: macronix: Add support for serial NAND
- flash
-Message-ID: <2024061250-contend-citadel-7d03@gregkh>
-References: <20240605054858.37560-1-linchengming884@gmail.com>
+	s=arc-20240116; t=1718203564; c=relaxed/simple;
+	bh=5AxXYH7nKTnTDISzs7OOMXqxrPovr+dh//GfJdFTR8k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gXVl3gytizSqzJWJLIs+RbQ7QaXLYCZp/oC7s2Rx5lDMMJQMHPikpaizdA9aJGYelfGoDU7WabRVoYpj526922txWzFEb3OSpMMDhkLh648iREb2/zVVI6uxYJuSzKQN3cFj9BUf3F6F6nKoZBcfGIOBLlkCZlstr/614G+YCv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQ8P34F7; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f04afcce1so304723366b.2;
+        Wed, 12 Jun 2024 07:46:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718203560; x=1718808360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5AxXYH7nKTnTDISzs7OOMXqxrPovr+dh//GfJdFTR8k=;
+        b=aQ8P34F7P6QvkYdFxgalqjIaH1D2++2VaFcDdpejbvCkFyPuFHQ208EgHNKjGW/HBR
+         iOI0GnF/6JRHvJ67wrmY/kCa8TquO/m2WNkqqMx9Pwe1RprYpuLiSl4BIjt6Gyr5Fnm8
+         oe75nEL76aIl7zZplwKJ/plVctywNZywXUdjCeNi3Cbg5e3K0bKL3XIAGIxozIwmDvyx
+         qc6oJWc7/PxDkcJEPhQdx1aXL3n+oSrE97m88KJ0TEIy37EnUM4RjT/7xaOXmrM50lJ6
+         YnTYtESvnJEc8fFtmxk7RQFH3I5oKkszaigacVCzERWjzQGmGUB2wEab3jXQyvQYg1Kf
+         Mq0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718203560; x=1718808360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5AxXYH7nKTnTDISzs7OOMXqxrPovr+dh//GfJdFTR8k=;
+        b=GiBmMLEh3bf3jXwVgb/FcNHo09Z7fi77FzGg3SPMPLFJMhkRJulQK3yZ57W2uTjV6e
+         chxS2BH9LaoHjz71WuyBmWMFt7RerC0ONBF5vtkeBhAoED8VXoUgnoql4XeYfHTTjOXj
+         ctf8ndseyLknZGEv440eFnW3nNZsHSg8jDibgBmO9wAIpx9USXcmE6AwIM5UOQx5coJo
+         hHtzxxKTbYDNIC24rpYXzbCdfkVndYJMCwfpEZyQqSTPBfEH71+ts5xRiS0IF2gmax1O
+         QR6zNWY1hlNtd1+XG5g12JC8gqrswWD5Wuz724fwdpycfrTCsJtQZvqJ1vypVnr3h9v0
+         QncA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6QD2T0M6q5KyZDAYfDYmkEbSmcgG/cVvCL7QR47MKtjZFm/A3mG4Gsj33D4XyPcwI89sKWTccXVZvRCtIxPAYm4SXWL0M0KfxKnsRQX/9jqcvXcOeRQ+o0sGEg3hisiEPdnb8t1K8Vghz6IvHDvzAjb+DBgrzn7HZdQ==
+X-Gm-Message-State: AOJu0YytyCywemBRDdJhjNdSIiXdexPs2EDM/+htXHjXwu8zpwRLGIx/
+	r9Vo+vef2Rxmju7fMeUMdTMDYwTohlAl3KIV5nlxDHj9nB2MoPQDZkgoUdIMheoxaUsV9CQY+D2
+	JPNFXS8jeyuPqnwFJ7Ma/rCsDOM0=
+X-Google-Smtp-Source: AGHT+IEl0JvRLUON6rkpWTuYeTJkOBLp2cxRobpfn23a+6NqNKZeRh/2J4mmduBxTKrwNFkPAbePHd1yLLmdOoT5X3A=
+X-Received: by 2002:a17:906:d8ab:b0:a6f:2d9a:c956 with SMTP id
+ a640c23a62f3a-a6f47d4eefamr167552966b.3.1718203559979; Wed, 12 Jun 2024
+ 07:45:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605054858.37560-1-linchengming884@gmail.com>
+References: <20240610125713.86750-1-fgriffo@amazon.co.uk> <k4r7ngm7cyctnyjcwbbscvprhj3oid6wv3cqobkwt4p4j4ibfy@pvmb35lmvdlz>
+In-Reply-To: <k4r7ngm7cyctnyjcwbbscvprhj3oid6wv3cqobkwt4p4j4ibfy@pvmb35lmvdlz>
+From: Frederic Griffoul <griffoul@gmail.com>
+Date: Wed, 12 Jun 2024 15:45:48 +0100
+Message-ID: <CAF2vKzP0C1nEYTWRdWeAFKVUcuu3BkPD0FVA7yAS1rc-c=gs5A@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] vfio/pci: add msi interrupt affinity support
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Fred Griffoul <fgriffo@amazon.co.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Alex Williamson <alex.williamson@redhat.com>, 
+	Waiman Long <longman@redhat.com>, Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Mark Brown <broonie@kernel.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Joey Gouly <joey.gouly@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Jeremy Linton <jeremy.linton@arm.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, Kevin Tian <kevin.tian@intel.com>, 
+	Eric Auger <eric.auger@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Ye Bin <yebin10@huawei.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 05, 2024 at 01:48:58PM +0800, Cheng Ming Lin wrote:
-> From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> 
-> commit c374839f9b4475173e536d1eaddff45cb481dbdf upstream.
+MIchal
 
-No, this isn't that commit, it's just a portion of it :(
+To be honest my initial idea was to store an affinity mask per vfio group, =
+which
+can be done in the privileged process setting the vfio group/device owner, =
+and
+later apply the mask to each interrupt of each device in the group.
 
-Please backport the whole thing, and leave the original signed-off-by
-lines and text in it.
+It would still require to fix the affinity of all the interrupts if
+the vfio group affinity is
+changed (or deliberately ignore this case). And it did not match
+exactly my use case
+where I need the process handling the interrupts to sometimes be able
+to change them
+but always within the cpuset. So I would still need the current patch,
+in addition to
+a new ioctl() to set the affinity mask of a vfio group.
 
-Also, this is needed for 5.10.y kernels, right?  Please provide a
-backported version for there, otherwise you would upgrade your kernel
-and have a regression.
+Br,
 
-thanks,
+Fred
 
-greg k-h
+On Mon, Jun 10, 2024 at 5:31=E2=80=AFPM Michal Koutn=C3=BD <mkoutny@suse.co=
+m> wrote:
+>
+> Hello Fred.
+>
+> On Mon, Jun 10, 2024 at 12:57:06PM GMT, Fred Griffoul <fgriffo@amazon.co.=
+uk> wrote:
+> > The usual way to configure a device interrupt from userland is to write
+> > the /proc/irq/<irq>/smp_affinity or smp_affinity_list files. When using
+> > vfio to implement a device driver or a virtual machine monitor, this ma=
+y
+> > not be ideal: the process managing the vfio device interrupts may not b=
+e
+> > granted root privilege, for security reasons. Thus it cannot directly
+> > control the interrupt affinity and has to rely on an external command.
+>
+> External commands something privileged? (I'm curious of an example how
+> this is setup.)
+>
+> > The affinity argument must be a subset of the process cpuset, otherwise
+> > an error -EPERM is returned.
+>
+> I'm not sure you want to look at task's cpuset mask for this purposes.
+>
+> Consider setups without cpuset or a change of (cpuset) mask anytime
+> during lifetime of the task...
+>
+> Michal
 
