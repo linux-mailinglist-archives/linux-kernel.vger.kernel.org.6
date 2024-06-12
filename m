@@ -1,101 +1,126 @@
-Return-Path: <linux-kernel+bounces-211482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7EF90526B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:29:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318C6905294
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3B21F2265D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:29:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339A11C218BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D0516F902;
-	Wed, 12 Jun 2024 12:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4B8170852;
+	Wed, 12 Jun 2024 12:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vnN08X8c"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=concord.sh header.i=@concord.sh header.b="hqddc/9m"
+Received: from komekko.fuwafuwatime.moe (komekko.fuwafuwatime.moe [65.21.224.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6600F16F0F3;
-	Wed, 12 Jun 2024 12:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126D116D4F6;
+	Wed, 12 Jun 2024 12:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.224.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718195352; cv=none; b=S4u5SECb3y2FQlW7EbDmp4GMWlnThplfGFdXlxQcqaKUd2CHAh7zwxnRSL/KP2tJwuIfNsZkQG8fbU/ocS11uDF8A/oFPzos8Yzy2uYwyrGJsBuGrnCdNfQyEP6uXFUL5BtsU6QnwEPaWkrwIyfjhNroc3leX+ipqIAJREDmOX8=
+	t=1718195713; cv=none; b=K0yKTlAyBXdC7d0JEl3p5hhQMBSO3gj8JrKZfsIpfVsQVA+AEpusBiEi9N171Q4tUS3U9OsQ+jNkVFczrUIX+G3RMoHYahc8bXhvX/hHff617lmaA4mf0n0cN++cTml2e4r7iCE4b5lDX74yH+FZQwbE7AoKS4JMDdlv9TiZ3fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718195352; c=relaxed/simple;
-	bh=xa3TDRwgZuX8yrQhYuKQcppS5saA02uNPUv7uS2FNlw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=RNBEy1SeC/bDxm/om2T+z2dwNv1BtEWAWItnMu86F56SGFJdYn6IFi2cqfcDvxBMhmp0sUUZZa7k3u0W2Ve6Og65TltWbfSzOcL04k/OSGgUCitHm/Af/JagE02lY7gwRDocrlau0fEGnSIXOK3GmdEmSIa6RAEcxUz6mfDUUSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vnN08X8c; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718195331; x=1718800131; i=markus.elfring@web.de;
-	bh=xa3TDRwgZuX8yrQhYuKQcppS5saA02uNPUv7uS2FNlw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vnN08X8c9dQil+FPsUvfogxmWJ4G3S2/XuGyM6/hEthZyVGU8cx7iXfZI8CYQu52
-	 tWjqZ08zhRMBhUhD89KDzmYTfWT0m3aYW2dm+iHwVkd7d+isO5bt+LpomHQ2rk1Aj
-	 g6lCS3uM88rApXtMDvkGDwo3Vt8s8z9XNUXOBH9/nzBbHMCot/K5yVKTHK1gOJE9a
-	 96CFXAgyZCtb1BDwYoaXXWXf2bDm261yJzBrZ/PQzZtRpVUqw80IgBeXIbLsZbagz
-	 Pefp4Jiw46fZSbTElpaq3aWLmsY54sy65RL/VUqrMULfuSX9H+P2v86kGGqZbVA1T
-	 29cQwcmGqjkREINl1w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mrfp8-1sn91S3dPY-00cXtP; Wed, 12
- Jun 2024 14:28:50 +0200
-Message-ID: <47685d2a-da23-4558-8577-98f4ddfff386@web.de>
-Date: Wed, 12 Jun 2024 14:28:49 +0200
+	s=arc-20240116; t=1718195713; c=relaxed/simple;
+	bh=TDi4E53eOV070hTG5YTA25MB1lt7gnKyfwnJfREXyYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VOH4gEf/bNo5HB3c9CyzMbMH4Id41DxAl/6QcAFtXgMBjxn7VdFAGAtufuZUM1viAXt8FF1zdVrXZ9FFxvAjkPU33sf3SqQ1cZjeGqi4UmbBy/fNtYBGCXrAKcIbsrc0igxirpsmJ+9jaZBER8xpIPicNcHpFCx0V3KOeHaoMiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=concord.sh; spf=pass smtp.mailfrom=concord.sh; dkim=pass (2048-bit key) header.d=concord.sh header.i=@concord.sh header.b=hqddc/9m; arc=none smtp.client-ip=65.21.224.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=concord.sh
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=concord.sh
+Received: from megumin.fuwafuwatime.moe (unknown [71.203.71.170])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by komekko.fuwafuwatime.moe (Postfix) with ESMTPSA id A03E41145104;
+	Wed, 12 Jun 2024 15:29:15 +0300 (EEST)
+Received: from localhost (unknown [192.168.1.101])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by megumin.fuwafuwatime.moe (Postfix) with ESMTPSA id 0C8D010962BC;
+	Wed, 12 Jun 2024 08:29:10 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=concord.sh; s=dkim;
+	t=1718195353;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TDi4E53eOV070hTG5YTA25MB1lt7gnKyfwnJfREXyYo=;
+	b=hqddc/9maZCsBRJ9ABlmTv6tXq6l0TTb+km1ZM5oOQfADREbo2japdfW2lyZe49Gfba42c
+	FGg6yfC+tWIv8FkC1NEeiJW1u2IWOmoK1ekdLLHPz2wkjITKo8UMxF6FQjA+fatksvPNoh
+	ncONAKqvg5cXEhxf4WpDBCh1Zvp+ZO7tnfD7xHmBtxGUQ66gWcwuBUYKaMMlPBlhotMEpJ
+	VRr1q8LALz50D2LL67N/gpLfA4kinPgTB6RXV+Zc3ggKIJhGf//5CNCHbz8aUOqPBDtSLD
+	lje7a8rSySZcGmtCyAB4e2MIXtbYRMgAmcBA5ncaYbDjVawpMgtbxGMCsfqwRQ==
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=me@concord.sh smtp.mailfrom=me@concord.sh
+Date: Wed, 12 Jun 2024 08:29:01 -0400
+From: Kenton Groombridge <me@concord.sh>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Kenton Groombridge <concord@gentoo.org>, 
+	Kees Cook <keescook@chromium.org>, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3] wifi: mac80211: Avoid address calculations via out of
+ bounds array indexing
+Message-ID: <hftvxmqv4wm4l6s4ynkzakvawem4a6mvzvkbvnfgvkuie6ybbw@7pulonpy7q74>
+Mail-Followup-To: Johannes Berg <johannes@sipsolutions.net>, 
+	Kenton Groombridge <concord@gentoo.org>, Kees Cook <keescook@chromium.org>, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+References: <20240605152218.236061-1-concord@gentoo.org>
+ <fd1acc0f69ef9573ff0dced35863949c80c6d5e7.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
-Subject: Re: [v2 00/14] drm/msm/hdmi: rework and fix the HPD even generation
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="m6rphp4l66hp66gv"
+Content-Disposition: inline
+In-Reply-To: <fd1acc0f69ef9573ff0dced35863949c80c6d5e7.camel@sipsolutions.net>
+
+
+--m6rphp4l66hp66gv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Ja2i8ZUUvIyK5q6YmCwdL9rk9uZKTbD7PKkt7563jmEhmvE1n4c
- ZzUvQSj4iXfm5RqU3YVXn2bO8RGzprL9jpkdN6Wkyc5bi1udDg6/jMke6Qq2DPUgdk/qPDS
- rx/UmNp34WoVZtCQ+Hm61N2h978worirp0LojuomUXpXRLzwhxvIvn04DPLkfb3EcHLR1LW
- CkPD1llIIPwaJ3/+h9TfA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yYaB5Ri7W4o=;VeXpXqKLcMhulJxSFoDGSSyHCDU
- 1qiyxgM707FIzTmPeutdJTN5Z17s79WLkQGxx5T5Ev/oR/SQMAXyzDiveZyG+pj8UoS5LMJqO
- d6vpnd7OBMweb9Jo7kPWnDDztF5e9B2wQi2XO3uWcMUTJWiHaXG7AVoLAosaHK0L2DxcUc9I0
- NLzd06Ls5sXgkYesdr/NS++eWV+gto7Jm3CQ0h5AJR5parbruvLI8RjB0n/cIiY3nGtYVQ6t1
- 5W64isUzcseQ780s3janMrjpRlLANa8cojD55YJu3G0AypYh0eFEKKBmkMAwf3XJ0hEGe/gpW
- f7P5rPFmslf7STucUBuuxem33Rr0xzIAQUaaVWoc0S62z2BywINXnbIlIs1ekeMRxHeXfeDb8
- 98N4IgBEijbe93h+kX0qUrIqhTDeBJYeG+UGqDMKrCL6hP1jaKjrUMgUm0y2L1pgJwcLta20f
- zs71UcnG41xTdDus060Qmhgfmp8L7KkTMUokwgDqklp6CRpQUeMoyC7008lUs8xrpM63h9uuV
- itOkG9n/KeONrcxZ9WwLW6IZ4iWAwDGWqGI1/vxLk34OaqQQ7yceltRI51lTMSbKGU5aILVqq
- KGmguOz31zO7mh8x+yjLdyyhHM5/Yk25SxsnuF7DJqEv3OXTVrKi6kcxkrDIzt4XQH0Nebg8p
- XOx8PYhVqK6MNf0KRKu0U8myq5TlI/RsTyO2Ks6wT6feFxiUqA/ta6mFKPzFeMpr0IJDBVy40
- Tu7+hQ01bR+Ndii39ADVjIwGhElg0IQT53xwFbbn4pFjNa21+0Dk6sxi2xK7+OiW7sUebrJgE
- JcQDccGzTtj9OyZn8803lhasUDYIkIoYl4OmHPFDAbLUY=
 
-=E2=80=A6
-> This series was tested on msm8996 and apq8064 boards. Previously HPD
-> handling sometimes could trigger in the CRTC event handling, =E2=80=A6
+On 24/06/12 10:20AM, Johannes Berg wrote:
+>=20
+> Wait ... I don't know what Kees did here, but seems then he should sign-
+> off too.
+>=20
 
-Would you like to refer to the word =E2=80=9Cevent=E2=80=9D also in the me=
-ssage subject?
+Very early on I asked Kees to review this patch and he identified a
+couple issues with it and offered some suggestions. I wanted to make
+sure to credit him appropriately for his help -- I apologize if the
+Co-authored-by: tag is not appropriate here.
 
-Regards,
-Markus
+--m6rphp4l66hp66gv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQKTBAABCgB9FiEEP+u3AkfbrORB/inCFt7v5V9Ft54FAmZplIlfFIAAAAAALgAo
+aXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5maWZ0aGhvcnNlbWFuLm5ldDNG
+RUJCNzAyNDdEQkFDRTQ0MUZFMjlDMjE2REVFRkU1NUY0NUI3OUUACgkQFt7v5V9F
+t57vpA//VHsT66cH6yUOnOb25EOh76FkknUiaDTdDSU90XWIx3SBe2xILR+yeipU
+hMpdatBpLtE0lIKnWjp7a9ZxTrIzHtqkKqscNzFRlsPVlZqOw3pOmCyyYi4gsxwY
+AL6tn4Jb6iS4msK124/ncdOIkudCMuE3p8ii9SDFn47ubf4oROgsFponQqP1Mjt6
+/0a1fPFbUm7pJR/dCVbk+WcEHq65jS3uk60fL1iYttLsPQVjAKjkbsfDzUA7h8Vx
+xPTXgbSNgy2uCp78s20z0gkGiJ4RLGJlE9U2msFHbWRUY0MBZDVa67IHMql7JsOl
+Y3MCItaZdLbf44bhP2NuFEF5NPdXka2EgrTpS7wUbnX8x9H9nmCVTgWFWOHKGV2y
+2roUwfuO/oYSrmQpFH2CTo0wtwnKaA+57e8qD6kQZzRqeGMrLGoc9AwvFPxxXPyy
+ZyDfSUXRY9PRJ/TGZAosm1PO1BCMJTd9Qg+0v3usoXeBtsG49E3XJtLfKCq0dK8i
+OSpUfNVuPDeZ1MA2YsbmXg/z/WGmj7daCA20Kto502qtuTHYsX4X9SxFx7SZHCEh
+MkKjyPpyLxMSMhLTHHD9qIs+LsUxvDbKElZPT+0YmrOaS1xB3SW685sNmoGVOZ8Z
+aF037mFI3iIUqGjFZZynBmJPllU2//O9CP9RIfne12m7TrZWc2U=
+=0LHB
+-----END PGP SIGNATURE-----
+
+--m6rphp4l66hp66gv--
 
