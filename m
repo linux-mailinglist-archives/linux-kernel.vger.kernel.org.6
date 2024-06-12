@@ -1,167 +1,97 @@
-Return-Path: <linux-kernel+bounces-210889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A9C99049AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:30:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD007904940
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6F7282D0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:30:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A581C23146
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66102208D6;
-	Wed, 12 Jun 2024 03:30:29 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2111.outbound.protection.partner.outlook.cn [139.219.146.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC881F92F;
+	Wed, 12 Jun 2024 03:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NT3d79ty"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0773EF4FA;
-	Wed, 12 Jun 2024 03:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.219.146.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF772DDC4;
+	Wed, 12 Jun 2024 03:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718163028; cv=none; b=EIL3nzmO0dXVmdeYV7M6DlH5S0SRF8njznfLKbTUuKMmU8JmEvXUpgIOOPrwlTbGt8x7iuojRgV/ltwqTESRKqT49tg+sQ2EcwLhXrzblz14Bnw2ganDnV6yjdevQzk76Y8XJWu2fWTOgeydepZvSM/tZvua6qtsTwhG8V6v6WU=
+	t=1718161234; cv=none; b=fIIeyK5oXqQN5HGnVRzSWAzgORCFIQqVPvtDv2UGER/nBr7UWQCqX/tgr9/5BMXMB/gaWthb2R2C/SLeFDDFrnHPpuAVpP7ZWZSfxj6cRC1s43pd88HtFCoBYQeGfK8sA5ykuOyIXT5mEnu41PQHd8b2H4gCY5XzkvHnmutpPn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718163028; c=relaxed/simple;
-	bh=kLKAbzi0xsqXvRGTpQFmPAYjqFrDThP5VWGEQnR2Icw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UtdBKit8mDuFyg6FUwvp1lIezUypelhUnmcOZxtgE5trEtwLdfAnZ3qZjLf16EG/KvFB88T/KFNCCYc6fm3Xcp3N8BK6VWMsiyWc5qWUBzRKkZTBAXW68/j3y6yU34Yj6TZNpcAqf7n+0j7xPHC6O8qK82U0mwn3u5BjFJ4kwAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=none smtp.client-ip=139.219.146.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-Received: from NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:10::10) by NT0PR01MB1023.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:2::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.38; Wed, 12 Jun
- 2024 02:58:19 +0000
-Received: from NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
- ([fe80::e3b:43f8:2e6d:ecce]) by NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
- ([fe80::e3b:43f8:2e6d:ecce%7]) with mapi id 15.20.7611.039; Wed, 12 Jun 2024
- 02:58:18 +0000
-From: JiaJie Ho <jiajie.ho@starfivetech.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: "David S . Miller" <davem@davemloft.net>, "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] crypto: starfive - Align rsa input data to 32-bit
-Thread-Topic: [PATCH] crypto: starfive - Align rsa input data to 32-bit
-Thread-Index: AQHasV7JGIR2o9Gsw0quf+yEyIC5HbG8Na+AgAdOR4A=
-Date: Wed, 12 Jun 2024 02:58:18 +0000
-Message-ID:
- <NT0PR01MB11824BA0DD4F7C638A91E80C8AC02@NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn>
-References: <20240529002553.1372257-1-jiajie.ho@starfivetech.com>
- <ZmLsK9Apy9NwNEQi@gondor.apana.org.au>
-In-Reply-To: <ZmLsK9Apy9NwNEQi@gondor.apana.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: NT0PR01MB1182:EE_|NT0PR01MB1023:EE_
-x-ms-office365-filtering-correlation-id: 00809498-56e6-4ffe-bcac-08dc8a8b8364
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230032|41320700005|366008|1800799016|38070700010;
-x-microsoft-antispam-message-info:
- 6BoecWKvpDpVjmNu8LUkwK6zwPA9uEmbO3qvlGVeHNPr88Q9UPxSlDZMUjw58AWJnrwYfhs2Zh5ccZ9HoM+d0g8N8BCcCP70ckGMXG2ArZW0cUreNEtFa+zGqVQZSDMksfDL7ALEVQ2rAxGiVLWaPVRPxVFo26IdR9hThbZJ/tapYhfMjTsRxW0Vgimfw7APubWSGBq68t2chXuQ8KBiKyGEj5v3d4MLnmWiGIrC6a/SgqmV3oZinRYLi75Z4XHbUfmNY4/ju9XQ88cOpClh2Zf6cMnBTathTx2f0Myct4rVhRSvV2aotUZBLVOclzfAcc4m3XRHGylEYhvqz9J2i6nzvL53hrvafM+s0d7PuVahljwjEWWnFs0aoEu814cYQXoYCbNc8VydbxoS40ay9/HGJBg40w0JW1LzX/UOYLujQHcLuF7WOpAeqZkYf1kx15JAogA+ulL6Yzjd/Rn7rsxYRelx1WBqQMSTX2o1QXezp/rjZrNiux73dDKQUR4SzQx95rWwTBr8gqhexduGQPl4P1tb2j7nI8gAq4JfjRBjNDHAUD049odPvPI+noJdEJ1fm75igpEHmJ95rltB2/wIIC/ARtWdeojnx19ZkMrwnIP89o6YDYHdr57CSjws
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230032)(41320700005)(366008)(1800799016)(38070700010);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?lW/5V8zycOjf4o3J2rWMKA2F98T1zCsR2wFwRdkDT7UF3xLDlq/K1UrIkzf+?=
- =?us-ascii?Q?nImXyR1pmQYkhR5ydxcIQv+8OK7BrFkxbhyBWTpkS5bFhZ6Pu1026UODyBkb?=
- =?us-ascii?Q?nMjpYLqbHeE7EAHZhIwK5CdkFsJ36jwc+sd1HfO/vAvax1nn6sSzVBF1Sn+7?=
- =?us-ascii?Q?IYddaf7Q4olGZhc9ts8hPiYHVIrdGXTWxGtQSaVM/mz4YYJkKqDkTfe1De3T?=
- =?us-ascii?Q?4mv/IFgUC5I2SsBYHBVkM9AbglbWeANKO0nZCDKETFutIbXuomB1qNAKxSfS?=
- =?us-ascii?Q?oJz8eGU5hK20i2rC6IQ5PlI71I0wvyBT248/zFzw7b9LiJno0MxV+ANv/TBY?=
- =?us-ascii?Q?nrkbLz3svKZNIlypsHz+9V6+ofMyLYA9ndi8iezs1S3qTqCMBBgOI0PVzaD/?=
- =?us-ascii?Q?UD6K2WenHXoO9ZxfQE1Q4c26OGioV3YU7ViHc57tmJ1O8n/55t9fPDDtD+J2?=
- =?us-ascii?Q?/qZ8tbrnILUEbhz3LFG1h2zElb1U+ovuA45mdpRhVd4l8RTt9qQMGGiPfXvS?=
- =?us-ascii?Q?frFfeoMlJ/idYfIYtTaRCQ4X6WTvsQFDXqiy2sCV6/Z5l4QEg92ZKfYJMbQY?=
- =?us-ascii?Q?iuD+2cge3CzN16JRvYjAJHzv+WAFPzzobJU+DE0Llww/vdpkMnj3g6JbTz2n?=
- =?us-ascii?Q?iIH9uZ4cpTOpZ+wM2L4dIHlO8EJR1tgqJr5zmiHprnUf8xfxsSJtp7CzbAeB?=
- =?us-ascii?Q?ICFAuFUkCCNxBqUuGrFWzzjbpql1y5ZvlPO13wmk5X7pk0MZDqq9efBH1CKC?=
- =?us-ascii?Q?UzIBNkR0RO464z6vFl0s76IknFzwg2qEirEV3rmkwrfEC/05dFGumVctr3Fa?=
- =?us-ascii?Q?JCqWcngVM+f8bPOrgudJ1X+DAgYE7IP99RVOecz8ygUxBOAhxu+V7+E0M3C7?=
- =?us-ascii?Q?isrM1qZa6nCclaFayixMPF3+t1bB2QGKlGfRLC3sCbJ9BP0YuSLhbRh8yyCH?=
- =?us-ascii?Q?9lKiuKytL6E9+KvX1RTGSnHe8e2TWB4B9930dSGSWw+9xysxMNknAoVGAcXv?=
- =?us-ascii?Q?eP8v+9dOexvaY9GxGZcMTnjsOyQsidMJkRKj8Zy37jRI6PiPFKK+XCN4a/qi?=
- =?us-ascii?Q?QA/U3sIE5j+/RzwQTiisq6FpUxrMSb4GC5PMJKnVsjcPkk+jKe13z/s9ApGa?=
- =?us-ascii?Q?ZS9dLdAsbMiHTNRQT/uVIegi8a+AtFA88mo1vO+8X9DRADBkDgdZennYFNUN?=
- =?us-ascii?Q?7HbIbWtgcxauAYJoH7DaodhgcjvjlpArb1zrwDezsPQQxRUr88tlJS1YxjM6?=
- =?us-ascii?Q?D5GCfuKFnVvuwHAj4SM9UGEPzkhqGagMBfCQudSTgL4LsTfash7zeedQEvuT?=
- =?us-ascii?Q?RV9IlhgdyQHsa1Ay2DzfsjPm2+7Vi/GRo+RX5Oia3cLEGjm3SyNmOFJwzsNF?=
- =?us-ascii?Q?QFnUijbvCpFazexgZdEeuzLYMknu/RxCPIS7Uk/uFKcvNW3n5YtUnuK3/3N9?=
- =?us-ascii?Q?Yj4o4kbVQvBf9a90xPi76P+jmdut5tIPlz4zdldtAeLSOM9oQjOUNIfx6IYV?=
- =?us-ascii?Q?SWZSE9oyKwUUYDTAjXBPtziEqm5TT/Zqt81ma2j1swPTm3xw/qCGilu1CAkm?=
- =?us-ascii?Q?AtZjThcg9XBYrlUubaO2d5VO5aADxb+ZfuQ02jcXhN8T/qPQvjt2Zkjnjw+W?=
- =?us-ascii?Q?lA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1718161234; c=relaxed/simple;
+	bh=2M+qM0U4qxV/y34cPtE7EHwJ5OefFeMyZddnNuriUP4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=iwttMzxGt5Jk2wxAkeCmAVJAwP0ewlnpA5mbKuZwc63JBsosa6IJ+WCJ+GNXJ7zUY0zDYrq4FgjR8gXIDvlVZo3JEEnkjwQGhxRtlbnCVwDkPGzhuqZvs4ADxQnwe9sZ/RhmIdrY0Z8I28ukJQni5IoNeUcmj1PDmm0/QeaLlb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NT3d79ty; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8B85AC4AF4D;
+	Wed, 12 Jun 2024 03:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718161233;
+	bh=2M+qM0U4qxV/y34cPtE7EHwJ5OefFeMyZddnNuriUP4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=NT3d79ty/pLboaP/rGNEZigh8GGJY4RYGRik3PQ//2nEp+Mzx2QfqpNuNuRCaAG3O
+	 Yra1gD7uxr0M6lHVpuQ98GgXh9C0jM8fHUAkZ2AoTbvH+UBHVZxTFQ6jUcJ/tuB2Ih
+	 fW8j0Z7Uje7CKrkAHHR3paE66Ln/T0uF0rOzXWvN9gwT/O1zAPNTFI3BDwWA4fRbLo
+	 h+BvZHb4qHDsx39Ao347C3MkSpL0jDvFKumSlgvZ4WSSUoKx2J1686TR1EE+xjHy42
+	 070F8T7kPoa3UIAmLrfnXmWPh3MuKmf83YG/7p3E9/7G9RzLblJxULgJLnxCJSGMVM
+	 rMffux4HWEkkQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7A5E8C4332D;
+	Wed, 12 Jun 2024 03:00:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00809498-56e6-4ffe-bcac-08dc8a8b8364
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2024 02:58:18.9125
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zt44A0KgQ86sjgO5RCVvzzLEJsp44L3oqx1hcRqmIHeWozRqbmLtbCmTU8BtDzhKYVzZjZvxJFm8nbxai4Sqo0xMZ1emJYbEvJybZOQRS1Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: NT0PR01MB1023
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v3] gve: ignore nonrelevant GSO type bits when processing
+ TSO headers
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171816123349.11889.11987638058865473120.git-patchwork-notify@kernel.org>
+Date: Wed, 12 Jun 2024 03:00:33 +0000
+References: <20240610225729.2985343-1-joshwash@google.com>
+In-Reply-To: <20240610225729.2985343-1-joshwash@google.com>
+To: Joshua Washington <joshwash@google.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
+ stable@kernel.org, pkaligineedi@google.com, hramamurthy@google.com,
+ willemb@google.com, edumazet@google.com, avagin@gmail.com,
+ jeroendb@google.com, shailend@google.com, pabeni@redhat.com,
+ rushilg@google.com, csully@google.com, bcf@google.com,
+ linux-kernel@vger.kernel.org
 
-> On Wed, May 29, 2024 at 08:25:53AM +0800, Jia Jie Ho wrote:
-> > Hardware expects RSA input plain/ciphertext to be 32-bit aligned.
-> > Allocate aligned buffer and shift data accordingly.
-> >
-> > Signed-off-by: Jia Jie Ho <jiajie.ho@starfivetech.com>
-> > ---
-> >  drivers/crypto/starfive/jh7110-cryp.h |  3 +--
-> > drivers/crypto/starfive/jh7110-rsa.c  | 17 ++++++++++-------
-> >  2 files changed, 11 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/crypto/starfive/jh7110-cryp.h
-> > b/drivers/crypto/starfive/jh7110-cryp.h
-> > index 494a74f52706..eeb4e2b9655f 100644
-> > --- a/drivers/crypto/starfive/jh7110-cryp.h
-> > +++ b/drivers/crypto/starfive/jh7110-cryp.h
-> > @@ -217,12 +217,11 @@ struct starfive_cryp_request_ctx {
-> >  	struct scatterlist			*out_sg;
-> >  	struct ahash_request			ahash_fbk_req;
-> >  	size_t					total;
-> > -	size_t					nents;
-> >  	unsigned int				blksize;
-> >  	unsigned int				digsize;
-> >  	unsigned long				in_sg_len;
-> >  	unsigned char				*adata;
-> > -	u8 rsa_data[] __aligned(sizeof(u32));
-> > +	u8					*rsa_data;
->=20
-> You didn't explain why this is moving from a pre-allocated buffer to one =
-that's
-> allocated on the run.  It would appear that there is no reason why you ca=
-n't
-> build the extra space used for shifting into reqsize.
->=20
-Hi Herbert,
+Hello:
 
-Can I fix the buffer length of the pre-allocated buffer to 256 bytes instea=
-d of
-the current variable length buffer?=20
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
--        u8 rsa_data[] __aligned(sizeof(u32));
-+       u8 rsa_data[STARFIVE_RSA_MAX_KEYSZ];
+On Mon, 10 Jun 2024 15:57:18 -0700 you wrote:
+> From: Joshua Washington <joshwash@google.com>
+> 
+> TSO currently fails when the skb's gso_type field has more than one bit
+> set.
+> 
+> TSO packets can be passed from userspace using PF_PACKET, TUNTAP and a
+> few others, using virtio_net_hdr (e.g., PACKET_VNET_HDR). This includes
+> virtualization, such as QEMU, a real use-case.
+> 
+> [...]
 
-That's the maximum length supported by the hardware and=20
-most applications now use rsa2048 and above.
+Here is the summary with links:
+  - [net,v3] gve: ignore nonrelevant GSO type bits when processing TSO headers
+    https://git.kernel.org/netdev/net/c/1b9f75634441
 
-Thanks,
-Jia Jie
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
