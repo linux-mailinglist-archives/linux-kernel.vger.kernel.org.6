@@ -1,266 +1,125 @@
-Return-Path: <linux-kernel+bounces-211410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7017C905148
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:23:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F6D90515E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7F11F222ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:23:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81C7C1C208AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B68816F292;
-	Wed, 12 Jun 2024 11:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34B116F0E8;
+	Wed, 12 Jun 2024 11:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R19Yq5TI"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xuuf40in"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A8616F0FB;
-	Wed, 12 Jun 2024 11:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8505B16C878;
+	Wed, 12 Jun 2024 11:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718191400; cv=none; b=Iuze3wh9sHSIMCP1TuhAK1YM5S1wxWxA6tiC5Sj0Fol5q296cTG8jKXFweiJ0q0Dv1CYcnh+7HNkuFTWpCmrb10M+VDJmMCbUxAbtRu+eNpouy7jFtrOP5U7zEvRZ8mCnPTVuW8KSCPgv+o6aHO3yqGizuKKJBlHyl5I9RPrcKA=
+	t=1718191653; cv=none; b=rSo6sEyiVpdZslbcJy56epd1UoHQKq5LjLl5h0VCtmlaFhQGzH0cGmbG5lmzJlKie2qptWA22y8BQdBWY147oNdiFeocZHXHIC8FAClrjRlbD+VmmmYQGJsqHZSHVjcKdo53PNpmQeZMn2KOm/0gd+4I1DRtW6L1HHB1PerYt9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718191400; c=relaxed/simple;
-	bh=eyqk4BWKM+w8zgI+2BHLFLdZGQatPIJSvGdKBMHkdnQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lPNZWuaFVGtpJsf7AkOddaHef/msG1JEQb9he6uVgyb4d2bYe8WUjDUGZ/+yI9WcjG2IBu872706KjtRx7AgqpDE4bCUjFRPJQ5jB1opiRLWcq1ATfljdCZ9t8utY938i75knO7CRSXwRNR2oPbwg/NL18uthf+DRej+FJalkzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=R19Yq5TI; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45CBNCwP080336;
-	Wed, 12 Jun 2024 06:23:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718191392;
-	bh=650Q/oEA4q0guSCa793ebYVf7QtXHsuFmq4zcJ/TXek=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=R19Yq5TIeFdUD4hvyy0acdnq7K8stejhKcBaJfMX9E0HGmWmZZdzijVJf8QhreDxF
-	 uSaJFZJ1nEf2DT/ohbt4R1ly5yrvWc0Od8fX3eWMHfuN5SgGBDqg4N2Gliny8GmLeb
-	 Stcjx+U3U8yo29oLWgAVqTjHdYxIe6OPprfDYk+U=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45CBNCk9022931
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Jun 2024 06:23:12 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
- Jun 2024 06:23:11 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 12 Jun 2024 06:23:12 -0500
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [10.24.69.66])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45CBMxe4120263;
-	Wed, 12 Jun 2024 06:23:08 -0500
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <j-choudhary@ti.com>, <vaishnav.a@ti.com>,
-        <afd@ti.com>, <u-kumar1@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] arm64: dts: ti: k3-j722s-evm: Add memory carveouts for R5F and C7x
-Date: Wed, 12 Jun 2024 16:52:59 +0530
-Message-ID: <20240612112259.1131653-3-b-padhi@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240612112259.1131653-1-b-padhi@ti.com>
-References: <20240612112259.1131653-1-b-padhi@ti.com>
+	s=arc-20240116; t=1718191653; c=relaxed/simple;
+	bh=2WXhunE0FX83qRs/SGKpCCNORSUg99lCzf12ZKZzJD0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4QaU2UiJ7y378RBD6j+dybEefBI0wwq+UTYhC3oJVmiAO5UhA3HuGy2lAwq1cQjkbdon+WOZ55rll8BcR+UobpGyQyAvJVCn9XQeg65Yj4YCHkJ/z2+3NVPjsJNRgINQdnvaCIjlEd0bcOSONuxrnAEqxEv+vB9lXHefrOyYtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xuuf40in; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52bc274f438so2948449e87.0;
+        Wed, 12 Jun 2024 04:27:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718191650; x=1718796450; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2WXhunE0FX83qRs/SGKpCCNORSUg99lCzf12ZKZzJD0=;
+        b=Xuuf40inTwVHXOw5MahtPUReIoIQTy3lP8yvO3OmiJ0BYsXNOaqKmxlCi7kvqkJO5s
+         Z6YQdR3xFX3SnpJwmFZsonPOYmfyYe/dUFfbzxRKkmF0UjZeiW8vEWZc2VYp5ELynUdK
+         spueHseTiA1KKDEiarFBNg7zPoFnrWg5jOfLNm5Ev34nK4xfUzCXEuwQKiHlJ3B/Bo7Z
+         SX2ryhE5P0VKa/gphGqsA1bsmlavW/dr/EuO6iLcheVl18KYTzXwzKgIgZy8LLpWJI6/
+         CoqjCmVwwAUa0gMr/pI313K5EfCxBKzgX5Gwr09wpaTMOD1r6L2kd9Bc7bLY0FkX9d47
+         43xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718191650; x=1718796450;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2WXhunE0FX83qRs/SGKpCCNORSUg99lCzf12ZKZzJD0=;
+        b=b7+39zBQFHJuiFJwk6kgekGPSolACjm+TEUqQpOy44bBqLzPxpsjt6JgFb2Hf9uxxH
+         ItBev+FIqqJ3PEcxnoSfIQsyhrBECnagNr/mZNWemI5+fQyqRXZ5lRa+pOeEBWRfQ026
+         sZ4yURFRlnSxLoI45X2jYZmRNPQuWuo2u8BPWtUYU3b4qOdc/rywT2ZU4PiNYqPyt9Ia
+         y1TNJtySY5kQa3kexrNDFLBYiLhK/TKXkZ5x6MXPn2/+bZffa9HHQ7jfYakz7Nwul7Dg
+         pow+uh5stmZGAkxGfiph3x66+U1UDXhqJ7QDi0DK0DgqPa6eGHX+9+GhnEcNbQosP71G
+         rLmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqQeS4c7e1loxOTvA0xT0VCGAZys8sztE4eiPdOcvkSyE20dZl5/mmC924CZPJJNwY6eZYZYJf62GqdpVYrFntSCi1yn8e4T8vCFyvzyqIfO86ck02J0qPrCWvvB8hQ/K9CnOJ
+X-Gm-Message-State: AOJu0Yzg/MGXLTaqqVuubWYsytkvwCiwA8hhhVCp6EhO6lMTpnjSZTZc
+	obp7X7CDniVq7bR0Nf95FXM8w6hXkS8iuOaymYhlZGzhe6gEw+AO
+X-Google-Smtp-Source: AGHT+IFL/+dHqux09NxFiimG8+4GZxdGxQxBDWDe+F9a1kTeGHUaRxVMPVGtrmjMLX8TEzoMX7Y22g==
+X-Received: by 2002:a05:6512:3e05:b0:52c:836c:9ce8 with SMTP id 2adb3069b0e04-52c9a3b9624mr1506594e87.4.1718191649607;
+        Wed, 12 Jun 2024 04:27:29 -0700 (PDT)
+Received: from pc636 (host-90-233-193-23.mobileonline.telia.com. [90.233.193.23])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c879187f0sm1489134e87.272.2024.06.12.04.27.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 04:27:28 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 12 Jun 2024 13:27:26 +0200
+To: Zhaoyang Huang <huangzhaoyang@gmail.com>, Baoquan He <bhe@redhat.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	"zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	hailong liu <hailong.liu@oppo.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	steve.kang@unisoc.com
+Subject: Re: [Resend PATCHv4 1/1] mm: fix incorrect vbq reference in
+ purge_fragmented_block
+Message-ID: <ZmmGHhUDk5PqSHPB@pc636>
+References: <20240607023116.1720640-1-zhaoyang.huang@unisoc.com>
+ <CAGWkznEODMbDngM3toQFo-bgkezEpmXf_qE=SpuYcqsjEJk1DQ@mail.gmail.com>
+ <CAGWkznE-HcYBia2HDcHt6trM9oeJ2x6KdyFzR3Jd_-L5HyPxSA@mail.gmail.com>
+ <ZmiUgPDjzI32Cqr9@pc636>
+ <CAGWkznGnaV8Tz0XrgaVWEVG0ug7dp3w23ygKKmq8SPu_AMBhoA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CAGWkznGnaV8Tz0XrgaVWEVG0ug7dp3w23ygKKmq8SPu_AMBhoA@mail.gmail.com>
 
-From: Apurva Nandan <a-nandan@ti.com>
+On Wed, Jun 12, 2024 at 10:00:14AM +0800, Zhaoyang Huang wrote:
+> On Wed, Jun 12, 2024 at 2:16 AM Uladzislau Rezki <urezki@gmail.com> wrote:
+> >
+> > >
+> > > Sorry to bother you again. Are there any other comments or new patch
+> > > on this which block some test cases of ANDROID that only accept ACKed
+> > > one on its tree.
+> > >
+> > I have just returned from vacation. Give me some time to review your
+> > patch. Meanwhile, do you have a reproducer? So i would like to see how
+> > i can trigger an issue that is in question.
+> This bug arises from an system wide android test which has been
+> reported by many vendors. Keep mount/unmount an erofs partition is
+> supposed to be a simple reproducer. IMO, the logic defect is obvious
+> enough to be found by code review.
+>
+Baoquan, any objection about this v4?
 
-The K3 J722S SoCs have one single-core Arm Cortex-R5F processor in each
-of the WAKEUP, MCU and MAIN voltage domain, and two C71x DSP subsystems
-in MAIN voltage domain.
+Your proposal about inserting a new vmap-block based on it belongs
+to, i.e. not per-this-cpu, should fix an issue. The problem is that
+such way does __not__ pre-load a current CPU what is not good.
 
-The Inter-Processor communication between the main A72 cores and these
-R5F and DSP remote cores is achieved through shared memory and
-Mailboxes. Thus, add the memory carveouts and enable the mailbox
-clusters required for communication.
-
-Signed-off-by: Apurva Nandan <a-nandan@ti.com>
-[ Added and enabled mailbox instances ]
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 140 ++++++++++++++++++++++++
- 1 file changed, 140 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-index 253b02f0437de..643a017833572 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-@@ -51,12 +51,71 @@ secure_ddr: optee@9e800000 {
- 			no-map;
- 		};
- 
-+		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@a0000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa0000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
- 		wkup_r5fss0_core0_memory_region: r5f-memory@a0100000 {
- 			compatible = "shared-dma-pool";
- 			reg = <0x00 0xa0100000 0x00 0xf00000>;
- 			no-map;
- 		};
- 
-+		mcu_r5fss0_core0_dma_memory_region: mcu-r5fss-dma-memory-region@a1000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa1000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		mcu_r5fss0_core0_memory_region: mcu-r5fss-memory-region@a1100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa1100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		main_r5fss0_core0_dma_memory_region: main-r5fss-dma-memory-region@a2000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa2000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		main_r5fss0_core0_memory_region: main-r5fss-memory-region@a2100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa2100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		c7x_0_dma_memory_region: c7x-dma-memory@a3000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa3000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		c7x_0_memory_region: c7x-memory@a3100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa3100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		c7x_1_dma_memory_region: c7x-dma-memory@a4000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		c7x_1_memory_region: c7x-memory@a4100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		rtos_ipc_memory_region: ipc-memories@a5000000 {
-+			reg = <0x00 0xa5000000 0x00 0x1c00000>;
-+			alignment = <0x1000>;
-+			no-map;
-+		};
- 	};
- 
- 	vmain_pd: regulator-0 {
-@@ -400,6 +459,87 @@ &sdhci1 {
- 	bootph-all;
- };
- 
-+&mailbox0_cluster0 {
-+	status = "okay";
-+	mbox_r5_0: mbox-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster1 {
-+	status = "okay";
-+	mbox_mcu_r5_0: mbox-mcu-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster2 {
-+	status = "okay";
-+	mbox_c7x_0: mbox-c7x-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster3 {
-+	status = "okay";
-+	mbox_main_r5_0: mbox-main-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+
-+	mbox_c7x_1: mbox-c7x-1 {
-+		ti,mbox-rx = <2 0 0>;
-+		ti,mbox-tx = <3 0 0>;
-+	};
-+};
-+
-+&wkup_r5fss0 {
-+	status = "okay";
-+};
-+
-+&wkup_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
-+	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
-+			<&wkup_r5fss0_core0_memory_region>;
-+};
-+
-+&mcu_r5fss0 {
-+	status = "okay";
-+};
-+
-+&mcu_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
-+	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
-+			<&mcu_r5fss0_core0_memory_region>;
-+};
-+
-+&main_r5fss0 {
-+	status = "okay";
-+};
-+
-+&main_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster3 &mbox_main_r5_0>;
-+	memory-region = <&main_r5fss0_core0_dma_memory_region>,
-+			<&main_r5fss0_core0_memory_region>;
-+};
-+
-+&c7x_0 {
-+	status = "okay";
-+	mboxes = <&mailbox0_cluster2 &mbox_c7x_0>;
-+	memory-region = <&c7x_0_dma_memory_region>,
-+			<&c7x_0_memory_region>;
-+};
-+
-+&c7x_1 {
-+	status = "okay";
-+	mboxes = <&mailbox0_cluster3 &mbox_c7x_1>;
-+	memory-region = <&c7x_1_dma_memory_region>,
-+			<&c7x_1_memory_region>;
-+};
-+
- &serdes_ln_ctrl {
- 	idle-states = <J722S_SERDES0_LANE0_USB>,
- 		      <J722S_SERDES1_LANE0_PCIE0_LANE0>;
--- 
-2.34.1
-
+--
+Uladzislau Rezki
 
