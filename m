@@ -1,106 +1,105 @@
-Return-Path: <linux-kernel+bounces-212206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97CDE905CB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:21:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACAC905CB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 742B01C2322D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:21:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71753282952
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222B18614D;
-	Wed, 12 Jun 2024 20:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEE084D0F;
+	Wed, 12 Jun 2024 20:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDy8K6tz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eIxSKhzI"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FECB84FDF;
-	Wed, 12 Jun 2024 20:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E229884D03
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 20:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718223668; cv=none; b=btFpjmuXANvgSXU6zVIQDeDzbDtRe5zkkwaTfYdqKoeEpfcgUJWr+KDhF5UI8WdRWZLV+WqNda15RA4OisSMhxo5E+HnSMY2+GPBPUXK2NjPUMNKRSELI36b3a9KSRLky0FawAG3hE2tkPnAcYxHsC749mZXzF0mplcHYXzUsTs=
+	t=1718223680; cv=none; b=NLl3qx7bKT1sFBYjYS39TxUjlU/rCeCb2ukNZmq6kJQTlGOFStACT792BA+7MrQDritvwD3OhSEzvbM8NvXWoEHzR9JrDkzyCoE971i4C8OyHhx+Cz+QiuV4Ymz1CkuCjRzINjCdsWkvAbP68MFmR+egOE4bORhlzRVUXWd4YKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718223668; c=relaxed/simple;
-	bh=MWggHuDmnRYrL6/F/g0nQyheyownkHUkefYD5cQ+7EU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VgMhOQu7oN0e42e9sa46rebveOUpUB4jy61/xciBFpaZxrK7N1m2T2+YM+HhoiGDLQnNyN9bvSBCf4P0/UgPGAA+Nd9ufNBTEAhDWfL83AEwqt2xUoAcC4JtjHOwtrNV3h9WHwBnYBUUoxgepNlY5yyASIcU/PQ1k1mDODcfpps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDy8K6tz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E05D1C32786;
-	Wed, 12 Jun 2024 20:21:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718223667;
-	bh=MWggHuDmnRYrL6/F/g0nQyheyownkHUkefYD5cQ+7EU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=dDy8K6tzIR2SW38mTPuGne/59hM0GYaWIWx++6nRhpxUcQvdYeOWmQYITGsROmCbg
-	 RLRNSy3f/W0Lu6Q0pVB2ldComQ7iqf96XMvmFczK5evPGziHapzFZYmuZg2qsEjTRe
-	 o2K9jJghL3hxrS1byOebezsWYFePPNmeBJQ5Xl6fSraFKhhPMTws7MZisx0OUlX+jb
-	 W0trPF8GArt0iYZMhiaku6yqk7EeBd2psHvmBc6kOY6cC/1iqmAq3nm315WywKoEOV
-	 E8mi/5300RFGzcGtDKG9F6yvfNVFTi+20ZvHXN48GjV5sj51QLh/fzDd8LWeP+gRcu
-	 y6IZsnXUPVYZQ==
-From: Mark Brown <broonie@kernel.org>
-To: Lars-Peter Clausen <lars@metafoo.de>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Peter Ujfalusi <peter.ujfalusi@gmail.com>, Jai Luthra <j-luthra@ti.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- alsa-devel@alsa-project.org, Devarsh Thakkar <devarsht@ti.com>, 
- Vignesh Raghavendra <vigneshr@ti.com>, 
- Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <20240611-asoc_next-v3-0-fcfd84b12164@ti.com>
-References: <20240611-asoc_next-v3-0-fcfd84b12164@ti.com>
-Subject: Re: [PATCH v3 0/2] Fixes for McASP and dmaengine_pcm
-Message-Id: <171822366586.240528.375456084176371266.b4-ty@kernel.org>
-Date: Wed, 12 Jun 2024 21:21:05 +0100
+	s=arc-20240116; t=1718223680; c=relaxed/simple;
+	bh=Z3LCtPuWBgt3B8PP4A93a4ldAsnXfNj/7glDIm7408o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h4AYPNirRhFp0GYtqxMPWycolswVdbpJARTZz2xleyomtKQQMNvddXQPuVwdgIVon0ao2rZm88bq5mP/ktnUTz82aoJlIBj5xj9rzCIvc5RkT6vjnrtyPanxZNT/HQKjy4VElGUpQrytwf2I39c8CzUN4iJoVR3jwhsrlD1tw8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eIxSKhzI; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Z3LC
+	tPuWBgt3B8PP4A93a4ldAsnXfNj/7glDIm7408o=; b=eIxSKhzImrvmincnonP0
+	Ocm+g2O71PCexJL8NLUWYpSdeeta1RLBbn4zjBHC67ZfhQF2kmDA2EDyryZPsFc6
+	zQ1ae9TXf1rTTWkoEsiKx3TNQDszjesHW0thloiZm31SMPpeFGI/cFLvK+oRnNUY
+	MMjIRz3wAXmWXqqCdfV5RFjpgDFx/hYIIC6xBpflvKbRCo+N7CkrPXFhk/UgBrsv
+	UfM8d71eP1Sw5H0z1H4Df7CHLgi7qdroJehuKywgaQStnGnAbTYDmKW7/HTAtpNh
+	fxnoVo44ryHYeUZoyaVfETYyr3mZj8MMcTJuvD4Hs+QoY466Zp0SUoErFtj1I2e8
+	rw==
+Received: (qmail 925661 invoked from network); 12 Jun 2024 22:21:13 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jun 2024 22:21:13 +0200
+X-UD-Smtp-Session: l3s3148p1@wq2pH7cahulehh9j
+Date: Wed, 12 Jun 2024 22:21:12 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] i2c: smbus: Handle stuck alerts
+Message-ID: <54uga6gyib76qxy3dhgsrwf4x2tbg7644m7cquc7zyw5fzphvb@y5eb54wfvau6>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220110172857.2980523-1-linux@roeck-us.net>
+ <18c810b6-2961-44e6-b890-5c6830fde995@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-4c370
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="himoqd3sedg4gqza"
+Content-Disposition: inline
+In-Reply-To: <18c810b6-2961-44e6-b890-5c6830fde995@roeck-us.net>
 
-On Tue, 11 Jun 2024 18:02:54 +0530, Jai Luthra wrote:
-> This series fixes two patches:
-> 
-> 1. Fix the dmaengine API usage by calling dmaengine_synchronize() after
->    dmaengine_terminate_async() when xrun events occur in application
-> 2. Use the McASP AFIFO property from DT to refine the period size,
->    instead of hardcoding minimum to 64 samples
-> 
-> [...]
 
-Applied to
+--himoqd3sedg4gqza
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Thanks!
+> Looking through the patches I carry locally, I just noticed that
+> I never got a reply to this series. Is there a problem with it,
+> or did it just get lost ?
 
-[1/2] ALSA: dmaengine: Synchronize dma channel after drop()
-      commit: e8343410ddf08fc36a9b9cc7c51a4e53a262d4c6
-[2/2] ASoC: ti: davinci-mcasp: Set min period size using FIFO config
-      commit: c5dcf8ab10606e76c1d8a0ec77f27d84a392e874
+The only problem was that I didn't have the bandwidth. But luckily, I
+need to work on SMBALERT myself now, so I will handle all related
+commits around that.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--himoqd3sedg4gqza
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZqAzQACgkQFA3kzBSg
+KbavlhAArhDf1JESwjFul5jRxDB4Ola/uDZTDfSyw12+ISVTCj5ZV1H3+IlijZZx
+4moGaQfpuNsuqXYrcKTNZ20zBx5oqBxFN7ay7A81Q4zv6CCfo+HJP/s3bFzK+2EV
+cFfSMasz/QRAlN6p5Cb2YoMnxiN9GofOZYzMp0jfkksyCv9ew+TmqP6WNXaR7252
+RNSSJFLROSHqedMJBp/pYB39cCXe/EnaxqDK5VlDuyFDgVulscGT5JWB38we+knP
+eGa6EEEi2IwBK1jaH9NiNntD6dG4dSUQRfvfYKn7vvlcvGXdGiC3DAdYIV8HTOai
+SnmwMNjCLGFmGn7epp2wQKbtoUDt+P+QnF2D6xgP5wo3Onl2SjHGq+Fa/cBOYPEv
++DxyI23EsqZ4pT6alwtGaxZ03YKEl9BSyNW+BGIUudPyRR7dxJnttMPaOFBfDFTl
+Dt8+brc+PkxEqjr6Q4xAlw0yNdWu+E86HgG6bKYmXzhkCxuPgMZKdmuM8APxG9OC
+9E0oKmCruriHgzOznWEsplAaSCDscJkl7wezs973/iWHRt07U4VsewOmF3nUKp9d
+GRiUqfgvQcXofwc8pYoeuRgjE4hfYReJ9UChEZyYxvYQLjJj5f8DyH5RYIUnwa/L
+x4zrgLZ3gWRdbWXFANGJM4gLAO9uGbV86Wp2AUBNKiwpXzm59Pc=
+=Oi8N
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
+--himoqd3sedg4gqza--
 
