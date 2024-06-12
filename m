@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-210844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD007904940
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:00:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C63C7904941
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A581C23146
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:00:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 556A7B22E2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC881F92F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A840E1EA80;
 	Wed, 12 Jun 2024 03:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NT3d79ty"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egd7vYH1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF772DDC4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7A3DF62;
 	Wed, 12 Jun 2024 03:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718161234; cv=none; b=fIIeyK5oXqQN5HGnVRzSWAzgORCFIQqVPvtDv2UGER/nBr7UWQCqX/tgr9/5BMXMB/gaWthb2R2C/SLeFDDFrnHPpuAVpP7ZWZSfxj6cRC1s43pd88HtFCoBYQeGfK8sA5ykuOyIXT5mEnu41PQHd8b2H4gCY5XzkvHnmutpPn0=
+	t=1718161234; cv=none; b=CJyStezkqIzkWmHb7SaSm/TVDtu9V/HnM2HMLfkxcPZH0oYUEjBORrW1Dl+E+B9Bn3rbKIobCNFxZ3zBDAP213NYlnmoaKVqNp/Dr+9d6hvSWmQOTZnJJ0JPmsYlMJjrheDDEFAUNv1iq2QD8u0zQLik+LeswZK/kh4Lchb7T30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718161234; c=relaxed/simple;
-	bh=2M+qM0U4qxV/y34cPtE7EHwJ5OefFeMyZddnNuriUP4=;
+	bh=RUXhIiQ650W0ISBjZa4FmMnAKv75xiQwfEYjljSa7Ys=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=iwttMzxGt5Jk2wxAkeCmAVJAwP0ewlnpA5mbKuZwc63JBsosa6IJ+WCJ+GNXJ7zUY0zDYrq4FgjR8gXIDvlVZo3JEEnkjwQGhxRtlbnCVwDkPGzhuqZvs4ADxQnwe9sZ/RhmIdrY0Z8I28ukJQni5IoNeUcmj1PDmm0/QeaLlb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NT3d79ty; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8B85AC4AF4D;
+	 In-Reply-To:To:Cc; b=Xu15NcoygvclC+6cxTODXLIzzZtvu47iChHiRBe4WJwDGrUKFRDfMi7MvCpINs8Dgp5DbUrW7AgZGPlY5RG8/xYmqgec+wSS2dmNaoJ5Z+wd7q0wATQTml79n7e0hhKLioVbOt/CR4DlKy0Xla61DHttyojprwPdd19PUY5B0Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egd7vYH1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 76F78C4AF1C;
 	Wed, 12 Jun 2024 03:00:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1718161233;
-	bh=2M+qM0U4qxV/y34cPtE7EHwJ5OefFeMyZddnNuriUP4=;
+	bh=RUXhIiQ650W0ISBjZa4FmMnAKv75xiQwfEYjljSa7Ys=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=NT3d79ty/pLboaP/rGNEZigh8GGJY4RYGRik3PQ//2nEp+Mzx2QfqpNuNuRCaAG3O
-	 Yra1gD7uxr0M6lHVpuQ98GgXh9C0jM8fHUAkZ2AoTbvH+UBHVZxTFQ6jUcJ/tuB2Ih
-	 fW8j0Z7Uje7CKrkAHHR3paE66Ln/T0uF0rOzXWvN9gwT/O1zAPNTFI3BDwWA4fRbLo
-	 h+BvZHb4qHDsx39Ao347C3MkSpL0jDvFKumSlgvZ4WSSUoKx2J1686TR1EE+xjHy42
-	 070F8T7kPoa3UIAmLrfnXmWPh3MuKmf83YG/7p3E9/7G9RzLblJxULgJLnxCJSGMVM
-	 rMffux4HWEkkQ==
+	b=egd7vYH1h06yWv8wIa6eIzpxyiFUxxsgc0Xa6iL2sUlaK5z+aOlL3Tf6Y8oMYUD5S
+	 FyT3vKJPg/pWFid861HMka3h4RIMx/eAjWQu6dp1lg85sGWvGoazpCugjZ6cb4LzWk
+	 SwUXIVazp6Z5EpI48fh4mjpncZbgu9atizAMR5dTqZnlLBCN0ldzTAHkQii6jnye8J
+	 tu0fy2/sIjNfiJqw9ZvtzFeS/ldiqSK8WJbYHdHeB77VC3BLcO3vrw6ha/0uXWLzi0
+	 uQvCt4Zh4/NIK2JtzeZAzqYvT1pNPU84Hfv0f2aU1DrNyaAG8Qv0B9CCtGlm8uB6yH
+	 Hk/Ec/XJtCs0A==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7A5E8C4332D;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 55327C43614;
 	Wed, 12 Jun 2024 03:00:33 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,42 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] gve: ignore nonrelevant GSO type bits when processing
- TSO headers
+Subject: Re: [net v5 PATCH] net: stmmac: replace priv->speed with the
+ portTransmitRate from the tc-cbs parameters
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171816123349.11889.11987638058865473120.git-patchwork-notify@kernel.org>
+ <171816123334.11889.9944196119101092125.git-patchwork-notify@kernel.org>
 Date: Wed, 12 Jun 2024 03:00:33 +0000
-References: <20240610225729.2985343-1-joshwash@google.com>
-In-Reply-To: <20240610225729.2985343-1-joshwash@google.com>
-To: Joshua Washington <joshwash@google.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
- stable@kernel.org, pkaligineedi@google.com, hramamurthy@google.com,
- willemb@google.com, edumazet@google.com, avagin@gmail.com,
- jeroendb@google.com, shailend@google.com, pabeni@redhat.com,
- rushilg@google.com, csully@google.com, bcf@google.com,
- linux-kernel@vger.kernel.org
+References: <20240608143524.2065736-1-xiaolei.wang@windriver.com>
+In-Reply-To: <20240608143524.2065736-1-xiaolei.wang@windriver.com>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: olteanv@gmail.com, linux@armlinux.org.uk, andrew@lunn.ch,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, wojciech.drewek@intel.com, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 10 Jun 2024 15:57:18 -0700 you wrote:
-> From: Joshua Washington <joshwash@google.com>
-> 
-> TSO currently fails when the skb's gso_type field has more than one bit
-> set.
-> 
-> TSO packets can be passed from userspace using PF_PACKET, TUNTAP and a
-> few others, using virtio_net_hdr (e.g., PACKET_VNET_HDR). This includes
-> virtualization, such as QEMU, a real use-case.
+On Sat,  8 Jun 2024 22:35:24 +0800 you wrote:
+> The current cbs parameter depends on speed after uplinking,
+> which is not needed and will report a configuration error
+> if the port is not initially connected. The UAPI exposed by
+> tc-cbs requires userspace to recalculate the send slope anyway,
+> because the formula depends on port_transmit_rate (see man tc-cbs),
+> which is not an invariant from tc's perspective. Therefore, we
+> use offload->sendslope and offload->idleslope to derive the
+> original port_transmit_rate from the CBS formula.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v3] gve: ignore nonrelevant GSO type bits when processing TSO headers
-    https://git.kernel.org/netdev/net/c/1b9f75634441
+  - [net,v5] net: stmmac: replace priv->speed with the portTransmitRate from the tc-cbs parameters
+    https://git.kernel.org/netdev/net/c/be27b8965297
 
 You are awesome, thank you!
 -- 
