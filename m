@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-211814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93357905754
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:48:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE704905756
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C2701F21EB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:48:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D20CB26DD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F2F180A9D;
-	Wed, 12 Jun 2024 15:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF462180A6C;
+	Wed, 12 Jun 2024 15:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUUDhFkB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUoEHlHK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B2A1EB2A;
-	Wed, 12 Jun 2024 15:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D8717C7C8;
+	Wed, 12 Jun 2024 15:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718207265; cv=none; b=UNsoko0/78auhNQrD8urD4Ib7rK6/elCCmCstZaFp1PutZF6iRykHAsGVCM/kJQMtnRkL2v/3QigjQduSxdqJsNJUD9xt8W3jesyFZj7Hr78F1dcg/H8i2y1ptjm4HnY3j+W9m/waF8G2xt7TyjnNuAyqQtlrBQ/F3plqa21wH0=
+	t=1718207303; cv=none; b=bnuOSKhKFDCemBXUCMllHnyj6oIuzqn/ix0PUR0xERqMjcyEYMf5uO+nC7pvdAi0g2DB3AqVn8DDkmAa+8pm60XVVMJuynFVdT/F7CMUWUbhE1BKWPl7/xVeQsaYukL6qmycPAFNTEKrpX1YtvR0Na/ouC6WZ8PhqFSQh5Isdpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718207265; c=relaxed/simple;
-	bh=RcO8kJK1SPBxidMQCBZS6Nufe2pEKnWn1BExnfdFDhs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H5RBiW4jLym8vj659wwxhgGumRTWDTtjLtvKARwuNZ+bKSnrnMR62SQGWlXoPniqOLLkA0NaAqgFd+KLtl4fmjvhlaLmKmWq+ZrYM/Vu4/V/vBHpWsr54vdG6WxebUjBEVGUJUmSxw+koReJDsrSSwBTT0+7ilvhgYfSnwk1OTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUUDhFkB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CCFC116B1;
-	Wed, 12 Jun 2024 15:47:41 +0000 (UTC)
+	s=arc-20240116; t=1718207303; c=relaxed/simple;
+	bh=+7dgCMAE8xXP+L3ANBWO9tjojn+ydsIoH8bkB9Y/hl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f2eeqcuRL1L17jiBrCpNp5g8HIho98O/p99fGZP8+RK/yybjofOVwcvRY89QBUZnrWQPbN5dG6KdsZb54lyUFpdlzjyFoUKx0We0yosaad49CPERkIaPIsfEhu4XXSjo9Il4LyFTRLFReBSdBFmRo5suo/ltGWHDTz+Oy7kLraM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUoEHlHK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14137C116B1;
+	Wed, 12 Jun 2024 15:48:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718207264;
-	bh=RcO8kJK1SPBxidMQCBZS6Nufe2pEKnWn1BExnfdFDhs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tUUDhFkBvtiENrkhGjsuaqjXStFu2y4QmRyEz8Z44+BNeCUMT1FwXpmM/Z+ZWMWEt
-	 xzcTbt93S5t/Z2Gjbj8/IPxqyEriOfVzDPo8HuhM4xgnSUgcbkjoEHG3d2MQTSOFzv
-	 0qw54/7Zv6wsSjSdQQTHNp9M57WuCZdau/mlvGyNsjZNzhUF8fmviXzmsmm/taiwEh
-	 UVHIkfWuUcjER2VhozjXME73U59vBlXDJxWYNfGXzCU6uWRy+oqe9bZwHjAo8SrVfr
-	 B8TqlIFed1ii275iDSfF4yGkhIgvyJBVxzUfGA6GSAus8H08zqOCQJNpZ4tAB3Ft9h
-	 9EyHQ6Et14wWw==
-Message-ID: <12fd227b-5f6a-4929-baaa-7f657933cde6@kernel.org>
-Date: Wed, 12 Jun 2024 09:47:40 -0600
+	s=k20201202; t=1718207302;
+	bh=+7dgCMAE8xXP+L3ANBWO9tjojn+ydsIoH8bkB9Y/hl0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lUoEHlHKTw5SY/PsFRy8BXdFLVNotLH7+Y0aYLHpuXxwKr8kdciwjPmVIP6d+k5wP
+	 hYFaetN8ddefpaQIiEdi8hNpYWMRSZkCQX3rZa7/sA/WYbeoKDiBtHbQusF4I8mbm+
+	 385Gqc0wc9u1/RmHSyf+fvac0YfcmoGz8tVW3zwmJnYcFxJYhzBpK70FeYe4sA9ONN
+	 8k8RcPuApOOZNBas84sRHCZ5UOYna7nLs0BPv1zNOowrOTSQ0Z4H9+bCKstTfPAM6p
+	 pOGg/SlEVU+/YiBhKeg2is8TWNY9RQiZLfmAlQn7ZDvgM7xdXnUpg0HBpa/Mi05HKr
+	 c6aYUD9b6Dmpg==
+Date: Wed, 12 Jun 2024 16:48:17 +0100
+From: Lee Jones <lee@kernel.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Ryan Walklin <ryan@testtoast.com>,
+	Chris Morgan <macroalpha82@gmail.com>
+Subject: Re: [PATCH v2 1/5] mfd: axp20x: AXP717: Fix missing IRQ status
+ registers range
+Message-ID: <20240612154817.GH1504919@google.com>
+References: <20240418000736.24338-1-andre.przywara@arm.com>
+ <20240418000736.24338-2-andre.przywara@arm.com>
+ <20240502093907.GM5338@google.com>
+ <56aef347-7582-497e-be02-d82eda7b3528@arm.com>
+ <20240612152510.GE1504919@google.com>
+ <7fdc23ff-fd55-4347-ac61-dd115eff6ff1@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
- custom page providers
-Content-Language: en-US
-To: Jason Gunthorpe <jgg@ziepe.ca>, Mina Almasry <almasrymina@google.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
- Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
-References: <eb237e6e-3626-4435-8af5-11ed3931b0ac@gmail.com>
- <be2d140f-db0f-4d15-967c-972ea6586b5c@kernel.org>
- <20240607145247.GG791043@ziepe.ca>
- <45803740-442c-4298-b47e-2d87ae5a6012@davidwei.uk>
- <54975459-7a5a-46ff-a9ae-dc16ceffbab4@gmail.com>
- <20240610121625.GI791043@ziepe.ca>
- <59443d14-1f1d-42bb-8be3-73e6e4a0b683@kernel.org>
- <00c67cf0-2bf3-4eaf-b200-ffe00d91593b@gmail.com>
- <20240610221500.GN791043@ziepe.ca>
- <CAHS8izNRd=f=jHgrYKKfzgcU3JzkZA1NkZnbQM+hfYd8-0NyBQ@mail.gmail.com>
- <20240612120602.GQ791043@ziepe.ca>
-From: David Ahern <dsahern@kernel.org>
-In-Reply-To: <20240612120602.GQ791043@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7fdc23ff-fd55-4347-ac61-dd115eff6ff1@arm.com>
 
-On 6/12/24 6:06 AM, Jason Gunthorpe wrote:
-> On Tue, Jun 11, 2024 at 11:09:15AM -0700, Mina Almasry wrote:
+On Wed, 12 Jun 2024, Andre Przywara wrote:
+
+> Hi,
 > 
->> Just curious: in Pavel's effort, io_uring - which is not a device - is
->> trying to share memory with the page_pool, which is also not a device.
->> And Pavel is being asked to wrap the memory in a dmabuf. Is dmabuf
->> going to be the kernel's standard for any memory sharing between any 2
->> components in the future, even when they're not devices?
+> On 12/06/2024 16:25, Lee Jones wrote:
+> > On Wed, 12 Jun 2024, Andre Przywara wrote:
+> > 
+> > > Hi Lee,
+> > > 
+> > > On 02/05/2024 10:39, Lee Jones wrote:
+> > > > On Thu, 18 Apr 2024, Andre Przywara wrote:
+> > > > 
+> > > > > While we list the "IRQ status *and acknowledge*" registers as volatile,
+> > > > > they are missing from the writable range array, so acknowledging any
+> > > > > interrupts was met with an -EIO error.
+> > > > > 
+> > > > > Add the five registers that hold those bits to the writable array.
+> > > > > 
+> > > > > Fixes: b5bfc8ab2484 ("mfd: axp20x: Add support for AXP717 PMIC")
+> > > > > Reported-by: Chris Morgan <macromorgan@hotmail.com>
+> > > > > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > > > > ---
+> > > > >    drivers/mfd/axp20x.c | 1 +
+> > > > >    1 file changed, 1 insertion(+)
+> > > > 
+> > > > Acked-by: Lee Jones <lee@kernel.org>
+> > > 
+> > > Can you please take just this patch as a fix for 6.10? This fixes the power
+> > > key operation.
+> > > This applies cleanly on top of v6.10-rc3, so there is no need for any extra
+> > > immutable branch or coordination with regulator.
+> > > (The same is true independently for patch 2/5, on the regulator side).
+> > 
+> > What does the Fixes: commit break?
+> > 
+> > Or is it the case that it never worked properly?
 > 
-> dmabuf is how we are refcounting non-struct page memory, there is
-> nothing about it that says it has to be MMIO memory, or even that the
-> memory doesn't have struct pages.
-> 
-> All it says is that the memory is alive according to dmabuf
-> refcounting rules. And the importer obviously don't get to touch the
-> underlying folios, if any.
-> 
+> The interrupt part never worked properly, but so far that's only needed for
+> the power key operation. Unfortunately that part wasn't tested properly
+> initially, so the patches were merged into your tree before that.
 
-In addition, the io_uring developers should be considering the use case
-of device memory. There is no reason for this design to be limited to
-host memory. io_uring should not care (it is not peeking inside the
-memory buffers); it is just memory references.
+This doesn't sounds like a -fixes candidate.  I'll mark the set for v6.11.
 
-One of io_uring's primary benefits is avoiding system calls. io_uring
-works with TCP sockets. Let it work with any dmabuf without concern of
-memory type. The performance benefits the Google crowd sees with system
-call based apps should be even better with io_uring.
-
-Focus on primitives, building blocks with solid APIs for other
-subsystems to leverage and let them be wired up in ways you cannot
-imagine today.
-
+-- 
+Lee Jones [李琼斯]
 
