@@ -1,148 +1,164 @@
-Return-Path: <linux-kernel+bounces-211496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE999052AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:41:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2909052C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B30D41C21189
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:41:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03195B21967
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DB4170844;
-	Wed, 12 Jun 2024 12:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A733217C9F9;
+	Wed, 12 Jun 2024 12:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="A/5sGVd3"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQz9aj/a"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26B016F29C;
-	Wed, 12 Jun 2024 12:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DC517083D;
+	Wed, 12 Jun 2024 12:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718196071; cv=none; b=YvoLWru2vy0oPxgPa3TdkMlQAJUHOO+1x4O6wbpSdmcHIqNmlhwdDUAsLO3iozXH7Rzpqmvy0MIjEumv2WlTuShjcUwwqSeoDDQDBklBorBDi9Pq3rNGD9gVZgsdmCmpBBGxhXKyBp3juwV+ikkNSER8A1fhUOCryYQ9zQMvMl8=
+	t=1718196125; cv=none; b=Xh8NHHj24nkcILBoQZmbd7qNHtU2a0c4VpZASCU4ivw1qnCeL1wNRz1VKo8XM5k0jNz1QF/yYRbuet2bJaMC66A/2o6MfckWwbukOq8KgVqXae56rBznnEHOX8p5CEHcMKpwAhNuvxt6F90zx/KrKhVs4F89HU9BWEXALNw6edU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718196071; c=relaxed/simple;
-	bh=8t9V+RAuQ307UNgRL1t8CxJDFzSaO2i9p55Z97H1iSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dLjno9OkAsKqgsVQeGxN19+oldqAUW4S1iR7sra3Iwl3/TWNyvHJhQzGS6Ii+rMP5gnnDEIS0rSaAq832M7pH+1kCPaBkb+chF15XAomXkHgN59sbMjOSQ72gxCjAS2zIMuzC5cdh2GuaNgMv9dQC44cG6QMYe4mCk5Ch/xtc+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=A/5sGVd3; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=pRy0sJWQM10IgB/bhi5G6l1DK7UQGSd130PPr57Mh4Y=;
-	t=1718196069; x=1718628069; b=A/5sGVd3QQbrZi9TzZmWda2DCsSu4WcQCFj9QwkkG6b0xmx
-	Zv3onSkETgPd341pc2KfX7lUmKJOw3p1YWkO+SJrtnSxxBv9aNrMpImVaDS40wCJF8HyQMa3kweNQ
-	6TJk4mvRAE6xBDFUn8jhYMakbx1eX8dtlwDfQ4AHxVMLHWpGA/HPlyEABjCtxxX9i6NAOvfnhyuSV
-	w/pbYPj3m7aoz95SvGFbI4RV/DtYW1Lx0dMvEweP0ydlujKa5dFB0BDiG9G/KL44QVOzAKfZrxiOM
-	9rPyPWEPEwVpb7Orssb1D5Adv0aeRzvfKpQE/NzzzzKI+DFObWz1TYrAYOpsbd2w==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sHNHl-0004yB-H5; Wed, 12 Jun 2024 14:41:05 +0200
-Message-ID: <67b279c7-1b65-46be-baa2-06794b47b9d1@leemhuis.info>
-Date: Wed, 12 Jun 2024 14:41:04 +0200
+	s=arc-20240116; t=1718196125; c=relaxed/simple;
+	bh=2eS5AS9BXmEOhaWNRS+1JFWwcMxQFs94YTD2RJKbNJI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hHHum1i3SlbTU4t3VucCRaRuacmjBcIACAaf5toDq9SxNga3CUSoTXIgZUHS1tr6bugS8vXbdkRSQN913t2NTzUOtb8D9e6q7OPwAPqwFA5DHkXa8QBjPFLdK/MIA+w1tzc6FR7rav6wc3TcxXvWu6TR+tjnjP6wZKG1Y5RcksM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQz9aj/a; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-579fa270e53so3590988a12.3;
+        Wed, 12 Jun 2024 05:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718196122; x=1718800922; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yaWg4m5Bnwvqv8YcEFmBCH4VJg0dR5I+06fePYSf13o=;
+        b=GQz9aj/afkHFwSE+qfS7yErjJNwZ3dqH/CVpt/uScG6PPvAgz3psfh5X2tfM5UkD5G
+         pMpPWb4kcN1dDIw255l8CNNR1iNb20Ou/aTXjxFlKJjea4rt4sRPTd48tVpb2pIQdVsk
+         egSJgonwMBzBSe+RAj8ktDDMAnZUX6wgTCDgUk9l5JImsmrZfoGJPvRalcv+DIRDMyG1
+         jHoGWc2jx+JMtMxwGYqkFjd7Ujxobl6Qm6TL4y4DdRtun8eeLFRsY4ShelDgqCSSi4TR
+         tXTHmgqHQaMZualXvuY3Ti8aYXSEiyxWOQsVRKMpKB2M/CxcQRtN8rviXz50ltPBGYXY
+         M+AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718196122; x=1718800922;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yaWg4m5Bnwvqv8YcEFmBCH4VJg0dR5I+06fePYSf13o=;
+        b=uxLgpnww9Z6SjezGbjaT+yZatl0H1B3lCSUR8B/aKoadM8Jg1Z0rIFlPulyVTqDljC
+         P1u/DzT/mC5uYObHJ/Ye6JSkoZbbcidIASIaIuS2AdyA7h7J3TxJAmvxF9XqsyzKgeBq
+         /VV60FJz4seiMdx6AFqnuN7EeN1ac9VUeXy20Ac1FQSuLXzior+pcFRkYYAwphfWNOV9
+         fnhXa9XrQERqjJ19nRaufGX54i3x4uHafi0xDv+9kMcFSNqsBTL4Z6vzC4PT3l5UGqPU
+         6VGlVk3gQe2fuFJHpMfrhCCHsLhICC6P+QWTkcNBD9kTU9ZlgDc88V5m4GGvJUKQ3icw
+         XWmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRw4D6jDupSDBmHBnjwU4OgVhTPFbbkBR/1gihrSjAWwNju7cu0GnMcvlqo2uIfSs8vIJeIliReb8QQXpc7j6mt/n60uqxDwl6oQSles3n2pv8Ww7fB9iRB7ed7lgTUNq48yvineZTG7zfknyp9eufNnXzfWV6lx6ggHYfkoi0folk
+X-Gm-Message-State: AOJu0Yw5N1xIXqrbq2WsvZRTRz7okxE2NWYjWA7+Qd+azetaf2XmQLn0
+	QwKZEwv1UQmf/UdCBcspOWRKccL/cMgd9S5BNS4/XTO+OyGzkCIS
+X-Google-Smtp-Source: AGHT+IEurYY9mBvYQqhqXDFmp4P8HwN0BoTp0cQDJ0TSoIEs17WlcQeFx3uNCZL+rbnmP83DTCb74A==
+X-Received: by 2002:a50:d7dd:0:b0:57c:74b1:bf51 with SMTP id 4fb4d7f45d1cf-57ca97626b3mr1524272a12.20.1718196122177;
+        Wed, 12 Jun 2024 05:42:02 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c9f32f079sm1869654a12.88.2024.06.12.05.42.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 05:42:01 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 12 Jun 2024 14:41:59 +0200
+To: Daniel Xu <dxu@dxuuu.xyz>
+Cc: Jiri Olsa <olsajiri@gmail.com>, shuah@kernel.org, daniel@iogearbox.net,
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+	quentin@isovalent.com, alan.maguire@oracle.com, acme@kernel.org,
+	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+	haoluo@google.com, mykolal@fb.com, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH bpf-next v4 03/12] bpf: selftests: Fix fentry test kfunc
+ prototypes
+Message-ID: <ZmmXl1NHgwOEXy4F@krava>
+References: <cover.1717881178.git.dxu@dxuuu.xyz>
+ <1f493cb7a7e5349f99e2badf0880b75dd6681898.1717881178.git.dxu@dxuuu.xyz>
+ <Zmb_hJQqxi44Nj5B@krava>
+ <gwrlw7wtc72vz3ky2pltvpoadtjlezv6kdrs6wf3ptsecyu2sh@aexbk4rotm3x>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] QXL display malfunction
-To: "tzimmermann@suse.de" <tzimmermann@suse.de>
-Cc: "Petkov, Borislav" <Borislav.Petkov@amd.com>,
- "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
- "zack.rusin@broadcom.com" <zack.rusin@broadcom.com>,
- "dmitry.osipenko@collabora.com" <dmitry.osipenko@collabora.com>,
- "Kaplan, David" <David.Kaplan@amd.com>,
- "Koenig, Christian" <Christian.Koenig@amd.com>,
- Dave Airlie <airlied@redhat.com>, Dave Airlie <airlied@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- ML dri-devel <dri-devel@lists.freedesktop.org>,
- spice-devel@lists.freedesktop.org, virtualization@lists.linux.dev
-References: <DS7PR12MB576622398096CB650FF6AF4294FF2@DS7PR12MB5766.namprd12.prod.outlook.com>
- <DS7PR12MB57665F9F4BDF0598D7CC53DD94FF2@DS7PR12MB5766.namprd12.prod.outlook.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <DS7PR12MB57665F9F4BDF0598D7CC53DD94FF2@DS7PR12MB5766.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718196069;3e301e0f;
-X-HE-SMSGID: 1sHNHl-0004yB-H5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <gwrlw7wtc72vz3ky2pltvpoadtjlezv6kdrs6wf3ptsecyu2sh@aexbk4rotm3x>
 
-[CCing a few more people and lists that get_maintainers pointed out for qxl]
-
-Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-for once, to make this easily accessible to everyone.
-
-Thomas, from here it looks like this report that apparently is caused by
-a change of yours that went into 6.10-rc1 (b33651a5c98dbd ("drm/qxl: Do
-not pin buffer objects for vmap")) fell through the cracks. Or was
-progress made to resolve this and I just missed this?
-
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
-
-#regzbot poke
-
-
-On 03.06.24 04:29, Kaplan, David wrote:
->> -----Original Message-----
->> From: Kaplan, David
->> Sent: Sunday, June 2, 2024 9:25 PM
->> To: tzimmermann@suse.de; dmitry.osipenko@collabora.com; Koenig,
->> Christian <Christian.Koenig@amd.com>; zach.rusin@broadcom.com
->> Cc: Petkov, Borislav <Borislav.Petkov@amd.com>; regressions@list.linux.dev
->> Subject: [REGRESSION] QXL display malfunction
->>
->> Hi,
->>
->> I am running an Ubuntu 19.10 VM with a tip kernel using QXL video and I've
->> observed the VM graphics often malfunction after boot, sometimes failing to
->> load the Ubuntu desktop or even immediately shutting the guest down.
->> When it does load, the guest dmesg log often contains errors like
->>
->> [    4.303586] [drm:drm_atomic_helper_commit_planes] *ERROR* head 1
->> wrong: 65376256x16777216+0+0
->> [    4.586883] [drm:drm_atomic_helper_commit_planes] *ERROR* head 1
->> wrong: 65376256x16777216+0+0
->> [    4.904036] [drm:drm_atomic_helper_commit_planes] *ERROR* head 1
->> wrong: 65335296x16777216+0+0
->> [    5.374347] [drm:qxl_release_from_id_locked] *ERROR* failed to find id in
->> release_idr
->>
->> I bisected the issue down to "drm/qxl: Do not pin buffer objects for vmap"
->> (b33651a5c98dbd5a919219d8c129d0674ef74299).
->>
->> The full guest .config and guest XML can be provided if desired.  The guest
->> kernel has QXL support compiled in and the VM has
->>
->> <video>
->>   <model type="qxl" ram="65536" vram="65536" vgamem="16384"
->> heads="1" primary="yes"/>
->>   <address type="pci" domain="0x0000" bus="0x00" slot="0x01"
->> function="0x0"/> </video>
->>
->> The host is Ubuntu 24.04 (stock) running QEMU version 8.2.2.  The VM is run
->> under virt-manager 4.1.0.  If other information would be helpful, just let me
->> know.
->>
->> Thanks --David Kaplan
+On Tue, Jun 11, 2024 at 10:58:26AM -0600, Daniel Xu wrote:
+> On Mon, Jun 10, 2024 at 03:28:36PM GMT, Jiri Olsa wrote:
+> > On Sat, Jun 08, 2024 at 03:15:59PM -0600, Daniel Xu wrote:
+> > > The prototypes in progs/get_func_ip_test.c were not in line with how the
+> > > actual kfuncs are defined in net/bpf/test_run.c. This causes compilation
+> > > errors when kfunc prototypes are generated from BTF.
+> > > 
+> > > Fix by aligning with actual kfunc definitions.
+> > > 
+> > > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> > > ---
+> > >  .../testing/selftests/bpf/progs/get_func_ip_test.c | 14 +++++++-------
+> > >  1 file changed, 7 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/tools/testing/selftests/bpf/progs/get_func_ip_test.c b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
+> > > index 8956eb78a226..a89596f7585d 100644
+> > > --- a/tools/testing/selftests/bpf/progs/get_func_ip_test.c
+> > > +++ b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
+> > > @@ -5,13 +5,13 @@
+> > >  
+> > >  char _license[] SEC("license") = "GPL";
+> > >  
+> > > -extern const void bpf_fentry_test1 __ksym;
+> > > -extern const void bpf_fentry_test2 __ksym;
+> > > -extern const void bpf_fentry_test3 __ksym;
+> > > -extern const void bpf_fentry_test4 __ksym;
+> > > -extern const void bpf_modify_return_test __ksym;
+> > > -extern const void bpf_fentry_test6 __ksym;
+> > > -extern const void bpf_fentry_test7 __ksym;
+> > > +extern int bpf_fentry_test1(int a) __ksym;
+> > 
+> > hum, the only registered one as kfunc is bpf_fentry_test1, to allow fmodret
+> > also there's bpf_fentry_test9 as kfunc, which AFAICS is not really needed
 > 
-> Fixing emails...sorry
-> 
-> --David Kaplan
+> I think bpf_modify_return_test() is also registered. But otherwise yeah,
+> I think I was overaggressive here. Are you thinking something like this?
+
+yes, looks good
+
 > 
 > 
+> diff --git a/tools/testing/selftests/bpf/progs/get_func_ip_test.c b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
+> index a89596f7585d..2011cacdeb18 100644
+> --- a/tools/testing/selftests/bpf/progs/get_func_ip_test.c
+> +++ b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
+> @@ -6,12 +6,11 @@
+>  char _license[] SEC("license") = "GPL";
+> 
+>  extern int bpf_fentry_test1(int a) __ksym;
+> -extern int bpf_fentry_test2(int a, __u64 b) __ksym;
+> -extern int bpf_fentry_test3(char a, int b, __u64 c) __ksym;
+> -extern int bpf_fentry_test4(void *a, char b, int c, __u64 d) __ksym;
+>  extern int bpf_modify_return_test(int a, int *b) __ksym;
+> -extern int bpf_fentry_test6(__u64 a, void *b, short c, int d, void *e, __u64 f) __ksym;
+> -extern int bpf_fentry_test7(struct bpf_fentry_test_t *arg) __ksym;
+
+I did not realize bpf_fentry_test6/7 are not used.. ok
+
+thanks,
+jirka
+
+> +
+> +extern const void bpf_fentry_test2 __ksym;
+> +extern const void bpf_fentry_test3 __ksym;
+> +extern const void bpf_fentry_test4 __ksym;
+> 
+>  extern bool CONFIG_X86_KERNEL_IBT __kconfig __weak;
 
