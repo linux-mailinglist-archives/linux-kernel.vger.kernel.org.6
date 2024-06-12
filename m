@@ -1,152 +1,122 @@
-Return-Path: <linux-kernel+bounces-212008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8C49059F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:30:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B1A9059F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF0391F232BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0091C1F24115
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3B518410B;
-	Wed, 12 Jun 2024 17:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAF6183085;
+	Wed, 12 Jun 2024 17:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cHTfEDbH"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5T7VXSb"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00991836C4
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 17:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD29B1822D4;
+	Wed, 12 Jun 2024 17:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718213362; cv=none; b=WODEDuZCRoHAtwAgiB9Z6XpnQrkx6HVO80pvBObBxgPHPjftsNn5FvNL4LoNmCX0+8ZpNUAd0t30b54BvtThjrszX6Zw/9FqXe0eb1WYb/kBZRj6kj+hHvOFZug6sVKgsV6zYSE+E+ppOCPrKHHELKRlm2g3V/1xUXGgbdXQUv8=
+	t=1718213376; cv=none; b=MqOkIgAYhwjza4QwWA1F5wMV2VlfXwC6hMXXJpy2D5rYOyxNU8U6w65NnCc0/W46L9vfKs7basI7onDoanu1yzp56CWyRRfOIZQwXOG7eoNjOE870EX800PEbf2/aGUbtEJw6LCnt4S6WbNnXRqBpThZBXhXBjzyiev3EHiw7IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718213362; c=relaxed/simple;
-	bh=SqHXwxyX0hOMrGyXlbcSlWw9tiq1bd472LhKjNZO0j4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MhS/xX8285cwx6pzMhp2JlCW+81LRyB3Ymsl1JCCdmAz4oLqnSE7Arrt1Zdq4WZ9aD5Yj/3RIrunmL+6nYat+3ep9GeZicYtvz9apUdrbrnMhvKsxDeGbpU95p8aGqxvT5pLYT+zEQrN0297sz7s3tMDy/48JfKpWs++tqTiq/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cHTfEDbH; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfe398bc50dso109742276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:29:19 -0700 (PDT)
+	s=arc-20240116; t=1718213376; c=relaxed/simple;
+	bh=Ba6GyynrpGuIi2Xb7JlSRrHrUtyBqSQwFHKrMZhcRb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MxYpD4UQhiFeT2OkNLmjIbFR8l8fm1rcggJXLBbbvfaUPWc5WxUz8p4kNSFKWvv1AVx9e23KpFp95L5w+lnHBCvLMdr8nxnpP4VQpD+GVvKmIuMkZTWI0DXC/C9nviFNX5BY/7LtVdf6gQgs1V6jLZdiF9T6j6XHAfJxqBqBiKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5T7VXSb; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6e7e23b42c3so51906a12.1;
+        Wed, 12 Jun 2024 10:29:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718213359; x=1718818159; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=60lvPuusqxavVhRXfVcmrSoiIVupdLi0rpCh21972os=;
-        b=cHTfEDbHk6HIEEn0Ouvd1wUDoXpMYFN/HZO3ahKHW+K15xPGFiMJcf8MVBZfy7Lndu
-         9B0gJUKFP12+r7Xc0M3Fq2RqW+bZgItpodmOakdof6kuTbSmAdWWeM2ubU1BlyQiebMb
-         MvuxAQamRDwQeIW9ZFBIcvc59CZMvSKdRtNzitNXU8JHVrEMDHNC/i5Yf9gBEwfkTVAI
-         KAIunmbnZvUDIKtLlMs0yrTuey7ImwDoH+0hvUxrPZx76Hy4yG9yQD5DOFiP9PpUxuj6
-         EIcmmCaIDNDCFGvrURI3v936AvRLS4oTV3eYPx2TdJldxRqJalPrHlTJbKC7D+B/tmAO
-         4PzQ==
+        d=gmail.com; s=20230601; t=1718213374; x=1718818174; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/7EZE8kZJ8YwXGxhpq3/arcNZCvvFBiX+mbM6jw0kdY=;
+        b=l5T7VXSblow1UfHW7uXzGe8JE9/Fu95k4EG2JKAuDFqZIpd/LTS+PvTjurrPo2YF86
+         yTXvbyHadkhA37K8PNdhYGUmWFeGtA5SV4HvDUGm4sKuG28oMwOwR6fFi7je7eaK6RM/
+         sqLvAGlHiOb8O1KwH4QOCuGEhWiEMC5PXkLyXrSiBl1gYLRxL/mQxxR3+YOkwRq0EH9v
+         Rvtgladx4GBLBtJ02DvlfYk7q6gQs3lnf6kIx50TgpJWZs2FaiTl3135EnPkNgjFcrNy
+         PLz2epUJ/L1YUYNO5FJnJA21JOAjGLZ2kM7rM4bYqb7rY6HR+dOkBiN2YcRe826VDmfk
+         30lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718213359; x=1718818159;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718213374; x=1718818174;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=60lvPuusqxavVhRXfVcmrSoiIVupdLi0rpCh21972os=;
-        b=xKzIDpSAZAPWewx9SPEaxDwxk7HN6SDAADrzv57nilzg7SJFngJrR5gSgjTbOBgVc2
-         DR1Xm+Azl+NsfjU2NsnnC3j1fF77ie+iLonaqT8hWSVyhTxfJODH0cu6XlYLcUZbCSwk
-         YOAxDBEu+BzCRTUigsCDWRUjOnJo7lKp7r+N/aBgFI+p4jGoZ+hLOXyyb9460i0YJDZ0
-         yRfNePxl+4vUPHAAVmnZK8tOFYuMGI2nwjzQgCFHNMDhEJOJmKVQ9ODMyio/bebA8SSI
-         HODrA073Whc10QMbiD0f6Xmbsrz0sYV7ss+J9XJHzAwq4T3bVP82c4p4xv1nAU+3QBt+
-         I1qA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4LxbwKuRRirQQPfLSnnmOU1Y0dIN61MiExN5wF0x6f/wfZZcOQS+hCuUKF/NNHWKEZyHDJSP9w9Znx23hswB3soungLENtmRj7+lg
-X-Gm-Message-State: AOJu0Ywa79Hg9Zri3mfueDe86yCpdK2OA+J3rT2ZBJ+9dkthP+KfaqXs
-	/RE09WetLiHVZh3SU88JL5bEkpgD2ESLT6qSYIREPMikPlgRJnN2d9kNhktqpCOr3w0FhDtU2W6
-	0rCti1iQ4iiMllmpyK2b/mEZb7E52V/fWjORt
-X-Google-Smtp-Source: AGHT+IEhGQzLLgCG9zMe0EWuDP1y2oVPtsHywKe/9At+CIXkctODudh6oHfrQfYIPwmYuFhbkIgUb9iq6CY+5R6qw6E=
-X-Received: by 2002:a25:7:0:b0:de6:1695:13a3 with SMTP id 3f1490d57ef6-dfe62f1a60dmr2505543276.0.1718213358736;
- Wed, 12 Jun 2024 10:29:18 -0700 (PDT)
+        bh=/7EZE8kZJ8YwXGxhpq3/arcNZCvvFBiX+mbM6jw0kdY=;
+        b=Z9MhGeeT+RkDPwvKpN7sKzmwDJJ/PchxAOC/UxlDDyUEg77mkRYmUPrKciDo+ve3E4
+         rd0x7mBYP7ypnhZv4n4hHBfKeyJ7gQwjzs+XTbwbTH9/tCpYAX3t0xjesPjeqna2p+Fs
+         dPOWD0HaO9eveXOZF52Hwp6NgHZNI/3Ntz0zOXB0JMsWmXwJHoG5MvSylmJTpCr+tTqM
+         dEaGAiNj8AeYUDcX9xhzM2nubymDeJs1TrwnZcZ9KGoT2/+Wm7+32gW3/bA2gfwBVb94
+         MHiY8dKYte6CGPymy6F4VeI6raIXLoOgtFH9q4jJiNECC52Hsdess6AA89sEY416DJdc
+         Q5XA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrlQTfePZyknSgT4Jh36Yeuir/xfChUGN5nt2dfA0l5Uzav1GzbFeRF0kp/+/9is2ILBKNhZTDpEzVT2Yc/VaVHtdCzFfm6tNRl8NF
+X-Gm-Message-State: AOJu0YwqWmywzFh9z+0CEA1tfT+a4J+MT/14/Z8GrGcPBFT6i74JnvRW
+	hyqJ9H0jJsfhZh8BSeLqeXU7y2da8eG0jXYYhjODu8CcWZSPgMjE
+X-Google-Smtp-Source: AGHT+IGd7Tv1NYL8MvHZP7GP4sML4J19g55sFnTvjguJaFG888Hs+XWIgGoJVs8gxFkgyVjNU8c+yw==
+X-Received: by 2002:a17:902:eccc:b0:1f7:3bb3:abb5 with SMTP id d9443c01a7336-1f83b64ac13mr27474335ad.8.1718213373929;
+        Wed, 12 Jun 2024 10:29:33 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f72a6c5a5fsm39546885ad.233.2024.06.12.10.29.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 10:29:33 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 12 Jun 2024 07:29:32 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Martin Oliveira <martin.oliveira@eideticom.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Shiraz Saleem <shiraz.saleem@intel.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Artemy Kovalyov <artemyko@nvidia.com>
+Subject: Re: [PATCH v2 1/4] kernfs: remove page_mkwrite() from
+ vm_operations_struct
+Message-ID: <Zmna_AmrLgTgfdHw@slm.duckdns.org>
+References: <20240611182732.360317-1-martin.oliveira@eideticom.com>
+ <20240611182732.360317-2-martin.oliveira@eideticom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240609104355.442002-1-jcalmels@3xx0.net> <20240609104355.442002-5-jcalmels@3xx0.net>
- <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
- <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
- <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com> <CAHC9VhQFNPJTOct5rUv3HT6Z2S20mYdW75seiG8no5=fZd7JjA@mail.gmail.com>
- <uuvwcdsy7o4ulmrdzwffr6uywfacmlkjrontmjdj44luantpok@dtatxaa6tzyv>
- <CAHC9VhRnthf8+KgfuzFHXWEAc9RShDO0G_g0kc1OJ-UTih1ywg@mail.gmail.com> <rgzhcsblub7wedm734n56cw2qf6czjb4jgck6l5miur6odhovo@n5tgrco74zce>
-In-Reply-To: <rgzhcsblub7wedm734n56cw2qf6czjb4jgck6l5miur6odhovo@n5tgrco74zce>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 12 Jun 2024 13:29:06 -0400
-Message-ID: <CAHC9VhRGJTND25MFk4gR-FGxoLhMmgUrMpz_YoMFOwL6kr28zQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM hooks
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: John Johansen <john.johansen@canonical.com>, brauner@kernel.org, ebiederm@xmission.com, 
-	Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Joel Granados <j.granados@samsung.com>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611182732.360317-2-martin.oliveira@eideticom.com>
 
-On Wed, Jun 12, 2024 at 4:15=E2=80=AFAM Jonathan Calmels <jcalmels@3xx0.net=
-> wrote:
-> On Tue, Jun 11, 2024 at 06:38:31PM GMT, Paul Moore wrote:
-> > On Tue, Jun 11, 2024 at 6:15=E2=80=AFPM Jonathan Calmels <jcalmels@3xx0=
-.net> wrote:
+On Tue, Jun 11, 2024 at 12:27:29PM -0600, Martin Oliveira wrote:
+> The .page_mkwrite operator of kernfs just calls file_update_time().
+> This is the same behaviour that the fault code does if .page_mkwrite is
+> not set.
+> 
+> Furthermore, having the page_mkwrite() operator causes
+> writable_file_mapping_allowed() to fail due to
+> vma_needs_dirty_tracking() on the gup flow, which is a pre-requisite for
+> enabling P2PDMA over RDMA.
+> 
+> There are no users of .page_mkwrite and no known valid use cases, so
+> just remove the .page_mkwrite from kernfs_ops and return -EINVAL if an
+> mmap() implementation sets .page_mkwrite.
+> 
+> Co-developed-by: Logan Gunthorpe <logang@deltatee.com>
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Signed-off-by: Martin Oliveira <martin.oliveira@eideticom.com>
 
-...
+Acked-by: Tejun Heo <tj@kernel.org>
 
-> > > Arguably, if we do want fine-grained userns policies, we need LSMs to
-> > > influence the userns capset at some point.
-> >
-> > One could always use, or develop, a LSM that offers additional
-> > controls around exercising capabilities.  There are currently four
-> > in-tree LSMs, including the capabilities LSM, which supply a
-> > security_capable() hook that is used by the capability-based access
-> > controls in the kernel; all of these hook implementations work
-> > together within the LSM framework and provide an additional level of
-> > control/granularity beyond the existing capabilities.
->
-> Right, but the idea was to have a simple and easy way to reuse/trigger
-> as much of the commoncap one as possible from BPF. If we're saying we
-> need to reimplement and/or use a whole new framework, then there is
-> little value.
+Thanks.
 
-I can appreciate how allowing direct manipulation of capability bits
-from a BPF LSM looks attractive, but my hope is that our discussion
-here revealed that as you look deeper into making it work there are a
-number of pitfalls which prevent this from being a safe option for
-generalized systems.
-
-> TBH, I don't feel strongly about this, which is why it is absent from
-> v1. However, as John pointed out, we should at least be able to modify
-> the blob if we want flexible userns caps policies down the road.
-
-As discussed in this thread, there are existing ways to provide fine
-grained control over exercising capabilities that can be safely used
-within the LSM framework.  I don't want to speak to what John is
-envisioning, but he should be aware of these mechanisms, and if I
-recall he did voice a level of concern about the same worries I
-mentioned.
-
-I'm happy to discuss ways in which we can adjust the LSM hooks/layer
-to support different approaches to capability controls, but one LSM
-directly manipulating the state of another is going to be a no vote
-from me.
-
---=20
-paul-moore.com
+-- 
+tejun
 
