@@ -1,135 +1,104 @@
-Return-Path: <linux-kernel+bounces-212209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E156A905CB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8DFB905CD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8678D1F24F68
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:22:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 776601F241D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745C484D0E;
-	Wed, 12 Jun 2024 20:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA5A84D0D;
+	Wed, 12 Jun 2024 20:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="igmSRE9K"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNaxhTTK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC9484A56;
-	Wed, 12 Jun 2024 20:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7645464A;
+	Wed, 12 Jun 2024 20:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718223760; cv=none; b=B7YbD/n0hli7TB/0P78b7IFKGtrElT5bZoF/ts+Fncve4lES73zWKnQxBcqSxmBzozNDne0ZRFHUABXmFdhPpPXDAGJ+6kIAf+Dz+IutxBWLmeV4HMw3FknD/LrhYJ6AxtrvTaOO7lOFb28IZ5SNE4bPBYdhccVv8FKN/6nXNpE=
+	t=1718224177; cv=none; b=ZnLllBOTdmQCPFHrFa6ydZfBIlQTmOmVXI3h4c6hCgzE0GMf2nMG4EKIIppCa+uuRg9WY+COiGyStfRWSy9eefIqgD6NNCho02hstuIxDDUOo2P4cYJhPapUO7H4Qr8FWuSkUHYPCvtRbSD5SJ7rXohTYeHV2pU7Tf+lzgMgOKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718223760; c=relaxed/simple;
-	bh=8WTD6sYve58aB6+RW7KFovQtTgqjvA9DP8iUKon4+mA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n6Pb7TU0m1AECL8gfRkcz2bnFWf+YCKUs/V9ZvAP05DYdNSUNl7H/OhPk8m3xhVQctO3UIH2hGphLeklxlSM6fo0f4IRCfVUkLOCn2TRs/WW8efuCc4Kq/4KEb9PNPLmtE3bhVQzhctGZEI17xfLGFtTV/JpVXQFyhyvjxP+MbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=igmSRE9K; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718223759; x=1749759759;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=8WTD6sYve58aB6+RW7KFovQtTgqjvA9DP8iUKon4+mA=;
-  b=igmSRE9KuZZI71SEX5gbREGV1TbLt8b8RtjA8YHhISKjaHYK3qQ1ZCpa
-   EuU0YsVbYfZmzmHimSPsS3iRyL40Srf/fK+70FmHZdh+T5rliZYVufBdb
-   3EkHnL8f/OTvoaaG8VXdJW4PfD3mU+3qp9eyeP6FfwKvNQPJ8ZJ4QZFwv
-   RMcZfGxwCmGMZfNnAs12NEOHI6RnkzHI200Z5AEHLhdrvmp6O6Ph4Au1E
-   GTU6n8WwzBvxDSZJsReAbbhFiuJ8FFDdd6sbmS4WieZcNPo0r4zyhwuhs
-   82KzRbdgD7M3MzNT42psrIZHN3On1kMHXYR6nsyR/iIlXVLK2uumqNw2V
-   w==;
-X-CSE-ConnectionGUID: zDlTbO8GRSyfkSDqhJBpvw==
-X-CSE-MsgGUID: 8gIT4jzSTWSsXES11It+5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="14974327"
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="14974327"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 13:22:39 -0700
-X-CSE-ConnectionGUID: iGF4IHCHRwOQDfhlcK79FA==
-X-CSE-MsgGUID: 0lpd7zF+RReLIylyivdOTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="45028858"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 13:22:39 -0700
-Date: Wed, 12 Jun 2024 13:27:41 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: X86 Kernel <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>, Zeng Guang
- <guang.zeng@intel.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 5/6] perf/x86: Enable NMI source reporting for
- perfmon
-Message-ID: <20240612132741.10f58458@jacob-builder>
-In-Reply-To: <8afef909-974e-40fe-a39c-3c1e4e6d6938@zytor.com>
-References: <20240611165457.156364-1-jacob.jun.pan@linux.intel.com>
-	<20240611165457.156364-6-jacob.jun.pan@linux.intel.com>
-	<8afef909-974e-40fe-a39c-3c1e4e6d6938@zytor.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718224177; c=relaxed/simple;
+	bh=gCWYIm7bTku77ZC6+dqoln8xvBDLmYRwniWsE89dzJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hgdt6y64gNNAleNVNePUl/asMc/w9+toPHhEkI+NDDqhFoGKbNGbD6d4qI3Hk4KIooFnaHl+oA0W6gJdf+dtwbMyKcKBXZoZN24+F57OWY0iHzZOMLdNIIbJRvRpMrDJiD7xoYGktFyx0Ip11+12iZEBOKjsSq/h504RiRcqAdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNaxhTTK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F786C116B1;
+	Wed, 12 Jun 2024 20:29:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718224177;
+	bh=gCWYIm7bTku77ZC6+dqoln8xvBDLmYRwniWsE89dzJU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cNaxhTTKl+SspOwSlEHNQvVoS0JL8tO0YYyYJuwXVEoSo8ReWdiq+NtN7oJ8NAveT
+	 z0/gkj8P9jZjc+NQSKy8ETCvdUOJbEb1CQjPVn29Os88FsauX1BN/xY/zRqQ+pmLQK
+	 iE3iPhD34t4/evmgNP5NrPWC+5PVrgCYZbTk7WzwYeKZy9NH1jSTTREwOzKiW3hBXa
+	 I3veBK3rMM5ogi/b080kLseDv5V4stIgIgjWTFOcVc0XdAN8UYQQ1MyxOPigU9M0V6
+	 NanknOc+8I6p+XApjml3BsC7b94+BFBP/v0RwJbE/iE0/5CX//jUiSU6WvbUB8kCor
+	 6/zwW1RYJZIvg==
+Date: Wed, 12 Jun 2024 21:29:34 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jiaxin Yu <jiaxin.yu@mediatek.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	angelogioacchino.delregno@collabora.com
+Subject: Re: [PATCH] ASoC: mediatek: mt6358: Add "Dmic Mode Switch" kcontrol
+ for switch DMIC mode.
+Message-ID: <ZmoFLizJO-J0N-m2@finisterre.sirena.org.uk>
+References: <20240612094155.23354-1-jiaxin.yu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XNKysN0M+FLP/L8C"
+Content-Disposition: inline
+In-Reply-To: <20240612094155.23354-1-jiaxin.yu@mediatek.com>
+X-Cookie: Your love life will be... interesting.
 
-Hi H.,
 
-On Tue, 11 Jun 2024 12:10:52 -0700, "H. Peter Anvin" <hpa@zytor.com> wrote:
+--XNKysN0M+FLP/L8C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On 6/11/24 09:54, Jacob Pan wrote:
-> > 
-> > diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> > index 1ef2201e48ac..db8c30881f5c 100644
-> > --- a/arch/x86/events/core.c
-> > +++ b/arch/x86/events/core.c
-> > @@ -46,6 +46,7 @@
-> >   
-> >   struct x86_pmu x86_pmu __read_mostly;
-> >   static struct pmu pmu;
-> > +u32 apic_perfmon_ctr = APIC_DM_NMI;
-> >   
-> >   DEFINE_PER_CPU(struct cpu_hw_events, cpu_hw_events) = {
-> >   	.enabled = 1,
-> > @@ -1680,7 +1681,7 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
-> >   	 * This generic handler doesn't seem to have any issues where
-> > the
-> >   	 * unmasking occurs so it was left at the top.
-> >   	 */
-> > -	apic_write(APIC_LVTPC, APIC_DM_NMI);
-> > +	apic_write(APIC_LVTPC, apic_perfmon_ctr);
-> >   
-> >   	for (idx = 0; idx < x86_pmu.num_counters; idx++) {
-> >   		if (!test_bit(idx, cpuc->active_mask))
-> > @@ -1723,7 +1724,10 @@ void perf_events_lapic_init(void)
-> >   	/*
-> >   	 * Always use NMI for PMU
-> >   	 */
-> > -	apic_write(APIC_LVTPC, APIC_DM_NMI);
-> > +	if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE))
-> > +		apic_perfmon_ctr |= NMI_SOURCE_VEC_PMI;
-> > +
-> > +	apic_write(APIC_LVTPC, apic_perfmon_ctr);
-> >   }
-> >  
-> There really is no reason to not do this unconditinoally. If NMI source 
-> is not supported it is simply a noop.
-Yes, will do.
+On Wed, Jun 12, 2024 at 05:41:55PM +0800, Jiaxin Yu wrote:
 
-I was being paranoid in case some old CPUs don't ignore the vector field.
+> +static int mt6358_dmic_mode_set(struct snd_kcontrol *kcontrol,
+> +				struct snd_ctl_elem_value *ucontrol)
+> +{
+> +	struct snd_soc_component *c = snd_soc_kcontrol_component(kcontrol);
+> +	struct mt6358_priv *priv = snd_soc_component_get_drvdata(c);
+> +	int enabled = ucontrol->value.integer.value[0];
+> +
+> +	if (priv->dmic_one_wire_mode != enabled) {
+> +		priv->dmic_one_wire_mode = enabled;
 
-Thanks,
+This will allow any value to be written rather than just 0 or 1,
+mixer-test should report that this is a bug - there should either be
+validation or clamping of the value so it stays as either 0 or 1.  Both
+options are valid.
 
-Jacob
+--XNKysN0M+FLP/L8C
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZqBS4ACgkQJNaLcl1U
+h9COmQf/a8xD+qrXvkFvABKq8FFX5YPeNHTkBlKnyk5PLvhdn856OJ7nHQoq3reW
+8qMriRZkD3z1FVN9qzUpt0hygDXVV6alDJ522jwYJVcr6kxuMpVlp9xwfX+H5nCR
+7slQUKmP7cyMS3LYJJZfGtG/a5oseajX6pRXl2q/BSui8usaEyYVzrfVd2I0F78G
+tQvPmJ/tQUX85DSWXCJmSUJJe6rQE0tH/Ly0hDfuIZuWS25XzFhkWnp3iDS7uKsK
+mCPiLFkvMRngfRApM8T2iPQiMBKFt5AkgzHWcBsHRalB1OlAQmZXchn4d5EKL5/j
+QrkFiepQBmCiKQ1rGMLc/CDy4GpjhQ==
+=0AqR
+-----END PGP SIGNATURE-----
+
+--XNKysN0M+FLP/L8C--
 
