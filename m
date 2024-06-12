@@ -1,222 +1,118 @@
-Return-Path: <linux-kernel+bounces-210945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7CF904ACC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:24:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6706F904AE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17655B21FF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB90F283F4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B819439FD4;
-	Wed, 12 Jun 2024 05:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E371E37708;
+	Wed, 12 Jun 2024 05:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="SE8oQZwu"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qXr+DAg8"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3D236124
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 05:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DBB286A8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 05:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718169821; cv=none; b=A0DLO/WiFJ/ex6iDwjkgJnpWCBSKO+aBUu2YoGUCSUdgFDIkPnxH1ePczu0c1f6atdHln4sv57PPzDMWQzQi0Ildn5U27bBHl+2kOl4DTM6dTCL+B6QpbW4gmtdL8S6EZZm7FFwYj5hsn9eZvgKAHdhL9LlXXxEbh5sGuSxJa6g=
+	t=1718170263; cv=none; b=mAcwXeNLVJuNHq4T9sMzgU7EIgw3KQcqtuhw3RNOM/BkrBDQGMtWNmEPrDOR9a52HZfMihhfv0kAAd+lg7yjB+M+zi1niEB/GOKueLTSf5HkbDlDP85LNLcAHA2NY8bk+H9k6gIIMAX7ciL+NLa3iLGb/lDbMIlnsdeF6vSjeTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718169821; c=relaxed/simple;
-	bh=26a9aogFFQ6QWc11kY+KtmVRlU7+xrXNx1HH+oHtcXs=;
-	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RY6fQl/bel8R2QzFqneywyrqGR3a3lCRQnQ8x5XLaI7vA2igJamJHQ/ADefLr4lEnp9B9dMd1oGOTS9gtuk+jT0UZGtzMxNZ+holNK7i2x0pVrumpwDomfsa7/ldEn9zRTBJ3bZdELC2rzPSe70vk8T531HHcCXxhATIFm/e22I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=SE8oQZwu; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-X-Envelope-To: mehdi.djait.k@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1718169817;
+	s=arc-20240116; t=1718170263; c=relaxed/simple;
+	bh=M79FP9xawocEU+lriIXIatL6EDmqJHLQLEu2xZP59cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/CZv8Zt1IajFVrLAuswSELjIytPtSHoHrzwMXUQjs8XfIX2X3an9yq1d8f/H8ZU+OcugLz4Ed63i5jQ7rcFV6CaTBNHkebHkM3bQevenncggec6nxGv643HfgXXyCBZcvMhdyBBxKGVNIbvJllDqrOF0J98riKTHUTB8mq9prE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qXr+DAg8; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: shahuang@redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718170259;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wbMyZcQy/EuPZsKGMdB3xw3iRWsXhVM6qxIencI5Uio=;
-	b=SE8oQZwuF1or8Al4mBxdn/0hs5SnM7LHqHb7yl9lhhh/qYKpJUZos0HclWWvhTG14RAkSZ
-	VPXy1gDXUZfjJpyKqayxAK+AvCTd8Mnwj5M7ex7crP1uW5PeM89hltSvay24efM6ZndDhQ
-	JLxWQ43LUItgAaPkw/BUMOtFLXEvAZWWZYZW5zjRqp+L8Nunuzw245iy9KpNRWfpztGu4f
-	Hv6wwAXeGDLB2NIi0S7JDAMsL9H/L65xef6VKKmGcgcswRc5Bya8pLJPJSwy622ixVgz9s
-	t4XwvrxlWx7Zc1eQxslbZDz8wddKtSvbPJSTneehQEf+TGg7cF+h18b/1IC2Ew==
-X-Envelope-To: mchehab@kernel.org
-X-Envelope-To: heiko@sntech.de
-X-Envelope-To: hverkuil-cisco@xs4all.nl
-X-Envelope-To: krzysztof.kozlowski+dt@linaro.org
-X-Envelope-To: robh+dt@kernel.org
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: linux-media@vger.kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
+	bh=/UiRVtVLigMQeE81g8Kpmn0pUJ/eW6cDDy3LoMW/VXc=;
+	b=qXr+DAg8cKacFvDiSUke0+CGHdsYkHAmAXVnXnPbCZTIdT4ICUniQacRM8YvMnGHJsOFdY
+	diLKnRd3TYks2/vlYheRAZEPOKxV2nCgdMwl21BghyUTzHBFWCzo/zfvIUM+oA0YvNQGpT
+	ysoU3sMV2TcI+Fq3yT58ywcIQaau6e8=
+X-Envelope-To: maz@kernel.org
+X-Envelope-To: kvmarm@lists.linux.dev
+X-Envelope-To: eauger@redhat.com
+X-Envelope-To: sebott@redhat.com
+X-Envelope-To: cohuck@redhat.com
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: james.morse@arm.com
+X-Envelope-To: kvm@vger.kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
 X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: thomas.petazzoni@bootlin.com
-X-Envelope-To: alexandre.belloni@bootlin.com
-X-Envelope-To: maxime.chevallier@bootlin.com
-X-Envelope-To: paul.kocialkowski@bootlin.com
-X-Envelope-To: michael.riesch@wolfvision.net
-X-Envelope-To: laurent.pinchart@ideasonboard.com
-X-Envelope-To: mehdi.djait@bootlin.com
-Date: Wed, 12 Jun 2024 02:23:13 -0300
+X-Envelope-To: linux-kselftest@vger.kernel.org
+X-Envelope-To: pbonzini@redhat.com
+X-Envelope-To: shuah@kernel.org
+X-Envelope-To: suzuki.poulose@arm.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: yuzenghui@huawei.com
+Date: Tue, 11 Jun 2024 22:30:51 -0700
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Val Packett <val@packett.cool>
-Subject: Re: [RESEND Patch v13 2/3] media: rockchip: Add a driver for
- Rockchip's camera interface
-To: Mehdi Djait <mehdi.djait.k@gmail.com>
-Cc: mchehab@kernel.org, heiko@sntech.de, hverkuil-cisco@xs4all.nl,
-	krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org, conor+dt@kernel.org,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	alexandre.belloni@bootlin.com, maxime.chevallier@bootlin.com,
-	paul.kocialkowski@bootlin.com, michael.riesch@wolfvision.net,
-	laurent.pinchart@ideasonboard.com, Mehdi Djait <mehdi.djait@bootlin.com>
-Message-Id: <PACYES.KP3K6W0JOIAK1@packett.cool>
-In-Reply-To: <715d89214d1ed6a8bb16cbb6268718a737485560.1707677804.git.mehdi.djait.k@gmail.com>
-References: <cover.1707677804.git.mehdi.djait.k@gmail.com>
-	<715d89214d1ed6a8bb16cbb6268718a737485560.1707677804.git.mehdi.djait.k@gmail.com>
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Shaoqin Huang <shahuang@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>, kvmarm@lists.linux.dev,
+	Eric Auger <eauger@redhat.com>, Sebastian Ott <sebott@redhat.com>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	James Morse <james.morse@arm.com>, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [RFC PATCH v1 0/2] KVM: arm64: Making BT Field in
+ ID_AA64PFR1_EL1 writable
+Message-ID: <Zmkyi39Pz6Wqll-7@linux.dev>
+References: <20240612023553.127813-1-shahuang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612023553.127813-1-shahuang@redhat.com>
 X-Migadu-Flow: FLOW_OUT
 
-Hi,
+Hi Shaoqin,
 
-a couple more comments on this driver:
-
-On Sun, Feb 11 2024 at 20:03:31 +01:00:00, Mehdi Djait 
-<mehdi.djait.k@gmail.com> wrote:
-> +static int cif_stream_start(struct cif_stream *stream)
-> +{
-> +	u32 val, fmt_type, xfer_mode = 0;
-> +	struct cif_device *cif_dev = stream->cifdev;
-> +	struct cif_remote *remote_info = &cif_dev->remote;
-> +	int ret;
-> +	u32 input_mode;
-> +
-> +	stream->frame_idx = 0;
-> +	stream->frame_phase = 0;
-> +
-> +	fmt_type = stream->cif_fmt_in->fmt_type;
-> +	input_mode = (remote_info->std == V4L2_STD_NTSC) ?
-> +		      CIF_FORMAT_INPUT_MODE_NTSC :
-> +		      CIF_FORMAT_INPUT_MODE_PAL;
-
-Mode logic needs to be expanded for cameras; I'm trying to get it 
-working correctly,
-so far managed to get some cursed selfies with the wrong pixel format 
-:) but either
-way I could send a patch when I have it working well.
-
-> +static int subdev_notifier_complete(struct v4l2_async_notifier 
-> *notifier)
-> +{
-> +	struct cif_device *cif_dev;
-> +	struct v4l2_subdev *sd;
-> +	int ret;
-> +
-> +	cif_dev = container_of(notifier, struct cif_device, notifier);
-> +	sd = cif_dev->remote.sd;
-> +
-> +	mutex_lock(&cif_dev->media_dev.graph_mutex);
-> +
-
-Potential deadlock with this lock:
-
-[    3.438667] ======================================================
-[    3.438672] WARNING: possible circular locking dependency detected
-[    3.438677] 6.10.0-rc1-next-20240531 #151 Not tainted
-[    3.438684] ------------------------------------------------------
-[    3.438687] kworker/u8:1/25 is trying to acquire lock:
-[    3.438695] c152d41c (videodev_lock){+.+.}-{4:4}, at: 
-__video_register_device+0xf4/0x15b0
-[    3.438737]
-[    3.438737] but task is already holding lock:
-[    3.438740] c31981fc (&mdev->graph_mutex){+.+.}-{4:4}, at: 
-subdev_notifier_complete+0x20/0x80
-[    3.438765]
-[    3.438765] which lock already depends on the new lock.
-[    3.438765]
-[    3.438769]
-[    3.438769] the existing dependency chain (in reverse order) is:
-[    3.438772]
-[    3.438772] -> #1 (&mdev->graph_mutex){+.+.}-{4:4}:
-[    3.438786]        lock_acquire+0x110/0x374
-[    3.438809]        __mutex_lock+0xac/0xf2c
-[    3.438828]        mutex_lock_nested+0x1c/0x24
-[    3.438843]        media_device_register_entity+0x80/0x1e8
-[    3.438857]        __video_register_device+0xab0/0x15b0
-[    3.438869]        cif_register_stream_vdev+0x158/0x18c
-[    3.438880]        cif_plat_probe+0x20c/0x424
-[    3.438888]        platform_probe+0x5c/0xb0
-[    3.438905]        really_probe+0xc8/0x2cc
-[    3.438916]        __driver_probe_device+0x88/0x1a0
-[    3.438926]        driver_probe_device+0x30/0x108
-[    3.438936]        __driver_attach+0x94/0x184
-[    3.438946]        bus_for_each_dev+0x7c/0xcc
-[    3.438955]        bus_add_driver+0xcc/0x1ec
-[    3.438964]        driver_register+0x7c/0x114
-[    3.438975]        do_one_initcall+0x7c/0x2f8
-[    3.438989]        kernel_init_freeable+0x1b0/0x20c
-[    3.439010]        kernel_init+0x14/0x12c
-[    3.439024]        ret_from_fork+0x14/0x28
-[    3.439033]
-[    3.439033] -> #0 (videodev_lock){+.+.}-{4:4}:
-[    3.439048]        check_prev_add+0x134/0x17d8
-[    3.439065]        __lock_acquire+0x17e0/0x21fc
-[    3.439080]        lock_acquire+0x110/0x374
-[    3.439095]        __mutex_lock+0xac/0xf2c
-[    3.439109]        mutex_lock_nested+0x1c/0x24
-[    3.439123]        __video_register_device+0xf4/0x15b0
-[    3.439135]        __v4l2_device_register_subdev_nodes+0xd8/0x1a0
-[    3.439152]        subdev_notifier_complete+0x2c/0x80
-[    3.439160]        __v4l2_async_register_subdev+0xa8/0x1a0
-[    3.439176]        gc0308_probe+0x654/0x6f4
-[    3.439187]        i2c_device_probe+0x168/0x268
-[    3.439201]        really_probe+0xc8/0x2cc
-[    3.439211]        __driver_probe_device+0x88/0x1a0
-[    3.439221]        driver_probe_device+0x30/0x108
-[    3.439231]        __device_attach_driver+0x94/0x10c
-[    3.439241]        bus_for_each_drv+0x90/0xe4
-[    3.439250]        __device_attach+0xac/0x1b0
-[    3.439260]        bus_probe_device+0x8c/0x90
-[    3.439269]        deferred_probe_work_func+0x7c/0xac
-[    3.439279]        process_one_work+0x23c/0x6bc
-[    3.439295]        worker_thread+0x190/0x3d8
-[    3.439308]        kthread+0xf8/0x114
-[    3.439321]        ret_from_fork+0x14/0x28
-[    3.439330]
-[    3.439330] other info that might help us debug this:
-[    3.439330]
-[    3.439333]  Possible unsafe locking scenario:
-[    3.439333]
-[    3.439336]        CPU0                    CPU1
-[    3.439339]        ----                    ----
-[    3.439341]   lock(&mdev->graph_mutex);
-[    3.439349]                                lock(videodev_lock);
-[    3.439356]                                lock(&mdev->graph_mutex);
-[    3.439363]   lock(videodev_lock);
-[    3.439370]
-[    3.439370]  *** DEADLOCK ***
-[    3.439370]
-[    3.439373] 5 locks held by kworker/u8:1/25:
-[    3.439379]  #0: c28106b4 
-((wq_completion)events_unbound){+.+.}-{0:0}, at: 
-process_one_work+0x1ac/0x6bc
-[    3.439408]  #1: f0889f20 (deferred_probe_work){+.+.}-{0:0}, at: 
-process_one_work+0x1d4/0x6bc
-[    3.439436]  #2: c303ec9c (&dev->mutex){....}-{4:4}, at: 
-__device_attach+0x30/0x1b0
-[    3.439461]  #3: c152d3d0 (list_lock){+.+.}-{4:4}, at: 
-__v4l2_async_register_subdev+0x50/0x1a0
-[    3.439491]  #4: c31981fc (&mdev->graph_mutex){+.+.}-{4:4}, at: 
-subdev_notifier_complete+0x20/0x80
-
+On Tue, Jun 11, 2024 at 10:35:50PM -0400, Shaoqin Huang wrote:
+> Hi guys,
 > 
+> I'm trying to enable migration from MtCollins(Ampere Altra, ARMv8.2+) to
+> AmpereOne(AmpereOne, ARMv8.6+), the migration always fails when migration from
+> MtCollins to AmpereOne due to some register fields differing between the
+> two machines.
+> 
+> In this patch series, we try to make more register fields writable like
+> ID_AA64PFR1_EL1.BT. This is first step towards making the migration possible.
+> Some other hurdles need to be overcome. This is not sufficient to make the
+> migration successful from MtCollins to AmpereOne.
 
+It isn't possible to transparently migrate between these systems. The
+former has a cntfrq of 25MHz, and the latter has a cntfrq of 1GHz. There
+isn't a mechanism for scaling the counter frequency, and I have zero
+appetite for a paravirt interface.
 
+On top of that, erratum AC03_CPU_38 seems to make a migration from
+Neoverse-N1 to AmpereOne quite perilous, unless you hide FEAT_HAFDBS on
+the source.
+
+These issues are separate, though, from any possible changes to the
+writability of ID_AA64PFR1_EL1, which still may be useful to userspace.
+
+-- 
+Thanks,
+Oliver
 
