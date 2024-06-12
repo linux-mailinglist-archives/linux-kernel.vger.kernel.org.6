@@ -1,171 +1,173 @@
-Return-Path: <linux-kernel+bounces-212072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B26905AE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:30:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43DE1905AEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CCA41C20FAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:30:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499471C22343
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7D647F6B;
-	Wed, 12 Jun 2024 18:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1CE54BD8;
+	Wed, 12 Jun 2024 18:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uygpFqX6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hGkDeiqB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B16C3FE2A;
-	Wed, 12 Jun 2024 18:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329142904;
+	Wed, 12 Jun 2024 18:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718216974; cv=none; b=inFGmxtf0sOSBzhty+kkk484pbecsrJpJEjO+YclojsakmGx/jFtbwZbyCc93Q77SNkPgDf3KNJt5jYeGcusFXzQyXqqNMPYubtlwNrSDCHCvwCkElcftINPnzo7lN/wIxy9cH1niHO37H//dHJkgZrU/wFGiaVVn21719GFxCs=
+	t=1718217070; cv=none; b=E8/McPnd3LDRfJIVNqBsW11GxgB7+NKl0ncMlGFolHilP2OEsBSxM5HZDCVYaLWd1hCuN7Zwdu7/KoNb1Nqzitb5/g29lu3WXl93NFvX3ImgaRMdVFFO/s0oW5P4DjhWVArIE+ZXWrl6SYAenosQSoecHQ496kzlekdLQGBv/3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718216974; c=relaxed/simple;
-	bh=OmrPRsVW/SqHsQ62oU68f2r5XqKqs5zc1yIXlgibcIs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ssOLY+K348ine7Cf3lArNJl4I6X6ynKbRj2RCvvzB6ByK0JW/LrsUwhg4NHXhy5duO1/GrjLw68QTYse9LnKs6b7zMVSmSPQ1GTX7c9bg7brgPsd6Z5FiHdPTO0XOGN9sZKU8XSY+t88JqlCj4gIksS/2RLtogqTTkUdPJfY1Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uygpFqX6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFB57C4AF1C;
-	Wed, 12 Jun 2024 18:29:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718216973;
-	bh=OmrPRsVW/SqHsQ62oU68f2r5XqKqs5zc1yIXlgibcIs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uygpFqX6aS5aZZu5MqHl50UapjHNeRaTdABTq3yex0HOvX/S228MsxfCQxhAqTPg8
-	 OThcV8SbqJQ3irPlV7/MhDK5lQQUOu/OR3rCoU3y1jWlwobuY1IrCb3QgInydpqrhx
-	 zAAbjbCZpRB7Ubr+uvXE9c1WpczfN1NllupVLm4AlJpxWL/W5ap0oxBaIa8YtYj35Z
-	 d01NNSY5yFo3R/m8ZPj1XcRHqFRH4+i7nQLjGOwzkU7VJskKExdqFXUPxTJWnrBIRF
-	 5FN1SNIbkj+6RT/X5bzct1zm+DMnVdbupFj7Ua/DvKXUDxZAMavt1eDKStXRNHrE8W
-	 rXDleSxKni+Qg==
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5bad4e45863so12805eaf.3;
-        Wed, 12 Jun 2024 11:29:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6dwSmVx4cnP2taCKriJiBys0XhBGAvTGliOhNmhYTkseZduYt0fC85rGYN+L+TDl1xdexWu3LLb7EP54=@vger.kernel.org, AJvYcCUT0rEHomCncIVJ6Sn0lOMgcq/pCO+IJ12uZNriZF4zUZSBiwBBIHJJOwewUR7LvL/7IyJaupC4c5Cz@vger.kernel.org, AJvYcCVRuUp19QCMOH1T4P1aomM4z22FTnsn+5iBCo1rBhRHp1strAJqF187xinDuXfsqt1pkVuPCVGcRdki287A@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaTfLo8oNWZbYWkL4GIx/J2jYr8Tt5poMoMOxJ0zqm87OcNLY8
-	KlsjiH6Mb+TkXBKfp9oOjxk9UWqj955mrO/DDMlqK+Sm8EUnCayacGx6svNE/YFliYJ9KfoqteM
-	Ki0gaawVG8WoY3d3SA9r1UCBajbc=
-X-Google-Smtp-Source: AGHT+IFylrCsWLsKLPqjnXt++1LHB3b3Atfwm0DR77ZFQrwea2y+55nezG7Xq+Di2smKAkN62xbjg85zPihLMpPy22E=
-X-Received: by 2002:a05:6871:4e91:b0:24f:ddd5:a21d with SMTP id
- 586e51a60fabf-255151f70fcmr2841268fac.5.1718216973099; Wed, 12 Jun 2024
- 11:29:33 -0700 (PDT)
+	s=arc-20240116; t=1718217070; c=relaxed/simple;
+	bh=bbW9jfn/YkVzxgq0mUcCmWnAQ+1pHU/SiOxwbF4Robs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A12fxE9TskWEkN/V+7ZbdazmMAFZFA4N4nRb9JDo6JGPfldyDIby7/o5hSt8KtNxSda09qybPIT4kkg3JGYuNz1cf6voNPzGCELZN1G/iC16OLZu1Jn/fipj+uN23NShPrWFlvsr4lemmAacXkkHvpRVpAXLJdyl3BLKSQ05nkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hGkDeiqB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CFbk34016948;
+	Wed, 12 Jun 2024 18:30:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=EzEJlEWFLZbkymQcOUSopO
+	cRdcYxgvQlzTjdmeL+W4g=; b=hGkDeiqBA7+fhg3uWzCox7KlLclY0ov7oIH/6Q
+	yYv+aZmpML5yrWgc8hHdUen0fdon168D7hZFtI5FzpWp1n+wftssKw5QJkcYnVnw
+	mFCc6QVSoXZUF5bvZ5/JNfZ4JyOTDKQvZHIh7hUBtkUuGL7S473f40MFSeeJAkfw
+	MElXflXSdf+L7FzkDiWVT1wp6uru+Bqyz5OBgWxm1iAWkwBxTMKu5wKMtszfs/Bj
+	HdRQbt4lWMPbsw+KnnVlC17LGPdNAAzJO+Chy1V2qCD+z+zm03hWiccP+FFg0Itj
+	iwZ8t2pXnQSdEqR3Ojs5s7Mkseh7xQEKk5C2P+PqAh1Wvy3g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypmjavmby-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 18:30:58 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CIUvr6007635
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 18:30:57 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 12 Jun 2024 11:30:53 -0700
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
+        <quic_sibis@quicinc.com>, <conor+dt@kernel.org>
+Subject: [RFC V2 0/4] firmware: arm_scmi: vendors: Qualcomm Vendor Protocol
+Date: Thu, 13 Jun 2024 00:00:27 +0530
+Message-ID: <20240612183031.219906-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528084413.2624435-1-sakari.ailus@linux.intel.com>
- <a05df025-a0be-49cd-84a9-7d7fb2eeb33e@redhat.com> <e9062095-b312-44df-a9e3-0b09f3ec9eff@redhat.com>
- <4b387b4d-f778-4891-9f07-df5fc0a093cd@redhat.com> <ZmmQLt7wB-yGQBTw@kekkonen.localdomain>
- <CAJZ5v0ii3WFQRPdfHeeW4M9kXSWDVxxxy02zThcf25mjNwqDAw@mail.gmail.com>
- <ZmmT56Cyvb2FCyav@kekkonen.localdomain> <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
- <ZmmY3he9vfWVWU3I@kekkonen.localdomain> <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
- <ZmnnFueL-Cgw5Eqp@kekkonen.localdomain>
-In-Reply-To: <ZmnnFueL-Cgw5Eqp@kekkonen.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Jun 2024 20:29:21 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gtK9yusimCOVV2dGkQWDwQ6=r=vfbgC-eE60Cg-5wk_Q@mail.gmail.com>
-Message-ID: <CAJZ5v0gtK9yusimCOVV2dGkQWDwQ6=r=vfbgC-eE60Cg-5wk_Q@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port nodes
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com, 
-	wentong.wu@intel.com, linux-media@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nzqeVsfnI2NV1gNaM2IAzbyH651A5Gwt
+X-Proofpoint-ORIG-GUID: nzqeVsfnI2NV1gNaM2IAzbyH651A5Gwt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_10,2024-06-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ clxscore=1015 mlxscore=0 impostorscore=0 mlxlogscore=913
+ lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120132
 
-Hi Sakari,
+The SCMI QCOM vendor protocol provides a generic way of exposing a
+number of Qualcomm SoC specific features (like memory bus scaling)
+through a mixture of pre-determined algorithm strings and param_id
+pairs hosted on the SCMI controller. Introduce a client driver that
+uses the memlat algorithm string hosted on QCOM SCMI Vendor Protocol
+to detect memory latency workloads and control frequency/level of
+the various memory buses (DDR/LLCC/DDR_QOS).
 
-On Wed, Jun 12, 2024 at 8:21=E2=80=AFPM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Rafael,
->
-> On Wed, Jun 12, 2024 at 03:06:53PM +0200, Rafael J. Wysocki wrote:
-> > Hi Sakari,
-> >
-> > On Wed, Jun 12, 2024 at 2:47=E2=80=AFPM Sakari Ailus
-> > <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Hi Rafael,
-> > >
-> > > On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysocki wrote:
-> > > > > > > > I just hit the same problem on another Dell laptop. It seem=
-s that
-> > > > > > > > all Dell laptops with IPU6 camera from the Tiger Lake, Alde=
-r Lake
-> > > > > > > > and Raptor Lake generations suffer from this problem.
-> > > > > > > >
-> > > > > > > > So instead of playing whack a mole with DMI matches we shou=
-ld
-> > > > > > > > simply disable ACPI MIPI DISCO support on all Dell laptops
-> > > > > > > > with those CPUs. I'm preparing a fix for this to replace
-> > > > > > > > the DMI matching now.
-> > > > > > >
-> > > > > > > DisCo for Imaging support shouldn't be dropped on these syste=
-ms, and this
-> > > > > > > isn't what your patch does either. Instead the ACPI graph por=
-t nodes (as
-> > > > > > > per Linux specific definitions) are simply dropped, i.e. this=
- isn't related
-> > > > > > > to DisCo for Imaging at all.
-> > > > > >
-> > > > > > So it looks like the changelog of that patch could be improved,=
- right?
-> > > > >
-> > > > > Well, yes. The reason the function is in the file is that nearly =
-all camera
-> > > > > related parsing is located there, not that it would be related to=
- DisCo for
-> > > > > Imaging as such.
-> > > >
-> > > > So IIUC the camera graph port nodes are created by default with the
-> > > > help of the firmware-supplied information, but if that is defective=
- a
-> > > > quirk can be added to skip the creation of those ports in which cas=
-e
-> > > > they will be created elsewhere.
-> > > >
-> > > > Is this correct?
-> > >
-> > > Yes.
-> >
-> > So it would be good to add a comment to this effect to
-> > acpi_nondev_subnode_extract() where acpi_graph_ignore_port() is
-> > called.
-> >
-> > And there is a somewhat tangential question that occurred to me: If
-> > the nodes are created elsewhere when acpi_graph_ignore_port() is true,
-> > why is it necessary to consult the platform firmware for the
-> > information on them at all?  Wouldn't it be better to simply always
-> > create them elsewhere?
->
-> Simple answer: for the same reason why in general system specific
-> information comes from ACPI and not from platform data compiled into the
-> kernel.
->
-> Of course this is technically possible but it does not scale.
+Generic QCOM Vendor protocol background:
+It was found that a lot of the vendor protocol used internally was
+for debug/internal development purposes that would either be super
+SoC specific or had to be disabled because of some features being
+fused during production. This lead to a large number of vendor
+protocol numbers being quickly consumed and were never released
+either. Using a generic vendor protocol with functionality abstracted
+behind algorithm strings gave us the flexibility of allowing such
+functionality exist during initial development/debugging while
+still being able to expose functionality like memlat once they have
+matured enough. The param-ids are certainly expected to act as ABI
+for algorithms strings like MEMLAT.
 
-While I agree in general, in this particular case the platform data
-compiled into the kernel needs to be present anyway, at least
-apparently, in case the data coming from the platform firmware is
-invalid.
+Now that the SCMI controller firmware (CPUCP) is feature complete
+with the impending release of X1E SoCs, I should be able to get out
+next re-spins a lot quicker. I'll keep adding more documentation in
+the subsequent re-spins. Thanks in advance for taking time to review
+the series.
 
-So we need to do 3 things: compile in the platform data into the
-kernel and expect the platform firmware to provide the necessary
-information, and add quirks for the systems where it is known invalid.
+Opens:
+* opp-tables are used but they don't get to be added to the scmi device (thus we
+  rely on a lot of manual parsing) because the memlat client driver doesn't vote
+  on these resources clocks/interconnects/power-domain from the kernel and some
+  of the resouces aren't modelled in the first place like DDR_QOS.
 
-Isn't this a bit too much?
+V1:
+* Add missing bindings for the protocol. [Konrad/Dmitry]
+* Use alternate bindings. [Dmitry/Konrad]
+* Rebase on top of Cristian's "SCMI multiple vendor protocol support" series. [Cristian]
+* Add more documentation wherever possible. [Sudeep]
+* Replace pr_err/info with it's dev equivalents.
+* Mixed tabs and initialization cleanups in the memlat driver. [Konrad]
+* Commit message update for the memlat driver. [Dmitry]
+* Cleanups/Fixes suggested for the client driver. [Dmitry/Konrad/Cristian]
+* Use opp-tables instead of memfreq-tbl. [Dmitry/Konrad]
+* Detect physical cpu to deal with variants with reduced cpu count.
+* Add support for DDR_QOS mem_type.
 
-> On laptops shipped with Windows some additional information is also avail=
-able
-> from ACPI via custom objects but a lot of information is just hard coded =
-into
-> the IPU bridge as well as the INT3472 driver.
+To Dos:
+* More documentation [Sudeep/Dmitry/Konrad]
+* Use alternate bindings instead of freq-table-Hz. [Dmitry]
+* Prevent duplication of code using vendor protocol driver. [Dmitry]
 
-Well, that's how it goes.
+Depends on:
+vendor protocol submenu: https://lore.kernel.org/all/20240408093052.3801576-3-cristian.marussi@arm.com/
+X1E cpufreq: https://lore.kernel.org/lkml/20240612124056.39230-1-quic_sibis@quicinc.com/
+
+Sibi Sankar (4):
+  dt-bindings: firmware: Add support for QCOM Vendor Protocol
+  firmware: arm_scmi: vendors: Add QCOM vendor protocol
+  soc: qcom: Introduce SCMI based Memlat (Memory Latency) governor
+  arm64: dts: qcom: x1e80100: Enable LLCC/DDR/DDR_QOS dvfs
+
+ .../bindings/firmware/arm,scmi.yaml           |  21 +
+ .../bindings/soc/qcom/qcom,scmi-memlat.yaml   | 243 ++++++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 136 ++++
+ drivers/firmware/arm_scmi/vendors/Kconfig     |  12 +
+ drivers/firmware/arm_scmi/vendors/Makefile    |   2 +-
+ .../arm_scmi/vendors/qcom_scmi_vendor.c       | 184 ++++++
+ drivers/soc/qcom/Kconfig                      |  12 +
+ drivers/soc/qcom/Makefile                     |   1 +
+ drivers/soc/qcom/qcom_scmi_client.c           | 590 ++++++++++++++++++
+ include/dt-bindings/soc/qcom,scmi-vendor.h    |  22 +
+ include/linux/qcom_scmi_vendor.h              |  39 ++
+ 11 files changed, 1261 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,scmi-memlat.yaml
+ create mode 100644 drivers/firmware/arm_scmi/vendors/qcom_scmi_vendor.c
+ create mode 100644 drivers/soc/qcom/qcom_scmi_client.c
+ create mode 100644 include/dt-bindings/soc/qcom,scmi-vendor.h
+ create mode 100644 include/linux/qcom_scmi_vendor.h
+
+-- 
+2.34.1
+
 
