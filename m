@@ -1,132 +1,184 @@
-Return-Path: <linux-kernel+bounces-210838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B199490492C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:44:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93535904915
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DC5A1F24970
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:44:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36CB7286A03
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF27EEED0;
-	Wed, 12 Jun 2024 02:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD9CF9F8;
+	Wed, 12 Jun 2024 02:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LWGrLywr"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JNRGtLfp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E17C122;
-	Wed, 12 Jun 2024 02:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BEAB651;
+	Wed, 12 Jun 2024 02:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718160272; cv=none; b=J9fDJWj7quZaMdwbjqS/cJz8NodKNbJV7ETOlFIFa3/gNfXVLjuyy2N20uWIw9doRXXEjO3uO7AmxsRbzjSlNMahvjCjN4o+J3b0grDDw2fP8xl/y4osUchrsdU/ZClNGz3axuAJ1qUQUnTspmnREumDfpC8HBF4S3WT27ORuAA=
+	t=1718159851; cv=none; b=mEBztCV3LFRNJfSsOb4kBV/2DAdrALrdTcwO6hJBpL1EjTPvi088zi4brVxvOXDU4TDTJDwzeJVQ5W5w84ShNscwRohvN+dY0UCwXU1ooUworTTxQucViiJXIgEtndG9MzPS9aYWB+TllJQxnWTomiqpHW7ePUdYSdrG0VPTHmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718160272; c=relaxed/simple;
-	bh=BE5Y9Qo5Eyxv2m3y0eALTspWX6n8dh5oWhlO+vbvdHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=R4xkNH4tpv1K1i8uAAldZfjrMaR6QVSE8YAhy6xSNM5Y0DEgDXnvIDTW0ezwWRgbSh08MR7497WqDf6GTbmauMXcMvWABAWoq+osYDGT2+rDbsOhfd5zwrjdoT+Ez67sapCAaeylplG+CYkY08MZKYpS0SXb4IN3p+XSuRPLbYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LWGrLywr; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1718159802;
-	bh=avg0iBHIDOS3x7PvuRSF0DrowyNVDLUAoBUaDVo+mOc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LWGrLywrcFTTXgXdkZgCAm6p+caTvNIpUPEASXmV5597KhRitw7YeETxiCwdV5LHo
-	 EuEHSiy3JZOUccuSH4GfUrK/EKMYb6U02fgZJ4TW2RIu7BLPL524e4FTmG9jMKJ6SG
-	 zs3/393A/Fz9rlae3cyITSjkWkaDxHvLKW7l9L7EMTowautNqveu5aMcVYe7rYakEr
-	 4/hFKe4vF6nl/66x5ED+6OmwPZPi7GXaw7xFcwvi8bJ0k3h/IYzneeGdjMhpk8Bpvp
-	 3OuZnvEGNIOqBz3f0cBLciKYJqHdyTAF/EUsQac+82a9c62zkV/KzAHlRWxN6PjOtL
-	 Bp7FQXVPk/1ig==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VzV6d5hLgz4wb2;
-	Wed, 12 Jun 2024 12:36:41 +1000 (AEST)
-Date: Wed, 12 Jun 2024 12:36:40 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@pengutronix.de>
-Subject: linux-next: manual merge of the driver-core tree with the mm tree
-Message-ID: <20240612123640.68ae0310@canb.auug.org.au>
+	s=arc-20240116; t=1718159851; c=relaxed/simple;
+	bh=FIlZ1Po+7l5jXHSE5OgRVwHa3qfDT39V0YMl45YwWI8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jY9cCYbY4nu2VPxKfwdq8AimQn7aAPKXDU7fIUTrYHEERlaL9T5RHyHoluoBSYhWUFKeuhLfo+7ZVVdN/JV4ibYdRC2yFqjvVwMv/IAhVc7B892GrvleqREvmurIHu/s28TSDw6iWfsho1z4kMTg7RXgEXe1Ziohh0r9zinNs1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JNRGtLfp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BDmAGv011284;
+	Wed, 12 Jun 2024 02:37:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=dL/OjdmAVSy+SNFQu2VJRG
+	bXRL5/DpTz2Gw/w62br+c=; b=JNRGtLfpSo5M+5/4+21aQbQ9PyQEx4sllodK5+
+	gduT8hW75PTYbtMw3HYLxqgVgDuRerdd/0cHmncDai2Tlt6IgL7HctMgPXG4vHWF
+	nJCnLHtd9bC3kiUrtq9Q9R2AQJT7H6yQZARGtnaS6XSYMdtN9AprOW8bVZzO9Xtt
+	mvzWV9/sm/l4VwAQIh0Kt/jDe/HLrvN4xf1ICWryEmRoi+dKGLRkG8cYDqLdt9Aw
+	eAomOgd/JCcMjBy5/duS0CmaGh8JzC/Cqjq8Orfb5ieRbynT/7IY/z6+RYAtXpWY
+	I+N489+/BZqiT/34XZIysxC8FGIV/FeJPA2N1lZ5edYb5RzA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmyw5e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 02:37:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C2bM1i016440
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 02:37:22 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
+ 2024 19:37:22 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 11 Jun 2024 19:37:20 -0700
+Subject: [PATCH] usb: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/NXGv7YrK=2nxl_57utSjCDV";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240611-md-drivers-usb-v1-1-8b8d669e8e73@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAN8JaWYC/x3MwQqDMAyA4VeRnBewMrt1rzJ2aE02A1pHoiKI7
+ 26343f4/x2MVdjgUe2gvIrJlAvcpYKuj/nDKFQMTd1ca+8cjoSksrIaLpbw7kMI1N6YnIcSfZX
+ fsv2Hz1dxisaYNOau/20GycuGY7SZFY7jBLnTZiJ/AAAA
+To: Peter Chen <peter.chen@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Oliver Neukum <oneukum@suse.com>,
+        Alan Stern
+	<stern@rowland.harvard.edu>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <usb-storage@lists.one-eyed-alien.net>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JDBySRTaunjx1iEhh1rC7EVO5Nj43UbF
+X-Proofpoint-ORIG-GUID: JDBySRTaunjx1iEhh1rC7EVO5Nj43UbF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_13,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1011 adultscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120016
 
---Sig_/NXGv7YrK=2nxl_57utSjCDV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/core/usbcore.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/mon/usbmon.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/class/usbtmc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/storage/uas.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/chipidea/ci_hdrc_msm.o
 
-Hi all,
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-Today's linux-next merge of the driver-core tree got a conflict in:
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+This is the remaining one-off fixes in usb.
 
-  drivers/fsi/fsi-occ.c
+Corrections to these descriptions are welcomed. I'm not an expert in
+this code so in most cases I've taken these descriptions directly from
+code comments, Kconfig descriptions, or git logs.  History has shown
+that in some cases these are originally wrong due to cut-n-paste
+errors, and in other cases the drivers have evolved such that the
+original information is no longer accurate.
 
-between commit:
+Let me know if any of these changes need to be segregated into
+separate patches to go through different maintainer trees.
+---
+ drivers/usb/chipidea/ci_hdrc_msm.c | 1 +
+ drivers/usb/class/usbtmc.c         | 1 +
+ drivers/usb/core/usb.c             | 1 +
+ drivers/usb/mon/mon_main.c         | 1 +
+ drivers/usb/storage/uas.c          | 1 +
+ 5 files changed, 5 insertions(+)
 
-  2d2bf1e680a9 ("fsi: occ: remove usage of the deprecated ida_simple_xx() A=
-PI")
+diff --git a/drivers/usb/chipidea/ci_hdrc_msm.c b/drivers/usb/chipidea/ci_hdrc_msm.c
+index 7b5b47ce8a02..1661639cd2eb 100644
+--- a/drivers/usb/chipidea/ci_hdrc_msm.c
++++ b/drivers/usb/chipidea/ci_hdrc_msm.c
+@@ -303,4 +303,5 @@ module_platform_driver(ci_hdrc_msm_driver);
+ 
+ MODULE_ALIAS("platform:msm_hsusb");
+ MODULE_ALIAS("platform:ci13xxx_msm");
++MODULE_DESCRIPTION("ChipIdea Highspeed Dual Role Controller");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
+index 311007b1d904..6bd9fe565385 100644
+--- a/drivers/usb/class/usbtmc.c
++++ b/drivers/usb/class/usbtmc.c
+@@ -2592,4 +2592,5 @@ static struct usb_driver usbtmc_driver = {
+ 
+ module_usb_driver(usbtmc_driver);
+ 
++MODULE_DESCRIPTION("USB Test & Measurement class driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+index a0c432b14b20..65f9940bc7e8 100644
+--- a/drivers/usb/core/usb.c
++++ b/drivers/usb/core/usb.c
+@@ -1150,4 +1150,5 @@ static void __exit usb_exit(void)
+ 
+ subsys_initcall(usb_init);
+ module_exit(usb_exit);
++MODULE_DESCRIPTION("USB support library");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/usb/mon/mon_main.c b/drivers/usb/mon/mon_main.c
+index 824904abe76f..af852d53aac6 100644
+--- a/drivers/usb/mon/mon_main.c
++++ b/drivers/usb/mon/mon_main.c
+@@ -419,4 +419,5 @@ static void __exit mon_exit(void)
+ module_init(mon_init);
+ module_exit(mon_exit);
+ 
++MODULE_DESCRIPTION("USB Monitor");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
+index a48870a87a29..9b8f578eef53 100644
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -1280,6 +1280,7 @@ static void __exit uas_exit(void)
+ module_init(uas_init);
+ module_exit(uas_exit);
+ 
++MODULE_DESCRIPTION("USB Attached SCSI driver");
+ MODULE_LICENSE("GPL");
+ MODULE_IMPORT_NS(USB_STORAGE);
+ MODULE_AUTHOR(
 
-from the mm-nonmm-unstable branch of the mm tree and commit:
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240611-md-drivers-usb-86999d57ed16
 
-  29f102dbb11f ("fsi: occ: Convert to platform remove callback returning vo=
-id")
-
-from the driver-core tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/fsi/fsi-occ.c
-index f7157c1d77d8,21d2666c4195..000000000000
---- a/drivers/fsi/fsi-occ.c
-+++ b/drivers/fsi/fsi-occ.c
-@@@ -718,9 -719,7 +718,7 @@@ static void occ_remove(struct platform_
-  	else
-  		device_for_each_child(&pdev->dev, NULL, occ_unregister_of_child);
- =20
- -	ida_simple_remove(&occ_ida, occ->idx);
- +	ida_free(&occ_ida, occ->idx);
--=20
-- 	return 0;
-  }
- =20
-  static const struct of_device_id occ_match[] =3D {
-
---Sig_/NXGv7YrK=2nxl_57utSjCDV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZpCbgACgkQAVBC80lX
-0GxVHQgAogcMO90jU47ZoQmSJulLfzunOkza2dlL3ZHjbJO3e2SO1LeKswN19IHb
-sbAAIcpb6ZB86vDf+exLjkXmz5s+eZi38mntFWivvLvqAqdrl1hZOFoZvTDc7dpQ
-KRuTedv+mclaDxfxH/8wY9Z3andvEWQa9MmBhHpGpEKcrdhWVGegm9ts+1McFfL5
-niC2i2/8nO1AHFto3m90ErEdtpSm2tHUgJK5owNLZaJWDmhIkjEH4O/V23j7oWgi
-x0TiaW4KJIKrRCP+U2iJT0cQB9khEUgjlZdYtLKDDOR/0KWDI5Exu+5e2Mw93Wjy
-c+xsQSt9un3ZQJxuWw324GQuxQsr3A==
-=LhxS
------END PGP SIGNATURE-----
-
---Sig_/NXGv7YrK=2nxl_57utSjCDV--
 
