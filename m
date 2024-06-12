@@ -1,186 +1,112 @@
-Return-Path: <linux-kernel+bounces-211650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71EEE9054DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:16:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5EC49054E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB18CB2228B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21C91C20D4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F5417DE04;
-	Wed, 12 Jun 2024 14:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B462817DE38;
+	Wed, 12 Jun 2024 14:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gdi/516v"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Un9XR3un"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E23A17BB27
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F24537F8;
+	Wed, 12 Jun 2024 14:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201795; cv=none; b=Tx9kcOiunZLAqVncDR4Lz+Rg0BtK2bXABKBO7gdlezeGOBWSmC9W8xNb/KKzsyhaWTUauz+XRlfBvt+ksS8PDAh5uexKxHA65L8djSmqpLIVoa3PBEIvrSBAk0lWSRS/f4fSBN5KV/jpUij7KdQ6YmYHmDWm14e64RHr0Q1HvR0=
+	t=1718201831; cv=none; b=urEZOwY4Qrvr00N6Z/2lSN1Z5MBQwY3zajCd7EAsqXB2SNBDBwB2tCZsRSMYdgRH/WoFCbVrcPjRo+lJEHTZxvUAuc/q8EhORP9Awg9bi9KLTZnQY5pbONINlobt76RKh6wbABbgNpjhwvv4Ult2drdgbGLsXflPysYm+Xk/B90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201795; c=relaxed/simple;
-	bh=WQWaU2XPSa7u7FY7PxELttfz2xxEozi/YyFkdxy44JE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ox/aZkKn2q3QbGCA+1NgsSn5jP6xQh/CspsJry+9qMfde5IVX038BCBTd88oCFaR5vsjQMM7flsjynTGrI7novjOvZ1uHQyHqc0Q98E3hN3hcYf6zM/Jh5UU6OOXUiIKlvm1TjKGppJ+tEwRM7cPbTwx5Q0uVoSGgG2LohelYdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gdi/516v; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1718201831; c=relaxed/simple;
+	bh=qbIPRYnyZGhF7xViW68hm4SHaRMwBauK1+ojB+XEcwk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pZQA+PI+ZodlExt5q5xzVIbPlA6+bJuI5t7BN0mwWhXqm7z5dKqP6bu0dV3QbW66wyLTdhLWov8JseyJ7bBelZfwRbioRf05AY4J1lnC4HEpElY+muMz1EvjjWCSqjFVtT/gd75bVStNB81+Mz1nNFtz0Tjf/gvc6bgEurq8xG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Un9XR3un; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a44c2ce80so3088550a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:16:33 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e72224c395so22628611fa.3;
+        Wed, 12 Jun 2024 07:17:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718201792; x=1718806592; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SXFeQu/InAtcwu283qRDGnx+2udBV3ofp/Fn0b8L8Uw=;
-        b=Gdi/516v/lyCNq9XEN/ghjprrGnukQkYq3Is8xeAdoj5G2Vx7ZeqvScRaKZnZIbzfo
-         3CxQWpQryC3rDH7vlQXDNoILlYiLsMUTjv7IjIUvtidzO9SZyC/PecaQnQKHIIxQmDiT
-         VR0vudCatrOkAkniLO6uFA4ErBQXy2zy7NFlTWt9Wz/qvakltNT+PRxFB80EVO8qP+nH
-         8QKB9N47AepXxToLAgMU+IYX5wGwvhndfluJ8khO53gUtRCksBBtG6D+A5k5E9NeXiAF
-         MVuTMKp1tg6Ox69y6/t/7e6yJbJMYONPnIrQFxfF/BOiZ3hi8pCMaSxGrUBsEnyuwm20
-         gj/g==
+        d=gmail.com; s=20230601; t=1718201828; x=1718806628; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=spyLnB7qZ3YQPzkCd6Fxx3pPcQHJ/lEc1AThjKTsvPM=;
+        b=Un9XR3un0StTvINPeNlt/ed0mSGA2KmqQqNwrdgZO/OxfgSIbyU8NKr2L7F44OD30F
+         4infKm2iqNi0tGvaFk/IY9bN/+CbgtyQFmd9YQbRiMjQiQ/7TbjXL7ibeI+n5aNoFtl/
+         i8sZicL6Ej6hB040qy5cKA/Te8KeAy6mHFgEwRCqehvBPT4BQQyE6DUt+zSiS+j/16Ud
+         7ZfO2r/cmlua4N5Xdj4x6d7m2PMDnJJY/Ib32WyaOz8J2LlZ3T6dga26VQxiZUeA0Mlf
+         RXw/sED697fJ+Y2p4Hc14pFA+IE2acRrf9D10BfU4ccntFGyhkd7c0N2FkecnikO7GbO
+         QnOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718201792; x=1718806592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SXFeQu/InAtcwu283qRDGnx+2udBV3ofp/Fn0b8L8Uw=;
-        b=dj2SYPTlNkyVR6qLpN192GQAYDgt1snH/WqkMh4M5bed1Je2sbeYI9sgaHH8+mJ8IB
-         5Cis26D+MFT/7IsTWvdFmW5ixJT63k5b8AUFTQXEiUJ9ODDAJxz8ZaeVU3W9fEqxinf2
-         3040Y2SEMbuoJVzP83wGqHfVnteXw7yPgALD7k6BEj2X1KnhV0mqxe8t9YU5ggTW3r61
-         xcFP1hZ4PLLIW1dlQ28pin2T8GNzjzFkvrwWBwzPEi9HkaZzBBMNEepZxyn80sMcpNU5
-         MGvHfPASHp+8Vw+fsT+nvApaWeDogaS6UZ2PRKy7CQr5m56OQKy0+asBxO0dARHsnAnE
-         udug==
-X-Forwarded-Encrypted: i=1; AJvYcCW/G7vI505aa1gVkdt6vSW+Cd1IRVHAvfK7fyoRdRDFLfKv6VqI2BFpIcVpPZWRuajdY6XyxxAR+Nqsmvv2d0hUBJg7sPMaiID9Bm+U
-X-Gm-Message-State: AOJu0YxpMOSN+niZiVOke3/z0RlejqQIjeUL4NXs2SVxwMcTGzS2CSQp
-	WUYE2dROasbNsezpnBf24MeG6fOGpaOFNIZ8DvoSvlviocbzLzfuQv+soPmmHrDprpPjbucF/76
-	+MaYifNzpH/bNC8kJloe9/1l/66I=
-X-Google-Smtp-Source: AGHT+IHW/hXJG+TBumCiBmHqhgd87pgriARFMrlfHwt20rM+xtCGUrKlVfeGKfk0StJxgwQF6b7D2BSQv+6WeSAyOU8=
-X-Received: by 2002:a50:9308:0:b0:57c:947c:f9cf with SMTP id
- 4fb4d7f45d1cf-57ca975348cmr1205743a12.11.1718201792124; Wed, 12 Jun 2024
- 07:16:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718201828; x=1718806628;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=spyLnB7qZ3YQPzkCd6Fxx3pPcQHJ/lEc1AThjKTsvPM=;
+        b=Ayr5nKWixBXu+LfWS4s9ACsGv1HLivSkKVza3E8aojEMOom5TzJNXbd7EJ5jnsMw0H
+         hthDF96Swzj3fCe/w/h+hwCJZR9x/d01u44y0vtbDJNEup+h5d6pE7VEFhhCjmdqrcHK
+         xhKjJ6jFGKuWgcmKjLF+E8dw/1ndUbZIc++q4ofaM6+dIpS7zz9unuO2EY7o4anFMo4t
+         h674EpSO3y4jDPw+1xWRKNK12KZprggdYZ8PuHPSEZZHDZg9OHuEdJNAv/RI1r9lqa3G
+         uH2hqpljgVATEQkvcno1QhwqBGitXwKxRMUeC3IugyCjiamXk0z6WZDUeg7HNWeFcg2O
+         3bDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbAfE5DOXfd8tCkcFfO7Pf7UpIshPO6UBMn8AZjbxfH4hCEXGArNPbXIfCTa+DGQ9Ch/OqRzYWQV+lQV7F7gAAPSkCe8rhG/NMDYJR6wHZ00wpV07OHQ1x/WkEzbR8G6UFHzxTqdZgAfsjsnO74+7LlK0rG2yLM9RMIfWe7udNHkVVBg==
+X-Gm-Message-State: AOJu0Yyhw3hs8zdA66aEySwsxYkA06dG7GL2RkgxGtgrY1+xpGkJpjK/
+	y7MFYx5j+OOw4YLSD5FCGesF6+2anr3koe//oj+/9TTYv2tT8aKp
+X-Google-Smtp-Source: AGHT+IE8rB2Uo89G98SAm8buwFxQVgCiqk8FRbd59f7SxkuOyJXgrRp/2ihXz/Ys91n8zYSKO3Z+VA==
+X-Received: by 2002:a2e:854f:0:b0:2eb:dbc6:da84 with SMTP id 38308e7fff4ca-2ebfc949a21mr12145791fa.53.1718201827662;
+        Wed, 12 Jun 2024 07:17:07 -0700 (PDT)
+Received: from spiri.. ([5.2.194.157])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe75ebsm27876655e9.9.2024.06.12.07.17.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 07:17:07 -0700 (PDT)
+From: Alisa-Dariana Roman <alisadariana@gmail.com>
+X-Google-Original-From: Alisa-Dariana Roman <alisa.roman@analog.com>
+To: Alisa-Dariana Roman <alisa.roman@analog.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexandru Tachici <alexandru.tachici@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH v3 0/2] iio: adc: ad7192: Fix clock config
+Date: Wed, 12 Jun 2024 17:16:35 +0300
+Message-Id: <20240612141637.175709-1-alisa.roman@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
- <4fd9e467d49ae4a747e428bcd821c7d13125ae67.1718090413.git.baolin.wang@linux.alibaba.com>
- <CAK1f24=Rz4qPyw9pfTHTAuQO6Yv9mFHccjCd75a0kvHvCBH3uA@mail.gmail.com> <df06474c-110f-459d-a093-76074e0b5666@linux.alibaba.com>
-In-Reply-To: <df06474c-110f-459d-a093-76074e0b5666@linux.alibaba.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Wed, 12 Jun 2024 22:16:20 +0800
-Message-ID: <CAK1f24=4tNTvT0Kr2wuERe11M1ZkYorv9rTNTtehOFmGSSt+Nw@mail.gmail.com>
-Subject: Re: [PATCH v5 6/6] mm: shmem: add mTHP counters for anonymous shmem
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org, 
-	david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com, 
-	21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com, 
-	da.gomez@samsung.com, p.raghav@samsung.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024 at 5:28=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
->
->
-> On 2024/6/12 16:04, Lance Yang wrote:
-> > Hi Baolin,
-> >
-> > On Tue, Jun 11, 2024 at 6:11=E2=80=AFPM Baolin Wang
-> > <baolin.wang@linux.alibaba.com> wrote:
-> >>
-> >> Add mTHP counters for anonymous shmem.
-> >>
-> >> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> >> ---
-> >>   include/linux/huge_mm.h |  3 +++
-> >>   mm/huge_memory.c        |  6 ++++++
-> >>   mm/shmem.c              | 18 +++++++++++++++---
-> >>   3 files changed, 24 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> >> index 909cfc67521d..212cca384d7e 100644
-> >> --- a/include/linux/huge_mm.h
-> >> +++ b/include/linux/huge_mm.h
-> >> @@ -281,6 +281,9 @@ enum mthp_stat_item {
-> >>          MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
-> >>          MTHP_STAT_SWPOUT,
-> >>          MTHP_STAT_SWPOUT_FALLBACK,
-> >> +       MTHP_STAT_FILE_ALLOC,
-> >> +       MTHP_STAT_FILE_FALLBACK,
-> >> +       MTHP_STAT_FILE_FALLBACK_CHARGE,
-> >>          __MTHP_STAT_COUNT
-> >>   };
-> >>
-> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >> index 1360a1903b66..3fbcd77f5957 100644
-> >> --- a/mm/huge_memory.c
-> >> +++ b/mm/huge_memory.c
-> >> @@ -555,6 +555,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_ST=
-AT_ANON_FAULT_FALLBACK);
-> >>   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAU=
-LT_FALLBACK_CHARGE);
-> >>   DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
-> >>   DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
-> >> +DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
-> >> +DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
-> >> +DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_C=
-HARGE);
-> >>
-> >>   static struct attribute *stats_attrs[] =3D {
-> >>          &anon_fault_alloc_attr.attr,
-> >> @@ -562,6 +565,9 @@ static struct attribute *stats_attrs[] =3D {
-> >>          &anon_fault_fallback_charge_attr.attr,
-> >>          &swpout_attr.attr,
-> >>          &swpout_fallback_attr.attr,
-> >> +       &file_alloc_attr.attr,
-> >> +       &file_fallback_attr.attr,
-> >> +       &file_fallback_charge_attr.attr,
-> >>          NULL,
-> >>   };
-> >>
-> >> diff --git a/mm/shmem.c b/mm/shmem.c
-> >> index f5469c357be6..99bd3c34f0fb 100644
-> >> --- a/mm/shmem.c
-> >> +++ b/mm/shmem.c
-> >> @@ -1773,6 +1773,9 @@ static struct folio *shmem_alloc_and_add_folio(s=
-truct vm_fault *vmf,
-> >>
-> >>                          if (pages =3D=3D HPAGE_PMD_NR)
-> >>                                  count_vm_event(THP_FILE_FALLBACK);
-> >> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >> +                       count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK=
-);
-> >> +#endif
-> >
-> > Using the conditional compilation directives here is a bit weird :)
-> > Would there be any issues if we were to drop them?
->
-> Will cause building errors if CONFIG_TRANSPARENT_HUGEPAGE is not enabled.
+Dear maintainers,
 
-Sorry, I got it wrong :p
+Thank you very much for your feedback!
 
->
-> >
-> > Since THP_FILE_FALLBACK is working as expected, MTHP_STAT_FILE_FALLBACK
-> > should work as well without the conditional compilation directives, IIU=
-C.
->
-> No, you should take a look at how count_mthp_stat() is defined :)
+Here is the series of only fixes. I will create another series for the
+other patches.
 
-You're correct. count_mthp_stat() does cause a compilation error without th=
-em
-when CONFIG_TRANSPARENT_HUGEPAGE is not defined.
+King regards,
+Alisa-Dariana Roman.
 
-Thanks,
-Lance
+v2 -> v3
+  - remove clean up patch
+  - remove clk provider part
+  - keep name mclk
+  - organize in function ad7192_clock_setup
+  - change commit messages accordingly
+
+
 
