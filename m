@@ -1,116 +1,241 @@
-Return-Path: <linux-kernel+bounces-212172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6332C905C42
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:47:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB0E905C47
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9193A284353
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:47:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 518341F21BFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6568084A4C;
-	Wed, 12 Jun 2024 19:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l581TawO"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4143883CDA;
+	Wed, 12 Jun 2024 19:48:03 +0000 (UTC)
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611902F50;
-	Wed, 12 Jun 2024 19:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90002381C4;
+	Wed, 12 Jun 2024 19:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718221656; cv=none; b=SmCvLgnawZVBrEz2/WKz2SqqHNtDUyFktbiEV83vwestkQHi3Flzk0tmko+En/HDtuk2ylIDmcodxq+BUg10Rt1aGxrthQwaZ3gkvgBBfOYOS9w96igV/sUjgikfRKGd0dh47hsMHNI2vqd4rBX5PhCRtt1DRtVo/g9ycmDltds=
+	t=1718221682; cv=none; b=HKbS54U+5abECphQbw5Vz5fYPYBEzJ5Yv6Rv40C5zg7XvFr1E+AuQINaHFmLk52w8o3q4/UopYyYcX+n6rjqls5/fx3Cl6FHByO+W7GVeshGbsY6Y403pCTN+mekxmR1wmwflrJncjbO4vpBraA9gukA84BKg982N/s2TwiM+PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718221656; c=relaxed/simple;
-	bh=iXYrYf6E3VhpKvW64KtUd6Z5LCbXkEegDMyJGiIA/oE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jCZwzpXL9k0Wi54FNIvws7CHHf1Zlg8M1/genKadDa/I7p0S/XbCfMm1xB88dtDY8V9Apgb4gDs/I0qxrCrlJz5iofvIRoH0iLFG7Os2jQ21eOAlvSgTTgCXeJQvGG7Q5pJfCywV+hzu0AQ1AsJhzBO+Gr2wfmfKJITHx0z6eKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l581TawO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CHW7Hh001183;
-	Wed, 12 Jun 2024 19:47:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=ww4DJkpHpVwnOLvPdxsLkl
-	dRNeezNP3rbu3LoE38HcI=; b=l581TawOjWicNLrKoJrF24VSEq2R3amStx/Npb
-	C3wE1b7Q63BlcoZfismcGZ6jTX2hcSk5YrnffH3H6dGxXw4IzBI+A1+mFyOeHmc3
-	N/yl291mqYr1uWADrg7Oxvk/9ex10CJPHSgzh0Pa/Omc4XzCKitMoOqHc5wzCR0y
-	eaeleQhOsTC0WtkZY3SN65pIXpWjoNoVXLurTFlkmnZC/Y9fqf48fsLFawShiCbg
-	UI3WuJpNIavce3Pal1sZU1YI+9ABN8Y6N/X32D3sHIdnUD4lJDce8Lw9k5bs/lHH
-	baURJHjeBM4zghiaxHYwPfSwXhdiAj1BU0Hcy4cD3zGPxsQQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypp87vgs0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 19:47:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CJlU5c025453
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 19:47:31 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 12:47:30 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 12:47:29 -0700
-Subject: [PATCH] media: tda9887: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718221682; c=relaxed/simple;
+	bh=VcP5QPo8mMAZf3HOjnC3ir8/AgsIrP19dT5MjMMl7GY=;
+	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
+	 References:Message-ID; b=jJUd+VDN3k7cSJfCRMVoW7GGeIEPJZJ4PeIkJ0bIYNfhtFuxnyGLPQPZRq4g9Wd04S+sdPubc8cvBJ1hl7UNfWAWfEgCAk/M8bYM2UgdrkJLlTcURcRNP1+nh3bt1MLoIKIzF++Oa12B5X9pzBViMStrNYsdKBgqyBFhHvxtrR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
+Received: from [127.0.0.1] (helo=localhost)
+	by relay.expurgate.net with smtp (Exim 4.92)
+	(envelope-from <prvs=9907278693=ms@dev.tdt.de>)
+	id 1sHTwc-00DaCD-Bk; Wed, 12 Jun 2024 21:47:42 +0200
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ms@dev.tdt.de>)
+	id 1sHTwb-00DaC7-CV; Wed, 12 Jun 2024 21:47:41 +0200
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+	by securemail.tdt.de (Postfix) with ESMTP id D6AE7240053;
+	Wed, 12 Jun 2024 21:47:40 +0200 (CEST)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+	by securemail.tdt.de (Postfix) with ESMTP id 334C7240050;
+	Wed, 12 Jun 2024 21:47:40 +0200 (CEST)
+Received: from mail.dev.tdt.de (localhost [IPv6:::1])
+	by mail.dev.tdt.de (Postfix) with ESMTP id 759433773C;
+	Wed, 12 Jun 2024 21:47:39 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-media-tuners-v1-1-7ea6440d766c@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFD7aWYC/x3MwQqDMAyA4VeRnBeo0vWwVxk7xDadgbUbiYogv
- rt1x+/w/zsYq7DBo9tBeRWTb23obx3EieqbUVIzDG7wLvQDloRJZWU1LJyEcF7qBbpnTzGz8yF
- Aq3/KWbb/+flqHskYR6Uap+v3kbpsWMhmVjiOE2VC9GGIAAAA
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -520wfINMfu24n5CnOh1Ujuy0MvHfMZl
-X-Proofpoint-ORIG-GUID: -520wfINMfu24n5CnOh1Ujuy0MvHfMZl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_10,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- spamscore=0 suspectscore=0 mlxlogscore=910 priorityscore=1501 adultscore=0
- bulkscore=0 mlxscore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406120140
+Date: Wed, 12 Jun 2024 21:47:39 +0200
+From: Martin Schiller <ms@dev.tdt.de>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: hauke@hauke-m.de, tsbogend@alpha.franken.de, rdunlap@infradead.org,
+ robh@kernel.org, bhelgaas@google.com, linux-mips@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
+Organization: TDT AG
+In-Reply-To: <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
+References: <20240607090400.1816612-1-ms@dev.tdt.de>
+ <ZmnfQWFoIw5UCV-k@google.com> <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
+Message-ID: <b6bea9239050ed39ce3a051a5985b86d@dev.tdt.de>
+X-Sender: ms@dev.tdt.de
+User-Agent: Roundcube Webmail/1.3.17
+X-purgate-type: clean
+X-purgate: clean
+X-purgate-ID: 151534::1718221662-C3C498CF-BD03A402/0/0
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/tuners/tda9887.o
+On 2024-06-12 20:39, Martin Schiller wrote:
+> On 2024-06-12 19:47, Dmitry Torokhov wrote:
+>> Hi Marton,
+> 
+> Hi Dmitry,
+> 
+>> 
+>> On Fri, Jun 07, 2024 at 11:04:00AM +0200, Martin Schiller wrote:
+>>> Commit 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API") 
+>>> not
+>>> only switched to the gpiod API, but also inverted / changed the 
+>>> polarity
+>>> of the GPIO.
+>>> 
+>>> According to the PCI specification, the RST# pin is an active-low
+>>> signal. However, most of the device trees that have been widely used 
+>>> for
+>>> a long time (mainly in the openWrt project) define this GPIO as
+>>> active-high and the old driver code inverted the signal internally.
+>>> 
+>>> Apparently there are actually boards where the reset gpio must be
+>>> operated inverted. For this reason, we cannot use the 
+>>> GPIOD_OUT_LOW/HIGH
+>>> flag for initialization. Instead, we must explicitly set the gpio to
+>>> value 1 in order to take into account any "GPIO_ACTIVE_LOW" flag that
+>>> may have been set.
+>> 
+>> Do you have example of such boards? They could not have worked before
+>> 90c2d2eb7ab5 because it was actively setting the reset line to 
+>> physical
+>> high, which should leave the device in reset state if there is an
+>> inverter between the AP and the device.
+> 
+> Oh, you're right. I totally missed that '__gpio_set_value' was used in
+> the original code and that raw accesses took place without paying
+> attention to the GPIO_ACTIVE_* flags.
+> 
+> You can find the device trees I am talking about in [1].
+> 
+> @Thomas Bogendoerfer:
+> Would it be possible to stop the merging of this patch?
+> I think We have to do do some further/other changes.
+> 
+>> 
+>>> 
+>>> In order to remain compatible with all these existing device trees, 
+>>> we
+>>> should therefore keep the logic as it was before the commit.
+>> 
+>> With gpiod API operating with logical states there's still difference 
+>> in
+>> logic:
+>> 
+>> 	gpiod_set_value_cansleep(reset_gpio, 1);
+>> 
+>> will leave GPIO at 1 if it is described as GPIO_ACTIVE_HIGH (which is
+>> apparently what you want for boards with broken DTS) but for boards
+>> that accurately describe GPIO as GPIO_ACTIVE_LOW it well drive GPIO to
+>> 0, leaving the card in reset state.
+>> 
+>> You should either use gpiod_set_raw_value_calsleep() or we can try and
+>> quirk it in gpiolib (like we do for many other cases of incorrect GPIO
+>> polarity descriptions and which is my preference).
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+So you mean we should add an entry for "lantiq,pci-xway" to the
+of_gpio_try_fixup_polarity()?
+Do you know any dts / device outside the openWrt universe which is using
+this driver.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/media/tuners/tda9887.c | 1 +
- 1 file changed, 1 insertion(+)
+For the lantiq targets in openWrt, the devicetree blob is appended to
+the kernel image and therefore also updated when doing a firmware
+upgrade. So, maybe it would also be an option to fix the driver (using
+GPIO_ACTIVE_* flag for the initial level and set it to 0 -> 1 -> 0) and
+rework all the dts files to use GPIO_ACTIVE_LOW.
 
-diff --git a/drivers/media/tuners/tda9887.c b/drivers/media/tuners/tda9887.c
-index dca2fc776e44..b2f7054c1832 100644
---- a/drivers/media/tuners/tda9887.c
-+++ b/drivers/media/tuners/tda9887.c
-@@ -707,4 +707,5 @@ struct dvb_frontend *tda9887_attach(struct dvb_frontend *fe,
- }
- EXPORT_SYMBOL_GPL(tda9887_attach);
- 
-+MODULE_DESCRIPTION("NXP TDA9885/6/7 analog IF demodulator driver");
- MODULE_LICENSE("GPL");
+Then we won't need any quirks.
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-media-tuners-a5f4acfe0466
-
+>> 
+>> This still leaves the question about boards that require inversion. 
+>> Are
+>> you saying that they have real signal inverter on the line or that 
+>> their
+>> device trees correctly describe the signal as GPIO_ACTIVE_LOW?
+>> 
+>> BTW, please consider getting DTS trees for your devices into mainline.
+>> Why do you keep them separate?
+> 
+> Unfortunately, these are not "my" devices and I can't even test them.
+> I've got feedback from some users when I updated the lantiq target to
+> linux 6.1 in openwrt.
+> 
+> 
+> Let's assume that all boards physically expect an active-low signal.
+> 
+> If the GPIO_ACTIVE_LOW flag were now set in the device tree, the
+> original (old) driver would have an incorrect initial level (LOW 
+> instead
+> of HIGH) due to the
+> 
+> 	gpio_direction_output(reset_gpio, 1);
+> 
+> This is probably the reason why the flag GPIO_ACTIVE_HIGH is set in
+> almost all dts files in openwrt.
+> 
+> But with commit 90c2d2eb7ab5 the initial level (LOW) is guaranteed to 
+> be
+> wrong because of the "GPIOD_OUT_LOW" and cannot be changed by "wrong"
+> device tree settings.
+> 
+> The signal curve is LOW -> LOW -> HIGH instead of HIGH -> LOW -> HIGH.
+> 
+>> 
+>>> 
+>>> Fixes: 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API")
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+>>> ---
+>>>  arch/mips/pci/pci-lantiq.c | 8 ++++----
+>>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>> 
+>>> diff --git a/arch/mips/pci/pci-lantiq.c b/arch/mips/pci/pci-lantiq.c
+>>> index 68a8cefed420..0844db34022e 100644
+>>> --- a/arch/mips/pci/pci-lantiq.c
+>>> +++ b/arch/mips/pci/pci-lantiq.c
+>>> @@ -124,14 +124,14 @@ static int ltq_pci_startup(struct 
+>>> platform_device *pdev)
+>>>  		clk_disable(clk_external);
+>>> 
+>>>  	/* setup reset gpio used by pci */
+>>> -	reset_gpio = devm_gpiod_get_optional(&pdev->dev, "reset",
+>>> -					     GPIOD_OUT_LOW);
+>>> +	reset_gpio = devm_gpiod_get_optional(&pdev->dev, "reset", 
+>>> GPIOD_ASIS);
+>>>  	error = PTR_ERR_OR_ZERO(reset_gpio);
+>>>  	if (error) {
+>>>  		dev_err(&pdev->dev, "failed to request gpio: %d\n", error);
+>>>  		return error;
+>>>  	}
+>>>  	gpiod_set_consumer_name(reset_gpio, "pci_reset");
+>>> +	gpiod_direction_output(reset_gpio, 1);
+>>> 
+>>>  	/* enable auto-switching between PCI and EBU */
+>>>  	ltq_pci_w32(0xa, PCI_CR_CLK_CTRL);
+>>> @@ -194,10 +194,10 @@ static int ltq_pci_startup(struct 
+>>> platform_device *pdev)
+>>> 
+>>>  	/* toggle reset pin */
+>>>  	if (reset_gpio) {
+>>> -		gpiod_set_value_cansleep(reset_gpio, 1);
+>>> +		gpiod_set_value_cansleep(reset_gpio, 0);
+>>>  		wmb();
+>>>  		mdelay(1);
+>>> -		gpiod_set_value_cansleep(reset_gpio, 0);
+>>> +		gpiod_set_value_cansleep(reset_gpio, 1);
+>>>  	}
+>>>  	return 0;
+>>>  }
+>>> --
+>>> 2.39.2
+>>> 
+>> 
+>> Thanks.
+> 
+> [1]
+> https://git.openwrt.org/?p=openwrt/openwrt.git;a=tree;f=target/linux/lantiq/files/arch/mips/boot/dts/lantiq
 
