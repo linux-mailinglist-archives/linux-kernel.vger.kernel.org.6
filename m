@@ -1,93 +1,132 @@
-Return-Path: <linux-kernel+bounces-211458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FFF9051D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:59:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9909051DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAE1C289ADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:59:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CFB31C206A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E28516F287;
-	Wed, 12 Jun 2024 11:58:07 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B937116F267;
+	Wed, 12 Jun 2024 11:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixEJTeCt"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3B316D4D3
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA8116E882;
+	Wed, 12 Jun 2024 11:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718193486; cv=none; b=d6RCHAxc+X2fXOiTAG8R53epzxmOqR5GOZHmGnw34onMdYi5alxmjXuFLEiW/NbZZnqs5jzQ2TOcTocxcmbfurc9nIPS907Q8YV75aJuxLsJcfObdfoiN+oU3648sF2ObfG0pjSEOXiPJmLe7g1dsia2GAOsQxeuF+i4ZPd+vJU=
+	t=1718193588; cv=none; b=qV96ylVLL/2CoyDpbSPXnfoxfox9KC3Wr2aeRjBMctSYCQ5q4tF2SOG9oFqnB9CzSeqXpfcT3oh6zLTyRlJUTtmzLUz7o5ARJdNuF9tFLmPXNshxhnFY4yujXa4zZkLw2Zxcn5smt6uARInQNJv8nxuA/bI5tAk+ORwl6lXMrik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718193486; c=relaxed/simple;
-	bh=xS/63wRKaKU0Wayi9VDY0udyPi1iW5NI1/aIwAXJvsU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lPsTUFpGjS2cQgu4xuZzx0nIhiGugrN+I2Sclc5f48ISXQqnPoFlw+BvpBQ39/ubjpK6nYlPrWyAtLgeCXtpGArtvIavyAapXpQkcU7nl8AjIbj8bokJRa/AgJP5r/IgQyDRPK75EE+G7ktNozF5Q1ddyAnGTXwIVCRuquD2bOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb7c3b8cf8so209610839f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:58:05 -0700 (PDT)
+	s=arc-20240116; t=1718193588; c=relaxed/simple;
+	bh=g+KF8NdttgCTb5bfAiBABlmcgbDcCXSiriG2NAgXuKE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s1Lb1ILVeAZ7yJSliouYr88GMZwGlfBpXC83nhixGEwH8r5wgQpzYq6lhie8Q/1JRMrRA3rv1vODksReJyT80WDagK87dio4ivnsKCwe1P4nnX/4RPg/cceMSC9OQFm6bJPDJP87avLnrnGYHWzNundvT3rXVKNJ2+i+Sf8IeHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ixEJTeCt; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-24c9f6338a4so3372769fac.1;
+        Wed, 12 Jun 2024 04:59:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718193586; x=1718798386; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3rw4oq0Ohf7tU3ClnNhFQL/oCvaY2J0yWIQIMUVmHN0=;
+        b=ixEJTeCtTOVvkp2gDvfhUuvxB28UEj5iDD9i2SxMoY9ahlAvLOlSgHhbeCGQ7s4mYf
+         fIqugPjmMJkwgTHyuETClCprJTe67oDXavgWPJefQof/19hnhlKo5K1n2ToOzNFHlvqK
+         pyyORjwhCeG2ERQbcl45Ov4Z5HnZWViI7d+9NrwnyYqyxFAUFXWs2uzZdse9m5WqaiBm
+         K+/iajScuggrufPcJwToda6gBh0KSg41TNNCqNbkhPLZ3bqZdVOx9jNgMYJlpQO8IF38
+         bRBH2q2F0YaJxqdQ64O8rffTPyUWmFad+NDFTGokWt3KoKt9tCGicviKdOOVrh8mPLER
+         LnIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718193484; x=1718798284;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UH8qBVaCa01Ff20+nfDvD/vKdbSccNB2gSxFLitfNvs=;
-        b=SjSc8aFMOEzrR+Nw87pKTnjgT1ioTPQkp6X8fTGHu399299XeoiLMy+RP3BHqpT8nY
-         NATNHz8MQbLEj+uaqGksdyKjsp5D7Z82GP1nrw79lCbyKsfkUix97SymDsLy/RVdhhdF
-         Wlhk2z1dG4EuJPYPY0Mq82OfUM6F4mQCxBF25eh/EIqko4yVZj2EBDQx77z6t3UJhiE+
-         CbBeLzvNiL+5UolkJ5SwvR0QDOrWvLOplbVC/IBOou7mPL3IThjztkjkmEKFh98z9HJQ
-         zQdcSOljFqb+CZaHXCID7/S45hji96G0kbJ96Ck5bqt4eGDOPSV45qFrN1PxzauoFmtg
-         SuMg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/gw4ipXEU0hkURZcBJzk+xzT3SC59Z9rMS+uvaLeUcTPLIXK9bWTWTD80jckUSx6tXJMJHfZF6BS2HKugBTFHLAZLV59KLfDUsLmn
-X-Gm-Message-State: AOJu0Ywq0sBw+C9rZFDHUExpV3XKiMHwBURUDZIbRijun4SlXMtecW3r
-	dKhSmGmXBHYodV7k5GCKism2EdcTQoiLd5c4JDl5bCfTs5+Kr5Ot0HkPrwiDa/1wh58FQtQELZP
-	ihfP8eUdS+Dzqu5RifztmrppocDVyXB4Aj197GuKurjwOS+D2cDkaDDc=
-X-Google-Smtp-Source: AGHT+IEp6wv4wPlWMGiy5qWcoM5qf4ugebQ7KN7CLbQlyazwMsxHbasLnWDudlrb68LCCThNf880tiV2BUwsHUWHH4DUsSta8u+R
+        d=1e100.net; s=20230601; t=1718193586; x=1718798386;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3rw4oq0Ohf7tU3ClnNhFQL/oCvaY2J0yWIQIMUVmHN0=;
+        b=AnGkD9ehjWx0Tr/P02DMerokqkBr3rL9LOfsWgSCHi6nkuW9RPbqF7636shk+ir288
+         9lCCaGIe1Lwatct0rJXdlkywFqL/euIln9JutfYtmrdh3wnoGcFmdLJudI2d3CcvOxNA
+         qfnGNreXTo9xZKDF0/+m/imog1hYJD7dU+dZOkdh0UiniNgQoZWSELk0cmVD2AMoJkJk
+         HZCdho7YB86UWU01Kn6d/9Sw1tjR2ZT7h+BQ2MTITUMpIfkCVEfIETXlZUC+zawZPoBZ
+         h4cy3aAbX2Dcl+fOEJbawFINTfe7D4wNo7RohPLf0Xb41jhUeqNvDSoLbyGPyk/4/IuN
+         RI/g==
+X-Forwarded-Encrypted: i=1; AJvYcCU9/fCMkHcjkwcLuXx23IEW34TjC05Qb2oVMKD0AyXslt9cqTzPzKVWio3z4PkwAfof0ObcL+GQYYNegPYCJSh2Dx3xZFrexajkRjcfBvfJuaOj3M+k1oypCBAiHV6n6xPFQe94gAW7hDoii5DzOL4oR42pRERX4yZtoMjayCGzt33j/PxX
+X-Gm-Message-State: AOJu0YzaGmVIOVDMyYNmdpJxK9LEXh00fTfWHKIC6J2VVr+Fk3aybSPn
+	4z8xWYvJYUT5Pdfmq0+7mRMbiWKEL0BC/rUQjoYzzzL+tpFffZbBfLHJR/plS9gNwshoCV5bNkM
+	+bS41boFCYSsD4IVjBM4ueJztI3Q=
+X-Google-Smtp-Source: AGHT+IFFf4hE4u3P0SMg8Z9wDg4GkGs4lvBLHNeR6wq+yEuT+bu0jRI3VhYDYsU3aM/1SnRiCtH56OVzz4nlSeUuYMo=
+X-Received: by 2002:a05:6870:c0d1:b0:24f:c892:d02b with SMTP id
+ 586e51a60fabf-255147aa8a0mr1721343fac.0.1718193585675; Wed, 12 Jun 2024
+ 04:59:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d0c:b0:7eb:8321:330c with SMTP id
- ca18e2360f4ac-7ebccfaa14cmr6903139f.0.1718193484381; Wed, 12 Jun 2024
- 04:58:04 -0700 (PDT)
-Date: Wed, 12 Jun 2024 04:58:04 -0700
-In-Reply-To: <0000000000004f12bb061a9acf07@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004acf7b061ab01899@google.com>
-Subject: Re: [syzbot] [mm?] general protection fault in dequeue_hugetlb_folio_nodemask
- (2)
-From: syzbot <syzbot+569ed13f4054f271087b@syzkaller.appspotmail.com>
-To: airlied@redhat.com, akpm@linux-foundation.org, kraxel@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, muchun.song@linux.dev, 
-	osalvador@suse.de, syzkaller-bugs@googlegroups.com, vivek.kasireddy@intel.com
+References: <20240611124405.63427-1-animeshagarwal28@gmail.com> <20240611200048.GA2966276-robh@kernel.org>
+In-Reply-To: <20240611200048.GA2966276-robh@kernel.org>
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+Date: Wed, 12 Jun 2024 17:29:34 +0530
+Message-ID: <CAE3Oz81AP-5RGK0Xef72XT3x4Je1tu223BMwk7-mzKrJWKqTbA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: wlf,wm8782: Convert to dtschema
+To: Rob Herring <robh@kernel.org>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, patches@opensource.cirrus.com, 
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+On Wed, Jun 12, 2024 at 1:30=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Tue, Jun 11, 2024 at 06:14:00PM +0530, Animesh Agarwal wrote:
+> > Convert the WM8782 audio codec bindings to DT schema.
+>
+> Missing "ASoC" on the subject. Mark may not see it.
+>
+> > Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> > Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> > ---
+> >  .../devicetree/bindings/sound/wlf,wm8782.yaml | 47 +++++++++++++++++++
+> >  .../devicetree/bindings/sound/wm8782.txt      | 24 ----------
+> >  2 files changed, 47 insertions(+), 24 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8782.=
+yaml
+> >  delete mode 100644 Documentation/devicetree/bindings/sound/wm8782.txt
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>
+>
+> This is yet another binding with no in tree DTS user. That's fine, but
+> not what I would prioritize converting. There are several ways I would
+> prioritize what to work on.
 
-commit 265a5cde9462d3a816b18c6cf4f0a231f1c29d1b
-Author: Vivek Kasireddy <vivek.kasireddy@intel.com>
-Date:   Thu Apr 11 06:59:43 2024 +0000
+I'll resend this patch adding "ASOC" in the subject, thanks for the
+advice I'll not prioritize bindings that do not have their DTS in the
+tree.
 
-    udmabuf: pin the pages using memfd_pin_folios() API
+> - There's a list maintained in CI of number of occurrences of
+> undocumented (by schema) compatibles[1]. Start at the top (most
+> occurrences).
+> - Pick a platform (or family of platform) and get the warnings down to
+> 0 or close. There's a grouping of warnings and undocumented
+> compatibles by platform family at the same link. Pick something that's
+> widely used like RPi or RK3399.
+> - Prioritize newer platforms over older (arm64 rather than
+> arm32(though there's still new arm32 stuff)).
+> - Fix warnings treewide from common schemas (i.e. from dtschema).
+> That's not conversions, but related.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1617ab6a980000
-start commit:   d35b2284e966 Add linux-next specific files for 20240607
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1517ab6a980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1117ab6a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d8bf5cd6bcca7343
-dashboard link: https://syzkaller.appspot.com/bug?extid=569ed13f4054f271087b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15eb5e86980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15db597e980000
+Thanks for the tips. I'll work accordingly.
 
-Reported-by: syzbot+569ed13f4054f271087b@syzkaller.appspotmail.com
-Fixes: 265a5cde9462 ("udmabuf: pin the pages using memfd_pin_folios() API")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Animesh
 
