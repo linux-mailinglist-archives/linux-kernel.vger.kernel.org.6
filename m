@@ -1,274 +1,227 @@
-Return-Path: <linux-kernel+bounces-211179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227FB904E17
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:25:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0795F904E15
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 525E4B271FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:25:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABF3D28A074
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BD016C871;
-	Wed, 12 Jun 2024 08:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8152216C87F;
+	Wed, 12 Jun 2024 08:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="p7hrNP3E"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mm5prvdn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00639156228
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D8D156228
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718180728; cv=none; b=t/abHPrVkrDyfRoveHVOcedCG9QT/AHrTMUijUg1Ztkh0njUMSgz+22jhw95kj8dZ5suPxDV9axtu6EjkhlXPRW+EWJX14qBafEbeHuTYnuKXGFO2uBXLCLTBFpxH9VTK70YPT7DU5fCc8G3uF42U5L7NHwbITSQHLRVAwkYw+U=
+	t=1718180673; cv=none; b=OZI56VT6kHQ5eC1oMYg41JhYlPZOPbTnE3iGrhjiAQGe61iILXAFuGVfsG6t+RNDBLSV6wzx3uJePBJSKFyqD4KYXRFYhzLadX5KSPy4R/ctcdst6TTaolre7TOfwMZNvV8VVe0J7ESGjEMwKaHLrOh2tcRDLkQ+VPQECHOQkj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718180728; c=relaxed/simple;
-	bh=j4IikM/8f0WxPsoP5Y1ret6QW1ddPJ5haXColS9GWeI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fGLuJ4GdVHK26Ydlety7kJU3cqkiZRWEPzsUD2dUnWt3qW03TJWbjl0xbFBxkCe36+zEhqPcNOHhPp4aDZRK4mNn+hP8+kCZVt67HI+YtU0ytozp9GtEPSg1D7m1ZW1cAwfQp9nZkL3m5j/fat++aewZCqw2pp4PTzoWr/t+pqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=p7hrNP3E; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45C8NjE6123708;
-	Wed, 12 Jun 2024 03:23:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718180625;
-	bh=SXg9W8qnUhziZySsDuvS+9nZfVaC8vrFqmChdl2skTM=;
-	h=From:To:CC:Subject:Date;
-	b=p7hrNP3EEz95Ebp8fUg/AlR8Y0Jy0hA+jKms+EJ86h8zAcsK9hKXinUHIwWruo8ck
-	 m0l5mq1FO8bF+/AQuV+Bi6dUHjSu/QVuD3WEpXChd3OPW+cQlsXgl1RN9zHdediTrs
-	 ZIFyo+eIuwl2yqfpzqPtoHtqYPKVWObUpv8Fdprg=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45C8NjT0048263
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Jun 2024 03:23:45 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
- Jun 2024 03:23:45 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 12 Jun 2024 03:23:45 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.160.158])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45C8NZhi099797;
-	Wed, 12 Jun 2024 03:23:35 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <13916275206@139.com>, <zhourui@huaqin.com>,
-        <alsa-devel@alsa-project.org>, <i-salazar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
-        <liam.r.girdwood@intel.com>, <jaden-yue@ti.com>,
-        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <yuhsuan@google.com>,
-        <henry.lo@ti.com>, <tiwai@suse.de>, <baojun.xu@ti.com>, <soyer@irl.hu>,
-        <Baojun.Xu@fpt.com>, <judyhsiao@google.com>, <navada@ti.com>,
-        <cujomalainey@google.com>, <aanya@ti.com>, <nayeem.mahmud@ti.com>,
-        <savyasanchi.shukla@netradyne.com>, <flaviopr@microsoft.com>,
-        <jesse-ji@ti.com>, <darren.ye@mediatek.com>,
-        Shenghao Ding
-	<shenghao-ding@ti.com>
-Subject: [RESEND PATCH v4] ASoc: tas2781: Enable RCA-based playback without DSP firmware download
-Date: Wed, 12 Jun 2024 16:23:30 +0800
-Message-ID: <20240612082332.1407-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1718180673; c=relaxed/simple;
+	bh=te1Q20Vth9MWwmn9a+KpPufbUwhGd2AwZ3ZB/0nsgxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QMDJROy8I2DqnIbzhrSIA+985fg1zP8OkNbt6XQJyWy1Zt0o2WxLrzDL6NOEJwPSb4Hfgv2vH/wbIagoTXc9oGWEs6Tq+3bHmO9QhKczto+jSAKnI00B7a5ha+njw+aNEzDjWvkLiwAQB/vg1U4zDdxPixWWHw4L5DZNpWveNMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mm5prvdn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718180671;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=x4SAin/ZbIr0LKUcDWptj03+6GW7XfZLpNKJdBjC5OY=;
+	b=Mm5prvdn+1W5HcmqAYoPl/RX8gmi+IO7wGoErYa9sUjjx3SsYfC5xPIGVAQu1A2AxNhT/1
+	HE/id+XmH3T7y03tctBa99FwToOrguUQRTYzxrLzLXgJKN37QiXa//5RV6ho6upGRLXOyk
+	EhzUacJ3hGcGTO0d8too9H4pavz6IMk=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-456-hI4RDzfINkynBFf5p0NtJw-1; Wed, 12 Jun 2024 04:24:26 -0400
+X-MC-Unique: hI4RDzfINkynBFf5p0NtJw-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a6f2662cfd8so102757166b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:24:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718180665; x=1718785465;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=x4SAin/ZbIr0LKUcDWptj03+6GW7XfZLpNKJdBjC5OY=;
+        b=jAhUOcJPsb/NRB5lNrd7aNsb/wbbdpZXXmJNUEEoT8CS+48n5IGportjfh6OcggdUI
+         vXQtiKFeao4wE1SuazIdEBPA9I1k3t3oXeXwUNU9xuLr5kUqQUzzCeZI6iaUvmXx5rcA
+         aOpfUv/8sQYsOP4oWRyqIGKWxAfFhRuWWvdesTztQBexPiVDZLeU5QQjVqtLSBXN4vpR
+         K0msNUMtDzzLZXEN6usHbv5XX5q/8ptgJHsttNW/sPoqkLh1r9Bazn5pyY/hRn7K9Fnl
+         C5N+68MTA/ZAknNqrfoJeBvmZFnRTy8XfWLbyPUG4Jg3ssnB6OxL+Yx7m2XsACJQIYco
+         Rr+A==
+X-Forwarded-Encrypted: i=1; AJvYcCV3c02NDPZEeZKn9yRIWIveHCTmUyOiUq3xZY1s+BljZOP/5w31VIbnZf9RmJeNYoyLUr1UgPyLJPH35CpHMZeSNjHLXPWHK6C0Hpbk
+X-Gm-Message-State: AOJu0YwJttDvSXvFxQaH6zPjXGy9yKVWEJ8DO93PvtwN42x8UN2bAZSd
+	fgD7WyLGkIbp8YGvzTDtK/vgsZ4bSsEEnJ9KdW0Sykyyfs/wQEe/s8VhHPdrM3XT8AuQ+6KgCFL
+	5WFeqa69WyEHMXmR2o4f2vohEJosKrnbYLbyS0a0JnzLNIY1b77Eh+A7HAvJ9yw==
+X-Received: by 2002:a17:906:394:b0:a6f:230:b73e with SMTP id a640c23a62f3a-a6f47c9e0edmr58641666b.20.1718180665205;
+        Wed, 12 Jun 2024 01:24:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGA1q7iuoA2WDuKe96aglvJScAbJcl9LmxJfQ259oiHHm3zp6kG7M8iBlW3Pg+ABx1QAfqvBg==
+X-Received: by 2002:a17:906:394:b0:a6f:230:b73e with SMTP id a640c23a62f3a-a6f47c9e0edmr58640066b.20.1718180664753;
+        Wed, 12 Jun 2024 01:24:24 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c702:bf00:abf6:cc3a:24d6:fa55? (p200300cbc702bf00abf6cc3a24d6fa55.dip0.t-ipconnect.de. [2003:cb:c702:bf00:abf6:cc3a:24d6:fa55])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2169fc45sm8386092f8f.10.2024.06.12.01.24.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 01:24:24 -0700 (PDT)
+Message-ID: <17b503f8-5d0c-48a3-9eeb-85b01583f9bb@redhat.com>
+Date: Wed, 12 Jun 2024 10:24:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] cleanups, fixes, and progress towards avoiding "make
+ headers"
+To: John Hubbard <jhubbard@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Andrei Vagin <avagin@google.com>,
+ Axel Rasmussen <axelrasmussen@google.com>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240608021023.176027-1-jhubbard@nvidia.com>
+ <b5dd99c7-866b-467c-9f76-d043e887394c@redhat.com>
+ <c1277bf6-a211-49eb-80af-726f16ca1802@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <c1277bf6-a211-49eb-80af-726f16ca1802@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In only RCA (Reconfigurable Architecture) binary case, no DSP program will
-be working inside tas2563/tas2781, that is dsp-bypass mode, do not support
-speaker protection, and audio acoustic algorithms in this mode.
+On 11.06.24 22:54, John Hubbard wrote:
+> On 6/11/24 2:36 AM, David Hildenbrand wrote:
+>> On 08.06.24 04:10, John Hubbard wrote:
+>>> Eventually, once the build succeeds on a sufficiently old distro, the
+>>> idea is to delete $(KHDR_INCLUDES) from the selftests/mm build, and then
+>>> after that, from selftests/lib.mk and all of the other selftest builds.
+>>>
+>>> For now, this series merely achieves a clean build of selftests/mm on a
+>>> not-so-old distro: Ubuntu 23.04:
+>>
+>> Wasn't the plan to rely on the tools/include headers, and pull in there whatever we need?
+> 
+> Yes, it is. You are correct.
+> 
+>>
+>>>
+>>> 1. Add __NR_mseal.
+>>>
+>>
+>> For example, making sure that tools/include/uapi/asm-generic/unistd.h is updated to contain __NR_mseal?
+> 
+> Well, here it gets less clear cut, because the selftests pull in *lots* of
+> system headers. In this case /usr/include/unistd.h gets pulled in. If we
+> force tools/include/uapi/asm-generic/unistd.h to be included, then we'll
+> get many many warnings of redefinitions of __NR_* items.
 
-Fixes: ef3bcde75d06 ("ASoC: tas2781: Add tas2781 driver")
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+I think, there is a difference between unistd.h and linux/unistd.h. We 
+want to continue including unistd.h from the distro, but might want to 
+stop including the linux one from the distro.
 
----
-v4:
- - add a description of what the state machine looks like.
- - Remove TASDEVICE_DSP_FW_NONE because of unused.
- - Remove stray change.
- - Fix broken indentation.
-v3:
- - Add description on RCA is Reconfigurable Architecture.
- - Add the description on enabling
- - Reword the commit
- - Remove question mark in the comments.
- - Add spaces in comments.
-v2:
- - Correct comment.
- - Add Fixes.
- - Move header file to the first.
-v1:
- - Split out the different logical changes into different patches.
- - rename tasdevice_dsp_fw_state -> tasdevice_fw_state, the fw are not
-   only DSP fw, but also RCA(Reconfigurable data, such as acoustic data
-   and register setting, etc).
- - Add TASDEVICE_RCA_FW_OK in tasdevice_fw_state to identify the state
-   that only RCA binary file has been download successfully, but DSP fw
-   is not loaded or loading failure.
- - Add the this strategy into tasdevice_tuning_switch.
- - If one side of the if/else has a braces both should in
-   tasdevice_tuning_switch.
- - Identify whehter both RCA and DSP have been loaded or only RCA has
-   been loaded in tasdevice_fw_ready.
- - Add check fw load status in tasdevice_startup.
- - remove ret in tasdevice_startup to make the code neater.
----
- include/sound/tas2781-dsp.h       | 11 ++++++++--
- sound/soc/codecs/tas2781-fmwlib.c | 18 +++++++++++-----
- sound/soc/codecs/tas2781-i2c.c    | 34 +++++++++++++++++++------------
- 3 files changed, 43 insertions(+), 20 deletions(-)
+My thinking was that we start maintaining our own linux headers copy 
+in-tree, and start converting our tests from including <linux/> supplied 
+by the distro to include the in-tree ones.
 
-diff --git a/include/sound/tas2781-dsp.h b/include/sound/tas2781-dsp.h
-index 7fba7ea26a4b..3cda9da14f6d 100644
---- a/include/sound/tas2781-dsp.h
-+++ b/include/sound/tas2781-dsp.h
-@@ -117,10 +117,17 @@ struct tasdevice_fw {
- 	struct device *dev;
- };
- 
--enum tasdevice_dsp_fw_state {
--	TASDEVICE_DSP_FW_NONE = 0,
-+enum tasdevice_fw_state {
-+	/* Driver in startup mode, not load any firmware. */
- 	TASDEVICE_DSP_FW_PENDING,
-+	/* DSP firmware in the system, but parsing error. */
- 	TASDEVICE_DSP_FW_FAIL,
-+	/*
-+	 * Only RCA (Reconfigurable Architecture) firmware load
-+	 * successfully.
-+	 */
-+	TASDEVICE_RCA_FW_OK,
-+	/* Both RCA and DSP firmware load successfully. */
- 	TASDEVICE_DSP_FW_ALL_OK,
- };
- 
-diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
-index 265a8ca25cbb..838d29fead96 100644
---- a/sound/soc/codecs/tas2781-fmwlib.c
-+++ b/sound/soc/codecs/tas2781-fmwlib.c
-@@ -2324,14 +2324,21 @@ void tasdevice_tuning_switch(void *context, int state)
- 	struct tasdevice_fw *tas_fmw = tas_priv->fmw;
- 	int profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
- 
--	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
--		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
-+	/*
-+	 * Only RCA-based Playback can still work with no dsp program running
-+	 * inside the chip.
-+	 */
-+	switch (tas_priv->fw_state) {
-+	case TASDEVICE_RCA_FW_OK:
-+	case TASDEVICE_DSP_FW_ALL_OK:
-+		break;
-+	default:
- 		return;
- 	}
- 
- 	if (state == 0) {
--		if (tas_priv->cur_prog < tas_fmw->nr_programs) {
--			/*dsp mode or tuning mode*/
-+		if (tas_fmw && tas_priv->cur_prog < tas_fmw->nr_programs) {
-+			/* dsp mode or tuning mode */
- 			profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
- 			tasdevice_select_tuningprm_cfg(tas_priv,
- 				tas_priv->cur_prog, tas_priv->cur_conf,
-@@ -2340,9 +2347,10 @@ void tasdevice_tuning_switch(void *context, int state)
- 
- 		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
- 			TASDEVICE_BIN_BLK_PRE_POWER_UP);
--	} else
-+	} else {
- 		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
- 			TASDEVICE_BIN_BLK_PRE_SHUTDOWN);
-+	}
- }
- EXPORT_SYMBOL_NS_GPL(tasdevice_tuning_switch,
- 	SND_SOC_TAS2781_FMWLIB);
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index 9350972dfefe..9c3c89cb36de 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -380,23 +380,32 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 	mutex_lock(&tas_priv->codec_lock);
- 
- 	ret = tasdevice_rca_parser(tas_priv, fmw);
--	if (ret)
-+	if (ret) {
-+		tasdevice_config_info_remove(tas_priv);
- 		goto out;
-+	}
- 	tasdevice_create_control(tas_priv);
- 
- 	tasdevice_dsp_remove(tas_priv);
- 	tasdevice_calbin_remove(tas_priv);
--	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
-+	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
- 	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
- 		tas_priv->dev_name);
- 	ret = tasdevice_dsp_parser(tas_priv);
- 	if (ret) {
- 		dev_err(tas_priv->dev, "dspfw load %s error\n",
- 			tas_priv->coef_binaryname);
--		tas_priv->fw_state = TASDEVICE_DSP_FW_FAIL;
- 		goto out;
- 	}
--	tasdevice_dsp_create_ctrls(tas_priv);
-+
-+	/*
-+	 * If no dsp-related kcontrol created, the dsp resource will be freed.
-+	 */
-+	ret = tasdevice_dsp_create_ctrls(tas_priv);
-+	if (ret) {
-+		dev_err(tas_priv->dev, "dsp controls error\n");
-+		goto out;
-+	}
- 
- 	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
- 
-@@ -417,9 +426,8 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 	tasdevice_prmg_load(tas_priv, 0);
- 	tas_priv->cur_prog = 0;
- out:
--	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
--		/*If DSP FW fail, kcontrol won't be created */
--		tasdevice_config_info_remove(tas_priv);
-+	if (tas_priv->fw_state == TASDEVICE_RCA_FW_OK) {
-+		/* If DSP FW fail, DSP kcontrol won't be created. */
- 		tasdevice_dsp_remove(tas_priv);
- 	}
- 	mutex_unlock(&tas_priv->codec_lock);
-@@ -466,14 +474,14 @@ static int tasdevice_startup(struct snd_pcm_substream *substream,
- {
- 	struct snd_soc_component *codec = dai->component;
- 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
--	int ret = 0;
- 
--	if (tas_priv->fw_state != TASDEVICE_DSP_FW_ALL_OK) {
--		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
--		ret = -EINVAL;
-+	switch (tas_priv->fw_state) {
-+	case TASDEVICE_RCA_FW_OK:
-+	case TASDEVICE_DSP_FW_ALL_OK:
-+		return 0;
-+	default:
-+		return -EINVAL;
- 	}
--
--	return ret;
- }
- 
- static int tasdevice_hw_params(struct snd_pcm_substream *substream,
+For mseal_test.c, that might mean stopping including "linux/mman.h", and 
+instead including the in-tree one.
+
+> 
+> So what's really going on here is that we have this uneasy mix of system
+> headers from the test machine, and newer versions of some of those headers
+> in the kernel tree. And some of those are easier to combine with system
+> headers, than others. unistd.h is clearly not going quietly, which is
+> why, I believe, the "#ifndef __NR_* " approach has flowered in the
+> selftests.
+
+Right, these mixtures are not what we want I think. But I have no idea 
+how easy it would be to convert individual tests.
+
+Maybe all it takes is updating the in-tree headers and then including 
+"TBD/linux/whatever.h" instead of <linux/whatever.h>
+
+In QEMU, we maintain some (not all) kernel headers ourselves, and 
+include them via
+
+"standard-headers/linux/whatever.h"
+
+> 
+>>
+>> ... to avoid hand-crafted defines we have to maintain for selftests.
+>>
+>> But maybe I am remembering something outdated.
+>>
+> 
+> You remembered correctly, but the situation is slighly muddier than
+> one would prefer. :)
+
+
+Absolutely, and I appreciate that you are trying to improve the situation.
+
 -- 
-2.34.1
+Cheers,
+
+David / dhildenb
 
 
