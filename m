@@ -1,559 +1,219 @@
-Return-Path: <linux-kernel+bounces-212095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07902905B2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:38:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E89905B2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701271F22B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:38:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 312FB28A0A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5359F495E5;
-	Wed, 12 Jun 2024 18:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3933209;
+	Wed, 12 Jun 2024 18:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XzWw7Ews"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H7EoFCk4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C7347F4B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F0C3F9ED
 	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718217509; cv=none; b=thdQtPCX5xMHRotgYfktWJosXIEO/WHm0Xc+rwnHT0fIKmFjn8p8Vckj8Kt3BkA7iUToqFvMoocE1QcgWLV8sD2X07Sh3cYQH7vVEkqFaSZ4IyX98NQtYpRZEraNKw+mfElpQPqZjWMAYbGmnMpnW8yZH9yioNr/1VGznO5bcE8=
+	t=1718217509; cv=none; b=tQ0p9hNX1w7WqWAeSYMeCowNkcOXrvHivImdMqGy8HxhXROtq6pSQYScaTkHNxwcpX4xc3HZacDbdCFwfTzYM3kqL9Kr1my5863IH7erJWGySLHlJwaDbAWKltlZGpNmya1L3JujMzjOGS+Q8MjGV6wmFtCXERA/tYCf4MXkhnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718217509; c=relaxed/simple;
-	bh=eEoCMvafOUroA2LzRkSDgFQPGWLzmeZMU/Qpu50wCCo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YNfH1RJgYkp8JSJ2uXYey9GCRKvOZ/PLpdH+Fckgk+izkgwl/Pe4iHVmpq33g3si0NtJ98cUO8oAAVSScK77D3xUCd7M3cuCUm5zUn81PTJixNEPLLnei1cPsAuQ7QqBk8qhhSQVZIkFMR4sjSkPYIRyvY+NQbwnLLYWIHYgjGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XzWw7Ews; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-681bc7f50d0so944532a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:38:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718217507; x=1718822307; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L5MjpIfnFC+/yhugwVSUtGBFX+NWlpkUODCD7ykEcrk=;
-        b=XzWw7Ews9WpMQ3SJa4sqwIlvjTwcmaQZ/fe9FkzW9HAvzXhnD4LVHIPRi9vpegPLxE
-         j8adbOC4BN7jQvXNByVw9zPyYq9vp5x5na6OnstvTXSUZmZys0tV8sc9oyJ3f/jy3Jg7
-         jv5oyFlhtGCTlSCmfQ8O4+ByQaeEpCI0FXMEGR9OhHvh985LNueijsqqAMTi36Xj91Bm
-         Sc0VzFiAlYUJ7YYFNsRKTBwjLhhTABPgTbstqBrdiaz147rwM2ffh2jOWkKaIzeB1s1H
-         v4AcQfYIIxJXfyuFLdo3m1tNGbLmjrXIvfOuhZQYgWwcZgJc5ZBXu7IY3rmz2ZPG1Dhq
-         2AuA==
+	bh=da4qQp7q9FRHa14+3H2CymUF4f/YBETTMzj+yV5bx9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QDLQjmr8wQuUIg+UF3Ws6NW/zklW9Ozn0sasy0e3iLdYzJ6MmGep+vZqSOMMlJb7VFpaAE07NIt6xdK0oYTOHc23Eq3HbpCxEBp9ACRDyumKAcbe3wT3TImcMH/XSyKjjB/R5co26sXdci/On9sWj7kBaN984PJZTH/YcUXV+Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H7EoFCk4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718217506;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eHkiYypujAnwSi5QrP8pZu0qQw3cLgJft3y7PW/t9t4=;
+	b=H7EoFCk4TR1O5TCHTcu3c9+awxn/Tb0EUzFJXuR0UZjx59XmKekCeZ+NpMZqLyJ7vVGwBg
+	qhLiDCZzlrfHE7+B8pw5jX+64aiV9rO/51bxvZZcOMktS/q2/CArpGOQ7bQRzsSNPrBR7j
+	9rvJ4GuQgSubkSYl4kWxb4tv7HZXwic=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-553-LBbQwBMWPXOYm3kvLgbklg-1; Wed, 12 Jun 2024 14:38:25 -0400
+X-MC-Unique: LBbQwBMWPXOYm3kvLgbklg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42183fdd668so1052455e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:38:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718217507; x=1718822307;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L5MjpIfnFC+/yhugwVSUtGBFX+NWlpkUODCD7ykEcrk=;
-        b=tFwCcLqTLbI1zHKTdrUwVmMSoa/z/t7EMkrNaLJ6MIixI6svIAinZcK3SSYq2S7mCp
-         2Qhm6ptrWczmsonECWS6fBCLfXiZleSY2THa19xJ+3jM3E0KqWN+ZRHArtYpqrLB5sfw
-         SjHEZDVVTc8YruvH4dOyX57SBjj1Z8iYUwtn7WuLM5WaGR7XnyZENUIi9R/l4uAzMFto
-         EtaF+MloRSImzobAqneExlgc6jJhnTOmpGiMsweuHwl+yXfOw1TZ1t2gK7OVAnxsLg1M
-         lGTz9YFy4dMi8s4Yy8crHwX5CN0COo/RAVlDPrLsLvuWcgS7ib2VqQ5SlH3Cj5vTR82R
-         JFFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXatpuUjr/w94rYbI/70DF7qdxH4qqTxBG/XOUbGWPjW4b9U9o7c2Dzz4Ht04Qx5ywTHDgKtY7ptQatVkCGP2nocWc47UM5VrNKym71
-X-Gm-Message-State: AOJu0Yw1jd0xTmpRWis3lwI/tQ7apeejLaalzjb+BV8Gw+UXmvpUAvL+
-	ZVjdoVVDAr/b9k4bGDjenoi8PxZZVZ19qI8XP5D3QdsQnIBf7R7tvcbu1t2THtkdsM3SFwgJybW
-	1HpDJSF7bIicNCGR2DolA4HYiG+o4M0cai8SDts2rQfUXqVqSECk=
-X-Google-Smtp-Source: AGHT+IFWIIgdF8K4XMGFWEjbR2SBhBXtFm6zX/rmou0r0omVeaE2RT7IJQPemyPZiA/HCzqNlL/M/H4mA1itAoWRA2o=
-X-Received: by 2002:a17:903:22c2:b0:1f6:ef8b:c366 with SMTP id
- d9443c01a7336-1f84df9b5b8mr6823955ad.4.1718217507154; Wed, 12 Jun 2024
- 11:38:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718217504; x=1718822304;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eHkiYypujAnwSi5QrP8pZu0qQw3cLgJft3y7PW/t9t4=;
+        b=b0xN1Iketz+GrZN7tjAkKjEWBm9ymND/nR1OT6Ffvz8ad7Br0ynQOhMpBqMU9orW4c
+         /kpC56XZ4Kk1RaiiZVdK1Dh13GfjTgHMuVhWfLzLkn2/JnwyuYtMQN0yRgglXgeb2KDu
+         kgq+Dxk0oO411XL30gbEK6qNBlgxOYBdHkAipGBNsMEGIxTpOPHJ35v6wQOE9FQZEJuv
+         2b46LV6ljAFPRh4xBFHE8MhZ3Dmgcbpjw/fyACvNMZR8hq11Laj1nKEN/iwBX6CL58ur
+         BD/hjvTbvZC26GpN7sEhRLh7dg4xIMSH14TEsNrFanpdRsIewIJ0nOhNY/qk0fLcJ3Gy
+         uLtg==
+X-Gm-Message-State: AOJu0YwqOMwKSbplFalZ13x9g94yq/FTODCEUUbZFSaZxwkDGQYoqz4x
+	yXfHbjqBL7umtxH4sDGPllvInGzqaIO15sBof5BjJzF926e0n6uegNT5BMvI+dYMgMszM/9dlmL
+	oIkoKEeobaBeqcXoWwdJaOnA2HYFWcj0ly1+1wX0AHjSYR06gxWGRQCjVi21q3A==
+X-Received: by 2002:a05:600c:358b:b0:422:683b:df4d with SMTP id 5b1f17b1804b1-422862aca70mr25635865e9.8.1718217504335;
+        Wed, 12 Jun 2024 11:38:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9c6UnJX0cTtZy9cm2l0blMA61xj4ptfyilK9HIBnbYNBzABHUDtJIhxGr1xkMg1evDFPT+w==
+X-Received: by 2002:a05:600c:358b:b0:422:683b:df4d with SMTP id 5b1f17b1804b1-422862aca70mr25635525e9.8.1718217503744;
+        Wed, 12 Jun 2024 11:38:23 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c702:bf00:abf6:cc3a:24d6:fa55? (p200300cbc702bf00abf6cc3a24d6fa55.dip0.t-ipconnect.de. [2003:cb:c702:bf00:abf6:cc3a:24d6:fa55])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870f760fsm35980815e9.33.2024.06.12.11.38.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 11:38:23 -0700 (PDT)
+Message-ID: <ca575956-f0dd-4fb9-a307-6b7621681ed9@redhat.com>
+Date: Wed, 12 Jun 2024 20:38:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527144054.155503-1-brgl@bgdev.pl> <ZleXc6tLbiWQ59i-@surfacebook.localdomain>
- <CAMRc=MftW0y7GicBy4vwABomUYuMndsJBUTdsQzZijDtgX1ohQ@mail.gmail.com> <ZmcUbe1aQfezZy5B@surfacebook.localdomain>
-In-Reply-To: <ZmcUbe1aQfezZy5B@surfacebook.localdomain>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 12 Jun 2024 20:38:14 +0200
-Message-ID: <CAMRc=McjAAFX1R4wAbLu5bcUkpPuy8rf=fwDOqCiUY1hbjmhMg@mail.gmail.com>
-Subject: Re: [PATCH v7] gpio: virtuser: new virtual driver
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Kent Gibson <warthog618@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] mm: pass meminit_context to __free_pages_core()
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
+ xen-devel@lists.xenproject.org, kasan-dev@googlegroups.com,
+ Mike Rapoport <rppt@kernel.org>, Oscar Salvador <osalvador@suse.de>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>
+References: <20240607090939.89524-1-david@redhat.com>
+ <20240607090939.89524-2-david@redhat.com>
+ <2ed64218-7f3b-4302-a5dc-27f060654fe2@redhat.com>
+ <20240611121942.050a2215143af0ecb576122f@linux-foundation.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240611121942.050a2215143af0ecb576122f@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 10, 2024 at 4:57=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> Mon, Jun 10, 2024 at 03:22:32PM +0200, Bartosz Golaszewski kirjoitti:
-> > On Wed, May 29, 2024 at 11:00=E2=80=AFPM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > Mon, May 27, 2024 at 04:40:54PM +0200, Bartosz Golaszewski kirjoitti:
->
-> ...
->
-> > > > User must pass exactly the number of values that the array contains
-> > >
-> > > Can't we assume non-active values for the rest if less than needed we=
-re
-> > > provided? For more than that, why do we care?
-> >
-> > Honestly, what good would it do? It would just be more confusing IMO.
->
-> Let's say you can leave documentation as is, but relax the code. That's t=
-he
-> benefit, less complex checks in the code.
->
+On 11.06.24 21:19, Andrew Morton wrote:
+> On Tue, 11 Jun 2024 12:06:56 +0200 David Hildenbrand <david@redhat.com> wrote:
+> 
+>> On 07.06.24 11:09, David Hildenbrand wrote:
+>>> In preparation for further changes, let's teach __free_pages_core()
+>>> about the differences of memory hotplug handling.
+>>>
+>>> Move the memory hotplug specific handling from generic_online_page() to
+>>> __free_pages_core(), use adjust_managed_page_count() on the memory
+>>> hotplug path, and spell out why memory freed via memblock
+>>> cannot currently use adjust_managed_page_count().
+>>>
+>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>> ---
+>>
+>> @Andrew, can you squash the following?
+> 
+> Sure.
+> 
+> I queued it against "mm: pass meminit_context to __free_pages_core()",
+> not against
+> 
+>> Subject: [PATCH] fixup: mm/highmem: make nr_free_highpages() return "unsigned
+>>    long"
+> 
 
-Actually this is more ambiguity in the code. I'm against it.
+Can you squash the following as well? (hopefully the last fixup, otherwise I
+might just resend a v2)
 
-> ...
->
-> > > > +#include <linux/atomic.h>
-> > > > +#include <linux/bitmap.h>
-> > > > +#include <linux/cleanup.h>
-> > > > +#include <linux/completion.h>
-> > > > +#include <linux/configfs.h>
-> > > > +#include <linux/device.h>
-> > > > +#include <linux/err.h>
-> > > > +#include <linux/gpio/consumer.h>
-> > > > +#include <linux/gpio/driver.h>
-> > > > +#include <linux/gpio/machine.h>
-> > >
-> > > > +#include <linux/idr.h>
-> > >
-> > > > +#include <linux/interrupt.h>
-> > > > +#include <linux/irq_work.h>
-> > >
-> > > > +#include <linux/kernel.h>
-> > >
-> > > Do you need this?
-> >
-> > ARRAY_SIZE() used to live here when I first wrote this but it was
-> > since moved. I'll drop this.
->
-> Rather replace with array_size.h.
->
 
-Yeah this is what I did.
+ From 53c8c5834e638b2ae5e2a34fa7d49ce0dcf25192 Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Wed, 12 Jun 2024 20:31:07 +0200
+Subject: [PATCH] fixup: mm: pass meminit_context to __free_pages_core()
 
-> > > > +#include <linux/limits.h>
-> > > > +#include <linux/list.h>
-> > > > +#include <linux/lockdep.h>
-> > > > +#include <linux/mod_devicetable.h>
-> > > > +#include <linux/module.h>
-> > > > +#include <linux/mutex.h>
-> > > > +#include <linux/notifier.h>
-> > > > +#include <linux/of.h>
-> > > > +#include <linux/overflow.h>
-> > > > +#include <linux/platform_device.h>
-> > > > +#include <linux/printk.h>
-> > > > +#include <linux/property.h>
-> > > > +#include <linux/slab.h>
-> > >
-> > > > +#include <linux/string.h>
-> > >
-> > > Implied by string_helpers.h
-> >
-> > Yeah, but we still use symbols directly from string.h, we shouldn't
-> > depend on implicit includes.
->
-> string_helpers.h is and will continue guranteening inclusion of string.h.
-> It's the same as we drop bits.h when we include, for instance, bitmap.h.
->
+Let's add the parameter name also in the declaration.
 
-Whatever, ok.
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  mm/internal.h | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > > > +#include <linux/string_helpers.h>
-> > > > +#include <linux/sysfs.h>
-> > > > +#include <linux/types.h>
->
-> ...
->
-> > > > +struct gpio_virtuser_attr_descr {
-> > > > +     const char *name;
-> > > > +     ssize_t (*show)(struct device *, struct device_attribute *, c=
-har *);
-> > > > +     ssize_t (*store)(struct device *, struct device_attribute *,
-> > > > +                      const char *, size_t);
-> > > > +};
-> > >
-> > > struct device_attribute ? (Yes, I know that that one is a bit bigger =
-but
-> > > benefit is that we have some code that you may reuse)
-> >
-> > Not sure what you mean here, these are callbacks for sysfs.
->
-> I mean to replace your custom data type with the existing device_attribut=
-e.
->
+diff --git a/mm/internal.h b/mm/internal.h
+index 14bab8a41baf6..254dd907bf9a2 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -605,7 +605,7 @@ extern void __putback_isolated_page(struct page *page, unsigned int order,
+  extern void memblock_free_pages(struct page *page, unsigned long pfn,
+  					unsigned int order);
+  extern void __free_pages_core(struct page *page, unsigned int order,
+-		enum meminit_context);
++		enum meminit_context context);
+  
+  /*
+   * This will have no effect, other than possibly generating a warning, if the
+-- 
+2.45.2
 
-Doesn't make sense here. struct device_attribute has lots of cruft we
-don't need here. It's just the name and the callback pointers.
 
-> ...
->
-> > > > +static ssize_t gpio_virtuser_sysfs_emit_value_array(char *buf,
-> > > > +                                                 unsigned long *va=
-lues,
-> > > > +                                                 size_t num_values=
-)
-> > > > +{
-> > > > +     ssize_t len =3D 0;
-> > > > +     size_t i;
-> > > > +
-> > > > +     for (i =3D 0; i < num_values; i++)
-> > > > +             len +=3D sysfs_emit_at(buf, len, "%d",
-> > > > +                                  test_bit(i, values) ? 1 : 0);
-> > > > +     return len + sysfs_emit_at(buf, len, "\n");
-> > >
-> > > Why not use %pb?
-> >
-> > Because it outputs hex? I want to output binary, can I do it?
->
-> But why do you need that? You can also print a list of numbers of bits th=
-at
-> set (%pbl).
->
-> We have a few ABIs in the kernel that works nice and people are familiar =
-with
-> (CPU sets, IRQ affinity masks, etc). Why to reinvent the wheel?
+-- 
+Cheers,
 
-If I see "11001011" as output, I can immediately convert that to pins
-in my head. If I see 0xcb, I need to use a calculator.
+David / dhildenb
 
->
-> > > > +}
->
-> ...
->
-> > > > +static int gpio_virtuser_sysfs_parse_value_array(const char *buf, =
-size_t len,
-> > > > +                                              unsigned long *value=
-s)
-> > > > +{
-> > > > +     size_t i;
-> > > > +
-> > > > +     for (i =3D 0; i < len; i++) {
-> > >
-> > > Perhaps
-> > >
-> > >                 bool val;
-> > >                 int ret;
-> > >
-> > >                 ret =3D kstrtobool(...);
-> >
-> > kstrtobool() accepts values we don't want here like [Tt]rue and [Ff]als=
-e.
->
-> Yes, see below.
->
-> > >                 if (ret)
-> > >                         return ret;
-> > >
-> > >                 assign_bit(...); // btw, why atomic?
-> > >
-> > > > +             if (buf[i] =3D=3D '0')
-> > > > +                     clear_bit(i, values);
-> > > > +             else if (buf[i] =3D=3D '1')
-> > > > +                     set_bit(i, values);
-> > > > +             else
-> > > > +                     return -EINVAL;
-> > >
-> > > > +     }
-> > >
-> > > BUT, why not bitmap_parse()?
-> >
-> > Because it parses hex, not binary.
->
-> So, why do we reinvent a wheel? Wouldn't be better that users may apply t=
-he
-> knowledge they familiar with (and I believe the group of the users who kn=
-ow
-> about bitmaps is much bigger than those who will use this driver).
->
-> > > > +     return 0;
-> > > > +}
->
-> ...
->
-> > > > +     return sysfs_emit(buf, "%s\n",
-> > > > +                       dir =3D=3D GPIO_LINE_DIRECTION_IN ? "input"=
- : "output");
-> > >
-> > > I think this maybe transformed to something like str_input_output() i=
-n
-> > > string_choices.h (and you don't even need to include that as it's imp=
-lied by
-> > > string_helpers.h)
-> >
-> > These helpers take bool as argument. Hard to tell whether input or
-> > output should correspond to true. I'd leave it as is.
->
-> There is a convention: str_TRUE_FALSE().
->
-> ...
->
-> > > > +static int gpio_virtuser_parse_direction(const char *buf, int *dir=
-, int *val)
-> > > > +{
-> > > > +     if (sysfs_streq(buf, "input")) {
-> > > > +             *dir =3D GPIO_LINE_DIRECTION_IN;
-> > > > +             return 0;
-> > > > +     }
-> > > > +
-> > > > +     if (sysfs_streq(buf, "output-high"))
-> > > > +             *val =3D 1;
-> > > > +     else if (sysfs_streq(buf, "output-low"))
-> > > > +             *val =3D 0;
-> > > > +     else
-> > > > +             return -EINVAL;
-> > > > +
-> > > > +     *dir =3D GPIO_LINE_DIRECTION_OUT;
-> > >
-> > > This can be transformed to use sysfs_match_string() with
-> > >
-> > > static const char * const dirs[] =3D { "output-low", "output-high", "=
-input" };
-> > >
-> > >         int ret;
-> > >
-> > >         ret =3D sysfs_match_string(...);
-> > >         if (ret < 0)
-> > >                 return ret;
-> > >
-> > >         *val =3D ret;
-> > >         *dir =3D ret =3D=3D 2 ? GPIO_LINE_DIRECTION_IN : GPIO_LINE_DI=
-RECTION_OUT;
-> > >
-> > > And with this approach it even not clear why do you need dir and val =
-to be
-> > > separated here (esp. if we add a enum like
-> >
-> > We do want them to be separated not for better UX but to be able to
-> > test all kernel APIs (gpiod_direction_input|output() and
-> > gpiod_set_value()).
->
-> Still you can do some optimisations I proposed above.
->
-
-IMO they are much less readable and you don't gain anything. NAK on this on=
-e.
-
-> > >         GPIO_VIRTUSER_OUT_LOW,
-> > >         GPIO_VIRTUSER_OUT_HIGH,
-> > >         GPIO_VIRTUSER_IN,
-> > >
-> > > (with it the string array can also be indexed).
-> > >
-> > > > +     return 0;
-> > > > +}
->
-> ...
->
-> > > > +static int gpio_virtuser_parse_value(const char *buf)
-> > > > +{
-> > > > +     int value, ret;
-> > > > +
-> > > > +     value =3D sysfs_match_string(gpio_virtuser_sysfs_value_string=
-s, buf);
-> > > > +     if (value < 0) {
-> > > > +             /* Can be 0 or 1 too. */
-> > > > +             ret =3D kstrtoint(buf, 0, &value);
-> > > > +             if (ret)
-> > > > +                     return ret;
-> > >
-> > > > +             if (value !=3D 0 && value !=3D 1)
-> > > > +                     return -EINVAL;
-> > >
-> > > Why not kstrtobool()?
-> >
-> > I don't want to accept all the other strings kstrtobool() is fine with.
->
-> What's wrong with other strings?
->
-
-A line is False? I mean sure, you can map that to inactive but it's
-not a naming convention associated with GPIOs very often.
-
-> At bare minumum you can reduce the range by using kstrtou8().
->
-
-As opposed to just checking '0' and '1'? Meh...
-
-> > > > +     }
-> > > > +
-> > > > +     return value;
-> > > > +}
->
-> ...
->
-> > > > +     ret =3D kstrtouint(buf, 10, &debounce);
-> > >
-> > > Why restrict to decimal?
-> >
-> > Not sure what you gain from passing a period in hex?
->
-> For example, if I compare this to the real HW, I might be able to do some=
-thing
-> like 0x1234 (let's say it's debounce step) and shifting it by 4 bits will=
- give
-> me something I want. But despite that quite unlikely case the restriction=
- here
-> doesn't bring us much.
->
-
-Ok, whatever.
-
-> > > > +     if (ret)
-> > > > +             return ret;
->
-> ...
->
-> > > > +     return dash && strcmp(dash, "-gpios") =3D=3D 0;
-> > >
-> > > Can't we reuse the suffix from the array from the gpiolib internal he=
-ader?
-> > > Also I don't like the form of '-' in the line. "gpios" is good and ch=
-ance
-> > > that linker deduplicates the same string if it occurs somewhere else =
-in the
-> > > binary (in case this goes with =3Dy in .config).
-> >
-> > I'm not sure I follow what you're saying here. Please rephrase.
->
-> Do strcmp() against one from the gpio_suffixes array.
->
-
-I don't want to accept the "gpio" suffix. Also: I don't want to
-include gpiolib.h.
-
-> ...
->
-> > > > +/*
-> > > > + * If this is an OF-based system, then we iterate over properties =
-and consider
-> > > > + * all whose names end in "-gpios". For configfs we expect an addi=
-tional string
-> > > > + * array property - "gpio-virtuser,ids" - containing the list of a=
-ll GPIO IDs
-> > > > + * to request.
-> > >
-> > > Why not any other system? What's wrong for having this available for =
-ACPI, for
-> > > example? Okay, I see that this is probably due to absence of API.
-> > >
-> > > OTOH the last call in the function assumes non-OF cases. Why can't we=
- have the
-> > > same approach in both?
-> >
-> > Again: I have no idea what you mean. We support device-tree and
-> > configfs as sources of configuration for these virtual consumers. If
-> > you want to add something more, be my guest once it's upstream.
-> >
-> > The reason to use a different approach is to not require the
-> > "gpio-virtuser,ids" property in device-tree.
->
-> Yes, and I'm asking why can't we unify and require it there as well?
-> But okay, I might give up on the trying of the DT/ACPI property unificati=
-on.
->
-> > > > + */
->
-> ...
->
-> > > > +                     if (gpio_virtuser_prop_is_gpio(prop))
-> > > > +                             ++ret;
-> > >
-> > > Why pre-increment?
-> >
-> > Why not?
->
-> Because we have a pattern. Pre-increment adds into additional questioning
-> "why?". I.e. What does make this case special? When I read such a code I =
-need
-> more brain power to parse it.
->
-
-Ok whatever.
-
-> ...
->
-> > > > +                     dash =3D strpbrk(prop->name, "-");
->
-> Btw, don't you want strrchr() here? (Note 'r' variant).
-
-Already changed.
-
->
-> > > > +                     diff =3D dash - prop->name;
-> > > > +
-> > > > +                     tmp =3D devm_kmemdup(dev, prop->name, diff + =
-1,
-> > > > +                                        GFP_KERNEL);
-> > >
-> > > devm_kstrndup() is not okay? Okay, we don't have it (yet?), but at le=
-ast I
-> > > would rather expect wrapped kstrndup() than this.
-> >
-> > Meh, this logic is fine as we know the range exactly. IMO kstrndup()
-> > here would be overkill. I'd leave it for now.
-> >
-> > > > +                     if (!tmp)
-> > > > +                             return -ENOMEM;
->
-> > > > +                     tmp[diff] =3D '\0';
->
-> This line will gone with kstrndup(). I think we will benefit from it.
->
-
-I'll allow myself to keep my version here.
-
-> ...
->
-> > > > +     int i =3D 0;
-> > >
-> > > Why signed? And in all this kind of case, I would split assignment...
->
-> (1)
->
-> > > > +     memset(properties, 0, sizeof(properties));
-> > > > +
-> > > > +     num_ids =3D list_count_nodes(&dev->lookup_list);
-> > > > +     char **ids __free(kfree) =3D kcalloc(num_ids + 1, sizeof(*ids=
-),
-> > > > +                                        GFP_KERNEL);
-> > > > +     if (!ids)
-> > > > +             return ERR_PTR(-ENOMEM);
-> > > > +
-> > >
-> > > To be here, that the reader will see immediately (close enough) what =
-is the
-> > > initial values. Moreover this code will be robuse against changes in =
-between
-> > > (if i become reusable).
-> >
-> > Sorry, I can't parse it.
->
-> I meant to see here
->
->         i =3D 0;
->
-> instead of the above (1).
->
-
-Why? I see no good reason.
-
-> > > > +     list_for_each_entry(lookup, &dev->lookup_list, siblings)
-> > > > +             ids[i++] =3D lookup->con_id;
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
-
-Bart
 
