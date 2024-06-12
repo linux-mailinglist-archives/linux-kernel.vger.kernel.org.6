@@ -1,114 +1,147 @@
-Return-Path: <linux-kernel+bounces-212039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DFDB905A5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:08:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C14C7905A66
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79F78B20D2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:08:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6942B1F22892
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00431183068;
-	Wed, 12 Jun 2024 18:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vGmSgnE7"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957F41836C4;
+	Wed, 12 Jun 2024 18:09:11 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B620117DE0F;
-	Wed, 12 Jun 2024 18:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71922180A99;
+	Wed, 12 Jun 2024 18:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718215704; cv=none; b=EIGQe55hQ2VDLlwGWX2lMhVWAwZuOANmnUGbCxix7GsnupQcfdubKV6RUEkBWJ+NgPCOcw0ib2yKRC2YPh7WSVbJHfNtMSB+Q34msyoUa1U/6Ykdx1oHJCWEJpxTHDwbQH+kR1s5fIv2cz7rp25cA1An2tvTjJ6p9MlF9C5htOk=
+	t=1718215751; cv=none; b=kXCpjTucJ42aII5eYk7uKD7582o7sGogmUMt4itPLKDwQ79Dmhw6k1H1p5p/Krl0eB0LR1/VphjxnPUohv4yEtSN8+G7sHPt6MXmEYopILtk2co8D0GtP47BLmhW3tmYCvsBNxNZS3AVm7zoyzi0lPtDDIW3lB2TrN4XVzOuAv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718215704; c=relaxed/simple;
-	bh=+upB2qwjfiYh/h4iqILkWX9TtN2BUxazXbJYqgaJFwU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=rXF33auCbRBG0flsVP3tw/lw3F8BoimfYIgvw4MwBUZje95S6wSVrvIEYx6I1HjhRu57V+uYh6tD5ZbXUeT5ooVg8r+BpcUJSpgthev/XucBxgcGIrnWWoRUZZ80+RLZX0ruynSI6lEjB8IXvcivp5rMFVKhkjIhv7xJUu9Mk40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vGmSgnE7; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718215688; x=1718820488; i=markus.elfring@web.de;
-	bh=vR1DLMpeZId+aNSKRhK1IPZHvpJqGmjpsDvOr4TyoSw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vGmSgnE7KNFaaX50dHu4QgjuTFa1UNZKTJ73DLJVwXQqNTBvKW3QWPrkrehohXaw
-	 qSWCOXbzw0BKaoC3MGuH8hUZ0UJmIDxHoEpaB6zrfHemuARQDJpq2zsbZsNQxW89z
-	 MH8vV+QuM/N/xjn8JvJ33g9FkryJr5SF1Xk9zwVWw0YMKEkXARHxVqmILoPoOMMxM
-	 8qREhN6s/WfN35OLt6wts5zXzufGvDycT6gTCNW7xMy2PqQXg8dWKH77SDOvoARc0
-	 gfWGNegVeYSHLPZuJ6aPmcEALmom/Ua8ApffhaO18xfhsazbPXIihDWwRgrIhGP+n
-	 bo11IHtBlwqeBSa/6w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Zo6-1seMZA0zSO-012ymy; Wed, 12
- Jun 2024 20:08:08 +0200
-Message-ID: <9bf241c5-68af-4471-a159-1c673243d80d@web.de>
-Date: Wed, 12 Jun 2024 20:08:04 +0200
+	s=arc-20240116; t=1718215751; c=relaxed/simple;
+	bh=RJNEvCAGIRZVQUyhqg15HbW6QCiKD5U3VFi2YuLgGgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rGsWa9eY0D22A8IRDSt212F64uVxu+ws4cl6BsVeZQJavT62p8A2xCcc8N+mA0YMLS3pRbmIXavpHAUBKnbWWPsmimaWuyyqRMOD16AnVPi4wa+SJw54AUQfmRke0HTpPZNK8H/3CqZtlRGqtALNN7SrEuioBF/DcltsSwYZGNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875be5.versanet.de ([83.135.91.229] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sHSOy-00025Y-8s; Wed, 12 Jun 2024 20:08:52 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jianfeng Liu <liujianfeng1994@gmail.com>,
+ Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
+Subject: Re: [PATCH v5 3/5] media: hantro: Add RK3588 VEPU121 support
+Date: Wed, 12 Jun 2024 20:08:51 +0200
+Message-ID: <1739853.izSxrag8PF@diego>
+In-Reply-To: <20240612173213.42827-4-sebastian.reichel@collabora.com>
+References:
+ <20240612173213.42827-1-sebastian.reichel@collabora.com>
+ <20240612173213.42827-4-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Hongchen Zhang <zhanghongchen@loongson.cn>,
- Huacai Chen <chenhuacai@loongson.cn>, linux-pci@vger.kernel.org,
- loongarch@lists.linux.dev, Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20240605075419.3973256-1-zhanghongchen@loongson.cn>
-Subject: Re: [PATCH v2] PCI: use local_pci_probe when best selected cpu is
- offline
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240605075419.3973256-1-zhanghongchen@loongson.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:k9f//JL/SkQ4XCesVEpYNO1oXTOIW7yIhuBMzW/ZwJiC5PbBIHZ
- jGaK1lryYCkyWlbYdR/H9NQiYKJ0rWYdQS2r7F2pdSxJluAmVmfg5+CwljOecKDXyHG3ZD/
- rwLRIDRJd7iTv2CMk9rrdX/r+yzM34yWTSZezzo2tnubf/rk5F+CTfkF/lShTX0TetNFuTs
- nWULOH+YX1KshtFg1X0rA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VzkNTr5/WFk=;Neu03KRfGdmlYDdTwUZUknHgAxm
- yBHsmeapQ9/PZx9CLdBka0+SdAFM3QBDDn64NJ29blxmy/Sb+I5qHlQpMb7c5xehkKup0VzDF
- AseCGQVa1YHeK11Dgj2pJ9kZof4AH9WBtDMNLZBMA057yGO8Z5bBdh+H9ME7qXmbs0h+iCnS6
- LzO4BhFbF6ftjidhy1YXVsfOf5cx+eb4XJcpjt+aJ0r2TX29l2msAovwIfIBspdgfwUrM4f97
- 82+scXnURXjVm8aPWJgINS5w+oe7EFCIXFTbe1qULVodV/rDIjs+ZSpR5AeVLjizS0BJrQXV0
- 9AUefSfvLXXWJiLguZgBS7K4jCP7d5HFx0NZzd9zTCUKpwPvx6zWZZp7rXHddMzH+h530XPTV
- R8V3ltV3baiGqdRc32WMqC5hh3adcwMwCKZ9h+TVoBeU9sfGLyqgRC04fyciNGtEMbMWfwlyh
- tyJ2DzmV6/+Ggxnd9mbefGPgw+38DW2NV/zywTlEZEB4xM4EXM2WQgnINHcVS7YuoflTq2JwX
- sqaDzwVGJvY5kSSrwCWf/BThhEjXooKwDUzsCgZ2/QGKOvZifudPUGx6TJYElfN3HkuXYBcFe
- /mvseqKvUguVJjBf8qKcHGxVi0UI6oeP406ntbwwtJyZlOp6SMzIqqzFL31vaDuHt059MS7OB
- r7e+beZEzJLoHqYMjO5D/H7PRSqur4kKO2oVWl2wsiImZaCklHMOBvY+xnsRExjgWsalxNB6v
- JMQLX6Pr6bDLU9xDE6NfpnED33IG0T6LuCf6jeVhP1pZIH23mvb3ZTb56QcDBu5m+hvm6TzV+
- i9Q1jDT1EOqPxm+xE2e63u1J4hnliR45Fy7CZSz8yH99s=
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-=E2=80=A6
-> This can be happen if a node is online while all its CPUs are offline
-> (we can use "maxcpus=3D1" without "nr_cpus=3D1" to reproduce it), Theref=
-ore,
-> in this case, we should call local_pci_probe() instead of work_on_cpu().
+Am Mittwoch, 12. Juni 2024, 19:15:43 CEST schrieb Sebastian Reichel:
+> Avoid exposing each of the 4 Hantro H1 cores separately to userspace.
+> For now just expose the first one.
+> 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  .../media/platform/verisilicon/hantro_drv.c   | 38 +++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+> 
+> diff --git a/drivers/media/platform/verisilicon/hantro_drv.c b/drivers/media/platform/verisilicon/hantro_drv.c
+> index 34b123dafd89..b722a20c5fe3 100644
+> --- a/drivers/media/platform/verisilicon/hantro_drv.c
+> +++ b/drivers/media/platform/verisilicon/hantro_drv.c
+> @@ -722,6 +722,7 @@ static const struct of_device_id of_hantro_match[] = {
+>  	{ .compatible = "rockchip,rk3399-vpu", .data = &rk3399_vpu_variant, },
+>  	{ .compatible = "rockchip,rk3568-vepu", .data = &rk3568_vepu_variant, },
+>  	{ .compatible = "rockchip,rk3568-vpu", .data = &rk3568_vpu_variant, },
+> +	{ .compatible = "rockchip,rk3588-vepu121", .data = &rk3568_vpu_variant, },
+>  	{ .compatible = "rockchip,rk3588-av1-vpu", .data = &rk3588_vpu981_variant, },
+>  #endif
+>  #ifdef CONFIG_VIDEO_HANTRO_IMX8M
+> @@ -992,6 +993,39 @@ static const struct media_device_ops hantro_m2m_media_ops = {
+>  	.req_queue = v4l2_m2m_request_queue,
+>  };
+>  
+> +/*
+> + * Some SoCs, like RK3588 have multiple identical Hantro cores, but the
+> + * kernel is currently missing support for multi-core handling. Exposing
+> + * separate devices for each core to userspace is bad, since that does
+> + * not allow scheduling tasks properly (and creates ABI). With this workaround
+> + * the driver will only probe for the first core and early exit for the other
+> + * cores. Once the driver gains multi-core support, the same technique
+> + * for detecting the main core can be used to cluster all cores together.
+> + */
+> +static int hantro_disable_multicore(struct hantro_dev *vpu)
+> +{
+> +	const char *compatible;
+> +	struct device_node *node;
+> +	int ret;
+> +
+> +	/* Intentionally ignores the fallback strings */
+> +	ret = of_property_read_string(vpu->dev->of_node, "compatible", &compatible);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* first compatible node found from the root node is considered the main core */
+> +	node = of_find_compatible_node(NULL, NULL, compatible);
+> +	if (!node)
+> +		return -EINVAL; /* broken DT? */
+> +
+> +	if (vpu->dev->of_node != node) {
+> +		dev_info(vpu->dev, "missing multi-core support, ignoring this instance\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int hantro_probe(struct platform_device *pdev)
+>  {
+>  	const struct of_device_id *match;
+> @@ -1011,6 +1045,10 @@ static int hantro_probe(struct platform_device *pdev)
+>  	match = of_match_node(of_hantro_match, pdev->dev.of_node);
+>  	vpu->variant = match->data;
+>  
+> +	ret = hantro_disable_multicore(vpu);
+> +	if (ret)
+> +		return ret;
+> +
 
-* Please take text layout concerns a bit better into account also accordin=
-g to
-  the usage of paragraphs.
-  https://elixir.bootlin.com/linux/v6.10-rc3/source/Documentation/process/=
-maintainer-tip.rst#L128
+I think this might be better as two patches?
 
-* Please improve the change description with an imperative wording.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc3#n94
+As this patch stands, the disable-multicore handling is done for _all_
+hantro variants, so part of me wants this to be labeled as such.
 
-* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
-
-* How do you think about to specify the name of the affected function
-  in the summary phrase?
+The whole reasoning is completely ok, but somehow having this under
+the "add rk3588" umbrella feels strange ;-)
 
 
-Regards,
-Markus
+Heiko
+
+
+
 
