@@ -1,135 +1,154 @@
-Return-Path: <linux-kernel+bounces-211691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1EB905575
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:42:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E514290557A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E51E1C20F35
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:42:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 128CE1C217CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4177117E913;
-	Wed, 12 Jun 2024 14:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D2917F366;
+	Wed, 12 Jun 2024 14:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2r7wGhyb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5kasKSA"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8F517DE39;
-	Wed, 12 Jun 2024 14:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D2117E8F6;
+	Wed, 12 Jun 2024 14:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718203343; cv=none; b=h9VO6yE/+1WBxxt93qyqrxivW4PWsSMhs4UuvTz9NO+Gj8tF96x6R0hJ5vpVQBRHmdC1E/XUv7FIbWnba1DCrBoqNgRymxlQ4jmC7+UQYOejMlTwp844AaIKLPS+vwf3MgkbuVmsVGGs7LhxcxpceiJWc6NyL9nBCsx6BKGOmzw=
+	t=1718203415; cv=none; b=ToxHBWBudJcJdiDXFEKu2jRDk+V7YW84GVNayPzr1jTIxpHycgIZcaX6qOc8+YONIHJS3U3yvmlaoFG55SUyF5RCRrzLTGWE+LdKkud/S+Qczhi7go9t3SiwAV+K8gTIbhtsSzlEQnYH/OMNvfl7v/07b7nHopRU8Dt94d4I9vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718203343; c=relaxed/simple;
-	bh=fIyHMCmdFag/kreazotdgSfqaaLxX6azOoYs64Naiq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MOCClNEcMmdRt/QfDpMLRzu9xCiEhXxdZL2OM4eeWxTH5/5Ua9zZY+EuStHr9RSq/mdRSf6y0R1PYx7Bq5wCBJRD67itJEwR23NCGluA+LLAPL9Sbm2gDhoqx4p/8vZZuG58A6vR1YuoxwXFaGbINMbOKYDfcs+Oiwnts/aL+uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2r7wGhyb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C34FC116B1;
-	Wed, 12 Jun 2024 14:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718203342;
-	bh=fIyHMCmdFag/kreazotdgSfqaaLxX6azOoYs64Naiq8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2r7wGhybYveJ0OLks02tsdo8uWtqpEFFUrtDCrsXCKYC1H7xvfiNjkI9VxsQ345hk
-	 TJKFXsJYUE9xA7aEoZdI9C2Va7O2R3Yd0hrKq8OC0ZkL3c5HWp82SMRze2saG2/DHQ
-	 icYL9JmNEzpNy+dkQ2CDZOVDP7TwVbPDBXqoCCAs=
-Date: Wed, 12 Jun 2024 16:42:20 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>,
-	Frank Oltmanns <frank@oltmanns.dev>, stable@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
-	Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and
- maximum rate
-Message-ID: <2024061208-trapping-diminish-fda6@gregkh>
-References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
- <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
- <yw1xo78z8ez0.fsf@mansr.com>
- <c4c1229c-1ed3-4b6e-a53a-e1ace2502ded@oltmanns.dev>
- <yw1x4jap90va.fsf@mansr.com>
- <yw1xo78w73uv.fsf@mansr.com>
- <8be80682-067a-4685-9830-cfed0287e617@leemhuis.info>
+	s=arc-20240116; t=1718203415; c=relaxed/simple;
+	bh=PjcM7rP+hBRDz6EYnrDQ84eaIe1J2+pJjc+pb92wRfk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lmkrl3eAfZuCFlH+Xg2cFyvm8WKubgFmqFGa+yu4zgX6ZHwkrK+vshlljscuE+QFtOd9KocF2VaISDfxC04KulhiyGvdx4a8NqYbtTxO/UXVh0nh8d+covsT3OPGEAxB4n6+GY/URC1My/kZE5GfntUXXD+rNybHxntzabHmBeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e5kasKSA; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ead2c6b50bso74753311fa.0;
+        Wed, 12 Jun 2024 07:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718203412; x=1718808212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bW83Ak87jUa6osjdXWew6iZXQucAO5XQn2fmjPBjnz8=;
+        b=e5kasKSA4zi1BBda0pXYoKtmWhBmPMxrRvyTo+12a2oJzv8X/wZdEp12sRwwYKZlTv
+         1kM1zhDIXZYe3fS5RkIGhtxVmtLjpT+9blEcPnOi2UZfT0J0Z4nwV3I1zsGkEoJSUHZt
+         JBKrAkSILMd8HJs27yg7S+DAXQm8Vo/+LMCc37/ZXQDMIVnRMYAworFMAPEtsNAtHn0g
+         fAEPZNUASOVuf2YWBZaWcOT77MR84td22yd1tqNwuqWH2IevY/quIW3XPZaegS7EQ/Ub
+         Uu7aASdT4OlUqv+hE1BNR++F8qeMcfvpjKSgaC3GgL5kzPphilDNZF2LrLGte6Yp+UpR
+         tPmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718203412; x=1718808212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bW83Ak87jUa6osjdXWew6iZXQucAO5XQn2fmjPBjnz8=;
+        b=FIWMT4hybq3jit/g+e9uliBPqEuT3e/ZN68drnD4dEhwj66cLlWg71YC5I8mS1+pPd
+         yWUeI2Eb/Mywq3VsZVjlTmcF8jXkSg3aQ0joisitRjN2lXdhV/GI93ayX6jpVBmR8dR3
+         lIipG1uXq1ujQyBnc1Ol/Dyas35G0+XGNXvly/evqg2bL4d6xfVN/v5lfSYXio3Ny8/4
+         DU1I8dPAulzw3kdQp4gDXXZiTYXhPrxkla6TLdj2HnFXX6ynZJ+frRWzL+1KexX4Sly4
+         cG24qRMjBRi6LCIwrlwSMfffdsEQJOoL8xXAYq92yltGyr7UplUmqI7BtqPcbgCTrobD
+         JZLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPtjLdfSt7uUSYm4k11NMSVMtr4SCFcWv7oEbTwQ4/1glu3MNDhdtMddINasbQnKCc+dUWSzvWKJXsTdbslwohRIHTO1ZoLLKGqlO0tiMAoE1+ypxI9olWR1Q5RzzncyxxcQuNVQkxx3JuZ2+UK7u5qcIXT+w0cFy2MjRbiKh0v6k/I1lO1NkkV8kKYNGa4HUCYZhgH6pYqvcg1cK5CwdFpQ==
+X-Gm-Message-State: AOJu0Yzdyj3T9LS6jS2ctfk+udnZNwgKDmOcqfNU/TQq6X2LHD8snHYl
+	1SsE/bcEMbZWcUY0ATfPB8amEuv4xm3G9nsVsRy9eLb1TCBZuDpgx+qs2DEa479a8r1KLo5EDte
+	dIm4eAoXrVOcaYOouJzcMu0MB+o082g==
+X-Google-Smtp-Source: AGHT+IGQSGKNUT6oh75ga9xXvvQMfdbkcrqzvWbotM/qwavxY69bbecS6VLhkRiwusswe/oDi6UAgpW8vIWNrooEw8U=
+X-Received: by 2002:a2e:a796:0:b0:2eb:fda7:e35f with SMTP id
+ 38308e7fff4ca-2ebfda7e40bmr12880991fa.5.1718203411907; Wed, 12 Jun 2024
+ 07:43:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8be80682-067a-4685-9830-cfed0287e617@leemhuis.info>
+References: <20240612075829.18241-1-brgl@bgdev.pl>
+In-Reply-To: <20240612075829.18241-1-brgl@bgdev.pl>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Wed, 12 Jun 2024 10:43:19 -0400
+Message-ID: <CABBYNZLrwgj848w97GP+ijybt-yU8yMNnW5UWhb2y5Zq6b5H9A@mail.gmail.com>
+Subject: Re: [GIT PULL] Immutable tag between the Bluetooth and pwrseq
+ branches for v6.11-rc1
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 03:28:01PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 23.05.24 20:58, Måns Rullgård wrote:
-> > Måns Rullgård <mans@mansr.com> writes:
-> >> Frank Oltmanns <frank@oltmanns.dev> writes:
-> >>> 21.05.2024 15:43:10 Måns Rullgård <mans@mansr.com>:
-> >>>> Frank Oltmanns <frank@oltmanns.dev> writes:
-> >>>>
-> >>>>> The Allwinner SoC's typically have an upper and lower limit for their
-> >>>>> clocks' rates. Up until now, support for that has been implemented
-> >>>>> separately for each clock type.
-> >>>>>
-> >>>>> Implement that functionality in the sunxi-ng's common part making use of
-> >>>>> the CCF rate liming capabilities, so that it is available for all clock
-> >>>>> types.
-> >>>>>
-> >>>>> Suggested-by: Maxime Ripard <mripard@kernel.org>
-> >>>>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> >>>>> Cc: stable@vger.kernel.org
-> >>>>> ---
-> >>>>> drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
-> >>>>> drivers/clk/sunxi-ng/ccu_common.h |  3 +++
-> >>>>> 2 files changed, 22 insertions(+)
-> >>>>
-> >>>> This just landed in 6.6 stable, and it broke HDMI output on an A20 based
-> >>>> device, the clocks ending up all wrong as seen in this diff of
-> >>>> /sys/kernel/debug/clk/clk_summary:
-> > [...]
-> > 
-> >>>> Reverting this commit makes it work again.
-> >>> Thank you for your detailed report!
-> > [...]
-> > It turns out HDMI output is broken in v6.9 for a different reason.
-> > However, this commit (b914ec33b391 clk: sunxi-ng: common: Support
-> > minimum and maximum rate) requires two others as well in order not
-> > to break things on the A20:
-> > 
-> > cedb7dd193f6 drm/sun4i: hdmi: Convert encoder to atomic
-> > 9ca6bc246035 drm/sun4i: hdmi: Move mode_set into enable
-> > 
-> > With those two (the second depends on the first) cherry-picked on top of
-> > v6.6.31, the HDMI output is working again.  Likewise on v6.8.10.
-> 
-> They from what I can see are not yet in 6.6.y or on their way there (6.8
-> is EOL now). Did anyone ask Greg to pick this up? If not: Månsm could
-> you maybe do that? CCing him on a reply and asking is likely enough if
-> both changes apply cleanly.
+Hi Bartosz,
 
-Both now queued up, thanks.
+On Wed, Jun 12, 2024 at 3:59=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Hi Marcel, Luiz,
+>
+> Please pull the following power sequencing changes into the Bluetooth tre=
+e
+> before applying the hci_qca patches I sent separately.
+>
+> Link: https://lore.kernel.org/linux-kernel/20240605174713.GA767261@bhelga=
+as/T/
+>
+> The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa6=
+70:
+>
+>   Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/pwrse=
+q-initial-for-v6.11
+>
+> for you to fetch changes up to 2f1630f437dff20d02e4b3f07e836f42869128dd:
+>
+>   power: pwrseq: add a driver for the PMU module on the QCom WCN chipsets=
+ (2024-06-12 09:20:13 +0200)
+>
+> ----------------------------------------------------------------
+> Initial implementation of the power sequencing subsystem for linux v6.11
+>
+> ----------------------------------------------------------------
+> Bartosz Golaszewski (2):
+>       power: sequencing: implement the pwrseq core
+>       power: pwrseq: add a driver for the PMU module on the QCom WCN chip=
+sets
 
-greg k-h
+Is this intended to go via bluetooth-next or it is just because it is
+a dependency of another set? You could perhaps send another set
+including these changes to avoid having CI failing to compile.
+
+>  MAINTAINERS                                |    8 +
+>  drivers/power/Kconfig                      |    1 +
+>  drivers/power/Makefile                     |    1 +
+>  drivers/power/sequencing/Kconfig           |   29 +
+>  drivers/power/sequencing/Makefile          |    6 +
+>  drivers/power/sequencing/core.c            | 1105 ++++++++++++++++++++++=
+++++++
+>  drivers/power/sequencing/pwrseq-qcom-wcn.c |  336 +++++++++
+>  include/linux/pwrseq/consumer.h            |   56 ++
+>  include/linux/pwrseq/provider.h            |   75 ++
+>  9 files changed, 1617 insertions(+)
+>  create mode 100644 drivers/power/sequencing/Kconfig
+>  create mode 100644 drivers/power/sequencing/Makefile
+>  create mode 100644 drivers/power/sequencing/core.c
+>  create mode 100644 drivers/power/sequencing/pwrseq-qcom-wcn.c
+>  create mode 100644 include/linux/pwrseq/consumer.h
+>  create mode 100644 include/linux/pwrseq/provider.h
+
+
+
+--=20
+Luiz Augusto von Dentz
 
