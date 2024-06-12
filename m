@@ -1,220 +1,84 @@
-Return-Path: <linux-kernel+bounces-211700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E6299055A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:48:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57F49055AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E37DF28AABC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:48:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE141C22313
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CB917FAB6;
-	Wed, 12 Jun 2024 14:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B50317F4E3;
+	Wed, 12 Jun 2024 14:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="grGqWBkB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AUhSppyo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528C21E504;
-	Wed, 12 Jun 2024 14:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793101E504;
+	Wed, 12 Jun 2024 14:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718203664; cv=none; b=SLO86olC37nGUwDl4inOE7HqfzNhey+H//p7Krv8eQyXnA5OYRnTqV3vBfB67WffvaF//3cNFnk6zYmdv82e+aNDMrGf0iSOOX9xRFLAHulnQwS67/llMjNsXfx/nHow5gXfRWMR1Vw+X6idJ7uY9S8ZBtsOejJfCdktVckCP9I=
+	t=1718203687; cv=none; b=bN1HT8lVYZKdr/WqQqB1+JLy/g19kASDxmEcCoJubDHA7V+APbVB96xWFDBQjzRoGxmbpWfMxvfn6mPWi+dZMD6LWVUsaw/5JN+Rl7xl2iqq5iFwETM5JhKXzl32qy0GMYdxYoemio/Xpxo9FSWFa8RWzLcM+6P70oDyDiJeM28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718203664; c=relaxed/simple;
-	bh=afYKfX5WiT24a7vRcOHvX/frxR+u+IAFVv0AQdtNlWs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lzzHYRp813k/cuM3XLTZw3zt5OE3fK8MTEwH5iujQjQJq9LK2go/h+fjsS7+kCkPYyD4D62Q6/5iF0obty8uLuIM4D7Eoryy+zgEkRy++VPioCh5pOITz2uBaDOmSe2koPzZEJcNFZsGWD6G/aowTXHg4xbaYBalLSr5SI4sbFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=grGqWBkB; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718203663; x=1749739663;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=afYKfX5WiT24a7vRcOHvX/frxR+u+IAFVv0AQdtNlWs=;
-  b=grGqWBkBrKX6Msb/pvvAOHn2rH4uV6Qb4CJO1tFzD+6GU18XlXSAXUWd
-   oAqBUpmV20lrCMDqbIW7gf+JUeJ5efRIYEFlpa4/rBRMVhb6PuVMrhq6i
-   3jR2/G2RcbpqfaxoniGJoeOKy31B4d+8uYv+V9mpLABrfVd5ZUj+COHm0
-   tx21xtLqs5F23FhWS5j2q5bRfjp/nalZL/xLjNyVzTgTYDwbVr0VdjN0U
-   /BtxqqgXrSKRknC/Y55XC2nGOzAHqTQYVQ0q+FeTnLOBjLMiQcAJ+B/SR
-   p+MKvpLnPW+5Oto47i9YhHk/FXrg3HXpCXRFkmh2cL5iLZ4/YdW15U2QG
-   g==;
-X-CSE-ConnectionGUID: jWqhhuq5RhGZ7B+MzB90kg==
-X-CSE-MsgGUID: O1xhuSP7TYm6zrnXWMr0HA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="14846470"
-X-IronPort-AV: E=Sophos;i="6.08,233,1712646000"; 
-   d="scan'208";a="14846470"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 07:47:41 -0700
-X-CSE-ConnectionGUID: lXJttGFaTCK21oTjZ4kGZw==
-X-CSE-MsgGUID: iGl843MOR66bAy93XUaE6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,233,1712646000"; 
-   d="scan'208";a="44375086"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.0.53]) ([10.94.0.53])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 07:47:36 -0700
-Message-ID: <5be51e1f-70c9-4bbc-96fa-1e50e441bd35@linux.intel.com>
-Date: Wed, 12 Jun 2024 16:47:34 +0200
+	s=arc-20240116; t=1718203687; c=relaxed/simple;
+	bh=gIuOYfz93n8dSbxaF6xUILMdMtwvKuPRkUX+zeecAKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1LFb52wmKrMpqKM2PGaBWUkp/mnk2UOCOmadpbw+YG0eRvxkioetw0d19ZSSK3oIgBLGFW1loNnAu3WM0XHV1ZMXmm1KaAgQVoi9QYbxT/SpHInRJQHqYfenJZlGjUHB981uahcu8E8gQdZBOZSD3dK+4JqACiSSa6/w5WOHnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AUhSppyo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 695EEC116B1;
+	Wed, 12 Jun 2024 14:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718203687;
+	bh=gIuOYfz93n8dSbxaF6xUILMdMtwvKuPRkUX+zeecAKU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AUhSppyowsRAhKMbeg3vEuP/5Y45fwXYI0mxxW89h4nOx5NS7rF4pWv/SYGu/CW21
+	 AC7eO/BbZKnj+y2vlp7UDvV+yOKgzjVqTWHQYnpKnpCgP+cDbS7KEFG8p1Dmw9DcAV
+	 /U9rCCoifJGVK1kWKk24zcNge8Hqn/D3TIZO32uo=
+Date: Wed, 12 Jun 2024 16:48:04 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Kuntal Nayak <kuntal.nayak@broadcom.com>
+Cc: stable@vger.kernel.org, pablo@netfilter.org, kadlec@netfilter.org,
+	fw@strlen.de, davem@davemloft.net, kuba@kernel.org,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ajay.kaher@broadcom.com, alexey.makhalov@broadcom.com,
+	vasavi.sirnapalli@broadcom.com
+Subject: Re: [PATCH 1/2 v5.10] netfilter: nf_tables: restrict tunnel object
+ to NFPROTO_NETDEV
+Message-ID: <2024061254-crayfish-gory-e4b8@gregkh>
+References: <20240607213735.46127-1-kuntal.nayak@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB
-Content-Language: en-US
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
- robh@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
- <20240610235808.22173-33-quic_wcheng@quicinc.com>
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <20240610235808.22173-33-quic_wcheng@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607213735.46127-1-kuntal.nayak@broadcom.com>
 
-On 6/11/2024 1:58 AM, Wesley Cheng wrote:
-
-(...)
-
-> +In the case where the USB offload driver is unbounded, while USB SND is
-
-unbounded -> unbound
-
-(...)
-
-> +SOC USB and USB Sound Kcontrols
-> +===============================
-> +Details
-> +-------
-> +SOC USB and USB sound expose a set of SND kcontrols for applications to select
-> +and fetch the current offloading status for the ASoC platform sound card. Kcontrols
-> +are split between two layers:
-> +
-> +	- USB sound - Notifies the sound card number for the ASoC platform sound
-> +	  card that it is registered to for supporting audio offload.
-> +
-> +	- SOC USB - Maintains the current status of the offload path, and device
-> +	  (USB sound card and PCM device) information.  This would be the main
-> +	  card that applications can read to determine offloading capabilities.
-> +
-> +Implementation
-> +--------------
-> +
-> +**Example:**
-> +
-> +  **Sound Cards**:
-> +
-> +	::
-> +
-> +	  0 [SM8250MTPWCD938]: sm8250 - SM8250-MTP-WCD9380-WSA8810-VA-D
-> +                     SM8250-MTP-WCD9380-WSA8810-VA-DMIC
-> +	  1 [C320M          ]: USB-Audio - Plantronics C320-M
-> +                     Plantronics Plantronics C320-M at usb-xhci-hcd.1.auto-1, full speed
-> +
-> +
-> +  **Platform Sound Card** - card#0:
-> +
-> +	::
-> +
-> +	  USB Offload Playback Route Card Select  1 (range -1->32)
-> +	  USB Offload Playback Route PCM Select   0 (range -1->255)
-> +	  USB Offload Playback Route Card Status  -1 (range -1->32)
-> +	  USB Offload Playback Route PCM Status   -1 (range -1->255)
-> +
-> +
-> +  **USB Sound Card** - card#1:
-> +
-> +	::
-> +
-> +	  USB Offload Playback Capable Card         0 (range -1->32)
-> +
-> +
-> +The platform sound card(card#0) kcontrols are created as part of adding the SOC
-> +USB device using **snd_soc_usb_add_port()**.  The following kcontrols are defined
-> +as:
-> +
-> +  - ``USB Offload Playback Route Card Status`` **(R)**: USB sound card device index
-> +    that defines which USB SND resources are currently offloaded.  If -1 is seen, it
-> +    signifies that offload is not active.
-> +  - ``USB Offload Playback Route PCM Status`` **(R)**: USB PCM device index
-> +    that defines which USB SND resources are currently offloaded.  If -1 is seen, it
-> +    signifies that offload is not active.
-> +  - ``USB Offload Playback Route Card Select`` **(R/W)**: USB sound card index which
-> +    selects the USB device to initiate offloading on.  If no value is written to the
-> +    kcontrol, then the last USB device discovered card index will be chosen.
-
-I see only one kcontrol, what if hardware is capable of offloading on 
-more cards, is it possible to do offloading on more than one device?
-
-> +  - ``USB Offload Playback Route PCM Select`` **(R/W)**: USB PCM index which selects
-> +    the USB device to initiate offloading on.  If no value is written to the
-> +    kcontrol, then the last USB device discovered PCM zero index will be chosen.
-> +
-> +The USB sound card(card#1) kcontrols are created as USB audio devices are plugged
-> +into the physical USB port and enumerated.  The kcontrols are defined as:
-> +
-> +  - ``USB Offload Playback Capable Card`` **(R)**: Provides the sound card
-> +    number/index that supports USB offloading.  Further/follow up queries about
-> +    the current offload state can be handled by reading the offload status
-> +    kcontrol exposed by the platform card.
-> +
-
-
-Why do we need to some magic between cards? I feel like whole kcontrol 
-thing is overengineered a bit - I'm not sure I understand the need to do 
-linking between cards. It would feel a lot simpler if USB card exposed 
-one "USB Offload" kcontrol on USB card if USB controller supports 
-offloading and allowed to set it to true/false to allow user to choose 
-if they want to do offloading on device.
-
-(...)
-> +Mixer Examples
-> +--------------
-> +
-> +	::
-> +
-> +	  tinymix -D 0 set 'USB Offload Playback Route Card Select' 2
-> +	  tinymix -D 0 set 'USB Offload Playback Route PCM Select' 0
-> +
-> +
-> +	::
-> +
-> +	  tinymix -D 0 get 'USB Offload Playback Route Card Select'
-> +	  --> 2 (range -1->32)
-> +	  tinymix -D 0 get 'USB Offload Playback Route PCM Select'
-> +	  --> 0 (range -1->255)
-> +
-> +	::
-> +
-> +	  tinymix -D 0 get 'USB Offload Playback Route Card Status'
-> +	  --> 2 (range -1->32)   [OFFLD active]
-> +	  --> -1 (range -1->32) [OFFLD idle]
-> +	  tinymix -D 0 get 'USB Offload Playback Route PCM Status'
-> +	  --> 0 (range -1->255)   [OFFLD active]
-> +	  --> -1 (range -1->255) [OFFLD idle]
-> +
-> +	::
-> +
-> +	  tinymix -D 1 get 'USB Offload Playback Capable Card'
-> +	  --> 0 (range -1->32)
+On Fri, Jun 07, 2024 at 02:37:34PM -0700, Kuntal Nayak wrote:
+> From: Pablo Neira Ayuso <pablo@netfilter.org>
 > 
+> [ upstream commit 776d451648443f9884be4a1b4e38e8faf1c621f9 ]
+> 
+> Bail out on using the tunnel dst template from other than netdev family.
+> Add the infrastructure to check for the family in objects.
+> 
+> Fixes: af308b94a2a4 ("netfilter: nf_tables: add tunnel support")
+> Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+> [KN: Backport patch according to v5.10.x source]
+> Signed-off-by: Kuntal Nayak <kuntal.nayak@broadcom.com>
+> ---
+>  include/net/netfilter/nf_tables.h |  2 ++
+>  net/netfilter/nf_tables_api.c     | 14 +++++++++-----
+>  net/netfilter/nft_tunnel.c        |  1 +
+>  3 files changed, 12 insertions(+), 5 deletions(-)
 
-Yes, looking at examples again, I'm still not sure I understand. There 
-are two cards and you do linking between them, this feels broken by 
-design. From my point of view USB Offload should be property of USB card 
-and not involve any other card in a system.
+Both now queued up, thanks.
 
+greg k-h
 
