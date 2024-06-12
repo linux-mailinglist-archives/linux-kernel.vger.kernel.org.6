@@ -1,290 +1,140 @@
-Return-Path: <linux-kernel+bounces-211752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1A4905669
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:09:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B77BF905639
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CFAE288D1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:09:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54DF5B22E04
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72EB17F505;
-	Wed, 12 Jun 2024 15:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCD317F4F9;
+	Wed, 12 Jun 2024 15:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HCDWKm2J"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQTL64+m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3BB183085;
-	Wed, 12 Jun 2024 15:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3181DDF6;
+	Wed, 12 Jun 2024 15:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718204715; cv=none; b=BAARXZQO0Oh9xmgIeGlKtLiqBB+TjE1W0DB2DhjNF1B6k7u7R3yyIfofN/uSurXwanyNoPGvImVsohOhj9kc3wEX/1JteL1ANtv4kYFgaeGKlug7/p6filweuzSbcg262ZiIOKaDzStHeMIgeqUHsR2/UEc+GHv7h/NWWYsLRNg=
+	t=1718204688; cv=none; b=Wtx+dq7HaoZKa776jp7eR/qMZ5yN+HNlpO+HCZkpvMTOAmEJ4AnhHzMZLR8Ad08SvkfLFDXJ7o0pwb+tKkuIJyzwxCy6sVDkfYCU2MXAQCW26GUecOSfSvhEfHe7HJzIGAHV7czGjKEi9elEg+e+E3SdCbNFWLM0ZmfPOyRqiVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718204715; c=relaxed/simple;
-	bh=5SC4SCTap6xR5jJu0SFRaajHz4hnnGaOKkU6KevpGPI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GqtNyYu1R0Ox6IJPJyuUhz7Fj2BbhPF/VaUleTxJ5x0e34E4oxcJPoi+IO+Dkl3XL+vMX1Yon3NobLa48lP4Ffii0UYBU7v0Xsrrih7L5+l8iMrkWv6x1rl//VLh3fYrdNoHodG8BeWlEnIr5qjpiTY5kVuEQm+jfOB6gXbiQOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HCDWKm2J; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AB38340007;
-	Wed, 12 Jun 2024 15:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718204711;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4D/WDNBi2rRpqkB1dWLbSf8v7lY2RM4BPVKzd1iG1gE=;
-	b=HCDWKm2Jz0j09St0m+hqKcgJq9i6HTr4R1KGewOixWh18CDp9XZ7+OEMzVoz/9IHO74x59
-	N6EfXI0SzzBaXJzZ81jZXueg4swShRenrjCYJd7q0vkkg+mGHy7MuLCMnhl2spxFbkZEER
-	O/vxQ8xnD8MxgRaBvYtI/D6vg3BqzoP06i++lDOGWGVWUK5QgvVTL4VV6/g/U6Bc3ugAH0
-	inKWr9CSxP6mSC0oPp7qli4amBWiKiYY1ZzShZL3MRrN2ND7QdgXRvYV/kquk9PtTcF02m
-	7AaIJjf+zbqoJmdZa0oIQvOaa0UmBo6NKP0iymaPh+2BSErR6+e1dzyNOu7TZQ==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Wed, 12 Jun 2024 17:04:14 +0200
-Subject: [PATCH net-next v15 14/14] netlink: specs: tsinfo: Enhance netlink
- attributes and add a set command
+	s=arc-20240116; t=1718204688; c=relaxed/simple;
+	bh=4mJ2JcUDVyd/bz6lXNXn2sgwg3vdEufQ7VUArRgiut8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nW3Q8wDf6keysNtAGaN2sBSCgn7ETNG9hV/OuW35GGoC/NmqAqPB5QRd+hWRh6cd1i/y4nUR4kHU85WLXck6tYayKHxmCOcLHWl8I/d6wjSwhGx5z4Sh1lnfDb8lrm0bDJV4l1UQJckmZMNnZdt1w1rXPqF6VNCCJoJ++oU7YIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQTL64+m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74679C116B1;
+	Wed, 12 Jun 2024 15:04:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718204688;
+	bh=4mJ2JcUDVyd/bz6lXNXn2sgwg3vdEufQ7VUArRgiut8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iQTL64+m+QpAQjEZwurYn65aCF4nU58DW8JNIjv8/C4u4FvcCY0ZuYxNIDRQD9mUr
+	 R4Wg1ztu67eHZr6tLtzCLeIdmO2vmHpvKPhIzAIpR6fG7MeIwc6d3kc0zOWBN/HLQ3
+	 fGlTpmzApCI6oxREOxt3b5xy0BXbaW7/yZHCj2agSzi6N+rcoSxnS3eFa94rRyaQuM
+	 +yYJlZTfV4/YC24RI30pdBs+eWyfML8KWH7h4+CpwATLSfJuh8mp0YrR1sLroksToQ
+	 ekvsONOmTw8dhrXi3bs9R1B41F2zQddoU5sxfBjvyRU6iO4QiRG5BYNNfiEvulbLO2
+	 X2F+S3QjI2XhA==
+Message-ID: <a5357897-9bb3-4297-843d-c97dadc3de4b@kernel.org>
+Date: Wed, 12 Jun 2024 17:04:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: sound: Convert max98088 to dtschema
+To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, lgirdwood@gmail.com,
+ broonie@kernel.org
+Cc: skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240612145903.497758-1-abdulrasaqolawani@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240612145903.497758-1-abdulrasaqolawani@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240612-feature_ptp_netnext-v15-14-b2a086257b63@bootlin.com>
-References: <20240612-feature_ptp_netnext-v15-0-b2a086257b63@bootlin.com>
-In-Reply-To: <20240612-feature_ptp_netnext-v15-0-b2a086257b63@bootlin.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Radu Pirea <radu-nicolae.pirea@oss.nxp.com>, 
- Jay Vosburgh <j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
- Simon Horman <horms@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Rahul Rameshbabu <rrameshbabu@nvidia.com>, 
- Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.13.0
-X-GND-Sasl: kory.maincent@bootlin.com
 
-Add new attributed to tsinfo allowing to get the tsinfo and the hwtstamp
-from a phc provider (composed by a phc index and a phc qualifier) on a
-netdevice's link.
-Add simultaneously a set command to be able to set hwtstamp configuration
-for a specified phc provider.
+On 12/06/2024 16:59, Abdulrasaq Lawani wrote:
+> Convert the max98088 audio codec txt bindings to DT schema.
+> 
+> Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+> ---
+> Validated with dtschema and tested against samsung/exynos5800-peach-pi.dts.
 
-Here is few examples:
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema
-             --dump tsinfo-get
-             --json '{"header":{"dev-name":"eth0"}}'
-[{'header': {'dev-index': 3, 'dev-name': 'eth0'},
-  'hwtst-provider': {'index': 0, 'qualifier': 0},
-  'phc-index': 0,
-  'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                  {'index': 2, 'name': 'some'}]},
-                 'nomask': True,
-                 'size': 16},
-  'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                    {'index': 2, 'name': 'hardware-receive'},
-                                    {'index': 6,
-                                     'name': 'hardware-raw-clock'}]},
-                   'nomask': True,
-                   'size': 17},
-  'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                                {'index': 1, 'name': 'on'}]},
-               'nomask': True,
-               'size': 4}},
- {'header': {'dev-index': 3, 'dev-name': 'eth0'},
-  'hwtst-provider': {'index': 2, 'qualifier': 0},
-  'phc-index': 2,
-  'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                  {'index': 1, 'name': 'all'}]},
-                 'nomask': True,
-                 'size': 16},
-  'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                    {'index': 1, 'name': 'software-transmit'},
-                                    {'index': 2, 'name': 'hardware-receive'},
-                                    {'index': 3, 'name': 'software-receive'},
-                                    {'index': 4,
-                                     'name': 'software-system-clock'},
-                                    {'index': 6,
-                                     'name': 'hardware-raw-clock'}]},
-                   'nomask': True,
-                   'size': 17},
-  'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                                {'index': 1, 'name': 'on'},
-                                {'index': 2, 'name': 'onestep-sync'}]},
-               'nomask': True,
-               'size': 4}}]
+What?
 
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-get
-             --json '{"header":{"dev-name":"eth0"},
-                      "hwtst-provider":{"index":0, "qualifier":0 }
-}'
-{'header': {'dev-index': 3, 'dev-name': 'eth0'},
- 'hwtst-provider': {'index': 0, 'qualifier': 0},
- 'phc-index': 0,
- 'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                 {'index': 2, 'name': 'some'}]},
-                'nomask': True,
-                'size': 16},
- 'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                   {'index': 2, 'name': 'hardware-receive'},
-                                   {'index': 6, 'name': 'hardware-raw-clock'}]},
-                  'nomask': True,
-                  'size': 17},
- 'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                               {'index': 1, 'name': 'on'}]},
-              'nomask': True,
-              'size': 4}}
+This is not a codec for this board. You are mixing now
+Documentation/devicetree/bindings/sound/maxim,max98090.yaml
 
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-set
-             --json '{"header":{"dev-name":"eth0"},
-                      "hwtst-provider":{"index":2, "qualifier":0}}'
-None
+Whatever you validated against Peach Pi DTS is wrong or not enough. You
+need to validate it against DTS using this binding.
 
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-get
-             --json '{"header":{"dev-name":"eth0"}, "ghwtstamp":1}'
-{'header': {'dev-index': 3, 'dev-name': 'eth0'},
- 'hwtst-flags': 1,
- 'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'}]},
-                'nomask': True,
-                'size': 16},
- 'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'}]},
-              'nomask': True,
-              'size': 4}}
 
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-set
-             --json '{"header":{"dev-name":"eth0"},
-                      "rx-filters":{"bits": {"bit": {"name":"ptpv2-l4-event"}},
-                                    "nomask": 1},
-                      "tx-types":{"bits": {"bit": {"name":"on"}},
-                                  "nomask": 1}}'
-None
+> +
+> +maintainers:
+> +  - Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - maxim,max98088
+> +      - maxim,max98091
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
+91? You meant 89...
 
-Changes in v8:
-- New patch
-
-Changes in v10:
-- Add ghwtstamp attributes
-- Add tsinfo ntf command
-
-Changes in v11:
-- Add examples in the commit message.
-
-Changes in v13:
-- Replace shorter name by real name.
-- Fix an issue reported by "make -C tools/net/ynl" on the namings.
----
- Documentation/netlink/specs/ethtool.yaml | 43 +++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
-index 00dc61358be8..80484908c5ee 100644
---- a/Documentation/netlink/specs/ethtool.yaml
-+++ b/Documentation/netlink/specs/ethtool.yaml
-@@ -576,6 +576,15 @@ attribute-sets:
-       -
-         name: tx-err
-         type: uint
-+  -
-+    name: tsinfo-hwtstamp-provider
-+    attributes:
-+      -
-+        name: index
-+        type: u32
-+      -
-+        name: qualifier
-+        type: u32
-   -
-     name: tsinfo
-     attributes:
-@@ -602,6 +611,16 @@ attribute-sets:
-         name: stats
-         type: nest
-         nested-attributes: ts-stat
-+      -
-+        name: ghwtstamp
-+        type: u8
-+      -
-+        name: hwtstamp-provider
-+        type: nest
-+        nested-attributes: tsinfo-hwtstamp-provider
-+      -
-+        name: hwtstamp-flags
-+        type: u32
-   -
-     name: cable-result
-     attributes:
-@@ -1406,7 +1425,7 @@ operations:
-       notify: eee-get
-     -
-       name: tsinfo-get
--      doc: Get tsinfo params.
-+      doc: Get tsinfo params or hwtstamp config.
- 
-       attribute-set: tsinfo
- 
-@@ -1414,6 +1433,8 @@ operations:
-         request:
-           attributes:
-             - header
-+            - ghwtstamp
-+            - hwtstamp-provider
-         reply:
-           attributes:
-             - header
-@@ -1422,6 +1443,8 @@ operations:
-             - rx-filters
-             - phc-index
-             - stats
-+            - hwtstamp-provider
-+            - hwtstamp-flags
-       dump: *tsinfo-get-op
-     -
-       name: cable-test-act
-@@ -1730,3 +1753,21 @@ operations:
-       name: mm-ntf
-       doc: Notification for change in MAC Merge configuration.
-       notify: mm-get
-+    -
-+      name: tsinfo-set
-+      doc: Set hwtstamp.
-+
-+      attribute-set: tsinfo
-+
-+      do:
-+        request:
-+          attributes:
-+            - header
-+            - tx-types
-+            - rx-filters
-+            - hwtstamp-provider
-+            - hwtstamp-flags
-+    -
-+      name: tsinfo-ntf
-+      doc: Notification for change in tsinfo configuration.
-+      notify: tsinfo-get
-
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
