@@ -1,144 +1,123 @@
-Return-Path: <linux-kernel+bounces-212146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12155905BD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:19:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0446905BDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78FA328731F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:19:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 711E31F24B24
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8070D8288C;
-	Wed, 12 Jun 2024 19:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98D5839E5;
+	Wed, 12 Jun 2024 19:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GX1JoK2x"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KcKZGMtj"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268018286F;
-	Wed, 12 Jun 2024 19:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB1282C7D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 19:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718219955; cv=none; b=YkuEqkYBWj0/5c/ZKPHugebc6IU7yuffBKpP3Hnmsz5MaFKpYqjRhGYyAR/foWH1bmOE/mszV0S3C/+6w99rZJwNLqg5EQSuAK4YmoOezudsiEccrjuHSjitV56fStHJGt9lKct9iLjfXYybCH68g6UIjPJC0G7q0GMExomPaYY=
+	t=1718220103; cv=none; b=TRh0rmo/0wytHlUFbr2qTdSGYG0mcHH56xyXbbWYyaY1QGsSo8pfX9l9d7YCH1c6nb/IcfnXC8QbROpw+f3AtF4VT9uUb0mkmN16e41aYDEJF+9g2V/YROGK8qXqVdv7qmeIdzojr31NbRgoMc1M1k0TQ5QJfLAzyO4x8rFz9WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718219955; c=relaxed/simple;
-	bh=niwOHHHq1Pwi5UhfM/Dq1+zY+w/chSzv/sf526DJhOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ExbBhhENgwm1qwxriuZNWTBjOjTITtvgp4gti4V8WaR57yVN8jvLj/9j6TPTirUIO29pXV8pIymLrwnwL2gTKTxEf6LywRFw7MFpwMOgDVjvZRwB83OuV81OgEypsBKY5QWoHmAaHbuvPmiXyQjrE6GJu3GaYTqv5oRSRuAiX4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GX1JoK2x; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718219954; x=1749755954;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=niwOHHHq1Pwi5UhfM/Dq1+zY+w/chSzv/sf526DJhOI=;
-  b=GX1JoK2xcW9TffD4RoReFXB3VkKOijOJjZS7eM0OVVVxSoVDcyO9JXmK
-   KHE3KWN/RJrz4EI4q88/HpM3ENKcuofXTqI97sdWTJTzp9NGTFO2xR+cs
-   uitQOeAH9GTM3L3tSKOGxzOJuTJSRkrg40haJRa+1f2+qe3HUVzAm89jt
-   X2ippfIytRXBIivL5ugtMjx5tyvBXWeLVwmK2pSv4gsEWQXNZUQ5oiPk/
-   Zfg6wqiLhct+7PPRlM5tVqao6dYMxOCEloHq66c8RlF0Jx1eOlHz7L54B
-   VfdmqPFINIbawvMSkyZ8+qk8gCkUoOBD9q53ioHK1cTx1kosMqgl7Hdoz
-   w==;
-X-CSE-ConnectionGUID: AnJL/7LeRQmcbaoYKO4nXw==
-X-CSE-MsgGUID: kidXO9rOThaFMLBVuRL42A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="14883212"
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="14883212"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 12:19:13 -0700
-X-CSE-ConnectionGUID: yDcCwTnyS96DAFSY7TSunA==
-X-CSE-MsgGUID: eHyHzQJyR4GUPDhj8me4lA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="39781836"
-Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 12 Jun 2024 12:19:11 -0700
-Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sHTUy-0001rA-0x;
-	Wed, 12 Jun 2024 19:19:08 +0000
-Date: Thu, 13 Jun 2024 03:18:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Raymond Hackley <raymondhackley@protonmail.com>,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Markuss Broks <markuss.broks@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Nikita Travkin <nikita@trvn.ru>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 2/3] input/touchscreen: imagis: Add supports for Imagis
- IST3038
-Message-ID: <202406130336.wSgshW3L-lkp@intel.com>
-References: <20240612032036.33103-3-raymondhackley@protonmail.com>
+	s=arc-20240116; t=1718220103; c=relaxed/simple;
+	bh=Uu9Gleg1ASn8Dt7yA/1zARp3BFz8u1dMTh4oQIDHX/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NgcF1gMoF+9n2KRmTGa8/oxIeIrB5qnT135BsBceTkLl4sGf9Q87ACeZKaXg3ThE0WzM2rSSfRkKIVERn68CdIwcFWqE5igREM365mgfQEdVHjhNIxiTobOBYrcydOgnE6Rg/sDikpvi1/4f9BiitjCBP3a8eCXl6hqAuJqAYFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KcKZGMtj; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d228309540so83423b6e.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 12:21:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718220101; x=1718824901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qXy7VIHll/aDTcqBYwLAggajOlv8GzK8EL/ET9q9bCA=;
+        b=KcKZGMtjmLVLw4epSZX5OqQkJsCAg+UA7HPZq6UhQd1JWuFWhrAqXCr/ajHlAhWs9/
+         eSR8B2v/5FMnnHCk/aklpVNhGJD5pAEZTxBjwUmSSUzcutRglcW+UpVGhce94o8vu28B
+         9mckY/Pg11StuYVVBUI+ES5mgb1KzRP9/iGl7Ach+VZpKFPt52OflmtlIaXJkNgRhaSR
+         ztvf7+D9D5VYTIWD5Q+tnsYByG61vX+B65+caYuWdajZGRAVYhhGWS3VyycJ4+qQQkwP
+         LIN7GX3jU4pQX0bGtBO7P3henBTrzWxen/hk/tFa9eLr4fmZkmGMjoSdYRZJx9L/hjsx
+         XPvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718220101; x=1718824901;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qXy7VIHll/aDTcqBYwLAggajOlv8GzK8EL/ET9q9bCA=;
+        b=YFIiJ2YKcOl8GXffYndoC1wMTRZNyBcmenrlKoIalpxt0uAXNZA07V4dYE4+KDwKJ7
+         jqLF1XKeGfFbLIPj2Vpqpbj0PKDKO3Ln0OagD5o8zvASg5oXVldjC23/LnhpMiL683i5
+         Pk0uPhcK9dnC40LqGpVr0GbmLBmilyJKqmlWujsTDmZXKTU77Ui/k4mOh89a3Okn9G6W
+         +pNni5vuJUChdwz5eVqTgW/LX2Qn40+9NiJaswbNnnWjWmgvtFcao8tuCVkuI5IvX0tO
+         V4i2r8yPCaiAyjU6gEbH9px5+LYaWaEGCnzag+sGW5JGt2HZZ2cIjvnhf7Opw6XbL5w/
+         LAmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvgBi0dsMYtsQd+pBV8H2m21SJ9/wLt2rm1TuVC6QtaT5cFQCbIwdD0w+M+1KQL/wRYmi9yBngGy0+tusb7WKDH+JUillyRJ4OAB5V
+X-Gm-Message-State: AOJu0YxEOLlyKM0xwrx1uzcjRg2v47OEP0EuGxGo8GU7AmbPZp2Pc6bK
+	f4f6SvlXt0Ce+e1q3mPsSYJINGe9fpJCDMu8zKPa3De3OwHOurqXPCwlS6bH2wV/NJNdvNh252t
+	T
+X-Google-Smtp-Source: AGHT+IFBYyiezdoccJIdyFcHFDAQu+3md5pmRIFWY9xx0C2Wc0lrAEmMqqvt6hKjm7tETzp01RmbeQ==
+X-Received: by 2002:a05:6808:220b:b0:3d2:2c07:c8af with SMTP id 5614622812f47-3d23e02eeb2mr3374670b6e.25.1718220101047;
+        Wed, 12 Jun 2024 12:21:41 -0700 (PDT)
+Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d236676bfesm648795b6e.12.2024.06.12.12.21.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 12:21:40 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Ramona Gradinariu <ramona.gradinariu@analog.com>
+Subject: [PATCH 0/3] iio: adc: ad4695: new driver for AD4695 and similar ADCs
+Date: Wed, 12 Jun 2024 14:20:39 -0500
+Message-ID: <20240612-iio-adc-ad4695-v1-0-6a4ed251fc86@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612032036.33103-3-raymondhackley@protonmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.12.4
+Content-Transfer-Encoding: 8bit
 
-Hi Raymond,
+This is adding DT bindings and a new driver for the AD4695 and similar
+devices. The plan is to implement quite a few more features, but this
+is a complex chip so we're spreading out the work. To start with, we
+have a reasonably complete DT binding and a very basic driver.
 
-kernel test robot noticed the following build warnings:
+This work is being done in collaboration with Analog Devices Inc.,
+hence they listed as maintainers rather than me. The code has been
+tested on a Zedboard with an EVAL-AD4696FMCZ using the internal LDO,
+an external reference and a variety of input channel configurations.
 
-[auto build test WARNING on dtor-input/next]
-[also build test WARNING on dtor-input/for-linus robh/for-next linus/master v6.10-rc3 next-20240612]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+---
+David Lechner (3):
+      dt-bindings: iio: adc: add AD4695 and similar ADCs
+      iio: adc: ad4695: Add driver for AD4695 and similar ADCs
+      Documentation: iio: Document ad4695 driver
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Raymond-Hackley/input-touchscreen-imagis-Clarify-the-usage-of-protocol_b/20240612-112300
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
-patch link:    https://lore.kernel.org/r/20240612032036.33103-3-raymondhackley%40protonmail.com
-patch subject: [PATCH 2/3] input/touchscreen: imagis: Add supports for Imagis IST3038
-config: i386-randconfig-061-20240612 (https://download.01.org/0day-ci/archive/20240613/202406130336.wSgshW3L-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240613/202406130336.wSgshW3L-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406130336.wSgshW3L-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/input/touchscreen/imagis.c:421:39: warning: 'imagis_3038c_data' defined but not used [-Wunused-const-variable=]
-     421 | static const struct imagis_properties imagis_3038c_data = {
-         |                                       ^~~~~~~~~~~~~~~~~
-   drivers/input/touchscreen/imagis.c:414:39: warning: 'imagis_3038b_data' defined but not used [-Wunused-const-variable=]
-     414 | static const struct imagis_properties imagis_3038b_data = {
-         |                                       ^~~~~~~~~~~~~~~~~
->> drivers/input/touchscreen/imagis.c:406:39: warning: 'imagis_3038_data' defined but not used [-Wunused-const-variable=]
-     406 | static const struct imagis_properties imagis_3038_data = {
-         |                                       ^~~~~~~~~~~~~~~~
-   drivers/input/touchscreen/imagis.c:397:39: warning: 'imagis_3032c_data' defined but not used [-Wunused-const-variable=]
-     397 | static const struct imagis_properties imagis_3032c_data = {
-         |                                       ^~~~~~~~~~~~~~~~~
-
-
-vim +/imagis_3038_data +406 drivers/input/touchscreen/imagis.c
-
-   405	
- > 406	static const struct imagis_properties imagis_3038_data = {
-   407		.interrupt_msg_cmd = IST30XX_REG_STATUS,
-   408		.touch_coord_cmd = IST30XX_REG_STATUS,
-   409		.whoami_cmd = IST30XX_REG_CHIPID,
-   410		.whoami_val = IST3038_WHOAMI,
-   411		.touch_keys_supported = true,
-   412	};
-   413	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ .../devicetree/bindings/iio/adc/adi,ad4695.yaml    | 297 ++++++++
+ Documentation/iio/ad4695.rst                       | 145 ++++
+ Documentation/iio/index.rst                        |   1 +
+ MAINTAINERS                                        |  11 +
+ drivers/iio/adc/Kconfig                            |  11 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/ad4695.c                           | 804 +++++++++++++++++++++
+ 7 files changed, 1270 insertions(+)
+---
+base-commit: cc1ce839526a65620778617da0b022bd88e8a139
+change-id: 20240517-iio-adc-ad4695-ef72b2a2cf88
 
