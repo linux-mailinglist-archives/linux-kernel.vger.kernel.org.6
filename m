@@ -1,116 +1,128 @@
-Return-Path: <linux-kernel+bounces-211388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 871CF905103
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CBF9905105
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23223B20ADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:59:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7B67B21139
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCEB16F0CB;
-	Wed, 12 Jun 2024 10:59:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6CD16EBFD;
-	Wed, 12 Jun 2024 10:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D6416EBFD;
+	Wed, 12 Jun 2024 11:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JUuagIPQ"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A444B3D388;
+	Wed, 12 Jun 2024 11:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718189969; cv=none; b=KpPtC+uB9hurzP06Ipi0n7SPgfbDCSumqCzeD0QWNRvJ/Q+kuBtz2TQ898nWHdwulDRN61MaWSTMjSBoJxKw40ndYPipziqzm0QJ5/acanJ4kJ+hG/HvDR1MDC52kKOkHvHy3P4cGCuakvUoQ8NqKbFQ/nntGakbUfKMpaw0KMg=
+	t=1718190092; cv=none; b=k4m0LDn5jU+PQRTPSjTDVH3PPZzfJsNDaiA/3CesgwaRdlag0lbon1tfkYyedKpKjaZV+CGywcLOCWG70Yzosh1HQSr3iA5AYVMUxLaUaOv668B5prkulozXk86Kq1+9qTbHRrfgLF5mh2Yq1Bdzn/iu6Lq8cGdd3W65fVSQu/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718189969; c=relaxed/simple;
-	bh=llCwwnVAkDKupqy/WhpTunxBcdTwr9NCz6JQmlN1bNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ODIZkUBANWVIk7oTmDag5IMkw/Jbp4bBYrwMRJEoYNVWmFWMyHcMYGw7XxudPJxVmruyXWmSOpPFgyapJcZsTUDIOX9C49QAtIxOJSYGg9RxgkRt7cFdSTn8hVr3PJVd1GrUoX33Ath0C0OM7yCiQw21ZSqDBMriLAOD6M36N40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FA281595;
-	Wed, 12 Jun 2024 03:59:50 -0700 (PDT)
-Received: from [10.57.72.20] (unknown [10.57.72.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C2D073F73B;
-	Wed, 12 Jun 2024 03:59:23 -0700 (PDT)
-Message-ID: <3301ddd8-f088-48e3-bfac-460891698eac@arm.com>
-Date: Wed, 12 Jun 2024 11:59:22 +0100
+	s=arc-20240116; t=1718190092; c=relaxed/simple;
+	bh=NNQLKjgkGeccMfGsnuL1MDtgD5ZRTMQ0Y1kyLbDsTFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xou+eBTek2I/U7qPs3HwX3WvG/vAYOpXvm/FvcD85NZmkZS+LclcV+Kq0wt2g6hg9Q5dXtvqd5SLMaNNpOthAph4JwIOLtoPYZnK8VvvzFu3lno6dZ5H5p+I2uJP/0FzrS6ig7R8Z9K2ymnU3HPm6QQP8uavlfpI6vbLZG3ho1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JUuagIPQ; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9B5DF60002;
+	Wed, 12 Jun 2024 11:01:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718190087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/7rG/GEjvXPlerb9QqvuKiLbAOCohc8u7hrLFYRHIqM=;
+	b=JUuagIPQ9RTp9a9IV0xljGSyy8wwd2k1OZFvNFHuJ6ONMVsu/dfLEGHpkaxcYCjnjrv7OH
+	Sx6WSA3PcfQZqWT+2RFTJ58iUihfwVAx2kOXbpHzGqAtft7rTW7cRJc3TV8cxPLnapMt55
+	R8ftNVmv//tdeDjSdCbw7LiD6XvS6yvxtbOEdcCQoxXnnMl5C1pp+cbbvjcwRegQPh0qWp
+	CHBhwG7+310/n3k4kQTwTTBrM8Dg1mGZx/flP9uN/8opPXvXIgHhyM1J2v1CxOsf5bYKK9
+	On8ZW8SEZ7/dTA4Aw1UsZwIHYqZ0d2N/5VgS9vypygFnTZn29VlOh8FKBeXJ9Q==
+Date: Wed, 12 Jun 2024 13:01:27 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
+Cc: Miroslav Lichvar <mlichvar@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Szentendrei=2C_Tam=E1s?= <szentendrei.tamas@prolan.hu>
+Subject: Re: [RFC PATCH v2] rtc: pcf2127: Add PPS capability through Seconds
+ Interrupt
+Message-ID: <202406121101270f7d84a9@mail.local>
+References: <20240611150458.684349-1-csokas.bence@prolan.hu>
+ <Zmks31shpsnoLQ3k@hoboy.vegasvil.org>
+ <ZmlTQsgRiW9fmYcB@localhost>
+ <c0b6ad83-b9d4-43e7-8c1a-14b71a2060f8@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/14] arm64: Detect if in a realm and set RIPAS RAM
-Content-Language: en-GB
-To: Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240605093006.145492-1-steven.price@arm.com>
- <20240605093006.145492-3-steven.price@arm.com> <20240612104023.GB4602@myrica>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20240612104023.GB4602@myrica>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c0b6ad83-b9d4-43e7-8c1a-14b71a2060f8@prolan.hu>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 12/06/2024 11:40, Jean-Philippe Brucker wrote:
-> On Wed, Jun 05, 2024 at 10:29:54AM +0100, Steven Price wrote:
->> From: Suzuki K Poulose <suzuki.poulose@arm.com>
->>
->> Detect that the VM is a realm guest by the presence of the RSI
->> interface.
->>
->> If in a realm then all memory needs to be marked as RIPAS RAM initially,
->> the loader may or may not have done this for us. To be sure iterate over
->> all RAM and mark it as such. Any failure is fatal as that implies the
->> RAM regions passed to Linux are incorrect - which would mean failing
->> later when attempting to access non-existent RAM.
->>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Co-developed-by: Steven Price <steven.price@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
+On 12/06/2024 11:16:02+0200, Csókás Bence wrote:
+> On 6/12/24 09:50, Miroslav Lichvar wrote:
+> > On Tue, Jun 11, 2024 at 10:06:39PM -0700, Richard Cochran wrote:
+> > > On Tue, Jun 11, 2024 at 05:04:57PM +0200, Csókás, Bence wrote:
+> > > 
+> > > > PCF2127/29/31 is capable of generating an interrupt on every
+> > > > second (SI) or minute (MI) change. It signals this through
+> > > > the Minute/Second Flag (MSF) as well, which needs to be cleared.
+> > > 
+> > > This is a RFC, and my comment is that a PPS from an RTC is not useful
+> > > to the Linux kernel.
+> > 
+> > I think a TCXO-based RTC can be useful to user space to improve
+> > holdover performance with NTP/PTP.
 > 
->> +static bool rsi_version_matches(void)
->> +{
->> +	unsigned long ver_lower, ver_higher;
->> +	unsigned long ret = rsi_request_version(RSI_ABI_VERSION,
->> +						&ver_lower,
->> +						&ver_higher);
+> Exactly.
 > 
-> There is a regression on QEMU TCG (in emulation mode, not running under KVM):
+> > There already is the RTC_UIE_ON
+> > ioctl to enable interrupts and receive them in user space.
+> > 
+> > The advantage of the PPS device over the ioctl would be more accurate
+> > timestamping (kernel vs user-space). Should PPS be supported, it would
+> > be nice if it worked generally with all drivers that support RTC_UIE_ON.
 > 
->    qemu-system-aarch64 -M virt -cpu max -kernel Image -nographic
-> 
-> This doesn't implement EL3 or EL2, so SMC is UNDEFINED (DDI0487J.a R_HMXQS),
-> and we end up with an undef instruction exception. So this patch would
-> also break hardware that only implements EL1 (I don't know if it exists).
+> As we've discussed in v1, UIE hardware support is being removed from the RTC
+> subsystem, which I tried to optionally re-introduce. Since there was no
+> response since then, I assumed that there is no willingness to do that, so I
+> chose the next best option, the PPS subsystem.
 
-Thanks for the report,  Could we not check ID_AA64PFR0_EL1.EL3 >= 0 ? I
-think we do this for kvm-unit-tests, we need the same here.
-
-
-Suzuki
+I won't reintroduce UIE but I'm going to fix the issue you see with the
+pcf2129.
 
 > 
-> The easiest fix is to detect the SMC conduit through the PSCI node in DT.
-> SMCCC helpers already do this, but we can't use them this early in the
-> boot. I tested adding an early probe to the PSCI driver to check this, see
-> attached patches.
+> On 5/28/24 19:56, Alexandre Belloni wrote:
+> > This has been removed from the kernel 13 years ago. What is your use
+> > case to reintroduce it?
 > 
-> Note that we do need to test the conduit after finding a PSCI node,
-> because even though it doesn't implement EL2 in this configuration, QEMU
-> still accepts PSCI HVCs in order to support SMP.
+> I also agree that multiple RTCs would benefit from this feature. However, we
+> should only add it to those which *have* hardware support for a "one second
+> has elapsed" signal. UIE is currently implemented by setting an alarm to the
+> next second, which didn't work well with the PCF2129.
+
+I agree with Miroslav that if done, this should be subsystem wise and
+not just for individual drivers.
+
+
+
 > 
-> Thanks,
-> Jean
+> Bence
 > 
 
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
