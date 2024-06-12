@@ -1,127 +1,100 @@
-Return-Path: <linux-kernel+bounces-211704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7129D9055B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:50:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1F89055C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21BFE1F24A06
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:50:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8724E286701
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7F217F391;
-	Wed, 12 Jun 2024 14:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ludUtzU7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D791DFC6;
-	Wed, 12 Jun 2024 14:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E622617F4F8;
+	Wed, 12 Jun 2024 14:52:44 +0000 (UTC)
+Received: from hust.edu.cn (unknown [202.114.0.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FE217F374;
+	Wed, 12 Jun 2024 14:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.114.0.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718203812; cv=none; b=jrD3kCMYf0S6sOy7lVh3fxVYGqMshJBsGW1KNAwMn8Z+Bb2GIAf7In2eBLcDzzqXUUHs0dVqTVD3FNLNPipOTzXf6tNDI98R7KHZmA/pQEMHL1Fx5RkVd2xthtab6rah207yWZSddtL3x4JWD1SbFneqlLyTuUE3ke09egFMC7c=
+	t=1718203964; cv=none; b=jBHaX8ktCvZlpWFOTuE02up2q4DNjZwNGzCpBOOSH811DOINosH1tbdW5h6/lLCO/sSKDKfRd56Y52ctSgZEyTTBcIjfZ2P43MhjNVmywWek1N2qnTM9tO1WIXir/452eJA2OgoAMq66PThrgQo/WFe24eRtkEO3yRazd8fligQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718203812; c=relaxed/simple;
-	bh=A3ALZuSC7JFA7FKUWJ7dtEFKaiBbbWF3EU24yn8PEOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l3EnbwRBWyUicWBoImu5Kf4AujSwNxEM98bvPUl3zhhLB3xa72i44MzMfa2tdpNWdGfWe1EEgbQm81JYDwGxCbk2OUj95/eF+s1xtTSCpmu9NzQS1SctRPqImEuruhkM+Zgr0NdRbGtWa9VlNu5/yr81ImOsQJRSJCaNaP18sPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ludUtzU7; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718203811; x=1749739811;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=A3ALZuSC7JFA7FKUWJ7dtEFKaiBbbWF3EU24yn8PEOM=;
-  b=ludUtzU7LmTO+kSNJthOdS/BQde4iLc2wy8s+ObKl4kOgNgWqkoZFsZb
-   c8rLZFYEsIbq1bWB9uhOCDG5VS6ZYxiNrXeuNZRwcNPkQbIVsmmN9Y2OO
-   DgyA4JrgZWWnGRq7oHfX0UC94v79AV1VAqR6vTlExzrcbgUaernowYvek
-   u8mfqetKQMso/YxM6OznL77FvO0rIHvhWmAAB/tnca2QDhoHq1UzLnpbK
-   WPlut+tjhu5j/xkc6pNGJQTlBnSID1MwB72n1l9NdRcdt95OPEwPsQXwN
-   9k1fWiOUwWhmU/Yd+kIK3sf3iYfIbm0zCOnkUpc7heNJPimpM5pgOc06t
-   g==;
-X-CSE-ConnectionGUID: wIze13QBTKmuKkcdNb4mOQ==
-X-CSE-MsgGUID: krqLjsqNQrWDuIXnA7J2mA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="25603908"
-X-IronPort-AV: E=Sophos;i="6.08,233,1712646000"; 
-   d="scan'208";a="25603908"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 07:50:09 -0700
-X-CSE-ConnectionGUID: sIB8IIaFR/u7dDoKj/j2Iw==
-X-CSE-MsgGUID: V8mahd+5QBSIdsk5KEyVLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,233,1712646000"; 
-   d="scan'208";a="39925635"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.0.53]) ([10.94.0.53])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 07:50:04 -0700
-Message-ID: <80fefd6b-0f3a-4f6a-869e-fd2225315801@linux.intel.com>
-Date: Wed, 12 Jun 2024 16:50:01 +0200
+	s=arc-20240116; t=1718203964; c=relaxed/simple;
+	bh=kicZ9/XRu1MAmkWk/I+JRxn8BvTZI+30+zPvFIqGN2I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Sk8BYQp5UnHreVfyoPR/tSs01u4IX2viS4TykiI5kQDrWOS9JgE/kNnMhNmGmuBTGjVrVc3U+Z+BMlvY3zGpSYuPTKFTw+OtTuQEw7/lGcDSSieo3aTecEmYqTee8RkYsom/lwYOtFU3qYE3mDBmGH/U0WakzXVJoxBi/cQUNe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=202.114.0.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app2 (Coremail) with SMTP id HwEQrABHn8cCtmlm6cxvAQ--.12262S2;
+	Wed, 12 Jun 2024 22:51:46 +0800 (CST)
+Received: from pride-poweredge-r740.. (unknown [222.20.126.129])
+	by gateway (Coremail) with SMTP id _____wDn7sYBtmlmLq4KAQ--.11539S2;
+	Wed, 12 Jun 2024 22:51:46 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Dongliang Mu <dzm91@hust.edu.cn>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs/zh_CN: Update the translation of dev-tools/gdb-kernel-debugging
+Date: Wed, 12 Jun 2024 22:50:45 +0800
+Message-Id: <20240612145048.57829-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 00/32] Introduce QC USB SND audio offloading support
-Content-Language: en-US
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
- robh@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <20240610235808.22173-1-quic_wcheng@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HwEQrABHn8cCtmlm6cxvAQ--.12262S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww1rGr48ZF48ZF15ur1DAwb_yoW8JFyxpw
+	4q9FyfG3WfZry3J345GF48GFy7Jas7GF45KFy0va4Fqryvq3yIqw4akas0qFy2q34IyFWU
+	uF4fCFyj93y093JanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUm2b7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vE
+	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_Jr
+	v_JF1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
+	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
+	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
+	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxAIw2
+	8IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AK
+	xVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
+	AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
+	42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
+	IF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVF
+	xhVjvjDU0xZFpf9x07jfpndUUUUU=
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-On 6/11/2024 1:57 AM, Wesley Cheng wrote:
+Update to commit 6b219431037b ("docs/scripts/gdb: add necessary
+make scripts_gdb step")
 
-> Wesley Cheng (32):
->    ASoC: Add SOC USB APIs for adding an USB backend
->    ASoC: dt-bindings: qcom,q6dsp-lpass-ports: Add USB_RX port
->    ASoC: qcom: qdsp6: Introduce USB AFE port to q6dsp
->    ASoC: qdsp6: q6afe: Increase APR timeout
->    ASoC: qcom: qdsp6: Add USB backend ASoC driver for Q6
->    ALSA: usb-audio: Introduce USB SND platform op callbacks
->    ALSA: usb-audio: Export USB SND APIs for modules
->    ALSA: usb-audio: Save UAC sample size information
->    usb: dwc3: Specify maximum number of XHCI interrupters
->    usb: host: xhci-plat: Set XHCI max interrupters if property is present
->    ALSA: usb-audio: qcom: Add USB QMI definitions
->    ALSA: usb-audio: qcom: Introduce QC USB SND offloading support
->    ALSA: usb-audio: Check for support for requested audio format
->    ASoC: usb: Add PCM format check API for USB backend
->    ASoC: qcom: qdsp6: Ensure PCM format is supported by USB audio device
->    ALSA: usb-audio: Prevent starting of audio stream if in use
->    ALSA: usb-audio: Do not allow USB offload path if PCM device is in use
->    ASoC: dt-bindings: Update example for enabling USB offload on SM8250
->    ALSA: usb-audio: qcom: Populate PCM and USB chip information
->    ASoC: qcom: qdsp6: Add support to track available USB PCM devices
->    ASoC: Introduce SND kcontrols to select sound card and PCM device
->    ASoC: qcom: qdsp6: Add SOC USB offload select get/put callbacks
->    ASoC: Introduce SND kcontrols to track USB offloading state
->    ASoC: qcom: qdsp6: Add PCM ops to track current state
->    ASoC: usb: Create SOC USB SND jack kcontrol
->    ASoC: qcom: qdsp6: Add headphone jack for offload connection status
->    ASoC: usb: Fetch ASoC sound card information
->    ALSA: usb-audio: Add USB offloading capable kcontrol
->    ALSA: usb-audio: Allow for rediscovery of connected USB SND devices
->    ALSA: usb-audio: qcom: Use card and PCM index from QMI request
->    ASoC: usb: Rediscover USB SND devices on USB port add
->    ASoC: doc: Add documentation for SOC USB
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+---
+ .../translations/zh_CN/dev-tools/gdb-kernel-debugging.rst     | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I'm not sure how other reviewers feel about this, but is there any 
-chance to group patches in some logical order? It is bit hard to review 
-when I need to jump from generic ALSA to ASoC then QCOM code and then 
-there are dt-bindings mixed in between and back again.
+diff --git a/Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst b/Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst
+index 17b5ce85a90c..94c15c258726 100644
+--- a/Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst
++++ b/Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst
+@@ -34,6 +34,10 @@ Kgdb内核调试器、QEMU等虚拟机管理程序或基于JTAG的硬件接口
+   但这通常仅在不依赖内核模块时才有效。有关此模式的更多详细信息，请参阅QEMU文档。
+   在这种情况下，如果架构支持KASLR，应该在禁用CONFIG_RANDOMIZE_BASE的情况下构建内核。
+ 
++- 构建gdb脚本（适用于内核v5.1版本及以上）
++
++    make scripts_gdb 
++
+ - 启用QEMU/KVM的gdb stub，可以通过如下方式实现
+ 
+     - 在VM启动时，通过在QEMU命令行中添加“-s”参数
+-- 
+2.34.1
+
 
