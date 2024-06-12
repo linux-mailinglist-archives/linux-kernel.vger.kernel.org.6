@@ -1,157 +1,235 @@
-Return-Path: <linux-kernel+bounces-211076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B035904CD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:28:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C709C904CDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3541B23D80
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:28:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6B1E1C243D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8AF169ACF;
-	Wed, 12 Jun 2024 07:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E48116C445;
+	Wed, 12 Jun 2024 07:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZAtkH9f4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cOG7zdUf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09892167270;
-	Wed, 12 Jun 2024 07:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C136D167270
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718177296; cv=none; b=iElQ3+4syZPYOngv423kyTgWXo/YVLI7IJR/KSg6AwvS0IhpkkqQEPMiYxzo6a/rSwZI2gqQgVbIe33B4pe9aR/QhUqSzPfFACOgUw4mfOuSdzSoSU4NavkhyyHPiaJ3fDc8QVhrufh98w8/oKV13r2+WXkUz1LdlXTNr/d0rWk=
+	t=1718177317; cv=none; b=QJQGve8Wmiam+hEU+1dDRGdTSpCx8Z5QYHsjJrwiZxGYstFr2nRHecakKb5mmwynh+mdhgTpG3kfK+7RQaZgL6FIWTFMe3Jdygw2Gh9+vmoLpxV0sKjR2URSz5V0Hd0STbDiq0dVyjExDe/QarDd5wk6LXI9+PhgtbTgyPIiSo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718177296; c=relaxed/simple;
-	bh=OINFqR0m9qTBB2evRLkOh/KF43W/Ig7Ub6ACgHyZnCw=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GuNXjjRjMReN8PUg5bUI9OtgK+ajSm7BBDQ7MF8iqXU6u/0ghZcbEjXUn3b+/HISWSPITS03Ziqc0sYWWmq+q2Uo0tS0Nv436pfIAVuez+/Q9O026YstILXRK802XX0KQA0e2uMa8lUF4X9/9mDiniW4nXh11hdcLtdceWf0pyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZAtkH9f4; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718177295; x=1749713295;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=OINFqR0m9qTBB2evRLkOh/KF43W/Ig7Ub6ACgHyZnCw=;
-  b=ZAtkH9f4XLCatNKGB6E1KtwqdqUSTDoDv1fQFauWUNYMBlASyvgnzdeu
-   K23rusFCzLC6xXTpcKFH6y2a312jW3am7BnF19Nz3X+KNYU9amn1GA306
-   WO4p2H0Sgeh9x1UH7offnjnQDBNaYSNWWlAW1LypZaoZNhR1Nc6lydEWv
-   G5pmoO1CvC6Yuj5iC8gVuoTRGP1Uqg1nfFVVL58JPbS6rGOOqOvzm05Vh
-   GXLDPpaLxUnkhv+XPduteItRmAKZhpi0cEcVKuy5HlTOwdxu+QO4w8s60
-   ZGN4yXaLKIhNJBeLd8vQnwxUoqFjXO7+FveJ75IZgu7ygg3jbw6w03x4h
-   Q==;
-X-CSE-ConnectionGUID: ekdBCSkPRk+9li5Nfmak0Q==
-X-CSE-MsgGUID: H49Uyl6iQuOZ0a1XyeKSOg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14649308"
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="14649308"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 00:28:14 -0700
-X-CSE-ConnectionGUID: fq3kvE2WR7uapVrS4pFk4g==
-X-CSE-MsgGUID: 8hrHmmwDRzO2V+ClaDy/aQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="39806557"
-Received: from unknown (HELO localhost) ([10.245.247.204])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 00:28:11 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 12 Jun 2024 10:28:06 +0300 (EEST)
-To: Shravan Ramani <shravankr@nvidia.com>
-cc: Hans de Goede <hdegoede@redhat.com>, Vadim Pasternak <vadimp@nvidia.com>, 
-    David Thompson <davthompson@nvidia.com>, 
-    "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] platform/mellanox: mlxbf-pmc: Add support for
- 64-bit counters and cycle count
-In-Reply-To: <DM4PR12MB5136EAD83A50869388E96FF3C0C72@DM4PR12MB5136.namprd12.prod.outlook.com>
-Message-ID: <370b5e44-cf92-21af-8c01-dbb208bf323f@linux.intel.com>
-References: <cover.1716205838.git.shravankr@nvidia.com> <ce077a0db5d4afdbcc63a635fece9793aaae055f.1716205838.git.shravankr@nvidia.com> <70d3c0af-8bf6-2e33-074d-5b1719a5674f@linux.intel.com> <DM4PR12MB513695D2BE98AA46A95B4C60C0FF2@DM4PR12MB5136.namprd12.prod.outlook.com>
- <33f25d4f-386c-6df6-344d-8b7aa011e69c@linux.intel.com> <DM4PR12MB5136EAD83A50869388E96FF3C0C72@DM4PR12MB5136.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1718177317; c=relaxed/simple;
+	bh=elCf9kKn2ETE+UiRgFAAbp7wIr9yvy1SWWySaTDrTbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uBgdyq+AhO4BKvEWux14rBMLfXjVBhNxHVR9k+JAMxCEn2hntWL/64yCHFLzJi/Mh1vJI7qz8rwiEx+BK8CxQJU8zsjwPG2jYyJykspetibNx+Ic6226r5BEGvQoWOguUuUdxhxSJc2Wz0BaWNTPDAnKbp/VH4vjSx23oWGGnnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cOG7zdUf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718177314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cQ2raOj2lYJDf1Kvgmr3Fk7V0QekFROmWcOO8IPa5ao=;
+	b=cOG7zdUf6GW+n/DEP3Pbi9EdRB2ba6BYBlOH0/7H2H9ZSdHaiznVnPM9KMKZxG5KwjsmPK
+	WZsQx1jlWelWxuoqyy7HTs3yu3Bex/Pf0XQbBEpA1SwECD6dMeIBjYRCYYFnX/7muVVrJV
+	qVVT6fnTbubnT7I5ssPkVyQIw1HJS7A=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-675-gGb709RIM8GA_otIo53NDg-1; Wed, 12 Jun 2024 03:28:32 -0400
+X-MC-Unique: gGb709RIM8GA_otIo53NDg-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52c8126f372so1513700e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 00:28:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718177311; x=1718782111;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cQ2raOj2lYJDf1Kvgmr3Fk7V0QekFROmWcOO8IPa5ao=;
+        b=FIoF+t9p753iwQItlO3O4/16B8KNDmjGbA/enZ6mM4ecPY6gdKeuU9ADJ4iXjTrg3u
+         tf7c+sF954ZXgmIWUb2LLxPK/EZHfoDhzSb5tprcMZM0ALds4i41HVqDdVOAKNSNBY4r
+         Ew6JoVj6sxCTctkHxBIda7UYww6mYalkOQ5TsBy5KAq1bRZDjygF8H8tyfczMmvDlt8Q
+         SbxIfuuo61BH6XkPfdne979tpYHutYRvMaTXn/92tIM+XqaJ2EXxocCDVqPBh5Ns1jve
+         W/iEs0BxlKgWxNrL6YfaGlTjrGF5MIQ4XGk59xHeXaywlaj7pU7qnOaNa0C6/HUS+3MV
+         FUcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYiUyshrI/llGiZAuZ+RWN913blGOjvr9JGNUzjsFhdO4h/MowR8YcfygUOG+oeLV8WA0RiCwANkbAJ8syiLfOSu1S8pmOLE+o5/pv
+X-Gm-Message-State: AOJu0YzhxlhgF4T7bmSlHapY3cUZWQD4JOW7wzEFWkAdNENU2lf0KqIP
+	T5FdPcRVnMRklMRrfi6OzVtKjKwbxfyhKofQdt2OGFHVAmqVKXx6odCrAWO35fZBRprVfCLGsB+
+	hnJPkWUV8lztoAhsYxqErSrsFhbg9526RTghhUQWy+DySjm7vdcyN6NNTJVUIAw==
+X-Received: by 2002:a05:6512:110e:b0:52c:9252:f822 with SMTP id 2adb3069b0e04-52c9a3fd6e8mr635246e87.53.1718177311231;
+        Wed, 12 Jun 2024 00:28:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGI2onEb6+vPmlh3Kjp9S+ApeDjbEa7aftaSwNLLRcEo6PnojYxAp/bLpzCTrag3fgd5xyDCw==
+X-Received: by 2002:a05:6512:110e:b0:52c:9252:f822 with SMTP id 2adb3069b0e04-52c9a3fd6e8mr635218e87.53.1718177310798;
+        Wed, 12 Jun 2024 00:28:30 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c702:bf00:abf6:cc3a:24d6:fa55? (p200300cbc702bf00abf6cc3a24d6fa55.dip0.t-ipconnect.de. [2003:cb:c702:bf00:abf6:cc3a:24d6:fa55])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1a7c663asm10448312f8f.115.2024.06.12.00.28.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 00:28:30 -0700 (PDT)
+Message-ID: <dafe3a34-3223-48ab-a9ae-cd20436cbda5@redhat.com>
+Date: Wed, 12 Jun 2024 09:28:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] s390/pci: Fix s390_mmio_read/write syscall page
+ fault handling
+To: Alex Williamson <alex.williamson@redhat.com>,
+ Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Gerd Bayer <gbayer@linux.ibm.com>,
+ Matthew Rosato <mjrosato@linux.ibm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Suren Baghdasaryan <surenb@google.com>, linux-s390@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
+ <20240529-vfio_pci_mmap-v3-1-cd217d019218@linux.ibm.com>
+ <98de56b1ba37f51639b9a2c15a745e19a45961a0.camel@linux.ibm.com>
+ <30ecb17b7a3414aeb605c51f003582c7f2cf6444.camel@linux.ibm.com>
+ <db10735e74d5a89aed73ad3268e0be40394efc31.camel@linux.ibm.com>
+ <ce7b9655-aaeb-4a13-a3ac-bd4a70bbd173@redhat.com>
+ <32b515269a31e177779f4d2d4fe2c05660beccc4.camel@linux.ibm.com>
+ <89c74380-6a60-4091-ba57-93c75d9a37d7@redhat.com>
+ <b38b571b753441314c090c3eb51c49c0e28a19d5.camel@linux.ibm.com>
+ <20240611162119.6bc04d61.alex.williamson@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240611162119.6bc04d61.alex.williamson@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 11 Jun 2024, Shravan Ramani wrote:
-
-> > > When 2 32-bit counters are coupled to form a 64-bit counter using this setting,
-> > > one counter will hold the lower 32 bits while the other will hold the upper 32.
-> > > So the other counter (or syses corresponding to it) also needs to be accessed.
-> > >
-> > > > For 64-bit counter, I suppose the userspace is expected to read the full
-> > > > counter from two sysfs files and combine the value (your documentation
-> > > > doesn't explain this)? That seems non-optimal, why cannot kernel just
-> > > > return the full combined 64-value directly in kernel?
-> > > 
-> > > I will add more clear comments for this.
-> > > While it is true that the driver could combine the 2 fields and present a
-> > > 64-bit value via one of the sysfs, the reason for the current approach is that
-> > > there are other interfaces which expose the same counters for our platform
-> > > and there are tools that are expected to work on top of both interfaces for
-> > > the purpose of collecting performance stats.
-> >
-> > > The other interfaces follow this
-> > > approach of having lower and upper 32-bits separately in each counter, and
-> > > the tools expect the same. Hence the driver follows this approach to keep
-> > > things consistent across the BlueField platform.
-> >
-> > Hi,
-> >
-> > I went to look through the existing arrays in mlxbf-pmc.c but did not find
-> > any entries that would have clearly indicated the counters being hi/lo
-> > parts of the same counter. There were a few 0/1 ones which could be the
-> > same counter although I suspect even they are not parts of the same
-> > counter but two separate entities called 0 and 1 having the same counter.
-> >
-> > Could you please elaborate further what you meant with the note about
-> > other interfaces above so I can better assess the claim?
+On 12.06.24 00:21, Alex Williamson wrote:
+> On Tue, 11 Jun 2024 17:37:20 +0200
+> Niklas Schnelle <schnelle@linux.ibm.com> wrote:
 > 
-> When combining 2 counters using the "use_odd_counter" setting, the mechanism
-> of joining them or assigning upper or lower 32 bits to a counter is handled in HW
-> and not by the driver. For example, if bit0 of "use_odd_counter" is set, counter0
-> and counter1 (which were originally separate counters) automatically become
-> the lower and upper bits of one 64-bit value. The user needs to read both these
-> sysfs separately to get the full 64-bit value. The driver does not do any special
-> handling for such cases, merely provides access to both counter0 and counter1.
+>> On Tue, 2024-06-11 at 17:10 +0200, David Hildenbrand wrote:
+>>>>>
+>>>>> which checks mmap_assert_write_locked().
+>>>>>
+>>>>> Setting VMA flags would be racy with the mmap lock in read mode.
+>>>>>
+>>>>>
+>>>>> remap_pfn_range() documents: "this is only safe if the mm semaphore is
+>>>>> held when called." which doesn't spell out if it needs to be held in
+>>>>> write mode (which I think it does) :)
+>>>>
+>>>> Logically this makes sense to me. At the same time it looks like
+>>>> fixup_user_fault() expects the caller to only hold mmap_read_lock() as
+>>>> I do here. In there it even retakes mmap_read_lock(). But then wouldn't
+>>>> any fault handling by its nature need to hold the write lock?
+>>>
+>>> Well, if you're calling remap_pfn_range() right now the expectation is
+>>> that we hold it in write mode. :)
+>>>
+>>> Staring at some random users, they all call it from mmap(), where you
+>>> hold the mmap lock in write mode.
+>>>
+>>>
+>>> I wonder why we are not seeing that splat with vfio all of the time?
+>>>
+>>> That mmap lock check was added "recently". In 1c71222e5f23 we started
+>>> using vm_flags_set(). That (including the mmap_assert_write_locked())
+>>> check was added via bc292ab00f6c almost 1.5 years ago.
+>>>
+>>> Maybe vfio is a bit special and was never really run with lockdep?
+>>>    
+>>>>    
+>>>>>
+>>>>>
+>>>>> My best guess is: if you are using remap_pfn_range() from a fault
+>>>>> handler (not during mmap time) you are doing something wrong, that's why
+>>>>> you get that report.
+>>>>
+>>>> @Alex: I guess so far the vfio_pci_mmap_fault() handler is only ever
+>>>> triggered by "normal"/"actual" page faults where this isn't a problem?
+>>>> Or could it be a problem there too?
+>>>>    
+>>>
+>>> I think we should see it there as well, unless I am missing something.
+>>
+>> Well good news for me, bad news for everyone else. I just reproduced
+>> the same problem on my x86_64 workstation. I "ported over" (hacked it
+>> until it compiles) an x86 version of my trivial vfio-pci user-space
+>> test code that mmaps() the BAR 0 of an NVMe and MMIO reads the NVMe
+>> version field at offset 8. On my x86_64 box this leads to the following
+>> splat (still on v6.10-rc1).
+> 
+> There's already a fix for this queued[1] in my for-linus branch for
+> v6.10.  The problem has indeed existed with lockdep for some time but
+> only with the recent lockdep changes to generate a warning regardless
+> of debug kernel settings has it gone from just sketchy to having a fire
+> under it.  There's still an outstanding question of whether we
+> can/should insert as many pfns as we can during the fault[2] to reduce
+> the new overhead and hopefully at some point we'll have an even cleaner
+> option to use huge_fault for pfnmaps, but currently
+> vmf_insert_pfn_{pmd,pud} don't work with those pfnmaps.
+> 
+> So hopefully this problem disappears on current linux-next, but let me
+> know if there's still an issue.  Thanks,
 
-I know all this by now, but we're discussion here is whether kernel should 
-do "special handling". Although, it's not really correct to depict 
-representing 64-bit counter in its entirety as "special handling".
-
-I think the kernel should combine the 64-bit halved and you argumented 
-it shouldn't. When I went to confirm the claim your argument was based 
-on, I couldn't find on what basis the claim was made.
-
-> Since the events supported by the blocks are quite HW centric and low-level in
-> nature, the driver is generally used alongside various tools which work on top of
-> this driver to collect telemetry info and provide more readable statistics to the
-> end-user. Similar to this driver, there are other FW interfaces providing access to
-> these counters (same and other additional ones as well that belong to other HW
-> blocks). For the sake of consistency and to allow the tools to be compatible with
-> all interfaces, the counter data needs to be accessible in the same way, ie, as 32-bit
-> upper and lower values in counter0 and counter1 sysfs as in the above case.
-
-This does nothing to answer my question. Where in the kernel, there's an 
-example where a 64-bit counter for BlueField platform is presented as 2 
-32-bit counters? If there isn't any examples in the kernel, your statement 
-about consistency within the platform doesn't hold water, quoted (again) 
-here for clarity what I'm refering to:
-
-"The other interfaces follow this approach of having lower and upper 
-32-bits separately in each counter, and the tools expect the same.
-Hence the driver follows this approach to keep things consistent across 
-the BlueField platform."
-
-Where I can find those "other interfaces" that already follow this 
-convention?
+I see us now using vmf_insert_pfn(), which should be the right thing to 
+do. So I suspect this problem should be disappearing.
 
 -- 
- i.
+Cheers,
+
+David / dhildenb
 
 
