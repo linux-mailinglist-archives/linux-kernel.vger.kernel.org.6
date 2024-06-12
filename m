@@ -1,81 +1,87 @@
-Return-Path: <linux-kernel+bounces-212319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9A9905E73
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:25:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E03B905E74
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DEC8284DB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:25:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1B71F25C05
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E03712D74D;
-	Wed, 12 Jun 2024 22:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3409912DD8F;
+	Wed, 12 Jun 2024 22:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MvJMW5+0"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TyGaBUem"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D02512D1F4
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DC712D1ED
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718231095; cv=none; b=WkP666S4Q+L5S8ckHhl6TsWyxF/j9cySPxNPdiMX3Cnusq5vYDabEIO+06b3CUjEPEfgWY9k+qhZd7OmaOmhjMzmdBnBb8QEK7MKhq74SQR1I0JlDdLPM8Q2fVsJQ/2k9TUouzVK/Lk1sp6nT6POof68IUE76gRd9FnK1/ulpSU=
+	t=1718231097; cv=none; b=nmNSwSP7FYj3WrwRbN8XJ7ufMuDUFX9SbmWC2fHgDTuYxvPqzL4482tO6C4G93mmzjvNZT+576uowz/6pgLk+z/0+k7zW5hlwAZOiW9+e0TAHrPhAnW9UfcpUi/apeGLbgqVT/S6P+gprNudDBf3PQZ39RmK/HWpzPDkhlzKmjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718231095; c=relaxed/simple;
-	bh=8xjZTpeFcaE74g6l02h1dDzTdoSJ+H05F9AhpsSAsWE=;
+	s=arc-20240116; t=1718231097; c=relaxed/simple;
+	bh=NRArsyGf8TAn/F8FIKbUDBSYg38BW5LqqhcOU6lhGSw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZgbIVEIfAigNQYkOkVMMMYCvHBjR8M6BC/P08du2upRERdayZ1e94hgbkkjGX2ntXJEnswBwOefMG/wXFJOudiaSPAT4d4mtm2PBIoCid1YZdIu2P+121/nRI5yywsAPA94FM6ic3V13vuV1Z8xDdrAFa7qFbhUw99BJXkqkxxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MvJMW5+0; arc=none smtp.client-ip=209.85.215.179
+	 MIME-Version; b=ClyFFLF6NmB5PopTc77J1txP9Vk5th0wbQ6lEPMzJQeGfdE9nFBxApJEoh1bV9IbxOJ6fYTdzDtAZRQOUplGBuoudEAqMb60Zui902kWTv7CkKTBKPNeEz8W8y3M1fNp2rJkzFWiZiWomj8HV92GczxcpWTGCBhW4COls1GHogE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TyGaBUem; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-656d8b346d2so289184a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:24:53 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f4a5344ec7so2679185ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:24:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718231093; x=1718835893; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1718231095; x=1718835895; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cG9YsnvV0dqFs63XW3w7FcDwXhGHgBYJnS7/vNMDsUI=;
-        b=MvJMW5+0l3kvsauUsrvS9g4K8VmDgpAjlIooetS/QiOpUPnU+e5mc1Vy0Z5p7WP0tU
-         3JgJ5R6A65bK8Lp9r/kpH1dq3xRDKPrIYyWWiHWpW0sH3Mo2z9bthTfBWfpSt0S5ou3Z
-         t3bemCAkGEk2o/hN8GGxNSaB3r8PrtyvVStSw=
+        bh=moW+vuchPBzwhuLa9D90CyqT2Qzy5nveIbqumh1IepQ=;
+        b=TyGaBUemiF8mB0SmycQkbC7KPJmVJgGqAxux2xx7yKhZLCDlYcMYxt9i9AkVDP6VFg
+         4iUtGR+uVUWam8l9KeERsrF3HD/XXcQ+ptI5BpdVS7NcFnb4LLGso3Ph8j3gcvA4Imlc
+         2467oEyWhfTrEBZ5vu9gALeyO+D8Y56eN1sLw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718231093; x=1718835893;
+        d=1e100.net; s=20230601; t=1718231095; x=1718835895;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cG9YsnvV0dqFs63XW3w7FcDwXhGHgBYJnS7/vNMDsUI=;
-        b=Qfj7I/xfaRG5nIeFsS+Qhy1li15wpHjmGZAENGlt6uuv3BnBuUWxjBvGINoWKg67F6
-         EalvAe8xX8TJOAKCoTUJrUAUxQhvbFsZ9SWDVePXIcssMXF4xSLzPHUmPv1ungw8Ud2L
-         3RzqBDS+v0IBhEhIefmkoI0Gcp9nSs0PzVaTZLuCkcHVpJ9/1f2KFB00lGCKnQXCFVTD
-         qa0GFM0F1fJ6oXDOkdCbJ5yd+H7T1koe/YHz+L9UY7vW5XeMa8NrFs3YMjS+Pc5ntsf7
-         4FeHpileymNVQX4QZ5Ws50FEYs7QxD+CB3mUSziGhfkfBvmjG1l05Ynaxc2SpcH6Mb88
-         v95Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUxSdvEFIXcvaHeMVd+6PPT0Al2JAKrXWf6PTmIcSyabBOHHjZvHmMipd9kljdhnHDHAZYFwC2Fql//JsE9R1XNz4dxlTZS4xBuZkco
-X-Gm-Message-State: AOJu0YxmcQvLTUjBDIFg9YMzvNRohUSWfy6lmubTbyuLpe61mMq0fp3S
-	05HlYJ/kYJ0petUTFBFkwb806ti4/7iQpjo5AxymNCCtWQZpHGi1CspFmOQEKg==
-X-Google-Smtp-Source: AGHT+IGI/wCAa9iSAbUyULm8uaZzcZmzyBGn6eSxHSxLyKPWYAONixriz1scQsX3eltdmrQaRYhqHw==
-X-Received: by 2002:a17:903:1cd:b0:1f7:234b:4f28 with SMTP id d9443c01a7336-1f83b60954cmr37501915ad.25.1718231093331;
-        Wed, 12 Jun 2024 15:24:53 -0700 (PDT)
+        bh=moW+vuchPBzwhuLa9D90CyqT2Qzy5nveIbqumh1IepQ=;
+        b=d/bpq23BLinpSbChzGV4sMA8fwCmWOWxs7S4qS9Q3Sxfl7aHCGlG4uVHMuVXFZeUSF
+         wxNuxsd1qeVgUyO6i7PY9zUAoZSGj+xTmrrjLTWv++mFIQB7FyMG0qE7jbzd0uq2HbDK
+         q8XP5eUhd8fLBxkVjXFvhIvWXGiT06uzWKf2mk61HdMFL49kbqWeSEdpMmo0yF1qzCbj
+         LVwXJVfoLpVoVTGQHUFTanx7lTWUOy951ZMBVswzLxSP1GkDwOVBljX7Pmal7tNsWzEq
+         N8jfkD3sd3/7crMd740hqMH4NDnJn+g/VHll/DH2G46QrrzGNqyd5AdgJQnW16UtHCCs
+         p94A==
+X-Forwarded-Encrypted: i=1; AJvYcCXmsPBJhBdrUuWwv9o+4U+bH6gbP+wEgU1HymR1XCyuDfVmCAQ4Oy1GuFKFdxYmCt1cUdSgaf3cbXkSUmbe0j5OUnDxIXGYbK2jSDap
+X-Gm-Message-State: AOJu0Yw57NAtm4Ee+753f7/QAjdTXh7BNxJzm/w7JpaLc1xo3Z2HNnZN
+	8+7MXvtHwzWwZB9/21Az1nZmw854wkhs0/eA2NWPCVjEDsNQwqziXdZnLaHSBQ==
+X-Google-Smtp-Source: AGHT+IHBAtSsNRsCiipiSSmdPtxdIvkO4DzXuXDcDLjyV0KBNSghL6hedDrLySr08oXr7dCUGUp9XA==
+X-Received: by 2002:a17:902:fc46:b0:1f2:fee2:82ed with SMTP id d9443c01a7336-1f84e425a39mr11905935ad.30.1718231095482;
+        Wed, 12 Jun 2024 15:24:55 -0700 (PDT)
 Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:2816:6a42:9074:18cc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6f30acda9sm87914105ad.198.2024.06.12.15.24.52
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6f30acda9sm87914105ad.198.2024.06.12.15.24.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 15:24:52 -0700 (PDT)
+        Wed, 12 Jun 2024 15:24:54 -0700 (PDT)
 From: Douglas Anderson <dianders@chromium.org>
 To: dri-devel@lists.freedesktop.org,
 	Maxime Ripard <mripard@kernel.org>
 Cc: Douglas Anderson <dianders@chromium.org>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
 	Daniel Vetter <daniel@ffwll.ch>,
 	David Airlie <airlied@gmail.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Steven Price <steven.price@arm.com>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/8] drm/arcpgu: Call drm_atomic_helper_shutdown() at shutdown time
-Date: Wed, 12 Jun 2024 15:23:44 -0700
-Message-ID: <20240612152336.v2.4.I8a0a246fea222059881d01a8fff2adcf7ef3d7a4@changeid>
+Subject: [PATCH v2 5/8] drm/sprd: Call drm_atomic_helper_shutdown() at remove time
+Date: Wed, 12 Jun 2024 15:23:45 -0700
+Message-ID: <20240612152336.v2.5.I7a2dd349cb52bae53280d0a49e22cc27b923274b@changeid>
 X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
 In-Reply-To: <20240612222435.3188234-1-dianders@chromium.org>
 References: <20240612222435.3188234-1-dianders@chromium.org>
@@ -87,14 +93,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Based on grepping through the source code this driver appears to be
-missing a call to drm_atomic_helper_shutdown() at system shutdown
-time. Among other things, this means that if a panel is in use that it
-won't be cleanly powered off at system shutdown time.
+Based on grepping through the source code, this driver appears to be
+missing a call to drm_atomic_helper_shutdown() at remove time. Let's
+add it.
 
 The fact that we should call drm_atomic_helper_shutdown() in the case
-of OS shutdown/restart comes straight out of the kernel doc "driver
+of OS driver remove comes straight out of the kernel doc "driver
 instance overview" in drm_drv.c.
+
+While at it, let's also fix it so that if the driver's bind fails or
+if a driver gets unbound that the drvdata gets set to NULL. This will
+make sure we can't get confused during a later shutdown().
 
 Suggested-by: Maxime Ripard <mripard@kernel.org>
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
@@ -102,35 +111,46 @@ Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 This commit is only compile-time tested.
 
+While making this patch, I noticed that the bind() function of this
+driver is using "devm". That's probably a bug. As per kernel docs [1]
+"the lifetime of the aggregate driver does not align with any of the
+underlying struct device instances. Therefore devm cannot be used and
+all resources acquired or allocated in this callback must be
+explicitly released in the unbind callback". Fixing that is outside
+the scope of this commit.
+
+[1] https://docs.kernel.org/driver-api/component.html
+
 (no changes since v1)
 
- drivers/gpu/drm/tiny/arcpgu.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/sprd/sprd_drm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tiny/arcpgu.c b/drivers/gpu/drm/tiny/arcpgu.c
-index 4f8f3172379e..85b21f5aac55 100644
---- a/drivers/gpu/drm/tiny/arcpgu.c
-+++ b/drivers/gpu/drm/tiny/arcpgu.c
-@@ -412,6 +412,11 @@ static void arcpgu_remove(struct platform_device *pdev)
- 	arcpgu_unload(drm);
+diff --git a/drivers/gpu/drm/sprd/sprd_drm.c b/drivers/gpu/drm/sprd/sprd_drm.c
+index a74cd0caf645..d4453430dd1f 100644
+--- a/drivers/gpu/drm/sprd/sprd_drm.c
++++ b/drivers/gpu/drm/sprd/sprd_drm.c
+@@ -114,6 +114,7 @@ static int sprd_drm_bind(struct device *dev)
+ 	drm_kms_helper_poll_fini(drm);
+ err_unbind_all:
+ 	component_unbind_all(drm->dev, drm);
++	platform_set_drvdata(pdev, NULL);
+ 	return ret;
  }
  
-+static void arcpgu_shutdown(struct platform_device *pdev)
-+{
-+	drm_atomic_helper_shutdown(platform_get_drvdata(pdev));
-+}
-+
- static const struct of_device_id arcpgu_of_table[] = {
- 	{.compatible = "snps,arcpgu"},
- 	{}
-@@ -422,6 +427,7 @@ MODULE_DEVICE_TABLE(of, arcpgu_of_table);
- static struct platform_driver arcpgu_platform_driver = {
- 	.probe = arcpgu_probe,
- 	.remove_new = arcpgu_remove,
-+	.shutdown = arcpgu_shutdown,
- 	.driver = {
- 		   .name = "arcpgu",
- 		   .of_match_table = arcpgu_of_table,
+@@ -122,10 +123,11 @@ static void sprd_drm_unbind(struct device *dev)
+ 	struct drm_device *drm = dev_get_drvdata(dev);
+ 
+ 	drm_dev_unregister(drm);
+-
+ 	drm_kms_helper_poll_fini(drm);
++	drm_atomic_helper_shutdown(drm);
+ 
+ 	component_unbind_all(drm->dev, drm);
++	dev_set_drvdata(dev, NULL);
+ }
+ 
+ static const struct component_master_ops drm_component_ops = {
 -- 
 2.45.2.505.gda0bf45e8d-goog
 
