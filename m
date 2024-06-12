@@ -1,132 +1,146 @@
-Return-Path: <linux-kernel+bounces-211269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2C8904F4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E84CC904F56
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F310D1F28CE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:30:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D2851F291BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBB216DEC2;
-	Wed, 12 Jun 2024 09:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C0B16DECB;
+	Wed, 12 Jun 2024 09:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Qsc+AJ2q"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GEz6HYS0"
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A26016D339;
-	Wed, 12 Jun 2024 09:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1C916D9D7;
+	Wed, 12 Jun 2024 09:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718184625; cv=none; b=LbN6dpEabf2gawCysIl3c5BH/7h7iiT5Kn55QgkR+ld2lCSJCSgHXuBKm/Y3Z4B/rAb/Rm7hpyipFckU9AvFoPvySRAhvYGeuVJ9DLHqlGm4EW9MzA5CYQKSBYPslwiS7YAai1lv1dvH3jVonuUm3EhGJxrEKN2bVbWIBwSSWWo=
+	t=1718184697; cv=none; b=C1RbyYBddrsyZ56jn+wHNVsHscOWERuiD/rwoqicjiW8Fxg6ktMp8T1JhdQjtb80fu5j2sTN3KWGVwa12JS94Xv3XVJqfkX0KSHBf/eHuCBjZ57A1VRMXjIw917tDR7OI4ry8MlKNvXhrU/a9kbQx754Wu8kQpa5JSYQ9tINSmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718184625; c=relaxed/simple;
-	bh=J/44THBA/dPfsljbhs1f2PJSH+f7JSY48xLWZSBEbX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RenNrPG5QkoxXh0Ds7B9awuxEMpNQblOnOOfwzrRCY8TNRpXBcqDB/8SGZMD3e/StuMOtvPJFsa4KQ8epXGit2rLKPtL6OiXWwA6PkuPp+q9B/24Awyb6zLnQzpDx+fnfkRhwqLRxfadwx/1gNWdnWxfpWkc6ssEGfSMYYTQnaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Qsc+AJ2q; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E7E8D40E0176;
-	Wed, 12 Jun 2024 09:30:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 4kBlhHtppWTH; Wed, 12 Jun 2024 09:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718184617; bh=bAaBH5qaA/JFcGMfRi72p+tRzwYREYvEMYDRH3DvGZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qsc+AJ2qmMEYH1GmdJ83828PmwbIvMP3sUK4daOukV73GEF20NSxER0+reGrO19uM
-	 enPkC9nyrprHCoS67qACrJZ6AC236TaKczMgkdfP9ndjVzVMRLBuqJpPl/zUbgIL4F
-	 j7TPT3ohwQ7tErya9eEnipyOdJEg0ctVbZWs+4m632GkVdYeVdekf/qkXvTScifNaY
-	 dX27wFRjeZKQ43p1zAbp64UfA4b/jwZsIqc6R9v1ljrqd/5holDsEmLEsEvM03Iv8d
-	 70HThSZKGtLrQyaaGH7jj9EK0D4oghYcQSt0vGljohHLJyQ+SAjaV97ukJbGIET8/X
-	 Jo9m12QCRFBdDMUXlImk41mbjLSd38G5IY8tlP1WLH3qu2eiguVk57A+GFIFhSGLG1
-	 sJXAeb5KSTM5QCxuKRIKgn7CeddxcPEVgnn0uCEMTRhmfjUyh99Y1TJ+AdytrJJXbg
-	 g7gH6jyMdp7VFB6YFc70bdkKU41w2xcKniRlcbgYbPtyvGM3H04nCbHyo7QNv/xpw7
-	 7XoPxWQnXjNhbBxnnlYyg41SnrbZyzZMjarQGWA0IIHJhMtKjxfJfHPlUZZWWHTevP
-	 3M+3mbFDLsLdTSSTsgPEc2QHFfqberzfPrWjfguIc/dgowqsvgMAtAh8XTehTAIo/L
-	 NqKts/+d049xpp32sa3U8rLY=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BBEAB40E0081;
-	Wed, 12 Jun 2024 09:29:49 +0000 (UTC)
-Date: Wed, 12 Jun 2024 11:29:43 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	Jun Nakajima <jun.nakajima@intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	"Kalra, Ashish" <ashish.kalra@amd.com>,
-	Sean Christopherson <seanjc@google.com>,
-	"Huang, Kai" <kai.huang@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
-	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Tao Liu <ltao@redhat.com>
-Subject: Re: [PATCHv11 18/19] x86/acpi: Add support for CPU offlining for
- ACPI MADT wakeup method
-Message-ID: <20240612092943.GCZmlqh7O662JB-yGu@fat_crate.local>
-References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
- <20240528095522.509667-19-kirill.shutemov@linux.intel.com>
- <20240603083930.GNZl2BQk2lQ8WtcE4o@fat_crate.local>
- <icu4yecqfwhmbexupo4zzei4lbe5sgavsfkm27jd6t6gyjynul@c2wap3jhtik7>
- <20240610134020.GCZmcCRFxuObyv1W_d@fat_crate.local>
- <hidvykk3yan5rtlhum6go7j3lwgrcfcgxlwyjug3osfakw2x6f@4ohvo23zaesv>
- <nh7cihzlsjtoddtec6m62biqdn62k3ka5svs6m64qekhpebu5z@dkplwad2urgp>
- <20240611194653.GGZmiprSNzK0JSJL17@fat_crate.local>
- <2kc27uzrsvpevtvos2harqj3bgfkizi5dhhxkigswlylpnogr5@lk6fi2okv53i>
+	s=arc-20240116; t=1718184697; c=relaxed/simple;
+	bh=WNOzoJUF5Sd3jb54WNIWO7Ok2KUCrQMO20CYYkK0ZGM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EW+I/oDa32NfcV45Orerj/3nCn9iRpB+IKWMwVxO6J2737gS2LLz5Mr3NQ2ikEghzo4Xbi+owaNuccyNutJsdD5eC1BuatcFq/n2G5FYCDKsNB4dIDlfl2m5WqdONYls7e+QykdS5per7AKDmP+PXwgkJCCa5gFm+OkXAv0NBdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GEz6HYS0; arc=none smtp.client-ip=209.85.210.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-7041e39a5beso3687432b3a.3;
+        Wed, 12 Jun 2024 02:31:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718184696; x=1718789496; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7yzsgZOmviXDPRveEaKsBFzgEIXtcAbD/zH2lFEcpTU=;
+        b=GEz6HYS0dIlX2CLFXJSOaK+VJz/35/sGYWlPWtR+46lTDPL/p6TqrNDfyp/yC9KUEW
+         52Rgjh1aVTygvEDtfRTDdtIMcGeR6cDzL0qYB/UzWwsIlr0jm2detLK988u0QkW3hDth
+         Rs+Iwz1/Q/zZERwEiLw5+1K7WdUYKj+rFpBMYkoeCmodFBFhPiT1gG9tm1M5PKfzNla2
+         nrMjuRJtfdUdzjDLJzBI0JMMcOqeol3tXmRFc7I6mZURCayS94COwgwMaeAvzS00Scsg
+         vz9UovPRCrpxRKfbdFp2NYDWX5hKLOZ8rF/Oe1S6mLHAdBBfw3ClqCiGhHNEJgVOiN5E
+         LoyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718184696; x=1718789496;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7yzsgZOmviXDPRveEaKsBFzgEIXtcAbD/zH2lFEcpTU=;
+        b=emKGj5Vdet26fhP3TcNCJyBxBE9tmtUFyX1M7ba8aXmcHszfWiz3PGdFVZ0TYOlDwm
+         vt8ZM9cQwepRw4uBPrygpcn0MF71f0UFJIGsCeKRQ73znJ6JnHrKoXaZdLtfxKLvStqQ
+         OF+tT+ffnNZ+XjmpHvNmHWS0tTzbrxRtLh0++o2p6oNQ1NfAz3xrD6mhKrdWWK7NPyLZ
+         yBJCwufQGMhlq+YZ8pZ5i/ZExJpyPjzoyqBTBAnD6EifI854VC/P90w4lQSCPDkRZzNO
+         hI0QfiP9+Npe+V2IcHlhmKxsAxDZzQpopGYgOmp0h/ZO4zVKhN1IiTskGDkrJR9lnj+N
+         6KBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEBgkwH2Mfu6gbsmUoJ5Pa8efThXOs2jcNomNkWQ8WR8Vas/QraofBMJvaAd3WuZP8MjKg+6BJMLeKy0W+diyVixmgKQokOunTXYA7
+X-Gm-Message-State: AOJu0YzrkmGw1lcCU9PLKHeVeJKzOpGxaYxmI5ogPsa1NafUT0P+KyPu
+	Kb+wC39W5AFjtDdOexTK5S/rXSc9ST4IaJcsZouwx5iDdxchHltM
+X-Google-Smtp-Source: AGHT+IFcQRCr4rkFrU5kbqsrK+X9/MIFW11p9GdKGUayDLo/CcyYLz7pcnOf9Dy5u/Gs1s15g1BepQ==
+X-Received: by 2002:a05:6a00:1886:b0:705:951e:ed88 with SMTP id d2e1a72fcca58-705bceb0393mr1319701b3a.25.1718184695596;
+        Wed, 12 Jun 2024 02:31:35 -0700 (PDT)
+Received: from lhy-a01-ubuntu22.. ([106.39.42.164])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70596eed610sm5119140b3a.170.2024.06.12.02.31.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 02:31:35 -0700 (PDT)
+From: Huai-Yuan Liu <qq810974084@gmail.com>
+To: linuxdrivers@attotech.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Huai-Yuan Liu <qq810974084@gmail.com>
+Subject: [PATCH] [SCSI] esas2r: fix possible buffer overflow caused by bad DMA value in esas2r_process_vda_ioctl()
+Date: Wed, 12 Jun 2024 17:31:19 +0800
+Message-Id: <20240612093119.296983-1-qq810974084@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2kc27uzrsvpevtvos2harqj3bgfkizi5dhhxkigswlylpnogr5@lk6fi2okv53i>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024 at 12:24:30PM +0300, Kirill A. Shutemov wrote:
-> I will try to deliver it in timely manner.
+The value vi->function is stored in DMA memory, so it can be modified at
+any time by malicious hardware. In this case, "if (vi->function >= vercnt)"
+can be passed, which may cause buffer overflow and other unexpected 
+execution results in the following code.
 
-:-P
+To address this issue, vi->function should be assigned to a local value,
+which replaces the use of vi->function.
 
-> > Yeah, we have a bunch of different pagetable manipulating things, all
-> > with their peculiarities and unifying them and having a good set of APIs
-> > which everything else uses, is always a good thing.
-> 
-> Will give it a try.
-> 
-> > And since we're talking cleanups, there's another thing I've been
-> > looking at critically: CONFIG_X86_5LEVEL. Maybe it is time to get rid of
-> > it and make the 5level stuff unconditional. And get rid of a bunch of
-> > code since both vendors support 5level now...
-> 
-> Can do.
+Fixes: 26780d9e12ed ("[SCSI] esas2r: ATTO Technology ExpressSAS 6G SAS/SATA RAID Adapter Driver")
+Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
+---
+ drivers/scsi/esas2r/esas2r_vda.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-Much appreciated, thanks!
-
+diff --git a/drivers/scsi/esas2r/esas2r_vda.c b/drivers/scsi/esas2r/esas2r_vda.c
+index 30028e56df63..48af8c05b01d 100644
+--- a/drivers/scsi/esas2r/esas2r_vda.c
++++ b/drivers/scsi/esas2r/esas2r_vda.c
+@@ -70,16 +70,17 @@ bool esas2r_process_vda_ioctl(struct esas2r_adapter *a,
+ 	u32 datalen = 0;
+ 	struct atto_vda_sge *firstsg = NULL;
+ 	u8 vercnt = (u8)ARRAY_SIZE(esas2r_vdaioctl_versions);
++	u8 vi_function = vi->function;
+ 
+ 	vi->status = ATTO_STS_SUCCESS;
+ 	vi->vda_status = RS_PENDING;
+ 
+-	if (vi->function >= vercnt) {
++	if (vi_function >= vercnt) {
+ 		vi->status = ATTO_STS_INV_FUNC;
+ 		return false;
+ 	}
+ 
+-	if (vi->version > esas2r_vdaioctl_versions[vi->function]) {
++	if (vi->version > esas2r_vdaioctl_versions[vi_function]) {
+ 		vi->status = ATTO_STS_INV_VERSION;
+ 		return false;
+ 	}
+@@ -89,14 +90,14 @@ bool esas2r_process_vda_ioctl(struct esas2r_adapter *a,
+ 		return false;
+ 	}
+ 
+-	if (vi->function != VDA_FUNC_SCSI)
++	if (vi_function != VDA_FUNC_SCSI)
+ 		clear_vda_request(rq);
+ 
+-	rq->vrq->scsi.function = vi->function;
++	rq->vrq->scsi.function = vi_function;
+ 	rq->interrupt_cb = esas2r_complete_vda_ioctl;
+ 	rq->interrupt_cx = vi;
+ 
+-	switch (vi->function) {
++	switch (vi_function) {
+ 	case VDA_FUNC_FLASH:
+ 
+ 		if (vi->cmd.flash.sub_func != VDA_FLASH_FREAD
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
