@@ -1,246 +1,192 @@
-Return-Path: <linux-kernel+bounces-211990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8A39059BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:18:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276D19059BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9101F2145F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25F228532D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87243181D0E;
-	Wed, 12 Jun 2024 17:18:24 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CA51822E4;
+	Wed, 12 Jun 2024 17:18:34 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B0517E90B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 17:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E09181CF3;
+	Wed, 12 Jun 2024 17:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718212703; cv=none; b=M5t/tGy22qrNRlBctQiDYYJrQ7yJb7yvr+TIt0O0cL4/S05AqDGQ2zeBFnyzrVGBZZZkqx0XaB/hmCAqBValCxiJbXec/5USFm3XZ8wanPyVOgYCS0i0BMBh7fAJscLM1qDtc/44N3TiMRciyayI9hWwJl+x7HEWz47dEpKn+sk=
+	t=1718212713; cv=none; b=uTe0g8vazM9vVOZ5x+bl7GkqJRKSS4JarPqPNktoI0Yz1MyPI6gyagt2cpnJQcDOwl9sh6dyYHMgyomtUPEYGCrJmUl+njjf+yPPjRn8WF7E7P1ZD6VvUMFNO3MEzeLrbpgr9c1gI8LmnJF6jn4MpgmPBFwewMs1s/78/nYb5bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718212703; c=relaxed/simple;
-	bh=Sq1psVMjIrxMRUXO4i2VqGZZu1i5PES+5UP+m7xAHHs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NhX46s1MP96wwVI2oaOlJoP5JdZSj2G8Za0ICQCC99TIk+EOc0woHmy/sTwfpFy0q/jFMcp6pcyIuEpkQGgwJNvX7fp2zFQG0Cc5H5gNPw2m4DB+jR4o/GEYfOKVHykLwK2OYReU22ffTVDB7ZZru5LCN0HdiJ2DVzsXoGEyg8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-37586a82295so444595ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:18:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718212701; x=1718817501;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5Wm5Y4VMxUk5RR3ELuQXPAkBPSR2A0FumYvOfuADlfg=;
-        b=IwTkL/amM4je4rZkCwdjmUmr3h5s4XCkUMd4himJ9zJpSMKbYxwnO5KkttBf2nHaIB
-         wdJWP8rt7Ynp4GI4E3c/unehCs7cXKxlUkMu6j+v0tlD5fxj0VSI8u3iw/TF4blMVJL9
-         L+YMn4tDrxUlCDl77spkHzjHxFGvrVWQlLQehRQeyy/pGLwi1U6kbmzcEPzhOSwJRG5l
-         yrIqj2u6OUlNIgXukAuLGnpqlokqWZhZd2hsqyn5mTEE6121JEyxUkcME2HOx3wMFMz4
-         SMjC0b1YoWid/toiYQf3nGpF66BBLOH/0VLYLLN9rnzaqPOZvp1znjPyOcZBctX+LoRo
-         SGBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUf4ZXY4gH+z97q8bpT/c4e3MR4Y9RLHGCnrFoKwj2TJ0rJs4W++rlC2+mF5EPvwVMOEIREK+MwLdq7sXKxwliwtOUpJizdJBTtVoSV
-X-Gm-Message-State: AOJu0YxfxF/Oa4mtrhgFjuj+MLGHPdiNg6Xkavi/F0Iv3TEciZQZUcT5
-	jwEItEs5kdxqufruZVUe/V9dPoAXK1Oo4uBL44CRIlLDyMHOv2Z8bz+WIplGU0UVAXsP/Q4keKz
-	mVKLgBgV/oNtEYvA9qzK2l6WtKciK6nptkLdY3p/JJBzWOOo+uh2Eu64=
-X-Google-Smtp-Source: AGHT+IGABgvSCB59Bl9Umbb17HV0yPEaE00tnPCyL7J6hU6mgOPM7oSjKkSkDy1HjeMf0N4eMQ5MYK0z+F625VCHKedG2LGL71JF
+	s=arc-20240116; t=1718212713; c=relaxed/simple;
+	bh=RlO+aaT++s2x82CDZH+vpEhG43YuOlTihcVA8EJmFI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=st8Nui8+7Zo5lubqfTDC4qOcIgT0fW8FAZcAugJV/j4o8JnTTaBOKTEP5cfGVACnU2o/fOk4/ZVQVe4Dnw+NvnvZmx6jlm/EL01VzzXBfMZOOdlwoZ3GvSHHQUXn1xRiPGNkqKlcNOV3NKCbksko4mlsCZX5cgrnHYhXevCO4Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F0EC116B1;
+	Wed, 12 Jun 2024 17:18:30 +0000 (UTC)
+Date: Wed, 12 Jun 2024 13:18:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller"
+ <davem@davemloft.net>, Daniel Bristot de Oliveira <bristot@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>,
+ Eric Dumazet <edumazet@google.com>, Frederic Weisbecker
+ <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Waiman Long
+ <longman@redhat.com>, Will Deacon <will@kernel.org>, Ben Segall
+ <bsegall@google.com>, Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Juri Lelli
+ <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
+ <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH v6 net-next 08/15] net: softnet_data: Make
+ xmit.recursion per task.
+Message-ID: <20240612131829.2e33ca71@rorschach.local.home>
+In-Reply-To: <20240612170303.3896084-9-bigeasy@linutronix.de>
+References: <20240612170303.3896084-1-bigeasy@linutronix.de>
+	<20240612170303.3896084-9-bigeasy@linutronix.de>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d10:b0:375:cbad:7b48 with SMTP id
- e9e14a558f8ab-375ccfc00fcmr1052675ab.0.1718212701428; Wed, 12 Jun 2024
- 10:18:21 -0700 (PDT)
-Date: Wed, 12 Jun 2024 10:18:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b7b11a061ab49122@google.com>
-Subject: [syzbot] [mm?] WARNING in __page_table_check_ptes_set (2)
-From: syzbot <syzbot+0b56d6ed0d0c0c9a79dc@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, pasha.tatashin@soleen.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Wed, 12 Jun 2024 18:44:34 +0200
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 
-syzbot found the following issue on:
+> Softirq is preemptible on PREEMPT_RT. Without a per-CPU lock in
+> local_bh_disable() there is no guarantee that only one device is
+> transmitting at a time.
+> With preemption and multiple senders it is possible that the per-CPU
+> recursion counter gets incremented by different threads and exceeds
+> XMIT_RECURSION_LIMIT leading to a false positive recursion alert.
+> 
+> Instead of adding a lock to protect the per-CPU variable it is simpler
+> to make the counter per-task. Sending and receiving skbs happens always
+> in thread context anyway.
+> 
+> Having a lock to protected the per-CPU counter would block/ serialize two
+> sending threads needlessly. It would also require a recursive lock to
+> ensure that the owner can increment the counter further.
+> 
+> Make the recursion counter a task_struct member on PREEMPT_RT.
 
-HEAD commit:    8867bbd4a056 mm: arm64: Fix the out-of-bounds issue in con..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=146b3d96980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b56d6ed0d0c0c9a79dc
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+I'm curious to what would be the harm to using a per_task counter
+instead of per_cpu outside of PREEMPT_RT. That way, we wouldn't have to
+have the #ifdef.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6ea21f50498b/disk-8867bbd4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e2fed09364aa/vmlinux-8867bbd4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4860173c7a18/Image-8867bbd4.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0b56d6ed0d0c0c9a79dc@syzkaller.appspotmail.com
-
-Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-Bluetooth: BNEP filters: protocol multicast
-Bluetooth: BNEP socket layer initialized
-Bluetooth: CMTP (CAPI Emulation) ver 1.0
-Bluetooth: CMTP socket layer initialized
-Bluetooth: HIDP (Human Interface Emulation) ver 1.2
-Bluetooth: HIDP socket layer initialized
-NET: Registered PF_RXRPC protocol family
-Key type rxrpc registered
-Key type rxrpc_s registered
-NET: Registered PF_KCM protocol family
-lec:lane_module_init: lec.c: initialized
-mpoa:atm_mpoa_init: mpc.c: initialized
-l2tp_core: L2TP core driver, V2.0
-l2tp_ppp: PPPoL2TP kernel driver, V2.0
-l2tp_ip: L2TP IP encapsulation support (L2TPv3)
-l2tp_netlink: L2TP netlink interface
-l2tp_eth: L2TP ethernet pseudowire support (L2TPv3)
-l2tp_ip6: L2TP IP encapsulation support for IPv6 (L2TPv3)
-NET: Registered PF_PHONET protocol family
-8021q: 802.1Q VLAN Support v1.8
-DCCP: Activated CCID 2 (TCP-like)
-DCCP: Activated CCID 3 (TCP-Friendly Rate Control)
-DCCP is deprecated and scheduled to be removed in 2025, please contact the netdev mailing list
-sctp: Hash tables configured (bind 32/56)
-NET: Registered PF_RDS protocol family
-Registered RDS/infiniband transport
-Registered RDS/tcp transport
-tipc: Activated (version 2.0.0)
-NET: Registered PF_TIPC protocol family
-tipc: Started in single node mode
-NET: Registered PF_SMC protocol family
-9pnet: Installing 9P2000 support
-NET: Registered PF_CAIF protocol family
-NET: Registered PF_IEEE802154 protocol family
-Key type dns_resolver registered
-Key type ceph registered
-libceph: loaded (mon/osd proto 15/24)
-batman_adv: B.A.T.M.A.N. advanced 2024.2 (compatibility version 15) loaded
-openvswitch: Open vSwitch switching datapath
-NET: Registered PF_VSOCK protocol family
-mpls_gso: MPLS GSO support
-Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
-registered taskstats version 1
-Loading compiled-in X.509 certificates
-Loaded X.509 cert 'Build time autogenerated kernel key: 79e1c0a63a233d95d926db3e542dc8d9e342ab6b'
-zswap: loaded using pool lzo/zsmalloc
-Demotion targets for Node 0: null
-debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 1 at mm/page_table_check.c:198 page_table_check_pte_flags mm/page_table_check.c:198 [inline]
-WARNING: CPU: 1 PID: 1 at mm/page_table_check.c:198 __page_table_check_ptes_set+0x324/0x398 mm/page_table_check.c:211
-Modules linked in:
-CPU: 1 PID: 1 Comm: swapper/0 Not tainted 6.10.0-rc2-syzkaller-g8867bbd4a056 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : page_table_check_pte_flags mm/page_table_check.c:198 [inline]
-pc : __page_table_check_ptes_set+0x324/0x398 mm/page_table_check.c:211
-lr : page_table_check_pte_flags mm/page_table_check.c:198 [inline]
-lr : __page_table_check_ptes_set+0x324/0x398 mm/page_table_check.c:211
-sp : ffff800093d57520
-x29: ffff800093d575a0 x28: ffff7000127aaec8 x27: dfff800000000000
-x26: 0000000000000001 x25: bfeffffffffffff3 x24: 1ffff000127aaea8
-x23: 0408000000000000 x22: 0000000000000001 x21: ffff0000d38131b8
-x20: ffff800093d57540 x19: 0408000000000000 x18: ffff800093d57300
-x17: 00000000000074be x16: ffff800080b0d2d4 x15: ffff7000127aaeb0
-x14: 1ffff000127aaeb0 x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff80008eb6e78c x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000c1968000 x7 : ffff80008096b550 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000001
-x2 : bfeffffffffffff3 x1 : 0408000000000000 x0 : 0408000000000000
-Call trace:
- page_table_check_pte_flags mm/page_table_check.c:198 [inline]
- __page_table_check_ptes_set+0x324/0x398 mm/page_table_check.c:211
- page_table_check_ptes_set include/linux/page_table_check.h:74 [inline]
- __set_ptes arch/arm64/include/asm/pgtable.h:404 [inline]
- set_ptes arch/arm64/include/asm/pgtable.h:1586 [inline]
- pte_clear_tests+0x510/0x538 mm/debug_vm_pgtable.c:640
- debug_vm_pgtable+0x268/0x590 mm/debug_vm_pgtable.c:1392
- do_one_initcall+0x254/0x9e4 init/main.c:1267
- do_initcall_level+0x154/0x214 init/main.c:1329
- do_initcalls+0x58/0xac init/main.c:1345
- do_basic_setup+0x8c/0xa0 init/main.c:1364
- kernel_init_freeable+0x324/0x478 init/main.c:1578
- kernel_init+0x24/0x2a0 init/main.c:1467
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-irq event stamp: 1342246
-hardirqs last  enabled at (1342245): [<ffff8000809ba500>] seqcount_lockdep_reader_access+0x6c/0xd4 include/linux/seqlock.h:74
-hardirqs last disabled at (1342246): [<ffff80008af10a10>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
-softirqs last  enabled at (1342178): [<ffff8000801ea530>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (1342178): [<ffff8000801ea530>] handle_softirqs+0xa60/0xc34 kernel/softirq.c:582
-softirqs last disabled at (1341257): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-page_owner is disabled
-Key type .fscrypt registered
-Key type fscrypt-provisioning registered
-kAFS: Red Hat AFS client v0.1 registering.
-Btrfs loaded, assert=on, ref-verify=on, zoned=yes, fsverity=yes
-Key type big_key registered
-Key type encrypted registered
-ima: No TPM chip found, activating TPM-bypass!
-Loading compiled-in module X.509 certificates
-Loaded X.509 cert 'Build time autogenerated kernel key: 79e1c0a63a233d95d926db3e542dc8d9e342ab6b'
-ima: Allocated hash algorithm: sha256
-ima: No architecture policies found
-evm: Initialising EVM extended attributes:
-evm: security.selinux (disabled)
-evm: security.SMACK64
-evm: security.SMACK64EXEC
-evm: security.SMACK64TRANSMUTE
-evm: security.SMACK64MMAP
-evm: security.apparmor (disabled)
-evm: security.ima
-evm: security.capability
-evm: HMAC attrs: 0x1
-printk: legacy console [netcon0] enabled
-netconsole: network logging started
-gtp: GTP module loaded (pdp ctx size 128 bytes)
-rdma_rxe: loaded
-cfg80211: Loading compiled-in X.509 certificates for regulatory database
-Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
-clk: Disabling unused clocks
-PM: genpd: Disabling unused power domains
-ALSA device list:
-  #0: Dummy 1
-  #1: Loopback 1
-  #2: Virtual MIDI Card 1
-md: Skipping autodetection of RAID arrays. (raid=autodetect will force)
-EXT4-fs (nvme0n1p2): mounted filesystem 126e38a5-b482-40da-8f06-bd78886e02c1 ro with ordered data mode. Quota mode: none.
-VFS: Mounted root (ext4 filesystem) readonly on device 259:2.
-devtmpfs: mounted
-Freeing unused kernel memory: 4416K
-Run /sbin/init as init process
+-- Steve
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> Cc: Ben Segall <bsegall@google.com>
+> Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Mel Gorman <mgorman@suse.de>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Valentin Schneider <vschneid@redhat.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  include/linux/netdevice.h | 11 +++++++++++
+>  include/linux/sched.h     |  4 +++-
+>  net/core/dev.h            | 20 ++++++++++++++++++++
+>  3 files changed, 34 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index d20c6c99eb887..b5ec072ec2430 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -3223,7 +3223,9 @@ struct softnet_data {
+>  #endif
+>  	/* written and read only by owning cpu: */
+>  	struct {
+> +#ifndef CONFIG_PREEMPT_RT
+>  		u16 recursion;
+> +#endif
+>  		u8  more;
+>  #ifdef CONFIG_NET_EGRESS
+>  		u8  skip_txqueue;
+> @@ -3256,10 +3258,19 @@ struct softnet_data {
+>  
+>  DECLARE_PER_CPU_ALIGNED(struct softnet_data, softnet_data);
+>  
+> +#ifdef CONFIG_PREEMPT_RT
+> +static inline int dev_recursion_level(void)
+> +{
+> +	return current->net_xmit_recursion;
+> +}
+> +
+> +#else
+> +
+>  static inline int dev_recursion_level(void)
+>  {
+>  	return this_cpu_read(softnet_data.xmit.recursion);
+>  }
+> +#endif
+>  
+>  void __netif_schedule(struct Qdisc *q);
+>  void netif_schedule_queue(struct netdev_queue *txq);
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 61591ac6eab6d..a9b0ca72db55f 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -975,7 +975,9 @@ struct task_struct {
+>  	/* delay due to memory thrashing */
+>  	unsigned                        in_thrashing:1;
+>  #endif
+> -
+> +#ifdef CONFIG_PREEMPT_RT
+> +	u8				net_xmit_recursion;
+> +#endif
+>  	unsigned long			atomic_flags; /* Flags requiring atomic access. */
+>  
+>  	struct restart_block		restart_block;
+> diff --git a/net/core/dev.h b/net/core/dev.h
+> index b7b518bc2be55..2f96d63053ad0 100644
+> --- a/net/core/dev.h
+> +++ b/net/core/dev.h
+> @@ -150,6 +150,25 @@ struct napi_struct *napi_by_id(unsigned int napi_id);
+>  void kick_defer_list_purge(struct softnet_data *sd, unsigned int cpu);
+>  
+>  #define XMIT_RECURSION_LIMIT	8
+> +
+> +#ifdef CONFIG_PREEMPT_RT
+> +static inline bool dev_xmit_recursion(void)
+> +{
+> +	return unlikely(current->net_xmit_recursion > XMIT_RECURSION_LIMIT);
+> +}
+> +
+> +static inline void dev_xmit_recursion_inc(void)
+> +{
+> +	current->net_xmit_recursion++;
+> +}
+> +
+> +static inline void dev_xmit_recursion_dec(void)
+> +{
+> +	current->net_xmit_recursion--;
+> +}
+> +
+> +#else
+> +
+>  static inline bool dev_xmit_recursion(void)
+>  {
+>  	return unlikely(__this_cpu_read(softnet_data.xmit.recursion) >
+> @@ -165,5 +184,6 @@ static inline void dev_xmit_recursion_dec(void)
+>  {
+>  	__this_cpu_dec(softnet_data.xmit.recursion);
+>  }
+> +#endif
+>  
+>  #endif
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
