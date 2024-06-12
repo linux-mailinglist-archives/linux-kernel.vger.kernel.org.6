@@ -1,118 +1,215 @@
-Return-Path: <linux-kernel+bounces-212043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE2D905A70
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:10:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4053905A76
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06A3A1F22800
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:10:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1254E284BA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C25183083;
-	Wed, 12 Jun 2024 18:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9241836DC;
+	Wed, 12 Jun 2024 18:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWUF0D7I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMslw1kM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0155316E895;
-	Wed, 12 Jun 2024 18:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5650818309D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718215833; cv=none; b=WPrZ7wkWwzbKnTc0ORFVCElEiBwQcs54bK2pK3HYezLHQqhdxSz8LjvBFYHhJ79XRmA8gj3AWiWNgDuC+n6XV57rUyHShKxJ17Xnc7W/LerwbXFmkMFs2iCvkf9Ywm/khxW/tYHWrqOgviEJhDRtLpQsPFIOLcGGHoGIo1P7c4Q=
+	t=1718215855; cv=none; b=RDe8it6FlKUiSgbqLYBCOAuU8B10snYMj5Ots2oGISsSOtJMA5mBsS4Rbk2IGN/itjiis6JNz8TK/zxIqzzmXVXQR+bCCtTcJoVVbpUqrj9L8Nd+myEYtpsOZSrpG3utEIB3HcYzOwLMGDgNdk8SyY9Czk5to3sgSNPkTRSY5pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718215833; c=relaxed/simple;
-	bh=zxGx4UHWoFeslODIvuI4YPtEigCLjSm31dy2cb55Oz4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=k4WKtG1kg0Gc9Q2LcQ0Z1xIzyHOihsI5lZtYZnjfOgHQQW04/HcdG/bE3IAA3UoxBZ5/P2ruELUGdffvubs9WehZOHIgsM9eczE3SoMza1Ny+eIdGGMSF4VFjLHU57wWCAo0fotAdtMJacxwAKtH+k0uHDmZjFpXp4dU0RByN6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWUF0D7I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 72475C32786;
-	Wed, 12 Jun 2024 18:10:31 +0000 (UTC)
+	s=arc-20240116; t=1718215855; c=relaxed/simple;
+	bh=SqV7Q9/x2YZSDMfPGfsV1yJAT7awWqzlHlOMVv8cLh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FmUoMnsMk0e+vGv9duXErvGz0ggSemn3K9PKisSPolyQQAmANP8fPW/p0ww3zVdqfPLoc0CF/CQkglTW9H6F8QkEH5In1R4vKQc9Pz7Rwe9PxmisHSUAS9oFwdkIrhwtpXZKioZZdQbYffcAupzLhvpN7ErzKfZmHdXPjC4E7d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMslw1kM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE48DC116B1;
+	Wed, 12 Jun 2024 18:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718215831;
-	bh=zxGx4UHWoFeslODIvuI4YPtEigCLjSm31dy2cb55Oz4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=TWUF0D7IRN5Vo2R7IFWkPtDTNF++1BL+Rgac5joXi+V6G+etTmFy8BLu+h6L7ExVi
-	 So01cJN5cilVjQ+l2BOZRbCDzBz4l0jx/528FVGADA91iX16nEcQqhk7C+I3XC2HK7
-	 h8YY+rz3VaV27PABMQPe+XFO0A3f09JiU6xuOpIhAcnYGpceK3myDMpXIhk8UsbUdW
-	 44QYK4zDYozKR6bdgJ0AuhU4boMkic+TRxvaa7l46+NcC0mz6N2MBj6oFYUg2r+kni
-	 oNTBDRvYmIZCWXND1t6CZDNcgogj3r8+3POtzOg865W7XV0bEc8neCi90WXcaEyIdz
-	 QYprE511ev6Tw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 58136C43618;
-	Wed, 12 Jun 2024 18:10:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1718215854;
+	bh=SqV7Q9/x2YZSDMfPGfsV1yJAT7awWqzlHlOMVv8cLh8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=gMslw1kMWn30pa75ei+/+bMEaMAwzg+JqSBQqRr3YbO7ctXDF9g2rYJBLan25UjHS
+	 lRvR3ecW/zowY/zpOO8slFFdh6+vA6qkx5GbSfAWBOBla0CtDcGfVoDWD9A7I4zDia
+	 vMpsuNdm821GYoNYAttWud6d5zbGyofE4SjmWnkcNy9LIL+SorLt+1F4KbQpyIVSa3
+	 wqvrDhhMyCi/c019QeenkpYrtnDQsKWn5HgCugXmFsWM9Qv2TjCYUHgYW4CvX97s/q
+	 BiDgbjZdb4jq0nll+K22zOWbms56nRD7lpy2ujq2Wzw/RBKZaM30TuERof/a5yAeXn
+	 FdxDXVGISLoRg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 7EDB7CE0DEA; Wed, 12 Jun 2024 11:10:54 -0700 (PDT)
+Date: Wed, 12 Jun 2024 11:10:54 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, torvalds@linux-foundation.org,
+	rostedt@goodmis.org, mark.rutland@arm.com, juri.lelli@redhat.com,
+	joel@joelfernandes.org, raghavendra.kt@amd.com,
+	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH v2 13/35] sched: allow runtime config for PREEMPT_AUTO
+Message-ID: <652b1be3-e154-4902-b7aa-f9151ed5cf75@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
+ <20240528003521.979836-14-ankur.a.arora@oracle.com>
+ <20240528162725.GH26599@noisy.programming.kicks-ass.net>
+ <87ttif641i.fsf@oracle.com>
+ <20240606115101.GC8774@noisy.programming.kicks-ass.net>
+ <87ikymw1g2.fsf@oracle.com>
+ <20240606173218.GH8774@noisy.programming.kicks-ass.net>
+ <87frtnt02l.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v5 00/12] bpf: Support dumping kfunc prototypes from
- BTF
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171821583135.29771.8486292481897939634.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Jun 2024 18:10:31 +0000
-References: <cover.1718207789.git.dxu@dxuuu.xyz>
-In-Reply-To: <cover.1718207789.git.dxu@dxuuu.xyz>
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, fsverity@lists.linux.dev, andrii@kernel.org,
- jolsa@kernel.org, linux-kbuild@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org,
- olsajiri@gmail.com, quentin@isovalent.com, alan.maguire@oracle.com,
- acme@kernel.org, eddyz87@gmail.com, kernel-team@meta.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87frtnt02l.fsf@oracle.com>
 
-Hello:
-
-This series was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
-
-On Wed, 12 Jun 2024 09:58:24 -0600 you wrote:
-> This patchset enables both detecting as well as dumping compilable
-> prototypes for kfuncs.
+On Sat, Jun 08, 2024 at 05:46:26PM -0700, Ankur Arora wrote:
+> Peter Zijlstra <peterz@infradead.org> writes:
+> > On Thu, Jun 06, 2024 at 08:11:41AM -0700, Ankur Arora wrote:
+> >> Peter Zijlstra <peterz@infradead.org> writes:
+> >> > On Thu, May 30, 2024 at 02:29:45AM -0700, Ankur Arora wrote:
+> >> >> Peter Zijlstra <peterz@infradead.org> writes:
+> >> >> > On Mon, May 27, 2024 at 05:34:59PM -0700, Ankur Arora wrote:
+> >> >> >> Reuse sched_dynamic_update() and related logic to enable choosing
+> >> >> >> the preemption model at boot or runtime for PREEMPT_AUTO.
+> >> >> >>
+> >> >> >> The interface is identical to PREEMPT_DYNAMIC.
+> >> >> >
+> >> >> > Colour me confused, why?!? What are you doing and why aren't just just
+> >> >> > adding AUTO to the existing DYNAMIC thing?
+> >> >>
+> >> >> You mean have a single __sched_dynamic_update()? AUTO doesn't use any
+> >> >> of the static_call/static_key stuff so I'm not sure how that would work.
+> >> >
+> >> > *sigh*... see the below, seems to work.
+> >>
+> >> Sorry, didn't mean for you to have to do all that work to prove the
+> >> point.
+> >
+> > Well, for a large part it was needed for me to figure out what your
+> > patches were actually doing anyway. Peel away all the layers and this is
+> > what remains.
+> >
+> >> I phrased it badly. I do understand how lazy can be folded in as
+> >> you do here:
+> >>
+> >> > +	case preempt_dynamic_lazy:
+> >> > +		if (!klp_override)
+> >> > +			preempt_dynamic_disable(cond_resched);
+> >> > +		preempt_dynamic_disable(might_resched);
+> >> > +		preempt_dynamic_enable(preempt_schedule);
+> >> > +		preempt_dynamic_enable(preempt_schedule_notrace);
+> >> > +		preempt_dynamic_enable(irqentry_exit_cond_resched);
+> >> > +		preempt_dynamic_key_enable(preempt_lazy);
+> >> > +		if (mode != preempt_dynamic_mode)
+> >> > +			pr_info("Dynamic Preempt: lazy\n");
+> >> > +		break;
+> >> >  	}
+> >>
+> >> But, if the long term goal (at least as I understand it) is to get rid
+> >> of cond_resched() -- to allow optimizations that needing to call cond_resched()
+> >> makes impossible -- does it make sense to pull all of these together?
+> >
+> > It certainly doesn't make sense to add yet another configurable thing. We
+> > have one, so yes add it here.
+> >
+> >> Say, eventually preempt_dynamic_lazy and preempt_dynamic_full are the
+> >> only two models left. Then we will have (modulo figuring out how to
+> >> switch over klp from cond_resched() to a different unwinding technique):
+> >>
+> >> static void __sched_dynamic_update(int mode)
+> >> {
+> >>         preempt_dynamic_enable(preempt_schedule);
+> >>         preempt_dynamic_enable(preempt_schedule_notrace);
+> >>         preempt_dynamic_enable(irqentry_exit_cond_resched);
+> >>
+> >>         switch (mode) {
+> >>         case preempt_dynamic_full:
+> >>                 preempt_dynamic_key_disable(preempt_lazy);
+> >>                 if (mode != preempt_dynamic_mode)
+> >>                         pr_info("%s: full\n", PREEMPT_MODE);
+> >>                 break;
+> >>
+> >> 	case preempt_dynamic_lazy:
+> >> 		preempt_dynamic_key_enable(preempt_lazy);
+> >> 		if (mode != preempt_dynamic_mode)
+> >> 			pr_info("Dynamic Preempt: lazy\n");
+> >> 		break;
+> >>         }
+> >>
+> >>         preempt_dynamic_mode = mode;
+> >> }
+> >>
+> >> Which is pretty similar to what the PREEMPT_AUTO code was doing.
+> >
+> > Right, but without duplicating all that stuff in the interim.
 > 
-> The first commit instructs pahole to DECL_TAG kfuncs when available.
-> This requires v1.27 which was released on 6/11/24. With it, users will
-> be able to look at BTF inside vmlinux (or modules) and check if the
-> kfunc they want is available.
+> Yeah, that makes sense. Joel had suggested something on these lines
+> earlier [1], to which I was resistant.
 > 
-> [...]
+> However, the duplication (and the fact that the voluntary model
+> was quite thin) should have told me that (AUTO, preempt=voluntary)
+> should just be folded under PREEMPT_DYNAMIC.
+> 
+> I'll rework the series to do that.
+> 
+> That should also simplify RCU related choices which I think Paul will
+> like. Given that the lazy model is meant to eventually replace
+> none/voluntary, so PREEMPT_RCU configuration can just be:
+> 
+> --- a/kernel/rcu/Kconfig
+> +++ b/kernel/rcu/Kconfig
+> @@ -18,7 +18,7 @@ config TREE_RCU
+> 
+>  config PREEMPT_RCU
+>         bool
+> -       default y if PREEMPTION
+> +       default y if PREEMPTION && !PREEMPT_LAZY
 
-Here is the summary with links:
-  - [bpf-next,v5,01/12] kbuild: bpf: Tell pahole to DECL_TAG kfuncs
-    https://git.kernel.org/bpf/bpf-next/c/ebb79e96f1ea
-  - [bpf-next,v5,02/12] bpf: selftests: Fix bpf_iter_task_vma_new() prototype
-    https://git.kernel.org/bpf/bpf-next/c/718135f5bd24
-  - [bpf-next,v5,03/12] bpf: selftests: Fix fentry test kfunc prototypes
-    https://git.kernel.org/bpf/bpf-next/c/dff96e4f5078
-  - [bpf-next,v5,04/12] bpf: selftests: Fix bpf_cpumask_first_zero() kfunc prototype
-    https://git.kernel.org/bpf/bpf-next/c/89f0b1abac49
-  - [bpf-next,v5,05/12] bpf: selftests: Fix bpf_map_sum_elem_count() kfunc prototype
-    https://git.kernel.org/bpf/bpf-next/c/ac42f636dc11
-  - [bpf-next,v5,06/12] bpf: Make bpf_session_cookie() kfunc return long *
-    https://git.kernel.org/bpf/bpf-next/c/2b8dd87332cd
-  - [bpf-next,v5,07/12] bpf: selftests: Namespace struct_opt callbacks in bpf_dctcp
-    https://git.kernel.org/bpf/bpf-next/c/0ce089cbdc6a
-  - [bpf-next,v5,08/12] bpf: verifier: Relax caller requirements for kfunc projection type args
-    https://git.kernel.org/bpf/bpf-next/c/ec209ad86324
-  - [bpf-next,v5,09/12] bpf: treewide: Align kfunc signatures to prog point-of-view
-    https://git.kernel.org/bpf/bpf-next/c/cce4c40b9606
-  - [bpf-next,v5,10/12] bpf: selftests: nf: Opt out of using generated kfunc prototypes
-    https://git.kernel.org/bpf/bpf-next/c/f709124dd72f
-  - [bpf-next,v5,11/12] bpf: selftests: xfrm: Opt out of using generated kfunc prototypes
-    https://git.kernel.org/bpf/bpf-next/c/c567cba34585
-  - [bpf-next,v5,12/12] bpftool: Support dumping kfunc prototypes from BTF
-    https://git.kernel.org/bpf/bpf-next/c/770abbb5a25a
+Given that PREEMPT_DYNAMIC selects PREEMPT_BUILD which in turn selects
+PREEMPTION, this should work.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> Or, maybe we should instead have this:
+> 
+> --- a/kernel/rcu/Kconfig
+> +++ b/kernel/rcu/Kconfig
+> @@ -18,7 +18,7 @@ config TREE_RCU
+> 
+>  config PREEMPT_RCU
+>         bool
+> -       default y if PREEMPTION
+> +       default y if PREEMPT || PREEMPT_RT
+>         select TREE_RCU
+> 
+> Though this would be a change in behaviour for current PREEMPT_DYNAMIC
+> users.
 
+Which I believe to be a no-go.  I believe that PREEMPT_DYNAMIC users
+really need their preemptible kernels to include preemptible RCU.
 
+If PREEMPT_LAZY causes PREEMPT_DYNAMIC non-preemptible kernels to become
+lazily preemptible, that is a topic to discuss with PREEMPT_DYNAMIC users.
+On the other hand, if PREEMPT_LAZY does not cause PREEMPT_DYNAMIC
+kernels to become lazily preemptible, then I would expect there to be
+hard questions about removing cond_resched() and might_sleep(), or,
+for that matter changing their semantics.  Which I again must leave
+to PREEMPT_DYNAMIC users.
+
+							Thanx, Paul
+
+> [1] https://lore.kernel.org/lkml/fd48ea5c-bc74-4914-a621-d12c9741c014@joelfernandes.org/
+> 
+> Thanks
+> --
+> ankur
 
