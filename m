@@ -1,151 +1,180 @@
-Return-Path: <linux-kernel+bounces-210818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBD09048EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:22:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F20A9048F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3B31F242AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:22:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09CCB28A9AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44781AD5D;
-	Wed, 12 Jun 2024 02:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729E2D29B;
+	Wed, 12 Jun 2024 02:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TWrSV3zL"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmsKNxu1"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E8B63BF
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394C3847C;
+	Wed, 12 Jun 2024 02:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718158884; cv=none; b=rMCgvWQfZWdHWjEtQPFnc/W7CilwMtLiEFzKdvecpGcqPk1LgLjATfh+xRpKINYUsyn5m+T836b6lj9EcvEup3m5Feb5IQ5h9kL0Mq5QuEsWB591ATEl9NX1A2PBcBpSCo3VlNqEFLDq9E/M9hb4wvx4zyfv1iapIYyz0e5tZPc=
+	t=1718159013; cv=none; b=YxN0m27YL32gXPcerppyg3RCoi4iHWtSlQPULTqjD3FokhWZGr7Kaq9lfx41o03nxffEcnPM+M1DEFLMerpduZrMoDInmlxLQu8znzBKKS01+RiSVNU3H9NBzcR2juV0o4MxfbXYBA4hObZWZhN9/8r5WSxHRlSqnxC97lB1lTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718158884; c=relaxed/simple;
-	bh=2RfIPyM2BaJyeNcdDcFiSSt+OrKJFVJYbx/rL5T1DGU=;
-	h=Mime-Version:Subject:From:To:CC:Message-ID:Date:Content-Type:
-	 References; b=Eu1w5ar27tdDNXePSWv+M2Dzfa4HZ91SQbclkFgI0PV4y3n9HFU0NQLf4sStqupVrW+5CIUB+VCZvAqusNWxuLNJLBAS6N63LuySgMmDfRZlYI8oaUb8QeAi3Ewh3Sf5n9N7Vw1+9TQdA83Lc3H109h9Epjc+L1w3f/jpyWQ7iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TWrSV3zL; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240612022114epoutp0204a5be2943cc8bb6afc89282277ef6fc~YIGSM1Rm61703117031epoutp02q
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:21:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240612022114epoutp0204a5be2943cc8bb6afc89282277ef6fc~YIGSM1Rm61703117031epoutp02q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718158874;
-	bh=aHiTLqz3DTEetGM77pTEUK8RRyp3MuomMyvuo5JbqcY=;
-	h=Subject:Reply-To:From:To:CC:Date:References:From;
-	b=TWrSV3zL3WX7ncK0gCU8tR+LluTJOxaTm4/cj6sSMmFtSTxJdZVCculQFuGzzO0cc
-	 K1mOXeRpDRuYGApD9KCe9qWXUO1Jq+ZY9F/I7cHrdCu3w6t1aBZmDagns3molgr6cr
-	 Zd5O/mscRw5gs+KuQ4aX3n9zAQ+KnP798i9hpL+c=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20240612022113epcas2p388bb2006691b6ca36d3fe0ce4a07c590~YIGRpYg_n2118421184epcas2p34;
-	Wed, 12 Jun 2024 02:21:13 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.98]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4VzTmn0hqqz4x9Q6; Wed, 12 Jun
-	2024 02:21:13 +0000 (GMT)
-X-AuditID: b6c32a47-4f767a800000264e-db-666906188eb0
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	78.A3.09806.81609666; Wed, 12 Jun 2024 11:21:13 +0900 (KST)
+	s=arc-20240116; t=1718159013; c=relaxed/simple;
+	bh=553eqYP03BYXJPed84E6WmxmDEiKOgjTIuF2NPlDzdI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n6HjSZjPvzYzJXslZjVwdVB5EjqjvfEGq5sfEz8F4qmdODRtk5jNNd8uGayhYolTYtwSbSL5f7Saz7pdT/uzUYVOa2tH2J3spKfeHRS9QYtCj2r7rrcSYezhlo67UyJbPc0H3p/QrPuf4DegNnOnJJHkA2JadI5xyqSCVCjZ3tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmsKNxu1; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c2db1fc31fso655430a91.0;
+        Tue, 11 Jun 2024 19:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718159011; x=1718763811; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5gFOKkMDT7D7pRqOfPOEkuBjvwZEWIElC/m+QYJ00kU=;
+        b=CmsKNxu1/Fbcelfj2kBARXJPX6MNHDbL+q6qrT3Ng5ty8OLnQBlhM4uzbCLXSM97w6
+         UxOSgChF0jMNgb5Oqb+LQO3g5+I02B99AcAoBbTnQnSr2FJr5dLvMFTFTf0Vp6g1RmoI
+         P8sQp7tUWEzg4MI/UZqqIMIU+t5q6mmOISBZmiAG+EHt9zoU8ehAk2lJOjjFqCc5G1tC
+         4wFKP1fSXHuObpnJfucwChAGeM9dYWOFDVMKe1UFOajIpV8wG4Dqo+VfhlaYeXq+K7b9
+         QChUsWjFSNB1L/TLek1tVQQ8Un04mHQAw26GptiKVF4ln0XEWq7uDIXoq2yq+bKhNMa+
+         kFbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718159011; x=1718763811;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5gFOKkMDT7D7pRqOfPOEkuBjvwZEWIElC/m+QYJ00kU=;
+        b=BzRPpslJz/WPCyV6rgfVIfv7zwplI3c0sYp9AH5Tq3gFOyCKW7dlm+4H/cbCf7HRWh
+         HYO71sdx5CiXPvms9XwCasZTDhpTyP2xDAmSJgTxtHycpgXcwh0A2DlhRT4pu/Z/jH6S
+         Io6iU11JM3oV/ex4eVvi2gbBd1zFyDmuZDXvNX+ILQyOpFdK6jbgHZAyiLmF2Of23cZR
+         dppOm03IAWuOgV6Br0vmOpZrUH5vl884Y26CQTvPSnGsru/Ohbo5wAu0qpeEoaMkEddg
+         M74x43/QjKGetXiqb11Z7aormMpmqSEWmCz993KduPE8S0eMNkzRjJbxLoXfqfNRG0K5
+         XWvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXBbMkJ0AxoU/JfQ0dSnLUObKhU2QpNeXaPXC7/0nmTkEk+IjwpwbFPudJRBNXcauEh0TXNVGbzS1y7MpOJfnTeLIWjl+YaQbaZv2yv85YyRh5tR1fxu9oy2vG5Vb8uxrC16xR
+X-Gm-Message-State: AOJu0YxFX+fgNQP8E1aU31H8yjiPzZoXvNj3JWwetbglQpvkPeRrHZjG
+	rqvacfGa1dy8R9lD5ESgQ134YR2uHMyGI1cTugeIW51Oc/K+TiTT
+X-Google-Smtp-Source: AGHT+IESk5o6BdqOI4+/gL5n5TOvot4UBXUgXEXOFZNwf8A6gZ8XocCd8ISrU+dCkYmNGrzZHycrXA==
+X-Received: by 2002:a05:6a20:dd9e:b0:1b5:ae2c:c730 with SMTP id adf61e73a8af0-1b8a9c5107cmr620180637.3.1718159011301;
+        Tue, 11 Jun 2024 19:23:31 -0700 (PDT)
+Received: from localhost.localdomain (122-117-151-175.hinet-ip.hinet.net. [122.117.151.175])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f70e644446sm52250505ad.7.2024.06.11.19.23.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 19:23:30 -0700 (PDT)
+From: Kuangyi Chiang <ki.chiang65@gmail.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ki.chiang65@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] xhci: Don't issue Reset Device command to Etron xHCI host
+Date: Wed, 12 Jun 2024 10:22:56 +0800
+Message-Id: <20240612022256.7365-1-ki.chiang65@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: [PATCH] f2fs: fix convert inline inode on readonly mode
-Reply-To: daejun7.park@samsung.com
-Sender: Daejun Park <daejun7.park@samsung.com>
-From: Daejun Park <daejun7.park@samsung.com>
-To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
-	<chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net"
-	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Daejun Park <daejun7.park@samsung.com>, Dongjin Kim
-	<dongjin_.kim@samsung.com>, Seokhwan Kim <sukka.kim@samsung.com>, Yonggil
-	Song <yonggil.song@samsung.com>, Eunhee Rho <eunhee83.rho@samsung.com>,
-	Jaeyoon Choi <j_yoon.choi@samsung.com>, Nayeon Kim
-	<nayeoni.kim@samsung.com>, Siwoo Jung <siu.jung@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20240612022012epcms2p77300b5130d18b0397c9fc2877704949d@epcms2p7>
-Date: Wed, 12 Jun 2024 11:20:12 +0900
-X-CMS-MailID: 20240612022012epcms2p77300b5130d18b0397c9fc2877704949d
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBJsWRmVeSWpSXmKPExsWy7bCmua4kW2aawZktTBanp55lsnh5SNNi
-	1YNwix8nTSx+Pulgs+jf3c5i8WT9LGaLS4vcLS7vmsNm0fLHyeL8xNdMFqs65jJaTD1/hMmB
-	12PTqk42j90LPjN59G1ZxejxeZNcAEtUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6h
-	pYW5kkJeYm6qrZKLT4CuW2YO0GlKCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnALz
-	Ar3ixNzi0rx0vbzUEitDAwMjU6DChOyMK39nMBb84Ko4/yWvgfEcRxcjJ4eEgInEsl1/WboY
-	uTiEBHYwSjQe2c/excjBwSsgKPF3hzBIjbCAg8SMA5tZQGwhASWJ9RdnsUPE9SRuPVzDCGKz
-	CehITD9xHywuIvCKUeLMalGQmcwCB5kkPp6ezQ6xjFdiRvtTFghbWmL78q2MELaGxI9lvcwQ
-	tqjEzdVv2WHs98fmQ9WISLTeOwtVIyjx4OduqLikxO25m6Dq8yX+X1kOZddIbDswD8rWl7jW
-	sRFsL6+Ar8SBdw1gcRYBVYlpN6azQdS4SNx89BFsJrOAvMT2t3OYQeHALKApsX6XPogpIaAs
-	ceQWC0QFn0TH4b9wXzVs/I2VvWPeEyYIW01i3c/1TBBjZCRuzWOcwKg0CxHOs5CsnYWwdgEj
-	8ypGsdSC4tz01GKjAmN4zCbn525iBCdRLfcdjDPeftA7xMjEwXiIUYKDWUmE90xMepoQb0pi
-	ZVVqUX58UWlOavEhRlOghycyS4km5wPTeF5JvKGJpYGJmZmhuZGpgbmSOO+91rkpQgLpiSWp
-	2ampBalFMH1MHJxSDUztif9FGFvDIm5OyVZQ+s3jslLMy3nv5PcMCXVH/Q+7Mhnp1VzK1pqX
-	yZzH/+zQvC+s9Zfr0+01hFh9Kna+NWiLv8++VL5/Y3hY9Ym8+NMzLPZ8/Sa67HFuNiu32crK
-	RzXrPnKnr7rOrh7vcK4j3+tJ+v9PywP513ZuZXdYwcSpsnDJo3dFMws2z7/tu/iwxNFj8zl3
-	xPtc0Q2dxTc54V7DhZtR1wLV448v2uxXanitoHxRVvjyjEebt8bwWQXO11/76tfLavFn+h1u
-	p7zeOS6dlOZ3sDRRkcHln0VZhkd9wekrTFo/J7x45tuxr2ze7Q9Z6k+1kjQfNvhbP2356dFt
-	evneJ7uItf+W7vUq8VRiKc5INNRiLipOBACaB+P9KwQAAA==
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240612022012epcms2p77300b5130d18b0397c9fc2877704949d
-References: <CGME20240612022012epcms2p77300b5130d18b0397c9fc2877704949d@epcms2p7>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-syzbot reported a bug in f2fs_vm_page_mkwrite() which checks for
-f2fs_has_inline_data(inode).
-The bug was caused by f2fs_convert_inline_inode() not returning an
-error when called on a read-only filesystem, but returning with the
-inline attribute as set.
-This patch fixes the problem by ensuring that f2fs_convert_inline_inode()
-returns -EROFS on readonly.
+Sometimes hub driver does not recognize USB device that is connected
+to external USB2.0 Hub when system resumes from S4.
 
-Fixes: ec2ddf499402 ("f2fs: don't allow any writes on readonly mount")
-Reported-by: syzbot+f195123a45ad487ca66c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f195123a45ad487ca66c
-Signed-off-by: Daejun Park <daejun7.park@samsung.com>
+This happens when xHCI driver issue Reset Device command to inform
+Etron xHCI host that USB device has been reset.
+
+Seems that Etron xHCI host can not perform this command correctly,
+affecting that USB device.
+
+Instead, to aviod this, xHCI driver should reassign device slot ID
+by calling xhci_free_dev() and then xhci_alloc_dev(), the effect is
+the same.
+
+Add XHCI_ETRON_HOST quirk flag to invoke workaround in
+xhci_discover_or_reset_device().
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
 ---
- fs/f2fs/inline.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/host/xhci-pci.c |  2 ++
+ drivers/usb/host/xhci.c     | 11 ++++++++++-
+ drivers/usb/host/xhci.h     |  2 ++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 7638d0d7b7ee..ae1d8f2d82c9 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -203,10 +203,12 @@ int f2fs_convert_inline_inode(struct inode *inode)
-        struct page *ipage, *page;
-        int err = 0;
-
--       if (!f2fs_has_inline_data(inode) ||
--                       f2fs_hw_is_readonly(sbi) || f2fs_readonly(sbi->sb))
-+       if (!f2fs_has_inline_data(inode))
-                return 0;
-
-+       if (unlikely(f2fs_hw_is_readonly(sbi) || f2fs_readonly(sbi->sb)))
-+               return -EROFS;
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index 05881153883e..c7a88340a6f8 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -395,11 +395,13 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 			pdev->device == PCI_DEVICE_ID_EJ168) {
+ 		xhci->quirks |= XHCI_RESET_ON_RESUME;
+ 		xhci->quirks |= XHCI_BROKEN_STREAMS;
++		xhci->quirks |= XHCI_ETRON_HOST;
+ 	}
+ 	if (pdev->vendor == PCI_VENDOR_ID_ETRON &&
+ 			pdev->device == PCI_DEVICE_ID_EJ188) {
+ 		xhci->quirks |= XHCI_RESET_ON_RESUME;
+ 		xhci->quirks |= XHCI_BROKEN_STREAMS;
++		xhci->quirks |= XHCI_ETRON_HOST;
+ 	}
+ 
+ 	if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 37eb37b0affa..aba4164b0873 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3752,6 +3752,15 @@ static int xhci_discover_or_reset_device(struct usb_hcd *hcd,
+ 						SLOT_STATE_DISABLED)
+ 		return 0;
+ 
++	if (xhci->quirks & XHCI_ETRON_HOST) {
++		xhci_free_dev(hcd, udev);
++		ret = xhci_alloc_dev(hcd, udev);
++		if (ret == 1)
++			return 0;
++		else
++			return -EINVAL;
++	}
 +
-        err = f2fs_dquot_initialize(inode);
-        if (err)
-                return err;
---
+ 	trace_xhci_discover_or_reset_device(slot_ctx);
+ 
+ 	xhci_dbg(xhci, "Resetting device with slot ID %u\n", slot_id);
+@@ -3862,7 +3871,7 @@ static int xhci_discover_or_reset_device(struct usb_hcd *hcd,
+  * disconnected, and all traffic has been stopped and the endpoints have been
+  * disabled.  Free any HC data structures associated with that device.
+  */
+-static void xhci_free_dev(struct usb_hcd *hcd, struct usb_device *udev)
++void xhci_free_dev(struct usb_hcd *hcd, struct usb_device *udev)
+ {
+ 	struct xhci_hcd *xhci = hcd_to_xhci(hcd);
+ 	struct xhci_virt_device *virt_dev;
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 30415158ed3c..f46b4dcb0613 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1627,6 +1627,7 @@ struct xhci_hcd {
+ #define XHCI_RESET_TO_DEFAULT	BIT_ULL(44)
+ #define XHCI_ZHAOXIN_TRB_FETCH	BIT_ULL(45)
+ #define XHCI_ZHAOXIN_HOST	BIT_ULL(46)
++#define XHCI_ETRON_HOST	BIT_ULL(47)
+ 
+ 	unsigned int		num_active_eps;
+ 	unsigned int		limit_active_eps;
+@@ -1863,6 +1864,7 @@ int xhci_resume(struct xhci_hcd *xhci, pm_message_t msg);
+ irqreturn_t xhci_irq(struct usb_hcd *hcd);
+ irqreturn_t xhci_msi_irq(int irq, void *hcd);
+ int xhci_alloc_dev(struct usb_hcd *hcd, struct usb_device *udev);
++void xhci_free_dev(struct usb_hcd *hcd, struct usb_device *udev);
+ int xhci_alloc_tt_info(struct xhci_hcd *xhci,
+ 		struct xhci_virt_device *virt_dev,
+ 		struct usb_device *hdev,
+-- 
 2.25.1
 
 
