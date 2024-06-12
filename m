@@ -1,128 +1,128 @@
-Return-Path: <linux-kernel+bounces-210749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730E2904841
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:19:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B5F904848
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261761F23F9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8E151F24441
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4D78C1E;
-	Wed, 12 Jun 2024 01:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99004A20;
+	Wed, 12 Jun 2024 01:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MhKWQPkS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dhhfKCQS"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B88BAD56;
-	Wed, 12 Jun 2024 01:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD7F4A0A;
+	Wed, 12 Jun 2024 01:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718155156; cv=none; b=AT2Fo++pwkep2cIFXrqWvh5KmtEEnuECS42qE0UbpYLwGmVt1sOVmhotmrbML5hnElGmyxjXQKQ51Jfa05JykHbuLo5GBpy8nwDzpeOdxva6EBmQVVUVJ6yI8y+t4Id9cA/BnJuwdtSPYqpm8UWWb5wYjDycDrGNay7503z80ig=
+	t=1718155238; cv=none; b=hJJgSZDjDt89ibhLavt4GkHydPqmZM6bkljkPZgvrAIgLIvHjR31DJtiuc94mwwYo4K0zgtFzV77Lv5324OTo23qL5M+RNZmvQGvZ6MvrkKa/vaKvguBrxU39Q6Hv5G8onJsN+t3OLEfDHjJge0/WRYm5N99Y2NgMEDX6LOOdaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718155156; c=relaxed/simple;
-	bh=kSYXv9nIPkIFXOkJTequSQ7Wqj4nVqUZe+e6mX6ay74=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=r/bgN1Dc/sWKqKXQvyy4+482U1Qwl6hzRvp5NXsr9AV7zLXPefcB1MkCxADw7gW0p3B1pIFMpA/HmsVsv2AMqB2dzR9c/rMTbbvBeKuiaPkLGkVj8G2QvPS9CBdHAE7WkM9rjwFaD5qxfOg+rQul/IxGXFKhs+1BN4t77UV+gnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MhKWQPkS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BHHrFi001180;
-	Wed, 12 Jun 2024 01:19:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=yw0xmqzsIr/6r5+9NKqm3b
-	RLhcjjifZCyGq40TyF3tI=; b=MhKWQPkSpWuFqtV+qjM+Hfbb2rIgsO+IXEG7DM
-	/9FtdsfJnM9LwQy2LG4u1nryfpf6VNZkMjpklq46ZLNkmZuUgwtqawWnXtXBB8kD
-	pAsAGtu/Mcx0ezs/4KzdxxLNW0qz4SvsGZcYaw+9fI/bQuaRJwCVLG9YL/jjmwou
-	K7VtbXoK/10sAIEiDWgmmr2zZkrblrP+1hIutyN0Wz+c2BeOCR5ijvi/7CF4AloY
-	LEZKGxb4OxW2Rdm7QamL+3jCpswV5OucWkN1lfabD2X+w9TYxpAJq9OlLpnMGxm4
-	3JDKDcvgbPuHFzT6tscp9Zyw5MQ8q+87riWuVjCEQq/hrYiA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yptuy0ux8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 01:19:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C1JCOk026642
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 01:19:12 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
- 2024 18:19:11 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 11 Jun 2024 18:19:10 -0700
-Subject: [PATCH] usb: phy: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1718155238; c=relaxed/simple;
+	bh=UFCfQ0hrhFG/Vxf7U9u47frkRuW4P5y2nTaEQJReSsA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AJCiIu731DXUb7xGFJTG1558RWgbLG9H9TtvEzMA8dUGui8fF6i1oZqG7zOC1Wrz4iD0fgwmgLvjWb44uwJx4SoIF5plQPScnAKEz4mCEQ/LBpz1JlEsVkiuz0uc/P0wBjy8CwMoj9nEAsbILFG5HadrkKSTayy02Hv3rV1qmvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dhhfKCQS; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f63dabc6285911efa54bbfbb386b949c-20240612
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=204HJCc8S6y1MsmDodpJho9HqhzErabCckCS1J9ulx8=;
+	b=dhhfKCQSHK8ikh1VwEwQv1layrNwulIxekQhXLsOwldNIWW/1u23bQv/27HlNvzlahxE0Dy14ucwb392bu29OyKmlXiFPdwVVU1bcScshQSqmStGKPQmYEtRGxTX+2sS7Ll8ttowq9cASLH5KgevQYepl0DUKVLUyksdGfNRP4Q=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:0d94837d-31ff-4ef6-9ed2-945d9baca99b,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:393d96e,CLOUDID:63f7df93-e2c0-40b0-a8fe-7c7e47299109,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: f63dabc6285911efa54bbfbb386b949c-20240612
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+	(envelope-from <zhi.mao@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 15499936; Wed, 12 Jun 2024 09:20:32 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 12 Jun 2024 09:20:30 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 12 Jun 2024 09:20:29 +0800
+From: Zhi Mao <zhi.mao@mediatek.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Zhi Mao <zhi.mao@mediatek.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Laurent Pinchart
+	<laurent.pinchart+renesas@ideasonboard.com>, Heiko Stuebner
+	<heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>, Hans de Goede <hdegoede@redhat.com>, Tomi
+ Valkeinen <tomi.valkeinen@ideasonboard.com>, Alain Volmat
+	<alain.volmat@foss.st.com>, Paul Elder <paul.elder@ideasonboard.com>, Mehdi
+ Djait <mehdi.djait@bootlin.com>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Bingbu Cao <bingbu.cao@intel.com>, <linux-media@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<shengnan.wang@mediatek.com>, <yaya.chang@mediatek.com>,
+	<yunkec@chromium.org>, <10572168@qq.com>
+Subject: [PATCH v3 0/3] media: i2c: Add support for GT97xx VCM
+Date: Wed, 12 Jun 2024 09:20:16 +0800
+Message-ID: <20240612012019.19078-1-zhi.mao@mediatek.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240611-md-drivers-usb-phy-v1-1-1cacb41280c3@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAI33aGYC/x3MTQ6CMBBA4auQWTsJrWLUqxgX/ZnaSaSSGSAYw
- t0pLr/FeysoCZPCo1lBaGblb6kwpwZCduVNyLEabGsv7dUY7CNG4ZlEcVKPQ/6hvdlzl7q7Syl
- ADQehxMt/+nxVe6eEXlwJ+Vh9uEwL9k5HEti2Hcikx+2DAAAA
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: oAh1paW8K3R4STJ9BfoJwCvCotDadggY
-X-Proofpoint-ORIG-GUID: oAh1paW8K3R4STJ9BfoJwCvCotDadggY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_13,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- impostorscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 clxscore=1015 mlxlogscore=643 phishscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406120006
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/phy/phy-am335x-control.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/phy/phy-am335x.o
+This series add YAML DT binding and V4L2 sub-device driver for Giantec's GT9768&GT9769.
+GT9768&GT9769 is a 10-bit DAC with 100mA output current sink capability, designed
+for voice coil motor(VCM) with I2C control bus.
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+This driver supports:
+ - support pm runtime function for suspend/resume
+ - support camera lens focus position by V4L2_CID_FOCUS_ABSOLUTE CMD
+ - used in camera features on ChromeOS application
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/usb/phy/phy-am335x-control.c | 1 +
- drivers/usb/phy/phy-am335x.c         | 1 +
- 2 files changed, 2 insertions(+)
+Previous versions of this patch-set can be found here:
+v2:https://lore.kernel.org/all/20240427012613.6621-1-zhi.mao@mediatek.com/
+v1:https://lore.kernel.org/all/20240420011840.23148-1-zhi.mao@mediatek.com/
+v0:https://lore.kernel.org/all/20240410104002.1197-1-zhi.mao@mediatek.com/
 
-diff --git a/drivers/usb/phy/phy-am335x-control.c b/drivers/usb/phy/phy-am335x-control.c
-index 97e6603c7149..ada508be090a 100644
---- a/drivers/usb/phy/phy-am335x-control.c
-+++ b/drivers/usb/phy/phy-am335x-control.c
-@@ -189,4 +189,5 @@ static struct platform_driver am335x_control_driver = {
- };
- 
- module_platform_driver(am335x_control_driver);
-+MODULE_DESCRIPTION("AM335x USB PHY Control Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/usb/phy/phy-am335x.c b/drivers/usb/phy/phy-am335x.c
-index e39665cf4b4a..6db88e00f127 100644
---- a/drivers/usb/phy/phy-am335x.c
-+++ b/drivers/usb/phy/phy-am335x.c
-@@ -142,4 +142,5 @@ static struct platform_driver am335x_phy_driver = {
- };
- 
- module_platform_driver(am335x_phy_driver);
-+MODULE_DESCRIPTION("AM335x USB PHY Driver");
- MODULE_LICENSE("GPL v2");
+This series is based on linux-next, tag: next-20240611
+Changes in v3:
+- Add maintainer entry for GT97xx VCM driver
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240611-md-drivers-usb-phy-28235f59affc
+Thanks
+
+Zhi Mao (3):
+  media: dt-bindings: i2c: add Giantec GT97xx VCM
+  media: i2c: Add GT97xx VCM driver
+  MAINTAINERS: Add entry for GT97xx VCM driver
+
+ .../bindings/media/i2c/giantec,gt9769.yaml    |  55 +++
+ MAINTAINERS                                   |   8 +
+ drivers/media/i2c/Kconfig                     |  13 +
+ drivers/media/i2c/Makefile                    |   1 +
+ drivers/media/i2c/gt97xx.c                    | 436 ++++++++++++++++++
+ 5 files changed, 513 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/giantec,gt9769.yaml
+ create mode 100644 drivers/media/i2c/gt97xx.c
+
+-- 
+2.25.1
+
 
 
