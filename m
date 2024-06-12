@@ -1,202 +1,233 @@
-Return-Path: <linux-kernel+bounces-211349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F32905073
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:33:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570A7905078
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 659DFB21EC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:33:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FCCE1C20D5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5193716EBFA;
-	Wed, 12 Jun 2024 10:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C67C16EBFE;
+	Wed, 12 Jun 2024 10:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Fqm5mmwA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mYglZfeb"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C737BB19;
-	Wed, 12 Jun 2024 10:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DD37BB19;
+	Wed, 12 Jun 2024 10:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718188408; cv=none; b=SRzIs8alI+FiKVMaddjfyzCmv47BX35P0bq7kPxrOR6ICPIJuNwkK6HMa7zOZgpIr2UelwPF0N6cqWbFf5PTY4akrU1Ugsa2nxSsl2HO7UWGII5pT221eYkEVnfHA1sEK0sGPgIg7QKJ+Mwz2+rWNrVrZ2qGPcCXTQGmJKPT9W8=
+	t=1718188507; cv=none; b=Yq268k8uaiindXKiao6N/9qqQ1M7auNbDXZ0djIxzUiYUVU4hIt6lr6j32mo2LfJLeIjGDs3PGCtFVFOVsq8KAGMsbVpn2Xo5RSoaoyo+tRN8413pkmCbg2ZHcNP+GPtk8wylpbRquEk2C19Ug5aIS6DU0jZacd5k6CcLN7bylE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718188408; c=relaxed/simple;
-	bh=ASdXSqRcFDtv4s/QXkOD0rx2u5bMuGLH7Iy5d2Q8dhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u+PHtbFMCaAgP0rI6ogToolkC1UNbEGNaWMQS2D/xxJFvS+A6ctoNALNObXisA1WLYmSw0Rt0PRuPYhZ1nmmmhw0bZqNZIfYMlNq4w2VGEkCz2vAbhC9bsxcWFl3dXvcOMhD8v3DDKGqMv7JX3NhQYD6O3MUjr9ZtEGJjkxnt7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Fqm5mmwA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CA57nA032587;
-	Wed, 12 Jun 2024 10:33:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SPXLtaBZREkBKSHgG7dppp2FZNOxxWlO6RPqI9GKYmg=; b=Fqm5mmwAXPdhJuAw
-	lYl5YdZHLyNvbGoxB/1wH+seJIvitLAPwknn2pjJs1CUDkVo4aCUUoTDGJUgni3K
-	l6ST/gQpRYlFpXF6e6JEO0uXIabmJY57vFRNXF6vra/liX24lUHtcyRXL3dwhJmH
-	nteGWl8g4tnR4aX8arOlYWpKnggo/C+RgBE1m3xjHFes2QcaxY9VQ2qjgI7Ve5Gb
-	R2TtMJPqozmkgOaUTqxtIYQQStVLyi/3zJeviLTTpLAXoW0y0ZZ6rZP3aqWwo7ZJ
-	KhlC3ewzjBHf5D4W689eHFuCVSj9qseGkQNF0L0qefv88ajx094I0CYhjrWI27R8
-	d5GlPw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypp87twuw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 10:33:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CAXLwR020724
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 10:33:21 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 03:33:17 -0700
-Message-ID: <fc2c7682-a091-4605-8c4c-a4f68a079b08@quicinc.com>
-Date: Wed, 12 Jun 2024 16:03:14 +0530
+	s=arc-20240116; t=1718188507; c=relaxed/simple;
+	bh=l6qWXOlYkiNh4aZueT78jx9WwtWf3q89ozgoiZSCKP8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t9dqdDYdPWclXPw0aU18g9bjGicjIQK4GzzBo822AfABnhAkVdavoNnIuSXbtGjZt3mj01busZlHgRxz1ApkSFdY38mXmcYvvhnBgUgxkA32nPHnOhrKnvjbPHruZj/UMxEv0M/S/CuOdw98M5zCXwzdVUFuIDhPA81+E+/ZACw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mYglZfeb; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-80b9c393c8cso957477241.1;
+        Wed, 12 Jun 2024 03:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718188505; x=1718793305; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WRlD9+JeJs697iLsuSWlTga8APWs4QACVErNO0SLQZ0=;
+        b=mYglZfeba6kbFgBYdmOyYGF1ElwC638ccF8rYZrBFRZ4W1pyG5VbWBqTGRBzIrv1Pp
+         Hno0DrU3vbXJ+/bXMwgiYc/HN2cR1VKTsX0GcplBwKQgpFaMLdTEB7C64GnFecqtVVPC
+         VGVd3Pxl4k24hkllr3NPHduS9e+9i4iSWunY7oPH/c5a7uy5jwRx+80Ifj3O5zsvd6Hc
+         IBQj3yEsNkUUH+a57uhcY+gbdTr2AKY7ul5B4koKp9PM3+KiXDUWXPow78nh60Gyz7eI
+         cfOdY6hlvGaZVX9JP1K8lkk2CUfUBjz1dH3FBaWGHdf8dfc0vgbkSfOF4tWGDxLlFUx+
+         2DBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718188505; x=1718793305;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WRlD9+JeJs697iLsuSWlTga8APWs4QACVErNO0SLQZ0=;
+        b=xExJJZK6Mx39yB92XXzOq/PFMMRFNyy7xp9yTkaot58lNNBokM9p62XtLk0LknCM5L
+         tHUnK6+Z+amrpIwf3SryuN7dR9QPfvmVZ8xp5PAflRoM+GtQMZ1DBTBTwtblLK+F7OVc
+         258915/1R21U/7ToJZVxf6aQaYvMOpv1Ne7Y2+yKxqtAfdu3DFc91MXEJF8NBLThahP+
+         12ruj3L+ShpCFB6uxkhvHU3HR+NFwG59M+0FEgjwA0oPNov4gjDYANpvcPWUyYJQYDaK
+         zPY8eqPyqcqx6ZeoQMw2+xEeR1Vv6IWwhcf+3ZDI09i1EYnOZdpOQC2OLKwwLtqoQ8OL
+         ksow==
+X-Forwarded-Encrypted: i=1; AJvYcCWis202AED39k/b+2Py5X5gAJ3R9o+sFFawUSD5cz92uV5FH6rJzSjRichp2XrsZISQ4NUjdDHgGQ0aOeYiUkMyPSs3U+6YFQgcTNvdJ7XPIiWQnsUds3M6Ntk5+4NHYUEGDc3e5QzB/qTfcRV1geDBmDc3e2j30l+1lC+T79xQZUfYN0UoHQ==
+X-Gm-Message-State: AOJu0YyzOm+Ijm4BjpEMTAzs2/nWd0jG0l3/WpKKUYjYMNefgGOP/r5F
+	CEeKMl5rOzvnrNSIos8IoVyK9KA2ICrizjWxGRsZydpvwuHE1NtSUsZCg2gV1hofDPG3jdp6wg9
+	NoX6lsQccReyqYSx47Y5vxF8eH6I=
+X-Google-Smtp-Source: AGHT+IG8RGjKwVA0WwyDvkW2k2N3AJJ0ptGb1SFZEGLpT6RKIK/BYhZ9JO1JKUds6gHjILDew716N+6RV8hr8WKKw3g=
+X-Received: by 2002:a05:6102:d5:b0:48c:323e:1ba3 with SMTP id
+ ada2fe7eead31-48d91e64e02mr1518264137.31.1718188504940; Wed, 12 Jun 2024
+ 03:35:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] Add support for SA8775P Multimedia clock
- controllers
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>
-CC: <devicetree@vger.kernel.org>, <quic_jkona@quicinc.com>,
-        <quic_imrashai@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240612-lemans-v2-split-mm-series-12-6-v2-0-056e828b0001@quicinc.com>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20240612-lemans-v2-split-mm-series-12-6-v2-0-056e828b0001@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: EdAq0xX-2gRdKdohlGJKtm01YdH29Nw3
-X-Proofpoint-ORIG-GUID: EdAq0xX-2gRdKdohlGJKtm01YdH29Nw3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_06,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- bulkscore=0 mlxscore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406120076
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+In-Reply-To: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 12 Jun 2024 13:34:53 +0300
+Message-ID: <CAOQ4uxidUYY02xry+y5VpRWfBjCmAt0CnmJ3JbgLTLkZ6nn1sA@mail.gmail.com>
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+To: NeilBrown <neilb@suse.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	James Clark <james.clark@arm.com>, ltp@lists.linux.it, linux-nfs@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jun 12, 2024 at 10:10=E2=80=AFAM NeilBrown <neilb@suse.de> wrote:
+>
+>
+> When a file is opened and created with open(..., O_CREAT) we get
+> both the CREATE and OPEN fsnotify events and would expect them in that
+> order.   For most filesystems we get them in that order because
+> open_last_lookups() calls fsnofify_create() and then do_open() (from
+> path_openat()) calls vfs_open()->do_dentry_open() which calls
+> fsnotify_open().
+>
+> However when ->atomic_open is used, the
+>    do_dentry_open() -> fsnotify_open()
+> call happens from finish_open() which is called from the ->atomic_open
+> handler in lookup_open() which is called *before* open_last_lookups()
+> calls fsnotify_create.  So we get the "open" notification before
+> "create" - which is backwards.  ltp testcase inotify02 tests this and
+> reports the inconsistency.
+>
+> This patch lifts the fsnotify_open() call out of do_dentry_open() and
+> places it higher up the call stack.  There are three callers of
+> do_dentry_open().
+>
+> For vfs_open() and kernel_file_open() the fsnotify_open() is placed
+> directly in that caller so there should be no behavioural change.
+>
+> For finish_open() there are two cases:
+>  - finish_open is used in ->atomic_open handlers.  For these we add a
+>    call to fsnotify_open() at the top of do_open() if FMODE_OPENED is
+>    set - which means do_dentry_open() has been called.
+>  - finish_open is used in ->tmpfile() handlers.  For these a similar
+>    call to fsnotify_open() is added to vfs_tmpfile()
 
-Please ignore this series, something got messed up in my b4.
+Any handlers other than ovl_tmpfile()?
+This one is a very recent and pretty special case.
+Did open(O_TMPFILE) used to emit an OPEN event before that change?
 
-On 6/12/2024 3:36 PM, Taniya Das wrote:
-> Add support for videocc, camcc, dispcc0 and dispcc1 on Qualcomm SA8775P
-> platform.
-> 
-> These multimedia clock controller and device tree patches are split
-> from the below series.
-> https://lore.kernel.org/all/20240531090249.10293-1-quic_tdas@quicinc.com/
-> 
-> Changes in this series compared to above series:
->   [PATCH 1/8]: Updated bindings to reference qcom,gcc.yaml
->   [PATCH 3/8]: Updated bindings to reference qcom,gcc.yaml
->   [PATCH 5/8]: Updated bindings to reference qcom,gcc.yaml
->   [PATCH 7/8]: Split updating sleep_clk frequency to separate patch
->   [PATCH 8/8]: Newly added to update sleep_clk frequency to 32000
-> 
-> Taniya Das (8):
->    dt-bindings: clock: qcom: Add SA8775P video clock controller
->    clk: qcom: Add support for Video clock controller on SA8775P
->    dt-bindings: clock: qcom: Add SA8775P camera clock controller
->    clk: qcom: Add support for Camera Clock Controller on SA8775P
->    dt-bindings: clock: qcom: Add SA8775P display clock controllers
->    clk: qcom: Add support for Display clock Controllers on SA8775P
->    arm64: dts: qcom: Add support for multimedia clock controllers
->    arm64: dts: qcom: Update sleep_clk frequency to 32000 on SA8775P
-> 
->   .../bindings/clock/qcom,sa8775p-camcc.yaml    |   62 +
->   .../bindings/clock/qcom,sa8775p-dispcc.yaml   |   79 +
->   .../bindings/clock/qcom,sa8775p-videocc.yaml  |   62 +
->   arch/arm64/boot/dts/qcom/sa8775p-ride.dts     |    2 +-
->   arch/arm64/boot/dts/qcom/sa8775p.dtsi         |   59 +
->   drivers/clk/qcom/Kconfig                      |   31 +
->   drivers/clk/qcom/Makefile                     |    3 +
->   drivers/clk/qcom/camcc-sa8775p.c              | 1849 +++++++++++++++++
->   drivers/clk/qcom/dispcc0-sa8775p.c            | 1481 +++++++++++++
->   drivers/clk/qcom/dispcc1-sa8775p.c            | 1481 +++++++++++++
->   drivers/clk/qcom/videocc-sa8775p.c            |  576 +++++
->   .../dt-bindings/clock/qcom,sa8775p-camcc.h    |  107 +
->   .../dt-bindings/clock/qcom,sa8775p-dispcc.h   |   87 +
->   .../dt-bindings/clock/qcom,sa8775p-videocc.h  |   47 +
->   14 files changed, 5925 insertions(+), 1 deletion(-)
->   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
->   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-dispcc.yaml
->   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml
->   create mode 100644 drivers/clk/qcom/camcc-sa8775p.c
->   create mode 100644 drivers/clk/qcom/dispcc0-sa8775p.c
->   create mode 100644 drivers/clk/qcom/dispcc1-sa8775p.c
->   create mode 100644 drivers/clk/qcom/videocc-sa8775p.c
->   create mode 100644 include/dt-bindings/clock/qcom,sa8775p-camcc.h
->   create mode 100644 include/dt-bindings/clock/qcom,sa8775p-dispcc.h
->   create mode 100644 include/dt-bindings/clock/qcom,sa8775p-videocc.h
-> 
+>
+> With this patch NFSv3 is restored to its previous behaviour (before
+> ->atomic_open support was added) of generating CREATE notifications
+> before OPEN, and NFSv4 now has that same correct ordering that is has
+> not had before.  I haven't tested other filesystems.
+>
+> Fixes: 7c6c5249f061 ("NFS: add atomic_open for NFSv3 to handle O_TRUNC co=
+rrectly.")
+> Reported-by: James Clark <james.clark@arm.com>
+> Closes: https://lore.kernel.org/all/01c3bf2e-eb1f-4b7f-a54f-d2a05dd3d8c8@=
+arm.com
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> ---
+>  fs/namei.c |  5 +++++
+>  fs/open.c  | 19 ++++++++++++-------
+>  2 files changed, 17 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 37fb0a8aa09a..057afacc4b60 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
+>         int acc_mode;
+>         int error;
+>
+> +       if (file->f_mode & FMODE_OPENED)
+> +               fsnotify_open(file);
+> +
+>         if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
+>                 error =3D complete_walk(nd);
+>                 if (error)
+> @@ -3700,6 +3703,8 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
+>         mode =3D vfs_prepare_mode(idmap, dir, mode, mode, mode);
+>         error =3D dir->i_op->tmpfile(idmap, dir, file, mode);
+>         dput(child);
+> +       if (file->f_mode & FMODE_OPENED)
+> +               fsnotify_open(file);
+>         if (error)
+>                 return error;
+>         /* Don't check for other permissions, the inode was just created =
+*/
+> diff --git a/fs/open.c b/fs/open.c
+> index 89cafb572061..970f299c0e77 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1004,11 +1004,6 @@ static int do_dentry_open(struct file *f,
+>                 }
+>         }
+>
+> -       /*
+> -        * Once we return a file with FMODE_OPENED, __fput() will call
+> -        * fsnotify_close(), so we need fsnotify_open() here for symmetry=
+.
+> -        */
+> -       fsnotify_open(f);
+>         return 0;
+>
+>  cleanup_all:
+> @@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
+>   */
+>  int vfs_open(const struct path *path, struct file *file)
+>  {
+> +       int ret;
+> +
+>         file->f_path =3D *path;
+> -       return do_dentry_open(file, NULL);
+> +       ret =3D do_dentry_open(file, NULL);
+> +       if (!ret)
+> +               /*
+> +                * Once we return a file with FMODE_OPENED, __fput() will=
+ call
+> +                * fsnotify_close(), so we need fsnotify_open() here for =
+symmetry.
+> +                */
+> +               fsnotify_open(file);
+
+I agree that this change preserves the logic, but (my own) comment
+above is inconsistent with the case of:
+
+        if ((f->f_flags & O_DIRECT) && !(f->f_mode & FMODE_CAN_ODIRECT))
+                return -EINVAL;
+
+Which does set FMODE_OPENED, but does not emit an OPEN event.
+
+I have a feeling that the comment is correct about the CLOSE event in
+that case, but honestly, I don't think this corner case is that important,
+just maybe the comment needs to be slightly clarified?
+
+Thanks,
+Amir.
+
+> +       return ret;
+>  }
+>
+>  struct file *dentry_open(const struct path *path, int flags,
+> @@ -1178,7 +1182,8 @@ struct file *kernel_file_open(const struct path *pa=
+th, int flags,
+>         if (error) {
+>                 fput(f);
+>                 f =3D ERR_PTR(error);
+> -       }
+> +       } else
+> +               fsnotify_open(f);
+>         return f;
+>  }
+>  EXPORT_SYMBOL_GPL(kernel_file_open);
 > --
-> 2.43.0
-> 
-> ---
-> Changes in v2:
-> - EDITME: describe what is new in this series revision.
-> - EDITME: use bulletpoints and terse descriptions.
-> - Link to v1: https://lore.kernel.org/r/20240612-lemans-v2-split-mm-series-12-6-v1-0-178429d989fe@quicinc.com
-> 
-> ---
-> Taniya Das (8):
->        dt-bindings: clock: qcom: Add SA8775P video clock controller
->        clk: qcom: Add support for Video clock controller on SA8775P
->        dt-bindings: clock: qcom: Add SA8775P camera clock controller
->        clk: qcom: Add support for Camera Clock Controller on SA8775P
->        dt-bindings: clock: qcom: Add SA8775P display clock controllers
->        clk: qcom: Add support for Display clock Controllers on SA8775P
->        arm64: dts: qcom: Add support for multimedia clock controllers
->        arm64: dts: qcom: Update sleep_clk frequency to 32000 on SA8775P
-> 
->   .../bindings/clock/qcom,sa8775p-camcc.yaml         |   62 +
->   .../bindings/clock/qcom,sa8775p-dispcc.yaml        |   79 +
->   .../bindings/clock/qcom,sa8775p-videocc.yaml       |   62 +
->   arch/arm64/boot/dts/qcom/sa8775p-ride.dts          |    2 +-
->   arch/arm64/boot/dts/qcom/sa8775p.dtsi              |   59 +
->   drivers/clk/qcom/Kconfig                           |   31 +
->   drivers/clk/qcom/Makefile                          |    3 +
->   drivers/clk/qcom/camcc-sa8775p.c                   | 1849 ++++++++++++++++++++
->   drivers/clk/qcom/dispcc0-sa8775p.c                 | 1481 ++++++++++++++++
->   drivers/clk/qcom/dispcc1-sa8775p.c                 | 1481 ++++++++++++++++
->   drivers/clk/qcom/videocc-sa8775p.c                 |  576 ++++++
->   include/dt-bindings/clock/qcom,sa8775p-camcc.h     |  107 ++
->   include/dt-bindings/clock/qcom,sa8775p-dispcc.h    |   87 +
->   include/dt-bindings/clock/qcom,sa8775p-videocc.h   |   47 +
->   14 files changed, 5925 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 03d44168cbd7fc57d5de56a3730427db758fc7f6
-> change-id: 20240612-lemans-v2-split-mm-series-12-6-42a28e9fcafe
-> 
-> Best regards,
-
--- 
-Thanks & Regards,
-Taniya Das.
+> 2.44.0
+>
 
