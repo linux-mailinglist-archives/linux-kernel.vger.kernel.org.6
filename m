@@ -1,121 +1,170 @@
-Return-Path: <linux-kernel+bounces-212304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16CC905E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:06:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28880905E41
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E70871C214E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:06:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 786ABB214E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4267812A16D;
-	Wed, 12 Jun 2024 22:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970E912B171;
+	Wed, 12 Jun 2024 22:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rxn08QA6"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jgrN9W1Q"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E590B126F0D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1093391;
+	Wed, 12 Jun 2024 22:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718230004; cv=none; b=FC/nGLv8yUbjIP6nFziJWjSVDlfhHrKFJHVx4e3PMwfgQRBbXQ5DP+xu5ab+0Svtn085fYldvR1HLlzMY4vBE6BfiGn6KAtaQffB+ZXSIWrBQU1hkyCCsNw8PFKFkhTD5NiqaonaXpFx0jC40UNkI3G9BG/DX3Zcr/XrSDvoJaY=
+	t=1718230231; cv=none; b=pbCmbZs619+22K4Y71sb7sS/0HDQGUllM7WUqhamFt3yBsyl7hmKyD48jrFdMlNDBW6HX4oOve4eW0AcPfWW5cD8hIzPeG7GQEq/ZeEVkbUKx9JGX04LwWOlLyLn1zNP3VJaHxwcs42PKFNNePtl5F7bWc2PNCZmlUgC0FIcsVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718230004; c=relaxed/simple;
-	bh=nWQB0cxwpb5Nyp9W2Aj2B6qiyQPIg/qKQY5yKA+03K8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pVd2NBVWw+wADE0B5Fq3w1SNSUAPLOnGrCZf89hBRNPeUd3Dw5jiCdb/8dceErp6vcIbFtVVz2Ry0y/5O6EmtJN13baEh7MvMztFmCeoXwObp7AXmn5pT5ryOouEAa7WlVpvQNDCOrMs6+okz5/DSrPpTPo0GS4/AiXWELNfPbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rxn08QA6; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52bc0236f04so52061e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718230001; x=1718834801; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VHMkWh1GJqApt9wvbkQjpRZMa0KcRsUTuqWe6P4okXg=;
-        b=Rxn08QA6bw+Rp/CPNBTBe1zTm9vXDUWsV7Uby7e1oF4TyL17o/CeJV0ALs+/t7PeWv
-         pwugLXNreBY8DyBo7jOcqWzqDVBmgXhlIFgZeUW0t2bMjv+iZmjTUzjwkAsHgVJnaX9p
-         UL9DY7b7MxtWgrVIUntHyQq6dfSAFOsev3QSajDrozf111aWRJjatg70HNVZpTo/pyMZ
-         9MfwthRMHWmgIi5exv5WiXdArtV+beTr9NurrBqA6bFF59SJuWpPnWMmkdnSfOmkpG0r
-         tdhRnpR0+q7wroUVHQuy8uJBIS6Xk6MnuI3/WIO086mIYe2ByKuHaSdI1WN7TGWeJqnl
-         pYsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718230001; x=1718834801;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VHMkWh1GJqApt9wvbkQjpRZMa0KcRsUTuqWe6P4okXg=;
-        b=cDDXyGqudHmI2xMzHNy/KgIHkS8a2BE1jvF3YNbYXnho+ttxsgA3ivharkrUtt+J9h
-         r3ijaeKHd6JuA4AFRVmh0LdSksBVN1b9F6yVZB3oKBiO+CTfpBsAPNY3JvvAoPIngyIP
-         wsBriahd6aAwOx1X0hV+WY9fNVQ5Vkdn94SfTOAMbsussihuKW4ybDr1aNbfV9H8S8FM
-         ygtNO6bsG3S3Y6sqSeswuZy9KGp2oLmh5I3VAExA6RHTFoUZn+v7y4PQmbGdt4G/0E6h
-         S5LoDA0mEYE2B0R0/SQIsIGCMdSsHAntuP61yaLTXZXmfrwFoXgx+u6lWQxzYi5uk0iB
-         ydZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhgEKHjMUv78g3cJZXsJYW4kYc/eHOvcAQm5DmPmnXqTr5M4HL1YnmPWDPgpb9uUMpflRPFXzpPFJ7Xg2owCTSPdd1B4d5eoAWZRhk
-X-Gm-Message-State: AOJu0YzLuFzZom1v0zjS0owwgYXAqZ5+tR8JB/7y618CqDPkUInH7wl7
-	fxZlWUMvRSEQbsSz3aWGaS4emxL32x7E+LvzePOlbCMQmzCh8vEe1D9lM3PovK4=
-X-Google-Smtp-Source: AGHT+IFGBDcnsnGgnH57GdtLyI7Cp/okDgOWixyNLiELylSt9euObSqVLA0Bs7EZsFFRS0f0ffmkBA==
-X-Received: by 2002:a2e:22c5:0:b0:2ec:2f8:f4b0 with SMTP id 38308e7fff4ca-2ec02f8f645mr4542301fa.0.1718230001010;
-        Wed, 12 Jun 2024 15:06:41 -0700 (PDT)
-Received: from [192.168.1.3] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c78556sm76301fa.85.2024.06.12.15.06.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 15:06:40 -0700 (PDT)
-Message-ID: <e974477c-f451-4c9c-83d6-31437c52f1bd@linaro.org>
-Date: Thu, 13 Jun 2024 01:06:39 +0300
+	s=arc-20240116; t=1718230231; c=relaxed/simple;
+	bh=bt3bBjmTxibuENDeAjA9wUy5gOZzKPk6baZegf+NdyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IyvYeFT1S05wUuvF/yMXds+1B4YLMojZHa+V8wis7DIKDAo1Ez7hdtqBVtnkuOLOZrlc2cf6mx0XLViRYzWaiTP5wlm6ndma/Zy+297Lbvq5B8zOHDeS1xwdjFFp4uoo4PHeZFAjQ1TqhIcuCnO+IdcM05n6SNjJZ9kRsNxlDDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jgrN9W1Q; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=AFaVBKZW4nApoB1IbTkcTuuDnuMN7hTpew8VlBI1fH8=; b=jgrN9W1QQsKRfHkAcQPZP4HPh6
+	nAwtS1F7uTHlvAUy/NvEJWLOlFwnjQU3TxkFJnMsf85PjKZSjKSp4DLSLryi+DiAe8arrQMB+XIFt
+	/+aVFF3nC16ci5dCVbIm8KIZcwe+Zu+QGKwy4Uelh0BBEpJWQv2TTuIEiuamqc7cIQBcje1ksQcmV
+	byDRyLMqXMoMT1g7N1e3RmOedTr+mnwalafQDuh0n+0nJGl0LcuJTQ9iG22Vch6nlMpFTm/J3SXpO
+	RUm/t4CwRoEbn4LKM7rK7qEQzC117Z49EScE6DVmzNR1+KmOwrgilC5FTgbcLXQ2yQQWNNIdjmbJu
+	pH2zHPWA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sHW8s-00000003A4E-17sI;
+	Wed, 12 Jun 2024 22:09:36 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 416D7300592; Thu, 13 Jun 2024 00:08:21 +0200 (CEST)
+Date: Thu, 13 Jun 2024 00:08:21 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Erick Archer <erick.archer@outlook.com>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Matthew Wilcox <mawilcox@microsoft.com>, x86@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 0/3] Hardening perf subsystem
+Message-ID: <20240612220821.GA18881@noisy.programming.kicks-ass.net>
+References: <AS8PR02MB7237F5BFDAA793E15692B3998BFD2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+ <202406101010.E1C77AE9D@keescook>
+ <20240610200544.GY8774@noisy.programming.kicks-ass.net>
+ <202406101438.BC43514F@keescook>
+ <20240611075542.GD8774@noisy.programming.kicks-ass.net>
+ <202406121148.688240B@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/8] dt-bindings: clock: qcom: Add SM8650 video clock
- controller
-Content-Language: en-US
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240602114439.1611-1-quic_jkona@quicinc.com>
- <20240602114439.1611-3-quic_jkona@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240602114439.1611-3-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202406121148.688240B@keescook>
 
-Hi Jagadeesh,
-
-On 6/2/24 14:44, Jagadeesh Kona wrote:
-> SM8650 video clock controller has most clocks same as SM8450,
-> but it also has few additional clocks and resets. Add device tree
-> bindings for the video clock controller on Qualcomm SM8650 platform
-> by defining these additional clocks and resets on top of SM8450.
+On Wed, Jun 12, 2024 at 12:01:19PM -0700, Kees Cook wrote:
+> On Tue, Jun 11, 2024 at 09:55:42AM +0200, Peter Zijlstra wrote:
+> > On Mon, Jun 10, 2024 at 02:46:09PM -0700, Kees Cook wrote:
+> > 
+> > > > I really detest this thing because it makes what was trivially readable
+> > > > into something opaque. Get me that type qualifier that traps on overflow
+> > > > and write plain C. All this __builtin_overflow garbage is just that,
+> > > > unreadable nonsense.
+> > > 
+> > > It's more readable than container_of(), 
+> > 
+> > Yeah, no. container_of() is absolutely trivial and very readable.
+> > container_of_const() a lot less so.
 > 
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> I mean, we have complex macros in the kernel. This isn't uncommon. Look
+> at cleanup.h. ;)
 
-thank you for the change.
+Yeah, but in those cases the macro actually saves a lot of typing. A
+mult and add is something you shouldn't be needing a macro for.
+	
+> But that's why we write kern-doc:
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Right, but reading comments is asking for trouble. That is, I really
+don't even see comments -- I have a built-in pre-processor that filters
+them out. I've been burned too many times by misleading or flat out
+wrong comments.
 
---
-Best wishes,
-Vladimir
+> > #define struct_size(p, member, num) \
+> > 	mult_add_no_overflow(num, sizeof(p->member), sizeof(*p))
+> > 
+> > would be *FAR* more readable. And then I still think struct_size() is
+> > less readable than its expansion. ]]
+> 
+> I'm happy to take patches. And for this bikeshed, this would be better
+> named under the size_*() helpers which are trying to keep size_t
+> calculations from overflowing (by saturating). i.e.:
+> 
+> 	size_add_mult(sizeof(*p), sizeof(*p->member), num)
+
+Fine I suppose, but what if we want something not size_t? Are we waiting
+for the type system extension?
+
+Anyway, I'll take the patch with the above. That at least is readable.
+
+The saturating thing is relying in the allocators never granting INT_MAX
+(or whatever size_t actually is) bytes?
+
+> Generalized overflow handing (check_add/sub/mul_overflow()) helpers
+> already exist and requires a destination variable to determine type
+> sizes. It is not safe to allow C semantics to perform
+> promotion/truncation, so we have to be explicit.
+
+Yeah, those are a sodding trainwreck, much like the
+__builtin_*_overflow() garbage. Can't we simply have them trap on
+overflow and do away with that most terrible calling convention?
+
+If we want to be really fancy we can have a #UD instruction that encodes
+a destination register to clear/saturate/whatever.
+
+> > Some day I'll have to look at this FORTIFY_SOURCE and see what it
+> > actually does I suppose :/
+> 
+> LOL. It's basically doing compile-time (__builtin_object_size) and
+> run-time (__builtin_dynamic_object_size) bounds checking on destination
+> (and source) object sizes, mainly driven by the mentioned builtins:
+> https://gcc.gnu.org/onlinedocs/gcc/Object-Size-Checking.html
+
+Right, I got that far. I also read most of:
+
+  https://discourse.llvm.org/t/rfc-enforcing-bounds-safety-in-c-fbounds-safety/70854
+
+But none of that is showing me generated asm for the various cases. As
+such, I don't consider myself informed enough.
+
+> Anyway! What about the patch that takes the 2 allocations down to 1?
+> That seems like an obvious improvement.
+
+Separate it from the struct_size() nonsense and Cc the author of that
+code (Sandipan IIRC) and I might just apply it.
 
