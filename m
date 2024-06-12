@@ -1,74 +1,70 @@
-Return-Path: <linux-kernel+bounces-211414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90A98905155
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:24:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A23905147
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF212287753
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:24:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 656741F22233
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A77E171656;
-	Wed, 12 Jun 2024 11:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95EF16F28C;
+	Wed, 12 Jun 2024 11:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ly4XYAeX"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Wqg/Q0xR"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B12A16F901;
-	Wed, 12 Jun 2024 11:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C905016F0FE;
+	Wed, 12 Jun 2024 11:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718191413; cv=none; b=WcQv7AT7xvbj/4P4an6tkAizr7aTkP729LGW+Boj9GGL8MKeZfiVgiXE8L7MhZ91qC7RpXEHiAFQKnSrTY6ab980w8zs2bmM+Ik59DqmlhZQYB32bPNLE1i2j3zrXZE77yr4mPRbqgVO0beKQ9x72sQ2tojXZvDsUbnnBdtpilU=
+	t=1718191400; cv=none; b=fiSiIbozkYA0zP4lDBGs4aMqKbB5JwJEkZ+r3U9CembkDXKqPNlPT2YhlQzNzItm+TpHf7QUw9hGnq7Wic8CdZdYQpmikh+cGilR2YiO4cDmX0AX/xmrGQy1KTl2KEv0zzRSP14Nnc49cbGqRsh0Q/oxsenqrwUq74NmUgrEhLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718191413; c=relaxed/simple;
-	bh=eOM+rlNe4Ccmiqqj78VRC7CbyAJhediEgq9+gqUJt5c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t9NbLKCPtSgxLcBbDS1KEj452gXpPCA0Yq03mW77pcD3iKtgHYlhjeV6t77KpejJDXzrIgBuiUZY9UY7DHlynCjEN1RFwHoVPPXnuwfyPAT4Hq6RDiUAa+c3dPwiRT1xvqMQv4+7C4asWJS3g2qWvfmMZY6RZMmrjMigAAH1Zxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ly4XYAeX; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718191412; x=1749727412;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=eOM+rlNe4Ccmiqqj78VRC7CbyAJhediEgq9+gqUJt5c=;
-  b=ly4XYAeXU368ABooJbncngtIeO6etP3CVj343H5xygIAYlG2AzYgn+a6
-   vcfAEyVMPjwIKCChRBMyu3hp3Fy4VLifZI1sWvtvoYET5stlPs6YV38TJ
-   arYpf5Rb6qIHK6tP4sfXdeTXKyGm1N12MpC97ZxHGMLook8kn3u02HLal
-   s5Z5BPVK0uHzLf1+48CUuriQzpfsiiy1Z/4fGmYe6mr7ipcFzydFXFw2n
-   TE8aiSJH4oCoB8/2E3ve0xYBg7izvr+SnwXobGKnbepJlmvGlN8HppdoK
-   SEpZjyhVU7lbJnvSH4klUAO3jG/3mFzkrVHmA4VM/4+3x0FYapps5G/zl
-   g==;
-X-CSE-ConnectionGUID: hzPuRHFvRM+Wy8rrRTyffQ==
-X-CSE-MsgGUID: jgaw45dBQPqiWppOjWLXvQ==
-X-IronPort-AV: E=Sophos;i="6.08,233,1712646000"; 
-   d="scan'208";a="29761713"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Jun 2024 04:23:23 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 12 Jun 2024 04:22:52 -0700
-Received: from daire-X570.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 12 Jun 2024 04:22:49 -0700
-From: <daire.mcnamara@microchip.com>
-To: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <conor.dooley@microchip.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <daire.mcnamara@microchip.com>
-Subject: [PATCH v3 3/3] dt-bindings: PCI: microchip,pcie-host: allow dma-noncoherent
-Date: Wed, 12 Jun 2024 12:22:13 +0100
-Message-ID: <20240612112213.2734748-4-daire.mcnamara@microchip.com>
+	s=arc-20240116; t=1718191400; c=relaxed/simple;
+	bh=534oH8+Q1AHlG524zRYiQIfuf0EB8t3AqqP1TBBPJ2k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mgrMjklfsNTVfvJHcEop7qXqxjsExb3fRImrQl6Q2LDwRKkiPyHSDqc+64U6bleINj18FG/ha7MzTomAkTeww+aCSd7D+enBqIyePIunVRtw+6Mnr8xOsH3w96u7n3VZOXF2x4kW6GjBB0adbosb5Lxgm1RYpswrQyKv58ncSiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Wqg/Q0xR; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45CBN4WU082591;
+	Wed, 12 Jun 2024 06:23:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718191384;
+	bh=f4tmQ06PUN/lPqgTx/FqLaVS5S8nfGaFloq2iBvKEdo=;
+	h=From:To:CC:Subject:Date;
+	b=Wqg/Q0xR5e+k7rFjgpgpbP8cgAvYFgWCRiYjV4uyaxJbJdtAMXj504ed8SfjuIH1k
+	 KlY+oKmm9eDX9tPupF0UmdhI6SC+Bb/GezOrtCu3lsg4wHxcDtRSGoj5ZxKBdQH9tR
+	 qciiniVP6vbOD4QPO9/9SkE/INL+TeFMqsjRUPC8=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45CBN45T125625
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 12 Jun 2024 06:23:04 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
+ Jun 2024 06:23:04 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 12 Jun 2024 06:23:03 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [10.24.69.66])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45CBMxe2120263;
+	Wed, 12 Jun 2024 06:23:00 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <j-choudhary@ti.com>, <vaishnav.a@ti.com>,
+        <afd@ti.com>, <u-kumar1@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/2] Add Remoteproc Support for TI's J722S SoCs
+Date: Wed, 12 Jun 2024 16:52:57 +0530
+Message-ID: <20240612112259.1131653-1-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240612112213.2734748-1-daire.mcnamara@microchip.com>
-References: <20240612112213.2734748-1-daire.mcnamara@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,32 +73,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Hello All,
 
-PolarFire SoC may be configured in a way that requires non-coherent DMA
-handling. On RISC-V, buses are coherent by default & the dma-noncoherent
-property is required to denote buses or devices that are non-coherent.
+The K3 J722S SoCs have one single-core Arm Cortex-R5F processor in each
+of the WAKEUP, MCU and MAIN voltage domain, and two C71x DSP subsystems
+in MAIN voltage domain. Thus, this series adds the DT Nodes and memory
+carveout regions to add remoteproc support in J722S SoCs.
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
----
- Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Note: This series is dependent on the following series that introduces
+k3-j722s-main.dtsi file:
+https://lore.kernel.org/linux-arm-kernel/20240604085252.3686037-4-s-vadapalli@ti.com/
 
-diff --git a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-index f7a3c2636355..c84e1ae20532 100644
---- a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-+++ b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-@@ -52,6 +52,8 @@ properties:
-     items:
-       pattern: '^fic[0-3]$'
- 
-+  dma-noncoherent: true
-+
-   interrupts:
-     minItems: 1
-     items:
+v2: Changelog:
+1) Addressed Andrew's comments to refactor remotecore nodes into
+k3-j722s-main.dtsi file.
+2) Squashed Patch 2 and 3 from V1 into Patch 2 in V2 as they were doing
+the same logical thing.
+3) The DTBs check warnings from V1 are automatically fixed after a
+dt-binding patch[0] was merged in linux-next.
+
+Link to v1:
+https://lore.kernel.org/all/20240607090433.488454-1-b-padhi@ti.com/
+
+[0]: https://lore.kernel.org/all/20240604171450.2455-1-hnagalla@ti.com/
+
+Apurva Nandan (2):
+  arm64: dts: ti: k3-j722s-main: Add R5F and C7x remote processor nodes
+  arm64: dts: ti: k3-j722s-evm: Add memory carveouts for R5F and C7x
+
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts   | 140 ++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi |  61 ++++++++++
+ 2 files changed, 201 insertions(+)
+
 -- 
 2.34.1
 
