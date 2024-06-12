@@ -1,119 +1,197 @@
-Return-Path: <linux-kernel+bounces-210891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B8F9049B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:39:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D819049C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E1F21C234FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:39:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B732862AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9F520332;
-	Wed, 12 Jun 2024 03:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D148D20335;
+	Wed, 12 Jun 2024 03:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItJOrarJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PgopbII7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1997B1799B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 03:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C656171C4;
+	Wed, 12 Jun 2024 03:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718163574; cv=none; b=XkxvICrCU8XsgLsydLXvBMwifpXeS+FdkEVheU6yGx4RJdSuBvE6VrJc9WHJ9yf3qN/Ysf5DjyXhloWuaIA0YMA/ntdA9P/lKbXtg5ZDfI2XA7ZpaflYQqdeUqh40Lzukbius3KynJb/3OrlcEb9Zy/mhYgP24sFBQLDru7fiMM=
+	t=1718164447; cv=none; b=fKJkH8YA0ZkOJ+mlsJPNjNaG3WUvfKnaXslnudX93Q4Zam/d3VUT4PQ/W4PNTeFXz05EZs5bTaifPIBxD3X7Sj3C9slDBCaq3w544W/7Slr9Y3GXi0tQ/WUQ993R1RbKV1AstG5spE1vvXN0Fy8E+tg5sALj2gfrpOhJWiLiPXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718163574; c=relaxed/simple;
-	bh=rcGTD1NatArwiA0ZaZbZWpjBQNKwW0dWWPYaKK68C9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nunX2RW00AI6Ga7gCy9a814mI98ZC0TvfIRgwscL6UVNKXY2Y8YFOED5TnbvkMAnr3EHfohnRGO9ey0sRNbu1Co6mOXvzSLeskZz0hRFsdlfHOHmg80qrsecBtpFwuO8Az39BQ3hM3nJzr+7p1GF3CuBpWPVxH8zvywxkZrrhyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItJOrarJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD64C2BD10;
-	Wed, 12 Jun 2024 03:39:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718163573;
-	bh=rcGTD1NatArwiA0ZaZbZWpjBQNKwW0dWWPYaKK68C9I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ItJOrarJ6UePkisoSxV5WrMfDHj+OxxwDL1bsCm/ovyOEQzdY+dGpZZ1zW8i3LSsG
-	 lsr5xHWPLC+y7UMjGtnFZjnMv6xb3jk5KZidGVSRcnF6p9uVr+75+iUXwQK9uqAj8S
-	 MU/LHJzFRh3oQ6WZL4BHyeX/K6NN4pMDyyJiLjyjO7tR5O5BuNdjMvMg3fSBKxuGN+
-	 vIdqqxYp4gzrsg2dJzxmJGpzsjVq8+U2x/RxGPZnoqIjhjex/Di59QKO3CfkhtuUDF
-	 j2UV7JsWGLB3jxZVEeQgHdgK1xsMeZ+03a7KmNvbY7KFhesn5bmONachK402SdqLgT
-	 9169DUfwann7A==
-Message-ID: <dfdf7dac-90e2-4ee7-8258-ffca0c777d9e@kernel.org>
-Date: Wed, 12 Jun 2024 11:39:27 +0800
+	s=arc-20240116; t=1718164447; c=relaxed/simple;
+	bh=uqrIClmGMFcFul1lrpFR1LsBQa8RW8p3+YKpsa24SYo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GIb9vSAy3CqlM33g2tQWE4mgt/4r3FxqoI8zeGicDVj5W1iAiPJy2uSK6M3BLsK/51+qmPvRNeFMqeg+Z84BFCd1fo12NQFENdHkaxew9wc7N5T6u1OESCI4I/OA24/uxwpRf+jw9BimgQBmyMTBNcI4ya70nJ80hhn8nJUVbik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PgopbII7; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718164445; x=1749700445;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=uqrIClmGMFcFul1lrpFR1LsBQa8RW8p3+YKpsa24SYo=;
+  b=PgopbII7pMAdPyLEBnXCYYHSUW6f/TBUbPebt11vAnwvH4MHfqp3A+c+
+   kZd/9R9J9NuvMjJffUb9JBoA4ZOxmP6A1vbewYw1kNYG7wF6Iz1/QslUk
+   +kFPn/GR5b4FPa1RX0EyMTemUUfJlxKxaAeZQJa4HD1SruONwkpHRL+30
+   F4FtqvnY7FY6CwD2wy8KglepXEfar32Mby65n1Qp3hyI6mEFr9caTxoPh
+   4s6c2JXqT0afKoWjhyqxF/V8inWc1kJLSgIMME8pKQrSm9Zk7UtYuNGXz
+   cZ5mYNCv12aDiIhUwMgg2Bo+bFM0gfElwM9uL+2LNxF26W0CtS4tHv5Mb
+   A==;
+X-CSE-ConnectionGUID: UgnkcvPvRcy/SHGsT7UBRg==
+X-CSE-MsgGUID: Rh2kNj5TTner1UkdyJZWDQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="37433722"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="37433722"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 20:54:04 -0700
+X-CSE-ConnectionGUID: nGZVKc52R9S+9+3DFvxQLA==
+X-CSE-MsgGUID: ku/+nzujRB6ticoE4gE00g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="39758566"
+Received: from inlubt0316.iind.intel.com ([10.191.20.213])
+  by fmviesa009.fm.intel.com with ESMTP; 11 Jun 2024 20:54:00 -0700
+From: lakshmi.sowjanya.d@intel.com
+To: tglx@linutronix.de,
+	giometti@enneenne.com,
+	corbet@lwn.net,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	andriy.shevchenko@linux.intel.com,
+	eddie.dong@intel.com,
+	christopher.s.hall@intel.com,
+	pandith.n@intel.com,
+	subramanian.mohan@intel.com,
+	thejesh.reddy.t.r@intel.com,
+	lakshmi.sowjanya.d@intel.com
+Subject: [PATCH v10 0/3] Add support for Intel PPS Generator
+Date: Wed, 12 Jun 2024 09:23:56 +0530
+Message-Id: <20240612035359.7307-1-lakshmi.sowjanya.d@intel.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] f2fs: fix convert inline inode on readonly mode
-To: daejun7.park@samsung.com, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Dongjin Kim <dongjin_.kim@samsung.com>,
- Seokhwan Kim <sukka.kim@samsung.com>, Yonggil Song
- <yonggil.song@samsung.com>, Eunhee Rho <eunhee83.rho@samsung.com>,
- Jaeyoon Choi <j_yoon.choi@samsung.com>, Nayeon Kim
- <nayeoni.kim@samsung.com>, Siwoo Jung <siu.jung@samsung.com>
-References: <CGME20240612022012epcms2p77300b5130d18b0397c9fc2877704949d@epcms2p7>
- <20240612022012epcms2p77300b5130d18b0397c9fc2877704949d@epcms2p7>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240612022012epcms2p77300b5130d18b0397c9fc2877704949d@epcms2p7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/6/12 10:20, Daejun Park wrote:
-> syzbot reported a bug in f2fs_vm_page_mkwrite() which checks for
-> f2fs_has_inline_data(inode).
-> The bug was caused by f2fs_convert_inline_inode() not returning an
-> error when called on a read-only filesystem, but returning with the
-> inline attribute as set.
-> This patch fixes the problem by ensuring that f2fs_convert_inline_inode()
-> returns -EROFS on readonly.
-> 
-> Fixes: ec2ddf499402 ("f2fs: don't allow any writes on readonly mount")
-> Reported-by: syzbot+f195123a45ad487ca66c@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=f195123a45ad487ca66c
-> Signed-off-by: Daejun Park <daejun7.park@samsung.com>
+From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
 
-Hi Daejun,
+The goal of the PPS (Pulse Per Second) hardware/software is to generate a
+signal from the system on a wire so that some third-party hardware can
+observe that signal and judge how close the system's time is to another
+system or piece of hardware.
 
-I guess below patch has fixed this issue, so we need to tag the report
-as duplicated?
+Existing methods (like parallel ports) require software to flip a bit at
+just the right time to create a PPS signal. Many things can prevent
+software from doing this precisely. This (Timed I/O) method is better
+because software only "arms" the hardware in advance and then depends on
+the hardware to "fire" and flip the signal at just the right time.
 
-https://lore.kernel.org/linux-f2fs-devel/20240603010745.2246488-1-chao@kernel.org/T/#u
+To generate a PPS signal with this new hardware, the kernel wakes up
+twice a second, once for 1->0 edge and other for the 0->1 edge. It does
+this shortly (~10ms) before the actual change in the signal needs to be
+made. It computes the TSC value at which edge will happen, convert to a
+value hardware understands and program this value to Timed I/O hardware.
+The actual edge transition happens without any further action from the
+kernel.
 
-Thanks,
+The result here is a signal coming out of the system that is roughly
+1,000 times more accurate than the old methods. If the system is heavily
+loaded, the difference in accuracy is larger in old methods.
 
-> ---
->   fs/f2fs/inline.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index 7638d0d7b7ee..ae1d8f2d82c9 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -203,10 +203,12 @@ int f2fs_convert_inline_inode(struct inode *inode)
->          struct page *ipage, *page;
->          int err = 0;
-> 
-> -       if (!f2fs_has_inline_data(inode) ||
-> -                       f2fs_hw_is_readonly(sbi) || f2fs_readonly(sbi->sb))
-> +       if (!f2fs_has_inline_data(inode))
->                  return 0;
-> 
-> +       if (unlikely(f2fs_hw_is_readonly(sbi) || f2fs_readonly(sbi->sb)))
-> +               return -EROFS;
-> +
->          err = f2fs_dquot_initialize(inode);
->          if (err)
->                  return err;
-> --
-> 2.25.1
-> 
+Application Interface:
+The API to use Timed I/O is very simple. It is enabled and disabled by
+writing a '1' or '0' value to the sysfs enable attribute associated with
+the Timed I/O PPS device. Each Timed I/O pin is represented by a PPS
+device. When enabled, a pulse-per-second (PPS) synchronized with the
+system clock is continuously produced on the Timed I/O pin, otherwise it
+is pulled low.
+
+The Timed I/O signal on the motherboard is enabled in the BIOS setup.
+Intel Advanced Menu -> PCH IO Configuration -> Timed I/O <Enable>
+
+References:
+https://en.wikipedia.org/wiki/Pulse-per-second_signal
+https://drive.google.com/file/d/1vkBRRDuELmY8I3FlfOZaEBp-DxLW6t_V/view
+https://youtu.be/JLUTT-lrDqw
+ 
+Patch 1 adds the pps(pulse per second) generator tio driver to the pps
+subsystem.
+Patch 2 documentation and usage of the pps tio generator module.
+Patch 3 includes documentation for sysfs interface.
+
+These patches are based on the timers/core branch:
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/?h=timers/core
+These changes are dependent on patches that are merged in [1].
+
+Please help to review the changes.
+
+Thanks in advance,
+Sowjanya
+
+Changes from v2:
+ - Split patch 1 to remove the functions in later stages.
+ - Include required headers in pps_gen_tio.
+
+Changes from v3:
+ - Corrections in Documentation.
+ - Introducing non-RFC version of the patch series.
+
+Changes from v4:
+ - Setting id in ice_ptp
+ - Modified conversion logic in convert_base_to_cs.
+ - Included the usage of the APIs in the commit message of 2nd patch.
+
+Changes from v5:
+ - Change nsecs variable to use_nsecs.
+ - Change order of 1&2 patches and modify the commit message.
+ - Add sysfs abi file entry in MAINTAINERS file.
+ - Add check to find if any event is missed and disable hardware
+   accordingly.
+
+Changes from v6:
+ - Split patch 1 into 1&2 patches.
+ - Add check for overflow in convert_ns_to_cs().
+ - Refine commit messages.
+
+Changes from v7:
+ - Split the if condition and return error if current time exceeds
+   expire time.
+ - Update kernel version and month in ABI file.
+
+Changes from v8:
+ - Add function to enable Timed I/O.
+ - Changed the updating of tio->enabled to a centralized place in
+   disable and enable functions.
+
+Changes from v9:
+ - use tio->enabled instead of reading ctrl register.
+ - change error code in enable_store to -ENODEV.
+
+Lakshmi Sowjanya D (3):
+  pps: generators: Add PPS Generator TIO Driver
+  Documentation: driver-api: pps: Add Intel Timed I/O PPS generator
+  ABI: pps: Add ABI documentation for Intel TIO
+
+ .../ABI/testing/sysfs-platform-pps-tio        |   7 +
+ Documentation/driver-api/pps.rst              |  24 ++
+ MAINTAINERS                                   |   1 +
+ drivers/pps/generators/Kconfig                |  16 ++
+ drivers/pps/generators/Makefile               |   1 +
+ drivers/pps/generators/pps_gen_tio.c          | 264 ++++++++++++++++++
+ 6 files changed, 313 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-pps-tio
+ create mode 100644 drivers/pps/generators/pps_gen_tio.c
+
+-- 
+2.35.3
+
 
