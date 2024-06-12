@@ -1,109 +1,194 @@
-Return-Path: <linux-kernel+bounces-210899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0959049E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:12:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B49339049E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B069A1C2356C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:12:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38A491F225CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7D320DF7;
-	Wed, 12 Jun 2024 04:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E55621362;
+	Wed, 12 Jun 2024 04:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MFKiELrB"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K8h6dbBt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59B8257D;
-	Wed, 12 Jun 2024 04:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB1025622;
+	Wed, 12 Jun 2024 04:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718165565; cv=none; b=V80iQbmPCLyocXOJJgxCq/+9GSWFTIuPfjxc1aF5b1vWejNth/Uvq546G/dQv3JMUXbSxXCS8Dw/lYsTncTQ0aVG1iG9j+5Bowm28JtP/vt5e8H6gTjdGCDElJT4HEQlH2Egwffwu6YNGCi2XtFomH+9m0WRO+FnNBbEQrsNDC0=
+	t=1718165612; cv=none; b=PH8jPdHrNXPOMtmH7A1q1A4aGuXQlPiAtLy8BSHm7SprfLE6AwiKJ6phKQ/UgBg+Lc7ZRz7UTtkGS+R4/nm3bb1dylVOmCN+Jvq/u/aLywUxqjZN+wAnRCr74ARmec882hMLYe3wvMUTrGDdYxKuuilcdhGko1EWdztMjd8mClI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718165565; c=relaxed/simple;
-	bh=z0HXs/dWY2Rct7KeFzt8JvycnssOhi03jSkN4HkU8rU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ETLTrwRBHe5hE7oUPCd+OOkI1RJ3TQPL01dWbeBQUs8klkDHyUgbJWWqiFgTmG5fiSmwTqBek/4zdJrFfvLt168jdc1zKG0ImZHARFGYpUrgXDhiEE2X50S6MoFdnhqn2rebgTyQ9IGEJ0IyfilKPSxidilL/qWG50KoUVasI4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MFKiELrB; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1718165560;
-	bh=9ZFs9kPnbsyJlJHuZTpWlbYutjebMjdcPR6NsGP867s=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MFKiELrBw+18mcbwASGU9x+vIxbhtb6tfULSNb7dFbLbaaom+nGdGJWwmZcT9E12O
-	 GwemrVq47ex4domIUIZLCWI7XLmoPPjAtWZ8LYWQudSSWppWo5zKXzx9i1muvODIeK
-	 25RoB9cP5K+3iw95KwxrPo9b2bO//+YGW8zqzBOWGuHPNbAWYkHkal8Kd4vP1+LkIM
-	 /TNj21aQNvTQoT5/HHRyI4sxAZGB8RiAj7Qzek+sRrOA3IAXWNrjGAi5XoS9WOUEBB
-	 +YcW9/voUUxjSZdxDCWcJIghtwVTb5Qn6WgUkcT2M4p4jzlLKZg8CgpKsQc/2a0q4Z
-	 1gV9BUa3MAwNQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VzXFN2mVmz4w2P;
-	Wed, 12 Jun 2024 14:12:40 +1000 (AEST)
-Date: Wed, 12 Jun 2024 14:12:39 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Mitul Golani <mitulkumar.ajitkumar.golani@intel.com>, Suraj Kandpal
- <suraj.kandpal@intel.com>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the drm-intel tree
-Message-ID: <20240612141239.141ce8cc@canb.auug.org.au>
+	s=arc-20240116; t=1718165612; c=relaxed/simple;
+	bh=e/rBT6UImx0hUN8k3KauxlxXxMRLEJaOaHDhUOQvQMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJJzb3noc+3fii6fdhCoNyCawQ0biZCA84qZmkxi6KWA/pHQi/q5M7aAymjUMRgZn8UHaUauoYuOr7aSaXUn6DY0E72gdy+XAGMU/gEHIIH6luqE2GaVPIFsiuPWS1FVTnyGr76A3We/3KSNw6qWXv0VYU+Ukovf4eYVJp1mNbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K8h6dbBt; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718165610; x=1749701610;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=e/rBT6UImx0hUN8k3KauxlxXxMRLEJaOaHDhUOQvQMg=;
+  b=K8h6dbBtxrZKcnIaQpUYDgJU02m1Jz4jzHK8bpkM4d5ZgIaXW5sWwaR0
+   WlSkfbQqKWMQOK9iyxEQxPluHYq2qhIw2QZP/lNnwtjv266OR7mqqGmg/
+   ZNQKh15SeQDmGDHLbfL+dFfr++FbPXxlWdYW+MkyKOBAYPcqhRgKLPMiJ
+   HiRQueWTsbHWpKYyWq8pJsiQXzQewAv7L92m1U9xxG0I9e2GtjL5KwIl1
+   QquOTc2rIrHVX+15PUoexy6QUuiXp6hqD32geurc0QfkWEUYkC0j9OfTU
+   AFy4tu7GmaE0WsedNe1hy8rsTeY2jBd+NVtL3czU/9uSJXd7aC7Bawt7/
+   w==;
+X-CSE-ConnectionGUID: IR7altQKRx+EVOpQzlSE3w==
+X-CSE-MsgGUID: 8YsT1GYFSbaeLXL2Wp/8LA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="15036641"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="15036641"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 21:13:30 -0700
+X-CSE-ConnectionGUID: F7fXhmU1SI65vdY9zc4Dnw==
+X-CSE-MsgGUID: 4lwvIdvLSm6UdbsbxXSi6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="39513592"
+Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 11 Jun 2024 21:13:26 -0700
+Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sHFMR-0001Bk-36;
+	Wed, 12 Jun 2024 04:13:23 +0000
+Date: Wed, 12 Jun 2024 12:13:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+Cc: oe-kbuild-all@lists.linux.dev, Shan-Chun Hung <schung@nuvoton.com>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Subject: Re: [PATCH v1 4/4] pinctrl: nuvoton: Reduce use of OF-specific APIs
+Message-ID: <202406121152.f2DLL871-lkp@intel.com>
+References: <20240611093127.90210-5-andy.shevchenko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/.vbPo1=wII9KCPpenjrUXFl";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611093127.90210-5-andy.shevchenko@gmail.com>
 
---Sig_/.vbPo1=wII9KCPpenjrUXFl
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Andy,
 
-Hi all,
+kernel test robot noticed the following build warnings:
 
-After merging the drm-intel tree, today's linux-next build (i386
-defconfig) failed like this:
+[auto build test WARNING on linusw-pinctrl/devel]
+[also build test WARNING on linusw-pinctrl/for-next next-20240611]
+[cannot apply to linus/master v6.10-rc3]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-x86_64-linux-gnu-ld: drivers/gpu/drm/i915/display/intel_vrr.o: in function =
-`intel_vrr_compute_config':
-intel_vrr.c:(.text+0x4e4): undefined reference to `__udivdi3'
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/pinctrl-nuvoton-Convert-to-use-struct-pingroup-and-PINCTRL_PINGROUP/20240611-173545
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+patch link:    https://lore.kernel.org/r/20240611093127.90210-5-andy.shevchenko%40gmail.com
+patch subject: [PATCH v1 4/4] pinctrl: nuvoton: Reduce use of OF-specific APIs
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240612/202406121152.f2DLL871-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240612/202406121152.f2DLL871-lkp@intel.com/reproduce)
 
-Caused by commit
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406121152.f2DLL871-lkp@intel.com/
 
-  1676ecd303ac ("drm/i915: Compute CMRR and calculate vtotal")
+All warnings (new ones prefixed by >>):
 
-I have reverted that commit for today.
+   drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c: In function 'npcm7xx_gpio_of':
+>> drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c:1833:25: warning: unused variable 'res' [-Wunused-variable]
+    1833 |         struct resource res;
+         |                         ^~~
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/.vbPo1=wII9KCPpenjrUXFl
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+vim +/res +1833 drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
 
------BEGIN PGP SIGNATURE-----
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1829  
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1830  static int npcm7xx_gpio_of(struct npcm7xx_pinctrl *pctrl)
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1831  {
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1832  	int ret = -ENXIO;
+3b588e43ee5c7a Tomer Maimon        2018-08-08 @1833  	struct resource res;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1834  	struct device *dev = pctrl->dev;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1835  	struct fwnode_reference_args args;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1836  	struct fwnode_handle *child;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1837  	int id = 0;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1838  
+0173ce55e50800 Andy Shevchenko     2022-04-01  1839  	for_each_gpiochip_node(dev, child) {
+7123707f39ae24 Andy Shevchenko     2024-06-11  1840  		pctrl->gpio_bank[id].base = fwnode_iomap(child, 0);
+ad64639417161e Jiasheng Jiang      2023-06-07  1841  		if (!pctrl->gpio_bank[id].base)
+ad64639417161e Jiasheng Jiang      2023-06-07  1842  			return -EINVAL;
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1843  
+0173ce55e50800 Andy Shevchenko     2022-04-01  1844  		ret = bgpio_init(&pctrl->gpio_bank[id].gc, dev, 4,
+0173ce55e50800 Andy Shevchenko     2022-04-01  1845  				 pctrl->gpio_bank[id].base + NPCM7XX_GP_N_DIN,
+0173ce55e50800 Andy Shevchenko     2022-04-01  1846  				 pctrl->gpio_bank[id].base + NPCM7XX_GP_N_DOUT,
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1847  				 NULL,
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1848  				 NULL,
+0173ce55e50800 Andy Shevchenko     2022-04-01  1849  				 pctrl->gpio_bank[id].base + NPCM7XX_GP_N_IEM,
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1850  				 BGPIOF_READ_OUTPUT_REG_SET);
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1851  		if (ret) {
+0173ce55e50800 Andy Shevchenko     2022-04-01  1852  			dev_err(dev, "bgpio_init() failed\n");
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1853  			return ret;
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1854  		}
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1855  
+0173ce55e50800 Andy Shevchenko     2022-04-01  1856  		ret = fwnode_property_get_reference_args(child, "gpio-ranges", NULL, 3, 0, &args);
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1857  		if (ret < 0) {
+0173ce55e50800 Andy Shevchenko     2022-04-01  1858  			dev_err(dev, "gpio-ranges fail for GPIO bank %u\n", id);
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1859  			return ret;
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1860  		}
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1861  
+7123707f39ae24 Andy Shevchenko     2024-06-11  1862  		ret = fwnode_irq_get(child, 0);
+e804944dcc7799 Krzysztof Kozlowski 2022-04-23  1863  		if (!ret) {
+0173ce55e50800 Andy Shevchenko     2022-04-01  1864  			dev_err(dev, "No IRQ for GPIO bank %u\n", id);
+e804944dcc7799 Krzysztof Kozlowski 2022-04-23  1865  			return -EINVAL;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1866  		}
+0173ce55e50800 Andy Shevchenko     2022-04-01  1867  		pctrl->gpio_bank[id].irq = ret;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1868  		pctrl->gpio_bank[id].irqbase = id * NPCM7XX_GPIO_PER_BANK;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1869  		pctrl->gpio_bank[id].pinctrl_id = args.args[0];
+0173ce55e50800 Andy Shevchenko     2022-04-01  1870  		pctrl->gpio_bank[id].gc.base = args.args[1];
+0173ce55e50800 Andy Shevchenko     2022-04-01  1871  		pctrl->gpio_bank[id].gc.ngpio = args.args[2];
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1872  		pctrl->gpio_bank[id].gc.owner = THIS_MODULE;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1873  		pctrl->gpio_bank[id].gc.parent = dev;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1874  		pctrl->gpio_bank[id].gc.fwnode = child;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1875  		pctrl->gpio_bank[id].gc.label = devm_kasprintf(dev, GFP_KERNEL, "%pfw", child);
+4be1eaf322f07b Nicholas Mc Guire   2018-11-23  1876  		if (pctrl->gpio_bank[id].gc.label == NULL)
+4be1eaf322f07b Nicholas Mc Guire   2018-11-23  1877  			return -ENOMEM;
+4be1eaf322f07b Nicholas Mc Guire   2018-11-23  1878  
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1879  		pctrl->gpio_bank[id].gc.dbg_show = npcmgpio_dbg_show;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1880  		pctrl->gpio_bank[id].direction_input = pctrl->gpio_bank[id].gc.direction_input;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1881  		pctrl->gpio_bank[id].gc.direction_input = npcmgpio_direction_input;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1882  		pctrl->gpio_bank[id].direction_output = pctrl->gpio_bank[id].gc.direction_output;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1883  		pctrl->gpio_bank[id].gc.direction_output = npcmgpio_direction_output;
+0173ce55e50800 Andy Shevchenko     2022-04-01  1884  		pctrl->gpio_bank[id].request = pctrl->gpio_bank[id].gc.request;
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1885  		pctrl->gpio_bank[id].gc.request = npcmgpio_gpio_request;
+de38bdbe011b31 Bartosz Golaszewski 2023-10-13  1886  		pctrl->gpio_bank[id].gc.free = pinctrl_gpio_free;
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1887  		id++;
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1888  	}
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1889  
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1890  	pctrl->bank_num = id;
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1891  	return ret;
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1892  }
+3b588e43ee5c7a Tomer Maimon        2018-08-08  1893  
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZpIDcACgkQAVBC80lX
-0GzmZgf/WRH/KEgcppZo+Klh5uGzWYf340VlANrW37r9HaPEdpoT2+2sYkAGcqQY
-R883y5nxFokZkRee3mRVZ4Lksdz9s8WRowvQdoOmBj7WHcljxCbhjscPQ0XVbMPy
-XCUQuxoA8n/CEG62clXPTA0ssin1J6dtP5CrFbMhgT68F8to7zHue8Wr0c7i4Pfx
-3sf7RVkia03hYTsNaIUSD/XZNZaUoDKfkKOMDW0+F3O0D8S4zk1qLn0WzqWx/0k5
-vbjp9yu/gEA2Lt+JLfZfK5N9LmxCgQ6vNZCb4HtXPhOILP/OcWe1XwcKcgiWJfv9
-iLbjMAWSjq/mKXIq6HTyzzcfk9Yolw==
-=kVkc
------END PGP SIGNATURE-----
-
---Sig_/.vbPo1=wII9KCPpenjrUXFl--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
