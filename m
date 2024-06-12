@@ -1,206 +1,159 @@
-Return-Path: <linux-kernel+bounces-211806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C8390572E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:40:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CDC0905729
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8216FB276F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:39:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F2A28227D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA53180A72;
-	Wed, 12 Jun 2024 15:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152EB180A79;
+	Wed, 12 Jun 2024 15:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gsOpL0R9"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TomE6Pe4"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5370318622;
-	Wed, 12 Jun 2024 15:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9AB17B437;
+	Wed, 12 Jun 2024 15:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718206754; cv=none; b=FiZCnctm5RmClpzu0TXzpTSO+ctpwiJP2Nt6k30vvxzbsfvn8+peFLRzYIuVexbevGP0mUDT2FAIPct+iK0mF828kXoJdwKgSTgxj76VHxa2o7UtU0gK1pAb0fiIpN8auP2u1FShe6Xg2YyXY9ApRSiux+4f6QKYw4PtQ4l9TdE=
+	t=1718206770; cv=none; b=C20MzzUoGVGJSpZFs6XoayGX6Y2t/m1vh25XJVy6zByK1f+O8wAnsssB2P505I2WJRObNZQsCuG2dj1JFCxCK0j/Sq0HlncTcrFudb/ZtTULM0lCdf30MiFSZia1i1kpTHOBb7UcCLYVNY+6R0wnNo8tDWn0cywVZsqAGiIekIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718206754; c=relaxed/simple;
-	bh=mz5ddMgSHBrMlN7KEn0jXPYKgE9bo2Re4KtL6Gnkk10=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GBGrrLrantAb4FtYAQGKhGzlNjYCqFnNBHDah+oginhyrLVhr5pUoaVPOpHWzPjgfm81+1PLSeCWCPPjr5TEiwx37Spe2020IxKpCAWI62lCZIrfRGloc1fSiQduM8nlYcFIzzytxwKE1776LiGbNoD4Kh/AbhTHdqaombKoZ8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gsOpL0R9; arc=none smtp.client-ip=209.85.210.169
+	s=arc-20240116; t=1718206770; c=relaxed/simple;
+	bh=dkjw2ohFiXCup80T4CFjYApo4cuECd+cmHE4G40BA1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=K7exRDGEzVIXqHmZROBiIY/rygz3gAMKvhAXYvw8VZ4BfBs5j9oOCYgNdDWwMpVYIw9R9Icl4DnLlcpJel4AsM5APLCWfWB5I5QvDspf4N4NJjSBeQF0Y+PQrVqTp3vtThO1XVfOQ0wFW7tGIfKNo6ZXvntSlE85IWP5+Zt0gAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TomE6Pe4; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7041053c0fdso3997764b3a.3;
-        Wed, 12 Jun 2024 08:39:13 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-704090c11easo5540996b3a.2;
+        Wed, 12 Jun 2024 08:39:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718206753; x=1718811553; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qCn/xAaLJSjrwXEId/Eyiyy2QeSoCVHrnLmnaPWwjhc=;
-        b=gsOpL0R9XPeB5HX0lp8OZ5j6Nl7f01/9MzXODdA45JyUQPyM7OR3sxFGf74zcZ5WcH
-         xLS3wenlKHbbz7i+qiVi3pGdnogOD/k6cL4HJGHAFvoRZZLJ9V6cfiZ/PCjDKiQIsByC
-         cFg2UltkWvyTiPNb6t2V+yGFBriadmk0CNuo5NRePZkVfswA4JwvfsdVW6y2LuOmI/v4
-         4U0P945KLyZ3HvFQzzqX/88jeYRHpt4M1kqmCAVGT9LE1egVHndlv+AmjUuHYDWYWbBn
-         tp7uM9YUVg2D1+VLEdAsiWT+//5bET0P5NMj6pjhBYU/Inqjdj6JDFV3c2+wZN5SqMRX
-         Z5Pw==
+        d=gmail.com; s=20230601; t=1718206768; x=1718811568; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=a5i7zUeG4PPBp0qWV+Ep+ZL6qU5kaVlXsxN+qELW5E4=;
+        b=TomE6Pe4Eb0OP0TCEHy53eMPTCH1L08wHp3/UlO90b8AGmJAqU7p253l9Sts/FZkpG
+         V6+erUIL6QgekCKp3j6LIk6xwmKN8kppQVGZuH/kyzyyQD89KgraRv5YG5ptioyTmt5B
+         Qy+dQwbCY0V96KCoeqPCZ/ctrflUc334+AUc8LIKR3BP1p4m4vYPEblsc9ayRE7Lsiij
+         ZsBZL6md6IL1fRDhPpu03T9INGMpaHIzwKZcAJhhX+vPx7FOaJmq40Vy04QAHVnKl0hM
+         oh43Nwk5sKjDh79y8kKhA96ybdMsLYYMBoxKJaz2rsEQEEsnDigWZA4DyDX3grXlKwSC
+         0i7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718206753; x=1718811553;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qCn/xAaLJSjrwXEId/Eyiyy2QeSoCVHrnLmnaPWwjhc=;
-        b=iTw6rTZKbkIfkFyaab5IDnsCPfHdtjj/8XnpiFYIVwhhGNWl5SfaWUsVzd3fjftRYh
-         krlAkWg92Sd9plDT0zXvTQvcPuP/0xcMUUYWCavqYMJRqS/6F2ul37tu26W8SI6o9XsJ
-         bgcYQbG7VLJzSfM3z5h3/PSaKciumep2BGqD9PXrDb4BPzywozZMj2v5FIl/3CIXQlTz
-         U1TKKuZkQAos+zYhkZMJqI7lavWepZWaaV04EHZrCRwKrswBpxCMswlM6IsLlHIaN37t
-         IwrB8hB31VOzfGAh8yb6UnYrNju9AMPkL5pXG3PG11iIZidiZaHPy5QFQmd7axHJCOdy
-         pQ+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW09/ZIRBrQyIEH0lTiZDfE/BKF/IZODCoKZw00+UIIvtQl6ZNOyuPsUhePR5RPQhGUL+SBBE+Cl0TbzQ7O+d8IFyyOnqJK3P9tyoaC3rhw2qcQPzojkzMPEdO0GpPYGJtRTuVZQj9BbznAm34hB0fUJ6OKLOMODUVLgZ2dlEbt7p63G7E/ZA==
-X-Gm-Message-State: AOJu0YzpLJ50L035DEzJw0jewkINI2/b5r/fGzdqGu5uC9dM8KDNhWIG
-	BAYGxNiuu9dV4SSZ62WSFsAfcY4iBrx4mwgLrU7JIw9x396IsCw1
-X-Google-Smtp-Source: AGHT+IF2wEvSHE4ImI+hkvi0c4Y7NXyqjd+90xTjAJT6rBbVNEb80wFQiX2er8Zw0Rbxhkky8odDtw==
-X-Received: by 2002:a05:6a21:6d95:b0:1b7:175a:6756 with SMTP id adf61e73a8af0-1b8a9c8de91mr2956080637.50.1718206752555;
-        Wed, 12 Jun 2024 08:39:12 -0700 (PDT)
-Received: from ga401ii.. ([2401:4900:1c29:22a5:7130:4b49:9907:6f99])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-704338ca12fsm6726273b3a.173.2024.06.12.08.39.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 08:39:12 -0700 (PDT)
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-To: 
-Cc: kanakshilledar111@protonmail.com,
-	Kanak Shilledar <kanakshilledar@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexey Charkov <alchark@gmail.com>,
+        d=1e100.net; s=20230601; t=1718206768; x=1718811568;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5i7zUeG4PPBp0qWV+Ep+ZL6qU5kaVlXsxN+qELW5E4=;
+        b=MJx9z/mjxltAgnvqsysBmliA8u7UeuZlXqOqQM3MJ5Jpv/bzIpp1SQgV8TGV5+VYzF
+         TcxWSGv1iTKzuaXKuxtv6S2nn/HmdPcXHw5cvR/WmA4NHr9HL0uyKFjmtVZtb3xlBYKz
+         c38d2B2Jf9dhaJGJrrOVtJjj/OmA3oZF4SdE8o9Xyk+3wZEEb2dq946Wi7QI+XWf5d2h
+         G164U9aQ/QFvE5vcWVYHeIL3bxr892ER9sbJ0mn6ZQWLguzdoRl4H9BSOTaFgSdPyxhm
+         YLNrRKpKxJ0YyVsweq8m4VI19TGD9KHFmujhscCKWo8in6rLWpCXbPn5EurWHZW6P3uC
+         R1Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNjFtkR0uQIdFkJsJNeDVMh+5IM8f02gR7bSdEPgTfVPBVHy3khebx7LK94qVG91VVBSo/gGN0aWxOyNJSYm69PeaQdXSYFzsZ/5A7IqrFgNgKgv+cmAvClXsxpPaM9/XPC5MmrIUfcLVU5DUx83WgEQcz5p3PPB3EuCaVU0Kn
+X-Gm-Message-State: AOJu0YwmDmpuoj6KAtHZ2Wz7Y8pRzE3osTZ33daqelcViJyizQy8HVFF
+	vmK/vbIdk0bvlNiuovDHD7lL0JCPvAS+2hUkHNqBVERDAHygb8Y3EZ3kmztqN4WHHw==
+X-Google-Smtp-Source: AGHT+IG5lHab+fHfgF23kgv84wra3o3xRcQiRCRLO0Hjiemm/oKJqu5T5xBuAbkAPUeZHsR2REDBzg==
+X-Received: by 2002:a05:6a20:2584:b0:1b4:e956:ae64 with SMTP id adf61e73a8af0-1b8a9c87755mr2628969637.54.1718206768211;
+        Wed, 12 Jun 2024 08:39:28 -0700 (PDT)
+Received: from localhost ([113.143.197.225])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6ee3f30e7sm89342385ad.173.2024.06.12.08.39.26
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Jun 2024 08:39:27 -0700 (PDT)
+From: joswang <joswang1221@gmail.com>
+To: Thinh.Nguyen@synopsys.com
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3] dt-bindings: serial: vt8500-uart: convert to json-schema
-Date: Wed, 12 Jun 2024 21:08:43 +0530
-Message-ID: <20240612153847.52647-2-kanakshilledar@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	stable@vger.kernel.org,
+	Jos Wang <joswang@lenovo.com>
+Subject: [PATCH v4, 3/3] usb: dwc3: core: Workaround for CSR read timeout
+Date: Wed, 12 Jun 2024 23:39:22 +0800
+Message-Id: <20240612153922.2531-1-joswang1221@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240601092646.52139-1-joswang1221@gmail.com>
+References: <20240601092646.52139-1-joswang1221@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Convert the VIA VT8500 and WonderMedia WM8xxx UART Controller to
-newer DT schema. Created DT schema based on the .txt file which had
-`compatible`, `reg`, `interrupts` and `clocks` as required properties.
+From: Jos Wang <joswang@lenovo.com>
 
-Additions to the original binding
-- changed the file name from vt8500-uart to via,vt8500-uart.yaml
-- removed unnecessary alias from the example.
+This is a workaround for STAR 4846132, which only affects
+DWC_usb31 version2.00a operating in host mode.
 
-Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+There is a problem in DWC_usb31 version 2.00a operating
+in host mode that would cause a CSR read timeout When CSR
+read coincides with RAM Clock Gating Entry. By disable
+Clock Gating, sacrificing power consumption for normal
+operation.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Jos Wang <joswang@lenovo.com>
 ---
-Changes in v3:
-- Removed Rob and myself from maintainers and added Alexey.
-- Fixed commit message which mentioned "greg and jiri as maintainers".
-- Elaborated changelog for v2.
-Changes in v2:
-- Rebased changes
-- Changed maintainers to have Rob and remove Greg and Jiri. VT8500 is
-orphaned according to the maintainers file.
-- Replaced `compatible` property description with comments.
+v1 -> v2:
+- add "dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk" patch,
+  this patch does not make any changes
+v2 -> v3:
+- code refactor
+- modify comment, add STAR number, workaround applied in host mode
+- modify commit message, add STAR number, workaround applied in host mode
+- modify Author Jos Wang
+v3 -> v4:
+- modify commit message, add Cc: stable@vger.kernel.org
 ---
- .../bindings/serial/via,vt8500-uart.yaml      | 46 +++++++++++++++++++
- .../bindings/serial/vt8500-uart.txt           | 27 -----------
- 2 files changed, 46 insertions(+), 27 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml
- delete mode 100644 Documentation/devicetree/bindings/serial/vt8500-uart.txt
+ drivers/usb/dwc3/core.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml b/Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml
-new file mode 100644
-index 000000000000..9c6819241a49
---- /dev/null
-+++ b/Documentation/devicetree/bindings/serial/via,vt8500-uart.yaml
-@@ -0,0 +1,46 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 3a8fbc2d6b99..61f858f64e5a 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -960,12 +960,16 @@ static bool dwc3_core_is_valid(struct dwc3 *dwc)
+ 
+ static void dwc3_core_setup_global_control(struct dwc3 *dwc)
+ {
++	unsigned int power_opt;
++	unsigned int hw_mode;
+ 	u32 reg;
+ 
+ 	reg = dwc3_readl(dwc->regs, DWC3_GCTL);
+ 	reg &= ~DWC3_GCTL_SCALEDOWN_MASK;
++	hw_mode = DWC3_GHWPARAMS0_MODE(dwc->hwparams.hwparams0);
++	power_opt = DWC3_GHWPARAMS1_EN_PWROPT(dwc->hwparams.hwparams1);
+ 
+-	switch (DWC3_GHWPARAMS1_EN_PWROPT(dwc->hwparams.hwparams1)) {
++	switch (power_opt) {
+ 	case DWC3_GHWPARAMS1_EN_PWROPT_CLK:
+ 		/**
+ 		 * WORKAROUND: DWC3 revisions between 2.10a and 2.50a have an
+@@ -998,6 +1002,20 @@ static void dwc3_core_setup_global_control(struct dwc3 *dwc)
+ 		break;
+ 	}
+ 
++	/*
++	 * This is a workaround for STAR#4846132, which only affects
++	 * DWC_usb31 version2.00a operating in host mode.
++	 *
++	 * There is a problem in DWC_usb31 version 2.00a operating
++	 * in host mode that would cause a CSR read timeout When CSR
++	 * read coincides with RAM Clock Gating Entry. By disable
++	 * Clock Gating, sacrificing power consumption for normal
++	 * operation.
++	 */
++	if (power_opt != DWC3_GHWPARAMS1_EN_PWROPT_NO &&
++	    hw_mode != DWC3_GHWPARAMS0_MODE_GADGET && DWC3_VER_IS(DWC31, 200A))
++		reg |= DWC3_GCTL_DSBLCLKGTNG;
 +
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/serial/via,vt8500-uart.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: VIA VT8500 and WonderMedia WM8xxx UART Controller
-+
-+maintainers:
-+  - Alexey Charkov <alchark@gmail.com>
-+
-+allOf:
-+  - $ref: serial.yaml
-+
-+properties:
-+  compatible:
-+    enum:
-+      - via,vt8500-uart # up to WM8850/WM8950
-+      - wm,wm8880-uart  # for WM8880 and later
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - clocks
-+  - interrupts
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    serial@d8200000 {
-+        compatible = "via,vt8500-uart";
-+        reg = <0xd8200000 0x1040>;
-+        interrupts = <32>;
-+        clocks = <&clkuart0>;
-+    };
-diff --git a/Documentation/devicetree/bindings/serial/vt8500-uart.txt b/Documentation/devicetree/bindings/serial/vt8500-uart.txt
-deleted file mode 100644
-index 2b64e6107fb3..000000000000
---- a/Documentation/devicetree/bindings/serial/vt8500-uart.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* VIA VT8500 and WonderMedia WM8xxx UART Controller
--
--Required properties:
--- compatible: should be "via,vt8500-uart" (for VIA/WonderMedia chips up to and
--	including WM8850/WM8950), or "wm,wm8880-uart" (for WM8880 and later)
--
--- reg: base physical address of the controller and length of memory mapped
--	region.
--
--- interrupts: hardware interrupt number
--
--- clocks: shall be the input parent clock phandle for the clock. This should
--	be the 24Mhz reference clock.
--
--Aliases may be defined to ensure the correct ordering of the uarts.
--
--Example:
--	aliases {
--		serial0 = &uart0;
--	};
--
--	uart0: serial@d8200000 {
--		compatible = "via,vt8500-uart";
--		reg = <0xd8200000 0x1040>;
--		interrupts = <32>;
--		clocks = <&clkuart0>;
--	};
+ 	/* check if current dwc3 is on simulation board */
+ 	if (dwc->hwparams.hwparams6 & DWC3_GHWPARAMS6_EN_FPGA) {
+ 		dev_info(dwc->dev, "Running with FPGA optimizations\n");
 -- 
-2.45.2
+2.17.1
 
 
