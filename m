@@ -1,55 +1,61 @@
-Return-Path: <linux-kernel+bounces-211985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FBD09059AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:11:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C3E9059B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DB0E28523C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:11:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37B4CB259C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136FC184109;
-	Wed, 12 Jun 2024 17:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452DD181D15;
+	Wed, 12 Jun 2024 17:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALitZ5fV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="In6Mmb+3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576291836CE
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 17:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E1117FAD4;
+	Wed, 12 Jun 2024 17:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718212193; cv=none; b=Og/0mi7w53LLS/7uDLjsn8K92GnpXIFKWoAMeOTo4G5soF3uITvoqGTdR5tGTm9R7V5LnXoKFKogxFs+Bcxr7xfTm0GdIf7gi2U9UmnoKUxybU5575opKZvabHeKnO/FCW82E2+QaCGux7SPTjVDEgLbz8wQJ9vwAPaYjpXCyk8=
+	t=1718212248; cv=none; b=eBGk8LRAuKbYAn4mlmTXW1sC8fifJlReswYbYfxytTFlMB0j7VSHEIRMwwxLA57R2saF5iHD/52wC39Zo4EexH7bIsHqJkoDq/gn0IZNy6Ba80S8VuckdaNIkKCGmK2X7PT0Eaomt4TsnlCSxQmTl5m2N53EVJ0erMNd49jGwUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718212193; c=relaxed/simple;
-	bh=Qjb4PcQO/USKFK8Vace4JKabxLlwRQRzJetYbjp9Vm0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KRIAKPwq6+vKut1l4iUZkIvX30FY2EIco8Ah8sx0y5l5J5mn6d/qTxnHi0y9+fL/SUH9o5KDcc/DOH0AUlUVt/be5rUQEMSatXLYxdCJyaRF9wUF5DqkuF7lgiYKXbQC3UXiWURcOdnG1FJ5By+AzeXzrp6eG9wR7z+1mkv0tjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALitZ5fV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D296C116B1;
-	Wed, 12 Jun 2024 17:09:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718212192;
-	bh=Qjb4PcQO/USKFK8Vace4JKabxLlwRQRzJetYbjp9Vm0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ALitZ5fVkZmxyoh4Ba15dHodb+xt3ibwNAZZ4wLKNa+M1eowPv+ds40FGT8giI/hj
-	 3vYu9qavcqoZTsl2GPdG6yDsv91oqtR/uloo1R7G6FWidbb3o3OBbWWyoaeqEEbyJ7
-	 FDaXQl9qWOJ2VFrw7gkmfmz7mwQMAYFAnI1R2V7hbqS6N5VPW04J7qERnwka6rIWg7
-	 W0lw2SinkwMR5GZeRijhWmzHv0ZJhhp2G1q49nyEnJDkLHCTI2Wbwauz2Sw1HNXrDB
-	 0HK50re5GNCtB3WWIQ519d14m4RdNIdhFOXKSpnoLOlruyyocS5kbas8gGjSkq2BhR
-	 FuKbns/T6zl/g==
-From: Mark Brown <broonie@kernel.org>
-To: Kalle Niemi <kaleposti@gmail.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee@kernel.org>, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <ZmmJXtuVJU6RgQAH@latitude5580>
-References: <ZmmJXtuVJU6RgQAH@latitude5580>
-Subject: Re: [PATCH] regulator: bd71815: fix ramp values
-Message-Id: <171821219113.232568.16310408431096376740.b4-ty@kernel.org>
-Date: Wed, 12 Jun 2024 18:09:51 +0100
+	s=arc-20240116; t=1718212248; c=relaxed/simple;
+	bh=OYbNIEzcgyt4PTLKu/l3E+9Rm3ZUcPSmSFVbK+6op20=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ZBGm+VfH5OoqbMnK2u6t3lDsAXO6p3XSMw3ipgEE6aiRL28D6z6TRNp5Ggxehhu366oqcgU4EiH617cb8FuR8LLwaqmaPZM+C2Go+8ls6XdARzrijmEy/O9TNqxuzr5Jou/KbjoWCcsn7xyFtzf1cUJqE1Ulq+a8iW2j7kW+O8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=In6Mmb+3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CAbPQG002327;
+	Wed, 12 Jun 2024 17:10:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=70WnYq+J0sbTiP8arHwPgW
+	TppXauHCU2FCPTt2YNUZw=; b=In6Mmb+3jwtye/8BobEJb1xqqI3gOQ4eQubUVm
+	i259OlFDZmv4M/4sh7w8jojfshzkrOm3kP+3AJ9pbi+7bojGVYocs8bOhZTNGK//
+	Po+BFDylOxxXC+H0t92iBieGLrCKshyK2HC+YNGK5ZE2oKmVK0efIKqwPeHjLHpN
+	sonzpQQEXqTYtLpyXzg5V7DOUMML1jPZYpBBkAJTca8LmQX4T/1dAaf9CymhsC32
+	LSSFLr7loVObl/blbIWqNCRv3rIHdu0nTDBWnS8uZ6YWPJx1v48AHDQvrB0uYTnv
+	xItnuO8ub2jTpztEnncf0B2OwTgR4QKakDNWepVkt7xX4mzw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yq4s8j3mb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 17:10:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CHAgcr028105
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 17:10:42 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 10:10:41 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 12 Jun 2024 10:10:40 -0700
+Subject: [PATCH] fbdev: kyro: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,42 +64,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-4c370
+Message-ID: <20240612-md-drivers-video-fbdev-kyro-v1-1-978b1245e734@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAI/WaWYC/x3MSwrCMBAA0KuUWTvQhlCDVxEX+UztoE1kRkOl9
+ O6mLt/mbaAkTAqXbgOhysolNwynDuLs852QUzOY3th+HAwuCZNwJVGsnKjgFBJVfHyloIvOOWP
+ P0doAbXgJTbz+9+utOXglDOJznI/zyfmz4uL1TQL7/gM3FWk8jAAAAA==
+To: Helge Deller <deller@gmx.de>
+CC: <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: hdWszw-4DstoNH4nFMzNSRqcSLeJCNwL
+X-Proofpoint-ORIG-GUID: hdWszw-4DstoNH4nFMzNSRqcSLeJCNwL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_08,2024-06-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ spamscore=0 mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1015 mlxlogscore=885 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120124
 
-On Wed, 12 Jun 2024 14:42:34 +0300, Kalle Niemi wrote:
-> Ramp values are inverted. This caused wrong values written to register
-> when ramp values were defined in device tree.
-> 
-> Invert values in table to fix this.
-> 
-> 
+With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/kyro/kyrofb.o
 
-Applied to
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/video/fbdev/kyro/fbdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks!
+diff --git a/drivers/video/fbdev/kyro/fbdev.c b/drivers/video/fbdev/kyro/fbdev.c
+index af6c0581d3e2..08ee8baa79f8 100644
+--- a/drivers/video/fbdev/kyro/fbdev.c
++++ b/drivers/video/fbdev/kyro/fbdev.c
+@@ -811,4 +811,5 @@ module_exit(kyrofb_exit);
+ #endif
+ 
+ MODULE_AUTHOR("STMicroelectronics; Paul Mundt <lethal@linux-sh.org>");
++MODULE_DESCRIPTION("STG4000/Kyro/PowerVR 3 driver");
+ MODULE_LICENSE("GPL");
 
-[1/1] regulator: bd71815: fix ramp values
-      commit: 4cac29b846f38d5f0654cdfff5c5bfc37305081c
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240612-md-drivers-video-fbdev-kyro-8c888247c44b
 
 
