@@ -1,122 +1,105 @@
-Return-Path: <linux-kernel+bounces-211275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471DD904F5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:33:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133CA904F5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F3F1F23C91
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:33:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42F72875B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E578B16DECF;
-	Wed, 12 Jun 2024 09:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E7016DECC;
+	Wed, 12 Jun 2024 09:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZnVoGqSU"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TKpsIqZb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B4616D9AC;
-	Wed, 12 Jun 2024 09:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0C116D9AC;
+	Wed, 12 Jun 2024 09:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718184748; cv=none; b=RiulIOeP/V6oaxOMQRK0+Ex095IQdtTOIam5oqms/6peBUPUkd6kLL1JNQ5CKO24rGjeh2haXWdivE/YW5OZqcRQy1H6j+B7YZUNS+/yph8XkkM5sbcIR7w8c8KLQKAA3DHcdML+REb/y15R6G0RrZvQ77TlCtBEScqxM5UxAAQ=
+	t=1718184800; cv=none; b=S4Jrbxy08IaT/y+JXLKqfGSoQVmeoSRhi+zHDu2d/daiOES1crUV7vn5DiO/0VmWYtkXcXkQdtTsN3TKt/JqtHIey60GiznLPXumPPc9idrdVdCqLAv7nlB9f5VsEaLrWdhZlEX+2ySrmIdRvNUZTADHjHmKFdhvIq8qU7Mj1jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718184748; c=relaxed/simple;
-	bh=6X0iD7TzpO+roGTpjK6TPJPfQxfbzItBOFhP+OjO2G8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IsacgVob7MI0mjww44OzY1HtuZm2Ov+/Z9A8/1ecFR/SgmCHo5U519H9t0YqmDSXzeoHOlpKZQCvme5xqph97zMegeHgIE4fcYbEdHsoZrhVa0P+CddyOsRnlRla3YFV6rOyy4iJ4NXnUPblrx6SC+/IIThovR0d5kToqQvhDsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZnVoGqSU; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-705c1220a52so194617b3a.1;
-        Wed, 12 Jun 2024 02:32:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718184746; x=1718789546; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/FQNww1AD6dH8cAepq1wCWnMnAcDBJE7rz1cWisQhNU=;
-        b=ZnVoGqSUOIIVP9N3HfXs+JHhD/OWvxQ6hOqmg+5Q9zAn6NFjRhJu1U+8Zq6jrFrsvY
-         cQPw0HWIeBiZMtb+2XipOXKU2C8zrm8fQRzOZdDRIRdvPYOpb72e+S554UwI+38A7MTA
-         njVJdHNu6lxn7xyytbYVMkLlKFinMxNC9DZUK7DJu7uyb4Ti3SH1lvWfccVM5bnn0sK4
-         80louL6R/W2hEyLNOch+nQn3h7ChVfRF8VMsqzXOIqxmAaxT8KqvKaLukupIQM1y04b4
-         8L5IZSTrAxJW7U0pgVK0eB++jPYQux43ZnnibUiBC5KJl/wXiAvzY5Vnwg1BsZ367dVS
-         iTlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718184746; x=1718789546;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/FQNww1AD6dH8cAepq1wCWnMnAcDBJE7rz1cWisQhNU=;
-        b=oF+8rBH61KQPruHg4Ifpio5T8DJFnZWEmJML93O1HFkSLgjAAM8sPF0jPaONsDvpWH
-         dpDN5TAj9KW0YXXTw6b2Z10akZGAdeoOig+eMqJ9nWN81iTH6tOifHQuFQmvLTfGirMG
-         9os4J6FNpdXXSSAd2MLbiUDZR44Y8B8/9XSRV8FfgdwA9l9QS1drGlLRr2jvUR4YzcvO
-         6STl4bNWC1FaND159fwFVRWQhd105fnBglUnIASZMgCqlEdNDqcMA8Z43IBJFV/YJpLu
-         RC8j0qrc+W+RHJh+4Y7fSLDn5fsHy3MjXUJ+pJkcTOS2MhuG+ku6ByYYN7/dQfYpflqv
-         WZZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbofqOgK2mtA+JHXhYzjgUc8uMpcErcCZEmEO/mVn0q0wnIu1wvvtpytecpTvJ/LeRcIXbW3LsyoZueAz05rkPeGoyQV+ErZo86ec05AA4athG0K1YyV9lenDuzDbqortmRprU
-X-Gm-Message-State: AOJu0YzpitVyezBZzNO101aB1nKoMH9CNfHYqc2LxOHKmPD77pmLWaDL
-	bnRt1rjSRA5CcbewgbQaEPKZWlLEG5OD1eULQwUp/M2VbGLSoRBW
-X-Google-Smtp-Source: AGHT+IFFogTLuH64nEqmLHYgxgSfQlcYfIeRTZOamLN1Dw4tSaasHxdPL+wJBoZgTkyLeT9PAPCdYA==
-X-Received: by 2002:a05:6a00:a14:b0:6fc:fcc8:cb38 with SMTP id d2e1a72fcca58-705bcf1accamr1608167b3a.33.1718184746256;
-        Wed, 12 Jun 2024 02:32:26 -0700 (PDT)
-Received: from lhy-a01-ubuntu22.. ([106.39.42.164])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd39569csm10223126b3a.72.2024.06.12.02.32.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 02:32:25 -0700 (PDT)
-From: Huai-Yuan Liu <qq810974084@gmail.com>
-To: jes@trained-monkey.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: linux-hippi@sunsite.dk,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Huai-Yuan Liu <qq810974084@gmail.com>
-Subject: [PATCH] hippi: fix possible buffer overflow caused by bad DMA value in rr_start_xmit()
-Date: Wed, 12 Jun 2024 17:31:53 +0800
-Message-Id: <20240612093153.297167-1-qq810974084@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718184800; c=relaxed/simple;
+	bh=GL4nKRoUa9GkN2VIgnRKxP5jpO2kVuOsRHsPt3n+/2U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Vuor3PGXkFmxKAgZO9S8PaDfhY/YtNihUijf11P8Fl1uBSR2RiGBGl3h5hENbzHTP8StWD+ZpxEMLlP0BnM9oiOwyaoAodu0Wp0Dfhqk7Y4QffgUhjMfzVAmNamuP49OD3V0s2bCSKbFR0S76JBAexZUr8dV+BMRB8o5FsmK88w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TKpsIqZb; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718184799; x=1749720799;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GL4nKRoUa9GkN2VIgnRKxP5jpO2kVuOsRHsPt3n+/2U=;
+  b=TKpsIqZb/6SFjYVhzMCk4xx2lkNBM48MSVaouHpoNPVBBBTf57JQJUl3
+   lKEc9GrBEIiCM2lwY/MYEAF/xGwMFqc4Md9E+4e5Q1uwDZJXoMG1CVL0U
+   gZ/hQkjtsipTegqOjEHn/0CeXBHs585lVM+sW33tRS2Z2OoD5Mh4O1lqG
+   1bMje3ZoXm0qJUJsyVhG3gTNf0Y4x54oGmgCFa23dG8NyqU0xmfnKkCSB
+   qFvbDvqfhzRq5ygpHF78UZdHPisUhS8ye/kv4xg9jUea45QBPkwq60lNG
+   Yc6aQNxkEbYy21obL21vpH+/XQcJf24AgwiJV2493ralKal1eesfKzQUh
+   Q==;
+X-CSE-ConnectionGUID: UZEA+910SMSGM794WBBwXw==
+X-CSE-MsgGUID: LpWoGJ/VSkqZTsrue/CDnA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14661123"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="14661123"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 02:33:19 -0700
+X-CSE-ConnectionGUID: 5O+HJgx5Qi22kyyQsudUDQ==
+X-CSE-MsgGUID: A8EnF27yTNi4C3qy2+2GRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="39589102"
+Received: from unknown (HELO localhost) ([10.245.247.204])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 02:33:09 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 1/1] PCI: Remove extra parenthesis from calculate_mem_align()
+Date: Wed, 12 Jun 2024 12:32:49 +0300
+Message-Id: <20240612093250.17544-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The value rrpriv->info->tx_ctrl is stored in DMA memory, and it is
-assigned to txctrl, so txctrl->pi can be modified at any time by malicious
-hardware. Becausetxctrl->pi is assigned to index, buffer overflow may
-occur when the code "rrpriv->tx_skbuff[index]" is executed.
+RHS of <<= does not need parenthesis so remove them.
 
-To address this issue, the index should be checked.
-
-Fixes: f33a7251c825 ("hippi: switch from 'pci_' to 'dma_' API")
-Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 ---
- drivers/net/hippi/rrunner.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/hippi/rrunner.c b/drivers/net/hippi/rrunner.c
-index aa8f828a0ae7..184f0933bca0 100644
---- a/drivers/net/hippi/rrunner.c
-+++ b/drivers/net/hippi/rrunner.c
-@@ -1440,6 +1440,11 @@ static netdev_tx_t rr_start_xmit(struct sk_buff *skb,
- 	txctrl = &rrpriv->info->tx_ctrl;
+This patch can be folded into the commit 658bf5d36dc5 ("PCI: Make
+minimum bridge window alignment reference more obvious") in
+pci/resource if so desired.
+---
+ drivers/pci/setup-bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 11ee60b9ca71..23082bc0ca37 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -960,7 +960,7 @@ static inline resource_size_t calculate_mem_align(resource_size_t *aligns,
+ 	for (order = 0; order <= max_order; order++) {
+ 		resource_size_t align1 = 1;
  
- 	index = txctrl->pi;
-+	if (index < 0 || index >= TX_RING_ENTRIES) {
-+		printk("invalid index value %02x\n", index);
-+		spin_unlock_irqrestore(&rrpriv->lock, flags);
-+		return NETDEV_TX_BUSY;
-+	}
+-		align1 <<= (order + __ffs(SZ_1M));
++		align1 <<= order + __ffs(SZ_1M);
  
- 	rrpriv->tx_skbuff[index] = skb;
- 	set_rraddr(&rrpriv->tx_ring[index].addr,
+ 		if (!align)
+ 			min_align = align1;
 -- 
-2.34.1
+2.39.2
 
 
