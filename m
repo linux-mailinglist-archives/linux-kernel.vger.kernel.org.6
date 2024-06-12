@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-211834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E50179057B8
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF019057B7
 	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18AEB1C22A01
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:58:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6025D1C2291A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2FB1836DC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFC51836DA;
 	Wed, 12 Jun 2024 15:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5vQvJyB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WW+wSfbA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C40718130D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB90D181314;
+	Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718207757; cv=none; b=SP2DV2L981+dTbkF2anasNR71UaOxHtgNn1+d0cvKV5HsIDnXKEj0ukfWg1pT8zoPxlG1wAaEtAUnOsH+ZgjBqm6Qe+qMDngGh/un/i0/ZVMh5uXszJMj34N45wSLQr2YRuLHWXQmbCjS9e+3nLvVUSCEWydFT4M+N23XjeruAU=
+	t=1718207757; cv=none; b=hGkoHIm/4wCpppeX6+fVCKV9F2O88ELABWFxuGTV/1dusxjdgFoGw5cfPH9lhsVqNLUzKvplK1H5DQq1tUxq6SUZU321NJX2xdzoIX2zciOimKgg6I8dB4w5Q6G3De2mOseIT7pKYMbMWJvB0zWMigHuLgLrfcjG/lkJwYNvWGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718207757; c=relaxed/simple;
-	bh=fg5ngAXBtHfUv26u+nwajvrTqbRSPs+zZsIgoe3iwR4=;
+	bh=47LLGyJx3n63fVJFIMhbJCouJ2KvXOEPCo6cPO4GGZQ=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Cg9sLyD7Syy/aJ0SGkjd53SJF2EHG/a3p9wUPqRuxNHroHSnaKBVgwK6hx0GFGZS6YQzhmFaZqmOVYS/11YDkN67Ct2j5F2k52XZEtLeqnwbM6u7VWrker2IbAHBPg7TIV8GK3LR+6PA93D0cgAuRj7Si0uqQ8Fm1fmRqE1z3JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5vQvJyB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 43C10C4AF53;
+	 In-Reply-To:To:Cc; b=Wye/1JouSSRcHyXqnnuHHN5WIwOwBFcES4qfqyLDIVNuzjC9DD3GH3e07BaTtqwsp11uZW3Ui67VJjNbntJpOkgqT+8Y9oAiwcScZg0BpEobXzEhztC9AkxOvEU6xUr2bVrVnhvHGwqgbDqowQdeAqShviHC0j5qJu9jR2c5cgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WW+wSfbA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5E7F4C4AF68;
 	Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1718207757;
-	bh=fg5ngAXBtHfUv26u+nwajvrTqbRSPs+zZsIgoe3iwR4=;
+	bh=47LLGyJx3n63fVJFIMhbJCouJ2KvXOEPCo6cPO4GGZQ=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=k5vQvJyBzqctuLwDDYj7pCJYgiBbRwzVJcRl1mJqImEXx8OrPBo9Qci53mSM+AGNc
-	 VTOTT9pQgIpE6xq1DqkQJ7qNyOt80lWHsKpUiYQjWNiHjaOKBIFLPJe79nlzhS/eK/
-	 oVElTBCjj2eopBOXvAjglDJY7w5VLhbBtpdWaNCH57UzNcvA5DLJXmg9vMxsm1Qqnt
-	 RmXU4N/H00oygZ8VMl7Heo+zZBiY/VC/JS7X3IAhxbpEk91lfiIJpMTdiQsifvyJeY
-	 R+05ZCk6JAKqDNYqcFmqiLfM0AN+2zdle0/sqyzSBsZCJa9MvmWdNUow2TYxC3rGjj
-	 o6Jh+01D6JqoA==
+	b=WW+wSfbAAomyAeKf1LSvtfryt8kxqzuwLGL3TFDswDG+935E5W31eLoxtwmgUVsI5
+	 3u1EqTPTQb0XumXkosdATdfrXmIeUSjzVsbuZEoD/mPlSU3FYKVwj0WzSCPr89liZY
+	 FJ1JZZ1HkCKaTpWZE6LRi4wtYnH5hi71LM1ALq+JSBO1GWjSPdeh1PCjeOky5uVut9
+	 oTeqvqkxmoZGzmaKvsorSQdVXaSX+hbsjjI01OemSpDNXplhCyRMunGcvXy48dL9sA
+	 jQCb2Q1ozyE0tQRR08Sc6Vge+9ng+SXrYFDhbN5i4FYlHz1TlXnTYg46CizSu5Y8b6
+	 c/VDWLtt0em1w==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 35CA6C43638;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4924EC4361A;
 	Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,58 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to cover read extent cache access
- with lock
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to force buffered IO on inline_data
+ inode
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <171820775721.32393.16229302976932686990.git-patchwork-notify@kernel.org>
+ <171820775729.32393.7251723492802127361.git-patchwork-notify@kernel.org>
 Date: Wed, 12 Jun 2024 15:55:57 +0000
-References: <20240531020032.1019991-1-chao@kernel.org>
-In-Reply-To: <20240531020032.1019991-1-chao@kernel.org>
+References: <20240523132948.2250254-1-chao@kernel.org>
+In-Reply-To: <20240523132948.2250254-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- syzbot+74ebe2104433e9dc610d@syzkaller.appspotmail.com,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, v-songbaohua@oppo.com, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 31 May 2024 10:00:32 +0800 you wrote:
-> syzbot reports a f2fs bug as below:
+On Thu, 23 May 2024 21:29:48 +0800 you wrote:
+> It will return all zero data when DIO reading from inline_data inode, it
+> is because f2fs_iomap_begin() assign iomap->type w/ IOMAP_HOLE incorrectly
+> for this case.
 > 
-> BUG: KASAN: slab-use-after-free in sanity_check_extent_cache+0x370/0x410 fs/f2fs/extent_cache.c:46
-> Read of size 4 at addr ffff8880739ab220 by task syz-executor200/5097
-> 
-> CPU: 0 PID: 5097 Comm: syz-executor200 Not tainted 6.9.0-rc6-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
->  print_address_description mm/kasan/report.c:377 [inline]
->  print_report+0x169/0x550 mm/kasan/report.c:488
->  kasan_report+0x143/0x180 mm/kasan/report.c:601
->  sanity_check_extent_cache+0x370/0x410 fs/f2fs/extent_cache.c:46
->  do_read_inode fs/f2fs/inode.c:509 [inline]
->  f2fs_iget+0x33e1/0x46e0 fs/f2fs/inode.c:560
->  f2fs_nfs_get_inode+0x74/0x100 fs/f2fs/super.c:3237
->  generic_fh_to_dentry+0x9f/0xf0 fs/libfs.c:1413
->  exportfs_decode_fh_raw+0x152/0x5f0 fs/exportfs/expfs.c:444
->  exportfs_decode_fh+0x3c/0x80 fs/exportfs/expfs.c:584
->  do_handle_to_path fs/fhandle.c:155 [inline]
->  handle_to_path fs/fhandle.c:210 [inline]
->  do_handle_open+0x495/0x650 fs/fhandle.c:226
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> We can let iomap framework handle inline data via assigning iomap->type
+> and iomap->inline_data correctly, however, it will be a little bit
+> complicated when handling race case in between direct IO and buffered IO.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: fix to cover read extent cache access with lock
-    https://git.kernel.org/jaegeuk/f2fs/c/d7409b05a64f
+  - [f2fs-dev] f2fs: fix to force buffered IO on inline_data inode
+    https://git.kernel.org/jaegeuk/f2fs/c/5c8764f8679e
 
 You are awesome, thank you!
 -- 
