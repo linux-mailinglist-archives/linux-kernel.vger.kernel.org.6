@@ -1,362 +1,199 @@
-Return-Path: <linux-kernel+bounces-212295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55274905DED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:47:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A76905DE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28C681C2163F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A6CA1F23184
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D73B12D1EA;
-	Wed, 12 Jun 2024 21:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05580127B62;
+	Wed, 12 Jun 2024 21:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Y3OqxrSI"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2077.outbound.protection.outlook.com [40.107.237.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ab0aUMQD"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1133A12C489;
-	Wed, 12 Jun 2024 21:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718228767; cv=fail; b=G/aIcxvnyon19scy57PdANqMkGOVKPGzMLRyVTyzehFK+Inu+AK+bODitQyA237rpNZv93V2/70eCJ7ukDPcETQ3rx8EQzKBfIAmeb0gQH6WLVm7qpJNvyh2RJrofeQ6i8oSQlPQ3Nzmey0bHpCQaa9MA+GGYOu5UqypOpV+GsU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718228767; c=relaxed/simple;
-	bh=zH+0LerWmhxj5KAmQnAGF4aHo0ory/DRk1NtSIncoUQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iVYA2OplBsybngyB1z5TInd4xzWA72CkD7dGGqLx1aZfZOUMWTI9iLFr9+6Z0Xt74rhqzIGGf7OAoLs29zS00VaHQHva3drvt7R1yVGcBjdmJl11ubBcFZlOSWm82c7rCgy1aUROtF2zDgN3fTlhXN1OtJiponNZOfBdN2j0Bv4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Y3OqxrSI; arc=fail smtp.client-ip=40.107.237.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MVuXDluK6zq+r1NhWUZpPiG804rEDFscQfAtEwxtXPcqLcZVwzlp6wwFB5h5ORxMtpPPso83RdEWEtx2gW8qz2gx4qID12eqAIAG3lV4PgspWvBu7lSjhdkj290K5zbygwBtajuyUsviwl+DoTJLRRfh2emc+xwr9K0tUUTfBm4bEAebvIMHJWXmchYxELBAOr2LnhIRiKwvgnV0vosHqm2GYeg4jF7SHLk/oAmN4oxxzk2C+2CHH//1rCrTLnMGnh71S3iCjMBbwl/na//tvCrGJNIAjapXkUVpeqK6mKr8zRx0omA+BN6rznkhKE0KdYkFBbFZaANRFgJCNZCDDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qZ/jZKGH8OfzuU1jiiOHWK1nOqg28FjiaqvHR59WHB4=;
- b=OQpqvrS7J3NmlamtEPgpS0e/p/bRA3d+Srm7YXb2yr7NO64GkK81MWbf/pgGJ0s0WjLQGtCEaj2ZeP/bFOPgqXji7Sx3XufwR3eRXqGcaupkYG79wsWFCGQVNEy7f9wd5v1OSaaTlgaDpeY7Y/EiTVJwv1ZHognl3YNjy8N2ZwE9LjWEyydxqQIYw5bnexXZ2wg1PgMzl0CkbJMx2ohIC8tmgYaYFGT8b+aMm1+31SUIn+TSumSB5DV3QbMBYKlfoWTJCifWYkV8lJE4ljTA9ZNPs7EIiYJXR3QQUIf2giSSHeoe3AbRC3QM6ltHaxWJWX0I7oCp6cQh6zSBbHZboQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qZ/jZKGH8OfzuU1jiiOHWK1nOqg28FjiaqvHR59WHB4=;
- b=Y3OqxrSINmGb3749OEXfqPDz/VFrLmrTxSO7gR7VvkJ0Fw86Lr7tEBwdqRxlgX0Xz47EjkyPUV49Ldch4XPAGjOQnixA/ljkF0HztswKAvFAB0YQsXHgNGnieIGB0QZOC9gRK2tw5R8nbcgadgrYzLc+YsJkKsLp2dCjhor2AXGgDBXc0zcHBWh7fuSqpe3kKspB+zMt4841+5FTyG81uw3rxzg2Ma4X4iZHpIKkFkbmctUlKdENZq+gbkeL9brXw3ZurSWratL3ylDZbLn+J9xHs1kteBkcKmYkmMLH8ptcWQj6+BB1xNGcj86N0kpPCae+0jXp2LXQe/O1RVTe5g==
-Received: from SA1P222CA0091.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:35e::11)
- by MW4PR12MB7014.namprd12.prod.outlook.com (2603:10b6:303:218::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.21; Wed, 12 Jun
- 2024 21:46:00 +0000
-Received: from SA2PEPF00003AE9.namprd02.prod.outlook.com
- (2603:10b6:806:35e:cafe::7e) by SA1P222CA0091.outlook.office365.com
- (2603:10b6:806:35e::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.21 via Frontend
- Transport; Wed, 12 Jun 2024 21:46:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SA2PEPF00003AE9.mail.protection.outlook.com (10.167.248.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.15 via Frontend Transport; Wed, 12 Jun 2024 21:46:00 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 12 Jun
- 2024 14:45:46 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 12 Jun 2024 14:45:46 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 12 Jun 2024 14:45:45 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <will@kernel.org>, <robin.murphy@arm.com>
-CC: <joro@8bytes.org>, <jgg@nvidia.com>, <thierry.reding@gmail.com>,
-	<vdumpa@nvidia.com>, <jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
-	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: [PATCH v9 6/6] iommu/tegra241-cmdqv: Limit CMDs for guest owned VINTF
-Date: Wed, 12 Jun 2024 14:45:33 -0700
-Message-ID: <1075717e8f4321b8fbeea0fb24d4151e39e8a900.1718228494.git.nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1718228494.git.nicolinc@nvidia.com>
-References: <cover.1718228494.git.nicolinc@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D4F84D02;
+	Wed, 12 Jun 2024 21:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718228743; cv=none; b=FGKFqm2DckM5gDZ2QrdIf6AyJBtqpcLS0RUq8DipHb3jviZiF+l9FQZ0mqYwO5cYgrdNKV6P1PjPzF9xS2/d+MzeMDDauNgdyiZyzorLFzYDOaKpIE6WJZEnJilNIvN1F2dktdl/f2zcCYqmnxgY9e1T1SUNRtUWYQxytAW3+nc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718228743; c=relaxed/simple;
+	bh=3qwM3YMDGCSC1fcQ0SSKCUNxj4nWENbqFIY8TjOX4jY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQRfRnzusNBJy+TyvlJMXovPDQHtqA90NIpu0S+BSfbInc7ZuOIV8KrDesBg1Go8WHCiCkDkXmk9SxPbPbin6YEi6UnroQ4ct6vcmf8CrcHvSZPU3WUPHsj26PoFltd2/CaUfZql2OhQus191RFA+w3Yo4JM8tjzSKg8zIIZqzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ab0aUMQD; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70432d3406bso261734b3a.1;
+        Wed, 12 Jun 2024 14:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718228741; x=1718833541; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=i6lWae0B5/GP4WtvVp63JCaJ9laTWe/yar8hYd+cHUM=;
+        b=ab0aUMQDnZni+oLzp/83JWaRuz5jApJvZItRJ3s3Q58TcF+OpqGSb6Yqf374rcYavg
+         G9XLrEw8k8z/MIr+xweXTCdv3p/vcsLukPvg6fRXz0S3HMdDqc7kVO5G5hDnYXqPda4X
+         X7uNxXCOqBk0Gnd8j2XdGyeUHbtH3WmRcfDrVBynGDlKcNzyA/Id+eyy0bpGjf35YNYv
+         OaJP81/gJpnYruc92dvJuemCFrVQtb6SStDvIlEpdcSX+gZ9XDdnL85PNXLFqQhwomrI
+         seZpBryvT1sZGX0QZHp2rk8beeFlWelHCq6ZZlHRCutHEDzi8Lpu9zWd3SvrAU6JyThz
+         PwiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718228741; x=1718833541;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i6lWae0B5/GP4WtvVp63JCaJ9laTWe/yar8hYd+cHUM=;
+        b=dPfZelmwU5pDKGXFI+gjqLtbeuZC5VysOzVD7gU94w6MHWhLz9p41ZBxuAAWChaLYv
+         jpEY38whoGgd3RXHpCZzGsrIEeVcDW6f72TRnPZ/KPZk6MaFoZ1LGsg7dHL79Yi1cKrw
+         6ltQym3TAIbi1zxF/+5rcNFJnPZonhevGpT14cv+emDpuS8hswuPC3OAoxuudcxGDPfZ
+         0WUC2SuFCCwvf6elv7VdkD3E/cyi8gS/Xj6Mlc10WueuadwKM7x+9Hvr1p8XWXHPbvvT
+         VS6swYNvjllELukIfpdmCldYJu0hkGiK5HTYp8xl0EIcekZNvKzrM8vxbP0d/arKKtKj
+         7JVg==
+X-Forwarded-Encrypted: i=1; AJvYcCW12gCS5cuOgtifWAha7PKyRZBKqqJH3wy3jvWrymIIunjK+Z+wD2cnpJibJ772Cq/5MXRkUPy7bS8elyRGfRv+MVK/1GonvVYanJHR+PGC4Hv2mIDI5XieYTSnLVNHyWHoBUshtP0g2gou9TjSxznsAcO5B/R/EBrqCwwWWc8rKA==
+X-Gm-Message-State: AOJu0Yy/u6HFOzbxtbLcLcD/c5RUA9LU01CCQtAgTJVKAIXLy0rSpcP3
+	y9PPKIpAeW0S9sKH2ryYTq5NxuPX9KblAlRv2WbfKmXWCwLzlKO8
+X-Google-Smtp-Source: AGHT+IGZC5SmaoqyXbCaLhBvQFZ1c0FtMBTPMwCFezpbf/bZb45GQ5Wm0sQBFB1zxS3xK8XrV31x/Q==
+X-Received: by 2002:a05:6a20:a11e:b0:1b5:d172:91ef with SMTP id adf61e73a8af0-1b8a9b704ffmr3594757637.5.1718228740702;
+        Wed, 12 Jun 2024 14:45:40 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:3077:52c7:3e56:8d61])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb6b4efsm16518b3a.151.2024.06.12.14.45.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 14:45:40 -0700 (PDT)
+Date: Wed, 12 Jun 2024 14:45:37 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: hauke@hauke-m.de, tsbogend@alpha.franken.de, rdunlap@infradead.org,
+	robh@kernel.org, bhelgaas@google.com, linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
+Message-ID: <ZmoXAR79emQBNyhj@google.com>
+References: <20240607090400.1816612-1-ms@dev.tdt.de>
+ <ZmnfQWFoIw5UCV-k@google.com>
+ <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
+ <b6bea9239050ed39ce3a051a5985b86d@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE9:EE_|MW4PR12MB7014:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c285cbc-8e98-40b0-b0b1-08dc8b290cca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230034|36860700007|376008|1800799018|82310400020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CiRW+fqL0yAW41GsWW6YHvztbgSIgYo4k2H9jLDWxOZJU4XqTO0CS+IuJiLE?=
- =?us-ascii?Q?OV9Wuck/TBQv4iM3rHEIYpzOM/8LgeN6thxwr0hT0X/D8B3i4SEMKA9Bah2O?=
- =?us-ascii?Q?l+a5nCh+5AMIMzYfKiqHPknllPIxZ0ThRbIuDEa4LRaFawBm4D+StZDn1KfN?=
- =?us-ascii?Q?2ZTqWxHroClAXCnpPF5P2wBcoqyIky5T57PpF2YJTQog+n50j3IwNmxW9OWC?=
- =?us-ascii?Q?H5G+dI8OWowJA1HdCrZpKzzGkiNLO0xe9y0CpcfKkEeyLFGy2KE8fry3v0Dp?=
- =?us-ascii?Q?ad6eULvYyB39vJ26bxLCqDkqEEisqABU1EYQ1e0gCKW1pCWQiiiYU4sxXj15?=
- =?us-ascii?Q?pDejFq1VrhmTRJX2cUxOqf7+7N/yvHMK7bEQV0b8tNlDc5BwBFo4Z13ASGnW?=
- =?us-ascii?Q?z9K7Guywwm4m8iR24TnjvXpayuHrx1y1Psr6zMYQZrFpcMoC7Nc65EDIdnUL?=
- =?us-ascii?Q?pfk7H5oU50Q1RM/DY0hHmyUb57HXrH2hBSX98u8zSi3vz6ciTYv0w9YmOiGz?=
- =?us-ascii?Q?OHkLB6KWVkGW6j3vVW5cHEh1QsgLe76dpvrh2gahyOLoCygmufRiGUoGHoQw?=
- =?us-ascii?Q?BoYdxrPGC4W3LuIaN+4SKOFKs+oTREJbCPAe+HKfvSYrvbfWO+JYYD9+klI3?=
- =?us-ascii?Q?mZGgU3YIRjjlUsGVHEfjx92oaX5EA2X8+0A0odg6ZAYY3bxeWxfNV/Ulmj1t?=
- =?us-ascii?Q?o8fLYzkwgLePqw4qzJJGhqNOILKjDPdnqTQIYjRZEggiL2CK4WxkgJ5a0mMM?=
- =?us-ascii?Q?Q7zeAKQKMWUmXxKd3GSPbfqGCCOjcE2ecjmJrQe2gE9swLnBVtEDWOGldgWZ?=
- =?us-ascii?Q?X704SpncnN3vjoN/SvFaESOSPEyS5Gagq7Na4UGUGwji165/cbQXO6zFNlam?=
- =?us-ascii?Q?7a/ObKiCdpmsMWK5OJXTPNfdEgpfPd5HgV+ODBU8UTDajXnLGFB625OltxlE?=
- =?us-ascii?Q?AB88vKTjdEekBHQO31D2PX5j7SafFIzUounxcuBUaU0Nty4HaMwanjz62ydz?=
- =?us-ascii?Q?P1BkkXvV8Uv8R9hH3NsALl1DZ3oNJyjWnoX0WM1eSNwDNBRY+I3a5/AaXmh2?=
- =?us-ascii?Q?WChFMMUvWdZ0hYquRslQQZItKxYF6nMHMXrGiF23Q/89mYTFKYazx59rHbzS?=
- =?us-ascii?Q?WJnTj74uia0gWUpZ0XgHffbAyASPoYMN4NnHiDX9RRd/+Z0J7d34x8pgj7+v?=
- =?us-ascii?Q?yoE9IJsBRfLI6llGlcmIHdrQWuBsZUIFynA059Qzq0WFdQI722UonKjCovbt?=
- =?us-ascii?Q?n+dK7EIsHdWO2Hq/y6lH8Kxbebywzl6eTS1fG2IeHflrQRM8AjuWgXFbOxjQ?=
- =?us-ascii?Q?52CNORZwi+v8fdBur2z6gnbVRka0m7uSGKxzOu2rKAkuq4b+IYmK95M4fKk2?=
- =?us-ascii?Q?QtAuIjg3/UUSdKs6DROsOpyNmghORXyAj2r+o/MwT1TiVCfcOA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230034)(36860700007)(376008)(1800799018)(82310400020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 21:46:00.2422
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c285cbc-8e98-40b0-b0b1-08dc8b290cca
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003AE9.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7014
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b6bea9239050ed39ce3a051a5985b86d@dev.tdt.de>
 
-When VCMDQs are assigned to a VINTF owned by a guest (HYP_OWN bit unset),
-only TLB and ATC invalidation commands are supported by the VCMDQ HW. So,
-add a new helper to scan the input cmd to make sure it is supported when
-selecting a queue, though this assumes that SMMUv3 driver will only add
-the same type of commands into an arm_smmu_cmdq_batch as it does today.
+On Wed, Jun 12, 2024 at 09:47:39PM +0200, Martin Schiller wrote:
+> On 2024-06-12 20:39, Martin Schiller wrote:
+> > On 2024-06-12 19:47, Dmitry Torokhov wrote:
+> > > Hi Marton,
+> > 
+> > Hi Dmitry,
+> > 
+> > > 
+> > > On Fri, Jun 07, 2024 at 11:04:00AM +0200, Martin Schiller wrote:
+> > > > Commit 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod
+> > > > API") not
+> > > > only switched to the gpiod API, but also inverted / changed the
+> > > > polarity
+> > > > of the GPIO.
+> > > > 
+> > > > According to the PCI specification, the RST# pin is an active-low
+> > > > signal. However, most of the device trees that have been widely
+> > > > used for
+> > > > a long time (mainly in the openWrt project) define this GPIO as
+> > > > active-high and the old driver code inverted the signal internally.
+> > > > 
+> > > > Apparently there are actually boards where the reset gpio must be
+> > > > operated inverted. For this reason, we cannot use the
+> > > > GPIOD_OUT_LOW/HIGH
+> > > > flag for initialization. Instead, we must explicitly set the gpio to
+> > > > value 1 in order to take into account any "GPIO_ACTIVE_LOW" flag that
+> > > > may have been set.
+> > > 
+> > > Do you have example of such boards? They could not have worked before
+> > > 90c2d2eb7ab5 because it was actively setting the reset line to
+> > > physical
+> > > high, which should leave the device in reset state if there is an
+> > > inverter between the AP and the device.
+> > 
+> > Oh, you're right. I totally missed that '__gpio_set_value' was used in
+> > the original code and that raw accesses took place without paying
+> > attention to the GPIO_ACTIVE_* flags.
+> > 
+> > You can find the device trees I am talking about in [1].
+> > 
+> > @Thomas Bogendoerfer:
+> > Would it be possible to stop the merging of this patch?
+> > I think We have to do do some further/other changes.
+> > 
+> > > 
+> > > > 
+> > > > In order to remain compatible with all these existing device
+> > > > trees, we
+> > > > should therefore keep the logic as it was before the commit.
+> > > 
+> > > With gpiod API operating with logical states there's still
+> > > difference in
+> > > logic:
+> > > 
+> > > 	gpiod_set_value_cansleep(reset_gpio, 1);
+> > > 
+> > > will leave GPIO at 1 if it is described as GPIO_ACTIVE_HIGH (which is
+> > > apparently what you want for boards with broken DTS) but for boards
+> > > that accurately describe GPIO as GPIO_ACTIVE_LOW it well drive GPIO to
+> > > 0, leaving the card in reset state.
+> > > 
+> > > You should either use gpiod_set_raw_value_calsleep() or we can try and
+> > > quirk it in gpiolib (like we do for many other cases of incorrect GPIO
+> > > polarity descriptions and which is my preference).
+> 
+> So you mean we should add an entry for "lantiq,pci-xway" to the
+> of_gpio_try_fixup_polarity()?
+> Do you know any dts / device outside the openWrt universe which is using
+> this driver.
 
-Note that the guest VM shouldn't have HYP_OWN bit being set regardless of
-guest kernel driver writing it or not, i.e. the hypervisor running in the
-host OS should wire this bit to zero when trapping a write access to this
-VINTF_CONFIG register from a guest kernel.
+No, I don't.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 31 +++++++++++-----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  5 +--
- .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 36 ++++++++++++++++++-
- 3 files changed, 60 insertions(+), 12 deletions(-)
+Could you please try this:
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 430e84fe3679..3e2eb88535de 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -332,10 +332,22 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
- 	return 0;
- }
- 
--static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct arm_smmu_device *smmu)
-+static struct arm_smmu_cmdq *
-+arm_smmu_get_cmdq(struct arm_smmu_device *smmu, u8 opcode)
- {
-+	/*
-+	 * TEGRA241 CMDQV has two modes to execute commands: host and guest.
-+	 * The host mode supports all the opcodes, while the guest mode only
-+	 * supports a few invalidation ones (check tegra241_vintf_support_cmd)
-+	 * and also a CMD_SYNC added by arm_smmu_cmdq_issue_cmdlist(..., true).
-+	 *
-+	 * Here pass in the representing opcode for either a single command or
-+	 * an arm_smmu_cmdq_batch, assuming that this SMMU driver will only add
-+	 * same type of commands into a batch as it does today or it will only
-+	 * mix supported invalidation commands in a batch.
-+	 */
- 	if (arm_smmu_has_tegra241_cmdqv(smmu))
--		return tegra241_cmdqv_get_cmdq(smmu);
-+		return tegra241_cmdqv_get_cmdq(smmu, opcode);
- 
- 	return &smmu->cmdq;
- }
-@@ -871,7 +883,7 @@ static int __arm_smmu_cmdq_issue_cmd(struct arm_smmu_device *smmu,
- 	}
- 
- 	return arm_smmu_cmdq_issue_cmdlist(
--		smmu, arm_smmu_get_cmdq(smmu), cmd, 1, sync);
-+		smmu, arm_smmu_get_cmdq(smmu, ent->opcode), cmd, 1, sync);
- }
- 
- static int arm_smmu_cmdq_issue_cmd(struct arm_smmu_device *smmu,
-@@ -887,10 +899,11 @@ static int arm_smmu_cmdq_issue_cmd_with_sync(struct arm_smmu_device *smmu,
- }
- 
- static void arm_smmu_cmdq_batch_init(struct arm_smmu_device *smmu,
--				     struct arm_smmu_cmdq_batch *cmds)
-+				     struct arm_smmu_cmdq_batch *cmds,
-+				     u8 opcode)
- {
- 	cmds->num = 0;
--	cmds->cmdq = arm_smmu_get_cmdq(smmu);
-+	cmds->cmdq = arm_smmu_get_cmdq(smmu, opcode);
- }
- 
- static void arm_smmu_cmdq_batch_add(struct arm_smmu_device *smmu,
-@@ -1169,7 +1182,7 @@ static void arm_smmu_sync_cd(struct arm_smmu_master *master,
- 		},
- 	};
- 
--	arm_smmu_cmdq_batch_init(smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(smmu, &cmds, cmd.opcode);
- 	for (i = 0; i < master->num_streams; i++) {
- 		cmd.cfgi.sid = master->streams[i].id;
- 		arm_smmu_cmdq_batch_add(smmu, &cmds, &cmd);
-@@ -2014,7 +2027,7 @@ static int arm_smmu_atc_inv_master(struct arm_smmu_master *master)
- 
- 	arm_smmu_atc_inv_to_cmd(IOMMU_NO_PASID, 0, 0, &cmd);
- 
--	arm_smmu_cmdq_batch_init(master->smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(master->smmu, &cmds, cmd.opcode);
- 	for (i = 0; i < master->num_streams; i++) {
- 		cmd.atc.sid = master->streams[i].id;
- 		arm_smmu_cmdq_batch_add(master->smmu, &cmds, &cmd);
-@@ -2054,7 +2067,7 @@ int arm_smmu_atc_inv_domain(struct arm_smmu_domain *smmu_domain, int ssid,
- 
- 	arm_smmu_atc_inv_to_cmd(ssid, iova, size, &cmd);
- 
--	arm_smmu_cmdq_batch_init(smmu_domain->smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(smmu_domain->smmu, &cmds, CMDQ_OP_ATC_INV);
- 
- 	spin_lock_irqsave(&smmu_domain->devices_lock, flags);
- 	list_for_each_entry(master, &smmu_domain->devices, domain_head) {
-@@ -2131,7 +2144,7 @@ static void __arm_smmu_tlb_inv_range(struct arm_smmu_cmdq_ent *cmd,
- 			num_pages++;
- 	}
- 
--	arm_smmu_cmdq_batch_init(smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(smmu, &cmds, cmd->opcode);
- 
- 	while (iova < end) {
- 		if (smmu->features & ARM_SMMU_FEAT_RANGE_INV) {
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index 604e26a292e7..2c1fe7e129cd 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -879,7 +879,8 @@ struct tegra241_cmdqv *tegra241_cmdqv_acpi_probe(struct arm_smmu_device *smmu,
- 						 struct acpi_iort_node *node);
- void tegra241_cmdqv_device_remove(struct arm_smmu_device *smmu);
- int tegra241_cmdqv_device_reset(struct arm_smmu_device *smmu);
--struct arm_smmu_cmdq *tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu);
-+struct arm_smmu_cmdq *tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu,
-+					      u8 opcode);
- #else /* CONFIG_TEGRA241_CMDQV */
- static inline bool arm_smmu_has_tegra241_cmdqv(struct arm_smmu_device *smmu)
- {
-@@ -903,7 +904,7 @@ static inline int tegra241_cmdqv_device_reset(struct arm_smmu_device *smmu)
- }
- 
- static inline struct arm_smmu_cmdq *
--tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
-+tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu, u8 opcode)
- {
- 	return NULL;
- }
-diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-index 1a2680d31c3d..bb696c66e56d 100644
---- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-@@ -144,6 +144,7 @@ struct tegra241_vcmdq {
-  * struct tegra241_vintf - Virtual Interface
-  * @idx: Global index in the CMDQV
-  * @enabled: Enable status
-+ * @hyp_own: Owned by hypervisor (in-kernel)
-  * @cmdqv: Parent CMDQV pointer
-  * @lvcmdqs: List of logical VCMDQ pointers
-  * @base: MMIO base address
-@@ -152,6 +153,7 @@ struct tegra241_vintf {
- 	u16 idx;
- 
- 	bool enabled;
-+	bool hyp_own;
- 
- 	struct tegra241_cmdqv *cmdqv;
- 	struct tegra241_vcmdq **lvcmdqs;
-@@ -290,7 +292,25 @@ static irqreturn_t tegra241_cmdqv_isr(int irq, void *devid)
- 
- /* Command Queue Selecting Function */
- 
--struct arm_smmu_cmdq *tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
-+static bool tegra241_vintf_support_cmd(struct tegra241_vintf *vintf, u8 opcode)
-+{
-+       /* Hypervisor-owned VINTF can execute any command in its VCMDQs */
-+	if (READ_ONCE(vintf->hyp_own))
-+		return true;
-+
-+	/* Guest-owned VINTF must check against the list of supported CMDs */
-+	switch (opcode) {
-+	case CMDQ_OP_TLBI_NH_ASID:
-+	case CMDQ_OP_TLBI_NH_VA:
-+	case CMDQ_OP_ATC_INV:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+struct arm_smmu_cmdq *tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu,
-+					      u8 opcode)
- {
- 	struct tegra241_cmdqv *cmdqv = smmu->tegra241_cmdqv;
- 	struct tegra241_vintf *vintf = cmdqv->vintfs[0];
-@@ -304,6 +324,10 @@ struct arm_smmu_cmdq *tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
- 	if (!READ_ONCE(vintf->enabled))
- 		return &smmu->cmdq;
- 
-+	/* Unsupported CMD go for smmu->cmdq pathway */
-+	if (!tegra241_vintf_support_cmd(vintf, opcode))
-+		return &smmu->cmdq;
-+
- 	/*
- 	 * Select a LVCMDQ to use. Here we use a temporal solution to
- 	 * balance out traffic on cmdq issuing: each cmdq has its own
-@@ -393,12 +417,22 @@ static int tegra241_vintf_hw_init(struct tegra241_vintf *vintf, bool hyp_own)
- 	tegra241_vintf_hw_deinit(vintf);
- 
- 	/* Configure and enable VINTF */
-+	/*
-+	 * Note that HYP_OWN bit is wired to zero when running in guest kernel,
-+	 * whether enabling it here or not, as !HYP_OWN cmdq HWs only support a
-+	 * restricted set of supported commands.
-+	 */
- 	regval = FIELD_PREP(VINTF_HYP_OWN, hyp_own);
- 	writel(regval, REG_VINTF(vintf, CONFIG));
- 
- 	ret = vintf_write_config(vintf, regval | VINTF_EN);
- 	if (ret)
- 		return ret;
-+	/*
-+	 * As being mentioned above, HYP_OWN bit is wired to zero for a guest
-+	 * kernel, so read it back from HW to ensure that reflects in hyp_own
-+	 */
-+	vintf->hyp_own = !!(VINTF_HYP_OWN & readl(REG_VINTF(vintf, CONFIG)));
- 
- 	for (lidx = 0; lidx < vintf->cmdqv->num_lvcmdqs_per_vintf; lidx++) {
- 		if (vintf->lvcmdqs && vintf->lvcmdqs[lidx]) {
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 59c7f8a2431a..4948ecaa422c 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -203,6 +203,16 @@ static void of_gpio_try_fixup_polarity(const struct device_node *np,
+ 		 */
+ 		{ "qi,lb60",		"rb-gpios",	true },
+ #endif
++#if IS_ENABLED(CONFIG_PCI_LANTIQ)
++		/*
++		 * According to the PCI specification, the RST# pin is an
++		 * active-low signal. However, most of the device trees that
++		 * have been widely used for a long time incorrectly describe
++		 * reset GPIO as active-high, and were also using wrong name
++		 * for the property.
++		 */
++		{ "lantiq,pci-xway",	"gpios-reset",	false },
++#endif
+ #if IS_ENABLED(CONFIG_TOUCHSCREEN_TSC2005)
+ 		/*
+ 		 * DTS for Nokia N900 incorrectly specified "active high"
+@@ -512,7 +522,7 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
+ 		{ "reset",	"reset-n-io",	"marvell,nfc-uart" },
+ 		{ "reset",	"reset-n-io",	"mrvl,nfc-uart" },
+ #endif
+-#if !IS_ENABLED(CONFIG_PCI_LANTIQ)
++#if IS_ENABLED(CONFIG_PCI_LANTIQ)
+ 		/* MIPS Lantiq PCI */
+ 		{ "reset",	"gpios-reset",	"lantiq,pci-xway" },
+ #endif
+
+Thanks.
+
 -- 
-2.43.0
-
+Dmitry
 
