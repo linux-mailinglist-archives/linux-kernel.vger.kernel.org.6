@@ -1,114 +1,196 @@
-Return-Path: <linux-kernel+bounces-211472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C519490522F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:12:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF200905233
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708751F220AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:12:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 403B91F21BE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B61F16F29E;
-	Wed, 12 Jun 2024 12:12:50 +0000 (UTC)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E9716D4C5;
+	Wed, 12 Jun 2024 12:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQn7FmAU"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649FE38F83;
-	Wed, 12 Jun 2024 12:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DA25CB8;
+	Wed, 12 Jun 2024 12:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718194370; cv=none; b=Z1+Tp5M2gbN7NaRV56cMyIs/tEYNXSu1p0xVWSp2utp0KNarkpahIS6Hk32zMdzBR3RCktaKrvevy/YHo7I8mgtGSpNxh+JNQhrSMAbvE6r/3uTBpqlQzCyD65pfRA6Ipn6ZcO3uooyyiiyh4DKWrZrU3EqwpYPfd2TyyV1HbLk=
+	t=1718194543; cv=none; b=FGXD8POGDjahpu3GCYDODye+AZ5+w8hzaG2ADMKJegU0J8ckqUriIuTU00adkweHDznMJlWHD48MDjUGCTCjR9mT5XZCD/mT6PUxvHakm9PEYZ8LTUCiP0uboJ1bl/Ioo7XNlFH3HI9UXTuNGS+vIZE7w25m3DiueOw6nXkjbME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718194370; c=relaxed/simple;
-	bh=VvWykEFj0IqDX/aWlkXc+2OJkJ4bnwO8Nif0QnQ/jdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hsCw4lIE+DLcR8oke++gZMQiJvLD3dZRsP9wxq8QlYpBQLwXkgh6vY8k1HVhbX4QIkFXiQei7iLgi9q5OP2lsjkHBZPrzh0id5eZjFG1Gi1pKmF+i/PucpAj5iFqYVUHryUcenEJTTZwpzxL9Vhy7G6qm8jEvTvj9usZcFmaJsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1718194543; c=relaxed/simple;
+	bh=aREFeHhRGadkM71j2silmcFik/atuRpn25ZF2V68cm8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m4NB915T6/IiXlU8S6r9Q/E4P9sq/cRoqguhAo/aUDAsFZ2+xoqupU080+qJBuk6pRRvqrp4rqx0FxG/JQk4sL5n48LHczVohnxKVPgvtb34NG5Ppm1zP3ToIQtUSo2HoEsoRUUTtdCejH5XrSyHv05F3uO7I/iUgCsqGksjIFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQn7FmAU; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6f1dc06298so276667766b.1;
-        Wed, 12 Jun 2024 05:12:48 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f6fabe9da3so33102345ad.0;
+        Wed, 12 Jun 2024 05:15:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718194541; x=1718799341; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vuzEzGYE5Vn8QxEth1OgjuHeZDFf8sibXRRMgQoc9co=;
+        b=jQn7FmAU2WgpOlpNOOecmWhvvT6yFwdqOSzTGCx9njeovqlRBp2gCJCpAdz9oiOjIe
+         TH+6LhOQZI1u52Ce9QS5jBTwxwAWbMrwyQ9U5EClUCNaLob+sU1JEq6Y5vB2t5N3hu28
+         UzSAnD4yuxrmV/trxVlk7KO0QYfIzq2d1OnX8HhC1N7YMU1Pqq8X7exsoJspgqCjHZ4i
+         hjKaYFMSHKswRhiymgU5QBiA73iOmqs1Qfs4CycaRyios33wO1FnjaeiNQVe7oDtnTI+
+         RjzcMaZ+64HGiDocILcehQBTas0zQHB6KrKByfD8q1Zv8dWQ4gKP3scN0iextptYXXC6
+         etGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718194367; x=1718799167;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kCzkCVOO/S6I7xxBKf3rQmzVC4qFCdmvbVAR9bBl8wg=;
-        b=LWhl2q7yCgz8FboLl+91EdsGpSRo858erh4R62l86sjyB9dB6aBgGTL74PtM8ARZoy
-         MUIrbGIXQvWA7KUEjPt1/cubMMSpTnbuxWoYUQGPNM3+1DaosSj/rHlGS3nciSceKy7G
-         lL3uNNigNcxmO2CDW2ilZL4wsZWKyUnNXU2UMm8UU0oy9uKGbWTo//qn2/DDbfxQlk9G
-         pR7e3Br64XtOnfWxsZt4rTsV/bJhbAnYzHy4O4QVD4H9aSuulk+v0vmrO7+2x2Q6PTfF
-         2wMHbvhzz6nhF5hw2vB/udtG8gv3rWHxLr7CiWd6iQPUO55x9L4a27OkLvzWCBGSFX8n
-         kDwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcuXNBk84aOkE45axKIzdsf+9zF04h37hg4DnZSYFkc4O3FV/IyG86OBEEFrzRkcrrBNPWF9/dTm3b+TvRHQdeVdFTSqQQoiNNr0WOQvk2F6maIu2fxqKZ9yLPLElY6Pt3htoeQ2KGkxdSc0lJXFHUJJVFCmENU49I2V8kJ3HAMjGNKfU=
-X-Gm-Message-State: AOJu0Yxh0C8quRpjul4XbHf/kaepS0KNNyPLGxctXV1WfQpLmD8WSVE/
-	ESNxkWfzVAQf1bLOulpji+VV1AZo8VlNdFjw1qFAn/nJf5UKlFDI
-X-Google-Smtp-Source: AGHT+IGR7F62IHl+JO/8MkXnchbbyZFgrbfk/pEQMitawRZHEq1nsIju8Ip26+AE0FN9ZIgHuNsCLQ==
-X-Received: by 2002:a17:906:b1c4:b0:a6f:e01:742f with SMTP id a640c23a62f3a-a6f47c9f048mr94138666b.31.1718194366273;
-        Wed, 12 Jun 2024 05:12:46 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f42166597sm125092766b.115.2024.06.12.05.12.45
+        d=1e100.net; s=20230601; t=1718194541; x=1718799341;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vuzEzGYE5Vn8QxEth1OgjuHeZDFf8sibXRRMgQoc9co=;
+        b=mh6maVWdpJD0ohW5WJdM+Wc1zLAI9lepJorG4ILmqS2RGmuTeFlmYLyC7gY94BngSL
+         umgVcdqVax5PEK62wvCj7iYmtWMeWkfgF9ttGd1QkA9CKnNC5jfkYsNi06X1G1ao2Xxp
+         4Fecj6vFRCdkh/i1sGi6p4f1uiHxpOiu0ruIz6vyUEQWOm5h+ZJrFv36zNjwS4jFPFUv
+         x3KB3KoqCVNFyDx2h04d0rGb3Zk8egk4SoAFGSJEL5MWck02v7vOEo3rytsLpkcQYpsT
+         2q7qKqDuJtcMGVdVumtI2TXwPWsDFnSx7rzeMa6kvbACfjW/jYAo2bMvg1jaRwCDBsw4
+         zuVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWhWYWDPyqOWjd71pqdfPMU/xzwwcxX5eEAXmPUqWANhGzZfzmjN4DJ6ZBHa8rFw9ZK6ZM+NPBSTyq13h52B0Tr5t6Ma0QvC+2BTgimfks7LF0l6iEMdDkfInnYkxZhKAteVwg4EdMRFO/BD/tMvCXeCzOuyrbmHl8pifqPiOzS2h5NmSP
+X-Gm-Message-State: AOJu0YzsNG5Fipr0NTOJ1RPmcSNhH9fZYmcy5yQiScobsubzwRjK9RZ9
+	lxHdGMaphNmxD1fAYCzkSN9UySLXuzLFjMFvQ6XzURj6vYdckjdI
+X-Google-Smtp-Source: AGHT+IFT/P6FYWtTRJkNs6wLGGCcWkJumILXOfirg+uDIrQZlS7ojKpDd8hwE95oENWAgmgVc92ffw==
+X-Received: by 2002:a17:902:ea12:b0:1f6:502d:ca88 with SMTP id d9443c01a7336-1f83b715d75mr19286615ad.49.1718194540868;
+        Wed, 12 Jun 2024 05:15:40 -0700 (PDT)
+Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f84619fcfasm5280725ad.282.2024.06.12.05.15.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 05:12:45 -0700 (PDT)
-Date: Wed, 12 Jun 2024 05:12:43 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>, ldewangan@nvidia.com
-Cc: Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, paulmck@kernel.org,
-	apopple@nvidia.com, Michael van der Westhuizen <rmikey@meta.com>,
-	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] [i2c-tegra] Do not mark ACPI devices as irq safe
-Message-ID: <ZmmQu15Z2acgAjZQ@gmail.com>
-References: <20240606132708.1610308-1-leitao@debian.org>
- <ZmhHvpHlkxe4kid7@smile.fi.intel.com>
+        Wed, 12 Jun 2024 05:15:40 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: animeshagarwal28@gmail.com,
+	Rob Herring <robh@kernel.org>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	patches@opensource.cirrus.com,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: ASoC: wlf,wm8782: Convert to dtschema
+Date: Wed, 12 Jun 2024 17:44:59 +0530
+Message-ID: <20240612121503.38769-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmhHvpHlkxe4kid7@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
 
-Hello Andy,
+Convert the WM8782 audio codec bindings to DT schema.
 
-On Tue, Jun 11, 2024 at 03:49:02PM +0300, Andy Shevchenko wrote:
-> On Thu, Jun 06, 2024 at 06:27:07AM -0700, Breno Leitao wrote:
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
 
-> > The problem arises because during __pm_runtime_resume(), the spinlock
-> > &dev->power.lock is acquired before rpm_resume() is called. Later,
-> > rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
-> > mutexes, triggering the error.
-> > 
-> > To address this issue, devices on ACPI are now marked as not IRQ-safe,
-> > considering the dependency of acpi_subsys_runtime_resume() on mutexes.
-> 
-> ...
-> 
-> While it's a move in the right direction, the real fix is to get rid of
-> the IRQ safe PM hack completely.
-> Look at how OMAP code was modified for
-> the last few years and now it's pm_runtime_irq_safe()-free. The main
-> (ab)users are SH code followed by Tegra drivers.
+---
+Changes in v2:
+- Added missing "ASoC" string in the subject.
+---
+ .../devicetree/bindings/sound/wlf,wm8782.yaml | 47 +++++++++++++++++++
+ .../devicetree/bindings/sound/wm8782.txt      | 24 ----------
+ 2 files changed, 47 insertions(+), 24 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/wlf,wm8782.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/wm8782.txt
 
-Thanks. 
+diff --git a/Documentation/devicetree/bindings/sound/wlf,wm8782.yaml b/Documentation/devicetree/bindings/sound/wlf,wm8782.yaml
+new file mode 100644
+index 000000000000..d0bbdc9f9ced
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/wlf,wm8782.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/wlf,wm8782.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Wolfson Microelectromics WM8782 audio CODEC
++
++maintainers:
++  - patches@opensource.cirrus.com
++
++allOf:
++  - $ref: dai-common.yaml#
++
++properties:
++  compatible:
++    const: wlf,wm8782
++
++  Vdda-supply:
++    description: Regulator for the analog power supply (2.7V - 5.5V)
++
++  Vdd-supply:
++    description: Regulator for the digital power supply (2.7V - 3.6V)
++
++  wlf,fsampen:
++    description: FSAMPEN pin value, 0 for low, 1 for high, 2 for disconnected.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1, 2]
++
++  "#sound-dai-cells":
++    const: 0
++
++required:
++  - compatible
++  - Vdda-supply
++  - Vdd-supply
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    wm8782: codec {
++        compatible = "wlf,wm8782";
++        Vdda-supply = <&vdda_supply>;
++        Vdd-supply = <&vdd_supply>;
++        wlf,fsampen = <2>;
++    };
+diff --git a/Documentation/devicetree/bindings/sound/wm8782.txt b/Documentation/devicetree/bindings/sound/wm8782.txt
+deleted file mode 100644
+index 1a28f3280972..000000000000
+--- a/Documentation/devicetree/bindings/sound/wm8782.txt
++++ /dev/null
+@@ -1,24 +0,0 @@
+-WM8782 stereo ADC
+-
+-This device does not have any control interface or reset pins.
+-
+-Required properties:
+-
+- - compatible  : "wlf,wm8782"
+- - Vdda-supply : phandle to a regulator for the analog power supply (2.7V - 5.5V)
+- - Vdd-supply  : phandle to a regulator for the digital power supply (2.7V - 3.6V)
+-
+-Optional properties:
+-
+- - wlf,fsampen:
+-   FSAMPEN pin value, 0 for low, 1 for high, 2 for disconnected.
+-   Defaults to 0 if left unspecified.
+-
+-Example:
+-
+-wm8782: stereo-adc {
+-	compatible = "wlf,wm8782";
+-	Vdda-supply = <&vdda_supply>;
+-	Vdd-supply = <&vdd_supply>;
+-	wlf,fsampen = <2>; /* 192KHz */
+-};
+-- 
+2.45.2
 
-I think these are two different goals here. This near term goal is just
-fix the driver so it can use the pm_runtime_irq_safe() in a saner
-way, avoiding calling mutexes inside spinlocks.
-
-Getting rid of the IRQ safe PM seems to me to be more a long term
-desirable goal, and unfortunately I cannot afford doing it now.
-
-Laxman, what is your view on this topic?
-
---breno
 
