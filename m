@@ -1,197 +1,95 @@
-Return-Path: <linux-kernel+bounces-211231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649A0904EC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:04:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B823E904EC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E94C928AAAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:04:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B9E4B214E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C0016D4E3;
-	Wed, 12 Jun 2024 09:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E221D16D4FF;
+	Wed, 12 Jun 2024 09:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JUvT4dFo"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mKCmaav+"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2A9155CA9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6A912B89;
+	Wed, 12 Jun 2024 09:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718183080; cv=none; b=ZPni2pkJd0XL8Z+zO9iAoghWD5ox0PAf4JYVNT1hvta6nsc/BP99OPoWmm0f1f7/uYrrtJeXdkFCF6VkLg2aaYC1RjNy2ylLBZo8iQJQE7vSyRPHc0rFpu5rV16YSrsl34cE3NO6GvB90B75xtlHj4QgOgrwdNM54o0h5MNfsxM=
+	t=1718183297; cv=none; b=IBBCiBrRUudVxjKWmK78dqAG/WO3FmCVc6OA3RHKh7fof1KMMPz+FAQSushc+qN+ddEuMGlydkQ0lieJD4RfDEuneqjNgjYcbjF8RpoVDibQ96BleaMTg6dSkBz2GASQ+z4GESygPtP4umw7MnE/BBatqAolLgmFIpbachuCm3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718183080; c=relaxed/simple;
-	bh=KCTdHWjxcSbj0CbGUAMYO0DJrx9aXUjvKSjsWIPb264=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cWWjgFZe7sfntpsXaWOHLmVfYyu4JRB1D1LmseVUYaBGkE8zc5OyfFTLriQ3SZQxc13kBMUrg1hQDCn1Rfp5+mJ4f76isQi9VRZ28g1y1a0icKDM5esBXKl7ftfug/q2+Lvw1xMUw9oYaFQvgaP1S5iCX/q/pglkjJ5CqSU5J4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JUvT4dFo; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2c313edc316so2326794a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:04:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718183078; x=1718787878; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=D2c+AHF5AjtrC8bNsb8AFd3OXBUEz9kIG1oPb2NfBAM=;
-        b=JUvT4dFoH7fEBbKluHLRtA1d3ii3a2uNcB6uKv+SbCcQ8OmALCaaRBYwgPY2I2wCtP
-         IblW94ndQSjSU75LiJlM33PrPNonnvfyR+mrG4iT85CzpNm4jxFdrHm0fOHTKGPiHaCP
-         YDHjKtF8IthMoRFKiHHYB6sdlGawQAx3ujgwgnOdDkcoNuq8iy8wv5IJaLh8A0k78OlA
-         mUnKbN/dyjMUGc2Jd8cGLW8gAmqd6ZVNF25NbzIeecixiuzikcqjN3bADEMXfUXFjJmF
-         FXDl+P06zyN+gXxPLdL7nXQesGFKzDl1LfwXO78JXLCB/hcl+r4YWne16hbn8W94gGVP
-         +Ftw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718183078; x=1718787878;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D2c+AHF5AjtrC8bNsb8AFd3OXBUEz9kIG1oPb2NfBAM=;
-        b=fAfIsdhGX1B8Xt0ahNL2jwFGttpITxQbR0ogk4LHcMGuxUb2/ZCbWyxi0XFUIpZazi
-         7AilD6YAjOxoR9vj5DmK1UdOR98s7SI+/PqgQuozECUFbiM7pEp6p1oSw5ta0DdUEImL
-         V4GrDB3GjY9yRBQcabYjLGiMF6HiAhAtCW2zzNfJ/f5u/b96D44JkuvcKdgv7w6ix0wQ
-         W0z7DDnEB1E4fbiZ1hq8Rp3Gj95gs2IvmhAnIgI2f74NckXf4mPqKYgDGEuX/XqBA3eV
-         iMj5ioeuHc0FmQ9U8C6WuPThDKwaUxqINOhCxP8tcshJa+jUaUsOZcoXwzknE19FFoNO
-         FDTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQpdHlCOXZsj8iESJSDNSC2fqS/goyrPNyHZb9vO/hfkyZjF67UWtYqV+Jgyd7oAFqZh3+3OaaIfbsszURGpdHuQHoS/DG03gbXDdb
-X-Gm-Message-State: AOJu0Yxy5cXqnq7pul6lm16zr1IXBRgb+qPD6zHyHpkuseKF+qimk1zT
-	dKfB/ndM8aQEvRbqGOUcr2YnoQoWkIdZm5Txs01A7cXwxdjaoOj6c4n/AXzoWLEnGq3CBqe8/+6
-	YUA7qaKMiGjpapieFUvzwaVFQi0gT3tGFpOasmQ==
-X-Google-Smtp-Source: AGHT+IEsM1OY43B01m+7YRNAMry97/lo7XEBvuJmAfjDuaVPnQeL9E6H3P1EUAfOk3JnYBSC4GDNsQSGEwImylEYkCI=
-X-Received: by 2002:a17:90a:986:b0:2c2:7bbe:d6ba with SMTP id
- 98e67ed59e1d1-2c4a7601665mr1276181a91.8.1718183077662; Wed, 12 Jun 2024
- 02:04:37 -0700 (PDT)
+	s=arc-20240116; t=1718183297; c=relaxed/simple;
+	bh=oGz+2MKh1s8xC7PcDyuwrGEgelZKhmmNpiMHi4axiow=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BXMv1o3gWRtN/iwdzWBxFaOIYvo5n0y59yCP6NTWpMQyHhFtvFXNrKccdm02gR8eKYGeqCRMSLd0bCC81QJL4svsyPBX5uMQwcP1xH4820tF8KMGdHIRSdEus/KBCYddo9WMCJWPiaQTuhGqp8STtuy0+evaBIwcZLd7ue//aMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mKCmaav+; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6BDE9E0007;
+	Wed, 12 Jun 2024 09:08:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718183287;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oGz+2MKh1s8xC7PcDyuwrGEgelZKhmmNpiMHi4axiow=;
+	b=mKCmaav+NzUX3Ds7NJOqrM3/k491Gi4CJSjDmpqcJsd3QU0xpAAFlOY55Gn+jePpFMZIlO
+	KiaaMCguFtk0ANk8c4f45Fm6R7YZgo5ojpjZmvYxpLK9AP8SJQKgX9Wh3v0dAT85FYacyZ
+	NEB+p4AkWAX70qBBZ8uwBHqXUIkfJoZp4ydK4bq8NtOmTxowCFNYiIba6UrIjmhPuGAqxb
+	doTFjG0CZ+i9Db9sObD+MA4Sx7XR0XN0wh9aV/nUfiwD0y28mVF+KSZ+Q31RwjUyPQpW3S
+	jUJnd63byHZxuZk7WOWkGifHxdY8NymiG+JHPGm134/Z51t/Cqa6txtFwC/xwg==
+Date: Wed, 12 Jun 2024 11:08:05 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dent Project
+ <dentproject@linuxfoundation.org>, kernel@pengutronix.de
+Subject: Re: [PATCH net-next v2 2/8] net: ethtool: pse-pd: Expand C33 PSE
+ status with class, power and extended state
+Message-ID: <20240612110805.04b4f553@kmaincent-XPS-13-7390>
+In-Reply-To: <ZmgFLlWscicJmnxX@pengutronix.de>
+References: <20240607-feature_poe_power_cap-v2-0-c03c2deb83ab@bootlin.com>
+	<20240607-feature_poe_power_cap-v2-2-c03c2deb83ab@bootlin.com>
+	<ZmaMGWMOvILHy8Iu@pengutronix.de>
+	<20240610112559.57806b8c@kmaincent-XPS-13-7390>
+	<ZmgFLlWscicJmnxX@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
- <20230105145159.1089531-3-kajetan.puchalski@arm.com> <20230711175814.zfavcn7xn3ia5va4@airbuntu>
- <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com> <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
- <20230917010516.54dgcmms44wyfrvx@airbuntu> <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
- <d54d6115-a4d6-466b-a4a2-9c064194f06e@arm.com> <CAKfTPtB21aY9cgi5dSHB0jRp6pE85AfGcHrHjrcpMwi3fJL0FA@mail.gmail.com>
- <286d4cf8-814b-41a2-8d5f-2673dc737f45@arm.com>
-In-Reply-To: <286d4cf8-814b-41a2-8d5f-2673dc737f45@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 12 Jun 2024 11:04:26 +0200
-Message-ID: <CAKfTPtBh6ZDv7=1Tst1kjQjD=UjDG1DAaQOUCXvzP4ZhD94iTg@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org, daniel.lezcano@linaro.org, 
-	Dietmar.Eggemann@arm.com, dsmythies@telus.net, yu.chen.surf@gmail.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Qais Yousef <qyousef@layalina.io>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, 12 Jun 2024 at 09:25, Lukasz Luba <lukasz.luba@arm.com> wrote:
->
-> Hi Vincent,
->
-> My apologies for delay, I was on sick leave.
->
-> On 5/28/24 15:07, Vincent Guittot wrote:
-> > On Tue, 28 May 2024 at 11:59, Lukasz Luba <lukasz.luba@arm.com> wrote:
-> >>
-> >> Hi Vincent,
-> >>
-> >> On 5/28/24 10:29, Vincent Guittot wrote:
-> >>> Hi All,
-> >>>
-> >>> I'm quite late on this thread but this patchset creates a major
-> >>> regression for psci cpuidle driver when using the OSI mode (OS
-> >>> initiated mode).  In such a case, cpuidle driver takes care only of
-> >>> CPUs power state and the deeper C-states ,which includes cluster and
-> >>> other power domains, are handled with power domain framework. In such
-> >>> configuration ,cpuidle has only 2 c-states : WFI and cpu off states
-> >>> and others states that include the clusters, are managed by genpd and
-> >>> its governor.
-> >>>
-> >>> This patch selects cpuidle c-state N-1 as soon as the utilization is
-> >>> above CPU capacity / 64 which means at most a level of 16 on the big
-> >>> core but can be as low as 4 on little cores. These levels are very low
-> >>> and the main result is that as soon as there is very little activity
-> >>> on a CPU, cpuidle always selects WFI states whatever the estimated
-> >>> sleep duration and which prevents any deeper states. Another effect is
-> >>> that it also keeps the tick firing every 1ms in my case.
-> >>
-> >> Thanks for reporting this.
-> >> Could you add what regression it's causing, please?
-> >> Performance or higher power?
-> >
-> > It's not a perf but rather a power regression. I don't have a power
-> > counter so it's difficult to give figures but I found it while running
-> > a unitary test below on my rb5:
-> > run 500us every 19457ms on medium core (uclamp_min: 600).
->
-> Mid cores are built differently, they have low static power (leakage).
-> Therefore, for them the residency in deeper idle state should be
-> longer than for Big CPU. When you power off the CPU you loose your
-> cache data/code. The data needs to be stored in the L3 or
-> further memory. When the cpu is powered on again, it needs code & data.
-> Thus, it will transfer that data/code from L3 or from DDR. That
-> information transfer has energy cost (it's not for free). The cost
-> of data from DDR is very high.
-> Then we have to justify if the energy lost while sleeping in shallower
-> idle state can be higher than loading data/code from outside.
-> For different CPU it would be different.
+On Tue, 11 Jun 2024 10:05:02 +0200
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-I'm aware of these points and the residency time of an idle state is
-set to reflect this cost. In my case, the idle time is far above the
-residency time which means that we should get some energy saving.
-cpu off 4.488ms
-cluster off 9.987ms
-vs
-sleep duration 18.000ms
+> On Mon, Jun 10, 2024 at 11:25:59AM +0200, Kory Maincent wrote:
+>=20
+> Here is my proposal aligned with IEEE 802.3-2022 33.2.4.4:
 
-Also, the policy of selecting a shallower idle state than the final
-selected one doesn't work with PSCI OSI because cpuidle is only aware
-of per CPU idle states but it is not aware of the cluster or
-deeper/wider idle states so cpuidle doesn't know what will be the
-final selected idle state. This is a major problem, in addition to
-keep the tick firing
+FYI: It seems your are using an old user guide for the PD692x0 communication
+protocol. The one I have is based on the last firmware version 3.55.
+So don't be surprised if the next series version will have few differences =
+with
+your proposal.
 
->
-> >
-> > With this use case, the idle time is more than 18ms (the 500us becomes
-> > 1ms as we don't run at max capacity) but the tick fires every 1ms
-> > while the system is fully idle (all 8 cpus are idle) and as cpuidle
-> > selects WFI, it prevents the full cluster power down. So even if WFI
-> > is efficient, the power impact should be significant.
->
-> I would say it's a problem of the right threshold. In this situation
-> the tick would be bigger issue IMO.
->
-> Because you don't have energy meter on that board, it's hard to say
-> if the power impact is significant.
->
-> Let's estimate something, when the system is not much loaded:
-> Mig CPU often has low freq at ~300-400MHz and Energy Model power
-> ~for that OPP is ~30mW.
-> If you are loaded in e.g. 1% at lowest frequency than your
-> avg power would be ~0.3mW, so ~1mW would be at ~3% load for
-> that frequency. That's dynamic power if you need to serve some IRQ,
-> like the tick.
-> The static power would be ~5% of total power (for these low-power
-> cells in Mid core) of this ~30mW, so something ~1.5mW.
-> I wouldn't say it's significant, it's some small power which might
-> be tackled.
->
-> This is when the system is not much loaded. When it's loaded then
-> we might pick higher OPP for the Mid cluster, but also quite often
-> get tasks in those CPUs. Then the WFI is better in such situations.
->
-> >
-> > For a 5 sec test duration, the system doesn't spend any time in
-> > cluster power down state with this patch but spent 3.9 sec in cluster
-> > power down state without
->
-> I think this can be achieved with just changing the thresholds.
->
-> Regards,
-> Lukasz
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
