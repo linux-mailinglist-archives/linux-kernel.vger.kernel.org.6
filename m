@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-212318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C667905E71
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:25:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9A9905E73
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90EC31C21872
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:25:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DEC8284DB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3A512B170;
-	Wed, 12 Jun 2024 22:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E03712D74D;
+	Wed, 12 Jun 2024 22:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dP8qkp8L"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MvJMW5+0"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CAA12CDB2
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D02512D1F4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718231094; cv=none; b=QIS/NFym4iaWVFVHt66VHrwlpqXmAL+HgocgPc/MfcxTVNDSmy0aauk2dMidFgSH6Sm7Kj30f4Xov6ne3yT3IJy6bU0d9jMQJfk52pJqn0GMhz+s2fQCTsNkVB/JqKVphr1N3f9rwpT47CNX2LygXNEjbLzbVCOF/nGOzLo0/BE=
+	t=1718231095; cv=none; b=WkP666S4Q+L5S8ckHhl6TsWyxF/j9cySPxNPdiMX3Cnusq5vYDabEIO+06b3CUjEPEfgWY9k+qhZd7OmaOmhjMzmdBnBb8QEK7MKhq74SQR1I0JlDdLPM8Q2fVsJQ/2k9TUouzVK/Lk1sp6nT6POof68IUE76gRd9FnK1/ulpSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718231094; c=relaxed/simple;
-	bh=t3yv9e1EzMXtPY6KnpScajrOJgyZidM/cqL/We5XO9Y=;
+	s=arc-20240116; t=1718231095; c=relaxed/simple;
+	bh=8xjZTpeFcaE74g6l02h1dDzTdoSJ+H05F9AhpsSAsWE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CrZYAdkW8P8nv8vJTapm77gLUfzp+nCZvzhZ2SljjRLUfIDCitxZh+5L64aFNHC6NsvG8RkFYpon3wDe+RbCsYydCRGlgtsj6rpHFTeLk6A0nJEm2Gz1/ycAdyD7BBTrmp07hxOVCfsan6tNW29kyYfRASoGS/JyGCkqBBMIA58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dP8qkp8L; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version; b=ZgbIVEIfAigNQYkOkVMMMYCvHBjR8M6BC/P08du2upRERdayZ1e94hgbkkjGX2ntXJEnswBwOefMG/wXFJOudiaSPAT4d4mtm2PBIoCid1YZdIu2P+121/nRI5yywsAPA94FM6ic3V13vuV1Z8xDdrAFa7qFbhUw99BJXkqkxxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MvJMW5+0; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f6fabe9da3so3886215ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:24:52 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-656d8b346d2so289184a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:24:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718231092; x=1718835892; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1718231093; x=1718835893; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zpmQn9g7cRN67S7SSaIwDQvRoODph3OOMStNp4IKliA=;
-        b=dP8qkp8Lg+k1/d/wQ+63ftRNYeBDI742xoAoNOkKSXgBoCNZwuqLk53ZeuwlGJZcC0
-         FQDIeJ9qBrZU80fkWx1sghO6+QYEkKyRe0ZJC3In/r/sp1hHKsocsqzF1jR2+I0aMsY1
-         SUq2rwVbxT5xYl18m99gcxyNbZDd1lgBRAq14=
+        bh=cG9YsnvV0dqFs63XW3w7FcDwXhGHgBYJnS7/vNMDsUI=;
+        b=MvJMW5+0l3kvsauUsrvS9g4K8VmDgpAjlIooetS/QiOpUPnU+e5mc1Vy0Z5p7WP0tU
+         3JgJ5R6A65bK8Lp9r/kpH1dq3xRDKPrIYyWWiHWpW0sH3Mo2z9bthTfBWfpSt0S5ou3Z
+         t3bemCAkGEk2o/hN8GGxNSaB3r8PrtyvVStSw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718231092; x=1718835892;
+        d=1e100.net; s=20230601; t=1718231093; x=1718835893;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zpmQn9g7cRN67S7SSaIwDQvRoODph3OOMStNp4IKliA=;
-        b=FNn/ixG0AWaFANvSjOSJWuihuMfPu1Aqcgy/g/a+GmwKCGjHsM/qFv11IkZ2IqE2OD
-         Zl0fEdCpWRsI/ai6s2dHmgIgZ5FHcAvXC6B8V6kTMy8rrnmsR6PdZyeT71ZH02WrM4ag
-         O6SfSWw1j0vJSDFKmIe75T9no3yT2r173Lvot5fPxPX2o2YrIhBp6YzFMdT+2Iw7RXP0
-         2YAStKtS8/UMjjvc31GQSs0VVa58ufgV4+gnOS5UeSB39gGOvhPLDJVdnGcrr7vJBC4f
-         y074tKlQ2PI/M+AwbgzxtM4bw4Wwj8AijSXBiLaJ783lUqDxZC5DVChC7a1JUHSvOGY6
-         EpZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeMuQa4TrzSlQiG13VA+SEkphfC2UmcDgVWg2Lpd9gJPgABMflx7u2NKb2MgZtvmMk4H1iCs+vf4TDf3p7i9Ij1H6woABBgBWyz/e9
-X-Gm-Message-State: AOJu0Yyxh1mgbmbO2xdaOSIwfiGwJDxrY5MOlHez5NjcVYYlpsCs8Lat
-	NKZFi7aXs14YCDDk/MNjKANUFMND1EAAZdY5itxto8RIKJuIu/wMfBrzEAl3OQ==
-X-Google-Smtp-Source: AGHT+IEw5ujOqNAyOIoLP8KuspnMOnAtd7Hh5dDQKTX8TBm9/CzqJoj2TsY6aejmqFawCaR9pN4o7w==
-X-Received: by 2002:a17:902:e750:b0:1f7:2a95:f2f8 with SMTP id d9443c01a7336-1f83b55e32cmr41999395ad.14.1718231091823;
-        Wed, 12 Jun 2024 15:24:51 -0700 (PDT)
+        bh=cG9YsnvV0dqFs63XW3w7FcDwXhGHgBYJnS7/vNMDsUI=;
+        b=Qfj7I/xfaRG5nIeFsS+Qhy1li15wpHjmGZAENGlt6uuv3BnBuUWxjBvGINoWKg67F6
+         EalvAe8xX8TJOAKCoTUJrUAUxQhvbFsZ9SWDVePXIcssMXF4xSLzPHUmPv1ungw8Ud2L
+         3RzqBDS+v0IBhEhIefmkoI0Gcp9nSs0PzVaTZLuCkcHVpJ9/1f2KFB00lGCKnQXCFVTD
+         qa0GFM0F1fJ6oXDOkdCbJ5yd+H7T1koe/YHz+L9UY7vW5XeMa8NrFs3YMjS+Pc5ntsf7
+         4FeHpileymNVQX4QZ5Ws50FEYs7QxD+CB3mUSziGhfkfBvmjG1l05Ynaxc2SpcH6Mb88
+         v95Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUxSdvEFIXcvaHeMVd+6PPT0Al2JAKrXWf6PTmIcSyabBOHHjZvHmMipd9kljdhnHDHAZYFwC2Fql//JsE9R1XNz4dxlTZS4xBuZkco
+X-Gm-Message-State: AOJu0YxmcQvLTUjBDIFg9YMzvNRohUSWfy6lmubTbyuLpe61mMq0fp3S
+	05HlYJ/kYJ0petUTFBFkwb806ti4/7iQpjo5AxymNCCtWQZpHGi1CspFmOQEKg==
+X-Google-Smtp-Source: AGHT+IGI/wCAa9iSAbUyULm8uaZzcZmzyBGn6eSxHSxLyKPWYAONixriz1scQsX3eltdmrQaRYhqHw==
+X-Received: by 2002:a17:903:1cd:b0:1f7:234b:4f28 with SMTP id d9443c01a7336-1f83b60954cmr37501915ad.25.1718231093331;
+        Wed, 12 Jun 2024 15:24:53 -0700 (PDT)
 Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:2816:6a42:9074:18cc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6f30acda9sm87914105ad.198.2024.06.12.15.24.49
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6f30acda9sm87914105ad.198.2024.06.12.15.24.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 15:24:51 -0700 (PDT)
+        Wed, 12 Jun 2024 15:24:52 -0700 (PDT)
 From: Douglas Anderson <dianders@chromium.org>
 To: dri-devel@lists.freedesktop.org,
 	Maxime Ripard <mripard@kernel.org>
 Cc: Douglas Anderson <dianders@chromium.org>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
 	Daniel Vetter <daniel@ffwll.ch>,
 	David Airlie <airlied@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 3/8] drm/tegra: Call drm_atomic_helper_shutdown() at shutdown time
-Date: Wed, 12 Jun 2024 15:23:43 -0700
-Message-ID: <20240612152336.v2.3.Ifb4450979b62976fd5a98847dade2e5b377d47c8@changeid>
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/8] drm/arcpgu: Call drm_atomic_helper_shutdown() at shutdown time
+Date: Wed, 12 Jun 2024 15:23:44 -0700
+Message-ID: <20240612152336.v2.4.I8a0a246fea222059881d01a8fff2adcf7ef3d7a4@changeid>
 X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
 In-Reply-To: <20240612222435.3188234-1-dianders@chromium.org>
 References: <20240612222435.3188234-1-dianders@chromium.org>
@@ -105,33 +104,33 @@ This commit is only compile-time tested.
 
 (no changes since v1)
 
- drivers/gpu/drm/tegra/drm.c | 6 ++++++
+ drivers/gpu/drm/tiny/arcpgu.c | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 03d1c76aec2d..d9f0728c3afd 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1330,6 +1330,11 @@ static int host1x_drm_remove(struct host1x_device *dev)
- 	return 0;
+diff --git a/drivers/gpu/drm/tiny/arcpgu.c b/drivers/gpu/drm/tiny/arcpgu.c
+index 4f8f3172379e..85b21f5aac55 100644
+--- a/drivers/gpu/drm/tiny/arcpgu.c
++++ b/drivers/gpu/drm/tiny/arcpgu.c
+@@ -412,6 +412,11 @@ static void arcpgu_remove(struct platform_device *pdev)
+ 	arcpgu_unload(drm);
  }
  
-+static void host1x_drm_shutdown(struct host1x_device *dev)
++static void arcpgu_shutdown(struct platform_device *pdev)
 +{
-+	drm_atomic_helper_shutdown(dev_get_drvdata(&dev->dev));
++	drm_atomic_helper_shutdown(platform_get_drvdata(pdev));
 +}
 +
- #ifdef CONFIG_PM_SLEEP
- static int host1x_drm_suspend(struct device *dev)
- {
-@@ -1398,6 +1403,7 @@ static struct host1x_driver host1x_drm_driver = {
- 	},
- 	.probe = host1x_drm_probe,
- 	.remove = host1x_drm_remove,
-+	.shutdown = host1x_drm_shutdown,
- 	.subdevs = host1x_drm_subdevs,
- };
- 
+ static const struct of_device_id arcpgu_of_table[] = {
+ 	{.compatible = "snps,arcpgu"},
+ 	{}
+@@ -422,6 +427,7 @@ MODULE_DEVICE_TABLE(of, arcpgu_of_table);
+ static struct platform_driver arcpgu_platform_driver = {
+ 	.probe = arcpgu_probe,
+ 	.remove_new = arcpgu_remove,
++	.shutdown = arcpgu_shutdown,
+ 	.driver = {
+ 		   .name = "arcpgu",
+ 		   .of_match_table = arcpgu_of_table,
 -- 
 2.45.2.505.gda0bf45e8d-goog
 
