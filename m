@@ -1,70 +1,54 @@
-Return-Path: <linux-kernel+bounces-211365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 163559050A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:45:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B4F39050A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71659B20518
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213DC1F243F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803E416F0E6;
-	Wed, 12 Jun 2024 10:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lDAW1UK9"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC045168C3A;
+	Wed, 12 Jun 2024 10:45:45 +0000 (UTC)
+Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7B016F0CB;
-	Wed, 12 Jun 2024 10:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4E2155329
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718189115; cv=none; b=NpqfOPooyNKHi3+UMQQoLpACH7GE8H7Y2myQWdOTfmQTUbb3JFFkkx7D+67Ia4fYHGppl46rPrp12ehFPvh14qH5QBxE+5uu1teiwinSjenUJP00H5q884bzXaYs4pLMFQya4AY4C1RbGcqvOJVcRwdsrP+lOUEykAWWbazlzmA=
+	t=1718189145; cv=none; b=BQTLHqNZlbGJn6sqzDD8Kd1I1NpxMZUoYe4Ih7NaTjHj/4m3w8uH4lzlAt9H75Lcqz5Jpf6Wx/ZtUy9jWko09HjvBzgJl2WFAFeErQbYt3LZu0YXuAIO6LXhrYKf+fAv/aifPv2/+9dN8+1iDMWw65IpMIqWl4N1n3ipSmyvCos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718189115; c=relaxed/simple;
-	bh=7KBVdtrVyLAPbuJcgaNyt4TEuscLxt+vNyICK4BFFWs=;
+	s=arc-20240116; t=1718189145; c=relaxed/simple;
+	bh=+mQ7+8F7eCub5AETH4YlnwofaJeIjl8cgIbHv9ox1Ns=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nctv1X3jIiqvC45B3WmRazPPCW1LAMYA4NQDQ7Dpu/avfaLSbxHDHg5dYqBbabI8totoKav4LtJuWtO/6QKGn25EAqwbjFiOYRlCaj+VBTRM+NKuqAxHUNFiiUn42Ucl8MqMuARY+ETZa/lfBmfuySnkNby7x71r3tWvRQBDsio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lDAW1UK9; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718189112;
-	bh=7KBVdtrVyLAPbuJcgaNyt4TEuscLxt+vNyICK4BFFWs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lDAW1UK9XSiFTbaMyIXs26KjiQuqRgfPtZ/wTBP71dndmPiobFX8h1+7AapHudFWk
-	 QAPwCnqFlPi6oveoy7HtuXlkzqvP9GKETMnypvHWy4Gcp5sGw51CCdckMFeXrVZpMq
-	 OLii7gHCAr66NsdX0P/nWn+gKMUivLj10TEwrtsTy6FNSoO+tNW+6JtR+P4DW3/GAf
-	 PNCgvi5n6HbSAT7yRo6CiPsw6zSqUP/vEOPjZRauihDRDhyjXCNffHAV5xsTtrb/Zk
-	 VawiM6otyI0AD3R/Sc/6xZaKjz/hDEXPjyvn+X1rWIpBHkRXNFyZgfrCj1xjQGYqXW
-	 +KsMgg+TxZoGA==
-Received: from localhost.localdomain (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E35EF378219A;
-	Wed, 12 Jun 2024 10:45:09 +0000 (UTC)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Anup Patel <anup@brainfault.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kernel@collabora.com,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] selftests: kvm: replace exit() with ksft_exit_fail_msg()
-Date: Wed, 12 Jun 2024 15:44:54 +0500
-Message-Id: <20240612104500.425012-2-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240612104500.425012-1-usama.anjum@collabora.com>
-References: <20240612104500.425012-1-usama.anjum@collabora.com>
+	 MIME-Version; b=bE1HSt5KZAKY7tG+aZIypMmO8hyL0GOW8qVuhMCexAlz3Imq3HrM0oM8O03HF6ovKWufgyPmFoX+Nk4FXJbd/rA9AtokepYM/CP++3Y+JoFEGAe4ZTz79rJg7hvpLcMhgx6K503f95OpkG5byGel9AQMY8zY58iiO4rU5VWWpFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.70.94])
+	by sina.com (172.16.235.24) with ESMTP
+	id 66697C49000079FB; Wed, 12 Jun 2024 18:45:31 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 52827045088841
+X-SMAIL-UIID: 793C01AB8E1F4AAF9D241D47517A0182-20240612-184531-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [nilfs?] [mm?] KASAN: slab-use-after-free Read in lru_add_fn
+Date: Wed, 12 Jun 2024 18:45:20 +0800
+Message-Id: <20240612104520.2217-1-hdanton@sina.com>
+In-Reply-To: <000000000000cae276061aa12d5e@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,30 +57,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The KSFT_FAIL, exit code must be used instead of exit(254). The 254 code
-here seems like anciant relic. Its even better if we use
-ksft_exit_fail_msg() which will print out "Bail out" meaning the test
-exited without completing. This string is TAP protocol specific.
+On Tue, 11 Jun 2024 11:10:20 -0700
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    83a7eefedc9b Linux 6.10-rc3
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c645e2980000
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- tools/testing/selftests/kvm/lib/assert.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
 
-diff --git a/tools/testing/selftests/kvm/lib/assert.c b/tools/testing/selftests/kvm/lib/assert.c
-index 33651f5b3a7fd..db648a7ac429b 100644
---- a/tools/testing/selftests/kvm/lib/assert.c
-+++ b/tools/testing/selftests/kvm/lib/assert.c
-@@ -87,7 +87,7 @@ test_assert(bool exp, const char *exp_str,
- 
- 		if (errno == EACCES)
- 			ksft_exit_skip("Access denied - Exiting\n");
--		exit(254);
-+		ksft_exit_fail_msg("\n");
+--- x/fs/read_write.c
++++ y/fs/read_write.c	2024-06-12 18:38:40.826180800 +0800
+@@ -583,6 +583,7 @@ ssize_t vfs_write(struct file *file, con
+ 		return ret;
+ 	if (count > MAX_RW_COUNT)
+ 		count =  MAX_RW_COUNT;
++	ihold(file_inode(file));
+ 	file_start_write(file);
+ 	if (file->f_op->write)
+ 		ret = file->f_op->write(file, buf, count, pos);
+@@ -596,6 +597,7 @@ ssize_t vfs_write(struct file *file, con
  	}
+ 	inc_syscw(current);
+ 	file_end_write(file);
++	iput(file_inode(file));
+ 	return ret;
+ }
  
- 	return;
--- 
-2.39.2
-
+--
 
