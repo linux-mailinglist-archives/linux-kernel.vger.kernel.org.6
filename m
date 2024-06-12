@@ -1,49 +1,51 @@
-Return-Path: <linux-kernel+bounces-211872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446E690582D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:09:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E20E90582F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C631F2150B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 911F21C20DCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCDF180A99;
-	Wed, 12 Jun 2024 16:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6E6180A96;
+	Wed, 12 Jun 2024 16:09:03 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A037180A88;
-	Wed, 12 Jun 2024 16:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A6A182AF;
+	Wed, 12 Jun 2024 16:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718208533; cv=none; b=dQ/w5ruzdoLXeq9zA+8m6PGay4ZxhKHvA2x1MGLp5vtJampNlCZHiM4mnSAFqeSKsnB0ROvdExhNO97PYIqYh+Y1t/EzfT955os1QwI0JdqjRtLPx6shPjXjRrxTgyOVcGKKW1KAuhF3fvMaMJg2miUTJDrk1/aX54M01ModyfQ=
+	t=1718208543; cv=none; b=dv5sUdtiACGol90MJRxPUCTNQo6f3oibyySK2ZSMEzV5znv4ucxU8II7WuTyhbATW5Nf2cz37cX4YMTXglziXozFAU5WvqMphoKPPK3r05lAJzuKQe17aIk9TNlYKMhAXvlHruCNBPL+5IO8LEkrh977ewLzsrSjKnw72bl6haU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718208533; c=relaxed/simple;
-	bh=Ip32zJidhkVImJldvuG8RpUllNiXoa6kdBVrAJd6yK8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tZyp9ks1FF1TiNEZTaLUQGf3RGpqQM6ZhPoQcwy9D8vIgQNJGmAj0zj33niOk4X6xCvtUP1qaYSmTk7lqI0qfTwrluH5cV7N7Q0/4uCEOVjefKLn6v2NW4euwgXMTx5UExNiQVrksMc1hb7dWH8YvzbUewnCN7wNzVFGBvw88LI=
+	s=arc-20240116; t=1718208543; c=relaxed/simple;
+	bh=gFULfkjrENjI7mJ0f3lqXeT0E2K4H0Hh2HhV5zoDq/4=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CVzBXQ8UJzL1oKFsh6p4wnwBJtOsbN3NEuqDwoKBFbIkB6llKMBC69cFSjlKf48QZSU03rbM/ngQPsl8KzzKhq5LgCuQ8I1SouhI8qeJKIAEscOHE70zfUKicT7/FqI4NY2/sRxa0TXMvxe/ovtA34MV/lbjwcqlepEZUetPwIc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A98B8C116B1;
-	Wed, 12 Jun 2024 16:08:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1B51C116B1;
+	Wed, 12 Jun 2024 16:09:00 +0000 (UTC)
 From: Catalin Marinas <catalin.marinas@arm.com>
-To: linux-arm-kernel@lists.infradead.org,
-	will@kernel.org,
-	shuah@kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Cc: linux-kernel@vger.kernel.org,
-	broonie@kernel.org,
-	suzuki.poulose@arm.com,
-	Anshuman.Khandual@arm.com
-Subject: Re: [PATCH] selftests: arm64: Fix redundancy of a testcase
-Date: Wed, 12 Jun 2024 17:08:48 +0100
-Message-Id: <171820848288.4013585.9352407974182180231.b4-ty@arm.com>
+To: Will Deacon <will@kernel.org>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Puranjay Mohan <puranjay@kernel.org>
+Subject: Re: [PATCH v3 1/2] arm64/arch_timer: include <linux/percpu.h>
+Date: Wed, 12 Jun 2024 17:08:58 +0100
+Message-Id: <171820853478.4013877.11908320926391379068.b4-ty@arm.com>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240605115448.640717-1-dev.jain@arm.com>
-References: <20240605115448.640717-1-dev.jain@arm.com>
+In-Reply-To: <20240503171847.68267-1-puranjay@kernel.org>
+References: <20240503171847.68267-1-puranjay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,19 +55,23 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 05 Jun 2024 17:24:48 +0530, Dev Jain wrote:
-> Currently, we are writing the same value as we read, into the TLS
-> register; hence, we cannot confirm updation of the register, making the
-> testcase "verify_tpidr_one" redundant. Fix this; while at it, do a style
-> change.
+On Fri, 03 May 2024 17:18:46 +0000, Puranjay Mohan wrote:
+> arch_timer.h includes linux/smp.h since the commit:
 > 
+>   6acc71ccac7187fc ("arm64: arch_timer: Allows a CPU-specific erratum to only affect a subset of CPUs")
 > 
+> It was included to use DEFINE_PER_CPU(), etc. But It should have
+> included <linux/percpu.h> rather than <linux/smp.h>. It worked because
+> smp.h includes percpu.h.
+> 
+> [...]
 
-Applied to arm64 (for-next/kselftest), thanks! I removed the increment
-style change.
+Applied to arm64 (for-next/misc), thanks!
 
-[1/1] selftests: arm64: Fix redundancy of a testcase
-      https://git.kernel.org/arm64/c/031d1f20d5db
+[1/2] arm64/arch_timer: include <linux/percpu.h>
+      https://git.kernel.org/arm64/c/7647e2b109f4
+[2/2] arm64: implement raw_smp_processor_id() using thread_info
+      https://git.kernel.org/arm64/c/bf0baa5bbdc9
 
 -- 
 Catalin
