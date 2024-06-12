@@ -1,105 +1,141 @@
-Return-Path: <linux-kernel+bounces-212207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BACAC905CB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:22:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C4F905CB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71753282952
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:22:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3077C1C23194
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEE084D0F;
-	Wed, 12 Jun 2024 20:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AABA84FAF;
+	Wed, 12 Jun 2024 20:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eIxSKhzI"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rhQtJxAF"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E229884D03
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 20:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3766C84DFF
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 20:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718223680; cv=none; b=NLl3qx7bKT1sFBYjYS39TxUjlU/rCeCb2ukNZmq6kJQTlGOFStACT792BA+7MrQDritvwD3OhSEzvbM8NvXWoEHzR9JrDkzyCoE971i4C8OyHhx+Cz+QiuV4Ymz1CkuCjRzINjCdsWkvAbP68MFmR+egOE4bORhlzRVUXWd4YKk=
+	t=1718223691; cv=none; b=JWtgXFFMjbNqPVsa5dyo6Dazhu0JDnG79T1dyQB6KwXOAQuUINmLpWms/ZYHA7vl7akQK1zMP1kc5gdkUZ8jkvINrY+RkIxrsCZik3mjiuXuWT5CE9OT8AcDKfxMeo/keZrUuG06V/zxt0LGJfYHdLYIFSIpHIexmAVS8pePTNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718223680; c=relaxed/simple;
-	bh=Z3LCtPuWBgt3B8PP4A93a4ldAsnXfNj/7glDIm7408o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4AYPNirRhFp0GYtqxMPWycolswVdbpJARTZz2xleyomtKQQMNvddXQPuVwdgIVon0ao2rZm88bq5mP/ktnUTz82aoJlIBj5xj9rzCIvc5RkT6vjnrtyPanxZNT/HQKjy4VElGUpQrytwf2I39c8CzUN4iJoVR3jwhsrlD1tw8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eIxSKhzI; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Z3LC
-	tPuWBgt3B8PP4A93a4ldAsnXfNj/7glDIm7408o=; b=eIxSKhzImrvmincnonP0
-	Ocm+g2O71PCexJL8NLUWYpSdeeta1RLBbn4zjBHC67ZfhQF2kmDA2EDyryZPsFc6
-	zQ1ae9TXf1rTTWkoEsiKx3TNQDszjesHW0thloiZm31SMPpeFGI/cFLvK+oRnNUY
-	MMjIRz3wAXmWXqqCdfV5RFjpgDFx/hYIIC6xBpflvKbRCo+N7CkrPXFhk/UgBrsv
-	UfM8d71eP1Sw5H0z1H4Df7CHLgi7qdroJehuKywgaQStnGnAbTYDmKW7/HTAtpNh
-	fxnoVo44ryHYeUZoyaVfETYyr3mZj8MMcTJuvD4Hs+QoY466Zp0SUoErFtj1I2e8
-	rw==
-Received: (qmail 925661 invoked from network); 12 Jun 2024 22:21:13 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jun 2024 22:21:13 +0200
-X-UD-Smtp-Session: l3s3148p1@wq2pH7cahulehh9j
-Date: Wed, 12 Jun 2024 22:21:12 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] i2c: smbus: Handle stuck alerts
-Message-ID: <54uga6gyib76qxy3dhgsrwf4x2tbg7644m7cquc7zyw5fzphvb@y5eb54wfvau6>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Wolfram Sang <wsa@kernel.org>, Jean Delvare <khali@linux-fr.org>, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220110172857.2980523-1-linux@roeck-us.net>
- <18c810b6-2961-44e6-b890-5c6830fde995@roeck-us.net>
+	s=arc-20240116; t=1718223691; c=relaxed/simple;
+	bh=Y9JmGBo0c7lW83Az7dSmFQ4xeG9SUat2NMd0Gd2IswQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=g4ifbAXW1YWDhW46xbf/ucNcsm4ElBm1fZcRHw5F03fnau0Dke7hQvumMCnegYceqCT9ERXmdxVfZgTTypBMg5oEjY28A5nVy3U1CGEfahrL7zh1XoFjA1c8SjavSQQjpx3hBXExBK/xogehfwMI85OeudRpZL3QMkVe7H8sZqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rhQtJxAF; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: torvalds@linux-foundation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718223686;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=wXcD6/YF85x4CLdgIr2RqnTdVu0TMTvQKa4O5vPHG4s=;
+	b=rhQtJxAFenwuQ6pEBVukxUvt/crmCY9eWVUQQ4XVUfSiXrTWEhHfTLFc8LOCTeal2Kh7Oz
+	VRLzUwdd/c+W/PfeiTMe96GK8x+2RxxD3/QWdZ32T19Nv+JDQ+kT8FfSiGp+GHe9XYY8s4
+	AFHTuMbe1k3X9NfwB5guXi3evHqAG+g=
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Wed, 12 Jun 2024 16:21:22 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.10-rc4
+Message-ID: <6pkst4l27qb7asdlg47jy6zycvvse45ienwiybqgjtc47fs4so@f6ahc5rwgv46>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="himoqd3sedg4gqza"
-Content-Disposition: inline
-In-Reply-To: <18c810b6-2961-44e6-b890-5c6830fde995@roeck-us.net>
-
-
---himoqd3sedg4gqza
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
+Hi Linus, another batch of fixes for you. Nothing terribly exciting, the
+usual mix of syzbot + user bug fixes.
 
-> Looking through the patches I carry locally, I just noticed that
-> I never got a reply to this series. Is there a problem with it,
-> or did it just get lost ?
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
 
-The only problem was that I didn't have the bandwidth. But luckily, I
-need to work on SMBALERT myself now, so I will handle all related
-commits around that.
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
 
+are available in the Git repository at:
 
---himoqd3sedg4gqza
-Content-Type: application/pgp-signature; name="signature.asc"
+  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-06-12
 
------BEGIN PGP SIGNATURE-----
+for you to fetch changes up to f2736b9c791a126ecb9cfc1aef1c7b4152b66e2d:
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZqAzQACgkQFA3kzBSg
-KbavlhAArhDf1JESwjFul5jRxDB4Ola/uDZTDfSyw12+ISVTCj5ZV1H3+IlijZZx
-4moGaQfpuNsuqXYrcKTNZ20zBx5oqBxFN7ay7A81Q4zv6CCfo+HJP/s3bFzK+2EV
-cFfSMasz/QRAlN6p5Cb2YoMnxiN9GofOZYzMp0jfkksyCv9ew+TmqP6WNXaR7252
-RNSSJFLROSHqedMJBp/pYB39cCXe/EnaxqDK5VlDuyFDgVulscGT5JWB38we+knP
-eGa6EEEi2IwBK1jaH9NiNntD6dG4dSUQRfvfYKn7vvlcvGXdGiC3DAdYIV8HTOai
-SnmwMNjCLGFmGn7epp2wQKbtoUDt+P+QnF2D6xgP5wo3Onl2SjHGq+Fa/cBOYPEv
-+DxyI23EsqZ4pT6alwtGaxZ03YKEl9BSyNW+BGIUudPyRR7dxJnttMPaOFBfDFTl
-Dt8+brc+PkxEqjr6Q4xAlw0yNdWu+E86HgG6bKYmXzhkCxuPgMZKdmuM8APxG9OC
-9E0oKmCruriHgzOznWEsplAaSCDscJkl7wezs973/iWHRt07U4VsewOmF3nUKp9d
-GRiUqfgvQcXofwc8pYoeuRgjE4hfYReJ9UChEZyYxvYQLjJj5f8DyH5RYIUnwa/L
-x4zrgLZ3gWRdbWXFANGJM4gLAO9uGbV86Wp2AUBNKiwpXzm59Pc=
-=Oi8N
------END PGP SIGNATURE-----
+  bcachefs: Fix rcu_read_lock() leak in drop_extra_replicas (2024-06-11 18:59:08 -0400)
 
---himoqd3sedg4gqza--
+----------------------------------------------------------------
+bcachefs fixes for 6.10-rc4
+
+- fix kworker explosion, due to calling submit_bio() (which can block)
+  from a multithreaded workqueue
+- fix error handling in btree node scan
+- forward compat fix: kill an old debug assert
+- key cache shrinker fixes
+  this is a partial fix for stalls doing multithreaded creates - there
+  were various O(n^2) issues the key cache shrinker was hitting
+
+  https://lore.kernel.org/linux-bcachefs/fmfpgkt3dlzxhotrfmqg3j3wn5bpqiqvlc44xllncvdkimmx3i@n4okabtvhu7t/
+
+  there's more work coming here; I'm working on a patch to delete the
+  key cache lock, which initial testing shows to be a pretty drastic
+  performance improvement
+- assorted syzbot fixes
+
+----------------------------------------------------------------
+Hongbo Li (1):
+      bcachefs: fix the display format for show-super
+
+Kent Overstreet (16):
+      bcachefs: Split out btree_write_submit_wq
+      bcachefs: Fix incorrect error handling found_btree_node_is_readable()
+      bcachefs: Delete incorrect BTREE_ID_NR assertion
+      bcachefs: fix stack frame size in fsck.c
+      bcachefs: Enable automatic shrinking for rhashtables
+      bcachefs: increase key cache shrinker batch size
+      bcachefs: set sb->s_shrinker->seeks = 0
+      bcachefs: Fix reporting of freed objects from key cache shrinker
+      bcachefs: Leave a buffer in the btree key cache to avoid lock thrashing
+      bcachefs: Fix refcount leak in check_fix_ptrs()
+      bcachefs: Fix snapshot_create_lock lock ordering
+      bcachefs: Replace bucket_valid() asserts in bucket lookup with proper checks
+      bcachefs: Check for invalid bucket from bucket_gen(), gc_bucket()
+      bcachefs: Add missing synchronize_srcu_expedited() call when shutting down
+      bcachefs: Add missing bch_inode_info.ei_flags init
+      bcachefs: Fix rcu_read_lock() leak in drop_extra_replicas
+
+ fs/bcachefs/alloc_background.c |  22 +++-
+ fs/bcachefs/bcachefs.h         |   3 +-
+ fs/bcachefs/btree_cache.c      |   9 +-
+ fs/bcachefs/btree_gc.c         |  17 ++-
+ fs/bcachefs/btree_io.c         |   8 +-
+ fs/bcachefs/btree_iter.c       |  11 +-
+ fs/bcachefs/btree_key_cache.c  |  33 +++--
+ fs/bcachefs/btree_node_scan.c  |   9 +-
+ fs/bcachefs/buckets.c          | 293 +++++++++++++++++++++++------------------
+ fs/bcachefs/buckets.h          |  17 ++-
+ fs/bcachefs/buckets_types.h    |   2 +
+ fs/bcachefs/data_update.c      |   3 +-
+ fs/bcachefs/ec.c               |  26 +++-
+ fs/bcachefs/extents.c          |   9 +-
+ fs/bcachefs/fs-ioctl.c         |  17 +--
+ fs/bcachefs/fs.c               |   3 +
+ fs/bcachefs/fsck.c             |   3 +
+ fs/bcachefs/io_read.c          |  37 ++++--
+ fs/bcachefs/io_write.c         |  19 ++-
+ fs/bcachefs/movinggc.c         |   7 +-
+ fs/bcachefs/super-io.c         |   6 +-
+ fs/bcachefs/super.c            |  10 +-
+ 22 files changed, 344 insertions(+), 220 deletions(-)
 
