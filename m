@@ -1,115 +1,118 @@
-Return-Path: <linux-kernel+bounces-211060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE682904CA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:23:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0213F904CB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347D5285B5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:23:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F2601F254B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F92416D4DD;
-	Wed, 12 Jun 2024 07:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2514F16C85D;
+	Wed, 12 Jun 2024 07:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="CSpD9dy4"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xIpiJo5W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AEF16B75C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5678616C69B;
+	Wed, 12 Jun 2024 07:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718176959; cv=none; b=aztwHc0pE8e202Fbk35tpuwHnfnpas5HBOOcRvkb+W/3SlawFHmSZA1eycI5klJ5wq9Jg/xXM/Vj8j0EbuN08X4N/yDeim3GrFWVpZHXNj5uXvhqMeYfNcUSNslMPt9o++39whFWaAsq+rl14BLCfl0dVmuLnEpJUW70ev1jsCc=
+	t=1718177000; cv=none; b=k25S3Ppj9SdHwY17O5r5TrRViUE10Kn4Oh0Jp/2neqmrqV/oJPrNHs0jKlOqjuZOzpfwkZBENC53yXvXzE/OzUdw45cbCCcFIzWVqLsHTWqmejZFBd20jyQ0jFXfr6V3+jNj39LDd5aeoKpmRhULm9h0c/qJ/uUI8q1mmkHJsVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718176959; c=relaxed/simple;
-	bh=wkDVA2dK3+U+cA6W49NHBtQ20kiOyRc5qnKumZI2mZ0=;
+	s=arc-20240116; t=1718177000; c=relaxed/simple;
+	bh=om+CeYPKCOnLN4dmJthXsArxlQeFcaDsrz+sk8PbJrU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDvrpgcCrUdfA6vq0nl0MZXoRTzEw/dKQsTyyfnSKGQwCsUUw98YWG8WfsLnCr15Y1T1aZuSZOAn6yhkoMlY6GT6wQRLOCEBQufoEStmjBS6oJ+JxPHLDHMdrbd8hLuDBvBtIhESbHL2vWX1xroZ810PK8wCmzjcalGsGZFcJx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=CSpD9dy4; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso82728561fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 00:22:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1718176956; x=1718781756; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XyAaGEtFFwkdm/QpmeEncAmUxjsc5CcFkHBcrT1qbjY=;
-        b=CSpD9dy4uJ1tvwuowHkLQayntpGdUohvr6xueFj/D1a/5fGv/mkoMcJYpzNmOozN00
-         u0wDdD+sB/NBft7PmOBci04IC+o6gcrWG7oi37w2mBErAOMEwW/VAGHWq+UPWd3HHcR4
-         W10/OwPBm7W3VNWvF486v6ekdHcp2UFZhw3G7c65/WCqjtJW6mfCkoz/DcPijtn2qK2F
-         1uWZwNs0O+qoKc920WjLetOHDH5omM4TLjFLe6P+HiBjizp95UfpOhZjz/6squ8T2/yV
-         G3gu6C0GSyzo5gikg2NISNJOtVB6r9Oi+mt+cRmAPoUl0X2W8n0lO5gaBW37l3ag0Bww
-         zFLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718176956; x=1718781756;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XyAaGEtFFwkdm/QpmeEncAmUxjsc5CcFkHBcrT1qbjY=;
-        b=H/5koA1CklA1IIrhUaxixgHb5DX607WKNRxOEBksso68QygdS5pN799o6JmOcW+OxF
-         Fg13JpARsaNnE4N7071Ip2ULF4/eGfLUT8FaTtN/8G6Pq1FsQrqPEnc4VTWTEPLL9kAn
-         lYaVyC+T+2N4LOFHR5NKThkJcdcmAP+X8uNi1WnYqG40tJe3O2GVfJoYbHAql1hTteRd
-         je3wFmt3n+6m0KtIamkw8QrC97w+w335+vet36x537IUwBovTJrWpm4PfwFpJHGE3zOs
-         U4zTchG3Qh9TFbGSfxH4/2YN8hKiAoqpyTTp2o3trMaTEokE/ta66gqRkHNJ+ElZH8b8
-         A0Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlsMtsYaVdfxpDRMHlIMefqpSQ9xmnAHBN8WWEQzV0JfVw+nN0dLUdAUxKhKCErcmcR/f98e459GiHC4jdxkU2r5gL6eCmGuEKEApv
-X-Gm-Message-State: AOJu0Yyf38/is/RHvUeFG6PtOG7m8VyqawP9Xq0IhKb+MjSWfO5e7XBg
-	TxEJNYuC+vXwyFCDqI13yPsE5n8J7AqsQhZBBthRT4CLWqISLLfM6x7Kj/z3Kx1nrlaFULzO14z
-	JD34=
-X-Google-Smtp-Source: AGHT+IH7lMBz0iqDSWgr4Qo//hA7IRWAfAG/YjDjdEYPujMcic/KlfaHdqUt7roVwGJmVDixv7uEJw==
-X-Received: by 2002:a05:651c:8a:b0:2eb:efff:7729 with SMTP id 38308e7fff4ca-2ebfc8ffa4bmr5282021fa.6.1718176955743;
-        Wed, 12 Jun 2024 00:22:35 -0700 (PDT)
-Received: from localhost ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1c958f9fsm9730922f8f.38.2024.06.12.00.22.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 00:22:35 -0700 (PDT)
-Date: Wed, 12 Jun 2024 09:22:32 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Cindy Lu <lulu@redhat.com>,
-	dtatulea@nvidia.com, jasowang@redhat.com,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 1/2] vdpa: support set mac address from vdpa tool
-Message-ID: <ZmlMuGGY2po6LLCY@nanopsycho.orion>
-References: <20240611053239.516996-1-lulu@redhat.com>
- <20240611185810.14b63d7d@kernel.org>
- <ZmlAYcRHMqCgYBJD@nanopsycho.orion>
- <20240612031356-mutt-send-email-mst@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ft96gPOvfIeEpiUpEyH9FKbMHM+5zSnfNxPMxVA5Ogl82Y1Z5yeeF28/LIp+UevtpnV1qw8EE2ANzEP1NclPXPb//PeNojueRUgixcP84SC2b7JDAeQLC9Ds3TdewGQ6yzahVuTOx0+OrPrx3499GAFVxHs9Sd/kHaaYVU1BY18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xIpiJo5W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812F0C3277B;
+	Wed, 12 Jun 2024 07:23:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718176999;
+	bh=om+CeYPKCOnLN4dmJthXsArxlQeFcaDsrz+sk8PbJrU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xIpiJo5WPsePjV0XEHViYmADYGGw0Idy1sMoarLMMycZPYsGnbCmYEKb+AaATfUwe
+	 gaCMrTv/JB9y9Q/QIROz+iqz6InfM41GKjziRU40+ChL0guUgFHm0j3lo+onhQVuSD
+	 xHt4denCAz7zylMLbfOM5zTb5A9snk6Z6HNQr/N0=
+Date: Wed, 12 Jun 2024 09:23:17 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jacky Huang <ychuang570808@gmail.com>
+Cc: dan.carpenter@linaro.org, jirislaby@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, Jacky Huang <ychuang3@nuvoton.com>
+Subject: Re: [PATCH] tty: serial: ma35d1: Add a NULL check for of_node
+Message-ID: <2024061226-laborious-jubilance-8df8@gregkh>
+References: <20240611092251.159149-1-ychuang570808@gmail.com>
+ <2024061118-sycamore-leggings-05a9@gregkh>
+ <73d2167a-84ee-40a4-a68d-ba25229ff8ce@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240612031356-mutt-send-email-mst@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <73d2167a-84ee-40a4-a68d-ba25229ff8ce@gmail.com>
 
-Wed, Jun 12, 2024 at 09:15:44AM CEST, mst@redhat.com wrote:
->On Wed, Jun 12, 2024 at 08:29:53AM +0200, Jiri Pirko wrote:
->> Wed, Jun 12, 2024 at 03:58:10AM CEST, kuba@kernel.org wrote:
->> >On Tue, 11 Jun 2024 13:32:32 +0800 Cindy Lu wrote:
->> >> Add new UAPI to support the mac address from vdpa tool
->> >> Function vdpa_nl_cmd_dev_config_set_doit() will get the
->> >> MAC address from the vdpa tool and then set it to the device.
->> >> 
->> >> The usage is: vdpa dev set name vdpa_name mac **:**:**:**:**:**
->> >
->> >Why don't you use devlink?
->> 
->> Fair question. Why does vdpa-specific uapi even exist? To have
->> driver-specific uapi Does not make any sense to me :/
->
->I am not sure which uapi do you refer to? The one this patch proposes or
->the existing one?
+On Wed, Jun 12, 2024 at 08:43:54AM +0800, Jacky Huang wrote:
+> Dear Greg,
+> 
+> 
+> On 2024/6/11 下午 07:11, Greg KH wrote:
+> > On Tue, Jun 11, 2024 at 09:22:51AM +0000, Jacky Huang wrote:
+> > > From: Jacky Huang <ychuang3@nuvoton.com>
+> > > 
+> > > The pdev->dev.of_node can be NULL if the "serial" node is absent.
+> > > Add a NULL check to return an error in such cases.
+> > > 
+> > > Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+> > > ---
+> > >   drivers/tty/serial/ma35d1_serial.c | 13 +++++++------
+> > >   1 file changed, 7 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/drivers/tty/serial/ma35d1_serial.c b/drivers/tty/serial/ma35d1_serial.c
+> > > index 19f0a305cc43..3b4206e815fe 100644
+> > > --- a/drivers/tty/serial/ma35d1_serial.c
+> > > +++ b/drivers/tty/serial/ma35d1_serial.c
+> > > @@ -688,12 +688,13 @@ static int ma35d1serial_probe(struct platform_device *pdev)
+> > >   	struct uart_ma35d1_port *up;
+> > >   	int ret = 0;
+> > > -	if (pdev->dev.of_node) {
+> > > -		ret = of_alias_get_id(pdev->dev.of_node, "serial");
+> > > -		if (ret < 0) {
+> > > -			dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
+> > > -			return ret;
+> > > -		}
+> > > +	if (!pdev->dev.of_node)
+> > > +		return -ENODEV;
+> > > +
+> > > +	ret = of_alias_get_id(pdev->dev.of_node, "serial");
+> > > +	if (ret < 0) {
+> > > +		dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
+> > > +		return ret;
+> > >   	}
+> > >   	up = &ma35d1serial_ports[ret];
+> > >   	up->port.line = ret;
+> > What commit id does this fix?
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> This patch fix the in tree ma35d1 serial driver.
+> The last commit for ma35d1_serial.c is
+> '6b64f8e360c00f180cffa1806095cdd2abc55b16'.
 
-Sure, I'm sure pointing out, that devlink should have been the answer
-instead of vdpa netlink introduction. That ship is sailed, now we have
-unfortunate api duplication which leads to questions like Jakub's one.
-That's all :/
+That is obviously not the commit that causes this problem, which is what
+I was looking for here.  Shouldn't you include a "Fixes:" line if this
+is resolving a bug?
+
+thanks,
+
+greg k-h
 
