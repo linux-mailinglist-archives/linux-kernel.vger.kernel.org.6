@@ -1,106 +1,140 @@
-Return-Path: <linux-kernel+bounces-211021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4244904C33
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:00:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DB2904C3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 194DC282926
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:00:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F068282E38
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0285516C44C;
-	Wed, 12 Jun 2024 07:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197C479D8;
+	Wed, 12 Jun 2024 07:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyn5Jzs3"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tRnbJ4w+"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E740E16B735;
-	Wed, 12 Jun 2024 07:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE79D16C43E
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718175606; cv=none; b=YJEPxN04yUtVgi6qpBeK5PJnAZ0hkP6ek1iGWnvmVE8eIxnm0omxE/5vMsWK8SXpzQ3HDuj0yUcBGAuq6vboPvVM4ofMGI+dPUk1wrS9Nocfh4Rl5tpTQERh1MGDUGmv4xcjMGXQlyn0jda3JAx+4uyU98WXSCtwBv8/8RC06C8=
+	t=1718175642; cv=none; b=r/RjyJI4ZSkC4hC87Z0O865a5UAg1e7LUsP9LkOas5tGZoVMuzXeFyu0yskr8/bS7uETPYOMT9R9BjYwL0SJJr9AmEZik2KMCbA2Y4p1CSyMZb6VSdf4mcYtWHMfeXSaQXFJEIEVG+DaQrFldlzlAln6xiFlxK9z07IZrPozIUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718175606; c=relaxed/simple;
-	bh=l2FWL3MaYkxGpNjR5SVeqc1ygoLE6HrOrfvSJrnDPZA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=KTTaUp+9UUxt4L5GCNcMfh6w0sdYYHcPjd5neskr6VGpsw8+76di7iZYDpjpjkVNvwnmBxcsF9RIM2OyMd2AQQr4n3Pgff9B5VlkZJkCOtiXPF0ZyqjeiMSMirDILF2pXDkZFWIuU33r9463HQ//JKQtObdjzXiXSjNlzlgEbgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gyn5Jzs3; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62f39fcb010so11676767b3.1;
-        Wed, 12 Jun 2024 00:00:04 -0700 (PDT)
+	s=arc-20240116; t=1718175642; c=relaxed/simple;
+	bh=OscwHNEBraxjXT0TgXjSjjl1pljTEut6w8PorcGMCFM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gh2w9cXzZWlGRTf/ofvpgxPcjFiRfH6K+wX66BLNi1seqtkm73IaPC20Vn699W3iOaGpqf+nOBCa5UinQfPj7joVzi/8/U3ae3HVvlOwab6vdyUnnkzxiR7w11QcjF9Hc4xk9ps482tihMz6WAwRgBsN1yDxv0hvX2Wh3W9aDKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tRnbJ4w+; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62a248f46aaso107945697b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 00:00:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718175604; x=1718780404; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l2FWL3MaYkxGpNjR5SVeqc1ygoLE6HrOrfvSJrnDPZA=;
-        b=gyn5Jzs3KjQgaZ8ZQo2xL3Jgvu9v8j3ZmrmBH9X6MGPFbLIOod81gcOrWBq3L8kAeG
-         z53IkFc+cA9SmFCOAM0KoKlMtYGjRU+AgP6mtoLw3Fi1Dl2SVcDMwPpkHDhRFhyKQhTf
-         MbFRgJTgMwBOkJ9UA3+FTutuwDDRSqH/9F7NdBLsKZvHOYvOv6VI1KdVLWJ98ayipWGi
-         2bavyBYSVzX9d3zW71v8I2ndk+co3vmddJwVYCHa2JulziFLP3b3cr4LoBQ2VqcrzLq3
-         YAUvP/dL5wPZn+9+rN3axUzXmatVKAFEKXHEeaXjjVvVl57hgEWRjOME16JP33KxULEk
-         z6rw==
+        d=google.com; s=20230601; t=1718175640; x=1718780440; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=I/wC/xKlaJhlLxFPJxNnjPTcgc2tAkZZ0x5vCfuNPTA=;
+        b=tRnbJ4w+nIjDLfHo3fKvXKDSNDq+aAHqzDhsWDy9uIUPBr9L39b+ruyysh55tdvftF
+         iYqN3OTQDSy0MxHAB//5W7QwSKzZ1NltyYYyZXQL26ZCMCb/b9TJ0C4oG63bxCeGw2XK
+         kj3b6eySIedgWMu88aODpQQy4ioEr4cHrDL3neLRIEo7KgmdUDFL25NtPagGdmXlCdpC
+         dU9S2wdqPXz8NZmxyjiXzHKxKPec5dj5tsaG1SmEEGjxFjivUp9KX/RRGmCHOO5376T7
+         yp0xXRNwVrf64B4ugXVIHk0IFugxRmUhkkFtPhHI5itzRLBeMMN5cVUp3tr3VsQ3ZeBM
+         yo8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718175604; x=1718780404;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l2FWL3MaYkxGpNjR5SVeqc1ygoLE6HrOrfvSJrnDPZA=;
-        b=rxxwgifvHoA43Uk89+A2xeYBXpgGNxBsrHbVmLf7fMo7A8JuMi8KSXfEoPSdBbytDV
-         HLfR42KS5MUMSe/2fJtt/E3ZS3lKEBy7TR9rgtT6dGC57N01/zXR/GcckLzDtURiNYeU
-         NyPUhNoQM/AjIHPHtPqJiy8iowRiuC3H3nYhYkPAYQX52OuyMzGIQOzNa/XIeKpMz2p4
-         vun+Z34f3emfQDt7TO9Ee0d5VxDN4LR4W5F26TPuiQYM2Q7hAzmPWWivDxy8Lwo/Hnx4
-         RD5pm/69emqO7T0jAPvgfh4LIhq69QR2KV6W3KQ/fcrKd4PqrlMYPbdIUUjfUr/gB0OS
-         ssCg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+oR2O7L+9TlQ6596bEQBhfidzWaYuDzLKeYuzQMl9ZPR6cOxsmihGvA9XLkENxWRt9msI5xT3oA/EuSGjM47ASGG6bmVs7i6x5oFomsVIl5gZywGCBwK626HYLxNX6YBqUuvDKpQ=
-X-Gm-Message-State: AOJu0YzAAKHMjhAiAqo7mGUdTbi64h1YYWXTGQJClkKbebxeEu6DQQQA
-	cTfcfDfRjhpXsFMo9PUsjzYMRM+xeldCrsEfeE8GEFPiSNxb1AiuDgjx+VE6dN93eWkldQc10uj
-	P2QaTmNzt59MTNB1J9bRfvGGREms=
-X-Google-Smtp-Source: AGHT+IH0PCdMZtOPs327plhtNOg8Po5yi4NuZcxFq+L5xNI8cUuoAoqhrkeCv0yXRtHtv34xRnq5okoYZehy6aEu55Y=
-X-Received: by 2002:a0d:f443:0:b0:61b:3356:d28c with SMTP id
- 00721157ae682-62fbb7f673emr9479367b3.2.1718175603741; Wed, 12 Jun 2024
- 00:00:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718175640; x=1718780440;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I/wC/xKlaJhlLxFPJxNnjPTcgc2tAkZZ0x5vCfuNPTA=;
+        b=mNL296vFvqHYYf0zJkd/51AWNoWLbQQtBBau3uXhTQslZoEoieN+M8XnRDX9bF25as
+         jK2sEVqoJXXjFpKMdJXyXL1dHb16CTJl49m7U3vkJ8OdKDZxBCbYPoBxoLXHmJ3XQJfs
+         mblFlJYARQFPriCxSn0bgMXe1DJvidMTmRtHLkg/gZ7ba5xL06W4xVqTDo6f4n2rnf07
+         PYIVEE/j+PL+Kqs5TZD9JT+J2xuoyEF3YoypUb8L26kLcS7qqhlIc6V+HpCvqLYqwfJu
+         ceHPsV0NhnrEo/9PW+kDwhjrwAuSQ6NSoxJnfTKM/95mAdLo6jdtMTsZgHo7SzlmLZ4l
+         nusg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1ltR9n9xjFroCcLxRqLmZylD3rfAWT9XPU+sc4V1k5JWck9Hi7vzXmt2i66uobDfZ/Dz4tGDCuGoSyc0tu48khVAl6G4lDa127DuH
+X-Gm-Message-State: AOJu0YwpdPfHdbbByOQrRfMxNnc8JpnHUYRzND3U7uHuKpzlQlpbOF4s
+	vACY6MHUf4xSYCZLR+4ijqlr1FtWEH6xq9ozmx5FuEGNiaFbWuYJkL73n5cqCHGwNs2KBHCQ1Ij
+	XIXuidLptvQ==
+X-Google-Smtp-Source: AGHT+IFjk2lid3CXTmQbLNeTOwbpoOYkNzVE+FBNDNetJc2GPftTJ4PBKr+lFhPrBSaKTJQmDF/MbWfJzFIDxQ==
+X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
+ (user=joychakr job=sendgmr) by 2002:a05:690c:60c1:b0:61a:d161:ff8a with SMTP
+ id 00721157ae682-62fb95f886amr3164577b3.1.1718175640030; Wed, 12 Jun 2024
+ 00:00:40 -0700 (PDT)
+Date: Wed, 12 Jun 2024 07:00:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CADZouDTYSbyxzo3cXq08Kk4i0-rLOwuCMRTFTett_vTTmLauQA@mail.gmail.com>
- <9baaad14-0639-4780-809a-0548e842556f@gmail.com>
-In-Reply-To: <9baaad14-0639-4780-809a-0548e842556f@gmail.com>
-From: chase xd <sl1589472800@gmail.com>
-Date: Wed, 12 Jun 2024 08:59:54 +0200
-Message-ID: <CADZouDRyyPKQyckxQ0SpEO=AJiZuh=r4PfMN6EU4nUJJTaOFbw@mail.gmail.com>
-Subject: Re: [io-uring] WARNING in __put_task_struct
-To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240612070031.1215558-1-joychakr@google.com>
+Subject: [PATCH] misc: microchip: pci1xxxx: Fix return value of nvmem callbacks
+From: Joy Chakraborty <joychakr@google.com>
+To: "Vaibhaav Ram T . L" <vaibhaavram.tl@microchip.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>, 
+	Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Joy Chakraborty <joychakr@google.com>, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Repro hit the bug with a low probability, so maybe you need to try
-more times on the branch I reported. Also, this bug still exists in
-branch 6.10.0-rc1-00004-gff802a9f35cf-dirty #7.
+Read/write callbacks registered with nvmem core expect 0 to be returned
+on success and a negative value to be returned on failure.
 
-Pavel Begunkov <asml.silence@gmail.com> =E4=BA=8E2024=E5=B9=B46=E6=9C=8812=
-=E6=97=A5=E5=91=A8=E4=B8=89 03:17=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 6/7/24 18:15, chase xd wrote:
-> > Dear Linux kernel maintainers,
-> >
-> > Syzkaller reports this previously unknown bug on Linux
-> > 6.8.0-rc3-00043-ga69d20885494-dirty #4. Seems like the bug was
-> > silently or unintendedly fixed in the latest version.
->
-> I can't reproduce it neither with upstream nor a69d20885494,
-> it's likely some funkiness of that branch, and sounds like
-> you already tested newer kernels with no success. You can
-> also try it with a stable kernel to see if you can hit it.
->
-> --
-> Pavel Begunkov
+Currently pci1xxxx_otp_read()/pci1xxxx_otp_write() and
+pci1xxxx_eeprom_read()/pci1xxxx_eeprom_write() return the number of
+bytes read/written on success.
+Fix to return 0 on success.
+
+Fixes: 9ab5465349c0 ("misc: microchip: pci1xxxx: Add support to read and write into PCI1XXXX EEPROM via NVMEM sysfs")
+Fixes: 0969001569e4 ("misc: microchip: pci1xxxx: Add support to read and write into PCI1XXXX OTP via NVMEM sysfs")
+Cc: stable@vger.kernel.org
+Signed-off-by: Joy Chakraborty <joychakr@google.com>
+---
+ drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
+index 16695cb5e69c..7c3d8bedf90b 100644
+--- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
++++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
+@@ -153,7 +153,6 @@ static int pci1xxxx_eeprom_read(void *priv_t, unsigned int off,
+ 
+ 		buf[byte] = readl(rb + MMAP_EEPROM_OFFSET(EEPROM_DATA_REG));
+ 	}
+-	ret = byte;
+ error:
+ 	release_sys_lock(priv);
+ 	return ret;
+@@ -197,7 +196,6 @@ static int pci1xxxx_eeprom_write(void *priv_t, unsigned int off,
+ 			goto error;
+ 		}
+ 	}
+-	ret = byte;
+ error:
+ 	release_sys_lock(priv);
+ 	return ret;
+@@ -258,7 +256,6 @@ static int pci1xxxx_otp_read(void *priv_t, unsigned int off,
+ 
+ 		buf[byte] = readl(rb + MMAP_OTP_OFFSET(OTP_RD_DATA_OFFSET));
+ 	}
+-	ret = byte;
+ error:
+ 	release_sys_lock(priv);
+ 	return ret;
+@@ -315,7 +312,6 @@ static int pci1xxxx_otp_write(void *priv_t, unsigned int off,
+ 			goto error;
+ 		}
+ 	}
+-	ret = byte;
+ error:
+ 	release_sys_lock(priv);
+ 	return ret;
+-- 
+2.45.2.505.gda0bf45e8d-goog
+
 
