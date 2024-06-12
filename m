@@ -1,316 +1,194 @@
-Return-Path: <linux-kernel+bounces-211204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 310C0904E73
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:48:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18227904E78
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 381461C22125
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:48:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A2E1F244BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A00B16D4E3;
-	Wed, 12 Jun 2024 08:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1360A757F8;
+	Wed, 12 Jun 2024 08:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8BL+cqz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hqJDE1As"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E322016D33A;
-	Wed, 12 Jun 2024 08:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D52116D32C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718182104; cv=none; b=izG+ciEG2EN81XKSpCkd9Wa3/+uo3HjJG8ziVoXkVFoywGdVyNpxpl3m2o57dt/4TLf9wenr50RkVUItogPHb2JoOs7p8a3BgVU0k9UPzX1aZiSeY4yuRcu9rf6E1Xg4Ox0mYkMH4M4lVW5qocRY639jdVOQ1pSh7rQqcUKU6mU=
+	t=1718182204; cv=none; b=nhY+x+KloM76Azj8IlMklAoPMhb2IOsTa0AiTapih5qQ8kaS7HdanWYs0u3A0LG/8AUSuIb1hoo0q7cP3I5z5e/WwjkYO6zkwIkKGzIbBPqzXb1LO/MC7w+ZnjIOAQgV6a42nUNpgErURttS0juIja8HAGXvmvJaNgmVNSzmyO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718182104; c=relaxed/simple;
-	bh=3F/WlERHmnGgoTDaBuqDnp0G93kr8brnnmE5UHbts80=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kkxt5BOUYve/7o2LHv5uEqnz/npip/Pqyo6V0uFAtqf6reYccmVIndCcXt3n+qLdCtd98IrPIbpmy2HckZjzrKNg25Lts//MCF3KBQegCmB+qZtw8PANgwDDQ+WHZTfwYse2gXw1MrMWHuelo5SCKUbYyMGUc0HnZ0l634/uhnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8BL+cqz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34A01C3277B;
-	Wed, 12 Jun 2024 08:48:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718182103;
-	bh=3F/WlERHmnGgoTDaBuqDnp0G93kr8brnnmE5UHbts80=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O8BL+cqznkWMIxQA17NwXLf+71f87b//JRml+m9cMkSVXLEeq1niRgCINOEAKACfj
-	 QE6/OLX5pdZ7kk7b6L/b0SCuGergeFo8ZkBntoE//qgZ+jhYRmdwIJ0VDUYKaO4CEk
-	 8DacRxhEz2vNxhEowUbJUV/ZpsjKP93XaRR71YnfFbRdwcU19V/n1Ae43Gc+RwPFzW
-	 NX5Q/bBi+uA1mzfD40R5jPK4hJk8F0DDGx64Hdpo0I14i+MkOY22P9FB6PUziJEzGv
-	 7+0+0Q8gr4R+EcYYR238DllGxTbFYhtU80CIbxiQGvIrVdiu8zXJSMFHUcuiIi8Cjr
-	 dlQ0iVvDzV53A==
-Message-ID: <e24cfd23-6f77-46a0-b020-9cb3daef6930@kernel.org>
-Date: Wed, 12 Jun 2024 11:48:17 +0300
+	s=arc-20240116; t=1718182204; c=relaxed/simple;
+	bh=b14JE8Hd1cKYDo7Y7AIGAOjh0QSV12BCe651HRE/Krk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FdqAF4sH19PSjxxoDO3URMiCLTynAlxhy7ZHJrT5LbSPP6R2ukC05P8IgoVhbN4p8gj64XGRcIdPqRYlPVj9UBnWR0dJQ1SOgCdT0aGcXoy73xVaJdztkHMzTRE9F4gs1nQJipuXoX9kega5X+RqwZ1MPtMyCqZTkRgVtLpDleI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hqJDE1As; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35f06861ae6so4172771f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:50:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718182201; x=1718787001; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KblFtxoLOYdOj133hsBDEfsyDTDk4K9GtWvFG0mVigs=;
+        b=hqJDE1AssGN+vj8hfCZOPwRj8MJF46bgIP1ZT9BZotdbYAQE3dKdk+tX+yRzAACRFc
+         2AquzzDpcNXuaUaWmUdKam59gmflrGnVtAi0ia1u5dYgD5Vlp/OJkG6U2Sv31f1YYEMj
+         U0GpfcwODeszj+HX0rMpML9ZY+geCxfVesLjfU2U/ebohF1gd5LknW1btCDxH049PKoU
+         nqpIatfjMuQur2kbk4G85JQFwVuNSKns+eezezUzebQwrEnYEi1JcoOoYEjZZsyCdulQ
+         V0Bkb4TD0kEXe6SHNb+l+OoQXUaqBLbuOPUpy42qDOKTz1pTrFVue2DoTVK7Tli15sZO
+         4Wlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718182201; x=1718787001;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KblFtxoLOYdOj133hsBDEfsyDTDk4K9GtWvFG0mVigs=;
+        b=rmLpaBJHqyNMjSyFlAPcZg8Ubc6Ki3De8qCrhjl16u9PEIJLZCar3LsSBGJDAwsKAx
+         iVf76eihz840AxtvcMATc1IGeiXrWh5T+HdUJwy9jHbvLGlAwCSvuHTVjQJjy3brInrj
+         7/UvLRXvox763wqVcI926GbZltMblEdkxFEbT2lz9D07PK9XjRbjEUMLv4uJNr1lgE4h
+         OsYZBxmV8SCZlUIBR8XwZSJQp4FY+nx/w1gVUVleHvuyu4Xl6ikeFWVVi98tPUZOowCd
+         6B8P2tyIP2XIyw+WDfK2ZvO40cvhM/XIuys0uJodkEJIznpJtZC6LfxgHHm5lwu56T5l
+         qRPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuejUlBSzXoMtWASaIbZKgvlqEgICZNAekKxb2XSb94/hQPhSKe11gCaDrz9m9W4pE7f5e/mAreJIv1dvja2VH8BD7g86BaaICemaK
+X-Gm-Message-State: AOJu0YwgTLQc8Z3+oAiJSuzfKrNZflj0OlK76q24BzPs/0yu9F7I4bpj
+	w20ZASJgsYY8YBgDLrWXF856sQJyaLH1Shh1YwvRvBeEN+4D6lfvddIb0IP/kSc=
+X-Google-Smtp-Source: AGHT+IEuW4Qt0F2C34adTuf4Iw0RgJsE7gOJQJAtCM1xxw0xSETRwNKL24J5NNVEkQTJOvaASbj0VQ==
+X-Received: by 2002:a5d:47a9:0:b0:35f:bcc:98ed with SMTP id ffacd0b85a97d-35fdf79a152mr942011f8f.6.1718182200506;
+        Wed, 12 Jun 2024 01:50:00 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f26578176sm6812313f8f.11.2024.06.12.01.49.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 01:50:00 -0700 (PDT)
+Date: Wed, 12 Jun 2024 11:49:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+	Sasha Levin <sashal@kernel.org>, Tom Gall <tom.gall@linaro.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v5] checkpatch: check for missing Fixes tags
+Message-ID: <6825db9f-be27-4096-9723-6ad65342a59e@moroto.mountain>
+References: <ZmhUgZBKeF_8ixA6@moroto>
+ <20240611113855.b63a6015b26a0dad49d9f2a7@linux-foundation.org>
+ <b3baa059-b433-42da-96c0-588312b5a4ac@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
- ability to gcc
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, quic_anusha@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
- <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com>
- <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
- <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com>
- <c015b3a5-2213-4ebd-b960-d97ed1fe7062@kernel.org>
- <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
- <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
- <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
- <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
- <176137e5-6312-4d46-97b6-c4494bc1c61b@kernel.org>
- <ZmlAdETV0+6Md8HC@hu-varada-blr.qualcomm.com>
-Content-Language: en-US
-From: Georgi Djakov <djakov@kernel.org>
-In-Reply-To: <ZmlAdETV0+6Md8HC@hu-varada-blr.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b3baa059-b433-42da-96c0-588312b5a4ac@leemhuis.info>
 
-On 12.06.24 9:30, Varadarajan Narayanan wrote:
-> On Tue, Jun 11, 2024 at 02:29:48PM +0300, Georgi Djakov wrote:
->> On 11.06.24 12:42, Varadarajan Narayanan wrote:
->>> On Thu, Jun 06, 2024 at 04:06:01PM +0200, Konrad Dybcio wrote:
->>>> On 8.05.2024 10:10 AM, Dmitry Baryshkov wrote:
->>>>> On Wed, 8 May 2024 at 09:53, Varadarajan Narayanan
->>>>> <quic_varada@quicinc.com> wrote:
->>>>>>
->>>>>> On Fri, May 03, 2024 at 04:51:04PM +0300, Georgi Djakov wrote:
->>>>>>> Hi Varada,
->>>>>>>
->>>>>>> Thank you for your work on this!
->>>>>>>
->>>>>>> On 2.05.24 12:30, Varadarajan Narayanan wrote:
->>>>>>>> On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
->>>>>>>>> On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
->>>>>>>>>> On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> On 4/18/24 11:23, Varadarajan Narayanan wrote:
->>>>>>>>>>>> IPQ SoCs dont involve RPM in managing NoC related clocks and
->>>>>>>>>>>> there is no NoC scaling. Linux itself handles these clocks.
->>>>>>>>>>>> However, these should not be exposed as just clocks and align
->>>>>>>>>>>> with other Qualcomm SoCs that handle these clocks from a
->>>>>>>>>>>> interconnect provider.
->>>>>>>>>>>>
->>>>>>>>>>>> Hence include icc provider capability to the gcc node so that
->>>>>>>>>>>> peripherals can use the interconnect facility to enable these
->>>>>>>>>>>> clocks.
->>>>>>>>>>>>
->>>>>>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>>>>>>>>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->>>>>>>>>>>> ---
->>>>>>>>>>>
->>>>>>>>>>> If this is all you do to enable interconnect (which is not the case,
->>>>>>>>>>> as this patch only satisfies the bindings checker, the meaningful
->>>>>>>>>>> change happens in the previous patch) and nothing explodes, this is
->>>>>>>>>>> an apparent sign of your driver doing nothing.
->>>>>>>>>>
->>>>>>>>>> It appears to do nothing because, we are just enabling the clock
->>>>>>>>>> provider to also act as interconnect provider. Only when the
->>>>>>>>>> consumers are enabled with interconnect usage, this will create
->>>>>>>>>> paths and turn on the relevant NOC clocks.
->>>>>>>>>
->>>>>>>>> No, with sync_state it actually does "something" (sets the interconnect
->>>>>>>>> path bandwidths to zero). And *this* patch does nothing functionally,
->>>>>>>>> it only makes the dt checker happy.
->>>>>>>>
->>>>>>>> I understand.
->>>>>>>>
->>>>>>>>>> This interconnect will be used by the PCIe and NSS blocks. When
->>>>>>>>>> those patches were posted earlier, they were put on hold until
->>>>>>>>>> interconnect driver is available.
->>>>>>>>>>
->>>>>>>>>> Once this patch gets in, PCIe for example will make use of icc.
->>>>>>>>>> Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
->>>>>>>>>>
->>>>>>>>>> The 'pcieX' nodes will include the following entries.
->>>>>>>>>>
->>>>>>>>>>           interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
->>>>>>>>>>                           <&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
->>>>>>>>>>           interconnect-names = "pcie-mem", "cpu-pcie";
->>>>>>>>>
->>>>>>>>> Okay. What about USB that's already enabled? And BIMC/MEMNOC?
->>>>>>>>
->>>>>>>> For USB, the GCC_ANOC_USB_AXI_CLK is enabled as part of the iface
->>>>>>>> clock. Hence, interconnect is not specified there.
->>>>>>>>
->>>>>>>> MEMNOC to System NOC interfaces seem to be enabled automatically.
->>>>>>>> Software doesn't have to turn on or program specific clocks.
->>>>>>>>
->>>>>>>>>>> The expected reaction to "enabling interconnect" without defining the
->>>>>>>>>>> required paths for your hardware would be a crash-on-sync_state, as all
->>>>>>>>>>> unused (from Linux's POV) resources ought to be shut down.
->>>>>>>>>>>
->>>>>>>>>>> Because you lack sync_state, the interconnects silently retain the state
->>>>>>>>>>> that they were left in (which is not deterministic), and that's precisely
->>>>>>>>>>> what we want to avoid.
->>>>>>>>>>
->>>>>>>>>> I tried to set 'sync_state' to icc_sync_state to be invoked and
->>>>>>>>>> didn't see any crash.
->>>>>>>>>
->>>>>>>>> Have you confirmed that the registers are actually written to, and with
->>>>>>>>> correct values?
->>>>>>>>
->>>>>>>> I tried the following combinations:-
->>>>>>>>
->>>>>>>> 1. Top of tree linux-next + This patch set
->>>>>>>>
->>>>>>>>       * icc_sync_state called
->>>>>>>>       * No crash or hang observed
->>>>>>>>       * From /sys/kernel/debug/clk/clk_summary can see the
->>>>>>>>         relevant clocks are set to the expected rates (compared
->>>>>>>>         with downstream kernel)
->>>>>>>>
->>>>>>>> 2. Top of tree linux-next + This patch set + PCIe enablement
->>>>>>>>
->>>>>>>>       * icc_sync_state NOT called
->>>>>>>
->>>>>>> If sync_state() is not being called, that usually means that there
->>>>>>> are interconnect consumers that haven't probed successfully (PCIe?)
->>>>>>> or their dependencies. That can be checked in /sys/class/devlink/.../status
->>>>>>> But i am not sure how this works for PCI devices however.
->>>>>>>
->>>>>>> You can also manually force a call to sync_state by writing "1" to
->>>>>>> the interconnect provider's /sys/devices/.../state_synced
->>>>>>>
->>>>>>> Anyway, the question is if PCIe and NSS work without this driver?
->>>>>>
->>>>>> No.
->>>>>>
->>>>>>> If they work, is this because the clocks are turned on by default
->>>>>>> or by the boot loader?
->>>>>>
->>>>>> Initially, the PCIe/NSS driver enabled these clocks directly
->>>>>> by having them in their DT nodes itself. Based on community
->>>>>> feedback this was removed and after that PCIe/NSS did not work.
->>>>>>
->>>>>>> Then if an interconnect path (clock) gets disabled either when we
->>>>>>> reach a sync_state (with no bandwidth requests) or we explicitly
->>>>>>> call icc_set_bw() with 0 bandwidth values, i would expect that
->>>>>>> these PCIe and NSS devices would not function anymore (it might
->>>>>>> save some power etc) and if this is unexpected we should see a
->>>>>>> a crash or hang...
->>>>>>>
->>>>>>> Can you confirm this?
->>>>>>
->>>>>> With ICC enabled, icc_set_bw (with non-zero values) is called by
->>>>>> PCIe and NSS drivers. Haven't checked with icc_set_bw with zero
->>>>>> values.
->>>>>>
->>>>>> PCIe:   qcom_pcie_probe -> qcom_pcie_icc_init -> icc_set_bw
->>>>>> NSS:    ppe_icc_init -> icc_set_bw
->>>>>>
->>>>>> I believe sync_state is not getting called since there is a
->>>>>> non-zero set bandwidth request. Which seems to be aligned with
->>>>>> your explanation.
->>>>>
->>>>> This doesn't look correct. sync_state is being called once all
->>>>> consumers are probed. It doesn't matter whether those consumers have
->>>>> non-zero bandwidth requests or no.
->>>>
->>>> /sys/kernel/debug/devices_deferred may have some useful info, too
->>>
->>> /sys/kernel/debug/devices_deferred seems to be empty
->>>
->>> 	# mount | grep -w debugfs
->>> 	none on /sys/kernel/debug type debugfs (rw,relatime)
->>>
->>> 	# cat /sys/kernel/debug/devices_deferred  | wc -l
->>> 	0
->>>
->>> Added the following print to icc_sync_state,
->>>
->>> 	@@ -1096,6 +1096,7 @@ void icc_sync_state(struct device *dev)
->>> 		struct icc_node *n;
->>> 		static int count;
->>>
->>> 	+	printk("--> %s: %d %d\n", __func__, providers_count, count);
->>> 		count++;
->>>
->>> 		if (count < providers_count)
->>> 			return;
->>>
->>> icc_sync_state seems to be called once,
->>>
->>> 	# dmesg | grep icc_sync_state
->>> 	[   12.260544] --> icc_sync_state: 2 0
->>>
->>> Since 'providers_count' is greated than 'count' icc_sync_state
->>> seems to return before doing anything.
->>
->> Is there also another interconnect provider on this platform, other
->> than the gcc? Check for DT nodes that have the #interconnect-cells
->> property.
+On Wed, Jun 12, 2024 at 08:46:24AM +0200, Thorsten Leemhuis wrote:
+> On 11.06.24 20:38, Andrew Morton wrote:
+> > On Tue, 11 Jun 2024 16:43:29 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > 
+> >> This check looks for common words that probably indicate a patch
+> >> is a fix.  For now the regex is:
+> >>
+> >> 	(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/)
+> >>
+> >> Why are stable patches encouraged to have a fixes tag?  Some people mark
+> >> their stable patches as "# 5.10" etc.  This is useful but a Fixes tag is
+> >> still a good idea.
+> > 
+> > I'd say that "# 5.10" is lame
 > 
-> Yes there are two interconnect providers
+> Documentation/process/stable-kernel-rules.rst documents this use to
+> "Point out kernel version prerequisites".
 > 
-> 	# find /proc/device-tree/ -name '#interconnect-cells'
-> 	/proc/device-tree/soc@0/clock-controller@1800000/#interconnect-cells
-> 	/proc/device-tree/soc@0/clock-controller@39b00000/#interconnect-cells
-> 
-> 	Note:	gcc => clock-controller@1800000
-> 		nsscc => clock-controller@39b00000
-> 
->> Are all providers probing successfully?
-> 
-> Yes. I printed the return value of their probe functions...
-> 
-> 	# dmesg | grep probe:
-> 	[    0.037815] --> gcc_ipq9574_probe: return 0
-> 	[    2.078215] --> nss_cc_ipq9574_probe: return 0
-> 
-> 
->> All providers must probe, as there might be paths that cross multiple
->> providers and we can't get into sync-state with a topology that is
->> only partially initialized.
-> 
-> It does look like both the providers' probe has completed. And,
-> there aren't any paths that cross providers
-> 
-> 	interconnects = <&gcc MASTER_ANOC_PCIE1 &gcc SLAVE_ANOC_PCIE1>,
-> 			<&gcc MASTER_SNOC_PCIE1 &gcc SLAVE_SNOC_PCIE1>;
-> 
-> 	interconnects = <&gcc MASTER_ANOC_PCIE3 &gcc SLAVE_ANOC_PCIE3>,
-> 			<&gcc MASTER_SNOC_PCIE3 &gcc SLAVE_SNOC_PCIE3>;
-> 
-> 	interconnects = <&gcc MASTER_ANOC_PCIE2 &gcc SLAVE_ANOC_PCIE2>,
-> 			<&gcc MASTER_SNOC_PCIE2 &gcc SLAVE_SNOC_PCIE2>;
-> 
-> 	interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
-> 			<&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
-> 
-> 	interconnects = <&nsscc MASTER_NSSNOC_PPE &nsscc SLAVE_NSSNOC_PPE>,
-> 			<&nsscc MASTER_NSSNOC_PPE_CFG &nsscc SLAVE_NSSNOC_PPE_CFG>,
-> 			<&gcc MASTER_NSSNOC_QOSGEN_REF &gcc SLAVE_NSSNOC_QOSGEN_REF>,
-> 			<&gcc MASTER_NSSNOC_TIMEOUT_REF &gcc SLAVE_NSSNOC_TIMEOUT_REF>,
-> 			<&gcc MASTER_MEM_NOC_NSSNOC &gcc SLAVE_MEM_NOC_NSSNOC>,
-> 			<&gcc MASTER_NSSNOC_MEMNOC &gcc SLAVE_NSSNOC_MEMNOC>,
-> 			<&gcc MASTER_NSSNOC_MEM_NOC_1 &gcc SLAVE_NSSNOC_MEM_NOC_1>;
 
-Are the above consumers also probing successfully? Especially the one with
-the nsscc paths? Is nss_cc_ipq9574 also using icc_sync_state? Sync state
-will be called when all consumers of the specific provider are probed.
+No, the 5.10 means that the fix is required for everything after 5.10.
+Here is how you reference pre-requisites.
 
-The idea of sync state is to allow all consumers to probe and to request
-their paths. Only after that, the framework will take into account the
-bandwidth values that has been requested from consumers and disable unused
-paths.
+    Cc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
+    Cc: <stable@vger.kernel.org> # 3.3.x: 1b9508f: sched: Rate-limit newidle
+    Cc: <stable@vger.kernel.org> # 3.3.x: fd21073: sched: Fix affinity logic
 
-Sorry, but i am doing a bit of guessing here as i am missing the complete
-picture. So you add interconnect-cells to nsscc, but what is this DT node
-that requests the nss and gcc paths? I am failing to find these on the
-mailing lists.
+The documentation was written before we went to 12 character hashes and
+also these days we normally put ("") around the subject.  I've made a
+copy of all the uses of this format from 2023 at the bottom of this
+email to see how people use it in real life.
 
-BR,
-Georgi
+> > and it would be good if checkpatch could
+> > detect this and warn "hey, use a proper Fixes:".  Because
+> > 
+> >> It  helps people to not cherry-pick buggy patches without also
+> >> cherry-picking the fix.
+> > 
+> > seems pretty important.
+> 
+> Hmmm. That would lead to false positive when it comes to changes that
+> for example just add a device ID (and thus do not "Fix" anything) while
+> having prerequisites that are only available in a specific version.
+
+What I'm saying is, imagine you are maintaining a distro kernel for
+10 years.  In this scenario you're pulling in whole new wifi drivers
+so the kernel still runs on modern hardware.  The stable tag says
+"apply this to 6.8+" because that's when the driver was merged.  But as
+a distro maintainer it's much nicer to have a Fixes: 123412341234 ("Add
+new wifi driver").
+
+regards,
+dan carpenter
+
+Dependencies listed in 2023:
+
+    Cc:  <stable@vger.kernel.org> # 6.1.x: 3837a03 serial: sc16is7xx: improve regmap debugfs by using one regmap per port
+    Cc:  <stable@vger.kernel.org> # 6.1.x: 3837a03 serial: sc16is7xx: improve regmap debugfs by using one regmap per port
+    Cc: <stable@vger.kernel.org> # 6.6+: f8ff234: kernel/Kconfig.kexec: drop select of KEXEC for CRASH_DUMP
+    Cc: <stable@vger.kernel.org> # v6.0+: 1da5c9b x86: Introduce ia32_enabled()
+    Cc: stable@vger.kernel.org # 6.6.x: c5dbf0416000: platform/x86: hp-bioscfg: Simplify return check in hp_add_other_attributes()
+    Cc: stable@vger.kernel.org # 6.6.x: 5736aa9537c9: platform/x86: hp-bioscfg: move mutex_lock() down in hp_add_other_attributes()
+    Cc: <stable@vger.kernel.org> # selftests/resctrl: Refactor feature check to use resource and feature name
+    Cc: <stable@vger.kernel.org> # selftests/resctrl: Remove duplicate feature check from CMT test
+    Cc: <stable@vger.kernel.org> # selftests/resctrl: Move _GNU_SOURCE define into Makefile
+    Cc: stable@vger.kernel.org # 5.9.x: 09252177d5f9: SUNRPC: Handle major timeout in xprt_adjust_timeout()
+    Cc: stable@vger.kernel.org # 5.9.x: 7de62bc09fe6: SUNRPC dont update timeout value on connection reset
+    Cc: stable@vger.kernel.org # 0b035401c570: rbd: move rbd_dev_refresh() definition
+    Cc: stable@vger.kernel.org # 510a7330c82a: rbd: decouple header read-in from updating rbd_dev->header
+    Cc: stable@vger.kernel.org # c10311776f0a: rbd: decouple parent info read-in from updating rbd_dev
+    Cc: <stable@vger.kernel.org> # 6.1.y: bf0207e172703 ("drm/amdgpu: add S/G display parameter")
+    Cc: <stable@vger.kernel.org> # 6.1.y: bf0207e172703 ("drm/amdgpu: add S/G display parameter")
+    Cc: <stable@vger.kernel.org> # 5.15.x: 60a0aab7463ee69 arm64: module-plts: inline linux/moduleloader.h
+    Cc: stable@vger.kernel.org # 588159009d5b: rbd: retrieve and check lock owner twice before blocklisting
+    Cc: stable@vger.kernel.org # f38cb9d9c204: rbd: make get_lock_owner_info() return a single locker or NULL
+    Cc: stable@vger.kernel.org # 8ff2c64c9765: rbd: harden get_lock_owner_info() a bit
+    Cc: 6.4+ <stable@vger.kernel.org> # 6.4+: 8bcbb18c61d6: thermal: core: constify params in thermal_zone_device_register
+    Cc: stable@vger.kernel.org # please backport to all LTSes but not before v6.6-rc2 is tagged
+    Cc: stable@vger.kernel.org      # 3.18: a872ab303d5d: "usb: dwc3: qcom: fix use-after-free on runtime-PM wakeup"
+    Cc: stable@vger.kernel.org # v6.0+ 2f38e84 net/ncsi: make one oem_gma function for all mfr id
+    Cc: <stable@vger.kernel.org> # 6.0: 5365cea199c7 ("soc: qcom: llcc: Rename reg_offset structs to reflect LLCC version")
+    Cc: <stable@vger.kernel.org> # 6.0: c13d7d261e36 ("soc: qcom: llcc: Pass LLCC version based register offsets to EDAC driver")
+    Cc: stable@vger.kernel.org # 6.1.y: 5591a051b86b: drm/amdgpu: refine get gpu clock counter method
+    Cc: stable@vger.kernel.org # 6.2.y: 5591a051b86b: drm/amdgpu: refine get gpu clock counter method
+    Cc: stable@vger.kernel.org # 6.3.y: 5591a051b86b: drm/amdgpu: refine get gpu clock counter method
+    Cc: stable@vger.kernel.org #3.2: 30332eeefec8: debugfs: regset32: Add Runtime PM support
+    Cc: <stable@vger.kernel.org> # dependency for "drm/rockchip: vop: Leave
+    Cc: stable@vger.kernel.org # 4.15: 30332eeefec8: debugfs: regset32: Add Runtime PM support
+    Cc: <stable@vger.kernel.org> # v5.19+ (if someone else does the backport)
+    CC: stable@vger.kernel.org # 5.4.x: c8a5f8ca9a9c: btrfs: print checksum type and implementation at mount time
+    Cc: <stable@kernel.org> # d6fd48eff750 ("virt/coco/sev-guest: Check SEV_SNP attribute at probe time")
+    Cc: <stable@kernel.org> # 970ab823743f (" virt/coco/sev-guest: Simplify extended guest request handling")
+    Cc: <stable@kernel.org> # c5a338274bdb ("virt/coco/sev-guest: Remove the disable_vmpck label in handle_guest_request()")
+    Cc: <stable@kernel.org> # 0fdb6cc7c89c ("virt/coco/sev-guest: Carve out the request issuing logic into a helper")
+    Cc: <stable@kernel.org> # d25bae7dc7b0 ("virt/coco/sev-guest: Do some code style cleanups")
+    Cc: <stable@kernel.org> # fa4ae42cc60a ("virt/coco/sev-guest: Convert the sw_exit_info_2 checking to a switch-case")
+    Cc: stable@vger.kernel.org      # 5.1: 680f8666baf6: interconnect: Make icc_provider_del() return void
+    Cc: <stable@kernel.org> # 2355370cd941 ("x86/microcode/amd: Remove load_microcode_amd()'s bsp parameter")
+    Cc: <stable@kernel.org> # a5ad92134bd1 ("x86/microcode/AMD: Add a @cpu parameter to the reloading functions")
+
 
