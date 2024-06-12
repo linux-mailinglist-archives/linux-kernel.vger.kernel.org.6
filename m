@@ -1,150 +1,115 @@
-Return-Path: <linux-kernel+bounces-211297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB50904F9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:51:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E3A9904FAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7527C1C231FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:51:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E5F72838E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53E216DECF;
-	Wed, 12 Jun 2024 09:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8417616E871;
+	Wed, 12 Jun 2024 09:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NDyft+Uk"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Nr22xxNX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C861A34;
-	Wed, 12 Jun 2024 09:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C70716DED2;
+	Wed, 12 Jun 2024 09:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718185900; cv=none; b=o4FJAMh0/5ZfF9N4yQQSPJI4eqpCZHt6+wl0CPGH0W0wZ0OvjCiP+NoCQSLBEJfBZCKEH+yMpWvOlCHcWCdF3qKgHSJFlamdcOcRpCC5U2RLagpNZ1qHRt2uP3+49LEDhsOPjUoFMTuQCXvbc9fBZKwTfckR2pYG6VocPqLK8Mo=
+	t=1718186031; cv=none; b=c9Z0oTewCko/yxiGS9N0hw3KFP5TInd/i2PWGipUvbXg9w5Zvyl+iDs0BfH8Qq7/gNJjE+U/cySNxVSfbRh0Rm5XPQSQH6HH0t6KFqJBNrPTMYonzpm7AlLxsiBLx5c1774KWY+LMOTUFoJo6/wu6X8xAmhHAAi05k2NPxgYcls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718185900; c=relaxed/simple;
-	bh=8dFZrXMQrpSMEZnw2V6V7d9rPJd3f8Fhs33OTTxQ9Fc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z8pY0Wc5bHHALmCog4/MWLxzUOlu6cC4hKKJBC9cPjAucMoKMm1kwYiG87kZJI5qjDmM6kTraxk6KqAECtcQv4+dvAxZNZTIiD+xKx4yMAnLyaUtYxsJ8fn2/E5yHSCWINkKHUTiCxWVls4PymSxjHrPOspJF2sdWQsAhPEYdc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NDyft+Uk; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6ce533b6409so1601079a12.1;
-        Wed, 12 Jun 2024 02:51:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718185899; x=1718790699; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gzrM6EvAqCUYyubpdKPvo+y6fnT5QsRDHvsxqtQtqU=;
-        b=NDyft+UkATa2UFldp+y4RdEVUCDXHkQnmjFPVY/a4y4kXD4nJGtpkXFINy70XzajOW
-         jGjAiTkEenKzh4A5ScHq7pLs+ty1vWIpK9ROAqY8vS7CVM0HuUOXby37MI8O0o8w7Lo5
-         8nXtPPdfOLeLnJ4NtdJpHk00b3IHIiyIOU9HRU9Lc5gzTrKBVjc75KtvSWEsyHaKLAxo
-         8rogKJDZW9ryn10JRVsxCjw3QokRHj6VKWu/BmWzrSADBCVICWPK/JfQOy4E7ll4PdIF
-         7UjYH6fyBgvS3ab6awSk13Dq3WD8I8YAp+zBk6s+Sh3s2aw+Yp9hNCb0lNN40j6yWtKC
-         TuCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718185899; x=1718790699;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0gzrM6EvAqCUYyubpdKPvo+y6fnT5QsRDHvsxqtQtqU=;
-        b=sAW67aX0+eUTyGU0lh2T5s5t9vIcHtrz+dBrjqS+hx4S99oaFPi01i3ISNfXmB3d/e
-         x05hVG/zY6tfqiyYr6Qep7IRHV9bGI+JSGQvupMeMYJV9+O3IDUw+Iri4gfoVhpcKzEh
-         d1MCA6INfLPb7wVnh3e2JVVLxaR23RrifM40g7NKNB/PQAVvqFnmJJhlyN1VgECUSzbD
-         x46SPnWd7/j6A3ojnNethbOULm+zKhzioW8by5hO8ypnwABKn7UgSFPB0m0JXH7ALLM7
-         8HCcTIQRWeADnF0X5MNc7ArAtOjNikkzHhsSQA7eVy5CdqYrDKqOudMUyoOOc7Hw7hWy
-         I/gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpKBFUdYnA6z/1p+jHDlh5YTpU4jruBf92UeaWFJhNBgFX9u8pvdTFbC4ytcdXEoYIyK+eyQT9ycqLNvwE5PkvpWlh98CCQRjNcdxi
-X-Gm-Message-State: AOJu0YxZjo8y2kOjD3uttfzeGvXtjJ+HFv0tQkTulrrIcEs3UQVPAz+T
-	fGuS7d/oiMCWbUOij9WySkGcnkiVs/IP/Nc25VrTtK6u55hXpgzCpfU1MvWVnAc=
-X-Google-Smtp-Source: AGHT+IGJN0M/2lFf49OeqFh31ecKXXTeS9tXciHX6sjFHJ0uuRZ48YpqlzWs/E6lU0N4L+wFzLxLjA==
-X-Received: by 2002:a17:90b:1d0d:b0:2c3:40b7:1f6d with SMTP id 98e67ed59e1d1-2c4a7530740mr1817234a91.0.1718185898396;
-        Wed, 12 Jun 2024 02:51:38 -0700 (PDT)
-Received: from localhost ([2405:201:a42a:e05e:b15d:9596:9397:9fee])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2c4a9c2fa34sm1161774a91.38.2024.06.12.02.51.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 02:51:38 -0700 (PDT)
-From: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-Date: Wed, 12 Jun 2024 15:21:25 +0530
-Subject: [PATCH RESEND] bpf: fix order of args in call to bpf_map_kvcalloc
+	s=arc-20240116; t=1718186031; c=relaxed/simple;
+	bh=yRlmiQo1uibOoBDJDgUIhh3gKKJ8sqPtUMS2oriWl9k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DBkWj5SSwWEfQ3oIEPsEg7p03qEBlgCz+sFk7cz1k9XbuFpEXXZQ3HQY4jYc3d9y9YrtAvwMobFKCvOX6xJ9lNc09D81c++wVyn+gEs/OYoFGtI5PvY8Cdyi/D1I/kMDNHphk9KAn8KKMGcpNk8doUHt4z75niqd4S1i5bz9L+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Nr22xxNX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C6cKkN001361;
+	Wed, 12 Jun 2024 09:53:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=nsxJ81OnUl8js+adMpv2E1
+	+5d/b+K4/IU2AKkSrL+E4=; b=Nr22xxNXXQMnvw9cNdIV1qA14ugNe2cbtVB3xi
+	N7D8VvwS4mWG2JfFvPo4HXA+ob3b+E4ZVQCAFU0P+ll6utPIQ3mPoBKWBxNQTnGT
+	BAogH4TGAL/kU3yAOeyoBae2ZMnwP9wMeLppwif1G+1lGtweJbYFDj7QvHXxbxsS
+	9ZD15I4KjzA11VRTIUSRMolpw3wMjA727l6JMm/OEh3jpJ/6MPYtOKh97eAiWePR
+	0HSpbZK3VRwXMP/fb1YkO3OotNLMKIQodpfBpsFndBHZgUfFqe/6gSRH5TLPQZ6f
+	2EioqnW6lNFub5//Pvqd4GIWqoDVq1cwKolLDxA5Ai42mwsA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yptuy1uru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 09:53:33 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C9rXSh013682
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 09:53:33 GMT
+Received: from luoj-gv.qualcomm.com (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 02:53:29 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andrew@lunn.ch>, <hkallweit1@gmail.com>,
+        <linux@armlinux.org.uk>, <corbet@lwn.net>, <vladimir.oltean@nxp.com>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
+Subject: [PATCH net-next 0/2] Introduce PHY mode 10G-QXGMII
+Date: Wed, 12 Jun 2024 17:53:15 +0800
+Message-ID: <20240612095317.1261855-1-quic_luoj@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240612-master-v1-1-a95f24339dab@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAJxvaWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDM0Mj3dzE4pLUIt20VMtUM+PEJNNkS1MloOKCotS0zAqwQdFKQa7Brn4
- uSrG1tQD2m2AGYAAAAA==
-To: Martin KaFai Lau <martin.lau@linux.dev>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
- Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1428;
- i=sheharyaar48@gmail.com; h=from:subject:message-id;
- bh=8dFZrXMQrpSMEZnw2V6V7d9rPJd3f8Fhs33OTTxQ9Fc=;
- b=owEBbQKS/ZANAwAIAVeh+rkVtmsSAcsmYgBmaW+j/5SiyBV1U+kYa1ezq8Z+KA1egtQ3xxPiO
- TjQprR/7qWJAjMEAAEIAB0WIQSJaujhf+zhb4nUAadXofq5FbZrEgUCZmlvowAKCRBXofq5FbZr
- Er8pD/488YlR0TVjaPLg3f8HjCYciHzDhSZtlc+mgsxn6oHHV5fwRfchyp82ZzPLyLaucoC0xec
- 8buWJEjWFJ+IoHURJ0uLl1lts58UyHHLOdu3CvQsoHzZBqpU75zDaZVDckeco2LvfuJ6Y5tZM9x
- VzmAkEYoYKNMWg4rMaMZ7fgaUHfKwUlLRlcuhZ2dYsqXT93ZkytWTAc5MCbryuh2y1XpUm98nwx
- n1pi8LzdZwKdF1QfpAKflwH7pwLi7zVLJceWZUg5FpoygGtnw4dQIwP8FtnUSpVv0f/AaJBYwou
- AeJIDCAJ6llJ97a+Afpdfj4zJB6Ji6K0wihM3TxA1McSqNdERYWB5Eg2Ny/K3cstxcI2bp83xMm
- q2WlZBydVdxQaFvxLrXGUujwENW6CoqbHYr4af5w++Otb0jriVdKqzU97XysGbZQg9owH4Iq3DB
- TWQyTF7NBhZapQgQNlk8dDgjl077bhdu7nOvEm+wQw7JsHOI5j2IS5By41XiHyi05/9UZovnQcX
- Xy3LpqGaWgiConcdPNRRGMIVkuh2kQd/j1eTlqObpRMcJ4AlhEr5xjyrGiIVtHk7NQxpNZcNY7p
- EjtgAgCslE6AMOlf8UpbG6KgXRjLM6MZtMf4SqqCRns1gJSxPKCqKKEoBfCFAMbeRXb4x2HY2C2
- 1ca/CydMvbPiNyg==
-X-Developer-Key: i=sheharyaar48@gmail.com; a=openpgp;
- fpr=896AE8E17FECE16F89D401A757A1FAB915B66B12
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: g_iMA5xOiqjxnp3lsznu5Ie_Cx3rYknf
+X-Proofpoint-ORIG-GUID: g_iMA5xOiqjxnp3lsznu5Ie_Cx3rYknf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_06,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 clxscore=1011 mlxlogscore=748 phishscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120071
 
-The original function call passed size of smap->bucket before the number of
-buckets which raises the error 'calloc-transposed-args' on compilation.
-
-Fixes: 62827d612ae5 ("bpf: Remove __bpf_local_storage_map_alloc")
-Reviewed-by: Andrii Nakryiko <andrii@kernel.org>
-Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
----
-- already merged in linux-next
-- [1] suggested sending as a fix for 6.10 cycle
-
-[1] https://lore.kernel.org/all/363ad8d1-a2d2-4fca-b66a-3d838eb5def9@intel.com/
----
- kernel/bpf/bpf_local_storage.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/bpf/bpf_local_storage.c b/kernel/bpf/bpf_local_storage.c
-index 976cb258a0ed..c938dea5ddbf 100644
---- a/kernel/bpf/bpf_local_storage.c
-+++ b/kernel/bpf/bpf_local_storage.c
-@@ -782,8 +782,8 @@ bpf_local_storage_map_alloc(union bpf_attr *attr,
- 	nbuckets = max_t(u32, 2, nbuckets);
- 	smap->bucket_log = ilog2(nbuckets);
+This patch series adds 10G-QXGMII mode for PHY driver. The patch
+series is split from the QCA8084 PHY driver patch series below.
+https://lore.kernel.org/all/20231215074005.26976-1-quic_luoj@quicinc.com/
  
--	smap->buckets = bpf_map_kvcalloc(&smap->map, sizeof(*smap->buckets),
--					 nbuckets, GFP_USER | __GFP_NOWARN);
-+	smap->buckets = bpf_map_kvcalloc(&smap->map, nbuckets,
-+					 sizeof(*smap->buckets), GFP_USER | __GFP_NOWARN);
- 	if (!smap->buckets) {
- 		err = -ENOMEM;
- 		goto free_smap;
+Per Andrew Lunn’s advice, submitting this patch series for acceptance
+as they already include the necessary 'Reviewed-by:' tags. This way,
+they need not wait for QCA8084 series patches to conclude review.
 
----
-base-commit: 2ef5971ff345d3c000873725db555085e0131961
-change-id: 20240612-master-fe9e63ab5c95
+Vladimir Oltean (2):
+  net: phy: introduce core support for phy-mode = "10g-qxgmii"
+  dt-bindings: net: ethernet-controller: add 10g-qxgmii mode
 
-Best regards,
+ .../devicetree/bindings/net/ethernet-controller.yaml |  1 +
+ Documentation/networking/phy.rst                     |  6 ++++++
+ drivers/net/phy/phy-core.c                           |  1 +
+ drivers/net/phy/phylink.c                            | 12 ++++++++++--
+ include/linux/phy.h                                  |  4 ++++
+ include/linux/phylink.h                              |  1 +
+ 6 files changed, 23 insertions(+), 2 deletions(-)
+
+
+base-commit: 91579c93a9b207725559e3199870419afd50220f
 -- 
-Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+2.34.1
 
 
