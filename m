@@ -1,118 +1,156 @@
-Return-Path: <linux-kernel+bounces-212018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65020905A0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:34:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064BA905A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBA2CB26793
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:34:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96DB71F228A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F3E1822FA;
-	Wed, 12 Jun 2024 17:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8C81822C9;
+	Wed, 12 Jun 2024 17:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="azdUnHZe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OEb+0hmM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C6A1822C9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 17:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07043770D;
+	Wed, 12 Jun 2024 17:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718213588; cv=none; b=SblIYMoqO+lmKjnjJY/bEukSsH0JfomCP2zLItUUdLLWc6VmGQ/5a7mGrI+RLSn24Wf9Cgu8r8w2r6bL/LuqIqOl1lfYKc/EbShZgCHuCJaa/27swxp40W9pezzcDj3rpuuFnoC66rPg8W+RtUfxhdb++IpBNQ0tHeF6pjZQyfU=
+	t=1718213890; cv=none; b=ua5ukLHG7qWla1CX0LP53dF0CAHpw0kGZgeBzn2BljAjdkWmldD+Rm0+E51AZKmg4xbnxu17Q3yfeqy06ZynVJNEVvrxpt0Zi6KChe8+pGvESPcfAQOQPLUu5HME3k5ndc00T5uHDm4LjeMym0dnXFZ7tFnBtlR6U3mYHnh4nbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718213588; c=relaxed/simple;
-	bh=8QslqOf6bq40lwL09Fh9oEB2dYpfPrXAnjP/2bJhEbo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bR6rIKqNnus6DdJOWA1JksSs4t/D1nUy/0V09MFOcWVzqY8H489qWJ4Z0Kss4GqnaQMeOQl2wl4RwXvWqQ/CCC/HzYCm7bSa8POddBLveB8yZ0Oc5cZBHLLzwB2fX3k8BS6J+4tvBQFJcWMcSlCZzby+yB2tMgVOjxb7YWOJVWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=azdUnHZe; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1718213890; c=relaxed/simple;
+	bh=w+ngwamm0ApqPGga3qi/YIQkOfcw86BRXlkHoeHqNZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hdvpoHnMPFnfJZ2OxrBSaPcbgHvMafzUw8Ghd2cQXgY3WuxVi67mq208xdQwvCU8DrpR/DFnT31g30vlEDWKYCc2BE2cXNcXd46Xfh04XkEUyi9HbuWLCK69vX5bEt31CnvcsQQ3HO5TbCizcAul8gyPqH+3fMtnTQI1pb1fDfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OEb+0hmM; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718213587; x=1749749587;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=8QslqOf6bq40lwL09Fh9oEB2dYpfPrXAnjP/2bJhEbo=;
-  b=azdUnHZeBpXgJmfCE0k7PQtk9aHTyh6/jtJJIlDMveJJzzvVn5Ww2XRn
-   NnisEqc+YkiZSnSYNEo73WliMi30XB9hr7PXdRAR5fmF8/c4/ZnpAS0gI
-   s7faV4wKM5AuZslxu5ZJElMRwBFELagx6GG34zTYlKUhM6/oWuaZVdnbF
-   mhZs0muI2u2yMXuN5DuL17vOpgjXmxh84dTA68uyh8mo+yKudgy0rKkPQ
-   x6tIBcKwQY2Y5InJOLbvNkmd5l4M0zlJBBiF8/hHVVx1VBrijFFDFi43E
-   y6Ymxo+JsZaRg/htATKdCdDu73NlIzh9Ok2i+PDQAVl3jbny465sssE7/
-   w==;
-X-CSE-ConnectionGUID: ykSRmcSYSyGXm+cUPkmJuQ==
-X-CSE-MsgGUID: N83F2mraQlCnhQjImxX1Qg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="18774231"
+  t=1718213889; x=1749749889;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=w+ngwamm0ApqPGga3qi/YIQkOfcw86BRXlkHoeHqNZg=;
+  b=OEb+0hmMdsWqvDkrE68PyupusIT/txz1uR8ayzEuSFsMFGuOc3tXwEC4
+   DtqeKoTPaMdg7c0yu1NESKemNg4ZnrxckhU2Zi7mmynAplO96vqMX9vpO
+   Udm8CUHOgoBNzWihQK+uUD4i68UMyd67z48Q/77m+t5IqMFu3omR7kRE+
+   ltw2ZtyEEwARmphzDt7KGgyxKPsWEPSqxNqQ/UE+wD3TD1joHW246Exp5
+   Gz+5JRDqv+jf5ltSzO//7ACZ00DRZBOU6raQBXdXjKoGSGOx5b9IBSUOQ
+   fsiw8ZytAI4tIZ5Pn4Rpg/Jzq8tnxDS4J2eUSxqHy82rYRgRW7ZNbwvFe
+   g==;
+X-CSE-ConnectionGUID: Arw4yAG2R7iCtt0qugcOsA==
+X-CSE-MsgGUID: TLYkkSQ3QPye6L7EmTNtug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="15119684"
 X-IronPort-AV: E=Sophos;i="6.08,233,1712646000"; 
-   d="scan'208";a="18774231"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 10:33:07 -0700
-X-CSE-ConnectionGUID: YXNGLTNPSBqIRyGNs4AMOw==
-X-CSE-MsgGUID: 3j9w/nRHRcCD46NM1qJW1g==
+   d="scan'208";a="15119684"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 10:38:08 -0700
+X-CSE-ConnectionGUID: Fzt9ZDUDRbuHE4/p+0mYzA==
+X-CSE-MsgGUID: U/zYKYu1QQ6imkplDYnjyA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,233,1712646000"; 
-   d="scan'208";a="39928976"
-Received: from snarapar-mobl1.amr.corp.intel.com (HELO [10.209.70.177]) ([10.209.70.177])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 10:33:06 -0700
-Message-ID: <47fad008a152957c87e9846fdbf40746b6e2871a.camel@linux.intel.com>
-Subject: Re: [PATCH 1/8] perf/x86/uncore: Save the unit control address of
- all units
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: "Liang, Kan" <kan.liang@linux.intel.com>, peterz@infradead.org, 
-	mingo@kernel.org, linux-kernel@vger.kernel.org
-Cc: acme@kernel.org, namhyung@kernel.org, irogers@google.com,
- eranian@google.com,  ak@linux.intel.com, yunying.sun@intel.com
-Date: Wed, 12 Jun 2024 10:33:05 -0700
-In-Reply-To: <eb5d91d1-2898-45e0-a2d3-aa5c66155911@linux.intel.com>
-References: <20240610201619.884021-1-kan.liang@linux.intel.com>
-	 <20240610201619.884021-2-kan.liang@linux.intel.com>
-	 <0f1ba5d8ecc62f774590077b2f88f5b64dd98452.camel@linux.intel.com>
-	 <eb5d91d1-2898-45e0-a2d3-aa5c66155911@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
+   d="scan'208";a="63052523"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.20.178])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 10:38:07 -0700
+Date: Wed, 12 Jun 2024 10:38:05 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>, Bharata B Rao <bharata@amd.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH -V2] cxl/region: Support to calculate memory tier
+ abstract distance
+Message-ID: <Zmnc/bIkAQp6dpxQ@aschofie-mobl2>
+References: <20240611055423.470574-1-ying.huang@intel.com>
+ <ZmjBfcaosIlOODFR@aschofie-mobl2>
+ <87sexi7vzp.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sexi7vzp.fsf@yhuang6-desk2.ccr.corp.intel.com>
 
-On Wed, 2024-06-12 at 10:49 -0400, Liang, Kan wrote:
->=20
->=20
-> The id and pmu_idx+die can all be used as a key to search the RB tree in
-> different places.
->=20
-> The id is the physical ID of a unit. The search via id is invoked when
-> adding a new unit. Perf needs to make sure that the same PMU idx
-> (logical id) is assigned to the unit with the same physical ID. Because
-> the units with the same physical ID in different dies share the same PMU.
+On Wed, Jun 12, 2024 at 10:09:14AM +0800, Ying Huang wrote:
 
-This info about having same physical ID implies the same PMU
-is worth mentioning in a comment and will be quite helpful in
-understanding the rb-tree organization.
+snip
 
-Thanks.
+> >> ---
+> >>  drivers/cxl/core/region.c | 40 +++++++++++++++++++++++++++++++++++----
+> >>  drivers/cxl/cxl.h         |  2 ++
+> >>  2 files changed, 38 insertions(+), 4 deletions(-)
+> >> 
+> >> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> >> index 3c2b6144be23..81d0910c0a02 100644
+> >> --- a/drivers/cxl/core/region.c
+> >> +++ b/drivers/cxl/core/region.c
+> >> @@ -9,6 +9,7 @@
+> >>  #include <linux/uuid.h>
+> >>  #include <linux/sort.h>
+> >>  #include <linux/idr.h>
+> >> +#include <linux/memory-tiers.h>
+> >>  #include <cxlmem.h>
+> >>  #include <cxl.h>
+> >>  #include "core.h"
+> >> @@ -2304,14 +2305,20 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
+> >>  	return true;
+> >>  }
+> >>  
+> >> +static int cxl_region_nid(struct cxl_region *cxlr)
+> >> +{
+> >> +	struct cxl_region_params *p = &cxlr->params;
+> >> +	struct cxl_endpoint_decoder *cxled = p->targets[0];
+> >> +	struct cxl_decoder *cxld = &cxled->cxld;
+> >> +
+> >> +	return phys_to_target_node(cxld->hpa_range.start);
+> >> +}
+> >> +
+> >
+> > I believe it's OK to send a resource_size_t to phys_to_target_node()
+> > like this:
+> >
+> > --- a/drivers/cxl/core/region.c
+> > +++ b/drivers/cxl/core/region.c
+> > @@ -2308,10 +2308,8 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
+> >  static int cxl_region_nid(struct cxl_region *cxlr)
+> >  {
+> >         struct cxl_region_params *p = &cxlr->params;
+> > -       struct cxl_endpoint_decoder *cxled = p->targets[0];
+> > -       struct cxl_decoder *cxld = &cxled->cxld;
+> >
+> > -       return phys_to_target_node(cxld->hpa_range.start);
+> > +       return phys_to_target_node(p->res->start);
+> >  }
+> >
+> 
+> I believe this works.  But the original implementation is just a
+> mechanical code movement from cxl_region_perf_attrs_callback().  So, I
+> prefer to keep it stupid. Then, further optimization can be done on top
+> of it.  Is it good for you?
 
-Tim
->=20
-> The pmu_idx+die key is used when setting the cpumask. Please see
-> intel_uncore_find_discovery_unit_id() in the patch 2. Perf wants to
-> understand on which dies the given PMU is available.
->=20
-> Since different keys can be used to search the RB tree, I think one of
-> them has to traverse the whole tree. At the stage of adding a new unit,
-> the tree is not complete yet. It minimizes the impact of the O(N)
-> search. So I choose the pmu_idx+die rather than id.
->=20
-> Also, the driver only does once to build the tree and set the cpumask at
-> driver load time. I think the O(N) should be acceptable here.
->=20
-> Thanks,
-> Kan
+I prefer to do it now while we are thinking about it.
 
+How about a precursor patch:
+Patch 1/2: cxl/region: Add a region to node id helper
+
+--and then in that commit log you can say it's a simplified lookup 
+and is being done in preparation for adding another caller.
+
+-- Alison
+
+> 
+snip
+> >
 
