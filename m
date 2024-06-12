@@ -1,241 +1,266 @@
-Return-Path: <linux-kernel+bounces-211192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83179904E46
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:37:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A955904E4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15CB7287963
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:37:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 385131C2473C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8004A16D326;
-	Wed, 12 Jun 2024 08:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF4416D32B;
+	Wed, 12 Jun 2024 08:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QWqbd73q";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ss2PGx4W";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QWqbd73q";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ss2PGx4W"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="QR4mtu4Q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LV3x6O+L"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC60169ACD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1F116C6AF;
+	Wed, 12 Jun 2024 08:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718181441; cv=none; b=bq/BE/QGvXOqixrRcIUuB0Puo6BVoHoxewlLAqKSCHSqLJrHiJzizkRGHIkxvAb4ZWoMk/54AeCreYDy3faoqYY6pJADO8HR9iXx+5AIILC1CkGIJtsOMWu1BoP4cMSIt/4N++s2oZwzE2YbFIJvB3i0JG5IPavcILifRli/ZVQ=
+	t=1718181507; cv=none; b=YEOhiUeqwvIwLSlyrquSh0sVB/Sb0SqBev6T5EOjJMeGP8e2J5tL4sZmboW14Dpb3q2FZogyrRwQFMon9uDeJiy47zrShQl8PpAqwUyFwtbn1BS6PnFbssEWAAxgzaDvTIPN/EUBczwCGWCsCTiDx7mXTA9rCNOSXvAkZy/r2Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718181441; c=relaxed/simple;
-	bh=d0mgryIxxvHromEOdqq/1QHx/jvSZHYku+sWqbNgJtY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=toxTrLqWs/gY8ux7wdSE47P0fCTH5zLb2nGUzfFMle8Tyxjue4Y5y3mYPPEMVzAZuLBZ83PBXYCfoS9o7VRH26dJjDzpCElZY/wfA9wASfH3s/GKhnW+d0oN0//ZYMftZ4pEkbFqRHzZdWgPNUZd2cRDxl/ezCqj9F3XwGyOX5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QWqbd73q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ss2PGx4W; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QWqbd73q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ss2PGx4W; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5F5D4340D7;
-	Wed, 12 Jun 2024 08:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718181435; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SG66lCuTBtRrUcDZb/NXKExJ27Faq10AeO/CvMXqc+c=;
-	b=QWqbd73qpVFEC24eoiMFB8dkAhOa5EdfpSLyzXHkZV8DMSuWk0TeQ/zaIRz/C4IkCE+vU4
-	h3FeCFEcxm19judYElYiV9zRnkZ2qpOETD0FRxAUdow0aPTVBptnnn7ir5b4HHMd5uG59z
-	ULPq1o8e8oNscIt3aan3SDkbomXSf80=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718181435;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SG66lCuTBtRrUcDZb/NXKExJ27Faq10AeO/CvMXqc+c=;
-	b=ss2PGx4WTiYpq1x2RrndpdmQWX4jv+buaD7QkrkXi/fg0/cSAR9k1/vNvYzxd1ChoheqiJ
-	NKngdBIFxTCSmZCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718181435; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SG66lCuTBtRrUcDZb/NXKExJ27Faq10AeO/CvMXqc+c=;
-	b=QWqbd73qpVFEC24eoiMFB8dkAhOa5EdfpSLyzXHkZV8DMSuWk0TeQ/zaIRz/C4IkCE+vU4
-	h3FeCFEcxm19judYElYiV9zRnkZ2qpOETD0FRxAUdow0aPTVBptnnn7ir5b4HHMd5uG59z
-	ULPq1o8e8oNscIt3aan3SDkbomXSf80=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718181435;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SG66lCuTBtRrUcDZb/NXKExJ27Faq10AeO/CvMXqc+c=;
-	b=ss2PGx4WTiYpq1x2RrndpdmQWX4jv+buaD7QkrkXi/fg0/cSAR9k1/vNvYzxd1ChoheqiJ
-	NKngdBIFxTCSmZCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 280B01372E;
-	Wed, 12 Jun 2024 08:37:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pU4dCDteaWYrXwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 12 Jun 2024 08:37:15 +0000
-Message-ID: <14a7c534-af3f-43b8-a24c-501a9af97936@suse.de>
-Date: Wed, 12 Jun 2024 10:37:14 +0200
+	s=arc-20240116; t=1718181507; c=relaxed/simple;
+	bh=YWtk753VKbXICjxbUaMpl058KAPoF0f/CE+ytNJPs8s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=i2PfCKHlBHFKfXuZO++V6TgzoYU+MmfN2kvNBoaz7W/k7w8D9MmT2L2Jmsf7PgsqwC6jgvGkeSe78RALMsaWMwMkPL/qnkzijQ9bgp/qV3KQDCL2Cvz0Chl1eEoaKegKy3PYjQBrsdzbJvgH3y+POBSDa191/wT8VVqHyo0BKvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=QR4mtu4Q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LV3x6O+L; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 3E14611400C2;
+	Wed, 12 Jun 2024 04:38:24 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Wed, 12 Jun 2024 04:38:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1718181504; x=1718267904; bh=rZ
+	avWNgK9bWUu4tKzoeFNgjPgkMNXtCWKxY3QEFPpxQ=; b=QR4mtu4QkKm/ehGlCL
+	fyS5lG9rREWk2DiZKOZs3VC2EnEYCeWHISO7eW3mGggsUNX3ZqRrD07w3SZLa2NY
+	n6rhIXrdKTBbo84unZEevvrZsaTnl+plCEy/SMo+vTqaFlrbYo3Ed8wOtUklT0v5
+	0EhYs5yOYaUK5fqfb280tTkBh8Fidg+agUgWGxBG8qn7IMaKHOG2XxSzrMuyRl3E
+	14EbeIgZOpD7ZlmCrF/8ZY2vE4hEiwz0ZvNPfhu7K5/TEwXvg8EZtzfbeUzUGipt
+	2nISveffagvUJcvdSb9eQqN9zkZEzvgyaS5B5h3PcYVtha0XkdG5wB/4d+6sTRHc
+	cZjA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1718181504; x=1718267904; bh=rZavWNgK9bWUu
+	4tKzoeFNgjPgkMNXtCWKxY3QEFPpxQ=; b=LV3x6O+Lj9KkLO40kaFLQ1PNZI414
+	4CvAtsEdYX02NNL/eSeevfZfherFNXYaPwW2jA/4n5q3vg4IEoWreANMewYy/z02
+	gpFr8uPG5Xk8xpH0mWHljFzfTG7k/LRNNss5DejANTfMeYWdtmEJTClAsoWq0/FC
+	YwAXcLidWYPI098dYqCFeCzjMN6dPEIeAqB6amcxGxcvCuXA9tYMwrKq3qTTYxNr
+	2sJMP4mmknHso+NqkotHxvg6PX+9ayEX9aFnPNkfzwjSqJqxVIjKs+ZPNh6mn959
+	L2HHuukcdHyiN2JPNxcqsHRQPFMIs5YH2Yx3QOazATT3cx5RJe5usrsPw==
+X-ME-Sender: <xms:f15pZjvoP5roakX8fytarFKl5e7G8kz5ov1fsplqPSPW9hss6MQSwQ>
+    <xme:f15pZkf_NKDQ_muq9ER-o60I0S9P4DCCr5zyu8M9kvWDiq5YT18OsCL6Y2daWmkr5
+    sSWomDOYFjoIbuQqVA>
+X-ME-Received: <xmr:f15pZmzTvrLRvMmH__goRZYdW_mSLJq8GGC0erTB5rtTn59Nqr7p1RY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedgtdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephfffufggtgfgkffvvefosehtkeertdertdejnecuhfhrohhmpeflihgrgihu
+    nhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqnecugg
+    ftrfgrthhtvghrnhepkefhueffudekhfelvdffieejheegtdeuieffveelkeevhfevvedt
+    keefhfegvddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehf
+    lhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:f15pZiN5pmF4ifi4rn0RZCPxi2e2pjtC6ZulOwo8EXXufZ66G_IZVQ>
+    <xmx:f15pZj_KPmd_OpczBU2GSxlKPrhQhonY4R9kHJD6uGE6fUserkadTg>
+    <xmx:f15pZiVTa_SLWLH-l8HnFDDpDPXOfG_Jf0DJSzlpJrqaec2ymP9fKw>
+    <xmx:f15pZkc2H63vGk1wJyz05tu0QeiYvFZjQ64ipVrSFAe03GkckZ_PlA>
+    <xmx:gF5pZkPpCFZuNibZW7mFHS3_SSvlUGplwVSSr6ESNwotI9g2WiYJed2Z>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Jun 2024 04:38:22 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Date: Wed, 12 Jun 2024 09:38:19 +0100
+Subject: [PATCH v3] MIPS: Implement ieee754 NAN2008 emulation mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/fbdev-dma: fix getting smem_start
-To: Javier Martinez Canillas <javierm@redhat.com>,
- "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>
-Cc: Peng Fan <peng.fan@nxp.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240604080328.4024838-1-peng.fan@oss.nxp.com>
- <8f4a6d80-dd3e-422f-88af-d26f50c973ff@suse.de>
- <e307fdc0-553d-4946-9017-ed3a28e9cae2@suse.de>
- <87cyomsiqt.fsf@minerva.mail-host-address-is-not-set>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <87cyomsiqt.fsf@minerva.mail-host-address-is-not-set>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	FREEMAIL_TO(0.00)[redhat.com,oss.nxp.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.29
-X-Spam-Level: 
+Message-Id: <20240612-mips_ieee754_emul-v3-1-2c21b450abdb@flygoat.com>
+X-B4-Tracking: v=1; b=H4sIAHpeaWYC/33NSwqDMBCA4atI1k1J4iO2q96jFAnJRAfUSGJDR
+ bx7o6sWSpnVPzDfrCSARwjkmq3EQ8SAbkyRnzKiOzW2QNGkJoKJgpVM0gGn0CAAyLJoYHj21HB
+ ZV6U1l1oyku4mDxZfh3l/pO4wzM4vx4vI9+0/LXKaxmipmeG5Vvpm+6V1aj5rN5Ddi+LD4PyXI
+ ZKhrLxUoAQHy76Nbdvevqmo6fgAAAA=
+To: Jonathan Corbet <corbet@lwn.net>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, 
+ =?utf-8?q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5330;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=YWtk753VKbXICjxbUaMpl058KAPoF0f/CE+ytNJPs8s=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrTMuLrqWzPuy5zXXPhvz6cYY/9F/X9a5P/vStMVr5yqK
+ mKxziOto5SFQYyLQVZMkSVEQKlvQ+PFBdcfZP2BmcPKBDKEgYtTACaysp7hv6+h2NqczuAqjbBl
+ DTcPy5i8v3FRZdnf2fFXDWS4k4tC9Rj+ipiwzY9c/FK9cuqyT3Z7ex7wr4hSmX9N2cOKIZp7pch
+ DHgA=
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-Hi Javier
+Implement ieee754 NAN2008 emulation mode.
 
-Am 12.06.24 um 09:49 schrieb Javier Martinez Canillas:
-> Thomas Zimmermann <tzimmermann@suse.de> writes:
->
-> Hello Thomas,
->
->> Hi
->>
->> Am 10.06.24 um 10:47 schrieb Thomas Zimmermann:
->>> Hi
->>>
->>> Am 04.06.24 um 10:03 schrieb Peng Fan (OSS):
->>>> From: Peng Fan <peng.fan@nxp.com>
->>>>
->>>> If 'info->screen_buffer' locates in vmalloc address space, virt_to_page
->>>> will not be able to get correct results. With CONFIG_DEBUG_VM and
->>>> CONFIG_DEBUG_VIRTUAL enabled on ARM64, there is dump below:
->>> Which graphics driver triggers this bug?
->>>
->>>> [    3.536043] ------------[ cut here ]------------
->>>> [    3.540716] virt_to_phys used for non-linear address:
->>>> 000000007fc4f540 (0xffff800086001000)
->>>> [    3.552628] WARNING: CPU: 4 PID: 61 at arch/arm64/mm/physaddr.c:12
->>>> __virt_to_phys+0x68/0x98
->>>> [    3.565455] Modules linked in:
->>>> [    3.568525] CPU: 4 PID: 61 Comm: kworker/u12:5 Not tainted
->>>> 6.6.23-06226-g4986cc3e1b75-dirty #250
->>>> [    3.577310] Hardware name: NXP i.MX95 19X19 board (DT)
->>>> [    3.582452] Workqueue: events_unbound deferred_probe_work_func
->>>> [    3.588291] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS
->>>> BTYPE=--)
->>>> [    3.595233] pc : __virt_to_phys+0x68/0x98
->>>> [    3.599246] lr : __virt_to_phys+0x68/0x98
->>>> [    3.603276] sp : ffff800083603990
->>>> [    3.677939] Call trace:
->>>> [    3.680393]  __virt_to_phys+0x68/0x98
->>>> [    3.684067]  drm_fbdev_dma_helper_fb_probe+0x138/0x238
->>>> [    3.689214] __drm_fb_helper_initial_config_and_unlock+0x2b0/0x4c0
->>>> [    3.695385]  drm_fb_helper_initial_config+0x4c/0x68
->>>> [    3.700264]  drm_fbdev_dma_client_hotplug+0x8c/0xe0
->>>> [    3.705161]  drm_client_register+0x60/0xb0
->>>> [    3.709269]  drm_fbdev_dma_setup+0x94/0x148
->>>>
->>>> So add a check 'is_vmalloc_addr'.
->>>>
->>>> Fixes: b79fe9abd58b ("drm/fbdev-dma: Implement fbdev emulation for
->>>> GEM DMA helpers")
->>>> Signed-off-by: Peng Fan <peng.fan@nxp.com>
->>> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
->> I'm taking back my r-b. The memory is expected to by be physically
->> contiguous and vmalloc() won't guarantee that.
->>
-> Agreed.
+When this mode is enabled, kernel will accept ELF file
+compiled for both NaN 2008 and NaN legacy, but if hardware
+does not have capability to match ELF's NaN mode, __own_fpu
+will fail for corresponding thread and fpuemu will then kick
+in.
 
-These smem_ fields are clearly designed for PCI BARs of traditional 
-graphics cards. So can we even assume contiguous memory for DMA? That 
-was my assumption, but with IOMMUs it might not be the case. Fbdev-dma 
-only sets smem_start to support a single old userspace driver. Maybe we 
-should further restrict usage of this field by making it opt-in for each 
-driver. Best regards Thomas
->
->> Best regards
->> Thomas
->>
+This mode trade performance for correctness, while maintaining
+support for both NaN mode regardless of hardware capability.
+It is useful for multilib installation that have both types
+of binary exist in system.
 
+Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+Changes in v3:
+- Fix typo in commit message
+- Collect R-b tags
+- Link to v2: https://lore.kernel.org/r/20240511-mips_ieee754_emul-v2-1-af796ea21ef0@flygoat.com
+
+Changes in v2:
+- Fix a typo
+- Link to v1: https://lore.kernel.org/r/20240507-mips_ieee754_emul-v1-1-1dc7c0d13cac@flygoat.com
+---
+ Documentation/admin-guide/kernel-parameters.txt |  4 +++-
+ arch/mips/include/asm/fpu.h                     | 15 +++++++++++++++
+ arch/mips/kernel/elf.c                          |  4 ++++
+ arch/mips/kernel/fpu-probe.c                    |  9 ++++++++-
+ 4 files changed, 30 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 500cfa776225..dee487b03c9d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2000,7 +2000,7 @@
+ 			for the device. By default it is set to false (0).
+ 
+ 	ieee754=	[MIPS] Select IEEE Std 754 conformance mode
+-			Format: { strict | legacy | 2008 | relaxed }
++			Format: { strict | legacy | 2008 | relaxed | emulated }
+ 			Default: strict
+ 
+ 			Choose which programs will be accepted for execution
+@@ -2020,6 +2020,8 @@
+ 				by the FPU
+ 			relaxed	accept any binaries regardless of whether
+ 				supported by the FPU
++			emulated accept any binaries but enable FPU emulator
++				if binary mode is unsupported by the FPU.
+ 
+ 			The FPU emulator is always able to support both NaN
+ 			encodings, so if no FPU hardware is present or it has
+diff --git a/arch/mips/include/asm/fpu.h b/arch/mips/include/asm/fpu.h
+index 86310d6e1035..bc5ac9887d09 100644
+--- a/arch/mips/include/asm/fpu.h
++++ b/arch/mips/include/asm/fpu.h
+@@ -129,6 +129,18 @@ static inline int __own_fpu(void)
+ 	if (ret)
+ 		return ret;
+ 
++	if (current->thread.fpu.fcr31 & FPU_CSR_NAN2008) {
++		if (!cpu_has_nan_2008) {
++			ret = SIGFPE;
++			goto failed;
++		}
++	} else {
++		if (!cpu_has_nan_legacy) {
++			ret = SIGFPE;
++			goto failed;
++		}
++	}
++
+ 	KSTK_STATUS(current) |= ST0_CU1;
+ 	if (mode == FPU_64BIT || mode == FPU_HYBRID)
+ 		KSTK_STATUS(current) |= ST0_FR;
+@@ -137,6 +149,9 @@ static inline int __own_fpu(void)
+ 
+ 	set_thread_flag(TIF_USEDFPU);
+ 	return 0;
++failed:
++	__disable_fpu();
++	return ret;
+ }
+ 
+ static inline int own_fpu_inatomic(int restore)
+diff --git a/arch/mips/kernel/elf.c b/arch/mips/kernel/elf.c
+index 7aa2c2360ff6..f0e7fe85a42a 100644
+--- a/arch/mips/kernel/elf.c
++++ b/arch/mips/kernel/elf.c
+@@ -318,6 +318,10 @@ void mips_set_personality_nan(struct arch_elf_state *state)
+ 	t->thread.fpu.fcr31 = c->fpu_csr31;
+ 	switch (state->nan_2008) {
+ 	case 0:
++		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
++			t->thread.fpu.fcr31 &= ~FPU_CSR_NAN2008;
++		if (!(c->fpu_msk31 & FPU_CSR_ABS2008))
++			t->thread.fpu.fcr31 &= ~FPU_CSR_ABS2008;
+ 		break;
+ 	case 1:
+ 		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
+diff --git a/arch/mips/kernel/fpu-probe.c b/arch/mips/kernel/fpu-probe.c
+index e689d6a83234..6bf3f19b1c33 100644
+--- a/arch/mips/kernel/fpu-probe.c
++++ b/arch/mips/kernel/fpu-probe.c
+@@ -144,7 +144,7 @@ static void cpu_set_fpu_2008(struct cpuinfo_mips *c)
+  * IEEE 754 conformance mode to use.  Affects the NaN encoding and the
+  * ABS.fmt/NEG.fmt execution mode.
+  */
+-static enum { STRICT, LEGACY, STD2008, RELAXED } ieee754 = STRICT;
++static enum { STRICT, EMULATED, LEGACY, STD2008, RELAXED } ieee754 = STRICT;
+ 
+ /*
+  * Set the IEEE 754 NaN encodings and the ABS.fmt/NEG.fmt execution modes
+@@ -160,6 +160,7 @@ static void cpu_set_nofpu_2008(struct cpuinfo_mips *c)
+ 
+ 	switch (ieee754) {
+ 	case STRICT:
++	case EMULATED:
+ 		if (c->isa_level & (MIPS_CPU_ISA_M32R1 | MIPS_CPU_ISA_M64R1 |
+ 				    MIPS_CPU_ISA_M32R2 | MIPS_CPU_ISA_M64R2 |
+ 				    MIPS_CPU_ISA_M32R5 | MIPS_CPU_ISA_M64R5 |
+@@ -204,6 +205,10 @@ static void cpu_set_nan_2008(struct cpuinfo_mips *c)
+ 		mips_use_nan_legacy = !cpu_has_nan_2008;
+ 		mips_use_nan_2008 = !!cpu_has_nan_2008;
+ 		break;
++	case EMULATED:
++		/* Pretend ABS2008/NAN2008 options are dynamic */
++		c->fpu_msk31 &= ~(FPU_CSR_NAN2008 | FPU_CSR_ABS2008);
++		fallthrough;
+ 	case RELAXED:
+ 		mips_use_nan_legacy = true;
+ 		mips_use_nan_2008 = true;
+@@ -226,6 +231,8 @@ static int __init ieee754_setup(char *s)
+ 		return -1;
+ 	else if (!strcmp(s, "strict"))
+ 		ieee754 = STRICT;
++	else if (!strcmp(s, "emulated"))
++		ieee754 = EMULATED;
+ 	else if (!strcmp(s, "legacy"))
+ 		ieee754 = LEGACY;
+ 	else if (!strcmp(s, "2008"))
+
+---
+base-commit: 93a39e4766083050ca0ecd6a3548093a3b9eb60c
+change-id: 20240507-mips_ieee754_emul-d17865fd9870
+
+Best regards,
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Jiaxun Yang <jiaxun.yang@flygoat.com>
 
 
