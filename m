@@ -1,113 +1,136 @@
-Return-Path: <linux-kernel+bounces-212136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E457905BB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:07:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C8E905BB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D046EB23C0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3969F1F2181E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14080839F7;
-	Wed, 12 Jun 2024 19:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96D082C67;
+	Wed, 12 Jun 2024 19:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="h9LqdHtw"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HCmF8r2F"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5A582C8E;
-	Wed, 12 Jun 2024 19:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB88E381AF;
+	Wed, 12 Jun 2024 19:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718219247; cv=none; b=P3hcaGRXvHxZAz8bDRg2iB7UqjA1AYRZpifLgbQXe6EcCEIIwUqQUhMrU7ERfbLKoHL8RZkSLNP/e0ym4KhJEEWiOwd37WEJClTYcub5moZcQrP/XdGSFU18yaKKngz62b0WgmqYxPZpabzuGm+1S6h/5FqSEuJJzjltgtihJeI=
+	t=1718219307; cv=none; b=U4/J/rCoWJLu5mR+IgwCrWyueGAHYYraCb9XCX4JDVXBjeGh4eE+qW2E2VAglqf3xEhmdS4Eo+oeL0J6sunBUr5i2k78q7SyJteQa3UYZVklKqyk2bFciTbGhSBrAUBKvcgXRrAcdt6LTIRe4ayA+uAQJkFkGKrMvKyUh+YirPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718219247; c=relaxed/simple;
-	bh=pYJ0NhdbHfLh+0Ti9ZhqGoLI9uZW8HiS8P0m+9+BSFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dwx6tq8CLiUO2RGoc8aufZeEvPqhvBRP9UsJCDGInuIoyf6ThZTJoq54yBQ2oKX1/LYU1tGRJayP8617R8Q3dL2BNQG0lTVivsfEPSDmOJ68GDYXKix9zAKrQiKhGbyv4IkP3vmEzmKk02A9mh/QJoiWsYEEAgxHDetPA6rz/3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=h9LqdHtw; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1718219241;
-	bh=pYJ0NhdbHfLh+0Ti9ZhqGoLI9uZW8HiS8P0m+9+BSFk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h9LqdHtwtogXhy/EoRPzbtvst5NoICJ5N8y76YZchkAvliQOKXDwNmHESWfnJq8ZN
-	 oEDaPipW6ZJYWr9x6IdyT3HEsrnIydCOSDXbEs38DZsdwN/t5vNLAH90tj1wVvh0eD
-	 5en6iHTVo9W/eahEb3Tk0b02EL+LmJOTSnFLpMKYQGjga+C9MD5r/G1ZccCL21dRs0
-	 A2gb5hD5xVurnU+YN4CPPHB2/q8MEAfQidQipYjyHjmUaGrd9onJiNA0jbuU0aLAae
-	 Sk2x8tT+CWtPX8/9XhtXXy1U9Yb4In2jM7lbTR9IVGF2+kXAB5OqfXy77GEZJSXuvL
-	 3GCHLbeQPuAiQ==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id 9D76B6007C;
-	Wed, 12 Jun 2024 19:07:18 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by x201s (Postfix) with ESMTP id D52B3201136;
-	Wed, 12 Jun 2024 19:07:12 +0000 (UTC)
-Message-ID: <2642a36f-1e53-4672-9826-8c07d10d69f2@fiberby.net>
-Date: Wed, 12 Jun 2024 19:07:12 +0000
+	s=arc-20240116; t=1718219307; c=relaxed/simple;
+	bh=acyp+foR3H6xaVXmAsc6xlFxbLgR9ZZPxI1Etk5jNaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s9J+CKB+DhlLuZEu9KJNYyfTOcRO+b3KmopfxpIF61bB9QvF+Z6DWrHpkuJfQOOYXmC00d4H1drgkjxKTECNMbrjRlEnJtGe69aIwQRrQGGHLqygefSX6ayjwoJyHs6XJv+geVFHVSnqfk/2oCIkXSn7G0kVyoqR3yzmM4BWA+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HCmF8r2F; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=nXMsYCyv4Yf7/Yu0L4W/RILlfgsgIycAWX2uQcsZwVg=; b=HCmF8r2FVSCYuICzIMuXFI/Cci
+	kfi3EelJoIlhXTo027+7qAg8KPfT+I8Y9B1pRhU/mfiGb2/y88pqAAClO7sJERJU2KbJU4JuCfjvM
+	aOjxzUtwo/hGHToL7VI98vwE3CbIyciALaQDc+hY5E5JxUvAgIqEZh23bB7efTVtkT4TYhHn6K2ja
+	WWZBTD48mR+KKa8ou0/C4UJ7Iuo+E4fi0FpmuWZ9qC0zkiXRWyaS6V4FMxJT4Hs9yKOdHnquLTIdo
+	xHtqx8pyTEu+jI9shrlDU3fAIUNfdDwY1VSzAr+iRxuMZgfSQk6riQ8PTkbEvW64WEnPlobIvlbqL
+	fnSlGl7Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sHTKR-0000000F0Aj-1j7U;
+	Wed, 12 Jun 2024 19:08:15 +0000
+Date: Wed, 12 Jun 2024 20:08:15 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org, mcgrof@kernel.org,
+	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
+	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
+	cl@os.amperecomputing.com, john.g.garry@oracle.com
+Subject: Re: [PATCH v7 06/11] filemap: cap PTE range to be created to allowed
+ zero fill in folio_map_range()
+Message-ID: <ZmnyH_ozCxr_NN_Z@casper.infradead.org>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-7-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH net-next 0/9] flower: rework TCA_FLOWER_KEY_ENC_FLAGS
- usage
-To: Davide Caratti <dcaratti@redhat.com>
-Cc: Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>,
- Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240611235355.177667-1-ast@fiberby.net>
- <Zmm5e3KFxFCQzwzt@dcaratti.users.ipa.redhat.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
-In-Reply-To: <Zmm5e3KFxFCQzwzt@dcaratti.users.ipa.redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607145902.1137853-7-kernel@pankajraghav.com>
 
-Hi Davide,
-
-On 6/12/24 3:06 PM, Davide Caratti wrote:
-> On Tue, Jun 11, 2024 at 11:53:33PM +0000, Asbjørn Sloth Tønnesen wrote:
->> This series reworks the recently added TCA_FLOWER_KEY_ENC_FLAGS
->> attribute, to be more like TCA_FLOWER_KEY_FLAGS, and use
->> the unused u32 flags field in TCA_FLOWER_KEY_ENC_CONTROL,
->> instead of adding another u32 in FLOW_DISSECTOR_KEY_ENC_FLAGS.
-
-s/TCA_FLOWER_KEY_ENC_CONTROL/FLOW_DISSECTOR_KEY_ENC_CONTROL/
-
->> I have defined the new FLOW_DIS_F_* and TCA_FLOWER_KEY_FLAGS_*
->> flags to coexists for now, so the meaning of the flags field
->> in struct flow_dissector_key_control is not depending on the
->> context that it is used in. If we run out of bits then we can
->> always make split them up later, if we really want to.
-
-s/always make split/always split/
-
->> Davide and Ilya would this work for you?
+On Fri, Jun 07, 2024 at 02:58:57PM +0000, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> If you are ok with this, I can adjust the iproute code I keep locally,
-> and the kselftest, re-test, and than report back to the series total
-> reviewed-by.
-> It's going a take some days though; and of course, those bit will be
-> upstreamed as well.
+> Usually the page cache does not extend beyond the size of the inode,
+> therefore, no PTEs are created for folios that extend beyond the size.
 > 
-> WDYT?
+> But with LBS support, we might extend page cache beyond the size of the
+> inode as we need to guarantee folios of minimum order. Cap the PTE range
+> to be created for the page cache up to the max allowed zero-fill file
+> end, which is aligned to the PAGE_SIZE.
 
-That would be great, there is still quite some time left before net-next
-closes, I just wanted to get the ball rolling, with some code, so it is
-easier to discuss the implementation details.
+I think this is slightly misleading because we might well zero-fill
+to the end of the folio.  The issue is that we're supposed to SIGBUS
+if userspace accesses pages which lie entirely beyond the end of this
+file.  Can you rephrase this?
 
--- 
-Best regards
-Asbjørn Sloth Tønnesen
-Network Engineer
-Fiberby - AS42541
+(from mmap(2))
+       SIGBUS Attempted access to a page of the buffer that lies beyond the end
+              of the mapped file.  For an explanation of the treatment  of  the
+              bytes  in  the  page that corresponds to the end of a mapped file
+              that is not a multiple of the page size, see NOTES.
+
+
+The code is good though.
+
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+> An fstests test has been created to trigger this edge case [0].
+> 
+> [0] https://lore.kernel.org/fstests/20240415081054.1782715-1-mcgrof@kernel.org/
+> 
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
+>  mm/filemap.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 8bb0d2bc93c5..0e48491b3d10 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3610,7 +3610,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	struct file *file = vma->vm_file;
+>  	struct address_space *mapping = file->f_mapping;
+> -	pgoff_t last_pgoff = start_pgoff;
+> +	pgoff_t file_end, last_pgoff = start_pgoff;
+>  	unsigned long addr;
+>  	XA_STATE(xas, &mapping->i_pages, start_pgoff);
+>  	struct folio *folio;
+> @@ -3636,6 +3636,10 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+>  		goto out;
+>  	}
+>  
+> +	file_end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE) - 1;
+> +	if (end_pgoff > file_end)
+> +		end_pgoff = file_end;
+> +
+>  	folio_type = mm_counter_file(folio);
+>  	do {
+>  		unsigned long end;
+> -- 
+> 2.44.1
+> 
 
