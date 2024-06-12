@@ -1,122 +1,306 @@
-Return-Path: <linux-kernel+bounces-211720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17F39055F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:57:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE059055F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E80081C22614
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:57:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F4A21F222D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70F517F4EB;
-	Wed, 12 Jun 2024 14:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE8117FABA;
+	Wed, 12 Jun 2024 14:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jcPK+yGu"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DtdtnfeD"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919EC17F504
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0CC17F4EE
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718204194; cv=none; b=b2vxrWGMdKk40N2hdj8z26gnLN264MBkxSkvrA3ckz514Ldn5Ix7Mcg8gQyigsJrVy40rZPT8QR7rqMC0rZrjy850/K9dUyUT6i+0yEwnNmva0cyAUDysO6I8ZLaUfZq2FaN2Fzq4GuuLrqoXpufG2wA/MgQtEeaJM4kWNqdTRg=
+	t=1718204223; cv=none; b=CaPMZDqlAu4CPRQnwxuhy3m5DdO/tDvl6rYa5iOfvAA1cBPi8O+W2m3hcazCVA83jElRLh/Ytd5nI0q/6CuBGrpmvuhWJK7AtWVSrLwpVkU204FWt7DfQ+zqjUxfgTv33yTjLFpArtWT7AUuNfxrNb54BBiq3sbIgEgZ5m0/zO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718204194; c=relaxed/simple;
-	bh=4kn8S3LzHMMLi/6nFeWowtDlnUvyLGqfc/HqAgfIrhQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=StO+aP/ZlxdevjM+cT/CbwbZk7o7wg9IOP261MQ9tuBs5/xootqu5JKKUSIyTgRClca+RCbrpfRK+UyPsZ+yAiU+AMMCYbcoIHlLmCJibY3lQCruks/H+FSkWq2fMpfuOkulJi+0kq3nw0sgQxCkCem2nccf4uZ8AtjWmc9gsk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jcPK+yGu; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6f09eaf420so465680866b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:56:32 -0700 (PDT)
+	s=arc-20240116; t=1718204223; c=relaxed/simple;
+	bh=kXvqJOj2qmIJtlSAfCsHO42GGGkuDIC0ENSaA26lh7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nwGElxuj7k9Z9HDAtdRh+yfutCw27hKdKROwhKAghU94I8Fh49Q5jG7y/WcNabgcvZ1bZwDVGBm69ZkoTdOwJ5mpYQcl+jeY7yWiUNVEmMi3ZvVG+QlxnCw1UaC0LZleFrrFO91YJ4vQ9D5ZkOp2pBBrD06vPzHg4qcJhzC2qOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DtdtnfeD; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-375bb80e5b8so133585ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:57:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718204191; x=1718808991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1718204220; x=1718809020; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q5yu8LOR9yMB+oZSUx+fwYASzFM4Hileor0B9Ph2tUI=;
-        b=jcPK+yGuvsDp844baXORuuy6LmQF02uRm5rukBMTdd8MDXHPn25+f0462WZrez8Ola
-         3rMNDiWO95xmcGBOtVhDY684AkBlRVN9wMFmJL9pAucYAlz64uV9CxblrOU4MpFgxIAD
-         ose+245sCKpgoD5qSf5I2G3u6QZCPYUdUwvaoahSVdKUsvwaEpc+QPMQ9yi3jooeQBs4
-         YORLLEh0dwDHRAVmbHFZOwok4AN+mfFdthdRzE1ULUiECnMD9PhQgdrVlozuY46Usk2b
-         XjtIP12IE0ggKDjjeqNF1Of3PSUbg2U1nEkW6dJvZpM/LlLe4g4aErYcdHRfyk0yxH35
-         A2/Q==
+        bh=Plug/FubSS9ewmpduy54mROO8mLilKQ8oOX0XAiB/Gs=;
+        b=DtdtnfeDIzv2aHUdLeehBrRIXrgnG39ZxfDCbqrBnnr1KFr6oXG3tume+V6wBO/fmx
+         QjgUR0EVBLh3bLpIjy9a3RpkikjSGqhC23XlKYvOOHXrpmzTbJLe6c3b0/X7cG6K6rKN
+         vlrQtwgnGU62ZjIfOnuRDGwv+SQVC8YLl1Qap6AZzTLPtH8nb/xbf3Tt8B9x3FWqqWPY
+         +O7XpyU87FjNYN8sRGAMLtG4Nl8QsNTvdGhNoz3PWqwWwtB8o3q/nRvHuUzFPo6BLea3
+         27sApHvd1J3hKD76gJuJ/1c4xRuAhv9igfP9QatNsrSwHOaObpvP2lXDShmwnT+UQZFU
+         HInA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718204191; x=1718808991;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718204220; x=1718809020;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q5yu8LOR9yMB+oZSUx+fwYASzFM4Hileor0B9Ph2tUI=;
-        b=td8cxZyLDvPW7sPK1r5zeX7KotdBN1/PY/1e5Pd8yJ8NADOBnYqeLVp80GiCVbeNBQ
-         Ig+iLffJJm/XJu9ool5HX1/kdERiB8V1DvYNr7uQAu/s+AkhEs8iuDt5+DwRQZ2V0Ha+
-         iXtaWZrngXB1/SNx3xQH8ZSREJg2DdGcay22LmJv+ncI0muqyhKPA7KCjhAgpDGDiOgv
-         7kmZnZfvyTlXV5mdBgn2F1MmxqQt0MVlaDMCiwCdQoOEJ8d830p6b4BB1FxtdMjSPoHk
-         IGuvn7IgRfBeHuWJmgnAJ8Od8y+AlPlPLOGc9858EOLQ5VlrvhuEdeNIN25ZXAAgxqUN
-         hDMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBZadAW3yOkfyVyy82/vJijyFpGqYyc68OKJZVWOZgXnHfDxrMuisM4o7LN5dqmhPw8Z58EOVZtSvlL33E+qYnTPRiDdkoH2H0IYAZ
-X-Gm-Message-State: AOJu0YxR6GPbPxDpRHxOujskEAWeJa5g2cqUqn+29pRjQz2f6eVL80cJ
-	NptGNaCh1c9h6lP6RRBeoHvAvSu4ZnputrDQafkEOxUeFFq0pK2vkN25PIn4LiuZz22CJGGq3BZ
-	jMyw=
-X-Google-Smtp-Source: AGHT+IEwGz7ExK9rFeDcCAcMm8cBQlNhVoJT3sknKM3Eud8XI4/QAubfXavkLlUfpvUlX4mMSSoZ7Q==
-X-Received: by 2002:a17:906:cb13:b0:a6f:4f2c:1936 with SMTP id a640c23a62f3a-a6f4f2c1c19mr45887366b.44.1718204190879;
-        Wed, 12 Jun 2024 07:56:30 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f0f98a285sm552368966b.210.2024.06.12.07.56.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 07:56:30 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Amol Maheshwari <amahesh@qti.qualcomm.com>, 
- Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dylan Van Assche <me@dylanvanassche.be>
-Cc: Caleb Connolly <caleb.connolly@linaro.org>, phone-devel@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht
-In-Reply-To: <20240524161423.15392-1-me@dylanvanassche.be>
-References: <20240524161423.15392-1-me@dylanvanassche.be>
-Subject: Re: [PATCH v5 0/2] misc: fastrpc: FastRPC reserved memory
- assignment for SDM845 SLPI
-Message-Id: <171820418971.165525.3637990952357907188.b4-ty@linaro.org>
-Date: Wed, 12 Jun 2024 15:56:29 +0100
+        bh=Plug/FubSS9ewmpduy54mROO8mLilKQ8oOX0XAiB/Gs=;
+        b=YpwLrwGhtBKkj6w51kzqQjLJvIBGoW1LJ6aAazWrupxkeSGEJ1xGwlP/NhR5ENc1gk
+         p2A5bXxh5GSlrXD/l4/sPjw1M1PYSr0jm8b3+f5V9n0LT4lrvVGttapimsfI0hvNnY1+
+         ti/9FRHG6rfXZOVNQ9dz3dlA0OoIYEyhRHvIE3+OeCx5GruNzWRIYG8lhykHP8tLCpAU
+         lsBCvWeIKyaTSvEyBaKGu4xvbJu0LSXi73wuEwvJER9eBNlEtI9BhMZD9Us/k01zysqM
+         75fkQScuqbojp3oS6uY0ldelKxvr6+cFXPn2Z9aGhVy1JZLF7ZQ6lA7B8JIHr0IYiJ3q
+         EpiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfGLFLiTJ/xFICNztgHkNQSnjlFyMH3i6dYNOLTZnuWfZka7FgiWwCs5sCvMlpeGIvVBmek7YuQMAGinYP7WyYlz5ay4d4VZv8cxke
+X-Gm-Message-State: AOJu0Yz5t3u3aQTkfunGrYmbFuBlQQrfcK5B0TGBTr5A9WzKCMpDcsAq
+	VtLd/adWNESHdPUTycvg0sPa9ObvXxhXKU+jaHNywblkJAsLCSJMvmc4/CIVH5Q71jVtwVR8akv
+	wTj5cA08dwNZStirPZQPXPn3cI4+Xl9g4Q7wB
+X-Google-Smtp-Source: AGHT+IE+R7i2gqv7zOLcWU1DwOUBcsVM5huisdx3jFVf0F4q7LWHKhAUARQO0XayM9rFqaGH95bCcfkchyDdX1riub8=
+X-Received: by 2002:a05:6e02:3188:b0:375:9ed9:1322 with SMTP id
+ e9e14a558f8ab-375cb514668mr3822735ab.16.1718204219578; Wed, 12 Jun 2024
+ 07:56:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
+References: <20240515060114.3268149-1-irogers@google.com> <20240515060114.3268149-2-irogers@google.com>
+ <ce31a50b-53db-4c6f-9cb1-242280b0951c@arm.com> <CAP-5=fWxdZ1ibv7Pi0L38+NF-vNWZCtcDS9JVf6k3z9nDsrQQw@mail.gmail.com>
+ <e9fc6ce3-d5c5-431d-a628-62742432be47@arm.com>
+In-Reply-To: <e9fc6ce3-d5c5-431d-a628-62742432be47@arm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 12 Jun 2024 07:56:48 -0700
+Message-ID: <CAP-5=fXCuQEqumkv1F5wG_dibGaTHoXM1DiDJ8Yr-YUN2dyinQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] perf pmus: Sort/merge/aggregate PMUs like mrvl_ddr_pmu
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Aishwarya TCV <aishwarya.tcv@arm.com>, Tuan Phan <tuanphan@os.amperecomputing.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Bhaskara Budiredla <bbudiredla@marvell.com>, 
+	Bharat Bhushan <bbhushan2@marvell.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@arm.com>, Ravi Bangoria <ravi.bangoria@amd.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Will Deacon <will@kernel.org>, Stephane Eranian <eranian@google.com>, Mark Brown <broonie@kernel.org>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jun 12, 2024 at 6:57=E2=80=AFAM Robin Murphy <robin.murphy@arm.com>=
+ wrote:
+>
+> On 12/06/2024 1:32 pm, Ian Rogers wrote:
+> > On Wed, Jun 12, 2024 at 4:19=E2=80=AFAM Aishwarya TCV <aishwarya.tcv@ar=
+m.com> wrote:
+> >>
+> >>
+> >>
+> >> On 15/05/2024 07:01, Ian Rogers wrote:
+> >>> The mrvl_ddr_pmu is uncore and has a hexadecimal address suffix while
+> >>> the previous PMU sorting/merging code assumes uncore PMU names start
+> >>> with uncore_ and have a decimal suffix. Because of the previous
+> >>> assumption it isn't possible to wildcard the mrvl_ddr_pmu.
+> >>>
+> >>> Modify pmu_name_len_no_suffix but also remove the suffix number out
+> >>> argument, this is because we don't know if a suffix number of say 100
+> >>> is in hexadecimal or decimal. As the only use of the suffix number is
+> >>> in comparisons, it is safe there to compare the values as hexadecimal=
+.
+> >>> Modify perf_pmu__match_ignoring_suffix so that hexadecimal suffixes
+> >>> are ignored.
+> >>>
+> >>> Only allow hexadecimal suffixes to be greater than length 2 (ie 3 or
+> >>> more) so that S390's cpum_cf PMU doesn't lose its suffix.
+> >>>
+> >>> Change the return type of pmu_name_len_no_suffix to size_t to
+> >>> workaround GCC incorrectly determining the result could be negative.
+> >>>
+> >>> Signed-off-by: Ian Rogers <irogers@google.com>
+> >>> ---
+> >>>   tools/perf/util/pmu.c  | 33 +++++++++++++--------
+> >>>   tools/perf/util/pmus.c | 67 ++++++++++++++++++++++++---------------=
+---
+> >>>   tools/perf/util/pmus.h |  7 ++++-
+> >>>   3 files changed, 65 insertions(+), 42 deletions(-)
+> >>>
+> >>
+> >> Hi Ian,
+> >>
+> >> Perf test "perf_all_PMU_test" is failing when run against
+> >> next-master(next-20240612) kernel with Arm64 on JUNO in our CI. It loo=
+ks
+> >> like it is failing when run on JUNO alone. Verified by running on othe=
+r
+> >> boards like RB5 and Ampere_altra and confirming that it does not fail =
+on
+> >> these boards. Suspecting that the suffixed 'armv8_pmuv3_0' naming coul=
+d
+> >> be the reason of test failure.
+> >>
+> >> Reverting the change (3241d46f5f54) seems to fix it.
+> >>
+> >> This works fine on Linux version v6.10-rc3
+> >>
+> >> Failure log
+> >> ------------
+> >> 110: perf all PMU test:
+> >> --- start ---
+> >> test child forked, pid 8279
+> >> Testing armv8_pmuv3/br_immed_retired/
+> >> Event 'armv8_pmuv3/br_immed_retired/' not printed in:
+> >> # Running 'internals/synthesize' benchmark:
+> >> Computing performance of single threaded perf event synthesis by
+> >> synthesizing events on the perf process itself:
+> >>    Average synthesis took: 1169.431 usec (+- 0.144 usec)
+> >>    Average num. events: 35.000 (+- 0.000)
+> >>    Average time per event 33.412 usec
+> >>    Average data synthesis took: 1225.698 usec (+- 0.102 usec)
+> >>    Average num. events: 119.000 (+- 0.000)
+> >>    Average time per event 10.300 usec
+> >>
+> >>   Performance counter stats for 'perf bench internals synthesize':
+> >>
+> >>          3263664785      armv8_pmuv3_0/br_immed_retired/
+> >>
+> >>
+> >>        25.472854464 seconds time elapsed
+> >>
+> >>         8.004791000 seconds user
+> >>        17.060209000 seconds sys
+> >> ---- end(-1) ----
+> >> 110: perf all PMU test                                               :
+> >> FAILED!
+> >
+> > Hi Aishwarya,
+> >
+> > Thanks for reporting an issue. The test should be pretty self
+> > explanatory: it is doing a `perf stat -e
+> > armv8_pmuv3/br_immed_retired/` and then looking for that in the
+> > output. The event armv8_pmuv3/br_immed_retired/ comes from running
+> > perf list. As you can see in the output the event did work, so perf
+> > stat is working so nothing is actually broken here. What isn't working
+> > is the perf stat output matching the command line event and this is
+> > because of the unnecessary suffix on ARM's PMU name.
+> >
+> > We have a problem that ARM have buggy PMU drivers, either from
+> > introducing new naming conventions or by just being broken:
+> > https://lore.kernel.org/lkml/CAP-5=3DfWNDkOpnYF=3D5v1aQkVDrDWsmw+zYX1pj=
+S8hoiYVgZsRGA@mail.gmail.com/
+> > I've also asked that ARM step up their testing, for example in the
+> > event parsing testing the PMU is hardcoded to the x86 PMU name of
+> > 'cpu':
+> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/tests/parse-events.c?h=3Dperf-tools-next#n2317
+> > On a cortex A53, then PMU is named 'armv8_cortex_a53':
+> > ```
+> > $ ls /sys/devices/armv8_cortex_a53/
+> > caps  cpus  events  format  perf_event_mux_interval_ms  power
+> > subsystem  type  uevent
+> > ```
+> > This name appears better, so what's up with ARM's core PMU name?
+>
+> With Devicetree, we are able to derive a descriptive PMU name from the
+> compatible string provided by the DT. Under ACPI, however, all we get
+> told is whether each CPU has a usable PMU or not, so the best we can do
+> is work out how many different CPU microarchitectures we have overall
+> and create a PMU instance for each type. We still don't know *what* each
+> one is, just that they're different, hence ending up with a common name
+> plus a suffix which we can increment for disambiguation if and when we
+> do see something new - userspace can still piece together the "cpus"
+> lists and MIDRs to figure out what's what, we just can't do much in the
+> kernel itself.
+>
+> > Anyway, I'm tempted to fix this by just skipping the test on ARM given
+> > ARM's overall broken state.
+>
+> This isn't a driver issue, it's a "the behaviour of 'perf list' changed
+> inconsistently" issue. I also had a brief dig into this using a
+> different arm64 ACPI system, and I think I can broadly characterise the
+> cause. This is prior to 3241d46f5f54:
+>
+> root@crazy-taxi:~# ./perf-mainline list armv8_pmuv3
+>
+> List of pre-defined events (to be used in -e or -M):
+>
+>
+> armv8_pmuv3_0:
+>    L1-dcache-loads OR armv8_pmuv3_0/L1-dcache-loads/
+>    L1-dcache-load-misses OR armv8_pmuv3_0/L1-dcache-load-misses/
+>    L1-icache-loads OR armv8_pmuv3_0/L1-icache-loads/
+>    L1-icache-load-misses OR armv8_pmuv3_0/L1-icache-load-misses/
+>    dTLB-loads OR armv8_pmuv3_0/dTLB-loads/
+>    dTLB-load-misses OR armv8_pmuv3_0/dTLB-load-misses/
+>    iTLB-loads OR armv8_pmuv3_0/iTLB-loads/
+>    iTLB-load-misses OR armv8_pmuv3_0/iTLB-load-misses/
+>    branch-loads OR armv8_pmuv3_0/branch-loads/
+>    branch-load-misses OR armv8_pmuv3_0/branch-load-misses/
+>    l3d_cache_wb OR armv8_pmuv3_0/l3d_cache_wb/        [Kernel PMU event]
+>
+>
+> And this is after:
+>
+> root@crazy-taxi:~# ./perf-next list armv8_pmuv3
+>
+> List of pre-defined events (to be used in -e or -M):
+>
+>
+> armv8_pmuv3_0:
+>    L1-dcache-loads OR armv8_pmuv3_0/L1-dcache-loads/
+>    L1-dcache-load-misses OR armv8_pmuv3_0/L1-dcache-load-misses/
+>    L1-icache-loads OR armv8_pmuv3_0/L1-icache-loads/
+>    L1-icache-load-misses OR armv8_pmuv3_0/L1-icache-load-misses/
+>    dTLB-loads OR armv8_pmuv3_0/dTLB-loads/
+>    dTLB-load-misses OR armv8_pmuv3_0/dTLB-load-misses/
+>    iTLB-loads OR armv8_pmuv3_0/iTLB-loads/
+>    iTLB-load-misses OR armv8_pmuv3_0/iTLB-load-misses/
+>    branch-loads OR armv8_pmuv3_0/branch-loads/
+>    branch-load-misses OR armv8_pmuv3_0/branch-load-misses/
+>    l3d_cache_wb OR armv8_pmuv3/l3d_cache_wb/          [Kernel PMU event]
+>
+> See the difference in the last line - it appears that CPU PMU events
+> which map to common hardware/cache events *do* still report the full PMU
+> name, but any PMU-type-specific events show a truncated name in list and
+> thus fail the test's strict match against the full name reported by stat.
 
-On Fri, 24 May 2024 18:14:01 +0200, Dylan Van Assche wrote:
-> * About *
-> 
-> The Qualcomm SDM845 SoC has a separate SLPI (Sensor Low Power Island)
-> DSP for sensors connected to the SoC which is responsible for exposing
-> sensors to userspace, power saving, and other features.
-> While sensors are connected to GPIOs of the SoC, they cannot be used
-> because the hypervisor blocks direct access to the sensors, thus the
-> DSP must be used to access any sensor on this SoC. The SLPI DSP uses a
-> GLink edge (dsps) to communicate with the host and has a FastRPC interface
-> to load files from the host filesystem such as sensor configuration files.
-> The FastRPC interface does not use regular FastRPC Compute Banks
-> but instead uses an allocated CMA region through which communication happens.
-> 
-> [...]
+Thanks Robin. The hardware and cache events are legacy events that are
+printed here, the assumption being that core PMUs don't use a suffix:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/print-events.c?h=3Dperf-tools-next#n304
+Fwiw these events are knowingly broken on the Apple M? ARM PMUs as
+legacy events like L1-dcache-loads will use a legacy encoding which is
+broken on this PMU, hence trying to migrate to preferring sysfs/json
+events first - the support for which is reverted in v6.10.
+The l3d_cache_wb event is not a legacy event and so goes down the
+regular PMU event printing route that tries to avoid listing duplicate
+PMUs as there may be 10s or 100s of these:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/pmus.c?h=3Dperf-tools-next#n490
+Yes, this was an intentional behavior change as system scale has gotten lar=
+ger.
+I'm currently thinking that the suffix should just be ignored on core
+PMUs, we assume they never have duplicates. Unfortunately the code
+just has a name and doesn't know from this whether a PMU is core or
+not:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/pmus.c?h=3Dperf-tools-next#n43
+Note, following Kan Liang's advice we've been trying to actually
+document the PMU naming convention:
+https://lore.kernel.org/lkml/20240606044959.335715-1-irogers@google.com/
+The inconsistency here comes from ARM core PMUs using suffixes, which
+isn't really intended behavior and will likely screw up, my guess is
+around legacy events (the tests of which currently have limited ARM
+coverage).
 
-Applied, thanks!
+Thanks,
+Ian
 
-[1/2] misc: fastrpc: support complete DMA pool access to the DSP
-      commit: 9cee10334bdfa9db771b006fe2eba060f8719687
-[2/2] misc: fastrpc: use coherent pool for untranslated Compute Banks
-      commit: 0ff3de43062785462d9acede2987f35525b1c0ba
-
-Best regards,
--- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
+> Thanks,
+> Robin.
 
