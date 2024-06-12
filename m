@@ -1,98 +1,133 @@
-Return-Path: <linux-kernel+bounces-211324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6334F905009
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:07:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5021790500D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77D6D1C2175B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:07:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0806D289688
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD6316EBE8;
-	Wed, 12 Jun 2024 10:07:17 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0722B16EBE7;
+	Wed, 12 Jun 2024 10:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCDtxszx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC3216D4E8;
-	Wed, 12 Jun 2024 10:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFC816E89E;
+	Wed, 12 Jun 2024 10:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718186837; cv=none; b=fYeSR/A3aPc2o6lzCajxl5tcTTQs27a/Cie5gT6Gyl/5VkGmQSMLd9Ygn/yQ/d1tEQX8eZybNsDbUlCD82Xf/gIdfH46IqrPgwt8GEk/U430MMzfk3/cXkRRzCQS2PjYIlAsNlAcxAWzGjV6ttwZ8tx8R1DmevKEUFWe9+d4uFE=
+	t=1718186845; cv=none; b=NLcO/dv2Ppg5YFTY1rjKKcYP6fhN2jsiZ8f0soIwT2pvfugvx3QadikG/V8lwxlMsgHIOWrfninSQeisOFFLXvIxRoMfufIynmD/9TyEPc/gwgkKL/MEKKCDgrc9sDXooVlYVVIPbr7ahBvGva2Y74kxiTzl2YrjYiIb+VuaLPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718186837; c=relaxed/simple;
-	bh=wVSj0BFnJgasNyV6X0X+XogJi6hOWF4I2zytqMc1A9s=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FTLffbAdpqGAjuwhO1fqeiZLSEvcoRUDDoOlGQAxXaQ5yIoYCnNlBQMJYpj2VXEnj9nUPgnrdEWWA22wJP0cNH5dR+SdT3GzHYkXCRSZO39L7M1vc8cdqPipWB1QzIe/CmOFtcUP9m68ubowyOXmdLx1pnPd0pP+6MJohuacz5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Message-ID: <4154d202-5c72-493e-bf3f-bce882a296c6@gentoo.org>
-Date: Wed, 12 Jun 2024 12:07:09 +0200
+	s=arc-20240116; t=1718186845; c=relaxed/simple;
+	bh=wijopm0nhucG+7m8+AH2LAOLzwedkcVS1zjeQR1rbGE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kWtwmJyAHDZpQo3I090ZMx7GPYH93lzY30w2EbYQtl1a+EXmTbRkmeOX7p4RC6m8qNwfXi387ZmnbEhclwqFresxXPE68C4cjPXykAw1mXc1zJ2CC1h/YXkWPTTj/0CLN78hCs2v/OxBUpt5jWa1rg+Fyka8oRRAyH9NifaAZpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCDtxszx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD94C32789;
+	Wed, 12 Jun 2024 10:07:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718186844;
+	bh=wijopm0nhucG+7m8+AH2LAOLzwedkcVS1zjeQR1rbGE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eCDtxszxNoB0piqxLuB/bD6m5JPZBy2liC/2ayWxt71f4cTQCaPFw/Wr6S6U81R0/
+	 WB5Brgoy4oB+3lpQCkkBTJQ2h/PvJV051cwaoluv4tGNAtFW4516zoYm1aPXz/LmWP
+	 S5OD1m1AYqm2/T8w9SUKCHOebT4JUcGaGTX4FzoiMIKmn9+qlnkv0UEayd5tFMIq3v
+	 AL5CkssPTZLYThiIaEKcHOfFheTV8ziG414PmBVrwH2j6Yky4ACVfxH4nv553eLh8L
+	 Cb52Tvaqm0beIXCv5AdDhIdwwmsdCIrP92H2CGWk6zjgglufiPb9p16AakkQrh+Srb
+	 PnscSM29EsFpw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sHKt0-0037CS-An;
+	Wed, 12 Jun 2024 11:07:22 +0100
+Date: Wed, 12 Jun 2024 11:07:21 +0100
+Message-ID: <8634pilbja.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Shaoqin Huang <shahuang@redhat.com>,
+	kvmarm@lists.linux.dev,
+	Eric Auger <eauger@redhat.com>,
+	Sebastian Ott <sebott@redhat.com>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	James Morse <james.morse@arm.com>,
+	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [RFC PATCH v1 0/2] KVM: arm64: Making BT Field in ID_AA64PFR1_EL1 writable
+In-Reply-To: <Zmkyi39Pz6Wqll-7@linux.dev>
+References: <20240612023553.127813-1-shahuang@redhat.com>
+	<Zmkyi39Pz6Wqll-7@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Matthias Schwarzott <zzam@gentoo.org>
-Subject: Re: ANNOUNCE: pahole v1.27 (reproducible builds, BTF kfuncs)
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, dwarves@vger.kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>,
- Jiri Olsa <jolsa@kernel.org>, Jan Engelhardt <jengelh@inai.de>,
- Viktor Malik <vmalik@redhat.com>, Eduard Zingerman <eddyz87@gmail.com>,
- Jan Alexander Steffens <heftig@archlinux.org>,
- Domenico Andreoli <cavok@debian.org>,
- Dominique Leuenberger <dimstar@opensuse.org>, Daniel Xu <dxu@dxuuu.xyz>,
- Yonghong Song <yonghong.song@linux.dev>
-References: <ZmjBHWw-Q5hKBiwA@x1>
-Content-Language: en-GB, de-DE
-In-Reply-To: <ZmjBHWw-Q5hKBiwA@x1>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, shahuang@redhat.com, kvmarm@lists.linux.dev, eauger@redhat.com, sebott@redhat.com, cohuck@redhat.com, catalin.marinas@arm.com, james.morse@arm.com, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, pbonzini@redhat.com, shuah@kernel.org, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Am 11.06.24 um 23:26 schrieb Arnaldo Carvalho de Melo:
-> Hi,
->   
-> 	The v1.27 release of pahole and its friends is out, supporting
-> parallel reproducible builds and encoding kernel kfuncs in BTF, allowing
-> tools such as bpftrace to enumerate the available kfuncs and obtain its
-> function signatures and return types.
+On Wed, 12 Jun 2024 06:30:51 +0100,
+Oliver Upton <oliver.upton@linux.dev> wrote:
 > 
+> Hi Shaoqin,
+> 
+> On Tue, Jun 11, 2024 at 10:35:50PM -0400, Shaoqin Huang wrote:
+> > Hi guys,
+> > 
+> > I'm trying to enable migration from MtCollins(Ampere Altra, ARMv8.2+) to
+> > AmpereOne(AmpereOne, ARMv8.6+), the migration always fails when migration from
+> > MtCollins to AmpereOne due to some register fields differing between the
+> > two machines.
+> > 
+> > In this patch series, we try to make more register fields writable like
+> > ID_AA64PFR1_EL1.BT. This is first step towards making the migration possible.
+> > Some other hurdles need to be overcome. This is not sufficient to make the
+> > migration successful from MtCollins to AmpereOne.
+> 
+> It isn't possible to transparently migrate between these systems. The
+> former has a cntfrq of 25MHz, and the latter has a cntfrq of 1GHz. There
+> isn't a mechanism for scaling the counter frequency, and I have zero
+> appetite for a paravirt interface.
 
-Regarding packaging of pahole:
-What is the state of the contained ostra-cg?
-I have no clue what it is and how to use it. Is there still a use-case 
-for it?
+Note that there *is* an architectural workaround in the form of
+FEAT_CNTSC. But of course:
 
-Starting it without arguments only shows the usage string.
-Running it with two dummy arguments:
-$ ostra-cg x y
-Traceback (most recent call last):
-   File "/usr/bin/ostra-cg", line 404, in <module>
-     class_def = ostra.class_definition(class_def_file = "%s.fields" % 
-traced_class,
- 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   File "/usr/share/dwarves/runtime/python/ostra.py", line 154, in __init__
-     f = file(class_def_file)
-         ^^^^
-NameError: name 'file' is not defined. Did you mean: 'field'?
+- it is optional (and likely not implemented)
+- it is global (hence affecting all SW running on the machine)
+- it invalidates the requirements of ARMv8.6 (who cares?)
+- KVM has nothing to do with it (yay!)
 
-According to 
-https://stackoverflow.com/questions/32131230/python-file-function the 
-function file() does not exist in python3.
+So if the two systems (from the same manufacturer) were ever designed
+to allow migration between the two, they would have at least baked
+some of that in.
 
-This part could be fixed by replacing it with open() but I wonder if 
-this is worth it.
+As for the paravirt interface, I agree that this is a non-starter
+(been there, done that, dumped it in the bin).
 
-As nobody has complained about it being broken:
-Should ostra just be removed?
+The patch itself is interesting and may be of use once it has been put
+to a compiler and not just dumped on the list without any testing.
 
-Regards
-Matthias
+	M.
 
+-- 
+Without deviation from the norm, progress is not possible.
 
