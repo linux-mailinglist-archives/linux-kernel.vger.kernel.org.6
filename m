@@ -1,199 +1,106 @@
-Return-Path: <linux-kernel+bounces-212204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B43905CAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:21:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE606905CB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048E21F24AE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DA6F1F24C74
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DC084D35;
-	Wed, 12 Jun 2024 20:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E2984E0A;
+	Wed, 12 Jun 2024 20:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IWbVAQlh"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URn75nSC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DD484A50;
-	Wed, 12 Jun 2024 20:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E762C84A54;
+	Wed, 12 Jun 2024 20:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718223666; cv=none; b=GyPk6/hdoMySI975yreUIXTU8IOn4YYqtGy9mVIfraCNJEhmNPmBAU7DPqkwhl/NH/gn/fCK7KcOGtC5XdxLbb30S5M47J4ZkL5sgzyCi59OkHiynkh7FRGSjgBOTqYkC/8KZzQ2UC3P6s4IkfoL/yCzWgTjzz11DvT98enygn0=
+	t=1718223667; cv=none; b=dLetWIzUFrp92Yqx9knJlG+eb1JJ4pFYJl/wRhjsxzQfkoqAgiKSjL+bTMYRKuHS3h2ppJFCgjyQ3stZa6wo5kYW32PkzR72gLL7x0WZU1/Gp3gCG5cBAjrxT0wQ+BIbdoIObi0E91zIieo9+N7AJfR4nHtCFavdkC4IZi1e4Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718223666; c=relaxed/simple;
-	bh=PHlVC2D76puZdSZINuqZtuUlXaqfJ96wvZFNLjvHtfc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rOhStKHVwmI3O1FzpxPZI4nA3z57vf4RH3jiWetMSAMau8bjP9BrjUQDcC8wzSiQZXCHFOQREvZ91OSI2UGuyh6SJKUdsdrUP/Ae60GZfImd2uFOsIeQcVLwOw/VpPdCftwlfObpTEvPpFRNYx1HTGL+85D9mvJTDrdNvKfZoDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IWbVAQlh; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718223661;
-	bh=PHlVC2D76puZdSZINuqZtuUlXaqfJ96wvZFNLjvHtfc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=IWbVAQlhH95bx5fqaubBcoIIS0eDvUAbqa+C4wjuNtjD7IQdVD6HTT0fdSMesayjk
-	 IwYl7CC8Pn6XIh+NtQB82xCNCazbeEnYAHE1fxMYinG2Ww6u4DUrimbf4x84l/du7m
-	 30R4M3bN3R/n24geqRNthBfVLdFJI0fSW5eKGPyUiLpsYmp7oJ90aOI03ZezUB26YA
-	 /a3VZP/zhCR0wFnBJqmKVxKA2Z55VQmtuB+e3uzBd30iWAr0M05aq9eFoQbsVnDibt
-	 0ckK7keaAroSCMHFV7Pk4mliY1MPvcWqSA2wJHGalbKlrfBnyRntsYLPXpkinx5Bwn
-	 bKFmxetDKvvpQ==
-Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id F0517378020D;
-	Wed, 12 Jun 2024 20:20:59 +0000 (UTC)
-Message-ID: <8705ad6ba987334f8941938bef19752942a08ace.camel@collabora.com>
-Subject: Re: [PATCH v5 4/5] arm64: dts: rockchip: Add VEPU121 to RK3588
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>, Ezequiel Garcia
- <ezequiel@vanguardiasur.com.ar>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>, Heiko Stuebner
- <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Jianfeng Liu
- <liujianfeng1994@gmail.com>, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
- linux-media@vger.kernel.org,  linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
- kernel@collabora.com
-Date: Wed, 12 Jun 2024 16:20:57 -0400
-In-Reply-To: <20240612173213.42827-5-sebastian.reichel@collabora.com>
-References: <20240612173213.42827-1-sebastian.reichel@collabora.com>
-	 <20240612173213.42827-5-sebastian.reichel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1718223667; c=relaxed/simple;
+	bh=VF8TXFGMOrc2cxAUxWDWimJvw5tB56D41Lk1keK3LeY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=hiJugSX0ZIqBjAuIkHMhh14dd9bfKzy+NmF2ul//XqbQ1GhXXdzN0RjKDZ9fIZExpcHH/ONcTVPSoz0JwmUE2kBo1J6iZHDBVcPWDftf9FYyUIwRG11dY0S1K9w+gt0Oxc5KWnLkdDZrFjVBYGSIKe4VsPp6VCZZjIcuRJ1ZN7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URn75nSC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBD16C116B1;
+	Wed, 12 Jun 2024 20:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718223664;
+	bh=VF8TXFGMOrc2cxAUxWDWimJvw5tB56D41Lk1keK3LeY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=URn75nSC/5cJcxRzqWCubCrsZPUXg+sQT5quwWqRXU9XoCocneYRWaQXa+HrxUI/9
+	 4/VyuQaMxztk7v9bKgw/f5E56QBqxmXd2th+W/m8cyde09j+WHqe3pAN4RHI5rbXlJ
+	 hJ82/sz4V1lNPDYlW4si+Se31a3cOF6t6neKxAvx5evZPi2TpmjZqUnNGJxlCT9jLn
+	 JmfHI3DkUFoZ1IwU1q6sLEdzw7RkOrFXh7GMLrCWOTSseA/rPq5+HgeAj6XLcYtnpg
+	 PX3E/Mg/wmWwfoxawleZuSrJC9vbAn9HWM8jAolAiQtap2RUqylNTu/7UH7ILLv8ZM
+	 N5DumOTsT3cZw==
+From: Mark Brown <broonie@kernel.org>
+To: Lars-Peter Clausen <lars@metafoo.de>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Peter Ujfalusi <peter.ujfalusi@gmail.com>, Jai Luthra <j-luthra@ti.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ alsa-devel@alsa-project.org, Devarsh Thakkar <devarsht@ti.com>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, 
+ Jayesh Choudhary <j-choudhary@ti.com>
+In-Reply-To: <20240610-asoc_next-v2-0-b52aaf5d67c4@ti.com>
+References: <20240610-asoc_next-v2-0-b52aaf5d67c4@ti.com>
+Subject: Re: [PATCH v2 0/2] Fixes for McASP and dmaengine_pcm
+Message-Id: <171822366136.240528.8303514508385610793.b4-ty@kernel.org>
+Date: Wed, 12 Jun 2024 21:21:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-4c370
 
-Hi Sebastian,
+On Mon, 10 Jun 2024 16:25:59 +0530, Jai Luthra wrote:
+> This series fixes two patches:
+> 
+> 1. Fix the dmaengine API usage by calling dmaengine_synchronize() after
+>    dmaengine_terminate_async() when xrun events occur in application
+> 2. Use the McASP AFIFO property from DT to refine the period size,
+>    instead of hardcoding minimum to 64 samples
+> 
+> [...]
 
-Le mercredi 12 juin 2024 =C3=A0 19:15 +0200, Sebastian Reichel a =C3=A9crit=
-=C2=A0:
-> From: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
->=20
-> RK3588 has 4 Hantro G1 encoder-only cores. They are all independent IP,
-> but can be used as a cluster (i.e. sharing work between the cores).
-> These cores are called VEPU121 in the TRM. The TRM describes one more
-> VEPU121, but that is combined with a Hantro H1. That one will be handled
-> using the VPU binding instead.
->=20
-> Signed-off-by: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 80 +++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/=
-dts/rockchip/rk3588s.dtsi
-> index 6ac5ac8b48ab..9edbcfe778ca 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> @@ -1159,6 +1159,86 @@ power-domain@RK3588_PD_SDMMC {
->  		};
->  	};
-> =20
-> +	jpeg_enc0: video-codec@fdba0000 {
-> +		compatible =3D "rockchip,rk3588-vepu121";
+Applied to
 
-As discussed earlier, VEPU121 is an modifier Hantro H1 encoder core that al=
-so
-supports VP8 and H.264 encoding (even though RK vendor kernel only expose t=
-hem
-for jpeg encoding). The compatible follow this idea, shall we change the al=
-ias
-now ?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Nicolas
+Thanks!
 
-> +		reg =3D <0x0 0xfdba0000 0x0 0x800>;
-> +		interrupts =3D <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER0>, <&cru HCLK_JPEG_ENCODER0>;
-> +		clock-names =3D "aclk", "hclk";
-> +		iommus =3D <&jpeg_enc0_mmu>;
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +	};
-> +
-> +	jpeg_enc0_mmu: iommu@fdba0800 {
-> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-> +		reg =3D <0x0 0xfdba0800 0x0 0x40>;
-> +		interrupts =3D <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER0>, <&cru HCLK_JPEG_ENCODER0>;
-> +		clock-names =3D "aclk", "iface";
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +		#iommu-cells =3D <0>;
-> +	};
-> +
-> +	jpeg_enc1: video-codec@fdba4000 {
-> +		compatible =3D "rockchip,rk3588-vepu121";
-> +		reg =3D <0x0 0xfdba4000 0x0 0x800>;
-> +		interrupts =3D <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER1>, <&cru HCLK_JPEG_ENCODER1>;
-> +		clock-names =3D "aclk", "hclk";
-> +		iommus =3D <&jpeg_enc1_mmu>;
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +	};
-> +
-> +	jpeg_enc1_mmu: iommu@fdba4800 {
-> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-> +		reg =3D <0x0 0xfdba4800 0x0 0x40>;
-> +		interrupts =3D <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER1>, <&cru HCLK_JPEG_ENCODER1>;
-> +		clock-names =3D "aclk", "iface";
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +		#iommu-cells =3D <0>;
-> +	};
-> +
-> +	jpeg_enc2: video-codec@fdba8000 {
-> +		compatible =3D "rockchip,rk3588-vepu121";
-> +		reg =3D <0x0 0xfdba8000 0x0 0x800>;
-> +		interrupts =3D <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER2>, <&cru HCLK_JPEG_ENCODER2>;
-> +		clock-names =3D "aclk", "hclk";
-> +		iommus =3D <&jpeg_enc2_mmu>;
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +	};
-> +
-> +	jpeg_enc2_mmu: iommu@fdba8800 {
-> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-> +		reg =3D <0x0 0xfdba8800 0x0 0x40>;
-> +		interrupts =3D <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER2>, <&cru HCLK_JPEG_ENCODER2>;
-> +		clock-names =3D "aclk", "iface";
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +		#iommu-cells =3D <0>;
-> +	};
-> +
-> +	jpeg_enc3: video-codec@fdbac000 {
-> +		compatible =3D "rockchip,rk3588-vepu121";
-> +		reg =3D <0x0 0xfdbac000 0x0 0x800>;
-> +		interrupts =3D <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER3>, <&cru HCLK_JPEG_ENCODER3>;
-> +		clock-names =3D "aclk", "hclk";
-> +		iommus =3D <&jpeg_enc3_mmu>;
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +	};
-> +
-> +	jpeg_enc3_mmu: iommu@fdbac800 {
-> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-> +		reg =3D <0x0 0xfdbac800 0x0 0x40>;
-> +		interrupts =3D <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER3>, <&cru HCLK_JPEG_ENCODER3>;
-> +		clock-names =3D "aclk", "iface";
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +		#iommu-cells =3D <0>;
-> +	};
-> +
->  	av1d: video-codec@fdc70000 {
->  		compatible =3D "rockchip,rk3588-av1-vpu";
->  		reg =3D <0x0 0xfdc70000 0x0 0x800>;
+[1/2] ALSA: dmaengine: Synchronize dma channel in prepare()
+      (no commit info)
+[2/2] ASoC: ti: davinci-mcasp: Set min period size using FIFO config
+      commit: c5dcf8ab10606e76c1d8a0ec77f27d84a392e874
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
