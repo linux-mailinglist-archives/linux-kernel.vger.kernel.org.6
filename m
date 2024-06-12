@@ -1,229 +1,105 @@
-Return-Path: <linux-kernel+bounces-211854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B5779057FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:03:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD4DC9057F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A47FB1C24167
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:03:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00A911C23F58
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2BF18757B;
-	Wed, 12 Jun 2024 15:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871BA1850B4;
+	Wed, 12 Jun 2024 15:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="KJ9cHO8k";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ecTm8V3J"
-Received: from wfhigh8-smtp.messagingengine.com (wfhigh8-smtp.messagingengine.com [64.147.123.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWIBCf6+"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E0E1850AE;
-	Wed, 12 Jun 2024 15:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC57181317;
+	Wed, 12 Jun 2024 15:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718207982; cv=none; b=MVDZojRgprEASmalAyxhTiByg224nlyGG+MEuM533tB/uunfW2ZUd6NXJJ/CGnUjTkRemGR3mplsznAF5NQ5/9xRkFP2R1ma28yHeAquUUbdzCfL7/ozBtuycmUeGKdxjyEolivRFURBw2GRFSEX9D+zg2ZejSPU4GK0RfevkB4=
+	t=1718207973; cv=none; b=myTOKZyQky4ZJEsW/yHFZkHbsrggNOL22yH4tLNaKqPqcIELZIJ+qqumcogOtDCipBAJqr/c1BDjBgySN7o6vcGTyWFlV00HmKOz4z7yxQsHXMZueZuiTXIHwI/2nEVg24auQ90M/apEiiAEoOAr6QxKFCMOHmNSIhximMq2AV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718207982; c=relaxed/simple;
-	bh=6au7MrpBu+3ErejQVoP0KkTLYnpWyNJm4OKAyEDW7OQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j8nAa+D2i2UhxdfE4EJE0uGAo1QN/AbXs1uraJcOff90l90sj3XKqcj8oWWIVVJXHdFFCXDwyrjIpJfL5VCdeGT55Oy+PUkohgqcgaC6VE/XW2ekuEAiZxwCzllKtVTXi+9eIGKwRIDCrusfDlJhukkXBnUI7SlvzxaCJyg0MK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=KJ9cHO8k; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ecTm8V3J; arc=none smtp.client-ip=64.147.123.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 547F51800084;
-	Wed, 12 Jun 2024 11:59:39 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 12 Jun 2024 11:59:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1718207978; x=
-	1718294378; bh=mh+C4m8zbjflVRUrybyCTLThOPeoG/8/+kC3qdHEVEE=; b=K
-	J9cHO8kP2w/4Eo9OdJHwWgHu1ArVgmL94PBwKoXzlMuCr/vCm0O2frdKUeB1FwDQ
-	wMiuYFyy/AG68vVXxY8woD6gpbJibjvsdqmHKxDURMJOexzvyh/RFNVRXLSqbQOT
-	sJeLR8YvQHYZm8C5HBHxFQ28Y/DwfPz30i2fumLU5USlPGucG4l82DR7DNkp+hxV
-	fpwYl+zy+Q/udQhmFPJSR5EhyYYVDdWojFHAvwctKA7iW2TbbPdaTwrDo+jRCI0W
-	stHm/f6wIZWQ3n7Z6z6CXCucuwstfytjnha/Dormt+xkL6+9S1fAAueOo+5BcBmK
-	ZyeQolSK8x7HaCia8nj7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718207978; x=
-	1718294378; bh=mh+C4m8zbjflVRUrybyCTLThOPeoG/8/+kC3qdHEVEE=; b=e
-	cTm8V3JlpSTqAYhiZFD5KDeM3T+O23QOR95AeD20YW0NbiHYkw57UWbl7EhFGLR4
-	7CWBFhlMetld64SicYEdhlxoxg1izWJxOI+ZzJ9Nkm4KISqapMDp8h9KE+zmF3vU
-	WeEUttAQWD9Rz0+PnrmSm1U/Yfqcv8KHvVg1EGa+zZYiM3MY020cJPIY+w13H0y2
-	jGP74eBGxZ6CTf9Xj0EYilacwrYHUmGbcla+R3STK1NNOypx0fctaD8jEa5HIKFd
-	/Pl7Ir22Q1z904qItZDUiA9lIEXu7CLE4Qw/dhOH1pjc4Gz6rJLTdrWv+3G+raK6
-	SnVsGOo1sNZ2WW5ENqyXw==
-X-ME-Sender: <xms:6sVpZkhhxJyI0XKPXmWwCgQRqDZ8YE-sHSM8mZdAyvkcC-jCBaMUxw>
-    <xme:6sVpZtA3WpWJPH2ICYJQOzK8IaQwP8CQ6XNFqvaLvQ1LKo_g6-21JEzarvPqb8_mR
-    B-qjhcBAGTdeZk0nQ>
-X-ME-Received: <xmr:6sVpZsH7rnCTRK0-lf1l1TVmI2nPLHr724y6pBJ114y3ef8IKN-0LkLUiMraW1bjtNKoe_5e0DSjcYrHXcjjNyx6IrXOZhWylPFMgK9k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedgleefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdljedtmdenucfjughrpefhvf
-    evufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeffrghnihgvlhcuighuuceo
-    ugiguhesugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepgfefgfegjefhudeike
-    dvueetffelieefuedvhfehjeeljeejkefgffeghfdttdetnecuvehluhhsthgvrhfuihii
-    vgepvdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguhhuuhdrgiihii
-X-ME-Proxy: <xmx:6sVpZlQDgOlXzYHeDJ2dWlZvTuMCMq6a2e0XfUV0775OaPlkQdTxIw>
-    <xmx:6sVpZhynMpQFoFcBN2PJkfaFpviVOKF6bSktppqXWNEiJ_U2Zd1REg>
-    <xmx:6sVpZj7ranKgMygbAXztxjCAsHTvhqr-bjtPeijkukRi_K7JkC7Prg>
-    <xmx:6sVpZuxupdrycWHSoqXi11neOGqp7LYRXsN31DtqaniHwZbHMoNGbw>
-    <xmx:6sVpZmzUMdFbPCJMbik2s78xgnP2fVCfqUgJDObVC25hNHVNegiPWMvf>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Jun 2024 11:59:37 -0400 (EDT)
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	qmo@kernel.org,
-	andrii@kernel.org,
-	olsajiri@gmail.com,
-	quentin@isovalent.com,
-	alan.maguire@oracle.com,
-	acme@kernel.org,
-	eddyz87@gmail.com
-Cc: martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@google.com,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH bpf-next v5 12/12] bpftool: Support dumping kfunc prototypes from BTF
-Date: Wed, 12 Jun 2024 09:58:36 -0600
-Message-ID: <bf6c08f9263c4bd9d10a717de95199d766a13f61.1718207789.git.dxu@dxuuu.xyz>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1718207789.git.dxu@dxuuu.xyz>
-References: <cover.1718207789.git.dxu@dxuuu.xyz>
+	s=arc-20240116; t=1718207973; c=relaxed/simple;
+	bh=oMcGDrE4Mw8QgCqo3A7gqxfHme1uE+j+aY8hmT0NHzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LxoWmSR07PEy+6JtTGnmiIaHltxiMFpriA5qR/fzvL7ATtxSpm2XvXCjRIjLmorW5zVaib7t9eaYuI20Y7fI9YqNbh7EYEd963b1WBZQvoNiBOgVwk1DJt7X6jBq7kBnZiLXLZ4BbgYtJFAoWfRMknUtjNdklK8Ugm59iaV4KFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWIBCf6+; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6c53a315c6eso5279656a12.3;
+        Wed, 12 Jun 2024 08:59:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718207970; x=1718812770; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mtQXgpv7/Oooaz+G4TiUO97dolMQhKitRb9zDqW9N0A=;
+        b=iWIBCf6+2cps6XrbjpgD2pW/xhEiqgVinYF7lffM3ri6KVlWjjC16drK2OjeAo44M3
+         8nrdiM/Bs5VmEuH4pwdkbTOewoZ7wA5d47qLw3R/FF9+BoaRJqKQzEKBUEWx86HALBPp
+         yi78HExA9/IAs/ZkOyT++3VVdAOjhvvjQNuZ1vXPqtYUnuawX/eCclvOBdWq7Q6ti3LZ
+         umxW0CB2/n/Qaq4te9BDClF/dlfC9Z2MZkZzW9UKNq5UvTXpIW4VktWythyIPTD8Nl1O
+         zt9dZG9VrhfxARPBKZH4iKVRrJWbQEHO3yStQCZOdpiCL36YevGZ+xr3/7yOrrTjJi3Z
+         tjyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718207970; x=1718812770;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mtQXgpv7/Oooaz+G4TiUO97dolMQhKitRb9zDqW9N0A=;
+        b=RmsjlohLmjm9kkWXQYEwx2gewplMBzk/VCvILeeRekYhqZwaf/pX4236IlDwaWLks6
+         uFv9f21qW8bkVhWafE6KNR3bAqX8GMJbKRKfLu2Wawm+g3qu/vkQsmcDrv/sdlaP0dCj
+         qHTtSXZ7+BtgsVBtzmQBYDjiO+wUYqQI0UYsJ+SISfIl4swIR8t7ou6vZEkM1KqNmc+d
+         HddAnXBnXp7wInrhRwr9P0QinyBtr8JC4K/pvRlq+kULLXTxjHt9pJ75iA1jX7S4Q/kw
+         fmSdkPCpUrMm9AhnRFmTPStLsLfpGTv/TnKnAU9muCp6BShdZW4W1stb9idrh+46KJPZ
+         Bhew==
+X-Forwarded-Encrypted: i=1; AJvYcCU+aZ/nERaZoeQoaD+vNx+kQRGLDvsuGSmIvv1l2Hmrpmrz7K40okZ8Dz+DvO2HXS1B53vOiVeO3qJjNvDlMjMhKJumx9Kcpy1g+WB36tV8qKKHxuf2ct1ekx1d1bM3Z/9mq1i7ntsc8EOpQkE2zutTl2iJp4AUiclJcNfGbj+Ug5yY3QZ9Qc2ILSF49OH5HbHe8RT0H1GTII3HTdzQJTJ2kOWh2MHyTDcg9QDvBGitB2JpGFD0ipbqhUuN
+X-Gm-Message-State: AOJu0Yzp/Pj/zb/8vtDjjKV9fqKpAkWQwsCbLkVT0SphXIhweYJr0kLm
+	eJkBvnyKMpN6hLVl2LE7La3pXd4SFpKdlFvONE3TIHAFiGBfcmL9
+X-Google-Smtp-Source: AGHT+IHbTM6oooBQgQWM1YhIXDNGXV/+otzNg0UQ5enijvCEmV4lK+FoI9FGnmRQbpPc7Qo2uv63wQ==
+X-Received: by 2002:a17:902:e847:b0:1f7:ed3:65cc with SMTP id d9443c01a7336-1f83b5c8336mr26696915ad.27.1718207970516;
+        Wed, 12 Jun 2024 08:59:30 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f84064dadbsm14837475ad.292.2024.06.12.08.59.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 08:59:29 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 12 Jun 2024 08:59:28 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Noah Wang <noahwang.wang@outlook.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jdelvare@suse.com, corbet@lwn.net, Delphine_CC_Chiu@wiwynn.com,
+	peteryin.openbmc@gmail.com, javier.carrasco.cruz@gmail.com,
+	patrick.rudolph@9elements.com, bhelgaas@google.com, lukas@wunner.de,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: hwmon: Add MPS mp2993
+Message-ID: <5c1c7d9d-5404-4ce3-8247-ff554c97e521@roeck-us.net>
+References: <SEYPR04MB6482721F71C0527767A149DEFAC72@SEYPR04MB6482.apcprd04.prod.outlook.com>
+ <SEYPR04MB6482EE5CA0C9A3F14863B999FAC72@SEYPR04MB6482.apcprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SEYPR04MB6482EE5CA0C9A3F14863B999FAC72@SEYPR04MB6482.apcprd04.prod.outlook.com>
 
-This patch enables dumping kfunc prototypes from bpftool. This is useful
-b/c with this patch, end users will no longer have to manually define
-kfunc prototypes. For the kernel tree, this also means we can optionally
-drop kfunc prototypes from:
+On Tue, Jun 11, 2024 at 06:14:14PM +0800, Noah Wang wrote:
+> Add support for MPS mp2993 controller
+> 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Noah Wang <noahwang.wang@outlook.com>
 
-        tools/testing/selftests/bpf/bpf_kfuncs.h
-        tools/testing/selftests/bpf/bpf_experimental.h
+Applied.
 
-Example usage:
-
-        $ make PAHOLE=/home/dxu/dev/pahole/build/pahole -j30 vmlinux
-
-        $ ./tools/bpf/bpftool/bpftool btf dump file ./vmlinux format c | rg "__ksym;" | head -3
-        extern void cgroup_rstat_updated(struct cgroup *cgrp, int cpu) __weak __ksym;
-        extern void cgroup_rstat_flush(struct cgroup *cgrp) __weak __ksym;
-        extern struct bpf_key *bpf_lookup_user_key(u32 serial, u64 flags) __weak __ksym;
-
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
----
- tools/bpf/bpftool/btf.c | 55 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
-
-diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
-index af047dedde38..6789c7a4d5ca 100644
---- a/tools/bpf/bpftool/btf.c
-+++ b/tools/bpf/bpftool/btf.c
-@@ -20,6 +20,8 @@
- #include "json_writer.h"
- #include "main.h"
- 
-+#define KFUNC_DECL_TAG		"bpf_kfunc"
-+
- static const char * const btf_kind_str[NR_BTF_KINDS] = {
- 	[BTF_KIND_UNKN]		= "UNKNOWN",
- 	[BTF_KIND_INT]		= "INT",
-@@ -461,6 +463,49 @@ static int dump_btf_raw(const struct btf *btf,
- 	return 0;
- }
- 
-+static int dump_btf_kfuncs(struct btf_dump *d, const struct btf *btf)
-+{
-+	LIBBPF_OPTS(btf_dump_emit_type_decl_opts, opts);
-+	int cnt = btf__type_cnt(btf);
-+	int i;
-+
-+	printf("\n/* BPF kfuncs */\n");
-+	printf("#ifndef BPF_NO_KFUNC_PROTOTYPES\n");
-+
-+	for (i = 1; i < cnt; i++) {
-+		const struct btf_type *t = btf__type_by_id(btf, i);
-+		const char *name;
-+		int err;
-+
-+		if (!btf_is_decl_tag(t))
-+			continue;
-+
-+		if (btf_decl_tag(t)->component_idx != -1)
-+			continue;
-+
-+		name = btf__name_by_offset(btf, t->name_off);
-+		if (strncmp(name, KFUNC_DECL_TAG, sizeof(KFUNC_DECL_TAG)))
-+			continue;
-+
-+		t = btf__type_by_id(btf, t->type);
-+		if (!btf_is_func(t))
-+			continue;
-+
-+		printf("extern ");
-+
-+		opts.field_name = btf__name_by_offset(btf, t->name_off);
-+		err = btf_dump__emit_type_decl(d, t->type, &opts);
-+		if (err)
-+			return err;
-+
-+		printf(" __weak __ksym;\n");
-+	}
-+
-+	printf("#endif\n\n");
-+
-+	return 0;
-+}
-+
- static void __printf(2, 0) btf_dump_printf(void *ctx,
- 					   const char *fmt, va_list args)
- {
-@@ -596,6 +641,12 @@ static int dump_btf_c(const struct btf *btf,
- 	printf("#ifndef BPF_NO_PRESERVE_ACCESS_INDEX\n");
- 	printf("#pragma clang attribute push (__attribute__((preserve_access_index)), apply_to = record)\n");
- 	printf("#endif\n\n");
-+	printf("#ifndef __ksym\n");
-+	printf("#define __ksym __attribute__((section(\".ksyms\")))\n");
-+	printf("#endif\n\n");
-+	printf("#ifndef __weak\n");
-+	printf("#define __weak __attribute__((weak))\n");
-+	printf("#endif\n\n");
- 
- 	if (root_type_cnt) {
- 		for (i = 0; i < root_type_cnt; i++) {
-@@ -615,6 +666,10 @@ static int dump_btf_c(const struct btf *btf,
- 			if (err)
- 				goto done;
- 		}
-+
-+		err = dump_btf_kfuncs(d, btf);
-+		if (err)
-+			goto done;
- 	}
- 
- 	printf("#ifndef BPF_NO_PRESERVE_ACCESS_INDEX\n");
--- 
-2.44.0
-
+Thanks,
+Guenter
 
