@@ -1,119 +1,114 @@
-Return-Path: <linux-kernel+bounces-212038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6CC905A59
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:08:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DFDB905A5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35AFE1F2262E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:08:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79F78B20D2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7679C18306D;
-	Wed, 12 Jun 2024 18:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00431183068;
+	Wed, 12 Jun 2024 18:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOcF6+Ys"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vGmSgnE7"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFC9181312;
-	Wed, 12 Jun 2024 18:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B620117DE0F;
+	Wed, 12 Jun 2024 18:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718215681; cv=none; b=H0p1twHCsX02vc7otRFook1JXJsvkyq/SfWv0VMbNGeR2JNsDE59iD9Vngp9nVmjbpSOiT+SiLyXPSIM8wo3Y0mIhabGaBbcdm4AzFjGozF1kK1fT/eOb7vG5Rm1Ihybx7p0BvRspvYvX1nqbjuTsq1yTNkNPhcQINSomTSI8sE=
+	t=1718215704; cv=none; b=EIGQe55hQ2VDLlwGWX2lMhVWAwZuOANmnUGbCxix7GsnupQcfdubKV6RUEkBWJ+NgPCOcw0ib2yKRC2YPh7WSVbJHfNtMSB+Q34msyoUa1U/6Ykdx1oHJCWEJpxTHDwbQH+kR1s5fIv2cz7rp25cA1An2tvTjJ6p9MlF9C5htOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718215681; c=relaxed/simple;
-	bh=UvHxczzQg4EGAxqN7YDDFJiegaC39sY8/1yzi4kLlVY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d8gIlH5sjxxwkxeGCHhzezaMGUEz3p5wEC2wH43TXSAsQFI+Fq5hUaPiLHDZo+XYJhyAO1EPvzpUOyVgHBgLCPj8+5VTY971telrbDtyM7MM0fgcliL8NiKzV5GxsM9PGIGGFP4sf7gt/TnFI5WpqqhDPfSQdRvUBA3SFp9xGfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OOcF6+Ys; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-35f225ac23bso184764f8f.0;
-        Wed, 12 Jun 2024 11:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718215678; x=1718820478; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j2KvIJWno4Stgu8w7sh9JsxW4Akq08TY0yFh2XkaJLI=;
-        b=OOcF6+YsiTr/1sFCIQFd6D4FgwMkZxOCpBSyT5HdiiROAOavGUsxlr1UNW7j4vHQf2
-         QN9ZHQ81fR4tBqYjDVK84wC619MHXL29O94LHQPLrH20L2Jbfma144pQqP50N78qeAyA
-         hJ6aTjdjsT83bM2rbDA6XrqHXk+TdzLmOqR72cTBr+Bj2TtmOGm0XLAokrvAeg7SKt4n
-         yU0CdLDPanBXmxeSgm660thoK7WESKxmnHV48ynXYa7RbabYC/KAfoZGQCaylr8/l4df
-         4srOaLadqrGyz5t5TO7RMxVWOJ9NuXmRGqRSGDsXjuwkaLxeY9KYlH4LSvvy23pRnu4R
-         m/VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718215678; x=1718820478;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j2KvIJWno4Stgu8w7sh9JsxW4Akq08TY0yFh2XkaJLI=;
-        b=rKs/iozrhoW1R6eRcamFp784sNA76k6eTIdVD8tjazCulUTkrWOfNYPfPdlU6HfmyK
-         SK/eiHEcfbIbYP65IPWmGUkmqIUJQfpIdrv9dbUrmcYsmiTEt0tkSPV1NvqFJA+j0VYh
-         3vhkEK9m4lyMLXZjZlYRS6MPpeYp2WFENoZEzNhcQLiy87qlieCp90akmPfXklBVqw/i
-         lk7ks6DhFA3t+HDFameLWtTzoces2/FYltmlCd5EhD1sUhS+uIA9qC2p1TvHnrllKs89
-         ANpzdrN9btSTl5crbESGTEGC7Be+jgZihOcrjnkTfLe7Sh8jlzyuTcoTP6/5HduzPocf
-         w6hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7UVJiMZpyi93Q8kWRPn9mB7jDcHOHsUNgcmLjBmEdMuBOVrNeZGV6zKsaY+/ktUzg8/YOzpdO3LeQbQB3T7Bq8G9YLY0wBpagvT2qwP1lehdVk/v1PQw9aAi2a2DvnOIopK0N3+dVTlb1NGs/jgNVXn90lWn4f05D
-X-Gm-Message-State: AOJu0YxoOfuUWQKk3y0VHMYPoT1pBdTADoUzuVbDx/4JwT6DPVMC0oWp
-	pDz1E0QmJL1N5MojVShDi8p32mtecwcB1RDdw90nNNB9IpoNxXFGuBidL5jzwL2jmQjVIK0XUpW
-	eU8kbeA3R1vrAqC2pRJg1SPX5A/Y=
-X-Google-Smtp-Source: AGHT+IFagaa3094jY436YOqfT/9pajpP6WHk7dIsYvtAxQJkEJx4qhjJqT33Ynz5duEVjwU+cavBJQtRxGSDQ4sDvkU=
-X-Received: by 2002:adf:ecd1:0:b0:360:7280:9cbd with SMTP id
- ffacd0b85a97d-36072809e11mr54163f8f.34.1718215678437; Wed, 12 Jun 2024
- 11:07:58 -0700 (PDT)
+	s=arc-20240116; t=1718215704; c=relaxed/simple;
+	bh=+upB2qwjfiYh/h4iqILkWX9TtN2BUxazXbJYqgaJFwU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=rXF33auCbRBG0flsVP3tw/lw3F8BoimfYIgvw4MwBUZje95S6wSVrvIEYx6I1HjhRu57V+uYh6tD5ZbXUeT5ooVg8r+BpcUJSpgthev/XucBxgcGIrnWWoRUZZ80+RLZX0ruynSI6lEjB8IXvcivp5rMFVKhkjIhv7xJUu9Mk40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vGmSgnE7; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718215688; x=1718820488; i=markus.elfring@web.de;
+	bh=vR1DLMpeZId+aNSKRhK1IPZHvpJqGmjpsDvOr4TyoSw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=vGmSgnE7KNFaaX50dHu4QgjuTFa1UNZKTJ73DLJVwXQqNTBvKW3QWPrkrehohXaw
+	 qSWCOXbzw0BKaoC3MGuH8hUZ0UJmIDxHoEpaB6zrfHemuARQDJpq2zsbZsNQxW89z
+	 MH8vV+QuM/N/xjn8JvJ33g9FkryJr5SF1Xk9zwVWw0YMKEkXARHxVqmILoPoOMMxM
+	 8qREhN6s/WfN35OLt6wts5zXzufGvDycT6gTCNW7xMy2PqQXg8dWKH77SDOvoARc0
+	 gfWGNegVeYSHLPZuJ6aPmcEALmom/Ua8ApffhaO18xfhsazbPXIihDWwRgrIhGP+n
+	 bo11IHtBlwqeBSa/6w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Zo6-1seMZA0zSO-012ymy; Wed, 12
+ Jun 2024 20:08:08 +0200
+Message-ID: <9bf241c5-68af-4471-a159-1c673243d80d@web.de>
+Date: Wed, 12 Jun 2024 20:08:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612085823.28133-1-kunyu@nfschina.com>
-In-Reply-To: <20240612085823.28133-1-kunyu@nfschina.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 12 Jun 2024 11:07:46 -0700
-Message-ID: <CAADnVQLcT3dqtapsYYFAtY9rU8A7RB4aoUvbOweobOGZkbj9+A@mail.gmail.com>
-Subject: Re: [PATCH] x86: net: bpf_jit_comp32: Remove unused 'cnt' variables
- from most functions
-To: kunyu <kunyu@nfschina.com>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Wang YanQing <udknight@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Hongchen Zhang <zhanghongchen@loongson.cn>,
+ Huacai Chen <chenhuacai@loongson.cn>, linux-pci@vger.kernel.org,
+ loongarch@lists.linux.dev, Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20240605075419.3973256-1-zhanghongchen@loongson.cn>
+Subject: Re: [PATCH v2] PCI: use local_pci_probe when best selected cpu is
+ offline
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240605075419.3973256-1-zhanghongchen@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:k9f//JL/SkQ4XCesVEpYNO1oXTOIW7yIhuBMzW/ZwJiC5PbBIHZ
+ jGaK1lryYCkyWlbYdR/H9NQiYKJ0rWYdQS2r7F2pdSxJluAmVmfg5+CwljOecKDXyHG3ZD/
+ rwLRIDRJd7iTv2CMk9rrdX/r+yzM34yWTSZezzo2tnubf/rk5F+CTfkF/lShTX0TetNFuTs
+ nWULOH+YX1KshtFg1X0rA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VzkNTr5/WFk=;Neu03KRfGdmlYDdTwUZUknHgAxm
+ yBHsmeapQ9/PZx9CLdBka0+SdAFM3QBDDn64NJ29blxmy/Sb+I5qHlQpMb7c5xehkKup0VzDF
+ AseCGQVa1YHeK11Dgj2pJ9kZof4AH9WBtDMNLZBMA057yGO8Z5bBdh+H9ME7qXmbs0h+iCnS6
+ LzO4BhFbF6ftjidhy1YXVsfOf5cx+eb4XJcpjt+aJ0r2TX29l2msAovwIfIBspdgfwUrM4f97
+ 82+scXnURXjVm8aPWJgINS5w+oe7EFCIXFTbe1qULVodV/rDIjs+ZSpR5AeVLjizS0BJrQXV0
+ 9AUefSfvLXXWJiLguZgBS7K4jCP7d5HFx0NZzd9zTCUKpwPvx6zWZZp7rXHddMzH+h530XPTV
+ R8V3ltV3baiGqdRc32WMqC5hh3adcwMwCKZ9h+TVoBeU9sfGLyqgRC04fyciNGtEMbMWfwlyh
+ tyJ2DzmV6/+Ggxnd9mbefGPgw+38DW2NV/zywTlEZEB4xM4EXM2WQgnINHcVS7YuoflTq2JwX
+ sqaDzwVGJvY5kSSrwCWf/BThhEjXooKwDUzsCgZ2/QGKOvZifudPUGx6TJYElfN3HkuXYBcFe
+ /mvseqKvUguVJjBf8qKcHGxVi0UI6oeP406ntbwwtJyZlOp6SMzIqqzFL31vaDuHt059MS7OB
+ r7e+beZEzJLoHqYMjO5D/H7PRSqur4kKO2oVWl2wsiImZaCklHMOBvY+xnsRExjgWsalxNB6v
+ JMQLX6Pr6bDLU9xDE6NfpnED33IG0T6LuCf6jeVhP1pZIH23mvb3ZTb56QcDBu5m+hvm6TzV+
+ i9Q1jDT1EOqPxm+xE2e63u1J4hnliR45Fy7CZSz8yH99s=
 
-On Wed, Jun 12, 2024 at 1:59=E2=80=AFAM kunyu <kunyu@nfschina.com> wrote:
->
-> In these functions, the 'cnt' variable is not used or does not require
-> value checking, so these 'cnt' variables can be removed.
->
-> Signed-off-by: kunyu <kunyu@nfschina.com>
-> ---
->  arch/x86/net/bpf_jit_comp32.c | 27 ++-------------------------
->  1 file changed, 2 insertions(+), 25 deletions(-)
->
-> diff --git a/arch/x86/net/bpf_jit_comp32.c b/arch/x86/net/bpf_jit_comp32.=
-c
-> index de0f9e5f9f73..30f9b8a3faed 100644
-> --- a/arch/x86/net/bpf_jit_comp32.c
-> +++ b/arch/x86/net/bpf_jit_comp32.c
-> @@ -207,7 +207,6 @@ static inline void emit_ia32_mov_i(const u8 dst, cons=
-t u32 val, bool dstk,
->                                    u8 **pprog)
->  {
->         u8 *prog =3D *pprog;
-> -       int cnt =3D 0;
+=E2=80=A6
+> This can be happen if a node is online while all its CPUs are offline
+> (we can use "maxcpus=3D1" without "nr_cpus=3D1" to reproduce it), Theref=
+ore,
+> in this case, we should call local_pci_probe() instead of work_on_cpu().
 
-I don't think you bothered to compile it.
+* Please take text layout concerns a bit better into account also accordin=
+g to
+  the usage of paragraphs.
+  https://elixir.bootlin.com/linux/v6.10-rc3/source/Documentation/process/=
+maintainer-tip.rst#L128
 
-pw-bot: cr
+* Please improve the change description with an imperative wording.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.10-rc3#n94
+
+* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+
+* How do you think about to specify the name of the affected function
+  in the summary phrase?
+
+
+Regards,
+Markus
 
