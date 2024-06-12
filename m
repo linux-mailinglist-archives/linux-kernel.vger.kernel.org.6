@@ -1,179 +1,133 @@
-Return-Path: <linux-kernel+bounces-211105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA876904D2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:54:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D382904D2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449681F23181
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:54:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13C48283B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F3B16C6A5;
-	Wed, 12 Jun 2024 07:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OAO4ftX0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="URvqdu35";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OAO4ftX0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="URvqdu35"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F872772A;
-	Wed, 12 Jun 2024 07:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5E016C69A;
+	Wed, 12 Jun 2024 07:53:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8222772A;
+	Wed, 12 Jun 2024 07:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718178844; cv=none; b=IBJ1U3u67C6lEORaBpTGH2JnG9AG6Lj1u8IAGW9GDyPslwlDV4SgGGXf8YdVH7mRUl5qEVPkT1I7xsvBau+U/YBiKToSAoZBjm1aQRAvyRzYf5D5e10WTu6W6zr/ypjSv3VuX6kttRzcQFNNn05QwFWg81FPgtB0L86WfTCX5kk=
+	t=1718178794; cv=none; b=RvMQLfHaONF6U2Bt8cnyhtpoVmABkyuTmZ4Pl0QrCBqcK3klye2IoQKi249Pm2wlI9M37ppL1yk7y5usZU3J97lzdnvm5I2B5UCetGHrEkzeBMuCsxj3iNhCLLmjqqL4Wr04gd3/JwBp9P7Yr/sILSR6XAG+P6zLRnCuZGTR2bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718178844; c=relaxed/simple;
-	bh=frjf2yRoYppskJEjgW+Fs4LD5DAGHLdgINmxMcprX20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=chbQZr42GIVPSKoWrddr7eMILcL62GGcgyZFuN6AqCsh3mxlmr76wIZVrdIpBMDDS16MkMhBhggwk2YmDyP6d1OWBf56mKg9ALwakjDWu4R0WqMtbwrCfcYPI941egYakIZMWGfxXfzuRukJISU1AQQQC6DSmKNzs405lhD0sYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OAO4ftX0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=URvqdu35; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OAO4ftX0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=URvqdu35; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 139825BDB3;
-	Wed, 12 Jun 2024 07:54:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718178841; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0nECO5VH26rvrWqSX/kqsFSBcBZ6QGhFggX3HCcXRKs=;
-	b=OAO4ftX0VHhGtesSCWGzzFz8W043mhdf8vCEcy/4gL+H7Hlctf0f68k6zL5FpdDggDKOGT
-	V/5CKx7Dr3GqVr+8BpeYc9nUn50x+N8HiIuqxM0oMorOyCQ7o7kQJ+nsUicUeSWINWyLL3
-	KoL7Pu9DhiNiHoimCa8mdgNE8hmeo3w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718178841;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0nECO5VH26rvrWqSX/kqsFSBcBZ6QGhFggX3HCcXRKs=;
-	b=URvqdu35GXkAcUSbpEvXU208bi5upvmGypa6CtyKaO2nkrb6jpV2J+xiHs887apYXUXiq5
-	p1apIeCxfrRh5wAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718178841; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0nECO5VH26rvrWqSX/kqsFSBcBZ6QGhFggX3HCcXRKs=;
-	b=OAO4ftX0VHhGtesSCWGzzFz8W043mhdf8vCEcy/4gL+H7Hlctf0f68k6zL5FpdDggDKOGT
-	V/5CKx7Dr3GqVr+8BpeYc9nUn50x+N8HiIuqxM0oMorOyCQ7o7kQJ+nsUicUeSWINWyLL3
-	KoL7Pu9DhiNiHoimCa8mdgNE8hmeo3w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718178841;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0nECO5VH26rvrWqSX/kqsFSBcBZ6QGhFggX3HCcXRKs=;
-	b=URvqdu35GXkAcUSbpEvXU208bi5upvmGypa6CtyKaO2nkrb6jpV2J+xiHs887apYXUXiq5
-	p1apIeCxfrRh5wAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 827B91372E;
-	Wed, 12 Jun 2024 07:53:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OlHOHwRUaWbcUQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 12 Jun 2024 07:53:40 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 554FCA0873; Wed, 12 Jun 2024 09:50:27 +0200 (CEST)
-Date: Wed, 12 Jun 2024 09:50:27 +0200
-From: Jan Kara <jack@suse.cz>
-To: Hugh Dickins <hughd@google.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>,
-	syzbot <syzbot+9c1fe13fcb51574b249b@syzkaller.appspotmail.com>,
-	akpm@linux-foundation.org, chengming.zhou@linux.dev,
-	hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, nphamcs@gmail.com,
-	syzkaller-bugs@googlegroups.com, Jan Kara <jack@suse.cz>,
-	linux-ext4@vger.kernel.org
-Subject: Re: [syzbot] [mm?] KMSAN: uninit-value in zswap_store
-Message-ID: <20240612075027.5pzkkovaewtx63n5@quack3>
-References: <000000000000d0f165061a6754c3@google.com>
- <CAJD7tkaTQU1Kxt935fmq+_BJd-VT6vKFj58o7Aq+QhoyrOtCmw@mail.gmail.com>
- <02a21a55-8fe3-a9eb-f54b-051d75ae8335@google.com>
+	s=arc-20240116; t=1718178794; c=relaxed/simple;
+	bh=yZsBP9m4WWs5zCRUxsl4WsBOoGGwuUfEVhbz0xFqIRs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r/GO0OBI4O+83rLIsd5TjkbwSqUuhliUs0omVpTXYwBCRCZ3sJdbb05LHhp7HxwpAr4f1dMnM8TcajsMIWaovbugsmEEulrvDQII/YLY12xgubm46PmnqRIk5ElALQ2TTc8mG0CwfIlh6KTqFqXyE2a6Yfob49C4ot0z8sKF2m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EC2F1595;
+	Wed, 12 Jun 2024 00:53:35 -0700 (PDT)
+Received: from [10.57.72.106] (unknown [10.57.72.106])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C655F3F64C;
+	Wed, 12 Jun 2024 00:53:08 -0700 (PDT)
+Message-ID: <d539bd2c-89f9-4a04-900c-41d257123163@arm.com>
+Date: Wed, 12 Jun 2024 08:53:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <02a21a55-8fe3-a9eb-f54b-051d75ae8335@google.com>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[9c1fe13fcb51574b249b];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,syzkaller.appspotmail.com,linux-foundation.org,linux.dev,cmpxchg.org,vger.kernel.org,kvack.org,gmail.com,googlegroups.com,suse.cz];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org,
+ daniel.lezcano@linaro.org, Dietmar.Eggemann@arm.com, dsmythies@telus.net,
+ yu.chen.surf@gmail.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Todd Kjos <tkjos@google.com>,
+ "wvw@google.com" <wvw@google.com>
+References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
+ <20230105145159.1089531-3-kajetan.puchalski@arm.com>
+ <20230711175814.zfavcn7xn3ia5va4@airbuntu>
+ <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com>
+ <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
+ <20230917010516.54dgcmms44wyfrvx@airbuntu>
+ <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
+ <20240529101950.bjpmmdqfhjg3aol6@airbuntu>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20240529101950.bjpmmdqfhjg3aol6@airbuntu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue 11-06-24 02:13:59, Hugh Dickins wrote:
-> On Mon, 10 Jun 2024, Yosry Ahmed wrote:
-> > Hugh, do you mind taking a quick look at whether this is a real bug?
-> > 
-> > If this is expected behavior, perhaps there is some annotation we can
-> > use in zswap that it is fine to encounter uninitialized data when
-> > reading the folio.
-> 
-> I've not been faced with a KMSAN report before, so I might well be
-> misunderstanding its language: but this looks like an ext4 "bug" to me.
-> 
-> I think the story that the three KMSAN stacks are telling is this:
-> syzbot has an ext4 filesystem on a loop device on a tmpfs file (I do
-> exactly that too); ext4 is doing some ext4_xattr_inode_write() business,
-> in the course of which it writes back a not-fully-initialized block to
-> the loop device; shmem faithfully copies that data into its pagecache,
-> then later when under memory pressure that page gets "written" out to
-> zswap: where zswap_is_page_same_filled() takes an interest in the data,
-> and KMSAN objects because some of it was not originally initialized.
-> 
-> If that's a correct interpretation, then it's probably not a big deal:
-> it's probably the uninitialized end of a buffer that's written out,
-> not any part of the "disk" which ext4 would ever show to a user; but
-> I do agree with KMSAN that ext4 would do better to clear that area,
-> rather than accidentally storing someone else's super-secret info.
+Hi Qais,
 
-Yes, that seems to be accurate.  ext4_xattr_inode_write() stores large
-extended attribute in the inode and we don't bother to zero out the tail of
-the block we use since we never access bytes beyond xattr size. Frankly I
-don't consider this a bug since the uninitialized bytes are never exposed
-to (unpriviledged) userspace. But I agree that out of pure precaution and
-because it doesn't cost much in terms of performance we could zero out the
-block tail.
++Todd and Wei on CC
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On 5/29/24 11:19, Qais Yousef wrote:
+> On 05/28/24 11:29, Vincent Guittot wrote:
+>> Hi All,
+>>
+>> I'm quite late on this thread but this patchset creates a major
+>> regression for psci cpuidle driver when using the OSI mode (OS
+>> initiated mode).  In such a case, cpuidle driver takes care only of
+>> CPUs power state and the deeper C-states ,which includes cluster and
+>> other power domains, are handled with power domain framework. In such
+>> configuration ,cpuidle has only 2 c-states : WFI and cpu off states
+>> and others states that include the clusters, are managed by genpd and
+>> its governor.
+>>
+>> This patch selects cpuidle c-state N-1 as soon as the utilization is
+>> above CPU capacity / 64 which means at most a level of 16 on the big
+>> core but can be as low as 4 on little cores. These levels are very low
+>> and the main result is that as soon as there is very little activity
+>> on a CPU, cpuidle always selects WFI states whatever the estimated
+>> sleep duration and which prevents any deeper states. Another effect is
+>> that it also keeps the tick firing every 1ms in my case.
+> 
+> Unfortunately I think we need to revert this. We've been seeing the power
+> regressions for a long while now and it doesn't seem we'll see an improvement
+> soon based on last discussion.
+
+Could you be more precised when you say 'we'?
+It's not Vincent, because he said he cannot measure power on his end.
+
+Do you mean Google ACK? Or Google Pixel Team?
+You send emails from your private account and people are confused when
+you say 'we'.
+
+> 
+>>
+>> IMO, we should at least increase the utilization level
+> 
+> This won't help. We tried different values, unfortunately the logic is flawed.
+> Utilization value on its own says nothing about the idleness of the system.
+
+This is not true. When you up-migrate a task to big CPU, then CPU idle
+gov can instantly benefit from utilization information and won't make
+mistake based on old local history and won't use deep idle state.
+So migrating the utilization from one CPU to another CPU says a lot
+about the idleness to that destination CPU.
+
+When Christian removed the util he got -4.5% lower score in GB5, so
+this util has impact [1].
+
+> I think best to revert and rethink the logic. Which is something we're pursuing
+> and we'll share outcome when we have something to share. As it stands, this
+> doesn't help. And we should really strive to avoid magic thresholds and values.
+> They don't scale.
+
+Please share the power numbers. It's not helping when you just say
+some power regression w/o numbers, but with assumption that you
+are working for big company.
+
+Regards,
+Lukasz
+
+[1] 
+https://lore.kernel.org/lkml/20240611112413.1241352-1-christian.loehle@arm.com/
 
