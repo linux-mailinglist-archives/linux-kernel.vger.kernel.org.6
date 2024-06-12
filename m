@@ -1,183 +1,119 @@
-Return-Path: <linux-kernel+bounces-211512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF389052E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:49:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176959052ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57031F207C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:49:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B5E9B2130B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A1C153509;
-	Wed, 12 Jun 2024 12:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D6317B417;
+	Wed, 12 Jun 2024 12:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C8R2kAE5"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJ2k0Fwt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04DE17084A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 12:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D87172BC1;
+	Wed, 12 Jun 2024 12:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718196555; cv=none; b=gvrUszIo/kD1bIPHfSmlUrHUgzZY6ohgLp/QKe7aHGGducr8ALh/FrACtOGOeH7hvmeJfGptWb7T6Gl6fwVB4tDu3BePsb2+PfrutmpXTxkQ7PbMaLfEPevvX7WT15LMnUe0b8oiTYJ206FbCc6PRGs7B1vy9M26E0i4SusINP0=
+	t=1718196596; cv=none; b=BTe8Rd9hgBj5pz9y95/t5Srio9XEPDMn0qCFy4SfQ2o8yxPqqdnQx9EPXmBV05RlNvOZLoAkKr4zG/joMZH5QVq15echLmvW1qZA9Diyt+cadD9Wa2gmMhZeJ5yO7llIm2Uq3RaJ8a/z4iOWmZ4QlMnB3PJVILYwv79yvpfrivo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718196555; c=relaxed/simple;
-	bh=nK8eQD3U2HLvmSpYT0ul176n/7+KfLRXAUeTJYk9YdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GskAmBP9THjQgdiwmRwwYP1kB0DnvGWXTE5XgZHKh72nE1/I098wy0uB6iebOqi8TWonzSHiBuwe8vuoqdu9VnV/uHHTqWJBgjlqXnKzWNqewbJDNX4jaAb8jsbb4Ah3OFNRZ//mXa00vzZLzUI3ym3yCqLx5tXh5BJ1wTGuMdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C8R2kAE5; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so37792281fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 05:49:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718196552; x=1718801352; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0yxD5VYZZavmxVXtb3enG8WmplRcJPFmwaHxZgVVSPo=;
-        b=C8R2kAE5QLFHnlLGclMrXOUYdtvEwoG1MkFG5A/bPsMQqQEYO9MZ7r5mbHC/ALwyYK
-         ty577VF8IjbswNcoJq0WRp81AL+7HwXvAHsBTSdc84nqAriQk1Nug2RiSA5knYIaQj7S
-         p2CaLggKxmeHEhxWgfBjd4OF9I1m0wqKTKZ4NBEl6UrhXA+jy0SkHtT2pM5Rl58bSbtX
-         9Ke4tUEFQDWulCkaNI+fq/4+t/Q4tO6DibeE/Kd4yxHJ7d/JQay8qUhtfGfrmGzBb6xd
-         mCQncXScN0+zZJSVuLHhqPErL4QlvUYdKGHyU8l1G9ZZaH4OffsKOVy9ecEnuXuBkPAr
-         wYNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718196552; x=1718801352;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0yxD5VYZZavmxVXtb3enG8WmplRcJPFmwaHxZgVVSPo=;
-        b=sreJ5/zDP37ISt9DNb9yyBW6r6M4R4jHhcbqKy2P2felkACHSWi/cahTbkdP2hkVpx
-         kJa0v27R/MlXpKEwFz/QdRL8sK99OBUKSjH2QzMvic3d/m0NRCeSXrJxlEShb8wTHOZc
-         Eyd7+2rZmIy9MbsYz+vUbIQ+IUaYzX083J88Qr/oocXD99LcMNmHnfhu2DB9y9dpYAJp
-         7TefJCF3FO3O52cWcLQoXCAxkCX9VrAI1E0oXSAGFgzQyWZ8pYzo3AwWRmkjPqwVao5j
-         TNEJJu6bak+onXQ+hcSv95zt73IwxPsvFOVjdwdDNWvKAepHHKgG3SRXBeXiqa+Qmgvc
-         rsNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUrkQgchxEgP4KK8xtkp4ENRiRiycA/YhNn/Y2jvzNfNrlmDza4uPzDhgyKPhRAbC85YqDGMVtcj4uZGUOhWn5pGQ88QPKJ7e+23Ec
-X-Gm-Message-State: AOJu0YymXMNEw6HyugdtcHXAXCfwhpGhFS7OfLPBFQRupH5SElg8kon+
-	ldP96SuOad+AEBSsXzoY/VO8ZPtcJenR+Rp7wPyIueYVoIU37f715DvM7rRBBAI=
-X-Google-Smtp-Source: AGHT+IHTtXOw7Dy85qXvDzKaBi3NfAqIFcpOA4TBDfQaEJBSthuiUBRe5J4B3+U+O6qnjq/yvAitWg==
-X-Received: by 2002:a2e:9b13:0:b0:2eb:de21:94a1 with SMTP id 38308e7fff4ca-2ebfc964026mr9608001fa.43.1718196551645;
-        Wed, 12 Jun 2024 05:49:11 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eadb8d2973sm22603021fa.117.2024.06.12.05.49.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 05:49:11 -0700 (PDT)
-Date: Wed, 12 Jun 2024 15:49:09 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, stable <stable@kernel.org>
-Subject: Re: [PATCH v5 6/7] misc: fastrpc: Fix ownership reassignment of
- remote heap
-Message-ID: <xvy4syldmqdklij4wbub6x52gexijlrgtoketd3urohxrca5g2@mmioafzpmy7s>
-References: <20240611103442.27198-1-quic_ekangupt@quicinc.com>
- <20240611103442.27198-7-quic_ekangupt@quicinc.com>
- <xc2ys75plbtrenastitqafadfrtolpd3bjdqcrl3wnozpc6kdo@e6e73ousyea7>
- <7d75f6b1-60fe-4a03-a251-4675a3364148@quicinc.com>
+	s=arc-20240116; t=1718196596; c=relaxed/simple;
+	bh=eQnr5sp7TMU5N9+uMDCu57G7uX0Piw4Oz8VKM7kfQy8=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=B2SVJAOLpVYJ01Ix7QsmKct3WJRGStLPZtBx1WcesbU9KaoPEDDPQ92uK+Ox59FYFPO7xMwd2Lyn1zHfPWQnY+cqzo9bFVKkyev+jGDetpPKTDMas5X8o4UO6SXFN2shFdgjrR/CnAaPlqZt7coGPaTTULBWoq1Gd6LjCzlWzFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJ2k0Fwt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94965C3277B;
+	Wed, 12 Jun 2024 12:49:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718196596;
+	bh=eQnr5sp7TMU5N9+uMDCu57G7uX0Piw4Oz8VKM7kfQy8=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=aJ2k0Fwtt4Xb1+hzlbll1Aahwhuiw50/l5W97ntyw/wMLsB1NPLwI8RyOXHcP6scE
+	 LDeOq9eFDKNdz1Rqv+0AZh5iWyng3A3wsJw85AQP4Tgo15pNlzXsqoJNBGuC0wOBOd
+	 ePJzAeCzlYh9g1k2Ha/zf5lnnK65hoYrkznfPeoPr3YX/99a0PZkyE55ILb9Zt0QK/
+	 3gsNei2Yyg4Ip8d1LqdhbBnCGAd8eQhDnY8MrYVwYdkXLmzCp2M7q8kjAS659fi5oU
+	 +WZn8rsCC7RSlyfS1BDCDW79WFkX2AcfW0Xn0B3qc2Ue3XdfGm70GuI7lr4PazJTDl
+	 8pdMRG8iYjqaw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,  "David S . Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  Jeff Johnson <jjohnson@kernel.org>,
+  linux-wireless@vger.kernel.org,  netdev@vger.kernel.org,
+  devicetree@vger.kernel.org,  ath11k@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  ath12k@lists.infradead.org,  Bartosz
+ Golaszewski <bartosz.golaszewski@linaro.org>,  Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v9 1/2] dt-bindings: net: wireless: qcom,ath11k:
+ describe the ath11k on QCA6390
+References: <20240605122106.23818-1-brgl@bgdev.pl>
+	<20240605122106.23818-2-brgl@bgdev.pl> <87h6e6qjuh.fsf@kernel.org>
+	<CAMRc=MdiKxtnN+g92RUTXdOydaPV5M2u5iUdKyE2SNvDkdXAjg@mail.gmail.com>
+	<871q5aqiei.fsf@kernel.org>
+	<CAMRc=McacZMP-51hjH+d8=PVe+Wgw4a8xWcv0sRPLJKL_gP=KQ@mail.gmail.com>
+	<87sexqoxm9.fsf@kernel.org>
+	<CAMRc=McYAbhL5M1geYtf8LbgJG5x_+ZUFKXRuo7Vff_8ssNoUA@mail.gmail.com>
+	<8db01c97-1cb2-4a86-abff-55176449e264@kernel.org>
+	<CAMRc=Mer2HpuBLGiabNtSgSRduzrrtT1AtGoDXeHgYqavWXdrA@mail.gmail.com>
+Date: Wed, 12 Jun 2024 15:49:51 +0300
+In-Reply-To: <CAMRc=Mer2HpuBLGiabNtSgSRduzrrtT1AtGoDXeHgYqavWXdrA@mail.gmail.com>
+	(Bartosz Golaszewski's message of "Tue, 11 Jun 2024 22:05:57 +0200")
+Message-ID: <87ikyenx5c.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d75f6b1-60fe-4a03-a251-4675a3364148@quicinc.com>
+Content-Type: text/plain
 
-On Wed, Jun 12, 2024 at 09:54:47AM +0530, Ekansh Gupta wrote:
-> 
-> 
-> On 6/11/2024 5:29 PM, Dmitry Baryshkov wrote:
-> > On Tue, Jun 11, 2024 at 04:04:39PM +0530, Ekansh Gupta wrote:
-> >> Audio PD daemon will allocate memory for audio PD dynamic loading
-> > What is Audio PD daemon? Is it something running on the CPU or on the
-> > DSP? Is it adsprpcd or some other daemon?
-> It's adsprpcd which is going to attach to Audio PD.
+Bartosz Golaszewski <brgl@bgdev.pl> writes:
 
-Ack
+>> >> Sure, I don't need DT but that's not my point. My point is why require
+>> >> these supplies for _all_ devices having PCI id 17cb:1101 (ie. QCA6390)
+>> >> then clearly there are such devices which don't need it? To me that's
+>> >> bad design and, if I'm understanding correctly, prevents use of
+>> >> qcom,ath11k-calibration-variant property. To me having the supplies
+>> >> optional in DT is more approriate.
+>> >>
+>> >
+>> > We require them because *they are physically there*.
+>>
+>> I understand that for all known DT QCA6390 hardware, the supplies should
+>> be provided thus they should be required. If in the future we have
+>> different design or we represent some pluggable PCI card, then:
+>> 1. Probably that PCI card does not need power sequencing, thus no DT
+>> description,
+>> 2. If still needs power sequencing, you can always amend bindings and
+>> un-require the supplies.
+>>
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>
+> Kalle, does the above answer your questions? Are these bindings good to go?
 
-> >
-> >> usage when it is attaching for the first time to audio PD. As
-> >> part of this, the memory ownership is moved to the VM where
-> > Which VM?
-> In audio PD case, it's the following VMIDs:
-> QCOM_SCM_VMID_LPASS
-> QCOM_SCM_VMID_ADSP_HEAP
-> 
-> Defined here: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/dt-bindings/firmware/qcom,scm.h?h=v6.10-rc3
-> 
-> These are expected to be added to fastrpc DT node as "qcom,vmids"
+To me most important is that we are on the same page that in some cases
+(eg. with M.2 boards) the supplies can be optional and we can update the
+bindings doc once such need arises (but we don't make any changes right
+now). Based on point 2 from Krzysztof I think we all agree, right?
 
-Ok, good.
-
-> 
-> >
-> >> audio PD can use it. In case daemon process is killed without any
-> >> impact to DSP audio PD, the daemon process will retry to attach to
-> >> audio PD and in this case memory won't be reallocated. If the invoke
-> >> fails due to any reason, as part of err_invoke, the memory ownership
-> >> is getting reassigned to HLOS even when the memory was not allocated.
-> >> At this time the audio PD might still be using the memory and an
-> >> attemp of ownership reassignment would result in memory issue.
-> > What kind of 'memory issues'? Is it even possible to reclaim the memory
-> > back?
-> In case when audio PD on DSP is still using the memory, the ownership should not be
-> moved to HLOS. This might happen in daemon kill scenario where remote_heap is not
-> allocated again, but if due to any reason if the fastrpc_internal_invoke fails, that might
-> result in the ownership change of remote_heap memory.
-
-You are describing the expected behaviour. not the observed issue.
-
-Also, the second quesiton didn't get the answer. Is it possible to free
-/reclaim the memory?
-
-> >
-> >> Fixes: 0871561055e6 ("misc: fastrpc: Add support for audiopd")
-> >> Cc: stable <stable@kernel.org>
-> >> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> >> ---
-> >>  drivers/misc/fastrpc.c | 4 +++-
-> >>  1 file changed, 3 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> >> index 1ba85c70e3ff..24dc1cba40e9 100644
-> >> --- a/drivers/misc/fastrpc.c
-> >> +++ b/drivers/misc/fastrpc.c
-> >> @@ -1238,6 +1238,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
-> >>  	struct fastrpc_phy_page pages[1];
-> >>  	char *name;
-> >>  	int err;
-> >> +	bool scm_done = false;
-> >>  	struct {
-> >>  		int pgid;
-> >>  		u32 namelen;
-> >> @@ -1289,6 +1290,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
-> >>  					fl->cctx->remote_heap->phys, fl->cctx->remote_heap->size, err);
-> >>  				goto err_map;
-> >>  			}
-> >> +			scm_done = true;
-> >>  		}
-> >>  	}
-> >>  
-> >> @@ -1324,7 +1326,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
-> >>  
-> >>  	return 0;
-> >>  err_invoke:
-> >> -	if (fl->cctx->vmcount) {
-> >> +	if (fl->cctx->vmcount && scm_done) {
-> >>  		u64 src_perms = 0;
-> >>  		struct qcom_scm_vmperm dst_perms;
-> >>  		u32 i;
-> >> -- 
-> >> 2.43.0
-> >>
-> 
+Just making sure: if we later change the supplies optional does that
+create any problems with backwards compatibility? It's important that
+updates go smoothly.
 
 -- 
-With best wishes
-Dmitry
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
