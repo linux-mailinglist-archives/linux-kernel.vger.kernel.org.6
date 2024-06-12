@@ -1,187 +1,131 @@
-Return-Path: <linux-kernel+bounces-211432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36BF90518E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:47:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F096905192
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F9A21F23A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:47:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4574B23CF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F6A16F0EF;
-	Wed, 12 Jun 2024 11:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F1216F0E9;
+	Wed, 12 Jun 2024 11:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="QgHqU6Gq"
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2045.outbound.protection.outlook.com [40.92.98.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QjRpCloa"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6582D1420B8;
-	Wed, 12 Jun 2024 11:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.98.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718192809; cv=fail; b=gKnQRo8uYsjDfi5+Isbs+vs/3qQxIVr/qHetqGQHITrTNt/Ck9W0stPlcHq/F6XYmF/fWhz+S1/F4tanUGhHNgNSecmtNsN7dv2WZNiWPg7ZmD6dj/cxfc3L70vJGxXPnti05jeCC34bFhgqjzfF7FjjTlAPIIVe5Ga3nO8vs90=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718192809; c=relaxed/simple;
-	bh=371w9SdY/LgERS9vsGZTB02Hyrt4G97gFhGKSPt+To8=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=p3QmHEptNgfPnzTf+ap8/I2yHMEnf2yMP88Srsgu50ZT67vvSztkr9eHh6wTEaswJLnpmZN9JkJkCjEP/Hjb0YKZnI+zK3t9ABKcNdVYEFVwkBPqMhCIM0l3iXGmNFZrJSQH+WlQ/SsrEd9kqOIc0BtvbVkR86QFsPg3If2Y8AM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=QgHqU6Gq; arc=fail smtp.client-ip=40.92.98.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BXNi2CYlCMu6mZdeCfqa53Q4dXiddxwrqS3jD7nEjuXN1StCj8g1DJ5A2hPfscYugOJCNdwmkVDtS7C0KUGnMxi8JNJisk4Gk19iRm+Zm7wmREBA+Uzp2wtpBrq99vJTBMHeOC1ZRHeauS/bDNZ500MYLgOEeSUHXRm9YPV2bIRcB9Ew02RIxhZtmEHuqA5AQ4G/souNb14u0QEWNADZ9sNAyzN8QMm/HqjwuVK5YWG0ovJS2pC+ZGgPyHTPQO/xeyges0ik4paPUr0q6W+1qemPb6/L0wBi71VRFcdoDRW3gyUXvH3TrlODC5SehiKfnlmNbw0zu3ltlC8mc+g6QA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RC21JaJ2n6Pe/WYWNSmF6uK8gaerwNtBKyme4hE2AHc=;
- b=hrn2nkkwcoU4eevW/YOlQItta3h4CeqDjpR3dT00DcAG6I1zDklSD6FgYelvtm9zkTzmazA6meGy9Cj1UyXwb+u8Mx2Uaq4MiwsBNhBVvo3YBs6VPe8SenDkMsm4v2I81m2NbZgrCwr1vWqYBzUqASmdauzzUzaKmu/eWMAwiBit6wFKcOaYdIDJNJNwOwsk3xeH028kd4iB6F4z7Tp14RxSIoSV+pofiehjj2jaeYWkOaEWP2K1z+NpdCV9rztzpqOi23BMohq3spC7tVGZHezpVvrvetvgOEMKYk73jty6GDgMgvENxdci9NYNYy0faZgx87At/kp9CHzGahm4Pg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RC21JaJ2n6Pe/WYWNSmF6uK8gaerwNtBKyme4hE2AHc=;
- b=QgHqU6GqkiimKiTpJArcwMWRzDTZhOWZJhuNho6tCo1vmmxGCnhCXHBFA3pf8joToUIjkbWDun7LiHFNBArmGl7HpyPu7h7BPLkohTBRJTzJXrgvEqKs615dtRrwGs42mPgKtVujXmxPRqv5JPoX6WyGvJz2U0Tzd1NhFPcdYymXuNfYRhsKNacemti7pEAEH+Phe04PFXMpPieNN64bvNZ8LMG+efVy93hDRxhjfS2NLcvDFJK0nsyAs1G4Zn/irJVo8QS0k/2QU6TRTbTx0uMeBEpbONXYqJsodGePYXb1l7UJNvnOU+kNmo8rZPc1oH76zw4XGkpSkp6A1vzG1Q==
-Received: from OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:1f1::11)
- by TYCP286MB2574.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:226::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.38; Wed, 12 Jun
- 2024 11:46:43 +0000
-Received: from OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM
- ([fe80::1167:655a:7fa5:5cef]) by OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM
- ([fe80::1167:655a:7fa5:5cef%4]) with mapi id 15.20.7633.037; Wed, 12 Jun 2024
- 11:46:43 +0000
-From: Riwen Lu <luriwen@hotmail.com>
-To: viresh.kumar@linaro.org,
-	ionela.voinescu@arm.com,
-	rafael@kernel.org
-Cc: pierre.gondois@arm.com,
-	beata.michalska@arm.com,
-	hotran@apm.com,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Riwen Lu <luriwen@kylinos.cn>
-Subject: [PATCH v4] cpufreq/cppc: Remove the desired_perf compare when set target
-Date: Wed, 12 Jun 2024 19:46:31 +0800
-Message-ID:
- <OS3P286MB2490EB027398DDB852BE2169B1C02@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [fL/b5AnrMUO6x/EbJEbIzKsgFV+nQeau]
-X-ClientProxiedBy: SG2PR06CA0204.apcprd06.prod.outlook.com (2603:1096:4:1::36)
- To OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:1f1::11)
-X-Microsoft-Original-Message-ID:
- <20240612114631.1055832-1-luriwen@hotmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBEB16D4D3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718192865; cv=none; b=tf2CAg39oxCkqI4MzuPxp0dQ3Fo5rkr13/rjJu0MnySG3JGHxAT2U/HXLl4g/rxOfvgWRSPxova/XrNPZKs0AnC/wRACCI894CC1zWdUZQXs/h51Xkhpi/wX0i7tGbLuGrJ7EUICXxga0LBmozWKHJrkd3Y4//S4p9J1NLCJB1w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718192865; c=relaxed/simple;
+	bh=VlzlBB0dCBI5lfoT0WJdI4XQI6RQ9zVg/+xsBEl6ioc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kvY/DiyNjuk9kTplUrqURrjHPx87QFmgB6kepNeaWrhTRY4p4bmxKZR5hcLNOlQPlfbKxLn+xTQm8v5MppU6iunOAvE0pIB9Wm1JQHZfbR4pHlbiHcHYOprzkHaOtcir4/A/2fUUMxALD2id+CrazIDs1FnxAtVlZh+bCEG7Tqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QjRpCloa; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bc1261f45so5310026e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:47:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718192862; x=1718797662; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3Z5DGSn0udcZbzTbE+TmEg1Luv49Nhw05suq5j2ttZc=;
+        b=QjRpCloa+HmVNhezL1QLdaPm6UeiRBMVYBEyWjSAdw1iUlr+3vzeBS/0yYJVoX/bSc
+         MocX5q989YvOVxTmfR7MGoZvRqBIDScXic7vzZTNryGaJIGPcPFi7G4uzqv+Jd5GX0pb
+         izbjplqbEE1g1b5s+sA3drkqj87dehOMw2vdg/iVRuYvRCdxcIaoFVndIM/Zf3VfrTjW
+         SsWm3yQYTjYXtIaZsusaHrel5pKZ7VWXfKcKIl9w6IvPgb9HAREP9Z3UzEqapIvR0eK0
+         ORTLIw/y+2dZXnSIs7zm2O5ZWoFuh5xKVjQuDAqxMaomgebO9hKzEZLG6rXX4vC5tX7c
+         nLOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718192862; x=1718797662;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Z5DGSn0udcZbzTbE+TmEg1Luv49Nhw05suq5j2ttZc=;
+        b=tBoUQEblLTFOPM4xdsIDGyaU3MVc9mNDAjahk1I+HhU4BjhDb1ruZUv4UHCRiG49Sw
+         SSvhkl611TtBUrdmmqieDi41hG2SpTsIQTvUtdJ6LLL+PwYNL2BVMa1M1cR8Gs/aD2yQ
+         tcFVoqJ+FQQfUT085S50fnMOESVmGevFg7em+OQaoHujdzVTdMmV6Vqf1ea+u4+bl1vG
+         q+z5J3ll18HIeN2MqtbOPvJ/8Tmozq3/jwz+lIZhWWZF3bx/NeD8Q4w0ZSmpF09rqiaK
+         oXYBNAFKjFv7DgLPru3kjKCJleMZItc1uLnwbHoLTYl9FYEcjwvh1xN/uIGRTAhbno86
+         bS7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWvAIO4nfcG9cVXZyjPdr7GTKO7azxFGL8JqPtX520a+1f+LLzmY5NTu1kqU+MoOmakUbtf8Is0c5jkJKnr78p9ZfDK/p/3u2CCqy3S
+X-Gm-Message-State: AOJu0YxrIGfIkjPsxVmjoUyYZIPgkT789/YVzn84fQNPXQo/t46Abi+4
+	aq73Bzv7M+cd6khzMJMS+6jEmTgUQ5L4VcTwNGfmxd684Eik939w
+X-Google-Smtp-Source: AGHT+IGhDuz2KvlTUdp0O3DO4ksfuwA794uBMR5acjGhmhWsSeadnd+8T0is6M6KXFOiMQjXVDi0ng==
+X-Received: by 2002:a05:6512:1114:b0:52c:7f93:c2b9 with SMTP id 2adb3069b0e04-52c9a405535mr1097705e87.63.1718192862079;
+        Wed, 12 Jun 2024 04:47:42 -0700 (PDT)
+Received: from [172.16.183.82] ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c9582d285sm495994e87.228.2024.06.12.04.47.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 04:47:41 -0700 (PDT)
+Message-ID: <9e9f27dc-80fb-4f0d-a29d-b418a7e96042@gmail.com>
+Date: Wed, 12 Jun 2024 14:47:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS3P286MB2490:EE_|TYCP286MB2574:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55540659-f0c0-47a2-9070-08dc8ad554b2
-X-Microsoft-Antispam: BCL:0;ARA:14566002|461199020|440099020|3412199017;
-X-Microsoft-Antispam-Message-Info:
-	pob0l01bs8mi0MjViUqRksOqLGTs/7G5wLrTx2mP+eulTbF934fnEUGqDjExgIKxNEY3saQtKTwYXd8fWY/PdjKOgk5vOuSJcepEMFMZCq9zYyV5dKlkB2PucEWXA2jWjKwXpJF1fwo/Yxw72BynW5bKxAbExGXwYVdBLMRGX9N4MJl1JaZ6CyvROwqtBYY+WQ/rRerMdI53JOhPd4dl5s/OA3x4daGMjuR4u+87Xw9eUz64yelFiyjDvj7Gfw/+JpAiUHqsgUkIEgXWwz8yQ/dgCflXoHPGAHCtJtnNF4tPRqL5YQQ1cGb3nQCvubN4j4sXD1JHNYDYIWUIieMmZ1cfxlbuG+RjcM+KbLUxA4PzlIJQqp02pYeKzxfyy2btO03+0Y34SNtmSdP4x4TMUm4AVqoQSzU5QmGhVr6Rez+ycDwCmFnmqpmRzucEkqELuH4u8AM8KX3RuVszeoaf1QDTzu9HZv4WSJ5JU0kvBN4Kx+XhkSUlLBaqsFhL/Dqu8o30tam65tWLr1LskVXlaAr5X98FIrgkI3d+qcu3VScMhQjcrRNZKi9Z1rXX5uPH
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Gxs2jGkLvvXbNCFsarU4uQ1fomXH1HUy/8fmJDaN5SlR/lBRAqjEKFivpkZd?=
- =?us-ascii?Q?CW/mqq1iL0uUaUjtm7SE5h+Luu66upmJ59OSqRId2Mzc44t7FvL0/+K9xykf?=
- =?us-ascii?Q?miO3lntYuK4UqEnLiUEFDExZkpZwzBLTmFo9Def7KNWvM32mryjYELRMzBKe?=
- =?us-ascii?Q?Grpipn8n86aUAVk/pyaH+FTrwIRDnxqgvxpRe1g+IrDZ1eJxHqmdnCAvt2PZ?=
- =?us-ascii?Q?JDs/IuezECo7Lja4k3w4iO1hVcyeoaxZPX4ik/Bu2ck3iXXLT4hJw+UmZo5H?=
- =?us-ascii?Q?GznNP29c1eqFBMCHtqG/lt6wpj0g8bNZDZPDcKebhGtRlZq+O4ipkXKAkipq?=
- =?us-ascii?Q?UPBvP1/L89Fm9tztPYWBUXH1QBJjgLAI2hsyt+miBOayQBjtFegZLpp5acjB?=
- =?us-ascii?Q?KZSPbEOb/OZ9gaju4m1g/CbIu+BozIZoyi0G3j7I1AGIahKqmk1M6tw3MaKj?=
- =?us-ascii?Q?KSfIL5KxozPH9k3x6jvAxtfZk9LfYIHXG1jUUVjWRuN0OiuhXWUCxG2RUosg?=
- =?us-ascii?Q?EiF4eIHh2DPMwbzMGXAM0QQxkT6Yc6Dy0HPoHfOp9VbPw825kErnm74DYqGt?=
- =?us-ascii?Q?lhrrAhXzeqFomf5CpWw2rpuZbS6U8f75O2RwBY8orLW9E3SDrZ5BdryUIFd9?=
- =?us-ascii?Q?f7dLUPeBWoGkGBU50jnQ66xjmPfBr/R7r8rC7xJmAa98IBW7gw1RimdMUmhq?=
- =?us-ascii?Q?FsYdJET2wCgwxR3SFeEFijftBH/qqpMCbtzINodaC2+YaniEILYTeJtLoPtJ?=
- =?us-ascii?Q?3xM6iLqTOCqu9Mse1Sfmwu/mYxq424BJ8q+Ie/LjSw8xFrrd8e42lZeCKxjz?=
- =?us-ascii?Q?z2O73Ed0o5sE/dkURAzTxoHmCt1O9t+pIr4mVivZfTGQFgL7bABNWt31sL3i?=
- =?us-ascii?Q?FEc5vKNFoY1dQL5RW3YzkLTVFBZl/wYDGAnJy+Hp4kSX+OQCYLU8eSjbRpot?=
- =?us-ascii?Q?d5UgP05KUuj7erqFyATSeaH+oXy16lSkZBITsx0PRtmM4RNcdggvItmsi2zg?=
- =?us-ascii?Q?hueAyeHNy+20BZ7r8G0zwlWGImwkPBDBLu/U+iSLVPs5sMI4CO9V6dhgIF0H?=
- =?us-ascii?Q?2UmHWXrooEY3KiHlw4RasYFx2md8Cw+0M6USGhmp+I6HDsQ2m7wLoxkRxz3e?=
- =?us-ascii?Q?cF1+UDrlR0nK0+RIiFuONGe+kkFPfalxk+moG+8QIKrCYDSn7jrfA3Jmj+Z3?=
- =?us-ascii?Q?/kaax5jQylV3T7BIBJpts8dNlhWN9Z1c+03Pzw6utFHCe+9gH9hGyus96p8?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-05f45.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55540659-f0c0-47a2-9070-08dc8ad554b2
-X-MS-Exchange-CrossTenant-AuthSource: OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 11:46:43.6238
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCP286MB2574
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator: bd71815: fix ramp values
+To: Kalle Niemi <kaleposti@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
+References: <ZmmJXtuVJU6RgQAH@latitude5580>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <ZmmJXtuVJU6RgQAH@latitude5580>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Riwen Lu <luriwen@kylinos.cn>
+Hi Kalle,
 
-There is a case that desired_perf is exactly the same with the old perf,
-but the actual current freq is not.
+Thanks for finding and fixing this!
 
-This happened in S3 while the cpufreq governor is set to powersave.
-During cpufreq resume process, the booting CPU's new_freq obtained via
-.get() is the highest frequency, while the policy->cur and
-cpu->perf_ctrls.desired_perf are in the lowest level(powersave
-governor). Causing the warning: "CPU frequency out of sync:", and set
-policy->cur to new_freq.
+On 6/12/24 14:42, Kalle Niemi wrote:
+> Ramp values are inverted. This caused wrong values written to register
+> when ramp values were defined in device tree.
+> 
+> Invert values in table to fix this.
+> 
+> Signed-off-by: Kalle Niemi <kaleposti@gmail.com>
 
-Then the governor->limits() calls cppc_cpufreq_set_target() to
-configures the CPU frequency and returns directly because the
-desired_perf converted from target_freq is the same with
-cpu->perf_ctrls.desired_perf and both are the lowest_perf.
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Since target_freq and policy->cur have been compared in
-__cpufreq_driver_target(), there's no need to compare desired_perf and
-cpu->perf_ctrls.desired_perf again in cppc_cpufreq_set_target() to
-ensure that the CPU frequency is properly configured.
+> Fixes: 1aad39001e85 ("regulator: Support ROHM BD71815 regulators")
+> ---
+>   drivers/regulator/bd71815-regulator.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/regulator/bd71815-regulator.c b/drivers/regulator/bd71815-regulator.c
+> index 26192d55a685..79fbb45297f6 100644
+> --- a/drivers/regulator/bd71815-regulator.c
+> +++ b/drivers/regulator/bd71815-regulator.c
+> @@ -256,7 +256,7 @@ static int buck12_set_hw_dvs_levels(struct device_node *np,
+>    * 10: 2.50mV/usec	10mV 4uS
+>    * 11: 1.25mV/usec	10mV 8uS
+>    */
+> -static const unsigned int bd7181x_ramp_table[] = { 1250, 2500, 5000, 10000 };
+> +static const unsigned int bd7181x_ramp_table[] = { 10000, 5000, 2500, 1250 };
+>   
+>   static int bd7181x_led_set_current_limit(struct regulator_dev *rdev,
+>   					int min_uA, int max_uA)
+> 
+> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
 
-Signed-off-by: Riwen Lu <luriwen@kylinos.cn>
-
----
-v1 -> v2:
- - Update commit message and email.
-v2 -> v3:
- - Update patch subject and commit message.
- - Remove the desired_perf compare logic.
-v3 -> v4:
- - Remove the desired_perf local variable.
----
- drivers/cpufreq/cppc_cpufreq.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index 15f1d41920a3..9095fd5f8c2d 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -291,15 +291,10 @@ static int cppc_cpufreq_set_target(struct cpufreq_policy *policy,
- 	struct cppc_cpudata *cpu_data = policy->driver_data;
- 	unsigned int cpu = policy->cpu;
- 	struct cpufreq_freqs freqs;
--	u32 desired_perf;
- 	int ret = 0;
- 
--	desired_perf = cppc_khz_to_perf(&cpu_data->perf_caps, target_freq);
--	/* Return if it is exactly the same perf */
--	if (desired_perf == cpu_data->perf_ctrls.desired_perf)
--		return ret;
--
--	cpu_data->perf_ctrls.desired_perf = desired_perf;
-+	cpu_data->perf_ctrls.desired_perf =
-+			cppc_khz_to_perf(&cpu_data->perf_caps, target_freq);
- 	freqs.old = policy->cur;
- 	freqs.new = target_freq;
- 
 -- 
-2.25.1
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
 
 
