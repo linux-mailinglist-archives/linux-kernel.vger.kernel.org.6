@@ -1,201 +1,131 @@
-Return-Path: <linux-kernel+bounces-211041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3246904C6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:11:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FBA904C75
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15F981C21FDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:11:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E121C2275E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A48816B73C;
-	Wed, 12 Jun 2024 07:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACD512F5A1;
+	Wed, 12 Jun 2024 07:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YM0uwE6c"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="o7Zd1oeZ"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA2A13A275;
-	Wed, 12 Jun 2024 07:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408F313B284
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718176240; cv=none; b=GJLbkZ1pOPMkC+X0Y50KWjIp1jXQzSrdqzGD4bauGTlSxE+OEhFOk7H4QROVbW8aGbrpxBfEkrQSVxK+7XyL/ObBvfnwv+e/u4RqCm7GQzYE656dC+BGUfoLKWBv8ToY1CtSTf0a/9Crzs9Ztn1+yxnGhla/lczCO8dq1cuKdoY=
+	t=1718176268; cv=none; b=t2/YkwJbXG3CPBaejwfDCcuy92kSgsm2Pi10IEbBKRiQA1QjHTb9yG6f86KOv7LIvpc/Xq7FXIo1WXrHAXP4UQaiOLEBEqqC4u7RS0leHsAib7SFMp9dJcWNDVvfjGeZ6jSFQgD8hqnRhaPqSQwOSqhiKC/Cd0ofsa89JKFRYDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718176240; c=relaxed/simple;
-	bh=0E/dP+JgY1h8LvmPra3kSmJVjKSVbX0+z+gI7jyAqMg=;
+	s=arc-20240116; t=1718176268; c=relaxed/simple;
+	bh=i6o0FZBPMx+nOIu/mzHBniZ5GdF+FcAxR4uXfrLlAu8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=bBkp1H5W5BZLqXtaRFhk+nM01pSkMMedRjpYNpP9t6J6bgyI+7vkAzZvzaemM732UYkaLdMpcugQ6AO7yUUGpTWe2zOTc16CiDOpvE9/1PYnN0xGpSuA9/mMUY6hzqPFsSqnjxEh8wYPH4MuBS91xMrML7uYe/VR8OCYh9f/hew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YM0uwE6c; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-62f518bbab1so9828797b3.2;
-        Wed, 12 Jun 2024 00:10:38 -0700 (PDT)
+	 To:Cc:Content-Type; b=fl2619W/bVm1nq9ebP11MpwXxe/xl0j7Ie2xxusWm8yP8xMHI4x1lg2oQnSvgGzOLK096hJJTHKKJ4xpJqQbbXn8sU4qoLVO2VbeRkbWpdKrHMFt3tmmhXzMgwy/EJ/+S16866OFu1hTM1EzHKHvWBXaZP28Fmv6iVm0T0nbwAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=o7Zd1oeZ; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eabd22d441so102929231fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 00:11:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718176238; x=1718781038; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718176264; x=1718781064; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ntuiepcls6DPTsVsPIFqvHYiiDifFrTTY9IXohUJcws=;
-        b=YM0uwE6cliZZsETd8IFRtsZNiku3kc2gp35sdIo4BREQpDMaDggeWKMSCdpc1N8mlT
-         P1Nbg8tRGoZTW4d11dCtU5WaK9KBurAv6T12aYFG3IOiEN7SsvmbaEvcknVQZzddWndX
-         +2JYU0kD+8MvQRP8LzpiR4YB276oGxUa3UbqkRZprdtWwIBCf/WGXQHJ+aDthkxdOGwZ
-         I/jR5g1e5uBAhQRa2eU5XJLtpsUBLPUxHMkb1YJUFRPI8qerYNRHCVibfoytmp3t5M1L
-         i6hQ55AtjwkX5vrhV9WJZvus1rj5/nD2Kg6p0Gx6aH6CYvNL/1wiqizf3Atb5IJaLXw8
-         /qXQ==
+        bh=i6o0FZBPMx+nOIu/mzHBniZ5GdF+FcAxR4uXfrLlAu8=;
+        b=o7Zd1oeZPpPLURaHzb321yRhJty2DLlnC4qlpDAKYRFrE37XjKXxDcFOiFIb9S/k59
+         zOiDJoKQKHDthECblWTjcuySU2K8pVGTszGKSP28d8Wqu8RslcoPlcygzf1gMvZwyl3I
+         pvNZo+1wN7nmbggtNN8Z6x2LMRnZSBpP+Z+J+iGRVSpfGK9gO4MbtRortXxuZgYt/y25
+         pNZA62NRWFLhqawVq7KXbsVGQsn49MwnAqnVQsnthUWtbAjJMYPwSAy5XiqKVPxQxpr8
+         LGRrV3JLU8vv3DDdZY6lCL2a6PAUrgpA0YzkKe44ijQH5GLO9atBJnYnPCFtsPgtHWjb
+         1ISQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718176238; x=1718781038;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1718176264; x=1718781064;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ntuiepcls6DPTsVsPIFqvHYiiDifFrTTY9IXohUJcws=;
-        b=flwSIg79e2/fjbRSich/EFzOqrsblBbzLH7kWA+h7kU8c+KROBiwgHq3QWULiNas6l
-         HtT3pd1Hz9PBzwpuXShueEHrWgo6uiJON2wb0kcCpyYr7n6MG7PsmUjcrz2Px5p4WTh5
-         tRHfOAvAZp23BVL+BtgTXfcMtZAhgdRG/wEcNNrU96HLo0L33r98p3J/lAB7TqiUqVDV
-         hFkwz2dEYnsmerT6VFiPxEte6yA2eywMGOFR6vbtOTDnSHUpVd+RSH4sp/IVKdVoxH6F
-         eKfKvP2bq498eteQT3VsBAyFa+HDxyu15ScWVj7ljH8yWAof88KnbV1Zi3Rs9HARfSGi
-         gImg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6kY3IuDB3WaRSWcz46cpeA4aL6D3dMXH8ycv3ZKBjKbYPAt1DK3gIS656QmUjSAExW9fmmdSEV00XIDDrpDpw+2QbW8ahPv017iInjCAt/hmLRz6vaGZuZrUrrmS2KTFgKlVa7Eo=
-X-Gm-Message-State: AOJu0YzEJlrxUq32iVjxr2HGmrLEQ9qKrcNet/g1vIMe/6nj6EdAMAh4
-	KF7z4rejDPBfhIKmZWfWkMvD6/GWmi6iYf9GEQWZxc4FQedOB/snvxhs7DEQ1Q5ny61UC3pRl0/
-	A7s0ty1MP6LcquLHhhH4aKWQb1NhHcDYC
-X-Google-Smtp-Source: AGHT+IE46xb7WGHKuxjm/SNiaKTQHcPBCIOCPd9x6kc6K50arCbz40Pdwbf8UMPcovzeQ3p46N6KdJgMO2TP22vgTJM=
-X-Received: by 2002:a81:7283:0:b0:62f:518b:ba53 with SMTP id
- 00721157ae682-62fba943427mr8931797b3.49.1718176238038; Wed, 12 Jun 2024
- 00:10:38 -0700 (PDT)
+        bh=i6o0FZBPMx+nOIu/mzHBniZ5GdF+FcAxR4uXfrLlAu8=;
+        b=Cky7/RW1N0COhGAgpRhergSeFUjNuOwhG4NteFG/Bb4F71H10jIa2LXi/KFLGu/lUE
+         q6o+u0hR5DDTkA9W+OV2WJbioEMHip7qjZJzvX08t1rZtT4DbXy226fX5gU5g/etin8y
+         mpibvS4LFXe/75FIS4Hubcpl2UfhOiFt+zaZEvX0VdRb3LDk1fHEfDz+xeTSS75Yr/mQ
+         1Q92hEnAtTuAFwKUrwWkGdSVuV2HgZT4qvPTKx8Ad+2rFtc119lHAay/XfWMAoTtplbv
+         CpmqZqb9UA3VsQrsbIdjgageecOrMwcfabuOsQGglOaqb4oNvMnuSRQP7jOQvZPwvXXP
+         GRRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJA+V9JdRh0nsfnKU9ps5EaHl033sj5LyNrJIC0SzrijqHymc1RVai3esCdJVml1Cb+jnH8vcU6x1iztwYSz9awNTSRVq+9prr9RqD
+X-Gm-Message-State: AOJu0YyQtjzixFLoQRzhukXoDkdaK1KomqIXLvEGw38/k4vgJHsg5Kqf
+	s0Kk/TAKIFCNVrRQZIxsQAWj9R7v0A+MnmGqOcKS3PT/P2H72gjt2lrMmezRy5fO/EKsWMFE99T
+	rrLdVfvVlReSwZUOdoU6nxPh242D7GFY+KYHUKg==
+X-Google-Smtp-Source: AGHT+IGbd4X2fJf6zNeYZx/X1mM77+GhoF1Zhv+mm3RhXCxcJXVvZIgRJjoUptYt08IGG4KjkAvHHP/xFOcuJD7oR1M=
+X-Received: by 2002:ac2:4c4a:0:b0:52c:826f:f3f1 with SMTP id
+ 2adb3069b0e04-52c9a3bfbb7mr898457e87.2.1718176264237; Wed, 12 Jun 2024
+ 00:11:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CADZouDQx4tqCfCfmCHjUp9nhAJ8_qTX=cCYOFzMYiQQwtsNuag@mail.gmail.com>
- <4fd9cd27-487d-4a23-b17a-aa9dcb09075f@gmail.com>
-In-Reply-To: <4fd9cd27-487d-4a23-b17a-aa9dcb09075f@gmail.com>
-From: chase xd <sl1589472800@gmail.com>
-Date: Wed, 12 Jun 2024 09:10:28 +0200
-Message-ID: <CADZouDSyJVR=WX-X46QCUZeUz=7DHg_9=e5y=N7Wb+zMQ_dGtQ@mail.gmail.com>
-Subject: Re: [io-uring] WARNING in io_fill_cqe_req_aux
-To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240528-pwrseq-v8-0-d354d52b763c@linaro.org> <20240611225428.GA1005695@bhelgaas>
+In-Reply-To: <20240611225428.GA1005695@bhelgaas>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 12 Jun 2024 09:10:53 +0200
+Message-ID: <CAMRc=MfE0o=ohK6fpJN6=J7hmywifneBaNdSxOgeGH9iZ1uvTQ@mail.gmail.com>
+Subject: Re: [PATCH v8 00/17] power: sequencing: implement the subsystem and
+ add first users
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
+	Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Elliot Berman <quic_eberman@quicinc.com>, Caleb Connolly <caleb.connolly@linaro.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Alex Elder <elder@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
+	Jeff Johnson <quic_jjohnson@quicinc.com>, ath12k@lists.infradead.org, 
+	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, kernel@quicinc.com, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Amit Pundir <amit.pundir@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Sorry now I'm also a bit confused by the branch choosing. I checked
-out branch "for-6.9/io_uring" and started testing on that branch. I
-assume that was the latest version of io_uring at that time, even now
-I check out that branch and the bug still exists. How should I know
-whether the branch will be merged, and which branch do you think I
-should test on? Thanks.
+On Wed, Jun 12, 2024 at 12:54=E2=80=AFAM Bjorn Helgaas <helgaas@kernel.org>=
+ wrote:
+>
+> On Tue, May 28, 2024 at 09:03:08PM +0200, Bartosz Golaszewski wrote:
+> > Note: I am resending this series in its entirety once more for
+> > discussions and reviews. If there won't be any major objections, I'll
+> > then start sending individual bits and pieces to appropriate trees.
+> >
+> > Merging strategy: The DT binding and DTS changes are a no-brainer, they
+> > can go through the wireless, regulator and arm-msm trees separately. Th=
+e
+> > bluetooth and PCI changes have a build-time dependency on the power
+> > sequencing code. The bluetooth changes also have a run-time dependency =
+on
+> > the PCI pwrctl part. In order to get it into next I plan to pick up the
+> > power sequencing code into my own tree and maintain it. I can then
+> > provide an immutable tag for the BT and PCI trees to pull. I wouldn't
+> > stress about the BT runtime dependency as it will be fixed once all
+> > changes are in next.
+>
+> The PCI changes are very self-contained and any conflicts will be
+> trivial, so rather than messing with an immutable tag, how about if I
+> just ack them and you can include them in your tree directly?
 
-Pavel Begunkov <asml.silence@gmail.com> =E4=BA=8E2024=E5=B9=B46=E6=9C=8812=
-=E6=97=A5=E5=91=A8=E4=B8=89 03:11=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 6/7/24 18:07, chase xd wrote:
-> > Dear Linux kernel maintainers,
-> >
-> > Syzkaller reports this previously unknown bug on Linux
-> > 6.8.0-rc3-00043-ga69d20885494-dirty #4. Seems like the bug was
-> > silently or unintendedly fixed in the latest version.
->
-> That branch you're using is confusing, apart from being
-> dirty and rc3, apparently it has never been merged. The
-> patch the test fails on looks different upstream:
->
->
-> commit 902ce82c2aa130bea5e3feca2d4ae62781865da7
-> Author: Pavel Begunkov <asml.silence@gmail.com>
-> Date:   Mon Mar 18 22:00:32 2024 +0000
->
->      io_uring: get rid of intermediate aux cqe caches
->
->
-> It reproduces with your version but not with anything
-> upstream
->
->
-> > ```
-> > Syzkaller hit 'WARNING in io_fill_cqe_req_aux' bug.
-> >
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 7 PID: 8369 at io_uring/io_uring.h:132
-> > io_lockdep_assert_cq_locked+0x2c7/0x340 io_uring/io_uring.h:132
-> > Modules linked in:
-> > CPU: 7 PID: 8369 Comm: syz-executor263 Not tainted
-> > 6.8.0-rc3-00043-ga69d20885494-dirty #4
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04=
-/01/2014
-> > RIP: 0010:io_lockdep_assert_cq_locked+0x2c7/0x340 io_uring/io_uring.h:1=
-32
-> > Code: 48 8d bb 98 03 00 00 be ff ff ff ff e8 52 45 4b 06 31 ff 89 c3
-> > 89 c6 e8 b7 e2 2d fd 85 db 0f 85 d5 fe ff ff e8 0a e7 2d fd 90 <0f> 0b
-> > 90 e9 c7 fe ff ff e8 fc e6 2d fd e8 c7 38 fa fc 48 85 c0 0f
-> > RSP: 0018:ffffc90012af79a8 EFLAGS: 00010293
-> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff845cf059
-> > RDX: ffff8880252ea440 RSI: ffffffff845cf066 RDI: 0000000000000005
-> > RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-> > R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
-> > FS:  00005555570e13c0(0000) GS:ffff88823bd80000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f1bdbcae020 CR3: 0000000022624000 CR4: 0000000000750ef0
-> > PKRU: 55555554
-> > Call Trace:
-> >   <TASK>
-> >   io_fill_cqe_req_aux+0xd6/0x1f0 io_uring/io_uring.c:925
-> >   io_poll_check_events io_uring/poll.c:325 [inline]
-> >   io_poll_task_func+0x16f/0x1000 io_uring/poll.c:357
-> >   io_handle_tw_list+0x172/0x560 io_uring/io_uring.c:1154
-> >   tctx_task_work_run+0xaa/0x330 io_uring/io_uring.c:1226
-> >   tctx_task_work+0x7b/0xd0 io_uring/io_uring.c:1244
-> >   task_work_run+0x16d/0x260 kernel/task_work.c:180
-> >   get_signal+0x1cb/0x25a0 kernel/signal.c:2669
-> >   arch_do_signal_or_restart+0x81/0x7e0 arch/x86/kernel/signal.c:310
-> >   exit_to_user_mode_loop kernel/entry/common.c:105 [inline]
-> >   exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-> >   __syscall_exit_to_user_mode_work kernel/entry/common.c:201 [inline]
-> >   syscall_exit_to_user_mode+0x156/0x2b0 kernel/entry/common.c:212
-> >   do_syscall_64+0xe5/0x270 arch/x86/entry/common.c:89
-> >   entry_SYSCALL_64_after_hwframe+0x6f/0x77
-> > RIP: 0033:0x7f1bdbc2d88d
-> > Code: c3 e8 a7 1f 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48
-> > 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-> > 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007ffd12f6fa18 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-> > RAX: 0000000000000001 RBX: 000000000000220b RCX: 00007f1bdbc2d88d
-> > RDX: 0000000000000000 RSI: 0000000000005012 RDI: 0000000000000003
-> > RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> > R13: 431bde82d7b634db R14: 00007f1bdbcaa4f0 R15: 0000000000000001
-> >   </TASK>
-> >
-> >
-> > Syzkaller reproducer:
-> > # {Threaded:false Repeat:true RepeatTimes:0 Procs:1 Slowdown:1
-> > Sandbox: SandboxArg:0 Leak:false NetInjection:false NetDevices:false
-> > NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false
-> > KCSAN:false DevlinkPCI:false NicVF:false USB:false VhciInjection:false
-> > Wifi:false IEEE802154:false Sysctl:false Swap:false UseTmpDir:false
-> > HandleSegv:false Repro:false Trace:false LegacyOptions:{Collide:false
-> > Fault:false FaultCall:0 FaultNth:0}}
-> > r0 =3D syz_io_uring_setup(0x220b, &(0x7f0000000000)=3D{0x0, 0x63db,
-> > 0x10000, 0x800}, &(0x7f0000000080)=3D<r1=3D>0x0,
-> > &(0x7f0000000200)=3D<r2=3D>0x0)
-> > r3 =3D socket$inet(0x2, 0x1, 0x0)
-> > syz_io_uring_submit(r1, r2,
-> > &(0x7f0000000a80)=3D@IORING_OP_POLL_ADD=3D{0x6, 0x0, 0x0, @fd=3Dr3, 0x0=
-,
-> > 0x0, 0x1})
-> > io_uring_enter(r0, 0x5012, 0x0, 0x0, 0x0, 0x0)
-> > ```
-> >
-> > crepro is in the attachment.
-> >
-> > Best Regards
-> > Xdchase
->
-> --
-> Pavel Begunkov
+Sure, if you're convinced that eventual conflicts in PCI core won't be
+an issue then it's even better.
+
+Bart
 
