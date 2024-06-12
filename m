@@ -1,82 +1,62 @@
-Return-Path: <linux-kernel+bounces-211392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F74B905111
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:06:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C74905117
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D805B211E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:06:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C4C528521B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FAC16F0CF;
-	Wed, 12 Jun 2024 11:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9C616F0D5;
+	Wed, 12 Jun 2024 11:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oVdHn6F4"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RBBDQG3x"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FAD3D388
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599A116D4C0;
+	Wed, 12 Jun 2024 11:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718190353; cv=none; b=NaOUweZSccfmE3xlCCG/DSyGKJJtNVrzuVkuUVNrw4kaGlX48e/Rp8pd3uuRYcn4Qt0ACN05+B+SoLjy6a8wZ5hprXGfszy66qZFh1gRWLsbIYRLhJU6TzxsttzfM9746EkbujNRI8j9dBnhgrD7zA5z5YyJOK9vyuQtP1TNPG0=
+	t=1718190529; cv=none; b=HFx5Tr8y7hBNN1NMrzQ6rP5DByiKZzcfrnM6sKivn1I1hqirPxOJ9tXOubmJnZjPNVPNdbr4gcQIQhyw0bXLSsRJUAkKH6ZVvbP5PQcJahawS83fOwQgtL67BLsJhXczd/l45ciGfw0va01YhdAUCIYfiywPIZ/DooO6DZMay64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718190353; c=relaxed/simple;
-	bh=+wdrnx3EeleCXAS9rkEiQm2x3E1AseIhoVIT1O7VTTA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Dt7WBPNqh0bJFlX9NTPxG289XDcn2gac+tP1f4VJbB27cKoqtfsGcG12f7wNs9WIt9vqcUxbgy02aG2mAVCVFh7Mau0NiZK8GS5ZlfZItIiJxxVMh0s00/K6ezkqDTHTZXkdq+2Tf6/AIM4aYlR/JUqfEbstQydsPcwn1JBV5/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oVdHn6F4; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-421b9068274so28769945e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:05:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718190350; x=1718795150; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VVEN4wl3rM6KP3IQiX2AC8CG+Yueqah2RH6wgyvbAMs=;
-        b=oVdHn6F4izANGPK+DztmUnz3kqlcKJxaJ3sT7xDJ5BDX1ZTmnfx9g02WkY4m1D36Y1
-         5OAnZTeHwzOdKNElxau1a4vlxOYYu6MvmPZYf3tc1Qnd2Ny03ULUPrb2Nh4D9W3AV9w+
-         /2Zu8tscj9nPDdReresG59r4SZWlzZBUGKtOGUwIypTB+lpJkwHQ/OWF3+ECrtQoHIJD
-         e1IXWCTsc8XJHTwvI37DcQCcD0gSIwI1PAuVyGvRJor/Ya9qaDerwAuN+dteUdgsDihy
-         pGhGZqopWNiI1FhroLnHMoa45UKwpY/9cR2EbbxfvUadayYhgZ0iPj73GGPTLXQXTMo7
-         JXxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718190350; x=1718795150;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VVEN4wl3rM6KP3IQiX2AC8CG+Yueqah2RH6wgyvbAMs=;
-        b=vaJMJrnVk1bMIehmKQ6hVrvgm/L/TZtHPJ/IUC1GLutgAOGPMLFctcRKolOQDh/Opp
-         cltIFFYr7AvcABWmM128MmPO7LbKRP2SzfmAuDHmkfQmWLYYftfKm/XlsZQUpNAs7BTb
-         K+BSXOrNQrnF1meoNjGNuqIj997GVWDtvTz+5bNZj/4KXWIoqhtkk5NMowEKl+s35YxH
-         YAQ+1RSi2dmIWdAlcMeX2GC8lE2/u4utC+5gO9vVK4noYXmsNyQ9OZaTPrxdHDuFmAyS
-         zq0oZlDu9JvNn76WXbUF44l0Q0LWU2JKyvB2lNpXaWhpEI/eNvIQu/8hCKelV77RHDmX
-         ZQTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcr3Exr94pLgci+snlCCk/QXaOChMwyIiS5+p6FeF7d4UOgd+1J6zTHVpZouLFjH3jMJKOpUgg/7l4Z2eEp9TAe2R0bppG8cYhg9J9
-X-Gm-Message-State: AOJu0YxTZLD9iimZQWw8HBZlCPusVEIa8hlx/V6l30XC39X/MmhVmWIk
-	yV8dB1q76cebB3agViqRK/IsXpkF31fe51C7ibkMIydKwzEUXx4igjt4xScQHlI=
-X-Google-Smtp-Source: AGHT+IEQ6RTTjXaKZqG61MP9ZE6kaM9KQ8Fu0PS5P9Lw9wK2R9SwWy4PHIA/zaPfHxyRpZfv03OQog==
-X-Received: by 2002:a05:600c:1793:b0:421:79e2:c957 with SMTP id 5b1f17b1804b1-422863ae433mr12355595e9.19.1718190350452;
-        Wed, 12 Jun 2024 04:05:50 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d69e71sm16153270f8f.65.2024.06.12.04.05.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 04:05:49 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240423150728.91527-1-sheharyaar48@gmail.com>
-References: <20240423150728.91527-1-sheharyaar48@gmail.com>
-Subject: Re: [PATCH] ARM: dts: vt8500: replace "uhci" nodename with generic
- name "usb"
-Message-Id: <171819034947.101264.3434060327775586581.b4-ty@linaro.org>
-Date: Wed, 12 Jun 2024 13:05:49 +0200
+	s=arc-20240116; t=1718190529; c=relaxed/simple;
+	bh=vY+cTHN2NsFnRhjuV3RjzB4VG0gkCLG7K7dwwRsL6IE=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=ZUZ1+s7nA8ObWtln/zHm10Mxc5edMcVdl2XnOeyVOlAeHZ52RPZ8PlJWkjk+pI8+gqP4Izki7s9Qpx2FpVcBNuKrTCkFxOUAarzHVDqg9aADFesFL5hwwKzPxzh8oE5+5/aXnc79w1JzRLWfTigDjnX2qPajCDV8XiC7d4NNhqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RBBDQG3x; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C4Z5CS002543;
+	Wed, 12 Jun 2024 11:08:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=3xGDmpJU1uCnOHWH+WIGuJ
+	trY0ErZVdyv5NatW7Uh5k=; b=RBBDQG3xgcHJoLUWybbuoufKIzYComUx/vj/Zk
+	dsq6aGmg0b3+tOovQ6l7kSBc9xdUnCzvcEsMmEAFnZthy4BUKTdhIfA0GHQiesE1
+	Un9+zzNO0dFumspX0qEDOyCz7ShYUlzMkFbSERFvDgQZSXuy7uNeZszh4tPePu0L
+	iZmTLr7kE3LcRnczcNwR113dizljQ5v/neE82ErlsCDrcxuRUEscn6RlsbcBoNuN
+	Z6Cazv7saglwEnI2z8lU7pS4RiYI49Ce5SmaWn6aL0nI+1Ng3JHCBAMvMq881fKW
+	s6vm26gjRUmQBwSRTcakHnvJWHuUEnvSDHdXbCBJuV2++/Fg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yq4s08vwu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 11:08:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CB8fAJ005852
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 11:08:41 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 12 Jun 2024 04:08:37 -0700
+From: Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v2 0/6] Update GCC, GPUCC clock drivers on SA8775P
+Date: Wed, 12 Jun 2024 16:38:20 +0530
+Message-ID: <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-0-adcc756a23df@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,22 +65,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-B4-Tracking: v=1; b=H4sIAKSBaWYC/0WMwQ6CMBBEf4X07JJ2ASme/A9jTLMssAcBWyAmh
+ H939eJl8l4mM7tJHIWTuWS7ibxJkmlUwVNmaAhjzyCtukGLpT07hBR8XVczbAg9EfTzqtnJmxM
+ wOfRt5cuavdGDOfKv0P3trt7F6QnLEDn8L6vC2UahyZ3FpgCE1yr0WNqQrl+SkXKanuY4PhdKx
+ yyrAAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_jkona@quicinc.com>,
+        <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>
+X-Mailer: b4 0.14-dev-f7c49
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: hYHGUAWyqxhjQK3lTcUl-ECN-HRwXSRE
+X-Proofpoint-ORIG-GUID: hYHGUAWyqxhjQK3lTcUl-ECN-HRwXSRE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_06,2024-06-12_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ bulkscore=0 malwarescore=0 impostorscore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 clxscore=1015 lowpriorityscore=0 mlxlogscore=600
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120081
 
+Update GCC, GPUCC clock controller drivers on SA8775P platform.
 
-On Tue, 23 Apr 2024 20:37:25 +0530, Mohammad Shehar Yaar Tausif wrote:
-> Replace "uhci" nodenames with "usb" as it's generic and aligns with
-> the schema binding.
-> 
-> 
+Changes in V2:
+ [PATCH 1/6]: Dropped fixes tag for removing ufs hw ctl clocks
+ [PATCH 3/6]: Updated commit text on setting FORCE_MEM_CORE_ON
+              bit for ufs phy ice core clk
+ [PATCH 4/6]: Updated commit text on removing CLK_IS_CRITICAL
+              for GPU clocks
 
-Applied, thanks!
+Link to V1: https://lore.kernel.org/all/20240531090249.10293-1-quic_tdas@quicinc.com/
 
-[1/1] ARM: dts: vt8500: replace "uhci" nodename with generic name "usb"
-      https://git.kernel.org/krzk/linux-dt/c/dd2118bd10c1e74b8f0082750bd39c4bcb5fe5f7
+Multimedia clock controller patches from above v1 series have
+been split to a separate series:
+https://lore.kernel.org/lkml/20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com/T/#t
+
+---
+Taniya Das (6):
+      clk: qcom: gcc-sa8775p: Remove support for UFS hw ctl clocks
+      clk: qcom: gcc-sa8775p: Update the GDSC wait_val fields and flags
+      clk: qcom: gcc-sa8775p: Set FORCE_MEM_CORE_ON for gcc_ufs_phy_ice_core_clk
+      clk: qcom: gpucc-sa8775p: Remove the CLK_IS_CRITICAL and ALWAYS_ON flags
+      clk: qcom: gpucc-sa8775p: Park RCG's clk source at XO during disable
+      clk: qcom: gpucc-sa8775p: Update wait_val fields for GPU GDSC's
+
+ drivers/clk/qcom/gcc-sa8775p.c   | 154 ++++++++++++---------------------------
+ drivers/clk/qcom/gpucc-sa8775p.c |  41 ++++++-----
+ 2 files changed, 66 insertions(+), 129 deletions(-)
+---
+base-commit: 03d44168cbd7fc57d5de56a3730427db758fc7f6
+change-id: 20240612-sa8775p-v2-gcc-gpucc-fixes-ec128d5847e8
 
 Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Taniya Das <quic_tdas@quicinc.com>
 
 
