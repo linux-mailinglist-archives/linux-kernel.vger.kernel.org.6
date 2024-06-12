@@ -1,158 +1,143 @@
-Return-Path: <linux-kernel+bounces-211404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE852905139
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:18:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A3E90513A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DCEA287490
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:18:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3284B21EBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F06116F0D6;
-	Wed, 12 Jun 2024 11:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EGzRQKBj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zpRLi3zK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7ED146017
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9251F16F0E3;
+	Wed, 12 Jun 2024 11:19:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A6C146017;
+	Wed, 12 Jun 2024 11:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718191107; cv=none; b=uwqo4r81RFlPsX4cwlrHcy7cKaUpL4M7yjN+o7qsasdWieQxxiAP0gPDUnQMWTcwE+TlQ+H7DolWRNsa6432RJwUuWKCISjsOiGHfAxmQXX36q3n421JivhPzcVRUG4qaE894fuGhpGuEFTqqyk0GTUNdIdlF8TtOZDLvbDqwLg=
+	t=1718191190; cv=none; b=LQannDJ4wWMRhlizYf5mmtcgnfgfdN+21RZonDv94E4kYnM20YIu6tWxVr626GQHLLnl97MumPvDhZeIDH+IYqpwldgzqrpk9YwkLk5CdmY4Uj5QiNWMPS75P+YTxK8UXRlMFdipz+iwgWLaS4IBSWklD4RFymHtsT80eIb9t1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718191107; c=relaxed/simple;
-	bh=PT6fOUf51ccBbvJb7+4E5fDv3MUsOjRKTM6YebMxFOA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UXvLW1vN3eMgkEsYwYANpfBkNVhwKOJHmLARgSCdUyzueeCneZTZYuyQK6tLNZJ2NpsfvwcsNcMA1yeN9vnVu4ZwE25JFVbUggoL8E4aUqRQiy7UoSt1/hVn+ipzN+diXQh7cycWXyqmT2c7WyjnObk5I4uEpPgGZSSsVi9CTlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EGzRQKBj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zpRLi3zK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718191104;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9TfoN5fT9z1aWy6mZPAFxGaM3QQbIfdI9fl1+BkB0sA=;
-	b=EGzRQKBjJvrI/FAVXDWKDfJecnRjDkJXRmXlXglaMqn51bf3npwvUEhoDkYIz4vzV3qjfG
-	NxxF+tihkeElfCvIHVpImckIezkbdNRbBjW8ByDdYHeTm+4qP6c3i1sXlMYcwwwNdiQfMX
-	3LlCMUOrPTl1ZHO5XxD89PoiLleDuevbi3Ie0Ch1rGRUzz+zEypcndHTAo/LAcjLnfX74X
-	TFiFlg2oLsmsxduqO4pi76zeFsxR6lsljPRRlX306mgjFSMYJg91XN27I4RvE6EMFLXW6t
-	MoumbV2oOvpxuIKQGxHgSkoTHo8Cx2RyOtNBpP95Mw5p5ogxpRvfvgXzJLMqRw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718191104;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9TfoN5fT9z1aWy6mZPAFxGaM3QQbIfdI9fl1+BkB0sA=;
-	b=zpRLi3zKrmqyDy+5eOEbIHGxmZUgW0nB3FaJp4f9rzCyqpmXehUQFAfEgqUZDy62OeoK7K
-	nUErFvIUj/WPm8CQ==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
- <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v2 04/18] printk: nbcon: Introduce printing kthreads
-In-Reply-To: <ZmlpPucSy8Topb5h@pathway.suse.cz>
-References: <20240603232453.33992-1-john.ogness@linutronix.de>
- <20240603232453.33992-5-john.ogness@linutronix.de>
- <ZmMIOWEAMgXz4j-U@pathway.suse.cz> <87ed95j8yh.fsf@jogness.linutronix.de>
- <ZmhkVAC_3FMohrEr@pathway.suse.cz> <87sexipmrk.fsf@jogness.linutronix.de>
- <ZmlpPucSy8Topb5h@pathway.suse.cz>
-Date: Wed, 12 Jun 2024 13:24:24 +0206
-Message-ID: <87plsmpfy7.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1718191190; c=relaxed/simple;
+	bh=Ke+gHbevqiDiYBwn5rd9Bha6Ujph6NUBUgSVjAAi3LU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=nV+kMhgi9X5bOEsLcK5yS7gyx9PT6Xlb6Hb25cgwQVVHerCLrKb740A63mThAsYI7mxWXMycNJTlXHnztGLoJ7gajvztFiS28Ax0GracxuOSWwCqfm29tKiU410kJ3Lhu6hdkdPLW9uYvpEGQ/obazUCAzmUOvBNEu/uDhLbYOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A95361595;
+	Wed, 12 Jun 2024 04:20:11 -0700 (PDT)
+Received: from [10.57.4.35] (unknown [10.57.4.35])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D1D13F73B;
+	Wed, 12 Jun 2024 04:19:42 -0700 (PDT)
+Message-ID: <ce31a50b-53db-4c6f-9cb1-242280b0951c@arm.com>
+Date: Wed, 12 Jun 2024 12:19:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] perf pmus: Sort/merge/aggregate PMUs like
+ mrvl_ddr_pmu
+To: Ian Rogers <irogers@google.com>
+References: <20240515060114.3268149-1-irogers@google.com>
+ <20240515060114.3268149-2-irogers@google.com>
+Content-Language: en-US
+Cc: Tuan Phan <tuanphan@os.amperecomputing.com>,
+ Robin Murphy <robin.murphy@arm.com>, Thomas Richter <tmricht@linux.ibm.com>,
+ Bhaskara Budiredla <bbudiredla@marvell.com>,
+ Bharat Bhushan <bbhushan2@marvell.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+ Stephane Eranian <eranian@google.com>, Mark Brown <broonie@kernel.org>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>
+From: Aishwarya TCV <aishwarya.tcv@arm.com>
+In-Reply-To: <20240515060114.3268149-2-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-06-12, Petr Mladek <pmladek@suse.com> wrote:
->> > After all, I would add two comments, like these:
->> >
->> > <proposal-2>
->> > 	/*
->> > 	 * Any access to the console device is serialized either by
->> > 	 * device_lock() or console context or both.
->> > 	 */
->> > 	kt = kthread_run(nbcon_kthread_func, con, "pr/%s%d", con->name,
->> > con->index);
->> > [...]
->> >
->> > 	/*
->> > 	 * Some users check con->kthread to decide whether to flush
->> > 	 * the messages directly using con->write_atomic(). But they
->> > 	 * do so only when the console is already in @console_list.
->> > 	 */
->> 
->> I do not understand how @console_list is related to racing between
->> non-thread and thread. kthreads are not only created during
->> registration. For example, they can be created much later when the last
->> boot console unregisters.
->
-> I had in mind two particular code paths:
->
->   1. The check of con->kthread in nbcon_device_release() before
->      calling __nbcon_atomic_flush_pending_con().
->
->      But it is called only when __uart_port_using_nbcon() returns true.
->      And it would fail when nbcon_kthread_create() is called because
->
-> 		checks hlist_unhashed_lockless(&up->cons->node)
->
->      would fail. Which checks of the console is in @console_list
->
->
->   2. The following check in console_flush_all()
->
-> 			if ((flags & CON_NBCON) && con->kthread)
-> 				continue;
->
->      The result affects whether the legacy flush would call
->      nbcon_legacy_emit_next_record().
->
->      But this is called only for_each_console_srcu(con)
->      => it could not race with nbcon_kthread_create()
-> 	because this console is not in @console_list at this moment.
->
-> By other words, I was curious whether some other code paths might
-> call con->write_atomic() while the kthread is already running.
->
-> It is not that important because it would be safe anyway.
-> I was checking this before I realized that it would be safe.
 
-Yes, it must be safe because it can happen at any time. For example,
-when flushing after an emergency section.
 
-> Anyway, the information about that the console is not in @console_list
-> when we set con->kthread still looks useful.
+On 15/05/2024 07:01, Ian Rogers wrote:
+> The mrvl_ddr_pmu is uncore and has a hexadecimal address suffix while
+> the previous PMU sorting/merging code assumes uncore PMU names start
+> with uncore_ and have a decimal suffix. Because of the previous
+> assumption it isn't possible to wildcard the mrvl_ddr_pmu.
+> 
+> Modify pmu_name_len_no_suffix but also remove the suffix number out
+> argument, this is because we don't know if a suffix number of say 100
+> is in hexadecimal or decimal. As the only use of the suffix number is
+> in comparisons, it is safe there to compare the values as hexadecimal.
+> Modify perf_pmu__match_ignoring_suffix so that hexadecimal suffixes
+> are ignored.
+> 
+> Only allow hexadecimal suffixes to be greater than length 2 (ie 3 or
+> more) so that S390's cpum_cf PMU doesn't lose its suffix.
+> 
+> Change the return type of pmu_name_len_no_suffix to size_t to
+> workaround GCC incorrectly determining the result could be negative.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/pmu.c  | 33 +++++++++++++--------
+>  tools/perf/util/pmus.c | 67 ++++++++++++++++++++++++------------------
+>  tools/perf/util/pmus.h |  7 ++++-
+>  3 files changed, 65 insertions(+), 42 deletions(-)
+> 
 
-Except that it is not always true. If boot consoles are registered, the
-kthread is created later, after the console _is_ in
-@console_list. Setting con->kthread really has nothing to do with
-@console_list.
+Hi Ian,
 
-> At minimum, the check would be racy if the console was on the list.
+Perf test "perf_all_PMU_test" is failing when run against
+next-master(next-20240612) kernel with Arm64 on JUNO in our CI. It looks
+like it is failing when run on JUNO alone. Verified by running on other
+boards like RB5 and Ampere_altra and confirming that it does not fail on
+these boards. Suspecting that the suffixed 'armv8_pmuv3_0' naming could
+be the reason of test failure.
 
-The con->kthread check _is_ racey, but it doesn't matter. Perhaps you
-just want to make it clear that it is racey but it does not matter.
+Reverting the change (3241d46f5f54) seems to fix it.
 
-How about:
+This works fine on Linux version v6.10-rc3
 
-	/*
-	 * Some users check con->kthread to decide whether to flush
-	 * the messages directly using con->write_atomic(). Although
-	 * racey, such a check for that purpose is safe because both
-	 * threaded and atomic printing are serialized by the
-	 * console context.
-	 */
-	con->kthread = kt;
+Failure log
+------------
+110: perf all PMU test:
+--- start ---
+test child forked, pid 8279
+Testing armv8_pmuv3/br_immed_retired/
+Event 'armv8_pmuv3/br_immed_retired/' not printed in:
+# Running 'internals/synthesize' benchmark:
+Computing performance of single threaded perf event synthesis by
+synthesizing events on the perf process itself:
+  Average synthesis took: 1169.431 usec (+- 0.144 usec)
+  Average num. events: 35.000 (+- 0.000)
+  Average time per event 33.412 usec
+  Average data synthesis took: 1225.698 usec (+- 0.102 usec)
+  Average num. events: 119.000 (+- 0.000)
+  Average time per event 10.300 usec
 
-John
+ Performance counter stats for 'perf bench internals synthesize':
+
+        3263664785      armv8_pmuv3_0/br_immed_retired/
+
+
+      25.472854464 seconds time elapsed
+
+       8.004791000 seconds user
+      17.060209000 seconds sys
+---- end(-1) ----
+110: perf all PMU test                                               :
+FAILED!
+
+Thanks,
+Aishwarya
 
