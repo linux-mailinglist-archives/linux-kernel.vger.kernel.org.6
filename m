@@ -1,116 +1,172 @@
-Return-Path: <linux-kernel+bounces-211572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4F89053E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2129053ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5757F285A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:37:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4785A28593B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41FA17BB37;
-	Wed, 12 Jun 2024 13:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="X0HXb1MF"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD44A17B408
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0B817C7A7;
+	Wed, 12 Jun 2024 13:39:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECEA53365;
+	Wed, 12 Jun 2024 13:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718199458; cv=none; b=B1qfvJTvK+A+eXpiZbLfEnVM2oj1ApthWrQhK3i2ztmMUMWyBiLTaMUcAyWN4wotdmVDwOIMI9HX3JNpyGWWdqhH9iR7SEbRtNjexH2AwRUjiEctImMnn2f9E7geCZaPce1yGAzVgpoImo8QAMU+GRQgTxF7NfJESOsErRJ1hZ0=
+	t=1718199562; cv=none; b=seVggywxgBDF/bfbL2FDNWyObkvH2gdCFwIUB3dqwdkq3FbC+3YhqtK08tqF+y2uvKKQwouvyTaoBzn9fkgy7mNl63RvMNy1+RP5ihemERTr/xOeGJpWFhAY3icUo2YCYzxeNEr29axVrWZ3v1u146zKrT6BGayLm5U93TQwT0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718199458; c=relaxed/simple;
-	bh=fe0VWMI+8IbOduW8IuBosS5lQngZX3belBNixyoqkno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fCEKyFg4j6j/X0Suev4WXT0J3jK0tJVXDDZKe1ftbAiFPq5kNHVT3ivuRKZ0nYYf32FbttwHR1/fT3R9fLavRL2IJNvVyFvkwDU9qaBV4nTF+yi9/fU21WRblrTH5ge9O73Qdblhm/BlFvU11NXEINVd0N5xtRfU8CczNU/bm9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=X0HXb1MF; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b06f1f9a06so21209776d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 06:37:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1718199454; x=1718804254; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K139GCQM1afDeL9T5S7IFhFlKLj20Oeajk42+esr2l0=;
-        b=X0HXb1MFfUF4Q0onJRTeLT7twjifQNAd2cbw4JgxMwbHh5eWrcT/gDZRl7DKYSLgMw
-         kaNBisbtc7tUN+t9BZwTheceZHcinPsA4889ZA7WzqrbORpmLXJ8U65h+fiBq28nm3rH
-         CSw9Xo/hMmD4jUx+ECO+DCt9syZmzbje1cPcZfQAFHKj6X46GSa4fkS+UwD+7+bYx9Lf
-         sO7y/QTNXC5fDOogBYH941c1/QOGSZg1wFQYWKwXfHt9HA5T6H6Kz68zDaIuTsg4bCyP
-         bcNi4KIA0FymZrcXEZjISSLemDQiDBMAzwnanA1uB4A1B1WHJlax2ooZ/kdW3RvpxS1H
-         ZMWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718199454; x=1718804254;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K139GCQM1afDeL9T5S7IFhFlKLj20Oeajk42+esr2l0=;
-        b=RQduyhwSdgGB/PL9K2wvbCK6u7LupaYXMxiRpX8p86mOJYizPKEMq3mlFayq8dFPrp
-         0N6bwGDeoG405mQSHX1LDsliGkAtGB1WCtkkqRJ22dkjJypqgF/9ztPo159ToksfwPe7
-         lKs9zxU66YB2a07ZErplpBqx8U+Atjm85a+ade8OAAMfziCK4eNCZ6mqTN+X7/R/O5B2
-         vZEZrMw9yBT5VPpMdq3XI72dZ0EAtgErDsnxENgMgB00rDBE62IU4DkQ3dBNs/PzhBhD
-         LCT/cUr1QCOWqgxUJN5NSgbLbSmg/X/hcs29IQ6EPmBXXwlI7bPo5aTDeIrQegKyq672
-         DpKg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1P+dLl055P3fa0ZznH7TEPZgUZzVTIvWBJcGl8lcr3sLUOHzt9RfUE5WJrQMwJqnbpEstN8yqW3lvtM86oM9o7akb5lvt4IKvpuhL
-X-Gm-Message-State: AOJu0YyZj0xB0vC3Xl/T6J12o5Npu5uQEqd9gMxZF8U7mlM20QvSkW1d
-	2584EnweBHzm1wlElyHZHu1rh/VkDWFonG1wRsVebFFUJEgmRQVLn7/bxBB6c6A=
-X-Google-Smtp-Source: AGHT+IHSfEYGwDvsij2R0661tz6O7lYNLUUlm/+RnRLZK7C4edHuNG4iu5XV2Em15wUQSAV1AhEuuw==
-X-Received: by 2002:a05:6214:5889:b0:6b0:6671:86a with SMTP id 6a1803df08f44-6b1a7ad4be4mr16867256d6.48.1718199454661;
-        Wed, 12 Jun 2024 06:37:34 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.89])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b091d55c30sm11949346d6.87.2024.06.12.06.37.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 06:37:33 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sHOAO-008wzF-E8;
-	Wed, 12 Jun 2024 10:37:32 -0300
-Date: Wed, 12 Jun 2024 10:37:32 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 03/10] iommu: Add attach handle to struct iopf_group
-Message-ID: <20240612133732.GW791043@ziepe.ca>
-References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
- <20240527040517.38561-4-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1718199562; c=relaxed/simple;
+	bh=IZ3Bk3DFn392ICorfb5WtfkcYQ+oznwIKgpY71fQ5Wg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FnMUMO7Ub21e78JnvU6/gHRUgSsAmeP0w6qDFQEdLZ+DRciHYVPMHe4sG3G6GADRipBeg7rmlsfSD77TIKHvEgqYnyQXHjnxjXDcvpwu6JY5QGom2ryiyFsApPR9XePMmKl+RoHWaYsp5hfyDN0AOQeVr1lugvx/iMESr1fzPxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6136367;
+	Wed, 12 Jun 2024 06:39:43 -0700 (PDT)
+Received: from e126817.cambridge.arm.com (e126817.cambridge.arm.com [10.2.3.5])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7AD6C3F64C;
+	Wed, 12 Jun 2024 06:39:17 -0700 (PDT)
+From: Ben Gainey <ben.gainey@arm.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org
+Cc: james.clark@arm.com,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ben Gainey <ben.gainey@arm.com>
+Subject: [PATCH v8 0/4] perf: Support PERF_SAMPLE_READ with inherit
+Date: Wed, 12 Jun 2024 14:39:07 +0100
+Message-ID: <20240612133911.3447625-1-ben.gainey@arm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527040517.38561-4-baolu.lu@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 27, 2024 at 12:05:10PM +0800, Lu Baolu wrote:
-> @@ -206,20 +182,49 @@ void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
->  	if (group == &abort_group)
->  		goto err_abort;
->  
-> -	group->domain = get_domain_for_iopf(dev, fault);
-> -	if (!group->domain)
-> +	if (fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID) {
-> +		group->attach_handle = iommu_attach_handle_get(dev->iommu_group,
-> +							       fault->prm.pasid,
-> +							       0);
-> +		if (IS_ERR(group->attach_handle)) {
-> +			if (!device_iommu_capable(dev, IOMMU_CAP_USER_IOASID_TABLE))
-> +				goto err_abort;
+This change allows events to use PERF_SAMPLE READ with inherit so long
+as PERF_SAMPLE_TID is also set.
 
-I'm not excited about calling a function pointer on every fault. Let's
-just add a constant flag to iommu_ops?
+Currently it is not possible to use PERF_SAMPLE_READ with inherit. This
+restriction assumes the user is interested in collecting aggregate
+statistics as per `perf stat`. It prevents a user from collecting
+per-thread samples using counter groups from a multi-threaded or
+multi-process application, as with `perf record -e '{....}:S'`. Instead
+users must use system-wide mode, or forgo the ability to sample counter
+groups, or profile a single thread. System-wide mode is often
+problematic as it requires specific permissions (no CAP_PERFMON / root
+access), or may lead to capture of significant amounts of extra data
+from other processes running on the system.
 
-Jason
+This patch changes `perf_event_alloc` relaxing the restriction against
+combining `inherit` with `PERF_SAMPLE_READ` so that the combination
+will be allowed so long as `PERF_SAMPLE_TID` is enabled. It modifies
+sampling so that only the count associated with the active thread is
+recorded into the buffer. It modifies the context switch handling so
+that perf contexts are always switched out if they have this kind of
+event so that the correct per-thread state is maintained. Finally, the
+tools are updated to allow perf record to specify this combination and
+to correctly decode the sample data.
+
+In this configuration sample values, as may appear in the read_format
+field of a PERF_RECORD_SAMPLE, are no longer global counters. Instead
+the value reports the per-thread value for the active thread.
+Tools that expect the global total, for example when calculate a delta
+between samples, would need updating to take this into account when
+opting into this new behaviour. Previously valid event configurations
+(system-wide, no-inherit and so on) are unaffected.
+
+
+Changes since v7:
+ - Rebase on v6.10-rc3
+ - Respond to Peter Zijlstra's feedback:
+ - Renamed nr_pending to nr_no_switch_fast and merged in nr_inherit_read
+   which otherwise had overlapping use
+ - Updated some of the commit messages to provide better justifications
+   of usecase, behavioural changes and so on
+ - Cleanup perf_event_count/_cumulative
+ - Make it explicit that the sampling event decides whether or not the
+   per-thread value is given in read_format for PERF_RECORD_SAMPLE and
+   PERF_RECORD_READ; updated tools to account for this.
+
+Changes since v6:
+ - Rebase on v6.10-rc2
+ - Make additional "perf test" tests succeed / skip based on kernel
+   version as per feedback from Namhyung.
+
+Changes since v5:
+ - Rebase on v6.9
+ - Cleanup feedback from Namhyung Kim
+
+Changes since v4:
+ - Rebase on v6.9-rc1
+ - Removed the dependency on inherit_stat that was previously assumed
+   necessary as per feedback from Namhyung Kim.
+ - Fixed an incorrect use of zfree instead of free in the tools leading
+   to an abort on tool shutdown.
+ - Additional test coverage improvements added to perf test.
+ - Cleaned up the remaining bit of irrelevant change missed between v3
+   and v4.
+
+Changes since v3:
+ - Cleaned up perf test data changes incorrectly included into this
+   series from elsewhere.
+
+Changes since v2:
+ - Rebase on v6.8
+ - Respond to James Clarke's feedback; fixup some typos and move some
+   repeated checks into a helper macro.
+ - Cleaned up checkpatch lints.
+ - Updated perf test; fixed evsel handling so that existing tests pass
+   and added new tests to cover the new behaviour.
+
+Changes since v1:
+ - Rebase on v6.8-rc1
+ - Fixed value written into sample after child exists.
+ - Modified handling of switch-out so that context with these events
+   take the slow path, so that the per-event/per-thread PMU state is
+   correctly switched.
+ - Modified perf tools to support this mode of operation.
+
+Ben Gainey (4):
+  perf: Rename perf_event_context.nr_pending to nr_no_switch_fast.
+  perf: Support PERF_SAMPLE_READ with inherit
+  tools/perf: Correctly calculate sample period for inherited
+    SAMPLE_READ values
+  tools/perf: Allow inherit + PERF_SAMPLE_READ when opening events
+
+ include/linux/perf_event.h                    |  8 ++-
+ kernel/events/core.c                          | 69 +++++++++++++------
+ tools/lib/perf/evsel.c                        | 48 +++++++++++++
+ tools/lib/perf/include/internal/evsel.h       | 63 ++++++++++++++++-
+ tools/perf/tests/attr/README                  |  2 +
+ .../tests/attr/test-record-group-sampling     |  3 +-
+ .../tests/attr/test-record-group-sampling1    | 51 ++++++++++++++
+ .../tests/attr/test-record-group-sampling2    | 61 ++++++++++++++++
+ tools/perf/tests/attr/test-record-group2      |  1 +
+ ...{test-record-group2 => test-record-group3} | 10 +--
+ tools/perf/util/evsel.c                       | 19 ++++-
+ tools/perf/util/evsel.h                       |  1 +
+ tools/perf/util/session.c                     | 25 ++++---
+ 13 files changed, 321 insertions(+), 40 deletions(-)
+ create mode 100644 tools/perf/tests/attr/test-record-group-sampling1
+ create mode 100644 tools/perf/tests/attr/test-record-group-sampling2
+ copy tools/perf/tests/attr/{test-record-group2 => test-record-group3} (81%)
+
+-- 
+2.45.2
+
 
