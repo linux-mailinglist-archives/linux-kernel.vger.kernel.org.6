@@ -1,75 +1,174 @@
-Return-Path: <linux-kernel+bounces-210966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B05904B6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:13:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6D0904B6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D97A1B21EAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:13:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CFF51F233C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DFF13FD6B;
-	Wed, 12 Jun 2024 06:13:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B982155A55;
+	Wed, 12 Jun 2024 06:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h/e2MtQW"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA1213CAA7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 06:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A8B1553BC
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 06:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718172783; cv=none; b=KRmuOYJ72IzOFE2K57oqBNqrI6X3jkLj0HXzUPkDG6puYN+3yJA0q1gvnC8xg/9i/beDUyBB+ikj2+5IoR3zq2J3PYHjwGN1d3KQogia9a6CqVW7stGITigG0D8mKWlmlZEOvGF//QVjYXr281s3N1e1jieRsRQnOr/o6rBjHuk=
+	t=1718172788; cv=none; b=ZR0vXXzte4VQytmg07xuxwEYfEP7Xu7LDhZtLMMJp+qJEOojyI0Q6v3o+gkZcqQ0r36fmWRDBCc8KjvkRXDQlh2ET33GW+iBN5XYJOn0ymDo9nU0XEeHVSeshXy5g5oKXFoXt8tUGukQiTyGjFVF1ct8cOByrGHAFNcbg2aZmsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718172783; c=relaxed/simple;
-	bh=f3GXiWsYvAV48N7PLUMYc3lgNUpwG0uh7ZsslRjW040=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=LCjR9T/sHJgH5QHQlKr6t+e091PEm0WLQQLM992CeYsZuJc3DB2sC2JcWJh3nUYDNgZ3C6RoQBFWwA6jlsSkgJqMktYT5DeA3lxrD0LPoe4hchnUqhjsIn7ube2JkzZBbt8q9qjgZqof4hUPvcVNKhrOy+MjdiZ9KIgARkS25NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb6fd69f7cso483620039f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 23:13:02 -0700 (PDT)
+	s=arc-20240116; t=1718172788; c=relaxed/simple;
+	bh=eSLvOmalzdcJlCBTYgSLmcvJpyhgU8wN7sUtelwJmB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T1PJkgzv5cpFhvYhvmDs9s9VIkoOZX18oOQ9UQYSVhb6njIccHJPxLC+1tqnzKKDTpYhkPjrVJt+xn/STutCk+HlpfQNprl4PFz69zvWgttrgK7nslHpbhoIk1D7VIESRhh8F159heNy55O/haOHl5085aL0B1fLXND2vn/EwMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h/e2MtQW; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a68b41ef3f6so729317966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 23:13:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718172784; x=1718777584; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=H+0nSB8ZtcBhQ3V/YzOcmbm9Frlqarxiqy6OjKZhljQ=;
+        b=h/e2MtQWB9W814xMflzTB/gL3AcBYWTEOdYg0Jf+3gNuNLjzQBD9QwpnppiL75+M+j
+         XeNDAagqxHkQDwfI17rt+eCS0lev/1b+JKEc3YNY5unh+E7F2bwOcaQn/cfOTdeVlbW6
+         OMweAquf6FafiEshyVItZYfUmVMH37MoYeCQYxXYB7SaxnTJWlRPSK0MkTsmVDT2Vx3G
+         whoarU30hRfTyKiuaK6QJJyw5RRI3+XnIqy4UbbglsAmFN4r0szovpOaDDXRxK0PwmA7
+         FTB53Yt/cxC807hCAXwfwhNlEo/2D9TcV+QGsHtxC6YipfRiKV0wiml4gwIdLafDdhRj
+         Qu6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718172782; x=1718777582;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f3GXiWsYvAV48N7PLUMYc3lgNUpwG0uh7ZsslRjW040=;
-        b=oqo81Ao9Cemjdmpfw5d5DZFeDA9q+8hqjPF23aeYqYMdzwWRS5bOB0fLQa9zp5HD51
-         FUMathE0AbkI8WDF3OHcoDVdPQCcUDh3XpEFhSRDYApDuB9SJ5/tqP+ee43j66eetXaL
-         xolyEpPeZ7aerLErnSHPGKn3WJ02Obge5eXM0DOCQfWehf1Sn/wtoSWUW5rMKN/cOKwH
-         xANvxDbYCVVQXG2go8hcN2NidATpdhqLarGw9IJwdzYBZIn4L+2Sy2eMjpUGSADTfSIn
-         DEMeVvm+SyhQhpVCFvMJC6WqnRqinR1DFHec2yrotodllKH0rELwp1WQiA9+r+8YJdvh
-         9gKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIsAEIqw0B+OCQDNopcK2RhaWxrf/GQVLRa4M+jQ3STed+yW+EKqd0yhbjt/QCwAP5Kq8NRvEhmb1a5Jjo4K6s4xzV6pkmBKFE/smx
-X-Gm-Message-State: AOJu0Ywn0eGV9/MBhueLwutFV6rGLbzi6hBxzRdozDNBGnvnBeV6Frl3
-	EZIzK8qfQQooFepBcJ+66LhBAs+ibDIbraScekx3teIS6dSFxh4oh0Wy9/f1iAxjvnUJoVUCan4
-	Gzn9riEPPm5WM7pR4LWXgHGmaKmcsZ0nf/Wy8ZXPJ8hlDg6OxeTEp0Qc=
-X-Google-Smtp-Source: AGHT+IHGWxnHiS8Tz+1CgqSNzZJg8oGuO2vBAf7v237d+EpcDtWxDQuU3+yYGPQedEnQY2A47yie3gy5+DQ8wORZf2KCKidwh7MZ
+        d=1e100.net; s=20230601; t=1718172784; x=1718777584;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H+0nSB8ZtcBhQ3V/YzOcmbm9Frlqarxiqy6OjKZhljQ=;
+        b=BUmwR2FQjd0G/hdO5nxTWVpcQLbQyhaMZnoWm3c+BDr3l/BjcNbpNKWx+q7O2W6PXs
+         xcWFfyv6l+Fz5EFELrOJvbuevtodRXiYUh6mh7U1L9gjSyiEnmqZH1iG9Mu7h9yPAXoE
+         U/exHqlulJ9du6FizkdPCI3KC4M/6mRnkDoX+XLmGqbdHCpObRG/LUyLLts1xFPpXg28
+         A04U20QzWK1UJoKBEI3PlAi3VJSr5KTGYCSRBYIvFbIp2O+/AjIEaEKyftUytcxJ0/wo
+         /qwoC621iuEXqtLv6/x1HYdKnt6whXnYu39L9Kx1usj5oKbS+N+tZbaevZJAtpGMW+QG
+         RnaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeY0jZ0Cy5891JSB0KZzPKh0ueLg9j9GBw4YbLovU8svaKjSL90dgr+4O6/Li4J5HGW1bfJrDabWEgK7DrUpnUignvj1L8I4Bu1TQC
+X-Gm-Message-State: AOJu0Yz0kMqzMKBMS/oBPpAr54DYB+L3wGVYtON9mfQ+qFP044iMteXI
+	375Qp5eXoOAA1FZOvYMSjlSRwv/IUlu4Zdam+8d2uhbgfRG/SiyIu4JasVUIS50=
+X-Google-Smtp-Source: AGHT+IGLmBCp9E+RgQKpYewKejbd5sntmqSWXLiE4LchETy2v6Ls6ZOIR6j/wWm4RHGRwX4C0RtyAQ==
+X-Received: by 2002:a17:906:b2d5:b0:a6f:27e2:812c with SMTP id a640c23a62f3a-a6f47d524abmr40862266b.22.1718172784413;
+        Tue, 11 Jun 2024 23:13:04 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f000a11c0sm546716966b.66.2024.06.11.23.13.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 23:13:03 -0700 (PDT)
+Message-ID: <e7052800-d787-4b7f-a3f6-fc85359ab763@linaro.org>
+Date: Wed, 12 Jun 2024 08:13:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:154b:b0:7eb:8ba3:2b87 with SMTP id
- ca18e2360f4ac-7ebcd1757dfmr3971639f.2.1718172781836; Tue, 11 Jun 2024
- 23:13:01 -0700 (PDT)
-Date: Tue, 11 Jun 2024 23:13:01 -0700
-In-Reply-To: <20240612061239.631256-1-sebek.zoltek@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000530bb7061aab461e@google.com>
-Subject: Re: Testing if issue still reproduces
-From: syzbot <syzbot+4fec412f59eba8c01b77@syzkaller.appspotmail.com>
-To: sebek.zoltek@gmail.com
-Cc: jack@suse.com, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sebek.zoltek@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 0/2] leds: Add a driver for MP3326
+To: "Yuxi (Yuxi) Wang" <Yuxi.Wang@monolithicpower.com>,
+ "pavel@ucw.cz" <pavel@ucw.cz>, "lee@kernel.org" <lee@kernel.org>,
+ "robh+dt@kernel.org" <robh+dt@kernel.org>,
+ "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "wyx137120466@gmail.com" <wyx137120466@gmail.com>
+Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240611083236.1609-1-Yuxi.Wang@monolithicpower.com>
+ <170c14c9-e1c7-4252-a550-4f9a8cef3a27@linaro.org>
+ <SN4PR13MB53105EE4DEB0E5EE42160627F6C02@SN4PR13MB5310.namprd13.prod.outlook.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <SN4PR13MB53105EE4DEB0E5EE42160627F6C02@SN4PR13MB5310.namprd13.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> #syz test
+On 12/06/2024 04:26, Yuxi (Yuxi) Wang wrote:
+> 
+>> On 11/06/2024 10:32, Yuxi Wang wrote:
+>>> Add the binding description and the corresponding driver for
+>>> the MPS MP3326.
+>>>
+>>> Signed-off-by: Yuxi Wang <Yuxi.Wang@monolithicpower.com>
+>>>
+>>> Changes in V2:
+>>>   - Fix patch format error
+>>
+>> Only this? So all other feedback - like 10 comments - were ignored?
+>>
+>> Sorry, please go to previous discussion and implement entire feedback.
+>> Then document in changelog what did you do.
+>>
+>> Best regards,
+>> Krzysztof
+> Hi krzysztof,
+> 
+> I think previous discussions can be summarized by this log.
 
-This bug is already marked as fixed. No point in testing.
+No, it cannot. It tells me nothing.
+
+> 
+> Ok,  I will write all my changes in the next version.
+
+
+
+Best regards,
+Krzysztof
 
 
