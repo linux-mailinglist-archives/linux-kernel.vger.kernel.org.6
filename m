@@ -1,181 +1,131 @@
-Return-Path: <linux-kernel+bounces-211643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF979054D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:12:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BAF59054D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4671B1F21D35
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:12:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 492861C20F85
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FE717DE1E;
-	Wed, 12 Jun 2024 14:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5A817E447;
+	Wed, 12 Jun 2024 14:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="StgvcIY0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RVlPVu6G"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806A217D8A3
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53D217D8BE;
+	Wed, 12 Jun 2024 14:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201563; cv=none; b=rJ9T/sfjhsiRQi+iA103NwnaxaPaDgsti9yPsgIAafL9WMUb2nHZ0UhO+dQSvCFbzNvMRwEazvp/6I4iyKVirbN0O5zNBEP0j/btfw+dNzDes2T+RuEidlU20+RcUUfeoVAq9QVB/fhuJGCyMuFCaw5rfvuEqj034j1CSvjHyao=
+	t=1718201564; cv=none; b=aRNXR+eGydbJNSgxWApRPZbZPqn6Xn0dHTDtwFBDnXMgJaGIqFL9uiHExmKIDF73pJ44h6IvEVmX8WvZ9OoswTTsqzpn7Jw7ML5/KqwJ3yIupEjmFZpCMPAP5iTSuIuJvy0puTNvTwA9+GZC+wkKqoKGuM1Cu3jdapGqZYisKyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201563; c=relaxed/simple;
-	bh=e6CithrYoqvWAZTwPj/kYCtycBNrDIODo8TF0DmX2ss=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Onf0VWN/D96xWwLfPckuXuHpLPfQNaRjwtA1MS/U5kfa6zUv94rrFBXa0FuFJ5QxBY0Jo/TVBbHadrUg1DShwKi0j1QwpuKjNiINy3GfSwlhmxZ8jq01TNqGKYFn1MdA4tXX6es3w2izC07g4tcx8i6yIvf7mPLjram0t045S6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=StgvcIY0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718201560;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=41mm6L+5qDMknpvTMwkuAgq3SgjPtSkdBwaxW2ijW5Q=;
-	b=StgvcIY01GgvOEzsnVnPOKpkrULziz5Nc5fAQIQ32FTAtcj5QTOSbxASJzkdFsKQSZ/ROB
-	q3MzJqcKrSg3BVLog03jwLJF9Lyci8srSvQah5MCfLN/5OvLVU76YSLVSdVpth9APFi1bH
-	8Xk+laGiFmAQPbjl7MtNNY20YPhghIU=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-504--jUkXuEEPD-MEb8-RDjFyQ-1; Wed, 12 Jun 2024 10:12:39 -0400
-X-MC-Unique: -jUkXuEEPD-MEb8-RDjFyQ-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-79557d418e0so141991385a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:12:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718201558; x=1718806358;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=41mm6L+5qDMknpvTMwkuAgq3SgjPtSkdBwaxW2ijW5Q=;
-        b=LT6ETxM3LZc885u+aMSiWUBlMGTLz3ulxpV/yuLy5ENYMOC54BPhlYiNKPfM5p81Vm
-         DisWZqXtPtFQKb0RqrXtG9reYW3Q8al9yXhufOjEk50y7KfR4PjOi4MKEYwPLhajL3Cc
-         3epADHM2gsxMHcRiecOylrfrkityqA7mD5u++RVxenkIGwJenZxrUEk3V/NcInDEAZ5b
-         TpDmCvUMk74tnXiySyG+cb3vTwwc92OMq9fWIaDOB4SBi6N8HK6rwhzmFcKTzcFJdHu7
-         Y/h0VzqxabuaAUrkW76QnS6dVxKCobit+B9s38CvC/ijgaNbc9UjZzJqkaVTzVJS1iS6
-         ZpLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVP6dKqfP4YAC4Q6SOQH/o5+XWi8rv32/eQib3lKTFF8oPSxAjacJ/3kX/eJSrV9HdWBCScHhxMUMJVZl57siFzhG9edgib53ZSpac2
-X-Gm-Message-State: AOJu0Yx2IPDWXaec07FGLSM1uCwwn9rsD//O2hMQU0D6a3WdQ66SZZc7
-	/zLna+xMCHyC0JUIGy4smufggCy2gGZzS+w4Ud9n7xjrN0ZngFF1B6cV2A7dNR6+0Xbte/9s4dt
-	xXHSscp04Qsqgluws6pZKM9pLedYEDzeHlGVj8Xmm89e7Q1CRI3OqUo5yt3F10A==
-X-Received: by 2002:a05:620a:190f:b0:797:84e7:9046 with SMTP id af79cd13be357-797f4db30e5mr352017185a.4.1718201558718;
-        Wed, 12 Jun 2024 07:12:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHB5vrOLZcD6InRm6Qvq4YB5P6QAVqAA61aZvOvCoo3qbREicdPR4c13qRvHDbOEOnZ6c3QTQ==
-X-Received: by 2002:a05:620a:190f:b0:797:84e7:9046 with SMTP id af79cd13be357-797f4db30e5mr352013285a.4.1718201558298;
-        Wed, 12 Jun 2024 07:12:38 -0700 (PDT)
-Received: from fionn ([74.12.5.183])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7954de1c077sm453970885a.48.2024.06.12.07.12.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 07:12:37 -0700 (PDT)
-Date: Wed, 12 Jun 2024 10:12:26 -0400 (EDT)
-From: John Kacur <jkacur@redhat.com>
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-cc: Daniel Bristot de Oliveira <bristot@kernel.org>, 
-    Steven Rostedt <rostedt@goodmis.org>, Clark Williams <williams@redhat.com>, 
-    linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtla/osnoise: Better report when histogram is empty
-In-Reply-To: <Zml6JmH5cbS7-HfZ@uudg.org>
-Message-ID: <9d283173-4ff6-fbac-bcc3-e712daa99572@redhat.com>
-References: <Zml6JmH5cbS7-HfZ@uudg.org>
+	s=arc-20240116; t=1718201564; c=relaxed/simple;
+	bh=1h7oyWZtOlDIZIvEwGXdpgoBFJZDitp/SnMaJKTy7Fw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=GbRtsTmwDB5ULnCxeLNt5I7Ugf7vVTAyUQLkAg6FTe+JcQ9FDmLsKUd83IQKwkXYkl9/zxJ/xv/i+JEASK35MGbbs4lZeI7Pih+kT9Of5MyeTJL8DD30eBiSTmL39UhQnooe25UHm3ba0X6AHOhfjX0aFxB3J/KXwGpY8Bub/Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RVlPVu6G; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CDfxPV018718;
+	Wed, 12 Jun 2024 14:12:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=m0FmGfkNeKrMXUaZQgUR4Q
+	N1A0zpT0OMtSwEyewWMhk=; b=RVlPVu6Gsy2fxTsmN7yw78lgLm6F89iuHYHj58
+	9EPQDHabSythCMXwrn6S5VqQKCyOFpenkhrtXprNHS030yezFqTz8xRUlnAH2TMG
+	I7yTO9QbPZojjhcITpw81ziMUnRxTvUkHXwIvCXfZ7VRc8vBYNIEM0vEr18Qm/Uh
+	BcdvLKb5Oaw9Tq6E2lBqznBQlgfIay7lnKWMB4HVXRlk39soNTsGbhF44lIiL3s9
+	yzBKu3el/hyG7fnlO02DMgOcndlIGJxQG0lJ4DAJm2CV4B791A5cNQ2D2ytZDY+4
+	3JBmPp9+lthlS+Xq83w+nQh3YQa8yrtvsGiK9c0W5TUMz/5w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yq4s8hbk9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 14:12:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CECWGq010422
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 14:12:32 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 07:12:32 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 12 Jun 2024 07:12:31 -0700
+Subject: [PATCH] backlight: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240612-md-drivers-video-backlight-v1-1-f4ca1beb36cc@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAM6saWYC/x3MSwrCMBAA0KuUWTuQxqDiVcRFPmMz2KYy04ZC6
+ d2NLt/m7aAkTAr3bgehyspzaehPHcTsy0DIqRmssc5ceotTwiRcSRQrJ5ox+PgeecgLWucsXa0
+ /m3SDFnyEXrz988ezOXglDOJLzL9y5LJuOHldSOA4vuR+X2aLAAAA
+To: Lee Jones <lee@kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>
+CC: <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2Srocz6UknqIcfJfrgXnSAhLzLIvGKlF
+X-Proofpoint-ORIG-GUID: 2Srocz6UknqIcfJfrgXnSAhLzLIvGKlF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_08,2024-06-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ spamscore=0 mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1011 mlxlogscore=952 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120101
 
+With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/rt4831-backlight.o
 
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-On Wed, 12 Jun 2024, Luis Claudio R. Goncalves wrote:
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/video/backlight/platform_lcd.c     | 1 +
+ drivers/video/backlight/rt4831-backlight.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-> When osnoise hist does not observe any samples above the threshold,
-> no entries are recorded and the final report shows empty entries
-> for the usual statistics (count, min, max, avg):
-> 
->     [~]# osnoise hist -d 5s -T 500
->     # RTLA osnoise histogram
->     # Time unit is microseconds (us)
->     # Duration:   0 00:00:05
->     Index
->     over: 
->     count:
->     min:  
->     avg:  
->     max:  
-> 
-> That could lead users to confusing interpretations of the results.
-> 
-> A simple solution is to report 0 for count and the statistics, making it
-> clear that no noise (above the defined threshold) was observed:
-> 
->     [~]# osnoise hist -d 5s -T 500
->     # RTLA osnoise histogram
->     # Time unit is microseconds (us)
->     # Duration:   0 00:00:05
->     Index
->     over: 0
->     count: 0
->     min: 0
->     avg: 0
->     max: 0
-> 
-> 
-> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-> ---
->  tools/tracing/rtla/src/osnoise_hist.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
-> index 7be17d09f7e85..214e2c93fde01 100644
-> --- a/tools/tracing/rtla/src/osnoise_hist.c
-> +++ b/tools/tracing/rtla/src/osnoise_hist.c
-> @@ -374,6 +374,7 @@ osnoise_print_stats(struct osnoise_hist_params *params, struct osnoise_tool *too
->  {
->  	struct osnoise_hist_data *data = tool->data;
->  	struct trace_instance *trace = &tool->trace;
-> +	int has_samples = 0;
->  	int bucket, cpu;
->  	int total;
->  
-> @@ -402,11 +403,25 @@ osnoise_print_stats(struct osnoise_hist_params *params, struct osnoise_tool *too
->  			continue;
->  		}
->  
-> +		/* There are samples above the threshold */
-IMHO The comment isn't needed because the variable had_samples is 
-descriptive, but it's not a big deal either
+diff --git a/drivers/video/backlight/platform_lcd.c b/drivers/video/backlight/platform_lcd.c
+index 76872f5c34c5..b0af612834a7 100644
+--- a/drivers/video/backlight/platform_lcd.c
++++ b/drivers/video/backlight/platform_lcd.c
+@@ -143,5 +143,6 @@ static struct platform_driver platform_lcd_driver = {
+ module_platform_driver(platform_lcd_driver);
+ 
+ MODULE_AUTHOR("Ben Dooks <ben-linux@fluff.org>");
++MODULE_DESCRIPTION("Generic platform-device LCD power control interface");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:platform-lcd");
+diff --git a/drivers/video/backlight/rt4831-backlight.c b/drivers/video/backlight/rt4831-backlight.c
+index 7d1af4c2ca67..c2f6fb29e1d0 100644
+--- a/drivers/video/backlight/rt4831-backlight.c
++++ b/drivers/video/backlight/rt4831-backlight.c
+@@ -229,4 +229,5 @@ static struct platform_driver rt4831_bl_driver = {
+ module_platform_driver(rt4831_bl_driver);
+ 
+ MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
++MODULE_DESCRIPTION("Richtek RT4831 Backlight Driver");
+ MODULE_LICENSE("GPL v2");
 
-
-> +		has_samples = 1;
->  		trace_seq_printf(trace->seq, "\n");
->  		trace_seq_do_printf(trace->seq);
->  		trace_seq_reset(trace->seq);
->  	}
->  
-> +	/*
-> +	 * If no samples were recorded, skip calculations, print zeroed statistics
-> +	 * and return.
-> +	 */
-> +	if (!has_samples) {
-> +		trace_seq_reset(trace->seq);
-> +		trace_seq_printf(trace->seq, "over: 0\ncount: 0\nmin: 0\navg: 0\nmax: 0\n");
-> +		trace_seq_do_printf(trace->seq);
-> +		trace_seq_reset(trace->seq);
-> +		return;
-> +	}
-> +
->  	if (!params->no_index)
->  		trace_seq_printf(trace->seq, "over: ");
->  
-> 
-> 
-> 
-
-
-Reviewed-by: John Kacur <jkacur@redhat.com>
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240612-md-drivers-video-backlight-2442e72a30d8
 
 
