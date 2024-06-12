@@ -1,175 +1,161 @@
-Return-Path: <linux-kernel+bounces-211149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C856C904DB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:10:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB581904DB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDA361C2319E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:10:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 944D81F21AE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92D216D317;
-	Wed, 12 Jun 2024 08:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A254716D306;
+	Wed, 12 Jun 2024 08:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Thtc9So0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Crx0GyBK"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF8816C847
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54B916C878
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718179823; cv=none; b=IecRR+Jqs8RE5MKHhd7HDVY7up7wCn0NHGwdLFF8hPVcGGJarRAiWrokJ4a7yKC9AL/3tT9w8b2tn3smKqbNw9AaQAEpV6CutASFXDqYggKEhS16qvWR11JrfciAAImQjJgS22WRgRp7TrTY3V6bHgJvZrcR3zyoCdkAJSXdsWk=
+	t=1718179895; cv=none; b=JhBkXVmzd1SUNvetuuBO2vZ3Oc7ZQialdqicAUBmqH79FDAJ9Sd78JwIdDjOaTfdwS/evGougrTGT/24HzX6bmBWHyFjsHF8mveqkYX0HhKHUJ4F8MEWlOTDnK/gNPJaFHog78hANd8SW2m37hE7vLy6lWHpTQkrBGe6obrPRG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718179823; c=relaxed/simple;
-	bh=KD8XsOYWtuKQcjM/eNkuQb8vTo+mQEltuXJ5GVxlhnk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qxADpJsQltkWpLxwtx2gIu03Fqzl9Zy5obUO6Qaa6FT75/hhQ26rgJPxWiCvk4mlRk94BmTL0iZ1XbnF0zmraHjcWNai9qpjLti6AIDvP2s0/j5Qf/cIl9S373h0+H5ZSdWFt+8w3ku9C/HhqN7yVt3vZ1Rgd4fr0tHYoEEyna0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Thtc9So0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718179819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mZzSDXkByvhQTe8Q6mgT19yqvdN/uz/2Piu84KIHlJ0=;
-	b=Thtc9So0HxBppRwvayd8INRPFc+/oOlIhhrPEXLYSV5uEkdpfLaB8puh84Wl+dusTKZKR3
-	zjC3ebDOqIoefS3Yi+irutcvF3Hrp7fWb7ikz1tMNvKBqCmNr0CW++BxbUIft7rU2FqFMU
-	dQqyo2GBOtSRLOEUv+cXm41mSWJLeOA=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-434-_j5Sgk0kPW-2QzELSQS_RQ-1; Wed, 12 Jun 2024 04:10:17 -0400
-X-MC-Unique: _j5Sgk0kPW-2QzELSQS_RQ-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-57c753a879dso1976489a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:10:17 -0700 (PDT)
+	s=arc-20240116; t=1718179895; c=relaxed/simple;
+	bh=o/83bP/Kgt021W/Xs4v4B6cZ9tybAWx60f4FgAlbeuo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JubfLTS06sA5b7pcomuMRaE6dfpqo7OEqdNohGNMn8r0PDLCIwIPs2Jfk4KzOsaCGKjPBU6W+YLIFLqjDbjel9k0kZAIXwxo+7JzKm81t/H+1qMtNJ0O9peRHzVCuTFRjY/3dnG5/hOJTCO07p6T1OkNpV7q6rkpMAepj2qKYRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Crx0GyBK; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5bafe063f35so299917eaf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718179893; x=1718784693; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jtUCsNEN1OLn5CWnbEq8DyQzZdykGreH7aUIN+pkvSo=;
+        b=Crx0GyBKN1SDVLT7nYH8zBXsmCCKraGc8DaS2ZC5oS2ePWjcqnLPrYnCeGmkqJPh/q
+         PDFKQLMRTGTOYGGkSI33Ftsgpym/l4btS4ErbFMec9ZBDQr//B6PWuvmVudpxcKfoPCp
+         sLZxfolRLEcrAKpwZmsKXOx+FJxWx+Y7vW7dZQSjKYt5yaU2hS6HvXwBjh/SoyJRxjo8
+         EDW/IA5aTDjxmVMfXsrUW0gftt5gRZxShG5utFzzcWcJc+NKR8APQ28E0ylhh4KpeLHm
+         RHw+HO7nRCCLrqdsmaXP2cwx44Z6QEOQqfE1jj1bxVsTPS8URh0eqEeqN53bUchMR6Ge
+         U8rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718179816; x=1718784616;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mZzSDXkByvhQTe8Q6mgT19yqvdN/uz/2Piu84KIHlJ0=;
-        b=YEgJEBvpN3XWQ5PW40sQx5pMchRU5iuEsJzQJ76eZr7MIyAgOKh0bRFgfn7TLy1TY6
-         3Xen1bGqUmQ2BSPGFt/bFk3KyPwpvYy1ZMPM4ocViXllapDgEsNtW81BG9KsPEzltRUq
-         ympGotTENHqdTxiUb8aCJeos9ovs84bv0YVVMA3F83yaW1yqUzLlSUgdbkBoBsLevp1k
-         Y02lmEnSbgUuugt80F24sfgiwlYOwXdWc/mnl2SUoCKQv12GUxSNTulJDanFfAkKX1+9
-         cXOi8PVKIWffwv6AoLz3fjL9fNpg4WHai+fLgOixaWemM61lg5O50no4jM8WYDw/KDgI
-         0a8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWfPFC+A7xoWZImpHtn8fYd8L8Gb6sR5npE9kr9Mj31vbfAgvv0oD4rpGxjbTEOecsmPfe7KeT7yPrn9Z039OhokWFWIDA1W3lY4p9p
-X-Gm-Message-State: AOJu0Yz1C7oJy18e4vtPjxJDfqM24Qi4Dn9qcfzhukGX8xmdii2Gm7px
-	1trXKAHrOuLRm4w526lv49hfp6csVS0Zsicc7wyQQvngvq6QIpOmtUmksiDMfhfxub/LbtaQ7Db
-	bAQIMAyuz6JShYlYbDHR/r0CZYb3BCXOzqlhQBIzxoq1SFq1PPF5/jOZVp7vgDg==
-X-Received: by 2002:a50:d583:0:b0:57c:4769:562a with SMTP id 4fb4d7f45d1cf-57ca8dfff3dmr677222a12.0.1718179816687;
-        Wed, 12 Jun 2024 01:10:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFmHuWpMoOlHLB/y32XdBF0kh5+hdKiBK6cLkE/6baSa9huKfKvmf3UKQQ1wP6lTycKWuKMA==
-X-Received: by 2002:a50:d583:0:b0:57c:4769:562a with SMTP id 4fb4d7f45d1cf-57ca8dfff3dmr677193a12.0.1718179816152;
-        Wed, 12 Jun 2024 01:10:16 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cae50adc2sm38283a12.75.2024.06.12.01.10.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 01:10:15 -0700 (PDT)
-Message-ID: <38336785-cb59-464f-b2a7-49812f4c2ce0@redhat.com>
-Date: Wed, 12 Jun 2024 10:10:14 +0200
+        d=1e100.net; s=20230601; t=1718179893; x=1718784693;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jtUCsNEN1OLn5CWnbEq8DyQzZdykGreH7aUIN+pkvSo=;
+        b=VMEOPPDAMra+xxGZ5Tm7Jcf/lMvWf0ne0WtlnA1DViwDACoftJRF7aUFIWq9kg/bzK
+         PNpysVxXsIOgzCR3e6F0Jzv4JOB1GO78G6ib5msSRIYo9YN+PiPdmVWI5u5efRJjdIhY
+         wyM1vIFEN3MV8mDfnnOn4YvWTAFXw6TeLwuxSPOiedPwxFsvvNE+bfKI55uV0hqYCb7g
+         Ld14eiyISj6ZMx+9aEBzj9Q7WGcdBAkWb3Ikm/NlszGVs9XjkUMvWruHL39XFFkDPl5V
+         q9HbcPbrxnV1FS+9h3zRmRAkLsWZvsMdCCK+ayFMyl6Jf4/bxK+00y/kvQsxQt+eKBwW
+         W+Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTigQ0lkCWSTD1ri51qVPrdoeRBrJ6gbdYs3XrhjflKMizYtWd/WoyIsfjLTly90p17t07u4KKecO5Ho4ln6zezzwoCNcIBogffORX
+X-Gm-Message-State: AOJu0Ywhp79we8/mWOGCRsA8tz2OX8cTcf8+nWnXpLY0w8OuJdnAMU87
+	jgIeIILwgbbNn0FMkPiWXFTbtHVT+XR6JAKbZeQaDmb86dNDUA/bboQKFykR2T5zH9u2K/H7a1D
+	u7Vrpw7Osj27eFVjyXZtMOWRdzro=
+X-Google-Smtp-Source: AGHT+IECgC2oHqDsxlvyzV/cACnerXz2243qmwjQzGItweUJ08q0MLhe29CXS0lfrpbzaZ22X3IRtwWP206QmA+KE2Q=
+X-Received: by 2002:a05:6870:2194:b0:254:a157:651a with SMTP id
+ 586e51a60fabf-25513554843mr634783fac.9.1718179892726; Wed, 12 Jun 2024
+ 01:11:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 05/49 RESEND] media: atomisp: Switch to new Intel CPU
- model defines
-To: Tony Luck <tony.luck@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
- Andy Shevchenko <andy@kernel.org>
-References: <20240611173406.352874-1-tony.luck@intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240611173406.352874-1-tony.luck@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240606070645.3295-1-xuewen.yan@unisoc.com> <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
+In-Reply-To: <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Wed, 12 Jun 2024 16:11:21 +0800
+Message-ID: <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding actual_cpu_capacity
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
+	vschneid@redhat.com, vincent.donnefort@arm.com, ke.wang@unisoc.com, 
+	linux-kernel@vger.kernel.org, christian.loehle@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tony,
+Hi Qais
 
-On 6/11/24 7:34 PM, Tony Luck wrote:
-> New CPU #defines encode vendor and family as well as model.
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
-> Acked-by: Hans de Goede <hdegoede@redhat.com>
-> ---
-> 
-> Mauro, Hans, Greg: Which one of you owns this one. Can you take
-> a look please. Let me know if changes are needed.
+On Mon, Jun 10, 2024 at 6:55=E2=80=AFAM Qais Yousef <qyousef@layalina.io> w=
+rote:
+>
+> On 06/06/24 15:06, Xuewen Yan wrote:
+> > Because the effective_cpu_util() would return a util which
+> > maybe bigger than the actual_cpu_capacity, this could cause
+> > the pd_busy_time calculation errors.
+> > So clamp the cpu_busy_time with the eenv->cpu_cap, which is
+> > the actual_cpu_capacity.
+>
+> I actually think capping by pd_cap is something we should remove. Saturat=
+ed
+> systems aren't calculated properly especially when uclamp_max is used.
+>
+> But this might a bigger change and out of scope of what you're proposing.=
+.
 
-I'll pick this one up. But atomisp support is a side project,
-so I only work on this every few weeks.
+I agree, there are other things to consider before doing this.
 
-My intent is to get this send to Mauro (media-next) in time
-for the 6.11 merge window.
+>
+> Did this 'wrong' calculation cause an actual problem for task placement?
+> I assume the pd looked 'busier' because some CPUs were too busy.
 
-Regards,
+This will not only affect calculations in scenarios with high temperatures.
+Sometimes, users will set scalimg_max_freq to actively limit the CPU freque=
+ncy,
+so that even if the CPU load is large, the CPU frequency will not be very h=
+igh.
+At this time, even if tasks are placed on other CPUs in the same PD,
+the energy increment may not be too large, thus affecting core selection.
 
-Hans
+>
+> Was the system in overutilzied state? Usually if one CPU is that busy
+> overutilized should be set and we'd skip EAS - unless uclamp_max was used=
+.
 
+As Christian said, This case occurs not only in the overutil scenario,
+this scenario holds true as long as the actual-cpu-capacity caused by
+the reduction in max cpu frequency is smaller than the cpu util.
 
-
-> 
->  .../atomisp/include/linux/atomisp_platform.h  | 27 ++++++++-----------
->  1 file changed, 11 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
-> index 0e3f6fb78483..fdeb247036b0 100644
-> --- a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
-> +++ b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
-> @@ -18,7 +18,7 @@
->  #ifndef ATOMISP_PLATFORM_H_
->  #define ATOMISP_PLATFORM_H_
->  
-> -#include <asm/intel-family.h>
-> +#include <asm/cpu_device_id.h>
->  #include <asm/processor.h>
->  
->  #include <linux/i2c.h>
-> @@ -178,22 +178,17 @@ void atomisp_unregister_subdev(struct v4l2_subdev *subdev);
->  int v4l2_get_acpi_sensor_info(struct device *dev, char **module_id_str);
->  
->  /* API from old platform_camera.h, new CPUID implementation */
-> -#define __IS_SOC(x) (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL && \
-> -		     boot_cpu_data.x86 == 6 &&                       \
-> -		     boot_cpu_data.x86_model == (x))
-> -#define __IS_SOCS(x,y) (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL && \
-> -		        boot_cpu_data.x86 == 6 &&                       \
-> -		        (boot_cpu_data.x86_model == (x) || \
-> -		         boot_cpu_data.x86_model == (y)))
-> -
-> -#define IS_MFLD	__IS_SOC(INTEL_FAM6_ATOM_SALTWELL_MID)
-> -#define IS_BYT	__IS_SOC(INTEL_FAM6_ATOM_SILVERMONT)
-> -#define IS_CHT	__IS_SOC(INTEL_FAM6_ATOM_AIRMONT)
-> -#define IS_MRFD	__IS_SOC(INTEL_FAM6_ATOM_SILVERMONT_MID)
-> -#define IS_MOFD	__IS_SOC(INTEL_FAM6_ATOM_AIRMONT_MID)
-> +#define __IS_SOC(x) (boot_cpu_data.x86_vfm == x)
-> +#define __IS_SOCS(x, y) (boot_cpu_data.x86_vfm == x || boot_cpu_data.x86_vfm == y)
-> +
-> +#define IS_MFLD	__IS_SOC(INTEL_ATOM_SALTWELL_MID)
-> +#define IS_BYT	__IS_SOC(INTEL_ATOM_SILVERMONT)
-> +#define IS_CHT	__IS_SOC(INTEL_ATOM_AIRMONT)
-> +#define IS_MRFD	__IS_SOC(INTEL_ATOM_SILVERMONT_MID)
-> +#define IS_MOFD	__IS_SOC(INTEL_ATOM_AIRMONT_MID)
->  
->  /* Both CHT and MOFD come with ISP2401 */
-> -#define IS_ISP2401 __IS_SOCS(INTEL_FAM6_ATOM_AIRMONT, \
-> -			     INTEL_FAM6_ATOM_AIRMONT_MID)
-> +#define IS_ISP2401 __IS_SOCS(INTEL_ATOM_AIRMONT, \
-> +			     INTEL_ATOM_AIRMONT_MID)
->  
->  #endif /* ATOMISP_PLATFORM_H_ */
-
+Thanks!
+---
+xuewen
+>
+> >
+> > Fixes: 3e8c6c9aac42 ("sched/fair: Remove task_util from effective utili=
+zation in feec()")
+> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> > ---
+> >  kernel/sched/fair.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 8a5b1ae0aa55..8939d725023a 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -7870,7 +7870,9 @@ static inline void eenv_pd_busy_time(struct energ=
+y_env *eenv,
+> >       for_each_cpu(cpu, pd_cpus) {
+> >               unsigned long util =3D cpu_util(cpu, p, -1, 0);
+> >
+> > -             busy_time +=3D effective_cpu_util(cpu, util, NULL, NULL);
+> > +             util =3D effective_cpu_util(cpu, util, NULL, NULL);
+> > +             util =3D min(eenv->cpu_cap, util);
+> > +             busy_time +=3D util;
+> >       }
+> >
+> >       eenv->pd_busy_time =3D min(eenv->pd_cap, busy_time);
+> > --
+> > 2.25.1
+> >
 
