@@ -1,233 +1,148 @@
-Return-Path: <linux-kernel+bounces-211350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570A7905078
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:35:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B50D190507C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FCCE1C20D5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C423B1C21265
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C67C16EBFE;
-	Wed, 12 Jun 2024 10:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA9916EBF8;
+	Wed, 12 Jun 2024 10:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mYglZfeb"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbM0EJXI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DD37BB19;
-	Wed, 12 Jun 2024 10:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E4D763E6;
+	Wed, 12 Jun 2024 10:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718188507; cv=none; b=Yq268k8uaiindXKiao6N/9qqQ1M7auNbDXZ0djIxzUiYUVU4hIt6lr6j32mo2LfJLeIjGDs3PGCtFVFOVsq8KAGMsbVpn2Xo5RSoaoyo+tRN8413pkmCbg2ZHcNP+GPtk8wylpbRquEk2C19Ug5aIS6DU0jZacd5k6CcLN7bylE=
+	t=1718188548; cv=none; b=j1mvIGO1fZXqiefr+bR1Kuo6zFgPAXoNQjpZIeRgFBOdG2drV0Xvg7jqZlnryJqIrPEEW/ROxX4b5gCtuzqDqkTNy8X5+LN20gRWRQuSqixwyxIdzXerjTWfsKc56pSJ6+2kL1rhIBOA6SNFyM3xNC6GVleckCcZgDztPc4iNK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718188507; c=relaxed/simple;
-	bh=l6qWXOlYkiNh4aZueT78jx9WwtWf3q89ozgoiZSCKP8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t9dqdDYdPWclXPw0aU18g9bjGicjIQK4GzzBo822AfABnhAkVdavoNnIuSXbtGjZt3mj01busZlHgRxz1ApkSFdY38mXmcYvvhnBgUgxkA32nPHnOhrKnvjbPHruZj/UMxEv0M/S/CuOdw98M5zCXwzdVUFuIDhPA81+E+/ZACw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mYglZfeb; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-80b9c393c8cso957477241.1;
-        Wed, 12 Jun 2024 03:35:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718188505; x=1718793305; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WRlD9+JeJs697iLsuSWlTga8APWs4QACVErNO0SLQZ0=;
-        b=mYglZfeba6kbFgBYdmOyYGF1ElwC638ccF8rYZrBFRZ4W1pyG5VbWBqTGRBzIrv1Pp
-         Hno0DrU3vbXJ+/bXMwgiYc/HN2cR1VKTsX0GcplBwKQgpFaMLdTEB7C64GnFecqtVVPC
-         VGVd3Pxl4k24hkllr3NPHduS9e+9i4iSWunY7oPH/c5a7uy5jwRx+80Ifj3O5zsvd6Hc
-         IBQj3yEsNkUUH+a57uhcY+gbdTr2AKY7ul5B4koKp9PM3+KiXDUWXPow78nh60Gyz7eI
-         cfOdY6hlvGaZVX9JP1K8lkk2CUfUBjz1dH3FBaWGHdf8dfc0vgbkSfOF4tWGDxLlFUx+
-         2DBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718188505; x=1718793305;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WRlD9+JeJs697iLsuSWlTga8APWs4QACVErNO0SLQZ0=;
-        b=xExJJZK6Mx39yB92XXzOq/PFMMRFNyy7xp9yTkaot58lNNBokM9p62XtLk0LknCM5L
-         tHUnK6+Z+amrpIwf3SryuN7dR9QPfvmVZ8xp5PAflRoM+GtQMZ1DBTBTwtblLK+F7OVc
-         258915/1R21U/7ToJZVxf6aQaYvMOpv1Ne7Y2+yKxqtAfdu3DFc91MXEJF8NBLThahP+
-         12ruj3L+ShpCFB6uxkhvHU3HR+NFwG59M+0FEgjwA0oPNov4gjDYANpvcPWUyYJQYDaK
-         zPY8eqPyqcqx6ZeoQMw2+xEeR1Vv6IWwhcf+3ZDI09i1EYnOZdpOQC2OLKwwLtqoQ8OL
-         ksow==
-X-Forwarded-Encrypted: i=1; AJvYcCWis202AED39k/b+2Py5X5gAJ3R9o+sFFawUSD5cz92uV5FH6rJzSjRichp2XrsZISQ4NUjdDHgGQ0aOeYiUkMyPSs3U+6YFQgcTNvdJ7XPIiWQnsUds3M6Ntk5+4NHYUEGDc3e5QzB/qTfcRV1geDBmDc3e2j30l+1lC+T79xQZUfYN0UoHQ==
-X-Gm-Message-State: AOJu0YyzOm+Ijm4BjpEMTAzs2/nWd0jG0l3/WpKKUYjYMNefgGOP/r5F
-	CEeKMl5rOzvnrNSIos8IoVyK9KA2ICrizjWxGRsZydpvwuHE1NtSUsZCg2gV1hofDPG3jdp6wg9
-	NoX6lsQccReyqYSx47Y5vxF8eH6I=
-X-Google-Smtp-Source: AGHT+IG8RGjKwVA0WwyDvkW2k2N3AJJ0ptGb1SFZEGLpT6RKIK/BYhZ9JO1JKUds6gHjILDew716N+6RV8hr8WKKw3g=
-X-Received: by 2002:a05:6102:d5:b0:48c:323e:1ba3 with SMTP id
- ada2fe7eead31-48d91e64e02mr1518264137.31.1718188504940; Wed, 12 Jun 2024
- 03:35:04 -0700 (PDT)
+	s=arc-20240116; t=1718188548; c=relaxed/simple;
+	bh=X0Zk+SveV+gEb4psqpLSCPha/o7toshYco8L5g3SX8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yp0I7NYd1e4GEJCjnrMMN3Yw54ScNFKKYdxYxUTH0wZrLpn5tp8//ACufk+L6UJ7Z6C67bgxiIZMjslI2GRGN3/FfnnLktJ6afSTtHCwgaNQbOIHMuP/UpT189Yoo9jojCDVAcjAIKsc3CxAsR8LPG8aaPSxR87bR1b/1OU8jsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbM0EJXI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C992FC3277B;
+	Wed, 12 Jun 2024 10:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718188548;
+	bh=X0Zk+SveV+gEb4psqpLSCPha/o7toshYco8L5g3SX8s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lbM0EJXIp8oIL6cno3WwmEwiq1kultN4QLcaOQ9OXrUT2f6sk1ZW0HghpbfJ8xFoF
+	 hsaMCMYWOgf2zDzlEiUK2QFfdsBYHS+mLP9J/+HrQLroBaVq2dGf07b65tlk69B2dO
+	 EHcwSW/dIEmR6rdgIXDUhxnKPymcWhI8PEhQS0S3ePiBdZgV6kd2qMso4QovTgPHzu
+	 P05JA3NGReqXIjkYSazArVNLmhVJ/MNxS2ljy9b2AgPXiAaxW69keu1E3MWSMvVFnj
+	 Pke1427BstaY1P3vcdsJiKeGJysiOpEwuCaXoUC1z1MoohwJXS7S87XaXJzuUkWLJ0
+	 d5c7+z48ddCZQ==
+Date: Wed, 12 Jun 2024 11:35:45 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Witold Sadowski <wsadowski@marvell.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"pthombar@cadence.com" <pthombar@cadence.com>,
+	Piyush Malgujar <pmalgujar@marvell.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v8 3/4] spi: cadence: Allow to read basic
+ xSPI configuration from ACPI
+Message-ID: <Zml6ARdI3ek6sVF1@finisterre.sirena.org.uk>
+References: <20240607151831.3858304-1-wsadowski@marvell.com>
+ <20240607151831.3858304-4-wsadowski@marvell.com>
+ <ZmclB2CMhhkasiBw@finisterre.sirena.org.uk>
+ <CO6PR18MB4098CD7676AA96B680FBC068B0C72@CO6PR18MB4098.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
-In-Reply-To: <171817619547.14261.975798725161704336@noble.neil.brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 12 Jun 2024 13:34:53 +0300
-Message-ID: <CAOQ4uxidUYY02xry+y5VpRWfBjCmAt0CnmJ3JbgLTLkZ6nn1sA@mail.gmail.com>
-Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
- ->atomic_open used.
-To: NeilBrown <neilb@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	James Clark <james.clark@arm.com>, ltp@lists.linux.it, linux-nfs@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Llmhg3KkfjprADEB"
+Content-Disposition: inline
+In-Reply-To: <CO6PR18MB4098CD7676AA96B680FBC068B0C72@CO6PR18MB4098.namprd18.prod.outlook.com>
+X-Cookie: Your love life will be... interesting.
+
+
+--Llmhg3KkfjprADEB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 10:10=E2=80=AFAM NeilBrown <neilb@suse.de> wrote:
->
->
-> When a file is opened and created with open(..., O_CREAT) we get
-> both the CREATE and OPEN fsnotify events and would expect them in that
-> order.   For most filesystems we get them in that order because
-> open_last_lookups() calls fsnofify_create() and then do_open() (from
-> path_openat()) calls vfs_open()->do_dentry_open() which calls
-> fsnotify_open().
->
-> However when ->atomic_open is used, the
->    do_dentry_open() -> fsnotify_open()
-> call happens from finish_open() which is called from the ->atomic_open
-> handler in lookup_open() which is called *before* open_last_lookups()
-> calls fsnotify_create.  So we get the "open" notification before
-> "create" - which is backwards.  ltp testcase inotify02 tests this and
-> reports the inconsistency.
->
-> This patch lifts the fsnotify_open() call out of do_dentry_open() and
-> places it higher up the call stack.  There are three callers of
-> do_dentry_open().
->
-> For vfs_open() and kernel_file_open() the fsnotify_open() is placed
-> directly in that caller so there should be no behavioural change.
->
-> For finish_open() there are two cases:
->  - finish_open is used in ->atomic_open handlers.  For these we add a
->    call to fsnotify_open() at the top of do_open() if FMODE_OPENED is
->    set - which means do_dentry_open() has been called.
->  - finish_open is used in ->tmpfile() handlers.  For these a similar
->    call to fsnotify_open() is added to vfs_tmpfile()
+On Tue, Jun 11, 2024 at 09:57:09PM +0000, Witold Sadowski wrote:
+> > > These changes enable reading the configurations from ACPI tables as
+> > > required for successful probing in an ACPI UEFI environment. In the
+> > > case of an ACPI-disabled or DTS-based environment, it will continue to
+> > > read configurations from DTS as before.
 
-Any handlers other than ovl_tmpfile()?
-This one is a very recent and pretty special case.
-Did open(O_TMPFILE) used to emit an OPEN event before that change?
+> > This doesn't describe what the ACPI tables are supposed to look like or
+> > anything, it's hard to review this...
 
->
-> With this patch NFSv3 is restored to its previous behaviour (before
-> ->atomic_open support was added) of generating CREATE notifications
-> before OPEN, and NFSv4 now has that same correct ordering that is has
-> not had before.  I haven't tested other filesystems.
->
-> Fixes: 7c6c5249f061 ("NFS: add atomic_open for NFSv3 to handle O_TRUNC co=
-rrectly.")
-> Reported-by: James Clark <james.clark@arm.com>
-> Closes: https://lore.kernel.org/all/01c3bf2e-eb1f-4b7f-a54f-d2a05dd3d8c8@=
-arm.com
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->  fs/namei.c |  5 +++++
->  fs/open.c  | 19 ++++++++++++-------
->  2 files changed, 17 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 37fb0a8aa09a..057afacc4b60 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
->         int acc_mode;
->         int error;
->
-> +       if (file->f_mode & FMODE_OPENED)
-> +               fsnotify_open(file);
-> +
->         if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
->                 error =3D complete_walk(nd);
->                 if (error)
-> @@ -3700,6 +3703,8 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
->         mode =3D vfs_prepare_mode(idmap, dir, mode, mode, mode);
->         error =3D dir->i_op->tmpfile(idmap, dir, file, mode);
->         dput(child);
-> +       if (file->f_mode & FMODE_OPENED)
-> +               fsnotify_open(file);
->         if (error)
->                 return error;
->         /* Don't check for other permissions, the inode was just created =
-*/
-> diff --git a/fs/open.c b/fs/open.c
-> index 89cafb572061..970f299c0e77 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -1004,11 +1004,6 @@ static int do_dentry_open(struct file *f,
->                 }
->         }
->
-> -       /*
-> -        * Once we return a file with FMODE_OPENED, __fput() will call
-> -        * fsnotify_close(), so we need fsnotify_open() here for symmetry=
-.
-> -        */
-> -       fsnotify_open(f);
->         return 0;
->
->  cleanup_all:
-> @@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
->   */
->  int vfs_open(const struct path *path, struct file *file)
->  {
-> +       int ret;
-> +
->         file->f_path =3D *path;
-> -       return do_dentry_open(file, NULL);
-> +       ret =3D do_dentry_open(file, NULL);
-> +       if (!ret)
-> +               /*
-> +                * Once we return a file with FMODE_OPENED, __fput() will=
- call
-> +                * fsnotify_close(), so we need fsnotify_open() here for =
-symmetry.
-> +                */
-> +               fsnotify_open(file);
+> There should be an example of ACPI table in commit message?
 
-I agree that this change preserves the logic, but (my own) comment
-above is inconsistent with the case of:
+No sign of one in the patch that got sent, nor in the cover letter.
 
-        if ((f->f_flags & O_DIRECT) && !(f->f_mode & FMODE_CAN_ODIRECT))
-                return -EINVAL;
+> > > +#ifdef CONFIG_ACPI
+> > > +static bool cdns_xspi_supports_op(struct spi_mem *mem,
+> > > +				  const struct spi_mem_op *op)
+> > > +{
 
-Which does set FMODE_OPENED, but does not emit an OPEN event.
+> > > +	if (!acpi_dev_get_property(adev, "spi-tx-bus-width",
+> > ACPI_TYPE_INTEGER,
+> > > +				   &obj)) {
 
-I have a feeling that the comment is correct about the CLOSE event in
-that case, but honestly, I don't think this corner case is that important,
-just maybe the comment needs to be slightly clarified?
+> > > +	if (!acpi_dev_get_property(adev, "spi-rx-bus-width",
+> > ACPI_TYPE_INTEGER,
+> > > +				   &obj)) {
 
-Thanks,
-Amir.
+> > Why is this Cadence specific?
 
-> +       return ret;
->  }
->
->  struct file *dentry_open(const struct path *path, int flags,
-> @@ -1178,7 +1182,8 @@ struct file *kernel_file_open(const struct path *pa=
-th, int flags,
->         if (error) {
->                 fput(f);
->                 f =3D ERR_PTR(error);
-> -       }
-> +       } else
-> +               fsnotify_open(f);
->         return f;
->  }
->  EXPORT_SYMBOL_GPL(kernel_file_open);
-> --
-> 2.44.0
->
+> So that part should do to generic spi? I think right now it is not
+> Supported to read tx/rx bus width from acpi.
+
+I think I meant to say Marvell there rather than Cadence.
+
+> > > -	cdns_xspi->iobase =3D devm_platform_ioremap_resource_byname(pdev,
+> > "io");
+> > > +	cdns_xspi->iobase =3D devm_platform_ioremap_resource(pdev, 0);
+> >=20
+> > > -	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "sdma");
+> > > +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> >=20
+> > > -	cdns_xspi->auxbase =3D devm_platform_ioremap_resource_byname(pdev,
+> > "aux");
+> > > +	cdns_xspi->auxbase =3D devm_platform_ioremap_resource(pdev, 2);
+
+> > This causes us to ignore naming on resources, that's an ABI break for
+> > other systems.
+
+> In that case acpi tables are not able to find resource by name. Or at
+> least I wasn't able to find a way to handle that in different way.
+> Is there better solution for that part?
+
+Try by name and then fall back on numbers?
+
+--Llmhg3KkfjprADEB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZpegAACgkQJNaLcl1U
+h9Dhsgf+JGMmyMkLPPtsh9gB5SjSbo5EYx+U4yVYqbC/tIANoDeej74YxpaOYQvv
+zmzu9dPxmcKMKlg4cqmonr0YGSt5HK1EnraoQlPTxKdW9ASi0MOweH3hhJZAv0HE
+Jy8kPOTbN2FRtKicXyJVU3iaFIRNukZdgBSnqprHd+Ccm+BjMbCJHaewEAPGbr+l
+jP+GqH81ZUu4oV2Fl/vWsSjJC4Pcc8YPyeYTKr2UZUf8KxiguTnmZJ2JxB24JDpe
+IeedhN7NsbE+kwnCKMYdZc2NGY4SuDBpw2XbcBmSMrgma9rxqZ1nYVr9tktvPzIi
+cNdxhE//NCF2xH2gON2twMd5jRQPXw==
+=Z3zK
+-----END PGP SIGNATURE-----
+
+--Llmhg3KkfjprADEB--
 
