@@ -1,225 +1,185 @@
-Return-Path: <linux-kernel+bounces-210887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE789049A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:29:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D799049A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45868283910
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:29:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EE211C20361
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300111F602;
-	Wed, 12 Jun 2024 03:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82618208A1;
+	Wed, 12 Jun 2024 03:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfZ3uEfp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Rzw1Gj/0"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498041DFF0;
-	Wed, 12 Jun 2024 03:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043A4257D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 03:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718162942; cv=none; b=XvT/MI32Vsji8y/oNowHxltHzljyG5dvQh7ldnFRInlKw6QTPNLNFa+COsr9A/inlLjfYDqv6eByqwI3kzgs1JmXDrYgwmDtkipKYbDOgvsRB0bnihqqT00rvodgkeQF0i+l2OzwET2ACAx0DqsA5w7maemtb9nQHWmL/SHAois=
+	t=1718162971; cv=none; b=V06jotT4rLA7Jl2UGqvUvjdZyfgccNOENfhGKv0KlPyzy7UL64JUCOMFOppEMMfQrRyfz+mb0o5pt+fjqB9tcv/DLP2eB2SJuKqwXzKCV59QimKeYhgATF4BUib+fTjKC3S2D+L8HzmxQpvef4vGCvFg3fWrGPNKpaakeGqqm3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718162942; c=relaxed/simple;
-	bh=dzytYAPA2vntPxLFoQACxn5mDGtGCdAdzSX3DYn4Sy0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QPC8fTD6kj5Hz9We0N1huk7sWeuyNhc9DaAxLHeewxgXJNl8cP8FbqsmK4ofn8jIzUk3ODZIGKHDHIYIrY74cCn6L5OmZoQngX6xBqnWmhwqBCyfsH0v6cDn/FhAOa0llwoevCntiOjUFahv9GVWrqqWOgCLJ/NYITyfYmxRa88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfZ3uEfp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D1EEDC32786;
-	Wed, 12 Jun 2024 03:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718162941;
-	bh=dzytYAPA2vntPxLFoQACxn5mDGtGCdAdzSX3DYn4Sy0=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=TfZ3uEfp1sH8DRTaiFN3apxLEzXcEDhJjfHsGkQ5VlIoPBxuj6Ms+6iQZtJaPoY0s
-	 gQXyoPncqufuYUTX1IFiR2iQkpGIfre2JTpQL60NhLzwIiyFPLjMik0A9FcpIr7VFC
-	 18qIsLPh2I3TAPFZgcMt1IWHqEyhP54YvGsoks8zRvMYfIlRE4YzS/Ly7/W4i4FFXV
-	 6L6+VfT6odL7ELpbA5J4Je2/q0gjrvBSfa77grZyVdeiCgw1/gd8vFDhz3y7kgWH60
-	 lKLiYEddd8VfYyg10u9eZ7/uPGxQXT5MNWY6/6MYL1cwyy+Kpfbs3JncZBM9masQ5R
-	 atq8xh9UXLY7w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C45E6C27C53;
-	Wed, 12 Jun 2024 03:29:01 +0000 (UTC)
-From: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
-Date: Wed, 12 Jun 2024 04:27:17 +0100
-Subject: [PATCH RFC v2] kbuild/x86: Use $(KBUILD_AFLAGS) in Kbuild's
- version of $(as-instr)
+	s=arc-20240116; t=1718162971; c=relaxed/simple;
+	bh=FY9fFF1F7cRvCwX73JSRpuljV2KG6+THYC6d4MhA8ZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MhfAQvzIBEz9srsIbBBnEdLB90WU0HMUFDzU5QL2/zcvYsWXTKA7WuzBLsKMv6UWqFRMABCMHhArSrXYC6+VvPUJyhJJkjiRZMaIqv3cBuL2E4S/HZiuuIvGcVryKUb+1Wn0lfRqLGUkFaLOYES5ICz93DW3ZhshW8ROX18Tzlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Rzw1Gj/0; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57c685bfd86so5295276a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:29:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718162968; x=1718767768; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qct4xvMTygFxOfNWaCR3/q2u96535kRB68KKPO3xZ1c=;
+        b=Rzw1Gj/0ZofNz5RIVAa2LB5as2e/ZPYVTTmWcYjY4w2aHrOFc7E53VJS5qntvrR4ap
+         a1ZaQ73nsJfYT8CNCJq3uu4HOa+/IDAW7SMOVTCuLbdnnjKEykHk1kuPnAsIhE7z0+J6
+         bIy+wlzsPEpdcRE3P6M53tP4o2fayoWs6EVRg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718162968; x=1718767768;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qct4xvMTygFxOfNWaCR3/q2u96535kRB68KKPO3xZ1c=;
+        b=o5/Ojb+ujP3cakbhns4cr4uzb2CPOmxpNYnPZ4hCiRptV5eCy7VC/HSp3aQh0WuF+6
+         lePp94uKr5qLQpo4NTSfXg4JbFDP16iNbqMw/wmeCG9Fb7v/f4//qHR+6X7DYluyG9PV
+         bDLM8uOFIggUVaPvN0GviFnIXDxOwzfmdAbQeRWRQwlXcpkDF/QDVn/IH4JSdVXIbwLe
+         3dL0VFjWskcxHasoAa61gNFgQefPTfkktsWGFVJ0npODviua4OqtK9yrmpurPIBmNJIt
+         uqb1N7RtVlXI8qTsnxVe0QoCSSfWaqT/fxhmwKXOPPHKMms8m++q8ozpGjpbz/b/fJK1
+         TuxA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8jq8J7l53nzHtN+Uw01h5cE1M2w48AyHyFPgDpNo/woAnW3LIpx0JZJlg2V370wID26S7VxWpmdtU1PoIqrlcr8YkMRn3OIoauVeX
+X-Gm-Message-State: AOJu0YxLQh273J4v03HBQaaotZqSU8qAca2/8Kuk4QRTb9OTtMxf48bF
+	xTb8maWJCRf4K6ngjUunwPDkwaneR8lkPb5UyWJ4lToUr0kFWryHs6ZmfcvjDaNUGw+112GdCeF
+	qEQ==
+X-Google-Smtp-Source: AGHT+IGSnfaFWFs+sp0RJy1wgk1q3iIuIow1kEhAGq26hJ54gy/LiRmOJk05ycRArAssgEvIrRDfkw==
+X-Received: by 2002:a50:d7d6:0:b0:578:676e:324 with SMTP id 4fb4d7f45d1cf-57ca976cccfmr306099a12.17.1718162967841;
+        Tue, 11 Jun 2024 20:29:27 -0700 (PDT)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c7cf18193sm5413814a12.50.2024.06.11.20.29.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 20:29:26 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6ef64b092cso474110266b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:29:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUZieLhKSrdpSyl7Ueg8L9SK0rrH546tHs4GXW1NogemBx45I4cdO76Ud2k4qQzx/M52gyffFR7vLUWLEfLMxq8E6bdEjKn1Mpo+zMC
+X-Received: by 2002:a17:906:f206:b0:a6e:fe97:b33a with SMTP id
+ a640c23a62f3a-a6f47f938acmr28194866b.29.1718162965328; Tue, 11 Jun 2024
+ 20:29:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240612-as-instr-opt-wrussq-v2-1-bd950f7eead7@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAJUVaWYC/22OzQrCMBCEX0X27EqTBjWeBMEH8Co9bOO2Ddgfs
- 7Uqpe9uWjx6nGG+mRlBOHgWOKxGCDx48W0ThV6vwFXUlIz+FjXoRJvEqARJ0DfSB2y7Hl/hKfJ
- As2eX7jjd6sRAJLvAhX8vrVe4nE+QRTMnYcwDNa6aC2uSnsOcrrz0bfgsFwa1ML819XdtUKjQ2
- lyRImsLmx7Lmvx949oasmmavuAli9LUAAAA
-To: Borislav Petkov <bp@alien8.de>, 
- Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
- "H. Peter Anvin" <hpa@zytor.com>, Masahiro Yamada <masahiroy@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- Dmitry Safonov <0x7f454c46@gmail.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718162850; l=6387;
- i=0x7f454c46@gmail.com; s=20240410; h=from:subject:message-id;
- bh=mE/MtJBn2tZ2pMC+jU16KAPPWHc/zIAQ99jOTODDD5E=;
- b=+ml6hQMsHqv7+mqb7hjrBh5lDWB7+8/2dGtaJhoUzvYoMQcYXrueH858HPd3C/nuBRFU8VOueaEV
- n5HA69KaAboO5X0CfNO40u34XTuavXrpBuLRgEQvfP5TjJX+IPce
-X-Developer-Key: i=0x7f454c46@gmail.com; a=ed25519;
- pk=cFSWovqtkx0HrT5O9jFCEC/Cef4DY8a2FPeqP4THeZQ=
-X-Endpoint-Received: by B4 Relay for 0x7f454c46@gmail.com/20240410 with
- auth_id=152
-X-Original-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Reply-To: 0x7f454c46@gmail.com
+References: <20240323-resend-hwtimestamp-v10-0-b08e590d97c7@chromium.org>
+ <20240323-resend-hwtimestamp-v10-4-b08e590d97c7@chromium.org>
+ <4kck7oedsnj6kfiv7ykwsjg35qodg5bdktu5t5w3xtg2xuscto@2yh6kfdqwimc> <20240610114306.GR18479@pendragon.ideasonboard.com>
+In-Reply-To: <20240610114306.GR18479@pendragon.ideasonboard.com>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Wed, 12 Jun 2024 12:28:56 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5DAXq6fTrp6jF42URrwzwE+tGz_jJCRM2bhieD76u+QpA@mail.gmail.com>
+Message-ID: <CAAFQd5DAXq6fTrp6jF42URrwzwE+tGz_jJCRM2bhieD76u+QpA@mail.gmail.com>
+Subject: Re: [PATCH v10 4/6] media: uvcvideo: Allow hw clock updates with
+ buffers not full
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"hn.chen" <hn.chen@sunplusit.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Dmitry Safonov <0x7f454c46@gmail.com>
-
-At Arista some products use compatible 32-bit userspace running on x86.
-As a part of disto build for ia32 it also compiles the 64-bit kernel.
-While the toolchain for the kernel build is yet the same, with 64-bit gcc:
-> / @Bru-na-Boinne% file /usr/bin/gcc-11
-> /usr/bin/gcc-11: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=6571ad50d8f12eece053f1bac7a95a2c767f32c9, for GNU/Linux 3.2.0, stripped
-
-It seems that gcc is being smart and detects that it's running in
-a 32-bit container (personality flag? 32-bit mmap base? something else
-inherited post-exec?  haven't yet figured it out) and by default tries
-to build 32-bit binaries.
-
-That results in a failing toolchain check:
-> / @Bru-na-Boinne% printf "%b\n" "wrussq %rax, (%rbx)" | /usr/bin/gcc-11 -Wa,--fatal-warnings -c -x assembler-with-cpp -o /dev/null -
-> <stdin>: Assembler messages:
-> <stdin>:1: Error: `wrussq' is only supported in 64-bit mode
-
-Which passes when -m64 is directly specify for the build check:
-> / @Bru-na-Boinne% printf "%b\n" "wrussq %rax, (%rbx)" | /usr/bin/gcc-11 -m64 -Wa,--fatal-warnings -c -x assembler-with-cpp -o /dev/null -
-> / @Bru-na-Boinne% echo $?
-> 0
-
-As a result, kbuild produces different value for CONFIG_AS_WRUSS
-for native 64-bit containers and ia32 containers with 64-bit gcc,
-which produces different kernels with enabled/disabled
-CONFIG_X86_USER_SHADOW_STACK.
-
-arch/x86/Makefile already properly defines KBUILD_AFLAGS += -m64,
-which is luckly already available at the point of toolchain check
-in arch/x86/Kconfig.assembler
-
-By hacking around Kbuild variable the following way:
-> --- a/scripts/Kconfig.include
-> +++ b/scripts/Kconfig.include
-> @@ -13,7 +13,8 @@ left_paren  := (
+On Mon, Jun 10, 2024 at 8:43=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
 >
->  # $(if-success,<command>,<then>,<else>)
->  # Return <then> if <command> exits with 0, <else> otherwise.
-> -if-success = $(shell,{ $(1); } >/dev/null 2>&1 && echo "$(2)" || echo "$(3)")
-> +if-success = $(shell,echo '$(1)' 1>&2;{ $(1); } >/dev/null 2>&1 && echo "$(2)" || echo "$(3)")
+> On Wed, May 29, 2024 at 05:03:08PM +0900, Tomasz Figa wrote:
+> > On Sat, Mar 23, 2024 at 10:48:05AM +0000, Ricardo Ribalda wrote:
+> > > With UVC 1.5 we get as little as one clock sample per frame. Which me=
+ans
+> > > that it takes 32 frames to move from the software timestamp to the
+> > > hardware timestamp method.
+> > >
+> > > This results in abrupt changes in the timestamping after 32 frames (~=
+1
+> > > second), resulting in noticeable artifacts when used for encoding.
+> > >
+> > > With this patch we modify the update algorithm to work with whatever
+> > > amount of values are available.
+> > >
+> > > Tested-by: HungNien Chen <hn.chen@sunplusit.com>
+> > > Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > >  drivers/media/usb/uvc/uvc_video.c | 16 ++++++++++++++--
+> > >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uv=
+c/uvc_video.c
+> > > index d6ca383f643e3..af25b9f1b53fe 100644
+> > > --- a/drivers/media/usb/uvc/uvc_video.c
+> > > +++ b/drivers/media/usb/uvc/uvc_video.c
+> > > @@ -768,10 +768,10 @@ void uvc_video_clock_update(struct uvc_streamin=
+g *stream,
+> > >
+> > >     spin_lock_irqsave(&clock->lock, flags);
+> > >
+> > > -   if (clock->count < clock->size)
+> > > +   if (clock->count < 2)
+> > >             goto done;
+> > >
+> > > -   first =3D &clock->samples[clock->head];
+> > > +   first =3D &clock->samples[(clock->head - clock->count + clock->si=
+ze) % clock->size];
+> > >     last =3D &clock->samples[(clock->head - 1 + clock->size) % clock-=
+>size];
+> > >
+> > >     /* First step, PTS to SOF conversion. */
+> > > @@ -786,6 +786,18 @@ void uvc_video_clock_update(struct uvc_streaming=
+ *stream,
+> > >     if (y2 < y1)
+> > >             y2 +=3D 2048 << 16;
+> > >
+> > > +   /*
+> > > +    * Have at least 1/4 of a second of timestamps before we
+> > > +    * try to do any calculation. Otherwise we do not have enough
+> > > +    * precision. This value was determined by running Android CTS
+> > > +    * on different devices.
+> > > +    *
+> > > +    * dev_sof runs at 1KHz, and we have a fixed point precision of
+> > > +    * 16 bits.
+> > > +    */
+> > > +   if ((y2 - y1) < ((1000 / 4) << 16))
+> > > +           goto done;
+> >
+> > Not a comment for this patch directly, but...
+> >
+> > This kind of makes me wonder if we don't want to have some documentatio=
+n
+> > that specifies what the userspace can expect from the timestamps, so
+> > that this isn't changed randomly in the future breaking what was fixed
+> > by this patch.
+>
+> I think timestamp handling should really be moved to userspace. It will
+> be easier to handle with floating-point arithmetic there. That would
+> have been difficult to manage for applications a while ago, but now that
+> we have libcamera, we could implement it there. This isn't high on my
+> todo list though.
 
-I got the following output for the toolchain check, before:
-> linux @Bru-na-Boinne% make ARCH=x86_64 oldconfig V=1 2>&1 | grep wrus
-> printf "%b\n" "wrussq %rax,(%rbx)" | gcc  -c -x assembler-with-cpp -o /dev/null -
-
-and after:
-> linux @Bru-na-Boinne% make ARCH=x86_64 oldconfig V=1 2>&1 | grep wrus
-> printf "%b\n" "wrussq %rax,(%rbx)" | gcc -D__ASSEMBLY__ -fno-PIE -m64 -c -x assembler-with-cpp -o /dev/null -
-
-Which seems appropriate to me.
-This also reflects the existing definition in scripts/Makefile.compiler
-for $(as-instr) that already has $(KBUILD_AFLAGS).
-
-In order to eliminate a possible circular dependency of
-Kconfig => arch/.../Makefile => Kconfig => ...
-which exist i.e. in arm64/Makefile for KASAN_SHADOW_SCALE_SHIFT that
-depends on CONFIG_KASAH_SW_TAGS and CONFIG_KASAN_GENERIC kconfigs,
-ignore KBUILD_AFLAGS difference in auto.conf.cmd as it is expected that
-the variable will differ between fist and later Makefile passes.
-Use that in Kconfig toolchain checks.
-
-Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
----
-Changes in v2:
-- I made a mistake in version 1 by not testing it on a clean tree.
-  Which passed on an existing "dirty" tree, but went into build
-  busy-loop over a fresh clean kernel tree. With a little debug,
-  I found out that the reason was subdir-asflags-y in scripts/.
-  They are "empty", but they update KBUILD_AFLAGS with an extra
-  trailing space. Ugh.
-  That resulted in include/config/auto.conf.cmd being unhappy and
-  triggering rebuild after rebuild.
-- Then I've added a patch to scripts/kconfig/preprocess.c that removes
-  any extra head or tail spaces from the environment variables.
-- That was a working patch set on x86_64, but that broke arm64 by
-  creating a circular dependency on KASAN_SHADOW_SCALE_SHIFT.
-- In the end, I decided to just ignore KBUILD_AFLAGS in auto.conf.cmd
-  for RFC v2. Probably, I could just add $(as-instr-config,...)
-  function to Kconfig that would take -m64 just for AS_WRUSS,
-  but that seems like fixing one specific place, rather than more
-  generic fix. Unsure, sending this as RFC, please advise/vote on
-  the best approach.
-- Link to v1: https://lore.kernel.org/r/20240411-as-instr-opt-wrussq-v1-1-99b1a1a99f93@gmail.com
----
- scripts/Kconfig.include      |  2 +-
- scripts/kconfig/preprocess.c | 14 +++++++++++++-
- 2 files changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
-index 3ee8ecfb8c04..d8574c1faf2d 100644
---- a/scripts/Kconfig.include
-+++ b/scripts/Kconfig.include
-@@ -33,7 +33,7 @@ ld-option = $(success,$(LD) -v $(1))
- 
- # $(as-instr,<instr>)
- # Return y if the assembler supports <instr>, n otherwise
--as-instr = $(success,printf "%b\n" "$(1)" | $(CC) $(CLANG_FLAGS) -Wa$(comma)--fatal-warnings -c -x assembler-with-cpp -o /dev/null -)
-+as-instr = $(success,printf "%b\n" "$(1)" | $(CC) $(CLANG_FLAGS) $(KBUILD_AFLAGS) -Wa$(comma)--fatal-warnings -c -x assembler-with-cpp -o /dev/null -)
- 
- # check if $(CC) and $(LD) exist
- $(error-if,$(failure,command -v $(CC)),C compiler '$(CC)' not found)
-diff --git a/scripts/kconfig/preprocess.c b/scripts/kconfig/preprocess.c
-index f0a4a218c4a5..cf7389f13f00 100644
---- a/scripts/kconfig/preprocess.c
-+++ b/scripts/kconfig/preprocess.c
-@@ -61,6 +61,17 @@ static void env_del(struct env *e)
- 	free(e);
- }
- 
-+static bool env_ignore(const char *name)
-+{
-+	/*
-+	 * Break the circular dependency Kconfig => arch/.../Makefile => Kconfig
-+	 * On the first Makefile pass only AFLAGS that do not depend on
-+	 * CONFIG_* set will be defined. Those are used by Kconfig for
-+	 * toolchain checks.
-+	 */
-+	return !strcmp(name, "KBUILD_AFLAGS");
-+}
-+
- /* The returned pointer must be freed when done */
- static char *env_expand(const char *name)
- {
-@@ -83,7 +94,8 @@ static char *env_expand(const char *name)
- 	 * We need to remember all referenced environment variables.
- 	 * They will be written out to include/config/auto.conf.cmd
- 	 */
--	env_add(name, value);
-+	if (!env_ignore(name))
-+		env_add(name, value);
- 
- 	return xstrdup(value);
- }
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240410-as-instr-opt-wrussq-48ec37e36204
+While indeed that would probably be a better way to handle the complex
+logic if we designed the driver today, we already have userspace that
+expects the timestamps to be handled correctly in the kernel. I
+suspect moving it to the userspace would require some core V4L2
+changes to define a new timestamp handling mode, where multiple raw
+hardware timestamps are exposed to the userspace, instead of the high
+level system monotonic one.
 
 Best regards,
--- 
-Dmitry Safonov <0x7f454c46@gmail.com>
-
-
+Tomasz
 
