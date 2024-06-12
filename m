@@ -1,219 +1,116 @@
-Return-Path: <linux-kernel+bounces-211679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556E4905549
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:37:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66F5905545
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2A09B21C5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:37:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AD7EB20EA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8992117F371;
-	Wed, 12 Jun 2024 14:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D20717E915;
+	Wed, 12 Jun 2024 14:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="PxuPfFmM"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2072.outbound.protection.outlook.com [40.107.103.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DjHbeAle"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C11D17E466;
-	Wed, 12 Jun 2024 14:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718203020; cv=fail; b=Qs4sJP19rI5H9cj/skVG4oOl3NoytII7UD7zmEGZEL+dyf6jFj77/0GkQN/DPZmEEvByJ3d4CyHpHu9zwlgFY+46lZX0UI5asdGMmTOnqd5bllN6+xI0YLaA9FGJT1AvKZrQDnuhNlgjrD4tGnPDD5BdWtBrN+EJo9n/u4G57iQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718203020; c=relaxed/simple;
-	bh=ZDWRmj2Ohpcn0g/j/x42JDtu48plH+FZvg8fT2rbZco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=T8p/iR52meD8q+GP0VhSRD+NhVB7tDW7IRU8XF54h3DMZD2v/27JxdXz3xyklwiG8Pv4xrqci7mqcAodCDEtftt/Pgm/0NqTtFrDUC2iCNLJif6HYkhUElFSGkYUwQgAkF8mLlMso3uOKwuiuiYnCAXAnDrYwcGC5FBKhWF+tDM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=PxuPfFmM; arc=fail smtp.client-ip=40.107.103.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Tljj/m6JSn9hqEUUzWnb9bTWUHhBoCsesg6M7Fxltdvrsu8hA0YPilUUbQx8zq6WXibdSqq4JyCdZrm1ny3Talv93ts5utOwCjmZbjqZWzHFRwTpRqBvt600aQrgR6G9/kxpr8uyA9TL23vk5BmqMTVFceyZoYMPEKQt+oWjK1K/+4rC8WemEFHRoA/cX3n8RYhrOhLUVgSmMljpQhkP+0d2JCr/nXYeM+oJhtbxNK8eP4yFdIK3JNK7ye0+pM792eHwF8OpFKDvfeloZ9FioihHeklaQTzL54G3LYd3NGj23afrV7yYims7Cn5PtwhEuutFiPXJYLoibpnWrHWXEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YPDA2sIE4yEDkMfPIxHFrhtZUV7nqEzh3+gMGZrP6tM=;
- b=Lq/fKgRMw3LOyUOUoP9mGhLReTcCXAwdpBD80BohPJkqXJvkPbYNQbmD8QRrkrlHFTwWFajsAcxkvkYeCOc+a62qvhjctqQ6YwLIQQ6YiTsXW+ARO0x+yVpvSHkiYfZEFyfwX7I5gou4JNxZ+TNNm6mdPzgzI8R3FZXBt+O1yw6fv5l9mg8//dHKFvC0SdQ6/WimtaxrcV7vqynQA6HEI0K1IB0oNWP+oYhX5BSU6iu1w0HHeBxcnEpizpVzhhpKrntSLlE1cFxx89+apSJmDGJBR86qLMz7IH0/E2zgANtAxKY9U24O78MJspbwFG0xUMW5wx7LYfoP/QOxb6Il0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YPDA2sIE4yEDkMfPIxHFrhtZUV7nqEzh3+gMGZrP6tM=;
- b=PxuPfFmM3gvCyzQTzAibF81/cSvjofRsOpSjUyuZ+0jI7T2QfCw5lNzPP1/6KNh6yz3cRhXtmj44GWgiLWUzYQRTMM8qQ63iDPkmSWhiUbT4qDVfWrFuIa5NBvAOcPzifmOTTP9UzAcCpdWm1MwmYe+d1lRUsdsOG9/b19v/pwE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DB9PR04MB8218.eurprd04.prod.outlook.com (2603:10a6:10:24a::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Wed, 12 Jun
- 2024 14:36:55 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.036; Wed, 12 Jun 2024
- 14:36:55 +0000
-Date: Wed, 12 Jun 2024 10:36:46 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v4 2/8] dt-bindings: mmc: mmc-spi-slot: Change
- voltage-ranges to uint32-matrix
-Message-ID: <Zmmyfna+DoAcYzHp@lizhi-Precision-Tower-5810>
-References: <20240611-ls_waring_esdhc-v4-0-d0d8a5b3f3cb@nxp.com>
- <20240611-ls_waring_esdhc-v4-2-d0d8a5b3f3cb@nxp.com>
- <20240611202311.GB3003237-robh@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611202311.GB3003237-robh@kernel.org>
-X-ClientProxiedBy: SJ0PR03CA0070.namprd03.prod.outlook.com
- (2603:10b6:a03:331::15) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C8817E8E9
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718203013; cv=none; b=mMaykurmFHpn8OECWIyz74pFr3dvLvhhFRucBzcsbS/kGZZYLzYtFUV2Xh2D/z5rYkJ+jhyNiWg3S8BWL2c003/c5a+XNoQS+FAsocwJgLeSIxnp7lztU03T/AYolBSiDftY+72OmrwKnAa+eLue9qLqFi61mC7yrWr8sADJLPw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718203013; c=relaxed/simple;
+	bh=nrCgGRwUUQ4P3s4cjco1QGlJ2g+lVcvVXrrJBdh9VT8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=oIWuESKxcgh2E7VrQVtOh9bjUJdMWh/UFQWx+Tx+wYxZdwrAwnJaJgS3/QFl/+dFJpAvCCWKCuENDtYYK8DS9zqeWGMdapJXfakTierXeDY5vI9v5eUhRP90QGpPkSL0lRhtjnaAp4fRHfuT/IMhKDEuXslMxakg3exj3CwAe94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DjHbeAle; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42172ed3597so6998775e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:36:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718203010; x=1718807810; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=10RrM/p3EK+MrQ2L7mQTBTup46vdiah1TdTSnhIWRqY=;
+        b=DjHbeAleqQWSQ9fYeY/4d1xYM7miKpwHoP4jY0XhHfXTC3czA+x8SKJf9E0Q75+ZBm
+         98l4bf/l/RxaW9u66JFJYYXSdX3JTaowOvmHgpX6rBN63NRSqlyzNNYZ3v9xBDaMq32D
+         G8Kns0JXd9JVD6lJt8/UnhkWSqP4Ayv5yNoVeJwYYG0YzV28jvoe/C4EOoVkWfd1Dl5L
+         d0sC5u7TlkREs3RXjUN4tDWkTWQasWNXUCZlLsWwiCzPwAsxwDMhFt0b4GSysK6foUrX
+         0wv+NHHoH/JRblC6GqyFM1tITINFCbWZk1jLwwHl5f8luMuHlrXGvy5HgaIZjF8TSVV7
+         Z1Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718203010; x=1718807810;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=10RrM/p3EK+MrQ2L7mQTBTup46vdiah1TdTSnhIWRqY=;
+        b=HJDW4XraihgQOPsf1QTGCdI8t2EB333YRvAx8IgtyQ7orU9OUPnPzoKuKm0fGIIEq6
+         kYX6ClDrzt1rgrcmyLBREjMxVMw7ij0AXuIw8jNLM5q85vBuJcM4vCYtApsYH68v99ge
+         wn3zrSYIflyi7tcbG/qRCJhA7szbTVyKBeVrNkGjSrTUat8wRp3bHW/nAiZh2i+pGk+R
+         DsSsJZnimE04qZyRDRJ8GRDSAUxzCRtUoPpwm9knGo1Rg7KIGRSAmkTVVoLLPwWEw4fc
+         dZKfsr5N5ZuHylbCnQfaaTDteZus5C5d1NYGMUCQD+cLpbwpVHFB8iv2sSqC5zb/93y8
+         OgPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQRfVAaVcwJEpBPLzjoXVxIh4fhoYbv4NtEmNnqJGiTBOetmVPbvpuxZqwp8WwNSPz3Yfh379qGkpHzbl6HZ1dH02YLwAQ/jsko0x/
+X-Gm-Message-State: AOJu0YxQoP+TrGvOat63lXA7XZiIj0LGzwqJtlM8BRTiF6O/+MgzFLeh
+	GvgqY1RvoZOJzqJ2DoJbwZDkdDQ9NgiXnYCUc/CBpb2/VhsUPv1wc4Q+dgcoiXA=
+X-Google-Smtp-Source: AGHT+IGvtLPVOtiFWrgMFyq9DtbW8o4WCqj67/qU+pmqjeeXy6OzoyX7cuk/Ir5K/S3ibokmn4Z8CA==
+X-Received: by 2002:a05:600c:3d91:b0:421:7ab8:59c with SMTP id 5b1f17b1804b1-422863b43ffmr22542885e9.10.1718203009895;
+        Wed, 12 Jun 2024 07:36:49 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f25dc3f07sm7881118f8f.79.2024.06.12.07.36.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 07:36:49 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: quic_jesszhan@quicinc.com, Tejas Vipin <tejasvipin76@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+ linus.walleij@linaro.org, dmitry.baryshkov@linaro.org, 
+ dianders@chromium.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240612133550.473279-1-tejasvipin76@gmail.com>
+References: <20240612133550.473279-1-tejasvipin76@gmail.com>
+Subject: Re: [PATCH 0/2] fix handling of incorrect arguments by
+ mipi_dsi_msleep
+Message-Id: <171820300907.2526372.2735368790944027690.b4-ty@linaro.org>
+Date: Wed, 12 Jun 2024 16:36:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB8218:EE_
-X-MS-Office365-Filtering-Correlation-Id: 124be509-f42e-45f9-bbb1-08dc8aed1b4e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230032|376006|366008|1800799016|7416006|52116006|38350700006;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?i3IhzMz9hxlKNoU9pftge9TELJSc2Y8qlSM3NwM+E1bblKhn1m2HY1/c86q4?=
- =?us-ascii?Q?iDJvo9imPyV8IV8/cwNvD9ewVduW18Xa7lHtEc5jKplIFQF2O0hUZmezNYJJ?=
- =?us-ascii?Q?H/kOf7mtYdSzSuxNoRs3ZLS/3SqhONK2Tg7Y4BPJ9rjCwdzuM+jkKyJXvkuI?=
- =?us-ascii?Q?MRdyELXBgFL0rBrCl1YXtCh3/kc7OENy9pNcEnIgy5PTKIGrbynJGlWDIGiG?=
- =?us-ascii?Q?zA7aZqcq2U0SzK3CRjUnVUL5Tjxj5UbLdGtRjrxAmsEjl2BujhaaYq2aOYZY?=
- =?us-ascii?Q?sNnu7UhsQ2SKhzmfFFivj2QCKjTd6Tv07/Qcp0G93P88J2bNkhLeIl3zRsIL?=
- =?us-ascii?Q?a5XD5xM6+LoH8nb+/i+0UcchelPMfTzV45fpIVKXUtGdrf4tk42wyIC7/fyA?=
- =?us-ascii?Q?5dgtk4C/oKEEiknF8RynHaTBr9s5oGsW5vo1n7ycJc10+PkS0y7/7POg513Q?=
- =?us-ascii?Q?7KSCX3qGVsfU9z8Xv+hyKez2iQ4hC0jfLbEgTM3ZwbzVkkeiV5Nf8buRGtLX?=
- =?us-ascii?Q?74RuGMycNw3EQZ5ddSL2aaNHRp6PrnWQGw7VhGkTWR2fMiHI0ax7957gIJ1j?=
- =?us-ascii?Q?8qALdqofcfxGIqjYK1Q3g9NSQyIhqJzkw/yCW/P+gVtLBetHlVJqlYmg5UEl?=
- =?us-ascii?Q?FW+yDUDKU/f4M5/Tx6HICGt0qUEiPlvUyZr4GfuyDReKbpnXhs8mRE2UNJpL?=
- =?us-ascii?Q?7dMcASWO0BypvpbVd39c6T4+dBNBbGi0u7/8xzL2VMq4TuZmxpTw6vwbt3i0?=
- =?us-ascii?Q?OJuOFzmiyBXUylsuJim+Hn5LsBrJ0gDrFAfzjd+XUB4arFspzzKgXuC7tGji?=
- =?us-ascii?Q?Kz10AY+UIihhHBl+o+z19cTwv8iZgaUJrGLCnPVDDtyNVO33Pd9i/W8MiajU?=
- =?us-ascii?Q?Xa5IG/jEE1SsS+uYoY5G5Mw4Ingv9NapjaNv1HTDd4WVwj2we0h0hf7/rwUV?=
- =?us-ascii?Q?lYtJISIl1lLrI1EibXrObP35yMS6Hc0YWKKpyR7BCTQFgMXOj/IeOSAilpb/?=
- =?us-ascii?Q?ZQ7lzJbyYjb7eAHyZRUeJiSxdIC9xnOWMG9Ch+8WIY+ooWaWYLxUfymsoaqc?=
- =?us-ascii?Q?e0kkaI/yYsNxWjsneoLzI/R15x9suPZ30IcNUEAAsM685okUQ+GTHn8zZznh?=
- =?us-ascii?Q?eWZ75kvaWRoUdPXwTkSdxmQDjkPI+t79Zf68udDGmyyqqdHsGtg+T2bGgVk9?=
- =?us-ascii?Q?pYy+D6z2vuMabBSdFZn/e2TC00gVNfnOfaZVYlt77YxtfJ5Fv6yXdScknmJt?=
- =?us-ascii?Q?Id077Bq8/ThnwNqUpJ8gKkJmMDAlfcbUppON/o6poltWa76pK3lGm3kj60md?=
- =?us-ascii?Q?a+ihwUfG0v4mtViV2Filct4qEvG+BT+6ZHQ0tICD0d88oGWRNfuzZvyGjZCE?=
- =?us-ascii?Q?sH3ULiQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230032)(376006)(366008)(1800799016)(7416006)(52116006)(38350700006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oWDPmcHdEWq6jqhndtWVkUA+5turB6L1K30P/TY2TrHtH7cKG3TrkH1GJE0S?=
- =?us-ascii?Q?53hfCUxZfxh6fEW4Mn6Tsw6dTlWS2LK33Mh/r7S3D3a/t59PjHD198pGlmyQ?=
- =?us-ascii?Q?H1bwBFAstMa46zNXLHqBaSyJ7fG9/Z3R2sG8vvcGDL/sPA6sAPfDjurgFVL0?=
- =?us-ascii?Q?lBnLpcbjEHf60I/qr8D/47PhkMCCw8DwpyGOJ+VeQ5cUrzNOhNojoQ3Rqgqo?=
- =?us-ascii?Q?DoT2WAdTEty+tl3FbsDwbqyRMyRzxNE5x9nPMdw7AzOi/6NJSbtpDzjnZ5k8?=
- =?us-ascii?Q?eUxzPTnpGPuQz9kDQ2kvj4HPsp0fegUn11nILJAiRrQpPi28nUm+GucZyCoD?=
- =?us-ascii?Q?whcA6j5lKQYmtLyy8NdONdkAoJjpCLDDUFEiMX/VmCiSyOKWMC0ZCJqj6UU2?=
- =?us-ascii?Q?Bk0nOtBUFGiJx1Bn1ZzXJEB602cdxVVqJauSQ+BLIDUu2xgPyDA0DZZoBQqj?=
- =?us-ascii?Q?bHUaQ7AN3lODNmVznAVTU/aEetn6UbpgnkmCVq9UOvI0pOGebFxloUr5bren?=
- =?us-ascii?Q?JTtpAsUYZ2EDfcEb1hPFqLlB03g49aVPIijPCIVM2lwQ4aInQ4VeYhEwHrgx?=
- =?us-ascii?Q?7nv+PO8doqYKBfGTT6L1Luk5wUTG542WsCRQ9pjQDFMhTNAejx38dp3VHJEh?=
- =?us-ascii?Q?65chaDhDN8CxlTzHVd7lqNRxpXihh/cKONdJTbra1dRKAehoBmBP6/+9Yn/x?=
- =?us-ascii?Q?INH0MPKwlR6Vq7JkwcqntoBjUxVdQNGq5T9lRAsxO8duYkmGGrAlheDEqOMd?=
- =?us-ascii?Q?gIuY1rTSN9oM1zxsak985uq3qshfg/+pJoupX3JyMKUSo4JeTJ0ncru4rZAM?=
- =?us-ascii?Q?4hucO3dcUCdJu84JVeqG1G/ERBC8Cya6EsGrwq3w3LdokoTZrvwiGAN356lg?=
- =?us-ascii?Q?GJ/1hCJog3R8wRMvGHpNtNDmLLGKwDDQWv6TPDTIOgN5M3/onl61+CI9t2oo?=
- =?us-ascii?Q?ZdSICAprBQfK06F0LbT26NuCZKGIlCnP5OKSH3Dz5k3ZlWmcRAyFN3Yw/R5d?=
- =?us-ascii?Q?t+OeE7RBzYolBm11NEjcyA5HdxY10Zw62ZSxDl/uG7olzys7apwOP+Uh6+hp?=
- =?us-ascii?Q?GLZ8c3tPLdcfXGAFWk9sIDbeC3C6xm6KOD70fHI3bugETq98q6LndmWKC99F?=
- =?us-ascii?Q?Vuk9aXg6nKvpfCOaGrpZ4QhAg1RzC0f8HhEkl+vPNrVw6qPBxxUpiEobIKij?=
- =?us-ascii?Q?TcHCm0kBIsPnbXPYa0LAt+lR5n16e3PBbFX5ImL9QoCYOZQrlRkxaneq71iF?=
- =?us-ascii?Q?ZbVl3tHQTlJG2qCJyHge6upq7zDHVMn/eFsQtlLdjJGXQO74fCeoj2Ri4bBS?=
- =?us-ascii?Q?tVBfEFdBCdPTLJ+TPTlGsha6ygeFzvh8ZoSjcqdTOLmcL70DqabQp5yqqeEt?=
- =?us-ascii?Q?pHHSasFJTLHY1CnBNy23FWgzTHLoYeiMVg13CTgg9oLxxmI5BskHMIKpuhp8?=
- =?us-ascii?Q?hOawCLyKMFTocSHyqntrSaTPZ5K74x1qqp+28fJCETm7kAB08u+Dtz0cheHx?=
- =?us-ascii?Q?MENeZc/KX3g24XVeVCDtXzAy5/evnb6ZZ/hg+l+fwYPz2c1dQy6qjBCiZ454?=
- =?us-ascii?Q?3lq463wpVbyfCT7PVCs9NjtVRdnigMukr5oRhVtq?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 124be509-f42e-45f9-bbb1-08dc8aed1b4e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 14:36:55.1091
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7/a+0hQjyWrNjdI9Cf+fidvJM5UU8zorjLA+2gZ+vA8YzkSX5RYd/c3+ph8pQJKjm1dQ+Ya2Im08XSl0aIo26g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8218
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Tue, Jun 11, 2024 at 02:23:11PM -0600, Rob Herring wrote:
-> On Tue, Jun 11, 2024 at 12:01:47PM -0400, Frank Li wrote:
-> > According to common mmc core, voltages-ranges should be matrix.
-> > 
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > 
-> > ---
-> > Not sure why it impact other mmc yaml's voltage-ranges.
-> 
-> It's a quirk of the tools. When decoding properties, the tools only know 
-> all possible types. Types are global, not per binding. Sometimes it can 
-> be figured out, but cases like this cannot be.
-> 
-> > ---
-> >  Documentation/devicetree/bindings/mmc/mmc-spi-slot.yaml | 17 ++++++++++-------
-> >  1 file changed, 10 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mmc/mmc-spi-slot.yaml b/Documentation/devicetree/bindings/mmc/mmc-spi-slot.yaml
-> > index 36acc40c7d181..05815b837219d 100644
-> > --- a/Documentation/devicetree/bindings/mmc/mmc-spi-slot.yaml
-> > +++ b/Documentation/devicetree/bindings/mmc/mmc-spi-slot.yaml
-> > @@ -27,17 +27,20 @@ properties:
-> >      maxItems: 1
-> >  
-> >    voltage-ranges:
-> > -    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> >      description: |
-> >        Two cells are required, first cell specifies minimum slot voltage (mV),
-> >        second cell specifies maximum slot voltage (mV).
-> >      items:
-> > -      - description: |
-> > -          value for minimum slot voltage in mV
-> > -        default: 3200
-> > -      - description: |
-> > -          value for maximum slot voltage in mV
-> > -        default: 3400
-> > +      items:
-> > +        - description: |
-> > +            value for minimum slot voltage in mV
-> > +          default: 3200
-> > +        - description: |
-> > +            value for maximum slot voltage in mV
-> > +          default: 3400
-> > +    minItems: 1
-> > +    maxItems: 8
-> 
-> From what I remember, SPI mode doesn't support voltage changes. 
-> Switching to 1.8V came much later in the spec. So it should be 
-> 'maxItems: 1'. Or better yet, make the outer 'items' a list (of 1 
-> entry).
+Hi,
 
-I don't understand "make the outer 'items' a list (of 1 entry)." Can guide
-me how to write it?
-
-Frank 
-
+On Wed, 12 Jun 2024 19:05:41 +0530, Tejas Vipin wrote:
+> mipi_dsi_msleep is currently defined such that it treats ctx as an
+> argument passed by value. In the case of ctx being passed by
+> reference, it doesn't raise an error, but instead evaluates the
+> resulting expression in an undesired manner. Since the majority of the
+> usage of this function passes ctx by reference (similar to
+> other functions), mipi_dsi_msleep can be modified to treat ctx as a
+> pointer and do it correctly, and the other calls to this macro can be
+> adjusted accordingly.
 > 
-> Rob
+> [...]
+
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+
+[1/2] drm/panel : himax-hx83102: fix incorrect argument to mipi_dsi_msleep
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/a13aaf157467e694a3824d81304106b58d4c20d6
+[2/2] drm/mipi-dsi: fix handling of ctx in mipi_dsi_msleep
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/66055636a146c435cd226fb5a334176304652f3c
+
+-- 
+Neil
+
 
