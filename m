@@ -1,110 +1,110 @@
-Return-Path: <linux-kernel+bounces-210976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 286F5904B8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:27:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE5F904B92
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C65AB22A25
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:27:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 112B61F221E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80C8168C17;
-	Wed, 12 Jun 2024 06:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E3F16936D;
+	Wed, 12 Jun 2024 06:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENojhtNN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hRbiXd1l"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C46167DA0;
-	Wed, 12 Jun 2024 06:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C0F2135A;
+	Wed, 12 Jun 2024 06:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718173638; cv=none; b=n4mfMsDv4odII1kUdmWfgnP/AJbapscOigPWs+c8YH5YN7/E/o7JD5MtT+cl+nGbRANVVPTzVOtCpSdeucEFDQFrbiM95whlAMej1KmukHXUomXriDlx8KVx0v7/WKOpxxi9sxE5ev8k2J2QRvCV3Uci7J4+NU6WcBXXwcG1W+4=
+	t=1718173669; cv=none; b=c74Qbmn8nWOBktu+sRahutG0AhHkqWJWYzbaXBlhjqzdKFgV3YpZH+zVPSqHwuQ9RR4g1w4jKh8rli0Xx2BiRYsWQ6PeGJWVOtJO/f4lu5Sc5o8yg9Znz/DT8WACfO7JBdcVvBrFtMcc9ZgIUoav1AcP8DHmDABDT2LXp9JkFdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718173638; c=relaxed/simple;
-	bh=e2ENKQIsTaX0sTudk2hGDKHVUGSIjiOwmVg8cJI75PA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUYbkFTnA8+j33+H2wh2wLFrEyONsdYCi6BFxc28Q3uDVw3cCCsCjcHevRmmjy7GuWZGxZ1Tw9PjNNOL9B8xq2p9DaLXcVM9tS7A2udq+RRgv3T1oAWzCfeJfMAm6Hjfm+KRnNBB48QK8PrJSW8nZ/heKXRLtT+j6h7H27Ih19M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENojhtNN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66683C32786;
-	Wed, 12 Jun 2024 06:27:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718173637;
-	bh=e2ENKQIsTaX0sTudk2hGDKHVUGSIjiOwmVg8cJI75PA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ENojhtNNGHdNYOnPQN1MFhFOstveOWidJQ7t/Y8POhDUCxRHat45JPNjaJiyOAs+r
-	 v/1sB3eR9c8Ywl85QTXifc6beSGNWx407WniIbbLEKEJ6gKG/GcbpneurWzfMx6FfC
-	 iQY12Mh9xYE45kRCnWQrAjpKtErCt/IlXpLBTWt6fR4vHF6YHZJXXRrwnaDw22mHM5
-	 lN0k7QZ+7Ee6+yNGTHmFioyGClrPmFBNiUzlSvZEw+pW9lhnHCaOK8SIpuuOkUs2Sp
-	 bHiLLdc9srG4e+P75deeQisFR4fO6LOBnIYgN/5VStYxYFkDHsHP2xdvGNYeqi/x3z
-	 pbIB3o0CYQkDw==
-Date: Wed, 12 Jun 2024 06:27:14 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	linux-pwm@vger.kernel.org, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] pwm: cros-ec: Don't care about consumers in
- .get_state()
-Message-ID: <Zmk_wolV5vK4JPCV@google.com>
-References: <20240607084416.897777-5-u.kleine-koenig@baylibre.com>
- <20240607084416.897777-6-u.kleine-koenig@baylibre.com>
- <ZmgP5NTPEGM0M2Li@google.com>
- <dbygoq4rzxnzforpdsvuy5jze2rxqszi6qxtx6q37yxwjo36o6@qfoc6iz2nbay>
+	s=arc-20240116; t=1718173669; c=relaxed/simple;
+	bh=+A9GFcAujDkjPAGPch4I3x0UGRqwd8uo/OWdfSJJT9w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qTW+G1cr47d4K6kZqaIiZpFZpukh8ZjNkM/Vhpc98jBc+DAt/6nr5cF4SK013Q+NwOXQgefRZHyv7B8/lwEpKnMbMaWs3eUO5TU15DjidK5FbTwIDBBvw1u6aXoUQzpRYdclvd4sINAGx08FTMxqimVj/gSWqUBFUVZ7ZwHtvPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hRbiXd1l; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BHHrcH001183;
+	Wed, 12 Jun 2024 06:27:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=DpyxiSWqtMbYoTxVmS3wDw
+	i8TsYjLuBNY90uP/vTmTY=; b=hRbiXd1l6Fb6YIEvIHGJc6NRLPux51ifftT7ga
+	y4Fsye9P46gvOcVvNqWpmfnA1C66O0agkaFYRW9PyJnyTZGBYUZPdHYR5uhGzT4n
+	hTp6sQF0fTRk3/QYjHPNdvyZ5QprtrtXLmJyu4bQ7wdpbISnQ3BRRBCqxoHpf+8y
+	6qdM96podqFCFfnnlYaSyl+k5Fgv1SDtzfU/m48PBuR/btpOyku/O6U7iKOAC49n
+	JOdogZSZu2ZaXJhl4puYuvNiJDMokDkZWuKLGl8v26FeD3FG6UfPWwBWAu5or0tS
+	e7MwfF/yWXwNmc/PoiHTlzoblqh9VhNAnfIbIboCyFn7iX/A==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yptuy1crw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 06:27:44 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C6RhvY026096
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 06:27:43 GMT
+Received: from hu-kbajaj-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 11 Jun 2024 23:27:39 -0700
+From: Komal Bajaj <quic_kbajaj@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Mukesh
+ Ojha" <quic_mojha@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Komal Bajaj <quic_kbajaj@quicinc.com>
+Subject: [PATCH 0/2] qdu1000: Fix LLCC reg property
+Date: Wed, 12 Jun 2024 11:57:17 +0530
+Message-ID: <20240612062719.31724-1-quic_kbajaj@quicinc.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <dbygoq4rzxnzforpdsvuy5jze2rxqszi6qxtx6q37yxwjo36o6@qfoc6iz2nbay>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Xz4cqGHH_j_LyGjSycX7hO3_eTezoD5W
+X-Proofpoint-ORIG-GUID: Xz4cqGHH_j_LyGjSycX7hO3_eTezoD5W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_02,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 mlxlogscore=685 phishscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120044
 
-On Tue, Jun 11, 2024 at 12:39:44PM +0200, Uwe Kleine-König wrote:
-> On Tue, Jun 11, 2024 at 08:50:44AM +0000, Tzung-Bi Shih wrote:
-> > On Fri, Jun 07, 2024 at 10:44:15AM +0200, Uwe Kleine-König wrote:
-> > > The get_state() callback is never called (in a visible way) after there
-> > > is a consumer for a pwm device. The core handles loosing the information
-> > > about duty_cycle just fine.
-> > 
-> > ChromeOS EC has no separated "enabled" state, it sees `duty == 0` as
-> > "disabled"[1].  1db37f9561b2 ("pwm: cros-ec: Cache duty cycle value")
-> > caches the value in kernel side so that it can retrieve the original duty
-> > value even if (struct pwm_state *)->enabled is false.
-> 
-> There is no need to cache, so the following would work:
+The LLCC binding and driver was corrected to handle the stride
+varying between platforms. Switch to the new format to obtain
+the base address of each LLCC bank from devicetree.
 
-Ack.
+Komal Bajaj (2):
+  arm64: dts: qcom: qdu1000: Fix LLCC reg property
+  dt-bindings: cache: qcom,llcc: Fix QDU1000 description
 
-> > To make sure I understand, did you mean the original duty value could be less
-> > important because:
-> > - We are less caring as it is in a debug context at [2]?
-> > - At [3], the PWM device is still initializing.
-> 
-> It doesn't really matter that this is about debug or initialisation. The
-> key here is that the core can handle the PWM using duty_cycle 0 (or
-> anything else) when it was requested to be disabled.
-> 
-> 
-> > [1]: https://crrev.com/0e16954460a08133b2557150e0897014ea2b9672/common/pwm.c#66
-> > [2]: https://elixir.bootlin.com/linux/v6.10-rc3/source/drivers/pwm/core.c#L52
-> > [3]: https://elixir.bootlin.com/linux/v6.10-rc3/source/drivers/pwm/core.c#L371
+ .../devicetree/bindings/cache/qcom,llcc.yaml     |  2 +-
+ arch/arm64/boot/dts/qcom/qdu1000.dtsi            | 16 +++++++++++++++-
+ 2 files changed, 16 insertions(+), 2 deletions(-)
 
-I was trying to understand the description in the commit message:
-: The get_state() callback is never called (in a visible way) after there
-: is a consumer for a pwm device.
+--
+2.42.0
 
-I guess I understood; the core reads the duty value via get_state() when:
-- Initializing the device for the intial value.
-- Debugging for checking if apply() really takes effect.
-
-What 1db37f9561b2 worried about is already addressed by the core[4].
-
-[4]: https://elixir.bootlin.com/linux/v6.10-rc3/source/drivers/pwm/core.c#L495
-
-Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
 
