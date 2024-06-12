@@ -1,221 +1,107 @@
-Return-Path: <linux-kernel+bounces-210949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4170C904AF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:36:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A34D904AFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B38F0B225AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:36:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D6E2850D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6404C383B0;
-	Wed, 12 Jun 2024 05:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B583770D;
+	Wed, 12 Jun 2024 05:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dWnrwXkE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0llf8ES"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE9C286A8;
-	Wed, 12 Jun 2024 05:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBC179D8;
+	Wed, 12 Jun 2024 05:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718170558; cv=none; b=FDZ2+uAOvhXFYymyhyp2NwIBTynppWEwZe9DuDh8ZpuJs0P70LLvcy5eClsGLPgyofJsLxmW0yR07cRyeMBTr9dMQ7lLroBFeZ5gYclq8CoDpPC7d2TSufW3lzsG0/ROeHY1a8a481Dtx31bBXTpl+USwIbQFyQVK/UbVm2FzNo=
+	t=1718170831; cv=none; b=JPvSCok8NBI4PFFVFBKYxB3SFpBDFe/O+VEHXGUSBVzqUgHvVJAjiOMZXpFyynORoFin78TJUt9JgP3EYJt9jT+z5EFuAxOWeteMysJ6BY2istkOSTE2OhikwalVfYmOiU1/LnjXUvqm8mAZHva/UflK7pDtDEvdmjr1ojAqxio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718170558; c=relaxed/simple;
-	bh=7/kYWCF8jY7m1ZBPFDMBniSgK9LVHVKaxhjwzGyb8us=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lKcqVwwBr9qPtbdKNYhJg89NqiY9fRPNIe72bM1APwAcescRDsgq6OmH1NLVnKWkJpC3OIZj6rC30oG4QsTFNQEgITCc6M3/q2jxd8KvBL6QAch+dTfb7D0MxwSt3KNiKCsv0oWeNhgmYSiHOWCQo+nXaOy2nLRK2zLnCJmDuiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dWnrwXkE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27577C32786;
-	Wed, 12 Jun 2024 05:35:58 +0000 (UTC)
+	s=arc-20240116; t=1718170831; c=relaxed/simple;
+	bh=z5DKGdkQHd6N4C5R0TvXcMTfbPbCS6uuyB3zQ/QDn24=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=CMehYYXxZAWjVk4aZcyerRl9CWXWbbAtXo8q6gFmiYEuDrUGLIziRz9uNg7XXKEjqhjbp5cKpN9B9YEEEZap/UriqBGzp2Gqi5FP+2A0/Gpugff8uXm/mBEDnMqD6PPSgMrvWCrxZxhmA62C8Ir8B33hObXr2m11N0Uj3WghewA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0llf8ES; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0509AC32786;
+	Wed, 12 Jun 2024 05:40:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718170558;
-	bh=7/kYWCF8jY7m1ZBPFDMBniSgK9LVHVKaxhjwzGyb8us=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dWnrwXkEnKHjBLlRSbQZvgo5mi+6dMoEVTImNg7Nk0J7DWA5pUMsgJTMLl1gfMVYf
-	 9XZJgVX88hvwVwx84tFW27SNrm+eVJ7D725oLvDz8VyEDPxdeh++fndHtoP4MjJEIA
-	 rjnges9Tq4fM3qcFnacFps+ZmC2Hnh8o3IAGrbcWqQruXYh1zrsAQ3BbgjASL0dTIz
-	 JIGgJzz0huhpUaHohhyLhIcXbeUF7YUrdH8L0MCWII+kW1KJ1gqAOj6f/ELDX+aZFl
-	 OdDsJfHAJwXsKW8qMIaOWprlDQvmSDhN4xJPvnTCLo5ipJjRxmAME/lVfbm4crk9vc
-	 V76ipllYQe4HQ==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebe3fb5d4dso4804731fa.0;
-        Tue, 11 Jun 2024 22:35:58 -0700 (PDT)
-X-Gm-Message-State: AOJu0Ywaro0O0GUN9rvWbAc2DBcHz5+s+vjFwVVrD/mVmW1Dod0OAnfC
-	RB8XkHwclZcbBxcrOuxm5EnjCfgTAGNin203YAIOJUK+rcJ87E26R64du4Yo8cl4S0ROYmhGvKH
-	Mi+/OEczgJav+yfwVEFwE49CIV0M=
-X-Google-Smtp-Source: AGHT+IEG2QnYvDxM3+qCzBzqjMIbe4/nF96oijHgNPZjcXlAGGyny1QXdyzIYF+epIQIm0Mqr3lqT71xJ7JTMk0rIIk=
-X-Received: by 2002:a05:651c:d5:b0:2ea:8895:ae8c with SMTP id
- 38308e7fff4ca-2ebfc135cc5mr2060731fa.24.1718170556765; Tue, 11 Jun 2024
- 22:35:56 -0700 (PDT)
+	s=k20201202; t=1718170831;
+	bh=z5DKGdkQHd6N4C5R0TvXcMTfbPbCS6uuyB3zQ/QDn24=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=B0llf8ES9k8QfWvbjirSJ+bEiP2L0vVMIDIFZvmAUl70BL6OxphJJHQLaTcoFvAB0
+	 zNypUlDZuPtNNhnCkbuVCLZJR9bFtejkFtMCGzt3iokIKxQ+3ML8QeZe0IBa2PXaUk
+	 g1jNhG23NLUXo11ukTFqWXphaRYHMseC/NOZTH+8YmAnqX+euU7JL0gWZAx3dXAmjw
+	 /Q+84ehJzLxGMJ8DlQyjRNYKO4him0tUKoXakwOPG1Pli3K6W30eE0hkFv2UTmVCxy
+	 M6LflOjnt+ZIkFzNaW8D7aBA6clV0aVmOy5j2UZTooZoLugJ8Yy+4FRkMUdbUji4k0
+	 hmTn0KWEqpRGA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E0465C54BB2;
+	Wed, 12 Jun 2024 05:40:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611175536.3518179-1-masahiroy@kernel.org> <20240611175536.3518179-7-masahiroy@kernel.org>
-In-Reply-To: <20240611175536.3518179-7-masahiroy@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 12 Jun 2024 14:35:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQFZu=z1ZT=6OUT8uiDN8mZS1++xGCNKc98Hc299cYqrQ@mail.gmail.com>
-Message-ID: <CAK7LNAQFZu=z1ZT=6OUT8uiDN8mZS1++xGCNKc98Hc299cYqrQ@mail.gmail.com>
-Subject: Re: [PATCH 06/16] kconfig: refactor choice value calculation
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v4 0/6] net/tcp: TCP-AO and TCP-MD5 tracepoints
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171817083091.28312.7398867679773366981.git-patchwork-notify@kernel.org>
+Date: Wed, 12 Jun 2024 05:40:30 +0000
+References: <20240607-tcp_ao-tracepoints-v4-0-88dc245c1f39@gmail.com>
+In-Reply-To: <20240607-tcp_ao-tracepoints-v4-0-88dc245c1f39@gmail.com>
+To: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
+Cc: edumazet@google.com, davem@davemloft.net, kuba@kernel.org,
+ pabeni@redhat.com, dsahern@kernel.org, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, corbet@lwn.net,
+ mnassiri@ciena.com, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, 0x7f454c46@gmail.com
 
-On Wed, Jun 12, 2024 at 2:56=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> Handling choices has always been in a PITA in Kconfig.
->
-> For example, fixes and reverts were repeated for randconfig with
-> KCONFIG_ALLCONFIG:
->
->  - 422c809f03f0 ("kconfig: fix randomising choice entries in presence of =
-KCONFIG_ALLCONFIG")
->  - 23a5dfdad22a ("Revert "kconfig: fix randomising choice entries in pres=
-ence of KCONFIG_ALLCONFIG"")
->  - 8357b48549e1 ("kconfig: fix randomising choice entries in presence of =
-KCONFIG_ALLCONFIG")
->  - 490f16171119 ("Revert "kconfig: fix randomising choice entries in pres=
-ence of KCONFIG_ALLCONFIG"")
->
-> As these commits pointed out, randconfig does not randomize choices when
-> KCONFIG_ALLCONFIG is used. This issue still remains.
->
-> [Test Case]
->
->     choice
->             prompt "choose"
->
->     config A
->             bool "A"
->
->     config B
->             bool "B"
->
->     endchoice
->
->     $ echo > all.config
->     $ make KCONFIG_ALLCONFIG=3D1 randconfig
->
-> The output is always as follows:
->
->     CONFIG_A=3Dy
->     # CONFIG_B is not set
->
-> Not only randconfig, but other all*config variants are broken with
-> KCONFIG_ALLCONFIG.
->
-> With the same Kconfig,
->
->     $ echo '# CONFIG_A is not set' > all.config
->     $ make KCONFIG_ALLCONFIG=3D1 allyesconfig
->
-> You will get this:
->
->     CONFIG_A=3Dy
->     # CONFIG_B is not set
->
-> This is incorrect because it does not respect all.config.
->
-> The correct output should be:
->
->     # CONFIG_A is not set
->     CONFIG_B=3Dy
->
-> To handle user inputs more accurately, this commit refactors the code
-> based on the following principles:
->
->  - When a user value is given, Kconfig must set it immediately.
->    Do not defer it by setting SYMBOL_NEED_SET_CHOICE_VALUES.
->
->  - The SYMBOL_DEF_USER flag must not be cleared, unless a new config
->    file is loaded. Kconfig must not forget user inputs.
->
-> In addition, user values for choices must be managed with priority.
-> If user inputs conflict within a choice block, the newest value wins.
-> The values given by randconfig have lower priority than explicit user
-> inputs.
->
-> This commit implements it by using a linked list. Every time a choice
-> block gets a new input, it is moved to the top of the list.
->
-> Let me explain how it works.
->
-> Let's say, we have a choice block that consists of three symbols:
-> A, B, and C.
->
-> Initially, the linked list looks like this:
->
->     A(=3D?) --> B(=3D?) --> C(=3D?)
->
-> Say, '# CONFIG_B is not set' is specified by KCONFIG_ALLCONFIG.
->
-> B is set to 'n', and moved to the top of the linked list:
->
->     B(=3Dn) --> A(=3D?) --> C(=3D?)
->
-> The randconfig shuffles the symbols without a user value.
->
-> So, you will get:
->
->     B(=3Dn) --> A(=3Dy) --> C(=3Dy)
-> or
->     B(=3Dn) --> C(=3Dy) --> A(=3Dy)
->
-> When calculating the output, the linked list is traversed. The first
-> visible symbol with =3Dy is taken. You will get either CONFIG_A=3Dy or
-> CONFIG_C=3Dy with equal probability.
->
-> As another example, let's say the .config with the following content
-> is loaded:
->
->     CONFIG_B=3Dy
->     CONFIG_C=3Dy
->
-> The linked list will become:
->
->     C(=3Dy) --> B(=3Dy) --> A(=3D?)
->
-> Please note the last one is prioritized when a decision conflicts in
-> the same file. This is reasonable behavior because merge_config.sh
-> appends config fragments to the existing .config file.
->
-> So, the output will be CONFIG_C=3Dy if C is visible, but otherwise
-> CONFIG_B=3Dy.
->
-> This is different from the former implementation; previously, Kconfig
-> forgot CONFIG_B=3Dy when CONFIG_C=3Dy appeared later in the same file.
->
-> In the new implementation, Kconfig remembers both CONFIG_B=3Dy and
-> CONFIG_C=3Dy, prioritizing the former.
+Hello:
 
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-
-prioritizing the latter.
-
-
-
-
-
-> If C is hidden due to unmet
-> dependency, CONFIG_B=3Dy arises as the second best.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+On Fri, 07 Jun 2024 00:25:54 +0100 you wrote:
+> Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
 > ---
+> Changes in v4:
+> - Fix the build for CONFIG_TCP_MD5SIG=n (Matthieu Baerts, netdev dashboard)
+> - Link to v3: https://lore.kernel.org/r/20240606-tcp_ao-tracepoints-v3-0-13621988c09f@gmail.com
+> 
+> Changes in v3:
+> - Unexported tcp_inbound_ao_hash() and made static (Eric Dumazet)
+> - Link to v2: https://lore.kernel.org/r/20240605-tcp_ao-tracepoints-v2-0-e91e161282ef@gmail.com
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v4,1/6] net/tcp: Use static_branch_tcp_{md5,ao} to drop ifdefs
+    https://git.kernel.org/netdev/net-next/c/3966a668bfee
+  - [net-next,v4,2/6] net/tcp: Add a helper tcp_ao_hdr_maclen()
+    https://git.kernel.org/netdev/net-next/c/72863087f635
+  - [net-next,v4,3/6] net/tcp: Move tcp_inbound_hash() from headers
+    https://git.kernel.org/netdev/net-next/c/811efc06e5f3
+  - [net-next,v4,4/6] net/tcp: Add tcp-md5 and tcp-ao tracepoints
+    https://git.kernel.org/netdev/net-next/c/96be3dcd013d
+  - [net-next,v4,5/6] net/tcp: Remove tcp_hash_fail()
+    https://git.kernel.org/netdev/net-next/c/78b1b27db91c
+  - [net-next,v4,6/6] Documentation/tcp-ao: Add a few lines on tracepoints
+    https://git.kernel.org/netdev/net-next/c/efe46fb18e78
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
