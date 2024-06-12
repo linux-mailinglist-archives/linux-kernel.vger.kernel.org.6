@@ -1,131 +1,113 @@
-Return-Path: <linux-kernel+bounces-211567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FAEA9053DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:34:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDC79053E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073521F23A63
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15E31F25AE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6B617BB06;
-	Wed, 12 Jun 2024 13:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E6217BB17;
+	Wed, 12 Jun 2024 13:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="H5aPaIHr"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbQAmAlK"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193311EF1A;
-	Wed, 12 Jun 2024 13:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FEB17B408
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718199254; cv=none; b=qLNWhIKrEzNKXhjpSe7HVrb+TEbM7TTtEfGWCmHS1jfUwFenXP17UBkXDlJj9QGfHtULKrTzu9gD9kI0fhi/rtvUPGc6tkwxPthhjcX9kA0zYSyRo7H+YpVJTw35whdQmJoI82RMW0LvrjOTCD+DIVr2gXnkB6Q/3Hy0clXUUeQ=
+	t=1718199412; cv=none; b=dNr6Nn4EWQE8VaqDgclvq5atpGSNKhTtCzbWCKm5A96ZG5OIA35ylvDKs0iNc65Gk3dM9/BjcTtCTIruHHMEXTFjI57QjyKwXNuaU8bevbdKaj7k1CDKILBAKoizJfq1CkKdAb2qHwusWErwBTNJgNcFQWvEPvfg9lxi3fzkDOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718199254; c=relaxed/simple;
-	bh=Au1llInZEepgsoZGLTYtmExSMQ5QuJqm+PY9oVjCw+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u95dUEd/l7UCk6W4LaGi5KJTrX3Qp7DirWHY2XDijyyFRVzCuHZCZiTVDFgRe0bZqhPAS0kaljALlAvuAborUBeYH97vH9jPPsZBhy2Oj6bixzTryMpxr6MpTZsun2KcqdoTt/RwmgTreo+8uUcuVcAeQMU/a9Gis+qqP7KgbEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=H5aPaIHr; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BBC1140E016C;
-	Wed, 12 Jun 2024 13:34:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Xl_z8xHFyKYs; Wed, 12 Jun 2024 13:34:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718199240; bh=eZyz57k7uXkPLYoNDXQ8VYUt/BHQFaQ55nFSMPTlOKQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H5aPaIHrEs/h1N/W9HuKXunwlA8nftqhlS9pE7BeeYgvKWZIC1ERtsbPfpYmkxKJk
-	 hntYNF7sGBh4JIO33lut5KX2ZJhA8xNm9SfUzoY7f3gTCbuaGamF8AlGlROVMXlrnT
-	 N/mGsCLozt7uFuJxl0YPSzpWY4IkfnjZbBjw75M5gB7utSK/Tc7bo8zN0xFSLLy2Bu
-	 L0N46CPQPq3agsmw24N6PaqK1wFSIXQjIInIkpctMegS6F0dKzg0pxmQM6MKQhOQLX
-	 5VLxd9Us/YmzkNFBH1MO1GaCRUZh3eCzZgzLKciZDVNHOyeyVrwpFDEGl7xgcoI1CX
-	 NdMT/6cqngYCNCCvq8/dd3kv1Ay4OCXaMPAsBtYbLuwF3Z18iDaQ/7ugJkD1mgkR6n
-	 6W9/SDV+I2P+4/Yld6p8/hg2fN61g/TVhLsXbJX70UsJTgLk3g3faymyLvCSgWhu+S
-	 G5OYMz0y9cuj71ZFdn5+1RwoXk82QclBnY80rfbb6c7Lfb6nE4y1F82F/ivDoL0p9V
-	 uu5w6mCHxknEm0DpHgOjqH8TA4+08R/C9oRodD1LSkT97TwIK3pWu4Hkj1PxzmdUAW
-	 bcFdZqQkvwANszCIOZpt+3y2vV/r5rGQNCbl8VZ3hQx6E4FJQNTZucm35leZia5wUT
-	 2kxYEsyATkKtl7k9RMzunPxo=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 25EBC40E0031;
-	Wed, 12 Jun 2024 13:33:47 +0000 (UTC)
-Date: Wed, 12 Jun 2024 15:33:40 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, will@kernel.org,
-	peterz@infradead.org, akpm@linux-foundation.org, acme@kernel.org,
-	namhyung@kernel.org
-Subject: Re: [RESEND v1 1/3] x86/cpufeatures: Add {required,disabled} feature
- configs
-Message-ID: <20240612133340.GBZmmjtD40dzhsWVyg@fat_crate.local>
-References: <20240509205340.275568-1-xin@zytor.com>
- <20240509205340.275568-2-xin@zytor.com>
+	s=arc-20240116; t=1718199412; c=relaxed/simple;
+	bh=Hj446fOHni3fZSVNrcAqYqHSQxLozFsONePUBZICr3w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RYDt20UTO+322sK26vWW2fudJ9GVI8R8y1OzX4m+knMgssetUwixAITVAGSHRh/cL4w1YzDBDPMfue6RNeYsmK0w05rqL9ZJ2HoTR2FHjD7/JIjz97p0RDSKj1Dy3i24QwNgOywQulmWxWoDosZzeYyLD9X1vuohVifIP+3nJTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbQAmAlK; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f64ecb1766so52835585ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 06:36:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718199410; x=1718804210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jalggb5KAXiKiH+TC/KM4w8VMC75sAk2yBUzqDTF5+g=;
+        b=gbQAmAlKILZaQd1Hh2uUSFrDmlhV2yeF9ZHMhGoOVnuh83VrWJYGzOdGraO4NU4w+X
+         l6iLYQuGoe50TQf/gHQhu+Y4FjyQhTVvnGmbTVywZ7xjAtRSTNhJBaNPBSPel7sfav/X
+         kyooveIvDaJ7vCek89PMZ2R9MJnhNXcE7nUGDuhh1+zXFYcKWSoo9O9C7aIUFzW94Zgt
+         8ptq31wAaYGTsltuGIiAzdkeoBZ83ONGLmAa6FLzx6HSsEaQs2Kw1AKwJdg2dua5nsC+
+         3rnvdH1NPJEQ04MjLY+0ywoS8wAPrbnhqGbgEcLYnffe7pSfkuB+GBMT6i2Dcd+hKEMd
+         MSsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718199410; x=1718804210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jalggb5KAXiKiH+TC/KM4w8VMC75sAk2yBUzqDTF5+g=;
+        b=XzjqQodW42RqHxfgCDQawVQKaE7vzEB9yje1BapX3aSj5c6d3e66AVpTfEkKGAdZ7D
+         vkqK5tlQkulGhwkYmWIHCtacWij0khx5yXVMSIbVHccCFSoqY4gjGzq/qnmnQU7N6GnS
+         DUkah1nnbh5GOPvmIfSBDrm6q1K413vnhGuLUtDlau8Mdmj6Jv43xanQmZ+1kbvvrAf6
+         s8RV5qoW/7Fm4xB7F80/s2ZRzrLSyMY9UqHMVIuHqG5GOC5uT8zP+8iz6D5ouYWBvHCI
+         puJEekOgbdO8O/CXSMEpjaPJACHmiP+TtSAqBiiAcqRIJDKIy5xleZQ5QGdoY2PWB+ee
+         weQw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8lZ2hUVepGjkGf/bY9vrZXBJDJlWkuVkww7DOtgvlWN5K+nSErFeY4Y7MKcIGzB8AFAkUGhS1ntt1GZWWoC39ZlvhV6zutkW30TZ9
+X-Gm-Message-State: AOJu0Yy0iHjkH6QyPhu0y/kKGgRKhMG38ekAjRxK+IMrAO6a/jfCAH0A
+	FhgSrnefKsg9I/3BbvJJ047vtHkFSYuRWBYrOysB8gPk0X8wGg8M
+X-Google-Smtp-Source: AGHT+IGJXOsSf9sVXW5Q5P3oht0VLzqOpHaHDBQ6BtEZVDQwNdrvibraCh4yXrfl2vD1iK5zCr/CIg==
+X-Received: by 2002:a17:902:ce92:b0:1f6:612b:96eb with SMTP id d9443c01a7336-1f83b7ae9d7mr23032955ad.50.1718199409822;
+        Wed, 12 Jun 2024 06:36:49 -0700 (PDT)
+Received: from distilledx.localdomain ([103.246.195.195])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f845e0ca86sm7291815ad.0.2024.06.12.06.36.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 06:36:49 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com
+Cc: Tejas Vipin <tejasvipin76@gmail.com>,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	linus.walleij@linaro.org,
+	dmitry.baryshkov@linaro.org,
+	dianders@chromium.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] fix handling of incorrect arguments by mipi_dsi_msleep
+Date: Wed, 12 Jun 2024 19:05:41 +0530
+Message-ID: <20240612133550.473279-1-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240509205340.275568-2-xin@zytor.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 09, 2024 at 01:53:38PM -0700, Xin Li (Intel) wrote:
-> diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-> index 2a7279d80460..719302d37053 100644
-> --- a/arch/x86/Kconfig.cpu
-> +++ b/arch/x86/Kconfig.cpu
-> @@ -358,6 +358,10 @@ config X86_P6_NOP
->  	depends on X86_64
->  	depends on (MCORE2 || MPENTIUM4 || MPSC)
->  
-> +config X86_REQUIRED_FEATURE_NOPL
+mipi_dsi_msleep is currently defined such that it treats ctx as an
+argument passed by value. In the case of ctx being passed by
+reference, it doesn't raise an error, but instead evaluates the
+resulting expression in an undesired manner. Since the majority of the
+usage of this function passes ctx by reference (similar to
+other functions), mipi_dsi_msleep can be modified to treat ctx as a
+pointer and do it correctly, and the other calls to this macro can be
+adjusted accordingly.
 
-Can we keep the X86_{REQUIRED,DISABLED}_ prefixes solely in
-arch/x86/Kconfig.cpufeatures and not spill them out into the rest of the tree?
+Tejas Vipin (2):
+  drm/panel : himax-hx83102: fix incorrect argument to mipi_dsi_msleep
+  drm/mipi-dsi: fix handling of ctx in mipi_dsi_msleep
 
-This way there will be no confusion between X86_FEATURE_, X86_REQUIRED_FEATURE_,
-X86_DISABLED_FEATURE_ and so on, and which one I am supposed to use where...
-
-> diff --git a/arch/x86/Kconfig.cpufeatures b/arch/x86/Kconfig.cpufeatures
-> new file mode 100644
-> index 000000000000..326a8410ff06
-> --- /dev/null
-> +++ b/arch/x86/Kconfig.cpufeatures
-> @@ -0,0 +1,153 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# x86 feature bits (see arch/x86/include/asm/cpufeatures.h) that are
-> +# either REQUIRED to be enabled, or DISABLED (always ignored) for this
-> +# particular compile-time configuration.  The tests for these features
-> +# are turned into compile-time constants via the generated
-> +# <asm/featuremasks.h>.
-> +#
-> +# The naming of these variables *must* match asm/cpufeatures.h.
-
-I presume they must match X86_FEATURE_<name>?
-
-And REQUIRED and DISABLED is manipulated in by the script?
-
-I guess I'll see later.
-
-Thx.
+ drivers/gpu/drm/panel/panel-himax-hx83102.c | 6 +++---
+ include/drm/drm_mipi_dsi.h                  | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.45.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
