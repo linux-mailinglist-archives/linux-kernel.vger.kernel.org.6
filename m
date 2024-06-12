@@ -1,125 +1,138 @@
-Return-Path: <linux-kernel+bounces-211944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F780905939
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A63EA90593D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 670EE1C21511
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D44283441
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8D6181CE7;
-	Wed, 12 Jun 2024 16:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AFF181D05;
+	Wed, 12 Jun 2024 16:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QvZReln7"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZPW3+2U"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5028F181B9F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 16:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A6617B437;
+	Wed, 12 Jun 2024 16:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718211276; cv=none; b=KPCizDQ6IydoSQTOavmcfqXwN0rCe/bngVoTS3RNnlKBzQF10Ostvf2P2cq/RL4kcJsUPASm2TsMVsit+SXdQwNxRt44z91cntiWIoV/CTft1pQDTpokj5Je2VNLKizb6VHwo2059YQ8hfvsNJUh7/hP8F/1qhZ2XoEtLJpPjwk=
+	t=1718211344; cv=none; b=uWxkMMPjFndwvlOICugGDQl3wXFGTtPOGcDwrT4T4oQujjfxJhDD95dL4A8/7R+hCYXjqn/6uyMf+vHhEXhGodKepv2lcT3j4ndMAj3rpGydCcU/DCZFKNsGwPuzFoV3/XBfz6s6qYU9GP/kwCZ8SXAr3zE7ObT6SPAlQgzdqkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718211276; c=relaxed/simple;
-	bh=1thz6tnKYh4W3UTSkm0UIqpLg3cHhFT9lD2SEIdOi/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R+vfUqxO+mIgnagYAzVzyd6OlUUCJ3txhxG5YEtrSEWRra5YbZBb8pw9bLZHS1Tc4RGtk4b8WrJ89yyry9/UdhiqcN38wsaCSR1W+9qBdDkFFm9wet81V2XGx/hJBqn5FXite1atKR367cXLfDouTk+UhKnfeKpN7wb+llcsUi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QvZReln7; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d21cb38362so196964b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:54:32 -0700 (PDT)
+	s=arc-20240116; t=1718211344; c=relaxed/simple;
+	bh=KEigEmaM4Bgy0UfbEbKbIhA0Ndjs89ehHeiMCsBe1Io=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N+bs284KpBJskUIn5nc/47kqpM0vtEySAwqU3O3xArAT3E7dw9wU3ez4ei8kFIBLZUvH3GcXZ7SOozszyEFYRZPJQFnZXtHJYD6eEq6kKCDd13xfhxEwiHBVz2VpyTHiruKIJICrOKHyBSfwsYDVrlF/wL1JOoWPp+pWbENKXsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CZPW3+2U; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f44b45d6abso1043525ad.0;
+        Wed, 12 Jun 2024 09:55:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718211271; x=1718816071; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=auZ0CYhLHHpQv2x9Ok7hNHgDuK+aHHonoO28jfXMPus=;
-        b=QvZReln7r68NLkOTDgHWwJzHAQIaTsk73QqqpzeSsyWy9AnHX+yyVgR8Xyqsi1ONlq
-         ZOpBOXgInNueyYB0WcyfSiemEW4DOwt7zufFeo5hGm8/zK5dMobj2NA7dvxc+TQw5kDZ
-         WLLlSYNBg2CjYVjgTma+bHZMCcPGleDq2Js8a5IhB6GPTWiIg5xffaSiF4w6QsWtaxvg
-         IklMz9JCxAXj5+bz1z1hZaEOPQyr9YbcY+s5UYn5HcXZjyo0jwywp/F8x3cyPjw7hsWh
-         HJAVakPnbicQKlt1F0nyXLohZWLy5BZ9TzGsdTeuicjDAkJGZ5kF65kllaFO3g2Yf0R4
-         PC+g==
+        d=gmail.com; s=20230601; t=1718211343; x=1718816143; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ezWpinzUl8erONkbD/y5khH8TAKVckebPB7LaqPHoHI=;
+        b=CZPW3+2UNnq+Qu9uTIJxMCCktcAz/74q05Qq5dt86z6c2FsKijcowbrDL5u8qak4qe
+         TPiEqwLZAXhh1vTRElTqHuXCJkAZRlwyW9ebyZTXEXdDAl/tbT6UT6WivUbWULCPFbLW
+         YEB1nY9d+KuEA6RIwtoeMfi3nmskmoAdZH69/aUPRPTRf/KFSFbhQmr0H5ujUujcZtEt
+         CfI5CHM5b4vxsz8qD/EDDVHObaR0NG4kWKjjaopT4AeCipv5L3a1/5Qx3gJVdd1Mcni7
+         hyjegRbeEo0PvfjnOmjQTD5LFP78lK8y7sLAWUGiw9T0AX0s9l3BGvG92fJmkAglpILd
+         LNyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718211271; x=1718816071;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=auZ0CYhLHHpQv2x9Ok7hNHgDuK+aHHonoO28jfXMPus=;
-        b=S7CBdVCNssCqG12icIRCGUBEYn+dZv1sjY96H4+l4dQRG7nfAvkG5ED9sDQwjprneD
-         z0cR8Xz+H92oZSeeV6htV3E4bgO/IWJEEzA7Ey1uJF7qnsqNl2ir1X9RTyFSDhpWp2QE
-         TECY/I5ZfMk0bv8cpH4LzGO3YCRYcFUzh5Kvuci8iJaSGUnW/YWdP1rP9LObmSruUC6q
-         lKubbWhQRCMHuJmEuFwbG4nk/UL/H7BJvO8jBsEmAJWRtPxwA5JzrvQnKZAfFFGJOr7r
-         C32wNxNu2dXXI6WF/XcG39Oz06pawt3peBPWYTsNFTH9fhq2FduIzxCyqZw3kAjzin3K
-         ezWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVo5ApFzCjgh6hlzrp+Y2HXYanNqWX5wOXjipT4NivpYh12YOe3Xz8Kadxl6Kg0Luj+qCuYnD50e7OJlbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHaYISUy8WivtlD6hI99lqDP5GBv48q7lxlc0YkX0xd8aAo/MZ
-	dk4FLTvBWbOGFZgghgSotPkOQuXl0RT0Gos3QWAFHR3cSQS0VNtc/IKIiEY35IQ=
-X-Google-Smtp-Source: AGHT+IFJcbrN0mfMMLSdZ99zjcbKdGCqyR/7L8hjEBh1nwrgjfG7Nv1hKm/yTAjp6qCBcgUqV8S5Zg==
-X-Received: by 2002:a05:6808:1520:b0:3d2:1b8a:be6f with SMTP id 5614622812f47-3d23e1841d5mr2768358b6e.4.1718211271170;
-        Wed, 12 Jun 2024 09:54:31 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d2219a6274sm1434752b6e.37.2024.06.12.09.54.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 09:54:30 -0700 (PDT)
-Message-ID: <795edef9-2bd7-413f-bba2-04d569da63b6@kernel.dk>
-Date: Wed, 12 Jun 2024 10:54:29 -0600
+        d=1e100.net; s=20230601; t=1718211343; x=1718816143;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ezWpinzUl8erONkbD/y5khH8TAKVckebPB7LaqPHoHI=;
+        b=KD0xzFFY7uH6RZxv5KeCkEcAycdJs4mLEt1pt7ob1JOoMud6nbmn2sZxFNnpdoarhT
+         79aJNf0csJq0zK39W2IAoEtpedSWo1zNbX80v2kB/dbNNqSS4AJoDnWF+kxkUj54lWwi
+         Z5exaoendKIu17SRLy94z53GtWuZcGJVuHxW3HlTaF+1Ru8JtzZ/F+8+AwT4Uw22QKIV
+         HUj423HCjuCQdabBoSHsMu7af1zTjrehp74n1YOxCnfWqAr/GUnwOqAFfUcU72YGIWx8
+         YkYCGaQYQVqozW12JLoOyTVOAZsg1ik6QBQkiYstCEgfOCR5Ls9qRtQrZYbO7zUYM2KJ
+         j+SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrcOu9XTjTEv7JTfoPgJRbg1wPqitCVjkbp2DWe4clKvWG+kpJZCnsJeCiUnHfB8i3oMzMXeDoY0YorHmgvHXSUPJYPRVJ7WaUzUdtvPE/SaKIwPczHdSPf3CbWb4mP7y9+7drrvfL5o17Y+6C1zjKHSya3xrgal4J3xgEgSPzlvsPWpwDOg==
+X-Gm-Message-State: AOJu0YyOrn0k1fwud5GA6UPaJqc0YZN5Ucb/zOa0YToNFrEkaZdgvnqq
+	jAOrZsos33G7JJOz/0gfZ7zqfJ0kOzgz5Sa8M6qyqliMn1L7dtHO
+X-Google-Smtp-Source: AGHT+IEYN+NKFQ62L1iRJ2d8loPKcOYD0p4c8lW5UuYKg41ftwzbs0S8YP6Mp3I857PTvxFwJa+96w==
+X-Received: by 2002:a17:902:f54f:b0:1f7:82b:903c with SMTP id d9443c01a7336-1f83b6f650emr29949915ad.32.1718211342611;
+        Wed, 12 Jun 2024 09:55:42 -0700 (PDT)
+Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd75efb4sm124218495ad.14.2024.06.12.09.55.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 09:55:42 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: animeshagarwal28@gmail.com,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH] dt-bindings: serial: nxp,sc16is7xx: Add missing child node
+Date: Wed, 12 Jun 2024 22:24:55 +0530
+Message-ID: <20240612165457.103575-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] aoe: consolidate flags update to prevent race condition
-To: Gui-Dong Han <hanguidong02@outlook.com>, justin@coraid.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- baijiaju1990@gmail.com
-References: <ME3P282MB3617DAD141ACDD21170355E0C0C72@ME3P282MB3617.AUSP282.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ME3P282MB3617DAD141ACDD21170355E0C0C72@ME3P282MB3617.AUSP282.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/10/24 9:52 PM, Gui-Dong Han wrote:
-> In aoecmd_sleepwork, there is a race condition caused by two consecutive
-> writes to the 'flags' variable within a critical section. If a read 
-> operation occurs between these writes, an intermediate state may be 
-> read, potentially causing bugs.
-> 
-> To address this issue, the 'flags' variable should be updated in a 
-> single operation to ensure atomicity and prevent any intermediate state
-> from being read.
-> 
-> Fixes: 3ae1c24e395b ("[PATCH] aoe [2/8]: support dynamic resizing of AoE devices")
-> Signed-off-by: Gui-Dong Han <hanguidong02@outlook.com>
-> ---
->  drivers/block/aoe/aoecmd.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
-> index cc9077b588d7..37d556f019c0 100644
-> --- a/drivers/block/aoe/aoecmd.c
-> +++ b/drivers/block/aoe/aoecmd.c
-> @@ -897,8 +897,7 @@ aoecmd_sleepwork(struct work_struct *work)
->  		set_capacity_and_notify(d->gd, d->ssize);
->  
->  		spin_lock_irq(&d->lock);
-> -		d->flags |= DEVFL_UP;
-> -		d->flags &= ~DEVFL_NEWSIZE;
-> +		d->flags = (d->flags | DEVFL_UP) & ~DEVFL_NEWSIZE;
->  		spin_unlock_irq(&d->lock);
->  	}
+Add missing child node property clock-sc16is7xx to nxp,sc16is7xx.yaml. This
+fixes the following warning upon running make dtbs_check:
 
-It's modified under the lock, and any reader should do so as well. If
-not, there's a race regardless of your change or not.
+./arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dtb: serial@0:
+Unevaluated properties are not allowed ('clock-sc16is7xx' was unexpected)
+from schema $id: http://devicetree.org/schemas/serial/nxp,sc16is7xx.yaml#
 
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+---
+ .../bindings/serial/nxp,sc16is7xx.yaml        | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/serial/nxp,sc16is7xx.yaml b/Documentation/devicetree/bindings/serial/nxp,sc16is7xx.yaml
+index 5dec15b7e7c3..d572b7e76c39 100644
+--- a/Documentation/devicetree/bindings/serial/nxp,sc16is7xx.yaml
++++ b/Documentation/devicetree/bindings/serial/nxp,sc16is7xx.yaml
+@@ -70,6 +70,25 @@ properties:
+       minimum: 0
+       maximum: 1
+ 
++  clock-sc16is7xx:
++    type: object
++
++    additionalProperties: false
++
++    properties:
++      compatible:
++        const: fixed-clock
++
++      "#clock-cells":
++        const: 0
++
++      clock-frequency: true
++
++    required:
++      - compatible
++      - "#clock-cells"
++      - clock-frequency
++
+ required:
+   - compatible
+   - reg
 -- 
-Jens Axboe
+2.45.2
 
 
