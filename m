@@ -1,140 +1,128 @@
-Return-Path: <linux-kernel+bounces-211248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FA5904F04
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:20:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3ED3904F11
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9F101F24786
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:20:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C5122811C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EADE16DEA4;
-	Wed, 12 Jun 2024 09:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DA716D9D8;
+	Wed, 12 Jun 2024 09:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YhuAIrns"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oR9ID2QC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AACF16D9B4;
-	Wed, 12 Jun 2024 09:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0C016B72E;
+	Wed, 12 Jun 2024 09:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718183984; cv=none; b=iMWyeosn+8HJA0+Y691MUQZHhJ7ayi3+hYyChzGOR4srFxbCO7xVCFbCBSKjpa+ONGMi2NBQfgQcUiKqhMVYrC1dx0kzGQFrS3qe8dd4WWLCfQSrvAHzqNLG3YXcLB+x6wWIBgZDhcjiJB7BlYwmWAgU9UaYz5ELGD/oFrWJV6w=
+	t=1718184082; cv=none; b=upCour+BONAoD78oS7IVzfo22DpiAPv0Mse5iOpfI4I3lepD8IRKnsgJfuMWosN8oMJUnfe4X6XoElXTretahgRDOt/8kk7JTkNwkH9Y2/vGWZ2gEdcrWw6XODmzS8dKz3FtoVEryPN1767nJ+BzcMn6r6U5f0dTcx0YTPXA39g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718183984; c=relaxed/simple;
-	bh=bmMkBybVdlRXuSL4XA9lo8lnC6svSFGItaKVuLcJkF0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hWf+iIWa4hvSwIXqBY5CfZKCQLgE68s73XS2okLm21d/FC+fgV0BJT961rEq+2pXzmv9OBSEjfDKWPQPeKo3r45Hz3NhlUASFunprxeGZ7XUyhZuj9wxaJlDMcRKbyJAEilwonGXJDbltTnxPwOrIz2pHB2qq2krUwI11xyMJ7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YhuAIrns; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c315b569c8so1834758a91.0;
-        Wed, 12 Jun 2024 02:19:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718183982; x=1718788782; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EGUBPInBcqjkJDTSlAH7Iyv9YVrpwaUSLJ3S332pvLs=;
-        b=YhuAIrnsk7iMdOJ8AQYu/7YpVRgIDJJKEmdojVPcoj5H167/GGPyB8kQroi9iQ4ORM
-         Fd0+B+yBGRSJZXRj5r3hSIngAmWLLloK65Jl4meC3ZAaPb03vVMphnXc94eKh04HTASf
-         8WCSTr0J4LUhK7AAs6A3EgGMHsjpoZNW7kx1yHTVReQToz7LAIzSu6k9lJ9Zuj9fGzyl
-         +b03KrZTgglj260xl4pWUBC4Qr+uaPVmFQpuI2MXTQ8E/EiKANiq2by2drkFFjJEeZrj
-         VFLNl8InWZ4689qgz+eOuegWhRcp+EvRfS+5M/dMdA+aXh1B1WttE70I22cmLtAI0MRe
-         Kjsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718183982; x=1718788782;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EGUBPInBcqjkJDTSlAH7Iyv9YVrpwaUSLJ3S332pvLs=;
-        b=aPyQC49fBLcXYrAazAKvXBCsw+hW3PkDPb1rWe/fHhzUklALDfXcNMSSmX/DyNgAE1
-         iznMOpY2G9Zwjypnt4noo9/8Q7eypQ3bgD8t1oLvxcqZePPmZDxC5YKTlG3Sz+6IcxvS
-         S4kOBPx9pGnq5nQuwUtXHshR/0rCj2JHdWFr0qVxSEWxrDUpZg6N/SzNHuPqV3j/RJew
-         +n41jE7JUeMoIODrlbr7dMSAnhLoeDEqrc8l3srYaVga4U7KLE0Wk7C0bv3XPhH2PHBu
-         o7nzOhB7Ubsgc6dbYAoyx2BTQU7vZelvm+oAWHHOcB3YOpbw1Sjg6xALwEXMLAmX4mlV
-         DRNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGt4DCeH6bzuqiNCz82QsEuo1Mwh/Qvmne/PWvEJCAuYBzDly+nN+IcZNemEtdjpEsbsbyW+HsWZwDqV1b1iMW41HotqhWlY4DuCnj
-X-Gm-Message-State: AOJu0Yxc1vpUaUShbEB5Hmm36duB5e78Vrrgo+b8vRFOgL5mqZyd8TqB
-	xrG0bKs2NAfi2WH1y6pdbZRum3w6IAnNMfyKQgK4U5xb4WikYIhytmzVodkJajyZ4s6yh0U04pP
-	6c6R8OZPYNrCp9zqaWkIWXEfZ/Gc=
-X-Google-Smtp-Source: AGHT+IH1q0ktXxgThj72o0e7vp911jiO97cSgDTVrklASa+YOAu6YTcwrZ/pCIBoSOQauCdF7gt5YWbp7LU0ofqjrIo=
-X-Received: by 2002:a17:90b:2250:b0:2c4:b300:1b4c with SMTP id
- 98e67ed59e1d1-2c4b3001d74mr279112a91.24.1718183982484; Wed, 12 Jun 2024
- 02:19:42 -0700 (PDT)
+	s=arc-20240116; t=1718184082; c=relaxed/simple;
+	bh=EsJGTO6GTs/SJhhsrjmi78vqJQP8kwuegjOox6ZFSPQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GnWe0Gx49R3nBMJdrIOh8siIAv1XMuPNAWy4T7lX4F2cYX0iHJdPyzvaV9wQh9jUxXYgGwvPTG7I6ba4oL79jjwJoUK0ZSkIxUOA7kYLZut0lB997X0RqnlVKyQClTjc3aTYTbXc0LfDwc3iVqbWrhbqdwQeDv+e2cdt+I0hgxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oR9ID2QC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C8DqqC018413;
+	Wed, 12 Jun 2024 09:21:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=xRrvXtowPvfK9lgsi7WMphP5
+	miUwkL2U7ntiBaCwewY=; b=oR9ID2QCdZIzQD3/QaEFhZ+8DABB/ZG7/gGgA+8e
+	CXr5TCSFGAvjYLCcq1RgcKVQhatCBr488V2aJ5ssGIEahH0snBcZnWWyzogFgY+6
+	rGZaHonvgvY75LYvohargShjrHu6Qq7idQWLvOAbl6b5CkwNMCBQhclWdKjAqUkC
+	w3DJTCcNGEKSSexDDBGAs7UgKWpO/WZO7OQefOswiOtHXcMJ+ejowgRZN9SgenFl
+	+6OxprqVVqzuO3BesqeKKuFP/I06FJ+QbKmzQse9BXIF396IAHQiP0af4ecAAVnR
+	OExWsLUsBjSHwHl31dlYUA6cNmg9aFSi8vDbaQEKocH6Qw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm6bb0up-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 09:21:17 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C9LGRf016236
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 09:21:16 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 12 Jun 2024 02:21:13 -0700
+Date: Wed, 12 Jun 2024 14:51:09 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Komal Bajaj <quic_kbajaj@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: cache: qcom,llcc: Fix QDU1000
+ description
+Message-ID: <ZmlohTUi6Ppl4k6f@hu-mojha-hyd.qualcomm.com>
+References: <20240612062719.31724-1-quic_kbajaj@quicinc.com>
+ <20240612062719.31724-3-quic_kbajaj@quicinc.com>
+ <175bd8b0-83b8-45d0-99bd-1e9384fed3f7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612050257.3670768-1-masahiroy@kernel.org>
-In-Reply-To: <20240612050257.3670768-1-masahiroy@kernel.org>
-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Date: Wed, 12 Jun 2024 10:19:30 +0100
-Message-ID: <CAJwJo6YzYWiCcHCVstA5V9rtgJWYsGzb+97eGP0hF+FwfRAdiA@mail.gmail.com>
-Subject: Re: [PATCH] x86/kconfig: add as-instr64 macro to properly evaluate AS_WRUSS
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Yu-cheng Yu <yu-cheng.yu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <175bd8b0-83b8-45d0-99bd-1e9384fed3f7@kernel.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: -FPgc8fuaJdhcs7nza0EowJ3NumJrYYq
+X-Proofpoint-GUID: -FPgc8fuaJdhcs7nza0EowJ3NumJrYYq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_05,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ mlxlogscore=999 impostorscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120067
 
-On Wed, 12 Jun 2024 at 06:03, Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> Some instructions are only available on the 64-bit architecture.
->
-> Bi-arch compilers that default to -m32 need the explicit -m64 option
-> to evaluate them properly.
->
-> Fixes: 18e66b695e78 ("x86/shstk: Add Kconfig option for shadow stack")
-> Reported-by: Dmitry Safonov <0x7f454c46@gmail.com>
-> Closes: https://lore.kernel.org/all/20240612-as-instr-opt-wrussq-v2-1-bd950f7eead7@gmail.com/
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+On Wed, Jun 12, 2024 at 09:58:50AM +0200, Krzysztof Kozlowski wrote:
+> On 12/06/2024 08:27, Komal Bajaj wrote:
+> > QDU1000 DTSI comes with one LLCC0-7 base addresses. Updating
+> > dt-bindings accordingly.
+> > 
+> > Fixes: f0f99f371822 ("dt-bindings: cache: qcom,llcc: correct QDU1000 reg entries")
+> 
+> You are basically reverting without saying this is a revert and without
+> explanation.
+> 
+> What's happening with QDU1000? Why it is such a mess that DTS was
+> totally not matching bindings drivers and now suddenly we need to revert
+> commits?
 
-Thank you Masahiro, this works as well!
-I guess I went on too generic path without an actual requirement for that.
+I think, this happened because of the refactoring happened in LLCC driver
+and at the same time QDU1000 device tree change picked while other SoCs
+change was made like 
 
-Tested-by: Dmitry Safonov <0x7f454c46@gmail.com>
+e.g
+https://lore.kernel.org/r/20230314080443.64635-11-manivannan.sadhasivam@linaro.org
+https://lore.kernel.org/r/20230517-topic-kailua-llcc-v1-2-d57bd860c43e@linaro.org
 
-> ---
->
->  arch/x86/Kconfig.assembler | 2 +-
->  scripts/Kconfig.include    | 3 ++-
->  2 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/Kconfig.assembler b/arch/x86/Kconfig.assembler
-> index 59aedf32c4ea..6d20a6ce0507 100644
-> --- a/arch/x86/Kconfig.assembler
-> +++ b/arch/x86/Kconfig.assembler
-> @@ -36,6 +36,6 @@ config AS_VPCLMULQDQ
->           Supported by binutils >= 2.30 and LLVM integrated assembler
->
->  config AS_WRUSS
-> -       def_bool $(as-instr,wrussq %rax$(comma)(%rbx))
-> +       def_bool $(as-instr64,wrussq %rax$(comma)(%rbx))
->         help
->           Supported by binutils >= 2.31 and LLVM integrated assembler
-> diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
-> index 3ee8ecfb8c04..3500a3d62f0d 100644
-> --- a/scripts/Kconfig.include
-> +++ b/scripts/Kconfig.include
-> @@ -33,7 +33,8 @@ ld-option = $(success,$(LD) -v $(1))
->
->  # $(as-instr,<instr>)
->  # Return y if the assembler supports <instr>, n otherwise
-> -as-instr = $(success,printf "%b\n" "$(1)" | $(CC) $(CLANG_FLAGS) -Wa$(comma)--fatal-warnings -c -x assembler-with-cpp -o /dev/null -)
-> +as-instr = $(success,printf "%b\n" "$(1)" | $(CC) $(CLANG_FLAGS) $(2) -Wa$(comma)--fatal-warnings -c -x assembler-with-cpp -o /dev/null -)
-> +as-instr64 = $(as-instr,$(1),$(m64-flag))
->
->  # check if $(CC) and $(LD) exist
->  $(error-if,$(failure,command -v $(CC)),C compiler '$(CC)' not found)
-> --
-> 2.43.0
->
--- 
-             Dmitry
+
+However, this change missed for QDU1000, later f0f99f371822 ("dt-bindings: cache: qcom,llcc: correct QDU1000 reg entries")
+happened and now realized the driver does not work anymore with current
+binding and hence fixing was required.
+
+-Mukesh
 
