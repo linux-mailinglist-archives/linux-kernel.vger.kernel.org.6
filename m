@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-211829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C57F90578F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:56:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF3D9057B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D96D528C205
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:56:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FF9C1C22887
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCB8181B87;
-	Wed, 12 Jun 2024 15:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534EC1836D6;
+	Wed, 12 Jun 2024 15:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFJWoRfe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqjqf/Ca"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1E3180A77
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886C5181307;
+	Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718207757; cv=none; b=a8ecCOMLxFsaGVC8cEfjmCg79IkGagJUyGEuJWDFxqJqIJOp1P+X4L8GkV1ivkqomJVV8y0PJFlIUyHD6WPkhvOnMeD/CLK1Pk3klAynSXZ37eO0Ma47XJaaAU1SzDeeBevP/Ph7qmZNuo0viTRSMdKy2uR7cOw/9x18fSHB6Qo=
+	t=1718207757; cv=none; b=UNg1IxXD51BVZArbFmncYtLIRtsPHLb/H/9D8I337kl6NHyZJP550pFceb29xY5bG8POT1dKvcPVSUqb7StZp65g9ybUzt1dYhLxiA29awVBTX241ps7uxZh4ypuhV4nILyBU5Z5cby9dzDwWLXMvuJZnH373UucbdGRLQscj88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718207757; c=relaxed/simple;
-	bh=InqFS4sAhFS4WS5r2v86I1PxxzLrtej/dKx5aTUSI7I=;
+	bh=9xEyt5u+0FV1WdcJW4h5qgOf/lShmIROJbiYfAkCp2U=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=tMhh/OhyLNnAo6RrVZ9/PTn2pOjoOyZ/8Xw/DtnhY11GxspS84BDY6h4tmjW63Sc4jyUCf6DemQKihC2kgcaJteFShcEEHNj3EfhJEa7wdPZqQXEQ4rAwphZ/LZiD4/FMwKbkM0G5DhCkopy2gw1tBMFYmUKK42SmMJGte+1UMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GFJWoRfe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2F693C4AF48;
+	 In-Reply-To:To:Cc; b=oVJn532XkRL72YH3Jped07L9bwxjv/qVHTLnb8iEdfGreN6F/aHS6TaewL486uFZ07cXjhmMpqzOQuKq5wt/Z93oHDUiAhtgDawEf5kKYgdZ4PDbWZgDsUodl0bHIcm2gPFTHYvO3km18zW5WODwa6/2CaQoJkbrM+eZTLCCH04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqjqf/Ca; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4DAE8C4AF55;
 	Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1718207757;
-	bh=InqFS4sAhFS4WS5r2v86I1PxxzLrtej/dKx5aTUSI7I=;
+	bh=9xEyt5u+0FV1WdcJW4h5qgOf/lShmIROJbiYfAkCp2U=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=GFJWoRfekMfMC6zwSUbqWD52MqaKb2xn1cp3YFaIcDLXIf3dfm79BsBvq2f78C2W7
-	 5eIrd8bRlh7nC1ceKvNSt+m2R+Tx1zweMWfPvlSMcJO5T5Nyc7BmKzzOgRhT4IYhOP
-	 FVir2jWKu6YikbRhghh6d4Wl3+V4LOtaeJ0W23e8fi3/glAfJlwwZW5uAHC2ChUqD9
-	 ftc3PYUeZ2sH0Z1s5wECTqoUarvE2sjw+BH3E2ivq25GMSYP/0MBZCUxW3O0nFBDXB
-	 0wGRIze9QWU0qQJr6mOXZ6gyC1J3BoQsJoMmLvKHX9EDHhUl/SyThEZTjfWyij4emm
-	 sGf+TChXjLP3g==
+	b=tqjqf/CaZet/Ag6j0poWxHb7HiKEaaK5YcB+GOgaujeGm/CTqmmR7Dpwe85nwoQwx
+	 c+V3kMPqdBP5Myz+65pVxE9oMiIsFN+BmWMtmf5VxY3oM8ksEzKlEKW+DmWNbZ/ku2
+	 fRhru4Rg96vBywd/pCW4BzWif/u0wRSZeSnfWgdUxLunAclTnW6cs75Go5DXZcAw2Q
+	 g7YKYNh1qexFpttb3MBCSKwtSuupJSXB6BfjE+gPOUhLGtj6l+dWeCfIVQ3z3mNFcv
+	 XYN2CjEu7HC5eZuPCf3f7G3R1emFMsBGz9nJm11Ps9Q3llkAWvIl0kTwNfVqd5AdBU
+	 sDaj/b6+rK7QQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 15C6EC43619;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3FEEEC43616;
 	Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,56 +51,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix to do sanity check on
- F2FS_INLINE_DATA flag in inode during GC
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix return value of
+ f2fs_convert_inline_inode()
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <171820775708.32393.13954078092151830814.git-patchwork-notify@kernel.org>
+ <171820775725.32393.9431930880169031046.git-patchwork-notify@kernel.org>
 Date: Wed, 12 Jun 2024 15:55:57 +0000
-References: <20240521062318.976239-1-chao@kernel.org>
-In-Reply-To: <20240521062318.976239-1-chao@kernel.org>
+References: <20240603010745.2246488-1-chao@kernel.org>
+In-Reply-To: <20240603010745.2246488-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com,
+Cc: jaegeuk@kernel.org, syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 21 May 2024 14:23:17 +0800 you wrote:
-> syzbot reports a f2fs bug as below:
+On Mon,  3 Jun 2024 09:07:45 +0800 you wrote:
+> If device is readonly, make f2fs_convert_inline_inode()
+> return EROFS instead of zero, otherwise it may trigger
+> panic during writeback of inline inode's dirty page as
+> below:
 > 
-> ------------[ cut here ]------------
-> kernel BUG at fs/f2fs/inline.c:258!
-> CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
-> RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
-> Call Trace:
->  f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
->  f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
->  __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
->  f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
->  do_writepages+0x35b/0x870 mm/page-writeback.c:2612
->  __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
->  writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
->  wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
->  wb_do_writeback fs/fs-writeback.c:2264 [inline]
->  wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
->  process_one_work kernel/workqueue.c:3254 [inline]
->  process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
->  worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
->  kthread+0x2f2/0x390 kernel/kthread.c:388
->  ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  f2fs_write_single_data_page+0xbb6/0x1e90 fs/f2fs/data.c:2888
+>  f2fs_write_cache_pages fs/f2fs/data.c:3187 [inline]
+>  __f2fs_write_data_pages fs/f2fs/data.c:3342 [inline]
+>  f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3369
+>  do_writepages+0x359/0x870 mm/page-writeback.c:2634
+>  filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:397
+>  __filemap_fdatawrite_range mm/filemap.c:430 [inline]
+>  file_write_and_wait_range+0x1aa/0x290 mm/filemap.c:788
+>  f2fs_do_sync_file+0x68a/0x1ae0 fs/f2fs/file.c:276
+>  generic_write_sync include/linux/fs.h:2806 [inline]
+>  f2fs_file_write_iter+0x7bd/0x24e0 fs/f2fs/file.c:4977
+>  call_write_iter include/linux/fs.h:2114 [inline]
+>  new_sync_write fs/read_write.c:497 [inline]
+>  vfs_write+0xa72/0xc90 fs/read_write.c:590
+>  ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,1/2] f2fs: fix to do sanity check on F2FS_INLINE_DATA flag in inode during GC
-    https://git.kernel.org/jaegeuk/f2fs/c/fc01008c92f4
-  - [f2fs-dev,2/2] f2fs: fix to do sanity check on blocks for inline_data inode
-    https://git.kernel.org/jaegeuk/f2fs/c/c240c87bcd44
+  - [f2fs-dev] f2fs: fix return value of f2fs_convert_inline_inode()
+    https://git.kernel.org/jaegeuk/f2fs/c/a8eb3de28e7a
 
 You are awesome, thank you!
 -- 
