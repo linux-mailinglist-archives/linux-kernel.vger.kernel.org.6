@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-211986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C3E9059B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:13:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BD39059B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37B4CB259C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:11:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7278228339D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452DD181D15;
-	Wed, 12 Jun 2024 17:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74734181D19;
+	Wed, 12 Jun 2024 17:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="In6Mmb+3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvuCsqof"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E1117FAD4;
-	Wed, 12 Jun 2024 17:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F6A17FAC5;
+	Wed, 12 Jun 2024 17:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718212248; cv=none; b=eBGk8LRAuKbYAn4mlmTXW1sC8fifJlReswYbYfxytTFlMB0j7VSHEIRMwwxLA57R2saF5iHD/52wC39Zo4EexH7bIsHqJkoDq/gn0IZNy6Ba80S8VuckdaNIkKCGmK2X7PT0Eaomt4TsnlCSxQmTl5m2N53EVJ0erMNd49jGwUY=
+	t=1718212406; cv=none; b=SlQLSwLmwf3x43CgNopsNvcWtU/PvPI8psWJCkWssVfp2LELQ4NIWSNVeVtV4uXaO6mRfR8bwe/ZexuUR2fpFRh+R56lcW/T3I94LZmUveukS7j3oVKPJEKHPGKsemP2fMiJQV4xm+O/Zz5eM+krgr9zBCr84aX3RAcAPJEEDVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718212248; c=relaxed/simple;
-	bh=OYbNIEzcgyt4PTLKu/l3E+9Rm3ZUcPSmSFVbK+6op20=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ZBGm+VfH5OoqbMnK2u6t3lDsAXO6p3XSMw3ipgEE6aiRL28D6z6TRNp5Ggxehhu366oqcgU4EiH617cb8FuR8LLwaqmaPZM+C2Go+8ls6XdARzrijmEy/O9TNqxuzr5Jou/KbjoWCcsn7xyFtzf1cUJqE1Ulq+a8iW2j7kW+O8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=In6Mmb+3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CAbPQG002327;
-	Wed, 12 Jun 2024 17:10:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=70WnYq+J0sbTiP8arHwPgW
-	TppXauHCU2FCPTt2YNUZw=; b=In6Mmb+3jwtye/8BobEJb1xqqI3gOQ4eQubUVm
-	i259OlFDZmv4M/4sh7w8jojfshzkrOm3kP+3AJ9pbi+7bojGVYocs8bOhZTNGK//
-	Po+BFDylOxxXC+H0t92iBieGLrCKshyK2HC+YNGK5ZE2oKmVK0efIKqwPeHjLHpN
-	sonzpQQEXqTYtLpyXzg5V7DOUMML1jPZYpBBkAJTca8LmQX4T/1dAaf9CymhsC32
-	LSSFLr7loVObl/blbIWqNCRv3rIHdu0nTDBWnS8uZ6YWPJx1v48AHDQvrB0uYTnv
-	xItnuO8ub2jTpztEnncf0B2OwTgR4QKakDNWepVkt7xX4mzw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yq4s8j3mb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 17:10:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CHAgcr028105
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 17:10:42 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 10:10:41 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 10:10:40 -0700
-Subject: [PATCH] fbdev: kyro: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718212406; c=relaxed/simple;
+	bh=pVRtT8SspP4plGFGsoiJuLG4f22ItF8UkF281AhSXAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LFK+U5arXn8ZLZ/6huHbGY5SJSk2uTRsJuQk6qVCE8/ONQ88M2ZTxPdPizXKnJDvlodOPOgxybFcySA1/NfIVZH022tyTjAwLX95EHPQXCMAlCR8W55vb5lELlGTim1U4R1ko8KDNNHWtdS6lOUUsq9Kp1zfSdHJJt8Ld5REuoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvuCsqof; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8AF7C116B1;
+	Wed, 12 Jun 2024 17:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718212405;
+	bh=pVRtT8SspP4plGFGsoiJuLG4f22ItF8UkF281AhSXAs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YvuCsqofG/60U/lperzaXZZak8MxjEoz7fZaX+6v9Bdvw2DsGZ59AWi58+Wh1+MBz
+	 kNTNFkz1znOaog3FO/EJkM5AWK1lx3hVs8U1lbgR+1PbIrdxEljW7KZE1+8lZZjveZ
+	 F8ddli7UOc9fthmALrrrS6kDhL4opjqdOoIAzpmi9vVnjw85xUlowj+d4ffp401Pp2
+	 kvue7KHzIl74pItTm28gbmDe3mPrIDfjUEQYoKaAGzbzJK5WpbHzne5A+9mV4sXDgZ
+	 i7Ab17rp82HN5cw6cDyuJ2QcNPm6Q6L97DBlW5tjvkPGldbecdARf3MFcHy/ijFbWZ
+	 n7QY47uCBsYJQ==
+Date: Wed, 12 Jun 2024 18:13:21 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: joswang <joswang1221@gmail.com>, Thinh.Nguyen@synopsys.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Jos Wang <joswang@lenovo.com>
+Subject: Re: [PATCH v4, 3/3] usb: dwc3: core: Workaround for CSR read timeout
+Message-ID: <20240612-balmy-deviancy-7d68aca2173c@spud>
+References: <20240601092646.52139-1-joswang1221@gmail.com>
+ <20240612153922.2531-1-joswang1221@gmail.com>
+ <2024061203-good-sneeze-f118@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-video-fbdev-kyro-v1-1-978b1245e734@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAI/WaWYC/x3MSwrCMBAA0KuUWTvQhlCDVxEX+UztoE1kRkOl9
- O6mLt/mbaAkTAqXbgOhysolNwynDuLs852QUzOY3th+HAwuCZNwJVGsnKjgFBJVfHyloIvOOWP
- P0doAbXgJTbz+9+utOXglDOJznI/zyfmz4uL1TQL7/gM3FWk8jAAAAA==
-To: Helge Deller <deller@gmx.de>
-CC: <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hdWszw-4DstoNH4nFMzNSRqcSLeJCNwL
-X-Proofpoint-ORIG-GUID: hdWszw-4DstoNH4nFMzNSRqcSLeJCNwL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_08,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- spamscore=0 mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
- priorityscore=1501 clxscore=1015 mlxlogscore=885 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406120124
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iV5vRXpMzTX8/qdP"
+Content-Disposition: inline
+In-Reply-To: <2024061203-good-sneeze-f118@gregkh>
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/kyro/kyrofb.o
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+--iV5vRXpMzTX8/qdP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/video/fbdev/kyro/fbdev.c | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, Jun 12, 2024 at 07:04:28PM +0200, Greg KH wrote:
+> On Wed, Jun 12, 2024 at 11:39:22PM +0800, joswang wrote:
+> > From: Jos Wang <joswang@lenovo.com>
+> >=20
+> > This is a workaround for STAR 4846132, which only affects
+> > DWC_usb31 version2.00a operating in host mode.
+> >=20
+> > There is a problem in DWC_usb31 version 2.00a operating
+> > in host mode that would cause a CSR read timeout When CSR
+> > read coincides with RAM Clock Gating Entry. By disable
+> > Clock Gating, sacrificing power consumption for normal
+> > operation.
+> >=20
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Jos Wang <joswang@lenovo.com>
+> > ---
+> > v1 -> v2:
+> > - add "dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk" patch,
+> >   this patch does not make any changes
+> > v2 -> v3:
+> > - code refactor
+> > - modify comment, add STAR number, workaround applied in host mode
+> > - modify commit message, add STAR number, workaround applied in host mo=
+de
+> > - modify Author Jos Wang
+> > v3 -> v4:
+> > - modify commit message, add Cc: stable@vger.kernel.org
+>=20
+> This thread is crazy, look at:
+> 	https://lore.kernel.org/all/20240612153922.2531-1-joswang1221@gmail.com/
+> for how it looks.  How do I pick out the proper patches to review/apply
+> there at all?  What would you do if you were in my position except just
+> delete the whole thing?
 
-diff --git a/drivers/video/fbdev/kyro/fbdev.c b/drivers/video/fbdev/kyro/fbdev.c
-index af6c0581d3e2..08ee8baa79f8 100644
---- a/drivers/video/fbdev/kyro/fbdev.c
-+++ b/drivers/video/fbdev/kyro/fbdev.c
-@@ -811,4 +811,5 @@ module_exit(kyrofb_exit);
- #endif
- 
- MODULE_AUTHOR("STMicroelectronics; Paul Mundt <lethal@linux-sh.org>");
-+MODULE_DESCRIPTION("STG4000/Kyro/PowerVR 3 driver");
- MODULE_LICENSE("GPL");
+I usually wouldn't admit to it, cos it means more for Rob or Krzysztof
+to look at, but deleting the thread is exactly what I did for the
+dt-binding part of it that I got sent.
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-video-fbdev-kyro-8c888247c44b
+--iV5vRXpMzTX8/qdP
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmnXMQAKCRB4tDGHoIJi
+0l31AQCgnzGy8jovB3LsHP5I2sLvaVto6mJsRUkPndueYrwlvAD7Bdo6b+tRh5DM
+V4NutjrkmxkWXiKN+F6SyZXpkCGmHgw=
+=Sgty
+-----END PGP SIGNATURE-----
+
+--iV5vRXpMzTX8/qdP--
 
