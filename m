@@ -1,196 +1,158 @@
-Return-Path: <linux-kernel+bounces-212101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F95905B3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:41:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76373905B3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3911F2138B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:41:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F10D4B2270E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25F051C45;
-	Wed, 12 Jun 2024 18:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G0Wu1Wyg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8005C47F4B;
-	Wed, 12 Jun 2024 18:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551F84DA13;
+	Wed, 12 Jun 2024 18:41:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CD84F1F8;
+	Wed, 12 Jun 2024 18:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718217660; cv=none; b=COMbnZZeux00a1whm85+GN2U6VDad1qxBKCHIBv/0Nj6Zm5H1nRsLhAtLFBMp6q8Gz2cqVRgpu+ZaO+jA/8efvKwP1Ce5hqIK7cQYj8P2cHXqzNfNP9JrYvZvTL3d+sYzqNmPkHBF9L1UOQ3rkDH9mu75SFrmwb89FHvfFYF/DE=
+	t=1718217702; cv=none; b=lFIhXsKVvQCzTinFXpF4IXRR94mia9Q19LbktKsYg/BmPLISAfTSp04oixkeCRvaawTuZU4fUXiIF2iBx7QUVvF9cSWrofTo7pH4+ZAv6UHU6LZwP4uubu7cjWxA/fOHyxgCdaohon4UXZi0AAZRYUXygSmCZ3HkVQSFjdNSsDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718217660; c=relaxed/simple;
-	bh=XAl+xt3Ajhmcb21HlyPPHcVsPGjc8S1/jBgQhVYVmEU=;
+	s=arc-20240116; t=1718217702; c=relaxed/simple;
+	bh=Si0NRG+Ce+hMN4fzIgccyq5264dCl0c7kRaWJDnjgZ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ewI4a9ldahI18XWBP6L/bB+AHkySxEOHo3WS+0Lo/CNo7jUngd2hiGRyDq7zdD0vulFNw65cpmk4qscBuFBcuFOQ1vGfDEr/AkzG4l0ZAn9blddTBT72Q1r1wP9CgEzdpp+zHOJaJ5U+6j04P2MQ5tN/Jclv1VgLi0FEm3KU9l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G0Wu1Wyg; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718217658; x=1749753658;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=XAl+xt3Ajhmcb21HlyPPHcVsPGjc8S1/jBgQhVYVmEU=;
-  b=G0Wu1Wyg3wj7pZqyxMsue6vTaOvIgK3+fnLvQccJ3ualaiaaakiTIW23
-   wQiZiN4KMt+2wyoOdAc2cwudap+wpKqmE0fnTuCAIFh7a5f0gC8ELHT3H
-   2BzPER3f8xfgSNrjP8IwYvnSGP3LFtZQCR/zEjma9vRAlR7ZqwR5guEe8
-   PYtkcwJfyjsQ8uqrXVE1lXDfXh7DZAIkj+RxXLP6cRcFzlWgpM3+oobRl
-   JzxoVKPoS+hS407bgPw8WC45tcg+H18ZY4Y4uGDqXNY4Z+IWo4hLDBBSL
-   l5jl5NtBa9JL3bVZMEQ4mz+dZe2ASiH395cb0OvAqnzSdS3p0CxG5Lmu3
-   w==;
-X-CSE-ConnectionGUID: rnwNqCsmQCeBXv39BLg4Lw==
-X-CSE-MsgGUID: c9mb7vc0QsCiJzSHj/ADgw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="25634816"
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="25634816"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 11:40:57 -0700
-X-CSE-ConnectionGUID: sx2zuM+FThuWBS97fQNFKw==
-X-CSE-MsgGUID: vXAup4MLQlmh7pn/xxsj6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="44271382"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 11:40:55 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 8C3FA11FA94;
-	Wed, 12 Jun 2024 21:40:52 +0300 (EEST)
-Date: Wed, 12 Jun 2024 18:40:52 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Genes Lists <lists@sapience.com>,
-	linux-kernel@vger.kernel.org, mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com,
-	wentong.wu@intel.com, linux-media@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port
- nodes
-Message-ID: <ZmnrtIEla9R24egi@kekkonen.localdomain>
-References: <e9062095-b312-44df-a9e3-0b09f3ec9eff@redhat.com>
- <4b387b4d-f778-4891-9f07-df5fc0a093cd@redhat.com>
- <ZmmQLt7wB-yGQBTw@kekkonen.localdomain>
- <CAJZ5v0ii3WFQRPdfHeeW4M9kXSWDVxxxy02zThcf25mjNwqDAw@mail.gmail.com>
- <ZmmT56Cyvb2FCyav@kekkonen.localdomain>
- <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
- <ZmmY3he9vfWVWU3I@kekkonen.localdomain>
- <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
- <ZmnnFueL-Cgw5Eqp@kekkonen.localdomain>
- <CAJZ5v0gtK9yusimCOVV2dGkQWDwQ6=r=vfbgC-eE60Cg-5wk_Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jSzngqgxUdfeQy8mf3SR+RJ60p2kuLwEi/olJwgbubb7+4GdgK3ysm6ybYK2pAHR5rmlrBPMpqZ9nxxjorFnEcWcu6gO9LsvGnoesWPKMDs1957i0VWBuXNAykykEQuhak+98Yo/wZ1dW5hPcym2KE4DPygQ11QYG3CGd/8tUJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1DF31042;
+	Wed, 12 Jun 2024 11:42:03 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6240E3F64C;
+	Wed, 12 Jun 2024 11:41:37 -0700 (PDT)
+Date: Wed, 12 Jun 2024 19:41:32 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH 0/7] arm64 / x86-64: low-level code generation issues
+Message-ID: <Zmnr3BjBkV4JxsIj@J2N7QTR9R3.cambridge.arm.com>
+References: <20240610204821.230388-1-torvalds@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0gtK9yusimCOVV2dGkQWDwQ6=r=vfbgC-eE60Cg-5wk_Q@mail.gmail.com>
+In-Reply-To: <20240610204821.230388-1-torvalds@linux-foundation.org>
 
-Hi Rafael,
-
-On Wed, Jun 12, 2024 at 08:29:21PM +0200, Rafael J. Wysocki wrote:
-> Hi Sakari,
+On Mon, Jun 10, 2024 at 01:48:14PM -0700, Linus Torvalds wrote:
+> The last three patches are purely arm64-specific, and just fix up some
+> nasty code generation in the user access functions.  I just noticed that
+> I will need to implement 'user_access_save()' for KCSAN now that I do
+> the unsafe user access functions. 
 > 
-> On Wed, Jun 12, 2024 at 8:21 PM Sakari Ailus
-> <sakari.ailus@linux.intel.com> wrote:
-> >
-> > Hi Rafael,
-> >
-> > On Wed, Jun 12, 2024 at 03:06:53PM +0200, Rafael J. Wysocki wrote:
-> > > Hi Sakari,
-> > >
-> > > On Wed, Jun 12, 2024 at 2:47 PM Sakari Ailus
-> > > <sakari.ailus@linux.intel.com> wrote:
-> > > >
-> > > > Hi Rafael,
-> > > >
-> > > > On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysocki wrote:
-> > > > > > > > > I just hit the same problem on another Dell laptop. It seems that
-> > > > > > > > > all Dell laptops with IPU6 camera from the Tiger Lake, Alder Lake
-> > > > > > > > > and Raptor Lake generations suffer from this problem.
-> > > > > > > > >
-> > > > > > > > > So instead of playing whack a mole with DMI matches we should
-> > > > > > > > > simply disable ACPI MIPI DISCO support on all Dell laptops
-> > > > > > > > > with those CPUs. I'm preparing a fix for this to replace
-> > > > > > > > > the DMI matching now.
-> > > > > > > >
-> > > > > > > > DisCo for Imaging support shouldn't be dropped on these systems, and this
-> > > > > > > > isn't what your patch does either. Instead the ACPI graph port nodes (as
-> > > > > > > > per Linux specific definitions) are simply dropped, i.e. this isn't related
-> > > > > > > > to DisCo for Imaging at all.
-> > > > > > >
-> > > > > > > So it looks like the changelog of that patch could be improved, right?
-> > > > > >
-> > > > > > Well, yes. The reason the function is in the file is that nearly all camera
-> > > > > > related parsing is located there, not that it would be related to DisCo for
-> > > > > > Imaging as such.
-> > > > >
-> > > > > So IIUC the camera graph port nodes are created by default with the
-> > > > > help of the firmware-supplied information, but if that is defective a
-> > > > > quirk can be added to skip the creation of those ports in which case
-> > > > > they will be created elsewhere.
-> > > > >
-> > > > > Is this correct?
-> > > >
-> > > > Yes.
-> > >
-> > > So it would be good to add a comment to this effect to
-> > > acpi_nondev_subnode_extract() where acpi_graph_ignore_port() is
-> > > called.
-> > >
-> > > And there is a somewhat tangential question that occurred to me: If
-> > > the nodes are created elsewhere when acpi_graph_ignore_port() is true,
-> > > why is it necessary to consult the platform firmware for the
-> > > information on them at all?  Wouldn't it be better to simply always
-> > > create them elsewhere?
-> >
-> > Simple answer: for the same reason why in general system specific
-> > information comes from ACPI and not from platform data compiled into the
-> > kernel.
-> >
-> > Of course this is technically possible but it does not scale.
+> Anyway, that 'user_access_save/restore()' issue only shows up with
+> KCSAN.  And it would be a no-op thanks to arm64 doing SMAP the right way
+> (pet peeve: arm64 did what I told the x86 designers to do originally,
+> but they claimed was too hard, so we ended up with that CLAC/STAC
+> instead)... 
 > 
-> While I agree in general, in this particular case the platform data
-> compiled into the kernel needs to be present anyway, at least
-> apparently, in case the data coming from the platform firmware is
-> invalid.
-> 
-> So we need to do 3 things: compile in the platform data into the
-> kernel and expect the platform firmware to provide the necessary
-> information, and add quirks for the systems where it is known invalid.
-> 
-> Isn't this a bit too much?
+> Sadly that "no-op for KCSAN" would is except for the horrid
+> CONFIG_ARM64_SW_TTBR0_PAN case, which is why I'm not touching it.  I'm
+> hoping some hapless^Whelpful arm64 person is willing to tackle this (or
+> maybe make KCSAN and ARM64_SW_TTBR0_PAN incompatible in the Kconfig). 
 
-Isn't this pretty much how ACPI works currently?
+Given how badly things go when we get this wrong (e.g. TLB corruption), I'd
+like to say "just mark it incompatible", applying to all instrumentation, not
+just KCSAN.
 
-We can support systems that contain correct DSDT description of cameras
-without platform data. I was, until recently, only aware of Dell XPS 9315
-that has incorrect camera description and that based on recent findings
-seems to extend to other Dell systems with IPU6 (Hans's patches have the
-details).
+Any new microarchitecture since ~2014 has real HW PAN, and IIUC it's really
+only Cortex-{A53,A57,A72} that don't have it, so I think it'd be fair to say
+don't use sanitizers with SW PAN on those CPUs.
 
-Still this is not a reason to break systems that have correct camera
-description and expect the users to report them so they can be listed as
-such.
+Otherwise, I came up with the below (untested). It's a bit horrid because we
+could have instrumentation in the middle of __uaccess_ttbr0_{enable,disable}(),
+and so we aways need the ISB just in case, and TBH I'm not sure that we use
+user_access_{save,restore}() in all the places we should.
 
-> 
-> > On laptops shipped with Windows some additional information is also available
-> > from ACPI via custom objects but a lot of information is just hard coded into
-> > the IPU bridge as well as the INT3472 driver.
-> 
-> Well, that's how it goes.
+Mark.
 
-Yes, but is it desirable?
-
--- 
-Kind regards,
-
-Sakari Ailus
+diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
+index 30e2f8fa87a4..83301400ec4c 100644
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -92,6 +92,38 @@ static inline void __uaccess_ttbr0_enable(void)
+        local_irq_restore(flags);
+ }
+ 
++static inline unsigned long user_access_ttbr0_save(void)
++{
++       if (!system_uses_ttbr0_pan())
++               return 0;
++
++       /*
++        * If TTBR1 has an ASID other than the reserved ASID, then we have an
++        * active user TTBR0 or are part-way through enabling/disabling TTBR0
++        * access.
++        */
++       if (read_sysreg(ttbr1_el1) & TTBR_ASID_MASK) {
++               __uaccess_ttbr0_disable();
++               return 1;
++       }
++
++       /*
++        * Instrumentation could fire during __uaccess_ttbr0_disable() between
++        * the final write to TTBR1 and before the trailing ISB. We need an ISB
++        * to ensure that we don't continue to use the old ASID.
++        */
++       isb();
++       return 0;
++}
++
++static inline void user_access_ttbr0_restore(unsigned long enabled)
++{
++       if (!system_uses_ttbr0_pan() || !enabled)
++               return;
++
++       __uaccess_ttbr0_enable();
++}
++
+ static inline bool uaccess_ttbr0_disable(void)
+ {
+        if (!system_uses_ttbr0_pan())
+@@ -117,8 +149,20 @@ static inline bool uaccess_ttbr0_enable(void)
+ {
+        return false;
+ }
++
++static inline unsigned long user_access_ttbr0_save(void)
++{
++       return 0;
++}
++
++static inline void user_access_ttbr0_restore(unsigned long)
++{
++}
+ #endif
+ 
++#define user_access_save       user_access_ttbr0_save
++#define user_access_restore    user_access_ttbr0_restore
++
+ static inline void __uaccess_disable_hw_pan(void)
+ {
+        asm(ALTERNATIVE("nop", SET_PSTATE_PAN(0), ARM64_HAS_PAN,
 
