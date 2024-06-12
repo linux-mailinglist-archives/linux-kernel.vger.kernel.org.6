@@ -1,160 +1,171 @@
-Return-Path: <linux-kernel+bounces-212376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE67D905F27
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:24:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C98F905F30
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35561B233B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:24:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB1EB1F24AE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B456B12DDAD;
-	Wed, 12 Jun 2024 23:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A7412CDB1;
+	Wed, 12 Jun 2024 23:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmewgSg0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="KF9jPSBE"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E732212D766;
-	Wed, 12 Jun 2024 23:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BFE84A36;
+	Wed, 12 Jun 2024 23:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718234613; cv=none; b=fV/9wSFQFQkYYRKFQ31JOSVZa+MaUYA/qSWb1MGhvlLrbukS+MExpZ11t5T6ikcjG2b9J5uoJ2K4bvMaDK/yKKC22wxB9w+7d7hNsSFjqR636fjsoSf5vHoohop4pHnRTNysDCbdGcaHeigC3dPW80jYK4oF01n+TDxaUH+7HDE=
+	t=1718234794; cv=none; b=VDDH/CSzUhLqCUlGimQxxUGIT5IzUdxx5cf1qu3hwXWw0skSv4Dyesa/rDJ9hkipJRNj1azq/C7foGba9z/r9xhjvYipwtnYfvmyp3sOuE5CeBU5ggbBlhxe9PoekZhGA/7iXI/cn71ySX1bCEXqERns2fQgkUe9Ap7k+ol7E3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718234613; c=relaxed/simple;
-	bh=osO3snio/Biz5ce4MVIPMmlqg+lPXsWqRxu6r/Yyymw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lhk9PGwb5fIxLdMkdD8AprQHgNwHcgUGQ6CAh7FqLlY0NFfHYVGq3z5fTlUmrC/7VmsCsbEcT74CXi+1DE/fVv5GJjf+zMPaGyIoUSytXBl0hC26Yernp3UQsZEMiNph7JvLUOGsunvTr7yM4Ts8mL9iox4O7Jk98z47W9xNmDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmewgSg0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D63AC116B1;
-	Wed, 12 Jun 2024 23:23:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718234612;
-	bh=osO3snio/Biz5ce4MVIPMmlqg+lPXsWqRxu6r/Yyymw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tmewgSg0pq7QujPTIHRe74qBY+8RJaYeSdQHcsSP9Kc8LrJVFB4Jtw8p9gNII/uix
-	 zGYR33D3z6eWobQ+5cW99F+yIIoeVC3eQXR8ryOPZzB21Dfi1M5G5COp914wDR3Hk9
-	 A7qQO0Gk2HPh/FzVL1Xlko4CAXc7vLW4uAYJLCHuCQLaB/Wp7vWE93HD+d66hFgljD
-	 oj+S+47+c5UO93bGqOYcIIVnHM4pJQwlNecfW1Y1Gs5bHw1ZdouDpsTcmeYxm3Rbw0
-	 nylKNCRkhAVS1vK0TTNd7CEsyu6gkL1IdkHfdwMsXu6pmEKJqs1EYfZVKuxhjHiROp
-	 JRHS3lJLPeBiQ==
-Date: Wed, 12 Jun 2024 16:23:31 -0700
-From: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Erick Archer <erick.archer@outlook.com>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Matthew Wilcox <mawilcox@microsoft.com>, x86@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 0/3] Hardening perf subsystem
-Message-ID: <202406121530.D9DB956C8@keescook>
-References: <AS8PR02MB7237F5BFDAA793E15692B3998BFD2@AS8PR02MB7237.eurprd02.prod.outlook.com>
- <202406101010.E1C77AE9D@keescook>
- <20240610200544.GY8774@noisy.programming.kicks-ass.net>
- <202406101438.BC43514F@keescook>
- <20240611075542.GD8774@noisy.programming.kicks-ass.net>
- <202406121148.688240B@keescook>
- <20240612220821.GA18881@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1718234794; c=relaxed/simple;
+	bh=aLnUBqPtUeBv32NbeLVNmgLi8ew95brTEfYYJlJWmEM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=ISiAlt9ABRICoh5LdBwS5KuBRABhU4CLcwm/+o0dkkmiNGUwmr0Ts5z9+aNuD7qm4lavwhbyihZ1GwfJgxpwqCQKiJbg30oS88+3YtMlsc4Uis3iwJcrIccbuQfjnUVV0hmP0/Pdv69JDOhyq18LF1t4A+w/jFOo5/0BAdo07AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=KF9jPSBE; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45CNPftp3933198
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 12 Jun 2024 16:25:42 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45CNPftp3933198
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024051501; t=1718234743;
+	bh=SaATviG6Z81UgEioCPxN9VS+E0yDGnphYvOlmf9J1es=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=KF9jPSBE0HgW6q2T+PnT8ZrKRIq/1w1yA2lERYUpTk0mvJnKTRoZ/s6e2WTNmsBvu
+	 bane9gvKiCqNfsQZu6Zou2esQBN+Se+uKDSjd+lVt4YqhJA97uEMT0Xz1JMwHrRc78
+	 BYsmaRDenE593mlF1op7w5q31M3WCf/+F9N1ls4tDCI25tuNiqNNCi2wTn8F8ltiMI
+	 Do+1jRWckpsiW09/FKMgRroup8rCGQZ8m5s6WJrQ2LWwRFWbUBN9k2XKbwbIs0DwyR
+	 v4X8SRVrEL48m/RSHe7ElSxkO31u/qnXEYCL2t9OL1WU/nPKYGs+PAc/3EkMw2ZV4U
+	 HFEVTl5DhqKsg==
+Date: Wed, 12 Jun 2024 16:25:41 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Andrew Cooper <andrew.cooper3@citrix.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+CC: Borislav Petkov <bp@alien8.de>, Nikolay Borisov <nik.borisov@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "Kalra, Ashish" <ashish.kalra@amd.com>,
+        Sean Christopherson <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Baoquan He <bhe@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+        linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCHv11_05/19=5D_x86/relocate=5Fkern?=
+ =?US-ASCII?Q?el=3A_Use_named_labels_for_less_confusion?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <addbd29a-66dc-4180-ae45-ef038c2249d1@citrix.com>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com> <20240528095522.509667-6-kirill.shutemov@linux.intel.com> <1e1d1aea-7346-4022-9f5f-402d171adfda@suse.com> <t3zx4f6ynru7qp4oel4syza2alcuxz7q7hxqgf2lxusgobnsnh@vtnecqrsxci5> <748d3b70-60b4-44e0-bd81-9117f1ab699d@zytor.com> <20240604091503.GQZl7bF14qTSAjqUhN@fat_crate.local> <ehttxqgg7zhbgty5m5uxkduj3xf7soonrzfu4rfw7hccqgdydl@afki66pnree5> <5c8b3ee9-64c2-4ff3-9cca-ba2672b9635e@zytor.com> <nxllu5wfhvfvorxbbt6ll3lc2mr47lw7sduszfawhtryqgtyrd@3qgtci7ocah6> <addbd29a-66dc-4180-ae45-ef038c2249d1@citrix.com>
+Message-ID: <587E6BF3-4200-442D-95F2-156A96F6FDD8@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612220821.GA18881@noisy.programming.kicks-ass.net>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 12:08:21AM +0200, Peter Zijlstra wrote:
-> On Wed, Jun 12, 2024 at 12:01:19PM -0700, Kees Cook wrote:
-> > I'm happy to take patches. And for this bikeshed, this would be better
-> > named under the size_*() helpers which are trying to keep size_t
-> > calculations from overflowing (by saturating). i.e.:
-> > 
-> > 	size_add_mult(sizeof(*p), sizeof(*p->member), num)
-> 
-> Fine I suppose, but what if we want something not size_t? Are we waiting
-> for the type system extension?
+On June 12, 2024 4:06:07 PM PDT, Andrew Cooper <andrew=2Ecooper3@citrix=2Ec=
+om> wrote:
+>On 12/06/2024 10:22 am, Kirill A=2E Shutemov wrote:
+>> On Tue, Jun 11, 2024 at 11:26:17AM -0700, H=2E Peter Anvin wrote:
+>>> On 6/4/24 08:21, Kirill A=2E Shutemov wrote:
+>>>>  From b45fe48092abad2612c2bafbb199e4de80c99545 Mon Sep 17 00:00:00 20=
+01
+>>>> From: "Kirill A=2E Shutemov" <kirill=2Eshutemov@linux=2Eintel=2Ecom>
+>>>> Date: Fri, 10 Feb 2023 12:53:11 +0300
+>>>> Subject: [PATCHv11=2E1 06/19] x86/kexec: Keep CR4=2EMCE set during ke=
+xec for TDX guest
+>>>>
+>>>> TDX guests run with MCA enabled (CR4=2EMCE=3D1b) from the very start=
+=2E If
+>>>> that bit is cleared during CR4 register reprogramming during boot or
+>>>> kexec flows, a #VE exception will be raised which the guest kernel
+>>>> cannot handle it=2E
+>>>>
+>>>> Therefore, make sure the CR4=2EMCE setting is preserved over kexec to=
+o and
+>>>> avoid raising any #VEs=2E
+>>>>
+>>>> The change doesn't affect non-TDX-guest environments=2E
+>>>>
+>>>> Signed-off-by: Kirill A=2E Shutemov <kirill=2Eshutemov@linux=2Eintel=
+=2Ecom>
+>>>> ---
+>>>>   arch/x86/kernel/relocate_kernel_64=2ES | 17 ++++++++++-------
+>>>>   1 file changed, 10 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/arch/x86/kernel/relocate_kernel_64=2ES b/arch/x86/kernel=
+/relocate_kernel_64=2ES
+>>>> index 085eef5c3904=2E=2E9c2cf70c5f54 100644
+>>>> --- a/arch/x86/kernel/relocate_kernel_64=2ES
+>>>> +++ b/arch/x86/kernel/relocate_kernel_64=2ES
+>>>> @@ -5,6 +5,8 @@
+>>>>    */
+>>>>   #include <linux/linkage=2Eh>
+>>>> +#include <linux/stringify=2Eh>
+>>>> +#include <asm/alternative=2Eh>
+>>>>   #include <asm/page_types=2Eh>
+>>>>   #include <asm/kexec=2Eh>
+>>>>   #include <asm/processor-flags=2Eh>
+>>>> @@ -145,14 +147,15 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+>>>>   	 * Set cr4 to a known state:
+>>>>   	 *  - physical address extension enabled
+>>>>   	 *  - 5-level paging, if it was enabled before
+>>>> +	 *  - Machine check exception on TDX guest, if it was enabled befor=
+e=2E
+>>>> +	 *    Clearing MCE might not be allowed in TDX guests, depending on=
+ setup=2E
+>>>> +	 *
+>>>> +	 * Use R13 that contains the original CR4 value, read in relocate_k=
+ernel()=2E
+>>>> +	 * PAE is always set in the original CR4=2E
+>>>>   	 */
+>>>> -	movl	$X86_CR4_PAE, %eax
+>>>> -	testq	$X86_CR4_LA57, %r13
+>>>> -	jz	=2ELno_la57
+>>>> -	orl	$X86_CR4_LA57, %eax
+>>>> -=2ELno_la57:
+>>>> -
+>>>> -	movq	%rax, %cr4
+>>>> +	andl	$(X86_CR4_PAE | X86_CR4_LA57), %r13d
+>>>> +	ALTERNATIVE "", __stringify(orl $X86_CR4_MCE, %r13d), X86_FEATURE_T=
+DX_GUEST
+>>>> +	movq	%r13, %cr4
+>>> If this is the case, I don't really see a reason to clear MCE per se a=
+s I'm
+>>> guessing a machine check here will be fatal anyway? It just changes th=
+e
+>>> method of death=2E
+>> Andrew had a strong opinion on method of death here=2E
+>>
+>> https://lore=2Ekernel=2Eorg/all/1144340e-dd95-ee3b-dabb-579f9a65b3c7@ci=
+trix=2Ecom
+>
+>Not sure if I intended it to come across that strongly, but given a
+>choice, the !CR4=2EMCE death is cleaner because at least you're not
+>interpreting garbage and trying to use it as a valid IDT=2E
+>
+>~Andrew
 
-Because of C's implicit promotion/truncation, we can't do anything
-sanely with return values of arbitrary type size; we have to capture the
-lvalue type somehow so the checking can happen without C doing silent
-garbage.
-
-> The saturating thing is relying in the allocators never granting INT_MAX
-> (or whatever size_t actually is) bytes?
-
-The max of size_t is ULONG_MAX, but yes, most of the allocators will
-refuse >INT_MAX, but I think vmalloc() is higher, but certainly not
-SIZE_MAX, which is the entire virtual memory space. ;)
-
-The saturating thing is two-fold: that we never wrap around SIZE_MAX,
-and that the allocator will refuse a SIZE_MAX allocation.
-
-> > LOL. It's basically doing compile-time (__builtin_object_size) and
-> > run-time (__builtin_dynamic_object_size) bounds checking on destination
-> > (and source) object sizes, mainly driven by the mentioned builtins:
-> > https://gcc.gnu.org/onlinedocs/gcc/Object-Size-Checking.html
-> 
-> Right, I got that far. I also read most of:
-> 
->   https://discourse.llvm.org/t/rfc-enforcing-bounds-safety-in-c-fbounds-safety/70854
-
-Oh wow, that's serious extra credit. :) It'll also probably be a while
-before most of that stuff is even landed in Clang, much less implemented
-in GCC. What we _do_ have is the "counted_by" attribute. This was added
-to Clang a little while ago and just landed last week in GCC for GCC 15.
-
-> But none of that is showing me generated asm for the various cases. As
-> such, I don't consider myself informed enough.
-
-Gotcha. For the compile-time stuff it's all just looking at
-known-at-compile-time sizes. So for something like this, we get a
-__compiletime_warning() emitted:
-
-	const char src[] = "Hello there";
-	char dst[10];
-
-	strscpy(dst, src); /* Compiler yells since src is bigger than dst. */
-
-For run-time checks it's basically just using the regular WARN()
-infrastructure with __builtin_dynamic_object_size(). Here's a simplified
-userspace example with assert():
-
-https://godbolt.org/z/zMrKnMxn5
-
-The kernel's FORTIFY_SOURCE is much more complex in how it does the
-checking, how it does the reporting (for helping people figure out what's
-gone weird), etc.
-
-> > Anyway! What about the patch that takes the 2 allocations down to 1?
-> > That seems like an obvious improvement.
-> 
-> Separate it from the struct_size() nonsense and Cc the author of that
-> code (Sandipan IIRC) and I might just apply it.
-
-Okay, thanks!
-
--Kees
-
--- 
-Kees Cook
+Zorch the IDT if it isn't valid?
 
