@@ -1,166 +1,155 @@
-Return-Path: <linux-kernel+bounces-212300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF3F905E02
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:53:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C3C9905E05
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34ADC284BA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:53:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB11B1F21EE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979AD12A16D;
-	Wed, 12 Jun 2024 21:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E14F82488;
+	Wed, 12 Jun 2024 21:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fB8clxDM"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kofaZ7Hh"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6230631A67
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 21:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF4E129E94;
+	Wed, 12 Jun 2024 21:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718229185; cv=none; b=sT3E4btmb3Aqd36D07tBrHiP1G6j/EN4LC9Wr9LELlwU8yCtJp1zgBgmJHJPI6ujH1KPIr9kbr+Vh1VAukGzgjEdRuAY+2OwdKddBsxnKmFGomuwhkkgNiwfO8JT63YPb3k1UfBKOKjOq+Xmk76vBV7teZYtrjF1k4gkfSIcKA8=
+	t=1718229213; cv=none; b=KFwssRwTGRfoh+3AcMvIiEASqr0QHZWa/dPMKhxn6DxMnK5V09ILmir7sTfGwyQ2Wpfzpr4wpUKanrv8enulg0ngOXsihZHeaBsAtw7vPoq7nKg2AOErrSXgSuB4BHDXvNb4LoiGklqaH691RoXcysB/sTULfUIRrAeSy28ujq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718229185; c=relaxed/simple;
-	bh=wusK4kc1FS+vHMjVpzL07yrjIW2g3Y3LcvsX2vuPaps=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KGv2UpslBnfnWQKX5GFso+1AkvCJTQ8f/avMgV0v+IkugeIKcd/3o23juSvjS+oqJsEgF7fOUi9K5Z74ELXRxDHe9rodkSPJ0wOvJ9CYyWtginLu4HDmbZ79sATFM+ipNG7bOV6KE0Q38gl613/g853n7qVcAFXye2oxmXSmdk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fB8clxDM; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2c24109ad3fso235342a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:53:03 -0700 (PDT)
+	s=arc-20240116; t=1718229213; c=relaxed/simple;
+	bh=mcJjYHjV++hIvIdWkHyHOgdpiusnN+4IJjaQnk6MVdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PKt0/pcFoc7C9k1hqk3fvi0bAvHQt25PImI3YjNpcCcCVkNmiUPG8XdBrPX8BfSCZW/eQfvdFlcR/LPkoIsaBgwndbD8gEfNSw0TvX5ysrNFLvo5YnUXP5NSVnRZiFEF68saPxFvFDERJXzWXSqw3hfzCCrDVNp4xjDALUfQpso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kofaZ7Hh; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4217926991fso3908165e9.3;
+        Wed, 12 Jun 2024 14:53:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718229183; x=1718833983; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xc5E1XEOoOO6m8at8GOziJ7pGWON/gur52mgUSEksH0=;
-        b=fB8clxDMfQn1hS6Z2I1gxumHpNNQjaVGN3szaluSHppL6hXntf8uxhdY9Js8lzGccg
-         ggTTh5Z1SsyDNOSmoGSmxBnNJ7RqDqJPK1LD7+6QT480YauemTIvdv4pgjpMoybFHuby
-         jIsATDnv+s5qGaXHuD8ZLAX43k5JNhmEfJzUM1mCvIhBAOyY1rWbTaPKvm5XNxf5AU0E
-         ZzCe1ivh/IQrQhiiQ0RqvMIZvDjDkoAMW3hgwyWOuFsz2E8VFIAbZJCvjEK8qBfIYc4H
-         5UB94XtiRSqYWhJv6kMFgHQh6e/d2upyP2zj/BW+PzWk66CpJ5p+jF3Xu8FegBkuKfTB
-         y5vw==
+        d=gmail.com; s=20230601; t=1718229210; x=1718834010; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9pxDQ2xml58KGU++S3MziyUsd0pYxlkTij9Nt+5fCkQ=;
+        b=kofaZ7Hh3eDkmlr2KpMuNhnS+PA02UIOOXea7GEar+k1UZeq22MPbgQNSJVRqqcx2I
+         cLkbJbCFNL18XVWtoCSS/GzQZU/QRlE1qU0i5XwcC9fKZhdB9tUeyF5SkLgziKsFcm5W
+         NJTVjYEplT8ZNTr+0oYqX+Ej/gVAqz5n4xX2ETwWOXC+Qd3hX/lKRL9efoeyCNVltn+s
+         ZWj3J1J2uJrCJpAFz6hzYGJS0iUMoVUzUvFtLbNGLExTlon3LFCanRNzucdB61SxLw+9
+         UX43ERM7HuCRS9TgMbZQ4OxlCe48foVoPAg8bMFi+KhRZVXVJFBMRtcxWHDDvxWotDfz
+         qwJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718229183; x=1718833983;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xc5E1XEOoOO6m8at8GOziJ7pGWON/gur52mgUSEksH0=;
-        b=L24c5M4OUuJ2iaOnlk4kqPDJK674noBlo/IZ3OBpBGU+kEthvbNfgM89x6f7fEileH
-         /LBCgjqjF4COFNlMzZBFpZ37mOLrjknzHOeDtzRKvs48SW6NQ0MBqDCi/Vtn40UJvN41
-         Bl3eaf9nUOWNMnga4/MpuJuwftqUSdMz7+VTerFHza6wXHWspt62HJq+vbEsQSNZXcys
-         4AAE9cN7qRnDD8FxNsaDZfPQd2EFPf4Ep3wJBt11wtwvZ1+3XgzlaW2ryMEEfrjegQs6
-         KvSSJHB5eY7kdBHOMZkvX6MezY0ymF/mzNu8YN4p8S/5THh7Q5DMN5qgeK5Pb7iHT1az
-         pqDQ==
-X-Gm-Message-State: AOJu0YzLYz3TFf3oxXK0QlAy0rkpikBROo4ciTVEjzbP1UhJfK4dyrRH
-	guP+IHHvrUIXexD+qUowfanMLkBoLquYMkmMjYXWpvV7f69E5ZWhmvpsWrQK8NBip093BXqxm3u
-	2cg==
-X-Google-Smtp-Source: AGHT+IHbT5hnMTXfHXSrzZVzfM2ddDy1yTfVBw9Mcqt2XJ++35TEAMcRNhA5paiMB3+XTpPwciNXAbVip6c=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:62c9:b0:2c2:c65f:52dc with SMTP id
- 98e67ed59e1d1-2c4a770e8f6mr8577a91.6.1718229182634; Wed, 12 Jun 2024 14:53:02
- -0700 (PDT)
-Date: Wed, 12 Jun 2024 14:53:01 -0700
-In-Reply-To: <20240207172646.3981-10-xin3.li@intel.com>
+        d=1e100.net; s=20230601; t=1718229210; x=1718834010;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9pxDQ2xml58KGU++S3MziyUsd0pYxlkTij9Nt+5fCkQ=;
+        b=UyciX6bT6joU/ap3tWyTZFNkbi0/lPXjRTN+GH2gTsXr3Hv6cBgIc6skvOO84JEFkt
+         Qgaqqo/CsZk62wSCE9XKgEMIQsSIk2uSEhb1kMdu62GeeJaoDP5fLRccOk+gzndaJUwd
+         oVHRHVvDGqynw8evOAOgVU2jRsk1GCN8Hry2vtzb34vUX3PsjZ9MFTSG0P2v2IVfrus2
+         tt5O5gTRLbT2EQwCSkAtfylavPnJrB8eea52JgLTP/ONTQr8OPld/8W45XRbXf8AjFEW
+         4TIg+pw9PGlZU1Dw6HIL3bgpEtELlSeOdGZFmuY/5jCWt4CAHYst2KPWpFDnuOPKIGi5
+         bWdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvnBxM5QwdkCqTac45gynk5iaOhx7LZ6StHgbXIR9W4dyffTyU5s5P9kMT12ey8VCWe4/Fm+oSxanLc4Ps50kOVytOO2vIT2kfjzkHIBtHb1W/L6zg5+1nr6j4vAeyCxBhX6LEhg5/zdcjK0ZXHy9D83vNAqVJ6ggYoH2MvBk+XOjYoA==
+X-Gm-Message-State: AOJu0YxhMk9FW8TGnJGITK7y1iqWQU9VJoQnJvUBSK5mbXoXvVL8P8B6
+	FuxCYH4S1bjOeRCPamyXduk6/kIJYdTENMGa6Hiph8E1YApyqBKEY2Ytkg==
+X-Google-Smtp-Source: AGHT+IFqIoOKC1lqkvIoSrutwet1tzBSEOu4Q+/c77rzZJZWz+OjyJm4fZX/gA7it5X1tJrM35WvNQ==
+X-Received: by 2002:a05:600c:358b:b0:422:6765:2726 with SMTP id 5b1f17b1804b1-422865ad68fmr27777105e9.30.1718229209883;
+        Wed, 12 Jun 2024 14:53:29 -0700 (PDT)
+Received: from [192.168.0.5] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35ef5d2e73dsm17831029f8f.16.2024.06.12.14.53.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 14:53:29 -0700 (PDT)
+Message-ID: <0b24c10f-1c20-4bd1-958b-dbf89cb28792@gmail.com>
+Date: Thu, 13 Jun 2024 00:54:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-10-xin3.li@intel.com>
-Message-ID: <ZmoYvcbFBPJ5ARma@google.com>
-Subject: Re: [PATCH v2 09/25] KVM: VMX: Switch FRED RSP0 between host and guest
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin3.li@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	shuah@kernel.org, vkuznets@redhat.com, peterz@infradead.org, 
-	ravi.v.shankar@intel.com, xin@zytor.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] net: wwan: mhi: make default data link id
+ configurable
+To: Slark Xiao <slark_xiao@163.com>, manivannan.sadhasivam@linaro.org
+Cc: loic.poulain@linaro.org, johannes@sipsolutions.net,
+ quic_jhugo@quicinc.com, netdev@vger.kernel.org, mhi@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240612093941.359904-1-slark_xiao@163.com>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <20240612093941.359904-1-slark_xiao@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 07, 2024, Xin Li wrote:
-> Switch MSR_IA32_FRED_RSP0 between host and guest in
-> vmx_prepare_switch_to_{host,guest}().
-> 
-> MSR_IA32_FRED_RSP0 is used during ring 3 event delivery only, thus
-> KVM, running on ring 0, can run safely with guest FRED RSP0, i.e.,
-> no need to switch between host/guest FRED RSP0 during VM entry and
-> exit.
-> 
-> KVM should switch to host FRED RSP0 before returning to user level,
-> and switch to guest FRED RSP0 before entering guest mode.
+Hello Slark, Manivannan,
 
-Heh, if only KVM had a framework that was specifically designed for context
-switching MSRs on return to userspace.  Translation: please use the user_return_msr()
-APIs.
+On 12.06.2024 12:39, Slark Xiao wrote:
+> For SDX72 MBIM device, it starts data mux id from 112 instead of 0.
+> This would lead to device can't ping outside successfully.
+> Also MBIM side would report "bad packet session (112)".
+> So we add a link id default value for these SDX72 products which
+> works in MBIM mode.
 
-> Signed-off-by: Xin Li <xin3.li@intel.com>
-> Tested-by: Shan Kang <shan.kang@intel.com>
+The patch itself looks good to me except a tiny nitpick (see below). 
+Meanwhile, I can not understand when we should merge it. During the V1 
+discussion, It was mentioned that we need this change specifically for 
+Foxconn SDX72 modem. Without any actual users the configurable default 
+data link id is a dead code.
+
+According to the ARM MSM patchwork [1], the main Foxconn SDX72 
+introducing patch is (a) not yet merged, (b) no more applicable. So, as 
+far as I understand, it should be resend. In this context, a best way to 
+merge the modem support is to prepend the modem introduction patch with 
+these changes forming a series:
+1/3: bus: mhi: host: Import mux_id item
+2/3: net: wwan: mhi: make default data link id configurable
+3/3: bus: mhi: host: Add Foxconn SDX72 related support
+
+And merge the series as whole, when everything will be ready. This will 
+help us to avoid partially merged work and will keep the modem support 
+introduction clear.
+
+Manivannan, could you share the main [1] Foxconn SDX72 introduction 
+patch status, and your thoughts regarding the merging process?
+
+
+1. 
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20240520070633.308913-1-slark_xiao@163.com/
+
+> Signed-off-by: Slark Xiao <slark_xiao@163.com>
 > ---
+>   drivers/net/wwan/mhi_wwan_mbim.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Changes since v1:
-> * Don't use guest_cpuid_has() in vmx_prepare_switch_to_{host,guest}(),
->   which are called from IRQ-disabled context (Chao Gao).
-> * Reset msr_guest_fred_rsp0 in __vmx_vcpu_reset() (Chao Gao).
-> ---
->  arch/x86/kvm/vmx/vmx.c | 17 +++++++++++++++++
->  arch/x86/kvm/vmx/vmx.h |  2 ++
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index b7b772183ee4..264378c3b784 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -1337,6 +1337,16 @@ void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
->  	}
->  
->  	wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
-> +
-> +	if (guest_can_use(vcpu, X86_FEATURE_FRED)) {
-> +		/*
-> +		 * MSR_IA32_FRED_RSP0 is top of task stack, which never changes.
-> +		 * Thus it should be initialized only once.
+> diff --git a/drivers/net/wwan/mhi_wwan_mbim.c b/drivers/net/wwan/mhi_wwan_mbim.c
+> index 3f72ae943b29..c731fe20814f 100644
+> --- a/drivers/net/wwan/mhi_wwan_mbim.c
+> +++ b/drivers/net/wwan/mhi_wwan_mbim.c
+> @@ -618,7 +618,8 @@ static int mhi_mbim_probe(struct mhi_device *mhi_dev, const struct mhi_device_id
+>   	mbim->rx_queue_sz = mhi_get_free_desc_count(mhi_dev, DMA_FROM_DEVICE);
+>   
+>   	/* Register wwan link ops with MHI controller representing WWAN instance */
+> -	return wwan_register_ops(&cntrl->mhi_dev->dev, &mhi_mbim_wwan_ops, mbim, 0);
+> +	return wwan_register_ops(&cntrl->mhi_dev->dev, &mhi_mbim_wwan_ops, mbim,
+> +		mhi_dev->mhi_cntrl->link_id);
 
-Then grab the host value during vmx_hardware_setup().  And when you rebase on top
-of the latest kvm-x86/next, there's a handy dandy "struct kvm_host_values kvm_host"
-to track host MSR values (and similar state).
+Just a nitpick. The second line had better be aligned with the opening 
+bracket:
 
-You could also use that for MSR_IA32_FRED_CONFIG and MSR_IA32_FRED_STKLVLS.
+return wwan_register_ops(&cntrl->...
+                          mhi_dev->...
 
-> +		 */
-> +		if (unlikely(vmx->msr_host_fred_rsp0 == 0))
-> +			vmx->msr_host_fred_rsp0 = read_msr(MSR_IA32_FRED_RSP0);
-> +		wrmsrl(MSR_IA32_FRED_RSP0, vmx->msr_guest_fred_rsp0);
-> +	}
->  #else
->  	savesegment(fs, fs_sel);
->  	savesegment(gs, gs_sel);
-> @@ -1381,6 +1391,11 @@ static void vmx_prepare_switch_to_host(struct vcpu_vmx *vmx)
->  	invalidate_tss_limit();
->  #ifdef CONFIG_X86_64
->  	wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_host_kernel_gs_base);
-> +
-> +	if (guest_can_use(&vmx->vcpu, X86_FEATURE_FRED)) {
-> +		vmx->msr_guest_fred_rsp0 = read_msr(MSR_IA32_FRED_RSP0);
-> +		wrmsrl(MSR_IA32_FRED_RSP0, vmx->msr_host_fred_rsp0);
-> +	}
->  #endif
->  	load_fixmap_gdt(raw_smp_processor_id());
->  	vmx->guest_state_loaded = false;
-> @@ -4889,6 +4904,8 @@ static void __vmx_vcpu_reset(struct kvm_vcpu *vcpu)
->  
->  #ifdef CONFIG_X86_64
->  	if (kvm_cpu_cap_has(X86_FEATURE_FRED)) {
-> +		vmx->msr_guest_fred_rsp0 = 0;
+>   }
+>   
+>   static void mhi_mbim_remove(struct mhi_device *mhi_dev)
 
-Eh, I wouldn't bother.  Arguably it's better to use __kvm_set_msr(), and "vmx"
-is zero-allocated so this is unnecessary.
-
-The GUEST_IA32_FRED_* VMCS fields need to be explicitly initialized because the
-VMCS could (very theoretically) use a non-zero-based encoding scheme.
+--
+Sergey
 
