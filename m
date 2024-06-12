@@ -1,152 +1,266 @@
-Return-Path: <linux-kernel+bounces-210850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905EE90494E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:06:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A73904951
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16E6A1F2345A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C3191C23099
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937DA1C6BD;
-	Wed, 12 Jun 2024 03:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9826B1804A;
+	Wed, 12 Jun 2024 03:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="X8poSioc"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D93C3214;
-	Wed, 12 Jun 2024 03:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OJKsTT14"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594773214;
+	Wed, 12 Jun 2024 03:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718161588; cv=none; b=kBAbPhkoNBQsZmcwW7hA8BQmMZyOLm+Hi2FdpJteZP48kB+My4jp1oW5g7WoTp6ALEDvuPj5IMbIRQlZF94y9jtmayrCheZt8nJjy6ks38Yml5OWVtXR9cy2QQ2mT9Ztsi0116V0f2Uhbi+ld2/J/yoejokkAiNWyJrvMMwIuJI=
+	t=1718161649; cv=none; b=V2gEXz7hnbyc9Y+rTqUufCu+uJoFOub8WBzvETOFrRynk+yk5jvEl74QTGpRxhc0ISK1lEuMbHqCb5vnFW+1/1Fa4ZeQhwQYdJXxTUBg3Cz5FGKbZXk88bXKKLVTHBx4AFdOxX1h7TFZPXFkFsxhl132tyqoGwB5LJJOMgowryg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718161588; c=relaxed/simple;
-	bh=+ctwHilzsepjKZ1sUUMB0cpG3p2QV3xK1hOQnQBgAdk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Herj/sJJj4pXmE5eSIUJ4+GLMExWbOPpU8QrQu2HNJPEEsijzByM/V60HabQk9R5RSePhsjVc+n+NP/EVV+31u4zUEiN2O3DoCLJ9didCNar4nvZvM6mMIc3Bdot1oUmp54+JROKUeHqkcwpPFeWYdpeSejkLTKpt3Rjw4TZdAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=X8poSioc reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=jEJJhb2OCVdkrKmlNWZ/Xdy7wOT5PME9awKqsmwRDw4=; b=X
-	8poSiocNMuEp9+oc2c9KB70weJ5FyWmLfXpOqi897OkM3GD6nt5INasD8F+8KzJR
-	1ipxR5Iv1EJSXGNN1vFjRc7zWO6uXwAKnrYGjI1jk768VDuxkNE+qa8C3Ao22Ci3
-	dA/PPDDbfKLWd2tSITox4Hoaat/dVv8EXS8UE99VI0=
-Received: from slark_xiao$163.com ( [112.97.57.186] ) by
- ajax-webmail-wmsvr-40-131 (Coremail) ; Wed, 12 Jun 2024 11:05:38 +0800
- (CST)
-Date: Wed, 12 Jun 2024 11:05:38 +0800 (CST)
-From: "Slark Xiao" <slark_xiao@163.com>
-To: "Sergey Ryazanov" <ryazanov.s.a@gmail.com>, 
-	"Manivannan Sadhasivam" <mani@kernel.org>, 
-	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, 
-	"Loic Poulain" <loic.poulain@linaro.org>
-Cc: quic_jhugo@quicinc.com, "Qiang Yu" <quic_qianyu@quicinc.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"mhi@lists.linux.dev" <mhi@lists.linux.dev>, 
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-Subject: Re:Re: [PATCH v1 2/2] net: wwan: Fix SDX72 ping failure issue
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <c292fcdc-4e5b-4e6a-9317-e293e2b6b74e@gmail.com>
-References: <20240607100309.453122-1-slark_xiao@163.com>
- <30d71968-d32d-4121-b221-d95a4cdfedb8@gmail.com>
- <97a4347.18d5.19004f07932.Coremail.slark_xiao@163.com>
- <c292fcdc-4e5b-4e6a-9317-e293e2b6b74e@gmail.com>
-X-NTES-SC: AL_Qu2aCv2dvk0o7iWZYekfmk8Sg+84W8K3v/0v1YVQOpF8jA/o9iACQHlnHHDUz/6yNiOQnDyzVhpP0898TKtfWr8Lkx8TjBtiq6VOCoY4ykLH6Q==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1718161649; c=relaxed/simple;
+	bh=Y/RcdanauC5gez0XfKh6zjRATRCUsTxbPQGvGoEz2Tg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6cV2umSpbKxj/709UtXOqaWGV2fFajTLS+sU9z5EL+iX+LMIcIgJ3aI2dMNrgcFVZZKIpT2/72j0hovutPrRp/dh44kMPtA9T2ajjtUMGtMLvDDlOwIqRUBz63k4MybQ4HJG9SgQ3B0z7RsAHyW2oe4eEpKFeQ+lbfLKxhvaMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OJKsTT14; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718161646; x=1749697646;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Y/RcdanauC5gez0XfKh6zjRATRCUsTxbPQGvGoEz2Tg=;
+  b=OJKsTT14kmDbabELm+PDkgRaKKQoCNq372AOL8I+GJPpUtfzdd/D4ESu
+   NASg7y+xqmUxdLHHXAIwsouBVT4hHFzZBLAVqx9krU3IwmOR9ZTOHmM/y
+   jMe01ySPfyLo3P/QUO80Z3W4Pgq8YXwceGQLg6SaNMeqstKHXwoY8xz1P
+   u3B9T98LlxnyGq5/e8dJd9CHc+fD3fhzcMSYMU0EsIAg9FtTjHvtw52jr
+   PVNk7Q4W4kY3LGNBbXdKrlfYkd9SojmciSrzF6e5kayKB5CqRDM/t8mxL
+   r0DURfWEm0hklRgNJ4NmCmsaJA650DRmTkCp2xKqeBOBCGzejPDaxCGQy
+   A==;
+X-CSE-ConnectionGUID: bjzUFIxLTz2CkrmxRq0x2A==
+X-CSE-MsgGUID: ZXl1n47WSv+UV6PfeA2l6Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="15075939"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="15075939"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 20:07:25 -0700
+X-CSE-ConnectionGUID: OwfkTZhcT+++D0cHiOGXuQ==
+X-CSE-MsgGUID: 9sDus5UPRAmuVvkHWWbMVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="40344945"
+Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 11 Jun 2024 20:07:25 -0700
+Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sHEKY-00019W-0i;
+	Wed, 12 Jun 2024 03:07:22 +0000
+Date: Wed, 12 Jun 2024 11:06:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH 06/16] kconfig: refactor choice value calculation
+Message-ID: <202406121008.8zFuX4VH-lkp@intel.com>
+References: <20240611175536.3518179-7-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <320ba7ec.38c9.1900a687ddc.Coremail.slark_xiao@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3v+yCEGlmcS80AA--.351W
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiRw-6ZGV4Juc3SQAJs9
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611175536.3518179-7-masahiroy@kernel.org>
 
-CkF0IDIwMjQtMDYtMTIgMDY6NDY6MzMsICJTZXJnZXkgUnlhemFub3YiIDxyeWF6YW5vdi5zLmFA
-Z21haWwuY29tPiB3cm90ZToKPk9uIDExLjA2LjIwMjQgMDQ6MzYsIFNsYXJrIFhpYW8gd3JvdGU6
-Cj4+ICtNb3JlIG1haW50YWluZXIgdG8gdGhpcyBzZWNvbmQgcGF0Y2ggbGlzdC4KPj4gCj4+IEF0
-IDIwMjQtMDYtMDggMDY6Mjg6NDgsICJTZXJnZXkgUnlhemFub3YiIDxyeWF6YW5vdi5zLmFAZ21h
-aWwuY29tPiB3cm90ZToKPj4+IEhlbGxvIFNsYXJrLAo+Pj4KPj4+IHdpdGhvdXQgdGhlIGZpcnN0
-IHBhdGNoIGl0IGlzIGNsb3NlIHRvIGltcG9zc2libGUgdG8gdW5kZXJzdGFuZCB0aGlzCj4+PiBv
-bmUuIE5leHQgdGltZSBwbGVhc2Ugc2VuZCBzdWNoIHRpZ2h0bHkgY29ubmVjdGVkIHBhdGNoZXMg
-dG8gYm90aAo+Pj4gbWFpbGluZyBsaXN0cy4KPj4+Cj4+IFNvcnJ5IGZvciB0aGlzIG1pc3Rha2Ug
-c2luY2UgaXQncyBteSBmaXJzdCBjb21taXQgYWJvdXQgY29tbWl0dGluZyBjb2RlIHRvIDIKPj4g
-ZGlmZmVyZW5jZSBhcmVhOiBtaGkgYW5kIG1iaW0uIEJvdGggdGhlIG1haW50YWluZXJzIGFyZSBk
-aWZmZXJlbmNlLgo+PiBJbiBjYXNlIGEgbmV3IHZlcnNpb24gY29tbWl0IHdvdWxkIGJlIGNyZWF0
-ZWQsIEkgd291bGQgbGlrZSB0byBhc2sgaWYKPj4gc2hvdWxkIEkgYWRkIGJvdGggc2lkZSBtYWlu
-dGFpbmVycyBvbiB0aGVzZSAyIHBhdGNoZXMgPwo+Cj5ObyB3b3JyaWVzLiBXZSBmaW5hbGx5IGdv
-dCBib3RoIHNpZGVzIG9mIHRoZSBwdXp6bGUuIEJUVywgbG9va3MgbGlrZSB0aGUgCj5maXJzdCBw
-YXRjaCBzdGlsbCBsYWNrcyBMaW51eCBuZXRkZXYgbWFpbGluZyBsaXN0IGluIHRoZSBDQy4KPgo+
-VXN1YWxseSBtYWludGFpbmVycyBhcmUgcmVzcG9uc2libGUgZm9yIGFwcGx5aW5nIHBhdGNoZXMg
-dG8gdGhlaXIgCj5kZWRpY2F0ZWQgcmVwb3NpdG9yaWVzICh0cmVlcyksIGFuZCB0aGVuIGV2ZW50
-dWFsbHkgZm9yIHNlbmRpbmcgdGhlbSBpbiAKPmJhdGNoIHRvIHRoZSBtYWluIHRyZWUuIFNvLCBp
-ZiBhIHdvcmsgY29uc2lzdHMgb2YgdHdvIHBhdGNoZXMsIGl0IGlzIAo+YmV0dGVyIHRvIGFwcGx5
-IHRoZW0gdG9nZXRoZXIgdG8gb25lIG9mIHRoZSB0cmVlcy4gT3RoZXJ3aXNlLCBpdCBjYW4gCj5j
-YXVzZSBhIGJ1aWxkIGZhaWx1cmUgaW4gb25lIHRyZWUgZHVlIHRvIGxhY2sgb2YgcmVxdWlyZWQg
-Y2hhbmdlcyB0aGF0IAo+aGF2ZSBiZWVuIGFwcGxpZWQgdG8gb3RoZXIuIFNvbWV0aW1lcyBjb250
-cmlidXRvcnMgZXZlbiBzcGVjaWZ5IGEgCj5wcmVmZXJyZWQgdHJlZSBpbiBhIGNvdmVyIGxldHRl
-ci4gSG93ZXZlciwgaXQgaXMgc3RpbGwgdXAgdG8gbWFpbnRhaW5lcnMgCj50byBtYWtlIGEgZGVj
-aXNpb24gd2hpY2ggdHJlZSBpcyBiZXR0ZXIgd2hlbiBhIHdvcmsgY2hhbmdlcyBzZXZlcmFsIAo+
-c3Vic3lzdGVtcy4KPgoKVGhhbmtzIGZvciB5b3VyIGRldGFpbGVkIGV4cGxhbmF0aW9uLiAKU2lu
-Y2UgdGhpcyBjaGFuZ2Ugd2FzIG1vZGlmaWVkIG1haW5seSBvbiBtaGkgc2lkZSwgSSBwcmVmZXIg
-dG8gY29tbWl0IGl0IHRvCiBtaGkgc2lkZS4gCkBsb2ljIEBtYW5pLCB3aGF0J3MgeW91ciBvcGlu
-aW9uPwoKPj4+IE9uIDA3LjA2LjIwMjQgMTM6MDMsIFNsYXJrIFhpYW8gd3JvdGU6Cj4+Pj4gRm9y
-IFNEWDcyIE1CSU0gZGV2aWNlLCBpdCBzdGFydHMgZGF0YSBtdXggaWQgZnJvbSAxMTIgaW5zdGVh
-ZCBvZiAwLgo+Pj4+IFRoaXMgd291bGQgbGVhZCB0byBkZXZpY2UgY2FuJ3QgcGluZyBvdXRzaWRl
-IHN1Y2Nlc3NmdWxseS4KPj4+PiBBbHNvIE1CSU0gc2lkZSB3b3VsZCByZXBvcnQgImJhZCBwYWNr
-ZXQgc2Vzc2lvbiAoMTEyKSIuCj4+Pj4gU28gd2UgYWRkIGEgbGluayBpZCBkZWZhdWx0IHZhbHVl
-IGZvciB0aGVzZSBTRFg3MiBwcm9kdWN0cyB3aGljaAo+Pj4+IHdvcmtzIGluIE1CSU0gbW9kZS4K
-Pj4+Pgo+Pj4+IFNpZ25lZC1vZmYtYnk6IFNsYXJrIFhpYW8gPHNsYXJrX3hpYW9AMTYzLmNvbT4K
-Pj4+Cj4+PiBTaW5jZSBpdCBhIGJ1dCBmaXgsIGl0IG5lZWRzIGEgJ0ZpeGVzOicgdGFnLgo+Pj4K
-Pj4gQWN0dWFsbHksIEkgdGhvdWdodCBpdCdzIGEgZml4IGZvciBjb21tb24gU0RYNzIgcHJvZHVj
-dC4gQnV0IG5vdyBJIHRoaW5rCj4+IGl0IHNob3VsZCBiZSBvbmx5IG1lZXQgZm9yIG15IFNEWDcy
-IE1CSU0gcHJvZHVjdC4gUHJldmlvdXMgY29tbWl0Cj4+IGhhcyBub3QgYmVlbiBhcHBsaWVkLiBT
-byB0aGVyZSBpcyBubyBjb21taXQgaWQgZm9yICJGaXhlcyIuCj4+IEJ1dCBJIHRoaW5rIEkgc2hh
-bGwgaW5jbHVkZSB0aGF0IHBhdGNoIGluIFYyIHZlcnNpb24uCj4+IFBsZWFzZSByZWY6Cj4+IGh0
-dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAyNDA1MjAwNzA2MzMuMzA4OTEzLTEtc2xhcmtf
-eGlhb0AxNjMuY29tLwo+Cj5UaGVyZSBhcmUgbm90aGluZyB0byBmaXggeWV0LiBHcmVhdC4gVGhl
-biB5b3UgY2FuIHJlc2VuZCB0aGUgRm94Y29ubiAKPlNEWDcyIGludHJvZHVjdGlvbiB3b3JrIGFz
-IGEgc2VyaWVzIHRoYXQgYWxzbyBpbmNsdWRlcyB0aGVzZSBtdXggaWQgCj5jaGFuZ2VzLiBKdXN0
-IHJlbmFtZSB0aGlzIHNwZWNpZmljIHBhdGNoIHRvIHNvbWV0aGluZyBsZXNzIHRlcnJpZnlpbmcu
-IAo+TWVhbiwgcmVtb3ZlIHRoZSAiRml4IiB3b3JkIGZyb20gdGhlIHN1YmplY3QsIHBsZWFzZS4K
-Pgo+TG9va3MgbGlrZSAibmV0OiB3d2FuOiBtaGk6IG1ha2UgZGVmYXVsdCBkYXRhIGxpbmsgaWQg
-Y29uZmlndXJhYmxlIiAKPnN1YmplY3QgYWxzbyBzdW1tYXJpemUgdGhlIHJlYXNvbiBvZiB0aGUg
-Y2hhbmdlLgo+CgpDdXJyZW50bHkgSSBkb24ndCBrbm93IGlmIG15IHByZXZpb3VzIGNvbW1pdCB3
-aGljaCBoYXMgYmVlbiByZXZpZXdlZCBzdGlsbApiZSBlZmZlY3RpdmUuIFNpbmNlIHRoaXMgbGlu
-a19pZCBjaGFuZ2VzIG9ubHkgd29ya3MgZm9yIE1CSU0gbW9kZSBvZiBTRFg3Mi4KSWYga2VlcHMg
-dGhlIGNvbW1pdCBvZiBbMV0sIHRoZW4gSSB3aWxsIHVwZGF0ZSB0aGlzIHBhdGNoIHdpdGggdjIg
-dmVyc2lvbiB3aGljaCBqdXN0IHVwZGF0ZQp0aGUgc3ViamVjdCAuIElmIG5vdCwgdGhlbiB0aGlz
-IFNEWDcyIHNlcmllcyB3b3VsZCBoYXZlIDMgcGF0Y2hlczogWzFdICsgZmlyc3QgcGF0Y2gKKyBz
-ZWNvbmQgcGF0Y2hbdjJdKG9yIDIgcGF0Y2hlczogY29tYmluZSBbMV0gd2l0aCBmaXJzdCBwYXRj
-aCArIHNlY29uZCBwYXRjaFt2Ml0pLgpQbGVhc2UgbGV0IG1lIGtub3cgd2hpY2ggc29sdXRpb24g
-d291bGQgYmUgYmV0dGVyLgoKVGhhbmtzLgo+Pj4+IC0tLQo+Pj4+ICAgIGRyaXZlcnMvbmV0L3d3
-YW4vbWhpX3d3YW5fbWJpbS5jIHwgMyArKy0KPj4+PiAgICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNl
-cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4+Pj4KPj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9u
-ZXQvd3dhbi9taGlfd3dhbl9tYmltLmMgYi9kcml2ZXJzL25ldC93d2FuL21oaV93d2FuX21iaW0u
-Ywo+Pj4+IGluZGV4IDNmNzJhZTk0M2IyOS4uNGNhNWM4NDUzOTRiIDEwMDY0NAo+Pj4+IC0tLSBh
-L2RyaXZlcnMvbmV0L3d3YW4vbWhpX3d3YW5fbWJpbS5jCj4+Pj4gKysrIGIvZHJpdmVycy9uZXQv
-d3dhbi9taGlfd3dhbl9tYmltLmMKPj4+PiBAQCAtNjE4LDcgKzYxOCw4IEBAIHN0YXRpYyBpbnQg
-bWhpX21iaW1fcHJvYmUoc3RydWN0IG1oaV9kZXZpY2UgKm1oaV9kZXYsIGNvbnN0IHN0cnVjdCBt
-aGlfZGV2aWNlX2lkCj4+Pj4gICAgCW1iaW0tPnJ4X3F1ZXVlX3N6ID0gbWhpX2dldF9mcmVlX2Rl
-c2NfY291bnQobWhpX2RldiwgRE1BX0ZST01fREVWSUNFKTsKPj4+PiAgICAKPj4+PiAgICAJLyog
-UmVnaXN0ZXIgd3dhbiBsaW5rIG9wcyB3aXRoIE1ISSBjb250cm9sbGVyIHJlcHJlc2VudGluZyBX
-V0FOIGluc3RhbmNlICovCj4+Pj4gLQlyZXR1cm4gd3dhbl9yZWdpc3Rlcl9vcHMoJmNudHJsLT5t
-aGlfZGV2LT5kZXYsICZtaGlfbWJpbV93d2FuX29wcywgbWJpbSwgMCk7Cj4+Pj4gKwlyZXR1cm4g
-d3dhbl9yZWdpc3Rlcl9vcHMoJmNudHJsLT5taGlfZGV2LT5kZXYsICZtaGlfbWJpbV93d2FuX29w
-cywgbWJpbSwKPj4+PiArCQltaGlfZGV2LT5taGlfY250cmwtPmxpbmtfaWQgPyBtaGlfZGV2LT5t
-aGlfY250cmwtPmxpbmtfaWQgOiAwKTsKPj4+Cj4+PiBJcyBpdCBwb3NzaWJsZSB0byBkcm9wIHRo
-ZSB0ZXJuYXJ5IG9wZXJhdG9yIGFuZCBwYXNzIHRoZSBsaW5rX2lkIGRpcmVjdGx5Pwo+Pj4KPj4+
-PiAgICB9Cj4+Pj4gICAgCj4+Pj4gICAgc3RhdGljIHZvaWQgbWhpX21iaW1fcmVtb3ZlKHN0cnVj
-dCBtaGlfZGV2aWNlICptaGlfZGV2KQo+Cj4tLQo+U2VyZ2V5ClsxXSAtIGh0dHBzOi8vbG9yZS5r
-ZXJuZWwub3JnL2xrbWwvMjAyNDA1MjAwNzA2MzMuMzA4OTEzLTEtc2xhcmtfeGlhb0AxNjMuY29t
-Lwo=
+Hi Masahiro,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on masahiroy-kbuild/kbuild]
+[also build test ERROR on masahiroy-kbuild/for-next next-20240611]
+[cannot apply to masahiroy-kbuild/fixes linus/master v6.10-rc3]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Masahiro-Yamada/kconfig-remove-unneeded-code-in-expr_compare_type/20240612-020202
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git kbuild
+patch link:    https://lore.kernel.org/r/20240611175536.3518179-7-masahiroy%40kernel.org
+patch subject: [PATCH 06/16] kconfig: refactor choice value calculation
+config: i386-buildonly-randconfig-002-20240612 (attached as .config)
+compiler: gcc-8 (Ubuntu 8.4.0-3ubuntu2) 8.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240612/202406121008.8zFuX4VH-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406121008.8zFuX4VH-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   scripts/kconfig/symbol.c: In function 'sym_calc_value':
+>> scripts/kconfig/symbol.c:448:3: error: a label can only be part of a statement and a declaration is not a statement
+      struct menu *choice_menu = sym_get_choice_menu(sym);
+      ^~~~~~
+   make[3]: *** [scripts/Makefile.host:133: scripts/kconfig/symbol.o] Error 1 shuffle=1413228972
+   make[3]: Target 'oldconfig' not remade because of errors.
+   make[2]: *** [Makefile:695: oldconfig] Error 2 shuffle=1413228972
+   make[1]: *** [Makefile:240: __sub-make] Error 2 shuffle=1413228972
+   make[1]: Target 'oldconfig' not remade because of errors.
+   make: *** [Makefile:240: __sub-make] Error 2 shuffle=1413228972
+   make: Target 'oldconfig' not remade because of errors.
+--
+   scripts/kconfig/symbol.c: In function 'sym_calc_value':
+>> scripts/kconfig/symbol.c:448:3: error: a label can only be part of a statement and a declaration is not a statement
+      struct menu *choice_menu = sym_get_choice_menu(sym);
+      ^~~~~~
+   make[3]: *** [scripts/Makefile.host:133: scripts/kconfig/symbol.o] Error 1 shuffle=1413228972
+   make[3]: Target 'olddefconfig' not remade because of errors.
+   make[2]: *** [Makefile:695: olddefconfig] Error 2 shuffle=1413228972
+   make[1]: *** [Makefile:240: __sub-make] Error 2 shuffle=1413228972
+   make[1]: Target 'olddefconfig' not remade because of errors.
+   make: *** [Makefile:240: __sub-make] Error 2 shuffle=1413228972
+   make: Target 'olddefconfig' not remade because of errors.
+
+
+vim +448 scripts/kconfig/symbol.c
+
+   398	
+   399	void sym_calc_value(struct symbol *sym)
+   400	{
+   401		struct symbol_value newval, oldval;
+   402		struct property *prop;
+   403	
+   404		if (!sym)
+   405			return;
+   406	
+   407		if (sym->flags & SYMBOL_VALID)
+   408			return;
+   409	
+   410		sym->flags |= SYMBOL_VALID;
+   411	
+   412		oldval = sym->curr;
+   413	
+   414		newval.tri = no;
+   415	
+   416		switch (sym->type) {
+   417		case S_INT:
+   418			newval.val = "0";
+   419			break;
+   420		case S_HEX:
+   421			newval.val = "0x0";
+   422			break;
+   423		case S_STRING:
+   424			newval.val = "";
+   425			break;
+   426		case S_BOOLEAN:
+   427		case S_TRISTATE:
+   428			newval.val = "n";
+   429			break;
+   430		default:
+   431			sym->curr.val = sym->name;
+   432			sym->curr.tri = no;
+   433			return;
+   434		}
+   435		sym->flags &= ~SYMBOL_WRITE;
+   436	
+   437		sym_calc_visibility(sym);
+   438	
+   439		if (sym->visible != no)
+   440			sym->flags |= SYMBOL_WRITE;
+   441	
+   442		/* set default if recursively called */
+   443		sym->curr = newval;
+   444	
+   445		switch (sym_get_type(sym)) {
+   446		case S_BOOLEAN:
+   447		case S_TRISTATE:
+ > 448			struct menu *choice_menu = sym_get_choice_menu(sym);
+   449	
+   450			if (choice_menu) {
+   451				sym_calc_choice(choice_menu);
+   452				newval.tri = sym->curr.tri;
+   453			} else {
+   454				if (sym->visible != no) {
+   455					/* if the symbol is visible use the user value
+   456					 * if available, otherwise try the default value
+   457					 */
+   458					if (sym_has_value(sym)) {
+   459						newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri,
+   460								      sym->visible);
+   461						goto calc_newval;
+   462					}
+   463				}
+   464				if (sym->rev_dep.tri != no)
+   465					sym->flags |= SYMBOL_WRITE;
+   466				if (!sym_is_choice(sym)) {
+   467					prop = sym_get_default_prop(sym);
+   468					if (prop) {
+   469						newval.tri = EXPR_AND(expr_calc_value(prop->expr),
+   470								      prop->visible.tri);
+   471						if (newval.tri != no)
+   472							sym->flags |= SYMBOL_WRITE;
+   473					}
+   474					if (sym->implied.tri != no) {
+   475						sym->flags |= SYMBOL_WRITE;
+   476						newval.tri = EXPR_OR(newval.tri, sym->implied.tri);
+   477						newval.tri = EXPR_AND(newval.tri,
+   478								      sym->dir_dep.tri);
+   479					}
+   480				}
+   481			calc_newval:
+   482				if (sym->dir_dep.tri < sym->rev_dep.tri)
+   483					sym_warn_unmet_dep(sym);
+   484				newval.tri = EXPR_OR(newval.tri, sym->rev_dep.tri);
+   485			}
+   486			if (newval.tri == mod && sym_get_type(sym) == S_BOOLEAN)
+   487				newval.tri = yes;
+   488			break;
+   489		case S_STRING:
+   490		case S_HEX:
+   491		case S_INT:
+   492			if (sym->visible != no && sym_has_value(sym)) {
+   493				newval.val = sym->def[S_DEF_USER].val;
+   494				break;
+   495			}
+   496			prop = sym_get_default_prop(sym);
+   497			if (prop) {
+   498				struct symbol *ds = prop_get_symbol(prop);
+   499				if (ds) {
+   500					sym->flags |= SYMBOL_WRITE;
+   501					sym_calc_value(ds);
+   502					newval.val = ds->curr.val;
+   503				}
+   504			}
+   505			break;
+   506		default:
+   507			;
+   508		}
+   509	
+   510		sym->curr = newval;
+   511		sym_validate_range(sym);
+   512	
+   513		if (memcmp(&oldval, &sym->curr, sizeof(oldval))) {
+   514			sym_set_changed(sym);
+   515			if (modules_sym == sym) {
+   516				sym_set_all_changed();
+   517				modules_val = modules_sym->curr.tri;
+   518			}
+   519		}
+   520	
+   521		if (sym_is_choice(sym))
+   522			sym->flags &= ~SYMBOL_WRITE;
+   523	}
+   524	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
