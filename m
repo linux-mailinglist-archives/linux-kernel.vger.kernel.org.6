@@ -1,46 +1,39 @@
-Return-Path: <linux-kernel+bounces-211267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBCA904F48
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:29:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134D3904F47
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E229A1C22364
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:29:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08BC1F280E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980F116DED0;
-	Wed, 12 Jun 2024 09:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AOrJ5cGv"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7192716D4F6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765F716DEB3;
+	Wed, 12 Jun 2024 09:29:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537F21CFB5;
+	Wed, 12 Jun 2024 09:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718184546; cv=none; b=sI9IOSdhOai7EIcSuSLEvDhWUdhWR2k88EtSm+QMkRMAUEuGgQEZch6S6weu8AfYd3UMT33MnONUnMWSf/2exqYEBIetmeO9tpVvq3cTZ/6LluV4TU5saeauaKkBdkOHbpJuYiTwCje16WrkA8K/e8Pw8OhWE9lQ3jI1qmZVoZs=
+	t=1718184546; cv=none; b=QRJ1pzMbjVA/sUxeBwyQ45OHpPdKZdInXRtzdBa1KKxlSQyg3NGDtputkD0F16K9f3NoYQltxeeionuNSXSJdoBCOIIDKkejZdqPtoOPpj9UgOfZNI0NeY+rSrpv876lCERd0FJAGWga7EGPJ8WmJmKjmSXOz+nSLFlutA6VRl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718184546; c=relaxed/simple;
-	bh=GqwZyjbDTb2LW7L7RQnUs/jhE0c2peodbic9mCWJ92k=;
+	bh=DsxnX5L2k3IkFgc1OU5UIunCZy/+2T26BRmIyb3T3R4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EyC8X1epmBLqhYjwZS+Q2yFFAXgVL69spHO92aNAo0OH+sa+S7z9gYJBm6CCYAvgTVA/Ul2K2W4KomPeZokB7QkYMNt2JJJTTmMEGCgffQFhVEG1TGFpzNsVXQGrNmUuxKRyAiw/GewoQ7yFbwe9LuV+sgf/AovPnYv5EcCjn8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AOrJ5cGv; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718184536; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=UvzU82ARd3O0HY9mewpe3B6t/gdUxhobUBIFn6ECcTE=;
-	b=AOrJ5cGvHTZu6JJN0yuO8HocECn/U5Fa5twm3KxBcnPKfd9wpnKLVLTDlHB1dcOf6eQdTk9h/ehYMBIv8MA6P/7WcEX74eh6e7/z+yNHJm2povRcrvBJAAuMNLy6ZYjIB6AflUbRxqZoRyB0DjpZhW2qJLmF73d0cisqb+T/lTs=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W8KLpTr_1718184503;
-Received: from 30.97.56.60(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8KLpTr_1718184503)
-          by smtp.aliyun-inc.com;
-          Wed, 12 Jun 2024 17:28:54 +0800
-Message-ID: <aef7c71e-5aff-4ce3-a2a9-8df930232af8@linux.alibaba.com>
-Date: Wed, 12 Jun 2024 17:28:54 +0800
+	 In-Reply-To:Content-Type; b=jPtHjq4uTrDF4Kb7q80MLHGm0gVkn9oM2McXyNhdCQBNFRLSnGbFxSzUARg4Ih/WPrZTg/gpseR4ZwBdYJzZJMvGaTO31XmHxIZT+hl640GCdcBUSZoEnvwJ/zvP7XKqYk03IyjtVNs9UvLzcjO4zswcBB6pGbUWS1koW3PpGGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49AAE1595;
+	Wed, 12 Jun 2024 02:29:27 -0700 (PDT)
+Received: from [10.57.42.88] (unknown [10.57.42.88])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E497B3F64C;
+	Wed, 12 Jun 2024 02:28:58 -0700 (PDT)
+Message-ID: <6304a5a2-1ca0-4e6c-8c0a-e7b320f64c7d@arm.com>
+Date: Wed, 12 Jun 2024 10:28:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,41 +41,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/6] mm: memory: extend finish_fault() to support large
- folio
-To: Zi Yan <ziy@nvidia.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
- david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com,
- 21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com,
- ioworker0@gmail.com, da.gomez@samsung.com, p.raghav@samsung.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
- <3a190892355989d42f59cf9f2f98b94694b0d24d.1718090413.git.baolin.wang@linux.alibaba.com>
- <DF94C669-963F-4BA7-81A1-B25031D2365A@nvidia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <DF94C669-963F-4BA7-81A1-B25031D2365A@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v3 2/2] drm/panfrost: Add support for Mali on the MT8188
+ SoC
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ boris.brezillon@collabora.com
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Chen-Yu Tsai <wenst@chromium.org>
+References: <20240611085602.491324-1-angelogioacchino.delregno@collabora.com>
+ <20240611085602.491324-3-angelogioacchino.delregno@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240611085602.491324-3-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2024/6/11 22:38, Zi Yan wrote:
-> On 11 Jun 2024, at 6:11, Baolin Wang wrote:
+On 11/06/2024 09:56, AngeloGioacchino Del Regno wrote:
+> MediaTek MT8188 has a Mali-G57 MC3 (Valhall-JM): add a new
+> compatible and platform data using the same supplies and the
+> same power domain lists as MT8183 (one regulator, three power
+> domains).
 > 
->> Add large folio mapping establishment support for finish_fault() as a
->> preparation, to support multi-size THP allocation of anonymous shmem pages
->> in the following patches.
->>
->> Keep the same behavior (per-page fault) for non-anon shmem to avoid inflating
->> the RSS unintentionally, and we can discuss what size of mapping to build
->> when extending mTHP to control non-anon shmem in the future.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   mm/memory.c | 57 +++++++++++++++++++++++++++++++++++++++++++----------
->>   1 file changed, 47 insertions(+), 10 deletions(-)
->>
-> LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Thanks Zi for reviewing.
+Reviewed-by: Steven Price <steven.price@arm.com>
+
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_drv.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index ef9f6c0716d5..b43557b10ae3 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -777,6 +777,15 @@ static const struct panfrost_compatible mediatek_mt8186_data = {
+>  	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
+>  };
+>  
+> +/* MT8188 uses the same power domains and power supplies as MT8183 */
+> +static const struct panfrost_compatible mediatek_mt8188_data = {
+> +	.num_supplies = ARRAY_SIZE(mediatek_mt8183_b_supplies) - 1,
+> +	.supply_names = mediatek_mt8183_b_supplies,
+> +	.num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
+> +	.pm_domain_names = mediatek_mt8183_pm_domains,
+> +	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
+> +};
+> +
+>  static const char * const mediatek_mt8192_supplies[] = { "mali", NULL };
+>  static const char * const mediatek_mt8192_pm_domains[] = { "core0", "core1", "core2",
+>  							   "core3", "core4" };
+> @@ -808,6 +817,7 @@ static const struct of_device_id dt_match[] = {
+>  	{ .compatible = "mediatek,mt8183-mali", .data = &mediatek_mt8183_data },
+>  	{ .compatible = "mediatek,mt8183b-mali", .data = &mediatek_mt8183_b_data },
+>  	{ .compatible = "mediatek,mt8186-mali", .data = &mediatek_mt8186_data },
+> +	{ .compatible = "mediatek,mt8188-mali", .data = &mediatek_mt8188_data },
+>  	{ .compatible = "mediatek,mt8192-mali", .data = &mediatek_mt8192_data },
+>  	{}
+>  };
+
 
