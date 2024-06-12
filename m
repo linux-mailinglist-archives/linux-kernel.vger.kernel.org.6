@@ -1,128 +1,187 @@
-Return-Path: <linux-kernel+bounces-211438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F75B9051A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:52:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677FA9051AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C433DB2392E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:52:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE86D1F24740
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD66516F823;
-	Wed, 12 Jun 2024 11:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F61F16F260;
+	Wed, 12 Jun 2024 11:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MqOqwi/1"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ljDya9GC"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CDB16F28A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA00B16F0E4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718193105; cv=none; b=XIsOyX6yQ2VHE7dc9ct4uyZkIOwjgK6Rp8kpQysX8QrjIVmvZxvru+WQ09p8OtGC6+Iz4tlIjfNYvV7/P8nEbIew1gyC6S0oI9sYZmHMq483fiX8059n8PWm7v8N7UewKJ2kOfnjBc0HxhU4LL0gFBQA5OUSTJsKBoirLTfAJpg=
+	t=1718193218; cv=none; b=QbCrE7eb+Dy6CqKzKFKbs7YoyYY+0W3ofi+drEd/rbgt/tQQgdb8Kv4LBTgrXfkR+XmS8kQJhphvGPAPEcjSsX5iwh+ATyH2gTNFCvbf8oBniWV+on/rJpdI8DWq3OD9Kcz6yOTAacYkR5aR1LT32z2tOeDXnWbCNO+O2WsJ7AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718193105; c=relaxed/simple;
-	bh=Iap+yq/UFPMhzwMJN1/W29xopjf+UPCfBHcc+afOI+A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PbuUurd7su/ZpJo4aYRStSEGEO7sWYo3Ri34SEj2XDOkZYxKEx/OMg267P7QlBVg6Ws2k2yjX/HPPtJwflnuuur0YXjREud04N6e9dhErQGAYkIPmcU2sS0byfGOu/LTUndIPYC3AwZYqdwJ/kpS3PZKRvAmTKRemWp46O6870k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MqOqwi/1; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42178999284so16785875e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:51:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718193102; x=1718797902; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ts2smytxY9xlqDn06N5ZqiAGp4oK5EeYYIBFYgm141E=;
-        b=MqOqwi/12tRyx06FZsWZCfP1wvIWGqsOsevlrnRo/kDCrABrJasNNoHqyOnHXG9nAy
-         fNAy8KlYwCoymLcuS5OBYJNOXqLYvppe7k0SVSjiRfMZmtLkwaQKHb+Ri89zwnjaMCXz
-         2TzCRRooM4fN1as7wdzUcAOuxNnQXz4TyjlLUEL+P16cdLza1ZgJiDpKU8srCeW59GBP
-         qPI8SgFm4L3uPBxv3jVevR+ZY/s3bCuEuACv9/1SY+tGAM598YxNyPSL8bCppk7gY0Kp
-         gG7KnR3usgr6XsK+uuj3FCQPcGzi8m+RDYdtDsVIB5i2+9xw1EZUPnGLnJnQP1jv6N7p
-         lq2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718193102; x=1718797902;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ts2smytxY9xlqDn06N5ZqiAGp4oK5EeYYIBFYgm141E=;
-        b=AYLZjhE6mghBHy04aFTMtVIaogYbqRft2bZEDnKdCip5GHkhdUmibicbzd6IWeJ2jO
-         8F0cGaoXoiCVAWbuoYws2lu7YkyAvNK8H1ja5c/4zPtu1716/eFUfRJdL7pmonqXTgmx
-         oAujeG3NHXtNqN7j04yqmftABwW5mdN+q7c/3BlnAqu9S/DzDR+IZmbmToUKVLjuhNvT
-         uH0f3+l8H8kieRmGTs1pn5/6hxV1vj3rlZxC6kQo8e2W8ZNnqU4FfJm40CdzVLGpHGjh
-         xxEfZeXN9dm5r9OHKzuNERXwZIsL4Pe/EPFZpGjowhplkonsjfYQTrJDdk4TLVNvZ+Qe
-         baNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaC0JcEt72ypmD4K2mHKRq/D3H2PAYZ8wo92huWZz3B2gqRTyWB1dXwldmV1c7amT6n8X57J6pvGPb5ZfrVHRmLnem9aLUr3ym2P97
-X-Gm-Message-State: AOJu0YxB4B9cJ3aUWGMW1/pXdvrLEcuQirafPo5JkzFAKeCmkZxahiMN
-	Hb10alqfECSpE30FuL0OzxHSISgkhwe99AoAmS/RCd6LqOYVU4ZoB0oQkVK9tpU=
-X-Google-Smtp-Source: AGHT+IGB21Kf+Yq70AofnMnKtJ/sAErPjS2QGuOdCNlXD6VJnixK2VEnojOvLWIJ653dzNytJ5zyZA==
-X-Received: by 2002:a05:6000:196c:b0:35f:1c6b:2b24 with SMTP id ffacd0b85a97d-35fe88c9498mr1167357f8f.29.1718193101706;
-        Wed, 12 Jun 2024 04:51:41 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f23fe7a64sm8174762f8f.89.2024.06.12.04.51.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 04:51:41 -0700 (PDT)
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: error27@gmail.com,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] KVM: SVM: Fix an error code in sev_gmem_post_populate()
-Date: Wed, 12 Jun 2024 14:50:39 +0300
-Message-ID: <20240612115040.2423290-4-dan.carpenter@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240612115040.2423290-2-dan.carpenter@linaro.org>
-References: <20240612115040.2423290-2-dan.carpenter@linaro.org>
+	s=arc-20240116; t=1718193218; c=relaxed/simple;
+	bh=VkkTtK8kv49ihxUIWWfJmoPWa7Qtpd9YsQ68XKHv/T4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eh4MYVu5syZKfaQsuxy+ltcPd4XdeBQym3K4kWhlmCRJ7Ew1xc/aSOIkbQYTkvglDdqMSOt7seVqBRwD3ZiGnTJ5S4mkjEwRv9z45wjMeIBLl13pKcTBuTlQdIg2GNubavCBdbKeThFJMp3nz9R9Sy7uCvy9wY/QxRjgmAmrdt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ljDya9GC; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45CBpuLn085550;
+	Wed, 12 Jun 2024 06:51:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718193116;
+	bh=VkkTtK8kv49ihxUIWWfJmoPWa7Qtpd9YsQ68XKHv/T4=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To;
+	b=ljDya9GCg4AdzEVBNT5A6TV9Uo15cW/lMf3r8TyH1fwbNYmkYxthEVF4ZTjTh9TQJ
+	 X85oYZBolz1A3uNaT+n7ao5rpb0YWRg/Blkj/zVTADY27rCfrUdWi710ZFL78nsR+v
+	 8eNl3WzIteepB9708pP/MoykdOZgWB3h/rPe5jV8=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45CBpuM1006451
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 12 Jun 2024 06:51:56 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
+ Jun 2024 06:51:55 -0500
+Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
+ DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
+ 15.01.2507.023; Wed, 12 Jun 2024 06:51:55 -0500
+From: "Ding, Shenghao" <shenghao-ding@ti.com>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "broonie@kernel.org" <broonie@kernel.org>
+CC: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz"
+	<perex@perex.cz>,
+        "13916275206@139.com" <13916275206@139.com>,
+        "zhourui@huaqin.com" <zhourui@huaqin.com>,
+        "alsa-devel@alsa-project.org"
+	<alsa-devel@alsa-project.org>,
+        "Salazar, Ivan" <i-salazar@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chadha,
+ Jasjot Singh" <j-chadha@ti.com>,
+        "liam.r.girdwood@intel.com"
+	<liam.r.girdwood@intel.com>,
+        "Yue, Jaden" <jaden-yue@ti.com>,
+        "yung-chuan.liao@linux.intel.com" <yung-chuan.liao@linux.intel.com>,
+        "Rao,
+ Dipa" <dipa@ti.com>, "yuhsuan@google.com" <yuhsuan@google.com>,
+        "Lo, Henry"
+	<henry.lo@ti.com>, "tiwai@suse.de" <tiwai@suse.de>,
+        "Xu, Baojun"
+	<baojun.xu@ti.com>, "soyer@irl.hu" <soyer@irl.hu>,
+        "Baojun.Xu@fpt.com"
+	<Baojun.Xu@fpt.com>,
+        "judyhsiao@google.com" <judyhsiao@google.com>,
+        "Navada
+ Kanyana, Mukund" <navada@ti.com>,
+        "cujomalainey@google.com"
+	<cujomalainey@google.com>,
+        "Kutty, Aanya" <aanya@ti.com>,
+        "Mahmud, Nayeem"
+	<nayeem.mahmud@ti.com>,
+        "savyasanchi.shukla@netradyne.com"
+	<savyasanchi.shukla@netradyne.com>,
+        "flaviopr@microsoft.com"
+	<flaviopr@microsoft.com>,
+        "Ji, Jesse" <jesse-ji@ti.com>,
+        "darren.ye@mediatek.com" <darren.ye@mediatek.com>
+Subject: RE: [EXTERNAL] Re: [RESEND PATCH v4] ASoc: tas2781: Enable RCA-based
+ playback without DSP firmware download
+Thread-Topic: [EXTERNAL] Re: [RESEND PATCH v4] ASoc: tas2781: Enable RCA-based
+ playback without DSP firmware download
+Thread-Index: AQHauA7VzKr60B04MES3npAwhDhNCbG7CTGAgAj/dqA=
+Date: Wed, 12 Jun 2024 11:51:55 +0000
+Message-ID: <c56ec5c5bd7349a788251230deead24a@ti.com>
+References: <20240606124105.1492-1-shenghao-ding@ti.com>
+ <146da765-c53f-4eb4-874e-53625daeb03e@linux.intel.com>
+In-Reply-To: <146da765-c53f-4eb4-874e-53625daeb03e@linux.intel.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The copy_from_user() function returns the number of bytes which it
-was not able to copy.  Return -EFAULT instead.
-
-Fixes: dee5a47cc7a4 ("KVM: SEV: Add KVM_SEV_SNP_LAUNCH_UPDATE command")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- arch/x86/kvm/svm/sev.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 70d8d213d401..14bb52ebd65a 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -2220,9 +2220,10 @@ static int sev_gmem_post_populate(struct kvm *kvm, gfn_t gfn_start, kvm_pfn_t pf
- 		if (src) {
- 			void *vaddr = kmap_local_pfn(pfn + i);
- 
--			ret = copy_from_user(vaddr, src + i * PAGE_SIZE, PAGE_SIZE);
--			if (ret)
-+			if (copy_from_user(vaddr, src + i * PAGE_SIZE, PAGE_SIZE)) {
-+				ret = -EFAULT;
- 				goto err;
-+			}
- 			kunmap_local(vaddr);
- 		}
- 
--- 
-2.43.0
-
+SGkgUGllcnJlDQpTb3JyeSBmb3IgbWlzc2luZyB5b3VyIHZhbHVhYmxlIHJldmlldyBjb21tZW50
+cywgdGhhbmtzIGZvciBCcm9vbmllJ3MgcmVtaW5kLg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2Fn
+ZS0tLS0tDQo+IEZyb206IFBpZXJyZS1Mb3VpcyBCb3NzYXJ0IDxwaWVycmUtbG91aXMuYm9zc2Fy
+dEBsaW51eC5pbnRlbC5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBKdW5lIDYsIDIwMjQgOTowOSBQ
+TQ0KPiBUbzogRGluZywgU2hlbmdoYW8gPHNoZW5naGFvLWRpbmdAdGkuY29tPjsgYnJvb25pZUBr
+ZXJuZWwub3JnDQo+IENjOiBhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb207IGxnaXJk
+d29vZEBnbWFpbC5jb207DQo+IHBlcmV4QHBlcmV4LmN6OyAxMzkxNjI3NTIwNkAxMzkuY29tOyB6
+aG91cnVpQGh1YXFpbi5jb207IGFsc2EtDQo+IGRldmVsQGFsc2EtcHJvamVjdC5vcmc7IFNhbGF6
+YXIsIEl2YW4gPGktc2FsYXphckB0aS5jb20+OyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVs
+Lm9yZzsgQ2hhZGhhLCBKYXNqb3QgU2luZ2ggPGotY2hhZGhhQHRpLmNvbT47DQo+IGxpYW0uci5n
+aXJkd29vZEBpbnRlbC5jb207IFl1ZSwgSmFkZW4gPGphZGVuLXl1ZUB0aS5jb20+OyB5dW5nLQ0K
+PiBjaHVhbi5saWFvQGxpbnV4LmludGVsLmNvbTsgUmFvLCBEaXBhIDxkaXBhQHRpLmNvbT47IHl1
+aHN1YW5AZ29vZ2xlLmNvbTsNCj4gTG8sIEhlbnJ5IDxoZW5yeS5sb0B0aS5jb20+OyB0aXdhaUBz
+dXNlLmRlOyBYdSwgQmFvanVuIDxiYW9qdW4ueHVAdGkuY29tPjsNCj4gc295ZXJAaXJsLmh1OyBC
+YW9qdW4uWHVAZnB0LmNvbTsganVkeWhzaWFvQGdvb2dsZS5jb207IE5hdmFkYSBLYW55YW5hLA0K
+PiBNdWt1bmQgPG5hdmFkYUB0aS5jb20+OyBjdWpvbWFsYWluZXlAZ29vZ2xlLmNvbTsgS3V0dHks
+IEFhbnlhDQo+IDxhYW55YUB0aS5jb20+OyBNYWhtdWQsIE5heWVlbSA8bmF5ZWVtLm1haG11ZEB0
+aS5jb20+Ow0KPiBzYXZ5YXNhbmNoaS5zaHVrbGFAbmV0cmFkeW5lLmNvbTsgZmxhdmlvcHJAbWlj
+cm9zb2Z0LmNvbTsgSmksIEplc3NlIDxqZXNzZS0NCj4gamlAdGkuY29tPjsgZGFycmVuLnllQG1l
+ZGlhdGVrLmNvbQ0KPiBTdWJqZWN0OiBbRVhURVJOQUxdIFJlOiBbUkVTRU5EIFBBVENIIHY0XSBB
+U29jOiB0YXMyNzgxOiBFbmFibGUgUkNBLWJhc2VkDQo+IHBsYXliYWNrIHdpdGhvdXQgRFNQIGZp
+cm13YXJlIGRvd25sb2FkDQo+IA0KPiBJIGFtIGFmcmFpZCB0aGVyZSBhcmUgc3RpbGwgY2lyY3Vs
+YXIgbG9naWMgaXNzdWVzLCBvciB0aGUgY29kZS9jb21tZW50cyBkb24ndA0KPiBjYXB0dXJlIHdo
+YXQgeW91IGFyZSB0cnlpbmcgdG8gZG8u4oCKLuKAii7igIouID4gZGlmZiAtLWdpdCBhL2luY2x1
+ZGUvc291bmQvdGFzMjc4MS0NCj4gZHNwLuKAimggYi9pbmNsdWRlL3NvdW5kL3RhczI3ODEtZHNw
+LuKAimggPiBpbmRleCA3ZmJhN2VhMjZhNGIu4oCKLuKAijNjZGE5ZGExNGY2ZA0KPiAxMDA2NDQg
+PiBaalFjbVFSWUZwZnB0QmFubmVyU3RhcnQgVGhpcyBtZXNzYWdlIHdhcyBzZW50IGZyb20gb3V0
+c2lkZSBvZg0KPiBUZXhhcyBJbnN0cnVtZW50cy4NCj4gRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9w
+ZW4gYXR0YWNobWVudHMgdW5sZXNzIHlvdSByZWNvZ25pemUgdGhlIHNvdXJjZSBvZiB0aGlzDQo+
+IGVtYWlsIGFuZCBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUuIElmIHlvdSB3aXNoIHRvIHJlcG9y
+dCB0aGlzIG1lc3NhZ2UgdG8gSVQNCj4gU2VjdXJpdHksIHBsZWFzZSBmb3J3YXJkIHRoZSBtZXNz
+YWdlIGFzIGFuIGF0dGFjaG1lbnQgdG8gcGhpc2hpbmdAbGlzdC50aS5jb20NCj4gDQo+IFpqUWNt
+UVJZRnBmcHRCYW5uZXJFbmQNCj4gSSBhbSBhZnJhaWQgdGhlcmUgYXJlIHN0aWxsIGNpcmN1bGFy
+IGxvZ2ljIGlzc3Vlcywgb3IgdGhlIGNvZGUvY29tbWVudHMgZG9uJ3QNCj4gY2FwdHVyZSB3aGF0
+IHlvdSBhcmUgdHJ5aW5nIHRvIGRvLi4uLg0KPiANCj4gDQouLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uLi4uDQo+IC4uLiBhbmQgaGVyZSB0aGlzIFRBU0RFVklDRV9SQ0FfRldfT0sgcmVh
+bGx5IG1lYW5zIGEgZmFpbC4NCj4gDQo+IHNvIGhvdyBjYW4gWzFdIGNvbnNpZGVyIFRBU0RFVklD
+RV9SQ0FfRldfT0sgYXMgYSBzdWNjZXNzIGNhc2U/DQo+IA0KPiBPciB0aGlzIHRoaXMgc2F5aW5n
+IHRoYXQgdGhlIGJhc2VsaW5lIGlzIHRoZSBSQ0EgY2FzZSwgYW5kIHRoZW4gdGhlIGNvZGUNCj4g
+YXR0ZW1wdHMgdG8gbG9hZCBmaXJtd2FyZSBidXQgaW4gY2FzZSBvZiBmYWlsdXJlcyBqdXN0IGtl
+ZXAgZ29pbmcsIGkuZS4NCj4gZmFpbGluZyB0byBsb2FkIGZpcm13YXJlIGlzIE5PVCBhbiBlcnJv
+cj8NCkNvcnJlY3QuDQo+IA0KPiBUaGF0IHdvdWxkIGJlIHNvbWV3aGF0IGRpZmZlcmVudCB0byB0
+aGUgY29tbWl0IHRpdGxlIHRoYXQgc2F5cyAnd2l0aG91dCBEU1ANCj4gZmlybXdhcmUgZG93bmxv
+YWQnLg0KPiANCj4gV291bGQgeW91IG1pbmQgY2xhcmlmeWluZyB0aGUgc3RlcHMgcGxlYXNlPw0K
+VGhlcmUncyB0d28gYmluIGZpbGVzIGZvciB0YXMyNzgxLCBvbmUgaXMgcmVnaXN0ZXIgc2V0dGlu
+Z3MoUkNBIGJpbiBmaWxlKSwgdGhlIG90aGVyIGlzIHRoZSBkc3AgZmlybXdhcmUgYW5kIGZpbHRl
+ciBjb2VmZi4NCklmIG5vIFJDQSBiaW4gZmlsZSBpcyBsb2FkLCB0aGUgdGFzMjc4MSBjYW4ndCB3
+b3JrLCBpdCB3aWxsIGJlIFRBU0RFVklDRV9EU1BfRldfRkFJTC4NCklmIG9ubHkgUkNBIGJpbiBm
+aWxlIGxvYWQsIHRoZSB0YXMyNzgxIHdpbGwgd29yayBpbiBieXBhc3MgbW9kZSwgd2hpY2ggZHNw
+IGRvIG5vdCB3b3JrLCBuZWl0aGVyIHNwayBwcm90ZWN0aW9uIG5vciBhY291c3RpYyANCmFsZ29y
+aXRobSBpcyBlbmFibGVkIA0KKFRBU0RFVklDRV9SQ0FfRldfT0spLg0KSWYgYm90aCBSQ0EgYmlu
+IGFuZCBkc3AgZmlybXdhcmUgYXJlIGxvYWRlZCwgdGhhdCBpcyBUQVNERVZJQ0VfRFNQX0ZXX0FM
+TF9PSywgdGFzMjc4MSB3b3JrIGluIGRzcCBtb2RlLCBib3RoIHNwayBwcm90ZWN0aW9uDQphbmQg
+YWNvdXN0aWMgYWxnb3JpdGhtIGFyZSBlbmFibGVkDQo+IA0KPiANCj4gPiAgCQl0YXNkZXZpY2Vf
+ZHNwX3JlbW92ZSh0YXNfcHJpdik7DQo+ID4gIAl9DQo+ID4gIAltdXRleF91bmxvY2soJnRhc19w
+cml2LT5jb2RlY19sb2NrKTsNCj4gPiBAQCAtNDY2LDE0ICs0NzQsMTQgQEAgc3RhdGljIGludCB0
+YXNkZXZpY2Vfc3RhcnR1cChzdHJ1Y3QNCj4gPiBzbmRfcGNtX3N1YnN0cmVhbSAqc3Vic3RyZWFt
+LCAgew0KPiA+ICAJc3RydWN0IHNuZF9zb2NfY29tcG9uZW50ICpjb2RlYyA9IGRhaS0+Y29tcG9u
+ZW50Ow0KPiA+ICAJc3RydWN0IHRhc2RldmljZV9wcml2IFRBU0RFVklDRV9SQ0FfRldfT0sqdGFz
+X3ByaXYgPQ0KPiBzbmRfc29jX2NvbXBvbmVudF9nZXRfZHJ2ZGF0YShjb2RlYyk7DQo+ID4gLQlp
+bnQgcmV0ID0gMDsNCj4gPg0KPiA+IC0JaWYgKHRhc19wcml2LT5md19zdGF0ZSAhPSBUQVNERVZJ
+Q0VfRFNQX0ZXX0FMTF9PSykgew0KPiA+IC0JCWRldl9lcnIodGFzX3ByaXYtPmRldiwgIkRTUCBi
+aW4gZmlsZSBub3QgbG9hZGVkXG4iKTsNCj4gPiAtCQlyZXQgPSAtRUlOVkFMOw0KPiA+ICsJc3dp
+dGNoICh0YXNfcHJpdi0+Zndfc3RhdGUpIHsNCj4gPiArCWNhc2UgVEFTREVWSUNFX1JDQV9GV19P
+SzoNCj4gPiArCWNhc2UgVEFTREVWSUNFX0RTUF9GV19BTExfT0s6DQo+ID4gKwkJcmV0dXJuIDA7
+DQo+ID4gKwlkZWZhdWx0Og0KPiA+ICsJCXJldHVybiAtRUlOVkFMOw0KPiA+ICAJfQ0KPiA+IC0N
+Cj4gPiAtCXJldHVybiByZXQ7DQo+ID4gIH0NCj4gPg0KPiA+ICBzdGF0aWMgaW50IHRhc2Rldmlj
+ZV9od19wYXJhbXMoc3RydWN0IHNuZF9wY21fc3Vic3RyZWFtICpzdWJzdHJlYW0sDQo=
 
