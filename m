@@ -1,99 +1,110 @@
-Return-Path: <linux-kernel+bounces-211308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1115F904FC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE037904FC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 201BC1C21599
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:57:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF1291C20E5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB4A16DEDD;
-	Wed, 12 Jun 2024 09:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B278A16DECF;
+	Wed, 12 Jun 2024 09:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Efyl2+vv"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WtidBo2h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC60A34;
-	Wed, 12 Jun 2024 09:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8B216DEDD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718186269; cv=none; b=k0A/Y3aPS3u4FHa4GwWhCilvl/Cs6EwvDxTD3XxRAyQ4/y2zfzyIgpUhN8br4WY01Kv007eiRI2TIqXhXs+nObU0RU2o36pkfjX3hcR7MbK/8F22Zolh/G6uCD4ddK//gOibqu6xHtJCVMBtgd80xFWkdPxxbHL6LdOCP0Sflbg=
+	t=1718186285; cv=none; b=S+7WY+2sdSOGiB5yTcXeBMi7ryH6xFkISpImIC67ybbygIjM0fSUA548gT/eXaSMCOxhnzE+/C96e/AsrsjEFLGLwCH0Lm8jCpaEVN+OyNxX19xv2XEvNwzyMAhZsxTHPLgX5bkZGYZiPrU8vCtU4a8r411dXY2GqS3i7/+Va7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718186269; c=relaxed/simple;
-	bh=iThV4k/VSpUxzzcfw2ggt5LI471Y/PmXZJjWEJdwVjs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r0bm+AgISN34QqeIC5pTgBxGNlHJIvoUP3LSZlV7oHbL0EvNWtN7gyLaNFE4/3+230/dtLlbCnuQEFh1glIOTyDoN+3V0k7Nzlf+P5uRUxdAihINeSd1Mvk5TwY6JwULFb80eXykZbuFk0S6Ur1THTOayCjNeBgyU1lU/w/5diY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Efyl2+vv; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C5ADfm014989;
-	Wed, 12 Jun 2024 04:57:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=Q8uuLceiRabcfzSggO
-	IFKi2cARAPS+Lac4yeJDIRirc=; b=Efyl2+vvP4+iaGprZsgRLJSz1wjF5TN/2O
-	AVmvFIHdl3tNrvzioe4cAnsRDvbBNWJ3uIXrRTuTnjQZ9Hc1NfvXNNIjML5GZT9L
-	Rb5eVXwANuYkp0uzXbhs1jJIAZCl2XSb1MjAjpesyfHMgkQuae+/6svzdATLcIXM
-	UmR5s1fnKwTIBBD0jdy8vcItBpmUmjYcHmGls3AiP3ONxweu3e5AUCmJBh7i6sSC
-	3ffRF3yPqG2QJzBqkYq2MoidGZjZRGSHXePhE8J4VreyA3/bUdxiydBqqGhYW5lo
-	e0ng96aZ4kmOOE952wp2Tv9Ih9sMYvMCnQJ7SiSDoAr6M+hMKmtw==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3ymmq0bpb3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 04:57:29 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 10:57:26 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Wed, 12 Jun 2024 10:57:26 +0100
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 5A7D8820248;
-	Wed, 12 Jun 2024 09:57:26 +0000 (UTC)
-Date: Wed, 12 Jun 2024 10:57:25 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-CC: Daniel Baluta <daniel.baluta@nxp.com>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <patches@opensource.cirrus.com>,
-        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: wlf,wm8782: Convert to dtschema
-Message-ID: <ZmlxBSPro1GtWx3Z@opensource.cirrus.com>
-References: <20240611124405.63427-1-animeshagarwal28@gmail.com>
+	s=arc-20240116; t=1718186285; c=relaxed/simple;
+	bh=/dq33L+wCHqTV5HbyMXSc1U5hW5k39SLNeDQ1ubJZ3w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=lK2J/I2t3Q/gYXbt6n2euc71pny1LJOkylP4ZO+vPTIga3Hv2ZNc2ZZd+X086mIboAVApVBaC/C+J0vwrOm8obbQOn6nkcMsAy6fOEWczzT6dxq71cyRzS8SYqkwLb4ijt3hgIFeK+OK8/7tOob5AAH1fl0zP+hSj6Z9RGKDIa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WtidBo2h; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718186284; x=1749722284;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/dq33L+wCHqTV5HbyMXSc1U5hW5k39SLNeDQ1ubJZ3w=;
+  b=WtidBo2hvYB/V+fq1E7WnxbWqjaXDh2UJHd4zOhKs3wiRLe1dBjHf8ss
+   oLW3YhjtPIKuonPmpeewuW/h2Mba1PqMbZIwghXKPAIyWeu/lvS12S1XX
+   cwqCoXxhcyiab1KQgRhfRxPXzkpengT8PbWmFLynavXl5FQXhvK611w36
+   MiaX79BYGb1NO9elcCDazrsSUlnhBzyzUCUmea9oRMpPtaEFXr4ix9EKC
+   W4doE7lZEKAnlYUQoILh9FnBAsNYS4VPdPyCdImwOcJERHnlam6DTBmLO
+   Ju9QiV865bevWajHJ5xqFJKP+adJu6v0VfuluB93u2eD0WofPcO/2XMn4
+   Q==;
+X-CSE-ConnectionGUID: eS0iyHuGQbOBhWe3qdRmHw==
+X-CSE-MsgGUID: LG1w25ULQESDpd/YVKO2yA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="25516607"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="25516607"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 02:58:03 -0700
+X-CSE-ConnectionGUID: z5/sL7oBSh25qe/D+7ptaw==
+X-CSE-MsgGUID: shZa+CeIQYud3SXvNrfj4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="70545970"
+Received: from unknown (HELO localhost) ([10.245.247.204])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 02:58:02 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Lee Jones <lee@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 1/1] mfd: intel-lpss: Add Intel Arrow Lake-H LPSS PCI IDs
+Date: Wed, 12 Jun 2024 12:57:55 +0300
+Message-Id: <20240612095755.18137-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240611124405.63427-1-animeshagarwal28@gmail.com>
-X-Proofpoint-GUID: G-Ki3PCoe0PhLSbnIzZ6qAfxCTOxwcUk
-X-Proofpoint-ORIG-GUID: G-Ki3PCoe0PhLSbnIzZ6qAfxCTOxwcUk
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 11, 2024 at 06:14:00PM +0530, Animesh Agarwal wrote:
-> Convert the WM8782 audio codec bindings to DT schema.
-> 
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> ---
+Add Intel Arrow Lake-H PCI IDs.
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/mfd/intel-lpss-pci.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Thanks,
-Charles
+diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
+index 1362b3f64ade..0eb6a98ed0fc 100644
+--- a/drivers/mfd/intel-lpss-pci.c
++++ b/drivers/mfd/intel-lpss-pci.c
+@@ -424,6 +424,19 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
+ 	{ PCI_VDEVICE(INTEL, 0x5ac4), (kernel_ulong_t)&bxt_spi_info },
+ 	{ PCI_VDEVICE(INTEL, 0x5ac6), (kernel_ulong_t)&bxt_spi_info },
+ 	{ PCI_VDEVICE(INTEL, 0x5aee), (kernel_ulong_t)&bxt_uart_info },
++	/* ARL-H */
++	{ PCI_VDEVICE(INTEL, 0x7725), (kernel_ulong_t)&bxt_uart_info },
++	{ PCI_VDEVICE(INTEL, 0x7726), (kernel_ulong_t)&bxt_uart_info },
++	{ PCI_VDEVICE(INTEL, 0x7727), (kernel_ulong_t)&tgl_spi_info },
++	{ PCI_VDEVICE(INTEL, 0x7730), (kernel_ulong_t)&tgl_spi_info },
++	{ PCI_VDEVICE(INTEL, 0x7746), (kernel_ulong_t)&tgl_spi_info },
++	{ PCI_VDEVICE(INTEL, 0x7750), (kernel_ulong_t)&bxt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x7751), (kernel_ulong_t)&bxt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x7752), (kernel_ulong_t)&bxt_uart_info },
++	{ PCI_VDEVICE(INTEL, 0x7778), (kernel_ulong_t)&bxt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x7779), (kernel_ulong_t)&bxt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x777a), (kernel_ulong_t)&bxt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0x777b), (kernel_ulong_t)&bxt_i2c_info },
+ 	/* RPL-S */
+ 	{ PCI_VDEVICE(INTEL, 0x7a28), (kernel_ulong_t)&bxt_uart_info },
+ 	{ PCI_VDEVICE(INTEL, 0x7a29), (kernel_ulong_t)&bxt_uart_info },
+-- 
+2.39.2
+
 
