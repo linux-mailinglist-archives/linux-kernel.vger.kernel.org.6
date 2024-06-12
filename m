@@ -1,78 +1,84 @@
-Return-Path: <linux-kernel+bounces-211165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46A59904DF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:20:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB6F904DFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CE221C215BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:20:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0536AB26331
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D42916D32B;
-	Wed, 12 Jun 2024 08:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA4E16D4FC;
+	Wed, 12 Jun 2024 08:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DlIdZTO8"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="TQxk5MYK"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8853216C852
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1216416C865
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718180436; cv=none; b=TUj5b3d7x84IgMfjMxGCp5rpVvv6fsDFyQ1CpfaaXQSDinXUYy+e3DjTgA4HRhrp1DQ/gCPgZ9kxNh73XNIDrUjY0YDwSpDa30oEbuwiUONsNVGJeWpQy8dSoNI7YIn2JOeZONkHYl01Pr5pTUG5H3wXU0j1J/JzeqwZipKOug8=
+	t=1718180438; cv=none; b=QiczvrLxwXZ3aVkYqK9MVVDsu5Ee7BOLR1iwfXDKfsMLXRRslfUcmdYZFE/rat5LM7pBoMRyRzx4KjpjG27SzYLKv86wL05GECUmNnc3wfjwZgKECz4UMHMYpAC8o/eEPIaCG9pIlqJLJircHvcp5ynB85E8/puncQ1bUa5tBiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718180436; c=relaxed/simple;
-	bh=UjX30Q/chhMfu+tqaRL4g479FQ85eWt5DCCzNJXZE7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R1we8ppVzOkDLLWWpA09c5vFe8MSVsrsHz1WaFO6JGveXX/1aL8YFERpoWwyY17IYlYbkRozINj2B71kKx0zEnL5k8pJ0SRcv1DowPRWp77P6Hwe1Q0XhzQUpGC1YmbYrK45D2VLjM0eAlXKyjoGY+f5q4XmY1TixOvA3+iOrYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DlIdZTO8; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1718180438; c=relaxed/simple;
+	bh=7ODnCMLyMATh86YrN1ZPmjwWRMHpwQW+fCV8rLwj58E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZfQRYBx4GO3lFTAMJgib4+5df8aC40tg004hqcRpSg3P6nxQBN0APF+G+0by8uFoCm4vEUd52DfLHS4QyrMaKe6IyFKJ4dFOVY9RZ8oCL04Ksx2uvA1LKo1TBod1LCTm+VFRAZgx2xDxXuVvQjDyYcET1Bi1qTVCmrl/UM/+w84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=TQxk5MYK; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-421820fc26dso27304545e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:20:34 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4218180a122so13980075e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:20:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718180433; x=1718785233; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4fnQoWbKQPigJStkTW3OuZtA3AHbdJ+985auD2zJfsY=;
-        b=DlIdZTO8TEvDB+QrFcVD0LjJqFuJPpJjXu8QA5niT5sa/oK3V+R9ahBDxFv1P3wCzd
-         IGYUKeHFXElc/MPicFdRSpLfgnNUiA5qpf69mjhWiGKBqqSawjw6UuqzqhS/jynFbcrA
-         Y5qOuEtaaY193AoPLhv+6FGiasYxMA2xcCpFL+lxcJ09uHAvGh4Zh+GJNgrrvAjiBo0/
-         XO/id5tuR8KzN+YY+uuI5N2rJ4a153OJYxoMfSWI3S+zK8bocWkmoBmgFIeKwo+RwXH1
-         MMGpfPXfpc/y+6xQ8/sgbiMK6peckxDY4qpYDdKtPJZJkWibXoejGML6JlIH/pjS/f98
-         BvhA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718180434; x=1718785234; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R+tryJWSLGei4yj4mnd/Wwwy83ERVx62Yqnj8MX2+CY=;
+        b=TQxk5MYKztGI6IXzOvLNSX1Njy4G7Hep1ykBwj6IhXYoOEw9pKxLtEzPd2wxtFb+cc
+         YAUAbUsz81k3PQwwtmjrzngEVjQP4rLRn5UMo326cRTX8vPoPRci43fPmLaByxOTfn0s
+         n/+BQV91CFCQfd7B9ahbGfKBH2G/7GNjglh78dz6WDDucsESrZa2P7YjtAmSGe2Otl4p
+         mHrThXSC9sEbti4UNFlq3kAWDNBu0OM8OnN7vKzYrh2PdIGXrNLYaA54VLL23wbtVBDi
+         6AVHg/yCYS9XrSRZcSTyhPVEWqy7IoZ7N3QAegDDfM4e1rLHyOEZU1pu20naTZo6ShTL
+         pYAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718180433; x=1718785233;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4fnQoWbKQPigJStkTW3OuZtA3AHbdJ+985auD2zJfsY=;
-        b=MflCpcKfuMxoJdLNNsfXiCVi3KviU2LtBXoJhC32nOdpoEu02OFv+wP2Rwriv582lT
-         zevjzWK/srUutU0vLdC3Ssy2pzS+Kmx7NbdqwmgG37/A5olVWUmfCkBBEgD67vpIoDxl
-         p11UB+bkpj3zNW9h5+M5TeQvQu6NLghu9q9eue8RwSB8pjR514mGEViyAoNhQp6hFKA1
-         AESDbBIgc0AembH499IfJTa4o6K/1wa4HHEZfWwHawgqK6L7/NAAmZP40CmTbDkS0GZx
-         S2QORqFsvfelUonHCnkgsB0jXuRlzQXc3OciMaB2eg1J7V+3brJ9aMpolMtl54/FjyAY
-         giaA==
-X-Gm-Message-State: AOJu0YxAIhdHpBUHVYC8GYtgM88YlnGdae1SZVlspKT8FV4+iizSknpM
-	iyIfTN+yh0Evt09Pu+5WUo/VzFIIirkgb8nz16qTlg6636JkwZ9DdHBPdRLyx0tDZlu/on1hSzF
-	J
-X-Google-Smtp-Source: AGHT+IHnWTN4AsV/rO/wXyzk0e+kJevmpUYIHPt+dsPykazjVLSo7vNtfO0z6ioqKTVg5mgovBNISA==
-X-Received: by 2002:a05:600c:458a:b0:421:b16c:5bf5 with SMTP id 5b1f17b1804b1-422862acb06mr10454575e9.2.1718180432772;
-        Wed, 12 Jun 2024 01:20:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718180434; x=1718785234;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R+tryJWSLGei4yj4mnd/Wwwy83ERVx62Yqnj8MX2+CY=;
+        b=DFf0uSK8ckkfomoxH1zChOXaiCnZCTRhQfJgGQ/EdJodZvMBtVRGEk3qVyEOvQqq6N
+         G7ASNz8fODrjsw7czeUf7EHTC3dxfje+d2eHgvI7zTOxurkBNgnPEIbw3cmTmuBQ4Zta
+         Wsd+notYaOZK+Zgww4znI1WuYO2UDWnZrCacWddPULO2xtokrLa/tttakyUYrzP97ehh
+         HYFpn2LsEWXdZQpsWJhIdsmnfHyIF1MweAnFYr6neFwcW4fW0XWrqa+kIcVJ1zEVwcyz
+         hsEkDcA/+n8qO/mxDofGbp0XEGQsKBGkgaR0mSbiggrVpU/IbCEfecbX/FQcvf6L0kBC
+         kPmw==
+X-Gm-Message-State: AOJu0YwRUjnXo3tSuTaH75RmP2HHHnXd+NLKnQao6Vvs5CRb55rmGxaf
+	RR8jVcGWgcWeB3zaO+2N64Ryl8+l6R13H5sjITLEmqwnpvMlcRsLMxgHvmAbHZc=
+X-Google-Smtp-Source: AGHT+IFDFkTt9Hyalt1EORmsWnUvoaT3No0XLhTfumJCHtinnWuBc/50Y76gRwgEs1k/81gMqxtorg==
+X-Received: by 2002:a05:600c:1913:b0:422:727c:70b1 with SMTP id 5b1f17b1804b1-422861aed43mr12346085e9.8.1718180434362;
+        Wed, 12 Jun 2024 01:20:34 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:8d3:3800:a172:4e8b:453e:2f03])
         by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4229207d1a7sm6011775e9.1.2024.06.12.01.20.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 01:20:32 -0700 (PDT)
+        Wed, 12 Jun 2024 01:20:33 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Bjorn Helgaas <bhelgaas@google.com>
 Cc: linux-kernel@vger.kernel.org,
 	linux-pci@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v9 0/5] PCI/pwrctl: initial implementation and first user
-Date: Wed, 12 Jun 2024 10:20:13 +0200
-Message-ID: <20240612082019.19161-1-brgl@bgdev.pl>
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Amit Pundir <amit.pundir@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Caleb Connolly <caleb.connolly@linaro.org>
+Subject: [PATCH v9 1/5] PCI: Hold the rescan mutex when scanning for the first time
+Date: Wed, 12 Jun 2024 10:20:14 +0200
+Message-ID: <20240612082019.19161-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240612082019.19161-1-brgl@bgdev.pl>
+References: <20240612082019.19161-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,102 +89,34 @@ Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I'm sending the PCI part separately to keep the history on the list.
-Bjorn acked all of them so I'll pick them up later today into the pwrseq
-tree.
+With the introduction of PCI device power control drivers that will be
+able to trigger the port rescan when probing, we need to hold the rescan
+mutex during the initial pci_host_probe() too or the two could get in
+each other's way.
 
-Changelog:
+Tested-by: Amit Pundir <amit.pundir@linaro.org>
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD, SM8650-QRD & SM8650-HDK
+Tested-by: Caleb Connolly <caleb.connolly@linaro.org> # OnePlus 8T
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/pci/probe.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Since v8:
-- split out the PCI patches into their own series
-- improved commit messages (added rationale for the PCI pwrctl and the
-  powrseq driver for QCOM QCAxyz, start with a capital letter)
-- pick up Acks from Bjorn
-- Link to v8: https://lore.kernel.org/r/20240528-pwrseq-v8-0-d354d52b763c@linaro.org
-
-Since v7:
-- added DTS changes for sm8650-hdk
-- added circular dependency detection for pwrseq units
-- fixed a KASAN reported use-after-free error in remove path
-- improve Kconfig descriptions
-- fix typos in bindings and Kconfig
-- fixed issues reported by smatch
-- fix the unbind path in PCI pwrctl
-- lots of minor improvements to the pwrseq core
-
-Since v6:
-- kernel doc fixes
-- drop myself from the DT bindings maintainers list for ath12k
-- wait until the PCI bridge device is fully added before creating the
-  PCI pwrctl platform devices for its sub-nodes, otherwise we may see
-  sysfs and procfs attribute failures (due to duplication, we're
-  basically trying to probe the same device twice at the same time)
-- I kept the regulators for QCA6390's ath11k as required as they only
-  apply to this specific Qualcomm package
-
-Since v5:
-- unify the approach to modelling the WCN WLAN/BT chips by always exposing
-  the PMU node on the device tree and making the WLAN and BT nodes become
-  consumers of its power outputs; this includes a major rework of the DT
-  sources, bindings and driver code; there's no more a separate PCI
-  pwrctl driver for WCN7850, instead its power-up sequence was moved
-  into the pwrseq driver common for all WCN chips
-- don't set load_uA from new regulator consumers
-- fix reported kerneldoc issues
-- drop voltage ranges for PMU outputs from DT
-- many minor tweaks and reworks
-
-v1: Original RFC:
-
-https://lore.kernel.org/lkml/20240104130123.37115-1-brgl@bgdev.pl/T/
-
-v2: First real patch series (should have been PATCH v2) adding what I
-    referred to back then as PCI power sequencing:
-
-https://lore.kernel.org/linux-arm-kernel/2024021413-grumbling-unlivable-c145@gregkh/T/
-
-v3: RFC for the DT representation of the PMU supplying the WLAN and BT
-    modules inside the QCA6391 package (was largely separate from the
-    series but probably should have been called PATCH or RFC v3):
-
-https://lore.kernel.org/all/CAMRc=Mc+GNoi57eTQg71DXkQKjdaoAmCpB=h2ndEpGnmdhVV-Q@mail.gmail.com/T/
-
-v4: Second attempt at the full series with changed scope (introduction of
-    the pwrseq subsystem, should have been RFC v4)
-
-https://lore.kernel.org/lkml/20240201155532.49707-1-brgl@bgdev.pl/T/
-
-v5: Two different ways of handling QCA6390 and WCN7850:
-
-https://lore.kernel.org/lkml/20240216203215.40870-1-brgl@bgdev.pl/
-
-Bartosz Golaszewski (5):
-  PCI: Hold the rescan mutex when scanning for the first time
-  PCI/pwrctl: Reuse the OF node for power controlled devices
-  PCI/pwrctl: Create platform devices for child OF nodes of the port
-    node
-  PCI/pwrctl: Add PCI power control core code
-  PCI/pwrctl: Add a PCI power control driver for power sequenced devices
-
- MAINTAINERS                            |   8 ++
- drivers/pci/Kconfig                    |   1 +
- drivers/pci/Makefile                   |   1 +
- drivers/pci/bus.c                      |   9 ++
- drivers/pci/of.c                       |  14 ++-
- drivers/pci/probe.c                    |   2 +
- drivers/pci/pwrctl/Kconfig             |  17 +++
- drivers/pci/pwrctl/Makefile            |   6 ++
- drivers/pci/pwrctl/core.c              | 137 +++++++++++++++++++++++++
- drivers/pci/pwrctl/pci-pwrctl-pwrseq.c |  89 ++++++++++++++++
- drivers/pci/remove.c                   |   3 +-
- include/linux/pci-pwrctl.h             |  51 +++++++++
- 12 files changed, 333 insertions(+), 5 deletions(-)
- create mode 100644 drivers/pci/pwrctl/Kconfig
- create mode 100644 drivers/pci/pwrctl/Makefile
- create mode 100644 drivers/pci/pwrctl/core.c
- create mode 100644 drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
- create mode 100644 include/linux/pci-pwrctl.h
-
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index bfeeaf2d1fa9..b14b9876c030 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -3083,7 +3083,9 @@ int pci_host_probe(struct pci_host_bridge *bridge)
+ 	struct pci_bus *bus, *child;
+ 	int ret;
+ 
++	pci_lock_rescan_remove();
+ 	ret = pci_scan_root_bus_bridge(bridge);
++	pci_unlock_rescan_remove();
+ 	if (ret < 0) {
+ 		dev_err(bridge->dev.parent, "Scanning root bridge failed");
+ 		return ret;
 -- 
 2.40.1
 
