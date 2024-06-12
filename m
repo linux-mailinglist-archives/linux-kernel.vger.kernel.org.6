@@ -1,114 +1,172 @@
-Return-Path: <linux-kernel+bounces-211150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835FB904DB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:11:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7870904DBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10A852830BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BBAF1C2123E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825B116C84B;
-	Wed, 12 Jun 2024 08:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DE216C84E;
+	Wed, 12 Jun 2024 08:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zyxi54du"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LsFIWwzU"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2048.outbound.protection.outlook.com [40.107.101.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3934745948;
-	Wed, 12 Jun 2024 08:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718179890; cv=none; b=U2jurtTPjtt7xQi3F2Kc1+5lsBleCnlt85MM6Erh54qfgSv834t3L/sxHFHIK+g88kHiqEOkCdQt2EDRqOYZ299Ag7+ZlYBNwWcTXhN4c6OOlauqGJUQYWxYD+w55o1kyQ1ewTi0Tn70XBsq3YNJIs2yKTRrpM/GUJ0ys+49ELI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718179890; c=relaxed/simple;
-	bh=xvC0pYsKju6If2He1LE0lGCBfp0CbEd4zvgJoGQEK+4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pc6M9dyUG+uCnjKgr/CeHT5ZnFxRvw4A6MNIZ/g30Y5sMtHgInK/AS+pgompr1nNfVjToYpVBlt9nLmhaHvNkd6k8ilKJKDaRlNFmTG+PGTxA2xTCslqvjb4PuxACA0RYA+/1KzoKszvLmv2sZSkmVTLyM9WBfc3NuUNxnLlNyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zyxi54du; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718179890; x=1749715890;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=xvC0pYsKju6If2He1LE0lGCBfp0CbEd4zvgJoGQEK+4=;
-  b=Zyxi54du5tLqP04BQYyj7HzQK7HPB0U90BfGp8N8UJNq58aNxQicqM13
-   zHsu0qWTzpXnYbMAHTyevXbJyWgfKuLLapGCJlaAkKBt4UNk3M2qZgFDv
-   ZOkdW+aSefNBhNNpIUdKLTISdB29Vnntq1N09kCqiK8aPH1EIzsWTtx5h
-   7BjtDS9K+qM5N3mwrbNTxh8tkoFYShlLn/mWdcld7Yy0oe+mWdvBVg7oI
-   IqsyOJVnmP3Atd/rXw7NzEYk75yrH1LjBalI1vumHk49QPhvP1HPe/WzV
-   dsIcPvCGtzuYvJ1vPFRbaPDVlNIpk4M8S07vdOg//LfV1ZBrMman8BqqB
-   g==;
-X-CSE-ConnectionGUID: QKONC2pCRoeRZd5SrdoE0A==
-X-CSE-MsgGUID: eYr9wkSkTEGV27t/T40bPg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="25505634"
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="25505634"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 01:11:29 -0700
-X-CSE-ConnectionGUID: lI9f8LxPSEi81r+jBhM2Bg==
-X-CSE-MsgGUID: aLELKqIWQ1eac12kCawmlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="39672038"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 01:11:27 -0700
-Message-ID: <a5bb2bb3-efe3-461f-a3d8-88af82f29b15@intel.com>
-Date: Wed, 12 Jun 2024 11:11:22 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2BA45948;
+	Wed, 12 Jun 2024 08:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718179939; cv=fail; b=tNcBGpKIGzRY5QZc4hKaI+OJtgrf3jpk1sZRqzY5qrN6Dz2W2BNDpX8jEFdkzWz7RwZ/urZMG+BrwtKppnzqoFDSUhc/sM7oI7mJkRao1/ivcfe+iw6kgGq160JCIo9kGBLfwWDNID3SYMUxO7KvnBJ6JwM2HAOnXDnln2LUpSo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718179939; c=relaxed/simple;
+	bh=u8opVFTucgBWlVQ9QovYBXf65OWFF0pzuflaPgoPQeI=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nn3pYTY2C2cEkF9YC1hz6dIph6qR75Z5qgz4TjA+iuZ4KObxBl9XF2i43dqil0HQz530X7+BKDhwkzif+g9o5ikwvwkf66G2V10navyrr/WkcAlGy3wwYeadtE5FVS+b50iuFMVQKHPJjOcwExH45+9qN4u/GHsBKWFTZkvsL5o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LsFIWwzU; arc=fail smtp.client-ip=40.107.101.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LaESELf6Zi1nwByn5UgtJCzwntLSOz0vTRvyn/dphAmilMfnMTxf1mrCRtlJVd3bUljCrcKOEs8cnNQKvLq42/apAK1U041eelHYHg53v4JvL8XVShd2yjAJNgQCkf4fvzyQNgKiSniTSgl35G5Ak1HrOmSvv7ij/P/eMwuyosW1krFHUIRYuYbbCCaQ0X1cRSWNPGFJRa+BZ6n1hUNK77SqH5COanurT1QCB0yrCtdWWUI7ptSxnQNi38DYOELJNh0Se3h/BjeiCFeUjLNQVosv1DY2F1C+U+9/81mrPN+7lS59/WVMHjDHPRKG78F6YXTx24+pANQScIzITSi/4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yTyM3sqKI/xtRqAewFQpg+zRzcfjQWnUOoan6Mfc3pQ=;
+ b=ivXJRda9t6eAtPKznCy/PIX7znhCOY5d+B/50vAZaIEZGHQ1fja2XCaT/pBAEpPtUCef7XkZGs9uUrM4SV74chBG4Nbe0Pnp8hSrybXF3JYr6w42aFXO6eHLt+g7dblE7P0E4RX6tSsW+aPX8s3Aifxi4bppxzowoKmtkEXfr7JgGQ5wRDJyHW2+VNFI6/WaZvfQ6KOXEagKOU3Ud1qXfGhFTJvKWjAi3QGA8ivuUZn7uog7LbyWPAmVBIxsUxlEqoT9pknQ6XJ2ZYYEU4DJv8JpeHmZ5RDh0tQdW5Uut07+zWIg12W+nYVmiHi8D7+6bdNwd8P/rlf6rR1sAcePpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yTyM3sqKI/xtRqAewFQpg+zRzcfjQWnUOoan6Mfc3pQ=;
+ b=LsFIWwzUC/lTzHF7UYpJaQnqqr5F8HnTEaX1gYcAGktAN7AbjC3Z/PiYD3Cg3maZwQ1GGKMWFgIiHUiUwk3xgl6jzyw5Yq3yyoPBm96+tZXPcuRjm5fAwzi1eAB+nXZDXXoM7OGkrf9ouFkYeqK6qJhp5C50INJk4TYH2w7tN+c=
+Received: from SJ0PR05CA0074.namprd05.prod.outlook.com (2603:10b6:a03:332::19)
+ by DS7PR12MB8371.namprd12.prod.outlook.com (2603:10b6:8:e9::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.21; Wed, 12 Jun
+ 2024 08:12:12 +0000
+Received: from CO1PEPF000066E6.namprd05.prod.outlook.com
+ (2603:10b6:a03:332:cafe::b0) by SJ0PR05CA0074.outlook.office365.com
+ (2603:10b6:a03:332::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.17 via Frontend
+ Transport; Wed, 12 Jun 2024 08:12:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000066E6.mail.protection.outlook.com (10.167.249.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Wed, 12 Jun 2024 08:12:11 +0000
+Received: from BLRRASHENOY1 (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 12 Jun
+ 2024 03:12:02 -0500
+From: Gautham R.Shenoy <gautham.shenoy@amd.com>
+To: Perry Yuan <perry.yuan@amd.com>, <Mario.Limonciello@amd.com>
+CC: <rafael.j.wysocki@intel.com>, <viresh.kumar@linaro.org>,
+	<Ray.Huang@amd.com>, <Borislav.Petkov@amd.com>, <Alexander.Deucher@amd.com>,
+	<Xinmei.Huang@amd.com>, <Xiaojian.Du@amd.com>, <Li.Meng@amd.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 06/10] Documentation: PM: amd-pstate: add guided mode
+ to the Operation mode
+In-Reply-To: <6e960ad57d31d379f8b0b631581b078fb9b272ea.1718095377.git.perry.yuan@amd.com>
+References: <cover.1718095377.git.perry.yuan@amd.com>
+ <6e960ad57d31d379f8b0b631581b078fb9b272ea.1718095377.git.perry.yuan@amd.com>
+Date: Wed, 12 Jun 2024 13:42:00 +0530
+Message-ID: <87jziuzijz.fsf@BLR-5CG11610CF.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: sdhci-of-dwcmshc: Use inverted-wp quirk for CV18xx
- and SG200x SoCs
-To: Haylen Chu <heylenay@outlook.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Jisheng Zhang <jszhang@kernel.org>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <SEYPR01MB42219753E4388009470D958DD7FC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <SEYPR01MB42219753E4388009470D958DD7FC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066E6:EE_|DS7PR12MB8371:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e91f17f-c001-4fc0-70a9-08dc8ab75c8a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230032|36860700005|1800799016|82310400018|376006;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OhrrHO7ImkvPD3dRCmp8wUCuHJhOQ2whBRxoIR6KdlSkX7C8hvhXwSUv+THn?=
+ =?us-ascii?Q?jcJ6sdvFD16EijkM8m6ItSl6yEsxFeZRofqyLW3Est4q6l3ciMvNQsfE5lOr?=
+ =?us-ascii?Q?RI0StdGZPKbTJF9pB0TlfUz5XsJPXPrR0b6IPFgbYdxVMzYotR+Mmcm4wjcE?=
+ =?us-ascii?Q?YuEMRKtKFSUJDYQLIdb2oxioFPCjoM7T1uSYK0Fc+7nYnYsjuoRVkCsyAslg?=
+ =?us-ascii?Q?fVqeAEUA9ynt3nKb9560ATzcc+/mHr3x4XehIFecj0YSyKMaHhg6Km81pFCl?=
+ =?us-ascii?Q?Zz1ayOukv9WSFVUhrQmby1/zWApX3df9VmFy4aa8JK8gNok1PzGrMdqNxvvZ?=
+ =?us-ascii?Q?/N7vCMahChJL1ftnIketA19qdE72nQG5qs9HoJr8m1/vp0Zw72Q6CyvxELqg?=
+ =?us-ascii?Q?dFFOnBn1pUQGuIwgbEGDtxfZ/6hJWnfYmdY78ep0cEroTGu3zIcUkywsYBws?=
+ =?us-ascii?Q?epJWfm7UJp/GQMSrU/epIjeP2fA4PVTKenT9UzNOGgDCrm5z0HSsTUMBUxmE?=
+ =?us-ascii?Q?iXqNVcSHsfEybGOnpGJD7xCZ0yWc9kUATpMVe0LVrU9qaqBJdmgv/kG9APgu?=
+ =?us-ascii?Q?6HxD5RkP52XNqqucBdsUwf45N3QIP8uv5nu/0gQGlihCGlgDTtZkVa6cgIn5?=
+ =?us-ascii?Q?/67mTbW9zx0PaxmaYS1seaVUgtZpi/xHisRorjLkRoZLYV5fygbKJmjd+0cQ?=
+ =?us-ascii?Q?SzyE6zRiTrp9g1L8W0epn7olVayi5MKEVpnXae2TtZVns0HCzSES1dAULWC0?=
+ =?us-ascii?Q?bUVj3SxweipnraHSxag0ZJC/7U6HHSLhFQ0Kk0TQvu/Y8PWNesNEHBxmi/ay?=
+ =?us-ascii?Q?qfqYzl89BKUO4d715jRRlURr/J/92fV7xwdFtAFxP6farn5s0tPbdhkWgePe?=
+ =?us-ascii?Q?SEIDn+VSkd2L7R/jf59oH8ekUL0k++8NMtQ7LgIuceXpPytpXua9Tf5P2KtK?=
+ =?us-ascii?Q?s6IwQo5h4y71Jlr0nF2ZUWN/6AdZ06wv5wlo/rloSmwvPr5Nhrk8Kx8sjGZc?=
+ =?us-ascii?Q?Z+94LFgv4nnSKQJ3fbcKw0HPmIx4fKHKadcmUtzFa/ShbZLEv4sWdjfK1itJ?=
+ =?us-ascii?Q?k4ECZJjBG9+1cC7VZNMYSXfgjF+f/mqbyBAh3iYRgjv6Fcfgc4+T8aZi4J4b?=
+ =?us-ascii?Q?Xqj7sDv+GNpPQohlm+SjeB7kdg529z7fgtHvLexPBN5eY6MMkWk6qhVmAabX?=
+ =?us-ascii?Q?/+QS4jM+MqIkuOoOt4N5splScrKgaJe6XZTZtDqHMQON8r49OUA+xLvYDKxI?=
+ =?us-ascii?Q?QH35oNBBUhzUc+IwyAGF936VYqLpnBqoxi5mfrg7/Wj42Xgd4G2TFTPMpqCS?=
+ =?us-ascii?Q?uqmLQ63jksM1JdZwfmowK7kBfJt2aTUrVJcepEJeeG+jnazIV7bhNPsb6xwx?=
+ =?us-ascii?Q?0M0wbBDf6B4/JWUPJ3tAwhLBVuHJdCvAnvVAyvWT1ptWKq0Yng=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230032)(36860700005)(1800799016)(82310400018)(376006);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 08:12:11.2555
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e91f17f-c001-4fc0-70a9-08dc8ab75c8a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066E6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8371
 
-On 31/05/24 17:13, Haylen Chu wrote:
-> MMC controller integrated in Sophgo CV18xx and SG200x SoCs has an
-> inverted write-protect flag, causing SDCards misdetected as read-only.
+Perry Yuan <perry.yuan@amd.com> writes:
 
-Is it the SDHCI_WRITE_PROTECT bit of the SDHCI_PRESENT_STATE
-register that needs to be inverted?
+> the guided mode is also supported, so the operation mode should include
+> that mode as well.
+>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
 
-> So set SDHCI_QURIK_INVERTED_WRITE_PROTECT to make write protection work
-> correctly.
-> 
-> Fixes: 017199c2849c ("mmc: sdhci-of-dwcmshc: Add support for Sophgo CV1800B and SG2002")
-> Signed-off-by: Haylen Chu <heylenay@outlook.com>
+Thanks for adding this.
+
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+
 > ---
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> index 39edf04fedcf..62b7f28de54f 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -962,7 +962,8 @@ static const struct sdhci_pltfm_data sdhci_dwcmshc_th1520_pdata = {
+>  Documentation/admin-guide/pm/amd-pstate.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/admin-guide/pm/amd-pstate.rst b/Documentation/admin-guide/pm/amd-pstate.rst
+> index de83e742738e..7eb35ad21c7d 100644
+> --- a/Documentation/admin-guide/pm/amd-pstate.rst
+> +++ b/Documentation/admin-guide/pm/amd-pstate.rst
+> @@ -406,7 +406,7 @@ control its functionality at the system level.  They are located in the
+>  ``/sys/devices/system/cpu/amd_pstate/`` directory and affect all CPUs.
 >  
->  static const struct sdhci_pltfm_data sdhci_dwcmshc_cv18xx_pdata = {
->  	.ops = &sdhci_dwcmshc_cv18xx_ops,
-> -	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> +	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
-> +		  SDHCI_QUIRK_INVERTED_WRITE_PROTECT,
->  	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
->  };
+>  ``status``
+> -	Operation mode of the driver: "active", "passive" or "disable".
+> +	Operation mode of the driver: "active", "passive", "guided" or "disable".
 >  
-
+>  	"active"
+>  		The driver is functional and in the ``active mode``
+> -- 
+> 2.34.1
 
