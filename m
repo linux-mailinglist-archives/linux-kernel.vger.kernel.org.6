@@ -1,171 +1,204 @@
-Return-Path: <linux-kernel+bounces-211442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09C09051AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:53:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D6DD90519B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5943D28393E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:53:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9009E1F220A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB90216F29F;
-	Wed, 12 Jun 2024 11:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE5C16F260;
+	Wed, 12 Jun 2024 11:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="o5ZwoQR0"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JXTTvfkn"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A874D16F0E9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939FD16D4D3;
+	Wed, 12 Jun 2024 11:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718193186; cv=none; b=IDxRM6T48oPGw4wxntI+JuuL9BDNS/yPjNowyY5RPnhkqsNVhu3w52NmLRq1rTfmxzvq2uyT9AAb+yRPAKeLX1esV7KxxbBkQ1hbLdb8mO8mcsLKKJhs0cJPieKqXOL/kc34lr0MaTic7GCakcKBHtvQ79fJpGmkSq3/MAABUTY=
+	t=1718193024; cv=none; b=uuWkpgkVr7SVCrxsZDDpqsVv2RbkyrOuqqdbMAJJf6mPKzCS48/jCszclse3a+XxMdGdi1UQmSKCHd8RiPXQUkjQpv3Q0mAoFICY651xH2Fiy1+lLvpeG4Cpylhcs1jyoCXyv4w5RLNdMsVZelXbMteM3Bo2n7NgWIS7dCt6m4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718193186; c=relaxed/simple;
-	bh=JDQkMWjIUvqE84ikntSBnxeL6cRw7OvNB40R51BdsFM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=irr3pNbdt9A5AfAfGZbv4pWy2R7QGFUbQ3w+JA3fowXIXcq06UZdVsShcBaP9lokIxD4EQ5CWii/v0FKnQBEjyNHRQFQsCqM1g0X6dJic9L9GoQSSTvJtscfp8byu7eeyOJsU1v/poTyjfGqil2vfWgg1PveCpvcjDLXWOx/BVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=o5ZwoQR0; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-35f1c567ae4so18890f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:53:04 -0700 (PDT)
+	s=arc-20240116; t=1718193024; c=relaxed/simple;
+	bh=3eKOWjrVJava8YNnTU7U4+iYN/4hSdOslNxJluc1cYs=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ryomiZ7/HZ4q1IaDKSZLCZGLqUSLcQ3l0we08s6huCC1fyjBxa8NihFwT5fC88d/5j385RJNGwbL6GKkgCj73CELhVWfUGHyBh1E0OlQIqT1TZcQi68SexJzSQvWI6zEJgGu5ql1nAd68rK0IkA8xUkD9acEIHc97vquoBmRCTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JXTTvfkn; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6efae34c83so518055666b.0;
+        Wed, 12 Jun 2024 04:50:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718193183; x=1718797983; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718193021; x=1718797821; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ufjGpymO2l4pPxuTK47gK3FSS4v9zOl7SdWpW7/pLTw=;
-        b=o5ZwoQR0rAO4TGVJnnplKBsHMPK351oUwBYkRYyvRftaiqSh3r6JtdKgZsjQf8/OZa
-         aB/yAtFAM5KdBd6XONd605p7gUOTnLtXYtDNc/jYjJzOktoF3d5UWolndePo4Yckl/Xr
-         pKsj3+8x7ZMhnkvBeMmAHS0uAfFZHVPoqTpIWj3+p/pIbU73PlJ3ezMRGeXPLfAxHX/H
-         QLuAnggjYIzAPaEIgbxUwoQlMSB1g0ZhR3fyKuncsXSv565QSirkBKPvLndWJyBAo8b+
-         WeJIGMAk8Ys8JTDaaPeayEaOOitrkXaH017iKkWqT20kTBn1ZB2JDNT+CF7QrUFQFwfX
-         skUg==
+        bh=6FTZ1hyJcf6QF0wQ81I5HTj1gs6efTfWrUVdJjnNkCg=;
+        b=JXTTvfkn/ZThcfO6yUefOvkPwjsFwZjcpZiHPGt2kpy//lZp8a1FYIM3SZVjpQUjDU
+         DcougL/BW2aNOFALmbHZ/ClA758OYxcoDPlVC1mg1gm4hdhQ/NKGKrv9eMObrD2T7LTP
+         /8VHabwzSR2dDShi6iTj43senAVt3x2RfkS9MNOFYK7F58pW/teY8enSxC4oo+g9hmeV
+         5qXSuWXR1lWTbrJVXEoP7nrADrEALK5oELW+MTdAljrt7MGP7D39c9kTV/kCDiD5iJum
+         3jp8Wq+pO/hqoWMsOHwBIOxWQweK6igeT6z3hQ2v0srURsstv4zay5OqfR3I2xD14Prv
+         RYFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718193183; x=1718797983;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ufjGpymO2l4pPxuTK47gK3FSS4v9zOl7SdWpW7/pLTw=;
-        b=XLAmJAok/ajuGBfafmuNbh4WQsM2LM32ycgK2FVlZncfB2j8YdDCakVOy6y9rrwZzQ
-         IRaIddsY8InrgV5PzZHz6F8c1VlnoZ9L1M0hPYTd2xbEaoNDpjKKkF+rAMMCvIbwuSGL
-         zuA99DapHwBy7V4dF6ihFiYP7PsSAPhOvzcrIbKL13eYsJMnzeCvi8oEPRmp8g/EH/0v
-         LGt9PFTavUvEnHioI7jKDy4jSboACesSDfinZ8ic9v/ktkQTyhtfVdb1SLgdfTb2xOE8
-         GP61qJy/n80D1DsCg4Zy9QSciHOw7+EEP652FLC7BTvSN36Gdlqr5O3tCy0Egn6mXS7y
-         RIjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtSGn0u0v6RsdJ3FeWw/X9UBtgyUuRTkEtaWBGvZV3H09yyM/kcBWdfSs9Jbm5CY5S/FFzRqhySvmjNq13RzlSi8un5L5dfggomqCx
-X-Gm-Message-State: AOJu0YyGoki5n3fZrVdKUELvpcNG+sMhAlikXQcJQ5FN2G6GhQFaapsj
-	XiuL3UVZizgPDNgGfbqYVXEEfZ/VDKUNFtHpibCF28JifED1UsqHuBRS360YFFk=
-X-Google-Smtp-Source: AGHT+IFjWInjWc9PWimjyszlJor2DHMYg9MFG+aIxIDc+zyXvpGduUgSZ7AIcsH+SI3wjocwmcF9dQ==
-X-Received: by 2002:a05:6000:bd0:b0:35f:1522:10b1 with SMTP id ffacd0b85a97d-35fe8910281mr1125602f8f.52.1718193183229;
-        Wed, 12 Jun 2024 04:53:03 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:8d3:3800:a172:4e8b:453e:2f03])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1c958f9fsm10457352f8f.38.2024.06.12.04.53.02
+        d=1e100.net; s=20230601; t=1718193021; x=1718797821;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=6FTZ1hyJcf6QF0wQ81I5HTj1gs6efTfWrUVdJjnNkCg=;
+        b=h/SIv3XO+Z8uaxcl7ZeKhxwXefpiCYgt3eKcbhSS6o7icFn34PYdhKYt4ec5HAfhbf
+         CFQnRqVDAf7CmEtSUXQ1I0t9SLkf/Vhbj0auWh4iZRBTrvA6JAqvL3IW/c4WQlyGvPJ2
+         hxLij/Ax6RQORde2OHkUgbAavH2n/fKZM/W09h/RXkWRnrK0yk4bOz3uqBoSCkGw34Vu
+         IrO3/5e2kRnfl8Zars2xtsaj/6W/BUMtEwlvgrbJwznYRb9o1O3rrH2MRXLQ3HILVkw7
+         3vRZUCVtaHD0h20pkzuzBhDDTqF+lLLTGf4PuZBIJ7fTpbv/kSJys+0VeyXmEmZzGp9H
+         kuNw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3gmsOBLPV9R+WFpFDJko0VHMyVWdzt09asGgXbcynG0XW4+WpAcp6jCBPYe8i6ov1vWiDdYwpn/K83kvtgBgp46pVRjHkiecQCf/Qo+QQu6sS78kqdECd3LLxHyBOOb1fsyuzOQaERwKW4hUiOIY513JA1milBO3NtO6C42S94i6qwg==
+X-Gm-Message-State: AOJu0YzwWSsO2gkJmdy3KmncCXnUBIc0d/aOc/Fosn/N71KY3noleuva
+	KuKiOH7Wfk2Ud3FaNRQLGtfpUgG0h8doLR8r+tbsZJuT0vs73JHr
+X-Google-Smtp-Source: AGHT+IHaFPqZF682IyxegQxDj1aKjCaUc+FExsq1xSH8oq6DTf27dquNCAbDGoQHjmPS7nuxLnzYRw==
+X-Received: by 2002:a17:906:9a9:b0:a6e:372c:cc5e with SMTP id a640c23a62f3a-a6f47fd6f28mr82582966b.61.1718193020451;
+        Wed, 12 Jun 2024 04:50:20 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f0c410d31sm553091566b.73.2024.06.12.04.50.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 04:53:02 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 2/2] gpio: sim: lock GPIOs as interrupts when they are requested
-Date: Wed, 12 Jun 2024 13:52:26 +0200
-Message-ID: <20240612115231.26703-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240612115231.26703-1-brgl@bgdev.pl>
-References: <20240612115231.26703-1-brgl@bgdev.pl>
+        Wed, 12 Jun 2024 04:50:20 -0700 (PDT)
+Message-ID: <b9c974265111887e7a944cb9e854e86cc8bcd47c.camel@gmail.com>
+Subject: Re: [PATCH v3 2/2] iio: frequency: adf4350: add clk provider
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, Lars-Peter Clausen
+	 <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron
+	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 12 Jun 2024 13:54:07 +0200
+In-Reply-To: <20240612104554.66851-2-antoniu.miclaus@analog.com>
+References: <20240612104554.66851-1-antoniu.miclaus@analog.com>
+	 <20240612104554.66851-2-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Antonium
 
-Use the notifier exposed by the interrupt simulator to be notified about
-interrupts associated with simulated GPIO pins being requested or
-released and lock/unlock them as interrupts accordingly.
+On Wed, 2024-06-12 at 13:45 +0300, Antoniu Miclaus wrote:
+> Add clk provider feature for the adf4350.
+>=20
+> Even though the driver was sent as an IIO driver in most cases the
+> device is actually seen as a clock provider.
+>=20
+> This patch aims to cover actual usecases requested by users in order to
+> completely control the output frequencies from userspace.
+>=20
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v3:
+> =C2=A0- use container_of to directly access the adf4350_state structure.
+> =C2=A0drivers/iio/frequency/adf4350.c | 118 +++++++++++++++++++++++++++++=
++++
+> =C2=A01 file changed, 118 insertions(+)
+>=20
+> diff --git a/drivers/iio/frequency/adf4350.c b/drivers/iio/frequency/adf4=
+350.c
+> index 4abf80f75ef5..f716f744baa9 100644
+> --- a/drivers/iio/frequency/adf4350.c
+> +++ b/drivers/iio/frequency/adf4350.c
+> @@ -19,6 +19,7 @@
+> =C2=A0#include <linux/gpio/consumer.h>
+> =C2=A0#include <asm/div64.h>
+> =C2=A0#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> =C2=A0
+> =C2=A0#include <linux/iio/iio.h>
+> =C2=A0#include <linux/iio/sysfs.h>
+> @@ -36,6 +37,9 @@ struct adf4350_state {
+> =C2=A0	struct gpio_desc		*lock_detect_gpiod;
+> =C2=A0	struct adf4350_platform_data	*pdata;
+> =C2=A0	struct clk			*clk;
+> +	struct clk			*clkout;
+> +	const char			*clk_out_name;
+> +	struct clk_hw			hw;
+> =C2=A0	unsigned long			clkin;
+> =C2=A0	unsigned long			chspc; /* Channel Spacing */
+> =C2=A0	unsigned long			fpfd; /* Phase Frequency Detector */
+> @@ -61,6 +65,8 @@ struct adf4350_state {
+> =C2=A0	__be32				val __aligned(IIO_DMA_MINALIGN);
+> =C2=A0};
+> =C2=A0
+> +#define to_state(_hw) container_of(_hw, struct adf4350_state, hw)
+> +
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-sim.c | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+nit: to_adf4350_state() would be neater...
 
-diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-index 2ed5cbe7c8a8..b5526f09b22b 100644
---- a/drivers/gpio/gpio-sim.c
-+++ b/drivers/gpio/gpio-sim.c
-@@ -53,6 +53,7 @@ struct gpio_sim_chip {
- 	struct irq_domain *irq_sim;
- 	struct mutex lock;
- 	const struct attribute_group **attr_groups;
-+	struct notifier_block nb;
- };
- 
- struct gpio_sim_attribute {
-@@ -227,6 +228,24 @@ static void gpio_sim_free(struct gpio_chip *gc, unsigned int offset)
- 	}
- }
- 
-+static int gpio_sim_irq_domain_notify(struct notifier_block *nb,
-+				      unsigned long action, void *data)
-+{
-+	struct gpio_sim_chip *chip = container_of(nb, struct gpio_sim_chip, nb);
-+	irq_hw_number_t *offset = data;
-+
-+	switch (action) {
-+	case IRQ_SIM_DOMAIN_IRQ_REQUESTED:
-+		gpiochip_lock_as_irq(&chip->gc, *offset);
-+		return NOTIFY_OK;
-+	case IRQ_SIM_DOMAIN_IRQ_RELEASED:
-+		gpiochip_unlock_as_irq(&chip->gc, *offset);
-+		return NOTIFY_OK;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
- static void gpio_sim_dbg_show(struct seq_file *seq, struct gpio_chip *gc)
- {
- 	struct gpio_sim_chip *chip = gpiochip_get_data(gc);
-@@ -322,13 +341,15 @@ static void gpio_sim_put_device(void *data)
- 	put_device(dev);
- }
- 
--static void gpio_sim_dispose_mappings(void *data)
-+static void gpio_sim_teardown_irq_sim(void *data)
- {
- 	struct gpio_sim_chip *chip = data;
- 	unsigned int i;
- 
- 	for (i = 0; i < chip->gc.ngpio; i++)
- 		irq_dispose_mapping(irq_find_mapping(chip->irq_sim, i));
-+
-+	irq_sim_domain_unregister_notifier(chip->irq_sim, &chip->nb);
- }
- 
- static void gpio_sim_sysfs_remove(void *data)
-@@ -454,7 +475,12 @@ static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
- 	if (IS_ERR(chip->irq_sim))
- 		return PTR_ERR(chip->irq_sim);
- 
--	ret = devm_add_action_or_reset(dev, gpio_sim_dispose_mappings, chip);
-+	chip->nb.notifier_call = gpio_sim_irq_domain_notify;
-+	ret = irq_sim_domain_register_notifier(chip->irq_sim, &chip->nb);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_add_action_or_reset(dev, gpio_sim_teardown_irq_sim, chip);
- 	if (ret)
- 		return ret;
- 
--- 
-2.40.1
+> =C2=A0static struct adf4350_platform_data default_pdata =3D {
+> =C2=A0	.channel_spacing =3D 10000,
+> =C2=A0	.r2_user_settings =3D ADF4350_REG2_PD_POLARITY_POS |
+> @@ -264,6 +270,10 @@ static ssize_t adf4350_write(struct iio_dev *indio_d=
+ev,
+> =C2=A0	mutex_lock(&st->lock);
+> =C2=A0	switch ((u32)private) {
+> =C2=A0	case ADF4350_FREQ:
+> +		if (st->clkout) {
+> +			ret =3D clk_set_rate(st->clkout, readin);
+> +			break;
+> +		}
+
+So, apparently you forgot or decided otherwise to not go with the suggestio=
+n of
+not including the IIO interface (at least he channel one - debugfs could be
+maintained I guess) or with the more in the middle approach Michael suggest=
+ed.
+Just not allowing ADF4350_FREQ and ADF4350_FREQ_REFIN.
+
+Hence, I would expect at least some justification to keep the above in your=
+ v3
+changelog. Also note that keeping ADF4350_FREQ_REFIN while being a clock
+provider seems pointless and maybe even be wrong (as the clock framework sh=
+ould
+take care of the parent clock). This also brings another question... see be=
+low
+
+...
+
+>=20
+> +static int adf4350_clk_register(struct adf4350_state *st)
+> +{
+> +	struct spi_device *spi =3D st->spi;
+> +	struct clk_init_data init;
+> +	struct clk *clk;
+> +	const char *parent_name;
+> +	int ret;
+> +
+> +	if (!device_property_present(&spi->dev, "#clock-cells"))
+> +		return 0;
+> +
+> +	init.name =3D devm_kasprintf(&spi->dev, GFP_KERNEL, "%s-clk",
+> +				=C2=A0=C2=A0 fwnode_get_name(dev_fwnode(&spi->dev)));
+> +	device_property_read_string(&spi->dev, "clock-output-names",
+> +				=C2=A0=C2=A0=C2=A0 &init.name);
+> +
+> +	parent_name =3D of_clk_get_parent_name(spi->dev.of_node, 0);
+> +	if (!parent_name)
+> +		return -EINVAL;
+> +
+> +	init.ops =3D &adf4350_clk_ops;
+> +	init.parent_names =3D &parent_name;
+> +	init.num_parents =3D 1;
+
+Shouldn't we set CLK_SET_RATE_PARENT in init.flags?
+
+- Nuno S=C3=A1
+
 
 
