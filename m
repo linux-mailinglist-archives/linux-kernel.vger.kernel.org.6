@@ -1,114 +1,157 @@
-Return-Path: <linux-kernel+bounces-210932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFC8904A9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:06:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06099904AA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90BB4282548
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:06:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 695F6B23673
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B348381CC;
-	Wed, 12 Jun 2024 05:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2EF36B17;
+	Wed, 12 Jun 2024 05:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8NhMmNj"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhC9JTFw"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034D2376E6;
-	Wed, 12 Jun 2024 05:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACD52C1BA;
+	Wed, 12 Jun 2024 05:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718168804; cv=none; b=nvgh0zRHrhs5Id2Q7df4s8eHa5O8umrTO2mGUBW+YlMM9NUzX169iwhvhFUXg5hq0x2Slf6F4qGJzq59UdSDmEj/mvWbFGqZR0q48KFCmPnENPJKmVxpvMQ7nHIZlOeFsewka6Gkh0X8EGHqmDgg+iulAo8BUVf44pFK5hV0qtA=
+	t=1718168861; cv=none; b=Nu4kA+PCYPE5PvaJw5sPQLWKX5HF42u6bj5o11UCPSSgCMXKSMqlKjc+niKuRf6zCcNb+PmicsWjDIwvJnZcXk77spSPauY15IbjYVAKsBDIeliMLhe4JpYtnrtDVgqmtbAtVLjoWrZeuenwkrfnFxK8jhpnl8Pi6PZQHDMnLy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718168804; c=relaxed/simple;
-	bh=CXtcUMWwJkEIqpnRMKcKS4gCggMkOvjE0n81czXvH1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lBY7jf0HiNQFerSdsLAC8xzfRBIHhHvB8jUJIXfvBp98zvdDxW6fVXTj5oXQhzDHF+hBNGMd6H86HN0CPUhsdCQpsee7wTAsxoVgbCdFkNOJn1jR7H70pFECtvRX8TUWvaraRsyGYP6Z6J+Rk5HayQV5P5ZQ53JtNM3/SsY3cO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8NhMmNj; arc=none smtp.client-ip=209.85.161.50
+	s=arc-20240116; t=1718168861; c=relaxed/simple;
+	bh=WjmktKeZlwW6thj1REFux9X6Fa55rngqfegdZkghqx8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P0u6F4NubpVZ/rxkdxnFECypeyYS+T9e0FrTJMKypId1ygeHY5qB2u0CIlh9fwx9wHuxg8b7R5nl2MgvDypMMK+uxJOx8zN/PLECFIbRhcb7J4XL9WGqmqPbtiiqAMLk5cCCSvDmP0gxi6OBbS6AGChC6JiZTafez5jn+1l1iTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PhC9JTFw; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5bb10cfe7daso231244eaf.2;
-        Tue, 11 Jun 2024 22:06:42 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5784861efb4so1134064a12.2;
+        Tue, 11 Jun 2024 22:07:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718168802; x=1718773602; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3dXYS15oeWjHskZX8YaOnpu7b/X3OJH0Z2xci2rbkY4=;
-        b=C8NhMmNjmI4/N3t94ZQsE/WYakCdRiul4Fbm3KbGOf1DkrOAuCyX7XBd7X0NLpdozu
-         N83/haWA8sQu37duWihntw6Er0gGDXGMZxXxbqpLH48qXqqm0jlnXkyhVYpK460f0oZT
-         NJF7rFBmbALEPvGEMvt6A1vphy8nONgvBvHvqGwOdP3m/aDYz2LJx1RXdsDcAn3Kg/2E
-         HX/DmsbiEtBFOYm5o0IF24Bcl0az+D3CVasrtrjpLtuidVslS9PrXpTAltdZbZ0nSWHy
-         TBE4MYlbG07zcdZqCj0L4tSakcR1KB+egW++U70YQOjTuscHP+OuhEifHTf32Q6hqIAJ
-         KsxA==
+        d=gmail.com; s=20230601; t=1718168858; x=1718773658; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qvq+FLhWYryoGqxlyUDGx6ThrzsXpwXKMCWedG+iFXo=;
+        b=PhC9JTFwlWmiWnwd23Ao3iT/jYcbJy5T7oR+7+0Gq0yuMfCsr5+O8+x66a2BOCH/HV
+         9uQ+Z73Yi0hUQCUS46ZjeoS5j19Bq4FD3+YRIaUIh8+i7sjGS5ghRnXDIxEeVSlsjLln
+         NddAerrKisaYhp0Ua6ZRH7dGCd7c9S1Vflp14yMCf4qpwu9WZqI7VP1fKWz9s24DMrOD
+         szylcnoa/lgleiluBhjbFGQDWCxzozZCkxzuuhrpL/qq6kG3P7UKIVBU56wqMr3+w5yN
+         TY7qoMg0Fm/b4WSmo49MYHrgDAiFgpWvlXYBcclndSA4k0ceUXTPhIxmNw7Sm/Ko+MgR
+         EFdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718168802; x=1718773602;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1718168858; x=1718773658;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3dXYS15oeWjHskZX8YaOnpu7b/X3OJH0Z2xci2rbkY4=;
-        b=Xg8v0IWGe2dQSGQ6rnJy6+et7fNvQt0MaMs8ao/wz+9BW3sVYFn5QMcCJgpjQym/5R
-         A33cUT5aTu7nSt+OYwRXvA9Ng3u3WUi6lT2XgNM+KZdRGG10nMpCqYT7KGeNse5opGWw
-         eZHJq7lzTdA9jNlE97fCcvKn1qWMEqO6iF0CKrYnbgNoj9nmAU6g0P9cKcaEGbzsh7zB
-         D9KZvMXZIWr1VSUNQPVjLSxQH8DDBBE9iwOokrBprRJ5l1rnYroQI+ZURU1SpJ2osxIR
-         +JiLLmIqujzw4E6pOLs6oVBmCxQR+n5PzSlerZQCWjy89ZcP/FFjRlPZFNMWi2alA+8K
-         t1XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPn3/A/zLbFtNFjchQk18pW+8L0RRWior28iu9BUaq2z3SyM4DKIO5NjEYoAF5+54Aqaf5fKiPlLySCsd6hSZBhe4tmr9ddGX4DEoN
-X-Gm-Message-State: AOJu0Yx6dyIGxI+14w26NgaGzNebXEaaFjobL5pG35xac9QiDW6kbP1f
-	MEtOloGcv7In+N4I+eAOWE+L1NlwzDYk2iIBn5JSljnCIpFU3Cw7
-X-Google-Smtp-Source: AGHT+IEgHkA1mSW5y3Jnsg39tt8JnGXbUkGlJIsltSfOEkfg4Nvkb9kRlwfnjq2i674ZZeRgJ2xYnQ==
-X-Received: by 2002:a4a:8552:0:b0:5ba:ca86:a025 with SMTP id 006d021491bc7-5bb3b7a9135mr944467eaf.0.1718168801852;
-        Tue, 11 Jun 2024 22:06:41 -0700 (PDT)
-Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5bac95e0733sm1621549eaf.7.2024.06.11.22.06.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 22:06:41 -0700 (PDT)
-Date: Tue, 11 Jun 2024 22:06:39 -0700
-From: Richard Cochran <richardcochran@gmail.com>
-To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Szentendrei=2C_Tam=E1s?= <szentendrei.tamas@prolan.hu>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Miroslav Lichvar <mlichvar@redhat.com>
-Subject: Re: [RFC PATCH v2] rtc: pcf2127: Add PPS capability through Seconds
- Interrupt
-Message-ID: <Zmks31shpsnoLQ3k@hoboy.vegasvil.org>
-References: <20240611150458.684349-1-csokas.bence@prolan.hu>
+        bh=qvq+FLhWYryoGqxlyUDGx6ThrzsXpwXKMCWedG+iFXo=;
+        b=s0yV8/BzzqJlY089pohtI3oyGBUMeLQlLK3pXpNscczzGaDU0BD/g293w100ycAsIz
+         22DzmTu0Ivjw1nY7ScaKoLlgukSPgYmsQMyqFimQ2TaGqXD1nRKxGQwb9E8ErkHnoORC
+         8+TOrs+yzTqgl69RUIj7pHKZQgbEN0RD1RaW7fYA8LLheyE/znn2amuWOk+fOEKH1swP
+         VdqyHcB1lGw7GSxuIDLr9X9P9SlimNyoniD+9F8QZLVhFbcKeUmvdMNbYij9zYab+QXF
+         gjatIZLvlKVZlqgFxhodC/mEkuL8hvLrBr3q9XerObfADj9FLftmwCZWnKGo4icNuTpX
+         phuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHehOmhsEvI8juZ6Incd/Yx9/cp7YaBIx6okDg7AGsK9v6CY+uMt7FNrPY/y+dSd1Ts5J4O63jtOpmI+GDufU=@vger.kernel.org, AJvYcCWLmIZJO2TtF7RziPV4e7bwdvzYIJDukF/QyeCuTAwLzullH9+nNqiMsop+8BXrrvXeNGibxgvDsrCMAg8a@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG7zBEzl6wZTgQ/AI1HQLLRSYxKfcDlnDKbsJnZYy1t2YQ1nVL
+	cpBqh40OiYi+IFk2KcgdWWEpymEd07dCe7kmfzoqGU73O0Na7mDw
+X-Google-Smtp-Source: AGHT+IGYL/xS9J6m/swK/Sj5RpwgOawzjyVI55GlBqI24z3BUWgiiKtGTAGXgwiptkMdyimmZp3/hw==
+X-Received: by 2002:a50:d591:0:b0:57c:710b:22ca with SMTP id 4fb4d7f45d1cf-57ca97497camr410101a12.1.1718168858109;
+        Tue, 11 Jun 2024 22:07:38 -0700 (PDT)
+Received: from [192.168.0.101] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c8f3a0c33sm2959245a12.82.2024.06.11.22.07.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 22:07:37 -0700 (PDT)
+Message-ID: <f849b64f-eaf4-46ca-b4a0-039fd0f6f2e7@gmail.com>
+Date: Wed, 12 Jun 2024 07:07:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240611150458.684349-1-csokas.bence@prolan.hu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: rtl8192e: add missing MODULE_DESCRIPTION()
+ macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240610-md-drivers-staging-rtl8192e-v1-1-b5d11ee98297@quicinc.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240610-md-drivers-staging-rtl8192e-v1-1-b5d11ee98297@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 6/11/24 02:33, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/rtl8192e/rtllib.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/rtl8192e/rtllib_crypt_ccmp.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/rtl8192e/rtllib_crypt_tkip.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/rtl8192e/rtllib_crypt_wep.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>   drivers/staging/rtl8192e/rtllib_crypt_ccmp.c | 1 +
+>   drivers/staging/rtl8192e/rtllib_crypt_tkip.c | 1 +
+>   drivers/staging/rtl8192e/rtllib_crypt_wep.c  | 1 +
+>   drivers/staging/rtl8192e/rtllib_module.c     | 1 +
+>   4 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
+> index cbb8c8dbe9b0..da9e630b594c 100644
+> --- a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
+> +++ b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
+> @@ -407,4 +407,5 @@ static void __exit rtllib_crypto_ccmp_exit(void)
+>   module_init(rtllib_crypto_ccmp_init);
+>   module_exit(rtllib_crypto_ccmp_exit);
+>   
+> +MODULE_DESCRIPTION("Support module for rtllib CCMP crypto");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
+> index 0244b524a7d4..3969b6b916ed 100644
+> --- a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
+> +++ b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
+> @@ -708,4 +708,5 @@ static void __exit rtllib_crypto_tkip_exit(void)
+>   module_init(rtllib_crypto_tkip_init);
+>   module_exit(rtllib_crypto_tkip_exit);
+>   
+> +MODULE_DESCRIPTION("Support module for rtllib TKIP crypto");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/staging/rtl8192e/rtllib_crypt_wep.c b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
+> index 21c2b7666d6f..eae75d122553 100644
+> --- a/drivers/staging/rtl8192e/rtllib_crypt_wep.c
+> +++ b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
+> @@ -238,4 +238,5 @@ static void __exit rtllib_crypto_wep_exit(void)
+>   module_init(rtllib_crypto_wep_init);
+>   module_exit(rtllib_crypto_wep_exit);
+>   
+> +MODULE_DESCRIPTION("Support module for rtllib WEP crypto");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/staging/rtl8192e/rtllib_module.c b/drivers/staging/rtl8192e/rtllib_module.c
+> index e7af4a25b0be..469a69726c16 100644
+> --- a/drivers/staging/rtl8192e/rtllib_module.c
+> +++ b/drivers/staging/rtl8192e/rtllib_module.c
+> @@ -175,4 +175,5 @@ static void __exit rtllib_exit(void)
+>   module_init(rtllib_init);
+>   module_exit(rtllib_exit);
+>   
+> +MODULE_DESCRIPTION("Support module for rtllib wireless devices");
+>   MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240610-md-drivers-staging-rtl8192e-0935b6c4b336
+> 
+> 
 
-(adding Miroslav onto CC)
+Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 
-On Tue, Jun 11, 2024 at 05:04:57PM +0200, Csókás, Bence wrote:
-
-> PCF2127/29/31 is capable of generating an interrupt on every
-> second (SI) or minute (MI) change. It signals this through
-> the Minute/Second Flag (MSF) as well, which needs to be cleared.
-
-This is a RFC, and my comment is that a PPS from an RTC is not useful
-to the Linux kernel.
-
-The kernel only uses the RTC to boot strap the wall clock to some
-approximate phase.
-
-After that, Linux either continues with a free running clock, or it
-synchronizes to a global time source via NTP.  In the latter case,
-Linux will write the NTP time back into the RTC.
-
-So I can't see how the RTC's PPS provides any benefit.
-
-Thanks,
-Richard
 
