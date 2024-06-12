@@ -1,130 +1,133 @@
-Return-Path: <linux-kernel+bounces-212279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B44905DA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:30:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0FEB905DB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C799528378A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:30:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C24F1F22A7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6DC126F32;
-	Wed, 12 Jun 2024 21:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2E6127B56;
+	Wed, 12 Jun 2024 21:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Mmgj2EO0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BGZ0oYOj"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C375F21360;
-	Wed, 12 Jun 2024 21:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FC185956
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 21:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718227821; cv=none; b=GTSOlty0xPi88qFGforQq0Dshez58FwOhBvxOCVBjrirJ+XyNV+MxxTO2bLxG96eg2qpJuQ94++e8SQxIzEa28R14ulDVcbOsXAwBWmMNkrbFAkHp7CF2pH7yyFinRZ2O2OIRRj3R7uen0KYbHdUAd8cUZDbkGDaOFSjekmquvs=
+	t=1718227927; cv=none; b=D1Wx1NqhwxB85i9z+Bw2r3gt2vLTVE+j43dMRx031rmwsJfbPGdPI3R9szpi0vwpFr/Vd9Ky/D3gR5Ozz8mkH3TuDfla+wi2U0Ya/T27GkjQq85uQr4pg6cYF5fBV7VbkvW1ct5tjZovksaw5ylYiAK19+8db/6kwDBF/c76n0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718227821; c=relaxed/simple;
-	bh=7oi+Dxn3vPmuBX3GF+LezGlD7Ns+idrg1dOvb8SD5k0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=RcSBZRI6+/Yd+hKAPRZCjV/lw3mwmAeOrL/2u2l8GtN7SNdQJbbn5gxco4rh43tGksYoaUF/08pA3TLUEwZbuJYe5gTfgNSaB8oC8vu4Da5x9dJ5Z2yJ5bwC7CgtOuscKB+jtY5guT6TnLQ+gAAzhr4opEeIJLBORj7cLFfByTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Mmgj2EO0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CKnLup021461;
-	Wed, 12 Jun 2024 21:30:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=IvQCOazXZ/AL5r1TiWeTRP
-	39ZBZboAl6gzkFzp6H2II=; b=Mmgj2EO0UkYiXJvOEQq7NMKrtuJ75PgJtZWnEj
-	Se/1qv951rqc3LzFLQSvbc+qWL3SHMVd4XF2cbHiNVBYDWXrS3+hKhDC3RUOi+vu
-	dWl9BC4O6ZbmGd0rcXz1iai2ePtyjglBE5prI9UcMlz9dVR7peEOR4nh2pvak8ZF
-	1tO9g2sy1JhuXkj20/rU8yCH3PU3dEGshfoKWMcyoxcFK2yuJ0jw4Q0G8283kzf8
-	ZfmT+ZSR1YePN0wJ3e5zylXMu5szeNRQFkbrNAGb2FQH6QgB88Odgu89bW2N2dzZ
-	4G4DO2Tx6IG+4yDsNExVzPz5RFSt1rZEgbQ+xQSdnUfK26KA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ype9153u0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 21:30:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CLUFbt015143
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 21:30:15 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 14:30:14 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 14:30:13 -0700
-Subject: [PATCH] interconnect: qcom: add missing MODULE_DESCRIPTION()
- macros
+	s=arc-20240116; t=1718227927; c=relaxed/simple;
+	bh=W5Lf3m/ndcYRRPBJWPF6wvhs/2Q/L4nQNdthZxKjzRg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bAgjmNTiZLhxvdDWtPSw/RRYoY+LifK8LZ2dKwrcjpK4MS/PSvBZgd99tOVOBnnLTe4JsTsQE4LFVvQcX86TcS7xSQw0T5rg968j55h2KTUfqhj7iFT6+ZDFqnl96Qk8vSGN7El0IQ3R7L9v5yGKcRd8qsdqYAkkLZBmlfMAAHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BGZ0oYOj; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62834d556feso6146077b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:32:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718227924; x=1718832724; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1QhL6pyEL28D/XNE8O9WA5q6Sm9P5RrVE+DUX18+yxg=;
+        b=BGZ0oYOjCuu+2FztOekL9bGT4kIT+0Mkyxtlqqs4iixMR2yB5xY0xLmd2xZSAFmoxL
+         NhwKcdf2MJWhO87UrxL22vqKTdQMLLfk+QSM6pqmfiu5YXG7HXylm/W0MNqSwAEc9tMd
+         muevp/bCQxRs5QSt/Y3L8aCehNOu6VKmCmpkViMXfCxi6SwrFY3YK3YnYmOGKM62TfoU
+         bNctT8HnlUkayiMEC1SYecE80166dbZh+hwfXXWnyHYDs8G486V+oYM9ihIv27eCGwfp
+         SIRYDMUIko+f1VvH65QrcaQ+j7djCOafZqYfhBx48v2xhBtBaUYpnWGbgp//+tV688Dd
+         OYEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718227924; x=1718832724;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1QhL6pyEL28D/XNE8O9WA5q6Sm9P5RrVE+DUX18+yxg=;
+        b=n9GeCOfP56bH15EF3+yOp4xkOX2fIfj769pbzV0QlwCleXwr1iwrjYQuuzBX7wzhb8
+         xu4MC63LEOEbDEhzuRZ19vBXfLbbzSKJxO7we8e5SvNxocF5Sr6jTjqj1IkhF5d4TrcP
+         OYCCqrM7OKK9bK7Ws9Wb6yQRiqP2Or78O7rPsf71EMZyVlwMnB1btiGtxURE4L0HhfP3
+         I7Sse6GaLC3WdKz8KWmWs7WiAB4+uXQZHxkQPqlzTvcZIfSsBxAIRubyUgscsoZH+sT/
+         n+zJGFzSKV0uQnBLnbThJWcdtBdoM7QGQ3qz9Z2wQN9GwdOvlqSkgxY7PwpR0/6g4UZ/
+         m9Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9mCSa9bxlP0itbtXGKpZxronSG/qnw/iAI6NcH+gb4yURDP9aEUlnHUJsKxfHaU0YlJ4MtRiaCOZXJzbki28rxrVmIsJUnXp3ncdh
+X-Gm-Message-State: AOJu0YxQzBvY83nGB3dR50VtE3c65K04f2RdFE0cI1A5Y68QmR19Xl4A
+	5rTEwYZY8/Z99LGN0EQPcw/cuX/aO+vjzqBY+MFEYRmQJ4Ug7itqLLpxf4mXGOPNTX6cuZ36Gjh
+	PWw==
+X-Google-Smtp-Source: AGHT+IElKu5tuXfOpkwDgTwij1K2xNLep+MJ1d93sRu5Kogldzr3WaT9Nh8Ti2R0sk/kH/nRqM8JoaY4WmY=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:d88:b0:62c:f976:a763 with SMTP id
+ 00721157ae682-62fb72f2569mr9479477b3.1.1718227923971; Wed, 12 Jun 2024
+ 14:32:03 -0700 (PDT)
+Date: Wed, 12 Jun 2024 14:32:02 -0700
+In-Reply-To: <ZiJzFsoHR41Sd8lE@chao-email>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-interconnect-qcom-v1-1-da0462d6301b@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAGUTamYC/x3MwQrCMAwA0F8ZORvYik7wV8RDl2YuYFNNtjEY+
- 3erx3d5OzibsMOt2cF4FZeiFd2pAZqiPhklVUNow7ntu4A5YTJZ2RxFZzYqqkwzfqhkpJGHSNf
- +koigFm/jUbZ/f39UD9EZB4tK0y99iS4b5uj1geP4AjIDTzqNAAAA
-To: Georgi Djakov <djakov@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HAhboqsiavfmPmU6s1l8Y8y0xcHiRM5R
-X-Proofpoint-ORIG-GUID: HAhboqsiavfmPmU6s1l8Y8y0xcHiRM5R
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_10,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 phishscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=982 impostorscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406120152
+Mime-Version: 1.0
+References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-8-xin3.li@intel.com>
+ <ZiJzFsoHR41Sd8lE@chao-email>
+Message-ID: <ZmoT0jaX_3Ww3Uzu@google.com>
+Subject: Re: [PATCH v2 07/25] KVM: VMX: Set intercept for FRED MSRs
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Xin Li <xin3.li@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	shuah@kernel.org, vkuznets@redhat.com, peterz@infradead.org, 
+	ravi.v.shankar@intel.com, xin@zytor.com
+Content-Type: text/plain; charset="us-ascii"
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/qcom/interconnect_qcom.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/qcom/icc-rpmh.o
+On Fri, Apr 19, 2024, Chao Gao wrote:
+> On Wed, Feb 07, 2024 at 09:26:27AM -0800, Xin Li wrote:
+> >Add FRED MSRs to the valid passthrough MSR list and set FRED MSRs intercept
+> >based on FRED enumeration.
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+This needs a *much* more verbose explanation.  It's pretty darn obvious _what_
+KVM is doing, but it's not at all clear _why_ KVM is passing through FRED MSRs.
+E.g. why is FRED_SSP0 not included in the set of passthrough MSRs?
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/interconnect/qcom/icc-common.c | 1 +
- drivers/interconnect/qcom/icc-rpmh.c   | 1 +
- 2 files changed, 2 insertions(+)
+> > static void vmx_vcpu_config_fred_after_set_cpuid(struct kvm_vcpu *vcpu)
+> > {
+> > 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+> >+	bool fred_enumerated;
+> > 
+> > 	kvm_governed_feature_check_and_set(vcpu, X86_FEATURE_FRED);
+> >+	fred_enumerated = guest_can_use(vcpu, X86_FEATURE_FRED);
+> > 
+> >-	if (guest_can_use(vcpu, X86_FEATURE_FRED)) {
+> >+	if (fred_enumerated) {
+> > 		vm_entry_controls_setbit(vmx, VM_ENTRY_LOAD_IA32_FRED);
+> > 		secondary_vm_exit_controls_setbit(vmx,
+> > 						  SECONDARY_VM_EXIT_SAVE_IA32_FRED |
+> >@@ -7788,6 +7793,16 @@ static void vmx_vcpu_config_fred_after_set_cpuid(struct kvm_vcpu *vcpu)
+> > 						    SECONDARY_VM_EXIT_SAVE_IA32_FRED |
+> > 						    SECONDARY_VM_EXIT_LOAD_IA32_FRED);
+> > 	}
+> >+
+> >+	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP0, MSR_TYPE_RW, !fred_enumerated);
+> >+	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP1, MSR_TYPE_RW, !fred_enumerated);
+> >+	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP2, MSR_TYPE_RW, !fred_enumerated);
+> >+	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP3, MSR_TYPE_RW, !fred_enumerated);
+> >+	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_STKLVLS, MSR_TYPE_RW, !fred_enumerated);
+> >+	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_SSP1, MSR_TYPE_RW, !fred_enumerated);
+> >+	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_SSP2, MSR_TYPE_RW, !fred_enumerated);
+> >+	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_SSP3, MSR_TYPE_RW, !fred_enumerated);
+> >+	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_CONFIG, MSR_TYPE_RW, !fred_enumerated);
+> 
+> Use a for-loop here? e.g., 
+> 	for (i = MSR_IA32_FRED_RSP0; i <= MSR_IA32_FRED_CONFIG; i++)
 
-diff --git a/drivers/interconnect/qcom/icc-common.c b/drivers/interconnect/qcom/icc-common.c
-index 9b9ee113f172..9b8a9c69e0cb 100644
---- a/drivers/interconnect/qcom/icc-common.c
-+++ b/drivers/interconnect/qcom/icc-common.c
-@@ -35,4 +35,5 @@ struct icc_node_data *qcom_icc_xlate_extended(const struct of_phandle_args *spec
- }
- EXPORT_SYMBOL_GPL(qcom_icc_xlate_extended);
- 
-+MODULE_DESCRIPTION("Qualcomm interconnect common functions");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
-index c1aa265c1f4e..4c5aa342e013 100644
---- a/drivers/interconnect/qcom/icc-rpmh.c
-+++ b/drivers/interconnect/qcom/icc-rpmh.c
-@@ -262,4 +262,5 @@ void qcom_icc_rpmh_remove(struct platform_device *pdev)
- }
- EXPORT_SYMBOL_GPL(qcom_icc_rpmh_remove);
- 
-+MODULE_DESCRIPTION("Qualcomm RPMh interconnect driver");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-interconnect-qcom-cfebac765dcc
-
+Hmm, I'd prefer to keep the open coded version.  It's not pretty, but I don't
+expect this to have much, if any, maintenance cost.  And using a loop makes it
+harder to both understand _exactly_ what's happening, and to search for relevant
+code.  E.g. it's quite difficult to see that FRED_SSP0 is still intercepted (see
+my comment regarding the changelog).
 
