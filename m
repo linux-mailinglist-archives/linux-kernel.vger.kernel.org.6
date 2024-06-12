@@ -1,112 +1,149 @@
-Return-Path: <linux-kernel+bounces-210780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A8E904892
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:53:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF5090489A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A8E2835C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:53:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3B831F23870
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40F45CB0;
-	Wed, 12 Jun 2024 01:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD118820;
+	Wed, 12 Jun 2024 01:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VJnecQqi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nngteK8L"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823424691;
-	Wed, 12 Jun 2024 01:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E95217BA1;
+	Wed, 12 Jun 2024 01:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718157196; cv=none; b=gVllhMBaeDCOVSGf2j+UnpYKj0lTssbzo336v3b7dpx5tTKluMwkxXL5uXSBsQrPj1UlWZz+LPkcuHez1Ey07HU512am3ZeOhKQDZ3zhTYSQbuCggs9Fr2Gh+4ARDZqO1y1VJWnVDYTn386gdqCJRFt0KSarwzLAMRBpoJFyqc8=
+	t=1718157273; cv=none; b=kjUM2Z59/o0goTlCTm6le74+4fSCSoKtP+3ApIEy4Vemv31FDhMnjlOMaLYmYEzWAyOuKuVLhQl1thmh5hXx/tEWFVF2Bmw5vuwTlBK3Grj3G/3e+shgTFak8MCHqojibmhtDnwSN9+ra3wnVpBW+Zf3afB370aw0emHsHrWOwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718157196; c=relaxed/simple;
-	bh=Yx1IziiU5dxC7IXNVT/wQHpMEAgt8M93+S6VPeJuhk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JAnH2a3W0Yy/zDajo2HpfwUXvT6SW6okX0rHDI2RYGD84Q/3rqRMslCiLOIOzgtx5SRoNKHxMbzWwOxQxTWqaN+dPdswzK43+OLkENgOP2P7g8OtBXiJGRYcdJK8O8Ij2JJD4YtblP9KK4qR5Jn2aWKeN8FDHTTwR24YCDa6Eas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VJnecQqi; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718157195; x=1749693195;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Yx1IziiU5dxC7IXNVT/wQHpMEAgt8M93+S6VPeJuhk8=;
-  b=VJnecQqi9augSO0H/c/gEkYI6eP9X/qO0GS+KvN/hnvuT5TIcaXVY0Rp
-   k1HbR/+1flM+lAHbIqYOclFLPbpxtSsYLrNGkk3JstSAQiI9je0z4Trey
-   lBV78Vnsd2Oel6sr1YycFWuSHbm+2QNeCRBtPyTU/ps67Zaw79tuQX4Zh
-   7XD4cFoWBGwr9bIVrSlsYb5ijVoH1pzKGUA7Y9kSPoICee5MBgRoGbGuk
-   ogPVc9EADIUdBkiAsqTme3GqgT3IElVa6pd+CY12ZVcsth53VPx/LPGXZ
-   yIz3aHztEXNu2Y9otKD30WngV0YW+cYqbESgo4TV/rOsSTdXRr4yt65Pt
-   A==;
-X-CSE-ConnectionGUID: 8GtT7gQHSLixSJD3tEZjBA==
-X-CSE-MsgGUID: XyDsxDOoSpmevj8T5Ac0mQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14863202"
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="14863202"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:53:14 -0700
-X-CSE-ConnectionGUID: pVKKMUREQtiB0mlS1ntLug==
-X-CSE-MsgGUID: liCBm6DGSJSp7/JNeTyHSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="77091467"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.51]) ([10.124.227.51])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:53:10 -0700
-Message-ID: <86a92ee5-af63-42dd-abed-0cd10ac937cd@intel.com>
-Date: Wed, 12 Jun 2024 09:53:06 +0800
+	s=arc-20240116; t=1718157273; c=relaxed/simple;
+	bh=w1xnUv5Kz3/tY/ryCxn3oTJxNlt53fqlci48thBjbm8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BKSU0v8/zPIhcNm4sxc/Aybt8tzFmbbnx+oSOuyOPpTSxOXC+rzRQosMGsm5s4JBNLt+Wd5GuwhrGGhDjjZ9+YUWG1O6wBD7C9Wq5eElrlIHOtUhsFSnOkAkNiZQ9OJDAbey2In7BgxpVRkuzR3ZsWbtXJPuCMOimICm8vAEx7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nngteK8L; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5baeab9fd60so1452757eaf.2;
+        Tue, 11 Jun 2024 18:54:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718157271; x=1718762071; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JwItdTmcPCVbWWTJKIwknMPMvZjx8Ik6YysUYQY2Gk4=;
+        b=nngteK8LPCYdacW2VfNvMaCDiBMFpVCS2BT43gA4FzMsrcfOIR0Nx2AMKuVnsDkSMD
+         yhVkghDaZ4zz+DnjjXN0CTIbA8OQ0/zhrTzkUtJvuuVUB9xdbpuIUUq1dNy4M7NHJwZV
+         GG7tBlIHXkiAouORIiwX7Tch5O/Qz0acJDh32oP4uTMRQEF5v4bPvxsh4Tg2TFLN6A/9
+         SjrQByYBVqSRsDY+9cKSb96HFsWEhW+4MjiwZ/904K3wmAWVBv5vV+47irc1u5lqejqi
+         JkMN8VOa6KE06SGUe+XTe4/q6PV//Ud08+Bmoafpm/EBLZnd10yxG+VORHtjSeWVX5U+
+         4lAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718157271; x=1718762071;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JwItdTmcPCVbWWTJKIwknMPMvZjx8Ik6YysUYQY2Gk4=;
+        b=j7HpVRgNdkEd1nVUR/e/+ErxlVdH8Dmi5yDoDXG2kazMho5wwb3ATR+dUkELk3smtJ
+         B+SFz4kIRIY6qO4QHFVJsgEyCbsbNDnSxfWnqVtuhfb3PJMqRz88Udo7bkd5ZL6r9CmU
+         llCyzJ9JGErOWqKYbtSJqKxMShiTLQeDBvd+Avj7Zjxp3spsQay8DaSYZ+gfgnUWDa+h
+         g+CrFxePIHCGDdFs2/gGzmR/P3bfMTrKKxkctuPhmjPGUpKwFBzlf3TKPJp8RKf8gXJH
+         rjikE4z3YgF/hKJG9x5T+/DWEqYxEKbnHaMBeLoGesurhCNzjbf2Ien43LWl531BA5tD
+         LsIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeFcxz5ZKPQJj0IFYAss+mUVaMSff7RBBFrT0qvnxBSORw4n/tlzNfQFnmsQ2fVV6dtHeiikXrxTpCZarEPF7GaMp0cdkunCz9KY5AFxR4tMRvGZpMyo6pn0/z58VYYc8LWRo+dPyZ
+X-Gm-Message-State: AOJu0YzgIPBYI0I1uRMk1Y+1IfuCRRgSr3MCG/LQo1/+lhfi7KnCECa7
+	QF9GzEUNGg9bxw3YohyIczrVZq3il8JUV2tJ4Kt9NNXU7hZZje4WsaPexsVK59UF9JDu98smt6j
+	SzxaLS5YpAHMI8hxzj1hWLWr8a34=
+X-Google-Smtp-Source: AGHT+IHKvXcsY6mlaFymMXwEWQLlYamCRCx2QwoAcHfH+QCs99TtpseiJAvy+X5wop0X5Jh0s7SF0rgNTsAUHA1+5tk=
+X-Received: by 2002:a05:6820:22a0:b0:5b9:f2f4:6a95 with SMTP id
+ 006d021491bc7-5bb3ba15b36mr529150eaf.5.1718157271162; Tue, 11 Jun 2024
+ 18:54:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 08/10] KVM VMX: Move MSR_IA32_VMX_MISC bit defines to
- asm/vmx.h
-To: Sean Christopherson <seanjc@google.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- Kai Huang <kai.huang@intel.com>, Jim Mattson <jmattson@google.com>,
- Shan Kang <shan.kang@intel.com>, Xin Li <xin3.li@intel.com>,
- Zhao Liu <zhao1.liu@intel.com>
-References: <20240605231918.2915961-1-seanjc@google.com>
- <20240605231918.2915961-9-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240605231918.2915961-9-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240611044358.25689-1-dzm91@hust.edu.cn> <1c3c4698-c70f-4b04-ae96-a83c3b9bbc4d@gmail.com>
+ <CAD-N9QXY8frJmxp+LWM9g2_8UdubzMushMEPGyM9Z-UFEHfN3A@mail.gmail.com> <5961a584-dbb5-40e7-8e25-69eb7aefcdb1@gmail.com>
+In-Reply-To: <5961a584-dbb5-40e7-8e25-69eb7aefcdb1@gmail.com>
+From: Dongliang Mu <mudongliangabcd@gmail.com>
+Date: Wed, 12 Jun 2024 09:54:05 +0800
+Message-ID: <CAD-N9QV-LqraTPVgt3CayyPKreVRR3S4SvFkwkqPKkVpuegJcw@mail.gmail.com>
+Subject: Re: [PATCH] docs/zh_CN: Update the translation of dev-tools/testing-overview
+To: Alex Shi <seakeel@gmail.com>
+Cc: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>, 
+	Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>, 
+	Hu Haowen <2023002089@link.tyut.edu.cn>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/6/2024 7:19 AM, Sean Christopherson wrote:
-> Move the handful of MSR_IA32_VMX_MISC bit defines that are currently in
-> msr-indx.h to vmx.h so that all of the VMX_MISC defines and wrappers can
-> be found in a single location.
-> 
-> Opportunistically use BIT_ULL() instead of open coding hex values, add
-> defines for feature bits that are architecturally defined, and move the
-> defines down in the file so that they are colocated with the helpers for
-> getting fields from VMX_MISC.
-> 
-> No functional change intended.
-> 
-> Cc: Shan Kang <shan.kang@intel.com>
-> Cc: Kai Huang <kai.huang@intel.com>
-> Signed-off-by: Xin Li <xin3.li@intel.com>
-> [sean: split to separate patch, write changelog]
-> Reviewed-by: Zhao Liu <zhao1.liu@intel.com>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
+On Wed, Jun 12, 2024 at 9:36=E2=80=AFAM Alex Shi <seakeel@gmail.com> wrote:
+>
+>
+>
+> On 6/11/24 2:50 PM, Dongliang Mu wrote:
+> > On Tue, Jun 11, 2024 at 2:36=E2=80=AFPM Alex Shi <seakeel@gmail.com> wr=
+ote:
+> >>
+> >>
+> >>
+> >> On 6/11/24 12:43 PM, Dongliang Mu wrote:
+> >>> Update to commit 42fb9cfd5b18 ("Documentation: dev-tools:
+> >>> Add link to RV docs")
+> >>>
+> >>> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+> >>> ---
+> >>>  Documentation/translations/zh_CN/dev-tools/testing-overview.rst | 2 =
+++
+> >>>  1 file changed, 2 insertions(+)
+> >>>
+> >>> diff --git a/Documentation/translations/zh_CN/dev-tools/testing-overv=
+iew.rst b/Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+> >>> index c91f9b60f9f1..d89d0ec1d4cc 100644
+> >>> --- a/Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+> >>> +++ b/Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+> >>> @@ -99,6 +99,8 @@ Documentation/dev-tools/kcov.rst =E6=98=AF=E8=83=BD=
+=E5=A4=9F=E6=9E=84=E5=BB=BA=E5=9C=A8=E5=86=85=E6=A0=B8=E4=B9=8B=E4=B8=AD=EF=
+=BC=8C=E7=94=A8=E4=BA=8E=E5=9C=A8=E6=AF=8F
+> >>>    =E5=8F=82=E9=98=85 Documentation/dev-tools/kfence.rst
+> >>>  * lockdep=E6=98=AF=E4=B8=80=E4=B8=AA=E9=94=81=E5=AE=9A=E6=AD=A3=E7=
+=A1=AE=E6=80=A7=E6=A3=80=E6=B5=8B=E5=99=A8=E3=80=82=E5=8F=82=E9=98=85
+> >>>    Documentation/locking/lockdep-design.rst
+> >>> +* Runtime Verification (RV) =E6=94=AF=E6=8C=81=E6=A3=80=E6=9F=A5=E7=
+=BB=99=E5=AE=9A=E5=AD=90=E7=B3=BB=E7=BB=9F=E7=9A=84=E7=89=B9=E5=AE=9A=E8=A1=
+=8C=E4=B8=BA=E3=80=82=E5=8F=82=E9=98=85
+> >>
+> >> Why not translate the words 'Runtime Verification' here?
+> >
+> > If you translate it into "=E5=8A=A8=E6=80=81=E7=A1=AE=E8=AE=A4", this s=
+ounds like a very general term.
+> > So I keep the original English.
+>
+> Runtime is often translated as '=E8=BF=90=E8=A1=8C=E6=97=B6', so could be=
+ =E2=80=98=E8=BF=90=E8=A1=8C=E6=97=B6=E7=A1=AE=E8=AE=A4=E2=80=99
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+How about =E8=BF=90=E8=A1=8C=E6=97=B6=E7=A1=AE=E8=AE=A4=EF=BC=88Runtime Ver=
+ification=EF=BC=89=EF=BC=9F
 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-
+>
+> >
+> >>
+> >> Thanks!
+> >> Alex
+> >>> +  Documentation/trace/rv/runtime-verification.rst=E3=80=82
+> >>>  * =E9=99=A4=E6=AD=A4=E4=BB=A5=E5=A4=96=EF=BC=8C=E5=9C=A8=E5=86=85=E6=
+=A0=B8=E4=B8=AD=E8=BF=98=E6=9C=89=E4=B8=80=E4=BA=9B=E5=85=B6=E5=AE=83=E7=9A=
+=84=E8=B0=83=E8=AF=95=E5=B7=A5=E5=85=B7=EF=BC=8C=E5=A4=A7=E5=A4=9A=E6=95=B0=
+=E8=83=BD=E5=9C=A8
+> >>>    lib/Kconfig.debug =E4=B8=AD=E6=89=BE=E5=88=B0=E3=80=82
+> >>>
+> >>
 
