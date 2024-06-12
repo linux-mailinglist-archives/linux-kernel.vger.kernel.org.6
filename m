@@ -1,149 +1,147 @@
-Return-Path: <linux-kernel+bounces-212378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B10905F31
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0CC905F36
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F48C1F226C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:29:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A769E1F2260F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AB612CDB2;
-	Wed, 12 Jun 2024 23:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F76512D745;
+	Wed, 12 Jun 2024 23:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YLpr5uXR"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vPnpl7Og"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFF912CD88
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 23:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDCF12CDA5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 23:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718234978; cv=none; b=IjNx6MHIG2quCoJgs+SkSS8LjswDxNlSMM3Dmkd26vhs8BQyWjKMZPbw3IngqQ3fRFFEgF36GZkIwU1aXikteRQ7JgnjRha+6t4ilVzp6tMB1wWgCO0fzI92F1edm5aqg6Q45JtJ/qNbBB1CggbzNKSZomovWj2jbXliKqRqoww=
+	t=1718235098; cv=none; b=MynDut0NmTSBZWVSsjk6OTHW2s15bb9iZEBy3fbc+QtTQ5xdi7BRakI8VWokRtsp2v4b0qQJ7YBRAHE5HtVxyoM5BWFAEF9EoYZ3a3fe+GM4NbUbtJYqUbmP3M4OT6jwlWneTBuUhgR9XhOdBFGcDNnQO1BRBT+6n1SlQIhgquI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718234978; c=relaxed/simple;
-	bh=jg2Hi9k6fwxW2IpyOYwdjHzjY2x3RN1zTqa9ZNVIbhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GP0+dpzmpXnEGUTbDhmC8caJECvsrZjRe5jQS3SfO9/BG0Iz7H5N/E4vm1CLueh07NU/K2rj6nb1rLfEq/Oy4TWoa3HDOxCe275DllENDYFnFNZBWTmbvt/B0Y2husvZcBid54QbwWMlrtlc1HqCqALO5rAYryYfL8+GcGdUNA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YLpr5uXR; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: syzbot+3cca837c2183f8f6fcaf@syzkaller.appspotmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718234973;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yOh52ckwej5r18PRkVmjQlcSDns7+NZmhFSFXWhw010=;
-	b=YLpr5uXRd/Nq2sg5r/RsshqLJkRrlm+FrmBkeYopcBuJKceSco8Fmzprh4ajLz4pjFxmDP
-	CgwOz3kqL3x5XqYFhapTWaBUA1/Sh2CHAFhIovDShNWd0OZkLo2Z1jJpDEFJecnUAbL2ma
-	KrSmM990lu4GD+iiWpJxNU35dn42FRM=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Wed, 12 Jun 2024 19:29:28 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+3cca837c2183f8f6fcaf@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] WARNING: locking bug in
- srcu_gp_start_if_needed
-Message-ID: <6jwebqun2sbikkdeum7sxuhtqmiiergyj6tseuk6lbwtqipukg@g5jr4svt5pyd>
-References: <0000000000002b1e82061a94aaef@google.com>
+	s=arc-20240116; t=1718235098; c=relaxed/simple;
+	bh=4SDKp1waJzXqdTd/ActDvagt62Ph9uX2CozVVnbthGw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OUOjNjseYGZXP3wie/K4XPajA20wV0hDDNJ+pmyufqhiYLlz1+J+MiR2wny1uuYrpTujGVipVy6CuRNqM0QuiL+tr0+p2yQphJpVUydRY5w60O7oSOigf/7E7tzwkOYAPpevcDn30B8zB1GDFRHkoVXBg3EObN3qqXKeqrqN17I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vPnpl7Og; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c24109ad3fso299422a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 16:31:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718235097; x=1718839897; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L/SyTTg+Pb2L8jVOL9JfQwGKpPzI3PRlHDd/+KWWSxs=;
+        b=vPnpl7OgTw3m1W9f7qd8zuFbhpnIj+Jd34ThUJ7cL7UUofqkzRWLXa51Txwe4/fgxL
+         PLzlDOasbRE+NzMuzxMsbsjUmjMh6HEYZPereLw5PaVNb8BVZzMrebU+Q81WpBJq7CPt
+         GqouZtMhHxB7yb43W4Zs/RcZMGIN1WXLa5N6v64RhHdchIZvE9y2s3HQzP+2zejVkIsE
+         D/qFO96+CjbH0nAd0oZsiCShLpItkPvCrABUdqVUmHILxr55EOKKcRgURxnQ8zF+0vYP
+         xqjDo2Whtgb7BT4Tsq/V0HUpLKSHFphdLrYRrTmQTYmOXlENmugklXmS1yPBJ5Re6sh1
+         IF3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718235097; x=1718839897;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L/SyTTg+Pb2L8jVOL9JfQwGKpPzI3PRlHDd/+KWWSxs=;
+        b=lrK2c/b2iJrRqa3OkWf195zt2J678Es426Zikeu/yKMqZhOZqLm8rMuRyB0TxrVNKK
+         fqIXHKWbsbemL8auSC/1w0fHUuFJcKl0+JAUh6QqMnaYlAYhSTLEFkflXKLIMtMoQIX4
+         iqpHLQncGG5Z8TSRUfwUL/2lQKQvw6KiJJ+7fMG3oOXZscr0QbJzNzGRPk9QDBYl3dCx
+         KZX1VuwuHU0RwTi5+ZcARFgr/eH5dnwR0dggHbfMvwaw7wjU4g390qFJEc3sqVN1KmYH
+         qk7Avh/DwwyINmwQIitN99H0B6+vzcjeda/JMK3jXL9eYTdERx0mkbyG5fdQlMsT1oqr
+         DOKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtfWZCEeju2Am+uoHJNG/9mtaD6xkt+wEt+Jk7nL1QzP55q1Wk726k/SM9zrpmekLHXmGfJCRKHNRZiGvdshm21QlyiFGAuL6hj3Gq
+X-Gm-Message-State: AOJu0YyRwkBPQ83QPpHT+eIW8iUnMFgNF9PC0YB1tXBjwY5jJ7lRHZQx
+	v7WDKGj794Xnwv+z0OA+4rbdA5+/8hwVs8kStExj4g7Pkqk3VoEQdwIegzvfrNan3KERFvZBW+5
+	gfw==
+X-Google-Smtp-Source: AGHT+IFF6ktwP1UGkcUZHB0WhdUhwnLGJBuZ/L5no7UNOMPx0KJvnv6kZJUd9YOHzqFhW28idnkubVIueTQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:62c9:b0:2c2:c65f:52dc with SMTP id
+ 98e67ed59e1d1-2c4a770e8f6mr9058a91.6.1718235096779; Wed, 12 Jun 2024 16:31:36
+ -0700 (PDT)
+Date: Wed, 12 Jun 2024 16:31:35 -0700
+In-Reply-To: <Zj7f+JWbVfIBIK8h@chao-email>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000002b1e82061a94aaef@google.com>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-13-xin3.li@intel.com>
+ <ZjBiLDJ4SdQ0p5xm@chao-email> <SA1PR11MB6734740F9B6085E0997A4179A8E72@SA1PR11MB6734.namprd11.prod.outlook.com>
+ <Zj7f+JWbVfIBIK8h@chao-email>
+Message-ID: <Zmov1x2KFtoMN3Vm@google.com>
+Subject: Re: [PATCH v2 12/25] KVM: VMX: Handle FRED event data
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Xin3 Li <xin3.li@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"hpa@zytor.com" <hpa@zytor.com>, "shuah@kernel.org" <shuah@kernel.org>, 
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>, 
+	Ravi V Shankar <ravi.v.shankar@intel.com>, "xin@zytor.com" <xin@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Jun 10, 2024 at 08:14:32PM -0700, syzbot wrote:
-> Hello,
+On Sat, May 11, 2024, Chao Gao wrote:
+> On Fri, May 10, 2024 at 05:36:03PM +0800, Li, Xin3 wrote:
+> >> >+               if (kvm_is_fred_enabled(vcpu)) {
+> >> >+                       u64 event_data = 0;
+> >> >+
+> >> >+                       if (is_debug(intr_info))
+> >> >+                               /*
+> >> >+                                * Compared to DR6, FRED #DB event data saved on
+> >> >+                                * the stack frame have bits 4 ~ 11 and 16 ~ 31
+> >> >+                                * inverted, i.e.,
+> >> >+                                *   fred_db_event_data = dr6 ^ 0xFFFF0FF0UL
+> >> >+                                */
+> >> >+                               event_data = vcpu->arch.dr6 ^ DR6_RESERVED;
+> >> >+                       else if (is_page_fault(intr_info))
+> >> >+                               event_data = vcpu->arch.cr2;
+> >> >+                       else if (is_nm_fault(intr_info))
+> >> >+                               event_data =
+> >> >+ to_vmx(vcpu)->fred_xfd_event_data;
+> >> >+
+> >> 
+> >> IMO, deriving an event_data from CR2/DR6 is a little short-sighted because the
+> >> event_data and CR2/DR6 __can__ be different, e.g., L1 VMM __can__ set CR2 to A
+> >> and event_data field to B (!=A) when injecting #PF.
+> >
+> >VMM should guarantee a FRED guest _sees_ consistent values in CR6/DR6
+> >and event data. If not it's just a VMM bug that we need to fix.
 > 
-> syzbot found the following issue on:
+> I don't get why VMM should.
 > 
-> HEAD commit:    d30d0e49da71 Merge tag 'net-6.10-rc3' of git://git.kernel...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11f5d896980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=96fd46a1ee1615e0
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3cca837c2183f8f6fcaf
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: i386
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d30d0e49.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/970e3906a552/vmlinux-d30d0e49.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/d80af4a76ff6/bzImage-d30d0e49.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+3cca837c2183f8f6fcaf@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> DEBUG_LOCKS_WARN_ON(1)
-> WARNING: CPU: 1 PID: 111 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
-> WARNING: CPU: 1 PID: 111 at kernel/locking/lockdep.c:232 hlock_class+0xfa/0x130 kernel/locking/lockdep.c:221
-> Modules linked in:
-> CPU: 1 PID: 111 Comm: kswapd0 Not tainted 6.10.0-rc2-syzkaller-00222-gd30d0e49da71 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
-> RIP: 0010:hlock_class+0xfa/0x130 kernel/locking/lockdep.c:221
-> Code: b6 14 11 38 d0 7c 04 84 d2 75 43 8b 05 b3 2e 77 0e 85 c0 75 19 90 48 c7 c6 80 be 2c 8b 48 c7 c7 20 b9 2c 8b e8 97 47 e5 ff 90 <0f> 0b 90 90 90 31 c0 eb 9e e8 98 f6 7f 00 e9 1c ff ff ff 48 c7 c7
-> RSP: 0018:ffffc90000e9f338 EFLAGS: 00010086
-> RAX: 0000000000000000 RBX: 00000000000018c4 RCX: ffffffff81511229
-> RDX: ffff888019f8a440 RSI: ffffffff81511236 RDI: 0000000000000001
-> RBP: 0000000000008000 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000000 R11: 000000002d2d2d2d R12: 0000000000000000
-> R13: 0000000000000000 R14: ffff888019f8afe8 R15: 00000000000018c4
-> FS:  0000000000000000(0000) GS:ffff88802c100000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000eeb14000 CR3: 0000000046f74000 CR4: 0000000000350ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  check_wait_context kernel/locking/lockdep.c:4773 [inline]
->  __lock_acquire+0x3f2/0x3b30 kernel/locking/lockdep.c:5087
->  lock_acquire kernel/locking/lockdep.c:5754 [inline]
->  lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
->  __raw_spin_trylock include/linux/spinlock_api_smp.h:90 [inline]
->  _raw_spin_trylock+0x63/0x80 kernel/locking/spinlock.c:138
->  spin_lock_irqsave_sdp_contention kernel/rcu/srcutree.c:373 [inline]
->  srcu_gp_start_if_needed+0x75e/0xf00 kernel/rcu/srcutree.c:1233
->  bkey_cached_free fs/bcachefs/btree_key_cache.c:90 [inline]
->  bch2_btree_key_cache_scan+0xb90/0x1820 fs/bcachefs/btree_key_cache.c:886
->  do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
->  shrink_slab+0x18a/0x1310 mm/shrinker.c:662
->  shrink_one+0x493/0x7c0 mm/vmscan.c:4790
->  shrink_many mm/vmscan.c:4851 [inline]
->  lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
->  shrink_node mm/vmscan.c:5910 [inline]
->  kswapd_shrink_node mm/vmscan.c:6720 [inline]
->  balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
->  kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
->  kthread+0x2c1/0x3a0 kernel/kthread.c:389
->  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-#syz fix: bcachefs: Fix initialization order for srcu barrier
+> I know the hardware will guarantee this. And likely KVM will also do this.
+> but I don't think it is necessary for KVM to assume L1 VMM will guarantee
+> this. because as long as L2 guest is enlightened to read event_data from stack
+> only, the ABI between L1 VMM and L2 guest can be: CR2/DR6 may be out of sync
+> with the event_data. I am not saying it is good that L1 VMM deviates from the
+> real hardware behavior. But how L1 VMM defines this ABI with L2 has nothing to
+> do with KVM as L0. KVM shouldn't make assumptions on that.
+
+Right, but in that case the propagation of event_data would be from vmcs12 =>
+vmcs02, which is handled by prepare_vmcs02_early().
+
+For this flow, it specifically handles exception injection from _L0 KVM_, in which
+case KVM should always follow the architectural behavior.
+
+Ahh, but the code in with __vmx_complete_interrupts() is wrong.  Overwriting
+vcpu->arch.{dr6,cr2} is wrong, because theres no telling what was in vmcs02.
+And even if vmcs02 holds DR6/CR2 values, those might be L2 values, i.e. shouldn't
+clobber the vCPU state.
+
+It's not clear to me that we need to do anything new for FRED in
+__vmx_complete_interrupts().  The relevant VMCS fields should already hold the
+correct values, there's no reason to clobber vCPU state.  The reason KVM grabs
+things like instruction length and error code is because that information is
+visible to other aspects of injection, e.g. to adjust RIP and pushed the error
+code on the stack.
 
