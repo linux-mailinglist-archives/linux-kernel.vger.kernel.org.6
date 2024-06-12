@@ -1,178 +1,107 @@
-Return-Path: <linux-kernel+bounces-211320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9B2904FFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:03:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02501904FFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 788EFB21259
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:03:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC09D1C2156D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02ACE16E870;
-	Wed, 12 Jun 2024 10:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F4D16E869;
+	Wed, 12 Jun 2024 10:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Lx2HAkYr"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fPC0L8/w"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D6016D9D0
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB6716D9D0;
+	Wed, 12 Jun 2024 10:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718186625; cv=none; b=Q7HfKfHUhg4t3kwHLkopUzWS+NnpOYkVZJA0PBLpgy9Dm5hejHvzv2Urh4wTO+fTAUW/rs3rtTfSD0TGvcFwZRKVPta7qyWFb7pq4xupM15JtJv/yQHPIhUzFnJUnaagT1vW+mt5X3dmY0Nqay5L7Xv5nue43wsAt0b1bYRN3sM=
+	t=1718186699; cv=none; b=ZXlRGRt9hzxCEuRHkg414hHNPMZU0TNAkwHf3u75bWsf1ZQiUO+h6eZrXrc33vHQCaSplVzA9JFvgPGZAiZyrNt/pZjWzCfjIOcOECRfpDkMhVUd3AeaPql0FTBRpUcTV86V65CLONShv0uuLtNMTOHGW1zB6MrCcjUQ6TMLOWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718186625; c=relaxed/simple;
-	bh=+55Nvekl/FD1qqRLwZ3qbL7Jw6AMS+/quMVjAN//7LI=;
+	s=arc-20240116; t=1718186699; c=relaxed/simple;
+	bh=iEUoNaayB2BlJnVCPB8Po5Qwl6xQduvYeyz+LVKfHzA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LVKw9IpAY70WG9N1ur8kQr45uWqzPQvznXOl2YWpEFtAm4KMnSeV+QPu4xKTZ+JoGfvhbP3tDMd+2UuJkm8w3Yp54LrqUnP5J5Do680tlVO66NTd8nPEbfI7fGxb9yqysffKTjKwF7GfGiSZC92ZXjzKdb5aecUqW47rsDldTQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Lx2HAkYr; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=ux2s
-	acGbdN9mSTkUplQzXMjSYbFp3+/ou8CtQwUKLbE=; b=Lx2HAkYrSnEfCoMjoCjQ
-	zQxmIuwqCwpMOZaX+ieXSmIgC+2XmUdSwWMLp2XTS+uBcxjKPE5xYtgsyXq8xTst
-	eSGGJhZ+5qSoPptJLhGUlrW0MUopqGP83hTDdOpEha+Qs11PGeOTHuGDrXOouuRt
-	3YtTe2RHcPXPysDAGcqpjLdvgKEc+De9j7VdWfWpZoCDRo2qmpN/aX7Va4iVNZoa
-	Fndvmsdtb15GHINoCmIPLkAuNkzn8nOPSPDwi8aNJF1EUfOdP1nPp4ja247Q7OVn
-	90ATZM+ji77oZETfPhkAbInCvPu+j7Og5cqLLoLBvBHI2eHfqJ5st37pQLCIAEpj
-	wA==
-Received: (qmail 757851 invoked from network); 12 Jun 2024 12:03:32 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jun 2024 12:03:32 +0200
-X-UD-Smtp-Session: l3s3148p1@oUuyfq4aUDltKPDc
-Date: Wed, 12 Jun 2024 12:03:31 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v9 1/1] gpio: add sloppy logic analyzer using polling
-Message-ID: <wdvnbt2vpobukz3s6pxkowoizvsxjeycnb3rmfsmfbx5zsgvrp@mog64h2ogftv>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	Jonathan Corbet <corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20240610112700.80819-1-wsa+renesas@sang-engineering.com>
- <20240610112700.80819-2-wsa+renesas@sang-engineering.com>
- <ZmcN6lJAGVxY3Ok2@surfacebook.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DiTaX4g849PWVquUSP4X0IqinRYTopmxPVX4LSqpsYDJ3FsuY7bZALfe0evHDE7hIbWbWZaCSbhTroCsI9QiZ21NI6jdeH6utfYGSabWDi+xLpOfI5YJbngkGtf0Po7A+AN04kLznI6DQX/z0c6reYbBTWTCdax2oZ2XoKWqM9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fPC0L8/w; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EC97940E0176;
+	Wed, 12 Jun 2024 10:04:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id r_odZfOLMdTS; Wed, 12 Jun 2024 10:04:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718186691; bh=aIgbnAOKTeM+FB8d5W9nTCjTvuJnn62DaSg830jf+FY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fPC0L8/wkmwCve3ZScwFP4VavsptqNjHj6aPqaJyJB3LbWg7Ua6HU3DFE9eDnMZYz
+	 rti2QWpOW4G7XfITaRc7J/zkGRKyjN8Ek8A1gd3gJCxExvGFDx0bhF2BE8AW0rEWar
+	 8UUEGkRkdBd3v4Dd44vFSvFUvKIpgS+7Skj8nq1JCHtUTW9n5iKRHmtnxGOx1lr78q
+	 TspzNTVhsPIDM27pkjuthmFWzev1by6hvTK8wtboUoTHWeGU2TfcB3bDrGt+dBxKM2
+	 PPEEQ7kKuSJ5PVLC2wrJATFRnKjWim77b4HNdNDJ06OJqNTWV1f7BSq+XB8XeAiA7m
+	 WP/g1+Vat2EVDWCV4t2KrcB8M4rfiv5bbCf6HK05w+soJyyPj+S1qwZJW1fXn+nA2n
+	 zimz8QtS78/iTV2e9lDL+owZw5lAvXwAdtnTS0SKtpXxJk+wKUZnPhEZv0nQZWqgHh
+	 EgBIRdXKmQYp+A1HqstpTcyHLe0KkIVrB5PAIFtmPe10OpjY9diM9ufbYXqNQo70zt
+	 4rh3N1gZZNHpIhXD0QBvXCoLFH21IQ2DMWfmMJ6qOmgraMIY9yfMajZS+ahzsxlrAn
+	 v3L1wR/FhLiJ6lhhwap0IleUoyPCJv3F5dHrPU9YCQaciGr7J3lXdzKPD7L6AY7bc5
+	 GnJ027YNlP7es90YP0ebIy0E=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A2EFE40E0031;
+	Wed, 12 Jun 2024 10:04:39 +0000 (UTC)
+Date: Wed, 12 Jun 2024 12:04:38 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Anvin <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH 2/7] add default dummy 'runtime constant' infrastructure
+Message-ID: <20240612100438.GAZmlytlj99BvVqlwd@fat_crate.local>
+References: <20240610204821.230388-1-torvalds@linux-foundation.org>
+ <20240610204821.230388-3-torvalds@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wj5fobjlv4oflgqg"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZmcN6lJAGVxY3Ok2@surfacebook.localdomain>
+In-Reply-To: <20240610204821.230388-3-torvalds@linux-foundation.org>
 
+On Mon, Jun 10, 2024 at 01:48:16PM -0700, Linus Torvalds wrote:
+> Subject: Re: [PATCH 2/7] add default dummy 'runtime constant' infrastructure
 
---wj5fobjlv4oflgqg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Probably need a subject prefix:
 
-Hi Andi,
+"runtime-const: Add default..."
 
+> This adds the initial dummy support for 'runtime constants' for when
+> an architecture doesn't actually support an implementation of fixing up
+> said runtime constants.
 
-> > +#include <linux/delay.h>
->=20
-> + device.h
-> + err.h
+...
 
-OK about the includes.
+-- 
+Regards/Gruss,
+    Boris.
 
-> > +	mutex_lock(&priv->blob_lock);
->=20
-> guard() (from cleanup.h)?
-
-If you insist. I doesn't save an exit path, so I don't think this will
-improve readability of the code. But I don't mind...
-
-> > +static const struct file_operations fops_trigger =3D {
-> > +	.owner =3D THIS_MODULE,
-> > +	.open =3D trigger_open,
-> > +	.write =3D trigger_write,
-> > +	.llseek =3D no_llseek,
-> > +	.release =3D single_release,
-> > +};
->=20
-> Wondering if you can use DEFINE_SHOW_STORE_ATTRIBUTE(), or if it makes se=
-nse.
-> It might be that it requires to use DEFINE_SHOW_ATTRIBUTE() for the sake =
-of
-> consistency, but I don't remember if there is a difference WRT debugfs us=
-age.
-
-Well, then we can just leave it for now and change it later, if desired.
-
-> > +	mutex_init(&priv->blob_lock);
->=20
-> devm_mutex_init()
-
-OK.
-
-> > +		new_meta =3D devm_krealloc(dev, meta, meta_len + add_len, GFP_KERNEL=
-);
->=20
-> Can it be rewritten to use devm_krealloc_array()?
-
-'meta' is not an array?
-
-> > +	dev_info(dev, "initialized");
->=20
-> Do we need this? Existence of folder in debugfs is enough indication of
-> success, no?
-
-Since the script can now list instances easily, this can be argued.
-Still, I don't think this matters much for a debug-only device.
-
-> > +static const struct of_device_id gpio_la_poll_of_match[] =3D {
-> > +	{ .compatible =3D GPIO_LA_NAME, },
->=20
-> Redundant inner comma.
-
-Yes.
-
-> > +late_initcall(gpio_la_poll_init);
->=20
-> Why? Can we add a comment?
-
-Sure.
-
-> Btw, have you tried `shellcheck` against your script?
-
-We did this in one of the 8 previous iterations.
-
-All the best,
-
-   Wolfram
-
-
---wj5fobjlv4oflgqg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZpcm8ACgkQFA3kzBSg
-KbZG+Q/8DO5hqL7b1XR0sD1SMJviOoyciDYILbF19jHtnENPh96Sexa7fj5HdsfE
-k8oyoeTUPX4LPLgFOTmr5SRHmiWjEb5s6oTgtNxJZqNFeFtglEK1QWUM5tANwQoy
-L4S7bTO8J91J3WwdNChdvDQkfSLbAVGUTBvbm4iZcDihOCtGdScZCm+hGF1LqTxK
-LE/2/8mwKfFymnGSbH/siPsb+CmtXMHuJNOhJlaI0KvNLIfHINkYJpBSPwMP3flV
-v/VIqwt39AIm+5TbTPazDcrOY4NciJ9nRIjLfqHxTSnIbCZaMUfqPK/CYgLWTmD4
-oFVvFZFP77yaVpPWjdkECDJJtfI9kkCMH+DgH7p6+6YoRhb2xDFWetS1JS25xJYR
-vFodZggVj0wEsjqPb2GiaZRM+A+D6GEtjNszeDj3zlCInV6luHTcRuJ4NoNDLVNZ
-XsFdHefQWoRv0/Kv5FY79tijNUNbGcwemt5d4wi4VFqfGZti5IFCbcb+/G+h18Hw
-+EDb3KWhybHNENl3QPn0hYVCqDOAQrKInUcqVR0Ph0uYTzxMmfTLdk2wIX9I3+Li
-fF7tI/JGxDHXZaT8KiQtFv9PEXgYheqLt7EdzSkTBrbydR9rcLg5l1cSy5Np8F7u
-d+zalrnyfGKSxIxMGX16RQkMIya4Xd2R620+e64o6eTV7gV36O8=
-=EuJ1
------END PGP SIGNATURE-----
-
---wj5fobjlv4oflgqg--
+https://people.kernel.org/tglx/notes-about-netiquette
 
