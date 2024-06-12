@@ -1,144 +1,141 @@
-Return-Path: <linux-kernel+bounces-211401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20AAB90512F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:14:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C34905134
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47AA41C20FC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:14:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C388B21ACB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D699A16F271;
-	Wed, 12 Jun 2024 11:13:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E680716F0D1;
-	Wed, 12 Jun 2024 11:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC1B16F0D6;
+	Wed, 12 Jun 2024 11:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fW3m6jnb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997C4146017;
+	Wed, 12 Jun 2024 11:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718190837; cv=none; b=QJvZ0SNYFvcETct08XKnbnjRgYTRVMm2vaPMwb3gpf1UGMitsKpUQ8c+/bR5/yLclilURNqdLtl2ACbfuQn8YSwoybs0pmsLyL2a6b4+fbVuNycUu1jC3AvrXrFj39qvKkSOfohdvg5HS8ciM3x+qQWmUQe9G2/pKcnaM2cvjkY=
+	t=1718190952; cv=none; b=TRiTS8C1icnjlR3vmkhnkRuUCgKZ/+KmZSzj2YyfA35u5LFSwe4lno217iyG2/syx0ivxQ8FtNJdOcVoDjXpsL7m4tqEI+rw9O7DdakRX3OM5/kqh/KxmP+1K1rgcFbL2UeOFcLcVsBbT0rjewMxAUfOeoUJpXU3OTEyHf9AJL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718190837; c=relaxed/simple;
-	bh=tGPupE+j4PNoFUUhCfT2XJ/QhRvNfK0mEe6nInmY/cE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TnpMBYhcXl89SILb98yESXpxa7CoU68IpcjtkQ6rXkd4PM0duWRkqr5xXm1cb7pIw/KZN1pbJ0rHMbfKtwPuIIn2R4/SpV7S1c5Vafjj56q5ts3V6GPu5yED5DrhgMug7qRUWWYDuAlSRRs+db71QOO2W2IwTPlR0XjbTfIWt/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5F421595;
-	Wed, 12 Jun 2024 04:14:18 -0700 (PDT)
-Received: from [10.162.42.15] (e116581.arm.com [10.162.42.15])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 471543F73B;
-	Wed, 12 Jun 2024 04:13:45 -0700 (PDT)
-Message-ID: <6bd821a3-9dbe-499c-ae17-afce70076299@arm.com>
-Date: Wed, 12 Jun 2024 16:43:41 +0530
+	s=arc-20240116; t=1718190952; c=relaxed/simple;
+	bh=7d24fUeZ1zP8SH2Q+34h24RjLG4meZy6sShN3SzAN8Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hB6LhNBMJ1GlD7fHcKAUUC1Ta3a/BBJpdRE5jqV4NytPfi6FUCjFY6GgEggMyoOVw57rBs8Y7SrySZmCg1yOA5OKshfZCWOAGb6FJ3oCJkOepTDt9uYQb6zxEiBGx1swkzFYMHXS5cnpIXaRoVsp2ZyjCR+s3+wWivg26GOmaDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fW3m6jnb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16653C3277B;
+	Wed, 12 Jun 2024 11:15:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718190952;
+	bh=7d24fUeZ1zP8SH2Q+34h24RjLG4meZy6sShN3SzAN8Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fW3m6jnb3gneinc4H/B0Gtb06vZCOSWj6qjo8a5u9z+DZVcY/GWNQK9eWzO+n6jU8
+	 W09bJuoYg7mhVUYy84Sy1mcgWgKHAxdaUu3Xqg5FXCDbDA0HKL4TXBEWp19cETU+oB
+	 swfc0FOlTdfZ5m6lPnxXT3btWIFc0ezWpwWSjU/AHyAl2XQCcVvG9EogMZ1PO5GnYP
+	 A/qmULkTeXu1I56u1ihWbrHQawI0Pivnoz7IeDiZKCvYwdIvd9lTN5VUO3RSuY212R
+	 NkzG9qSXU7QMXz9ILxMGruWywLWAITG4di/SDb7wI4IxFEfPspXSylnGA11cgL12/X
+	 cyUr/xA9fw88w==
+Date: Wed, 12 Jun 2024 12:15:47 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Minda Chen <minda.chen@starfivetech.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Subject: Re: Re : [PATCH v1] riscv: dts: starfive: add PCIe dts configuration
+ for JH7110
+Message-ID: <20240612-italicize-cultural-a10b8a387520@spud>
+References: <20240611015200.40996-1-minda.chen@starfivetech.com>
+ <20240611-irk-hypocrite-a53e98e6c394@spud>
+ <SHXPR01MB0863CFE4519C0D69E961620CE6C02@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] selftests: kvm: remove print_skip()
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- James Morse <james.morse@arm.com>, Suzuki K Poulose
- <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- David Hildenbrand <david@redhat.com>, Sean Christopherson
- <seanjc@google.com>, Haibo Xu <haibo1.xu@intel.com>,
- Anup Patel <anup@brainfault.org>, Andrew Jones <ajones@ventanamicro.com>,
- Aaron Lewis <aaronlewis@google.com>, Thomas Huth <thuth@redhat.com>,
- Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
- Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kernel@collabora.com, Shuah Khan <skhan@linuxfoundation.org>,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dev Jain <dev.jain@arm.com>
-References: <20240612104500.425012-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20240612104500.425012-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Li8mNAUIEQ/ZV6y1"
+Content-Disposition: inline
+In-Reply-To: <SHXPR01MB0863CFE4519C0D69E961620CE6C02@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
 
 
-On 6/12/24 16:14, Muhammad Usama Anjum wrote:
->
->
-> diff --git a/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c b/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
-> index 4f5881d4ef66d..695c45635d257 100644
-> --- a/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
-> +++ b/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
-> @@ -144,10 +144,9 @@ int main(int argc, char *argv[])
->   	free((void *)hv_cpuid_entries);
->   
->   	if (!kvm_cpu_has(X86_FEATURE_VMX) ||
-> -	    !kvm_has_cap(KVM_CAP_HYPERV_ENLIGHTENED_VMCS)) {
-> -		print_skip("Enlightened VMCS is unsupported");
-> -		goto do_sys;
-> -	}
-> +	    !kvm_has_cap(KVM_CAP_HYPERV_ENLIGHTENED_VMCS))
-> +		ksft_exit_skip("Enlightened VMCS is unsupported\n");
-> +
+--Li8mNAUIEQ/ZV6y1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Isn't it incorrect to delete 'goto do_sys'? ksft_exit_skip() will exit and the
-program will never jump to that label. At other places too you have deleted the 'goto'.
+On Wed, Jun 12, 2024 at 01:48:55AM +0000, Minda Chen wrote:
+>=20
+>=20
+> >=20
+> > On Tue, Jun 11, 2024 at 09:52:00AM +0800, Minda Chen wrote:
+> > > Add PCIe dts configuraion for JH7110 SoC platform.
+> > >
+> > > Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
+> > > Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
+> > > ---
+> > >  .../boot/dts/starfive/jh7110-common.dtsi      | 64 ++++++++++++++
+> > >  arch/riscv/boot/dts/starfive/jh7110.dtsi      | 86 +++++++++++++++++=
+++
+> > >  2 files changed, 150 insertions(+)
+> > >
+> > > diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> > > b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> > > index 8ff6ea64f048..1da7379f4e08 100644
+> > > --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> > > +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> > > @@ -294,6 +294,22 @@
+> > >  	status =3D "okay";
+> > >  };
+> > >
+> > > +&pcie0 {
+> > > +	perst-gpios =3D <&sysgpio 26 GPIO_ACTIVE_LOW>;
+> > > +	phys =3D <&pciephy0>;
+> > > +	pinctrl-names =3D "default";
+> > > +	pinctrl-0 =3D <&pcie0_pins>;
+> > > +	status =3D "okay";
+> > > +};
+> > > +
+> > > +&pcie1 {
+> > > +	perst-gpios =3D <&sysgpio 28 GPIO_ACTIVE_LOW>;
+> > > +	phys =3D <&pciephy1>;
+> > > +	pinctrl-names =3D "default";
+> > > +	pinctrl-0 =3D <&pcie1_pins>;
+> > > +	status =3D "okay";
+> > > +};
+> >=20
+> > Do all 3 of the mars, star64 and visionfive 2 have both PCIe ports expo=
+sed? I
+> > assume if one does, all does, since they're basically identical?
+>=20
+> Visionfive 2 and milkv mars are all the same. Star64 do NOT enable PCIe0,=
+ PCIe1 pins are the same.
 
+This patch adds both PCIe instances for the Star64 though, since that
+also includes jh7110-common.dtsi. I think you need to enable these in
+the board dts files instead?
 
->   	vcpu_enable_evmcs(vcpu);
->   	hv_cpuid_entries = vcpu_get_supported_hv_cpuid(vcpu);
->   	test_hv_cpuid(hv_cpuid_entries, true);
-> @@ -155,10 +154,8 @@ int main(int argc, char *argv[])
->   
->   do_sys:
->   	/* Test system ioctl version */
-> -	if (!kvm_has_cap(KVM_CAP_SYS_HYPERV_CPUID)) {
-> -		print_skip("KVM_CAP_SYS_HYPERV_CPUID not supported");
-> -		goto out;
-> -	}
-> +	if (!kvm_has_cap(KVM_CAP_SYS_HYPERV_CPUID))
-> +		ksft_exit_skip("KVM_CAP_SYS_HYPERV_CPUID not supported\n");
->   
->   	test_hv_cpuid_e2big(vm, NULL);
->   
-> diff --git a/tools/testing/selftests/kvm/x86_64/hyperv_extended_hypercalls.c b/tools/testing/selftests/kvm/x86_64/hyperv_extended_hypercalls.c
-> index 949e08e98f315..d37212a27990b 100644
-> --- a/tools/testing/selftests/kvm/x86_64/hyperv_extended_hypercalls.c
-> +++ b/tools/testing/selftests/kvm/x86_64/hyperv_extended_hypercalls.c
-> @@ -47,10 +47,8 @@ int main(void)
->   
->   	/* Verify if extended hypercalls are supported */
->   	if (!kvm_cpuid_has(kvm_get_supported_hv_cpuid(),
-> -			   HV_ENABLE_EXTENDED_HYPERCALLS)) {
-> -		print_skip("Extended calls not supported by the kernel");
-> -		exit(KSFT_SKIP);
-> -	}
-> +			   HV_ENABLE_EXTENDED_HYPERCALLS))
-> +		ksft_exit_skip("Extended calls not supported by the kernel\n");
->   
->   	vm = vm_create_with_one_vcpu(&vcpu, guest_code);
->   	run = vcpu->run;
-> diff --git a/tools/testing/selftests/kvm/x86_64/ucna_injection_test.c b/tools/testing/selftests/kvm/x86_64/ucna_injection_test.c
-> index 57f157c06b393..1dcb37a1f0be9 100644
-> --- a/tools/testing/selftests/kvm/x86_64/ucna_injection_test.c
-> +++ b/tools/testing/selftests/kvm/x86_64/ucna_injection_test.c
-> @@ -273,10 +273,8 @@ int main(int argc, char *argv[])
->   	kvm_ioctl(vm->kvm_fd, KVM_X86_GET_MCE_CAP_SUPPORTED,
->   		  &supported_mcg_caps);
->   
-> -	if (!(supported_mcg_caps & MCG_CMCI_P)) {
-> -		print_skip("MCG_CMCI_P is not supported");
-> -		exit(KSFT_SKIP);
-> -	}
-> +	if (!(supported_mcg_caps & MCG_CMCI_P))
-> +		ksft_exit_skip("MCG_CMCI_P is not supported\n");
->   
->   	ucna_vcpu = create_vcpu_with_mce_cap(vm, 0, true, ucna_injection_guest_code);
->   	cmcidis_vcpu = create_vcpu_with_mce_cap(vm, 1, false, cmci_disabled_guest_code);
+--Li8mNAUIEQ/ZV6y1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmmDYwAKCRB4tDGHoIJi
+0hRRAP9uJQeWEGeh7XescP1RuK/PppGYyYJPTZoCbrDpZU0wCQD/Q+mC+PcqoffH
+44ymM0rcydKYlUsr+vX1H3OvOtKdnQU=
+=UKtv
+-----END PGP SIGNATURE-----
+
+--Li8mNAUIEQ/ZV6y1--
 
