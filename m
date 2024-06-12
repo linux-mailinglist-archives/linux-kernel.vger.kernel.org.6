@@ -1,139 +1,225 @@
-Return-Path: <linux-kernel+bounces-211359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90249905096
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:43:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43AF905099
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC6E71C210B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:42:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A8091F22329
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0BB16EBFF;
-	Wed, 12 Jun 2024 10:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE62716F0D5;
+	Wed, 12 Jun 2024 10:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A9L9OakW"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IDpjaBA8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rkHwJMlc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC537A93B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549F916EC0E;
+	Wed, 12 Jun 2024 10:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718188972; cv=none; b=jjpL6+P3CEK2HvjdUUgLTi4TvgxsifxiurxtNvrojdyV5I+ad/Bw7cF5hQnwK6UW3WUJQN0NpE5hJBvgvd8BBAU7CEJx3tdINC5wHcs8wdZKqiHJi+00FT5kSapsYPLAy/Ed8HEyHOCKLQGYkbmyVBgSY6uWUxnh3gylrj2I57U=
+	t=1718188978; cv=none; b=sKsOo4JXrJjJnJiRXunlqIlY3+rRrx8Hchhu4qtD6WTAfyZ5N/muCU8XTrWQvZ8766r7XJeZ38nOXlVNUEf3UDN0I6oNWM1zpBfx3kL/e4TNrfPg86qei+6FlalA03DFOfJO1xyQwhUX2lPTNXoo81I9ZR80vNFIrcjhx1ebfdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718188972; c=relaxed/simple;
-	bh=2XwGvhbD54qUCqDh5ZqW42AThD2/LYE3fEFmsOx36Lw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QMNSUfQmOIIzOA2t3ZnXBSEpgnq0L0YCSM7o4JoM6ySfiW/W0H3JHSdVi2RlYCCzQCzFeRmvfRPF/xXv5Dg0r8zpZ6jvwUWpBtkO2upHD92rqRF3L13VqlQv880BZU8peKOqSJX8l/RY+90JCXikRmz73U4H4AHi9T/BJuFovoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A9L9OakW; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f177b78dcso423396166b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 03:42:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718188969; x=1718793769; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ejgIXmzvvComY08Yy5gfeDMSrRGMGtcObAMX3owmvqw=;
-        b=A9L9OakWD6NFj7kyfReW9eSegWcoAPFe/9MUU8pUzchtUuh1eUFjGbPiF5T6Do8TT/
-         RaXrAs970i28jk9rvgsQi9J3KWLGjLBWikHAaO+yY/e1XVHe7IO0SxM0WmqhwpkAyltg
-         JVT+GbmvfEwUg4/SlXdn7zX3YHwe/hG4HFcsbqqzrJTl5gP9KJ19p7TIgkQgdnYz5BZS
-         gPr5bKVsF5xOQuQHklIaXTHun86jnBweaNgYkRWvpDHFtiuK+wD3JLBh2vrcR3aLB3K5
-         O7l1CgnFa2d2eL76SQYi/y/yuxvgGeCDoiEdxJkGvIMvEiNbk1eE0wNnegrWd1Gv3kcy
-         yMXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718188969; x=1718793769;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ejgIXmzvvComY08Yy5gfeDMSrRGMGtcObAMX3owmvqw=;
-        b=w8dn+7vxEwAl0wuWDOi+dcY/WNA82nqxYDKglvPqrQ2oZOGp3Xwt8ZPkzTN8HMTUtp
-         NZRecRISMCYWNYaB9wWpoMvsZeIxKDVGKT3dnaOeTqS/yhHzFiL7HaSOqIpOKrOwP0kr
-         yw7etLwwhUNjDWZ16Soe2PzqWT5D8438ZEfcVaPPUZFVQFXASiHUEx60YBfRTsf6htgc
-         D5ghtSaH5J/nOf7Mi0jU+PCV2f3WkW1hYl+lsMcpCOuPlCnzzhhKmwVOQFoAf4cwWqSJ
-         aGtZmIqkX8z2mDL6v9OY25VSFPJQ5t6KXty2T+CqtcbNlAzhiBtJc9hz6d7sjSK8WFeh
-         +NMA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/FPhDnrvAXE8K1vj+KhucTnxLFKcHScqtX8jVtItfb1zY3Fm14N2ouO0ldd43RcSJZOJZXWtCGQ4szXtEj97LZzOsE2rQFalqk9Cc
-X-Gm-Message-State: AOJu0Ywy2a6NiuMoTrKmRhPOfmu8JiFNcrq1S2HzbW3ddqwt1pe5qUHi
-	szueGPIU8nh6d413wR0AqIdARWr/HdgEqKicD1Spqy881/4f6mmU
-X-Google-Smtp-Source: AGHT+IEZcovSaBqgCkdTE1FGjX91iscrvkVPJZmnAYq/r4gf/teWPLTxnzQ/LiTENoQ5H/yqTyJ1Wg==
-X-Received: by 2002:a17:907:9724:b0:a6d:b66f:7b21 with SMTP id a640c23a62f3a-a6f4800b17dmr117532166b.54.1718188968801;
-        Wed, 12 Jun 2024 03:42:48 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::4:e76f])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8072ac1fsm872200666b.222.2024.06.12.03.42.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 03:42:48 -0700 (PDT)
-Message-ID: <b7635421-e5e3-47cc-9aea-13a4a9c224fb@gmail.com>
-Date: Wed, 12 Jun 2024 11:42:47 +0100
+	s=arc-20240116; t=1718188978; c=relaxed/simple;
+	bh=x0irVHea9xJBnbsbAv4Kh560yicrGm3RLgdBbtzUyl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dX7g4PoJLYy6zgcGsSS4bz6fYm/0vyg1hTi8I7BmRgSJDrKHtjCyzCEI2UVSWaGqRx1QkS+bMe2vA/qZJtxh/kmJQE42cXl0IUk+V2j+Qkz5OiX04aBW+Aq0Hu2swLLgkPJOQgliN91DRAst2gmsIw5KI5Zp9IzEHX4v7DOchKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IDpjaBA8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rkHwJMlc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 12 Jun 2024 12:42:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718188973;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btdOPFQFwTkICHYO1/SoS8iTZ/W/Xt2/b1M+VRqmDTM=;
+	b=IDpjaBA81cwQHdCuUa6AsYhHFMJfKS66w1BzngfRChyyzRsuf1C7gUDC1H4T64izBar7Vo
+	3qpLLECGiwGfco+3yOh7lwhloytYJvZ8YjzX26zWCTLsOD6DV4b1ktoIdy4BAPZDM6ZMNM
+	UhJTB26hppPQ3ypcHcSNhwZAwBW0Gj5H4ZNQ66ZLC4MVpG9kwGcE3WL/JgfZ4nkr6B20tj
+	M1J31nbbvSBhD1arW6+O4bAiDmKgIq7durXJ20MUONT9VIkkUWcraDAGUUri2HHn8mr4Mj
+	t27i6+WPxHho/IviSahXeBdnBdrZ2XFMihFVD/BDWbalfCgP91kmCl20RFOv4w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718188973;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btdOPFQFwTkICHYO1/SoS8iTZ/W/Xt2/b1M+VRqmDTM=;
+	b=rkHwJMlcGcVjifPlUIsNT1RgwpVmOs1VR/JmIAvZ8a0kz1iIbmBjQ6EguIfz7TD28Ug6DA
+	4BXb03RjqhRAsQAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+	Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
+Subject: Re: [PATCH v5 net-next 14/15] net: Reference bpf_redirect_info via
+ task_struct on PREEMPT_RT.
+Message-ID: <20240612104251.DDjnpfnq@linutronix.de>
+References: <20240607070427.1379327-1-bigeasy@linutronix.de>
+ <20240607070427.1379327-15-bigeasy@linutronix.de>
+ <045e3716-3c3a-4238-b38a-3616c8974e2c@kernel.org>
+ <20240610165014.uWp_yZuW@linutronix.de>
+ <18328cc2-c135-4b69-8c5f-cd45998e970f@kernel.org>
+ <20240611083918.fJTJJtBu@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, david@redhat.com,
- ying.huang@intel.com, hughd@google.com, willy@infradead.org,
- yosryahmed@google.com, chengming.zhou@linux.dev, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-team@meta.com,
- Shakeel Butt <shakeel.butt@linux.dev>
-References: <20240610121820.328876-1-usamaarif642@gmail.com>
- <20240610121820.328876-2-usamaarif642@gmail.com>
- <CAKEwX=PnwjmZKPLX2=ubD6+-+ZAqpXnczkHe4=1QY1hizOE8WQ@mail.gmail.com>
- <d6088fb2-58d8-4ed1-8d3b-83ea34657db7@gmail.com>
- <CAKEwX=MOWFQojVgO7u=zEpQSG661j1QHjTGL9m3Gcy47CLNKAg@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAKEwX=MOWFQojVgO7u=zEpQSG661j1QHjTGL9m3Gcy47CLNKAg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240611083918.fJTJJtBu@linutronix.de>
 
+On 2024-06-11 10:39:20 [+0200], To Jesper Dangaard Brouer wrote:
+> On 2024-06-11 09:55:11 [+0200], Jesper Dangaard Brouer wrote:
+> > >   struct bpf_net_context {
+> > >   	struct bpf_redirect_info ri;
+> > >   	struct list_head cpu_map_flush_list;
+> > >   	struct list_head dev_map_flush_list;
+> > >   	struct list_head xskmap_map_flush_list;
+> > > +	unsigned int flags;
+> > 
+> > Why have yet another flags variable, when we already have two flags in
+> > bpf_redirect_info ?
+> 
+> Ah you want to fold this into ri member including the status for the
+> lists? Could try. It is splitted in order to delay the initialisation of
+> the lists, too. We would need to be careful to not overwrite the
+> flags if `ri' is initialized after the lists. That would be the case
+> with CONFIG_DEBUG_NET=y and not doing redirect (the empty list check
+> initializes that).
 
-On 11/06/2024 20:33, Nhat Pham wrote:
-> On Tue, Jun 11, 2024 at 11:50 AM Usama Arif <usamaarif642@gmail.com> wrote:
->> In swap_writepage, with this patch you have:
->>
->>       if (is_folio_zero_filled(folio)) {
->>           swap_zeromap_folio_set(folio);
->>           folio_unlock(folio);
->>           return 0;
->>       }
->>       swap_zeromap_folio_clear(folio);
->>
-> I was concerned with the swap slot being freed and reused, without
-> ever being read :) But looks like it has to be properly reset before
-> being reused, so all is well on that front.
->
-> What about the put_swap_folio() -> swap_free_cluster() case - do we
-> need to handle zeromap bit clearing here too? Looks like it's clearing
-> the swap_map (i.e returning it directly to the swapfile, allowing
-> those slots to be reused) here, and I notice that you clear the
-> zeromap bitmap wherever the swap_map is cleared as well :)
->
-> I jumped around the code a bit - in free_cluster() (called by
-> swap_free_cluster()), there's this chunk:
->
-> if ((si->flags & (SWP_WRITEOK | SWP_PAGE_DISCARD)) ==
->      (SWP_WRITEOK | SWP_PAGE_DISCARD)) {
->      swap_cluster_schedule_discard(si, idx);
->      return;
-> }
->
-> swap_cluster_schedule_discard() does clear_bit() on the zeromap on the
-> entire cluster. We also clear_bit() in the work function
-> swap_do_scheduled_discard() (is this redundant?).
->
-> But what if this check is false, i.e the swap device does not have the
-> SWP_PAGE_DISCARD flag set? Are we not clearing the bits in the zeromap
-> here?
+What about this:
 
-Yes, should add in swap_free_cluster as well, will do in next revision. 
-Thanks!
+------>8----------
 
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index d2b4260d9d0be..c0349522de8fb 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -733,15 +733,22 @@ struct bpf_nh_params {
+ 	};
+ };
+ 
++/* flags for bpf_redirect_info kern_flags */
++#define BPF_RI_F_RF_NO_DIRECT	BIT(0)	/* no napi_direct on return_frame */
++#define BPF_RI_F_RI_INIT	BIT(1)
++#define BPF_RI_F_CPU_MAP_INIT	BIT(2)
++#define BPF_RI_F_DEV_MAP_INIT	BIT(3)
++#define BPF_RI_F_XSK_MAP_INIT	BIT(4)
++
+ struct bpf_redirect_info {
+ 	u64 tgt_index;
+ 	void *tgt_value;
+ 	struct bpf_map *map;
+ 	u32 flags;
+-	u32 kern_flags;
+ 	u32 map_id;
+ 	enum bpf_map_type map_type;
+ 	struct bpf_nh_params nh;
++	u32 kern_flags;
+ };
+ 
+ struct bpf_net_context {
+@@ -757,14 +764,7 @@ static inline struct bpf_net_context *bpf_net_ctx_set(struct bpf_net_context *bp
+ 
+ 	if (tsk->bpf_net_context != NULL)
+ 		return NULL;
+-	memset(&bpf_net_ctx->ri, 0, sizeof(bpf_net_ctx->ri));
+-
+-	if (IS_ENABLED(CONFIG_BPF_SYSCALL)) {
+-		INIT_LIST_HEAD(&bpf_net_ctx->cpu_map_flush_list);
+-		INIT_LIST_HEAD(&bpf_net_ctx->dev_map_flush_list);
+-	}
+-	if (IS_ENABLED(CONFIG_XDP_SOCKETS))
+-		INIT_LIST_HEAD(&bpf_net_ctx->xskmap_map_flush_list);
++	bpf_net_ctx->ri.kern_flags = 0;
+ 
+ 	tsk->bpf_net_context = bpf_net_ctx;
+ 	return bpf_net_ctx;
+@@ -785,6 +785,11 @@ static inline struct bpf_redirect_info *bpf_net_ctx_get_ri(void)
+ {
+ 	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
+ 
++	if (!(bpf_net_ctx->ri.kern_flags & BPF_RI_F_RI_INIT)) {
++		memset(&bpf_net_ctx->ri, 0, offsetof(struct bpf_net_context, ri.nh));
++		bpf_net_ctx->ri.kern_flags |= BPF_RI_F_RI_INIT;
++	}
++
+ 	return &bpf_net_ctx->ri;
+ }
+ 
+@@ -792,6 +797,11 @@ static inline struct list_head *bpf_net_ctx_get_cpu_map_flush_list(void)
+ {
+ 	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
+ 
++	if (!(bpf_net_ctx->ri.kern_flags & BPF_RI_F_CPU_MAP_INIT)) {
++		INIT_LIST_HEAD(&bpf_net_ctx->cpu_map_flush_list);
++		bpf_net_ctx->ri.kern_flags |= BPF_RI_F_CPU_MAP_INIT;
++	}
++
+ 	return &bpf_net_ctx->cpu_map_flush_list;
+ }
+ 
+@@ -799,6 +809,11 @@ static inline struct list_head *bpf_net_ctx_get_dev_flush_list(void)
+ {
+ 	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
+ 
++	if (!(bpf_net_ctx->ri.kern_flags & BPF_RI_F_DEV_MAP_INIT)) {
++		INIT_LIST_HEAD(&bpf_net_ctx->dev_map_flush_list);
++		bpf_net_ctx->ri.kern_flags |= BPF_RI_F_DEV_MAP_INIT;
++	}
++
+ 	return &bpf_net_ctx->dev_map_flush_list;
+ }
+ 
+@@ -806,12 +821,14 @@ static inline struct list_head *bpf_net_ctx_get_xskmap_flush_list(void)
+ {
+ 	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
+ 
++	if (!(bpf_net_ctx->ri.kern_flags & BPF_RI_F_XSK_MAP_INIT)) {
++		INIT_LIST_HEAD(&bpf_net_ctx->xskmap_map_flush_list);
++		bpf_net_ctx->ri.kern_flags |= BPF_RI_F_XSK_MAP_INIT;
++	}
++
+ 	return &bpf_net_ctx->xskmap_map_flush_list;
+ }
+ 
+-/* flags for bpf_redirect_info kern_flags */
+-#define BPF_RI_F_RF_NO_DIRECT	BIT(0)	/* no napi_direct on return_frame */
+-
+ /* Compute the linear packet data range [data, data_end) which
+  * will be accessed by various program types (cls_bpf, act_bpf,
+  * lwt, ...). Subsystems allowing direct data access must (!)
 
+------>8----------
+
+Moving kern_flags to the end excludes it from the memset() and can be
+re-used for the delayed initialisation.
+
+Sebastian
 
