@@ -1,208 +1,116 @@
-Return-Path: <linux-kernel+bounces-211568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C72F9053E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:36:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB4F89053E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23E942857F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:36:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5757F285A09
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F30817BB37;
-	Wed, 12 Jun 2024 13:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41FA17BB37;
+	Wed, 12 Jun 2024 13:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="geAkIrEP"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="X0HXb1MF"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C2A1EF1A;
-	Wed, 12 Jun 2024 13:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD44A17B408
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718199387; cv=none; b=lDob8xtllIv0BHRJa4UatSko/OqMv9SmAhcEirafC56QfC6aCAkPS/oq+XPUlFPbL1aMO3SiO7XYocN3X9+pFTtGyaZrhrLAZuHKjNez2PbjbVhQ0mQsO+uc47ktYW89juef1Uhdv10dX46n/s+a5M7yFOW7w3n0AzIMQKyT5oI=
+	t=1718199458; cv=none; b=B1qfvJTvK+A+eXpiZbLfEnVM2oj1ApthWrQhK3i2ztmMUMWyBiLTaMUcAyWN4wotdmVDwOIMI9HX3JNpyGWWdqhH9iR7SEbRtNjexH2AwRUjiEctImMnn2f9E7geCZaPce1yGAzVgpoImo8QAMU+GRQgTxF7NfJESOsErRJ1hZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718199387; c=relaxed/simple;
-	bh=G+/YbTPUzPFhAhef2S5fdJZcq7ly7ZnYe5drKnp8NJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QGYvJ4MU+CaITs/ykEfTj8fW/bydKhPiNBU8dMF3aLpy4I30/bVsogPZEBe/TvfeeYC3p/UORpNGCiMEneD31Nm9tjRF7xeNPwk3+bSQgirVeyRwGJFcipuQ5vXRBUliQlKYklB5OslpPcPUCvcQOnqO+FC3CV2muxAD3fO246Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=geAkIrEP; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=1FGAP7qOnb/lT4NAs00dzeuWltKxm4nGQ3NRIx3zrWo=;
-	t=1718199385; x=1718631385; b=geAkIrEPeG9uihICxa23FsHbytc3aJFsaI0xfdpUn0dB+9K
-	ZwI9FqWUERtckF9bkkaCDInGl3p53eaSFAvPa2+poyx50fu25MVDB7r1MkqmVj0WlD0uCpUKfO9Sb
-	gxAnvpYwqqDSPJAqIJaRrPHtYxTdy75dP6m+oFexXDG5aswTdhHMQcVTYF9K7OMhTG1KyWESAxAsx
-	muCQ0DOA76ltuBYsatzai1fCIr/zVQ69EksahJTJz9ZnIQBjpDyp1OsrXBiSD61bnL3bLtej2XPGC
-	6JLYP0jF7znx6yjBzRESeAKlSRkx0CrR4QnHKTY2BAkaBinenqGKcq6rx2HnaziA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sHO9G-0000rc-MQ; Wed, 12 Jun 2024 15:36:22 +0200
-Message-ID: <ceb24cb7-dbb0-48b0-9de2-9557f3e310b5@leemhuis.info>
-Date: Wed, 12 Jun 2024 15:36:22 +0200
+	s=arc-20240116; t=1718199458; c=relaxed/simple;
+	bh=fe0VWMI+8IbOduW8IuBosS5lQngZX3belBNixyoqkno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fCEKyFg4j6j/X0Suev4WXT0J3jK0tJVXDDZKe1ftbAiFPq5kNHVT3ivuRKZ0nYYf32FbttwHR1/fT3R9fLavRL2IJNvVyFvkwDU9qaBV4nTF+yi9/fU21WRblrTH5ge9O73Qdblhm/BlFvU11NXEINVd0N5xtRfU8CczNU/bm9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=X0HXb1MF; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b06f1f9a06so21209776d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 06:37:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1718199454; x=1718804254; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K139GCQM1afDeL9T5S7IFhFlKLj20Oeajk42+esr2l0=;
+        b=X0HXb1MFfUF4Q0onJRTeLT7twjifQNAd2cbw4JgxMwbHh5eWrcT/gDZRl7DKYSLgMw
+         kaNBisbtc7tUN+t9BZwTheceZHcinPsA4889ZA7WzqrbORpmLXJ8U65h+fiBq28nm3rH
+         CSw9Xo/hMmD4jUx+ECO+DCt9syZmzbje1cPcZfQAFHKj6X46GSa4fkS+UwD+7+bYx9Lf
+         sO7y/QTNXC5fDOogBYH941c1/QOGSZg1wFQYWKwXfHt9HA5T6H6Kz68zDaIuTsg4bCyP
+         bcNi4KIA0FymZrcXEZjISSLemDQiDBMAzwnanA1uB4A1B1WHJlax2ooZ/kdW3RvpxS1H
+         ZMWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718199454; x=1718804254;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K139GCQM1afDeL9T5S7IFhFlKLj20Oeajk42+esr2l0=;
+        b=RQduyhwSdgGB/PL9K2wvbCK6u7LupaYXMxiRpX8p86mOJYizPKEMq3mlFayq8dFPrp
+         0N6bwGDeoG405mQSHX1LDsliGkAtGB1WCtkkqRJ22dkjJypqgF/9ztPo159ToksfwPe7
+         lKs9zxU66YB2a07ZErplpBqx8U+Atjm85a+ade8OAAMfziCK4eNCZ6mqTN+X7/R/O5B2
+         vZEZrMw9yBT5VPpMdq3XI72dZ0EAtgErDsnxENgMgB00rDBE62IU4DkQ3dBNs/PzhBhD
+         LCT/cUr1QCOWqgxUJN5NSgbLbSmg/X/hcs29IQ6EPmBXXwlI7bPo5aTDeIrQegKyq672
+         DpKg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1P+dLl055P3fa0ZznH7TEPZgUZzVTIvWBJcGl8lcr3sLUOHzt9RfUE5WJrQMwJqnbpEstN8yqW3lvtM86oM9o7akb5lvt4IKvpuhL
+X-Gm-Message-State: AOJu0YyZj0xB0vC3Xl/T6J12o5Npu5uQEqd9gMxZF8U7mlM20QvSkW1d
+	2584EnweBHzm1wlElyHZHu1rh/VkDWFonG1wRsVebFFUJEgmRQVLn7/bxBB6c6A=
+X-Google-Smtp-Source: AGHT+IHSfEYGwDvsij2R0661tz6O7lYNLUUlm/+RnRLZK7C4edHuNG4iu5XV2Em15wUQSAV1AhEuuw==
+X-Received: by 2002:a05:6214:5889:b0:6b0:6671:86a with SMTP id 6a1803df08f44-6b1a7ad4be4mr16867256d6.48.1718199454661;
+        Wed, 12 Jun 2024 06:37:34 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.89])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b091d55c30sm11949346d6.87.2024.06.12.06.37.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 06:37:33 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sHOAO-008wzF-E8;
+	Wed, 12 Jun 2024 10:37:32 -0300
+Date: Wed, 12 Jun 2024 10:37:32 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
+	virtualization@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 03/10] iommu: Add attach handle to struct iopf_group
+Message-ID: <20240612133732.GW791043@ziepe.ca>
+References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
+ <20240527040517.38561-4-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: Bug in Kernel 6.8.x, 6.9.x Causing Trace/Panic During
- Shutdown/Reboot
-To: =?UTF-8?Q?Ilkka_Naulap=C3=A4=C3=A4?= <digirigawa@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
- stable@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <CAE4VaREzY+a2PvQJYJbfh8DwB4OP7kucZG-e28H22xyWob1w_A@mail.gmail.com>
- <5b79732b-087c-411f-a477-9b837566673e@leemhuis.info>
- <20240527183139.42b6123c@rorschach.local.home>
- <CAE4VaRHaijpV1CC9Jo_Lg4tNQb_+=LTHwygOp5Bm2z5ErVzeow@mail.gmail.com>
- <20240528144743.149e351b@rorschach.local.home>
- <CAE4VaRE3_MYVt+=BGs+WVCmKUiQv0VSKE2NT+JmUPKG0UF+Juw@mail.gmail.com>
- <20240529144757.79d09eeb@rorschach.local.home>
- <20240529154824.2db8133a@rorschach.local.home>
- <CAE4VaRGRwsp+KuEWtsUCxjEtgv1FO+_Ey1-A9xr-o+chaUeteg@mail.gmail.com>
- <20240530095953.0020dff9@rorschach.local.home>
- <CAE4VaRGYoa_CAtttifVzmkdm4vW05WtoCwOrcH7=rSUVeD6n5g@mail.gmail.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <CAE4VaRGYoa_CAtttifVzmkdm4vW05WtoCwOrcH7=rSUVeD6n5g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718199385;0b49ec19;
-X-HE-SMSGID: 1sHO9G-0000rc-MQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527040517.38561-4-baolu.lu@linux.intel.com>
 
-Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-for once, to make this easily accessible to everyone.
+On Mon, May 27, 2024 at 12:05:10PM +0800, Lu Baolu wrote:
+> @@ -206,20 +182,49 @@ void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
+>  	if (group == &abort_group)
+>  		goto err_abort;
+>  
+> -	group->domain = get_domain_for_iopf(dev, fault);
+> -	if (!group->domain)
+> +	if (fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID) {
+> +		group->attach_handle = iommu_attach_handle_get(dev->iommu_group,
+> +							       fault->prm.pasid,
+> +							       0);
+> +		if (IS_ERR(group->attach_handle)) {
+> +			if (!device_iommu_capable(dev, IOMMU_CAP_USER_IOASID_TABLE))
+> +				goto err_abort;
 
-Ilkka or Steven, what happened to this? This thread looks stalled. I
-also was unsuccessful when looking for other threads related to this
-report or the culprit. Did it fall through the cracks or am I missing
-something here?
+I'm not excited about calling a function pointer on every fault. Let's
+just add a constant flag to iommu_ops?
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
-
-#regzbot poke
-
-On 02.06.24 09:32, Ilkka Naulapää wrote:
-> sorry longer delay, been a bit busy but here is the result from that
-> new patch. Only applied this patch so if the previous one is needed
-> also, let me know and I'll rerun it.
-> 
-> --Ilkka
-> 
-> On Thu, May 30, 2024 at 5:00 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->>
->> On Thu, 30 May 2024 16:02:37 +0300
->> Ilkka Naulapää <digirigawa@gmail.com> wrote:
->>
->>> applied your patch and here's the output.
->>>
->>
->> Unfortunately, it doesn't give me any new information. I added one more
->> BUG on, want to try this? Otherwise, I'm pretty much at a lost. :-/
->>
->> -- Steve
->>
->> diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
->> index de5b72216b1a..a090495e78c9 100644
->> --- a/fs/tracefs/inode.c
->> +++ b/fs/tracefs/inode.c
->> @@ -39,13 +39,17 @@ static struct inode *tracefs_alloc_inode(struct super_block *sb)
->>                 return NULL;
->>
->>         ti->flags = 0;
->> +       ti->magic = 20240823;
->>
->>         return &ti->vfs_inode;
->>  }
->>
->>  static void tracefs_free_inode(struct inode *inode)
->>  {
->> -       kmem_cache_free(tracefs_inode_cachep, get_tracefs(inode));
->> +       struct tracefs_inode *ti = get_tracefs(inode);
->> +
->> +       BUG_ON(ti->magic != 20240823);
->> +       kmem_cache_free(tracefs_inode_cachep, ti);
->>  }
->>
->>  static ssize_t default_read_file(struct file *file, char __user *buf,
->> @@ -147,16 +151,6 @@ static const struct inode_operations tracefs_dir_inode_operations = {
->>         .rmdir          = tracefs_syscall_rmdir,
->>  };
->>
->> -struct inode *tracefs_get_inode(struct super_block *sb)
->> -{
->> -       struct inode *inode = new_inode(sb);
->> -       if (inode) {
->> -               inode->i_ino = get_next_ino();
->> -               inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
->> -       }
->> -       return inode;
->> -}
->> -
->>  struct tracefs_mount_opts {
->>         kuid_t uid;
->>         kgid_t gid;
->> @@ -384,6 +378,7 @@ static void tracefs_dentry_iput(struct dentry *dentry, struct inode *inode)
->>                 return;
->>
->>         ti = get_tracefs(inode);
->> +       BUG_ON(ti->magic != 20240823);
->>         if (ti && ti->flags & TRACEFS_EVENT_INODE)
->>                 eventfs_set_ef_status_free(dentry);
->>         iput(inode);
->> @@ -568,6 +563,18 @@ struct dentry *eventfs_end_creating(struct dentry *dentry)
->>         return dentry;
->>  }
->>
->> +struct inode *tracefs_get_inode(struct super_block *sb)
->> +{
->> +       struct inode *inode = new_inode(sb);
->> +
->> +       BUG_ON(sb->s_op != &tracefs_super_operations);
->> +       if (inode) {
->> +               inode->i_ino = get_next_ino();
->> +               inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
->> +       }
->> +       return inode;
->> +}
->> +
->>  /**
->>   * tracefs_create_file - create a file in the tracefs filesystem
->>   * @name: a pointer to a string containing the name of the file to create.
->> diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
->> index 69c2b1d87c46..9059b8b11bb6 100644
->> --- a/fs/tracefs/internal.h
->> +++ b/fs/tracefs/internal.h
->> @@ -9,12 +9,15 @@ enum {
->>  struct tracefs_inode {
->>         unsigned long           flags;
->>         void                    *private;
->> +       unsigned long           magic;
->>         struct inode            vfs_inode;
->>  };
->>
->>  static inline struct tracefs_inode *get_tracefs(const struct inode *inode)
->>  {
->> -       return container_of(inode, struct tracefs_inode, vfs_inode);
->> +       struct tracefs_inode *ti = container_of(inode, struct tracefs_inode, vfs_inode);
->> +       BUG_ON(ti->magic != 20240823);
->> +       return ti;
->>  }
->>
->>  struct dentry *tracefs_start_creating(const char *name, struct dentry *parent);
+Jason
 
