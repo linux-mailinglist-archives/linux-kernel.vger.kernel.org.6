@@ -1,152 +1,135 @@
-Return-Path: <linux-kernel+bounces-211767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6052B90568F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:13:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4019905694
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFA21B28DDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BD6F288325
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BC41802DF;
-	Wed, 12 Jun 2024 15:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BE7180A99;
+	Wed, 12 Jun 2024 15:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U9xbURPo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdBt74Ka"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FAD15444E;
-	Wed, 12 Jun 2024 15:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A3017F504;
+	Wed, 12 Jun 2024 15:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718205136; cv=none; b=kNRQY+avigFzvelUyFj/V3GJAyYGhEU+F+Q9/aznje9SeIL8eIOxhBBcvCn4R+9MoQtmkB1D4j9Lh1l6MzdRBP18JPusDoNqZfebfHEJHpzpjLQ6D/0Ze+upUEtP/cZ0J+/xaS5uJQcT8PS7mIeQjXF4s8pI+sMd1ps2hkvXkPg=
+	t=1718205184; cv=none; b=TxLOCN862KLWr442vL5xdXUH0rdQ81Gdnw6wzTm/zhTIVcX3lWNHhPPwE8Jzl19C0p//PkAVSMIyKesLQGEdmB9LelOp+SGmOAu1a7DHCZmcAWkw9UOzHlHKC4oYiVt/LeMbht7EywgkDbJglK6NNgR9Q61Plv/4sRYW71MPyCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718205136; c=relaxed/simple;
-	bh=WjhyEVrS4YOsT148Yx89pL+UkzPas9bEKkZhjJS5Oho=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=kIzghlzF12PdQ41E0muJiE9yYbpNXwAQc051GDxHa8/1qq5ZBfvJopaLANWLbArl687rr+V5Iue6LiO0b7QHHW35NHEiJ1D5p9ieCldPMBqEHP43gNi0to43u5ei7BomTEe0nSBSm9IQ1M+HN2tLE4wZ22l1MwZ8CImVtNmmLCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U9xbURPo; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718205135; x=1749741135;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=WjhyEVrS4YOsT148Yx89pL+UkzPas9bEKkZhjJS5Oho=;
-  b=U9xbURPov/qbSTaDL2rVhzPlBZA1eEKoNe7JYU7QJAoHllyDOH8Ni/D1
-   D0AV/v8d4itHREp6ExyoIrt37Yg291TG6mPWCmrysitaLOXjSLkZsWwJf
-   e6YX9nTzv+1qSYTnwAfeliLx+jAkxIVzxrzLKDRMhCcanP3IUSHLUb+8u
-   OZX1Dk41J8pweO3SjM08znDaGmGpjLF3MI6w3HqxCwfMCENdQYa6hC1RJ
-   5vQssUnn8OQGiEXYeMZp9IgV/HekZkbhGc1D0OzGn0rdcIM06bA1/L+gu
-   gB1dvkx2TdnjDAt0lbfKyFx1g5UTxk2R+OXSXOkYEFZhFtSfLAE/Ar/+X
-   g==;
-X-CSE-ConnectionGUID: Ltfxjm6yRc+LAV03ZV4Scw==
-X-CSE-MsgGUID: /TS8zCxARyeE/2h67+oLvQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="26394319"
-X-IronPort-AV: E=Sophos;i="6.08,233,1712646000"; 
-   d="scan'208";a="26394319"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 08:12:14 -0700
-X-CSE-ConnectionGUID: kwDaRzc1TQiY9jarYnCxdg==
-X-CSE-MsgGUID: 5Rrxm+96Skqw7TKKe3UrOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,233,1712646000"; 
-   d="scan'208";a="40295494"
-Received: from sj-4150-psse-sw-opae-dev2.sj.intel.com ([10.233.115.162])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 08:12:14 -0700
-Date: Wed, 12 Jun 2024 08:12:05 -0700 (PDT)
-From: matthew.gerlach@linux.intel.com
-X-X-Sender: mgerlach@sj-4150-psse-sw-opae-dev2
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com, 
-    krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-    joyce.ooi@intel.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] PCI: altera: support dt binding update
-In-Reply-To: <20240611170410.GA989554@bhelgaas>
-Message-ID: <alpine.DEB.2.22.394.2406120744350.662691@sj-4150-psse-sw-opae-dev2>
-References: <20240611170410.GA989554@bhelgaas>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1718205184; c=relaxed/simple;
+	bh=CI3a4ZTH6QkNb6fo8QvVrdnNkzWsdTGrepojuhjTqcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=eGrV1p5+a8G/4QvejpAEHfmilOFurabcTFBNwIIpdkohy2gruf74kO8F2SIt+shoBnKS609A1Zc3ZoHX7qK01gIBi+qmOAisbE9rH1BA10V1UuzXuHjMu2bIqBhq3LBCn6WBxQBOSKN/v26kqsGnttl8B22atkg6TcoD3CaOavo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SdBt74Ka; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4415e623653so4632791cf.1;
+        Wed, 12 Jun 2024 08:13:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718205182; x=1718809982; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=XHQXmqxHeWpd8OXnf/8HM51by6gwtLJcxhrxbZ3GwFA=;
+        b=SdBt74KapjbuSKBX7YwpNEAXKm3gUpfJFyGuE5v9YAEVrYDctykXGsBEXoZSuKgcYc
+         M+ZGEzcxOFX5GQcmCWqKMSS1drco3GyphI5wYO+w8j/cMlwsIkj4jSTWxMeZdI5K1D8D
+         87u/qjFCA/pbKAJznJe41F94OG+WuzWGoTOIH5sr9mJTsSL0n6q3zX9ByQZd/HYAXbXP
+         UHK1sV8fKAU6I7YmBQe+btnLdKbBOHxBsnKoankODLMS48swxIfpQxI2NrZtKRmBv15p
+         3WuKSZIRrdkfSpe6cbQVBezb/1pin57YvKnL+UdTXB1sQG1FJek7PPDoFxVu9tTRF+zu
+         MLmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718205182; x=1718809982;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XHQXmqxHeWpd8OXnf/8HM51by6gwtLJcxhrxbZ3GwFA=;
+        b=utFVhfPj+dXDfEJEYGVxNUmlzXUeR1I1wsL5GXATmhCQxKpWy55QmBufTK7c92+fLj
+         4zeg7uwdL/U7Ao4XvIqJpl4E4KvIPlmfGpTuxd0M2Sgef9TgWvghyaEZzDytvyc/f1uQ
+         dUUicufAqTUNNoAxk7hpCZtbvL4ujSAvhkEoZsmxshgHIiIzYMDdvitiRZPdKCL91mdy
+         Ra8S5TV8V4M9+hoB9+Rl7pMcE0KM0oCry/rk4ZqFFrVsl09CziwjHfn1LyceM6z30Syk
+         Ei0v0Mw0VKHfcdhseKmHN/dH7aaYtn4eV0wf+gG7QcXrbDl6SxQqGZbdmk393ZPx0UEX
+         Zz3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVGEXCxiM1f++kTqWlWRd8rF2aOaPLVs+BuaA41V3/7qKADqXvCky2r/sdLx+clc7Jg/j5uprwCc48nQC6ooJTDZhYSynj/K8Pq1AZnBKe+QFO51HImfsaFXQgrxEb3t/iy/j8L5EmF7Q==
+X-Gm-Message-State: AOJu0Yyk9t09yTdjXTQCQuWE13jPJ1hghtg8bWCMlQqteuSg9uhdq8zo
+	9YyjDCNUMRYPLUJ0fVkefXN9E71xeANTePLA/2VxuINqLeZcbbFI
+X-Google-Smtp-Source: AGHT+IHfUqkiFUdNB7o+p/EPi7/QHlTHXRBGuw+7U9oYj8NY19HT4c3Kg9utIq6uyPK27o/gfKaG5w==
+X-Received: by 2002:a05:622a:148c:b0:43f:ee8c:b2e with SMTP id d75a77b69052e-44159b68890mr34943721cf.29.1718205181674;
+        Wed, 12 Jun 2024 08:13:01 -0700 (PDT)
+Received: from [0.0.0.0] (97.64.23.41.16clouds.com. [97.64.23.41])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4403895aa9asm56189961cf.7.2024.06.12.08.12.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 08:13:01 -0700 (PDT)
+Message-ID: <68b4dbc5-18ee-4dc7-85da-dd420df9bf16@gmail.com>
+Date: Wed, 12 Jun 2024 23:12:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] scsi: scsi_error: Fix wrong statistic when print
+ error info
+To: Hannes Reinecke <hare@suse.de>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240605091731.3111195-1-haowenchao22@gmail.com>
+ <20240605091731.3111195-3-haowenchao22@gmail.com>
+ <15f0fb9b-3b30-413d-9f30-81c246b6bae1@suse.de>
+Content-Language: en-US
+From: Wenchao Hao <haowenchao22@gmail.com>
+In-Reply-To: <15f0fb9b-3b30-413d-9f30-81c246b6bae1@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-On Tue, 11 Jun 2024, Bjorn Helgaas wrote:
-
-> On Tue, Jun 11, 2024 at 11:35:25AM -0500, matthew.gerlach@linux.intel.com wrote:
->> From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+On 6/12/24 4:34 PM, Hannes Reinecke wrote:
+> On 6/5/24 11:17, Wenchao Hao wrote:
+>> shost_for_each_device() would skip devices which is in progress of
+>> removing, so commands of these devices would be ignored in
+>> scsi_eh_prt_fail_stats().
 >>
->> Add support for the device tree binding update. As part of
->> converting the binding document from text to yaml, with schema
->> validation, a device tree subnode was added to properly map
->> legacy interrupts. Maintain backward compatibility with previous binding.
->
-> If something was *added* to the binding, I think it would be helpful
-> to split that into two patches: (1) convert to YAML with zero
-> functional changes, (2) add the new stuff.  Adding something at the
-> same time as changing the format makes it hard to review.
-
-Thanks for feedback. It was during the conversion to YAML that a problem 
-with the original binding was discovered. As Rob Herring pointed out in
-https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240513205913.313592-1-matthew.gerlach@linux.intel.com/
-
-"Making the PCI host the interrupt parent didn't even work in the kernel
-  until somewhat recently (maybe a few years now). That's why a bunch of PCI
-  hosts have an interrupt-controller child node."
-
-This was an attempt to fix the problem. I can resubmit a conversion to YAML 
-with zero functional changes.
-
-Matthew Gerlach
-
-
->
-> Then we could have a more specific subject and commit log for *this*
-> patch.
->
->> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+>> Fix this issue by using shost_for_each_device_include_deleted()
+>> to iterate devices in scsi_eh_prt_fail_stats().
+>>
+>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
 >> ---
->>  drivers/pci/controller/pcie-altera.c | 13 +++++++++++--
->>  1 file changed, 11 insertions(+), 2 deletions(-)
+>>   drivers/scsi/scsi_error.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
->> index a9536dc4bf96..88511fa2f078 100644
->> --- a/drivers/pci/controller/pcie-altera.c
->> +++ b/drivers/pci/controller/pcie-altera.c
->> @@ -667,11 +667,20 @@ static void altera_pcie_isr(struct irq_desc *desc)
->>  static int altera_pcie_init_irq_domain(struct altera_pcie *pcie)
->>  {
->>  	struct device *dev = &pcie->pdev->dev;
->> -	struct device_node *node = dev->of_node;
->> +	struct device_node *node, *child;
->>
->>  	/* Setup INTx */
->> +	child = of_get_next_child(dev->of_node, NULL);
->> +	if (child)
->> +		node = child;
->> +	else
->> +		node = dev->of_node;
->> +
->>  	pcie->irq_domain = irq_domain_add_linear(node, PCI_NUM_INTX,
->> -					&intx_domain_ops, pcie);
->> +						 &intx_domain_ops, pcie);
->> +	if (child)
->> +		of_node_put(child);
->> +
->>  	if (!pcie->irq_domain) {
->>  		dev_err(dev, "Failed to get a INTx IRQ domain\n");
->>  		return -ENOMEM;
->> --
->> 2.34.1
->>
->
+>> diff --git a/drivers/scsi/scsi_error.c b/drivers/scsi/scsi_error.c
+>> index 612489afe8d2..a61fd8af3b1f 100644
+>> --- a/drivers/scsi/scsi_error.c
+>> +++ b/drivers/scsi/scsi_error.c
+>> @@ -409,7 +409,7 @@ static inline void scsi_eh_prt_fail_stats(struct Scsi_Host *shost,
+>>       int cmd_cancel = 0;
+>>       int devices_failed = 0;
+>>   -    shost_for_each_device(sdev, shost) {
+>> +    shost_for_each_device_include_deleted(sdev, shost) {
+>>           list_for_each_entry(scmd, work_q, eh_entry) {
+>>               if (scmd->device == sdev) {
+>>                   ++total_failures;
+> 
+> That is wrong. We should rather add a failure counter to the SCSI host, and have the scsi device increase it every time a failure occurs.
+> Then we can avoid this loop completely.
+> 
+
+This function would print the total failure commands and the number of device like following:
+
+scsi host4: Total of 3 commands on 2 devices require eh work
+
+Just add a failure counter to the SCSI host can not record the number of devices.
+
+> Cheers,
+> 
+> Hannes
+
 
