@@ -1,131 +1,239 @@
-Return-Path: <linux-kernel+bounces-211755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B299D905671
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:10:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FF4905675
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3586A1F23005
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:10:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF49FB27B3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3093180A72;
-	Wed, 12 Jun 2024 15:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3232180A9B;
+	Wed, 12 Jun 2024 15:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DpKSnAsY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UaMfkBp5"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8591802DC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB81017F51D;
+	Wed, 12 Jun 2024 15:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718204805; cv=none; b=k/q1xR2UMNZEZoE83YL8H6dmgwL8mGGiiEXrlIv+9AeiDPdPlNCAUCdUo1YurIuAGW7T5W1CGit/wyCedokOLFdpjKbhZEjGCHgCbB5ahN+Y6Qiher1nml9b0CLJhOeeIAdsXA85ugzQ8a/gfZpWofM9CUGq6w94JgrVI8x66DY=
+	t=1718204839; cv=none; b=Ck7YHyd4EKoCOSGnst8L48afOyNLppja63VhK6Om76+GjJc68Hf0ME7eTMR0Li7VWORzTGszBgYIvQY5eZeIuVJnQxis/14qXKSw/vy/GjvvL7dPqeG8y+LPHzznvC0oUuQ0E5nHJ16RSUlAx3Xm+9QYpCDgC/wm3VB0XSCrkd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718204805; c=relaxed/simple;
-	bh=0eHVEB5pAxp11dm2HUruK3VO3gn39LNxtkdQM8Bhig0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSRHeR6EpuYoe3tlyrNjmIXvI1HhWp6B8Kz0WxsaNRU+Hk4yN36BXtH8Ch4u5XZRBX1G2CQLfSv9rJlsWE2cquidfwMiRxCWoUKrHA1BheuYHhSPbwGVUqUGewB7OahtzAo8tiSI8Sq7sTCyVQxohF1IxsPrt6lT/gij2h35dLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DpKSnAsY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718204800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bp8tpOuWLrT8Dd7Q1BYypdXJ8eG6sBxcdpUi5JUhFuw=;
-	b=DpKSnAsY8M/QmaLexUM7ShC3l6DflZbhQVLovB5j0u43hPXiqhgVog4sZ69TIO05/Ls5PB
-	3EvbkAcBjw1nW+qUt6TfaQetiMp7Q/eX96EsPSsX6MRFzoniRcXnTUzYvti9UNKpOea/4I
-	YT3+9OJMQNHsG6v28R7VpHTMsuRoYI8=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-196-grclqqDhMO2Vms2dtSDzjQ-1; Wed, 12 Jun 2024 11:06:38 -0400
-X-MC-Unique: grclqqDhMO2Vms2dtSDzjQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35f1f358e59so584630f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:06:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718204797; x=1718809597;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bp8tpOuWLrT8Dd7Q1BYypdXJ8eG6sBxcdpUi5JUhFuw=;
-        b=rBq+eoaUl8B+WgjjYvOWvQVG7SCfbC4YWkvCjtMXianQysM8JnvsjmffVSCGkLYH5U
-         9wWNQw312LbePovLNDDvglFBj3rthl1q6HzjoRaRnDtD288vV/trcZ4F0qf1xcmfPVIK
-         m0YO2MUE7+pn5unzAlrci4AnX1pa/M/2uiN8+0nENCbfhhzr3ULad38fq42WV1EApUKf
-         q3jLc/GL8o8DYCFd2O4UYRAaeVHc3GfpGusLjartLE9dUCNWe10JAfYj/xh//PE5svwj
-         BS3m+opYzh/lrvKC4bc0qEfTUiNdghoSCJpE+ghmSaO38X8IUBN29SE8YksWT+GhQd45
-         soxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUm/kiXNGaniWuJRmu5ouMCpvHZ6DbFy2Jjx1xUKt8z5iA/ca22K/htxnkeqrAxgk2MSPDAz2dBHGX3QnUhSaJny6w1oOXgtlZWIQYS
-X-Gm-Message-State: AOJu0YxQAajF0e60dNpzAr/w3OkUKMgcLbklcQgI3gx0J7crLcX9GxvX
-	lx4GOJvrnxr/XhptPk10ogwOcN2/ULCPJbPCDuOIZcyerTsrAnuzkOR5YPZTn46wE+xXEDJgFE6
-	HuWy7QRiublWFnkYO7l1CkNhj2CDVWW7xjUmkYzTr5KscDnE1wksrySQeTNz0uw==
-X-Received: by 2002:a05:6000:186:b0:35f:204e:bcf0 with SMTP id ffacd0b85a97d-35f2b27c669mr5653331f8f.13.1718204797251;
-        Wed, 12 Jun 2024 08:06:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsmbOL8mSVB2bSnh6EQUk0V7ORdG70D+bjbg3nTZEcncKxeOFt330EglJquQWsox6O0gqZNg==
-X-Received: by 2002:a05:6000:186:b0:35f:204e:bcf0 with SMTP id ffacd0b85a97d-35f2b27c669mr5653277f8f.13.1718204796670;
-        Wed, 12 Jun 2024 08:06:36 -0700 (PDT)
-Received: from localhost (nat-pool-brq-u.redhat.com. [213.175.37.12])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1e4075d6sm10290603f8f.18.2024.06.12.08.06.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 08:06:35 -0700 (PDT)
-Date: Wed, 12 Jun 2024 17:06:35 +0200
-From: Davide Caratti <dcaratti@redhat.com>
-To: =?iso-8859-1?Q?Asbj=F8rn_Sloth_T=F8nnesen?= <ast@fiberby.net>
-Cc: Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next 0/9] flower: rework TCA_FLOWER_KEY_ENC_FLAGS
- usage
-Message-ID: <Zmm5e3KFxFCQzwzt@dcaratti.users.ipa.redhat.com>
-References: <20240611235355.177667-1-ast@fiberby.net>
+	s=arc-20240116; t=1718204839; c=relaxed/simple;
+	bh=zEWuCAoO2uNYvaqGht66j45VjIoDAy1oI5JMwk8VCn4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=elQFA2f0R02vBGRSG/ctvZupumHMKUe+wmbJ6ieObO9DT9W1yMnAf6IzJrdjJK/RSJcn3MB3aMtLbDV7QhWytpTQMF6o3YUiRPxEXKnSCVUyCFqfRkDV23wHjTwsHCzFdLm3J0H8VgwyyTH/jREWzuXI6sKIXj8HbxWQzCshPAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UaMfkBp5; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45CF7CAt009684;
+	Wed, 12 Jun 2024 10:07:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718204832;
+	bh=+e6m33PRrkfeoKJB8tWne+G0mb2Nm9QwOT+TQzuvl+Q=;
+	h=From:To:CC:Subject:Date;
+	b=UaMfkBp5pfqlADHSY9trtk6Xnv7nKcPeKglhgG8k6sIncMeRWFoONm+K0V5AOEteT
+	 EKbjq92SPOqLgvw/bMw5Vt4iziIvxxfMMddV2YH+G4THlmiLDeXHLKKjFAUGGBIInq
+	 xCpCGlZAcPCnefviisg/LOmfR04z1vjmKBhdvoZ4=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45CF7CWT027678
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 12 Jun 2024 10:07:12 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
+ Jun 2024 10:07:12 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 12 Jun 2024 10:07:12 -0500
+Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45CF7BDF095064;
+	Wed, 12 Jun 2024 10:07:12 -0500
+From: Andrew Davis <afd@ti.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
+Subject: [PATCH] dt-bindings: input: ti,nspire-keypad: convert to YAML format
+Date: Wed, 12 Jun 2024 10:07:11 -0500
+Message-ID: <20240612150711.26706-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240611235355.177667-1-ast@fiberby.net>
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-hi Asbjørn, thanks for the patch! 
+Convert TI-NSPIRE Keypad controller bindings to DT schema.
 
-On Tue, Jun 11, 2024 at 11:53:33PM +0000, Asbjørn Sloth Tønnesen wrote:
-> This series reworks the recently added TCA_FLOWER_KEY_ENC_FLAGS
-> attribute, to be more like TCA_FLOWER_KEY_FLAGS, and use
-> the unused u32 flags field in TCA_FLOWER_KEY_ENC_CONTROL,
-> instead of adding another u32 in FLOW_DISSECTOR_KEY_ENC_FLAGS.
-> 
-> I have defined the new FLOW_DIS_F_* and TCA_FLOWER_KEY_FLAGS_*
-> flags to coexists for now, so the meaning of the flags field
-> in struct flow_dissector_key_control is not depending on the
-> context that it is used in. If we run out of bits then we can
-> always make split them up later, if we really want to.
-> 
-> Davide and Ilya would this work for you?
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ .../bindings/input/ti,nspire-keypad.txt       | 60 ---------------
+ .../bindings/input/ti,nspire-keypad.yaml      | 74 +++++++++++++++++++
+ 2 files changed, 74 insertions(+), 60 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/input/ti,nspire-keypad.txt
+ create mode 100644 Documentation/devicetree/bindings/input/ti,nspire-keypad.yaml
 
-If you are ok with this, I can adjust the iproute code I keep locally,
-and the kselftest, re-test, and than report back to the series total
-reviewed-by.
-It's going a take some days though; and of course, those bit will be
-upstreamed as well. 
-
-WDYT?
-
-> Currently this series is only compile-tested.
-> 
-
-thanks,
+diff --git a/Documentation/devicetree/bindings/input/ti,nspire-keypad.txt b/Documentation/devicetree/bindings/input/ti,nspire-keypad.txt
+deleted file mode 100644
+index 513d94d6e899e..0000000000000
+--- a/Documentation/devicetree/bindings/input/ti,nspire-keypad.txt
++++ /dev/null
+@@ -1,60 +0,0 @@
+-TI-NSPIRE Keypad
+-
+-Required properties:
+-- compatible: Compatible property value should be "ti,nspire-keypad".
+-
+-- reg: Physical base address of the peripheral and length of memory mapped
+-  region.
+-
+-- interrupts: The interrupt number for the peripheral.
+-
+-- scan-interval: How often to scan in us. Based on a APB speed of 33MHz, the
+-	maximum and minimum delay time is ~2000us and ~500us respectively
+-
+-- row-delay: How long to wait before scanning each row.
+-
+-- clocks: The clock this peripheral is attached to.
+-
+-- linux,keymap: The keymap to use
+-	(see Documentation/devicetree/bindings/input/matrix-keymap.txt)
+-
+-Optional properties:
+-- active-low: Specify that the keypad is active low (i.e. logical low signifies
+-	a key press).
+-
+-Example:
+-
+-input {
+-	compatible = "ti,nspire-keypad";
+-	reg = <0x900E0000 0x1000>;
+-	interrupts = <16>;
+-
+-	scan-interval = <1000>;
+-	row-delay = <200>;
+-
+-	clocks = <&apb_pclk>;
+-
+-	linux,keymap = <
+-	0x0000001c	0x0001001c	0x00040039
+-	0x0005002c	0x00060015	0x0007000b
+-	0x0008000f	0x0100002d	0x01010011
+-	0x0102002f	0x01030004	0x01040016
+-	0x01050014	0x0106001f	0x01070002
+-	0x010a006a	0x02000013	0x02010010
+-	0x02020019	0x02030007	0x02040018
+-	0x02050031	0x02060032	0x02070005
+-	0x02080028	0x0209006c	0x03000026
+-	0x03010025	0x03020024	0x0303000a
+-	0x03040017	0x03050023	0x03060022
+-	0x03070008	0x03080035	0x03090069
+-	0x04000021	0x04010012	0x04020020
+-	0x0404002e	0x04050030	0x0406001e
+-	0x0407000d	0x04080037	0x04090067
+-	0x05010038	0x0502000c	0x0503001b
+-	0x05040034	0x0505001a	0x05060006
+-	0x05080027	0x0509000e	0x050a006f
+-	0x0600002b	0x0602004e	0x06030068
+-	0x06040003	0x0605006d	0x06060009
+-	0x06070001	0x0609000f	0x0708002a
+-	0x0709001d	0x070a0033	>;
+-};
+diff --git a/Documentation/devicetree/bindings/input/ti,nspire-keypad.yaml b/Documentation/devicetree/bindings/input/ti,nspire-keypad.yaml
+new file mode 100644
+index 0000000000000..ed3cfff13addc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/ti,nspire-keypad.yaml
+@@ -0,0 +1,74 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/ti,nspire-keypad.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI-NSPIRE Keypad
++
++maintainers:
++  - Andrew Davis <afd@ti.com>
++
++allOf:
++  - $ref: input.yaml#
++  - $ref: matrix-keymap.yaml#
++
++properties:
++  compatible:
++    enum:
++      - ti,nspire-keypad
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  scan-interval:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: How often to scan in us. Based on a APB speed of 33MHz, the
++      maximum and minimum delay time is ~2000us and ~500us respectively
++
++  row-delay:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: How long to wait between scanning each row in us.
++
++  active-low:
++    description: Specify that the keypad is active low.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - scan-interval
++  - row-delay
++  - linux,keymap
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/input/input.h>
++    keypad@900e0000 {
++        compatible = "ti,nspire-keypad";
++        reg = <0x900e0000 0x1000>;
++        interrupts = <16>;
++
++        clocks = <&apb_pclk>;
++
++        scan-interval = <1000>;
++        row-delay = <200>;
++
++        linux,keymap = <
++            MATRIX_KEY(0,  0, KEY_ENTER)
++            MATRIX_KEY(0,  1, KEY_ENTER)
++            MATRIX_KEY(0,  4, KEY_SPACE)
++            MATRIX_KEY(0,  5, KEY_Z)
++            MATRIX_KEY(0,  6, KEY_Y)
++            MATRIX_KEY(0,  7, KEY_0)
++        >;
++    };
 -- 
-davide
+2.39.2
 
 
