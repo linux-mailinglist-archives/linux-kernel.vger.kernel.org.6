@@ -1,306 +1,152 @@
-Return-Path: <linux-kernel+bounces-210928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF46A904A88
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:01:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C31904A8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BAA41F25B99
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:01:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AFD028438E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494D62C69B;
-	Wed, 12 Jun 2024 05:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11BE36124;
+	Wed, 12 Jun 2024 05:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F/T7R24+"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="IfXUYS1f"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11olkn2017.outbound.protection.outlook.com [40.92.19.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E69BF4FA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 05:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718168505; cv=none; b=QTrVGJvOturk7okiMP4DxfgB7JxKzak714lWUnqH7LWfWZGioIImafNo99NZdyGX6altrEFig5Gy49Ti11UfFXLTvuCWUDCytBjt/m2dAb6aL7mjP7ofwWKtsy7ekmUlPb+95ZT9fPJg4+NnwOC4wW8o6fXbi93on63e4Flr/GI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718168505; c=relaxed/simple;
-	bh=+FPO0pOUHca0YkNQOpF9tmWvBXnMagAcn71iVDG+Doo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MZ2uHP9Zez2KYxkFu/FE2cQBiflYJPdywYDZtG0wSDXcpJQq9MTGPb+6frjvQQKrMR3WvkOpzuenz+Bjsgz+wTBcG2vlETLjDGdYonjh6Jvq9Q0G2FrKndh+FmF8tSksgRmZ9elUlOG/gdZ827rkLx35QcnaHLAhKnLB+NzH3Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F/T7R24+; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfaff6bf125so4891235276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:01:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718168502; x=1718773302; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lxWIpqVuiSpUi+w7zOEokbBeKNv8goSyLfXEzEpVegA=;
-        b=F/T7R24+CEGSDEtfDTqEqyMzVPL/i/yUiF5Z0vCTWFaafDhVG3y5z5pgtD2/0YAVaD
-         bClU4N2gOFxE7faXqkpAg0OSxb/GOORbUmlFkJz4EVqkQh2Go2a4AQMC2fPs+dnEwLFH
-         uQDPb0T7ft4AEKOIeRTLQFIidLRZLF6kyhvTeDu+t9luvwAxu/XCUAXh+30/4aS8Fcvd
-         U4xwLerYoT7P14Tfxs06gZTSPrSSFDkzhBjq+9ofdWlOt3XiyT537HJAAQeezgPTNalv
-         i6Liz8qb53jsiWq9ScRJYAykn2fQfaRVtU5vaPuHLmmvOTzEljJevPfNO7zE6SK9jZ82
-         U9kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718168502; x=1718773302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lxWIpqVuiSpUi+w7zOEokbBeKNv8goSyLfXEzEpVegA=;
-        b=IaswhtBcjteiXrl6Bm6w/HXcCqZGOUIPAnd9MolPqa1mQbbY4Wx/v01J/gBptErdZM
-         056eExcquzWoaygiH827MNAGqlEVoSLxF/JbuWLmKCCMembxn+Iq69QEZ7dlTVQAVuVi
-         3AGclFht+Tw4cNqbLB3cNWdHYgkFKp52oC57+acGt3t5Xu8vWfIfgx4XDBiMNdW+Yt64
-         z7s2C66R++L5tpNsphB+Uw9/XClltps1wRu1hJ80OwC+2TGqeTcd8bTrKgBipPHGQp5X
-         WSjqCIFrE2AwQ/Pzhzx9iVu0dQOxzLxn3WiJ/n9D9uU4k4vaGTXzh4YggYnPE4qN9O0D
-         xvPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURh0EOMiitV3uORpPltYnNZ5LNjVXJbkHt6lXuqMRIN4gWTYOhgQOvmub2kfK8Q5r5KAcReyT/SzbIy1GQfwNK10zuYRUVktqcRF+O
-X-Gm-Message-State: AOJu0YwpDgRt8rYvlNMeoPfBvPIy8RJvJyxkxbjeDe4JUqCkk66e4Swb
-	iQc07dg75lxE+2fhogNI+xr9HYheHmEXU2hLX2+x3La1XwGoIRqHyd3vK3gTqfkKh4ywdSFvjuz
-	4KTFFqYCNN4QXWghxlf0nklM/Lzdyo2m03aGzlDdQovlPfG3boznTCnrn9plT8v/zkXVbyjvUo5
-	hQV1O4fkQeuaU5WGBVWuMGX2NIFiWuJPh3DoF5T7vM4Q==
-X-Google-Smtp-Source: AGHT+IEGT1ppFwble93yNyGFU3HfypCIF0j2RjdVYDRmiDNX921lOKQDwbNO1DL6O5v1S+6ccec+5Tlob2xzQ/tdtT0=
-X-Received: by 2002:a25:8583:0:b0:df7:978a:73de with SMTP id
- 3f1490d57ef6-dfe66461d07mr699038276.19.1718168501928; Tue, 11 Jun 2024
- 22:01:41 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107D22232B;
+	Wed, 12 Jun 2024 05:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.19.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718168583; cv=fail; b=egF/1ykbppYiezBE6oUzAiSqvkKFfr1716G/zf4ouX3Cf7bQtgqSShy53+e7urB2F5jjuDFcsc/z0kzpXm2qAy3VuEVGPHRGnH6Rrc1vyV2a6qf/YXwgp3rSZsKqLPTqKGCUX1iwewbB2Kskohm9wFKwySFDTWmCXgXjXH9J3qM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718168583; c=relaxed/simple;
+	bh=u9Uo6Cu2N/DDSFFN/1DvIYDSAcAtNrjvCiqYkt80HCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=I6PUzIQyvcFMwEhGBMKr/NhHRf2kZPJtdEVIST2WT0hRIT4rUhL3DNmu2T+NiK/cY/HygM6d8FkAEeNwhPiQ3Ma/E3eMEJVoVNIywOHMFFSgvou33y5xLzrSFGea6t7XXjRQ6QensWN/NIB+bs6q3+dwg0rHQvBeetMcIKlvSTk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=IfXUYS1f; arc=fail smtp.client-ip=40.92.19.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZLnGJSefuzrgTlfkjvRMhIPM/vRf5qES2BV7dAo4679D7W8ql1p1c8CNdj2Z0wboMTc0blyUiDSZOxGxNyIfoCqkZVFs7Unuf3M/pyCgECoPSt9nucB4aV4bhraLewqVy8daLcOLSH4SSSYWQPSaj1ZpPpFenHfaJfsIZG/ujEsLTAwEMwXoGoy6VwgjR7bH6eDtBbD6NORpORwwSqpT7ly4/6PZ9Mn5xDCrfRWyQ/ROrhynuKnWatdEJ/krjVghx4S5QRnYd43WPvrm9vl8qBf8/FtZecFCbbghwpQw+xyQn13THRf/MfqA+eYjT424fvxVsqc84o9FzTtLQlNiRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GFKv6QnuP10CTCd02udQUEEL9HKsaIiLGoiRE/5xQLY=;
+ b=leEQFnJiemsYuHvsfV5jm8p44iev88PxhrVqwMGB1UQ1RUHmpshR0ci5uWnXkyzp6luuUCuAfnocsoQvS9BmOTKAgqFoc1CUijOy+YTvdaGit7FmhnZt9mcHs/kLVZBnEHWAGatqa7R4J7pnH3W2gxdf/NU1tXOkCaW5rtvTY6exLGDDLKYQMQ2Yg1P67KvSPqRZNfFCDZ5G0iJbd/+93iFhy82RMUhx9UP33Wqw+673j+46FEGPSIXC/qFB8Dsiq0/ZnlLmkE66XfaIhjvCnGsxa9Tmcw5MZuqyyhdUwwwqaRHwr5ucNKjaoyNIVTx8QCyIVWGB0jGB9LaLYFwGnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GFKv6QnuP10CTCd02udQUEEL9HKsaIiLGoiRE/5xQLY=;
+ b=IfXUYS1f2WZk+/r7PHBMw/UP7e5xkA1BIyufpGRmZkLoUEC6JKhjMYlbjOW/kiUa+L4hX22rKFAabDJdKtMg6zL71mk1UPzUQGOQklcWfU70/AX1Q7OmlsrRSNxDJsoGDQXCvp2rWEi7+vsYeXEi0Q+9ypQOPOr0UwM26Q8G2LTa/H4I2uYT9Y9QBkwLNGMaQ6oV61ATutgCSauMCZtS4Sm585IkmFA26AM9ikF0CYcTYCqf/5kBkAgDG6CtmhI5p39enO2PrPk0HzjfLKb6DjeRK8g7HBBLNcE7dIdGjUhBxrz1igdzUUTc7XkhC9A4lYQHd+fAypeE2WEwxsYjvw==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by DM6PR20MB3347.namprd20.prod.outlook.com (2603:10b6:5:2ad::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Wed, 12 Jun
+ 2024 05:03:00 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%6]) with mapi id 15.20.7633.036; Wed, 12 Jun 2024
+ 05:03:00 +0000
+Date: Wed, 12 Jun 2024 13:02:31 +0800
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Jisheng Zhang <jszhang@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Chao Wei <chao.wei@sophgo.com>, 
+	Chen Wang <unicorn_wang@outlook.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, Inochi Amaoto <inochiama@outlook.com>
+Subject: Re: [PATCH 0/2] riscv: sophgo: add pinctrl support for cv1800b
+Message-ID:
+ <IA1PR20MB49530084D4517A42CE0556F6BBC02@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <20231113005702.2467-1-jszhang@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231113005702.2467-1-jszhang@kernel.org>
+X-TMN: [TqeGbXL6tm4W0h2yUT2cDn7PKlfwU05QN4WwpEP0mgo=]
+X-ClientProxiedBy: PS2PR06CA0005.apcprd06.prod.outlook.com
+ (2603:1096:300:56::17) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <sbxcazj7ymzvzrwrsmfnq3vhasrpsrkqpvkitarxld56uu67o3@bsva6u5ctyih>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+8cD2CBcaerhwC0i7e0O4LU9oQg1w3J5RsV6qcZMEr2Uw@mail.gmail.com>
-In-Reply-To: <CAKPOu+8cD2CBcaerhwC0i7e0O4LU9oQg1w3J5RsV6qcZMEr2Uw@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 11 Jun 2024 22:01:29 -0700
-Message-ID: <CAJuCfpGa55gpKHBE_0mwRPsf0f1Wp5UK7+w6N7yZi-7v31vNzw@mail.gmail.com>
-Subject: Re: Bad psi_group_cpu.tasks[NR_MEMSTALL] counter
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Peter Zijlstra <peterz@infradead.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ccpol: medium
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|DM6PR20MB3347:EE_
+X-MS-Office365-Filtering-Correlation-Id: 16d8bc40-7f13-47de-81ee-08dc8a9cee32
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199020|440099020|3412199017|1710799020;
+X-Microsoft-Antispam-Message-Info:
+	9EHfD1X1xfAWbe2AsulPaqyY87rXtTOizmyqIS5mAL76E5X5VD6ORIrgW2z8eyUON5bEIVTkSMOxTn4hCIQkO5OTnzIu0h1JD8W9oAuOMOaVIhMYOQ5HnrVbuQR5oCbbyeTXKWT32ycnzGRIrDveHTqYbZL1uFuyZAF7PrXBgPnOFns03lf7QgrRPyP8a+GzBd4NaWXLXo5eOvuiOhtDhOyWY+KOJMawcLo8RqtPxIW1J/KvTaAlv9zfkmxnGsOR7YxzQvLuXJ1Lvq9mn7zF7hIK8Dwx3lkD6ylkbXEY4HlsFHxpKj+wIcliaCakyKtkkceblsbS+8YoZ/ORjV7Mli0J7p2sxJAWSl0ipKXEAZ0FQn1qbGS23P4fMQL9b2ogATZicBfw8dtTF2SAEQiRHOtI46iVUhrQfmWnWPaEbvQ/O7pndkVddjlF44t+oeul7GFNuR5pEuoO5gwQi9/113GyTOj1KCM3LVQx9/XfMkEnzBOX0mNdmLJh36otPvxauKQsv1rgUP40BZquKqMPoepgzGBwxcnG/jqVDSIMc22QDMjguJInC2B503fLM2MWs9Fu9IkoZS0+8Y0RobL6M6FTUMWRleClbFHOXOYdUEiX9oLJT8N1fhlxPKzgQsDx
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?y6Fx9icOfE0HBrO3lVB6yTxHcBcE6iVyRDcuG7bzgITNTVszNZBfmG/RfJPJ?=
+ =?us-ascii?Q?xVfznfZJWU6D74iH26zIiFaaeM9q+J0pq7Miws8mzb4o3ct2ekvgwhIoX5kv?=
+ =?us-ascii?Q?CJkZUIWnrFLb5d/ze0jUldVDo+pAhLdq0Aac2a66SgN79B3chXSSyKFUwZEr?=
+ =?us-ascii?Q?GGqvueKQmQB2wKjlws/98oes1KrApCJGQ+oH2mE4C0ix/X9PmB8eWRpLBl6i?=
+ =?us-ascii?Q?LB0GCpG1vZ8cBnOdBqYrnTHI3sAW0TUK+qn5wN9eY2Fjqnrr8p6YFioP2bQ2?=
+ =?us-ascii?Q?4u90KMSNpSw55+WQ5vrEo3wvai94Bp89ydoy3RZyflrfxdEQNad64iplMRik?=
+ =?us-ascii?Q?Jf9AHbuAk4y7XlLwBqjcZ9tBSeFhmImyZvouEwV/XEtmm8gziBZHZ9q2+OFX?=
+ =?us-ascii?Q?u+T31DCtFlVtjU/5DLvuG9qu3SvTI8oga7Akhec4V6jpoB27KCmy2fODRyIJ?=
+ =?us-ascii?Q?lzhpDLB0dH0otZQ/StNLV64BnZy+xU4Lt9nGkDsJvdaaNrxyro/OYxGYDva6?=
+ =?us-ascii?Q?3QN6+bzHCb6CwsFRAx6deiuxUOxLfVLKnk15AQEwzfSQqeBJQrvfpHrgTyBs?=
+ =?us-ascii?Q?kDO6ta64uxstgFXJFElOP1hmQ2S7GXe9KDef2rax99Kq5N6Beep3Y+N/o3kh?=
+ =?us-ascii?Q?J39Ik07YR0fSpG3WrjGvFR6dLrTMMZlmxB9wbXIEEOZwtnk8D4nuq3eENgbu?=
+ =?us-ascii?Q?bwScZdjBKrDIX52UFFoch4rmuz93WrRysE56+QbeF2+YQk+2QT6pmyvcMrxB?=
+ =?us-ascii?Q?7q7W5nfJB3/cdZOyAkCfi40vGFg8Wad3VskdOnc0oSXPqFi1UUGVn+uNv1Qk?=
+ =?us-ascii?Q?o9HwQuIgXihvOA1y/73SLLUzA29JIt0S6/I4YNDQXmtt1/L5CXH4yhks3fPH?=
+ =?us-ascii?Q?851jqlySwgnzEbsFvcGiptoc168DlQvgkuXiDT13M1IivDgtr8TegIv/uleh?=
+ =?us-ascii?Q?AeCHAccv2S4PxlEe0IwVZxS/3pdZoL/8UW0ALTqCbAaGKgaJaDNBfUbR6Otv?=
+ =?us-ascii?Q?whSAYODyU1Qbtdx+AESKOtLWnKk7h6OQc57ExZfLyHoc9buFNhZiML56Grcu?=
+ =?us-ascii?Q?A8fjWjsHfMPEjt8EHH66f3U3YqopB9Q46edhZTSc2y5eYqlYKzmZfjWI3RVd?=
+ =?us-ascii?Q?TVhGTJ5GvtqDFdLuqbJNnqYopDYdVqhgHPxF9Rcc6MkjxXxZXf2vCpXXWXAY?=
+ =?us-ascii?Q?WRIf8u1+uxwIKlgkXIgB3peLq2pqb2x8ziRZ0EWst6OcD3bypzUZKs3LEiJc?=
+ =?us-ascii?Q?9vEYAyvi8+SANxYEILUP?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16d8bc40-7f13-47de-81ee-08dc8a9cee32
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 05:02:59.8716
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR20MB3347
 
-On Tue, Jun 4, 2024 at 12:16=E2=80=AFAM Max Kellermann <max.kellermann@iono=
-s.com> wrote:
->
-> Hi kernel people,
-> I have a problem that I have been trying to debug for a few days, but
-> I got lost in the depths of the scheduler code; I'm stuck and I need
-> your help.
-> We have several servers which show a constant memory.pressure value of
-> 30 to 100 (or more), even when the server is idle. I tracked this down
-> to psi_group_cpu.tasks[NR_MEMSTALL]=3D=3D1 even though no such process
-> exists, but I can't figure out why the kernel thinks there is still
-> one task stuck in memstall. I tried to track down all the code paths
-> that lead to psi_group_change(), but found nothing conclusive, and
-> failed to reproduce it on a test machine with kernel patches injecting
-> delays (trying to cause data race bugs that may have caused this
-> problem).
->
-> This happened on servers that were very busy and indeed were in
-> memstall often due to going over memory.high frequently. We have one
-> "main" cgroup with memory.high configured, and all the workload
-> processes live in sub-cgroups, of which we always have a few thousand.
-> When memory.events gets triggered, our process manager stops a bunch
-> of idle processes to free up memory, which then deletes the sub-cgroup
-> they belong to. In other words: sub-cgroups get created and deleted
-> very often, and they get deleted when there is indeed memory stall
-> happening. My theory was that there could be a data race bug that
-> forgets to decrement tasks[NR_MEMSTALL], maybe when a stalled child
-> cgroup gets deleted.
+On Mon, Nov 13, 2023 at 08:57:00AM GMT, Jisheng Zhang wrote:
+> This series adds pinctrl support for cv1800b reusing the
+> pinctrl-single driver.
+> 
+> Jisheng Zhang (2):
+>   riscv: dts: cv1800b: add pinctrl node for cv1800b
+>   riscv: dts: sophgo: set pinctrl for uart0
+> 
+>  arch/riscv/boot/dts/sophgo/cv-pinctrl.h       | 19 +++++++++++++++++++
+>  .../boot/dts/sophgo/cv1800b-milkv-duo.dts     | 11 +++++++++++
+>  arch/riscv/boot/dts/sophgo/cv1800b.dtsi       | 10 ++++++++++
+>  3 files changed, 40 insertions(+)
+>  create mode 100644 arch/riscv/boot/dts/sophgo/cv-pinctrl.h
+> 
+> -- 
+> 2.42.0
+> 
 
-Hi Max,
-I'm not an expert in the scheduler (I maintain mostly PSI triggers),
-so my feedback might be utterly wrong.
-I looked a bit into the relevant code and I think if your theory was
-correct and psi_task_change() was called while task's cgroup is
-destroyed then task_psi_group() would have returned an invalid pointer
-and we would crash once that value is dereferenced.
-Instead I think what might be happening is that the task is terminated
-while it's in memstall. do_exit() calls do_task_dead() at the very
-end, which sets current->__state to TASK_DEAD and calls the last
-__schedule() for this task. __schedule() will call deactivate_task(rq,
-prev, DEQUEUE_SLEEP) which will set prev->on_rq =3D NULL and call
-dequeue_task(..., DEQUEUE_SLEEP) leading to psi_dequeue(..., true).
-Note that because of that last parameter of psi_dequeue() is "true",
-psi_task_change() will not be called at this time. Later on
-__schedule() calls psi_sched_switch(). That leads to psi_task_switch()
-but note that the last parameter will be "true" because prev->on_rq =3D=3D
-NULL. So we end up calling psi_task_switch(, true). Now, note this
-line: https://elixir.bootlin.com/linux/latest/source/kernel/sched/psi.c#L95=
-5.
-It will clear TSK_MEMSTALL_RUNNING but not TSK_MEMSTALL. So, if the
-task was in TSK_MEMSTALL state then that state won't be cleared, which
-might be the problem you are facing.
-I think you can check if this theory pans out by adding a WARN_ON() ar
-the end of psi_task_switch():
+Hi, Jisheng,
 
-void psi_task_switch(struct task_struct *prev, struct task_struct
-*next, bool sleep)
-{
-...
-        if ((prev->psi_flags ^ next->psi_flags) & ~TSK_ONCPU) {
-                clear &=3D ~TSK_ONCPU;
-                for (; group; group =3D group->parent)
-                        psi_group_change(group, cpu, clear, set, now,
-wake_clock);
-        }
-+        WARN_ON(prev->__state & TASK_DEAD && prev->psi_flags & TSK_MEMSTAL=
-L);
-}
+Could you rebase this patch for the latest kernel?
 
-Again, I am by no means an expert in this area. Johannes or Peter
-would be much better people to consult with.
-Thanks,
-Suren.
-
-> On our Grafana, I can easily track the beginning of this bug to a
-> point two weeks ago; in the system log, I can see that hundreds of
-> processes needed to be terminated due to memory pressure at that time.
->
-> The affected servers run kernel 6.8.7 with a few custom patches, but
-> none of these patches affect the scheduler or cgroups; they're about
-> unrelated things like denying access to Ceph snapshots and adjusting
-> debugfs permissions. (I submitted most of those patches to LKML long
-> ago but nobody cared.)
-> Newer kernels don't seem to have fixes for my problem; the relevant
-> parts of the code are unchanged.
->
-> One of the servers is still running with this problem, and I can
-> access it with gdb on /proc/kcore. I'll keep it that way for some more
-> time, so if you have any idea what to look for, let me know.
->
-> This is the psi_group of the "main" cgroup:
->
->  $1 =3D {parent =3D 0xffff9de707287800, enabled =3D true, avgs_lock =3D {=
-owner
-> =3D {counter =3D 0}, wait_lock =3D {raw_lock =3D {{val =3D {counter =3D 0=
-},
-> {locked =3D 0 '\000', pending =3D 0 '\000'}, {locked_pending =3D 0, tail =
-=3D
-> 0}}}}, osq =3D {tail =3D {
->         counter =3D 0}}, wait_list =3D {next =3D 0xffff9de70f772820, prev=
- =3D
-> 0xffff9de70f772820}}, pcpu =3D 0x3fb640033900, avg_total =3D
-> {6133960836647, 5923217690044, 615319825665255, 595479374843164,
-> 19259777147170, 12847590051880},
->   avg_last_update =3D 1606208471280060, avg_next_update =3D
-> 1606210394507082, avgs_work =3D {work =3D {data =3D {counter =3D 321}, en=
-try =3D
-> {next =3D 0xffff9de70f772880, prev =3D 0xffff9de70f772880}, func =3D
-> 0xffffffff880dcc00}, timer =3D {entry =3D {
->         next =3D 0x0 <fixed_percpu_data>, pprev =3D 0xffff9e05bef5bc48},
-> expires =3D 4455558105, function =3D 0xffffffff880a1ca0, flags =3D
-> 522190853}, wq =3D 0xffff9de700051400, cpu =3D 64}, avg_triggers =3D {nex=
-t =3D
-> 0xffff9de70f7728d0,
->     prev =3D 0xffff9de70f7728d0}, avg_nr_triggers =3D {0, 0, 0, 0, 0, 0},
-> total =3D {{6133960836647, 5923217690044, 615328415599847,
-> 595487964777756, 19281251983650, 12869064888360}, {6092994926,
-> 5559819737, 105947464151, 100672353730,
->       8196529519, 7678536634}}, avg =3D {{0, 0, 0}, {0, 0, 0}, {203596,
-> 203716, 198499}, {203596, 203716, 198288}, {0, 0, 60}, {0, 0, 0}},
-> rtpoll_task =3D 0x0 <fixed_percpu_data>, rtpoll_timer =3D {entry =3D {nex=
-t =3D
-> 0xdead000000000122,
->       pprev =3D 0x0 <fixed_percpu_data>}, expires =3D 4405010639, functio=
-n
-> =3D 0xffffffff880dac50, flags =3D 67108868}, rtpoll_wait =3D {lock =3D {{=
-rlock
-> =3D {raw_lock =3D {{val =3D {counter =3D 0}, {locked =3D 0 '\000', pendin=
-g =3D 0
-> '\000'}, {
->                 locked_pending =3D 0, tail =3D 0}}}}}}, head =3D {next =
-=3D
-> 0xffff9de70f772a20, prev =3D 0xffff9de70f772a20}}, rtpoll_wakeup =3D
-> {counter =3D 0}, rtpoll_scheduled =3D {counter =3D 0}, rtpoll_trigger_loc=
-k =3D
-> {owner =3D {counter =3D 0},
->     wait_lock =3D {raw_lock =3D {{val =3D {counter =3D 0}, {locked =3D 0 =
-'\000',
-> pending =3D 0 '\000'}, {locked_pending =3D 0, tail =3D 0}}}}, osq =3D {ta=
-il =3D
-> {counter =3D 0}}, wait_list =3D {next =3D 0xffff9de70f772a48, prev =3D
-> 0xffff9de70f772a48}},
->   rtpoll_triggers =3D {next =3D 0xffff9de70f772a58, prev =3D
-> 0xffff9de70f772a58}, rtpoll_nr_triggers =3D {0, 0, 0, 0, 0, 0},
-> rtpoll_states =3D 0, rtpoll_min_period =3D 18446744073709551615,
-> rtpoll_total =3D {6092994926, 5559819737, 105947464151,
->     100672353730, 8196529519, 7678536634}, rtpoll_next_update =3D
-> 1100738436720135, rtpoll_until =3D 0}
->
-> This is a summary of all psi_group_pcpu for the 32 CPU cores (on the
-> way, I wrote a small gdb script to dump interesting details like these
-> but that went nowhere):
->
->   state_mask 0 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 1 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 2 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 3 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 4 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 5 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 6 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 7 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 8 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 9 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 10 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 11 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 12 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 13 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 14 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 15 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 16 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 17 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 18 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 19 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 20 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 21 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 22 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 23 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 24 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 25 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 26 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 27 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 28 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 29 =3D 0x0 tasks {0, 0, 0, 0}
->   state_mask 30 =3D 0x4c tasks {0, 1, 0, 0}
->   state_mask 31 =3D 0x0 tasks {0, 0, 0, 0}
->
-> CPU core 30 is stuck with this bogus value. state_mask 0x4c =3D
-> PSI_MEM_SOME|PSI_MEM_FULL|PSI_NONIDLE.
->
-> The memory pressure at the time of this writing:
->
->  # cat /sys/fs/cgroup/system.slice/system-cm4all.slice/bp-spawn.scope/mem=
-ory.pressure
->  some avg10=3D99.22 avg60=3D99.39 avg300=3D97.62 total=3D615423620626
->  full avg10=3D99.22 avg60=3D99.39 avg300=3D97.54 total=3D595583169804
->  # cat /sys/fs/cgroup/system.slice/system-cm4all.slice/bp-spawn.scope/_/m=
-emory.pressure
->  some avg10=3D0.00 avg60=3D0.00 avg300=3D0.00 total=3D0
->  full avg10=3D0.00 avg60=3D0.00 avg300=3D0.00 total=3D0
->  # cat /sys/fs/cgroup/system.slice/system-cm4all.slice/bp-spawn.scope/cgr=
-oup.stat
->  nr_descendants 1
->  nr_dying_descendants 2224
->
-> There is currently no worker process; there is only one idle dummy
-> process in a single sub-cgroup called "_", only there to keep the
-> systemd scope populated. It should therefore be impossible to have
-> memory.pressure when the only leaf cgroup has pressure=3D0.
->
-> (nr_dying_descendants is decremented extremely slowly; I deactivated
-> the server shortly before collecting these numbers, to make sure it's
-> really idle and there are really no processes left to cause this
-> pressure. I don't think nr_dying_descendants is relevant for this
-> problem; even after two days of full idle, the counter and the
-> pressure didn't go back to zero.)
->
-> Please help :-)
->
-> Max
+Regards,
+Inochi
 
