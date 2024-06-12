@@ -1,134 +1,128 @@
-Return-Path: <linux-kernel+bounces-211258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BA3904F2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:25:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C770904F33
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C089A1F2707B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:25:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0FCE281850
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C99416DEDF;
-	Wed, 12 Jun 2024 09:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202A716E891;
+	Wed, 12 Jun 2024 09:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JYeHG7YJ"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ji0uTgrt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D72616DEB9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD37C16D9DD;
+	Wed, 12 Jun 2024 09:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718184273; cv=none; b=HNQuPutJLmFfIGfS3S/ijke+0qf9C/UChtBKbwp24NWmjOREL8WOZqotmTCegARo7VJcKGBKrxdg+LwjfFkoK+mNKT5MJJJ0L7hUbm0TEaa2MvlaKM1gnf5uDBnPPRQ+TkhMhMuJTKDCFnp3AEeQbrT/zUT4+Vh0gZ0mYilypsU=
+	t=1718184280; cv=none; b=bFN+0Zpi67qI1sc3mL4+WHIzvphudTbeYvHIXbC+Gl85JQZD9qmd+vRlQ+AhHwA/t7esb6po/x98tevAin6EJZrxA8tEiFz89nMEtfVkd49qpwAJwJ1dgf2l59XUY3AUClZh/sHYYibRDL/qsgMa3xXPqi9zwC1Frn/pb9dWnUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718184273; c=relaxed/simple;
-	bh=/YmAORbO3+x2lQ89cPlqc8Ys60h2WO17kQvYvC6EUd0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IDkU0/tRshpnaRMzsuEM7/toEmXxhOvSzbGSaTuuZBA0e2MB+4HOn4yUdCSQq1brv1uoV6m33HJn0y3wNS5yqvXFooQ6/1s99YOqkT6fPpB26av8PwuFglrOakmulE0TopXuYLF68DbCdLLq1EvZVfWeJu9E7QH5bzqcnAnE0JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JYeHG7YJ; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bbdc237f0so2588598e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:24:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718184270; x=1718789070; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DfH51kBtOmvN/SbHgLsWaCNr0Bu/Fg6um6oRQlR7oHY=;
-        b=JYeHG7YJjxA9XXiVI5+d7Dgip5bHXF+8A3Lt4FtmfAHSyltDKSkvOFmXmAAKBcUE4Y
-         EKUPCYAAEPPlnX6SRr0wAJKL7YVPeeQs2/Z2fCm6FEyug85WFBKC6a84OGoT9nLRxxoy
-         90IDi3G7tUSN3PgVXpAVQMOEEtM73HgE+qGkHxx2xRjHS4yfUSTamz8cCiPuOvQPxJSS
-         s0GqhLbZa4WD9B7PVBuSAPGsKuTJYHjrph74YuE/y9zdf7q4gcGcdpO7k3yYtXEsdA1z
-         HLTtxx11Y6S5OG3SwuYIDFYSoi3hazp2/rfzEk402EiOwb038bMPKMQSye+azsb2VUVN
-         0NmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718184270; x=1718789070;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DfH51kBtOmvN/SbHgLsWaCNr0Bu/Fg6um6oRQlR7oHY=;
-        b=uXZUMEVokHi5Mjv6H8GfcFi5jXfNrrur9NzNBn7sBF+HFHfBj8r/vhfd+wP5lukcOn
-         ApfLwxLXS+6KImzEtFaKWKHV8WAgqQy0QiXthuBXkPifN83FJAlJdrfIjMnlL8wUszUF
-         txVNW5Uxl4efQvNcywZWINIwxXOCkUMchFgzV4kzkkiAH4LB2eD9WeSjuu/+v+FVgWmG
-         9mJyIEDWUrPpWlhEE31PKd3fsxLwkkfCC0IUo+y2bszZiFVNnxmhiI1S49mJvg5nAaNs
-         IEwoJ3OY8SgKzHA3+AP3Kd1YYgqt3rlQ+0D7SAe4hsKGpbH66zZgwUvZAPDd6d6XXF+T
-         SZqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKUxEMD2cPa3ogG2vOLAkQAuJMQzQWoCScJuYmc1u0gQ3eJ3lL070eSQT4bOtTSyuZubw8rLUUWI+wyaGL0+NPRsljY9PVSeJdz9GN
-X-Gm-Message-State: AOJu0YxHzw3vYFCbFplgkDeeRJq/F1gkfXU1/gr92jiah2lVA50xL59Z
-	ZZnq5zQhUWt6N0fAavX7IWK5SCuQVDFkzkMSL1enKl9SrYuYd4gD93DrbUAw/M0=
-X-Google-Smtp-Source: AGHT+IEF/QjW1JAYelI47//kT/YeUyUvmkw2ZBd8t575ZCaGqY/UKt62km1JBl3qUL4DuZNV4IphVA==
-X-Received: by 2002:ac2:4341:0:b0:52c:8a15:3c01 with SMTP id 2adb3069b0e04-52c9a3dfab4mr923248e87.40.1718184269730;
-        Wed, 12 Jun 2024 02:24:29 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c82faf1b7sm1623806e87.130.2024.06.12.02.24.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 02:24:29 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 3/3] arm64: dts: mediatek: mt8173-elm: drop PMIC's syscon node
-Date: Wed, 12 Jun 2024 11:24:21 +0200
-Message-ID: <20240612092421.52917-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240612092421.52917-1-krzysztof.kozlowski@linaro.org>
-References: <20240612092421.52917-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1718184280; c=relaxed/simple;
+	bh=Qea/Jn12txiTuu1sQzZhiztNW21tvwMqG/CoQdaTdLE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDBZ0n2OvfyX8USNNj0Ua3FSuMI9+tkKT4wBiAr5aO0I3Xu5zXp581j1eNWhdc84tncfRaZ2nYljlm/mbTcHK7agTVC6MMurU3xZE1koCXGb2HBoVgdhwYN40s8THIYBZWvm1A7GQVkXleS4NCqQwSr7fbz01E4YpTDlcdMj6oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ji0uTgrt; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718184279; x=1749720279;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Qea/Jn12txiTuu1sQzZhiztNW21tvwMqG/CoQdaTdLE=;
+  b=Ji0uTgrtXzmB9eNKa9GjDTeC4+2EBQfjyduHVY9emfybV/mj76BUDE0o
+   iOiBJ2EaVjI9KjNMuG2TlZ9L0Y5ReTN4x+/3jww8GXYALrkYZKYRIZIcI
+   GbIFq4PPmABUzaf1FtvXIjvbAooRIvJxZ7IYuv9pX8WujYuLgevxyZZPO
+   IB9KIuftEGEkYIk3FQ8bfbhyV/RazxwtnI4jLgAs977ecxCJBF1SY0eeQ
+   fYZU+hwwLxqVLwaoI1WlVvgmN0wZYFv9vYuWw/kZq4PxOqB2t4HUiVaE2
+   95Y4mg9/8xEH0IJhPGAtnWEN/E+G9Ja+KcDdblZUPscPnsyCTHdU2GjKI
+   A==;
+X-CSE-ConnectionGUID: 4kNUjFavRPehjHlHehY0rg==
+X-CSE-MsgGUID: /U+stWlcRDmLh/GENKu0uQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="15166827"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="15166827"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 02:24:38 -0700
+X-CSE-ConnectionGUID: i2TjnqRFRByO99lPQ1rpLg==
+X-CSE-MsgGUID: 3Cah0xaYTqG0k8+PVw92kg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="40201459"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 12 Jun 2024 02:24:32 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 195CE193; Wed, 12 Jun 2024 12:24:30 +0300 (EEST)
+Date: Wed, 12 Jun 2024 12:24:30 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Elena Reshetova <elena.reshetova@intel.com>, 
+	Jun Nakajima <jun.nakajima@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, "Kalra, Ashish" <ashish.kalra@amd.com>, 
+	Sean Christopherson <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	kexec@lists.infradead.org, linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv11 18/19] x86/acpi: Add support for CPU offlining for
+ ACPI MADT wakeup method
+Message-ID: <2kc27uzrsvpevtvos2harqj3bgfkizi5dhhxkigswlylpnogr5@lk6fi2okv53i>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-19-kirill.shutemov@linux.intel.com>
+ <20240603083930.GNZl2BQk2lQ8WtcE4o@fat_crate.local>
+ <icu4yecqfwhmbexupo4zzei4lbe5sgavsfkm27jd6t6gyjynul@c2wap3jhtik7>
+ <20240610134020.GCZmcCRFxuObyv1W_d@fat_crate.local>
+ <hidvykk3yan5rtlhum6go7j3lwgrcfcgxlwyjug3osfakw2x6f@4ohvo23zaesv>
+ <nh7cihzlsjtoddtec6m62biqdn62k3ka5svs6m64qekhpebu5z@dkplwad2urgp>
+ <20240611194653.GGZmiprSNzK0JSJL17@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611194653.GGZmiprSNzK0JSJL17@fat_crate.local>
 
-According to AngeloGioacchino Del Regno, the syscon node in PMIC is
-neither needed nor used.  It looks like a solution to expose some of the
-registers of PMIC.
+On Tue, Jun 11, 2024 at 09:46:53PM +0200, Borislav Petkov wrote:
+> On Tue, Jun 11, 2024 at 06:47:05PM +0300, Kirill A. Shutemov wrote:
+> > Borislav, given this code deduplication effort is not trivial, maybe we
+> > can do it as a separate patchset on top of this one?
+> 
+> Sure, as long as it gets done and doesn't get delayed indefinitely by
+> new and more important features enablement.
 
-Drop it to solve also incorrect number of entries in the "reg" property
-and fix dtbs_check warning:
+I will try to deliver it in timely manner.
 
-  mt8173-elm.dtb: syscon@c000: reg: [[0, 49152], [0, 264]] is too long
+> Usually, we do unifications and cleanups first - then new features but
+> this kexec pile has been long in the making already...
+> 
+> > I also wounder if it makes sense to combine ident_map.c and
+> > set_memory.c.  There's some overlap between the two.
+> 
+> Yeah, we have a bunch of different pagetable manipulating things, all
+> with their peculiarities and unifying them and having a good set of APIs
+> which everything else uses, is always a good thing.
 
-Link: https://lore.kernel.org/all/671a4b1e-3d95-438c-beae-d967e0ad1c77@collabora.com/
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Will give it a try.
 
----
+> And since we're talking cleanups, there's another thing I've been
+> looking at critically: CONFIG_X86_5LEVEL. Maybe it is time to get rid of
+> it and make the 5level stuff unconditional. And get rid of a bunch of
+> code since both vendors support 5level now...
 
-Changes in v2:
-1. Drop the node as suggested.
----
- arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi | 6 ------
- 1 file changed, 6 deletions(-)
+Can do.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-index 6d962d437e02..b4d85147b77b 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-@@ -1134,12 +1134,6 @@ mt6397_vibr_reg: ldo_vibr {
- 		rtc: mt6397rtc {
- 			compatible = "mediatek,mt6397-rtc";
- 		};
--
--		syscfg_pctl_pmic: syscon@c000 {
--			compatible = "mediatek,mt6397-pctl-pmic-syscfg",
--				     "syscon";
--			reg = <0 0x0000c000 0 0x0108>;
--		};
- 	};
- };
- 
 -- 
-2.43.0
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
