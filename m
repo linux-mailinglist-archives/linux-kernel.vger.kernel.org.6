@@ -1,197 +1,110 @@
-Return-Path: <linux-kernel+bounces-210975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B813904B89
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:26:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286F5904B8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9BD01F22FD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:26:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C65AB22A25
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E30168C3C;
-	Wed, 12 Jun 2024 06:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80C8168C17;
+	Wed, 12 Jun 2024 06:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VMJXd1HL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENojhtNN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762F81649BE;
-	Wed, 12 Jun 2024 06:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C46167DA0;
+	Wed, 12 Jun 2024 06:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718173595; cv=none; b=CyIO+TNCBZsMQAwb1yum4apTIhCICZahmagFAgMCAuaZixAZvx0VaNn3q6mOd9VtbEAdRM599NLLhI21U/4dERqAd4EkjNu+heq3AnCwSLRqC6+LIZ0SBm/7i8DPlPyJcrudmHwgLMhRhF3TInkJiLMzR763xcYetBlZfFCetq8=
+	t=1718173638; cv=none; b=n4mfMsDv4odII1kUdmWfgnP/AJbapscOigPWs+c8YH5YN7/E/o7JD5MtT+cl+nGbRANVVPTzVOtCpSdeucEFDQFrbiM95whlAMej1KmukHXUomXriDlx8KVx0v7/WKOpxxi9sxE5ev8k2J2QRvCV3Uci7J4+NU6WcBXXwcG1W+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718173595; c=relaxed/simple;
-	bh=sQH+ctTBrnaFXqBVQ3P9FoSeWIhSEL3g55kjhK2gcCQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tu5w0NZIrLf1xoCPFMfq/4PlemdA9rD5O/NjWOcsGsgSQHAkn7k42jODfQTFuiRrd6ogEunfDIt/ONsCGRUXEC8mt6wsXJKdtlP9jJVty/A5kzq6YLpdEhiVgkTC4MDKcYA89Zl+oAz0VaMcWVI7y5BUsjnp+nY2/qImAk/4YYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VMJXd1HL; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718173594; x=1749709594;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=sQH+ctTBrnaFXqBVQ3P9FoSeWIhSEL3g55kjhK2gcCQ=;
-  b=VMJXd1HLogVpkz3FVEvaJ4Fs7kexyeEekycHcmvWeB9hGsgCujaD+/DV
-   53LPpIvMpdnUaqd2TfyFCS9Xb095vn8sSGTrULG5GYjAKAzSibEfna6pN
-   58ipswwYYjHCT+SrNuC5sXoQc3Vmk9JzzyMA3M/op1crLd3nGM65Z41xm
-   2SVD8axvdaxWpfakQ2cNCcIfBY/BlAYmrK14vBMLCfQF+Btxhtw4gB88h
-   eIuX5nj2ZDp10dXw+yU9UwMTMD4b5k3GQoy9Gh64RJlmjYPwFZKYqcrS4
-   N7ybbPPMqSQv8FZr0a03t3a5saoFlvjnkhsj4CJFZDMIQfrR55kEq2y+J
-   w==;
-X-CSE-ConnectionGUID: BSXy1zvgTaCUVBDq/Xh+WQ==
-X-CSE-MsgGUID: pKmZLNnVTP+Dv6suCj0PzA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="25593976"
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="25593976"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 23:26:33 -0700
-X-CSE-ConnectionGUID: JGKS937NR8+AHIMi83g6sA==
-X-CSE-MsgGUID: NLMuK80MQ1OvZJMLwJDkOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="40155538"
-Received: from rathodpx-mobl.gar.corp.intel.com ([10.213.109.222])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 23:26:29 -0700
-Message-ID: <4e68c0164022ca41494c6d577766dd4b66c93e9f.camel@linux.intel.com>
-Subject: Re: [RFC] HID: ishtp-hid-client: replace fake-flex arrays with
- flex-array members
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Erick Archer <erick.archer@outlook.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
-  Justin Stitt <justinstitt@google.com>, Kees Cook <keescook@chromium.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-input@vger.kernel.org,
-  linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Date: Tue, 11 Jun 2024 23:26:25 -0700
-In-Reply-To: <AS8PR02MB723798FF6CEF28DCB62FAC958BC42@AS8PR02MB7237.eurprd02.prod.outlook.com>
-References: 
-	<AS8PR02MB723760CB93942370E92F00638BF72@AS8PR02MB7237.eurprd02.prod.outlook.com>
-	 <80976997acb82fe3e6ba54fa2708c8f40fb3eb00.camel@linux.intel.com>
-	 <AS8PR02MB723798FF6CEF28DCB62FAC958BC42@AS8PR02MB7237.eurprd02.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.0-1 
+	s=arc-20240116; t=1718173638; c=relaxed/simple;
+	bh=e2ENKQIsTaX0sTudk2hGDKHVUGSIjiOwmVg8cJI75PA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUYbkFTnA8+j33+H2wh2wLFrEyONsdYCi6BFxc28Q3uDVw3cCCsCjcHevRmmjy7GuWZGxZ1Tw9PjNNOL9B8xq2p9DaLXcVM9tS7A2udq+RRgv3T1oAWzCfeJfMAm6Hjfm+KRnNBB48QK8PrJSW8nZ/heKXRLtT+j6h7H27Ih19M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENojhtNN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66683C32786;
+	Wed, 12 Jun 2024 06:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718173637;
+	bh=e2ENKQIsTaX0sTudk2hGDKHVUGSIjiOwmVg8cJI75PA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ENojhtNNGHdNYOnPQN1MFhFOstveOWidJQ7t/Y8POhDUCxRHat45JPNjaJiyOAs+r
+	 v/1sB3eR9c8Ywl85QTXifc6beSGNWx407WniIbbLEKEJ6gKG/GcbpneurWzfMx6FfC
+	 iQY12Mh9xYE45kRCnWQrAjpKtErCt/IlXpLBTWt6fR4vHF6YHZJXXRrwnaDw22mHM5
+	 lN0k7QZ+7Ee6+yNGTHmFioyGClrPmFBNiUzlSvZEw+pW9lhnHCaOK8SIpuuOkUs2Sp
+	 bHiLLdc9srG4e+P75deeQisFR4fO6LOBnIYgN/5VStYxYFkDHsHP2xdvGNYeqi/x3z
+	 pbIB3o0CYQkDw==
+Date: Wed, 12 Jun 2024 06:27:14 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+	linux-pwm@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] pwm: cros-ec: Don't care about consumers in
+ .get_state()
+Message-ID: <Zmk_wolV5vK4JPCV@google.com>
+References: <20240607084416.897777-5-u.kleine-koenig@baylibre.com>
+ <20240607084416.897777-6-u.kleine-koenig@baylibre.com>
+ <ZmgP5NTPEGM0M2Li@google.com>
+ <dbygoq4rzxnzforpdsvuy5jze2rxqszi6qxtx6q37yxwjo36o6@qfoc6iz2nbay>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dbygoq4rzxnzforpdsvuy5jze2rxqszi6qxtx6q37yxwjo36o6@qfoc6iz2nbay>
 
-On Sat, 2024-06-08 at 11:56 +0200, Erick Archer wrote:
-> Hi Srinivas,
-> First of all, thanks for looking at this ;)
->=20
-> On Sat, Jun 08, 2024 at 01:42:54AM -0700, srinivas pandruvada wrote:
-> > On Sun, 2024-05-26 at 15:32 +0200, Erick Archer wrote:
-> > > One-element arrays as fake flex arrays are deprecated [1] and we
-> > > are
-> > > moving towards adopting C99 flexible-array members, instead. This
-> > > case
-> > > also has more complexity because it is a flexible array of
-> > > flexible
-> > > arrays and this patch needs to be ready to enable the new
-> > > compiler
-> > > flag
-> > > -Wflex-array-member-not-at-end (coming in GCC-14) globally.
-> > >=20
-> > > So, define a new struct type for the single reports:
-> > >=20
-> > > struct report {
-> > > 	uint16_t size;
-> > > 	struct hostif_msg_hdr msg;
-> > > } __packed;
-> > >=20
-> > > but without the payload (flex array) in it. And add this payload
-> > > to
-> > > the
-> > > "hostif_msg" structure. This way, in the "report_list" structure
-> > > we
-> > > can
-> > > declare a flex array of single reports which now do not contain
-> > > another
-> > > flex array.
-> > >=20
-> > > struct report_list {
-> > > 	[...]
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct report reports[];
-> > > } __packed;
-> > >=20
-> > > Also, use "container_of()" whenever we need to retrieve a pointer
-> > > to
-> > > the flexible structure, through which we can access the flexible
-> > > array
-> > > if needed.
-> > >=20
-> > > Moreover, refactor the code accordingly to use the new structures
-> > > and
-> > > take advantage of this avoiding some pointer arithmetic and using
-> > > the
-> > > "struct_size" helper when possible.
-> > >=20
-> > > This way, the code is more readable and safer.
-> >=20
-> > Applied and tested, atleast didn't break anything.
-> >=20
-> > But the explanation above didn't give me enough clue. You have
-> > added a
-> > payload[] in the=C2=A0 struct hostif_msg {} then using that as a messag=
-e
-> > pointer following the header. I think this description needs to be
-> > better.
->=20
-> Yeah, I will try to improve the commit message. What do you think
-> about
-> the following parragrafs?
->=20
-> [I have copied part of the message to show where the new info will
-> be]
-> > > declare a flex array of single reports which now do not contain
-> > > another flex array.
-> > >=20
-> > > struct report_list {
-> > > 	[...]
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct report reports[];
-> > > } __packed;
->=20
-> Therefore, the "struct hostif_msg" is now made up of a header and a
-> payload. And the "struct report" uses only the "hostif_msg" header.
-> The perfect solution would be for the "report" structure to use the
-> whole "hostif_msg" structure but this is not possible due to nested
-> flexible arrays. Anyway, the end result is equivalent since this
-> patch
-> does attemp to change the behaviour of the code.
->=20
-> Now as well, we have more clarity after the cast from the raw bytes
-> to
-> the new structures.
->=20
-> > >=20
-> > > Also, use "container_of()" whenever we need to retrieve a pointer
-> > > to
-> > > the flexible structure, through which we can access the flexible
-> > > array
-> > > if needed.
->=20
-> I would like to know if it is enough :)
+On Tue, Jun 11, 2024 at 12:39:44PM +0200, Uwe Kleine-König wrote:
+> On Tue, Jun 11, 2024 at 08:50:44AM +0000, Tzung-Bi Shih wrote:
+> > On Fri, Jun 07, 2024 at 10:44:15AM +0200, Uwe Kleine-König wrote:
+> > > The get_state() callback is never called (in a visible way) after there
+> > > is a consumer for a pwm device. The core handles loosing the information
+> > > about duty_cycle just fine.
+> > 
+> > ChromeOS EC has no separated "enabled" state, it sees `duty == 0` as
+> > "disabled"[1].  1db37f9561b2 ("pwm: cros-ec: Cache duty cycle value")
+> > caches the value in kernel side so that it can retrieve the original duty
+> > value even if (struct pwm_state *)->enabled is false.
+> 
+> There is no need to cache, so the following would work:
 
-The apporoach is fine. But I don't like clubbing other changes like
-struct_size(). That make code difficult to follow.
+Ack.
 
-Thanks,
-Srinivas
+> > To make sure I understand, did you mean the original duty value could be less
+> > important because:
+> > - We are less caring as it is in a debug context at [2]?
+> > - At [3], the PWM device is still initializing.
+> 
+> It doesn't really matter that this is about debug or initialisation. The
+> key here is that the core can handle the PWM using duty_cycle 0 (or
+> anything else) when it was requested to be disabled.
+> 
+> 
+> > [1]: https://crrev.com/0e16954460a08133b2557150e0897014ea2b9672/common/pwm.c#66
+> > [2]: https://elixir.bootlin.com/linux/v6.10-rc3/source/drivers/pwm/core.c#L52
+> > [3]: https://elixir.bootlin.com/linux/v6.10-rc3/source/drivers/pwm/core.c#L371
 
+I was trying to understand the description in the commit message:
+: The get_state() callback is never called (in a visible way) after there
+: is a consumer for a pwm device.
 
+I guess I understood; the core reads the duty value via get_state() when:
+- Initializing the device for the intial value.
+- Debugging for checking if apply() really takes effect.
 
->=20
-> Regards,
-> Erick
-> >=20
-> > Thanks,
-> > Srinivas
+What 1db37f9561b2 worried about is already addressed by the core[4].
 
+[4]: https://elixir.bootlin.com/linux/v6.10-rc3/source/drivers/pwm/core.c#L495
+
+Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
 
