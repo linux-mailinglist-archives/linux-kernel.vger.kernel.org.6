@@ -1,169 +1,203 @@
-Return-Path: <linux-kernel+bounces-211655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08EB59054F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:18:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C192D9054F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F40C8B2452E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:18:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C77328293B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FD85336D;
-	Wed, 12 Jun 2024 14:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A81169ACA;
+	Wed, 12 Jun 2024 14:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwNHUoEr"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NIlJle/Y"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9A417DE06;
-	Wed, 12 Jun 2024 14:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FE217DE35
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201890; cv=none; b=iZ7iU09FrDt46h3DM3wVD3Z1MKzbMsMD6HCy6wiIcUUCs2EJC+lE3X9OOen9ORlTbEkssq56HrL4g75CgbU7L/mrxVtcV7kHhlavFAyqIsKI2EBakw2ArUd4kH7GS6KHUAHycA/q0Q5Hb6egOYC30+1IEFEDQJ8T6VQ1yM3cwZc=
+	t=1718201922; cv=none; b=G1R6YDC+4Hw1t41Cjn7dwk8m5SCfe+uRCnlMI+iJlUujQ2u3Nqg1lx2t1iVWOtOq1WkGu1kxaBUo3KjHBT6NfhQ3fjIDZ9yFb/txbxTwy8hyk1d6aNLqvaLDjWU6We3VQCL8YyIqNoKfFQK2jE2IQKsKlfiWSzNaO/3NvDJuqv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201890; c=relaxed/simple;
-	bh=YXIdG8Cu8DfnRnzDjLA/KcUHFB8cUiSt1hLOsWlN2MU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uPLGwAYo11ZY1zpaHS9Irnl4fotjmU6tNEQz2RcVUbkmwVnNev+gQceIxTSUXCvJwaCf5SsEp2qCJmN3gorR2XhCmUJZ9RGNrub8jm1Zon35aSl/kYtpa1evciJrZxAmTn2RmJXo4xWLzQZSJK7Ek0y87pA6mqh0YeyPdal/K74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hwNHUoEr; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1718201922; c=relaxed/simple;
+	bh=cWUsIBqBJ/97bmxnKU7BawRUZHR9jz5VDoKx3NZQ1R8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fk2lkHf/8D5aDiRfcPH0+09fTd52UZFt8bFgWfu6Qp7ydDPd8FDCPj3rPIPui+ics4KLTYIGczyIDHLj4B47OdrM1YNevlfZqyWPMLixtrFuhpAnpUn0gZPXfc8zB7DwaHRdom7SwLFD0vwDkp8OE8UNyUu5ClfTPTydANbuWxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NIlJle/Y; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-705bf368037so575483b3a.0;
-        Wed, 12 Jun 2024 07:18:09 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57c7681ccf3so4911019a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:18:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718201888; x=1718806688; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=pxqNL565NWmPeGrXLhi1hyl8lckCal08zSMZyztgL+Y=;
-        b=hwNHUoEr7eB5hmTiHYkQRQG6ualX5wK+66DWuCXq+e05vJ1Q5PlUEpejdSgOB6okG3
-         6bg685gdhlvbY8HZNB109JW2fCgyAaIsmx97XFqq26Qnq+UFjNKN4WGYVXLgzBm7j3QT
-         Fjswx9hS8tdjusIXNxC1rqDyzc0AawQwXeeKFb5iAAxbsiW7QLt7puiCnNXkNxVVHR8z
-         hdHn8k+TAtAApS/VSSBfVsGF8/3W65sObcL3+0HVnP/ei5kh1DvITLuQ1Et4rfLn/ikU
-         rrn35968B9yC9BViuYh4GqBYnEGD+gKOZyboySVX6jU2zCq5uEHe+MR5+ekNXtvHycNO
-         yEdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718201888; x=1718806688;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718201918; x=1718806718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pxqNL565NWmPeGrXLhi1hyl8lckCal08zSMZyztgL+Y=;
-        b=bimVLO42KczrVxhmSvIpODDKjlt+7HkgzOEuAuhJN0KjrXZsMWTWIOz1aGi4HyMmQJ
-         /n7cS4Ls1yJtP5VGr0vIJo0tO9nZmjpbDp+vV4Ij2C/80/yszUZ/cQfUgdL9cgVTFgcQ
-         erUcOcRvObFW8Q2wlHrB3MZnz+iDw9EqeARWlaGol1c6wz8rM7odX9dLcmlSnK1VX5gP
-         HC0Qny3FUG9FgzjsnEDgpXAUsBxtoyUh4M3jQiU5UwTB2ERiddm8kgKttU4SSCzuXaqo
-         YA7Lvk46Tc+IuwMRgjl8+r24fxe/3YATsOk6BD6yIAB5imrT16Iu+66kan29njsQcz1V
-         afwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPfNiPE3gJQDDVTNLpBe6Ejd4R8u36myh8I4CqRgJWHPzsKyluNoFGh4wxlwIQ5TDADjXdyp4txXkZajmrkKtWG4MtxdJGc092bIJ7oUeb4a6zLTZMkAu2U75q91gmgC3Vd7XN0SFLng==
-X-Gm-Message-State: AOJu0Yw4wGvsJRSVXg3AxAJLQysnwLtzHmWVDrOWUeoQNLEfzZsQFPTL
-	AUSMnlkKH8ZchlTqU54CDzCGV5sacSkksz1lAN96hMEW974nJkfVCenPDg==
-X-Google-Smtp-Source: AGHT+IHDQvXjMLdL88OFf+YQ7k2+FaY0EqKRh17/5byTfA0vFMPAWVjc1fzka1+etT7NKq31JPWM4g==
-X-Received: by 2002:a05:6a00:b41:b0:704:3521:fb58 with SMTP id d2e1a72fcca58-705bceac04fmr2598102b3a.27.1718201888444;
-        Wed, 12 Jun 2024 07:18:08 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70419ec2bfdsm8647589b3a.167.2024.06.12.07.18.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 07:18:07 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <ab648952-769a-42bf-b7bb-ee13b58f8794@roeck-us.net>
-Date: Wed, 12 Jun 2024 07:18:06 -0700
+        bh=kR6Mw/uBGrdLP+c87yF7rrJHnsUwR0tIZHnBvWUb2j0=;
+        b=NIlJle/YpC2wA45CIXW6LMMQs/VdWB/tDc1jL2bYPJjeKvRAQv14R1hamKfhjZXXu8
+         iNaa3WidFEkRMEu/OH0fghh0l4ioL8bw8ZhXKd0Muupmb/30nqZ6CnLdXlwIyEwKXjgt
+         gW093S4kkErzLC+Tstx9x5rB9yFqG1XCXfbl10Y/JEw3x+kiqq7LhQi0+MCTLw2GJiah
+         g1w7XSPaDaT0WX2gKjoPsnErIchI24brJDsVDvmakiBi/wadqnQOGMtjIuA0cX6W+C0i
+         ZOBk8+a1HhL8aQMYD73u8MlL5ClLHMZvEU6UUjMt72OKeeW6ZiQOsU0qwcV6NFr3sFZE
+         8CXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718201918; x=1718806718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kR6Mw/uBGrdLP+c87yF7rrJHnsUwR0tIZHnBvWUb2j0=;
+        b=aVD1RGLfVOZ/NyxJ0hKQSQS6GnwhuzlKUalhdwvnhL0v4mReW9KdqKreISdZ8RyBi0
+         LunyKXHpkpDNvVT5FfkLQr4sC4G2MG1uDA3TyYY+Ha8ulOOdcGraJ3UrabMSdftlnzCx
+         +gNjAXPB5Q4g2imT9d9BLDkws71N/2Js1fsL9WnodRDaQM0lSxUMJk691ajTSLGmIBI1
+         +nH9cCeaf+uNrO3FgyKkl62ckXZKkyVzIIwBkMaIS1QDJ7J1etj43LpDl5aZ3e4kzoEI
+         mAHsS3qAwhz+1Gv4O0FFZORqxsZr+DiX4Mt4mfa5avbnEQlibCKa4ycK94EW2VmjsooZ
+         Luog==
+X-Forwarded-Encrypted: i=1; AJvYcCU6RtuokMXPA9MdXzTRusny2zw+gKfuVCaYJza/XY8FAq32DWJZ/7GWyrFhiRINso8jfKRG+kLDNrdZ7F5ScaN28OeLTHq5TvdpSpcE
+X-Gm-Message-State: AOJu0YwBgKTxMBCTEkQW/O8faM4kVETVb0pNWBtQuxIrUZOl+fzIzAkt
+	kj88VNdjD2WC1Xn942Uvpb3QP1QrVCHU2PqjFFrtU0DCVMZypeS7s0EvSFkGejfB7UGHssflyjf
+	Nt20p/ghhU9EAfLr7TDNvBzEv7wo=
+X-Google-Smtp-Source: AGHT+IHpDL+y1qV0WViwduL3/EQ/4jVuUbfWn2uPTJDMWv9LlgaA1cXdBOkXmE6zmolWjGSI7EfcYjHSnbpOA06l7HY=
+X-Received: by 2002:a05:6402:33d4:b0:57c:6955:41ea with SMTP id
+ 4fb4d7f45d1cf-57caaac6682mr1181981a12.38.1718201917780; Wed, 12 Jun 2024
+ 07:18:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] hwmon: (ina2xx):Add Suppor for passing alert
- polarity from device tree to driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Amna Waseem
- <Amna.Waseem@axis.com>, Jean Delvare <jdelvare@suse.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@axis.com
-References: <20240611-apol-ina2xx-fix-v4-0-8df1d2282fc5@axis.com>
- <34fe20d5-c67a-44e6-8ec1-566d80e25447@kernel.org>
- <ef71090e-13c7-4ef1-b34e-d6fe9546b705@axis.com>
- <629a1867-94b7-4f89-821a-a38b92189af5@kernel.org>
- <4af156a3-37a6-4995-a3cd-8340c17345c2@axis.com>
- <2e0eeac2-891e-44c8-a1e1-36ec759d1b84@kernel.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <2e0eeac2-891e-44c8-a1e1-36ec759d1b84@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1718090413.git.baolin.wang@linux.alibaba.com> <4fd9e467d49ae4a747e428bcd821c7d13125ae67.1718090413.git.baolin.wang@linux.alibaba.com>
+In-Reply-To: <4fd9e467d49ae4a747e428bcd821c7d13125ae67.1718090413.git.baolin.wang@linux.alibaba.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Wed, 12 Jun 2024 22:18:25 +0800
+Message-ID: <CAK1f24k0bYk2zGAj3znkkT=XnweTxF64XhLP9Xg_HUHeNtrAXA@mail.gmail.com>
+Subject: Re: [PATCH v5 6/6] mm: shmem: add mTHP counters for anonymous shmem
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org, 
+	david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com, 
+	21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com, 
+	da.gomez@samsung.com, p.raghav@samsung.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/11/24 23:44, Krzysztof Kozlowski wrote:
-> On 12/06/2024 08:37, Amna Waseem wrote:
->> On 6/12/24 08:20, Krzysztof Kozlowski wrote:
->>> So you require someone to re-review?
->>
->> Yes that will be great if someone re-review.
-> 
-> You are joking, right? We have hundreds of other patches to take care of
-> and you ignore review tag, so you get duplicated work from the same
-> reviewer? That's huge waste of time and actually quite disrespectful to
-> our time.
-> 
+On Tue, Jun 11, 2024 at 6:11=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+> Add mTHP counters for anonymous shmem.
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-I applied v3 of the devicetree patch (after comparing the two to make sure
-there are no changes).
+LGTM. Feel free to add:
+Reviewed-by: Lance Yang <ioworker0@gmail.com>
 
-Amna, I would suggest to run checkpatch on your patches in the future
-to find problems such as the following.
-
-ERROR: trailing whitespace
-#178: FILE: Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml:74:
-+      the alert polarity to active-high. $
+Just a friendly reminder: We also need to update the documentation
+for the counters in transhuge.rst.
 
 Thanks,
-Guenter
+Lance
 
+> ---
+>  include/linux/huge_mm.h |  3 +++
+>  mm/huge_memory.c        |  6 ++++++
+>  mm/shmem.c              | 18 +++++++++++++++---
+>  3 files changed, 24 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 909cfc67521d..212cca384d7e 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -281,6 +281,9 @@ enum mthp_stat_item {
+>         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+>         MTHP_STAT_SWPOUT,
+>         MTHP_STAT_SWPOUT_FALLBACK,
+> +       MTHP_STAT_FILE_ALLOC,
+> +       MTHP_STAT_FILE_FALLBACK,
+> +       MTHP_STAT_FILE_FALLBACK_CHARGE,
+>         __MTHP_STAT_COUNT
+>  };
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 1360a1903b66..3fbcd77f5957 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -555,6 +555,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_=
+ANON_FAULT_FALLBACK);
+>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_F=
+ALLBACK_CHARGE);
+>  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+>  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+> +DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
+> +DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
+> +DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHAR=
+GE);
+>
+>  static struct attribute *stats_attrs[] =3D {
+>         &anon_fault_alloc_attr.attr,
+> @@ -562,6 +565,9 @@ static struct attribute *stats_attrs[] =3D {
+>         &anon_fault_fallback_charge_attr.attr,
+>         &swpout_attr.attr,
+>         &swpout_fallback_attr.attr,
+> +       &file_alloc_attr.attr,
+> +       &file_fallback_attr.attr,
+> +       &file_fallback_charge_attr.attr,
+>         NULL,
+>  };
+>
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index f5469c357be6..99bd3c34f0fb 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1773,6 +1773,9 @@ static struct folio *shmem_alloc_and_add_folio(stru=
+ct vm_fault *vmf,
+>
+>                         if (pages =3D=3D HPAGE_PMD_NR)
+>                                 count_vm_event(THP_FILE_FALLBACK);
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +                       count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
+> +#endif
+>                         order =3D next_order(&suitable_orders, order);
+>                 }
+>         } else {
+> @@ -1792,9 +1795,15 @@ static struct folio *shmem_alloc_and_add_folio(str=
+uct vm_fault *vmf,
+>                 if (xa_find(&mapping->i_pages, &index,
+>                                 index + pages - 1, XA_PRESENT)) {
+>                         error =3D -EEXIST;
+> -               } else if (pages =3D=3D HPAGE_PMD_NR) {
+> -                       count_vm_event(THP_FILE_FALLBACK);
+> -                       count_vm_event(THP_FILE_FALLBACK_CHARGE);
+> +               } else if (pages > 1) {
+> +                       if (pages =3D=3D HPAGE_PMD_NR) {
+> +                               count_vm_event(THP_FILE_FALLBACK);
+> +                               count_vm_event(THP_FILE_FALLBACK_CHARGE);
+> +                       }
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
+E_FALLBACK);
+> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
+E_FALLBACK_CHARGE);
+> +#endif
+>                 }
+>                 goto unlock;
+>         }
+> @@ -2168,6 +2177,9 @@ static int shmem_get_folio_gfp(struct inode *inode,=
+ pgoff_t index,
+>                 if (!IS_ERR(folio)) {
+>                         if (folio_test_pmd_mappable(folio))
+>                                 count_vm_event(THP_FILE_ALLOC);
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
+E_ALLOC);
+> +#endif
+>                         goto alloced;
+>                 }
+>                 if (PTR_ERR(folio) =3D=3D -EEXIST)
+> --
+> 2.39.3
+>
 
