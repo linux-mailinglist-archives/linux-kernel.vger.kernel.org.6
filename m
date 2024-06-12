@@ -1,127 +1,128 @@
-Return-Path: <linux-kernel+bounces-211640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550249054CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:09:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D309054CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E78E02852FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 671151C20F6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B08817DE1F;
-	Wed, 12 Jun 2024 14:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C7017DE14;
+	Wed, 12 Jun 2024 14:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VFuu2Wwj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fe5lvo2j"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC185336D;
-	Wed, 12 Jun 2024 14:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3FE17D8B1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201388; cv=none; b=a9JVnSdzZQhIZt+Ef6+0jy1gVu6BIL+aznoIyFzfB7foJ11SoJ5MtFcHhzYsRJjxffdMyR/7StCWkHM5qaaym42GezPybZ7A0TKMPfi1kcgTJHvm6rad7xS4HkL5qEpbPQXkMSBX54YRRZeDR1LmolagZ7AIlP2AgvTzFwiHSPo=
+	t=1718201447; cv=none; b=eoW3Kv03RcTmIlT2Qex2zBeXvUeL5FJhjSass271ZYQlkfZY5/3ibgXFw7tPfYmZLFEvrgKGrpLeiUZI4266EBwmVoM//P3elzTUA5iN5vi+wlm0eZ5kWJtkMna1OjKLEj4KgRd6s634HOrefGOkkItIWi8VSgOiFYgXtw7/YtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201388; c=relaxed/simple;
-	bh=II/NbhnYcdYmV79okBAT6ronkbwY9LssX0rkK2/jFYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wxu0jU5kyth4VxQavCyO4FoQkUQrsH2NW70feMII77aQ15StLhsmHGPD2SVNNDFiAIEtGh92e7WNd/xXxBGsoi6OwOCdV7kQBNxfgZJtngBUqtf6R2vwIqeEmT3qnSHYPZctytnBB+w1ZTIzN1RPWgg5BBuISkE2fAu/+YVhSYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=VFuu2Wwj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA7D4C116B1;
-	Wed, 12 Jun 2024 14:09:46 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VFuu2Wwj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1718201384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sp4kuln6csh80is8raFd9JuQeBE6LYfogahL+0jpLZs=;
-	b=VFuu2WwjHV79Ftcbh7MPyFzpURb23M2Q8GuLu1yfrurEKnnPfVq67aRQjUcnc6pG7iF9Fz
-	uVoB+nZR2nX6+c0ItUORM/GdfNQtMLltNs5JmOX74vBFe+zjQadH2pnpdOkcFnkBTZXF9s
-	v/CYDvOwV2LPGahQixqcoChvchvtCxo=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 50eb8ae5 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 12 Jun 2024 14:09:43 +0000 (UTC)
-Date: Wed, 12 Jun 2024 16:09:40 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Greg KH <gregkh@linuxfoundation.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	kernel-janitors@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	"workflows@vger.kernel.org" <workflows@vger.kernel.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <ZmmsJFDmnbjngRNV@zx2c4.com>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240609082726.32742-6-Julia.Lawall@inria.fr>
- <20240610112223.151faf65@rorschach.local.home>
- <b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
- <20240610163606.069d552a@gandalf.local.home>
- <70c093a5-df9c-4665-b9c9-90345c7f2139@suse.cz>
- <2024061143-transfer-jalapeno-afa0@gregkh>
- <05ec743a-c4e9-4c66-b2cd-4e89c858d7d4@suse.cz>
- <20240611101458.7fa78da8@gandalf.local.home>
+	s=arc-20240116; t=1718201447; c=relaxed/simple;
+	bh=a0/DHXF2SUZ9T62+RNnFm7pTHl4jfZzPu4UlkE1hp4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eVQZAP/rZ2zs+ug4zosGGmL/8JWwDpXym10piGjPS3ONc27sgEBZ1FOPi/G5yohFJLN15IQyQA/sITiMEcLwq1NjpQLbGBIt0krLU0qmd3iyctHUBruVGT+nYPrVJ13Z7cq7OtbntOSs5oxH8xrthB1OqjGhESKEDAYR5s1lLEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fe5lvo2j; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so23231221fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:10:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718201443; x=1718806243; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fDZBDbUR/Osz8PKcQ2HcjsVNrayHLES+DrpHvD2F5Pk=;
+        b=Fe5lvo2jFCMPLmfuLZ4l0vLQpjx3qF+RW7XPQcOd8xAGaRx1CmdX8ktLxgRsHoPxDN
+         zHz8V1NXknemc7w7DSIiCSOPzifVeWcZ83xImDBZynFDUa5Y4OaRVbq5z8ubsRUHZZCs
+         MR2fx4WfIbZ1jOcxTv7O4vc+44rsIWlE46a4b9NUGKGEtdK2DvEZJ70nyWLjj9o0fTAV
+         fG76egoThXupZnsZrStmY5yJ6NFZMdEkOwEkrvLbqNs9l3yyQaDT+lR+0Hu2/5NR1QEd
+         Bm0ZTCo9rJ3pf/PvGmBhxTvTU2RaCrMy4EchzEMGuDWj+/Ci6Rr+r7VJCtnaD/LBbZvo
+         lOig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718201443; x=1718806243;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fDZBDbUR/Osz8PKcQ2HcjsVNrayHLES+DrpHvD2F5Pk=;
+        b=nboonLuedDl1bZPDaPEahHapVE6wENkKBW/wHU0FiC+/u+2GyuL5fsYFy9ldP3XPNG
+         sTuiwLys2WmJjG71hbrDSWlby3PQ7BBnuYp02cKdMj8K3gTI9y1fYHaRF2QNHQ6w6xab
+         egfVXECKy8SAcL2LOjjuHQ1g7ZiTQtatBg4to5TuFAMehslQcatsVekBn6ep3ovOdG2U
+         +eetCiToDic1VQQbThsMTeBJobi3i4gfRLMOfkKJ/sy72qA3pUANfIIonnMb1DSLJO1E
+         Z0ds5r8FC0Sr9xExf2VquCwND+7EZ81nKQzopd5//9jlmXSRQKbx2bIhpAucgAr4uPL0
+         Hcrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUchq5jer9aN0pt2pr5cZN/Ek+aIJ7bWIsXVjEKdpxHYKnkJrZkBDxzJLveDRSoDKGf2q1HFNFa0LdKnzMAKw83jLLxF0JGsbjd1tiu
+X-Gm-Message-State: AOJu0Yx8sUzM9/odVhCxuP+uH9792C0fk1kNuBzp23XAoEnRTXEtCLpS
+	YOAs91vkCMJYHY03O9eTqGEGT0LV4BXtMuvZQTvX3036fxhr753v81aCxTF/kcw=
+X-Google-Smtp-Source: AGHT+IFjLR7yr1vu07suK4U8uhG1T2SNjOgZASn+EN8VRdq7sFOEyjV5ivQ5D5ogr5TWg7tHypOgaw==
+X-Received: by 2002:a2e:9b88:0:b0:2eb:120c:1a59 with SMTP id 38308e7fff4ca-2ebfc9d0865mr11492691fa.16.1718201443353;
+        Wed, 12 Jun 2024 07:10:43 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe7670sm29304585e9.6.2024.06.12.07.10.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 07:10:42 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	arm@kernel.org,
+	soc@kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Oleksij Rempel <linux@rempel-privat.de>
+Subject: [PATCH] MAINTAINERS: ARM: alphascale: add Krzysztof Kozlowski as maintainer
+Date: Wed, 12 Jun 2024 16:10:18 +0200
+Message-ID: <20240612141018.7348-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240611101458.7fa78da8@gandalf.local.home>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 11, 2024 at 10:14:58AM -0400, Steven Rostedt wrote:
-> On Tue, 11 Jun 2024 10:42:28 +0200
-> Vlastimil Babka <vbabka@suse.cz> wrote:
-> 
-> > AFAICS that documented way is for a different situation? I assume you mean
-> > this part:
-> > 
-> > * Specify any additional patch prerequisites for cherry picking::
-> > 
-> >     Cc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
-> > 
-> > But that would assume we actively want to backport this cleanup patch in the
-> > first place. But as I understand Steven's intention, we want just to make
-> > sure that if in the future this patch is backported (i.e. as a dependency of
-> > something else) it won't be forgotten to also backport c9929f0e344a
-> > ("mm/slob: remove CONFIG_SLOB"). How to express that without actively
-> > marking this patch for backport at the same time?
-> 
-> Exactly! This isn't to be tagged as stable. It's just a way to say "if you
-> need this patch for any reason, you also need patch X".
-> 
-> I think "Depends-on" is the way to go, as it is *not* a stable thing, and
-> what is in stable rules is only about stable patches.
+Apparently there was never a maintainers entry for the ARM Alphascale
+ASM9260 SoC, thus patches end up nowhere.  Add such entry, because even
+if platform is orphaned and on its way out of the kernel, it is nice to
+take patches if someone sends something.
 
-How does "Depends-on" not spiral out of control? There's a *lot* of
-"Depends-on" relations one could express in commit series and such. Of
-course a lot of git itself is designed to show some subset of these
-relationships.
+I do not plan to actively support/maintain ARM Alphascale but I can take
+odd fixes now and then.
 
-It seems like in most cases, the "Cc: stable@v.g.o # x.y.z+" notation
-expresses the backporting safety correctly. What is the purpose of
-saying, "if you need this patch for any reason, you also need patch X"?
-Who is the intended audience, and are you sure they need this?
+Cc: Oleksij Rempel <linux@rempel-privat.de>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ MAINTAINERS | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-I ask these questions because I wind up doing a lot of work backporting
-patches to stable and marking things properly for that or submitting
-manually backported stable patches and so forth, and in general, patch
-applicability for stable things is something I wind up devoting a lot of
-time to. If I have to *additionally* start caring about the theoretical
-possibility that somebody in the future, outside of the stable flow,
-might not understand the context of a given patch and blindly apply it
-to some random tree here or there, that sounds like a lot of extra brain
-cycles to consider.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c7a13170b697..647233a62f50 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1946,6 +1946,16 @@ N:	allwinner
+ N:	sun[x456789]i
+ N:	sun[25]0i
+ 
++ARM/ALPHASCALE ARCHITECTURE
++M:	Krzysztof Kozlowski <krzk@kernel.org>
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Odd Fixes
++F:	arch/arm/boot/dts/alphascale/
++F:	drivers/clk/clk-asm9260.c
++F:	drivers/clocksource/asm9260_timer.c
++F:	drivers/rtc/rtc-asm9260.c
++F:	drivers/watchdog/asm9260_wdt.c
++
+ ARM/AMD PENSANDO ARM64 ARCHITECTURE
+ M:	Brad Larson <blarson@amd.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-- 
+2.43.0
 
-So, is this actually necessary, and how does it not spiral out of
-control?
 
