@@ -1,235 +1,321 @@
-Return-Path: <linux-kernel+bounces-211077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C709C904CDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:28:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31DA5904CDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6B1E1C243D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67BA1F259F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E48116C445;
-	Wed, 12 Jun 2024 07:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDDC169AC0;
+	Wed, 12 Jun 2024 07:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cOG7zdUf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcpDHefw"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C136D167270
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B05829413;
+	Wed, 12 Jun 2024 07:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718177317; cv=none; b=QJQGve8Wmiam+hEU+1dDRGdTSpCx8Z5QYHsjJrwiZxGYstFr2nRHecakKb5mmwynh+mdhgTpG3kfK+7RQaZgL6FIWTFMe3Jdygw2Gh9+vmoLpxV0sKjR2URSz5V0Hd0STbDiq0dVyjExDe/QarDd5wk6LXI9+PhgtbTgyPIiSo0=
+	t=1718177455; cv=none; b=M3j+ggPXNFOk14nzrwsyLnNtyM5Pv8l7BwRnVKVAW+X9NquSvErNH78vBJzmaWMI+4YJlevdDd2ZyWLBRc6rKY2Wwvl0idw9sugDAv3VY/1Fpo9afahtLIiHxSi7i9pjFpWeio2QDhG70VD19Kp8iVWbzct1FwpMMnj1Slu6PBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718177317; c=relaxed/simple;
-	bh=elCf9kKn2ETE+UiRgFAAbp7wIr9yvy1SWWySaTDrTbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uBgdyq+AhO4BKvEWux14rBMLfXjVBhNxHVR9k+JAMxCEn2hntWL/64yCHFLzJi/Mh1vJI7qz8rwiEx+BK8CxQJU8zsjwPG2jYyJykspetibNx+Ic6226r5BEGvQoWOguUuUdxhxSJc2Wz0BaWNTPDAnKbp/VH4vjSx23oWGGnnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cOG7zdUf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718177314;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cQ2raOj2lYJDf1Kvgmr3Fk7V0QekFROmWcOO8IPa5ao=;
-	b=cOG7zdUf6GW+n/DEP3Pbi9EdRB2ba6BYBlOH0/7H2H9ZSdHaiznVnPM9KMKZxG5KwjsmPK
-	WZsQx1jlWelWxuoqyy7HTs3yu3Bex/Pf0XQbBEpA1SwECD6dMeIBjYRCYYFnX/7muVVrJV
-	qVVT6fnTbubnT7I5ssPkVyQIw1HJS7A=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-675-gGb709RIM8GA_otIo53NDg-1; Wed, 12 Jun 2024 03:28:32 -0400
-X-MC-Unique: gGb709RIM8GA_otIo53NDg-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52c8126f372so1513700e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 00:28:32 -0700 (PDT)
+	s=arc-20240116; t=1718177455; c=relaxed/simple;
+	bh=agPMNzLdSO0SU0PfpyNTXaVlt30ktrN5sKjcpxAHw0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TznQNl9gbShhcHMoruh/zYP2ISSeBR507sitPKU2RamtxALkkJmC4w1REyFFODwr9o/A476EYPQMA0MxXznmG5w4YXcdCpEtxUK41G5fhpkRKoSSyr8v4QTN1nwA4B0xKVCmX/WuwseRm8GBOd6A7YkND3nVX7QcwQIyO2jnb5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GcpDHefw; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso1111967a12.1;
+        Wed, 12 Jun 2024 00:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718177451; x=1718782251; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JX3oJ82eNeO5bizIMhHP+nlMW1vS5qyRXC4dQHMZXzQ=;
+        b=GcpDHefwV5P9Fdk+n/Bg/5UlnvLqmIArqDbLsVcPKOlodPI8cC9YmFLubkXIfEWPOZ
+         G9Wk+Vcv5ytu1l2mEYFFO5PDygPZQIPrgOatYpx99y4RAxD/m29l+GI6FktiFR3SfDt8
+         j4xZ79hpImiIEqDJswZjlkpNlYAS39TUOuk86SrqMfbojnWNIe190u1+TFCKYsI2M6QB
+         j2PfLjIrGeLjfnzui+SKnAOnUx+XNlNrMOQe3+dARiWUauVWlwdgjt3mplg54ZIz9nOd
+         bKxLkbKb813FjvwMBQVFuutKPQBODF2gxx1pYEgUPlijt0c8CeU6xTNwpmT9QlwoTpno
+         p41A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718177311; x=1718782111;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cQ2raOj2lYJDf1Kvgmr3Fk7V0QekFROmWcOO8IPa5ao=;
-        b=FIoF+t9p753iwQItlO3O4/16B8KNDmjGbA/enZ6mM4ecPY6gdKeuU9ADJ4iXjTrg3u
-         tf7c+sF954ZXgmIWUb2LLxPK/EZHfoDhzSb5tprcMZM0ALds4i41HVqDdVOAKNSNBY4r
-         Ew6JoVj6sxCTctkHxBIda7UYww6mYalkOQ5TsBy5KAq1bRZDjygF8H8tyfczMmvDlt8Q
-         SbxIfuuo61BH6XkPfdne979tpYHutYRvMaTXn/92tIM+XqaJ2EXxocCDVqPBh5Ns1jve
-         W/iEs0BxlKgWxNrL6YfaGlTjrGF5MIQ4XGk59xHeXaywlaj7pU7qnOaNa0C6/HUS+3MV
-         FUcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYiUyshrI/llGiZAuZ+RWN913blGOjvr9JGNUzjsFhdO4h/MowR8YcfygUOG+oeLV8WA0RiCwANkbAJ8syiLfOSu1S8pmOLE+o5/pv
-X-Gm-Message-State: AOJu0YzhxlhgF4T7bmSlHapY3cUZWQD4JOW7wzEFWkAdNENU2lf0KqIP
-	T5FdPcRVnMRklMRrfi6OzVtKjKwbxfyhKofQdt2OGFHVAmqVKXx6odCrAWO35fZBRprVfCLGsB+
-	hnJPkWUV8lztoAhsYxqErSrsFhbg9526RTghhUQWy+DySjm7vdcyN6NNTJVUIAw==
-X-Received: by 2002:a05:6512:110e:b0:52c:9252:f822 with SMTP id 2adb3069b0e04-52c9a3fd6e8mr635246e87.53.1718177311231;
-        Wed, 12 Jun 2024 00:28:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGI2onEb6+vPmlh3Kjp9S+ApeDjbEa7aftaSwNLLRcEo6PnojYxAp/bLpzCTrag3fgd5xyDCw==
-X-Received: by 2002:a05:6512:110e:b0:52c:9252:f822 with SMTP id 2adb3069b0e04-52c9a3fd6e8mr635218e87.53.1718177310798;
-        Wed, 12 Jun 2024 00:28:30 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c702:bf00:abf6:cc3a:24d6:fa55? (p200300cbc702bf00abf6cc3a24d6fa55.dip0.t-ipconnect.de. [2003:cb:c702:bf00:abf6:cc3a:24d6:fa55])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1a7c663asm10448312f8f.115.2024.06.12.00.28.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 00:28:30 -0700 (PDT)
-Message-ID: <dafe3a34-3223-48ab-a9ae-cd20436cbda5@redhat.com>
-Date: Wed, 12 Jun 2024 09:28:29 +0200
+        d=1e100.net; s=20230601; t=1718177451; x=1718782251;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JX3oJ82eNeO5bizIMhHP+nlMW1vS5qyRXC4dQHMZXzQ=;
+        b=gWujIN0aJYrjSkyaq9IHett2hNUHTN2t0DaPs8iwZf7RktD+s1WWKnSyOmI0WqXiKE
+         OO8VLaG7t0BvJ+Nc35jAQTK3+3bYN97OE+909Zid0hOqSkQggsWlgP30jQEbQI72DWzg
+         53MXNyceocdZThgvAxv5j9x6hXRJ2MLRWc2ML78VBrFbWIB7F6op79YyhZQjLboWTyy2
+         YoU3LUU9eCXgJCEohBUi6JXBxqr3dnHzhGtnymwzVBPKaAafmPUsa3Trj2mz2H740jFX
+         rzZ4toifvPtITwJgPPhRdd7jIVxRp8IrVcVWsDLzU+cIO5RlzfmYerOqE/izwo+fFvOF
+         2Oow==
+X-Forwarded-Encrypted: i=1; AJvYcCUE4azTsLj2smnuU1SiTGxFItf9N9aKeBVpz2v3+blubVc9FsK9X5To06tmTFHKQGAVZJys7j/f7wrSHzgrg/vh2fO0eiI82COUgaag9oMYBQaa3PhUmoUs6hGewWRXn7hSXMDW6OhjcM3tKYRbBm4jOfVf
+X-Gm-Message-State: AOJu0Yyki771diO3VGsu7i1XrMCvYpDVTbPX7Uimf8Gv9csiy7TMA1ay
+	T++I2oOAfhADmxcW0usr2L/ifhmErn+ikX7/YWfcC72Dsyij7jHL2IrG2fGjRYI=
+X-Google-Smtp-Source: AGHT+IH10d8wKZW7QVcduV/RLxAQsP/7llA3XpbI+F3SWl6OF6LKMYpTn+arhdpnxgG7EWeXdwdKug==
+X-Received: by 2002:a05:6402:791:b0:578:6360:aa11 with SMTP id 4fb4d7f45d1cf-57c90a228admr3208454a12.5.1718177451021;
+        Wed, 12 Jun 2024 00:30:51 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c874e3cb6sm4006384a12.27.2024.06.12.00.30.50
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Jun 2024 00:30:50 -0700 (PDT)
+Date: Wed, 12 Jun 2024 07:30:49 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+	Ross Zwisler <zwisler@google.com>, wklin@google.com,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Mike Rapoport <rppt@kernel.org>
+Subject: Re: [PATCH v2 1/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+Message-ID: <20240612073049.xof3ciae2x5qjp6a@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240606150143.876469296@goodmis.org>
+ <20240606150316.751642266@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] s390/pci: Fix s390_mmio_read/write syscall page
- fault handling
-To: Alex Williamson <alex.williamson@redhat.com>,
- Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Gerd Bayer <gbayer@linux.ibm.com>,
- Matthew Rosato <mjrosato@linux.ibm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Suren Baghdasaryan <surenb@google.com>, linux-s390@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
- <20240529-vfio_pci_mmap-v3-1-cd217d019218@linux.ibm.com>
- <98de56b1ba37f51639b9a2c15a745e19a45961a0.camel@linux.ibm.com>
- <30ecb17b7a3414aeb605c51f003582c7f2cf6444.camel@linux.ibm.com>
- <db10735e74d5a89aed73ad3268e0be40394efc31.camel@linux.ibm.com>
- <ce7b9655-aaeb-4a13-a3ac-bd4a70bbd173@redhat.com>
- <32b515269a31e177779f4d2d4fe2c05660beccc4.camel@linux.ibm.com>
- <89c74380-6a60-4091-ba57-93c75d9a37d7@redhat.com>
- <b38b571b753441314c090c3eb51c49c0e28a19d5.camel@linux.ibm.com>
- <20240611162119.6bc04d61.alex.williamson@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240611162119.6bc04d61.alex.williamson@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606150316.751642266@goodmis.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On 12.06.24 00:21, Alex Williamson wrote:
-> On Tue, 11 Jun 2024 17:37:20 +0200
-> Niklas Schnelle <schnelle@linux.ibm.com> wrote:
+On Thu, Jun 06, 2024 at 11:01:44AM -0400, Steven Rostedt wrote:
+>From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+>
+>In order to allow for requesting a memory region that can be used for
+>things like pstore on multiple machines where the memory layout is not the
+>same, add a new option to the kernel command line called "reserve_mem".
+>
+>The format is:  reserve_mem=nn:align:name
+>
+>Where it will find nn amount of memory at the given alignment of align.
+>The name field is to allow another subsystem to retrieve where the memory
+>was found. For example:
+>
+>  reserve_mem=12M:4096:oops ramoops.mem_name=oops
+>
+>Where ramoops.mem_name will tell ramoops that memory was reserved for it
+>via the reserve_mem option and it can find it by calling:
+>
+>  if (reserve_mem_find_by_name("oops", &start, &size)) {
+>	// start holds the start address and size holds the size given
+>
+>This is typically used for systems that do not wipe the RAM, and this
+>command line will try to reserve the same physical memory on soft reboots.
+>Note, it is not guaranteed to be the same location. For example, if KASLR
+>places the kernel at the location of where the RAM reservation was from a
+>previous boot, the new reservation will be at a different location.  Any
+>subsystem using this feature must add a way to verify that the contents of
+>the physical memory is from a previous boot, as there may be cases where
+>the memory will not be located at the same location.
+>
+>Not all systems may work either. There could be bit flips if the reboot
+>goes through the BIOS. Using kexec to reboot the machine is likely to
+>have better results in such cases.
+>
+>Link: https://lore.kernel.org/all/ZjJVnZUX3NZiGW6q@kernel.org/
+>
+>Suggested-by: Mike Rapoport <rppt@kernel.org>
+>Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+>---
+> .../admin-guide/kernel-parameters.txt         | 20 ++++
+> include/linux/mm.h                            |  2 +
+> mm/memblock.c                                 | 97 +++++++++++++++++++
+> 3 files changed, 119 insertions(+)
+>
+>diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>index b600df82669d..4b2f7fb8de66 100644
+>--- a/Documentation/admin-guide/kernel-parameters.txt
+>+++ b/Documentation/admin-guide/kernel-parameters.txt
+>@@ -5710,6 +5710,26 @@
+> 			them.  If <base> is less than 0x10000, the region
+> 			is assumed to be I/O ports; otherwise it is memory.
 > 
->> On Tue, 2024-06-11 at 17:10 +0200, David Hildenbrand wrote:
->>>>>
->>>>> which checks mmap_assert_write_locked().
->>>>>
->>>>> Setting VMA flags would be racy with the mmap lock in read mode.
->>>>>
->>>>>
->>>>> remap_pfn_range() documents: "this is only safe if the mm semaphore is
->>>>> held when called." which doesn't spell out if it needs to be held in
->>>>> write mode (which I think it does) :)
->>>>
->>>> Logically this makes sense to me. At the same time it looks like
->>>> fixup_user_fault() expects the caller to only hold mmap_read_lock() as
->>>> I do here. In there it even retakes mmap_read_lock(). But then wouldn't
->>>> any fault handling by its nature need to hold the write lock?
->>>
->>> Well, if you're calling remap_pfn_range() right now the expectation is
->>> that we hold it in write mode. :)
->>>
->>> Staring at some random users, they all call it from mmap(), where you
->>> hold the mmap lock in write mode.
->>>
->>>
->>> I wonder why we are not seeing that splat with vfio all of the time?
->>>
->>> That mmap lock check was added "recently". In 1c71222e5f23 we started
->>> using vm_flags_set(). That (including the mmap_assert_write_locked())
->>> check was added via bc292ab00f6c almost 1.5 years ago.
->>>
->>> Maybe vfio is a bit special and was never really run with lockdep?
->>>    
->>>>    
->>>>>
->>>>>
->>>>> My best guess is: if you are using remap_pfn_range() from a fault
->>>>> handler (not during mmap time) you are doing something wrong, that's why
->>>>> you get that report.
->>>>
->>>> @Alex: I guess so far the vfio_pci_mmap_fault() handler is only ever
->>>> triggered by "normal"/"actual" page faults where this isn't a problem?
->>>> Or could it be a problem there too?
->>>>    
->>>
->>> I think we should see it there as well, unless I am missing something.
->>
->> Well good news for me, bad news for everyone else. I just reproduced
->> the same problem on my x86_64 workstation. I "ported over" (hacked it
->> until it compiles) an x86 version of my trivial vfio-pci user-space
->> test code that mmaps() the BAR 0 of an NVMe and MMIO reads the NVMe
->> version field at offset 8. On my x86_64 box this leads to the following
->> splat (still on v6.10-rc1).
+>+	reserve_mem=	[RAM]
+>+			Format: nn[KNG]:<align>:<label>
+>+			Reserve physical memory and label it with a name that
+>+			other subsystems can use to access it. This is typically
+>+			used for systems that do not wipe the RAM, and this command
+>+			line will try to reserve the same physical memory on
+>+			soft reboots. Note, it is not guaranteed to be the same
+>+			location. For example, if KASLR places the kernel at the
+>+			location of where the RAM reservation was from a previous
+>+			boot, the new reservation will be at a different location.
+>+			Any subsystem using this feature must add a way to verify
+>+			that the contents of the physical memory is from a previous
+>+			boot, as there may be cases where the memory will not be
+>+			located at the same location.
+>+
+>+			The format is size:align:label for example, to request
+>+			12 megabytes of 4096 alignment for ramoops:
+>+
+>+			reserver_mem=12M:4096:oops ramoops.mem_name=oops
+>+
+> 	reservetop=	[X86-32,EARLY]
+> 			Format: nn[KMG]
+> 			Reserves a hole at the top of the kernel virtual
+>diff --git a/include/linux/mm.h b/include/linux/mm.h
+>index 9849dfda44d4..b4455cc02f2c 100644
+>--- a/include/linux/mm.h
+>+++ b/include/linux/mm.h
+>@@ -4263,4 +4263,6 @@ static inline bool pfn_is_unaccepted_memory(unsigned long pfn)
+> void vma_pgtable_walk_begin(struct vm_area_struct *vma);
+> void vma_pgtable_walk_end(struct vm_area_struct *vma);
 > 
-> There's already a fix for this queued[1] in my for-linus branch for
-> v6.10.  The problem has indeed existed with lockdep for some time but
-> only with the recent lockdep changes to generate a warning regardless
-> of debug kernel settings has it gone from just sketchy to having a fire
-> under it.  There's still an outstanding question of whether we
-> can/should insert as many pfns as we can during the fault[2] to reduce
-> the new overhead and hopefully at some point we'll have an even cleaner
-> option to use huge_fault for pfnmaps, but currently
-> vmf_insert_pfn_{pmd,pud} don't work with those pfnmaps.
+>+int reserve_mem_find_by_name(const char *name, unsigned long *start, unsigned long *size);
+>+
+> #endif /* _LINUX_MM_H */
+>diff --git a/mm/memblock.c b/mm/memblock.c
+>index d09136e040d3..a8bf0ee9e2b4 100644
+>--- a/mm/memblock.c
+>+++ b/mm/memblock.c
+>@@ -2244,6 +2244,103 @@ void __init memblock_free_all(void)
+> 	totalram_pages_add(pages);
+> }
 > 
-> So hopefully this problem disappears on current linux-next, but let me
-> know if there's still an issue.  Thanks,
+>+/* Keep a table to reserve named memory */
+>+#define RESERVE_MEM_MAX_ENTRIES		8
+>+#define RESERVE_MEM_NAME_SIZE		16
+>+struct reserve_mem_table {
+>+	char			name[RESERVE_MEM_NAME_SIZE];
+>+	unsigned long		start;
+>+	unsigned long		size;
+>+};
+>+static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRIES];
+>+static int reserved_mem_count;
+>+
+>+/* Add wildcard region with a lookup name */
+>+static int __init reserved_mem_add(unsigned long start, unsigned long size,
+>+				   const char *name)
+>+{
+>+	struct reserve_mem_table *map;
+>+
+>+	if (!name || !name[0] || strlen(name) >= RESERVE_MEM_NAME_SIZE)
+>+		return -EINVAL;
+>+
+>+	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
+>+		return -1;
 
-I see us now using vmf_insert_pfn(), which should be the right thing to 
-do. So I suspect this problem should be disappearing.
+Another thing come to my mind: could we specify several reserve_mem on the
+command line?
+
+If so, we may need to check whether names conflict.
+
+>+
+>+	map = &reserved_mem_table[reserved_mem_count++];
+>+	map->start = start;
+>+	map->size = size;
+>+	strscpy(map->name, name);
+>+	return 0;
+>+}
+>+
+>+/**
+>+ * reserve_mem_find_by_name - Find reserved memory region with a given name
+>+ * @name: The name that is attached to a reserved memory region
+>+ * @start: If found, holds the start address
+>+ * @size: If found, holds the size of the address.
+>+ *
+>+ * Returns: 1 if found or 0 if not found.
+>+ */
+>+int reserve_mem_find_by_name(const char *name, unsigned long *start, unsigned long *size)
+>+{
+>+	struct reserve_mem_table *map;
+>+	int i;
+>+
+>+	for (i = 0; i < reserved_mem_count; i++) {
+>+		map = &reserved_mem_table[i];
+>+		if (!map->size)
+>+			continue;
+>+		if (strcmp(name, map->name) == 0) {
+>+			*start = map->start;
+>+			*size = map->size;
+>+			return 1;
+>+		}
+>+	}
+>+	return 0;
+>+}
+>+
+>+/*
+>+ * Parse early_reserve_mem=nn:align:name
+>+ */
+>+static int __init reserve_mem(char *p)
+>+{
+>+	phys_addr_t start, size, align;
+>+	char *oldp;
+>+	int err;
+>+
+>+	if (!p)
+>+		return -EINVAL;
+>+
+>+	oldp = p;
+>+	size = memparse(p, &p);
+>+	if (p == oldp)
+>+		return -EINVAL;
+>+
+>+	if (*p != ':')
+>+		return -EINVAL;
+>+
+>+	align = memparse(p+1, &p);
+>+	if (*p != ':')
+>+		return -EINVAL;
+>+
+>+	start = memblock_phys_alloc(size, align);
+>+	if (!start)
+>+		return -ENOMEM;
+>+
+>+	p++;
+>+	err = reserved_mem_add(start, size, p);
+>+	if (err) {
+>+		memblock_phys_free(start, size);
+>+		return err;
+>+	}
+>+
+>+	p += strlen(p);
+>+
+>+	return *p == '\0' ? 0: -EINVAL;
+>+}
+>+__setup("reserve_mem=", reserve_mem);
+>+
+> #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
+> static const char * const flagname[] = {
+> 	[ilog2(MEMBLOCK_HOTPLUG)] = "HOTPLUG",
+>-- 
+>2.43.0
+>
+>
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Wei Yang
+Help you, Help me
 
