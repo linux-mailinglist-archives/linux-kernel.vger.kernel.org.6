@@ -1,194 +1,162 @@
-Return-Path: <linux-kernel+bounces-211684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96CA905556
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:39:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134C490555D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DC84284010
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:39:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76ACDB21D47
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CC917E8F9;
-	Wed, 12 Jun 2024 14:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95F117E8E8;
+	Wed, 12 Jun 2024 14:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H9ZYcwD/"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wJr6F2t1"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9817DE39
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC6417DE34;
+	Wed, 12 Jun 2024 14:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718203159; cv=none; b=mG+Zl2tHzu3p9FaYuIfK/nE/BhLVK/UqoFmFN0hLur4o1hV6scTDlxQx6tMWIqeRSaM+TVTzGUzcFgKPBMhAI8R/2nJ7jMgeYnAgeqP3hbQu1nWS3gyOYEhWuu/3h0LXRhmeLhV+qeMRoHoJ0ax2CmMRRLfESKhCxiQUExcSkDY=
+	t=1718203222; cv=none; b=mhktHb2FWOMOfSJnejFrozJzMW06Uh1ip3HGcQwiRvWx3MQg3I7iQePdX8TqAhHK1UApIZgqVkHVFeR6YhP9MxUrQqvjeSp/ueVEr2N7/kQ31awbxZUwou9wT53BwHVEE6TiWbKPJiZ+htsgbzobUPykuGNifZUBJAN+ObATzTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718203159; c=relaxed/simple;
-	bh=k7T4B0Thfp0UyTe4JzEOApM5BqV9p4UeUFs9C1mTxKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RMf4VdpM0Lu1/3faEGwt+osFKT3Bbhgprx5KgbifSwfWGUPF8jXTRreUPbaT0yGx8saQaqink4wIuQFNn1tx+KvvKmQjlBzon1/cDF8sJi8s3kD5kW4Vbo8N60xJaywl71CWN6pWJShDRQqtHQb/ZLzffn8Vrv5yQe6WzNPAFE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=H9ZYcwD/; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6f9611fc320so2505193a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:39:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718203155; x=1718807955; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UY8FyGhFzNz8kU02mOEKGYBexw/0qw3Ur3irWH55yC0=;
-        b=H9ZYcwD/rv70qFE2Pl5/FWEQwUviLjyASruJKNdG3fVcatgmWxJhRTOpEDTiRGbb1m
-         9Yvn+x3IIE9QiNen6XAq91KWNN3b8tmDTxJZqlVkz2ifPgorZhvqejckcfgobc3axwTs
-         8cG5p9CFTsz7KGRKGbVnSJhuUmCoOu7uZdH6M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718203155; x=1718807955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UY8FyGhFzNz8kU02mOEKGYBexw/0qw3Ur3irWH55yC0=;
-        b=hwCYeFmbpGhFV2R6+sVVq/mKt/mnapf9c0sHxb83u5wDCcAxhm6NWYtsMDwGridnf0
-         QMNcVuUUKmvjp+ANxm7gE18QB1ELEVvgfp5gqAmAzlc4xVofMg0iplaMtfZkxAQ91yN8
-         gmVMfYEf4hVChWJYhSEin1bW+BIQcDBNHTG5O4o4YEcOFjcYGfhbSfr0YAaqhMCYbK0S
-         LcH2H+yJdkeseXD3h6F0SMnV7EX65CSz4vOKRppg6NMdPjYcgSPuyKvvWZX4a9x2cauV
-         TuJVRFxlNLMY2IdG6PtqlR1KMbtT4KuM5mHu0kunCUg9vhzx8TJLX5MpHzyt0l3w/vJF
-         GHbg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6PyXSbDH1F7cln3A2Wb+xowmAD3/SXNdMlP3jBAVOKugxxAEl5Xx9otWT+2RDFlvLW6NwYBA+8wBH6L6gif4xaQl7eZYaob7f+YhU
-X-Gm-Message-State: AOJu0YzDTiAL4WbM0KOAigUxgV7OJSbbO5/8/GJl0ofV816VXCLksYu1
-	VFA53y7S+lwquddo/IHWTd//fPTLGuzjXb103E3Np6RPJ7fNeBMRC7EzuOB9aQhbw5QuiOI5a+Q
-	=
-X-Google-Smtp-Source: AGHT+IEYcBz0cmV8miYzCMMRWkiXGptEYENyYuf5+zfMi/IsI/g0dQBg68DL12Kga97X8qMrmls5Eg==
-X-Received: by 2002:a9d:6b0c:0:b0:6f9:64f1:5b14 with SMTP id 46e09a7af769-6fa1c222cb2mr2221853a34.27.1718203155364;
-        Wed, 12 Jun 2024 07:39:15 -0700 (PDT)
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com. [209.85.160.169])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7955a737829sm364260285a.51.2024.06.12.07.39.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 07:39:14 -0700 (PDT)
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4405cf01a7fso339221cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:39:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV05XgUvFPYmbNv4GBBnSjydN9PoVHWEc07v/tlfS6Jgml2+e40VIykcfT8CEpvk/5fFARyeiXtJDBASdyyDCWYc1TZRkwQJutv55Vz
-X-Received: by 2002:a05:622a:998:b0:43f:bba6:3759 with SMTP id
- d75a77b69052e-44158bc6537mr4241291cf.10.1718203153602; Wed, 12 Jun 2024
- 07:39:13 -0700 (PDT)
+	s=arc-20240116; t=1718203222; c=relaxed/simple;
+	bh=JPNJmCvj0/G+NJcBj5UdicW55buFti9R+yrbgiH8D/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tnNnveT+r/uXbhAuhIWR85d1tsc+mQNbxb6UBLz/t4T+oeU6bQ2Nr0BjR9VbnZWuCmdDLUmdwkJR8lAoioU1gM6ZP2iM92EwR7X/ka0EdZwam/0sSQqgEfxOsrL8FaHMBsFwS/19KcQv0y/eHE6J0tL0HpkIsCxWYbFi521ACAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wJr6F2t1; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A5B3429A;
+	Wed, 12 Jun 2024 16:40:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718203203;
+	bh=JPNJmCvj0/G+NJcBj5UdicW55buFti9R+yrbgiH8D/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wJr6F2t1UjHrDJkj3IdB3qb/VJJ0SPbrJzZgNOlR7UYyN+KaFEjudY0ky6g7V/sKc
+	 W7Yz4gnJBJ0ewejY8zhIvZbdFPYKbzORCZKgE2QR6vgtnjiHWSVwQUmNkQ2Xw3uZjq
+	 m6TewdaS51KybIlwpVY/HMSL5ul3wqQgtg0Unjm0=
+Date: Wed, 12 Jun 2024 17:39:56 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org,
+	mchehab@kernel.org, hverkuil-cisco@xs4all.nl, wentong.wu@intel.com,
+	linux-media@vger.kernel.org, linux-acpi@vger.kernel.org,
+	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
+Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port
+ nodes
+Message-ID: <20240612143956.GN28989@pendragon.ideasonboard.com>
+References: <a05df025-a0be-49cd-84a9-7d7fb2eeb33e@redhat.com>
+ <e9062095-b312-44df-a9e3-0b09f3ec9eff@redhat.com>
+ <4b387b4d-f778-4891-9f07-df5fc0a093cd@redhat.com>
+ <ZmmQLt7wB-yGQBTw@kekkonen.localdomain>
+ <CAJZ5v0ii3WFQRPdfHeeW4M9kXSWDVxxxy02zThcf25mjNwqDAw@mail.gmail.com>
+ <ZmmT56Cyvb2FCyav@kekkonen.localdomain>
+ <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
+ <ZmmY3he9vfWVWU3I@kekkonen.localdomain>
+ <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
+ <18cb82bb-51c6-4a52-80a4-6b1e3d95f99c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611074846.1.Ieb287c2c3ee3f6d3b0d5f49b29f746b93621749c@changeid>
- <20240612-garnet-condor-from-saturn-1c51bb@houat>
-In-Reply-To: <20240612-garnet-condor-from-saturn-1c51bb@houat>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 12 Jun 2024 07:39:01 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Xpu0-_kEvRWy9w8ypjo7pF7tsFWxHfhMZ=YjHugTqG1w@mail.gmail.com>
-Message-ID: <CAD=FV=Xpu0-_kEvRWy9w8ypjo7pF7tsFWxHfhMZ=YjHugTqG1w@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: Avoid warnings w/ panel-simple/panel-edp at shutdown
-To: Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Yuran Pereira <yuran.pereira@hotmail.com>, Chris Morgan <macromorgan@hotmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <18cb82bb-51c6-4a52-80a4-6b1e3d95f99c@redhat.com>
 
-Hi,
+On Wed, Jun 12, 2024 at 04:30:30PM +0200, Hans de Goede wrote:
+> On 6/12/24 3:06 PM, Rafael J. Wysocki wrote:
+> > On Wed, Jun 12, 2024 at 2:47 PM Sakari Ailus wrote:
+> >> On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysocki wrote:
+> >>>>>>> I just hit the same problem on another Dell laptop. It seems that
+> >>>>>>> all Dell laptops with IPU6 camera from the Tiger Lake, Alder Lake
+> >>>>>>> and Raptor Lake generations suffer from this problem.
+> >>>>>>>
+> >>>>>>> So instead of playing whack a mole with DMI matches we should
+> >>>>>>> simply disable ACPI MIPI DISCO support on all Dell laptops
+> >>>>>>> with those CPUs. I'm preparing a fix for this to replace
+> >>>>>>> the DMI matching now.
+> >>>>>>
+> >>>>>> DisCo for Imaging support shouldn't be dropped on these systems, and this
+> >>>>>> isn't what your patch does either. Instead the ACPI graph port nodes (as
+> >>>>>> per Linux specific definitions) are simply dropped, i.e. this isn't related
+> >>>>>> to DisCo for Imaging at all.
+> >>>>>
+> >>>>> So it looks like the changelog of that patch could be improved, right?
+> >>>>
+> >>>> Well, yes. The reason the function is in the file is that nearly all camera
+> >>>> related parsing is located there, not that it would be related to DisCo for
+> >>>> Imaging as such.
+> >>>
+> >>> So IIUC the camera graph port nodes are created by default with the
+> >>> help of the firmware-supplied information, but if that is defective a
+> >>> quirk can be added to skip the creation of those ports in which case
+> >>> they will be created elsewhere.
+> >>>
+> >>> Is this correct?
+> >>
+> >> Yes.
+> > 
+> > So it would be good to add a comment to this effect to
+> > acpi_nondev_subnode_extract() where acpi_graph_ignore_port() is
+> > called.
+> > 
+> > And there is a somewhat tangential question that occurred to me: If
+> > the nodes are created elsewhere when acpi_graph_ignore_port() is true,
+> > why is it necessary to consult the platform firmware for the
+> > information on them at all?  Wouldn't it be better to simply always
+> > create them elsewhere?
+> 
+> That is a good question. The ACPI MIPI DISCO specification is an
+> attempt standardize how MIPI cameras and their sensors are described
+> in ACPI.
+> 
+> But this is not actually being used by any Windows drivers atm. The windows
+> drivers rely on their own custom ACPI data which gets translated into
+> standard Linux device-properties by: drivers/media/pci/intel/ipu-bridge.c 
+> 
+> and so far AFAIK there are 0 laptops where there actually is 100% functional
+> ACPI MIPI information. I believe that some work is in place to get correct
+> usable ACPI MIPI information in place in the ACPI tables of some Meteor Lake
+> laptops. But I believe that there too it does not work yet with the BIOS
+> version with which current Windows models are shipping. It is being fixed
+> for systems which have Linux support from the vendor but I suspect that
 
-On Wed, Jun 12, 2024 at 1:09=E2=80=AFAM Maxime Ripard <mripard@kernel.org> =
-wrote:
->
-> Hi,
->
-> On Tue, Jun 11, 2024 at 07:48:51AM GMT, Douglas Anderson wrote:
-> > At shutdown if you've got a _properly_ coded DRM modeset driver then
-> > you'll get these two warnings at shutdown time:
-> >
-> >   Skipping disable of already disabled panel
-> >   Skipping unprepare of already unprepared panel
-> >
-> > These warnings are ugly and sound concerning, but they're actually a
-> > sign of a properly working system. That's not great.
-> >
-> > It's not easy to get rid of these warnings. Until we know that all DRM
-> > modeset drivers used with panel-simple and panel-edp are properly
-> > calling drm_atomic_helper_shutdown() or drm_helper_force_disable_all()
-> > then the panel drivers _need_ to disable/unprepare themselves in order
-> > to power off the panel cleanly. However, there are lots of DRM modeset
-> > drivers used with panel-edp and panel-simple and it's hard to know
-> > when we've got them all. Since the warning happens only on the drivers
-> > that _are_ updated there's nothing to encourage broken DRM modeset
-> > drivers to get fixed.
-> >
-> > In order to flip the warning to the proper place, we need to know
-> > which modeset drivers are going to shutdown properly. Though ugly, do
-> > this by creating a list of everyone that shuts down properly. This
-> > allows us to generate a warning for the correct case and also lets us
-> > get rid of the warning for drivers that are shutting down properly.
-> >
-> > Maintaining this list is ugly, but the idea is that it's only short
-> > term. Once everyone is converted we can delete the list and call it
-> > done. The list is ugly enough and adding to it is annoying enough that
-> > people should push to make this happen.
-> >
-> > Implement this all in a shared "header" file included by the two panel
-> > drivers that need it. This avoids us adding an new exports while still
-> > allowing the panel drivers to be modules. The code waste should be
-> > small and, as per above, the whole solution is temporary.
-> >
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> > I came up with this idea to help us move forward since otherwise I
-> > couldn't see how we were ever going to fix panel-simple and panel-edp
-> > since they're used by so many DRM Modeset drivers. It's a bit ugly but
-> > I don't hate it. What do others think?
->
-> I don't think it's the right approach, even more so since we're so close
-> now to having it in every driver.
->
-> I ran the coccinelle script we started with, and here are the results:
->
-> ./drivers/gpu/drm/vmwgfx/vmwgfx_drv.c:1640:25-39: ERROR: KMS driver vmw_p=
-ci_driver is missing shutdown implementation
-> ./drivers/gpu/drm/kmb/kmb_drv.c:621:30-49: ERROR: KMS driver kmb_platform=
-_driver is missing shutdown implementation
-> ./drivers/gpu/drm/tiny/arcpgu.c:422:30-52: ERROR: KMS driver arcpgu_platf=
-orm_driver is missing shutdown implementation
+I think it's shipped in Chrome Books. Sakari can confirm.
 
-Sure, although I think we agreed even back when we talked about this
-last that your coccinelle script wasn't guaranteed to catch every
-driver. ...so I guess the question is: are we willing to accept that
-we'll stop disabling panels at shutdown for any drivers that might
-were missed. For instance, looking at it by hand (which also could
-miss things), I previously thought that we also might need:
+> on other models if ACPI MIPI DISCO information is there it will not
+> necessarily be reliable because AFAICT Windows does not actually use it.
+> 
+> And TBH this has me worried about camera support for Meteor Lake devices
+> going forward. We really need to have 1 reliable source of truth here and
+> using information which is ignored by Windows does not seem like the best
+> source to use.
 
-* nouveau
-* tegra
-* amdgpu
-* sprd
-* gma500
-* radeon
+As long as the Windows drivers don't use the ACPI data that Linux uses,
+you can be 100% sure it will be wrong. That will never be fixed if Intel
+doesn't address the issue on their side, and effort we would put in
+standardizing that data for machines shipped by Windows OEMs is a waste
+of time in my opinion. Our only option, given Intel's failure, is to
+keep reverse-engineering camera support per machine for the time being
+(sometimes with the help of OEMs).
 
-I sent patches for those drivers but they don't go through drm-misc
-and some of the drivers had a lot of abstraction layers and were hard
-to reason about. I'm also not 100% confident that all of those drivers
-really are affected--they'd have to be used with panel-simple or
-panel-edp...
+> Sakari I know you have been pushing for MIPI camera descriptions under
+> ACPI to move to a standardized format and I can see how that is a good
+> thing, but atm it seems to mainly cause things to break and before
+> the ACPI MIPI DISCO support landed in 6.8 we did not have these issues,
+> since the information used by the ipu-bridge code does seem to be correct.
 
-In any case, having some sort of warning that would give us a
-definitive answer would be nice. My proposed patch would give us that
-warning. I could even jump to a WARN_ON right from the start.
+-- 
+Regards,
 
-My proposed patch is self-admittedly super ugly and is also designed
-to be temporary, so I don't think of this as giving up right before
-crossing the finish line but instead accepting a tiny bit of temporary
-ugliness to make sure that we don't accidentally regress anyone. I
-would really hope it would be obvious to anyone writing / reviewing
-drivers that the function I introduced isn't intended for anyone but
-panel-simple and panel-edp.
-
--Doug
+Laurent Pinchart
 
