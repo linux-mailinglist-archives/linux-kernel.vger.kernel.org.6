@@ -1,257 +1,162 @@
-Return-Path: <linux-kernel+bounces-212339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 231D8905EC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:52:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4FD905ED8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72228B21A5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:52:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B972B24815
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC9A12C801;
-	Wed, 12 Jun 2024 22:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A168D12EBCE;
+	Wed, 12 Jun 2024 22:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gRPsHtDf"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FpQmQoWI"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB7612BF3E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718232743; cv=none; b=o8knwf5UqpYUALzIA+ISNbscV88mRY3BSwpImGz4gsSfw6h5UCifMLOXX1N+D3i61bjH+TCaGKmOTK8aOyXAgSDrCzNSs/3VraeCsmo0o6bskUe/xaj8/rSZecSdAIkTtf4ieq6rQgXB/7VcPla2u7vDuKeRT2fEXZ86LnwklKg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718232743; c=relaxed/simple;
-	bh=9PhuIo3IyQcw4P814d2ZMnmgCFWhfOyk4PBN98JGULk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LePo/HeZ2/X/qVJBXnb9vP5mfwOrZBwZfK//K0lJnf45MNpf1Ndgmi+dVIctR964IxDW96Q8vtgEqG/ydlXzh7p8ezZihYuyPbM7PrtCUo91Oc7noI2nm++Dku06tYBocLgk4edU6aLFD09pvAIzxpPlLd9kUPaqjKiZ+Z4Czp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gRPsHtDf; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c24109ad3fso271109a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:52:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718232740; x=1718837540; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qIMdKxazuAYEMA3ljsiIyftbOZIGg9iFuuIIcdrawL4=;
-        b=gRPsHtDfrTBjQEBqcQ1gFhMBD6QElhzLJRL5nfJ1bhGAcXrtbzJFd8fETBP+NCoD2B
-         cHKeO3xW8m7natSTX7GkDXf8dfZArO8Zwulw9axQ5aMSYx7jNmdBCdCRsIPwwAgLM+af
-         s+es2dmYhvZ+PIlVH579GX+JC5unx+YUq17V4ybR9DgDQo3cL/r0vtJH8UHI+UMGiHbl
-         kLK92MT1adTxKU1sxAeszcDsj9pLg1968Z6CdBIegZ+0GbVYvhT5dgDH91LCpRAesKpj
-         Vz6auP8qaa80nHKGmKLh73DsFhNN9OGo/si1QJmLSo8LWUw2FMxlGLozw9bvOnobufji
-         HYjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718232740; x=1718837540;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qIMdKxazuAYEMA3ljsiIyftbOZIGg9iFuuIIcdrawL4=;
-        b=lidg0cX9vhCOSH9Xkzhb28UmK0YTkwaJFKjPdbLS3ONo8v6eR21uSq/z1hpNUttAwF
-         2KMGOD/32hkfkYcRaFXYplNRH6Meq5q4tdilB1RKksKL8ORoIqzds3srieh02QQofxM+
-         obZf8pkwIYn4c7lqGz+nH/PERXeXAqAc1HWPaRGPxxatwqoHb1eP5vwgpFCvwoEpKY90
-         zofOkc4Q7c+ef/c1z9OUQ8cqTGFxZHV/EltIlSn9RwWU3I0BioNZNaO7kJoISf2T9f40
-         xZW/GnNdCjDjunZmK/diUUENYBYDwy/u/owuL8b0bleAoL3fCqazZW6XjiZG8Lypwmsw
-         Z+oA==
-X-Gm-Message-State: AOJu0Yy+Q+0/p8KBcr+J6OcuUmAOQ4UF6IEvQSIegSJG77twKG2D1lCw
-	qrgjnY91WNd41te/a3FcSOcUVSn+9/qQJqvoEWw3orZbt+KxnxxlSRlwSUNbSLk9y0y0v1aAcoZ
-	d1w==
-X-Google-Smtp-Source: AGHT+IGCAHPANQ/LEowM3vH0tyHfCNdFfhePy3s7fIN6woZGNNV+qREcLXSH6cGMz5j2YasglzwODR04zqY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:fb4a:b0:2c2:dffd:1d9e with SMTP id
- 98e67ed59e1d1-2c4a7606ed2mr8825a91.1.1718232740203; Wed, 12 Jun 2024 15:52:20
- -0700 (PDT)
-Date: Wed, 12 Jun 2024 15:52:18 -0700
-In-Reply-To: <20240207172646.3981-13-xin3.li@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2995712C819;
+	Wed, 12 Jun 2024 22:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718232792; cv=fail; b=U7ChgTKv2K4l1CbzDMQ5FCTxszQ0Bf9UjkOuov842XVpNBgKYlGoBdQr/N1rsGvrXdHFzWwgooBG/MLFvRPmYVUiGv7fOwc/MycbRu6kEMxJ179qSFU7pPxGSojrEOXbQXuYCgCKN9xkRqWQft/K4mj5WKdq8GxCyXHUqqK6E0A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718232792; c=relaxed/simple;
+	bh=A/Iek4gFA+rcS8Aoqs5GHU5+D/iMxWfsBHGnKE0IkYI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hCpaxJZEsf/Z5hSAANB5HDj1tyX3x28bRKZXeogGVge2VxFB79kmw4c0AIeFyNp3XzFSV2csmdJ0jvVYQ5hQcjdB9aIiSRNnMpqFq0zuuWzTK08aH1c+gpTkc1Whj9LjUZbiQCmK8efmer5Bp5n3CVZwtyQQO9huMUr4DfWET3o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FpQmQoWI; arc=fail smtp.client-ip=40.107.220.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VPoghjDqLmQxYgiOCn0wCzUpnX+8Xh3HNl1aMwtNj4vDl/aTox8al9oeMvHAgvER6kngQkYCVhwSGJkj6KXzAjefX9DVLUMHaEpZkbsGzsWU+cKLQEC76g/PJTBoYM409wpL4mNHGn1ubsYFRiRtNwcWoo5nW5sU4kUityk3JBAW1+q9rJtZ39nakWOHv/Jyr2sD1P/6KfmEvSPRvMtzOt+uUJ+cZIiTii6OPklvph8U1pZvpRTLY912cheO8P3rx0tH+igNabYng+Z0BcsVeHxvrceHumWr/rvUKSwVXqJCNFf7on9DdPGPLMMIKTbRT87Ms8BAwYt2nSr++HCRhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Kt30IILtiYed2iAPiRAUsTceMFu2f0FsHgPn5DBBUlU=;
+ b=BxInusXlfHuZj71Ew5L8KcUbdGI2tLcUvR2r4UyBEDQOweth7zbnJzUMkVLpewljvQi4NV+rN/etJQDYwAUCHWuCAvdxENGf5Quu1PjjRYVoVRjbZNVTKQeUZOCE+TCKFuP1saSjdTqlSvf2l13DZSbWq5QAHmvpPPkPkFbIp0cvi0CwIqPvs8Tr8DA/OA2ZhA7wDOqS8jM7m1XVY3oA/MoWBIAJO6jVwBttULLXyEAuLk9Lzm/v5ZO8UG3Rjn82DI5OS/1fJ0Z77bUjBgRAumvLybkNjw1Xqkq/DpmUoYzAkXcXr4d0OZ2BuqXH3pkbWvX+LyouBvPWdJeinxWO8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kt30IILtiYed2iAPiRAUsTceMFu2f0FsHgPn5DBBUlU=;
+ b=FpQmQoWIXHrhXpG5Fdepba9Da2zv36cxe2TT55nCld/BKmtNAE7fIAEb/yE9rW3v2cJZ2q3XU18yeq6UktGs0akV9WuVCUMiCtXOnG1Do9PqDyasmO9Z3uQ7z7ijDya585Tze8lqST05YoPC/tx2E9s6JJxMq8JT1L7B68D498nO++YC244wXylrvw7K54AcTsNPuR86XNnBGYNex4urAAExHmwtxjskBgW3eW+5JWCn6yQ1rzuYgFHWcZd4Om2u3f3aCoip4F+qYDbzoH/bwWrlex/97D9N4hinMBA2LSX4u93slCIBnt1PQV6n6/DOcQkdqEMFT3AONX7HvTmKYQ==
+Received: from BLAP220CA0019.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:32c::24)
+ by MN0PR12MB6199.namprd12.prod.outlook.com (2603:10b6:208:3c4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Wed, 12 Jun
+ 2024 22:53:07 +0000
+Received: from BL02EPF00021F6C.namprd02.prod.outlook.com
+ (2603:10b6:208:32c:cafe::fa) by BLAP220CA0019.outlook.office365.com
+ (2603:10b6:208:32c::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.21 via Frontend
+ Transport; Wed, 12 Jun 2024 22:53:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL02EPF00021F6C.mail.protection.outlook.com (10.167.249.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.15 via Frontend Transport; Wed, 12 Jun 2024 22:53:07 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 12 Jun
+ 2024 15:52:46 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 12 Jun 2024 15:52:45 -0700
+Received: from vdi.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 12 Jun 2024 15:52:44 -0700
+From: Liming Sun <limings@nvidia.com>
+To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>, David Thompson <davthompson@nvidia.com>
+CC: Liming Sun <limings@nvidia.com>, <linux-mmc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 0/2] eMMC RST_N support on BlueField-2 SoC
+Date: Wed, 12 Jun 2024 18:52:36 -0400
+Message-ID: <cover.1718213918.git.limings@nvidia.com>
+X-Mailer: git-send-email 2.30.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-13-xin3.li@intel.com>
-Message-ID: <Zmomoj-PngmXHlxQ@google.com>
-Subject: Re: [PATCH v2 12/25] KVM: VMX: Handle FRED event data
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin3.li@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	shuah@kernel.org, vkuznets@redhat.com, peterz@infradead.org, 
-	ravi.v.shankar@intel.com, xin@zytor.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6C:EE_|MN0PR12MB6199:EE_
+X-MS-Office365-Filtering-Correlation-Id: f91033a4-6645-41f5-c017-08dc8b326d2f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230034|376008|1800799018|82310400020|36860700007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5lMXmezcBHjQopucXYbUyP8M3PpLmbYqmJgPQddAdvhUHsdiynAIDxym93JD?=
+ =?us-ascii?Q?IIwYU/NveGZG5q/aq38qs0LRKfAZSV3zzs+PlOgjeQnuf44UkcA/7Nx+afqr?=
+ =?us-ascii?Q?N1aDageDDe7WAepdvbgzTP+QhSmVJYmUQSLhR0HE8/cgxV+Pdx1UzPSidLAG?=
+ =?us-ascii?Q?X3dmgCVRPZ7Cr1cdhwS2MpT/uHCh+je9tQFCxjpr05fKy51gAp3wdAmAOIl5?=
+ =?us-ascii?Q?GqqLq8JER+Wd6nWz/QJezx+ahOrMmefw89u9DepTZumZIRo5U32NzBZ2MQbD?=
+ =?us-ascii?Q?SfczFZG6a0OINAtXJfMBbRkojiU+iFA3ld1kO/zdAFb+dJN+cecxaygXld0b?=
+ =?us-ascii?Q?Jp3bkFRScNbE+Iz5B6GSoOE03K9b9A8NjgX/37MFA6EoSUxPzjlUc6Ik/JT1?=
+ =?us-ascii?Q?n7SQU0KuUSHhEjqej3Slt8RjqwX/oDgjHVxO96qsjtGT4ncWBaj+o2u7XaDF?=
+ =?us-ascii?Q?8Uicvn012tommm9ncDlrS0CyXQtnLFbToPveQPOPnJDVbUTDRPTvHtKzlPjP?=
+ =?us-ascii?Q?EjR/L78gq/OuzyvTvTrqOFwjUD7DHmImcwbeLhAWUghwEaePYMjuFjwjr7aF?=
+ =?us-ascii?Q?JnCkBGPNjJf9+PXQE0uu3uKw1BhOMkUnCaqnaVZvi1yL7nf3ryUVJZG8SQwk?=
+ =?us-ascii?Q?3SEfaXZRn2assdUT/mMjDHu+e6P2Qq/yapT1riGtL1gbcSEtjSyG/GqxhuPR?=
+ =?us-ascii?Q?qkpKlTN8Up6Ppojpcsl7Cgpn/2xOybVuoKrq/b9+wFnLb+4BwM/uN0SbWfcG?=
+ =?us-ascii?Q?/tujr+F8ZnFSzcj3nsMoZiysRQEB5uOx4cOxZSyGtq4L0132I+db0UJC35uq?=
+ =?us-ascii?Q?ja0SB9k2u1zsHos9FiVa4DMRWrbU0LTXPApU3UUpxHF5YiYJMbie00VzhqhR?=
+ =?us-ascii?Q?SLNQJz7n2Htt9/xBPn6yweS6bAe9dT4clEH0/bnl7BGd/TdNeEySKwoeiizB?=
+ =?us-ascii?Q?+80i2wHHAoGCVeCiL28j6+9LMZudU98bsXaQKOrFzPN6KgExTQ+FiWA4/vws?=
+ =?us-ascii?Q?5gDVgqw6j+bws4zYX6EEAVaQ7uXrd64xIFJJ89+Yh3bT2HMwS1wOWfwc7MpP?=
+ =?us-ascii?Q?SKVmdB2yUM4vE6yp6yv5+XWV5JnuI21GaZhVBIN8o+2j9bR6gkIEzrF4gLl2?=
+ =?us-ascii?Q?jnLFpYBxrm9ibKmk2O+AQmQKl1+thv253VvavpRXfuHVZrcJSD4uRWkom/kj?=
+ =?us-ascii?Q?+vxWg2WZYDQQgzumMijTImWA6+YH+4rV7gq0eacIJcFJbya4IHNlU+qwFI0A?=
+ =?us-ascii?Q?r52epExv3+fIVBZEjZQocqCwz12moZVdQJUl0smlAvaToIM1qn2Ccl4s14AA?=
+ =?us-ascii?Q?GeQVU7hDFta2fP8HPC5xAuxypZY/7FDYj2BU2Vl5yi/40Mmj3wHn0sKMa6nY?=
+ =?us-ascii?Q?oIlqa4IgovPpykT/C1D/O2VRLfcjo/oTv+3pjL+RuBFXtXkDHg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230034)(376008)(1800799018)(82310400020)(36860700007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 22:53:07.4364
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f91033a4-6645-41f5-c017-08dc8b326d2f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F6C.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6199
 
-On Wed, Feb 07, 2024, Xin Li wrote:
-> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-> index 4889754415b5..6b796c5c9c2b 100644
-> --- a/arch/x86/include/asm/vmx.h
-> +++ b/arch/x86/include/asm/vmx.h
-> @@ -256,8 +256,12 @@ enum vmcs_field {
->  	PID_POINTER_TABLE_HIGH		= 0x00002043,
->  	SECONDARY_VM_EXIT_CONTROLS	= 0x00002044,
->  	SECONDARY_VM_EXIT_CONTROLS_HIGH	= 0x00002045,
-> +	INJECTED_EVENT_DATA		= 0x00002052,
-> +	INJECTED_EVENT_DATA_HIGH	= 0x00002053,
->  	GUEST_PHYSICAL_ADDRESS          = 0x00002400,
->  	GUEST_PHYSICAL_ADDRESS_HIGH     = 0x00002401,
-> +	ORIGINAL_EVENT_DATA		= 0x00002404,
-> +	ORIGINAL_EVENT_DATA_HIGH	= 0x00002405,
+The dw_mmc driver supports eMMC RST_N recovery flow but doesn't work
+on BlueField-2 SoC because the RST_N register is designed as secure
+register. This patch series enhance the dw_mci_drv_data structure to
+support platform-specific hw_reset(), then implements this function in
+dw_mmc-bluefield.c to support RST_N via SMC call.
 
-Are these the actual names from the SDM?  E.g. is there no FRED_ prefix to clue
-in readers that they are FRED specific? (unless they aren't FRED specific?)
+Liming Sun (2):
+  dw_mmc: support platform specific hw_reset()
+  dw_mmc-bluefield: add hw_reset() support
 
->  	VMCS_LINK_POINTER               = 0x00002800,
->  	VMCS_LINK_POINTER_HIGH          = 0x00002801,
->  	GUEST_IA32_DEBUGCTL             = 0x00002802,
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index ee61d2c25cb0..f622fb90a098 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -1871,9 +1871,29 @@ static void vmx_inject_exception(struct kvm_vcpu *vcpu)
->  		vmcs_write32(VM_ENTRY_INSTRUCTION_LEN,
->  			     vmx->vcpu.arch.event_exit_inst_len);
->  		intr_info |= INTR_TYPE_SOFT_EXCEPTION;
-> -	} else
-> +	} else {
->  		intr_info |= INTR_TYPE_HARD_EXCEPTION;
->  
-> +		if (kvm_is_fred_enabled(vcpu)) {
-> +			u64 event_data = 0;
-> +
-> +			if (is_debug(intr_info))
-> +				/*
-> +				 * Compared to DR6, FRED #DB event data saved on
-> +				 * the stack frame have bits 4 ~ 11 and 16 ~ 31
-> +				 * inverted, i.e.,
-> +				 *   fred_db_event_data = dr6 ^ 0xFFFF0FF0UL
-> +				 */
-> +				event_data = vcpu->arch.dr6 ^ DR6_RESERVED;
-> +			else if (is_page_fault(intr_info))
-> +				event_data = vcpu->arch.cr2;
-> +			else if (is_nm_fault(intr_info))
-> +				event_data = to_vmx(vcpu)->fred_xfd_event_data;
-> +
-> +			vmcs_write64(INJECTED_EVENT_DATA, event_data);
-> +		}
-> +	}
-> +
->  	vmcs_write32(VM_ENTRY_INTR_INFO_FIELD, intr_info);
->  
->  	vmx_clear_hlt(vcpu);
-> @@ -7082,8 +7102,11 @@ static void handle_nm_fault_irqoff(struct kvm_vcpu *vcpu)
->  	 *
->  	 * Queuing exception is done in vmx_handle_exit. See comment there.
->  	 */
-> -	if (vcpu->arch.guest_fpu.fpstate->xfd)
-> +	if (vcpu->arch.guest_fpu.fpstate->xfd) {
->  		rdmsrl(MSR_IA32_XFD_ERR, vcpu->arch.guest_fpu.xfd_err);
-> +		to_vmx(vcpu)->fred_xfd_event_data = vcpu->arch.cr0 & X86_CR0_TS
+ drivers/mmc/host/dw_mmc-bluefield.c | 18 +++++++++++++++++-
+ drivers/mmc/host/dw_mmc.c           |  6 ++++++
+ drivers/mmc/host/dw_mmc.h           |  2 ++
+ 3 files changed, 25 insertions(+), 1 deletion(-)
 
-kvm_is_cr0_bit_set(), don't read vcpu->arch.cr0 directly.
+-- 
+2.30.1
 
-> +			? 0 : vcpu->arch.guest_fpu.xfd_err;
-
-Maybe this?
-
-		if (kvm_is_cr0_bit_set(vcpu, X86_CR0_TS))
-			to_vmx(vcpu)->fred_xfd_event_data = 0;
-		else
-			to_vmx(vcpu)->fred_xfd_event_data = vcpu->arch.guest_fpu.xfd_err;
-
-Hmm, but why does this need to be cached _now_?  I.e. why does fred_xfd_event_data
-need to exist?  Wouldn't it be simpler and more robust to use vcpu->arch.guest_fpu.xfd_err
-directly in vmx_inject_exception()?
-
-> +	}
->  }
->  
->  static void handle_exception_irqoff(struct vcpu_vmx *vmx)
-> @@ -7199,29 +7222,28 @@ static void vmx_recover_nmi_blocking(struct vcpu_vmx *vmx)
->  					      vmx->loaded_vmcs->entry_time));
->  }
->  
-> -static void __vmx_complete_interrupts(struct kvm_vcpu *vcpu,
-> -				      u32 idt_vectoring_info,
-> -				      int instr_len_field,
-> -				      int error_code_field)
-> +static void __vmx_complete_interrupts(struct kvm_vcpu *vcpu, bool vectoring)
->  {
-> -	u8 vector;
-> -	int type;
-> -	bool idtv_info_valid;
-> -
-> -	idtv_info_valid = idt_vectoring_info & VECTORING_INFO_VALID_MASK;
-> +	u32 event_id = vectoring ? to_vmx(vcpu)->idt_vectoring_info
-> +				 : vmcs_read32(VM_ENTRY_INTR_INFO_FIELD);
-
-
-Preferred style for ternary operators is:
-
-	u32 event_id = vectoring ? to_vmx(vcpu)->idt_vectoring_info :
-				   vmcs_read32(VM_ENTRY_INTR_INFO_FIELD);
-
-That said, I don't think this is a net positive versus passing in all params.
-The bare true/false is somewhat inscrutable, and in this code, it's hard to
-understand why KVM looks at X instead of Y without the conext of the caller.
-
-> +	int instr_len_field = vectoring ? VM_EXIT_INSTRUCTION_LEN
-> +					: VM_ENTRY_INSTRUCTION_LEN;
-> +	int error_code_field = vectoring ? IDT_VECTORING_ERROR_CODE
-> +					 : VM_ENTRY_EXCEPTION_ERROR_CODE;
-> +	int event_data_field = vectoring ? ORIGINAL_EVENT_DATA
-> +					 : INJECTED_EVENT_DATA;
-> +	u8 vector = event_id & INTR_INFO_VECTOR_MASK;
-> +	int type = event_id & INTR_INFO_INTR_TYPE_MASK;
->  
->  	vcpu->arch.nmi_injected = false;
->  	kvm_clear_exception_queue(vcpu);
->  	kvm_clear_interrupt_queue(vcpu);
->  
-> -	if (!idtv_info_valid)
-> +	if (!(event_id & INTR_INFO_VALID_MASK))
->  		return;
->  
->  	kvm_make_request(KVM_REQ_EVENT, vcpu);
->  
-> -	vector = idt_vectoring_info & VECTORING_INFO_VECTOR_MASK;
-> -	type = idt_vectoring_info & VECTORING_INFO_TYPE_MASK;
-> -
->  	switch (type) {
->  	case INTR_TYPE_NMI_INTR:
->  		vcpu->arch.nmi_injected = true;
-> @@ -7236,10 +7258,31 @@ static void __vmx_complete_interrupts(struct kvm_vcpu *vcpu,
->  		vcpu->arch.event_exit_inst_len = vmcs_read32(instr_len_field);
->  		fallthrough;
->  	case INTR_TYPE_HARD_EXCEPTION:
-> -		if (idt_vectoring_info & VECTORING_INFO_DELIVER_CODE_MASK) {
-> -			u32 err = vmcs_read32(error_code_field);
-> -			kvm_requeue_exception_e(vcpu, vector, err);
-> -		} else
-> +		if (kvm_is_fred_enabled(vcpu)) {
-> +			/* Save event data for being used as injected-event data */
-> +			u64 event_data = vmcs_read64(event_data_field);
-> +
-> +			switch (vector) {
-> +			case DB_VECTOR:
-> +				/* %dr6 should be equal to (event_data ^ DR6_RESERVED) */
-
-DR6, no need to use assembly syntax, but I'd just drop this comment, as well as
-the CR2 comment.  They add no insight beyond what the code literally does.
-
-> +				vcpu->arch.dr6 = event_data ^ DR6_RESERVED;
-> +				break;
-> +			case NM_VECTOR:
-> +				to_vmx(vcpu)->fred_xfd_event_data = event_data;
-> +				break;
-> +			case PF_VECTOR:
-> +				/* %cr2 should be equal to event_data */
-> +				vcpu->arch.cr2 = event_data;
-> +				break;
-> +			default:
-> +				WARN_ON(event_data != 0);
-> +				break;
-> +			}
-> +		}
 
