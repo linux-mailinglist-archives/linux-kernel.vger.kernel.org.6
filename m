@@ -1,254 +1,201 @@
-Return-Path: <linux-kernel+bounces-211040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E71904C6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:10:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3246904C6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D96321F220B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:10:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15F981C21FDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC1416B72E;
-	Wed, 12 Jun 2024 07:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A48816B73C;
+	Wed, 12 Jun 2024 07:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LkV/ZaX8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xgm+6acR";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FPE2S/yD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0FtTp0u0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YM0uwE6c"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A086D25622;
-	Wed, 12 Jun 2024 07:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA2A13A275;
+	Wed, 12 Jun 2024 07:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718176206; cv=none; b=EBF9J3LB2B0VjCp0/+lU8y4IpeNq59FEvqNkR1AMIJkCTVITNxDj0stByXmp10Ze4y0kfWJTT3Zo2IT32ANOr2lxqTiLIIM+47cgCbIadXHIlzKXcgOcBP/k5vLIrvBLiWPbgWC2uiaZlZEAdQ80VK8ayk7bqdxQolOCHLfuzfk=
+	t=1718176240; cv=none; b=GJLbkZ1pOPMkC+X0Y50KWjIp1jXQzSrdqzGD4bauGTlSxE+OEhFOk7H4QROVbW8aGbrpxBfEkrQSVxK+7XyL/ObBvfnwv+e/u4RqCm7GQzYE656dC+BGUfoLKWBv8ToY1CtSTf0a/9Crzs9Ztn1+yxnGhla/lczCO8dq1cuKdoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718176206; c=relaxed/simple;
-	bh=qbxLuon5KxXHYApDIRUEBavM5lzeW7uuEr5MdN4Lllg=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:Date:Message-id; b=uS59i43bdlx/P97WN1HKKmuHrD9g2t7a3mi4B/zMkNROGOvFeKdhGz919q0u/3qwDrX9RzVVwPF1TmzhDhDx1GbCLm0AeMz02zcqm4FntgiHhc7554H9wTyj28FehXwLM48mJ9dJM4gtqDfC05hPe3qPeRLX9lcnR/Gg6AAkBn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LkV/ZaX8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xgm+6acR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FPE2S/yD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0FtTp0u0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CE1ED5BD04;
-	Wed, 12 Jun 2024 07:10:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718176203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=G7i4+1Vvosd7eNoIC1qmAQ+0MIGQEpsmdevyZCNDhcs=;
-	b=LkV/ZaX8lAh6loAJySmBqgm3MoWJ2qaC/UTH6hiZv4NQLc5G5OPf43eo8Teb4ya2XflPD4
-	hgiWeFqEXDf/jKI2lFLelo1EiPom5+kHs2T9WJ/yujZXMTMMC7Z7yn2tn9Eng+NOR4S1GF
-	ZYNdebNgUPYn8qe2+IvF00+uYv0eejw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718176203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=G7i4+1Vvosd7eNoIC1qmAQ+0MIGQEpsmdevyZCNDhcs=;
-	b=Xgm+6acRrYEg3rDOjcP6GBzDP4JVeL0Dm2hoXSP/BB+LqT2GWCtjbTf62QEF6xI+FOytC5
-	Esq5XwDgN3mowTAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="FPE2S/yD";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0FtTp0u0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718176202; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=G7i4+1Vvosd7eNoIC1qmAQ+0MIGQEpsmdevyZCNDhcs=;
-	b=FPE2S/yDU2yTIbPU0wRddevJtzKslVe57uxTWkRd+cjtOsQwild9quZUoo6moeZ7PG6Vks
-	kOXRY2JVCeQkieNqmrcUQhpXD441lealnKHbbdK4XUlWv0gbA6lWjMJaiSOf+tH9+5uKRM
-	1He3hQIOze2vogmudW5zc4+si4pjYkE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718176202;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=G7i4+1Vvosd7eNoIC1qmAQ+0MIGQEpsmdevyZCNDhcs=;
-	b=0FtTp0u091MUVhJtYYnpRK2mRbRFtlOl2V73w9vP4JAc2Waz2xxnuJI8Nyujbru64CaZj8
-	eTMtPKMtdtLownAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 291C9137DF;
-	Wed, 12 Jun 2024 07:09:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id S0/bL8ZJaWYQRQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 12 Jun 2024 07:09:58 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1718176240; c=relaxed/simple;
+	bh=0E/dP+JgY1h8LvmPra3kSmJVjKSVbX0+z+gI7jyAqMg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=bBkp1H5W5BZLqXtaRFhk+nM01pSkMMedRjpYNpP9t6J6bgyI+7vkAzZvzaemM732UYkaLdMpcugQ6AO7yUUGpTWe2zOTc16CiDOpvE9/1PYnN0xGpSuA9/mMUY6hzqPFsSqnjxEh8wYPH4MuBS91xMrML7uYe/VR8OCYh9f/hew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YM0uwE6c; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-62f518bbab1so9828797b3.2;
+        Wed, 12 Jun 2024 00:10:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718176238; x=1718781038; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ntuiepcls6DPTsVsPIFqvHYiiDifFrTTY9IXohUJcws=;
+        b=YM0uwE6cliZZsETd8IFRtsZNiku3kc2gp35sdIo4BREQpDMaDggeWKMSCdpc1N8mlT
+         P1Nbg8tRGoZTW4d11dCtU5WaK9KBurAv6T12aYFG3IOiEN7SsvmbaEvcknVQZzddWndX
+         +2JYU0kD+8MvQRP8LzpiR4YB276oGxUa3UbqkRZprdtWwIBCf/WGXQHJ+aDthkxdOGwZ
+         I/jR5g1e5uBAhQRa2eU5XJLtpsUBLPUxHMkb1YJUFRPI8qerYNRHCVibfoytmp3t5M1L
+         i6hQ55AtjwkX5vrhV9WJZvus1rj5/nD2Kg6p0Gx6aH6CYvNL/1wiqizf3Atb5IJaLXw8
+         /qXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718176238; x=1718781038;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ntuiepcls6DPTsVsPIFqvHYiiDifFrTTY9IXohUJcws=;
+        b=flwSIg79e2/fjbRSich/EFzOqrsblBbzLH7kWA+h7kU8c+KROBiwgHq3QWULiNas6l
+         HtT3pd1Hz9PBzwpuXShueEHrWgo6uiJON2wb0kcCpyYr7n6MG7PsmUjcrz2Px5p4WTh5
+         tRHfOAvAZp23BVL+BtgTXfcMtZAhgdRG/wEcNNrU96HLo0L33r98p3J/lAB7TqiUqVDV
+         hFkwz2dEYnsmerT6VFiPxEte6yA2eywMGOFR6vbtOTDnSHUpVd+RSH4sp/IVKdVoxH6F
+         eKfKvP2bq498eteQT3VsBAyFa+HDxyu15ScWVj7ljH8yWAof88KnbV1Zi3Rs9HARfSGi
+         gImg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6kY3IuDB3WaRSWcz46cpeA4aL6D3dMXH8ycv3ZKBjKbYPAt1DK3gIS656QmUjSAExW9fmmdSEV00XIDDrpDpw+2QbW8ahPv017iInjCAt/hmLRz6vaGZuZrUrrmS2KTFgKlVa7Eo=
+X-Gm-Message-State: AOJu0YzEJlrxUq32iVjxr2HGmrLEQ9qKrcNet/g1vIMe/6nj6EdAMAh4
+	KF7z4rejDPBfhIKmZWfWkMvD6/GWmi6iYf9GEQWZxc4FQedOB/snvxhs7DEQ1Q5ny61UC3pRl0/
+	A7s0ty1MP6LcquLHhhH4aKWQb1NhHcDYC
+X-Google-Smtp-Source: AGHT+IE46xb7WGHKuxjm/SNiaKTQHcPBCIOCPd9x6kc6K50arCbz40Pdwbf8UMPcovzeQ3p46N6KdJgMO2TP22vgTJM=
+X-Received: by 2002:a81:7283:0:b0:62f:518b:ba53 with SMTP id
+ 00721157ae682-62fba943427mr8931797b3.49.1718176238038; Wed, 12 Jun 2024
+ 00:10:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>, James Clark <james.clark@arm.com>,
- ltp@lists.linux.it, linux-nfs@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
-Subject:
- [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when ->atomic_open used.
-Date: Wed, 12 Jun 2024 17:09:55 +1000
-Message-id: <171817619547.14261.975798725161704336@noble.neil.brown.name>
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[gmail.com,arm.com,lists.linux.it,vger.kernel.org];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: CE1ED5BD04
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
+References: <CADZouDQx4tqCfCfmCHjUp9nhAJ8_qTX=cCYOFzMYiQQwtsNuag@mail.gmail.com>
+ <4fd9cd27-487d-4a23-b17a-aa9dcb09075f@gmail.com>
+In-Reply-To: <4fd9cd27-487d-4a23-b17a-aa9dcb09075f@gmail.com>
+From: chase xd <sl1589472800@gmail.com>
+Date: Wed, 12 Jun 2024 09:10:28 +0200
+Message-ID: <CADZouDSyJVR=WX-X46QCUZeUz=7DHg_9=e5y=N7Wb+zMQ_dGtQ@mail.gmail.com>
+Subject: Re: [io-uring] WARNING in io_fill_cqe_req_aux
+To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Sorry now I'm also a bit confused by the branch choosing. I checked
+out branch "for-6.9/io_uring" and started testing on that branch. I
+assume that was the latest version of io_uring at that time, even now
+I check out that branch and the bug still exists. How should I know
+whether the branch will be merged, and which branch do you think I
+should test on? Thanks.
 
-When a file is opened and created with open(..., O_CREAT) we get
-both the CREATE and OPEN fsnotify events and would expect them in that
-order.   For most filesystems we get them in that order because
-open_last_lookups() calls fsnofify_create() and then do_open() (from
-path_openat()) calls vfs_open()->do_dentry_open() which calls
-fsnotify_open().
-
-However when ->atomic_open is used, the
-   do_dentry_open() -> fsnotify_open()
-call happens from finish_open() which is called from the ->atomic_open
-handler in lookup_open() which is called *before* open_last_lookups()
-calls fsnotify_create.  So we get the "open" notification before
-"create" - which is backwards.  ltp testcase inotify02 tests this and
-reports the inconsistency.
-
-This patch lifts the fsnotify_open() call out of do_dentry_open() and
-places it higher up the call stack.  There are three callers of
-do_dentry_open().
-
-For vfs_open() and kernel_file_open() the fsnotify_open() is placed
-directly in that caller so there should be no behavioural change.
-
-For finish_open() there are two cases:
- - finish_open is used in ->atomic_open handlers.  For these we add a
-   call to fsnotify_open() at the top of do_open() if FMODE_OPENED is
-   set - which means do_dentry_open() has been called.
- - finish_open is used in ->tmpfile() handlers.  For these a similar
-   call to fsnotify_open() is added to vfs_tmpfile()
-
-With this patch NFSv3 is restored to its previous behaviour (before
-->atomic_open support was added) of generating CREATE notifications
-before OPEN, and NFSv4 now has that same correct ordering that is has
-not had before.  I haven't tested other filesystems.
-
-Fixes: 7c6c5249f061 ("NFS: add atomic_open for NFSv3 to handle O_TRUNC correc=
-tly.")
-Reported-by: James Clark <james.clark@arm.com>
-Closes: https://lore.kernel.org/all/01c3bf2e-eb1f-4b7f-a54f-d2a05dd3d8c8@arm.=
-com
-Signed-off-by: NeilBrown <neilb@suse.de>
----
- fs/namei.c |  5 +++++
- fs/open.c  | 19 ++++++++++++-------
- 2 files changed, 17 insertions(+), 7 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 37fb0a8aa09a..057afacc4b60 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
- 	int acc_mode;
- 	int error;
-=20
-+	if (file->f_mode & FMODE_OPENED)
-+		fsnotify_open(file);
-+
- 	if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
- 		error =3D complete_walk(nd);
- 		if (error)
-@@ -3700,6 +3703,8 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
- 	mode =3D vfs_prepare_mode(idmap, dir, mode, mode, mode);
- 	error =3D dir->i_op->tmpfile(idmap, dir, file, mode);
- 	dput(child);
-+	if (file->f_mode & FMODE_OPENED)
-+		fsnotify_open(file);
- 	if (error)
- 		return error;
- 	/* Don't check for other permissions, the inode was just created */
-diff --git a/fs/open.c b/fs/open.c
-index 89cafb572061..970f299c0e77 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1004,11 +1004,6 @@ static int do_dentry_open(struct file *f,
- 		}
- 	}
-=20
--	/*
--	 * Once we return a file with FMODE_OPENED, __fput() will call
--	 * fsnotify_close(), so we need fsnotify_open() here for symmetry.
--	 */
--	fsnotify_open(f);
- 	return 0;
-=20
- cleanup_all:
-@@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
-  */
- int vfs_open(const struct path *path, struct file *file)
- {
-+	int ret;
-+
- 	file->f_path =3D *path;
--	return do_dentry_open(file, NULL);
-+	ret =3D do_dentry_open(file, NULL);
-+	if (!ret)
-+		/*
-+		 * Once we return a file with FMODE_OPENED, __fput() will call
-+		 * fsnotify_close(), so we need fsnotify_open() here for symmetry.
-+		 */
-+		fsnotify_open(file);
-+	return ret;
- }
-=20
- struct file *dentry_open(const struct path *path, int flags,
-@@ -1178,7 +1182,8 @@ struct file *kernel_file_open(const struct path *path, =
-int flags,
- 	if (error) {
- 		fput(f);
- 		f =3D ERR_PTR(error);
--	}
-+	} else
-+		fsnotify_open(f);
- 	return f;
- }
- EXPORT_SYMBOL_GPL(kernel_file_open);
---=20
-2.44.0
-
+Pavel Begunkov <asml.silence@gmail.com> =E4=BA=8E2024=E5=B9=B46=E6=9C=8812=
+=E6=97=A5=E5=91=A8=E4=B8=89 03:11=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 6/7/24 18:07, chase xd wrote:
+> > Dear Linux kernel maintainers,
+> >
+> > Syzkaller reports this previously unknown bug on Linux
+> > 6.8.0-rc3-00043-ga69d20885494-dirty #4. Seems like the bug was
+> > silently or unintendedly fixed in the latest version.
+>
+> That branch you're using is confusing, apart from being
+> dirty and rc3, apparently it has never been merged. The
+> patch the test fails on looks different upstream:
+>
+>
+> commit 902ce82c2aa130bea5e3feca2d4ae62781865da7
+> Author: Pavel Begunkov <asml.silence@gmail.com>
+> Date:   Mon Mar 18 22:00:32 2024 +0000
+>
+>      io_uring: get rid of intermediate aux cqe caches
+>
+>
+> It reproduces with your version but not with anything
+> upstream
+>
+>
+> > ```
+> > Syzkaller hit 'WARNING in io_fill_cqe_req_aux' bug.
+> >
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 7 PID: 8369 at io_uring/io_uring.h:132
+> > io_lockdep_assert_cq_locked+0x2c7/0x340 io_uring/io_uring.h:132
+> > Modules linked in:
+> > CPU: 7 PID: 8369 Comm: syz-executor263 Not tainted
+> > 6.8.0-rc3-00043-ga69d20885494-dirty #4
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04=
+/01/2014
+> > RIP: 0010:io_lockdep_assert_cq_locked+0x2c7/0x340 io_uring/io_uring.h:1=
+32
+> > Code: 48 8d bb 98 03 00 00 be ff ff ff ff e8 52 45 4b 06 31 ff 89 c3
+> > 89 c6 e8 b7 e2 2d fd 85 db 0f 85 d5 fe ff ff e8 0a e7 2d fd 90 <0f> 0b
+> > 90 e9 c7 fe ff ff e8 fc e6 2d fd e8 c7 38 fa fc 48 85 c0 0f
+> > RSP: 0018:ffffc90012af79a8 EFLAGS: 00010293
+> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff845cf059
+> > RDX: ffff8880252ea440 RSI: ffffffff845cf066 RDI: 0000000000000005
+> > RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
+> > R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
+> > FS:  00005555570e13c0(0000) GS:ffff88823bd80000(0000) knlGS:00000000000=
+00000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007f1bdbcae020 CR3: 0000000022624000 CR4: 0000000000750ef0
+> > PKRU: 55555554
+> > Call Trace:
+> >   <TASK>
+> >   io_fill_cqe_req_aux+0xd6/0x1f0 io_uring/io_uring.c:925
+> >   io_poll_check_events io_uring/poll.c:325 [inline]
+> >   io_poll_task_func+0x16f/0x1000 io_uring/poll.c:357
+> >   io_handle_tw_list+0x172/0x560 io_uring/io_uring.c:1154
+> >   tctx_task_work_run+0xaa/0x330 io_uring/io_uring.c:1226
+> >   tctx_task_work+0x7b/0xd0 io_uring/io_uring.c:1244
+> >   task_work_run+0x16d/0x260 kernel/task_work.c:180
+> >   get_signal+0x1cb/0x25a0 kernel/signal.c:2669
+> >   arch_do_signal_or_restart+0x81/0x7e0 arch/x86/kernel/signal.c:310
+> >   exit_to_user_mode_loop kernel/entry/common.c:105 [inline]
+> >   exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+> >   __syscall_exit_to_user_mode_work kernel/entry/common.c:201 [inline]
+> >   syscall_exit_to_user_mode+0x156/0x2b0 kernel/entry/common.c:212
+> >   do_syscall_64+0xe5/0x270 arch/x86/entry/common.c:89
+> >   entry_SYSCALL_64_after_hwframe+0x6f/0x77
+> > RIP: 0033:0x7f1bdbc2d88d
+> > Code: c3 e8 a7 1f 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48
+> > 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+> > 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> > RSP: 002b:00007ffd12f6fa18 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+> > RAX: 0000000000000001 RBX: 000000000000220b RCX: 00007f1bdbc2d88d
+> > RDX: 0000000000000000 RSI: 0000000000005012 RDI: 0000000000000003
+> > RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> > R13: 431bde82d7b634db R14: 00007f1bdbcaa4f0 R15: 0000000000000001
+> >   </TASK>
+> >
+> >
+> > Syzkaller reproducer:
+> > # {Threaded:false Repeat:true RepeatTimes:0 Procs:1 Slowdown:1
+> > Sandbox: SandboxArg:0 Leak:false NetInjection:false NetDevices:false
+> > NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false
+> > KCSAN:false DevlinkPCI:false NicVF:false USB:false VhciInjection:false
+> > Wifi:false IEEE802154:false Sysctl:false Swap:false UseTmpDir:false
+> > HandleSegv:false Repro:false Trace:false LegacyOptions:{Collide:false
+> > Fault:false FaultCall:0 FaultNth:0}}
+> > r0 =3D syz_io_uring_setup(0x220b, &(0x7f0000000000)=3D{0x0, 0x63db,
+> > 0x10000, 0x800}, &(0x7f0000000080)=3D<r1=3D>0x0,
+> > &(0x7f0000000200)=3D<r2=3D>0x0)
+> > r3 =3D socket$inet(0x2, 0x1, 0x0)
+> > syz_io_uring_submit(r1, r2,
+> > &(0x7f0000000a80)=3D@IORING_OP_POLL_ADD=3D{0x6, 0x0, 0x0, @fd=3Dr3, 0x0=
+,
+> > 0x0, 0x1})
+> > io_uring_enter(r0, 0x5012, 0x0, 0x0, 0x0, 0x0)
+> > ```
+> >
+> > crepro is in the attachment.
+> >
+> > Best Regards
+> > Xdchase
+>
+> --
+> Pavel Begunkov
 
