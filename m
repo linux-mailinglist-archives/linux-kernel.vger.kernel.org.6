@@ -1,272 +1,102 @@
-Return-Path: <linux-kernel+bounces-211161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9FBF904DE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:17:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C785904DED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B583D1C23E87
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:17:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCA77283849
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12E716C869;
-	Wed, 12 Jun 2024 08:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C2A16C86C;
+	Wed, 12 Jun 2024 08:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xc+92hCH"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GVXVRZJi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D35115279B;
-	Wed, 12 Jun 2024 08:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC52B16D305;
+	Wed, 12 Jun 2024 08:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718180213; cv=none; b=UPjzd8ZWIwWVa5yL8AYDUTCpm5/1A6O0ErL3YArEuhRSCUBp1GEZuIrN469u/HKxgVhcTXHnIJASQEO1p2EwRsSN3b8S239mlU2LLmk2SwENebwKDBRW0TRa4Q89Z0gpVwY7kBVEPuo2zwfBO4r+Ms+hznw0nQQcEl1xw1MzifI=
+	t=1718180265; cv=none; b=ssOMa4hh/sBmq4w6v0fXImLhkOqujnfIloFHzuQMN2G51Jw35uaraVbtn2s9H8YXH85Ta89TeoUk04GR7b/a0SOZwc/7OpweQVuhkUxWPiFkhdtxRXzancoL7g0Jh7YR1uRAOcGpLnIdKMhDl2j1VVeJpyxTzNLpAyanRu8wQ/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718180213; c=relaxed/simple;
-	bh=Yg97OsjtcY3yk1e+X2kIqRNCmOwcA8lmuN0BccmJp1w=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=r7DkSc3NdUHV+NnVFaE9lmO/ruBU+72IaWqRXRcm0CeU6TBAjcqOlY2mQj/yrlwleZRKMPgxYDouGX7PJMyOd2fdtcizvkbM427HzaxtZK80MBfZuPppErM4hYObAQAw89BVuxzX2PdnH9Ws3+aq0KQGVSxkMSw9l3CSLc4VGx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xc+92hCH; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718180209;
-	bh=Yg97OsjtcY3yk1e+X2kIqRNCmOwcA8lmuN0BccmJp1w=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Xc+92hCH52rej/sP6x6VK+kHGHGlTm2WhSJg3MJWkGfjDr019xsMMlkisR+4kVWqS
-	 KJYh9UP96g88t0hLyrCwmQRUgb/nvkfQZEv/k67Nf+aCu4B8B20iAqz0e2YbEa37l7
-	 97X2K2JgZhyXagoQ2bS2tiyb0MXQJ2mVemD4FmjllWbrzOLewAHwNTaS9RIs7PlPJ3
-	 5rmSLUzAQR4VYT9gtfD4842oJJa6Zu0Q5vos3emaEv5xFQXv/Puzm/RyGsqLLRsbO1
-	 R96kLsBkz36kBGu/M0ZkRNBxQJ46UZ+2P3oU/uYG5rBMlplK8uD65h01wBd2mb4e7p
-	 Hf/gaWkJRh4tQ==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 053CD378216D;
-	Wed, 12 Jun 2024 08:16:46 +0000 (UTC)
-Message-ID: <87e6beea-4618-4a5c-a883-42ef64a2d584@collabora.com>
-Date: Wed, 12 Jun 2024 13:17:23 +0500
+	s=arc-20240116; t=1718180265; c=relaxed/simple;
+	bh=QcEF0sKXV5ZBAmtYMHhZHVLLMVcw7FqLHJp1lyXLpYU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=fYiQxNN9BxmkhSg1hUz5fsDutN3lfMd9nIhW/fbY4Qjp3n2Z6sp5GFkWh8wKNRKGNEk7w7rwXhT/Xtzo3w1l/O8nFSH1Z4QpVJwgAG0LRG0JfkfbOMdLP0pj617Uxe1Ctm5Jtm6k56+ij9NTAqo4GxhC35j3pa+b3NTkky03z/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GVXVRZJi; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718180264; x=1749716264;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=QcEF0sKXV5ZBAmtYMHhZHVLLMVcw7FqLHJp1lyXLpYU=;
+  b=GVXVRZJitGHNM1YKbMyEHjNRGq9BmhDY/So6ZzrZwIjxRDkEIWIQypTQ
+   uu49ooE+VzE1TFjzYkhgC6o3HHVwvsn1OjYwonLBzu9Rw1ZTvQcgEapdP
+   YKIAdNhZSES40WszjWH2O8Qb6t0SVBdD8GHhB9l2Yc+3lwpmtRNwBcuzs
+   9xVxYNvJ8G3+DAgbkSNXBsN6NED46ZZV9xy6Cd1AOvefa3itztJ955awi
+   QKn7JJoo8h+UBQUxUAAtKJuAeE6HnBB2hngLYcgwPWzmRLns9gOGRiJiv
+   7Qh1kEy/piba6hOGprKcz6/QSlC5vllJ3JTnNyQXM5BdzdYbcuYxWdNk3
+   Q==;
+X-CSE-ConnectionGUID: 6m8Y3mZ1QaONDQ+WXfVgMQ==
+X-CSE-MsgGUID: pHJ2QoMfTHu6mYZNGf5RhA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="40337111"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="40337111"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 01:17:43 -0700
+X-CSE-ConnectionGUID: WyntrCBfRuKPHpdPJp1Kdg==
+X-CSE-MsgGUID: ApWrOod5RFCqLD/zMVAtzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="40180479"
+Received: from unknown (HELO localhost) ([10.245.247.204])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 01:17:40 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Tony Luck <tony.luck@intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, 
+ platform-driver-x86@vger.kernel.org, x86@kernel.org, 
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+ Jithu Joseph <jithu.joseph@intel.com>, 
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+In-Reply-To: <20240611171455.352536-1-tony.luck@intel.com>
+References: <20240611171455.352536-1-tony.luck@intel.com>
+Subject: Re: [PATCH v6 04/49 RESEND] platform/x86/intel/ifs: Switch to new
+ Intel CPU model defines
+Message-Id: <171818025089.1855.17784413167917645490.b4-ty@linux.intel.com>
+Date: Wed, 12 Jun 2024 11:17:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com
-Subject: Re: [PATCH v2 1/4] kselftests: vdso: vdso_test_clock_getres: conform
- test to TAP output
-To: Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Tiezhu Yang <yangtiezhu@loongson.cn>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240610054129.1527389-1-usama.anjum@collabora.com>
- <20240610054129.1527389-2-usama.anjum@collabora.com>
- <7b020209-3b20-48f4-92fb-099d80aee625@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <7b020209-3b20-48f4-92fb-099d80aee625@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On 6/12/24 1:32 AM, Shuah Khan wrote:
-> On 6/9/24 23:41, Muhammad Usama Anjum wrote:
->> Conform the layout, informational and status messages to TAP. No
->> functional change is intended other than the layout of output messages.
->> Use kselftest_harness.h to conform to TAP as the number of tests depend
->> on the available options at build time. The kselftest_harness makes the
-> 
-> 
-> How does converting to kselftest_harness help with available options ay
-> build time? Can you explain?
-> 
-> I am not seeing any value in converting this test to the harness? I want
-> to see a better justification.
+On Tue, 11 Jun 2024 10:14:55 -0700, Tony Luck wrote:
 
-Before:
-./vdso_test_clock_getres
-clock_id: CLOCK_REALTIME [PASS]
-clock_id: CLOCK_BOOTTIME [PASS]
-clock_id: CLOCK_TAI [PASS]
-clock_id: CLOCK_REALTIME_COARSE [PASS]
-clock_id: CLOCK_MONOTONIC [PASS]
-clock_id: CLOCK_MONOTONIC_RAW [PASS]
-clock_id: CLOCK_MONOTONIC_COARSE [PASS]
-
-Here is the output of the test before this patch. The test output test
-names and if they are passed or failed. It doesn't output information
-related to error when it occurs. I wanted to convert it to standard format
-by using kselftest.h where we can get the error related information as
-well. But as the number of tests depend on how many of CLOCK_BOOTTIME,
-CLOCK_TAI etc are defined, static counting is difficult. Test harness is
-best suited for this. Output:
-
-./vdso_test_clock_getres
-TAP version 13
-1..7
-# Starting 7 tests from 1 test cases.
-#  RUN           global.clock_realtime ...
-#            OK  global.clock_realtime
-ok 1 global.clock_realtime
-#  RUN           global.clock_boottime ...
-#            OK  global.clock_boottime
-ok 2 global.clock_boottime
-#  RUN           global.clock_tai ...
-#            OK  global.clock_tai
-ok 3 global.clock_tai
-#  RUN           global.clock_realtime_coarse ...
-#            OK  global.clock_realtime_coarse
-ok 4 global.clock_realtime_coarse
-#  RUN           global.clock_monotonic ...
-#            OK  global.clock_monotonic
-ok 5 global.clock_monotonic
-#  RUN           global.clock_monotonic_raw ...
-#            OK  global.clock_monotonic_raw
-ok 6 global.clock_monotonic_raw
-#  RUN           global.clock_monotonic_coarse ...
-#            OK  global.clock_monotonic_coarse
-ok 7 global.clock_monotonic_coarse
-# PASSED: 7 / 7 tests passed.
-# Totals: pass:7 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-Not only the code is simplified, the descriptive error is printed on
-console that what went wrong. Example if a test case fails:
-
-#  RUN           global.clock_realtime ...
-# vdso_test_clock_getres.c:66:clock_realtime:Expected 1 (1) == ((x.tv_sec
-!= y.tv_sec) || (x.tv_nsec != y.tv_nsec)) (0)
-# clock_realtime: Test terminated by assertion
-#          FAIL  global.clock_realtime
-not ok 1 global.clock_realtime
-
-> 
->> test easy to convert and presents better maintainability.
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->> Changes since v1:
->> - Update commit message to include that kselftest_harness has been used
->>    to conform to TAP and why
->> ---
->>   .../selftests/vDSO/vdso_test_clock_getres.c   | 68 +++++++++----------
->>   1 file changed, 33 insertions(+), 35 deletions(-)
->>
->> diff --git a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
->> b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
->> index 38d46a8bf7cba..c1ede40521f05 100644
->> --- a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
->> +++ b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
->> @@ -25,7 +25,7 @@
->>   #include <unistd.h>
->>   #include <sys/syscall.h>
->>   -#include "../kselftest.h"
->> +#include "../kselftest_harness.h"
->>     static long syscall_clock_getres(clockid_t _clkid, struct timespec *_ts)
->>   {
->> @@ -54,18 +54,8 @@ const char *vdso_clock_name[12] = {
->>   /*
->>    * This function calls clock_getres in vdso and by system call
->>    * with different values for clock_id.
->> - *
->> - * Example of output:
->> - *
->> - * clock_id: CLOCK_REALTIME [PASS]
->> - * clock_id: CLOCK_BOOTTIME [PASS]
->> - * clock_id: CLOCK_TAI [PASS]
->> - * clock_id: CLOCK_REALTIME_COARSE [PASS]
->> - * clock_id: CLOCK_MONOTONIC [PASS]
->> - * clock_id: CLOCK_MONOTONIC_RAW [PASS]
->> - * clock_id: CLOCK_MONOTONIC_COARSE [PASS]
->>    */
->> -static inline int vdso_test_clock(unsigned int clock_id)
->> +static inline void vdso_test_clock(struct __test_metadata *_metadata,
->> unsigned int clock_id)
->>   {
->>       struct timespec x, y;
->>   @@ -73,52 +63,60 @@ static inline int vdso_test_clock(unsigned int
->> clock_id)
->>       clock_getres(clock_id, &x);
->>       syscall_clock_getres(clock_id, &y);
->>   -    if ((x.tv_sec != y.tv_sec) || (x.tv_nsec != y.tv_nsec)) {
->> -        printf(" [FAIL]\n");
->> -        return KSFT_FAIL;
->> -    }
->> -
->> -    printf(" [PASS]\n");
->> -    return KSFT_PASS;
->> +    ASSERT_EQ(0, ((x.tv_sec != y.tv_sec) || (x.tv_nsec != y.tv_nsec)));
->>   }
->>   -int main(int argc, char **argv)
->> -{
->> -    int ret = 0;
->> -
->>   #if _POSIX_TIMERS > 0
->>     #ifdef CLOCK_REALTIME
->> -    ret += vdso_test_clock(CLOCK_REALTIME);
->> +TEST(clock_realtime)
->> +{
->> +    vdso_test_clock(_metadata, CLOCK_REALTIME);
->> +}
->>   #endif
->>     #ifdef CLOCK_BOOTTIME
->> -    ret += vdso_test_clock(CLOCK_BOOTTIME);
->> +TEST(clock_boottime)
->> +{
->> +    vdso_test_clock(_metadata, CLOCK_BOOTTIME);
->> +}
->>   #endif
->>     #ifdef CLOCK_TAI
->> -    ret += vdso_test_clock(CLOCK_TAI);
->> +TEST(clock_tai)
->> +{
->> +    vdso_test_clock(_metadata, CLOCK_TAI);
->> +}
->>   #endif
->>     #ifdef CLOCK_REALTIME_COARSE
->> -    ret += vdso_test_clock(CLOCK_REALTIME_COARSE);
->> +TEST(clock_realtime_coarse)
->> +{
->> +    vdso_test_clock(_metadata, CLOCK_REALTIME_COARSE);
->> +}
->>   #endif
->>     #ifdef CLOCK_MONOTONIC
->> -    ret += vdso_test_clock(CLOCK_MONOTONIC);
->> +TEST(clock_monotonic)
->> +{
->> +    vdso_test_clock(_metadata, CLOCK_MONOTONIC);
->> +}
->>   #endif
->>     #ifdef CLOCK_MONOTONIC_RAW
->> -    ret += vdso_test_clock(CLOCK_MONOTONIC_RAW);
->> +TEST(clock_monotonic_raw)
->> +{
->> +    vdso_test_clock(_metadata, CLOCK_MONOTONIC_RAW);
->> +}
->>   #endif
->>     #ifdef CLOCK_MONOTONIC_COARSE
->> -    ret += vdso_test_clock(CLOCK_MONOTONIC_COARSE);
->> +TEST(clock_monotonic_coarse)
->> +{
->> +    vdso_test_clock(_metadata, CLOCK_MONOTONIC_COARSE);
->> +}
->>   #endif
->>   -#endif
->> -    if (ret > 0)
->> -        return KSFT_FAIL;
->> +#endif /* _POSIX_TIMERS > 0 */
->>   -    return KSFT_PASS;
->> -}
->> +TEST_HARNESS_MAIN
-> 
-> thanks,
-> -- Shuah
+> New CPU #defines encode vendor and family as well as model.
 > 
 > 
 
--- 
-BR,
-Muhammad Usama Anjum
+
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[04/49] platform/x86/intel/ifs: Switch to new Intel CPU model defines
+        commit: 490d573b5a8579178beb648a69a2cbab91495a7b
+
+--
+ i.
+
 
