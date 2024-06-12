@@ -1,415 +1,882 @@
-Return-Path: <linux-kernel+bounces-211346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D59905061
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:28:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A94E905064
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00CA6B2428C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:28:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C93F1F231C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F3F16EBFC;
-	Wed, 12 Jun 2024 10:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB10216E882;
+	Wed, 12 Jun 2024 10:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OOZo2BLi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mjygxd6K"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA90016D9D7;
-	Wed, 12 Jun 2024 10:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AC52F50A;
+	Wed, 12 Jun 2024 10:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718188120; cv=none; b=BFfYO7U7FmIOAaLP+xFJutnAuTksgg3FGIeIqfj2w3H7qha9/U3iGER4VDs3YmaocEYrt2EbfVilO7jYTIG4mWQv2kqOXAPnQD48Y2Q7lhmr1YIla8o7eY5hLHCQhJsR6jsiYDPyoJM4Afm3ywUlbzDqC9lVMCor0o6hnukkawk=
+	t=1718188225; cv=none; b=P05ex20fDcg30ySBj9kmcYoMAzMhiBbIZGchUx1ssbVcF77MXpVDEc5ATtugeY1PPhzagLqzAFrgzSXK7jOel0ECb6xB+GG2ZLJ0SiylkFXdQaQ+dZdxBVOCccObBD7yTS9YWv+J5Nu8ZgA6KkQHveph1BzD3xQ+VYmPq5KyRyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718188120; c=relaxed/simple;
-	bh=DqDmBfyPccLDacPbh+TeEIUHPb11wuDh/LGPb58lvC8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hjhRH8gvmiSXQlVAFmcJWyTjx3NFBbbUXySFFYpl/d4UbLq+ZemmRRnXv41KuGN5JpN5QzRgp2jkKMYGDQnKBfVF/0zYfCa8DypIyd+ygRekhFvbomB+NSheWvwWI+3dadyi92P4/RwZY+sD0zaryAkB30FCfEfhH/S/+XsnfUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OOZo2BLi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C1ub3b009732;
-	Wed, 12 Jun 2024 10:28:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=madimlA9iBPfjtpX9TuxWdHY
-	1DKpi5ag8HsBR+wtnVY=; b=OOZo2BLiF9eeK4d6ZILTT9Mu0BgqvNGq86nkm32q
-	ONip/osxKpueMJD45jL/7FvbQ/HCWgGQ0CFg6p7rJOXooTi0yAE7+yM09ZIP+m94
-	tbL+AeFPmLUgHlRvbALIelclARi9wnhaS0U5bUJgVDed42ByGGx2T3Cs2LLVx2+p
-	ZqbYsKPeR/kAHqnIiUwECINF3aJeep7KWBDyUdE3nW182mtSRpWJM1gB9eM7247f
-	vT6xKKSnezaEoSS+X8Wy5VD6n7ITvGTPoDpU9cDZyjP2NsyEiok+aM8lvX30myA0
-	pOvkpU027Sesg88MLQdbEmGXJ9WqxjJwSWxGUk2OlCYcrA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ype913y2y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 10:28:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CASUTf000347
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 10:28:30 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Jun 2024 03:28:25 -0700
-Date: Wed, 12 Jun 2024 15:58:21 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>
-CC: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
- ability to gcc
-Message-ID: <Zml4RQ5R5s3mVMnI@hu-varada-blr.qualcomm.com>
-References: <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
- <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com>
- <c015b3a5-2213-4ebd-b960-d97ed1fe7062@kernel.org>
- <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
- <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
- <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
- <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
- <176137e5-6312-4d46-97b6-c4494bc1c61b@kernel.org>
- <ZmlAdETV0+6Md8HC@hu-varada-blr.qualcomm.com>
- <e24cfd23-6f77-46a0-b020-9cb3daef6930@kernel.org>
+	s=arc-20240116; t=1718188225; c=relaxed/simple;
+	bh=+6RMNPEfbepllDW2hPgoTfBjAURy5+wxegSER6D8p6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XMAm5OZ2hLIbZbiIfpH9hCX0Y0lnVTJey+ajAlk4WrrWgsq57XlcV73As5tDoH9BEGTjf2b71Nrj+Ji0P6bYaXkDsY0PseDB8Y6YHJdpH1tdkFXteG+wPBH0EwmCiXblQwE0iyUM+1H//SIyw+2OHK5XHEksVanvvzQ29i7YFD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mjygxd6K; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7042882e741so3352843b3a.2;
+        Wed, 12 Jun 2024 03:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718188223; x=1718793023; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d02wy5v1xc6q7sa77GxblQUsYPTMV6d6FIKeIFTSTQA=;
+        b=Mjygxd6K53uhdVxaXEpu6m6QlSDtgNfQY34GG1f7ftTuLH7H/JWPciO3WYUZvTxY4O
+         u5v7a5ZkLDPogRSJN3F6tcV6xL1m5MVFG34Q0KamZjMjrdk4hr59fxPISVNvVtYHUdXG
+         Qx+XuiU7qbkSVKWE9BfAWOTOJ3UDsQjRygjRAaysgvpGw7VPhAtumf7fsV4hlVTZSK3m
+         1sjQsy1m4S+jxD9JAwM69bmgh6BHLwiDW8YhGh3uEs/e/viExuXNWQcoT9PrF+OcEOw9
+         4ilRpnHXDQaWR3ZU7mrsL+NevyRWNsa2ACg9NhDDy/wZHlPt2gTeisfLNxaZWVYyaalQ
+         0NgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718188223; x=1718793023;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d02wy5v1xc6q7sa77GxblQUsYPTMV6d6FIKeIFTSTQA=;
+        b=tmEzvthv5Lci4JJAYhmfuh2Rr1im1BQQl6lu0n8S/dZywgOD5VddJ5shwWjYbT8Mp6
+         HFe8lVO7BFehEjB87QlwvKmkpQmkrJv9jswmTzXb7KcMg7B0R6SB6NMP+JYc0ru/LN9a
+         kNFj+B923xI56qxjjhz1DEATCnyPuvWmD5FVczOEA6dZydomZq7LOWtoMRHkZOOHV2WO
+         skyiZfBqLogqm+kV2PWBDMSjvyCd690QAyItQIpxjRlE5Q7aapFpVlQ259P0jl70gmkd
+         kYxVPec7ffNQyDh/CK+9Uiki/xCT2Yjx5ZubqHYzhFBwrk6fvnJtawTI2wYit8wJqip2
+         Jt8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUMh5sTxRcIwHFloNVNdZ1/cXz//dI4trDLzobtcB6zXcOthyBgmJLEYpPxHNP/sgiBOXtLH0NS8U0f8WUdtbBZEns5uHThswGqjPeQ4Tjvd3f8ujNMqpA4ebT0Eaq+BeiqOEx75oyHqgY=
+X-Gm-Message-State: AOJu0YzNVH9P2oFtGLYIYRwt3K75X2ef82ZRpmIcdPKlDgrLkEY8ADSG
+	AxLZIdKRUatpw/xEKt7fnXomoHAU64TP1AMUX14dMI80UB5WhAmC
+X-Google-Smtp-Source: AGHT+IH+lIrS4jT87X7dA8Wc0ZqMdP1zmQo6heXvhAuBpUo8IbFf5bL+xUFx/X8SGBvS/l+58iYZTw==
+X-Received: by 2002:a05:6a20:a11b:b0:1af:cc75:3f79 with SMTP id adf61e73a8af0-1b8ab6ab340mr1613478637.55.1718188222341;
+        Wed, 12 Jun 2024 03:30:22 -0700 (PDT)
+Received: from ux-UP-WHL01 ([120.237.109.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7041a748da2sm8213594b3a.169.2024.06.12.03.30.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 03:30:21 -0700 (PDT)
+Date: Wed, 12 Jun 2024 18:30:11 +0800
+From: Charles Wang <charles.goodix@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: jikos@kernel.org, bentiss@kernel.org, hbarnor@chromium.org,
+	dianders@chromium.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] HID: hid-goodix: Add Goodix HID-over-SPI driver
+Message-ID: <Zml4PY_ME-b_D8E9@ux-UP-WHL01>
+References: <20240607133709.3518-1-charles.goodix@gmail.com>
+ <ZmNYepAl9mdz9hKG@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e24cfd23-6f77-46a0-b020-9cb3daef6930@kernel.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: UJjWuV05zfhtyUYc1s0wJoZwO7b2A1aH
-X-Proofpoint-ORIG-GUID: UJjWuV05zfhtyUYc1s0wJoZwO7b2A1aH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_06,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 phishscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=999 impostorscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406120075
+In-Reply-To: <ZmNYepAl9mdz9hKG@google.com>
 
-On Wed, Jun 12, 2024 at 11:48:17AM +0300, Georgi Djakov wrote:
-> On 12.06.24 9:30, Varadarajan Narayanan wrote:
-> > On Tue, Jun 11, 2024 at 02:29:48PM +0300, Georgi Djakov wrote:
-> > > On 11.06.24 12:42, Varadarajan Narayanan wrote:
-> > > > On Thu, Jun 06, 2024 at 04:06:01PM +0200, Konrad Dybcio wrote:
-> > > > > On 8.05.2024 10:10 AM, Dmitry Baryshkov wrote:
-> > > > > > On Wed, 8 May 2024 at 09:53, Varadarajan Narayanan
-> > > > > > <quic_varada@quicinc.com> wrote:
-> > > > > > >
-> > > > > > > On Fri, May 03, 2024 at 04:51:04PM +0300, Georgi Djakov wrote:
-> > > > > > > > Hi Varada,
-> > > > > > > >
-> > > > > > > > Thank you for your work on this!
-> > > > > > > >
-> > > > > > > > On 2.05.24 12:30, Varadarajan Narayanan wrote:
-> > > > > > > > > On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
-> > > > > > > > > > On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
-> > > > > > > > > > > On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
-> > > > > > > > > > > >
-> > > > > > > > > > > >
-> > > > > > > > > > > > On 4/18/24 11:23, Varadarajan Narayanan wrote:
-> > > > > > > > > > > > > IPQ SoCs dont involve RPM in managing NoC related clocks and
-> > > > > > > > > > > > > there is no NoC scaling. Linux itself handles these clocks.
-> > > > > > > > > > > > > However, these should not be exposed as just clocks and align
-> > > > > > > > > > > > > with other Qualcomm SoCs that handle these clocks from a
-> > > > > > > > > > > > > interconnect provider.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Hence include icc provider capability to the gcc node so that
-> > > > > > > > > > > > > peripherals can use the interconnect facility to enable these
-> > > > > > > > > > > > > clocks.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > > > > > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > > > > > > > > > > > ---
-> > > > > > > > > > > >
-> > > > > > > > > > > > If this is all you do to enable interconnect (which is not the case,
-> > > > > > > > > > > > as this patch only satisfies the bindings checker, the meaningful
-> > > > > > > > > > > > change happens in the previous patch) and nothing explodes, this is
-> > > > > > > > > > > > an apparent sign of your driver doing nothing.
-> > > > > > > > > > >
-> > > > > > > > > > > It appears to do nothing because, we are just enabling the clock
-> > > > > > > > > > > provider to also act as interconnect provider. Only when the
-> > > > > > > > > > > consumers are enabled with interconnect usage, this will create
-> > > > > > > > > > > paths and turn on the relevant NOC clocks.
-> > > > > > > > > >
-> > > > > > > > > > No, with sync_state it actually does "something" (sets the interconnect
-> > > > > > > > > > path bandwidths to zero). And *this* patch does nothing functionally,
-> > > > > > > > > > it only makes the dt checker happy.
-> > > > > > > > >
-> > > > > > > > > I understand.
-> > > > > > > > >
-> > > > > > > > > > > This interconnect will be used by the PCIe and NSS blocks. When
-> > > > > > > > > > > those patches were posted earlier, they were put on hold until
-> > > > > > > > > > > interconnect driver is available.
-> > > > > > > > > > >
-> > > > > > > > > > > Once this patch gets in, PCIe for example will make use of icc.
-> > > > > > > > > > > Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
-> > > > > > > > > > >
-> > > > > > > > > > > The 'pcieX' nodes will include the following entries.
-> > > > > > > > > > >
-> > > > > > > > > > >           interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
-> > > > > > > > > > >                           <&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
-> > > > > > > > > > >           interconnect-names = "pcie-mem", "cpu-pcie";
-> > > > > > > > > >
-> > > > > > > > > > Okay. What about USB that's already enabled? And BIMC/MEMNOC?
-> > > > > > > > >
-> > > > > > > > > For USB, the GCC_ANOC_USB_AXI_CLK is enabled as part of the iface
-> > > > > > > > > clock. Hence, interconnect is not specified there.
-> > > > > > > > >
-> > > > > > > > > MEMNOC to System NOC interfaces seem to be enabled automatically.
-> > > > > > > > > Software doesn't have to turn on or program specific clocks.
-> > > > > > > > >
-> > > > > > > > > > > > The expected reaction to "enabling interconnect" without defining the
-> > > > > > > > > > > > required paths for your hardware would be a crash-on-sync_state, as all
-> > > > > > > > > > > > unused (from Linux's POV) resources ought to be shut down.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Because you lack sync_state, the interconnects silently retain the state
-> > > > > > > > > > > > that they were left in (which is not deterministic), and that's precisely
-> > > > > > > > > > > > what we want to avoid.
-> > > > > > > > > > >
-> > > > > > > > > > > I tried to set 'sync_state' to icc_sync_state to be invoked and
-> > > > > > > > > > > didn't see any crash.
-> > > > > > > > > >
-> > > > > > > > > > Have you confirmed that the registers are actually written to, and with
-> > > > > > > > > > correct values?
-> > > > > > > > >
-> > > > > > > > > I tried the following combinations:-
-> > > > > > > > >
-> > > > > > > > > 1. Top of tree linux-next + This patch set
-> > > > > > > > >
-> > > > > > > > >       * icc_sync_state called
-> > > > > > > > >       * No crash or hang observed
-> > > > > > > > >       * From /sys/kernel/debug/clk/clk_summary can see the
-> > > > > > > > >         relevant clocks are set to the expected rates (compared
-> > > > > > > > >         with downstream kernel)
-> > > > > > > > >
-> > > > > > > > > 2. Top of tree linux-next + This patch set + PCIe enablement
-> > > > > > > > >
-> > > > > > > > >       * icc_sync_state NOT called
-> > > > > > > >
-> > > > > > > > If sync_state() is not being called, that usually means that there
-> > > > > > > > are interconnect consumers that haven't probed successfully (PCIe?)
-> > > > > > > > or their dependencies. That can be checked in /sys/class/devlink/.../status
-> > > > > > > > But i am not sure how this works for PCI devices however.
-> > > > > > > >
-> > > > > > > > You can also manually force a call to sync_state by writing "1" to
-> > > > > > > > the interconnect provider's /sys/devices/.../state_synced
-> > > > > > > >
-> > > > > > > > Anyway, the question is if PCIe and NSS work without this driver?
-> > > > > > >
-> > > > > > > No.
-> > > > > > >
-> > > > > > > > If they work, is this because the clocks are turned on by default
-> > > > > > > > or by the boot loader?
-> > > > > > >
-> > > > > > > Initially, the PCIe/NSS driver enabled these clocks directly
-> > > > > > > by having them in their DT nodes itself. Based on community
-> > > > > > > feedback this was removed and after that PCIe/NSS did not work.
-> > > > > > >
-> > > > > > > > Then if an interconnect path (clock) gets disabled either when we
-> > > > > > > > reach a sync_state (with no bandwidth requests) or we explicitly
-> > > > > > > > call icc_set_bw() with 0 bandwidth values, i would expect that
-> > > > > > > > these PCIe and NSS devices would not function anymore (it might
-> > > > > > > > save some power etc) and if this is unexpected we should see a
-> > > > > > > > a crash or hang...
-> > > > > > > >
-> > > > > > > > Can you confirm this?
-> > > > > > >
-> > > > > > > With ICC enabled, icc_set_bw (with non-zero values) is called by
-> > > > > > > PCIe and NSS drivers. Haven't checked with icc_set_bw with zero
-> > > > > > > values.
-> > > > > > >
-> > > > > > > PCIe:   qcom_pcie_probe -> qcom_pcie_icc_init -> icc_set_bw
-> > > > > > > NSS:    ppe_icc_init -> icc_set_bw
-> > > > > > >
-> > > > > > > I believe sync_state is not getting called since there is a
-> > > > > > > non-zero set bandwidth request. Which seems to be aligned with
-> > > > > > > your explanation.
-> > > > > >
-> > > > > > This doesn't look correct. sync_state is being called once all
-> > > > > > consumers are probed. It doesn't matter whether those consumers have
-> > > > > > non-zero bandwidth requests or no.
-> > > > >
-> > > > > /sys/kernel/debug/devices_deferred may have some useful info, too
-> > > >
-> > > > /sys/kernel/debug/devices_deferred seems to be empty
-> > > >
-> > > > 	# mount | grep -w debugfs
-> > > > 	none on /sys/kernel/debug type debugfs (rw,relatime)
-> > > >
-> > > > 	# cat /sys/kernel/debug/devices_deferred  | wc -l
-> > > > 	0
-> > > >
-> > > > Added the following print to icc_sync_state,
-> > > >
-> > > > 	@@ -1096,6 +1096,7 @@ void icc_sync_state(struct device *dev)
-> > > > 		struct icc_node *n;
-> > > > 		static int count;
-> > > >
-> > > > 	+	printk("--> %s: %d %d\n", __func__, providers_count, count);
-> > > > 		count++;
-> > > >
-> > > > 		if (count < providers_count)
-> > > > 			return;
-> > > >
-> > > > icc_sync_state seems to be called once,
-> > > >
-> > > > 	# dmesg | grep icc_sync_state
-> > > > 	[   12.260544] --> icc_sync_state: 2 0
-> > > >
-> > > > Since 'providers_count' is greated than 'count' icc_sync_state
-> > > > seems to return before doing anything.
-> > >
-> > > Is there also another interconnect provider on this platform, other
-> > > than the gcc? Check for DT nodes that have the #interconnect-cells
-> > > property.
-> >
-> > Yes there are two interconnect providers
-> >
-> > 	# find /proc/device-tree/ -name '#interconnect-cells'
-> > 	/proc/device-tree/soc@0/clock-controller@1800000/#interconnect-cells
-> > 	/proc/device-tree/soc@0/clock-controller@39b00000/#interconnect-cells
-> >
-> > 	Note:	gcc => clock-controller@1800000
-> > 		nsscc => clock-controller@39b00000
-> >
-> > > Are all providers probing successfully?
-> >
-> > Yes. I printed the return value of their probe functions...
-> >
-> > 	# dmesg | grep probe:
-> > 	[    0.037815] --> gcc_ipq9574_probe: return 0
-> > 	[    2.078215] --> nss_cc_ipq9574_probe: return 0
-> >
-> >
-> > > All providers must probe, as there might be paths that cross multiple
-> > > providers and we can't get into sync-state with a topology that is
-> > > only partially initialized.
-> >
-> > It does look like both the providers' probe has completed. And,
-> > there aren't any paths that cross providers
-> >
-> > 	interconnects = <&gcc MASTER_ANOC_PCIE1 &gcc SLAVE_ANOC_PCIE1>,
-> > 			<&gcc MASTER_SNOC_PCIE1 &gcc SLAVE_SNOC_PCIE1>;
-> >
-> > 	interconnects = <&gcc MASTER_ANOC_PCIE3 &gcc SLAVE_ANOC_PCIE3>,
-> > 			<&gcc MASTER_SNOC_PCIE3 &gcc SLAVE_SNOC_PCIE3>;
-> >
-> > 	interconnects = <&gcc MASTER_ANOC_PCIE2 &gcc SLAVE_ANOC_PCIE2>,
-> > 			<&gcc MASTER_SNOC_PCIE2 &gcc SLAVE_SNOC_PCIE2>;
-> >
-> > 	interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
-> > 			<&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
-> >
-> > 	interconnects = <&nsscc MASTER_NSSNOC_PPE &nsscc SLAVE_NSSNOC_PPE>,
-> > 			<&nsscc MASTER_NSSNOC_PPE_CFG &nsscc SLAVE_NSSNOC_PPE_CFG>,
-> > 			<&gcc MASTER_NSSNOC_QOSGEN_REF &gcc SLAVE_NSSNOC_QOSGEN_REF>,
-> > 			<&gcc MASTER_NSSNOC_TIMEOUT_REF &gcc SLAVE_NSSNOC_TIMEOUT_REF>,
-> > 			<&gcc MASTER_MEM_NOC_NSSNOC &gcc SLAVE_MEM_NOC_NSSNOC>,
-> > 			<&gcc MASTER_NSSNOC_MEMNOC &gcc SLAVE_NSSNOC_MEMNOC>,
-> > 			<&gcc MASTER_NSSNOC_MEM_NOC_1 &gcc SLAVE_NSSNOC_MEM_NOC_1>;
+Hi Dmitry,
+
+Thank you very much for your kind review and advice.
+
+On Fri, Jun 07, 2024 at 11:59:06AM -0700, Dmitry Torokhov wrote:
+> > +struct goodix_ts_data {
+> > +	struct device *dev;
+> > +	struct spi_device *spi;
+> > +	struct hid_device *hid;
+> > +	struct goodix_hid_desc hid_desc;
+> > +
+> > +	struct gpio_desc *reset_gpio;
+> > +	u32 hid_report_addr;
+> > +
+> > +	/* lock for hid raw request operation */
+> > +	struct mutex hid_request_lock;
+> > +	/* lock for reg read write operations */
+> > +	struct mutex reg_rw_lock;
+> > +	u32 spi_xfer_max_sz;
+> > +	/* buffer used to store hid report event */
+> > +	u8 event_buf[SZ_4K] ____cacheline_aligned;
+> 
+> Why does this have to be cacheline aligned? I do not think it is
+> directly involved in the transfers.
 >
-> Are the above consumers also probing successfully? Especially the one with
-> the nsscc paths? Is nss_cc_ipq9574 also using icc_sync_state? Sync state
-> will be called when all consumers of the specific provider are probed.
 
-nsscc_ipq9574 was not using icc_sync_state. After adding that, I
-can see the following messages printed from icc_sync_state. I
-also added a print to confirm if 'p->set(n, n);' is called.
+Yes, you are right; sorry for the misuse.
 
-	[   12.260138] --> icc_sync_state: 2 2
---->	[   12.260166] qcom,gcc-ipq9574 1800000.clock-controller: interconnect provider is in synced state
-	[   12.262429] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_anoc_pcie0_1lane_m_clk_master)
-	[   12.271206] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_anoc_pcie0_1lane_m_clk_slave)
-	[   12.281225] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_snoc_pcie0_1lane_s_clk_master)
-	[   12.291118] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_snoc_pcie0_1lane_s_clk_slave)
-	[   12.300902] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_anoc_pcie1_1lane_m_clk_master)
-	[   12.310797] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_anoc_pcie1_1lane_m_clk_slave)
-	[   12.320596] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_snoc_pcie1_1lane_s_clk_master)
-	[   12.330494] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_snoc_pcie1_1lane_s_clk_slave)
-	[   12.340299] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_anoc_pcie2_2lane_m_clk_master)
-	[   12.350224] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_anoc_pcie2_2lane_m_clk_slave)
-	[   12.360013] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_snoc_pcie2_2lane_s_clk_master)
-	[   12.369904] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_snoc_pcie2_2lane_s_clk_slave)
-	[   12.379709] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_anoc_pcie3_2lane_m_clk_master)
-	[   12.389616] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_anoc_pcie3_2lane_m_clk_slave)
-	[   12.399415] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_snoc_pcie3_2lane_s_clk_master)
-	[   12.409312] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_snoc_pcie3_2lane_s_clk_slave)
-	[   12.419119] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_snoc_usb_clk_master)
-	[   12.429017] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_snoc_usb_clk_slave)
-	[   12.437781] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_anoc_usb_axi_clk_master)
-	[   12.446813] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_anoc_usb_axi_clk_slave)
-	[   12.456098] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_nsscc_clk_master)
-	[   12.465474] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_nsscc_clk_slave)
-	[   12.474767] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_snoc_clk_master)
-	[   12.484138] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_snoc_clk_slave)
-	[   12.493424] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_snoc_1_clk_master)
-	[   12.502713] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_snoc_1_clk_slave)
-	[   12.512261] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_pcnoc_1_clk_master)
-	[   12.521379] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_pcnoc_1_clk_slave)
-	[   12.531098] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_qosgen_ref_clk_master)
-	[   12.540651] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_qosgen_ref_clk_slave)
-	[   12.550456] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_timeout_ref_clk_master)
-	[   12.559922] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_timeout_ref_clk_slave)
-	[   12.569986] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_xo_dcd_clk_master)
-	[   12.579886] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_xo_dcd_clk_slave)
-	[   12.589344] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_atb_clk_master)
-	[   12.598466] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_atb_clk_slave)
-	[   12.607834] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_mem_noc_nssnoc_clk_master)
-	[   12.617039] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_mem_noc_nssnoc_clk_slave)
-	[   12.626497] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_memnoc_clk_master)
-	[   12.636049] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_memnoc_clk_slave)
-	[   12.645507] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_mem_noc_1_clk_master)
-	[   12.654668] qcom,gcc-ipq9574 1800000.clock-controller: Calling icc_clk_set(gcc_nssnoc_mem_noc_1_clk_slave)
---->	[   12.664354] qcom,nsscc-ipq9574 39b00000.clock-controller: interconnect provider is in synced state
-	[   12.674069] qcom,nsscc-ipq9574 39b00000.clock-controller: Calling icc_clk_set(nss_cc_nssnoc_ppe_clk_master)
-	[   12.683012] qcom,nsscc-ipq9574 39b00000.clock-controller: Calling icc_clk_set(nss_cc_nssnoc_ppe_clk_slave)
-	[   12.692646] qcom,nsscc-ipq9574 39b00000.clock-controller: Calling icc_clk_set(nss_cc_nssnoc_ppe_cfg_clk_master)
-	[   12.702369] qcom,nsscc-ipq9574 39b00000.clock-controller: Calling icc_clk_set(nss_cc_nssnoc_ppe_cfg_clk_slave)
-	[   12.712349] qcom,nsscc-ipq9574 39b00000.clock-controller: Calling icc_clk_set(nss_cc_nssnoc_nss_csr_clk_master)
-	[   12.722431] qcom,nsscc-ipq9574 39b00000.clock-controller: Calling icc_clk_set(nss_cc_nssnoc_nss_csr_clk_slave)
-	[   12.732404] qcom,nsscc-ipq9574 39b00000.clock-controller: Calling icc_clk_set(nss_cc_nssnoc_imem_qsb_clk_master)
-	[   12.742473] qcom,nsscc-ipq9574 39b00000.clock-controller: Calling icc_clk_set(nss_cc_nssnoc_imem_qsb_clk_slave)
-	[   12.752801] qcom,nsscc-ipq9574 39b00000.clock-controller: Calling icc_clk_set(nss_cc_nssnoc_imem_ahb_clk_master)
-	[   12.762611] qcom,nsscc-ipq9574 39b00000.clock-controller: Calling icc_clk_set(nss_cc_nssnoc_imem_ahb_clk_slave)
+> Also, 4K is quite a bit of data. How often does the device send more
+> than 1 report? Maybe you should do what i2c-hid does and scan reports
+> for the maximum report size and use it to allocate sufficiently sized
+> buffer(s)? See drivers/hid/i2c-hid/i2c-hid-core.c::i2c_hid_start(). 
+> 
 
-> The idea of sync state is to allow all consumers to probe and to request
-> their paths. Only after that, the framework will take into account the
-> bandwidth values that has been requested from consumers and disable unused
-> paths.
+The device sends heatmap data along with touch reports whenever there is a
+touch event. The length of the heatmap data is not fixed; it varies depending
+on the screen size and the number of touch points. Even though we know the
+input data length won't exceed 4K bytes, parsing the reports to determine
+the maximum length seems more reasonable. I will change this to allocate
+memory accordingly, rather than using the fixed 4K length.
+
+> > +	/* buffer used to do spi data transfer */
+> > +	u8 xfer_buf[GOODIX_HID_MAX_PKG_SIZE] ____cacheline_aligned;
+> > +};
+> > +
+> > +static int goodix_spi_read(struct goodix_ts_data *ts, u32 addr,
+> > +			   u8 *data, unsigned int len)
+> 
+> Maybe make data void * so callers do not need to cast? Also maybe size_t
+> for len?
+> 
+
+Ack.
+
+> > +{
+> > +	struct spi_device *spi = to_spi_device(&ts->spi->dev);
+> > +	struct spi_transfer xfers;
+> > +	struct spi_message spi_msg;
+> > +	int error;
+> > +
+> > +	if (GOODIX_SPI_READ_PREFIX_LEN + len > ts->spi_xfer_max_sz) {
+> > +		dev_err(ts->dev, "read data len exceed limit %d",
+> > +			ts->spi_xfer_max_sz - GOODIX_SPI_READ_PREFIX_LEN);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	mutex_lock(&ts->reg_rw_lock);
+> 
+> This can be written as
+> 
+> 	guard(mutex)(&ts->reg_rw_lock);
+> 
+> and you do not need to explicitly unlock the mutex at the end of the
+> function. You can also safely return early and the mutex will be
+> unlocked.
+> 
+
+Ack, this is great.
+
+> > +	/* buffer format: 0xF1 + addr(4bytes) + dummy(3bytes) + data */
+> > +	ts->xfer_buf[0] = GOODIX_SPI_READ_FLAG;
+> > +	put_unaligned_be32(addr, ts->xfer_buf + GOODIX_SPI_TRANS_PREFIX_LEN);
+> > +
+> > +	spi_message_init(&spi_msg);
+> > +	memset(&xfers, 0, sizeof(xfers));
+> > +	xfers.tx_buf = ts->xfer_buf;
+> > +	xfers.rx_buf = ts->xfer_buf;
+> > +	xfers.len = GOODIX_SPI_READ_PREFIX_LEN + len;
+> > +	spi_message_add_tail(&xfers, &spi_msg);
+> > +
+> > +	error = spi_sync(spi, &spi_msg);
+> > +	if (error)
+> > +		dev_err(ts->dev, "spi transfer error:%d", error);
+> 
+> "error: %d"
+> 
+
+Ack.
+
+> > +	else
+> > +		memcpy(data, ts->xfer_buf + GOODIX_SPI_READ_PREFIX_LEN, len);
+> > +
+> > +	mutex_unlock(&ts->reg_rw_lock);
+> > +	return error;
+> > +}
+> > +
+> > +static int goodix_spi_write(struct goodix_ts_data *ts, u32 addr,
+> > +			    u8 *data, unsigned int len)
+> 
+> const void *data
+> 
+
+Ack.
+
+> > +{
+> > +	struct spi_device *spi = to_spi_device(&ts->spi->dev);
+> > +	struct spi_transfer xfers;
+> > +	struct spi_message spi_msg;
+> > +	int error;
+> > +
+> > +	if (GOODIX_SPI_WRITE_PREFIX_LEN + len > ts->spi_xfer_max_sz) {
+> > +		dev_err(ts->dev, "write data len exceed limit %d",
+> > +			ts->spi_xfer_max_sz - GOODIX_SPI_WRITE_PREFIX_LEN);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	mutex_lock(&ts->reg_rw_lock);
+> 
+> 	guard(mutex)(&ts->reg_rw_lock);
 >
-> Sorry, but i am doing a bit of guessing here as i am missing the complete
-> picture. So you add interconnect-cells to nsscc, but what is this DT node
-> that requests the nss and gcc paths? I am failing to find these on the
-> mailing lists.
 
-The gcc based interconnect paths are referenced by PCIe controller
-nodes. Please refer to this patch
+Ack.
 
-	[PATCH V5 4/6] arm64: dts: qcom: ipq9574: Add PCIe PHYs and controller nodes
-	https://lore.kernel.org/linux-arm-msm/20240512082858.1806694-5-quic_devipriy@quicinc.com/
+> > +	/* buffer format: 0xF0 + addr(4bytes) + data */
+> > +	ts->xfer_buf[0] = GOODIX_SPI_WRITE_FLAG;
+> > +	put_unaligned_be32(addr, ts->xfer_buf + GOODIX_SPI_TRANS_PREFIX_LEN);
+> > +	memcpy(ts->xfer_buf + GOODIX_SPI_WRITE_PREFIX_LEN, data, len);
+> > +
+> > +	spi_message_init(&spi_msg);
+> > +	memset(&xfers, 0, sizeof(xfers));
+> > +	xfers.tx_buf = ts->xfer_buf;
+> > +	xfers.len = GOODIX_SPI_WRITE_PREFIX_LEN + len;
+> > +	spi_message_add_tail(&xfers, &spi_msg);
+> > +
+> > +	error = spi_sync(spi, &spi_msg);
+> > +	if (error)
+> > +		dev_err(ts->dev, "spi transfer error:%d", error);
+> > +
+> > +	mutex_unlock(&ts->reg_rw_lock);
+> > +	return error;
+> > +}
+> > +
+> > +static int goodix_dev_confirm(struct goodix_ts_data *ts)
+> > +{
+> > +	u8 tx_buf[8], rx_buf[8];
+> > +	int retry = 3;
+> > +	int error;
+> > +
+> > +	gpiod_set_value_cansleep(ts->reset_gpio, 0);
+> > +	usleep_range(4000, 4100);
+> > +
+> > +	memset(tx_buf, GOODIX_DEV_CONFIRM_VAL, sizeof(tx_buf));
+> > +	while (retry--) {
+> > +		error = goodix_spi_write(ts, GOODIX_DEV_CONFIRM_ADDR,
+> > +					 tx_buf, sizeof(tx_buf));
+> > +		if (error)
+> > +			return error;
+> > +
+> > +		error = goodix_spi_read(ts, GOODIX_DEV_CONFIRM_ADDR,
+> > +					rx_buf, sizeof(rx_buf));
+> > +		if (error)
+> > +			return error;
+> > +
+> > +		if (!memcmp(tx_buf, rx_buf, sizeof(tx_buf)))
+> > +			return 0;
+> > +
+> > +		usleep_range(5000, 5100);
+> > +	}
+> > +
+> > +	dev_err(ts->dev, "device confirm failed, rx_buf:%*ph", 8, rx_buf);
+> > +	return -EINVAL;
+> > +}
+> > +
+> > +/**
+> > + * goodix_hid_parse() - hid-core .parse() callback
+> > + * @hid: hid device instance
+> > + *
+> > + * This function gets called during call to hid_add_device
+> > + *
+> > + * Return: 0 on success and non zero on error
+> > + */
+> > +static int goodix_hid_parse(struct hid_device *hid)
+> > +{
+> > +	struct goodix_ts_data *ts = hid->driver_data;
+> > +	u8 *rdesc __free(kfree);
+> 
+> This is not proper use of this. rdesc will contain garbage (not NULL),
+> so if rsize check below failed we'll get a nasty surprise.
+>
 
-Sorry, did not post the nsscc related patches since this base ICC
-patch hasn't reached closure. The nsscc patches are very similar
-to this gcc based series. Wanted to gather the issues raised in
-this and address them in nsscc so that it is in a more acceptable
-shape.
+Ack, thanks.
+
+> > +	u16 rsize;
+> > +	int error;
+> > +
+> > +	rsize = le16_to_cpu(ts->hid_desc.report_desc_lenght);
+> > +	if (!rsize || rsize > HID_MAX_DESCRIPTOR_SIZE) {
+> > +		dev_err(ts->dev, "invalid report desc size %d", rsize);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	rdesc = kzalloc(rsize, GFP_KERNEL);
+> > +	if (!rdesc)
+> > +		return -ENOMEM;
+> 
+> Linus said that for pointers annotated with __free() he prefers
+> combining declaration with allocation, like this:
+> 
+> 	u8 *rdesc __free(kfree) = kzalloc(rsize, GFP_KERNEL);
+> 	if (!rdesc)
+> 		return -ENOMEM;
+> 
+
+Ack.
+
+> > +
+> > +	error = goodix_spi_read(ts, GOODIX_HID_REPORT_DESC_ADDR, rdesc, rsize);
+> > +	if (error) {
+> > +		dev_err(ts->dev, "failed get report desc, %d", error);
+> > +		return error;
+> > +	}
+> > +
+> > +	error = hid_parse_report(hid, rdesc, rsize);
+> > +	if (error)
+> > +		dev_err(ts->dev, "failed parse report, %d", error);
+> > +
+> > +	return error;
+> 
+> I am not sure what Benjamin and Jiri prefer, but my preference is to
+> explicitly return error or 0 instead of returning "error" in both
+> success and failure cases, especially when there are multiple failure
+> points in a function. So:
+> 
+> 	error = hid_parse_report(hid, rdesc, rsize);
+> 	if (error) {
+> 		dev_err(ts->dev, "failed parse report, %d", error);
+> 		return error;
+> 	}
+> 
+> 	return 0;
+> 
+
+Ack. Return 0 here seems clearer than returning "error".
+
+> > +}
+> > +
+> > +/* Empty callbacks with success return code */
+> > +static int goodix_hid_start(struct hid_device *hid)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +static void goodix_hid_stop(struct hid_device *hid)
+> > +{
+> > +}
+> > +
+> > +static int goodix_hid_open(struct hid_device *hid)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +static void goodix_hid_close(struct hid_device *hid)
+> > +{
+> > +}
+> > +
+> > +/* Return date length of response data */
+> > +static int goodix_hid_check_ack_status(struct goodix_ts_data *ts)
+> > +{
+> > +	struct goodix_hid_report_header hdr;
+> > +	int retry = 20;
+> > +	int error;
+> > +
+> > +	while (retry--) {
+> > +		/*
+> > +		 * 3 bytes of hid request response data
+> > +		 * - byte 0:    Ack flag, value of 1 for data ready
+> > +		 * - bytes 1-2: Response data length
+> > +		 */
+> > +		error = goodix_spi_read(ts, ts->hid_report_addr,
+> > +					(u8 *)&hdr, sizeof(hdr));
+> > +		if (!error && (hdr.flag & GOODIX_HID_ACK_READY_FLAG))
+> > +			return le16_to_cpu(hdr.size);
+> > +
+> > +		/* Wait 10ms for another try */
+> > +		usleep_range(10000, 11000);
+> > +	}
+> > +
+> > +	return -EINVAL;
+> > +}
+> > +
+> > +/**
+> > + * goodix_hid_get_raw_report() - Process hidraw GET REPORT operation
+> > + * @hid: hid device instance
+> > + * @reportnum: Report ID
+> > + * @buf: Buffer for store the reprot date
+> > + * @len: Length fo reprot data
+> > + * @report_type: Report type
+> > + *
+> > + * The function for hid_ll_driver.get_raw_report to handle the HIDRAW ioctl
+> > + * get report request. The transmitted data follows the standard i2c-hid
+> > + * protocol with a specified header.
+> > + *
+> > + * Return: The length of the data in the buf on success, negative error code
+> > + */
+> > +static int goodix_hid_get_raw_report(struct hid_device *hid,
+> > +				     unsigned char reportnum,
+> > +				     __u8 *buf, size_t len,
+> > +				     unsigned char report_type)
+> 
+> I think u8 for report type is better. It is not a character but a
+> number.
+> 
+
+Ack.
+
+> > +{
+> > +	struct goodix_ts_data *ts = hid->driver_data;
+> > +	u16 data_register = le16_to_cpu(ts->hid_desc.data_register);
+> > +	u16 cmd_register = le16_to_cpu(ts->hid_desc.cmd_register);
+> > +	u8 tmp_buf[GOODIX_HID_MAX_INBUF_SIZE];
+> > +	int tx_len = 0, args_len = 0;
+> > +	int response_data_len;
+> > +	u8 args[3];
+> > +	int error;
+> > +
+> > +	if (report_type == HID_OUTPUT_REPORT)
+> > +		return -EINVAL;
+> > +
+> > +	if (reportnum == 3) {
+> > +		/* Get win8 signature data */
+> > +		error = goodix_spi_read(ts, GOODIX_HID_SIGN_ADDR, buf, len);
+> > +		if (error) {
+> > +			dev_err(ts->dev, "failed get win8 sign:%d", error);
+> > +			return -EINVAL;
+> > +		}
+> > +		return len;
+> > +	}
+> > +
+> > +	if (reportnum >= 0x0F)
+> > +		args[args_len++] = reportnum;
+> > +
+> > +	put_unaligned_le16(data_register, args + args_len);
+> > +	args_len += sizeof(data_register);
+> > +
+> > +	/* Clean 3 bytes of hid ack header data */
+> > +	memset(tmp_buf, 0, GOODIX_HID_ACK_HEADER_SIZE);
+> > +	tx_len += GOODIX_HID_ACK_HEADER_SIZE;
+> > +
+> > +	put_unaligned_le16(cmd_register, tmp_buf + tx_len);
+> > +	tx_len += sizeof(cmd_register);
+> > +
+> > +	tmp_buf[tx_len] = (report_type == HID_FEATURE_REPORT ? 0x03 : 0x01) << 4;
+> > +	tmp_buf[tx_len] |=  reportnum >= 0x0F ? 0x0F : reportnum;
+> > +	tx_len++;
+> > +
+> > +	tmp_buf[tx_len++] = GOODIX_HID_GET_REPORT_CMD;
+> > +
+> > +	memcpy(tmp_buf + tx_len, args, args_len);
+> > +	tx_len += args_len;
+> > +
+> > +	/* Step1: write report request info */
+> > +	error = goodix_spi_write(ts, ts->hid_report_addr, tmp_buf, tx_len);
+> > +	if (error) {
+> > +		dev_err(ts->dev, "failed send read feature cmd, %d", error);
+> > +		return error;
+> > +	}
+> > +
+> > +	/* No need read response data */
+> > +	if (!len)
+> > +		return 0;
+> > +
+> > +	/* Step2: check response data status */
+> > +	response_data_len = goodix_hid_check_ack_status(ts);
+> > +	if (response_data_len <= GOODIX_HID_PKG_LEN_SIZE)
+> > +		return -EINVAL;
+> > +
+> > +	len = min(len, response_data_len - GOODIX_HID_PKG_LEN_SIZE);
+> > +	/* Step3: read response data(skip 2bytes of hid pkg length) */
+> > +	error = goodix_spi_read(ts, ts->hid_report_addr +
+> > +				GOODIX_HID_ACK_HEADER_SIZE +
+> > +				GOODIX_HID_PKG_LEN_SIZE, buf, len);
+> > +	if (error) {
+> > +		dev_err(ts->dev, "failed read hid response data, %d", error);
+> > +		return error;
+> > +	}
+> > +
+> > +	if (buf[0] != reportnum) {
+> > +		dev_err(ts->dev, "incorrect reprot (%d vs %d expected)",
+> 
+> s/reprot/report/
+> 
+
+Ack.
+
+> > +			buf[0], reportnum);
+> > +		return -EINVAL;
+> > +	}
+> > +	return len;
+> > +}
+> > +
+> > +/**
+> > + * goodix_hid_set_raw_report() - process hidraw SET REPORT operation
+> > + * @hid: HID device
+> > + * @reportnum: Report ID
+> > + * @buf: Buffer for communication
+> > + * @len: Length of data in the buffer
+> > + * @report_type: Report type
+> > + *
+> > + * The function for hid_ll_driver.get_raw_report to handle the HIDRAW ioctl
+> > + * set report request. The transmitted data follows the standard i2c-hid
+> > + * protocol with a specified header.
+> > + *
+> > + * Return: The length of the data sent, negative error code on failure
+> > + */
+> > +static int goodix_hid_set_raw_report(struct hid_device *hid,
+> > +				     unsigned char reportnum,
+> > +				     __u8 *buf, size_t len,
+> > +				     unsigned char report_type)
+> > +{
+> > +	struct goodix_ts_data *ts = hid->driver_data;
+> > +	u16 data_register = le16_to_cpu(ts->hid_desc.data_register);
+> > +	u16 cmd_register = le16_to_cpu(ts->hid_desc.cmd_register);
+> > +	int tx_len = 0, args_len = 0;
+> > +	u8 tmp_buf[GOODIX_HID_MAX_INBUF_SIZE];
+> > +	u8 args[5];
+> > +	int error;
+> > +
+> > +	if (reportnum >= 0x0F) {
+> > +		args[args_len++] = reportnum;
+> > +		reportnum = 0x0F;
+> > +	}
+> > +
+> > +	put_unaligned_le16(data_register, args + args_len);
+> > +	args_len += sizeof(data_register);
+> > +
+> > +	put_unaligned_le16(GOODIX_HID_PKG_LEN_SIZE + len, args + args_len);
+> > +	args_len += GOODIX_HID_PKG_LEN_SIZE;
+> > +
+> > +	/* Clean 3 bytes of hid ack header data */
+> > +	memset(tmp_buf, 0, GOODIX_HID_ACK_HEADER_SIZE);
+> > +	tx_len += GOODIX_HID_ACK_HEADER_SIZE;
+> > +
+> > +	put_unaligned_le16(cmd_register, tmp_buf + tx_len);
+> > +	tx_len += sizeof(cmd_register);
+> > +
+> > +	tmp_buf[tx_len++] = ((report_type == HID_FEATURE_REPORT ? 0x03 : 0x02) << 4) | reportnum;
+> > +	tmp_buf[tx_len++] = GOODIX_HID_SET_REPORT_CMD;
+> > +
+> > +	memcpy(tmp_buf + tx_len, args, args_len);
+> > +	tx_len += args_len;
+> > +
+> > +	memcpy(tmp_buf + tx_len, buf, len);
+> > +	tx_len += len;
+> > +
+> > +	error = goodix_spi_write(ts, ts->hid_report_addr, tmp_buf, tx_len);
+> > +	if (error) {
+> > +		dev_err(ts->dev, "failed send report %*ph", tx_len, tmp_buf);
+> > +		return error;
+> > +	}
+> > +	return len;
+> > +}
+> > +
+> > +static int goodix_hid_raw_request(struct hid_device *hid,
+> > +				  unsigned char reportnum,
+> > +				  __u8 *buf, size_t len,
+> > +				  unsigned char rtype, int reqtype)
+> > +{
+> > +	struct goodix_ts_data *ts = hid->driver_data;
+> > +	int error = -EINVAL;
+> > +
+> > +	mutex_lock(&ts->hid_request_lock);
+> 
+> 	guard(mutex)(&ts->hid_request_lock);
+> 
+
+Ack.
+
+> > +	switch (reqtype) {
+> > +	case HID_REQ_GET_REPORT:
+> > +		error = goodix_hid_get_raw_report(hid, reportnum, buf,
+> > +						  len, rtype);
+> > +		break;
+> > +	case HID_REQ_SET_REPORT:
+> > +		if (buf[0] == reportnum)
+> > +			error = goodix_hid_set_raw_report(hid, reportnum,
+> > +							  buf, len, rtype);
+> > +		break;
+> > +	default:
+> > +		break;
+> > +	}
+> > +	mutex_unlock(&ts->hid_request_lock);
+> > +
+> > +	return error;
+> > +}
+> > +
+> > +static struct hid_ll_driver goodix_hid_ll_driver = {
+> > +	.parse = goodix_hid_parse,
+> > +	.start = goodix_hid_start,
+> > +	.stop = goodix_hid_stop,
+> > +	.open = goodix_hid_open,
+> > +	.close = goodix_hid_close,
+> > +	.raw_request = goodix_hid_raw_request
+> > +};
+> > +
+> > +static irqreturn_t goodix_hid_irq(int irq, void *data)
+> > +{
+> > +	struct goodix_ts_data *ts = data;
+> > +	struct goodix_hid_report_event event;
+> > +	struct goodix_hid_report_package *pkg;
+> > +	u16 report_size;
+> > +	int error;
+> > +
+> > +	/*
+> > +	 * First, read buffer with space for header and coordinate package:
+> > +	 * - event header = 3 bytes
+> > +	 * - coordinate event = GOODIX_HID_COOR_PKG_LEN bytes
+> > +	 *
+> > +	 * If the data size info in the event header exceeds
+> > +	 * GOODIX_HID_COOR_PKG_LEN, it means that there are other packages
+> > +	 * besides the coordinate package.
+> > +	 */
+> > +	error = goodix_spi_read(ts, ts->hid_report_addr, (u8 *)&event,
+> 
+> Drop cast.
+> 
+
+Ack.
+
+> > +				sizeof(event));
+> > +	if (error) {
+> > +		dev_err(ts->dev, "failed get coordinate data, %d", error);
+> > +		return IRQ_HANDLED;
+> > +	}
+>  > +
+> > +	/* Check coordinate data valid falg */
+> > +	if (event.hdr.flag != GOODIX_HID_REPORT_READY_FLAG) {
+> > +		dev_err(ts->dev, "invalid event flag 0x%x", event.hdr.flag);
+> > +		return IRQ_HANDLED;
+> > +	}
+> > +
+> > +	pkg = (struct goodix_hid_report_package *)event.data;
+> > +	hid_input_report(ts->hid, HID_INPUT_REPORT, pkg->data,
+> > +			 le16_to_cpu(pkg->size) - GOODIX_HID_PKG_LEN_SIZE, 1);
+> > +
+> > +	report_size = le16_to_cpu(event.hdr.size);
+> > +	/* Check if there are other packages */
+> > +	if (report_size <= GOODIX_HID_COOR_PKG_LEN)
+> > +		return IRQ_HANDLED;
+> > +
+> > +	if (report_size - GOODIX_HID_COOR_PKG_LEN > sizeof(ts->event_buf)) {
+> > +		dev_err(ts->dev, "invalid package size, %d", report_size);
+> > +		return IRQ_HANDLED;
+> > +	}
+> > +
+> > +	/* Read the package behind the coordinate data */
+> > +	error = goodix_spi_read(ts, ts->hid_report_addr + sizeof(event),
+> > +				ts->event_buf,
+> > +				report_size - GOODIX_HID_COOR_PKG_LEN);
+> > +	if (error) {
+> > +		dev_err(ts->dev, "failed read data, %d", error);
+> > +		return IRQ_HANDLED;
+> > +	}
+> > +
+> > +	pkg = (struct goodix_hid_report_package *)ts->event_buf;
+> > +	hid_input_report(ts->hid, HID_INPUT_REPORT, pkg->data,
+> > +			 le16_to_cpu(pkg->size) - GOODIX_HID_PKG_LEN_SIZE, 1);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int goodix_hid_init(struct goodix_ts_data *ts)
+> > +{
+> > +	struct hid_device *hid;
+> > +	int error;
+> > +
+> > +	/* Get hid descriptor */
+> > +	error = goodix_spi_read(ts, GOODIX_HID_DESC_ADDR, (u8 *)&ts->hid_desc,
+> 
+> Drop cast.
+>
+
+Ack.
+
+> > +				sizeof(ts->hid_desc));
+> > +	if (error) {
+> > +		dev_err(ts->dev, "failed get hid desc, %d", error);
+> > +		return error;
+> > +	}
+> > +
+> > +	hid = hid_allocate_device();
+> > +	if (IS_ERR(hid))
+> > +		return PTR_ERR(hid);
+> > +
+> > +	hid->driver_data = ts;
+> > +	hid->ll_driver = &goodix_hid_ll_driver;
+> > +	hid->bus = BUS_SPI;
+> > +	hid->dev.parent = &ts->spi->dev;
+> > +
+> > +	hid->version = le16_to_cpu(ts->hid_desc.bcd_version);
+> > +	hid->vendor = le16_to_cpu(ts->hid_desc.vendor_id);
+> > +	hid->product = le16_to_cpu(ts->hid_desc.product_id);
+> > +	snprintf(hid->name, sizeof(hid->name), "%s %04X:%04X", "hid-gdix",
+> > +		 hid->vendor, hid->product);
+> > +
+> > +	error = hid_add_device(hid);
+> > +	if (error) {
+> > +		dev_err(ts->dev, "failed add hid device, %d", error);
+> > +		hid_destroy_device(hid);
+> > +		return error;
+> > +	}
+> > +
+> > +	ts->hid = hid;
+> > +	return 0;
+> > +}
+> > +
+> > +static int goodix_spi_probe(struct spi_device *spi)
+> > +{
+> > +	struct device *dev = &spi->dev;
+> > +	struct goodix_ts_data *ts;
+> > +	int error;
+> > +
+> > +	/* init spi_device */
+> > +	spi->mode            = SPI_MODE_0;
+> > +	spi->bits_per_word   = 8;
+> > +	error = spi_setup(spi);
+> > +	if (error)
+> > +		return error;
+> > +
+> > +	ts = devm_kzalloc(dev, sizeof(*ts), GFP_KERNEL);
+> > +	if (!ts)
+> > +		return -ENOMEM;
+> > +
+> > +	mutex_init(&ts->hid_request_lock);
+> > +	mutex_init(&ts->reg_rw_lock);
+> > +	spi_set_drvdata(spi, ts);
+> > +	if (spi->controller->max_transfer_size)
+> > +		ts->spi_xfer_max_sz = spi->controller->max_transfer_size(spi);
+> > +	else
+> > +		ts->spi_xfer_max_sz = GOODIX_HID_MAX_PKG_SIZE;
+> > +
+> > +	ts->spi_xfer_max_sz = min(GOODIX_HID_MAX_PKG_SIZE, ts->spi_xfer_max_sz);
+> > +	ts->spi = spi;
+> > +	ts->dev = dev;
+> > +	ts->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+> > +	if (IS_ERR(ts->reset_gpio))
+> > +		return dev_err_probe(dev, PTR_ERR(ts->reset_gpio),
+> > +				     "failed to request reset gpio\n");
+> > +
+> > +	error = device_property_read_u32(dev, "hid-report-addr",
+> > +					 &ts->hid_report_addr);
+> 
+> This will require device binding document. Well, we needed it anyway to
+> describe the reset GPIO. You should add regulator handling as well.
+> 
+
+Ack. I will add the reset GPIO and "hid-report-addr" to the device binding
+document. However, regarding the regulator handling, on my x86 platform,
+the device regulator is controlled through ACPI. I think we can address
+the regulator information in the future when it becomes necessary to control
+it within the driver.
+
+> > +	if (error)
+> > +		return dev_err_probe(dev, error,
+> > +				     "failed get hid report addr\n");
+> > +
+> > +	error = goodix_dev_confirm(ts);
+> > +	if (error)
+> > +		return error;
+> > +
+> > +	/* Waits 150ms for firmware to fully boot */
+> > +	msleep(GOODIX_NORMAL_RESET_DELAY_MS);
+> > +
+> > +	error = goodix_hid_init(ts);
+> > +	if (error) {
+> > +		dev_err(dev, "failed init hid device");
+> > +		return error;
+> > +	}
+> > +
+> > +	error = devm_request_threaded_irq(&ts->spi->dev, ts->spi->irq,
+> > +					  NULL, goodix_hid_irq, IRQF_ONESHOT,
+> > +					  "goodix_spi_hid", ts);
+> 
+> I think we still have an issue. The hid device is "added" to hid bus in
+> goodix_hid_init(). Immediately HID bus will attempt to match the HID
+> device and HID driver, start the low level transport (i.e. us), and try
+> to interrogate and initiate the device. That means that interrupts need
+> to be working already. However we only request IRQ after returning from
+> goodix_hid_init(), which is too late.
+> 
+> Please take a look at how i2c-hid driver allocates HID device, requests
+> IRQ, and then calls to hid_add_device(). Also see how it checks for
+> I2C_HID_STARTED flags in the interrupt routine to see of the data needs
+> to be reported to the HID subsystem.
+> 
+
+After re-checking the i2c-hid driver, I found that there is only one scenario
+where interrupts need to be functional already, which is while waiting for
+the hardware reset done event.
+
+In our case, this confirmation mechanism is not necessary. Once the
+GOODIX_NORMAL_RESET_DELAY_MS delay is complete, the device is fully ready
+without requiring an additional hardware reset to confirm its status.
+Therefore, enabling the IRQ service after hid_add_device() should be safe.
+
+> > +	if (error < 0) {
+> 
+> 	if (error)
+> 
+
+Ack.
+
+> > +		dev_err(ts->dev, "could not register interrupt, irq = %d, %d",
+> > +			ts->spi->irq, error);
+> > +		goto err_destroy_hid;
+> > +	}
+> > +
+> > +	return 0;
+> > +
+> > +err_destroy_hid:
+> > +	hid_destroy_device(ts->hid);
+> > +	return error;
+> > +}
+> > +
+> > +static void goodix_spi_remove(struct spi_device *spi)
+> > +{
+> > +	struct goodix_ts_data *ts = spi_get_drvdata(spi);
+> > +
+> > +	disable_irq(spi->irq);
+> > +	hid_destroy_device(ts->hid);
+> 
+> Here we again need to make sure interrupts are working while the device
+> is being used but the HID subsystem, but make sure we are not trying to
+> service interrupts once device is fully gone.
+>
+
+Same as above. I think keeping the interrupts working is unnecessary in
+this case.
+
+> > +}
+> > +
+> > +static void goodix_spi_shutdown(struct spi_device *spi)
+> > +{
+> > +	struct goodix_ts_data *ts = spi_get_drvdata(spi);
+> > +
+> > +	disable_irq(spi->irq);
+> > +	hid_destroy_device(ts->hid);
+> 
+> Same as above.
+>
+
+Same as above.
+
+> > +}
+> > +
+> > +#ifdef CONFIG_ACPI
+> > +static const struct acpi_device_id goodix_spi_acpi_match[] = {
+> > +	{ "GXTS7986" },
+> > +	{ },
+> > +};
+> > +MODULE_DEVICE_TABLE(acpi, goodix_spi_acpi_match);
+> > +#endif
+> > +
+> > +static struct spi_driver goodix_spi_driver = {
+> > +	.driver = {
+> > +		.name = "goodix-spi-hid",
+> > +		.acpi_match_table = ACPI_PTR(goodix_spi_acpi_match),
+> > +	},
+> > +	.probe =	goodix_spi_probe,
+> > +	.remove =	goodix_spi_remove,
+> > +	.shutdown =	goodix_spi_shutdown,
+> > +};
+> > +module_spi_driver(goodix_spi_driver);
+> > +
+> > +MODULE_DESCRIPTION("Goodix SPI driver for HID touchscreen");
+> > +MODULE_AUTHOR("Goodix, Inc.");
+> > +MODULE_LICENSE("GPL");
+> > -- 
+> > 2.43.0
+> > 
+> 
 
 Thanks
-Varada
+
+Charles
 
