@@ -1,101 +1,83 @@
-Return-Path: <linux-kernel+bounces-212385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB70905F6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29123905F70
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8321F2246A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 507611F22458
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CA112D759;
-	Wed, 12 Jun 2024 23:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAAE12D75F;
+	Wed, 12 Jun 2024 23:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kWvE8FSf"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZfNWTxkS"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7D6839F4;
-	Wed, 12 Jun 2024 23:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F10184A23;
+	Wed, 12 Jun 2024 23:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718236197; cv=none; b=DmwBWesIL+6vrtHbsQ//YVgfRXDQ8C8IEgr0YTGe5d5PEOlToVS3385geNbNmFxrc4V/fX1DAcc8TRpyW1RhIXy1rCwzBRvltXzU7+8YNwvBlrLGsSicSGm74nOUgojDUB5rcMj7brHPIdjlOgFN09R0VyEPyaUlW6n8hyiA4Vo=
+	t=1718236236; cv=none; b=m7MXWbpHpGn5v8Vh5FtbnNeQvFmlKzPW1DGyQzr0Fz/qIfYBs/y8B1am1BkdnbPYZZpu/BO0H6dpjrpXxZgwUOd0n6gqUZDbXDff/jTJQtx8pUg05zKaixnAQYRNsXKet4WR4UgXpqa8iPIFlAffvwkTxtZ6sQlPH4Ez0MVsWVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718236197; c=relaxed/simple;
-	bh=5zwvcairmfSamRD7d3COHF4HK4JTeRQyyG/DKNbO7oY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=sUyR36QIVHPp/zdeZeYtmE+EjuSZI0Bjo765WvChegQS2wqBP5hhLXVLhbnHsoxnI9c6LhFe8FXMU9S04aapm2cbtGFqh6j7Hlrb6tcsw4dLDisLNboL/hGfl/kLG4pAWQRcSTjS28TEMDL8Nv64b5t7w/uk14WyFpzazRfJ5/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kWvE8FSf; arc=none smtp.client-ip=209.85.216.45
+	s=arc-20240116; t=1718236236; c=relaxed/simple;
+	bh=kDF4cwWr08knGiAlXtNKAIG2QSOhB1iCVLQj4UclPys=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=liw8QGnJYuQSlEVhLzv44FcxFsOYRZuh47aKW/MsQ9JA4NQz12qrKmdWxm+s3pB6kRU5kinUldnvFFkELR10D9XjUrtGr9FFeIVmPv77jC+ydQRoSfM+H+pBjN6zEEPBeJE1f1kU9Vgnt8n8TaoY0Ehm8g4NV3q8ixn/Lml+180=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZfNWTxkS; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c1def9b4b3so318652a91.0;
-        Wed, 12 Jun 2024 16:49:54 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70109d34a16so375538b3a.2;
+        Wed, 12 Jun 2024 16:50:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718236194; x=1718840994; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718236233; x=1718841033; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YfL2n0kjWNEZeW/AAk0iH6FuaGr51CvJuO13/ofzGO8=;
-        b=kWvE8FSfFlRYpXwn8KPwBqt0Ok0kByVMiGjfg10eLyZ+lCOqCeSG27jzmutqW9+/oH
-         JC7nFJlf1Geuce2LiiyEdTnDXEbYH+urmjc8eYYbIe51M0ifdobjip3a/iU42MCJtONJ
-         xtmvyWy7DZQMPmm9dgIh9rp/msHCD3O8Hto5Fyp4B4IHhWat2I3cR34ZVRn/J3d93b2N
-         09Nr/gIFHmRUW+FgwJQ22jgDjCGwl9Jko0PS4OyBu6bGXpK7BM1Yzeux3FPpQ5q7v10D
-         79M/d4w8bpMmWDAruZ7SSexPvML0G2gsHOzEACrMzQ/xlgv6ZQyyGvtItuAaXgPSpY9C
-         DH4A==
+        bh=qwGVpELNd48gRkrDYlFW6FoIe0pVE70+ua6ucuQB1Jo=;
+        b=ZfNWTxkS5bT4ZUhpC5eAC+wPGJR6ZJNfiWVRVoHaHhNGEqDWjX9cZFB8lGx9I6MHi7
+         qi6D/qlmsGNVCp8v70Dc2OEaJkUUP10tUx3OREbVneEj9zOlA+iqnFN+yxslkftmXjhq
+         ppHMohbD6Ja/dwDWmmRB06FG/rW89NAr//px8w36kknUxlpL+PpR+oF2Zbs/lWwTo2XL
+         4MDRklAQtGF49UHkMFk2q1k0pk/SjZYHwVA5eRmnvveuCttwA5h8EVIIuxmpXu0iFRAP
+         Y+CDcf3D2V0nku+cZy8q/JK6GNk2rRIUujmu7AiKKE+9ifEi3k+dDdbFNDVucQOljuC/
+         qkUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718236194; x=1718840994;
+        d=1e100.net; s=20230601; t=1718236233; x=1718841033;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YfL2n0kjWNEZeW/AAk0iH6FuaGr51CvJuO13/ofzGO8=;
-        b=icSyexQhM5TL6haeBfuXAXc6Wigx7kWNniTGlFXKBD4N7B5xP54ntl+Xl4/gac6B8J
-         y8tLfqm15ohREmKA+WUK+oeyVVyXJ3J0eALeYY50eZSfyqtGhnWg9oduILNs5gBWcnlq
-         TqbzyD1dZ2xosmZ232Itj2FqsDj/Qv2lDwgbbA+ok2CzRvnJjyNkE6DDVNXYOfvoUeeG
-         8sEURIylys3CyqO37ZwcrVWbZlQQhQ0UwppX+fjam21y8GOuRQmRDjLr54vM/VqjoEED
-         1d811Ejmk/vZSE7rnY00HcQkQVvuED8od20hu8Siqv3zP9sNcowUF3dfgHWYZA7pIaIH
-         ctWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJW3d5wrNCWxsCq4g8p9Io+7M8RJdn5toxZlLATTZ/xgHkAURbL+6MqeWjI6hvYXOiPfYTvTn2i4I3z5XEHn09L61D0R9mOvGPRVuHgz2YZUH/l/XsXlxVBmrt+qMq+jPap/vKxHFHYGhRAJrpSJZnWiB1rRS9l9QkhFvYD6dbp7kX8+yEen16R0h9uljj1UAOE5xCY9I0253R0RVmR3kebCOzPLR7
-X-Gm-Message-State: AOJu0YyUCpJkBQC9LYagQwPZ8pxLExWd3P5y/LqA6FAfRZDNcGIuuiGb
-	msEzowtAJJludOdZtJH7lhOXLJ6sSPFcRD8YDInslHnEO5jRLoh8
-X-Google-Smtp-Source: AGHT+IEaurM7LKKj+LG0ZIHXCX2Cwx2VYZvfQZQjh+Nx/DzL2lXP5EIHHBg3Gzz3rRhyzYv2DgfqYQ==
-X-Received: by 2002:a17:90b:4c84:b0:2c1:bcc7:23f1 with SMTP id 98e67ed59e1d1-2c4a7628b8cmr3540684a91.12.1718236193428;
-        Wed, 12 Jun 2024 16:49:53 -0700 (PDT)
+        bh=qwGVpELNd48gRkrDYlFW6FoIe0pVE70+ua6ucuQB1Jo=;
+        b=kJFi24jbdjYKjlxYHO0sIF0HuWM9sb3jfzDK25P2w0A309DLIc9+XmvCtqI0bQEZmn
+         lnhrTkAHk+2JBIXxpBhUkR2+Q0/li0YLUV2nkeDY3sXCD/6RYSpQAuEKcp8dQsSWhca1
+         NEOcGZwiWZa8nGFr75exfgimkN1eCLKbnBpD/jLpFz1Ywy4i6tMx3K0SM2hEDDgCUghn
+         s7x7gY9MuerDLDo9uODg3GIITCu23+7gVnR2sgJ3Ug8u/XWFzoDjJ6RlKjVtPovhvUYo
+         aC+iIsKjDw0hT/A6aop/wi1qRJfVhiUuGpdwkEbBJy4SezKikJ9JXrd3P1FHS6MVX0ak
+         fJTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXw/20QOCnTfxW9q01oBX2fkzWUkhVloES/Yq9ci0zgsBPezufIGRx//Y4VEPhcWMGL6y7HjNtUbcL1Q6MDV6GauNyT5V/gYUo+pBAW9TmLOE2qBXy+Ew6AD2Kf7tgLyBoGevZ4YNAguRQ=
+X-Gm-Message-State: AOJu0YwMpcQtUvUESLOAqlzp451MSwApiW3QQ5RiE/KokBI/oAdunq9m
+	iw02ihYORgjShLnHXcuEOYR3VrI4Zk7Xh6zOcBx0ip5k8h9Rm7GH
+X-Google-Smtp-Source: AGHT+IEoTqGe0L4V4fmTi9MRSMbyF3p2jQNcVJY/sqTR5DXkyCcA3NwcHcms1mViGh+dQY2eSSAVIQ==
+X-Received: by 2002:a05:6a21:78a4:b0:1b4:5d12:63f1 with SMTP id adf61e73a8af0-1b8a9ba7c13mr4006755637.26.1718236233156;
+        Wed, 12 Jun 2024 16:50:33 -0700 (PDT)
 Received: from apais-devbox.. ([2001:569:766d:6500:b5fe:8c68:54d3:a3d5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a76ab127sm2464757a91.50.2024.06.12.16.49.52
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc964b2bsm127716b3a.48.2024.06.12.16.50.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 16:49:52 -0700 (PDT)
+        Wed, 12 Jun 2024 16:50:32 -0700 (PDT)
 From: Allen Pais <allen.lkml@gmail.com>
-To: Aubin Constans <aubin.constans@microchip.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Manuel Lauss <manuel.lauss@gmail.com>,
-	=?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Alex Dubov <oakad@yahoo.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Bruce Chang <brucechang@via.com.tw>,
-	Harald Welte <HaraldWelte@viatech.com>,
-	Pierre Ossman <pierre@ossman.eu>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Bluecherry Maintainers <maintainers@bluecherrydvr.com>,
+	Anton Sviridenko <anton@corp.bluecherry.net>,
+	Andrey Utkin <andrey.utkin@corp.bluecherry.net>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Sean Young <sean@mess.org>
 Cc: Allen Pais <allen.lkml@gmail.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	linux-mmc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] mmc: Convert from tasklet to BH workqueue
-Date: Wed, 12 Jun 2024 16:49:26 -0700
-Message-Id: <20240612234930.211119-1-allen.lkml@gmail.com>
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4] media: Convert from tasklet to BH workqueue
+Date: Wed, 12 Jun 2024 16:50:01 -0700
+Message-Id: <20240612235006.211471-1-allen.lkml@gmail.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -103,7 +85,6 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 The only generic interface to execute asynchronously in the BH context is
@@ -112,1240 +93,1237 @@ replace tasklets, BH workqueue support was recently added. A BH workqueue
 behaves similarly to regular workqueues except that the queued work items
 are executed in the BH context.
 
-This patch converts drivers/mmc/* from tasklet to BH workqueue.
+This patch converts drivers/media/* from tasklet to BH workqueue.
 
 Based on the work done by Tejun Heo <tj@kernel.org>
 
-Tested-by: Christian Loehle <christian.loehle@arm.com>
-Tested-by: Aubin Constans <aubin.constans@microchip.com>
-Acked-by: Aubin Constans <aubin.constans@microchip.com>
-Acked-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 Signed-off-by: Allen Pais <allen.lkml@gmail.com>
 ---
+
+v4:
+  - fixed styling issues.
+  - rename work to bh_work [Hans Verkuil]
+  - Fixed mantis build failure [Hans Verkuil]
+
+v3:
+https://lore.kernel.org/all/20240425183127.11409-1-apais@linux.microsoft.com/
+
 v2:
-   - fixed patch styling issues
-   - rename work to bh_work
+https://lore.kernel.org/all/20240327160314.9982-9-apais@linux.microsoft.com/
 
-Link to v1:
-https://lore.kernel.org/all/20240327160314.9982-10-apais@linux.microsoft.com/
+ drivers/media/pci/bt8xx/bt878.c               |  8 ++--
+ drivers/media/pci/bt8xx/bt878.h               |  3 +-
+ drivers/media/pci/bt8xx/dvb-bt8xx.c           |  9 +++--
+ drivers/media/pci/ddbridge/ddbridge.h         |  2 +-
+ drivers/media/pci/mantis/hopper_cards.c       |  2 +-
+ drivers/media/pci/mantis/mantis_cards.c       |  2 +-
+ drivers/media/pci/mantis/mantis_common.h      |  2 +-
+ drivers/media/pci/mantis/mantis_dma.c         |  4 +-
+ drivers/media/pci/mantis/mantis_dma.h         |  2 +-
+ drivers/media/pci/mantis/mantis_dvb.c         | 12 +++---
+ drivers/media/pci/ngene/ngene-core.c          | 22 +++++-----
+ drivers/media/pci/ngene/ngene.h               |  5 ++-
+ drivers/media/pci/smipcie/smipcie-main.c      | 18 ++++-----
+ drivers/media/pci/smipcie/smipcie.h           |  3 +-
+ drivers/media/pci/ttpci/budget-av.c           |  3 +-
+ drivers/media/pci/ttpci/budget-ci.c           | 27 +++++++------
+ drivers/media/pci/ttpci/budget-core.c         | 10 ++---
+ drivers/media/pci/ttpci/budget.h              |  5 ++-
+ drivers/media/pci/tw5864/tw5864-core.c        |  2 +-
+ drivers/media/pci/tw5864/tw5864-video.c       | 13 +++---
+ drivers/media/pci/tw5864/tw5864.h             |  7 ++--
+ drivers/media/platform/intel/pxa_camera.c     | 15 +++----
+ drivers/media/platform/marvell/mcam-core.c    |  8 ++--
+ drivers/media/platform/marvell/mcam-core.h    |  3 +-
+ .../st/sti/c8sectpfe/c8sectpfe-core.c         | 14 +++----
+ .../st/sti/c8sectpfe/c8sectpfe-core.h         |  2 +-
+ drivers/media/radio/wl128x/fmdrv.h            |  5 ++-
+ drivers/media/radio/wl128x/fmdrv_common.c     | 40 +++++++++----------
+ drivers/media/rc/mceusb.c                     |  2 +-
+ drivers/media/usb/ttusb-dec/ttusb_dec.c       | 21 +++++-----
+ 30 files changed, 142 insertions(+), 129 deletions(-)
 
- drivers/mmc/host/atmel-mci.c                  | 35 ++++-----
- drivers/mmc/host/au1xmmc.c                    | 37 +++++-----
- drivers/mmc/host/cb710-mmc.c                  | 14 ++--
- drivers/mmc/host/cb710-mmc.h                  |  3 +-
- drivers/mmc/host/dw_mmc.c                     | 24 +++---
- drivers/mmc/host/dw_mmc.h                     |  9 ++-
- drivers/mmc/host/omap.c                       | 17 +++--
- drivers/mmc/host/renesas_sdhi.h               |  3 +-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 24 +++---
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  9 +--
- drivers/mmc/host/sdhci-bcm-kona.c             |  2 +-
- drivers/mmc/host/tifm_sd.c                    | 15 ++--
- drivers/mmc/host/tmio_mmc.h                   |  3 +-
- drivers/mmc/host/tmio_mmc_core.c              |  4 +-
- drivers/mmc/host/uniphier-sd.c                | 12 +--
- drivers/mmc/host/via-sdmmc.c                  | 25 ++++---
- drivers/mmc/host/wbsd.c                       | 74 +++++++++----------
- drivers/mmc/host/wbsd.h                       | 10 +--
- 18 files changed, 163 insertions(+), 157 deletions(-)
-
-diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-index 8199d9620075..6490df54a6f5 100644
---- a/drivers/mmc/host/atmel-mci.c
-+++ b/drivers/mmc/host/atmel-mci.c
-@@ -33,6 +33,7 @@
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
- #include <linux/pinctrl/consumer.h>
-+#include <linux/workqueue.h>
- 
- #include <asm/cacheflush.h>
- #include <asm/io.h>
-@@ -272,12 +273,12 @@ struct atmel_mci_dma {
-  *	EVENT_DATA_ERROR is pending.
-  * @stop_cmdr: Value to be loaded into CMDR when the stop command is
-  *	to be sent.
-- * @tasklet: Tasklet running the request state machine.
-+ * @bh_work: Work running the request state machine.
-  * @pending_events: Bitmask of events flagged by the interrupt handler
-- *	to be processed by the tasklet.
-+ *	to be processed by the work.
-  * @completed_events: Bitmask of events which the state machine has
-  *	processed.
-- * @state: Tasklet state.
-+ * @state: Work state.
-  * @queue: List of slots waiting for access to the controller.
-  * @need_clock_update: Update the clock rate before the next request.
-  * @need_reset: Reset controller before next request.
-@@ -352,7 +353,7 @@ struct atmel_mci {
- 	u32			data_status;
- 	u32			stop_cmdr;
- 
--	struct tasklet_struct	tasklet;
-+	struct work_struct	bh_work;
- 	unsigned long		pending_events;
- 	unsigned long		completed_events;
- 	enum atmel_mci_state	state;
-@@ -735,7 +736,7 @@ static void atmci_timeout_timer(struct timer_list *t)
- 	host->need_reset = 1;
- 	host->state = STATE_END_REQUEST;
- 	smp_wmb();
--	tasklet_schedule(&host->tasklet);
-+	queue_work(system_bh_wq, &host->bh_work);
- }
- 
- static inline unsigned int atmci_ns_to_clocks(struct atmel_mci *host,
-@@ -958,7 +959,7 @@ static void atmci_pdc_complete(struct atmel_mci *host)
- 
- 	dev_dbg(dev, "(%s) set pending xfer complete\n", __func__);
- 	atmci_set_pending(host, EVENT_XFER_COMPLETE);
--	tasklet_schedule(&host->tasklet);
-+	queue_work(system_bh_wq, &host->bh_work);
- }
- 
- static void atmci_dma_cleanup(struct atmel_mci *host)
-@@ -972,7 +973,7 @@ static void atmci_dma_cleanup(struct atmel_mci *host)
- }
- 
- /*
-- * This function is called by the DMA driver from tasklet context.
-+ * This function is called by the DMA driver from bh context.
-  */
- static void atmci_dma_complete(void *arg)
- {
-@@ -995,7 +996,7 @@ static void atmci_dma_complete(void *arg)
- 	if (data) {
- 		dev_dbg(dev, "(%s) set pending xfer complete\n", __func__);
- 		atmci_set_pending(host, EVENT_XFER_COMPLETE);
--		tasklet_schedule(&host->tasklet);
-+		queue_work(system_bh_wq, &host->bh_work);
- 
- 		/*
- 		 * Regardless of what the documentation says, we have
-@@ -1008,7 +1009,7 @@ static void atmci_dma_complete(void *arg)
- 		 * haven't seen all the potential error bits yet.
- 		 *
- 		 * The interrupt handler will schedule a different
--		 * tasklet to finish things up when the data transfer
-+		 * bh work to finish things up when the data transfer
- 		 * is completely done.
- 		 *
- 		 * We may not complete the mmc request here anyway
-@@ -1745,9 +1746,9 @@ static void atmci_detect_change(struct timer_list *t)
- 	}
- }
- 
--static void atmci_tasklet_func(struct tasklet_struct *t)
-+static void atmci_work_func(struct work_struct *t)
- {
--	struct atmel_mci        *host = from_tasklet(host, t, tasklet);
-+	struct atmel_mci        *host = from_work(host, t, bh_work);
- 	struct mmc_request	*mrq = host->mrq;
- 	struct mmc_data		*data = host->data;
- 	struct device		*dev = host->dev;
-@@ -1759,7 +1760,7 @@ static void atmci_tasklet_func(struct tasklet_struct *t)
- 
- 	state = host->state;
- 
--	dev_vdbg(dev, "tasklet: state %u pending/completed/mask %lx/%lx/%x\n",
-+	dev_vdbg(dev, "bh_work: state %u pending/completed/mask %lx/%lx/%x\n",
- 		state, host->pending_events, host->completed_events,
- 		atmci_readl(host, ATMCI_IMR));
- 
-@@ -2118,7 +2119,7 @@ static irqreturn_t atmci_interrupt(int irq, void *dev_id)
- 			dev_dbg(dev, "set pending data error\n");
- 			smp_wmb();
- 			atmci_set_pending(host, EVENT_DATA_ERROR);
--			tasklet_schedule(&host->tasklet);
-+			queue_work(system_bh_wq, &host->bh_work);
+diff --git a/drivers/media/pci/bt8xx/bt878.c b/drivers/media/pci/bt8xx/bt878.c
+index 90972d6952f1..dedf82b76e28 100644
+--- a/drivers/media/pci/bt8xx/bt878.c
++++ b/drivers/media/pci/bt8xx/bt878.c
+@@ -300,8 +300,8 @@ static irqreturn_t bt878_irq(int irq, void *dev_id)
  		}
- 
- 		if (pending & ATMCI_TXBUFE) {
-@@ -2187,7 +2188,7 @@ static irqreturn_t atmci_interrupt(int irq, void *dev_id)
- 			smp_wmb();
- 			dev_dbg(dev, "set pending notbusy\n");
- 			atmci_set_pending(host, EVENT_NOTBUSY);
--			tasklet_schedule(&host->tasklet);
-+			queue_work(system_bh_wq, &host->bh_work);
+ 		if (astat & BT878_ARISCI) {
+ 			bt->finished_block = (stat & BT878_ARISCS) >> 28;
+-			if (bt->tasklet.callback)
+-				tasklet_schedule(&bt->tasklet);
++			if (bt->bh_work.func)
++				queue_work(system_bh_wq, &bt->bh_work);
+ 			break;
  		}
+ 		count++;
+@@ -478,8 +478,8 @@ static int bt878_probe(struct pci_dev *dev, const struct pci_device_id *pci_id)
+ 	btwrite(0, BT878_AINT_MASK);
+ 	bt878_num++;
  
- 		if (pending & ATMCI_NOTBUSY) {
-@@ -2196,7 +2197,7 @@ static irqreturn_t atmci_interrupt(int irq, void *dev_id)
- 			smp_wmb();
- 			dev_dbg(dev, "set pending notbusy\n");
- 			atmci_set_pending(host, EVENT_NOTBUSY);
--			tasklet_schedule(&host->tasklet);
-+			queue_work(system_bh_wq, &host->bh_work);
- 		}
- 
- 		if (pending & ATMCI_RXRDY)
-@@ -2211,7 +2212,7 @@ static irqreturn_t atmci_interrupt(int irq, void *dev_id)
- 			smp_wmb();
- 			dev_dbg(dev, "set pending cmd rdy\n");
- 			atmci_set_pending(host, EVENT_CMD_RDY);
--			tasklet_schedule(&host->tasklet);
-+			queue_work(system_bh_wq, &host->bh_work);
- 		}
- 
- 		if (pending & (ATMCI_SDIOIRQA | ATMCI_SDIOIRQB))
-@@ -2487,7 +2488,7 @@ static int atmci_probe(struct platform_device *pdev)
- 
- 	host->mapbase = regs->start;
- 
--	tasklet_setup(&host->tasklet, atmci_tasklet_func);
-+	INIT_WORK(&host->bh_work, atmci_work_func);
- 
- 	ret = request_irq(irq, atmci_interrupt, 0, dev_name(dev), host);
- 	if (ret) {
-diff --git a/drivers/mmc/host/au1xmmc.c b/drivers/mmc/host/au1xmmc.c
-index b5a5c6a2fe8b..6e80bcb668ec 100644
---- a/drivers/mmc/host/au1xmmc.c
-+++ b/drivers/mmc/host/au1xmmc.c
-@@ -42,6 +42,7 @@
- #include <linux/leds.h>
- #include <linux/mmc/host.h>
- #include <linux/slab.h>
-+#include <linux/workqueue.h>
- 
- #include <asm/io.h>
- #include <asm/mach-au1x00/au1000.h>
-@@ -113,8 +114,8 @@ struct au1xmmc_host {
- 
- 	int irq;
- 
--	struct tasklet_struct finish_task;
--	struct tasklet_struct data_task;
-+	struct work_struct finish_bh_work;
-+	struct work_struct data_bh_work;
- 	struct au1xmmc_platform_data *platdata;
- 	struct platform_device *pdev;
- 	struct resource *ioarea;
-@@ -253,9 +254,9 @@ static void au1xmmc_finish_request(struct au1xmmc_host *host)
- 	mmc_request_done(host->mmc, mrq);
- }
- 
--static void au1xmmc_tasklet_finish(struct tasklet_struct *t)
-+static void au1xmmc_finish_bh_work(struct work_struct *t)
- {
--	struct au1xmmc_host *host = from_tasklet(host, t, finish_task);
-+	struct au1xmmc_host *host = from_work(host, t, finish_bh_work);
- 	au1xmmc_finish_request(host);
- }
- 
-@@ -363,9 +364,9 @@ static void au1xmmc_data_complete(struct au1xmmc_host *host, u32 status)
- 	au1xmmc_finish_request(host);
- }
- 
--static void au1xmmc_tasklet_data(struct tasklet_struct *t)
-+static void au1xmmc_data_bh_work(struct work_struct *t)
- {
--	struct au1xmmc_host *host = from_tasklet(host, t, data_task);
-+	struct au1xmmc_host *host = from_work(host, t, data_bh_work);
- 
- 	u32 status = __raw_readl(HOST_STATUS(host));
- 	au1xmmc_data_complete(host, status);
-@@ -425,7 +426,7 @@ static void au1xmmc_send_pio(struct au1xmmc_host *host)
- 		if (host->flags & HOST_F_STOP)
- 			SEND_STOP(host);
- 
--		tasklet_schedule(&host->data_task);
-+		queue_work(system_bh_wq, &host->data_bh_work);
- 	}
- }
- 
-@@ -505,7 +506,7 @@ static void au1xmmc_receive_pio(struct au1xmmc_host *host)
- 		if (host->flags & HOST_F_STOP)
- 			SEND_STOP(host);
- 
--		tasklet_schedule(&host->data_task);
-+		queue_work(system_bh_wq, &host->data_bh_work);
- 	}
- }
- 
-@@ -561,7 +562,7 @@ static void au1xmmc_cmd_complete(struct au1xmmc_host *host, u32 status)
- 
- 	if (!trans || cmd->error) {
- 		IRQ_OFF(host, SD_CONFIG_TH | SD_CONFIG_RA | SD_CONFIG_RF);
--		tasklet_schedule(&host->finish_task);
-+		queue_work(system_bh_wq, &host->finish_bh_work);
- 		return;
- 	}
- 
-@@ -797,7 +798,7 @@ static irqreturn_t au1xmmc_irq(int irq, void *dev_id)
- 		IRQ_OFF(host, SD_CONFIG_NE | SD_CONFIG_TH);
- 
- 		/* IRQ_OFF(host, SD_CONFIG_TH | SD_CONFIG_RA | SD_CONFIG_RF); */
--		tasklet_schedule(&host->finish_task);
-+		queue_work(system_bh_wq, &host->finish_bh_work);
- 	}
- #if 0
- 	else if (status & SD_STATUS_DD) {
-@@ -806,7 +807,7 @@ static irqreturn_t au1xmmc_irq(int irq, void *dev_id)
- 			au1xmmc_receive_pio(host);
- 		else {
- 			au1xmmc_data_complete(host, status);
--			/* tasklet_schedule(&host->data_task); */
-+			/* queue_work(system_bh_wq, &host->data_bh_work); */
- 		}
- 	}
- #endif
-@@ -854,7 +855,7 @@ static void au1xmmc_dbdma_callback(int irq, void *dev_id)
- 	if (host->flags & HOST_F_STOP)
- 		SEND_STOP(host);
- 
--	tasklet_schedule(&host->data_task);
-+	queue_work(system_bh_wq, &host->data_bh_work);
- }
- 
- static int au1xmmc_dbdma_init(struct au1xmmc_host *host)
-@@ -1039,9 +1040,9 @@ static int au1xmmc_probe(struct platform_device *pdev)
- 	if (host->platdata)
- 		mmc->caps &= ~(host->platdata->mask_host_caps);
- 
--	tasklet_setup(&host->data_task, au1xmmc_tasklet_data);
-+	INIT_WORK(&host->data_bh_work, au1xmmc_data_bh_work);
- 
--	tasklet_setup(&host->finish_task, au1xmmc_tasklet_finish);
-+	INIT_WORK(&host->finish_bh_work, au1xmmc_finish_bh_work);
- 
- 	if (has_dbdma()) {
- 		ret = au1xmmc_dbdma_init(host);
-@@ -1091,8 +1092,8 @@ static int au1xmmc_probe(struct platform_device *pdev)
- 	if (host->flags & HOST_F_DBDMA)
- 		au1xmmc_dbdma_shutdown(host);
- 
--	tasklet_kill(&host->data_task);
--	tasklet_kill(&host->finish_task);
-+	cancel_work_sync(&host->data_bh_work);
-+	cancel_work_sync(&host->finish_bh_work);
- 
- 	if (host->platdata && host->platdata->cd_setup &&
- 	    !(mmc->caps & MMC_CAP_NEEDS_POLL))
-@@ -1135,8 +1136,8 @@ static void au1xmmc_remove(struct platform_device *pdev)
- 		__raw_writel(0, HOST_CONFIG2(host));
- 		wmb(); /* drain writebuffer */
- 
--		tasklet_kill(&host->data_task);
--		tasklet_kill(&host->finish_task);
-+		cancel_work_sync(&host->data_bh_work);
-+		cancel_work_sync(&host->finish_bh_work);
- 
- 		if (host->flags & HOST_F_DBDMA)
- 			au1xmmc_dbdma_shutdown(host);
-diff --git a/drivers/mmc/host/cb710-mmc.c b/drivers/mmc/host/cb710-mmc.c
-index 0aec33b88bef..902f7f20abaa 100644
---- a/drivers/mmc/host/cb710-mmc.c
-+++ b/drivers/mmc/host/cb710-mmc.c
-@@ -493,7 +493,7 @@ static void cb710_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	if (!cb710_mmc_command(mmc, mrq->cmd) && mrq->stop)
- 		cb710_mmc_command(mmc, mrq->stop);
- 
--	tasklet_schedule(&reader->finish_req_tasklet);
-+	queue_work(system_bh_wq, &reader->finish_req_bh_work);
- }
- 
- static int cb710_mmc_powerup(struct cb710_slot *slot)
-@@ -646,10 +646,10 @@ static int cb710_mmc_irq_handler(struct cb710_slot *slot)
- 	return 1;
- }
- 
--static void cb710_mmc_finish_request_tasklet(struct tasklet_struct *t)
-+static void cb710_mmc_finish_request_bh_work(struct work_struct *t)
- {
--	struct cb710_mmc_reader *reader = from_tasklet(reader, t,
--						       finish_req_tasklet);
-+	struct cb710_mmc_reader *reader = from_work(reader, t,
-+						       finish_req_bh_work);
- 	struct mmc_request *mrq = reader->mrq;
- 
- 	reader->mrq = NULL;
-@@ -718,8 +718,8 @@ static int cb710_mmc_init(struct platform_device *pdev)
- 
- 	reader = mmc_priv(mmc);
- 
--	tasklet_setup(&reader->finish_req_tasklet,
--		      cb710_mmc_finish_request_tasklet);
-+	INIT_WORK(&reader->finish_req_bh_work,
-+			cb710_mmc_finish_request_bh_work);
- 	spin_lock_init(&reader->irq_lock);
- 	cb710_dump_regs(chip, CB710_DUMP_REGS_MMC);
- 
-@@ -763,7 +763,7 @@ static void cb710_mmc_exit(struct platform_device *pdev)
- 	cb710_write_port_32(slot, CB710_MMC_CONFIG_PORT, 0);
- 	cb710_write_port_16(slot, CB710_MMC_CONFIGB_PORT, 0);
- 
--	tasklet_kill(&reader->finish_req_tasklet);
-+	cancel_work_sync(&reader->finish_req_bh_work);
- 
- 	mmc_free_host(mmc);
- }
-diff --git a/drivers/mmc/host/cb710-mmc.h b/drivers/mmc/host/cb710-mmc.h
-index 5e053077dbed..59abaccaad10 100644
---- a/drivers/mmc/host/cb710-mmc.h
-+++ b/drivers/mmc/host/cb710-mmc.h
-@@ -8,10 +8,11 @@
- #define LINUX_CB710_MMC_H
- 
- #include <linux/cb710.h>
-+#include <linux/workqueue.h>
- 
- /* per-MMC-reader structure */
- struct cb710_mmc_reader {
--	struct tasklet_struct finish_req_tasklet;
-+	struct work_struct finish_req_bh_work;
- 	struct mmc_request *mrq;
- 	spinlock_t irq_lock;
- 	unsigned char last_power_mode;
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index 8e2d676b9239..7195de2cde44 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -493,7 +493,7 @@ static void dw_mci_dmac_complete_dma(void *arg)
- 	 */
- 	if (data) {
- 		set_bit(EVENT_XFER_COMPLETE, &host->pending_events);
--		tasklet_schedule(&host->tasklet);
-+		queue_work(system_bh_wq, &host->bh_work);
- 	}
- }
- 
-@@ -1834,7 +1834,7 @@ static enum hrtimer_restart dw_mci_fault_timer(struct hrtimer *t)
- 	if (!host->data_status) {
- 		host->data_status = SDMMC_INT_DCRC;
- 		set_bit(EVENT_DATA_ERROR, &host->pending_events);
--		tasklet_schedule(&host->tasklet);
-+		queue_work(system_bh_wq, &host->bh_work);
- 	}
- 
- 	spin_unlock_irqrestore(&host->irq_lock, flags);
-@@ -2056,9 +2056,9 @@ static bool dw_mci_clear_pending_data_complete(struct dw_mci *host)
- 	return true;
- }
- 
--static void dw_mci_tasklet_func(struct tasklet_struct *t)
-+static void dw_mci_work_func(struct work_struct *t)
- {
--	struct dw_mci *host = from_tasklet(host, t, tasklet);
-+	struct dw_mci *host = from_work(host, t, bh_work);
- 	struct mmc_data	*data;
- 	struct mmc_command *cmd;
- 	struct mmc_request *mrq;
-@@ -2113,7 +2113,7 @@ static void dw_mci_tasklet_func(struct tasklet_struct *t)
- 				 * will waste a bit of time (we already know
- 				 * the command was bad), it can't cause any
- 				 * errors since it's possible it would have
--				 * taken place anyway if this tasklet got
-+				 * taken place anyway if this bh work got
- 				 * delayed. Allowing the transfer to take place
- 				 * avoids races and keeps things simple.
- 				 */
-@@ -2706,7 +2706,7 @@ static void dw_mci_cmd_interrupt(struct dw_mci *host, u32 status)
- 	smp_wmb(); /* drain writebuffer */
- 
- 	set_bit(EVENT_CMD_COMPLETE, &host->pending_events);
--	tasklet_schedule(&host->tasklet);
-+	queue_work(system_bh_wq, &host->bh_work);
- 
- 	dw_mci_start_fault_timer(host);
- }
-@@ -2774,7 +2774,7 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
- 				set_bit(EVENT_DATA_COMPLETE,
- 					&host->pending_events);
- 
--			tasklet_schedule(&host->tasklet);
-+			queue_work(system_bh_wq, &host->bh_work);
- 
- 			spin_unlock(&host->irq_lock);
- 		}
-@@ -2793,7 +2793,7 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
- 					dw_mci_read_data_pio(host, true);
- 			}
- 			set_bit(EVENT_DATA_COMPLETE, &host->pending_events);
--			tasklet_schedule(&host->tasklet);
-+			queue_work(system_bh_wq, &host->bh_work);
- 
- 			spin_unlock(&host->irq_lock);
- 		}
-@@ -3098,7 +3098,7 @@ static void dw_mci_cmd11_timer(struct timer_list *t)
- 
- 	host->cmd_status = SDMMC_INT_RTO;
- 	set_bit(EVENT_CMD_COMPLETE, &host->pending_events);
--	tasklet_schedule(&host->tasklet);
-+	queue_work(system_bh_wq, &host->bh_work);
- }
- 
- static void dw_mci_cto_timer(struct timer_list *t)
-@@ -3144,7 +3144,7 @@ static void dw_mci_cto_timer(struct timer_list *t)
- 		 */
- 		host->cmd_status = SDMMC_INT_RTO;
- 		set_bit(EVENT_CMD_COMPLETE, &host->pending_events);
--		tasklet_schedule(&host->tasklet);
-+		queue_work(system_bh_wq, &host->bh_work);
- 		break;
- 	default:
- 		dev_warn(host->dev, "Unexpected command timeout, state %d\n",
-@@ -3195,7 +3195,7 @@ static void dw_mci_dto_timer(struct timer_list *t)
- 		host->data_status = SDMMC_INT_DRTO;
- 		set_bit(EVENT_DATA_ERROR, &host->pending_events);
- 		set_bit(EVENT_DATA_COMPLETE, &host->pending_events);
--		tasklet_schedule(&host->tasklet);
-+		queue_work(system_bh_wq, &host->bh_work);
- 		break;
- 	default:
- 		dev_warn(host->dev, "Unexpected data timeout, state %d\n",
-@@ -3435,7 +3435,7 @@ int dw_mci_probe(struct dw_mci *host)
- 	else
- 		host->fifo_reg = host->regs + DATA_240A_OFFSET;
- 
--	tasklet_setup(&host->tasklet, dw_mci_tasklet_func);
-+	INIT_WORK(&host->bh_work, dw_mci_work_func);
- 	ret = devm_request_irq(host->dev, host->irq, dw_mci_interrupt,
- 			       host->irq_flags, "dw-mci", host);
- 	if (ret)
-diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-index 4ed81f94f7ca..b504f7ae513a 100644
---- a/drivers/mmc/host/dw_mmc.h
-+++ b/drivers/mmc/host/dw_mmc.h
-@@ -17,6 +17,7 @@
- #include <linux/fault-inject.h>
- #include <linux/hrtimer.h>
- #include <linux/interrupt.h>
-+#include <linux/workqueue.h>
- 
- enum dw_mci_state {
- 	STATE_IDLE = 0,
-@@ -89,12 +90,12 @@ struct dw_mci_dma_slave {
-  * @stop_cmdr: Value to be loaded into CMDR when the stop command is
-  *	to be sent.
-  * @dir_status: Direction of current transfer.
-- * @tasklet: Tasklet running the request state machine.
-+ * @bh_work: Work running the request state machine.
-  * @pending_events: Bitmask of events flagged by the interrupt handler
-- *	to be processed by the tasklet.
-+ *	to be processed by bh work.
-  * @completed_events: Bitmask of events which the state machine has
-  *	processed.
-- * @state: Tasklet state.
-+ * @state: BH work state.
-  * @queue: List of slots waiting for access to the controller.
-  * @bus_hz: The rate of @mck in Hz. This forms the basis for MMC bus
-  *	rate and timeout calculations.
-@@ -194,7 +195,7 @@ struct dw_mci {
- 	u32			data_status;
- 	u32			stop_cmdr;
- 	u32			dir_status;
--	struct tasklet_struct	tasklet;
-+	struct work_struct	bh_work;
- 	unsigned long		pending_events;
- 	unsigned long		completed_events;
- 	enum dw_mci_state	state;
-diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
-index a8ee0df47148..335350a4e99a 100644
---- a/drivers/mmc/host/omap.c
-+++ b/drivers/mmc/host/omap.c
-@@ -28,6 +28,7 @@
- #include <linux/slab.h>
- #include <linux/gpio/consumer.h>
- #include <linux/platform_data/mmc-omap.h>
-+#include <linux/workqueue.h>
- 
- 
- #define	OMAP_MMC_REG_CMD	0x00
-@@ -105,7 +106,7 @@ struct mmc_omap_slot {
- 	u16			power_mode;
- 	unsigned int		fclk_freq;
- 
--	struct tasklet_struct	cover_tasklet;
-+	struct work_struct	cover_bh_work;
- 	struct timer_list       cover_timer;
- 	unsigned		cover_open;
- 
-@@ -873,18 +874,18 @@ void omap_mmc_notify_cover_event(struct device *dev, int num, int is_closed)
- 		sysfs_notify(&slot->mmc->class_dev.kobj, NULL, "cover_switch");
- 	}
- 
--	tasklet_hi_schedule(&slot->cover_tasklet);
-+	queue_work(system_bh_highpri_wq, &slot->cover_bh_work);
- }
- 
- static void mmc_omap_cover_timer(struct timer_list *t)
- {
- 	struct mmc_omap_slot *slot = from_timer(slot, t, cover_timer);
--	tasklet_schedule(&slot->cover_tasklet);
-+	queue_work(system_bh_wq, &slot->cover_bh_work);
- }
- 
--static void mmc_omap_cover_handler(struct tasklet_struct *t)
-+static void mmc_omap_cover_bh_handler(struct work_struct *t)
- {
--	struct mmc_omap_slot *slot = from_tasklet(slot, t, cover_tasklet);
-+	struct mmc_omap_slot *slot = from_work(slot, t, cover_bh_work);
- 	int cover_open = mmc_omap_cover_is_open(slot);
- 
- 	mmc_detect_change(slot->mmc, 0);
-@@ -1314,7 +1315,7 @@ static int mmc_omap_new_slot(struct mmc_omap_host *host, int id)
- 
- 	if (slot->pdata->get_cover_state != NULL) {
- 		timer_setup(&slot->cover_timer, mmc_omap_cover_timer, 0);
--		tasklet_setup(&slot->cover_tasklet, mmc_omap_cover_handler);
-+		INIT_WORK(&slot->cover_bh_work, mmc_omap_cover_bh_handler);
- 	}
- 
- 	r = mmc_add_host(mmc);
-@@ -1333,7 +1334,7 @@ static int mmc_omap_new_slot(struct mmc_omap_host *host, int id)
- 					&dev_attr_cover_switch);
- 		if (r < 0)
- 			goto err_remove_slot_name;
--		tasklet_schedule(&slot->cover_tasklet);
-+		queue_work(system_bh_wq, &slot->cover_bh_work);
- 	}
+-	if (!bt->tasklet.func)
+-		tasklet_disable(&bt->tasklet);
++	if (!bt->bh_work.func)
++		disable_work_sync(&bt->bh_work);
  
  	return 0;
-@@ -1356,7 +1357,7 @@ static void mmc_omap_remove_slot(struct mmc_omap_slot *slot)
- 	if (slot->pdata->get_cover_state != NULL)
- 		device_remove_file(&mmc->class_dev, &dev_attr_cover_switch);
  
--	tasklet_kill(&slot->cover_tasklet);
-+	cancel_work_sync(&slot->cover_bh_work);
- 	del_timer_sync(&slot->cover_timer);
- 	flush_workqueue(slot->host->mmc_omap_wq);
- 
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index 586f94d4dbfd..4fd2bfcacd76 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -11,6 +11,7 @@
- 
- #include <linux/dmaengine.h>
- #include <linux/platform_device.h>
+diff --git a/drivers/media/pci/bt8xx/bt878.h b/drivers/media/pci/bt8xx/bt878.h
+index fde8db293c54..5b1c7f56e553 100644
+--- a/drivers/media/pci/bt8xx/bt878.h
++++ b/drivers/media/pci/bt8xx/bt878.h
+@@ -14,6 +14,7 @@
+ #include <linux/sched.h>
+ #include <linux/spinlock.h>
+ #include <linux/mutex.h>
 +#include <linux/workqueue.h>
- #include "tmio_mmc.h"
  
- struct renesas_sdhi_scc {
-@@ -67,7 +68,7 @@ struct renesas_sdhi_dma {
- 	dma_filter_fn filter;
- 	void (*enable)(struct tmio_mmc_host *host, bool enable);
- 	struct completion dma_dataend;
--	struct tasklet_struct dma_complete;
-+	struct work_struct dma_complete;
+ #include "bt848.h"
+ #include "bttv.h"
+@@ -120,7 +121,7 @@ struct bt878 {
+ 	dma_addr_t risc_dma;
+ 	u32 risc_pos;
+ 
+-	struct tasklet_struct tasklet;
++	struct work_struct bh_work;
+ 	int shutdown;
  };
  
- struct renesas_sdhi {
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 422fa63a2e99..5fd276492f80 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -337,7 +337,7 @@ static bool renesas_sdhi_internal_dmac_dma_irq(struct tmio_mmc_host *host)
- 		writel(status ^ dma_irqs, host->ctl + DM_CM_INFO1);
- 		set_bit(SDHI_DMA_END_FLAG_DMA, &dma_priv->end_flags);
- 		if (test_bit(SDHI_DMA_END_FLAG_ACCESS, &dma_priv->end_flags))
--			tasklet_schedule(&dma_priv->dma_complete);
-+			queue_work(system_bh_wq, &dma_priv->dma_complete);
+diff --git a/drivers/media/pci/bt8xx/dvb-bt8xx.c b/drivers/media/pci/bt8xx/dvb-bt8xx.c
+index 390cbba6c065..45074af3de66 100644
+--- a/drivers/media/pci/bt8xx/dvb-bt8xx.c
++++ b/drivers/media/pci/bt8xx/dvb-bt8xx.c
+@@ -15,6 +15,7 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/i2c.h>
++#include <linux/workqueue.h>
+ 
+ #include <media/dmxdev.h>
+ #include <media/dvbdev.h>
+@@ -39,9 +40,9 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
+ 
+ #define IF_FREQUENCYx6 217    /* 6 * 36.16666666667MHz */
+ 
+-static void dvb_bt8xx_task(struct tasklet_struct *t)
++static void dvb_bt8xx_work(struct work_struct *t)
+ {
+-	struct bt878 *bt = from_tasklet(bt, t, tasklet);
++	struct bt878 *bt = from_work(bt, t, bh_work);
+ 	struct dvb_bt8xx_card *card = dev_get_drvdata(&bt->adapter->dev);
+ 
+ 	dprintk("%d\n", card->bt->finished_block);
+@@ -782,7 +783,7 @@ static int dvb_bt8xx_load_card(struct dvb_bt8xx_card *card, u32 type)
+ 		goto err_disconnect_frontend;
  	}
  
- 	return status & dma_irqs;
-@@ -352,7 +352,7 @@ renesas_sdhi_internal_dmac_dataend_dma(struct tmio_mmc_host *host)
- 	set_bit(SDHI_DMA_END_FLAG_ACCESS, &dma_priv->end_flags);
- 	if (test_bit(SDHI_DMA_END_FLAG_DMA, &dma_priv->end_flags) ||
- 	    host->data->error)
--		tasklet_schedule(&dma_priv->dma_complete);
-+		queue_work(system_bh_wq, &dma_priv->dma_complete);
+-	tasklet_setup(&card->bt->tasklet, dvb_bt8xx_task);
++	INIT_WORK(&card->bt->bh_work, dvb_bt8xx_work);
+ 
+ 	frontend_init(card, type);
+ 
+@@ -922,7 +923,7 @@ static void dvb_bt8xx_remove(struct bttv_sub_device *sub)
+ 	dprintk("dvb_bt8xx: unloading card%d\n", card->bttv_nr);
+ 
+ 	bt878_stop(card->bt);
+-	tasklet_kill(&card->bt->tasklet);
++	cancel_work_sync(&card->bt->bh_work);
+ 	dvb_net_release(&card->dvbnet);
+ 	card->demux.dmx.remove_frontend(&card->demux.dmx, &card->fe_mem);
+ 	card->demux.dmx.remove_frontend(&card->demux.dmx, &card->fe_hw);
+diff --git a/drivers/media/pci/ddbridge/ddbridge.h b/drivers/media/pci/ddbridge/ddbridge.h
+index f3699dbd193f..f01ecdb0b627 100644
+--- a/drivers/media/pci/ddbridge/ddbridge.h
++++ b/drivers/media/pci/ddbridge/ddbridge.h
+@@ -298,7 +298,7 @@ struct ddb_link {
+ 	spinlock_t             lock; /* lock link access */
+ 	struct mutex           flash_mutex; /* lock flash access */
+ 	struct ddb_lnb         lnb;
+-	struct tasklet_struct  tasklet;
++	struct work_struct     bh_work;
+ 	struct ddb_ids         ids;
+ 
+ 	spinlock_t             temp_lock; /* lock temp chip access */
+diff --git a/drivers/media/pci/mantis/hopper_cards.c b/drivers/media/pci/mantis/hopper_cards.c
+index c0bd5d7e148b..b85aef4e2b24 100644
+--- a/drivers/media/pci/mantis/hopper_cards.c
++++ b/drivers/media/pci/mantis/hopper_cards.c
+@@ -116,7 +116,7 @@ static irqreturn_t hopper_irq_handler(int irq, void *dev_id)
+ 	if (stat & MANTIS_INT_RISCI) {
+ 		dprintk(MANTIS_DEBUG, 0, "<%s>", label[8]);
+ 		mantis->busy_block = (stat & MANTIS_INT_RISCSTAT) >> 28;
+-		tasklet_schedule(&mantis->tasklet);
++		queue_work(system_bh_wq, &mantis->bh_work);
+ 	}
+ 	if (stat & MANTIS_INT_I2CDONE) {
+ 		dprintk(MANTIS_DEBUG, 0, "<%s>", label[9]);
+diff --git a/drivers/media/pci/mantis/mantis_cards.c b/drivers/media/pci/mantis/mantis_cards.c
+index 906e4500d87d..b44b4cf42f86 100644
+--- a/drivers/media/pci/mantis/mantis_cards.c
++++ b/drivers/media/pci/mantis/mantis_cards.c
+@@ -125,7 +125,7 @@ static irqreturn_t mantis_irq_handler(int irq, void *dev_id)
+ 	if (stat & MANTIS_INT_RISCI) {
+ 		dprintk(MANTIS_DEBUG, 0, "<%s>", label[8]);
+ 		mantis->busy_block = (stat & MANTIS_INT_RISCSTAT) >> 28;
+-		tasklet_schedule(&mantis->tasklet);
++		queue_work(system_bh_wq, &mantis->bh_work);
+ 	}
+ 	if (stat & MANTIS_INT_I2CDONE) {
+ 		dprintk(MANTIS_DEBUG, 0, "<%s>", label[9]);
+diff --git a/drivers/media/pci/mantis/mantis_common.h b/drivers/media/pci/mantis/mantis_common.h
+index d88ac280226c..6e563ecd94e8 100644
+--- a/drivers/media/pci/mantis/mantis_common.h
++++ b/drivers/media/pci/mantis/mantis_common.h
+@@ -125,7 +125,7 @@ struct mantis_pci {
+ 	__le32			*risc_cpu;
+ 	dma_addr_t		risc_dma;
+ 
+-	struct tasklet_struct	tasklet;
++	struct work_struct	bh_work;
+ 	spinlock_t		intmask_lock;
+ 
+ 	struct i2c_adapter	adapter;
+diff --git a/drivers/media/pci/mantis/mantis_dma.c b/drivers/media/pci/mantis/mantis_dma.c
+index 80c843936493..eeb210a2862f 100644
+--- a/drivers/media/pci/mantis/mantis_dma.c
++++ b/drivers/media/pci/mantis/mantis_dma.c
+@@ -200,9 +200,9 @@ void mantis_dma_stop(struct mantis_pci *mantis)
  }
  
- /*
-@@ -440,9 +440,9 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	renesas_sdhi_internal_dmac_enable_dma(host, false);
- }
  
--static void renesas_sdhi_internal_dmac_issue_tasklet_fn(unsigned long arg)
-+static void renesas_sdhi_internal_dmac_issue_work_fn(struct work_struct *t)
+-void mantis_dma_xfer(struct tasklet_struct *t)
++void mantis_dma_xfer(struct work_struct *t)
  {
--	struct tmio_mmc_host *host = (struct tmio_mmc_host *)arg;
-+	struct tmio_mmc_host *host = from_work(host, t, dma_issue);
- 	struct renesas_sdhi *priv = host_to_priv(host);
+-	struct mantis_pci *mantis = from_tasklet(mantis, t, tasklet);
++	struct mantis_pci *mantis = from_work(mantis, t, bh_work);
+ 	struct mantis_hwconfig *config = mantis->hwconfig;
  
- 	tmio_mmc_enable_mmc_irqs(host, TMIO_STAT_DATAEND);
-@@ -454,7 +454,7 @@ static void renesas_sdhi_internal_dmac_issue_tasklet_fn(unsigned long arg)
- 		/* on CMD errors, simulate DMA end immediately */
- 		set_bit(SDHI_DMA_END_FLAG_DMA, &priv->dma_priv.end_flags);
- 		if (test_bit(SDHI_DMA_END_FLAG_ACCESS, &priv->dma_priv.end_flags))
--			tasklet_schedule(&priv->dma_priv.dma_complete);
-+			queue_work(system_bh_wq, &priv->dma_priv.dma_complete);
+ 	while (mantis->last_block != mantis->busy_block) {
+diff --git a/drivers/media/pci/mantis/mantis_dma.h b/drivers/media/pci/mantis/mantis_dma.h
+index 37da982c9c29..5db0d3728f15 100644
+--- a/drivers/media/pci/mantis/mantis_dma.h
++++ b/drivers/media/pci/mantis/mantis_dma.h
+@@ -13,6 +13,6 @@ extern int mantis_dma_init(struct mantis_pci *mantis);
+ extern int mantis_dma_exit(struct mantis_pci *mantis);
+ extern void mantis_dma_start(struct mantis_pci *mantis);
+ extern void mantis_dma_stop(struct mantis_pci *mantis);
+-extern void mantis_dma_xfer(struct tasklet_struct *t);
++extern void mantis_dma_xfer(struct work_struct *t);
+ 
+ #endif /* __MANTIS_DMA_H */
+diff --git a/drivers/media/pci/mantis/mantis_dvb.c b/drivers/media/pci/mantis/mantis_dvb.c
+index c7ba4a76e608..398e32f44692 100644
+--- a/drivers/media/pci/mantis/mantis_dvb.c
++++ b/drivers/media/pci/mantis/mantis_dvb.c
+@@ -105,7 +105,7 @@ static int mantis_dvb_start_feed(struct dvb_demux_feed *dvbdmxfeed)
+ 	if (mantis->feeds == 1)	 {
+ 		dprintk(MANTIS_DEBUG, 1, "mantis start feed & dma");
+ 		mantis_dma_start(mantis);
+-		tasklet_enable(&mantis->tasklet);
++		enable_and_queue_work(system_bh_wq, &mantis->bh_work);
+ 	}
+ 
+ 	return mantis->feeds;
+@@ -125,7 +125,7 @@ static int mantis_dvb_stop_feed(struct dvb_demux_feed *dvbdmxfeed)
+ 	mantis->feeds--;
+ 	if (mantis->feeds == 0) {
+ 		dprintk(MANTIS_DEBUG, 1, "mantis stop feed and dma");
+-		tasklet_disable(&mantis->tasklet);
++		disable_work_sync(&mantis->bh_work);
+ 		mantis_dma_stop(mantis);
+ 	}
+ 
+@@ -205,8 +205,8 @@ int mantis_dvb_init(struct mantis_pci *mantis)
+ 	}
+ 
+ 	dvb_net_init(&mantis->dvb_adapter, &mantis->dvbnet, &mantis->demux.dmx);
+-	tasklet_setup(&mantis->tasklet, mantis_dma_xfer);
+-	tasklet_disable(&mantis->tasklet);
++	INIT_WORK(&mantis->bh_work, mantis_dma_xfer);
++	disable_work_sync(&mantis->bh_work);
+ 	if (mantis->hwconfig) {
+ 		result = config->frontend_init(mantis, mantis->fe);
+ 		if (result < 0) {
+@@ -235,7 +235,7 @@ int mantis_dvb_init(struct mantis_pci *mantis)
+ 
+ 	/* Error conditions ..	*/
+ err5:
+-	tasklet_kill(&mantis->tasklet);
++	cancel_work_sync(&mantis->bh_work);
+ 	dvb_net_release(&mantis->dvbnet);
+ 	if (mantis->fe) {
+ 		dvb_unregister_frontend(mantis->fe);
+@@ -273,7 +273,7 @@ int mantis_dvb_exit(struct mantis_pci *mantis)
+ 		dvb_frontend_detach(mantis->fe);
+ 	}
+ 
+-	tasklet_kill(&mantis->tasklet);
++	cancel_work_sync(&mantis->bh_work);
+ 	dvb_net_release(&mantis->dvbnet);
+ 
+ 	mantis->demux.dmx.remove_frontend(&mantis->demux.dmx, &mantis->fe_mem);
+diff --git a/drivers/media/pci/ngene/ngene-core.c b/drivers/media/pci/ngene/ngene-core.c
+index 24ec576dc3bf..9641f23b2247 100644
+--- a/drivers/media/pci/ngene/ngene-core.c
++++ b/drivers/media/pci/ngene/ngene-core.c
+@@ -50,9 +50,9 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
+ /* nGene interrupt handler **************************************************/
+ /****************************************************************************/
+ 
+-static void event_tasklet(struct tasklet_struct *t)
++static void event_bh_work(struct work_struct *t)
+ {
+-	struct ngene *dev = from_tasklet(dev, t, event_tasklet);
++	struct ngene *dev = from_work(dev, t, event_bh_work);
+ 
+ 	while (dev->EventQueueReadIndex != dev->EventQueueWriteIndex) {
+ 		struct EVENT_BUFFER Event =
+@@ -68,9 +68,9 @@ static void event_tasklet(struct tasklet_struct *t)
  	}
  }
  
-@@ -484,9 +484,9 @@ static bool renesas_sdhi_internal_dmac_complete(struct tmio_mmc_host *host)
- 	return true;
- }
- 
--static void renesas_sdhi_internal_dmac_complete_tasklet_fn(unsigned long arg)
-+static void renesas_sdhi_internal_dmac_complete_work_fn(struct work_struct *t)
+-static void demux_tasklet(struct tasklet_struct *t)
++static void demux_bh_work(struct work_struct *t)
  {
--	struct tmio_mmc_host *host = (struct tmio_mmc_host *)arg;
-+	struct tmio_mmc_host *host = from_work(host, t, dma_complete);
+-	struct ngene_channel *chan = from_tasklet(chan, t, demux_tasklet);
++	struct ngene_channel *chan = from_work(chan, t, demux_bh_work);
+ 	struct device *pdev = &chan->dev->pci_dev->dev;
+ 	struct SBufferHeader *Cur = chan->nextBuffer;
  
- 	spin_lock_irq(&host->lock);
- 	if (!renesas_sdhi_internal_dmac_complete(host))
-@@ -544,12 +544,10 @@ renesas_sdhi_internal_dmac_request_dma(struct tmio_mmc_host *host,
- 	/* Each value is set to non-zero to assume "enabling" each DMA */
- 	host->chan_rx = host->chan_tx = (void *)0xdeadbeaf;
- 
--	tasklet_init(&priv->dma_priv.dma_complete,
--		     renesas_sdhi_internal_dmac_complete_tasklet_fn,
--		     (unsigned long)host);
--	tasklet_init(&host->dma_issue,
--		     renesas_sdhi_internal_dmac_issue_tasklet_fn,
--		     (unsigned long)host);
-+	INIT_WORK(&priv->dma_priv.dma_complete,
-+			renesas_sdhi_internal_dmac_complete_work_fn);
-+	INIT_WORK(&host->dma_issue,
-+			renesas_sdhi_internal_dmac_issue_work_fn);
- 
- 	/* Add pre_req and post_req */
- 	host->ops.pre_req = renesas_sdhi_internal_dmac_pre_req;
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 9cf7f9feab72..793595ad6d02 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -312,9 +312,9 @@ static void renesas_sdhi_sys_dmac_start_dma(struct tmio_mmc_host *host,
- 	}
- }
- 
--static void renesas_sdhi_sys_dmac_issue_tasklet_fn(unsigned long priv)
-+static void renesas_sdhi_sys_dmac_issue_work_fn(struct work_struct *t)
- {
--	struct tmio_mmc_host *host = (struct tmio_mmc_host *)priv;
-+	struct tmio_mmc_host *host = from_work(host, t, dma_issue);
- 	struct dma_chan *chan = NULL;
- 
- 	spin_lock_irq(&host->lock);
-@@ -401,9 +401,8 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
- 			goto ebouncebuf;
- 
- 		init_completion(&priv->dma_priv.dma_dataend);
--		tasklet_init(&host->dma_issue,
--			     renesas_sdhi_sys_dmac_issue_tasklet_fn,
--			     (unsigned long)host);
-+		INIT_WORK(&host->dma_issue,
-+				renesas_sdhi_sys_dmac_issue_work_fn);
+@@ -204,7 +204,7 @@ static irqreturn_t irq_handler(int irq, void *dev_id)
+ 			dev->EventQueueOverflowFlag = 1;
+ 		}
+ 		dev->EventBuffer->EventStatus &= ~0x80;
+-		tasklet_schedule(&dev->event_tasklet);
++		queue_work(system_bh_wq, &dev->event_bh_work);
+ 		rc = IRQ_HANDLED;
  	}
  
- 	renesas_sdhi_sys_dmac_enable_dma(host, true);
-diff --git a/drivers/mmc/host/sdhci-bcm-kona.c b/drivers/mmc/host/sdhci-bcm-kona.c
-index cb9152c6a65d..9c215db81b2b 100644
---- a/drivers/mmc/host/sdhci-bcm-kona.c
-+++ b/drivers/mmc/host/sdhci-bcm-kona.c
-@@ -107,7 +107,7 @@ static void sdhci_bcm_kona_sd_init(struct sdhci_host *host)
-  * Software emulation of the SD card insertion/removal. Set insert=1 for insert
-  * and insert=0 for removal. The card detection is done by GPIO. For Broadcom
-  * IP to function properly the bit 0 of CORESTAT register needs to be set/reset
-- * to generate the CD IRQ handled in sdhci.c which schedules card_tasklet.
-+ * to generate the CD IRQ handled in sdhci.c which schedules card_bh_work.
-  */
- static int sdhci_bcm_kona_sd_card_emulate(struct sdhci_host *host, int insert)
- {
-diff --git a/drivers/mmc/host/tifm_sd.c b/drivers/mmc/host/tifm_sd.c
-index b5a2f2f25ad9..aea14bf3e2e8 100644
---- a/drivers/mmc/host/tifm_sd.c
-+++ b/drivers/mmc/host/tifm_sd.c
-@@ -13,6 +13,7 @@
- #include <linux/highmem.h>
+@@ -217,8 +217,8 @@ static irqreturn_t irq_handler(int irq, void *dev_id)
+ 			     ngeneBuffer.SR.Flags & 0xC0) == 0x80) {
+ 				dev->channel[i].nextBuffer->
+ 					ngeneBuffer.SR.Flags |= 0x40;
+-				tasklet_schedule(
+-					&dev->channel[i].demux_tasklet);
++				queue_work(system_bh_wq,
++					&dev->channel[i].demux_bh_work);
+ 				rc = IRQ_HANDLED;
+ 			}
+ 		}
+@@ -1181,7 +1181,7 @@ static void ngene_init(struct ngene *dev)
+ 	struct device *pdev = &dev->pci_dev->dev;
+ 	int i;
+ 
+-	tasklet_setup(&dev->event_tasklet, event_tasklet);
++	INIT_WORK(&dev->event_bh_work, event_bh_work);
+ 
+ 	memset_io(dev->iomem + 0xc000, 0x00, 0x220);
+ 	memset_io(dev->iomem + 0xc400, 0x00, 0x100);
+@@ -1395,7 +1395,7 @@ static void release_channel(struct ngene_channel *chan)
+ 	if (chan->running)
+ 		set_transfer(chan, 0);
+ 
+-	tasklet_kill(&chan->demux_tasklet);
++	cancel_work_sync(&chan->demux_bh_work);
+ 
+ 	if (chan->ci_dev) {
+ 		dvb_unregister_device(chan->ci_dev);
+@@ -1445,7 +1445,7 @@ static int init_channel(struct ngene_channel *chan)
+ 	struct ngene_info *ni = dev->card_info;
+ 	int io = ni->io_type[nr];
+ 
+-	tasklet_setup(&chan->demux_tasklet, demux_tasklet);
++	INIT_WORK(&chan->demux_bh_work, demux_bh_work);
+ 	chan->users = 0;
+ 	chan->type = io;
+ 	chan->mode = chan->type;	/* for now only one mode */
+@@ -1649,7 +1649,7 @@ void ngene_remove(struct pci_dev *pdev)
+ 	struct ngene *dev = pci_get_drvdata(pdev);
+ 	int i;
+ 
+-	tasklet_kill(&dev->event_tasklet);
++	cancel_work_sync(&dev->event_bh_work);
+ 	for (i = MAX_STREAM - 1; i >= 0; i--)
+ 		release_channel(&dev->channel[i]);
+ 	if (dev->ci.en)
+diff --git a/drivers/media/pci/ngene/ngene.h b/drivers/media/pci/ngene/ngene.h
+index d1d7da84cd9d..9f989420b9e7 100644
+--- a/drivers/media/pci/ngene/ngene.h
++++ b/drivers/media/pci/ngene/ngene.h
+@@ -16,6 +16,7 @@
  #include <linux/scatterlist.h>
+ 
+ #include <linux/dvb/frontend.h>
++#include <linux/workqueue.h>
+ 
+ #include <media/dmxdev.h>
+ #include <media/dvbdev.h>
+@@ -621,7 +622,7 @@ struct ngene_channel {
+ 	int                   users;
+ 	struct video_device  *v4l_dev;
+ 	struct dvb_device    *ci_dev;
+-	struct tasklet_struct demux_tasklet;
++	struct work_struct    demux_bh_work;
+ 
+ 	struct SBufferHeader *nextBuffer;
+ 	enum KSSTATE          State;
+@@ -717,7 +718,7 @@ struct ngene {
+ 	struct EVENT_BUFFER   EventQueue[EVENT_QUEUE_SIZE];
+ 	int                   EventQueueOverflowCount;
+ 	int                   EventQueueOverflowFlag;
+-	struct tasklet_struct event_tasklet;
++	struct work_struct    event_bh_work;
+ 	struct EVENT_BUFFER  *EventBuffer;
+ 	int                   EventQueueWriteIndex;
+ 	int                   EventQueueReadIndex;
+diff --git a/drivers/media/pci/smipcie/smipcie-main.c b/drivers/media/pci/smipcie/smipcie-main.c
+index 0c300d019d9c..7db6d443fc54 100644
+--- a/drivers/media/pci/smipcie/smipcie-main.c
++++ b/drivers/media/pci/smipcie/smipcie-main.c
+@@ -279,10 +279,10 @@ static void smi_port_clearInterrupt(struct smi_port *port)
+ 		(port->_dmaInterruptCH0 | port->_dmaInterruptCH1));
+ }
+ 
+-/* tasklet handler: DMA data to dmx.*/
+-static void smi_dma_xfer(struct tasklet_struct *t)
++/* BH work handler: DMA data to dmx.*/
++static void smi_dma_xfer(struct work_struct *t)
+ {
+-	struct smi_port *port = from_tasklet(port, t, tasklet);
++	struct smi_port *port = from_work(port, t, bh_work);
+ 	struct smi_dev *dev = port->dev;
+ 	u32 intr_status, finishedData, dmaManagement;
+ 	u8 dmaChan0State, dmaChan1State;
+@@ -426,8 +426,8 @@ static int smi_port_init(struct smi_port *port, int dmaChanUsed)
+ 	}
+ 
+ 	smi_port_disableInterrupt(port);
+-	tasklet_setup(&port->tasklet, smi_dma_xfer);
+-	tasklet_disable(&port->tasklet);
++	INIT_WORK(&port->bh_work, smi_dma_xfer);
++	disable_work_sync(&port->bh_work);
+ 	port->enable = 1;
+ 	return 0;
+ err:
+@@ -438,7 +438,7 @@ static int smi_port_init(struct smi_port *port, int dmaChanUsed)
+ static void smi_port_exit(struct smi_port *port)
+ {
+ 	smi_port_disableInterrupt(port);
+-	tasklet_kill(&port->tasklet);
++	cancel_work_sync(&port->bh_work);
+ 	smi_port_dma_free(port);
+ 	port->enable = 0;
+ }
+@@ -452,7 +452,7 @@ static int smi_port_irq(struct smi_port *port, u32 int_status)
+ 		smi_port_disableInterrupt(port);
+ 		port->_int_status = int_status;
+ 		smi_port_clearInterrupt(port);
+-		tasklet_schedule(&port->tasklet);
++		queue_work(system_bh_wq, &port->bh_work);
+ 		handled = 1;
+ 	}
+ 	return handled;
+@@ -823,7 +823,7 @@ static int smi_start_feed(struct dvb_demux_feed *dvbdmxfeed)
+ 		smi_port_clearInterrupt(port);
+ 		smi_port_enableInterrupt(port);
+ 		smi_write(port->DMA_MANAGEMENT, dmaManagement);
+-		tasklet_enable(&port->tasklet);
++		enable_and_queue_work(system_bh_wq, &port->bh_work);
+ 	}
+ 	return port->users;
+ }
+@@ -837,7 +837,7 @@ static int smi_stop_feed(struct dvb_demux_feed *dvbdmxfeed)
+ 	if (--port->users)
+ 		return port->users;
+ 
+-	tasklet_disable(&port->tasklet);
++	disable_work_sync(&port->bh_work);
+ 	smi_port_disableInterrupt(port);
+ 	smi_clear(port->DMA_MANAGEMENT, 0x30003);
+ 	return 0;
+diff --git a/drivers/media/pci/smipcie/smipcie.h b/drivers/media/pci/smipcie/smipcie.h
+index 2b5e0154814c..98e44edaab9e 100644
+--- a/drivers/media/pci/smipcie/smipcie.h
++++ b/drivers/media/pci/smipcie/smipcie.h
+@@ -17,6 +17,7 @@
+ #include <linux/pci.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/slab.h>
++#include <linux/workqueue.h>
+ #include <media/rc-core.h>
+ 
+ #include <media/demux.h>
+@@ -257,7 +258,7 @@ struct smi_port {
+ 	u32 _dmaInterruptCH0;
+ 	u32 _dmaInterruptCH1;
+ 	u32 _int_status;
+-	struct tasklet_struct tasklet;
++	struct work_struct bh_work;
+ 	/* dvb */
+ 	struct dmx_frontend hw_frontend;
+ 	struct dmx_frontend mem_frontend;
+diff --git a/drivers/media/pci/ttpci/budget-av.c b/drivers/media/pci/ttpci/budget-av.c
+index 2e62c938e2cb..dd915bf5d2a4 100644
+--- a/drivers/media/pci/ttpci/budget-av.c
++++ b/drivers/media/pci/ttpci/budget-av.c
+@@ -36,6 +36,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/input.h>
+ #include <linux/spinlock.h>
++#include <linux/workqueue.h>
+ 
+ #include <media/dvb_ca_en50221.h>
+ 
+@@ -54,7 +55,7 @@ struct budget_av {
+ 	struct video_device vd;
+ 	int cur_input;
+ 	int has_saa7113;
+-	struct tasklet_struct ciintf_irq_tasklet;
++	struct work_struct ciintf_irq_work;
+ 	int slot_status;
+ 	struct dvb_ca_en50221 ca;
+ 	u8 reinitialise_demod:1;
+diff --git a/drivers/media/pci/ttpci/budget-ci.c b/drivers/media/pci/ttpci/budget-ci.c
+index 76de40e3c802..8187e26a0b3d 100644
+--- a/drivers/media/pci/ttpci/budget-ci.c
++++ b/drivers/media/pci/ttpci/budget-ci.c
+@@ -18,6 +18,7 @@
+ #include <linux/slab.h>
+ #include <linux/interrupt.h>
+ #include <linux/spinlock.h>
++#include <linux/workqueue.h>
+ #include <media/rc-core.h>
+ 
+ #include "budget.h"
+@@ -81,7 +82,7 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
+ 
+ struct budget_ci_ir {
+ 	struct rc_dev *dev;
+-	struct tasklet_struct msp430_irq_tasklet;
++	struct work_struct msp430_irq_work;
+ 	char name[72]; /* 40 + 32 for (struct saa7146_dev).name */
+ 	char phys[32];
+ 	int rc5_device;
+@@ -92,7 +93,7 @@ struct budget_ci_ir {
+ 
+ struct budget_ci {
+ 	struct budget budget;
+-	struct tasklet_struct ciintf_irq_tasklet;
++	struct work_struct ciintf_irq_work;
+ 	int slot_status;
+ 	int ci_irq;
+ 	struct dvb_ca_en50221 ca;
+@@ -100,9 +101,9 @@ struct budget_ci {
+ 	u8 tuner_pll_address; /* used for philips_tdm1316l configs */
+ };
+ 
+-static void msp430_ir_interrupt(struct tasklet_struct *t)
++static void msp430_ir_interrupt(struct work_struct *t)
+ {
+-	struct budget_ci_ir *ir = from_tasklet(ir, t, msp430_irq_tasklet);
++	struct budget_ci_ir *ir = from_work(ir, t, msp430_irq_work);
+ 	struct budget_ci *budget_ci = container_of(ir, typeof(*budget_ci), ir);
+ 	struct rc_dev *dev = budget_ci->ir.dev;
+ 	u32 command = ttpci_budget_debiread(&budget_ci->budget, DEBINOSWAP, DEBIADDR_IR, 2, 1, 0) >> 8;
+@@ -231,7 +232,7 @@ static int msp430_ir_init(struct budget_ci *budget_ci)
+ 
+ 	budget_ci->ir.dev = dev;
+ 
+-	tasklet_setup(&budget_ci->ir.msp430_irq_tasklet, msp430_ir_interrupt);
++	INIT_WORK(&budget_ci->ir.msp430_irq_work, msp430_ir_interrupt);
+ 
+ 	SAA7146_IER_ENABLE(saa, MASK_06);
+ 	saa7146_setgpio(saa, 3, SAA7146_GPIO_IRQHI);
+@@ -245,7 +246,7 @@ static void msp430_ir_deinit(struct budget_ci *budget_ci)
+ 
+ 	SAA7146_IER_DISABLE(saa, MASK_06);
+ 	saa7146_setgpio(saa, 3, SAA7146_GPIO_INPUT);
+-	tasklet_kill(&budget_ci->ir.msp430_irq_tasklet);
++	cancel_work_sync(&budget_ci->ir.msp430_irq_work);
+ 
+ 	rc_unregister_device(budget_ci->ir.dev);
+ }
+@@ -349,10 +350,10 @@ static int ciintf_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
+ 	return 0;
+ }
+ 
+-static void ciintf_interrupt(struct tasklet_struct *t)
++static void ciintf_interrupt(struct work_struct *t)
+ {
+-	struct budget_ci *budget_ci = from_tasklet(budget_ci, t,
+-						   ciintf_irq_tasklet);
++	struct budget_ci *budget_ci = from_work(budget_ci, t,
++						   ciintf_irq_work);
+ 	struct saa7146_dev *saa = budget_ci->budget.dev;
+ 	unsigned int flags;
+ 
+@@ -491,7 +492,7 @@ static int ciintf_init(struct budget_ci *budget_ci)
+ 
+ 	// Setup CI slot IRQ
+ 	if (budget_ci->ci_irq) {
+-		tasklet_setup(&budget_ci->ciintf_irq_tasklet, ciintf_interrupt);
++		INIT_WORK(&budget_ci->ciintf_irq_work, ciintf_interrupt);
+ 		if (budget_ci->slot_status != SLOTSTATUS_NONE)
+ 			saa7146_setgpio(saa, 0, SAA7146_GPIO_IRQLO);
+ 		else
+@@ -530,7 +531,7 @@ static void ciintf_deinit(struct budget_ci *budget_ci)
+ 	if (budget_ci->ci_irq) {
+ 		SAA7146_IER_DISABLE(saa, MASK_03);
+ 		saa7146_setgpio(saa, 0, SAA7146_GPIO_INPUT);
+-		tasklet_kill(&budget_ci->ciintf_irq_tasklet);
++		cancel_work_sync(&budget_ci->ciintf_irq_work);
+ 	}
+ 
+ 	// reset interface
+@@ -556,13 +557,13 @@ static void budget_ci_irq(struct saa7146_dev *dev, u32 *isr)
+ 	dprintk(8, "dev: %p, budget_ci: %p\n", dev, budget_ci);
+ 
+ 	if (*isr & MASK_06)
+-		tasklet_schedule(&budget_ci->ir.msp430_irq_tasklet);
++		queue_work(system_bh_wq, &budget_ci->ir.msp430_irq_work);
+ 
+ 	if (*isr & MASK_10)
+ 		ttpci_budget_irq10_handler(dev, isr);
+ 
+ 	if ((*isr & MASK_03) && (budget_ci->budget.ci_present) && (budget_ci->ci_irq))
+-		tasklet_schedule(&budget_ci->ciintf_irq_tasklet);
++		queue_work(system_bh_wq, &budget_ci->ciintf_irq_work);
+ }
+ 
+ static u8 philips_su1278_tt_inittab[] = {
+diff --git a/drivers/media/pci/ttpci/budget-core.c b/drivers/media/pci/ttpci/budget-core.c
+index d33adeca196f..ebcae1baedfe 100644
+--- a/drivers/media/pci/ttpci/budget-core.c
++++ b/drivers/media/pci/ttpci/budget-core.c
+@@ -172,9 +172,9 @@ static int budget_read_fe_status(struct dvb_frontend *fe,
+ 	return ret;
+ }
+ 
+-static void vpeirq(struct tasklet_struct *t)
++static void vpeirq(struct work_struct *t)
+ {
+-	struct budget *budget = from_tasklet(budget, t, vpe_tasklet);
++	struct budget *budget = from_work(budget, t, vpe_work);
+ 	u8 *mem = (u8 *) (budget->grabbing);
+ 	u32 olddma = budget->ttbp;
+ 	u32 newdma = saa7146_read(budget->dev, PCI_VDP3);
+@@ -525,7 +525,7 @@ int ttpci_budget_init(struct budget *budget, struct saa7146_dev *dev,
+ 	/* upload all */
+ 	saa7146_write(dev, GPIO_CTRL, 0x000000);
+ 
+-	tasklet_setup(&budget->vpe_tasklet, vpeirq);
++	INIT_WORK(&budget->vpe_work, vpeirq);
+ 
+ 	/* frontend power on */
+ 	if (bi->type != BUDGET_FS_ACTIVY)
+@@ -565,7 +565,7 @@ int ttpci_budget_deinit(struct budget *budget)
+ 
+ 	budget_unregister(budget);
+ 
+-	tasklet_kill(&budget->vpe_tasklet);
++	cancel_work_sync(&budget->vpe_work);
+ 
+ 	saa7146_vfree_destroy_pgtable(dev->pci, budget->grabbing, &budget->pt);
+ 
+@@ -584,7 +584,7 @@ void ttpci_budget_irq10_handler(struct saa7146_dev *dev, u32 *isr)
+ 	dprintk(8, "dev: %p, budget: %p\n", dev, budget);
+ 
+ 	if (*isr & MASK_10)
+-		tasklet_schedule(&budget->vpe_tasklet);
++		queue_work(system_bh_wq, &budget->vpe_work);
+ }
+ EXPORT_SYMBOL_GPL(ttpci_budget_irq10_handler);
+ 
+diff --git a/drivers/media/pci/ttpci/budget.h b/drivers/media/pci/ttpci/budget.h
+index 83ead34dc766..54bf96a2f5b5 100644
+--- a/drivers/media/pci/ttpci/budget.h
++++ b/drivers/media/pci/ttpci/budget.h
+@@ -18,6 +18,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/workqueue.h>
+ 
+ #include <media/drv-intf/saa7146.h>
+ 
+@@ -54,8 +55,8 @@ struct budget {
+ 	unsigned char *grabbing;
+ 	struct saa7146_pgtable pt;
+ 
+-	struct tasklet_struct fidb_tasklet;
+-	struct tasklet_struct vpe_tasklet;
++	struct work_struct fidb_work;
++	struct work_struct vpe_work;
+ 
+ 	struct dmxdev dmxdev;
+ 	struct dvb_demux demux;
+diff --git a/drivers/media/pci/tw5864/tw5864-core.c b/drivers/media/pci/tw5864/tw5864-core.c
+index 560ff1ddcc83..4d33caf83307 100644
+--- a/drivers/media/pci/tw5864/tw5864-core.c
++++ b/drivers/media/pci/tw5864/tw5864-core.c
+@@ -144,7 +144,7 @@ static void tw5864_h264_isr(struct tw5864_dev *dev)
+ 		cur_frame->gop_seqno = input->frame_gop_seqno;
+ 
+ 		dev->h264_buf_w_index = next_frame_index;
+-		tasklet_schedule(&dev->tasklet);
++		queue_work(system_bh_wq, &dev->bh_work);
+ 
+ 		cur_frame = next_frame;
+ 
+diff --git a/drivers/media/pci/tw5864/tw5864-video.c b/drivers/media/pci/tw5864/tw5864-video.c
+index 8b1aae4b6319..4f35c159efe5 100644
+--- a/drivers/media/pci/tw5864/tw5864-video.c
++++ b/drivers/media/pci/tw5864/tw5864-video.c
+@@ -6,6 +6,7 @@
+  */
+ 
  #include <linux/module.h>
 +#include <linux/workqueue.h>
- #include <asm/io.h>
+ #include <media/v4l2-common.h>
+ #include <media/v4l2-event.h>
+ #include <media/videobuf2-dma-contig.h>
+@@ -175,7 +176,7 @@ static const unsigned int intra4x4_lambda3[] = {
+ static v4l2_std_id tw5864_get_v4l2_std(enum tw5864_vid_std std);
+ static enum tw5864_vid_std tw5864_from_v4l2_std(v4l2_std_id v4l2_std);
  
- #define DRIVER_NAME "tifm_sd"
-@@ -97,7 +98,7 @@ struct tifm_sd {
- 	unsigned int          clk_div;
- 	unsigned long         timeout_jiffies;
+-static void tw5864_handle_frame_task(struct tasklet_struct *t);
++static void tw5864_handle_frame_work(struct work_struct *t);
+ static void tw5864_handle_frame(struct tw5864_h264_frame *frame);
+ static void tw5864_frame_interval_set(struct tw5864_input *input);
  
--	struct tasklet_struct finish_tasklet;
-+	struct work_struct    finish_bh_work;
- 	struct timer_list     timer;
- 	struct mmc_request    *req;
+@@ -1062,7 +1063,7 @@ int tw5864_video_init(struct tw5864_dev *dev, int *video_nr)
+ 	dev->irqmask |= TW5864_INTR_VLC_DONE | TW5864_INTR_TIMER;
+ 	tw5864_irqmask_apply(dev);
  
-@@ -463,7 +464,7 @@ static void tifm_sd_check_status(struct tifm_sd *host)
- 		}
- 	}
- finish_request:
--	tasklet_schedule(&host->finish_tasklet);
-+	queue_work(system_bh_wq, &host->finish_bh_work);
- }
+-	tasklet_setup(&dev->tasklet, tw5864_handle_frame_task);
++	INIT_WORK(&dev->bh_work, tw5864_handle_frame_work);
  
- /* Called from interrupt handler */
-@@ -723,9 +724,9 @@ static void tifm_sd_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	mmc_request_done(mmc, mrq);
- }
+ 	for (i = 0; i < TW5864_INPUTS; i++) {
+ 		dev->inputs[i].root = dev;
+@@ -1079,7 +1080,7 @@ int tw5864_video_init(struct tw5864_dev *dev, int *video_nr)
+ 	for (i = last_input_nr_registered; i >= 0; i--)
+ 		tw5864_video_input_fini(&dev->inputs[i]);
  
--static void tifm_sd_end_cmd(struct tasklet_struct *t)
-+static void tifm_sd_end_cmd(struct work_struct *t)
+-	tasklet_kill(&dev->tasklet);
++	cancel_work_sync(&dev->bh_work);
+ 
+ free_dma:
+ 	for (i = last_dma_allocated; i >= 0; i--) {
+@@ -1198,7 +1199,7 @@ void tw5864_video_fini(struct tw5864_dev *dev)
  {
--	struct tifm_sd *host = from_tasklet(host, t, finish_tasklet);
-+	struct tifm_sd *host = from_work(host, t, finish_bh_work);
- 	struct tifm_dev *sock = host->dev;
- 	struct mmc_host *mmc = tifm_get_drvdata(sock);
- 	struct mmc_request *mrq;
-@@ -960,7 +961,7 @@ static int tifm_sd_probe(struct tifm_dev *sock)
- 	 */
- 	mmc->max_busy_timeout = TIFM_MMCSD_REQ_TIMEOUT_MS;
+ 	int i;
  
--	tasklet_setup(&host->finish_tasklet, tifm_sd_end_cmd);
-+	INIT_WORK(&host->finish_bh_work, tifm_sd_end_cmd);
- 	timer_setup(&host->timer, tifm_sd_abort, 0);
+-	tasklet_kill(&dev->tasklet);
++	cancel_work_sync(&dev->bh_work);
  
- 	mmc->ops = &tifm_sd_ops;
-@@ -999,7 +1000,7 @@ static void tifm_sd_remove(struct tifm_dev *sock)
- 	writel(0, sock->addr + SOCK_MMCSD_INT_ENABLE);
- 	spin_unlock_irqrestore(&sock->lock, flags);
- 
--	tasklet_kill(&host->finish_tasklet);
-+	cancel_work_sync(&host->finish_bh_work);
- 
- 	spin_lock_irqsave(&sock->lock, flags);
- 	if (host->req) {
-@@ -1009,7 +1010,7 @@ static void tifm_sd_remove(struct tifm_dev *sock)
- 		host->req->cmd->error = -ENOMEDIUM;
- 		if (host->req->stop)
- 			host->req->stop->error = -ENOMEDIUM;
--		tasklet_schedule(&host->finish_tasklet);
-+		queue_work(system_bh_wq, &host->finish_bh_work);
- 	}
- 	spin_unlock_irqrestore(&sock->lock, flags);
- 	mmc_remove_host(mmc);
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index de56e6534aea..63000d9c7030 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -21,6 +21,7 @@
- #include <linux/scatterlist.h>
- #include <linux/spinlock.h>
- #include <linux/interrupt.h>
-+#include <linux/workqueue.h>
- 
- #define CTL_SD_CMD 0x00
- #define CTL_ARG_REG 0x04
-@@ -156,7 +157,7 @@ struct tmio_mmc_host {
- 	bool			dma_on;
- 	struct dma_chan		*chan_rx;
- 	struct dma_chan		*chan_tx;
--	struct tasklet_struct	dma_issue;
-+	struct work_struct	dma_issue;
- 	struct scatterlist	bounce_sg;
- 	u8			*bounce_buf;
- 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 93e912afd3ae..51bd2365795b 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -608,7 +608,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
- 			} else {
- 				tmio_mmc_disable_mmc_irqs(host,
- 							  TMIO_MASK_READOP);
--				tasklet_schedule(&host->dma_issue);
-+				queue_work(system_bh_wq, &host->dma_issue);
- 			}
- 		} else {
- 			if (!host->dma_on) {
-@@ -616,7 +616,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
- 			} else {
- 				tmio_mmc_disable_mmc_irqs(host,
- 							  TMIO_MASK_WRITEOP);
--				tasklet_schedule(&host->dma_issue);
-+				queue_work(system_bh_wq, &host->dma_issue);
- 			}
- 		}
- 	} else {
-diff --git a/drivers/mmc/host/uniphier-sd.c b/drivers/mmc/host/uniphier-sd.c
-index 1404989e6151..417fd13efdfd 100644
---- a/drivers/mmc/host/uniphier-sd.c
-+++ b/drivers/mmc/host/uniphier-sd.c
-@@ -90,9 +90,9 @@ static void uniphier_sd_dma_endisable(struct tmio_mmc_host *host, int enable)
+ 	for (i = 0; i < TW5864_INPUTS; i++)
+ 		tw5864_video_input_fini(&dev->inputs[i]);
+@@ -1315,9 +1316,9 @@ static int tw5864_is_motion_triggered(struct tw5864_h264_frame *frame)
+ 	return detected;
  }
  
- /* external DMA engine */
--static void uniphier_sd_external_dma_issue(struct tasklet_struct *t)
-+static void uniphier_sd_external_dma_issue(struct work_struct *t)
+-static void tw5864_handle_frame_task(struct tasklet_struct *t)
++static void tw5864_handle_frame_work(struct work_struct *t)
  {
--	struct tmio_mmc_host *host = from_tasklet(host, t, dma_issue);
-+	struct tmio_mmc_host *host = from_work(host, t, dma_issue);
- 	struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
- 
- 	uniphier_sd_dma_endisable(host, 1);
-@@ -199,7 +199,7 @@ static void uniphier_sd_external_dma_request(struct tmio_mmc_host *host,
- 	host->chan_rx = chan;
- 	host->chan_tx = chan;
- 
--	tasklet_setup(&host->dma_issue, uniphier_sd_external_dma_issue);
-+	INIT_WORK(&host->dma_issue, uniphier_sd_external_dma_issue);
- }
- 
- static void uniphier_sd_external_dma_release(struct tmio_mmc_host *host)
-@@ -236,9 +236,9 @@ static const struct tmio_mmc_dma_ops uniphier_sd_external_dma_ops = {
- 	.dataend = uniphier_sd_external_dma_dataend,
- };
- 
--static void uniphier_sd_internal_dma_issue(struct tasklet_struct *t)
-+static void uniphier_sd_internal_dma_issue(struct work_struct *t)
- {
--	struct tmio_mmc_host *host = from_tasklet(host, t, dma_issue);
-+	struct tmio_mmc_host *host = from_work(host, t, dma_issue);
+-	struct tw5864_dev *dev = from_tasklet(dev, t, tasklet);
++	struct tw5864_dev *dev = from_work(dev, t, bh_work);
  	unsigned long flags;
+ 	int batch_size = H264_BUF_CNT;
  
- 	spin_lock_irqsave(&host->lock, flags);
-@@ -317,7 +317,7 @@ static void uniphier_sd_internal_dma_request(struct tmio_mmc_host *host,
- 
- 	host->chan_tx = (void *)0xdeadbeaf;
- 
--	tasklet_setup(&host->dma_issue, uniphier_sd_internal_dma_issue);
-+	INIT_WORK(&host->dma_issue, uniphier_sd_internal_dma_issue);
- }
- 
- static void uniphier_sd_internal_dma_release(struct tmio_mmc_host *host)
-diff --git a/drivers/mmc/host/via-sdmmc.c b/drivers/mmc/host/via-sdmmc.c
-index ba6044b16e07..f77457105ec3 100644
---- a/drivers/mmc/host/via-sdmmc.c
-+++ b/drivers/mmc/host/via-sdmmc.c
+diff --git a/drivers/media/pci/tw5864/tw5864.h b/drivers/media/pci/tw5864/tw5864.h
+index a8b6fbd5b710..2da5f4215fd9 100644
+--- a/drivers/media/pci/tw5864/tw5864.h
++++ b/drivers/media/pci/tw5864/tw5864.h
 @@ -12,6 +12,7 @@
+ #include <linux/mutex.h>
+ #include <linux/io.h>
  #include <linux/interrupt.h>
- 
- #include <linux/mmc/host.h>
 +#include <linux/workqueue.h>
  
- #define DRV_NAME	"via_sdmmc"
+ #include <media/v4l2-common.h>
+ #include <media/v4l2-ioctl.h>
+@@ -85,7 +86,7 @@ struct tw5864_input {
+ 	int nr; /* input number */
+ 	struct tw5864_dev *root;
+ 	struct mutex lock; /* used for vidq and vdev */
+-	spinlock_t slock; /* used for sync between ISR, tasklet & V4L2 API */
++	spinlock_t slock; /* used for sync between ISR, bh_work & V4L2 API */
+ 	struct video_device vdev;
+ 	struct v4l2_ctrl_handler hdl;
+ 	struct vb2_queue vidq;
+@@ -142,7 +143,7 @@ struct tw5864_h264_frame {
  
-@@ -307,7 +308,7 @@ struct via_crdr_mmc_host {
- 	struct sdhcreg pm_sdhc_reg;
+ /* global device status */
+ struct tw5864_dev {
+-	spinlock_t slock; /* used for sync between ISR, tasklet & V4L2 API */
++	spinlock_t slock; /* used for sync between ISR, bh_work & V4L2 API */
+ 	struct v4l2_device v4l2_dev;
+ 	struct tw5864_input inputs[TW5864_INPUTS];
+ #define H264_BUF_CNT 4
+@@ -150,7 +151,7 @@ struct tw5864_dev {
+ 	int h264_buf_r_index;
+ 	int h264_buf_w_index;
  
- 	struct work_struct carddet_work;
--	struct tasklet_struct finish_tasklet;
-+	struct work_struct finish_bh_work;
+-	struct tasklet_struct tasklet;
++	struct work_struct bh_work;
  
- 	struct timer_list timer;
- 	spinlock_t lock;
-@@ -643,7 +644,7 @@ static void via_sdc_finish_data(struct via_crdr_mmc_host *host)
- 	if (data->stop)
- 		via_sdc_send_command(host, data->stop);
- 	else
--		tasklet_schedule(&host->finish_tasklet);
-+		queue_work(system_bh_wq, &host->finish_bh_work);
+ 	int encoder_busy;
+ 	/* Input number to check next for ready raw picture (in RR fashion) */
+diff --git a/drivers/media/platform/intel/pxa_camera.c b/drivers/media/platform/intel/pxa_camera.c
+index d904952bf00e..f118aaac0b38 100644
+--- a/drivers/media/platform/intel/pxa_camera.c
++++ b/drivers/media/platform/intel/pxa_camera.c
+@@ -43,6 +43,7 @@
+ #include <linux/videodev2.h>
+ 
+ #include <linux/platform_data/media/camera-pxa.h>
++#include <linux/workqueue.h>
+ 
+ #define PXA_CAM_VERSION "0.0.6"
+ #define PXA_CAM_DRV_NAME "pxa27x-camera"
+@@ -683,7 +684,7 @@ struct pxa_camera_dev {
+ 	unsigned int		buf_sequence;
+ 
+ 	struct pxa_buffer	*active;
+-	struct tasklet_struct	task_eof;
++	struct work_struct	eof_bh_work;
+ 
+ 	u32			save_cicr[5];
+ };
+@@ -1146,9 +1147,9 @@ static void pxa_camera_deactivate(struct pxa_camera_dev *pcdev)
+ 	clk_disable_unprepare(pcdev->clk);
  }
  
- static void via_sdc_finish_command(struct via_crdr_mmc_host *host)
-@@ -653,7 +654,7 @@ static void via_sdc_finish_command(struct via_crdr_mmc_host *host)
- 	host->cmd->error = 0;
+-static void pxa_camera_eof(struct tasklet_struct *t)
++static void pxa_camera_eof_bh_work(struct work_struct *t)
+ {
+-	struct pxa_camera_dev *pcdev = from_tasklet(pcdev, t, task_eof);
++	struct pxa_camera_dev *pcdev = from_work(pcdev, t, eof_bh_work);
+ 	unsigned long cifr;
+ 	struct pxa_buffer *buf;
  
- 	if (!host->cmd->data)
--		tasklet_schedule(&host->finish_tasklet);
-+		queue_work(system_bh_wq, &host->finish_bh_work);
- 
- 	host->cmd = NULL;
- }
-@@ -682,7 +683,7 @@ static void via_sdc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	status = readw(host->sdhc_mmiobase + VIA_CRDR_SDSTATUS);
- 	if (!(status & VIA_CRDR_SDSTS_SLOTG) || host->reject) {
- 		host->mrq->cmd->error = -ENOMEDIUM;
--		tasklet_schedule(&host->finish_tasklet);
-+		queue_work(system_bh_wq, &host->finish_bh_work);
- 	} else {
- 		via_sdc_send_command(host, mrq->cmd);
+@@ -1185,7 +1186,7 @@ static irqreturn_t pxa_camera_irq(int irq, void *data)
+ 	if (status & CISR_EOF) {
+ 		cicr0 = __raw_readl(pcdev->base + CICR0) | CICR0_EOFM;
+ 		__raw_writel(cicr0, pcdev->base + CICR0);
+-		tasklet_schedule(&pcdev->task_eof);
++		queue_work(system_bh_wq, &pcdev->eof_bh_work);
  	}
-@@ -848,7 +849,7 @@ static void via_sdc_cmd_isr(struct via_crdr_mmc_host *host, u16 intmask)
- 		host->cmd->error = -EILSEQ;
- 
- 	if (host->cmd->error)
--		tasklet_schedule(&host->finish_tasklet);
-+		queue_work(system_bh_wq, &host->finish_bh_work);
- 	else if (intmask & VIA_CRDR_SDSTS_CRD)
- 		via_sdc_finish_command(host);
- }
-@@ -955,16 +956,16 @@ static void via_sdc_timeout(struct timer_list *t)
- 				sdhost->cmd->error = -ETIMEDOUT;
- 			else
- 				sdhost->mrq->cmd->error = -ETIMEDOUT;
--			tasklet_schedule(&sdhost->finish_tasklet);
-+			queue_work(system_bh_wq, &sdhost->finish_bh_work);
- 		}
- 	}
- 
- 	spin_unlock_irqrestore(&sdhost->lock, flags);
- }
- 
--static void via_sdc_tasklet_finish(struct tasklet_struct *t)
-+static void via_sdc_finish_bh_work(struct work_struct *t)
- {
--	struct via_crdr_mmc_host *host = from_tasklet(host, t, finish_tasklet);
-+	struct via_crdr_mmc_host *host = from_work(host, t, finish_bh_work);
- 	unsigned long flags;
- 	struct mmc_request *mrq;
- 
-@@ -1005,7 +1006,7 @@ static void via_sdc_card_detect(struct work_struct *work)
- 			pr_err("%s: Card removed during transfer!\n",
- 			       mmc_hostname(host->mmc));
- 			host->mrq->cmd->error = -ENOMEDIUM;
--			tasklet_schedule(&host->finish_tasklet);
-+			queue_work(system_bh_wq, &host->finish_bh_work);
- 		}
- 
- 		spin_unlock_irqrestore(&host->lock, flags);
-@@ -1051,7 +1052,7 @@ static void via_init_mmc_host(struct via_crdr_mmc_host *host)
- 
- 	INIT_WORK(&host->carddet_work, via_sdc_card_detect);
- 
--	tasklet_setup(&host->finish_tasklet, via_sdc_tasklet_finish);
-+	INIT_WORK(&host->finish_bh_work, via_sdc_finish_bh_work);
- 
- 	addrbase = host->sdhc_mmiobase;
- 	writel(0x0, addrbase + VIA_CRDR_SDINTMASK);
-@@ -1193,7 +1194,7 @@ static void via_sd_remove(struct pci_dev *pcidev)
- 		sdhost->mrq->cmd->error = -ENOMEDIUM;
- 		if (sdhost->mrq->stop)
- 			sdhost->mrq->stop->error = -ENOMEDIUM;
--		tasklet_schedule(&sdhost->finish_tasklet);
-+		queue_work(system_bh_wq, &sdhost->finish_bh_work);
- 	}
- 	spin_unlock_irqrestore(&sdhost->lock, flags);
- 
-@@ -1203,7 +1204,7 @@ static void via_sd_remove(struct pci_dev *pcidev)
- 
- 	del_timer_sync(&sdhost->timer);
- 
--	tasklet_kill(&sdhost->finish_tasklet);
-+	cancel_work_sync(&sdhost->finish_bh_work);
- 
- 	/* switch off power */
- 	gatt = readb(sdhost->pcictrl_mmiobase + VIA_CRDR_PCICLKGATT);
-diff --git a/drivers/mmc/host/wbsd.c b/drivers/mmc/host/wbsd.c
-index f0562f712d98..6e20405d0430 100644
---- a/drivers/mmc/host/wbsd.c
-+++ b/drivers/mmc/host/wbsd.c
-@@ -459,7 +459,7 @@ static void wbsd_empty_fifo(struct wbsd_host *host)
- 	 * FIFO threshold interrupts properly.
- 	 */
- 	if ((data->blocks * data->blksz - data->bytes_xfered) < 16)
--		tasklet_schedule(&host->fifo_tasklet);
-+		queue_work(system_bh_wq, &host->fifo_bh_work);
- }
- 
- static void wbsd_fill_fifo(struct wbsd_host *host)
-@@ -524,7 +524,7 @@ static void wbsd_fill_fifo(struct wbsd_host *host)
- 	 * 'FIFO empty' under certain conditions. So we
- 	 * need to be a bit more pro-active.
- 	 */
--	tasklet_schedule(&host->fifo_tasklet);
-+	queue_work(system_bh_wq, &host->fifo_bh_work);
- }
- 
- static void wbsd_prepare_data(struct wbsd_host *host, struct mmc_data *data)
-@@ -746,7 +746,7 @@ static void wbsd_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	struct mmc_command *cmd;
- 
- 	/*
--	 * Disable tasklets to avoid a deadlock.
-+	 * Disable bh works to avoid a deadlock.
- 	 */
- 	spin_lock_bh(&host->lock);
- 
-@@ -821,7 +821,7 @@ static void wbsd_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 		 * Dirty fix for hardware bug.
- 		 */
- 		if (host->dma == -1)
--			tasklet_schedule(&host->fifo_tasklet);
-+			queue_work(system_bh_wq, &host->fifo_bh_work);
- 
- 		spin_unlock_bh(&host->lock);
- 
-@@ -961,13 +961,13 @@ static void wbsd_reset_ignore(struct timer_list *t)
- 	 * Card status might have changed during the
- 	 * blackout.
- 	 */
--	tasklet_schedule(&host->card_tasklet);
-+	queue_work(system_bh_wq, &host->card_bh_work);
- 
- 	spin_unlock_bh(&host->lock);
- }
- 
- /*
-- * Tasklets
-+ * BH Works
-  */
- 
- static inline struct mmc_data *wbsd_get_data(struct wbsd_host *host)
-@@ -987,9 +987,9 @@ static inline struct mmc_data *wbsd_get_data(struct wbsd_host *host)
- 	return host->mrq->cmd->data;
- }
- 
--static void wbsd_tasklet_card(struct tasklet_struct *t)
-+static void wbsd_card_bh_work(struct work_struct *t)
- {
--	struct wbsd_host *host = from_tasklet(host, t, card_tasklet);
-+	struct wbsd_host *host = from_work(host, t, card_bh_work);
- 	u8 csr;
- 	int delay = -1;
- 
-@@ -1020,7 +1020,7 @@ static void wbsd_tasklet_card(struct tasklet_struct *t)
- 			wbsd_reset(host);
- 
- 			host->mrq->cmd->error = -ENOMEDIUM;
--			tasklet_schedule(&host->finish_tasklet);
-+			queue_work(system_bh_wq, &host->finish_bh_work);
- 		}
- 
- 		delay = 0;
-@@ -1036,9 +1036,9 @@ static void wbsd_tasklet_card(struct tasklet_struct *t)
- 		mmc_detect_change(host->mmc, msecs_to_jiffies(delay));
- }
- 
--static void wbsd_tasklet_fifo(struct tasklet_struct *t)
-+static void wbsd_fifo_bh_work(struct work_struct *t)
- {
--	struct wbsd_host *host = from_tasklet(host, t, fifo_tasklet);
-+	struct wbsd_host *host = from_work(host, t, fifo_bh_work);
- 	struct mmc_data *data;
- 
- 	spin_lock(&host->lock);
-@@ -1060,16 +1060,16 @@ static void wbsd_tasklet_fifo(struct tasklet_struct *t)
- 	 */
- 	if (host->num_sg == 0) {
- 		wbsd_write_index(host, WBSD_IDX_FIFOEN, 0);
--		tasklet_schedule(&host->finish_tasklet);
-+		queue_work(system_bh_wq, &host->finish_bh_work);
- 	}
- 
- end:
- 	spin_unlock(&host->lock);
- }
- 
--static void wbsd_tasklet_crc(struct tasklet_struct *t)
-+static void wbsd_crc_bh_work(struct work_struct *t)
- {
--	struct wbsd_host *host = from_tasklet(host, t, crc_tasklet);
-+	struct wbsd_host *host = from_work(host, t, crc_bh_work);
- 	struct mmc_data *data;
- 
- 	spin_lock(&host->lock);
-@@ -1085,15 +1085,15 @@ static void wbsd_tasklet_crc(struct tasklet_struct *t)
- 
- 	data->error = -EILSEQ;
- 
--	tasklet_schedule(&host->finish_tasklet);
-+	queue_work(system_bh_wq, &host->finish_bh_work);
- 
- end:
- 	spin_unlock(&host->lock);
- }
- 
--static void wbsd_tasklet_timeout(struct tasklet_struct *t)
-+static void wbsd_timeout_bh_work(struct work_struct *t)
- {
--	struct wbsd_host *host = from_tasklet(host, t, timeout_tasklet);
-+	struct wbsd_host *host = from_work(host, t, timeout_bh_work);
- 	struct mmc_data *data;
- 
- 	spin_lock(&host->lock);
-@@ -1109,15 +1109,15 @@ static void wbsd_tasklet_timeout(struct tasklet_struct *t)
- 
- 	data->error = -ETIMEDOUT;
- 
--	tasklet_schedule(&host->finish_tasklet);
-+	queue_work(system_bh_wq, &host->finish_bh_work);
- 
- end:
- 	spin_unlock(&host->lock);
- }
- 
--static void wbsd_tasklet_finish(struct tasklet_struct *t)
-+static void wbsd_finish_bh_work(struct work_struct *t)
- {
--	struct wbsd_host *host = from_tasklet(host, t, finish_tasklet);
-+	struct wbsd_host *host = from_work(host, t, finish_bh_work);
- 	struct mmc_data *data;
- 
- 	spin_lock(&host->lock);
-@@ -1156,18 +1156,18 @@ static irqreturn_t wbsd_irq(int irq, void *dev_id)
- 	host->isr |= isr;
- 
- 	/*
--	 * Schedule tasklets as needed.
-+	 * Schedule bh work as needed.
- 	 */
- 	if (isr & WBSD_INT_CARD)
--		tasklet_schedule(&host->card_tasklet);
-+		queue_work(system_bh_wq, &host->card_bh_work);
- 	if (isr & WBSD_INT_FIFO_THRE)
--		tasklet_schedule(&host->fifo_tasklet);
-+		queue_work(system_bh_wq, &host->fifo_bh_work);
- 	if (isr & WBSD_INT_CRC)
--		tasklet_hi_schedule(&host->crc_tasklet);
-+		queue_work(system_bh_highpri_wq, &host->crc_bh_work);
- 	if (isr & WBSD_INT_TIMEOUT)
--		tasklet_hi_schedule(&host->timeout_tasklet);
-+		queue_work(system_bh_highpri_wq, &host->timeout_bh_work);
- 	if (isr & WBSD_INT_TC)
--		tasklet_schedule(&host->finish_tasklet);
-+		queue_work(system_bh_wq, &host->finish_bh_work);
  
  	return IRQ_HANDLED;
+@@ -2383,7 +2384,7 @@ static int pxa_camera_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	tasklet_setup(&pcdev->task_eof, pxa_camera_eof);
++	INIT_WORK(&pcdev->eof_bh_work, pxa_camera_eof_bh_work);
+ 
+ 	pxa_camera_activate(pcdev);
+ 
+@@ -2409,7 +2410,7 @@ static int pxa_camera_probe(struct platform_device *pdev)
+ 	return 0;
+ exit_deactivate:
+ 	pxa_camera_deactivate(pcdev);
+-	tasklet_kill(&pcdev->task_eof);
++	cancel_work_sync(&pcdev->eof_bh_work);
+ exit_free_dma:
+ 	dma_release_channel(pcdev->dma_chans[2]);
+ exit_free_dma_u:
+@@ -2428,7 +2429,7 @@ static void pxa_camera_remove(struct platform_device *pdev)
+ 	struct pxa_camera_dev *pcdev = platform_get_drvdata(pdev);
+ 
+ 	pxa_camera_deactivate(pcdev);
+-	tasklet_kill(&pcdev->task_eof);
++	cancel_work_sync(&pcdev->eof_bh_work);
+ 	dma_release_channel(pcdev->dma_chans[0]);
+ 	dma_release_channel(pcdev->dma_chans[1]);
+ 	dma_release_channel(pcdev->dma_chans[2]);
+diff --git a/drivers/media/platform/marvell/mcam-core.c b/drivers/media/platform/marvell/mcam-core.c
+index 66688b4aece5..fa7ebf2fcfac 100644
+--- a/drivers/media/platform/marvell/mcam-core.c
++++ b/drivers/media/platform/marvell/mcam-core.c
+@@ -439,9 +439,9 @@ static void mcam_ctlr_dma_vmalloc(struct mcam_camera *cam)
+ /*
+  * Copy data out to user space in the vmalloc case
+  */
+-static void mcam_frame_tasklet(struct tasklet_struct *t)
++static void mcam_frame_work(struct work_struct *t)
+ {
+-	struct mcam_camera *cam = from_tasklet(cam, t, s_tasklet);
++	struct mcam_camera *cam = from_work(cam, t, s_work);
+ 	int i;
+ 	unsigned long flags;
+ 	struct mcam_vb_buffer *buf;
+@@ -493,7 +493,7 @@ static int mcam_check_dma_buffers(struct mcam_camera *cam)
+ 
+ static void mcam_vmalloc_done(struct mcam_camera *cam, int frame)
+ {
+-	tasklet_schedule(&cam->s_tasklet);
++	queue_work(system_bh_wq, &cam->s_work);
  }
-@@ -1443,13 +1443,13 @@ static int wbsd_request_irq(struct wbsd_host *host, int irq)
- 	int ret;
  
- 	/*
--	 * Set up tasklets. Must be done before requesting interrupt.
-+	 * Set up bh works. Must be done before requesting interrupt.
- 	 */
--	tasklet_setup(&host->card_tasklet, wbsd_tasklet_card);
--	tasklet_setup(&host->fifo_tasklet, wbsd_tasklet_fifo);
--	tasklet_setup(&host->crc_tasklet, wbsd_tasklet_crc);
--	tasklet_setup(&host->timeout_tasklet, wbsd_tasklet_timeout);
--	tasklet_setup(&host->finish_tasklet, wbsd_tasklet_finish);
-+	INIT_WORK(&host->card_bh_work, wbsd_card_bh_work);
-+	INIT_WORK(&host->fifo_bh_work, wbsd_fifo_bh_work);
-+	INIT_WORK(&host->crc_bh_work, wbsd_crc_bh_work);
-+	INIT_WORK(&host->timeout_bh_work, wbsd_timeout_bh_work);
-+	INIT_WORK(&host->finish_bh_work, wbsd_finish_bh_work);
+ #else /* MCAM_MODE_VMALLOC */
+@@ -1305,7 +1305,7 @@ static int mcam_setup_vb2(struct mcam_camera *cam)
+ 		break;
+ 	case B_vmalloc:
+ #ifdef MCAM_MODE_VMALLOC
+-		tasklet_setup(&cam->s_tasklet, mcam_frame_tasklet);
++		INIT_WORK(&cam->s_work, mcam_frame_work);
+ 		vq->ops = &mcam_vb2_ops;
+ 		vq->mem_ops = &vb2_vmalloc_memops;
+ 		cam->dma_setup = mcam_ctlr_dma_vmalloc;
+diff --git a/drivers/media/platform/marvell/mcam-core.h b/drivers/media/platform/marvell/mcam-core.h
+index 51e66db45af6..0d4b953dbb23 100644
+--- a/drivers/media/platform/marvell/mcam-core.h
++++ b/drivers/media/platform/marvell/mcam-core.h
+@@ -9,6 +9,7 @@
  
- 	/*
- 	 * Allocate interrupt.
-@@ -1472,11 +1472,11 @@ static void  wbsd_release_irq(struct wbsd_host *host)
+ #include <linux/list.h>
+ #include <linux/clk-provider.h>
++#include <linux/workqueue.h>
+ #include <media/v4l2-common.h>
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-dev.h>
+@@ -167,7 +168,7 @@ struct mcam_camera {
+ 	unsigned int dma_buf_size;	/* allocated size */
+ 	void *dma_bufs[MAX_DMA_BUFS];	/* Internal buffer addresses */
+ 	dma_addr_t dma_handles[MAX_DMA_BUFS]; /* Buffer bus addresses */
+-	struct tasklet_struct s_tasklet;
++	struct work_struct s_work;
+ #endif
+ 	unsigned int sequence;		/* Frame sequence number */
+ 	unsigned int buf_seq[MAX_DMA_BUFS]; /* Sequence for individual bufs */
+diff --git a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
+index 2f58a0d0df85..7bbb26a5b366 100644
+--- a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
++++ b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
+@@ -72,16 +72,16 @@ static void c8sectpfe_timer_interrupt(struct timer_list *t)
  
- 	host->irq = 0;
+ 		/* is this descriptor initialised and TP enabled */
+ 		if (channel->irec && readl(channel->irec + DMA_PRDS_TPENABLE))
+-			tasklet_schedule(&channel->tsklet);
++			queue_work(system_bh_wq, &channel->bh_work);
+ 	}
  
--	tasklet_kill(&host->card_tasklet);
--	tasklet_kill(&host->fifo_tasklet);
--	tasklet_kill(&host->crc_tasklet);
--	tasklet_kill(&host->timeout_tasklet);
--	tasklet_kill(&host->finish_tasklet);
-+	cancel_work_sync(&host->card_bh_work);
-+	cancel_work_sync(&host->fifo_bh_work);
-+	cancel_work_sync(&host->crc_bh_work);
-+	cancel_work_sync(&host->timeout_bh_work);
-+	cancel_work_sync(&host->finish_bh_work);
+ 	fei->timer.expires = jiffies +	msecs_to_jiffies(POLL_MSECS);
+ 	add_timer(&fei->timer);
+ }
+ 
+-static void channel_swdemux_tsklet(struct tasklet_struct *t)
++static void channel_swdemux_bh_work(struct work_struct *t)
+ {
+-	struct channel_info *channel = from_tasklet(channel, t, tsklet);
++	struct channel_info *channel = from_work(channel, t, bh_work);
+ 	struct c8sectpfei *fei;
+ 	unsigned long wp, rp;
+ 	int pos, num_packets, n, size;
+@@ -210,7 +210,7 @@ static int c8sectpfe_start_feed(struct dvb_demux_feed *dvbdmxfeed)
+ 
+ 		dev_dbg(fei->dev, "Starting channel=%p\n", channel);
+ 
+-		tasklet_setup(&channel->tsklet, channel_swdemux_tsklet);
++		INIT_WORK(&channel->bh_work, channel_swdemux_bh_work);
+ 
+ 		/* Reset the internal inputblock sram pointers */
+ 		writel(channel->fifo,
+@@ -303,7 +303,7 @@ static int c8sectpfe_stop_feed(struct dvb_demux_feed *dvbdmxfeed)
+ 		/* disable this channels descriptor */
+ 		writel(0,  channel->irec + DMA_PRDS_TPENABLE);
+ 
+-		tasklet_disable(&channel->tsklet);
++		disable_work_sync(&channel->bh_work);
+ 
+ 		/* now request memdma channel goes idle */
+ 		idlereq = (1 << channel->tsin_id) | IDLEREQ;
+@@ -630,8 +630,8 @@ static int configure_memdma_and_inputblock(struct c8sectpfei *fei,
+ 	writel(tsin->back_buffer_busaddr, tsin->irec + DMA_PRDS_BUSWP_TP(0));
+ 	writel(tsin->back_buffer_busaddr, tsin->irec + DMA_PRDS_BUSRP_TP(0));
+ 
+-	/* initialize tasklet */
+-	tasklet_setup(&tsin->tsklet, channel_swdemux_tsklet);
++	/* initialize work */
++	INIT_WORK(&tsin->bh_work, channel_swdemux_bh_work);
+ 
+ 	return 0;
+ 
+diff --git a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.h b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.h
+index bf377cc82225..c1b124c6ef12 100644
+--- a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.h
++++ b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.h
+@@ -51,7 +51,7 @@ struct channel_info {
+ 	unsigned long  fifo;
+ 
+ 	struct completion idle_completion;
+-	struct tasklet_struct tsklet;
++	struct work_struct bh_work;
+ 
+ 	struct c8sectpfei *fei;
+ 	void __iomem *irec;
+diff --git a/drivers/media/radio/wl128x/fmdrv.h b/drivers/media/radio/wl128x/fmdrv.h
+index da8920169df8..03117a41dbd4 100644
+--- a/drivers/media/radio/wl128x/fmdrv.h
++++ b/drivers/media/radio/wl128x/fmdrv.h
+@@ -15,6 +15,7 @@
+ #include <sound/core.h>
+ #include <sound/initval.h>
+ #include <linux/timer.h>
++#include <linux/workqueue.h>
+ #include <media/v4l2-ioctl.h>
+ #include <media/v4l2-common.h>
+ #include <media/v4l2-device.h>
+@@ -200,10 +201,10 @@ struct fmdev {
+ 	int streg_cbdata; /* status of ST registration */
+ 
+ 	struct sk_buff_head rx_q;	/* RX queue */
+-	struct tasklet_struct rx_task;	/* RX Tasklet */
++	struct work_struct rx_bh_work;	/* RX BH Work */
+ 
+ 	struct sk_buff_head tx_q;	/* TX queue */
+-	struct tasklet_struct tx_task;	/* TX Tasklet */
++	struct work_struct tx_bh_work;	/* TX BH Work */
+ 	unsigned long last_tx_jiffies;	/* Timestamp of last pkt sent */
+ 	atomic_t tx_cnt;	/* Number of packets can send at a time */
+ 
+diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
+index 3da8e5102bec..37ed1ed664e0 100644
+--- a/drivers/media/radio/wl128x/fmdrv_common.c
++++ b/drivers/media/radio/wl128x/fmdrv_common.c
+@@ -9,7 +9,7 @@
+  *     one Channel-8 command to be sent to the chip).
+  *  2) Sending each Channel-8 command to the chip and reading
+  *     response back over Shared Transport.
+- *  3) Managing TX and RX Queues and Tasklets.
++ *  3) Managing TX and RX Queues and BH Works.
+  *  4) Handling FM Interrupt packet and taking appropriate action.
+  *  5) Loading FM firmware to the chip (common, FM TX, and FM RX
+  *     firmware files based on mode selection)
+@@ -244,10 +244,10 @@ void fmc_update_region_info(struct fmdev *fmdev, u8 region_to_set)
  }
  
  /*
-diff --git a/drivers/mmc/host/wbsd.h b/drivers/mmc/host/wbsd.h
-index be30b4d8ce4c..970886831305 100644
---- a/drivers/mmc/host/wbsd.h
-+++ b/drivers/mmc/host/wbsd.h
-@@ -171,11 +171,11 @@ struct wbsd_host
- 	int			irq;		/* Interrupt */
- 	int			dma;		/* DMA channel */
+- * FM common sub-module will schedule this tasklet whenever it receives
++ * FM common sub-module will queue this work whenever it receives
+  * FM packet from ST driver.
+  */
+-static void recv_tasklet(struct tasklet_struct *t)
++static void recv_bh_work(struct work_struct *t)
+ {
+ 	struct fmdev *fmdev;
+ 	struct fm_irq *irq_info;
+@@ -256,7 +256,7 @@ static void recv_tasklet(struct tasklet_struct *t)
+ 	u8 num_fm_hci_cmds;
+ 	unsigned long flags;
  
--	struct tasklet_struct	card_tasklet;	/* Tasklet structures */
--	struct tasklet_struct	fifo_tasklet;
--	struct tasklet_struct	crc_tasklet;
--	struct tasklet_struct	timeout_tasklet;
--	struct tasklet_struct	finish_tasklet;
-+	struct work_struct	card_bh_work;	/* Work structures */
-+	struct work_struct	fifo_bh_work;
-+	struct work_struct	crc_bh_work;
-+	struct work_struct	timeout_bh_work;
-+	struct work_struct	finish_bh_work;
+-	fmdev = from_tasklet(fmdev, t, tx_task);
++	fmdev = from_work(fmdev, t, tx_bh_work);
+ 	irq_info = &fmdev->irq_info;
+ 	/* Process all packets in the RX queue */
+ 	while ((skb = skb_dequeue(&fmdev->rx_q))) {
+@@ -322,22 +322,22 @@ static void recv_tasklet(struct tasklet_struct *t)
  
- 	struct timer_list	ignore_timer;	/* Ignore detection timer */
- };
+ 		/*
+ 		 * Check flow control field. If Num_FM_HCI_Commands field is
+-		 * not zero, schedule FM TX tasklet.
++		 * not zero, queue FM TX work.
+ 		 */
+ 		if (num_fm_hci_cmds && atomic_read(&fmdev->tx_cnt))
+ 			if (!skb_queue_empty(&fmdev->tx_q))
+-				tasklet_schedule(&fmdev->tx_task);
++				queue_work(system_bh_wq, &fmdev->tx_bh_work);
+ 	}
+ }
+ 
+-/* FM send tasklet: is scheduled when FM packet has to be sent to chip */
+-static void send_tasklet(struct tasklet_struct *t)
++/* FM send_bh_work: is scheduled when FM packet has to be sent to chip */
++static void send_bh_work(struct work_struct *t)
+ {
+ 	struct fmdev *fmdev;
+ 	struct sk_buff *skb;
+ 	int len;
+ 
+-	fmdev = from_tasklet(fmdev, t, tx_task);
++	fmdev = from_work(fmdev, t, tx_bh_work);
+ 
+ 	if (!atomic_read(&fmdev->tx_cnt))
+ 		return;
+@@ -366,7 +366,7 @@ static void send_tasklet(struct tasklet_struct *t)
+ 	if (len < 0) {
+ 		kfree_skb(skb);
+ 		fmdev->resp_comp = NULL;
+-		fmerr("TX tasklet failed to send skb(%p)\n", skb);
++		fmerr("TX work failed to send skb(%p)\n", skb);
+ 		atomic_set(&fmdev->tx_cnt, 1);
+ 	} else {
+ 		fmdev->last_tx_jiffies = jiffies;
+@@ -374,7 +374,7 @@ static void send_tasklet(struct tasklet_struct *t)
+ }
+ 
+ /*
+- * Queues FM Channel-8 packet to FM TX queue and schedules FM TX tasklet for
++ * Queues FM Channel-8 packet to FM TX queue and schedules FM TX work for
+  * transmission
+  */
+ static int fm_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type,	void *payload,
+@@ -440,7 +440,7 @@ static int fm_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type,	void *payload,
+ 
+ 	fm_cb(skb)->completion = wait_completion;
+ 	skb_queue_tail(&fmdev->tx_q, skb);
+-	tasklet_schedule(&fmdev->tx_task);
++	queue_work(system_bh_wq, &fmdev->tx_bh_work);
+ 
+ 	return 0;
+ }
+@@ -462,7 +462,7 @@ int fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
+ 
+ 	if (!wait_for_completion_timeout(&fmdev->maintask_comp,
+ 					 FM_DRV_TX_TIMEOUT)) {
+-		fmerr("Timeout(%d sec),didn't get regcompletion signal from RX tasklet\n",
++		fmerr("Timeout(%d sec),didn't get regcompletion signal from RX work\n",
+ 			   jiffies_to_msecs(FM_DRV_TX_TIMEOUT) / 1000);
+ 		return -ETIMEDOUT;
+ 	}
+@@ -1455,7 +1455,7 @@ static long fm_st_receive(void *arg, struct sk_buff *skb)
+ 
+ 	memcpy(skb_push(skb, 1), &skb->cb[0], 1);
+ 	skb_queue_tail(&fmdev->rx_q, skb);
+-	tasklet_schedule(&fmdev->rx_task);
++	queue_work(system_bh_wq, &fmdev->rx_bh_work);
+ 
+ 	return 0;
+ }
+@@ -1537,13 +1537,13 @@ int fmc_prepare(struct fmdev *fmdev)
+ 	spin_lock_init(&fmdev->rds_buff_lock);
+ 	spin_lock_init(&fmdev->resp_skb_lock);
+ 
+-	/* Initialize TX queue and TX tasklet */
++	/* Initialize TX queue and TX work */
+ 	skb_queue_head_init(&fmdev->tx_q);
+-	tasklet_setup(&fmdev->tx_task, send_tasklet);
++	INIT_WORK(&fmdev->tx_bh_work, send_bh_work);
+ 
+-	/* Initialize RX Queue and RX tasklet */
++	/* Initialize RX Queue and RX work */
+ 	skb_queue_head_init(&fmdev->rx_q);
+-	tasklet_setup(&fmdev->rx_task, recv_tasklet);
++	INIT_WORK(&fmdev->rx_bh_work, recv_bh_work);
+ 
+ 	fmdev->irq_info.stage = 0;
+ 	atomic_set(&fmdev->tx_cnt, 1);
+@@ -1589,8 +1589,8 @@ int fmc_release(struct fmdev *fmdev)
+ 	/* Service pending read */
+ 	wake_up_interruptible(&fmdev->rx.rds.read_queue);
+ 
+-	tasklet_kill(&fmdev->tx_task);
+-	tasklet_kill(&fmdev->rx_task);
++	cancel_work_sync(&fmdev->tx_bh_work);
++	cancel_work_sync(&fmdev->rx_bh_work);
+ 
+ 	skb_queue_purge(&fmdev->tx_q);
+ 	skb_queue_purge(&fmdev->rx_q);
+diff --git a/drivers/media/rc/mceusb.c b/drivers/media/rc/mceusb.c
+index c76ba24c1f55..01b65451228d 100644
+--- a/drivers/media/rc/mceusb.c
++++ b/drivers/media/rc/mceusb.c
+@@ -774,7 +774,7 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, u8 *buf, int buf_len,
+ 
+ /*
+  * Schedule work that can't be done in interrupt handlers
+- * (mceusb_dev_recv() and mce_write_callback()) nor tasklets.
++ * (mceusb_dev_recv() and mce_write_callback()) nor BH work.
+  * Invokes mceusb_deferred_kevent() for recovering from
+  * error events specified by the kevent bit field.
+  */
+diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+index 79faa2560613..c8bc84f4aefb 100644
+--- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
++++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+@@ -19,6 +19,7 @@
+ #include <linux/input.h>
+ 
+ #include <linux/mutex.h>
++#include <linux/workqueue.h>
+ 
+ #include <media/dmxdev.h>
+ #include <media/dvb_demux.h>
+@@ -139,7 +140,7 @@ struct ttusb_dec {
+ 	int			v_pes_postbytes;
+ 
+ 	struct list_head	urb_frame_list;
+-	struct tasklet_struct	urb_tasklet;
++	struct work_struct	urb_work;
+ 	spinlock_t		urb_frame_list_lock;
+ 
+ 	struct dvb_demux_filter	*audio_filter;
+@@ -766,9 +767,9 @@ static void ttusb_dec_process_urb_frame(struct ttusb_dec *dec, u8 *b,
+ 	}
+ }
+ 
+-static void ttusb_dec_process_urb_frame_list(struct tasklet_struct *t)
++static void ttusb_dec_process_urb_frame_list(struct work_struct *t)
+ {
+-	struct ttusb_dec *dec = from_tasklet(dec, t, urb_tasklet);
++	struct ttusb_dec *dec = from_work(dec, t, urb_work);
+ 	struct list_head *item;
+ 	struct urb_frame *frame;
+ 	unsigned long flags;
+@@ -822,7 +823,7 @@ static void ttusb_dec_process_urb(struct urb *urb)
+ 				spin_unlock_irqrestore(&dec->urb_frame_list_lock,
+ 						       flags);
+ 
+-				tasklet_schedule(&dec->urb_tasklet);
++				queue_work(system_bh_wq, &dec->urb_work);
+ 			}
+ 		}
+ 	} else {
+@@ -1198,11 +1199,11 @@ static int ttusb_dec_alloc_iso_urbs(struct ttusb_dec *dec)
+ 	return 0;
+ }
+ 
+-static void ttusb_dec_init_tasklet(struct ttusb_dec *dec)
++static void ttusb_dec_init_work(struct ttusb_dec *dec)
+ {
+ 	spin_lock_init(&dec->urb_frame_list_lock);
+ 	INIT_LIST_HEAD(&dec->urb_frame_list);
+-	tasklet_setup(&dec->urb_tasklet, ttusb_dec_process_urb_frame_list);
++	INIT_WORK(&dec->urb_work, ttusb_dec_process_urb_frame_list);
+ }
+ 
+ static int ttusb_init_rc( struct ttusb_dec *dec)
+@@ -1588,12 +1589,12 @@ static void ttusb_dec_exit_usb(struct ttusb_dec *dec)
+ 	ttusb_dec_free_iso_urbs(dec);
+ }
+ 
+-static void ttusb_dec_exit_tasklet(struct ttusb_dec *dec)
++static void ttusb_dec_exit_work(struct ttusb_dec *dec)
+ {
+ 	struct list_head *item;
+ 	struct urb_frame *frame;
+ 
+-	tasklet_kill(&dec->urb_tasklet);
++	cancel_work_sync(&dec->urb_work);
+ 
+ 	while ((item = dec->urb_frame_list.next) != &dec->urb_frame_list) {
+ 		frame = list_entry(item, struct urb_frame, urb_frame_list);
+@@ -1703,7 +1704,7 @@ static int ttusb_dec_probe(struct usb_interface *intf,
+ 
+ 	ttusb_dec_init_v_pes(dec);
+ 	ttusb_dec_init_filters(dec);
+-	ttusb_dec_init_tasklet(dec);
++	ttusb_dec_init_work(dec);
+ 
+ 	dec->active = 1;
+ 
+@@ -1729,7 +1730,7 @@ static void ttusb_dec_disconnect(struct usb_interface *intf)
+ 	dprintk("%s\n", __func__);
+ 
+ 	if (dec->active) {
+-		ttusb_dec_exit_tasklet(dec);
++		ttusb_dec_exit_work(dec);
+ 		ttusb_dec_exit_filters(dec);
+ 		if(enable_rc)
+ 			ttusb_dec_exit_rc(dec);
 -- 
 2.34.1
 
