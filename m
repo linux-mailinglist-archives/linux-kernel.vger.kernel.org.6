@@ -1,266 +1,136 @@
-Return-Path: <linux-kernel+bounces-212099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD07F905B36
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:40:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36C45905A53
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B06428AF51
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:40:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A65F11F224E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018694F1F8;
-	Wed, 12 Jun 2024 18:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE43183061;
+	Wed, 12 Jun 2024 18:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="u+K8j4Zl"
-Received: from mx0b-00823401.pphosted.com (mx0b-00823401.pphosted.com [148.163.152.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QCdTbmGh"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AC14A9B0;
-	Wed, 12 Jun 2024 18:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8E41822D5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718217605; cv=none; b=JqmdIf7frGpUvS7LY3PPar0NzStQb4gM6RNAoQVc2LfqfCb9RN5IEvTodMdPI0J3Uizoswh+sBezsFT8liAMrbzWZfQJjnB0YTNL+aiIM82AB1WqLNcSiqoDrAJCPwbIA+MX6+ELpHm49x+YqZk+GL7jP+UeojskOmFkN12eAlw=
+	t=1718215497; cv=none; b=Iyvh9Jtwjf+0K3cgE7+4WztvkjhIiuuOAP4Sv1zSEMubrjkKdyhyRYo71zcBeZQrGYjv2lDOwS4DLy778GvBNBfxWlAUoy/PgeEjZ5v8a5TMzs1Lj9cqGDig9JtkcLV1O8a2PYMkMt5fqfHYgjqfgN5na88++TH/0LjSD120px4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718217605; c=relaxed/simple;
-	bh=Bjuj+h31fXZSJTP947nQ6wd95zco9N/KLLRlENy27RI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=anyLKl4UwCzwaP1IPyITo+QngT85qFujnB/o2JaaixlYOteptfaYCjUZ2pOP8z8i+7KjjcmwgHSp5SAytjL1Ok0eVr8roC0oKFu+bRpL5PjEg9Vceq2Nsrt2Dx/9ceugSbygtIyqI8mfryUZn3dn5P8Nb6NqS0j5glwEutqsBNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=u+K8j4Zl; arc=none smtp.client-ip=148.163.152.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
-Received: from pps.filterd (m0355092.ppops.net [127.0.0.1])
-	by mx0b-00823401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CCP1ED025711;
-	Wed, 12 Jun 2024 15:30:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=DKIM202306; bh=8WJALL82Sk9HW31XdlI5/qJ
-	F14ASSC7G53mFaIDlTHE=; b=u+K8j4Zl0SL5R8jo7tx1yB96WVYiDjz3XIHWfj3
-	jgzaoZjTVDGWEuOcXRIn4az7tt5yUowZK5vqHhb+RLyTlkTvN2MXO3sza5Xk9RLU
-	QXq9+ZI8EbevxNapOgfwB+BcWL4Vij8sOh8DgrGx8CLNUB80KZ1qaZXb95hhJrEL
-	I0FtV5FwJnr+wsMj7f/CgtBcQzTf1YTgzccP3sKoBcvYNNOS3R5mt69ww4H3xKJY
-	WdsaNxHr/+2QMWDTGobddDW1bKCcl5wMNq/MJWHlRlmzJRg8TuzphID8tRTSgZwp
-	WoqugM4TfrnWSgvoQW0hOgiE6Bpa2ouiVPIpS9FHDmIEeGw==
-Received: from va32lpfpp04.lenovo.com ([104.232.228.24])
-	by mx0b-00823401.pphosted.com (PPS) with ESMTPS id 3yn5mcqfpp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 15:30:08 +0000 (GMT)
-Received: from ilclmmrp01.lenovo.com (ilclmmrp01.mot.com [100.65.83.165])
-	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by va32lpfpp04.lenovo.com (Postfix) with ESMTPS id 4VzqH4149Fzg1bn;
-	Wed, 12 Jun 2024 15:30:08 +0000 (UTC)
-Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mbland)
-	by ilclmmrp01.lenovo.com (Postfix) with ESMTPSA id 4VzqH36rykz3nd88;
-	Wed, 12 Jun 2024 15:30:07 +0000 (UTC)
-Date: Wed, 12 Jun 2024 10:30:06 -0500
-From: Maxwell Bland <mbland@motorola.com>
-To: "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Zi Shen Lim <zlim.lnx@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Puranjay Mohan <puranjay12@gmail.com>
-Subject: [PATCH bpf-next v6 1/3] cfi: add C CFI type macro
-Message-ID: <q2zpwapuc5nisffwmztl2pdfutf4voy34tstmy6yiosfx4baa7@u6cvs5dp4dyg>
-References: <illfkwuxwq3adca2h4shibz2xub62kku3g2wte4sqp7xj7cwkb@ckn3qg7zxjuv>
+	s=arc-20240116; t=1718215497; c=relaxed/simple;
+	bh=dFn5z5vyRgzrtdFYpRlXpNJabtvUhGHB6/rVF68SWB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iXhd/v7vMii+Ks6Ch+vH2yLiD7cqDTxROOy+bbVfiYm8DcvKYlUgldGpSIwVfaPfT+rQXJx11nt5BFoLqP8QhdmQfT+cie7u8Aej1RmDfuZt9Y/SDhuqB+0PCh4Ol3DxZr6Es3qhS/U1314T8ujd0uvL2Ku0gEMLNypZRCxoVAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QCdTbmGh; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-371cc143f6aso484595ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:04:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718215495; x=1718820295; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cGLk/OMcBRjBjppSq5kcqwVIND0/RXijKiorHpLiyN0=;
+        b=QCdTbmGhOmAcvA/8/9ES99bUZ1FCtYvMmOk7oluayCuofCjHtAdaIRRhRP56mwuKln
+         s3U1ttNl/hsBRcqIh/dycYaHFx9VLHDTV8Y5Vt+dSKRFj8TYRUOUmKc0qhItLha7hjm5
+         CW/9FepdqizM0uGdI8L7SjhYkJt/1ZSxsRPFs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718215495; x=1718820295;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cGLk/OMcBRjBjppSq5kcqwVIND0/RXijKiorHpLiyN0=;
+        b=IpvQDd8I7hO1J0tRxhzEvzhqH5w2d8QpYvlyAbZRHLtJnYnd297DTKCO6KYNUXYuOz
+         S1fKPGSXwLYJDSQXZ0/YtGfJvsA0csV6nepiQ1aoa+/HphToeCnt0efbjB7+x2HEmxzP
+         6At+fr6nTSzZBOjoCYOYAmAbxlN9k5QE5uLyjmbbbFu9bZk9Fm2Hh15jVE0juAeq2tQm
+         nzZJrsUyOsVuc9hN+mku55dji6T0qrZJwO9OXi1t8tQNojhqqjpBIa1e8fLoNs/BneyL
+         ONn7uziHmc0XsQeskENIM2fl2yXxFORP8T5BdNlzLpX/EVxL+T7p1/qLMvsoOmANGbON
+         vGkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKf6uIzJgGOGUNXkr+aYInvpODywwb5XMQEh84mv+v2HkTbcAh6j8G5qvEOqarNjX3nFd5qhWvHuuxeq8jCL+rPO3ISEuh2FDcUq1J
+X-Gm-Message-State: AOJu0YzKPneGLFtd119pcq1fC+RNnM/BAAGijMSbOco8fSkC7Kvasz4y
+	3JfgMXxcmzbUNJLrlp5XI6WT8VHp+umChTMfFhfHOvDRF/svOqVCkBU6TfaN2g==
+X-Google-Smtp-Source: AGHT+IHsB4v7LqoJ57mEJVyYDJIaRFk8bzEhFib1t5I1fEjH2G8m5We1R5lTyptZEifb4qZ89Cgsbw==
+X-Received: by 2002:a05:6e02:1a86:b0:375:c394:4344 with SMTP id e9e14a558f8ab-375cd1e44famr26980645ab.21.1718215494896;
+        Wed, 12 Jun 2024 11:04:54 -0700 (PDT)
+Received: from localhost (113.176.132.34.bc.googleusercontent.com. [34.132.176.113])
+        by smtp.gmail.com with UTF8SMTPSA id e9e14a558f8ab-375a8ac5419sm14516575ab.21.2024.06.12.11.04.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 11:04:54 -0700 (PDT)
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jameson Thies <jthies@google.com>,
+	Benson Leung <bleung@google.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] usb: misc: onboard_usb_dev: Add match function
+Date: Wed, 12 Jun 2024 18:04:48 +0000
+Message-ID: <20240612180448.1.I805556c176c626872c15ce001f0e8198e1f95ae1@changeid>
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <illfkwuxwq3adca2h4shibz2xub62kku3g2wte4sqp7xj7cwkb@ckn3qg7zxjuv>
-X-Proofpoint-GUID: BKW5k9w-_tNY6AftGe2uCC95v5P6L0jn
-X-Proofpoint-ORIG-GUID: BKW5k9w-_tNY6AftGe2uCC95v5P6L0jn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_08,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- clxscore=1015 malwarescore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 adultscore=0 phishscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406120111
+Content-Transfer-Encoding: 8bit
 
-From: Mark Rutland <mark.rutland@arm.com>
+Add a match function for the onboard_usb_dev driver. Primary
+matching is still done through the VID:PID pair, as usual for
+USB devices. The new match function checks in addition whether
+the device has a device tree node, which is a needed for using
+the onboard_usb_dev driver.
 
-Currently x86 and riscv open-code 4 instances of the same logic to
-define a u32 variable with the KCFI typeid of a given function.
+Remove the check for a device tree node from _probe(), the new
+match functions prevents devices without DT node from probing.
 
-Replace the duplicate logic with a common macro.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Maxwell Bland <mbland@motorola.com>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- arch/riscv/kernel/cfi.c       | 35 +++--------------------------------
- arch/x86/kernel/alternative.c | 35 +++--------------------------------
- include/linux/cfi_types.h     | 23 +++++++++++++++++++++++
- 3 files changed, 29 insertions(+), 64 deletions(-)
 
-diff --git a/arch/riscv/kernel/cfi.c b/arch/riscv/kernel/cfi.c
-index 64bdd3e1ab8c..e7aec5f36dd5 100644
---- a/arch/riscv/kernel/cfi.c
-+++ b/arch/riscv/kernel/cfi.c
-@@ -4,6 +4,7 @@
-  *
-  * Copyright (C) 2023 Google LLC
-  */
-+#include <linux/cfi_types.h>
- #include <linux/cfi.h>
- #include <asm/insn.h>
+ drivers/usb/misc/onboard_usb_dev.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
+index f2bcc1a8b95f..56710e6b1653 100644
+--- a/drivers/usb/misc/onboard_usb_dev.c
++++ b/drivers/usb/misc/onboard_usb_dev.c
+@@ -454,16 +454,18 @@ static struct onboard_dev *_find_onboard_dev(struct device *dev)
+ 	return onboard_dev;
+ }
  
-@@ -82,41 +83,11 @@ struct bpf_insn;
- /* Must match bpf_func_t / DEFINE_BPF_PROG_RUN() */
- extern unsigned int __bpf_prog_runX(const void *ctx,
- 				    const struct bpf_insn *insn);
--
--/*
-- * Force a reference to the external symbol so the compiler generates
-- * __kcfi_typid.
-- */
--__ADDRESSABLE(__bpf_prog_runX);
--
--/* u32 __ro_after_init cfi_bpf_hash = __kcfi_typeid___bpf_prog_runX; */
--asm (
--"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"
--"	.type	cfi_bpf_hash,@object				\n"
--"	.globl	cfi_bpf_hash					\n"
--"	.p2align	2, 0x0					\n"
--"cfi_bpf_hash:							\n"
--"	.word	__kcfi_typeid___bpf_prog_runX			\n"
--"	.size	cfi_bpf_hash, 4					\n"
--"	.popsection						\n"
--);
-+DEFINE_CFI_TYPE(cfi_bpf_hash, __bpf_prog_runX);
- 
- /* Must match bpf_callback_t */
- extern u64 __bpf_callback_fn(u64, u64, u64, u64, u64);
--
--__ADDRESSABLE(__bpf_callback_fn);
--
--/* u32 __ro_after_init cfi_bpf_subprog_hash = __kcfi_typeid___bpf_callback_fn; */
--asm (
--"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"
--"	.type	cfi_bpf_subprog_hash,@object			\n"
--"	.globl	cfi_bpf_subprog_hash				\n"
--"	.p2align	2, 0x0					\n"
--"cfi_bpf_subprog_hash:						\n"
--"	.word	__kcfi_typeid___bpf_callback_fn			\n"
--"	.size	cfi_bpf_subprog_hash, 4				\n"
--"	.popsection						\n"
--);
-+DEFINE_CFI_TYPE(cfi_bpf_subprog_hash, __bpf_callback_fn);
- 
- u32 cfi_get_func_hash(void *func)
- {
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 89de61243272..933d0c13a0d8 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
- #define pr_fmt(fmt) "SMP alternatives: " fmt
- 
-+#include <linux/cfi_types.h>
- #include <linux/module.h>
- #include <linux/sched.h>
- #include <linux/perf_event.h>
-@@ -901,41 +902,11 @@ struct bpf_insn;
- /* Must match bpf_func_t / DEFINE_BPF_PROG_RUN() */
- extern unsigned int __bpf_prog_runX(const void *ctx,
- 				    const struct bpf_insn *insn);
--
--/*
-- * Force a reference to the external symbol so the compiler generates
-- * __kcfi_typid.
-- */
--__ADDRESSABLE(__bpf_prog_runX);
--
--/* u32 __ro_after_init cfi_bpf_hash = __kcfi_typeid___bpf_prog_runX; */
--asm (
--"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"
--"	.type	cfi_bpf_hash,@object				\n"
--"	.globl	cfi_bpf_hash					\n"
--"	.p2align	2, 0x0					\n"
--"cfi_bpf_hash:							\n"
--"	.long	__kcfi_typeid___bpf_prog_runX			\n"
--"	.size	cfi_bpf_hash, 4					\n"
--"	.popsection						\n"
--);
-+DEFINE_CFI_TYPE(cfi_bpf_hash, __bpf_prog_runX);
- 
- /* Must match bpf_callback_t */
- extern u64 __bpf_callback_fn(u64, u64, u64, u64, u64);
--
--__ADDRESSABLE(__bpf_callback_fn);
--
--/* u32 __ro_after_init cfi_bpf_subprog_hash = __kcfi_typeid___bpf_callback_fn; */
--asm (
--"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"
--"	.type	cfi_bpf_subprog_hash,@object			\n"
--"	.globl	cfi_bpf_subprog_hash				\n"
--"	.p2align	2, 0x0					\n"
--"cfi_bpf_subprog_hash:						\n"
--"	.long	__kcfi_typeid___bpf_callback_fn			\n"
--"	.size	cfi_bpf_subprog_hash, 4				\n"
--"	.popsection						\n"
--);
-+DEFINE_CFI_TYPE(cfi_bpf_subprog_hash, __bpf_callback_fn);
- 
- u32 cfi_get_func_hash(void *func)
- {
-diff --git a/include/linux/cfi_types.h b/include/linux/cfi_types.h
-index 6b8713675765..f510e62ca8b1 100644
---- a/include/linux/cfi_types.h
-+++ b/include/linux/cfi_types.h
-@@ -41,5 +41,28 @@
- 	SYM_TYPED_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)
- #endif
- 
-+#else /* __ASSEMBLY__ */
++static bool onboard_dev_usbdev_match(struct usb_device *udev)
++{
++	/* Onboard devices using this driver must have a device tree node */
++	return !!udev->dev.of_node;
++}
 +
-+#ifdef CONFIG_CFI_CLANG
-+#define DEFINE_CFI_TYPE(name, func)						\
-+	/*									\
-+	 * Force a reference to the function so the compiler generates		\
-+	 * __kcfi_typeid_<func>.						\
-+	 */									\
-+	__ADDRESSABLE(func);							\
-+	/* u32 name = __kcfi_typeid_<func> */					\
-+	extern u32 name;							\
-+	asm (									\
-+	"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"	\
-+	"	.type	" #name ",@object				\n"	\
-+	"	.globl	" #name "					\n"	\
-+	"	.p2align	2, 0x0					\n"	\
-+	#name ":							\n"	\
-+	"	.long	__kcfi_typeid_" #func "				\n"	\
-+	"	.size	" #name ", 4					\n"	\
-+	"	.popsection						\n"	\
-+	);
-+#endif
-+
- #endif /* __ASSEMBLY__ */
- #endif /* _LINUX_CFI_TYPES_H */
+ static int onboard_dev_usbdev_probe(struct usb_device *udev)
+ {
+ 	struct device *dev = &udev->dev;
+ 	struct onboard_dev *onboard_dev;
+ 	int err;
+ 
+-	/* ignore supported devices without device tree node */
+-	if (!dev->of_node)
+-		return -ENODEV;
+-
+ 	onboard_dev = _find_onboard_dev(dev);
+ 	if (IS_ERR(onboard_dev))
+ 		return PTR_ERR(onboard_dev);
+@@ -513,6 +515,7 @@ MODULE_DEVICE_TABLE(usb, onboard_dev_id_table);
+ 
+ static struct usb_device_driver onboard_dev_usbdev_driver = {
+ 	.name = "onboard-usb-dev",
++	.match = onboard_dev_usbdev_match,
+ 	.probe = onboard_dev_usbdev_probe,
+ 	.disconnect = onboard_dev_usbdev_disconnect,
+ 	.generic_subclass = 1,
 -- 
-2.43.0
+2.45.2.627.g7a2c4fd464-goog
 
 
