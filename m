@@ -1,117 +1,109 @@
-Return-Path: <linux-kernel+bounces-210789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD9C69048AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:59:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43249048B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47A46B21DBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:59:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00EE71C22095
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9CD847C;
-	Wed, 12 Jun 2024 01:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3C28F72;
+	Wed, 12 Jun 2024 02:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CJ+Kjvpv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mGj9ArJl"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195F44696;
-	Wed, 12 Jun 2024 01:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113C74A15;
+	Wed, 12 Jun 2024 02:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718157585; cv=none; b=tmZRSIScfyBI7+yyeGkCJElQAk2e5PvZuAreCgsSCAn9tyjpbfxaJ4EgDXzm97YV+WGdeRokPqXBaYdwUF0JflsfpLuZS2iAC+/h7OoQuUNpoolvr2ush+Px9V5jpsZQ27/kmpRTu28uVVOHUH0NqPINZvYW2BfFZIRanQ/fiXA=
+	t=1718157629; cv=none; b=KVjF2vXmXADNDjdxttr9DF/thNWY4N48nTmmRBX2Kv2GyEo3gN4FkYNREPRgazpKHXuVHxp6AzdyNahh1qmiePl+NlIVqIh6EF+jxKGxm6eHXic+iTiTOmiey8m0XsfT7oq5UovhDWmy7sfwdTQerGArkMYtc8POHo6nweeKnEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718157585; c=relaxed/simple;
-	bh=864XpaVKILlfYw0eJqI5Z58BDDy0cJ3P9fgW1Ko95xQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hGhs1pVRD8KkgLTT2c+D19O9kdfexofKDDojsu05fZqI7SiVZUlaXT6fCmKQdLneuMv8i2JnHELZfGKrczXDmttf6NLX+vp1ZIu/D9ltXN/wmDJnpkeABFTZ9l/8Ov8mTAPh4urvvCOaNHJGS2PXXiwdvETz9i72Y5+SIXmDpRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CJ+Kjvpv; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718157584; x=1749693584;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=864XpaVKILlfYw0eJqI5Z58BDDy0cJ3P9fgW1Ko95xQ=;
-  b=CJ+Kjvpv/UlJU6uyJU4p+G94fgmXaNPnHuQHlKyTJhTg5VDEhIoI58b1
-   qBejoTKzXA5kTNJAjeIOQECmNLofsVDbhpr5dP8WRZKdJMnGLSLZVsDu9
-   DKE4MM+tIG5AzpCsTreQGrVNm7r3nZnkXnKtuPdNtnEyORmzKWJ2wNbqu
-   VeHTyB5oqZmnZNZdmgwaM0arxJsUuwinuw3KBHvSgSUvti5hftOUM5va3
-   mHHDyBdGyudKF16vXgVFhFbusAC1GkXGI1FkgpRumTKA+/AIrdwSlXSZ2
-   Y4WJlfOm4g3geQ0mnWEdoh08BdT30Rnrqa+7G4Rai0AvRR7G9ExwwNvxA
-   w==;
-X-CSE-ConnectionGUID: XbRW/3pFTFqdChYHGM07RQ==
-X-CSE-MsgGUID: ir+f7X/VR9ezAEGMn3BJrA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14627031"
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="14627031"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:59:44 -0700
-X-CSE-ConnectionGUID: 5HB6WzFSSMGKudJkHqD1gA==
-X-CSE-MsgGUID: yNpNGTL4TJCH+F1tV7HboQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="39688397"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.51]) ([10.124.227.51])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:59:42 -0700
-Message-ID: <04b27f2d-5509-4fd0-ac97-ae61d6105b4d@intel.com>
-Date: Wed, 12 Jun 2024 09:59:39 +0800
+	s=arc-20240116; t=1718157629; c=relaxed/simple;
+	bh=dxXi6ytAQbOBXOqgkVPcfqxBW0bnb4QPSPbX/emC1o0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S5Zr1aVP1kU40yR1xr9IzZc/g1QbWqpytqZzmxd0BapY76FHouvlG8K2V9zKgvnqI9F1MTt5Ly9QUHqL2VHgo69m0j3Wj2XMcutJ5QBdYZD8koetuTrrpup+Ym+jT5sL8swAEyJkML8cXQUDpYM9JobyMzeIUaE2rvdYqPWNcwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mGj9ArJl; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52c4b92c09bso2276835e87.1;
+        Tue, 11 Jun 2024 19:00:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718157626; x=1718762426; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dxXi6ytAQbOBXOqgkVPcfqxBW0bnb4QPSPbX/emC1o0=;
+        b=mGj9ArJlKojIXdPhmTsj4LklKDU97XIQVFsolZvezpSlXQb31oej4IgMcR309lTPDG
+         IFx2VoMKWknB2bIiyD0P7hL3koJL1eFEi98Xupn949NhYF9/SBeLOZMlQ0v/5d/rHsOX
+         I3W5YO3kW/fRamXRhxDKVgDghHqvjPXGzUpgfNAyAxDkcH9KiZVvrbGKGE0ryIVntZ1j
+         vez0X5Sh4TVEZvlfYjt690NOhx/nOWrd3vjC+O1OuL/gIuvHUzKyv8edIX9CIUftef0K
+         9lEwzFdn4e0EF/D1Q0EHyDOw4EkIhBQ0lSYVSR6JpibkpvZeKs8fKy8PwILJJ/rl8f4n
+         GJpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718157626; x=1718762426;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dxXi6ytAQbOBXOqgkVPcfqxBW0bnb4QPSPbX/emC1o0=;
+        b=MasaN1ZTwyMtRM9d+8BgPx67xNQfr+WTM1gkBHV887/8ftBCRxltaWmNyWmLBLMvOy
+         HjZVdFOzDI1URxaZsYVUlM7Kg5A46FG+aZCvkye2nYVN27vF7ALLlYs19xNXMob9fTcC
+         SWENIDBe9G1f9KtjwE3qDOlmVmNflm4Zfx05vGS54uszoF7DPFjZfPazzTJK9zhlbdzU
+         DYkYnXOXAcJ/XHUCNFBjUYtirfZKY2OFqjSBb/P+UcYqqKCSMac5Fl+eQ3WLhozt+wRn
+         PBt+5YJcsDZVueAtxKiKX2LgQAhMazHw8zvvmyqYRjzaegdfi3PKmDUypYgiSp8AXVsS
+         j5ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUFODM0KYXmJeH9/o2vqdAdBMHZDFyeirrSdf/7Gds0IiWqb1Z4647X5RYufyb+DkfUbz3+UOKVuH6LW4IG9xdEc7ExIeak1p1sfG6ONnoqcbgqXIHrMIiLeJbD3NRANyV6mizp
+X-Gm-Message-State: AOJu0YwXsXzx66K+e0QCSOB2lUj8Rwx9tgwz/xAltCijr5LQPRo4fFla
+	xJ+oQWbkGLQQz4ENDH+xPbAnQTu+SyPYu2ND9zIr7Tm+oXf1/GNMlwI3lSAE3k5lEKaY2gWIN6g
+	Ro17ADLx5dNMYZuCKOJ6evR30CgA=
+X-Google-Smtp-Source: AGHT+IFi4zE0NNyW5qtAbVp0N7wCudL2WMqMEeyo1zEjzIJHDmc8wJeq/lgtYvfuuBtzlZj1NXHC55VsaZYV27XOmWg=
+X-Received: by 2002:a19:6a0a:0:b0:52b:863a:59b4 with SMTP id
+ 2adb3069b0e04-52c9a3df5bcmr278585e87.41.1718157625899; Tue, 11 Jun 2024
+ 19:00:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: x86/mmu: Rephrase comment about synthetic PFERR
- flags in #PF handler
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240608001108.3296879-1-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240608001108.3296879-1-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240607023116.1720640-1-zhaoyang.huang@unisoc.com>
+ <CAGWkznEODMbDngM3toQFo-bgkezEpmXf_qE=SpuYcqsjEJk1DQ@mail.gmail.com>
+ <CAGWkznE-HcYBia2HDcHt6trM9oeJ2x6KdyFzR3Jd_-L5HyPxSA@mail.gmail.com> <ZmiUgPDjzI32Cqr9@pc636>
+In-Reply-To: <ZmiUgPDjzI32Cqr9@pc636>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Wed, 12 Jun 2024 10:00:14 +0800
+Message-ID: <CAGWkznGnaV8Tz0XrgaVWEVG0ug7dp3w23ygKKmq8SPu_AMBhoA@mail.gmail.com>
+Subject: Re: [Resend PATCHv4 1/1] mm: fix incorrect vbq reference in purge_fragmented_block
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, hailong liu <hailong.liu@oppo.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, steve.kang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/8/2024 8:11 AM, Sean Christopherson wrote:
-> Reword the BUILD_BUG_ON() comment in the legacy #PF handler to explicitly
-> describe how asserting that synthetic PFERR flags are limited to bits 31:0
-> protects KVM against inadvertently passing a synthetic flag to the common
-> page fault handler.
-> 
-> No functional change intended.
-> 
-> Suggested-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-
-> ---
->   arch/x86/kvm/mmu/mmu.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 8d7115230739..2421d971ce1b 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4599,7 +4599,10 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
->   	if (WARN_ON_ONCE(error_code >> 32))
->   		error_code = lower_32_bits(error_code);
->   
-> -	/* Ensure the above sanity check also covers KVM-defined flags. */
-> +	/*
-> +	 * Restrict KVM-defined flags to bits 63:32 so that it's impossible for
-> +	 * them to conflict with #PF error codes, which are limited to 32 bits.
-> +	 */
->   	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
->   
->   	vcpu->arch.l1tf_flush_l1d = true;
-> 
-> base-commit: b9adc10edd4e14e66db4f7289a88fdbfa45ae7a8
-
+On Wed, Jun 12, 2024 at 2:16=E2=80=AFAM Uladzislau Rezki <urezki@gmail.com>=
+ wrote:
+>
+> >
+> > Sorry to bother you again. Are there any other comments or new patch
+> > on this which block some test cases of ANDROID that only accept ACKed
+> > one on its tree.
+> >
+> I have just returned from vacation. Give me some time to review your
+> patch. Meanwhile, do you have a reproducer? So i would like to see how
+> i can trigger an issue that is in question.
+This bug arises from an system wide android test which has been
+reported by many vendors. Keep mount/unmount an erofs partition is
+supposed to be a simple reproducer. IMO, the logic defect is obvious
+enough to be found by code review.
+>
+> Thanks!
+>
+> --
+> Uladzislau Rezki
 
