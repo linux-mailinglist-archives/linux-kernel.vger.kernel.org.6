@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-212213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52AF905CC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:24:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F1C905CBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F33581C23A3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:24:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 100CF1F2512A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D020684FB7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D9C84E0A;
 	Wed, 12 Jun 2024 20:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W6EcJCUA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F74izOzU"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Omu5T1oz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MY4HrY/R"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1EF84A50;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B6584A57;
 	Wed, 12 Jun 2024 20:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718223867; cv=none; b=GMNncu2Sfkpe29e2bURE5Gdk0BRa9FNaUrRIDbRqsysXRlLDCNd1vM68snT4YcbralTbms1vSkNlEGjtVdyBmC38ZFuiJtRHq1IYzFUaNBxxAl3KhFsFxhjcv5B4RuMTEB/8AQ+OhliVYS7O8YD3EbuPrP1JT/4Y45iytK1+qqo=
+	t=1718223866; cv=none; b=tPzYyOWOYKfCAnT0x+++W5pBtVdvtl63xUAR6fpF9/iVRnnJhyvjEONuSgnyOwix592+fceyz3/vvXDo0y2KxQRJ14m2dAWjRemfBlzedqGv/uCTyFfE7ddSNfbeaSSJDF3coDHHpi1KZOoGm82o9rvL8imVwIOWFW1yRT4fw/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718223867; c=relaxed/simple;
-	bh=yjWkhxs5kUTi6CYrOT0J3zw9KEWkho0XRWlCYLaAA5Y=;
+	s=arc-20240116; t=1718223866; c=relaxed/simple;
+	bh=LIyKfRfRz3WyKm4vpCmSWRaMedgilHhPbcrB9c9g/0o=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=r4fyFG4gfwCp6+Ly9yUCre/EIK7UVi/1voA73VNpFrUPsYvfdIZneM8SEuGuJHdZo6LVGvdHqe+2qnjvf3sJXBCfHxgm15rCn0ruvbv43lXAcpAyqrLGYa5ilODLUFBlL1aN95mdh4nlGytqz91IH6cEpKdJ8cEZfWglR8KTql4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W6EcJCUA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F74izOzU; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=W6GHwgSORKkHOIMqhBzopbnWc0YIBJD9G3B+5Dpb2NM8Q6WjjClHb5xAyiPlqjHvhJj9fc6tt0d3gcdJUe4vvFFN1CskIgtXDtUGvz14Gbu7Y4WOOLUzzeBhH7z4j+3WaCsWlnBbzVttwa1jjqwjHWPRwYFoH0mO3gw1P1vSReU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Omu5T1oz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MY4HrY/R; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Wed, 12 Jun 2024 20:24:23 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718223864;
+	s=2020; t=1718223863;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HwVOHysEGr846iN4zNF25RAqMaPqe7jfEOPp/zwruw8=;
-	b=W6EcJCUAgxDaQHnXTu8L4qHXN4tYjGjQI4bLpqKdg+PWuTWo++a6SJxvGOv9bQ70Om8oih
-	kKPSzpoaPAJsaswd+CsSp6/XAKyOVyMZM/LSdMdBu62NRsNgW/ZcozlaxulrLFl9/p15iC
-	S48J5PjrbUV2KDUlUfzMap7eUrm2crjhWrLmsToO5tpzJeafPz5tD2n4/buAswGp2JffRj
-	+Ebbu1nxctwS/3aTda7E/wFJrjSIifpJkO4wFTtQn/JPb2yCHj1nt+cGh0EPEMr+sfyzsL
-	uqho0DOKjQQRs6zZ/uow1utbehK0hC01zAgCmhUOnAoHYwpUh5ih5TSg2b5nGw==
+	bh=Q8uc29jjHlTSS415RpyJfZ+whRW4voX8fLpotz5hIhg=;
+	b=Omu5T1oz5riwasMDLhZ4SNQwQZjIRrx0PMjgIWjQFM5gtEMkdb+HoyvV88CmnBnTL2IUoO
+	lKwfuUDIcPl5jqF8vQjXrpmf2KQyz5FxSq4J99Hs6jPXHjR12ok590cPDRHPV7VZ2GDhdc
+	lr6+9IXs9NQvd+taYmmy/yicnmgZSprbDEHs7RY22KHvPVwW3Ab83yVffGnmwZwM6AWt+C
+	FPdfElQ4jQwzOvIY+e75f6ZY4GhfKyHmz3JrZ2hdk/tgGu+c8yE1mlhTbjtO4sisCVYQKx
+	3AaWSOznkbnEScrWnQJv29ogqU6SKF3FWs6SSV2e1G0uFDQCcgJEQF3XrLVdxg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718223864;
+	s=2020e; t=1718223863;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HwVOHysEGr846iN4zNF25RAqMaPqe7jfEOPp/zwruw8=;
-	b=F74izOzUfdHo3BBtu8a45QTUUR1edL9+910wh1bY6jO0OnBfrPjc0AU8AWLEG8B+m1aQxC
-	1/H/2E8aYdEV71Bg==
+	bh=Q8uc29jjHlTSS415RpyJfZ+whRW4voX8fLpotz5hIhg=;
+	b=MY4HrY/RALyxCBvZASJhIfOPeYEEnK7MQH9zCSepZnzTp7+Fxvt6O9rCRFaofU4g4E0BdT
+	v+nkCmxss4GkNCDg==
 From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/misc] hwmon: (k10temp) Define a helper function to read CCD
- temperature
+Subject:
+ [tip: x86/misc] hwmon: (k10temp) Reduce k10temp_get_ccd_support() parameters
 Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
  "Borislav Petkov (AMD)" <bp@alien8.de>,
  Mario Limonciello <mario.limonciello@amd.com>,
  Guenter Roeck <linux@roeck-us.net>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240606-fix-smn-bad-read-v4-5-ffde21931c3f@amd.com>
-References: <20240606-fix-smn-bad-read-v4-5-ffde21931c3f@amd.com>
+In-Reply-To: <20240606-fix-smn-bad-read-v4-6-ffde21931c3f@amd.com>
+References: <20240606-fix-smn-bad-read-v4-6-ffde21931c3f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171822386382.10875.6648306533264978895.tip-bot2@tip-bot2>
+Message-ID: <171822386356.10875.3642928193180867372.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,69 +84,93 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/misc branch of tip:
 
-Commit-ID:     cc66126fd317a70d8612a8356ad512a1539abd75
-Gitweb:        https://git.kernel.org/tip/cc66126fd317a70d8612a8356ad512a1539abd75
+Commit-ID:     a8bc4165d237f4a6bddbab55d2b6592b87341f0a
+Gitweb:        https://git.kernel.org/tip/a8bc4165d237f4a6bddbab55d2b6592b87341f0a
 Author:        Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate:    Thu, 06 Jun 2024 11:12:58 -05:00
+AuthorDate:    Thu, 06 Jun 2024 11:12:59 -05:00
 Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 12 Jun 2024 11:39:29 +02:00
+CommitterDate: Wed, 12 Jun 2024 11:39:49 +02:00
 
-hwmon: (k10temp) Define a helper function to read CCD temperature
+hwmon: (k10temp) Reduce k10temp_get_ccd_support() parameters
 
-The CCD temperature register is read in two places. These reads are done
-using an AMD SMN access, and a number of parameters are needed for the
-operation.
+Currently, k10temp_get_ccd_support() takes as input "pdev" and "data".  However,
+"pdev" is already included in "data". Furthermore, the "pdev" parameter is no
+longer used in k10temp_get_ccd_support(), since its use was moved into
+read_ccd_temp_reg().
 
-Move the SMN access and parameter gathering into a helper function in order to
-simplify the code flow. This also has a benefit of centralizing the hardware
-register access in a single place in case fixes or special decoding is required.
+Drop the "pdev" input parameter as it is no longer needed.
+
+No functional change is intended.
 
 Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 Acked-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20240606-fix-smn-bad-read-v4-5-ffde21931c3f@amd.com
+Link: https://lore.kernel.org/r/20240606-fix-smn-bad-read-v4-6-ffde21931c3f@amd.com
 ---
- drivers/hwmon/k10temp.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/hwmon/k10temp.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-index 6cad35e..315c52d 100644
+index 315c52d..6deb272 100644
 --- a/drivers/hwmon/k10temp.c
 +++ b/drivers/hwmon/k10temp.c
-@@ -158,6 +158,13 @@ static void read_tempreg_nb_zen(struct pci_dev *pdev, u32 *regval)
- 		*regval = 0;
- }
+@@ -385,8 +385,7 @@ static const struct hwmon_chip_info k10temp_chip_info = {
+ 	.info = k10temp_info,
+ };
  
-+static int read_ccd_temp_reg(struct k10temp_data *data, int ccd, u32 *regval)
-+{
-+	u16 node_id = amd_pci_dev_to_node_id(data->pdev);
-+
-+	return amd_smn_read(node_id, ZEN_CCD_TEMP(data->ccd_offset, ccd), regval);
-+}
-+
- static long get_raw_temp(struct k10temp_data *data)
+-static void k10temp_get_ccd_support(struct pci_dev *pdev,
+-				    struct k10temp_data *data, int limit)
++static void k10temp_get_ccd_support(struct k10temp_data *data, int limit)
  {
  	u32 regval;
-@@ -223,9 +230,7 @@ static int k10temp_read_temp(struct device *dev, u32 attr, int channel,
- 				*val = 0;
+ 	int i;
+@@ -456,18 +455,18 @@ static int k10temp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		case 0x11:	/* Zen APU */
+ 		case 0x18:	/* Zen+ APU */
+ 			data->ccd_offset = 0x154;
+-			k10temp_get_ccd_support(pdev, data, 4);
++			k10temp_get_ccd_support(data, 4);
  			break;
- 		case 2 ... 13:		/* Tccd{1-12} */
--			ret = amd_smn_read(amd_pci_dev_to_node_id(data->pdev),
--					   ZEN_CCD_TEMP(data->ccd_offset, channel - 2),
--					   &regval);
-+			ret = read_ccd_temp_reg(data, channel - 2, &regval);
- 
- 			if (ret)
- 				return ret;
-@@ -397,8 +402,7 @@ static void k10temp_get_ccd_support(struct pci_dev *pdev,
- 		 * the register value. And this will incorrectly pass the TEMP_VALID
- 		 * bit check.
- 		 */
--		if (amd_smn_read(amd_pci_dev_to_node_id(pdev),
--				 ZEN_CCD_TEMP(data->ccd_offset, i), &regval))
-+		if (read_ccd_temp_reg(data, i, &regval))
- 			continue;
- 
- 		if (regval & ZEN_CCD_TEMP_VALID)
+ 		case 0x31:	/* Zen2 Threadripper */
+ 		case 0x60:	/* Renoir */
+ 		case 0x68:	/* Lucienne */
+ 		case 0x71:	/* Zen2 */
+ 			data->ccd_offset = 0x154;
+-			k10temp_get_ccd_support(pdev, data, 8);
++			k10temp_get_ccd_support(data, 8);
+ 			break;
+ 		case 0xa0 ... 0xaf:
+ 			data->ccd_offset = 0x300;
+-			k10temp_get_ccd_support(pdev, data, 8);
++			k10temp_get_ccd_support(data, 8);
+ 			break;
+ 		}
+ 	} else if (boot_cpu_data.x86 == 0x19) {
+@@ -481,21 +480,21 @@ static int k10temp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		case 0x21:		/* Zen3 Ryzen Desktop */
+ 		case 0x50 ... 0x5f:	/* Green Sardine */
+ 			data->ccd_offset = 0x154;
+-			k10temp_get_ccd_support(pdev, data, 8);
++			k10temp_get_ccd_support(data, 8);
+ 			break;
+ 		case 0x40 ... 0x4f:	/* Yellow Carp */
+ 			data->ccd_offset = 0x300;
+-			k10temp_get_ccd_support(pdev, data, 8);
++			k10temp_get_ccd_support(data, 8);
+ 			break;
+ 		case 0x60 ... 0x6f:
+ 		case 0x70 ... 0x7f:
+ 			data->ccd_offset = 0x308;
+-			k10temp_get_ccd_support(pdev, data, 8);
++			k10temp_get_ccd_support(data, 8);
+ 			break;
+ 		case 0x10 ... 0x1f:
+ 		case 0xa0 ... 0xaf:
+ 			data->ccd_offset = 0x300;
+-			k10temp_get_ccd_support(pdev, data, 12);
++			k10temp_get_ccd_support(data, 12);
+ 			break;
+ 		}
+ 	} else if (boot_cpu_data.x86 == 0x1a) {
 
