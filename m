@@ -1,110 +1,68 @@
-Return-Path: <linux-kernel+bounces-212227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F2C905CDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:33:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97100905CFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 150FB287B10
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92EB01C22EA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DD084D39;
-	Wed, 12 Jun 2024 20:33:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EDB84D04;
-	Wed, 12 Jun 2024 20:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E170A85956;
+	Wed, 12 Jun 2024 20:42:45 +0000 (UTC)
+Received: from iodev.co.uk (iodev.co.uk [46.30.189.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DED984D39;
+	Wed, 12 Jun 2024 20:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.189.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718224380; cv=none; b=WK3jQYl1bL8mefoChpwRfEB+9z55twzojZHNxrjODj9fjaqRd2uwELZs/tR1zH7eaiQIhRRwI+PPm1WOTZZd/BHMO2QUz55nicIx56jtpg0MzUvGMzJAs5nTow8siuLROjoK4ZQ/sOBQCssYTViB9i11bsH3hIqoDupy5l55Wpk=
+	t=1718224965; cv=none; b=mTqXtBywr3U0l2BEJ7As1CSCkiwC1gqQ4eRnrV5r/z1GWwrO6FLP9Vq2Fu1+vEN2xBYhqNXbh9viq6fx6my8L/EkgO9nIcQfYCqJN1/8j4tIiN9O9UJ2jC88gIEMtDC1NpZInLfpjTlJdDvG3xDI7fj8fCnHqRYgBHW8kYpHLsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718224380; c=relaxed/simple;
-	bh=2nCR64Zc31pzpiWEW5Gs2Jv/fYZlIieQTBon12415e0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pZEyCpeynwtrdgHgNYZb4vpjwbQ9NvNrRndI3iBmLelhehEGJLTn9XfIOtZWH90tLG+i+x7c3VdWmHBCu1k2wenSVcLrKy0NHWHHqArU5nKXBqvwzyLnEdcHid6ytpY68TGwfRVLcKEWLaWOv0f7sNt43szyLYGxElang0NI9rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EA8B1042;
-	Wed, 12 Jun 2024 13:33:21 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9108F3F5A1;
-	Wed, 12 Jun 2024 13:32:54 -0700 (PDT)
-Message-ID: <cc1b0673-13b3-439f-afdf-c9cb450f8fed@arm.com>
-Date: Wed, 12 Jun 2024 21:32:53 +0100
+	s=arc-20240116; t=1718224965; c=relaxed/simple;
+	bh=+qyqE9vjz/LOYQtCfw+SBzbNmcA8piPkgSyHmAla2O0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Qq1qV6SoW+LQb5Zok3uwyGSzYiR5FM2QDAz5377/B6+lSK8Dq92XLZ2nKg3T37AuCVJ2Xn/HWqyeohbgjDFShWC/zqoObtQMerdKauBizVsqyllGFtvI+tm2vgaNsfeXxIT0NP8dLbnmvpWbQ5AmH/gQIwOrzSRsbf3fML1rkfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iodev.co.uk; spf=pass smtp.mailfrom=iodev.co.uk; arc=none smtp.client-ip=46.30.189.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iodev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iodev.co.uk
+Received: from pirotess (222.red-83-46-228.dynamicip.rima-tde.net [83.46.228.222])
+	by iodev.co.uk (Postfix) with ESMTPSA id 91AB12F8341;
+	Wed, 12 Jun 2024 22:33:20 +0200 (CEST)
+Date: Wed, 12 Jun 2024 22:33:19 +0200
+From: Ismael Luceno <ismael@iodev.co.uk>
+To: stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: Intel e1000e driver bug on stable (6.9.x)
+Message-ID: <ZmfcJsyCB6M3wr84@pirotess>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] perf arm: Workaround ARM PMUs cpu maps having offline
- cpus
-To: Ian Rogers <irogers@google.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yicong Yang <yangyicong@huawei.com>
-References: <20240607065343.695369-1-irogers@google.com>
- <23ee1734-7e65-4f11-aede-fea44ada3cc4@arm.com>
- <CAP-5=fUP69NJ+j6+9rUnp+UPBxcopJ=BOY-LeOjs8vYdt4soMA@mail.gmail.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <CAP-5=fUP69NJ+j6+9rUnp+UPBxcopJ=BOY-LeOjs8vYdt4soMA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi,
+
+I noticed that the NIC started to fail on a couple of notebooks [0]
+[1] after upgrading to 6.9.1.
+
+I tracked down the problem to commit 861e8086029e ("e1000e: move force
+SMBUS from enable ulp function to avoid PHY loss issue", 2024-03-03),
+included in all 6.9.x releases.
+
+The fix is in commit bfd546a552e1 ("e1000e: move force SMBUS near
+the end of enable_ulp function", 2024-05-28) from mainline.
+
+The NIC fails right after boot on both systems I tried; I mention
+because the description is a bit unclear about that on the fix, maybe
+other systems are affected differently.
+
+Best regards.
 
 
-Hi Ian,
-
-On 6/10/24 18:33, Ian Rogers wrote:
-
-[...]
-
->> Just a nitpick and I think it is not an issue caused by this patch.
->> After hotplug off one CPU and then if specify the CPU with option '-C',
->> the 'perf stat' command still continues to run. This is inconsistent
->> with the 'perf record' which exits with failures immediately.
->>
->> Maybe consider to send an extra patch to address this issue?
-> 
-> As you say, this doesn't relate to the problem fixed here. I don't
-> have a problem with the command line behavior change but I think my
-> getting shouted at budget is fairly well exhausted.
-
-I understand you put much efforts on fixing issues, on Arm platforms and
-other platforms. This is also why I want to contribute a bit for testing
-the patches.
-
-> How about we trade issues, if the following get fixed:
-> 
-> Renaming of the cycles event in arm_dsu_pmu.c - I'd say this is a top
-> priority issue right now.
-
-I cannot promise this. The main reason is that I still believe the
-'cycles' event (or, generally speaking, all events) should be managed by
-the tool rather than by the uncore PMU drivers. Additionally, the perf
-tool currently has handled these symbolic events effectively.
-
-> Fixing ARM hybrid default perf stat (it is crazy we can accept this
-> being broken), opening events on both BIG.little PMUs as done here.
-
-Yeah, James is working on this.
-
-> I'll address this.
-
-Anyway, I appreciate your work.
-
-Thanks,
-Leo
+[0] HP ZBook 17 Gen 1 (D5D93AV) [8086:153a (rev 04)]
+[1] Lenovo Thinkpad P15 Gen 1 [8086:0d4c]
 
