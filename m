@@ -1,140 +1,202 @@
-Return-Path: <linux-kernel+bounces-211348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1AC890506C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:31:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F32905073
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56B16282E6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:31:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 659DFB21EC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CBC16EBEC;
-	Wed, 12 Jun 2024 10:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5193716EBFA;
+	Wed, 12 Jun 2024 10:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjtPeTTE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Fqm5mmwA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507A21C6AE;
-	Wed, 12 Jun 2024 10:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C737BB19;
+	Wed, 12 Jun 2024 10:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718188310; cv=none; b=KbuAzhvUwJTw1/cZpWj6EM4phOxGQGMeXb3N6wOKIrlkd1K2SSciZGLHF7gJIjwHRQZDYpE1GUA9V5LBHycvUGenzsnIPA8zOaUrgNQiqy0LKpkOvpjY467E09P5wjTlashE1/48l5nXNU41K9XnX4zthrMCSSegvR7YSLRMJ4s=
+	t=1718188408; cv=none; b=SRzIs8alI+FiKVMaddjfyzCmv47BX35P0bq7kPxrOR6ICPIJuNwkK6HMa7zOZgpIr2UelwPF0N6cqWbFf5PTY4akrU1Ugsa2nxSsl2HO7UWGII5pT221eYkEVnfHA1sEK0sGPgIg7QKJ+Mwz2+rWNrVrZ2qGPcCXTQGmJKPT9W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718188310; c=relaxed/simple;
-	bh=IKnzRWbZIW0uMBjg3hPVKLFJtN6YgQCWwnKZsfQ2BtI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tbwjYF3RplOmyvxgF2U/9ZhsHBjqxDn0Vgf8fY8f4WDNgfVMVrKwXr+PwRk5XuvBrIM3CfpWPe1vrgvmRcgLjf2hERfk5/NsnNCpLLMtdey6j+ynj8RgsfJWB54hYTIr/A/z+E+du4Ep1EOsEHYzluHWYm3sf0k9OvH/HDF5Ios=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjtPeTTE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14164C4AF1A;
-	Wed, 12 Jun 2024 10:31:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718188309;
-	bh=IKnzRWbZIW0uMBjg3hPVKLFJtN6YgQCWwnKZsfQ2BtI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OjtPeTTE8aznrDm5OVgGIHxoLsNXOnhepszN2pDUXVV88OtMRWHojv2jAz+k3SZbw
-	 PkgzY75Hbt3qPZLNkk1uqYXmh0JdUQSb1aNTAeODYhe7j6Nns6+2yb1CaS4m+whVit
-	 I6c4U8w9n3P6Zt3fkCZe97sUVYmrnXI2fUFWRp4wgAmarSyCWGo/nmrsZ5WCp1YkB7
-	 vNDnRKgWZbJWxnoAje5gTmCHnXVM5Y4MlSiZXGYH17RF9yQSvlYR47+/X0KAqAAIXi
-	 Sn5RePqW7rEpIQH9UYst+ndPNDm/28+HHQ8jVJh+vngAp+3kTrIUx8Jw1UrQwqSCkC
-	 VUXM3MwYigrFA==
-Date: Wed, 12 Jun 2024 11:31:40 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Witold Sadowski <wsadowski@marvell.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"pthombar@cadence.com" <pthombar@cadence.com>
-Subject: Re: [EXTERNAL] Re: [PATCH v8 2/4] spi: cadence: Add Marvell xSPI IP
- overlay changes
-Message-ID: <Zml5DD5s7OZopVkU@finisterre.sirena.org.uk>
-References: <20240607151831.3858304-1-wsadowski@marvell.com>
- <20240607151831.3858304-3-wsadowski@marvell.com>
- <Zmcj3fZ4DF8r_qf0@finisterre.sirena.org.uk>
- <CO6PR18MB4098E3DEF64621FB147BC345B0C72@CO6PR18MB4098.namprd18.prod.outlook.com>
+	s=arc-20240116; t=1718188408; c=relaxed/simple;
+	bh=ASdXSqRcFDtv4s/QXkOD0rx2u5bMuGLH7Iy5d2Q8dhU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=u+PHtbFMCaAgP0rI6ogToolkC1UNbEGNaWMQS2D/xxJFvS+A6ctoNALNObXisA1WLYmSw0Rt0PRuPYhZ1nmmmhw0bZqNZIfYMlNq4w2VGEkCz2vAbhC9bsxcWFl3dXvcOMhD8v3DDKGqMv7JX3NhQYD6O3MUjr9ZtEGJjkxnt7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Fqm5mmwA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CA57nA032587;
+	Wed, 12 Jun 2024 10:33:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SPXLtaBZREkBKSHgG7dppp2FZNOxxWlO6RPqI9GKYmg=; b=Fqm5mmwAXPdhJuAw
+	lYl5YdZHLyNvbGoxB/1wH+seJIvitLAPwknn2pjJs1CUDkVo4aCUUoTDGJUgni3K
+	l6ST/gQpRYlFpXF6e6JEO0uXIabmJY57vFRNXF6vra/liX24lUHtcyRXL3dwhJmH
+	nteGWl8g4tnR4aX8arOlYWpKnggo/C+RgBE1m3xjHFes2QcaxY9VQ2qjgI7Ve5Gb
+	R2TtMJPqozmkgOaUTqxtIYQQStVLyi/3zJeviLTTpLAXoW0y0ZZ6rZP3aqWwo7ZJ
+	KhlC3ewzjBHf5D4W689eHFuCVSj9qseGkQNF0L0qefv88ajx094I0CYhjrWI27R8
+	d5GlPw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypp87twuw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 10:33:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CAXLwR020724
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 10:33:21 GMT
+Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 03:33:17 -0700
+Message-ID: <fc2c7682-a091-4605-8c4c-a4f68a079b08@quicinc.com>
+Date: Wed, 12 Jun 2024 16:03:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xvH9bqAg6EKL9q/g"
-Content-Disposition: inline
-In-Reply-To: <CO6PR18MB4098E3DEF64621FB147BC345B0C72@CO6PR18MB4098.namprd18.prod.outlook.com>
-X-Cookie: Your love life will be... interesting.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/8] Add support for SA8775P Multimedia clock
+ controllers
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>
+CC: <devicetree@vger.kernel.org>, <quic_jkona@quicinc.com>,
+        <quic_imrashai@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240612-lemans-v2-split-mm-series-12-6-v2-0-056e828b0001@quicinc.com>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <20240612-lemans-v2-split-mm-series-12-6-v2-0-056e828b0001@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EdAq0xX-2gRdKdohlGJKtm01YdH29Nw3
+X-Proofpoint-ORIG-GUID: EdAq0xX-2gRdKdohlGJKtm01YdH29Nw3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_06,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
+ bulkscore=0 mlxscore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406120076
 
 
---xvH9bqAg6EKL9q/g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please ignore this series, something got messed up in my b4.
 
-On Tue, Jun 11, 2024 at 09:51:58PM +0000, Witold Sadowski wrote:
-> > On Fri, Jun 07, 2024 at 08:18:29AM -0700, Witold Sadowski wrote:
+On 6/12/2024 3:36 PM, Taniya Das wrote:
+> Add support for videocc, camcc, dispcc0 and dispcc1 on Qualcomm SA8775P
+> platform.
+> 
+> These multimedia clock controller and device tree patches are split
+> from the below series.
+> https://lore.kernel.org/all/20240531090249.10293-1-quic_tdas@quicinc.com/
+> 
+> Changes in this series compared to above series:
+>   [PATCH 1/8]: Updated bindings to reference qcom,gcc.yaml
+>   [PATCH 3/8]: Updated bindings to reference qcom,gcc.yaml
+>   [PATCH 5/8]: Updated bindings to reference qcom,gcc.yaml
+>   [PATCH 7/8]: Split updating sleep_clk frequency to separate patch
+>   [PATCH 8/8]: Newly added to update sleep_clk frequency to 32000
+> 
+> Taniya Das (8):
+>    dt-bindings: clock: qcom: Add SA8775P video clock controller
+>    clk: qcom: Add support for Video clock controller on SA8775P
+>    dt-bindings: clock: qcom: Add SA8775P camera clock controller
+>    clk: qcom: Add support for Camera Clock Controller on SA8775P
+>    dt-bindings: clock: qcom: Add SA8775P display clock controllers
+>    clk: qcom: Add support for Display clock Controllers on SA8775P
+>    arm64: dts: qcom: Add support for multimedia clock controllers
+>    arm64: dts: qcom: Update sleep_clk frequency to 32000 on SA8775P
+> 
+>   .../bindings/clock/qcom,sa8775p-camcc.yaml    |   62 +
+>   .../bindings/clock/qcom,sa8775p-dispcc.yaml   |   79 +
+>   .../bindings/clock/qcom,sa8775p-videocc.yaml  |   62 +
+>   arch/arm64/boot/dts/qcom/sa8775p-ride.dts     |    2 +-
+>   arch/arm64/boot/dts/qcom/sa8775p.dtsi         |   59 +
+>   drivers/clk/qcom/Kconfig                      |   31 +
+>   drivers/clk/qcom/Makefile                     |    3 +
+>   drivers/clk/qcom/camcc-sa8775p.c              | 1849 +++++++++++++++++
+>   drivers/clk/qcom/dispcc0-sa8775p.c            | 1481 +++++++++++++
+>   drivers/clk/qcom/dispcc1-sa8775p.c            | 1481 +++++++++++++
+>   drivers/clk/qcom/videocc-sa8775p.c            |  576 +++++
+>   .../dt-bindings/clock/qcom,sa8775p-camcc.h    |  107 +
+>   .../dt-bindings/clock/qcom,sa8775p-dispcc.h   |   87 +
+>   .../dt-bindings/clock/qcom,sa8775p-videocc.h  |   47 +
+>   14 files changed, 5925 insertions(+), 1 deletion(-)
+>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
+>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-dispcc.yaml
+>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml
+>   create mode 100644 drivers/clk/qcom/camcc-sa8775p.c
+>   create mode 100644 drivers/clk/qcom/dispcc0-sa8775p.c
+>   create mode 100644 drivers/clk/qcom/dispcc1-sa8775p.c
+>   create mode 100644 drivers/clk/qcom/videocc-sa8775p.c
+>   create mode 100644 include/dt-bindings/clock/qcom,sa8775p-camcc.h
+>   create mode 100644 include/dt-bindings/clock/qcom,sa8775p-dispcc.h
+>   create mode 100644 include/dt-bindings/clock/qcom,sa8775p-videocc.h
+> 
+> --
+> 2.43.0
+> 
+> ---
+> Changes in v2:
+> - EDITME: describe what is new in this series revision.
+> - EDITME: use bulletpoints and terse descriptions.
+> - Link to v1: https://lore.kernel.org/r/20240612-lemans-v2-split-mm-series-12-6-v1-0-178429d989fe@quicinc.com
+> 
+> ---
+> Taniya Das (8):
+>        dt-bindings: clock: qcom: Add SA8775P video clock controller
+>        clk: qcom: Add support for Video clock controller on SA8775P
+>        dt-bindings: clock: qcom: Add SA8775P camera clock controller
+>        clk: qcom: Add support for Camera Clock Controller on SA8775P
+>        dt-bindings: clock: qcom: Add SA8775P display clock controllers
+>        clk: qcom: Add support for Display clock Controllers on SA8775P
+>        arm64: dts: qcom: Add support for multimedia clock controllers
+>        arm64: dts: qcom: Update sleep_clk frequency to 32000 on SA8775P
+> 
+>   .../bindings/clock/qcom,sa8775p-camcc.yaml         |   62 +
+>   .../bindings/clock/qcom,sa8775p-dispcc.yaml        |   79 +
+>   .../bindings/clock/qcom,sa8775p-videocc.yaml       |   62 +
+>   arch/arm64/boot/dts/qcom/sa8775p-ride.dts          |    2 +-
+>   arch/arm64/boot/dts/qcom/sa8775p.dtsi              |   59 +
+>   drivers/clk/qcom/Kconfig                           |   31 +
+>   drivers/clk/qcom/Makefile                          |    3 +
+>   drivers/clk/qcom/camcc-sa8775p.c                   | 1849 ++++++++++++++++++++
+>   drivers/clk/qcom/dispcc0-sa8775p.c                 | 1481 ++++++++++++++++
+>   drivers/clk/qcom/dispcc1-sa8775p.c                 | 1481 ++++++++++++++++
+>   drivers/clk/qcom/videocc-sa8775p.c                 |  576 ++++++
+>   include/dt-bindings/clock/qcom,sa8775p-camcc.h     |  107 ++
+>   include/dt-bindings/clock/qcom,sa8775p-dispcc.h    |   87 +
+>   include/dt-bindings/clock/qcom,sa8775p-videocc.h   |   47 +
+>   14 files changed, 5925 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 03d44168cbd7fc57d5de56a3730427db758fc7f6
+> change-id: 20240612-lemans-v2-split-mm-series-12-6-42a28e9fcafe
+> 
+> Best regards,
 
-> > > features included are:
-> > >     - Clock configuration
-> > >     - PHY configuration
-> > >     - Interrupt configuration (enabling)
-
-> > This feels like it could usefully be split up so these three bits are
-> > separate, and there appear to be other changes buried in here as well.
-> > I can't tell what changes either the PHY or interrupt configuration might
-> > be referencing.
-
-> That changes are in single commit as, using not all of them will result in
-> total xSPI failure. Configuring PHY makes no sense if clock is not enabled.
-> But I can try to split that into 3 separate commits.
-
-They won't actually do anything until we detect the Marvell IP.
-
-> > > +static void mrvl_ioreadq(void __iomem  *addr, void *buf, int len) {
-> > > +	int i = 0;
-> > > +	int rcount = len / 8;
-> > > +	int rcount_nf = len % 8;
-> > > +	uint64_t tmp;
-> > > +	uint64_t *buf64 = (uint64_t *)buf;
-
-> > Any need to cast away from void * indicates a problem.
-
-> I will check that, but code is checking alignment of that pointer.
-
-A cast won't do anything to fix alignment issues.
-
-> > >  	case CDNS_XSPI_SDMA_DIR_READ:
-> > > -		ioread8_rep(cdns_xspi->sdmabase,
-> > > -			    cdns_xspi->in_buffer, sdma_size);
-> > > +		cdns_xspi_sdma_memread(cdns_xspi, sdma_size);
-> > >  		break;
-
-> > It's feeling like it might make sense to have an ops structure rather than
-> > sprinkling checks for the Marvell overlay everywhere.
-
-> Won't it cause big code duplication? There are some differences, but whole
-> Part of SPI stig mode configuration is the same.
-
-No more than having a bunch of functions which are called a single time
-with checks in them will?
-
---xvH9bqAg6EKL9q/g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZpeQsACgkQJNaLcl1U
-h9ADNAf/WTR0H0Qn2OWdd/BymBjuQCwA8E904iCChNKnS4OQO/0+hIrOvaP17XKx
-CC+pD4RcnGfxAo7ZaSt+e/4x+FSwvCrvehnKyf/SyDsdGM9L7xiSA1DkaTUB17nn
-2i4VK0aHKc1Dsl6/FBpX557xiWLY0/2Cvp7pSFvrKkserLjBXZQOK/bAKe+91DTg
-W1Khh+gxUR2WExITICPU9oK2mPMQLICmv2OESHgG5KORduKk89GtcS0UNHngP+Zt
-Rk1R8BwlDkdx9iGZSghCSZxMF+0Uce2z7xDL9iJiR6lCXvFKk2i2jTbX9vxy8v5/
-D7z6idrOqBxEOijFsYLWngShvjw+NQ==
-=oof7
------END PGP SIGNATURE-----
-
---xvH9bqAg6EKL9q/g--
+-- 
+Thanks & Regards,
+Taniya Das.
 
