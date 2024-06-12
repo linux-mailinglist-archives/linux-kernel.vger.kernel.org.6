@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-210829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B37990490E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:36:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B199490492C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C11D1C215EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DC5A1F24970
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A121B7E4;
-	Wed, 12 Jun 2024 02:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF27EEED0;
+	Wed, 12 Jun 2024 02:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h28Zx+zj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LWGrLywr"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D9510795
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E17C122;
+	Wed, 12 Jun 2024 02:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718159777; cv=none; b=vDfggtWimgeIccP1fM1qPmfNA4kj47xvFxiagoqXwXpf39vdNH7y1wfCvc07b4DEeZaEgt2Tgt/bUT+ky1kVQtBJPTB/Bsvbs58i3tZk1nMPBNcs9q8m6ITVkzZy1xgWd7XovRJOu2ljGghIAfJRoPhAM/coH8h7MFaNNge+Rcc=
+	t=1718160272; cv=none; b=J9fDJWj7quZaMdwbjqS/cJz8NodKNbJV7ETOlFIFa3/gNfXVLjuyy2N20uWIw9doRXXEjO3uO7AmxsRbzjSlNMahvjCjN4o+J3b0grDDw2fP8xl/y4osUchrsdU/ZClNGz3axuAJ1qUQUnTspmnREumDfpC8HBF4S3WT27ORuAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718159777; c=relaxed/simple;
-	bh=+C9CpexBYFfnMpqRsSGyPaSylMt0LZhxG8Bqf4uE1vc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nqUJ1XZV4hO0xsm8GBL1mRIMgUw9amAywSnTOib+Focx3FTJKQ8NmdNsfaC0SXEkT18Q9v66E6ksHHehJ/v+9yiF9RVFZGTIEgYkz5Oj9hMmQ4oRIwPSgs/LeECbUnQVLAu9Nek1ggwCQvgZ+jYsCPfbY624A5A7bME4T8uwga4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h28Zx+zj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718159775;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ARgZIxE+11qj8ADHfG2c1X50fN5kwjd0+5g/sQvCIdY=;
-	b=h28Zx+zj/Zy8FcCuIWXGXvo7pkx5mwfsIDTJS8BzGCBvMeIs0P4LcEqWhV5vdC2vlKK9hh
-	2fWZ4x4T/94QVXk4agD4vaFj7M1KXG5BrvOQfx3WMpdtu+dyBhn90E0BHPNVK59cLZIuoU
-	DCcotD0olWXmnKNo/c8/ulAu79BaLlc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-529-Hv6NuDmENy6inG_gTUu0Zg-1; Tue,
- 11 Jun 2024 22:36:10 -0400
-X-MC-Unique: Hv6NuDmENy6inG_gTUu0Zg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	s=arc-20240116; t=1718160272; c=relaxed/simple;
+	bh=BE5Y9Qo5Eyxv2m3y0eALTspWX6n8dh5oWhlO+vbvdHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=R4xkNH4tpv1K1i8uAAldZfjrMaR6QVSE8YAhy6xSNM5Y0DEgDXnvIDTW0ezwWRgbSh08MR7497WqDf6GTbmauMXcMvWABAWoq+osYDGT2+rDbsOhfd5zwrjdoT+Ez67sapCAaeylplG+CYkY08MZKYpS0SXb4IN3p+XSuRPLbYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LWGrLywr; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1718159802;
+	bh=avg0iBHIDOS3x7PvuRSF0DrowyNVDLUAoBUaDVo+mOc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=LWGrLywrcFTTXgXdkZgCAm6p+caTvNIpUPEASXmV5597KhRitw7YeETxiCwdV5LHo
+	 EuEHSiy3JZOUccuSH4GfUrK/EKMYb6U02fgZJ4TW2RIu7BLPL524e4FTmG9jMKJ6SG
+	 zs3/393A/Fz9rlae3cyITSjkWkaDxHvLKW7l9L7EMTowautNqveu5aMcVYe7rYakEr
+	 4/hFKe4vF6nl/66x5ED+6OmwPZPi7GXaw7xFcwvi8bJ0k3h/IYzneeGdjMhpk8Bpvp
+	 3OuZnvEGNIOqBz3f0cBLciKYJqHdyTAF/EUsQac+82a9c62zkV/KzAHlRWxN6PjOtL
+	 Bp7FQXVPk/1ig==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA4F219560B2;
-	Wed, 12 Jun 2024 02:36:08 +0000 (UTC)
-Received: from virt-mtcollins-01.lab.eng.rdu2.redhat.com (virt-mtcollins-01.lab.eng.rdu2.redhat.com [10.8.1.196])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5386619560AD;
-	Wed, 12 Jun 2024 02:36:06 +0000 (UTC)
-From: Shaoqin Huang <shahuang@redhat.com>
-To: Oliver Upton <oliver.upton@linux.dev>,
-	Marc Zyngier <maz@kernel.org>,
-	kvmarm@lists.linux.dev
-Cc: Eric Auger <eauger@redhat.com>,
-	Sebastian Ott <sebott@redhat.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v1 2/2] KVM: selftests: aarch64: Add writable test for ID_AA64PFR1_EL1
-Date: Tue, 11 Jun 2024 22:35:52 -0400
-Message-Id: <20240612023553.127813-3-shahuang@redhat.com>
-In-Reply-To: <20240612023553.127813-1-shahuang@redhat.com>
-References: <20240612023553.127813-1-shahuang@redhat.com>
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VzV6d5hLgz4wb2;
+	Wed, 12 Jun 2024 12:36:41 +1000 (AEST)
+Date: Wed, 12 Jun 2024 12:36:40 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@pengutronix.de>
+Subject: linux-next: manual merge of the driver-core tree with the mm tree
+Message-ID: <20240612123640.68ae0310@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: multipart/signed; boundary="Sig_/NXGv7YrK=2nxl_57utSjCDV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Add test for the BT field in the ID_AA64PFR1_EL1 register.
+--Sig_/NXGv7YrK=2nxl_57utSjCDV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Shaoqin Huang <shahuang@redhat.com>
----
- tools/testing/selftests/kvm/aarch64/set_id_regs.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Hi all,
 
-diff --git a/tools/testing/selftests/kvm/aarch64/set_id_regs.c b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-index 16e2338686c1..5381b8ec5562 100644
---- a/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-+++ b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-@@ -133,6 +133,11 @@ static const struct reg_ftr_bits ftr_id_aa64pfr0_el1[] = {
- 	REG_FTR_END,
- };
- 
-+static const struct reg_ftr_bits ftr_id_aa64pfr1_el1[] = {
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, BT, 0),
-+	REG_FTR_END,
-+};
-+
- static const struct reg_ftr_bits ftr_id_aa64mmfr0_el1[] = {
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, ECV, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, EXS, 0),
-@@ -199,6 +204,7 @@ static struct test_feature_reg test_regs[] = {
- 	TEST_REG(SYS_ID_AA64ISAR1_EL1, ftr_id_aa64isar1_el1),
- 	TEST_REG(SYS_ID_AA64ISAR2_EL1, ftr_id_aa64isar2_el1),
- 	TEST_REG(SYS_ID_AA64PFR0_EL1, ftr_id_aa64pfr0_el1),
-+	TEST_REG(SYS_ID_AA64PFR1_EL1, ftr_id_aa64pfr1_el1),
- 	TEST_REG(SYS_ID_AA64MMFR0_EL1, ftr_id_aa64mmfr0_el1),
- 	TEST_REG(SYS_ID_AA64MMFR1_EL1, ftr_id_aa64mmfr1_el1),
- 	TEST_REG(SYS_ID_AA64MMFR2_EL1, ftr_id_aa64mmfr2_el1),
--- 
-2.40.1
+Today's linux-next merge of the driver-core tree got a conflict in:
 
+  drivers/fsi/fsi-occ.c
+
+between commit:
+
+  2d2bf1e680a9 ("fsi: occ: remove usage of the deprecated ida_simple_xx() A=
+PI")
+
+from the mm-nonmm-unstable branch of the mm tree and commit:
+
+  29f102dbb11f ("fsi: occ: Convert to platform remove callback returning vo=
+id")
+
+from the driver-core tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/fsi/fsi-occ.c
+index f7157c1d77d8,21d2666c4195..000000000000
+--- a/drivers/fsi/fsi-occ.c
++++ b/drivers/fsi/fsi-occ.c
+@@@ -718,9 -719,7 +718,7 @@@ static void occ_remove(struct platform_
+  	else
+  		device_for_each_child(&pdev->dev, NULL, occ_unregister_of_child);
+ =20
+ -	ida_simple_remove(&occ_ida, occ->idx);
+ +	ida_free(&occ_ida, occ->idx);
+-=20
+- 	return 0;
+  }
+ =20
+  static const struct of_device_id occ_match[] =3D {
+
+--Sig_/NXGv7YrK=2nxl_57utSjCDV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZpCbgACgkQAVBC80lX
+0GxVHQgAogcMO90jU47ZoQmSJulLfzunOkza2dlL3ZHjbJO3e2SO1LeKswN19IHb
+sbAAIcpb6ZB86vDf+exLjkXmz5s+eZi38mntFWivvLvqAqdrl1hZOFoZvTDc7dpQ
+KRuTedv+mclaDxfxH/8wY9Z3andvEWQa9MmBhHpGpEKcrdhWVGegm9ts+1McFfL5
+niC2i2/8nO1AHFto3m90ErEdtpSm2tHUgJK5owNLZaJWDmhIkjEH4O/V23j7oWgi
+x0TiaW4KJIKrRCP+U2iJT0cQB9khEUgjlZdYtLKDDOR/0KWDI5Exu+5e2Mw93Wjy
+c+xsQSt9un3ZQJxuWw324GQuxQsr3A==
+=LhxS
+-----END PGP SIGNATURE-----
+
+--Sig_/NXGv7YrK=2nxl_57utSjCDV--
 
