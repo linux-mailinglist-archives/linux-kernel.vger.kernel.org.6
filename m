@@ -1,131 +1,116 @@
-Return-Path: <linux-kernel+bounces-212266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A85905D7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:12:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B83D905D81
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24444B211A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35651F22672
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29058662E;
-	Wed, 12 Jun 2024 21:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D9385934;
+	Wed, 12 Jun 2024 21:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KXj1+zWA"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="R8yuJ4Fd"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F88784E07
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 21:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812C784E00;
+	Wed, 12 Jun 2024 21:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718226737; cv=none; b=Ifyexlz65cO9f7vo7PsNs5Rz0wsFRNTaiCk/NcYjigeE6mktGfOCGuCOoYRMpqTqagcs9ciTK4vsYqSYx8mUWr3K1KIGIUQLHlAhRARGXctUZJWiAF8lgVRhU57CghgvEc2w1hgRyw1xJN0/qNOy3/8aX9S+T3FS6AA4zs3zCSU=
+	t=1718226787; cv=none; b=qVaCH4JsNsHKSCiF0vEkeEPJO7rL1dsviwnE6S/Vvupg90Mons2XOdpc4/4xpnXXmq610Zl8KMqL2pOH3lkC6qjDhTmLKXgekNlro4oTKfPtA0e+G1KW5HRCc3hm13/7PwGoxsEBl3GF+fcfSO44wdzSjTMeYA+Z4icgwjUbx48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718226737; c=relaxed/simple;
-	bh=mZ1gVsscLnoQrhu6DUaN86+gh4C4z0/alorNn55aWOU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=erITj1LIjor4dJyBIG1g2uXn4b6oGpSw2G7dfB++azjtGXigOS3GTiMLCK9kb3rATG4E1KimoVN3lgCAr3a/3pCttT8xo9eofTZo6/3cRtvddVpYc1yGdkiXJLUcxGbZoCsIiWmlhM0jYg6WNoLB4ueUwe3AU8RzmqO1/mVvMEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KXj1+zWA; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dee902341c0so408745276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:12:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718226734; x=1718831534; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OQnTUkcCD7nk2Vw7ExeAQaoK3gWIegL46mSfNzj2DMU=;
-        b=KXj1+zWAF/3cHUvUtvrZxNbygxmzl80WhX2rgC4OTqdHqJxEzXMOwvRai0agp4baAJ
-         GnG2+7oEt4mxhsCUVx40mKDeHRczaAwQgID+X/j9kDG59bD4Bn15hag58/YkSV37cES5
-         4Gwirc8/dIifUYDtwzCeLA+ELcCMgkzS18PPaPa1oNFGsA5PW6Jkg4RaA/A1dBuBa1fP
-         QOogVN53Y8J0KPz82U/reO8bj0xMV92B4dh1Ltv+Lt+cDCcxGZwsqm/vY8M+2Q9sh2w0
-         jsbcq0r7NU8XxbZ61ubxGpVN4AAUQKmMOFKoddAUrzybn/GhSLtiFEKSHdplZKVS7F7l
-         RHVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718226734; x=1718831534;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OQnTUkcCD7nk2Vw7ExeAQaoK3gWIegL46mSfNzj2DMU=;
-        b=m50J8Y+vjws1KwNRHtm/hW2V2+A10KYxUDbZJGco2EFrC33GfquTec/Cl7KYIt6/W8
-         AGn0/bYMmLNmrGrZyM+ngov7Bu1Iek8V5x9unsqENqHAhmiuqDtsRvM/70uNMXP/65gD
-         ZODYuA17GpmmlQH/EjjKkO2U2zvu19f5SvSNa/exHF/S29ZN1d7BUvcikppJHixba2qU
-         qfBGKrVyOuYVU5eHee7YdnM1PqBo1tbhKwYo+vgQ2tgvjf8oEi+1WDlCL0NdDe0iSGGY
-         aEntGU7rCxSNxK68eW5Gl4FocI5Hou7n3kSXey+HVRdEFH+KA0lmPjzRXVdmr2kP/Js9
-         ONUw==
-X-Gm-Message-State: AOJu0YzxHX5KJrb7Jj5L5xFvtHVzRvxhQEut6fg+G+VE2BvydQ4e7Pzm
-	yXDh5+pj/OuKuE5afD/A21tnHL7BOtONmN67zEDfQ8xO7s9wbW/lOqgyIT6HC5+I+wYRb8lsBLr
-	Elg==
-X-Google-Smtp-Source: AGHT+IHsV28eaC2THrd7M7nGgltqa0kTEglruuHJgRHKPTTyPjjhrN5LKu8lrwbv6iFMvLbV9hefC3OsmFA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:120c:b0:df4:920f:3192 with SMTP id
- 3f1490d57ef6-dfe68036303mr137279276.8.1718226733624; Wed, 12 Jun 2024
- 14:12:13 -0700 (PDT)
-Date: Wed, 12 Jun 2024 14:12:12 -0700
-In-Reply-To: <20240207172646.3981-5-xin3.li@intel.com>
+	s=arc-20240116; t=1718226787; c=relaxed/simple;
+	bh=m7dkmymv3ocsLwM5RBIeCOX1op7kT/HL3bNHHw/zP+4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=M1+9LoiqtQN538WJM/CR4eiEMYSuDUVh+tBCZsPFKXu0XtH1kKJV5MxliFQgglOJT7PxutQMOaZyaLxciNZ8gCelUrcGfu92UTk66GcoAEt6PmMEIzeFziL6aeXamWIfxBTP+38heP05vpwRvD+0LdIqJLGHvbZLrnNyuTVm+r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=R8yuJ4Fd; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0343A45E09
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1718226778; bh=KXI+K1lfq8TL5SFEVkycAbAE6O+6El1LAKAkRnQ6TJ8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=R8yuJ4FdrWGdF4DiUgESJzPTg7JiXTNbxi5vhmEXE8KfnCoRArD48ovkyN0YHxUIY
+	 ZyZ79SELD5xest3TPmOCmtr2fAY3pPoWb8yCqwO5R7af97XsWqkfLnZdPwLi6uvCsa
+	 J+gklePmqmGJp2xv+LHoXFeVwIrKn1Hu7KW5APlEV5baVsdahixegcVsZB1UJFj5F9
+	 7XjMvm1gIpLAMFQDbASN21CZ9vqs81qLfJVCFDCu8tkDiaUEKGsxcQX5gV5Bg/c1SA
+	 QMOZevbLEl05XCK4DXC+iTkvoo3g8+lmgIAyHSRrTeAozbnYpmTQqxG3kDwPuW1oKa
+	 fFeXV+0dkcTVA==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 0343A45E09;
+	Wed, 12 Jun 2024 21:12:57 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>, Yanteng
+ Si <siyanteng@loongson.cn>, Haoyang Liu <tttturtleruss@hust.edu.cn>,
+ Dongliang Mu <dzm91@hust.edu.cn>, Vegard Nossum <vegard.nossum@oracle.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs/zh_CN: Update dev-tools/index.rst
+In-Reply-To: <20240612161835.18931-1-dzm91@hust.edu.cn>
+References: <20240612161835.18931-1-dzm91@hust.edu.cn>
+Date: Wed, 12 Jun 2024 15:12:57 -0600
+Message-ID: <871q51q2zq.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-5-xin3.li@intel.com>
-Message-ID: <ZmoPLOx8sujVsGIS@google.com>
-Subject: Re: [PATCH v2 04/25] KVM: x86: Mark CR4.FRED as not reserved
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin3.li@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	shuah@kernel.org, vkuznets@redhat.com, peterz@infradead.org, 
-	ravi.v.shankar@intel.com, xin@zytor.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Wed, Feb 07, 2024, Xin Li wrote:
-> The CR4.FRED bit, i.e., CR4[32], is no longer a reserved bit when a guest
-> enumerates FRED, otherwise it is still a reserved bit.
+Dongliang Mu <dzm91@hust.edu.cn> writes:
 
-This isn't quite correct, as __cr4_reserved_bits() is used with kvm_cpu_caps too,
-i.e. to compute CR4 bits that are reserved from the host's perspective.  And that
-matters, because if this check was done _only_ on guest CPUID, then KVM would
-allow CR4.FRED=1 before all of KVM support is in place.
-
-> Signed-off-by: Xin Li <xin3.li@intel.com>
-> Tested-by: Shan Kang <shan.kang@intel.com>
+> Update to commit 8c88bc5b489e ("docs: dev-tools: Add UAPI checker
+> documentation")
+>
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 > ---
->  arch/x86/include/asm/kvm_host.h | 2 +-
->  arch/x86/kvm/x86.h              | 2 ++
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index b5b2d0fde579..0d88873eba63 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -134,7 +134,7 @@
->  			  | X86_CR4_OSXSAVE | X86_CR4_SMEP | X86_CR4_FSGSBASE \
->  			  | X86_CR4_OSXMMEXCPT | X86_CR4_LA57 | X86_CR4_VMXE \
->  			  | X86_CR4_SMAP | X86_CR4_PKE | X86_CR4_UMIP \
-> -			  | X86_CR4_LAM_SUP))
-> +			  | X86_CR4_LAM_SUP | X86_CR4_FRED))
+>  Documentation/translations/zh_CN/dev-tools/index.rst | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/translations/zh_CN/dev-tools/index.rst b/Documentation/translations/zh_CN/dev-tools/index.rst
+> index fa900f5beb68..c540e4a7d5db 100644
+> --- a/Documentation/translations/zh_CN/dev-tools/index.rst
+> +++ b/Documentation/translations/zh_CN/dev-tools/index.rst
+> @@ -20,18 +20,22 @@ Documentation/translations/zh_CN/dev-tools/testing-overview.rst
 >  
->  #define CR8_RESERVED_BITS (~(unsigned long)X86_CR8_TPR)
+>     testing-overview
+>     sparse
+> +   kcov
+>     gcov
+>     kasan
+> -   kcov
+>     ubsan
+>     kmemleak
+>     gdb-kernel-debugging
 >  
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index 2f7e19166658..9a52016ebf5a 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -532,6 +532,8 @@ bool kvm_msr_allowed(struct kvm_vcpu *vcpu, u32 index, u32 type);
->  		__reserved_bits |= X86_CR4_PCIDE;       \
->  	if (!__cpu_has(__c, X86_FEATURE_LAM))           \
->  		__reserved_bits |= X86_CR4_LAM_SUP;     \
-> +	if (!__cpu_has(__c, X86_FEATURE_FRED))          \
-> +		__reserved_bits |= X86_CR4_FRED;        \
->  	__reserved_bits;                                \
->  })
+>  Todolist:
 >  
-> -- 
-> 2.43.0
-> 
+> + - checkpatch
+>   - coccinelle
+> + - kmsan
+>   - kcsan
+>   - kfence
+>   - kgdb
+>   - kselftest
+>   - kunit/index
+> + - ktap
+> + - checkuapi
+
+So I have to say that the changelog here is not particularly helpful.
+You have *not* updated the translation to that commit, so it doesn't
+seem like you should say that you did.  "Add several newish documents to
+the todo list" is appropriate for something like this.
+
+I've applied the patch, but with the changed commit message.
+
+Thanks,
+
+jon
 
