@@ -1,163 +1,128 @@
-Return-Path: <linux-kernel+bounces-211938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0473790591D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:47:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26056905925
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 146521C219DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:47:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5DD1F21CBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E44B181D04;
-	Wed, 12 Jun 2024 16:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98717181CF3;
+	Wed, 12 Jun 2024 16:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpKSVlTp"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rng/KsFr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB9C17FAB2;
-	Wed, 12 Jun 2024 16:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4438180A9D;
+	Wed, 12 Jun 2024 16:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718210845; cv=none; b=cMPFi2NEkWLZTuVtJxG7880Xfgemk5knL/q/gWFye4RhM39ScIXldjgPHLdOoXQnITdghSci/09EXjq3AxKac2v945A16AvB9hjjuKYNo6CC0iWEImvZI64aInRzGPbsXvmVSTwpPsb9nDfDlAHXtrlWaGMHFES52pBHvjRy3tg=
+	t=1718211078; cv=none; b=rJWPs7VXuMVkCSgzqHoN9dcwRq0XLEqsKYL4h/SZs8Kt8flF7dsrVY6KRQbPajifE0gvc//FL3tHQJkWQ9ALdbVKufiTscQMoXg4jlo/3I6HI8fc6JMaHV6J1ydUMHZkBpOEomJ8DTp/zr+dIlourImPYYj3Vi4CkWS8SepDopI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718210845; c=relaxed/simple;
-	bh=i1VqQul0aDavmR/6DXs1c0vrMHV9t54lQ1/SdKFFgcA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KUb7hlIxZRZSssstz33JWNkZFItl0/W9aO0LiisXAk07Y5hRBxM0MdD+QB778NzITjwAaSB/+rLHuv4N9DFCeE4mjQYDCggRHfG10rdimB/KsmPPFZ9EDbhdP0ts8+aXJ5j/eg/Rf7p6ih32LolfEc4LO8ua6coySMP/Wb1SsC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SpKSVlTp; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52c32d934c2so105074e87.2;
-        Wed, 12 Jun 2024 09:47:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718210842; x=1718815642; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3LSxFCdDc2AZqzsEX2s/C0J4Wg0gWxXtxhy1sWyLans=;
-        b=SpKSVlTpjgDwftsFOBfi9fyEoCinBkQpmrLfXi8v8dtabzEWdQtqjJSp/l9XkPZMQQ
-         qfJyUu3TCAHAQ8on3hR2HfRMk2FIYx1G8kabtLkm/Tx7brPmZcHsX/i30hDfdg+4Gb3N
-         7LT3hUGeZOwgEVrvy+H+WAQQnEW/y/xD1DU11wIf6ZP4WH4RM01RLSXOR8b5r9/3kPK9
-         4GrQJtGySGtv3ANAJh91vpWfEdXBA0LCrcpGYgFmkJ0QeHNUR7H20SXDxiqUoNJetB2D
-         0Q0IYrYLoSSB5KYju+KhpBLcme03NpdNS/UtySh2W51bi12TzO0KOzcfTf7Z8nP4j/pM
-         C2DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718210842; x=1718815642;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3LSxFCdDc2AZqzsEX2s/C0J4Wg0gWxXtxhy1sWyLans=;
-        b=woG6VKWWja0rJCHlmJ8agtDNCdbtd+s49vpCaxTsR6Z3uLVcfhFNNymzQV9xKwwker
-         qAN5IkQUrZQm3lbIAQKxHjQRHkaXLUI1H27S3m2VT6KYwhydliVgBko4xT8Oq838j2R2
-         HUkehZz4f39wytCkod1W3uNCi0C1mUzjckv/bvIywC9M1imvHxTieNG+A0rP/TSkSKzY
-         fpR1HRfzhpAjUsZNEhmuQCMQyBqQWssWyRknStU/upSnHB8EDt3x3vMfW403CCAFzPTk
-         lWdepkbnixbIZC+qYU3qzBcqPt0VwlVg9sOJXjLCJEArdyCdWWELECEoYnx1JrtbJv0I
-         mHZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpYbhXTwz9jRWim2z7O13GNv/Dln0/mBd4c40ghfzaU7fNO07WSGMu7r7UHSd+TCoOQDYPetnt5ud5/bv18xLNV1iEX6i6dDEgpzZYJ5wziceTZUeRVd+XFWu7JQbEeJ1bN/CWBxvdk5rboA==
-X-Gm-Message-State: AOJu0Yx+llM9p+YrdnnRBX7NRfTBoGKMxhr92TPRP77QSM1MVkRtmi+k
-	9guXrkn2EYSuGcyKZld7nUS1KREMYgPwRvthmCCEUOgYhvTyHmDupKoWDQ==
-X-Google-Smtp-Source: AGHT+IHQuyWYKttlD7FyL3MnPGfd0WS563CXW9xMTDu6ak9IsSR1KZ34aIT41UCLCfzx1GUtyPkiXw==
-X-Received: by 2002:a05:6512:3b27:b0:52c:6ff5:aecc with SMTP id 2adb3069b0e04-52c9a3fe607mr1642650e87.51.1718210841736;
-        Wed, 12 Jun 2024 09:47:21 -0700 (PDT)
-Received: from f.. (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f0ce4b62fsm13786703f8f.80.2024.06.12.09.47.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 09:47:21 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] vfs: move d_lockref out of the area used by RCU lookup
-Date: Wed, 12 Jun 2024 18:47:15 +0200
-Message-ID: <20240612164715.614843-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718211078; c=relaxed/simple;
+	bh=RCaHtACj2SxL4hUQI5V+jP3OfLSwL9/Qp69eRQVinrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VKFqDwOCoDt2wYihLhXkspicsyakCXEduxKREYyQcE+9oFbC9C4HvHdJ2cGnyXz6NFsGsQJKIyc50PcOIKA7B4252TBAJIMg2iwqmTtC1M50i1HmPp0DNw5NeSHsi/rWnFJ8rWCwLRwN0BL9SVqtP40hEbWYVfYFsU+TFIJ03Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rng/KsFr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C534CC116B1;
+	Wed, 12 Jun 2024 16:51:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718211078;
+	bh=RCaHtACj2SxL4hUQI5V+jP3OfLSwL9/Qp69eRQVinrI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rng/KsFrm67z5muQdvve4Da1go0NZ3uq+e5l4cMdvn9JltfTYbk6e/bnXM473NcQZ
+	 KZEv/buQTkLr8MtKpXimApeaLy8lkQOOC747dIaIaT5nbOSJUAdeoHreVPrEJC7HNg
+	 gs6aE+jBfHJa2zfr0Z32CLvJcvsyQ4cm3wLYGviFFvVZwP7Bl9BpMnrqZEJ06ahNO6
+	 l8vM9HZ8YMjel4kB7+HLiwWO/CMtsRl0b+O+YFqnxD/Avs3fNakdqUIf40jI1alsAK
+	 qlPIs+Z6yXagJxifwgoBKNfnu8cXuNjZSvovUKnPfiLKfeBq9BqiEmn6ZsgKPFjEWw
+	 bP26jT61u94Cw==
+Date: Wed, 12 Jun 2024 17:51:13 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Bryan Brattlof <bb@ti.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Vibhore Vardhan <vibhore@ti.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/5] DONOTMERGE: dt-bindings: mfd: syscon: add TI's opp
+ table compatible
+Message-ID: <20240612-unranked-unsalted-b32674a98d4a@spud>
+References: <20240612-ti-opp-updates-v1-0-3551c31d9872@ti.com>
+ <20240612-ti-opp-updates-v1-3-3551c31d9872@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="RLdNql4jJBieNqa9"
+Content-Disposition: inline
+In-Reply-To: <20240612-ti-opp-updates-v1-3-3551c31d9872@ti.com>
 
-Stock kernel scales worse than FreeBSD when doing a 20-way stat(2) on
-the same tmpfs-backed file.
 
-According to perf top:
-  38.09%  [kernel]              [k] lockref_put_return
-  26.08%  [kernel]              [k] lockref_get_not_dead
-  25.60%  [kernel]              [k] __d_lookup_rcu
-   0.89%  [kernel]              [k] clear_bhb_loop
+--RLdNql4jJBieNqa9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-__d_lookup_rcu is participating in cacheline ping pong due to the
-embedded name sharing a cacheline with lockref.
+On Wed, Jun 12, 2024 at 11:41:52AM -0500, Bryan Brattlof wrote:
+> The JTAG_USER_ID_USERCODE efuse address, which is located inside the
+> WKUP_CTRL_MMR0 range holds information to identify the speed grades of
+> various components on TI's K3 SoCs. Add a compatible to allow the
+> cpufreq driver to obtain the data to limit the maximum frequency for the
+> CPUs under Linux control.
+>=20
+> Signed-off-by: Bryan Brattlof <bb@ti.com>
 
-Moving it out resolves the problem:
-  41.50%  [kernel]                  [k] lockref_put_return
-  41.03%  [kernel]                  [k] lockref_get_not_dead
-   1.54%  [kernel]                  [k] clear_bhb_loop
+$subject: DONOTMERGE: dt-bindings: mfd: syscon: add TI's opp table compatib=
+le
 
-benchmark (will-it-scale, Sapphire Rapids, tmpfs, ops/s):
-FreeBSD:7219334
-before:	5038006
-after:	7842883 (+55%)
+Okay, if this isn't for merging then I won't Ack it.
 
-One minor remark: the 'after' result is unstable, fluctuating between
-~7.8 mln and ~9 mln between restarts of the test. I picked the lower
-bound.
+Thanks,
+Conor.
 
-An important remark: lockref API has a deficiency where if the spinlock
-is taken for any reason and there is a continuous stream of incs/decs,
-it will never recover back to atomic op -- everyone will be stuck taking
-the lock. I used to run into it on occasion when spawning 'perf top'
-while benchmarking, but now that the pressure on lockref itself is
-increased I randomly see it merely when benchmarking.
+> ---
+>  Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Document=
+ation/devicetree/bindings/mfd/syscon.yaml
+> index 7ed12a938baa3..ab1fcbe2148f7 100644
+> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> @@ -88,6 +88,7 @@ properties:
+>                - rockchip,rv1126-qos
+>                - starfive,jh7100-sysmain
+>                - ti,am62-usb-phy-ctrl
+> +              - ti,am62-opp-efuse-table
+>                - ti,am62p-cpsw-mac-efuse
+>                - ti,am654-dss-oldi-io-ctrl
+>                - ti,am654-serdes-ctrl
+>=20
+> --=20
+> 2.45.2
+>
 
-It looks like this:
-min:308703 max:429561 total:8217844	<-- nice start
-min:152207 max:178380 total:3501879	<-- things are degrading
-min:65563 max:70106 total:1349677	<-- everyone is stuck locking
-min:69001 max:72873 total:1424714
-min:68993 max:73084 total:1425902
+--RLdNql4jJBieNqa9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The fix would be to add a variant which will wait for the lock to be
-released for some number of spins, and only take it after to still
-guarantee forward progress. I'm going to look into it. Mentioned in the
-commit message if someone runs into it as is.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- include/linux/dcache.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmnSAQAKCRB4tDGHoIJi
+0sWBAQCOPrkQuLnJ8hVCTnNLC9CZqP/gnQc6qb+FonTElR9zSQEA+XVKyJ8OzunD
+0pSEZE1WzJwXwAz9j/q1rshvEKDl5gs=
+=yCht
+-----END PGP SIGNATURE-----
 
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index bf53e3894aae..326dbccc3736 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -89,13 +89,18 @@ struct dentry {
- 	struct inode *d_inode;		/* Where the name belongs to - NULL is
- 					 * negative */
- 	unsigned char d_iname[DNAME_INLINE_LEN];	/* small names */
-+	/* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
- 
- 	/* Ref lookup also touches following */
--	struct lockref d_lockref;	/* per-dentry lock and refcount */
- 	const struct dentry_operations *d_op;
- 	struct super_block *d_sb;	/* The root of the dentry tree */
- 	unsigned long d_time;		/* used by d_revalidate */
- 	void *d_fsdata;			/* fs-specific data */
-+	/* --- cacheline 2 boundary (128 bytes) --- */
-+	struct lockref d_lockref;	/* per-dentry lock and refcount
-+					 * keep separate from RCU lookup area if
-+					 * possible!
-+					 */
- 
- 	union {
- 		struct list_head d_lru;		/* LRU list */
--- 
-2.43.0
-
+--RLdNql4jJBieNqa9--
 
