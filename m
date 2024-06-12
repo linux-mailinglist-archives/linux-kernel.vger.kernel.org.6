@@ -1,289 +1,170 @@
-Return-Path: <linux-kernel+bounces-212149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37BE905BE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:22:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195DD905BEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDB471C239F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CC3A288EA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4269384A52;
-	Wed, 12 Jun 2024 19:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="r74LmvTJ"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0962382D64;
+	Wed, 12 Jun 2024 19:22:13 +0000 (UTC)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A938D82D9E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 19:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDA28526C;
+	Wed, 12 Jun 2024 19:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718220108; cv=none; b=cE6K/LUq5zU4MtXvPwM6dPepC8Bl++4BDOC2sfQMzl+EE6NIi2ze9ECYs4mP0SYpr8EUkOwkmZfnkO9ib8r2Fga5KvmLeRdsr5hujR0o1B3l7+fl8d3ujLZQKc5fgeNgzXh9fmrKlsIq5Jz9tq5IIgxS6pHrc6FMMeIft/3ZDHU=
+	t=1718220132; cv=none; b=praMIBXH/giYS/c39LkH6d6zcgOscVElS/kD+MrtfOZkxi1LQOuLU+xB+LmY+wt06Ig96r1+8BmTZL1ifsSDvSbEm5R5R7J7jSbiYPIDqUFlGdPXxJx1CG31JbJhnGcPK4dCTuDtQoLLt3yrwFRLOnWywTrATycIJKDh6Hn4OJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718220108; c=relaxed/simple;
-	bh=nYTAeIKAQnbfKWEqhRPle1j756SIOQpvdGbjJq8DHmA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=md77Ei//z9f7iLjwbs9V7aYDzlYtxnBqu9fcdznXjyjsJ3V0UqHb8b6GkvYwAIue4lHSvtP9zIDbcTsYhCOUD4vZ1S+zTX1J11ifq+DnL9Amdsw+bT6Tl1i4jJgOnl3/pek5Jz32ausV2limcIyX+FB1PaylS1xFIlus0IZDwOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=r74LmvTJ; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d23db75f5cso81662b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 12:21:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718220104; x=1718824904; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nWjk00AKWLCCc2wBmuv0MRbs0RIV4aO29ZnuU1Z2jqM=;
-        b=r74LmvTJEi786hdPB17H0FI7tI/8MNGocXBMnZ9ksdS5YT0fwHcTyuSvYITil3QlrQ
-         QnakzZbNdfgxSURix0k493GYPiGEjj50jj44tofx5mwoiXHh/JD0dAbEX5LSGQ8xaCbY
-         eo8tyATaWdqDpLcRIDd+jMR1XMxKDbagQ14rgPJDJ2NXDMMpiqJ4+Nrd/1d61ku2bPIe
-         hlY6pWDAphNjUwfx/a6kQB25VLArjrgt5JFNKVnQbLp7Qm0CqaJ9iHZYJXSubFUol7Hl
-         oLSKfDUrSvuZ87g2xCraIDiXqUJXoP9uwMUb9eV4Deu8eboSfvYO3ivPEw+1h9EtsWi9
-         2LBA==
+	s=arc-20240116; t=1718220132; c=relaxed/simple;
+	bh=EJ2U0PBqYGloWqGwHp67L2zESA8Kvm6C7y+3Lwt/JAY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A/8F8+xJEd1Gni1TJGBVSVb1DiGyOkta5MAgijRPnw7ghwPPdpJX09eNbAg9YFyWVlnc89pdSc1mzENgtoVzZeyKKoEO1mJP4debYaK0IpApnQk+t0CoWkF50woStFxolTOum2PbF7wgDLtcowreh4SLvFV8BjpaRcFeL75Mh2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dfdff9771f8so252745276.1;
+        Wed, 12 Jun 2024 12:22:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718220104; x=1718824904;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718220128; x=1718824928;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nWjk00AKWLCCc2wBmuv0MRbs0RIV4aO29ZnuU1Z2jqM=;
-        b=p9IwwS4RAd89KU5thLQ2iw8cuF9aanFePUs0wU80KBfOh6ATn9DzngvAW0ey50WXkc
-         o8P3IiNRyHj3BQ8zrpvlRkP0FFEgwDbtScJnKgGe/qVmJp3K7NNVJAhPvVCn73XCidXs
-         iBWFUb9Gbw1ZOoLfC5ttbrs1gR6vGPyXBFbuB85lqy4c0tekjvJBLyL7oOSqy04FTrkh
-         RHFQLJG7naZEb38heww5wva97BViB5TBCS0RNiRuJzqqEoAVIJkjur6uDZ9S9HzFlom2
-         fqfHn8zBzdEasWFk00idGeaEdi+xU8Vf2ixJb6xIuJobSUn9gvL8FfNysI4fAkILSWIK
-         QAMA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4fTlgrLfKf9BzU0vHjxtPzFKt/FtFQbjMkZcPWUc9rX6JEe/BhIUtWIKpGStPlreq40LtFLIyl/Wm2D5YhmRMs7wiFqa7y/BNFSWK
-X-Gm-Message-State: AOJu0YzDPo6N9obWKTmIqRc+9HDmOY2z/zZvPiJcsMA3GWmIZbLiPAxK
-	vWZkhG9sNEDVts+NVOK4YJNc9JFSX2oZ/4F6KRUT1jnRs+abjUxMlKlCXsO76rQ=
-X-Google-Smtp-Source: AGHT+IEa/VIxRkmieNYQk4VzRYdACSw5OtAZWDJEvPLtR8gg2MekPODBwYIt5gbwQDWgBopvLz4egg==
-X-Received: by 2002:a05:6808:138e:b0:3d2:29c2:9600 with SMTP id 5614622812f47-3d23e00b19fmr3371146b6e.23.1718220103587;
-        Wed, 12 Jun 2024 12:21:43 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d236676bfesm648795b6e.12.2024.06.12.12.21.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 12:21:43 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH 3/3] Documentation: iio: Document ad4695 driver
-Date: Wed, 12 Jun 2024 14:20:42 -0500
-Message-ID: <20240612-iio-adc-ad4695-v1-3-6a4ed251fc86@baylibre.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240612-iio-adc-ad4695-v1-0-6a4ed251fc86@baylibre.com>
-References: <20240612-iio-adc-ad4695-v1-0-6a4ed251fc86@baylibre.com>
+        bh=o9H3Nrhjw0EDFs2mHp/oL+kQ0y9WJBzcaGC/TcFVbrU=;
+        b=H3A4UYvRlxoljART4ch0VRrnsbSnTuape3wPhks1ckjMx37wO2Bh+3ft59db8hZnKq
+         07tKc/sePhte7H5T5+uY+o7B5y3amF+d1cI+2IRcKOH1VwszwAJE2yCxqlZcVMEefLvj
+         ZrKDX3EMr1D0oYJmtBxOmkzrCY1jXcgQ6jdTxo4vFWQ2vM52ONcWFIAAZD51gIBLEnKa
+         OtGAtjHCoGo9y8Gn2SImwElfvadUjX0xFB4Dti6HhkHbbIuAVnRDuDVJ3KmkfQPB7NR5
+         7lQkTv9KONJswJW5sLFVBrZO3GsdAphKgfqTJV3ihrxHzd8XwwpD5RwUOtuXi4Q7XWpe
+         /uoA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4AYIcEfaDDwQkkzj1jr7Q0oY+cnhUAb8va9cClJLn97ZnwjslraIYd/FmtjdehHKZsMd4md69X7AcIo5XB2b/Zj9H7Mz4N3dCAcpCTf25GiNCxOG4PMsJROma7GyJyplJvZLjMbbmIAzdppEQNSi9SIfriBkCWMX1q5s66MeQnBGTnFY8QlD6mYGzaRfc
+X-Gm-Message-State: AOJu0YzSPNYytpCdgBD9vBaCukNcICk2LSHfKbxSr8QOPfci+7m2NLZy
+	x//0vdbflnh2PAxdmPqq9llPzN9T2pqsWPZK3kwbB7aT54Q52rkCnQ6zpCzUYW0=
+X-Google-Smtp-Source: AGHT+IGHVG5RA9RqiVcSQKn7yJ7aIAH9zI2882i4i5DsyygRMNZU8QfyIwYyeJ97V1DzduaYYEGQZw==
+X-Received: by 2002:a25:c74f:0:b0:dff:129:ade2 with SMTP id 3f1490d57ef6-dff0129b374mr105752276.12.1718220127623;
+        Wed, 12 Jun 2024 12:22:07 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dff009bee58sm16809276.59.2024.06.12.12.22.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 12:22:06 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-62a0809c805so2789637b3.0;
+        Wed, 12 Jun 2024 12:22:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUmyibkF4LhYVjTyMAJ1XeDg4rRVomOo4bKMlZI5OHveoGVZ2etFVcqpqpADVEEDztIE3FZl3BpMY9GLkMAvJDQy1a6b+141+yZ21qkaSY72PAmayBSZ7E4TtxCrLKAnCkFIgLcqr8Rp0qZRaC/N43Z3XQG+v/z86ebFKg34dbg/CIoQMmc4SLU8PkLyk9D
+X-Received: by 2002:a81:4fd8:0:b0:615:e0e:d234 with SMTP id
+ 00721157ae682-62fbbde9490mr28515547b3.16.1718220126141; Wed, 12 Jun 2024
+ 12:22:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.12.4
-Content-Transfer-Encoding: 8bit
+References: <20240610213055.it.075-kees@kernel.org> <20240610213330.1310156-2-kees@kernel.org>
+ <CABVgOSmFL50_qYOBROkE9LZx__W6MLnHWahGnAVuLBDVO4k1zQ@mail.gmail.com> <202406120927.3C64ACD6@keescook>
+In-Reply-To: <202406120927.3C64ACD6@keescook>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Jun 2024 21:21:52 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUsjy86z3=s6ipFSQrbsycPaExNv8oxrcL_8FhzabMoTg@mail.gmail.com>
+Message-ID: <CAMuHMdUsjy86z3=s6ipFSQrbsycPaExNv8oxrcL_8FhzabMoTg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] usercopy: Convert test_user_copy to KUnit test
+To: Kees Cook <kees@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, David Gow <davidgow@google.com>, 
+	Vitor Massaru Iha <vitor@massaru.org>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-hardening@vger.kernel.org, linux-m68k@lists.linux-m68k.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Analog Devices Inc. AD4695 (and similar chips) are complex ADCs that
-will benefit from a detailed driver documentation.
+Hi Kees,
 
-This documents the current features supported by the driver.
+On Wed, Jun 12, 2024 at 6:51=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+> On Wed, Jun 12, 2024 at 05:13:39PM +0800, David Gow wrote:
+> > On Tue, 11 Jun 2024 at 05:33, Kees Cook <kees@kernel.org> wrote:
+> > > Convert the runtime tests of hardened usercopy to standard KUnit test=
+s.
+> > >
+> > > Co-developed-by: Vitor Massaru Iha <vitor@massaru.org>
+> > > Signed-off-by: Vitor Massaru Iha <vitor@massaru.org>
+> > > Link: https://lore.kernel.org/r/20200721174654.72132-1-vitor@massaru.=
+org
+> > > Tested-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> > > Signed-off-by: Kees Cook <kees@kernel.org>
+> > > ---
+> >
+> > This looks good, particularly with the x86 fix applied.
+> >
+> > It's still hanging on m68k -- I think at the 'illegal reversed
+> > copy_to_user passed' test -- but I'll admit to not having tried to
+> > debug it further.
+> >
+> > One other (set of) notes below about using KUNIT_EXPECT_MEMEQ_MSG(),
+> > otherwise (assuming the m68k stuff isn't actually a regression, which
+> > I haven't tested but I imagine is unlikely),
+>
+> I'm trying to debug a hang on m68k in the usercopy behavioral testing
+> routines. It's testing for the pathological case of having inverted
+> arguments to copy_to_user():
+>
+>         user_addr =3D kunit_vm_mmap(test, NULL, 0, priv->size,
+>                             PROT_READ | PROT_WRITE | PROT_EXEC,
+>                             MAP_ANONYMOUS | MAP_PRIVATE, 0);
+>         ...
+>         bad_usermem =3D (char *)user_addr;
+>         ...
+>         KUNIT_EXPECT_NE_MSG(test, copy_to_user((char __user *)kmem, bad_u=
+sermem,
+>                                                PAGE_SIZE), 0,
+>                 "illegal reversed copy_to_user passed");
+>
+> On other architectures, this immediate fails because the access_ok()
+> check rejects it. On m68k with CONFIG_ALTERNATE_USER_ADDRESS_SPACE,
+> access_ok() short-circuits to "true". I've tried reading
+> arch/m68k/include/asm/uaccess.h but I'm not sure what's happening under
+> CONFIG_CPU_HAS_ADDRESS_SPACES.
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- Documentation/iio/ad4695.rst | 145 +++++++++++++++++++++++++++++++++++++++++++
- Documentation/iio/index.rst  |   1 +
- MAINTAINERS                  |   1 +
- 3 files changed, 147 insertions(+)
+On m68k CPUs that support CPU_HAS_ADDRESS_SPACES (i.e. all traditional
+680x0 that can run real Linux), the CPU has separate address spaces
+for kernel and user addresses.  Accessing userspace addresses is done
+using the special "moves" instruction, so we can just use the MMU to
+catch invalid accesses.
 
-diff --git a/Documentation/iio/ad4695.rst b/Documentation/iio/ad4695.rst
-new file mode 100644
-index 000000000000..6e142561524e
---- /dev/null
-+++ b/Documentation/iio/ad4695.rst
-@@ -0,0 +1,145 @@
-+.. SPDX-License-Identifier: GPL-2.0-only
-+
-+=============
-+AD4695 driver
-+=============
-+
-+ADC driver for Analog Devices Inc. AD4695 and similar devices. The module name
-+is ``ad4695``.
-+
-+
-+Supported devices
-+=================
-+
-+The following chips are supported by this driver:
-+
-+* `AD4695 <https://www.analog.com/AD4695>`_
-+* `AD4696 <https://www.analog.com/AD4696>`_
-+* `AD4697 <https://www.analog.com/AD4697>`_
-+* `AD4698 <https://www.analog.com/AD4698>`_
-+
-+
-+Supported features
-+==================
-+
-+SPI wiring modes
-+----------------
-+
-+The driver currently supports the following SPI wiring configuration:
-+
-+4-wire mode
-+^^^^^^^^^^^
-+
-+In this mode, CNV and CS are tied together and there is a single SDO line.
-+
-+.. code-block::
-+
-+    +-------------+         +-------------+
-+    |          CS |<-+------| CS          |
-+    |         CNV |<-+      |             |
-+    |     ADC     |         |     HOST    |
-+    |             |         |             |
-+    |         SDI |<--------| SDO         |
-+    |         SDO |-------->| SDI         |
-+    |        SCLK |<--------| SCLK        |
-+    +-------------+         +-------------+
-+
-+To use this mode, in the device tree, omit the ``cnv-gpios`` and
-+``spi-rx-bus-width`` properties.
-+
-+Channel configuration
-+---------------------
-+
-+Since the chip supports multiple ways to configure each channel, this must be
-+described in the device tree based on what is actually wired up to the inputs.
-+
-+There are three typical configurations:
-+
-+Single-ended where a pin is used with the ``REFGND`` pin, pseudo-differential
-+where a pin is used with the ``COM`` pin and differential where two ``INx``
-+pins are used as a pair
-+
-+Single-ended input
-+^^^^^^^^^^^^^^^^^^
-+
-+Each ``INx`` pin can be used as a single-ended input in conjunction with the
-+``REFGND`` pin. The device tree will look like this:
-+
-+.. code-block::
-+
-+    channel@2 {
-+        reg = <2>;
-+    };
-+
-+This will appear on the IIO bus as the ``voltage2`` channel. The processed value
-+(*raw × scale*) will be the voltage between the ``INx`` relative to ``REFGND``.
-+(Offset is always 0 when pairing with ``REFGND``.)
-+
-+Pseudo-differential input
-+^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+Each ``INx`` pin can be used as a pseudo-differential input in conjunction with
-+the ``COM`` pin. The device tree will look like this:
-+
-+.. code-block::
-+
-+    com-supply = <&vref_div_2>;
-+
-+    channel@3 {
-+        reg = <3>;
-+        adi,pin-pairing = "com";
-+        bipolar;
-+    };
-+
-+This will appear on the IIO bus as the ``voltage3`` channel. The processed value
-+(*(raw + offset) × scale*) will be the voltage measured on ``INx`` relative to
-+``REFGND``. (The offset is determined by the ``com-supply`` voltage.)
-+
-+Differential input
-+^^^^^^^^^^^^^^^^^^
-+
-+An even-numbered ``INx`` pin and the following odd-numbered ``INx`` pin can be
-+used as a differential pair. The device tree for using ``IN0`` as the positive
-+input and ``IN1`` as the negative input will look like this:
-+
-+.. code-block::
-+
-+    channel@0 {
-+        reg = <0>;
-+        adi,pin-pairing = "next";
-+        bipolar;
-+    };
-+
-+This will appear on the IIO bus as the ``voltage0-voltage1`` channel. The
-+processed value (*raw × scale*) will be the voltage difference between the two
-+pins. (Offset is always 0 for differential channels.)
-+
-+VCC supply
-+----------
-+
-+The chip supports being powered by an external LDO via the ``VCC`` input or an
-+internal LDO via the ``LDO_IN`` input. The driver looks at the device tree to
-+determine which is being used. If ``ldo-supply`` is present, then the internal
-+LDO is used. If ``vcc-supply`` is present, then the external LDO is used and
-+the internal LDO is disabled.
-+
-+Reference voltage
-+-----------------
-+
-+The chip supports an external reference voltage via the ``REF`` input or an
-+internal buffered reference voltage via the ``REFIN`` input. The driver looks
-+at the device tree to determine which is being used. If ``ref-supply`` is
-+present, then the external reference voltage is used and the internal buffer is
-+disabled. If ``refin-supply`` is present, then the internal buffered reference
-+voltage is used.
-+
-+Unimplemented features
-+----------------------
-+
-+- Additional wiring modes
-+- Buffered reads
-+- Threshold events
-+- Oversampling
-+- Gain/offset calibration
-+- GPIO support
-+- CRC support
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 4c13bfa2865c..df69a76bf583 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -17,6 +17,7 @@ Industrial I/O Kernel Drivers
- .. toctree::
-    :maxdepth: 1
- 
-+   ad4695
-    ad7944
-    adis16475
-    adis16480
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 611b7929e650..edd1a4e8f538 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1198,6 +1198,7 @@ L:	linux-iio@vger.kernel.org
- S:	Supported
- W:	https://ez.analog.com/linux-software-drivers
- F:	Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-+F:	Documentation/iio/index.rst
- F:	drivers/iio/dac/ad3552r.c
- 
- ANALOG DEVICES INC AD4130 DRIVER
+> For now I've excluded that test for m68k, but I'm not sure what's
+> expected to happen here on m68k for this set of bad arguments. Can you
+> advise?
 
--- 
-2.45.2
+Perhaps the kernel address is actually a valid user address, or
+vice versa?
 
+Does the test work on systems that use 4G/4G for kernel/userspace
+instead of the usual 1G/3G split?
+
+/me runs the old test_user_copy.ko on ARAnyM
+Seems to take a while? Or it hangs, too?
+
+Related reading material
+https://lore.kernel.org/all/CAMuHMdUzHwm5_TL7TNAOF+uqheJnKgsqF+_vzqGRzB_3eu=
+fKug@mail.gmail.com/
+https://lore.kernel.org/all/CAMuHMdVQ93ihgcxUbjptTaHdPjxXLyVAsAr-m3tWBJV0kr=
+S2vw@mail.gmail.com/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
