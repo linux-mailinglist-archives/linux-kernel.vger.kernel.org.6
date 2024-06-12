@@ -1,120 +1,261 @@
-Return-Path: <linux-kernel+bounces-211406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B2B90513D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2368190513F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 653621C2134F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:21:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 145561C21548
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931B616F0E2;
-	Wed, 12 Jun 2024 11:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C13116F0E1;
+	Wed, 12 Jun 2024 11:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bO7vusRs"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SULeRaqN"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4996716DECC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C003716DECC
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718191311; cv=none; b=nJMCMnVAo219s5LzbBhfOZ21XTYlfpf3uw8Y89hQ42sfIMR97rlRPXELZ7IqeaGagQF7P+/NkDU4P04xSGZWbFPsUe2pdTYlM+IFdl/P8HHBPZ5zBa+SF8N4xhV095FHkpWW1gFxg5EzmQKl+Or/vL8NUJ5+emL5rsDACYHfRVQ=
+	t=1718191340; cv=none; b=DebbSTYnrRM9/Fs0TYCK86BudlcCYDOtItRQCzNk0uFQio9RN4lWHxAi6pJyYGMzQGRz7eN/wYzYGM0puEqJBCP0W7qGKHflDoryoH+bhTsAvj1/h9vm9S5FVSmO8p8AFwbstZ+pffPIJ1GpN43gzRfB3NnRr4LneVZ4NG+ZQyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718191311; c=relaxed/simple;
-	bh=uxlKCAm2txGIagWscbMXXdaokJMxFy7SF3oG6AgNQcY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eKRryARWpI+OYsdENnyttVQV7dPq2l93XYNZjsqK3pKF4GQWnoggTqJ2l2SJ+cJVSxYJFZx8rI4O6cEzL4vOD658Th58Ilc+Lzu+Gr8vKqVLGV+5/RQFF0zJ1mxPrqpDuzSkIj+R8VJVhfNmXmu2wChWkb/4hHa7HZ0tPP09z/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bO7vusRs; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4210aa012e5so21075605e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:21:49 -0700 (PDT)
+	s=arc-20240116; t=1718191340; c=relaxed/simple;
+	bh=S4ToOD7sLlIxL+6jhns7OyjKM8K4sMQHz0KiwTmb2Rk=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mlyjMrl+zHWwL7fmQ/+PITEiWwj5xUYSj5cDi+ww3thzKLB+JY4VfjKwjnqRBItNrvW1uki/lB6h3hXiMHWdCpRFLoa2Kdr52mEAZgmRs2hEHmKJs/MahWbHfN4ywgPlCc/ZCshYUOmG5kvGQUqOJrAyd9d4FWnFuK1Cu++83/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SULeRaqN; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-48d7a81a594so1010139137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:22:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718191308; x=1718796108; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gidLaYRgBr4ZiXlMA4QHhxP2ifbUc6V3Fe/pQzts44E=;
-        b=bO7vusRsFWcmOJrtLRXJ2Eh8fr3UXfikIwp6QQdYqTbOqCT9ahEDPi2sCX+EKTOe7x
-         w5hVFwYVWYA2et+jzdv124TymghwjeKdWDZRStHTf0QJrUFQ89kUGrdMVU/zz4lcqfap
-         CiF7l1vrPNDhn0AjHDtAKutGBMt6A5/ONl2FOSmHhEh0uuoDIDOwNXIBqpZfX2yrK0ZO
-         DZ/+FojvfzYygjAily7lM4CMjHmyoQkukN1Ymfy7pO1Bdc6YLjvX/UBTzEX/qHwk3cJK
-         vMNtSu0/+k/rQz292OucS0VHEYKt+X7UG057E9MsPptjsyBtLVcSh3ZxX+1WkI+1LnpB
-         SQqg==
+        d=linaro.org; s=google; t=1718191337; x=1718796137; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/IAp1HeQ73IM50UTkojUWwtLb+9FPd+0r53y+ZVFfs8=;
+        b=SULeRaqN7tmJGH3DNrTxUd6E4oCRjufUJlogeYU3ry5r2ptFcpFsEZ1EjRMkADEVn9
+         t7lmy5x6WJAilYppZmaIjc8VnIZfWnKPiPStBM1qvoTxFXkVFykS7KQ18lCfss6m3fg4
+         hUSBAigj1LeT84BhXWjP+LJWouvVmC9oYSWEVZNmFWeNxfp6mvEzGd9sGCFdSpvDOhuz
+         NHKg7Kcn/bGhTns8qLo/cHf4/WdJkQjLIRTtaO3yeNxGORVFd+NmzEej6kILU/z7zIPX
+         y4VN4ik+AoYn/nlK8NS9pbTtZwuOcTCHVnntp41IH6kk4Z6BJ9JG5gpbmnu9Cuwnm+eD
+         LA3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718191308; x=1718796108;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gidLaYRgBr4ZiXlMA4QHhxP2ifbUc6V3Fe/pQzts44E=;
-        b=q5c2DwZTMIyxsYM5qiqsefoV0A0AqzbIO0jxdtievb72fjbGpchzOzSRDdicv+4IGS
-         4G8Ey3d8/6vZXrSu5cLfEz7XqeM4R/dai4L0SssOPxFcA0tCN1zqAczJp/o0Gay63DDf
-         Sb3gAtSpeaL62FgE60sC6jmllOZo8pvjTmOJ65M8ERVNpxRD4Mii0CyHHTUapuT1MpLY
-         H6CaACYRv9fDMH7Vp1wojRT0cyxsUaKEpgTpxnrC3HmalZCQ9fpEjq6jaOrevEk6nHXy
-         z8ydM1CeTuzl+L1iWHpt57vOwoDPUaQknlS7S1n/fTwY8A8LqhueC7TUXXjn+o4xapJX
-         zCvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUm7yzibhzUqkC2Th0w8qVq7Pe967QBSkKhmhPtjtUd5XLWqM5XdzK6cWjG2k7hfCj3qOhjCHuKcnibzeWWL9dHT/gUTKcSM1cdXfyC
-X-Gm-Message-State: AOJu0Yx8zP3d6FXCzo/YJHCZf2RblcBGtc6v93YPCWgD5C0iSQxD5YCE
-	gf8RAVpruhakVpfuMKbizXnGkQz63aYTxhUeRqIiIjWdWYev1hOGeGQCUhpRaAw=
-X-Google-Smtp-Source: AGHT+IHcU0QhXukZEQ9aIF8NXpANofNp/2zJEo6ILnTzlDzqhmpsbba99qMIc3kT8Fwfq/Z5s+/NIw==
-X-Received: by 2002:a05:600c:1793:b0:421:79e2:c957 with SMTP id 5b1f17b1804b1-422863ae433mr12657625e9.19.1718191308233;
-        Wed, 12 Jun 2024 04:21:48 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:8d3:3800:a172:4e8b:453e:2f03])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe92c6sm23337985e9.18.2024.06.12.04.21.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 04:21:45 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v9 0/5] PCI/pwrctl: initial implementation and first user
-Date: Wed, 12 Jun 2024 13:21:44 +0200
-Message-ID: <171819130040.25408.1481825727128724197.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240612082019.19161-1-brgl@bgdev.pl>
-References: <20240612082019.19161-1-brgl@bgdev.pl>
+        d=1e100.net; s=20230601; t=1718191337; x=1718796137;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/IAp1HeQ73IM50UTkojUWwtLb+9FPd+0r53y+ZVFfs8=;
+        b=ebnox0ZT65iIyXaG2OX531M7Bwyzu6WrlxRhGZ2y+yVn8js4aRoFz0gGv1K6y3N3dv
+         jFbVH20LhAPlWIkkBKusyMIcH0lea1a6ZHu+BoZZc9BwSynFWHpLHeodIC8zRYx/FunI
+         sQD0y4obj/4K1v5/tz8RASsPYvmk3QFaVH2DxpB3UCY3hRF3nj8r5R915Yw4CqUAYXAK
+         dgM940FmQ670YDYqX6ugE0ya03TDXUJ4/ewUikzYPNhXPT1XrsR5jcNAkcssbCDWu3H2
+         hJQZghuIrbIRPELBNR1Dolg4wT7hs0sdaPT7p+Vx4Qk5TvWaUdP/EPkDkdmTEWYh7cCC
+         poaw==
+X-Gm-Message-State: AOJu0YwXAhy/V62Uy5l0cV7p1xAqmzjBo4EqHWFUvAy7irzKcu9zI7jl
+	b6Cx5E5Bbq+Q/kXZYfAr75JUbuSGuz6BUDdPAE1nmD2FCCsgDIT6BpW8wKQQ1x/7nzUp90s5/rQ
+	e3PQwVwO81wKXoYjTAAlUBLQOWikvMo0mRUsiyykUiv7p5+wyuJ0=
+X-Google-Smtp-Source: AGHT+IFuXyhrRXVZeSDEz6144SsmDCO/JhJUFVRlEEpkHGrZTOPtzH+GwmA4geqUJLZxUhHP6q0/vu5O0222H9ECWBI=
+X-Received: by 2002:a67:f715:0:b0:48c:377b:11d with SMTP id
+ ada2fe7eead31-48d91e41468mr1887485137.22.1718191337202; Wed, 12 Jun 2024
+ 04:22:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 12 Jun 2024 16:52:05 +0530
+Message-ID: <CA+G9fYsSVJQZH=nM=1cjTc94PgSnMF9y65BnOv6XSoCG_b6wmw@mail.gmail.com>
+Subject: LTP tracing crashed on arm64 rk3399-rock-pi-4 - pc : ftrace_ops_test
+To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The following kernel oops and kernel panic noticed while running LTP tracing
+test cases on arm64 rk3399-rock-pi-4 device running Linux next-20240612 tag.
 
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-On Wed, 12 Jun 2024 10:20:13 +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> I'm sending the PCI part separately to keep the history on the list.
-> Bjorn acked all of them so I'll pick them up later today into the pwrseq
-> tree.
-> 
-> Changelog:
-> 
-> [...]
+Boot and test log:
+--------------
+[    0.000000] Linux version 6.10.0-rc3-next-20240612 (tuxmake@tuxmake)
+ (Debian clang version 18.1.6
+ (++20240518023133+1118c2e05e67-1~exp1~20240518143227.130),
+ Debian LLD 18.1.6) #1 SMP PREEMPT @1718178628
+...
+trap: SIGUSR1: bad trap
+ftrace-stress-test 1 TINFO: Start pid16=595
+/opt/ltp/testcases/bin/ftrace_stress/ftrace_tracing_cpumask.sh
+ftrace-stress-test 1 TINFO: Start pid17=598
+/opt/ltp/testcases/bin/ftrace_stress/ftrace_set_ftrace_filter.sh
+[   55.770077] Scheduler tracepoints stat_sleep, stat_iowait,
+stat_blocked and stat_runtime require the kernel parameter
+schedstats=enable or kernel.sched_schedstats=1
+[   55.790580] Scheduler tracepoints stat_sleep, stat_iowait,
+stat_blocked and stat_runtime require the kernel parameter
+schedstats=enable or kernel.sched_schedstats=1
+trap: SIGTERM: bad trap
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+ftrace_buffer_size_kb.sh: 33: echo: echo: I/O error
+[  100.599846] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000008
+[  100.599846] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000008
+[  100.599846] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000008
+[  100.599846] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000008
+[  100.599856] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000008
+[  100.599866] Mem abort info:
+[  100.599867] Mem abort info:
+[  100.599867] Mem abort info:
+[  100.599874]   ESR = 0x0000000096000004
+[  100.599875]   ESR = 0x0000000096000004
+[  100.599875]   ESR = 0x0000000096000004
+[  100.599883]   EC = 0x25: DABT (current EL), IL = 32 bits
+[  100.599885]   EC = 0x25: DABT (current EL), IL = 32 bits
+[  100.599885]   EC = 0x25: DABT (current EL), IL = 32 bits
+[  100.599892]   SET = 0, FnV = 0
+[  100.599896]   SET = 0, FnV = 0
+[  100.599896]   SET = 0, FnV = 0
+[  100.599899]   EA = 0, S1PTW = 0
+[  100.599906]   EA = 0, S1PTW = 0
+[  100.599906]   EA = 0, S1PTW = 0
+[  100.599906]   FSC = 0x04: level 0 translation fault
+[  100.599914] Data abort info:
+[  100.599915]   FSC = 0x04: level 0 translation fault
+[  100.599915]   FSC = 0x04: level 0 translation fault
+[  100.599920]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[  100.599925] Data abort info:
+[  100.599926] Data abort info:
+[  100.599928]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[  100.599935]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[  100.599935]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[  100.599936]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[  100.599944]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[  100.599946]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[  100.599945] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000014fc7000
+[  100.599955]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[  100.599955]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[  100.599956] [0000000000000008] pgd=0000000000000000
+[  100.599964] , p4d=0000000000000000
+[  100.599966] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000006ce0000
+[  100.599966] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000079ec000
+[  100.599975]
+[  100.599976] [0000000000000008] pgd=0000000000000000
+[  100.599977] [0000000000000008] pgd=0000000000000000
+[  100.599985] , p4d=0000000000000000
+[  100.599986] , p4d=0000000000000000
+[  100.599985] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+[  100.599992]
+[  100.599994]
+[  100.599997] Modules linked in: brcmfmac snd_soc_hdmi_codec
+dw_hdmi_cec dw_hdmi_i2s_audio brcmutil crct10dif_ce rockchipdrm
+hci_uart snd_soc_spdif_tx hantro_vpu panfrost snd_soc_simple_card
+snd_soc_audio_graph_card btqca dw_mipi_dsi gpu_sched
+snd_soc_simple_card_utils btbcm v4l2_h264 analogix_dp cfg80211
+drm_shmem_helper dw_hdmi v4l2_vp9 phy_rockchip_pcie bluetooth
+v4l2_mem2mem cec snd_soc_rockchip_i2s videobuf2_v4l2
+drm_display_helper videobuf2_dma_contig drm_dma_helper
+videobuf2_memops rtc_rk808 rfkill snd_soc_es8316 videobuf2_common
+drm_kms_helper rockchip_saradc industrialio_triggered_buffer
+pcie_rockchip_host rockchip_thermal kfifo_buf coresight_cpu_debug drm
+fuse backlight dm_mod ip_tables x_tables
+[  100.600212] CPU: 3 PID: 0 Comm: swapper/3 Not tainted
+6.10.0-rc3-next-20240612 #1
+[  100.600222] Hardware name: Radxa ROCK Pi 4B (DT)
+[  100.600229] pstate: 800003c5 (Nzcv DAIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[  100.600239] pc : ftrace_ops_test+0x34/0x138
+[  100.600258] lr : function_graph_enter+0x144/0x208
+[  100.600271] sp : ffff800082fd3730
+[  100.600276] x29: ffff800082fd3770 x28: 0000000000000038 x27: ffff80008271a790
+[  100.600293] x26: ffff800082d24b08 x25: ffffffffffffffff x24: ffff800082d24000
+[  100.600310] x23: 0000000000000001 x22: 0000000000000001 x21: ffff000000cbdf00
+[  100.600326] x20: ffff80008271a3f0 x19: ffff800080163078 x18: 000000000000123d
+[  100.600343] x17: 0000000000000000 x16: 00500072b5503510 x15: 0000000000000000
+[  100.600359] x14: 0000000000000009 x13: 0000000000000037 x12: 0000000000000006
+[  100.600375] x11: 00000000fffffffe x10: ffff800082fd3740 x9 : ffff800082fd3738
+[  100.600391] x8 : 0000000000000000 x7 : 00000072b5503510 x6 : 0000000000300000
+[  100.600407] x5 : 0000000000000000 x4 : ffff8000801ffc20 x3 : ffff800082fd3900
+[  100.600423] x2 : 0000000000000000 x1 : ffff800080163078 x0 : ffff80008271a400
+[  100.600440] Call trace:
+[  100.600445]  ftrace_ops_test+0x34/0x138
+[  100.600455]  function_graph_enter+0x144/0x208
+[  100.600465]  ftrace_graph_func+0x34/0x58
+[  100.600477]  arch_ftrace_ops_list_func+0xd0/0x180
+[  100.600489]  ftrace_caller+0x6c/0x9c
+[  100.600498]  __traceiter_rcu_dyntick+0xc/0x88
+[  100.600511]  trace_rcu_dyntick+0x7c/0xa0
+[  100.600523]  ct_nmi_enter+0x90/0xc0
+[  100.600537]  ct_irq_enter+0x10/0x20
+[  100.600548]  enter_from_kernel_mode+0x30/0x58
+[  100.600560]  el1_abort+0x24/0x60
+[  100.600570]  el1h_64_sync_handler+0x80/0xd0
+[  100.600580]  el1h_64_sync+0x64/0x68
+[  100.600590]  ftrace_ops_test+0x34/0x138
+[  100.600600]  function_graph_enter+0x144/0x208
+[  100.600610]  ftrace_graph_func+0x34/0x58
+[  100.600620]  arch_ftrace_ops_list_func+0xd0/0x180
+[  100.600633] Mem abort info:
+[  100.600630]  ftrace_caller+0x6c/0x9c
+[  100.600639]   ESR = 0x0000000096000004
+[  100.600641]  arch_timer_set_next_event_phys+0xc/0x50
+[  100.600656]  clockevents_program_event+0xa0/0x1e0
+[  100.600669]  tick_program_event+0x5c/0xb0
+[  100.600679]  hrtimer_start_range_ns+0x15c/0x350
+[  100.600691]  tick_nohz_restart_sched_tick+0x90/0xb0
+[  100.600702]  tick_nohz_idle_exit+0xf0/0x168
+[  100.600712]  do_idle+0x238/0x290
+[  100.600721]  cpu_startup_entry+0x40/0x50
+[  100.600730]  secondary_start_kernel+0x13c/0x168
+[  100.600743]  __secondary_switched+0xb8/0xc0
+[  100.600761] Code: f9402c08 a902ffff a901ffff a900ffff (f9400508)
+[  100.600769] ---[ end trace 0000000000000000 ]---
+[  100.600782] Kernel panic - not syncing: Attempted to kill the idle task!
+[  100.600789] SMP: stopping secondary CPUs
+[  101.767463] SMP: failed to stop secondary CPUs 0-1,3-5
+[  101.767476] Kernel Offset: disabled
+[  101.767481] CPU features: 0x04,00001041,60100000,4200421b
+[  101.767489] Memory Limit: none
+[  101.814070] ---[ end Kernel panic - not syncing: Attempted to kill
+the idle task! ]---
 
-Applied, thanks!
+metadata:
+-------
+  git_describe: next-20240612
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git_sha: 03d44168cbd7fc57d5de56a3730427db758fc7f6
+  kernel-config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2hloyVmgiND3p4zFZFj3KksAgm8/config
+  build-url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2hloyVmgiND3p4zFZFj3KksAgm8/
+  kernel_version: 6.10.0-rc3
+  toolchain: clang-18
 
-[1/5] PCI: Hold the rescan mutex when scanning for the first time
-      commit: 5799eba8eeabe79a476016f22a7aea57467b7638
-[2/5] PCI/pwrctl: Reuse the OF node for power controlled devices
-      commit: 62c953f0f4fb0b5f67b0ad3096ab38f5c5712d75
-[3/5] PCI/pwrctl: Create platform devices for child OF nodes of the port node
-      commit: 8fb18619d9102e8f4f6184cdac482422d9293b48
-[4/5] PCI/pwrctl: Add PCI power control core code
-      commit: 4565d2652a37e438e4cd729e2a8dfeffe34c958c
-[5/5] PCI/pwrctl: Add a PCI power control driver for power sequenced devices
-      commit: 6140d185a43daa298d43453929560388d6d49b6e
+Links:
+----
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240612/testrun/24277665/suite/log-parser-test/tests/
+ - https://lkft.validation.linaro.org/scheduler/job/7658998#L1508
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+ --
+Linaro LKFT
+https://lkft.linaro.org
 
