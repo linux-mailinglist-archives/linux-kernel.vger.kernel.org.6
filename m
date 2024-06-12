@@ -1,188 +1,153 @@
-Return-Path: <linux-kernel+bounces-211727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DB8905607
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01FEE905606
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1218C1C20A1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:59:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E03C51C215A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B7417F518;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DDA17F510;
 	Wed, 12 Jun 2024 14:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GPp7RNFy"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="AZS2wXkk"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1802B17E908;
-	Wed, 12 Jun 2024 14:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A4117A931;
+	Wed, 12 Jun 2024 14:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718204373; cv=none; b=niP0VtLIeN6n/Xg8JJ3Czfz+KBHNhAjNzW5JPyAw69YbIt2txzalaMY4I7JHCdk+9RcDr7rSRXEDIxsZvdBrD+ZltyX410keAQeG777fUzjPgbqah+6qLfsJmkD5OWn5HHJVdu9e2Y1TN3mGtFHQNXlsY1JUCDpDpFpFffkPNzI=
+	t=1718204373; cv=none; b=ntbQkI8s+m4PDMae7b/omRaoFx2/kMEz1mm4zxa3oPoN2IG474dIlgnXZMCcHvG83naEI0Icxgx7dcZDN6IlUdpPXY/YJ4Jx/kxOtKGRsp1rw4dgWK65C2K2MHq9cbXJ+B1aheJB8REHlbzVjtf+0PIG8bU7O+8t/yV8Zsh7csg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718204373; c=relaxed/simple;
-	bh=I/RhYDzf/30awGk8qX49GxRawz1i67PHYIeoDU9q/pA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WZvkG+VNLMbrE3dgHOeAw1dpxyVNE0INH/sE0pkjKsQGCdQ0WUVAX9/UdDBB2PJw6v1w9iKtxu0G6iQ4UddMd/I/lQGGtuluKbXcpc9qPw4kpE6SPX5Oz3yDNpLJU4ZXIwLUAqqzsL8JWgteogY/40wTF2nxbqEKEy1ppnSeYC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GPp7RNFy; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-797fb0b4832so23031185a.0;
-        Wed, 12 Jun 2024 07:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718204371; x=1718809171; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=r7pnIh8CCgoUZgqnSf6nIhLg5VDGVcPLcOm4WGfQJrQ=;
-        b=GPp7RNFyEbd8m7R5ORIO795gPgpicOY6JIdsIsI8NTqrNlqCLdBsfhNigoUc9H7tUs
-         gWCcL/fxng21y+kd9LDeihea+UhyWDjp+SuKaShIxnGVMh9nlLRoBiAEoKHeYizmwq5V
-         UqdOw7o2+fdGcuJoj4+xX4NLfaVbJOsS9nzYQthbxSHH+WcaEvgrQkH1TdyxOyc2zRcl
-         wDcalQ0CqARJVU9a+cKkN3ObNzQ0+bShzda9upU+0ESSgSX1kk6nPNVnASVPKXZFzqc/
-         04g0u+EUF2PE5FXL02Suf68a37ss6tIZes6T0/sjJK/0NNrOuz0OZnMcqdlNvZNSeMHG
-         26wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718204371; x=1718809171;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r7pnIh8CCgoUZgqnSf6nIhLg5VDGVcPLcOm4WGfQJrQ=;
-        b=rkwhDnZKiez6pvamnu2/a+r/ylw17RHB3A4fBrG2kM2+BJuOuOhCSfQ9BVVIKNDzhK
-         Vcjm4LcfNv2znahtylsHuN9dL5pqXML0AFQxrotJMIBV1zFozcBlBAjoNb9hQA2NglDd
-         KXhffHMnTrDd37U+hyJg7mkYMssUnqlh/exX2XQHC+MTwozuaCRSFdNDLy/Fuu2NTo0f
-         CxT1NmtwrPj9UtVUEYmiGh+9S3vOi9VEO9eIBgkgOHVOzwHAGyP59VE90modZua8r9re
-         ILC5AWIyoJs64ukiTZWYBG5ZssUPnJ0YXC+feBxtVD/mUL/aXg+RVlq8td7OEQIYa5y+
-         Td6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVdWTue07FjcJYZQeRZvCqGoZraxALoTvdworm9ioErxOJjKxlfA+3CV3UX4f5v4Dgod14z7vHYGfAutGCtPKzJJGjS+N9NBJbjAGEa5Db/JaJbJaCM+j5yhX6W275pbHbR682Q/e5E4qkhvVdRrY79DhepbfV99gKHLrIAZbKQYQif9sVw
-X-Gm-Message-State: AOJu0YwqKd3g6FoXOGXeUjEr8HDCRHWzd6wmWSR0Z5+xmIyAHFaCOInu
-	NQxZ8laUDUpr/Tu48mN181zmG/s59WmkiaOiPUJNvJYsmI8gatGk
-X-Google-Smtp-Source: AGHT+IEzBD02R0RYQC2Qs1ckK+wDy9Iol4jNBX/wfyFXYm5GbCm+JL+8uf/UJjk2wOPVhPpisc5hjA==
-X-Received: by 2002:a05:620a:258a:b0:795:5a93:5b86 with SMTP id af79cd13be357-797f600740bmr217734585a.15.1718204370889;
-        Wed, 12 Jun 2024 07:59:30 -0700 (PDT)
-Received: from sheun-Legion-5-15IAH7H.phub.net.cable.rogers.com ([2607:fea8:bad7:5400:f2b7:e8f6:98dd:a423])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7955ad3b9b5sm366409385a.85.2024.06.12.07.59.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 07:59:30 -0700 (PDT)
-From: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org
-Cc: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
-	skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: sound: Convert max98088 to dtschema
-Date: Wed, 12 Jun 2024 10:59:01 -0400
-Message-ID: <20240612145903.497758-1-abdulrasaqolawani@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	bh=hZe66tmBruqItE6Qo0fdsbLpkz7kntMz0MEsPGhcTs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQVjtECgY4O/3EgKPNcopOhhfu7qy12eCvL62DyqiStBYHNBb+wZI9a0NaW5FpP8LM8emeyiYIqzxewzlw4lO95Mk3BO0O8LP05hJ9zWV/YkU6YIYlTVa1/XSJMOdsTqIpXgz1RQ16CLgg5e40DVvEHB9fkDxRfmt9E+GS4efU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=AZS2wXkk; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=KJPyWglk6TTgeC4SYtEN5iGBVrUcdT9kbqfPN/0Fs6s=; b=AZS2wXkk7HtR1yaV5seNb7ikdk
+	y5I08xmnO15BmJnALxV+nd7MNFmLAPJAY/kVDs3plt9aQNCxmj9wbKBPJ8UH187zpeoepQYPA7DVc
+	G4kG8rqaOjNiQ+BoOmfzUirUfKfJxI1QFQ0MhMmRN4y7wFmQyuYaWRWmZ05A+r0rTkEI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sHPRR-00HTtj-VE; Wed, 12 Jun 2024 16:59:13 +0200
+Date: Wed, 12 Jun 2024 16:59:13 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yojana Mallik <y-mallik@ti.com>
+Cc: schnelle@linux.ibm.com, wsa+renesas@sang-engineering.com,
+	diogo.ivo@siemens.com, rdunlap@infradead.org, horms@kernel.org,
+	vigneshr@ti.com, rogerq@ti.com, danishanwar@ti.com,
+	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+	davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, srk@ti.com, rogerq@kernel.org,
+	Siddharth Vadapalli <s-vadapalli@ti.com>
+Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
+ driver as network device
+Message-ID: <8b4dc94a-0d59-499f-8f28-d503e91f2b27@lunn.ch>
+References: <20240531064006.1223417-1-y-mallik@ti.com>
+ <20240531064006.1223417-3-y-mallik@ti.com>
+ <4416ada7-399b-4ea0-88b0-32ca432d777b@lunn.ch>
+ <2d65aa06-cadd-4462-b8b9-50c9127e6a30@ti.com>
+ <f14a554c-555f-4830-8be5-13988ddbf0ba@lunn.ch>
+ <b07cfdfe-dce4-484b-b8a8-9d0e49985c60@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b07cfdfe-dce4-484b-b8a8-9d0e49985c60@ti.com>
 
-Convert the max98088 audio codec txt bindings to DT schema.
+> The shared memory address space in AM64x board is 2G and u32 data type for
+> address works to use this address space. In order to make the driver generic,to
+> work with systems that have more than 4G address space, we can change the base
+> addr data type to u64 in the virtual driver code and the corresponding
+> necessary changes have to be made in the firmware.
 
-Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
----
-Validated with dtschema and tested against samsung/exynos5800-peach-pi.dts.
+You probably need to think about this concept in a more generic
+way. You have a block of memory which is physically shared between two
+CPUs. Does each have its own MMU involved in accesses this memory? Why
+would each see the memory at the same physical address? Why does one
+CPU actually know anything about the memory layout of another CPU, and
+can tell it how to use its own memory? Do not think about your AM64x
+board when answering these questions. Think about an abstract system,
+two CPUs with a block of shared memory. Maybe it is even a CPU and a
+GPU with shared memory, etc. 
 
- .../bindings/sound/maxim,max98088.txt         | 23 ---------
- .../bindings/sound/maxim,max98088.yaml        | 47 +++++++++++++++++++
- 2 files changed, 47 insertions(+), 23 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/maxim,max98088.txt
- create mode 100644 Documentation/devicetree/bindings/sound/maxim,max98088.yaml
+> The shared memory layout is modeled as circular buffer.
+> /*      Shared Memory Layout
+>  *
+>  *	---------------------------	*****************
+>  *	|        MAGIC_NUM        |	 icve_shm_head
+>  *	|          HEAD           |
+>  *	---------------------------	*****************
+>  *	|        MAGIC_NUM        |
+>  *	|        PKT_1_LEN        |
+>  *	|          PKT_1          |
+>  *	---------------------------
+>  *	|        MAGIC_NUM        |
+>  *	|        PKT_2_LEN        |	 icve_shm_buf
+>  *	|          PKT_2          |
+>  *	---------------------------
+>  *	|           .             |
+>  *	|           .             |
+>  *	---------------------------
+>  *	|        MAGIC_NUM        |
+>  *	|        PKT_N_LEN        |
+>  *	|          PKT_N          |
+>  *	---------------------------	****************
+>  *	|        MAGIC_NUM        |      icve_shm_tail
+>  *	|          TAIL           |
+>  *	---------------------------	****************
+>  */
+> 
+> Linux retrieves the following info provided in response by R5 core:
+> 
+> Tx buffer head address which is stored in port->tx_buffer->head
+> 
+> Tx buffer buffer's base address which is stored in port->tx_buffer->buf->base_addr
+> 
+> Tx buffer tail address which is stored in port->tx_buffer->tail
+> 
+> The number of packets that can be put into Tx buffer which is stored in
+> port->icve_tx_max_buffers
+> 
+> Rx buffer head address which is stored in port->rx_buffer->head
+> 
+> Rx buffer buffer's base address which is stored in port->rx_buffer->buf->base_addr
+> 
+> Rx buffer tail address which is stored in port->rx_buffer->tail
+> 
+> The number of packets that are put into Rx buffer which is stored in
+> port->icve_rx_max_buffers
 
-diff --git a/Documentation/devicetree/bindings/sound/maxim,max98088.txt b/Documentation/devicetree/bindings/sound/maxim,max98088.txt
-deleted file mode 100644
-index da764d913319..000000000000
---- a/Documentation/devicetree/bindings/sound/maxim,max98088.txt
-+++ /dev/null
-@@ -1,23 +0,0 @@
--MAX98088 audio CODEC
--
--This device supports I2C only.
--
--Required properties:
--
--- compatible: "maxim,max98088" or "maxim,max98089".
--- reg: The I2C address of the device.
--
--Optional properties:
--
--- clocks: the clock provider of MCLK, see ../clock/clock-bindings.txt section
--  "consumer" for more information.
--- clock-names: must be set to "mclk"
--
--Example:
--
--max98089: codec@10 {
--	compatible = "maxim,max98089";
--	reg = <0x10>;
--	clocks = <&clks IMX6QDL_CLK_CKO2>;
--	clock-names = "mclk";
--};
-diff --git a/Documentation/devicetree/bindings/sound/maxim,max98088.yaml b/Documentation/devicetree/bindings/sound/maxim,max98088.yaml
-new file mode 100644
-index 000000000000..8800075f7f97
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/maxim,max98088.yaml
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/maxim,max98088.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MAX98088 audio CODEC
-+
-+maintainers:
-+  - Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - maxim,max98088
-+      - maxim,max98091
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: master clock
-+
-+  clock-names:
-+    items:
-+      - const: mclk
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        audio-codec@10 {
-+            compatible = "maxim,max98089";
-+            reg = <0x10>;
-+            clocks = <&clks 0>;
-+            clock-names = "mclk";
-+        };
-+    };
--- 
-2.43.0
+I think most of these should not be pointers, but offsets from the
+base of the shared memory. It then does not matter if they are mapped
+at different physical addresses on each CPU.
+
+> Linux trusts these addresses sent by the R5 core to send or receive ethernet
+> packets. By this way both the CPUs map to the same physical address.
+
+I'm not sure Linux should trust the R5. For a generic implementation,
+the trust should be held to a minimum. There needs to be an agreement
+about how the shared memory is partitioned, but each end needs to
+verify that the memory is in fact valid, that none of the data
+structures point outside of the shared memory etc. Otherwise one
+system can cause memory corruption on the other, and that sort of bug
+is going to be very hard to debug.
+
+	Andrew
 
 
