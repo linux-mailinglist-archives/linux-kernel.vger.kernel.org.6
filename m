@@ -1,129 +1,116 @@
-Return-Path: <linux-kernel+bounces-211598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE70290542E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:52:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A66905437
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E7B283978
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:52:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D99B61F2556F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD50E17D355;
-	Wed, 12 Jun 2024 13:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8AC17E464;
+	Wed, 12 Jun 2024 13:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="IwKO4hxI"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XItuXSJ9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B133617C7D5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1320D17D8BC;
+	Wed, 12 Jun 2024 13:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718200344; cv=none; b=rTMo9Vs8OTIRynTeOTGnIQExKxGV31WN7ZsfJvdH9biHT2CFsHhd6zacmZg4DTPMzxp7ZaOVWvN8SCpkV8UUducfjS8fWUkd+TOgGVZIzW3fXpcotU9nJt8EVypuPer/WfHH0PxrZJDOXcfUXk9JVJHncTvO1uCvHxoU4n7Xp9c=
+	t=1718200356; cv=none; b=UJg6vV7F6dIQeTOCBIuVCVCrFV+fvF9tWG8G/pKgza4g96brJa1Wisw6Lj7vpnzidqWHRBSWoxZmHixGx4PLfV7m/TGNe7/q9macB6++SHQLgD5fC1RFPoeOxdTTTB7nuh3HIJpKJdZj0WrZ2c79IV+pK8Zkgd9SpKQx6gUk+8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718200344; c=relaxed/simple;
-	bh=Oo7eKQ/vuiKK57nzWHRwBZAQcLEcZwfz+apajKIxjpc=;
+	s=arc-20240116; t=1718200356; c=relaxed/simple;
+	bh=v5+9aEh/+pFUL2JW5D8sLUBK0VBMLPjRr38po5B++UY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LfiIiNIG5YjRC7HtowU2to7NthsIVV6Yd4cbmWZoiMEmNWYzSfF28mgHcT1BoYRaQRFWJyEm/8/m9/UbUlfFAED9CDXpvhshFDqUL3x2n85pZuSHiDGSXgCN3X7+/zX8xAnnWuaypr2VkRUlAZfx9Zf+8eHr3u727URurs+oqyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=IwKO4hxI; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dfef5980a69so447227276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 06:52:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1718200342; x=1718805142; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n4yFXPH48K7YremfXbvI5F9w5geLcApF+zrC9idLOg0=;
-        b=IwKO4hxIzxgsEBkBNhUlUTztoGSaqBvsEw0ONBjyssFC2uDz/Y2052AUVgiSWt4Zwt
-         qwcJzFYSiS4AjdDvZOEVaIyDw5TJvb8qpwo7nuL59l4ZOG7jDeIiiqLtgcoSRou7+Hrr
-         y0UsNss+aqsogQYGEE4fFmrSEufiw+CU7zwSaqEuwfw5bJXVDCmCM0w2fKAdMs69REzM
-         doEXs2Ev57lioYfQKXVlfRic94nxvxlX/9DeU+nGBY86iYS2n9c/wh1NR3E0wsR5XBD4
-         j+cRt5Y8qcXEcXsCXUcWCLPK6DFmSdAs63ifn7Szm5m9W85pgzqnXzqlZfvMMTeozNWL
-         txyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718200342; x=1718805142;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n4yFXPH48K7YremfXbvI5F9w5geLcApF+zrC9idLOg0=;
-        b=C15muNoYd3CALL8zx7DDeSyjFjb4U6Z52QA8IySF9PwgQnlnudkEo57752oZRz5t5W
-         ykfwAzwQFCKdPomDo7charV49LrOrzmzLY5rkTuCGaWWeoprdeVIo9QFHhQ/is8JsJf+
-         +uVR3GLjvJQpT+zk7hP9TRUzC5RjDMuNnoXCxqniXbxp0h4Ij1BXRoiMffNwJSxYzOwL
-         OhuZB4dJXLpk1vrrA8mNyU7QMn46tsQpoK2xyjcDoaHvDNjVtt/0m4J3VAwSu9KQxrVe
-         UyFvqUOrex8XOwsn350ana/x5HleLuo00eyX1FNVaT9E1H2Sl2tQrikpC/rJe2YrdSVG
-         YWAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpkGtnNFr1RbzUDe+KMPFubE0enOVvT0kazq761o/nVMWH/TzcYlpiliYMsyhFurRRjG2iTmCEDPE7kmVRrCwxnr3H69Q4elyc0P2M
-X-Gm-Message-State: AOJu0Ywcs0TUYgjAU7om+EhgEkWGixdY/qsDh3IVGFzq6pvqlk1i8ZHl
-	aFuu5qlMGE1s9XJHmFdjQqwFwkUlJV8YG3QNMwvn1ZMK9JT8+LyazrwNoH9Rb0tPKLqRaHAuQUX
-	0apI=
-X-Google-Smtp-Source: AGHT+IG5MsAGFlJNLCZBYHd/CyREyJszvbTdf4kNLXCsh8V0bZu+GJ7j2/lX4r8ZXtpS+8b1yVkNJQ==
-X-Received: by 2002:a25:ac14:0:b0:dfe:388e:2987 with SMTP id 3f1490d57ef6-dfe694f0e9amr1659594276.64.1718200341645;
-        Wed, 12 Jun 2024 06:52:21 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.89])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b08dafd095sm16499226d6.130.2024.06.12.06.52.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 06:52:20 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sHOOh-0091GZ-F3;
-	Wed, 12 Jun 2024 10:52:19 -0300
-Date: Wed, 12 Jun 2024 10:52:19 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 05/10] iommufd: Add fault and response message
- definitions
-Message-ID: <20240612135219.GZ791043@ziepe.ca>
-References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
- <20240527040517.38561-6-baolu.lu@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T84A6Kl61Hy89kL9gQ6lybRFamh6vq1+oc5VF67tAsCuXdeKQJscK8/y+deNqXXBGHXrieUxgMaE6ijppzG0FVNW1po2voXnP9A/qKsHdLPNT0Av9FmHdVsWptVBvNCgl0wdd1cvmHiNCMwgP2i9VSP8LlOd/4KG0ZNVA9xglZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XItuXSJ9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35057C116B1;
+	Wed, 12 Jun 2024 13:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718200355;
+	bh=v5+9aEh/+pFUL2JW5D8sLUBK0VBMLPjRr38po5B++UY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XItuXSJ9bGwNqyhVtOBhCc5LBIb1n4LqefzkJQKBy5gBrW+Mu+krOsztJH4dcV2Xq
+	 TYpP1nEiKIkrT7/E4UzqSd0jX2T8kYRy9vigtrrjTMbAShBYlaQF4M8+QvO2NPAWav
+	 iMUPZ3lD0FyvWuW9doXTLbib/w5p2HmKrtj7MChw=
+Date: Wed, 12 Jun 2024 15:52:32 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: joswang <joswang1221@gmail.com>
+Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jos Wang <joswang@lenovo.com>
+Subject: Re: [PATCH v3, 3/3] usb: dwc3: core: Workaround for CSR read timeout
+Message-ID: <2024061226-luminous-veneering-904d@gregkh>
+References: <20240601092646.52139-1-joswang1221@gmail.com>
+ <20240611142953.12057-1-joswang1221@gmail.com>
+ <2024061219-reroute-strike-7230@gregkh>
+ <CAMtoTm2tUDD-CCs4wqigx9ZNqHjWUCA_F080i+v55vubu8wtmQ@mail.gmail.com>
+ <2024061254-oval-womb-a6c1@gregkh>
+ <CAMtoTm0DtH=pi_20UibBjea1P5OkfKP3eY3G5s_Ta4pks0M3Lw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240527040517.38561-6-baolu.lu@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMtoTm0DtH=pi_20UibBjea1P5OkfKP3eY3G5s_Ta4pks0M3Lw@mail.gmail.com>
 
-On Mon, May 27, 2024 at 12:05:12PM +0800, Lu Baolu wrote:
-> +/**
-> + * struct iommu_hwpt_pgfault - iommu page fault data
-> + * @size: sizeof(struct iommu_hwpt_pgfault)
-> + * @flags: Combination of enum iommu_hwpt_pgfault_flags
-> + * @dev_id: id of the originated device
-> + * @pasid: Process Address Space ID
-> + * @grpid: Page Request Group Index
-> + * @perm: Combination of enum iommu_hwpt_pgfault_perm
-> + * @addr: Fault address
-> + * @length: a hint of how much data the requestor is expecting to fetch. For
-> + *          example, if the PRI initiator knows it is going to do a 10MB
-> + *          transfer, it could fill in 10MB and the OS could pre-fault in
-> + *          10MB of IOVA. It's default to 0 if there's no such hint.
-> + * @cookie: kernel-managed cookie identifying a group of fault messages. The
-> + *          cookie number encoded in the last page fault of the group should
-> + *          be echoed back in the response message.
-> + */
-> +struct iommu_hwpt_pgfault {
-> +	__u32 size;
+On Wed, Jun 12, 2024 at 09:39:47PM +0800, joswang wrote:
+> On Wed, Jun 12, 2024 at 8:56 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Wed, Jun 12, 2024 at 08:47:31PM +0800, joswang wrote:
+> > > On Wed, Jun 12, 2024 at 3:58 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Tue, Jun 11, 2024 at 10:29:53PM +0800, joswang wrote:
+> > > > > From: Jos Wang <joswang@lenovo.com>
+> > > > >
+> > > > > This is a workaround for STAR 4846132, which only affects
+> > > > > DWC_usb31 version2.00a operating in host mode.
+> > > > >
+> > > > > There is a problem in DWC_usb31 version 2.00a operating
+> > > > > in host mode that would cause a CSR read timeout When CSR
+> > > > > read coincides with RAM Clock Gating Entry. By disable
+> > > > > Clock Gating, sacrificing power consumption for normal
+> > > > > operation.
+> > > > >
+> > > > > Signed-off-by: Jos Wang <joswang@lenovo.com>
+> > > > > ---
+> > > > > v1 -> v2:
+> > > > > - add "dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk" patch
+> > > > > v2 -> v3:
+> > > > > - code refactor
+> > > > > - modify comment, add STAR number, workaround applied in host mode
+> > > > > - modify commit message, add STAR number, workaround applied in host mode
+> > > > > - modify Author Jos Wang
+> > > > > ---
+> > > > >  drivers/usb/dwc3/core.c | 20 +++++++++++++++++++-
+> > > > >  1 file changed, 19 insertions(+), 1 deletion(-)
+> > > >
+> > > > Where are patches 1/3 and 2/3 of this series?
+> > > >
+> > > > thanks,
+> > > >
+> > > > greg k-h
+> > >
+> > > Patches 1/3 and 2/3 are other cases. The maintainer is reviewing them
+> > > and has no accurate conclusion yet, so only patches 3/3 are submitted.
+> >
+> > How are we supposed to know this?  A patch series should be taken all at
+> > once, right?
+> >
+> > confused,
+> >
+> > greg k-h
+> 
+> I am very sorry, I misunderstood the patch series before. How should I
+> deal with this patch now? Should Patches 1/3 and 2/3 also be
+> submitted?
 
-Given we fail the system call if size is not exactly the right value
-we should probably drop it here.
-
-The ioctl to get the FD can someday specify the format of the fault
-messages if we need to upgrade. If we want to change it down the road
-then the old FD will be exactly as it is now, and the user will
-request a new format FD that only works in whatever the new way is.
-
-Jason
+Yes please.
 
