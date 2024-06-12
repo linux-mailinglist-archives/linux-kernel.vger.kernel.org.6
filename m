@@ -1,117 +1,187 @@
-Return-Path: <linux-kernel+bounces-212189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAF5905C7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:03:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1CFB905C84
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20965286633
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:03:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38F0D2854FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B972784D35;
-	Wed, 12 Jun 2024 20:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B7184A5F;
+	Wed, 12 Jun 2024 20:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="bdracif+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eX9bv4hL"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="N+ZCQN09"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514165025E;
-	Wed, 12 Jun 2024 20:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3A44F8BB;
+	Wed, 12 Jun 2024 20:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718222594; cv=none; b=atuftryeIQw2ySi5KM0CCZZt27mWvtkB1Ke2/4foas5e/4ICea8j5c2FHswGrMMeaHT6Us/GbP/+TDFgMuUuhR3XAt4eEkNAqHvwaGaVdlBTkSdcQrcx065e9Bc8GE0kiE4HGysC9Y2POh5UIzfyuU1mpeqdEp72uxnfUVvlDwA=
+	t=1718222928; cv=none; b=cFgj3YW5MLF52qDDVSibrH9bp80b68YYfUJVahPeredHThPGTSGwo5U8hkPn/iILicMwiDH0psHNyXpywv/adm7Wk76e57srMQQIM+H+0lLKKbIyd9O8uspDYdfm4dziQ2Wej8Cu3KaLLhwJQCG5suLzeqVeypw4qHphQL3fgxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718222594; c=relaxed/simple;
-	bh=eDHqA85Z2rvfYj1BKRq7EcTMlaC7d4L2JpS6byQL4tc=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=qjecl2vXS5q4ESfyygwuHBK2JhwIx9kqnx0i9FKTS8quX6OMjFtE1POQ2jjAfa/bZPXYdVrtC0egEz6o+8w0o0v5PXmzgn6RG+RixRRO36FR/PgjiUzYMsQTn+teB1L9sTZ6AO58fsw8H/Ws7lk77nutzSs85MSFruzXRJ9bJr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=bdracif+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eX9bv4hL; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 635B41380094;
-	Wed, 12 Jun 2024 16:03:11 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 12 Jun 2024 16:03:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718222591; x=1718308991; bh=eDHqA85Z2r
-	vfYj1BKRq7EcTMlaC7d4L2JpS6byQL4tc=; b=bdracif+6Oclj0KIBUZFAt+CB7
-	exErJOai5mjL4Neqf4q7OsiFw0WAUDksfzHhHkU70285bw5zVvhpCWmozIydRXvg
-	FlUc1zXQMOhmAi3A8KpBYGFLkAUqGOQ+jBko3PJvMYWb8Yk8gP0nhY50JJe3ue/Y
-	0fAgVxSACjHC6jpgRMSJcgiIP2vmoseDiNLgg9OwagisvvURaTIj/XsODLBopOfH
-	zBq+EsMa1XTA8vX0jWywkVud6IQMqL48NDlb2kZTaTcYMUfCFueXnwuv92IvG2z+
-	k3G4y8I6TphHNizAGCIUpdvoOYsMmutZLMCh9SfFSaSTWmDPs+1kajPqGTzg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718222591; x=1718308991; bh=eDHqA85Z2rvfYj1BKRq7EcTMlaC7
-	d4L2JpS6byQL4tc=; b=eX9bv4hL3MFv4oTDfL4B6wWacg87KjSHyV9TxOs9sdiv
-	3K+oYZ2uej7uqvaW/GWqeh39F52u7a1JhBnugU405vl9KAFaYOCS1VhcprXdZYc9
-	TRQFPzz+xBR6JwrRm27SHvnynATqjjICgI/u1kKfYFk1sGeTALG5k+t62EtxPljv
-	eYeJ2KZtGWeAWZ481ZBVdYUES9+oCvZU7l9JimAxflMkQ5+AXeo2gyNdY9sd2cIP
-	54r3d2gq7n6oy0SIJiOoG+9OUXiAi/y2QJRLr14QnTyM6ToYhWgktHsjVeXaD8gB
-	otiaNf9DI0q/K3VR5O9z1Y99qc6htdsYrI27gE/VgQ==
-X-ME-Sender: <xms:__5pZmtm4UKP1S7K5zU1GcPPMfh1vVxUzJGkCMM7OVmWYSrU10_Lwg>
-    <xme:__5pZrfZlnhhxbQKiU3UyXq5R5xe03_96QJUdNQyeeVMs_PytX14ph6rstVOXD8aA
-    3Kd7cQ5C35wL3xU2G8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedgudegvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeu
-    feehudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:__5pZhx16T38Gc-lKXSw9kn_Gkl6b_7ukmKQsXtCe_6KilD-Td86OA>
-    <xmx:__5pZhNxUZ5gq7XmaXgqPlsjEPwxF5lKeGJd6i6LWVG0y_rBLtHGhQ>
-    <xmx:__5pZm_7C4jicZUyKxkEXJTdHnrCsKNeC43nRUCffqf2MMIBjr-lYQ>
-    <xmx:__5pZpVkOj4MiFlzdTNFdKj3a9pWTlyGJRXbLBdengBOj1-1de9Rgg>
-    <xmx:__5pZoJni_9sYcxUGm86Ruo2h_BcS8XQ26p3Ud_v-2Q1FGu-66gZKHrZ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 08BD7B6008D; Wed, 12 Jun 2024 16:03:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
+	s=arc-20240116; t=1718222928; c=relaxed/simple;
+	bh=YtbPsXWtEDrY++ARfDvNYAfet227CXa/oD480skBvMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=snYO0uVxM4wfL2W6k/GC99z8RxrbnHdmug40YDyNyx7Otw9zvcVdWNt68wVjFdul9vqplyDc4fnUGaR9si7TKj3uRaFBOCfJTpeRIBYAfWwahMQrwAnskFxOpkt/ssphsCDFBCcpWRJAG8vGZLa7NVcf7HPS0hrnQ6BolLaUKQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=N+ZCQN09; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2A4C9124F;
+	Wed, 12 Jun 2024 22:08:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718222912;
+	bh=YtbPsXWtEDrY++ARfDvNYAfet227CXa/oD480skBvMg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N+ZCQN09U/IsYIlZfPebDWD/rNnC5w6brldYBOyG6AqZkSiUijVHKu3wCW6vozJVt
+	 Ih9jg47AfkTZVLBiCAbwCOZd8jaZofiKPEdfcwQPzIiHpsU2PJPBqeT66+hW7zzY7K
+	 hu3CWpurC7p2Yl5g1v5WGOm0HPqwVQnHXvTbHL/E=
+Date: Wed, 12 Jun 2024 23:08:25 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org,
+	mchehab@kernel.org, hverkuil-cisco@xs4all.nl, wentong.wu@intel.com,
+	linux-media@vger.kernel.org, linux-acpi@vger.kernel.org,
+	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
+Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port
+ nodes
+Message-ID: <20240612200825.GR28989@pendragon.ideasonboard.com>
+References: <4b387b4d-f778-4891-9f07-df5fc0a093cd@redhat.com>
+ <ZmmQLt7wB-yGQBTw@kekkonen.localdomain>
+ <CAJZ5v0ii3WFQRPdfHeeW4M9kXSWDVxxxy02zThcf25mjNwqDAw@mail.gmail.com>
+ <ZmmT56Cyvb2FCyav@kekkonen.localdomain>
+ <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
+ <ZmmY3he9vfWVWU3I@kekkonen.localdomain>
+ <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
+ <18cb82bb-51c6-4a52-80a4-6b1e3d95f99c@redhat.com>
+ <20240612143956.GN28989@pendragon.ideasonboard.com>
+ <CAJZ5v0hFYSQic3N2KWGzyrX-K4KX9Okt20NtXmqRuutc140HUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <7f258a4c-6048-4718-851d-4768789bc5e1@app.fastmail.com>
-In-Reply-To: <20240612160038.522924-1-steven.price@arm.com>
-References: <20240612160038.522924-1-steven.price@arm.com>
-Date: Wed, 12 Jun 2024 22:02:50 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Steven Price" <steven.price@arm.com>
-Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fixmap: Remove unused set_fixmap_offset_io()
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0hFYSQic3N2KWGzyrX-K4KX9Okt20NtXmqRuutc140HUw@mail.gmail.com>
 
-On Wed, Jun 12, 2024, at 18:00, Steven Price wrote:
-> The macro set_fixmap_offset_io() was added in commit f774b7d10e21
-> ("arm64: fixmap: fix missing sub-page offset for earlyprintk") but then
-> commit 8ef0ed95ee04 ("arm64: remove arch specific earlyprintk") removed
-> the file causing the only user to be removed when the two commits were
-> merged. Since this has never been used again since the v3.15 release
-> remove it.
->
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> This came up because for Arm CCA there is a need to override
-> set_fixmap_io() [1] and rather than also update set_fixmap_offset_io() I
-> thought it would be better to just drop the unused macro.
->
-> [1] https://lore.kernel.org/lkml/20240605093006.145492-6-steven.price@arm.com/
+Hi Rafael,
 
-I assume you want to keep this with your other patch, so
+On Wed, Jun 12, 2024 at 09:07:09PM +0200, Rafael J. Wysocki wrote:
+> On Wed, Jun 12, 2024 at 4:40 PM Laurent Pinchart wrote:
+> > On Wed, Jun 12, 2024 at 04:30:30PM +0200, Hans de Goede wrote:
+> > > On 6/12/24 3:06 PM, Rafael J. Wysocki wrote:
+> > > > On Wed, Jun 12, 2024 at 2:47 PM Sakari Ailus wrote:
+> > > >> On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysocki wrote:
+> > > >>>>>>> I just hit the same problem on another Dell laptop. It seems that
+> > > >>>>>>> all Dell laptops with IPU6 camera from the Tiger Lake, Alder Lake
+> > > >>>>>>> and Raptor Lake generations suffer from this problem.
+> > > >>>>>>>
+> > > >>>>>>> So instead of playing whack a mole with DMI matches we should
+> > > >>>>>>> simply disable ACPI MIPI DISCO support on all Dell laptops
+> > > >>>>>>> with those CPUs. I'm preparing a fix for this to replace
+> > > >>>>>>> the DMI matching now.
+> > > >>>>>>
+> > > >>>>>> DisCo for Imaging support shouldn't be dropped on these systems, and this
+> > > >>>>>> isn't what your patch does either. Instead the ACPI graph port nodes (as
+> > > >>>>>> per Linux specific definitions) are simply dropped, i.e. this isn't related
+> > > >>>>>> to DisCo for Imaging at all.
+> > > >>>>>
+> > > >>>>> So it looks like the changelog of that patch could be improved, right?
+> > > >>>>
+> > > >>>> Well, yes. The reason the function is in the file is that nearly all camera
+> > > >>>> related parsing is located there, not that it would be related to DisCo for
+> > > >>>> Imaging as such.
+> > > >>>
+> > > >>> So IIUC the camera graph port nodes are created by default with the
+> > > >>> help of the firmware-supplied information, but if that is defective a
+> > > >>> quirk can be added to skip the creation of those ports in which case
+> > > >>> they will be created elsewhere.
+> > > >>>
+> > > >>> Is this correct?
+> > > >>
+> > > >> Yes.
+> > > >
+> > > > So it would be good to add a comment to this effect to
+> > > > acpi_nondev_subnode_extract() where acpi_graph_ignore_port() is
+> > > > called.
+> > > >
+> > > > And there is a somewhat tangential question that occurred to me: If
+> > > > the nodes are created elsewhere when acpi_graph_ignore_port() is true,
+> > > > why is it necessary to consult the platform firmware for the
+> > > > information on them at all?  Wouldn't it be better to simply always
+> > > > create them elsewhere?
+> > >
+> > > That is a good question. The ACPI MIPI DISCO specification is an
+> > > attempt standardize how MIPI cameras and their sensors are described
+> > > in ACPI.
+> > >
+> > > But this is not actually being used by any Windows drivers atm. The windows
+> > > drivers rely on their own custom ACPI data which gets translated into
+> > > standard Linux device-properties by: drivers/media/pci/intel/ipu-bridge.c
+> > >
+> > > and so far AFAIK there are 0 laptops where there actually is 100% functional
+> > > ACPI MIPI information. I believe that some work is in place to get correct
+> > > usable ACPI MIPI information in place in the ACPI tables of some Meteor Lake
+> > > laptops. But I believe that there too it does not work yet with the BIOS
+> > > version with which current Windows models are shipping. It is being fixed
+> > > for systems which have Linux support from the vendor but I suspect that
+> >
+> > I think it's shipped in Chrome Books. Sakari can confirm.
+> >
+> > > on other models if ACPI MIPI DISCO information is there it will not
+> > > necessarily be reliable because AFAICT Windows does not actually use it.
+> > >
+> > > And TBH this has me worried about camera support for Meteor Lake devices
+> > > going forward. We really need to have 1 reliable source of truth here and
+> > > using information which is ignored by Windows does not seem like the best
+> > > source to use.
+> >
+> > As long as the Windows drivers don't use the ACPI data that Linux uses,
+> > you can be 100% sure it will be wrong. That will never be fixed if Intel
+> > doesn't address the issue on their side, and effort we would put in
+> > standardizing that data for machines shipped by Windows OEMs is a waste
+> > of time in my opinion. Our only option, given Intel's failure, is to
+> > keep reverse-engineering camera support per machine for the time being
+> > (sometimes with the help of OEMs).
+> 
+> So while I kind of agree with you on the technical side (as you can
+> see from my messages in this thread), there is one thing in the above
+> paragraph that I need to react to.
+> 
+> Namely, both I and Sakari are Intel employees.  Do you think or are
+> you suggesting that we are somehow responsible for this failure?
+> Because I personally don't think like I have anything to do with it.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+That's a worthy clarification: I blame neither you nor Sakari, quite the
+contrary. As far as I can tell, both of you have done and are doing your
+best to fix this kind of issues. Sakari has helped standardizing DisCo
+for Imaging for instance, which was the best outcome we could
+realistically hope for in this context. Intel is a large company, and as
+with any large company, some people end up having to try and fix the
+mess created by others :-S I'm sorry it's falling on you and Sakari.
+
+> What do you mean, specifically, by saying "if Intel doesn't address
+> the issue on their side"?  And who at Intel do I need to talk to about
+> this?
+
+I think you would need to get the Windows and Linux side of the Intel
+team(s) responsible for camera drivers and ACPI integration, along with
+a manager who can understand the problem, the bad PR, and get the
+stakeholders to cooperate and do better in the future. I don't know who
+that would be though, what I know is that it doesn't seem the issue will
+solve itself without someone with decision power decides to fix it.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
