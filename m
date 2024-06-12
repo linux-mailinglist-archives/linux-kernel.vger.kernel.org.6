@@ -1,178 +1,97 @@
-Return-Path: <linux-kernel+bounces-211635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70749054B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D739054B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54FE3B2698E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:03:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1C43B268B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C0417DE2B;
-	Wed, 12 Jun 2024 14:03:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D981417D8A3;
-	Wed, 12 Jun 2024 14:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5A117D8B1;
+	Wed, 12 Jun 2024 14:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VrG6lVNe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B63017B4F1;
+	Wed, 12 Jun 2024 14:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201015; cv=none; b=J6XK26aPExL0dI5icWlFyUiNXuhBdrugMdvi9kgH0bQmlirbrYpEWYjin6LREQ1+RzIafoQPAIC5N2Beu4RUNy5vBinFF4iN3BqDs6H7MGPa9ZyORIjX8eb+vEMKnDhV3+rj7MMr4DOcWpO7yzZB5/O91OMHWQa+3mbG+GERSlc=
+	t=1718201013; cv=none; b=gFWDvzWqGpP2X1/A5RT6uXH8atDRiHKraLQhHT282OngWlQ/JrOEdEg4Koif5I4+kT+dTKwiMuAnx3OoiKGMMBOiJLERac0UPg85yzT/ZEfqb6eAbUbHAIddmFvZlKjZNsGGYn6ECZhYYo40ZiSWyp5ghO5iMxgf3VVqzaLUaJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201015; c=relaxed/simple;
-	bh=Z8v6VN3VTXwQnLuxWiCD7XiHXxTlypzscfkEhk+/2RU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GIYHCyDXOEh1PfzzWMPk608LCvyB6Xu7EhD5v4jiCH1KTsO5b8SR7JsXfHlltyGDJG9/qt4Ta2Ap7fvuA+6lxIu9R6iusgz4zAdsVrnxaxqxzezusPrqm5j1UOhRjvsRjeilBAWEuJ1zsL/1AkLlFWGa3fPtDCypcaad4j3GkmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B448D367;
-	Wed, 12 Jun 2024 07:03:57 -0700 (PDT)
-Received: from e127643.broadband (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E43413F64C;
-	Wed, 12 Jun 2024 07:03:30 -0700 (PDT)
-From: James Clark <james.clark@arm.com>
-To: linux-perf-users@vger.kernel.org
-Cc: James Clark <james.clark@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Spoorthy S <spoorts2@in.ibm.com>,
-	German Gomez <german.gomez@arm.com>,
+	s=arc-20240116; t=1718201013; c=relaxed/simple;
+	bh=T+d5/w/TrCDK3gbxr4NrNSoQldtcv42SmPQU3MNE7+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ag0gI6I0fRmAXQRjrvfo/kDZn8u8+EYVUt8Ulbx4GUTmrZ+N4GSBoo2NRVRWdOd6/rJpfX9Jy3Xqc/Ibe9f+di6PXuHc3oe2LlD60rOa0PiyrTYKXljHKwdtXdacUnwhR6tVvHowdCuGUxZ8ubTCpPd2iOgrAVqXIxuES5Xzfg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VrG6lVNe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A89C4AF1A;
+	Wed, 12 Jun 2024 14:03:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718201010;
+	bh=T+d5/w/TrCDK3gbxr4NrNSoQldtcv42SmPQU3MNE7+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VrG6lVNebfEEcNcaKfdsPm/90t3QuvUTE9d47oKtx4M8Hbu/H24D/4BKoxQvOElGM
+	 l6ebdhLXq3nsuvcxOoKZ4q1OCoWRiaklCEdcwQwY+602efpNbpkIQNZIsdkGpD9zqW
+	 es7b2cN3IyrSvOOrepEQRYs1sJvRXVyujYHVJqSDFowzt3nJSABh7+wbPgbMg28Qud
+	 Op3T3ShwqploZFnEfzphqXkXVpi2cHRvgy8t6LJzjtaALblib8gPTorAkfTiLkjnKN
+	 LcZ7XLjaJUUiiUInxUgIIswwiN3BTNhS0fpiOcChJuLCNUMOURhj6og2Y7bIMO4JNw
+	 nCaaW6BLdJ77w==
+Date: Wed, 12 Jun 2024 15:03:26 +0100
+From: Lee Jones <lee@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	broonie@kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf test: Make test_arm_callgraph_fp.sh more robust
-Date: Wed, 12 Jun 2024 15:03:14 +0100
-Message-Id: <20240612140316.3006660-1-james.clark@arm.com>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH -next] dt-bindings: mfd: twl: Fix example
+Message-ID: <20240612140326.GD1504919@google.com>
+References: <20240612134039.1089839-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240612134039.1089839-1-andreas@kemnade.info>
 
-The 2 second sleep can cause the test to fail on very slow network file
-systems because Perf ends up being killed before it finishes starting
-up.
+On Wed, 12 Jun 2024, Andreas Kemnade wrote:
 
-Fix it by making the leafloop workload end after a fixed time like the
-other workloads so there is no need to kill it after 2 seconds.
+> Fix example to also conform to rules specified in the separate
+> not-included gpadc binding.
+> 
+> Fixes: 62e4f3396197 ("dt-bindings: regulator: twl-regulator: convert to yaml")
 
-Also remove the 1 second start sampling delay because it is similarly
-fragile. Instead, search through all samples for a matching one, rather
-than just checking the first sample and hoping it's in the right place.
+If this was applied via Regulator, that's where the fix will need to go.
 
-Fixes: cd6382d82752 ("perf test arm64: Test unwinding using fame-pointer (fp) mode")
-Signed-off-by: James Clark <james.clark@arm.com>
----
- .../perf/tests/shell/test_arm_callgraph_fp.sh | 27 +++++++------------
- tools/perf/tests/workloads/leafloop.c         | 20 +++++++++++---
- 2 files changed, 26 insertions(+), 21 deletions(-)
+Acked-by: Lee Jones <lee@kernel.org>
 
-diff --git a/tools/perf/tests/shell/test_arm_callgraph_fp.sh b/tools/perf/tests/shell/test_arm_callgraph_fp.sh
-index 61898e256616..9caa36130175 100755
---- a/tools/perf/tests/shell/test_arm_callgraph_fp.sh
-+++ b/tools/perf/tests/shell/test_arm_callgraph_fp.sh
-@@ -28,28 +28,21 @@ cleanup_files()
- 
- trap cleanup_files EXIT TERM INT
- 
--# Add a 1 second delay to skip samples that are not in the leaf() function
- # shellcheck disable=SC2086
--perf record -o "$PERF_DATA" --call-graph fp -e cycles//u -D 1000 --user-callchains -- $TEST_PROGRAM 2> /dev/null &
--PID=$!
-+perf record -o "$PERF_DATA" --call-graph fp -e cycles//u --user-callchains -- $TEST_PROGRAM
- 
--echo " + Recording (PID=$PID)..."
--sleep 2
--echo " + Stopping perf-record..."
--
--kill $PID
--wait $PID
-+# Try opening the file so any immediate errors are visible in the log
-+perf script -i "$PERF_DATA" -F comm,ip,sym | head -n4
- 
--# expected perf-script output:
-+# expected perf-script output if 'leaf' has been inserted correctly:
- #
--# program
-+# perf
- # 	728 leaf
- # 	753 parent
- # 	76c leafloop
--# ...
-+# ... remaining stack to main() ...
- 
--perf script -i "$PERF_DATA" -F comm,ip,sym | head -n4
--perf script -i "$PERF_DATA" -F comm,ip,sym | head -n4 | \
--	awk '{ if ($2 != "") sym[i++] = $2 } END { if (sym[0] != "leaf" ||
--						       sym[1] != "parent" ||
--						       sym[2] != "leafloop") exit 1 }'
-+# Each frame is separated by a tab, some spaces and an address
-+SEP="[[:space:]]+ [[:xdigit:]]+"
-+perf script -i "$PERF_DATA" -F comm,ip,sym | tr '\n' ' ' | \
-+	grep -E -q "perf $SEP leaf $SEP parent $SEP leafloop"
-diff --git a/tools/perf/tests/workloads/leafloop.c b/tools/perf/tests/workloads/leafloop.c
-index 1bf5cc97649b..f7561767e32c 100644
---- a/tools/perf/tests/workloads/leafloop.c
-+++ b/tools/perf/tests/workloads/leafloop.c
-@@ -1,6 +1,8 @@
- /* SPDX-License-Identifier: GPL-2.0 */
-+#include <signal.h>
- #include <stdlib.h>
- #include <linux/compiler.h>
-+#include <unistd.h>
- #include "../tests.h"
- 
- /* We want to check these symbols in perf script */
-@@ -8,10 +10,16 @@ noinline void leaf(volatile int b);
- noinline void parent(volatile int b);
- 
- static volatile int a;
-+static volatile sig_atomic_t done;
-+
-+static void sighandler(int sig __maybe_unused)
-+{
-+	done = 1;
-+}
- 
- noinline void leaf(volatile int b)
- {
--	for (;;)
-+	while (!done)
- 		a += b;
- }
- 
-@@ -22,12 +30,16 @@ noinline void parent(volatile int b)
- 
- static int leafloop(int argc, const char **argv)
- {
--	int c = 1;
-+	int sec = 1;
- 
- 	if (argc > 0)
--		c = atoi(argv[0]);
-+		sec = atoi(argv[0]);
-+
-+	signal(SIGINT, sighandler);
-+	signal(SIGALRM, sighandler);
-+	alarm(sec);
- 
--	parent(c);
-+	parent(sec);
- 	return 0;
- }
- 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>  Documentation/devicetree/bindings/mfd/ti,twl.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> index 2cbdd238f48f..e94b0fd7af0f 100644
+> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> @@ -225,6 +225,7 @@ examples:
+>          gpadc {
+>            compatible = "ti,twl6030-gpadc";
+>            interrupts = <6>;
+> +          #io-channel-cells = <1>;
+>          };
+>  
+>          rtc {
+> -- 
+> 2.39.2
+> 
+
 -- 
-2.34.1
-
+Lee Jones [李琼斯]
 
