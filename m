@@ -1,92 +1,132 @@
-Return-Path: <linux-kernel+bounces-210857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 270F390497E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:22:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B05904980
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16DC1F24919
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:22:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E8EA1F24904
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E215E37708;
-	Wed, 12 Jun 2024 03:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0598F4FA;
+	Wed, 12 Jun 2024 03:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Vhy73vMD"
-Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kCpG9zIC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE8E2C1BA;
-	Wed, 12 Jun 2024 03:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7234CF9F8;
+	Wed, 12 Jun 2024 03:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718162491; cv=none; b=SDpFSkZ6iJY7NSJFPjG80IhWOubH2NvuT6DXfS292381g/nknJCwVqt9RzUbDS0mN38s51BgI0ECNZjYvxNoCi8b/kpN/HQWngxL4vVKyk8b3SWpIal42MpIOCnH4JHwIv5ECl10e/kgnfA5zxvO1XGTQRVJ0Lgm9UNeGtmluiw=
+	t=1718162504; cv=none; b=YmKpWiesE6xZgoLSMDhjS/H1IXKN3j70LIEko8dLpgXuPcVKsFNQL3PTjmd6vzLrZkIl2BDFJ3YxzcK1PtSbV2cwGawjcXvJqaeLfON3nn/fx44GPK3/MrzlPRXa2BcmQGkk8xQvLVWpXBBLSKJofOzBuqLgN0h9t+7HjT0lzLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718162491; c=relaxed/simple;
-	bh=DWxPsEhJZsPyLSnh9ioNt5dXQHtNNFp1hy4BIqKzpF8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C/oWmzlx4CmJFFXsgm/KZNlxDhT12ATFWRcnR+s5FndzDR/ECtCX+fKHBlY6rmWkdZZnNFGFD3uUDn/aIr8jJthLCTAJKJyFjrZhC5GHJGsyHgKys1wmOrqT5FF5d3YhXL0+P+XX8q2uSUqFQtb5KhFkFpFC0mW+dBy9K5/Ir3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Vhy73vMD; arc=none smtp.client-ip=185.70.43.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1718162487; x=1718421687;
-	bh=H1GLr5Hux1N4JOpyjG066oNxDyD7VpK2fBNM2y98AvA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Vhy73vMDoLTJXkODvRsg1B6lSLY8TxMun2DqUxf9Ie8mkOfXc0euOywBNDt7aJGWK
-	 AiFoO+/sDWSQPwJZehH1DUXJrP2KPwDjn+jC/YATFFGtoKRBVHpPXLgTRmbq2r8v6I
-	 BHrLTkm4h4AUkJfR7958Ab5JvWPWDA63RKFAGoTr1IqDwKUeeuxTZ71MN3LcmEEk3d
-	 Nv5eY76vIR1Z3dOsCtxLT+4Tiua4gR88hERiCI7Jhkl0gB6PG91EFapVZ2zghdKWlp
-	 mRGGk8eqo5pN7f2gsiXMF2f8yrnxYWT6EmKGfJybAX+d69DUgkN1SYOtbr9G713Sfl
-	 xQ40mwwsoS0Ug==
-Date: Wed, 12 Jun 2024 03:21:24 +0000
-To: linux-kernel@vger.kernel.org
-From: Raymond Hackley <raymondhackley@protonmail.com>
-Cc: Markuss Broks <markuss.broks@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, Nikita Travkin <nikita@trvn.ru>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: [PATCH 3/3] dt-bindings: input/touchscreen: imagis: Document ist3038
-Message-ID: <20240612032036.33103-4-raymondhackley@protonmail.com>
-In-Reply-To: <20240612032036.33103-1-raymondhackley@protonmail.com>
-References: <20240612032036.33103-1-raymondhackley@protonmail.com>
-Feedback-ID: 49437091:user:proton
-X-Pm-Message-ID: 62ef74be6eb55fe10e27fc423f06e173d02acdd0
+	s=arc-20240116; t=1718162504; c=relaxed/simple;
+	bh=uYJvhtf4v9hFR+ic3HylVrg5NhEao7IHYK2nQRrEZTg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=LfEZVa8AxDd1aakSrBzNjQdAlZpG+OIZ2Ly5x3wyWigjaQkCAVKquFeCXyhj6VHxCk7XldzpD2w7lZoF/nVIXzmcfZFKzjBoDRJ6sNGyUoI2/RPjB37ErrkyUdf8r49hVmVraBoa9UawlKcMSX5awmNB6sTs2qe9ODApm/lX6Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kCpG9zIC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C316Kw011284;
+	Wed, 12 Jun 2024 03:21:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=gba0lVcv2ruGV764DaMHoG
+	qg9+LsiuA8SeAPxsUY8NM=; b=kCpG9zIC9BTBZEiUQFThS8QIcJzFjjPzqdTdu6
+	MAdlOT8Ep1YfNW0szaaskiz+n8F34nbUqCqTW4Lqpd48eycSDrAuXIULde8OvSzj
+	B+A1cEGci6zhybdQdgZiMpbrkNuaMhrhC9+3t6DpC8YumoTrWXBrKJYP1H8HyraL
+	1gIS0J5TrlWhCUqtzJFY7QzeYBll7TEBTbagCKIK1yQ/CcgeuGIiproUfw/IUv10
+	UxZpO6N/MkhNxy3sTz7GSG1F8f0gvVOpmJ4Z1+GJQxWVAfhuUHSDaRv/4Fl6kpS9
+	3ur16PpgxMgVFwM1/AN7G9mFI6GCuCIjRAGJ/COAJadvqy9Q==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmyy71-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 03:21:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C3LbHf011019
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 03:21:37 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
+ 2024 20:21:37 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 11 Jun 2024 20:21:34 -0700
+Subject: [PATCH] media: dvb-frontends: add missing MODULE_DESCRIPTION()
+ macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240611-md-drivers-media-dvb-frontends-v1-1-a378ed102f69@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAD0UaWYC/x3NQQrCQAxA0auUrA20HavgVcTFdJLagJNKUodC6
+ d0dXb7N/zs4m7DDrdnBuIjLohXdqYE0R30yClVD3/bn9tJ1mAnJpLA5ZiaJSGXEyRZdWcmRKQz
+ X1IcpDQFq5G08yfYf3B/VY3TG0aKm+Zd9iX42zNFXNjiOL7cifYKPAAAA
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: brpsN2rayYQr0EnGDN2D2avuy-fbEV6A
+X-Proofpoint-ORIG-GUID: brpsN2rayYQr0EnGDN2D2avuy-fbEV6A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_13,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1015 adultscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120022
 
-Imagis IST3038 is a variant of Imagis touchscreen IC. Document it in
-imagis,ist3038c bindings.
+With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/dvb-frontends/au8522_decoder.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/dvb-frontends/mb86a16.o
 
-Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- .../devicetree/bindings/input/touchscreen/imagis,ist3038c.yaml   | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/dvb-frontends/au8522_decoder.c | 1 +
+ drivers/media/dvb-frontends/mb86a16.c        | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/imagis,ist=
-3038c.yaml b/Documentation/devicetree/bindings/input/touchscreen/imagis,ist=
-3038c.yaml
-index 77ba280b3bdc..2aea21bfe6ac 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/imagis,ist3038c.y=
-aml
-+++ b/Documentation/devicetree/bindings/input/touchscreen/imagis,ist3038c.y=
-aml
-@@ -15,6 +15,7 @@ properties:
-=20
-   compatible:
-     enum:
-+      - imagis,ist3038
-       - imagis,ist3032c
-       - imagis,ist3038b
-       - imagis,ist3038c
---=20
-2.39.2
+diff --git a/drivers/media/dvb-frontends/au8522_decoder.c b/drivers/media/dvb-frontends/au8522_decoder.c
+index acc27376c246..d02a92a81c60 100644
+--- a/drivers/media/dvb-frontends/au8522_decoder.c
++++ b/drivers/media/dvb-frontends/au8522_decoder.c
+@@ -25,6 +25,7 @@
+ #include "au8522_priv.h"
+ 
+ MODULE_AUTHOR("Devin Heitmueller");
++MODULE_DESCRIPTION("Auvitek AU8522 QAM/8VSB demodulator driver and video decoder");
+ MODULE_LICENSE("GPL");
+ 
+ static int au8522_analog_debug;
+diff --git a/drivers/media/dvb-frontends/mb86a16.c b/drivers/media/dvb-frontends/mb86a16.c
+index 0fc45896e7b8..9033e39d75f4 100644
+--- a/drivers/media/dvb-frontends/mb86a16.c
++++ b/drivers/media/dvb-frontends/mb86a16.c
+@@ -1854,5 +1854,6 @@ struct dvb_frontend *mb86a16_attach(const struct mb86a16_config *config,
+ 	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(mb86a16_attach);
++MODULE_DESCRIPTION("Fujitsu MB86A16 DVB-S/DSS DC Receiver driver");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Manu Abraham");
 
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240611-md-drivers-media-dvb-frontends-ed357c23fc53
 
 
