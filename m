@@ -1,137 +1,99 @@
-Return-Path: <linux-kernel+bounces-212026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4BF905A34
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:49:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7994905A36
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 125731F24254
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:49:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B79281FD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5D01822DD;
-	Wed, 12 Jun 2024 17:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421AB1822CB;
+	Wed, 12 Jun 2024 17:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZfnEycA"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABTrFF7v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9464B16E895;
-	Wed, 12 Jun 2024 17:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8200220DF7;
+	Wed, 12 Jun 2024 17:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718214584; cv=none; b=Lhz3NmXuC4eY4iQNsnq2MeFnubFvC4xBqcnTKmTdlrPCM5G3XgIIWPO8MXs9mC2PFOU5U8+rfNTjtj+u6+mmzwQtr4ZK9Xoe/d1h2E9ro+9dKranzdNvpTWRcaA+cTVcpVlJpc7g9sXS719Szcne0/ewsAwUiVcusA8n99CJcmg=
+	t=1718214710; cv=none; b=jaSXCiBFBsThgwHgrjkL+rKDxC0zab5vt6O4Vb5IT2623lSEUCHhkJmGKcGT9BEgRiqCQG1LitLNa3Xz1GyM+3S+f1KQaac7iEPoDGz/JdFmmqhP1Yyn9FEl2DHFe+hoxRMl9FRCWyA0LFcOE04YVvcWJ2YtuCCu2DccziFGkxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718214584; c=relaxed/simple;
-	bh=eknbSOKAkHr7WNotgf3GFZX1KF5IIKMVVYf+Xjthm+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ieg/K73m0Mjq7+NwEMy483I/CDj3JGaYzPC6P8cSjO4jdaylgWCHLwXBvWnpuOyqjRSX7LAUJK2J9JAMAv7nsXPI1ffXHfVnPJ8BWmqOUuPj7YZn/I5gID0XNH1a/6xQEqmgH7nRpQPJ/YqRwqIg2Kh2tH4tEa+1oICbka05GPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QZfnEycA; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f64ecb1766so1476355ad.1;
-        Wed, 12 Jun 2024 10:49:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718214582; x=1718819382; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NjPQOb5v9LZYNRlrMIH8bhMWtbaji/7OGHLLhTtyIaw=;
-        b=QZfnEycAVTZNj7xAtQQrKUrWZkQlRgDLyma3A11vwx75iMUbIUH0ZmxhxuWmkStXSZ
-         uGGcq11wAxOKn7oek0/MGjbQmWJR15kB8DREOKrqtRgFwVj4VrcihRABMqv/V6+JFG0A
-         538ZTGDFHzZb5S6rYEWlIluEVHla/R55b0Fljy7x0b7AMvaG1ZfmQNnvAb5yljircIG1
-         BRaQDreFHpGHzzOVhnp4Z4BR1c7JOi8LfT3iJ3+IuRTj9YH77bZ+HrbT0Q1ma5SXKr10
-         8oSKfgkI10HSXS+y4bAGPHBiEcSTT/jTR3UPK042OoMWjS+DleWyStHmYYdzD8VedGWj
-         umiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718214582; x=1718819382;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NjPQOb5v9LZYNRlrMIH8bhMWtbaji/7OGHLLhTtyIaw=;
-        b=jeRvb0qmFyUNjJTQ9o/QJ4FUxFekcv0aE/V+NDilOpwcb/HYypyNpT8vPvJu5fkAbA
-         9Ue45gFSBjLJktm/plLKXsiEHtDyUxM1uhYRtJjzT5CMwC5ToqLEJrwLwXakTZ509JtX
-         mxqPDIaaUfMTejzOrqblMPRgL6O/IGqDjQ3zMYmRTgSb4zv3uyjfTPtEFDLgevSYrCVQ
-         42k6dC2sxHY2aSYBkAU3r3leJyBo6kVNt+Cmj1FDWoMnWZhEoDEzTHuFfJ/qjP5dD7bL
-         ARTJ7t5GPmVHg5nye15nvZ+X3FAwuEWy5dvvu3/5bI80rEtf1M73kGdPH9QYzZnYMi5J
-         PJNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBPV8x80QFIBcTaV7xet/busrnpN4LfNgxjvElgIy3k1QFvg+N5EwgEn0EVP0sPpISUyKoV5WiKPwYNTwcNnlNYTciiMxoOwmursUKk/uoxo5JEcqcu0T3fQNr608JAdqMdnZHX0lH
-X-Gm-Message-State: AOJu0YxvkZWk+17vM5csmN0xLQWOJeLKWdi+x+LMA7bzDJil7rNaM1w7
-	UkBOfqv6N8A9IKKZJ5KAuri6Qn21EP/r4lPAtoVv4cY7UqH8HUiPyS+uWg==
-X-Google-Smtp-Source: AGHT+IGlVdCQrkzplOB6tZKJ34PhflntCnXbokMIoYyZOeTT9+UoljY2l3lhqspxfBegan5us3U2LQ==
-X-Received: by 2002:a17:903:8cc:b0:1f4:620b:6a27 with SMTP id d9443c01a7336-1f83b626511mr29688335ad.13.1718214581782;
-        Wed, 12 Jun 2024 10:49:41 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f849044371sm6993225ad.242.2024.06.12.10.49.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 10:49:40 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 12 Jun 2024 10:49:39 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Wolfram Sang <wsa@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Jean Delvare <khali@linux-fr.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] i2c: smbus: Handle stuck alerts
-Message-ID: <18c810b6-2961-44e6-b890-5c6830fde995@roeck-us.net>
-References: <20220110172857.2980523-1-linux@roeck-us.net>
+	s=arc-20240116; t=1718214710; c=relaxed/simple;
+	bh=vvib4mDLNFGbxtjwNx1VQX4FbVFw8DxDSeb+iVnMLJk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cThMannvp+lKmvmpeBvRsMCuHIzsK4+GcEnTHIk7dD0HBWCQX9HUL6BG1iEoVi32v6/5Z7TbUK7yE8H3S0m+hR1jwFAg7hJJS0epwQY4TdZtZSedV/h2Hc7g8MM6DF1yxXS8Ebr0P3Ea/j9V8BcA/rue4dG9jbmB7t17TlRlFrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABTrFF7v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E7D5C116B1;
+	Wed, 12 Jun 2024 17:51:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718214710;
+	bh=vvib4mDLNFGbxtjwNx1VQX4FbVFw8DxDSeb+iVnMLJk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ABTrFF7vZPtXgioJTr56V+Wpd5t2B3DAoaYSkgl/Yq3NXgAmw+I8YohN9jMOnxdxw
+	 qFAJ1NyOXzpjnjWsirudk7Kjzul7zJnTS2Nlo4xGr6sKrQ08ndJww33cJ7ymKNhm5o
+	 oFTB1L+wZDlT+eDtek53ypwzyguDr0mKOtuPTps4mOcBCkfuregZOodH9buqpUoyFd
+	 H8ATPdOY3sVPlXB0dnEDXSHmR9Shb+Pp4NLGo8zGSgDZaqaJgTT+C1FDaocsAoqVmW
+	 9zr328B7Av3dk3GNTU1MpSsx90jfgDm7f3EBDlLMx1kmtXW4Ou3JHueJfnXfDRTpVJ
+	 dKD/rxqCpLJkQ==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org>
+References: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org>
+Subject: Re: [PATCH 0/5] a few fixes for the Samsung USB phy driver
+Message-Id: <171821470509.586907.3119518278516252634.b4-ty@kernel.org>
+Date: Wed, 12 Jun 2024 23:21:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220110172857.2980523-1-linux@roeck-us.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-Hi,
 
-On Mon, Jan 10, 2022 at 09:28:55AM -0800, Guenter Roeck wrote:
-> While playing with SMBus alert functionality, I noticed the following
-> messages if alert was active on more than once device.
+On Tue, 07 May 2024 15:14:43 +0100, André Draszik wrote:
+> Before coming to an agreement on my Samsung USB31 / gs101 phy changes [1]
+> [2], I decided to split out those changes from that series which can also be
+> applied independently and add a few additional fixes I had lying around.
 > 
-> smbus_alert 3-000c: SMBALERT# from dev 0x0c, flag 0
-> smbus_alert 3-000c: no driver alert()!
+> This contains mostly cleanup, but also a change to using fsleep() as
+> recommended by the timers-howto, and a fix for setting the ref frequency for
+> E850.
 > 
-> or:
-> 
-> smbus_alert 3-000c: SMBALERT# from dev 0x28, flag 0
-> 
-> This is seen if multiple devices assert alert at the same time and at least
-> one of them does not or not correctly implement SMBus arbitration.
-> 
-> Once it starts, this message repeats forever at high rate.
-> Worst case, the problem turn resulted in system crashes after a while.
-> 
-> The following two patches fix the problem for me. The first patch
-> aborts the endless loop in smbus_alert() if no handler is found
-> for an alert address. The second patch sends alerts to all devices
-> with alert handler if that situation is observed.
-> 
-> I split the changes into two patches since I figured that the first patch
-> might be easier to accept. However, both patches are really needed to
-> fix the problem for good.
-> 
-> Note that there is one situation which is not addressed by this set of
-> patches: If the corrupted address points to yet another device with alert
-> handler on the same bus, the alert handler of that device will be called.
-> If it is not a source of the alert, we are back to the original problem.
-> I do not know how to address this case.
-> 
-> ----------------------------------------------------------------
-> Guenter Roeck (2):
->       i2c: smbus: Improve handling of stuck alerts
->       i2c: smbus: Send alert notifications to all devices if source not found
-> 
->  drivers/i2c/i2c-smbus.c | 64 ++++++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 58 insertions(+), 6 deletions(-)
+> [...]
 
-Looking through the patches I carry locally, I just noticed that
-I never got a reply to this series. Is there a problem with it,
-or did it just get lost ?
+Applied, thanks!
 
-Thanks,
-Guenter
+[1/5] phy: exynos5-usbdrd: uniform order of register bit macros
+      commit: 2a0dc34bab8ede5fa50378ef206f580303eed8de
+[2/5] phy: exynos5-usbdrd: convert udelay() to fsleep()
+      commit: 27f3d3f6d87f650cc6b3ea08335dea749f1b04aa
+[3/5] phy: exynos5-usbdrd: make phy_isol() take a bool for clarity
+      commit: f2b6fc4d5c9793c556412e9a8ac122670a0d8dcb
+[4/5] phy: exynos5-usbdrd: fix definition of EXYNOS5_FSEL_26MHZ
+      commit: 32b2495e731f2a56118034e9c665e6fe56bbfe3a
+[5/5] phy: exynos5-usbdrd: set ref clk freq in exynos850_usbdrd_utmi_init()
+      commit: d14c14618e851eb25d55807810c2c1791a637712
+
+Best regards,
+-- 
+Vinod Koul <vkoul@kernel.org>
+
 
