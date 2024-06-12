@@ -1,126 +1,102 @@
-Return-Path: <linux-kernel+bounces-211490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318C6905294
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:35:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB9C90526F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339A11C218BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 544791F22DC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4B8170852;
-	Wed, 12 Jun 2024 12:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9427416FF3E;
+	Wed, 12 Jun 2024 12:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=concord.sh header.i=@concord.sh header.b="hqddc/9m"
-Received: from komekko.fuwafuwatime.moe (komekko.fuwafuwatime.moe [65.21.224.109])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2tT9/xc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126D116D4F6;
-	Wed, 12 Jun 2024 12:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.224.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF8616F848;
+	Wed, 12 Jun 2024 12:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718195713; cv=none; b=K0yKTlAyBXdC7d0JEl3p5hhQMBSO3gj8JrKZfsIpfVsQVA+AEpusBiEi9N171Q4tUS3U9OsQ+jNkVFczrUIX+G3RMoHYahc8bXhvX/hHff617lmaA4mf0n0cN++cTml2e4r7iCE4b5lDX74yH+FZQwbE7AoKS4JMDdlv9TiZ3fk=
+	t=1718195368; cv=none; b=eagfM5/xJbTd5595f4Hq09M40q/5MgUtUqVh938XzZKXvwgS4e7OOoueMoON7h0yDUR4jVGEsXOuWprjm1Q/K+M2iV9csdXAaCBYFi5AbgFjZDiB8NWFdfy7aORC4rc/KB9rCdb0ehXbrRap3WjPw2F69NMZHGHZ0BpUUP2+iKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718195713; c=relaxed/simple;
-	bh=TDi4E53eOV070hTG5YTA25MB1lt7gnKyfwnJfREXyYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VOH4gEf/bNo5HB3c9CyzMbMH4Id41DxAl/6QcAFtXgMBjxn7VdFAGAtufuZUM1viAXt8FF1zdVrXZ9FFxvAjkPU33sf3SqQ1cZjeGqi4UmbBy/fNtYBGCXrAKcIbsrc0igxirpsmJ+9jaZBER8xpIPicNcHpFCx0V3KOeHaoMiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=concord.sh; spf=pass smtp.mailfrom=concord.sh; dkim=pass (2048-bit key) header.d=concord.sh header.i=@concord.sh header.b=hqddc/9m; arc=none smtp.client-ip=65.21.224.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=concord.sh
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=concord.sh
-Received: from megumin.fuwafuwatime.moe (unknown [71.203.71.170])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by komekko.fuwafuwatime.moe (Postfix) with ESMTPSA id A03E41145104;
-	Wed, 12 Jun 2024 15:29:15 +0300 (EEST)
-Received: from localhost (unknown [192.168.1.101])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by megumin.fuwafuwatime.moe (Postfix) with ESMTPSA id 0C8D010962BC;
-	Wed, 12 Jun 2024 08:29:10 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=concord.sh; s=dkim;
-	t=1718195353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TDi4E53eOV070hTG5YTA25MB1lt7gnKyfwnJfREXyYo=;
-	b=hqddc/9maZCsBRJ9ABlmTv6tXq6l0TTb+km1ZM5oOQfADREbo2japdfW2lyZe49Gfba42c
-	FGg6yfC+tWIv8FkC1NEeiJW1u2IWOmoK1ekdLLHPz2wkjITKo8UMxF6FQjA+fatksvPNoh
-	ncONAKqvg5cXEhxf4WpDBCh1Zvp+ZO7tnfD7xHmBtxGUQ66gWcwuBUYKaMMlPBlhotMEpJ
-	VRr1q8LALz50D2LL67N/gpLfA4kinPgTB6RXV+Zc3ggKIJhGf//5CNCHbz8aUOqPBDtSLD
-	lje7a8rSySZcGmtCyAB4e2MIXtbYRMgAmcBA5ncaYbDjVawpMgtbxGMCsfqwRQ==
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=me@concord.sh smtp.mailfrom=me@concord.sh
-Date: Wed, 12 Jun 2024 08:29:01 -0400
-From: Kenton Groombridge <me@concord.sh>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Kenton Groombridge <concord@gentoo.org>, 
-	Kees Cook <keescook@chromium.org>, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3] wifi: mac80211: Avoid address calculations via out of
- bounds array indexing
-Message-ID: <hftvxmqv4wm4l6s4ynkzakvawem4a6mvzvkbvnfgvkuie6ybbw@7pulonpy7q74>
-Mail-Followup-To: Johannes Berg <johannes@sipsolutions.net>, 
-	Kenton Groombridge <concord@gentoo.org>, Kees Cook <keescook@chromium.org>, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-References: <20240605152218.236061-1-concord@gentoo.org>
- <fd1acc0f69ef9573ff0dced35863949c80c6d5e7.camel@sipsolutions.net>
+	s=arc-20240116; t=1718195368; c=relaxed/simple;
+	bh=aPMJ7TzY2Dg+TsFr4Fv7AJOxLApsEqX6Hn4TKyXO1uM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SO7SGur6UA2znWbDVt8b7xhAI0kaRsJRfKkOplPOZNzYDedWZmQY7SfOtqdD1lmr6Sll48i1Ux369Js72z4yyGmzwasJvdj3G1wBnLmyotjUovSu+g6MDzLTxcEeqoaix1zFWDZtaLy64N2i+hV9HtjuFpVaNUiZyZ609DsbZUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2tT9/xc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6D9EC3277B;
+	Wed, 12 Jun 2024 12:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718195368;
+	bh=aPMJ7TzY2Dg+TsFr4Fv7AJOxLApsEqX6Hn4TKyXO1uM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=k2tT9/xcri/krj9rQ0L3V9UnjefZUzMFU+lBND3HP2O8Wff3Nj1oTiVQ8W/LjwjPz
+	 A2B5t3W2wTSJU5JX/nr8PSn44W2gEsr3hwfGa/00Ywy59/K64/WU1yABR8tFwI1aTT
+	 TdsoyeoJs+30dmcDX4+3604AnHZZk8gndK8x7CG5ugcvXFl35X4gpAX5gBauYQZiPc
+	 qmiEG+d3zSQ1z5v8hOCFAO2mtVqLNb6VCJGNELTTzkvt3NeGoQLJjFX63v+6/hIm/C
+	 ctKhQVzqy1j6YK8kXI0gwAlQLA2K+/nLzpZ/hl1Udzg27Sq6vmbGEQ8OEj5EfAyxFB
+	 MQW7eKbVccrrw==
+From: Christian Brauner <brauner@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsi@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	jk@ozlabs.org,
+	joel@jms.id.au,
+	alistair@popple.id.au,
+	eajames@linux.ibm.com,
+	parthiban.veerasooran@microchip.com,
+	christian.gromm@microchip.com,
+	willy@infradead.org,
+	akpm@linux-foundation.org
+Subject: Re: (subset) [PATCH RESEND 3/3] proc: Remove usage of the deprecated ida_simple_xx() API
+Date: Wed, 12 Jun 2024 14:29:04 +0200
+Message-ID: <20240612-mohnblume-avancieren-582d8e0e52ae@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To:  <ae10003feb87d240163d0854de95f09e1f00be7d.1717855701.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1717855701.git.christophe.jaillet@wanadoo.fr> <ae10003feb87d240163d0854de95f09e1f00be7d.1717855701.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m6rphp4l66hp66gv"
-Content-Disposition: inline
-In-Reply-To: <fd1acc0f69ef9573ff0dced35863949c80c6d5e7.camel@sipsolutions.net>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1112; i=brauner@kernel.org; h=from:subject:message-id; bh=aPMJ7TzY2Dg+TsFr4Fv7AJOxLApsEqX6Hn4TKyXO1uM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRlTpl9tfvL2dyQE3NWPjOs7Aifb7Iy6Mea2i3qORGt7 +Y82XzuekcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE9qQx/LNN/X3p7Izau73C PM631W/FPYg+MD/4sc4iNduVgh/KFgUzMny3mM8rbyTpYLVN9bCd7eyqxIuij/uu35ivtObWRd6 NifwA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+On Sat, 08 Jun 2024 16:34:20 +0200, Christophe JAILLET wrote:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+> 
+> Note that the upper limit of ida_simple_get() is exclusive, but the one of
+> ida_alloc_max() is inclusive. So a -1 has been added when needed.
+> 
+> 
+> [...]
 
---m6rphp4l66hp66gv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-On 24/06/12 10:20AM, Johannes Berg wrote:
->=20
-> Wait ... I don't know what Kees did here, but seems then he should sign-
-> off too.
->=20
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Very early on I asked Kees to review this patch and he identified a
-couple issues with it and offered some suggestions. I wanted to make
-sure to credit him appropriately for his help -- I apologize if the
-Co-authored-by: tag is not appropriate here.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
---m6rphp4l66hp66gv
-Content-Type: application/pgp-signature; name="signature.asc"
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
------BEGIN PGP SIGNATURE-----
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-iQKTBAABCgB9FiEEP+u3AkfbrORB/inCFt7v5V9Ft54FAmZplIlfFIAAAAAALgAo
-aXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5maWZ0aGhvcnNlbWFuLm5ldDNG
-RUJCNzAyNDdEQkFDRTQ0MUZFMjlDMjE2REVFRkU1NUY0NUI3OUUACgkQFt7v5V9F
-t57vpA//VHsT66cH6yUOnOb25EOh76FkknUiaDTdDSU90XWIx3SBe2xILR+yeipU
-hMpdatBpLtE0lIKnWjp7a9ZxTrIzHtqkKqscNzFRlsPVlZqOw3pOmCyyYi4gsxwY
-AL6tn4Jb6iS4msK124/ncdOIkudCMuE3p8ii9SDFn47ubf4oROgsFponQqP1Mjt6
-/0a1fPFbUm7pJR/dCVbk+WcEHq65jS3uk60fL1iYttLsPQVjAKjkbsfDzUA7h8Vx
-xPTXgbSNgy2uCp78s20z0gkGiJ4RLGJlE9U2msFHbWRUY0MBZDVa67IHMql7JsOl
-Y3MCItaZdLbf44bhP2NuFEF5NPdXka2EgrTpS7wUbnX8x9H9nmCVTgWFWOHKGV2y
-2roUwfuO/oYSrmQpFH2CTo0wtwnKaA+57e8qD6kQZzRqeGMrLGoc9AwvFPxxXPyy
-ZyDfSUXRY9PRJ/TGZAosm1PO1BCMJTd9Qg+0v3usoXeBtsG49E3XJtLfKCq0dK8i
-OSpUfNVuPDeZ1MA2YsbmXg/z/WGmj7daCA20Kto502qtuTHYsX4X9SxFx7SZHCEh
-MkKjyPpyLxMSMhLTHHD9qIs+LsUxvDbKElZPT+0YmrOaS1xB3SW685sNmoGVOZ8Z
-aF037mFI3iIUqGjFZZynBmJPllU2//O9CP9RIfne12m7TrZWc2U=
-=0LHB
------END PGP SIGNATURE-----
-
---m6rphp4l66hp66gv--
+[3/3] proc: Remove usage of the deprecated ida_simple_xx() API
+      https://git.kernel.org/vfs/vfs/c/08ce6f724ce9
 
