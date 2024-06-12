@@ -1,129 +1,145 @@
-Return-Path: <linux-kernel+bounces-212251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5AD0905D4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:59:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A89905D5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36BA9B20DFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 640041F216B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436FD84A56;
-	Wed, 12 Jun 2024 20:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB7912B169;
+	Wed, 12 Jun 2024 21:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TwaRogoV"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwGXea6B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2680D84FAC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 20:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F111F433A4;
+	Wed, 12 Jun 2024 21:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718225976; cv=none; b=ERonGg84r0WlTXnBfRIV9xGwodTzdo9grCklJkny5h08ItaLmAtkuD7VklQd2t0TE1HNrcJWTItXJ3W4iH5dDy4+SbORfnkftBQe1H5CmNxi74BS24RAILVV58FQl0PA7RG4fxFVl4bv0oAFOfH90cQCSNRLWdIka7ryo3RB+No=
+	t=1718226169; cv=none; b=Oytq5ZxvRztnL0mXIVGNTLcyqkDorRWcWswKWAklym7tVmdEsIRupcO2hry4PO2JiEQqecNls20m9jniY1gWLMAgnzgA2vIng+Hi/wwwK6Cuj+RMb9QqoHk2qvzRwyF9nXVebxTag1WZLKftWhvFX24XLsVoFY1k0dPMG3vv7nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718225976; c=relaxed/simple;
-	bh=hPFWi4QxzNcEP51DZmP3MHWLX9GCVr2i2GLvwpb2egI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lf2ok9a3h+2M7YFmO2c8Mcp6xZoqdKN4vIrCSmed083QBwZqC8ZqYeuNsu9rVXBBQcrH39aANIN2NSR64sqMwc8Q9LMk8QhsxmKamQWUuPQ6EMsU9T3ZJE059tvKgbtoZ/qTInUha8VHW+Nzn6rTXbahXzBJzS5NjDjbT9qpBmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TwaRogoV; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f61742a024so56705ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718225974; x=1718830774; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hPFWi4QxzNcEP51DZmP3MHWLX9GCVr2i2GLvwpb2egI=;
-        b=TwaRogoVyuhOdbOfyGvSm6/hEfX/7oPcW0BRgxMAjFB7o80vqZ+GQVlbA5A6c6ExLd
-         o4OpOqJhc/UTyDtMA3QtxpZ84Fz0s5TvhhU5M0Jk/5oeNj0Zrgkfpiva2IOwvD7plGKO
-         d/mghP0RpQNo8xE9+H4YRU8rwdynLV5UNzmUgBuRYl7xVgY550+JVVtPHa3h+ozZngc5
-         DTZSNSPOu6G+PwbKKO7VjiXmTvZGf4yung5VQpYNW7jAA2R5echo3a4qlyAnX7+7L97b
-         2Odd8yGEa2u/sdT4J4VovV/Xi52EsKn9soCaTE7Hv5kxPXa57ABfcCAFrwjPFhVQKK9J
-         uK+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718225974; x=1718830774;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hPFWi4QxzNcEP51DZmP3MHWLX9GCVr2i2GLvwpb2egI=;
-        b=oXTnxS2muH8kpPdv2QXgpYvWuR1BdJPPnah11IhRw0aQRekJ5wX820e69zWrMtgdAS
-         nAq6sJdFEhz8ryAHnif2yhe7fD40LGhKy4W+IesK6+69kD2DF45W8I+9G6QiouKvT9x1
-         prPCFTT+WDr+F+OukucyAebIVe859+Py9h0SOuf7kp4T6Mj3i4dAn7HotJBdahPG2ExX
-         byJseRYoFNcVNUw4Hl/WtkTtorW1V35g+r1m6wRZT5kUEtDPUFYhqT3i+xkTd0LLKTy3
-         xYYARWJM6eFzTiGG+D7tB1q7LllgEr4RiV23CoqALMcNArrcJ3BsPw4uQk75hRlnCzEo
-         52ow==
-X-Forwarded-Encrypted: i=1; AJvYcCUToAW3v9RxaXqSyZ1JvtlHrDQqGJLh12zBGIzR0q0zbp5bZY1/9Ww9qDdwSZBG5dynt7UQoos7Rayyp7C5gwCZ8EU8g5TAU82a7wdB
-X-Gm-Message-State: AOJu0Yx/u/JG9M6RWoOczpUjtFevIAqrvhqtiOpzPdVKTaln5GgEn+F9
-	Q4HFhfPuPNCsFlkv+6riqiC456PcjHHRRPCl3OpSB2eaX0V0D+N+5uF9Ree1FCIckLAMfMSf9N4
-	8ibGblscRPmjjfpoJKHnUl9WRPfFxiKFPq+6o
-X-Google-Smtp-Source: AGHT+IFWmsdEasPwyOynYBtzxGWhPDlYAW7MCo/VR6F7DeOyZ4t8Z05zsA0gmIZLPABsyF5wtAXUbmNxcWHTnKYlGWw=
-X-Received: by 2002:a17:903:2b86:b0:1f3:3ede:9b0 with SMTP id
- d9443c01a7336-1f84fd58c5cmr833695ad.10.1718225974074; Wed, 12 Jun 2024
- 13:59:34 -0700 (PDT)
+	s=arc-20240116; t=1718226169; c=relaxed/simple;
+	bh=2lfTlYRZCf4xaUB6sPr/DlI2iYZHVJqO+OgfzvR4kGw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YmxOT2fA2ivx/opLUWgtmZ+rNnJ9GGCf6b6mpRVcfKgNRtW/0o3rFNlc4GevKmvdT++8Eim65XGPqsZeV3Nrv83kPf03B1yp7hXLh4l2qWuNbFDhV6PMKtwINrDphNQanfhnDRAoI2dQ3oN8qHpAao4VNyRREaEdn1sVm9RjWiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fwGXea6B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6FDE3C116B1;
+	Wed, 12 Jun 2024 21:02:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718226168;
+	bh=2lfTlYRZCf4xaUB6sPr/DlI2iYZHVJqO+OgfzvR4kGw=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=fwGXea6BJRhGx+laVmx6YpeiZLZ8shU8KXnFtipCOY6R8AB0AncVq3DD6oF9X9mAF
+	 2shovLjZfxp+iCsTMEHltvz8eZ4cCooiM92CcK0VZY1dnqchQfE8ep5YmtxolR4/oo
+	 9J0ps9CjVXm+RjhxquK1TEFJIQpHKDmzdf4NlXzzjtqUYfX7vaTnp2owviVtxhVo06
+	 5sXZcXoxR41+zGKg+hhcz3BBnFZAtILmVreEkKD/U/F6ycs9Y9ZrV0tUWenpjKJ+LO
+	 DjaRdph8uE6/0yZXKl1vvgiTIlI8v+quRCw++L56s3wS7bqxlEB5ljAY4Bdt9UvKiM
+	 Pzvg6id4IiPPQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52192C27C53;
+	Wed, 12 Jun 2024 21:02:48 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Subject: [PATCH v3 0/3] Add sy7802 flash led driver
+Date: Wed, 12 Jun 2024 23:01:31 +0200
+Message-Id: <20240612-sy7802-v3-0-1e9cc1c79b79@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607065343.695369-1-irogers@google.com> <23ee1734-7e65-4f11-aede-fea44ada3cc4@arm.com>
- <CAP-5=fUP69NJ+j6+9rUnp+UPBxcopJ=BOY-LeOjs8vYdt4soMA@mail.gmail.com> <cc1b0673-13b3-439f-afdf-c9cb450f8fed@arm.com>
-In-Reply-To: <cc1b0673-13b3-439f-afdf-c9cb450f8fed@arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 12 Jun 2024 13:59:22 -0700
-Message-ID: <CAP-5=fUBsuOau6scssB_RL6uGczGfe8GHL2Cx-ZE1Oj7ZTZ4KA@mail.gmail.com>
-Subject: Re: [PATCH v1] perf arm: Workaround ARM PMUs cpu maps having offline cpus
-To: Leo Yan <leo.yan@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
-	James Clark <james.clark@arm.com>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yicong Yang <yangyicong@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKsMamYC/1WMwQ6CMBAFf8Xs2Zp221L05H8YDwVa2QuQFhuR8
+ O8WEjQe5+XNzBBdIBfhcpghuESR+i6DPB6gbm33cIyazIAcFZeoWZxMyZF5xX1deF1o1JDPQ3C
+ eXlvods/cUhz7MG3dJNZ1T5g9kQTjrKmMspVEb62/2oHGd6zbk3vCGkn4ExUXXxGzKIQsxZlbo
+ 1T5Ly7L8gGP6kno1wAAAA==
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ Trilok Soni <quic_tsoni@quicinc.com>, Kees Cook <kees@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ phone-devel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718226168; l=2112;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=2lfTlYRZCf4xaUB6sPr/DlI2iYZHVJqO+OgfzvR4kGw=;
+ b=Pych9e2dTWPhOchjqcDytmZ/K/iZ6oz2KN+nidvINrUBfeDPVXXIhVJ3r3TsY9GaSqk5+WjjM
+ SENcXoQ7nFlCC6vEaOEjuRohZAprrZVcWnbwwLCELrO0dyBYZfpIEfJ
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-On Wed, Jun 12, 2024 at 1:32=E2=80=AFPM Leo Yan <leo.yan@arm.com> wrote:
-[...]
-> >
-> > Renaming of the cycles event in arm_dsu_pmu.c - I'd say this is a top
-> > priority issue right now.
->
-> I cannot promise this. The main reason is that I still believe the
-> 'cycles' event (or, generally speaking, all events) should be managed by
-> the tool rather than by the uncore PMU drivers. Additionally, the perf
-> tool currently has handled these symbolic events effectively.
+This series introduces a driver for the Silergy SY7802 charge pump used
+in the BQ Aquaris M5 and X5 smartphones.
 
-I don't understand this.
-1) the PMU advertises an event called 'cycles' - nothing to do with the too=
-l
-2) perf without a PMU matches events on all PMUs. I don't know people
-involved in the perf tool development who think cycles shouldn't match
-on an uncore PMU, which was Linus' stand point and reason for
-rejecting my fix in favor of a revert.
-3) matching all PMUs wasn't the case for legacy events, like cycles,
-but now we want it to be to fix the Apple M? PMU issues where legacy
-events fail to work. The whole reason we changed the priority of
-legacy events as ARM requested. It also makes things more uniform with
-BIG.little/hybrid.
+The implementation is based on information extracted from downstream as
+the datasheet provided by a distributor of the hardware didn't include
+any information about the i2c register description.
 
-We can update perf record to warn (not fail) about not opening events.
-ARM should do this as (1) and (3) were caused by ARM - I have a WIP
-patch but I'm in no mood to finish/send it. Even with this there will
-be a warning for "perf record -e cycles .." and fixing the event name
-is the only way to clear that up without special case code or making
-warnings verbose only - something that makes me and others
-uncomfortable.
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+Changes in v3:
+- Add R-b tag to first patch
+- Extend driver commit message
+- Improve readability of defines by using BIT()
+- Rename some variables/parameters
+  * led_no -> led_id
+  * level -> brightness
+  * curr -> fled_{strobe,torch}_used_tmp
+  * mask -> {flash,torch}_mask
+  * i -> child_num
+- Restructure structs ("Place th big stuff at the top")
+- Declare 'child' on a separate line
+- Move multi-line assignments out of declaration block
+- Update warning/error messages and comments
+- Use gotos to handle error path
+- Use devm API to cleanup module's resources
+- Init mutex before LED class device is registered to avoid race
+  condition
+- Link to v2: https://lore.kernel.org/r/20240401-sy7802-v2-0-1138190a7448@apitzsch.eu
 
-Thanks,
-Ian
+Changes in v2:
+- bindings: remove unneeded allOf
+- bindings: example: move flash-led-controller under i2c node to fix
+  check error
+- Cc to phone-devel
+- Link to v1: https://lore.kernel.org/r/20240327-sy7802-v1-0-db74ab32faaf@apitzsch.eu
+
+---
+André Apitzsch (3):
+      dt-bindings: leds: Add Silergy SY7802 flash LED
+      leds: sy7802: Add support for Silergy SY7802 flash LED controller
+      arm64: dts: qcom: msm8939-longcheer-l9100: Add rear flash
+
+ .../devicetree/bindings/leds/silergy,sy7802.yaml   | 100 ++++
+ .../boot/dts/qcom/msm8939-longcheer-l9100.dts      |  26 +
+ drivers/leds/flash/Kconfig                         |  11 +
+ drivers/leds/flash/Makefile                        |   1 +
+ drivers/leds/flash/leds-sy7802.c                   | 546 +++++++++++++++++++++
+ 5 files changed, 684 insertions(+)
+---
+base-commit: 6a03b35e4395eb2d6e89a38aca00a9fe9cb39ba1
+change-id: 20240325-sy7802-f40fc6f56525
+
+Best regards,
+-- 
+André Apitzsch <git@apitzsch.eu>
+
+
 
