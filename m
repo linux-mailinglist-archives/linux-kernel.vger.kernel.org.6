@@ -1,170 +1,124 @@
-Return-Path: <linux-kernel+bounces-211050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 646F1904C8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:19:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D80B7904C90
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E53D1C2291D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:19:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6BA51C2276B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9238169361;
-	Wed, 12 Jun 2024 07:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BFE167296;
+	Wed, 12 Jun 2024 07:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Rld9zix5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vO4VaIEn";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lMiRGPgu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eHGR4jeF"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="u1Re4Ijl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038646F077;
-	Wed, 12 Jun 2024 07:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE6417C9;
+	Wed, 12 Jun 2024 07:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718176738; cv=none; b=KxUTiOVa+/Es/kqROkwOxUdTjd+TtrEvJPsK+HWHl8gkZBt+VTAydFSvJZJRxrKHc10ffwOx5AOV3XLNYft95ztswqv5HH8qzDmY8Dy5jcQc28qYjtpnIKkdDioZiU30tAhkNsyU59ZJT7VU0bRbc9qqPEpS3vZ7fBAjfVSDF38=
+	t=1718176806; cv=none; b=oINYK7PgCi2uTLjAbxZuSBhgaFTQRh6wkpNEKkr8zAmBtY/DXMrn5itMAxZBaWnsVwngQLoDPrKoF4OKalWS3RYYHIVmc5w1X+EbmMRZqstkQallH0dK0THbfmj5IlVb9CYGntiHsijwpryLOZBM4uk/+Q9eZqmiTJWi44c7Ql8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718176738; c=relaxed/simple;
-	bh=KwNgimE294iB6otsiEvXsbXHCC2yLiVNNG7IpeDVq+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t3GopCpHdiCug37AbggeGUIdqpzBFCCBMqtIoOFi7Hzlo+GiV4fh1+YpiL0vG+8rFJ8E8sfbq393U3LAsvERzwX89TOHysMd7sEGVMaKg51nEWp9qLHANGE6MfDuEkFe+s/Q1EZ16Dcu3MCkRvmrVC+rA1HcyYMdZyC8W0cXjmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Rld9zix5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vO4VaIEn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lMiRGPgu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eHGR4jeF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id F15375BD1C;
-	Wed, 12 Jun 2024 07:18:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718176734; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCRwjfh3efFojbLfiXjXPTbdsMU5jxmIYn1xogazkBw=;
-	b=Rld9zix5HWJpEfkVqVwKtN2bFSRJWLK2V+hI13ilyK1rh9BvO5DaEnJl5aVXFg2daPPuyF
-	6QmTgEr0NumeOz2gont4zLBVQNRDAmeLf5PBx2Rzi4DccgPTzl6hMIZueJhl/XPpHHwkfK
-	D/3iW97Qaeykclcsqc50//Ezw6t1wYQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718176734;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCRwjfh3efFojbLfiXjXPTbdsMU5jxmIYn1xogazkBw=;
-	b=vO4VaIEnm92U/xadIv1O5ZfeJNWU/FzvNBf0QlVPDPIzep/ksRM3h5yuKnmOnOkM6D6+ol
-	wluUN/WBIkJDw5AQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718176733; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCRwjfh3efFojbLfiXjXPTbdsMU5jxmIYn1xogazkBw=;
-	b=lMiRGPguZb+xKoVEyNONKkkS+GRcU+IS21+SA8Gxn502mv2VcJyyFFMFCxbEOXBfAt6Toj
-	lbYCZX62m23iYKXuvURLuLC2BcxD7tAiq6bFDY9//6lKYFUG7khJFhva7sGiW60hbaX2ue
-	fXmQjyTvvhFs/2+ad6+elB4XIM0/kSs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718176733;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCRwjfh3efFojbLfiXjXPTbdsMU5jxmIYn1xogazkBw=;
-	b=eHGR4jeFqTVG2euIiZ8dzLLgB59CyPyhVHjiFAqAYgCti50lqdfdEwWQ9ludaZCeGX21Zw
-	cPX0aFq78+p7vmCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7DE24137DF;
-	Wed, 12 Jun 2024 07:18:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8tk+G91LaWa5RwAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 12 Jun 2024 07:18:53 +0000
-Message-ID: <b1ab1878-cdf3-4f8c-8268-bc6b5f6b905e@suse.de>
-Date: Wed, 12 Jun 2024 09:18:52 +0200
+	s=arc-20240116; t=1718176806; c=relaxed/simple;
+	bh=6LKNcDkiR6haqhH0c4d9D/aD3KKjTTuaAQYblOONqB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c5QZ/ZItLggOArDTLhibKtZmNY7k4+y+LvDgOfQ1TGoj4CeF74OLAfi6dypT1ifehfMqaLlSZMoZGi2rXmnpsHQHqptErgXxp5alu8U9roLM1DVn5rZvxrvD5tmfqdMjiqN75iqOEoPQICe34mNwHoHErmYiJN/pmPb1axmrfQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=u1Re4Ijl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 413E0C3277B;
+	Wed, 12 Jun 2024 07:20:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718176805;
+	bh=6LKNcDkiR6haqhH0c4d9D/aD3KKjTTuaAQYblOONqB8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u1Re4IjlBcM5fzUtCOGLInvUYXE6IPxIpJ2+kVcecipQMs9HVh3kx7J7caR7vLVUn
+	 yzOC3UDmjvc/G4G8IpzP2OTa2Kc0/OPeMJtv5MVV7Q41Weu2J3hW+s1qVjOOmr2OTd
+	 NLRoFDifDAB32GCuxZP1EYtBN7X3hOM0fRyeZ3HI=
+Date: Wed, 12 Jun 2024 09:20:02 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "zhai.he" <zhai.he@nxp.com>
+Cc: akpm@linux-foundation.org, sboyd@kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	zhipeng.wang_1@nxp.com, jindong.yue@nxp.com
+Subject: Re: [PATCH] Supports to use the default CMA when the
+ device-specified CMA memory is not enough.
+Message-ID: <2024061228-unburned-dander-c9a2@gregkh>
+References: <20240612023831.810332-1-zhai.he@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/14] scsi: fnic: Modify IO path to use FDLS
-Content-Language: en-US
-To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
-Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
- mkai2@cisco.com, satishkh@cisco.com, jejb@linux.ibm.com,
- martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240610215100.673158-1-kartilak@cisco.com>
- <20240610215100.673158-10-kartilak@cisco.com>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240610215100.673158-10-kartilak@cisco.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.29
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,cisco.com:email,imap1.dmz-prg2.suse.org:helo]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612023831.810332-1-zhai.he@nxp.com>
 
-On 6/10/24 23:50, Karan Tilak Kumar wrote:
-> Modify IO path to use FDLS.
-> Add helper functions to process IOs.
-> Remove unused template functions.
-> Cleanup obsolete code.
-> Refactor old function definitions.
+On Wed, Jun 12, 2024 at 10:38:31AM +0800, zhai.he wrote:
+> From: He Zhai <zhai.he@nxp.com>
 > 
-> Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
-> Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-> Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
-> Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
+> In the current code logic, if the device-specified CMA memory
+> allocation fails, memory will not be allocated from the default CMA area.
+> This patch will use the default cma region when the device's
+> specified CMA is not enough.
+> 
+> Signed-off-by: He Zhai <zhai.he@nxp.com>
 > ---
->   drivers/scsi/fnic/fnic.h       |   20 +-
->   drivers/scsi/fnic/fnic_io.h    |    3 +
->   drivers/scsi/fnic/fnic_main.c  |    5 +-
->   drivers/scsi/fnic/fnic_scsi.c  | 1107 +++++++++++++++++++-------------
->   drivers/scsi/fnic/fnic_stats.h |    2 -
->   5 files changed, 680 insertions(+), 457 deletions(-)
+>  kernel/dma/contiguous.c | 11 +++++++++--
+>  mm/cma.c                |  2 +-
+>  2 files changed, 10 insertions(+), 3 deletions(-)
 > 
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index 055da410ac71..e45cfb24500f 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -357,8 +357,13 @@ struct page *dma_alloc_contiguous(struct device *dev, size_t size, gfp_t gfp)
+>  	/* CMA can be used only in the context which permits sleeping */
+>  	if (!gfpflags_allow_blocking(gfp))
+>  		return NULL;
+> -	if (dev->cma_area)
+> -		return cma_alloc_aligned(dev->cma_area, size, gfp);
+> +	if (dev->cma_area) {
+> +		struct page *page = NULL;
+> +
+> +		page = cma_alloc_aligned(dev->cma_area, size, gfp);
+> +		if (page)
+> +			return page;
+> +	}
+>  	if (size <= PAGE_SIZE)
+>  		return NULL;
+>  
+> @@ -406,6 +411,8 @@ void dma_free_contiguous(struct device *dev, struct page *page, size_t size)
+>  	if (dev->cma_area) {
+>  		if (cma_release(dev->cma_area, page, count))
+>  			return;
+> +		if (cma_release(dma_contiguous_default_area, page, count))
+> +			return;
+>  	} else {
+>  		/*
+>  		 * otherwise, page is from either per-numa cma or default cma
+> diff --git a/mm/cma.c b/mm/cma.c
+> index 3e9724716bad..f225b3f65bd2 100644
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -495,7 +495,7 @@ struct page *cma_alloc(struct cma *cma, unsigned long count,
+>  	}
+>  
+>  	if (ret && !no_warn) {
+> -		pr_err_ratelimited("%s: %s: alloc failed, req-size: %lu pages, ret: %d\n",
+> +		pr_debug("%s: %s: alloc failed, req-size: %lu pages, ret: %d, try to use default cma\n",
+>  				   __func__, cma->name, count, ret);
 
-Well. This patch reverts bascially all changes I did to the fnic driver
-in converting it to use tagset iterators.
+Why did you change the error level here?
 
-Please update it to stay with tagset iterators.
+And when you use pr_debug(), you NEVER need to use __func__, as it is
+already included automatically in the message output.  So now you have
+it twice :)
 
-Cheers,
+thanks,
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
-
+greg k-h
 
