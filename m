@@ -1,183 +1,96 @@
-Return-Path: <linux-kernel+bounces-212285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0AE905DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9AC905DD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05887B218F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:37:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87D97B21820
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B34126F02;
-	Wed, 12 Jun 2024 21:37:30 +0000 (UTC)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506871272A7;
+	Wed, 12 Jun 2024 21:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="hUOX1iOH"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6F6537FF;
-	Wed, 12 Jun 2024 21:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CFD84FD6;
+	Wed, 12 Jun 2024 21:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718228249; cv=none; b=m7IfhjYx3diKSP6D12QuzhoOYrgzaIPfX9zYwMYd+IUdIV52Uy0YbjhWPBI4FreHa2SkRKjkvyqxAyyB8NGjTXBfCtCqbXbSu8ZBabqvB08WdBLz/HJLPs/+AUjAz/j/OKyTK4hKa7O6dGE0e6wFcrGbeujF+2EZlL2cHet4KKM=
+	t=1718228467; cv=none; b=ttWhKLp3BXd35zF5sV9EKypfDWBdPU3evsK0zn6tJSWct9XMeCWfhjKZZ3Ya8Y0A0FxSSTojg34NGEtEITE2WY8jt+miL70Gw6CYvDPPvhjRoI0LMM2JZvGmhxm2qiqGXUD/ej1384JUdjqIJ7QE6dlavVxq1UYbqx0rA70lXHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718228249; c=relaxed/simple;
-	bh=bhKvs8D06n4pcQ7fNZQQ/3XqHs7BTL3nX8StQflzXlI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MvttL1mmZ1oh02fTcV1AR+8KwLuX7xImS8XQeKRGGwKn7aZa6lrmjiGM9Bx2mz3pGvXQ7sx/9On54/lS1teZloeVWECTpUycy+qnYR51MUZZtAN6LSLRbC/t/dM46wbKFUbVFaPyWuegSpjInebd82bbRC4NKU7hY0wVCifJbcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-80b8e5cab7bso89712241.0;
-        Wed, 12 Jun 2024 14:37:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718228247; x=1718833047;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iGrQ4kC0usDlo6X7rb0FFn4z1I4iV8UOfsxmWyJU8T8=;
-        b=mcNKucnkcDbEqf1tekqrC8BEPD2LISBWfDwrggWw/f2uypNjI/pRed07LZJj9zq5og
-         R0S+OkOFzHn621lrX+N1gwR3VEsE7mdvk5HeDHwrFfrtF3U0rP2L3VdFD461dJNXtEXK
-         BDnxaboc/cZ8UPeMZonbIyv3806v59lpmTvqKVShXISPzeHA9uUgTbL6F+EY28J6/g8v
-         gEv1TN4rUV7FLvS3jfxmuZmZqr4HUaOVrBsjiVcerBHBdQOa3PTFG2hlhNynrnY21mP3
-         ccR+xfC+O2YHrzRrrOiEakGxzrkpkPQAS1+VX3fh2XMMwCa/E/5jyYA35nWukYZtNYYu
-         NDgA==
-X-Forwarded-Encrypted: i=1; AJvYcCX98iYw5vSfSaSHKpN/0rFuQUIfJE21bDnYa4LGTvT/gw8S73Mq7aRoT4A1m9K9ytYa8n7exRxiKMlvRszgqxmnBYjLYbwoGIS/8W5oT+b163GiGxvpO/YexGaNzxjNA7njSILS
-X-Gm-Message-State: AOJu0YzDGmz5VyggIUlj+nmac7X8DPe6aSarvghkGnESJTHMWroS4tt8
-	sQP5paNGFfCIqGC4q2TCJ7fUwSz03CMp2NJyrbDmJfWThqWjqqBnikjU06oPUhGdhq0w7Hp8vy9
-	ZTncByzpRN0+6ZkoiyQvhRkwPwSk=
-X-Google-Smtp-Source: AGHT+IFxF8EN06J17xFY/m06JGL5/Bofq4OOHKPvS2e7I791mJG11bjTcP4Zr47YKFd5X7pKAZ20ZqNeu7FQRBIxKg8=
-X-Received: by 2002:a05:6102:4646:b0:48c:454f:e7ea with SMTP id
- ada2fe7eead31-48d91e67d3cmr3414916137.29.1718228246725; Wed, 12 Jun 2024
- 14:37:26 -0700 (PDT)
+	s=arc-20240116; t=1718228467; c=relaxed/simple;
+	bh=ziYzFLawczmHhgIWSrqFxQLHUdUZWpR/vS18tblY604=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cVKXr/OzrtkagGuXXFoyNIgA17+jkr2+IFPD0fNWvoC9099bRrkMsJug0fgF0eLXkY4E4sCGcWa8yTpwKCCmF1lF6VBKISRhAwY6liOV6GbflHjfg4+wrqpxvQ+Xu2vU5G/Ibx1ffNc3PEG2dziXUkAq3BiAK73nzH5fdpqpzEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=hUOX1iOH; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6BBE845E2C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1718228465; bh=qIc356MqW+8GvLC3z6w6lKJewxejf1SBuJ5raswiJNk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hUOX1iOHRgjtb2Al4eoDjrXBk8jheHUTSOe0XcRV4PQozwJAJfhTVtwOHuv0u803c
+	 n4aCxxAAd4XyGfkueM5FNjKlJxpt1vsInQhqkMeeDcaR4St3WvNIdU340VMkEFdVP4
+	 FP03i0wvLI4x3xMfMACDYHlY4I0F3gHek8upcxi10MX4m3rySdFHnxpnx/BmnPGaNF
+	 RvbRxi27E9fQuWzWzmEXzlLfEzpx0+8GkEtR9dL7o1zc1kR+p6e2AvtqWj0t40vVNt
+	 XaKn06Z8hbfbXiCcJkcMaU+LkBHgDDPtjNiurP4wi0GT1zxupGJ3l+7ZmdQIrUKcQp
+	 mpzxjSXy/qNOQ==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 6BBE845E2C;
+	Wed, 12 Jun 2024 21:41:05 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>, Dan Williams
+ <dan.j.williams@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, Andre Noll <maan@systemlinux.org>
+Cc: linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@pengutronix.de, Ahmad Fatoum
+ <a.fatoum@pengutronix.de>
+Subject: Re: [PATCH v2] docs: crypto: async-tx-api: fix broken code example
+In-Reply-To: <20240529-async-dma-docs-v2-1-8faf87e72e6d@pengutronix.de>
+References: <20240529-async-dma-docs-v2-1-8faf87e72e6d@pengutronix.de>
+Date: Wed, 12 Jun 2024 15:41:04 -0600
+Message-ID: <87cyolon4f.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612081216.1319089-1-zhai.he@nxp.com> <20240612114748.bf5983b50634f23d674bc749@linux-foundation.org>
-In-Reply-To: <20240612114748.bf5983b50634f23d674bc749@linux-foundation.org>
-From: Barry Song <baohua@kernel.org>
-Date: Thu, 13 Jun 2024 09:37:15 +1200
-Message-ID: <CAGsJ_4wsAh8C08PXutYZx9xV3rLRwLG-E6Mq-JgoSO5LA1ns=A@mail.gmail.com>
-Subject: Re: [PATCH v2] Supports to use the default CMA when the
- device-specified CMA memory is not enough.
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "zhai.he" <zhai.he@nxp.com>, sboyd@kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, zhipeng.wang_1@nxp.com, 
-	jindong.yue@nxp.com, Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, Jun 13, 2024 at 6:47=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Wed, 12 Jun 2024 16:12:16 +0800 "zhai.he" <zhai.he@nxp.com> wrote:
->
-> > From: He Zhai <zhai.he@nxp.com>
->
-> (cc Barry & Christoph)
->
-> What was your reason for adding cc:stable to the email headers?  Does
-> this address some serious problem?  If so, please fully describe that
-> problem.
->
-> > In the current code logic, if the device-specified CMA memory
-> > allocation fails, memory will not be allocated from the default CMA are=
-a.
-> > This patch will use the default cma region when the device's
-> > specified CMA is not enough.
-> >
-> > In addition, the log level of allocation failure is changed to debug.
-> > Because these logs will be printed when memory allocation from the
-> > device specified CMA fails, but if the allocation fails, it will be
-> > allocated from the default cma area. It can easily mislead developers'
-> > judgment.
+Ahmad Fatoum <a.fatoum@pengutronix.de> writes:
 
-I am not convinced that this patch is correct. If device-specific CMA
-is too small,
-why not increase it in the device tree? Conversely, if the default CMA
-size is too
-large, why not reduce it via the cmdline?  CMA offers all kinds of
-flexible configuration
-options based on users=E2=80=99 needs.
-
-One significant benefit of device-specific CMA is that it helps
-decrease fragmentation
-in the common CMA pool. While many devices allocate memory from the same po=
-ol,
-they have different memory requirements in terms of sizes and
-alignments. Occasions
-of memory allocation and release can lead to situations where the CMA
-pool has enough
-free space, yet someone fails to obtain contiguous memory from it.
-
-This patch entirely negates the advantage we gain from device-specific CMA.
-My point is that instead of modifying the core code, please consider correc=
-ting
-your device tree or cmdline configurations.
-
-> >
-> > ...
-> >
-> > --- a/kernel/dma/contiguous.c
-> > +++ b/kernel/dma/contiguous.c
-> > @@ -357,8 +357,13 @@ struct page *dma_alloc_contiguous(struct device *d=
-ev, size_t size, gfp_t gfp)
-> >       /* CMA can be used only in the context which permits sleeping */
-> >       if (!gfpflags_allow_blocking(gfp))
-> >               return NULL;
-> > -     if (dev->cma_area)
-> > -             return cma_alloc_aligned(dev->cma_area, size, gfp);
-> > +     if (dev->cma_area) {
-> > +             struct page *page =3D NULL;
-> > +
-> > +             page =3D cma_alloc_aligned(dev->cma_area, size, gfp);
-> > +             if (page)
-> > +                     return page;
-> > +     }
-> >       if (size <=3D PAGE_SIZE)
-> >               return NULL;
+> The code example fails to compile:
 >
-> The dma_alloc_contiguous() kerneldoc should be updated for this.
+>   1) addr_conv is defined twice, once as a VLA, which have been phased out
 >
-> The patch prompts the question "why does the device-specified CMA area
-> exist?".  Why not always allocate from the global pool?  If the
-> device-specified area exists to prevent one device from going crazy and
-> consuming too much contiguous memory, this patch violates that intent?
+>   2) submit is not a pointer, but is still dereferenced with ->
 >
-> > @@ -406,6 +411,8 @@ void dma_free_contiguous(struct device *dev, struct=
- page *page, size_t size)
-> >       if (dev->cma_area) {
-> >               if (cma_release(dev->cma_area, page, count))
-> >                       return;
-> > +             if (cma_release(dma_contiguous_default_area, page, count)=
-)
-> > +                     return;
-> >       } else {
-> >               /*
-> >                * otherwise, page is from either per-numa cma or default=
- cma
-> > diff --git a/mm/cma.c b/mm/cma.c
-> > index 3e9724716bad..6e12faf1bea7 100644
-> > --- a/mm/cma.c
-> > +++ b/mm/cma.c
-> > @@ -495,8 +495,8 @@ struct page *cma_alloc(struct cma *cma, unsigned lo=
-ng count,
-> >       }
-> >
-> >       if (ret && !no_warn) {
-> > -             pr_err_ratelimited("%s: %s: alloc failed, req-size: %lu p=
-ages, ret: %d\n",
-> > -                                __func__, cma->name, count, ret);
-> > +             pr_debug("%s: alloc failed, req-size: %lu pages, ret: %d,=
- try to use default cma\n",
-> > +                         cma->name, count, ret);
-> >               cma_debug_show_areas(cma);
-> >       }
+>   3) The first call to async_xor() lacked the trailing semicolon
 >
+> Fix these issues and while at it, fix some code style nitpicks as well:
+>
+>   1) make the functions static as users are unlikely to export them
+>
+>   2) include the relevant header
+>
+>   3) Shorten the example a bit by removing a redundant variable
+>      definition
+>
+> Fixes: 04ce9ab385dc ("async_xor: permit callers to pass in a 'dma/page scribble' region")
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-Thanks
-Barry
+It looks like nobody has picked this up, so I've applied it.
+
+Thanks,
+
+jon
 
