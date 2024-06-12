@@ -1,95 +1,123 @@
-Return-Path: <linux-kernel+bounces-211232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B823E904EC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:08:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E31C8904ECD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B9E4B214E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:08:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55D34B2290C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E221D16D4FF;
-	Wed, 12 Jun 2024 09:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mKCmaav+"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6A912B89;
-	Wed, 12 Jun 2024 09:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57DE16D9A6;
+	Wed, 12 Jun 2024 09:09:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF17B33D0;
+	Wed, 12 Jun 2024 09:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718183297; cv=none; b=IBBCiBrRUudVxjKWmK78dqAG/WO3FmCVc6OA3RHKh7fof1KMMPz+FAQSushc+qN+ddEuMGlydkQ0lieJD4RfDEuneqjNgjYcbjF8RpoVDibQ96BleaMTg6dSkBz2GASQ+z4GESygPtP4umw7MnE/BBatqAolLgmFIpbachuCm3M=
+	t=1718183346; cv=none; b=FDuIFdVUJOI2KjNY3D272A2JVwkvmom1EydRcTHwfzjcpx7OGCgFI3lMZkOUVaDlFrIhnQdbg3fr6fiRHlvpVgaDE5stR3dbLrfLFVnRcKsE2ZmFBxPNA0s0hKmVDqOSBOBVs0GZBSRBeEzm4EfLMxu0AB2/Jhx07pOVzFLza+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718183297; c=relaxed/simple;
-	bh=oGz+2MKh1s8xC7PcDyuwrGEgelZKhmmNpiMHi4axiow=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BXMv1o3gWRtN/iwdzWBxFaOIYvo5n0y59yCP6NTWpMQyHhFtvFXNrKccdm02gR8eKYGeqCRMSLd0bCC81QJL4svsyPBX5uMQwcP1xH4820tF8KMGdHIRSdEus/KBCYddo9WMCJWPiaQTuhGqp8STtuy0+evaBIwcZLd7ue//aMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mKCmaav+; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6BDE9E0007;
-	Wed, 12 Jun 2024 09:08:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718183287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oGz+2MKh1s8xC7PcDyuwrGEgelZKhmmNpiMHi4axiow=;
-	b=mKCmaav+NzUX3Ds7NJOqrM3/k491Gi4CJSjDmpqcJsd3QU0xpAAFlOY55Gn+jePpFMZIlO
-	KiaaMCguFtk0ANk8c4f45Fm6R7YZgo5ojpjZmvYxpLK9AP8SJQKgX9Wh3v0dAT85FYacyZ
-	NEB+p4AkWAX70qBBZ8uwBHqXUIkfJoZp4ydK4bq8NtOmTxowCFNYiIba6UrIjmhPuGAqxb
-	doTFjG0CZ+i9Db9sObD+MA4Sx7XR0XN0wh9aV/nUfiwD0y28mVF+KSZ+Q31RwjUyPQpW3S
-	jUJnd63byHZxuZk7WOWkGifHxdY8NymiG+JHPGm134/Z51t/Cqa6txtFwC/xwg==
-Date: Wed, 12 Jun 2024 11:08:05 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dent Project
- <dentproject@linuxfoundation.org>, kernel@pengutronix.de
-Subject: Re: [PATCH net-next v2 2/8] net: ethtool: pse-pd: Expand C33 PSE
- status with class, power and extended state
-Message-ID: <20240612110805.04b4f553@kmaincent-XPS-13-7390>
-In-Reply-To: <ZmgFLlWscicJmnxX@pengutronix.de>
-References: <20240607-feature_poe_power_cap-v2-0-c03c2deb83ab@bootlin.com>
-	<20240607-feature_poe_power_cap-v2-2-c03c2deb83ab@bootlin.com>
-	<ZmaMGWMOvILHy8Iu@pengutronix.de>
-	<20240610112559.57806b8c@kmaincent-XPS-13-7390>
-	<ZmgFLlWscicJmnxX@pengutronix.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718183346; c=relaxed/simple;
+	bh=ekVvXOtgEWGc5upJE6j41XAzTm9If7AcFpwlPUsRGRQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EYBNn/t6D/fLOmZevU5yBZqYjkJxisLr9YqUGXXI/70NIOZLBCzhaKw950hWb8FVhVC/5GBimitdtHMQ+tcbCFmLvc1araGAvE9rmlqkbsPXhgctGJYESNuuQ58jK0aqgWkJXL4ORU5+kIznATSCK7NFHZyn47OISFQNEWxrZQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 479401595;
+	Wed, 12 Jun 2024 02:09:27 -0700 (PDT)
+Received: from [10.57.69.241] (unknown [10.57.69.241])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC5043F64C;
+	Wed, 12 Jun 2024 02:09:00 -0700 (PDT)
+Message-ID: <dd536c45-cf2a-4b00-b1cc-c23e3157a4b8@arm.com>
+Date: Wed, 12 Jun 2024 11:08:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] cpufreq/cppc: Remove the desired_perf compare when set
+ target
+To: Riwen Lu <luriwen@hotmail.com>
+Cc: linux-pm@vger.kernel.org, viresh.kumar@linaro.org, rafael@kernel.org,
+ linux-kernel@vger.kernel.org, ionela.voinescu@arm.com,
+ beata.michalska@arm.com, hotran@apm.com, Riwen Lu <luriwen@kylinos.cn>
+References: <20240530061621.36byo5a2iqc6o2az@vireshk-i7>
+ <OS3P286MB249076187B3497D1EDD70988B1F32@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Pierre Gondois <pierre.gondois@arm.com>
+In-Reply-To: <OS3P286MB249076187B3497D1EDD70988B1F32@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 11 Jun 2024 10:05:02 +0200
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+Hello Riwen,
 
-> On Mon, Jun 10, 2024 at 11:25:59AM +0200, Kory Maincent wrote:
->=20
-> Here is my proposal aligned with IEEE 802.3-2022 33.2.4.4:
+This function seems to be the only cpufreq function saving and comparing the
+requested frequency with the last requested frequency. This seems to be more the
+task of the cpufreq framework than the cpufreq driver.
 
-FYI: It seems your are using an old user guide for the PD692x0 communication
-protocol. The one I have is based on the last firmware version 3.55.
-So don't be surprised if the next series version will have few differences =
-with
-your proposal.
+So FYIW, the patch looks good to me.
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+On 5/30/24 13:08, Riwen Lu wrote:
+> From: Riwen Lu <luriwen@kylinos.cn>
+> 
+> There is a case that desired_perf is exactly the same with the old perf,
+> but the actual current freq is not.
+> 
+> This happened in S3 while the cpufreq governor is set to powersave.
+> During cpufreq resume process, the booting CPU's new_freq obtained via
+> .get() is the highest frequency, while the policy->cur and
+> cpu->perf_ctrls.desired_perf are in the lowest level(powersave
+> governor). Causing the warning: "CPU frequency out of sync:", and set
+> policy->cur to new_freq.
+
+(new paragraph)
+
+Then the governor->limits() calls
+> cppc_cpufreq_set_target() to configures the CPU frequency and returns
+> directly because the desired_perf converted from target_freq is the
+> same with cpu->perf_ctrls.desired_perf and both are the lowest_perf.
+
+(new paragraph)
+
+> Since target_freq and policy->cur have been compared in
+> __cpufreq_driver_target(), there's no need to compare desired_perf
+> and cpu->perf_ctrls.desired_perf again in cppc_cpufreq_set_target()
+> to ensure that the CPU frequency is properly configured.
+
+NIT:
+Would it be possible to make distinct paragraphs ?
+
+> 
+> Signed-off-by: Riwen Lu <luriwen@kylinos.cn>
+> 
+> ---
+> v1 -> v2:
+>   - Update commit message and email.
+> v2 -> v3:
+>   - Update patch subject and commit message.
+>   - Remove the desired_perf compare logic.
+> ---
+>   drivers/cpufreq/cppc_cpufreq.c | 3 ---
+>   1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index 15f1d41920a3..337cece61ab5 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -295,9 +295,6 @@ static int cppc_cpufreq_set_target(struct cpufreq_policy *policy,
+>   	int ret = 0;
+>   
+>   	desired_perf = cppc_khz_to_perf(&cpu_data->perf_caps, target_freq);
+> -	/* Return if it is exactly the same perf */
+> -	if (desired_perf == cpu_data->perf_ctrls.desired_perf)
+> -		return ret;
+>   
+>   	cpu_data->perf_ctrls.desired_perf = desired_perf;
+>   	freqs.old = policy->cur;
 
