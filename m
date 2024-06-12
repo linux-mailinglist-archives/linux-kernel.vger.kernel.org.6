@@ -1,152 +1,99 @@
-Return-Path: <linux-kernel+bounces-211628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97DF9054A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:01:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE1C9054A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CD75B24779
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201D32811DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF5A17F361;
-	Wed, 12 Jun 2024 13:58:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00B517E914
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EF017F390;
+	Wed, 12 Jun 2024 13:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KgGObPDa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAA517F37C;
+	Wed, 12 Jun 2024 13:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718200719; cv=none; b=pa/9q+GxRgod+it9kl3RdSbDacDZRlNr52N8OG5PK3SdPPX4sS6aPLyJgNTu7EtyZXt38ifhhyB3c67VPxPDfiw7gH3FfPOYR9Q0jUCUa13Oajcq+4spu/3zipfXC2EnoXNkqEEdsI3h3a/HJsTAt1+yEK+aG+w4brmnVJV1Rfk=
+	t=1718200723; cv=none; b=Mf7l5Gc4nnhEjpodano8t66zmQ9uBafh/Lwj0UQfn1w5+pfYQ/dyQEOpWfbuaR4izr+1tkDxnm8RR7Tw2D081XftUZOFzo11jp8pp4MFkVh2dDSsgfxdcG1GkJXbE3vMs4oThsICsHIIqe4iU4O4gebZypFx4EW8wEv+Q5bdUsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718200719; c=relaxed/simple;
-	bh=Gy/lm/jdUpZeiX3Bu0wEuYgsJ1o06Dcw4DdUBsQN11Y=;
+	s=arc-20240116; t=1718200723; c=relaxed/simple;
+	bh=B3wMkmZ7OrCEXcqJWumgkuWRETuK/7tmpwj6d2FUnJk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NDGBgHCCtkCHVijEmDPKRffOyall1XniA/OqBfdHlZV9Vybf6PgmwFiGtbEWXKDrcX64IG24DW/Bitx0tjJmDaiUc0iKAUo7nMnEH2dE1M4JzA402lR36K3dPNlNxLLAOMRbJ8v36WNy596xgXQXfFl8Jm+6wJPkAaYo+6YULK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F14BB367;
-	Wed, 12 Jun 2024 06:59:01 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4678F3F64C;
-	Wed, 12 Jun 2024 06:58:35 -0700 (PDT)
-Date: Wed, 12 Jun 2024 14:58:31 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: catalin.marinas@arm.com, james.morse@arm.com, jean-philippe@linaro.org,
-	Sudeep Holla <sudeep.holla@arm.com>, maz@kernel.org,
-	oliver.upton@linux.dev, qperret@google.com, qwandor@google.com,
-	suzuki.poulose@arm.com, tabba@google.com, will@kernel.org,
-	yuzenghui@huawei.com, lpieralisi@kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v2 1/4] KVM: arm64: Trap FFA_VERSION host call in pKVM
-Message-ID: <Zmmph6YlIsBhJQqd@bogus>
-References: <20240515172258.1680881-1-sebastianene@google.com>
- <20240515172258.1680881-2-sebastianene@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nyTVNO1+9BIud1RbRWSGw6qZzDkUMDf563VbV7Z09daNiFRdWb7BwPcBphKNS5jyEpw4PD62qsBeTxx1VrlSEH0FLcCwOMMm6AfnSISnNc6wVupRDCbiF0le8vS3mN450Txslfx/FgmyAnD0oEQt1cDKD/F6sk+iGAbfmpK1pTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KgGObPDa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CA31C116B1;
+	Wed, 12 Jun 2024 13:58:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718200722;
+	bh=B3wMkmZ7OrCEXcqJWumgkuWRETuK/7tmpwj6d2FUnJk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KgGObPDaAXLSFFl5LJohXuwg2syT6p7JwTpXyKC2dODCSbhI6y90/NWk04DQ0Fcxs
+	 yasLlQSJ1ZJJPnfEdhP0ucBMrYsvYak+2HfQpeMVWJCPjvUdW3NQauWM0xlKtqvF6j
+	 1Tr7jqst4yXBgyTWIGXjgUDK19CYXmgNTJvmd6Dc=
+Date: Wed, 12 Jun 2024 15:58:39 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH stable-5.15.y 0/2] Fix PTP received on wrong port with
+ bridged SJA1105 DSA
+Message-ID: <2024061227-agony-washable-111e@gregkh>
+References: <20240531165016.3021154-1-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240515172258.1680881-2-sebastianene@google.com>
+In-Reply-To: <20240531165016.3021154-1-vladimir.oltean@nxp.com>
 
-On Wed, May 15, 2024 at 05:22:55PM +0000, Sebastian Ene wrote:
-> The pKVM hypervisor initializes with FF-A version 1.0. The spec requires
-> that no other FF-A calls to be issued before the version negotiation
-> phase is complete. Split the hypervisor proxy initialization code in two
-> parts so that we can move the later one after the host negotiates its
-> version.
-
-Blank line here would be nice.
-
-> Without trapping the call, the host drivers can negotiate a higher
-> version number with TEE which can result in a different memory layout
-> described during the memory sharing calls.
->
-
-LGTM(apart from minor nits),
-
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-
-> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+On Fri, May 31, 2024 at 07:50:14PM +0300, Vladimir Oltean wrote:
+> It has been brought to my attention that what had been fixed 1 year ago
+> here for kernels 5.18 and later:
+> https://lore.kernel.org/netdev/20230626155112.3155993-1-vladimir.oltean@nxp.com/
+> 
+> is still broken on linux-5.15.y. Short summary: PTP boundary clock is
+> broken for ports under a VLAN-aware bridge.
+> 
+> The reason is that the Fixes: tags in those patches were wrong. The
+> issue originated from earlier, but the changes from 5.18 (blamed there),
+> aka DSA FDB isolation, masked that.
+> 
+> A straightforward cherry-pick was not possible, due to the conflict with
+> the aforementioned DSA FDB isolation work from 5.18. So I redid patch
+> 2/2 and marked what I had to adapt.
+> 
+> Tested on the NXP LS1021A-TSN board.
+> 
+> Vladimir Oltean (2):
+>   net: dsa: sja1105: always enable the INCL_SRCPT option
+>   net: dsa: tag_sja1105: always prefer source port information from
+>     INCL_SRCPT
+> 
+>  drivers/net/dsa/sja1105/sja1105_main.c |  9 ++-----
+>  net/dsa/tag_sja1105.c                  | 34 ++++++++++++++++++++------
+>  2 files changed, 28 insertions(+), 15 deletions(-)
 > ---
->  arch/arm64/kvm/hyp/nvhe/ffa.c | 123 +++++++++++++++++++++++++---------
->  1 file changed, 92 insertions(+), 31 deletions(-)
->
-> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> index 320f2eaa14a9..72f1206c85fb 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> @@ -1,4 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> +//
+> 
+> I'm sorry for the people who will want to backport DSA FDB isolation to
+> linux-5.15.y :(
 
-It should be OK but still spurious for $subject 😉
+Now queued up, thanks.
 
-[...]
-
-> @@ -700,7 +789,6 @@ bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
->  int hyp_ffa_init(void *pages)
->  {
->  	struct arm_smccc_res res;
-> -	size_t min_rxtx_sz;
->  	void *tx, *rx;
->
->  	if (kvm_host_psci_config.smccc_version < ARM_SMCCC_VERSION_1_2)
-> @@ -726,35 +814,7 @@ int hyp_ffa_init(void *pages)
->  	if (FFA_MAJOR_VERSION(res.a0) != 1)
->  		return -EOPNOTSUPP;
->
-> -	arm_smccc_1_1_smc(FFA_ID_GET, 0, 0, 0, 0, 0, 0, 0, &res);
-> -	if (res.a0 != FFA_SUCCESS)
-> -		return -EOPNOTSUPP;
-> -
-> -	if (res.a2 != HOST_FFA_ID)
-> -		return -EINVAL;
-> -
-> -	arm_smccc_1_1_smc(FFA_FEATURES, FFA_FN64_RXTX_MAP,
-> -			  0, 0, 0, 0, 0, 0, &res);
-> -	if (res.a0 != FFA_SUCCESS)
-> -		return -EOPNOTSUPP;
-> -
-> -	switch (res.a2) {
-> -	case FFA_FEAT_RXTX_MIN_SZ_4K:
-> -		min_rxtx_sz = SZ_4K;
-> -		break;
-> -	case FFA_FEAT_RXTX_MIN_SZ_16K:
-> -		min_rxtx_sz = SZ_16K;
-> -		break;
-> -	case FFA_FEAT_RXTX_MIN_SZ_64K:
-> -		min_rxtx_sz = SZ_64K;
-> -		break;
-> -	default:
-> -		return -EINVAL;
-> -	}
-> -
-> -	if (min_rxtx_sz > PAGE_SIZE)
-> -		return -EOPNOTSUPP;
-> -
-> +	hyp_ffa_version = FFA_VERSION_1_0;
->  	tx = pages;
->  	pages += KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE;
->  	rx = pages;
-> @@ -773,8 +833,9 @@ int hyp_ffa_init(void *pages)
->  	};
->
->  	host_buffers = (struct kvm_ffa_buffers) {
-> -		.lock	= __HYP_SPIN_LOCK_UNLOCKED,
-> +		.lock   = __HYP_SPIN_LOCK_UNLOCKED,
-
-Spurious or intentional whitespace change ? I can't make out from the mail.
-
---
-Regards,
-Sudeep
+greg k-h
 
