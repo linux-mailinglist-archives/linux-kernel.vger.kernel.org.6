@@ -1,170 +1,107 @@
-Return-Path: <linux-kernel+bounces-210909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47FC7904A05
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:31:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0EB904A0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70351F24B46
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:31:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 341AD2818B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C662576F;
-	Wed, 12 Jun 2024 04:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623042576F;
+	Wed, 12 Jun 2024 04:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JywGFy1/"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4wSSCCu"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C5D63A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45ECE3209;
+	Wed, 12 Jun 2024 04:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718166690; cv=none; b=BLvdWf4qXm+DAqxC7gt3Q5HVgfy1J5p3iTyh+iynSaHPpTOypYGIR2vh3Tk2SUmmBEtj1Fbrd53iaatbZI339gewQXwD6DO90AyZg1H9OSZ0nJZT21yIOTrwGtnJeMG8WdGxn955hCAePc465XFIBGIxCdFiHu6I/RGwTNt7v/w=
+	t=1718166909; cv=none; b=NRPqBInKzj6JlhYot8PslEP9ohHAzbq4PCYAVne50oRmL3b9gujYmzxxbOQpVDCRfcwe8z/UF4V0bZD7VRBlkBGWCvVsAc3EuLySKOtiwk9LYsxyaxdBUmE3pZwRrQS9hI7QRV2m3lwSsPleb40p66YKB4f2h5gv15NWpJbozSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718166690; c=relaxed/simple;
-	bh=hSnJiEgR5nMe+pD1oPm3BPIx6ljI+CeVh/tUDiPt7w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TGZb0Ar8aXrY04WO4hxNdRSbXOTXwiPygjMltMIpv/WBHyYCrFJWod3u6u6HWlBpKd5i7h/JN96K0l7pH3HUKn/MDCQCvFkANh+R1Z1EEfF91sn6McLpxE6akLjOfz/m9lR+H7W9AbQ51wYHTajTd+9OzH2J8tkeUCrBDcJ4mJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JywGFy1/; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7041a7d4beeso4005629b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:31:29 -0700 (PDT)
+	s=arc-20240116; t=1718166909; c=relaxed/simple;
+	bh=U4LY/dmzfg+kHzvbhMb1NS3BJ9kksTomksJ3XlEHAjE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=WVUWWD9Hn+95FsomelTyp9a9V81MKesqaQhuBccB9aJxSfBHiuygniOwK7GUYSJanzjZMGnWAruVQsFnUBIc4mrP6gc1ZHbfVywM3oSN6yR8hxJELX/RbIquCYmxNIwFzt0XpvRkrk8oRhDPFwfJ6+Z2DtjWlcvyLxXfZgRbZMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4wSSCCu; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3c9c36db8eeso928418b6e.0;
+        Tue, 11 Jun 2024 21:35:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718166689; x=1718771489; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=26yCayUAzc76t5ERK7B6b8gwpGmJll8Ij+c08Bg2GMU=;
-        b=JywGFy1/ZJMdXblpUDu3vfbAHc41BGpW3SFtL5fAaPkpgADXKjklyV8/QSAf5MZrYl
-         awRCMjXfwK8enCCLyMgvArnetTGIFCIvYP1w9RqvYYqSWPuYrFejFCfL2Ut+twi2egRp
-         t5QAarNFZxXMKlNn/2heBWSKSqGE38tMpSOi8=
+        d=gmail.com; s=20230601; t=1718166907; x=1718771707; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FcgKiRFptA5wGMWvTtSCxIu+CVZgMKx0LwpVaGdU3m0=;
+        b=Y4wSSCCuVYi0CGbhDv0oom4R5cWutryNnNHfdGI4ch9zNMCOlCjEO+xmFd38/CfJEo
+         BiJF8rcSm1Y721FizGS3oVQNJIBBM/BEmTGo2peFOhkUCIpaDtZWFy4Nio8kxIal3AiZ
+         j2kR/BWcYVs5yk9E2RKvD8nab0EThyWyakhviFBnrheMK9LqmStJg7likgh5Rv2qvGmY
+         7p4uxxH5qEy54MiMMwq1jF+bodQNjpdIAsfsudFISJZDoLOAt3cq6QfGJtKHJQ+W29Py
+         lMyNpGUVJcyEpgGh1T8HFNJC0l2DH51bNXFrCg57StIVH8etDFG8VBRJ8wFwkdGzIUSz
+         yNTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718166689; x=1718771489;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=26yCayUAzc76t5ERK7B6b8gwpGmJll8Ij+c08Bg2GMU=;
-        b=tmH9WabuvYM3NnbZOeiz6GvXHfntpNDX1oZ6Cmjyi8vbB8GFjp1h/7Ei0I1W65gZb7
-         9DURN8uXdf7y19tmObPjuj/u3FwF2TZYl06+4G4+743+GkJaDNJcrOShXYPvMotbYOwA
-         GIVPRak0kVK/98c9kYuZLbIj42g+Q7P4V49GPot7010B2hwB4qVdR6DmBJ8vouE+IKuA
-         +K8669999WQWCknAvcd87jUtTgxMXKkaO00FfUjPIIE7fQTzbEoucClbvGCRIW45R86U
-         oG5TFMP8joitZN3vn5uSxXlhZYyvKb9HKWWogpkVZslCSsIntiGbj+saeZqjHUam0Js4
-         Gq1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWqStngyn+dZQ02DLafJJOVQyjpwhqA2vSMO3EK0zGtd0DKbBr0KPKn0bTd3FVf+nd+e0ewyIaGjIrEPJOJH9JQLrEi7ryroljJ+qhJ
-X-Gm-Message-State: AOJu0YxsArvP4H7Dzg3fqWjyx/i0me1+VpONEJpxL8bWLuTj7mS9s2+u
-	nQtwVyJO3PqBf4qZDhgjOrhquKAbyUVV687p/ZAucXeEAtcZcjKwZnYjVhKoKw==
-X-Google-Smtp-Source: AGHT+IEDNIroERFQYahAEyUp89r/l251ag7KXTZkZl5/HBfB+fwRsfZPqR83QoYb4oKa3SSk62X7hQ==
-X-Received: by 2002:a05:6a21:81a2:b0:1b2:2e3e:42dd with SMTP id adf61e73a8af0-1b8a9be9bb0mr745623637.34.1718166688682;
-        Tue, 11 Jun 2024 21:31:28 -0700 (PDT)
-Received: from chromium.org (174.71.80.34.bc.googleusercontent.com. [34.80.71.174])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f74179d0basm11631455ad.122.2024.06.11.21.31.24
+        d=1e100.net; s=20230601; t=1718166907; x=1718771707;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FcgKiRFptA5wGMWvTtSCxIu+CVZgMKx0LwpVaGdU3m0=;
+        b=KNf9qBezdxDHC46g+QkXWnhDciyiGdx/dx6ffcnJ/XyQaC1d3YodsVHAElNq514sen
+         jaz2Bb/Au2sTr9VKTLtUultaKigV5hUubFw5yIScAS9bu4PGiLFj82Rbi28rkYC7wFoa
+         k/+9Cv5STqLCZIoKrP90jXLZ9M1ZPPikOO3zBonW+tMgdQ7jlVsnhYSgwIb7uzSU0hO+
+         LXSYMZS/M7XnhzaGKrKqBnRBLSJg2oFJhbcQIyUAyasjK395JYCA4OJINa9URlDcp5r3
+         yW2nCQXkQ68MPUs62H9bgadGM3IZahozsfoHm6x76lGyhpNRNo/a3OChOiJKu5MHyHcd
+         JLNw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1mKUDi0Mb52NT3MGy111QUcJQa0WwMkiidwYu1ye03eJGdj3uMkdJNTFOvqKc44vbOH9S8C98xu6Y/5pC+o+6901ZiMTZcQi+jJkjuBdQ3+/m0TfMpgzo1Wf01xOLYS1pfNkdopF9IA==
+X-Gm-Message-State: AOJu0YwRsvcmjNfy3Z/WQeIyncBAFnsTqV1YS9XltDKQxrKCA2ntS6H6
+	8EDjg7L9j2s809M4akGvQ6RCsaQEFmEkx8RX/g2NkZZpc3or5OxH
+X-Google-Smtp-Source: AGHT+IEJDGJTwJnI3MRL/73vf8uDAdbsr6Xop1CeeCIYUnDnzlja3WAixsMCdC76m2jl4wXONrXsWA==
+X-Received: by 2002:a05:6808:10d6:b0:3d2:3dba:f5a8 with SMTP id 5614622812f47-3d23e01b462mr1084539b6e.9.1718166905613;
+        Tue, 11 Jun 2024 21:35:05 -0700 (PDT)
+Received: from localhost.localdomain (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6de276061e3sm9021275a12.80.2024.06.11.21.35.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 21:31:28 -0700 (PDT)
-Date: Wed, 12 Jun 2024 13:31:22 +0900
-From: Tomasz Figa <tfiga@chromium.org>
-To: Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: Jeffrey Kardatzke <jkardatzke@google.com>, 
-	=?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Chen-Yu Tsai <wenst@chromium.org>, 
-	Yong Wu <yong.wu@mediatek.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
-	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	Steve Cho <stevecho@chromium.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T . J . Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v6,03/24] v4l2: verify restricted dmabufs are used in
- restricted queue
-Message-ID: <rw6dkzasaz4lnvtmxkxlkxte5nvphpjixigjouvjkpctscpdla@bheblt7kmj4y>
-References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
- <20240516122102.16379-4-yunfei.dong@mediatek.com>
+        Tue, 11 Jun 2024 21:35:05 -0700 (PDT)
+From: Potin Lai <potin.lai.pt@gmail.com>
+To: Corey Minyard <minyard@acm.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Quan Nguyen <quan@os.amperecomputing.com>
+Cc: openipmi-developer@lists.sourceforge.net,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Patrick Williams <patrick@stwcx.xyz>,
+	Cosmo Chou <cosmo.chou@quantatw.com>,
+	Potin Lai <potin.lai@quantatw.com>,
+	Potin Lai <potin.lai.pt@gmail.com>
+Subject: [PATCH 0/2] ipmi: ssif_bmc: add support of skipping ARM SBMR boot progress response
+Date: Wed, 12 Jun 2024 12:32:53 +0800
+Message-Id: <20240612043255.1849007-1-potin.lai.pt@gmail.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516122102.16379-4-yunfei.dong@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 16, 2024 at 08:20:41PM +0800, Yunfei Dong wrote:
-> From: Jeffrey Kardatzke <jkardatzke@google.com>
-> 
-> Verfies in the dmabuf implementations that if the restricted memory
-> flag is set for a queue that the dmabuf submitted to the queue is
-> unmappable.
-> 
-> Signed-off-by: Jeffrey Kardatzke <jkardatzke@google.com>
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-> ---
->  drivers/media/common/videobuf2/videobuf2-dma-contig.c | 8 ++++++++
->  drivers/media/common/videobuf2/videobuf2-dma-sg.c     | 8 ++++++++
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-> index 3d4fd4ef5310..35a3c1c01eae 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-> @@ -710,6 +710,14 @@ static int vb2_dc_map_dmabuf(void *mem_priv)
->  		return -EINVAL;
->  	}
->  
-> +	/* Verify the dmabuf is restricted if we are in restricted mode, this is done
-> +	 * by validating there is no page entry for the dmabuf.
-> +	 */
+Adding support of skipping ARM SBMR boot progress response, to avoid
+SSIF state machine problem if host chosse not read back the response.
 
-Kernel coding style [1] defines multi-line comments to start with an empty
-line.
+Potin Lai (2):
+  bindings: ipmi: Add property for skipping SBMR boot progress response
+  ipmi: ssif_bmc: support skipping ARM SBMR bootprogress response
 
-[1] https://www.kernel.org/doc/html/latest/process/coding-style.html#commenting
+ .../devicetree/bindings/ipmi/ssif-bmc.yaml    |  5 ++++
+ drivers/char/ipmi/ssif_bmc.c                  | 25 +++++++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-> +	if (buf->vb->vb2_queue->restricted_mem && !sg_dma_is_restricted(sgt->sgl)) {
-> +		pr_err("restricted queue requires restricted dma_buf");
-> +		return -EINVAL;
+-- 
+2.31.1
 
-This would leak the mapping. We need to unmap the attachment here.
-
-> +	}
-> +
->  	/* checking if dmabuf is big enough to store contiguous chunk */
->  	contig_size = vb2_dc_get_contiguous_size(sgt);
->  	if (contig_size < buf->size) {
-> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> index 6975a71d740f..2399a9c074ba 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> @@ -570,6 +570,14 @@ static int vb2_dma_sg_map_dmabuf(void *mem_priv)
->  		return -EINVAL;
->  	}
->  
-> +	/* Verify the dmabuf is restricted if we are in restricted mode, this is done
-> +	 * by validating there is no page entry for the dmabuf.
-> +	 */
-
-Ditto.
-
-> +	if (buf->vb->vb2_queue->restricted_mem && !sg_dma_is_restricted(sgt->sgl)) {
-> +		pr_err("restricted queue requires restricted dma_buf");
-> +		return -EINVAL;
-
-Ditto.
-
-Best regards,
-Tomasz
-
-> +	}
-> +
->  	buf->dma_sgt = sgt;
->  	buf->vaddr = NULL;
->  
-> -- 
-> 2.25.1
-> 
 
