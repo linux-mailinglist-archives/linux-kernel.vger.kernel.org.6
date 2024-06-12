@@ -1,154 +1,152 @@
-Return-Path: <linux-kernel+bounces-210849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72DD90494B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 905EE90494E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E051F23154
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:05:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16E6A1F2345A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8730171C4;
-	Wed, 12 Jun 2024 03:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937DA1C6BD;
+	Wed, 12 Jun 2024 03:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="VWhxPaur"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAA23214;
-	Wed, 12 Jun 2024 03:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="X8poSioc"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D93C3214;
+	Wed, 12 Jun 2024 03:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718161493; cv=none; b=j3+xy3CwuLcllAu15sMo8TF0rd88dqo0AzbA3Sh2zV3Ta9XqFsE7RCv+LzbJ9fzZVrbKIYYiY9b/qvPaH8v2Uvq3kMFcwkKibp6g0ep1uAuXf+22Do9AO9YWJT6OMKSIi1FH0dm1GlBPe5JarJGCMEg7n8TH+r2M8IAfOVrBuTM=
+	t=1718161588; cv=none; b=kBAbPhkoNBQsZmcwW7hA8BQmMZyOLm+Hi2FdpJteZP48kB+My4jp1oW5g7WoTp6ALEDvuPj5IMbIRQlZF94y9jtmayrCheZt8nJjy6ks38Yml5OWVtXR9cy2QQ2mT9Ztsi0116V0f2Uhbi+ld2/J/yoejokkAiNWyJrvMMwIuJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718161493; c=relaxed/simple;
-	bh=AoulektFXDLQ9/pJbAPrcVrJPfngF/cjslcJtCvy3Us=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rRT3BeKsCVrx+m/v+cZgmZrXqGl1X7X+4y2WFEWOOZX7yyMQYGHDn0SoNq0l4RQZuZwAJ/k+YEopCJ6/51qbdJDoJlarjkv5Wy/58B1HVN591nQObhkc5Ia7thimWMFB4krtQME5iBSnMVLZ8/a+bWCGYKcBVSBLwEvqzwG8JGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=VWhxPaur; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45C34NPU3584446
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 11 Jun 2024 20:04:24 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45C34NPU3584446
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024051501; t=1718161465;
-	bh=jB1N2BWEhGdB47Ne04YM51CEeX4dLjKxuD2f4GC+EWw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VWhxPaurms/Up2n5+kCHzbtIRpFwVI4635Zgj3+/nl0ZLbvq78nZYKk0Z0c9OQT0A
-	 Z43wybYmI/8+A/YLDz01QLjusiXRcjufpiZNU/ci3h0zqbBW0/jsmy/nzerF0+GEDp
-	 HIZ/4z42EFZNrxWMiGCEZLsm/edfMmNFpYIjBz+/OKTAPJ1IaUjPC5zM1PY8gRvgSi
-	 OgVMHIce+vqfUnzlBpa0WiWCyWlkxt6fDIbZ4bs62F9PIz6PG+JyGXiXaBhOE1Eu5C
-	 Iy+aXPsc+kZHJmpxVNG/YVk8D6pOyNRDQVrjfnHiSinA+dIjbef3QObu1g+vBxObBB
-	 MvCCc2d7KbHlw==
-Message-ID: <573ebc0d-cc2b-46ea-80d9-c92207933f14@zytor.com>
-Date: Tue, 11 Jun 2024 20:04:23 -0700
+	s=arc-20240116; t=1718161588; c=relaxed/simple;
+	bh=+ctwHilzsepjKZ1sUUMB0cpG3p2QV3xK1hOQnQBgAdk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=Herj/sJJj4pXmE5eSIUJ4+GLMExWbOPpU8QrQu2HNJPEEsijzByM/V60HabQk9R5RSePhsjVc+n+NP/EVV+31u4zUEiN2O3DoCLJ9didCNar4nvZvM6mMIc3Bdot1oUmp54+JROKUeHqkcwpPFeWYdpeSejkLTKpt3Rjw4TZdAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=X8poSioc reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=jEJJhb2OCVdkrKmlNWZ/Xdy7wOT5PME9awKqsmwRDw4=; b=X
+	8poSiocNMuEp9+oc2c9KB70weJ5FyWmLfXpOqi897OkM3GD6nt5INasD8F+8KzJR
+	1ipxR5Iv1EJSXGNN1vFjRc7zWO6uXwAKnrYGjI1jk768VDuxkNE+qa8C3Ao22Ci3
+	dA/PPDDbfKLWd2tSITox4Hoaat/dVv8EXS8UE99VI0=
+Received: from slark_xiao$163.com ( [112.97.57.186] ) by
+ ajax-webmail-wmsvr-40-131 (Coremail) ; Wed, 12 Jun 2024 11:05:38 +0800
+ (CST)
+Date: Wed, 12 Jun 2024 11:05:38 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: "Sergey Ryazanov" <ryazanov.s.a@gmail.com>, 
+	"Manivannan Sadhasivam" <mani@kernel.org>, 
+	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, 
+	"Loic Poulain" <loic.poulain@linaro.org>
+Cc: quic_jhugo@quicinc.com, "Qiang Yu" <quic_qianyu@quicinc.com>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"mhi@lists.linux.dev" <mhi@lists.linux.dev>, 
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+Subject: Re:Re: [PATCH v1 2/2] net: wwan: Fix SDX72 ping failure issue
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <c292fcdc-4e5b-4e6a-9317-e293e2b6b74e@gmail.com>
+References: <20240607100309.453122-1-slark_xiao@163.com>
+ <30d71968-d32d-4121-b221-d95a4cdfedb8@gmail.com>
+ <97a4347.18d5.19004f07932.Coremail.slark_xiao@163.com>
+ <c292fcdc-4e5b-4e6a-9317-e293e2b6b74e@gmail.com>
+X-NTES-SC: AL_Qu2aCv2dvk0o7iWZYekfmk8Sg+84W8K3v/0v1YVQOpF8jA/o9iACQHlnHHDUz/6yNiOQnDyzVhpP0898TKtfWr8Lkx8TjBtiq6VOCoY4ykLH6Q==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] x86/irq: Add enumeration of NMI source reporting
- CPU feature
-To: "H. Peter Anvin" <hpa@zytor.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>, X86 Kernel <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, linux-perf-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>
-References: <20240611165457.156364-1-jacob.jun.pan@linux.intel.com>
- <20240611165457.156364-2-jacob.jun.pan@linux.intel.com>
- <de99f490-8b8d-4ae9-9f87-e0336e563aba@zytor.com>
- <34E0974A-45E0-4E98-9384-3A19D01ECF1E@zytor.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <34E0974A-45E0-4E98-9384-3A19D01ECF1E@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <320ba7ec.38c9.1900a687ddc.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3v+yCEGlmcS80AA--.351W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiRw-6ZGV4Juc3SQAJs9
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On 6/11/2024 7:50 PM, H. Peter Anvin wrote:
-> On June 11, 2024 7:32:54 PM PDT, Xin Li <xin@zytor.com> wrote:
->> On 6/11/2024 9:54 AM, Jacob Pan wrote:
->>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->>> index 1d7122a1883e..b8b15f20b94e 100644
->>> --- a/arch/x86/Kconfig
->>> +++ b/arch/x86/Kconfig
->>> @@ -511,12 +511,21 @@ config X86_CPU_RESCTRL
->>>    config X86_FRED
->>>    	bool "Flexible Return and Event Delivery"
->>>    	depends on X86_64
->>> +	select X86_NMI_SOURCE
->>>    	help
->>>    	  When enabled, try to use Flexible Return and Event Delivery
->>>    	  instead of the legacy SYSCALL/SYSENTER/IDT architecture for
->>>    	  ring transitions and exception/interrupt handling if the
->>>    	  system supports it.
->>>    +config X86_NMI_SOURCE
->>
->> Lets reuse X86_FRED instead of adding another hard config option. See
->> below.
-
-<snip>
-
->>
->> With this, no need to add DISABLE_NMI_SOURCE to disabled-features.h:
->>
->> 1) If FRED is not available, NMI source won't be too.
->> 2) If FRED is available but not enabled, all features relying on FRED
->> should be cleared. We probably should move the feature bits clearing
->> code into a static function when more such features are added in future.
->>
->>>      	/* Init cpu_entry_area before IST entries are set up */
->>>    	setup_cpu_entry_areas();
->>
->> Thanks!
->>     Xin
-> 
-> And even if we did, FRED should not *select* NMI_SOURCE; the dependency goes the other way.
-
-Right, I was a bit of confused but was focusing on why do we need this.
-
+CkF0IDIwMjQtMDYtMTIgMDY6NDY6MzMsICJTZXJnZXkgUnlhemFub3YiIDxyeWF6YW5vdi5zLmFA
+Z21haWwuY29tPiB3cm90ZToKPk9uIDExLjA2LjIwMjQgMDQ6MzYsIFNsYXJrIFhpYW8gd3JvdGU6
+Cj4+ICtNb3JlIG1haW50YWluZXIgdG8gdGhpcyBzZWNvbmQgcGF0Y2ggbGlzdC4KPj4gCj4+IEF0
+IDIwMjQtMDYtMDggMDY6Mjg6NDgsICJTZXJnZXkgUnlhemFub3YiIDxyeWF6YW5vdi5zLmFAZ21h
+aWwuY29tPiB3cm90ZToKPj4+IEhlbGxvIFNsYXJrLAo+Pj4KPj4+IHdpdGhvdXQgdGhlIGZpcnN0
+IHBhdGNoIGl0IGlzIGNsb3NlIHRvIGltcG9zc2libGUgdG8gdW5kZXJzdGFuZCB0aGlzCj4+PiBv
+bmUuIE5leHQgdGltZSBwbGVhc2Ugc2VuZCBzdWNoIHRpZ2h0bHkgY29ubmVjdGVkIHBhdGNoZXMg
+dG8gYm90aAo+Pj4gbWFpbGluZyBsaXN0cy4KPj4+Cj4+IFNvcnJ5IGZvciB0aGlzIG1pc3Rha2Ug
+c2luY2UgaXQncyBteSBmaXJzdCBjb21taXQgYWJvdXQgY29tbWl0dGluZyBjb2RlIHRvIDIKPj4g
+ZGlmZmVyZW5jZSBhcmVhOiBtaGkgYW5kIG1iaW0uIEJvdGggdGhlIG1haW50YWluZXJzIGFyZSBk
+aWZmZXJlbmNlLgo+PiBJbiBjYXNlIGEgbmV3IHZlcnNpb24gY29tbWl0IHdvdWxkIGJlIGNyZWF0
+ZWQsIEkgd291bGQgbGlrZSB0byBhc2sgaWYKPj4gc2hvdWxkIEkgYWRkIGJvdGggc2lkZSBtYWlu
+dGFpbmVycyBvbiB0aGVzZSAyIHBhdGNoZXMgPwo+Cj5ObyB3b3JyaWVzLiBXZSBmaW5hbGx5IGdv
+dCBib3RoIHNpZGVzIG9mIHRoZSBwdXp6bGUuIEJUVywgbG9va3MgbGlrZSB0aGUgCj5maXJzdCBw
+YXRjaCBzdGlsbCBsYWNrcyBMaW51eCBuZXRkZXYgbWFpbGluZyBsaXN0IGluIHRoZSBDQy4KPgo+
+VXN1YWxseSBtYWludGFpbmVycyBhcmUgcmVzcG9uc2libGUgZm9yIGFwcGx5aW5nIHBhdGNoZXMg
+dG8gdGhlaXIgCj5kZWRpY2F0ZWQgcmVwb3NpdG9yaWVzICh0cmVlcyksIGFuZCB0aGVuIGV2ZW50
+dWFsbHkgZm9yIHNlbmRpbmcgdGhlbSBpbiAKPmJhdGNoIHRvIHRoZSBtYWluIHRyZWUuIFNvLCBp
+ZiBhIHdvcmsgY29uc2lzdHMgb2YgdHdvIHBhdGNoZXMsIGl0IGlzIAo+YmV0dGVyIHRvIGFwcGx5
+IHRoZW0gdG9nZXRoZXIgdG8gb25lIG9mIHRoZSB0cmVlcy4gT3RoZXJ3aXNlLCBpdCBjYW4gCj5j
+YXVzZSBhIGJ1aWxkIGZhaWx1cmUgaW4gb25lIHRyZWUgZHVlIHRvIGxhY2sgb2YgcmVxdWlyZWQg
+Y2hhbmdlcyB0aGF0IAo+aGF2ZSBiZWVuIGFwcGxpZWQgdG8gb3RoZXIuIFNvbWV0aW1lcyBjb250
+cmlidXRvcnMgZXZlbiBzcGVjaWZ5IGEgCj5wcmVmZXJyZWQgdHJlZSBpbiBhIGNvdmVyIGxldHRl
+ci4gSG93ZXZlciwgaXQgaXMgc3RpbGwgdXAgdG8gbWFpbnRhaW5lcnMgCj50byBtYWtlIGEgZGVj
+aXNpb24gd2hpY2ggdHJlZSBpcyBiZXR0ZXIgd2hlbiBhIHdvcmsgY2hhbmdlcyBzZXZlcmFsIAo+
+c3Vic3lzdGVtcy4KPgoKVGhhbmtzIGZvciB5b3VyIGRldGFpbGVkIGV4cGxhbmF0aW9uLiAKU2lu
+Y2UgdGhpcyBjaGFuZ2Ugd2FzIG1vZGlmaWVkIG1haW5seSBvbiBtaGkgc2lkZSwgSSBwcmVmZXIg
+dG8gY29tbWl0IGl0IHRvCiBtaGkgc2lkZS4gCkBsb2ljIEBtYW5pLCB3aGF0J3MgeW91ciBvcGlu
+aW9uPwoKPj4+IE9uIDA3LjA2LjIwMjQgMTM6MDMsIFNsYXJrIFhpYW8gd3JvdGU6Cj4+Pj4gRm9y
+IFNEWDcyIE1CSU0gZGV2aWNlLCBpdCBzdGFydHMgZGF0YSBtdXggaWQgZnJvbSAxMTIgaW5zdGVh
+ZCBvZiAwLgo+Pj4+IFRoaXMgd291bGQgbGVhZCB0byBkZXZpY2UgY2FuJ3QgcGluZyBvdXRzaWRl
+IHN1Y2Nlc3NmdWxseS4KPj4+PiBBbHNvIE1CSU0gc2lkZSB3b3VsZCByZXBvcnQgImJhZCBwYWNr
+ZXQgc2Vzc2lvbiAoMTEyKSIuCj4+Pj4gU28gd2UgYWRkIGEgbGluayBpZCBkZWZhdWx0IHZhbHVl
+IGZvciB0aGVzZSBTRFg3MiBwcm9kdWN0cyB3aGljaAo+Pj4+IHdvcmtzIGluIE1CSU0gbW9kZS4K
+Pj4+Pgo+Pj4+IFNpZ25lZC1vZmYtYnk6IFNsYXJrIFhpYW8gPHNsYXJrX3hpYW9AMTYzLmNvbT4K
+Pj4+Cj4+PiBTaW5jZSBpdCBhIGJ1dCBmaXgsIGl0IG5lZWRzIGEgJ0ZpeGVzOicgdGFnLgo+Pj4K
+Pj4gQWN0dWFsbHksIEkgdGhvdWdodCBpdCdzIGEgZml4IGZvciBjb21tb24gU0RYNzIgcHJvZHVj
+dC4gQnV0IG5vdyBJIHRoaW5rCj4+IGl0IHNob3VsZCBiZSBvbmx5IG1lZXQgZm9yIG15IFNEWDcy
+IE1CSU0gcHJvZHVjdC4gUHJldmlvdXMgY29tbWl0Cj4+IGhhcyBub3QgYmVlbiBhcHBsaWVkLiBT
+byB0aGVyZSBpcyBubyBjb21taXQgaWQgZm9yICJGaXhlcyIuCj4+IEJ1dCBJIHRoaW5rIEkgc2hh
+bGwgaW5jbHVkZSB0aGF0IHBhdGNoIGluIFYyIHZlcnNpb24uCj4+IFBsZWFzZSByZWY6Cj4+IGh0
+dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAyNDA1MjAwNzA2MzMuMzA4OTEzLTEtc2xhcmtf
+eGlhb0AxNjMuY29tLwo+Cj5UaGVyZSBhcmUgbm90aGluZyB0byBmaXggeWV0LiBHcmVhdC4gVGhl
+biB5b3UgY2FuIHJlc2VuZCB0aGUgRm94Y29ubiAKPlNEWDcyIGludHJvZHVjdGlvbiB3b3JrIGFz
+IGEgc2VyaWVzIHRoYXQgYWxzbyBpbmNsdWRlcyB0aGVzZSBtdXggaWQgCj5jaGFuZ2VzLiBKdXN0
+IHJlbmFtZSB0aGlzIHNwZWNpZmljIHBhdGNoIHRvIHNvbWV0aGluZyBsZXNzIHRlcnJpZnlpbmcu
+IAo+TWVhbiwgcmVtb3ZlIHRoZSAiRml4IiB3b3JkIGZyb20gdGhlIHN1YmplY3QsIHBsZWFzZS4K
+Pgo+TG9va3MgbGlrZSAibmV0OiB3d2FuOiBtaGk6IG1ha2UgZGVmYXVsdCBkYXRhIGxpbmsgaWQg
+Y29uZmlndXJhYmxlIiAKPnN1YmplY3QgYWxzbyBzdW1tYXJpemUgdGhlIHJlYXNvbiBvZiB0aGUg
+Y2hhbmdlLgo+CgpDdXJyZW50bHkgSSBkb24ndCBrbm93IGlmIG15IHByZXZpb3VzIGNvbW1pdCB3
+aGljaCBoYXMgYmVlbiByZXZpZXdlZCBzdGlsbApiZSBlZmZlY3RpdmUuIFNpbmNlIHRoaXMgbGlu
+a19pZCBjaGFuZ2VzIG9ubHkgd29ya3MgZm9yIE1CSU0gbW9kZSBvZiBTRFg3Mi4KSWYga2VlcHMg
+dGhlIGNvbW1pdCBvZiBbMV0sIHRoZW4gSSB3aWxsIHVwZGF0ZSB0aGlzIHBhdGNoIHdpdGggdjIg
+dmVyc2lvbiB3aGljaCBqdXN0IHVwZGF0ZQp0aGUgc3ViamVjdCAuIElmIG5vdCwgdGhlbiB0aGlz
+IFNEWDcyIHNlcmllcyB3b3VsZCBoYXZlIDMgcGF0Y2hlczogWzFdICsgZmlyc3QgcGF0Y2gKKyBz
+ZWNvbmQgcGF0Y2hbdjJdKG9yIDIgcGF0Y2hlczogY29tYmluZSBbMV0gd2l0aCBmaXJzdCBwYXRj
+aCArIHNlY29uZCBwYXRjaFt2Ml0pLgpQbGVhc2UgbGV0IG1lIGtub3cgd2hpY2ggc29sdXRpb24g
+d291bGQgYmUgYmV0dGVyLgoKVGhhbmtzLgo+Pj4+IC0tLQo+Pj4+ICAgIGRyaXZlcnMvbmV0L3d3
+YW4vbWhpX3d3YW5fbWJpbS5jIHwgMyArKy0KPj4+PiAgICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNl
+cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4+Pj4KPj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9u
+ZXQvd3dhbi9taGlfd3dhbl9tYmltLmMgYi9kcml2ZXJzL25ldC93d2FuL21oaV93d2FuX21iaW0u
+Ywo+Pj4+IGluZGV4IDNmNzJhZTk0M2IyOS4uNGNhNWM4NDUzOTRiIDEwMDY0NAo+Pj4+IC0tLSBh
+L2RyaXZlcnMvbmV0L3d3YW4vbWhpX3d3YW5fbWJpbS5jCj4+Pj4gKysrIGIvZHJpdmVycy9uZXQv
+d3dhbi9taGlfd3dhbl9tYmltLmMKPj4+PiBAQCAtNjE4LDcgKzYxOCw4IEBAIHN0YXRpYyBpbnQg
+bWhpX21iaW1fcHJvYmUoc3RydWN0IG1oaV9kZXZpY2UgKm1oaV9kZXYsIGNvbnN0IHN0cnVjdCBt
+aGlfZGV2aWNlX2lkCj4+Pj4gICAgCW1iaW0tPnJ4X3F1ZXVlX3N6ID0gbWhpX2dldF9mcmVlX2Rl
+c2NfY291bnQobWhpX2RldiwgRE1BX0ZST01fREVWSUNFKTsKPj4+PiAgICAKPj4+PiAgICAJLyog
+UmVnaXN0ZXIgd3dhbiBsaW5rIG9wcyB3aXRoIE1ISSBjb250cm9sbGVyIHJlcHJlc2VudGluZyBX
+V0FOIGluc3RhbmNlICovCj4+Pj4gLQlyZXR1cm4gd3dhbl9yZWdpc3Rlcl9vcHMoJmNudHJsLT5t
+aGlfZGV2LT5kZXYsICZtaGlfbWJpbV93d2FuX29wcywgbWJpbSwgMCk7Cj4+Pj4gKwlyZXR1cm4g
+d3dhbl9yZWdpc3Rlcl9vcHMoJmNudHJsLT5taGlfZGV2LT5kZXYsICZtaGlfbWJpbV93d2FuX29w
+cywgbWJpbSwKPj4+PiArCQltaGlfZGV2LT5taGlfY250cmwtPmxpbmtfaWQgPyBtaGlfZGV2LT5t
+aGlfY250cmwtPmxpbmtfaWQgOiAwKTsKPj4+Cj4+PiBJcyBpdCBwb3NzaWJsZSB0byBkcm9wIHRo
+ZSB0ZXJuYXJ5IG9wZXJhdG9yIGFuZCBwYXNzIHRoZSBsaW5rX2lkIGRpcmVjdGx5Pwo+Pj4KPj4+
+PiAgICB9Cj4+Pj4gICAgCj4+Pj4gICAgc3RhdGljIHZvaWQgbWhpX21iaW1fcmVtb3ZlKHN0cnVj
+dCBtaGlfZGV2aWNlICptaGlfZGV2KQo+Cj4tLQo+U2VyZ2V5ClsxXSAtIGh0dHBzOi8vbG9yZS5r
+ZXJuZWwub3JnL2xrbWwvMjAyNDA1MjAwNzA2MzMuMzA4OTEzLTEtc2xhcmtfeGlhb0AxNjMuY29t
+Lwo=
 
