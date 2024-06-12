@@ -1,145 +1,129 @@
-Return-Path: <linux-kernel+bounces-212250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2524C905D4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:59:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5AD0905D4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9551F22AC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:59:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36BA9B20DFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA87085628;
-	Wed, 12 Jun 2024 20:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436FD84A56;
+	Wed, 12 Jun 2024 20:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z6SruB8v"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TwaRogoV"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86D384A56;
-	Wed, 12 Jun 2024 20:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2680D84FAC
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 20:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718225949; cv=none; b=GJqrVB2he+ZHZd9nltygiG+i4FSzzaRc6w0au9V7XlClVs4tzToSOwjKFxU2ILjXiQTsWnO9K1cqVU7GmAqa4LnAcm6V9bHCk1OMWPfFdqJ5rU1P8gqh3FpbgLupQCXCwMtsDnTxpuGuomU4B0flXi91RyVeugKD9HYdYDmFoMg=
+	t=1718225976; cv=none; b=ERonGg84r0WlTXnBfRIV9xGwodTzdo9grCklJkny5h08ItaLmAtkuD7VklQd2t0TE1HNrcJWTItXJ3W4iH5dDy4+SbORfnkftBQe1H5CmNxi74BS24RAILVV58FQl0PA7RG4fxFVl4bv0oAFOfH90cQCSNRLWdIka7ryo3RB+No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718225949; c=relaxed/simple;
-	bh=onNKzjgA3bLnrhQ91DOWISsPRYS3ZKDz36/FANmYGs0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Dp+M16EKnEcD99NtEMaXoIzpCxUh2tOX8b5XtEI/QDL9j7oILBne/Mhw4JuNQzTSowUTQzGihSFDrJLvuahPtkUB7dZq8Qi9Ij0H19HFdThPzQNzexV16u9ARye0Qf3sDnEh3exnuMwuYMz6YUpIMlhYsSY7vriLh0VeQK4CeN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z6SruB8v; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718225945;
-	bh=onNKzjgA3bLnrhQ91DOWISsPRYS3ZKDz36/FANmYGs0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Z6SruB8vNB2Y/DCbnrkLaXh5mzh2EQttTZ7L0+bm+N+eDH5MSkb20HkUQXyh6LOBI
-	 9cavqK2YXc/0rKjRSMlWHPeBvck/f/qF+hj1iZVV7ekg8fGNMvwlJ+aG84l9aIMBV9
-	 9fDyuaOLcmxPxCQW6mvwp8QUEP+jXIFfYV4TGk4pV5e7XacxMAUzqkwBlU6lPM/rGY
-	 9WV4sfKLkd8js0+YWSMleBhIadlZFtTAUjKROa13xR57DO8TPUzpQaNDVf35WhsTJU
-	 8+0uTUQg8SoOxLR1yp8jCc2B9DcdmvJWaRg3+OovviNW2RjT6XT5y1wU/WY2S+FIaM
-	 yqeV0UiHFGt9w==
-Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 207F4378020D;
-	Wed, 12 Jun 2024 20:59:02 +0000 (UTC)
-Message-ID: <03aca2439ac31ec01b24233384cc8c8d5179df02.camel@collabora.com>
-Subject: Re: [PATCH v6,04/24] v4l: add documentation for restricted memory
- flag
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Tomasz Figa <tfiga@chromium.org>, Yunfei Dong
- <yunfei.dong@mediatek.com>,  Jeffrey Kardatzke <jkardatzke@google.com>,
- =?ISO-8859-1?Q?N=EDcolas?= "F . R . A . Prado" <nfraprado@collabora.com>, 
- Nathan Hebert <nhebert@chromium.org>, Hans Verkuil
- <hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Sebastian Fricke
- <sebastian.fricke@collabora.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Marek Szyprowski <m.szyprowski@samsung.com>, Chen-Yu
- Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>,  Hsin-Yi Wang
- <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter
- <daniel@ffwll.ch>,  Steve Cho <stevecho@chromium.org>, Sumit Semwal
- <sumit.semwal@linaro.org>, Brian Starkey <Brian.Starkey@arm.com>, John
- Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>,
- Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Matthias
- Brugger <matthias.bgg@gmail.com>,  linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org,  linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  linux-mediatek@lists.infradead.org, 
- Project_Global_Chrome_Upstream_Group@mediatek.com
-Date: Wed, 12 Jun 2024 16:58:58 -0400
-In-Reply-To: <20240612202507.GT28989@pendragon.ideasonboard.com>
-References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
-	 <20240516122102.16379-5-yunfei.dong@mediatek.com>
-	 <20240522111622.GA31185@pendragon.ideasonboard.com>
-	 <bhgv5djcjc4yt75pyug2yirrymeucjyslthnvq6k2kpp7axfph@jzo5wpcbgwun>
-	 <33d38919f3f94b6e1848aaee20cf52ac9c1df606.camel@collabora.com>
-	 <20240612202507.GT28989@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1718225976; c=relaxed/simple;
+	bh=hPFWi4QxzNcEP51DZmP3MHWLX9GCVr2i2GLvwpb2egI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lf2ok9a3h+2M7YFmO2c8Mcp6xZoqdKN4vIrCSmed083QBwZqC8ZqYeuNsu9rVXBBQcrH39aANIN2NSR64sqMwc8Q9LMk8QhsxmKamQWUuPQ6EMsU9T3ZJE059tvKgbtoZ/qTInUha8VHW+Nzn6rTXbahXzBJzS5NjDjbT9qpBmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TwaRogoV; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f61742a024so56705ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:59:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718225974; x=1718830774; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hPFWi4QxzNcEP51DZmP3MHWLX9GCVr2i2GLvwpb2egI=;
+        b=TwaRogoVyuhOdbOfyGvSm6/hEfX/7oPcW0BRgxMAjFB7o80vqZ+GQVlbA5A6c6ExLd
+         o4OpOqJhc/UTyDtMA3QtxpZ84Fz0s5TvhhU5M0Jk/5oeNj0Zrgkfpiva2IOwvD7plGKO
+         d/mghP0RpQNo8xE9+H4YRU8rwdynLV5UNzmUgBuRYl7xVgY550+JVVtPHa3h+ozZngc5
+         DTZSNSPOu6G+PwbKKO7VjiXmTvZGf4yung5VQpYNW7jAA2R5echo3a4qlyAnX7+7L97b
+         2Odd8yGEa2u/sdT4J4VovV/Xi52EsKn9soCaTE7Hv5kxPXa57ABfcCAFrwjPFhVQKK9J
+         uK+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718225974; x=1718830774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hPFWi4QxzNcEP51DZmP3MHWLX9GCVr2i2GLvwpb2egI=;
+        b=oXTnxS2muH8kpPdv2QXgpYvWuR1BdJPPnah11IhRw0aQRekJ5wX820e69zWrMtgdAS
+         nAq6sJdFEhz8ryAHnif2yhe7fD40LGhKy4W+IesK6+69kD2DF45W8I+9G6QiouKvT9x1
+         prPCFTT+WDr+F+OukucyAebIVe859+Py9h0SOuf7kp4T6Mj3i4dAn7HotJBdahPG2ExX
+         byJseRYoFNcVNUw4Hl/WtkTtorW1V35g+r1m6wRZT5kUEtDPUFYhqT3i+xkTd0LLKTy3
+         xYYARWJM6eFzTiGG+D7tB1q7LllgEr4RiV23CoqALMcNArrcJ3BsPw4uQk75hRlnCzEo
+         52ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUToAW3v9RxaXqSyZ1JvtlHrDQqGJLh12zBGIzR0q0zbp5bZY1/9Ww9qDdwSZBG5dynt7UQoos7Rayyp7C5gwCZ8EU8g5TAU82a7wdB
+X-Gm-Message-State: AOJu0Yx/u/JG9M6RWoOczpUjtFevIAqrvhqtiOpzPdVKTaln5GgEn+F9
+	Q4HFhfPuPNCsFlkv+6riqiC456PcjHHRRPCl3OpSB2eaX0V0D+N+5uF9Ree1FCIckLAMfMSf9N4
+	8ibGblscRPmjjfpoJKHnUl9WRPfFxiKFPq+6o
+X-Google-Smtp-Source: AGHT+IFWmsdEasPwyOynYBtzxGWhPDlYAW7MCo/VR6F7DeOyZ4t8Z05zsA0gmIZLPABsyF5wtAXUbmNxcWHTnKYlGWw=
+X-Received: by 2002:a17:903:2b86:b0:1f3:3ede:9b0 with SMTP id
+ d9443c01a7336-1f84fd58c5cmr833695ad.10.1718225974074; Wed, 12 Jun 2024
+ 13:59:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240607065343.695369-1-irogers@google.com> <23ee1734-7e65-4f11-aede-fea44ada3cc4@arm.com>
+ <CAP-5=fUP69NJ+j6+9rUnp+UPBxcopJ=BOY-LeOjs8vYdt4soMA@mail.gmail.com> <cc1b0673-13b3-439f-afdf-c9cb450f8fed@arm.com>
+In-Reply-To: <cc1b0673-13b3-439f-afdf-c9cb450f8fed@arm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 12 Jun 2024 13:59:22 -0700
+Message-ID: <CAP-5=fUBsuOau6scssB_RL6uGczGfe8GHL2Cx-ZE1Oj7ZTZ4KA@mail.gmail.com>
+Subject: Re: [PATCH v1] perf arm: Workaround ARM PMUs cpu maps having offline cpus
+To: Leo Yan <leo.yan@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
+	James Clark <james.clark@arm.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yicong Yang <yangyicong@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Jun 12, 2024 at 1:32=E2=80=AFPM Leo Yan <leo.yan@arm.com> wrote:
+[...]
+> >
+> > Renaming of the cycles event in arm_dsu_pmu.c - I'd say this is a top
+> > priority issue right now.
+>
+> I cannot promise this. The main reason is that I still believe the
+> 'cycles' event (or, generally speaking, all events) should be managed by
+> the tool rather than by the uncore PMU drivers. Additionally, the perf
+> tool currently has handled these symbolic events effectively.
 
-Le mercredi 12 juin 2024 =C3=A0 23:25 +0300, Laurent Pinchart a =C3=A9crit=
-=C2=A0:
-> On Wed, Jun 12, 2024 at 03:43:58PM -0400, Nicolas Dufresne wrote:
-> > Le mercredi 12 juin 2024 =C3=A0 13:37 +0900, Tomasz Figa a =C3=A9crit=
-=C2=A0:
-> > > > Why is this flag needed ? Given that the usage model requires the V=
-4L2
-> > > > device to be a dma buf importer, why would userspace set the
-> > > > V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM flag and pass a non-restricted
-> > > > buffer to the device ?
-> > >=20
-> > > Given that the flag is specified at REQBUF / CREATE_BUFS time, it's
-> > > actually useful to tell the driver the queue is operating in restrict=
-ed
-> > > (aka secure) mode.
-> > >=20
-> > > I suppose we could handle that at the time of a first QBUF, but that
-> > > would make the driver initialization and validation quite a bit of pa=
-in.
-> > > So I'd say that the design being proposed here makes things simpler a=
-nd
-> > > more clear, even if it doesn't add any extra functionality.
-> >=20
-> > There is few more reasons I notice in previous series (haven't read the=
- latest):
-> >=20
-> > - The driver needs to communicate through the OPTEE rather then SCP and=
- some
-> > communication are needed just to figure-out things like supported profi=
-le/level
-> > resolutions etc.
-> > - The driver needs to allocate auxiliary buffers in secure heap too, al=
-location
-> > at runtime are not the best
->=20
-> Will the same driver support both modes on the same system ?
+I don't understand this.
+1) the PMU advertises an event called 'cycles' - nothing to do with the too=
+l
+2) perf without a PMU matches events on all PMUs. I don't know people
+involved in the perf tool development who think cycles shouldn't match
+on an uncore PMU, which was Linus' stand point and reason for
+rejecting my fix in favor of a revert.
+3) matching all PMUs wasn't the case for legacy events, like cycles,
+but now we want it to be to fix the Apple M? PMU issues where legacy
+events fail to work. The whole reason we changed the priority of
+legacy events as ARM requested. It also makes things more uniform with
+BIG.little/hybrid.
 
-Yes, as per this implementation, it seems you can flip from one mode to ano=
-ther
-even on the same instance.
+We can update perf record to warn (not fail) about not opening events.
+ARM should do this as (1) and (3) were caused by ARM - I have a WIP
+patch but I'm in no mood to finish/send it. Even with this there will
+be a warning for "perf record -e cycles .." and fixing the event name
+is the only way to clear that up without special case code or making
+warnings verbose only - something that makes me and others
+uncomfortable.
 
-Nicolas
-
->=20
-> > Note that the discussion around this flag already took place in the ver=
-y first
-> > iteration of the serie, it was originally using a CID and that was a pr=
-oposed
-> > replacement from Hans.
->=20
-
+Thanks,
+Ian
 
