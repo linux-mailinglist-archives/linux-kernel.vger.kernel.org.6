@@ -1,134 +1,119 @@
-Return-Path: <linux-kernel+bounces-211534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A90905349
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:07:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E7090534A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1F1284996
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:07:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F7D286676
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DB917A938;
-	Wed, 12 Jun 2024 13:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75F9178395;
+	Wed, 12 Jun 2024 13:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9q3FErm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O7NHJkVY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7AC178371;
-	Wed, 12 Jun 2024 13:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11841D54B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718197626; cv=none; b=eaVSYOsjFMmX3T0HdqJAQOmiauDOTaPmT65LhrRViMePmJKGlFvFw1dNaat+mPMChm7fanx8ylQjm39Ymf9x4bx1dEu1jokJrM17pXJFa+CHg2LqeowwsGvhhnSSmyBzqegv3NCR9ak/4LrJVFxAiDjyR5m0sUR0TaCAzf/hAKM=
+	t=1718197666; cv=none; b=lJCpLd00AG71QG54kqMBzax3mP4bZJL8QYlLjWwfTamFiGBwxsv2Jj6KAYX4rpBhGJSMG+ahrn2ur0EAD7BhvkUy7oZnOnZuiqDHop+hX8B2tfxUUV6Pq3zSpfZLoTojvlTBjIQ8qKeeU81cL59gG+Pw5I+M3bRqXPxDLoZQp6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718197626; c=relaxed/simple;
-	bh=lrnihvvSZGrimK51z8Vm3UHgRlphb++nLv3/ylgKNfc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=opzg1kzwOEf/nrxe4tBtXQi2TfQJM8fFHOTOulE33JP7rae6efZG05bHFTU3jKy2iz8BBXumZ1zd9Kb5FWjGYSBLKl4LYZlarCazmvYydrHvfLvD1wHU4Y13qr5QBLsyjhmw2VZWiRyLLqOZjY6WNMYf+KDjoDib/LfucovYYR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9q3FErm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B589CC3277B;
-	Wed, 12 Jun 2024 13:07:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718197625;
-	bh=lrnihvvSZGrimK51z8Vm3UHgRlphb++nLv3/ylgKNfc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=k9q3FErmOKe1Ln+6Cp+StYEfhRBxizkoiwwI2eP3R3E4vXx3zre20LdsqyrtR4uHx
-	 fBqP1BpWc0hKVR7rv1ue8V8l82FMYJalpca8MxpBIqvUlGWxK/kilQtf27jrpYH7Vc
-	 EaJRFzBBoGirVZTJRClKLVtYy7BRmNSN+wM8WHVDFclvdAQ1swmYgVUkD+hf0u92Ay
-	 +oYRNKnj92loSJIoCxUlDIWVgqPnl6TEoxAn6DbR9Sn9kPcvhv03joZzT+DXwujbr6
-	 emMSdJ5dU8sQpdEvjl/A7hidCDITN6mHE1DsCgBgCB/QU6SRViEtTRs2KBkudTwb/I
-	 szBvkQbiuz3Fg==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-250aa23752dso161029fac.3;
-        Wed, 12 Jun 2024 06:07:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXNVLP6dRr1U13qSvuq9BiudSIN5Z+EvdLZobDU+skx6j3Hoee35ZWxVZaBON713CDgYodE2OKDB665uhfOLjh6iLNKgTWdGaRqVtVaIXffHrw4GhGMpPxE8/pf1Os3nbnnzaBs3ibAbFYEc+DGoeQGpBTyP6g8MQQO2zBVyQXvLtrsuL7k
-X-Gm-Message-State: AOJu0YzG256pg6zgChOMG9M+QJH2wgdo1eKkzNuDEDocT49MjkME1sK3
-	AZYVnnrrzHfokKO9e02w4kXFLIAi91AXtlIpLNQi/6dXQDafoDusYwcBRBuXLPst/NwEeS/Lwxf
-	s//Z1MQnCLlPk3hPvGd+FTB5c5fo=
-X-Google-Smtp-Source: AGHT+IF431IDCkOjmZOkN3CBMg6hR6xYBKiQoefnw+Svnx7rCZVovTxZqpP09929qkpZmQGbMmtJ/5AlDGikX6/r2nI=
-X-Received: by 2002:a05:6871:4e91:b0:24f:ddd5:a21d with SMTP id
- 586e51a60fabf-255151f70fcmr1871165fac.5.1718197625087; Wed, 12 Jun 2024
- 06:07:05 -0700 (PDT)
+	s=arc-20240116; t=1718197666; c=relaxed/simple;
+	bh=vRQlHNGUb9RMnafK9dTcbbr+Rpm98qcgacrWhXBREjE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DsORRvRrqitnlOXl3qRETRWGDaBbvfAWolgmZnTfC9fWjOHi3H/410s7jR2V9kdNonFXjRiNhQZx+OEbKYoygoDNTEUvWOFynHjplLsWUbHtX2Gz4hH0Z409EQ6lJz3nyt/ig6S1TczEaDRLvVkYUKsBEbf4UNaT/tAwStrFDpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O7NHJkVY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718197663;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QBMW5M/9uCuip/bSRX1dLBTS2ODu1sCKXWa+SRNoHPM=;
+	b=O7NHJkVYw5LKBXNZ6GS1p83um6sys1kq+bbwYLEbMDIBhTKxeWkT75mDYx8RoUQAqIN1S9
+	XX1CTxZ3a2HdRGY0VU2YAbn8L2YZDhUeTLrUPevxmkXU82Tn//fXUjnzGRXvqhrlpwSSCi
+	q9pfni/lGvpX7tCDiRNhxb/TW0Xg31w=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-374-PB9uv3aOMD-2o40qdK_hag-1; Wed,
+ 12 Jun 2024 09:07:38 -0400
+X-MC-Unique: PB9uv3aOMD-2o40qdK_hag-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A4C3019560B3;
+	Wed, 12 Jun 2024 13:07:36 +0000 (UTC)
+Received: from [10.22.32.53] (unknown [10.22.32.53])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 735D11956053;
+	Wed, 12 Jun 2024 13:07:34 +0000 (UTC)
+Message-ID: <868707d5-bbe5-4f10-8395-333caa867a82@redhat.com>
+Date: Wed, 12 Jun 2024 09:07:33 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
- <20240528084413.2624435-1-sakari.ailus@linux.intel.com> <a05df025-a0be-49cd-84a9-7d7fb2eeb33e@redhat.com>
- <e9062095-b312-44df-a9e3-0b09f3ec9eff@redhat.com> <4b387b4d-f778-4891-9f07-df5fc0a093cd@redhat.com>
- <ZmmQLt7wB-yGQBTw@kekkonen.localdomain> <CAJZ5v0ii3WFQRPdfHeeW4M9kXSWDVxxxy02zThcf25mjNwqDAw@mail.gmail.com>
- <ZmmT56Cyvb2FCyav@kekkonen.localdomain> <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
- <ZmmY3he9vfWVWU3I@kekkonen.localdomain>
-In-Reply-To: <ZmmY3he9vfWVWU3I@kekkonen.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Jun 2024 15:06:53 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
-Message-ID: <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port nodes
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com, 
-	wentong.wu@intel.com, linux-media@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/1] nvme-multipath: implement "queue-depth" iopolicy
+To: Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ "kbusch@kernel.org" <kbusch@kernel.org>, "hch@lst.de" <hch@lst.de>,
+ "sagi@grimberg.me" <sagi@grimberg.me>, "emilne@redhat.com"
+ <emilne@redhat.com>
+Cc: "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "jrani@purestorage.com" <jrani@purestorage.com>,
+ "randyj@purestorage.com" <randyj@purestorage.com>,
+ "hare@kernel.org" <hare@kernel.org>
+References: <20240612002034.1299922-1-jmeneghi@redhat.com>
+ <20240612002034.1299922-2-jmeneghi@redhat.com>
+ <1307c447-65bb-430c-88e1-045191d8d8ba@nvidia.com>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <1307c447-65bb-430c-88e1-045191d8d8ba@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi Sakari,
 
-On Wed, Jun 12, 2024 at 2:47=E2=80=AFPM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Rafael,
->
-> On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysocki wrote:
-> > > > > > I just hit the same problem on another Dell laptop. It seems th=
-at
-> > > > > > all Dell laptops with IPU6 camera from the Tiger Lake, Alder La=
-ke
-> > > > > > and Raptor Lake generations suffer from this problem.
-> > > > > >
-> > > > > > So instead of playing whack a mole with DMI matches we should
-> > > > > > simply disable ACPI MIPI DISCO support on all Dell laptops
-> > > > > > with those CPUs. I'm preparing a fix for this to replace
-> > > > > > the DMI matching now.
-> > > > >
-> > > > > DisCo for Imaging support shouldn't be dropped on these systems, =
-and this
-> > > > > isn't what your patch does either. Instead the ACPI graph port no=
-des (as
-> > > > > per Linux specific definitions) are simply dropped, i.e. this isn=
-'t related
-> > > > > to DisCo for Imaging at all.
-> > > >
-> > > > So it looks like the changelog of that patch could be improved, rig=
-ht?
-> > >
-> > > Well, yes. The reason the function is in the file is that nearly all =
-camera
-> > > related parsing is located there, not that it would be related to Dis=
-Co for
-> > > Imaging as such.
-> >
-> > So IIUC the camera graph port nodes are created by default with the
-> > help of the firmware-supplied information, but if that is defective a
-> > quirk can be added to skip the creation of those ports in which case
-> > they will be created elsewhere.
-> >
-> > Is this correct?
->
-> Yes.
+On 6/11/24 21:44, Chaitanya Kulkarni wrote:
+>>    /*
+>>     * List of workarounds for devices that required behavior not specified in
+>>     * the standard.
+>> @@ -195,6 +197,7 @@ enum {
+>>    	NVME_REQ_CANCELLED		= (1 << 0),
+>>    	NVME_REQ_USERCMD		= (1 << 1),
+>>    	NVME_MPATH_IO_STATS		= (1 << 2),
+>> +	NVME_MPATH_CNT_ACTIVE	= (1 << 3),
+> nit:- please align above to existing code ...
 
-So it would be good to add a comment to this effect to
-acpi_nondev_subnode_extract() where acpi_graph_ignore_port() is
-called.
+Ok... there must be something wrong with my tab stop.... are we using 8 space tabs in linux?
 
-And there is a somewhat tangential question that occurred to me: If
-the nodes are created elsewhere when acpi_graph_ignore_port() is true,
-why is it necessary to consult the platform firmware for the
-information on them at all?  Wouldn't it be better to simply always
-create them elsewhere?
+Here's what I have in my .vimrc
+
+set smartindent              " always set smartindenting on
+set autoindent               " always set autoindenting on
+set backspace=2              " Influences the working of <BS>, <Del>, CTRL-W and CTRL-U in Insert mode.
+set noexpandtab              " insert tabs instead of spaces
+set textwidth=0              " Don't wrap words by default
+set shiftwidth=4 smarttab    " number of spaces to use for each step of indent
+set tabstop=4 softtabstop=0  " setting tab stops to be different from the indentation width
+
+What is recommended setting for these ?
+
+set shiftwidth=8 ?
+set tabstop=8 ?
+
+/John
+
 
