@@ -1,166 +1,93 @@
-Return-Path: <linux-kernel+bounces-211457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EAB69051D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:59:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FFF9051D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E6B01F26B01
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:59:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAE1C289ADE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC8217D896;
-	Wed, 12 Jun 2024 11:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="eVEegoCh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="je75aGZ8"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E28516F287;
+	Wed, 12 Jun 2024 11:58:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301B017C206;
-	Wed, 12 Jun 2024 11:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3B316D4D3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718193421; cv=none; b=iUPnvouXQSxhMwokEvnfdDLEt+awORFSvJtFA/GWYQo8m1Unpidwx2BY1xxQLnT7Nb66RWsTz/o6M4X1Cj02NyhpD0D2DHM8DeRsX9SpN0FOqPgPepB59tcOSD/ZXs4R0ajIA/HG22iFxJ6TlFuFJB3scGd3/he3R95492GpjH4=
+	t=1718193486; cv=none; b=d6RCHAxc+X2fXOiTAG8R53epzxmOqR5GOZHmGnw34onMdYi5alxmjXuFLEiW/NbZZnqs5jzQ2TOcTocxcmbfurc9nIPS907Q8YV75aJuxLsJcfObdfoiN+oU3648sF2ObfG0pjSEOXiPJmLe7g1dsia2GAOsQxeuF+i4ZPd+vJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718193421; c=relaxed/simple;
-	bh=FqYFcbHWrq35Q20DJGtu08zhvYZISHWayM6Dshw2k94=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c/abcaj/jiy7hhHGuXD5PybXl98imC0qmstXV+aj0vnwDmVg9YDH87NtigjhEz50tskTP/NjdF68tFF4o99CC3nbWNGCYhCwaZZoKE+/OmpjlkydXjzG3iF12BMLsM+aB06tRB9Ze4gbSMCezOPYtZz83E/LQFKFUvnXWKvyz/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=eVEegoCh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=je75aGZ8; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 489DC13801C8;
-	Wed, 12 Jun 2024 07:56:59 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Wed, 12 Jun 2024 07:56:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1718193419;
-	 x=1718279819; bh=dEkQj1pEyhcYOVI2l79QHwfWgHUy/egfEwBVNSft4zY=; b=
-	eVEegoCh9hQ3BjI7EsYqCQmYZbFh923aoJxBynMKJ1FF84gJAN6Vn5MO1wKxAcZM
-	6UFOnRw799gE0KBlf5XruDPHFq0oW7fOjuXD0kAKovP3XmYadYUT6o2yA241sSwR
-	x4QaR5pB/uWCJTBeBMoiuATZLuMxklJgk8VPwGyIZY14dnpRRVO+5d+sSXrE1hFF
-	M7KramaojSfb9nUM1xNECiP56DAdhtXpOkgBVXjfpZEGyiaez446/tiF2W/DZ2Av
-	2hVYyut2I/VQcCagV3yYNsl3spbwgtN7kfB9+UpUZH7oGX8djeXCqVpJpoN7FmDA
-	8ADFNDadT5/z/+dCbDURSQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718193419; x=
-	1718279819; bh=dEkQj1pEyhcYOVI2l79QHwfWgHUy/egfEwBVNSft4zY=; b=j
-	e75aGZ8g09uTzmtYolyYKG+vG4Xx6SVJuw2Twy+f3wmw7ZkYfsMJuuyNTAJuIzcK
-	bKwxOPu9/04OOj+dQumSDQam2bNOZC7QXBc2j1nLbvJocv4IDpqjX/1WAbKbOkt1
-	91SAr0/UR2vvWJqWCQORpNmumTCoJ7PRXi7KRzAeKMVZPdnF+HUW2z2i37aAwwRM
-	H74TT5q3IFBwQAt52TcTczN2f5YNGB3x5rtEdGRqxkrvKCtH8LaA0EEJQjZzAqqd
-	kIrh69YyQ31xJCxtgm2QeAK3vQ1AEYckP5ilr/D5U2yA3X8O8j1pxjrBNWuYWWDI
-	kRUDw7pp7aLIgG0kSOvdQ==
-X-ME-Sender: <xms:C41pZr578lEHSs-Er_rny-SN-Fd2kOirScvHW8A4lImNu3_3Ol70Iw>
-    <xme:C41pZg6Aid7Ll5gCxICeketjH3oPzCXL9icuO29udYHKB9b6-cpfovjVYu_S2nEHe
-    7rp5qRwC7e3sxnmm6c>
-X-ME-Received: <xmr:C41pZidy4HE2meX_Cyzn-KDtxNnt6937Vw7c3Psxn04BFbLnuGtzk0E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedggeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeflihgr
-    gihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqne
-    cuggftrfgrthhtvghrnheptdffudefteeijeeljedtvdekteduvedtkeetheefkeetkedu
-    tdetkefhfeeuffdvnecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdr
-    higrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:C41pZsIQ93Whj9XUPBXmSXFLns4TXlzcTdWu5uXwQnHLLqjjOiuUWA>
-    <xmx:C41pZvIyXB61Ve616igc6RCjsoUiv97wYLYemNMBr30jeOzM5ErRxQ>
-    <xmx:C41pZly5BRerneg_CjXjIY97leSgZpygeacWkAcyYgj90TJrvIVfEg>
-    <xmx:C41pZrIlZg0cx3RQzPkvIR7H5vidRzIKcAhEh8Ne-fcdNsjp0NTn3A>
-    <xmx:C41pZsBl3dPCIP0mhdZaU0wNjli3NOs9mYtdqT1JdpgPdE-OSTKjHlWy>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Jun 2024 07:56:57 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Wed, 12 Jun 2024 12:56:27 +0100
-Subject: [PATCH v2 8/8] dt-bindings: mips: img: Add devices binding
+	s=arc-20240116; t=1718193486; c=relaxed/simple;
+	bh=xS/63wRKaKU0Wayi9VDY0udyPi1iW5NI1/aIwAXJvsU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lPsTUFpGjS2cQgu4xuZzx0nIhiGugrN+I2Sclc5f48ISXQqnPoFlw+BvpBQ39/ubjpK6nYlPrWyAtLgeCXtpGArtvIavyAapXpQkcU7nl8AjIbj8bokJRa/AgJP5r/IgQyDRPK75EE+G7ktNozF5Q1ddyAnGTXwIVCRuquD2bOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb7c3b8cf8so209610839f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:58:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718193484; x=1718798284;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UH8qBVaCa01Ff20+nfDvD/vKdbSccNB2gSxFLitfNvs=;
+        b=SjSc8aFMOEzrR+Nw87pKTnjgT1ioTPQkp6X8fTGHu399299XeoiLMy+RP3BHqpT8nY
+         NATNHz8MQbLEj+uaqGksdyKjsp5D7Z82GP1nrw79lCbyKsfkUix97SymDsLy/RVdhhdF
+         Wlhk2z1dG4EuJPYPY0Mq82OfUM6F4mQCxBF25eh/EIqko4yVZj2EBDQx77z6t3UJhiE+
+         CbBeLzvNiL+5UolkJ5SwvR0QDOrWvLOplbVC/IBOou7mPL3IThjztkjkmEKFh98z9HJQ
+         zQdcSOljFqb+CZaHXCID7/S45hji96G0kbJ96Ck5bqt4eGDOPSV45qFrN1PxzauoFmtg
+         SuMg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/gw4ipXEU0hkURZcBJzk+xzT3SC59Z9rMS+uvaLeUcTPLIXK9bWTWTD80jckUSx6tXJMJHfZF6BS2HKugBTFHLAZLV59KLfDUsLmn
+X-Gm-Message-State: AOJu0Ywq0sBw+C9rZFDHUExpV3XKiMHwBURUDZIbRijun4SlXMtecW3r
+	dKhSmGmXBHYodV7k5GCKism2EdcTQoiLd5c4JDl5bCfTs5+Kr5Ot0HkPrwiDa/1wh58FQtQELZP
+	ihfP8eUdS+Dzqu5RifztmrppocDVyXB4Aj197GuKurjwOS+D2cDkaDDc=
+X-Google-Smtp-Source: AGHT+IEp6wv4wPlWMGiy5qWcoM5qf4ugebQ7KN7CLbQlyazwMsxHbasLnWDudlrb68LCCThNf880tiV2BUwsHUWHH4DUsSta8u+R
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240612-boston-syscon-v2-8-9f8e1a07fa63@flygoat.com>
-References: <20240612-boston-syscon-v2-0-9f8e1a07fa63@flygoat.com>
-In-Reply-To: <20240612-boston-syscon-v2-0-9f8e1a07fa63@flygoat.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Paul Burton <paulburton@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mips@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1356;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=FqYFcbHWrq35Q20DJGtu08zhvYZISHWayM6Dshw2k94=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhrTMnj8/Loavfi4+j+PEhbtxpbUX1Voa69tFRW0OFZsnC
- TYEnNvQUcrCIMbFICumyBIioNS3ofHigusPsv7AzGFlAhnCwMUpABNxNGH4Z/XXyuLoeVtTG8vn
- jGVMP291TJtaM1/ubgTLlSbtGY88zRn+ac0oXZQjncK/NaZy0bPewFlKk4zSe4tj1s1T0izh81z
- IBgA=
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+X-Received: by 2002:a05:6602:6d0c:b0:7eb:8321:330c with SMTP id
+ ca18e2360f4ac-7ebccfaa14cmr6903139f.0.1718193484381; Wed, 12 Jun 2024
+ 04:58:04 -0700 (PDT)
+Date: Wed, 12 Jun 2024 04:58:04 -0700
+In-Reply-To: <0000000000004f12bb061a9acf07@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004acf7b061ab01899@google.com>
+Subject: Re: [syzbot] [mm?] general protection fault in dequeue_hugetlb_folio_nodemask
+ (2)
+From: syzbot <syzbot+569ed13f4054f271087b@syzkaller.appspotmail.com>
+To: airlied@redhat.com, akpm@linux-foundation.org, kraxel@redhat.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, muchun.song@linux.dev, 
+	osalvador@suse.de, syzkaller-bugs@googlegroups.com, vivek.kasireddy@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add devices binding for various Imagination Technologies
-MIPS based Platforms.
+syzbot has bisected this issue to:
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- .../devicetree/bindings/mips/img/devices.yaml      | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+commit 265a5cde9462d3a816b18c6cf4f0a231f1c29d1b
+Author: Vivek Kasireddy <vivek.kasireddy@intel.com>
+Date:   Thu Apr 11 06:59:43 2024 +0000
 
-diff --git a/Documentation/devicetree/bindings/mips/img/devices.yaml b/Documentation/devicetree/bindings/mips/img/devices.yaml
-new file mode 100644
-index 000000000000..460ca96577ad
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mips/img/devices.yaml
-@@ -0,0 +1,33 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mips/img/devices.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Imagination Technologies MIPS based Platforms
-+
-+maintainers:
-+  - Jiaxun Yang <jiaxun.yang@flygoat.com>
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+
-+      - description: IMG Boston
-+        const: img,boston
-+
-+      - description: IMG Marduk (Creator Ci40)
-+        items:
-+          - const: img,pistachio-marduk
-+          - const: img,pistachio
-+
-+      - description: Imagination University Program MIPSfpga
-+        items:
-+          - const: img,xilfpga
-+          - const: digilent,nexys4ddr
-+
-+additionalProperties: true
-+
-+...
+    udmabuf: pin the pages using memfd_pin_folios() API
 
--- 
-2.43.0
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1617ab6a980000
+start commit:   d35b2284e966 Add linux-next specific files for 20240607
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1517ab6a980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1117ab6a980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d8bf5cd6bcca7343
+dashboard link: https://syzkaller.appspot.com/bug?extid=569ed13f4054f271087b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15eb5e86980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15db597e980000
 
+Reported-by: syzbot+569ed13f4054f271087b@syzkaller.appspotmail.com
+Fixes: 265a5cde9462 ("udmabuf: pin the pages using memfd_pin_folios() API")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
