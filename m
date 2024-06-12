@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-211671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43792905535
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:32:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D31D3905539
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5284C1C20F39
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:32:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37EF0B21CEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BB117E456;
-	Wed, 12 Jun 2024 14:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A530517E460;
+	Wed, 12 Jun 2024 14:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ir06c6gI"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PABoon3D"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF85616F0CA;
-	Wed, 12 Jun 2024 14:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B7E7E8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718202759; cv=none; b=brXja8qTDE5RjuEJ0jfajMPJzAhiwya/GBfG6CBtDKqER/m96qJ2eIPxfruAUkiY0by1Y+SLp9ic6OyvPC08On8bK4LGxbPmoQKrBEyfqf5K9UIIJh0hJE1HZs4uMbC2SO+bpE58TQpUXhFKQhDkV/DM2av0OoWDfRO6L3w7Xps=
+	t=1718202858; cv=none; b=s9gNJMLPDgYYrzS4gc9JYpLQzkzR5QSDzFZM89dc21+jHwRnXHBqt24xiaGLCDLbYL2XccwZ14K02XqiFW/xCLWZ5+lxKHhOtMt8ViT4GINhEMWB6G6Mveyn5xwD0eKigE3xaQBcokO67ruimKtal5Fp/k9tT2UnknKtpCtsZdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718202759; c=relaxed/simple;
-	bh=ZzWSeGePy11VFjnhicIZDBhClYhf9fghrdIA8gH/GBo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a0Nt/g7EEe6U8qkx3FxWW+595pUtsUe3e/vfLlP6ng/VNiFaRvnYziP/4paFi+fUPOGW8LlztPZCS9NSdxUcVAgu3mT2YwnNI2Oh8zEUlG7RO47YZKsP2D+OoHHy7J954lL67dgTG7q62u11T30cmp1+BXUR+5pYNn1hfxixtmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ir06c6gI; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718202741; x=1718807541; i=markus.elfring@web.de;
-	bh=ZzWSeGePy11VFjnhicIZDBhClYhf9fghrdIA8gH/GBo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ir06c6gIaK8LSeu7haFUgR2OSXTW+CphYOBPjAmbmgQPbLIWvBJO9Jnzc9sh4ObE
-	 2vpePDEE76sQZzk6Ch8cUPZTm8zVaHwyG4wvteYUXUSIhhYPbNhKEYh46Lkp5+ZCt
-	 6aEYXz7d+/iHC8Y7CMdVfvTVn8TrPLPbfE1/OKo9Nb/vg1HCY8zmyqaHiek9oT49z
-	 3B/yFioACdAdbjf0N+Y6fM4F4AyuyMydA8OUgef3Ioi7uMVf6ZoEzB1awXpO/RBqN
-	 fY0he6UaY6SnJAI8Hljz+5mD1ybPs6IR7EeKLsZiX/ES/MnD4L3hJP3T/VXWhmR/y
-	 5cvYcIBkqPan9bI2oQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MlbLM-1siBJn35uM-00cEYW; Wed, 12
- Jun 2024 16:32:21 +0200
-Message-ID: <1cb42d85-2eb6-4544-b4ea-8a75416cd287@web.de>
-Date: Wed, 12 Jun 2024 16:32:20 +0200
+	s=arc-20240116; t=1718202858; c=relaxed/simple;
+	bh=LFPQeU9q4FsqywsDqQ+Lwqx2MK2V0A/PxmsFBqLV0bE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uaogxuRhJTWVeD2iQbCBn85de0JVmU3uavAySHnj/eomDTpxQ2EbH/j/nZ+ffRvYPxDx2SGvlcbkucayIThdiR9twKK1dsgkFYRMQvXcWscOWM0zXZWIE8u2v+ff7mNTWG57zlnQFy4ru5fvD7PPGLIvyb0Hn0+5FGxhi2YurOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PABoon3D; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so6886205e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:34:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718202855; x=1718807655; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=45hi7CYVmDt3hhlDLfSd5gueMZgniK5jw3pCKS1O/Rk=;
+        b=PABoon3D7rlEpYVeIT47uxiShj73iC+g+9fth72pGUCXqD/9qIEjhzosVDYR2Jfpyj
+         dQQK7yqDmMp4MJ3U9Jhv+yZVXFkZeDoDPjTMERJ5jL7Lma/z6liHfwaIg/Jaj7shNCyO
+         qoxSYWpmCHwIlC9AuHkwVsWGq9QbtHFO63elvnRu4m41enxA+C0TLJVGzme05/cs6gbO
+         qktRCIByW36NbpMup+ZFqTlsilkFD1hFleIrT5FRXBqyKMTE9OtHHHoVrAgAgxXhTfdB
+         Vg8zIViaP2Iz3y7p5ZdJoU+LlIn1ofeLEa493f2HYxThdbXlPbO4BgJU3vIczkjDYjvq
+         nM2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718202855; x=1718807655;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=45hi7CYVmDt3hhlDLfSd5gueMZgniK5jw3pCKS1O/Rk=;
+        b=SHfySdySM7bRBqOmis3UxuU2dVlb751WeYc1gI6Zh5dt+cJGu+h/sobCd9oV3hkkdA
+         BwZ//4DU8Av+rSk1SDrj9Br84WhruThdk54XjJLglR5VgHJ6MeXXkuBnpWLlMQaPr8KL
+         0nATVkCe4GVGeYuRdApk9hwBImyUH2EaCPZ76lkd8XTrcNl046T/GeewdiRCoYrIs1aF
+         vn0YYl4tq7ldCobLlfuPP8i1pHLwWE7kGICsiKLW8Upy4jEu/fy2gNoj4izBO7PtpX9U
+         LEAAAGZNiDPaHIDzt5CSGbRY7sW/HE9NUm8IvP3z6Wi3eSFbvp05m2AzpvcHOYCU356Z
+         spwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVkZ3/XbhPO3AaxyCvY19dQimkdw+E+21Gh0k02IhXzfGp8w6pVWVgmtne9b4/6q+xr58sB53BlXx7R51X+THD/AcvKo77T3755MK2
+X-Gm-Message-State: AOJu0YydXyqR7uX81J/SMURZdTu/sMKq5aAne1eVFAsWclcBCoCMsPqn
+	r2nRwMdX/OP1Yi505pzsPunNP8CZWmgyAtDudvyUmn3XKOkalhDW01SeKdduOMo=
+X-Google-Smtp-Source: AGHT+IGUbEgRbUewkZ9/hJ9J3L553IVcbn3aXC5zr5hcRQzc4weBPSkFt029esQGJZ+cg/pLyT4vJQ==
+X-Received: by 2002:a05:600c:19c9:b0:421:75af:e64a with SMTP id 5b1f17b1804b1-422862aef2bmr21206525e9.6.1718202854732;
+        Wed, 12 Jun 2024 07:34:14 -0700 (PDT)
+Received: from localhost.localdomain ([31.120.167.14])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f304f3f80sm3581136f8f.113.2024.06.12.07.34.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 07:34:14 -0700 (PDT)
+From: Teddy Engel <engel.teddy@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Teddy Engel <engel.teddy@gmail.com>
+Subject: [PATCH] staging: rtl8192e: Remove unused constant IC_VersionCut_C
+Date: Wed, 12 Jun 2024 15:33:26 +0100
+Message-Id: <20240612143326.6764-1-engel.teddy@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 13/14] drm/msm/hdmi: ensure that HDMI is one if HPD is
- requested
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter
- <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- LKML <linux-kernel@vger.kernel.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>
-References: <20240522-fd-hdmi-hpd-v2-13-c30bdb7c5c7e@linaro.org>
- <deaa2a50-9e16-4f23-8c13-34947ba4e4e0@web.de>
- <CAA8EJppn_mVzmd==-bs8je8VjXrNrWu0hNXWAGuP+TP3DARReg@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAA8EJppn_mVzmd==-bs8je8VjXrNrWu0hNXWAGuP+TP3DARReg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Qa6PMuv8BlnaWEaPN0trvoJibGkgRbnY5GV1+EYNT7IUlWXAND+
- PMjmSVNsuRPf71qX0iD/Em4t2SBE0abLB73fKXnXm0hEVaH6hpp44IIsiOgE9sLrtJrXpyS
- rdj+knMDe7Qab1PqIKHhebOLqzCprrlgWblb0APzwM9O1t3wXWzhnMRCl5vDrXs1+/HSi3Z
- ahEevsB1jXxmb0L7Rk52g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:utl37s2MzvQ=;eoXzZhjH6c3/951EJ8KbHC+i8A3
- FFaBqbdE02S09yOaDTN/+cO/MwpHKnxqiVn2lbGNXVWh2VlmukbiTaO+i5lZ5QV4kvvuqyKKW
- ACoPFNzMyDLXYD8enrM6WXh1jMju+cgbTzPNlr1VX4DAuVeBAf29WT8V2y8lCR3KR7EpdZcG+
- b2NXbQlsboWxslN61IOkj29eQroO99hbhx9RuQ6z/VQu2i+bFirjHEojiD+3y5SdzXgnig+X/
- kJ/eohufHyWd2LGZJLor7IKF88pauUl/AY9zWMjc3npVy8Xm9iSHqWtQiFQZ2JeZMzZCM71Jw
- 7BbW5TiAR5l5MxC+a26FJ0RcwMLsJQxpIGw7zTZ9Et3D76uDYoOHAjrGmWoqmcKmu7ID95SJh
- bFtQ9xuB/TN4OIkkvEAKHR/6SLmTsDoV4+hnVfQ+CTL4Nrrtbt92LEbOZivUy0e/5chcsy/Jc
- 5lrGvsDYDnEnkQeIrHePbmh0vd+PkQuzI/ahGClLKH1q42LlDIv2ikuDr9oFgCERBIFYEnV+q
- pcAxZNvIADFObwlcwj78cFEpH+1Jcgqm9fHbDncEPDmaygfV2yg6y3JbiEBjsLhCnHGukEJhk
- SArK0NBvUp8KH/gmokmRDQ0d9O8YgAKoBz5pyg6UoRvuYmiMay/apoSyFCIbwVHf6/cwwXkud
- LObH2/kbRhG4HToxaELeUi/eNr5fn8A+UPc1XlgMsv2ciZZ96Me1o7N6nJe8wQT33LR0MBmUL
- hE8aO/+dWGid19ZJ77U/bv1jgO4v/mUTMDWZqDGtJAHSGEtpwL8/OKmsSIbGsbjPIE9kyVyO9
- JeIoKiBlb8a3eDKE+IoJ+7IrOuszz6c4hvCbjLNpBLV6c=
+Content-Transfer-Encoding: 8bit
 
->> Would you become interested to apply a statement like =E2=80=9Cguard(mu=
-tex)(&hdmi->state_mutex);=E2=80=9D?
->> https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/mutex.h=
-#L196
->
-> I am not.
+Remove unused constant.
 
-Under which circumstances will development interests grow for scope-based =
-resource management?
-https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/cleanup.h#=
-L124
+Signed-off-by: Teddy Engel <engel.teddy@gmail.com>
+---
+ drivers/staging/rtl8192e/rtl8192e/r8190P_def.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/staging/rtl8192e/rtl8192e/r8190P_def.h b/drivers/staging/rtl8192e/rtl8192e/r8190P_def.h
+index 8c85f1c866d3..2cab232bbf30 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/r8190P_def.h
++++ b/drivers/staging/rtl8192e/rtl8192e/r8190P_def.h
+@@ -88,7 +88,6 @@ enum version_8190_loopback {
+ 	VERSION_8190_BE
+ };
+ 
+-#define IC_VersionCut_C	0x2
+ #define IC_VersionCut_D	0x3
+ #define IC_VersionCut_E	0x4
+ 
+-- 
+2.39.2
+
 
