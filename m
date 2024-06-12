@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-211409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A23905147
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:23:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 180F6905143
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 656741F22233
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:23:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B04521F222ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95EF16F28C;
-	Wed, 12 Jun 2024 11:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C50A16F0E2;
+	Wed, 12 Jun 2024 11:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Wqg/Q0xR"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YCj2/Ca6"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C905016F0FE;
-	Wed, 12 Jun 2024 11:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD471534EA;
+	Wed, 12 Jun 2024 11:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718191400; cv=none; b=fiSiIbozkYA0zP4lDBGs4aMqKbB5JwJEkZ+r3U9CembkDXKqPNlPT2YhlQzNzItm+TpHf7QUw9hGnq7Wic8CdZdYQpmikh+cGilR2YiO4cDmX0AX/xmrGQy1KTl2KEv0zzRSP14Nnc49cbGqRsh0Q/oxsenqrwUq74NmUgrEhLM=
+	t=1718191396; cv=none; b=VlfE3rzCRGlS430m1vPYtxKY9YTbTLVTdedu4uLXkHy5HgyPJvbMkWwoHa1ZrOCeuBvBvce1q7/3mXQhtdSGQuGG1leTV+Yo6mv48Vml2ZW6TfkyVyBMfzXpeU87N6F1aAgCSAMR2ntHBTwLru2Aqqfi7KrwHbNic04IbG863fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718191400; c=relaxed/simple;
-	bh=534oH8+Q1AHlG524zRYiQIfuf0EB8t3AqqP1TBBPJ2k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mgrMjklfsNTVfvJHcEop7qXqxjsExb3fRImrQl6Q2LDwRKkiPyHSDqc+64U6bleINj18FG/ha7MzTomAkTeww+aCSd7D+enBqIyePIunVRtw+6Mnr8xOsH3w96u7n3VZOXF2x4kW6GjBB0adbosb5Lxgm1RYpswrQyKv58ncSiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Wqg/Q0xR; arc=none smtp.client-ip=198.47.19.141
+	s=arc-20240116; t=1718191396; c=relaxed/simple;
+	bh=1wUBgueOjI1BytFrGkHYP3KfTEqUo/lYCFPSMUVT+l8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lMvGqCHhU0ZOVeNjVwkAoPjIQjxMc9slaRFY4sm1SDKwL01QQB3alFx3dHbaE/6J/5SXhlPf2sIW+2gwDgpz/2M8AIq2l+9PSH0mLQGA8oCqo7Ec7FVODUUhHNdBQQSYb6eSBX6SFv7ETH5rZ8K3A6EoJOQychPqKPF1R+jzTxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YCj2/Ca6; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45CBN4WU082591;
-	Wed, 12 Jun 2024 06:23:04 -0500
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45CBN8jO045847;
+	Wed, 12 Jun 2024 06:23:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718191384;
-	bh=f4tmQ06PUN/lPqgTx/FqLaVS5S8nfGaFloq2iBvKEdo=;
-	h=From:To:CC:Subject:Date;
-	b=Wqg/Q0xR5e+k7rFjgpgpbP8cgAvYFgWCRiYjV4uyaxJbJdtAMXj504ed8SfjuIH1k
-	 KlY+oKmm9eDX9tPupF0UmdhI6SC+Bb/GezOrtCu3lsg4wHxcDtRSGoj5ZxKBdQH9tR
-	 qciiniVP6vbOD4QPO9/9SkE/INL+TeFMqsjRUPC8=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45CBN45T125625
+	s=ti-com-17Q1; t=1718191388;
+	bh=DlWmeBChXX90LjxZUr3kBbM7iSYW8tAoDGjC+yAvZV4=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=YCj2/Ca6LgJ6kQcsukvSAy/q5H6Cr1ryOC7whW1hP5XYT5SANaJJsyU9lBdCW9Mas
+	 0XheUKHpQp2wxl/6KTxdJNYXITsRMqDtd/+E95YhpwsYOMq46GTqnrLDydS3dgkuH2
+	 gQkVNDBpTHBt2GorVMdCP/JGxWzR6yz/o15Uczbs=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45CBN87O125669
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Jun 2024 06:23:04 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 12 Jun 2024 06:23:08 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
- Jun 2024 06:23:04 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2024 06:23:07 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 12 Jun 2024 06:23:03 -0500
+ Frontend Transport; Wed, 12 Jun 2024 06:23:07 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [10.24.69.66])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45CBMxe2120263;
-	Wed, 12 Jun 2024 06:23:00 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45CBMxe3120263;
+	Wed, 12 Jun 2024 06:23:04 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>
 CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
@@ -61,10 +62,12 @@ CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <afd@ti.com>, <u-kumar1@ti.com>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 0/2] Add Remoteproc Support for TI's J722S SoCs
-Date: Wed, 12 Jun 2024 16:52:57 +0530
-Message-ID: <20240612112259.1131653-1-b-padhi@ti.com>
+Subject: [PATCH v2 1/2] arm64: dts: ti: k3-j722s-main: Add R5F and C7x remote processor nodes
+Date: Wed, 12 Jun 2024 16:52:58 +0530
+Message-ID: <20240612112259.1131653-2-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240612112259.1131653-1-b-padhi@ti.com>
+References: <20240612112259.1131653-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,38 +78,92 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello All,
+From: Apurva Nandan <a-nandan@ti.com>
 
 The K3 J722S SoCs have one single-core Arm Cortex-R5F processor in each
 of the WAKEUP, MCU and MAIN voltage domain, and two C71x DSP subsystems
-in MAIN voltage domain. Thus, this series adds the DT Nodes and memory
-carveout regions to add remoteproc support in J722S SoCs.
+in MAIN voltage domain. Add the DT nodes to support Inter-Processor
+Communication.
 
-Note: This series is dependent on the following series that introduces
-k3-j722s-main.dtsi file:
-https://lore.kernel.org/linux-arm-kernel/20240604085252.3686037-4-s-vadapalli@ti.com/
+Signed-off-by: Apurva Nandan <a-nandan@ti.com>
+[ refactoring changes to k3-j722s-main.dtsi ]
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 61 +++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-v2: Changelog:
-1) Addressed Andrew's comments to refactor remotecore nodes into
-k3-j722s-main.dtsi file.
-2) Squashed Patch 2 and 3 from V1 into Patch 2 in V2 as they were doing
-the same logical thing.
-3) The DTBs check warnings from V1 are automatically fixed after a
-dt-binding patch[0] was merged in linux-next.
-
-Link to v1:
-https://lore.kernel.org/all/20240607090433.488454-1-b-padhi@ti.com/
-
-[0]: https://lore.kernel.org/all/20240604171450.2455-1-hnagalla@ti.com/
-
-Apurva Nandan (2):
-  arm64: dts: ti: k3-j722s-main: Add R5F and C7x remote processor nodes
-  arm64: dts: ti: k3-j722s-evm: Add memory carveouts for R5F and C7x
-
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts   | 140 ++++++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-j722s-main.dtsi |  61 ++++++++++
- 2 files changed, 201 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+index b16f3a7cb1097..1ca3f656a7209 100644
+--- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+@@ -153,6 +153,67 @@ usb1: usb@31200000{
+ 			dr_mode = "otg";
+ 		};
+ 	};
++
++	main_r5fss0: r5fss@78400000 {
++		compatible = "ti,am62-r5fss";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x78400000 0x00 0x78400000 0x8000>,
++			 <0x78500000 0x00 0x78500000 0x8000>;
++		power-domains = <&k3_pds 261 TI_SCI_PD_EXCLUSIVE>;
++		status = "disabled";
++
++		main_r5fss0_core0: r5f@78400000 {
++			compatible = "ti,am62-r5f";
++			reg = <0x78400000 0x00008000>,
++			      <0x78500000 0x00008000>;
++			reg-names = "atcm", "btcm";
++			ti,sci = <&dmsc>;
++			ti,sci-dev-id = <262>;
++			ti,sci-proc-ids = <0x04 0xff>;
++			resets = <&k3_reset 262 1>;
++			firmware-name = "j722s-main-r5f0_0-fw";
++			ti,atcm-enable = <1>;
++			ti,btcm-enable = <1>;
++			ti,loczrama = <1>;
++		};
++	};
++
++	c7x_0: dsp@7e000000 {
++		compatible = "ti,am62a-c7xv-dsp";
++		reg = <0x00 0x7e000000 0x00 0x00200000>;
++		reg-names = "l2sram";
++		ti,sci = <&dmsc>;
++		ti,sci-dev-id = <208>;
++		ti,sci-proc-ids = <0x30 0xff>;
++		resets = <&k3_reset 208 1>;
++		firmware-name = "j722s-c71_0-fw";
++		status = "disabled";
++	};
++
++	c7x_1: dsp@7e200000 {
++		compatible = "ti,am62a-c7xv-dsp";
++		reg = <0x00 0x7e200000 0x00 0x00200000>;
++		reg-names = "l2sram";
++		ti,sci = <&dmsc>;
++		ti,sci-dev-id = <268>;
++		ti,sci-proc-ids = <0x31 0xff>;
++		resets = <&k3_reset 268 1>;
++		firmware-name = "j722s-c71_1-fw";
++		status = "disabled";
++	};
++};
++
++/* MCU domain overrides */
++
++&mcu_r5fss0_core0 {
++	firmware-name = "j722s-mcu-r5f0_0-fw";
++};
++
++/* Wakeup domain overrides */
++
++&wkup_r5fss0_core0 {
++	firmware-name = "j722s-wkup-r5f0_0-fw";
+ };
+ 
+ &main_conf {
 -- 
 2.34.1
 
