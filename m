@@ -1,101 +1,108 @@
-Return-Path: <linux-kernel+bounces-211462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6084B9051E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:02:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 784B39051EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 099361F283BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA651F285D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FFD16F28C;
-	Wed, 12 Jun 2024 12:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FD116F284;
+	Wed, 12 Jun 2024 12:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="fnqZgEYx"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="ZsXjaFex"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EB816D306
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 12:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908FF16D306
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 12:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718193726; cv=none; b=EWlWLqaj/b9uhN0GUtMETuTw/MAN6+1qATJ2j9E1LvMykxnwpmYl0Nr5IM0QkDLP26fqfv7pAYg84RMIhLHwP09IK6gQvrihDrA5+z7rOleqsSQWXbaYEijAPRhpmCF1A5QwgDKFRcuEt3GqUDjwHyxGYN+bHUW3h2LRdGPWTBQ=
+	t=1718193770; cv=none; b=E7zS9fOgHS2WyQBJal9G1Mjao8alEQK+yecyQIZEyKqNdnnzR+fkIsZKBWjI77tGZ+TTKvycmZJRwVUD9F4nPqTd27bP6egEAsSvcHXORfRRNKlFJYE/VACir5joc5EHgwCDdpc3oOBysAe5R4hvuZztKMhbbHQDWm0Iln9uKK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718193726; c=relaxed/simple;
-	bh=yD6R8w4UBkKJudrIwQyum7bH4UdiU/mENrrdT4nd20I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cITgo/ff2ank2nodbvFFx8mekCIrvyuEydC16i8u3Cvqugt9gcvi5CKmGipm4ZdkVY+cEoAHO0x9Vlnb0h2d3lnfCPtg33Dr3iaZ2YvZa6Ky/RFU9zLQilpgqafNXAqkVLhAtPmsusXhh6JrO7ZfTTtIBg4APhunHsQ5Brw9uwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=fnqZgEYx; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52c9034860dso3514961e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 05:02:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718193722; x=1718798522; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pgHNgP5mgQQhJMbmzukrZ80r1nI1t333GxSKlDaG7So=;
-        b=fnqZgEYx18dNfHggOD1+6+vQV8fw1RHjlS0bzrZXoVVJIj5VyIq2EvXZP4YfH6cf7x
-         nnfk4ah0AJQHeMm46e5psUFjEoJKZ6NksRHR4zJGaP4Hcp6jBwMjmCe/6vrPmpZx9HGQ
-         OoWqDzY9HSdOfZUgySymyzQbQFL3qlZSVF82bUqZe7fdrpM18jGlojVTFde2XFOwW0gR
-         SAv1ZoSJ18SrgXEdS9W8On3LZt0yaXHD5YePpSnGbtg4jdi9LmRb8kjz6Z7u/tQ87LSq
-         m/HnNATGUv3XBPSLhCEDITN9MSlUkTHxL47DDzHMnmk5e0xCTP9m+VMN7S2cPOl3oDYd
-         j7Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718193722; x=1718798522;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pgHNgP5mgQQhJMbmzukrZ80r1nI1t333GxSKlDaG7So=;
-        b=E7WbKSAaLTx6paHbXeTs/zUCZrzZoHB6lT7yqt+w14LGbUQ3DriVzuLDpZd9c0+J1Y
-         s/2bSbxZdteQofu22f3mjU8DW0/4fv88pzIxZnEdSedXOC919rsI61vzWzQFKCp2Kjlc
-         lvKBx1xUrPwgjog9Dw7YE84LrbTdBjxmQjVEVb4qUIdGgWr/7TBSoRON5RADbOCh1GL7
-         PvaYJydMVqesH2EXK/DNfO+3U0Xi+/KPfXRc9GyKRUmMWUOshEQ7mit1UZgx+RxNBDlQ
-         MH8FIOQrkiDXS4xXv57Sve1F9k+D49qPMkQTfhebAHcIldkhjb358xHo2ZNBPoscTTdm
-         sbsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVN1c8MoJRTX7Bc4Cavl46YSCr8m2wNZhm/yusGUnDGxPrq1wrZ3ecSF+VQ2ZRuqF3BQue966q00kSyNWWUxAevlrjWZuSAkPOT/97m
-X-Gm-Message-State: AOJu0Yya1QFWFkVwKjyXAv+ssphOnbpepsOtlwah/bg3Z4vMnUOG9kHR
-	ATPlJLIlJd/eSBDJENDCL+vgMXO26XoKyZuafvlbny1j5iKld+ja5f7WKC0kq6gIxrG0GrA+FlE
-	1VzUbPLha3vu5UaIgtIYwi+VJt6XE2TC0F0+x7Z9SUNAd/gVegVY=
-X-Google-Smtp-Source: AGHT+IFTsWHoTu0eHCUEIDfT+ze11HzmE/etIZ7sNoJT7JzsAgwhY3+Wp9mO51T7N/HcjZr5s9IGNKEKawNEM8cxd5A=
-X-Received: by 2002:a19:8c41:0:b0:52b:be6b:d16a with SMTP id
- 2adb3069b0e04-52c9a3e3b86mr1025330e87.31.1718193722025; Wed, 12 Jun 2024
- 05:02:02 -0700 (PDT)
+	s=arc-20240116; t=1718193770; c=relaxed/simple;
+	bh=mL6cvqeW+xRR7/gR0vCFleXEVve6zwKquscdx7tNoCA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mZyNkqVqPFo4sHkHEasH9WeSCo5ZEy+VMr+WT52ypl61KNF9cYTcSq2rm1bE4MxanfF/Ii005jzgS4zjzE3oTtDyDlWZNgO9zd3rEgEUEqOuoD9ZPZh1Be0T1vNlhfs9lKZ2pZmXWYki9gwQLTWllSfO64aUP39Z4MZrhk3WtZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=ZsXjaFex; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=mL6cvqeW+xRR7/gR0vCFleXEVve6zwKquscdx7tNoCA=;
+	t=1718193768; x=1719403368; b=ZsXjaFexFUJKWMSpFF3w+dj6C0o61yNuUHpppkHQscqAMcZ
+	WI14zfhjFOM8rLph5vMgrODJjVJ5pJ84220pKyw/xsih3xN+FSzrvSUe9fvco/Jlnjtoo3+NLlOuV
+	U6UOc4dt+BYDEfOVTA2jZtbyq2IE46EwFG3L5UULG1HhStZX4FY/sGqB8ZIr7g8M40KgPm55ojepL
+	BaBE8pTnFWUaoUA8SptTDyYjogsZbrrRYBis1piAN6PpN9SisKEUYAUPozU9d8Pgrb6tOE8+ab/1/
+	vWSKZBLyfX3Duo1orRf1xbqagEywKeQeGAIzJLr7vgVER25lCwY4YE22Y6z4jQbA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sHMgZ-0000000AEXv-1ybR;
+	Wed, 12 Jun 2024 14:02:39 +0200
+Message-ID: <49c2fbdc91d128c5249d50d016d97c8e5162f7b7.camel@sipsolutions.net>
+Subject: Re: [PATCH v6 1/2] devcoredump: Add dev_coredumpm_timeout()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: =?ISO-8859-1?Q?Jos=E9?= Roberto de Souza <jose.souza@intel.com>, 
+ linux-kernel@vger.kernel.org, intel-xe@lists.freedesktop.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>, Mukesh Ojha
+ <quic_mojha@quicinc.com>,  Jonathan Cavitt <jonathan.cavitt@intel.com>
+Date: Wed, 12 Jun 2024 14:02:37 +0200
+In-Reply-To: <20240611174716.72660-1-jose.souza@intel.com>
+References: <20240611174716.72660-1-jose.souza@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611140034.24685-1-afd@ti.com>
-In-Reply-To: <20240611140034.24685-1-afd@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 12 Jun 2024 14:01:50 +0200
-Message-ID: <CAMRc=Md4ayrVmiD1xPSmCrF6KrjiZGyFVpnrQt5SX46KY0WZ_Q@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: gpio: lsi,zevio-gpio: convert to YAML
-To: Andrew Davis <afd@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-malware-bazaar: not-scanned
 
-On Tue, Jun 11, 2024 at 4:00=E2=80=AFPM Andrew Davis <afd@ti.com> wrote:
->
-> Convert Zevio GPIO controller bindings to DT schema.
->
-> Changes during conversion:
->  - Add used but undocumented interrupts property
->
-> Signed-off-by: Andrew Davis <afd@ti.com>
-> ---
+On Tue, 2024-06-11 at 10:47 -0700, Jos=C3=A9 Roberto de Souza wrote:
+> Add function to set a custom coredump timeout.
+>=20
+> For Xe driver usage, current 5 minutes timeout may be too short for
+> users to search and understand what needs to be done to capture
+> coredump to report bugs.
+>=20
+> We have plans to automate(distribute a udev script) it but at the end
+> will be up to distros and users to pack it so having a option to
+> increase the timeout is a safer option.
+>=20
+> v2:
+> - replace dev_coredump_timeout_set() by dev_coredumpm_timeout() (Mukesh)
+>=20
+> v3:
+> - make dev_coredumpm() static inline (Johannes)
+>=20
+> v5:
+> - rename DEVCOREDUMP_TIMEOUT -> DEVCD_TIMEOUT to avoid redefinition
+> in include/net/bluetooth/coredump.h
+>=20
+> v6:
+> - fix definition of dev_coredumpm_timeout() when CONFIG_DEV_COREDUMP
+> is disabled
 
-The conversion of this file by another author is already in next as
-commit e4608bbccf2b ("dt-bindings: gpio: lsi,zevio-gpio: convert to
-dtschema").
+Got to v6, heh.
 
-Bart
+I still don't think this is _right_, but I guess I'm OK with giving you
+rope to hang yourself ;-)
+
+Acked-by: Johannes Berg <johannes@sipsolutions.net>
+
+Seems like you really should've CC'ed Greg though since these things
+usually went through his tree, so if you want to take them through yours
+he really should be at least aware ...
+
+johannes
+
 
