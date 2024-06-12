@@ -1,141 +1,147 @@
-Return-Path: <linux-kernel+bounces-211565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441BB9053C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:27:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD369053CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4761E1C2248E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 716FC1F23623
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AAA17C203;
-	Wed, 12 Jun 2024 13:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ED617BB27;
+	Wed, 12 Jun 2024 13:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Elh4tOzn"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="YYyHDS22"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A1017BB31
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F06F176ACD;
+	Wed, 12 Jun 2024 13:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718198736; cv=none; b=D2eDw+XhF78ATjGsDb0N+T70JuSStRvEvSIVYYHvmT16R19EA/G5mtE9TYi1Bp4O+bu+ULe1pYf7fAfYYKEwKJiI1cRvhoNWJchNw9OE9yazdBY+6OJOkMwKrJDybEk3uX+m2gtE2HHFo9UekS/yeiFVopAal9SeWP/sElcppjY=
+	t=1718198891; cv=none; b=G24kteH+x8PDpV25AgyPW6k7cISilaLiIZZKPJ4Pq6YVxTiSyQrYEDfD2HSdlKRM7wqgzF5eXxTsz70NNcnZArB+E70EG34sEb++As4NgzvwVMmYo1NmD4py/KbYFbrJW6Pn/bKnhgt1fT4l3HL0dFO+AEB3SVafVitnWzmgER8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718198736; c=relaxed/simple;
-	bh=5r7kTei3l3CsdNg/q8RBiLmWZ032Se1UCEEyvhJU1a8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eaXzAb1e9ZRSMV0+v2etCqOjN+jwUdZq1B1KSL0o7Ha6zvU3VTNHWU2rcEs3tRpZCio3AgPPSBQ+jEkiHTPcFHAu1vWTbue6JvxDuKvRN4z8l6RoZs7qw3GKZci+2YuAw/vzwpfOTfY/sGWmZue1MJJxB6SMbWbKyuC4gOAZRtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Elh4tOzn; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-440655e64bdso20763281cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 06:25:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1718198733; x=1718803533; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zUSqpmX+ejk/HnC4nbAm5rQmmAITtEvd4QugKxTCvc0=;
-        b=Elh4tOzndv4W1vAri7aqt79yRp6FXNOqAXK68wjhMEpH+woCySpjGazEUlJFDG595f
-         Uz72NQ7/rUXvefsR/8ZwFyx2J92wK2u1PXP9l3i3WXKuD5L/2b0SzDFDbj5sfkZQp4wQ
-         KYAwQ+NmdciSpwUmDL3yO4NqrHpspWOImqNQ54XeXk/48O5hs0BgGTV9G3suHwOyxRpb
-         GqDWnuqhk625ozJUldZHN4UhpbzIwwGkqU1rtV3DxT+5EhQNngihJyOMfqVeL7/02+Zb
-         6geeSKDVEuyMMOVN+yEQPUtZBaCCptsXK0IQyzv9fGHp+P1TptxtMwigq3/eJT5uWVuF
-         jTAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718198733; x=1718803533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zUSqpmX+ejk/HnC4nbAm5rQmmAITtEvd4QugKxTCvc0=;
-        b=mcdnwKa8rg5H9QW3xsUNow+zcmQCxceTNsFsZcudbjuuNT/0UFXhb4APLKvPaR0SS6
-         pH1mYd1tOMHqNAxyAcNNIZq/wEFkPIDB6vlQyYJOK7P2j6WoI6qeLuvwKG+JluFxLZzn
-         NFlKr1hQ7gAliID4W9iQ/Ee0R448j+lOP2/ELDZXxqd01J5GJDFYY48TsEp1LvlAduv6
-         G9/39PwxaMhOTXrZamcWUrXr46lQ6mAZ+qTOqc0GU0B6A37ifpr9OBQkCY2sk1CGRaQi
-         Qr68EZQyWasVWSJ+JKgXHln6R1glKwTegDSe6Z3hg0eiYvq3aFC19HUik3lsasVWW4+g
-         aMkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpCHtc2HwjtJR8rmkEqwrG+oa2HF0Gtq7lMYGOOI2fyNHYp90ZfWdy1PCTg6JuJRsDMhbZNSc8+DzBZX2H3RYS7eQPgFKnWgEQHpIl
-X-Gm-Message-State: AOJu0YyKuT597tbkCg1noS1S/HiypNaj34kmLUpSG4ugJ7zPmY4dZ/YC
-	t4mAVNOqDJ2qKxm9iJq4HThE0HeFLf+PZvk5mUZR3i3JmI0dA8FvRXK/V/XxDL8=
-X-Google-Smtp-Source: AGHT+IEaSleQ5/4nSB1kEi3YoGwZTAao8TntM14Myn/eVd0unCfawvyN6q3ByV4cJt9BsHj66DtLGg==
-X-Received: by 2002:ac8:5d92:0:b0:441:37b:cd68 with SMTP id d75a77b69052e-4415abd5a8emr18860231cf.25.1718198733475;
-        Wed, 12 Jun 2024 06:25:33 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.89])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-440542e98f8sm42778781cf.18.2024.06.12.06.25.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 06:25:32 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sHNyl-008tWb-7f;
-	Wed, 12 Jun 2024 10:25:31 -0300
-Date: Wed, 12 Jun 2024 10:25:31 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	"Liu, Yi L" <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 06/10] iommufd: Add iommufd fault object
-Message-ID: <20240612132531.GV791043@ziepe.ca>
-References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
- <20240527040517.38561-7-baolu.lu@linux.intel.com>
- <BN9PR11MB527615EC664698C340A0CA878CFB2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <a17113d3-500e-45ef-a2d2-747d890c9c5e@linux.intel.com>
+	s=arc-20240116; t=1718198891; c=relaxed/simple;
+	bh=gB2qcYBlp6AUro7UgWKhRGLkwMDMrcuWA2Fwl19jD0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=foD9B34QctGK4HKP09URoEkVKYLlLosG6eNoThMxH2dFRZNasHG85V90oV6xJ+NyzaS4aeDyv95dDvh66PZym462hL8Eq1Mqzd2X6DcYMr3Lfjy+CnP5XhJ4oNnbDwatWuzfN/+GcFv0R+7uq2XmX3v6WUUPVTcNYKF7+z8Hwhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=YYyHDS22; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=mLhQQIGQlskOYaBcJkFs0QBTdU7FLcK/wqX92dmx0i0=;
+	t=1718198889; x=1718630889; b=YYyHDS22kNlzhzFoeSSrFmLqpiE95Hxy+6P95jU51fj5/5s
+	JUy3JAy04H54tQZc/WMQ69VkZS3dVFQRaL/pSMlInnZ1axPSX59ROFB9jNsmCYWp7D6JJffyMCjyD
+	hVoX4v6My++nMziS/VwpFFY0RVJ9t2+5wUsFnBaKxc2X7RsP8owhzSt/32XdNe3DGqrxgGj33LpHO
+	SsAmysDR1SxmMvw8Eps1zrK85FVeTysjsIQLuKhlcUTNmv42hn9D82vtLtxUxhIurDweEPVP2mZ9h
+	BmHBjuiW7muq3SWlKisx5nJkFSYuN6XxqEskuEhXRk61NISl/PI4WRxx/+MKQUKQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sHO1C-0007Ep-V0; Wed, 12 Jun 2024 15:28:03 +0200
+Message-ID: <8be80682-067a-4685-9830-cfed0287e617@leemhuis.info>
+Date: Wed, 12 Jun 2024 15:28:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a17113d3-500e-45ef-a2d2-747d890c9c5e@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and maximum
+ rate
+To: =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>,
+ Frank Oltmanns <frank@oltmanns.dev>, stable@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, =?UTF-8?Q?Guido_G=C3=BCnther?=
+ <agx@sigxcpu.org>, Purism Kernel Team <kernel@puri.sm>,
+ Ondrej Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
+ <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
+ <yw1xo78z8ez0.fsf@mansr.com>
+ <c4c1229c-1ed3-4b6e-a53a-e1ace2502ded@oltmanns.dev>
+ <yw1x4jap90va.fsf@mansr.com> <yw1xo78w73uv.fsf@mansr.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <yw1xo78w73uv.fsf@mansr.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718198889;f7fcbcb9;
+X-HE-SMSGID: 1sHO1C-0007Ep-V0
 
-On Sat, Jun 08, 2024 at 05:58:34PM +0800, Baolu Lu wrote:
-
-> > > +static int iommufd_fault_fops_release(struct inode *inode, struct file *filep)
-> > > +{
-> > > +	struct iommufd_fault *fault = filep->private_data;
-> > > +
-> > > +	iommufd_ctx_put(fault->ictx);
-> > > +	refcount_dec(&fault->obj.users);
-> > > +	return 0;
-
-
-This is in the wrong order, dec users before ctx_put.
-
-> > hmm this doesn't sound correct. the context and refcount are
-> > acquired in iommufd_fault_alloc() but here they are reverted when
-> > the fd is closed...
+On 23.05.24 20:58, Måns Rullgård wrote:
+> Måns Rullgård <mans@mansr.com> writes:
+>> Frank Oltmanns <frank@oltmanns.dev> writes:
+>>> 21.05.2024 15:43:10 Måns Rullgård <mans@mansr.com>:
+>>>> Frank Oltmanns <frank@oltmanns.dev> writes:
+>>>>
+>>>>> The Allwinner SoC's typically have an upper and lower limit for their
+>>>>> clocks' rates. Up until now, support for that has been implemented
+>>>>> separately for each clock type.
+>>>>>
+>>>>> Implement that functionality in the sunxi-ng's common part making use of
+>>>>> the CCF rate liming capabilities, so that it is available for all clock
+>>>>> types.
+>>>>>
+>>>>> Suggested-by: Maxime Ripard <mripard@kernel.org>
+>>>>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+>>>>> Cc: stable@vger.kernel.org
+>>>>> ---
+>>>>> drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
+>>>>> drivers/clk/sunxi-ng/ccu_common.h |  3 +++
+>>>>> 2 files changed, 22 insertions(+)
+>>>>
+>>>> This just landed in 6.6 stable, and it broke HDMI output on an A20 based
+>>>> device, the clocks ending up all wrong as seen in this diff of
+>>>> /sys/kernel/debug/clk/clk_summary:
+> [...]
 > 
-> These two refcounts were requested when the fault object was installed
-> to the fault FD.
+>>>> Reverting this commit makes it work again.
+>>> Thank you for your detailed report!
+> [...]
+> It turns out HDMI output is broken in v6.9 for a different reason.
+> However, this commit (b914ec33b391 clk: sunxi-ng: common: Support
+> minimum and maximum rate) requires two others as well in order not
+> to break things on the A20:
 > 
->        filep = anon_inode_getfile("[iommufd-pgfault]", &iommufd_fault_fops,
->                                    fault, O_RDWR);
->         if (IS_ERR(filep)) {
->                 rc = PTR_ERR(filep);
->                 goto out_abort;
->         }
+> cedb7dd193f6 drm/sun4i: hdmi: Convert encoder to atomic
+> 9ca6bc246035 drm/sun4i: hdmi: Move mode_set into enable
 > 
->         refcount_inc(&fault->obj.users);
->         iommufd_ctx_get(fault->ictx);
->         fault->filep = filep;
-> 
-> These refcounts must then be released when the FD is released.
+> With those two (the second depends on the first) cherry-picked on top of
+> v6.6.31, the HDMI output is working again.  Likewise on v6.8.10.
 
-Yes
+They from what I can see are not yet in 6.6.y or on their way there (6.8
+is EOL now). Did anyone ask Greg to pick this up? If not: Månsm could
+you maybe do that? CCing him on a reply and asking is likely enough if
+both changes apply cleanly.
 
-The ctx refcount is to avoid destroying the ctx FD, which can't work,
-while the fault FD has an object pinned. This is also why the above
-order is backwards.
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
-Jason
+#regzbot introduced: 547263745e15a0
+#regzbot fix: drm/sun4i: hdmi: Move mode_set into enable
+#regzbot poke
 
