@@ -1,413 +1,116 @@
-Return-Path: <linux-kernel+bounces-212057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5CD905A9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:18:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED64F905AA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35AFB1C222B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:18:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0B1F1F213CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FFB383A2;
-	Wed, 12 Jun 2024 18:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB0041C76;
+	Wed, 12 Jun 2024 18:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bHRTkPkw"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pzHI3nyz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6663626AD5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507EB3B78D;
+	Wed, 12 Jun 2024 18:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718216307; cv=none; b=QQOagOHnRuNGJ3QIDhx1HDKSuEJzXbYqXxKWLWFJOB6olAEw23CuCvLo/Zz6Ct27gMp/y+620DmhXywa5iMBuwS+/k5k39Y3FZe3PMzQkrnMXjgCH/evVjCmH5/8T38Yb32oJlAcbd6NA7OaGqeXfcqLfuv26fOY4lti9Cv8qYg=
+	t=1718216396; cv=none; b=POo9F9VGIE4ALREqIj2rkrGaDhH8wgRUiFsa+oM+2ANTpQel6nFRqqVDn86RYOGJHmAQd/hVkOecc9SlmbEZyIS6exn0HOvency9gBN1FbxGjJ1Q7vggE/Ph1H71gkhjGeKMYcAY0EqXpF2pABTR7NJT3feT1bdTFB82vmf8Mzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718216307; c=relaxed/simple;
-	bh=uM3A/QTCQEjzoE7Sb7paEO05DthHFo3RxVjPzBe73CA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twTn1uuTDI61/YKqkZ4ZPi5Jf0U3sIUpju2vGnkn6+HnJh8YbYm8OUnEGNCYhfc01InBdRwuZnNQTTLbGFYm7VkG0xahKprr2bJg2bkEhdgsICsA8d0nh3noFo1mpzRFLbEtSQbGR0kIyK66vfeIspxVo7jbR0kg0PziOHN3N4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bHRTkPkw; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52c7fbad011so240069e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:18:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718216303; x=1718821103; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8DheaBl17/wrTIWUg8nbFGKDT2XQ2iKfGsx9zy/UKyc=;
-        b=bHRTkPkwW4p2uiqbr9P65B02DNhZtxcSlAMZ3nUD9lnmcvzpvZsaGipbphYmYNXHR1
-         uDxqJPT8waiY4mFkLBJs/H8iNaD2WkMUXwjq9NasHQVhf/cPtIcNndNXbo+S9nmhniGf
-         a/fCdZ7Nc3/SZCldSMZ8GJ3YEROBwGccCVOFHb7DVtOU8U6RXm27b4tuDn6E7S4gTBeR
-         WUCyU3TxgKwswLU1cyAtCYydVxr8jH5Q4YRmu4AuzuUdJysApaYRhU//QrO5T6K80m2P
-         OLxEJmZF7+mxPsJGmdobaG2T7Jo94l1Z+KoAII1ye8ecBNuWIf4TNIoA+U40xNV3q/Qm
-         UyBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718216303; x=1718821103;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8DheaBl17/wrTIWUg8nbFGKDT2XQ2iKfGsx9zy/UKyc=;
-        b=P0jSAaDZ4bAb0ewTjyLj4te4ltUT6KFBlqu7MH5zWogbXPeCSM1PW96pUzXbIyiUl7
-         CFtcjsHPnn5AVgaAWlBupf62A/ZYKDcch5xPuAVtR0ZcP/X6zA8ku1vNqQeV+X3AmlIt
-         w+tpy+f5ADiTItYIwjwqW4addWEQIzjC7sX98zBYR1noIkWwmXAW6TLu1/esm9HJ8j8h
-         mIiWFs3B37wmb6nOeebRIZoHClHzf0X5yDr1Dm3ZebtRuCJyQUyJR3U4PCNeUfpONR3Q
-         701Ijdoqx8Tbnj5qo3qyanpljd7J0Kjuk6+fPsoKrDyang3g7VtXeC1eDQn82+dD+V7t
-         cExQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnGNkCWZ2ioMMGf9DYlscUA3x3oaF6PMC2cgeBwPx6NKIZKM9AV5TXdVf1IKnUjXZp/3CuhOm0JnfFDYll8W1nrwvJmbRBoO3GQ4/b
-X-Gm-Message-State: AOJu0YwCa/YBJ13JTQ2/6SyZJEvpny4kyiElHxyBNi2mH+5hpRdEBDpi
-	qWrnK5j/51NP4yBgWqTBw5bkcDtOM0NB484xAWOTUoZNT1XeLd07WHk2LrR1/RM=
-X-Google-Smtp-Source: AGHT+IFcasEe0j+9Di1GUyrChBO1YQv6qWzK+DWEa4zNpTKfqOdA++2fywZcmCRWBqpOyN+ZJKK/+Q==
-X-Received: by 2002:a19:e05c:0:b0:52c:9ab1:a312 with SMTP id 2adb3069b0e04-52c9ab1a41fmr1520496e87.4.1718216303424;
-        Wed, 12 Jun 2024 11:18:23 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c97093be4sm606349e87.157.2024.06.12.11.18.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 11:18:22 -0700 (PDT)
-Date: Wed, 12 Jun 2024 21:18:21 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Banajit Goswami <bgoswami@quicinc.com>, neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, 
-	krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	alsa-devel@alsa-project.org
-Subject: Re: [PATCH v3 3/3] ASoC: codec: lpass-rx-macro: add support for 2.5
- codec version
-Message-ID: <dxkgfqxdx4kovs4lfgl6y22chv7b7skmacpttp2z5nzhqj2ijh@6sofslw756mp>
-References: <20240612-lpass-codec-v25-v1-0-9f40611a1370@linaro.org>
- <20240612-lpass-codec-v25-v1-3-9f40611a1370@linaro.org>
+	s=arc-20240116; t=1718216396; c=relaxed/simple;
+	bh=nPimuZQ0UWcYvonaJlq2ON6+IH0LRCu0HdaiWnuUcr8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=nKaLM1VzORhI+1koyN8GJPu8kfOuGswagYOjs7rikr3T4dtkFQzElj6W7B4InpPnliHkzgi4MB47zHGa6J2mYdVfJ3+YXlxjDDRF1nEtKWrAQbyrSguWuV9ne/5AhTIA683g0AbqVr6oHHUu/L/5mkoYvtcW61p7SSvvnvQ0H0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pzHI3nyz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CGOUAx004125;
+	Wed, 12 Jun 2024 18:19:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Ab6Gj3VvvSTzRxsA4sQ8ni
+	k250uuwROQA7dFhi+go1U=; b=pzHI3nyzFkKdbwk0Glw2Uvs50vC+g3a1FvrvY+
+	qdWtuT9V2emoawDRVx1uqX0Rm5AyT4tXRYnu3i/TQ/Fa6uZKy9s9v12EKu09m3QJ
+	c3yHKvEOAH0HIPWfT1JgSzZs+x5o+7IwlKkqBs8JLynqatldLOFlarLClZiCo3xp
+	EoDdT0ghRl+xUP0gS3yVWYYLfcoPrlWs+ufQWQY9+WdHewtehn+XttalpJgnGaGy
+	hxgjhfgdsUlNoG7K7DrRzGZ5pODzD7v/Cw5IANP+2R7OgxxHHvCstvOEhd4op9z4
+	IlgrtVVnI2U2El5EIgMZgI8UsDLrl0NBsyIoORDT1RUSXlpg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ype914rmd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 18:19:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CIJoOS012193
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 18:19:50 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 11:19:50 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 12 Jun 2024 11:19:49 -0700
+Subject: [PATCH] media: uda1342: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612-lpass-codec-v25-v1-3-9f40611a1370@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240612-md-drivers-media-i2c-v1-1-7011b578a07c@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMTmaWYC/x3MwQ6CMAyA4VchPdtkDALqqxgP3ValiZumRUJCe
+ Hemx+/w/xsYq7DBtdlAeRGTd6loTw3EicqTUVI1eOd7N7Qec8KksrAaZk5CKD5ix2dHw9jFyxi
+ gph/lh6z/7e1eHcgYg1KJ02/2kvJdMZPNrLDvB6VeZcKFAAAA
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fj63BiEZwCoXJGP7lB9ZEsrL4wpYmWCt
+X-Proofpoint-ORIG-GUID: fj63BiEZwCoXJGP7lB9ZEsrL4wpYmWCt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_09,2024-06-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 malwarescore=0 phishscore=0 bulkscore=0
+ clxscore=1015 mlxlogscore=798 impostorscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406120130
 
-On Wed, Jun 12, 2024 at 05:57:23PM +0100, Srinivas Kandagatla wrote:
-> LPASS Codec v2.5 has significant changes in the rx register strides.
-> Due to this headset playback on SM8550, SM8650, x1e80100 and all SoCs
-> after SM8450 have only Left working.
-> 
-> This patch adjusts the registers to accomdate 2.5 changes. With this
-> fixed now L and R are functional on Headset playback.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  sound/soc/codecs/lpass-rx-macro.c | 220 +++++++++++++++++++++++++++++++++++---
->  1 file changed, 207 insertions(+), 13 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
-> index 8beeacbd6ae6..7e8bb005b0b9 100644
-> --- a/sound/soc/codecs/lpass-rx-macro.c
-> +++ b/sound/soc/codecs/lpass-rx-macro.c
-> @@ -262,6 +262,53 @@
->  #define CDC_RX_RX2_RX_PATH_MIX_SEC0	(0x0544)
->  #define CDC_RX_RX2_RX_PATH_MIX_SEC1	(0x0548)
->  #define CDC_RX_RX2_RX_PATH_DSM_CTL	(0x054C)
-> +
-> +/* LPASS CODEC version 2.5 rx reg offsets */
-> +#define CDC_2_5_RX_RX1_RX_PATH_CTL		(0x04c0)
-> +#define CDC_2_5_RX_RX1_RX_PATH_CFG0		(0x04c4)
-> +#define CDC_2_5_RX_RX1_RX_PATH_CFG1		(0x04c8)
-> +#define CDC_2_5_RX_RX1_RX_PATH_CFG2		(0x04cC)
-> +#define CDC_2_5_RX_RX1_RX_PATH_CFG3		(0x04d0)
-> +#define CDC_2_5_RX_RX1_RX_VOL_CTL		(0x04d4)
-> +#define CDC_2_5_RX_RX1_RX_PATH_MIX_CTL		(0x04d8)
-> +#define CDC_2_5_RX_RX1_RX_PATH_MIX_CFG		(0x04dC)
-> +#define CDC_2_5_RX_RX1_RX_VOL_MIX_CTL		(0x04e0)
-> +#define CDC_2_5_RX_RX1_RX_PATH_SEC1		(0x04e4)
-> +#define CDC_2_5_RX_RX1_RX_PATH_SEC2		(0x04e8)
-> +#define CDC_2_5_RX_RX1_RX_PATH_SEC3		(0x04eC)
-> +#define CDC_2_5_RX_RX1_RX_PATH_SEC4		(0x04f0)
-> +#define CDC_2_5_RX_RX1_RX_PATH_SEC7		(0x04f4)
-> +#define CDC_2_5_RX_RX1_RX_PATH_MIX_SEC0		(0x04f8)
-> +#define CDC_2_5_RX_RX1_RX_PATH_MIX_SEC1		(0x04fC)
-> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_CTL		(0x0500)
-> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA1	(0x0504)
-> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA2	(0x0508)
-> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA3	(0x050C)
-> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA4	(0x0510)
-> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA5	(0x0514)
-> +#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA6	(0x0518)
-> +
-> +#define CDC_2_5_RX_RX2_RX_PATH_CTL		(0x0580)
-> +#define CDC_2_5_RX_RX2_RX_PATH_CFG0		(0x0584)
-> +#define CDC_2_5_RX_RX2_RX_PATH_CFG1		(0x0588)
-> +#define CDC_2_5_RX_RX2_RX_PATH_CFG2		(0x058C)
-> +#define CDC_2_5_RX_RX2_RX_PATH_CFG3		(0x0590)
-> +#define CDC_2_5_RX_RX2_RX_VOL_CTL		(0x0594)
-> +#define CDC_2_5_RX_RX2_RX_PATH_MIX_CTL		(0x0598)
-> +#define CDC_2_5_RX_RX2_RX_PATH_MIX_CFG		(0x059C)
-> +#define CDC_2_5_RX_RX2_RX_VOL_MIX_CTL		(0x05a0)
-> +#define CDC_2_5_RX_RX2_RX_PATH_SEC0		(0x05a4)
-> +#define CDC_2_5_RX_RX2_RX_PATH_SEC1		(0x05a8)
-> +#define CDC_2_5_RX_RX2_RX_PATH_SEC2		(0x05aC)
-> +#define CDC_2_5_RX_RX2_RX_PATH_SEC3		(0x05b0)
-> +#define CDC_2_5_RX_RX2_RX_PATH_SEC4		(0x05b4)
-> +#define CDC_2_5_RX_RX2_RX_PATH_SEC5		(0x05b8)
-> +#define CDC_2_5_RX_RX2_RX_PATH_SEC6		(0x05bC)
-> +#define CDC_2_5_RX_RX2_RX_PATH_SEC7		(0x05c0)
-> +#define CDC_2_5_RX_RX2_RX_PATH_MIX_SEC0		(0x05c4)
-> +#define CDC_2_5_RX_RX2_RX_PATH_MIX_SEC1		(0x05c8)
-> +#define CDC_2_5_RX_RX2_RX_PATH_DSM_CTL		(0x05cC)
-> +
->  #define CDC_RX_IDLE_DETECT_PATH_CTL	(0x0780)
->  #define CDC_RX_IDLE_DETECT_CFG0		(0x0784)
->  #define CDC_RX_IDLE_DETECT_CFG1		(0x0788)
-> @@ -764,6 +811,8 @@ static SOC_ENUM_SINGLE_DECL(rx_int0_dem_inp_enum, CDC_RX_RX0_RX_PATH_CFG1, 0,
->  			    rx_int_dem_inp_mux_text);
->  static SOC_ENUM_SINGLE_DECL(rx_int1_dem_inp_enum, CDC_RX_RX1_RX_PATH_CFG1, 0,
->  			    rx_int_dem_inp_mux_text);
-> +static SOC_ENUM_SINGLE_DECL(rx_2_5_int1_dem_inp_enum, CDC_2_5_RX_RX1_RX_PATH_CFG1, 0,
-> +			    rx_int_dem_inp_mux_text);
->  
->  static SOC_ENUM_SINGLE_DECL(rx_macro_rx0_enum, SND_SOC_NOPM, 0, rx_macro_mux_text);
->  static SOC_ENUM_SINGLE_DECL(rx_macro_rx1_enum, SND_SOC_NOPM, 0, rx_macro_mux_text);
-> @@ -1083,6 +1132,52 @@ static const struct reg_default rx_defaults[] = {
->  	{ CDC_RX_DSD1_CFG2, 0x96 },
->  };
->  
-> +static const struct reg_default rx_2_5_defaults[] = {
-> +	{ CDC_2_5_RX_RX1_RX_PATH_CTL, 0x04 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_CFG0, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_CFG1, 0x64 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_CFG2, 0x8F },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_CFG3, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_VOL_CTL, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_MIX_CTL, 0x04 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_MIX_CFG, 0x7E },
-> +	{ CDC_2_5_RX_RX1_RX_VOL_MIX_CTL, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_SEC1, 0x08 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_SEC2, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_SEC3, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_SEC4, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_SEC7, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_MIX_SEC0, 0x08 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_MIX_SEC1, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_DSM_CTL, 0x08 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA1, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA2, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA3, 0x00 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA4, 0x55 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA5, 0x55 },
-> +	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA6, 0x55 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_CTL, 0x04 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_CFG0, 0x00 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_CFG1, 0x64 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_CFG2, 0x8F },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_CFG3, 0x00 },
-> +	{ CDC_2_5_RX_RX2_RX_VOL_CTL, 0x00 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_MIX_CTL, 0x04 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_MIX_CFG, 0x7E },
-> +	{ CDC_2_5_RX_RX2_RX_VOL_MIX_CTL, 0x00 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_SEC0, 0x04 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_SEC1, 0x08 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_SEC2, 0x00 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_SEC3, 0x00 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_SEC4, 0x00 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_SEC5, 0x00 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_SEC6, 0x00 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_SEC7, 0x00 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_MIX_SEC0, 0x08 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_MIX_SEC1, 0x00 },
-> +	{ CDC_2_5_RX_RX2_RX_PATH_DSM_CTL, 0x00 },
-> +};
-> +
->  static const struct reg_default rx_pre_2_5_defaults[] = {
->  	{ CDC_RX_RX1_RX_PATH_CTL, 0x04 },
->  	{ CDC_RX_RX1_RX_PATH_CFG0, 0x00 },
-> @@ -1236,8 +1331,62 @@ static bool rx_pre_2_5_is_rw_register(struct device *dev, unsigned int reg)
->  	return false;
->  }
->  
-> +static bool rx_2_5_is_rw_register(struct device *dev, unsigned int reg)
-> +{
-> +	switch (reg) {
-> +	case CDC_2_5_RX_RX1_RX_PATH_CTL:
-> +	case CDC_2_5_RX_RX1_RX_PATH_CFG0:
-> +	case CDC_2_5_RX_RX1_RX_PATH_CFG1:
-> +	case CDC_2_5_RX_RX1_RX_PATH_CFG2:
-> +	case CDC_2_5_RX_RX1_RX_PATH_CFG3:
-> +	case CDC_2_5_RX_RX1_RX_VOL_CTL:
-> +	case CDC_2_5_RX_RX1_RX_PATH_MIX_CTL:
-> +	case CDC_2_5_RX_RX1_RX_PATH_MIX_CFG:
-> +	case CDC_2_5_RX_RX1_RX_VOL_MIX_CTL:
-> +	case CDC_2_5_RX_RX1_RX_PATH_SEC1:
-> +	case CDC_2_5_RX_RX1_RX_PATH_SEC2:
-> +	case CDC_2_5_RX_RX1_RX_PATH_SEC3:
-> +	case CDC_2_5_RX_RX1_RX_PATH_SEC4:
-> +	case CDC_2_5_RX_RX1_RX_PATH_SEC7:
-> +	case CDC_2_5_RX_RX1_RX_PATH_MIX_SEC0:
-> +	case CDC_2_5_RX_RX1_RX_PATH_MIX_SEC1:
-> +	case CDC_2_5_RX_RX1_RX_PATH_DSM_CTL:
-> +	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA1:
-> +	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA2:
-> +	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA3:
-> +	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA4:
-> +	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA5:
-> +	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA6:
-> +	case CDC_2_5_RX_RX2_RX_PATH_CTL:
-> +	case CDC_2_5_RX_RX2_RX_PATH_CFG0:
-> +	case CDC_2_5_RX_RX2_RX_PATH_CFG1:
-> +	case CDC_2_5_RX_RX2_RX_PATH_CFG2:
-> +	case CDC_2_5_RX_RX2_RX_PATH_CFG3:
-> +	case CDC_2_5_RX_RX2_RX_VOL_CTL:
-> +	case CDC_2_5_RX_RX2_RX_PATH_MIX_CTL:
-> +	case CDC_2_5_RX_RX2_RX_PATH_MIX_CFG:
-> +	case CDC_2_5_RX_RX2_RX_VOL_MIX_CTL:
-> +	case CDC_2_5_RX_RX2_RX_PATH_SEC0:
-> +	case CDC_2_5_RX_RX2_RX_PATH_SEC1:
-> +	case CDC_2_5_RX_RX2_RX_PATH_SEC2:
-> +	case CDC_2_5_RX_RX2_RX_PATH_SEC3:
-> +	case CDC_2_5_RX_RX2_RX_PATH_SEC4:
-> +	case CDC_2_5_RX_RX2_RX_PATH_SEC5:
-> +	case CDC_2_5_RX_RX2_RX_PATH_SEC6:
-> +	case CDC_2_5_RX_RX2_RX_PATH_SEC7:
-> +	case CDC_2_5_RX_RX2_RX_PATH_MIX_SEC0:
-> +	case CDC_2_5_RX_RX2_RX_PATH_MIX_SEC1:
-> +	case CDC_2_5_RX_RX2_RX_PATH_DSM_CTL:
-> +		return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  static bool rx_is_rw_register(struct device *dev, unsigned int reg)
->  {
-> +	struct rx_macro *rx = dev_get_drvdata(dev);
-> +
->  	switch (reg) {
->  	case CDC_RX_TOP_TOP_CFG0:
->  	case CDC_RX_TOP_SWR_CTRL:
-> @@ -1453,6 +1602,9 @@ static bool rx_is_rw_register(struct device *dev, unsigned int reg)
->  		return true;
->  	}
->  
-> +	if (rx->codec_version >= LPASS_CODEC_VERSION_2_5)
-> +		return rx_2_5_is_rw_register(dev, reg);
-> +
->  	return rx_pre_2_5_is_rw_register(dev, reg);
->  }
->  
-> @@ -1551,6 +1703,10 @@ static const struct snd_kcontrol_new rx_int1_dem_inp_mux =
->  		SOC_DAPM_ENUM_EXT("rx_int1_dem_inp", rx_int1_dem_inp_enum,
->  		  snd_soc_dapm_get_enum_double, rx_macro_int_dem_inp_mux_put);
->  
-> +static const struct snd_kcontrol_new rx_2_5_int1_dem_inp_mux =
-> +		SOC_DAPM_ENUM_EXT("rx_int1_dem_inp", rx_2_5_int1_dem_inp_enum,
-> +		  snd_soc_dapm_get_enum_double, rx_macro_int_dem_inp_mux_put);
-> +
->  static int rx_macro_set_prim_interpolator_rate(struct snd_soc_dai *dai,
->  					       int rate_reg_val, u32 sample_rate)
->  {
-> @@ -2835,6 +2991,18 @@ static const struct snd_kcontrol_new rx_macro_def_snd_controls[] = {
->  			  -84, 40, digital_gain),
->  };
->  
-> +static const struct snd_kcontrol_new rx_macro_2_5_snd_controls[] = {
-> +
-> +	SOC_SINGLE_S8_TLV("RX_RX1 Digital Volume", CDC_2_5_RX_RX1_RX_VOL_CTL,
-> +			  -84, 40, digital_gain),
-> +	SOC_SINGLE_S8_TLV("RX_RX2 Digital Volume", CDC_2_5_RX_RX2_RX_VOL_CTL,
-> +			  -84, 40, digital_gain),
-> +	SOC_SINGLE_S8_TLV("RX_RX1 Mix Digital Volume", CDC_2_5_RX_RX1_RX_VOL_MIX_CTL,
-> +			  -84, 40, digital_gain),
-> +	SOC_SINGLE_S8_TLV("RX_RX2 Mix Digital Volume", CDC_2_5_RX_RX2_RX_VOL_MIX_CTL,
-> +			  -84, 40, digital_gain),
-> +};
-> +
->  static const struct snd_kcontrol_new rx_macro_snd_controls[] = {
->  	SOC_SINGLE_S8_TLV("RX_RX0 Digital Volume", CDC_RX_RX0_RX_VOL_CTL,
->  			  -84, 40, digital_gain),
-> @@ -2956,6 +3124,12 @@ static int rx_macro_enable_echo(struct snd_soc_dapm_widget *w,
->  
->  	return 0;
->  }
-> +
-> +static const struct snd_soc_dapm_widget rx_macro_2_5_dapm_widgets[] = {
-> +	SND_SOC_DAPM_MUX("RX INT1 DEM MUX", SND_SOC_NOPM, 0, 0,
-> +			 &rx_2_5_int1_dem_inp_mux),
-> +};
-> +
->  static const struct snd_soc_dapm_widget rx_macro_def_dapm_widgets[] = {
->  	SND_SOC_DAPM_MUX("RX INT1 DEM MUX", SND_SOC_NOPM, 0, 0,
->  			 &rx_int1_dem_inp_mux),
-> @@ -3454,10 +3628,17 @@ static int rx_macro_component_probe(struct snd_soc_component *component)
->  				      CDC_RX_DC_COEFF_SEL_MASK,
->  				      CDC_RX_DC_COEFF_SEL_TWO);
->  
-> -	controls = rx_macro_def_snd_controls;
-> -	num_controls = ARRAY_SIZE(rx_macro_def_snd_controls);
-> -	widgets = rx_macro_def_dapm_widgets;
-> -	num_widgets = ARRAY_SIZE(rx_macro_def_dapm_widgets);
-> +	if (rx->codec_version >= LPASS_CODEC_VERSION_2_5) {
-> +		controls = rx_macro_2_5_snd_controls;
-> +		num_controls = ARRAY_SIZE(rx_macro_2_5_snd_controls);
-> +		widgets = rx_macro_2_5_dapm_widgets;
-> +		num_widgets = ARRAY_SIZE(rx_macro_2_5_dapm_widgets);
-> +	} else {
-> +		controls = rx_macro_def_snd_controls;
-> +		num_controls = ARRAY_SIZE(rx_macro_def_snd_controls);
-> +		widgets = rx_macro_def_dapm_widgets;
-> +		num_widgets = ARRAY_SIZE(rx_macro_def_dapm_widgets);
-> +	}
->  
->  	rx->component = component;
->  
-> @@ -3609,15 +3790,28 @@ static int rx_macro_probe(struct platform_device *pdev)
->  		goto err;
->  	}
->  	rx->codec_version = lpass_macro_get_codec_version();
-> -
-> -	rx->rxn_reg_stride = 0x80;
-> -	def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_pre_2_5_defaults);
-> -	reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
-> -	if (!reg_defaults)
-> -		return -ENOMEM;
-> -	memcpy(&reg_defaults[0], rx_defaults, sizeof(rx_defaults));
-> -	memcpy(&reg_defaults[ARRAY_SIZE(rx_defaults)],
-> -			rx_pre_2_5_defaults, sizeof(rx_pre_2_5_defaults));
-> +	switch (rx->codec_version) {
-> +	case LPASS_CODEC_VERSION_2_5 ... LPASS_CODEC_VERSION_2_8:
+With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/i2c/uda1342.o
 
-I don't like that the next 2.9 version will end up in a default bucket.
-It might be better to have an explicit list of versions instead and then
-return -EINVAL in the default case.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-> +		rx->rxn_reg_stride = 0xc0;
-> +		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_2_5_defaults);
-> +		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
-> +		if (!reg_defaults)
-> +			return -ENOMEM;
-> +		memcpy(&reg_defaults[0], rx_defaults, sizeof(rx_defaults));
-> +		memcpy(&reg_defaults[ARRAY_SIZE(rx_defaults)],
-> +				rx_2_5_defaults, sizeof(rx_2_5_defaults));
-> +		break;
-> +	default:
-> +		rx->rxn_reg_stride = 0x80;
-> +		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_pre_2_5_defaults);
-> +		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
-> +		if (!reg_defaults)
-> +			return -ENOMEM;
-> +		memcpy(&reg_defaults[0], rx_defaults, sizeof(rx_defaults));
-> +		memcpy(&reg_defaults[ARRAY_SIZE(rx_defaults)],
-> +				rx_pre_2_5_defaults, sizeof(rx_pre_2_5_defaults));
-> +		break;
-> +	}
->  
->  	rx_regmap_config.reg_defaults = reg_defaults;
->  	rx_regmap_config.num_reg_defaults = def_count;
-> 
-> -- 
-> 2.25.1
-> 
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/media/i2c/uda1342.c | 1 +
+ 1 file changed, 1 insertion(+)
 
--- 
-With best wishes
-Dmitry
+diff --git a/drivers/media/i2c/uda1342.c b/drivers/media/i2c/uda1342.c
+index da7bc4700bed..abd052a44bd7 100644
+--- a/drivers/media/i2c/uda1342.c
++++ b/drivers/media/i2c/uda1342.c
+@@ -95,4 +95,5 @@ static struct i2c_driver uda1342_driver = {
+ 
+ module_i2c_driver(uda1342_driver);
+ 
++MODULE_DESCRIPTION("Philips UDA1342 audio codec driver");
+ MODULE_LICENSE("GPL v2");
+
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240612-md-drivers-media-i2c-3e80a673c97b
+
 
