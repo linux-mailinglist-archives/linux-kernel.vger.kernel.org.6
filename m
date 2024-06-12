@@ -1,130 +1,131 @@
-Return-Path: <linux-kernel+bounces-210782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19927904898
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45EC290489C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C201E1F23BB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF12F2854A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556D1D29B;
-	Wed, 12 Jun 2024 01:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IaV9SEyl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3273BE4B;
+	Wed, 12 Jun 2024 01:55:00 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1913E4696;
-	Wed, 12 Jun 2024 01:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AF5A34;
+	Wed, 12 Jun 2024 01:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718157259; cv=none; b=SWTmTGdVVi9zdpoKybQ4tkWFpyo5DvkTv6S+qM/6PVHEh++r4pjrhb4/aLZUr13+Ml027PsNVRFOVcviJZnk3uwi3qthPR0RxZ7iPXK6AZL7jFn4LQvqrb1ddId1nroA/dPJjmhgqtLvsFxl4AAShnxLCi5o+v9WS0GkpRuUOzY=
+	t=1718157300; cv=none; b=KrlQO8/6L/dBEzyXlJ5/vCvvGW2XmTi3komtKkXR0b2E+chRG+IlSI5BZnp0Ds2snlF2OWNymAVDvJ+tjG2FMuQRQoE/2t77/yAOD5DuismVSG8peygrQ5BXz09mduDei4bP6OQEterMGm8xAZqHKAh1KpGv6YLXS2ZMS+U1A5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718157259; c=relaxed/simple;
-	bh=qEP1jfUnLDqKY+Tbv7jWMRIeP29xqp5aif0Wikh853o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=VciAf8PgYMRg6AvktxQhdQD14BtHjUb7v/LDPTLphp/h5aI31aTaK1GgnZpINKo5BkcyYe4AdbEcjElhNymiOaku903t+QOsaNE1HkykreoLq12PvBYj892Ivbr0E0FCYNSiaLekWmu0bgOdWE4P539luVqE3f0SOHfxhrdVkz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IaV9SEyl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BFD0TR031044;
-	Wed, 12 Jun 2024 01:54:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=dEliYOecfFwvzvpruyOir3
-	lcTsdZk5RA15G2wEuI1WA=; b=IaV9SEylu7NSFXZfhs2n4RO2fkhanhD6kofAJS
-	L4umGZBIrLvYNKxlr/XLfKNXifOPSEkBihNiFLA5eYxZSpg3wSDdBAvKoY2Wjpjs
-	Z88/lrpPu3N32r0dOfu5dWABaOQvt2Q18AuNIV4X2kqpsEFoJhtUL387IkNMheFR
-	nupel6Yg7nZ5Tv/p4VjhmDnrhKFSVKw17pg3rPks7Gb5R+UgU7H743LMSfDM/4Lf
-	JRFF8oB3DeNvFPqm1d/tSs0ZyPt4Ssn0fqn1Ndiw10CJOLFa+lWDqU0fHIov0FPh
-	GHy71gpsg2P9P6Tx9e0FwSr7frKz8Gzx81efVgPZPrbSJ6vw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmytwj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 01:54:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C1sCPI026977
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 01:54:12 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
- 2024 18:54:12 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 11 Jun 2024 18:54:11 -0700
-Subject: [PATCH] usb: common: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1718157300; c=relaxed/simple;
+	bh=r8PY6QEOhPtRFjfjSiFU8lPQ8wJfWgLeOtd1jLIo/JA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KxqIvgxmsk0MJ40mI4xgI75LixvmiL/9Sn80yYzvLXhHL7OkcqVoR9LK1uNCU8oT0lzV9yqGf9AW2NbHPURN2sZOrdJZOq6+urXsf8qen6+sHpPxZA5gT9YloDRkJy9aKcJeTcoM2QkVs3rCF9aA3udxC0WhNaHG9wVzHNpWJlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VzT4y4fKBzmcTP;
+	Wed, 12 Jun 2024 09:50:10 +0800 (CST)
+Received: from dggpemd100004.china.huawei.com (unknown [7.185.36.20])
+	by mail.maildlp.com (Postfix) with ESMTPS id E4FD5140EEF;
+	Wed, 12 Jun 2024 09:54:53 +0800 (CST)
+Received: from [10.67.109.211] (10.67.109.211) by
+ dggpemd100004.china.huawei.com (7.185.36.20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 12 Jun 2024 09:54:53 +0800
+Message-ID: <ce637b13-de98-4a77-9df6-8bc6ec177009@huawei.com>
+Date: Wed, 12 Jun 2024 09:54:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240611-md-drivers-usb-common-v1-1-f81555b0bd0d@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAML/aGYC/x3MwQrCMAyA4VcZORtoi1P0VcRD2kYXsK0kbgzG3
- t3q8Tv8/wbGKmxwHTZQXsSk1Q5/GCBNVJ+MkrshuHB0J++xZMwqC6vhbBFTK6VVHMMYHF/OkVy
- E3r6VH7L+v7d7dyRjjEo1Tb/bS+q8YiH7sMK+fwHJzxW9hgAAAA==
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Chen
-	<peter.chen@kernel.org>
-CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sX6MLW-0Ze7QD44XD6xCn93IH3hZr5T7
-X-Proofpoint-ORIG-GUID: sX6MLW-0Ze7QD44XD6xCn93IH3hZr5T7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_13,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 clxscore=1011 adultscore=0 phishscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=797 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406120010
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH-next v4] arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<arnd@arndb.de>, <ardb@kernel.org>, <linux@armlinux.org.uk>, <afd@ti.com>,
+	<akpm@linux-foundation.org>, <kirill.shutemov@linux.intel.com>,
+	<corbet@lwn.net>, <rppt@kernel.org>, <robh@kernel.org>, <tglx@linutronix.de>,
+	<linus.walleij@linaro.org>, <maskray@google.com>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, Chris Brandt <Chris.Brandt@renesas.com>
+References: <20240316023932.700685-1-liuyuntao12@huawei.com>
+ <CAMuHMdWMAg59p+hzeLG9Uc3X55Vt9ccNy5BRoPX0RJbxrMOFLA@mail.gmail.com>
+From: "liuyuntao (F)" <liuyuntao12@huawei.com>
+In-Reply-To: <CAMuHMdWMAg59p+hzeLG9Uc3X55Vt9ccNy5BRoPX0RJbxrMOFLA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemd100004.china.huawei.com (7.185.36.20)
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/common/usb-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/common/usb-otg-fsm.o
+That's great, thanks for your testing.
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/usb/common/common.c      | 1 +
- drivers/usb/common/usb-otg-fsm.c | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/usb/common/common.c b/drivers/usb/common/common.c
-index b84efae26e15..59b55d6cf490 100644
---- a/drivers/usb/common/common.c
-+++ b/drivers/usb/common/common.c
-@@ -433,4 +433,5 @@ static void __exit usb_common_exit(void)
- subsys_initcall(usb_common_init);
- module_exit(usb_common_exit);
- 
-+MODULE_DESCRIPTION("Common code for host and device side USB");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/usb/common/usb-otg-fsm.c b/drivers/usb/common/usb-otg-fsm.c
-index 0697fde51d00..e11803225775 100644
---- a/drivers/usb/common/usb-otg-fsm.c
-+++ b/drivers/usb/common/usb-otg-fsm.c
-@@ -449,4 +449,5 @@ int otg_statemachine(struct otg_fsm *fsm)
- 	return fsm->state_changed;
- }
- EXPORT_SYMBOL_GPL(otg_statemachine);
-+MODULE_DESCRIPTION("OTG Finite State Machine");
- MODULE_LICENSE("GPL");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240611-md-drivers-usb-common-52520e97ba0b
-
+On 2024/6/11 20:45, Geert Uytterhoeven wrote:
+> Hi Yuntao,
+> 
+> On Sat, Mar 16, 2024 at 3:44 AM Yuntao Liu <liuyuntao12@huawei.com> wrote:
+>> The current arm32 architecture does not yet support the
+>> HAVE_LD_DEAD_CODE_DATA_ELIMINATION feature. arm32 is widely used in
+>> embedded scenarios, and enabling this feature would be beneficial for
+>> reducing the size of the kernel image.
+>>
+>> In order to make this work, we keep the necessary tables by annotating
+>> them with KEEP, also it requires further changes to linker script to KEEP
+>> some tables and wildcard compiler generated sections into the right place.
+>> When using ld.lld for linking, KEEP is not recognized within the OVERLAY
+>> command, and Ard proposed a concise method to solve this problem.
+>>
+>> It boots normally with defconfig, vexpress_defconfig and tinyconfig.
+>>
+>> The size comparison of zImage is as follows:
+>> defconfig       vexpress_defconfig      tinyconfig
+>> 5137712         5138024                 424192          no dce
+>> 5032560         4997824                 298384          dce
+>> 2.0%            2.7%                    29.7%           shrink
+>>
+>> When using smaller config file, there is a significant reduction in the
+>> size of the zImage.
+>>
+>> We also tested this patch on a commercially available single-board
+>> computer, and the comparison is as follows:
+>> a15eb_config
+>> 2161384         no dce
+>> 2092240         dce
+>> 3.2%            shrink
+>>
+>> The zImage size has been reduced by approximately 3.2%, which is 70KB on
+>> 2.1M.
+>>
+>> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+>> Tested-by: Arnd Bergmann <arnd@arndb.de>
+>> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Thanks for your patch, which is now commit ed0f941022515ff4 ("ARM:
+> 9404/1: arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION") in
+> arm/for-next (next-20240611).
+> 
+> I gave this a try on my custom configs for RSK+RZA1 (RZ/A1H)
+> and RZA2MEVB (RZ/A2M).  According to bloat-o-meter, enabling
+> HAVE_LD_DEAD_CODE_DATA_ELIMINATION reduced kernel size by almost
+> 500 KiB (-8.3%).  The figures reported in "Memory: ... available"
+> were even more impressive: 1032 KiB more free memory than before.
+> 
+> As these boards have only 32 resp. 64 MiB of RAM, and some products
+> even use RZ/A1H with just the 10 MiB of on-chip SRAM, this is a good
+> improvement to have!
+> Thanks!
+> 
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
 
