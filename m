@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel+bounces-211673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31D3905539
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:34:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A40905537
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37EF0B21CEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:34:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5231F21012
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A530517E460;
-	Wed, 12 Jun 2024 14:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF7917E466;
+	Wed, 12 Jun 2024 14:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PABoon3D"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mYxakUdv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QYdjqIRq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B7E7E8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1856D7E8;
+	Wed, 12 Jun 2024 14:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718202858; cv=none; b=s9gNJMLPDgYYrzS4gc9JYpLQzkzR5QSDzFZM89dc21+jHwRnXHBqt24xiaGLCDLbYL2XccwZ14K02XqiFW/xCLWZ5+lxKHhOtMt8ViT4GINhEMWB6G6Mveyn5xwD0eKigE3xaQBcokO67ruimKtal5Fp/k9tT2UnknKtpCtsZdk=
+	t=1718202820; cv=none; b=dNN/XKphEWQG2GBNJ73WIxB7iC8coK9RdFgPi6/mMCQyZsPbxT1Ah3hfEVE5ius58Ni5v6deI5usaTPLZEWypW6UoqNBJ9V7vO3BYCZY3Q51SRrWUR6IeFZYDYgtLjMCZ8AhjzeZjaGv3/Jw6eVQlA76mAY78Y703Ir7ywKFLAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718202858; c=relaxed/simple;
-	bh=LFPQeU9q4FsqywsDqQ+Lwqx2MK2V0A/PxmsFBqLV0bE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uaogxuRhJTWVeD2iQbCBn85de0JVmU3uavAySHnj/eomDTpxQ2EbH/j/nZ+ffRvYPxDx2SGvlcbkucayIThdiR9twKK1dsgkFYRMQvXcWscOWM0zXZWIE8u2v+ff7mNTWG57zlnQFy4ru5fvD7PPGLIvyb0Hn0+5FGxhi2YurOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PABoon3D; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so6886205e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:34:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718202855; x=1718807655; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=45hi7CYVmDt3hhlDLfSd5gueMZgniK5jw3pCKS1O/Rk=;
-        b=PABoon3D7rlEpYVeIT47uxiShj73iC+g+9fth72pGUCXqD/9qIEjhzosVDYR2Jfpyj
-         dQQK7yqDmMp4MJ3U9Jhv+yZVXFkZeDoDPjTMERJ5jL7Lma/z6liHfwaIg/Jaj7shNCyO
-         qoxSYWpmCHwIlC9AuHkwVsWGq9QbtHFO63elvnRu4m41enxA+C0TLJVGzme05/cs6gbO
-         qktRCIByW36NbpMup+ZFqTlsilkFD1hFleIrT5FRXBqyKMTE9OtHHHoVrAgAgxXhTfdB
-         Vg8zIViaP2Iz3y7p5ZdJoU+LlIn1ofeLEa493f2HYxThdbXlPbO4BgJU3vIczkjDYjvq
-         nM2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718202855; x=1718807655;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=45hi7CYVmDt3hhlDLfSd5gueMZgniK5jw3pCKS1O/Rk=;
-        b=SHfySdySM7bRBqOmis3UxuU2dVlb751WeYc1gI6Zh5dt+cJGu+h/sobCd9oV3hkkdA
-         BwZ//4DU8Av+rSk1SDrj9Br84WhruThdk54XjJLglR5VgHJ6MeXXkuBnpWLlMQaPr8KL
-         0nATVkCe4GVGeYuRdApk9hwBImyUH2EaCPZ76lkd8XTrcNl046T/GeewdiRCoYrIs1aF
-         vn0YYl4tq7ldCobLlfuPP8i1pHLwWE7kGICsiKLW8Upy4jEu/fy2gNoj4izBO7PtpX9U
-         LEAAAGZNiDPaHIDzt5CSGbRY7sW/HE9NUm8IvP3z6Wi3eSFbvp05m2AzpvcHOYCU356Z
-         spwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVkZ3/XbhPO3AaxyCvY19dQimkdw+E+21Gh0k02IhXzfGp8w6pVWVgmtne9b4/6q+xr58sB53BlXx7R51X+THD/AcvKo77T3755MK2
-X-Gm-Message-State: AOJu0YydXyqR7uX81J/SMURZdTu/sMKq5aAne1eVFAsWclcBCoCMsPqn
-	r2nRwMdX/OP1Yi505pzsPunNP8CZWmgyAtDudvyUmn3XKOkalhDW01SeKdduOMo=
-X-Google-Smtp-Source: AGHT+IGUbEgRbUewkZ9/hJ9J3L553IVcbn3aXC5zr5hcRQzc4weBPSkFt029esQGJZ+cg/pLyT4vJQ==
-X-Received: by 2002:a05:600c:19c9:b0:421:75af:e64a with SMTP id 5b1f17b1804b1-422862aef2bmr21206525e9.6.1718202854732;
-        Wed, 12 Jun 2024 07:34:14 -0700 (PDT)
-Received: from localhost.localdomain ([31.120.167.14])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f304f3f80sm3581136f8f.113.2024.06.12.07.34.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 07:34:14 -0700 (PDT)
-From: Teddy Engel <engel.teddy@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Teddy Engel <engel.teddy@gmail.com>
-Subject: [PATCH] staging: rtl8192e: Remove unused constant IC_VersionCut_C
-Date: Wed, 12 Jun 2024 15:33:26 +0100
-Message-Id: <20240612143326.6764-1-engel.teddy@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1718202820; c=relaxed/simple;
+	bh=lM0105xhUEJAZ0rF089XCyWZwmPEVyWloqojg7qhDH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JURq5uFpLKQO2EaHRpJtKUJx35SZmtXk23BG8/uAMez3riPmlgkOpM998mEAjoQLKDzaS0E0PQIiinDu9zBf3EhgcLGZhM3uJGMEcY5aiMh6WaQKUczWRwuOpfC1cHrwnBq8gqOY5P1ze4oIOUSQ+AKP0mKXUgZxwlRh9kP1Kac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mYxakUdv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QYdjqIRq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 12 Jun 2024 16:33:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718202816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DWd8QKQQ8IGdDR33Y2JGlmwXUNokIoZ++i3blHSZ1fs=;
+	b=mYxakUdvyNrBCqpcRSjdX1A8dEKzpapsGp3U6FKoYvAGrwBpN+4UexO/2QaeQRzC73tLRA
+	vG0FxyFHW00KmxcJGhzsqzxy/VpbM3KDhLjwbbmJJFaVfbPnndjbZR7hI6O9XCOLG1SwP4
+	IALeemhBLWFhLKEquxK2oduCDGWDpYeWS6OgnJ+W4EyR1tpt4gepJWaFKweJG8SrF59o/M
+	6Yuk9X0a2diAvkpE1dVEqxTnE+wcobDFz/JG5Bz01Fgj8A7x8NS6S0zvm4j87zlvtuV1Jy
+	kV3DunhoAuHi2XGPeetgoBpf9ZjsqusWkitzTpJsdNC43G5TBT0TOA+OsnvooQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718202816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DWd8QKQQ8IGdDR33Y2JGlmwXUNokIoZ++i3blHSZ1fs=;
+	b=QYdjqIRq7U4BsCtlGvexKdRXtTSLhXFFuvIqQ+K/laOQrtllh+WdF7M5Cs5wpn7tmFQRpk
+	vjlakbtYzjLxM+Dg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: xu xin <xu.xin.sc@gmail.com>, xu.xin16@zte.com.cn,
+	linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
+	liu.chun2@zte.com.cn, rostedt@goodmis.org, si.hao@zte.com.cn,
+	yang.yang29@zte.com.cn, zhang.yunkai@zte.com.cn
+Subject: Re: [PATCH  5.10-rt] printk: ignore that console preempted by
+ irq/softirq
+Message-ID: <20240612143335.1smVOgke@linutronix.de>
+References: <20240523235537910_yxfGMbTcSOmMkcfuK2d8@zte.com.cn>
+ <20240528064003.776618-1-xu.xin16@zte.com.cn>
+ <20240528152933.ns7uyFSD@linutronix.de>
+ <87cyoxeqh4.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87cyoxeqh4.fsf@jogness.linutronix.de>
 
-Remove unused constant.
+On 2024-06-03 22:17:35 [+0206], John Ogness wrote:
+> On 2024-05-28, Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> > There is a `may_sleep` variable set earlier. Couldn't that be re-used?
+> 
+> Since the printing thread cannot preempt the softirq context and since
+> the printing threads are not started before @system_state is
+> SYSTEM_RUNNING, using @may_sleep is OK.
 
-Signed-off-by: Teddy Engel <engel.teddy@gmail.com>
----
- drivers/staging/rtl8192e/rtl8192e/r8190P_def.h | 1 -
- 1 file changed, 1 deletion(-)
+will there be a repost?
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/r8190P_def.h b/drivers/staging/rtl8192e/rtl8192e/r8190P_def.h
-index 8c85f1c866d3..2cab232bbf30 100644
---- a/drivers/staging/rtl8192e/rtl8192e/r8190P_def.h
-+++ b/drivers/staging/rtl8192e/rtl8192e/r8190P_def.h
-@@ -88,7 +88,6 @@ enum version_8190_loopback {
- 	VERSION_8190_BE
- };
- 
--#define IC_VersionCut_C	0x2
- #define IC_VersionCut_D	0x3
- #define IC_VersionCut_E	0x4
- 
--- 
-2.39.2
+> if (!may_sleep &&
+>     con->thread &&
+>     task_cpu(con->thread) == smp_processor_id()) {
+> 	continue;
+> }
+> 
+> John Ogness
 
+Sebastian
 
