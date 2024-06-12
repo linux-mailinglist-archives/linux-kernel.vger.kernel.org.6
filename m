@@ -1,137 +1,155 @@
-Return-Path: <linux-kernel+bounces-211953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E3B905956
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:00:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1030905959
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E010B261C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:00:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59C08284E82
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C111822D5;
-	Wed, 12 Jun 2024 16:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38CD181BBB;
+	Wed, 12 Jun 2024 17:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="ivlepZVa";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Zf5UuWr0"
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4EY30YH3"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C531617B437;
-	Wed, 12 Jun 2024 16:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C1417E450
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 17:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718211588; cv=none; b=QUjeelqce253XdeqIMkO+E7109om1Aiom7WSJi7DZbhfskmgfH3BULLuOxDVTHPp7dsi2IBex9G5r2ijtsc4xHkeKHB1EsjAB+ZGukkliAd+7FVznlIZSp/0juT3PAN8AUMN+RsTZNTg4ddCyohKHeRlo7sr9qjElp3CBtDlfpw=
+	t=1718211620; cv=none; b=J7ND9wtlS0EygsI1VD2NBOjAZkRGXTP49C3PlrftDE7w6IrKxkNkZTOsPnCl5zrT15XZ4ht6YwWH6eE+IEorjwRk0L9hlzRbvQDthucu3NsrZdjx6M8f5nWWS9tsDX9+F26WHkDOewsOxX9uWUs5y3qWtkYyXNiaLWUIwCQWxfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718211588; c=relaxed/simple;
-	bh=wC5RCTev5WQ9LiPQGRHBt+kEUELHELC57T6uyWsR3qo=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Y3F5tyRgESL5wP1+8ndhcydGYBh4IaugLzUtR+f2mxhOqDxrx61XVNnRBayA36FwwI2f+nk1RkeaSL4ghEVbUQYoWyiTm2RemoB+TVXRkR5CTBdCIzgnnWEtwiCKFGtqzWWFV+nKVsdOdliCmOvjFDMxEM/1TgOvxoW80r949Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=ivlepZVa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Zf5UuWr0; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 0081111401DB;
-	Wed, 12 Jun 2024 12:59:45 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Wed, 12 Jun 2024 12:59:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1718211584;
-	 x=1718297984; bh=Hv2WcLKXLnlZB4pxKAJHjjIuxbBLU4HHysJ2zfIjCN0=; b=
-	ivlepZVaDUCcS8PTqt42BfLAwK+KSzZeCtB+sva593ZHXtw9wc6KEFFOGv2yMdnk
-	eelhnPbGrMIOD3QoN0/HoUCyNL3xUJ0eQDVuaT4qfLeDjSh/WrhNB00elmNOcktJ
-	hJzc1+gDZu8W7kEonLCExkSEgswKPfmDPGMARb5gsUWebyhWCw2Bt/TcMq5C6Yue
-	TobOKhRm6uVQBOlqcDbygEQCNsDRyBoAdniAapxu9d5ohKc2jNjljLJG4zoo6O7u
-	B8NVKjRArktwxV2d45fSMjGWhlwnOxGPlNnAyjkpTGg1zE99WFMhgIb/3UKsZMFA
-	Se85pPyeE3eQbB9dxWLB3g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718211584; x=
-	1718297984; bh=Hv2WcLKXLnlZB4pxKAJHjjIuxbBLU4HHysJ2zfIjCN0=; b=Z
-	f5UuWr0wqIZAE8BMSl4VlSUs5mJhElVRuMDYdbrzSO81aXO55BwHPV2Q3SSdG0R9
-	EMH4lHLJ4D/9Raf9srD1yQe4d2WuXpnoQbE1VAxZCydNws7R9MytKIjbloXKuYtE
-	cJlLqGS6JnqFnzssjD6/9mRYz6lmmWcFE5esRVItMCRvHVAEqX0EDy/M3kWD+Uth
-	KQzTlLUDF4LQRJrhHZ8mYg/tgE9D7qn8DL1cuKwbbCi7u6Z8pVUBa0AbAYLmtJr9
-	adGHhljbKGDAzSAlLiuUHWfDx66WrEdTUBVaPDokEYcA1CsXEpMsBisYDVIk284j
-	QedFhsX5nKyvmuEr6MZEQ==
-X-ME-Sender: <xms:ANRpZma_V6G4s4hQYqIhpS_3Vt4YJCTVx1ZRBVJCnTO_TCvfwtiQLQ>
-    <xme:ANRpZpY-ULZoILlHQNvhFTgfDlD0kYqzKYonRlw77nRzv2_huLatkuMllzrX2h0Va
-    qRy5IMvYo_bRHO5MlQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedguddtiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    lfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtg
-    homheqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefh
-    jeeugeevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:ANRpZg_CDXY4Lwo2CSLo8-U0p0in5jDg7z_6wC7m6WwnKI9K29AYCw>
-    <xmx:ANRpZoqG7MzZn68QzDkL0-bcpPdedsEe00XwsQKYl1icWv63nWnfXQ>
-    <xmx:ANRpZhoJEbHWJHGeD6XdNMs_0By0tBdjt76i0ki-yQzsw5OdrtrBkw>
-    <xmx:ANRpZmTYTCOUAueQ_GgU-2EPpJBTMOCN2ksBKVua7SDkNoZ9b2Bnew>
-    <xmx:ANRpZs1duLR81V24HuuyW4SmMnUsrZoDpmySND0vgJ3YQl74nN03hxFm>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id AB9DF36A0074; Wed, 12 Jun 2024 12:59:44 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
+	s=arc-20240116; t=1718211620; c=relaxed/simple;
+	bh=lk6GPRb8cDY1Px2newtcG+uxRs8xIZKv4PbSRzkuVfc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m3hAggDIovBpg36PoAUIfHLFl5xZfMHsExen8MI6Fr4VWSVTmHRV87ywlN13OC90G4X47XZZPcClX0YgJUJuXil/2By0S2a7Cp/50YVUVXoH3LONeo2GUwcDQWDFOW1ct+Iwx5N9A9BUj2v7E09qql/aQzCh6afiOHzRDBcKdPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4EY30YH3; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42175bce556so1515e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:00:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718211617; x=1718816417; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HsvWeW5eyBF6ROygK9LGppgGGqUZLW2+K1PQvnJ6/gk=;
+        b=4EY30YH3vMRNy8JNBgC19o1MYijVjhS3y91omyexhuRd9v713fxMnzQD21weKFy+OB
+         ZDdgWjCJrdd/CBGUdppjr3LD1PKuk5SvhCCnwWxvLb0XNMMF4JZRoAICreryLxkiQ/gA
+         VQ+KR+hvHb5FdPCDF7sLBTgPoExQUZvt7Fa9R4TzUXFUs5M/xh8I/HZ9jfXOxKTPBrAd
+         xTF8rgL76YO96TzdlrWe0BazB+p+1ser4WPU0MC9HjpKXIPuUs2v5EW5ngGe9wdL7ttY
+         0UHri19S2EnGuifJGuOYJc6nSLE1tsbkG7QatQ6vr0jgJPcmVk0loA0HWrZ0VSMRK/En
+         2Chg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718211617; x=1718816417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HsvWeW5eyBF6ROygK9LGppgGGqUZLW2+K1PQvnJ6/gk=;
+        b=feSxy//auj2k/uopqHZv1TxIW7VDbjt9kvEjwFyOdNBtyMvFvf16xhM7WpWdSSLD25
+         yn70xJGJ5ihjt11V8dv3/LPPvbg9h86CVffGxBd/3Z9rzP89DEsE5XKw5E7nsdEsWCTc
+         AgLL4pan0fY6N6TdB7pslkvgvH/ETfOmC1cnLuHpIDjl6d5PWY3aYPX3o+1PefUaRMmZ
+         mlW5N2oe3ChYEPDnycptiYIdbL0P0EE398+Pyxjs9DLno9N/iFM8NqkKtjnLqixTG9+W
+         U/ctCRBxUbN45o2zxoZaqrewNOXTiAVsASdl3p/9XszXPi0Kr+KFrNRmJOeBTO7jflPb
+         zRrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjiwHpEe1ZkglpOSTO6f9cHEV9ulThyIAjVyzF49/88WvEyMwWmBDP/5Ui8kat1gxchg6OqPTHr8H3pUHFHctrU+w5MBTMFbTjgloM
+X-Gm-Message-State: AOJu0Yx8O2iZj14KRzsaTtNpEsDWo3mhDJw4lVQtdJWK5/RiSrixAq8N
+	hJhbG+nPxdzSlxs6wOCK7DXchxhWv7Y40kYFaizv1wAEp2Mkury4iWTOzRRRpYxx7DTlYRvKIaT
+	KKhGc+V0UDo468EWHpZGsZoIVnDxYKK9o72ci
+X-Google-Smtp-Source: AGHT+IGkC8R6gs8FWiWHpUMtbGyq+bA7RbAETq6ID+j0qnlJP6qfOP8ypwWfjR3KUBqpX/w72oFg8by83yIZWemEZcA=
+X-Received: by 2002:a05:600c:501e:b0:421:7195:43e with SMTP id
+ 5b1f17b1804b1-42280dae244mr2301425e9.0.1718211616345; Wed, 12 Jun 2024
+ 10:00:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <ddb36d6c-b54f-4982-b9ca-48c022ce6eb8@app.fastmail.com>
-In-Reply-To: <20240612-unstuffed-figure-966c90af52bc@spud>
-References: <20240612-boston-syscon-v2-0-9f8e1a07fa63@flygoat.com>
- <20240612-boston-syscon-v2-7-9f8e1a07fa63@flygoat.com>
- <20240612-unstuffed-figure-966c90af52bc@spud>
-Date: Wed, 12 Jun 2024 17:59:24 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Conor Dooley" <conor@kernel.org>
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v2 7/8] du-bindings: mips: cpu: Add img,mips compatible
-Content-Type: text/plain;charset=utf-8
+References: <20240611002145.2078921-1-jthoughton@google.com>
+ <20240611002145.2078921-9-jthoughton@google.com> <ZmnGlpBR91TyI3Lt@google.com>
+In-Reply-To: <ZmnGlpBR91TyI3Lt@google.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Wed, 12 Jun 2024 10:59:38 -0600
+Message-ID: <CAOUHufYCmYNngmS=rOSAQRB0N9ai+mA0aDrB9RopBvPHEK42Ng@mail.gmail.com>
+Subject: Re: [PATCH v5 8/9] mm: multi-gen LRU: Have secondary MMUs participate
+ in aging
+To: Sean Christopherson <seanjc@google.com>
+Cc: James Houghton <jthoughton@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-
-
-=E5=9C=A82024=E5=B9=B46=E6=9C=8812=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
-=8D=885:39=EF=BC=8CConor Dooley=E5=86=99=E9=81=93=EF=BC=9A
-> On Wed, Jun 12, 2024 at 12:56:26PM +0100, Jiaxun Yang wrote:
->> This compatible is used by boston.dts.
->>=20
->> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->> ---
->> note: This is a wildcard compatible for all MIPS CPUs,
->>       I think we should use something like "riscv" for riscv.
+On Wed, Jun 12, 2024 at 10:02=E2=80=AFAM Sean Christopherson <seanjc@google=
+.com> wrote:
 >
-> riscv systems, other than simulators etc are not meant to use the
-> "riscv" compatible. All of the real CPUs use "vendor,cpu", "riscv".
-> I'd suggest you add specific compatibles for your CPUs.
-
-Boston can be combined with many different CPUs, thus we need to have
-such compatibles.
-
-Thanks
+> On Tue, Jun 11, 2024, James Houghton wrote:
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index e8fc5ecb59b2..24a3ff639919 100644
+> > --- a/mm/rmap.c
+> > +++ b/mm/rmap.c
+> > @@ -870,13 +870,10 @@ static bool folio_referenced_one(struct folio *fo=
+lio,
+> >                       continue;
+> >               }
+> >
+> > -             if (pvmw.pte) {
+> > -                     if (lru_gen_enabled() &&
+> > -                         pte_young(ptep_get(pvmw.pte))) {
+> > -                             lru_gen_look_around(&pvmw);
+> > +             if (lru_gen_enabled() && pvmw.pte) {
+> > +                     if (lru_gen_look_around(&pvmw))
+> >                               referenced++;
+> > -                     }
+> > -
+> > +             } else if (pvmw.pte) {
+> >                       if (ptep_clear_flush_young_notify(vma, address,
+> >                                               pvmw.pte))
+> >                               referenced++;
 >
-> Thanks
-> Conor.
->
-[...]
+> Random question not really related to KVM/secondary MMU participation.  A=
+FAICT,
+> the MGLRU approach doesn't flush TLBs after aging pages.  How does MGLRU =
+mitigate
+> false negatives on pxx_young() due to the CPU not setting Accessed bits b=
+ecause
+> of stale TLB entries?
 
---=20
-- Jiaxun
+I do think there can be false negatives but we have not been able to
+measure their practical impacts since we disabled the flush on some
+host MMUs long ago (NOT by MGLRU), e.g., on x86 and ppc,
+ptep_clear_flush_young() is just ptep_test_andclear_young(). The
+theoretical basis is that, given the TLB coverage trend (Figure 1 in
+[1]), when a system is running out of memory, it's unlikely to have
+many long-lived entries in its TLB. IOW, if that system had a stable
+working set (hot memory) that can fit into its TLB, it wouldn't hit
+page reclaim. Again, this is based on the theory (proposition) that
+for most systems, their TLB coverages are much smaller than their
+memory sizes.
+
+If/when the above proposition doesn't hold, the next step in the page
+reclaim path, which is to unmap the PTE, will cause a page fault. The
+fault can be minor or major (requires IO), depending on the race
+between the reclaiming and accessing threads. In this case, the
+tradeoff, in a steady state, is between the PF cost of pages we
+shouldn't reclaim and the flush cost of pages we scan. The PF cost is
+higher than the flush cost per page. But we scan many pages and only
+reclaim a few of them; pages we shouldn't reclaim are a (small)
+portion of the latter.
+
+[1] https://www.usenix.org/legacy/events/osdi02/tech/full_papers/navarro/na=
+varro.pdf
 
