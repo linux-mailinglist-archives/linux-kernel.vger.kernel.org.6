@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-211125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D90904D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:04:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B85904D50
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C512D1C2494E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:03:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E920A1C243E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A117816C843;
-	Wed, 12 Jun 2024 08:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B3E16C852;
+	Wed, 12 Jun 2024 07:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DqQ1KXw0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hnbv1Ed3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AA14696;
-	Wed, 12 Jun 2024 08:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463C016C6B4;
+	Wed, 12 Jun 2024 07:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718179370; cv=none; b=bqN1WQTLSX1vJlVNvrjX2JXahT8P1j1gDSZqJe7PlXDyYulLG3i3JkuWX4RiuCrjgtD7l9NiUUoetA/yfgI9+40YPlRf5IFqsI0z2NBjmBS9q8Zqbl9ZoOiuTshu7oTzAQp0x4dNoRhg1bZEm0QYnq8yRrTSNunsnkV20Ht9iDk=
+	t=1718179162; cv=none; b=oWKHRDT2+xKmM7ZEZ9tm87wlpVaEqqHakwdiFq3JACEyWy7iHrLZGK9g5fvKdrYNoqxSKFCbsNmBleetE+uT1sPtnmJSu35Z4BPt3CpR8hpIDH5rug9xjBz0RCD61InChWaysUwvxZzV1N9qeGStlo03QuoHVi4Kb4sKec2lZ6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718179370; c=relaxed/simple;
-	bh=N1bClvRvObB6ZljtKs6JY5eoGxIdtJA0IytQtreuk6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dl7h0cw1DsJ5R+bFW4sR734k27USvAyyzDHZe8wM/oBXcDyr6ZUjdnl/Dq54jbI1tBYQUmi2vTI33wFVb6TwrHmYmlgQdFeSd2dTqNGqcayYagDcSboNFAgVdTL3BIsLhG5MlPUNhyH8d1XrXSimuSntkUZjFwiQfckmUvOiz98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DqQ1KXw0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ADE9C3277B;
-	Wed, 12 Jun 2024 08:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718179369;
-	bh=N1bClvRvObB6ZljtKs6JY5eoGxIdtJA0IytQtreuk6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DqQ1KXw0HNnwmUKJCtNZVDfhBe9ukGFZ7dzd+n4fYJrunK6hfe4FJomwSnPaOvx/c
-	 apRLmhXvSe/GBslRA3UUyOgTQXT8sHPifvpEe2LQnUCYs2COloIkNmouGty1vdQJ3c
-	 268Vs+5S6WLlB1kEmMZyzzJWlFToymZjeSuZodDo=
-Date: Wed, 12 Jun 2024 10:02:46 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: lakshmi.sowjanya.d@intel.com
-Cc: tglx@linutronix.de, giometti@enneenne.com, corbet@lwn.net,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	andriy.shevchenko@linux.intel.com, eddie.dong@intel.com,
-	christopher.s.hall@intel.com, pandith.n@intel.com,
-	subramanian.mohan@intel.com, thejesh.reddy.t.r@intel.com
-Subject: Re: [PATCH v10 2/3] Documentation: driver-api: pps: Add Intel Timed
- I/O PPS generator
-Message-ID: <2024061230-thimble-oxymoron-3beb@gregkh>
-References: <20240612035359.7307-1-lakshmi.sowjanya.d@intel.com>
- <20240612035359.7307-3-lakshmi.sowjanya.d@intel.com>
+	s=arc-20240116; t=1718179162; c=relaxed/simple;
+	bh=7mTgNg2ikwIKft8i7UAtYj8u3wE6XKrlCmTmjGuHvTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LGtD+78+s38fEheRu2M97+XvwDMaaRLcnKnSzXPEnHW0YNOHWIgDggMcQX5gMkH3LU5TEoCy8M6zYjFetS3aRouMCnJEsjPuT4gFQV4RaXugNZYL+1Nmkf78nxgyENiCW2zPsf/QfhkUR5lxGANvnY586fYSwBLeKqn/JoI1V/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hnbv1Ed3; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718179162; x=1749715162;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=7mTgNg2ikwIKft8i7UAtYj8u3wE6XKrlCmTmjGuHvTY=;
+  b=hnbv1Ed3Frzy/NGL6TTNKqdNzpwQH9I6n9rfrzqOKmksSL9dydSrzDbu
+   r80W/cEEum3g4wWS3xCnNq31hbm3ZxgA2uBJH71T+uzfkxYq3hZvtAaAY
+   rhuM2BT8Ya+4LKog3JGiZHGl+K9pDQdVoBwhQzYSyyUwSbSiIl4bfeJKd
+   1Hp5pp4KWpNn9X9IrgZEDvu3ctoQyW+nnQIzFvAhUZnFzVb336kvVLR7A
+   uMtuYbGmDQyZgtMlmDWFmOY83U5yC15IN0IbZGiiuc16l8Mr6UxEncHrd
+   fiJEUpOGejiNtmCv6B9WZXv1yv20ezoYsOzdU+r2RXuU/qhOrk/Zb5DBp
+   Q==;
+X-CSE-ConnectionGUID: VOCIsYWeRE6kPuRGFEPBsQ==
+X-CSE-MsgGUID: CgSWh2oYTKycgpG6+h+jLw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14768825"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="14768825"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 00:59:21 -0700
+X-CSE-ConnectionGUID: 5bFV976PRICls1WKE1o/UQ==
+X-CSE-MsgGUID: TVfmcDRRRV6XTDc3W17Fsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="39597596"
+Received: from zwan2-desk1.sh.intel.com ([10.239.160.154])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 00:59:18 -0700
+From: Zhenyu Wang <zhenyuw@linux.intel.com>
+To: peterz@infradead.org
+Cc: kan.liang@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	x86@kernel.org,
+	Rui Zhang <rui.zhang@intel.com>,
+	Artem Bityutskiy <artem.bityutskiy@intel.com>,
+	Wendy Wang <wendy.wang@intel.com>
+Subject: [PATCH RESEND AGAIN] perf/x86/intel/cstate: Add pkg C2 residency counter for Sierra Forest
+Date: Wed, 12 Jun 2024 16:08:35 +0800
+Message-ID: <20240612080835.306254-1-zhenyuw@linux.intel.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240515032158.12845-1-zhenyuw@linux.intel.com>
+References: <20240515032158.12845-1-zhenyuw@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612035359.7307-3-lakshmi.sowjanya.d@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024 at 09:23:58AM +0530, lakshmi.sowjanya.d@intel.com wrote:
-> From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
-> 
-> Add Intel Timed I/O PPS usage instructions.
-> 
-> Co-developed-by: Pandith N <pandith.n@intel.com>
-> Signed-off-by: Pandith N <pandith.n@intel.com>
-> Signed-off-by: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Acked-by: Rodolfo Giometti <giometti@enneenne.com>
-> ---
->  Documentation/driver-api/pps.rst | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/Documentation/driver-api/pps.rst b/Documentation/driver-api/pps.rst
-> index 78dded03e5d8..75f7b094f963 100644
-> --- a/Documentation/driver-api/pps.rst
-> +++ b/Documentation/driver-api/pps.rst
-> @@ -246,3 +246,27 @@ delay between assert and clear edge as small as possible to reduce system
->  latencies. But if it is too small slave won't be able to capture clear edge
->  transition. The default of 30us should be good enough in most situations.
->  The delay can be selected using 'delay' pps_gen_parport module parameter.
-> +
-> +
-> +Intel Timed I/O PPS signal generator
-> +------------------------------------
-> +
-> +Intel Timed I/O is a high precision device, present on 2019 and newer Intel
-> +CPUs, that can generate PPS signals.
-> +
-> +Timed I/O and system time are both driven by same hardware clock. The signal
-> +is generated with a precision of ~20 nanoseconds. The generated PPS signal
-> +is used to synchronize an external device with system clock. For example,
-> +it can be used to share your clock with a device that receives PPS signal,
-> +generated by Timed I/O device. There are dedicated Timed I/O pins to deliver
-> +the PPS signal to an external device.
-> +
-> +Usage of Intel Timed I/O as PPS generator:
-> +
-> +Start generating PPS signal::
-> +
-> +        $echo 1 > /sys/devices/platform/INTCxxxx\:00/enable
-> +
-> +Stop generating PPS signal::
-> +
-> +        $echo 0 > /sys/devices/platform/INTCxxxx\:00/enable
+Package C2 residency counter is also available on Sierra Forest.
+So add it support in srf_cstates.
 
-Why is this not described in Documenation/ABI/ ?
+Cc: Rui Zhang <rui.zhang@intel.com>
+Cc: Artem Bityutskiy <artem.bityutskiy@intel.com>
+Cc: Wendy Wang <wendy.wang@intel.com>
+Tested-by: Wendy Wang <wendy.wang@intel.com>
+Fixes: 3877d55a0db2 ("perf/x86/intel/cstate: Add Sierra Forest support")
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+---
+ arch/x86/events/intel/cstate.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-thanks,
+diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
+index 9d6e8f13d13a..b1a822af25d0 100644
+--- a/arch/x86/events/intel/cstate.c
++++ b/arch/x86/events/intel/cstate.c
+@@ -64,7 +64,7 @@
+  *			       perf code: 0x00
+  *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
+  *						KBL,CML,ICL,ICX,TGL,TNT,RKL,ADL,
+- *						RPL,SPR,MTL
++ *						RPL,SPR,MTL,SRF
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
+  *			       perf code: 0x01
+@@ -684,7 +684,8 @@ static const struct cstate_model srf_cstates __initconst = {
+ 	.core_events		= BIT(PERF_CSTATE_CORE_C1_RES) |
+ 				  BIT(PERF_CSTATE_CORE_C6_RES),
+ 
+-	.pkg_events		= BIT(PERF_CSTATE_PKG_C6_RES),
++	.pkg_events		= BIT(PERF_CSTATE_PKG_C2_RES) |
++				  BIT(PERF_CSTATE_PKG_C6_RES),
+ 
+ 	.module_events		= BIT(PERF_CSTATE_MODULE_C6_RES),
+ };
+-- 
+2.45.1
 
-greg k-h
 
