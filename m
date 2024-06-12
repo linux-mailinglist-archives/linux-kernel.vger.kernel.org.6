@@ -1,199 +1,156 @@
-Return-Path: <linux-kernel+bounces-212289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A76905DE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:45:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1E5905DF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A6CA1F23184
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:45:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A17AAB23D22
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05580127B62;
-	Wed, 12 Jun 2024 21:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F03E1292FF;
+	Wed, 12 Jun 2024 21:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ab0aUMQD"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tvGJgy3f"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D4F84D02;
-	Wed, 12 Jun 2024 21:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4768A86252
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 21:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718228743; cv=none; b=FGKFqm2DckM5gDZ2QrdIf6AyJBtqpcLS0RUq8DipHb3jviZiF+l9FQZ0mqYwO5cYgrdNKV6P1PjPzF9xS2/d+MzeMDDauNgdyiZyzorLFzYDOaKpIE6WJZEnJilNIvN1F2dktdl/f2zcCYqmnxgY9e1T1SUNRtUWYQxytAW3+nc=
+	t=1718228817; cv=none; b=o57hhWEqmqjeSeNNx4OmGKTGDVoKILQrEIGd3/qPeJIbNcx2hC1xbK1Dv1Mw9S8lKhvu2w8HRhcHlHf3724elRdgaM+/ByIS1lvQu+rgPMnGd+hgsOS2GqcPSLohEnJT8YUWjsUKxO3UFQixOTngPjNcCjgM9u8i+C9hgDqDlwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718228743; c=relaxed/simple;
-	bh=3qwM3YMDGCSC1fcQ0SSKCUNxj4nWENbqFIY8TjOX4jY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQRfRnzusNBJy+TyvlJMXovPDQHtqA90NIpu0S+BSfbInc7ZuOIV8KrDesBg1Go8WHCiCkDkXmk9SxPbPbin6YEi6UnroQ4ct6vcmf8CrcHvSZPU3WUPHsj26PoFltd2/CaUfZql2OhQus191RFA+w3Yo4JM8tjzSKg8zIIZqzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ab0aUMQD; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70432d3406bso261734b3a.1;
-        Wed, 12 Jun 2024 14:45:41 -0700 (PDT)
+	s=arc-20240116; t=1718228817; c=relaxed/simple;
+	bh=+InWqwc59WaX46vE5AxcsSfl1jFryAeQ5J5u3z8pMrY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YqRfA8GZzllZuDE6AtF9UMcIuZiMXUXK3eVFrPZFLhQ5LTVJ56TlZiremVRVY4giYRNBLiGX7zpYCRYteQMw6LBP9WHQRa76d5oLhATQZIvE8ZNI7akdpKscGTisGk27oNwSy/DBlG/+xla4BDlP/2TqF1kA+NFHQxRhOANoAPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tvGJgy3f; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4405cf01a7fso58571cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:46:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718228741; x=1718833541; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i6lWae0B5/GP4WtvVp63JCaJ9laTWe/yar8hYd+cHUM=;
-        b=ab0aUMQDnZni+oLzp/83JWaRuz5jApJvZItRJ3s3Q58TcF+OpqGSb6Yqf374rcYavg
-         G9XLrEw8k8z/MIr+xweXTCdv3p/vcsLukPvg6fRXz0S3HMdDqc7kVO5G5hDnYXqPda4X
-         X7uNxXCOqBk0Gnd8j2XdGyeUHbtH3WmRcfDrVBynGDlKcNzyA/Id+eyy0bpGjf35YNYv
-         OaJP81/gJpnYruc92dvJuemCFrVQtb6SStDvIlEpdcSX+gZ9XDdnL85PNXLFqQhwomrI
-         seZpBryvT1sZGX0QZHp2rk8beeFlWelHCq6ZZlHRCutHEDzi8Lpu9zWd3SvrAU6JyThz
-         PwiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718228741; x=1718833541;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1718228815; x=1718833615; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=i6lWae0B5/GP4WtvVp63JCaJ9laTWe/yar8hYd+cHUM=;
-        b=dPfZelmwU5pDKGXFI+gjqLtbeuZC5VysOzVD7gU94w6MHWhLz9p41ZBxuAAWChaLYv
-         jpEY38whoGgd3RXHpCZzGsrIEeVcDW6f72TRnPZ/KPZk6MaFoZ1LGsg7dHL79Yi1cKrw
-         6ltQym3TAIbi1zxF/+5rcNFJnPZonhevGpT14cv+emDpuS8hswuPC3OAoxuudcxGDPfZ
-         0WUC2SuFCCwvf6elv7VdkD3E/cyi8gS/Xj6Mlc10WueuadwKM7x+9Hvr1p8XWXHPbvvT
-         VS6swYNvjllELukIfpdmCldYJu0hkGiK5HTYp8xl0EIcekZNvKzrM8vxbP0d/arKKtKj
-         7JVg==
-X-Forwarded-Encrypted: i=1; AJvYcCW12gCS5cuOgtifWAha7PKyRZBKqqJH3wy3jvWrymIIunjK+Z+wD2cnpJibJ772Cq/5MXRkUPy7bS8elyRGfRv+MVK/1GonvVYanJHR+PGC4Hv2mIDI5XieYTSnLVNHyWHoBUshtP0g2gou9TjSxznsAcO5B/R/EBrqCwwWWc8rKA==
-X-Gm-Message-State: AOJu0Yy/u6HFOzbxtbLcLcD/c5RUA9LU01CCQtAgTJVKAIXLy0rSpcP3
-	y9PPKIpAeW0S9sKH2ryYTq5NxuPX9KblAlRv2WbfKmXWCwLzlKO8
-X-Google-Smtp-Source: AGHT+IGZC5SmaoqyXbCaLhBvQFZ1c0FtMBTPMwCFezpbf/bZb45GQ5Wm0sQBFB1zxS3xK8XrV31x/Q==
-X-Received: by 2002:a05:6a20:a11e:b0:1b5:d172:91ef with SMTP id adf61e73a8af0-1b8a9b704ffmr3594757637.5.1718228740702;
-        Wed, 12 Jun 2024 14:45:40 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:3077:52c7:3e56:8d61])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb6b4efsm16518b3a.151.2024.06.12.14.45.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 14:45:40 -0700 (PDT)
-Date: Wed, 12 Jun 2024 14:45:37 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: hauke@hauke-m.de, tsbogend@alpha.franken.de, rdunlap@infradead.org,
-	robh@kernel.org, bhelgaas@google.com, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
-Message-ID: <ZmoXAR79emQBNyhj@google.com>
-References: <20240607090400.1816612-1-ms@dev.tdt.de>
- <ZmnfQWFoIw5UCV-k@google.com>
- <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
- <b6bea9239050ed39ce3a051a5985b86d@dev.tdt.de>
+        bh=XGFO/gWpjWxRc6zdNFKUtA+WWgn2yoVFVUtmjvc0LMM=;
+        b=tvGJgy3fw1wjv83IS6iWRyxq+V76Z471ZFGQD1m/yrydchGf+5EG5EDf9yGr4ivrw/
+         vg1szCuPNLu+woaO2eW+tjX6MQn8106h9wFyORHWJN/+7lh4nNojjrjbC0x9/loSPOs/
+         eQFETMITZHkmJ3gnSLTIms7qMHB8Ky5SRn7yWgfp4gEclZnyoIAq6lTiV5pHFjyVktXU
+         xJ7YQSVR8wdT2+E65LKV7mcK012En0KgwZkuAMp+j3H8ISIkMH2Rb09jFMcZx4vlDdKx
+         bjl/sBtS2EY2WRiwM9V4KP602Yw1hcnJO5YmjaN5hjpwYRlzkMT1Z64EGxfG6GKnDgLz
+         zHPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718228815; x=1718833615;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XGFO/gWpjWxRc6zdNFKUtA+WWgn2yoVFVUtmjvc0LMM=;
+        b=NgoipcgDZ3LJ4mSjdMEBDGCkRE4tygCEexS+PbGae+Kq/AC8wM/Cn1tWBGa7FYP9uB
+         Mk8jj13VxOJRKc9abL5nHgmt/72eN9iODMq57YNUeXlfYZknG0JJpewcHV2+0OAykqLH
+         LXxtdfnzNol6xbpwjejTygfaiHN+xTWTVu/fXO3adQvNL6KvhhyTF3RBTNfSEEGZu90X
+         LG4bwiaSa15CgzDwk+A9Oi6SQYU8hk1BrSDY87SVqQYPzedMWfhEpBrv2kaoCbwxzQde
+         Jate8Xc+y7l3Jozcb540r8xS/ru7URKipV7EL9zakrtxi1L+pxp7Yj72BmIBJ1NzIZsr
+         NHZg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8AcszqHaYVkWP+u0LO2xeGSwE3i2aUWKozMf/kKT9VSGzVHQD2CW6TOqa+5X96emoop9i3eDp4tZhnZ1YtpyOFSuIpmStOIv/gRTt
+X-Gm-Message-State: AOJu0YzXUf20zeE8zTBbktb7l5c8c4TAyjoAr6lgT5it/H5dz0uSbd1d
+	nI89GG+xnzVyIJOWtrE/0V47Onu0SE5VFrpZnpnVRnRoJiMUj7IA9Dsrls0i/y9326eTtA2jNEl
+	yuLv9gQ3Eug8wAM1ZFb0yfArjNpr+eQezOiYV
+X-Google-Smtp-Source: AGHT+IF7kA7jzJbe/avrLLkOmazBUAeVUG1MPaJsw0sfB3QphtF3xLPAgEAF+B2A3ZPJawxP8BglPYnijgmcaHbwINE=
+X-Received: by 2002:a05:622a:1b17:b0:43e:cb4:1d10 with SMTP id
+ d75a77b69052e-441a1272b40mr740741cf.14.1718228814988; Wed, 12 Jun 2024
+ 14:46:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6bea9239050ed39ce3a051a5985b86d@dev.tdt.de>
+References: <20240525013021.436430-2-irogers@google.com> <202405311548.1e881dea-oliver.sang@intel.com>
+ <CAP-5=fX7ZyT82=W8uSZbT7c76E5+1JaoR5-y_gcj7A_=Js1YfA@mail.gmail.com>
+ <Zl3Q7AtOWY8ZCcg8@xsang-OptiPlex-9020> <CAP-5=fU=UPpZTULuyZm=Ep0Ri6SdTciL5kqpciUfnWyDvz6HZg@mail.gmail.com>
+In-Reply-To: <CAP-5=fU=UPpZTULuyZm=Ep0Ri6SdTciL5kqpciUfnWyDvz6HZg@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 12 Jun 2024 14:46:43 -0700
+Message-ID: <CAP-5=fV5Qdu5iH_DKeAXQfEmQN9SmxCViSgbOCvAmN529WoeOw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] perf jevents: Autogenerate empty-pmu-events.c
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Weilin Wang <weilin.wang@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jing Zhang <renyu.zj@linux.alibaba.com>, John Garry <john.g.garry@oracle.com>, 
+	Sandipan Das <sandipan.das@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 09:47:39PM +0200, Martin Schiller wrote:
-> On 2024-06-12 20:39, Martin Schiller wrote:
-> > On 2024-06-12 19:47, Dmitry Torokhov wrote:
-> > > Hi Marton,
-> > 
-> > Hi Dmitry,
-> > 
-> > > 
-> > > On Fri, Jun 07, 2024 at 11:04:00AM +0200, Martin Schiller wrote:
-> > > > Commit 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod
-> > > > API") not
-> > > > only switched to the gpiod API, but also inverted / changed the
-> > > > polarity
-> > > > of the GPIO.
-> > > > 
-> > > > According to the PCI specification, the RST# pin is an active-low
-> > > > signal. However, most of the device trees that have been widely
-> > > > used for
-> > > > a long time (mainly in the openWrt project) define this GPIO as
-> > > > active-high and the old driver code inverted the signal internally.
-> > > > 
-> > > > Apparently there are actually boards where the reset gpio must be
-> > > > operated inverted. For this reason, we cannot use the
-> > > > GPIOD_OUT_LOW/HIGH
-> > > > flag for initialization. Instead, we must explicitly set the gpio to
-> > > > value 1 in order to take into account any "GPIO_ACTIVE_LOW" flag that
-> > > > may have been set.
-> > > 
-> > > Do you have example of such boards? They could not have worked before
-> > > 90c2d2eb7ab5 because it was actively setting the reset line to
-> > > physical
-> > > high, which should leave the device in reset state if there is an
-> > > inverter between the AP and the device.
-> > 
-> > Oh, you're right. I totally missed that '__gpio_set_value' was used in
-> > the original code and that raw accesses took place without paying
-> > attention to the GPIO_ACTIVE_* flags.
-> > 
-> > You can find the device trees I am talking about in [1].
-> > 
-> > @Thomas Bogendoerfer:
-> > Would it be possible to stop the merging of this patch?
-> > I think We have to do do some further/other changes.
-> > 
-> > > 
-> > > > 
-> > > > In order to remain compatible with all these existing device
-> > > > trees, we
-> > > > should therefore keep the logic as it was before the commit.
-> > > 
-> > > With gpiod API operating with logical states there's still
-> > > difference in
-> > > logic:
-> > > 
-> > > 	gpiod_set_value_cansleep(reset_gpio, 1);
-> > > 
-> > > will leave GPIO at 1 if it is described as GPIO_ACTIVE_HIGH (which is
-> > > apparently what you want for boards with broken DTS) but for boards
-> > > that accurately describe GPIO as GPIO_ACTIVE_LOW it well drive GPIO to
-> > > 0, leaving the card in reset state.
-> > > 
-> > > You should either use gpiod_set_raw_value_calsleep() or we can try and
-> > > quirk it in gpiolib (like we do for many other cases of incorrect GPIO
-> > > polarity descriptions and which is my preference).
-> 
-> So you mean we should add an entry for "lantiq,pci-xway" to the
-> of_gpio_try_fixup_polarity()?
-> Do you know any dts / device outside the openWrt universe which is using
-> this driver.
+On Mon, Jun 3, 2024 at 8:46=E2=80=AFAM Ian Rogers <irogers@google.com> wrot=
+e:
+>
+> On Mon, Jun 3, 2024 at 7:19=E2=80=AFAM Oliver Sang <oliver.sang@intel.com=
+> wrote:
+[...]
+> > I tried below patch
+> >
+> > commit a79a41133a41adc2d69c8f603c7d880b3796cbf7
+> > Author: 0day robot <lkp@intel.com>
+> > Date:   Mon Jun 3 16:35:45 2024 +0800
+> >
+> >     fix from Ian Rogers: invoke "diff -w -u" instead of "diff -u"
+> >
+> > diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
+> > index c3fa43c497069..54d19b492db5c 100644
+> > --- a/tools/perf/pmu-events/Build
+> > +++ b/tools/perf/pmu-events/Build
+> > @@ -39,7 +39,7 @@ $(TEST_EMPTY_PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JE=
+VENTS_PY) $(METRIC_PY) $(ME
+> >
+> >  $(EMPTY_PMU_EVENTS_TEST_LOG): $(EMPTY_PMU_EVENTS_C) $(TEST_EMPTY_PMU_E=
+VENTS_C)
+> >         $(call rule_mkdir)
+> > -       $(Q)$(call echo-cmd,test)diff -u $? 2> $@ || (cat $@ && false)
+> > +       $(Q)$(call echo-cmd,test)diff -w -u $? 2> $@ || (cat $@ && fals=
+e)
+> >
+> >  $(PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $(MET=
+RIC_TEST_LOG) $(EMPTY_PMU_EVENTS_TEST_LOG)
+> >         $(call rule_mkdir)
+> >
+> >
+> > but make still failed. I still saw below in our build log
+> >
+> > --- pmu-events/empty-pmu-events.c       2024-06-03 08:41:16.000000000 +=
+0000
+> > +++ pmu-events/test-empty-pmu-events.c  2024-06-03 13:47:19.522463482 +=
+0000
+> > @@ -136,7 +136,7 @@
+> >  { 2623 }, /* M3\000\0001 / M3\000\000\000\000\000\000\000\00000 */
+> >  { 2078 }, /* cache_miss_cycles\000group1\000dcache_miss_cpi + icache_m=
+iss_cycles\000\000\000\000\000\000\000\00000 */
+> >  { 1947 }, /* dcache_miss_cpi\000\000l1d\\-loads\\-misses / inst_retire=
+d.any\000\000\000\000\000\000\000\00000 */
+> > -{ 2011 }, /* icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_ret=
+iredany\000\000\000\000\000\000\000\00000 */
+> > +{ 2011 }, /* icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_ret=
+ired.any\000\000\000\000\000\000\000\00000 */
+> >
+> >  };
+> >
+> >
+> > I will try to get generated test-empty-pmu-events.c tomorrow.
+>
+> Thanks Oliver, if you could get the environment variables that would
+> probably also be useful.
 
-No, I don't.
+Hi Oliver, any update on this?
 
-Could you please try this:
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 59c7f8a2431a..4948ecaa422c 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -203,6 +203,16 @@ static void of_gpio_try_fixup_polarity(const struct device_node *np,
- 		 */
- 		{ "qi,lb60",		"rb-gpios",	true },
- #endif
-+#if IS_ENABLED(CONFIG_PCI_LANTIQ)
-+		/*
-+		 * According to the PCI specification, the RST# pin is an
-+		 * active-low signal. However, most of the device trees that
-+		 * have been widely used for a long time incorrectly describe
-+		 * reset GPIO as active-high, and were also using wrong name
-+		 * for the property.
-+		 */
-+		{ "lantiq,pci-xway",	"gpios-reset",	false },
-+#endif
- #if IS_ENABLED(CONFIG_TOUCHSCREEN_TSC2005)
- 		/*
- 		 * DTS for Nokia N900 incorrectly specified "active high"
-@@ -512,7 +522,7 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
- 		{ "reset",	"reset-n-io",	"marvell,nfc-uart" },
- 		{ "reset",	"reset-n-io",	"mrvl,nfc-uart" },
- #endif
--#if !IS_ENABLED(CONFIG_PCI_LANTIQ)
-+#if IS_ENABLED(CONFIG_PCI_LANTIQ)
- 		/* MIPS Lantiq PCI */
- 		{ "reset",	"gpios-reset",	"lantiq,pci-xway" },
- #endif
-
-Thanks.
-
--- 
-Dmitry
+Thanks,
+Ian
 
