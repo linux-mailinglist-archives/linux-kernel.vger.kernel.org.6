@@ -1,123 +1,145 @@
-Return-Path: <linux-kernel+bounces-212249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45FE3905D47
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:58:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2524C905D4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B09C1C21182
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:57:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9551F22AC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B1684FDC;
-	Wed, 12 Jun 2024 20:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA87085628;
+	Wed, 12 Jun 2024 20:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ek/SQXK7"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z6SruB8v"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD4F84A56
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 20:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86D384A56;
+	Wed, 12 Jun 2024 20:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718225874; cv=none; b=rgngbUKYUD6ute/ZxCwASsp49m7wuS/2NQhTfZZ18gYEqHyVVG3YOU6wMfC/zsvzyQcNQm5hyiN8cUoJBBJbvgD4RTXFWfYNRsu5BZns964zBblWKUPBCN7DvCw5T0UYax+ZxLMh4kpS6LUJfTk/EeSdP01v5XIyhH8fLYSKhos=
+	t=1718225949; cv=none; b=GJqrVB2he+ZHZd9nltygiG+i4FSzzaRc6w0au9V7XlClVs4tzToSOwjKFxU2ILjXiQTsWnO9K1cqVU7GmAqa4LnAcm6V9bHCk1OMWPfFdqJ5rU1P8gqh3FpbgLupQCXCwMtsDnTxpuGuomU4B0flXi91RyVeugKD9HYdYDmFoMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718225874; c=relaxed/simple;
-	bh=R6KRUoUZ9Sn5OH3wZeBm3taYSCMljLwNdxHxT8X/gLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UBaTzZsIGl6Ynecn2jKEgF+Qk2fJw2X3fdVauRvIBKj/Xuh624W6ni6bM0eQbZLpWj5RhQA2nDyRMRUANIH1n5/P3hpaLVwf5/vET/1w7ChZRA/bkQwPzR+BV+nGdekC8OznTqxqoRn9M9mUuto1nqd7hpGbQWOwYEOb7ZzAGdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ek/SQXK7; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35f1edc71e6so33138f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:57:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718225870; x=1718830670; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=uOsiW8OYUfyTW+up5+j2gle6/xMA5K2ljE518H1R1Kc=;
-        b=ek/SQXK73skm3ujzXugQhHQVZh72MV/VTT2DGmOZRerYLi0wuek8fDoo4E9NmptUsu
-         kWrMsTTY5jTKjAlL194x8qvCSnkxyfb8SKLMWSKgbyc+LOHVk9UCWaR/1qvvGvbedisF
-         FJ3YfepOpvcMk5FKl4lTFVHwUnNxRKDzsShQ8oyU0lWWqVbkU3spf378nVi1hSSgRFmn
-         TKfQjx4Dc0Vd7wydhm6s9TvsEWM0K1DZigEABLqcL+ZRNeGvNOeZoB2i9PmWU54N0cTC
-         DdRYUEd2P+73Z37zTtEjww/PGvsWK3ukLVYg9rz2Ik4RwzF4OHJiJtsrQoDFZHEj1Ded
-         L+Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718225870; x=1718830670;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uOsiW8OYUfyTW+up5+j2gle6/xMA5K2ljE518H1R1Kc=;
-        b=q5Lan2cJqpEgBD3Udp8Di3sYNZln1MuSko000qKE5TowvUFoTDUeE1QYfCQ7pvgYRa
-         ah1XaDBVOdtgP6aFY+Lv06F3gotNE6QQzAVOHZz6dX+Kgu+kzKM9KRhiXxSfrZrSHo5I
-         3U/1oWeJZKhDS+rbJQnc4dWn7XLiFpjeGQTs7SFWmYhZHQMOjxKfQi4k1HmxIbzeX2+U
-         BtKrHJfT9HKiSwanyXmMSFq3peBgnC+EtK2oG02lsWtjx00mJEM716Xx9yxwBkOdnkGU
-         fxDBmpIjSYaq1Rzq/WFnxTn/R9wMPtqBYa7EdkrvfMZ3eXcOZYh2Xp2hSorohoQdpzbB
-         lf0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVxDpGSHm7CYVvLI9/9u/qZGaP5XcL5Iue45+tNw8O0xgvdI4102iYhSz9dnMa4mEuixsLLMsv5+qUewMNpGxp411hqWwsV3eECKjte
-X-Gm-Message-State: AOJu0YzcFKpZ7Pq/N+IkIlGKvaJBeBMy4xdE1xe3NIg3j6X4surk5iPC
-	qa418iDuhLFKzG+cPOVYRr6P986jzJFJMHfVA601T62RQgxQi0bZwKaIRg==
-X-Google-Smtp-Source: AGHT+IHaNx1hKLE9sUF1+YmsUUZ/Ldgz/P5eurnsRKHBXheW8FKCo81Fug4A133Nfa2IO1PoYcUwyA==
-X-Received: by 2002:a5d:6c6f:0:b0:35f:306f:1580 with SMTP id ffacd0b85a97d-35fd4d89841mr2430226f8f.0.1718225848994;
-        Wed, 12 Jun 2024 13:57:28 -0700 (PDT)
-Received: from [192.168.0.104] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6ef83ac0c4sm687466866b.74.2024.06.12.13.57.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 13:57:28 -0700 (PDT)
-Message-ID: <390c1aeb-69ad-4a0e-86ab-992e3757cbd3@gmail.com>
-Date: Wed, 12 Jun 2024 22:57:27 +0200
+	s=arc-20240116; t=1718225949; c=relaxed/simple;
+	bh=onNKzjgA3bLnrhQ91DOWISsPRYS3ZKDz36/FANmYGs0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Dp+M16EKnEcD99NtEMaXoIzpCxUh2tOX8b5XtEI/QDL9j7oILBne/Mhw4JuNQzTSowUTQzGihSFDrJLvuahPtkUB7dZq8Qi9Ij0H19HFdThPzQNzexV16u9ARye0Qf3sDnEh3exnuMwuYMz6YUpIMlhYsSY7vriLh0VeQK4CeN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z6SruB8v; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718225945;
+	bh=onNKzjgA3bLnrhQ91DOWISsPRYS3ZKDz36/FANmYGs0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Z6SruB8vNB2Y/DCbnrkLaXh5mzh2EQttTZ7L0+bm+N+eDH5MSkb20HkUQXyh6LOBI
+	 9cavqK2YXc/0rKjRSMlWHPeBvck/f/qF+hj1iZVV7ekg8fGNMvwlJ+aG84l9aIMBV9
+	 9fDyuaOLcmxPxCQW6mvwp8QUEP+jXIFfYV4TGk4pV5e7XacxMAUzqkwBlU6lPM/rGY
+	 9WV4sfKLkd8js0+YWSMleBhIadlZFtTAUjKROa13xR57DO8TPUzpQaNDVf35WhsTJU
+	 8+0uTUQg8SoOxLR1yp8jCc2B9DcdmvJWaRg3+OovviNW2RjT6XT5y1wU/WY2S+FIaM
+	 yqeV0UiHFGt9w==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 207F4378020D;
+	Wed, 12 Jun 2024 20:59:02 +0000 (UTC)
+Message-ID: <03aca2439ac31ec01b24233384cc8c8d5179df02.camel@collabora.com>
+Subject: Re: [PATCH v6,04/24] v4l: add documentation for restricted memory
+ flag
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Tomasz Figa <tfiga@chromium.org>, Yunfei Dong
+ <yunfei.dong@mediatek.com>,  Jeffrey Kardatzke <jkardatzke@google.com>,
+ =?ISO-8859-1?Q?N=EDcolas?= "F . R . A . Prado" <nfraprado@collabora.com>, 
+ Nathan Hebert <nhebert@chromium.org>, Hans Verkuil
+ <hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Sebastian Fricke
+ <sebastian.fricke@collabora.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Marek Szyprowski <m.szyprowski@samsung.com>, Chen-Yu
+ Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>,  Hsin-Yi Wang
+ <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter
+ <daniel@ffwll.ch>,  Steve Cho <stevecho@chromium.org>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Brian Starkey <Brian.Starkey@arm.com>, John
+ Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>,
+ Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Matthias
+ Brugger <matthias.bgg@gmail.com>,  linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,  linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-mediatek@lists.infradead.org, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+Date: Wed, 12 Jun 2024 16:58:58 -0400
+In-Reply-To: <20240612202507.GT28989@pendragon.ideasonboard.com>
+References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
+	 <20240516122102.16379-5-yunfei.dong@mediatek.com>
+	 <20240522111622.GA31185@pendragon.ideasonboard.com>
+	 <bhgv5djcjc4yt75pyug2yirrymeucjyslthnvq6k2kpp7axfph@jzo5wpcbgwun>
+	 <33d38919f3f94b6e1848aaee20cf52ac9c1df606.camel@collabora.com>
+	 <20240612202507.GT28989@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: vt6656: Remove line from TODO
-To: Teddy Engel <engel.teddy@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240612140735.2423-1-engel.teddy@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240612140735.2423-1-engel.teddy@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 6/12/24 16:07, Teddy Engel wrote:
-> Remove checkpatch.pl line from TODO as no valid checkpatch
-> recommendations still present.
-> 
-> Signed-off-by: Teddy Engel <engel.teddy@gmail.com>
-> ---
->   drivers/staging/vt6656/TODO | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/staging/vt6656/TODO b/drivers/staging/vt6656/TODO
-> index e154b2f3b247..876cdccb6948 100644
-> --- a/drivers/staging/vt6656/TODO
-> +++ b/drivers/staging/vt6656/TODO
-> @@ -11,7 +11,6 @@ TODO:
->   - switch to use LIB80211
->   - switch to use MAC80211
->   - use kernel coding style
-> -- checkpatch.pl fixes
->   - sparse fixes
->   - integrate with drivers/net/wireless
->   
+Hi,
 
-Hi Teddy,
+Le mercredi 12 juin 2024 =C3=A0 23:25 +0300, Laurent Pinchart a =C3=A9crit=
+=C2=A0:
+> On Wed, Jun 12, 2024 at 03:43:58PM -0400, Nicolas Dufresne wrote:
+> > Le mercredi 12 juin 2024 =C3=A0 13:37 +0900, Tomasz Figa a =C3=A9crit=
+=C2=A0:
+> > > > Why is this flag needed ? Given that the usage model requires the V=
+4L2
+> > > > device to be a dma buf importer, why would userspace set the
+> > > > V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM flag and pass a non-restricted
+> > > > buffer to the device ?
+> > >=20
+> > > Given that the flag is specified at REQBUF / CREATE_BUFS time, it's
+> > > actually useful to tell the driver the queue is operating in restrict=
+ed
+> > > (aka secure) mode.
+> > >=20
+> > > I suppose we could handle that at the time of a first QBUF, but that
+> > > would make the driver initialization and validation quite a bit of pa=
+in.
+> > > So I'd say that the design being proposed here makes things simpler a=
+nd
+> > > more clear, even if it doesn't add any extra functionality.
+> >=20
+> > There is few more reasons I notice in previous series (haven't read the=
+ latest):
+> >=20
+> > - The driver needs to communicate through the OPTEE rather then SCP and=
+ some
+> > communication are needed just to figure-out things like supported profi=
+le/level
+> > resolutions etc.
+> > - The driver needs to allocate auxiliary buffers in secure heap too, al=
+location
+> > at runtime are not the best
+>=20
+> Will the same driver support both modes on the same system ?
 
-to me this is a second version of a previous patch. Please issue a new 
-version. Your next Patch with this content is V3 as this was a V2
+Yes, as per this implementation, it seems you can flip from one mode to ano=
+ther
+even on the same instance.
 
-If you send in a second version of this patch please use a change 
-history. Description from Dan under:
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+Nicolas
 
-Thanks for your support.
+>=20
+> > Note that the discussion around this flag already took place in the ver=
+y first
+> > iteration of the serie, it was originally using a CID and that was a pr=
+oposed
+> > replacement from Hans.
+>=20
 
-Bye Philipp
 
