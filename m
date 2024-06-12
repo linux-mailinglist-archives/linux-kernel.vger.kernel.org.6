@@ -1,156 +1,270 @@
-Return-Path: <linux-kernel+bounces-212297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1E5905DF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C161905DF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A17AAB23D22
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:47:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1DA1F2178B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F03E1292FF;
-	Wed, 12 Jun 2024 21:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F6D12C526;
+	Wed, 12 Jun 2024 21:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tvGJgy3f"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QffqexAz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4768A86252
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 21:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B563F8F7;
+	Wed, 12 Jun 2024 21:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718228817; cv=none; b=o57hhWEqmqjeSeNNx4OmGKTGDVoKILQrEIGd3/qPeJIbNcx2hC1xbK1Dv1Mw9S8lKhvu2w8HRhcHlHf3724elRdgaM+/ByIS1lvQu+rgPMnGd+hgsOS2GqcPSLohEnJT8YUWjsUKxO3UFQixOTngPjNcCjgM9u8i+C9hgDqDlwI=
+	t=1718228850; cv=none; b=Vubz/znzw3xkkz0Zhbx7+FRtkyWrZdLVm+LcpIr37wyP9GxCLlwQOPolu88jAOeAH0IlUsYFvAbVaGfu/FGiyianezeaztllYOep+Uy78MBiUWgSONic3n6FLa2ECJPjnVo5gC+mJDw69nKsYGoDGjuUhI90WL0HeosvVGeZ4Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718228817; c=relaxed/simple;
-	bh=+InWqwc59WaX46vE5AxcsSfl1jFryAeQ5J5u3z8pMrY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YqRfA8GZzllZuDE6AtF9UMcIuZiMXUXK3eVFrPZFLhQ5LTVJ56TlZiremVRVY4giYRNBLiGX7zpYCRYteQMw6LBP9WHQRa76d5oLhATQZIvE8ZNI7akdpKscGTisGk27oNwSy/DBlG/+xla4BDlP/2TqF1kA+NFHQxRhOANoAPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tvGJgy3f; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4405cf01a7fso58571cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:46:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718228815; x=1718833615; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XGFO/gWpjWxRc6zdNFKUtA+WWgn2yoVFVUtmjvc0LMM=;
-        b=tvGJgy3fw1wjv83IS6iWRyxq+V76Z471ZFGQD1m/yrydchGf+5EG5EDf9yGr4ivrw/
-         vg1szCuPNLu+woaO2eW+tjX6MQn8106h9wFyORHWJN/+7lh4nNojjrjbC0x9/loSPOs/
-         eQFETMITZHkmJ3gnSLTIms7qMHB8Ky5SRn7yWgfp4gEclZnyoIAq6lTiV5pHFjyVktXU
-         xJ7YQSVR8wdT2+E65LKV7mcK012En0KgwZkuAMp+j3H8ISIkMH2Rb09jFMcZx4vlDdKx
-         bjl/sBtS2EY2WRiwM9V4KP602Yw1hcnJO5YmjaN5hjpwYRlzkMT1Z64EGxfG6GKnDgLz
-         zHPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718228815; x=1718833615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XGFO/gWpjWxRc6zdNFKUtA+WWgn2yoVFVUtmjvc0LMM=;
-        b=NgoipcgDZ3LJ4mSjdMEBDGCkRE4tygCEexS+PbGae+Kq/AC8wM/Cn1tWBGa7FYP9uB
-         Mk8jj13VxOJRKc9abL5nHgmt/72eN9iODMq57YNUeXlfYZknG0JJpewcHV2+0OAykqLH
-         LXxtdfnzNol6xbpwjejTygfaiHN+xTWTVu/fXO3adQvNL6KvhhyTF3RBTNfSEEGZu90X
-         LG4bwiaSa15CgzDwk+A9Oi6SQYU8hk1BrSDY87SVqQYPzedMWfhEpBrv2kaoCbwxzQde
-         Jate8Xc+y7l3Jozcb540r8xS/ru7URKipV7EL9zakrtxi1L+pxp7Yj72BmIBJ1NzIZsr
-         NHZg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8AcszqHaYVkWP+u0LO2xeGSwE3i2aUWKozMf/kKT9VSGzVHQD2CW6TOqa+5X96emoop9i3eDp4tZhnZ1YtpyOFSuIpmStOIv/gRTt
-X-Gm-Message-State: AOJu0YzXUf20zeE8zTBbktb7l5c8c4TAyjoAr6lgT5it/H5dz0uSbd1d
-	nI89GG+xnzVyIJOWtrE/0V47Onu0SE5VFrpZnpnVRnRoJiMUj7IA9Dsrls0i/y9326eTtA2jNEl
-	yuLv9gQ3Eug8wAM1ZFb0yfArjNpr+eQezOiYV
-X-Google-Smtp-Source: AGHT+IF7kA7jzJbe/avrLLkOmazBUAeVUG1MPaJsw0sfB3QphtF3xLPAgEAF+B2A3ZPJawxP8BglPYnijgmcaHbwINE=
-X-Received: by 2002:a05:622a:1b17:b0:43e:cb4:1d10 with SMTP id
- d75a77b69052e-441a1272b40mr740741cf.14.1718228814988; Wed, 12 Jun 2024
- 14:46:54 -0700 (PDT)
+	s=arc-20240116; t=1718228850; c=relaxed/simple;
+	bh=+/VTydx8DuKC+hBaP5Tnh04ofGemNXKWLfDD9tjXUwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PeaZxoz1UF0A0Qnk/R/g3NXz2L2CT3W4Ocq+Zqsj+SQCJHHEKsAq/mmWSS4hMeT5uaLlE2I3ojvBOnrNpu2Bt7msFYQDoG6Q6KWhvfKlq/fcPRCHvtJ0mDDaJmDyuELkkGV1g+HBIlF8mbK9Go36RuLnnkYl+516TqZR+rMp8GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QffqexAz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA68EC116B1;
+	Wed, 12 Jun 2024 21:47:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718228849;
+	bh=+/VTydx8DuKC+hBaP5Tnh04ofGemNXKWLfDD9tjXUwo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QffqexAzs3KBLfngWw5SiR/LiYM9HWTJ+9du9kZ9zv+i8sSzY98yBnmXrjNyOZabB
+	 U/ck13+Vg9ga/wkTZMgvz071bhJcm6aAO+VOId0A4vJ1tpoYrK0Pxr9sZIFO1z+/55
+	 jNf0LSzjZcN81fAo7//dsmA5wDLGof5rgYgtaMIPuvCUrl6fQwiMApmoVoFmgUnKAM
+	 IB6Gc/ysLm/Z5qm7rDoqVGb73GLOZIqfGt2hdqleDljCHOeHg0mjybbOeSgAKoiO6a
+	 mZFQ2+6LCc8Rc70AZeesAubTqd5BfCNqrO3eX17/kjNmxlfQO8rv/YjLcY5VA31NSD
+	 6fOIRtOCqzeEg==
+Date: Wed, 12 Jun 2024 14:47:29 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, tytso@mit.edu, dchinner@redhat.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.com,
+	chandan.babu@oracle.com, hch@lst.de, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
+	linux-xfs@vger.kernel.org, catherine.hoang@oracle.com,
+	ritesh.list@gmail.com, mcgrof@kernel.org,
+	mikulas@artax.karlin.mff.cuni.cz, agruenba@redhat.com,
+	miklos@szeredi.hu, martin.petersen@oracle.com
+Subject: Re: [PATCH v4 03/22] xfs: Use extent size granularity for
+ iomap->io_block_size
+Message-ID: <20240612214729.GL2764752@frogsfrogsfrogs>
+References: <20240607143919.2622319-1-john.g.garry@oracle.com>
+ <20240607143919.2622319-4-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240525013021.436430-2-irogers@google.com> <202405311548.1e881dea-oliver.sang@intel.com>
- <CAP-5=fX7ZyT82=W8uSZbT7c76E5+1JaoR5-y_gcj7A_=Js1YfA@mail.gmail.com>
- <Zl3Q7AtOWY8ZCcg8@xsang-OptiPlex-9020> <CAP-5=fU=UPpZTULuyZm=Ep0Ri6SdTciL5kqpciUfnWyDvz6HZg@mail.gmail.com>
-In-Reply-To: <CAP-5=fU=UPpZTULuyZm=Ep0Ri6SdTciL5kqpciUfnWyDvz6HZg@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 12 Jun 2024 14:46:43 -0700
-Message-ID: <CAP-5=fV5Qdu5iH_DKeAXQfEmQN9SmxCViSgbOCvAmN529WoeOw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] perf jevents: Autogenerate empty-pmu-events.c
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Weilin Wang <weilin.wang@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, John Garry <john.g.garry@oracle.com>, 
-	Sandipan Das <sandipan.das@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607143919.2622319-4-john.g.garry@oracle.com>
 
-On Mon, Jun 3, 2024 at 8:46=E2=80=AFAM Ian Rogers <irogers@google.com> wrot=
-e:
->
-> On Mon, Jun 3, 2024 at 7:19=E2=80=AFAM Oliver Sang <oliver.sang@intel.com=
-> wrote:
-[...]
-> > I tried below patch
-> >
-> > commit a79a41133a41adc2d69c8f603c7d880b3796cbf7
-> > Author: 0day robot <lkp@intel.com>
-> > Date:   Mon Jun 3 16:35:45 2024 +0800
-> >
-> >     fix from Ian Rogers: invoke "diff -w -u" instead of "diff -u"
-> >
-> > diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
-> > index c3fa43c497069..54d19b492db5c 100644
-> > --- a/tools/perf/pmu-events/Build
-> > +++ b/tools/perf/pmu-events/Build
-> > @@ -39,7 +39,7 @@ $(TEST_EMPTY_PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JE=
-VENTS_PY) $(METRIC_PY) $(ME
-> >
-> >  $(EMPTY_PMU_EVENTS_TEST_LOG): $(EMPTY_PMU_EVENTS_C) $(TEST_EMPTY_PMU_E=
-VENTS_C)
-> >         $(call rule_mkdir)
-> > -       $(Q)$(call echo-cmd,test)diff -u $? 2> $@ || (cat $@ && false)
-> > +       $(Q)$(call echo-cmd,test)diff -w -u $? 2> $@ || (cat $@ && fals=
-e)
-> >
-> >  $(PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $(MET=
-RIC_TEST_LOG) $(EMPTY_PMU_EVENTS_TEST_LOG)
-> >         $(call rule_mkdir)
-> >
-> >
-> > but make still failed. I still saw below in our build log
-> >
-> > --- pmu-events/empty-pmu-events.c       2024-06-03 08:41:16.000000000 +=
-0000
-> > +++ pmu-events/test-empty-pmu-events.c  2024-06-03 13:47:19.522463482 +=
-0000
-> > @@ -136,7 +136,7 @@
-> >  { 2623 }, /* M3\000\0001 / M3\000\000\000\000\000\000\000\00000 */
-> >  { 2078 }, /* cache_miss_cycles\000group1\000dcache_miss_cpi + icache_m=
-iss_cycles\000\000\000\000\000\000\000\00000 */
-> >  { 1947 }, /* dcache_miss_cpi\000\000l1d\\-loads\\-misses / inst_retire=
-d.any\000\000\000\000\000\000\000\00000 */
-> > -{ 2011 }, /* icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_ret=
-iredany\000\000\000\000\000\000\000\00000 */
-> > +{ 2011 }, /* icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_ret=
-ired.any\000\000\000\000\000\000\000\00000 */
-> >
-> >  };
-> >
-> >
-> > I will try to get generated test-empty-pmu-events.c tomorrow.
->
-> Thanks Oliver, if you could get the environment variables that would
-> probably also be useful.
+On Fri, Jun 07, 2024 at 02:39:00PM +0000, John Garry wrote:
+> Currently iomap->io_block_size is set to the i_blocksize() value for the
+> inode.
+> 
+> Expand the sub-fs block size zeroing to now cover RT extents, by calling
+> setting iomap->io_block_size as xfs_inode_alloc_unitsize().
+> 
+> In xfs_iomap_write_unwritten(), update the unwritten range fsb to cover
+> this extent granularity.
+> 
+> In xfs_file_dio_write(), handle a write which is not aligned to extent
+> size granularity as unaligned. Since the extent size granularity need not
+> be a power-of-2, handle this also.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/xfs_file.c  | 24 +++++++++++++++++++-----
+>  fs/xfs/xfs_inode.c | 17 +++++++++++------
+>  fs/xfs/xfs_inode.h |  1 +
+>  fs/xfs/xfs_iomap.c |  8 +++++++-
+>  4 files changed, 38 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index b240ea5241dc..24fe3c2e03da 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -601,7 +601,7 @@ xfs_file_dio_write_aligned(
+>  }
+>  
+>  /*
+> - * Handle block unaligned direct I/O writes
+> + * Handle unaligned direct IO writes.
+>   *
+>   * In most cases direct I/O writes will be done holding IOLOCK_SHARED, allowing
+>   * them to be done in parallel with reads and other direct I/O writes.  However,
+> @@ -630,9 +630,9 @@ xfs_file_dio_write_unaligned(
+>  	ssize_t			ret;
+>  
+>  	/*
+> -	 * Extending writes need exclusivity because of the sub-block zeroing
+> -	 * that the DIO code always does for partial tail blocks beyond EOF, so
+> -	 * don't even bother trying the fast path in this case.
+> +	 * Extending writes need exclusivity because of the sub-block/extent
+> +	 * zeroing that the DIO code always does for partial tail blocks
+> +	 * beyond EOF, so don't even bother trying the fast path in this case.
 
-Hi Oliver, any update on this?
+Hummm.  So let's say the fsblock size is 4k, the rt extent size is 16k,
+and you want to write bytes 8192-12287 of a file.  Currently we'd use
+xfs_file_dio_write_aligned for that, but now we'd use
+xfs_file_dio_write_unaligned?  Even though we don't need zeroing or any
+of that stuff?
 
-Thanks,
-Ian
+>  	 */
+>  	if (iocb->ki_pos > isize || iocb->ki_pos + count >= isize) {
+>  		if (iocb->ki_flags & IOCB_NOWAIT)
+> @@ -698,11 +698,25 @@ xfs_file_dio_write(
+>  	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
+>  	struct xfs_buftarg      *target = xfs_inode_buftarg(ip);
+>  	size_t			count = iov_iter_count(from);
+> +	bool			unaligned;
+> +	u64			unitsize;
+>  
+>  	/* direct I/O must be aligned to device logical sector size */
+>  	if ((iocb->ki_pos | count) & target->bt_logical_sectormask)
+>  		return -EINVAL;
+> -	if ((iocb->ki_pos | count) & ip->i_mount->m_blockmask)
+> +
+> +	unitsize = xfs_inode_alloc_unitsize(ip);
+> +	if (!is_power_of_2(unitsize)) {
+> +		if (isaligned_64(iocb->ki_pos, unitsize) &&
+> +		    isaligned_64(count, unitsize))
+> +			unaligned = false;
+> +		else
+> +			unaligned = true;
+> +	} else {
+> +		unaligned = (iocb->ki_pos | count) & (unitsize - 1);
+> +	}
+
+Didn't I already write this?
+
+> +	if (unaligned)
+
+	if (!xfs_is_falloc_aligned(ip, iocb->ki_pos, count))
+
+>  		return xfs_file_dio_write_unaligned(ip, iocb, from);
+>  	return xfs_file_dio_write_aligned(ip, iocb, from);
+>  }
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index 58fb7a5062e1..93ad442f399b 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -4264,15 +4264,20 @@ xfs_break_layouts(
+>  	return error;
+>  }
+>  
+> -/* Returns the size of fundamental allocation unit for a file, in bytes. */
+
+Don't delete the comment, it has useful return type information.
+
+/*
+ * Returns the size of fundamental allocation unit for a file, in
+ * fsblocks.
+ */
+
+>  unsigned int
+> -xfs_inode_alloc_unitsize(
+> +xfs_inode_alloc_unitsize_fsb(
+>  	struct xfs_inode	*ip)
+>  {
+> -	unsigned int		blocks = 1;
+> -
+>  	if (XFS_IS_REALTIME_INODE(ip))
+> -		blocks = ip->i_mount->m_sb.sb_rextsize;
+> +		return ip->i_mount->m_sb.sb_rextsize;
+> +
+> +	return 1;
+> +}
+>  
+> -	return XFS_FSB_TO_B(ip->i_mount, blocks);
+> +/* Returns the size of fundamental allocation unit for a file, in bytes. */
+> +unsigned int
+> +xfs_inode_alloc_unitsize(
+> +	struct xfs_inode	*ip)
+> +{
+> +	return XFS_FSB_TO_B(ip->i_mount, xfs_inode_alloc_unitsize_fsb(ip));
+>  }
+> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> index 292b90b5f2ac..90d2fa837117 100644
+> --- a/fs/xfs/xfs_inode.h
+> +++ b/fs/xfs/xfs_inode.h
+> @@ -643,6 +643,7 @@ int xfs_inode_reload_unlinked(struct xfs_inode *ip);
+>  bool xfs_ifork_zapped(const struct xfs_inode *ip, int whichfork);
+>  void xfs_inode_count_blocks(struct xfs_trans *tp, struct xfs_inode *ip,
+>  		xfs_filblks_t *dblocks, xfs_filblks_t *rblocks);
+> +unsigned int xfs_inode_alloc_unitsize_fsb(struct xfs_inode *ip);
+>  unsigned int xfs_inode_alloc_unitsize(struct xfs_inode *ip);
+>  
+>  struct xfs_dir_update_params {
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index ecb4cae88248..fbe69f747e30 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -127,7 +127,7 @@ xfs_bmbt_to_iomap(
+>  	}
+>  	iomap->offset = XFS_FSB_TO_B(mp, imap->br_startoff);
+>  	iomap->length = XFS_FSB_TO_B(mp, imap->br_blockcount);
+> -	iomap->io_block_size = i_blocksize(VFS_I(ip));
+> +	iomap->io_block_size = xfs_inode_alloc_unitsize(ip);
+
+Oh, I see.  So io_block_size causes iomap to write zeroes to the storage
+backing surrounding areas of the file range.  In this case, for direct
+writes to the unwritten middle 4k of an otherwise written 16k extent,
+we'll write zeroes to 0-4k and 8k-16k even though that wasn't what the
+caller asked for?
+
+IOWs, if you start with:
+
+WWuW
+
+write to the "U", then it'll write zeroes to the "W" areas?  That
+doesn't sound good...
+
+>  	if (mapping_flags & IOMAP_DAX)
+>  		iomap->dax_dev = target->bt_daxdev;
+>  	else
+> @@ -577,11 +577,17 @@ xfs_iomap_write_unwritten(
+>  	xfs_fsize_t	i_size;
+>  	uint		resblks;
+>  	int		error;
+> +	unsigned int	rounding;
+>  
+>  	trace_xfs_unwritten_convert(ip, offset, count);
+>  
+>  	offset_fsb = XFS_B_TO_FSBT(mp, offset);
+>  	count_fsb = XFS_B_TO_FSB(mp, (xfs_ufsize_t)offset + count);
+> +	rounding = xfs_inode_alloc_unitsize_fsb(ip);
+> +	if (rounding > 1) {
+> +		offset_fsb = rounddown_64(offset_fsb, rounding);
+> +		count_fsb = roundup_64(count_fsb, rounding);
+> +	}
+
+...and then the ioend handler is supposed to be smart enough to know
+that iomap quietly wrote to other parts of the disk.
+
+Um, does this cause unwritten extent conversion for entire rtextents
+after writeback to a rtextsize > 1fsb file?
+
+Or am I really misunderstanding what's going on here with the io paths?
+
+--D
+
+>  	count_fsb = (xfs_filblks_t)(count_fsb - offset_fsb);
+>  
+>  	/*
+> -- 
+> 2.31.1
+> 
+> 
 
