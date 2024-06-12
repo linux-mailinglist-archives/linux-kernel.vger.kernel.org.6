@@ -1,270 +1,131 @@
-Return-Path: <linux-kernel+bounces-211530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B8E90532D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:03:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D078905331
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A35288AB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0110B1F22B5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C935B176AD4;
-	Wed, 12 Jun 2024 13:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SROAlC1T";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cRVAmEl1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GGh8lvue";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cz+b4DGr"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0220C17A92D;
+	Wed, 12 Jun 2024 13:04:14 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C43176AC7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6604C1D54B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718197425; cv=none; b=R0rdpbDkA8bRCAbaGGx3FaHrGA8n+nQeCS1Rnxpbn3nH0iZv+VATMFCJITfgE2xP9LtLNF3ikfT+d/YQNqqKqmHeFxMglGaHZM7k4Xiar9ONsG1VGYY6YkCYHqyJvclgi68J1/umxJK9M7q7s8LZsFOhjqjShRmmQtWia3OD8n8=
+	t=1718197453; cv=none; b=ml8wNd2Tgsdy+ItX17S+wnNhetV5/ZB/t+ZsMp6j2WavgAgZVcVuT2eyTTN5nZWGVQNgD1XLpKHmocGieNF2iUfygJm7hcCBXfXupbXcPMNHfnnGI/lXyrC4xCJG2WmMiY8btY3cVVow9uX1vkE00knisqRfr9LC2neVg86XD6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718197425; c=relaxed/simple;
-	bh=Ny+KlE/me6sD43VZMkpTDYPv60q45Fv6EQ9vSF9mvnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rOI3NUrcndOiZ1PNO8+81mCRGIgIC3IbIWb7henQVMVWlbbboVSNg/DgRVSdNz6WDYFDczJx4XD6QUcy3Cv0vzV7WVJXKV+rnMSZASdx8GN9M5ZhAm2u9V+nzAHyDyZe1D67V57Xon/L7mS6kN6kUtRbC+2Z2asRxBzprG7wo+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SROAlC1T; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cRVAmEl1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GGh8lvue; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cz+b4DGr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EE2B91FB99;
-	Wed, 12 Jun 2024 13:03:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718197422; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5uhrNVuEo/BCXhkbW9P9vkmF4+5JRKqB+xMwcvdddys=;
-	b=SROAlC1T/ong55DgQM+s5kjU2TM81bJTOWBURxKknfhIDKS/Ymf+O/25/mUNHQkr9dA9eU
-	hhLT4qernNVwGXtWxyxzUZ/RvjQC/GI1rfr3BCJdI4RS+KGVAaM/CARPw0LUV3/jshceMn
-	J/yGvnV7Acp1sgUHKlcFgR0CeMdF30g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718197422;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5uhrNVuEo/BCXhkbW9P9vkmF4+5JRKqB+xMwcvdddys=;
-	b=cRVAmEl1gd8gT4zLq6Iyg9aR82oAa9SOvjjD3nEQCegtf5ZeO9Tzl7yjuPED069VL4zhEr
-	S4Ert79VjRYJvtDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=GGh8lvue;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cz+b4DGr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718197421; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5uhrNVuEo/BCXhkbW9P9vkmF4+5JRKqB+xMwcvdddys=;
-	b=GGh8lvueWVJUShFG9rZbtnpjdGse7ot6PS/lm9bXRm2wZKIuC6nRXtFntQQDbgsO7ybT1J
-	HFQOhdONa0HQLM8pJppjSaMg5Pysgf4ROrY8GkJKhLdMIAluqvvdkbn7SLATuJ621VCi4E
-	yli5S0MzQ5zzN5q3WMiZkUnBpQ6miOU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718197421;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5uhrNVuEo/BCXhkbW9P9vkmF4+5JRKqB+xMwcvdddys=;
-	b=cz+b4DGr3v3NrcPWs70L/65cgwjo10rMRoxW/kg+n9SVRomKGXZy8ImxwKqOwWb++BwMV/
-	T5DGF1hEArjPisAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B407E132FF;
-	Wed, 12 Jun 2024 13:03:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hLSkKq2caWaQMQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 12 Jun 2024 13:03:41 +0000
-Message-ID: <605bf442-41f9-49d9-a4b7-e889ff800734@suse.de>
-Date: Wed, 12 Jun 2024 15:03:41 +0200
+	s=arc-20240116; t=1718197453; c=relaxed/simple;
+	bh=OsXaaGOBhD19JYLTP3o3NcrZQzURqDDVdkeF/tStYCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dl6I5bf9/IQr0u2GLO5cFax+mYUUoMHI8SFNL8ry+E4tmRQ/tjhWzTptxfywyhHgQdgTagYXrs5ftu3RmRQZ9AG2D/lg4ZfdwfVYNGYr+uTC0o0XpswJ4NmwGJpK/rigq2dOUtaHUyn8MThjh0y+kW2pO/ZdNMPp8UXQhdNmGFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sHNdu-0007qM-Bf; Wed, 12 Jun 2024 15:03:58 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sHNdt-001nHG-F9; Wed, 12 Jun 2024 15:03:57 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sHNdt-006Yzr-1D;
+	Wed, 12 Jun 2024 15:03:57 +0200
+Date: Wed, 12 Jun 2024 15:03:57 +0200
+From: "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "kvalo@kernel.org" <kvalo@kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"francesco@dolcini.it" <francesco@dolcini.it>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"briannorris@chromium.org" <briannorris@chromium.org>,
+	"yu-hao.lin@nxp.com" <yu-hao.lin@nxp.com>
+Subject: Re: [PATCH] wifi: mwifiex: increase max_num_akm_suites
+Message-ID: <ZmmcvUM9mjBSf7-6@pengutronix.de>
+References: <20240530130156.1651174-1-s.hauer@pengutronix.de>
+ <171767674666.2401308.2539321240473169281.kvalo@kernel.org>
+ <Zmaq-4whltVgrzCz@pengutronix.de>
+ <bd519d27dbe5c239d621072f96f67e371e552a74.camel@toradex.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/fbdev-dma: fix getting smem_start
-To: Peng Fan <peng.fan@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Javier Martinez Canillas <javierm@redhat.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240604080328.4024838-1-peng.fan@oss.nxp.com>
- <8f4a6d80-dd3e-422f-88af-d26f50c973ff@suse.de>
- <AM6PR04MB59415B3F01D02024A255BFB988C72@AM6PR04MB5941.eurprd04.prod.outlook.com>
- <766908de-922c-4d71-bb04-29dbe4d1d64d@suse.de>
- <AM6PR04MB5941216A69AE325A79689C5888C72@AM6PR04MB5941.eurprd04.prod.outlook.com>
- <6c01bee4-c3f5-496e-8b4f-a29c97954808@suse.de>
- <ZmlgQV4Eov0xv5bc@phenom.ffwll.local>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <ZmlgQV4Eov0xv5bc@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: EE2B91FB99
-X-Spam-Score: -6.50
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-6.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[nxp.com,oss.nxp.com,linux.intel.com,kernel.org,gmail.com,redhat.com,lists.freedesktop.org,vger.kernel.org];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bd519d27dbe5c239d621072f96f67e371e552a74.camel@toradex.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi
+On Tue, Jun 11, 2024 at 01:12:26PM +0000, Marcel Ziswiler wrote:
+> Hi Sascha
+> 
+> On Mon, 2024-06-10 at 09:27 +0200, Sascha Hauer wrote:
+> > On Thu, Jun 06, 2024 at 12:25:48PM +0000, Kalle Valo wrote:
+> > > Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> > > 
+> > > > The maximum number of AKM suites will be set to two if not specified by
+> > > > the driver. Set it to CFG80211_MAX_NUM_AKM_SUITES to let userspace
+> > > > specify up to ten AKM suites in the akm_suites array.
+> > > > 
+> > > > Without only the first two AKM suites will be used, further ones are
+> > > > ignored.
+> > > > 
+> > > > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > > 
+> > > I assume you that you have also tested this on a real device, right?
+> > 
+> > Sure. It was tested with a MAYA-W161-00B module from u-blox with a IW416
+> > chipset.
+> > 
+> > BTW I haven't mentioned this, but It fixes the same problem as mentioned here:
+> > 
+> > https://lore.kernel.org/linux-kernel/20240523081428.2852276-1-s.hauer@pengutronix.de/T/
+> 
+> As we are also using the IW416 albeit from the MAYA-W160-00B module on our Verdin AM62, we were wondering about
+> the exact use case this patch helps solving. Could you reveal some more details around this? Thanks!
 
-Am 12.06.24 um 10:45 schrieb Daniel Vetter:
-> On Tue, Jun 11, 2024 at 11:29:58AM +0200, Thomas Zimmermann wrote:
->> Hi
->>
->> Am 11.06.24 um 10:23 schrieb Peng Fan:
->>>> Subject: Re: [PATCH] drm/fbdev-dma: fix getting smem_start
->>>>
->>>> Hi
->>>>
->>>> Am 11.06.24 um 03:00 schrieb Peng Fan:
->>>>>> Subject: Re: [PATCH] drm/fbdev-dma: fix getting smem_start
->>>>>>
->>>>>> Hi
->>>>>>
->>>>>> Am 04.06.24 um 10:03 schrieb Peng Fan (OSS):
->>>>>>> From: Peng Fan <peng.fan@nxp.com>
->>>>>>>
->>>>>>> If 'info->screen_buffer' locates in vmalloc address space,
->>>>>>> virt_to_page will not be able to get correct results. With
->>>>>>> CONFIG_DEBUG_VM and CONFIG_DEBUG_VIRTUAL enabled on ARM64,
->>>>>> there is dump below:
->>>>>>
->>>>>> Which graphics driver triggers this bug?
->>>>> It is NXP i.MX95 DPU driver which is still in NXP downstream repo.
->>>> Which DRM memory manager does that driver use?
->>> DRM_GEM_DMA_DRIVER_OPS
->> So fbdev-dma would be correct. But with the gem-dma allocator, wouldn't you
->> allocate from one of these dma_alloc_() calls at [1] ? How does the drivers
->> end up with vmalloc'd fbdev memory? Specifically in the light of the docs at
->> [2].
-> I think when you have an iommu dma_alloc just allocates pages, and uses
-> the iommu to make it all contiguous for the device, and vmalloc for the
-> kernel. So it's not allocated with vmalloc(), just ends up getting mapped
-> into the vmalloc range.
+You'll need this patch once wpa_supplicant specifies more than two akm
+suites in the key_mgmt (in AP mode).
 
-Thanks, that makes sense. As I mentioned in another reply, it might make 
-sense to protect smem_start with an opt-in flag for only that single 
-driver that needs it.
+With the current mainline driver using NetworkManager to setup a hotspot
+with:
 
-Best regards
-Thomas
+nmcli device wifi hotspot con-name leica ssid mywifi band bg password hallo123
 
-> -Sima
->
->
->> [1] https://elixir.bootlin.com/linux/v6.9/source/drivers/gpu/drm/drm_gem_dma_helper.c#L146
->> [2] https://elixir.bootlin.com/linux/v6.9/source/Documentation/core-api/dma-api-howto.rst#L124
->>
->> Best regards
->> Thomas
->>
->>>> I'm asking because if the driver allocates BOs via vmalloc(), should it really
->>>> use fbdev-dma?
->>> We use it for fbdev emulation. If drm_kms_helper.fbdev_emulation is 0,
->>> fbdev emulation could be disabled.
->>>
->>> Thanks
->>> Peng
->>>> Best regards
->>>> Thomas
->>>>
->>>>> Thanks,
->>>>> Peng.
->>>> --
->>>> --
->>>> Thomas Zimmermann
->>>> Graphics Driver Developer
->>>> SUSE Software Solutions Germany GmbH
->>>> Frankenstrasse 146, 90461 Nuernberg, Germany
->>>> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman HRB
->>>> 36809 (AG Nuernberg)
->> -- 
->> --
->> Thomas Zimmermann
->> Graphics Driver Developer
->> SUSE Software Solutions Germany GmbH
->> Frankenstrasse 146, 90461 Nuernberg, Germany
->> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
->> HRB 36809 (AG Nuernberg)
->>
+NetworkManager ends up setting the key_mgmt option to 'WPA-PSK WPA-PSK-SHA256'.
+These are two entries and this works fine.
+
+However, when the patches adding host mlme support are applied (see
+https://lore.kernel.org/lkml/Zk6TklTIbxZxIWyb@google.com/T/),
+NetworkManager will set key_mgmt to 'WPA-PSK WPA-PSK-SHA256 SAE'. These
+are three entries and thus exceed the current array size of two. The
+effect is that SAE is ignored by the driver and SAE is not enabled in
+the device.
+
+Sascha
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
