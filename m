@@ -1,154 +1,129 @@
-Return-Path: <linux-kernel+bounces-212232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40504905CFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D113905D04
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8A6C1F227B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:42:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3BA1F22A9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3937684E0D;
-	Wed, 12 Jun 2024 20:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3231984E0B;
+	Wed, 12 Jun 2024 20:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yhg4Jx7m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wuN7W3G4"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E15384D39;
-	Wed, 12 Jun 2024 20:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B70284A56
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 20:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718224957; cv=none; b=Aef8EF0ILV9XuDPw4NbDM9n3Cr+RAaLFK4Vr/OzZzTRR5zexckuf3YftNjdhYjHua5Ex2BtQWNuEFwKfg9onBIsVdsNmd30TltiGleE+zWxx42kor1zyu5nzfobTsdKVDV5BNMk2DWNGcbYXvzj/htDmwy02FgabihIaP83KkPk=
+	t=1718225106; cv=none; b=rf15gd4rYFvMDOLGhYnNmoIU3ve2oiBVGKYM/oIxFM6MRn6C9JJ9gDnVjz8i9InoqdKMP6/iJBRPEVxD4mMQuhBExzQwA8dpG3tdOn8L1yRpGJG7y2FIb98aW5G/1NYGzOrWSvYWWdCLAg/7wgNzLEr7auEdNUWEBl4y0scETLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718224957; c=relaxed/simple;
-	bh=ROAG1n+s9+Sfvh8VDDnGQMJgUbbS6fHotKmxBlMQ33Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=AiwGzj4xudFAy6K61hXEoqPm6hnhzsl7BujX3uZQd7feAgstlGAhU3kahF5ZYR80szriOC85XKZXaui5a+Q2DBiLvgnlG31SLwbNQcXrhc6Rkr5qE+wDSnzoftmYT3yHpl2pPAKzvIaVFKPCIZYwkwz1nD7vhFuP0NE5zkRaA/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yhg4Jx7m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D54C116B1;
-	Wed, 12 Jun 2024 20:42:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718224957;
-	bh=ROAG1n+s9+Sfvh8VDDnGQMJgUbbS6fHotKmxBlMQ33Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Yhg4Jx7mXQtKoJwbeqymT+AC/jzOi5DPUWQvL+ZBMforcPV0Wld2wZfY7NMcSVP72
-	 0u91JxxSnSU1u2V1l5c17bzxUy/X6hSDV8ozaaKVj6soNVAxv1Nn6wdwfZYNKQRY/+
-	 kOZIXUjRnTDdBGuQOi1gsg2UpnjYl3G8BzUWhst/0JV04Qv2Dp52Z2Gx/hQ/29Iq2i
-	 KA40SffByyHxxDWrmoXw6XqB8gIlV3KYO6xmt5lkF//tnyI7Ca0X9+jDZ//5DCyIJs
-	 wVsQZ34h0IL8SQGbQlLbZ9vCynj6ECEUUioFyKCUTd9eKq61e8mN/KN6nU6sNCD9DA
-	 oJFDFPeoJf1bw==
-Date: Wed, 12 Jun 2024 15:42:35 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Sam Ravnborg <sam@ravnborg.org>, dakr@redhat.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v8 03/13] PCI: Reimplement plural devres functions
-Message-ID: <20240612204235.GA1037175@bhelgaas>
+	s=arc-20240116; t=1718225106; c=relaxed/simple;
+	bh=LJPyVLxQz22AUgai1hBIZOsMe6oYq/Z01oyfjpDxA7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGlxI2bdVihDXcgVVVgm48r9rQXi59OgUiARpXcfmovkOlcFox7OUS0LfKwn+A3dVj3KKVJQOYIXJWZhdy2OK8vMD1iU/2cqdPwikrnwbvDexPds2i6isbfy0hzPpIfFQPV/3fxRy3ax6Y5IoOATeUZdlkW3dJYfvsN9Wi7Ir3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wuN7W3G4; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e78fe9fc2bso2920811fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:45:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718225102; x=1718829902; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SEA70tBJ4PwBkoOMmWe3ULbP4tpxOmjC5IUbkfsrBUs=;
+        b=wuN7W3G4i0bEunh3Zn2kPsv7VQc1iBvgTbSiCi42stiS8E2JXCKbV9Dm9Q8z054he+
+         sQsmB0E2mup8J3mbHo0rBC27WUBdyEqSIkp5ru8Tu2zRMGxl+L4UTNblN3iI/dXoP16b
+         RNtz70s3raT8O3kUhbmw4+Sh9V1/6pFmGRlud2tzivjDawzwtQxDKt6KMuq/+xFanMii
+         2TRMKVTZofHa0sLa9Ww8r+Md8vKFfxVPtUBXjFd8hHHGbmTIoVjPD5hcr1ZUbgG+tK8e
+         ZFVypr+ERMfEvlzIX9SjI2MewHoC4ZUu3tgQ7JMUP4f+GtIZ8xOHZheVUuwPPRIeOKDY
+         CXfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718225102; x=1718829902;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SEA70tBJ4PwBkoOMmWe3ULbP4tpxOmjC5IUbkfsrBUs=;
+        b=XqRQe0ugcAyRKGvwnG9gHqsEyOEYUVjuCfRmZreDBYkhaQ7YVW5iTxAExZBfDL+LQH
+         WWQyC936ynHnvHSTtmdWyTporIeFaKQiALYsAHDrLGDlsRrc4CYhhqlvPU1ySFlL2+8g
+         dpbLXzxXp64CGyH9DC1oMJUpBco9xPFzgYZAlpYnoLhB8BtT2BCqHuUaBXYVqrSD8XX0
+         KihmzN3OhoFb9kG5oy94/1IEuwMFdjCMqPlR3+QszFRHtYOUbKKcFv6u3fTZJFQfi+LR
+         s+ShxsEzuOHIpWCt7jBSrphd4N1+MKZgUAqiMgZjDB6sy+Y1fvfuHlQRzXJQATcevCPX
+         Flwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVefpzUgokhkjiOkm2RZtT/7JqvxqXlZTTvooOfixrm/mX3HFq3V1Opj4qTjy9L+hCczDsyS5dRVblDnqbDQxOzNrB4Mm+/EUacfIVW
+X-Gm-Message-State: AOJu0YzPFsZRhw25oFo7L1DXK6Cjfmz5ijt5tDUK1vKQiJ/OpyC/UYwh
+	DnfSC7Cg9PTGMOV2tM1v8B7fJEEjLDjOUM+DXNbTtRhc7rHRJgfUkLrJ6M8Us3I=
+X-Google-Smtp-Source: AGHT+IGVRVhHEiIlwITe9DlEo5WfJ4Eof41I9EM1LQ/eq9af4QfavH0OfsPqZ0JOdpEI84p8RNKzSw==
+X-Received: by 2002:a2e:9ed1:0:b0:2eb:e840:4a1b with SMTP id 38308e7fff4ca-2ebfc8feb43mr16792821fa.7.1718225102385;
+        Wed, 12 Jun 2024 13:45:02 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ebe4169b35sm16912301fa.135.2024.06.12.13.45.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 13:45:01 -0700 (PDT)
+Date: Wed, 12 Jun 2024 23:45:00 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-dev@igalia.com, alexander.deucher@amd.com, 
+	christian.koenig@amd.com, Simon Ser <contact@emersion.fr>, 
+	Pekka Paalanen <ppaalanen@gmail.com>, daniel@ffwll.ch, Daniel Stone <daniel@fooishbar.org>, 
+	'Marek =?utf-8?B?T2zFocOhayc=?= <maraeo@gmail.com>, Dave Airlie <airlied@gmail.com>, ville.syrjala@linux.intel.com, 
+	Xaver Hugl <xaver.hugl@gmail.com>, Joshua Ashton <joshua@froggi.es>, 
+	Michel =?utf-8?Q?D=C3=A4nzer?= <michel.daenzer@mailbox.org>
+Subject: Re: [PATCH v5 2/3] drm: Allow drivers to choose plane types to async
+ flip
+Message-ID: <pu4nawhvy52imqgpib4lx3s5lsbatmfrq3e7aa4zxfmewt6xrn@ki7woraegakt>
+References: <20240612193713.167448-1-andrealmeid@igalia.com>
+ <20240612193713.167448-3-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec1be501811dc2ac082ec71349bde45145749d3c.camel@redhat.com>
+In-Reply-To: <20240612193713.167448-3-andrealmeid@igalia.com>
 
-On Wed, Jun 12, 2024 at 10:51:40AM +0200, Philipp Stanner wrote:
-> On Tue, 2024-06-11 at 16:44 -0500, Bjorn Helgaas wrote:
-> > I'm trying to merge these into pci/next, but I'm having a hard time
-> > writing the merge commit log.  I want a one-sentence description of
-> > each patch that tells me what the benefit of the patch is.  Usually
-> > the subject line is a good start.
-> > 
-> > "Reimplement plural devres functions" is kind of vague and doesn't
-> > quite motivate this patch, and I'm having a hard time extracting the
-> > relevant details from the commit log below.
+On Wed, Jun 12, 2024 at 04:37:12PM -0300, Andr� Almeida wrote:
+> Different planes may have different capabilities of doing async flips,
+> so create a field to let drivers allow async flip per plane type.
 > 
-> I would say that the summary would be something along the lines:
-> "Set ground layer for devres simplification and extension"
+> Signed-off-by: Andr� Almeida <andrealmeid@igalia.com>
+> ---
+>  drivers/gpu/drm/drm_atomic_uapi.c | 4 ++--
+>  drivers/gpu/drm/drm_plane.c       | 3 +++
+>  include/drm/drm_plane.h           | 5 +++++
+>  3 files changed, 10 insertions(+), 2 deletions(-)
 > 
-> because this patch simplifies the existing functions and adds
-> infrastructure that can later be used to deprecate the bloated existing
-> functions, remove the hybrid mechanism and add pcim_iomap_range().
+> diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+> index 57662a1fd345..bbcec3940636 100644
+> --- a/drivers/gpu/drm/drm_plane.c
+> +++ b/drivers/gpu/drm/drm_plane.c
+> @@ -385,6 +385,9 @@ static int __drm_universal_plane_init(struct drm_device *dev,
+>  
+>  	drm_modeset_lock_init(&plane->mutex);
+>  
+> +	if (type == DRM_PLANE_TYPE_PRIMARY)
+> +		plane->async_flip = true;
+> +
 
-I think something concrete like "Add partial-BAR devres support" would
-give people a hint about what to look for.
+Why? Also note that the commit message writes about adding the field,
+not about enabling it for the primary planes.
 
-This patch contains quite a bit more than that, and if it were
-possible, it might be nice to split the rest to a different patch, but
-I'm not sure it's even possible and I just want to get this series out
-the door.
+>  	plane->base.properties = &plane->properties;
+>  	plane->dev = dev;
+>  	plane->funcs = funcs;
 
-If the commit log includes the partial-BAR idea and the specific
-functions added, I think that will hold together.  And then it makes
-sense for why the "plural" functions would be implemented on top of
-the "singular" ones.
 
-> > > Implement a set of singular functions 
-> > 
-> > What is this set of functions?  My guess is below.
-> > 
-> > > that use devres as it's intended and
-> > > use those singular functions to reimplement the plural functions.
-> > 
-> > What does "as it's intended" mean?  Too nebulous to fit here.
-> 
-> Well, the idea behind devres is that you allocate a device resource
-> _for each_ object you want to be freed / deinitialized automatically.
-> One devres object per driver / subsystem object, one devres callback
-> per cleanup job for the driver / subsystem.
-> 
-> What PCI devres did instead was to use just ONE devres object _for
-> everything_ and then it had to implement all sorts of checks to check
-> which sub-resource this master resource is actually about:
-> 
-> (from devres.c)
-> static void pcim_release(struct device *gendev, void *res)
-> {
-> 	struct pci_dev *dev = to_pci_dev(gendev);
-> 	struct pci_devres *this = res;
-> 	int i;
-> 
-> 	for (i = 0; i < DEVICE_COUNT_RESOURCE; i++)
-> 		if (this->region_mask & (1 << i))
-> 			pci_release_region(dev, i);
-> 
-> 	if (this->mwi)
-> 		pci_clear_mwi(dev);
-> 
-> 	if (this->restore_intx)
-> 		pci_intx(dev, this->orig_intx);
-> 
-> 	if (this->enabled && !this->pinned)
-> 		pci_disable_device(dev);
-> }
-> 
-> 
-> So one could dare to say that devres was partially re-implemented on
-> top of devres.
-> 
-> The for-loop and the if-conditions constitute that "re-implementation".
-> No one has any clue why it has been done that way, because it provides
-> 0 upsides and would have been far easier to implement by just letting
-> devres do its job.
-> 
-> Would you like to see the above details in the commit message?
-
-No.  Just remove the "use devres as it's intended" since that's not
-needed to motivate this patch.  I think we need fewer and
-more-specific words.
-
-Bjorn
+-- 
+With best wishes
+Dmitry
 
