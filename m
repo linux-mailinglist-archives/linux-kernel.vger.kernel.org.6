@@ -1,113 +1,110 @@
-Return-Path: <linux-kernel+bounces-212225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 117A5905CD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F2C905CDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93362283970
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:31:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 150FB287B10
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A4C84DEB;
-	Wed, 12 Jun 2024 20:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dcjnrchj"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E6E7F7E3;
-	Wed, 12 Jun 2024 20:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DD084D39;
+	Wed, 12 Jun 2024 20:33:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EDB84D04;
+	Wed, 12 Jun 2024 20:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718224307; cv=none; b=vAJN53YeKcPy+xB87YRkIP9GSjNblO3DD6B1Lu40lzRIb9s3s4Xxv2yrKtkrCFU7xq8TXintkkJUrcfv3J0EiHVIhyCjELMn54Lc2JUIe6aquZa4RNF/AhimkbYlddDHcw3EQkfGVb6O4/hCLxaGewUXaq6rJvDQ/lnG7aQmB8s=
+	t=1718224380; cv=none; b=WK3jQYl1bL8mefoChpwRfEB+9z55twzojZHNxrjODj9fjaqRd2uwELZs/tR1zH7eaiQIhRRwI+PPm1WOTZZd/BHMO2QUz55nicIx56jtpg0MzUvGMzJAs5nTow8siuLROjoK4ZQ/sOBQCssYTViB9i11bsH3hIqoDupy5l55Wpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718224307; c=relaxed/simple;
-	bh=1TlNttQafOdr2aigwuyiH+bjl/sHPOXIwnCqNr7gAts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=svXcA6YvVJGr0y7ap/uNLfBPUUfA3u0WrDdJolRKOuVF6cipCcJGiJJ7wgksZJQZhi2OzHOsgFtHiJ1twuBx1znt2jIHh0LbuV2QDkDtzIbDXOcDujI3i7V0NcXiW9ltGPSw7D7knzRQT1BF29ECJqMILJEJwJ9nPjNOCZ4wrXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dcjnrchj; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9E95512E4;
-	Wed, 12 Jun 2024 22:31:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718224290;
-	bh=1TlNttQafOdr2aigwuyiH+bjl/sHPOXIwnCqNr7gAts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dcjnrchjLlZpLD8NFkndl9LRohQkz6uvKc7Q7meFRO+Zs1eUq7fkYNaX8GMavhPjU
-	 A+LGDgU1BwMQsFqoOQrl0OCV8Lxrv+rdbVlAohHf2znCsNq5Uub102dS0dfN1ukpw4
-	 iXhxbwClRHVNhFuk5IstWMur8tqKXn0JbnS8/t/s=
-Date: Wed, 12 Jun 2024 23:31:24 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Gergo Koteles <soyer@irl.hu>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] media: v4l2: map UVC_CT_ROLL_ABSOLUTE_CONTROL
-Message-ID: <20240612203124.GU28989@pendragon.ideasonboard.com>
-References: <cover.1718216718.git.soyer@irl.hu>
- <163b1aee53fa78fe1a8d0b8bb7b0f7be1f1975c9.1718216718.git.soyer@irl.hu>
+	s=arc-20240116; t=1718224380; c=relaxed/simple;
+	bh=2nCR64Zc31pzpiWEW5Gs2Jv/fYZlIieQTBon12415e0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pZEyCpeynwtrdgHgNYZb4vpjwbQ9NvNrRndI3iBmLelhehEGJLTn9XfIOtZWH90tLG+i+x7c3VdWmHBCu1k2wenSVcLrKy0NHWHHqArU5nKXBqvwzyLnEdcHid6ytpY68TGwfRVLcKEWLaWOv0f7sNt43szyLYGxElang0NI9rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EA8B1042;
+	Wed, 12 Jun 2024 13:33:21 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9108F3F5A1;
+	Wed, 12 Jun 2024 13:32:54 -0700 (PDT)
+Message-ID: <cc1b0673-13b3-439f-afdf-c9cb450f8fed@arm.com>
+Date: Wed, 12 Jun 2024 21:32:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <163b1aee53fa78fe1a8d0b8bb7b0f7be1f1975c9.1718216718.git.soyer@irl.hu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] perf arm: Workaround ARM PMUs cpu maps having offline
+ cpus
+To: Ian Rogers <irogers@google.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yicong Yang <yangyicong@huawei.com>
+References: <20240607065343.695369-1-irogers@google.com>
+ <23ee1734-7e65-4f11-aede-fea44ada3cc4@arm.com>
+ <CAP-5=fUP69NJ+j6+9rUnp+UPBxcopJ=BOY-LeOjs8vYdt4soMA@mail.gmail.com>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <CAP-5=fUP69NJ+j6+9rUnp+UPBxcopJ=BOY-LeOjs8vYdt4soMA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 12, 2024 at 08:31:14PM +0200, Gergo Koteles wrote:
-> Some new UVC cameras can report whether they are mounted in 'portrait
-> mode'.
+
+Hi Ian,
+
+On 6/10/24 18:33, Ian Rogers wrote:
+
+[...]
+
+>> Just a nitpick and I think it is not an issue caused by this patch.
+>> After hotplug off one CPU and then if specify the CPU with option '-C',
+>> the 'perf stat' command still continues to run. This is inconsistent
+>> with the 'perf record' which exits with failures immediately.
+>>
+>> Maybe consider to send an extra patch to address this issue?
 > 
-> Current roll degrees (-90, 0, 90, 180) are reported with
-> UVC_CT_ROLL_ABSOLUTE_CONTROL.
+> As you say, this doesn't relate to the problem fixed here. I don't
+> have a problem with the command line behavior change but I think my
+> getting shouted at budget is fairly well exhausted.
 
-UVC_CT_ROLL_ABSOLUTE_CONTROL is about controlling the motion of the
-camera along the roll axis, while this patch series sounds like you want
-to support reporting the mounting orientation of the device, not cause
-the device to rotate. Is that right ?
+I understand you put much efforts on fixing issues, on Arm platforms and
+other platforms. This is also why I want to contribute a bit for testing
+the patches.
 
-If that's the case, the right V4L2 control to use would be
-V4L2_CID_CAMERA_SENSOR_ROTATION. Mapping it to
-UVC_CT_ROLL_ABSOLUTE_CONTROL is problematic though, as
-UVC_CT_ROLL_ABSOLUTE_CONTROL is not meant for this in the UVC spec. We
-would likely need a quirk to control how it gets used.
-
-> Map UVC_CT_ROLL_ABSOLUTE_CONTROL to V4L2_CID_ROLL_ABSOLUTE to
-> make it available to userspace.
+> How about we trade issues, if the following get fixed:
 > 
-> Signed-off-by: Gergo Koteles <soyer@irl.hu>
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 4b685f883e4d..bc3272b6ceb1 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -748,6 +748,15 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
->  		.v4l2_type	= V4L2_CTRL_TYPE_BOOLEAN,
->  		.data_type	= UVC_CTRL_DATA_TYPE_BOOLEAN,
->  	},
-> +	{
-> +		.id		= V4L2_CID_ROLL_ABSOLUTE,
-> +		.entity		= UVC_GUID_UVC_CAMERA,
-> +		.selector	= UVC_CT_ROLL_ABSOLUTE_CONTROL,
-> +		.size		= 16,
-> +		.offset		= 0,
-> +		.v4l2_type	= V4L2_CTRL_TYPE_INTEGER,
-> +		.data_type	= UVC_CTRL_DATA_TYPE_SIGNED,
-> +	},
->  };
->  
->  const struct uvc_control_mapping uvc_ctrl_power_line_mapping_limited = {
+> Renaming of the cycles event in arm_dsu_pmu.c - I'd say this is a top
+> priority issue right now.
 
--- 
-Regards,
+I cannot promise this. The main reason is that I still believe the
+'cycles' event (or, generally speaking, all events) should be managed by
+the tool rather than by the uncore PMU drivers. Additionally, the perf
+tool currently has handled these symbolic events effectively.
 
-Laurent Pinchart
+> Fixing ARM hybrid default perf stat (it is crazy we can accept this
+> being broken), opening events on both BIG.little PMUs as done here.
+
+Yeah, James is working on this.
+
+> I'll address this.
+
+Anyway, I appreciate your work.
+
+Thanks,
+Leo
 
