@@ -1,103 +1,144 @@
-Return-Path: <linux-kernel+bounces-212202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C525905CA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:18:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7127E905CAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7175D1C22FBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E33D1F248CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A39684D08;
-	Wed, 12 Jun 2024 20:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DE484D04;
+	Wed, 12 Jun 2024 20:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iV+zO8I/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qay0gEo/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D61182AF;
-	Wed, 12 Jun 2024 20:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B488B55C08;
+	Wed, 12 Jun 2024 20:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718223513; cv=none; b=T308emVT8Wmt8Amv9DIPWhy4qGdNXdYThGHCcNc/31oCxK+jzxJ6Us0MZp12Wm+GSMLqxAlHqDAC2XDnUrlXKeUM4D7WJCGrWwaR1a9Sv9G8ThzI28RTVTjdpp/e1N0DYlcfkzLRKsTmEnjjD0d8h5z9SYG2v4GQ1xvrodxYw5o=
+	t=1718223645; cv=none; b=nvVBnlGLbmKspsqTj8Fb+9vSoWmwk39KRL1jBb3MLPiCUmTNLiGhWE86HLvKdS6H2GP4w5QGAYrnETRXk5TyqyBt0eXypAV7eFD6W+xmOTCz344k6lk3f+1gz8262r++IAO1fayeu+dj9N6z1CvlDaGW4LQA9EqJQ5uXJg0Wk4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718223513; c=relaxed/simple;
-	bh=njGhKPnNqXDaLAWemur/lSMydRb9BaPJzA7YroBJXy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ET5GdY+euNsEkLn28WVQBT6TYW027tphr9mZQJFEjL8BCtx4R8uwSfTMFdO6WNPz0bXL7WHCt23kIt2vWRp1jXsLOUAG4+rfQbUngsKHvlWmUMcUNm9o1Vn7irKxFa/fpmeZGl5X9oQMIii2MZGYqX7OaVmAJDIIH0rqa5eoeC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iV+zO8I/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2478C116B1;
-	Wed, 12 Jun 2024 20:18:32 +0000 (UTC)
+	s=arc-20240116; t=1718223645; c=relaxed/simple;
+	bh=XBpigFK488BpUSYT5s0FHcdoB1pg3lKFZCYWjmNb4HE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=rmBS4LFDQ7ZbT3GFPjvoKfc4TDav3OS/AGcRJYzuFPDugguGK9rYsFGyuj108T3CivUg5pUtsgU58Pj0M6eNzob4kX6ykeDL2ie0Mxgw4u0aowyTmEy+rCP4hlYYm5/MPusP6jToxzhbX3onDa+YdYZ9oz9/hn9lezhML41WxC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qay0gEo/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A6AC116B1;
+	Wed, 12 Jun 2024 20:20:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718223513;
-	bh=njGhKPnNqXDaLAWemur/lSMydRb9BaPJzA7YroBJXy8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iV+zO8I/CZs5wVgnGn3iLOpGco8Aw44kDAKoN8T8ukmZ+WjHSHIR2Iimg8WXrxe6v
-	 GR/8Aytc0zwIbIfe4fxBz1lqBShMyACZbrcOGkLPqwVJwO14IbQBK8ucBiJDjU2rDZ
-	 qu7a6P9Hbfzh0fNxgM7K7uVBSPYTXqV9LGvQkW2Nn4G1jKEAWyARIupKdrUD13k6SZ
-	 7PXkHf0cB14H/DBklsZFDV367YpLBg+mxCidFtEVmopFamOeGGQNDPAEl/X1QHILi6
-	 I2JB3ev4uy/z39IubhRxgPs5uad69IDt8nZR8xkVx9dEdrIHktuNdpfcaHK9OhOwJv
-	 ovMzTgm4UjlUw==
-Date: Wed, 12 Jun 2024 21:18:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Banajit Goswami <bgoswami@quicinc.com>, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, krzysztof.kozlowski@linaro.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org
-Subject: Re: [PATCH v3 1/3] ASoC: codecs: lpass-macro: add helpers to get
- codec version
-Message-ID: <ZmoCl16mACdJU5Qt@finisterre.sirena.org.uk>
-References: <20240612-lpass-codec-v25-v1-0-9f40611a1370@linaro.org>
- <20240612-lpass-codec-v25-v1-1-9f40611a1370@linaro.org>
- <jowqhnspiai4ydp7m7mn3p654kufg4ufbm2iexjg5dqbcxqatu@jfex2rnes5vu>
+	s=k20201202; t=1718223645;
+	bh=XBpigFK488BpUSYT5s0FHcdoB1pg3lKFZCYWjmNb4HE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=qay0gEo/8xVWF2qx7h5/bZgKFxIXuRDfY+jnZjFGBOao8JMYCdEA8s92G88jmUCL0
+	 HhE9h/xcewebQkwro0bn+p/yJh1tpBZBiMguZ43ENdRw5sNDMiMyJsGV9wwL4q3amf
+	 qQ1Q37k3TF8z+Frnv4q3PV1bxMKT/LWqBBBxW16JcpS46Uylu7LssxO/OUYUcLdYgM
+	 dmzzG9LRbskjsSD6TJI6pXwh0nOblvIex4oddYFzmGaiHS5DyNvzIO30Pr1wONu6VL
+	 Fq32FRflwqmZul30ZvV0OPuVb978f/Xf+J9fcz/6p3K7Mq1cdcbT0mt5ldyrVqtpf/
+	 E8VxPwCcmi1OA==
+Date: Wed, 12 Jun 2024 15:20:43 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] PCI: endpoint: make pci_epc_class constant
+Message-ID: <20240612202043.GA1036897@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Xapvb1KMCPCdZk/7"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <jowqhnspiai4ydp7m7mn3p654kufg4ufbm2iexjg5dqbcxqatu@jfex2rnes5vu>
-X-Cookie: Your love life will be... interesting.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024061011-citable-herbicide-1095@gregkh>
 
+On Mon, Jun 10, 2024 at 10:20:12AM +0200, Greg Kroah-Hartman wrote:
+> Now that the driver core allows for struct class to be in read-only
+> memory, we should make all 'class' structures declared at build time
+> placing them into read-only memory, instead of having to be dynamically
+> allocated at runtime.
+> 
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: "Krzysztof Wilczyński" <kw@linux.com>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-pci@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---Xapvb1KMCPCdZk/7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to pci/endpoint for v6.11, thanks!
 
-On Wed, Jun 12, 2024 at 09:15:21PM +0300, Dmitry Baryshkov wrote:
-> On Wed, Jun 12, 2024 at 05:57:21PM +0100, Srinivas Kandagatla wrote:
-> > LPASS Digital codec have changes in register layout across multiple
-> > versions. Add a proper way read the codec version allowint all the lpass
-> > macro drivers (tx, rx, wsa, va) to configure the registers correctly.
-
-Please delete unneeded context from mails when replying.  Doing this
-makes it much easier to find your reply in the message, helping ensure
-it won't be missed by people scrolling through the irrelevant quoted
-material.
-
---Xapvb1KMCPCdZk/7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZqApQACgkQJNaLcl1U
-h9CpnAf/Sl3IB3d6N7vAnrXggB6qM/9ur6uBFSna4TVicmPaBDqdKWmW70JbgFiQ
-UXqpmmTwqtSi5kYlBBJlCzvWO2hftIyp2uLokrWDU34hjb7QuKnBGRTK7ULPabd1
-ZtzQ9NlPXFeV1bWI2UfJz/x1glSSUzEeQOodpH0JdBKkUf7GFNgfCGEiXJ32qm55
-FNRQkSrg4ZjVZIx0uvkuERG+kOVobl5qxZTrL+7qnR+KBf45avv4x4ygdLtTtt/C
-q84Ij7bm+7qtzH+c9YSIIhE3B48iV2caBc7sGLh8va671JUsRdVNaL8x/VglZvEr
-QZ7FtzG4tzNzIe93tzJBOvk+RffeMA==
-=d1jY
------END PGP SIGNATURE-----
-
---Xapvb1KMCPCdZk/7--
+> ---
+>  drivers/pci/endpoint/pci-epc-core.c | 19 +++++++------------
+>  1 file changed, 7 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+> index 47d27ec7439d..ed038dd77f83 100644
+> --- a/drivers/pci/endpoint/pci-epc-core.c
+> +++ b/drivers/pci/endpoint/pci-epc-core.c
+> @@ -14,7 +14,9 @@
+>  #include <linux/pci-epf.h>
+>  #include <linux/pci-ep-cfs.h>
+>  
+> -static struct class *pci_epc_class;
+> +static const struct class pci_epc_class = {
+> +	.name = "pci_epc",
+> +};
+>  
+>  static void devm_pci_epc_release(struct device *dev, void *res)
+>  {
+> @@ -60,7 +62,7 @@ struct pci_epc *pci_epc_get(const char *epc_name)
+>  	struct device *dev;
+>  	struct class_dev_iter iter;
+>  
+> -	class_dev_iter_init(&iter, pci_epc_class, NULL, NULL);
+> +	class_dev_iter_init(&iter, &pci_epc_class, NULL, NULL);
+>  	while ((dev = class_dev_iter_next(&iter))) {
+>  		if (strcmp(epc_name, dev_name(dev)))
+>  			continue;
+> @@ -867,7 +869,7 @@ __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
+>  	INIT_LIST_HEAD(&epc->pci_epf);
+>  
+>  	device_initialize(&epc->dev);
+> -	epc->dev.class = pci_epc_class;
+> +	epc->dev.class = &pci_epc_class;
+>  	epc->dev.parent = dev;
+>  	epc->dev.release = pci_epc_release;
+>  	epc->ops = ops;
+> @@ -927,20 +929,13 @@ EXPORT_SYMBOL_GPL(__devm_pci_epc_create);
+>  
+>  static int __init pci_epc_init(void)
+>  {
+> -	pci_epc_class = class_create("pci_epc");
+> -	if (IS_ERR(pci_epc_class)) {
+> -		pr_err("failed to create pci epc class --> %ld\n",
+> -		       PTR_ERR(pci_epc_class));
+> -		return PTR_ERR(pci_epc_class);
+> -	}
+> -
+> -	return 0;
+> +	return class_register(&pci_epc_class);
+>  }
+>  module_init(pci_epc_init);
+>  
+>  static void __exit pci_epc_exit(void)
+>  {
+> -	class_destroy(pci_epc_class);
+> +	class_unregister(&pci_epc_class);
+>  }
+>  module_exit(pci_epc_exit);
+>  
+> -- 
+> 2.45.2
+> 
 
