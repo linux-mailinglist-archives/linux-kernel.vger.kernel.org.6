@@ -1,105 +1,152 @@
-Return-Path: <linux-kernel+bounces-212160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A523905C13
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:37:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454FD905C1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A81721F22493
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:37:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3BF1F220FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BDA83CC1;
-	Wed, 12 Jun 2024 19:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7201384A39;
+	Wed, 12 Jun 2024 19:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Pj8oAdlG"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G11A0aLv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473876A8DB
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 19:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183778287E;
+	Wed, 12 Jun 2024 19:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718221065; cv=none; b=hUgism7Zwfhnze1q6PHPhx8X2n2h2ZFsq0ux+1RYwj4mAzrR+M/vfun0GipKnaBbHhe+Q0HCdfGomG8g9JK01ONj+J2Mf4owKRafe+Wm7cg7ELcw3KEzcCnDmcVQ+gC4Ss0uxDuMlYcOQXmLsVOtGqYhLvbsCmR3KcV2afaVro8=
+	t=1718221114; cv=none; b=iKA6uxzFVpHKnEkU0Fok/52rOqhv/vTW4g0JWYdBBzw5ov8hu1KDjwg+puViGZb/j6YhjFzXU17beg5xfjUGSAk9TgRhEmE95qYC4hFx7bShEAIbrWT3zBzM0pne5QUZGtThMZpOIbrIWlqfZ1fhDdDG6AUAZ8TbwPwhbsp0dRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718221065; c=relaxed/simple;
-	bh=bAgvQLjry72ucsu6tyvE+IoTpk3LdoXsF+98JxrZlGc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pfrBQqgQ8DZfWo/DbAG7u0e/HvshbAcS6YD+tkRuXPnOyIqzNRS+qZZmLsyIVXWYa0WHJHAeJeEKi421onSADsq3aIdcejgWIyIyhx9SvEN0ZwsuVnuDn0MjzPpvnQ271/2PrQS4ZDy7CYbjisHIk9QyJ9DWVPG+ZS6F8r4OAi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Pj8oAdlG; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=rJP3bi32e6r8RV+D2X0N8VAFuxM3UDfcxB2VNYPJ2TI=; b=Pj8oAdlGr1ZqbcE2L91WeNekxr
-	UJtQDy2roFDtBjZdT9mC+3YBbRvFn8Akid+p+qWIVSNiBkorGQXAywBjBl3PywJpv0B0Nrnyfx4Ql
-	3QmcQ3OVRTLFMbqmN2S9Rw07Vm7tXgLhOXCwBpeD0agZtb8wB8Lo6Ed4LU9Gw3sw7BD0VFgXx9ClE
-	S26I6mzsO+3y1fY89GpB8fbN8opQSeRA1j+1i+nY0aVJ0Qa0a3VJZZhQHzw1AobZV+quj0ItSHQCy
-	GJZScBPIAZxwqbOJ1T7XHMemb9BczneTGknNwktnvaTeTNbF4ICoZgzVF99oH8YudzeOueMxWqekE
-	cOaa+Knw==;
-Received: from [191.204.194.169] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sHTmp-002RtF-F2; Wed, 12 Jun 2024 21:37:35 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel-dev@igalia.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Simon Ser <contact@emersion.fr>,
-	Pekka Paalanen <ppaalanen@gmail.com>,
-	daniel@ffwll.ch,
-	Daniel Stone <daniel@fooishbar.org>,
-	=?UTF-8?q?=27Marek=20Ol=C5=A1=C3=A1k=27?= <maraeo@gmail.com>,
-	Dave Airlie <airlied@gmail.com>,
-	ville.syrjala@linux.intel.com,
-	Xaver Hugl <xaver.hugl@gmail.com>,
-	Joshua Ashton <joshua@froggi.es>,
-	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v5 3/3] drm/amdgpu: Make it possible to async flip overlay planes
-Date: Wed, 12 Jun 2024 16:37:13 -0300
-Message-ID: <20240612193713.167448-4-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240612193713.167448-1-andrealmeid@igalia.com>
-References: <20240612193713.167448-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1718221114; c=relaxed/simple;
+	bh=d32MiCbVXWXFZkPey7ssf/tf/faMNZuWIlojVdCoicw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=h9YewpGNSl1xk0Mq8bLUbKayBkQZWA6XkYuTwwo/jFh5nA05AK6sZNDkSeIQypYoc7T1V1CpfEtuIWrhs/mvLALMJWIHw5IusHNtfJEhy60QNxQVAb1U+C+0Tx38ZDZUIZRB4eRMAyAd14S40TVuge0ZGvVusQEn56b3+bi1c0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G11A0aLv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CGOH31003526;
+	Wed, 12 Jun 2024 19:38:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	skQ8Rd99Bnftz8B5vinGT/Kjrx0fdNO1wEQ3MtRhlmg=; b=G11A0aLvoPLmjU8U
+	2a3nBQzc1zEYxPMYsTtEKuZMsXFcPmSmOq8OcGtXhI9ebK8lDmaAF0fUATEX+qdR
+	2tOgGzxzm9cf+FW8hrHuGOQr3BVd7ANtTi2Z9xrVEny6tLsWBYnCq80lSk6DUJe6
+	QkXvYQx1NUNYciP2vqh9bUujI95UFAuVGmLIwdFG21k1YYE0qwQPSbQBaAVxpye7
+	7BXc2+qBdMRtpiLwUgCISALSzlNFl8ohAxA8pTXP6O1ojrcaCcobp900RDWFBvLI
+	NuN6XgsFoMGaadNXjaSkf5Naoo8slxA3XMC+48LTeGVyleOC5e1iins6p8YstF++
+	mFlMjg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ype914wh1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 19:38:15 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CJcDcE013460
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 19:38:13 GMT
+Received: from [10.110.56.180] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 12:38:12 -0700
+Message-ID: <c17e6d77-8daf-30f7-700c-d8b72cacf9cc@quicinc.com>
+Date: Wed, 12 Jun 2024 12:38:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v23 00/32] Introduce QC USB SND audio offloading support
+Content-Language: en-US
+To: =?UTF-8?Q?Amadeusz_S=c5=82awi=c5=84ski?=
+	<amadeuszx.slawinski@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <robh@kernel.org>, <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
+ <80fefd6b-0f3a-4f6a-869e-fd2225315801@linux.intel.com>
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <80fefd6b-0f3a-4f6a-869e-fd2225315801@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: HHXUBLJgdQL5MbjC7E0KsMgLBiref_Yc
+X-Proofpoint-ORIG-GUID: HHXUBLJgdQL5MbjC7E0KsMgLBiref_Yc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_10,2024-06-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 malwarescore=0 phishscore=0 bulkscore=0
+ clxscore=1015 mlxlogscore=999 impostorscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406120138
 
-amdgpu can handle async flips on overlay planes, so mark it as true
-during the plane initialization.
+Hi Amadeusz,
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 1 +
- 1 file changed, 1 insertion(+)
+On 6/12/2024 7:50 AM, Amadeusz Sławiński wrote:
+> On 6/11/2024 1:57 AM, Wesley Cheng wrote:
+> 
+>> Wesley Cheng (32):
+>>    ASoC: Add SOC USB APIs for adding an USB backend
+>>    ASoC: dt-bindings: qcom,q6dsp-lpass-ports: Add USB_RX port
+>>    ASoC: qcom: qdsp6: Introduce USB AFE port to q6dsp
+>>    ASoC: qdsp6: q6afe: Increase APR timeout
+>>    ASoC: qcom: qdsp6: Add USB backend ASoC driver for Q6
+>>    ALSA: usb-audio: Introduce USB SND platform op callbacks
+>>    ALSA: usb-audio: Export USB SND APIs for modules
+>>    ALSA: usb-audio: Save UAC sample size information
+>>    usb: dwc3: Specify maximum number of XHCI interrupters
+>>    usb: host: xhci-plat: Set XHCI max interrupters if property is present
+>>    ALSA: usb-audio: qcom: Add USB QMI definitions
+>>    ALSA: usb-audio: qcom: Introduce QC USB SND offloading support
+>>    ALSA: usb-audio: Check for support for requested audio format
+>>    ASoC: usb: Add PCM format check API for USB backend
+>>    ASoC: qcom: qdsp6: Ensure PCM format is supported by USB audio device
+>>    ALSA: usb-audio: Prevent starting of audio stream if in use
+>>    ALSA: usb-audio: Do not allow USB offload path if PCM device is in use
+>>    ASoC: dt-bindings: Update example for enabling USB offload on SM8250
+>>    ALSA: usb-audio: qcom: Populate PCM and USB chip information
+>>    ASoC: qcom: qdsp6: Add support to track available USB PCM devices
+>>    ASoC: Introduce SND kcontrols to select sound card and PCM device
+>>    ASoC: qcom: qdsp6: Add SOC USB offload select get/put callbacks
+>>    ASoC: Introduce SND kcontrols to track USB offloading state
+>>    ASoC: qcom: qdsp6: Add PCM ops to track current state
+>>    ASoC: usb: Create SOC USB SND jack kcontrol
+>>    ASoC: qcom: qdsp6: Add headphone jack for offload connection status
+>>    ASoC: usb: Fetch ASoC sound card information
+>>    ALSA: usb-audio: Add USB offloading capable kcontrol
+>>    ALSA: usb-audio: Allow for rediscovery of connected USB SND devices
+>>    ALSA: usb-audio: qcom: Use card and PCM index from QMI request
+>>    ASoC: usb: Rediscover USB SND devices on USB port add
+>>    ASoC: doc: Add documentation for SOC USB
+> 
+> I'm not sure how other reviewers feel about this, but is there any 
+> chance to group patches in some logical order? It is bit hard to review 
+> when I need to jump from generic ALSA to ASoC then QCOM code and then 
+> there are dt-bindings mixed in between and back again.
+> 
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-index 8a4c40b4c27e..dc5392c08a87 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-@@ -1708,6 +1708,7 @@ int amdgpu_dm_plane_init(struct amdgpu_display_manager *dm,
- 	} else if (plane->type == DRM_PLANE_TYPE_OVERLAY) {
- 		unsigned int zpos = 1 + drm_plane_index(plane);
- 		drm_plane_create_zpos_property(plane, zpos, 1, 254);
-+		plane->async_flip = true;
- 	} else if (plane->type == DRM_PLANE_TYPE_CURSOR) {
- 		drm_plane_create_zpos_immutable_property(plane, 255);
- 	}
--- 
-2.45.2
+OK I'll see if I can re-order them to make it easier to look at between 
+layers.
 
+Thanks
+Wesley Cheng
 
