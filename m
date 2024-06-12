@@ -1,93 +1,144 @@
-Return-Path: <linux-kernel+bounces-212060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F36905AAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:21:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD770905AB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F05EB1C21B11
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:21:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D60D1C21FD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DDC3B78D;
-	Wed, 12 Jun 2024 18:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A9040867;
+	Wed, 12 Jun 2024 18:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJRfooWj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aSC5nsvt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F248820DF7;
-	Wed, 12 Jun 2024 18:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6964D38F98;
+	Wed, 12 Jun 2024 18:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718216447; cv=none; b=EPy7nG7BCzGffmcDSrG8tBm3/vhkEwSKqlypsahglCgemEgq5hqnBs9AJZaB7KYvgQpaw/ZlLNpmR0/wsKKR471BAp7UEIw4NdlcX0P+Mz29lx3OkS9Df5vz9RztVevh1xu4nPi8QbRg9PDxPSRosSQlRl0Z4d9x8SFSC2VWyrY=
+	t=1718216479; cv=none; b=C6qj8q13rFZuydsrontMq7tvb1stML2yY2wU3q8DxUjxKu9VxGZIJht31NqrO95UCNGLfmx8a/bZnr7YXjSncR9sR6s7eSBV7Qio4j5xIAYcnefdGd/DNVgy4MKk7qju0KrxEj9TuaghkvHLG0LqgiotZ6oCr4wRdx4evzBANCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718216447; c=relaxed/simple;
-	bh=arXJKii7hZO7vb4B/vvN+V1nOiJPnwFUFK+yxQZsqQQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WiEI8QLd6yXVdj9wNwIGgMO8lZXzxb4Fti0wgZyCfR3ZUN00gbWbi4LacmsKYpgzTJide962ymg2DsfCCK/i+fF3n8Ip0xd7cjiNExrpkY+QXP/qYVoN8/q5xXUj/Zv4PMLEDAJNtTdBxiiA1/9kVwMbyBajhe+ZVtqO3QQfwpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJRfooWj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F332CC116B1;
-	Wed, 12 Jun 2024 18:20:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718216446;
-	bh=arXJKii7hZO7vb4B/vvN+V1nOiJPnwFUFK+yxQZsqQQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=HJRfooWjtcllpqykEnyB0p3CzWNiAY3VMVaTGyZMfLl0+Zv5lLVZKHr28vDla+jzy
-	 3hLtnhklRrH4djyDuE/+XyIHfjmrqLtrvuIB/pOVyec3A7JszCBBux91+NOpjGgzdD
-	 paA9gawZMJTPjiIBL8DGRUQ70yTTVvAgZ45osiWMwuyM85nEJ3pxNO6S2rdoU1oynH
-	 9Ye1pQIwKNZjeGrkQ5caAFbZQveXWUISbQEgaQCP5hgJyw+up5JuZGUe1cWmkVrsuG
-	 cMPP2WXwAsN/rs7hKit2CVN0ZKSOhRUfhOkTTbDfRWVXHT9tq/92mxBJXi4x4ZM+Iz
-	 Ym4ZrINN9jnRA==
-From: Leon Romanovsky <leon@kernel.org>
-To: linux-hardening@vger.kernel.org, netdev@vger.kernel.org, 
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-rdma@vger.kernel.org, 
- Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>, 
- Ahmed Zaki <ahmed.zaki@intel.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>, 
- Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>, 
- Konstantin Taranov <kotaranov@microsoft.com>, 
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>, 
- Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>, 
- Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
- Haiyang Zhang <haiyangz@microsoft.com>, 
- "K. Y. Srinivasan" <kys@microsoft.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
- Long Li <longli@microsoft.com>, Shradha Gupta <shradhagupta@microsoft.com>, 
- Kees Cook <kees@kernel.org>
-In-Reply-To: <1718015319-9609-1-git-send-email-shradhagupta@linux.microsoft.com>
-References: <1718015319-9609-1-git-send-email-shradhagupta@linux.microsoft.com>
-Subject: Re: [PATCH net-next v4] net: mana: Allow variable size indirection
- table
-Message-Id: <171821644166.505049.8840755139752392962.b4-ty@kernel.org>
-Date: Wed, 12 Jun 2024 21:20:41 +0300
+	s=arc-20240116; t=1718216479; c=relaxed/simple;
+	bh=dmCdEyDaa9CWF6uzIZIdsw+wZv/+qhmk+UAaXOk/6JQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DnBNTRiutF37pFhJ+U18F0u7kQllRSw1s02Kk2SKQI977r5AEVa43XBLCTALTZ2Kt0DXwawEP5Fau4hRmgxMP/xTf+/ZqFvJwx88HM9EkKhewgJDNLUgvSaC+Q9Lvj3lpc78x07Hyq+SRexlxa8Cym132WWvyicYUGS1t3vD2y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aSC5nsvt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CGOUB4004125;
+	Wed, 12 Jun 2024 18:21:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1wkuKnY3v6ZgdO1n4RdvPiX2uiSoPI9pme0TEiEkQRM=; b=aSC5nsvt/O7yxQtq
+	kOkzByEIYG40ylswCXDRfJrdwx9gMqIieQOjBSjqZjGroZMAKILomO74cD7Chf40
+	z6GnH1VjXVyOPomecbpayDkm2wp67VhcT7zULOOJOj7g+u9bsRvcox2opjuHLUGv
+	Cmt06YBlxn74mPfe/a4qPZpup4r/4QZGXZdrZPrseGsRHjYd0cOraHSmTi2SD99r
+	VeeIxW5bUCID2kukNQaT2qDQTkcVeYrNshoTwWV78VCWX5B3n15aswPMXADz6f6l
+	ygIdjHrCqSVijagXAlHsqyWT2Yv/1DTXlaoRV12yizqe1QCg/wQxBkpuh3XAwN5m
+	MdktzQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ype914rq8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 18:21:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CIL58U014028
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 18:21:05 GMT
+Received: from [10.48.243.20] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 11:21:05 -0700
+Message-ID: <4300d6a0-66be-4a5d-8c3d-c43043106c4d@quicinc.com>
+Date: Wed, 12 Jun 2024 11:21:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Alan Stern <stern@rowland.harvard.edu>
+CC: Peter Chen <peter.chen@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Oliver Neukum <oneukum@suse.com>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <usb-storage@lists.one-eyed-alien.net>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240611-md-drivers-usb-v1-1-8b8d669e8e73@quicinc.com>
+ <183a4d6a-30ad-4dce-b54d-3624aba36ac9@rowland.harvard.edu>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <183a4d6a-30ad-4dce-b54d-3624aba36ac9@rowland.harvard.edu>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sCkTRAscjI77nju_y2oFP-bhQIcrga1O
+X-Proofpoint-ORIG-GUID: sCkTRAscjI77nju_y2oFP-bhQIcrga1O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_09,2024-06-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 malwarescore=0 phishscore=0 bulkscore=0
+ clxscore=1015 mlxlogscore=999 impostorscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406120130
 
-
-On Mon, 10 Jun 2024 03:28:39 -0700, Shradha Gupta wrote:
-> Allow variable size indirection table allocation in MANA instead
-> of using a constant value MANA_INDIRECT_TABLE_SIZE.
-> The size is now derived from the MANA_QUERY_VPORT_CONFIG and the
-> indirection table is allocated dynamically.
+On 6/12/2024 11:16 AM, Alan Stern wrote:
+> On Tue, Jun 11, 2024 at 07:37:20PM -0700, Jeff Johnson wrote:
+>> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/core/usbcore.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/mon/usbmon.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/class/usbtmc.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/storage/uas.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/chipidea/ci_hdrc_msm.o
+>>
+>> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>> This is the remaining one-off fixes in usb.
+>>
+>> Corrections to these descriptions are welcomed. I'm not an expert in
+>> this code so in most cases I've taken these descriptions directly from
+>> code comments, Kconfig descriptions, or git logs.  History has shown
+>> that in some cases these are originally wrong due to cut-n-paste
+>> errors, and in other cases the drivers have evolved such that the
+>> original information is no longer accurate.
+>>
+>> Let me know if any of these changes need to be segregated into
+>> separate patches to go through different maintainer trees.
 > 
+>> diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+>> index a0c432b14b20..65f9940bc7e8 100644
+>> --- a/drivers/usb/core/usb.c
+>> +++ b/drivers/usb/core/usb.c
+>> @@ -1150,4 +1150,5 @@ static void __exit usb_exit(void)
+>>  
+>>  subsys_initcall(usb_init);
+>>  module_exit(usb_exit);
+>> +MODULE_DESCRIPTION("USB support library");
+>>  MODULE_LICENSE("GPL");
 > 
+> I would change this to "USB core host-side support", or something more 
+> along those lines.  It's not just a library because it does include 
+> several drivers (such as the USB hub driver).  And it's host-side rather 
+> than device-side -- that's a separate module.
+> 
+> Alan Stern
 
-Applied, thanks!
+thanks, will reword in the next version
 
-[1/1] net: mana: Allow variable size indirection table
-      https://git.kernel.org/rdma/rdma/c/7fc45cb68696c7
-
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
-
+/jeff
 
