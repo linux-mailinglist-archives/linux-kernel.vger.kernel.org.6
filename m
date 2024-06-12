@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-211481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AAAA905267
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:28:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7EF90526B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6D8C281609
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:28:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3B21F2265D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F8E16F901;
-	Wed, 12 Jun 2024 12:28:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A0F16F0F3;
-	Wed, 12 Jun 2024 12:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D0516F902;
+	Wed, 12 Jun 2024 12:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vnN08X8c"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6600F16F0F3;
+	Wed, 12 Jun 2024 12:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718195301; cv=none; b=IrMMrqMG/dmbbSKcBhOgpI1HYUgfTEiBxDlxz5funbH3MkFfcKzQ7M1KBAPGf8fgYLucC+5cOuBuUfzvgMF8H4nIjM0sH+MiNkacZIiX5M46fGGqAP6SMKloguUaCWWez84jF/Uw1Mcsu1PV1/RVEd7Bt71kdVIG3+jv4nHQras=
+	t=1718195352; cv=none; b=S4u5SECb3y2FQlW7EbDmp4GMWlnThplfGFdXlxQcqaKUd2CHAh7zwxnRSL/KP2tJwuIfNsZkQG8fbU/ocS11uDF8A/oFPzos8Yzy2uYwyrGJsBuGrnCdNfQyEP6uXFUL5BtsU6QnwEPaWkrwIyfjhNroc3leX+ipqIAJREDmOX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718195301; c=relaxed/simple;
-	bh=CbHzrsS2xuvw8cRx5w/aRlruF8LSrUFindAXw2+MRag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rHTKtO25O8/DDcJcB7HUzH/p7bK/OeYMNUdotA1bXh3GpxNcA7DKx7hDNr5SSPUbZgCm3AaC8R9MMDXTTRO4X+DgoWK7o5ThL7oM++WEB/h3CEZFIpUJqUzpGAfiCaliYH3QOYihsDo4ocRBWbQ4XEaM8OoRVuNrtpzhpDtuycw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FBF11595;
-	Wed, 12 Jun 2024 05:28:41 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3EDF23F64C;
-	Wed, 12 Jun 2024 05:28:14 -0700 (PDT)
-Message-ID: <8112b2bf-3950-4889-96bf-2317fbfb4bee@arm.com>
-Date: Wed, 12 Jun 2024 13:28:08 +0100
+	s=arc-20240116; t=1718195352; c=relaxed/simple;
+	bh=xa3TDRwgZuX8yrQhYuKQcppS5saA02uNPUv7uS2FNlw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=RNBEy1SeC/bDxm/om2T+z2dwNv1BtEWAWItnMu86F56SGFJdYn6IFi2cqfcDvxBMhmp0sUUZZa7k3u0W2Ve6Og65TltWbfSzOcL04k/OSGgUCitHm/Af/JagE02lY7gwRDocrlau0fEGnSIXOK3GmdEmSIa6RAEcxUz6mfDUUSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vnN08X8c; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718195331; x=1718800131; i=markus.elfring@web.de;
+	bh=xa3TDRwgZuX8yrQhYuKQcppS5saA02uNPUv7uS2FNlw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=vnN08X8c9dQil+FPsUvfogxmWJ4G3S2/XuGyM6/hEthZyVGU8cx7iXfZI8CYQu52
+	 tWjqZ08zhRMBhUhD89KDzmYTfWT0m3aYW2dm+iHwVkd7d+isO5bt+LpomHQ2rk1Aj
+	 g6lCS3uM88rApXtMDvkGDwo3Vt8s8z9XNUXOBH9/nzBbHMCot/K5yVKTHK1gOJE9a
+	 96CFXAgyZCtb1BDwYoaXXWXf2bDm261yJzBrZ/PQzZtRpVUqw80IgBeXIbLsZbagz
+	 Pefp4Jiw46fZSbTElpaq3aWLmsY54sy65RL/VUqrMULfuSX9H+P2v86kGGqZbVA1T
+	 29cQwcmGqjkREINl1w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mrfp8-1sn91S3dPY-00cXtP; Wed, 12
+ Jun 2024 14:28:50 +0200
+Message-ID: <47685d2a-da23-4558-8577-98f4ddfff386@web.de>
+Date: Wed, 12 Jun 2024 14:28:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,118 +56,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] perf pmus: Sort/merge/aggregate PMUs like
- mrvl_ddr_pmu
-To: Aishwarya TCV <aishwarya.tcv@arm.com>, Ian Rogers <irogers@google.com>
-Cc: Tuan Phan <tuanphan@os.amperecomputing.com>,
- Robin Murphy <robin.murphy@arm.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Bhaskara Budiredla <bbudiredla@marvell.com>,
- Bharat Bhushan <bbhushan2@marvell.com>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Ravi Bangoria
- <ravi.bangoria@amd.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
- Stephane Eranian <eranian@google.com>, Mark Brown <broonie@kernel.org>,
- Naresh Kamboju <naresh.kamboju@linaro.org>
-References: <20240515060114.3268149-1-irogers@google.com>
- <20240515060114.3268149-2-irogers@google.com>
- <ce31a50b-53db-4c6f-9cb1-242280b0951c@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <ce31a50b-53db-4c6f-9cb1-242280b0951c@arm.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
+Subject: Re: [v2 00/14] drm/msm/hdmi: rework and fix the HPD even generation
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Ja2i8ZUUvIyK5q6YmCwdL9rk9uZKTbD7PKkt7563jmEhmvE1n4c
+ ZzUvQSj4iXfm5RqU3YVXn2bO8RGzprL9jpkdN6Wkyc5bi1udDg6/jMke6Qq2DPUgdk/qPDS
+ rx/UmNp34WoVZtCQ+Hm61N2h978worirp0LojuomUXpXRLzwhxvIvn04DPLkfb3EcHLR1LW
+ CkPD1llIIPwaJ3/+h9TfA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yYaB5Ri7W4o=;VeXpXqKLcMhulJxSFoDGSSyHCDU
+ 1qiyxgM707FIzTmPeutdJTN5Z17s79WLkQGxx5T5Ev/oR/SQMAXyzDiveZyG+pj8UoS5LMJqO
+ d6vpnd7OBMweb9Jo7kPWnDDztF5e9B2wQi2XO3uWcMUTJWiHaXG7AVoLAosaHK0L2DxcUc9I0
+ NLzd06Ls5sXgkYesdr/NS++eWV+gto7Jm3CQ0h5AJR5parbruvLI8RjB0n/cIiY3nGtYVQ6t1
+ 5W64isUzcseQ780s3janMrjpRlLANa8cojD55YJu3G0AypYh0eFEKKBmkMAwf3XJ0hEGe/gpW
+ f7P5rPFmslf7STucUBuuxem33Rr0xzIAQUaaVWoc0S62z2BywINXnbIlIs1ekeMRxHeXfeDb8
+ 98N4IgBEijbe93h+kX0qUrIqhTDeBJYeG+UGqDMKrCL6hP1jaKjrUMgUm0y2L1pgJwcLta20f
+ zs71UcnG41xTdDus060Qmhgfmp8L7KkTMUokwgDqklp6CRpQUeMoyC7008lUs8xrpM63h9uuV
+ itOkG9n/KeONrcxZ9WwLW6IZ4iWAwDGWqGI1/vxLk34OaqQQ7yceltRI51lTMSbKGU5aILVqq
+ KGmguOz31zO7mh8x+yjLdyyhHM5/Yk25SxsnuF7DJqEv3OXTVrKi6kcxkrDIzt4XQH0Nebg8p
+ XOx8PYhVqK6MNf0KRKu0U8myq5TlI/RsTyO2Ks6wT6feFxiUqA/ta6mFKPzFeMpr0IJDBVy40
+ Tu7+hQ01bR+Ndii39ADVjIwGhElg0IQT53xwFbbn4pFjNa21+0Dk6sxi2xK7+OiW7sUebrJgE
+ JcQDccGzTtj9OyZn8803lhasUDYIkIoYl4OmHPFDAbLUY=
 
+=E2=80=A6
+> This series was tested on msm8996 and apq8064 boards. Previously HPD
+> handling sometimes could trigger in the CRTC event handling, =E2=80=A6
 
+Would you like to refer to the word =E2=80=9Cevent=E2=80=9D also in the me=
+ssage subject?
 
-On 12/06/2024 12:19, Aishwarya TCV wrote:
-> 
-> 
-> On 15/05/2024 07:01, Ian Rogers wrote:
->> The mrvl_ddr_pmu is uncore and has a hexadecimal address suffix while
->> the previous PMU sorting/merging code assumes uncore PMU names start
->> with uncore_ and have a decimal suffix. Because of the previous
->> assumption it isn't possible to wildcard the mrvl_ddr_pmu.
->>
->> Modify pmu_name_len_no_suffix but also remove the suffix number out
->> argument, this is because we don't know if a suffix number of say 100
->> is in hexadecimal or decimal. As the only use of the suffix number is
->> in comparisons, it is safe there to compare the values as hexadecimal.
->> Modify perf_pmu__match_ignoring_suffix so that hexadecimal suffixes
->> are ignored.
->>
->> Only allow hexadecimal suffixes to be greater than length 2 (ie 3 or
->> more) so that S390's cpum_cf PMU doesn't lose its suffix.
->>
->> Change the return type of pmu_name_len_no_suffix to size_t to
->> workaround GCC incorrectly determining the result could be negative.
->>
->> Signed-off-by: Ian Rogers <irogers@google.com>
->> ---
->>  tools/perf/util/pmu.c  | 33 +++++++++++++--------
->>  tools/perf/util/pmus.c | 67 ++++++++++++++++++++++++------------------
->>  tools/perf/util/pmus.h |  7 ++++-
->>  3 files changed, 65 insertions(+), 42 deletions(-)
->>
-> 
-> Hi Ian,
-> 
-> Perf test "perf_all_PMU_test" is failing when run against
-> next-master(next-20240612) kernel with Arm64 on JUNO in our CI. It looks
-> like it is failing when run on JUNO alone. Verified by running on other
-> boards like RB5 and Ampere_altra and confirming that it does not fail on
-> these boards. Suspecting that the suffixed 'armv8_pmuv3_0' naming could
-> be the reason of test failure.
-> 
-> Reverting the change (3241d46f5f54) seems to fix it.
-> 
-> This works fine on Linux version v6.10-rc3
-> 
-> Failure log
-> ------------
-> 110: perf all PMU test:
-> --- start ---
-> test child forked, pid 8279
-> Testing armv8_pmuv3/br_immed_retired/
-> Event 'armv8_pmuv3/br_immed_retired/' not printed in:
-> # Running 'internals/synthesize' benchmark:
-> Computing performance of single threaded perf event synthesis by
-> synthesizing events on the perf process itself:
->   Average synthesis took: 1169.431 usec (+- 0.144 usec)
->   Average num. events: 35.000 (+- 0.000)
->   Average time per event 33.412 usec
->   Average data synthesis took: 1225.698 usec (+- 0.102 usec)
->   Average num. events: 119.000 (+- 0.000)
->   Average time per event 10.300 usec
-> 
->  Performance counter stats for 'perf bench internals synthesize':
-> 
->         3263664785      armv8_pmuv3_0/br_immed_retired/
-> 
-> 
->       25.472854464 seconds time elapsed
-> 
->        8.004791000 seconds user
->       17.060209000 seconds sys
-> ---- end(-1) ----
-> 110: perf all PMU test                                               :
-> FAILED!
-> 
-> Thanks,
-> Aishwarya
-> 
-
-I can take this one, the test can probably be relaxed to not care about
-the suffix. Or maybe change what we print in the stat output to match
-the string that the event was opened with.
-
-Not sure which way is best yet but it will probably become more obvious
-after some digging.
-
-James
-
+Regards,
+Markus
 
