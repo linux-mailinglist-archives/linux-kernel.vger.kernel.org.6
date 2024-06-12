@@ -1,121 +1,195 @@
-Return-Path: <linux-kernel+bounces-211987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BD39059B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:13:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E02939059B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7278228339D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:13:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9D3F1C212F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74734181D19;
-	Wed, 12 Jun 2024 17:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D261822E3;
+	Wed, 12 Jun 2024 17:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvuCsqof"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="m4b2nDT+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F6A17FAC5;
-	Wed, 12 Jun 2024 17:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F287417FAC5;
+	Wed, 12 Jun 2024 17:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718212406; cv=none; b=SlQLSwLmwf3x43CgNopsNvcWtU/PvPI8psWJCkWssVfp2LELQ4NIWSNVeVtV4uXaO6mRfR8bwe/ZexuUR2fpFRh+R56lcW/T3I94LZmUveukS7j3oVKPJEKHPGKsemP2fMiJQV4xm+O/Zz5eM+krgr9zBCr84aX3RAcAPJEEDVg=
+	t=1718212415; cv=none; b=ZcdYdAK78A2iBRf6/2lyTfYqYR6O5i9VxWVbfGCWN6ZxGJLnu4+B7jIFWrFneJnC8XVdTlWJhVcXsSmp3EHgIblStlOtQ3/g6cA8j/raLPMZY0ZzA/FOOgniD95VpKo6EYylWCspOBnL+CD27a2fz2SAgYFFnY/DaR0CHHYmGKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718212406; c=relaxed/simple;
-	bh=pVRtT8SspP4plGFGsoiJuLG4f22ItF8UkF281AhSXAs=;
+	s=arc-20240116; t=1718212415; c=relaxed/simple;
+	bh=YddBzQ3+G8dpMI1SPWT5hGHfO/uLv6eA4KaATQnMwGM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LFK+U5arXn8ZLZ/6huHbGY5SJSk2uTRsJuQk6qVCE8/ONQ88M2ZTxPdPizXKnJDvlodOPOgxybFcySA1/NfIVZH022tyTjAwLX95EHPQXCMAlCR8W55vb5lELlGTim1U4R1ko8KDNNHWtdS6lOUUsq9Kp1zfSdHJJt8Ld5REuoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvuCsqof; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8AF7C116B1;
-	Wed, 12 Jun 2024 17:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718212405;
-	bh=pVRtT8SspP4plGFGsoiJuLG4f22ItF8UkF281AhSXAs=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=jSOXqYksUHd98L47E4SRjkNdqdsucMxEb7G1gfcesSCJXLUvnObJIO3jA5eVLahoKT6/lRXoP+sdzeQsq36aOTxr7Ly8vAmaJLIEXB9ocgzb3DYN9bMrYkrjwHayQoiIs0k0CpOxesAhrTZ7bs7y+6dC6+nfdnmb3wcS7qHKyhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=m4b2nDT+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBB70C116B1;
+	Wed, 12 Jun 2024 17:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718212414;
+	bh=YddBzQ3+G8dpMI1SPWT5hGHfO/uLv6eA4KaATQnMwGM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YvuCsqofG/60U/lperzaXZZak8MxjEoz7fZaX+6v9Bdvw2DsGZ59AWi58+Wh1+MBz
-	 kNTNFkz1znOaog3FO/EJkM5AWK1lx3hVs8U1lbgR+1PbIrdxEljW7KZE1+8lZZjveZ
-	 F8ddli7UOc9fthmALrrrS6kDhL4opjqdOoIAzpmi9vVnjw85xUlowj+d4ffp401Pp2
-	 kvue7KHzIl74pItTm28gbmDe3mPrIDfjUEQYoKaAGzbzJK5WpbHzne5A+9mV4sXDgZ
-	 i7Ab17rp82HN5cw6cDyuJ2QcNPm6Q6L97DBlW5tjvkPGldbecdARf3MFcHy/ijFbWZ
-	 n7QY47uCBsYJQ==
-Date: Wed, 12 Jun 2024 18:13:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: joswang <joswang1221@gmail.com>, Thinh.Nguyen@synopsys.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Jos Wang <joswang@lenovo.com>
-Subject: Re: [PATCH v4, 3/3] usb: dwc3: core: Workaround for CSR read timeout
-Message-ID: <20240612-balmy-deviancy-7d68aca2173c@spud>
-References: <20240601092646.52139-1-joswang1221@gmail.com>
- <20240612153922.2531-1-joswang1221@gmail.com>
- <2024061203-good-sneeze-f118@gregkh>
+	b=m4b2nDT+30zAJ957wVy6JfNicWjRb6NzPw96SZL/2Bmj225KyELj9hHjlePM1ndUf
+	 TcslL1jxexz28yc+sQba7/LjPhi8vbCrkPKAML1FKqeBnKnpjzyYJbxK7rkWc+TNPH
+	 sbSMIMu8540WoQS9/DlhiOMhYpOaP60iBCGDZFsw=
+Date: Wed, 12 Jun 2024 19:13:31 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, rafael@kernel.org, mcgrof@kernel.org,
+	russell.h.weight@intel.com, ojeda@kernel.org, alex.gaynor@gmail.com,
+	wedsonaf@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] rust: add abstraction for struct device
+Message-ID: <2024061254-scoured-gallantly-5e41@gregkh>
+References: <20240610180318.72152-2-dakr@redhat.com>
+ <ZmdID8AlXtoxUfC1@boqun-archlinux>
+ <ZmhPW9yq7y6jbmIg@pollux>
+ <2024061136-unbridle-confirm-c653@gregkh>
+ <Zmh3oN9sWamaYHOD@Boquns-Mac-mini.home>
+ <d74edb73-1dba-43f4-a50c-36354c39d758@redhat.com>
+ <2024061245-kangaroo-clothes-76e1@gregkh>
+ <ZmnAOfCUFkZqhDji@pollux>
+ <2024061214-dusk-channel-e124@gregkh>
+ <ZmnKXoBYf0qOcPU4@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iV5vRXpMzTX8/qdP"
-Content-Disposition: inline
-In-Reply-To: <2024061203-good-sneeze-f118@gregkh>
-
-
---iV5vRXpMzTX8/qdP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZmnKXoBYf0qOcPU4@pollux>
 
-On Wed, Jun 12, 2024 at 07:04:28PM +0200, Greg KH wrote:
-> On Wed, Jun 12, 2024 at 11:39:22PM +0800, joswang wrote:
-> > From: Jos Wang <joswang@lenovo.com>
-> >=20
-> > This is a workaround for STAR 4846132, which only affects
-> > DWC_usb31 version2.00a operating in host mode.
-> >=20
-> > There is a problem in DWC_usb31 version 2.00a operating
-> > in host mode that would cause a CSR read timeout When CSR
-> > read coincides with RAM Clock Gating Entry. By disable
-> > Clock Gating, sacrificing power consumption for normal
-> > operation.
-> >=20
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Jos Wang <joswang@lenovo.com>
-> > ---
-> > v1 -> v2:
-> > - add "dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk" patch,
-> >   this patch does not make any changes
-> > v2 -> v3:
-> > - code refactor
-> > - modify comment, add STAR number, workaround applied in host mode
-> > - modify commit message, add STAR number, workaround applied in host mo=
-de
-> > - modify Author Jos Wang
-> > v3 -> v4:
-> > - modify commit message, add Cc: stable@vger.kernel.org
->=20
-> This thread is crazy, look at:
-> 	https://lore.kernel.org/all/20240612153922.2531-1-joswang1221@gmail.com/
-> for how it looks.  How do I pick out the proper patches to review/apply
-> there at all?  What would you do if you were in my position except just
-> delete the whole thing?
+On Wed, Jun 12, 2024 at 06:18:38PM +0200, Danilo Krummrich wrote:
+> On Wed, Jun 12, 2024 at 05:50:42PM +0200, Greg KH wrote:
+> > On Wed, Jun 12, 2024 at 05:35:21PM +0200, Danilo Krummrich wrote:
+> > > On Wed, Jun 12, 2024 at 05:02:52PM +0200, Greg KH wrote:
+> > > > On Wed, Jun 12, 2024 at 04:51:42PM +0200, Danilo Krummrich wrote:
+> > > > > On 6/11/24 18:13, Boqun Feng wrote:
+> > > > > > On Tue, Jun 11, 2024 at 03:29:22PM +0200, Greg KH wrote:
+> > > > > > > On Tue, Jun 11, 2024 at 03:21:31PM +0200, Danilo Krummrich wrote:
+> > > > > > > > ...hence, I agree we should indeed add to the #Invariants and #Safety section
+> > > > > > > > that `->release` must be callable  from any thread.
+> > > > > > > > 
+> > > > > > > > However, this is just theory, do we actually have cases where `device::release`
+> > > > > > 
+> > > > > > @Danilo, right, it's only theorical, but it's good to call it out since
+> > > > > > it's the requirement for a safe Rust abstraction.
+> > > > > 
+> > > > > Similar to my previous reply, if we want to call this out as safety requirement
+> > > > > in `Device::from_raw`, we probably want to add it to the documentation of the C
+> > > > > `struct device`, such that we can argue that this is an invariant of C's
+> > > > > `struct device`.
+> > > > > 
+> > > > > Otherwise we'd have to write something like:
+> > > > > 
+> > > > > "It must also be ensured that the `->release` function of a `struct device` can
+> > > > > be called from any non-atomic context. While not being officially documented this
+> > > > > is guaranteed by the invariant of `struct device`."
+> > > > 
+> > > > In the 20+ years of the driver model being part of the kernel, I don't
+> > > > think this has come up yet, so maybe you can call the release function
+> > > > in irq context.  I don't know, I was just guessing :)
+> > > 
+> > > Ah, I see. I thought you know and it's defined, but just not documented.
+> > > 
+> > > This means it's simply undefined what we expect to happen when the last
+> > > reference of a device is dropped from atomic context.
+> > > 
+> > > Now, I understand (and would even expect) that practically this has never been
+> > > an issue. You'd need two circumstances, release() actually does something that
+> > > is not allowed in atomic context plus the last device reference is dropped from
+> > > atomic context - rather unlikely.
+> > > 
+> > > > 
+> > > > So let's not go adding constraints that we just do not have please.
+> > > > Same goes for the C code, so the rust code is no different here.
+> > > 
+> > > I agree we shouldn't add random constraints, but for writing safe code we also
+> > > have to rely on defined behavior.
+> > 
+> > As the rust code is relying on C code that could change at any point in
+> > time, how can that ever be "safe"?  :)
+> 
+> That's the same as with any other API. If the logic of an API is changed the
+> users (e.g a Rust abstraction) of the API have to be adjusted.
 
-I usually wouldn't admit to it, cos it means more for Rob or Krzysztof
-to look at, but deleting the thread is exactly what I did for the
-dt-binding part of it that I got sent.
+Agreed, just like any other in-kernel code, so there shouldn't be
+anything special here.
 
---iV5vRXpMzTX8/qdP
-Content-Type: application/pgp-signature; name="signature.asc"
+> > Sorry, this type of definition annoys me.
+> > 
+> > > I see two options:
+> > > 
+> > > (1) We globally (for struct device) define from which context release() is
+> > >     allowed to be called.
+> > 
+> > If you want, feel free to do that work please.  And then find out how to
+> > enforce it in the driver core.
+> 
+> If we *would* define non-atomic context only, we could enforce it with
+> might_sleep() for instance.
 
------BEGIN PGP SIGNATURE-----
+might_sleep() isn't always correct from what I remember.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmnXMQAKCRB4tDGHoIJi
-0l31AQCgnzGy8jovB3LsHP5I2sLvaVto6mJsRUkPndueYrwlvAD7Bdo6b+tRh5DM
-V4NutjrkmxkWXiKN+F6SyZXpkCGmHgw=
-=Sgty
------END PGP SIGNATURE-----
+> If we *would* define any context, there is nothing to enforce, but we'd need to
+> validate that no implementer of release() voids that.
 
---iV5vRXpMzTX8/qdP--
+Trying to validate that might be hard, again, I don't think it's worth
+it.
+
+> The former is a constaint you don't want to add, the latter a lot of work. What
+> if we at least define that implementers of release() must *minimally* make sure
+> that it can be call from any non-atomic context.
+> 
+> That'd be something we can rely on in Rust.
+
+Determining if you are, or are not, in atomic context is almost
+impossible in C, I don't know how you are going to do that at build time
+in Rust.  Good luck!
+
+> Oh, I fully agree with that. Let me try to explain a bit what this is about:
+> 
+> In Rust we have the `Send` and `Sync` marker traits. If a type (e.g. `Device`)
+> implements `Send` it means that it's safe to pass an instance of this type
+> between threads. Which is clearly something we want to do with a `Device`.
+> 
+> If I don't implement `Sync` for `Device` the compiler will prevent me from
+> sending it between threads, e.g. by disallowing me to put an instance of
+> `Device` into another data structure that is potentially passed between threads.
+> 
+> If I implement `Sync` I have to add a safety comment on why it is safe to pass
+> `Device` between threads. And here we have what Boqun pointed out: `Device` can
+> only be passed between threads when we're allowed to drop the last reference
+> from any thread. In the case of the kernel this can be any non-atomic context,
+> any context or any other subset. But I have to write something here that is
+> a defined rule and can be relied on.
+
+You really have two things here, a matrix of:
+	can transfer between threads
+	can call in irq context
+that are independent and not related to each other at all.
+
+Looks like Rust has built in support for the first.  And nothing for the
+second as that is a very kernel-specific thing.
+
+So let's not confuse the two please.  `Send` and `Sync` should be fine
+for a device pointer to be passed around, as long as the reference is
+incremented, as that's what all of the kernel C code does today.  Let's
+not worry about irq context at all, that's independent and can be
+handled at a later time, if at all, with a different "marking" as it's
+independent of the current two things.
+
+thanks,
+
+greg k-h
 
