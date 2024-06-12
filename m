@@ -1,185 +1,194 @@
-Return-Path: <linux-kernel+bounces-212023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B49905A2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:48:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42DB5905A2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DC321C228F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A5E281FAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720FC1822E3;
-	Wed, 12 Jun 2024 17:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE72C1822EC;
+	Wed, 12 Jun 2024 17:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRO7ksuj"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlK+VWVL"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F371CD38;
-	Wed, 12 Jun 2024 17:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419C4FBF3;
+	Wed, 12 Jun 2024 17:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718214471; cv=none; b=YnZKcWBSGrxpE3kgkGGc9KDJ2O3b4oVDKyhrpUEgbZALpL/iK03CZCaPtIuUYpsmt3H7+aS6iTNKG0HFmE7SvTqMUIP1aeneaCV4LgbR7uY09khg7jcadP/udi58M0YoeR8LMVt8Vw5rrzCOcfZjbp8fDRnn/qBUhE/bS0A9Nnk=
+	t=1718214538; cv=none; b=POet4kmikJI2W3IRPlOiCVHaaRTTL8tWI279hhaL9nr5hcLbsWU8FMBi3TsoyJn9qqbOL/5HS4EVYckOcnCV17YDsiaKIHH/BjKaI0+Vf8fUwTN4fpGHL5Q0zpCySZ6op4SrigaZBbz7HZP+AUMPj2HspLgnPr6bZp2+da/SaeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718214471; c=relaxed/simple;
-	bh=o7nMcAobM0fr+FE7YpoLA/9P61yx0cw3wLTk7ctxWdo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Phv7tfkaZMg0Yg61PecStEN66ElI92ewqfUEDOF7hmhUYuShSkeSNvLpbVKLM9acwPheGJEAXLmRJCOG5KjC6Giv1+lQkf4+0lGW+tDES9GSbp+5OFO+VYzo+r6lXypch6dJAlxmI2SrsyVzK9mmTAaPqHvBJeuBgOFE/sbP9/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRO7ksuj; arc=none smtp.client-ip=209.85.210.182
+	s=arc-20240116; t=1718214538; c=relaxed/simple;
+	bh=6bhxDbJUU+W20aR7IgKPzHvfQW5ALys80/3bU+QOtN8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i5LwxPf81yuqsN5SL88RBt6hXD/MW0SWd8AOr5OP1AQYdFuuBo0JLPqJeFx31JCG10+gOqFhGFbfjs+PtsFQp/QUsyt/bMoWWlQY1xfLAINI04AcLCfxPwovrN74nFvBDeyG+QZjA6FE87RN+twBUxxGTPMHsqN73So6a9Op5Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlK+VWVL; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7041a7d4beeso49594b3a.2;
-        Wed, 12 Jun 2024 10:47:50 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ebf961e504so463291fa.2;
+        Wed, 12 Jun 2024 10:48:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718214469; x=1718819269; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vt9UevBKC9qNAIKvJM91i6a6EnX6lWlczaKn9yOTblw=;
-        b=cRO7ksujgBiLAmksCumhSpJIoN/P85+MZCY12etfed1e+NOcgkyLtq5n98ZbdYynZ7
-         NBhakqsxAOiI5ABGVO6oGCPMvrpuxs8ZaopeqxO1YXThTkAiwh8LKUXJWc18iWKoGnIi
-         KUzgtrcdVZbXcuLCoMuXEBkFhb1b/tQxdqDms7N04IyiCTCU5+s+HiPpVwCmWE6i9Bbt
-         5XSI4fd5eYv2D7zHlCUVPf8mR6Qh4pZkTQhoa9R1C6sReUocvGPScZtAkTzhtwyReChC
-         lXOe7OC5UDcIdGSvnUr+6AOr8KEjTC4LaMP6s9Tr2QJ59GhqJV4q9SHJ3MAWjMgzfawu
-         MMmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718214469; x=1718819269;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718214534; x=1718819334; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vt9UevBKC9qNAIKvJM91i6a6EnX6lWlczaKn9yOTblw=;
-        b=hb/N5OUy3W/J0nebkh/q8GRVUaRbHATeK8PNtouYIhhcsVTqB62prbwUSETv82auTf
-         JYaDJXKN3Cj1VAP2sZkGq5V0bfr2eA1c5eURwc09zzeQLcCR28NdOFhVCDsOJyRTbz60
-         AFBY1O5QIj5gRY0ce9I2gXf2e89+qNq0puD+1Cow17ZSmrdnGDwlfPgEkj0vhz/nS9Ed
-         /rmKBgJrpsDRtiutQecXJh5OGsq2ig0uJSpaZ4Yc5AP7b6eJxCyq5fooVpuxvfcYkqe8
-         sVgj8QkcuycEBh+6TQn3UXM8wAiCN0WHDrDrNc4jYgV+1QulLH5jgP0PlxSYG+OWcRrR
-         +Eaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzZ8ZVzwnfCWCiHAEIvVRGmytlqmzG57pQxFeovGsovWCN4Kur1JWaqclfttZIC3SWwJc6zzZN4hEMX4jpWz9rXxarcxL2l7rpaMTGXQ4y2c7kDwW3l0Ulwn2xm3YhDJ9/gjbM4JLqzD9+TA7uEgbEiNcTLTowHWzqqIc3cOL79w==
-X-Gm-Message-State: AOJu0Ywx574ih6g+8PfJc+ZwAuXMudDCs5/e9UMdepzhiKNvi5qrlKy2
-	63rrxRfZBFaaPGKNqveBHWLjSZhlw1Pv3WAooT7h7xmI0r9izBr6
-X-Google-Smtp-Source: AGHT+IH7JfGiYuIz5nkfrgH04y3iCv5Ne4VmkNY6L600tIuH7CYcze57i7ddYDRdsllnvilT/+jsPg==
-X-Received: by 2002:a05:6a21:32a8:b0:1b3:8232:2079 with SMTP id adf61e73a8af0-1b8a9c8e246mr2947048637.52.1718214468169;
-        Wed, 12 Jun 2024 10:47:48 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:3077:52c7:3e56:8d61])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70426c9f2bfsm7745513b3a.219.2024.06.12.10.47.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 10:47:47 -0700 (PDT)
-Date: Wed, 12 Jun 2024 10:47:45 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: hauke@hauke-m.de, tsbogend@alpha.franken.de, rdunlap@infradead.org,
-	robh@kernel.org, bhelgaas@google.com, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
-Message-ID: <ZmnfQWFoIw5UCV-k@google.com>
-References: <20240607090400.1816612-1-ms@dev.tdt.de>
+        bh=sWRq3PAWFykXw/wg8pUX9HlfeUGFcprx4t2KU6HQHu8=;
+        b=XlK+VWVLEAdF6mNKfj8FvjvQUEO3PpTmYYGHpo3kssMprivZ3VZ9b5BKcia3FkFFUT
+         +3Z4yyoZM3ej+bwXfWpPWl2tXma6G/fHv9hUs2UNUoUsAExLb9NV0aVfQgaJzrWcR9ZS
+         zaHQk03HvuI3NQmV7r+7CHsxQjsNtneEHE+I8yYWfQ8+dWz6E85pEmOUmyLFHESURMMu
+         z2IVZY2Mv1NRBdgS6zF959CA0Uq3MVwDr4CteAiGvFcD8Q2NmSztJdyDSky0TbhqjGMI
+         sgIHx/xYgo+PUnKN6rTYg8/AcKVhaRGL5Zbx6gCs0jMg9tGCappxGefmf6fzQIb7IqBP
+         SKFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718214534; x=1718819334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sWRq3PAWFykXw/wg8pUX9HlfeUGFcprx4t2KU6HQHu8=;
+        b=KY+h0R5j6dt/y/jt/RJW8CWTbq0EEQwt/Qiov3fUzjFGlNdADodM0Iyy8TVLMeBEQH
+         iALyDVmOsxNPQudrLdhMumihAHhGoFeKlUX/oVWVWcgQuuqBfJVlQ99HjDz0IvM++T5t
+         QLVUfZviavwVX5idxIeFMDQwRwdpwoV8tjCDU/rbvjI4QymIKVI6Kh66NawTmytgaHec
+         beUUT0RJJtVdQiU3sjImaJLAH2UkjDIt9rysELRVelztxNHDFTqRDUhNoTsiGTLBWe//
+         03mJEFwrWIAZtPUwXG9lzMQNe1Xkz3BiIjwsyZi0ctGxEtS/wpSHTzef6M/hxrrVJvaH
+         MbQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpjZW3zRi/m61ktaQvrd0EWh3D59SV7KGekx9c5sYmoNxA3j93eSyK0VqZ7a++rlMAXbDhB1dFjL+6IWQVvH/HIhPtAvI6N5OujTnR8UJMncuUM2nZofaqfqZQcBcdYAvRocBoqjnAkfdpX/VhiqJAQ6F4erI/r4/v1bOaX9oRCw==
+X-Gm-Message-State: AOJu0YyTjt1P44MaiFg9569xqUuFPRKNd1Jjzqhq6vcVFxyl/6ful13a
+	mxyfP+XiM/IQC1ufHMgCf9ikrEifTIhPcEFDHxKyXqmkD1+Ljb+v9WOJIckoGcEtQw3oQJGnZWa
+	AT/wl8cqsDarvHy51am1ldEhh+jA=
+X-Google-Smtp-Source: AGHT+IHA55C4BDttu7u2HKaLoMXFIz1/aGOTxtg5E/j5naZlPku4zxMaSGvkX/d3yoCc442ECzpUGWN8vYj/jbiTdss=
+X-Received: by 2002:a05:651c:20c:b0:2eb:ec25:c4af with SMTP id
+ 38308e7fff4ca-2ebfc9499ebmr15663611fa.50.1718214534010; Wed, 12 Jun 2024
+ 10:48:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607090400.1816612-1-ms@dev.tdt.de>
+References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-4-andrii@kernel.org>
+ <ZmOKMgZn_ki17UYM@gmail.com> <CAEf4BzYAQwX0AQ_fbcB9kVBj3vpx0-5pPPZNYKL4VjnX_eYKpg@mail.gmail.com>
+In-Reply-To: <CAEf4BzYAQwX0AQ_fbcB9kVBj3vpx0-5pPPZNYKL4VjnX_eYKpg@mail.gmail.com>
+From: Andrei Vagin <avagin@gmail.com>
+Date: Wed, 12 Jun 2024 10:48:42 -0700
+Message-ID: <CANaxB-zLkvXWS3Fg5Ps463iF7Cb1UVr+FwKb65VFRATqbgnW+A@mail.gmail.com>
+Subject: Re: [PATCH v3 3/9] fs/procfs: implement efficient VMA querying API
+ for /proc/<pid>/maps
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, liam.howlett@oracle.com, surenb@google.com, 
+	rppt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Marton,
+On Mon, Jun 10, 2024 at 1:17=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Fri, Jun 7, 2024 at 11:31=E2=80=AFPM Andrei Vagin <avagin@gmail.com> w=
+rote:
+> >
+> > On Tue, Jun 04, 2024 at 05:24:48PM -0700, Andrii Nakryiko wrote:
+> > > /proc/<pid>/maps file is extremely useful in practice for various tas=
+ks
+> > > involving figuring out process memory layout, what files are backing =
+any
+> > > given memory range, etc. One important class of applications that
+> > > absolutely rely on this are profilers/stack symbolizers (perf tool be=
+ing one
+> > > of them). Patterns of use differ, but they generally would fall into =
+two
+> > > categories.
+> > >
+> > > In on-demand pattern, a profiler/symbolizer would normally capture st=
+ack
+> > > trace containing absolute memory addresses of some functions, and wou=
+ld
+> > > then use /proc/<pid>/maps file to find corresponding backing ELF file=
+s
+> > > (normally, only executable VMAs are of interest), file offsets within
+> > > them, and then continue from there to get yet more information (ELF
+> > > symbols, DWARF information) to get human-readable symbolic informatio=
+n.
+> > > This pattern is used by Meta's fleet-wide profiler, as one example.
+> > >
+> > > In preprocessing pattern, application doesn't know the set of address=
+es
+> > > of interest, so it has to fetch all relevant VMAs (again, probably on=
+ly
+> > > executable ones), store or cache them, then proceed with profiling an=
+d
+> > > stack trace capture. Once done, it would do symbolization based on
+> > > stored VMA information. This can happen at much later point in time.
+> > > This patterns is used by perf tool, as an example.
+> > >
+> > > In either case, there are both performance and correctness requiremen=
+t
+> > > involved. This address to VMA information translation has to be done =
+as
+> > > efficiently as possible, but also not miss any VMA (especially in the
+> > > case of loading/unloading shared libraries). In practice, correctness
+> > > can't be guaranteed (due to process dying before VMA data can be
+> > > captured, or shared library being unloaded, etc), but any effort to
+> > > maximize the chance of finding the VMA is appreciated.
+> > >
+> > > Unfortunately, for all the /proc/<pid>/maps file universality and
+> > > usefulness, it doesn't fit the above use cases 100%.
+> > >
+> > > First, it's main purpose is to emit all VMAs sequentially, but in
+> > > practice captured addresses would fall only into a smaller subset of =
+all
+> > > process' VMAs, mainly containing executable text. Yet, library would
+> > > need to parse most or all of the contents to find needed VMAs, as the=
+re
+> > > is no way to skip VMAs that are of no use. Efficient library can do t=
+he
+> > > linear pass and it is still relatively efficient, but it's definitely=
+ an
+> > > overhead that can be avoided, if there was a way to do more targeted
+> > > querying of the relevant VMA information.
+> > >
+> > > Second, it's a text based interface, which makes its programmatic use=
+ from
+> > > applications and libraries more cumbersome and inefficient due to the
+> > > need to handle text parsing to get necessary pieces of information. T=
+he
+> > > overhead is actually payed both by kernel, formatting originally bina=
+ry
+> > > VMA data into text, and then by user space application, parsing it ba=
+ck
+> > > into binary data for further use.
+> >
+> > I was trying to solve all these issues in a more generic way:
+> > https://lwn.net/Articles/683371/
+> >
+>
+> Can you please provide a tl;dr summary of that effort?
 
-On Fri, Jun 07, 2024 at 11:04:00AM +0200, Martin Schiller wrote:
-> Commit 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API") not
-> only switched to the gpiod API, but also inverted / changed the polarity
-> of the GPIO.
-> 
-> According to the PCI specification, the RST# pin is an active-low
-> signal. However, most of the device trees that have been widely used for
-> a long time (mainly in the openWrt project) define this GPIO as
-> active-high and the old driver code inverted the signal internally.
-> 
-> Apparently there are actually boards where the reset gpio must be
-> operated inverted. For this reason, we cannot use the GPIOD_OUT_LOW/HIGH
-> flag for initialization. Instead, we must explicitly set the gpio to
-> value 1 in order to take into account any "GPIO_ACTIVE_LOW" flag that
-> may have been set.
+task_diag is a generic interface designed to efficiently gather
+information about running processes. It addresses the limitations of
+traditional /proc/PID/* files. This binary interface utilizes the
+netlink protocol, inspired by the socket diag interface. Input is
+provided as a netlink message detailing the desired information, and the
+kernel responds with a set of netlink messages containing the results.
+Compared to struct-based interfaces like this one or statx, the
+netlink-based approach can be more flexible, particularly when
+dealing with numerous optional parameters.  BTW, David Ahern made
+some adjustments in task_diag to optimize the same things that are
+targeted here.
 
-Do you have example of such boards? They could not have worked before
-90c2d2eb7ab5 because it was actively setting the reset line to physical
-high, which should leave the device in reset state if there is an
-inverter between the AP and the device.
+task_diag hasn't been merged to the kernel. I don't remember all the
+arguments, it was some time ago. The primary concern was the
+introduction of redundant functionality. It would have been the second
+interface offering similar capabilities, without a plan to deprecate the
+older interface. Furthermore, there wasn't sufficient demand to justify
+the addition of a new interface at the time.
 
-> 
-> In order to remain compatible with all these existing device trees, we
-> should therefore keep the logic as it was before the commit.
-
-With gpiod API operating with logical states there's still difference in
-logic:
-
-	gpiod_set_value_cansleep(reset_gpio, 1);
-
-will leave GPIO at 1 if it is described as GPIO_ACTIVE_HIGH (which is
-apparently what you want for boards with broken DTS) but for boards
-that accurately describe GPIO as GPIO_ACTIVE_LOW it well drive GPIO to
-0, leaving the card in reset state.
-
-You should either use gpiod_set_raw_value_calsleep() or we can try and
-quirk it in gpiolib (like we do for many other cases of incorrect GPIO
-polarity descriptions and which is my preference).
-
-This still leaves the question about boards that require inversion. Are
-you saying that they have real signal inverter on the line or that their
-device trees correctly describe the signal as GPIO_ACTIVE_LOW?
-
-BTW, please consider getting DTS trees for your devices into mainline.
-Why do you keep them separate?
-
-> 
-> Fixes: 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
-> ---
->  arch/mips/pci/pci-lantiq.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/mips/pci/pci-lantiq.c b/arch/mips/pci/pci-lantiq.c
-> index 68a8cefed420..0844db34022e 100644
-> --- a/arch/mips/pci/pci-lantiq.c
-> +++ b/arch/mips/pci/pci-lantiq.c
-> @@ -124,14 +124,14 @@ static int ltq_pci_startup(struct platform_device *pdev)
->  		clk_disable(clk_external);
->  
->  	/* setup reset gpio used by pci */
-> -	reset_gpio = devm_gpiod_get_optional(&pdev->dev, "reset",
-> -					     GPIOD_OUT_LOW);
-> +	reset_gpio = devm_gpiod_get_optional(&pdev->dev, "reset", GPIOD_ASIS);
->  	error = PTR_ERR_OR_ZERO(reset_gpio);
->  	if (error) {
->  		dev_err(&pdev->dev, "failed to request gpio: %d\n", error);
->  		return error;
->  	}
->  	gpiod_set_consumer_name(reset_gpio, "pci_reset");
-> +	gpiod_direction_output(reset_gpio, 1);
->  
->  	/* enable auto-switching between PCI and EBU */
->  	ltq_pci_w32(0xa, PCI_CR_CLK_CTRL);
-> @@ -194,10 +194,10 @@ static int ltq_pci_startup(struct platform_device *pdev)
->  
->  	/* toggle reset pin */
->  	if (reset_gpio) {
-> -		gpiod_set_value_cansleep(reset_gpio, 1);
-> +		gpiod_set_value_cansleep(reset_gpio, 0);
->  		wmb();
->  		mdelay(1);
-> -		gpiod_set_value_cansleep(reset_gpio, 0);
-> +		gpiod_set_value_cansleep(reset_gpio, 1);
->  	}
->  	return 0;
->  }
-> -- 
-> 2.39.2
-> 
-
-Thanks.
-
--- 
-Dmitry
+Thanks,
+Andrei
 
