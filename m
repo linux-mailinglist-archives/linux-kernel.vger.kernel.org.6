@@ -1,125 +1,119 @@
-Return-Path: <linux-kernel+bounces-211763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C1E905686
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:12:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD2A905688
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3218F28733D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:12:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622BC1F2524D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BBC1822E6;
-	Wed, 12 Jun 2024 15:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB7A181D1B;
+	Wed, 12 Jun 2024 15:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZD5NFSUX"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="P7r/Zs9H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C07417FADE
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D551717F502
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718204955; cv=none; b=nc5wJ+uMVmbFxsWjR2Zlt+Mg5snBoasoZu6ODIG+HQh6PDNKIhtnrSVZUqvTO4FD20+DOTvyGKPTH2zUH4ZE1PAjJTZRwVVW30SHNAa6Lm/X24EHfSGfith29em8H6oCdkoOiVLMK1/gR5cCzbubXbH8s/I/sgzuDfKCt6E3gAc=
+	t=1718205005; cv=none; b=IC0ocESZf+PpPMRyQFSlVrKNzK3PSqJ/lNujZ9GX+RhgI8Fn+BEUfY8Q4iUKYNwuP34gu19brfD3R4AZFySpaqDUYrA2nUf6I+LdMTUZx6LQzDy3hvg9Pamq6cGyEpnIw7/4tUyO5B1RJdF+Df6pLbFdIddOxqORO3DD2NDjhQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718204955; c=relaxed/simple;
-	bh=9vxzMMsiKlsHxS6wCrhX54/bINYp4thihdaS/ecmOVc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=msxZ2a7wfyKQQx3whONZNqKbNxbww7f7fA4Ao/lwZwe9Z+a+KVwQUy50JyVaUrRHphTRNqWFf04rKi15lsFj2nBis5lYP0IKGPB21AbZV1dZqUf3ghCFkFN+S7xsJcs28YBOaMiDm+YlnnAlO3UPLoTPPNlA1btuU3HbUmzZv2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZD5NFSUX; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6aedd5167d1so12904166d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718204952; x=1718809752; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uIyFJZA41hTOfcR4RkgAGQA584hTqBRBqK+Eq7CovWA=;
-        b=ZD5NFSUXLSbGMKy+BIXNBxNaLDmd/jirh9Z5ErOnhae0Ds4GmQ9pH/GU1DfUND4UJ/
-         6rcMDO4QpQHVUig20PQsdxNbvNc704UtVUi+76TtX20ilHRkN8mePhkLRY8yTptpC3zB
-         eZtZWyBFcu3SrZTZmfq28LQAIIHES/Mxf7PsvPqWfg0zlgEbY/dbvL1Y/svmnKT48wwa
-         ElFcnK1vyjhSpeGHQwzhh+YbNcQec/E1yDptz2tqe5DDIfmOURy/U/CTezlbXcOJifop
-         YiwvJOuNWvMOb6iG60UaURQW5plcUXooxngvBPfJ1bGnOeBcDYChA5WrDRsqhblIQ1jp
-         ecwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718204952; x=1718809752;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uIyFJZA41hTOfcR4RkgAGQA584hTqBRBqK+Eq7CovWA=;
-        b=B6inwXowXrHNMkUyf6w3xl+v4Z0U75urUc/hM5xxAsfuE/qdMIvdSU4fSWug2DzAod
-         0QNw3Rwny9/wbJPzRX1MSoMQlbWieWJf7BpuVuX62+SBiIMT4YTzLvPLmStgN/l0jA6A
-         cCpLknSyIPxpDj4kbo2Gr5SI37VLAnHFBRKRQynd1axnTGWSzjtnD+3EAggyRIxYb+NK
-         JtDdu7RyFiKs7pa1Rwjy8aDJ4+kk6K8AnERAWV9XwFaws+uXUauv+jKzJ2f4T0yJGDRR
-         V4RShJ/T0AulCenBCnk3Nf5k57QYfcF6fpqDsgLAhklaXuAZfQyLzs4ojlgIALQdrXaB
-         sVhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGX5QXZeP1rEbppbW5fVsMl//Gl1JKANAcMtQfIKqRiSXBGAO+w+WxziCfIP1ChVCY82ixEEFSBD/5KW6qsBqIp+jcs5GeYXqg90eZ
-X-Gm-Message-State: AOJu0YzuO6pNAu+TQ3ALrYtGj68ZXluaeKNIBTnldEDG/ecvpWfgQuKi
-	pJiREQAvkqNlpXs1VdX6JVwetNr9gyqdgX7FMfq31vDikvif2SZAcha75jjKfDbJhMWrd7Iy2iI
-	5GtWbvwmQ4y4QdnRgduoSXX+Bwxc=
-X-Google-Smtp-Source: AGHT+IGbzRrnDX5kKP7qBeH4xqlcvLU/jDo/s/lK29Ef63ehaomxr9IhwDzedzhA2rct5ZxGbdOqdEr5x4CobdVgeYU=
-X-Received: by 2002:a05:6214:5992:b0:6b0:7660:7955 with SMTP id
- 6a1803df08f44-6b1a61ad884mr21991576d6.37.1718204952452; Wed, 12 Jun 2024
- 08:09:12 -0700 (PDT)
+	s=arc-20240116; t=1718205005; c=relaxed/simple;
+	bh=ZuEtNZwwOHtkdd1OwgkAj9rzmJGCtDmVV3FUpnzB+QE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VEbPXEEeGn6qIsQORQOyt4mybY+M1zhBRwqb9gO+6kzhna1zVkY4aoOoXw8nxUOGo04FYeqc6xTOIh+L/FuEtHqqwLbh8JHAv3/SXMD2v9kaIkXmRam6iJMvn7dKt8M0tBb2TR4MyQoTaHdqRVp4Q38ok0tCMwj4kG1i7FgtitQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=P7r/Zs9H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AFB9C116B1;
+	Wed, 12 Jun 2024 15:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718205005;
+	bh=ZuEtNZwwOHtkdd1OwgkAj9rzmJGCtDmVV3FUpnzB+QE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P7r/Zs9HIew4lkEhYW3pw+95q83DX4q0OmpjzxrgLFwyKblFd3mnD3y5TVEILW2Yc
+	 2HuukgnaTOBLnFu6Of+pE7zBQcB03dcii9IWgRiWEz+67YFKmV6plqDmc4uWNAtzwj
+	 ZVw9Ffl2Y65cNuk5v6fToWCMr4JOojnRCWb2Bj0E=
+Date: Wed, 12 Jun 2024 17:10:02 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	=?iso-8859-1?Q?Jos=E9?= Roberto de Souza <jose.souza@intel.com>,
+	linux-kernel@vger.kernel.org, intel-xe@lists.freedesktop.org,
+	Mukesh Ojha <quic_mojha@quicinc.com>,
+	Jonathan Cavitt <jonathan.cavitt@intel.com>
+Subject: Re: [PATCH v6 1/2] devcoredump: Add dev_coredumpm_timeout()
+Message-ID: <2024061248-scanning-backlight-da0f@gregkh>
+References: <20240611174716.72660-1-jose.souza@intel.com>
+ <49c2fbdc91d128c5249d50d016d97c8e5162f7b7.camel@sipsolutions.net>
+ <Zmm2jC2nx6gZ2WOn@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612124750.2220726-1-usamaarif642@gmail.com> <20240612124750.2220726-3-usamaarif642@gmail.com>
-In-Reply-To: <20240612124750.2220726-3-usamaarif642@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Wed, 12 Jun 2024 08:09:01 -0700
-Message-ID: <CAKEwX=Nh4hudrcqj5-a4FhE7kZRTKWZs0aq64b0KPnu3Dm=QaQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] mm: remove code to handle same filled pages
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, shakeel.butt@linux.dev, 
-	david@redhat.com, ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
-	yosryahmed@google.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zmm2jC2nx6gZ2WOn@intel.com>
 
-On Wed, Jun 12, 2024 at 5:47=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
- wrote:
->
-> With an earlier commit to handle zero-filled pages in swap directly,
-> and with only 1% of the same-filled pages being non-zero, zswap no
-> longer needs to handle same-filled pages and can just work on compressed
-> pages.
->
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> ---
->  mm/zswap.c | 86 +++++-------------------------------------------------
->  1 file changed, 8 insertions(+), 78 deletions(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index b9b35ef86d9b..ca8df9c99abf 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -44,8 +44,6 @@
->  **********************************/
->  /* The number of compressed pages currently stored in zswap */
->  atomic_t zswap_stored_pages =3D ATOMIC_INIT(0);
-> -/* The number of same-value filled pages currently stored in zswap */
-> -static atomic_t zswap_same_filled_pages =3D ATOMIC_INIT(0);
+On Wed, Jun 12, 2024 at 10:54:04AM -0400, Rodrigo Vivi wrote:
+> On Wed, Jun 12, 2024 at 02:02:37PM +0200, Johannes Berg wrote:
+> > On Tue, 2024-06-11 at 10:47 -0700, José Roberto de Souza wrote:
+> > > Add function to set a custom coredump timeout.
+> > > 
+> > > For Xe driver usage, current 5 minutes timeout may be too short for
+> > > users to search and understand what needs to be done to capture
+> > > coredump to report bugs.
+> > > 
+> > > We have plans to automate(distribute a udev script) it but at the end
+> > > will be up to distros and users to pack it so having a option to
+> > > increase the timeout is a safer option.
+> > > 
+> > > v2:
+> > > - replace dev_coredump_timeout_set() by dev_coredumpm_timeout() (Mukesh)
+> > > 
+> > > v3:
+> > > - make dev_coredumpm() static inline (Johannes)
+> > > 
+> > > v5:
+> > > - rename DEVCOREDUMP_TIMEOUT -> DEVCD_TIMEOUT to avoid redefinition
+> > > in include/net/bluetooth/coredump.h
+> > > 
+> > > v6:
+> > > - fix definition of dev_coredumpm_timeout() when CONFIG_DEV_COREDUMP
+> > > is disabled
+> > 
+> > Got to v6, heh.
+> > 
+> > I still don't think this is _right_, but I guess I'm OK with giving you
+> > rope to hang yourself ;-)
+> 
+> I do see your point. But with the udev in place, 5 min or 1 hour it shouldn't
+> matter right? But for users without the udev script then a long time is better
+> to react and learn how to capture the very first GPU hang information.
+> 
+> > 
+> > Acked-by: Johannes Berg <johannes@sipsolutions.net>
+> 
+> Thank you
+> 
+> > 
+> > Seems like you really should've CC'ed Greg though since these things
+> > usually went through his tree, so if you want to take them through yours
+> > he really should be at least aware ...
+> 
+> Indeed
+> 
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> Greg, ack on getting it through drm?
 
-Can we re-introduce this counter somewhere? I have found this counter
-to be valuable in the past, and would love to keep it. For instance,
-in a system where a lot of zero-filled pages are reclaimed, we might
-see an increase in swap usage. Having this counter at hands will allow
-us to trace the source of the swap usage more easily. I *suppose* you
-can do elimination work (check zswap usage, check disk swap usage
-somehow - I'm not sure, etc., etc.), but this would be much more
-direct and user-friendly.
+Fine with me:
 
-Not *entirely* sure where to expose this though. Seems a bit specific
-for vmstat. Maybe as a new debugfs directory?
-
-This doesn't have to be done in this patch (or this series even) - but
-please consider this for follow-up work at least :)
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
