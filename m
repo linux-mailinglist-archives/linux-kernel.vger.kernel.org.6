@@ -1,328 +1,174 @@
-Return-Path: <linux-kernel+bounces-211070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B294904CB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:26:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59E4904CBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3C41F25494
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:26:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C551C23B66
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1C816C445;
-	Wed, 12 Jun 2024 07:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E218416D30D;
+	Wed, 12 Jun 2024 07:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D0REuxv0"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FMyplx7m"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C987D412;
-	Wed, 12 Jun 2024 07:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EF454FB5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718177025; cv=none; b=ejJcFbRuli+5LW79Z+6d9dh1/Mkyk2rZyq7WbjY42i1dtJSFIXPEFgKHO6L5x4XFknogsal/qYEO6i8g+SHaT++BEe5HCr9G350jYDqFqI3x0n2sSmGinI75CWOmALImgxKsyO9Bd8i3jEOj/gbjDBCpBzonE5niJqkiTM6CrkY=
+	t=1718177038; cv=none; b=mWK+hORyvwTdx9vh+rAT8Lwrwp/2t1BVe1LphlZMsoPZvNgcqmm1XZwLgR87L7DLID9WHRLTvU6gjzp8VqA0BfUn4HYF5ZnYgUTJiTlALHVO0LNrs7vs0xkOwxN3VNo5/GJYsjzo5QAdPTwkLfFhcB3Tr3yVqsqXX8o4X33QzDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718177025; c=relaxed/simple;
-	bh=y9mF+JpF82gFZ7/11rrW03SsbP5vOzAjWt7DDYM8LqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1WuhWhjOzhBWleL7l33oYMU7zlva7mINseY5C07G8tqG3gsgYQaawt1KZ00M6Lrpb4XAX/Bhbf/oRgnkZKWIEVFIbC0PKpJZbwvkNP5s0/SRMETHGSXSod38xGknoR5ackA67jNTZvtIPfVD3FwfVpojgYhKWmML8bvSgSjoxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D0REuxv0; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57ca8e45a1bso489484a12.0;
-        Wed, 12 Jun 2024 00:23:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718177022; x=1718781822; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zzoZ2C0guQAGIJY+WDpPhVUMExli5mSXJ8fvKFTkBhw=;
-        b=D0REuxv0DCfBochDjS7RcgE3H7p3V4hdflD+WUVe785xX0teBtApfC92TUSr7lWbfO
-         +0fSwRswvYu6tYVQPRyzX5p6yF27atUTEyX2Nmia7u+aJ5SpdqTcloVlTZ3heq2e8jQj
-         PFUVGmLpjCaEDvMehvArQR3GdYBHA1ddKx6U6Ujrknlf2LUi5BsOlXezc+Fbl5ake/9G
-         4zNF0N9Q38e/vwM34VrvvqXWVCgEWemuUZsx5FFoEnKBzjKjJ2f9L4ZQRQgwyjWF3PwC
-         KUOmLq0W8X0Gd69LSLmANPI3nlMQCM0q45aVc5PYN7D2xFDFrVb55Z+F46nrLyFdCt5B
-         OdBA==
+	s=arc-20240116; t=1718177038; c=relaxed/simple;
+	bh=zyeH7hpVXD5gOotVuNMmMsh0jgjOfSeYs9k3afJeouA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uLmI3Q76AJ6PVlMKVuNGcXYfOaGpeY9LOhw6+PcREzhQf1wlwbP4ezZjHxXH+v0PtyNMlQlRcm16pX2HqI0ChwuWaM1x/dIMp3SHCanOD7yC98a+yEbG/Ai8hEW32jK6B+sz28tL/sTIjqZmHjhKSM/v46fKljwC0OJaLJ4HDaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FMyplx7m; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718177035;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=79mN57PblL//gRfMCssaahRjclAPb9+bPKf2dv1SbGA=;
+	b=FMyplx7m1W4SKGK+6N2jUwfMh5B4xXvdY5v9G8iJEK8p2nvnsq6Hp27v5sByMLs6w55ec2
+	AhufmTXRDbAdugxkJ4WXd8ikzY24LAht4dH5iigr9b+8iqAuxFDAQzQfh0OwB6y7gRF0BR
+	uKBuo70R+jeIpYdcHLoVBkuypYRZkgI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-154-93ke1z50OtmGCzACa_vj6Q-1; Wed, 12 Jun 2024 03:23:53 -0400
+X-MC-Unique: 93ke1z50OtmGCzACa_vj6Q-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4217f941ca8so23813135e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 00:23:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718177022; x=1718781822;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zzoZ2C0guQAGIJY+WDpPhVUMExli5mSXJ8fvKFTkBhw=;
-        b=YMLojAPS+zBfhR0N1ZmlduDiqUuKBvVh7g1ArJCv9LYmCldGx9kqfMfou5KdgNgxIr
-         HDrqKhzEfFxMgN1d1h7T9UU17ctFmgt0WX7jRGv7Cu0HMnBAGoT4LOvkTDaIt5+rqll3
-         9Kc9IYA7w8tHk7xPpAy62B5PxEDJAfb9HjxPphKX3W6YnplCeYbDt+aLxWzoFVcOuert
-         tODAYj6AWiZnE6p/wPA5uPvVB9en7C/eN5EnGu59lNOB+3MRB2aXMe7EpEJFUmGWBG2R
-         33YGcd9pN8jrimb26mUuTFuGpj78eDPdicCOCLwPAg0ERVUkW4Bm0O+CTZhr24SSbqE9
-         aE5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWevKg5PI70bYBmugZxSPek0LUY8Jt0jxSCmvfvGgZtBeo5WEGntN2LxOob4+rGL34O9ERMahW8gSgEbk3AXzHbD8gLWKn0uBKWW7p3IhiagM+b8YqH6BcktKxuQf5uJLdI54E3GfUFLDzlJArjcUZPI82iwWaF4Pp42FqRu1MBuvcUFnpEfs7BWEijCKcoAo6S
-X-Gm-Message-State: AOJu0YxrypJNlq/qnIbjf6do7tk7U5kE0eFPylytS/rAcg2ifbQQvZ19
-	/xPz8sNqQyaMfGwz4c0NwoC9rUS4LVIXijfwTTT5eL02n+GW8SEG
-X-Google-Smtp-Source: AGHT+IGNIbOiKuBi8XBaHBBWZFuuSUm5/fxYrK1eNRgIcIp/HAFQQAj2B1ndW70Hhj705NIJRAC8gQ==
-X-Received: by 2002:a50:99d9:0:b0:57c:610a:6e85 with SMTP id 4fb4d7f45d1cf-57caa9bc77emr933866a12.27.1718177022047;
-        Wed, 12 Jun 2024 00:23:42 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c7156e6c2sm6912641a12.9.2024.06.12.00.23.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Jun 2024 00:23:41 -0700 (PDT)
-Date: Wed, 12 Jun 2024 07:23:40 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	Ross Zwisler <zwisler@google.com>, wklin@google.com,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Linus Torvalds <torvalds@linuxfoundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Mike Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH v2 1/2] mm/memblock: Add "reserve_mem" to reserved named
- memory at boot up
-Message-ID: <20240612072340.hsdxusmszixebvrt@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240606150143.876469296@goodmis.org>
- <20240606150316.751642266@goodmis.org>
- <20240611144029.h7egl4aif5mjlrwf@master>
- <20240611111218.71e57e0f@gandalf.local.home>
+        d=1e100.net; s=20230601; t=1718177032; x=1718781832;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=79mN57PblL//gRfMCssaahRjclAPb9+bPKf2dv1SbGA=;
+        b=AwZiaK4aQkFIupTci9aXeCDSqhJzb2v21PSVtshUgl2cZ4wS5TfGs2vbEneAIgX318
+         +ESd5WhK1CpBfTjWAsk3ZTEqt3rL7nIYeLMNIBvKfeMp22qQD1lN40r2T0x+ZbVC1ppN
+         cUW1vbq1dTV933VgAYpAJSaBfcnDI3HTb8UVe7ThrHP0QCnvQygA65UzURN5b4i/DeKU
+         mWMCErvkvlMci86lhi4kaXct8Ndu89iA2XBETaWa8/R2Xo+5wj37p/PDQstispKHrfda
+         kqAkzIdMjOn1/Q+zGw4lCa3e4wZtFWOmDf/Ll5yzpPxn43xgXjU28Z0OM2g6iDm28vs/
+         ezCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuF2KaaWKGtQSNQN2Sq5q6E9SvVkwi1coL1nXfyExEZAv9PlNPu2GJ8KV/bbPgTd3B+ZiM93x8v4Sh557ns8DFUyr3wZaOJek7yd4c
+X-Gm-Message-State: AOJu0YzUSwrnM8YwmL+oCn0M8eMyo6TN71urOUuSXsroZidKRkU3A3Ib
+	C6eB4GulrDRQzAdEJ+ajKV6uK8sLbgHSXPs9G4tZs1Vz1jJJSQdS2bEPidM3rMtlFgV3TdtgQmW
+	Zg8tUgyt4yaXDPQRbTkR96bGvLamvx4nxN2zxqKpvbFgDldDn9Xj9KSmORfm2Xq/W9uwD7g==
+X-Received: by 2002:a05:600c:138d:b0:421:5966:ca40 with SMTP id 5b1f17b1804b1-422863b4838mr11414535e9.10.1718177032181;
+        Wed, 12 Jun 2024 00:23:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtj8PBXU2plzI2QtlIeeLdg/YMNZ/9oe3xZYexWTW7W2BruHYPTtRrm2ij9fTk7U2doAjf8w==
+X-Received: by 2002:a05:600c:138d:b0:421:5966:ca40 with SMTP id 5b1f17b1804b1-422863b4838mr11414285e9.10.1718177031531;
+        Wed, 12 Jun 2024 00:23:51 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c702:bf00:abf6:cc3a:24d6:fa55? (p200300cbc702bf00abf6cc3a24d6fa55.dip0.t-ipconnect.de. [2003:cb:c702:bf00:abf6:cc3a:24d6:fa55])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2169fc45sm8245554f8f.10.2024.06.12.00.23.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 00:23:51 -0700 (PDT)
+Message-ID: <03f1f5a5-e2eb-4dec-9c03-5d00243ee485@redhat.com>
+Date: Wed, 12 Jun 2024 09:23:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611111218.71e57e0f@gandalf.local.home>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH unstable] mm: rmap: abstract updating per-node and
+ per-memcg stats fix
+To: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Yosry Ahmed <yosryahmed@google.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <49914517-dfc7-e784-fde0-0e08fafbecc2@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <49914517-dfc7-e784-fde0-0e08fafbecc2@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 11, 2024 at 11:12:18AM -0400, Steven Rostedt wrote:
->On Tue, 11 Jun 2024 14:40:29 +0000
->Wei Yang <richard.weiyang@gmail.com> wrote:
->
->Missed this just before sending out v3 :-p
->
->> >diff --git a/mm/memblock.c b/mm/memblock.c
->> >index d09136e040d3..a8bf0ee9e2b4 100644
->> >--- a/mm/memblock.c
->> >+++ b/mm/memblock.c
->> >@@ -2244,6 +2244,103 @@ void __init memblock_free_all(void)
->> > 	totalram_pages_add(pages);
->> > }
->> > 
->> >+/* Keep a table to reserve named memory */
->> >+#define RESERVE_MEM_MAX_ENTRIES		8
->> >+#define RESERVE_MEM_NAME_SIZE		16  
->>                                         ^
->> Suggest to align with previous line.
->
->It is. But because the patch adds a "+", it pushed the "8" out another tab.
->
->> 
->> >+struct reserve_mem_table {
->> >+	char			name[RESERVE_MEM_NAME_SIZE];
->> >+	unsigned long		start;
->> >+	unsigned long		size;  
->> 
->> phys_addr_t looks more precise?
->
->For just the start variable, correct? I'm OK with updating that.
->
+On 12.06.24 07:10, Hugh Dickins wrote:
+> /proc/meminfo is showing ridiculously large numbers on some lines:
+> __folio_remove_rmap()'s __folio_mod_stat() should be subtracting!
+> 
+> Signed-off-by: Hugh Dickins <hughd@google.com>
+> ---
+> A fix for folding into mm-unstable, not needed for 6.10-rc.
+> 
+>   mm/rmap.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1567,7 +1567,7 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>   		    list_empty(&folio->_deferred_list))
+>   			deferred_split_folio(folio);
+>   	}
+> -	__folio_mod_stat(folio, nr, nr_pmdmapped);
+> +	__folio_mod_stat(folio, -nr, -nr_pmdmapped);
+>   
+>   	/*
+>   	 * It would be tidy to reset folio_test_anon mapping when fully
 
-Both start and size. When you look at the definition of memblock_region, both
-are defined as phys_addr_t.
+Missed that detail, thanks!
 
->> 
->> >+};
->> >+static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRIES];
->> >+static int reserved_mem_count;  
->> 
->> Seems no matter we use this feature or not, these memory would be occupied?
->
->Yes, because allocation may screw it up as well. I could add a CONFIG
->around it, so that those that do not want this could configure it out. But
->since it's just a total of (16 + 8 + 8) * 8 = 256 bytes, I'm not sure it's
->much of a worry to add the complexities to save that much space. As the
->code to save it may likely be bigger.
->
-
-If Mike feel good to it, I am ok.
-
->> 
->> >+
->> >+/* Add wildcard region with a lookup name */
->> >+static int __init reserved_mem_add(unsigned long start, unsigned long size,
->> >+				   const char *name)
->> >+{
->> >+	struct reserve_mem_table *map;
->> >+
->> >+	if (!name || !name[0] || strlen(name) >= RESERVE_MEM_NAME_SIZE)
->> >+		return -EINVAL;
->> >+
->> >+	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
->> >+		return -1;  
->> 
->> return ENOSPC? Not good at it, but a raw value maybe not a good practice.
->
->This is what gets returned by the command line parser. It only cares if it
->is zero or not.
->
->> 
->> Also, we'd better do this check before allocation.
->
->What allocation?
->
-
-You call reserved_mem_add() after memblock_phys_alloc(). 
-My suggestion is do those sanity check before calling memblock_phys_alloc().
-
->> 
->> >+
->> >+	map = &reserved_mem_table[reserved_mem_count++];
->> >+	map->start = start;
->> >+	map->size = size;
->> >+	strscpy(map->name, name);
->> >+	return 0;
->> >+}
->> >+
->> >+/**
->> >+ * reserve_mem_find_by_name - Find reserved memory region with a given name
->> >+ * @name: The name that is attached to a reserved memory region
->> >+ * @start: If found, holds the start address
->> >+ * @size: If found, holds the size of the address.
->> >+ *
->> >+ * Returns: 1 if found or 0 if not found.
->> >+ */
->> >+int reserve_mem_find_by_name(const char *name, unsigned long *start, unsigned long *size)
->> >+{
->> >+	struct reserve_mem_table *map;
->> >+	int i;
->> >+
->> >+	for (i = 0; i < reserved_mem_count; i++) {
->> >+		map = &reserved_mem_table[i];
->> >+		if (!map->size)
->> >+			continue;
->> >+		if (strcmp(name, map->name) == 0) {
->> >+			*start = map->start;
->> >+			*size = map->size;
->> >+			return 1;
->> >+		}
->> >+	}
->> >+	return 0;
->> >+}
->> >+
->> >+/*
->> >+ * Parse early_reserve_mem=nn:align:name  
->> 
->> early_reserve_mem or reserve_mem ?
->
->Oops, that was the original name. I'll change that.
->
->> 
->> >+ */
->> >+static int __init reserve_mem(char *p)
->> >+{
->> >+	phys_addr_t start, size, align;
->
->Hmm, I wonder if I should change size and align to unsigned long?
->
-
-I grep the kernel, some use u64, some use unsigned long. 
-I think it is ok to use unsigned long here.
-
->> >+	char *oldp;
->> >+	int err;
->> >+
->> >+	if (!p)
->> >+		return -EINVAL;
->> >+
->> >+	oldp = p;
->> >+	size = memparse(p, &p);
->> >+	if (p == oldp)
->> >+		return -EINVAL;
->> >+
->> >+	if (*p != ':')
->> >+		return -EINVAL;
->> >+
->> >+	align = memparse(p+1, &p);
->> >+	if (*p != ':')
->> >+		return -EINVAL;
->> >+  
->> 
->> Better to check if the name is valid here. 
->
->You mean that it has text and is not blank?
->
->> 
->> Make sure command line parameters are valid before doing the allocation.
->
->You mean that size is non zero?
->
-
-I mean do those sanity check before real allocation.
-
->I don't know if we care what the align is. Zero is valid.
->
-
-memblock internal would check the alignment. If it is zero, it will change to
-SMP_CACHE_BYTES with dump_stack().
-
->> 
->> >+	start = memblock_phys_alloc(size, align);
->> >+	if (!start)
->> >+		return -ENOMEM;
->> >+
->> >+	p++;
->> >+	err = reserved_mem_add(start, size, p);
->> >+	if (err) {
->> >+		memblock_phys_free(start, size);
->> >+		return err;
->> >+	}
->> >+
->> >+	p += strlen(p);
->> >+
->> >+	return *p == '\0' ? 0: -EINVAL;  
->> 
->> We won't free the memory if return -EINVAL?
->
->I guess we can do this check before the allocation, like you suggested.
->
->Thanks for the review.
->
->-- Steve
->
->
->> 
->> >+}
->> >+__setup("reserve_mem=", reserve_mem);
->> >+
->> > #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
->> > static const char * const flagname[] = {
->> > 	[ilog2(MEMBLOCK_HOTPLUG)] = "HOTPLUG",
->> >-- 
->> >2.43.0
->> >
->> >  
->> 
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-Wei Yang
-Help you, Help me
+Cheers,
+
+David / dhildenb
+
 
