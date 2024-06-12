@@ -1,197 +1,186 @@
-Return-Path: <linux-kernel+bounces-211079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE5BA904CE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:32:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99F7B904CE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 480751F259AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:32:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D6502875EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22CD7F7E3;
-	Wed, 12 Jun 2024 07:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F493169361;
+	Wed, 12 Jun 2024 07:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sn/NBNIc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HfSjfjhc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937EE29413
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B9329413;
+	Wed, 12 Jun 2024 07:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718177532; cv=none; b=N4fOtU77ZcJF4WpgdjbbPUdCFicCyqyS1E5NzkCDLXIEUVZB/cvUdOrso1JCcxpb1mBVwLd5C5GzN5LhTmK81t5am5U3to1HK8gkS+iKi3neEuFLUwkGdqL9jc0eU590uB7pf1glLYK0G+l0vkB2pXhBYLIQtOgoTjd8WfArF+o=
+	t=1718177621; cv=none; b=i7R7qm/CMt5/66Vi6EWSjON8jsxY9d4HePLeihrvHURZGncP0Zzf+72UY8/tseLT29L7Hx+6Lqby66/MsDYWSnXDJsg1k8R+c2SIy5TOL8Kj0ePvg63fGgBgpSYKcLnWCtSbYA03nxyNvgiN3lOoXofRXV3cDuJ59038vt2Bfw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718177532; c=relaxed/simple;
-	bh=/vwIyEMvEjX1HRGyzEZ+dJiqLUuIe+oKndJLmb6dxl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gdwU18iyv0pPBoKDcpDgmTdgn/x2tcXqMM+5KRlW6olnqiUiiCD8BMUVc5TdBDikbq0DDOnl6/unh50tXeiS3x+Gf9tjk6iLTEvXCM7Wbhom0c+rqe3vz/9Zt1oVi4RXDyFXL8u5YyqjsheXEk1zv3sKzBpuYRrkufUiG/C+OOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sn/NBNIc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718177528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ed7eSdV4iPKjNeuFNhzZoVLSasdUP/mWopJUg7P2wX0=;
-	b=Sn/NBNIcBEcS+MLJyuGKgzi69JgfZ5Sqd3NRn/sV1IA1uexusYCL3gtYy6aj81QBX4FiMR
-	vRjmvK/S4tOgkk2qaH2YfF8cujRAfyAmcsIgdJzOckR5tjOtdl7KLUuCfoidxYO0SQRM4p
-	FYusWSn6HQslqE+1cGKzH9+U9Y62tR8=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-320-EegJ22vGP7G34tApKvzKIA-1; Wed, 12 Jun 2024 03:32:04 -0400
-X-MC-Unique: EegJ22vGP7G34tApKvzKIA-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ebddcae207so26539451fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 00:32:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718177523; x=1718782323;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ed7eSdV4iPKjNeuFNhzZoVLSasdUP/mWopJUg7P2wX0=;
-        b=dNy3g5lbgYcbigyBImy7heV7wszi/kY0ULCVB/XN/d02HYEq0mR10iz37cFsio+0La
-         NySFX96AkQMZc9jBpveS5J9mkO6TIGvBISpS0bBudcMfYvkyah9910icnIX+v1XeYfxH
-         r51NnmI5RcfXQXDKRRKO1BvPZcizilcel3M0Sa4aH/k+SSy4T9FYkOrzcZqmzyQR+4O1
-         tTyijQsCdtOMGtJl46g+wfvD3/uB+AV4UfzcSARDbP9+NnrkAgCX7bRa3T1SZiPiYgOs
-         y/Ja/uBuXg42rcJ8NlvBQJOXCtb1lQmGb+bsXAeJqjbQty8dbjmFYvOEALuKpfaFbWjB
-         Qg8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVkEUzlip4AgVg4aJVi5akMBivxuL24HbbHwqujWRVTXM9GGfjGaNBjTHCvB5PjKQmsy4clFFKzQ68ux5RHWOHNWqxpATujbjUtz++c
-X-Gm-Message-State: AOJu0YzfjcCX98oDi05vQiCznWK8RhCFCQpZPx7h9HYD8jWR7SJ2NFgF
-	poNnGrSiv4jnn3UkOYBn84XguYErISZvFonmIlBk7jS1T2+woF3+1PR4nVJLQFPQ9scGwcP5/B6
-	OI58gUCwOpZKih111oFFBK26+vIAL4Y4yRWiTIKjVNltZLHDLswhodTzcc/I4rA==
-X-Received: by 2002:a2e:8782:0:b0:2eb:e1fa:4f55 with SMTP id 38308e7fff4ca-2ebfc9c9d53mr6178231fa.12.1718177522770;
-        Wed, 12 Jun 2024 00:32:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFL9VZICmq3wWOxmHMEaOi+ZW4Z541K9OLPwP60b1PrajV5I7ETP42j2tXyTBW7CzSOFlntOw==
-X-Received: by 2002:a2e:8782:0:b0:2eb:e1fa:4f55 with SMTP id 38308e7fff4ca-2ebfc9c9d53mr6178041fa.12.1718177522363;
-        Wed, 12 Jun 2024 00:32:02 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c702:bf00:abf6:cc3a:24d6:fa55? (p200300cbc702bf00abf6cc3a24d6fa55.dip0.t-ipconnect.de. [2003:cb:c702:bf00:abf6:cc3a:24d6:fa55])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870f0d9dsm14491555e9.29.2024.06.12.00.32.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 00:32:01 -0700 (PDT)
-Message-ID: <a39c8602-3c9c-48fd-9bdb-2089ccccd6bc@redhat.com>
-Date: Wed, 12 Jun 2024 09:32:01 +0200
+	s=arc-20240116; t=1718177621; c=relaxed/simple;
+	bh=SUfIAtDi5cgpBLZQB/Du7Hs4SYoZugQDNHll79iQU7w=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jmXPkwSbygxyNiVJH6Pa/k6akS1G70H7k/ZFShoZoU7v1u2pmtWatsqTHtyJDZO2nRhlqq7I0/rk58z4SnExA4jvPEkj0mSqror6X3rqpAhIxqrFyJ9xuYuuZ1igvTXh8caNZDLWvOWX+ves5MqPXZhrZSqcRX5SATL/t8WTGfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HfSjfjhc; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718177620; x=1749713620;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=SUfIAtDi5cgpBLZQB/Du7Hs4SYoZugQDNHll79iQU7w=;
+  b=HfSjfjhc0idvtlaYA3dBl9llfvSkBfshB8IsEXJo0yFgWQNhOYonCpQu
+   W25shQcUg0x+UQ4aIIRcxtwFJhqkQT/bmMYYuBoo61japlCrGrbIr0SPs
+   BGxTJ1SW6dnQM3rxY18AYgvqqTXSZgdaPxDo5Jh1LcPiYmdtFXbbj3Mts
+   gK4931YgDtXKVFTqvn5XUy6FVoM7iRnTYMm4XVOWfwXm476Wv321zYsTi
+   JKo3S9UJrapyfqDN2L4uj7jggzn6/SVeQD4+W2yCXHFUcyXTjWMD/Rmmw
+   qsm/ZcaV08NFj7Wl3dH1NRjsFdOzXftGs8i8LLmqY8GZEnckW90A81NQZ
+   Q==;
+X-CSE-ConnectionGUID: dA/g+31YQQmoJC0NEyep4A==
+X-CSE-MsgGUID: 2HWeL1TvQ4qIjLfxaBRCVA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="26041609"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="26041609"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 00:33:39 -0700
+X-CSE-ConnectionGUID: RgCrLq4xQ6C3yjzVbbQBkQ==
+X-CSE-MsgGUID: Sp4CeumZRcu/J86gUJIRZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="39592979"
+Received: from unknown (HELO localhost) ([10.245.247.204])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 00:33:35 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 12 Jun 2024 10:33:30 +0300 (EEST)
+To: Babu Moger <babu.moger@amd.com>
+cc: fenghua.yu@intel.com, Reinette Chatre <reinette.chatre@intel.com>, 
+    shuah@kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-kselftest@vger.kernel.org, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    peternewman@google.com, eranian@google.com
+Subject: Re: [PATCH v3] selftests/resctrl: Fix non-contiguous CBM for AMD
+In-Reply-To: <96d276c11e69cfb1e29d50a12c8043555c06b404.1718144237.git.babu.moger@amd.com>
+Message-ID: <dbb757c2-072c-5689-2122-157532715a63@linux.intel.com>
+References: <3a6c9dd9dc6bda6e2582db049bfe853cd836139f.1717622080.git.babu.moger@amd.com> <96d276c11e69cfb1e29d50a12c8043555c06b404.1718144237.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/gup: don't check page lru flag before draining it
-To: yangge1116 <yangge1116@126.com>, Matthew Wilcox <willy@infradead.org>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn
-References: <0d7a4405-9a2e-4bd1-ba89-a31486155233@redhat.com>
- <dc7a0b61-8d3f-7205-2f6d-c2b12500947a@126.com>
- <776de760-e817-43b2-bd00-8ce96f4e37a8@redhat.com>
- <7063920f-963a-4b3e-a3f3-c5cc227bc877@redhat.com>
- <48150a28-ed48-49ff-9432-9cd30cda4da4@linux.alibaba.com>
- <11ef3deb-d1e3-46d5-97ed-9ba3c1fbbba9@redhat.com>
- <697a9bc2-a655-4035-aa5e-7d3acb23e79d@redhat.com>
- <d6deb928-3466-45ea-939b-cb5aca9bc7b4@linux.alibaba.com>
- <3a368e38-a4cb-413e-a6d9-41c6b3dbd5ae@redhat.com>
- <48fb0e58-16d1-7956-cf35-74741826617a@126.com>
- <ZmR1dVUB5mE2If9t@casper.infradead.org>
- <617f9e36-9334-4630-a6b9-473f2dd570d4@redhat.com>
- <8351052a-5c21-c383-544b-3166e883587c@126.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <8351052a-5c21-c383-544b-3166e883587c@126.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1864459413-1718177611=:1312"
 
-On 11.06.24 13:20, yangge1116 wrote:
-> 
-> 
-> 在 2024/6/9 上午12:03, David Hildenbrand 写道:
->> On 08.06.24 17:15, Matthew Wilcox wrote:
->>> On Sat, Jun 08, 2024 at 12:38:49PM +0800, yangge1116 wrote:
->>>> Can we add a PG_lru_batch flag to determine whether a page is in lru
->>>> batch?
->>>> If we can, seems this problem will be easier.
->>>
->>> Page flags are in short supply.  You'd need a really good justification.
->>>
->>
->> A flag would not be able to handle the "part of multiple LRU batches"
->> that should currently possible (when to clear the flag?). Well, if we
->> have to keep supporting that. If we only to be part in a single LRU
->> batch, a new flag could work and we could still allow isolating a folio
->> from LRU while in some LRU batch.
-> 
-> Yes, before adding a folio to LRU batch, check whether the folio has
-> been added. Add the folio to LRU batch only if the folio has not been
-> added.
-> 
->>
->> If we could handle it using the existing flags, that would of course be
->> better (wondering if we could store more information in the existing
->> flags by using a different encoding for the different states).
-> 
-> If a folio contains more than one page, the folio will not be added to
-> LRU batch. Can we use folio_test_large(folio) to filter?
-> 
-> if (!folio_test_large(folio) && drain_allow) {
-> 	lru_add_drain_all();
-> 	drain_allow = false;
-> }
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I think we should do better than this, and not do arbitrary 
-lru_add_drain_all() calls.
+--8323328-1864459413-1718177611=:1312
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
--- 
-Cheers,
+On Tue, 11 Jun 2024, Babu Moger wrote:
 
-David / dhildenb
+> The non-contiguous CBM test fails on AMD with:
+> Starting L3_NONCONT_CAT test ...
+> Mounting resctrl to "/sys/fs/resctrl"
+> CPUID output doesn't match 'sparse_masks' file content!
+> not ok 5 L3_NONCONT_CAT: test
+>=20
+> AMD always supports non-contiguous CBM but does not report it via CPUID.
+>=20
+> Fix the non-contiguous CBM test to use CPUID to discover non-contiguous
+> CBM support only on Intel.
+>=20
+> Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT test=
+")
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
+Thanks.
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+> ---
+> v3: Reworked changelong.
+>=20
+> v2: Moved the non-contiguous CBM verification to a new function
+>     arch_supports_noncont_cat.
+>=20
+> v1: This was part of the series
+>     https://lore.kernel.org/lkml/cover.1708637563.git.babu.moger@amd.com/
+>     Sending this as a separate fix per review comments.
+> ---
+>  tools/testing/selftests/resctrl/cat_test.c | 32 +++++++++++++++-------
+>  1 file changed, 22 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/s=
+elftests/resctrl/cat_test.c
+> index d4dffc934bc3..742782438ca3 100644
+> --- a/tools/testing/selftests/resctrl/cat_test.c
+> +++ b/tools/testing/selftests/resctrl/cat_test.c
+> @@ -288,11 +288,30 @@ static int cat_run_test(const struct resctrl_test *=
+test, const struct user_param
+>  =09return ret;
+>  }
+> =20
+> +static bool arch_supports_noncont_cat(const struct resctrl_test *test)
+> +{
+> +=09unsigned int eax, ebx, ecx, edx;
+> +
+> +=09/* AMD always supports non-contiguous CBM. */
+> +=09if (get_vendor() =3D=3D ARCH_AMD)
+> +=09=09return true;
+> +
+> +=09/* Intel support for non-contiguous CBM needs to be discovered. */
+> +=09if (!strcmp(test->resource, "L3"))
+> +=09=09__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+> +=09else if (!strcmp(test->resource, "L2"))
+> +=09=09__cpuid_count(0x10, 2, eax, ebx, ecx, edx);
+> +=09else
+> +=09=09return false;
+> +
+> +=09return ((ecx >> 3) & 1);
+> +}
+> +
+>  static int noncont_cat_run_test(const struct resctrl_test *test,
+>  =09=09=09=09const struct user_params *uparams)
+>  {
+>  =09unsigned long full_cache_mask, cont_mask, noncont_mask;
+> -=09unsigned int eax, ebx, ecx, edx, sparse_masks;
+> +=09unsigned int sparse_masks;
+>  =09int bit_center, ret;
+>  =09char schemata[64];
+> =20
+> @@ -301,15 +320,8 @@ static int noncont_cat_run_test(const struct resctrl=
+_test *test,
+>  =09if (ret)
+>  =09=09return ret;
+> =20
+> -=09if (!strcmp(test->resource, "L3"))
+> -=09=09__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+> -=09else if (!strcmp(test->resource, "L2"))
+> -=09=09__cpuid_count(0x10, 2, eax, ebx, ecx, edx);
+> -=09else
+> -=09=09return -EINVAL;
+> -
+> -=09if (sparse_masks !=3D ((ecx >> 3) & 1)) {
+> -=09=09ksft_print_msg("CPUID output doesn't match 'sparse_masks' file con=
+tent!\n");
+> +=09if (arch_supports_noncont_cat(test) !=3D sparse_masks) {
+> +=09=09ksft_print_msg("Hardware and kernel differ on non-contiguous CBM s=
+upport!\n");
+>  =09=09return 1;
+>  =09}
+> =20
+>=20
+--8323328-1864459413-1718177611=:1312--
 
