@@ -1,95 +1,132 @@
-Return-Path: <linux-kernel+bounces-211268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84D5904F4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:30:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B2C8904F4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71B68B2392C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:29:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F310D1F28CE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AAD16DEB5;
-	Wed, 12 Jun 2024 09:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBB216DEC2;
+	Wed, 12 Jun 2024 09:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Dr7DPNum"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Qsc+AJ2q"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B234F16D9C2;
-	Wed, 12 Jun 2024 09:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A26016D339;
+	Wed, 12 Jun 2024 09:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718184590; cv=none; b=YFeip+A8zi7murcmsy07JfkZUjyiAzFjiF/xyYc4XXlC+7/edoGBE70JvNXxcZ9X5/Ov1d4On9y1ozaxPbU+eSZZlZ89W6rwCmFhd1/6Ps2CtRX4Ymhn/ABrmuFbFOSh9wNwcXO2E8+H2JHJ9U1UMHRL4IIk/8Z0U9boW22RXfo=
+	t=1718184625; cv=none; b=LbN6dpEabf2gawCysIl3c5BH/7h7iiT5Kn55QgkR+ld2lCSJCSgHXuBKm/Y3Z4B/rAb/Rm7hpyipFckU9AvFoPvySRAhvYGeuVJ9DLHqlGm4EW9MzA5CYQKSBYPslwiS7YAai1lv1dvH3jVonuUm3EhGJxrEKN2bVbWIBwSSWWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718184590; c=relaxed/simple;
-	bh=rFs6324PNSNEr+KrQbB0/JC7iriAaHajaKyTasMSKrU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=In2p/QxKSdcfT6yuy3em0j5/SQwX+LZxKFonROK3z63VBt8YFOVeeNNyAhjD0lFWgPO21TjphD4gr5BuTltV0/aCzj63vYKQPKcwDY/LmXKOUwxuiKhOaQK9sUo6lhjPqdU0x8HbOqzdjexC044gT32tY6ZK5liO5BvKQ4OR3w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Dr7DPNum; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 0BF551FCBE;
-	Wed, 12 Jun 2024 11:29:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1718184585;
-	bh=Uif8SokEBNPcdv/uzxFpcgOwjzaU/nH1FeWne+W/Rwo=; h=From:To:Subject;
-	b=Dr7DPNum7Pp+kftR635PcT7EIqNtum6OeIOvfvfBUB6RzYu6jv2kVL6HBnvyoiJEK
-	 +vTtNuU01DCsv9aXo7koOMDS6wRfbPF0Ejxsr5yYk7u8vWG5Yjxj2LJ4zerF+VUku/
-	 rmFdBFvJmWmJdA1cMi/FM+sJu/fQ8e0C+JnN2uMbbTPdDyG4D4IOP5Pmc+dXIKgWi2
-	 7S4uQ6vMM828Tk5Bn7PssZlbw2zOp8hurf7tx1RFCW3jq9ezSUDkKp0KyWrAtNYmAI
-	 CtqUzRB2jf5BX+0HTB4NBfLwqho+w90WJfW6FIkiGSAF3AB+eFY0zA4NOsVWcYuGa2
-	 VcuQDq1Gu8sLQ==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Eggers <ceggers@arri.de>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: eeprom: at25: add  fujitsu,mb85rs256 compatible
-Date: Wed, 12 Jun 2024 11:29:34 +0200
-Message-Id: <20240612092934.12282-1-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1718184625; c=relaxed/simple;
+	bh=J/44THBA/dPfsljbhs1f2PJSH+f7JSY48xLWZSBEbX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RenNrPG5QkoxXh0Ds7B9awuxEMpNQblOnOOfwzrRCY8TNRpXBcqDB/8SGZMD3e/StuMOtvPJFsa4KQ8epXGit2rLKPtL6OiXWwA6PkuPp+q9B/24Awyb6zLnQzpDx+fnfkRhwqLRxfadwx/1gNWdnWxfpWkc6ssEGfSMYYTQnaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Qsc+AJ2q; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E7E8D40E0176;
+	Wed, 12 Jun 2024 09:30:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 4kBlhHtppWTH; Wed, 12 Jun 2024 09:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718184617; bh=bAaBH5qaA/JFcGMfRi72p+tRzwYREYvEMYDRH3DvGZo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qsc+AJ2qmMEYH1GmdJ83828PmwbIvMP3sUK4daOukV73GEF20NSxER0+reGrO19uM
+	 enPkC9nyrprHCoS67qACrJZ6AC236TaKczMgkdfP9ndjVzVMRLBuqJpPl/zUbgIL4F
+	 j7TPT3ohwQ7tErya9eEnipyOdJEg0ctVbZWs+4m632GkVdYeVdekf/qkXvTScifNaY
+	 dX27wFRjeZKQ43p1zAbp64UfA4b/jwZsIqc6R9v1ljrqd/5holDsEmLEsEvM03Iv8d
+	 70HThSZKGtLrQyaaGH7jj9EK0D4oghYcQSt0vGljohHLJyQ+SAjaV97ukJbGIET8/X
+	 Jo9m12QCRFBdDMUXlImk41mbjLSd38G5IY8tlP1WLH3qu2eiguVk57A+GFIFhSGLG1
+	 sJXAeb5KSTM5QCxuKRIKgn7CeddxcPEVgnn0uCEMTRhmfjUyh99Y1TJ+AdytrJJXbg
+	 g7gH6jyMdp7VFB6YFc70bdkKU41w2xcKniRlcbgYbPtyvGM3H04nCbHyo7QNv/xpw7
+	 7XoPxWQnXjNhbBxnnlYyg41SnrbZyzZMjarQGWA0IIHJhMtKjxfJfHPlUZZWWHTevP
+	 3M+3mbFDLsLdTSSTsgPEc2QHFfqberzfPrWjfguIc/dgowqsvgMAtAh8XTehTAIo/L
+	 NqKts/+d049xpp32sa3U8rLY=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BBEAB40E0081;
+	Wed, 12 Jun 2024 09:29:49 +0000 (UTC)
+Date: Wed, 12 Jun 2024 11:29:43 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"Kalra, Ashish" <ashish.kalra@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv11 18/19] x86/acpi: Add support for CPU offlining for
+ ACPI MADT wakeup method
+Message-ID: <20240612092943.GCZmlqh7O662JB-yGu@fat_crate.local>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-19-kirill.shutemov@linux.intel.com>
+ <20240603083930.GNZl2BQk2lQ8WtcE4o@fat_crate.local>
+ <icu4yecqfwhmbexupo4zzei4lbe5sgavsfkm27jd6t6gyjynul@c2wap3jhtik7>
+ <20240610134020.GCZmcCRFxuObyv1W_d@fat_crate.local>
+ <hidvykk3yan5rtlhum6go7j3lwgrcfcgxlwyjug3osfakw2x6f@4ohvo23zaesv>
+ <nh7cihzlsjtoddtec6m62biqdn62k3ka5svs6m64qekhpebu5z@dkplwad2urgp>
+ <20240611194653.GGZmiprSNzK0JSJL17@fat_crate.local>
+ <2kc27uzrsvpevtvos2harqj3bgfkizi5dhhxkigswlylpnogr5@lk6fi2okv53i>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2kc27uzrsvpevtvos2harqj3bgfkizi5dhhxkigswlylpnogr5@lk6fi2okv53i>
 
-From: Francesco Dolcini <francesco.dolcini@toradex.com>
+On Wed, Jun 12, 2024 at 12:24:30PM +0300, Kirill A. Shutemov wrote:
+> I will try to deliver it in timely manner.
 
-The fujitsu,mb85rs256 is a 256 Kbit SPI memory FRAM in the same family
-as the two existing fujitsu,mb85rs* compatibles and at25 compatible.
+:-P
 
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
-No changes in the driver is required for this to be used, a device tree
-file using it will come in a later step. Sending to minimize work
-slowdown because of TI DT maintainer requirements on DT bindings, see
-https://lore.kernel.org/all/469be7c2-6865-40d4-bd06-15dc3a08b3e3@kernel.org/
-for more details.
----
- Documentation/devicetree/bindings/eeprom/at25.yaml | 1 +
- 1 file changed, 1 insertion(+)
+> > Yeah, we have a bunch of different pagetable manipulating things, all
+> > with their peculiarities and unifying them and having a good set of APIs
+> > which everything else uses, is always a good thing.
+> 
+> Will give it a try.
+> 
+> > And since we're talking cleanups, there's another thing I've been
+> > looking at critically: CONFIG_X86_5LEVEL. Maybe it is time to get rid of
+> > it and make the 5level stuff unconditional. And get rid of a bunch of
+> > code since both vendors support 5level now...
+> 
+> Can do.
 
-diff --git a/Documentation/devicetree/bindings/eeprom/at25.yaml b/Documentation/devicetree/bindings/eeprom/at25.yaml
-index 1715b0c9feea..c31e5e719525 100644
---- a/Documentation/devicetree/bindings/eeprom/at25.yaml
-+++ b/Documentation/devicetree/bindings/eeprom/at25.yaml
-@@ -28,6 +28,7 @@ properties:
-               - anvo,anv32e61w
-               - atmel,at25256B
-               - fujitsu,mb85rs1mt
-+              - fujitsu,mb85rs256
-               - fujitsu,mb85rs64
-               - microchip,at25160bn
-               - microchip,25lc040
+Much appreciated, thanks!
+
 -- 
-2.39.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
