@@ -1,145 +1,197 @@
-Return-Path: <linux-kernel+bounces-210842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50DEF904936
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:56:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7066904934
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58C921C22DA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:56:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E98502850A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40410F4FA;
-	Wed, 12 Jun 2024 02:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCFB10795;
+	Wed, 12 Jun 2024 02:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="AyZOx08C"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HnBguCff";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P+G7PaQI";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HnBguCff";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P+G7PaQI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F051CABD;
-	Wed, 12 Jun 2024 02:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D1F3C2F;
+	Wed, 12 Jun 2024 02:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718160963; cv=none; b=HzR+0T1nZySV3EnK0nDY6VYSChWfsEWaY/pRopeYWI4VK0/FSTG/CLBs6XWYHKcqZxzLDuUV1XXpTrRPBOJYZMKxa6IgXULK+NgXsddBwG7WXxQONVQPwu9KUmmpuYRTLl2urT4O7MPtJK1Wrb9/J9Q82C2x09+IaQcjcVXJahI=
+	t=1718160951; cv=none; b=KOUgARNSxcit/AxrKntwuJlTux+okqAFhYz0dNfkDIMQNecgqWchJ+5xalJ/L8E5d03I3pOUu+FLR5gLlly7JaRdZ4dnbnM694uwB117NO7Jl9Ye9e9T4dt+yMOiRe15Ayivvkvjg6QKGwfdZjhfwd1UH6ItHMQc86nQt1UnA1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718160963; c=relaxed/simple;
-	bh=Pypyq75ZCtmTZMnYwPw+81sinC2N+SOxDTQi3DsFga4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tXiBlkNyL24q6x+4J8vTzdgxSbz6i2dCSLCG0ie+HOV5QG8xN2t1UAGBrjQf2gu6SmlKlTfi8i9e+tc7qd3qry4CeN3JgNcXkoTKZr5h22tXYp8SNI713+cXTsoqvjMdR3PxNclf2aGu+U7wzJs0+5nIq6/1o6GC18v+4Vf6N7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=AyZOx08C; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45C2tURR3581319
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 11 Jun 2024 19:55:31 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45C2tURR3581319
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024051501; t=1718160932;
-	bh=omP5I4jCHHygGqfmsnQTzeRs9EExzMgObol55T/+PXw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AyZOx08C8GxGkYauH7CnWui6WCfuIsLKpyNOVqbrC94kv0u0Gz9uJMM5n0JG9Kp02
-	 CICrf8IlCkm6A/D7MLZ+8f1k1l2SctJB8mOs8HRUpGsxzuydRtvfp6tCdwz/jE+8v3
-	 uqmU6Vdk7ZBdh6nnJOBftOyepbYGBmD12Y2quVmcgdcHX8P72eAtOwef/33gQVDnvB
-	 EPYLpGwJdMh3Ga5NQedRlm1trcijh/wSI/n43/gLFQPC3pzVk4VeIyL0pZlaLIxYUR
-	 BT5gQIlK+0GIXh25SaVVM5T7uxp+eQtkAolMx1bkX8lSTHYAEizaU8gwOZWDBG8Lqj
-	 5JowIAz3WPRSA==
-Message-ID: <41287f0c-4c1c-472b-a6ef-5669c68aad76@zytor.com>
-Date: Tue, 11 Jun 2024 19:55:30 -0700
+	s=arc-20240116; t=1718160951; c=relaxed/simple;
+	bh=CWUH+foI6HMl68oOCwwSHQTb1k2+/MYYF0gH8gZanhY=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=LfdH5X3vsAokbTaX0Ba0arMr8y2rYylSd01VunIPfJSyTbDEk9rlVK/Vss0rWo3aMge9g1NoJmNU7WHUWuGAKboxz0RKKn4IQbGcILGVChUwyiJqcs/+6UA14+KeH36qubpw9krH4Y1FoCdM0O2u3vRPIBrh8Kk33zUwpJDwDCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HnBguCff; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P+G7PaQI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HnBguCff; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P+G7PaQI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CBEE620E49;
+	Wed, 12 Jun 2024 02:55:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718160947; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a/btJp52x6H5kgv/jR8z+3XSQ/4SH6/WdXpxSMLKM3U=;
+	b=HnBguCffpXlQE5lNoNrD1iAZCzOx7MKcBvU13zSgMPlBdzyXItj3sG317S71ShPfLLJVUS
+	ygDf53cBGHafhqz4C3mcq9hDS+CujKgDEMit4EOF61ItG9zjqZC/yLFMLmP3lbPtYxRi1D
+	YAe6/0TAJhbtOJ4DBxrHaoVAdle+Flw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718160947;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a/btJp52x6H5kgv/jR8z+3XSQ/4SH6/WdXpxSMLKM3U=;
+	b=P+G7PaQI9wQ69zlBmPm3tK1W9z0tIcijUFV4TAu06akCknpdoUcjp7PrSe7Ua4W46plY/u
+	qeva8bmxWc6UaZAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718160947; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a/btJp52x6H5kgv/jR8z+3XSQ/4SH6/WdXpxSMLKM3U=;
+	b=HnBguCffpXlQE5lNoNrD1iAZCzOx7MKcBvU13zSgMPlBdzyXItj3sG317S71ShPfLLJVUS
+	ygDf53cBGHafhqz4C3mcq9hDS+CujKgDEMit4EOF61ItG9zjqZC/yLFMLmP3lbPtYxRi1D
+	YAe6/0TAJhbtOJ4DBxrHaoVAdle+Flw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718160947;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a/btJp52x6H5kgv/jR8z+3XSQ/4SH6/WdXpxSMLKM3U=;
+	b=P+G7PaQI9wQ69zlBmPm3tK1W9z0tIcijUFV4TAu06akCknpdoUcjp7PrSe7Ua4W46plY/u
+	qeva8bmxWc6UaZAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1FDDD137DF;
+	Wed, 12 Jun 2024 02:55:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tv4oLS8OaWZPCgAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 12 Jun 2024 02:55:43 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re:
-To: Sean Christopherson <seanjc@google.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: X86 Kernel <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        linux-perf-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>
-References: <20240611165457.156364-1-jacob.jun.pan@linux.intel.com>
- <ZmkCFyOXDC5KfC-5@google.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
- 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
- Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
- bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
- raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
- VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
- wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
- 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
- NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
- AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
- tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
- v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
- sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
- QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
- wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
- oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
- vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
- MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
- g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
- cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
- jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
- Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
- m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
- bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
- JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
- /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
- OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
- dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
- 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
- Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
- PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
- gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
- l75w1xInsg==
-In-Reply-To: <ZmkCFyOXDC5KfC-5@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Amir Goldstein" <amir73il@gmail.com>, "James Clark" <james.clark@arm.com>,
+ ltp@lists.linux.it, linux-nfs@vger.kernel.org,
+ "LKML" <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
+Subject:
+ Re: [PATCH] VFS: generate FS_CREATE before FS_OPEN when ->atomic_open used.
+In-reply-to: <20240612023748.GG1629371@ZenIV>
+References: <171815791109.14261.10223988071271993465@noble.neil.brown.name>,
+ <20240612023748.GG1629371@ZenIV>
+Date: Wed, 12 Jun 2024 12:55:40 +1000
+Message-id: <171816094008.14261.10304380583720747013@noble.neil.brown.name>
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_TLS_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,suse.cz,gmail.com,arm.com,lists.linux.it,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-On 6/11/2024 7:04 PM, Sean Christopherson wrote:
-> On Tue, Jun 11, 2024, Jacob Pan wrote:
->> To tackle these challenges, Intel introduced NMI source reporting as a part
->> of the FRED specification (detailed in Chapter 9).
-> 
-> Chapter 9 of the linked spec is "VMX Interactions with FRED Transitions".  I
-> spent a minute or so poking around the spec and didn't find anything that describes
-> how "NMI source reporting" works.
+On Wed, 12 Jun 2024, Al Viro wrote:
+> On Wed, Jun 12, 2024 at 12:05:11PM +1000, NeilBrown wrote:
+>=20
+> > For finish_open() there are three cases:
+> >  - finish_open is used in ->atomic_open handlers.  For these we add a
+> >    call to fsnotify_open() in do_open() if FMODE_OPENED is set - which
+> >    means do_dentry_open() has been called. This happens after fsnotify_cr=
+eate().
+>=20
+> 	Hummm....  There's a bit of behaviour change; in case we fail in
+> may_open(), we used to get fsnotify_open()+fsnotify_close() and with that
+> patch we's get fsnotify_close() alone.
 
-I did the same thing when I saw NMI source was added to the spec :)
+True.  Presumably we could fix that by doing
+diff --git a/fs/namei.c b/fs/namei.c
+index 37fb0a8aa09a..6fd04c9046fa 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3645,6 +3645,8 @@ static int do_open(struct nameidata *nd,
+ 			return error;
+ 		do_truncate =3D true;
+ 	}
++	if (file->f_mode & FMODE_OPENED)
++		fsnotify_open(file);
+ 	error =3D may_open(idmap, &nd->path, acc_mode, open_flag);
+ 	if (!error && !(file->f_mode & FMODE_OPENED))
+ 		error =3D vfs_open(&nd->path, file);
+@@ -3702,6 +3704,7 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
+ 	dput(child);
+ 	if (error)
+ 		return error;
++	fsnotify_open(file);
+ 	/* Don't check for other permissions, the inode was just created */
+ 	error =3D may_open(idmap, &file->f_path, 0, file->f_flags);
+ 	if (error)
 
-> 
->> 1.	Performance monitoring.
->> 2.	Inter-Processor Interrupts (IPIs) for functions like CPU backtrace,
->> 	machine check, Kernel GNU Debugger (KGDB), reboot, panic stop, and
->> 	self-test.
->>
->> Other NMI sources will continue to be handled as previously when the NMI
->> source is not utilized or remains unidentified.
->>
->> Next steps:
->> 1. KVM support
-> 
-> I can't tell for sure since I can't find the relevant spec info, but doesn't KVM
-> support need to land before this gets enabled?  Otherwise the source would get
-> lost if the NMI arrived while the CPU was in non-root mode, no?  E.g. I don't
-> see any changes to fred_entry_from_kvm() in this series.
+instead, but it seems a little weird sending an OPEN notification if
+may_open() fails.
 
-You're absolutely right!
+>=20
+> 	IF we don't care about that, we might as well take fsnotify_open()
+> out of vfs_open() and, for do_open()/do_tmpfile()/do_o_path(), into
+> path_openat() itself.  I mean, having
+>         if (likely(!error)) {
+>                 if (likely(file->f_mode & FMODE_OPENED)) {
+> 			fsnotify_open(file);
+>                         return file;
+> 		}
+> in there would be a lot easier to follow...  It would lose fsnotify_open()
+> in a few more failure exits, but if we don't give a damn about having it
+> paired with fsnotify_close()...
+>=20
 
-There is a patch in NMI source KVM patches for this, but as you
-mentioned it has to be in this NMI source native patches instead.
+Should we have fsnotify_open() set a new ->f_mode flag, and
+fsnotify_close() abort if it isn't set (and clear it if it is)?
+Then we would be guaranteed a balance - which does seem like a good
+idea.
 
-Thanks!
-     Xin
+Thanks,
+NeilBrown
+
 
