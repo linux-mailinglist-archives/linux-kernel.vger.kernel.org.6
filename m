@@ -1,187 +1,202 @@
-Return-Path: <linux-kernel+bounces-211443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677FA9051AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1927E9051A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE86D1F24740
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:53:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90AA61F22529
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F61F16F260;
-	Wed, 12 Jun 2024 11:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7063B16F260;
+	Wed, 12 Jun 2024 11:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ljDya9GC"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ePrY1PSU"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA00B16F0E4
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D41216C872
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718193218; cv=none; b=QbCrE7eb+Dy6CqKzKFKbs7YoyYY+0W3ofi+drEd/rbgt/tQQgdb8Kv4LBTgrXfkR+XmS8kQJhphvGPAPEcjSsX5iwh+ATyH2gTNFCvbf8oBniWV+on/rJpdI8DWq3OD9Kcz6yOTAacYkR5aR1LT32z2tOeDXnWbCNO+O2WsJ7AI=
+	t=1718193134; cv=none; b=bMVme2K8aRZ6F0lvYDXltze7jjxaSU9FE2ibkKs5HkLlybxGZGz20nRYrRY30dGOZyMa1mpYVo3M8XlkxAVziwawPXFxf2M1JYXXqMpETUKqf/ZeWVDLjFrjD/gMJ6jPTKhs+xhxFXUYlZOXm20DhZl84ylmY0Gr0xr2nKE6JaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718193218; c=relaxed/simple;
-	bh=VkkTtK8kv49ihxUIWWfJmoPWa7Qtpd9YsQ68XKHv/T4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=eh4MYVu5syZKfaQsuxy+ltcPd4XdeBQym3K4kWhlmCRJ7Ew1xc/aSOIkbQYTkvglDdqMSOt7seVqBRwD3ZiGnTJ5S4mkjEwRv9z45wjMeIBLl13pKcTBuTlQdIg2GNubavCBdbKeThFJMp3nz9R9Sy7uCvy9wY/QxRjgmAmrdt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ljDya9GC; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45CBpuLn085550;
-	Wed, 12 Jun 2024 06:51:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718193116;
-	bh=VkkTtK8kv49ihxUIWWfJmoPWa7Qtpd9YsQ68XKHv/T4=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To;
-	b=ljDya9GCg4AdzEVBNT5A6TV9Uo15cW/lMf3r8TyH1fwbNYmkYxthEVF4ZTjTh9TQJ
-	 X85oYZBolz1A3uNaT+n7ao5rpb0YWRg/Blkj/zVTADY27rCfrUdWi710ZFL78nsR+v
-	 8eNl3WzIteepB9708pP/MoykdOZgWB3h/rPe5jV8=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45CBpuM1006451
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Jun 2024 06:51:56 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
- Jun 2024 06:51:55 -0500
-Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
- DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
- 15.01.2507.023; Wed, 12 Jun 2024 06:51:55 -0500
-From: "Ding, Shenghao" <shenghao-ding@ti.com>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        "broonie@kernel.org" <broonie@kernel.org>
-CC: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz"
-	<perex@perex.cz>,
-        "13916275206@139.com" <13916275206@139.com>,
-        "zhourui@huaqin.com" <zhourui@huaqin.com>,
-        "alsa-devel@alsa-project.org"
-	<alsa-devel@alsa-project.org>,
-        "Salazar, Ivan" <i-salazar@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Chadha,
- Jasjot Singh" <j-chadha@ti.com>,
-        "liam.r.girdwood@intel.com"
-	<liam.r.girdwood@intel.com>,
-        "Yue, Jaden" <jaden-yue@ti.com>,
-        "yung-chuan.liao@linux.intel.com" <yung-chuan.liao@linux.intel.com>,
-        "Rao,
- Dipa" <dipa@ti.com>, "yuhsuan@google.com" <yuhsuan@google.com>,
-        "Lo, Henry"
-	<henry.lo@ti.com>, "tiwai@suse.de" <tiwai@suse.de>,
-        "Xu, Baojun"
-	<baojun.xu@ti.com>, "soyer@irl.hu" <soyer@irl.hu>,
-        "Baojun.Xu@fpt.com"
-	<Baojun.Xu@fpt.com>,
-        "judyhsiao@google.com" <judyhsiao@google.com>,
-        "Navada
- Kanyana, Mukund" <navada@ti.com>,
-        "cujomalainey@google.com"
-	<cujomalainey@google.com>,
-        "Kutty, Aanya" <aanya@ti.com>,
-        "Mahmud, Nayeem"
-	<nayeem.mahmud@ti.com>,
-        "savyasanchi.shukla@netradyne.com"
-	<savyasanchi.shukla@netradyne.com>,
-        "flaviopr@microsoft.com"
-	<flaviopr@microsoft.com>,
-        "Ji, Jesse" <jesse-ji@ti.com>,
-        "darren.ye@mediatek.com" <darren.ye@mediatek.com>
-Subject: RE: [EXTERNAL] Re: [RESEND PATCH v4] ASoc: tas2781: Enable RCA-based
- playback without DSP firmware download
-Thread-Topic: [EXTERNAL] Re: [RESEND PATCH v4] ASoc: tas2781: Enable RCA-based
- playback without DSP firmware download
-Thread-Index: AQHauA7VzKr60B04MES3npAwhDhNCbG7CTGAgAj/dqA=
-Date: Wed, 12 Jun 2024 11:51:55 +0000
-Message-ID: <c56ec5c5bd7349a788251230deead24a@ti.com>
-References: <20240606124105.1492-1-shenghao-ding@ti.com>
- <146da765-c53f-4eb4-874e-53625daeb03e@linux.intel.com>
-In-Reply-To: <146da765-c53f-4eb4-874e-53625daeb03e@linux.intel.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1718193134; c=relaxed/simple;
+	bh=7LD66xSINsodhZwvGnWbhgzSoyQkiGmOvbl8gmj8k74=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bkc764Npb9bkk7LjGWxcBF/HFLWXQOr1f9W3vhbNDpcKP56/U5SBSDbF7YL0lhzus5XJq5aMpSTQcqz8gwYV+vf+9WYIX20Dypo6DQ5UiTUIxM2YwRkBJ44N2acSm6gs9ouXrH8ApGWH3OVm8+yHTXJfZ6yR/b2jJ/BuF3sHTdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ePrY1PSU; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3748a9fa84fso127845ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:52:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718193132; x=1718797932; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wDVeyfDKY20hrMZkPuumvahLgkbZ8XPx+xCcPCGoUlg=;
+        b=ePrY1PSULnehCzJdymZiHOBvcxokV7audVCkbGWr43nPF2gU8yNI0se7qGOzyEOjhF
+         g5n6YykUyrdBHXE1uCALmuff+3DtgSORUmC/SGZq6yTA77xT2LVnBW/6MuALdgzwnoGV
+         PTzXdBnTyvJ8pT50fnz3MXdzmvWhcOw1Js6V45mUC2aLaYBHCYQJwfc3MsJhqa+RQeaN
+         x82AA3KALYSRcqBPxPojF+xaNFOc8NNlct+jIJ20L0DS0tmj9pfrZUECLmSjWmBgUtFc
+         6PlMoJ/kRFrcT2sGbK72o3ZbnHIPPyyhiEYzhL1SEq8f9fE5uAvfqtecwbfufjcePKCw
+         I1mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718193132; x=1718797932;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wDVeyfDKY20hrMZkPuumvahLgkbZ8XPx+xCcPCGoUlg=;
+        b=YBVHLaDdaqJjnDHfZujmLOS9Pm+k9QOLSTVCOlGuB4N97Q0qbHwJjO7tSmdOniTFza
+         uDwEh5uFpk08pHWMEthiJc1JqHY2NSss26wZ2f+uWSrQXZP8IZuBkHEZGtkB4zOfNH+6
+         TtYcsOtjKplXOHsTW7+erYZ2CxizBk7/oJrREgH94iKn3Z8pgRySLKUkGD70A76Swl8B
+         qxZYt3+9tg0DDpm2I93vQanBd5gD2lCw/hY1mynBPc+8/pWWMHfj1tCFHZa2/SJYeI0+
+         3sGw7dHNiHtpM9HUFpo3ydiGLRE4hf+j81LPFLCuTz2/yBavYm3zHd5D5De/ORKNCaxd
+         jhmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnXMYDKA1dhH8T7KMy8FjN1RLYrSAdtjRUTHYAFEJiOP9JGmYu3Gc2K2a5Iy+5gxJ8lvjIvyq+EVPOSH+O5ouQKzGi0imZUwTQeCAS
+X-Gm-Message-State: AOJu0YxHceXHBawm3RsF+hEyLPH4EtWmPiDOFgRCL2E97wyWnWmT96hx
+	d/lv56X9dooiThQeMlKYsETWj0eElwvEhv/lFjxfKYFNiw6N0Mok9XMwpDXeELLCQo5sbqUFldv
+	+Tv/pCUMF5UJYwnuYvY3vPHdNHo8tAtw+PUVj
+X-Google-Smtp-Source: AGHT+IE89xTmZD7j7eQRxBBnlT8TqLZ55txucZmJnqJJq5kOu47qog8PEr5hK2uyKYXe4HWIQ8krODHQ97o4tQ4XXuM=
+X-Received: by 2002:a05:6e02:3f82:b0:374:984c:5c8d with SMTP id
+ e9e14a558f8ab-375cb51be3amr3078965ab.16.1718193131991; Wed, 12 Jun 2024
+ 04:52:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240607065343.695369-1-irogers@google.com> <cc4ac58b-6a0b-1d72-f881-a60b43d5c229@huawei.com>
+In-Reply-To: <cc4ac58b-6a0b-1d72-f881-a60b43d5c229@huawei.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 12 Jun 2024 04:52:00 -0700
+Message-ID: <CAP-5=fWNDkOpnYF=5v1aQkVDrDWsmw+zYX1pjS8hoiYVgZsRGA@mail.gmail.com>
+Subject: Re: [PATCH v1] perf arm: Workaround ARM PMUs cpu maps having offline cpus
+To: Yicong Yang <yangyicong@huawei.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
+	James Clark <james.clark@arm.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	yangyicong@hisilicon.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgUGllcnJlDQpTb3JyeSBmb3IgbWlzc2luZyB5b3VyIHZhbHVhYmxlIHJldmlldyBjb21tZW50
-cywgdGhhbmtzIGZvciBCcm9vbmllJ3MgcmVtaW5kLg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2Fn
-ZS0tLS0tDQo+IEZyb206IFBpZXJyZS1Mb3VpcyBCb3NzYXJ0IDxwaWVycmUtbG91aXMuYm9zc2Fy
-dEBsaW51eC5pbnRlbC5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBKdW5lIDYsIDIwMjQgOTowOSBQ
-TQ0KPiBUbzogRGluZywgU2hlbmdoYW8gPHNoZW5naGFvLWRpbmdAdGkuY29tPjsgYnJvb25pZUBr
-ZXJuZWwub3JnDQo+IENjOiBhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb207IGxnaXJk
-d29vZEBnbWFpbC5jb207DQo+IHBlcmV4QHBlcmV4LmN6OyAxMzkxNjI3NTIwNkAxMzkuY29tOyB6
-aG91cnVpQGh1YXFpbi5jb207IGFsc2EtDQo+IGRldmVsQGFsc2EtcHJvamVjdC5vcmc7IFNhbGF6
-YXIsIEl2YW4gPGktc2FsYXphckB0aS5jb20+OyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVs
-Lm9yZzsgQ2hhZGhhLCBKYXNqb3QgU2luZ2ggPGotY2hhZGhhQHRpLmNvbT47DQo+IGxpYW0uci5n
-aXJkd29vZEBpbnRlbC5jb207IFl1ZSwgSmFkZW4gPGphZGVuLXl1ZUB0aS5jb20+OyB5dW5nLQ0K
-PiBjaHVhbi5saWFvQGxpbnV4LmludGVsLmNvbTsgUmFvLCBEaXBhIDxkaXBhQHRpLmNvbT47IHl1
-aHN1YW5AZ29vZ2xlLmNvbTsNCj4gTG8sIEhlbnJ5IDxoZW5yeS5sb0B0aS5jb20+OyB0aXdhaUBz
-dXNlLmRlOyBYdSwgQmFvanVuIDxiYW9qdW4ueHVAdGkuY29tPjsNCj4gc295ZXJAaXJsLmh1OyBC
-YW9qdW4uWHVAZnB0LmNvbTsganVkeWhzaWFvQGdvb2dsZS5jb207IE5hdmFkYSBLYW55YW5hLA0K
-PiBNdWt1bmQgPG5hdmFkYUB0aS5jb20+OyBjdWpvbWFsYWluZXlAZ29vZ2xlLmNvbTsgS3V0dHks
-IEFhbnlhDQo+IDxhYW55YUB0aS5jb20+OyBNYWhtdWQsIE5heWVlbSA8bmF5ZWVtLm1haG11ZEB0
-aS5jb20+Ow0KPiBzYXZ5YXNhbmNoaS5zaHVrbGFAbmV0cmFkeW5lLmNvbTsgZmxhdmlvcHJAbWlj
-cm9zb2Z0LmNvbTsgSmksIEplc3NlIDxqZXNzZS0NCj4gamlAdGkuY29tPjsgZGFycmVuLnllQG1l
-ZGlhdGVrLmNvbQ0KPiBTdWJqZWN0OiBbRVhURVJOQUxdIFJlOiBbUkVTRU5EIFBBVENIIHY0XSBB
-U29jOiB0YXMyNzgxOiBFbmFibGUgUkNBLWJhc2VkDQo+IHBsYXliYWNrIHdpdGhvdXQgRFNQIGZp
-cm13YXJlIGRvd25sb2FkDQo+IA0KPiBJIGFtIGFmcmFpZCB0aGVyZSBhcmUgc3RpbGwgY2lyY3Vs
-YXIgbG9naWMgaXNzdWVzLCBvciB0aGUgY29kZS9jb21tZW50cyBkb24ndA0KPiBjYXB0dXJlIHdo
-YXQgeW91IGFyZSB0cnlpbmcgdG8gZG8u4oCKLuKAii7igIouID4gZGlmZiAtLWdpdCBhL2luY2x1
-ZGUvc291bmQvdGFzMjc4MS0NCj4gZHNwLuKAimggYi9pbmNsdWRlL3NvdW5kL3RhczI3ODEtZHNw
-LuKAimggPiBpbmRleCA3ZmJhN2VhMjZhNGIu4oCKLuKAijNjZGE5ZGExNGY2ZA0KPiAxMDA2NDQg
-PiBaalFjbVFSWUZwZnB0QmFubmVyU3RhcnQgVGhpcyBtZXNzYWdlIHdhcyBzZW50IGZyb20gb3V0
-c2lkZSBvZg0KPiBUZXhhcyBJbnN0cnVtZW50cy4NCj4gRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9w
-ZW4gYXR0YWNobWVudHMgdW5sZXNzIHlvdSByZWNvZ25pemUgdGhlIHNvdXJjZSBvZiB0aGlzDQo+
-IGVtYWlsIGFuZCBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUuIElmIHlvdSB3aXNoIHRvIHJlcG9y
-dCB0aGlzIG1lc3NhZ2UgdG8gSVQNCj4gU2VjdXJpdHksIHBsZWFzZSBmb3J3YXJkIHRoZSBtZXNz
-YWdlIGFzIGFuIGF0dGFjaG1lbnQgdG8gcGhpc2hpbmdAbGlzdC50aS5jb20NCj4gDQo+IFpqUWNt
-UVJZRnBmcHRCYW5uZXJFbmQNCj4gSSBhbSBhZnJhaWQgdGhlcmUgYXJlIHN0aWxsIGNpcmN1bGFy
-IGxvZ2ljIGlzc3Vlcywgb3IgdGhlIGNvZGUvY29tbWVudHMgZG9uJ3QNCj4gY2FwdHVyZSB3aGF0
-IHlvdSBhcmUgdHJ5aW5nIHRvIGRvLi4uLg0KPiANCj4gDQouLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uDQo+IC4uLiBhbmQgaGVyZSB0aGlzIFRBU0RFVklDRV9SQ0FfRldfT0sgcmVh
-bGx5IG1lYW5zIGEgZmFpbC4NCj4gDQo+IHNvIGhvdyBjYW4gWzFdIGNvbnNpZGVyIFRBU0RFVklD
-RV9SQ0FfRldfT0sgYXMgYSBzdWNjZXNzIGNhc2U/DQo+IA0KPiBPciB0aGlzIHRoaXMgc2F5aW5n
-IHRoYXQgdGhlIGJhc2VsaW5lIGlzIHRoZSBSQ0EgY2FzZSwgYW5kIHRoZW4gdGhlIGNvZGUNCj4g
-YXR0ZW1wdHMgdG8gbG9hZCBmaXJtd2FyZSBidXQgaW4gY2FzZSBvZiBmYWlsdXJlcyBqdXN0IGtl
-ZXAgZ29pbmcsIGkuZS4NCj4gZmFpbGluZyB0byBsb2FkIGZpcm13YXJlIGlzIE5PVCBhbiBlcnJv
-cj8NCkNvcnJlY3QuDQo+IA0KPiBUaGF0IHdvdWxkIGJlIHNvbWV3aGF0IGRpZmZlcmVudCB0byB0
-aGUgY29tbWl0IHRpdGxlIHRoYXQgc2F5cyAnd2l0aG91dCBEU1ANCj4gZmlybXdhcmUgZG93bmxv
-YWQnLg0KPiANCj4gV291bGQgeW91IG1pbmQgY2xhcmlmeWluZyB0aGUgc3RlcHMgcGxlYXNlPw0K
-VGhlcmUncyB0d28gYmluIGZpbGVzIGZvciB0YXMyNzgxLCBvbmUgaXMgcmVnaXN0ZXIgc2V0dGlu
-Z3MoUkNBIGJpbiBmaWxlKSwgdGhlIG90aGVyIGlzIHRoZSBkc3AgZmlybXdhcmUgYW5kIGZpbHRl
-ciBjb2VmZi4NCklmIG5vIFJDQSBiaW4gZmlsZSBpcyBsb2FkLCB0aGUgdGFzMjc4MSBjYW4ndCB3
-b3JrLCBpdCB3aWxsIGJlIFRBU0RFVklDRV9EU1BfRldfRkFJTC4NCklmIG9ubHkgUkNBIGJpbiBm
-aWxlIGxvYWQsIHRoZSB0YXMyNzgxIHdpbGwgd29yayBpbiBieXBhc3MgbW9kZSwgd2hpY2ggZHNw
-IGRvIG5vdCB3b3JrLCBuZWl0aGVyIHNwayBwcm90ZWN0aW9uIG5vciBhY291c3RpYyANCmFsZ29y
-aXRobSBpcyBlbmFibGVkIA0KKFRBU0RFVklDRV9SQ0FfRldfT0spLg0KSWYgYm90aCBSQ0EgYmlu
-IGFuZCBkc3AgZmlybXdhcmUgYXJlIGxvYWRlZCwgdGhhdCBpcyBUQVNERVZJQ0VfRFNQX0ZXX0FM
-TF9PSywgdGFzMjc4MSB3b3JrIGluIGRzcCBtb2RlLCBib3RoIHNwayBwcm90ZWN0aW9uDQphbmQg
-YWNvdXN0aWMgYWxnb3JpdGhtIGFyZSBlbmFibGVkDQo+IA0KPiANCj4gPiAgCQl0YXNkZXZpY2Vf
-ZHNwX3JlbW92ZSh0YXNfcHJpdik7DQo+ID4gIAl9DQo+ID4gIAltdXRleF91bmxvY2soJnRhc19w
-cml2LT5jb2RlY19sb2NrKTsNCj4gPiBAQCAtNDY2LDE0ICs0NzQsMTQgQEAgc3RhdGljIGludCB0
-YXNkZXZpY2Vfc3RhcnR1cChzdHJ1Y3QNCj4gPiBzbmRfcGNtX3N1YnN0cmVhbSAqc3Vic3RyZWFt
-LCAgew0KPiA+ICAJc3RydWN0IHNuZF9zb2NfY29tcG9uZW50ICpjb2RlYyA9IGRhaS0+Y29tcG9u
-ZW50Ow0KPiA+ICAJc3RydWN0IHRhc2RldmljZV9wcml2IFRBU0RFVklDRV9SQ0FfRldfT0sqdGFz
-X3ByaXYgPQ0KPiBzbmRfc29jX2NvbXBvbmVudF9nZXRfZHJ2ZGF0YShjb2RlYyk7DQo+ID4gLQlp
-bnQgcmV0ID0gMDsNCj4gPg0KPiA+IC0JaWYgKHRhc19wcml2LT5md19zdGF0ZSAhPSBUQVNERVZJ
-Q0VfRFNQX0ZXX0FMTF9PSykgew0KPiA+IC0JCWRldl9lcnIodGFzX3ByaXYtPmRldiwgIkRTUCBi
-aW4gZmlsZSBub3QgbG9hZGVkXG4iKTsNCj4gPiAtCQlyZXQgPSAtRUlOVkFMOw0KPiA+ICsJc3dp
-dGNoICh0YXNfcHJpdi0+Zndfc3RhdGUpIHsNCj4gPiArCWNhc2UgVEFTREVWSUNFX1JDQV9GV19P
-SzoNCj4gPiArCWNhc2UgVEFTREVWSUNFX0RTUF9GV19BTExfT0s6DQo+ID4gKwkJcmV0dXJuIDA7
-DQo+ID4gKwlkZWZhdWx0Og0KPiA+ICsJCXJldHVybiAtRUlOVkFMOw0KPiA+ICAJfQ0KPiA+IC0N
-Cj4gPiAtCXJldHVybiByZXQ7DQo+ID4gIH0NCj4gPg0KPiA+ICBzdGF0aWMgaW50IHRhc2Rldmlj
-ZV9od19wYXJhbXMoc3RydWN0IHNuZF9wY21fc3Vic3RyZWFtICpzdWJzdHJlYW0sDQo=
+On Wed, Jun 12, 2024 at 3:16=E2=80=AFAM Yicong Yang <yangyicong@huawei.com>=
+ wrote:
+>
+> Hi Ian,
+>
+> On 2024/6/7 14:53, Ian Rogers wrote:
+> > When PMUs have a cpu map in the 'cpus' or 'cpumask' file, perf will
+> > try to open events on those CPUs. ARM doesn't remove offline CPUs
+> > meaning taking a CPU offline will cause perf commands to fail unless a
+> > CPU map is passed on the command line.
+> >
+> > More context in:
+> > https://lore.kernel.org/lkml/20240603092812.46616-1-yangyicong@huawei.c=
+om/
+> >
+> > Reported-by: Yicong Yang <yangyicong@huawei.com>
+> > Closes: https://lore.kernel.org/lkml/20240603092812.46616-2-yangyicong@=
+huawei.com/
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+>
+> Tested worked for this case:
+>
+> [root@localhost tmp]# echo 0 > /sys/devices/system/cpu/cpu1/online
+> [root@localhost tmp]# /home/yang/perf_static stat -e armv8_pmuv3_0/cpu_cy=
+cles/ --timeout 100
+> Error:
+> The sys_perf_event_open() syscall returned with 19 (No such device) for e=
+vent (armv8_pmuv3_0/cpu_cycles/).
+> /bin/dmesg | grep -i perf may provide additional information.
+>
+> [root@localhost tmp]# /tmp/perf_Ian stat -e armv8_pmuv3_0/cpu_cycles/ --t=
+imeout 100
+>
+>  Performance counter stats for 'system wide':
+>
+>           54994604      armv8_pmuv3_0/cpu_cycles/
+>
+>        0.176079800 seconds time elapsed
+>
+> So:
+> Tested-by: Yicong Yang <yangyicong@hisilicon.com>
+>
+> But still wondering why isn't it better to move this into pmu_cpumask() a=
+s does in
+> the previous patch? Yes currently this is a arm specific issue, but we ca=
+nnot handle
+> the case if later PMU doesn't update the cpus/cpumask either :)
+
+Thanks Yicong. To the greatest extent possible I'm trying to avoid
+unnecessary code during event parsing. On x86 there isn't a PMU that
+has the buggy behavior of showing offline CPUs in the cpumask, so
+computing the online CPUs and doing the intersection there is pure
+overhead. The online CPUs calculation is either going to read a file
+or probe via sysconf. The fallback sysconf probing may fail and can't
+handle arbitrary holes in the CPU map (like in your example). So I'm
+concerned about the overhead of doing this in pmu_cpumask and the
+ability for it to break non-ARM platforms. I think the right
+conservative thing to do is to just have the buggy cpumask fix for ARM
+and work toward fixing the PMU drivers so potentially in the future we
+can remove the fix there. Something I'd like to see is greater PMU
+driver testing and detecting bugs, like:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/tests/pmu.c?h=3Dperf-tools-next#n285
+
+Thanks,
+Ian
+
+> > ---
+> >  tools/perf/arch/arm/util/pmu.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/=
+pmu.c
+> > index 8b7cb68ba1a8..6b544edbd3f6 100644
+> > --- a/tools/perf/arch/arm/util/pmu.c
+> > +++ b/tools/perf/arch/arm/util/pmu.c
+> > @@ -11,12 +11,15 @@
+> >
+> >  #include "arm-spe.h"
+> >  #include "hisi-ptt.h"
+> > +#include "../../../util/cpumap.h"
+> >  #include "../../../util/pmu.h"
+> >  #include "../../../util/cs-etm.h"
+> >  #include "../../arm64/util/mem-events.h"
+> >
+> > -void perf_pmu__arch_init(struct perf_pmu *pmu __maybe_unused)
+> > +void perf_pmu__arch_init(struct perf_pmu *pmu)
+> >  {
+> > +     struct perf_cpu_map *intersect;
+> > +
+> >  #ifdef HAVE_AUXTRACE_SUPPORT
+> >       if (!strcmp(pmu->name, CORESIGHT_ETM_PMU_NAME)) {
+> >               /* add ETM default config here */
+> > @@ -33,6 +36,9 @@ void perf_pmu__arch_init(struct perf_pmu *pmu __maybe=
+_unused)
+> >               pmu->selectable =3D true;
+> >  #endif
+> >       }
+> > -
+> >  #endif
+> > +     /* Workaround some ARM PMU's failing to correctly set CPU maps fo=
+r online processors. */
+> > +     intersect =3D perf_cpu_map__intersect(cpu_map__online(), pmu->cpu=
+s);
+> > +     perf_cpu_map__put(pmu->cpus);
+> > +     pmu->cpus =3D intersect;
+> >  }
+> >
 
