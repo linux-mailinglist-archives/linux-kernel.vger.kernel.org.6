@@ -1,102 +1,123 @@
-Return-Path: <linux-kernel+bounces-211735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E85E905631
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:03:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B31905634
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5ACB1F2181F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:03:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D653282F71
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D720917F4FE;
-	Wed, 12 Jun 2024 15:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEF617F501;
+	Wed, 12 Jun 2024 15:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0LlI8vc1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQHWPMJ+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2575F17A931;
-	Wed, 12 Jun 2024 15:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CB217E453;
+	Wed, 12 Jun 2024 15:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718204575; cv=none; b=fTtlSDKJUUq9l1DkXVt6xfmbB69jkz8xruNrXGqk0QBnCV15Vz4Xq5/VcQbci2iB/vWa6QdbfofTCqd7JAIx3oi4ZVAUV4XasqQ1LGd0mWYN8fXBfvcKjBA3Bs3+Q/KhefwVrciODqz87etGhn3XoJdZuKHO2g0TD/BmnKBTOhA=
+	t=1718204612; cv=none; b=AIgb9LUhJ8/q1Kr1ukp7g+Uf8904NIlEzuekHOx9a4DzB8j+ddTwkKDEIT0F0hwrQa2zH/j9YGZ0HNNw6+FvPba6K6wFBVHXEGr/ytOSZVOjao6x8Zl3icRJL5x1uy1zeRGH7eaktDTzj9yYhzzH4REaCRmYfzEn+zHxmlerKBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718204575; c=relaxed/simple;
-	bh=w8xN1LUeu90ka9f2NePQMJcUgzi1zzj8+WSBQDOiGrU=;
+	s=arc-20240116; t=1718204612; c=relaxed/simple;
+	bh=AMq+F3yP0qGn6PUexLUcixWqx9UsBEvmZ9R2Pl/8kHE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RnMV/otrb06Nvi0BX+Qes0jVpwUb+R6ghzjJy99Z/cmqVlxLNv4FntV1Ub5jhQkx+VQJwYNArL5w/3h55gkrc1BkRp4n7Fd0RHS3f40ErTI4VuZnpiUm89ri7Mm/lGgornsTx+LbwoLUcNHO/Ot9D84sr8fqARJS5Z6oYD7o8XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0LlI8vc1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C9EFC116B1;
-	Wed, 12 Jun 2024 15:02:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718204574;
-	bh=w8xN1LUeu90ka9f2NePQMJcUgzi1zzj8+WSBQDOiGrU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=YNPKOXbUDqblUw7IaJpS6JRr154QXzPwg8z89RsdLwlMgb47JPKO5mxdMk7FPeRoP3ur+TbIl7De5KAC3thpOeTdBW4cIr/Wi7lCf2N5qbVmK4Ho0GtEljRtHda4zNlH9Jgv2U6QStAu++kCYvLUysa6V70+wsLxeUeHBMSkrC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQHWPMJ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C183C4AF1C;
+	Wed, 12 Jun 2024 15:03:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718204612;
+	bh=AMq+F3yP0qGn6PUexLUcixWqx9UsBEvmZ9R2Pl/8kHE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0LlI8vc1AFsgy8mQQrWrkldkvWKEX4bVBlB8rI3b6igobLYZVZMkaPEa6hjgUMGHN
-	 rXjO+LmkhYX0S+Qq6MZgzE7n3GwAIuaJSFzKETHCEmOEGnoPuSFja4ZJMmpKkUeG21
-	 WsMqOOQ3jmjCUt0MKp3jH3Pf65L9e4XxpMb6Tji4=
-Date: Wed, 12 Jun 2024 17:02:52 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, rafael@kernel.org, mcgrof@kernel.org,
-	russell.h.weight@intel.com, ojeda@kernel.org, alex.gaynor@gmail.com,
-	wedsonaf@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] rust: add abstraction for struct device
-Message-ID: <2024061245-kangaroo-clothes-76e1@gregkh>
-References: <20240610180318.72152-1-dakr@redhat.com>
- <20240610180318.72152-2-dakr@redhat.com>
- <ZmdID8AlXtoxUfC1@boqun-archlinux>
- <ZmhPW9yq7y6jbmIg@pollux>
- <2024061136-unbridle-confirm-c653@gregkh>
- <Zmh3oN9sWamaYHOD@Boquns-Mac-mini.home>
- <d74edb73-1dba-43f4-a50c-36354c39d758@redhat.com>
+	b=SQHWPMJ+5hGMi0F461js4qxDtCy4IJCGyS8bEOqXjH/kAhYAfaVoDyLM6/Zm/q2Tn
+	 W5uP5rdZByPJB3TTvH08RBGP12xYSy/zkIDqI3IRktJMm7RI2SUngPGUvvChlsG40m
+	 Rz61i7IMuwWD70bxt9xXtK2Egqahp7JLlefBtw3tqB8Zfs46Zerh5NWBWFRsCzsNZL
+	 LlvQ40aT7fIWt1L3V/nQB+Okg7xsTqm9vYXo9iP1zYnwmtnKGZQ51pHqW4B3Ok1V5O
+	 d7LkxN4tn4d7ume7QOSSR+LA7KEt2IuRv98d8l7q+eIQB0rSgLA3tKyEDPYhc0T2yx
+	 DHHSXJ+L/57Fg==
+Date: Wed, 12 Jun 2024 16:03:26 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] rust: add static_key_false
+Message-ID: <20240612-cottage-revision-9842e7e22070@spud>
+References: <20240610-tracepoint-v2-0-faebad81b355@google.com>
+ <20240610-tracepoint-v2-1-faebad81b355@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dUAfOGkLLXcIvSlP"
+Content-Disposition: inline
+In-Reply-To: <20240610-tracepoint-v2-1-faebad81b355@google.com>
+
+
+--dUAfOGkLLXcIvSlP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d74edb73-1dba-43f4-a50c-36354c39d758@redhat.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 04:51:42PM +0200, Danilo Krummrich wrote:
-> On 6/11/24 18:13, Boqun Feng wrote:
-> > On Tue, Jun 11, 2024 at 03:29:22PM +0200, Greg KH wrote:
-> > > On Tue, Jun 11, 2024 at 03:21:31PM +0200, Danilo Krummrich wrote:
-> > > > ...hence, I agree we should indeed add to the #Invariants and #Safety section
-> > > > that `->release` must be callable  from any thread.
-> > > > 
-> > > > However, this is just theory, do we actually have cases where `device::release`
-> > 
-> > @Danilo, right, it's only theorical, but it's good to call it out since
-> > it's the requirement for a safe Rust abstraction.
-> 
-> Similar to my previous reply, if we want to call this out as safety requirement
-> in `Device::from_raw`, we probably want to add it to the documentation of the C
-> `struct device`, such that we can argue that this is an invariant of C's
-> `struct device`.
-> 
-> Otherwise we'd have to write something like:
-> 
-> "It must also be ensured that the `->release` function of a `struct device` can
-> be called from any non-atomic context. While not being officially documented this
-> is guaranteed by the invariant of `struct device`."
+On Mon, Jun 10, 2024 at 02:01:04PM +0000, Alice Ryhl wrote:
+> Add just enough support for static key so that we can use it from
+> tracepoints. Tracepoints rely on `static_key_false` even though it is
+> deprecated, so we add the same functionality to Rust.
+>=20
+> It is not possible to use the existing C implementation of
+> arch_static_branch because it passes the argument `key` to inline
+> assembly as an 'i' parameter, so any attempt to add a C helper for this
+> function will fail to compile because the value of `key` must be known
+> at compile-time.
+>=20
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-In the 20+ years of the driver model being part of the kernel, I don't
-think this has come up yet, so maybe you can call the release function
-in irq context.  I don't know, I was just guessing :)
+> +#[cfg(target_arch =3D "x86_64")]
 
-So let's not go adding constraints that we just do not have please.
-Same goes for the C code, so the rust code is no different here.
+> +#[cfg(target_arch =3D "aarch64")]
 
-thanks,
+This patch breaks the build on riscv (and I assume loongarch):
 
-greg k-h
+error[E0432]: unresolved import `_static_key_false`
+--> /stuff/linux/rust/kernel/static_key.rs:87:10
+|
+87 | pub use {_static_key_false, static_key_false};
+|          ^^^^^^^^^^^^^^^^^ no external crate `_static_key_false`
+
+Cheers,
+Conor.
+
+
+--dUAfOGkLLXcIvSlP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmm4vgAKCRB4tDGHoIJi
+0pVkAP9EeMhX3Q/hwLb+de1F64FhI0DaOk0yQebsR9xD6ZE8VgEAlwzOITVeEvJ2
+iMqajvY89XlzKAdwizJAOPQ+h/BZwQk=
+=xvXY
+-----END PGP SIGNATURE-----
+
+--dUAfOGkLLXcIvSlP--
 
