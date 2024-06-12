@@ -1,132 +1,114 @@
-Return-Path: <linux-kernel+bounces-211902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5639A90588E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:21:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04995905897
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A7F02884C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:21:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 898CB2854B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A664197A9D;
-	Wed, 12 Jun 2024 16:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o+GrKvoB"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF58F195998
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 16:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F0C181D04;
+	Wed, 12 Jun 2024 16:19:41 +0000 (UTC)
+Received: from hust.edu.cn (unknown [202.114.0.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD20E180A9C;
+	Wed, 12 Jun 2024 16:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.114.0.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718208982; cv=none; b=OCDv1svi61pUUojEM8ehBUdExxz8JC4+a5jIrNJvky+OJTJ0wB7a9HYaHCDFeaE21ZYwpqkVLcvIk0iBEKczh8uce4zeMH6UFXGNz9gL2NeixNa29IexMmOCPteTYwy8TYcZscsKyxDSXH5uldqiskLpt1l/5AqPHI3mIkUzRo0=
+	t=1718209180; cv=none; b=dJUSGrXEbiYXeoI/LQ5daNIEXAFgWo3/q5hNihMoEAdMt5Tp9cnBYdvfQahsLH9jnWjzssTh45jzFGQujVPvTLCTMDax41MISnehIIbx9NI1F2DlJLachMKzKTUjEfzGIbp76R6rweJ/APH33PX5r9IrKNVMVWp/4XB/wsKWtOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718208982; c=relaxed/simple;
-	bh=6+UBEqHPuSCJQ5GPuzFYqeY5be1EJ+f74Fpf7byXhqo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O07nsKC7JjW6JbR6nQpvNGAYaoHZzs2lrjvrWbA/y/DzTFMV8Tl+oZ/lnyYTf39sWoA6Yho6QUMCkt/MylpwxKcr4lwEXx4IjyFkGMtXDsq/99RTGsbh/kV+/z8jzX24ecBO5Tfbl/pHvBK0PIYaisBrX7rpkD+9DdotXUfNdKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o+GrKvoB; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52bc29c79fdso76821e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:16:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718208978; x=1718813778; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KUSq90CkA/e5YtyJB3DxxxJXJzc5nG1xr3zOSJv9S5o=;
-        b=o+GrKvoB8w8kPSQGXkjcoHycph1mJjuNRcq+KDohLwKCoCzAOrVLNSumeMG/rEZdqy
-         opNNtWFfBzqlQgHDBlnMg98rnzi6s/WDFe5mURKXX2/9LWRo84ZtEwyHdNKyicHehqHy
-         k0Hiv9psCCQaCsNuvi/RXDjI+9DQXEnY7fgnbtLzo+H9A4I1L7PDsHV27mbx2xmM+8Vw
-         NsUbWLI+KNC25arx9/K7VC09gyeof9DANg5ha0sTfZMoc6b82zauDH9Mzy1Vk68dYZWU
-         4lYgpRaBKNinTEu6hS0q0+I/NK91TH7Wj01w6y04hQFYCUOCNoNCzYTiFf8J0ijS+epM
-         zUsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718208978; x=1718813778;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KUSq90CkA/e5YtyJB3DxxxJXJzc5nG1xr3zOSJv9S5o=;
-        b=G6SMWnk7u3SrdP75ayUittlcExxVxN1iUlKTv/mcoJ8/GxwWqlQ1oNVwP4WcPmugOv
-         XTz+xVVoJsw32c1PvG6QAH6sIFKSBPPbXSuC6oC1xZAwlSrZqpWJv3ro/C/3Ckb2w9Rf
-         r6RfIDKulUpE9qJaX/GSTZjXMsXsdCD0xIBMs6/DD2mqbKhyLeW68mJEbB9DzAnk3WGV
-         A162vftvpwuAvNz513/uATx46ORRigt9xBJnGblr9CslLunfYCbXyZ4baRgx6RnK7ZoE
-         WxnzC0b8tmDfr5/rMpbmynTmiiUsRsA7QFwFqr0HRNTpPIWOEJw4IKS0wJGoPfSS1P4g
-         yUEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeyan1/RPjMiOrWLORAn78P2eyW5DOen7lKF19zkEhVG/p9p7ghevrlPPD0e4RCY1e2eoK+00PeUxB5Sx0iqhNU+kWwdXuOBRUgrQf
-X-Gm-Message-State: AOJu0YzfbpVi0lI21aujmOBNn8wpojPXjmLuY0ACovN+eBgKL3Fb2LiK
-	XxBEG/l8EKvnuHU3T8WjfkLhrAFP7vD3p7/MBraocsuhi5g9PyniDwsuYs5gisE=
-X-Google-Smtp-Source: AGHT+IFwbnYghzXFTnC+RPeeiOFea6oxzdRq4GTl+xpaiMotJwnH3mE3DEOAsY+KEGhGtB0mf+6f5Q==
-X-Received: by 2002:a19:e00a:0:b0:52c:8811:42f7 with SMTP id 2adb3069b0e04-52c9a3d2020mr1828169e87.19.1718208978302;
-        Wed, 12 Jun 2024 09:16:18 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6efd6cfb74sm624815866b.20.2024.06.12.09.16.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 09:16:17 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 12 Jun 2024 18:15:36 +0200
-Subject: [PATCH 23/23] ASoC: codecs: wcd939x: Drop unused num_ports field
+	s=arc-20240116; t=1718209180; c=relaxed/simple;
+	bh=SGt12UU+KpiUHKlDhDGy8jBtpG3BwXdIN9I/4hIxvOg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oinFVytvsmswTicya0Mj3umt8WhUzQ+OlVIOeH0ZA58+QlWKBoJue+pDVVKieQGOv8mxf8A1wyhSKmqCHfEgMshuN++mmR1xAF2lmcMs5QJAtXw9uEhmdzrM8uvQInPdGV+wqhwyYc1868fhZwCWG6Dibehv1Hu4G2B+SasUTLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=202.114.0.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app2 (Coremail) with SMTP id HwEQrAAnLvpgymlmQPRvAQ--.26353S2;
+	Thu, 13 Jun 2024 00:18:40 +0800 (CST)
+Received: from pride-poweredge-r740.. (unknown [222.20.126.129])
+	by gateway (Coremail) with SMTP id _____wB3UUZeymlmfhAbAA--.28972S2;
+	Thu, 13 Jun 2024 00:18:39 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Haoyang Liu <tttturtleruss@hust.edu.cn>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Vegard Nossum <vegard.nossum@oracle.com>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs/zh_CN: Update dev-tools/index.rst
+Date: Thu, 13 Jun 2024 00:18:32 +0800
+Message-Id: <20240612161835.18931-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240612-asoc-wcd9xxx-wide-cleanups-v1-23-0d15885b2a06@linaro.org>
-References: <20240612-asoc-wcd9xxx-wide-cleanups-v1-0-0d15885b2a06@linaro.org>
-In-Reply-To: <20240612-asoc-wcd9xxx-wide-cleanups-v1-0-0d15885b2a06@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=668;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=6+UBEqHPuSCJQ5GPuzFYqeY5be1EJ+f74Fpf7byXhqo=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmacmr/WnHs89ZC/yEkUavUltM0vHYHU6KbqX4W
- wEotKpQ6ieJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZmnJqwAKCRDBN2bmhouD
- 19KVEACbMMT3jPxwjV7Xo2ksLok+3WxWywwteg/LnIXFjkRxGoGONk15q24uYyDKKeTxUuPDpib
- XcwgtSHFW0e0q0mt2feP46Ce1INuVVah99aoK+HGWF79YJG/2UtzxzPCaTbewL7o4h+55j5TcuA
- vHM6nrwyyC+r7AJeOtKlOZy/tOy+YANRFZWu9UkXXRxx9pB2GtBYsTPaJ3HYwrGrjO+zJ9QITs4
- ccPF7qmrb5f7Gp2yZ8NU35FLjbaS0/UOSeyXCrXNF181JruQZ+wed0snTOALbZbdQ6IDQ9JD6GO
- rX0VMP0JW37eGVz/wcJRUYHOQ8zKCXQ9tgfANZn4JvwUhbFay/vJGEFhRhOC1tBt+k86B5Pbjzl
- SAB3Azk97OvL+I9xA/jLtun1WoHWXbFeSrhYFaUx1StgW0CATkzIdD6cL23hxrvZKhDTOADiDCo
- edn/0N6j5mAktUp3v2PV/lSD+qgj36GvPC6/P4Tj0TAVE+33cMLYxBD/ZNXcRnlyZK3eLztTnKS
- yHmDTb/is8fY8DEdcpmxpSEI0TqbM0masGNvaS26HcB91dO1ND8Ghs+gn81PjrTvvskQz5Gumld
- ALpx3MIKDaAHcU2lRawkwvJ9Y4AeWo8YnyzrkYIykhcicLO1BA+PR+XLarpL0oGplP0tQAVtWt1
- m/+jt/LnIuV+7Ig==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HwEQrAAnLvpgymlmQPRvAQ--.26353S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvdXoW7Wr43GFy3Gryxur15tw1DKFg_yoWfAFb_Gw
+	s7XFWvyry3XFyIqr1rAr1kZrnYvF4Fgw18Ars0ya98J34UCwsrGFyDX34DZFW5WFWa9rW3
+	CrWkur9aqrn2yjkaLaAFLSUrUUUU0b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbmkYjsxI4VWxJwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
+	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
+	8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E
+	87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAaw2AFwI0_JF
+	0_Jw1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
+	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
+	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
+	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMx
+	AIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkE
+	bVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
+	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
+	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
+	xVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU0XVy3UUUUU==
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-The driver does not use few 'num_ports' in 'struct wcd939x_sdw_priv'.
+Update to commit 8c88bc5b489e ("docs: dev-tools: Add UAPI checker
+documentation")
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 ---
- sound/soc/codecs/wcd939x.h | 1 -
- 1 file changed, 1 deletion(-)
+ Documentation/translations/zh_CN/dev-tools/index.rst | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wcd939x.h b/sound/soc/codecs/wcd939x.h
-index 0aa4d9d542c6..1571c2120cfc 100644
---- a/sound/soc/codecs/wcd939x.h
-+++ b/sound/soc/codecs/wcd939x.h
-@@ -912,7 +912,6 @@ struct wcd939x_sdw_priv {
- 	const struct wcd939x_sdw_ch_info *ch_info;
- 	bool port_enable[WCD939X_MAX_SWR_CH_IDS];
- 	int active_ports;
--	int num_ports;
- 	bool is_tx;
- 	struct wcd939x_priv *wcd939x;
- 	struct irq_domain *slave_irq;
-
+diff --git a/Documentation/translations/zh_CN/dev-tools/index.rst b/Documentation/translations/zh_CN/dev-tools/index.rst
+index fa900f5beb68..c540e4a7d5db 100644
+--- a/Documentation/translations/zh_CN/dev-tools/index.rst
++++ b/Documentation/translations/zh_CN/dev-tools/index.rst
+@@ -20,18 +20,22 @@ Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+ 
+    testing-overview
+    sparse
++   kcov
+    gcov
+    kasan
+-   kcov
+    ubsan
+    kmemleak
+    gdb-kernel-debugging
+ 
+ Todolist:
+ 
++ - checkpatch
+  - coccinelle
++ - kmsan
+  - kcsan
+  - kfence
+  - kgdb
+  - kselftest
+  - kunit/index
++ - ktap
++ - checkuapi
 -- 
-2.43.0
+2.34.1
 
 
