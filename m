@@ -1,138 +1,78 @@
-Return-Path: <linux-kernel+bounces-210853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443DB90496F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:15:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF878904975
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97450B23484
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:15:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 493A9B22857
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC4714AB4;
-	Wed, 12 Jun 2024 03:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD6B1B7E4;
+	Wed, 12 Jun 2024 03:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.com.au header.i=@fastmail.com.au header.b="UKUsHu92";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZXNOpqER"
-Received: from wfout6-smtp.messagingengine.com (wfout6-smtp.messagingengine.com [64.147.123.149])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="OQ7cf4T+"
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C635F257D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 03:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFF3F4FA;
+	Wed, 12 Jun 2024 03:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718162142; cv=none; b=tUEiEdx5gP52kkCJjFsnxfqpvy198oc6CtRhQ0Ol0vP8p0AA4ilsDiKMuSQCSjW1zIQItxzsNDMIXg95ImfarZys1v7j/oNpmk6hYosrudggwhDOeCxUhY3s+mpLmG+Auk4akXb+KW3hlJDMShC6q+w+I8xiRMmtc0AHXgi8zhY=
+	t=1718162473; cv=none; b=u+536NAHH7a0zJ07/cu+M2iMsG/WLTtEotYqqEmTVVl+qk4wLoECjnVZqhNu8HKYa4wd5rV6YFXrlBZ6LqH96T5Isp5a6TJYbsicE1dlq7WzQs3zkli+DrGGnA5EHFhA6UnhY412jnHyx5emC14BwP1m1czjm5Ybj0mYDyYJP7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718162142; c=relaxed/simple;
-	bh=Sv5rRXI0khWjS7T/iNGvbK8+tcfD9Cz0pW1TgjH6ha8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q0nXOSJ04RUqOK3jmCRTZy4UWX1M9nzz1oc0o2yuaop8nZBjTxtK4nmFbIT36WdDDW1kOoLkW23pX062R+61ih5ZiKFNY5xH8pE5UQH+kK4NQR4OZq6/afNEgTr88C0Rf5ejARZJVBTePh4f/d+fEpCjWxTlP549Ob7N2wy+xnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=johnthomson.fastmail.com.au; spf=pass smtp.mailfrom=johnthomson.fastmail.com.au; dkim=pass (2048-bit key) header.d=fastmail.com.au header.i=@fastmail.com.au header.b=UKUsHu92; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZXNOpqER; arc=none smtp.client-ip=64.147.123.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=johnthomson.fastmail.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=johnthomson.fastmail.com.au
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfout.west.internal (Postfix) with ESMTP id 995451C00178;
-	Tue, 11 Jun 2024 23:15:39 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 11 Jun 2024 23:15:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com.au;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm1; t=1718162139; x=1718248539; bh=zvLwu9Fi+t
-	Ya2Qb87tnXmDFfyJhm4LTPbxoJiYbmi+8=; b=UKUsHu92PUSjutygmWSWw3DkGI
-	ieX6a8QIpaBG+ihf0merrBG2lsh+g3jcWmmXCUzJMszPxc2ZrEpO0FMi9yNjKs3I
-	M1dVfoBVfl9tQoO/siJ9lnYUXlw6YeTnL9oCpAQ2bXtVdS2SnFyrdZAUEvXgNl0i
-	Jpa2hQ29Fej6xP7b19h5Nbko5CBiCSgxo6m4U9odK46ZgZTtlVDx+I1FqXgOqffH
-	khtsf63Un/uUNxwXj9PanMHVS6WiEJxK3kNdE/YL+6A7lEn5DSeSQmlJObTer0Ti
-	LVskW9TX2cklgBkh1aDjCN4ygxLpehnMpRxQPlJl4/1+I8OKH4L7K5kKIANw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718162139; x=1718248539; bh=zvLwu9Fi+tYa2Qb87tnXmDFfyJhm
-	4LTPbxoJiYbmi+8=; b=ZXNOpqER9fUgi4eB2pioh8fOFeM6doawVMchqfoESzzD
-	WIphSPpBl3T8Z5w9T6VqMgRlkCJXiNEBwOY5Bq0/n2aLB7fifSqy/acQsOoxz1vb
-	yZR1lXC3TZ08Kji22RdknBtaKpIwaAFc6PKfXxtTS0xgCLxwTNKmmb0koF9rHN+Y
-	1uZXylEZVZp1918QFZwZ1FvmmW6HKQlgW/NUGLZP3c+mPWnydkMv7jBvySQkdlgf
-	KrEFuroPCt9ZePkFjmCqu2ADHvS456zlILZCj7O5wfVt1mGYcyhEMyM58ZOaRRDU
-	lr0FxE2NmPwnxeJAb51oioWr8A1SSE1z3w7PpLqEJg==
-X-ME-Sender: <xms:2hJpZjUVDzqJZnooVpJEaOKGROEQ9GJhGvJlrU6WSQNNaqAzhmKptA>
-    <xme:2hJpZrnBSxAauqMRsRy_rS_E6msC4a7k6JuOWN9o_QglPWsx1hg_DeP8QyPzlENrO
-    5kWq-SjWB-P0sXeKg>
-X-ME-Received: <xmr:2hJpZvYJOvxmlrBRVU5ecjP1ilc6ifrGnkJGZpT5j47nJ05EZUh2s28SgUxnsuiJSFy1TyLRFFQ__AqBJQob_0hpdpcb65HL_bUX6aYeq5aFBLSCkH5c60RwCQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedufedgieeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
-    ertddtnecuhfhrohhmpeflohhhnhcuvfhhohhmshhonhcuoehgihhtsehjohhhnhhthhho
-    mhhsohhnrdhfrghsthhmrghilhdrtghomhdrrghuqeenucggtffrrghtthgvrhhnpeetje
-    evgffggeekffduledthfevgfeugeelhfeuveeiueekgfegffetudevhfdutdenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgihhtsehjohhhnh
-    hthhhomhhsohhnrdhfrghsthhmrghilhdrtghomhdrrghu
-X-ME-Proxy: <xmx:2hJpZuWtVFGgoO2BmYCktTxv4kPIIStObi29wRcTtXw4hf1uvNMoXw>
-    <xmx:2hJpZtmMqdaLiJ2z1mLhGVoeEDmF4vW7dtV2-1UkufF3ECtF__z5wQ>
-    <xmx:2hJpZreKrkGA3WYDQqnYxhSA581FOuO-jlhDOQ98IQ_IxeTAK0G53w>
-    <xmx:2hJpZnELQ82UaOV76WFocfbqVlXRvWT-_Je_X498DoTsHS1DPEBWfA>
-    <xmx:2xJpZmA3BkVWsYxUdmzqDlraae5es4mC5nBwlBHuYS_9NwtNI7oCwr6k>
-Feedback-ID: ic081425d:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Jun 2024 23:15:36 -0400 (EDT)
-From: John Thomson <git@johnthomson.fastmail.com.au>
-To: rafal@milecki.pl,
-	srinivas.kandagatla@linaro.org
-Cc: linux-kernel@vger.kernel.org,
-	John Thomson <git@johnthomson.fastmail.com.au>
-Subject: [RFC] nvmem: u-boot-env: error if device too small
-Date: Wed, 12 Jun 2024 13:15:10 +1000
-Message-ID: <20240612031510.14414-1-git@johnthomson.fastmail.com.au>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1718162473; c=relaxed/simple;
+	bh=xoraK43U16pXlakxdHI1pgYWCBDNzBssPxameDeDePM=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YVhdnkq6cV0QJvfrDP8tvvuJs+ROKk0E31JrFssFTnBWKyzQHLtSfj9Lof+8HH9svLw8SqWyGsaa1UZMbw7YieZH1SkdcciEAUYVz0z4NEPLR8ak4EEcz4nEwlwJbW9CM0t2wxpT+NS3O6Cs8Gto6Hu4MgdDmPsYF81riJQnMmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=OQ7cf4T+; arc=none smtp.client-ip=51.77.79.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1718162461; x=1718421661;
+	bh=xoraK43U16pXlakxdHI1pgYWCBDNzBssPxameDeDePM=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=OQ7cf4T+ezoHkxugoTjXFGbL/7XU5YYbdCLpT+YpfPoylRZ7MH6zbOCpA1WovWgR/
+	 V8kDC/KQgIe9a2rc7PBZsPwrldsQxKehqGz49jx67/tdoOpEsJKMgJGyFTuTpC7k7U
+	 MXCkz/9q0bsJwNgVkVtS96+ICSkkvgEmIYMa452kBAOp1NuaPzcdagl+q7e8dqHpfX
+	 vSBnyScC5b66E+GgGJxp3hpLS3WZ0nm3W/6OWTbx9ke3D7qrKgbn140hEalPCSVEM8
+	 A4wqGH3BW6h6LAFaFzv+mEA87iQJPR8a4Lz4cgppLp3XLLN5avkX8iweaPGYc2SeGM
+	 3aypE1wsaDX7g==
+Date: Wed, 12 Jun 2024 03:20:55 +0000
+To: linux-kernel@vger.kernel.org
+From: Raymond Hackley <raymondhackley@protonmail.com>
+Cc: Markuss Broks <markuss.broks@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, Nikita Travkin <nikita@trvn.ru>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: [PATCH 0/3] Add support for Imagis IST3038 and clarify the usage of protocol_b
+Message-ID: <20240612032036.33103-1-raymondhackley@protonmail.com>
+Feedback-ID: 49437091:user:proton
+X-Pm-Message-ID: 30ee4ca33747296f4316c28bf11e4877e14966c1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Using a DTB description of u_boot,env within an MTD partition that
-starts beyond the end of the hardware results in kernel panic in
-u_boot_env_parse, where the crc32 is calculated.
+Imagis IST3038 is another variant of Imagis IST3038 IC, which has
+a different register interface from IST3038C (possibly firmware defined).
 
-When mtdpart detects an out of reach partition, its size and offset
-are set to zero. Add a check in u-boot-env before running the crc32,
-that the data to be processed is reachable. This situation should only
-ever be reached through hardware error or misconfiguration, but it is
-handled gracefully at the MTD level.
+Unlike IST3038C/IST3032C, IST3038 has different registers for commands,
+which means IST3038 doesn't use protocol B.
+Similar to IST3032C and maybe the other variants, IST3038 has touch keys
+support, which provides KEY_APPSELECT and KEY_BACK.
 
-Signed-off-by: John Thomson <git@johnthomson.fastmail.com.au>
----
-RFC
+Add support for IST3038 with touch keys.
 
-Only tested on OpenWrt's Linux 6.6 based kernel (which has nvmem
-backports from 6.8), but it's not mainline Linux kernel.
----
- drivers/nvmem/u-boot-env.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+protocol_b is a property, which tells Imagis panel to use a different
+format for coordinates.
 
-diff --git a/drivers/nvmem/u-boot-env.c b/drivers/nvmem/u-boot-env.c
-index befbab156cda..6e73d042467b 100644
---- a/drivers/nvmem/u-boot-env.c
-+++ b/drivers/nvmem/u-boot-env.c
-@@ -176,6 +176,13 @@ static int u_boot_env_parse(struct u_boot_env *priv)
- 		data_offset = offsetof(struct u_boot_env_image_broadcom, data);
- 		break;
- 	}
-+
-+	if (bytes < crc32_data_offset) {
-+		dev_err(dev, "Device too small for u-boot-env\n");
-+		err = -EIO;
-+		goto err_kfree;
-+	}
-+
- 	crc32_addr = (__le32 *)(buf + crc32_offset);
- 	crc32 = le32_to_cpu(*crc32_addr);
- 	crc32_data_len = dev_size - crc32_data_offset;
--- 
-2.45.1
+IST30XXC series is known for using protocol B, while the other series
+aren't. Note this could be confusing, unlike the model name implies.
+
+Adjust the usage of protocol_b to avoid confusion.
 
 
