@@ -1,107 +1,170 @@
-Return-Path: <linux-kernel+bounces-211798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE709056F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:34:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5380B905708
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E0F1F27C26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:34:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E7D6B26C87
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E66B180A62;
-	Wed, 12 Jun 2024 15:34:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECB21802CF;
-	Wed, 12 Jun 2024 15:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887DA180A6C;
+	Wed, 12 Jun 2024 15:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TjNn8WYv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E151802CC
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718206461; cv=none; b=IrREZPlBvPqlqJ9wd3VqRLGa0Ty0/S+LhBqYzgwa/rEh/yBFgbMEpYnt3CGpmiJvuHeHygS2A0gZyUirT5q5+Nh5xIUUAOLgK6RgXODJYkzZ0NkIUT8tmGoXhJPTPzYHw2j9WY8IIX3XbszeJ1cBikt3X/H1NEjCx10tdl83edg=
+	t=1718206531; cv=none; b=ATWI33VC/pUfAKqhIcKZdvxbm6SWkXu9IjnePEj4OgIAf7uH8LNmM820SomaCrE70Z8JnRHB+15iRbn7ESFHsMRQOUFlRA012p+wFsF28efvgXaP4DiIoefckfdaC9oEpWWtdALEYRok6Jyc0IT17co7z+xxZsmA98FiABp7VMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718206461; c=relaxed/simple;
-	bh=AEH1PF2oiR9AWSog4ZyajYHOgBRYvq3XpSnXr5FyMaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=thILJJkTXVYOghb/Wn9M2OCKWKL0bWqMqXUG4YNvGuqbipPrxZPyGJiQ6J0hKrBPGPhFAOE7vDwCx5jAnxqU2akSAv6X8sn/7zE+RZW1GycGDB58G8bYP914TcPkC4/l6uooX/TmtOlCKWMNsbEYk4mac1PJe4cnpY8f3A3v5WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FA481042;
-	Wed, 12 Jun 2024 08:34:42 -0700 (PDT)
-Received: from [10.1.29.46] (e110479.arm.com [10.1.29.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E861B3F73B;
-	Wed, 12 Jun 2024 08:34:14 -0700 (PDT)
-Message-ID: <7fdc23ff-fd55-4347-ac61-dd115eff6ff1@arm.com>
-Date: Wed, 12 Jun 2024 16:34:12 +0100
+	s=arc-20240116; t=1718206531; c=relaxed/simple;
+	bh=/eth/rLHQaVXa5Gg6iEJQONz1lIgOpwaz6EWrI3kLxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I28x7hfXT9OXHvlHSxBBtqLeOzg+RNmiuZLlJmb+N/M8m1/DIApj4O8u1I8ELuqKo2SVRl6j4poV7Sw7hKIVUD0AEhG0EtrW1bFV6oNC0tm9QIt/nwxk0UPgpPIaUnLWzYdH41x00mHQ2/65SuoDQ/JBVTneJH+afGHKqdcA1mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TjNn8WYv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718206529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TLPk25s5a0RpSrB3M9CtlVSrmFBRqAPSDQu7Lqf2nKs=;
+	b=TjNn8WYv7s65Qe8aDAZDViKHrYOA+Zg1N1AnH4OI6XpTHzHSzalafNHAK8laoQTBfjOi2p
+	CqpnjTZK8mlPn7AWPCnDf+kr6Iaqp4XULhV9NTb+wB0uxt3wS/eLMc7RpRXBOTd4Ml4PV8
+	oS5/s1CmMQON3eaj4GQs9itTcgOxnyo=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-222-ZdJTzZ4qMtmgLey7Pq_ipQ-1; Wed, 12 Jun 2024 11:35:27 -0400
+X-MC-Unique: ZdJTzZ4qMtmgLey7Pq_ipQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35f2730d114so436306f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:35:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718206525; x=1718811325;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TLPk25s5a0RpSrB3M9CtlVSrmFBRqAPSDQu7Lqf2nKs=;
+        b=a8KCt5lFNY2go1okn4pkrLuCDggXdlLKR6ON5hcsQySQcFCqt5A5BHJU2vUG3Afz6V
+         4r8xps8/MgLIXO+jQGOzikLYsmmHDYYD7vExiyVFBYjVDF0YVhuNprzqFpVGJIEpJg4j
+         nSm7FTCzwao4Ck45QRPYpqe92DYQGakQ0y9qjRnicGbY9GoeJjXY3qi83OBXm59hCPhy
+         Z0YE8e8PERuDKZKr48RkDThibGttwlQmZtUHw/w+Sbn3J7P3KKPsTTYanWfiSQ/+uoC/
+         h6krjI7UyrCGIcx/2hQUuX4Ak5AO6febA9ISqmnkF7tT2/GsHKjdeJG1Y1rDmakYTAqW
+         6UHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXW+GkEKQz6369DFBbM7VZES0hyXO/oruW86/GqtTXHoWqmpSiZJuWzpUSUARB3XZFcVUE32ZWUXpgoKex+eLcMpINvHvU+o1eeV7/G
+X-Gm-Message-State: AOJu0YwB/bVs8zWLrHU4SPg6n0aG8m/wC8Gg7r0bcMKpT5VWrSkVPn9R
+	v68XWD4KglIt6co175YibCSkH3sqI/8L17+iwijR94LEJPSZ1mYljwnVxW0q11lEhKbM0NdCT8b
+	KlJ3I2gt5OwBWqB+cZOt18lTIOugXng9vUZpkzIiR1ZhGhjRanDCXSxwR1+WuIv1/uxVkLQ==
+X-Received: by 2002:a5d:69c2:0:b0:35f:1c95:4042 with SMTP id ffacd0b85a97d-360718c9d97mr28086f8f.4.1718206525126;
+        Wed, 12 Jun 2024 08:35:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtDkYfyxEJvsVijeUZeP0vECL4S57V/yigRw4w79fBzt8VAsMr+xkBwdMj5gMa5WMGHSk9JQ==
+X-Received: by 2002:a5d:69c2:0:b0:35f:1c95:4042 with SMTP id ffacd0b85a97d-360718c9d97mr28048f8f.4.1718206524664;
+        Wed, 12 Jun 2024 08:35:24 -0700 (PDT)
+Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286eef70csm31041305e9.3.2024.06.12.08.35.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 08:35:23 -0700 (PDT)
+Date: Wed, 12 Jun 2024 17:35:21 +0200
+From: Danilo Krummrich <dakr@redhat.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, rafael@kernel.org, mcgrof@kernel.org,
+	russell.h.weight@intel.com, ojeda@kernel.org, alex.gaynor@gmail.com,
+	wedsonaf@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] rust: add abstraction for struct device
+Message-ID: <ZmnAOfCUFkZqhDji@pollux>
+References: <20240610180318.72152-1-dakr@redhat.com>
+ <20240610180318.72152-2-dakr@redhat.com>
+ <ZmdID8AlXtoxUfC1@boqun-archlinux>
+ <ZmhPW9yq7y6jbmIg@pollux>
+ <2024061136-unbridle-confirm-c653@gregkh>
+ <Zmh3oN9sWamaYHOD@Boquns-Mac-mini.home>
+ <d74edb73-1dba-43f4-a50c-36354c39d758@redhat.com>
+ <2024061245-kangaroo-clothes-76e1@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] mfd: axp20x: AXP717: Fix missing IRQ status
- registers range
-To: Lee Jones <lee@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Ryan Walklin <ryan@testtoast.com>,
- Chris Morgan <macroalpha82@gmail.com>
-References: <20240418000736.24338-1-andre.przywara@arm.com>
- <20240418000736.24338-2-andre.przywara@arm.com>
- <20240502093907.GM5338@google.com>
- <56aef347-7582-497e-be02-d82eda7b3528@arm.com>
- <20240612152510.GE1504919@google.com>
-Content-Language: en-US
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20240612152510.GE1504919@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024061245-kangaroo-clothes-76e1@gregkh>
 
-Hi,
-
-On 12/06/2024 16:25, Lee Jones wrote:
-> On Wed, 12 Jun 2024, Andre Przywara wrote:
+On Wed, Jun 12, 2024 at 05:02:52PM +0200, Greg KH wrote:
+> On Wed, Jun 12, 2024 at 04:51:42PM +0200, Danilo Krummrich wrote:
+> > On 6/11/24 18:13, Boqun Feng wrote:
+> > > On Tue, Jun 11, 2024 at 03:29:22PM +0200, Greg KH wrote:
+> > > > On Tue, Jun 11, 2024 at 03:21:31PM +0200, Danilo Krummrich wrote:
+> > > > > ...hence, I agree we should indeed add to the #Invariants and #Safety section
+> > > > > that `->release` must be callable  from any thread.
+> > > > > 
+> > > > > However, this is just theory, do we actually have cases where `device::release`
+> > > 
+> > > @Danilo, right, it's only theorical, but it's good to call it out since
+> > > it's the requirement for a safe Rust abstraction.
+> > 
+> > Similar to my previous reply, if we want to call this out as safety requirement
+> > in `Device::from_raw`, we probably want to add it to the documentation of the C
+> > `struct device`, such that we can argue that this is an invariant of C's
+> > `struct device`.
+> > 
+> > Otherwise we'd have to write something like:
+> > 
+> > "It must also be ensured that the `->release` function of a `struct device` can
+> > be called from any non-atomic context. While not being officially documented this
+> > is guaranteed by the invariant of `struct device`."
 > 
->> Hi Lee,
->>
->> On 02/05/2024 10:39, Lee Jones wrote:
->>> On Thu, 18 Apr 2024, Andre Przywara wrote:
->>>
->>>> While we list the "IRQ status *and acknowledge*" registers as volatile,
->>>> they are missing from the writable range array, so acknowledging any
->>>> interrupts was met with an -EIO error.
->>>>
->>>> Add the five registers that hold those bits to the writable array.
->>>>
->>>> Fixes: b5bfc8ab2484 ("mfd: axp20x: Add support for AXP717 PMIC")
->>>> Reported-by: Chris Morgan <macromorgan@hotmail.com>
->>>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
->>>> ---
->>>>    drivers/mfd/axp20x.c | 1 +
->>>>    1 file changed, 1 insertion(+)
->>>
->>> Acked-by: Lee Jones <lee@kernel.org>
->>
->> Can you please take just this patch as a fix for 6.10? This fixes the power
->> key operation.
->> This applies cleanly on top of v6.10-rc3, so there is no need for any extra
->> immutable branch or coordination with regulator.
->> (The same is true independently for patch 2/5, on the regulator side).
-> 
-> What does the Fixes: commit break?
-> 
-> Or is it the case that it never worked properly?
+> In the 20+ years of the driver model being part of the kernel, I don't
+> think this has come up yet, so maybe you can call the release function
+> in irq context.  I don't know, I was just guessing :)
 
-The interrupt part never worked properly, but so far that's only needed 
-for the power key operation. Unfortunately that part wasn't tested 
-properly initially, so the patches were merged into your tree before that.
+Ah, I see. I thought you know and it's defined, but just not documented.
 
-Cheers,
-Andre
+This means it's simply undefined what we expect to happen when the last
+reference of a device is dropped from atomic context.
+
+Now, I understand (and would even expect) that practically this has never been
+an issue. You'd need two circumstances, release() actually does something that
+is not allowed in atomic context plus the last device reference is dropped from
+atomic context - rather unlikely.
+
+> 
+> So let's not go adding constraints that we just do not have please.
+> Same goes for the C code, so the rust code is no different here.
+
+I agree we shouldn't add random constraints, but for writing safe code we also
+have to rely on defined behavior.
+
+I see two options:
+
+(1) We globally (for struct device) define from which context release() is
+    allowed to be called.
+
+(2) We define it for the Rust abstraction only and just constrain it to
+    non-atomic context to be able to give a safety guarantee. We can't say
+    "might be safe from any context, but we don't know".
+
+But again, this is really just a formality, the C code does it all the way and
+practically there never was an issue, which means we actually do follow some
+rules, it's just about writing them down. :)
+
+- Danilo
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
+
 
