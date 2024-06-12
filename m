@@ -1,222 +1,321 @@
-Return-Path: <linux-kernel+bounces-210766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B61E904874
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:35:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A5D904870
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8318CB21A6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99962284F63
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F161847C;
-	Wed, 12 Jun 2024 01:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8039E4A15;
+	Wed, 12 Jun 2024 01:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cCTAIE+K";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="DaqTxmut"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F7TYBj87"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B79615C9;
-	Wed, 12 Jun 2024 01:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718156089; cv=fail; b=Lr5Ok+ANYIJOdXAtH4ln7poHBcdfnwV9LuXG7WF9lHqoEPhO2UmfkITtit9GBoOj6LotKLEJDzJstlvuYZ9p01jKMuW7Hk1764Yl9oPhuNM+IOQZhEm/x+WVnute63Tt7nq9TWoEWAm4vJ4FtefxOwxPL+6npqacdOk8vs35i+c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718156089; c=relaxed/simple;
-	bh=AjWj1JGcl4v+iDu4qmloIMhdvJ0+LbYrxwYXpRkY/BA=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=jRdvuRvAeWN+E2avzzDvx7fOm5grLljkwPLaPWHSXL4XqYIZydURxwowrJBx+1y7HJU2tQao7LcabfPLHeXU8xFiFiiBUZdzGEFM/WCt6ZOh7cmxRf0EeHMOAEFH1bMVZqPPNe8E35cs3pJrT1OzjDjk7lKdjHNWgfWL2Ppc9pM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cCTAIE+K; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=DaqTxmut; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C1CZCH011740;
-	Wed, 12 Jun 2024 01:34:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
-	:cc:subject:from:in-reply-to:message-id:references:date
-	:content-type:mime-version; s=corp-2023-11-20; bh=kGm9eBgnyC02wK
-	hRDn9oQoA05nIyvee5AL5+BFy2TQM=; b=cCTAIE+KDg3KmffBuZtLfiVkbO0LDE
-	YBwFc2MPZBBH0v9m4LRunzxZba2UpH1QU5mNQBLy3NxDV4RRwd/eHgQRnqrXQQhl
-	UBk6I6jxx13FW1X9kl1YfhwcupllBHKCEzTIAxBIXtOCPXZAJMBmjajpA0qVdpoO
-	kG06F4yMLNxk2fZHDMI2muO6xCM71twlCdb6A+eF3SS+pLB2WU+N2Ou0CcBV6wWs
-	oAG10SJdpDd2TP6JFUNPNPUuT0ltCjQR5mieUDZMGBRc3R5mJTTdfnKDKFyGIzhf
-	16W65rKgft2vp9J4ScPegPU/3VCcGLeCJ2Dgmz9zFjkLUUH6iENAY1ug==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymhf1e3u6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Jun 2024 01:34:22 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45C17lQR012553;
-	Wed, 12 Jun 2024 01:34:21 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2041.outbound.protection.outlook.com [104.47.55.41])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ync9xq0m3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Jun 2024 01:34:21 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i8iNjGGu5LHayZrNeM3EiohbwKMsuiUiUiEl7jtCg5Vd8U7uihx0tRbTO9kDz1hmfFZKleje33x/tTGqvLXAzkkAnjuyzGfHdtHEhrMHt/IhZbAgTlRmjiiRFytccvxHWPh59v/prDOzLGFcWVLBJD+gGSZvB66JZAH6/gqxdMa7Zm7g6fPrZwiGlYZheklouvKM28dxKoUEZJnzMXxOHhPIRES1pWPG60/zRWS/usEHDjkFdGnfuCjr51rx4N7V+oSUcUyBIflb5z5zn6+aT60LWxGJYThJs46YP+m3CI7/AmSJbn5SpLf6jdZ7OZH3BuvXAi4AeEykKeHG2BCh0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kGm9eBgnyC02wKhRDn9oQoA05nIyvee5AL5+BFy2TQM=;
- b=azc6jCWBh5ON1nImuuuO8vn9o9PZIiakoA/a6nMTP2P6pJonx6Yf+tpT6b5FEYesnpQ13etnI7ojXAOZPGMeeoiMnkkVJLUSkYl4vy1YBRc7/r87sv/461tjT2jSvatOUQ1y/q14ReL/mc85XK/f6Iq0HQyXa10APPfY4koPsuP+l5pdnw8owQTDzBl/8mlwP+PQP3yYdjxDzCY203qgdZHZFx0Rgc9xhorxPXraL3PY/ufrQs1c6ii8+3fNCkOzAMJ+cvwdgeWLlsf3E1u3+woNWM28mn9F5wU258jBVljVL1x4ELdfeNfUZmCyjgvu4bjRkCkTYs9ZRro4Cq1ooA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA00010F2;
+	Wed, 12 Jun 2024 01:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718156065; cv=none; b=lJB/Ap/KYtjjp4xXgIUmChyOLwQVnXiwXGvqtUfCeURDn6X78rFi/ngLFlCNX5JgvOv80xaStKpqiUZakbD6sSkIuHSiAdq12teiEJu1lPNcinPOA4FHPXSQYNzJ7UYHgqUJM9OsCA3vQUwh7cs73DT/Ffvt3WgD3VDgA898gF8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718156065; c=relaxed/simple;
+	bh=Zs3Gjos4LsBpSwXMnubnoIJmsGgPi02BZ5xWOBrRtKw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LO9ANQTmKAGjc5Miq4RqQDFvCCBnhBulBq59LwcWS0MzTLmjMkCCNaWoEaHYjguXvMbPaTeO2qq16pocXfarbnz/LMvodTHc2JFy1Mc0d8FCXaTLbd6+Q6bMxNK3Aqik5DeCsoCO212nRJAiJN/PtpBANjd1s+N1ruhxgUxGGOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F7TYBj87; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7046e87e9afso1475673b3a.0;
+        Tue, 11 Jun 2024 18:34:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kGm9eBgnyC02wKhRDn9oQoA05nIyvee5AL5+BFy2TQM=;
- b=DaqTxmutXF2yzLbfyYS4FS8V8M92La2TO4dJ8CH018XmCixtECAUt0vsU1VDLmPOe4ERJ71mS3VTSndTsxl3IM+H+TJeu4ac0qI9+IpYKg6JtrW+Sf80J7/hJ9mJilh0vgS5x+p2TvYnWH6EFlW7HmsFlR+eYkgyr7G468/xqHI=
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
- by LV3PR10MB7865.namprd10.prod.outlook.com (2603:10b6:408:1b8::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Wed, 12 Jun
- 2024 01:34:19 +0000
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7633.037; Wed, 12 Jun 2024
- 01:34:19 +0000
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Khalid Aziz <khalid@gonehiking.org>,
-        "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
- <martin.petersen@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Hannes Reinecke" <hare@suse.com>, Finn Thain <fthain@linux-m68k.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        James Smart
- <james.smart@broadcom.com>,
-        Ram Vegesna <ram.vegesna@broadcom.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "Juergen E. Fischer"
- <fischer@norbit.de>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <target-devel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v3] scsi: add missing MODULE_DESCRIPTION() macros
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20240610-md-drivers-scsi-v3-1-055da78d66b2@quicinc.com> (Jeff
-	Johnson's message of "Mon, 10 Jun 2024 09:16:15 -0700")
-Organization: Oracle Corporation
-Message-ID: <yq1cyonymer.fsf@ca-mkp.ca.oracle.com>
-References: <20240610-md-drivers-scsi-v3-1-055da78d66b2@quicinc.com>
-Date: Tue, 11 Jun 2024 21:34:14 -0400
-Content-Type: text/plain
-X-ClientProxiedBy: LO3P123CA0017.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:ba::22) To PH0PR10MB4759.namprd10.prod.outlook.com
- (2603:10b6:510:3d::12)
+        d=gmail.com; s=20230601; t=1718156063; x=1718760863; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IWRd6FFkLYS5WcN+M56v5OtkCFgkbR1vqPFfOWbUjbg=;
+        b=F7TYBj87vj1JL9+ar9x0tc1HhrTjKGA6VTtZsDoVvUsoUqvWE/st1MChQHMMUsXviG
+         gR18H7PQQ9T6hZa3ZVSGrd44qFEdbvau9W2vc3HKeOsPOlUcMeYuLDZDhsNokWyUSm/r
+         2G/tlQEUUel/RxcIYVKWBohickRkidXnGzipuJ+DDvI3iaP8tRW8RKx6MO7XKobp6ray
+         PBeGkcOoRYq99RuOdzcO7E7IOUlyuUiF2eWl5Cs8UkjmFMwHSictzOjeV3qGtVvjK5Rz
+         1Wvn0f5QDNULQ+0/QhPmscf4FWTXJ544RlTVt4FDYh9VkC8LaFjYst1rSZZ6zjBTqLh9
+         KN/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718156063; x=1718760863;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IWRd6FFkLYS5WcN+M56v5OtkCFgkbR1vqPFfOWbUjbg=;
+        b=tqCEaN5w3gjeBvL7WzCex25ZDbLsKjNuLeZ+MLC409TSyMmaN64XH11D2A94zV9m4h
+         LSbfbzfPxsiby+XaMO6ygTM0bzhU6swOP2aGkuJSwg36+qvA8NLgLWMobS4xFAum+uua
+         ALqKpYZrC3yjnhnvMsJ7YC7Sk1KkPWJFUpTRLFd6Nq6lwRLpCjRJ1gVNNTm0qMMzDRqJ
+         YF57CiNGTr7/+xiWtWHxydVAyh75njzKcCJFacBC7BPuxxGytYT27crVBxsDSqfi/Xk0
+         B59PW9KnprYy3rUn2TzsSO4dVOvaSmA9UCY/xOi3USzl3h3AUo7Uiqtacp5GvGCep4f1
+         CJlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGHvxB3KcbEvt3mnuSmKwXs+RMvrrmmvi6FeE9AHJle+MIY+YFO4cH/F/+LhT0c2umeQO3kxDJBwmKZ0TXY30XijKmxkiDobUh6QcqshbmdQzhEiWzDJ1INdkpyQTskUuTYEyyaLSI
+X-Gm-Message-State: AOJu0YyCgfag1KjR9ptsP7C6t5AuIp2cEqPMGY4umYrlEyqxmzI5x58A
+	fb9IUVhqzQtS8gJSPrUVoswTbmTo/9TOwsSz5A4z0DYLgvr/TqrMLJIn0w==
+X-Google-Smtp-Source: AGHT+IG7efEIAlIisoV784XUCgcOg9PAp9r9MU0CzAeDRDFveS7hRtA8L9J6W9JJa5rW0EMiNDrFvA==
+X-Received: by 2002:a05:6a00:1786:b0:705:b2c8:a23 with SMTP id d2e1a72fcca58-705bcdcc62bmr621989b3a.5.1718156063039;
+        Tue, 11 Jun 2024 18:34:23 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.24])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70431c8cb72sm5629175b3a.145.2024.06.11.18.34.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 18:34:22 -0700 (PDT)
+Message-ID: <6964e8bb-d2f1-4203-94db-857135cf7ecf@gmail.com>
+Date: Wed, 12 Jun 2024 09:34:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|LV3PR10MB7865:EE_
-X-MS-Office365-Filtering-Correlation-Id: c57e2c69-fdb7-4475-33e5-08dc8a7fc735
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230032|376006|7416006|366008|1800799016;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?caYa8zQh9E+OnFmSLn3VNaiQasij6WSwDsuaeKN9yFnwMhKu5PB9GsUPZ/ox?=
- =?us-ascii?Q?Z6QoGA4QP5DVd+SusxIpUEMRGT1OYEpeKs/RF/jrMekHPaDCwqVMW00O6xhw?=
- =?us-ascii?Q?tTFbAGYysWrMYVBIS0/HsAUaQfmvbeYURLJZHyPRxLgIE0f9onJgUAEdHVbW?=
- =?us-ascii?Q?kvz5i9EEoaPorHuluJG2HxQ1r1Difsu2RIHsZfAMOu22B3L2WOuUd5LACi5n?=
- =?us-ascii?Q?eAmBT/W1BgZJNrrPFAosbkIU1g2X17PB95IoMEQYIwvqqiNpV/GW/KmvSJ+l?=
- =?us-ascii?Q?5VMWdXqrVrMUlNmq3K2loOmBQ+6RbRbG2Bvy2JAS9/s7Eq8lj0DjT+1gMzzj?=
- =?us-ascii?Q?9g8qEc+BRBVCGLRfcBMpPii3/+6J3BqxH+pyxsBmJJcvP8QC26SlBRTsRO7W?=
- =?us-ascii?Q?HenQoCtG4IKNG7wVJQlcFA8muekFKANQwDlhaU1onsCTj1QuxJX+/Msm+79a?=
- =?us-ascii?Q?XrvzRRkK3qcYk/4YentVHeJPfvApOLtwWBAYKH2ugdZcn/fV/GiHRc0gaBbJ?=
- =?us-ascii?Q?RJ4Z5g1z1w/v7R/aQFlVJ5Pl9J3yeVwqlCs3Iji7hcN2gPihDvWCzDiwpqRC?=
- =?us-ascii?Q?IVjJmAIF5RuiCMEeILbNxPQM6hUTwYM8uUxYPGCGqn/IqL59d/PwfMYRNOLe?=
- =?us-ascii?Q?dbx87x5voUEutGiP8whuOYfixlWf+2uyCbrkWo852FnrOykciVCEh4novEUY?=
- =?us-ascii?Q?IL3ZdY01HxOcgI80IKAHspciQqpcTrU4cAjo2mX1GRUP2dgivJhj7QFrI3wZ?=
- =?us-ascii?Q?xh1FK7zChl0zNVwTADzsi+ZkTSXfJK0YVQgc5L9qKBrD/DKolNL4fXzpYWEd?=
- =?us-ascii?Q?IRZbE1LM7YO484OUo/48OqZt5MjNR4ybMcqXAvb0R+Ke0Etkcfk9/92auAkE?=
- =?us-ascii?Q?l8vWkd/Rlvtqdgkm+iI/W4HIcQp2XA0b/MCmfFtfZZgV7OlPlDGSfNV8lKBo?=
- =?us-ascii?Q?Q+jxRrb9YABKVWJD7tq8cAYeTVeyNyifDHDmh7R8cIljkzRuZJu3IukcxGw2?=
- =?us-ascii?Q?h+Vvxya5iKZ7B4BknLH4btghweC3GqQEZ+otaWnNx4L04GZsv5Fvx4r9AJvY?=
- =?us-ascii?Q?dynPF4wITR1FsEptHbz8Dm18djYohDRcNhO+VD86WetHQQsda+i5zEoxuQR9?=
- =?us-ascii?Q?BmpHT8kKdwdYUpzOyBSHVOsV5UO7KvP85cFB/Jyg5bnli0qkas13HAQAWj0N?=
- =?us-ascii?Q?w7dxQObXlNbi2OzUh7EN8HuUeLLkM0Ge0g5KuaNAOXUtUlU3hkK1x+zK/YMI?=
- =?us-ascii?Q?XbG0I7MmzLsz2QLPdxfVTjsWMT6mONVvz9OuSnw9I/E/38iOpxCk8BpPM5NX?=
- =?us-ascii?Q?K2diaj1BUExngJovLFxyrBWM?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230032)(376006)(7416006)(366008)(1800799016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?QQ7kR2ctT93WxIiOU3idEQ3xapJVPABntXKPiKi/TaIsusrBiyQWNOYatKVA?=
- =?us-ascii?Q?Lz1WMulnDBYeU7XvVfuVdyEibl9qESam0R2BVd+kLR1D/aP3SuPKaG9heXBC?=
- =?us-ascii?Q?gtLsQS3u6NciVDDZ6Qyz1rSp9flm8bKJnHJCFNSEREzkAzxm8kw8yfdUOtBD?=
- =?us-ascii?Q?SgoV22oDzCbdIxfyFaogC9WXgYPnS5zjs5nm5TTprmAnPU9RoBruRf/2Ox9c?=
- =?us-ascii?Q?0Xsv7CJw5FAU8jCu67kQGZJoGVjS/RZYCR551Thy9SCHjNM8VCFsunKMeRoY?=
- =?us-ascii?Q?kmXdAOsL0/ArG44LeZSqL0jlRLw345C8XlpcD2O5Ev/CNYJmX4ou5CpBQffh?=
- =?us-ascii?Q?ylrxDOY17t4/CJYz7cmXNvmpHqcS/0zcrlAXbCBvpnneradk9t2pY9LQr8vZ?=
- =?us-ascii?Q?0sHgRG+HinKD/TtEi9TA5w8jwMTjycDrrIVVKo2YWr3aLORdhteBiUZb5IIT?=
- =?us-ascii?Q?3v6ojcHbm7Rv/rkopnvKB41pNgQ8vtaOL5IwHJ+fWpfE3/I4eD1s/gBlqkW1?=
- =?us-ascii?Q?koazbA6ApwbaBovMWOTQmF5h2gxOECji++p4lMtaWAk8hYffaM2pBmfSgzTO?=
- =?us-ascii?Q?n2x6FuYZNhs1P7HbsHVEEE6lhacoOJRTGVOdkww24FfTgimU1JgZm+K6YxmE?=
- =?us-ascii?Q?MHRApI1L0seA9jJpmsuopMOrdgSsLb7ccUlQu/74N9PDE1riYC8+pCVbblcn?=
- =?us-ascii?Q?Vvee+kUj5JkXfM6l4dTy+tcqvkcPNmR2s1/qbpTT1MpOx4gyuLlvx8LX1hoN?=
- =?us-ascii?Q?393Qtsfk2ncUOOcxE0KSDM1Qr2q3mKy5dcBAjjHBLOBRTmAkm85YuPgZaGGv?=
- =?us-ascii?Q?25SMrBaFm5vjxZnUOV5IuYW+ck2WAPGp5L90h0LwH3mowIWcbCY+x1jrg/qK?=
- =?us-ascii?Q?BpeOJnbWeXHK881NV8PCNgSUBDQOWoO7oF4XZp566s3N8Xb6AUNyE13/O5uN?=
- =?us-ascii?Q?notXYajZ7apYuqEaYvCk8eVJL2cL3Or5ztde2Wz4AS5ZMLCFZTskTPiyrWdM?=
- =?us-ascii?Q?P4VCmq17SO9Y3jsqIMJ5JPUdohmjRxFdF5mb8G+j7ifaRnXs0RPzS+BPvNNx?=
- =?us-ascii?Q?xkx77HabU+VtMxAQSlWdBJ+my5jiR9MYU2kKA64dvkxtRRz645DNbDZt4HaI?=
- =?us-ascii?Q?FzoV+Ll4xzaOS7MqUQmqrqqUQChvJg9E1JPsoAjH44FBHG668VynkVq3kG9j?=
- =?us-ascii?Q?1Qd2KuZrEU8DFdPgwB4BnfWM26bQbRF7aD5y8vANTbgnQjEiPSqmqtpBWp1u?=
- =?us-ascii?Q?NvXqwQ+v83T4fD1hLFh0bIu7K6zvHqXNtBHXeL8oMV0+LxKU+DC2a1EaEyuM?=
- =?us-ascii?Q?PZbP9c/nKYo+98ZigSOvXWJ066tI65DMFqqHlctnAKAAbAHpgyrd860D/J0c?=
- =?us-ascii?Q?isdGgxp6d0B/7BD0Dbm/m/kN5LdoPgUG54sFUBzUJnb9y3vZ0mAmeqO1/iVV?=
- =?us-ascii?Q?neqbiTkxL9Dn5L7HgL2dpP72RfwzJUcbs00RAQ+W3N+l0450wtxv7qK9ENuL?=
- =?us-ascii?Q?fhHiZgxwWGHjKh6m8FJSrgVeoZI7dYyna2ynRy8J3MBaSRujOMozvhG+jvBe?=
- =?us-ascii?Q?QS9Jh4Y7xWZ3YzE0CC8YMNTIWm3esD3cjICXz/IesTTWKqXkb3YlLWkmPdmd?=
- =?us-ascii?Q?aw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	Bkzjlir8oYq5MALNAWCJLpAbtZSFzGYkWdYb8VsLqayxsymmSj5Up5ZGDCQh9eQg3bNKqvRrjdkJPbc/ffe20LTwQdrbCxROODyl/AJyz8HRClLATIMmyzjRYPR/C9PImsxSQVrZ87ey9/G7cIWcm6s9kUeNVGxdpaj+GLaU1bBTmx1SYjLH9rbJEAgRXUeQ83Vc8OrTn1tRkHjxAb9frQg6HOvpDCdmSU6VnYXUoBfW8xDMSHa7MB8EHo6g1M9GZ1OJq5jSj6mwyDixOGJ6hZ7SJ8KH+RwowMUZpFl+FIhwwFdqfw8Joqdy3l0hmMhMtX05laQQU8n21MGkvIqFy38msEv2YTWnp14pAwQhia80wikQ5QdprmCebC/2RYI1d/NeIe5tjYeikTtrMm/jAnqYxgjrcBVYN2jSYNHsCU3mxtTuJJB9XTWCCec+F22Vd84sArKsoDJjFtuqlGhVHpr6lKyzmADye62NasUZI36qs1orSizqcyvhGqHTWb9AA4pYo+lbmnsl8jbm25o9m2XZCtek2xln4Si3K/zhuU7nDTuKVf29sxD9maTPPyEbn1MdFxZNZ75C+B7fHW0ez8MJK4ts/XhQWxlezAEx9lY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c57e2c69-fdb7-4475-33e5-08dc8a7fc735
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 01:34:18.9796
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zVZADPa0GlTuKJWY/flbQyWMKTXRto7WM7IhsnUBhfTU1rNleUDTeraD0ogP9h7QuVpCAnUq5WQr/OUwuokZEJ3mfZ9jINNG3hQ2HXGp8QQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB7865
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_13,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- phishscore=0 suspectscore=0 malwarescore=0 mlxscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406120008
-X-Proofpoint-ORIG-GUID: LNduR272ETT1HUt6g-tQvGvp69_QkxMm
-X-Proofpoint-GUID: LNduR272ETT1HUt6g-tQvGvp69_QkxMm
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scripts: add scripts/checktransupdate.py
+To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
+ Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ Cheng Ziqiu <chengziqiu@hust.edu.cn>, linux-kernel@vger.kernel.org
+References: <20240611131723.53515-1-dzm91@hust.edu.cn>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <20240611131723.53515-1-dzm91@hust.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Jeff,
 
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/scsi_common.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/advansys.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/BusLogic.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/aha1740.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/isci/isci.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/elx/efct.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/atp870u.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/ppa.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/imm.o
->
-> Add all missing invocations of the MODULE_DESCRIPTION() macro.
+On 6/11/24 9:17 PM, Dongliang Mu wrote:
+> The checktransupdate.py script helps track the translation status of
+> the documentation in different locales, e.g., zh_CN and verify if
+> these documenation is up-to-date. More specially, it uses `git log`
+> commit to find the latest english commit from the translation commit
+> (order by author date) and the latest english commits from HEAD. If
+> differences occur, report the file and commits that need to be updated.
+> 
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+> Signed-off-by: Cheng Ziqiu <chengziqiu@hust.edu.cn>
+> ---
 
-Applied to 6.11/scsi-staging, thanks!
+Reviewed-by: Alex Shi <alexs@kernel.org>
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> v1->v2: revise the output format of git commits
+>         add some description and usage of this script
+>  scripts/checktransupdate.py | 203 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 203 insertions(+)
+>  create mode 100755 scripts/checktransupdate.py
+> 
+> diff --git a/scripts/checktransupdate.py b/scripts/checktransupdate.py
+> new file mode 100755
+> index 000000000000..5a0fc99e3f93
+> --- /dev/null
+> +++ b/scripts/checktransupdate.py
+> @@ -0,0 +1,203 @@
+> +#!/usr/bin/env python3
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +"""
+> +This script helps track the translation status of the documentation
+> +in different locales, e.g., zh_CN. More specially, it uses `git log`
+> +commit to find the latest english commit from the translation commit
+> +(order by author date) and the latest english commits from HEAD. If
+> +differences occur, report the file and commits that need to be updated.
+> +
+> +The usage is as follows:
+> +- ./scripts/checktransupdate.py -l zh_CN
+> +This will print all the files that need to be updated in the zh_CN locale.
+> +- ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+> +This will only print the status of the specified file.
+> +
+> +The output is something like:
+> +Documentation/translations/zh_CN/dev-tools/testing-overview.rst (1 commits)
+> +commit 42fb9cfd5b18 ("Documentation: dev-tools: Add link to RV docs")
+> +"""
+> +
+> +import os
+> +from argparse import ArgumentParser, BooleanOptionalAction
+> +from datetime import datetime
+> +
+> +flag_p_c = False
+> +flag_p_uf = False
+> +flag_debug = False
+> +
+> +
+> +def dprint(*args, **kwargs):
+> +    if flag_debug:
+> +        print("[DEBUG] ", end="")
+> +        print(*args, **kwargs)
+> +
+> +
+> +def get_origin_path(file_path):
+> +    paths = file_path.split("/")
+> +    tidx = paths.index("translations")
+> +    opaths = paths[:tidx]
+> +    opaths += paths[tidx + 2 :]
+> +    return "/".join(opaths)
+> +
+> +
+> +def get_latest_commit_from(file_path, commit):
+> +    command = "git log --pretty=format:%H%n%aD%n%cD%n%n%B {} -1 -- {}".format(
+> +        commit, file_path
+> +    )
+> +    dprint(command)
+> +    pipe = os.popen(command)
+> +    result = pipe.read()
+> +    result = result.split("\n")
+> +    if len(result) <= 1:
+> +        return None
+> +
+> +    dprint("Result: {}".format(result[0]))
+> +
+> +    return {
+> +        "hash": result[0],
+> +        "author_date": datetime.strptime(result[1], "%a, %d %b %Y %H:%M:%S %z"),
+> +        "commit_date": datetime.strptime(result[2], "%a, %d %b %Y %H:%M:%S %z"),
+> +        "message": result[4:],
+> +    }
+> +
+> +
+> +def get_origin_from_trans(origin_path, t_from_head):
+> +    o_from_t = get_latest_commit_from(origin_path, t_from_head["hash"])
+> +    while o_from_t is not None and o_from_t["author_date"] > t_from_head["author_date"]:
+> +        o_from_t = get_latest_commit_from(origin_path, o_from_t["hash"] + "^")
+> +    if o_from_t is not None:
+> +        dprint("tracked origin commit id: {}".format(o_from_t["hash"]))
+> +    return o_from_t
+> +
+> +
+> +def get_commits_count_between(opath, commit1, commit2):
+> +    command = "git log --pretty=format:%H {}...{} -- {}".format(commit1, commit2, opath)
+> +    dprint(command)
+> +    pipe = os.popen(command)
+> +    result = pipe.read().split("\n")
+> +    # filter out empty lines
+> +    result = list(filter(lambda x: x != "", result))
+> +    return result
+> +
+> +
+> +def pretty_output(commit):
+> +    command = "git log --pretty='format:%h (\"%s\")' -1 {}".format(commit)
+> +    dprint(command)
+> +    pipe = os.popen(command)
+> +    return pipe.read()
+> +
+> +
+> +def check_per_file(file_path):
+> +    opath = get_origin_path(file_path)
+> +
+> +    if not os.path.isfile(opath):
+> +        dprint("Error: Cannot find the origin path for {}".format(file_path))
+> +        return
+> +
+> +    o_from_head = get_latest_commit_from(opath, "HEAD")
+> +    t_from_head = get_latest_commit_from(file_path, "HEAD")
+> +
+> +    if o_from_head is None or t_from_head is None:
+> +        print("Error: Cannot find the latest commit for {}".format(file_path))
+> +        return
+> +
+> +    o_from_t = get_origin_from_trans(opath, t_from_head)
+> +
+> +    if o_from_t is None:
+> +        print("Error: Cannot find the latest origin commit for {}".format(file_path))
+> +        return
+> +
+> +    if o_from_head["hash"] == o_from_t["hash"]:
+> +        if flag_p_uf:
+> +            print("No update needed for {}".format(file_path))
+> +        return
+> +    else:
+> +        print("{}".format(file_path), end="\t")
+> +        commits = get_commits_count_between(
+> +            opath, o_from_t["hash"], o_from_head["hash"]
+> +        )
+> +        print("({} commits)".format(len(commits)))
+> +        if flag_p_c:
+> +            for commit in commits:
+> +                msg = pretty_output(commit)
+> +                if "Merge tag" not in msg:
+> +                    print("commit", msg)
+> +
+> +
+> +def main():
+> +    script_path = os.path.dirname(os.path.abspath(__file__))
+> +    linux_path = os.path.join(script_path, "..")
+> +
+> +    parser = ArgumentParser(description="Check the translation update")
+> +    parser.add_argument(
+> +        "-l",
+> +        "--locale",
+> +        help="Locale to check when files are not specified",
+> +    )
+> +    parser.add_argument(
+> +        "--print-commits",
+> +        action=BooleanOptionalAction,
+> +        default=True,
+> +        help="Print commits between the origin and the translation",
+> +    )
+> +
+> +    parser.add_argument(
+> +        "--print-updated-files",
+> +        action=BooleanOptionalAction,
+> +        default=False,
+> +        help="Print files that do no need to be updated",
+> +    )
+> +
+> +    parser.add_argument(
+> +        "--debug",
+> +        action=BooleanOptionalAction,
+> +        help="Print debug information",
+> +        default=False,
+> +    )
+> +
+> +    parser.add_argument(
+> +        "files", nargs="*", help="Files to check, if not specified, check all files"
+> +    )
+> +    args = parser.parse_args()
+> +
+> +    global flag_p_c, flag_p_uf, flag_debug
+> +    flag_p_c = args.print_commits
+> +    flag_p_uf = args.print_updated_files
+> +    flag_debug = args.debug
+> +
+> +    # get files related to linux path
+> +    files = args.files
+> +    if len(files) == 0:
+> +        if args.locale is not None:
+> +            files = (
+> +                os.popen(
+> +                    "find {}/Documentation/translations/{} -type f".format(
+> +                        linux_path, args.locale
+> +                    )
+> +                )
+> +                .read()
+> +                .split("\n")
+> +            )
+> +        else:
+> +            files = (
+> +                os.popen(
+> +                    "find {}/Documentation/translations -type f".format(linux_path)
+> +                )
+> +                .read()
+> +                .split("\n")
+> +            )
+> +
+> +    files = list(filter(lambda x: x != "", files))
+> +    files = list(map(lambda x: os.path.relpath(os.path.abspath(x), linux_path), files))
+> +
+> +    # cd to linux root directory
+> +    os.chdir(linux_path)
+> +
+> +    for file in files:
+> +        check_per_file(file)
+> +
+> +
+> +if __name__ == "__main__":
+> +    main()
 
