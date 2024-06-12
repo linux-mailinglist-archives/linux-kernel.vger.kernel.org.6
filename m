@@ -1,144 +1,199 @@
-Return-Path: <linux-kernel+bounces-212203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7127E905CAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B43905CAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E33D1F248CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:20:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048E21F24AE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DE484D04;
-	Wed, 12 Jun 2024 20:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DC084D35;
+	Wed, 12 Jun 2024 20:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qay0gEo/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IWbVAQlh"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B488B55C08;
-	Wed, 12 Jun 2024 20:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DD484A50;
+	Wed, 12 Jun 2024 20:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718223645; cv=none; b=nvVBnlGLbmKspsqTj8Fb+9vSoWmwk39KRL1jBb3MLPiCUmTNLiGhWE86HLvKdS6H2GP4w5QGAYrnETRXk5TyqyBt0eXypAV7eFD6W+xmOTCz344k6lk3f+1gz8262r++IAO1fayeu+dj9N6z1CvlDaGW4LQA9EqJQ5uXJg0Wk4M=
+	t=1718223666; cv=none; b=GyPk6/hdoMySI975yreUIXTU8IOn4YYqtGy9mVIfraCNJEhmNPmBAU7DPqkwhl/NH/gn/fCK7KcOGtC5XdxLbb30S5M47J4ZkL5sgzyCi59OkHiynkh7FRGSjgBOTqYkC/8KZzQ2UC3P6s4IkfoL/yCzWgTjzz11DvT98enygn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718223645; c=relaxed/simple;
-	bh=XBpigFK488BpUSYT5s0FHcdoB1pg3lKFZCYWjmNb4HE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=rmBS4LFDQ7ZbT3GFPjvoKfc4TDav3OS/AGcRJYzuFPDugguGK9rYsFGyuj108T3CivUg5pUtsgU58Pj0M6eNzob4kX6ykeDL2ie0Mxgw4u0aowyTmEy+rCP4hlYYm5/MPusP6jToxzhbX3onDa+YdYZ9oz9/hn9lezhML41WxC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qay0gEo/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A6AC116B1;
-	Wed, 12 Jun 2024 20:20:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718223645;
-	bh=XBpigFK488BpUSYT5s0FHcdoB1pg3lKFZCYWjmNb4HE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=qay0gEo/8xVWF2qx7h5/bZgKFxIXuRDfY+jnZjFGBOao8JMYCdEA8s92G88jmUCL0
-	 HhE9h/xcewebQkwro0bn+p/yJh1tpBZBiMguZ43ENdRw5sNDMiMyJsGV9wwL4q3amf
-	 qQ1Q37k3TF8z+Frnv4q3PV1bxMKT/LWqBBBxW16JcpS46Uylu7LssxO/OUYUcLdYgM
-	 dmzzG9LRbskjsSD6TJI6pXwh0nOblvIex4oddYFzmGaiHS5DyNvzIO30Pr1wONu6VL
-	 Fq32FRflwqmZul30ZvV0OPuVb978f/Xf+J9fcz/6p3K7Mq1cdcbT0mt5ldyrVqtpf/
-	 E8VxPwCcmi1OA==
-Date: Wed, 12 Jun 2024 15:20:43 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] PCI: endpoint: make pci_epc_class constant
-Message-ID: <20240612202043.GA1036897@bhelgaas>
+	s=arc-20240116; t=1718223666; c=relaxed/simple;
+	bh=PHlVC2D76puZdSZINuqZtuUlXaqfJ96wvZFNLjvHtfc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rOhStKHVwmI3O1FzpxPZI4nA3z57vf4RH3jiWetMSAMau8bjP9BrjUQDcC8wzSiQZXCHFOQREvZ91OSI2UGuyh6SJKUdsdrUP/Ae60GZfImd2uFOsIeQcVLwOw/VpPdCftwlfObpTEvPpFRNYx1HTGL+85D9mvJTDrdNvKfZoDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IWbVAQlh; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718223661;
+	bh=PHlVC2D76puZdSZINuqZtuUlXaqfJ96wvZFNLjvHtfc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=IWbVAQlhH95bx5fqaubBcoIIS0eDvUAbqa+C4wjuNtjD7IQdVD6HTT0fdSMesayjk
+	 IwYl7CC8Pn6XIh+NtQB82xCNCazbeEnYAHE1fxMYinG2Ww6u4DUrimbf4x84l/du7m
+	 30R4M3bN3R/n24geqRNthBfVLdFJI0fSW5eKGPyUiLpsYmp7oJ90aOI03ZezUB26YA
+	 /a3VZP/zhCR0wFnBJqmKVxKA2Z55VQmtuB+e3uzBd30iWAr0M05aq9eFoQbsVnDibt
+	 0ckK7keaAroSCMHFV7Pk4mliY1MPvcWqSA2wJHGalbKlrfBnyRntsYLPXpkinx5Bwn
+	 bKFmxetDKvvpQ==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id F0517378020D;
+	Wed, 12 Jun 2024 20:20:59 +0000 (UTC)
+Message-ID: <8705ad6ba987334f8941938bef19752942a08ace.camel@collabora.com>
+Subject: Re: [PATCH v5 4/5] arm64: dts: rockchip: Add VEPU121 to RK3588
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>, Ezequiel Garcia
+ <ezequiel@vanguardiasur.com.ar>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>, Heiko Stuebner
+ <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Jianfeng Liu
+ <liujianfeng1994@gmail.com>, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
+ linux-media@vger.kernel.org,  linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ kernel@collabora.com
+Date: Wed, 12 Jun 2024 16:20:57 -0400
+In-Reply-To: <20240612173213.42827-5-sebastian.reichel@collabora.com>
+References: <20240612173213.42827-1-sebastian.reichel@collabora.com>
+	 <20240612173213.42827-5-sebastian.reichel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024061011-citable-herbicide-1095@gregkh>
 
-On Mon, Jun 10, 2024 at 10:20:12AM +0200, Greg Kroah-Hartman wrote:
-> Now that the driver core allows for struct class to be in read-only
-> memory, we should make all 'class' structures declared at build time
-> placing them into read-only memory, instead of having to be dynamically
-> allocated at runtime.
-> 
-> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: "Krzysztof Wilczyński" <kw@linux.com>
-> Cc: Manivannan Sadhasivam <mani@kernel.org>
-> Cc: Kishon Vijay Abraham I <kishon@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Hi Sebastian,
 
-Applied to pci/endpoint for v6.11, thanks!
-
+Le mercredi 12 juin 2024 =C3=A0 19:15 +0200, Sebastian Reichel a =C3=A9crit=
+=C2=A0:
+> From: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
+>=20
+> RK3588 has 4 Hantro G1 encoder-only cores. They are all independent IP,
+> but can be used as a cluster (i.e. sharing work between the cores).
+> These cores are called VEPU121 in the TRM. The TRM describes one more
+> VEPU121, but that is combined with a Hantro H1. That one will be handled
+> using the VPU binding instead.
+>=20
+> Signed-off-by: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 > ---
->  drivers/pci/endpoint/pci-epc-core.c | 19 +++++++------------
->  1 file changed, 7 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-> index 47d27ec7439d..ed038dd77f83 100644
-> --- a/drivers/pci/endpoint/pci-epc-core.c
-> +++ b/drivers/pci/endpoint/pci-epc-core.c
-> @@ -14,7 +14,9 @@
->  #include <linux/pci-epf.h>
->  #include <linux/pci-ep-cfs.h>
->  
-> -static struct class *pci_epc_class;
-> +static const struct class pci_epc_class = {
-> +	.name = "pci_epc",
-> +};
->  
->  static void devm_pci_epc_release(struct device *dev, void *res)
->  {
-> @@ -60,7 +62,7 @@ struct pci_epc *pci_epc_get(const char *epc_name)
->  	struct device *dev;
->  	struct class_dev_iter iter;
->  
-> -	class_dev_iter_init(&iter, pci_epc_class, NULL, NULL);
-> +	class_dev_iter_init(&iter, &pci_epc_class, NULL, NULL);
->  	while ((dev = class_dev_iter_next(&iter))) {
->  		if (strcmp(epc_name, dev_name(dev)))
->  			continue;
-> @@ -867,7 +869,7 @@ __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
->  	INIT_LIST_HEAD(&epc->pci_epf);
->  
->  	device_initialize(&epc->dev);
-> -	epc->dev.class = pci_epc_class;
-> +	epc->dev.class = &pci_epc_class;
->  	epc->dev.parent = dev;
->  	epc->dev.release = pci_epc_release;
->  	epc->ops = ops;
-> @@ -927,20 +929,13 @@ EXPORT_SYMBOL_GPL(__devm_pci_epc_create);
->  
->  static int __init pci_epc_init(void)
->  {
-> -	pci_epc_class = class_create("pci_epc");
-> -	if (IS_ERR(pci_epc_class)) {
-> -		pr_err("failed to create pci epc class --> %ld\n",
-> -		       PTR_ERR(pci_epc_class));
-> -		return PTR_ERR(pci_epc_class);
-> -	}
-> -
-> -	return 0;
-> +	return class_register(&pci_epc_class);
->  }
->  module_init(pci_epc_init);
->  
->  static void __exit pci_epc_exit(void)
->  {
-> -	class_destroy(pci_epc_class);
-> +	class_unregister(&pci_epc_class);
->  }
->  module_exit(pci_epc_exit);
->  
-> -- 
-> 2.45.2
-> 
+>  arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 80 +++++++++++++++++++++++
+>  1 file changed, 80 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/=
+dts/rockchip/rk3588s.dtsi
+> index 6ac5ac8b48ab..9edbcfe778ca 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> @@ -1159,6 +1159,86 @@ power-domain@RK3588_PD_SDMMC {
+>  		};
+>  	};
+> =20
+> +	jpeg_enc0: video-codec@fdba0000 {
+> +		compatible =3D "rockchip,rk3588-vepu121";
+
+As discussed earlier, VEPU121 is an modifier Hantro H1 encoder core that al=
+so
+supports VP8 and H.264 encoding (even though RK vendor kernel only expose t=
+hem
+for jpeg encoding). The compatible follow this idea, shall we change the al=
+ias
+now ?
+
+Nicolas
+
+> +		reg =3D <0x0 0xfdba0000 0x0 0x800>;
+> +		interrupts =3D <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks =3D <&cru ACLK_JPEG_ENCODER0>, <&cru HCLK_JPEG_ENCODER0>;
+> +		clock-names =3D "aclk", "hclk";
+> +		iommus =3D <&jpeg_enc0_mmu>;
+> +		power-domains =3D <&power RK3588_PD_VDPU>;
+> +	};
+> +
+> +	jpeg_enc0_mmu: iommu@fdba0800 {
+> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
+> +		reg =3D <0x0 0xfdba0800 0x0 0x40>;
+> +		interrupts =3D <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks =3D <&cru ACLK_JPEG_ENCODER0>, <&cru HCLK_JPEG_ENCODER0>;
+> +		clock-names =3D "aclk", "iface";
+> +		power-domains =3D <&power RK3588_PD_VDPU>;
+> +		#iommu-cells =3D <0>;
+> +	};
+> +
+> +	jpeg_enc1: video-codec@fdba4000 {
+> +		compatible =3D "rockchip,rk3588-vepu121";
+> +		reg =3D <0x0 0xfdba4000 0x0 0x800>;
+> +		interrupts =3D <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks =3D <&cru ACLK_JPEG_ENCODER1>, <&cru HCLK_JPEG_ENCODER1>;
+> +		clock-names =3D "aclk", "hclk";
+> +		iommus =3D <&jpeg_enc1_mmu>;
+> +		power-domains =3D <&power RK3588_PD_VDPU>;
+> +	};
+> +
+> +	jpeg_enc1_mmu: iommu@fdba4800 {
+> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
+> +		reg =3D <0x0 0xfdba4800 0x0 0x40>;
+> +		interrupts =3D <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks =3D <&cru ACLK_JPEG_ENCODER1>, <&cru HCLK_JPEG_ENCODER1>;
+> +		clock-names =3D "aclk", "iface";
+> +		power-domains =3D <&power RK3588_PD_VDPU>;
+> +		#iommu-cells =3D <0>;
+> +	};
+> +
+> +	jpeg_enc2: video-codec@fdba8000 {
+> +		compatible =3D "rockchip,rk3588-vepu121";
+> +		reg =3D <0x0 0xfdba8000 0x0 0x800>;
+> +		interrupts =3D <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks =3D <&cru ACLK_JPEG_ENCODER2>, <&cru HCLK_JPEG_ENCODER2>;
+> +		clock-names =3D "aclk", "hclk";
+> +		iommus =3D <&jpeg_enc2_mmu>;
+> +		power-domains =3D <&power RK3588_PD_VDPU>;
+> +	};
+> +
+> +	jpeg_enc2_mmu: iommu@fdba8800 {
+> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
+> +		reg =3D <0x0 0xfdba8800 0x0 0x40>;
+> +		interrupts =3D <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks =3D <&cru ACLK_JPEG_ENCODER2>, <&cru HCLK_JPEG_ENCODER2>;
+> +		clock-names =3D "aclk", "iface";
+> +		power-domains =3D <&power RK3588_PD_VDPU>;
+> +		#iommu-cells =3D <0>;
+> +	};
+> +
+> +	jpeg_enc3: video-codec@fdbac000 {
+> +		compatible =3D "rockchip,rk3588-vepu121";
+> +		reg =3D <0x0 0xfdbac000 0x0 0x800>;
+> +		interrupts =3D <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks =3D <&cru ACLK_JPEG_ENCODER3>, <&cru HCLK_JPEG_ENCODER3>;
+> +		clock-names =3D "aclk", "hclk";
+> +		iommus =3D <&jpeg_enc3_mmu>;
+> +		power-domains =3D <&power RK3588_PD_VDPU>;
+> +	};
+> +
+> +	jpeg_enc3_mmu: iommu@fdbac800 {
+> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
+> +		reg =3D <0x0 0xfdbac800 0x0 0x40>;
+> +		interrupts =3D <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks =3D <&cru ACLK_JPEG_ENCODER3>, <&cru HCLK_JPEG_ENCODER3>;
+> +		clock-names =3D "aclk", "iface";
+> +		power-domains =3D <&power RK3588_PD_VDPU>;
+> +		#iommu-cells =3D <0>;
+> +	};
+> +
+>  	av1d: video-codec@fdc70000 {
+>  		compatible =3D "rockchip,rk3588-av1-vpu";
+>  		reg =3D <0x0 0xfdc70000 0x0 0x800>;
+
 
