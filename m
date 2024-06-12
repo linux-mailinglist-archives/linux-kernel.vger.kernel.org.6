@@ -1,116 +1,151 @@
-Return-Path: <linux-kernel+bounces-212228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A5C9905CDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:35:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D47B905CED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E4D6B2444F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:35:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E842849D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0570C84E0A;
-	Wed, 12 Jun 2024 20:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B8984E16;
+	Wed, 12 Jun 2024 20:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SKtVbsJZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="ki+tVRU6"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443AE84D29;
-	Wed, 12 Jun 2024 20:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E98984D0E
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 20:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718224510; cv=none; b=Exrm+dIwQwMWveq5+4pGFwmUDbUGYqXMthOz0vOEOCpl+bP+GJPkeKwt/Sa/ZknNYaV2toWC8x6jJ7oSNPcnMIZpnUal1q+1GC18NYFRhqsMQAffIlwtLAdig8l8/s+y+88fUBbrnxiA1wqwugyk5qfthQfu61FmFJ0V9sSEovk=
+	t=1718224789; cv=none; b=J0rKyt5C2mo2vxB0ZyDg5sZKgIDZxAPqyfRajjoY/SfQCelbdPKX0l77Hdz/Y6+zNkvNbZtcpBPFb33I9cfeddvMrllVt/NxFthAbfvuBY9HECnjFkZU9oUe65JysJOotqIF+UPy8m/p51DQFIi66h2LKlZK2N4nBeNnKIYV2PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718224510; c=relaxed/simple;
-	bh=L/2EIoZ/+vwHw6uSyi6cUEoLIqe5+OV0+uzzq/20Tfc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Fy7Q54c/RMhfjlXxlpE21u2Mkq4LmreYSL7bAi7PDYR+sdJbz0i8e6l/uxA5TYvtBILQK58IkDQpaPPNRPO5Kgp/sOgoPcK7qczkdPLhdjcOr4cE+llsuxmozgT7j6q+U3E5S4UNMMYUkDz63AOS5fLQLgh+tyD6y5zGjK3SvMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SKtVbsJZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CGOQpn008296;
-	Wed, 12 Jun 2024 20:34:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=OmxBAyyWG3YkdYQ7UWbmkd
-	Z3ASpIZSZ23s/j9DiPjSA=; b=SKtVbsJZxNhbL7J6K/pNFrNFgw2rmMO20xPvo4
-	y7V28CAwb17SPTRqiW679HyPfY+VX9oU9OGeHuRCFJkZ+Zy449vUQslsPzzxyONn
-	QH617swy+EgdUGaH0QoZbfrLbxxMythD2mv67AKfxeg4mto2bqHKryhMttnvgyAc
-	vmOPEf6AtRQ08+sm0IOswMmWLrTM8zEQk3aeG13DUMV/CJeiGxQYkUWAvLxtIFqA
-	kopIxsvC5EjNli/MiTrjwSTWGVJh8DKS24nxyZ73BAYoYX5arnQ21ItqKzBwWU8R
-	nbkE4GeLV+ljcUr/Rrn7QOk58eZhD7v/XdnK2ffJoYWNgSmg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yps5xbbpf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 20:34:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CKYwkp009622
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 20:34:58 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 13:34:57 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 13:34:56 -0700
-Subject: [PATCH] ARM64: reloc_test: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718224789; c=relaxed/simple;
+	bh=MBvZJBtPzLw/EBKRznQxfD/Rf2LONqVNSM90OIkC7kU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iAAAiZkmbRMdO1zc1FS9fAUi6NPwKJw8Ta8rV0ILywjl5YOPbUJWwlTB6Dp59Ql0c1G2+wtMTeX62MiBSaVLj8ByL75ibcTKenYhpHbXryWtgwQLnyik9VaGSuYHvnkWSr81PAgKy51ETztV9rDmsRUFiXFdZaOETQVhXPGUPD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=ki+tVRU6; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id B728D2C0343;
+	Thu, 13 Jun 2024 08:39:37 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1718224777;
+	bh=MBvZJBtPzLw/EBKRznQxfD/Rf2LONqVNSM90OIkC7kU=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=ki+tVRU6RFVN7QCAZEv/SwCgpXRw8wafyAMzMU+DwxyLKYJN7M55eMDbXk6wPL/HZ
+	 jRmCJ+Vnk21yRXeASZQbwRvdXaVc6LJARJSOfj4PuY05uhtQqRIbkN1X4y/kRBcxLY
+	 88bBnYGo/AlMycXhsxm2OKZJDg4n8UsBtuWPAvdxsM7OJhbRlrx8uyP5I9vwzbTgAe
+	 /ah0NQSoPRxTfS+ATgI+ABT8LmzSzr7GnFmZdgQeK+ZoH28GXVI4tdE5XRYPyopQm1
+	 FJ9PGaIlHNicFA/DoF9M7Zs711RUWFLmOfED+b8kZUZMUk8AUoBKFUR7U9jNQfpYo2
+	 JWjGIDNOMJgZw==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B666a07890001>; Thu, 13 Jun 2024 08:39:37 +1200
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 13 Jun 2024 08:39:37 +1200
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Thu, 13 Jun 2024 08:39:37 +1200
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: =?utf-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>
+CC: "andrew@lunn.ch" <andrew@lunn.ch>, "hkallweit1@gmail.com"
+	<hkallweit1@gmail.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "ericwouds@gmail.com" <ericwouds@gmail.com>
+Subject: Re: [PATCH next-next] net: phy: realtek: add support for rtl8224
+ 2.5Gbps PHY
+Thread-Topic: [PATCH next-next] net: phy: realtek: add support for rtl8224
+ 2.5Gbps PHY
+Thread-Index: AQHau8ECnGOzFCFnUUe89YjWXGoxMrHCPySAgACudYCAAOMCgA==
+Date: Wed, 12 Jun 2024 20:39:37 +0000
+Message-ID: <34d4b1e9-fb8a-4e50-acee-b089c168d164@alliedtelesis.co.nz>
+References: <20240611053415.2111723-1-chris.packham@alliedtelesis.co.nz>
+ <c3d699a1-2f24-41c5-b0a7-65db025eedbc@alliedtelesis.co.nz>
+ <20240612090707.7da3fc01@dellmb>
+In-Reply-To: <20240612090707.7da3fc01@dellmb>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F070FE5EE612334F97764E1F43CB3482@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-arch-arm64-kernel-v1-1-1fafe8d11df3@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAG8GamYC/x3MQQrCMBCF4auUWTuQhjYWryIu0mRiBpsoMyqF0
- rubunnwLd6/gZIwKVy6DYS+rPysDf2pg5B9vRNybAZr7GBcb7FE9BJym+IGfJBUWnCa3BgdnUN
- KBtr1JZR4/Wevt+bZK+EsvoZ8xBaunxWL1zcJ7PsPDShCRYUAAAA=
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: LLWG6yMqIGgXcxmm4lrbe7R3YyvbR2VF
-X-Proofpoint-ORIG-GUID: LLWG6yMqIGgXcxmm4lrbe7R3YyvbR2VF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_10,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 clxscore=1015 malwarescore=0 mlxlogscore=999
- spamscore=0 suspectscore=0 adultscore=0 bulkscore=0 mlxscore=0
- phishscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406120145
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=666a0789 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=kmH4_w4JlrKdn0nk7BcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm64/kernel/arm64-reloc-test.o
-
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- arch/arm64/kernel/reloc_test_core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/kernel/reloc_test_core.c b/arch/arm64/kernel/reloc_test_core.c
-index 99f2ffe9fc05..5b0891146054 100644
---- a/arch/arm64/kernel/reloc_test_core.c
-+++ b/arch/arm64/kernel/reloc_test_core.c
-@@ -74,4 +74,5 @@ static void __exit reloc_test_exit(void)
- module_init(reloc_test_init);
- module_exit(reloc_test_exit);
- 
-+MODULE_DESCRIPTION("Relocation testing module");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-arch-arm64-kernel-8865d6e7cff0
-
+DQpPbiAxMi8wNi8yNCAxOTowNywgTWFyZWsgQmVow7puIHdyb3RlOg0KPiBPbiBUdWUsIDExIEp1
+biAyMDI0IDIwOjQyOjQzICswMDAwDQo+IENocmlzIFBhY2toYW0gPENocmlzLlBhY2toYW1AYWxs
+aWVkdGVsZXNpcy5jby5uej4gd3JvdGU6DQo+DQo+PiArY2MgRXJpYyBXIGFuZCBNYXJlay4NCj4+
+DQo+PiBPbiAxMS8wNi8yNCAxNzozNCwgQ2hyaXMgUGFja2hhbSB3cm90ZToNCj4+PiBUaGUgUmVh
+bHRlayBSVEw4MjI0IFBIWSBpcyBhIDIuNUdicHMgY2FwYWJsZSBQSFkuIEl0IG9ubHkgdXNlcyB0
+aGUNCj4+PiBjbGF1c2UgNDUgTURJTyBpbnRlcmZhY2UgYW5kIGNhbiBsZXZlcmFnZSB0aGUgc3Vw
+cG9ydCB0aGF0IGhhcyBhbHJlYWR5DQo+Pj4gYmVlbiBhZGRlZCBmb3IgdGhlIG90aGVyIDgyMngg
+UEhZcy4NCj4+Pg0KPj4+IFNpZ25lZC1vZmYtYnk6IENocmlzIFBhY2toYW0gPGNocmlzLnBhY2to
+YW1AYWxsaWVkdGVsZXNpcy5jby5uej4NCj4+PiAtLS0NCj4+Pg0KPj4+IE5vdGVzOg0KPj4+ICAg
+ICAgIEknbSBjdXJyZW50bHkgdGVzdGluZyB0aGlzIG9uIGFuIG9sZGVyIGtlcm5lbCBiZWNhdXNl
+IHRoZSBib2FyZCBJJ20NCj4+PiAgICAgICB1c2luZyBoYXMgYSBTT0MvRFNBIHN3aXRjaCB0aGF0
+IGhhcyBhIGRyaXZlciBpbiBvcGVud3J0IGZvciBMaW51eCA1LjE1Lg0KPj4+ICAgICAgIEkgaGF2
+ZSB0cmllZCB0byBzZWxlY3RpdmVseSBiYWNrIHBvcnQgdGhlIGJpdHMgSSBuZWVkIGZyb20gdGhl
+IG90aGVyDQo+Pj4gICAgICAgcnRsODIyeCB3b3JrIHNvIHRoaXMgc2hvdWxkIGJlIGFsbCB0aGF0
+IGlzIHJlcXVpcmVkIGZvciB0aGUgcnRsODIyNC4NCj4+PiAgICAgICANCj4+PiAgICAgICBUaGVy
+ZSdzIHF1aXRlIGEgbG90IHRoYXQgd291bGQgbmVlZCBmb3J3YXJkIHBvcnRpbmcgZ2V0IGEgd29y
+a2luZyBzeXN0ZW0NCj4+PiAgICAgICBhZ2FpbnN0IGEgY3VycmVudCBrZXJuZWwgc28gaG9wZWZ1
+bGx5IHRoaXMgaXMgc21hbGwgZW5vdWdoIHRoYXQgaXQgY2FuDQo+Pj4gICAgICAgbGFuZCB3aGls
+ZSBJJ20gdHJ5aW5nIHRvIGZpZ3VyZSBvdXQgaG93IHRvIHVudGFuZ2xlIGFsbCB0aGUgb3RoZXIg
+Yml0cy4NCj4+PiAgICAgICANCj4+PiAgICAgICBPbmUgdGhpbmcgdGhhdCBtYXkgYXBwZWFyIGxh
+Y2tpbmcgaXMgdGhlIGxhY2sgb2YgcmF0ZV9tYXRjaGluZyBzdXBwb3J0Lg0KPj4+ICAgICAgIEFj
+Y29yZGluZyB0byB0aGUgZG9jdW1lbnRhdGlvbiBJIGhhdmUga25vdyB0aGUgaW50ZXJmYWNlIHVz
+ZWQgb24gdGhlDQo+Pj4gICAgICAgUlRMODIyNCBpcyAocSl1eHNnbWlpIHNvIG5vIHJhdGUgbWF0
+Y2hpbmcgaXMgcmVxdWlyZWQuIEFzIEknbSBzdGlsbA0KPj4+ICAgICAgIHRyeWluZyB0byBnZXQg
+dGhpbmdzIGNvbXBsZXRlbHkgd29ya2luZyB0aGF0IG1heSBjaGFuZ2UgaWYgSSBnZXQgbmV3DQo+
+Pj4gICAgICAgaW5mb3JtYXRpb24uDQo+Pj4NCj4+PiAgICBkcml2ZXJzL25ldC9waHkvcmVhbHRl
+ay5jIHwgOCArKysrKysrKw0KPj4+ICAgIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKykN
+Cj4+Pg0KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9waHkvcmVhbHRlay5jIGIvZHJpdmVy
+cy9uZXQvcGh5L3JlYWx0ZWsuYw0KPj4+IGluZGV4IDdhYjQxZjk1ZGFlNS4uMjE3NDg5M2M5NzRm
+IDEwMDY0NA0KPj4+IC0tLSBhL2RyaXZlcnMvbmV0L3BoeS9yZWFsdGVrLmMNCj4+PiArKysgYi9k
+cml2ZXJzL25ldC9waHkvcmVhbHRlay5jDQo+Pj4gQEAgLTEzMTcsNiArMTMxNywxNCBAQCBzdGF0
+aWMgc3RydWN0IHBoeV9kcml2ZXIgcmVhbHRla19kcnZzW10gPSB7DQo+Pj4gICAgCQkucmVzdW1l
+ICAgICAgICAgPSBydGxnZW5fcmVzdW1lLA0KPj4+ICAgIAkJLnJlYWRfcGFnZSAgICAgID0gcnRs
+ODIxeF9yZWFkX3BhZ2UsDQo+Pj4gICAgCQkud3JpdGVfcGFnZSAgICAgPSBydGw4MjF4X3dyaXRl
+X3BhZ2UsDQo+Pj4gKwl9LCB7DQo+Pj4gKwkJUEhZX0lEX01BVENIX0VYQUNUKDB4MDAxY2NhZDAp
+LA0KPj4+ICsJCS5uYW1lCQk9ICJSVEw4MjI0IDIuNUdicHMgUEhZIiwNCj4+PiArCQkuZ2V0X2Zl
+YXR1cmVzICAgPSBydGw4MjJ4X2M0NV9nZXRfZmVhdHVyZXMsDQo+Pj4gKwkJLmNvbmZpZ19hbmVn
+ICAgID0gcnRsODIyeF9jNDVfY29uZmlnX2FuZWcsDQo+Pj4gKwkJLnJlYWRfc3RhdHVzICAgID0g
+cnRsODIyeF9jNDVfcmVhZF9zdGF0dXMsDQo+Pj4gKwkJLnN1c3BlbmQgICAgICAgID0gZ2VucGh5
+X2M0NV9wbWFfc3VzcGVuZCwNCj4+PiArCQkucmVzdW1lICAgICAgICAgPSBydGxnZW5fYzQ1X3Jl
+c3VtZSwNCj4+PiAgICAJfSwgew0KPj4+ICAgIAkJUEhZX0lEX01BVENIX0VYQUNUKDB4MDAxY2M5
+NjEpLA0KPj4+ICAgIAkJLm5hbWUJCT0gIlJUTDgzNjZSQiBHaWdhYml0IEV0aGVybmV0Ig0KPiBE
+b24ndCB5b3UgbmVlZCBydGw4MjJ4Yl9jb25maWdfaW5pdCBmb3Igc2VyZGVzIGNvbmZpZ3VyYXRp
+b24/DQoNCkkgbW9yZSB0aGFuIGxpa2VseSBuZWVkIGEgY29uZmlnX2luaXQoKSBmdW5jdGlvbi4g
+SSdtIHdvcmtpbmcgd2l0aCANCmluY29tcGxldGUgZGF0YXNoZWV0cyBzbyBJJ20gbm90IHN1cmUg
+aWYgcnRsODIyeGJfY29uZmlnX2luaXQoKSB3aWxsIA0Kd29yayBmb3IgbWUgKGlmIGFueW9uZSBo
+YXMgYSBjb250YWN0IGF0IFJlYWx0ZWsgSSdkIGxpa2UgdG8gaGVhciBmcm9tIA0KeW91KS4gVGhl
+IE1BQy1QSFkgaW50ZXJmYWNlIG9uIHRoZSBSVEw4MjI0IGlzIHF1c3hnbWlpIGFuZCANCnJ0bDgy
+MnhiX2NvbmZpZ19pbml0KCkgc2VlbXMgdG8gb25seSBjYXRlciBmb3IgMjUwMGJhc2UteCBvciBo
+c2dtaWkgc28gSSANCnRoaW5rIEkgd2lsbCBuZWVkIGEgZGlmZmVyZW50IGNvbmZpZ19pbml0KCkg
+YnV0IHF1aXRlIHdoYXQgdGhhdCBsb29rcyANCmxpa2UgSSdtIG5vdCBzdXJlLg0KDQpUaGF0J3Mg
+YWxzbyB3aGVyZSBJIHN0YXJ0IHJ1bm5pbmcgaW50byB0aGUgYmFja3BvcnRpbmcgcHJvYmxlbSBi
+ZWNhdXNlIA0KdGhlIHJ0bDgyMnhiX2NvbmZpZ19pbml0KCkgZGVjaWRlcyB0aGUgbW9kZSBiYXNl
+ZCBvbiB0aGUgaG9zdF9pbnRlcmZhY2VzIA0Kd2hpY2ggZG9lc24ndCBleGlzdCBpbiB0aGUga2Vy
+bmVsIEkgaGF2ZSBkc2EgZHJpdmVycyBmb3IuIEkgZG8gcGxhbiBvbiANCnRyeWluZyB0byBicmlu
+ZyB0aGUgY29kZSBJIGhhdmUgZm9yd2FyZCBidXQgdGhlcmUncyBxdWl0ZSBhIGxvdCBJIG5lZWQg
+DQp0byBzaWZ0IHRocm91Z2guDQo=
 
