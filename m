@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-211463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784B39051EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:02:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BBF09051EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA651F285D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:02:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4511C20B3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FD116F284;
-	Wed, 12 Jun 2024 12:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EE016F29D;
+	Wed, 12 Jun 2024 12:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="ZsXjaFex"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XGWRVmxP"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908FF16D306
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 12:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A45F16F0E1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 12:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718193770; cv=none; b=E7zS9fOgHS2WyQBJal9G1Mjao8alEQK+yecyQIZEyKqNdnnzR+fkIsZKBWjI77tGZ+TTKvycmZJRwVUD9F4nPqTd27bP6egEAsSvcHXORfRRNKlFJYE/VACir5joc5EHgwCDdpc3oOBysAe5R4hvuZztKMhbbHQDWm0Iln9uKK4=
+	t=1718193798; cv=none; b=jXlfFHLlC/vuPQ6C1Hb851YnYl7EVSGFrj8Wq1Gleqqc6fIgbK+J5w/YZtOA48QE3tNIEwgkkDyYllNCCq6EB6SaR/gfwtc3fP7yx8tPb9rnEOUVx0uQp/J8+8uMtTwqzl6zJIcgOVUgmuCIp+c5U7RxZopQn65LSxgJZzKLFgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718193770; c=relaxed/simple;
-	bh=mL6cvqeW+xRR7/gR0vCFleXEVve6zwKquscdx7tNoCA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mZyNkqVqPFo4sHkHEasH9WeSCo5ZEy+VMr+WT52ypl61KNF9cYTcSq2rm1bE4MxanfF/Ii005jzgS4zjzE3oTtDyDlWZNgO9zd3rEgEUEqOuoD9ZPZh1Be0T1vNlhfs9lKZ2pZmXWYki9gwQLTWllSfO64aUP39Z4MZrhk3WtZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=ZsXjaFex; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=mL6cvqeW+xRR7/gR0vCFleXEVve6zwKquscdx7tNoCA=;
-	t=1718193768; x=1719403368; b=ZsXjaFexFUJKWMSpFF3w+dj6C0o61yNuUHpppkHQscqAMcZ
-	WI14zfhjFOM8rLph5vMgrODJjVJ5pJ84220pKyw/xsih3xN+FSzrvSUe9fvco/Jlnjtoo3+NLlOuV
-	U6UOc4dt+BYDEfOVTA2jZtbyq2IE46EwFG3L5UULG1HhStZX4FY/sGqB8ZIr7g8M40KgPm55ojepL
-	BaBE8pTnFWUaoUA8SptTDyYjogsZbrrRYBis1piAN6PpN9SisKEUYAUPozU9d8Pgrb6tOE8+ab/1/
-	vWSKZBLyfX3Duo1orRf1xbqagEywKeQeGAIzJLr7vgVER25lCwY4YE22Y6z4jQbA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1sHMgZ-0000000AEXv-1ybR;
-	Wed, 12 Jun 2024 14:02:39 +0200
-Message-ID: <49c2fbdc91d128c5249d50d016d97c8e5162f7b7.camel@sipsolutions.net>
-Subject: Re: [PATCH v6 1/2] devcoredump: Add dev_coredumpm_timeout()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: =?ISO-8859-1?Q?Jos=E9?= Roberto de Souza <jose.souza@intel.com>, 
- linux-kernel@vger.kernel.org, intel-xe@lists.freedesktop.org, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>, Mukesh Ojha
- <quic_mojha@quicinc.com>,  Jonathan Cavitt <jonathan.cavitt@intel.com>
-Date: Wed, 12 Jun 2024 14:02:37 +0200
-In-Reply-To: <20240611174716.72660-1-jose.souza@intel.com>
-References: <20240611174716.72660-1-jose.souza@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1718193798; c=relaxed/simple;
+	bh=GaWixcRc7cLjif3vTgrTA5TxIa1tfz6d4HCIcdoIrpE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c/tofH2vyxVY0Ovg+IKlhLzIWkIOQ51oW3jq5WBG6uwK7yD/swEgrVlnV3n6Y4fJGYk+IubF79ywYwTYdbCRbJ/hfdwhnYXjCHXC3vD3gMhIaIGqMFCbTwCQq45+7SolTNIjl/jJIEQhDPSpJ4v79EDorcoMOUh0h/S51JvMp34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XGWRVmxP; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e78fe9fc2bso92618391fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 05:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718193794; x=1718798594; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EpdvA3t0LhYQ51ruF05mfpKy9nZXuP4heggj+jgSeCE=;
+        b=XGWRVmxPaBy/wTZqxaUN+//+Y23IynV62syUqZLKwX32cxnLc1pYKZCdRcd3LlyC4Q
+         QGdtZ2t8ty4fZjuQC6FYEac8u8X8WOi3Fqn5nRet3dMf+CHUX9I71klq4+Ycnztr3kFh
+         QYp1cDAsgFEAkGqfiy4toOBmIW/6fxUosWeaYJ/Zp2b3GMWqM7BoKjmVNye+VhWwTCdX
+         I/XoLi4eAKXTZjVhCVC500EjX+xIHaNGWOMT0qp/u7fnctZekDesjJ6PRxEJ0ICOMlM1
+         owy/IT5HQ3Rv0KYw/LPSaE03xMPlOSgiff9QZ7c2URvil0lTzaUY7IjUoreJYSnDPduj
+         Zvgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718193794; x=1718798594;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EpdvA3t0LhYQ51ruF05mfpKy9nZXuP4heggj+jgSeCE=;
+        b=KYWqJqG1T3/kd96GB5LCgH1mtz8Y4xdphwLFuLtZS80l4Kp55JCmya4UwBzrkA5POv
+         scq+YI9fFmJGRCedPIm9Mrbq5ep0pPAgh51CZXyak/voaD54RN+anuJWPM0vWUxUxUby
+         LF05RdP8aLRXtQFp8bSrIblgfo+vsBSZ9/iAe2IlXsvVm/AXawDIsVVcHw3gEMyspERs
+         W4fnRB4XH3y5PZQG0uzsytSQK518Jxgvjxmy1vgOQeCwEDAw4c9TYg/b51MfSHNoWD+r
+         za1x8Xu64Ul+jeSxPPVTg+f4TlVRncG8d7TShYXd+yXDTUD6O85bOYPdd76B74Cw6ZsD
+         2EDQ==
+X-Gm-Message-State: AOJu0Yw8D6je6r7+5rSul27JXMOXCWf/3AmViFeN/7AqWIoxmRTusKsE
+	BXHJ5DyZMY91UIQwKZ6GZNSf/RvzL1kZo4xz4lImaaBTO/B7226mx1TNiiveKaRhj7PkucP8sac
+	k
+X-Google-Smtp-Source: AGHT+IEd+O1uxudQ7gtE3vp9qxZ2Su0J221EOuF2GH3ZcKozbjK871J1l8zVpbPeRgCX3nanl1tetQ==
+X-Received: by 2002:a2e:b0d8:0:b0:2ea:e773:c5a with SMTP id 38308e7fff4ca-2ebfc8fecb9mr9110811fa.9.1718193794473;
+        Wed, 12 Jun 2024 05:03:14 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:8d3:3800:a172:4e8b:453e:2f03])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42284d1130esm11210045e9.0.2024.06.12.05.03.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 05:03:14 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	brgl@bgdev.pl,
+	corbet@lwn.net,
+	drankinatty@gmail.com,
+	Kent Gibson <warthog618@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 0/2] Documentation: gpio: clarify that line values are logical
+Date: Wed, 12 Jun 2024 14:03:12 +0200
+Message-ID: <171819379034.33019.17199591747943340340.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240610092157.9147-1-warthog618@gmail.com>
+References: <20240610092157.9147-1-warthog618@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-06-11 at 10:47 -0700, Jos=C3=A9 Roberto de Souza wrote:
-> Add function to set a custom coredump timeout.
->=20
-> For Xe driver usage, current 5 minutes timeout may be too short for
-> users to search and understand what needs to be done to capture
-> coredump to report bugs.
->=20
-> We have plans to automate(distribute a udev script) it but at the end
-> will be up to distros and users to pack it so having a option to
-> increase the timeout is a safer option.
->=20
-> v2:
-> - replace dev_coredump_timeout_set() by dev_coredumpm_timeout() (Mukesh)
->=20
-> v3:
-> - make dev_coredumpm() static inline (Johannes)
->=20
-> v5:
-> - rename DEVCOREDUMP_TIMEOUT -> DEVCD_TIMEOUT to avoid redefinition
-> in include/net/bluetooth/coredump.h
->=20
-> v6:
-> - fix definition of dev_coredumpm_timeout() when CONFIG_DEV_COREDUMP
-> is disabled
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Got to v6, heh.
 
-I still don't think this is _right_, but I guess I'm OK with giving you
-rope to hang yourself ;-)
+On Mon, 10 Jun 2024 17:21:55 +0800, Kent Gibson wrote:
+> The line values passed by the GPIO uAPI are logical values, and the edges
+> returned are based on changes to logical line values.  While the
+> documentation consistently uses active/inactive terminology to identify
+> the values as logical, this is never explicitly spelt out.
+> This series clarifies those points, with paricular emphasis on the
+> effect the active low flag has on values and edge polarity.
+> 
+> [...]
 
-Acked-by: Johannes Berg <johannes@sipsolutions.net>
+Applied, thanks!
 
-Seems like you really should've CC'ed Greg though since these things
-usually went through his tree, so if you want to take them through yours
-he really should be at least aware ...
+[1/2] Documentation: gpio: Clarify effect of active low flag on line values
+      commit: 5ca84d416e1ca82ca068906fc1386f61a57b17f2
+[2/2] Documentation: gpio: Clarify effect of active low flag on line edges
+      commit: 08d94c7428680715527757585a6c4575fcf571b9
 
-johannes
-
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
