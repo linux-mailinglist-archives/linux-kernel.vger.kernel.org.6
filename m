@@ -1,392 +1,263 @@
-Return-Path: <linux-kernel+bounces-212048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A491905A82
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:14:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8720F905A85
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251D1284C69
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:13:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0707B218D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985F818308F;
-	Wed, 12 Jun 2024 18:13:47 +0000 (UTC)
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1930A383B0;
+	Wed, 12 Jun 2024 18:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b0yPwlNJ"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E32E1822F3;
-	Wed, 12 Jun 2024 18:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CF6EED0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718216026; cv=none; b=kqtizF+CM7sSk1l6GU7NIRE2ALwjSxPVZIOud5TjUNQ4wJU6EYvbBPvGY3KFPoG+OHa+MoBjmkzLHO3hM1lXghI5ZJxq8TdkUG+zDDKRoC6vaAeNDJ0VHIqp1ERRLT12W4NCGXlfH28yhfCdReIJf4sTM8C2o2RjuJrGGSZfkVU=
+	t=1718216127; cv=none; b=H1dRJGHEFfPWI0Vcg1o/UajOqnJPszf0JCSh2pnAR2z7AdiBafNPawEpIW4sw54iDSnKAUa+EOchKbcYKlhJWrayAWAgM0REBUaGdH0IVIMNMOfv5Bd4z1tbZ6JWQo6D1RLDxi5Zzs9K63F0KC8CsCbpY8ZaFv8MN1kZUv0rhTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718216026; c=relaxed/simple;
-	bh=cZp+m7GoUyD511OLhwA5NzHdSoU4z+QAg2M2yrL4/y0=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=dAbu+Xy4moMWf4T2MiCDU45OX8JFFdV5XrOQaeKhC8arJma4XYumLah1/RurXpG/riP/0N/wP00+ZXN6GHOLNYAo7SXXJ7Iw6Qi0hGXdnHs+n+HJx1fILoRtVagHm+kDFtucIMjYdoWZh42kjYPp8NsoiRGKeG/kkm+eODdrISc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id DB9E03781139;
-	Wed, 12 Jun 2024 18:13:41 +0000 (UTC)
-From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
-In-Reply-To: <202406060917.8DEE8E3@keescook>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240605164931.3753-1-adrian.ratiu@collabora.com>
- <20240605164931.3753-2-adrian.ratiu@collabora.com> <202406060917.8DEE8E3@keescook>
-Date: Wed, 12 Jun 2024 19:13:41 +0100
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com, inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org, "Guenter Roeck" <groeck@chromium.org>, "Doug Anderson" <dianders@chromium.org>, "Jann Horn" <jannh@google.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Randy Dunlap" <rdunlap@infradead.org>, "Christian Brauner" <brauner@kernel.org>, "Jeff Xu" <jeffxu@google.com>, "Mike Frysinger" <vapier@chromium.org>
-To: "Kees Cook" <kees@kernel.org>
+	s=arc-20240116; t=1718216127; c=relaxed/simple;
+	bh=xiWH756fmXpz8dkWhjOmyz0/S9uN/nhk/v2hE+f3UBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IxENAtQt65yLZ1/nRqb6PAwfdUUexrQOPuyFgYoXzdMPMFqSJZUHMoIte5uqpWv7lZ1Ufu/4+UfjzOi9ETghnsbK8lJkQNcJhk7lblXyT+o+6KkV6/U8DySYu13FpZdupMv5thMFf0AnDB0qUeBehX6XEC+9FIqNxddbugZSq/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b0yPwlNJ; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52bbdc237f0so245306e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 11:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718216124; x=1718820924; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mraezCEzi7HPYzzdi4zkA3wSgYn7YV5wl4ixiQZdTak=;
+        b=b0yPwlNJZ5TdPLYw1SGa3tmCQfrxUdlXm/CoboKN9+zKmKKgqy3Lh8xYuv9PUQylCp
+         geQ1cuxEHrzCmmwovHBlN3Aiueoxrlti61YDxBTHhNtwZDbgZ+jON2e8fpMMRiPonTaz
+         BeEXT9mrFomic6fTcF1badeu0mdZVW4bfDPzanydBogdUUhFCm1fRhvuySB4ryjbwBSd
+         iQSddVHmiQSsyyvlUneMiRSW2lNEcZ60yp/7lJGS2ULNgVaGHXx3rlKyN5skBrjnwJBb
+         M695TuQs4MGnYylHBDwwOtj/34Nm/7tihOtAiMoFnWaASHetHgfiyZ2aFf7kkmRdNgMJ
+         DDnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718216124; x=1718820924;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mraezCEzi7HPYzzdi4zkA3wSgYn7YV5wl4ixiQZdTak=;
+        b=XF2UcLT+WnfG3looD/KE2AnU3xE48tB9H9qrCHl9blCUjyk2XQCufnWG9tlY78kXDF
+         sMqdcX4jqNmNxdm2xO8bANnP64ik/DAAizYx3edHzG2ymT2MlGhwope3N0E9gnSc4Lh6
+         ddt2zqHYcKKywarrHVeeEZpvQSdSnxGnbbHYzLBy/vqa0mhYQmbqpoxNUi1pXQah3J6S
+         3LgP52Nm/UVCap7shOMZKC9aS/3OL+2Ylp/4fiDoazZqGbIy64OuzOxYyAd+DdWWgGic
+         eGB+ToU2DjO4l1oJkcwPogwZXLs31HIP5NsmR971+c7/6Q8Wjk1O5pj9yYTGB/4QaGN0
+         B9yw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSL69ld01f+7/uSraLb2GGA9o/NHoVWlwaF5tHiyB86HMQkkAkWZxkn9uKFovIg3OusHVne1jh/e3ywcDEh1HMf5latfbApF8iFhAG
+X-Gm-Message-State: AOJu0YxmHI2gb2xtu/VxqoQCSzY2WItcAdxFsdIWV7w9CWDVGpQ5m4Mp
+	hP2/DHD3AIzdiQ/Uw2yAy3usjCEAxN+wcQRpCDlREnOR5vkKvb+H4f1K4CJ0OPE=
+X-Google-Smtp-Source: AGHT+IFSBNLRqXQ9ycHtcrkpAwckrL3o8yPmK68fpMaDQWCd4BwUD6ZjT6xvrWnTk6ysDRpq/EKUEA==
+X-Received: by 2002:a05:6512:239f:b0:52c:93f4:390 with SMTP id 2adb3069b0e04-52c9a3b8d57mr2685629e87.4.1718216123471;
+        Wed, 12 Jun 2024 11:15:23 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c1e056c05sm2050458e87.80.2024.06.12.11.15.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 11:15:23 -0700 (PDT)
+Date: Wed, 12 Jun 2024 21:15:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Banajit Goswami <bgoswami@quicinc.com>, neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, 
+	krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	alsa-devel@alsa-project.org
+Subject: Re: [PATCH v3 1/3] ASoC: codecs: lpass-macro: add helpers to get
+ codec version
+Message-ID: <jowqhnspiai4ydp7m7mn3p654kufg4ufbm2iexjg5dqbcxqatu@jfex2rnes5vu>
+References: <20240612-lpass-codec-v25-v1-0-9f40611a1370@linaro.org>
+ <20240612-lpass-codec-v25-v1-1-9f40611a1370@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <3304e0-6669e580-9f9-33d83680@155585222>
-Subject: =?utf-8?q?Re=3A?= [PATCH v5 2/2] =?utf-8?q?proc=3A?= restrict /proc/pid/mem
-User-Agent: SOGoMail 5.10.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612-lpass-codec-v25-v1-1-9f40611a1370@linaro.org>
 
-On Thursday, June 06, 2024 20:45 EEST, Kees Cook <kees@kernel.org> wrot=
-e:
+On Wed, Jun 12, 2024 at 05:57:21PM +0100, Srinivas Kandagatla wrote:
+> LPASS Digital codec have changes in register layout across multiple
+> versions. Add a proper way read the codec version allowint all the lpass
+> macro drivers (tx, rx, wsa, va) to configure the registers correctly.
+> 
+> LPASS VA macro has the required registers to read the codec version.
+> Read the the version and make it available to other lpass codec macros
+> using the common helper functions.
+> 
+> Existing method of using LPASS IP version is not accurate as the same
+> the codec versioning is totally independent of LPASS IP block versions.
+> 
+> These helper functions should be able to provide a convient way to get
+> the codec version, and will help scale the drivers in right direction.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  sound/soc/codecs/lpass-macro-common.c | 23 +++++++++++++++++++++++
+>  sound/soc/codecs/lpass-macro-common.h | 35 +++++++++++++++++++++++++++++++++++
+>  sound/soc/codecs/lpass-va-macro.c     | 29 +++++++++++++++++++++++++++++
+>  3 files changed, 87 insertions(+)
+> 
+> diff --git a/sound/soc/codecs/lpass-macro-common.c b/sound/soc/codecs/lpass-macro-common.c
+> index da1b422250b8..8b038a99a8f9 100644
+> --- a/sound/soc/codecs/lpass-macro-common.c
+> +++ b/sound/soc/codecs/lpass-macro-common.c
+> @@ -11,6 +11,9 @@
+>  
+>  #include "lpass-macro-common.h"
+>  
+> +static DEFINE_MUTEX(lpass_codec_mutex);
+> +static int lpass_codec_version;
+> +
+>  struct lpass_macro *lpass_macro_pds_init(struct device *dev)
+>  {
+>  	struct lpass_macro *l_pds;
+> @@ -66,5 +69,25 @@ void lpass_macro_pds_exit(struct lpass_macro *pds)
+>  }
+>  EXPORT_SYMBOL_GPL(lpass_macro_pds_exit);
+>  
+> +void lpass_macro_set_codec_version(int version)
+> +{
+> +	mutex_lock(&lpass_codec_mutex);
+> +	lpass_codec_version = version;
+> +	mutex_unlock(&lpass_codec_mutex);
+> +}
+> +EXPORT_SYMBOL_GPL(lpass_macro_set_codec_version);
+> +
+> +int lpass_macro_get_codec_version(void)
+> +{
+> +	int ver;
+> +
+> +	mutex_lock(&lpass_codec_mutex);
+> +	ver = lpass_codec_version;
+> +	mutex_unlock(&lpass_codec_mutex);
+> +
+> +	return ver;
+> +}
+> +EXPORT_SYMBOL_GPL(lpass_macro_get_codec_version);
+> +
+>  MODULE_DESCRIPTION("Common macro driver");
+>  MODULE_LICENSE("GPL");
+> diff --git a/sound/soc/codecs/lpass-macro-common.h b/sound/soc/codecs/lpass-macro-common.h
+> index d98718b3dc4b..f6f1bfe8eb77 100644
+> --- a/sound/soc/codecs/lpass-macro-common.h
+> +++ b/sound/soc/codecs/lpass-macro-common.h
+> @@ -18,6 +18,18 @@ enum lpass_version {
+>  	LPASS_VER_11_0_0,
+>  };
+>  
+> +enum lpass_codec_version {
+> +	LPASS_CODEC_VERSION_1_0 = 1,
+> +	LPASS_CODEC_VERSION_1_1,
+> +	LPASS_CODEC_VERSION_1_2,
+> +	LPASS_CODEC_VERSION_2_0,
+> +	LPASS_CODEC_VERSION_2_1,
+> +	LPASS_CODEC_VERSION_2_5,
+> +	LPASS_CODEC_VERSION_2_6,
+> +	LPASS_CODEC_VERSION_2_7,
+> +	LPASS_CODEC_VERSION_2_8,
+> +};
+> +
+>  struct lpass_macro {
+>  	struct device *macro_pd;
+>  	struct device *dcodec_pd;
+> @@ -25,5 +37,28 @@ struct lpass_macro {
+>  
+>  struct lpass_macro *lpass_macro_pds_init(struct device *dev);
+>  void lpass_macro_pds_exit(struct lpass_macro *pds);
+> +void lpass_macro_set_codec_version(int version);
+> +int lpass_macro_get_codec_version(void);
+> +
+> +static inline const char *lpass_macro_get_codec_version_string(int version)
+> +{
+> +	switch (version) {
+> +	case LPASS_CODEC_VERSION_2_0:
+> +		return "v2.0";
+> +	case LPASS_CODEC_VERSION_2_1:
+> +		return "v2.1";
+> +	case LPASS_CODEC_VERSION_2_5:
+> +		return "v2.5";
+> +	case LPASS_CODEC_VERSION_2_6:
+> +		return "v2.6";
+> +	case LPASS_CODEC_VERSION_2_7:
+> +		return "v2.7";
+> +	case LPASS_CODEC_VERSION_2_8:
+> +		return "v2.8";
+> +	default:
+> +		break;
+> +	}
+> +	return "NA";
+> +}
+>  
+>  #endif /* __LPASS_MACRO_COMMON_H__ */
+> diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
+> index 6eceeff10bf6..0ae9e6377e3a 100644
+> --- a/sound/soc/codecs/lpass-va-macro.c
+> +++ b/sound/soc/codecs/lpass-va-macro.c
+> @@ -1461,6 +1461,33 @@ static int va_macro_validate_dmic_sample_rate(u32 dmic_sample_rate,
+>  	return dmic_sample_rate;
+>  }
+>  
+> +static void va_macro_set_lpass_codec_version(struct va_macro *va)
+> +{
+> +	int core_id_0 = 0, core_id_1 = 0, core_id_2 = 0, version;
+> +
+> +	regmap_read(va->regmap, CDC_VA_TOP_CSR_CORE_ID_0, &core_id_0);
+> +	regmap_read(va->regmap, CDC_VA_TOP_CSR_CORE_ID_1, &core_id_1);
+> +	regmap_read(va->regmap, CDC_VA_TOP_CSR_CORE_ID_2, &core_id_2);
+> +
+> +	if ((core_id_0 == 0x01) && (core_id_1 == 0x0F))
+> +		version = LPASS_CODEC_VERSION_2_0;
+> +	if ((core_id_0 == 0x02) && (core_id_1 == 0x0E))
+> +		version = LPASS_CODEC_VERSION_2_1;
+> +	if ((core_id_0 == 0x02) && (core_id_1 == 0x0F) && (core_id_2 == 0x50 || core_id_2 == 0x51))
+> +		version = LPASS_CODEC_VERSION_2_5;
+> +	if ((core_id_0 == 0x02) && (core_id_1 == 0x0F) && (core_id_2 == 0x60 || core_id_2 == 0x61))
+> +		version = LPASS_CODEC_VERSION_2_6;
+> +	if ((core_id_0 == 0x02) && (core_id_1 == 0x0F) && (core_id_2 == 0x70 || core_id_2 == 0x71))
+> +		version = LPASS_CODEC_VERSION_2_7;
+> +	if ((core_id_0 == 0x02) && (core_id_1 == 0x0F) && (core_id_2 == 0x80 || core_id_2 == 0x81))
+> +		version = LPASS_CODEC_VERSION_2_8;
+> +
+> +	lpass_macro_set_codec_version(version);
+> +
+> +	dev_info(va->dev, "LPASS Codec Version %s\n",
+> +			lpass_macro_get_codec_version_string(version));
 
-> On Wed, Jun 05, 2024 at 07:49:31PM +0300, Adrian Ratiu wrote:
-> > +	proc=5Fmem.restrict=5Ffoll=5Fforce=3D [KNL]
-> > +			Format: {all | ptracer}
-> > +			Restricts the use of the FOLL=5FFORCE flag for /proc/*/mem acce=
-ss.
-> > +			If restricted, the FOLL=5FFORCE flag will not be added to vm ac=
-cesses.
-> > +			Can be one of:
-> > +			- 'all' restricts all access unconditionally.
-> > +			- 'ptracer' allows access only for ptracer processes.
-> > +			If not specified, FOLL=5FFORCE is always used.
->=20
-> It dawns on me that we likely need an "off" setting for these in case=
- it
-> was CONFIG-enabled...
->=20
-> > +static int =5F=5Finit early=5Fproc=5Fmem=5Frestrict=5F##name(char =
-*buf)			\
-> > +{										\
-> > +	if (!buf)								\
-> > +		return -EINVAL;							\
-> > +										\
-> > +	if (strcmp(buf, "all") =3D=3D 0)						\
-> > +		static=5Fkey=5Fslow=5Finc(&proc=5Fmem=5Frestrict=5F##name##=5Fal=
-l.key);	\
-> > +	else if (strcmp(buf, "ptracer") =3D=3D 0)					\
-> > +		static=5Fkey=5Fslow=5Finc(&proc=5Fmem=5Frestrict=5F##name##=5Fpt=
-racer.key);	\
-> > +	return 0;								\
-> > +}										\
-> > +early=5Fparam("proc=5Fmem.restrict=5F" #name, early=5Fproc=5Fmem=5F=
-restrict=5F##name)
->=20
-> Why slow=5Finc here instead of the normal static=5Fkey=5Fenable/disab=
-le?
->=20
-> And we should report misparsing too, so perhaps:
->=20
-> static int =5F=5Finit early=5Fproc=5Fmem=5Frestrict=5F##name(char *bu=
-f)			\
-> {										\
-> 	if (!buf)								\
-> 		return -EINVAL;							\
-> 										\
-> 	if (strcmp(buf, "all") =3D=3D 0) {						\
-> 		static=5Fkey=5Fenable(&proc=5Fmem=5Frestrict=5F##name##=5Fall.key);=
-		\
-> 		static=5Fkey=5Fdisable(&proc=5Fmem=5Frestrict=5F##name##=5Fptracer.=
-key);	\
-> 	} else if (strcmp(buf, "ptracer") =3D=3D 0) {				\
-> 		static=5Fkey=5Fdisable(&proc=5Fmem=5Frestrict=5F##name##=5Fall.key)=
-;	\
-> 		static=5Fkey=5Fenable(&proc=5Fmem=5Frestrict=5F##name##=5Fptracer.k=
-ey);	\
-> 	} else if (strcmp(buf, "off") =3D=3D 0) {					\
-> 		static=5Fkey=5Fdisable(&proc=5Fmem=5Frestrict=5F##name##=5Fall.key)=
-;	\
-> 		static=5Fkey=5Fdisable(&proc=5Fmem=5Frestrict=5F##name##=5Fptracer.=
-key);	\
-> 	} else									\
-> 		pr=5Fwarn("%s: ignoring unknown option '%s'\n",			\
-> 			"proc=5Fmem.restrict=5F" #name, buf);			\
-> 	return 0;								\
-> }										\
-> early=5Fparam("proc=5Fmem.restrict=5F" #name, early=5Fproc=5Fmem=5Fre=
-strict=5F##name)
->=20
-> > +static int =5F=5Fmem=5Fopen=5Faccess=5Fpermitted(struct file *file=
-, struct task=5Fstruct *task)
-> > +{
-> > +	bool is=5Fptracer;
-> > +
-> > +	rcu=5Fread=5Flock();
-> > +	is=5Fptracer =3D current =3D=3D ptrace=5Fparent(task);
-> > +	rcu=5Fread=5Funlock();
-> > +
-> > +	if (file->f=5Fmode & FMODE=5FWRITE) {
-> > +		/* Deny if writes are unconditionally disabled via param */
-> > +		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPE=
-N=5FWRITE=5FDEFAULT,
-> > +					&proc=5Fmem=5Frestrict=5Fopen=5Fwrite=5Fall))
-> > +			return -EACCES;
-> > +
-> > +		/* Deny if writes are allowed only for ptracers via param */
-> > +		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPE=
-N=5FWRITE=5FPTRACE=5FDEFAULT,
-> > +					&proc=5Fmem=5Frestrict=5Fopen=5Fwrite=5Fptracer) &&
-> > +		    !is=5Fptracer)
-> > +			return -EACCES;
-> > +	}
-> > +
-> > +	if (file->f=5Fmode & FMODE=5FREAD) {
-> > +		/* Deny if reads are unconditionally disabled via param */
-> > +		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPE=
-N=5FREAD=5FDEFAULT,
-> > +					&proc=5Fmem=5Frestrict=5Fopen=5Fread=5Fall))
-> > +			return -EACCES;
-> > +
-> > +		/* Deny if reads are allowed only for ptracers via param */
-> > +		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPE=
-N=5FREAD=5FPTRACE=5FDEFAULT,
-> > +					&proc=5Fmem=5Frestrict=5Fopen=5Fread=5Fptracer) &&
-> > +		    !is=5Fptracer)
-> > +			return -EACCES;
-> > +	}
-> > +
-> > +	return 0; /* R/W are not restricted */
-> > +}
->=20
-> Given how deeply some of these behaviors may be in userspace, it migh=
-t
-> be more friendly to report the new restrictions with a pr=5Fnotice() =
-so
-> problems can be more easily tracked down. For example:
->=20
-> static void report=5Fmem=5Frw=5Frejection(const char *action, struct =
-task=5Fstruct *task)
-> {
-> 	pr=5Fwarn=5Fratelimited("Denied %s of /proc/%d/mem (%s) by pid %d (%=
-s)\n",
-> 			    action, task=5Fpid=5Fnr(task), task->comm,
-> 			    task=5Fpid=5Fnr(current), current->comm);
-> }
->=20
-> ...
->=20
-> 	if (file->f=5Fmode & FMODE=5FWRITE) {
-> 		/* Deny if writes are unconditionally disabled via param */
-> 		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPEN=5F=
-WRITE=5FDEFAULT,
-> 					&proc=5Fmem=5Frestrict=5Fopen=5Fwrite=5Fall)) {
-> 			report=5Fmem=5Frw=5Freject("all open-for-write");
-> 			return -EACCES;
-> 		}
->=20
-> 		/* Deny if writes are allowed only for ptracers via param */
-> 		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPEN=5F=
-WRITE=5FPTRACE=5FDEFAULT,
-> 					&proc=5Fmem=5Frestrict=5Fopen=5Fwrite=5Fptracer) &&
-> 		    !is=5Fptracer)
-> 			report=5Fmem=5Frw=5Freject("non-ptracer open-for-write");
-> 			return -EACCES;
-> 	}
->=20
-> etc
->=20
-> > +static bool =5F=5Fmem=5Frw=5Fcurrent=5Fis=5Fptracer(struct file *f=
-ile)
-> > +{
-> > +	struct inode *inode =3D file=5Finode(file);
-> > +	struct task=5Fstruct *task =3D get=5Fproc=5Ftask(inode);
-> > +	struct mm=5Fstruct *mm =3D NULL;
-> > +	int is=5Fptracer =3D false, has=5Fmm=5Faccess =3D false;
-> > +
-> > +	if (task) {
-> > +		rcu=5Fread=5Flock();
-> > +		is=5Fptracer =3D current =3D=3D ptrace=5Fparent(task);
-> > +		rcu=5Fread=5Funlock();
-> > +
-> > +		mm =3D mm=5Faccess(task, PTRACE=5FMODE=5FREAD=5FFSCREDS);
-> > +		if (mm && file->private=5Fdata =3D=3D mm) {
-> > +			has=5Fmm=5Faccess =3D true;
-> > +			mmput(mm);
-> > +		}
-> > +
-> > +		put=5Ftask=5Fstruct(task);
-> > +	}
-> > +
-> > +	return is=5Fptracer && has=5Fmm=5Faccess;
-> > +}
->=20
-> Thanks; this looks right to me now!
->=20
-> > +menu "Procfs mem restriction options"
-> > +
-> > +config PROC=5FMEM=5FRESTRICT=5FFOLL=5FFORCE=5FDEFAULT
-> > +	bool "Restrict all FOLL=5FFORCE flag usage"
-> > +	default n
-> > +	help
-> > +	  Restrict all FOLL=5FFORCE usage during /proc/*/mem RW.
-> > +	  Debuggers like GDB require using FOLL=5FFORCE for basic
-> > +	  functionality.
-> > +
-> > +config PROC=5FMEM=5FRESTRICT=5FFOLL=5FFORCE=5FPTRACE=5FDEFAULT
-> > +	bool "Restrict FOLL=5FFORCE usage except for ptracers"
-> > +	default n
-> > +	help
-> > +	  Restrict FOLL=5FFORCE usage during /proc/*/mem RW, except
-> > +	  for ptracer processes. Debuggers like GDB require using
-> > +	  FOLL=5FFORCE for basic functionality.
->=20
-> Can we adjust the Kconfigs to match the bootparam arguments? i.e.
-> instead of two for each mode, how about one with 3 settings ("all",
-> "ptrace", or "off")
->=20
-> choice
-> 	prompt "Restrict /proc/pid/mem FOLL=5FFORCE usage"
-> 	default PROC=5FMEM=5FRESTRICT=5FFOLL=5FFORCE=5FOFF
-> 	help
-> 	  Reading and writing of /proc/pid/mem bypasses memory permission
-> 	  checks due to the internal use of the FOLL=5FFORCE flag. This can =
-be
-> 	  used by attackers to manipulate process memory contents that
-> 	  would have been otherwise protected. However, debuggers, like GDB,
-> 	  use this to set breakpoints, etc. To force debuggers to fall back
-> 	  to PEEK/POKE, see PROC=5FMEM=5FRESTRICT=5FOPEN=5FWRITE=5FALL.
->=20
-> 	config PROC=5FMEM=5FRESTRICT=5FFOLL=5FFORCE=5FOFF
-> 	bool "Do not restrict FOLL=5FFORCE usage with /proc/pid/mem (regular=
-)"
-> 	help
-> 	  Regular behavior: continue to use the FOLL=5FFORCE flag for
-> 	  /proc/pid/mem access.
->=20
-> 	config PROC=5FMEM=5FRESTRICT=5FFOLL=5FFORCE=5FPTRACE
-> 	bool "Only allow ptracers to use FOLL=5FFORCE with /proc/pid/mem (sa=
-fer)"
-> 	help
-> 	  Only use the FOLL=5FFORCE flag for /proc/pid/mem access when the
-> 	  current task is the active ptracer of the target task. (Safer,
-> 	  least disruptive to most usage patterns.)
->=20
-> 	config PROC=5FMEM=5FRESTRICT=5FFOLL=5FFORCE=5FALL
-> 	bool "Do not use FOLL=5FFORCE with /proc/pid/mem (safest)"
-> 	help
-> 	  Remove the FOLL=5FFORCE flag for all /proc/pid/mem accesses.
-> 	  (Safest, but may be disruptive to some usage patterns.)
-> endchoice
->=20
-> Then the static=5Fkeys can be defined like this mess (I couldn't find=
- a
-> cleaner way to do it):
->=20
-> #define DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5FALL(name) \
-> 	DEFINE=5FSTATIC=5FKEY=5FTRUE=5FRO(proc=5Fmem=5Frestrict=5F##name##=5F=
-all);	\
-> 	DEFINE=5FSTATIC=5FKEY=5FFALSE=5FRO(proc=5Fmem=5Frestrict=5F##name##=5F=
-ptracer);
-> #define DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5FPTRACE(name) \
-> 	DEFINE=5FSTATIC=5FKEY=5FFALSE=5FRO(proc=5Fmem=5Frestrict=5F##name##=5F=
-all);	\
-> 	DEFINE=5FSTATIC=5FKEY=5FTRUE=5FRO(proc=5Fmem=5Frestrict=5F##name##=5F=
-ptracer);
-> #define DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5FOFF(name) \
-> 	DEFINE=5FSTATIC=5FKEY=5FFALSE=5FRO(proc=5Fmem=5Frestrict=5F##name##=5F=
-all);	\
-> 	DEFINE=5FSTATIC=5FKEY=5FFALSE=5FRO(proc=5Fmem=5Frestrict=5F##name##=5F=
-ptracer);
->=20
-> #define DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5F0(level, name)
-> #define DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5F1(level, name)		\
-> 	DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5F##level(name)
->=20
-> #define =5FDEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5FPICK(enabled, level, =
-name)   \
-> DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5F##enabled(level, name)
->=20
-> #define DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5FPICK(enabled, level, nam=
-e)   \
-> =5FDEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5FPICK(enabled, level, name)
->=20
-> #define DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM(CFG, name)			\
-> DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5FPICK(IS=5FENABLED(CONFIG=5FPROC=5F=
-MEM=5FRESTRICT=5F##CFG##=5FALL), ALL, name)
-> DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5FPICK(IS=5FENABLED(CONFIG=5FPROC=5F=
-MEM=5FRESTRICT=5F##CFG##=5FPTRACE), PTRACE, name)
-> DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM=5FPICK(IS=5FENABLED(CONFIG=5FPROC=5F=
-MEM=5FRESTRICT=5F##CFG##=5FOFF), OFF, name)
->=20
-> #define DEFINE=5FEARLY=5FPROC=5FMEM=5FRESTRICT(CFG, name)				\
-> DEFINE=5FSTATIC=5FKEY=5FPROC=5FMEM(CFG, name)						\
-> static int =5F=5Finit early=5Fproc=5Fmem=5Frestrict=5F##name(char *bu=
-f)			\
-> {										\
-> 	if (!buf)								\
-> 		return -EINVAL;							\
-> 										\
-> 	if (strcmp(buf, "all") =3D=3D 0) {						\
-> 		static=5Fkey=5Fenable(&proc=5Fmem=5Frestrict=5F##name##=5Fall.key);=
-		\
-> 		static=5Fkey=5Fdisable(&proc=5Fmem=5Frestrict=5F##name##=5Fptracer.=
-key);	\
-> 	} else if (strcmp(buf, "ptracer") =3D=3D 0) {				\
-> 		static=5Fkey=5Fdisable(&proc=5Fmem=5Frestrict=5F##name##=5Fall.key)=
-;	\
-> 		static=5Fkey=5Fenable(&proc=5Fmem=5Frestrict=5F##name##=5Fptracer.k=
-ey);	\
-> 	} else if (strcmp(buf, "off") =3D=3D 0) {					\
-> 		static=5Fkey=5Fdisable(&proc=5Fmem=5Frestrict=5F##name##=5Fall.key)=
-;	\
-> 		static=5Fkey=5Fdisable(&proc=5Fmem=5Frestrict=5F##name##=5Fptracer.=
-key);	\
-> 	} else									\
-> 		pr=5Fwarn("%s: ignoring unknown option '%s'\n",			\
-> 			"proc=5Fmem.restrict=5F" #name, buf);			\
-> 	return 0;								\
-> }										\
-> early=5Fparam("proc=5Fmem.restrict=5F" #name, early=5Fproc=5Fmem=5Fre=
-strict=5F##name)
->=20
-> DEFINE=5FEARLY=5FPROC=5FMEM=5FRESTRICT(OPEN=5FREAD, open=5Fread);
-> DEFINE=5FEARLY=5FPROC=5FMEM=5FRESTRICT(OPEN=5FWRITE, open=5Fwrite);
-> DEFINE=5FEARLY=5FPROC=5FMEM=5FRESTRICT(WRITE, write);
-> DEFINE=5FEARLY=5FPROC=5FMEM=5FRESTRICT(FOLL=5FFORCE, foll=5Fforce);
+dev_dbg(), please. I think the kernel should be mostly quiet by default.
 
-Hello again,
+> +}
+> +
+>  static int va_macro_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -1554,6 +1581,8 @@ static int va_macro_probe(struct platform_device *pdev)
+>  			goto err_npl;
+>  	}
+>  
+> +	va_macro_set_lpass_codec_version(va);
+> +
+>  	if (va->has_swr_master) {
+>  		/* Set default CLK div to 1 */
+>  		regmap_update_bits(va->regmap, CDC_VA_TOP_CSR_SWR_MIC_CTL0,
+> 
+> -- 
+> 2.25.1
+> 
 
-I tried very hard to make the above work these past few days and gave u=
-p.
-Couldn't find a way to get it to compile.
-Tried to also debug the compiler preprocess output and my head hurts. :=
-)
-
-Would macros like the following be acceptable?
-I know it's more verbose but also much easier to understand and it work=
-s.
-
-#if IS=5FENABLED(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPEN=5FREAD=5FALL)
-DEFINE=5FSTATIC=5FKEY=5FTRUE=5FRO(proc=5Fmem=5Frestrict=5Fopen=5Fread=5F=
-all);
-DEFINE=5FSTATIC=5FKEY=5FFALSE=5FRO(proc=5Fmem=5Frestrict=5Fopen=5Fread=5F=
-ptracer);
-#elif IS=5FENABLED(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPEN=5FREAD=5FPTRAC=
-E)
-DEFINE=5FSTATIC=5FKEY=5FFALSE=5FRO(proc=5Fmem=5Frestrict=5Fopen=5Fread=5F=
-all);
-DEFINE=5FSTATIC=5FKEY=5FTRUE=5FRO(proc=5Fmem=5Frestrict=5Fopen=5Fread=5F=
-ptracer);
-#else
-DEFINE=5FSTATIC=5FKEY=5FFALSE=5FRO(proc=5Fmem=5Frestrict=5Fopen=5Fread=5F=
-all);
-DEFINE=5FSTATIC=5FKEY=5FFALSE=5FRO(proc=5Fmem=5Frestrict=5Fopen=5Fread=5F=
-ptracer);
-#endif
-
+-- 
+With best wishes
+Dmitry
 
