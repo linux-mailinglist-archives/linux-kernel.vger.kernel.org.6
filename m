@@ -1,92 +1,102 @@
-Return-Path: <linux-kernel+bounces-212000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CB99059D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:25:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5BF79059E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1E61C216EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:25:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212E7285B34
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39AF1822D4;
-	Wed, 12 Jun 2024 17:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738E61822DF;
+	Wed, 12 Jun 2024 17:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JSC2fm/3"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="FBdPhDQP"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9942D3209;
-	Wed, 12 Jun 2024 17:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41981822CE;
+	Wed, 12 Jun 2024 17:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718213104; cv=none; b=cGoupNk7jFHkoptSGiAG9SthIOucSFipmplyxWgzfV7wdCBrgTZd71FOVVgcF8L1E3sSo/ZiwbgRHJlirJNp6yw/5YuYjw7ICce6cf90reRu8TKkExEMnXZXuIOIPtTVy1kpXxm3J0zDroEZ5Ctt5EAOgu6tbcGqPahw69VM9Dw=
+	t=1718213334; cv=none; b=JjATYaDXZIP+sUQSmYf+++bg9RgwB/jX6P8LM4NBeIkzYicyIkQC4iBqOGHc5Elr03/AemC5NOe/xtMKKY4S4Ya/+DPG5qiFxyR5Zfb1ZPcv/OoET/nA82W28XnlsUQScHGEzqR8gL7TMtMSXadrZRhUSXnE6gQCRBNsj+Gpfco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718213104; c=relaxed/simple;
-	bh=j9Ce3yFE3sDH+2AWEO7WyDZ03Ns8tASD/cdNexiiKsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fICQ5P5VAABrRgVArnct5Cjz4dZJFRh9kINT02DqSzQt8DSARxjHa1CL+TdTqjalTfBizgpJ+3b5jMgOJUlauwf21XLAz9RSiLNXxjWpnMPTgJ7GsUZYdbiBU0P4n34sIFk5xOsQEH0p4Vy8BC4VShbEUXPCaxtfz8h2uw9S308=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JSC2fm/3; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=amAeSiLiL/5PV3oMw3RYgelQ4VzuG/TJzfRKgkx8h+U=; b=JSC2fm/350AJHGVYIofS85JA6l
-	LAB1PwbyUL7UlyrhGj6j0lN6XGLmXnNr9CehZfuT4tL4bUqAyS2HwvyrKZD/vS8o7ZGHgfP8ZVqhQ
-	R0j+9U7YosceH9go477TzkPVw4QH3k9iRLsCKqBf554QA7Jv6FfFqVxuLytZzSNiGbSy73lYR8mZT
-	+JHCegogZmo81skCsmDHCauhcSUov+i+itmhCvWzsbG+sPMbWn0b5ad3bdmxZ+3Wrmtts9zrfsdB+
-	/nr2xxTwpe/N8z5Pf4R0KLlkKXjAGQjwDt5ZJmBRwxgrPDq/mx+Lb6LIPIOynB9mgJn6n4PWkORlQ
-	w7uQhO4A==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sHRiN-0000000Ev4s-1apg;
-	Wed, 12 Jun 2024 17:24:51 +0000
-Date: Wed, 12 Jun 2024 18:24:51 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 03/11] filemap: allocate mapping_min_order folios in
- the page cache
-Message-ID: <ZmnZ49dqeJkCJNYE@casper.infradead.org>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-4-kernel@pankajraghav.com>
+	s=arc-20240116; t=1718213334; c=relaxed/simple;
+	bh=riOoqu/bsmYryWoPNq+qSSg4e9AZz4xSKxN54pv5OL0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SJQywOKguoPutLHA0dPC0ED7hcCkNTD8DTMTHjxcbXLqhRI0n/WyrdQMunWsoPaGMZvIUgIqT+0SViTMMz6BhBKaQmdFSXMHoSCN3D8BKrg1US5yW+uCTgRfkBi32xyflgbOC73B6VZ6lJlO+gaeAbdyuIxqOm4n4xHhFu2TUnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=FBdPhDQP; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718213332; x=1749749332;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=riOoqu/bsmYryWoPNq+qSSg4e9AZz4xSKxN54pv5OL0=;
+  b=FBdPhDQPJHK9jHOgLzHDDvjJK4Zi5/rHK9xbuqgN+ZABRLj4r/fqKjVy
+   SUmZ0BlmntMrhv/MfgXCDkq71H4Jyzgd9IaE5zasiUwB6DBSaWYTp61E+
+   4WhousuXs0S0atHFD5IygnaFbFKDnuwbBz3sAGwIpRMzmrcLH21UkH5N8
+   Be5+OEQUR0NAGjkxHXPhiphlTHEJqzreJdbhOtFzEu84XVZiEpAmw9ani
+   3WQzlcQSbTRjTRi43vtfMookcIl9USgKTIRVpqCGLKM1L575lEmVLDt36
+   h33DRBsAdV0rgXWmKC2ZIr3NrPPQsuxsCmsAcG1ImK/CjAjj/XnozOeYn
+   w==;
+X-CSE-ConnectionGUID: kQJR97/CQB64mCyFSlUH9g==
+X-CSE-MsgGUID: Un5h+f01RDK1PE87fATe3A==
+X-IronPort-AV: E=Sophos;i="6.08,233,1712646000"; 
+   d="scan'208";a="258194646"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Jun 2024 10:28:51 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 12 Jun 2024 10:28:34 -0700
+Received: from HYD-DK-UNGSW21.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 12 Jun 2024 10:28:29 -0700
+From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+To: <netdev@vger.kernel.org>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bryan.whitehead@microchip.com>, <andrew@lunn.ch>, <linux@armlinux.org.uk>,
+	<sbauer@blackbox.su>, <hmehrtens@maxlinear.com>, <lxu@maxlinear.com>,
+	<hkallweit1@gmail.com>, <edumazet@google.com>, <pabeni@redhat.com>,
+	<wojciech.drewek@intel.com>, <UNGLinuxDriver@microchip.com>
+Subject: [PATCH net V4 0/3] net: lan743x: Fixes for multiple WOL related issues
+Date: Wed, 12 Jun 2024 22:55:36 +0530
+Message-ID: <20240612172539.28565-1-Raju.Lakkaraju@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607145902.1137853-4-kernel@pankajraghav.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, Jun 07, 2024 at 02:58:54PM +0000, Pankaj Raghav (Samsung) wrote:
-> +/**
-> + * mapping_align_start_index() - Align starting index based on the min
-> + * folio order of the page cache.
+This patch series implement the following fixes:
+1. Disable WOL upon resume in order to restore full data path operation
+2. Support WOL at both the PHY and MAC appropriately 
+3. Remove interrupt mask clearing from config_init 
 
-_short_ description.  "Align index appropriately for this mapping".
-And maybe that means we should call it "mapping_align_index" instead
-of mapping_align_start_index?
+Patch-3 was sent seperately earlier. Review comments in link: 
+https://lore.kernel.org/lkml/4a565d54-f468-4e32-8a2c-102c1203f72c@lunn.ch/T/
 
-> + * @mapping: The address_space.
-> + *
-> + * Ensure the index used is aligned to the minimum folio order when adding
-> + * new folios to the page cache by rounding down to the nearest minimum
-> + * folio number of pages.
+Raju Lakkaraju (3):
+  net: lan743x: disable WOL upon resume to restore full data path
+    operation
+  net: lan743x: Support WOL at both the PHY and MAC appropriately
+  net: phy: mxl-gpy: Remove interrupt mask clearing from config_init
 
-How about:
+ .../net/ethernet/microchip/lan743x_ethtool.c  | 44 ++++++++++++--
+ drivers/net/ethernet/microchip/lan743x_main.c | 48 ++++++++++++---
+ drivers/net/ethernet/microchip/lan743x_main.h | 28 +++++++++
+ drivers/net/phy/mxl-gpy.c                     | 58 ++++++++++++-------
+ 4 files changed, 146 insertions(+), 32 deletions(-)
 
- * The index of a folio must be naturally aligned.  If you are adding a
- * new folio to the page cache and need to know what index to give it,
- * call this function.
+-- 
+2.34.1
 
 
