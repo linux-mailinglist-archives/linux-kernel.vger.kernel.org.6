@@ -1,158 +1,113 @@
-Return-Path: <linux-kernel+bounces-210777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6EA290488C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:50:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C95D90488E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28DEF1F225F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:50:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 120061F2324B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3835CAC;
-	Wed, 12 Jun 2024 01:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B614C94;
+	Wed, 12 Jun 2024 01:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KR3TSfCi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jp0ollvH"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BF823A6;
-	Wed, 12 Jun 2024 01:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCF54696
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718157007; cv=none; b=lsVFEmb2mr9XrVLW7IWQx5g3g8E8DBPj+hRZEKw0j+RH5QChHiXMv0HqKu67jWjxAdoAxNBYgB5aPkmlDQkX9fM9DhCa4Y2hb2lwmJcWDGXjkH5H1vDXbA+McVd3yKX+gvRqE0K8aDTB7IdOa//wLJsQ51Cd/3kyuyGKEwt3BCU=
+	t=1718157038; cv=none; b=DJSJUchpaBu58T3ge4p/nIFPoodazjt8e9Inm2ZOtlqztWqtez4WozNCRwOrgL8OvcptZxPN1o1H4g6DF0GmrEYjs9IbGQ8RqWpJ79zmqJtUx4mO5cbglE9GilOWGvpZpCW4HO+bLlXVOjSS4Yeq5JnKosXb38uBTl+l5oxoqS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718157007; c=relaxed/simple;
-	bh=mruOr8BApZYwayCBu9Ee90puSaZOMe5vEm6X1V8AExY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AP0Pwl8ClGBEZ3Z4og8UN5XXJYfWZIBnpFesC1Nwussx3dsKfpuiqNycmYpcJBvn9Ow/claB2Xnb8Svk13jOKJ67P6FrxhUgZvBe0tR2tuN4STb5C77jSQizSRHemzQ0AO3rcMkXpJCDYLy/DdJZvVCmRjthbFwxSpLIjZM0ZAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KR3TSfCi; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718157005; x=1749693005;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mruOr8BApZYwayCBu9Ee90puSaZOMe5vEm6X1V8AExY=;
-  b=KR3TSfCiw0JaJp7zOXv1xPuSI0UKRvk+jrid7NeQW2igrvVyyXnqrpjr
-   Bz42Y/kPmLSBP3EdrsqRkwL2KYHbgG+W27yAQkp02ddah2FA6NZnNcziA
-   p9yLv/2E8vfCUIpFLCTHELLvcV4DNsoN0xbfLJ/VvcL+1RxSy6ITUrP+U
-   BMMwh9/CKNYs1kqKxXVLmePbb4WoBXSHc/Q/FPJsWaLVpgSkxrRUh+KmS
-   lw6j/3i2Fi5XByyEYj8NBdwnPDlprgRcTr7Fnb0kjRdxrP+ilCRayHH40
-   Yoleav9HKBOuLKup34kEmyBxLZfJOLt+jiLjUJ/vnh8Ntnbc4g/3h0B76
-   g==;
-X-CSE-ConnectionGUID: hRv6ej2gQgGsQj4pJ20ndA==
-X-CSE-MsgGUID: qHALJiI3TCq+WOcR7BUhnw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14626140"
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="14626140"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:50:04 -0700
-X-CSE-ConnectionGUID: FlxYsiKURFyp8kWXOcDlWQ==
-X-CSE-MsgGUID: vYyZtfXZSZabcZlcflZg/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="39685966"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.51]) ([10.124.227.51])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:50:00 -0700
-Message-ID: <98b1d143-13bf-471d-8dc6-5f8e03ddde79@intel.com>
-Date: Wed, 12 Jun 2024 09:49:57 +0800
+	s=arc-20240116; t=1718157038; c=relaxed/simple;
+	bh=CKzAUUkEhigDiFfq9f0v9aKgqgAE2xEgqzhO+uzIlyc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gJc1DY/6Tki4XVFwDfOKdJk3ypI6KSFR1+sYpE5ry7lWAgLYBoo7En74KeFQrQsH3kp5vIiv/yBmwMdkCAdXMdkyQ/sqw9iaDMMqZk9Vw568r5v6wCNh9qcqMV2ULO8s+i0iqeA0vMTP7sh5eLrxDQu0bDAyhmqU07rLq/Xn9Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jp0ollvH; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-6ea5a4fd129so2831919a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:50:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718157037; x=1718761837; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IKtpIL6U7kg1fAPfAGw1LfrxkdIqOyyJ+814b5HJ4FE=;
+        b=Jp0ollvHUpiko7V82fF7TufxCkNgoTT9Iq1uoSQuGxoNv58MBxhm4Bz8uE3pLTymKP
+         o4WeKa8/nQVwvIBQuI2Arw87enea8qnNt2hpTqjvuy/FB4iDwGNf34vvkhPhroniR0Jl
+         I4emDrjfdI40Rm2YiE0OmJp4j4n7e5T/RK1U8O7k3rrVpUweZPI93Huzw3KfnL9zzftJ
+         4gtMEXoZXTyUfF8SPmg3p41eniyUvMsdovlDvOjrPcrZ6MwiJ+v9cD143FpYStfrUl+S
+         eZN9eYsmMJn+RrUzFcmdoGFuUGiZ8fT/AQZTIn2AdcSY5djZh89uuo7CvOY3Fh0GMJe6
+         SisQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718157037; x=1718761837;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IKtpIL6U7kg1fAPfAGw1LfrxkdIqOyyJ+814b5HJ4FE=;
+        b=J4+IP7yz4MBwZ610jo0+zJMnwXjh96hxMmg2H2GTPjhsMU9OlK0LqB1K1GSpP6h0CF
+         sJez+KLdi4ZpLnI7C3bKHQTMN4JOXWyPvdOT8AS2PbsVSgMqFV++Dt2w5fA+VOetENs0
+         fsuGlyTYkVnPeiMPbaQnxyu4CfLvHe6JjGmzB9aMGr5o4f8BSConH0TfUjrU9SRATQGh
+         dqryjZeI+O7U3Q+KaRyXqxnNh1vylYZY0Fp+IjfBVGQPHbrYRda2CF0BPIpfDHFJk3vK
+         9LjfcxdUtmb/yHxnDMRFtf+h51v0crHhcMHoyJhK7ioLwMGyB3s7U52UUb9N0hF8YbMF
+         5q3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkbcJP6567l6n45hofjyU8InQGxZheur1kUddUOESZ0H7OyLWjWXGJsky8iIf3mWS7zNn1vUsoW4Sqau7KRHw3sZMNf2ugNybasrKn
+X-Gm-Message-State: AOJu0Yyu1j8geiie3rvDHH1grET1bIk+MasRcvyBEez7M8QXl8g1sanJ
+	AwZtJpYJoQwPrrUiDm50QeDYANTGDDQ5YyQoGKr30L61Jwz59fQk2iaaoPlSwcGhk+FVedZbft0
+	+YA==
+X-Google-Smtp-Source: AGHT+IH+xKZzaonjaJ1DrCmOckVUlkP3Oe7TZbZOhcwldGcFb1yYxQPimTUv78mDfgKG+TfCv49u+GahTv4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a02:8c1:b0:6e5:f498:250a with SMTP id
+ 41be03b00d2f7-6fae76010c6mr926a12.12.1718157036530; Tue, 11 Jun 2024 18:50:36
+ -0700 (PDT)
+Date: Wed, 12 Jun 2024 01:50:35 +0000
+In-Reply-To: <Zmj+I2jtZLkFGgpd@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 04/10] KVM: VMX: Move MSR_IA32_VMX_BASIC bit defines to
- asm/vmx.h
-To: Sean Christopherson <seanjc@google.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- Kai Huang <kai.huang@intel.com>, Jim Mattson <jmattson@google.com>,
- Shan Kang <shan.kang@intel.com>, Xin Li <xin3.li@intel.com>,
- Zhao Liu <zhao1.liu@intel.com>
-References: <20240605231918.2915961-1-seanjc@google.com>
- <20240605231918.2915961-5-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240605231918.2915961-5-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240605224527.2907272-1-seanjc@google.com> <171803644297.3355626.18364027225741935056.b4-ty@google.com>
+ <Zmj+I2jtZLkFGgpd@yzhao56-desk.sh.intel.com>
+Message-ID: <Zmj-6wyzIFHuQw-4@google.com>
+Subject: Re: [PATCH 0/2] nVMX: Ensure host's PAT stays sane
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
+	Xiangfei Ma <xiangfeix.ma@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 6/6/2024 7:19 AM, Sean Christopherson wrote:
-> From: Xin Li <xin3.li@intel.com>
-> 
-> Move the bit defines for MSR_IA32_VMX_BASIC from msr-index.h to vmx.h so
-> that they are colocated with other VMX MSR bit defines, and with the
-> helpers that extract specific information from an MSR_IA32_VMX_BASIC value.
-> 
-> Opportunistically use BIT_ULL() instead of open coding hex values.
-> 
-> Opportunistically rename VMX_BASIC_64 to VMX_BASIC_32BIT_PHYS_ADDR_ONLY,
-> as "VMX_BASIC_64" is widly misleading.  The flag enumerates that addresses
-> are limited to 32 bits, not that 64-bit addresses are allowed.
-> 
-> Last but not least, opportunistically #define DUAL_MONITOR_TREATMENT so
-> that all known single-bit feature flags are defined (this will allow
-> replacing open-coded literals in the future).
-> 
-> Cc: Shan Kang <shan.kang@intel.com>
-> Cc: Kai Huang <kai.huang@intel.com>
-> Signed-off-by: Xin Li <xin3.li@intel.com>
-> [sean: split to separate patch, write changelog]
-> Reviewed-by: Zhao Liu <zhao1.liu@intel.com>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
+On Wed, Jun 12, 2024, Yan Zhao wrote:
+> On Tue, Jun 11, 2024 at 06:18:40PM -0700, Sean Christopherson wrote:
+> > On Wed, 05 Jun 2024 15:45:25 -0700, Sean Christopherson wrote:
+> > > Fix a bug(s) where test_load_host_pat clobbers PAT and causes all
+> > > subsequent tests to effectively run with all memory mapped as UC.  Xiangfei
+> > > first noticed that this caused rdtsc_vmexit_diff_test to fail, but it can
+> > > also lead to timeouts if more tests are added, i.e. if more stuff runs after
+> > > test_load_host_pat.
+> > > 
+> > > Sean Christopherson (2):
+> > >   nVMX: Ensure host's PAT is loaded at the end of all VMX tests
+> > >   nVMX: Verify KVM actually loads the value in HOST_PAT into the PAT MSR
+> > > 
+> > > [...]
+> > 
+> > Applied to kvm-x86 next, thanks!
+> > 
+> > [1/2] nVMX: Ensure host's PAT is loaded at the end of all VMX tests
+> >       https://github.com/kvm-x86/kvm-unit-tests/commit/8cbb8d3cbca9
+> This is also good, though I thought you would fix the theoretical one as
+> https://lore.kernel.org/all/ZmesywdpFG3qDIkZ@google.com/ :)
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Doh, I did squash that, I just forgot to update the "thanks" email with the
+correct hashes.
 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/include/asm/msr-index.h | 8 --------
->   arch/x86/include/asm/vmx.h       | 7 +++++++
->   2 files changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-> index d93b73476583..b25c1c62b77c 100644
-> --- a/arch/x86/include/asm/msr-index.h
-> +++ b/arch/x86/include/asm/msr-index.h
-> @@ -1167,14 +1167,6 @@
->   #define MSR_IA32_VMX_VMFUNC             0x00000491
->   #define MSR_IA32_VMX_PROCBASED_CTLS3	0x00000492
->   
-> -/* VMX_BASIC bits and bitmasks */
-> -#define VMX_BASIC_VMCS_SIZE_SHIFT	32
-> -#define VMX_BASIC_TRUE_CTLS		(1ULL << 55)
-> -#define VMX_BASIC_64		0x0001000000000000LLU
-> -#define VMX_BASIC_MEM_TYPE_SHIFT	50
-> -#define VMX_BASIC_MEM_TYPE_MASK	0x003c000000000000LLU
-> -#define VMX_BASIC_INOUT		0x0040000000000000LLU
-> -
->   /* Resctrl MSRs: */
->   /* - Intel: */
->   #define MSR_IA32_L3_QOS_CFG		0xc81
-> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-> index e531d8d80a11..81b986e501a9 100644
-> --- a/arch/x86/include/asm/vmx.h
-> +++ b/arch/x86/include/asm/vmx.h
-> @@ -135,6 +135,13 @@
->   #define VMX_VMFUNC_EPTP_SWITCHING               VMFUNC_CONTROL_BIT(EPTP_SWITCHING)
->   #define VMFUNC_EPTP_ENTRIES  512
->   
-> +#define VMX_BASIC_VMCS_SIZE_SHIFT		32
-> +#define VMX_BASIC_32BIT_PHYS_ADDR_ONLY		BIT_ULL(48)
-> +#define VMX_BASIC_DUAL_MONITOR_TREATMENT	BIT_ULL(49)
-> +#define VMX_BASIC_MEM_TYPE_SHIFT		50
-> +#define VMX_BASIC_INOUT				BIT_ULL(54)
-> +#define VMX_BASIC_TRUE_CTLS			BIT_ULL(55)
-> +
->   static inline u32 vmx_basic_vmcs_revision_id(u64 vmx_basic)
->   {
->   	return vmx_basic & GENMASK_ULL(30, 0);
-
+[1/2] nVMX: Ensure host's PAT is loaded at the end of all VMX tests
+      https://github.com/kvm-x86/kvm-unit-tests/commit/184ee0d5
+[2/2] nVMX: Verify KVM actually loads the value in HOST_PAT into the PAT MSR
+      https://github.com/kvm-x86/kvm-unit-tests/commit/ee1d79c3
 
