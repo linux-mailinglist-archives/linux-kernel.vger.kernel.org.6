@@ -1,257 +1,131 @@
-Return-Path: <linux-kernel+bounces-211124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5077E904D75
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:03:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A070904D69
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:02:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67B0A1C2259B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:03:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3DD0284741
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B9B16D9AB;
-	Wed, 12 Jun 2024 08:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEBB16C6BE;
+	Wed, 12 Jun 2024 08:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IP0n2msn"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NzYrEmjT"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5A116D33A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4AE4C63
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718179343; cv=none; b=bXFeaWGtSPS63oiM1Xegg23w6xw3xKxo3ssoW6ed4V43H8Lyz3WVGyRuEW2t6cSfsF9gMWyLS4JjCw2U/+p2pPWivkCwUnlecmCG4v+q7D0KdJSrSyeihObWYYXXineRJor3AO6ZhSSwzHyrWjexksz3WiMuTy8n3toSp0Wr+3c=
+	t=1718179331; cv=none; b=APBBqvidXWQNkoHVVNwJzpXSwRhuNqxr8r9zV0dVcMuIfDO+BR4hh1NQGs157zlwsi8xNgtERJbz+9RWAVobWqAm6JyOmZjC7nzMBhY3qovFpZrIW4MufiIC+/0hbx+c5zSLcspy2v5foDSiWXlkjG42csNS1dXluOlpFfuqK/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718179343; c=relaxed/simple;
-	bh=W+e6GzcGPpmKnfH/4lMgnkYBO9jQbYopGjcoMVmsm/o=;
+	s=arc-20240116; t=1718179331; c=relaxed/simple;
+	bh=E4ogs9hBictxE7ukXz0EmjyOLTNqPtBX6JxBOeDJggM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gR6H11uQ7eqqZ9yHkKLxXKT1yEH3V7jQ4JzRCv8jjrjBPdxHIQINsm8SsAIv2WeLFFAR8hJIYh45d8+/p7l46E4Veklgz9y1PZdGAMCNjod2yTxnf9RvnrIMDxwUZczKt4hiBL5bol05qKSs9ePw8EctzfooVArs2L0HhUGvNNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IP0n2msn; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52bc035a7ccso2219393e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:02:21 -0700 (PDT)
+	 MIME-Version:Content-Type; b=EH02sK78KuVy5XChPooevEVKxlzOKKjUtkxk29v0kE4SzR1anVTcG3wR699Wzyw486cYwr3rnPhsmFmiV3zIbNL8S5N0nF4a1DtLsHmR4yzIad1I/WMtizC49Brp6b6hMkPmGOWMchXxI7+k80w4dpkAZd4s3aYBhY3WLxlPQ6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NzYrEmjT; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c94cf4c9bso1902866e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:02:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718179340; x=1718784140; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718179328; x=1718784128; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ibUc+zwzJLvbl/Wmj0pe2SpxSlINttj4gVe75zpWZPo=;
-        b=IP0n2msnQb8vkTxJnWkRKB3Q+0/1Kmfsm/tUzDE3Srv6qCIkqDHUrP0oyXf2qdO3KA
-         QT3y3wycFgwQIUgozlrJ3LnMb8tcOTwGXiaVLvCzygnwCbEvrrV7HUPh/Mvu/qWMYcsV
-         vJlqehWI+la2i6cKLkeFwqMb/Y2//4VVZWJTEl+DUTvo0n1Hc6mMFWqbP5Y+iC4rOxo5
-         QZHczZUtrUYZFl17H+ZE0wV+C9ftAxfYHMrL9O3QuHWfrUytiEUFfcHVNN6UztGaZzoG
-         CqXDLAPTYAHshtNiTcSb/NZeY4ngZH5t8cfGNiryqeYzsqIoMoJDqO4g/r8X0S9NCXrj
-         +1jQ==
+        bh=iy6VaAIWsc/uFJxkxC11R2z+NrPGPrzZFexuniHGbrY=;
+        b=NzYrEmjTa8FaiGfGTcVuqWzOAF9WVuHG2wKoEsALDBP8S4C1+NJzF/si4ueUzfpj3s
+         TkRWLyg/xf18ZfNJFktPsDDftbHCPuRsikZF/X9QmXKCUSccX7DlgVUPvKhpqzxFdCNp
+         kHiekoWtxVjyemu54W38CiGgrx3l89sd0fC1ZdD+Y0R/eCpVSAW2hG7+NwGZ3iMEoKSq
+         r7inZBJwEw0KgVOuvDsFXa7GpaSV8AzAYp+gNgEm+7n/nxSblj/HCVZGr82Qqr4GcpDy
+         gmZNkYyrkUNQPpsQRZ4E9V9n0iAnY/eWuTYd2+DbJGtIW4JG9R4TATcHWzi6ouJtK7e4
+         IZQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718179340; x=1718784140;
+        d=1e100.net; s=20230601; t=1718179328; x=1718784128;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ibUc+zwzJLvbl/Wmj0pe2SpxSlINttj4gVe75zpWZPo=;
-        b=htNcQQqOtto67j4AYczk4zUd/kYF0Bwj2tWtbVFh7vE+P7M0ljaIeWV/Z5RfmWadpa
-         u1Ait90lAMXSHUr/UEQFH51ZbaH9n7vB+oPVw/B5BUhuRt6ZNuAnsZbcSDvZrKa+8HMK
-         mR9WAyu3Du5IELcgs0ZsYooYItgptIUN8bt+TYGBfnAmqZq3UeclvPU2I5xCMya8oWYi
-         8WSNzyVy6iIcjWMC/yfZxGpYx11Z/3SuPwPldYpzpO7Wdb90QdS+/T0OGQk7wPOqxQep
-         6yDj5kk6DfOy619/Uh0K/lNJF1SQGfcrmde2Chv/7z+EV3LGqsxdVg9qjacdJii6KMOg
-         uwHw==
-X-Forwarded-Encrypted: i=1; AJvYcCW29Xw05RGzDd0OZqr3Vo2MaD0odd/hhqJXTLth2/qcmcCpXi2lcUh+Y+6T9k3l+Kk7vw89qI6kMA3yB3tJ/YVuL93DyE0rURN/s5nn
-X-Gm-Message-State: AOJu0YwFDWMwpTHkPDUw3kO6dBHCUCQjusKOj9evfr36ef1Z9HbU3tQF
-	XkhYcgsffE8Sd4QulgbMs8vy9eNA56GCj8Gse+41REYumiKW1FDkJwB468uXr5A=
-X-Google-Smtp-Source: AGHT+IEZO0Ryu2SN1F0auWS4jC+K9mTuzpwX5ynw1tvj4TWxSVveKrOVJOe+PFGEMMWDSZwmTq+PVw==
-X-Received: by 2002:a05:6512:110e:b0:52c:9252:f822 with SMTP id 2adb3069b0e04-52c9a3fd6e8mr697924e87.53.1718179339955;
-        Wed, 12 Jun 2024 01:02:19 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:8d3:3800:a172:4e8b:453e:2f03])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f24c7a9c8sm7452585f8f.78.2024.06.12.01.02.18
+        bh=iy6VaAIWsc/uFJxkxC11R2z+NrPGPrzZFexuniHGbrY=;
+        b=W88XMT1qUmyh4Z5O3ATXUGRVujX/fDOK+eKLSNcGRO3RxPyjw4Y74swFcINeHFH+du
+         TzJeryX3ewlChD6H6jZA6GUZimQEW3QdDxbxxpNQOY/dh6SDLJ94u0WyES/Wb6G4yl1F
+         Qp7llovEnQyvedPQCxTB6vDPjF6dPUkD21dz57Dpd3C54oCIpiVKHB4lrEjF1+46mj8r
+         ecyrLdnSD12LG2FikxVUa9Y4ymiUELzZM5KMzhy3uEoflHG/0fZxDdT5Q2V9aS/9hnVU
+         7LVHhHEzwMKiLlVQzBi6ViZPc8gTDngpk4Q7ty9nk9Au6z0TXTDfqKYxUSx3c4OqsmUh
+         72Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlnmBFrymTx/MwaNBIL9t2xWIs8t7r/FIryiJ9n9bu/ycdi2E6I0BC+xiI1fgojGy5DKK8SbnytxRLALmfHFZTR5qe3U8PopAFGslr
+X-Gm-Message-State: AOJu0Yxr63PbC10oRXEBs8vLlvH6RzTfOXO8pREuJehjVjoFpIa0mBOs
+	Z+iOk7CVk3T30se/uDBhqfrDup2V1+Q2UXZEUSEpJUdyBNqOm6WGq/ouHZydiac=
+X-Google-Smtp-Source: AGHT+IFDKHNqbb5jXRRVasJXbOoXoBcVXVT3XdueDls6+ffc1QNC2kyj8whnyTo7bp9zFvAdHXeXCQ==
+X-Received: by 2002:ac2:58e8:0:b0:52c:7fe5:f89 with SMTP id 2adb3069b0e04-52c9a3c6b34mr739943e87.15.1718179327968;
+        Wed, 12 Jun 2024 01:02:07 -0700 (PDT)
+Received: from eriador.lan (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c879187f0sm1435885e87.272.2024.06.12.01.02.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 01:02:18 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-bluetooth@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Amit Pundir <amit.pundir@linaro.org>,
+        Wed, 12 Jun 2024 01:02:07 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
-	Caleb Connolly <caleb.connolly@linaro.org>
-Subject: [PATCH v9 2/2] Bluetooth: qca: use the power sequencer for QCA6390
-Date: Wed, 12 Jun 2024 10:01:50 +0200
-Message-ID: <20240612080150.18375-3-brgl@bgdev.pl>
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v5 0/9] drm/msm: make use of the HDMI connector infrastructure
+Date: Wed, 12 Jun 2024 11:02:06 +0300
+Message-ID: <171817931352.2727087.11541630600563210677.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240612080150.18375-1-brgl@bgdev.pl>
-References: <20240612080150.18375-1-brgl@bgdev.pl>
+In-Reply-To: <20240607-bridge-hdmi-connector-v5-0-ab384e6021af@linaro.org>
+References: <20240607-bridge-hdmi-connector-v5-0-ab384e6021af@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Fri, 07 Jun 2024 16:22:57 +0300, Dmitry Baryshkov wrote:
+> This patchset sits on top Maxime's HDMI connector patchset ([1]).
+> 
+> Currently this is an RFC exploring the interface between HDMI bridges
+> and HDMI connector code. This has been lightly verified on the Qualcomm
+> DB820c, which has native HDMI output. If this approach is considered to
+> be acceptable, I'll finish MSM HDMI bridge conversion (reworking the
+> Audio Infoframe code). Other bridges can follow the same approach (we
+> have lt9611 / lt9611uxc / adv7511 on Qualcomm hardware).
+> 
+> [...]
 
-Use the pwrseq subsystem's consumer API to run the power-up sequence for
-the Bluetooth module of the QCA6390 package.
+Applied to drm-misc-next, thanks!
 
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD, SM8650-QRD & SM8650-HDK
-Tested-by: Caleb Connolly <caleb.connolly@linaro.org> # OnePlus 8T
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/bluetooth/hci_qca.c | 74 +++++++++++++++++++++++++++++--------
- 1 file changed, 59 insertions(+), 15 deletions(-)
+[1/9] drm/connector: hdmi: allow disabling Audio Infoframe
+      commit: 000d1940c90984a9a2af9c02bc17e3ca0d87f71d
+[2/9] drm/bridge-connector: switch to using drmm allocations
+      commit: c12907be57b16eed5a73f75a44ebea8f30629c85
+[3/9] drm/bridge-connector: implement glue code for HDMI connector
+      commit: 6b4468b0c6ba37a16795da567b58dc80bc7fb439
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 2f47267508d5..2b31f3dc33a9 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -28,6 +28,7 @@
- #include <linux/of.h>
- #include <linux/acpi.h>
- #include <linux/platform_device.h>
-+#include <linux/pwrseq/consumer.h>
- #include <linux/regulator/consumer.h>
- #include <linux/serdev.h>
- #include <linux/mutex.h>
-@@ -214,6 +215,7 @@ struct qca_power {
- 	struct regulator_bulk_data *vreg_bulk;
- 	int num_vregs;
- 	bool vregs_on;
-+	struct pwrseq_desc *pwrseq;
- };
- 
- struct qca_serdev {
-@@ -1684,6 +1686,27 @@ static bool qca_wakeup(struct hci_dev *hdev)
- 	return wakeup;
- }
- 
-+static int qca_port_reopen(struct hci_uart *hu)
-+{
-+	int ret;
-+
-+	/* Now the device is in ready state to communicate with host.
-+	 * To sync host with device we need to reopen port.
-+	 * Without this, we will have RTS and CTS synchronization
-+	 * issues.
-+	 */
-+	serdev_device_close(hu->serdev);
-+	ret = serdev_device_open(hu->serdev);
-+	if (ret) {
-+		bt_dev_err(hu->hdev, "failed to open port");
-+		return ret;
-+	}
-+
-+	hci_uart_set_flow_control(hu, false);
-+
-+	return 0;
-+}
-+
- static int qca_regulator_init(struct hci_uart *hu)
- {
- 	enum qca_btsoc_type soc_type = qca_soc_type(hu);
-@@ -1752,21 +1775,7 @@ static int qca_regulator_init(struct hci_uart *hu)
- 		break;
- 	}
- 
--	/* Now the device is in ready state to communicate with host.
--	 * To sync host with device we need to reopen port.
--	 * Without this, we will have RTS and CTS synchronization
--	 * issues.
--	 */
--	serdev_device_close(hu->serdev);
--	ret = serdev_device_open(hu->serdev);
--	if (ret) {
--		bt_dev_err(hu->hdev, "failed to open port");
--		return ret;
--	}
--
--	hci_uart_set_flow_control(hu, false);
--
--	return 0;
-+	return qca_port_reopen(hu);
- }
- 
- static int qca_power_on(struct hci_dev *hdev)
-@@ -1794,6 +1803,17 @@ static int qca_power_on(struct hci_dev *hdev)
- 		ret = qca_regulator_init(hu);
- 		break;
- 
-+	case QCA_QCA6390:
-+		qcadev = serdev_device_get_drvdata(hu->serdev);
-+		ret = pwrseq_power_on(qcadev->bt_power->pwrseq);
-+		if (ret)
-+			return ret;
-+
-+		ret = qca_port_reopen(hu);
-+		if (ret)
-+			return ret;
-+		break;
-+
- 	default:
- 		qcadev = serdev_device_get_drvdata(hu->serdev);
- 		if (qcadev->bt_en) {
-@@ -2168,6 +2188,10 @@ static void qca_power_shutdown(struct hci_uart *hu)
- 		}
- 		break;
- 
-+	case QCA_QCA6390:
-+		pwrseq_power_off(qcadev->bt_power->pwrseq);
-+		break;
-+
- 	default:
- 		gpiod_set_value_cansleep(qcadev->bt_en, 0);
- 	}
-@@ -2309,12 +2333,25 @@ static int qca_serdev_probe(struct serdev_device *serdev)
- 	case QCA_WCN6750:
- 	case QCA_WCN6855:
- 	case QCA_WCN7850:
-+	case QCA_QCA6390:
- 		qcadev->bt_power = devm_kzalloc(&serdev->dev,
- 						sizeof(struct qca_power),
- 						GFP_KERNEL);
- 		if (!qcadev->bt_power)
- 			return -ENOMEM;
-+		break;
-+	default:
-+		break;
-+	}
- 
-+	switch (qcadev->btsoc_type) {
-+	case QCA_WCN3988:
-+	case QCA_WCN3990:
-+	case QCA_WCN3991:
-+	case QCA_WCN3998:
-+	case QCA_WCN6750:
-+	case QCA_WCN6855:
-+	case QCA_WCN7850:
- 		qcadev->bt_power->dev = &serdev->dev;
- 		err = qca_init_regulators(qcadev->bt_power, data->vregs,
- 					  data->num_vregs);
-@@ -2360,6 +2397,13 @@ static int qca_serdev_probe(struct serdev_device *serdev)
- 		}
- 		break;
- 
-+	case QCA_QCA6390:
-+		qcadev->bt_power->pwrseq = devm_pwrseq_get(&serdev->dev,
-+							   "bluetooth");
-+		if (IS_ERR(qcadev->bt_power->pwrseq))
-+			return PTR_ERR(qcadev->bt_power->pwrseq);
-+		fallthrough;
-+
- 	default:
- 		qcadev->bt_en = devm_gpiod_get_optional(&serdev->dev, "enable",
- 					       GPIOD_OUT_LOW);
+Best regards,
 -- 
-2.40.1
+With best wishes
+Dmitry
 
 
