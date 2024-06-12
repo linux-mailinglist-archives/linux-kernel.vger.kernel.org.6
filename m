@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-210845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C63C7904941
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:00:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605EB904945
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 556A7B22E2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0939A284FDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A840E1EA80;
-	Wed, 12 Jun 2024 03:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBA037707;
+	Wed, 12 Jun 2024 03:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egd7vYH1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXtI/rnI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7A3DF62;
-	Wed, 12 Jun 2024 03:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959E32D60C;
+	Wed, 12 Jun 2024 03:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718161234; cv=none; b=CJyStezkqIzkWmHb7SaSm/TVDtu9V/HnM2HMLfkxcPZH0oYUEjBORrW1Dl+E+B9Bn3rbKIobCNFxZ3zBDAP213NYlnmoaKVqNp/Dr+9d6hvSWmQOTZnJJ0JPmsYlMJjrheDDEFAUNv1iq2QD8u0zQLik+LeswZK/kh4Lchb7T30=
+	t=1718161238; cv=none; b=G7h6qmdqkTTNPdKYzR5oyKnXUru59bugaomz6xAyWChabsPgJRSise71y3AhjdbEDZB5ev2hRAC9xq3hkBxtRIKzvAdGqg/9oxfjJAke3QofqkIz0ChaRGS7xsBDoiU0mMTCZncIjIuvy5gb7gkUKwZabF4oLoyLM7RLHBmimlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718161234; c=relaxed/simple;
-	bh=RUXhIiQ650W0ISBjZa4FmMnAKv75xiQwfEYjljSa7Ys=;
+	s=arc-20240116; t=1718161238; c=relaxed/simple;
+	bh=J/kQkK84KQJAkIFQhoiCtHTv4yGPIAirFnvd3aW3x2Q=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Xu15NcoygvclC+6cxTODXLIzzZtvu47iChHiRBe4WJwDGrUKFRDfMi7MvCpINs8Dgp5DbUrW7AgZGPlY5RG8/xYmqgec+wSS2dmNaoJ5Z+wd7q0wATQTml79n7e0hhKLioVbOt/CR4DlKy0Xla61DHttyojprwPdd19PUY5B0Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egd7vYH1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 76F78C4AF1C;
-	Wed, 12 Jun 2024 03:00:33 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Z8p7BhrjtcL+nrHSo5LEoXvtoOqHT1+A6PEHMNBJy1m4muDilMQcIGo7I2AOau4m8daw7ZLl+zmVpIEk5eXamW9xzIMvm0WyWz+WXj4w5j3hzzxNMBJvd/VUtzaTDGfgU2aE2APIWQh0lcLLajTAVyzMF538VdDqdVDCLrGQzHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXtI/rnI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 71BCCC32786;
+	Wed, 12 Jun 2024 03:00:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718161233;
-	bh=RUXhIiQ650W0ISBjZa4FmMnAKv75xiQwfEYjljSa7Ys=;
+	s=k20201202; t=1718161238;
+	bh=J/kQkK84KQJAkIFQhoiCtHTv4yGPIAirFnvd3aW3x2Q=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=egd7vYH1h06yWv8wIa6eIzpxyiFUxxsgc0Xa6iL2sUlaK5z+aOlL3Tf6Y8oMYUD5S
-	 FyT3vKJPg/pWFid861HMka3h4RIMx/eAjWQu6dp1lg85sGWvGoazpCugjZ6cb4LzWk
-	 SwUXIVazp6Z5EpI48fh4mjpncZbgu9atizAMR5dTqZnlLBCN0ldzTAHkQii6jnye8J
-	 tu0fy2/sIjNfiJqw9ZvtzFeS/ldiqSK8WJbYHdHeB77VC3BLcO3vrw6ha/0uXWLzi0
-	 uQvCt4Zh4/NIK2JtzeZAzqYvT1pNPU84Hfv0f2aU1DrNyaAG8Qv0B9CCtGlm8uB6yH
-	 Hk/Ec/XJtCs0A==
+	b=SXtI/rnIth8j9oQDxbtTNNpSDTVyRo+yikew61JFqkGM+8i73aXqcSL2ukTqWHDeJ
+	 gQPEUPk8JQljrLwi0Kr+ZkWDir80ErunONy/7gFX9F3wfZ/q9KD09hp9du1X5ULZyE
+	 +mBwDDae6qMLsTXQsCpPTGw2CW1Yhqpu44crupj9nZXmQAntGHNo/qc0n6nCY4WGPw
+	 5Uu1zfZ4I9kRM5qIj0mRbrLBfBWk7n/haowc/UkR4R95M4WS3cNeGOCjpj4U5UfqXR
+	 gvAGukxWrcKdsPTKyjDsANM9682YMuP2scfeT2VvdA3/GTGPXF/jlJQ0M0IWTaFrrP
+	 3+ip3ZYHe4Szg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 55327C43614;
-	Wed, 12 Jun 2024 03:00:33 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 636AAC54BB2;
+	Wed, 12 Jun 2024 03:00:38 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [net v5 PATCH] net: stmmac: replace priv->speed with the
- portTransmitRate from the tc-cbs parameters
+Subject: Re: [PATCH net-next 0/6] selftests: mptcp: use net/lib.sh to manage
+ netns
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171816123334.11889.9944196119101092125.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Jun 2024 03:00:33 +0000
-References: <20240608143524.2065736-1-xiaolei.wang@windriver.com>
-In-Reply-To: <20240608143524.2065736-1-xiaolei.wang@windriver.com>
-To: Xiaolei Wang <xiaolei.wang@windriver.com>
-Cc: olteanv@gmail.com, linux@armlinux.org.uk, andrew@lunn.ch,
- alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- mcoquelin.stm32@gmail.com, wojciech.drewek@intel.com, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+ <171816123840.11889.13593974623249727089.git-patchwork-notify@kernel.org>
+Date: Wed, 12 Jun 2024 03:00:38 +0000
+References: <20240607-upstream-net-next-20240607-selftests-mptcp-net-lib-v1-0-e36986faac94@kernel.org>
+In-Reply-To: <20240607-upstream-net-next-20240607-selftests-mptcp-net-lib-v1-0-e36986faac94@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org, martineau@kernel.org,
+ geliang@kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tanggeliang@kylinos.cn
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Sat,  8 Jun 2024 22:35:24 +0800 you wrote:
-> The current cbs parameter depends on speed after uplinking,
-> which is not needed and will report a configuration error
-> if the port is not initially connected. The UAPI exposed by
-> tc-cbs requires userspace to recalculate the send slope anyway,
-> because the formula depends on port_transmit_rate (see man tc-cbs),
-> which is not an invariant from tc's perspective. Therefore, we
-> use offload->sendslope and offload->idleslope to derive the
-> original port_transmit_rate from the CBS formula.
+On Fri, 07 Jun 2024 18:31:01 +0200 you wrote:
+> The goal of this series is to use helpers from net/lib.sh with MPTCP
+> selftests.
+> 
+> - Patches 1 to 4 are some clean-ups and preparation in net/lib.sh:
+> 
+>   - Patch 1 simplifies the code handling errexit by ignoring possible
+>     errors instead of disabling errexit temporary.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v5] net: stmmac: replace priv->speed with the portTransmitRate from the tc-cbs parameters
-    https://git.kernel.org/netdev/net/c/be27b8965297
+  - [net-next,1/6] selftests: net: lib: ignore possible errors
+    https://git.kernel.org/netdev/net-next/c/7e0620bc6a5e
+  - [net-next,2/6] selftests: net: lib: remove ns from list after clean-up
+    https://git.kernel.org/netdev/net-next/c/92fe5670271a
+  - [net-next,3/6] selftests: net: lib: do not set ns var as readonly
+    https://git.kernel.org/netdev/net-next/c/577db6bd5750
+  - [net-next,4/6] selftests: net: lib: remove 'ns' var in setup_ns
+    https://git.kernel.org/netdev/net-next/c/f8a2d2f874b7
+  - [net-next,5/6] selftests: mptcp: lib: use setup/cleanup_ns helpers
+    https://git.kernel.org/netdev/net-next/c/f265d3119a29
+  - [net-next,6/6] selftests: mptcp: lib: use wait_local_port_listen helper
+    https://git.kernel.org/netdev/net-next/c/1af3bc912eac
 
 You are awesome, thank you!
 -- 
