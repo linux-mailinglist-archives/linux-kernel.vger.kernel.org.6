@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-211278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274F8904F67
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:38:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A7D904F6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2C971F22814
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7DD28AFFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A9A16DECA;
-	Wed, 12 Jun 2024 09:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9B516DED4;
+	Wed, 12 Jun 2024 09:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HaSue+0H"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FD516DEA9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YkgDkpNg"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72352576F;
+	Wed, 12 Jun 2024 09:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718185086; cv=none; b=tn/n/G6dEjKDXJ8/89UdSlaVgt30znX9KuziFGsf7395UWDNyv4aXR2K/o6t1b2m+Bx57DEjmySO42Yj8AKIb8YwXb4B4ty6bs5ySQvrJB1Szq+iOOkd+8DMEFBgZQfAw6xvReWi0EPOjy4bEJURWoCWM6CDXXXUVlqyw9qp2SY=
+	t=1718185173; cv=none; b=umE59L7TIfUr2p8MD9WV28izq+eoBFqKzONj+EKQbgHEtJok8McXKFWSkLf0N72n5WQisvYTeUblWiGYi9Zb+PGyQmQpZhRcPcr22QTRox0zG+TIPUF6ZDCChZVPAaP0zyTCNOIKUR49UlRUNrhuwO/eKnTncPtJatDgOuwfLXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718185086; c=relaxed/simple;
-	bh=/OLzwTXfKEVgX1FDemg7z7MaKi7DyqZprPCae8jyq/Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TxGvMiAPmdzWhVDQ5K0bzyUF/AgnCjm478xUxrFohHmTY3f/GTEDUodpswvq3BCntlq2IjmrwnZefkCG+lMigqf6i9A+N9CpekfVrKFxEZ/YCSJF1wPDeZRDMXj2KJc9Ix4Qq1wmOjk1+dQb7iqz9RurQDb1uCgycqD52LUvRNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HaSue+0H; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3d226c5a157so2178387b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718185083; x=1718789883; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BD/9IUJ0GX5iY+Im1dJVEqyByZWn0TG0w/F44NXDHLc=;
-        b=HaSue+0HEf1EKaAvFHDsyFqIGIRUCyJooADNpL5tStVFr+fmpdvkCC2WiY82KLTdrB
-         Q27l23DB+nRAdUr92geFocVTLhICYdYSxFnUItA2P2JH91ylDOzsW2IetDA3QO/lKx1Q
-         IOmc7ZHjXjfBDIg/m68wRsGgp6WoL/hjQ2UuNshqSNAAS1DXPotuvw07EGxoOZ+sBZgg
-         EG6S7v/mJyjNjnPQMvMECrvUt/QhibQRbux0pjQiA+wyBFIK3azG8Xyx+yGeXEqQEPfR
-         lptY/aseWxp4IDeTa+JdJI2+41MehHjA25N2MrWv5vRn43P1Sa1IN6MdIhZRJfg1qeRS
-         wGyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718185083; x=1718789883;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BD/9IUJ0GX5iY+Im1dJVEqyByZWn0TG0w/F44NXDHLc=;
-        b=VOIB1Fpy1htx22ZNOqWhjB+zCJv17btkGAGkJVnQxb4X9bjTtwUCesju/QpsWvpRk2
-         xF3hCj9NMfZt5sxp5LbGcCE3prn32KP1472hXDeAHeS/myX1NcXyZLnu8RChuMhC6e0K
-         ZyuIcmxw/4aKR0TiJu4bpSB6f+OC9N48oy/9bG9gTQ3Vswj8jU1YeZ3VNRkbB+YTpAn4
-         T8wWADbedMp0EfeqGHy0s20x8JvQ16mmrwmgeh8rxEwrZv8Ew8EUJ7rMxa7cp6Vt/ttc
-         fgszolggCqcNtHjkfvws5BCqK8mV2SsOz29SXqGw6PBw33pXktpfkeEc3nwxJ1xlb8Bj
-         vsJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhjPnr/uMpK8M/ZjXiz9Mz3mZSHwPdM9G09hjS4Zo8+DVVxH+LePIkOxEAOuUg1mhqfd3WkdrWZ1IdfjoCbVYIRVShhBNv7XASIolP
-X-Gm-Message-State: AOJu0Yw1R4rMeqIUni/1YAkEvdyVxtbmyb9cKefggx5rcmMs4k+PAVWy
-	R8U6ARIRWrynZScFgqDOa68tINZMnbXJzNbw8GFM6BVZLuCbAYX2Ot8lL1o67scMbPakEt+5NAa
-	pVThIDtliNu85Upmjg5Peu/C5CjGRZigOyBLSAQ==
-X-Google-Smtp-Source: AGHT+IGm+RwZ0B9L/QOSni4O4Rx1n2ES+x8U9sHD7LvNXczdj6rZMABLoZ66Mwklcv5iX/J6wqTx4u/KMr664uropCc=
-X-Received: by 2002:a05:6870:5e12:b0:254:a57e:1aed with SMTP id
- 586e51a60fabf-25514c799f2mr1439059fac.26.1718185082718; Wed, 12 Jun 2024
- 02:38:02 -0700 (PDT)
+	s=arc-20240116; t=1718185173; c=relaxed/simple;
+	bh=hq17MAkaqI/mS5UaroN1BkaNHRkBEIuYufisq/6rssk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uqVl4isjzWbvZVIq7UNf/C/4gxzawqKJrlVzt6hbzr26s6N52UKBlZUrm5R1xdBuPqFGuYM4QUEGdbSmex6cdk5tU7+MZCFqYuYdL3lHwqyJZzovJ/KbJF061bKJ4oDYdC6KWl4BEp6xo0mQ31K4VKfNhW9XUcioR+FQf32ZXUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YkgDkpNg; arc=none smtp.client-ip=45.254.50.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=tAb1g
+	4fB79567ItBIyDcRXSQsvQ9HpG5fbNWTaEarMY=; b=YkgDkpNgD+bYwyzX+c46Z
+	bbHYLMbEFwRAvUtfovntc83lNRnRxrL1K8/xJzIWWD26/PMNvt8DMGO21sDD5olI
+	HY6FkO6+4wgZocB81Uhr0NbG/XpJLKRahwoZjfMtuwUVk+KtGSj/qTzoFaurKWBF
+	h8+ldOaGjhebLDIgknMKek=
+Received: from localhost.localdomain (unknown [112.97.57.186])
+	by gzga-smtp-mta-g0-2 (Coremail) with SMTP id _____wDX30WwbGlmH_qlAQ--.27950S2;
+	Wed, 12 Jun 2024 17:38:57 +0800 (CST)
+From: Slark Xiao <slark_xiao@163.com>
+To: manivannan.sadhasivam@linaro.org,
+	loic.poulain@linaro.org,
+	ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net,
+	quic_jhugo@quicinc.com
+Cc: netdev@vger.kernel.org,
+	mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Slark Xiao <slark_xiao@163.com>
+Subject: [PATCH v2 1/2] bus: mhi: host: Import mux_id item
+Date: Wed, 12 Jun 2024 17:38:42 +0800
+Message-Id: <20240612093842.359805-1-slark_xiao@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org> <20240507-samsung-usb-phy-fixes-v1-5-4ccba5afa7cc@linaro.org>
-In-Reply-To: <20240507-samsung-usb-phy-fixes-v1-5-4ccba5afa7cc@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 12 Jun 2024 10:37:52 +0100
-Message-ID: <CADrjBPqvdBsLVNeXVtqWp=hGS0G_=0jYQ_91pyg6jvFPN+2CvQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] phy: exynos5-usbdrd: set ref clk freq in exynos850_usbdrd_utmi_init()
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDX30WwbGlmH_qlAQ--.27950S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZrWfJr1DAr1DAF1kKw13CFg_yoW8tr4kpF
+	sYgrW3Jr4fXrWjyryqk3s7ZF1rWw4DG347KrW7K342ywn8t34qvFWjga4ftF1akrZFkF42
+	yFy5u3y5W3WDXFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRuc_3UUUUU=
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiRxT7ZGV4JvHumQAAsx
 
-Hi Andr=C3=A9,
+For SDX72 MBIM mode, it starts data mux id from 112 instead of 0.
+This would lead to device can't ping outside successfully.
+Also MBIM side would report "bad packet session (112)".
+So we add a default mux_id value for SDX72. And this value
+would be transferred to wwan mbim side.
 
-On Tue, 7 May 2024 at 15:14, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
-wrote:
->
-> While commit 255ec3879dd4 ("phy: exynos5-usbdrd: Add 26MHz ref clk
-> support") correctly states that CLKRSTCTRL[7:5] doesn't need to be set
-> on modern Exynos platforms, SSPPLLCTL[2:0] should be programmed with
-> the frequency of the reference clock for the USB2.0 phy instead.
->
-> I stumbled across this while adding support for the Google Tensor
-> gs101, but this should apply to E850 just the same.
->
-> Do so.
->
-> Fixes: 691525074db9 ("phy: exynos5-usbdrd: Add Exynos850 support")
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->
-> ---
-> Feel free to drop the Fixes: if you think that is unwarranted here.
->
-> v2: add missing bitfield.h include (seems this is implied on some
->     platforms, but not on others)
-> ---
+Signed-off-by: Slark Xiao <slark_xiao@163.com>
+---
+ drivers/bus/mhi/host/pci_generic.c | 3 +++
+ include/linux/mhi.h                | 2 ++
+ 2 files changed, 5 insertions(+)
 
-Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
+diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+index 0b483c7c76a1..9e9adf8320d2 100644
+--- a/drivers/bus/mhi/host/pci_generic.c
++++ b/drivers/bus/mhi/host/pci_generic.c
+@@ -53,6 +53,7 @@ struct mhi_pci_dev_info {
+ 	unsigned int dma_data_width;
+ 	unsigned int mru_default;
+ 	bool sideband_wake;
++	unsigned int mux_id;
+ };
+ 
+ #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
+@@ -469,6 +470,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
+ 	.dma_data_width = 32,
+ 	.mru_default = 32768,
+ 	.sideband_wake = false,
++	.mux_id = 112,
+ };
+ 
+ static const struct mhi_channel_config mhi_mv3x_channels[] = {
+@@ -1035,6 +1037,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	mhi_cntrl->runtime_get = mhi_pci_runtime_get;
+ 	mhi_cntrl->runtime_put = mhi_pci_runtime_put;
+ 	mhi_cntrl->mru = info->mru_default;
++	mhi_cntrl->link_id = info->mux_id;
+ 
+ 	if (info->edl_trigger)
+ 		mhi_cntrl->edl_trigger = mhi_pci_generic_edl_trigger;
+diff --git a/include/linux/mhi.h b/include/linux/mhi.h
+index b573f15762f8..499c735fb1a3 100644
+--- a/include/linux/mhi.h
++++ b/include/linux/mhi.h
+@@ -361,6 +361,7 @@ struct mhi_controller_config {
+  * @wake_set: Device wakeup set flag
+  * @irq_flags: irq flags passed to request_irq (optional)
+  * @mru: the default MRU for the MHI device
++ * @link_id: the default link
+  *
+  * Fields marked as (required) need to be populated by the controller driver
+  * before calling mhi_register_controller(). For the fields marked as (optional)
+@@ -445,6 +446,7 @@ struct mhi_controller {
+ 	bool wake_set;
+ 	unsigned long irq_flags;
+ 	u32 mru;
++	u32 link_id;
+ };
+ 
+ /**
+-- 
+2.25.1
 
-regards,
-
-Peter
-
-[..]
 
