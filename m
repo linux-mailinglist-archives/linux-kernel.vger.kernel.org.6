@@ -1,142 +1,115 @@
-Return-Path: <linux-kernel+bounces-211547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861B0905386
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:19:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5671A905382
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E2EF1C234B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:19:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB404B233C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1C717A931;
-	Wed, 12 Jun 2024 13:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B8416EC0F;
+	Wed, 12 Jun 2024 13:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="c2txolqs"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OApSNVQ9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FCD16EC12;
-	Wed, 12 Jun 2024 13:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8DD16EC12;
+	Wed, 12 Jun 2024 13:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718198388; cv=none; b=ufHFBheOdsS95ImPLkg2r0lScAPNs4OShhhsQQ+TwFzROOu4Z4JK3iD/rJ/zZiwbtxBk7QY2YRRetGIRc8ndwZAOkVYGgkycWVVuiED0WiUvxohkuaAS4u49xzMdo941P82v3tK32T+1pxNE0/Q0EkvpVUqCYQxL4m1R3s39zYU=
+	t=1718198285; cv=none; b=JJkwfVs2vSH5uI4qv/DBz3LKYT0MLLBpS011CNda4H0bZ8D0Ue0ZlvMISvTQerX8BeAJnfIF2z59Px8HJNU1FUtyCYuFDaFoK3hLmhPKfyUNwPRgc5+oqsjHtWc3l0H4HmjGlb5lHn6j3CAj89b8m/J8EwcbfptJJ0pw8eH2/kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718198388; c=relaxed/simple;
-	bh=xiTnCZU5KEL0H35TJi4MPR25pya4ueT1IUyePxAA0AA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AjZt4UTwMQJeyYcVPZUD6QYMeIv7W8FUs92TNdnE6cWsUpYt8eAYO2a3sRcXYZG/XnMGm0ARzhGwS76J0HlrXRiWCyM44tkXA7FzGkMolqzPzMCYpP57icoHV+/fKacRjbt0PL9t1mD6xMDxbmYaGmJI3V2/4O+UiN2BlQzedeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=c2txolqs; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id D11DE100002;
-	Wed, 12 Jun 2024 16:19:18 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1718198358; bh=sHLWV/zF6E7dCy7EgzBUyyoPsCq43FjnuXPUVgA9yfY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=c2txolqsqoc2RJ1zZ1hGiqbBqVvmuQl2GRECTtj8+ESOY8GGm0VdUBLRsJ1c0/rQD
-	 WxF1vcolTZgpFd/0XbIb6pmCDy+ihHLY8z4gHilSTmmOa8AnGPqiHwdNBVE1q9kU+v
-	 iVEtxQ+cxQ7YN2mEsfR9kVJDUkckb9cZB/C8DNCNOrYaMvzwtwa6IWbwTvNaUtdBxq
-	 Zdax1O9KNL8T8McFPCd5+/Xks9fO2t8rHYjqMAnAy/e1t8YcugNqU6IRsXzFdn5bTQ
-	 lS6YysTZjXSsegwpLNwoyN9TprdsV0lR5Ps1uS8OlqdrSW1edJCyDrN3JpAmla44yV
-	 2kg/hV8VT7g+Q==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Wed, 12 Jun 2024 16:17:51 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 16:17:31 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Peng Fan <peng.fan@nxp.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Bjorn Andersson
-	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn
- Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	<linux-remoteproc@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, <stable@vger.kernel.org>
-Subject: [PATCH] remoteproc: imx_rproc: Fix refcount mistake in imx_rproc_addr_init
-Date: Wed, 12 Jun 2024 16:17:14 +0300
-Message-ID: <20240612131714.12907-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1718198285; c=relaxed/simple;
+	bh=EAhhAkJSPT8m5ngR46DhDWBeRyQ+o42ANBwH3ptZVhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fqg9X6enFyGfuaHx+TKNQCVe3De0MmandlpuSCB+hP6Hw9fzmEdwWxrtwXspygWJPeDOsG2t3KwYqit9MaxTTiTPRsKDgUUQNkKu/d5gI5r6xH26rER6pvlo25cHsLQJDX+HZYSPNJzgTGVWgeiPf7VMUxi5uflsOYE+coCewuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OApSNVQ9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40486C4AF50;
+	Wed, 12 Jun 2024 13:18:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718198285;
+	bh=EAhhAkJSPT8m5ngR46DhDWBeRyQ+o42ANBwH3ptZVhg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OApSNVQ9rxCDt78BplPKCVq47aEVD9f7bvXL595EXGUxakoQ5fNWgPRq+nw8FUdDB
+	 48+kmtTH+mDChhpxU9+TXo90WaGNshAaVz8EAdHmGQ8prHcI5l8gAAYoicWRbcugKs
+	 Fm4nbnlyjSaqcBUoghULX27RFQE5Qy5Op8b44vj8atRLQBvD63HHk5fUNWc9CQEfWo
+	 vgLuWdQUbCwrdVKv7d/DtFUwtutQCY+Tdx7lmUHRvad9/jbd95ikcEmisJp8jz5lVL
+	 xDrbvgdK7PNtYZ8L9fOwZ0LUVeyloZ8sttX/xFMnM4ZbPG4GsVj4crSSySPlW69pYQ
+	 zkrMyQBbPJ9MA==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52c7f7fdd24so2893841e87.1;
+        Wed, 12 Jun 2024 06:18:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVQGvJLOfIqKNLIAigHcdCE3BVNAdTciPjQitn+R//7Mhj0e9fu/dPLImMPAL0M9EkpqmhcSs9u8cUO5MpJlnjl82kavuTfVyVRYKRbHferwrJJm1y9oEwvusTDNFuG8x+xfPBFxmHnh8x4HMWA4NHa4EUhdk/QK5cV6xFEW5KX1awXIw==
+X-Gm-Message-State: AOJu0Yz+NlZYAiDBDfykWr7nYVTOYWfT9zcdGUAMS3S2m0ObTcofvAM1
+	qyXnTul2KGVN64f87hpTTUVUf9T081YCUO4icM3JeQ80eHPjU7lmdukDeLjYozSNs9lt8ffD21t
+	3pMU+2VQrEth81vweXiesIeS98w==
+X-Google-Smtp-Source: AGHT+IGRdGHPsMkRPpbZiPDo0vVmCHDqtl0Psn5HUImt9EEAE0lx3tPjGwXY5tKVUkqpNnOVIiW4L3JmK8xPdWvgy8M=
+X-Received: by 2002:a05:6512:3d1f:b0:52b:d48e:32e8 with SMTP id
+ 2adb3069b0e04-52c9a3fd878mr1250484e87.45.1718198283584; Wed, 12 Jun 2024
+ 06:18:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185880 [Jun 12 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mx1.t-argos.ru.ru:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/06/12 12:51:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/12 04:43:00 #25560246
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de>
+ <20240611-dev-mule-i2c-mux-v3-2-08d26a28e001@cherry.de> <171811272875.1782775.2673232019553624734.robh@kernel.org>
+In-Reply-To: <171811272875.1782775.2673232019553624734.robh@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 12 Jun 2024 07:17:51 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ83sz5-MZN+Cv6=AbLXWxAaYayw=k0_X=F2AAxU1j2Gg@mail.gmail.com>
+Message-ID: <CAL_JsqJ83sz5-MZN+Cv6=AbLXWxAaYayw=k0_X=F2AAxU1j2Gg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/7] dt-bindings: i2c: mux: mule: add dt-bindings for
+ mule i2c multiplexer
+To: Farouk Bouabid <farouk.bouabid@cherry.de>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andi Shyti <andi.shyti@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Quentin Schulz <quentin.schulz@cherry.de>, 
+	linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org, 
+	devicetree@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In imx_rproc_addr_init() strcmp() is performed over the node after the
-of_node_put() is performed over it.
-Fix this error by moving of_node_put() calls.
+On Tue, Jun 11, 2024 at 7:32=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
+>
+>
+> On Tue, 11 Jun 2024 13:43:53 +0200, Farouk Bouabid wrote:
+> > Mule is an MCU that emulates a set of I2C devices which are reachable
+> > through an I2C-mux.
+> >
+> > The emulated devices share a single I2C address with the mux itself
+> > where the requested register is what determines which logic is executed
+> > (mux logic or device logic).
+> >
+> > Add support for the Mule I2C multiplexer bindings.
+> >
+> > Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
+> > ---
+> >  .../devicetree/bindings/i2c/tsd,mule-i2c-mux.yaml  | 80 ++++++++++++++=
+++++++++
+> >  1 file changed, 80 insertions(+)
+> >
+>
+> My bot found errors running 'make dt_binding_check' on your patch:
+>
+> yamllint warnings/errors:
+>
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i=
+2c/tsd,mule-i2c-mux.example.dtb: fan@18: '#cooling-cells' does not match an=
+y of the regexes: 'pinctrl-[0-9]+'
+>         from schema $id: http://devicetree.org/schemas/trivial-devices.ya=
+ml#
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+You cannot add warnings. Please fix this or this patch will never be
+accepted. Either drop the property from the example or add it to the
+binding (by moving out of trivial-devices.yaml).
 
-Fixes: 5e4c1243071d ("remoteproc: imx_rproc: support remote cores booted before Linux Kernel")
-Cc: stable@vger.kernel.org
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
- drivers/remoteproc/imx_rproc.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 39eacd90af14..144c8e9a642e 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -734,25 +734,29 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
- 			continue;
- 		}
- 		err = of_address_to_resource(node, 0, &res);
--		of_node_put(node);
- 		if (err) {
- 			dev_err(dev, "unable to resolve memory region\n");
-+			of_node_put(node);
- 			return err;
- 		}
- 
--		if (b >= IMX_RPROC_MEM_MAX)
-+		if (b >= IMX_RPROC_MEM_MAX) {
-+			of_node_put(node);
- 			break;
-+		}
- 
- 		/* Not use resource version, because we might share region */
- 		priv->mem[b].cpu_addr = devm_ioremap_wc(&pdev->dev, res.start, resource_size(&res));
- 		if (!priv->mem[b].cpu_addr) {
- 			dev_err(dev, "failed to remap %pr\n", &res);
-+			of_node_put(node);
- 			return -ENOMEM;
- 		}
- 		priv->mem[b].sys_addr = res.start;
- 		priv->mem[b].size = resource_size(&res);
- 		if (!strcmp(node->name, "rsc-table"))
- 			priv->rsc_table = priv->mem[b].cpu_addr;
-+		of_node_put(node);
- 		b++;
- 	}
- 
--- 
-2.30.2
-
+Rob
 
