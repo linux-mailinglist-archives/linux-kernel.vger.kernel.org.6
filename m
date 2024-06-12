@@ -1,185 +1,217 @@
-Return-Path: <linux-kernel+bounces-211724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F99F9055FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:59:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B0D9905600
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A50B91C23694
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF1782864AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C519917F4FB;
-	Wed, 12 Jun 2024 14:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153A917FAAD;
+	Wed, 12 Jun 2024 14:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cc5/pyDW"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2087.outbound.protection.outlook.com [40.107.243.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="MvsU6UpK"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486FC17E90D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718204300; cv=fail; b=YZNJOKAOJCoSpRAfRArNEIlq9/pjVtIaw36Qn3u0kGvoShcfAnBTQVXUXefUAcjYDZ/kebWWzbJfBPeZ6RfB0e0zBqap83Wwy5ZNzjr5qhCDO1L0dUBGiOCVd6TNpy8WgjXLBIL8Osb+lpVJ0afSB74rJkF+NLUzQZ2NgSQKMkc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718204300; c=relaxed/simple;
-	bh=Yu/filk1qN6DibW1OVv+gtvy2sw1b/p2R9gmtBo/bI0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FaFSgCjQYDt0eTHukW6VK8Xx5XWpUZQMLO6S7CjxreknTBB6P9y1Lcops+n1dqOQIa+h0Y9Uj1ucz1iqtjg5Lo8ISKG1vwyxFhrM9Z/UMvi4IxJLeRlXGZWuY6TTF6Esn/zDXUTpSfHFL2WfdLaLi1czYqiF2JUnVOQyP3DnhM4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cc5/pyDW; arc=fail smtp.client-ip=40.107.243.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XfCDjIK2II/DtqeWC92n64yv68D9vpieCnpg/Khtzh5YmhNACRAVxsMdnVHSHhY1XQuM3Q9/3L8D4t3QTKYnDy0InZ+2Lt9pOvsHAxb0lNuTOj8RR8IhvRBIbfTi2KMZe4lTN5+YSK0cVaJfrWcf7w0cDC3qj/fnWQTEqUB+9WbcC9uwxr29L1ki7JRbX4Xq0AxAoOxQWS77LhvCQzcKWKh5wnu2t6JUzharcHIczrBWp7n4eSfx9z0EmHCn3tYoZUQXX8TJ/folkpaOOeIATkKwff3bsKPvD0r8K9RpuxSnDNfKGuMf59T8q4Gao3c3W5FeutvjXYIXnKlxZBzwfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yu/filk1qN6DibW1OVv+gtvy2sw1b/p2R9gmtBo/bI0=;
- b=mP7twl68FpHyhwenP4NiLL4R+0b0GhQTvWQuaJGJntU5B5jxAvl7lCsHzAf5kMwkO09zi+PFyoEOmxyu165mtnaGdbcj7ueEsZdb+Txtrr7L9J6aAL0+QkMu8yUlb00iMryS9Nk2Pej/DBeLiPRnbssYvyiVIxTZuL9dJAguUjdskhdFdNhdoHc3JfdDoFppLGekxA9F4jBRrTJk8lotKIohZ1IWcjTUZYrg0co97Y5uox2xXIDAwRHcbk63l3HDyPWaaoTWWbU7VHZj/+03Zu1Q+/vbGPPU8GmFTjhAE9ZiAzM0kbc4vXXr9gATUYS0veHDtuKQWSJeper/xZi6tA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yu/filk1qN6DibW1OVv+gtvy2sw1b/p2R9gmtBo/bI0=;
- b=cc5/pyDWyutl3WLkICRzYjJ64q55Vl3wvaPRdkxEQFJqOK0SQIVuRkfR4esqD6uXbNAok56Jgu9aqoAGTMGDH6ailWjWMv097z8iko6TrbApWbEm7cVtq7S6qBS4ZBVTyNrztR8JM0dbaShCh3Q2oWhGZI0F/vv1bLKzUc2F80CE2/ByUsfiPNR4j3CiR3yLtGOMnsNrt7FjSqSQihXD96iZqFOsQQcTaPL6nwDz6dPTN+9RomxY9kt/KkKPPBU3JOvE7Dmbeh/p8azoPC0m4xEIAlo6FEd7PC0PYhKYG5mEstfDjOeq94Gu44xgYczg+RcP+bBq0b8hAyR9iU81MQ==
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
- by CH3PR12MB7764.namprd12.prod.outlook.com (2603:10b6:610:14e::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Wed, 12 Jun
- 2024 14:58:16 +0000
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.7677.019; Wed, 12 Jun 2024
- 14:58:16 +0000
-From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To: Daniel Wagner <dwagner@suse.de>, Christoph Hellwig <hch@lst.de>, Sagi
- Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>
-CC: "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] nvmet-passthru: propagate status from id override
- functions
-Thread-Topic: [PATCH] nvmet-passthru: propagate status from id override
- functions
-Thread-Index: AQHavNKQtY6Z23tOBk2TnEX0d80yYbHEOEKA
-Date: Wed, 12 Jun 2024 14:58:15 +0000
-Message-ID: <8c328a67-cef5-4c89-a9ba-22bba97a352b@nvidia.com>
-References: <20240612-nvmet-passthru-fix-v1-1-f583f8affa2f@suse.de>
-In-Reply-To: <20240612-nvmet-passthru-fix-v1-1-f583f8affa2f@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|CH3PR12MB7764:EE_
-x-ms-office365-filtering-correlation-id: c8d026f8-7635-4845-8473-08dc8af016de
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230032|1800799016|366008|376006|38070700010;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Q0JQM2p2cHN5NjNiR1BaUmtnTUFhZ2JjQWJXYWxkdlBqWjhCc0YrQjRsZ3N6?=
- =?utf-8?B?TDErWW1DOU9DWlRQcEtrUExIWUFBR3o2MjRwOTNlUzNISXA3akZab09qUjRx?=
- =?utf-8?B?VTZWNElCQzdXdmg5RkRmTFJRNTdGOGh5ZmtBTUhSc3BaUThsZm9nRFdYV3RC?=
- =?utf-8?B?cnBWNHkrL3VTNnUybHJJV3JqOUdpcnRSREhCaHZXNGhJRVJFWG9wRU1jc1RO?=
- =?utf-8?B?YmErdVh2anpUZENwNTJFSEVrOWo0NUh1VllhNEtyWUNJNVRYMXFnS3R0RzdQ?=
- =?utf-8?B?TktSZ3M2ZEpxY2JkZDNoTk5KMWJZN1ZFRmJVbHRMM1Ntckt4TUFLRU1rcXBU?=
- =?utf-8?B?OWNIbFZ2TXkxRVVRV2NkQVlldE0vc3lMQ2IzN255OUdIaFIzeEprc21sREFo?=
- =?utf-8?B?TVlDOVBxUUdmRDBwZW84NkJKV1Q1UVdObXE1NWx6UnhxNlphTnRvckxPMTdm?=
- =?utf-8?B?R1ZwWFZHMEN5Yy84N1E4VVorWXo0WHZlOVE3L0JVc09XZnJWUEFNOVFaMEJw?=
- =?utf-8?B?USs1VlBIRUFuWXNqc0ZGdDg4WSt6Z2RYMkNhT2o5bjFBcHgybDk3QXVGOGgy?=
- =?utf-8?B?ZHJBakN5UldCS3dnVmFHUE5yR0xpTERoWXVINVdZaWlWMTdkR1ZyWWxHa1Vs?=
- =?utf-8?B?OFRjUFJTQm4yZmFnV21YWGxXaDAycnN0clkzVDExTSt0TFBRRUtLbTNBd3p4?=
- =?utf-8?B?ZWtySFVPVmx3OHNLOTR4dFk2UVRIWTlsOUQwNFU3Qzd2WWVlU01MK21MS2JU?=
- =?utf-8?B?dE1YUEorTk9XZUtHNTdsRmIwVnd0YXRLL0xrSThPSDIxWkcxQXhiYVE1UWlU?=
- =?utf-8?B?YlFkQXlzYzYzd3pyZWxOVDI2bzZGZ1cvcG8wcHRZVWFpSGl3cC9CeHBLZGhn?=
- =?utf-8?B?ZUZWRjlicVNCRzBmQURkZlNjVERSYVNqV2RHZmNveFhLUU5OcmdFSVA3NjhK?=
- =?utf-8?B?WE5kRFV4OUR0b3Rmb3R6WnhMaitYOUJTZHdiZi9WakZUYUNFcWM4SzZFck5P?=
- =?utf-8?B?bkdNMGtEWTVWTUFld3pRTFF2Z0p6N21zaG13VUVteTFvUjA0UUVsRjFMR2lN?=
- =?utf-8?B?WnVJL1BrOExoeGlIWXc3QUtKK0tzeC9rRmZkdmt1K3c5NDlFbWtkdzJvcXg5?=
- =?utf-8?B?QUpIb0NqWjJMaHZsR3prZVZQWWE3UFk3cWNvWWZSZGVIb0tRRHJMSGlqdXI0?=
- =?utf-8?B?R3JhWjAwek9FZDl4MSs5cjRuRzg0M3dES1lLVGFOOVVZR0N4WEw5eXRCczVy?=
- =?utf-8?B?cjc0bThCN2ZpMmxYa0YybHJVcmRqbGVzQnRYZnNlN3pjRHREZlNOalNydEpW?=
- =?utf-8?B?eUJLVlNrTTIyY3BUMGgxWTdmSUliNml3QWNxNCt5ZlBhK1RPdjYvSnNRczVS?=
- =?utf-8?B?dThKbEtnL040SjdSYjhuNEpld3pOY2pmQXEvMFFHclNOU3lTaENLbHhhK25D?=
- =?utf-8?B?VWZ6c1RzSHFRb0krR2MvVm1NU2JmTzJQR0lTdy9mZUk0MkZtMkZnb29mbG9p?=
- =?utf-8?B?OEY2ZkVZM2huVzhhd2JTQ21qbElzT04rWXNzMEowZm11emZEN0F2Zks4Ui85?=
- =?utf-8?B?bHd2b0ZITzRjK2VFOCt2WUJyKzFVeTBpbisyRlJ0VkdUck9veVRtTDRHUzdh?=
- =?utf-8?B?NVV5Z1g2TUNOOFl0QWlHUzJnV3NSdmdJQk5lV2RxOXUyMzVtM3YwUEY0a1A0?=
- =?utf-8?B?eWoyV2wzWkpiYzJzbjVUZ2E3TGw4c0N2cDZZa1Y3TTR6Q25lTVN0ckdPNWxk?=
- =?utf-8?B?NUdiTDR0NGkyclpWTGpmRlBsa0kzM3BKNFNkL3FVK1NBOFV2K0FsNkhDelRj?=
- =?utf-8?Q?O2qc9XcWObzH2QeZWy6RO8ELyarly2+/JTqpA=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230032)(1800799016)(366008)(376006)(38070700010);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?OURyU05nc2NIVnU4RzdhQnloUDVJbThiTXY5ZnI5akxJKzFlTVlSM3pQRXNz?=
- =?utf-8?B?bklxdDh5NEExVG9oLytQNEhLNHphd01HaWZqanZvQ3BOUkF0RUZZaitFMlEw?=
- =?utf-8?B?ekdQMXJ3NEQ0UlFLS3BKRmNGN3BLa0pISkZWY3JHMWFmVk94azdVSXhSNExO?=
- =?utf-8?B?dDhYc3lnYTNYYXRnOElSak96N1BmMnJuQ3ZVbFJxaDlWMjM2NXZtTTREdW5j?=
- =?utf-8?B?R291WHBVU3Jvd2ptcFBLN3FVQUF3cm55RVdiNnBISTJ5SW5jaU5zYnR0Z2Nl?=
- =?utf-8?B?cTZRakxqLzJoSUo4cUxxa2YvZjMwWnBITUkrUTllSXpjNmxzZWNlaGpOdTZm?=
- =?utf-8?B?VFhSYmovKy9aMStSV2gvb1FMbUIyNWQvaTRmZDNDa2puQnRVZDBIRStPRW1v?=
- =?utf-8?B?Y0hPaHFsa0JuWjR6RUQycmpKRlMxYUovdWl2WWcydXRNM29xZThGM1V3UFEw?=
- =?utf-8?B?SFlWZGFNNTR6UzRseEhCT1FJMjVPZ0JtRmUwSkRpVSs4aTdoQjVoWG5NL0lw?=
- =?utf-8?B?eDZoMGYyQXgrOWJ2TnU3a0VlOE8zNnFmZHk0R0Z6Vm54UDZDQ01wQUlFWkNu?=
- =?utf-8?B?enM4OFdaeXBiWU56cjg2enpYTVp2YjlDSjZpckt6VEZsaHNkMVNHaWh4RVZr?=
- =?utf-8?B?UGpyam4wZHVya3VqTDdjamVPYkE0bktwQTNuUkt0djRYTlBkT21EY1dNa1kz?=
- =?utf-8?B?bjl2L3MyTzdzR2FIanlEaWV4NC9TUnhPZzhRRi9Gb29pN25QYTlpTWtnUnF3?=
- =?utf-8?B?aG0xZ1c0Nk84T21OTUxIYTlVQS9KeGorUmtWYlhzaU1wUnl1cUU3NnBGNUMz?=
- =?utf-8?B?dzF1Z2VXYVRycVlzSU54NnhCek56NXJKMys1S0NSY1pUdDBpWHZYeFdrNUVk?=
- =?utf-8?B?UVBTQ1U1anJvS0FISDZjQnBsYjdaakg3V1lLaUtpbTJYQkxTR3gzb1IwTytE?=
- =?utf-8?B?QWl2S2ppVEUzNFpWSzBqanZiS21KT1NGdEFUa1lYdFhuMUUxSFlncXJLRGda?=
- =?utf-8?B?WWN4ejh1QXFzSWpDVzdjOGpjNjVmVU5vZVR6QlVINURjSGFDdDM1T1JtUW5l?=
- =?utf-8?B?WjZ6aVRIMStVb2VNN3Fsb3dCeWR3MjNORmFYRUFGTGNudkNzb2NNdTE5ckFw?=
- =?utf-8?B?NGRHMjVEOEIvcW5leDBUbkJ4VVRHQ1ZLMkk5M0hKRVhXalgrT01sUHI1VjVj?=
- =?utf-8?B?S3U5SCtUODdIR3c3ZnY5MTVOQUY4bFpBbU10WUF0bWxZOFpyYk1lTUtvMTN6?=
- =?utf-8?B?T0t2MTFFUmo2N0txWnIwdWU4T01XSnhUQ1dVVTcvTzkzdmtOUnFUTkkxZENj?=
- =?utf-8?B?Mkh2U0I3RGxqMHA3WDJnR01GZWJJSi9lYTNWdTJiS211aUtuc0ZvakRBUHZN?=
- =?utf-8?B?Mk1mY3RzOXpKZUdnRm1SdkV3bWxDVWkzOGRKT25XbldBUVRlLzZQK2xqdDR4?=
- =?utf-8?B?YnNoOG1mRnRFbWI2TTNzRFBzN1ZNOXBqQVo2V2lhKzNHMFhKVjJReDN2S1Vv?=
- =?utf-8?B?QjM5Qm1FalNMUEJYOVNZNkVCdkRoWDFSbS9ra3ZndHp5TEZpMU16c29zbXpJ?=
- =?utf-8?B?aE5ESFJqZExSa0RUdzgyTTBiR29WaVE5RVdmQy9WT1IzOVNhdjE5VytwMzg0?=
- =?utf-8?B?M0c0Y3h6UWEreEdyc0p3SFhvRkRjN1pVdiszSFhTT0tTQVRCZS85Y3J0ZDJu?=
- =?utf-8?B?VlNqZ1NSeEY5SVlSaSt0aFhLMGRVRnNnNjZaanVZdVlSWkg2SGpPY0dHQWZ4?=
- =?utf-8?B?eUJIdzJBUXZiMm1MdkJsZG93b0UrTGZ0V0prS2o4K3M4ZDdtbkovQ2QwaHEy?=
- =?utf-8?B?UEl3SWNuSmtoY05pblFFR0tJYVBzWStYaWUrTm5weGxzZ0VWRS9jV0NYV0l5?=
- =?utf-8?B?TnhLSkhNZlI4Z1QrK0xUaXZ0REdPQkQzaDE5bng5OThzdG9CZysxeXk1UUFV?=
- =?utf-8?B?clkyNkFReGJBK0duS3VOc2NxYkRDaHk4ZFk4VmMxb0p2V3hJUEk5UklZb2J6?=
- =?utf-8?B?WGNBUzRnbUJUMHkySjdZQlNKK3lJeDZyYUhqMW45TmdXK01BK05qdXBtV05S?=
- =?utf-8?B?cWF4ZmNLeGFaME1DZTAzOFN0QWgxeENwT0lEZFR1dzBMQ0ZZMGpvdXFzeTht?=
- =?utf-8?B?aC81V0dta2hlVkx1Y3pCVmxMZ3gxZmlBak1mMzRPV3VmUzZwd0tuQmdoaisy?=
- =?utf-8?Q?YIKqAw7q+D0q9HWyteowntQO5aL7rMmwe4C/cw6ZDDEy?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A93D45179ED43E448D67EE2801816847@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391F717B417
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718204303; cv=none; b=nNcTRm7CYhE+cMVHg2mQBIUiG5GpCu/A2/v2bhPDZX3MU4rdoQB/iU+Ljmy2WniiszzueJP/lnAl2Li2fSJ4qGkD/JTR0IThtdL3Tl8SNaQgdly7S61piCpaJy1IhNQFcg9L0Y2iZGoUFg0TvgzLBLSW8sDiELflI4IWp1w5i+Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718204303; c=relaxed/simple;
+	bh=n0t6zpzKRUuFPMrM7Q3gm0V90FFk8BqQaytgPKRJSbo=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=NUnq63BdI3vPcvdpinIM43qH+AKzdz2LVCW1Wrj2osxJq1ZHveeNGqwXQd8oBUNAfgGItwaFmukGlRZhvZ9NWMkZIYIfk/I4vzQFoSXE+4ZbgiPreYveE6lPeOvubIajg7QA3EWhgUU5LEjTbOCK8aDJi5CmPKPSzaSDeiGtRXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=MvsU6UpK; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f68834bfdfso51767825ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:58:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1718204300; x=1718809100; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dYVQc7sbI7D0Oe7HLiFsYyb4EXhyajIKibLIV5on50g=;
+        b=MvsU6UpKudDuzaEO2AFFDu21KprIxMxtscRM4zAAHhFtueLwwrQ1sgTUCKvjhtircR
+         KhpMnOnxDJnvICXf5hkWHtYMU0Dq+9IfSQTehRSgUwkS8juaXQ7AWF7fs+yLCj2cwIO5
+         XpQ0mOIVHpzOGC0vITMLaQin0yn4hXraYSplRZ6RHe+OCp9gLI5nVlVepr1XmUe9zu+X
+         YbN37nEj2ULEVo2bzPVRymsNp6Eg3lhq4S8t5j/7Zyob8FyYj0oAvNyidxXB6lOOhuww
+         jo0TcZ/BLSF2+DjbxT42odbPAvp/ZyaRPPKx5Q/85lFguVQRHjydJURlEL2cJIDIQ9zV
+         ofAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718204300; x=1718809100;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dYVQc7sbI7D0Oe7HLiFsYyb4EXhyajIKibLIV5on50g=;
+        b=WpZ/Ow472qETOG5y9rZwrCEwrsEZUuKvrnCNnj0RIMByPfF7yn8lEKSHvwlxpEC03I
+         xYwupmIWBSAxOomB7HmpwjKiJ52QMI5Sri4uh7S0od56iUCcih0yJYQFM5fuqIMP70Je
+         CNwMyLC8GiVWeLfK7Aoy/wnRXyvJqw9lu77OMZoN8mANs6+G70pxRwiF6jjHz4v3cThA
+         CGofP2PxzZjZ6Gmr5qtMcZqkWdOl4u5yzH94dMN7diCvCJUNp8JlnXEJ+chFjlAKlNjW
+         TkLm7tkPFslGcG3MO/1reSMko25OazsNP2FMyvXb1y7tpSBJ8yrUe5EArCi7WNZyOFwC
+         b34A==
+X-Forwarded-Encrypted: i=1; AJvYcCUIfVboPnOMEqtTTZcxDOlPQ8u3UL7WzYgP+s4hVp/1yiBYfeUZr+YPd7F2fXHTMtEl73JWY2pFhmhJklA4fWqla63VblTAMqRvR75l
+X-Gm-Message-State: AOJu0Yx6DZzVoZBGZvDe0CfvpzHXt0PzMc26+DSCDiALuGobWdkJSlJJ
+	47huEBHPQTxz01VwAuqIhJcIXYfjRGeCo5+EElzQh9fpayUSLTCEZvTiVIrHL7Y=
+X-Google-Smtp-Source: AGHT+IGrq7jW8732rVd+qc8IpryGpylS9Fm49H6HNRQuvUwUSpYg0NbpacN44xXJc7BI5TdojnEihw==
+X-Received: by 2002:a17:902:c404:b0:1f4:5dc0:5fe8 with SMTP id d9443c01a7336-1f83b6989b3mr20922595ad.15.1718204300054;
+        Wed, 12 Jun 2024 07:58:20 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6d7091e5esm103751575ad.167.2024.06.12.07.58.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 07:58:19 -0700 (PDT)
+Date: Wed, 12 Jun 2024 07:58:19 -0700 (PDT)
+X-Google-Original-Date: Wed, 12 Jun 2024 07:58:17 PDT (-0700)
+Subject:     Re: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
+In-Reply-To: <c1f5a958-1130-4bdb-a154-0c0eeb06c8f9@rivosinc.com>
+CC: debug@rivosinc.com, Conor Dooley <conor@kernel.org>,
+  Conor Dooley <conor.dooley@microchip.com>, alex@ghiti.fr, jesse@rivosinc.com, linux-riscv@lists.infradead.org,
+  linux-kernel@vger.kernel.org, llvm@lists.linux.dev, alexghiti@rivosinc.com, aou@eecs.berkeley.edu,
+  Bjorn Topel <bjorn@rivosinc.com>, Paul Walmsley <paul.walmsley@sifive.com>, nathan@kernel.org,
+  ndesaulniers@google.com, masahiroy@kernel.org, Atish Patra <atishp@rivosinc.com>
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: cleger@rivosinc.com
+Message-ID: <mhng-e9618799-eb28-4e60-a321-41a786f2a332@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8d026f8-7635-4845-8473-08dc8af016de
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2024 14:58:15.9990
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oKWEK2GluVJQAasI0O4ah4NUJptSq1KvZeHGdexH5pOsoCjQQIxTEI1Dr1t8jSUtDTMnOkyR4Tb76tDtj1EltA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7764
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-T24gNi8xMi8yNCAwNzowMiwgRGFuaWVsIFdhZ25lciB3cm90ZToNCj4gVGhlIGlkIG92ZXJyaWRl
-IGZ1bmN0aW9ucyByZXR1cm4gYSBzdGF0dXMgd2hpY2ggaXMgbm90IHByb3BhZ2F0ZWQgdG8gdGhl
-DQo+IGNhbGxlci4NCj4NCj4gRml4ZXM6IGMxZmVmNzNmNzkzYiAoIm52bWV0OiBhZGQgcGFzc3Ro
-cnUgY29kZSB0byBwcm9jZXNzIGNvbW1hbmRzIikNCj4gU2lnbmVkLW9mZi1ieTogRGFuaWVsIFdh
-Z25lcjxkd2FnbmVyQHN1c2UuZGU+DQoNCnRoYW5rcyBmb3IgdGhlIGZpeCwgbG9va3MgZ29vZC4N
-Cg0KUmV2aWV3ZWQtYnk6IENoYWl0YW55YSBLdWxrYXJuaSA8a2NoQG52aWRpYS5jb20+DQoNCi1j
-aw0KDQoNCg==
+On Wed, 12 Jun 2024 00:15:26 PDT (-0700), cleger@rivosinc.com wrote:
+>
+>
+> On 11/06/2024 17:32, Deepak Gupta wrote:
+>> On Mon, Jun 10, 2024 at 10:56:35PM +0100, Conor Dooley wrote:
+>>> On Mon, Jun 10, 2024 at 02:06:50PM -0700, Deepak Gupta wrote:
+>>>> On Mon, Jun 10, 2024 at 11:16:42AM +0200, Clément Léger wrote:
+>>>> > On 10/06/2024 11:02, Conor Dooley wrote:
+>>>> > > On Mon, Jun 10, 2024 at 10:33:34AM +0200, Clément Léger wrote:
+>>>> > > > On 07/06/2024 20:51, Deepak Gupta wrote:
+>>>> > > > > On Mon, Jun 03, 2024 at 01:47:40PM +0100, Conor Dooley wrote:
+>>>> > > > > > On Mon, Jun 03, 2024 at 11:14:49AM +0200, Alexandre Ghiti
+>>>> wrote:
+>>>> > > > > I don't know all the details but on first glance it seems
+>>>> like instead
+>>>> > > > > of ACPI,
+>>>> > > > > may be FWFT is a better place for discovery ?
+>>>> > > > >
+>>>> https://lists.riscv.org/g/tech-prs/topic/patch_v12_add_firmware/106479571
+>>>> > > >
+>>>> > > > IMHO, doing discovery in FWFT is not the goal of this
+>>>> extension. I think
+>>>> > > > the "real" solution would be to wait for the unified discovery
+>>>> task
+>>>> > > > group to come up with something for that (which is their goal I
+>>>> think) [1]
+>>>>
+>>>> Yeah I understand the conundrum here.
+>>>>
+>>>> > >
+>>>> > > I'm curious to see how that works out. The proposal documents an
+>>>> m-mode
+>>>> > > csr, so we'd have to smuggle the information to s-mode somehow...
+>>>> >
+>>>> > Ahem, yeah, I spoke a bit too fast. Looked at the proposal and the
+>>>> > mconfigptr CSR will be accessible by M-mode only so I guess we will
+>>>> have
+>>>> > to find another way...
+>>>>
+>>>> That's not the only problem. Even if you get mconfigptr access,
+>>>> parsing the format
+>>>> is another thing that has to be done. This is early in boot. Although
+>>>> its strictly (pun
+>>>> intended) not a firmware feature extension, I think it's much easier
+>>>> to ask underlying
+>>>> firmware if platform is `Sstrict`. or may be expose something like below
+>>>>
+>>>> `ENABLE_SSTRICT`.
+>>>> Platforms which support `Sstrict` can return success for this while
+>>>> platforms which don't
+>>>> have `Sstrict` can return error code (not supported or not implemented).
+>>>> This way its not feature discovery.
+>>>
+>>> I mean, it's feature discovery in all but name. You're calling it
+>>> enable, but the behaviour you describe is feature discovery - not that I
+>>> am against this being feature discovery since it gets us out of an
+>>> annoying bind.
+>>
+>> Yes I know it's cheating but at least for this case, it seems like easy
+>> solution which
+>> doesn't break anything. Neither I see it creating any future problems
+>> (except FWFT becoming
+>> to look like discovery mechanism :-) and Clement/Atish hating me for that)
+>
+> Ahah no worries;) Thinking a bit more about it, if we need only a few
+> extensions to be discoverable, it seems manageable (ie add a "locked"
+> feature that report the extension availability itself, get only will
+> work, set will return SBI_EDENIED). But if need more of them, then a
+> dedicated mechanism should probably be designed.
+>
+> Clément
+>
+>>
+>> Another solution to this could be introducing a riscv config
+>> `CONFIG_RISCV_SSTRICT`.
+>> By default always select `CONFIG_RISCV_SSTRICT` and any platform owner
+>> who are not
+>> sstrict, they can build their own.
+>> I expect distro (ubuntu, red hat, etc) would want by default
+>> `CONFIG_RISCV_SSTRICT`.
+
+IMO things like Sstrict is going to end up being useless.  It's just 
+another way to kick the can down the road on actually having 
+compatibility.  We've already seen this with the extensions and the 
+profiles, I don't see how Sstrict is any different.
+
+The RISC-V foundation needs to just actually do compatibility, making up 
+more names isn't going to change anything.
+
+>>> I forget which extension Alex and I discussed previously, but there's
+>>> some mm-related things that you're gonna have to probe super early and
+>>> we need to figure out if we can get that info from ACPI or not. I know
+>>> we discussed it w.r.t. one of the T-Head vendor extensions, but I think
+>>> another standard one got mentioned too.
+>>>
+>>>> It seems like arm64 parses fdt and it reads certain CSRs too
+>>>> (`arch/arm64/kernel/pi/kaslr_early.c`). Although it doesn't look like
+>>>> it has to do any
+>>>> discovery for them.
+>>>
+>>> A decree from the Palmer that we don't support things that do not conform
+>>> in this manner would allow us to do what arm64 does. I brought this up
+>>> originally because it's been discussed before that we cannot rely on
+>>> conformance because we want to support people's platforms, whether they
+>>> comply or not. I'd be wary of making this an exception now, and then
+>>> later on someone makes a platform we want to support that doesn't
+>>> conform and hey presto, we regress KASLR support - even if I think it is
+>>> pretty unlikely that someone is going to repurpose the Zkr CSRs.
+
+Ya, I think that's fine.  Let's just blindly read the CSR without 
+probing, if some hardware has destructive side effects on the CSR read 
+then we can figure out what to do with it later.
+
+>>> One of the problems with only supporting conforming platforms is that
+>>> the definition of conforming changes over time! This has happened with
+>>> the Andes PMU for example, which I believe uses an interrupt number that
+>>> was later co-opted by AIA spec. That conformed at the time, but doesn't
+>>> anymore - do they get to mark themselves as Sstrict?
+>>>
+>>> Maybe we can do this on a case-by-case basis, but it's up to Palmer
+>>> whether or not we can do that.
+
+Yep.  Trying to stick to only supporting what counts as conforming today 
+isn't going to work, RISC-V just isn't managed that way.  That's why we 
+have all these strict rules about avoiding breaking what used to work in 
+software land, if we didn't have those then we be breaking users every 
+release.
 
