@@ -1,200 +1,190 @@
-Return-Path: <linux-kernel+bounces-212230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69628905CF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:40:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFDBE905CF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90751F21E3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:40:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F21ED1C22424
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF84884E0D;
-	Wed, 12 Jun 2024 20:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7075084FB7;
+	Wed, 12 Jun 2024 20:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWWFMwJk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JtnpjQOV"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031F784D29;
-	Wed, 12 Jun 2024 20:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1807684D39;
+	Wed, 12 Jun 2024 20:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718224827; cv=none; b=ooCQhX6ntPoBK2IjECfpjYchVPcUwrC1qr1v+M8pmW8LCuvOhLvrr5o4+sKU241E2u/SL48GH/HZoJ7qW9VYe8Q2hUtwJk6qGCJp8nN7N29x93zTGN6XxRpeH7nocnSuufe4/hGQlftK8awyJo8oGqG1ja1HIFfDnfkur57RDJ0=
+	t=1718224897; cv=none; b=FD+jRkfWN9312zPND5YrFbXo3u+ZCIJ3kQn+EzzhoYLROcV85xxkMWikv1QMDPmi9gHH9a6opesIzQ9IjekrS2TKhXkgbwB+bDue6NJsCU1Fl6ZUHVaDL0e2AlZHfGss5DLv+E6GyGSD6PAs6xB+/By8DKC7y3EZfAXhNsK5Yws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718224827; c=relaxed/simple;
-	bh=SZUB4FY1/4Uc5DKQFanz8Q8mDAcnM64BMP2Z067yeq0=;
+	s=arc-20240116; t=1718224897; c=relaxed/simple;
+	bh=iksz8x0J+16o1rcdeXT1mVm0qNREjzh30WqMubfeTgI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3ikOxxHrPsoeDm33fsKeosPB3eCe3ZfUTEBe0hshBurFJTHu8jOU6ohl4jeqg4UQL2yY19gcxKe2LDI5f7q3tYdXMvBJjYnZ6R2jEgg9wlMHeHlUpDYNQBGEgRiiARid5mc5Js131w6gCOOENB4BermmKvq3NPDkwftMRGwwYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWWFMwJk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924EAC116B1;
-	Wed, 12 Jun 2024 20:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718224826;
-	bh=SZUB4FY1/4Uc5DKQFanz8Q8mDAcnM64BMP2Z067yeq0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=DRBhXGv/Ni7ESboRFcq42ha4mZnBmqN3mxd+oxCdbNRhwzhHA7xbanAI0d5tlqPC3ynm11fmuV84mY5PIWgyGmTAUotlKZbqwV+opIgShe/c6KEkaNAjCViTV0qZL20ruCIqKn4BHTpYygIpR7Tt8VyZcB27Fqs+HbmsFQGRBsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JtnpjQOV; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DB78A12E4;
+	Wed, 12 Jun 2024 22:41:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718224881;
+	bh=iksz8x0J+16o1rcdeXT1mVm0qNREjzh30WqMubfeTgI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oWWFMwJk0F9C3vPy/4z2yYg/eBLF+FDqdqcufPDLGeU8cFFPlTKiAs2n6JlGmxRD2
-	 6oTW1oVv0iBpWPUT6/LJhqVwVwqtG3i9Vqa43TQ5Rj7n4LD9HHG0DYwUwJM471gczc
-	 gnhRVFJ/gGVIrjBH8mzkO02ZGbaendNNx8ww597L6QIKrXVEjchj4S3icJ74AIHUSy
-	 YaIkyj2jvGICtBcPxklwL4AVOJ+3aBNCwgqSFdv2mKNyfMxEQyIqLeNbZeB0riMtA8
-	 zcj1Fm9Tc4/uBw2kZbker/r8V1tydETAnhQOKiLYmXyVOTpeFFUWiwEIRoq/8ObKCb
-	 cK5S5yPFwZEwQ==
-Date: Wed, 12 Jun 2024 13:40:25 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: david@fromorbit.com, chandan.babu@oracle.com, brauner@kernel.org,
-	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 07/11] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <20240612204025.GI2764752@frogsfrogsfrogs>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-8-kernel@pankajraghav.com>
+	b=JtnpjQOVy2sLoaifEsK4xCzR24o0w82Tw4QpdFx7X5Z6WDWPm5piRH8BitafAQyoK
+	 YeQ0NrkbMmSoltft8qcVxQzpKXUNLvv5Mbturel1XhUKux1YacEWxMJPTQEd1CnXmC
+	 qDREB10+CTLfSv+fEt+Vxu9kZbg67c/g0fpCeVgY=
+Date: Wed, 12 Jun 2024 23:41:14 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org,
+	mchehab@kernel.org, hverkuil-cisco@xs4all.nl, wentong.wu@intel.com,
+	linux-media@vger.kernel.org, linux-acpi@vger.kernel.org,
+	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
+Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port
+ nodes
+Message-ID: <20240612204114.GV28989@pendragon.ideasonboard.com>
+References: <ZmmT56Cyvb2FCyav@kekkonen.localdomain>
+ <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
+ <ZmmY3he9vfWVWU3I@kekkonen.localdomain>
+ <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
+ <ZmnnFueL-Cgw5Eqp@kekkonen.localdomain>
+ <CAJZ5v0gtK9yusimCOVV2dGkQWDwQ6=r=vfbgC-eE60Cg-5wk_Q@mail.gmail.com>
+ <ZmnrtIEla9R24egi@kekkonen.localdomain>
+ <CAJZ5v0hXU62QiXxWfkbiovciNNEk0h49kRdScmz5qONTMDA+4A@mail.gmail.com>
+ <20240612200012.GP28989@pendragon.ideasonboard.com>
+ <CAJZ5v0hF+6_RCyP-Rr+ajNNEKe0YenFR8x6wX3dG1Pq+vguTwg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240607145902.1137853-8-kernel@pankajraghav.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0hF+6_RCyP-Rr+ajNNEKe0YenFR8x6wX3dG1Pq+vguTwg@mail.gmail.com>
 
-On Fri, Jun 07, 2024 at 02:58:58PM +0000, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+On Wed, Jun 12, 2024 at 10:31:06PM +0200, Rafael J. Wysocki wrote:
+> On Wed, Jun 12, 2024 at 10:00 PM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> >
+> > On Wed, Jun 12, 2024 at 08:50:57PM +0200, Rafael J. Wysocki wrote:
+> > > On Wed, Jun 12, 2024 at 8:41 PM Sakari Ailus wrote:
+> > > > On Wed, Jun 12, 2024 at 08:29:21PM +0200, Rafael J. Wysocki wrote:
+> > > > > On Wed, Jun 12, 2024 at 8:21 PM Sakari Ailus wrote:
+> > > > > > On Wed, Jun 12, 2024 at 03:06:53PM +0200, Rafael J. Wysocki wrote:
+> > > > > > > On Wed, Jun 12, 2024 at 2:47 PM Sakari Ailus wrote:
+> > > > > > > > On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysocki wrote:
+> > > > > > > > > > > > > I just hit the same problem on another Dell laptop. It seems that
+> > > > > > > > > > > > > all Dell laptops with IPU6 camera from the Tiger Lake, Alder Lake
+> > > > > > > > > > > > > and Raptor Lake generations suffer from this problem.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > So instead of playing whack a mole with DMI matches we should
+> > > > > > > > > > > > > simply disable ACPI MIPI DISCO support on all Dell laptops
+> > > > > > > > > > > > > with those CPUs. I'm preparing a fix for this to replace
+> > > > > > > > > > > > > the DMI matching now.
+> > > > > > > > > > > >
+> > > > > > > > > > > > DisCo for Imaging support shouldn't be dropped on these systems, and this
+> > > > > > > > > > > > isn't what your patch does either. Instead the ACPI graph port nodes (as
+> > > > > > > > > > > > per Linux specific definitions) are simply dropped, i.e. this isn't related
+> > > > > > > > > > > > to DisCo for Imaging at all.
+> > > > > > > > > > >
+> > > > > > > > > > > So it looks like the changelog of that patch could be improved, right?
+> > > > > > > > > >
+> > > > > > > > > > Well, yes. The reason the function is in the file is that nearly all camera
+> > > > > > > > > > related parsing is located there, not that it would be related to DisCo for
+> > > > > > > > > > Imaging as such.
+> > > > > > > > >
+> > > > > > > > > So IIUC the camera graph port nodes are created by default with the
+> > > > > > > > > help of the firmware-supplied information, but if that is defective a
+> > > > > > > > > quirk can be added to skip the creation of those ports in which case
+> > > > > > > > > they will be created elsewhere.
+> > > > > > > > >
+> > > > > > > > > Is this correct?
+> > > > > > > >
+> > > > > > > > Yes.
+> > > > > > >
+> > > > > > > So it would be good to add a comment to this effect to
+> > > > > > > acpi_nondev_subnode_extract() where acpi_graph_ignore_port() is
+> > > > > > > called.
+> > > > > > >
+> > > > > > > And there is a somewhat tangential question that occurred to me: If
+> > > > > > > the nodes are created elsewhere when acpi_graph_ignore_port() is true,
+> > > > > > > why is it necessary to consult the platform firmware for the
+> > > > > > > information on them at all?  Wouldn't it be better to simply always
+> > > > > > > create them elsewhere?
+> > > > > >
+> > > > > > Simple answer: for the same reason why in general system specific
+> > > > > > information comes from ACPI and not from platform data compiled into the
+> > > > > > kernel.
+> > > > > >
+> > > > > > Of course this is technically possible but it does not scale.
+> > > > >
+> > > > > While I agree in general, in this particular case the platform data
+> > > > > compiled into the kernel needs to be present anyway, at least
+> > > > > apparently, in case the data coming from the platform firmware is
+> > > > > invalid.
+> > > > >
+> > > > > So we need to do 3 things: compile in the platform data into the
+> > > > > kernel and expect the platform firmware to provide the necessary
+> > > > > information, and add quirks for the systems where it is known invalid.
+> > > > >
+> > > > > Isn't this a bit too much?
+> > > >
+> > > > Isn't this pretty much how ACPI works currently?
+> > >
+> > > No, we don't need to put platform data into the kernel for every bit
+> > > of information that can be retrieved from the platform firmware via
+> > > ACPI.
+> > >
+> > > The vast majority of information in the ACPI tables is actually
+> > > correct and if quirks are needed, they usually are limited in scope.
+> > >
+> > > Where it breaks is when the ACPI tables are not sufficiently validated
+> > > by OEMs which mostly happens when the data in question are not needed
+> > > to pass some sort of certification or admission tests.
+> >
+> > We have to be careful here. Part of the job of the ACPI methods for
+> > camera objects is to control the camera sensor PMIC and set up the right
+> > voltages (many PMICs have programmable output levels). In many cases
+> > we've seen with the IPU3, broken ACPI support means the methods will try
+> > to do something completely bogus, like accessing a PMIC at an incorrect
+> > I2C address. That's mostly fine, it will result in the camera not being
+> > detected. We could however have broken ACPI implementation that would
+> > program the PMIC to output voltages that would damage the sensor. Users
+> > won't be happy.
 > 
-> iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
-> < fs block size. iomap_dio_zero() has an implicit assumption that fs block
-> size < page_size. This is true for most filesystems at the moment.
+> My point is basically that if that data were also used by Windows,
+> then chances are that breakage of this sort would be caught during
+> Windows validation before shipping the machines and so it wouldn't
+> affect Linux as well.
 > 
-> If the block size > page size, this will send the contents of the page
-> next to zero page(as len > PAGE_SIZE) to the underlying block device,
-> causing FS corruption.
+> However, if OEMs have no vehicle to validate their systems against,
+> bad things can happen indeed.
 > 
-> iomap is a generic infrastructure and it should not make any assumptions
-> about the fs block size and the page size of the system.
-> 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
-> ---
->  fs/internal.h          |  5 +++++
->  fs/iomap/buffered-io.c |  6 ++++++
->  fs/iomap/direct-io.c   | 26 ++++++++++++++++++++++++--
->  3 files changed, 35 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 84f371193f74..30217f0ff4c6 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -35,6 +35,11 @@ static inline void bdev_cache_init(void)
->  int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
->  		get_block_t *get_block, const struct iomap *iomap);
->  
-> +/*
-> + * iomap/direct-io.c
-> + */
-> +int iomap_dio_init(void);
-> +
->  /*
->   * char_dev.c
->   */
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 49938419fcc7..9f791db473e4 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1990,6 +1990,12 @@ EXPORT_SYMBOL_GPL(iomap_writepages);
->  
->  static int __init iomap_init(void)
->  {
-> +	int ret;
-> +
-> +	ret = iomap_dio_init();
-> +	if (ret)
-> +		return ret;
-> +
->  	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
->  			   offsetof(struct iomap_ioend, io_bio),
->  			   BIOSET_NEED_BVECS);
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index f3b43d223a46..b95600b254a3 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -27,6 +27,13 @@
->  #define IOMAP_DIO_WRITE		(1U << 30)
->  #define IOMAP_DIO_DIRTY		(1U << 31)
->  
-> +/*
-> + * Used for sub block zeroing in iomap_dio_zero()
-> + */
-> +#define ZERO_FSB_SIZE (65536)
-> +#define ZERO_FSB_ORDER (get_order(ZERO_FSB_SIZE))
-> +static struct page *zero_fs_block;
+> Also, if an OEM has no incentive to carry out the requisite checks,
+> the result is likely to be invalid data in the platform firmware.
 
-Er... zero_page_64k ?
+We're exactly on the same page. The only solution [*] I can see for this
+problem is to get the Windows drivers to use the same ACPI data as the
+Linux drivers.
 
-Since it's a permanent allocation, can we also mark the memory ro?
+* Another solution would be for OEMs to stop caring about Windows and
+testing their machines with Linux only, essentially reversing the
+current situation. Chances of this happening however seem even tinier
+:-)
 
-> +
->  struct iomap_dio {
->  	struct kiocb		*iocb;
->  	const struct iomap_dio_ops *dops;
-> @@ -52,6 +59,16 @@ struct iomap_dio {
->  	};
->  };
->  
-> +int iomap_dio_init(void)
-> +{
-> +	zero_fs_block = alloc_pages(GFP_KERNEL | __GFP_ZERO, ZERO_FSB_ORDER);
-> +
-> +	if (!zero_fs_block)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
+-- 
+Regards,
 
-Can't we just turn this into another fs_initcall() instead of exporting
-it just so we can call it from iomap_init?  And maybe rename the
-existing iomap_init to iomap_pagecache_init or something, for clarity's
-sake?
-
---D
-
-> +
->  static struct bio *iomap_dio_alloc_bio(const struct iomap_iter *iter,
->  		struct iomap_dio *dio, unsigned short nr_vecs, blk_opf_t opf)
->  {
-> @@ -236,17 +253,22 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
->  		loff_t pos, unsigned len)
->  {
->  	struct inode *inode = file_inode(dio->iocb->ki_filp);
-> -	struct page *page = ZERO_PAGE(0);
->  	struct bio *bio;
->  
-> +	/*
-> +	 * Max block size supported is 64k
-> +	 */
-> +	WARN_ON_ONCE(len > ZERO_FSB_SIZE);
-> +
->  	bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
->  	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
->  				  GFP_KERNEL);
-> +
->  	bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
->  	bio->bi_private = dio;
->  	bio->bi_end_io = iomap_dio_bio_end_io;
->  
-> -	__bio_add_page(bio, page, len, 0);
-> +	__bio_add_page(bio, zero_fs_block, len, 0);
->  	iomap_dio_submit_bio(iter, dio, bio, pos);
->  }
->  
-> -- 
-> 2.44.1
-> 
-> 
+Laurent Pinchart
 
