@@ -1,186 +1,203 @@
-Return-Path: <linux-kernel+bounces-211080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F7B904CE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:33:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C61904CE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D6502875EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:33:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7C71C23DE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F493169361;
-	Wed, 12 Jun 2024 07:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA2913CFB8;
+	Wed, 12 Jun 2024 07:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HfSjfjhc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Brzyheyi"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B9329413;
-	Wed, 12 Jun 2024 07:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2132429413
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718177621; cv=none; b=i7R7qm/CMt5/66Vi6EWSjON8jsxY9d4HePLeihrvHURZGncP0Zzf+72UY8/tseLT29L7Hx+6Lqby66/MsDYWSnXDJsg1k8R+c2SIy5TOL8Kj0ePvg63fGgBgpSYKcLnWCtSbYA03nxyNvgiN3lOoXofRXV3cDuJ59038vt2Bfw4=
+	t=1718177679; cv=none; b=Tfe9L/nPGvpcCqdT/1/ymiUBZsY+BAaRBkIiIxkCyaM9mLeI2VoGm+FgS/gRXyCSb/5tgV2jfY3s7edcXqLsjBFRe9Y1G7v2JtF9wIinrDOq3GE4ZDROsGXYg+4InQGt8Pk8/GFOyEmJnoK5ufzgNrnWurBoSLYVVPArkJgIWXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718177621; c=relaxed/simple;
-	bh=SUfIAtDi5cgpBLZQB/Du7Hs4SYoZugQDNHll79iQU7w=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jmXPkwSbygxyNiVJH6Pa/k6akS1G70H7k/ZFShoZoU7v1u2pmtWatsqTHtyJDZO2nRhlqq7I0/rk58z4SnExA4jvPEkj0mSqror6X3rqpAhIxqrFyJ9xuYuuZ1igvTXh8caNZDLWvOWX+ves5MqPXZhrZSqcRX5SATL/t8WTGfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HfSjfjhc; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718177620; x=1749713620;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=SUfIAtDi5cgpBLZQB/Du7Hs4SYoZugQDNHll79iQU7w=;
-  b=HfSjfjhc0idvtlaYA3dBl9llfvSkBfshB8IsEXJo0yFgWQNhOYonCpQu
-   W25shQcUg0x+UQ4aIIRcxtwFJhqkQT/bmMYYuBoo61japlCrGrbIr0SPs
-   BGxTJ1SW6dnQM3rxY18AYgvqqTXSZgdaPxDo5Jh1LcPiYmdtFXbbj3Mts
-   gK4931YgDtXKVFTqvn5XUy6FVoM7iRnTYMm4XVOWfwXm476Wv321zYsTi
-   JKo3S9UJrapyfqDN2L4uj7jggzn6/SVeQD4+W2yCXHFUcyXTjWMD/Rmmw
-   qsm/ZcaV08NFj7Wl3dH1NRjsFdOzXftGs8i8LLmqY8GZEnckW90A81NQZ
-   Q==;
-X-CSE-ConnectionGUID: dA/g+31YQQmoJC0NEyep4A==
-X-CSE-MsgGUID: 2HWeL1TvQ4qIjLfxaBRCVA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="26041609"
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="26041609"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 00:33:39 -0700
-X-CSE-ConnectionGUID: RgCrLq4xQ6C3yjzVbbQBkQ==
-X-CSE-MsgGUID: Sp4CeumZRcu/J86gUJIRZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="39592979"
-Received: from unknown (HELO localhost) ([10.245.247.204])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 00:33:35 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 12 Jun 2024 10:33:30 +0300 (EEST)
-To: Babu Moger <babu.moger@amd.com>
-cc: fenghua.yu@intel.com, Reinette Chatre <reinette.chatre@intel.com>, 
-    shuah@kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-kselftest@vger.kernel.org, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    peternewman@google.com, eranian@google.com
-Subject: Re: [PATCH v3] selftests/resctrl: Fix non-contiguous CBM for AMD
-In-Reply-To: <96d276c11e69cfb1e29d50a12c8043555c06b404.1718144237.git.babu.moger@amd.com>
-Message-ID: <dbb757c2-072c-5689-2122-157532715a63@linux.intel.com>
-References: <3a6c9dd9dc6bda6e2582db049bfe853cd836139f.1717622080.git.babu.moger@amd.com> <96d276c11e69cfb1e29d50a12c8043555c06b404.1718144237.git.babu.moger@amd.com>
+	s=arc-20240116; t=1718177679; c=relaxed/simple;
+	bh=in7Uq7Ckd8ql4oQaJaUoIJyX738NyNrshp18J+kVuQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lGqr/rlyphbUJF9NHx04qUJo0GMSmvJiSwoSwx6ZEn/S/C0OzbkQrSn4UYA0KVWvudIArZRdPkoVqBiXGu46oNutLQI5/aJG+Prkh/A1jmp8Do+hSsRxxOz+qPWPeJM3DHBZiYpSWw93aMiGYRzr68IaJTNnHM5beRx+iAHMao4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Brzyheyi; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57c83100cb4so3537015a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 00:34:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718177676; x=1718782476; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8o77M9qAN+pRgJWJYRJ+nSK3wcPE6vxMUhsaBsoX0kU=;
+        b=Brzyheyi1k6LkzBg2dNPVpEagWb8dSalOhUXOAwuKVSWgo8w9VqbgTyUcjlDiXzKgH
+         0sZo5sty1abPQUqWSGODS1wfo7KpjO4mki1gTFwweqRa8DBu5NMU0JqV9CYcCL0VJIrD
+         M/UPGzumqh9lRN3CuHyuKPooXatu6KzPRLfoe9ayeRjorhlBE7T0S9siLHs/BsOFLAOg
+         Sfa2Mc+TDdrgQJDQGSkJxfNa6HevRjjnv2dwHUCHmgY9IKS/grHtjTJld17GZjRrZYqs
+         LS55urXoz6RH8T/6Ii1+NI80gwt6NJ7Ur6h236CAfZt0gJv6TRn75BsdYmwHsMtGrigw
+         eA3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718177676; x=1718782476;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=8o77M9qAN+pRgJWJYRJ+nSK3wcPE6vxMUhsaBsoX0kU=;
+        b=Pk5sEDbbsHP7ewCutWBUYI7g20ec9m6SQiTfvbQpmySGPEqfD6d/q22dGuGDGXBF6r
+         A31LjghyAWmF/4OiPuFdYjeDiUeGRoFq8w3PLBswng8E6cNxz4+2ZWxvoYAgGEPphBoX
+         iMT6ikcuWTR2/AW0Z3JfGyJ8KUgn4/m/KViWbLtJQlQP0bwjIDl/YHO+LYWmoQfRnzLb
+         Vh2ovtCtHM/wcuw0HCZLIMfPBMgWKP4w6eG0YHmdzTcH2+/s20hzbK55n341BSPyCwUU
+         DUBH3wYMqjKgImrDywLTwkL7jojdb6A9K6gXnIV+vSC3LM2oX52PkhY/F/XsKU+ASs5J
+         A2NA==
+X-Forwarded-Encrypted: i=1; AJvYcCXw6ytfJ/Vzw8/+OuvC5KStHu2sQQ8d7SSriLGbIu8CuKBzdB7ExGUU6r8Nb/r0A9l0i4OHb3WadnGZOo5Nrr1Ma5qg5MvODImOEPvc
+X-Gm-Message-State: AOJu0YwWCKEnr9rZfEIABIfT69yl/tQu1c/l3SXR0s6UzI39MvBu/kNq
+	BxZS4J7SpgIoPl1d8ffI+pWvpGwspSDnofpuz7Cn612/Dqhw/m4+
+X-Google-Smtp-Source: AGHT+IEjfLXx+nSEe/8KSqR2eK19VmxG5zwhz5cEWknfBmK0RrzQ6CxrwsRbpjmHvKlaPAABxzIu2g==
+X-Received: by 2002:a50:9f86:0:b0:57c:5f2b:b5a with SMTP id 4fb4d7f45d1cf-57ca9749915mr630736a12.2.1718177676095;
+        Wed, 12 Jun 2024 00:34:36 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c8f6095e9sm3099184a12.24.2024.06.12.00.34.35
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Jun 2024 00:34:35 -0700 (PDT)
+Date: Wed, 12 Jun 2024 07:34:35 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>,
+	Oscar Salvador <osalvador@suse.de>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 2/2] mm/highmem: make nr_free_highpages() return
+ "unsigned long"
+Message-ID: <20240612073435.52fch2aut5lxeyhf@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240607083711.62833-1-david@redhat.com>
+ <20240607083711.62833-3-david@redhat.com>
+ <ZmZ1x6QQYPFSOd7O@localhost.localdomain>
+ <99073d55-5b18-4ed2-b860-8c09e056f585@redhat.com>
+ <20240611005636.g6525rkqpos43yds@master>
+ <04b3dda2-c6a8-4f26-90b8-75fe7580d63e@redhat.com>
+ <20240612070144.q6rpbq2hkwtielav@master>
+ <2d0df7ca-2720-4a0c-95c5-9b665a567e5f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1864459413-1718177611=:1312"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2d0df7ca-2720-4a0c-95c5-9b665a567e5f@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Jun 12, 2024 at 09:22:25AM +0200, David Hildenbrand wrote:
+>On 12.06.24 09:01, Wei Yang wrote:
+>> On Tue, Jun 11, 2024 at 11:20:00AM +0200, David Hildenbrand wrote:
+>> > On 11.06.24 02:56, Wei Yang wrote:
+>> > > On Mon, Jun 10, 2024 at 10:22:49AM +0200, David Hildenbrand wrote:
+>> > > > On 10.06.24 05:40, Oscar Salvador wrote:
+>> > > > > On Fri, Jun 07, 2024 at 10:37:11AM +0200, David Hildenbrand wrote:
+>> > > > > > It looks rather weird that totalhigh_pages() returns an
+>> > > > > > "unsigned long" but nr_free_highpages() returns an "unsigned int".
+>> > > > > > 
+>> > > > > > Let's return an "unsigned long" from nr_free_highpages() to be
+>> > > > > > consistent.
+>> > > > > > 
+>> > > > > > While at it, use a plain "0" instead of a "0UL" in the !CONFIG_HIGHMEM
+>> > > > > > totalhigh_pages() implementation, to make these look alike as well.
+>> > > > > > 
+>> > > > > > Signed-off-by: David Hildenbrand <david@redhat.com>
+>> > > > > ...
+>> > > > > > -static inline unsigned int nr_free_highpages(void) { return 0; }
+>> > > > > > -static inline unsigned long totalhigh_pages(void) { return 0UL; }
+>> > > > > > +static inline unsigned long nr_free_highpages(void) { return 0; }
+>> > > > > > +static inline unsigned long totalhigh_pages(void) { return 0; }
+>> > > > > 
+>> > > > > Although I doubt it has any consequences, I would just leave them both with UL,
+>> > > > > so the return type is consistent with what we are returning.
+>> > > > 
+>> > > > These suffixes are only required when using constants that would not fit
+>> > > > into the native (int) type, or converting from that native (int) type to
+>> > > > something else automatically by the compiler would mess things up (for example,
+>> > > > undesired sign extension). For 0 that is certainly impossible :)
+>> > > > 
+>> > > > 
+>> > > > That's also the reason why in include/linux we now have:
+>> > > > 
+>> > > > t14s: ~/git/linux/include/linux $ git grep "return 0UL;"
+>> > > > skbuff.h:       return 0UL;
+>> > > > uaccess.h:static inline unsigned long user_access_save(void) { return 0UL; }
+>> > > > t14s: ~/git/linux/include/linux $ git grep "0UL;"
+>> > > > bitmap.h:               *dst = ~0UL;
+>> > > > dax.h:          return ~0UL;
+>> > > > mtd/map.h:                      r.x[i] = ~0UL;
+>> > > > netfilter.h:    return ((ul1[0] ^ ul2[0]) | (ul1[1] ^ ul2[1])) == 0UL;
+>> > > > skbuff.h:       return 0UL;
+>> > > > uaccess.h:static inline unsigned long user_access_save(void) { return 0UL; }
+>> > > > 
+>> > > > 
+>> > > > ... compared to a long list if "unsigned long" functions that simply "return 0;"
+>> > > > 
+>> > > 
+>> > > Seems this is the current status.
+>> > > 
+>> > > Then my question is do we have a guide line for this? Or 0 is the special
+>> > > case? Sounds positive value has no sign extension problem. If we need to
+>> > > return 1, we suppose to use 1 or 1UL? I found myself confused.
+>> > > 
+>> > > I grepped "return 1" and do find some cases without UL:
+>> > > 
+>> > > backing-dev.h: wb_stat_error() return 1 for unsigned long.
+>> > > pgtable.h: pte_batch_hint() return 1 for unsigned int.
+>> > > 
+>> > > So the guide line is for positive value, it is not necessary to use UL?
+>> > 
+>> > I think when returning simple values (0/1/-1), we really don't need these
+>> > suffices at all. The standard says "The type of an integer constant is the
+>> > first of the corresponding list in which its value can be represented.". I
+>> > thought it would always use an "int", but that is not the case.
+>> > 
+>> > So, if we use "-1", the compiler will use an "int", and sign extension to
+>> > "unsigned" long will do the right thing.
+>> > 
+>> > Simple test:
+>> > 
+>> > -1 results in: 0xffffffffffffffff
+>> > -1U results in: 0xffffffff
+>> > -1UL results in: 0xffffffffffffffff
+>> > 0xffffffff results in: 0xffffffff
+>> > 0xffffffffU results in: 0xffffffff
+>> > 0xffffffffUL results in: 0xffffffff
+>> > ~0xffffffff results in: 0x0
+>> > ~0xffffffffU results in: 0x0
+>> > ~0xffffffffUL results in: 0xffffffff00000000
+>> > 0xffffffffffffffff results in: 0xffffffffffffffff
+>> > 0xffffffffffffffffU results in: 0xffffffffffffffff
+>> 
+>> I expect this to be 0xffffffff. Why this extend it to a UL?
+>
+>Apparently, the "U" only restricts the set of types to "unsigned ones".
+>
+>https://en.cppreference.com/w/cpp/language/integer_literal
+>
+>So the compiler will use the first "unsigned" type that can hold that value.
+>
 
---8323328-1864459413-1718177611=:1312
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Interesting, thanks for the reference.
 
-On Tue, 11 Jun 2024, Babu Moger wrote:
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-> The non-contiguous CBM test fails on AMD with:
-> Starting L3_NONCONT_CAT test ...
-> Mounting resctrl to "/sys/fs/resctrl"
-> CPUID output doesn't match 'sparse_masks' file content!
-> not ok 5 L3_NONCONT_CAT: test
->=20
-> AMD always supports non-contiguous CBM but does not report it via CPUID.
->=20
-> Fix the non-contiguous CBM test to use CPUID to discover non-contiguous
-> CBM support only on Intel.
->=20
-> Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT test=
-")
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
-> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+>-- 
+>Cheers,
+>
+>David / dhildenb
 
-Thanks.
-
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
-> ---
-> v3: Reworked changelong.
->=20
-> v2: Moved the non-contiguous CBM verification to a new function
->     arch_supports_noncont_cat.
->=20
-> v1: This was part of the series
->     https://lore.kernel.org/lkml/cover.1708637563.git.babu.moger@amd.com/
->     Sending this as a separate fix per review comments.
-> ---
->  tools/testing/selftests/resctrl/cat_test.c | 32 +++++++++++++++-------
->  1 file changed, 22 insertions(+), 10 deletions(-)
->=20
-> diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/s=
-elftests/resctrl/cat_test.c
-> index d4dffc934bc3..742782438ca3 100644
-> --- a/tools/testing/selftests/resctrl/cat_test.c
-> +++ b/tools/testing/selftests/resctrl/cat_test.c
-> @@ -288,11 +288,30 @@ static int cat_run_test(const struct resctrl_test *=
-test, const struct user_param
->  =09return ret;
->  }
-> =20
-> +static bool arch_supports_noncont_cat(const struct resctrl_test *test)
-> +{
-> +=09unsigned int eax, ebx, ecx, edx;
-> +
-> +=09/* AMD always supports non-contiguous CBM. */
-> +=09if (get_vendor() =3D=3D ARCH_AMD)
-> +=09=09return true;
-> +
-> +=09/* Intel support for non-contiguous CBM needs to be discovered. */
-> +=09if (!strcmp(test->resource, "L3"))
-> +=09=09__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
-> +=09else if (!strcmp(test->resource, "L2"))
-> +=09=09__cpuid_count(0x10, 2, eax, ebx, ecx, edx);
-> +=09else
-> +=09=09return false;
-> +
-> +=09return ((ecx >> 3) & 1);
-> +}
-> +
->  static int noncont_cat_run_test(const struct resctrl_test *test,
->  =09=09=09=09const struct user_params *uparams)
->  {
->  =09unsigned long full_cache_mask, cont_mask, noncont_mask;
-> -=09unsigned int eax, ebx, ecx, edx, sparse_masks;
-> +=09unsigned int sparse_masks;
->  =09int bit_center, ret;
->  =09char schemata[64];
-> =20
-> @@ -301,15 +320,8 @@ static int noncont_cat_run_test(const struct resctrl=
-_test *test,
->  =09if (ret)
->  =09=09return ret;
-> =20
-> -=09if (!strcmp(test->resource, "L3"))
-> -=09=09__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
-> -=09else if (!strcmp(test->resource, "L2"))
-> -=09=09__cpuid_count(0x10, 2, eax, ebx, ecx, edx);
-> -=09else
-> -=09=09return -EINVAL;
-> -
-> -=09if (sparse_masks !=3D ((ecx >> 3) & 1)) {
-> -=09=09ksft_print_msg("CPUID output doesn't match 'sparse_masks' file con=
-tent!\n");
-> +=09if (arch_supports_noncont_cat(test) !=3D sparse_masks) {
-> +=09=09ksft_print_msg("Hardware and kernel differ on non-contiguous CBM s=
-upport!\n");
->  =09=09return 1;
->  =09}
-> =20
->=20
---8323328-1864459413-1718177611=:1312--
+-- 
+Wei Yang
+Help you, Help me
 
