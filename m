@@ -1,223 +1,196 @@
-Return-Path: <linux-kernel+bounces-212100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D41C905B39
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:40:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F95905B3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528BA1C20E87
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:40:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3911F2138B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E0B4EB45;
-	Wed, 12 Jun 2024 18:40:21 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25F051C45;
+	Wed, 12 Jun 2024 18:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G0Wu1Wyg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B796447F4B;
-	Wed, 12 Jun 2024 18:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8005C47F4B;
+	Wed, 12 Jun 2024 18:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718217620; cv=none; b=PDq2HYKtRorLKwdRDKcQhWcvalsPbxG3YmxmDr+/03mCFERZZmtgCxmjUcKRenjVJcen14f9jDkmMP4mwtJlbcGtzNzfKXjXD5nAAeh/ZDaCFmF2aaXM0EJwPeBx97nqS6ZXsYk5a0vFgd7WPKKBbofZovREuBhghxiWSXdGq/0=
+	t=1718217660; cv=none; b=COMbnZZeux00a1whm85+GN2U6VDad1qxBKCHIBv/0Nj6Zm5H1nRsLhAtLFBMp6q8Gz2cqVRgpu+ZaO+jA/8efvKwP1Ce5hqIK7cQYj8P2cHXqzNfNP9JrYvZvTL3d+sYzqNmPkHBF9L1UOQ3rkDH9mu75SFrmwb89FHvfFYF/DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718217620; c=relaxed/simple;
-	bh=KuaLG9bzDcur9dwVKKPiSS8EqUoqRjZ3JTJzUwbnx/s=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=Zdkx7JDOx8PtDg/8Bzn3FhWBIF0lC+25S5QXxaik4UlGRu8rkvfMkeIsu6hsbgwx0/0rL1bcGxX/9KQiVCQXGjAI1zZbN3A1gB3ugJ/kpbrMjgq3zSLtc8yyNlR61n+F785Tmmv0ESLGnJBi4xiNOz6oupQEeB4k9PKFg6y4SM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=9907278693=ms@dev.tdt.de>)
-	id 1sHSt8-003PMm-DD; Wed, 12 Jun 2024 20:40:02 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1sHSt7-002UFN-H0; Wed, 12 Jun 2024 20:40:01 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 2386F240053;
-	Wed, 12 Jun 2024 20:40:01 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 7CC15240050;
-	Wed, 12 Jun 2024 20:40:00 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id E1FB53773C;
-	Wed, 12 Jun 2024 20:39:59 +0200 (CEST)
+	s=arc-20240116; t=1718217660; c=relaxed/simple;
+	bh=XAl+xt3Ajhmcb21HlyPPHcVsPGjc8S1/jBgQhVYVmEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ewI4a9ldahI18XWBP6L/bB+AHkySxEOHo3WS+0Lo/CNo7jUngd2hiGRyDq7zdD0vulFNw65cpmk4qscBuFBcuFOQ1vGfDEr/AkzG4l0ZAn9blddTBT72Q1r1wP9CgEzdpp+zHOJaJ5U+6j04P2MQ5tN/Jclv1VgLi0FEm3KU9l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G0Wu1Wyg; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718217658; x=1749753658;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=XAl+xt3Ajhmcb21HlyPPHcVsPGjc8S1/jBgQhVYVmEU=;
+  b=G0Wu1Wyg3wj7pZqyxMsue6vTaOvIgK3+fnLvQccJ3ualaiaaakiTIW23
+   wQiZiN4KMt+2wyoOdAc2cwudap+wpKqmE0fnTuCAIFh7a5f0gC8ELHT3H
+   2BzPER3f8xfgSNrjP8IwYvnSGP3LFtZQCR/zEjma9vRAlR7ZqwR5guEe8
+   PYtkcwJfyjsQ8uqrXVE1lXDfXh7DZAIkj+RxXLP6cRcFzlWgpM3+oobRl
+   JzxoVKPoS+hS407bgPw8WC45tcg+H18ZY4Y4uGDqXNY4Z+IWo4hLDBBSL
+   l5jl5NtBa9JL3bVZMEQ4mz+dZe2ASiH395cb0OvAqnzSdS3p0CxG5Lmu3
+   w==;
+X-CSE-ConnectionGUID: rnwNqCsmQCeBXv39BLg4Lw==
+X-CSE-MsgGUID: c9mb7vc0QsCiJzSHj/ADgw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="25634816"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="25634816"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 11:40:57 -0700
+X-CSE-ConnectionGUID: sx2zuM+FThuWBS97fQNFKw==
+X-CSE-MsgGUID: vXAup4MLQlmh7pn/xxsj6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="44271382"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 11:40:55 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 8C3FA11FA94;
+	Wed, 12 Jun 2024 21:40:52 +0300 (EEST)
+Date: Wed, 12 Jun 2024 18:40:52 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Genes Lists <lists@sapience.com>,
+	linux-kernel@vger.kernel.org, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com,
+	wentong.wu@intel.com, linux-media@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
+Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port
+ nodes
+Message-ID: <ZmnrtIEla9R24egi@kekkonen.localdomain>
+References: <e9062095-b312-44df-a9e3-0b09f3ec9eff@redhat.com>
+ <4b387b4d-f778-4891-9f07-df5fc0a093cd@redhat.com>
+ <ZmmQLt7wB-yGQBTw@kekkonen.localdomain>
+ <CAJZ5v0ii3WFQRPdfHeeW4M9kXSWDVxxxy02zThcf25mjNwqDAw@mail.gmail.com>
+ <ZmmT56Cyvb2FCyav@kekkonen.localdomain>
+ <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
+ <ZmmY3he9vfWVWU3I@kekkonen.localdomain>
+ <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
+ <ZmnnFueL-Cgw5Eqp@kekkonen.localdomain>
+ <CAJZ5v0gtK9yusimCOVV2dGkQWDwQ6=r=vfbgC-eE60Cg-5wk_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 12 Jun 2024 20:39:59 +0200
-From: Martin Schiller <ms@dev.tdt.de>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: hauke@hauke-m.de, tsbogend@alpha.franken.de, rdunlap@infradead.org,
- robh@kernel.org, bhelgaas@google.com, linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
-Organization: TDT AG
-In-Reply-To: <ZmnfQWFoIw5UCV-k@google.com>
-References: <20240607090400.1816612-1-ms@dev.tdt.de>
- <ZmnfQWFoIw5UCV-k@google.com>
-Message-ID: <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
-X-Sender: ms@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-type: clean
-X-purgate: clean
-X-purgate-ID: 151534::1718217602-83CB5642-2266EBAB/0/0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0gtK9yusimCOVV2dGkQWDwQ6=r=vfbgC-eE60Cg-5wk_Q@mail.gmail.com>
 
-On 2024-06-12 19:47, Dmitry Torokhov wrote:
-> Hi Marton,
+Hi Rafael,
 
-Hi Dmitry,
+On Wed, Jun 12, 2024 at 08:29:21PM +0200, Rafael J. Wysocki wrote:
+> Hi Sakari,
+> 
+> On Wed, Jun 12, 2024 at 8:21 PM Sakari Ailus
+> <sakari.ailus@linux.intel.com> wrote:
+> >
+> > Hi Rafael,
+> >
+> > On Wed, Jun 12, 2024 at 03:06:53PM +0200, Rafael J. Wysocki wrote:
+> > > Hi Sakari,
+> > >
+> > > On Wed, Jun 12, 2024 at 2:47 PM Sakari Ailus
+> > > <sakari.ailus@linux.intel.com> wrote:
+> > > >
+> > > > Hi Rafael,
+> > > >
+> > > > On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysocki wrote:
+> > > > > > > > > I just hit the same problem on another Dell laptop. It seems that
+> > > > > > > > > all Dell laptops with IPU6 camera from the Tiger Lake, Alder Lake
+> > > > > > > > > and Raptor Lake generations suffer from this problem.
+> > > > > > > > >
+> > > > > > > > > So instead of playing whack a mole with DMI matches we should
+> > > > > > > > > simply disable ACPI MIPI DISCO support on all Dell laptops
+> > > > > > > > > with those CPUs. I'm preparing a fix for this to replace
+> > > > > > > > > the DMI matching now.
+> > > > > > > >
+> > > > > > > > DisCo for Imaging support shouldn't be dropped on these systems, and this
+> > > > > > > > isn't what your patch does either. Instead the ACPI graph port nodes (as
+> > > > > > > > per Linux specific definitions) are simply dropped, i.e. this isn't related
+> > > > > > > > to DisCo for Imaging at all.
+> > > > > > >
+> > > > > > > So it looks like the changelog of that patch could be improved, right?
+> > > > > >
+> > > > > > Well, yes. The reason the function is in the file is that nearly all camera
+> > > > > > related parsing is located there, not that it would be related to DisCo for
+> > > > > > Imaging as such.
+> > > > >
+> > > > > So IIUC the camera graph port nodes are created by default with the
+> > > > > help of the firmware-supplied information, but if that is defective a
+> > > > > quirk can be added to skip the creation of those ports in which case
+> > > > > they will be created elsewhere.
+> > > > >
+> > > > > Is this correct?
+> > > >
+> > > > Yes.
+> > >
+> > > So it would be good to add a comment to this effect to
+> > > acpi_nondev_subnode_extract() where acpi_graph_ignore_port() is
+> > > called.
+> > >
+> > > And there is a somewhat tangential question that occurred to me: If
+> > > the nodes are created elsewhere when acpi_graph_ignore_port() is true,
+> > > why is it necessary to consult the platform firmware for the
+> > > information on them at all?  Wouldn't it be better to simply always
+> > > create them elsewhere?
+> >
+> > Simple answer: for the same reason why in general system specific
+> > information comes from ACPI and not from platform data compiled into the
+> > kernel.
+> >
+> > Of course this is technically possible but it does not scale.
+> 
+> While I agree in general, in this particular case the platform data
+> compiled into the kernel needs to be present anyway, at least
+> apparently, in case the data coming from the platform firmware is
+> invalid.
+> 
+> So we need to do 3 things: compile in the platform data into the
+> kernel and expect the platform firmware to provide the necessary
+> information, and add quirks for the systems where it is known invalid.
+> 
+> Isn't this a bit too much?
+
+Isn't this pretty much how ACPI works currently?
+
+We can support systems that contain correct DSDT description of cameras
+without platform data. I was, until recently, only aware of Dell XPS 9315
+that has incorrect camera description and that based on recent findings
+seems to extend to other Dell systems with IPU6 (Hans's patches have the
+details).
+
+Still this is not a reason to break systems that have correct camera
+description and expect the users to report them so they can be listed as
+such.
 
 > 
-> On Fri, Jun 07, 2024 at 11:04:00AM +0200, Martin Schiller wrote:
->> Commit 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API") 
->> not
->> only switched to the gpiod API, but also inverted / changed the 
->> polarity
->> of the GPIO.
->> 
->> According to the PCI specification, the RST# pin is an active-low
->> signal. However, most of the device trees that have been widely used 
->> for
->> a long time (mainly in the openWrt project) define this GPIO as
->> active-high and the old driver code inverted the signal internally.
->> 
->> Apparently there are actually boards where the reset gpio must be
->> operated inverted. For this reason, we cannot use the 
->> GPIOD_OUT_LOW/HIGH
->> flag for initialization. Instead, we must explicitly set the gpio to
->> value 1 in order to take into account any "GPIO_ACTIVE_LOW" flag that
->> may have been set.
+> > On laptops shipped with Windows some additional information is also available
+> > from ACPI via custom objects but a lot of information is just hard coded into
+> > the IPU bridge as well as the INT3472 driver.
 > 
-> Do you have example of such boards? They could not have worked before
-> 90c2d2eb7ab5 because it was actively setting the reset line to physical
-> high, which should leave the device in reset state if there is an
-> inverter between the AP and the device.
+> Well, that's how it goes.
 
-Oh, you're right. I totally missed that '__gpio_set_value' was used in
-the original code and that raw accesses took place without paying
-attention to the GPIO_ACTIVE_* flags.
+Yes, but is it desirable?
 
-You can find the device trees I am talking about in [1].
+-- 
+Kind regards,
 
-@Thomas Bogendoerfer:
-Would it be possible to stop the merging of this patch?
-I think We have to do do some further/other changes.
-
-> 
->> 
->> In order to remain compatible with all these existing device trees, we
->> should therefore keep the logic as it was before the commit.
-> 
-> With gpiod API operating with logical states there's still difference 
-> in
-> logic:
-> 
-> 	gpiod_set_value_cansleep(reset_gpio, 1);
-> 
-> will leave GPIO at 1 if it is described as GPIO_ACTIVE_HIGH (which is
-> apparently what you want for boards with broken DTS) but for boards
-> that accurately describe GPIO as GPIO_ACTIVE_LOW it well drive GPIO to
-> 0, leaving the card in reset state.
-> 
-> You should either use gpiod_set_raw_value_calsleep() or we can try and
-> quirk it in gpiolib (like we do for many other cases of incorrect GPIO
-> polarity descriptions and which is my preference).
-> 
-> This still leaves the question about boards that require inversion. Are
-> you saying that they have real signal inverter on the line or that 
-> their
-> device trees correctly describe the signal as GPIO_ACTIVE_LOW?
-> 
-> BTW, please consider getting DTS trees for your devices into mainline.
-> Why do you keep them separate?
-
-Unfortunately, these are not "my" devices and I can't even test them.
-I've got feedback from some users when I updated the lantiq target to
-linux 6.1 in openwrt.
-
-
-Let's assume that all boards physically expect an active-low signal.
-
-If the GPIO_ACTIVE_LOW flag were now set in the device tree, the
-original (old) driver would have an incorrect initial level (LOW instead
-of HIGH) due to the
-
-	gpio_direction_output(reset_gpio, 1);
-
-This is probably the reason why the flag GPIO_ACTIVE_HIGH is set in
-almost all dts files in openwrt.
-
-But with commit 90c2d2eb7ab5 the initial level (LOW) is guaranteed to be
-wrong because of the "GPIOD_OUT_LOW" and cannot be changed by "wrong"
-device tree settings.
-
-The signal curve is LOW -> LOW -> HIGH instead of HIGH -> LOW -> HIGH.
-
-> 
->> 
->> Fixes: 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
->> ---
->>  arch/mips/pci/pci-lantiq.c | 8 ++++----
->>  1 file changed, 4 insertions(+), 4 deletions(-)
->> 
->> diff --git a/arch/mips/pci/pci-lantiq.c b/arch/mips/pci/pci-lantiq.c
->> index 68a8cefed420..0844db34022e 100644
->> --- a/arch/mips/pci/pci-lantiq.c
->> +++ b/arch/mips/pci/pci-lantiq.c
->> @@ -124,14 +124,14 @@ static int ltq_pci_startup(struct 
->> platform_device *pdev)
->>  		clk_disable(clk_external);
->> 
->>  	/* setup reset gpio used by pci */
->> -	reset_gpio = devm_gpiod_get_optional(&pdev->dev, "reset",
->> -					     GPIOD_OUT_LOW);
->> +	reset_gpio = devm_gpiod_get_optional(&pdev->dev, "reset", 
->> GPIOD_ASIS);
->>  	error = PTR_ERR_OR_ZERO(reset_gpio);
->>  	if (error) {
->>  		dev_err(&pdev->dev, "failed to request gpio: %d\n", error);
->>  		return error;
->>  	}
->>  	gpiod_set_consumer_name(reset_gpio, "pci_reset");
->> +	gpiod_direction_output(reset_gpio, 1);
->> 
->>  	/* enable auto-switching between PCI and EBU */
->>  	ltq_pci_w32(0xa, PCI_CR_CLK_CTRL);
->> @@ -194,10 +194,10 @@ static int ltq_pci_startup(struct 
->> platform_device *pdev)
->> 
->>  	/* toggle reset pin */
->>  	if (reset_gpio) {
->> -		gpiod_set_value_cansleep(reset_gpio, 1);
->> +		gpiod_set_value_cansleep(reset_gpio, 0);
->>  		wmb();
->>  		mdelay(1);
->> -		gpiod_set_value_cansleep(reset_gpio, 0);
->> +		gpiod_set_value_cansleep(reset_gpio, 1);
->>  	}
->>  	return 0;
->>  }
->> --
->> 2.39.2
->> 
-> 
-> Thanks.
-
-[1] 
-https://git.openwrt.org/?p=openwrt/openwrt.git;a=tree;f=target/linux/lantiq/files/arch/mips/boot/dts/lantiq
-
-
+Sakari Ailus
 
