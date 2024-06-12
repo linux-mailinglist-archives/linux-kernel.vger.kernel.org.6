@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-212205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE606905CB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:21:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97CDE905CB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DA6F1F24C74
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:21:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 742B01C2322D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E2984E0A;
-	Wed, 12 Jun 2024 20:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222B18614D;
+	Wed, 12 Jun 2024 20:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URn75nSC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDy8K6tz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E762C84A54;
-	Wed, 12 Jun 2024 20:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FECB84FDF;
+	Wed, 12 Jun 2024 20:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718223667; cv=none; b=dLetWIzUFrp92Yqx9knJlG+eb1JJ4pFYJl/wRhjsxzQfkoqAgiKSjL+bTMYRKuHS3h2ppJFCgjyQ3stZa6wo5kYW32PkzR72gLL7x0WZU1/Gp3gCG5cBAjrxT0wQ+BIbdoIObi0E91zIieo9+N7AJfR4nHtCFavdkC4IZi1e4Hw=
+	t=1718223668; cv=none; b=btFpjmuXANvgSXU6zVIQDeDzbDtRe5zkkwaTfYdqKoeEpfcgUJWr+KDhF5UI8WdRWZLV+WqNda15RA4OisSMhxo5E+HnSMY2+GPBPUXK2NjPUMNKRSELI36b3a9KSRLky0FawAG3hE2tkPnAcYxHsC749mZXzF0mplcHYXzUsTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718223667; c=relaxed/simple;
-	bh=VF8TXFGMOrc2cxAUxWDWimJvw5tB56D41Lk1keK3LeY=;
+	s=arc-20240116; t=1718223668; c=relaxed/simple;
+	bh=MWggHuDmnRYrL6/F/g0nQyheyownkHUkefYD5cQ+7EU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hiJugSX0ZIqBjAuIkHMhh14dd9bfKzy+NmF2ul//XqbQ1GhXXdzN0RjKDZ9fIZExpcHH/ONcTVPSoz0JwmUE2kBo1J6iZHDBVcPWDftf9FYyUIwRG11dY0S1K9w+gt0Oxc5KWnLkdDZrFjVBYGSIKe4VsPp6VCZZjIcuRJ1ZN7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URn75nSC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBD16C116B1;
-	Wed, 12 Jun 2024 20:21:00 +0000 (UTC)
+	 MIME-Version:Content-Type; b=VgMhOQu7oN0e42e9sa46rebveOUpUB4jy61/xciBFpaZxrK7N1m2T2+YM+HhoiGDLQnNyN9bvSBCf4P0/UgPGAA+Nd9ufNBTEAhDWfL83AEwqt2xUoAcC4JtjHOwtrNV3h9WHwBnYBUUoxgepNlY5yyASIcU/PQ1k1mDODcfpps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDy8K6tz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E05D1C32786;
+	Wed, 12 Jun 2024 20:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718223664;
-	bh=VF8TXFGMOrc2cxAUxWDWimJvw5tB56D41Lk1keK3LeY=;
+	s=k20201202; t=1718223667;
+	bh=MWggHuDmnRYrL6/F/g0nQyheyownkHUkefYD5cQ+7EU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=URn75nSC/5cJcxRzqWCubCrsZPUXg+sQT5quwWqRXU9XoCocneYRWaQXa+HrxUI/9
-	 4/VyuQaMxztk7v9bKgw/f5E56QBqxmXd2th+W/m8cyde09j+WHqe3pAN4RHI5rbXlJ
-	 hJ82/sz4V1lNPDYlW4si+Se31a3cOF6t6neKxAvx5evZPi2TpmjZqUnNGJxlCT9jLn
-	 JmfHI3DkUFoZ1IwU1q6sLEdzw7RkOrFXh7GMLrCWOTSseA/rPq5+HgeAj6XLcYtnpg
-	 PX3E/Mg/wmWwfoxawleZuSrJC9vbAn9HWM8jAolAiQtap2RUqylNTu/7UH7ILLv8ZM
-	 N5DumOTsT3cZw==
+	b=dDy8K6tzIR2SW38mTPuGne/59hM0GYaWIWx++6nRhpxUcQvdYeOWmQYITGsROmCbg
+	 RLRNSy3f/W0Lu6Q0pVB2ldComQ7iqf96XMvmFczK5evPGziHapzFZYmuZg2qsEjTRe
+	 o2K9jJghL3hxrS1byOebezsWYFePPNmeBJQ5Xl6fSraFKhhPMTws7MZisx0OUlX+jb
+	 W0trPF8GArt0iYZMhiaku6yqk7EeBd2psHvmBc6kOY6cC/1iqmAq3nm315WywKoEOV
+	 E8mi/5300RFGzcGtDKG9F6yvfNVFTi+20ZvHXN48GjV5sj51QLh/fzDd8LWeP+gRcu
+	 y6IZsnXUPVYZQ==
 From: Mark Brown <broonie@kernel.org>
 To: Lars-Peter Clausen <lars@metafoo.de>, Jaroslav Kysela <perex@perex.cz>, 
  Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
@@ -48,11 +48,11 @@ Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
  alsa-devel@alsa-project.org, Devarsh Thakkar <devarsht@ti.com>, 
  Vignesh Raghavendra <vigneshr@ti.com>, 
  Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <20240610-asoc_next-v2-0-b52aaf5d67c4@ti.com>
-References: <20240610-asoc_next-v2-0-b52aaf5d67c4@ti.com>
-Subject: Re: [PATCH v2 0/2] Fixes for McASP and dmaengine_pcm
-Message-Id: <171822366136.240528.8303514508385610793.b4-ty@kernel.org>
-Date: Wed, 12 Jun 2024 21:21:01 +0100
+In-Reply-To: <20240611-asoc_next-v3-0-fcfd84b12164@ti.com>
+References: <20240611-asoc_next-v3-0-fcfd84b12164@ti.com>
+Subject: Re: [PATCH v3 0/2] Fixes for McASP and dmaengine_pcm
+Message-Id: <171822366586.240528.375456084176371266.b4-ty@kernel.org>
+Date: Wed, 12 Jun 2024 21:21:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,7 +63,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-4c370
 
-On Mon, 10 Jun 2024 16:25:59 +0530, Jai Luthra wrote:
+On Tue, 11 Jun 2024 18:02:54 +0530, Jai Luthra wrote:
 > This series fixes two patches:
 > 
 > 1. Fix the dmaengine API usage by calling dmaengine_synchronize() after
@@ -79,8 +79,8 @@ Applied to
 
 Thanks!
 
-[1/2] ALSA: dmaengine: Synchronize dma channel in prepare()
-      (no commit info)
+[1/2] ALSA: dmaengine: Synchronize dma channel after drop()
+      commit: e8343410ddf08fc36a9b9cc7c51a4e53a262d4c6
 [2/2] ASoC: ti: davinci-mcasp: Set min period size using FIFO config
       commit: c5dcf8ab10606e76c1d8a0ec77f27d84a392e874
 
