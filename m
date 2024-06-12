@@ -1,111 +1,288 @@
-Return-Path: <linux-kernel+bounces-210734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD4F90480D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:34:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63CA90480F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF69E1F216BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:34:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D681A1C229DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 00:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493CE1C2D;
-	Wed, 12 Jun 2024 00:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DB31865;
+	Wed, 12 Jun 2024 00:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vONq4abH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AYEM5FMc"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CC6394;
-	Wed, 12 Jun 2024 00:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32AD5244
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 00:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718152446; cv=none; b=rtzf38vra4osJNruhXvKuaq2smXz7IVUJ47/Jz04BTw+rFoiWOIAMQ6Ixa5lvWo4nNyHQN0iM/nwHeCeSYMfZ/ImiWZqmkhI9yH4mA/RsRnIqrk/QOxotWyr9LA4MmCWTpdRc6ygkUTxoeKUu4aL0i0IXbkjraMMv51rEDz0FpY=
+	t=1718152468; cv=none; b=QFpP8E/ZDNx7bnWs0fMoz9NSWWHKIpa4+Tm2K6vJ70Br3VPq41v4ZLQwHFAzPgdAFjQ6AsrXUPflOjepdOkZng63yLlzGESgByArgCt5mIwewyjckO+Hp7B5MO4/3NADTXRDVSCfNBGsllAOBBiKvbDm/2+8l0BcSOp/ChnxnVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718152446; c=relaxed/simple;
-	bh=5fRGuvJp6cBf5p4D5mJF23NkzpveK8jJGPPtUPoL47Y=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=qNMgf9HaGNJiNlJkxtmAYmAesmcbb9cADd52eDAyCSCuZDFqUYakrDs6ybvQQ2r0QsL96weFfjQ4YE7NJO0497xmTw3+hHKi8tQl3roZfg8to4fOepZBTNWvLV4vnW72Ofdh7hZ/y3wnzYiczlRryl/PdOkzV2AgOK9PD4z2EGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vONq4abH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92413C2BD10;
-	Wed, 12 Jun 2024 00:34:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718152446;
-	bh=5fRGuvJp6cBf5p4D5mJF23NkzpveK8jJGPPtUPoL47Y=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=vONq4abHtLrO1CV8n8jkL2JI7V/e8C71ZawuNB8izsThmZ7zeuBNf6L9pjUeYOb0L
-	 ABkkhSjNK1tGGBdcEQHF+QGGr0Boc3xPaNH4pwF0gf7uFwWoYnPcQEaTuwdROGl5lG
-	 76cXGQwCz2LHb0c4UDqX5k19r2FM7x0cdHoA/bq8tmU00FBoLSECTlNLrlhnxDsY9T
-	 r3d6Cg7iQfrVsoDV0MeUpKPiEDPvkcurn31SYc7xAQeHoTGMoMgkG7JqfFzjBE13c9
-	 4rM354UbjF2TpJsCOG0dG8Lou2GbSuhMEhWK4+EDi6nZHNJl1E9hEOfld92kQKqESx
-	 eMMDN65Z+ALkg==
-Date: Tue, 11 Jun 2024 18:34:04 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1718152468; c=relaxed/simple;
+	bh=VXq4cGbbJ5wUC3sXPQGmmw6XT5m9n5fm86NSv1tTzA0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GlsPJUpPd1K9Hmmx1CqbBz8HiOwzP0SPE083KXgLaAMEhytMNrttJJJxxHiAobAmvuXKvCpL4UeCDiDcPp/F8ebpWtHhq6BHbNGFRX/z6zkOqxZb2HNVdDJ8khMyCDyK2i3aBimxlCL4Canh0gKJvpGXWB0Jdy/J4m2bMpWSo4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AYEM5FMc; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6818fa37eecso5466262a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 17:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718152466; x=1718757266; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wZtnx2ypD298MOxfRWQWCGDlyBsjwxOedcKmzJ1Vh/w=;
+        b=AYEM5FMc6LKAyFggqv6oepM75Ja7Py5dC3/U0Ax93IliMle+dnCj5ONl5hsgfX0O91
+         C+ptTQ4X6jeuDJILJGFddXLg04T2udmRPzpJ7QHpW/d2FDQRnRoUNiE+F7704ov3Iz+X
+         k1PTGbZiMvjmKY2m/9PuqrAgV72OX7ErADPLUeeVZUI7ee4wmr0ChB1NKhW4RUa4RrGg
+         NngFyEJzLIG0GeAENVQXlm6SKcWurI4++cKY2d/N9ydgK9a5G/Spalc6nO1FAD8DcTfH
+         rf/fMqCi8R6Zdpm+ZTNlgEfCM5wpCoNpZzdKI0KtRc2EEB/Gbq5CJU+vTeNLAlE4HKFN
+         7iFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718152466; x=1718757266;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wZtnx2ypD298MOxfRWQWCGDlyBsjwxOedcKmzJ1Vh/w=;
+        b=O0DMyqlUnEJ9KrlfBjj1nYQ4FUxssw793e9pSa2DkMr6MLzkb7iE7jDy8jrdvJsgPp
+         0cCUjVOumMN16ojTJ69ow0TxhADHscEvcaaqPSM/1wpB094MruEE45oTXeDbuvmp2yhX
+         gxJVTJhOseV30wZWxudhvVVQJs0espvsyciDbxowZTmQbtvbnAWdokR4Q7aiu/z06RWU
+         vZDk/Jc4xaZ00haJZWY9JMCjquHt14p3CuPWq9GAJKDryG8DUNUwISrLSzVTfwTfNoHi
+         LNG6t+Ah9KcIlYehSB7YV/AJUXenAtcgFU8RjcQeb+DKL3+4ZtayCXZCLyu1W8c+3fSN
+         Fbyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVppXmjHGZ9vdfu/ljDHNu5hFLB31O6b2xdABy8kfA/vcEV31tZE977mUBzrRLI8UGiRTIuCmdzeWi6VrV7W2nRExAP226P6nta9VyU
+X-Gm-Message-State: AOJu0YwWlvQ/aun+gxRt+D5c2QyBiJom9vzMzcHlbj9VPNlX6vr82jlC
+	Ww6lEnN3lpA9U6hLExi9DYUB/ny+RYGAAvd2LBJjsLXz0/zjInPnuHfQTfHb8ttTAf8kcfdwZj4
+	n4A==
+X-Google-Smtp-Source: AGHT+IEfUID57KRVZYNnDxF72ThhfPcukhPZNhZpGIpvsildrCe9AtFmJCUvjyphH5TOLB/4W627VDGrjJE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a02:515:b0:6f6:7aa3:fc71 with SMTP id
+ 41be03b00d2f7-6fae161fed2mr810a12.2.1718152466035; Tue, 11 Jun 2024 17:34:26
+ -0700 (PDT)
+Date: Tue, 11 Jun 2024 17:34:24 -0700
+In-Reply-To: <CADrL8HU_FKHTz_6d=xhVLZFDQ_zQo-zdB2rqdpa2CKusa1uo+A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Danila Tikhonov <danila@jiaxyga.com>
-Cc: jonathan@marek.ca, krzk+dt@kernel.org, quic_khsieh@quicinc.com, 
- linux-arm-msm@vger.kernel.org, quic_rmccann@quicinc.com, sean@poorly.run, 
- dmitry.baryshkov@linaro.org, tzimmermann@suse.de, mripard@kernel.org, 
- linux-kernel@vger.kernel.org, konrad.dybcio@linaro.org, 
- dri-devel@lists.freedesktop.org, maarten.lankhorst@linux.intel.com, 
- daniel@ffwll.ch, freedreno@lists.freedesktop.org, 
- marijn.suijten@somainline.org, robdclark@gmail.com, conor+dt@kernel.org, 
- swboyd@chromium.org, quic_abhinavk@quicinc.com, devicetree@vger.kernel.org, 
- airlied@gmail.com, quic_jesszhan@quicinc.com, neil.armstrong@linaro.org
-In-Reply-To: <20240611223743.113223-2-danila@jiaxyga.com>
-References: <20240611223743.113223-1-danila@jiaxyga.com>
- <20240611223743.113223-2-danila@jiaxyga.com>
-Message-Id: <171815244421.3448243.12009673117592867975.robh@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: display/msm: Add SM7150 MDSS
+Mime-Version: 1.0
+References: <20240611002145.2078921-1-jthoughton@google.com>
+ <20240611002145.2078921-5-jthoughton@google.com> <CAOUHufYGqbd45shZkGCpqeTV9wcBDUoo3iw1SKiDeFLmrP0+=w@mail.gmail.com>
+ <CADrL8HVHcKSW3hiHzKTit07gzo36jtCZCnM9ZpueyifgNdGggw@mail.gmail.com>
+ <ZmioedgEBptNoz91@google.com> <CADrL8HU_FKHTz_6d=xhVLZFDQ_zQo-zdB2rqdpa2CKusa1uo+A@mail.gmail.com>
+Message-ID: <ZmjtEBH42u7NUWRc@google.com>
+Subject: Re: [PATCH v5 4/9] mm: Add test_clear_young_fast_only MMU notifier
+From: Sean Christopherson <seanjc@google.com>
+To: James Houghton <jthoughton@google.com>
+Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jun 11, 2024, James Houghton wrote:
+> On Tue, Jun 11, 2024 at 12:42=E2=80=AFPM Sean Christopherson <seanjc@goog=
+le.com> wrote:
+> > --
+> > diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
+> > index 7b77ad6cf833..07872ae00fa6 100644
+> > --- a/mm/mmu_notifier.c
+> > +++ b/mm/mmu_notifier.c
+> > @@ -384,7 +384,8 @@ int __mmu_notifier_clear_flush_young(struct mm_stru=
+ct *mm,
+> >
+> >  int __mmu_notifier_clear_young(struct mm_struct *mm,
+> >                                unsigned long start,
+> > -                              unsigned long end)
+> > +                              unsigned long end,
+> > +                              bool fast_only)
+> >  {
+> >         struct mmu_notifier *subscription;
+> >         int young =3D 0, id;
+> > @@ -393,9 +394,12 @@ int __mmu_notifier_clear_young(struct mm_struct *m=
+m,
+> >         hlist_for_each_entry_rcu(subscription,
+> >                                  &mm->notifier_subscriptions->list, hli=
+st,
+> >                                  srcu_read_lock_held(&srcu)) {
+> > -               if (subscription->ops->clear_young)
+> > -                       young |=3D subscription->ops->clear_young(subsc=
+ription,
+> > -                                                               mm, sta=
+rt, end);
+> > +               if (!subscription->ops->clear_young ||
+> > +                   fast_only && !subscription->ops->has_fast_aging)
+> > +                       continue;
+> > +
+> > +               young |=3D subscription->ops->clear_young(subscription,
+> > +                                                       mm, start, end)=
+;
+>=20
+> KVM changing has_fast_aging dynamically would be slow, wouldn't it?
 
-On Wed, 12 Jun 2024 01:37:40 +0300, Danila Tikhonov wrote:
-> Document the MDSS hardware found on the Qualcomm SM7150 platform.
-> 
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
->  .../display/msm/qcom,sm7150-mdss.yaml         | 460 ++++++++++++++++++
->  1 file changed, 460 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sm7150-mdss.yaml
-> 
+No, it could/would be done quite quickly.  But, I'm not suggesting has_fast=
+_aging
+be dynamic, i.e. it's not an "all aging is guaranteed to be fast", it's a "=
+this
+MMU _can_ do fast aging".  It's a bit fuzzy/weird mostly because KVM can es=
+sentially
+have multiple secondary MMUs wired up to the same mmu_notifier.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+> I feel like it's simpler to just pass in fast_only into `clear_young` its=
+elf
+> (and this is how I interpreted what you wrote above anyway).
 
-yamllint warnings/errors:
+Eh, maybe?  A "has_fast_aging" flag is more robust in the sense that it req=
+uires
+secondary MMUs to opt-in, i.e. all secondary MMUs will be considered "slow"=
+ by
+default.
+=20
+It's somewhat of a moot point because KVM is the only secondary MMU that im=
+plements
+.clear_young() and .test_young() (which I keep forgetting), and that seems =
+unlikely
+to change.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/display/msm/qcom,sm7150-mdss.example.dts:25:18: fatal error: dt-bindings/clock/qcom,sm7150-dispcc.h: No such file or directory
-   25 |         #include <dt-bindings/clock/qcom,sm7150-dispcc.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/display/msm/qcom,sm7150-mdss.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
+A flag would also avoid an indirect call and thus a RETPOLINE when CONFIG_R=
+ETPOLINE=3Dy,
+i.e. would be a minor optimization when KVM doesn't suppport fast aging.  B=
+ut that's
+probably a pretty unlikely combination, so it's probably not a valid argume=
+nt.
 
-doc reference errors (make refcheckdocs):
+So, I guess I don't have a strong opinion?
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240611223743.113223-2-danila@jiaxyga.com
+> > Double ugh.  Peeking ahead at the "failure" code, NAK to adding
+> > kvm_arch_young_notifier_likely_fast for all the same reasons I objected=
+ to
+> > kvm_arch_has_test_clear_young() in v1.  Please stop trying to do anythi=
+ng like
+> > that, I will NAK each every attempt to have core mm/ code call directly=
+ into KVM.
+>=20
+> Sorry to make you repeat yourself; I'll leave it out of v6. I don't
+> like it either, but I wasn't sure how important it was to avoid
+> calling into unnecessary notifiers if the TDP MMU were completely
+> disabled.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+If it's important, e.g. for performance, then the mmu_notifier should have =
+a flag
+so that the behavior doesn't assume a KVM backend.   Hence my has_fast_agin=
+g
+suggestion.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+> > Anyways, back to this code, before we spin another version, we need to =
+agree on
+> > exactly what behavior we want out of secondary MMUs.  Because to me, th=
+e behavior
+> > proposed in this version doesn't make any sense.
+> >
+> > Signalling failure because KVM _might_ have relevant aging information =
+in SPTEs
+> > that require taking kvm->mmu_lock is a terrible tradeoff.  And for the =
+test_young
+> > case, it's flat out wrong, e.g. if a page is marked Accessed in the TDP=
+ MMU, then
+> > KVM should return "young", not "failed".
+>=20
+> Sorry for this oversight. What about something like:
+>=20
+> 1. test (and maybe clear) A bits on TDP MMU
+> 2. If accessed && !should_clear: return (fast)
+> 3. if (fast_only): return (fast)
+> 4. If !(must check shadow MMU): return (fast)
+> 5. test (and maybe clear) A bits in shadow MMU
+> 6. return (slow)
 
-pip3 install dtschema --upgrade
+I don't understand where the "must check shadow MMU" in #4 comes from.  I a=
+lso
+don't think it's necessary; see below.
+=20
+> Some of this reordering (and maybe a change from
+> kvm_shadow_root_allocated() to checking indirect_shadow_pages or
+> something else) can be done in its own patch.
+>
+> > So rather than failing the fast aging, I think what we want is to know =
+if an
+> > mmu_notifier found a young SPTE during a fast lookup.  E.g. something l=
+ike this
+> > in KVM, where using kvm_has_shadow_mmu_sptes() instead of kvm_memslots_=
+have_rmaps()
+> > is an optional optimization to avoid taking mmu_lock for write in paths=
+ where a
+> > (very rare) false negative is acceptable.
+> >
+> >   static bool kvm_has_shadow_mmu_sptes(struct kvm *kvm)
+> >   {
+> >         return !tdp_mmu_enabled || READ_ONCE(kvm->arch.indirect_shadow_=
+pages);
+> >   }
+> >
+> >   static int __kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range=
+,
+> >                          bool fast_only)
+> >   {
+> >         int young =3D 0;
+> >
+> >         if (!fast_only && kvm_has_shadow_mmu_sptes(kvm)) {
+> >                 write_lock(&kvm->mmu_lock);
+> >                 young =3D kvm_handle_gfn_range(kvm, range, kvm_age_rmap=
+);
+> >                 write_unlock(&kvm->mmu_lock);
+> >         }
+> >
+> >         if (tdp_mmu_enabled && kvm_tdp_mmu_age_gfn_range(kvm, range))
+> >                 young =3D 1 | MMU_NOTIFY_WAS_FAST;
+>=20
+> I don't think this line is quite right. We might set
+> MMU_NOTIFY_WAS_FAST even when we took the mmu_lock. I understand what
+> you mean though, thanks.
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+The name sucks, but I believe the logic is correct.  As posted here in v5, =
+the
+MGRLU code wants to age both fast _and_ slow MMUs.  AIUI, the intent is to =
+always
+get aging information, but only look around at other PTEs if it can be done=
+ fast.
 
+	if (should_walk_secondary_mmu()) {
+		notifier_result =3D
+			mmu_notifier_test_clear_young_fast_only(
+					vma->vm_mm, addr, addr + PAGE_SIZE,
+					/*clear=3D*/true);
+	}
+
+	if (notifier_result & MMU_NOTIFIER_FAST_FAILED)
+		secondary_young =3D mmu_notifier_clear_young(vma->vm_mm, addr,
+							   addr + PAGE_SIZE);
+	else {
+		secondary_young =3D notifier_result & MMU_NOTIFIER_FAST_YOUNG;
+		notifier_was_fast =3D true;
+	}
+
+The change, relative to v5, that I am proposing is that MGLRU looks around =
+if
+the page was young in _a_ "fast" secondary MMU, whereas v5 looks around if =
+and
+only if _all_ secondary MMUs are fast.
+
+In other words, if a fast MMU had a young SPTE, look around _that_ MMU, via=
+ the
+fast_only flag.
 
