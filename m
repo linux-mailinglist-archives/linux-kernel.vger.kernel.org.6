@@ -1,132 +1,156 @@
-Return-Path: <linux-kernel+bounces-210944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887E5904AC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:23:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2CE904AC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 939021C23880
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8928D1F244B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9B7381AF;
-	Wed, 12 Jun 2024 05:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662C0374D1;
+	Wed, 12 Jun 2024 05:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rQIhdXDt"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJzKow9T"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF9E36AF5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 05:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA041C2D;
+	Wed, 12 Jun 2024 05:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718169770; cv=none; b=Njdoq+cPlM6IvPmY01YpFbTKzx62eW0Njh0NB5wYLR7ujsjv1iRw9lDhYcP5nvl7hf3bmM6p6fYvfdjqt53yZ0CHFpY+QgaYdPR0xfdhpWG4mBBrbnGbBoRPWhwFqq9psxpy27Ic/g3u9vZnxwTtSNHmkYLDqP3u7kZLR5dMpAM=
+	t=1718169721; cv=none; b=Z0BrEpUP8MXTH2peVm5uAlDQsBSpW+gWOoIm7ZjzdYMu5yI1TXSgm2t18hgzFtNIdLOZoHcBi0XKSfgGNREiDIaPDbJacuU9eOvjvk79m6xyN/wXK+Dw0GEH7nIcmPAqK0FlxIgGvp2FWnwKNLiJayaF27OKuwSySM4pGgbo1nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718169770; c=relaxed/simple;
-	bh=35UcWIWYEQHwpKXq+bxmCMU3dqH3YGp239618H0CEGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ORv7IKoTbqLAREadORJ+/DcRgx73o3TxBa50HbNnYqYAEO6mdcbjnFXmpkSKGUKukmCEcFgdW7VQeMV0ZQRl08KegejA9Obrz64C1WWN/H0sSray04HFWxWr8AUtIcLpEC79b7diFtU1vUXPH1gQ9cdYDoZXH8ylS/21vi+y2r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rQIhdXDt; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45C5M1ub058704;
-	Wed, 12 Jun 2024 00:22:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718169721;
-	bh=7dhCBqMpnOFGD2givG/XRMTkcJbao4lg4u/p3lcH/tI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=rQIhdXDtWcbshKXgo7q4vYWzEJE7LgNbPs6k8Qg15WxKCJ2vA1LavmPYy6O6qCFKO
-	 enjeCR9AttWLyrigNRDXU/wZ1kl/x7X6ut8QoOr+dQT6WhZATc0zHaxsPKaXuLCNd3
-	 US0ffus9ealSwtJkvnDRaXRUqBCUI/qVjLa9T4Ig=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45C5M1PE010122
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Jun 2024 00:22:01 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
- Jun 2024 00:22:00 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 12 Jun 2024 00:22:00 -0500
-Received: from [172.24.227.55] (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.55])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45C5Lt3U089569;
-	Wed, 12 Jun 2024 00:21:56 -0500
-Message-ID: <cc4553df-af5d-4c9f-8b0a-ed35e1cb36fb@ti.com>
-Date: Wed, 12 Jun 2024 10:51:55 +0530
+	s=arc-20240116; t=1718169721; c=relaxed/simple;
+	bh=8SGOda8tYPcw0wzFjbPUAUG2mv09WHxbpDwu0cNWIFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ml2166lDugBjm/EL2ajqF0bxCUR2z61W15m7gJFNOv8KD1CcvnlVdPH9GtwnHxYe0PAanA9BVZmHtIhOG5UcYjMDAUKZmPQHRRE9bO1OZJ66GuklIttK7HCRUMU6RpIYowMXRhWnQa/b9A862ZyRgyFtdFN9WqSMKPTfHbsfuek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJzKow9T; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-48c4a821d76so1015381137.2;
+        Tue, 11 Jun 2024 22:22:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718169719; x=1718774519; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fjEwJgRoG92FC9Vw5huQBkdZy2fxtlgBnuBKB/008U0=;
+        b=XJzKow9TKqUCW9TmDa5rKNQxTtDpSNeVcSt6QWMhIkRzm/zQ90nWoZa/w5xw6RVmwz
+         2p3ABsv2oCNQkIP//1cvDC2mNCeXFwbcE6bv1C6WQBVHFvLCLQNp2xgV4RC6lb1vCdk1
+         jxqBpojj3DIlgYbIQnc/lxTv9Ut/YSiRL36duXOYAA0cdwZ5bEDdQ/yfVr+0GrB6VNo4
+         N+/BllgyLD2CLVeluJddcdMY907nAyxB52dzUAOy6JcGvsjLOqPmlqYrrhaF1oYPKp3M
+         2Scnug70Gr/XJFCOf/WOp8wET8Xce27/AhfpHhH9522MB5oYaIbaguI8mszk8kAAi6te
+         KjPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718169719; x=1718774519;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fjEwJgRoG92FC9Vw5huQBkdZy2fxtlgBnuBKB/008U0=;
+        b=D/BO4D1LGzsQDFSHkCbYQXHf1c5cFGyDCvpz7TBSf0cMheYHsUselzsrOCbvHk4hP+
+         /ewKgDIHbJ18ebTLDB3BvTeYahnwIj7zTIwx1pFftAg0wYI58GoRzHpPny+uyh3bzSLq
+         CAfXRWmofFBuAv1mlf0OAAJYI474o4edw0zJ1jfRs4vEutaYFfOoAAXEtiDnUY3wVSPg
+         nu+UtP+HDu5S2jevb9hFPArEdMIVVVa+pcR7i08lDUyivosvxoIz8d3piSxFBSEDXg3Q
+         wHV3cRiSqfTDDtuR3XkMLZc1UXNl9EWwljyn7XaEKqaqJKM40R53hIoJ98tB88/0Kk3f
+         Z1bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJzdieaVpq9Aj3C8/Tfm8stcTPcxwr37x3qhfwtnmXG9R9j5H+5ODzFwc2I+tWgXsbCK/wd9CT7BD6uIGhLzREwnlQSiFwcrrUnZN4
+X-Gm-Message-State: AOJu0YxaSKl4eg5JtCqr+jjzUUz3vbeILHzFyJJnePFlE6ztSy2yU0KT
+	VhTdlwV4T5xK3ZXfTpLC+Sk4DswdO3RfrjkRMEptFKsTOaw/yLx6
+X-Google-Smtp-Source: AGHT+IFDvF86CuK3Kg24+xx5dBk2/UDjJk+sWB47rTKVHiKT+QQs97LesjLepl9XawzJSkfEe8TcLw==
+X-Received: by 2002:a67:b641:0:b0:48c:4d59:6295 with SMTP id ada2fe7eead31-48d91de3080mr974801137.19.1718169719138;
+        Tue, 11 Jun 2024 22:21:59 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-797a2b7f956sm186654985a.6.2024.06.11.22.21.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 22:21:58 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 2893D1200043;
+	Wed, 12 Jun 2024 01:21:58 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 12 Jun 2024 01:21:58 -0400
+X-ME-Sender: <xms:djBpZjepV48rA8difPCs5QQIvsblVI7GqyooEM7GVBuLcH16ihDHFQ>
+    <xme:djBpZpOSBMMS1yv7MEuoR35VjkeF488ge73Jx5kJkC22K4G57GbHOnZgXqssf0WWB
+    LlpdvgelIy0Snt0_w>
+X-ME-Received: <xmr:djBpZsjShrWrBibnu9O0Z5xGTsFQUDKh4aBvdzdl2xYg3fHO5SgeEPA-Iw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedufedgledvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
+    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
+    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
+    igmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:djBpZk_bCnEb_qh7jne4GYOzjhOCd-swKy33lBc1UEW6ZbCk2qtrLA>
+    <xmx:djBpZvsewM13dmMZPARhg3iAt4WCJZFI0JeqkrOkJGXIIwT-aoIvfg>
+    <xmx:djBpZjFP7fB-7itURqGUpDkD_-jG_qeF881mb10M5DIalgYd3C57Fw>
+    <xmx:djBpZmNP-rupTPcCkq3RtbEC-2Lk_76CXmNW5bi2IfkV9fzr5J-n7g>
+    <xmx:djBpZgOM2_4tEuUKI0CjzbgPmeiKi1FhZDowT24t05GD5MTbv4HMNHp5>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Jun 2024 01:21:57 -0400 (EDT)
+Date: Tue, 11 Jun 2024 22:21:56 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH rcu 0/6] Grace-period memory-barrier adjustments for v6.11
+Message-ID: <ZmkwdFhXK2SsVWa4@Boquns-Mac-mini.home>
+References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v4,1/2] drm/bridge: sii902x: Fix mode_valid hook
-To: Sui Jingfeng <sui.jingfeng@linux.dev>, Sam Ravnborg <sam@ravnborg.org>
-CC: <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
-        <mripard@kernel.org>, <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-        <airlied@gmail.com>, <daniel@ffwll.ch>, <a-bhatia1@ti.com>,
-        <dri-devel@lists.freedesktop.org>
-References: <20240530092930.434026-2-j-choudhary@ti.com>
- <e5ce13e6-1007-41c9-bedc-2045d6f75480@linux.dev>
- <20240531133324.GA1715839@ravnborg.org>
- <955a6d94-9a4c-4f7d-974c-819261579f14@linux.dev>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <955a6d94-9a4c-4f7d-974c-819261579f14@linux.dev>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
 
-Hello Sui, Sam!
-
-Thanks for the review.
-
-(Sorry for delayed response. I was OoO last week)
-
-On 31/05/24 19:34, Sui Jingfeng wrote:
-> Hi, Jayesh
+On Tue, Jun 04, 2024 at 03:26:46PM -0700, Paul E. McKenney wrote:
+> Hello!
 > 
+> This series removes redundant memory barriers from the grace-period
+> code paths:
 > 
-> On 5/31/24 21:33, Sam Ravnborg wrote:
->> Hi Jayesh,
->>
->>>> +
->>>>    static const struct drm_bridge_funcs sii902x_bridge_funcs = {
->>>>        .attach = sii902x_bridge_attach,
->>>>        .mode_set = sii902x_bridge_mode_set,
->>>> @@ -516,6 +529,7 @@ static const struct drm_bridge_funcs 
->>>> sii902x_bridge_funcs = {
->>>>        .atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
->>>>        .atomic_get_input_bus_fmts = 
->>>> sii902x_bridge_atomic_get_input_bus_fmts,
->>>>        .atomic_check = sii902x_bridge_atomic_check,
->>>> +    .mode_valid = sii902x_bridge_mode_valid,
->>
->> As you have the possibility to test the driver, it would be nice with a
->> follow-up patch that replaces the use of enable() / disable() with the
->> atomic counterparts.
->>
->> enable() / disable() are deprecated, so it is nice to reduce their use.
+> 1.	Remove full ordering on second EQS snapshot, courtesy of Frederic
+> 	Weisbecker.
 > 
-> I agree with Sam.
+> 2.	Remove superfluous full memory barrier upon first EQS snapshot,
+> 	courtesy of Frederic Weisbecker.
 > 
-> Please using atomic uniformally with a follow-up patch, the mixed
-> using of atomic API and non atomic API is a little bit confusing IMO.
+> 3.	rcu/exp: Remove superfluous full memory barrier upon first EQS
+> 	snapshot, courtesy of Frederic Weisbecker.
 > 
+> 4.	Remove full memory barrier on boot time eqs sanity check,
+> 	courtesy of Frederic Weisbecker.
+> 
+> 5.	Remove full memory barrier on RCU stall printout, courtesy of
+> 	Frederic Weisbecker.
+> 
+> 6.	rcu/exp: Remove redundant full memory barrier at the end of GP,
+> 	courtesy of Frederic Weisbecker.
 > 
 
-I will change the enable and disable to their atomic counter parts in 
-the next revision.
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
 
-Warm Regards,
--Jayesh
+Regards,
+Boqun
 
-
+> 						Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+>  b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst |    6 +--
+>  b/kernel/rcu/tree.c                                                     |    2 -
+>  b/kernel/rcu/tree_exp.h                                                 |    8 +++-
+>  b/kernel/rcu/tree_stall.h                                               |    4 +-
+>  kernel/rcu/tree.c                                                       |   19 +++-------
+>  kernel/rcu/tree_exp.h                                                   |    8 +++-
+>  6 files changed, 26 insertions(+), 21 deletions(-)
+> 
 
