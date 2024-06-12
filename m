@@ -1,84 +1,134 @@
-Return-Path: <linux-kernel+bounces-211318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DCD8904FF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:02:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F90A904FF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753C21C22B0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F6CE1F2156A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB4216E882;
-	Wed, 12 Jun 2024 10:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CA616E898;
+	Wed, 12 Jun 2024 10:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kdKHnRoS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XnDoTSHz"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E10A153BEF;
-	Wed, 12 Jun 2024 10:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8C3A34
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718186443; cv=none; b=mquiluYqqQgWT4bTjqj1eGrEZSe8oxyTqHOa1Meqz9Kwp9EcQHNQwdUjs/2MXZubRLpySUV+kZ3qd93y/SL8bJ5PzFfrH619b+op58PEKrH3PXAG3tOGn4tHugZ9G3AisxG5HP2Gyp2qGqWATseS6dhV/d039TEA0rNkGUk9p7M=
+	t=1718186485; cv=none; b=J+HEvAyYdZV1KH4M9ZWFIicS2fX5x88vhi4iLKueuViPfw9HNxef8ZqrjQ6zMGk7O02cKxnc+jh+YsmgYWItclC/hKeeTBXKs2ITJ2c78gWzIjrvHibBAWcCk6WJUPOuG7ZmgM3eI8xH6Kff/SvaGIYcOXBP85CgWRMPjfiTt1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718186443; c=relaxed/simple;
-	bh=7LFqbV8a2eEf04HyVsqJ/oKgbTyp/2/zSarRLIBqhmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EcWLjqpE2qE0pi9O+OusiFF3di+MIZlA+fGvcfy06Dh2/rgsU+bIKhoWu+E2ZRglt3GOuTax+lqA48FXw3qNb75OZilJ5mCEKQ4VW+Ca3RB/LqO80uPl8fK6rY6N86bfpPR2R9a73bgS7qJBXm9HDS+W1BcdDaZK7DBS7BR3U4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kdKHnRoS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DADB2C3277B;
-	Wed, 12 Jun 2024 10:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718186443;
-	bh=7LFqbV8a2eEf04HyVsqJ/oKgbTyp/2/zSarRLIBqhmQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kdKHnRoS1XvxkBjEUW5CYbnJqb9mdMDAyeGMUa5SEH/jcItCRT6abOIulu1Io5Jg2
-	 67160/YLkMJCBzdDKsBJrZ0Jr/mGzLS7ONQmoIdZdL5jFSNBILuN9k+AtEFOML4mFI
-	 RLEbtwJQDeqa2oOkR6G7tM1IyDx5/kIUXiOylvrI=
-Date: Wed, 12 Jun 2024 12:00:40 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH] nvdimm: make nd_class constant
-Message-ID: <2024061206-unleveled-seduce-9861@gregkh>
-References: <2024061041-grandkid-coherence-19b0@gregkh>
- <66673b8a1ec86_12552029457@dwillia2-xfh.jf.intel.com.notmuch>
+	s=arc-20240116; t=1718186485; c=relaxed/simple;
+	bh=eONlZ4ZZXucitjMnx29p/sFsI36wtPsuca6/lJlt/38=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oqJEQhH79N7yjd3n4H4JrVyeX9sQZL4fBagmU+T3v8vTnJjfwqVhFERW2WW9UQ1Xx6gDkJVi9zNKcr9mroLZLyPU+iogAsrqvmOSh0MUHIIdkYGK+PNIGwDs/IskbgonexY3gKLNt4Vkrycb7RIvvStyKrtGSXGXTes6CEvvZzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XnDoTSHz; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-62a145e0bb2so75978977b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 03:01:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718186482; x=1718791282; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AhgKyJlD2vWJb9JL/Gw5nFT1XfWpW1UuHSEQpsWI+uY=;
+        b=XnDoTSHzDOazf0Cr+V9I8mMKSOsvVBLPhgpYT6ViD/bhjLWFXRqhsEFJXgqlXT+epY
+         r6gVp8CCwcXJ/rA66D6loL9PZiGXYPJVSzHmrogEmaDbyQhLAz3AvEjju/F0e9NHMmuS
+         9uzs6DMUBWL3MiHp6T83ICLvym+NWoV1E2hKQIt3jCBrG7theFlLPkkKRZcP3E+QnMJ/
+         88u/hMIG0c5hFQipdqpxK9YZM6LnxH2KtPIGL/l+xcKp93mL26k5No41CYHvdls3GzYR
+         oFh2qAzV2ZMwtnAcCM0n0PohP5lFPhJyCkjRtu5LsCqMq4Ob9ZEr072nnbhuIBc459IW
+         pOaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718186482; x=1718791282;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AhgKyJlD2vWJb9JL/Gw5nFT1XfWpW1UuHSEQpsWI+uY=;
+        b=BVOhnFmqv9NfWnH4Rp8cBlz9y6RjY5T/OyXdmfWQqzyU7toqdyS9dqTb0bNGssUARX
+         eJbjx33cBepHyKongapHtjf7VHTsJ6M3k5itar7ucqPKcBXe6wM7MM64HXSvhfsOgIod
+         HfG1PF6q0ADeQk+WTd7HEKgANuuRMskN3ryaA+sKkYuyXT9LMyB2GnWH4lKPi/ZeI1b0
+         QvAHMyOhzaj35+ZQMx8H4YmODIfN0i8JDzIXydr9pDVCR+ookH7rBZVDVjZNvh+iAgcj
+         0q46BAQVZODN+TkXGlFHcpy/jfPaXrNsAYfTx9n4pg5y3rdEZp9yF1f3a7bdua/jRvgD
+         Ta1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUxGcG8uyVT8KQ/KE26D4BVhELWLGJeC6XZlNJ/boG7syf1eVMOTqNu2rZXDCFqx+CZXLoZj+nPjbxwYpU4gWEKt9bUYl0gsXqwPOHs
+X-Gm-Message-State: AOJu0YxOFTTXrD3ERIrQaYhjtBghJM9cxkgyBNJ9eaMWFXSrFTgC+sPp
+	f0IssYKl6KtQ2yNKRReygUstVhXtDPnB5iwg5GQTXfrtzPkUcJjOWIhsy3z1KWI=
+X-Google-Smtp-Source: AGHT+IE4L0L47QVH3JJIqko79lJt0u2nUHCu1fn9GgPaUuT4L3KK3xB9cYvRMloLBM2cXbGS1VsgNw==
+X-Received: by 2002:a0d:c285:0:b0:62f:4149:760f with SMTP id 00721157ae682-62fbd79c03bmr11770277b3.33.1718186482133;
+        Wed, 12 Jun 2024 03:01:22 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-005.fbsv.net. [2a03:2880:20ff:5::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b06ae2266bsm45026816d6.3.2024.06.12.03.01.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 03:01:21 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: akpm@linux-foundation.org
+Cc: shakeel.butt@linux.dev,
+	willy@infradead.org,
+	hannes@cmpxchg.org,
+	yosryahmed@google.com,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH] mm: Do not start/end writeback for pages stored in zswap
+Date: Wed, 12 Jun 2024 11:01:09 +0100
+Message-ID: <20240612100109.1616626-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66673b8a1ec86_12552029457@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 10, 2024 at 10:44:42AM -0700, Dan Williams wrote:
-> Greg Kroah-Hartman wrote:
-> > Now that the driver core allows for struct class to be in read-only
-> > memory, we should make all 'class' structures declared at build time
-> > placing them into read-only memory, instead of having to be dynamically
-> > allocated at runtime.
-> 
-> Change looks good to me,
-> 
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> 
-> ...changelog grammar tripped me up though, how about:
-> 
-> "Now that the driver core allows for struct class to be in read-only
-> memory, it is possible to make all 'class' structures be declared at
-> build time. Move the class to a 'static const' declaration and register
-> it rather than dynamically create it."
+Most of the work done in folio_start_writeback is reversed in
+folio_end_writeback. For e.g. NR_WRITEBACK and NR_ZONE_WRITE_PENDING
+are incremented in start_writeback and decremented in end_writeback.
+Calling end_writeback immediately after start_writeback (separated by
+folio_unlock) cancels the affect of most of the work done in start
+hence can be removed.
 
-That works too, want me to resubmit with this, or can I update it when I
-commit it to my tree?
+There is some extra work done in folio_end_writeback, however it is
+incorrect/not applicable to zswap:
+- folio_end_writeback incorrectly increments NR_WRITTEN counter,
+  eventhough the pages aren't written to disk, hence this change
+  corrects this behaviour.
+- folio_end_writeback calls folio_rotate_reclaimable, but that only
+  makes sense for async writeback pages, while for zswap pages are
+  synchronously reclaimed.
 
-thanks,
+Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+Acked-by: Yosry Ahmed <yosryahmed@google.com>
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+---
+ mm/page_io.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-greg "the changelog is the hardest part" k-h
+diff --git a/mm/page_io.c b/mm/page_io.c
+index a360857cf75d..501784d79977 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -196,9 +196,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
+ 		return ret;
+ 	}
+ 	if (zswap_store(folio)) {
+-		folio_start_writeback(folio);
+ 		folio_unlock(folio);
+-		folio_end_writeback(folio);
+ 		return 0;
+ 	}
+ 	if (!mem_cgroup_zswap_writeback_enabled(folio_memcg(folio))) {
+-- 
+2.43.0
+
 
