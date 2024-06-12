@@ -1,107 +1,110 @@
-Return-Path: <linux-kernel+bounces-210950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A34D904AFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:40:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F140904AFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D6E2850D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:40:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4EC12850D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B583770D;
-	Wed, 12 Jun 2024 05:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CE636124;
+	Wed, 12 Jun 2024 05:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0llf8ES"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWtCrySh"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBC179D8;
-	Wed, 12 Jun 2024 05:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426F779D8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 05:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718170831; cv=none; b=JPvSCok8NBI4PFFVFBKYxB3SFpBDFe/O+VEHXGUSBVzqUgHvVJAjiOMZXpFyynORoFin78TJUt9JgP3EYJt9jT+z5EFuAxOWeteMysJ6BY2istkOSTE2OhikwalVfYmOiU1/LnjXUvqm8mAZHva/UflK7pDtDEvdmjr1ojAqxio=
+	t=1718170871; cv=none; b=EMANWPfw/LBTw2PgDLSdkYWZRt1Xh5F4njFTQnjhJpm3ZZFYvooFxNjsxf8J0Z7ZQZ1n6zmkdLxvUXePIP4bYyUiiB/yKNXtQ+2tpMTDAXXQkd4pXHw8QpAE9RY+NJQV0UR6lNvs4mQwHPWz6jCpbwX2isPvtWviqKBxrwswil4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718170831; c=relaxed/simple;
-	bh=z5DKGdkQHd6N4C5R0TvXcMTfbPbCS6uuyB3zQ/QDn24=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=CMehYYXxZAWjVk4aZcyerRl9CWXWbbAtXo8q6gFmiYEuDrUGLIziRz9uNg7XXKEjqhjbp5cKpN9B9YEEEZap/UriqBGzp2Gqi5FP+2A0/Gpugff8uXm/mBEDnMqD6PPSgMrvWCrxZxhmA62C8Ir8B33hObXr2m11N0Uj3WghewA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0llf8ES; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0509AC32786;
-	Wed, 12 Jun 2024 05:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718170831;
-	bh=z5DKGdkQHd6N4C5R0TvXcMTfbPbCS6uuyB3zQ/QDn24=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=B0llf8ES9k8QfWvbjirSJ+bEiP2L0vVMIDIFZvmAUl70BL6OxphJJHQLaTcoFvAB0
-	 zNypUlDZuPtNNhnCkbuVCLZJR9bFtejkFtMCGzt3iokIKxQ+3ML8QeZe0IBa2PXaUk
-	 g1jNhG23NLUXo11ukTFqWXphaRYHMseC/NOZTH+8YmAnqX+euU7JL0gWZAx3dXAmjw
-	 /Q+84ehJzLxGMJ8DlQyjRNYKO4him0tUKoXakwOPG1Pli3K6W30eE0hkFv2UTmVCxy
-	 M6LflOjnt+ZIkFzNaW8D7aBA6clV0aVmOy5j2UZTooZoLugJ8Yy+4FRkMUdbUji4k0
-	 hmTn0KWEqpRGA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E0465C54BB2;
-	Wed, 12 Jun 2024 05:40:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718170871; c=relaxed/simple;
+	bh=N2qeEuLIeQ/Sboky+rnEg8RxtodJVVIk8kOoJLibkBg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=u2Ifbs0pOSt3PY4xXObzRnNOQq4+hNXQBX30pEwccSuYO8sNYi34h61Id2YblyzzImPTaXmC7AGFxcuZ+rzvhPU4336otS04O+9jvZ84A9WDhj6ivxbx6toQkQ6TLJU+oG/JMl74lPvc7c5HDPdTa4AuthJ9eN2pYJGaN5BHQ0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWtCrySh; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6f408b8037so16242466b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718170868; x=1718775668; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sKVvOJDRBmXEZZQWgGpt7X0kHZm5kqDS8w/6wm0mBr4=;
+        b=RWtCryShM9qf9COQ1pgWTStsnh5gFYk0xOsPO0Nmma5ziGu4HRnOrWuykZ6bEQyMbc
+         4oaM6gHsgAfwRunIVm7NfcoKmQ53vtzgJXqhVMW0PInWdom1kQ4kddNUbjZs5kAS27TV
+         1/u351L4oLLQq5JTjlq9gXB4rlamP3SOj7RN9cUzaw3g/YyxLQFT6YHdsrQ2rdw963kO
+         i5Cd+hg0PLMVckjozKMqJyFrJGpjEumkRPMhy2RstDjHls8VBEbS/Rsc6aQcf99hOcUB
+         OwDq8jUo4okQuL2qOHfTzfIbC28bFMGl2Vvgkp5C1AwO624DalSJbz5iGeY2bxr7sNiw
+         jjWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718170868; x=1718775668;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sKVvOJDRBmXEZZQWgGpt7X0kHZm5kqDS8w/6wm0mBr4=;
+        b=HXCUGlxe6qzYjgQPHW62tVZ2tV9HbrV2ksQlXGZj9Vwpb526sT4k3zUyhDbBhnXLgz
+         Gs+4/M2rFS+V2OGuQwaYqGRZ+y+KkaL0vH0bDEXX21WsXf1OyfkIMbB1EyITb4LEDHvG
+         p8Gp+3Hp6LlFBqkHITRYs1byob+a1CmmXr3q8jfmJtZM3mHlstk/2hNq0swzh6jNDPdP
+         LeMc5ZDp2ferM6UJoeOVaiZrBov/8aicY3w2LN/nxABZDbfLKqNPByv0e9CTSFL8rBzD
+         2+L9b0i1alaBkyTskZLv1g8oqbiDPmKictoISuFVyuhphlXTmQdoCvXC9cvsFpvOEqnV
+         CncQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBO1wicDle7RZ/joJqSqlqQl6GFqwMF2h2peYh0wlsk/u1zC0UvF8YRjDa/Fr49laDJYC7ZrqVDZisMOcRFQHVdoqs+uviOJXpW7k6
+X-Gm-Message-State: AOJu0YwtYULXxnurEatntQF4misQDhjBYWg28grjD9NawMUUtQTBi56o
+	wDfKrPYTnB/rt5ZNIcmEWZ55TyCVEW19suhNBcGXlhP0e284kvQC
+X-Google-Smtp-Source: AGHT+IEMKTWRaBB1/ku+YH/D2e753+srFdxu59n9NNVoFvu7NyD67xXsC5R0sbrtRdeFTc4/osfwOg==
+X-Received: by 2002:a17:906:4ad0:b0:a6f:4a8d:1db with SMTP id a640c23a62f3a-a6f4a8d0254mr17225266b.4.1718170868261;
+        Tue, 11 Jun 2024 22:41:08 -0700 (PDT)
+Received: from [192.168.0.101] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80728be9sm838049066b.199.2024.06.11.22.41.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 22:41:07 -0700 (PDT)
+Message-ID: <fcf77c98-0ee5-45ce-a17f-d68dfba9f7ee@gmail.com>
+Date: Wed, 12 Jun 2024 07:41:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v4 0/6] net/tcp: TCP-AO and TCP-MD5 tracepoints
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171817083091.28312.7398867679773366981.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Jun 2024 05:40:30 +0000
-References: <20240607-tcp_ao-tracepoints-v4-0-88dc245c1f39@gmail.com>
-In-Reply-To: <20240607-tcp_ao-tracepoints-v4-0-88dc245c1f39@gmail.com>
-To: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
-Cc: edumazet@google.com, davem@davemloft.net, kuba@kernel.org,
- pabeni@redhat.com, dsahern@kernel.org, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, corbet@lwn.net,
- mnassiri@ciena.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, 0x7f454c46@gmail.com
-
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Fri, 07 Jun 2024 00:25:54 +0100 you wrote:
-> Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
-> ---
-> Changes in v4:
-> - Fix the build for CONFIG_TCP_MD5SIG=n (Matthieu Baerts, netdev dashboard)
-> - Link to v3: https://lore.kernel.org/r/20240606-tcp_ao-tracepoints-v3-0-13621988c09f@gmail.com
-> 
-> Changes in v3:
-> - Unexported tcp_inbound_ao_hash() and made static (Eric Dumazet)
-> - Link to v2: https://lore.kernel.org/r/20240605-tcp_ao-tracepoints-v2-0-e91e161282ef@gmail.com
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v4,1/6] net/tcp: Use static_branch_tcp_{md5,ao} to drop ifdefs
-    https://git.kernel.org/netdev/net-next/c/3966a668bfee
-  - [net-next,v4,2/6] net/tcp: Add a helper tcp_ao_hdr_maclen()
-    https://git.kernel.org/netdev/net-next/c/72863087f635
-  - [net-next,v4,3/6] net/tcp: Move tcp_inbound_hash() from headers
-    https://git.kernel.org/netdev/net-next/c/811efc06e5f3
-  - [net-next,v4,4/6] net/tcp: Add tcp-md5 and tcp-ao tracepoints
-    https://git.kernel.org/netdev/net-next/c/96be3dcd013d
-  - [net-next,v4,5/6] net/tcp: Remove tcp_hash_fail()
-    https://git.kernel.org/netdev/net-next/c/78b1b27db91c
-  - [net-next,v4,6/6] Documentation/tcp-ao: Add a few lines on tracepoints
-    https://git.kernel.org/netdev/net-next/c/efe46fb18e78
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Teddy Engel <engel.teddy@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Subject: Re: [PATCH] staging: vt6656: Fix checkpatch unnecessary parentheses
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
+Remove unnecessary parentheses - according to checkpatch.pl strict
+
+Signed-off-by: Teddy Engel <engel.teddy@gmail.com>
+
+
+Hi Teddy,
+
+your patch creates a checkpatch warning:
+WARNING: A patch subject line should describe the change not the tool 
+that found it
+
+The next thing that worries me is that the fix does not increase the
+readability of the code for me. I think overview is better with
+brackets.
+
+I also think that you are doing two things at a time. You are changing
+the TODO file and the brackets.
+
+I would change only the TODO file.
+
+Thanks for your support.
+
+Bye Philipp
 
