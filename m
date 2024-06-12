@@ -1,62 +1,91 @@
-Return-Path: <linux-kernel+bounces-211251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87C1904F15
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:22:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E068C904F1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BC5F1F249FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:22:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A8D3B2184E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2576416D9DC;
-	Wed, 12 Jun 2024 09:22:03 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AE716D9DB;
+	Wed, 12 Jun 2024 09:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kvC5e96l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A857916B72E;
-	Wed, 12 Jun 2024 09:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED0416D4EF;
+	Wed, 12 Jun 2024 09:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718184122; cv=none; b=qrWmyJN6hs1uW1HntxwGAvjhC5apIutuVAMX/PzqWiK/rChR5bqGbMFIS8NTGPzMJftC+eE9cEgzz1XJTpVXLa7roocIPkDBTkrhYDhxkPZzr3k+PXVIJy3vt/+wxSkit2UuQjusIs68QsFBGp5WUyYqefpSBE1pFy8azjlojTY=
+	t=1718184156; cv=none; b=Jb4fLLEcVkNXegebsC2fh7sam2k4qpICFoAgTMhBDiMNv60IvvlO7nw3bxPgu8pKCUtxio/f9mTI3QQxH9LKEuJyAYRw+pCbku/D16ynK01kkX3yOgUas2j4qC4kIK0v4IEu0XqN/ejGRnSA7vF6omXo637Gb2Kwg/y8NClBQR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718184122; c=relaxed/simple;
-	bh=ta48ixBdpMRrTsIAyE+J7/VDBnWPsC4PwbGNgrcyFlc=;
+	s=arc-20240116; t=1718184156; c=relaxed/simple;
+	bh=7QifDfrNsx1fq4Zn54nkhEExNwXSNVLR0i6Op1TRZJI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hEroQeRNe0P4O6x6tNPRcxv/dfHx7gYxvWKE8jLrLLnakbvJ6Ts7wGHMFSewUXZ3tT2YepIrtxun4FUYQLTf++5P1TY8rPyr6gaZa6Yk97hihNYKdbNOhLiLeuaqzmTx/aVcl/Ql9mUbzo6AaRtEX3H7VCDk/QlxGsOKhqmga4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC7BCC3277B;
-	Wed, 12 Jun 2024 09:21:56 +0000 (UTC)
-Date: Wed, 12 Jun 2024 10:21:54 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Fred Griffoul <fgriffo@amazon.co.uk>
-Cc: griffoul@gmail.com, kernel test robot <lkp@intel.com>,
-	Will Deacon <will@kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mark Brown <broonie@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Jeremy Linton <jeremy.linton@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Eric Auger <eric.auger@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Ye Bin <yebin10@huawei.com>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	cgroups@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] cgroup/cpuset: export cpuset_cpus_allowed()
-Message-ID: <Zmlosj-Fmsoq1AiU@arm.com>
-References: <20240611174430.90787-1-fgriffo@amazon.co.uk>
- <20240611174430.90787-2-fgriffo@amazon.co.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tptqZyocjljSFPOmZKPC6G2CjnTJBng4WAf9CY2NBzTLEcj1l8bMlXKGaF3Ld9EKGgCB33ZuUlVU0UVs8LERwQFdBYSGvgOHYNxfUAV8sDGLDIvc+JPXKZONOxauxMyE9uOiKntLO+RGMgYdtUSnByIIGDQ9VqV43cB84PFgI9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kvC5e96l; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718184155; x=1749720155;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7QifDfrNsx1fq4Zn54nkhEExNwXSNVLR0i6Op1TRZJI=;
+  b=kvC5e96lZeYTPVgV3qvBaeV7Mt9Wh+eOaQp1H+xFUUuvx8nBg+C3/fAD
+   F+9TA8Xa+hZo4QKzr1OpeXseiE+kIHAPtU5WXxqMQzpkyuPZA97C/gyN4
+   7Cb88KddkOzZp9TJwL9V/eDzO3TuU3lRLZTMZG4RwuBRG4z1FqNilfmAT
+   S+zrVUPwV50zW4SsILwMuKKHBCe2xhK+k7VJmOIdGj2xIFtsLpAgsfJO9
+   uUak//4s4e+2M4xjOWC7VdJZiW1ScvV0QhnvgKmDNf5H1ydtDsORhDvN7
+   CYQDtDNA48Y+mG71viP1UsJi/69dBf/qgSds/uDp5v9RAbKaPSnISWFAW
+   Q==;
+X-CSE-ConnectionGUID: QKvvp6miSzuRFAJPOLZ98Q==
+X-CSE-MsgGUID: GHfnlU84Q/KxfIMcCkP4dg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14810225"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="14810225"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 02:22:34 -0700
+X-CSE-ConnectionGUID: l+tjhQPjQImOMdvNQ7mk4A==
+X-CSE-MsgGUID: Isa6/PTmSJC0RRJHVa41FQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="70530128"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP; 12 Jun 2024 02:22:28 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 07C52193; Wed, 12 Jun 2024 12:22:26 +0300 (EEST)
+Date: Wed, 12 Jun 2024 12:22:26 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: "H. Peter Anvin" <hpa@zytor.com>, 
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Borislav Petkov <bp@alien8.de>, Nikolay Borisov <nik.borisov@suse.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Elena Reshetova <elena.reshetova@intel.com>, 
+	Jun Nakajima <jun.nakajima@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, "Kalra, Ashish" <ashish.kalra@amd.com>, 
+	Sean Christopherson <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	kexec@lists.infradead.org, linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv11 05/19] x86/relocate_kernel: Use named labels for less
+ confusion
+Message-ID: <nxllu5wfhvfvorxbbt6ll3lc2mr47lw7sduszfawhtryqgtyrd@3qgtci7ocah6>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-6-kirill.shutemov@linux.intel.com>
+ <1e1d1aea-7346-4022-9f5f-402d171adfda@suse.com>
+ <t3zx4f6ynru7qp4oel4syza2alcuxz7q7hxqgf2lxusgobnsnh@vtnecqrsxci5>
+ <748d3b70-60b4-44e0-bd81-9117f1ab699d@zytor.com>
+ <20240604091503.GQZl7bF14qTSAjqUhN@fat_crate.local>
+ <ehttxqgg7zhbgty5m5uxkduj3xf7soonrzfu4rfw7hccqgdydl@afki66pnree5>
+ <5c8b3ee9-64c2-4ff3-9cca-ba2672b9635e@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,28 +94,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240611174430.90787-2-fgriffo@amazon.co.uk>
+In-Reply-To: <5c8b3ee9-64c2-4ff3-9cca-ba2672b9635e@zytor.com>
 
-On Tue, Jun 11, 2024 at 05:44:24PM +0000, Fred Griffoul wrote:
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 56583677c1f2..2f1de6343bee 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -127,6 +127,7 @@ static bool __read_mostly allow_mismatched_32bit_el0;
->   * seen at least one CPU capable of 32-bit EL0.
->   */
->  DEFINE_STATIC_KEY_FALSE(arm64_mismatched_32bit_el0);
-> +EXPORT_SYMBOL_GPL(arm64_mismatched_32bit_el0);
->  
->  /*
->   * Mask of CPUs supporting 32-bit EL0.
-> @@ -1614,6 +1615,7 @@ const struct cpumask *system_32bit_el0_cpumask(void)
->  
->  	return cpu_possible_mask;
->  }
-> +EXPORT_SYMBOL_GPL(system_32bit_el0_cpumask);
+On Tue, Jun 11, 2024 at 11:26:17AM -0700, H. Peter Anvin wrote:
+> On 6/4/24 08:21, Kirill A. Shutemov wrote:
+> > 
+> >  From b45fe48092abad2612c2bafbb199e4de80c99545 Mon Sep 17 00:00:00 2001
+> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> > Date: Fri, 10 Feb 2023 12:53:11 +0300
+> > Subject: [PATCHv11.1 06/19] x86/kexec: Keep CR4.MCE set during kexec for TDX guest
+> > 
+> > TDX guests run with MCA enabled (CR4.MCE=1b) from the very start. If
+> > that bit is cleared during CR4 register reprogramming during boot or
+> > kexec flows, a #VE exception will be raised which the guest kernel
+> > cannot handle it.
+> > 
+> > Therefore, make sure the CR4.MCE setting is preserved over kexec too and
+> > avoid raising any #VEs.
+> > 
+> > The change doesn't affect non-TDX-guest environments.
+> > 
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > ---
+> >   arch/x86/kernel/relocate_kernel_64.S | 17 ++++++++++-------
+> >   1 file changed, 10 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+> > index 085eef5c3904..9c2cf70c5f54 100644
+> > --- a/arch/x86/kernel/relocate_kernel_64.S
+> > +++ b/arch/x86/kernel/relocate_kernel_64.S
+> > @@ -5,6 +5,8 @@
+> >    */
+> >   #include <linux/linkage.h>
+> > +#include <linux/stringify.h>
+> > +#include <asm/alternative.h>
+> >   #include <asm/page_types.h>
+> >   #include <asm/kexec.h>
+> >   #include <asm/processor-flags.h>
+> > @@ -145,14 +147,15 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+> >   	 * Set cr4 to a known state:
+> >   	 *  - physical address extension enabled
+> >   	 *  - 5-level paging, if it was enabled before
+> > +	 *  - Machine check exception on TDX guest, if it was enabled before.
+> > +	 *    Clearing MCE might not be allowed in TDX guests, depending on setup.
+> > +	 *
+> > +	 * Use R13 that contains the original CR4 value, read in relocate_kernel().
+> > +	 * PAE is always set in the original CR4.
+> >   	 */
+> > -	movl	$X86_CR4_PAE, %eax
+> > -	testq	$X86_CR4_LA57, %r13
+> > -	jz	.Lno_la57
+> > -	orl	$X86_CR4_LA57, %eax
+> > -.Lno_la57:
+> > -
+> > -	movq	%rax, %cr4
+> > +	andl	$(X86_CR4_PAE | X86_CR4_LA57), %r13d
+> > +	ALTERNATIVE "", __stringify(orl $X86_CR4_MCE, %r13d), X86_FEATURE_TDX_GUEST
+> > +	movq	%r13, %cr4
+> 
+> If this is the case, I don't really see a reason to clear MCE per se as I'm
+> guessing a machine check here will be fatal anyway? It just changes the
+> method of death.
 
-For the arm64 bits:
+Andrew had a strong opinion on method of death here.
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+https://lore.kernel.org/all/1144340e-dd95-ee3b-dabb-579f9a65b3c7@citrix.com
+
+> Also, is there a reason to save %cr4, run code, and *then* clear the
+> relevant bits? Wouldn't it be better to sanitize %cr4 as soon as possible?
+
+You mean set new CR4 directly in relocate_kernel() before switching CR3?
+I guess it is possible.
+
+But I can say I see huge benefit of changing it. Such change would have
+own risks.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
