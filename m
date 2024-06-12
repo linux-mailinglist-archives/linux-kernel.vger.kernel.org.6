@@ -1,98 +1,132 @@
-Return-Path: <linux-kernel+bounces-211917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 310BD9058D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:33:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481429058D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83657B25C21
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:29:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFCC01F21D65
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80572181313;
-	Wed, 12 Jun 2024 16:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CB018131E;
+	Wed, 12 Jun 2024 16:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GZ7rqg6c"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Igv5DP48"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B415317E915
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 16:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD3C12F365;
+	Wed, 12 Jun 2024 16:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718209753; cv=none; b=mIscUbKmf1Bte902ThJt1i8fT17wbUqSXYld8dXklIFp9yt+79bZ7iC3zfcpy+orNwfVdxt28PznKt7Oz1xiPD4zFwxDgvaIRgMi/N5IV+hAStFGAf1hy3VOVLvqm4eT3SWkeyaHKHJnkic++mgVeVD2ey3XGCLw5pa3ZX1Ijv0=
+	t=1718209841; cv=none; b=DkMmmb5GsUqkxS/yVDGUmkiTTu6z75YimrihyOxXF+/gdOEVv37y2YyTWz8gD5hLL8XKjwtq/ypi8gVOgzvgO4b4c9ZWxj4bzw5Njow5RM4To89FbcYszJRxx3elkYJIviri+GGHr5JkzYDNVVq9oO8ippgGlG9C3OtPwaTQf20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718209753; c=relaxed/simple;
-	bh=TRobG/Dgg8lfifwp1Xf05nQsi34ezrs9G7kZNro6PKc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mGM0yVvawB0Seo71nG/1JruqSGha510RqkuxJeXt96033DO5+s5gBrPipoaWqgo2oixMbqOmsXSKAON3YokV6Tm0ydwD1Tq57TkPQx3u1pcdhKUpjN0P/3fEe7+8emWBO4MZtp97cceunl6oSFqjVyxGeq6o2DrMWiIg+tID5+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GZ7rqg6c; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57c83100bd6so4736972a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718209750; x=1718814550; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5KZuCOQU21ybYvWRh7CztdrCiHdcxNZjpnQYkyIhIi0=;
-        b=GZ7rqg6cL6qQaRENwtkmocfuHFaGvQDXnNLXB1+VKRM5pIxihGmQ7aksBbMN4pPS+M
-         QjiTfw60Wkdq1wuwdVt0L5EUWUgZGXALVzTwqFx+RupPAGuE3DY53CjTpKdeEYGm2pga
-         KD2A6xifraQH3YVFIUjuAO3e1LMQjbnhgKJII=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718209750; x=1718814550;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5KZuCOQU21ybYvWRh7CztdrCiHdcxNZjpnQYkyIhIi0=;
-        b=Uzqhi5U4qRiln7e14UmYAlqWCcNWgmXTLyEoH7MB6zrQlXWWM8lwp0GIYBWtr4/Y1W
-         6MUqV9/aRyEzLcZzmB3G2RdmIzm7KbEEnxYN+7Prdcv3GIgCiXn4l/tmtFKdCU2r9ymi
-         a8l/CJ4dG+THwP3e6XMLS3kRhjav/b7IH1hVUQTYQqyxz5PrZJ82DSsM7F2yvB1l9pR6
-         nZgyKLuOtnfryV3ipJbA2cZkBHki9D8Ewm7Rt5vN9ba64znWR9VxH4VqSxeV4cb+sv10
-         XV8gdgnobhfPQX301XJRuBlA3Ij4bsnpJzCK+4S5fpeyufkJ0KJtGVjyrqQwty4ECe/L
-         Ah7g==
-X-Gm-Message-State: AOJu0YzpuhtX7U2tpbUHVD219nl4s61/ymPVh6x2bf0uf+gO2fJokanP
-	Vts8RMMAgKhZN332ityfOqBxYM7dUyeVBe9YNik2bTazgwJZKEIt2fOMHq0fkQVcSkPfyus8quC
-	f/a3TiQ==
-X-Google-Smtp-Source: AGHT+IF2Ca9Xxwx1//kON828sqKlFEXYquwG+Bu0CB8Xv20W/bwLQBh0w6m0EWYHo6Fj4quGHH3j4Q==
-X-Received: by 2002:a50:c181:0:b0:57c:74a3:8fd2 with SMTP id 4fb4d7f45d1cf-57ca977e887mr1774444a12.21.1718209749733;
-        Wed, 12 Jun 2024 09:29:09 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c8492fb96sm5277858a12.11.2024.06.12.09.29.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 09:29:09 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6e349c0f2bso10451466b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:29:08 -0700 (PDT)
-X-Received: by 2002:a17:906:aec6:b0:a6f:5202:3dad with SMTP id
- a640c23a62f3a-a6f52023fb8mr14297166b.55.1718209748540; Wed, 12 Jun 2024
- 09:29:08 -0700 (PDT)
+	s=arc-20240116; t=1718209841; c=relaxed/simple;
+	bh=MuDkD4Y5Xr/E5kiJGSuSZCUhZSy7wFH47LvJyu+n4XU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C8QKSRwPRxQY/DOivdV7aYIjTqANDHB6uHvwUwhgjH36Wl1SOp7OIE/eqPKB79A9d78i0BIZg/VVSWFcre7eEiwtB14Yoa/h09l6c9pqBpXdMad1etmZOUM/3KA2Ut1tA6LZQFkjN4k6usrP2z103U93qMV3uVXkxjqKbZqbEOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Igv5DP48; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2034C116B1;
+	Wed, 12 Jun 2024 16:30:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718209841;
+	bh=MuDkD4Y5Xr/E5kiJGSuSZCUhZSy7wFH47LvJyu+n4XU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Igv5DP48E7gNgtaishMOuW/uxRb2oa2oF1jJSIBsCB94WOPVICkT7NUItrvQSDu0a
+	 ppA/Xf5jRb7QXNe5semzQH/6wef5jzHca7S1Myl10h4d2hrdevl0t3uZebUc0K07bQ
+	 pcrTcyFxVebMSGwUNnEiZostHhIRgXH5blHo3QrXuABbK499JO9GNiICuitw6q+v4h
+	 pR0J4Bi1mnn5UHOeQEsNwU82r+3NCQrZWO75rl+h37W3oML3a4Nsh9xFZiISpNTmL4
+	 z0qwT0OD9XrgnDfFC2iBZC5W5dapwtv/sN1hOtw4e4n5Q3K0ct0IZEf6LP5IQnO0pm
+	 FWduKDqn58PGQ==
+Date: Wed, 12 Jun 2024 17:30:36 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alisa-Dariana Roman <alisadariana@gmail.com>
+Cc: Alisa-Dariana Roman <alisa.roman@analog.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexandru Tachici <alexandru.tachici@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: adc: ad7192: Fix clock config
+Message-ID: <20240612-daylong-unnamable-c6f3aa60c8e3@spud>
+References: <20240612141637.175709-1-alisa.roman@analog.com>
+ <20240612141637.175709-2-alisa.roman@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611145940.3879610-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20240611145940.3879610-1-andriy.shevchenko@linux.intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 12 Jun 2024 09:28:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjMeTB9i5uZGoUMWiFDCYCwcfe6jp0dzx2OJHyeZ29pEg@mail.gmail.com>
-Message-ID: <CAHk-=wjMeTB9i5uZGoUMWiFDCYCwcfe6jp0dzx2OJHyeZ29pEg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] mailmap: Add my outdated addresses to the map file
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jKTczYEpqqA+Uas4"
+Content-Disposition: inline
+In-Reply-To: <20240612141637.175709-2-alisa.roman@analog.com>
 
-On Tue, 11 Jun 2024 at 07:59, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> Cc'ed to Linus, since I have no clue who is the best to apply this
-> change.
 
-I've applied it directly. Thanks,
+--jKTczYEpqqA+Uas4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-                Linus
+On Wed, Jun 12, 2024 at 05:16:36PM +0300, Alisa-Dariana Roman wrote:
+> There are actually 4 configuration modes of clock source for AD719X
+> devices. Either a crystal can be attached externally between MCLK1 and
+> MCLK2 pins, or an external CMOS-compatible clock can drive the MCLK2
+> pin. The other 2 modes make use of the 4.92MHz internal clock.
+>=20
+> The presence of an external clock is optional, not required. When
+> absent, internal clock of the device is used.
+>=20
+> Fixes: f7356e47032c ("dt-bindings: iio: adc: ad7192: Add binding document=
+ation for AD7192")
+> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad7192.yaml    | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+> index a03da9489ed9..3ae2f860d24c 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+> @@ -39,11 +39,15 @@ properties:
+> =20
+>    clocks:
+>      maxItems: 1
+> -    description: phandle to the master clock (mclk)
+> +    description: |
+> +      Optionally, either a crystal can be attached externally between MC=
+LK1 and
+> +      MCLK2 pins, or an external CMOS-compatible clock can drive the MCL=
+K2
+> +      pin. If absent, internal 4.92MHz clock is used.
+> =20
+>    clock-names:
+> -    items:
+> -      - const: mclk
+> +    enum:
+> +      - xtal
+> +      - mclk
+
+Nothing in this commit message explains why "mclk" is not a suitable
+name for either of the two configurations.
+
+--jKTczYEpqqA+Uas4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmnNLAAKCRB4tDGHoIJi
+0oivAP9ktMVN6kGzDFf2XPHRXYTqo7uhIEZosOdgNo/1+GdS/AD/XfF4SgDkYQ3j
+fXy1FbHzAmmbzVEl0pVGOUJBRPv9XA4=
+=SUxL
+-----END PGP SIGNATURE-----
+
+--jKTczYEpqqA+Uas4--
 
