@@ -1,108 +1,115 @@
-Return-Path: <linux-kernel+bounces-211824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9202F905778
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:54:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1490905779
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 948F51C21D40
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:54:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76B0F1F28B49
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5FF180A83;
-	Wed, 12 Jun 2024 15:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7677180A83;
+	Wed, 12 Jun 2024 15:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTy8Jw/j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A2fEKgNO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE381182AF;
-	Wed, 12 Jun 2024 15:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A135B182AF
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718207637; cv=none; b=GHONXi35E385xMMDTZFEZr1fwKiDd1UDpkDmsKSE/ZiSPE0KWuFgG24zN9PSiCphXYYuagomXRxsmrqx/sOGGECmEUhw7ReZ1ZXGCd4weIN+PgClZpf2o5Athigh1f0Pk8RDmU2q401V6tw1utFTDKZc36dncgSfvxdGntFTSCg=
+	t=1718207651; cv=none; b=X2etvkYR+22lUny02JNlbece4bkgfyEkPCA0tRxOz2nSMNAygBmyor/dfkI4EuIZJ1ztoddKvkTB5pLQ64PrtlP+OAoXSTo8AhJoY1WtHWpD0nJGzWV5vmAXAg7iw351E2rp74NPBv2kiIHJE96GHEScYcZKJNwdRrbhbblNcLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718207637; c=relaxed/simple;
-	bh=A/q6m45sA8KG3xWSmANGingFfUIcNjjpTnH7bMJgRmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dMJCmrPc6i2kZ3Iu8Mn+huZkRpCzDjeVP5AA2zIcoF70l7MMHl7/XzRdC0ceYwyh42ibm62OzPq1RdipdE115nwwZcN0/AusFvnIwWPx3JGFud9cJSrTXDRjj55uvVMHCAlj2XTqQoVpEQ0BkoBw64ZMV/bTl8z9h9yVuTBm0Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTy8Jw/j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17E8CC116B1;
-	Wed, 12 Jun 2024 15:53:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718207637;
-	bh=A/q6m45sA8KG3xWSmANGingFfUIcNjjpTnH7bMJgRmI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mTy8Jw/jTcDpAnDYssZPlt8vz3bcbolI+P475PfDuR+fHaR5a09wgg6QBVQmg+owo
-	 PFKNFpynkSRKrTtBXBPy0ysbUUlHxeVjIjUdtXs96LdZ1ufRoZNg9rgwCa5eJvUXvB
-	 rCgM8wwfi+tDUSoLG4g6iuFsIYolucywbFU0XQtmCtG7Y9FvraSaYABDJTo0mMeKWw
-	 m9+vnDFnA0M5HoTXzHh49/T8BwrUh8ZGmJTUA4odCXPkzzhHrFgKwlHX+CGKglQIAV
-	 BhAfgE5r6q2Je+Tb9DPxuDgUdayvTqG0MbCQoqOnv0PXv3JsExXn/4BjdcAMmn8aTl
-	 yIYArnfRGivpg==
-Date: Wed, 12 Jun 2024 16:53:53 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jessica Clarke <jrtc27@jrtc27.com>
-Cc: Minda Chen <minda.chen@starfivetech.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-riscv <linux-riscv@lists.infradead.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Subject: Re: [PATCH v1] riscv: dts: starfive: add PCIe dts configuration for
- JH7110
-Message-ID: <20240612-circling-hungry-29a993ca5fc5@spud>
-References: <20240611015200.40996-1-minda.chen@starfivetech.com>
- <98031697-93AE-43AC-B192-44B12CB43EC5@jrtc27.com>
+	s=arc-20240116; t=1718207651; c=relaxed/simple;
+	bh=QdhPZnflueKeszAeF4v371ojdYwe9ACDEG0gUSVvmtQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dNCTi1emumNJOPMFoGBDgAY/dZOOOiXj5dWw/dr2R3DYszAIShAhGYdzigtaIv14XL1rdFmKooRgaMGl26ZnHDcLaA1gFP+ZhH1RKzNI+lXkc1XWju2DJXORDjxEq+eQjRv3PJv4ThXeRx6FPEJzsoQSCZvOxEmHIMeI3ieDXMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A2fEKgNO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718207648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HWITcPld692gjBNY4dq4HSNit6UcpgCJOc4MJm877h0=;
+	b=A2fEKgNOjrI+g/5hLGcuTvUau7T6yskTxQ/BxyWQeT63DSUy5Hcgx6CauJGIOAl71St4p/
+	PhUO5fpySHzaqreXaY3YCmu8eqRnMfC4ye4zhIK42BP/HDSqc2KxBqVfQkG/Tk9hU7QF6T
+	CoNT+8NWdbyIk5ARNrPgbIfoWa/Dtz8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-138-ylgDqTpaMkWuAu5eIWyGlg-1; Wed,
+ 12 Jun 2024 11:54:05 -0400
+X-MC-Unique: ylgDqTpaMkWuAu5eIWyGlg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E1C91956095;
+	Wed, 12 Jun 2024 15:54:03 +0000 (UTC)
+Received: from [10.43.2.69] (cera.brq.redhat.com [10.43.2.69])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ECEB919560AB;
+	Wed, 12 Jun 2024 15:53:58 +0000 (UTC)
+Message-ID: <04c8da79-6d94-406c-b168-73c23a9c0e43@redhat.com>
+Date: Wed, 12 Jun 2024 17:53:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="o24WclyZlx9mMuRS"
-Content-Disposition: inline
-In-Reply-To: <98031697-93AE-43AC-B192-44B12CB43EC5@jrtc27.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ice: use proper macro for testing bit
+To: Petr Oros <poros@redhat.com>, netdev@vger.kernel.org
+Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Marcin Domagala <marcinx.domagala@intel.com>,
+ Eric Joyner <eric.joyner@intel.com>,
+ Konrad Knitter <konrad.knitter@intel.com>,
+ Marcin Szycik <marcin.szycik@linux.intel.com>,
+ "moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240612154607.131914-1-poros@redhat.com>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <20240612154607.131914-1-poros@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
 
---o24WclyZlx9mMuRS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 04:24:44PM +0100, Jessica Clarke wrote:
-> On 11 Jun 2024, at 02:52, Minda Chen <minda.chen@starfivetech.com> wrote:
-> >=20
-> > Add PCIe dts configuraion for JH7110 SoC platform.
-> >=20
-> > Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
-> > Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
-> > ---
-> > .../boot/dts/starfive/jh7110-common.dtsi      | 64 ++++++++++++++
-> > arch/riscv/boot/dts/starfive/jh7110.dtsi      | 86 +++++++++++++++++++
-> > 2 files changed, 150 insertions(+)
->=20
-> Is there a corresponding YAML schema?
+On 12. 06. 24 17:46, Petr Oros wrote:
+> Do not use _test_bit() macro for testing bit. The proper macro for this
+> is one without underline.
+> 
+> Fixes: 4da71a77fc3b ("ice: read internal temperature sensor")
+> Signed-off-by: Petr Oros <poros@redhat.com>
+> ---
+>   drivers/net/ethernet/intel/ice/ice_hwmon.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/ice/ice_hwmon.c b/drivers/net/ethernet/intel/ice/ice_hwmon.c
+> index e4c2c1bff6c086..b7aa6812510a4f 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_hwmon.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_hwmon.c
+> @@ -96,7 +96,7 @@ static bool ice_is_internal_reading_supported(struct ice_pf *pf)
+>   
+>   	unsigned long sensors = pf->hw.dev_caps.supported_sensors;
+>   
+> -	return _test_bit(ICE_SENSOR_SUPPORT_E810_INT_TEMP_BIT, &sensors);
+> +	return test_bit(ICE_SENSOR_SUPPORT_E810_INT_TEMP_BIT, &sensors);
+>   };
+>   
+>   void ice_hwmon_init(struct ice_pf *pf)
 
-Yeah, it's in linux-next via the PCI tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Do=
-cumentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
+Acked-by: Ivan Vecera <ivecera@redhat.com>
 
---o24WclyZlx9mMuRS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmnEkAAKCRB4tDGHoIJi
-0tEhAQDKDsuAnifw9l4RMxkk9gttAErd01F5deCxrozjvbw68gD/f4YR4jwR+HWo
-guuAKaN4L1wy1l8OHja7SG8tgk4Wsgo=
-=DpyI
------END PGP SIGNATURE-----
-
---o24WclyZlx9mMuRS--
 
