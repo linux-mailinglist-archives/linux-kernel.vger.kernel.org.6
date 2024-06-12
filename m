@@ -1,93 +1,91 @@
-Return-Path: <linux-kernel+bounces-212351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D518B905EF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:10:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC3E905EFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C452285117
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:10:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8E041C22C7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 23:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5676012D219;
-	Wed, 12 Jun 2024 23:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E6B12CD8F;
+	Wed, 12 Jun 2024 23:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRnCU4cj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OFmkN0tD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961A74597A;
-	Wed, 12 Jun 2024 23:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1409D4315D;
+	Wed, 12 Jun 2024 23:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718233844; cv=none; b=oPK/JwZaMt61ts4qVUrleCHs94aBG275MCvREMU52GYGz6VoagKPcOZODPzV8fFSNarB54fqQM9GeNEjcXAZ+nlOfGwVdF5pVhxbWW+2cRL0rY1ShmB6reMED/grUbfrv/ZIf1lm+Az96lBl5zmU7NUHZ0CL8y+X8gY7V9v/oJ4=
+	t=1718234011; cv=none; b=VJSscEi3p6qTSZPBeW4w+dCi0+CO9xnwworVxCrorZG/9JoPA6BO3zozUN+/2UbVCL6L1M+GzPgEQPzFZDUfTstb0VbQ52x/rKVjS6XI6FWqGENTIX4UtYcwQC16FJy6X2nVisTKeiQ9DUYuYT4iyxRjU8zEpIqpuoYJ01J6E24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718233844; c=relaxed/simple;
-	bh=7O9hS8SZ1m9W6Ge9OVT1ZjAtj4M7EvpT4X35ACqANtM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=el63i7MBa/jM4xqxEoX/bndPtGLa4aPHXCoKvfBMW+HL8sGhCvnpFYuPdMSmF3OQuuUCfiXZbY+i7jbXVIgjQJKC6vvayEaw4kej/jfXZMhebEuHMrXKs9AkmazMHKDS58PW+60nw0fzLdzMEbGihPpmBl9+//kbr9bmdKsAxro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRnCU4cj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 35E22C4AF1C;
-	Wed, 12 Jun 2024 23:10:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718233844;
-	bh=7O9hS8SZ1m9W6Ge9OVT1ZjAtj4M7EvpT4X35ACqANtM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=eRnCU4cjcN2eURWVIPVaZji/UPFo1ZkR4lh5zfitUWAjiYFr+gbGPPOL/bTGn5dO1
-	 VxGmTxiBzcAvz2Lwpvt0kGvf2ONpWibWkQ12prroX5YpqM3nMZ2iC2vHYX7GzEuu50
-	 +QG59xun/F3PFA1jkDYaaZ7OvdUX3kVp6hknKeh+ZSLes5O6FLDBl3o90Eto7vWZTr
-	 rxWDY2YSWE09AXcEc9fYMi58KzCBZq73QO+rkzP6yyoyWEv3ez5pNGOcMS00CTwYJn
-	 PIwh5Ivg5WpRiQZA01db0+T8OCyMsIeR/FV3c/anbhdQrOacCNahuRcqDsPb8OzsG2
-	 r4QCZr7nhLRZQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1E28EC43619;
-	Wed, 12 Jun 2024 23:10:44 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718234011; c=relaxed/simple;
+	bh=qnghZq2zQy7pKT1QVvrvOegUoeTABeUySW8sFn8c144=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iUh4pbNxfKTUC3d095XxVTTLUmuztCOPLomH96241y2mq/pqNTjV2ksH++K8pPjv2IyliKtfynSGKJ+F5QTGOWxk1r810Qvi/uXK3Dzr4L6k926zFDc7EA0X+8pTRY24dxKBIUR9KlreKV7wiL7Wn42m7lykm3Tg0F0H7lyFE3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OFmkN0tD; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718234010; x=1749770010;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qnghZq2zQy7pKT1QVvrvOegUoeTABeUySW8sFn8c144=;
+  b=OFmkN0tDwxEhnc1ih2hZ9y+54SsMaG2mEcxRDxC10RGqX9ufqhztuBcO
+   U2IPc4VoGPQfhuzNnV8t5azUw5igAyD8DWknpqfFqFdvUn+8Qj5QTnJeu
+   +A6+U6xUFlD5MZzuSemR9Q6TmqlYfVnjcvnGUwuLhorEJ0gkQPHhbsmMU
+   27gkaO8riTozVOz1zF2yXEzbkeeEmT4ckk36lpgXYfsncUnrdBMg//iuL
+   lfzYqwjhlUsUUHkFvm4wjiE4WzRqo6Tcf+XapC6p8gqNTOuRsnDW/D762
+   +nK+26g3BbAzmZDBZ6CMeLtzc4ZohdKs2ez9a3BBhg9MSSHP3fzmAz0/0
+   A==;
+X-CSE-ConnectionGUID: zBaflUmSTf2m8zK9f8VoIQ==
+X-CSE-MsgGUID: ct00syy2RHinkEOKW/9vKw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="25663711"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="25663711"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 16:13:29 -0700
+X-CSE-ConnectionGUID: 0sx/4wx5QROvGwdjp+SVbA==
+X-CSE-MsgGUID: 5gEIKIrVRwWl/ZhIwvzm3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="40004765"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 16:13:29 -0700
+Date: Wed, 12 Jun 2024 16:13:29 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	Michael Roth <michael.roth@amd.com>, isaku.yamahata@linux.intel.com
+Subject: Re: [PATCH] KVM: interrupt kvm_gmem_populate() on signals
+Message-ID: <20240612231329.GA1900928@ls.amr.corp.intel.com>
+References: <20240611102243.47904-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: xilinx: axienet: Use NL_SET_ERR_MSG instead
- of netdev_err
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171823384411.4751.4325990307048449401.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Jun 2024 23:10:44 +0000
-References: <20240611154116.2643662-1-sean.anderson@linux.dev>
-In-Reply-To: <20240611154116.2643662-1-sean.anderson@linux.dev>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: radhey.shyam.pandey@amd.com, andrew@lunn.ch, netdev@vger.kernel.org,
- kuba@kernel.org, linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
- michal.simek@amd.com, pabeni@redhat.com, edumazet@google.com,
- davem@davemloft.net, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240611102243.47904-1-pbonzini@redhat.com>
 
-Hello:
+On Tue, Jun 11, 2024 at 06:22:43AM -0400,
+Paolo Bonzini <pbonzini@redhat.com> wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> kvm_gmem_populate() is a potentially lengthy operation that can involve
+> multiple calls to the firmware.  Interrupt it if a signal arrives.
 
-On Tue, 11 Jun 2024 11:41:16 -0400 you wrote:
-> This error message can be triggered by userspace. Use NL_SET_ERR_MSG so
-> the message is returned to the user and to avoid polluting the kernel
-> logs. Additionally, change the return value from EFAULT to EBUSY to
-> better reflect the error (which has nothing to do with addressing).
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> 
-> [...]
+What about cond_resched() in the loop?  kvm_gmem_allocate() has both.
 
-Here is the summary with links:
-  - [net-next,v2] net: xilinx: axienet: Use NL_SET_ERR_MSG instead of netdev_err
-    https://git.kernel.org/netdev/net-next/c/32b06603f879
-
-You are awesome, thank you!
+The change itself looks good for TDX because KVM_TDX_INIT_MEMREGION checks the
+signal.  I can drop the duplicated check.  Similar to cond_resched().
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Isaku Yamahata <isaku.yamahata@intel.com>
 
