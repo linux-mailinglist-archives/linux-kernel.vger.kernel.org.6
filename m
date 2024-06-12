@@ -1,223 +1,272 @@
-Return-Path: <linux-kernel+bounces-210936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB454904AA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:12:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38EB904AAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 374821F22106
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5347328228E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8F62F50A;
-	Wed, 12 Jun 2024 05:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6654236AF2;
+	Wed, 12 Jun 2024 05:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fX25/7Y5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TQEukDXp";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fX25/7Y5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TQEukDXp"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Mh25kMJ9"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115F528DD1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 05:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825E928DD1;
+	Wed, 12 Jun 2024 05:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718169124; cv=none; b=UoQd8yE+2LL9QMS4Qx0FHItw4GUiCmuZL4wfMj2b+iLMjqdAUaTGpYG+ZJvtQf981+zIeFPi9HNMZG6+P+Db+gQsohAHXD1MShEqJEF2aHt+Uz9raktO4Hdcy2/qKTZshDeSkksTe/fwU9bLzJNpSLoslWZdGhsammIE1+h6FfE=
+	t=1718169183; cv=none; b=IFyiYwa6ADj98cH+fn5a4FCBYfUvSw6hl32W9IPknTL5AnB1oe+GscJKzJZVf9+44Jqzoa4pntozkIjW8z+XBO+6xfjs6iSK2t6H47ewNG6T23JVmZHbcCNCP+2i9mz1aTamR77tCsBefqKhWjr2mHCydwu7vujr92AqaepX2IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718169124; c=relaxed/simple;
-	bh=As6APksy1IGxV4JLIT2WN1gTJM2ZYvvx3ja6MzDeckM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BN3jH6NaRqeX9mil8nJzMMJvlPGcCxKpFWT+4cM3HnI/nkgdlrzKJX8BHWXLqr/zIJ/+6eSUGpBRDbpK6LBkEZm0kESa9rkr2YbQRpYQKbxQkWebLc52olN6VmUs1T/D/tactp2Tmnn/rlxFh5As3WTYFf8sx8QVPbdclbdDWDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fX25/7Y5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TQEukDXp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fX25/7Y5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TQEukDXp; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1231A33EC2;
-	Wed, 12 Jun 2024 05:12:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718169121; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r3YBn/nAZuJl3pGHfMw3MJArLAqmqGFrn2hyTXR70cM=;
-	b=fX25/7Y5DzIfPRxSG5CRhJ4ACd8LIvhUipT+cSstyXQ+yiSfeFf8+WXErYQ1K35LOA8jJ4
-	768G5z2kFRGqZa/R6L2CayIfYFjmkrqRY3/z3AnJpqkZH3KF1zqjA9wPslf6PFB4Ww+uDt
-	UElrJNaMjPwPFt5MfYpWT7byu3Usw4Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718169121;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r3YBn/nAZuJl3pGHfMw3MJArLAqmqGFrn2hyTXR70cM=;
-	b=TQEukDXpbw6EYkkYBQxMR/vDy3gpQQr5imz/npGfEGpWWj4ZtF5o0EXw0TAhGRzd7A6WNT
-	CAIzVzWVfLtY3YAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718169121; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r3YBn/nAZuJl3pGHfMw3MJArLAqmqGFrn2hyTXR70cM=;
-	b=fX25/7Y5DzIfPRxSG5CRhJ4ACd8LIvhUipT+cSstyXQ+yiSfeFf8+WXErYQ1K35LOA8jJ4
-	768G5z2kFRGqZa/R6L2CayIfYFjmkrqRY3/z3AnJpqkZH3KF1zqjA9wPslf6PFB4Ww+uDt
-	UElrJNaMjPwPFt5MfYpWT7byu3Usw4Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718169121;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r3YBn/nAZuJl3pGHfMw3MJArLAqmqGFrn2hyTXR70cM=;
-	b=TQEukDXpbw6EYkkYBQxMR/vDy3gpQQr5imz/npGfEGpWWj4ZtF5o0EXw0TAhGRzd7A6WNT
-	CAIzVzWVfLtY3YAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A0217137DF;
-	Wed, 12 Jun 2024 05:12:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +EV7JCAuaWY2KAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 12 Jun 2024 05:12:00 +0000
-Date: Wed, 12 Jun 2024 07:11:59 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: syzbot <syzbot+569ed13f4054f271087b@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	muchun.song@linux.dev, syzkaller-bugs@googlegroups.com,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>
-Subject: Re: [syzbot] [mm?] general protection fault in
- dequeue_hugetlb_folio_nodemask (2)
-Message-ID: <ZmkuH8R2XJZEvJwh@localhost.localdomain>
-References: <0000000000004f12bb061a9acf07@google.com>
- <20240611103005.ae4170608bd15d63adee2492@linux-foundation.org>
- <ZmiNeTL5cZYmCbNf@localhost.localdomain>
- <ZmiOxhiWU-CE2ilg@localhost.localdomain>
+	s=arc-20240116; t=1718169183; c=relaxed/simple;
+	bh=QuKgoKhkRC9lkLuEWouInKhzEjvQYEbbMHXsX9D/WKw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HsEj1cpo7poB+OHT06jEssmpFBFG6q3/HMtgrfNkkL/sn9Zvtc8oZCFA1FCNXl3uQ5IlR8UMf6VPTGJqjZNgtvd2is6YeYXm1x2/X7PaB8PNdDqSM8msfgbZFC1k9VMNmGV4qj0Ri9RLg5a+BZH9Ih6Y9UF5+Tb6O5kywQgRkss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Mh25kMJ9; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45C5Cm6n113921;
+	Wed, 12 Jun 2024 00:12:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718169168;
+	bh=xVJ3m/Bj+QeP46W8FNEFQooN15bLt4kkNLLkhHLR5og=;
+	h=From:To:CC:Subject:Date;
+	b=Mh25kMJ91tnTdBFSIr6+9OWYsFlFSTizQbkAaIfXZXJbTKofRuJi7t580JWk6yi+1
+	 3tKi8iDIBE47sS9yuBU2l04bolVFPSKHqaX+G/MOZwmXjG8U7/IKQOetrZFK4StwVL
+	 msyAFNyQaHK/O8KX64kuzY1Bc6XWYlQGTPvHpAZ0=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45C5CmnR046932
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 12 Jun 2024 00:12:48 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
+ Jun 2024 00:12:47 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 12 Jun 2024 00:12:48 -0500
+Received: from localhost (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.55])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45C5Cldo072964;
+	Wed, 12 Jun 2024 00:12:47 -0500
+From: Jayesh Choudhary <j-choudhary@ti.com>
+To: <linux-kernel@vger.kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
+        <robh@kernel.org>, <j-luthra@ti.com>, <u-kumar1@ti.com>,
+        <j-choudhary@ti.com>
+CC: <kristo@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2] arm64: dts: ti: k3-j722s-evm: Enable analog audio support
+Date: Wed, 12 Jun 2024 10:42:46 +0530
+Message-ID: <20240612051246.41117-1-j-choudhary@ti.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmiOxhiWU-CE2ilg@localhost.localdomain>
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[569ed13f4054f271087b];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Jun 11, 2024 at 07:52:06PM +0200, Oscar Salvador wrote:
-> On Tue, Jun 11, 2024 at 07:46:33PM +0200, Oscar Salvador wrote:
-> > On Tue, Jun 11, 2024 at 10:30:05AM -0700, Andrew Morton wrote:
-> > > On Tue, 11 Jun 2024 03:34:25 -0700 syzbot <syzbot+569ed13f4054f271087b@syzkaller.appspotmail.com> wrote:
-> > > 
-> > > > Hello,
-> > > > 
-> > > > syzbot found the following issue on:
-> > > 
-> > > Thanks.
-> > > 
-> > > > Call Trace:
-> > > >  <TASK>
-> > > >  alloc_hugetlb_folio_nodemask+0xae/0x3f0 mm/hugetlb.c:2603
-> > > >  memfd_alloc_folio+0x15e/0x390 mm/memfd.c:75
-> > > >  memfd_pin_folios+0x1066/0x1720 mm/gup.c:3864
-> > > >  udmabuf_create+0x658/0x11c0 drivers/dma-buf/udmabuf.c:353
-> > > >  udmabuf_ioctl_create drivers/dma-buf/udmabuf.c:420 [inline]
-> > > >  udmabuf_ioctl+0x304/0x4f0 drivers/dma-buf/udmabuf.c:451
-> > > >  vfs_ioctl fs/ioctl.c:51 [inline]
-> > > >  __do_sys_ioctl fs/ioctl.c:907 [inline]
-> > > >  __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
-> > > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > > >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > 
-> > > I think we can pretty confidently point at the series "mm/gup:
-> > > Introduce memfd_pin_folios() for pinning memfd folios".  I'll drop the
-> > > v14 series.  
-> > 
-> > jfyi: I am trying to reproduce this locally.
-> 
-> Actually, should not memfd_alloc_folio() pass htlb_alloc_mask() instead
-> of GFP_USER to alloc_hugetlb_folio_nodemask? Or at least do
-> GFP_HIGHUSER.
+The audio support on J722S-EVM is using TLV320AIC3106[0] codec
+connected to McASP1 serializers.
 
-Ok, I spot the issue.
-memfd_alloc_folio() was calling alloc_hugetlb_folio_nodemask with
-preferred_nid being NUMA_NO_NODE, but that is bad as
-dequeue_hugetlb_folio_nodemask will do:
+- Add the nodes for sound-card, audio codec and McASP1.
+- Add hog for TRC_MUX_SEL to select between McASP and TRACE signals
+- Add hogs for GPIO_AUD_RSTn and MCASP1_FET_SEL which is used to
+  switch between HDMI audio and codec audio.
+- Add pinmux for MCASP1 and AUDIO_EXT_REFCLK1.
+- Add syscon node for audio_refclk1 to set the enable bit in
+  CTRL_MMR reg and select the parent clock for the external clock.
 
-zonelist = node_zonelist(nid, gfp_mask)
+[0]: <https://www.ti.com/lit/gpn/TLV320AIC3106>
 
-which will try to get node_zonelists from nid, but since nid is -1, heh.
+Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+---
 
-The below patch fixes the issue for me, but I think that the right place
-to fix this up would be alloc_hugetlb_folio_nodemask(), so we can place
-the numa_node_id() if preferred_nid = NUMA_NO_NODE in there as a safety
-net.
-This way we catch this before exploding in case the user was not careful
-enough.
+This patch depends upon the bcdma driver fix posted upstream:
+<https://lore.kernel.org/all/20240607-bcdma_chan_cnt-v2-1-bf1a55529d91@ti.com/>
 
-I will cook up a patch shortly.
+v1 patch:
+<https://lore.kernel.org/all/20240611082820.17442-1-j-choudhary@ti.com/>
 
-Another thing is why memfd_alloc_folio uses GFP_USER instead of
-GFP_HIGHUSER, but that maybe because I see that memfd_pin_folios() is
-used by some DMA driver which might not have access to HIGH_MEMORY.
+Changelog v1->v2:
+- Fix dtb warning for pin-muxing
 
-diff --git a/mm/memfd.c b/mm/memfd.c
-index 8035c6325e3c..2692f0298adc 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -68,12 +68,13 @@ static void memfd_tag_pins(struct xa_state *xas)
- struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx)
- {
- #ifdef CONFIG_HUGETLB_PAGE
-+	int nid = numa_node_id();
- 	struct folio *folio;
- 	int err;
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 121 ++++++++++++++++++++++++
+ 1 file changed, 121 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+index bf3c246d13d1..426ae3e8a839 100644
+--- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+@@ -105,6 +105,16 @@ vdd_sd_dv: regulator-TLV71033 {
+ 			 <3300000 0x1>;
+ 	};
  
- 	if (is_file_hugepages(memfd)) {
- 		folio = alloc_hugetlb_folio_nodemask(hstate_file(memfd),
--						     NUMA_NO_NODE,
-+						     nid,
- 						     NULL,
- 						     GFP_USER,
- 						     false);
-
-> 
-> 
-> -- 
-> Oscar Salvador
-> SUSE Labs
-> 
-
++	vcc_3v3_aud: regulator-vcc3v3 {
++		/* Output of LM5140 */
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		regulator-boot-on;
++	};
++
+ 	vsys_io_1v8: regulator-vsys-io-1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vsys_io_1v8";
+@@ -122,6 +132,35 @@ vsys_io_1v2: regulator-vsys-io-1v2 {
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 	};
++
++	codec_audio: sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "J722S-EVM";
++		simple-audio-card,widgets =
++			"Headphone",	"Headphone Jack",
++			"Line",		"Line In",
++			"Microphone",	"Microphone Jack";
++		simple-audio-card,routing =
++			"Headphone Jack",	"HPLOUT",
++			"Headphone Jack",	"HPROUT",
++			"LINE1L",		"Line In",
++			"LINE1R",		"Line In",
++			"MIC3R",		"Microphone Jack",
++			"Microphone Jack",	"Mic Bias";
++		simple-audio-card,format = "dsp_b";
++		simple-audio-card,bitclock-master = <&sound_master>;
++		simple-audio-card,frame-master = <&sound_master>;
++		simple-audio-card,bitclock-inversion;
++
++		simple-audio-card,cpu {
++			sound-dai = <&mcasp1>;
++		};
++
++		sound_master: simple-audio-card,codec {
++			sound-dai = <&tlv320aic3106>;
++			clocks = <&audio_refclk1>;
++		};
++	};
+ };
+ 
+ &main_pmx0 {
+@@ -202,6 +241,21 @@ J722S_IOPAD(0x0130, PIN_OUTPUT, 0) /* (AG26) RGMII1_TXC */
+ 			J722S_IOPAD(0x012c, PIN_OUTPUT, 0) /* (AF25) RGMII1_TX_CTL */
+ 		>;
+ 	};
++
++	main_mcasp1_pins_default: main-mcasp1-default-pins {
++		pinctrl-single,pins = <
++			J722S_IOPAD(0x0090, PIN_INPUT, 2) /* (U24) GPMC0_BE0n_CLE.MCASP1_ACLKX */
++			J722S_IOPAD(0x0098, PIN_INPUT, 2) /* (AA24) GPMC0_WAIT0.MCASP1_AFSX */
++			J722S_IOPAD(0x008c, PIN_OUTPUT, 2) /* (T25) GPMC0_WEn.MCASP1_AXR0 */
++			J722S_IOPAD(0x0084, PIN_INPUT, 2) /* (R25) GPMC0_ADVn_ALE.MCASP1_AXR2 */
++		>;
++	};
++
++	audio_ext_refclk1_pins_default: audio-ext-refclk1-default-pins {
++		pinctrl-single,pins = <
++			J722S_IOPAD(0x0a0, PIN_OUTPUT, 1) /* (N24) GPMC0_WPn.AUDIO_EXT_REFCLK1 */
++		>;
++	};
+ };
+ 
+ &cpsw3g {
+@@ -277,6 +331,12 @@ &wkup_i2c0 {
+ 	bootph-all;
+ };
+ 
++&k3_clks {
++	/* Configure AUDIO_EXT_REFCLK1 pin as output */
++	pinctrl-names = "default";
++	pinctrl-0 = <&audio_ext_refclk1_pins_default>;
++};
++
+ &main_i2c0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&main_i2c0_pins_default>;
+@@ -301,6 +361,41 @@ exp1: gpio@23 {
+ 				  "PCIe0_1L_RC_RSTz", "PCIe0_1L_PRSNT#",
+ 				  "ENET1_EXP_SPARE2", "ENET1_EXP_PWRDN",
+ 				  "PD_I2ENET1_I2CMUX_SELC_IRQ", "ENET1_EXP_RESETZ";
++
++		p01_hog: p01-hog {
++			/* P01 - TRC_MUX_SEL */
++			gpio-hog;
++			gpios = <0 GPIO_ACTIVE_HIGH>;
++			output-low;
++			line-name = "TRC_MUX_SEL";
++		};
++
++		p02_hog: p02-hog {
++			/* P02 - MCASP1_FET_SEL */
++			gpio-hog;
++			gpios = <2 GPIO_ACTIVE_HIGH>;
++			output-high;
++			line-name = "MCASP1_FET_SEL";
++		};
++
++		p13_hog: p13-hog {
++			/* P13 - GPIO_AUD_RSTn */
++			gpio-hog;
++			gpios = <13 GPIO_ACTIVE_HIGH>;
++			output-high;
++			line-name = "GPIO_AUD_RSTn";
++		};
++	};
++
++	tlv320aic3106: audio-codec@1b {
++		#sound-dai-cells = <0>;
++		compatible = "ti,tlv320aic3106";
++		reg = <0x1b>;
++		ai3x-micbias-vg = <1>;  /* 2.0V */
++		AVDD-supply = <&vcc_3v3_aud>;
++		IOVDD-supply = <&vcc_3v3_aud>;
++		DRVDD-supply = <&vcc_3v3_aud>;
++		DVDD-supply = <&vsys_io_1v8>;
+ 	};
+ };
+ 
+@@ -384,3 +479,29 @@ &sdhci1 {
+ 	status = "okay";
+ 	bootph-all;
+ };
++
++&mcasp1 {
++	status = "okay";
++	#sound-dai-cells = <0>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&main_mcasp1_pins_default>;
++	op-mode = <0>; /* MCASP_IIS_MODE */
++	tdm-slots = <2>;
++	serial-dir = < /* 0: INACTIVE, 1: TX, 2: RX */
++	       1 0 2 0
++	       0 0 0 0
++	       0 0 0 0
++	       0 0 0 0
++	>;
++};
++
++&main_conf {
++	audio_refclk1: clock@82e4 {
++		compatible = "ti,am62-audio-refclk";
++		reg = <0x82e4 0x4>;
++		clocks = <&k3_clks 157 18>;
++		assigned-clocks = <&k3_clks 157 18>;
++		assigned-clock-parents = <&k3_clks 157 33>;
++		#clock-cells = <0>;
++	};
++};
 -- 
-Oscar Salvador
-SUSE Labs
+2.25.1
+
 
