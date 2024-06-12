@@ -1,80 +1,83 @@
-Return-Path: <linux-kernel+bounces-211270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84CC904F56
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:31:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471DD904F5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D2851F291BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:31:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F3F1F23C91
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C0B16DECB;
-	Wed, 12 Jun 2024 09:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E578B16DECF;
+	Wed, 12 Jun 2024 09:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GEz6HYS0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZnVoGqSU"
 Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1C916D9D7;
-	Wed, 12 Jun 2024 09:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B4616D9AC;
+	Wed, 12 Jun 2024 09:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718184697; cv=none; b=C1RbyYBddrsyZ56jn+wHNVsHscOWERuiD/rwoqicjiW8Fxg6ktMp8T1JhdQjtb80fu5j2sTN3KWGVwa12JS94Xv3XVJqfkX0KSHBf/eHuCBjZ57A1VRMXjIw917tDR7OI4ry8MlKNvXhrU/a9kbQx754Wu8kQpa5JSYQ9tINSmU=
+	t=1718184748; cv=none; b=RiulIOeP/V6oaxOMQRK0+Ex095IQdtTOIam5oqms/6peBUPUkd6kLL1JNQ5CKO24rGjeh2haXWdivE/YW5OZqcRQy1H6j+B7YZUNS+/yph8XkkM5sbcIR7w8c8KLQKAA3DHcdML+REb/y15R6G0RrZvQ77TlCtBEScqxM5UxAAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718184697; c=relaxed/simple;
-	bh=WNOzoJUF5Sd3jb54WNIWO7Ok2KUCrQMO20CYYkK0ZGM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EW+I/oDa32NfcV45Orerj/3nCn9iRpB+IKWMwVxO6J2737gS2LLz5Mr3NQ2ikEghzo4Xbi+owaNuccyNutJsdD5eC1BuatcFq/n2G5FYCDKsNB4dIDlfl2m5WqdONYls7e+QykdS5per7AKDmP+PXwgkJCCa5gFm+OkXAv0NBdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GEz6HYS0; arc=none smtp.client-ip=209.85.210.195
+	s=arc-20240116; t=1718184748; c=relaxed/simple;
+	bh=6X0iD7TzpO+roGTpjK6TPJPfQxfbzItBOFhP+OjO2G8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IsacgVob7MI0mjww44OzY1HtuZm2Ov+/Z9A8/1ecFR/SgmCHo5U519H9t0YqmDSXzeoHOlpKZQCvme5xqph97zMegeHgIE4fcYbEdHsoZrhVa0P+CddyOsRnlRla3YFV6rOyy4iJ4NXnUPblrx6SC+/IIThovR0d5kToqQvhDsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZnVoGqSU; arc=none smtp.client-ip=209.85.210.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-7041e39a5beso3687432b3a.3;
-        Wed, 12 Jun 2024 02:31:36 -0700 (PDT)
+Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-705c1220a52so194617b3a.1;
+        Wed, 12 Jun 2024 02:32:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718184696; x=1718789496; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718184746; x=1718789546; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7yzsgZOmviXDPRveEaKsBFzgEIXtcAbD/zH2lFEcpTU=;
-        b=GEz6HYS0dIlX2CLFXJSOaK+VJz/35/sGYWlPWtR+46lTDPL/p6TqrNDfyp/yC9KUEW
-         52Rgjh1aVTygvEDtfRTDdtIMcGeR6cDzL0qYB/UzWwsIlr0jm2detLK988u0QkW3hDth
-         Rs+Iwz1/Q/zZERwEiLw5+1K7WdUYKj+rFpBMYkoeCmodFBFhPiT1gG9tm1M5PKfzNla2
-         nrMjuRJtfdUdzjDLJzBI0JMMcOqeol3tXmRFc7I6mZURCayS94COwgwMaeAvzS00Scsg
-         vz9UovPRCrpxRKfbdFp2NYDWX5hKLOZ8rF/Oe1S6mLHAdBBfw3ClqCiGhHNEJgVOiN5E
-         LoyQ==
+        bh=/FQNww1AD6dH8cAepq1wCWnMnAcDBJE7rz1cWisQhNU=;
+        b=ZnVoGqSUOIIVP9N3HfXs+JHhD/OWvxQ6hOqmg+5Q9zAn6NFjRhJu1U+8Zq6jrFrsvY
+         cQPw0HWIeBiZMtb+2XipOXKU2C8zrm8fQRzOZdDRIRdvPYOpb72e+S554UwI+38A7MTA
+         njVJdHNu6lxn7xyytbYVMkLlKFinMxNC9DZUK7DJu7uyb4Ti3SH1lvWfccVM5bnn0sK4
+         80louL6R/W2hEyLNOch+nQn3h7ChVfRF8VMsqzXOIqxmAaxT8KqvKaLukupIQM1y04b4
+         8L5IZSTrAxJW7U0pgVK0eB++jPYQux43ZnnibUiBC5KJl/wXiAvzY5Vnwg1BsZ367dVS
+         iTlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718184696; x=1718789496;
+        d=1e100.net; s=20230601; t=1718184746; x=1718789546;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7yzsgZOmviXDPRveEaKsBFzgEIXtcAbD/zH2lFEcpTU=;
-        b=emKGj5Vdet26fhP3TcNCJyBxBE9tmtUFyX1M7ba8aXmcHszfWiz3PGdFVZ0TYOlDwm
-         vt8ZM9cQwepRw4uBPrygpcn0MF71f0UFJIGsCeKRQ73znJ6JnHrKoXaZdLtfxKLvStqQ
-         OF+tT+ffnNZ+XjmpHvNmHWS0tTzbrxRtLh0++o2p6oNQ1NfAz3xrD6mhKrdWWK7NPyLZ
-         yBJCwufQGMhlq+YZ8pZ5i/ZExJpyPjzoyqBTBAnD6EifI854VC/P90w4lQSCPDkRZzNO
-         hI0QfiP9+Npe+V2IcHlhmKxsAxDZzQpopGYgOmp0h/ZO4zVKhN1IiTskGDkrJR9lnj+N
-         6KBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEBgkwH2Mfu6gbsmUoJ5Pa8efThXOs2jcNomNkWQ8WR8Vas/QraofBMJvaAd3WuZP8MjKg+6BJMLeKy0W+diyVixmgKQokOunTXYA7
-X-Gm-Message-State: AOJu0YzrkmGw1lcCU9PLKHeVeJKzOpGxaYxmI5ogPsa1NafUT0P+KyPu
-	Kb+wC39W5AFjtDdOexTK5S/rXSc9ST4IaJcsZouwx5iDdxchHltM
-X-Google-Smtp-Source: AGHT+IFcQRCr4rkFrU5kbqsrK+X9/MIFW11p9GdKGUayDLo/CcyYLz7pcnOf9Dy5u/Gs1s15g1BepQ==
-X-Received: by 2002:a05:6a00:1886:b0:705:951e:ed88 with SMTP id d2e1a72fcca58-705bceb0393mr1319701b3a.25.1718184695596;
-        Wed, 12 Jun 2024 02:31:35 -0700 (PDT)
+        bh=/FQNww1AD6dH8cAepq1wCWnMnAcDBJE7rz1cWisQhNU=;
+        b=oF+8rBH61KQPruHg4Ifpio5T8DJFnZWEmJML93O1HFkSLgjAAM8sPF0jPaONsDvpWH
+         dpDN5TAj9KW0YXXTw6b2Z10akZGAdeoOig+eMqJ9nWN81iTH6tOifHQuFQmvLTfGirMG
+         9os4J6FNpdXXSSAd2MLbiUDZR44Y8B8/9XSRV8FfgdwA9l9QS1drGlLRr2jvUR4YzcvO
+         6STl4bNWC1FaND159fwFVRWQhd105fnBglUnIASZMgCqlEdNDqcMA8Z43IBJFV/YJpLu
+         RC8j0qrc+W+RHJh+4Y7fSLDn5fsHy3MjXUJ+pJkcTOS2MhuG+ku6ByYYN7/dQfYpflqv
+         WZZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbofqOgK2mtA+JHXhYzjgUc8uMpcErcCZEmEO/mVn0q0wnIu1wvvtpytecpTvJ/LeRcIXbW3LsyoZueAz05rkPeGoyQV+ErZo86ec05AA4athG0K1YyV9lenDuzDbqortmRprU
+X-Gm-Message-State: AOJu0YzpitVyezBZzNO101aB1nKoMH9CNfHYqc2LxOHKmPD77pmLWaDL
+	bnRt1rjSRA5CcbewgbQaEPKZWlLEG5OD1eULQwUp/M2VbGLSoRBW
+X-Google-Smtp-Source: AGHT+IFFogTLuH64nEqmLHYgxgSfQlcYfIeRTZOamLN1Dw4tSaasHxdPL+wJBoZgTkyLeT9PAPCdYA==
+X-Received: by 2002:a05:6a00:a14:b0:6fc:fcc8:cb38 with SMTP id d2e1a72fcca58-705bcf1accamr1608167b3a.33.1718184746256;
+        Wed, 12 Jun 2024 02:32:26 -0700 (PDT)
 Received: from lhy-a01-ubuntu22.. ([106.39.42.164])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70596eed610sm5119140b3a.170.2024.06.12.02.31.31
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd39569csm10223126b3a.72.2024.06.12.02.32.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 02:31:35 -0700 (PDT)
+        Wed, 12 Jun 2024 02:32:25 -0700 (PDT)
 From: Huai-Yuan Liu <qq810974084@gmail.com>
-To: linuxdrivers@attotech.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
+To: jes@trained-monkey.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-hippi@sunsite.dk,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	baijiaju1990@gmail.com,
 	Huai-Yuan Liu <qq810974084@gmail.com>
-Subject: [PATCH] [SCSI] esas2r: fix possible buffer overflow caused by bad DMA value in esas2r_process_vda_ioctl()
-Date: Wed, 12 Jun 2024 17:31:19 +0800
-Message-Id: <20240612093119.296983-1-qq810974084@gmail.com>
+Subject: [PATCH] hippi: fix possible buffer overflow caused by bad DMA value in rr_start_xmit()
+Date: Wed, 12 Jun 2024 17:31:53 +0800
+Message-Id: <20240612093153.297167-1-qq810974084@gmail.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,62 +87,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The value vi->function is stored in DMA memory, so it can be modified at
-any time by malicious hardware. In this case, "if (vi->function >= vercnt)"
-can be passed, which may cause buffer overflow and other unexpected 
-execution results in the following code.
+The value rrpriv->info->tx_ctrl is stored in DMA memory, and it is
+assigned to txctrl, so txctrl->pi can be modified at any time by malicious
+hardware. Becausetxctrl->pi is assigned to index, buffer overflow may
+occur when the code "rrpriv->tx_skbuff[index]" is executed.
 
-To address this issue, vi->function should be assigned to a local value,
-which replaces the use of vi->function.
+To address this issue, the index should be checked.
 
-Fixes: 26780d9e12ed ("[SCSI] esas2r: ATTO Technology ExpressSAS 6G SAS/SATA RAID Adapter Driver")
+Fixes: f33a7251c825 ("hippi: switch from 'pci_' to 'dma_' API")
 Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
 ---
- drivers/scsi/esas2r/esas2r_vda.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/net/hippi/rrunner.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/scsi/esas2r/esas2r_vda.c b/drivers/scsi/esas2r/esas2r_vda.c
-index 30028e56df63..48af8c05b01d 100644
---- a/drivers/scsi/esas2r/esas2r_vda.c
-+++ b/drivers/scsi/esas2r/esas2r_vda.c
-@@ -70,16 +70,17 @@ bool esas2r_process_vda_ioctl(struct esas2r_adapter *a,
- 	u32 datalen = 0;
- 	struct atto_vda_sge *firstsg = NULL;
- 	u8 vercnt = (u8)ARRAY_SIZE(esas2r_vdaioctl_versions);
-+	u8 vi_function = vi->function;
+diff --git a/drivers/net/hippi/rrunner.c b/drivers/net/hippi/rrunner.c
+index aa8f828a0ae7..184f0933bca0 100644
+--- a/drivers/net/hippi/rrunner.c
++++ b/drivers/net/hippi/rrunner.c
+@@ -1440,6 +1440,11 @@ static netdev_tx_t rr_start_xmit(struct sk_buff *skb,
+ 	txctrl = &rrpriv->info->tx_ctrl;
  
- 	vi->status = ATTO_STS_SUCCESS;
- 	vi->vda_status = RS_PENDING;
+ 	index = txctrl->pi;
++	if (index < 0 || index >= TX_RING_ENTRIES) {
++		printk("invalid index value %02x\n", index);
++		spin_unlock_irqrestore(&rrpriv->lock, flags);
++		return NETDEV_TX_BUSY;
++	}
  
--	if (vi->function >= vercnt) {
-+	if (vi_function >= vercnt) {
- 		vi->status = ATTO_STS_INV_FUNC;
- 		return false;
- 	}
- 
--	if (vi->version > esas2r_vdaioctl_versions[vi->function]) {
-+	if (vi->version > esas2r_vdaioctl_versions[vi_function]) {
- 		vi->status = ATTO_STS_INV_VERSION;
- 		return false;
- 	}
-@@ -89,14 +90,14 @@ bool esas2r_process_vda_ioctl(struct esas2r_adapter *a,
- 		return false;
- 	}
- 
--	if (vi->function != VDA_FUNC_SCSI)
-+	if (vi_function != VDA_FUNC_SCSI)
- 		clear_vda_request(rq);
- 
--	rq->vrq->scsi.function = vi->function;
-+	rq->vrq->scsi.function = vi_function;
- 	rq->interrupt_cb = esas2r_complete_vda_ioctl;
- 	rq->interrupt_cx = vi;
- 
--	switch (vi->function) {
-+	switch (vi_function) {
- 	case VDA_FUNC_FLASH:
- 
- 		if (vi->cmd.flash.sub_func != VDA_FLASH_FREAD
+ 	rrpriv->tx_skbuff[index] = skb;
+ 	set_rraddr(&rrpriv->tx_ring[index].addr,
 -- 
 2.34.1
 
