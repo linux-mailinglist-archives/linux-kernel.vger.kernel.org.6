@@ -1,119 +1,286 @@
-Return-Path: <linux-kernel+bounces-211224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67DC4904EA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE72904EAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9AFE28909E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47C48289C7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5BC16D9B7;
-	Wed, 12 Jun 2024 08:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RGvDZY9Q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E4A16D4E9;
-	Wed, 12 Jun 2024 08:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19C416D9BF;
+	Wed, 12 Jun 2024 08:59:02 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 71C2A16D4EF;
+	Wed, 12 Jun 2024 08:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718182650; cv=none; b=bTe3EUoyvnxHsYxhtNRCHFoV9baqoVXVLl0KOHeSKCWn7Mbs6Nne8k5QvZsUv3nWyMzcOqd5XqSBzBwz2FwbxibvY1SP6on/XtyxyKatjZKh5hJYtHmzrGlwLFdFcYSUPUUcke0a9hIqEIcSRwJ3lIES0RcmMln5nKyc1YiqTfs=
+	t=1718182742; cv=none; b=NbY8TYvPDAZx6Prt3Wg/A8UiilcZUEQqCJbx+O5NOuDwxXR4DkWavIeSS3bbTqN1skxhA4hXsTS5AfLwu7YSpoW65MC/nauPkqTYhE8CeAbxbw/CXyZ/BYP+L3Xz62zgyMyusy8N2KhboxzoEnn6Bpcv3ZEMcg+8BAKCBFWepJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718182650; c=relaxed/simple;
-	bh=rSWAv76CS9DrIAWgkBXjqcWjEwCJ0bzwSYtZQcOfclA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fQV9TQyfKEvxwPylW6EW9hQqVBELc+LKGh/Q8X/6zRlbMvct1fKmFwK0JHRN581yCn4DALywSNIGwrkiYOU8bbq7DiMoAxAZRCMaLHwLjcJbE2dXw33Jqi7Z91zcmOxsjrvqsedysvG7YG4tCb1hkYzUbIB8uE75vaUOVk6iNBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RGvDZY9Q; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718182648; x=1749718648;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=rSWAv76CS9DrIAWgkBXjqcWjEwCJ0bzwSYtZQcOfclA=;
-  b=RGvDZY9Q91QtwHhbe7JYK7AIl4J/EoQlswJZ0/gx3W0hWgi5qlUrl/V/
-   JhDbMVfrhiDwPv5KuGWyABi6Z4qAa7Pcn2SCDpp2D4RWO3yCIbuJxBc8o
-   77kx+7yzfe981kO0yIY0KVWnzqO8Mk6NQmZcgb288MhHalJypMAXvdrWS
-   uCgccEMMh0SwPCNHejRf4KtDqCznTwEjM4WsnZvJiJiCAIkX3QxyfQLl4
-   6G2w4moQ39EyFrLiStYrJzaQm3K4fv9Fkw0sNKYicrW4UF6HFM6qSQBwD
-   dyBCC9jt58R3SHTRvMOoAdFCR5Yd0KgkJ3zTWlyQJABk8nHMAiZpqZ3h7
-   w==;
-X-CSE-ConnectionGUID: UvLfX0hHQ56z3EQviJTPyA==
-X-CSE-MsgGUID: G9PRM/BRTIWaXs4fGLgu4Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="18792158"
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="18792158"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 01:57:28 -0700
-X-CSE-ConnectionGUID: 4zlu8W8fQYeg647hM6IZDw==
-X-CSE-MsgGUID: hUjTRGRTQfiyGkT8Z6hV4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="39582944"
-Received: from unknown (HELO localhost) ([10.245.247.204])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 01:57:23 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	Robert Richter <rric@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 3/3] PCI: Use align and resource helpers, and SZ_* in quirk_s3_64M()
-Date: Wed, 12 Jun 2024 11:56:29 +0300
-Message-Id: <20240612085629.5015-4-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240612085629.5015-1-ilpo.jarvinen@linux.intel.com>
-References: <20240612085629.5015-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1718182742; c=relaxed/simple;
+	bh=IPCWgpd6c1bFEoB2WSV9QRjQj7pwRw3QVv26rxSLklw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=l+yp1dRdTYARkoG/NkN0SDMxkn2UuxOKAsrAXgzEbatk4s/eY4CYqPMOJVcNTP1d9sDmlAwTOG/fSOO3Qlr/WCRv3knwUTH69M5T8LCp0S50M9IeeRUcmf1Qjt4OxUk82SEEcou5ieLPq7BOG0O0fgJCGp157Vkn3Rg+NxGxAQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [219.141.250.2])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 6C0126022F9AD;
+	Wed, 12 Jun 2024 16:58:36 +0800 (CST)
+X-MD-Sfrom: kunyu@nfschina.com
+X-MD-SrcIP: 219.141.250.2
+From: kunyu <kunyu@nfschina.com>
+To: davem@davemloft.net,
+	dsahern@kernel.org,
+	udknight@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@google.com,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com
+Cc: netdev@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kunyu <kunyu@nfschina.com>
+Subject: [PATCH] x86: net: bpf_jit_comp32: Remove unused 'cnt' variables from most functions
+Date: Wed, 12 Jun 2024 16:58:23 +0800
+Message-Id: <20240612085823.28133-1-kunyu@nfschina.com>
+X-Mailer: git-send-email 2.18.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-Use IS_ALIGNED(), resource_size(), and SZ_* defines in quirk_s3_64M().
+In these functions, the 'cnt' variable is not used or does not require
+value checking, so these 'cnt' variables can be removed.
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Signed-off-by: kunyu <kunyu@nfschina.com>
 ---
- drivers/pci/quirks.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/net/bpf_jit_comp32.c | 27 ++-------------------------
+ 1 file changed, 2 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index bde0f5388d06..125fc1cbad95 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -12,6 +12,7 @@
-  * file, where their drivers can use them.
-  */
- 
-+#include <linux/align.h>
- #include <linux/bitfield.h>
- #include <linux/types.h>
- #include <linux/kernel.h>
-@@ -591,7 +592,7 @@ static void quirk_s3_64M(struct pci_dev *dev)
+diff --git a/arch/x86/net/bpf_jit_comp32.c b/arch/x86/net/bpf_jit_comp32.c
+index de0f9e5f9f73..30f9b8a3faed 100644
+--- a/arch/x86/net/bpf_jit_comp32.c
++++ b/arch/x86/net/bpf_jit_comp32.c
+@@ -207,7 +207,6 @@ static inline void emit_ia32_mov_i(const u8 dst, const u32 val, bool dstk,
+ 				   u8 **pprog)
  {
- 	struct resource *r = &dev->resource[0];
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
  
--	if ((r->start & 0x3ffffff) || r->end != r->start + 0x3ffffff) {
-+	if (!IS_ALIGNED(r->start, SZ_64M) || resource_size(r) != SZ_64M) {
- 		r->flags |= IORESOURCE_UNSET;
- 		resource_set_range(r, 0, SZ_64M);
- 	}
+ 	if (dstk) {
+ 		if (val == 0) {
+@@ -235,7 +234,6 @@ static inline void emit_ia32_mov_r(const u8 dst, const u8 src, bool dstk,
+ 				   bool sstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 sreg = sstk ? IA32_EAX : src;
+ 
+ 	if (sstk)
+@@ -286,7 +284,6 @@ static inline void emit_ia32_mul_r(const u8 dst, const u8 src, bool dstk,
+ 				   bool sstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 sreg = sstk ? IA32_ECX : src;
+ 
+ 	if (sstk)
+@@ -319,7 +316,6 @@ static inline void emit_ia32_to_le_r64(const u8 dst[], s32 val,
+ 					 const struct bpf_prog_aux *aux)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
+ 	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
+ 
+@@ -367,7 +363,6 @@ static inline void emit_ia32_to_be_r64(const u8 dst[], s32 val,
+ 				       const struct bpf_prog_aux *aux)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
+ 	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
+ 
+@@ -436,7 +431,6 @@ static inline void emit_ia32_div_mod_r(const u8 op, const u8 dst, const u8 src,
+ 				       bool dstk, bool sstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 
+ 	if (sstk)
+ 		/* mov ecx,dword ptr [ebp+off] */
+@@ -483,7 +477,6 @@ static inline void emit_ia32_shift_r(const u8 op, const u8 dst, const u8 src,
+ 				     bool dstk, bool sstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 dreg = dstk ? IA32_EAX : dst;
+ 	u8 b2;
+ 
+@@ -525,7 +518,6 @@ static inline void emit_ia32_alu_r(const bool is64, const bool hi, const u8 op,
+ 				   bool sstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 sreg = sstk ? IA32_EAX : src;
+ 	u8 dreg = dstk ? IA32_EDX : dst;
+ 
+@@ -599,7 +591,6 @@ static inline void emit_ia32_alu_i(const bool is64, const bool hi, const u8 op,
+ 				   u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 dreg = dstk ? IA32_EAX : dst;
+ 	u8 sreg = IA32_EDX;
+ 
+@@ -698,7 +689,6 @@ static inline void emit_ia32_alu_i64(const bool is64, const u8 op,
+ static inline void emit_ia32_neg64(const u8 dst[], bool dstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
+ 	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
+ 
+@@ -732,7 +722,6 @@ static inline void emit_ia32_lsh_r64(const u8 dst[], const u8 src[],
+ 				     bool dstk, bool sstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
+ 	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
+ 
+@@ -785,7 +774,6 @@ static inline void emit_ia32_arsh_r64(const u8 dst[], const u8 src[],
+ 				      bool dstk, bool sstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
+ 	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
+ 
+@@ -838,7 +826,6 @@ static inline void emit_ia32_rsh_r64(const u8 dst[], const u8 src[], bool dstk,
+ 				     bool sstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
+ 	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
+ 
+@@ -891,7 +878,6 @@ static inline void emit_ia32_lsh_i64(const u8 dst[], const u32 val,
+ 				     bool dstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
+ 	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
+ 
+@@ -939,7 +925,6 @@ static inline void emit_ia32_rsh_i64(const u8 dst[], const u32 val,
+ 				     bool dstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
+ 	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
+ 
+@@ -988,7 +973,6 @@ static inline void emit_ia32_arsh_i64(const u8 dst[], const u32 val,
+ 				      bool dstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
+ 	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
+ 
+@@ -1036,7 +1020,6 @@ static inline void emit_ia32_mul_r64(const u8 dst[], const u8 src[], bool dstk,
+ 				     bool sstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 
+ 	if (dstk)
+ 		/* mov eax,dword ptr [ebp+off] */
+@@ -1113,7 +1096,6 @@ static inline void emit_ia32_mul_i64(const u8 dst[], const u32 val,
+ 				     bool dstk, u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	u32 hi;
+ 
+ 	hi = val & (1<<31) ? (u32)~0 : 0;
+@@ -1200,7 +1182,6 @@ struct jit_context {
+ static void emit_prologue(u8 **pprog, u32 stack_depth)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 	const u8 *r1 = bpf2ia32[BPF_REG_1];
+ 	const u8 fplo = bpf2ia32[BPF_REG_FP][0];
+ 	const u8 fphi = bpf2ia32[BPF_REG_FP][1];
+@@ -1237,7 +1218,6 @@ static void emit_prologue(u8 **pprog, u32 stack_depth)
+ 	EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EBX), STACK_VAR(tcc[0]));
+ 	EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EBX), STACK_VAR(tcc[1]));
+ 
+-	BUILD_BUG_ON(cnt != PROLOGUE_SIZE);
+ 	*pprog = prog;
+ }
+ 
+@@ -1246,7 +1226,6 @@ static void emit_epilogue(u8 **pprog, u32 stack_depth)
+ {
+ 	u8 *prog = *pprog;
+ 	const u8 *r0 = bpf2ia32[BPF_REG_0];
+-	int cnt = 0;
+ 
+ 	/* mov eax,dword ptr [ebp+off]*/
+ 	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX), STACK_VAR(r0[0]));
+@@ -1391,7 +1370,6 @@ static void emit_bpf_tail_call(u8 **pprog, u8 *ip)
+ static inline void emit_push_r64(const u8 src[], u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 
+ 	/* mov ecx,dword ptr [ebp+off] */
+ 	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX), STACK_VAR(src_hi));
+@@ -1409,7 +1387,6 @@ static inline void emit_push_r64(const u8 src[], u8 **pprog)
+ static void emit_push_r32(const u8 src[], u8 **pprog)
+ {
+ 	u8 *prog = *pprog;
+-	int cnt = 0;
+ 
+ 	/* mov ecx,dword ptr [ebp+off] */
+ 	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX), STACK_VAR(src_lo));
+@@ -1570,7 +1547,7 @@ static int emit_kfunc_call(const struct bpf_prog *bpf_prog, u8 *end_addr,
+ 			   const struct bpf_insn *insn, u8 **pprog)
+ {
+ 	const u8 arg_regs[] = { IA32_EAX, IA32_EDX, IA32_ECX };
+-	int i, cnt = 0, first_stack_regno, last_stack_regno;
++	int i, first_stack_regno, last_stack_regno;
+ 	int free_arg_regs = ARRAY_SIZE(arg_regs);
+ 	const struct btf_func_model *fm;
+ 	int bytes_in_stack = 0;
+@@ -1663,7 +1640,7 @@ static int do_jit(struct bpf_prog *bpf_prog, int *addrs, u8 *image,
+ 	int insn_cnt = bpf_prog->len;
+ 	bool seen_exit = false;
+ 	u8 temp[BPF_MAX_INSN_SIZE + BPF_INSN_SAFETY];
+-	int i, cnt = 0;
++	int i;
+ 	int proglen = 0;
+ 	u8 *prog = temp;
+ 
 -- 
-2.39.2
+2.18.2
 
 
