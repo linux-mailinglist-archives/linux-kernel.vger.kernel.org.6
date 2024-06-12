@@ -1,270 +1,198 @@
-Return-Path: <linux-kernel+bounces-211159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029AC904DDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:16:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B975D904E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30C48B25FF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:16:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE0A1F239A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBE1374FF;
-	Wed, 12 Jun 2024 08:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7370316D4CE;
+	Wed, 12 Jun 2024 08:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="T/COupJO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Q1t7Oopg"
-Received: from wflow5-smtp.messagingengine.com (wflow5-smtp.messagingengine.com [64.147.123.140])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="5ztkh6O4"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A355416D305;
-	Wed, 12 Jun 2024 08:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1742616C847;
+	Wed, 12 Jun 2024 08:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718180148; cv=none; b=deuYjV9nKHnGLkYfwfED7o3lUPR0/MFNmCpqhtaDOvm4EMBvbcEOnUGBfjSRpbCZcJSZ1RYIi1EqN0ngido1OsgXDYs9h45fPWfuR62w80ykrEgkKAMVaQAQzT1nvvR2b5KE/OVCXUgwM1FGMxnCbcjt4kXC31Vc58JfCGmhFZE=
+	t=1718180591; cv=none; b=KwAGYS645I8l2HCy9sQChct1b3uKE6/OwFedG9xBoGqABQepRRZRA6Iej2nNGs8eiIWVP+EImMcri9ZwPyV10dwRj9shiIxSMh8qPhypaYKAFYwsoRy4l+yIJ+5sTVakh6fh+2V8uTn7SVWy0rVg/VGQJacAUlTCY2i8LROh85E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718180148; c=relaxed/simple;
-	bh=U6hukzBbxKrvojtraGdCUg5S848y4qN0OYQuMf0rzt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nPBxECaVt8IPUzcE/h+brj/Pizn8iUe3t2kAg62fb/+qwW2rPShxzVf6zJ0EySVPwHHfZ0eyhGJsbcdCffXlAO3GPjnL+ds62jqBijMwMOoHFu5117epb8GpQR+LhzUFHoNfSVCcb0LsDWnz+smHkKyXonCz6SYTrQzGvHYfoZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=T/COupJO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Q1t7Oopg; arc=none smtp.client-ip=64.147.123.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailflow.west.internal (Postfix) with ESMTP id 56FE02CC01F5;
-	Wed, 12 Jun 2024 04:15:43 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 12 Jun 2024 04:15:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1718180142;
-	 x=1718183742; bh=HeipJvuPUXcxMs0ABdL536egEdVvkPwYQPNqw34NrRM=; b=
-	T/COupJOcGQBBzKb4rbSed3jgNiyDZbxjs5JEtO62DxXUNSbNnBaXJ6I3BPKd6Z+
-	6ARsd0guK71kwjXw1RDdKg5FDdOuWZkhwcyazmIZQ+0GGUiPXA//nZRmjiyKDLNQ
-	H3/FNjklRKt6S0bTwlxmBGERxBLF6m4484BT0r9L+hTKInVQ+3ZYLh5YNyhJQYXp
-	ZZZMseNCt+e5LtkzAJE90jHuYM3sIq1I7W7lunhkpVB8TAmty1La50EuAaJ2vR/x
-	PTEbGgbt62p4WoIo7bG36hXKZCWOBjYI6WmrR/4jUJFSGtN1AaNl7FrHu6maHb+C
-	adktYiXIICDWSH7ngkbRJg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718180142; x=
-	1718183742; bh=HeipJvuPUXcxMs0ABdL536egEdVvkPwYQPNqw34NrRM=; b=Q
-	1t7OopgDslFmy8Sn7kpNoKmWbzt3Z2MGoExLH6bfO3TYPzfnfQmHEmYzcMmDYeHV
-	4dOdhWYUwwev8eBSiP2BjHKfakaj7tjqMPnm2sdSXNNRycOPLgtwenCOF46yNAyx
-	pPGsiB5WI1cN0szwAA8d9Y57IMMJlW3Ei1JOljlO9f5ryb0xDOh5eGgEy9Jj/ToU
-	J12o9vnGWKGOfi3Pf99MDmRwkD/fZLuT0kChTde7Io3QW+/d+bIpBFmWeAnhDtLL
-	Sktq4hNvnEGvGrHexapT4Ja5f4O0hdjtDsDaNSAJp70b6y8l05Fy5XHVTfs3iZLk
-	IGtT76BrLZv7Sbyt6kHjw==
-X-ME-Sender: <xms:LllpZr8xON2t8JBtvP8z2r9RPYAmVXKWxpra7VsoLzksHIWrVAqsTw>
-    <xme:LllpZnvkqHMbLn7nTwJpStwes9BHkU7PymLNoNE0gBFFBIWcXFG3r7Wg35DH8sg6E
-    Ww3SmzOnbYfBIBkWs8>
-X-ME-Received: <xmr:LllpZpAi9D44gg8B35OwmmG863qQRbZ6qMZRrXVT34TXUCAV6qQheTcH-4QZDZnznyXra_ThPng13sWtDhfFg7Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedgtdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeflohhn
-    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
-    ggtffrrghtthgvrhhnpeetgedutdfggeetleefhfeuhedtheduteekieduvdeigeegvdev
-    vddtieekiedvheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
-X-ME-Proxy: <xmx:LllpZneDoyZ-RX3X4rVUuUmiN2s53H0HQpEPmjarSlJmdbeNsrC-cg>
-    <xmx:LllpZgOos_vdtrYhH4zy-fXOAUsMnhJPoF2-A5YI2fB8xlNbQzKhqQ>
-    <xmx:LllpZpnXG5LqLB-ZltLJVdyjPBFYDlsy8SHeGNxT_BRuOggOAb-DYg>
-    <xmx:LllpZqvTNxszjuD5ehQbJyHiu7_SOSqdldAZXDNby64nJkUiYieeqQ>
-    <xmx:LllpZquORTNviG0fl8x754yxTGr1qD6L8k5YykdTsQFtiAHXFTPbkZnD>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Jun 2024 04:15:38 -0400 (EDT)
-Date: Wed, 12 Jun 2024 01:20:49 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: John Johansen <john.johansen@canonical.com>, brauner@kernel.org,
- 	ebiederm@xmission.com, Jonathan Corbet <corbet@lwn.net>,
- 	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- 	KP Singh <kpsingh@kernel.org>,
- Matt Bobrowski <mattbobrowski@google.com>,
- 	Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- 	Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>,
- 	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- 	Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
- David Howells <dhowells@redhat.com>,
- 	Jarkko Sakkinen <jarkko@kernel.org>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- 	Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, 	containers@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- 	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
- bpf@vger.kernel.org, 	apparmor@lists.ubuntu.com,
- keyrings@vger.kernel.org, selinux@vger.kernel.org,
- 	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM
- hooks
-Message-ID: <rgzhcsblub7wedm734n56cw2qf6czjb4jgck6l5miur6odhovo@n5tgrco74zce>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-5-jcalmels@3xx0.net>
- <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
- <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
- <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com>
- <CAHC9VhQFNPJTOct5rUv3HT6Z2S20mYdW75seiG8no5=fZd7JjA@mail.gmail.com>
- <uuvwcdsy7o4ulmrdzwffr6uywfacmlkjrontmjdj44luantpok@dtatxaa6tzyv>
- <CAHC9VhRnthf8+KgfuzFHXWEAc9RShDO0G_g0kc1OJ-UTih1ywg@mail.gmail.com>
+	s=arc-20240116; t=1718180591; c=relaxed/simple;
+	bh=9N3OweDQgcGJyws9SM6sqrkHn9fTMjWjILZBLGP8XK8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MDAOu6SO0XqVAvM06DqX/+/NK20ckY7Trum2dVEEzuxl8H+6skTMoyRsZ42pKnqAquQ79NnhijU1AZwsKheCdAjoP9EaWRg/0e/2FgcXhS0SN76tPg6hwp8CjWrOyAlCfyQoYEkiO/lHuj9fMMwGQVStTIlVLF57dggF9YU21+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=5ztkh6O4; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C6GZ02015552;
+	Wed, 12 Jun 2024 10:22:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=sQynSTz9r90PygX8PsR9BB
+	DC55tTFZGRrls4Q247R6I=; b=5ztkh6O4h2I4N3LzISQoI96ZThMJgS6gOZvB61
+	rjKt3iSU4Ns5HE8BlpOG7F3kT+/yoaRC4mqrF0jEYcgGO2SI4FviAlK9BahNmHHQ
+	Dsw2ph1B4HkJoMcyy5ze8qgwIf9AsL6I/yeWaPar+MzKEi6D9iHInUU9xVwdcFf/
+	SvCkfshNh2HNkk0dIJxzw243sajNbHtRE8ZERptrk7+4b64HPR+TDvwakBGuGEZs
+	fwaAxOywHGJn8p3OPkMb7xMUSyAoV//McpxRjc4Ig+T3g4q/oCsZbMQpIufLXv2J
+	LZi3fSxT+nIqMtzBvZNOZeX7/3SihzDVkXC6Fmb99qaVrh3g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ypub3aax8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 10:22:15 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 17AE54002D;
+	Wed, 12 Jun 2024 10:22:10 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 913B820F56F;
+	Wed, 12 Jun 2024 10:21:32 +0200 (CEST)
+Received: from localhost (10.130.72.241) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 12 Jun
+ 2024 10:21:32 +0200
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Sylvain Petinot <sylvain.petinot@foss.st.com>,
+        Sakari Ailus
+	<sakari.ailus@linux.intel.com>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>
+CC: <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Mugnier
+	<benjamin.mugnier@foss.st.com>
+Subject: [PATCH v2] media: i2c: vgxy61: Fix device name
+Date: Wed, 12 Jun 2024 10:21:14 +0200
+Message-ID: <20240612082114.43125-1-benjamin.mugnier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRnthf8+KgfuzFHXWEAc9RShDO0G_g0kc1OJ-UTih1ywg@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_04,2024-06-11_01,2024-05-17_01
 
-On Tue, Jun 11, 2024 at 06:38:31PM GMT, Paul Moore wrote:
-> On Tue, Jun 11, 2024 at 6:15 PM Jonathan Calmels <jcalmels@3xx0.net> wrote:
-> > On Tue, Jun 11, 2024 at 03:01:01PM GMT, Paul Moore wrote:
-> > > On Tue, Jun 11, 2024 at 6:32 AM John Johansen
-> > > <john.johansen@canonical.com> wrote:
-> > > >
-> > > > On 6/11/24 01:09, Jonathan Calmels wrote:
-> > > > > On Sun, Jun 09, 2024 at 08:18:48PM GMT, Paul Moore wrote:
-> > > > >> On Sun, Jun 9, 2024 at 6:40 AM Jonathan Calmels <jcalmels@3xx0.net> wrote:
-> > > > >>>
-> > > > >>> This patch allows modifying the various capabilities of the struct cred
-> > > > >>> in BPF-LSM hooks. More specifically, the userns_create hook called
-> > > > >>> prior to creating a new user namespace.
-> > > > >>>
-> > > > >>> With the introduction of userns capabilities, this effectively provides
-> > > > >>> a simple way for LSMs to control the capabilities granted to a user
-> > > > >>> namespace and all its descendants.
-> > > > >>>
-> > > > >>> Update the selftests accordingly by dropping CAP_SYS_ADMIN in
-> > > > >>> namespaces and checking the resulting task's bounding set.
-> > > > >>>
-> > > > >>> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
-> > > > >>> ---
-> > > > >>>   include/linux/lsm_hook_defs.h                 |  2 +-
-> > > > >>>   include/linux/security.h                      |  4 +-
-> > > > >>>   kernel/bpf/bpf_lsm.c                          | 55 +++++++++++++++++++
-> > > > >>>   security/apparmor/lsm.c                       |  2 +-
-> > > > >>>   security/security.c                           |  6 +-
-> > > > >>>   security/selinux/hooks.c                      |  2 +-
-> > > > >>>   .../selftests/bpf/prog_tests/deny_namespace.c | 12 ++--
-> > > > >>>   .../selftests/bpf/progs/test_deny_namespace.c |  7 ++-
-> > > > >>>   8 files changed, 76 insertions(+), 14 deletions(-)
-> > > > >>
-> > > > >> I'm not sure we want to go down the path of a LSM modifying the POSIX
-> > > > >> capabilities of a task, other than the capabilities/commoncap LSM.  It
-> > > > >> sets a bad precedent and could further complicate issues around LSM
-> > > > >> ordering.
-> > > > >
-> > > > > Well unless I'm misunderstanding, this does allow modifying the
-> > > > > capabilities/commoncap LSM through BTF. The reason for allowing
-> > > > > `userns_create` to be modified is that it is functionally very similar
-> > > > > to `cred_prepare` in that it operates with new creds (but specific to
-> > > > > user namespaces because of reasons detailed in [1]).
-> > > >
-> > > > yes
-> > > >
-> > > > > There were some concerns in previous threads that the userns caps by
-> > > > > themselves wouldn't be granular enough, hence the LSM integration.
-> > > >
-> > > > > Ubuntu for example, currently has to resort to a hardcoded profile
-> > > > > transition to achieve this [2].
-> > > > >
-> > > >
-> > > > The hard coded profile transition, is because the more generic solution
-> > > > as part of policy just wasn't ready. The hard coding will go away before
-> > > > it is upstreamed.
-> > > >
-> > > > But yes, updating the cred really is necessary for the flexibility needed
-> > > > whether it is modifying the POSIX capabilities of the task or the LSM
-> > > > modifying its own security blob.
-> > > >
-> > > > I do share some of Paul's concerns about the LSM modifying the POSIX
-> > > > capabilities of the task, but also thing the LSM here needs to be
-> > > > able to modify its own blob.
-> > >
-> > > To be clear, this isn't about a generic LSM needing to update its own
-> > > blob (LSM state), it is about the BPF LSM updating the capability
-> > > sets.  While we obviously must support a LSM updating its own state,
-> > > I'm currently of the opinion that allowing one LSM to update the state
-> > > of another LSM is only going to lead to problems.  We wouldn't want to
-> > > allow Smack to update AppArmor state, and from my current perspective
-> > > allowing the BPF LSM to update the capability state is no different.
-> > >
-> > > It's also important to keep in mind that if we allow one LSM to do
-> > > something, we need to allow all LSMs to do something.  If we allow
-> > > multiple LSMs to manipulate the capability sets, how do we reconcile
-> > > differences in the desired capability state?  Does that resolution
-> > > change depending on what LSMs are enabled at build time?  Enabled at
-> > > boot?  Similarly, what about custom LSM ordering?
-> > >
-> > > What about those LSMs that use a task's capabilities as an input to an
-> > > access control decision?  If those LSMs allow an access based on a
-> > > given capability set only to have a LSM later in the ordering modify
-> > > that capability set to something which would have resulted in an
-> > > access denial, do we risk a security regression?
-> >
-> > I understand the concerns, what I fail to understand however, is how is
-> > it any different from say the `cred_prepare` hook today?
-> 
-> The existing cred_prepare hooks only operate on their own small
-> portion of the cred::security blob.  What you are proposing would be
-> the BPF LSM operating on the capability sets that it does not "own"
-> (they belong to the capability LSM).
-> 
-> If you see that as a minor difference, please understand that if you
-> skip past that you have all the issues I mentioned in my previous
-> message to deal with.
-> 
-> > > Our current approach to handling multiple LSMs is that each LSM is
-> > > limited to modifying its own state, and I'm pretty confident that we
-> > > stick to this model if we have any hope of preserving the sanity of
-> > > the LSM layer as a whole.  If you want to modify the capability set
-> > > you need to do so within the confines of the capability LSM and/or
-> > > modify the other related kernel subsystems (which I'm guessing will
-> > > likely necessitate a change in the LSMs, but that avenue is very
-> > > unclear if such an option even exists).
-> >
-> > What do you mean by "within the confines of the capability LSM" here?
-> 
-> Basically security/commoncap.c.  One could make a lot of arguments
-> about if it is, or isn't, a LSM, but commoncap.c registers LSM hooks
-> which is pretty much the definition of a LSM from an implementation
-> point of view.
+Rename 'st-vgxy61' to 'vgxy61', dropping the vendor prefix to follow the
+same naming scheme as the vast majority of device drivers.
+The device tree binding does not fall into binding rename exceptions and
+therefore must not be changed. Keep its legacy name.
 
-Yes, hence the proposal to give it more fine-grained controls than
-what's currently available. But to your point, unlike the others,
-its own state (i.e. capsets) is shared, so this gets questionable.
+Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+---
+ Documentation/userspace-api/media/drivers/index.rst         | 2 +-
+ .../media/drivers/{st-vgxy61.rst => vgxy61.rst}             | 0
+ MAINTAINERS                                                 | 6 +++---
+ drivers/media/i2c/Kconfig                                   | 2 +-
+ drivers/media/i2c/Makefile                                  | 2 +-
+ drivers/media/i2c/{st-vgxy61.c => vgxy61.c}                 | 2 +-
+ 6 files changed, 7 insertions(+), 7 deletions(-)
+ rename Documentation/userspace-api/media/drivers/{st-vgxy61.rst => vgxy61.rst} (100%)
+ rename drivers/media/i2c/{st-vgxy61.c => vgxy61.c} (99%)
 
-> > Arguably, if we do want fine-grained userns policies, we need LSMs to
-> > influence the userns capset at some point.
-> 
-> One could always use, or develop, a LSM that offers additional
-> controls around exercising capabilities.  There are currently four
-> in-tree LSMs, including the capabilities LSM, which supply a
-> security_capable() hook that is used by the capability-based access
-> controls in the kernel; all of these hook implementations work
-> together within the LSM framework and provide an additional level of
-> control/granularity beyond the existing capabilities.
+diff --git a/Documentation/userspace-api/media/drivers/index.rst b/Documentation/userspace-api/media/drivers/index.rst
+index 2252063593bf..d706cb47b112 100644
+--- a/Documentation/userspace-api/media/drivers/index.rst
++++ b/Documentation/userspace-api/media/drivers/index.rst
+@@ -35,6 +35,6 @@ For more details see the file COPYING in the source distribution of Linux.
+ 	max2175
+ 	npcm-video
+ 	omap3isp-uapi
+-	st-vgxy61
+ 	thp7312
+ 	uvcvideo
++	vgxy61
+diff --git a/Documentation/userspace-api/media/drivers/st-vgxy61.rst b/Documentation/userspace-api/media/drivers/vgxy61.rst
+similarity index 100%
+rename from Documentation/userspace-api/media/drivers/st-vgxy61.rst
+rename to Documentation/userspace-api/media/drivers/vgxy61.rst
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ef6be9d95143..33ee4d5e7f0e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20892,8 +20892,8 @@ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ T:	git git://linuxtv.org/media_tree.git
+ F:	Documentation/devicetree/bindings/media/i2c/st,st-vgxy61.yaml
+-F:	Documentation/userspace-api/media/drivers/st-vgxy61.rst
+-F:	drivers/media/i2c/st-vgxy61.c
++F:	Documentation/userspace-api/media/drivers/vgxy61.rst
++F:	drivers/media/i2c/vgxy61.c
+ 
+ ST VL53L0X ToF RANGER(I2C) IIO DRIVER
+ M:	Song Qiang <songqiang1304521@gmail.com>
+@@ -23210,7 +23210,7 @@ F:	drivers/media/i2c/mt*
+ F:	drivers/media/i2c/og*
+ F:	drivers/media/i2c/ov*
+ F:	drivers/media/i2c/s5*
+-F:	drivers/media/i2c/st-vgxy61.c
++F:	drivers/media/i2c/vgxy61.c
+ 
+ VF610 NAND DRIVER
+ M:	Stefan Agner <stefan@agner.ch>
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index c6d3ee472d81..25619d5e29c4 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -659,7 +659,7 @@ config VIDEO_S5K6A3
+ 	  This is a V4L2 sensor driver for Samsung S5K6A3 raw
+ 	  camera sensor.
+ 
+-config VIDEO_ST_VGXY61
++config VIDEO_VGXY61
+ 	tristate "ST VGXY61 sensor support"
+ 	select V4L2_CCI_I2C
+ 	depends on OF && GPIOLIB
+diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+index dfbe6448b549..d322ba161da5 100644
+--- a/drivers/media/i2c/Makefile
++++ b/drivers/media/i2c/Makefile
+@@ -124,7 +124,6 @@ obj-$(CONFIG_VIDEO_SAA717X) += saa717x.o
+ obj-$(CONFIG_VIDEO_SAA7185) += saa7185.o
+ obj-$(CONFIG_VIDEO_SONY_BTF_MPX) += sony-btf-mpx.o
+ obj-$(CONFIG_VIDEO_ST_MIPID02) += st-mipid02.o
+-obj-$(CONFIG_VIDEO_ST_VGXY61) += st-vgxy61.o
+ obj-$(CONFIG_VIDEO_TC358743) += tc358743.o
+ obj-$(CONFIG_VIDEO_TC358746) += tc358746.o
+ obj-$(CONFIG_VIDEO_TDA1997X) += tda1997x.o
+@@ -148,6 +147,7 @@ obj-$(CONFIG_VIDEO_TW9910) += tw9910.o
+ obj-$(CONFIG_VIDEO_UDA1342) += uda1342.o
+ obj-$(CONFIG_VIDEO_UPD64031A) += upd64031a.o
+ obj-$(CONFIG_VIDEO_UPD64083) += upd64083.o
++obj-$(CONFIG_VIDEO_VGXY61) += vgxy61.o
+ obj-$(CONFIG_VIDEO_VP27SMPX) += vp27smpx.o
+ obj-$(CONFIG_VIDEO_VPX3220) += vpx3220.o
+ obj-$(CONFIG_VIDEO_WM8739) += wm8739.o
+diff --git a/drivers/media/i2c/st-vgxy61.c b/drivers/media/i2c/vgxy61.c
+similarity index 99%
+rename from drivers/media/i2c/st-vgxy61.c
+rename to drivers/media/i2c/vgxy61.c
+index b9e7c57027b1..30378e962016 100644
+--- a/drivers/media/i2c/st-vgxy61.c
++++ b/drivers/media/i2c/vgxy61.c
+@@ -1878,7 +1878,7 @@ static const struct dev_pm_ops vgxy61_pm_ops = {
+ 
+ static struct i2c_driver vgxy61_i2c_driver = {
+ 	.driver = {
+-		.name  = "st-vgxy61",
++		.name  = "vgxy61",
+ 		.of_match_table = vgxy61_dt_ids,
+ 		.pm = &vgxy61_pm_ops,
+ 	},
+-- 
+2.25.1
 
-Right, but the idea was to have a simple and easy way to reuse/trigger
-as much of the commoncap one as possible from BPF. If we're saying we
-need to reimplement and/or use a whole new framework, then there is
-little value.
-
-TBH, I don't feel strongly about this, which is why it is absent from
-v1. However, as John pointed out, we should at least be able to modify
-the blob if we want flexible userns caps policies down the road.
 
