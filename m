@@ -1,225 +1,113 @@
-Return-Path: <linux-kernel+bounces-211360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43AF905099
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:43:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0968C90509B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A8091F22329
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:43:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A4C71C20D60
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE62716F0D5;
-	Wed, 12 Jun 2024 10:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3FE16EC0B;
+	Wed, 12 Jun 2024 10:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IDpjaBA8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rkHwJMlc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oktXjwWY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549F916EC0E;
-	Wed, 12 Jun 2024 10:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF42416E881;
+	Wed, 12 Jun 2024 10:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718188978; cv=none; b=sKsOo4JXrJjJnJiRXunlqIlY3+rRrx8Hchhu4qtD6WTAfyZ5N/muCU8XTrWQvZ8766r7XJeZ38nOXlVNUEf3UDN0I6oNWM1zpBfx3kL/e4TNrfPg86qei+6FlalA03DFOfJO1xyQwhUX2lPTNXoo81I9ZR80vNFIrcjhx1ebfdo=
+	t=1718189008; cv=none; b=sPPBLByf++gj99MU1xLsFTL37W9NYhxi+sYdIQwHLyyGon962A88MZJRYrAZNdqQ+wNEc6q/Ys7lEJBxQhXKSSyLhwWL74LWnIneejtcqxdGpBAMuEmPjdKJoWi9ZvaP97zil2bJSXqkixXIu0oG7sxLTMcCKilsdEs9hgkpw6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718188978; c=relaxed/simple;
-	bh=x0irVHea9xJBnbsbAv4Kh560yicrGm3RLgdBbtzUyl0=;
+	s=arc-20240116; t=1718189008; c=relaxed/simple;
+	bh=i0AkVG96HZP+xZlgakshFx4WYDgJ6NHv2HEdMjfHNzM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dX7g4PoJLYy6zgcGsSS4bz6fYm/0vyg1hTi8I7BmRgSJDrKHtjCyzCEI2UVSWaGqRx1QkS+bMe2vA/qZJtxh/kmJQE42cXl0IUk+V2j+Qkz5OiX04aBW+Aq0Hu2swLLgkPJOQgliN91DRAst2gmsIw5KI5Zp9IzEHX4v7DOchKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IDpjaBA8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rkHwJMlc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 12 Jun 2024 12:42:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718188973;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=btdOPFQFwTkICHYO1/SoS8iTZ/W/Xt2/b1M+VRqmDTM=;
-	b=IDpjaBA81cwQHdCuUa6AsYhHFMJfKS66w1BzngfRChyyzRsuf1C7gUDC1H4T64izBar7Vo
-	3qpLLECGiwGfco+3yOh7lwhloytYJvZ8YjzX26zWCTLsOD6DV4b1ktoIdy4BAPZDM6ZMNM
-	UhJTB26hppPQ3ypcHcSNhwZAwBW0Gj5H4ZNQ66ZLC4MVpG9kwGcE3WL/JgfZ4nkr6B20tj
-	M1J31nbbvSBhD1arW6+O4bAiDmKgIq7durXJ20MUONT9VIkkUWcraDAGUUri2HHn8mr4Mj
-	t27i6+WPxHho/IviSahXeBdnBdrZ2XFMihFVD/BDWbalfCgP91kmCl20RFOv4w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718188973;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=btdOPFQFwTkICHYO1/SoS8iTZ/W/Xt2/b1M+VRqmDTM=;
-	b=rkHwJMlcGcVjifPlUIsNT1RgwpVmOs1VR/JmIAvZ8a0kz1iIbmBjQ6EguIfz7TD28Ug6DA
-	4BXb03RjqhRAsQAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH v5 net-next 14/15] net: Reference bpf_redirect_info via
- task_struct on PREEMPT_RT.
-Message-ID: <20240612104251.DDjnpfnq@linutronix.de>
-References: <20240607070427.1379327-1-bigeasy@linutronix.de>
- <20240607070427.1379327-15-bigeasy@linutronix.de>
- <045e3716-3c3a-4238-b38a-3616c8974e2c@kernel.org>
- <20240610165014.uWp_yZuW@linutronix.de>
- <18328cc2-c135-4b69-8c5f-cd45998e970f@kernel.org>
- <20240611083918.fJTJJtBu@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dj/YibfbEiEl47f41N+t+jnhxm2KWcLg33AVj/p9qYtkhL2SuxnrNjX0f3DHX56mxVeV9DRYL0BUiXMNWpr3GYPZIOfo8L0k6KO0Gd3tpQLJc4IpISahs+JjM4ZmHJQkrtksBTx0by0H5cYh0UMSkIlvHiMAdH38A9DM5YC5F9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oktXjwWY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1DE0C3277B;
+	Wed, 12 Jun 2024 10:43:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718189007;
+	bh=i0AkVG96HZP+xZlgakshFx4WYDgJ6NHv2HEdMjfHNzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oktXjwWY0SjBMdlI1iZB4rWkwiB5T05GruABT09QkcllcPLknmNITngDkJ7UMNaVV
+	 7Fdv2sgReaQFCD3tdrl+PQWXYifjYJ4Dsyu/D0h8ZZtxyCNx8tErP0cfR9Naw+Enng
+	 GPYw0bbfHVB0ppCEf09EdsHw84edZ2TvDOlkyLjKvx0P5Ib9CTIJOUHsjyrq1jdnnb
+	 YhpATUXX70LETG2uNLsk5gafHeLU1rcxvHvBx0p54u3Dc/gTG82bVYjiOv+5hjpcQL
+	 g8YAI2sdNPrGmcGDYJD8lbWIOgr1cRe4XJpdcBR+1HlfgMfZZFdOBxDWsM9gzaV21H
+	 Yu/8O4vQJkbDw==
+Date: Wed, 12 Jun 2024 11:43:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Shuah Khan <shuah@kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: mm: Make map_fixed_noreplace test names stable
+Message-ID: <Zml7zMzgBLEpMm8J@finisterre.sirena.org.uk>
+References: <20240605-kselftest-mm-fixed-noreplace-v1-1-a235db8b9be9@kernel.org>
+ <20240611152317.8e72edb3a545a685a2a0b395@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="taj9yIMJlp9FRGvc"
 Content-Disposition: inline
-In-Reply-To: <20240611083918.fJTJJtBu@linutronix.de>
+In-Reply-To: <20240611152317.8e72edb3a545a685a2a0b395@linux-foundation.org>
+X-Cookie: Your love life will be... interesting.
 
-On 2024-06-11 10:39:20 [+0200], To Jesper Dangaard Brouer wrote:
-> On 2024-06-11 09:55:11 [+0200], Jesper Dangaard Brouer wrote:
-> > >   struct bpf_net_context {
-> > >   	struct bpf_redirect_info ri;
-> > >   	struct list_head cpu_map_flush_list;
-> > >   	struct list_head dev_map_flush_list;
-> > >   	struct list_head xskmap_map_flush_list;
-> > > +	unsigned int flags;
-> > 
-> > Why have yet another flags variable, when we already have two flags in
-> > bpf_redirect_info ?
-> 
-> Ah you want to fold this into ri member including the status for the
-> lists? Could try. It is splitted in order to delay the initialisation of
-> the lists, too. We would need to be careful to not overwrite the
-> flags if `ri' is initialized after the lists. That would be the case
-> with CONFIG_DEBUG_NET=y and not doing redirect (the empty list check
-> initializes that).
 
-What about this:
+--taj9yIMJlp9FRGvc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
------->8----------
+On Tue, Jun 11, 2024 at 03:23:17PM -0700, Andrew Morton wrote:
+> On Wed, 05 Jun 2024 23:36:12 +0100 Mark Brown <broonie@kernel.org> wrote:
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index d2b4260d9d0be..c0349522de8fb 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -733,15 +733,22 @@ struct bpf_nh_params {
- 	};
- };
- 
-+/* flags for bpf_redirect_info kern_flags */
-+#define BPF_RI_F_RF_NO_DIRECT	BIT(0)	/* no napi_direct on return_frame */
-+#define BPF_RI_F_RI_INIT	BIT(1)
-+#define BPF_RI_F_CPU_MAP_INIT	BIT(2)
-+#define BPF_RI_F_DEV_MAP_INIT	BIT(3)
-+#define BPF_RI_F_XSK_MAP_INIT	BIT(4)
-+
- struct bpf_redirect_info {
- 	u64 tgt_index;
- 	void *tgt_value;
- 	struct bpf_map *map;
- 	u32 flags;
--	u32 kern_flags;
- 	u32 map_id;
- 	enum bpf_map_type map_type;
- 	struct bpf_nh_params nh;
-+	u32 kern_flags;
- };
- 
- struct bpf_net_context {
-@@ -757,14 +764,7 @@ static inline struct bpf_net_context *bpf_net_ctx_set(struct bpf_net_context *bp
- 
- 	if (tsk->bpf_net_context != NULL)
- 		return NULL;
--	memset(&bpf_net_ctx->ri, 0, sizeof(bpf_net_ctx->ri));
--
--	if (IS_ENABLED(CONFIG_BPF_SYSCALL)) {
--		INIT_LIST_HEAD(&bpf_net_ctx->cpu_map_flush_list);
--		INIT_LIST_HEAD(&bpf_net_ctx->dev_map_flush_list);
--	}
--	if (IS_ENABLED(CONFIG_XDP_SOCKETS))
--		INIT_LIST_HEAD(&bpf_net_ctx->xskmap_map_flush_list);
-+	bpf_net_ctx->ri.kern_flags = 0;
- 
- 	tsk->bpf_net_context = bpf_net_ctx;
- 	return bpf_net_ctx;
-@@ -785,6 +785,11 @@ static inline struct bpf_redirect_info *bpf_net_ctx_get_ri(void)
- {
- 	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
- 
-+	if (!(bpf_net_ctx->ri.kern_flags & BPF_RI_F_RI_INIT)) {
-+		memset(&bpf_net_ctx->ri, 0, offsetof(struct bpf_net_context, ri.nh));
-+		bpf_net_ctx->ri.kern_flags |= BPF_RI_F_RI_INIT;
-+	}
-+
- 	return &bpf_net_ctx->ri;
- }
- 
-@@ -792,6 +797,11 @@ static inline struct list_head *bpf_net_ctx_get_cpu_map_flush_list(void)
- {
- 	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
- 
-+	if (!(bpf_net_ctx->ri.kern_flags & BPF_RI_F_CPU_MAP_INIT)) {
-+		INIT_LIST_HEAD(&bpf_net_ctx->cpu_map_flush_list);
-+		bpf_net_ctx->ri.kern_flags |= BPF_RI_F_CPU_MAP_INIT;
-+	}
-+
- 	return &bpf_net_ctx->cpu_map_flush_list;
- }
- 
-@@ -799,6 +809,11 @@ static inline struct list_head *bpf_net_ctx_get_dev_flush_list(void)
- {
- 	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
- 
-+	if (!(bpf_net_ctx->ri.kern_flags & BPF_RI_F_DEV_MAP_INIT)) {
-+		INIT_LIST_HEAD(&bpf_net_ctx->dev_map_flush_list);
-+		bpf_net_ctx->ri.kern_flags |= BPF_RI_F_DEV_MAP_INIT;
-+	}
-+
- 	return &bpf_net_ctx->dev_map_flush_list;
- }
- 
-@@ -806,12 +821,14 @@ static inline struct list_head *bpf_net_ctx_get_xskmap_flush_list(void)
- {
- 	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
- 
-+	if (!(bpf_net_ctx->ri.kern_flags & BPF_RI_F_XSK_MAP_INIT)) {
-+		INIT_LIST_HEAD(&bpf_net_ctx->xskmap_map_flush_list);
-+		bpf_net_ctx->ri.kern_flags |= BPF_RI_F_XSK_MAP_INIT;
-+	}
-+
- 	return &bpf_net_ctx->xskmap_map_flush_list;
- }
- 
--/* flags for bpf_redirect_info kern_flags */
--#define BPF_RI_F_RF_NO_DIRECT	BIT(0)	/* no napi_direct on return_frame */
--
- /* Compute the linear packet data range [data, data_end) which
-  * will be accessed by various program types (cls_bpf, act_bpf,
-  * lwt, ...). Subsystems allowing direct data access must (!)
+> > KTAP parsers interpret the output of ksft_test_result_*() as being the
+> > name of the test.  The map_fixed_noreplace test uses a dynamically
+> > allocated base address for the mmap()s that it tests and currently
+> > includes this in the test names that it logs so the test names that are
+> > logged are not stable between runs.  It also uses multiples of PAGE_SIZE
+> > which mean that runs for kernels with different PAGE_SIZE configurations
+> > can't be directly compared.  Both these factors cause issues for CI
+> > systems when interpreting and displaying results.
 
------->8----------
+> > Fix this by replacing the current test names with fixed strings
+> > describing the intent of the mappings that are logged, the existing
+> > messages with the actual addresses and sizes are retained as diagnostic
+> > prints to aid in debugging.
 
-Moving kern_flags to the end excludes it from the memset() and can be
-re-used for the delayed initialisation.
+> This sounds fairly annoying and I'm inclined to backport the fix into
+> -stable kernels(?).
 
-Sebastian
+It's annoying but more of a UI issue than anything too serious - for my
+setup it just translates into not validating those individual tests and
+instead only paying attention to the overall result of the program.
+Personally I'd say that it reaches the severity where it might be worth
+sending for v6.10 but not to stable.
+
+--taj9yIMJlp9FRGvc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZpe8sACgkQJNaLcl1U
+h9A3rQf/X65fpQaBQdsPSyX4tv50iov2KxXIBmL++mft/PrqcYvGNIQAtxXjeXQZ
+Q5f7YQ4YcCHlUCjw3ic7zLPox1YNobi7ZBSCU/QvZ9YeWhA3/Ud8Q9CdYPKwx3ZS
+xhK9NZpQ5WO2QOmtRfSLkdMCTnYV36oM4K4gb9duQOJtEZfh769/AmbVzLLnCoab
+WIlqmwoMrkfMieNk+H8z/1i2jFWVTxHRiM73dMv6SiWCIjQbMixCXlOMvsf9bCYc
+6Eol5gIsfEHmL7qbVi+d+MLC4uypLuA35Mtqvez3EGl1spWKsjV9NsxA2kD7hyVm
+CE/qEsbVD4KHawxWtsoSbAT4PyHPfw==
+=/+tZ
+-----END PGP SIGNATURE-----
+
+--taj9yIMJlp9FRGvc--
 
