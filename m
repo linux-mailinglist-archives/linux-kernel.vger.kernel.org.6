@@ -1,120 +1,117 @@
-Return-Path: <linux-kernel+bounces-211815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE704905756
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:48:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE92905759
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D20CB26DD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C9501C221C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF462180A6C;
-	Wed, 12 Jun 2024 15:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F1B17C7C8;
+	Wed, 12 Jun 2024 15:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUoEHlHK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BX7YQziI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D8717C7C8;
-	Wed, 12 Jun 2024 15:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DBFB65E;
+	Wed, 12 Jun 2024 15:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718207303; cv=none; b=bnuOSKhKFDCemBXUCMllHnyj6oIuzqn/ix0PUR0xERqMjcyEYMf5uO+nC7pvdAi0g2DB3AqVn8DDkmAa+8pm60XVVMJuynFVdT/F7CMUWUbhE1BKWPl7/xVeQsaYukL6qmycPAFNTEKrpX1YtvR0Na/ouC6WZ8PhqFSQh5Isdpc=
+	t=1718207331; cv=none; b=L08tyo0PjBXle/6acKVvk8milD9nNL6RzWfptDj21pk74KoaRyjGyuWnFZFAqgaYLhzeo04z9L0ISkvkFxSXtIQqv2zQlfooG/hpaMuHGnZ2aORWUWcNRezROqsks09GdOR+AHtDMKLm515oxJpKbfTBkdhHscNjhp+/rYjHa5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718207303; c=relaxed/simple;
-	bh=+7dgCMAE8xXP+L3ANBWO9tjojn+ydsIoH8bkB9Y/hl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f2eeqcuRL1L17jiBrCpNp5g8HIho98O/p99fGZP8+RK/yybjofOVwcvRY89QBUZnrWQPbN5dG6KdsZb54lyUFpdlzjyFoUKx0We0yosaad49CPERkIaPIsfEhu4XXSjo9Il4LyFTRLFReBSdBFmRo5suo/ltGWHDTz+Oy7kLraM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUoEHlHK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14137C116B1;
-	Wed, 12 Jun 2024 15:48:19 +0000 (UTC)
+	s=arc-20240116; t=1718207331; c=relaxed/simple;
+	bh=Zv5RO+ev5GfuXBQM8OVvJacsGQmGXoAme99ziwuiEck=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p3h7mFzV9nCp47Yr3lJgvXOamm5+wcxap4XXzjuUmTfWwCUkNiTr6ohDNPoEKZkqjSvgzfKu4f67YvvIlOGT82RJVoMjL+adyCTgQGIt9wXf4ZRTb9fW7J7GazT59G/mDL+xOIxkVF1eE33cIZ7nfuAfQqFCPocNXYhWsiua3B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BX7YQziI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E4F4C116B1;
+	Wed, 12 Jun 2024 15:48:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718207302;
-	bh=+7dgCMAE8xXP+L3ANBWO9tjojn+ydsIoH8bkB9Y/hl0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lUoEHlHKTw5SY/PsFRy8BXdFLVNotLH7+Y0aYLHpuXxwKr8kdciwjPmVIP6d+k5wP
-	 hYFaetN8ddefpaQIiEdi8hNpYWMRSZkCQX3rZa7/sA/WYbeoKDiBtHbQusF4I8mbm+
-	 385Gqc0wc9u1/RmHSyf+fvac0YfcmoGz8tVW3zwmJnYcFxJYhzBpK70FeYe4sA9ONN
-	 8k8RcPuApOOZNBas84sRHCZ5UOYna7nLs0BPv1zNOowrOTSQ0Z4H9+bCKstTfPAM6p
-	 pOGg/SlEVU+/YiBhKeg2is8TWNY9RQiZLfmAlQn7ZDvgM7xdXnUpg0HBpa/Mi05HKr
-	 c6aYUD9b6Dmpg==
-Date: Wed, 12 Jun 2024 16:48:17 +0100
-From: Lee Jones <lee@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Ryan Walklin <ryan@testtoast.com>,
-	Chris Morgan <macroalpha82@gmail.com>
-Subject: Re: [PATCH v2 1/5] mfd: axp20x: AXP717: Fix missing IRQ status
- registers range
-Message-ID: <20240612154817.GH1504919@google.com>
-References: <20240418000736.24338-1-andre.przywara@arm.com>
- <20240418000736.24338-2-andre.przywara@arm.com>
- <20240502093907.GM5338@google.com>
- <56aef347-7582-497e-be02-d82eda7b3528@arm.com>
- <20240612152510.GE1504919@google.com>
- <7fdc23ff-fd55-4347-ac61-dd115eff6ff1@arm.com>
+	s=k20201202; t=1718207331;
+	bh=Zv5RO+ev5GfuXBQM8OVvJacsGQmGXoAme99ziwuiEck=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BX7YQziIjwMZfXU0YaZomh/upatYQYZUGXQ/gieuDsa9lHHH6IXuLe5CWwi8zvEiO
+	 4MVnoIG7zXqf/0d24cWmZHPf3kTevU7tUBOj26/3MnuklimKVGk5huSRgKYwztRmu/
+	 GgkcV19g3+RW982sqldDpHHAyHvbiGqO4/GwXUcplKhwhc1jhFSXMOFwjOAeS/uY2g
+	 UURuFkVVoi6LncNTPzj390R3bL4rqB7DQ5N9JiXHB2HBpnNkuAw2AP6yUK23Mddplw
+	 L+GDRo7hirnaWDCQs9G5tvMOJL78qu04pnRH/U7EWVNQWmfqsfvDi7Kk7dRbB9Dxri
+	 UMWjj3YilADrw==
+From: Conor Dooley <conor@kernel.org>
+To: linux-mmc@vger.kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	cyril.jean@microchip.com,
+	Mark Brown <broonie@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-spi@vger.kernel.org
+Subject: [RFC v1 0/3] mmc-spi - support controllers incapable of getting as low as 400KHz
+Date: Wed, 12 Jun 2024 16:48:30 +0100
+Message-ID: <20240612-brigade-shell-1f626e7e592f@spud>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1827; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=jUBdCKFRhPbdoAZJHxpB1biK3nMfNT3Pp93RB7R03bE=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGmZh31+Pm/g6ohf0duw6nVeD9Per0uMtwtxV56d+SrMv b92nZBlRykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACbytpbhr8Bf9Si3ZXVFdZVd x49dWL3xPsN13mz1GY8DrmmEx8WwlTL8L+kS/R9c+YftQeCvP85rHr7O8L3xseH8jP878tVe9mf sZAMA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7fdc23ff-fd55-4347-ac61-dd115eff6ff1@arm.com>
 
-On Wed, 12 Jun 2024, Andre Przywara wrote:
+From: Conor Dooley <conor.dooley@microchip.com>
 
-> Hi,
-> 
-> On 12/06/2024 16:25, Lee Jones wrote:
-> > On Wed, 12 Jun 2024, Andre Przywara wrote:
-> > 
-> > > Hi Lee,
-> > > 
-> > > On 02/05/2024 10:39, Lee Jones wrote:
-> > > > On Thu, 18 Apr 2024, Andre Przywara wrote:
-> > > > 
-> > > > > While we list the "IRQ status *and acknowledge*" registers as volatile,
-> > > > > they are missing from the writable range array, so acknowledging any
-> > > > > interrupts was met with an -EIO error.
-> > > > > 
-> > > > > Add the five registers that hold those bits to the writable array.
-> > > > > 
-> > > > > Fixes: b5bfc8ab2484 ("mfd: axp20x: Add support for AXP717 PMIC")
-> > > > > Reported-by: Chris Morgan <macromorgan@hotmail.com>
-> > > > > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > > > > ---
-> > > > >    drivers/mfd/axp20x.c | 1 +
-> > > > >    1 file changed, 1 insertion(+)
-> > > > 
-> > > > Acked-by: Lee Jones <lee@kernel.org>
-> > > 
-> > > Can you please take just this patch as a fix for 6.10? This fixes the power
-> > > key operation.
-> > > This applies cleanly on top of v6.10-rc3, so there is no need for any extra
-> > > immutable branch or coordination with regulator.
-> > > (The same is true independently for patch 2/5, on the regulator side).
-> > 
-> > What does the Fixes: commit break?
-> > 
-> > Or is it the case that it never worked properly?
-> 
-> The interrupt part never worked properly, but so far that's only needed for
-> the power key operation. Unfortunately that part wasn't tested properly
-> initially, so the patches were merged into your tree before that.
+Yo,
 
-This doesn't sounds like a -fixes candidate.  I'll mark the set for v6.11.
+RFC for some stuff that I've got in-progress for a customer's board
+where they want to use mmc-spi-slot with a QSPI controller that is
+incapable of getting as low as 400KHz with the way clocks have been
+configured on the system. At the moment, if a controller cannot get that
+low, linux continuously reports that queuing a transfer fails. The first
+couple of transfers will complete on this system, until mmc_start_host()
+kicks in and clamps the frequency to the larger of host->f_min and 400
+KHz.
+Doing something like patch 1 of this set would allow the mmc-spi-slot to
+function for some sd cards, an improvement on the current none. I don't
+have any sd cards on hand that don't support the 5 MHz minimum frequency
+that this controller is limited to, so I amn't sure at what point this
+will blow up if such a card was used.
+
+Is this sort of change something that would fly?
+
+Patches 2 & 3 are just here b/c without #3 the qspi driver for this
+platform doesn't support anything other than mem ops and #2 is required
+to set the minimum frequency for mmc_spi to pick up.
+
+Cheers,
+Conor.
+
+CC: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: cyril.jean@microchip.com
+CC: Mark Brown <broonie@kernel.org>
+CC: linux-mmc@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-riscv@lists.infradead.org
+CC: linux-spi@vger.kernel.org
+
+Conor Dooley (2):
+  mmc: mmc_spi: allow for spi controllers incapable of getting as low as
+    400k
+  spi: microchip-core-qspi: set min_speed_hz during probe
+
+Cyril Jean (1):
+  spi: microchip-core-qspi: Add regular transfers
+
+ drivers/mmc/host/mmc_spi.c            |   5 +-
+ drivers/spi/spi-microchip-core-qspi.c | 224 +++++++++++++++++++++++++-
+ 2 files changed, 226 insertions(+), 3 deletions(-)
 
 -- 
-Lee Jones [李琼斯]
+2.43.0
+
 
