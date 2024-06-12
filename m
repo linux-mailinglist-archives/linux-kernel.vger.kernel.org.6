@@ -1,152 +1,139 @@
-Return-Path: <linux-kernel+bounces-210919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C28904A26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:44:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E11904A35
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC121C23AE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0BBF1C23B51
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC072D057;
-	Wed, 12 Jun 2024 04:44:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF97E2C6A3;
-	Wed, 12 Jun 2024 04:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC90282ED;
+	Wed, 12 Jun 2024 04:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EKjrNjIb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68352224C9
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718167452; cv=none; b=NfYrBUResj50NOzLNXC6EuP4tcxvRx2hVUKQe0e35heqZJ8Xv5vUSpKgdWQBvmSVznGC2UMXDX0s5WwGxs/1TzGqmSAenXFmVgD2k5asplJJZToIeHl+M/WNu7z9KBHibKP/bMNSh1D+S0vzI4CiloVtp0brKp4MKnHps7Zdi1Q=
+	t=1718167663; cv=none; b=uaRi/UWzKSPCgJOMsuSHWzGSUaW7+DMsTW9dp5Gcoa/TBn/jCJCrv388HO5sFCyn7Xnru7SftXk9OZN4pH5xVumsLUlcAypzfBR5q5LnreJtx/jjentBau9JZA1YVX3lxSxzSDsLFMwzIjOkSMfYTM48EUousF5mZ93E/1PkpKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718167452; c=relaxed/simple;
-	bh=88bOPtJH+39QSELyA0j6OxhwfRT9w6E56fXRX/NhS24=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UmShhoc5z6Ew5562v4cDG/rgEn/VwrD93qZZYqQb+SPDzbZoFmyO+ZCaL440cF9mUXAZhbO430idLAp7O+/8Fo9kgpdYxRyht2fD2EE6OC4tDe9pXRr7wb2sfvX+0S+mPShKCWOx3vC1OjMQtoacUBhwf4CfPoiS8f4UVwpyYQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D470152B;
-	Tue, 11 Jun 2024 21:44:33 -0700 (PDT)
-Received: from [10.162.42.15] (e116581.arm.com [10.162.42.15])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 793E03F64C;
-	Tue, 11 Jun 2024 21:44:04 -0700 (PDT)
-Message-ID: <ec1973ee-909d-41a2-8b32-256302d190b4@arm.com>
-Date: Wed, 12 Jun 2024 10:14:01 +0530
+	s=arc-20240116; t=1718167663; c=relaxed/simple;
+	bh=DwOaQl3v4kXfyBw+OsCGIk1eo2nvMrlf7McHTzHa+40=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I1OprKngicLn9vpY8Dg/8GVIqyIhw3JvznMkk1P+diUuKEzVjAw7BcsYjlziAEusbYS5evHHHcOju4tw+FtIQ+Nqi1gGhQbBXUjXsLwzHSTH9sI9pjhH+9JbzaUMdVez5cmAMWJv4JtT+vjq6D7/abqURyFLsRm3Sk28dwka1HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EKjrNjIb; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718167661; x=1749703661;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=DwOaQl3v4kXfyBw+OsCGIk1eo2nvMrlf7McHTzHa+40=;
+  b=EKjrNjIblNlrJ7SMZJ/QkQIAgxj5bp8OG6GyFAmVw/ysR0G24ySvXJWc
+   k4Sl7FOasJzgyist/CkcuQhp0E2QA7cgYjs0LjDcqIb2uJEkX6Ff99ixO
+   E2AP1KkYrD9kwiY8RRK73zW1SdGg0ENXPr5t6h6Ppyl3zh7IAOKa6zVT0
+   A9U+on1tk23ZfQI0OCqBcTXUiycptbzqlfm51+ggzJ8QyHtw9p5UNDOhd
+   pbBVIi2Ldj79Jjv1JK/CbrkWkIbDBTFCd4eZRlcc3gsRiaZiLSk5vaYz0
+   9omQwQUEbwdzTeynxzS3DYHyIjY48hwWxlt2GyH1vCBzFlkUae1mgQvNw
+   Q==;
+X-CSE-ConnectionGUID: FQkuoO9qTRitQaKmYnv8Pg==
+X-CSE-MsgGUID: AI1sFhL3RC2wgtH0OM88uw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="15038684"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="15038684"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 21:47:40 -0700
+X-CSE-ConnectionGUID: arkobFfVQEynY0OdfwYIeA==
+X-CSE-MsgGUID: Vq54Ex0LRrep1F5oIRtuhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="39630490"
+Received: from iweiny-mobl.amr.corp.intel.com (HELO localhost) ([10.213.170.70])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 21:47:39 -0700
+From: Ira Weiny <ira.weiny@intel.com>
+Date: Tue, 11 Jun 2024 23:47:31 -0500
+Subject: [PATCH] testing: nvdimm: Add MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] selftests: Add a test mangling with uc_sigmask
-To: Mark Brown <broonie@kernel.org>
-Cc: shuah@kernel.org, oleg@redhat.com, stsp2@yandex.ru, mingo@kernel.org,
- tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com,
- suzuki.poulose@arm.com, Anshuman.Khandual@arm.com,
- DeepakKumar.Mishra@arm.com, AneeshKumar.KizhakeVeetil@arm.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240611075650.814397-1-dev.jain@arm.com>
- <20240611075650.814397-3-dev.jain@arm.com>
- <Zmg0GoGnJFbPysfK@finisterre.sirena.org.uk>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <Zmg0GoGnJFbPysfK@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240611-nvdimm-test-mod-warn-v1-1-4a583be68c17@intel.com>
+X-B4-Tracking: v=1; b=H4sIAGIoaWYC/x3MQQqAIBBA0avErBvQjIyuEi1Mp5qFFhoWRHdPW
+ r7F/w8kikwJhuqBSJkT76FA1hXYzYSVkF0xNKJpRSclhuzYezwpneh3h5eJAXu7aK1UJ2aloaR
+ HpIXvfztO7/sBL1PC5GYAAAA=
+To: nvdimm@lists.linux.dev
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+ linux-kernel@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>, 
+ Ira Weiny <ira.weiny@intel.com>
+X-Mailer: b4 0.13-dev-2d940
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718167658; l=1841;
+ i=ira.weiny@intel.com; s=20221211; h=from:subject:message-id;
+ bh=DwOaQl3v4kXfyBw+OsCGIk1eo2nvMrlf7McHTzHa+40=;
+ b=ZG57LJpHjEvng6K4xUdJD9QsKjnJk8zQ84LIS2EZlf3lc9O9OLmWe+xKxyiXGQec7tOHXhbFL
+ 43sQTJ5p5T7Do5vn4Wob8GoIMKsVpGJBLWDbsw6X+G+jHO3c+JbRF0M
+X-Developer-Key: i=ira.weiny@intel.com; a=ed25519;
+ pk=noldbkG+Wp1qXRrrkfY1QJpDf7QsOEthbOT7vm0PqsE=
 
+When building with W=1 the following errors are seen:
 
-On 6/11/24 16:55, Mark Brown wrote:
-> On Tue, Jun 11, 2024 at 01:26:50PM +0530, Dev Jain wrote:
->
->> + * A signal is said to be delivered, when the program takes action on the
->> + * signal: such action may involve termination of the process, ignoring the
->> + * signal, terminating with core dump, stopping the process, or continuing the
->> + * process if it was currently stopped. A signal is said to be blocked when the
->> + * program refuses to take any of the above actions; note that, this is not the
->> + * same as ignoring the signal. At a later time, the program may unblock the
->> + * signal and then it will have to take one of the five actions
->> + * described above.
-> I'm not sure that's what my understanding of a blocked signal is, I
-> would interpret "blocked" as a signal being masked (this usage can be
-> seen in for example sigaction(2)).  I'd also interpret delivery of the
-> signal as happening when the signal handler is invoked rather than
-> something that the handler has control over (the comment later on says
-> that so I think it's just an issue here).  Perhaps I'm confused about
-> terminology though, this is just usage I've picked up and ICBW.
+WARNING: modpost: missing MODULE_DESCRIPTION() in tools/testing/nvdimm/test/nfit_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in tools/testing/nvdimm/test/ndtest.o
 
-Isn't "signal being masked" equivalent to what I wrote...
-man signal(7): Under "Signal mask and pending signals":-
-"A signal may be blocked, which means that it will not be delivered
-until it is later unblocked."
-Under "Signal dispositions":-
-"Each signal has a current disposition, which determines how the
-process behaves when it is delivered the signal."
+Add the required MODULE_DESCRIPTION() to the test platform device
+drivers.
 
-The above must imply that, the delivery of a signal implies a signal
-disposition coming into picture; so in case of blocked signal, the
-following should happen:
-Set disposition (default, ignore, or jump to handler) -> block SIG_x using,
-say, sigprocmask() -> raise(SIG_x) -> nothing happens, do normal work ->
-unblock SIG_x by sigprocmask() -> immediately act on disposition, since the
-signal will be delivered.
-When I wrote "such action may involve termination of the process..." I should
-have also included "or jump to a signal handler".
+Suggested-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+---
+Jeff I'm not seeing a patch to cover these cases for the missing module
+descriptions you have been sending out.  If you have an outstanding
+patch I missed could you point me to it?  Otherwise I believe this
+cleans up the nvdimm tree.
+---
+ tools/testing/nvdimm/test/ndtest.c | 1 +
+ tools/testing/nvdimm/test/nfit.c   | 1 +
+ 2 files changed, 2 insertions(+)
 
-"The comment later on says that", which comment and what does it say,
-sorry didn't get you.
+diff --git a/tools/testing/nvdimm/test/ndtest.c b/tools/testing/nvdimm/test/ndtest.c
+index b438f3d053ee..892e990c034a 100644
+--- a/tools/testing/nvdimm/test/ndtest.c
++++ b/tools/testing/nvdimm/test/ndtest.c
+@@ -987,5 +987,6 @@ static __exit void ndtest_exit(void)
+ 
+ module_init(ndtest_init);
+ module_exit(ndtest_exit);
++MODULE_DESCRIPTION("Test non-NFIT devices");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("IBM Corporation");
+diff --git a/tools/testing/nvdimm/test/nfit.c b/tools/testing/nvdimm/test/nfit.c
+index a61df347a33d..cfd4378e2129 100644
+--- a/tools/testing/nvdimm/test/nfit.c
++++ b/tools/testing/nvdimm/test/nfit.c
+@@ -3382,5 +3382,6 @@ static __exit void nfit_test_exit(void)
+ 
+ module_init(nfit_test_init);
+ module_exit(nfit_test_exit);
++MODULE_DESCRIPTION("Test ACPI NFIT devices");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Intel Corporation");
 
->
->> + * For standard signals (also see real-time signals in the man page), multiple
->> + * blocked instances of the same signal are not queued; such a signal will
->> + * be delivered just once.
-> See also SA_NODEFER.
+---
+base-commit: 2df0193e62cf887f373995fb8a91068562784adc
+change-id: 20240611-nvdimm-test-mod-warn-8cf773360b37
 
-Yes, thanks for the note, but do  need to include it in the
-comments? This is a specific setting...
-
->
->> +	/* SEGV has been blocked in sa_mask, but ucontext is invariant */
->> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGSEGV);
->> +	ksft_test_result(ret == 0, "SEGV not blocked in ucontext\n");
->> +
->> +	/* USR1 has been blocked, but ucontext is invariant */
->> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGUSR1);
->> +	ksft_test_result(ret == 0, "USR1 not blocked in ucontext\n");
-> We're not manipulating the masks outside of main() so it's a bit unclear
-> what the mention of ucontext being invariant is all about here?
-
-This is the point I raised in the cover letter and in this program:  the mask
-stores the set of blocked signals. What should happen when I block signals
-using sigaction()? According to the man pages, one could easily come to
-an erroneous conclusion that these signals will also be present as blocked
-in ucontext. I am making a point that, SEGV and USR1 have been blocked,
-but they have not been added into ucontext, i.e ucontext is invariant w.r.t
-to before and in the handler.
-
->
->> +	/* Mangled ucontext implies USR2 is blocked for current thread */
->> +	if (raise(SIGUSR2))
->> +		ksft_exit_fail_perror("raise");
->> +
->> +	ksft_print_msg("USR2 bypassed successfully\n");
->> +
->> +	act.sa_sigaction = &handler_verify_ucontext;
->> +	if (sigaction(SIGUSR1, &act, NULL))
->> +		ksft_exit_fail_perror("Cannot install handler");
->> +
->> +	if (raise(SIGUSR1))
->> +		ksft_exit_fail_perror("raise");
->> +
->> +	ksft_print_msg("USR2 still blocked on return from handler\n");
-> But we just raised SIGUSR1 rather than SIGUSR2?  If nothing else this
-> bit is a little unclear.
-
-Before raise(SIGUSR1), we register a handler for it: handler_verify_ucontext.
-So, we jump there, we verify that USR2 is present in ucontext (since we mangled
-with ucontext before), then we raise(SIGUSR2): the program must not terminate
-since USR2 is blocked in &current->blocked. This is described by ksft_print_msg().
+Best regards,
+-- 
+Ira Weiny <ira.weiny@intel.com>
 
 
