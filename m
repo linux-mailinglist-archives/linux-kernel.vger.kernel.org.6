@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-211118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFF4904D53
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:00:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A42D904D57
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 978F01F25C30
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E7E21C22110
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B8016C863;
-	Wed, 12 Jun 2024 07:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6CD16C847;
+	Wed, 12 Jun 2024 08:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+0chLGp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WCd1yQzN"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542FF1369AF;
-	Wed, 12 Jun 2024 07:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BC04C63
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718179190; cv=none; b=EnoRSZPQCKlX5Tq6OsAPZdSQRxavdN7FCeYurrSxXAGcRee+dHy68uXayj6KZC9hAjT5KWYmHu3LtImfdYFhXezNPFh15MaTekriMb/1c8F8B3lo3aaSZ/mrBMBjCDMO9MmdRp5eG1cZhtL5b6Jp/0RbcGqmUhcVYPunuYZvUhY=
+	t=1718179249; cv=none; b=XbmbRdkweNfjOU1b8505honVPJplbzdm+bgO9J8T3FcBSUuO4F5dcD0lcKpjspzUCLbHfq3D7QcQ9Dc1bNyA8Xe+ThuWAiu2IuuhBHDrMPER97SNEEM6o7Ca81s7DZTUU19rAuyVHGgRW9lTmfexIVJVXS4HoxCJbcWXAR3YMII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718179190; c=relaxed/simple;
-	bh=IawdLXVTxFLymI92USdaxv8s69/d7KuTRBgkwNJFy2I=;
+	s=arc-20240116; t=1718179249; c=relaxed/simple;
+	bh=Iye8NbZSQ6kLwre3fp7X6/PawuNxoVKqvT377JMBMRI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NuM0v4US9jDFEoz8vKAEPSoUUlCaSu0rGZ/gGULYDmuL2ZU69FvV5F1CVKH2mRXsYo9dDgWn6QmzfD6SwZYAf3GMGAIxML6tRXtMF5/Lf46134o36++aph8J9ULK8zbff9grU0Vi3jfU48IpR/DneZBI8Cqps64pXlySqaG7cgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+0chLGp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C71D1C3277B;
-	Wed, 12 Jun 2024 07:59:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718179189;
-	bh=IawdLXVTxFLymI92USdaxv8s69/d7KuTRBgkwNJFy2I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G+0chLGp54wyAGi7A+apGyUAiZTuwSavDO88Ajal/9KxsXKtOrjdlGa51lzpMht+W
-	 RuLzab0qTJ27Nja9lxde7lE3OVtpfjp/8Bbaf19V5VJlFWYLC9CNNryX6BSKjQUl8P
-	 DPVcgtZVkzSoYjrNy/0Qp9YCLlj58a7G0dC3CyjkzQR+fmMEoHPJfSA+c+t6Ji4zfL
-	 aIBpNjMFqRRAkRIJQiazQfYZyTMLCUP/jJlEk5swEv04BZS+SL1HdDlcGbRXx2kJp3
-	 xLX1qhDsJr9yhe6dKd/g7tdkI6gRK0jlisyHbllH0rU8FqP7X8xzJ2xRLDWBfnewFK
-	 s6GdSehruh2jQ==
-Message-ID: <fed7b2ca-5180-417f-a676-fb126157dff3@kernel.org>
-Date: Wed, 12 Jun 2024 09:59:43 +0200
+	 In-Reply-To:Content-Type; b=L7Lyr9uilP/UPLlyjNMBu8mAmJHx2264sf0Sl0QjVZnF3kkwiGX0+LNsXahQoIbfAWDRvaK2kR2K21/uNXK/Ejbua+D+vWWEm36mKai5sOh8QaKH5A19HRz0UgFAYGlXq2CuVep89iFa4msOWJmJcWGPkyTdzFI4tIGaTD7aqA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WCd1yQzN; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6f1c4800easo384937666b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:00:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718179245; x=1718784045; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7wcRVW/nhW18asiOmcxYMI52nKc1Lau2tgBza0fWM8k=;
+        b=WCd1yQzNAYSGRY5yoZmDG0Ys/l/UB7zu3NtU7wYnfwloPUHO2DDCkcrQxGt9ibExKz
+         vQa4YWDbibA9ox4t9v/vOuHs4AsPWcvb3UxxADMMbY2eaF1gDbvMvSiQndF5PwzLItbQ
+         MkiJmguaTYizyWPfmRbgA7hl1tY7zZozK+aNI+LnbS0WAhiqQPpos8oLbYuEOrf8Zqne
+         NCdl1pUqEQoJKWUXrTVsSojV5114pEQ1I02PP3KJ7JwenhivrgvcOyx6X3vHBXYGpv5r
+         NrMIIBZu8LZNUAmQy6WMhiPdTIfJZZSSeE0aPQdQd1tNQZWMuSt3kHcfzgCATMg9jbkg
+         dHgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718179245; x=1718784045;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7wcRVW/nhW18asiOmcxYMI52nKc1Lau2tgBza0fWM8k=;
+        b=Hk4Q3GYffVXq3DGVtVEauuH9fiyXjoKwyQImLuvVQuGO2yw2Vz6Wk6poqa/FqU0+nP
+         J+PhHGCR8PFARvGvqlkX+R17DnIhuhkwdil/kISWsmr2r4EgHTEpTVfbTeXJe3UqZneS
+         QyOvDpnj1jMtXbOLdjmOFFBysj2/2WJxshztqAalZLpb1fxKYlrjhF6bX9bxAjVazmcw
+         DLdfLbJd7XbilvK+jpFI7RB4Bf+1150phcjlJkx8138OHRB6RBUi6nVr3jwbsTR7kKYC
+         Q6gFYA/xeis7yLosbKLRedz/UWFMjmNcNvxIaiaZpBNPOyI6Y1yKKpquBp4UPqBfNvW+
+         OJKg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8R1rdTHT9ak4ODIxs/8BRquLcxXrB7DSgoBdH8vipTog3ldCpEwopYtjgm602JKDrPuAO7YJ1UMAreP8/2McsP3bPPJ3RAaInNkin
+X-Gm-Message-State: AOJu0Yy86jjItVmaX6ntwog/Lx0HzEj820N1fcW7qNl9o/8AzoEM20D0
+	RzP12DweMUJfYGwuiUMvZymxVFb94X6mZodeHwSN+WIMSK3QQZXLYc0EN5k9sK4=
+X-Google-Smtp-Source: AGHT+IGRFholVNe/4JMsUiq5frRKGJ1K2M3+HujTTgz1BQSdVdgGDoBmuhS1E15RnAK9dM3I9sdihA==
+X-Received: by 2002:a17:906:55cf:b0:a6f:e55:ba1d with SMTP id a640c23a62f3a-a6f47d1e186mr58094966b.11.1718179245217;
+        Wed, 12 Jun 2024 01:00:45 -0700 (PDT)
+Received: from ?IPV6:2001:a61:138e:201:27e2:fe9:90b9:6b9a? ([2001:a61:138e:201:27e2:fe9:90b9:6b9a])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6ef7913eb8sm626424566b.178.2024.06.12.01.00.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 01:00:45 -0700 (PDT)
+Message-ID: <378bad75-dfc7-4462-8fbc-a462e129a0ea@suse.com>
+Date: Wed, 12 Jun 2024 10:00:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,106 +75,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 net-next 1/7] net: add rx_sk to trace_kfree_skb
-To: Yan Zhai <yan@cloudflare.com>, netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- David Ahern <dsahern@kernel.org>,
- Abhishek Chauhan <quic_abchauha@quicinc.com>,
- Mina Almasry <almasrymina@google.com>, Florian Westphal <fw@strlen.de>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- David Howells <dhowells@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Pavel Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org,
- kernel-team@cloudflare.com, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Neil Horman <nhorman@tuxdriver.com>, linux-trace-kernel@vger.kernel.org,
- Dan Carpenter <dan.carpenter@linaro.org>
-References: <cover.1718136376.git.yan@cloudflare.com>
- <dcfa5db9be2d29b68fe7c87b3f017e98e5ec83b4.1718136376.git.yan@cloudflare.com>
+Subject: Re: USB Denial Of Service
+To: Alan Stern <stern@rowland.harvard.edu>,
+ Greg KH <gregkh@linuxfoundation.org>, Oliver Neukum <oneukum@suse.com>
+Cc: USB mailing list <linux-usb@vger.kernel.org>,
+ Kernel development list <linux-kernel@vger.kernel.org>
+References: <40dfa45b-5f21-4eef-a8c1-51a2f320e267@rowland.harvard.edu>
 Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <dcfa5db9be2d29b68fe7c87b3f017e98e5ec83b4.1718136376.git.yan@cloudflare.com>
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <40dfa45b-5f21-4eef-a8c1-51a2f320e267@rowland.harvard.edu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 11/06/2024 22.11, Yan Zhai wrote:
-> skb does not include enough information to find out receiving
-> sockets/services and netns/containers on packet drops. In theory
-> skb->dev tells about netns, but it can get cleared/reused, e.g. by TCP
-> stack for OOO packet lookup. Similarly, skb->sk often identifies a local
-> sender, and tells nothing about a receiver.
+On 11.06.24 16:35, Alan Stern wrote:
+> Greg, Oliver, or anyone else:
 > 
-> Allow passing an extra receiving socket to the tracepoint to improve
-> the visibility on receiving drops.
+> Questions:
 > 
-> Signed-off-by: Yan Zhai<yan@cloudflare.com>
-> ---
-> v3->v4: adjusted the TP_STRUCT field order to be consistent
-> v2->v3: fixed drop_monitor function prototype
-> ---
->   include/trace/events/skb.h | 11 +++++++----
->   net/core/dev.c             |  2 +-
->   net/core/drop_monitor.c    |  9 ++++++---
->   net/core/skbuff.c          |  2 +-
->   4 files changed, 15 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/trace/events/skb.h b/include/trace/events/skb.h
-> index 07e0715628ec..3e9ea1cca6f2 100644
-> --- a/include/trace/events/skb.h
-> +++ b/include/trace/events/skb.h
-> @@ -24,13 +24,14 @@ DEFINE_DROP_REASON(FN, FN)
->   TRACE_EVENT(kfree_skb,
->   
->   	TP_PROTO(struct sk_buff *skb, void *location,
-> -		 enum skb_drop_reason reason),
-> +		 enum skb_drop_reason reason, struct sock *rx_sk),
->   
-> -	TP_ARGS(skb, location, reason),
-> +	TP_ARGS(skb, location, reason, rx_sk),
->   
->   	TP_STRUCT__entry(
->   		__field(void *,		skbaddr)
->   		__field(void *,		location)
-> +		__field(void *,		rx_skaddr)
+> If a broken or malicious device causes a USB class driver to add a
+> thousand (or more) error messages per second to the kernel log,
+> indefinitely, would that be considered a form of DOS?
 
-Is there any reason for appending the "addr" part to "rx_sk" ?
-It makes it harder to read this is the sk (socket).
+Yes.
 
-AFAICR the skbaddr naming is a legacy thing.
+> Should the driver be fixed?
 
->   		__field(unsigned short,	protocol)
->   		__field(enum skb_drop_reason,	reason)
->   	),
-> @@ -38,12 +39,14 @@ TRACE_EVENT(kfree_skb,
->   	TP_fast_assign(
->   		__entry->skbaddr = skb;
->   		__entry->location = location;
-> +		__entry->rx_skaddr = rx_sk;
->   		__entry->protocol = ntohs(skb->protocol);
->   		__entry->reason = reason;
->   	),
->   
-> -	TP_printk("skbaddr=%p protocol=%u location=%pS reason: %s",
-> -		  __entry->skbaddr, __entry->protocol, __entry->location,
-> +	TP_printk("skbaddr=%p rx_skaddr=%p protocol=%u location=%pS reason: %s",
-                               ^^^^^^^^^
-I find it hard to visually tell skbaddr and rx_skaddr apart.
-And especially noticing the "skb" vs "sk" part of the string.
+If a broken device can do that, definitely.
 
+> What is an acceptable rate for an unending stream of error messages?
+> Once a second?  Once a minute?
 
-> +		  __entry->skbaddr, __entry->rx_skaddr, __entry->protocol,
-> +		  __entry->location,
->   		  __print_symbolic(__entry->reason,
->   				   DEFINE_DROP_REASON(FN, FNe)))
->   );
+Definitely not once a second. I'd be tempted to call a neverending stream
+an issue by itself. The approach the SCSI layer takes by giving up on
+a device if all else fails seems wise to me.
+  
+> At what point should the driver give up and stop trying to communicate
+> with the device?
 
+I would propose after five cycles of all error handling.
 
---Jesper
+The exact number, as long as it is greater than 1 and a small integer
+does not really matter, as long as it exists.
+
+	Regards
+		Oliver
 
