@@ -1,130 +1,99 @@
-Return-Path: <linux-kernel+bounces-211306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84184904FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:55:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA67A904FC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FBE02849B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:55:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A25B2282E0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9754E16DEDE;
-	Wed, 12 Jun 2024 09:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBB816DEDB;
+	Wed, 12 Jun 2024 09:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wbgQ/ePR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="H/PbhyXA"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C1AA34;
-	Wed, 12 Jun 2024 09:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BA1A34;
+	Wed, 12 Jun 2024 09:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718186120; cv=none; b=a2w/3oYpp1k6xJia5g2Tkcm+GbXaP0c7K6vSesFVNNe8+2x8m2fXGYQ5imhFFzlxLuLE0EoOlxBEUgWr8IBT1E7ULi+iZxjRUYlCPA+QNfOXvTm9zJ3RqelZ1y38t2jNNl5lsXpoFVr+rkqqL52EUpwilUrpj7/d0ya0h40zQvs=
+	t=1718186197; cv=none; b=qYTp8+PL2Ii0NIc576pw8L+M6ZSdztmdjA52JFYHMjRiN/XfkDzrCLkW2oaUUVPL5+KGehs0MjBeuN0c6Lfx0oMAO5o+/0w3o2IT2oRB01Ubi8xqNg20chtNPr+DX0BkFAaZu6lO6Iu7HwGQAg+iDxkqtAGrhiOn4u/tKsIjIFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718186120; c=relaxed/simple;
-	bh=IUlWQQqW3cQb1qb4NtDCHI7QOQj5j7JMOhaHKauOiNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W0/FkcMPd9Aebfje/obsl9HEfSdpDdrfCgx4MroCZjdCTxkOeM5/HBHUGztdvLIlNGR6ElStJf47pibM5mYHaBjyYl9BuFZOiCtVNICvpSNWVWMm5hBNHTtDJlLKulK/An06TVvahaalr9/TlFPjY/M90a7eeCUUmWmCShFHi3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wbgQ/ePR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A594C3277B;
-	Wed, 12 Jun 2024 09:55:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718186119;
-	bh=IUlWQQqW3cQb1qb4NtDCHI7QOQj5j7JMOhaHKauOiNI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wbgQ/ePRCJCuF1v4mZFoS9pFDhM27kHeWXMuh9OoDCTYgnuVBWGotLmRaILAdj/jH
-	 +c10ngXD8YNfyoD9n+CACwFleSSp4TXlsfzqrFQgimCIsTxeQQymsWqvrSL0zvSsPm
-	 AQL7L0BdYfUUPgjdysWu4HYqXWaoGXE4ZZrGnmEw=
-Date: Wed, 12 Jun 2024 11:55:17 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Oliver Neukum <oneukum@suse.com>,
-	USB mailing list <linux-usb@vger.kernel.org>,
-	Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: USB Denial Of Service
-Message-ID: <2024061236-diabolic-wisplike-d2b1@gregkh>
-References: <40dfa45b-5f21-4eef-a8c1-51a2f320e267@rowland.harvard.edu>
+	s=arc-20240116; t=1718186197; c=relaxed/simple;
+	bh=GmQfuVpYVMoxw//+VZkcA4DLbCRQkx3EyZHDcLI2H3s=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eobqVWCp6vQDupBtFuOp/41US6oXypgM+24tp8U3OQj17X7hxo0BbTnSZwYzeElTSH4yITmAbeGlYuumCsI5hmueqljryaqduAl2pE28X8hs23xUhnHEkiySCxYPBktp/yXAO0IKThz7tK9hEXFFE5knoFsU6wEk81S54B0JZLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=H/PbhyXA; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C30uOU015315;
+	Wed, 12 Jun 2024 04:56:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=m1LLXHsEtF5yDASxKC
+	g2mH1kucWQQIwecALYO2Nn7dQ=; b=H/PbhyXABZPsI0qZBjTf79pbGc80MKPxQR
+	2zU5mJeUrWK90a3SSbFzMA1C/rsaWDtljR2b5cv31y4KM+aalvij0uFWsBn1O/3i
+	ATH0/xUj/2Qa5+6jD0J2TEOoJWBWRPbBLQpIYbjqOFgySNdtJ4sRc6XhNDtl314a
+	MExkKgiLoiOYf3JzMqdvOYx4jPUdmtGRhs2JK6LqheR1fOcwvz7+cuNoy+hLZPuY
+	Hmj3U0j+9I6Ehd+g41yhl0hoPLgQ0rkfu6Klv+G3F17mshjp7RwRqrPhlsrwvAxa
+	e3MbKf34c8thkHio3ZJ4rJuDmZA7o/xyfh8nBiDFR9X/gLnd9hYQ==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3ymkqhuunx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 04:56:29 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 10:56:27 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Wed, 12 Jun 2024 10:56:27 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 8F080820248;
+	Wed, 12 Jun 2024 09:56:27 +0000 (UTC)
+Date: Wed, 12 Jun 2024 10:56:26 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+CC: Daniel Baluta <daniel.baluta@nxp.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <patches@opensource.cirrus.com>,
+        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: dt-bindings: wlf,wm8804: Convert to dtschema
+Message-ID: <ZmlwyjHXjAwFvy01@opensource.cirrus.com>
+References: <20240611122258.47406-1-animeshagarwal28@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <40dfa45b-5f21-4eef-a8c1-51a2f320e267@rowland.harvard.edu>
+In-Reply-To: <20240611122258.47406-1-animeshagarwal28@gmail.com>
+X-Proofpoint-GUID: 3tPNXNwug9zjDl2wtWSXcMk_QYW-sygG
+X-Proofpoint-ORIG-GUID: 3tPNXNwug9zjDl2wtWSXcMk_QYW-sygG
+X-Proofpoint-Spam-Reason: safe
 
-On Tue, Jun 11, 2024 at 10:35:12AM -0400, Alan Stern wrote:
-> Greg, Oliver, or anyone else:
+On Tue, Jun 11, 2024 at 05:52:51PM +0530, Animesh Agarwal wrote:
+> Convert the WM8804 audio codec bindings to DT schema.
 > 
-> Questions:
-> 
-> If a broken or malicious device causes a USB class driver to add a 
-> thousand (or more) error messages per second to the kernel log, 
-> indefinitely, would that be considered a form of DOS?
-> 
-> Should the driver be fixed?
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
 
-Good question.  Right now, by default, we "trust" usb devices to an
-extent.  We have been "pushing back" that boundry over time, such that
-now we will validate USB descriptors to verify that they actually are
-sane before allowing a driver to bind to them, and if there's any bugs
-with that, we will fix them.
-
-But we totally trust the data stream from devices, and trust that once
-an urb is submitted, they work properly.
-
-If we wish to change that threat model, great, but that will require
-those that wish to change that model to DO THE ACTUAL WORK!
-
-I don't want to see fuzzers start to fuzz the data streams of USB
-drivers and expect us to fix the bugs.  That's flat out not ok, as this
-is something that right now, we do not care about.  If companies do care
-about this, they need to do the work as that is NOT how Linux is
-currently designed and implemented.
-
-Same goes for other device types.  I get this conversation all the time
-(had it last week at a very very very large Linux company.)  It usually
-goes something like:
-
-	Them:	We want to claim that we can trust drivers to work
-		properly for malicious devices
-	Me:	Wonderful, send the patches to do so, fixing up all
-		subsystems that rely on them!
-	Them:	No, that's something that Linux should already support.
-	Me:	Why do you care about this?
-	Them:	Because we want to host systems in untrusted situations.
-	Me:	So you want to save money by not using a single physical
-		host.
-	Them:	Yes.
-	Me:	Then spend some of that money to do the work to make
-		this happen, do not force the community to do it for you.
-	Them:	...
-
-> What is an acceptable rate for an unending stream of error messages?  
-> Once a second?  Once a minute?
-
-The *_ratelimited() functions should handle this if you want to use
-them.
-
-> At what point should the driver give up and stop trying to communicate 
-> with the device?
-
-That's tricky, we don't have good answers for that as everyone has a
-different idea of how long "flaky" devices should be able to flake out
-before coming back.
-
-> (These are not moot questions.  There are indeed drivers, and probably 
-> not just in the USB subsystem, subject to this sort of behavior.)
-
-Totally agreed.  But again, the design of Linux right now is that we
-implicitly trust the hardware we are running on.  If that design
-decision wants to be changed, some people need to do a ton of work to
-change it.
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
 Thanks,
-
-greg k-h
+Charles
 
