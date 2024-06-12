@@ -1,113 +1,152 @@
-Return-Path: <linux-kernel+bounces-210918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB84904A24
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:44:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C28904A26
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DD4C283A5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC121C23AE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61C0282ED;
-	Wed, 12 Jun 2024 04:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="eUD4HTR7"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D705728DC1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC072D057;
+	Wed, 12 Jun 2024 04:44:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF97E2C6A3;
+	Wed, 12 Jun 2024 04:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718167447; cv=none; b=MUiC5GOmvVo3WxeH6Dv7pFtUWDhQtE5sycoR93h6v5BsfE8VNx4DBvxaGYC6neYTWkPBC13+6JPD8BCw50Z2vWsTHCF/Cd3DQ3kAiFLyoepcrcE3oYI+Iwdb4xhVWFPLeEF+JizGWYWlaw7rCULHRnUefVUJeYJZflkMHCMnods=
+	t=1718167452; cv=none; b=NfYrBUResj50NOzLNXC6EuP4tcxvRx2hVUKQe0e35heqZJ8Xv5vUSpKgdWQBvmSVznGC2UMXDX0s5WwGxs/1TzGqmSAenXFmVgD2k5asplJJZToIeHl+M/WNu7z9KBHibKP/bMNSh1D+S0vzI4CiloVtp0brKp4MKnHps7Zdi1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718167447; c=relaxed/simple;
-	bh=6WAbp/YTWBBBHytqI9A3XftZ0v8U7in0FWEcO+BDimQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=O6FeWaLuk1YHNmiWVVeJjw+Z3TCmXnUe/iUBgDbc5oikl+7wM/BYKaIMDZa7HHzffcddHqDMk2O30iYkE+Ufee48DfB6e+CrxRIRt0dQpGAow4FIjmwBMTBwK8gNVIbPz5XWMfMiJ6hc7ruHYf221sXHC5VhrlflDih4Txf1cYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=eUD4HTR7; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=08nvx
-	UJoWiC4KViLG7ofKg87VtDw88I4g5s84vmog6I=; b=eUD4HTR7jSWyzGgp+4Vkq
-	1yNFi8BuQeX0G1BAspf3Zmz5byWEAuartENn1emiU8/+xw+wFUCCcSmYaw3OiVuq
-	P5FmrJGom63yFXwcsm/5Qqm7+EBbfz2JcGjdgVgwSmS5z431oK3uuXHFsbwPhRqF
-	1FjPjIMrKm6rcCXKwrw6wU=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g0-2 (Coremail) with SMTP id _____wDH7w92J2lmhVCKAQ--.3449S4;
-	Wed, 12 Jun 2024 12:43:35 +0800 (CST)
-From: ran xiaokai <ranxiaokai627@163.com>
-To: akpm@linux-foundation.org
-Cc: david@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mhocko@kernel.org,
-	ran.xiaokai@zte.com.cn,
-	si.hao@zte.com.cn,
-	v-songbaohua@oppo.com,
-	xu.xin16@zte.com.cn,
-	yang.yang29@zte.com.cn,
-	ziy@nvidia.com
-Subject: Re: [PATCH linux-next v3] mm: huge_memory: fix misused mapping_large_folio_support()  for anon folios
-Date: Wed, 12 Jun 2024 04:43:33 +0000
-Message-Id: <20240612044333.979885-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240607142153.5cc922f1f2c96989dc809cd3@linux-foundation.org>
-References: <20240607142153.5cc922f1f2c96989dc809cd3@linux-foundation.org>
+	s=arc-20240116; t=1718167452; c=relaxed/simple;
+	bh=88bOPtJH+39QSELyA0j6OxhwfRT9w6E56fXRX/NhS24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UmShhoc5z6Ew5562v4cDG/rgEn/VwrD93qZZYqQb+SPDzbZoFmyO+ZCaL440cF9mUXAZhbO430idLAp7O+/8Fo9kgpdYxRyht2fD2EE6OC4tDe9pXRr7wb2sfvX+0S+mPShKCWOx3vC1OjMQtoacUBhwf4CfPoiS8f4UVwpyYQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D470152B;
+	Tue, 11 Jun 2024 21:44:33 -0700 (PDT)
+Received: from [10.162.42.15] (e116581.arm.com [10.162.42.15])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 793E03F64C;
+	Tue, 11 Jun 2024 21:44:04 -0700 (PDT)
+Message-ID: <ec1973ee-909d-41a2-8b32-256302d190b4@arm.com>
+Date: Wed, 12 Jun 2024 10:14:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDH7w92J2lmhVCKAQ--.3449S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KF47Ar4fXFy5Jw48CrWfKrg_yoW8Zr1rpF
-	15Wrs5t3ykJFZYkrnFv3WvkFnYy3yrWay8Aa4fGwnFyas8uF4F9FyIk3WjvayUWr95urWx
-	AF4UWF9xu3Z8JFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRoKZZUUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiMxn7TGXAlx6BsAAAsA
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] selftests: Add a test mangling with uc_sigmask
+To: Mark Brown <broonie@kernel.org>
+Cc: shuah@kernel.org, oleg@redhat.com, stsp2@yandex.ru, mingo@kernel.org,
+ tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com,
+ suzuki.poulose@arm.com, Anshuman.Khandual@arm.com,
+ DeepakKumar.Mishra@arm.com, AneeshKumar.KizhakeVeetil@arm.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240611075650.814397-1-dev.jain@arm.com>
+ <20240611075650.814397-3-dev.jain@arm.com>
+ <Zmg0GoGnJFbPysfK@finisterre.sirena.org.uk>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <Zmg0GoGnJFbPysfK@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> > 
-> > When I did a large folios split test, a WARNING
-> > "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
-> > was triggered. But the test cases are only for anonmous folios.
-> > while mapping_large_folio_support() is only reasonable for page
-> > cache folios.
-> > 
-> > In split_huge_page_to_list_to_order(), the folio passed to
-> > mapping_large_folio_support() maybe anonmous folio. The
-> > folio_test_anon() check is missing. So the split of the anonmous THP
-> > is failed. This is also the same for shmem_mapping(). We'd better add
-> > a check for both. But the shmem_mapping() in __split_huge_page() is
-> > not involved, as for anonmous folios, the end parameter is set to -1, so
-> > (head[i].index >= end) is always false. shmem_mapping() is not called.
-> > 
-> > Also add a VM_WARN_ON_ONCE() in mapping_large_folio_support()
-> > for anon mapping, So we can detect the wrong use more easily.
-> > 
-> > THP folios maybe exist in the pagecache even the file system doesn't
-> > support large folio, it is because when CONFIG_TRANSPARENT_HUGEPAGE
-> > is enabled, khugepaged will try to collapse read-only file-backed pages
-> > to THP. But the mapping does not actually support multi order
-> > large folios properly.
-> > 
-> > Using /sys/kernel/debug/split_huge_pages to verify this, with this
-> > patch, large anon THP is successfully split and the warning is ceased.
-> > 
-> 
-> Can we pleae identify a Fixes: target for this?  Is it c010d47f107f
-> ("mm: thp: split huge page to any lower order pages")?
 
-yes, this fixes c010d47f107f ("mm: thp: split huge page to any lower order pages").
+On 6/11/24 16:55, Mark Brown wrote:
+> On Tue, Jun 11, 2024 at 01:26:50PM +0530, Dev Jain wrote:
+>
+>> + * A signal is said to be delivered, when the program takes action on the
+>> + * signal: such action may involve termination of the process, ignoring the
+>> + * signal, terminating with core dump, stopping the process, or continuing the
+>> + * process if it was currently stopped. A signal is said to be blocked when the
+>> + * program refuses to take any of the above actions; note that, this is not the
+>> + * same as ignoring the signal. At a later time, the program may unblock the
+>> + * signal and then it will have to take one of the five actions
+>> + * described above.
+> I'm not sure that's what my understanding of a blocked signal is, I
+> would interpret "blocked" as a signal being masked (this usage can be
+> seen in for example sigaction(2)).  I'd also interpret delivery of the
+> signal as happening when the signal handler is invoked rather than
+> something that the handler has control over (the comment later on says
+> that so I think it's just an issue here).  Perhaps I'm confused about
+> terminology though, this is just usage I've picked up and ICBW.
 
-> It would be good to add a selftest which would have caught this.
+Isn't "signal being masked" equivalent to what I wrote...
+man signal(7): Under "Signal mask and pending signals":-
+"A signal may be blocked, which means that it will not be delivered
+until it is later unblocked."
+Under "Signal dispositions":-
+"Each signal has a current disposition, which determines how the
+process behaves when it is delivered the signal."
 
-I have updated the code in selftests/mm/split_huge_page_test.c.
-For now, only order-0 is tested for the anonymous THP split case,
-I am adding more mTHP-suitable-orders test cases.
-I will send that in a separate patch when it is done.
+The above must imply that, the delivery of a signal implies a signal
+disposition coming into picture; so in case of blocked signal, the
+following should happen:
+Set disposition (default, ignore, or jump to handler) -> block SIG_x using,
+say, sigprocmask() -> raise(SIG_x) -> nothing happens, do normal work ->
+unblock SIG_x by sigprocmask() -> immediately act on disposition, since the
+signal will be delivered.
+When I wrote "such action may involve termination of the process..." I should
+have also included "or jump to a signal handler".
+
+"The comment later on says that", which comment and what does it say,
+sorry didn't get you.
+
+>
+>> + * For standard signals (also see real-time signals in the man page), multiple
+>> + * blocked instances of the same signal are not queued; such a signal will
+>> + * be delivered just once.
+> See also SA_NODEFER.
+
+Yes, thanks for the note, but do  need to include it in the
+comments? This is a specific setting...
+
+>
+>> +	/* SEGV has been blocked in sa_mask, but ucontext is invariant */
+>> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGSEGV);
+>> +	ksft_test_result(ret == 0, "SEGV not blocked in ucontext\n");
+>> +
+>> +	/* USR1 has been blocked, but ucontext is invariant */
+>> +	ret = sigismember(&(((ucontext_t *)uc)->uc_sigmask), SIGUSR1);
+>> +	ksft_test_result(ret == 0, "USR1 not blocked in ucontext\n");
+> We're not manipulating the masks outside of main() so it's a bit unclear
+> what the mention of ucontext being invariant is all about here?
+
+This is the point I raised in the cover letter and in this program:  the mask
+stores the set of blocked signals. What should happen when I block signals
+using sigaction()? According to the man pages, one could easily come to
+an erroneous conclusion that these signals will also be present as blocked
+in ucontext. I am making a point that, SEGV and USR1 have been blocked,
+but they have not been added into ucontext, i.e ucontext is invariant w.r.t
+to before and in the handler.
+
+>
+>> +	/* Mangled ucontext implies USR2 is blocked for current thread */
+>> +	if (raise(SIGUSR2))
+>> +		ksft_exit_fail_perror("raise");
+>> +
+>> +	ksft_print_msg("USR2 bypassed successfully\n");
+>> +
+>> +	act.sa_sigaction = &handler_verify_ucontext;
+>> +	if (sigaction(SIGUSR1, &act, NULL))
+>> +		ksft_exit_fail_perror("Cannot install handler");
+>> +
+>> +	if (raise(SIGUSR1))
+>> +		ksft_exit_fail_perror("raise");
+>> +
+>> +	ksft_print_msg("USR2 still blocked on return from handler\n");
+> But we just raised SIGUSR1 rather than SIGUSR2?  If nothing else this
+> bit is a little unclear.
+
+Before raise(SIGUSR1), we register a handler for it: handler_verify_ucontext.
+So, we jump there, we verify that USR2 is present in ucontext (since we mangled
+with ucontext before), then we raise(SIGUSR2): the program must not terminate
+since USR2 is blocked in &current->blocked. This is described by ksft_print_msg().
 
 
