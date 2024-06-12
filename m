@@ -1,162 +1,152 @@
-Return-Path: <linux-kernel+bounces-210768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED64904877
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:35:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52FF1904879
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA757B2194A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:35:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEACD1F235D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95432AD5C;
-	Wed, 12 Jun 2024 01:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B1563B9;
+	Wed, 12 Jun 2024 01:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hSmNs7iA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHOJVDHK"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3939F5CAC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700984C90;
+	Wed, 12 Jun 2024 01:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718156133; cv=none; b=DBP0SrkeaG6Ynx89IaZV3U6fzXLqeqCpyICpfhpYdl4Lq3U7+NXj2uhFbvbvDEfV7K09vmKbWdnRXp7chbeMqnPofiUu4+xPbiBOtwJXzKEAGYiz2DaBvW7jq+wwJxDi5l8mJJf4wrramtnc4EZHi5JWemROof6W1VRXrgsNe9k=
+	t=1718156150; cv=none; b=sr8aOhQ00c+rBcERpS5CGab8Z4ZK7JyyFVz0IVP6x7w1JzuoIUaMgCiks/K6zjwa8ZD09Ffsem44OK8gIrucNRkop6Tfkw2/xcLFICmYVzht/zI1jxguuvbRXmsQ9ev1UcBfQd6PU0xtw5N/pcYnCx1PY9lr0+N8BB73iP5RNR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718156133; c=relaxed/simple;
-	bh=SUbo+YKohnGRExDlaUfo3uU9lbahumsxOGb28uZaVjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u9BBMNCQ/rJgix3te+86bnmM+H4no+YkryiNxVfBUFe907snUAYVMlXSA9EcAOSKlghkw57n4ckmDcg0L+WxiD656y1o87bQQACdKtJv22ihjNxYunwGbfLRbJw/9HnIUk9+zxbECQ0PsNmc8+yzQxX/GX+daTcoG85/Cvr0FbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hSmNs7iA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718156130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0W3paLQyIxFzIGzA0UJ1JuvvuAzjNLrCVraVK30gc4M=;
-	b=hSmNs7iAjgzL7ojJsQETpy+f8MhU0Hidz/i4CdUxUK/y7W08m/8VOqWG5kIeOx4HPthFj+
-	6VlyrwFhjOs/Nv8w71OCeTva4r/LGSGHYCJ8ID3TbWs4UQHaFELKLwEglFSDi6rTVQ+Xsh
-	ZPRNaUi/i0sq25BzNpRX1sYyjQzQTlc=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-611-bskaXANhPdatFIJltRdnQA-1; Tue, 11 Jun 2024 21:35:28 -0400
-X-MC-Unique: bskaXANhPdatFIJltRdnQA-1
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-62a083e617aso33644697b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:35:28 -0700 (PDT)
+	s=arc-20240116; t=1718156150; c=relaxed/simple;
+	bh=yTYu+zjzSnvVXtDPpg8jDiEvElerW8Sdp2y1QzZxXgg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O3E/fDKkRjWLi4ftU+/VwIb9QcZYL0D+24eUDaTFQs4pQc1SObZHSZyEYiyriWqQ9Jk62lle3Y08C7opUZiJS9AgMDB20PrHL/oVoBzU2TjIF1zpCULHHEGmMYFUe7cI2xNfQPtUp42XuF/esDRlOiL2evI1oY6dRu+hcJi2ou0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cHOJVDHK; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c2ecd25e5aso2995715a91.2;
+        Tue, 11 Jun 2024 18:35:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718156149; x=1718760949; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aHJbujBLIYDpnFz6RlBGq04LsufYNQpcJYJ5eGH4g8U=;
+        b=cHOJVDHK62uNRG3x2xbt1KLyVLQXGM3F9zzb6103EX2vZT0/kx0yQNL4kbNMmO1zFg
+         jmkEFmyuUiprnMXtv6HEuGLVQ7fH6tK95ZL6Hdj3sHf233Jp1PzxHx06psghV9vtVG/5
+         kvptRyfxwyQlOsPQ+YbV97W84MbQ6kC44gAAFb0iWcTjq08hnLTaLV6CoZ9A1Pnq3q7s
+         Tv38bXla56TlQigJg/fZW8OJKz7Q5SsHTyG6BrGwX5D+yoaaykiBOGjVKiVEEyLCUT4M
+         rkrEdstTQlVbG/bF6a5UbU5cm3M6WMqgYo5t7N+M3Ua/6C5znL2ZbXJF1jBbwFVF9Q3x
+         m7og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718156128; x=1718760928;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0W3paLQyIxFzIGzA0UJ1JuvvuAzjNLrCVraVK30gc4M=;
-        b=XFlzS3taJ0hJ1qTCeog8yH2UyGnJqc7malc8wCITGl/BF8WqwJRI4aenilnfz8p65i
-         NBgavvtjfWpaa9DbLiIhitm65Hk7qz5C8aKW1a6SqDubXMMF7VSgRjEwwhtf8nLLi1xE
-         J9wT8gaAKfn8bLDnVCn6RPTFx3G3ObaIPoWjDt96/0Px6pALKKYrxYtXAmlulfdd9Qok
-         hPgRrqWruodvR1vYAS1Zl/FzpoCnZlDb7B6TjkztXpa7FBtc4mvcq/glzcTS0uJyJduz
-         x82CXsx1wryjRHl0bc3OaupMDxXrJesDiC8oA7x2NGb8tXoFJcY4hVxpBybdx5FMFufb
-         7ljg==
-X-Gm-Message-State: AOJu0YyDaIdfuXmC7S11iYJKgzCasmXOkbwZpz1oG9ZATEeUeD9Ml9EG
-	7iK2ofrm2BBIqzrKtCKMNctvcmTnDVfzKdnIwOl+jmSShxiV8gFjLMS2ks+2/MNZoK4ReC93vNS
-	k9q0c1lEXoY/IoN1w1pwkkzrs7hupoL4NXa//Noj7lWdjpFld5xyyRSjdsSKAoQ==
-X-Received: by 2002:a0d:d403:0:b0:62d:a29:5384 with SMTP id 00721157ae682-62fbdaaa65cmr4151697b3.43.1718156127853;
-        Tue, 11 Jun 2024 18:35:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjmTTt67EgNF2LKxAS293dORd45vdPlnfDq/IczAzWnFhn/SbC/sQEGoRMtkW7fUqRC/2aTQ==
-X-Received: by 2002:a0d:d403:0:b0:62d:a29:5384 with SMTP id 00721157ae682-62fbdaaa65cmr4151637b3.43.1718156127487;
-        Tue, 11 Jun 2024 18:35:27 -0700 (PDT)
-Received: from x1-fbsd.aquini.net (c-76-152-42-226.hsd1.nh.comcast.net. [76.152.42.226])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b093aff889sm4361476d6.101.2024.06.11.18.35.26
+        d=1e100.net; s=20230601; t=1718156149; x=1718760949;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aHJbujBLIYDpnFz6RlBGq04LsufYNQpcJYJ5eGH4g8U=;
+        b=LRvkivQEhsZh31Maox69gWir4QVStrkHWidBHeaX5EaDi82obhS3ipVDR901jPCNeJ
+         dlTCQSpX+EfyNBW1joUIXyTHb9x8dcSXzIgAp2zTc2WV5fgBQtO6FTrVfFGZ0wmQc9l1
+         ZnyWnb93DJG8B1tOBgZ3HrKN9Yf1hnjKr1UcoUBFoVN7k+juk2hktqRifRVppSz5ewWw
+         xtH/JzevtgXdMkfwAP0sZIuvpDU6/1peDiEkiDyI3bOkPIjf0TclRdLuSrdb0Wc4rNFg
+         IvGUL43cNoY+RKoEQ5EwdXL54xKvBLkiaWiMHfeea1E9GhRk72ylj6z5COhub0JjiuhX
+         LuqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKaqKAckizLeRzxvOCsrIyfLkvPBLIqJBbFn057nS7uWUHpvrOlqdzDtI6QOqlhaKuNFyMmyYkUbGMb4DARKlHCja1HYel3b56CL+prhaVa4wHidbLMMZbLh5Vzu9ak0GKEIuD+DQL/7qReJmoBpWTXZWc1d1EtxQF4u0d0x7bEh5h
+X-Gm-Message-State: AOJu0YzamCECoQhNclHP6jk3/pW8GJR3TnTbZWicpk+TGHudiPcYviOs
+	pwddbImHzhmfCegn7qbhABRmxw8sEL5lf0cAvzzaiAdjbi7wLru/
+X-Google-Smtp-Source: AGHT+IFoOJlhlpGlmRm6t3JCw3P6OWv/Au5K+gL709xRpxP59BZGI0pbcGS0VqxcrwG3Ji8SDkGPXQ==
+X-Received: by 2002:a17:90a:c4:b0:2c4:aa8e:4efb with SMTP id 98e67ed59e1d1-2c4aa8e5204mr240435a91.40.1718156148586;
+        Tue, 11 Jun 2024 18:35:48 -0700 (PDT)
+Received: from localhost.localdomain (140-211-169-189-openstack.osuosl.org. [140.211.169.189])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a76abe66sm295715a91.56.2024.06.11.18.35.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 18:35:27 -0700 (PDT)
-Date: Tue, 11 Jun 2024 21:35:24 -0400
-From: Rafael Aquini <aquini@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Heiko Carstens <hca@linux.ibm.com>, Petr Mladek <pmladek@suse.com>,
-	Mike Rapoport <rppt@kernel.org>, Paul McKenney <paulmck@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v2] mm: mmap: allow for the maximum number of bits for
- randomizing mmap_base by default
-Message-ID: <Zmj7XAF5EcF40glG@x1-fbsd.aquini.net>
-References: <20240606170026.101839-1-aquini@redhat.com>
- <20240606180622.102099-1-aquini@redhat.com>
- <20240610111139.1e392360ffe847ea48ffebab@linux-foundation.org>
- <ZmdJyK7Mm9rFCpv2@optiplex-fbsd>
- <20240611143239.ab8e4d96289a748ae1f8a480@linux-foundation.org>
+        Tue, 11 Jun 2024 18:35:48 -0700 (PDT)
+From: Zhouyi Zhou <zhouzhouyi@gmail.com>
+To: paulmck@kernel.org,
+	linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	lance@osuosl.org
+Cc: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Subject: [PATCH V3] rcutorture: Add CFcommon.arch for the various arch's need
+Date: Wed, 12 Jun 2024 01:35:27 +0000
+Message-Id: <20240612013527.1325751-1-zhouzhouyi@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611143239.ab8e4d96289a748ae1f8a480@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 11, 2024 at 02:32:39PM -0700, Andrew Morton wrote:
-> On Mon, 10 Jun 2024 14:45:28 -0400 Rafael Aquini <aquini@redhat.com> wrote:
-> 
-> > On Mon, Jun 10, 2024 at 11:11:39AM -0700, Andrew Morton wrote:
-> > > On Thu,  6 Jun 2024 14:06:22 -0400 Rafael Aquini <aquini@redhat.com> wrote:
-> > > 
-> > > > An ASLR regression was noticed [1] and tracked down to file-mapped areas
-> > > > being backed by THP in recent kernels. The 21-bit alignment constraint
-> > > > for such mappings reduces the entropy for randomizing the placement of
-> > > > 64-bit library mappings and breaks ASLR completely for 32-bit libraries.
-> > > > 
-> > > > The reported issue is easily addressed by increasing vm.mmap_rnd_bits
-> > > > and vm.mmap_rnd_compat_bits. This patch just provides a simple way to
-> > > > set ARCH_MMAP_RND_BITS and ARCH_MMAP_RND_COMPAT_BITS to their maximum
-> > > > values allowed by the architecture at build time.
-> > > > 
-> > > > [1] https://zolutal.github.io/aslrnt/
-> > > 
-> > > Are we able to identify a Fixes: target for this?
-> > >
-> > 
-> > Sure, it would be:
-> > 
-> >  Fixes: 1854bc6e2420 ("mm/readahead: Align file mappings for non-DAX")
-> >  
-> > > I assume a cc:stable is appropriate?
-> > > 
-> > 
-> > Andrew, I admit I was somewhat hesitant on adding the Fixes: and the stable CC
-> > to this patch because I didn't really think of it as a "fix" for the given 
-> > commit, but just as a simple way to toggle ARCH_MMAP_RND{,_COMPAT}_BITS 
-> > to maximum allowed at build time.
-> > 
-> > I don't disagree with doing it, though, if you think it might be appropriate.
-> 
-> Well, "breaks completely" is motivational!
-> 
-> But does the patch fix this, by default?  Doesn't the user have to take
-> some action (set FORCE_MAX_MMAP_RND_BITS) to fix the breakage?
+Add CFcommon.arch for the various arch's need for rcutorture.
 
-Correct. The patch doesn't fix it by default but provides a way for users
-to adjust these settings at buildtime. Users are still expected/required to 
-take action, though.
+According to [1] and [2], this patch
+Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options") by moving
+x86 specific kernel option CONFIG_HYPERVISOR_GUEST to CFcommon.arch
 
-> Shouldn't we make this the default (at least for 32-bit) so the
-> regressed kernels are fixed simply by applying this patch?
-> 
+The patch has been revised and improved under
+Paul E. McKenney's guidance [3].
 
-That is a fair take, indeed. I guess we could do something like
+[1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
+[2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
+[3] https://lore.kernel.org/lkml/cd3709dc-2c08-4ac2-a19b-d8edb66195e3@paulmck-laptop/T/
 
- config FORCE_MAX_MMAP_RND_BITS
-        bool "Force maximum number of bits to use for ASLR of mmap base address"
--       default n
-+       default y if !64BIT
+Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
 
+Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+---
+ tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh       | 2 ++
+ tools/testing/selftests/rcutorture/configs/rcu/CFcommon        | 1 -
+ tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686   | 1 +
+ tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64 | 1 +
+ 4 files changed, 4 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
+ create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
 
-> > Lemme know if you want me refreshing the patch to amend these bits.
-> 
-> Is OK, I can update things.
-
-Thank you!
-
--- Rafael
+diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
+index b33cd8753689..ad79784e552d 100755
+--- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
++++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
+@@ -68,6 +68,8 @@ config_override_param "--gdb options" KcList "$TORTURE_KCONFIG_GDB_ARG"
+ config_override_param "--kasan options" KcList "$TORTURE_KCONFIG_KASAN_ARG"
+ config_override_param "--kcsan options" KcList "$TORTURE_KCONFIG_KCSAN_ARG"
+ config_override_param "--kconfig argument" KcList "$TORTURE_KCONFIG_ARG"
++config_override_param "$config_dir/CFcommon.$(uname -m)" KcList \
++		      "`cat $config_dir/CFcommon.$(uname -m) 2> /dev/null`"
+ cp $T/KcList $resdir/ConfigFragment
+ 
+ base_resdir=`echo $resdir | sed -e 's/\.[0-9]\+$//'`
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
+index 0e92d85313aa..cf0387ae5358 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
++++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
+@@ -1,6 +1,5 @@
+ CONFIG_RCU_TORTURE_TEST=y
+ CONFIG_PRINTK_TIME=y
+-CONFIG_HYPERVISOR_GUEST=y
+ CONFIG_PARAVIRT=y
+ CONFIG_KVM_GUEST=y
+ CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC=n
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
+new file mode 100644
+index 000000000000..2770560d56a0
+--- /dev/null
++++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
+@@ -0,0 +1 @@
++CONFIG_HYPERVISOR_GUEST=y
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
+new file mode 100644
+index 000000000000..2770560d56a0
+--- /dev/null
++++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
+@@ -0,0 +1 @@
++CONFIG_HYPERVISOR_GUEST=y
+-- 
+2.25.1
 
 
