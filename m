@@ -1,163 +1,117 @@
-Return-Path: <linux-kernel+bounces-210907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40819049F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:27:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183A7904A02
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D96D11C23722
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDA8D1F245B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9642926AD5;
-	Wed, 12 Jun 2024 04:27:08 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CF223769;
+	Wed, 12 Jun 2024 04:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FdmUU+DV"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1061B10A0E;
-	Wed, 12 Jun 2024 04:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3969764A;
+	Wed, 12 Jun 2024 04:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718166428; cv=none; b=g/VQgSCkXzZoBuDy74WGaDnS58lB5BO5dFnfZd53zCRNwCHN9mYS1TqhCklmb49IPOsM/vR/nLXSmzqPOqlXOT3qnlC0xq3ZbD0mt4zp39U/prhKbJL7v0wCt6yMVu/WEwCLfJ/wa9DxsBb6x+Tj/JLIQGPpoOH8nUZin0i50OM=
+	t=1718166569; cv=none; b=d0OwgEeSbrhi+15xcag1+PokLToO4NXO7uoDQPopYiiYniQ55oPwcaVKCz99RHFroUDX83XoAO3izWCNtumzxBhHK9cNjKoIv+2sxzFyVEDh+Gr291CVUxiPZtnYw21KBjYW/4l0qt6jiC3qnxAMkNRg4xxtJVmqI03nx0+EPsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718166428; c=relaxed/simple;
-	bh=MBJunRKKZCYSzLIojD7Nl18fcwI5Ptviv8JR3p0uV4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/v22icvk1I4brtT37Zc816A0p/tDsfExsImhRHDDhoMxpLic09NN0HzJ93PLwuZGFmrdbHhZ/dGhQkoPH92X3RgIoy/Bh2VtCSvHU0oQTYKsEjaOPZXEB2GCEIHxY6bsxCXsDte7kzJ/9CNp75P8ECpeFQejnYBKP0Os5CUe6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13FFAC32786;
-	Wed, 12 Jun 2024 04:27:03 +0000 (UTC)
-Date: Wed, 12 Jun 2024 09:56:55 +0530
-From: "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>
-To: Slark Xiao <slark_xiao@163.com>
-Cc: Sergey Ryazanov <ryazanov.s.a@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Loic Poulain <loic.poulain@linaro.org>, quic_jhugo@quicinc.com,
-	Qiang Yu <quic_qianyu@quicinc.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"mhi@lists.linux.dev" <mhi@lists.linux.dev>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-Subject: Re: Re: [PATCH v1 2/2] net: wwan: Fix SDX72 ping failure issue
-Message-ID: <20240612042655.GA2645@thinkpad>
-References: <20240607100309.453122-1-slark_xiao@163.com>
- <30d71968-d32d-4121-b221-d95a4cdfedb8@gmail.com>
- <97a4347.18d5.19004f07932.Coremail.slark_xiao@163.com>
- <c292fcdc-4e5b-4e6a-9317-e293e2b6b74e@gmail.com>
- <320ba7ec.38c9.1900a687ddc.Coremail.slark_xiao@163.com>
+	s=arc-20240116; t=1718166569; c=relaxed/simple;
+	bh=qbMh0+pf2SPeD3Kjln8qLzxtLjXV8v02l3LAkjQVDyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eBx8ZGW/+P/xuPqdlIzbfZj76mVFLiKgEsrtoxdPBU4Ws+k5Z3Qo+AbHiEUDjj0RhulyOarWs0o5Mz1EypDgMmexA6EpS8jzOsVHmeWc1Yph3ikXYn6AecjBM+ARphB2j1bfCrgUaEibReE0kVR1eonQ1uyeN3J2nI1TALCtsH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FdmUU+DV; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=DUVnrezAAabhLkyXkeIE6MKzW6donbVmDcF5Y3z7MHI=; b=FdmUU+DVgDEttgjLj+4RxQ0bZA
+	tviaev38EhPBLr63OK5PQUupTvTyfCOSlPW9tJ5mhQa8idu9/Bqmfo7lJgVB6bysG/SJIUO7vhCzR
+	w8A7ujfqMgQJldJqgO/bOqYhKiElMPdFeTRoHyRCCHat/KGTOpLND7Zz665kXgoa03MG5Kv65eUAR
+	k28R5R4B6U1OfRrVOnGh44BWCQg1PX3YbYu6nlPy34dWXx4wYVrhYyGRb5Y5k7IAI+eII0bARTwrD
+	2jJSXNMIuQrnlWmZ1Lrx9yAFDATXWR724DXw09FW6RgMKStwrtWIdJUik1ppQ5T4stI/mn+5OfgSX
+	ATldFxOg==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sHFbu-0000000B1YS-0tjz;
+	Wed, 12 Jun 2024 04:29:22 +0000
+Message-ID: <8b66c491-ec6a-430f-8566-114372151c3a@infradead.org>
+Date: Tue, 11 Jun 2024 21:29:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <320ba7ec.38c9.1900a687ddc.Coremail.slark_xiao@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 3/3] ABI: pps: Add ABI documentation for Intel TIO
+To: lakshmi.sowjanya.d@intel.com, tglx@linutronix.de, giometti@enneenne.com,
+ corbet@lwn.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
+ eddie.dong@intel.com, christopher.s.hall@intel.com, pandith.n@intel.com,
+ subramanian.mohan@intel.com, thejesh.reddy.t.r@intel.com
+References: <20240612035359.7307-1-lakshmi.sowjanya.d@intel.com>
+ <20240612035359.7307-4-lakshmi.sowjanya.d@intel.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240612035359.7307-4-lakshmi.sowjanya.d@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 12, 2024 at 11:05:38AM +0800, Slark Xiao wrote:
+Hi--
+
+On 6/11/24 8:53 PM, lakshmi.sowjanya.d@intel.com wrote:
+> From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
 > 
-> At 2024-06-12 06:46:33, "Sergey Ryazanov" <ryazanov.s.a@gmail.com> wrote:
-> >On 11.06.2024 04:36, Slark Xiao wrote:
-> >> +More maintainer to this second patch list.
-> >> 
-> >> At 2024-06-08 06:28:48, "Sergey Ryazanov" <ryazanov.s.a@gmail.com> wrote:
-> >>> Hello Slark,
-> >>>
-> >>> without the first patch it is close to impossible to understand this
-> >>> one. Next time please send such tightly connected patches to both
-> >>> mailing lists.
-> >>>
-> >> Sorry for this mistake since it's my first commit about committing code to 2
-> >> difference area: mhi and mbim. Both the maintainers are difference.
-> >> In case a new version commit would be created, I would like to ask if
-> >> should I add both side maintainers on these 2 patches ?
-> >
-> >No worries. We finally got both sides of the puzzle. BTW, looks like the 
-> >first patch still lacks Linux netdev mailing list in the CC.
-> >
-> >Usually maintainers are responsible for applying patches to their 
-> >dedicated repositories (trees), and then eventually for sending them in 
-> >batch to the main tree. So, if a work consists of two patches, it is 
-> >better to apply them together to one of the trees. Otherwise, it can 
-> >cause a build failure in one tree due to lack of required changes that 
-> >have been applied to other. Sometimes contributors even specify a 
-> >preferred tree in a cover letter. However, it is still up to maintainers 
-> >to make a decision which tree is better when a work changes several 
-> >subsystems.
-> >
+> Document sysfs interface for Intel Timed I/O PPS driver.
 > 
-> Thanks for your detailed explanation. 
-> Since this change was modified mainly on mhi side, I prefer to commit it to
->  mhi side. 
-> @loic @mani, what's your opinion?
+> Signed-off-by: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+> ---
+>  Documentation/ABI/testing/sysfs-platform-pps-tio | 7 +++++++
+>  MAINTAINERS                                      | 1 +
+>  2 files changed, 8 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-platform-pps-tio
 > 
+> diff --git a/Documentation/ABI/testing/sysfs-platform-pps-tio b/Documentation/ABI/testing/sysfs-platform-pps-tio
+> new file mode 100644
+> index 000000000000..e461cea12d60
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-platform-pps-tio
+> @@ -0,0 +1,7 @@
+> +What:		/sys/devices/platform/INTCxxxx/enable
+> +Date:		September 2024
+> +KernelVersion:	6.11
+> +Contact:	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+> +Description:
+> +		(RW) Enable or disable PPS TIO generator output, read to
+> +		see the status of hardware (Enabled/Disabled).
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index aacccb376c28..9c623f167aa9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17946,6 +17946,7 @@ M:	Rodolfo Giometti <giometti@enneenne.com>
+>  L:	linuxpps@ml.enneenne.com (subscribers-only)
+>  S:	Maintained
+>  W:	http://wiki.enneenne.com/index.php/LinuxPPS_support
 
-There is a build dependency with the MHI patch. So I'll just take both patches
-through MHI tree once I get an ACK from WWAN maintainers.
+I can't connect to (load) that web page above (wiki...).
+Is it correct? Does it work for other people?
 
-> >>> On 07.06.2024 13:03, Slark Xiao wrote:
-> >>>> For SDX72 MBIM device, it starts data mux id from 112 instead of 0.
-> >>>> This would lead to device can't ping outside successfully.
-> >>>> Also MBIM side would report "bad packet session (112)".
-> >>>> So we add a link id default value for these SDX72 products which
-> >>>> works in MBIM mode.
-> >>>>
-> >>>> Signed-off-by: Slark Xiao <slark_xiao@163.com>
-> >>>
-> >>> Since it a but fix, it needs a 'Fixes:' tag.
-> >>>
-> >> Actually, I thought it's a fix for common SDX72 product. But now I think
-> >> it should be only meet for my SDX72 MBIM product. Previous commit
-> >> has not been applied. So there is no commit id for "Fixes".
-> >> But I think I shall include that patch in V2 version.
-> >> Please ref:
-> >> https://lore.kernel.org/lkml/20240520070633.308913-1-slark_xiao@163.com/
-> >
-> >There are nothing to fix yet. Great. Then you can resend the Foxconn 
-> >SDX72 introduction work as a series that also includes these mux id 
-> >changes. Just rename this specific patch to something less terrifying. 
-> >Mean, remove the "Fix" word from the subject, please.
-> >
-> >Looks like "net: wwan: mhi: make default data link id configurable" 
-> >subject also summarize the reason of the change.
-> >
-> 
-> Currently I don't know if my previous commit which has been reviewed still
-> be effective. Since this link_id changes only works for MBIM mode of SDX72.
-> If keeps the commit of [1], then I will update this patch with v2 version which just update
-> the subject . If not, then this SDX72 series would have 3 patches: [1] + first patch
-> + second patch[v2](or 2 patches: combine [1] with first patch + second patch[v2]).
-> Please let me know which solution would be better.
-> 
 
-Just send v2 of both patches. There are some comments in the MHI patch as well.
-
-> Thanks.
-> >>>> ---
-> >>>>    drivers/net/wwan/mhi_wwan_mbim.c | 3 ++-
-> >>>>    1 file changed, 2 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/net/wwan/mhi_wwan_mbim.c b/drivers/net/wwan/mhi_wwan_mbim.c
-> >>>> index 3f72ae943b29..4ca5c845394b 100644
-> >>>> --- a/drivers/net/wwan/mhi_wwan_mbim.c
-> >>>> +++ b/drivers/net/wwan/mhi_wwan_mbim.c
-> >>>> @@ -618,7 +618,8 @@ static int mhi_mbim_probe(struct mhi_device *mhi_dev, const struct mhi_device_id
-> >>>>    	mbim->rx_queue_sz = mhi_get_free_desc_count(mhi_dev, DMA_FROM_DEVICE);
-> >>>>    
-> >>>>    	/* Register wwan link ops with MHI controller representing WWAN instance */
-> >>>> -	return wwan_register_ops(&cntrl->mhi_dev->dev, &mhi_mbim_wwan_ops, mbim, 0);
-> >>>> +	return wwan_register_ops(&cntrl->mhi_dev->dev, &mhi_mbim_wwan_ops, mbim,
-> >>>> +		mhi_dev->mhi_cntrl->link_id ? mhi_dev->mhi_cntrl->link_id : 0);
-> >>>
-> >>> Is it possible to drop the ternary operator and pass the link_id directly?
-> >>>
-
-Yeah, just use link_id directly as it will be 0 by default.
-
-- Mani
+> +F:	Documentation/ABI/testing/sysfs-platform-pps-tio
+>  F:	Documentation/ABI/testing/sysfs-pps
+>  F:	Documentation/devicetree/bindings/pps/pps-gpio.yaml
+>  F:	Documentation/driver-api/pps.rst
 
 -- 
-மணிவண்ணன் சதாசிவம்
+~Randy
 
