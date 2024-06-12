@@ -1,160 +1,382 @@
-Return-Path: <linux-kernel+bounces-211370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5FEB9050B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:47:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6250090503E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47A6F2876EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:47:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 691B71C2145C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF9D16F265;
-	Wed, 12 Jun 2024 10:47:19 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2116.outbound.protection.partner.outlook.cn [139.219.17.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5822516E89A;
+	Wed, 12 Jun 2024 10:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="l16fhzwY"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B032F84A21;
-	Wed, 12 Jun 2024 10:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718189238; cv=fail; b=gus+oKt7UU1H4ZNkeCAB1yfvM3Z4gGcC0gV35GsQ9G8ub6Mm00Zrut+HmzEh9acDbDAKp3CHHq0CpssSz/36OlW++q0IV4zfbDiEMUveUln5UpJBGqZfEzdaItqqz+WdRB+HIvt9kEjXsmMQMKDNSPUnJ+Vt7BR5yf81QuOpjjk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718189238; c=relaxed/simple;
-	bh=oyU59uWBlhpz/dzB2XbZ8yS2oKF/Gg+L7snJYcG1WqI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Sgmt4UW3+RomKX21pB3HM+eyfjskJvOB873Tg6Z5futpk3X+uV7+utHuvDEM6mIf4OA7qPHSjbVs/U0ZuIAdhJyWPQ78n5j8JW2NoKFwCXCpC8TvXf7IjWwz6Gawvqxh+c5DkaSJ5dOJDX9HbnQT9VcZNdeFC2Rct6NE5YmBZxc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FDRU6lqY1/DolojgXzt27iZ3VwKZyUCCNHdb2T85p3eyYr9jb/PpjgyRYGZXPxm+Ur5LOJ9LAxLAt+8KxkmljtfOZUK8y5XBBP3SVLpTT21gfh/tfF0yb/SQplDTIHn3toPB/VxHe8k6+6AI+g1vUnIHX/VIePR4qbLCHGDstcMQ9AXDKqq1n6EEJ8Ue4D4Oedr2SyWzRNGpcRC+wex2lNF4N7aljNTumRJXBvbJToiKAq/srwxmigkaQtwFzvp+W2hFJaAANNrff03tZ2AnKKmmd+kks25igiFv6PiYWkzr2sCYGQZ8Mw9o9XE55s+Q7AZQPdl+359Gb4AvObAphg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rYC7lAMr84vaQfxhFj4YJDGk3n1eyG8mtZC7ZDEewNs=;
- b=jifHtrJghjNGTL3L/ThHzX1Apv+7jnWYz+tLbmNvpqUQg7ExozK484CKZNBBqrXUjHMs1VmbbeQwH8uAoA0kp9vNE40/A3ib6HXNnstzLcMEKubfTmdlaKXLrZz5IWX9vjLUt0D+EMGYrhttQq9KMeXuVpr/3AZhz18PzL1aHfCMKIUtutxlSY/5hwCw45/CKP5titGVjhmpLJWA1TfF2pr+QWUS8kMLQfEIh4h2ckbAESTc1XeKvASqfwtY5AnOks8K9krcFvhnD+8dVPGLGHsaaFZ2FNIMI6B8KL3JXDUg+8UxjmLhwrEziIsfkvJM0/r8gEfWFuXctICLrnbeBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:10::10) by NT0PR01MB0976.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:d::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.38; Wed, 12 Jun
- 2024 10:13:30 +0000
-Received: from NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
- ([fe80::e3b:43f8:2e6d:ecce]) by NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
- ([fe80::e3b:43f8:2e6d:ecce%7]) with mapi id 15.20.7611.039; Wed, 12 Jun 2024
- 10:13:30 +0000
-From: JiaJie Ho <jiajie.ho@starfivetech.com>
-To: Vinod Koul <vkoul@kernel.org>
-CC: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
-	<davem@davemloft.net>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
-Subject: RE: [PATCH v5 1/3] dmaengine: dw-axi-dmac: Support hardware quirks
-Thread-Topic: [PATCH v5 1/3] dmaengine: dw-axi-dmac: Support hardware quirks
-Thread-Index: AQHasj8OTzZ9CEf8H0CgWgm1ave3tbHC60wAgAD2s5A=
-Date: Wed, 12 Jun 2024 10:13:30 +0000
-Message-ID:
- <NT0PR01MB11826C9F142FCD1A1199A11B8AC02@NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn>
-References: <20240530031112.4952-1-jiajie.ho@starfivetech.com>
- <20240530031112.4952-2-jiajie.ho@starfivetech.com> <ZmiOemWQrG-3EdIB@matsya>
-In-Reply-To: <ZmiOemWQrG-3EdIB@matsya>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: NT0PR01MB1182:EE_|NT0PR01MB0976:EE_
-x-ms-office365-filtering-correlation-id: 4da55e4d-2239-401f-1d49-08dc8ac84ee8
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230032|1800799016|366008|41320700005|38070700010;
-x-microsoft-antispam-message-info:
- 8iPYnKZOuakbiVm3Ik2TSg8G7Yfm3uw55Kcsyj1GgGiTW+tAOq1YJvcYuSiBksxDu6VzznTy2Bim+JRNlkQEd7WE+h9kbJa0jDJAGBk/6qK3Gdxx+hzvwHsYnKQI+Bpcw55qsbvyK5UduLA964hrzdiq9KXzYYL5MIaXgYfFA/diVlKBJMl6x3TFPqEGcCKaTmdN0H1x+bAjRaGKzdqq0XIFP4Ij07ni2iU6Lc3ViKRgQqWeDCkYCpR0q5gWyLVF4AYWsZJmxx1yLJICS7TB/4YmqrHO8RUFlm1fUNG03Gc9ifxm1s6dtUXteAzqx4SFDDJNQAltgtfEhVn5l+kDMbj2YDF9mLw8nQMI6+Ntr7V7ty7ol4vG8AELtSQiz+BsZxTsvDSRhaXtQX2W0xdnG98HmLRhhF9N3/QLcMwcyiHu+fy0uJSd0uNG2RIu1ngPEFJRUYmuy9GTp/Gau8LSOTdS8kEJxhgS0FI1F5JDP+Aoe41qOv/crqxSEjhy7Pgf/VuSm2ervrAi9EG9vjBoFNSXnDgRAlFrqbmJfeo3W/Fc8NIZ+nTo7NGWoOsysoXpvF/sGE7a74kC+ZuPVDiPYCXWYnelpOFD+wwDJ4l3K0r4Bfk7szgBRXwGy/9dxOUc
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230032)(1800799016)(366008)(41320700005)(38070700010);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?N7MMaoVQ+kFd/cXVfNKZnOicOPoV0UCbS2IqDuM1up/xUJ3IzV/xsiEaQD+H?=
- =?us-ascii?Q?nOANXakc1Sjj39THpAaotiwtU6gfdSXKrCH+jsOzQ98CKvsN42vJ+5DwHi79?=
- =?us-ascii?Q?ysNxgnbKpKOW756xhmMQPeCODIoubGJSRdS44anZCXPtvNLjlcWYltkIhKZW?=
- =?us-ascii?Q?MYnuv0iabBhFw5tPLmVVP2O3zEby6XKTU7u5WeYuMYCOUr+DRPhN+jpZH1qj?=
- =?us-ascii?Q?bjMiQ0vuGwT3gTe7IuL19EUsW8ytBmcNYlu4vmvaXLdIgBfQ4YbmTX7J0483?=
- =?us-ascii?Q?aWd9nYcwJqgSmSPDCSSFz2nh6FUBgQFTS/yLJoUcQxZi+BK79/vLXwPE5Aku?=
- =?us-ascii?Q?rusA6evO4MH07Q5ogEHG6x+3S3tZcwf6nm7nCrRJqwToqtrisaNmYS0lLY9B?=
- =?us-ascii?Q?ti5O+TyzUCrl32l9qA86IJZcwzgDp1+M9cPKoZZKK5fVVL3kqifmw0lyHN1f?=
- =?us-ascii?Q?uhxQjXyoJElh1su/NsJ31tlMTRea9ZBky0ZdIsOVGee6xwvOn2J3vCxDl4Zm?=
- =?us-ascii?Q?ihHPxUrOmDtxYq2KjHeUIaLjrRZC5snnhnFW/U7CVWQPlgEJ/rc4onlY+SU/?=
- =?us-ascii?Q?zPB58G5fcLFbkzDCIOOynlOv/H3h6vhI3zYOoNNOSKFIeDyMIW82OC/xD291?=
- =?us-ascii?Q?t12CMrS2WtiX9lqhn8j+xZWykWia52TR7y/aqok1bXvBdvDRDtGGsbYCXsku?=
- =?us-ascii?Q?S09I3eZSBSAQMaj7OqBOTC0SwJV4LuAI60MH5JlOgmTJ+JaGUSKLxK07q3n1?=
- =?us-ascii?Q?uP4D2wr/+uM0GuFFsQR1SWz8VNkmZOuzNX/esodT3R43qV6CnB8J9SzOq6/D?=
- =?us-ascii?Q?z4sq+9BZrQtBhzDFWReqfBHQifjkNuGFABQFAasm71xEaImwCnyvSXXBijBZ?=
- =?us-ascii?Q?tGN2/Hu+CVgi1jIoPrtDT59Y9cJvySLmqLk6g/nXQ9Xuhv6T6VkCE+xIGxt9?=
- =?us-ascii?Q?gP28UUeW7RAkxYpCzzlE90ICwSL/VpUdP4cQwYBhsR1f5m52rCu3AEv0PSao?=
- =?us-ascii?Q?poTgCueJnXO6NFQ1nHlkmO6EM+RaF9FdlZdTBcX7EmxJZj5zQ5y5s/UyKAdC?=
- =?us-ascii?Q?D5vHPYZNwFUWb4hDpkvFD0q9oJB11xUCwTmUDh95EY4OoIXvr+wfsHfO/uUX?=
- =?us-ascii?Q?F/3zhDf4eB35R7wKJPmUk+PO9s0gP5EEvf+mKzOLMeHlVk8KnlPSXwU4Po5k?=
- =?us-ascii?Q?kSh4LLtj2R/eWpuGg+Nx71bMcXBvpYJnih1uH6tKUnjOQNEL5u1FLTeul+TS?=
- =?us-ascii?Q?SkahqnNKz9KcQTR5J4k14uJ/+wKWNJwZ3ea4qBkXelGeSCSOc7OSorp1vKym?=
- =?us-ascii?Q?6ucwOGNI8FJLO2d99Ixys1r0AQ8nDnyK7vnVHzj14xAlVq2sMdn2/oDerUhd?=
- =?us-ascii?Q?ykLpRu1J/y0q0pse/flj+6LAANlmvN3StIy0w6kE2I+szuiPBVorHN8Jv0gV?=
- =?us-ascii?Q?aPDJ9D0Tj1ZXO/0afC03slH8IXFkfbmubzpImAgz0k6D4zEcmh/Ilfv/mXWv?=
- =?us-ascii?Q?JZuia86XfeqddoGwTKUav6YqKsOp4Mt1fjE6B+l/se75Px8G3ecbHEGmB3i1?=
- =?us-ascii?Q?ldCpegvp78NoSCwsuUKLfn3SvoCurdGj7U0YPU7oPbJizBSrCsizmUum38cP?=
- =?us-ascii?Q?LQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075E4110A;
+	Wed, 12 Jun 2024 10:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718187432; cv=none; b=YB4dBNi1FziEIuLmhDPxKEwKmX7wuxODLv8omWfA5P9/+EqRbcvIQm91AwsVe4eSzhgUxE5XSyj0hyhGcy7rlSDHoQmq4yBkhLZ60WmdRiog93/ShzrIZUtj0h795/4M4nHyVZCAtV40nKb1JBcBLIQCFgzzLpKQMQORzyfXWtg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718187432; c=relaxed/simple;
+	bh=Rrf/0OEe91PyXmXpZmQBXc76141j12WNVET1gzJ+GEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=me0tUhRMjczKNH+VS3zp7vaK2ppctWCdfHlrezlrZInXsSa5In9DVVLNrAxV/jXxV9f6u5mwDwzkBEpSnaw8iiHYuWDPffdARsXn1VDt5k9Zw5mtCxl96zoNyQCamk8eLrNBywQpfvQZ/RzJX7E5cqQOnx4qwg3Cj+pEBcOYZgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=l16fhzwY; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45CAFQZ4014801;
+	Wed, 12 Jun 2024 05:15:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718187326;
+	bh=6PYNTaf4bBC1gHSa8xOkQZDHIzU4NmE0UgHp94stOrU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=l16fhzwYcI6dYNLLGfVvnlmcqmPX1Q5TUP2YvinKpdmOwyiT7WdSGY2VqAsKK7xPG
+	 e8B0x9NCKean3l+JQndyH9P8m3+a4NkFyB77ZNnHC0trm0F//xuaHeyWj7DKD9DdNi
+	 AVKGispoTnMVwF1jSx7NgkWMZS+umXAl2yUO0EUQ=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45CAFQTn105017
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 12 Jun 2024 05:15:26 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
+ Jun 2024 05:15:26 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 12 Jun 2024 05:15:26 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45CAFJeX032469;
+	Wed, 12 Jun 2024 05:15:20 -0500
+Message-ID: <69f01921-545a-4ddd-85ee-d1b7fc635df5@ti.com>
+Date: Wed, 12 Jun 2024 15:45:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4da55e4d-2239-401f-1d49-08dc8ac84ee8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2024 10:13:30.1315
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2OgE7UjI5WoQnBE/y2wNfXSDyRm9a42EWu71RqBm9UjapoDiYs2l+vfisZYoJI1PABgytSquvVcLZtALGHjvs82VAc2LGYMI80zKicfRL8w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: NT0PR01MB0976
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 2/2] net: ti: icssg_prueth: add TAPRIO offload
+ support
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: Jan Kiszka <jan.kiszka@siemens.com>,
+        Dan Carpenter
+	<dan.carpenter@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>, Simon Horman
+	<horms@kernel.org>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Wolfram Sang
+	<wsa+renesas@sang-engineering.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Jacob
+ Keller <jacob.e.keller@intel.com>,
+        Roger Quadros <rogerq@ti.com>
+References: <20240531135157.aaxgslyur5br6zkb@skbuf>
+ <20240531044512.981587-1-danishanwar@ti.com>
+ <20240531044512.981587-1-danishanwar@ti.com>
+ <20240531044512.981587-3-danishanwar@ti.com>
+ <20240531044512.981587-3-danishanwar@ti.com>
+ <20240531135157.aaxgslyur5br6zkb@skbuf>
+ <9bcc04a9-645a-4571-a679-ffe67300877a@ti.com>
+ <9bcc04a9-645a-4571-a679-ffe67300877a@ti.com>
+ <20240603135100.t57lr4u3j6h6zszd@skbuf>
+ <d5786231-b79d-46a0-bb4e-020efb805559@ti.com>
+ <20240606141759.pzug3gezeuabrxzm@skbuf>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20240606141759.pzug3gezeuabrxzm@skbuf>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-> On 30-05-24, 11:11, Jia Jie Ho wrote:
->=20
-> > +
-> > +struct dw_axi_peripheral_config {
-> > +#define DWAXIDMAC_STARFIVE_SM_ALGO	BIT(0)
->=20
-> what does this quirk mean?
->=20
-> > +	u32 quirks;
->=20
-> Can you explain why you need this to be exposed. I would prefer we use
-> existing interfaces and not define a new one...
->=20
 
-Hi Vinod,
-Thanks for reviewing this.
-This is a dedicated dma controller for the crypto engine.
-I am adding this quirk to:
-1. Select the src and dest AXI master for transfers between mem and dev.=20
-    Driver currently only uses AXI0 for both.
-2. Workaround a hardware limitation on the crypto engine to
-     transfer data > 256B by incrementing the peripheral FIFO offset.
 
-What is the recommended way to handle such cases besides using=20
-peripheral_config in dma_slave_config?
+On 06/06/24 7:47 pm, Vladimir Oltean wrote:
+> On Thu, Jun 06, 2024 at 04:33:58PM +0530, MD Danish Anwar wrote:
+>>>>>> +static void tas_reset(struct prueth_emac *emac)
+>>>>>> +{
+>>>>>> +	struct tas_config *tas = &emac->qos.tas.config;
+>>>>>> +	int i;
+>>>>>> +
+>>>>>> +	for (i = 0; i < TAS_MAX_NUM_QUEUES; i++)
+>>>>>> +		tas->max_sdu_table.max_sdu[i] = 2048;
+>>>>>
+>>>>> Macro + short comment for the magic number, please.
+>>>>>
+>>>>
+>>>> Sure I will add it. Each elements in this array is a 2 byte value
+>>>> showing the maximum length of frame to be allowed through each gate.
+>>>
+>>> Is the queueMaxSDU[] array active even with the TAS being in the reset
+>>> state? Does this configuration have any impact upon the device MTU?
+>>> I don't know why 2048 was chosen.
+>>
+>> I talked to the firmware team. The value of 248 is actually wrong. It
+>> should be the device mtu only i.e. PRUETH_MAX_MTU.
+> 
+> There was another comment about the value of 0, sent separately.
+> 
 
-Best regards,
-Jia Jie
+Yes, I have replied to that.
+
+>>> If you're replacing an existing active schedule with a shadow one, the
+>>> ICSSG_EMAC_PORT_TAS_ENABLE command isn't needed because the TAS is
+>>> already enabled on the port, right? In fact it will be suppressed by
+>>> tas_set_state() without even generating an emac_set_port_state() call,
+>>> right?
+>>>
+>>
+>> As this point TAS is not enabled. TAS is enabled on the port only when
+>> ICSSG_EMAC_PORT_TAS_ENABLE is sent. Which happens at the end of
+>> emac_taprio_replace().
+> 
+> "If you're replacing an existing active schedule" => emac_taprio_replace()
+> was already called once, and we're calling it again, with no emac_taprio_destroy()
+> in between.
+> 
+> This is done using the "tc qdisc replace" command. You can keep the
+> mqprio parameters the same, just change the schedule parameters.
+> The transition from the old to the new schedule is supposed to be
+> seamless and at a well-defined time, according to the IEEE definitions.
+> 
+
+I talked with the FW team. During "tc qdisc replace" there is no need to
+send ICSSG_EMAC_PORT_TAS_ENABLE as it is already enabled. I'll fix it.
+
+>>>> The following three offsets are configured in this function,
+>>>> 1. TAS_ADMIN_CYCLE_TIME → admin cycle time
+>>>> 2. TAS_CONFIG_CHANGE_CYCLE_COUNT → number of cycles after which the
+>>>> admin list is taken as operating list.
+>>>> This parameter is calculated based on the base_time, cur_time and
+>>>> cycle_time. If the base_time is in past (already passed) the
+>>>> TAS_CONFIG_CHANGE_CYCLE_COUNT is set to 1. If the base_time is in
+>>>> future, TAS_CONFIG_CHANGE_CYCLE_COUNT is calculated using
+>>>> DIV_ROUND_UP_ULL(base_time - cur_time, cycle_time)
+>>>> 3. TAS_ADMIN_LIST_LENGTH → Number of window entries in the admin list.
+>>>>
+>>>> After configuring the above three parameters, the driver gives the
+>>>> trigger signal to the firmware using the R30 command interface with
+>>>> ICSSG_EMAC_PORT_TAS_TRIGGER command.
+>>>>
+>>>> The schedule starts based on TAS_CONFIG_CHANGE_CYCLE_COUNT. Those cycles
+>>>> are relative to time remaining in the base_time from now i.e. base_time
+>>>> - cur_time.
+>>>
+>>> So you're saying that the firmware executes the schedule switch at
+>>>
+>>> 	now                  +      TAS_ADMIN_CYCLE_TIME * TAS_CONFIG_CHANGE_CYCLE_COUNT ns
+>>> 	~~~
+>>> 	time of reception of
+>>> 	ICSSG_EMAC_PORT_TAS_TRIGGER
+>>> 	R30 command
+>>>
+>>> ?
+>>>
+>>
+>> I talked to the firmware team on this topic. Seems like this is actually
+>> a bug in the firmware design. This *now* is very relative and it will
+>> always introduce jitter as you have mentioned.
+>>
+>> The firmware needs to change to handle the below two cases that you have
+>> mentioned.
+>>
+>> The schedule should start at base-time (given by user). Instead of
+>> sending the cycle count from now to base-time to firmware. Driver should
+>> send the absolute cycle count corresponding to the base-time. Firmware
+>> can then check the curr cycle count and when it matches the count set by
+>> driver firmware will start scheduling.
+>>
+>> change_cycle_count = base-time / cycle-time;
+>>
+>> This way the irregularity with *now* will be removed. Now even if we run
+>> the same command on two different ICSSG devices(whose clocks are synced
+>> with PTP), the scheduling will happen at same time.
+>>
+>> As the change_cycle_count will be same for both of them. Since the
+>> clocks are synced the current cycle count (read from
+>> TIMESYNC_FW_WC_CYCLECOUNT_OFFSET) will also be same for both the devices
+> 
+> You could pass the actual requested base-time to the firmware, and let
+> the firmware calculate a cycle count or whatever the hardware needs.
+> Otherwise, you advance the base-time in the driver into what was the
+> future at the time, but by the time the r30 command reaches the
+> firmware, the passed number of cycles has already elapsed.
+> 
+
+Yes that would work too.
+
+>>> I'm not really interested in how the driver calculates the cycle count,
+>>> just in what are the primitives that the firmware ABI wants.
+>>>
+>>> Does the readb_poll_timeout() call from tas_update_oper_list() actually
+>>> wait until this whole time elapses? It is user space input, so it can
+>>> keep a task waiting in the kernel, with rtnl_lock() acquired, for a very
+>>> long time if the base_time is far away in the future.
+>>>
+>>
+>> readb_poll_timeout() call from tas_update_oper_list() waits for exactly
+>> 10 msecs. Driver send the trigger_list_change command and sets
+>> config_change register to 1 (details in tas_set_trigger_list_change()).
+>> Driver waits for 10 ms for firmware to clear this register. If the
+>> register is not cleared, list wasn't changed by firmware. Driver will
+>> then return err.
+> 
+> And the firmware clears this register when? Quickly upon reception of
+> the TAS_TRIGGER command, or after the TAS is actually triggered (after
+> change_cycle_count cycles)?
+> 
+
+tas->config_list->config_change is set to 1 by driver in
+tas_set_trigger_list_change() before sending the TAS_TRIGGER command.
+tas->config_list->config_change indicates that the driver has filled the
+shadow list.
+
+Firmware then receives the TAS_TRIGGER command and clears
+`tas->config_list->config_change` as soon as new shadow list is received.
+
+Firmware then goes on to copy the shadow list to active list and once
+that is done, firmware clears `tas->config_list->config_pending`
+register. After this TAS is actually triggered when change_cycle_count
+cycles have passed.
+
+>>> 2. You cannot apply a phase offset between the schedules on two ICSSG
+>>> devices in the same network.
+>>>
+>>> Since there is a PHY-dependent propagation delay on each link, network
+>>> engineers typically delay the schedules on switch ports along the path
+>>> of a stream.
+>>>
+>>> Say for example there is a propagation delay of 800 ns on a switch with
+>>> base-time 0. On the next switch, you could add the schedule like this:
+>>>
+>>> tc qdisc replace dev swp0 parent root taprio \
+>>> 	num_tc 8 \
+>>> 	map 0 1 2 3 4 5 6 7 \
+>>> 	queues 1@0 1@1 1@2 1@3 1@4 1@5 1@6 1@7 \
+>>> 	base-time 800 \
+>>> 	sched-entry S 0x81 100000 \
+>>> 	sched-entry S 0x01 900000 \
+>>> 	flags 0x2 \
+>>> 	max-sdu 0 0 0 0 0 0 0 79
+>>>
+>>> Same schedule, phase-shifted by 800 ns, so that if the packet goes
+>>> through an open gate in the first switch, it will also go through an
+>>> open gate through the second.
+>>>
+>>> According to your own calculations and explanations, the firmware ABI
+>>> makes no difference between base-time 0 and base-time 800.
+>>>
+>>
+>> In the new implementation base-time 0 and base-time 800 will make a
+>> difference. as the change_cycle_count will be different from both the cases.
+>> In case of base-time 0, change_cycle_count will be 1. Implying schedule
+>> will start on the very next cycle.
+>>
+>> In case of base-time 800, change_cycle_count will be 800 / cycle-time.
+> 
+> In this example, cycle-time is (much) larger than 800 ns, so 800 / cycle-time is 0.
+> Simply put, base-time 0 and base-time 800 will still be treated equally,
+> if the firmware only starts the schedule upon integer multiples of the
+> cycle time. A use case is offsetting schedules by a small value, smaller
+> than the cycle time.
+> 
+> The base-time value of 800 should be advanced by the smallest integer
+> multiple of the cycle-time that satisfies the inequality
+> new-base-time = (base-time + N * cycle-time) >= now.
+> 
+> You can see that for the same value of N and cycle-time, new-base-time
+> will different when base-time = 0 vs when base-time = 800. Taprio
+> expects that difference to be reflected into the schedule.
+> 
+>>> In this case they are probably both smaller than the current time, so
+>>> TAS_CONFIG_CHANGE_CYCLE_COUNT will be set to the same "1" in both cases.
+>>>
+>>
+>> If cycle-time is larger then both 0 and 800 then the change_cycle_count
+>> would be 1 in both the cases.
+>>
+>>> But even assuming a future base-time, it still will make no difference.
+>>> The firmware seems to operate only on integer multiples of a cycle-time
+>>> (here 1000000).
+>>
+>> Yes, the firmware works only on multiple of cycle time. If the base-time
+>> is not a multiple of cycle time, the scheduling will start on the next
+>> cycle count.
+>>
+>> i.e. change_cycle_count = ceil (base-time / cycle-time)
+>>> Summarized, the blocking problems I see are:
+>>>
+>>> - For issue #2, the driver should not lie to the user space that it
+>>>   applied a schedule with a base-time that isn't a precise multiple of
+>>>   the cycle-time, because it doesn't do that.
+>>>
+>>
+>> Yes, I acknowledge it's a limitation. Driver can print "requested
+>> base-time is not multiple of cycle-time, secheduling will start on the
+>> next available cycle from base-time". I agree the driver shouldn't lie
+>> about this. Whenever driver encounters a base time which is not multiple
+>> of cycle-time. It can still do the scheduling but throw a print so that
+>> user is aware of this.
+> 
+> Is that a firmware or a hardware limitation? You're making it sound as
+> if we shouldn't be expecting for it to be lifted.
+> 
+
+It is a firmware limitation and I have conveyed this issue to the
+firmware team. They are working on fixing this as well. In my earlier
+reply I meant to say that if this is not fixed or if it takes very long
+to fix this, we can still go ahead with the driver by mentioning this
+limitation by a print.
+
+>>> - For issue #1, the bigger problem is that there is always a
+>>>   software-induced jitter which makes whatever the user space has
+>>>   requested irrelevant.
+>>>
+>>
+>> As a I mentioned earlier, the new implementation will take care of this.
+>>
+>> I will work with the firmware team to get this fixed. Once that's done I
+>> will send a new revision.
+>>
+>> Thanks for all the feedbacks. Please let me know if some more
+>> clarification is needed.
+> 
+> Ok, so we're waiting for a new firmware release, and a check in the
+> driver that the firmware version >= some minimum requirement, else
+> -EOPNOTSUPP?
+
+Yes, we are waiting on a new firmware release. The check however might
+not be necessary as ICSSG firmware is not yet public. It's not part of
+Linux-firmware. We are planning on integrating the ICSSG firmware with
+Linux-firmware. However as of now it's not public. Since the firmware is
+not public yet and the first public version will most probably be after
+this things are fixed and driver support is upstream-ed, I don't think
+version check will be needed.
+
+Once the firmware is public and the some change is done in driver that
+depends on firmware versions then the check will be necessary.
+
+-- 
+Thanks and Regards,
+Danish
 
