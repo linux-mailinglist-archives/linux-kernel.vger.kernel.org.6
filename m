@@ -1,164 +1,212 @@
-Return-Path: <linux-kernel+bounces-211503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2909052C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E407F9052C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03195B21967
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:43:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C062B225FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A733217C9F9;
-	Wed, 12 Jun 2024 12:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849FA176256;
+	Wed, 12 Jun 2024 12:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQz9aj/a"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJkZjo5x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DC517083D;
-	Wed, 12 Jun 2024 12:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964BA16F8F6;
+	Wed, 12 Jun 2024 12:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718196125; cv=none; b=Xh8NHHj24nkcILBoQZmbd7qNHtU2a0c4VpZASCU4ivw1qnCeL1wNRz1VKo8XM5k0jNz1QF/yYRbuet2bJaMC66A/2o6MfckWwbukOq8KgVqXae56rBznnEHOX8p5CEHcMKpwAhNuvxt6F90zx/KrKhVs4F89HU9BWEXALNw6edU=
+	t=1718196159; cv=none; b=BLgf92qD/M7LfbnxKGHJORlzc92pvbd3h1qEGHu0b+kXZB7akOP4gbyE6fPcN4KP8w9dCZ0z/eCEFzf0lnKAs+WfiE6PUp6WHsQOLgxOC1DkDmAXfKtQbR6eIZY+XPAFy8QYja0BZ9aHLxUZv1D1K5CBQsidUjNU75OVNYBP6Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718196125; c=relaxed/simple;
-	bh=2eS5AS9BXmEOhaWNRS+1JFWwcMxQFs94YTD2RJKbNJI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hHHum1i3SlbTU4t3VucCRaRuacmjBcIACAaf5toDq9SxNga3CUSoTXIgZUHS1tr6bugS8vXbdkRSQN913t2NTzUOtb8D9e6q7OPwAPqwFA5DHkXa8QBjPFLdK/MIA+w1tzc6FR7rav6wc3TcxXvWu6TR+tjnjP6wZKG1Y5RcksM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQz9aj/a; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-579fa270e53so3590988a12.3;
-        Wed, 12 Jun 2024 05:42:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718196122; x=1718800922; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yaWg4m5Bnwvqv8YcEFmBCH4VJg0dR5I+06fePYSf13o=;
-        b=GQz9aj/afkHFwSE+qfS7yErjJNwZ3dqH/CVpt/uScG6PPvAgz3psfh5X2tfM5UkD5G
-         pMpPWb4kcN1dDIw255l8CNNR1iNb20Ou/aTXjxFlKJjea4rt4sRPTd48tVpb2pIQdVsk
-         egSJgonwMBzBSe+RAj8ktDDMAnZUX6wgTCDgUk9l5JImsmrZfoGJPvRalcv+DIRDMyG1
-         jHoGWc2jx+JMtMxwGYqkFjd7Ujxobl6Qm6TL4y4DdRtun8eeLFRsY4ShelDgqCSSi4TR
-         tXTHmgqHQaMZualXvuY3Ti8aYXSEiyxWOQsVRKMpKB2M/CxcQRtN8rviXz50ltPBGYXY
-         M+AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718196122; x=1718800922;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yaWg4m5Bnwvqv8YcEFmBCH4VJg0dR5I+06fePYSf13o=;
-        b=uxLgpnww9Z6SjezGbjaT+yZatl0H1B3lCSUR8B/aKoadM8Jg1Z0rIFlPulyVTqDljC
-         P1u/DzT/mC5uYObHJ/Ye6JSkoZbbcidIASIaIuS2AdyA7h7J3TxJAmvxF9XqsyzKgeBq
-         /VV60FJz4seiMdx6AFqnuN7EeN1ac9VUeXy20Ac1FQSuLXzior+pcFRkYYAwphfWNOV9
-         fnhXa9XrQERqjJ19nRaufGX54i3x4uHafi0xDv+9kMcFSNqsBTL4Z6vzC4PT3l5UGqPU
-         6VGlVk3gQe2fuFJHpMfrhCCHsLhICC6P+QWTkcNBD9kTU9ZlgDc88V5m4GGvJUKQ3icw
-         XWmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRw4D6jDupSDBmHBnjwU4OgVhTPFbbkBR/1gihrSjAWwNju7cu0GnMcvlqo2uIfSs8vIJeIliReb8QQXpc7j6mt/n60uqxDwl6oQSles3n2pv8Ww7fB9iRB7ed7lgTUNq48yvineZTG7zfknyp9eufNnXzfWV6lx6ggHYfkoi0folk
-X-Gm-Message-State: AOJu0Yw5N1xIXqrbq2WsvZRTRz7okxE2NWYjWA7+Qd+azetaf2XmQLn0
-	QwKZEwv1UQmf/UdCBcspOWRKccL/cMgd9S5BNS4/XTO+OyGzkCIS
-X-Google-Smtp-Source: AGHT+IEurYY9mBvYQqhqXDFmp4P8HwN0BoTp0cQDJ0TSoIEs17WlcQeFx3uNCZL+rbnmP83DTCb74A==
-X-Received: by 2002:a50:d7dd:0:b0:57c:74b1:bf51 with SMTP id 4fb4d7f45d1cf-57ca97626b3mr1524272a12.20.1718196122177;
-        Wed, 12 Jun 2024 05:42:02 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c9f32f079sm1869654a12.88.2024.06.12.05.42.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 05:42:01 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 12 Jun 2024 14:41:59 +0200
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: Jiri Olsa <olsajiri@gmail.com>, shuah@kernel.org, daniel@iogearbox.net,
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
-	quentin@isovalent.com, alan.maguire@oracle.com, acme@kernel.org,
-	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-	haoluo@google.com, mykolal@fb.com, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH bpf-next v4 03/12] bpf: selftests: Fix fentry test kfunc
- prototypes
-Message-ID: <ZmmXl1NHgwOEXy4F@krava>
-References: <cover.1717881178.git.dxu@dxuuu.xyz>
- <1f493cb7a7e5349f99e2badf0880b75dd6681898.1717881178.git.dxu@dxuuu.xyz>
- <Zmb_hJQqxi44Nj5B@krava>
- <gwrlw7wtc72vz3ky2pltvpoadtjlezv6kdrs6wf3ptsecyu2sh@aexbk4rotm3x>
+	s=arc-20240116; t=1718196159; c=relaxed/simple;
+	bh=z+KLxZwv3KVjMH+GO5G/9Jy6q5pczKwfg5UxIKL9ucM=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=lV/PyxFgKOCJjqJCDHVqAfpqTBMRDQ2KAuLMO7JuwX5fvpNIuRu3Cz/D6oFKJ1nGT2POtyT5f+2IAWAgJv4pj0+6HafvqhBzv/Izl+N3r6pNDPFmoPjzE1kqVpn1XUHLzz91Tj9YWbzAFfwfRl0KOtvxXIe0psFIki3hkiZ0Lxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJkZjo5x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65D9FC3277B;
+	Wed, 12 Jun 2024 12:42:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718196159;
+	bh=z+KLxZwv3KVjMH+GO5G/9Jy6q5pczKwfg5UxIKL9ucM=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=kJkZjo5xs0lK86YklafnNU927mRi4jWdl0SCGkcphfa1Z9n6VxvAqQaJxC1gGKSJL
+	 RoYSkIqL4CUGFKVz5HYkntqCEGAENNgD7w4d4FJS/6uVur/sAgna6t3xIvSZskMA/p
+	 /VwEt3XVxLyFLVDui40jlEas+ijlXkVJ16ZphJ2DNl6vJKAS9MyqzY1eeFgKafp8xn
+	 ZUNWCt5FywUYQkmoATvI1+GZTDKK4AhAsDmmcI8y2Hy7FDnjzSDJE7IgrTAKhAeXnq
+	 cE9u+gLYEpoAJQ7sz1AaBmUwdaD55b90h9Ce+/V39ScOZUkvnLCOKAN/sB93TfGn59
+	 YF6m2J0Q8nbGw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "David S . Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
+ <pabeni@redhat.com>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Jeff Johnson
+ <jjohnson@kernel.org>,  linux-wireless@vger.kernel.org,
+  netdev@vger.kernel.org,  devicetree@vger.kernel.org,
+  ath11k@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  ath12k@lists.infradead.org,  Bartosz Golaszewski
+ <bartosz.golaszewski@linaro.org>,  Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v9 1/2] dt-bindings: net: wireless: qcom,ath11k:
+ describe the ath11k on QCA6390
+References: <20240605122106.23818-1-brgl@bgdev.pl>
+	<20240605122106.23818-2-brgl@bgdev.pl> <87h6e6qjuh.fsf@kernel.org>
+	<CAMRc=MdiKxtnN+g92RUTXdOydaPV5M2u5iUdKyE2SNvDkdXAjg@mail.gmail.com>
+	<871q5aqiei.fsf@kernel.org>
+	<CAMRc=McacZMP-51hjH+d8=PVe+Wgw4a8xWcv0sRPLJKL_gP=KQ@mail.gmail.com>
+	<87sexqoxm9.fsf@kernel.org>
+	<CAMRc=McYAbhL5M1geYtf8LbgJG5x_+ZUFKXRuo7Vff_8ssNoUA@mail.gmail.com>
+Date: Wed, 12 Jun 2024 15:42:33 +0300
+In-Reply-To: <CAMRc=McYAbhL5M1geYtf8LbgJG5x_+ZUFKXRuo7Vff_8ssNoUA@mail.gmail.com>
+	(Bartosz Golaszewski's message of "Thu, 6 Jun 2024 20:08:11 +0200")
+Message-ID: <87msnqnxhi.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <gwrlw7wtc72vz3ky2pltvpoadtjlezv6kdrs6wf3ptsecyu2sh@aexbk4rotm3x>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 10:58:26AM -0600, Daniel Xu wrote:
-> On Mon, Jun 10, 2024 at 03:28:36PM GMT, Jiri Olsa wrote:
-> > On Sat, Jun 08, 2024 at 03:15:59PM -0600, Daniel Xu wrote:
-> > > The prototypes in progs/get_func_ip_test.c were not in line with how the
-> > > actual kfuncs are defined in net/bpf/test_run.c. This causes compilation
-> > > errors when kfunc prototypes are generated from BTF.
-> > > 
-> > > Fix by aligning with actual kfunc definitions.
-> > > 
-> > > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > > ---
-> > >  .../testing/selftests/bpf/progs/get_func_ip_test.c | 14 +++++++-------
-> > >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/tools/testing/selftests/bpf/progs/get_func_ip_test.c b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> > > index 8956eb78a226..a89596f7585d 100644
-> > > --- a/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> > > +++ b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> > > @@ -5,13 +5,13 @@
-> > >  
-> > >  char _license[] SEC("license") = "GPL";
-> > >  
-> > > -extern const void bpf_fentry_test1 __ksym;
-> > > -extern const void bpf_fentry_test2 __ksym;
-> > > -extern const void bpf_fentry_test3 __ksym;
-> > > -extern const void bpf_fentry_test4 __ksym;
-> > > -extern const void bpf_modify_return_test __ksym;
-> > > -extern const void bpf_fentry_test6 __ksym;
-> > > -extern const void bpf_fentry_test7 __ksym;
-> > > +extern int bpf_fentry_test1(int a) __ksym;
-> > 
-> > hum, the only registered one as kfunc is bpf_fentry_test1, to allow fmodret
-> > also there's bpf_fentry_test9 as kfunc, which AFAICS is not really needed
-> 
-> I think bpf_modify_return_test() is also registered. But otherwise yeah,
-> I think I was overaggressive here. Are you thinking something like this?
+Bartosz Golaszewski <brgl@bgdev.pl> writes:
 
-yes, looks good
+> On Thu, Jun 6, 2024 at 6:16=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wrot=
+e:
+>
+>>
+>> Bartosz Golaszewski <brgl@bgdev.pl> writes:
+>>
+>> > On Thu, Jun 6, 2024 at 4:02=E2=80=AFPM Kalle Valo <kvalo@kernel.org> w=
+rote:
+>> >
+>> >> Sure, I'm not worried about functionality. I'm worried that if I
+>> >> there's, for example, an ARM based setup which uses DT and wants to u=
+se
+>> >> a similar QCA6390 board that I have, and set
+>> >> qcom,ath11k-calibration-variant in DT. In other words, I'm worried if
+>> >> you are looking at this only for Snapdragon family of boards?
+>> >>
+>> >
+>> > No, what I'm looking at is the entire QCA6390 package. That means WLAN
+>> > *and* Bluetooth *and* the PMU that manages power.
+>>
+>> I think we are just looking at this from different point of views. You
+>> are looking at a datasheet (most likely for a Snapdragon based system)
+>> and I'm looking what actual devices there are out in the field.
+>>
+>> > If you're using the QCA6390 on a device-tree system then you should
+>> > probably model at least the WLAN node and the PMU and the problem with
+>> > supplies is fixed.
+>>
+>> But why? If there are boards out there who don't need any of this why
+>> would they still need to model all this in DT?
+>>
+>
+> Because this is what is there? The goal of the device tree is to
+> describe the hardware. The fact we didn't describe it before doesn't
+> make it correct.
+>
+>> Based on the discussions I have heard only Snapdragon systems who
+>> require all this configuration you describe. Of course there can be
+>> other systems but I have not heard about those.
+>>
+>
+> DT is not configuration, it is description of actual hardware. It
+> doesn't matter if Snapdragon systems are the only ones that actually
+> *require* this description to make WLAN/BT functional upstream. The
+> chipset would be the same on any PCIe board, it's just that the host
+> systems wouldn't need to take care with its power sequence. But for a
+> dynamic board like this, you don't need DT.
+>
+>> > But if you don't have the supplies, that's alright for downstream.
+>>
+>> What do you mean downstream in this context?
+>>
+>
+> I mean: if you wanted to upstream the DT sources, then they should
+> include the supplies AND the PMU node. But if you just want to make
+> the WLAN run on some vendor kernel then you don't need to think about
+> it, it will work.
+>
+>> >> Again, I don't see this as a blocker. I just want to understand how t=
+his
+>> >> should work for all types of devices there are out there.
+>> >>
+>> >> > But if you have a QCA6390 then you have its PMU too and the bindings
+>> >> > model the real-world hardware.
+>> >> >
+>> >> > IOW: your laptop should be alright but the supplies are really there
+>> >> > which warrants adding them to the bindings.
+>> >>
+>> >> Sorry, not following here. Can you clarify your comment "the supplies
+>> >> are really there"? You mean inside the PCI board? But that's not visi=
+ble
+>> >> to the kernel in anyway, the PCI board just works after I plug it in.
+>> >> It's like a regular PCI device. So I don't understand why that should=
+ be
+>> >> visible in DT, but I can very well be missing something.
+>> >>
+>> >
+>> > I think you're thinking about some kind of detachable PCIe board with
+>> > this chipset on it.
+>>
+>> Exactly, a lot of WLAN boards are like this.
+>>
+>> > I refer to the QCA6390 chipset itself which is also more than just
+>> > PCI. The Bluetooth interface doesn't use PCI at all. On the boards I'm
+>> > working on, the chipset is just soldered to the main board.
+>>
+>> And I guess you are looking at Snapdragon boards only?
+>>
+>
+> But what is your point?
 
-> 
-> 
-> diff --git a/tools/testing/selftests/bpf/progs/get_func_ip_test.c b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> index a89596f7585d..2011cacdeb18 100644
-> --- a/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> +++ b/tools/testing/selftests/bpf/progs/get_func_ip_test.c
-> @@ -6,12 +6,11 @@
->  char _license[] SEC("license") = "GPL";
-> 
->  extern int bpf_fentry_test1(int a) __ksym;
-> -extern int bpf_fentry_test2(int a, __u64 b) __ksym;
-> -extern int bpf_fentry_test3(char a, int b, __u64 c) __ksym;
-> -extern int bpf_fentry_test4(void *a, char b, int c, __u64 d) __ksym;
->  extern int bpf_modify_return_test(int a, int *b) __ksym;
-> -extern int bpf_fentry_test6(__u64 a, void *b, short c, int d, void *e, __u64 f) __ksym;
-> -extern int bpf_fentry_test7(struct bpf_fentry_test_t *arg) __ksym;
+My point (again) is that to me it look likes that you are looking this
+only for Snapdragon type of devices and ignoring the rest. I am looking
+at this to support _all_ type of devices and I want to make sure that we
+don't have any artificial restrictions to use ath11k or ath12k devices
+in upstream Linux.
 
-I did not realize bpf_fentry_test6/7 are not used.. ok
+I could not find a public example of a QCA6390 M.2 board like I have, but
+here's one for QCA2066:
 
-thanks,
-jirka
+https://compex.com.sg/shop/wifi-module/wlt206h-wifi6-ble5-1-11ax-qca2062-qc=
+a2065/
 
-> +
-> +extern const void bpf_fentry_test2 __ksym;
-> +extern const void bpf_fentry_test3 __ksym;
-> +extern const void bpf_fentry_test4 __ksym;
-> 
->  extern bool CONFIG_X86_KERNEL_IBT __kconfig __weak;
+QCA2066 is a mobile chipset supported by ath11k, similarly like QCA6390.
+It's just newer and different features, and with a different PCI id. In
+the past using these kind of M.2 boards for Wi-Fi has been quite common
+but don't know how commit it is nowadays.
+
+>> > If your detachable board "just works" then it must be wired in a way
+>> > that enables WLAN the moment it's plugged in but this doesn't happen
+>> > over PCI. The chipset has a power input and GPIOs to enable each
+>> > module.
+>>
+>> I don't know how the boards are implemented but it could be so. But from
+>> host system point of view it's just a regular PCI device.
+>>
+>
+> And you don't need DT anyway for this type of devices.
+
+I wish we wouldn't need to use DT for such M.2 boards, but we do need to
+use qcom,ath11k-calibration-variant in some cases when the device (or
+the firmware) doesn't provide unique enough identifier to choose the
+correct board file automatically. I already mentioned the property in my
+earlier emails.
+
+I hope this clears up what I'm trying to say.
+
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
