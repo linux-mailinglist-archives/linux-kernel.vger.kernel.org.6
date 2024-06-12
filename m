@@ -1,170 +1,139 @@
-Return-Path: <linux-kernel+bounces-211599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F0A905431
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:53:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F681905440
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82D9DB22BFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:52:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55B828495C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7292C17DE38;
-	Wed, 12 Jun 2024 13:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfKfh0B1"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C4D17DE15;
+	Wed, 12 Jun 2024 13:53:07 +0000 (UTC)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCF317DE34;
-	Wed, 12 Jun 2024 13:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BDA16F271;
+	Wed, 12 Jun 2024 13:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718200349; cv=none; b=GCdf6RXvQKn4dRzVGRIVUGzueL/3BK4tJMrRtnGM4KjsYRj+tr7jJ9+584+m9J4926B/0dRlCZjCg35x6deIObpq1d7gUnMxZKwc+oZeNoiFr/GxkxJJYAupdTzJPpVZsEkPDIHivivEAmC7hFuoh85m6ZdGv/0AyYvcxN147qw=
+	t=1718200386; cv=none; b=E7IdmuaBkBwCyU5Syz0PBNmOvPcsmMKe5/iMf+y7XBnaau8hCREJdSZt997PN4QGVMT57ceLvVyO6oMRZnBI8pmiU9o2nF++7R5FwwKEFnvhQrw+aLPS/GphJQAAJzaMDiMe5+ND2AUigDN0qDSL/SPfsLOp/q1yArLGJAXg/Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718200349; c=relaxed/simple;
-	bh=UqMzqbXKOkO76fD/Q0Ho9aIFw47zcnwUeK/a7nuXcys=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=bBlXBX1OblPMh7FMjunwaLXt1KCNdUIEPNSkxyD6StZlookqS8pirPVXOlJHZQXPb9DS6nVTktxoevKL9hlVm+lll5XD37ORnJOUj7MjjjS184ru4nJS1sxHoRKm7HqsYO7WnhZFRjqGHjcVcYTGMsjcNWRgZWPg+6yDkzFNXLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GfKfh0B1; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1718200386; c=relaxed/simple;
+	bh=VwTo+mvW090vyc3G2pODaN13478wwyTxNG0+WDia1OE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hlvsfanZifzjh4fRswBpqxinjHLoSjiopoKpGETNiTj7EzVNcP9dYl18EzDT//kun22JF8I2PjZ50Fbx76hKq8EEyFNjRCAEPYMYhoY5TDdIbxTF9XLSa+6RjZgsrPTsnXoMLSkkeR/YxdqmY0zvZ+195zxyvYGfOUSWogw0obQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6e349c0f2bso685678566b.2;
-        Wed, 12 Jun 2024 06:52:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718200346; x=1718805146; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2bc6XZQC+pu8/aGiFTyN2/kmoeF3F+5LCRlKYM1dDFw=;
-        b=GfKfh0B1RI9idRtXh/NWHf5qqx43k14hmVSO92Ai928hkYrXN7Qm5Rg/kEJZU2kCe+
-         4paKLy5A4dDPG1nZqMhdy+U5560l1ibGFNKa9OJZuab2vmpWWVj7TChk0nyXItSb+oQR
-         HSg415xweozuWB27+GMHMMhq1BMk0VTPtg2WvgqrsMPmqC8ADs2XzZphoTxtlNQ/vR2I
-         oBiZVi54hq1txaKIAZBAaaovgL2gi8bILUuBVFu/D8L0viT/ijP3RmQApyCHiHyySGsN
-         bsGjl8UeMp7FuLPRXigAetnRWIdPH72hw9oZhTawBKnp9T2fkixLoMv06t92a3X9umMo
-         0LAQ==
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42278f3aea4so11709005e9.1;
+        Wed, 12 Jun 2024 06:53:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718200346; x=1718805146;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2bc6XZQC+pu8/aGiFTyN2/kmoeF3F+5LCRlKYM1dDFw=;
-        b=HeZBKoCmNFYQZWjeChXvM7WhbO+QL9QSlnpYb+ENvV1B8uoHqPRjJqi2D9GeF5xwf4
-         PzC22zG9tcIL7xXNMOz7IIF61T4rh2yLiWyliotUd36xp7scv8QgZYWhzGePIswLp+Pu
-         b3LnNeDKBfhU84561/tT2sWOasiDynEXN+hTUW3i6t5QcJjb01ydXTpNy49kZ8nlKqYy
-         2W2aZuX0GJxWSCvZXBHX8uvgz2WaJFqGuj4GMc721aDAoHRyH6eJvNsNjkapB9jYEecS
-         XGTnFpXwd1AQTxGT3vQ1D8DsxBXm+jgcdbT4ABA2psZ6XP7YxaWtcdyY7CrGM3hG60R8
-         ppCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFS6c0LFOT73p+asa2F7BIY6CT/P3efBlEXmcA2L9sc5YQtvCLkMm7jIBbtiMWGGt6Ca+Q7f/pJwNGOncKHBk/1nV/SMPdjwaw6epzvefifR9bkzzNt3X5nKMwKLYCM9VZOsrV+Os=
-X-Gm-Message-State: AOJu0YxGXVQ388FMKTUYjg2KrUKS98WHdA4311WNohq/2EWEU0BgEWZl
-	D0OaWeDnuP26Ld0YUQxxC5WAytXEgT0zf8Bssd7P+AHAVLtHYMHX
-X-Google-Smtp-Source: AGHT+IH4+PnjnbHt0mgvZsrG7K9UPD2r6mRESXcYAmGipdFzcoLKhlQxEtiFTEiuyrSjX5dge4cgog==
-X-Received: by 2002:a17:907:2d21:b0:a6f:147f:7d06 with SMTP id a640c23a62f3a-a6f480288d6mr123721566b.77.1718200346217;
-        Wed, 12 Jun 2024 06:52:26 -0700 (PDT)
-Received: from [192.168.42.148] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f0b5371d2sm574318766b.39.2024.06.12.06.52.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 06:52:25 -0700 (PDT)
-Message-ID: <8431d920-ab84-447d-84fc-eb7904b1c733@gmail.com>
-Date: Wed, 12 Jun 2024 14:52:34 +0100
+        d=1e100.net; s=20230601; t=1718200383; x=1718805183;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TGBcr2RK+U/upO1TBgkbMQlKphC74REv/dCO0ULM5Bc=;
+        b=qeRxbPrEdE4VK9/36PUjq/7JZzAzW5sMcyOBf3oj+R/A7wKEaedUf1UeukjmM2fEpa
+         95e7zsZqNg52lJr2/umQ0+YC/48VNYIUKgUEUGKOqFjLSinB/dRIMuTFiZwKWmsYHxPt
+         aqqaXZMubm0qyEJpFzD1DkwW9qAaZKJanuLQDh64depwpUUOBGzVkorS941DhudJqRLu
+         SkHxcVDV+3/FGuVne3CAqUElm9cn+x/G1qj2qb6ZuHhLJ8ndU/sGm0sYzP5WEOYgHNfm
+         BN4r4wOYIFXU/6fBZzlzvEJ1ZjZ5+tDI4JoRSl17toq8hKAp62NvrLsNxOqOBG91l4vt
+         IEbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWjCojKLEB+Prf4qMy8GwmowZuQ22RceLmIqd8LyeXYpkSHBdgkaDa/dTh6lBaqFj8ixQrh8FNCINRK36RJTZIkMoTNqdsmUEoXJR96gF8E9mjy/ptYrdnizJid3PHJS4Kr5Au5NjWbMzPj6his+xi4PcEx72CxfE2eUtirYspVHBJIj/Nc
+X-Gm-Message-State: AOJu0YxaIEmM0vlCPvZDFDvNRCxN96b8H3Xks6d/mADXyzvUWIZf0EMA
+	k3msITYN+3VgboYz0tkYT2fIP53EA7bHXgkO5Vt/Fi9lJ097suNl
+X-Google-Smtp-Source: AGHT+IFpLlhCxjJHPHBYfibghuC2LyUOVhxW9VizojTuoZbWMakCG+/4bvOBPIPTBmnYXt2VZXwpnA==
+X-Received: by 2002:a5d:45c7:0:b0:35f:2161:1fc0 with SMTP id ffacd0b85a97d-35fe892bddamr1198669f8f.70.1718200382941;
+        Wed, 12 Jun 2024 06:53:02 -0700 (PDT)
+Received: from ramallet.home (cst-prg-45-36.cust.vodafone.cz. [46.135.45.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422871ec9e6sm28201695e9.38.2024.06.12.06.53.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 06:53:02 -0700 (PDT)
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Subject: [PATCH 0/9] New DRM accel driver for Rockchip's RKNN NPU
+Date: Wed, 12 Jun 2024 15:52:53 +0200
+Message-Id: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [io-uring] WARNING in io_fill_cqe_req_aux
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: chase xd <sl1589472800@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CADZouDQx4tqCfCfmCHjUp9nhAJ8_qTX=cCYOFzMYiQQwtsNuag@mail.gmail.com>
- <4fd9cd27-487d-4a23-b17a-aa9dcb09075f@gmail.com>
- <CADZouDSyJVR=WX-X46QCUZeUz=7DHg_9=e5y=N7Wb+zMQ_dGtQ@mail.gmail.com>
- <6213cf3d-b114-4c27-b9c5-6339b9f363aa@gmail.com>
-Content-Language: en-US
-In-Reply-To: <6213cf3d-b114-4c27-b9c5-6339b9f363aa@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADaoaWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDM0MjXTNdQwPdovzk7NQSXUtjQ7OU1LRkQ5NkcyWgjoKi1LTMCrBp0bG
+ 1tQDVw8QnXQAAAA==
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
+ Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
+ Tomeu Vizoso <tomeu@tomeuvizoso.net>
+X-Mailer: b4 0.13.0
 
-On 6/12/24 13:35, Pavel Begunkov wrote:
-> On 6/12/24 08:10, chase xd wrote:
->> Sorry now I'm also a bit confused by the branch choosing. I checked
->> out branch "for-6.9/io_uring" and started testing on that branch. I
->> assume that was the latest version of io_uring at that time, even now
->> I check out that branch and the bug still exists. How should I know
->> whether the branch will be merged, and which branch do you think I
->> should test on? Thanks.
-> 
-> # git show a69d20885494:io_uring/io_uring.c | grep -A 13 io_fill_cqe_req_aux
-> bool io_fill_cqe_req_aux(struct io_kiocb *req, bool defer, s32 res, u32 cflags)
-> {
->          struct io_ring_ctx *ctx = req->ctx;
->          u64 user_data = req->cqe.user_data;
-> 
->          if (!defer)
->                  return __io_post_aux_cqe(ctx, user_data, res, cflags, false);
-> 
->          lockdep_assert_held(&ctx->uring_lock);
->          io_lockdep_assert_cq_locked(ctx);
-> 
->          ctx->submit_state.flush_cqes = true;
->          return io_fill_cqe_aux(ctx, user_data, res, cflags);
-> }
-> 
-> That's the buggy version from the hash you're testing, IIRC it
-> was in the tree for longer than necessary, presumably which is
-> why you found it, but it was never sent to Linus. Below is
-> current state of for-6.9 and what it was replaced with
-> respectively. Let me separately check for-6.9/io_uring if you're
-> concerned about it.
+This series adds a new driver for the NPU that Rockchip includes in its
+newer SoCs, developed by them on the NVDLA base.
 
-In other words, it happens that bugs appear in the branches
-but get rooted out before it gets anywhere. The main confusion
-is that the version you're looking at was fixed up back somewhere
-in March. That's fine, I'd just recommend fetch the repo and
-update your base.
+In its current form, it supports the specific NPU in the RK3588 SoC.
 
-I can't hit the problem with for-6.9/io_uring, which make sense
-because it's lacking the patch I'd blame it to. I'm confused
-how you see it there.
+The userspace driver is part of Mesa and an initial draft can be found at:
 
+https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/29698
 
-> # git show for-6.9/io_uring:io_uring/io_uring.c | grep -A 30 io_fill_cqe_req_aux
-> bool io_fill_cqe_req_aux(struct io_kiocb *req, bool defer, s32 res, u32 cflags)
-> {
->          struct io_ring_ctx *ctx = req->ctx;
->          u64 user_data = req->cqe.user_data;
->          struct io_uring_cqe *cqe;
-> 
->          lockdep_assert(!io_wq_current_is_worker());
-> 
->          if (!defer)
->                  return __io_post_aux_cqe(ctx, user_data, res, cflags, false);
-> 
->          lockdep_assert_held(&ctx->uring_lock);
-> 
->          if (ctx->submit_state.cqes_count == ARRAY_SIZE(ctx->completion_cqes)) {
-> ...
-> 
-> # git show origin/for-6.10/io_uring:io_uring/io_uring.c | grep -A 13 io_req_post_cqe
-> bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags)
-> {
->          struct io_ring_ctx *ctx = req->ctx;
->          bool posted;
-> 
->          lockdep_assert(!io_wq_current_is_worker());
->          lockdep_assert_held(&ctx->uring_lock);
-> 
->          __io_cq_lock(ctx);
->          posted = io_fill_cqe_aux(ctx, req->cqe.user_data, res, cflags);
->          ctx->submit_state.cq_flush = true;
->          __io_cq_unlock_post(ctx);
->          return posted;
-> }
-> 
+Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+---
+Tomeu Vizoso (9):
+      iommu/rockchip: Add compatible for rockchip,rk3588-iommu
+      iommu/rockchip: Attach multiple power domains
+      dt-bindings: mailbox: rockchip,rknn: Add bindings
+      arm64: dts: rockchip: Add nodes for NPU and its MMU to rk3588s
+      arm64: dts: rockchip: Enable the NPU on quartzpro64
+      accel/rocket: Add a new driver for Rockchip's NPU
+      accel/rocket: Add IOCTL for BO creation
+      accel/rocket: Add job submission IOCTL
+      accel/rocket: Add IOCTLs for synchronizing memory accesses
 
+ .../devicetree/bindings/npu/rockchip,rknn.yaml     |  123 +
+ MAINTAINERS                                        |    8 +
+ .../arm64/boot/dts/rockchip/rk3588-quartzpro64.dts |    8 +
+ arch/arm64/boot/dts/rockchip/rk3588s.dtsi          |   53 +
+ drivers/accel/Kconfig                              |    1 +
+ drivers/accel/Makefile                             |    1 +
+ drivers/accel/rocket/Kconfig                       |   13 +
+ drivers/accel/rocket/Makefile                      |   10 +
+ drivers/accel/rocket/rocket_core.c                 |  155 +
+ drivers/accel/rocket/rocket_core.h                 |   48 +
+ drivers/accel/rocket/rocket_device.c               |   39 +
+ drivers/accel/rocket/rocket_device.h               |   40 +
+ drivers/accel/rocket/rocket_drv.c                  |  243 ++
+ drivers/accel/rocket/rocket_drv.h                  |   16 +
+ drivers/accel/rocket/rocket_gem.c                  |  136 +
+ drivers/accel/rocket/rocket_gem.h                  |   33 +
+ drivers/accel/rocket/rocket_job.c                  |  708 ++++
+ drivers/accel/rocket/rocket_job.h                  |   49 +
+ drivers/accel/rocket/rocket_registers.h            | 4449 ++++++++++++++++++++
+ drivers/iommu/rockchip-iommu.c                     |   39 +
+ include/uapi/drm/rocket_accel.h                    |  116 +
+ 21 files changed, 6288 insertions(+)
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240612-6-10-rocket-9316defc14c7
+
+Best regards,
 -- 
-Pavel Begunkov
+Tomeu Vizoso <tomeu@tomeuvizoso.net>
+
 
