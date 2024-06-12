@@ -1,163 +1,357 @@
-Return-Path: <linux-kernel+bounces-211238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E62904EE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:13:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B16D904EE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1246B1F221C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:13:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5DA6281FD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2E116D9AB;
-	Wed, 12 Jun 2024 09:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C30B16D9A2;
+	Wed, 12 Jun 2024 09:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OyVWd1Cm"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wpmkz7AB"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6581616D330
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B234116D330
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718183618; cv=none; b=bGw9GsjgMkS24HV41xI6O/WZiiWGpep4lnvG9EyaQ94lzezWilSf9anoseZHXKe8Qghy62hlofjpncin7tUsJqUOt5hqeJBcollOsqQwPHXCeNfABCA/7RG1bbxBsEXDE9AS/gQeHotBMvVpkh5Kwa28fCE6IQPorQxUY2ldxoQ=
+	t=1718183632; cv=none; b=lHB21mZKbwj00mjS8JOskf53HxXxgYBIk9IDDYsCMlOO4DIR4QaJ6xZehKliODSHyZNrRS2fL16pCcJl0uzWdBdv6Cfvx3652PYypxAixzOvNCAnJKhbPBlPo0UYlafBmQv9sKbIQaM8/gOZ9x+Kk3LYet1FcNfCBBcqyf+Z6wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718183618; c=relaxed/simple;
-	bh=j8FlzZswyZrdWHuPm4vDFTQ0SQ+sH3WR6PptS3UTEGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UDHEw718zpY+sXpQluaqjZEFtmdqo5NKasUHcIxO8/c83896RctFHZLzVZcYS5LxdpZv6SMG5dKGFJ0Fgwz5aMvUoOHUbeC68Om4fzL4TpFdYMVnVbw2yhRb2LzVPs0gRj+U2+PsqyebF2wITFsk0SIkU7CsRODzds80Vc+BTmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OyVWd1Cm; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57c778b5742so4455697a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:13:36 -0700 (PDT)
+	s=arc-20240116; t=1718183632; c=relaxed/simple;
+	bh=rBq/Zx0kE0ZqDInwzxUlvFLkFI1TAneglYjGvt4UfVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CNaEUd0vdwj8SqiK8bi/Cy82dsirm+6c0rZP1Fb440GdtOSC4+YRXRkIdJGH+VSot2A7ugcqtdu9Ad66nDBccVzvSNvH7hIXVXKlG0Sr3d9YGes7dxFoQPaLcZVP58C8jmfcNaKvR8bFKn8WOIZb3UGjsLIp8+gvsKct4S/NC4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wpmkz7AB; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4405cf01a7fso225651cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:13:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718183615; x=1718788415; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=2RaRwZY/TeqpJK2AA/6tfR5bEggSmTNICLDhm6oAAGY=;
-        b=OyVWd1Cmmmxw96C54WnpScAn5EzrEyrveCZdgcq+HvjlmkbKhhAb9Zi7MttsYvkyMD
-         pAJfb5kAyVcLfMAC9R+HYH2DiH2mASNu5wELPstfrUnJa2DvlTVOcPMXrpe6Vt+6aqEj
-         vxkKcofl+9FgsrYUc9vZKh+FMvSJsMXl/1O8L5oHz5n143hIOk89fAmFYODyTBC8eTeJ
-         cvVocoQfVdIARPc6dm43D4/BZsUbPubrLfKPN0Z+gQBjY7er/zHlqAi1l7AZMAxrDT1c
-         zX7opef87xLSL647qSj8ikmatesBkE3G4gsBwuDEAH/5aPXID8DZxZj4xEJ+Lv5yID3Q
-         MB+Q==
+        d=google.com; s=20230601; t=1718183629; x=1718788429; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/PmlvILeAo6YRa/ohUJ8QvTiVWIK8syY94oDBxO5V3o=;
+        b=wpmkz7ABWg6PZwAAlvDVLcTI39V+XFRN4tyceQoQBbpOO6MF7qT2Ht7NbUAQ2KVB+9
+         qKYSJI1BIu4JoAkmxi62ayTE6vHkHTfsD3ZwUaX3QBAy3woN+hh0mCZaCep0Q2DugByz
+         VYn3ZTJ+1iVZOPZjZ5+eA569z5DrVTfOMR7bfm3qpTy7xLOBcNifgfcui9/Yq6lGikAI
+         CdjQ2/thWcMpIfTugL0PHvVAW4tAf9LEADLln/yh9pVW6Eppap2bQ0+ki+PFHXu+eBLg
+         L0eI6K+iVWgdfqAjk6+4vU21/BZrvNMwFRtRFQ7E4Yj5tnQd+S3Ej9soYF2SFtry4v6r
+         d+OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718183615; x=1718788415;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1718183629; x=1718788429;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2RaRwZY/TeqpJK2AA/6tfR5bEggSmTNICLDhm6oAAGY=;
-        b=h9DKv0AU5EBxR/UiH0VLU0AazHPNQ7au714vKpfLfheR1d3UDHEJxGqb5PCHt2MVb2
-         1Up/Hq+q/t9W6ym2+TRwB78mxRu3Zx9z+MF014QjlW9ens6SdNek+zy6yagT/oz7Nxg+
-         aVV1pMgqGtem5fVPTvjE8MbeMaJSXpp81Y/oFKlMfKcCQT57igIrAAP38Ni0uiySWLD8
-         DoqCz2AcOGGSNETKxdP1fZCgkijx1qfddGGJbn78WhBKobvJJOR8jtmMQKevfQUVgweP
-         Hzj/kHPAECAX1UM1Ubsen3vL1ifSn0kVqpw0qk3HlsbOWm7cjhr73H9xkayNKgj8JNlS
-         7DMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMg4cajSQ1zz+m+eElwZv8uRAq99YBSYnEqXPjLiiA1ZuyTcnTKEnzmiXflWvvGsbxaQUFU7fD31YtZnXf1ZvkEx0uqVJ4P7dXaPti
-X-Gm-Message-State: AOJu0Yykf6MvytqYwsNaL477YeXq1gyz2rKWk1trtIBRJi1ujGLJTy1o
-	Ikmz2pz7tkiosZlmg/UytjwmahG2F38DlLuQ4ngLfXVMMLVfknEbOWvyrYR+CRCj736ea5IHX2h
-	Y
-X-Google-Smtp-Source: AGHT+IHLw5sP1+Su4LuW1t4YjjnNqCfmuAZ6LUlmL9sCtLZoSuUFnNPVMoQI48zPX496swrW4hoDLw==
-X-Received: by 2002:a50:9f45:0:b0:57c:8049:a9a with SMTP id 4fb4d7f45d1cf-57ca97495a3mr817656a12.2.1718183614654;
-        Wed, 12 Jun 2024 02:13:34 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57ca472956bsm1393045a12.29.2024.06.12.02.13.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 02:13:34 -0700 (PDT)
-Message-ID: <47ddbc43-889a-4def-8e39-e4f166eae667@linaro.org>
-Date: Wed, 12 Jun 2024 11:13:32 +0200
+        bh=/PmlvILeAo6YRa/ohUJ8QvTiVWIK8syY94oDBxO5V3o=;
+        b=lrQojYf8D/8VRAczHILOxNktRVj0cAgaZERDFZAWqipDALJ987N1HOx01X9BatDVq1
+         kEmD9bU9L2dfzJOqeNrzhZXbckqvWSS18dxV2J0SAokPLTzmNZAQocF2b0wQ4NodWS5s
+         6fGa5oPwixLzB1zpYyj3Gfx/vd5MVJ/oH1mm/xBtsysDyJmiPHEQezMQXMaZthWEWMuL
+         2ur+PrDP9koT/CZnFx+HQ7mECXz2YxXMelOsfwvQ87aU7nq+TWTMIy12lImBBAZp/nOE
+         XZF5eCF7vsvJi4r3cC5KikIaQyVnMaxCcEr6I9zOzBi6/A9UGXIWQJKWoFGpt4pkUFbR
+         lyaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXV5/O6MgHG2rgy55t2csNlMpcglgpZNOyy5S1OZTuUKt/dn2U+I7oYoO+MoevHYAcNGnpS8kWsLiuDx4hEpqdlRhV4lEYwypstv8KN
+X-Gm-Message-State: AOJu0YwyXCZgzYe7FpM0Ql1MoLl4kgDAB/ZE5LI8T8Qnj9inyW2G7giB
+	NYooJ3KMNDgDfAxUQ0O+H68pPzkkL9/j3HPfGlk6H4YQgXFhpOqqtCjExaP6cZsGm3Z2GmiLpyX
+	gZ3TJ+ln/DutISXiHZc4Oc7OyWQiVD8+ZQNc6
+X-Google-Smtp-Source: AGHT+IFL56h6cC+EX90XV/p//2kqIxzBw2KcGFQ9v9I0jHiCIV4yz+/0rlLEL2yE/29YBjWwru6dj1DYmN8umguUc5Q=
+X-Received: by 2002:a05:622a:420e:b0:440:1fbb:9b0c with SMTP id
+ d75a77b69052e-4415a238e01mr2353641cf.29.1718183629379; Wed, 12 Jun 2024
+ 02:13:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm: arm,juno-fpga-apb-regs: document
- FPGA syscon
-To: Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
-References: <20240518203903.119608-1-krzysztof.kozlowski@linaro.org>
- <171741897752.2195655.18414699008765504203.b4-ty@arm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <171741897752.2195655.18414699008765504203.b4-ty@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240610213055.it.075-kees@kernel.org> <20240610213330.1310156-1-kees@kernel.org>
+In-Reply-To: <20240610213330.1310156-1-kees@kernel.org>
+From: David Gow <davidgow@google.com>
+Date: Wed, 12 Jun 2024 17:13:35 +0800
+Message-ID: <CABVgOS=8zL+jj4w32Ckh3cKq1DvidMLPGs+vj2adhbmCEcQ_6Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] kunit: test: Add vm_mmap() allocation resource manager
+To: Kees Cook <kees@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Vitor Massaru Iha <vitor@massaru.org>, 
+	Ivan Orlov <ivan.orlov0322@gmail.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Rae Moar <rmoar@google.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-hardening@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000ecaf10061aadccd1"
 
-On 03/06/2024 14:51, Sudeep Holla wrote:
-> On Sat, 18 May 2024 22:39:02 +0200, Krzysztof Kozlowski wrote:
->> Add dedicated bindings for the FPGA syscon registers on ARM Juno board,
->> to fully document the block and also fix dtbs_check warning:
->>
->>   juno.dtb: apbregs@10000: compatible: ['syscon', 'simple-mfd'] is too short
-> 
-> Applied to sudeep.holla/linux (for-next/vexpress/updates), thanks!
-> 
-> [1/2] dt-bindings: arm: arm,juno-fpga-apb-regs: document FPGA syscon
->       https://git.kernel.org/sudeep.holla/c/3e295d8b4731
-> [2/2] arm64: dts: juno: add dedicated FPGA syscon compatible
->       https://git.kernel.org/sudeep.holla/c/2e84e7ed7b02
+--000000000000ecaf10061aadccd1
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks. It seems your tree is not in the linux-next or this branch is
-not in next, because these patches are not available in next after a
-week. Maybe you need to update the branches being fed to next (including
-pending-fixes etc.).
+On Tue, 11 Jun 2024 at 05:33, Kees Cook <kees@kernel.org> wrote:
+>
+> For tests that need to allocate using vm_mmap() (e.g. usercopy and
+> execve), provide the interface to have the allocation tracked by KUnit
+> itself. This requires bringing up a placeholder userspace mm.
+>
+> This combines my earlier attempt at this with Mark Rutland's version[1].
+>
+> Link: https://lore.kernel.org/lkml/20230321122514.1743889-2-mark.rutland@arm.com/ [1]
+> Co-developed-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
 
-Best regards,
-Krzysztof
+Thanks: this looks good to me, at least on the KUnit side of things.
 
+Reviewed-by: David Gow <davidgow@google.com>
+
+Cheers,
+-- David
+
+
+>  include/kunit/test.h   |  17 +++++++
+>  lib/kunit/Makefile     |   1 +
+>  lib/kunit/user_alloc.c | 111 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 129 insertions(+)
+>  create mode 100644 lib/kunit/user_alloc.c
+>
+> diff --git a/include/kunit/test.h b/include/kunit/test.h
+> index e32b4cb7afa2..ec61cad6b71d 100644
+> --- a/include/kunit/test.h
+> +++ b/include/kunit/test.h
+> @@ -480,6 +480,23 @@ static inline void *kunit_kcalloc(struct kunit *test, size_t n, size_t size, gfp
+>         return kunit_kmalloc_array(test, n, size, gfp | __GFP_ZERO);
+>  }
+>
+> +/**
+> + * kunit_vm_mmap() - Allocate KUnit-tracked vm_mmap() area
+> + * @test: The test context object.
+> + * @file: struct file pointer to map from, if any
+> + * @addr: desired address, if any
+> + * @len: how many bytes to allocate
+> + * @prot: mmap PROT_* bits
+> + * @flag: mmap flags
+> + * @offset: offset into @file to start mapping from.
+> + *
+> + * See vm_mmap() for more information.
+> + */
+> +unsigned long kunit_vm_mmap(struct kunit *test, struct file *file,
+> +                           unsigned long addr, unsigned long len,
+> +                           unsigned long prot, unsigned long flag,
+> +                           unsigned long offset);
+> +
+>  void kunit_cleanup(struct kunit *test);
+>
+>  void __printf(2, 3) kunit_log_append(struct string_stream *log, const char *fmt, ...);
+> diff --git a/lib/kunit/Makefile b/lib/kunit/Makefile
+> index 309659a32a78..56dd67dc6e57 100644
+> --- a/lib/kunit/Makefile
+> +++ b/lib/kunit/Makefile
+> @@ -2,6 +2,7 @@ obj-$(CONFIG_KUNIT) +=                  kunit.o
+>
+>  kunit-objs +=                          test.o \
+>                                         resource.o \
+> +                                       user_alloc.o \
+>                                         static_stub.o \
+>                                         string-stream.o \
+>                                         assert.o \
+> diff --git a/lib/kunit/user_alloc.c b/lib/kunit/user_alloc.c
+> new file mode 100644
+> index 000000000000..d66f42282f43
+> --- /dev/null
+> +++ b/lib/kunit/user_alloc.c
+> @@ -0,0 +1,111 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * KUnit userspace memory allocation resource management.
+> + */
+> +#include <kunit/resource.h>
+> +#include <kunit/test.h>
+> +#include <linux/kthread.h>
+> +#include <linux/mm.h>
+> +
+> +struct kunit_vm_mmap_resource {
+> +       unsigned long addr;
+> +       size_t size;
+> +};
+> +
+> +/* vm_mmap() arguments */
+> +struct kunit_vm_mmap_params {
+> +       struct file *file;
+> +       unsigned long addr;
+> +       unsigned long len;
+> +       unsigned long prot;
+> +       unsigned long flag;
+> +       unsigned long offset;
+> +};
+> +
+> +/* Create and attach a new mm if it doesn't already exist. */
+> +static int kunit_attach_mm(void)
+> +{
+> +       struct mm_struct *mm;
+> +
+> +       if (current->mm)
+> +               return 0;
+> +
+> +       mm = mm_alloc();
+> +       if (!mm)
+> +               return -ENOMEM;
+> +
+> +       /* Define the task size. */
+> +       mm->task_size = TASK_SIZE;
+> +
+> +       /* Make sure we can allocate new VMAs. */
+> +       arch_pick_mmap_layout(mm, &current->signal->rlim[RLIMIT_STACK]);
+> +
+> +       /* Attach the mm. It will be cleaned up when the process dies. */
+> +       kthread_use_mm(mm);
+> +
+> +       return 0;
+> +}
+> +
+> +static int kunit_vm_mmap_init(struct kunit_resource *res, void *context)
+> +{
+> +       struct kunit_vm_mmap_params *p = context;
+> +       struct kunit_vm_mmap_resource vres;
+> +       int ret;
+> +
+> +       ret = kunit_attach_mm();
+> +       if (ret)
+> +               return ret;
+> +
+> +       vres.size = p->len;
+> +       vres.addr = vm_mmap(p->file, p->addr, p->len, p->prot, p->flag, p->offset);
+> +       if (!vres.addr)
+> +               return -ENOMEM;
+> +       res->data = kmemdup(&vres, sizeof(vres), GFP_KERNEL);
+> +       if (!res->data) {
+> +               vm_munmap(vres.addr, vres.size);
+> +               return -ENOMEM;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static void kunit_vm_mmap_free(struct kunit_resource *res)
+> +{
+> +       struct kunit_vm_mmap_resource *vres = res->data;
+> +
+> +       /*
+> +        * Since this is executed from the test monitoring process,
+> +        * the test's mm has already been torn down. We don't need
+> +        * to run vm_munmap(vres->addr, vres->size), only clean up
+> +        * the vres.
+> +        */
+> +
+> +       kfree(vres);
+> +       res->data = NULL;
+> +}
+> +
+> +unsigned long kunit_vm_mmap(struct kunit *test, struct file *file,
+> +                           unsigned long addr, unsigned long len,
+> +                           unsigned long prot, unsigned long flag,
+> +                           unsigned long offset)
+> +{
+> +       struct kunit_vm_mmap_params params = {
+> +               .file = file,
+> +               .addr = addr,
+> +               .len = len,
+> +               .prot = prot,
+> +               .flag = flag,
+> +               .offset = offset,
+> +       };
+> +       struct kunit_vm_mmap_resource *vres;
+> +
+> +       vres = kunit_alloc_resource(test,
+> +                                   kunit_vm_mmap_init,
+> +                                   kunit_vm_mmap_free,
+> +                                   GFP_KERNEL,
+> +                                   &params);
+> +       if (vres)
+> +               return vres->addr;
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(kunit_vm_mmap);
+> --
+> 2.34.1
+>
+
+--000000000000ecaf10061aadccd1
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
+BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
+BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
+Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
+FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
+YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
+AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
+DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
+4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
+GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
+kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
+MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
+IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
+hvcNAQkEMSIEIB0E4g5BBc0JWZt8dHEfRHrSMXYTT0P7eePeFVyHWWcaMBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDYxMjA5MTM0OVowaQYJKoZIhvcNAQkPMVww
+WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCAKZHB
+B97dwl0vUB6hSwAwj+g7bzQ+Ja3tYFvHs2KfZ4JtdEh4NZq5iW1YmntrCWqMrruLHexLbARXyYsP
+ZzjYa0zm9z68A4+HVq1Kbv9hO4hbMSgNhHChleK0J3pt/rrx/R1vSGLlXkrrcX/CuEbp98anSxgd
+25tvN+lG+H5G9QUBMKyYMTD/YNVpZPyzkSsSdMS+wnchpj9XGv24mg5Y/fTD1dixxti87JJudEiN
+j6Mh0COdpFT1hqPU4+GHhae0YFe72d0TM2Yl4kwMbzklDutqaYo4PPwm/TRg8VY3lXEoeNrvotnF
+Ic3mZv3N2eB37Cv1RYamvq8uH17ul9GA
+--000000000000ecaf10061aadccd1--
 
