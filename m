@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-210790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB459048B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:00:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9C69048AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CB751C209AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:00:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47A46B21DBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C8B8820;
-	Wed, 12 Jun 2024 02:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9CD847C;
+	Wed, 12 Jun 2024 01:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GA6RsYza"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CJ+Kjvpv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34584C63;
-	Wed, 12 Jun 2024 01:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195F44696;
+	Wed, 12 Jun 2024 01:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718157601; cv=none; b=q1CAtoIhZoc7VeBRnj3Bys8TjYB0V9UWrEGqgcI9YIMylTYX6OxZPNZBEpg/luM/zsfsrrielDCgLOfNR9lluvpFUfbKbC4Yj06nSa8pL9CNkNt+Wu8l1RGCkzcoyImckKo/f0zMbm9bUPY0ibT9x0po9nwYUtFhZ4XcE1JNils=
+	t=1718157585; cv=none; b=tmZRSIScfyBI7+yyeGkCJElQAk2e5PvZuAreCgsSCAn9tyjpbfxaJ4EgDXzm97YV+WGdeRokPqXBaYdwUF0JflsfpLuZS2iAC+/h7OoQuUNpoolvr2ush+Px9V5jpsZQ27/kmpRTu28uVVOHUH0NqPINZvYW2BfFZIRanQ/fiXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718157601; c=relaxed/simple;
-	bh=2laTD/gr2ws3Bq063zMCVoYUIkFJmoBHsc7n7gu27TY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J/McBmMxd9pVTJXMffLviDqs2bwQ12IMWGyU9B+b8QmFYFoxWyI+/90XIjWOuBCZn3XC1mcRYvk/wuGGrI05GvcUdlDpLc1Uo+HqznP16Gj7fO8Ho4QIBtRUoglxHb1A0G9qHVbpWmb27+1SPBcDStatZr+W0OHZYXT3e86iyjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GA6RsYza; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C1u0b3009858;
-	Wed, 12 Jun 2024 01:59:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=
-	corp-2023-11-20; bh=5AG8/9k6Mx48uSNG3x0C+EhfYLMl0swRusYC/0j0CLw=; b=
-	GA6RsYzagDi+4tAJWW9nrWsU2eH0gNQszKcPl1EicWEnGBjIobNKz3NXNFyAp5UL
-	1FAUeAvTjOpOzgHwFS6N2txn7IOSDx6ghp9mfb6L9JWVbD8nCorXlwprNQPx90Jd
-	cnQACDSGWmT7kbTWagVTZ2Eo7il4wmIeP/IcLDd2hZ/Tdq3iUJULiZRSeU81zZE9
-	LeuOpx2RcAxvb+TVKuOaUXIlHNcaMeyAiS/c5Y6zjQM0amn/Cww+qbQPf5gIqwhj
-	WDb+hbqVuav72S8AOw0Qp3Ca3q8o/cavCCNZ5rTqiXjtTfPuz4xcZkXohncvOrqb
-	Aqw7ltzOhEgUp68+InEPiA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymh1me44a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Jun 2024 01:59:52 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45BNLBZx014400;
-	Wed, 12 Jun 2024 01:59:43 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ynceusgwu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Jun 2024 01:59:43 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 45C1xfbg034029;
-	Wed, 12 Jun 2024 01:59:43 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ynceusgvu-2;
-	Wed, 12 Jun 2024 01:59:43 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Minwoo Im <minwoo.im@samsung.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>, gost.dev@samsung.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeuk Kim <jeuk20.kim@samsung.com>
-Subject: Re: [PATCH v2 0/2] ufs: pci: Add support UFSHCI 4.0 MCQ
-Date: Tue, 11 Jun 2024 21:59:03 -0400
-Message-ID: <171815477639.111825.17159475816474314158.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240531212244.1593535-1-minwoo.im@samsung.com>
-References: <CGME20240531213424epcas2p16d7360e12d310c9f299d449e66af07b3@epcas2p1.samsung.com> <20240531212244.1593535-1-minwoo.im@samsung.com>
+	s=arc-20240116; t=1718157585; c=relaxed/simple;
+	bh=864XpaVKILlfYw0eJqI5Z58BDDy0cJ3P9fgW1Ko95xQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hGhs1pVRD8KkgLTT2c+D19O9kdfexofKDDojsu05fZqI7SiVZUlaXT6fCmKQdLneuMv8i2JnHELZfGKrczXDmttf6NLX+vp1ZIu/D9ltXN/wmDJnpkeABFTZ9l/8Ov8mTAPh4urvvCOaNHJGS2PXXiwdvETz9i72Y5+SIXmDpRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CJ+Kjvpv; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718157584; x=1749693584;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=864XpaVKILlfYw0eJqI5Z58BDDy0cJ3P9fgW1Ko95xQ=;
+  b=CJ+Kjvpv/UlJU6uyJU4p+G94fgmXaNPnHuQHlKyTJhTg5VDEhIoI58b1
+   qBejoTKzXA5kTNJAjeIOQECmNLofsVDbhpr5dP8WRZKdJMnGLSLZVsDu9
+   DKE4MM+tIG5AzpCsTreQGrVNm7r3nZnkXnKtuPdNtnEyORmzKWJ2wNbqu
+   VeHTyB5oqZmnZNZdmgwaM0arxJsUuwinuw3KBHvSgSUvti5hftOUM5va3
+   mHHDyBdGyudKF16vXgVFhFbusAC1GkXGI1FkgpRumTKA+/AIrdwSlXSZ2
+   Y4WJlfOm4g3geQ0mnWEdoh08BdT30Rnrqa+7G4Rai0AvRR7G9ExwwNvxA
+   w==;
+X-CSE-ConnectionGUID: XbRW/3pFTFqdChYHGM07RQ==
+X-CSE-MsgGUID: ir+f7X/VR9ezAEGMn3BJrA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14627031"
+X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
+   d="scan'208";a="14627031"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:59:44 -0700
+X-CSE-ConnectionGUID: 5HB6WzFSSMGKudJkHqD1gA==
+X-CSE-MsgGUID: yNpNGTL4TJCH+F1tV7HboQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
+   d="scan'208";a="39688397"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.51]) ([10.124.227.51])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:59:42 -0700
+Message-ID: <04b27f2d-5509-4fd0-ac97-ae61d6105b4d@intel.com>
+Date: Wed, 12 Jun 2024 09:59:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_13,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
- phishscore=0 bulkscore=0 malwarescore=0 spamscore=0 mlxscore=0
- mlxlogscore=601 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406120011
-X-Proofpoint-ORIG-GUID: h1qfzA1Y3wWc4bdS-OOMGn-7THkqihc4
-X-Proofpoint-GUID: h1qfzA1Y3wWc4bdS-OOMGn-7THkqihc4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: x86/mmu: Rephrase comment about synthetic PFERR
+ flags in #PF handler
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240608001108.3296879-1-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20240608001108.3296879-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, 01 Jun 2024 06:22:42 +0900, Minwoo Im wrote:
-
-> This patchset introduces add support for MCQ introduced in UFSHCI 4.0.  The
-> first patch adds a simple helper to get the address of MCQ queue config
-> registers.  The second one enables MCQ feature by adding mandatory vops
-> callback functions required at MCQ initialization phase.  The last one is to
-> prevent a case where number of MCQ is given 1 since driver allocates poll_queues
-> first rather than I/O queues to handle device commands.  Instead of causing
-> exception handlers due to no I/O queue, failfast during the initialization time.
+On 6/8/2024 8:11 AM, Sean Christopherson wrote:
+> Reword the BUILD_BUG_ON() comment in the legacy #PF handler to explicitly
+> describe how asserting that synthetic PFERR flags are limited to bits 31:0
+> protects KVM against inadvertently passing a synthetic flag to the common
+> page fault handler.
 > 
-> [...]
+> No functional change intended.
+> 
+> Suggested-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Applied to 6.11/scsi-queue, thanks!
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
-[1/2] ufs: pci: Add support MCQ for QEMU-based UFS
-      https://git.kernel.org/mkp/scsi/c/175d1825ca4d
-[2/2] ufs: mcq: Prevent no I/O queue case for MCQ
-      https://git.kernel.org/mkp/scsi/c/a420a8ed0a92
+> ---
+>   arch/x86/kvm/mmu/mmu.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 8d7115230739..2421d971ce1b 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -4599,7 +4599,10 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
+>   	if (WARN_ON_ONCE(error_code >> 32))
+>   		error_code = lower_32_bits(error_code);
+>   
+> -	/* Ensure the above sanity check also covers KVM-defined flags. */
+> +	/*
+> +	 * Restrict KVM-defined flags to bits 63:32 so that it's impossible for
+> +	 * them to conflict with #PF error codes, which are limited to 32 bits.
+> +	 */
+>   	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
+>   
+>   	vcpu->arch.l1tf_flush_l1d = true;
+> 
+> base-commit: b9adc10edd4e14e66db4f7289a88fdbfa45ae7a8
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
 
