@@ -1,94 +1,105 @@
-Return-Path: <linux-kernel+bounces-211794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9167F9056EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:33:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE91E9056F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:33:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E1E01F27085
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:33:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5779B1F2737A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64065180A6B;
-	Wed, 12 Jun 2024 15:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE20181318;
+	Wed, 12 Jun 2024 15:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NS2Q5BtM"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1dk2jb0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3344B1802D9;
-	Wed, 12 Jun 2024 15:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE1A180A79;
+	Wed, 12 Jun 2024 15:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718206363; cv=none; b=b7wphDWFJUCnqGFAfD3wFwYHiNyoaxHQPMH15HwE5+cf+emXaprgPneen2Xn5XYtxZjIfUT9pxj0DjSKPFj77OGeWrDULbWA/70iwSoq0UkTkPh9gb9jtHB6Oi8tnh3cltQhlbmpHS2nde+xtetP04NBOepcwEVLRhaS35jc/20=
+	t=1718206368; cv=none; b=CDvs30jo8eaBM3f4DuPKu0sP9Vib0WMdKuBDF16f1+XmihKa97IgIQnIQ/utw0fyw0gIVKtvAquNp5zXskBsPzE3ER3NglEuV5Pg8IzsBWk0vlgPXRPui0dp72s8KHjKg5YFnVC5OLa7qCjdWUGk4O7X+tBJI5m4PJInAu4WEiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718206363; c=relaxed/simple;
-	bh=ifRzRxf1rrmcvnfimIiSxsCywCmMXk1id3TTD2HQxtg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K9vH3ad7FGunF4V/1mC1ksZErLEyQnDZlXOUzq8AiQ3dQjeSpFrVFfXgXp1Gpu9wb6kqUBWHDVPJ2BdiqWg59VjqwN+EO0S01EEo+Lz4SMwz2jFGwFW/Sh4G2uAxENfIiNP0ZsOYrGHX0HxiERx1u1jIZfMeYOgAE6jhaf3kmRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NS2Q5BtM; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57c61165af6so6617408a12.2;
-        Wed, 12 Jun 2024 08:32:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718206359; x=1718811159; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ifRzRxf1rrmcvnfimIiSxsCywCmMXk1id3TTD2HQxtg=;
-        b=NS2Q5BtMEFGhSJS2+CKp51OxRpnwWFWfkY5AYgZNtbtkYO/ND2KMEzXkGSnCp7/6hu
-         iOpe6wZ0XEyin0bB2I9MbYncNWAcPiDp4zCmWRN6y/XfZ65SwZZs226OBmSBqwbkhCX7
-         LRmlFMmMtiyqummQ06O3A477qRfeX/300geqd2tBvuZCsSMniycuCF5YQIHzTZRhCJ0A
-         Quqzl5JtuMI4Gh40YnWPuDcbOaguSXPshR7JRJI1ial7oij5ZWbdNJ0aJwHiw51AiOoO
-         Bdyf74lqvsStlKEtMg/Kwus2TsiLTsmAs7wpYWdoh4LlHtySpKDxDkBWoITF7KnbSPIe
-         gcfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718206359; x=1718811159;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ifRzRxf1rrmcvnfimIiSxsCywCmMXk1id3TTD2HQxtg=;
-        b=cN5ZNnxZNI+QdoJKiLHk2LamuW2u7gALLwS9ru4EyiyJTwNxzxVLYvGrkz75z7YF2L
-         WxE45I6GXaO72cKeQGkriyYaBVTDz58jiYGLSznavle/jEiR8tcQ0GUnqIdrBjaJNv7O
-         2pgPSk81Q/LR7DyUoLOVV0DTgGC+TaETg4DAc/y+w3ndXAmNP7iv25LGjApTmp8gI3VV
-         xZJTg5dj4/p28vTP0v1fOy7HSNNyqhJqNRaRF7uZDSKeIe8UeeQfJD79cnBS7QRQSjb3
-         ueelupmJ22bwbjEjNzrIuImx1wXI2jOv4ySMB3y9BaDRcvFjdzvmnvzI/72zw8O8Vvu+
-         rn3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX07ZClAUDVAmgyeAAs7o10CX3E7b2Gswq/jQc8Hd4iWwN5x7WLIzvfDHQ0/swaRAz4yqIoNhy/GG6x6hSHh/HJKeYZ+9bht8ts5rmRJEnF/BlZmgAC+uSlNU9EGNzaUDKVij8uuORS0zFVUPkQp58jgWPWmqDrB0aOB8PEcUi81h8LS6YrHA==
-X-Gm-Message-State: AOJu0YwzvqgHy6d+E69nR0ykPkXAGtvx/F+7HsQqoXZMlOIUyCP//4+g
-	+o67A6/9mQv/PIbuTKUsARl2Om3qw22DrdTTvP4cprRygM8P/1oC7Yr/F/Ise3Pkoo4C9zcroEX
-	UUEOsiAH4KGyq84w+yvA3YSTKOEc=
-X-Google-Smtp-Source: AGHT+IElaL2Bh5AGgHhl64jF1fLtnm4lTPWXn5/I3eAW+jWB96be+8eLrTB1DmW3qgp3ngxWnHbaPGIZmacUz33mK8U=
-X-Received: by 2002:a50:8d54:0:b0:57c:60f0:98bc with SMTP id
- 4fb4d7f45d1cf-57ca9754f1amr1507418a12.11.1718206359224; Wed, 12 Jun 2024
- 08:32:39 -0700 (PDT)
+	s=arc-20240116; t=1718206368; c=relaxed/simple;
+	bh=A4LXxVy38n/hdJk7+HDkZy7E6cYBqwA9u3vwpbFPPpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tsb0zV8NRefHc72Q2eFyJe3EP9ZtmZW6GOj4TUJ7fwp6dBf/bjmSH2yYObhzYlPejAKKeMz6KXYgiV7NbWeA/DNcYNCYkgR+uqy06vCA5qIHguBrEje5zvjdBDGOSdvnbJNP2+DPSQr1rcbU/4pjh2sjp4NPqI/jzJs4ZkSF51c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1dk2jb0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12B0FC32786;
+	Wed, 12 Jun 2024 15:32:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718206368;
+	bh=A4LXxVy38n/hdJk7+HDkZy7E6cYBqwA9u3vwpbFPPpg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q1dk2jb0rep78D4tnoiuqiiBrgVtN1bUOCYTIwfvuZ/b3q38BkVLLJ5MUFll4BYN4
+	 DFUUEUezYt0Df2uShLAIVdPsleyPJJRzC0XkLqYbAW3wQHnvp4rL+zrU0TpyyjQtBe
+	 N+ee/D0QPsI5VvieCA4hGr3aSjVy88FC5vtJ42lU45zFYLiIBOpT6Sf6OzAqE5CUe4
+	 WPwI0kEt9/vo4Mn60rhgalqzG5vbZ/wh5ebbq987KmbwqOoktgO5k7UK9XAPZgtrjA
+	 lo6XleH3JWS3aOxcj1yR/OzXsYsqaYQ4HIrvF1gra0iGOoMfQ83g5WzNZYjGQay83j
+	 CLezwVyROkCmA==
+Date: Wed, 12 Jun 2024 16:32:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH] ASoC: cs35l56: Disconnect ASP1 TX sources when ASP1 DAI
+ is hooked up
+Message-ID: <Zmm_np5cIF0MSE9U@finisterre.sirena.org.uk>
+References: <20240611145746.1454663-1-rf@opensource.cirrus.com>
+ <Zmh3VmRfGEU6pGps@finisterre.sirena.org.uk>
+ <36219997-397b-4a26-96ee-7527fb6eb024@opensource.cirrus.com>
+ <Zml2FfjbO4Vgk0jy@finisterre.sirena.org.uk>
+ <92f2d6c6-2d63-42eb-ae91-59a14831145a@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612142951.37259-1-kanakshilledar@gmail.com> <dd529de8-07b0-444d-83c3-4b8c3424a7ef@kernel.org>
-In-Reply-To: <dd529de8-07b0-444d-83c3-4b8c3424a7ef@kernel.org>
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-Date: Wed, 12 Jun 2024 21:02:27 +0530
-Message-ID: <CAGLn_=s=LtCJsP-BWFG9vJp_hQfQ_hnAtB6oKdTW68YxLLE_mg@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: serial: vt8500-uart: convert to json-schema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kanak Shilledar <kanakshilledar111@protonmail.com>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ws70HyzkY6K4LGiZ"
+Content-Disposition: inline
+In-Reply-To: <92f2d6c6-2d63-42eb-ae91-59a14831145a@opensource.cirrus.com>
+X-Cookie: Your love life will be... interesting.
 
-Sorry for the confusion. I will fix the maintainers part quickly.
-I have one question that if I find any area for the SoC is not
-maintained or orphaned,
-how can I find out who is the maintainer for that area, or the one who
-last contributed
-for that specific area?
 
-Thanks and Regards,
-Kanak Shilledar
+--ws70HyzkY6K4LGiZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Jun 12, 2024 at 11:42:15AM +0100, Richard Fitzgerald wrote:
+
+> I can send a V2 of this patch with this long explanation of the
+> background. I didn't put it all in V1 because it never occurred to me
+
+Yes, please - it just needs to mention that due to the firmware we don't
+have hardware defaults here.  I think it would probably be more robust
+for the driver to just set all the documented registers rather than
+hoping it's set all the important values and needing to keep adding to
+that piecemeal.
+
+> that defaulting the mixer sources would be controversial.
+
+There's probably a reason you have all these use case specific
+variations set in firmware...
+
+--ws70HyzkY6K4LGiZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZpv50ACgkQJNaLcl1U
+h9CtUwf+NBoXGau3/eYXKr81FuNxSnOhRdPBQp57iszrQ4weyqBab6t0wWKr5pUQ
+AHAj4nwoFFaiehndPQaQol3kxvrrOn1f4vpk+n79F/eksHlXk6GOykyueklNlD99
+Y2g+k2uETzBOHPTosZ99RQbLRj6aGVEWfAItaP5tAZw53ryiRcFrRTXlywlnverP
+hS/uEt2Oi6SI+qdWg1BVx2+YPqbk/OnxucbLnyl90xOwa0CdZbbyIcD9rmIi0+c2
+zS7t3m0NIHuiI5gz4vFChPQubxf/OSU2kwJ1O57WFySsXu0cKxI3kv2kBmURS+uS
+A0UJPakozVyIIiJi2nw64Hl0IJDTcg==
+=CNPA
+-----END PGP SIGNATURE-----
+
+--ws70HyzkY6K4LGiZ--
 
