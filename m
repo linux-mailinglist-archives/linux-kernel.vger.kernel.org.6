@@ -1,137 +1,110 @@
-Return-Path: <linux-kernel+bounces-211782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF1F9056BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:24:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0659056BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8871A2830B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:24:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA4ABB2274C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C115D17F504;
-	Wed, 12 Jun 2024 15:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90C317FAD6;
+	Wed, 12 Jun 2024 15:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAj0nTFe"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5fxdoXk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2B93D388;
-	Wed, 12 Jun 2024 15:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1014178CE2;
+	Wed, 12 Jun 2024 15:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718205839; cv=none; b=VRzKHCXAlueIbGxo0bgfQqbmQfFXW+WfMVP1L+umt9zsUihcfOoNa1aALK6mdo7LifgJjPOa6o4yipkS3NbtdgAsz03g+/bpt32EsNWulnp8zbplPN7DsVWAs2srCet7Ih8xDJnwV1UzRcVPr045+P1UxPEaVrQghjrZ15CG2Gg=
+	t=1718205846; cv=none; b=F0vcjfmBEfjp4wZ9VcJzX/INDIXbpYiEEGr5HZ0Ik+wBmMosqVHfvKOCURa8sBT2FvD3oJbSGHyVCrNk6ZpzY58CM31vusqtm+Du44SuMhg1TFsNgAikhQebpLBVqmCzA4srirpLrNy/HnJ0ewn/nrbG0dvkBECZarVHZ82kK7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718205839; c=relaxed/simple;
-	bh=L0TPxO2068yX+MTAtGA10ZqJ9vRLIVvBQVLw5Xen/7o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=OQLpAMtfHPs9tW7lrGaQHuZjTqgy2MkIOqo+ghUScDIKRQ90cRNbAKJeDpKHFgUvUjFQPCRhBK5GdE5SI6tZKhWPiIpcG/djQHEBm8Cc/fYdnTCjxOXsVznx2f30IKZ7MrkPU5qpQRpBBPXrJDS3032C/MZrfNkZJKzyi+stPpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bAj0nTFe; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6e40ee57f45so1993070a12.0;
-        Wed, 12 Jun 2024 08:23:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718205837; x=1718810637; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=O4jqrH4dgrb+nT1o6H+kGr8hXgJ85CBLLo3LyaQhqJs=;
-        b=bAj0nTFe/1moXXhh8E4KoeFJeELetH8jqwwMDVL7rgvDOMa/ADBpezXoOAjNjiYrWa
-         1oL6xHySUSrS1uunFN7XYrukg835uHiVGRx23btR0YJVny6STt2KMf26hr3fQ+ISlExd
-         zrGOkYuE3hUsrkZWq/YfdA2aN4PMTV97jnRob9pxBU8yKUUTOyxghLpKHP5eVCuGFuwL
-         R+4Frte+8/8xO7JzpyEF+NJ4Djgdr45SI5uDGUpPC+giN0F6hAgtfLw30MXkhV5qsrBI
-         /R/d1MGvfnQYuJwb+ZMNdr+fXgoUYbef2l8Rd01tZkYO+9oXi7EQGrCm2cuUBf3KHyI0
-         +7vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718205837; x=1718810637;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O4jqrH4dgrb+nT1o6H+kGr8hXgJ85CBLLo3LyaQhqJs=;
-        b=P3wYBm6Hwmz49rQc0uuoa50Gk0+DHL7bfeTHJbImzQWUhx4LXzuprzX9up0nFcZ0e+
-         RqoQwLijjIhAiGEwpjKr6ll44/IAPH2AOgAQX/e2cK+fT00NcCzAi1yBUI6gMNTVvNP3
-         B3N04VmUkY2Zsem12vrCnXyPp6VgeOQvZ1WqDt4br66OKCVLEwSiuj82tcqWnzndkthZ
-         h8wF6S87Bqo9WyOeqaPitqncECJWPlblRbEdvMAYlWHrDNQp0iud3D/KN2MPsM5dT1QP
-         uooZSY9pN1+9GeQxiuwS66SA4VOrN6WIjI9nZ7dUH90c0GyFeHlaY/+nxy3jwUYScQvr
-         3rEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXs28otatZ34LudmKhuejpv+wz/KuPg0yPggueEaz5lJnBrEyMFVDk8H5n6JoGzZq99lpVfrlieITVRdYZ7mYp99oCUbr1kjfF6+SIoEKOsuzEyacPW4MYyl5WxCWkE6MGB7yIwXsg0MLg/49nC6bC8vTjYCRa+zzIywYMvTKtS83uCMw==
-X-Gm-Message-State: AOJu0Yy4euyVvQkE2wUZZwzcfGszKQarexDj4fpNKsTdHFO5TGMrkClL
-	WXB0DuEDwDN7Il1JchGPCufCbKUwshLREm6CuPLRq0wmjEKyS/Bk
-X-Google-Smtp-Source: AGHT+IEDmRDRXVDRwArnOlnUYRAAl2gSBdmBtEXCzIi+zGbzqhAF9o5Q24n24snscZYNdnrxP6ZWhg==
-X-Received: by 2002:a17:902:ce90:b0:1f6:a96f:225c with SMTP id d9443c01a7336-1f83b60eea6mr25692545ad.28.1718205837039;
-        Wed, 12 Jun 2024 08:23:57 -0700 (PDT)
-Received: from localhost ([113.143.197.225])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f71790b089sm57540515ad.106.2024.06.12.08.23.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Jun 2024 08:23:56 -0700 (PDT)
-From: joswang <joswang1221@gmail.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: Thinh.Nguyen@synopsys.com,
-	gregkh@linuxfoundation.org,
-	balbi@kernel.org,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jos Wang <joswang@lenovo.com>
-Subject: [PATCH v4, 1/3] dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk
-Date: Wed, 12 Jun 2024 23:23:47 +0800
-Message-Id: <20240612152347.3192-1-joswang1221@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240601092646.52139-1-joswang1221@gmail.com>
-References: <20240601092646.52139-1-joswang1221@gmail.com>
+	s=arc-20240116; t=1718205846; c=relaxed/simple;
+	bh=fUZ+mbaSNdcCsJSK/yWLJwUy2bPRSRlb6UhOxTORqE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P5h0hNE0AKpULB3OuBSIEYKBDNNcLqJBjdKnfg8h+e/y7MKUKMY/aO2NBkoco+BGP7e2eY1bjJPBUQggqK6WSQbb5/Oy4F/s7jIpeKasAL9M8qVn1UHJ4Gv+4i6/N8/bxJ0AekGofiZ9twKSy2f5IDuukdbzuf1kNKTCkvZyI+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5fxdoXk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79703C116B1;
+	Wed, 12 Jun 2024 15:24:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718205845;
+	bh=fUZ+mbaSNdcCsJSK/yWLJwUy2bPRSRlb6UhOxTORqE0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=e5fxdoXkLnhAyXr3At8tTK6JNXGcMLYj4TZElKo8O6bHPtdB46ztAIvKtqZGzm8MK
+	 /Fy+PECw+KWsFQ8MOC65zLNKOktZIDNtDQTVlXZgnQfnnlP0lLQTd/42Ot85SQcE5i
+	 HfTx/l3vxkxLm+xpNuRJD0/L5Acc7rTMJHYlZF2thN8mrqxvAhDSoqIxCvKGbuxOTH
+	 Fiz1KxvFum6I0WTNydoSDdYCTgL3CctoOkxwFNHk355IjTjldwAaMWaM+fbsCtExvG
+	 O2UVqGSEot75v2/Nb3PW15haxVw7QpAJ4lLD8Z/yeav6hdE1urR0x0dMh2RghqlAFK
+	 yBzZWH96Pef7Q==
+Date: Wed, 12 Jun 2024 17:24:00 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Tony Luck <tony.luck@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+ linux-media@vger.kernel.org, linux-staging@lists.linux.dev, Andy Shevchenko
+ <andy@kernel.org>
+Subject: Re: [PATCH v6 05/49 RESEND] media: atomisp: Switch to new Intel CPU
+ model defines
+Message-ID: <20240612172355.11c470a3@coco.lan>
+In-Reply-To: <38336785-cb59-464f-b2a7-49812f4c2ce0@redhat.com>
+References: <20240611173406.352874-1-tony.luck@intel.com>
+	<38336785-cb59-464f-b2a7-49812f4c2ce0@redhat.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Jos Wang <joswang@lenovo.com>
+Em Wed, 12 Jun 2024 10:10:14 +0200
+Hans de Goede <hdegoede@redhat.com> escreveu:
 
-There is an issue with the DWC31 2.00a and earlier versions
-where the controller link power state transition from
-P3/P3CPM/P4 to P2 may take longer than expected, ultimately
-resulting in the hibernation D3 entering time exceeding the
-expected 10ms.
+> Hi Tony,
+> 
+> On 6/11/24 7:34 PM, Tony Luck wrote:
+> > New CPU #defines encode vendor and family as well as model.
+> > 
+> > Signed-off-by: Tony Luck <tony.luck@intel.com>
+> > Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> > Acked-by: Hans de Goede <hdegoede@redhat.com>
+> > ---
+> > 
+> > Mauro, Hans, Greg: Which one of you owns this one. Can you take
+> > a look please. Let me know if changes are needed.  
+> 
+> I'll pick this one up. But atomisp support is a side project,
+> so I only work on this every few weeks.
+> 
+> My intent is to get this send to Mauro (media-next) in time
+> for the 6.11 merge window.
 
-Add a new 'snps,p2p3tranok-quirk' DT quirk to dwc3 core
-for enable the controller transitions directly from phy
-power state P2 to P3 or from state P3 to P2.
+Hans,
 
-Note that this can only be set if the USB3 PHY supports
-direct p3 to p2 or p2 to p3 conversion.
+It seems that you already acked to this one, right?
 
-Signed-off-by: Jos Wang <joswang@lenovo.com>
----
-v1 -> v2:
-- v1 did not add this PATCH
-v2 -> v3:
-- modify Author Jos Wang
-v3 -> v4:
-- no change
----
- Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+If so, please add my acked-by, if this will end being merged
+via some other tree.
 
-diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-index 1cd0ca90127d..721927495887 100644
---- a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-@@ -242,6 +242,13 @@ properties:
-       When set, all HighSpeed bus instances in park mode are disabled.
-     type: boolean
- 
-+  snps,p2p3tranok-quirk:
-+    description:
-+      When set, the controller transitions directly from phy power state
-+      P2 to P3 or from state P3 to P2. Note that this can only be set
-+      if the USB3 PHY supports direct p3 to p2 or p2 to p3 conversion.
-+    type: boolean
-+
-   snps,dis_metastability_quirk:
-     description:
-       When set, disable metastability workaround. CAUTION! Use only if you are
--- 
-2.17.1
+Tony,
 
+I don't object having this merged via your tree with Hans
+ack.
+
+We may also have it merged on media via Hans tree. He usually
+send me one or two pull requests per Kernel cycle with lots
+of atomisp patches on it.
+
+Regards,
+Mauro
+
+Thanks,
+Mauro
 
