@@ -1,75 +1,67 @@
-Return-Path: <linux-kernel+bounces-212185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC7A905C74
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:01:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEECD905C76
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 867FA1F24DA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 837911C23232
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBE084A27;
-	Wed, 12 Jun 2024 20:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B784884A52;
+	Wed, 12 Jun 2024 20:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QNAN/pF1"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="A/IzcKWF"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B56412E61;
-	Wed, 12 Jun 2024 20:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8492783CD3;
+	Wed, 12 Jun 2024 20:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718222480; cv=none; b=qvlONOfpn7gZxrqSK9WsX8xSP9T/W9VL6Hx0+a1zFPicWqFO23rOq2XgAi24iOpRVPFqdP42CLGQykqqeseFKuwS1m4bJAWfbmvO64rB709ytKsO+3ul1tf/VGbI8vvRctyNKa015Tbdm/Yqn8Quz6ATtl4CerXKfd2tMU8nVgc=
+	t=1718222514; cv=none; b=j718ycDI+oKYB91ahcOVXpc+Gn7BUjulkrxirbiVEkSY/NdfZ0Fpia7Exo4DozzTF49tlbKqqSRsGZPGzC08q+P++s6dcgp5SsYor3eVRUE/LkNkA9O1brhqlsql+72p7jzWNg7QOSg+fg2fsnsCTVXIptpewCuGPEDvBg6zVJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718222480; c=relaxed/simple;
-	bh=7OyQ3rFkewMNoKXLLCpqRc4pn0D0NK/EKUMpItvjHOk=;
+	s=arc-20240116; t=1718222514; c=relaxed/simple;
+	bh=89+kjFXh2oXPASs1slgl/MaJkh7Lr0/NggJNDrEMkUs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B+EVVmuVuEZsSti4X+VX/rbQ8IqfVirnMq6anPtxX1isqRz6HxCevUpwAygH+Z8V+79hKlBncl3fAQkWXtUSn2+4klNswkG1Ua8oeNa+QosojUXUuEzt2q9PfuhFa+ChwdHOYO2d8gqd9KixR7b2QJXBkrN5JvDMUrrSCavw9do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QNAN/pF1; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C006D40E016C;
-	Wed, 12 Jun 2024 20:01:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bwaUVT6yOVHN; Wed, 12 Jun 2024 20:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718222471; bh=eofNYV0tt5LQVQJm8Gzo1T+sEAzPcM96k4aJGffrnrA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=dlhl17VzgPn0leIihajIVoUNNur7YOyw2PdsH3VGteoMW/kRnx/eVPytOstuL9HGqYOdSS/0Zq/bdMUFVzVEtrH+N2oLIcwfWEwfiH2SX7gunED29LjnFnPQ9dMCLkpUQ42Uz7eN6cb+6i1+9GY+Az1vUAlS0fjcP2Z8xrN3TrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=A/IzcKWF; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6B229EA2;
+	Wed, 12 Jun 2024 22:01:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718222497;
+	bh=89+kjFXh2oXPASs1slgl/MaJkh7Lr0/NggJNDrEMkUs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QNAN/pF1v1x5lbI2pQQD1zc95VZB9pTIS3GbdQOtZpiyhljDlMljKnOurEm1Ze8cI
-	 MNmW5LSS6XH45qXjO36irfFfScgbefOf0E2XKiAKNMP6f+0txcrNAgT6FVo3YC3ANp
-	 6QDAyUN1EOWInLRR18eSGrJBDQXOSRJUSuNCWcJ9YVUSWLWNOv03dH8026eHoieZ3i
-	 vjZDtzIPFQoAPHpierCMVlFrc3JZaMkdiCvEeavAHQPb2gdBwq4iwb0ocKDusC1bzO
-	 s/81UlgR+pOCB2N/UiiX2cKoc/9d3keCJRV1H7QzdFrdRf0dP0U9zneYHp2XssNzbc
-	 V+5vwr+7VUN60ULPa3/pvP1Ly98XsnvwbIjRNbEwZECs0evFJdvxJGM127tBGYWddl
-	 Rn80PFudUV9XHjU27Lez76mY6jN62rQV4EJ6J83L96oKw24pb39qPeUzlPxPaKJhw9
-	 gVR2nZLsi4iITeJYHF0mJQ2exobvbTYBR6Gom4+8zrZgCN3vFftaGzLwsC4N/RNZT5
-	 G+VNQ5+MEOVie7RLqJIfPXp5ULa9VYTdnmx5Sm8mFJOfxh5HX44Cd5fIHuGteJZXCa
-	 uF6LYcRfMR9kocZvteE5kRsXLXN3qXYQXoAiA3TnqlnAjSoA3v0aChygd+W/K7jPDe
-	 tdSywu0V9OrpLcHiNfUwWSMI=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 881D940E0176;
-	Wed, 12 Jun 2024 20:01:03 +0000 (UTC)
-Date: Wed, 12 Jun 2024 22:00:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: David Thompson <davthompson@nvidia.com>
-Cc: tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
-	rric@kernel.org, shravankr@nvidia.com, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] EDAC/bluefield: fix white space in
- bluefield_edac_mc_probe
-Message-ID: <20240612200056.GGZmn-eO15ePolbAPo@fat_crate.local>
-References: <20240612193831.25913-1-davthompson@nvidia.com>
- <20240612193831.25913-2-davthompson@nvidia.com>
+	b=A/IzcKWFHJj11PB0fcB3oL//inBtScfZWq3Zub8NXLpC3h1wkVAriilaYrY+rMJNv
+	 Z3VXWyI/N+u1rANoAxUkKVh/nuHZRPQpKoScQSJ3BgjKgjhdz1lNpdIs/0csnnkUoK
+	 4ehxSct92dMx3QShO1hHstJo/honcqmGtcm8WJlE=
+Date: Wed, 12 Jun 2024 23:01:31 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org,
+	mchehab@kernel.org, hverkuil-cisco@xs4all.nl, wentong.wu@intel.com,
+	linux-media@vger.kernel.org, linux-acpi@vger.kernel.org,
+	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
+Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port
+ nodes
+Message-ID: <20240612200131.GQ28989@pendragon.ideasonboard.com>
+References: <4b387b4d-f778-4891-9f07-df5fc0a093cd@redhat.com>
+ <ZmmQLt7wB-yGQBTw@kekkonen.localdomain>
+ <CAJZ5v0ii3WFQRPdfHeeW4M9kXSWDVxxxy02zThcf25mjNwqDAw@mail.gmail.com>
+ <ZmmT56Cyvb2FCyav@kekkonen.localdomain>
+ <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
+ <ZmmY3he9vfWVWU3I@kekkonen.localdomain>
+ <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
+ <ZmnnFueL-Cgw5Eqp@kekkonen.localdomain>
+ <CAJZ5v0gtK9yusimCOVV2dGkQWDwQ6=r=vfbgC-eE60Cg-5wk_Q@mail.gmail.com>
+ <ZmnrtIEla9R24egi@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,58 +70,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240612193831.25913-2-davthompson@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZmnrtIEla9R24egi@kekkonen.localdomain>
 
-On Wed, Jun 12, 2024 at 03:38:30PM -0400, David Thompson wrote:
-> This patch removes an empty line in bluefield_edac_mc_probe().
-
-Avoid having "This patch" or "This commit" in the commit message. It is
-tautologically useless.
-
-Also, do
-
-$ git grep 'This patch' Documentation/process
-
-for more details.
-
-Also, feel free to peruse that whole directory.
-
-> Signed-off-by: David Thompson <davthompson@nvidia.com>
-> Reviewed-by: Shravan Kumar Ramani <shravankr@nvidia.com>
-> ---
->  drivers/edac/bluefield_edac.c | 1 -
->  1 file changed, 1 deletion(-)
+On Wed, Jun 12, 2024 at 06:40:52PM +0000, Sakari Ailus wrote:
+> On Wed, Jun 12, 2024 at 08:29:21PM +0200, Rafael J. Wysocki wrote:
+> > On Wed, Jun 12, 2024 at 8:21 PM Sakari Ailus wrote:
+> > > On Wed, Jun 12, 2024 at 03:06:53PM +0200, Rafael J. Wysocki wrote:
+> > > > On Wed, Jun 12, 2024 at 2:47 PM Sakari Ailus wrote:
+> > > > > On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysocki wrote:
+> > > > > > > > > > I just hit the same problem on another Dell laptop. It seems that
+> > > > > > > > > > all Dell laptops with IPU6 camera from the Tiger Lake, Alder Lake
+> > > > > > > > > > and Raptor Lake generations suffer from this problem.
+> > > > > > > > > >
+> > > > > > > > > > So instead of playing whack a mole with DMI matches we should
+> > > > > > > > > > simply disable ACPI MIPI DISCO support on all Dell laptops
+> > > > > > > > > > with those CPUs. I'm preparing a fix for this to replace
+> > > > > > > > > > the DMI matching now.
+> > > > > > > > >
+> > > > > > > > > DisCo for Imaging support shouldn't be dropped on these systems, and this
+> > > > > > > > > isn't what your patch does either. Instead the ACPI graph port nodes (as
+> > > > > > > > > per Linux specific definitions) are simply dropped, i.e. this isn't related
+> > > > > > > > > to DisCo for Imaging at all.
+> > > > > > > >
+> > > > > > > > So it looks like the changelog of that patch could be improved, right?
+> > > > > > >
+> > > > > > > Well, yes. The reason the function is in the file is that nearly all camera
+> > > > > > > related parsing is located there, not that it would be related to DisCo for
+> > > > > > > Imaging as such.
+> > > > > >
+> > > > > > So IIUC the camera graph port nodes are created by default with the
+> > > > > > help of the firmware-supplied information, but if that is defective a
+> > > > > > quirk can be added to skip the creation of those ports in which case
+> > > > > > they will be created elsewhere.
+> > > > > >
+> > > > > > Is this correct?
+> > > > >
+> > > > > Yes.
+> > > >
+> > > > So it would be good to add a comment to this effect to
+> > > > acpi_nondev_subnode_extract() where acpi_graph_ignore_port() is
+> > > > called.
+> > > >
+> > > > And there is a somewhat tangential question that occurred to me: If
+> > > > the nodes are created elsewhere when acpi_graph_ignore_port() is true,
+> > > > why is it necessary to consult the platform firmware for the
+> > > > information on them at all?  Wouldn't it be better to simply always
+> > > > create them elsewhere?
+> > >
+> > > Simple answer: for the same reason why in general system specific
+> > > information comes from ACPI and not from platform data compiled into the
+> > > kernel.
+> > >
+> > > Of course this is technically possible but it does not scale.
+> > 
+> > While I agree in general, in this particular case the platform data
+> > compiled into the kernel needs to be present anyway, at least
+> > apparently, in case the data coming from the platform firmware is
+> > invalid.
+> > 
+> > So we need to do 3 things: compile in the platform data into the
+> > kernel and expect the platform firmware to provide the necessary
+> > information, and add quirks for the systems where it is known invalid.
+> > 
+> > Isn't this a bit too much?
 > 
-> diff --git a/drivers/edac/bluefield_edac.c b/drivers/edac/bluefield_edac.c
-> index 5b3164560648..1f6f39a7dbf3 100644
-> --- a/drivers/edac/bluefield_edac.c
-> +++ b/drivers/edac/bluefield_edac.c
-> @@ -320,7 +320,6 @@ static int bluefield_edac_mc_probe(struct platform_device *pdev)
->  	edac_mc_free(mci);
->  
->  	return ret;
-> -
->  }
->  
->  static void bluefield_edac_mc_remove(struct platform_device *pdev)
-> -- 
+> Isn't this pretty much how ACPI works currently?
+> 
+> We can support systems that contain correct DSDT description of cameras
+> without platform data. I was, until recently, only aware of Dell XPS 9315
+> that has incorrect camera description and that based on recent findings
+> seems to extend to other Dell systems with IPU6 (Hans's patches have the
+> details).
 
-So just the effort to create a whole patch just for that is an overkill.
+Are you aware of any IPU6-based devices, apart from chromebooks, that
+have correct ACPI tables for the camera ?
 
-Please do not do that. If you notice very minor style issues like that, you can
-do them when touching this code as part of a change with more substance. Or you
-can simply ignore such minor issues.
-
-Whitespace cleanup like that gets in the way of real work and pretty much all
-maintainers are overworked already.
-
-So I'd appreciate it if you concentrate on real fixes and improvements.
-
-Thx.
+> Still this is not a reason to break systems that have correct camera
+> description and expect the users to report them so they can be listed as
+> such.
+> 
+> > > On laptops shipped with Windows some additional information is also available
+> > > from ACPI via custom objects but a lot of information is just hard coded into
+> > > the IPU bridge as well as the INT3472 driver.
+> > 
+> > Well, that's how it goes.
+> 
+> Yes, but is it desirable?
 
 -- 
-Regards/Gruss,
-    Boris.
+Regards,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Laurent Pinchart
 
