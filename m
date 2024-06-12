@@ -1,134 +1,102 @@
-Return-Path: <linux-kernel+bounces-211733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B0790562C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E85E905631
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3C11F25198
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:02:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5ACB1F2181F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D8C17FAC6;
-	Wed, 12 Jun 2024 15:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D720917F4FE;
+	Wed, 12 Jun 2024 15:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fas3SAW2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0LlI8vc1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80FE1DDF6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2575F17A931;
+	Wed, 12 Jun 2024 15:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718204479; cv=none; b=DYv+ikqSaJ/t9as/Eyv6LW6RlB9LpRZ4Slc1ESE7/WqUcP20x/YOKoOm6MbkK20/Rkqcdrp2msO0JnShiEtA+vh/6+Wv9RXTCcjPS4X2l4cixY5zkbqFhcL47Hn955s36pOdNLEJo48xB/r4N6rD+61JWJBLiCX8ynsgmCUC7ZE=
+	t=1718204575; cv=none; b=fTtlSDKJUUq9l1DkXVt6xfmbB69jkz8xruNrXGqk0QBnCV15Vz4Xq5/VcQbci2iB/vWa6QdbfofTCqd7JAIx3oi4ZVAUV4XasqQ1LGd0mWYN8fXBfvcKjBA3Bs3+Q/KhefwVrciODqz87etGhn3XoJdZuKHO2g0TD/BmnKBTOhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718204479; c=relaxed/simple;
-	bh=99ZGerARksGUGdw+E23Lcu8HvgTTG9/x1SmFsKpGl20=;
+	s=arc-20240116; t=1718204575; c=relaxed/simple;
+	bh=w8xN1LUeu90ka9f2NePQMJcUgzi1zzj8+WSBQDOiGrU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EBQ4lcpfLxmUdb1xcntuc71CIREv1H8mewwe57hwClT1nTj6P8Um2JEHl9w5Rk8BjuvUdL521fkOJd6V/YkmoAQhZtuNfB08TTeImSiA00sTiXR/YqGyfqYbU3M1coHCzeMJ3CQbtPLmoxbwtGp0ouHy+aBLkOjPZmPeQJ+DsRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fas3SAW2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718204476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AK7Qzf/MhUoQm7mnY6EWFd26DeQUWTNXILgKlaTUO3c=;
-	b=Fas3SAW2CjbWoV8KGQZvhGQVm07fkAW+Jrd070R1rod7+7lrOHyJp04Id/nC5w11bBthbo
-	ms7Cj/w6JY5wd6oUdR4vhYiA2mXAjMCm2rAMaJvsE+0cbBKup/qMPbqvyBuw5RPV5TRtD2
-	ZhLgfMF5UN/wVQYjX31Tm8C7hP3SYT8=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-211-SoQ-7KDuMS-iP7koNzYsXw-1; Wed, 12 Jun 2024 11:01:13 -0400
-X-MC-Unique: SoQ-7KDuMS-iP7koNzYsXw-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ebf7a0ed89so12806301fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:01:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718204472; x=1718809272;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AK7Qzf/MhUoQm7mnY6EWFd26DeQUWTNXILgKlaTUO3c=;
-        b=TKUXL8Q37YTH49UuOIQwmLn6IrI51k0CNRlVuzNa1FezZZOP//BLnvE4vz42KJ+Pf/
-         1Z38S63BCdfyUlfPL6Y8E04RNg2yWoMjJWfjWxQBrH9gvgh/TzkLxzAiQcvc5P7Sj9ga
-         C88F5V9HS54yAbBzxwyb0PaO9GhjGxRJdXwUzE8Lcss5fgRjItuh9R6S3PDYuUhwLyke
-         fkPujXFuwTdsqx+Pu+73DgUhGgr3dSEkX3F4E21vZ7f892kuUdnUsHPqGFHqIbXDTBYD
-         jzEoAXgCdDFgM6ufcDOYCfp+eH81d0Q72iYTYFp2mwsyzSMR8Z6IXGnijF9EPDGZlshl
-         hWbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2Zqs5vMIrI+ezBC83XErh6cak1LmqmgaGsKxlNC3DnRr6l6ZUBfdiaymq3PwkLub/S9r4Q7VEUgU3x6dMFC50A+mLi7gA/Mb63nOW
-X-Gm-Message-State: AOJu0YzUNPisOaV+VGh4IZ8TNyRMQP6RT7J8FUUaFxHbx9Nq9OAKpLuA
-	IT8jCeCKoOuratOI20POBW/6PHWTXgfmUHFGa2XFIOiVzbsiE1tHX+tSCDOBaqdx57pOBvvNvir
-	vqgPunQbl/ozvDiAMUUocKC3JVdpABNBVdTTb+0sEyV83bwV8809fYvzbA0RLLg==
-X-Received: by 2002:a2e:99c7:0:b0:2ea:e98e:4399 with SMTP id 38308e7fff4ca-2ebfc94de35mr14250771fa.36.1718204472175;
-        Wed, 12 Jun 2024 08:01:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTuPBgbKAFLkoD5DUY4zQdrl9+ofAljCO8M4EqUgORhCBOFn2MvAE0KtkNSgtX7OadYbchrQ==
-X-Received: by 2002:a2e:99c7:0:b0:2ea:e98e:4399 with SMTP id 38308e7fff4ca-2ebfc94de35mr14250531fa.36.1718204471700;
-        Wed, 12 Jun 2024 08:01:11 -0700 (PDT)
-Received: from localhost (nat-pool-brq-u.redhat.com. [213.175.37.12])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f26578176sm7756461f8f.11.2024.06.12.08.01.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 08:01:10 -0700 (PDT)
-Date: Wed, 12 Jun 2024 17:01:04 +0200
-From: Davide Caratti <dcaratti@redhat.com>
-To: =?iso-8859-1?Q?Asbj=F8rn_Sloth_T=F8nnesen?= <ast@fiberby.net>
-Cc: Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next 1/9] net/sched: flower: define new tunnel
- flags
-Message-ID: <Zmm4MMX_WFFEfLFd@dcaratti.users.ipa.redhat.com>
-References: <20240611235355.177667-1-ast@fiberby.net>
- <20240611235355.177667-2-ast@fiberby.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnMV/otrb06Nvi0BX+Qes0jVpwUb+R6ghzjJy99Z/cmqVlxLNv4FntV1Ub5jhQkx+VQJwYNArL5w/3h55gkrc1BkRp4n7Fd0RHS3f40ErTI4VuZnpiUm89ri7Mm/lGgornsTx+LbwoLUcNHO/Ot9D84sr8fqARJS5Z6oYD7o8XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0LlI8vc1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C9EFC116B1;
+	Wed, 12 Jun 2024 15:02:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718204574;
+	bh=w8xN1LUeu90ka9f2NePQMJcUgzi1zzj8+WSBQDOiGrU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0LlI8vc1AFsgy8mQQrWrkldkvWKEX4bVBlB8rI3b6igobLYZVZMkaPEa6hjgUMGHN
+	 rXjO+LmkhYX0S+Qq6MZgzE7n3GwAIuaJSFzKETHCEmOEGnoPuSFja4ZJMmpKkUeG21
+	 WsMqOOQ3jmjCUt0MKp3jH3Pf65L9e4XxpMb6Tji4=
+Date: Wed, 12 Jun 2024 17:02:52 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, rafael@kernel.org, mcgrof@kernel.org,
+	russell.h.weight@intel.com, ojeda@kernel.org, alex.gaynor@gmail.com,
+	wedsonaf@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] rust: add abstraction for struct device
+Message-ID: <2024061245-kangaroo-clothes-76e1@gregkh>
+References: <20240610180318.72152-1-dakr@redhat.com>
+ <20240610180318.72152-2-dakr@redhat.com>
+ <ZmdID8AlXtoxUfC1@boqun-archlinux>
+ <ZmhPW9yq7y6jbmIg@pollux>
+ <2024061136-unbridle-confirm-c653@gregkh>
+ <Zmh3oN9sWamaYHOD@Boquns-Mac-mini.home>
+ <d74edb73-1dba-43f4-a50c-36354c39d758@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240611235355.177667-2-ast@fiberby.net>
+In-Reply-To: <d74edb73-1dba-43f4-a50c-36354c39d758@redhat.com>
 
-On Tue, Jun 11, 2024 at 11:53:34PM +0000, Asbjørn Sloth Tønnesen wrote:
-> Define new TCA_FLOWER_KEY_FLAGS_* flags for use in struct
-> flow_dissector_key_control, covering the same flags
-> as currently exposed through TCA_FLOWER_KEY_ENC_FLAGS,
-> but assign them new bit positions in so that they don't
-> conflict with existing TCA_FLOWER_KEY_FLAGS_* flags.
+On Wed, Jun 12, 2024 at 04:51:42PM +0200, Danilo Krummrich wrote:
+> On 6/11/24 18:13, Boqun Feng wrote:
+> > On Tue, Jun 11, 2024 at 03:29:22PM +0200, Greg KH wrote:
+> > > On Tue, Jun 11, 2024 at 03:21:31PM +0200, Danilo Krummrich wrote:
+> > > > ...hence, I agree we should indeed add to the #Invariants and #Safety section
+> > > > that `->release` must be callable  from any thread.
+> > > > 
+> > > > However, this is just theory, do we actually have cases where `device::release`
+> > 
+> > @Danilo, right, it's only theorical, but it's good to call it out since
+> > it's the requirement for a safe Rust abstraction.
 > 
-> Synchronize FLOW_DIS_* flags, but put the new flags
-> under FLOW_DIS_F_*. The idea is that we can later, move
-> the existing flags under FLOW_DIS_F_* as well.
+> Similar to my previous reply, if we want to call this out as safety requirement
+> in `Device::from_raw`, we probably want to add it to the documentation of the C
+> `struct device`, such that we can argue that this is an invariant of C's
+> `struct device`.
 > 
-> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
-> ---
->  include/net/flow_dissector.h | 17 +++++++++++++----
->  include/uapi/linux/pkt_cls.h |  5 +++++
->  2 files changed, 18 insertions(+), 4 deletions(-)
+> Otherwise we'd have to write something like:
 > 
-> diff --git a/include/net/flow_dissector.h b/include/net/flow_dissector.h
-> index 99626475c3f4a..1f0fddb29a0d8 100644
-> --- a/include/net/flow_dissector.h
-> +++ b/include/net/flow_dissector.h
-> @@ -16,7 +16,8 @@ struct sk_buff;
->   * struct flow_dissector_key_control:
->   * @thoff:     Transport header offset
->   * @addr_type: Type of key. One of FLOW_DISSECTOR_KEY_*
-> - * @flags:     Key flags. Any of FLOW_DIS_(IS_FRAGMENT|FIRST_FRAGENCAPSULATION)
-> + * @flags:     Key flags.
-> + *             Any of FLOW_DIS_(IS_FRAGMENT|FIRST_FRAGENCAPSULATION|F_*)
+> "It must also be ensured that the `->release` function of a `struct device` can
+> be called from any non-atomic context. While not being officially documented this
+> is guaranteed by the invariant of `struct device`."
 
-^^ nit: there was a typo in the original line above. Maybe this is a
-good chance to put the missing '|' before 'ENCAPSULATION'
+In the 20+ years of the driver model being part of the kernel, I don't
+think this has come up yet, so maybe you can call the release function
+in irq context.  I don't know, I was just guessing :)
 
+So let's not go adding constraints that we just do not have please.
+Same goes for the C code, so the rust code is no different here.
 
+thanks,
+
+greg k-h
 
