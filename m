@@ -1,124 +1,118 @@
-Return-Path: <linux-kernel+bounces-212169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A3C905C3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:44:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C7C905C3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A4A283089
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:44:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 520AF1C212B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EAA83CD3;
-	Wed, 12 Jun 2024 19:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC6C839F3;
+	Wed, 12 Jun 2024 19:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k5YzWpmx"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QZvAjgiQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE72982860
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 19:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13062F50
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 19:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718221488; cv=none; b=PmgNBw2KYPPgF4/AHoS+sF9NkliD9+e4igDJYXwOzIVz7xHirNYXZQb22hKC29useOp4UKtIblwdXDUUZdp5tKiDLelGUbl8RVrhoa/k8sf07AMXBzMLK7sWPf3H5RalLsHE6OYpk9fggVwg00DEWt+7o2EBsBlKm25NYTdyDBE=
+	t=1718221649; cv=none; b=okpcZZhWmbto621dqDSC61hbbrgF9wezpPFtCJ4+TtcYwciatHYKdE6P7yAtxOoc6FtESnOB5lqH+KFtGak+0xhcUlaobFrb8lSU1u2Jo9AMoyagtBgXnI5r8WcG56vbCt+0yROwWEKyH0aQwS6D+rojjZDUmNRaZ4FcObKArj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718221488; c=relaxed/simple;
-	bh=OR1d5VyF/7X0e1TsHxZ9Lk78cj+zPyBIY+rt5wIGorQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ia80xgdLUKC0FvLSomgCtzfEMm+NvQnhz689zTV5A7opuWwcshf+kZT0FX7OVuy8+8ajMkSJk5L+1DTXiUF7h4uIyHq9AN7ZCRqUe8IRUdIfmyRTeGkCFIcKz1T3TrcUwb2Et5JJaYrD2QxaA/ZbTMO3E7FlzbtyoFe6QgAIlWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k5YzWpmx; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f61742a024so42385ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 12:44:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718221486; x=1718826286; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DnH5fWF1vZdpxO/xmNthzzpxxZmShkacESefN2gAYOU=;
-        b=k5YzWpmxyJIFr7fjvTPmYboZhtgs4Np5p9QLirs4LtpJD+4NLsnn23AvkugL6bE37V
-         KE5qjBKGT46/UjOWpRtGeABAvj9ijHclzifBp0NZpmJE0EFFEDl1WKbaUtlnc56xL00Q
-         btaRUTTISrF3aCJmZXgYyEMd2OLznCcuxyKuRdzz+tlbxWOV35nGEx768WQfn1p5udOx
-         eflPofpM12ADnYqFbT9Tk7qIcPmem1z53MlsUq6ckcZpePbpOsVohzh4pS9HY94DSe2X
-         ZAZPh0tyNg5lb1dJk1oQMpxCmkxO4Lhmd+jclgJaKmRus25nFY8Yc9n3XAdkjaMYlxnH
-         oHyg==
+	s=arc-20240116; t=1718221649; c=relaxed/simple;
+	bh=PBL/TEU3DjSBOlA4ZGwb9at01hRR3W0FTMA6ERyOutU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMyD0SDl910r9Susekk3WP7UTV2YnWrp57+DN9UrqNiUGWgMwGXy95bXZkh2shaV83ur9PozftBrKu2PM+y9+RBSLkmYX4+WhoYJHqM3TIEqYzJtmbIQq7/x1Z2ikYY1hG0DSNIuBm3nTTzOTRGhGt9QSWrtiNQcWm6xIHBq5Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QZvAjgiQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718221645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NChSDrDZFs6MIHVW5KmNAjBXBpmqSeC9Z8y1fy6uHnk=;
+	b=QZvAjgiQQ6tzDVff0bIgjtG3ruOZDh7dYv0W29+dNLH4PoSEpCPvaC4CIZ4tX4frDuHUf8
+	Ej++6lfOnTBGule2sHX+XBV/U/h55cPCKf1rHKtI/rHDujHy8m3EVXjKFNNm2jQ3eWuR0f
+	9XM7+fPQCB5lXzs5neqQqMPv7tGyps0=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-313-Mze8wmnvOxCZiHlkQwjPDw-1; Wed, 12 Jun 2024 15:47:22 -0400
+X-MC-Unique: Mze8wmnvOxCZiHlkQwjPDw-1
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-dfa478f473eso38799276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 12:47:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718221486; x=1718826286;
-        h=mime-version:user-agent:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DnH5fWF1vZdpxO/xmNthzzpxxZmShkacESefN2gAYOU=;
-        b=P3AQmKpgc8LurKTgKShZPFUF3j1nLcAEk905hiHtBeiddTlE8SarK7KA7/DEhkGKlA
-         ExKNz86taeAwx3vquNDRN+4pzkpG9OvaWlQxTMI9qk/fl3aK6enbTVI1COUHJdz0AH5m
-         EAnTTV5uHMZtSiCEi5g61W27EZWedBW6Wrv6aJKVNQNwS0QRLz9Lhb9cew7eueOts2KR
-         g4rJcbWZo5A/N7lrBuLMJKhrRe0j+CZ1FLr51a1TFn/PKpU9byAs8NGm6DLAZlSRdD6o
-         a6lUHzljjYdF+WYwmMWjsnVn9LfTzTUnoCe7RF5SviNx0t2g0Uh8oBz/2MDWIvhwC02H
-         0JUw==
-X-Gm-Message-State: AOJu0Yyt/0bZMKvycMoCyP1A3GSx52phhokyGBN/UT3wJqmGhZvcGHh6
-	Iz/Vx/TnwDL6TfyqojFSYjCgTWZnedDcOL8W5jrOLNaZ9cWBpOeYvxnfmVkEXw==
-X-Google-Smtp-Source: AGHT+IFtovkZPw6siRncHj2S+TjHg2Th+7w9+JVXHjCH3C6TPMRJDnE3pfpHjNx+tY7kW9GKIA7AQA==
-X-Received: by 2002:a17:902:fc90:b0:1f7:3bb8:c32f with SMTP id d9443c01a7336-1f84ff3fde6mr451775ad.13.1718221485651;
-        Wed, 12 Jun 2024 12:44:45 -0700 (PDT)
-Received: from bsegall.svl.corp.google.com.localhost ([2620:15c:2a3:200:bcff:f772:74b7:8f03])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7042571df69sm7905262b3a.52.2024.06.12.12.44.44
+        d=1e100.net; s=20230601; t=1718221642; x=1718826442;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NChSDrDZFs6MIHVW5KmNAjBXBpmqSeC9Z8y1fy6uHnk=;
+        b=sYjorZouCpFdEHUzs3+4sX6EqZJuxCzHqmv5MgizFIaicc5N8qNsIhGy/Z1/Ml6m1y
+         ogdqVcBfcjaVHCPCrYis2BpzKpyQ+y5rsnmJrZgxdDlpThVT269MkeSxnB5fwk3WwzZY
+         dgr6MQTD6fWv57uZ1oBnqZU6uIkdTrk9AUzIAxdKEs7e2eceWbUZhP1hiKqQmahRFqTK
+         3SIc8lFcvLst5vig3S3s6mCGbyB7MMZLmi0zF+WphAIzJ3eZObZd83el0PI9Cg1Xx3YW
+         SRmJ9i6IJp4vLXYQFHND25y8z5MFk289PR81Wxduf++4XugtMVSeZQfS2IRnIiy2FTtP
+         nurA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1pYfbTdI3pmYv8OWsSY7+081EEYvKwGv4nNlJW30hpXtIvM1YZ/ufw1oYDCT3n64/Tg4aQgRPGC2azlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqya/oaNSgxofY3fg0KNPsxNZeGlJYv/IEyYHNElunGCQalUJ6
+	a/z3Jqk8mw71OnF2mZgY3aCIUOjLAuw6Zd0ZgLmv9inG7z2eRsNp0XSRwzu8+FOuerUsdm+abJT
+	r2ZJ7qHHxLdrTDLQqM1DvaRY2ehSj8CODtrOqktmlegLSJ01RyEx5kGlpRGTfCA==
+X-Received: by 2002:a25:2c2:0:b0:dfa:705c:6e3e with SMTP id 3f1490d57ef6-dfe62d2455amr2349351276.0.1718221641801;
+        Wed, 12 Jun 2024 12:47:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/NZjWL/XewnwBWXM0ARgE6B1DBKt2PB3fFEmrHVSn9NT4tqJ1paRNq44UK0/0zf5T3cQbJQ==
+X-Received: by 2002:a25:2c2:0:b0:dfa:705c:6e3e with SMTP id 3f1490d57ef6-dfe62d2455amr2349334276.0.1718221641128;
+        Wed, 12 Jun 2024 12:47:21 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44064755da4sm34321341cf.14.2024.06.12.12.47.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 12:44:45 -0700 (PDT)
-From: Benjamin Segall <bsegall@google.com>
-To: linux-efi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, Arvind
- Sankar <nivedita@alum.mit.edu>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>
-Subject: [PATCH v2] x86/boot: Don't add the EFI stub to targets, again
-Date: Wed, 12 Jun 2024 12:44:44 -0700
-Message-ID: <xm267ceukksz.fsf@bsegall.svl.corp.google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        Wed, 12 Jun 2024 12:47:20 -0700 (PDT)
+Date: Wed, 12 Jun 2024 15:47:19 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: syzbot <syzbot+0b56d6ed0d0c0c9a79dc@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	pasha.tatashin@soleen.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] WARNING in __page_table_check_ptes_set (2)
+Message-ID: <Zmn7R7cHU3onWbP7@x1n>
+References: <000000000000b7b11a061ab49122@google.com>
+ <20240612104735.ee6405d2096236bf18c51a41@linux-foundation.org>
+ <ZmnmNkexK5CGacN9@x1n>
+ <20240612123005.d5872e92a8f60e8dd459cdee@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240612123005.d5872e92a8f60e8dd459cdee@linux-foundation.org>
 
-This is a re-commit of the commit da05b143a308 ("x86/boot: Don't add the
-EFI stub to targets") after the tagged patch incorrectly reverted it.
+On Wed, Jun 12, 2024 at 12:30:05PM -0700, Andrew Morton wrote:
+> > Looks like this is the same issue that the other patch wanted to fix:
+> > 
+> > [PATCH] mm/debug_vm_pgtable: Drop RANDOM_ORVALUE trick
+> > https://lore.kernel.org/r/20240523132139.289719-1-peterx@redhat.com
+> > 
+> > I had a look, and indeed that patch hasn't reached arm64/for-kernelci
+> > branch.
+> 
+> Thanks.
+> 
+> I currently have that patch queued for 6.11-rc1.  I'm thinking it
+> should have Fixes: 8430557fc5846 ("mm/page_table_check: support
+> userfault wr-protect entries") and that it should be moved to hotfixes
+> for 6.10-rcX, yes?
 
-To summarize: vmlinux-objs-y is added to targets, with an assumption
-that they are all relative to $(obj); adding a $(objtree)/drivers/...
-path causes the build to incorrectly create a useless
-arch/x86/boot/compressed/drivers/... directory tree.
+It looks like I kept forgetting the tags in a few patches..  And yes, that
+looks all sane to me, thanks.
 
-Fix this just by using a different make variable for the EFI stub.
-
-Fixes: cb8bda8ad443 ("x86/boot/compressed: Rename efi_thunk_64.S to efi-mixed.S")
-Signed-off-by: Ben Segall <bsegall@google.com>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Cc: stable@vger.kernel.org # v6.1+
----
- arch/x86/boot/compressed/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 243ee86cb1b1..f2051644de94 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -103,13 +103,13 @@ vmlinux-objs-$(CONFIG_ACPI) += $(obj)/acpi.o
- vmlinux-objs-$(CONFIG_INTEL_TDX_GUEST) += $(obj)/tdx.o $(obj)/tdcall.o $(obj)/tdx-shared.o
- vmlinux-objs-$(CONFIG_UNACCEPTED_MEMORY) += $(obj)/mem.o
- 
- vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
- vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_mixed.o
--vmlinux-objs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-+vmlinux-libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
- 
--$(obj)/vmlinux: $(vmlinux-objs-y) FORCE
-+$(obj)/vmlinux: $(vmlinux-objs-y) $(vmlinux-libs-y) FORCE
- 	$(call if_changed,ld)
- 
- OBJCOPYFLAGS_vmlinux.bin :=  -R .comment -S
- $(obj)/vmlinux.bin: vmlinux FORCE
- 	$(call if_changed,objcopy)
 -- 
-2.45.2.505.gda0bf45e8d-goog
+Peter Xu
 
 
