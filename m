@@ -1,133 +1,94 @@
-Return-Path: <linux-kernel+bounces-210762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F366904866
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:28:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0897C90486D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791B5284BBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:28:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9A3C284B64
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BD24691;
-	Wed, 12 Jun 2024 01:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3575963B9;
+	Wed, 12 Jun 2024 01:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dyzncG6r"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q9kqe8ah"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC3C17C9;
-	Wed, 12 Jun 2024 01:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D764A12
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718155676; cv=none; b=ipR7GkSKTa9zri39vBEcduV7KRE7TuRC2DswgHoynrJlLA9jbRm2mogeR7G4rQ9XXi/lFYZdVqy+BK70InGbfrwciME4c6/8y9kYR2WBXsWtCpASUsoAbnGAhj2QaT3Va7AGcGoKUGsDYxjFg9dnD8nNWRsGUtb+qM+UZs+7dPI=
+	t=1718155885; cv=none; b=gYwF/2wJFIUM6ZYClEymAI1i31p5Faqs7UX/OE4M1bKutMk+8d1n9JTCMBhJh0aOv3ZRhfvzsIBwgSFBI6mKCUunkvfmgmDQuLLMf7XiNca4Gyhy1E2RcmThPis25j4D4KK9YzrbsJEECHdyUwwMmki3oU182DrRo5YqXFbvLpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718155676; c=relaxed/simple;
-	bh=72ccGiqpasKMW/KuF0ZWk8xmKm5MkMvQGTh43Of7jks=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RKLpqITOOgGVggpAxkmppi6+I5urJ+FHYLgGGNbo6CiCic/Jcm1beL4njaCB0MMGM3PnJ+JvNNIX2fY7bBYgszQKHWmm3o7u8Q7Ik4s+yQT4orMpBzIAKYKKv3yAkXhm4efxN2zVDW6Jv83yVT4An4lYfWEJTZT6sFCyyveTTxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dyzncG6r; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1718155671;
-	bh=aenrKh5vxiZhj+lFhogAzKc1iOwHEHknWWsHgrgrf2E=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dyzncG6rDIK6Q1P1pek2X2HGCvOLLvO9d6kaBeaiYFFCduUeauiopPbenV3ahkdi/
-	 qtnNmsvVDM9HIyRMZ70ekQoOZ0BhSTa/4zIWTUwPGOrofPk5Y63uhIQkTXXm5t3DKk
-	 D+M7VxRwxGN/W+1FZLQp/8pHp6Hsnk7qPdjOQ/LtzXgBSTPXTSraR+6tYaeWA9CiLS
-	 WfDF+x3Jl48kZXKDG1y57+ZE8C7E3ZaLHj+85ddVk0ThNXYR/wyGM3EU+oRjZH7JUs
-	 6zQeDR6qjrzZizW/fTZi/ZEDL43NL0ZjeQ8SlF9G+W1EQtY7JVmjxvWRPzSpSI1MIg
-	 BGEArgKWS7vTQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VzSb64rXCz4w2P;
-	Wed, 12 Jun 2024 11:27:46 +1000 (AEST)
-Date: Wed, 12 Jun 2024 11:27:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Tony Luck <tony.luck@intel.com>, Yury Norov
- <yury.norov@gmail.com>
-Subject: linux-next: manual merge of the tip tree with the mm tree
-Message-ID: <20240612112746.3130d68b@canb.auug.org.au>
+	s=arc-20240116; t=1718155885; c=relaxed/simple;
+	bh=iTJ+y+yUYurbot1d/zZMuCMgrR5OjCYsg4h2tP6dM08=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jauPOUNsosKuSariajOMP1puWjDs7FIxuj4vvEs/YL50WmOpb5BIZ+LiYW/6PXStQBU/QvgDe3eLrVHS6a63IVtjhVojSixlSKeDFpjo5vdSqoGkDq9soi1QgKN6zeOFQacHeKFdxfosp2IrXRjxRU+n1no10ImWjoyEaAXBOfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q9kqe8ah; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62fb36d7f5fso4435237b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:31:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718155883; x=1718760683; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ar9pYcOp2XX0p6wb+X/64p4KFgEtV0/Aspp8aMtT5ao=;
+        b=q9kqe8ah6UWiHYnkSQl43YPWAjNb56rY3jGsF1TK78XiH6Mz1rUoalSeKH7lZmHIeu
+         5PVZd+5mUi21bK+cZSHsoBctEaZQhKEdy8uhK0J4KOjSta8LVraZwf5MLdA9SFt89YSK
+         elVgXaAZuYWpZ1MsbetEqxQBmiri2l+F83LGWQjf64IGPVHRryrLVNfgxaS7h3XRcRZJ
+         +jnB9KP/F7JmCuUhjxbZyWfc9Z69q0ovTVEScusBxxBJhcrJIpzT8FwA+dW86dMFFse2
+         0JLIOmH5vKNltIQSNZG098HC4FF7MesUZu6ets77Ar3I+6EFs6TDUHP7H7DC6hpv0Vcb
+         ItQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718155883; x=1718760683;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ar9pYcOp2XX0p6wb+X/64p4KFgEtV0/Aspp8aMtT5ao=;
+        b=POdR9rHd4i+cf5r0tvbX0x4LTbwW/FXz2VITtcElIZqXD9VbtRHKRQCwoxhAVz0NKm
+         CCucNsMzql1fXf0FcvGNOiwDgVymtk0YniwO6o8NToFnbj4NMseB4lT8xgwNmPr9gPMH
+         uR4Fif3qS8lpS0K0cxwdROhI8CApcRb4ox0iWm5zscQDVlUZSF7DXoRJxd7odAZbNU8+
+         w23VZh8YC+2WMeioGIM1PMogTCK+zY04W038NprHfMFBE6gy+fOU/A3yv3umwkyR+3eO
+         TbsVdzLr8Y2YJogP9e2xcg+UUKlLIcyXP8L4zNCdgJKUmIowCgDHAY51z/paxpFFsatF
+         z7qA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkikSZSKPk+AGAS2BV3G5uzm7OPmEur/RyF4QwtgqdXv6TbWfVWP9N4egwS/3WvIno8Pj4E8aTQ54nHxJqVB5jAjaMZ84V3iinD9Rb
+X-Gm-Message-State: AOJu0YzcZ2uBibnwLFqWVHa5DPSLIH0KWIdgovrKRt6U8rnN4llvOKV8
+	wZnVzBCCZdB1ePFcIMxW/OCckuQ7PHm2QLx8lHs1e+qRCrTEDmeMtO4YBudIOdz1I4QMtZw1AIj
+	L9A==
+X-Google-Smtp-Source: AGHT+IHjsmkw6gcJpOYLaVOJnx0DSozjS1LUCiStBXBbuhGBJOoAQwoomO7H5cEoCaK9cwKJGkA7Y6cmS2s=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:f:b0:627:96bd:b1e with SMTP id
+ 00721157ae682-62fbaa3d8d7mr1514547b3.10.1718155883247; Tue, 11 Jun 2024
+ 18:31:23 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue, 11 Jun 2024 18:31:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/YOSTDTDlMN0uXKzhX+3sSTZ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240612013119.426771-1-seanjc@google.com>
+Subject: [ANNOUNCE] PUCK Agenda - 2024.06.12 - Paravirt Scheduling
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vineeth Pillai <vineeth@bitbyteword.org>, Joel Fernandes <joel@joelfernandes.org>
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/YOSTDTDlMN0uXKzhX+3sSTZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Tomorrow's topic is PV scheduling.  My apologies for the late reminder, I don't
+have a good excuse other than its become tradition to procrastinate on sending
+the agenda.
 
-Hi all,
+https://lore.kernel.org/all/20240403140116.3002809-1-vineeth@bitbyteword.org
 
-Today's linux-next merge of the tip tree got a conflict in:
+Advanced warning #2, no PUCK on June 19th or July 3rd (US holidays).
 
-  include/linux/cacheinfo.h
-
-between commit:
-
-  f6a9651bfd74 ("cpumask: make core headers including cpumask_types.h where=
- possible")
-
-from the mm-nonmm-unstable branch of the mm tree and commit:
-
-  685cb1674060 ("cacheinfo: Add function to get cacheinfo for a given CPU a=
-nd cache level")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/cacheinfo.h
-index 286db104e054,3dde175f4108..000000000000
---- a/include/linux/cacheinfo.h
-+++ b/include/linux/cacheinfo.h
-@@@ -3,7 -3,8 +3,8 @@@
-  #define _LINUX_CACHEINFO_H
- =20
-  #include <linux/bitops.h>
-+ #include <linux/cpuhplock.h>
- -#include <linux/cpumask.h>
- +#include <linux/cpumask_types.h>
-  #include <linux/smp.h>
- =20
-  struct device_node;
-
---Sig_/YOSTDTDlMN0uXKzhX+3sSTZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZo+ZIACgkQAVBC80lX
-0GxisQf+OmG6pg1a7Pj2fCoxVz3x2kbRExO5WJss2J8RJZWmyUs+q7NOkLb8QhA/
-nakSdWLgocoJ5AwgCCZjidYIPzQtqTM54R9hQsymo5jWk51xYCLhmWTe8rEElK7P
-pkH99Shjf3D4ErISee+9pQCfMp1D3vC75eb70fZIYqucaPbqJtkQ0JwjGAFflv6Q
-wFn+VQAwlfiXkIiS2gUYOKTSN7KqAJZr95+VzsWCvjMP/vUUIire6WY6p+8RMu8F
-PgnsHYWP79PONHrOyBcnnDau5IgFMqUgLFSerx2gxEXUFdFBKG1MEvEB5L3KiryU
-L8sPSAHgeGHDJyf0KKtifnrJ2Vb1zw==
-=iA/m
------END PGP SIGNATURE-----
-
---Sig_/YOSTDTDlMN0uXKzhX+3sSTZ--
+Future Schedule:
+June 19th - CANCELED
+June 26th - No Topic
+July  3rd - CANCELED
 
