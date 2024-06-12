@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-211361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0968C90509B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:43:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3CA90509D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A4C71C20D60
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:43:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5999B223A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3FE16EC0B;
-	Wed, 12 Jun 2024 10:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E2F16EC00;
+	Wed, 12 Jun 2024 10:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oktXjwWY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nz5ecIO0"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF42416E881;
-	Wed, 12 Jun 2024 10:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F4516EBFD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718189008; cv=none; b=sPPBLByf++gj99MU1xLsFTL37W9NYhxi+sYdIQwHLyyGon962A88MZJRYrAZNdqQ+wNEc6q/Ys7lEJBxQhXKSSyLhwWL74LWnIneejtcqxdGpBAMuEmPjdKJoWi9ZvaP97zil2bJSXqkixXIu0oG7sxLTMcCKilsdEs9hgkpw6w=
+	t=1718189021; cv=none; b=SGdFU6zAyxNp/p9ApX4jSB0Vt/V/jutRRCSSUMyFx+6dxsVcnftUmbKUtbbBapS8bSqZ1NPWuyUbZ1XMXIu3+0LeRh1dslXMT3FW1I42kNo7Gs1b1Np9pcYalZT4fvQsX8eJ94Cpmj997/eQjEmcwSwl+84Nn8mSR/XwgxCfBj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718189008; c=relaxed/simple;
-	bh=i0AkVG96HZP+xZlgakshFx4WYDgJ6NHv2HEdMjfHNzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dj/YibfbEiEl47f41N+t+jnhxm2KWcLg33AVj/p9qYtkhL2SuxnrNjX0f3DHX56mxVeV9DRYL0BUiXMNWpr3GYPZIOfo8L0k6KO0Gd3tpQLJc4IpISahs+JjM4ZmHJQkrtksBTx0by0H5cYh0UMSkIlvHiMAdH38A9DM5YC5F9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oktXjwWY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1DE0C3277B;
-	Wed, 12 Jun 2024 10:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718189007;
-	bh=i0AkVG96HZP+xZlgakshFx4WYDgJ6NHv2HEdMjfHNzM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oktXjwWY0SjBMdlI1iZB4rWkwiB5T05GruABT09QkcllcPLknmNITngDkJ7UMNaVV
-	 7Fdv2sgReaQFCD3tdrl+PQWXYifjYJ4Dsyu/D0h8ZZtxyCNx8tErP0cfR9Naw+Enng
-	 GPYw0bbfHVB0ppCEf09EdsHw84edZ2TvDOlkyLjKvx0P5Ib9CTIJOUHsjyrq1jdnnb
-	 YhpATUXX70LETG2uNLsk5gafHeLU1rcxvHvBx0p54u3Dc/gTG82bVYjiOv+5hjpcQL
-	 g8YAI2sdNPrGmcGDYJD8lbWIOgr1cRe4XJpdcBR+1HlfgMfZZFdOBxDWsM9gzaV21H
-	 Yu/8O4vQJkbDw==
-Date: Wed, 12 Jun 2024 11:43:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shuah Khan <shuah@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: mm: Make map_fixed_noreplace test names stable
-Message-ID: <Zml7zMzgBLEpMm8J@finisterre.sirena.org.uk>
-References: <20240605-kselftest-mm-fixed-noreplace-v1-1-a235db8b9be9@kernel.org>
- <20240611152317.8e72edb3a545a685a2a0b395@linux-foundation.org>
+	s=arc-20240116; t=1718189021; c=relaxed/simple;
+	bh=REYZcvusm3pkwQ7HGYtJFqKnsOvXK1eSq4fjluTiMa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KXQUGG1PToVQD0oEer7jsUtGYqF+ZQTYhc9auXPqLdQ3Ar6T0FDw+tgwCBUre8Gl5AtAsiYqrvHXLsy2wQmLgubehZkH20N53yP0TH4tx/1CydQBBKK3iKqBBw57IQBl6JG7gYfmYCE3YipaaryvcZbvhsYD3ARk2ytYqIJTxAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nz5ecIO0; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ebd421a931so44251831fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 03:43:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718189017; x=1718793817; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=en5v3zZb3SYUynuEEvB5KY7fvjCtjNs2C99/5XHt5sQ=;
+        b=nz5ecIO0pAY/S7aL5GGowJEQAAJHigWeTCvTLfrU434O6+lYLQ4pMiQpdHx44i7S07
+         uLavFrc8a/A6vwKIlUUgnhSDKbvYSfhFody4I34hFYeyod+YcOFazPwgHQZ3Q7hJzuB3
+         QzQMdFpLD/m2bOpX1vzEAbETmqydRUHx3BYtGH+WdG+FPFnvgF4F9zQcwsAaYOq1jipp
+         xr1jdppunOWlitTbbZhalwQFI206a3PefqXcvmIJezYqHeXs/INrjzfFJlIHx5ZFP87+
+         IovLV4n3tI4ikkID7le/Ag8TLRG4iDNkJAlIsO4PHpBCFMLH+VfeTMLE/NSe7hitSNIq
+         iGOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718189017; x=1718793817;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=en5v3zZb3SYUynuEEvB5KY7fvjCtjNs2C99/5XHt5sQ=;
+        b=j4agTEgW3A6h7NhWAiNUryQW+DPVfFnnZ63kI14dJGJ7ZVaF5ibqLUhegw1ruhggUP
+         2N5RDu7Su8ZeegNV/aoNCGfrP3EI4Va3HXdOa2lMmVGf6mPrTzXbXkpISgdsqCa7/Z2E
+         Ich0iAX9p+zCPywgw62Mv3g/kClARU+XMrq/h8El51G17SYkmhJMoSfQ0MtZN3dMhyHO
+         limird0yjJzT0/QhLD/ck6qIUnwVzvyr4W9d59KfHTOi/RCg59Mf/GmQqQSfG25GS83d
+         XOSr7RPDhWA8TiA4YiY6WktqAusc6Bm0Qn0MPzBhzbCJO74LIblu5fjvXJtWAU0NcKll
+         GPxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGgbYoRSigS3M+CJJeeR+jt3lMmPBoXPrTXVRzXhgmRY4VTREdpk9TVr8LCn9z44n6S60c32aikPl/Pdq5vkCw7FIjfeCsXe/kQKKp
+X-Gm-Message-State: AOJu0YwAzgkB5VStr6QjIN6hTRbvHPaC39/4lfNEUp/pPrAsGHwb+Q6k
+	EMQ5DCgrHnkxp3VVzDfI6gxGDd/KKNH64yRKki76jDhMxThJIuojOCc9udyT2bI=
+X-Google-Smtp-Source: AGHT+IGAjGH7WuBg4zqQ4D62wvnr79c+GSlh8tV4aOGiyUMLTUamEwviTONC6JOitXK9+WCXuDW5Ng==
+X-Received: by 2002:a2e:a796:0:b0:2eb:fda7:e35f with SMTP id 38308e7fff4ca-2ebfda7e40bmr8240381fa.5.1718189017181;
+        Wed, 12 Jun 2024 03:43:37 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de62fsm21843715e9.38.2024.06.12.03.43.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 03:43:36 -0700 (PDT)
+Date: Wed, 12 Jun 2024 13:43:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jacky Huang <ychuang3@nuvoton.com>
+Cc: Shan-Chun Hung <schung@nuvoton.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] pinctrl: nuvoton: ma35d1: Fix an IS_ERR() vs NULL check
+Message-ID: <840152f9-d3bb-410e-8164-4c5043e1983e@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="taj9yIMJlp9FRGvc"
-Content-Disposition: inline
-In-Reply-To: <20240611152317.8e72edb3a545a685a2a0b395@linux-foundation.org>
-X-Cookie: Your love life will be... interesting.
-
-
---taj9yIMJlp9FRGvc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Tue, Jun 11, 2024 at 03:23:17PM -0700, Andrew Morton wrote:
-> On Wed, 05 Jun 2024 23:36:12 +0100 Mark Brown <broonie@kernel.org> wrote:
+The fwnode_iomap() function doesn't return error pointers, it returns
+NULL.  It's the same as of_iomap() in that way.  Update the check
+accordingly.
 
-> > KTAP parsers interpret the output of ksft_test_result_*() as being the
-> > name of the test.  The map_fixed_noreplace test uses a dynamically
-> > allocated base address for the mmap()s that it tests and currently
-> > includes this in the test names that it logs so the test names that are
-> > logged are not stable between runs.  It also uses multiples of PAGE_SIZE
-> > which mean that runs for kernels with different PAGE_SIZE configurations
-> > can't be directly compared.  Both these factors cause issues for CI
-> > systems when interpreting and displaying results.
+Fixes: ecc5bf868673 ("pinctrl: nuvoton: Add ma35d1 pinctrl and GPIO driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/pinctrl/nuvoton/pinctrl-ma35.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > Fix this by replacing the current test names with fixed strings
-> > describing the intent of the mappings that are logged, the existing
-> > messages with the actual addresses and sizes are retained as diagnostic
-> > prints to aid in debugging.
+diff --git a/drivers/pinctrl/nuvoton/pinctrl-ma35.c b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
+index fb933cddde91..1fa00a23534a 100644
+--- a/drivers/pinctrl/nuvoton/pinctrl-ma35.c
++++ b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
+@@ -571,8 +571,8 @@ static int ma35_gpiolib_register(struct platform_device *pdev, struct ma35_pinct
+ static int ma35_get_bank_data(struct ma35_pin_bank *bank)
+ {
+ 	bank->reg_base = fwnode_iomap(bank->fwnode, 0);
+-	if (IS_ERR(bank->reg_base))
+-		return PTR_ERR(bank->reg_base);
++	if (!bank->reg_base)
++		return -ENOMEM;
+ 
+ 	bank->irq = fwnode_irq_get(bank->fwnode, 0);
+ 
+-- 
+2.43.0
 
-> This sounds fairly annoying and I'm inclined to backport the fix into
-> -stable kernels(?).
-
-It's annoying but more of a UI issue than anything too serious - for my
-setup it just translates into not validating those individual tests and
-instead only paying attention to the overall result of the program.
-Personally I'd say that it reaches the severity where it might be worth
-sending for v6.10 but not to stable.
-
---taj9yIMJlp9FRGvc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZpe8sACgkQJNaLcl1U
-h9A3rQf/X65fpQaBQdsPSyX4tv50iov2KxXIBmL++mft/PrqcYvGNIQAtxXjeXQZ
-Q5f7YQ4YcCHlUCjw3ic7zLPox1YNobi7ZBSCU/QvZ9YeWhA3/Ud8Q9CdYPKwx3ZS
-xhK9NZpQ5WO2QOmtRfSLkdMCTnYV36oM4K4gb9duQOJtEZfh769/AmbVzLLnCoab
-WIlqmwoMrkfMieNk+H8z/1i2jFWVTxHRiM73dMv6SiWCIjQbMixCXlOMvsf9bCYc
-6Eol5gIsfEHmL7qbVi+d+MLC4uypLuA35Mtqvez3EGl1spWKsjV9NsxA2kD7hyVm
-CE/qEsbVD4KHawxWtsoSbAT4PyHPfw==
-=/+tZ
------END PGP SIGNATURE-----
-
---taj9yIMJlp9FRGvc--
 
