@@ -1,89 +1,133 @@
-Return-Path: <linux-kernel+bounces-211113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17457904D44
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:58:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74CAD904D4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1A31F23DEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:58:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863101C21522
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DE716C869;
-	Wed, 12 Jun 2024 07:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FFF16C875;
+	Wed, 12 Jun 2024 07:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="se3m/+I1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="zWvqyePI"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95B816C6BE;
-	Wed, 12 Jun 2024 07:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD4B16C859
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718179093; cv=none; b=ghtp/g1fqp40vcvTyPdFbf1vvjmnuXGSayMzQOvrWUAHdgM+YKGWGWvB5fTBwKveLdJiPqSe5O6yNIEfrj2rtbgm4BTJn451eK5ooHPRUKp4TM/8sDgCEp/j7AU/7A9TYN60BCiwTf8lI6cUKFuHD1UZQn2wrGa78hh5y5jDaOI=
+	t=1718179152; cv=none; b=C9miyU4BvkwyW30+3rP4SICwIZY1kelDcg+IuBaUpDlAVczsX9qIKYsYNY1holHPx9ASs5eRePobL+C6hQ7sKu5UONkhJhYhAwUb827V7bug53H8UF1TPme+Yc7O9YBI6M6nwTOSTFCpBMJCxMguELOFuv6EQSiWCPf75N8fozw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718179093; c=relaxed/simple;
-	bh=OknuNNK6uKLrZGWMzcve3pAdEC6a+jZCzFuUAGM0Ipw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pu38KHQhGFmQVXT4mhyxH9a4nbkJUw2QZISJAMsybpSsSRRNY20Eq6sAF1P0XYzzUHODkXH/1050HfdALc8RpSQoXPLqCocJ2ghDtDuSgi/W5vJu0v0zZzWkeCYixBlwtROM1JMU6qRQprVvRotCIftMAcZnLsG77OUFsRYr8xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=se3m/+I1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 201A9C3277B;
-	Wed, 12 Jun 2024 07:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718179093;
-	bh=OknuNNK6uKLrZGWMzcve3pAdEC6a+jZCzFuUAGM0Ipw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=se3m/+I1/51CyWYewGMwD1WNe7WIJWRqspVpvn8k3yTPWa7WQvJSpkFjjUYsNx3s9
-	 2rDM1spM2i6oNdvCV6cHc8l7yevsUj1hAJ0DJUr+J8QtCRcmARc1zRkTMAHbS9bqn/
-	 veY/zAQtP7Nf+E3xMa+5BbTjj2eCA2+RMe5JBXsQ=
-Date: Wed, 12 Jun 2024 09:58:10 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: joswang <joswang1221@gmail.com>
-Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jos Wang <joswang@lenovo.com>
-Subject: Re: [PATCH v3, 3/3] usb: dwc3: core: Workaround for CSR read timeout
-Message-ID: <2024061247-geranium-unstaffed-ff09@gregkh>
-References: <20240601092646.52139-1-joswang1221@gmail.com>
- <20240611142953.12057-1-joswang1221@gmail.com>
+	s=arc-20240116; t=1718179152; c=relaxed/simple;
+	bh=vwNJ897gwBvDgypF3Aq9mgPnj8YQo/CTPzx+egzni4c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A+2GH+O0XUKs0Bp6Z+QSInu0pu2GQjKJFuLL7GfboaNtoDOjcKFoSwzSKq9ERcd+WE96yxh9aflJQiy771KlkdP8txeu62uUavlqzB9kJtr7VRSpd/R22qIcHf54wq6GCsDI1iCgwXqukZ4ALJ49zgjDUulzgsZ7AB2sXrJ7gYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=zWvqyePI; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52962423ed8so7545909e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 00:59:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718179150; x=1718783950; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J9bGYOos+5ZAvSBq70WnnGsqeYl9M4GtIdifUxXDp6M=;
+        b=zWvqyePIFpXkfXxDhnYeGltGSiPqWz4I0ZG6/nztCMDdYBSnx18fg0mTlQMUj8Hz3V
+         90IgUsz1qtr/L41nWvRgmDIWbt4aZAwNEfhGZiiiZT7GBny7zjq764evOPLpFN/QMWbL
+         RHcy5JwngJcwt8PdZmFBlGKvWs62ukDWcS39vM57F49mEjLW4NbHZMX4YiM9HgQemVKt
+         tDNApbw4Mv6BUrUHzRGJv3g3BZ8ntqcDW35LcCCpRfxJHkrSn7W8CCqL8yr9q9Z5WA0d
+         rekcySITRF32nUuFZjaAR2e5wq5u+Yn6UfKTTd1YTFYOTbTdlCPWOnjsU2mA8+jMdz26
+         d/ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718179150; x=1718783950;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J9bGYOos+5ZAvSBq70WnnGsqeYl9M4GtIdifUxXDp6M=;
+        b=IYrKR/K74oSXiuF+CRbbBkksLSxyQGIFcrowXR+paxaUTV1Q83Vrb8y8lNHfkglMBC
+         Xj3XOb98MLetbiw7BhRDRkB1sipgKK5orL3J5rNVAJYfSn2elmHezQ9Luw/dNIFeZnK5
+         OJDHIgeaOK/OQOwsJPR2FsO1cHyQgKbnAoJdHImtZbbP3vhDDLOTliFr89105fK0GlsQ
+         6FZseGNKT4uVOIkNDEnq3t6JiDcl2EEhlpp+odvvwnq3c263FBFUCSlphvap41lcjgKA
+         0euzqj20jxAwsxMOVy2KDBOztpztKENgA9/WcUbZ5+vGPjnq4Ue6h3sVsBwZ6GfkX5Sa
+         EHNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUG3Pu8zX3xWUxUBBqXK5npD2aNvZtadivrwMfQ10AqlkFss8LaSt99/8BTEvlYkhaq6VESKY0moAnL4BqXRXYT9EozutUrA0hG89x9
+X-Gm-Message-State: AOJu0YxVCfFyKE70rFV+2VaFwYdximAg7zpcZvUB/ej+pBoXRJfxcM6Y
+	mbkel6RY9we/dp6lYZvfmzm49NsnVfOPHNMWDvN1tXq7QfMYawdLCO7OytlTmLM=
+X-Google-Smtp-Source: AGHT+IHW4NIxUvz4W89OLc8Yhve4W25GsEQm/AZgXDZVaD85P+vCuq8RK+JIPGo75+rm9H3KVgiVuA==
+X-Received: by 2002:a05:6512:1243:b0:52b:bf8f:5690 with SMTP id 2adb3069b0e04-52c9a3fd437mr800598e87.52.1718179149308;
+        Wed, 12 Jun 2024 00:59:09 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:8d3:3800:a172:4e8b:453e:2f03])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de607sm15312315e9.34.2024.06.12.00.59.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 00:59:09 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-bluetooth@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] Immutable tag between the Bluetooth and pwrseq branches for v6.11-rc1
+Date: Wed, 12 Jun 2024 09:58:29 +0200
+Message-ID: <20240612075829.18241-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611142953.12057-1-joswang1221@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 11, 2024 at 10:29:53PM +0800, joswang wrote:
-> From: Jos Wang <joswang@lenovo.com>
-> 
-> This is a workaround for STAR 4846132, which only affects
-> DWC_usb31 version2.00a operating in host mode.
-> 
-> There is a problem in DWC_usb31 version 2.00a operating
-> in host mode that would cause a CSR read timeout When CSR
-> read coincides with RAM Clock Gating Entry. By disable
-> Clock Gating, sacrificing power consumption for normal
-> operation.
-> 
-> Signed-off-by: Jos Wang <joswang@lenovo.com>
-> ---
-> v1 -> v2:
-> - add "dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk" patch
-> v2 -> v3:
-> - code refactor
-> - modify comment, add STAR number, workaround applied in host mode
-> - modify commit message, add STAR number, workaround applied in host mode
-> - modify Author Jos Wang
-> ---
->  drivers/usb/dwc3/core.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Should this have a cc: stable line?
+Hi Marcel, Luiz,
 
-thanks,
+Please pull the following power sequencing changes into the Bluetooth tree
+before applying the hci_qca patches I sent separately.
 
-greg k-h
+Link: https://lore.kernel.org/linux-kernel/20240605174713.GA767261@bhelgaas/T/
+
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
+
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/pwrseq-initial-for-v6.11
+
+for you to fetch changes up to 2f1630f437dff20d02e4b3f07e836f42869128dd:
+
+  power: pwrseq: add a driver for the PMU module on the QCom WCN chipsets (2024-06-12 09:20:13 +0200)
+
+----------------------------------------------------------------
+Initial implementation of the power sequencing subsystem for linux v6.11
+
+----------------------------------------------------------------
+Bartosz Golaszewski (2):
+      power: sequencing: implement the pwrseq core
+      power: pwrseq: add a driver for the PMU module on the QCom WCN chipsets
+
+ MAINTAINERS                                |    8 +
+ drivers/power/Kconfig                      |    1 +
+ drivers/power/Makefile                     |    1 +
+ drivers/power/sequencing/Kconfig           |   29 +
+ drivers/power/sequencing/Makefile          |    6 +
+ drivers/power/sequencing/core.c            | 1105 ++++++++++++++++++++++++++++
+ drivers/power/sequencing/pwrseq-qcom-wcn.c |  336 +++++++++
+ include/linux/pwrseq/consumer.h            |   56 ++
+ include/linux/pwrseq/provider.h            |   75 ++
+ 9 files changed, 1617 insertions(+)
+ create mode 100644 drivers/power/sequencing/Kconfig
+ create mode 100644 drivers/power/sequencing/Makefile
+ create mode 100644 drivers/power/sequencing/core.c
+ create mode 100644 drivers/power/sequencing/pwrseq-qcom-wcn.c
+ create mode 100644 include/linux/pwrseq/consumer.h
+ create mode 100644 include/linux/pwrseq/provider.h
 
