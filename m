@@ -1,111 +1,197 @@
-Return-Path: <linux-kernel+bounces-210974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB969904B87
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:26:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B813904B89
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F185F1C2145D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9BD01F22FD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAE1168C15;
-	Wed, 12 Jun 2024 06:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E30168C3C;
+	Wed, 12 Jun 2024 06:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z6a9aNld"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VMJXd1HL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AD91649BE
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 06:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762F81649BE;
+	Wed, 12 Jun 2024 06:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718173589; cv=none; b=MULBDc58U6N7I/XTDY+Hrlymfiu7b8VRtdand9B20RRTp02K8K+bwsfV+oN05KaSLdGjwoqcsz8u6dSdlXSVe+z6W/92HNIFIL4NSxs3H8teH7bW8a6Amp4K4SeAVMRdBdqy8dmVuDKTipDMGBpttnRe8eM6gLM/jo87Te1Hm98=
+	t=1718173595; cv=none; b=CyIO+TNCBZsMQAwb1yum4apTIhCICZahmagFAgMCAuaZixAZvx0VaNn3q6mOd9VtbEAdRM599NLLhI21U/4dERqAd4EkjNu+heq3AnCwSLRqC6+LIZ0SBm/7i8DPlPyJcrudmHwgLMhRhF3TInkJiLMzR763xcYetBlZfFCetq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718173589; c=relaxed/simple;
-	bh=OjV2vgagW1+36R48ACdlpUls/Ff5SMqKkUp9o2DpjS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gy3eD8RZPGPX6igqsUuOiywsj91X9vQ+3bIlD69nhan2OoXVyeJC06OLmiO7Az6lPvel1l5AR1lfdvgHnHwjwVjEur4G9QC6Qb2deFGxIhfuVeCxIX1DkKhyDp9m0pjM3vzBd9rEvU7PVNrxDtDJU89CBFm3cz8SMY4fWcXmmNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z6a9aNld; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70417a6c328so4001594b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 23:26:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718173587; x=1718778387; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+0qDpNTuN255HruljLxZ81sNK88XdDWwGWSt+LRgqrk=;
-        b=Z6a9aNld1t2HgEmd1UnMeg1fWCv8oBp+tHv2ilPRrRzXEJYygV0maRiC/TuZRJJmsK
-         +C5WjAaU2gW6//5K3Sd1QNSEjGQZVtUKwjCBy+cuBXH301EUjBkLjghIg3ZKW04C+jnj
-         OT3zcayDwptwZC0nsP2bS3Fa568Uh4LPoy7q24KTBF4qm+gsdoxzhW83wmnMPrXcAYO1
-         1FX5LUwv3+KfdHsagVpPuy9u/lPIDuRvIt2Qx0a94W1d9J/XqpSEMBEsz2J7zZQY001F
-         1os7McqTEY73SPT9ewUA0EKk1rgMUA9rl0JW4QtoDDbUVpoNCRZ0XCGplpYH5eIJjcOb
-         Ujgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718173587; x=1718778387;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+0qDpNTuN255HruljLxZ81sNK88XdDWwGWSt+LRgqrk=;
-        b=tAPFYtFvKNGDYRhWAobsmu8OGXH2CeJkWdHVARKfLxbszsf3hcqBp7QpI28RC7DFJ8
-         pBaoCIUnjvkq1PnsyDx4lKKrv0ghu3k6kGAcS1tFErKWB9xb+S48J4rC4Bl5xRYlwcL0
-         KQbK7pqFUXwYT2mhMjz7fA4+cjbaTozPEhgnsZ91XmvcMSdUNHmgR4ag2Amf6ILQaUrR
-         /cwItqULwA52R8Fx0KE4WJlsFwp75o2EVFKw3KwDU3FhY194eqwq5XOv8rwxr8nz+pIC
-         dgsUMaErLokSa1CAZMVxD/bX/9qMcH4QibowN0aVKzP9SqvUOY2zKiX2d8v5jy6mzhZX
-         eyxg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7BjNNM3SFptdzj4O5kAYOiG8nSXT4jyjMlJ0RHcJ6b0VBkQI5fNQ8F+tzB+gXr+vdLi3liYAN0JVwWsHkQaL+XYKCw/eZ+rSWRi9L
-X-Gm-Message-State: AOJu0YyPfvVOu7zk8yfSoWMcQP9jxN2mi/1tGfhIDWcM5DShhc0imv08
-	GAODBrelOymykAN1pM7u9dopn1hNSrBRHmF7R1mdKooBlBIXqCLIkajLAwOs1UE=
-X-Google-Smtp-Source: AGHT+IGzELfA2i9/pLOE2Y9YPsNDC54W5IrlhSFxE52jcKF0MeUTrJiiVe2uK90sPFxYjCQcX+MoNQ==
-X-Received: by 2002:a05:6a21:32aa:b0:1af:fbab:cf92 with SMTP id adf61e73a8af0-1b8ab6a8be5mr1146101637.54.1718173586835;
-        Tue, 11 Jun 2024 23:26:26 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f712408089sm53434545ad.117.2024.06.11.23.26.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 23:26:26 -0700 (PDT)
-Date: Wed, 12 Jun 2024 11:56:24 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Riwen Lu <luriwen@hotmail.com>
-Cc: Ionela Voinescu <ionela.voinescu@arm.com>, beata.michalska@arm.com,
-	rafael@kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hotran@apm.com,
-	Riwen Lu <luriwen@kylinos.cn>
-Subject: Re: [PATCH v3] cpufreq/cppc: Remove the desired_perf compare when
- set target
-Message-ID: <20240612062624.i4kcm2nhneed6yjk@vireshk-i7>
-References: <20240530061621.36byo5a2iqc6o2az@vireshk-i7>
- <OS3P286MB249076187B3497D1EDD70988B1F32@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
- <20240606090737.z3qenphikjs5ijj4@vireshk-i7>
- <ZmgQ06jtJBPh5wat@arm.com>
- <20240611091049.lrypvvluntf37uff@vireshk-i7>
- <OS3P286MB249073C57E2B5A36F45A02E0B1C02@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
- <20240612062404.yjfduze4bvgyts6a@vireshk-i7>
+	s=arc-20240116; t=1718173595; c=relaxed/simple;
+	bh=sQH+ctTBrnaFXqBVQ3P9FoSeWIhSEL3g55kjhK2gcCQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tu5w0NZIrLf1xoCPFMfq/4PlemdA9rD5O/NjWOcsGsgSQHAkn7k42jODfQTFuiRrd6ogEunfDIt/ONsCGRUXEC8mt6wsXJKdtlP9jJVty/A5kzq6YLpdEhiVgkTC4MDKcYA89Zl+oAz0VaMcWVI7y5BUsjnp+nY2/qImAk/4YYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VMJXd1HL; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718173594; x=1749709594;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=sQH+ctTBrnaFXqBVQ3P9FoSeWIhSEL3g55kjhK2gcCQ=;
+  b=VMJXd1HLogVpkz3FVEvaJ4Fs7kexyeEekycHcmvWeB9hGsgCujaD+/DV
+   53LPpIvMpdnUaqd2TfyFCS9Xb095vn8sSGTrULG5GYjAKAzSibEfna6pN
+   58ipswwYYjHCT+SrNuC5sXoQc3Vmk9JzzyMA3M/op1crLd3nGM65Z41xm
+   2SVD8axvdaxWpfakQ2cNCcIfBY/BlAYmrK14vBMLCfQF+Btxhtw4gB88h
+   eIuX5nj2ZDp10dXw+yU9UwMTMD4b5k3GQoy9Gh64RJlmjYPwFZKYqcrS4
+   N7ybbPPMqSQv8FZr0a03t3a5saoFlvjnkhsj4CJFZDMIQfrR55kEq2y+J
+   w==;
+X-CSE-ConnectionGUID: BSXy1zvgTaCUVBDq/Xh+WQ==
+X-CSE-MsgGUID: pKmZLNnVTP+Dv6suCj0PzA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="25593976"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="25593976"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 23:26:33 -0700
+X-CSE-ConnectionGUID: JGKS937NR8+AHIMi83g6sA==
+X-CSE-MsgGUID: NLMuK80MQ1OvZJMLwJDkOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="40155538"
+Received: from rathodpx-mobl.gar.corp.intel.com ([10.213.109.222])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 23:26:29 -0700
+Message-ID: <4e68c0164022ca41494c6d577766dd4b66c93e9f.camel@linux.intel.com>
+Subject: Re: [RFC] HID: ishtp-hid-client: replace fake-flex arrays with
+ flex-array members
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Erick Archer <erick.archer@outlook.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+  Justin Stitt <justinstitt@google.com>, Kees Cook <keescook@chromium.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-input@vger.kernel.org,
+  linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Date: Tue, 11 Jun 2024 23:26:25 -0700
+In-Reply-To: <AS8PR02MB723798FF6CEF28DCB62FAC958BC42@AS8PR02MB7237.eurprd02.prod.outlook.com>
+References: 
+	<AS8PR02MB723760CB93942370E92F00638BF72@AS8PR02MB7237.eurprd02.prod.outlook.com>
+	 <80976997acb82fe3e6ba54fa2708c8f40fb3eb00.camel@linux.intel.com>
+	 <AS8PR02MB723798FF6CEF28DCB62FAC958BC42@AS8PR02MB7237.eurprd02.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612062404.yjfduze4bvgyts6a@vireshk-i7>
 
-On 12-06-24, 11:54, Viresh Kumar wrote:
-> On 12-06-24, 10:52, Riwen Lu wrote:
-> > I think it's no need to remove the "desired_perf" local variable here, the
-> > code is seems more readable.
-> 
-> There is no need of a temporary variable and I don't think it increases
-> readability at all. Moreover, same needs to be done in
-> cppc_cpufreq_fast_switch() too.
+On Sat, 2024-06-08 at 11:56 +0200, Erick Archer wrote:
+> Hi Srinivas,
+> First of all, thanks for looking at this ;)
+>=20
+> On Sat, Jun 08, 2024 at 01:42:54AM -0700, srinivas pandruvada wrote:
+> > On Sun, 2024-05-26 at 15:32 +0200, Erick Archer wrote:
+> > > One-element arrays as fake flex arrays are deprecated [1] and we
+> > > are
+> > > moving towards adopting C99 flexible-array members, instead. This
+> > > case
+> > > also has more complexity because it is a flexible array of
+> > > flexible
+> > > arrays and this patch needs to be ready to enable the new
+> > > compiler
+> > > flag
+> > > -Wflex-array-member-not-at-end (coming in GCC-14) globally.
+> > >=20
+> > > So, define a new struct type for the single reports:
+> > >=20
+> > > struct report {
+> > > 	uint16_t size;
+> > > 	struct hostif_msg_hdr msg;
+> > > } __packed;
+> > >=20
+> > > but without the payload (flex array) in it. And add this payload
+> > > to
+> > > the
+> > > "hostif_msg" structure. This way, in the "report_list" structure
+> > > we
+> > > can
+> > > declare a flex array of single reports which now do not contain
+> > > another
+> > > flex array.
+> > >=20
+> > > struct report_list {
+> > > 	[...]
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct report reports[];
+> > > } __packed;
+> > >=20
+> > > Also, use "container_of()" whenever we need to retrieve a pointer
+> > > to
+> > > the flexible structure, through which we can access the flexible
+> > > array
+> > > if needed.
+> > >=20
+> > > Moreover, refactor the code accordingly to use the new structures
+> > > and
+> > > take advantage of this avoiding some pointer arithmetic and using
+> > > the
+> > > "struct_size" helper when possible.
+> > >=20
+> > > This way, the code is more readable and safer.
+> >=20
+> > Applied and tested, atleast didn't break anything.
+> >=20
+> > But the explanation above didn't give me enough clue. You have
+> > added a
+> > payload[] in the=C2=A0 struct hostif_msg {} then using that as a messag=
+e
+> > pointer following the header. I think this description needs to be
+> > better.
+>=20
+> Yeah, I will try to improve the commit message. What do you think
+> about
+> the following parragrafs?
+>=20
+> [I have copied part of the message to show where the new info will
+> be]
+> > > declare a flex array of single reports which now do not contain
+> > > another flex array.
+> > >=20
+> > > struct report_list {
+> > > 	[...]
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct report reports[];
+> > > } __packed;
+>=20
+> Therefore, the "struct hostif_msg" is now made up of a header and a
+> payload. And the "struct report" uses only the "hostif_msg" header.
+> The perfect solution would be for the "report" structure to use the
+> whole "hostif_msg" structure but this is not possible due to nested
+> flexible arrays. Anyway, the end result is equivalent since this
+> patch
+> does attemp to change the behaviour of the code.
+>=20
+> Now as well, we have more clarity after the cast from the raw bytes
+> to
+> the new structures.
+>=20
+> > >=20
+> > > Also, use "container_of()" whenever we need to retrieve a pointer
+> > > to
+> > > the flexible structure, through which we can access the flexible
+> > > array
+> > > if needed.
+>=20
+> I would like to know if it is enough :)
 
-Also please don't send the new patch in-reply-to the earlier one. Send
-a fresh thread.
+The apporoach is fine. But I don't like clubbing other changes like
+struct_size(). That make code difficult to follow.
 
-Thanks.
+Thanks,
+Srinivas
 
--- 
-viresh
+
+
+>=20
+> Regards,
+> Erick
+> >=20
+> > Thanks,
+> > Srinivas
+
 
