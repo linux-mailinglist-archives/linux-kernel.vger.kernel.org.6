@@ -1,236 +1,84 @@
-Return-Path: <linux-kernel+bounces-211317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7771E904FEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:01:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCD8904FF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13C9A281F5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:01:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753C21C22B0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5094116FF50;
-	Wed, 12 Jun 2024 09:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB4216E882;
+	Wed, 12 Jun 2024 10:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WLn6Pj7P"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kdKHnRoS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DFA16EC12
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E10A153BEF;
+	Wed, 12 Jun 2024 10:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718186384; cv=none; b=HHEd2QSmRKmoiCjUp4CAva1scolvvyQx2y+qq+OkzEBAmZyWUsvvoki7x1PC672tk9GBiRyuLPU2jAH9wHOaCOvFpYf2ybylmtIZdiey7U1LYlHuynd/qVrxnXU439S12evUetl/hafK19Pe7BTTaZ1u2OvlRBKwWLSWllPiyM8=
+	t=1718186443; cv=none; b=mquiluYqqQgWT4bTjqj1eGrEZSe8oxyTqHOa1Meqz9Kwp9EcQHNQwdUjs/2MXZubRLpySUV+kZ3qd93y/SL8bJ5PzFfrH619b+op58PEKrH3PXAG3tOGn4tHugZ9G3AisxG5HP2Gyp2qGqWATseS6dhV/d039TEA0rNkGUk9p7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718186384; c=relaxed/simple;
-	bh=ohK2sslGjClxr9kCmY/gW62DMEkgvC5Tz6xsCMKB8Kw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C6IYWUOgEB89spHWNXzkxxqDmeNG5WwPYukxuNu6wReDdwJDPf7bI0QVahG6mRFbDRo+SFOQtIJf1sYZYAY+EfX0MpWevEhRyQk3D8Sj/46qpHbmFuU8h6dks9T+Rs0hvCijudD3Gw0IL8NTxClVChCsi9UYlJ/YmAkvmz+oXbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WLn6Pj7P; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52bc035a7ccso2339769e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:59:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718186379; x=1718791179; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o+nA/cIlT4hl2if/i6DmrZViDpHELl0xAbf5HX+dSsg=;
-        b=WLn6Pj7Piq+4cztdivf0ukLwjmPqMkfsDfsto44sg8iXKOzIu5SiqrhpCeaYXPRo/R
-         uNA5r7LY3E5d7nXUvBXkcF0YRpgMRxiW6iGhg1jwrf6akDCBJoG4XtILeyd91ce3ies2
-         mkFqcWjtZSAsNj5xB5zobPbcgyKaCjRj6BcoJV9nPfAxa4SzZLlHNCl/hETbesD0rMIa
-         GlEyKOJB/bsQESlQU8kTXJnkEW6qbI5U8UfPwUUBTEJnNJWZ8s4aDCkPxwm6b9lXJDds
-         hkN+q5gAXOkS7/IUjvtu7+67EKtnPAcZiN0FeAp6RgKLoWVexYzPkxouHJN7hHktxC6z
-         2IsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718186379; x=1718791179;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o+nA/cIlT4hl2if/i6DmrZViDpHELl0xAbf5HX+dSsg=;
-        b=xHWNVc4uJRsxAccE8MUF0CkAJvRVqNUtnqtbPvMg2fOnmPAWDOZWpXm3TmnBr4WMkH
-         b1W3mgc3NSyJXDFP71NFzovnZTOu8tV291VyCsfYN1+qOnrt/BztMifckzT8BeGW+IUl
-         hGFyvWGua8j/8SjB0MVwesMgYisP3/5qV9HpNO3lr2iEmJ7Ek8Dkq/ijN3DOFX2nH48Z
-         CYXIW24BxwsO9dfgspi+tOpQkv1Nz1FokxUEbMaCGPZ0flMZpj4d5W+W03xx6WkKqj+z
-         Q5FbsWTebOP7Y0oPDkkDn8J37z1uC+JyXI64g1Wznhd0gxMcWJ5qsOuIk+sCW9kocjjy
-         s/Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUJFyylJcD9qSAyS0uwki4PY9FZtrPPZofZS6Qa0AzB4yfo8IcqV45vCQpB5UCo7YbmAGDXF62AAF9ndrqIOYvQx6+erRFtAnntxo6
-X-Gm-Message-State: AOJu0Yzh74Z3J6423JlcbVcugiTlNrhvXr16E3HeKO/wIrQF/GlPlrx+
-	6LiKhCGBRoxAziPubPz6dRvftlFg5chjaIBoQUH0FrsvLjwNasOyK8AEj5tPCco=
-X-Google-Smtp-Source: AGHT+IHTcT4mC0Nzbmc6b1H/FZNG20WBWcPGniAAoVbeRpccp8ESJqfGnnzabTmdUSfmS01JMG2n0A==
-X-Received: by 2002:ac2:5304:0:b0:52c:5925:fc9e with SMTP id 2adb3069b0e04-52c9a3c90a9mr711130e87.25.1718186379504;
-        Wed, 12 Jun 2024 02:59:39 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c8907dae9sm1408095e87.129.2024.06.12.02.59.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 02:59:39 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 12 Jun 2024 12:59:37 +0300
-Subject: [PATCH v6 6/6] arm64: dts: qcom: c630: Add Embedded Controller
- node
+	s=arc-20240116; t=1718186443; c=relaxed/simple;
+	bh=7LFqbV8a2eEf04HyVsqJ/oKgbTyp/2/zSarRLIBqhmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EcWLjqpE2qE0pi9O+OusiFF3di+MIZlA+fGvcfy06Dh2/rgsU+bIKhoWu+E2ZRglt3GOuTax+lqA48FXw3qNb75OZilJ5mCEKQ4VW+Ca3RB/LqO80uPl8fK6rY6N86bfpPR2R9a73bgS7qJBXm9HDS+W1BcdDaZK7DBS7BR3U4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kdKHnRoS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DADB2C3277B;
+	Wed, 12 Jun 2024 10:00:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718186443;
+	bh=7LFqbV8a2eEf04HyVsqJ/oKgbTyp/2/zSarRLIBqhmQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kdKHnRoS1XvxkBjEUW5CYbnJqb9mdMDAyeGMUa5SEH/jcItCRT6abOIulu1Io5Jg2
+	 67160/YLkMJCBzdDKsBJrZ0Jr/mGzLS7ONQmoIdZdL5jFSNBILuN9k+AtEFOML4mFI
+	 RLEbtwJQDeqa2oOkR6G7tM1IyDx5/kIUXiOylvrI=
+Date: Wed, 12 Jun 2024 12:00:40 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH] nvdimm: make nd_class constant
+Message-ID: <2024061206-unleveled-seduce-9861@gregkh>
+References: <2024061041-grandkid-coherence-19b0@gregkh>
+ <66673b8a1ec86_12552029457@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240612-yoga-ec-driver-v6-6-8e76ba060439@linaro.org>
-References: <20240612-yoga-ec-driver-v6-0-8e76ba060439@linaro.org>
-In-Reply-To: <20240612-yoga-ec-driver-v6-0-8e76ba060439@linaro.org>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Nikita Travkin <nikita@trvn.ru>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2519;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=ve9c78TTAFS5VXzgVyLUhE7e1KCToRb1yljm5NLcL8s=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmaXGGOk/65ERYG8sCrkBZ6uTW6sRyP3LfmRj1l
- 6y9bUFbLayJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZmlxhgAKCRCLPIo+Aiko
- 1dCvB/9LQGrfkJ/u4aLp75/Zx6a+cXAeCvOCANx8w5dfCHL5TokODXa5I6kDdMLBOR37znLJgqr
- aT9z6ceGWbOk93tw7e1g59lHc+8Mw5QRkxl4NUPCFd3n+sx7Xs7YqyL9RhMY7zld2zsnh75EzmR
- u9yd9Mopfkxb56v33Dy6yLVZZjs3nFyV0m6AZW+wJ1wAwsJG/YQlFiPa1O01ZGrlQ1nRFDfQPnr
- 2/PsADEFy5fmazZTtIVvKRMqdNoyn2DktsqfcSi0/xPI50LXPPLrveZFjnTdXDtyHC4TWvSgb5C
- /Ww4kB3AeLhoN1yGDBXzkwLqYmzOFKhZgCq7ppu4YnZvwmNt
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66673b8a1ec86_12552029457@dwillia2-xfh.jf.intel.com.notmuch>
 
-From: Bjorn Andersson <andersson@kernel.org>
+On Mon, Jun 10, 2024 at 10:44:42AM -0700, Dan Williams wrote:
+> Greg Kroah-Hartman wrote:
+> > Now that the driver core allows for struct class to be in read-only
+> > memory, we should make all 'class' structures declared at build time
+> > placing them into read-only memory, instead of having to be dynamically
+> > allocated at runtime.
+> 
+> Change looks good to me,
+> 
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> 
+> ...changelog grammar tripped me up though, how about:
+> 
+> "Now that the driver core allows for struct class to be in read-only
+> memory, it is possible to make all 'class' structures be declared at
+> build time. Move the class to a 'static const' declaration and register
+> it rather than dynamically create it."
 
-The Embedded Controller in the Lenovo Yoga C630 is accessible on &i2c1
-and provides battery and adapter status, as well as altmode
-notifications for the second USB Type-C port.
+That works too, want me to resubmit with this, or can I update it when I
+commit it to my tree?
 
-Add a definition for the EC.
+thanks,
 
-Signed-off-by: Bjorn Andersson <andersson@kernel.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts      | 75 ++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-index 8402ea2d93a7..f18050848cd8 100644
---- a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-@@ -370,6 +370,66 @@ zap-shader {
- &i2c1 {
- 	status = "okay";
- 	clock-frequency = <400000>;
-+
-+	embedded-controller@70 {
-+		compatible = "lenovo,yoga-c630-ec";
-+		reg = <0x70>;
-+
-+		interrupts-extended = <&tlmm 20 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&ec_int_state>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		connector@0 {
-+			compatible = "usb-c-connector";
-+			reg = <0>;
-+			power-role = "dual";
-+			data-role = "host";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					ucsi0_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_dwc3_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					ucsi0_ss_in: endpoint {
-+						remote-endpoint = <&usb_1_qmpphy_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					ucsi0_sbu: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
-+		connector@1 {
-+			compatible = "usb-c-connector";
-+			reg = <1>;
-+			power-role = "dual";
-+			data-role = "host";
-+
-+			/*
-+			 * connected to the onboard USB hub, orientation is
-+			 * handled by the controller
-+			 */
-+		};
-+	};
- };
- 
- &i2c3 {
-@@ -695,6 +755,13 @@ mode_pin_active: mode-pin-state {
- 
- 		bias-disable;
- 	};
-+
-+	ec_int_state: ec-int-state {
-+		pins = "gpio20";
-+		function = "gpio";
-+
-+		bias-disable;
-+	};
- };
- 
- &uart6 {
-@@ -742,6 +809,10 @@ &usb_1_dwc3 {
- 	dr_mode = "host";
- };
- 
-+&usb_1_dwc3_hs {
-+	remote-endpoint = <&ucsi0_hs_in>;
-+};
-+
- &usb_1_hsphy {
- 	status = "okay";
- 
-@@ -762,6 +833,10 @@ &usb_1_qmpphy {
- 	vdda-pll-supply = <&vdda_usb1_ss_core>;
- };
- 
-+&usb_1_qmpphy_out {
-+	remote-endpoint = <&ucsi0_ss_in>;
-+};
-+
- &usb_2 {
- 	status = "okay";
- };
-
--- 
-2.39.2
-
+greg "the changelog is the hardest part" k-h
 
