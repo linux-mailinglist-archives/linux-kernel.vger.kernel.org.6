@@ -1,117 +1,170 @@
-Return-Path: <linux-kernel+bounces-210908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 183A7904A02
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:29:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47FC7904A05
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDA8D1F245B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:29:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70351F24B46
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CF223769;
-	Wed, 12 Jun 2024 04:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C662576F;
+	Wed, 12 Jun 2024 04:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FdmUU+DV"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JywGFy1/"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3969764A;
-	Wed, 12 Jun 2024 04:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C5D63A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718166569; cv=none; b=d0OwgEeSbrhi+15xcag1+PokLToO4NXO7uoDQPopYiiYniQ55oPwcaVKCz99RHFroUDX83XoAO3izWCNtumzxBhHK9cNjKoIv+2sxzFyVEDh+Gr291CVUxiPZtnYw21KBjYW/4l0qt6jiC3qnxAMkNRg4xxtJVmqI03nx0+EPsM=
+	t=1718166690; cv=none; b=BLvdWf4qXm+DAqxC7gt3Q5HVgfy1J5p3iTyh+iynSaHPpTOypYGIR2vh3Tk2SUmmBEtj1Fbrd53iaatbZI339gewQXwD6DO90AyZg1H9OSZ0nJZT21yIOTrwGtnJeMG8WdGxn955hCAePc465XFIBGIxCdFiHu6I/RGwTNt7v/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718166569; c=relaxed/simple;
-	bh=qbMh0+pf2SPeD3Kjln8qLzxtLjXV8v02l3LAkjQVDyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eBx8ZGW/+P/xuPqdlIzbfZj76mVFLiKgEsrtoxdPBU4Ws+k5Z3Qo+AbHiEUDjj0RhulyOarWs0o5Mz1EypDgMmexA6EpS8jzOsVHmeWc1Yph3ikXYn6AecjBM+ARphB2j1bfCrgUaEibReE0kVR1eonQ1uyeN3J2nI1TALCtsH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FdmUU+DV; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=DUVnrezAAabhLkyXkeIE6MKzW6donbVmDcF5Y3z7MHI=; b=FdmUU+DVgDEttgjLj+4RxQ0bZA
-	tviaev38EhPBLr63OK5PQUupTvTyfCOSlPW9tJ5mhQa8idu9/Bqmfo7lJgVB6bysG/SJIUO7vhCzR
-	w8A7ujfqMgQJldJqgO/bOqYhKiElMPdFeTRoHyRCCHat/KGTOpLND7Zz665kXgoa03MG5Kv65eUAR
-	k28R5R4B6U1OfRrVOnGh44BWCQg1PX3YbYu6nlPy34dWXx4wYVrhYyGRb5Y5k7IAI+eII0bARTwrD
-	2jJSXNMIuQrnlWmZ1Lrx9yAFDATXWR724DXw09FW6RgMKStwrtWIdJUik1ppQ5T4stI/mn+5OfgSX
-	ATldFxOg==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sHFbu-0000000B1YS-0tjz;
-	Wed, 12 Jun 2024 04:29:22 +0000
-Message-ID: <8b66c491-ec6a-430f-8566-114372151c3a@infradead.org>
-Date: Tue, 11 Jun 2024 21:29:17 -0700
+	s=arc-20240116; t=1718166690; c=relaxed/simple;
+	bh=hSnJiEgR5nMe+pD1oPm3BPIx6ljI+CeVh/tUDiPt7w4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TGZb0Ar8aXrY04WO4hxNdRSbXOTXwiPygjMltMIpv/WBHyYCrFJWod3u6u6HWlBpKd5i7h/JN96K0l7pH3HUKn/MDCQCvFkANh+R1Z1EEfF91sn6McLpxE6akLjOfz/m9lR+H7W9AbQ51wYHTajTd+9OzH2J8tkeUCrBDcJ4mJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JywGFy1/; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7041a7d4beeso4005629b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:31:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718166689; x=1718771489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=26yCayUAzc76t5ERK7B6b8gwpGmJll8Ij+c08Bg2GMU=;
+        b=JywGFy1/ZJMdXblpUDu3vfbAHc41BGpW3SFtL5fAaPkpgADXKjklyV8/QSAf5MZrYl
+         awRCMjXfwK8enCCLyMgvArnetTGIFCIvYP1w9RqvYYqSWPuYrFejFCfL2Ut+twi2egRp
+         t5QAarNFZxXMKlNn/2heBWSKSqGE38tMpSOi8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718166689; x=1718771489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=26yCayUAzc76t5ERK7B6b8gwpGmJll8Ij+c08Bg2GMU=;
+        b=tmH9WabuvYM3NnbZOeiz6GvXHfntpNDX1oZ6Cmjyi8vbB8GFjp1h/7Ei0I1W65gZb7
+         9DURN8uXdf7y19tmObPjuj/u3FwF2TZYl06+4G4+743+GkJaDNJcrOShXYPvMotbYOwA
+         GIVPRak0kVK/98c9kYuZLbIj42g+Q7P4V49GPot7010B2hwB4qVdR6DmBJ8vouE+IKuA
+         +K8669999WQWCknAvcd87jUtTgxMXKkaO00FfUjPIIE7fQTzbEoucClbvGCRIW45R86U
+         oG5TFMP8joitZN3vn5uSxXlhZYyvKb9HKWWogpkVZslCSsIntiGbj+saeZqjHUam0Js4
+         Gq1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWqStngyn+dZQ02DLafJJOVQyjpwhqA2vSMO3EK0zGtd0DKbBr0KPKn0bTd3FVf+nd+e0ewyIaGjIrEPJOJH9JQLrEi7ryroljJ+qhJ
+X-Gm-Message-State: AOJu0YxsArvP4H7Dzg3fqWjyx/i0me1+VpONEJpxL8bWLuTj7mS9s2+u
+	nQtwVyJO3PqBf4qZDhgjOrhquKAbyUVV687p/ZAucXeEAtcZcjKwZnYjVhKoKw==
+X-Google-Smtp-Source: AGHT+IEDNIroERFQYahAEyUp89r/l251ag7KXTZkZl5/HBfB+fwRsfZPqR83QoYb4oKa3SSk62X7hQ==
+X-Received: by 2002:a05:6a21:81a2:b0:1b2:2e3e:42dd with SMTP id adf61e73a8af0-1b8a9be9bb0mr745623637.34.1718166688682;
+        Tue, 11 Jun 2024 21:31:28 -0700 (PDT)
+Received: from chromium.org (174.71.80.34.bc.googleusercontent.com. [34.80.71.174])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f74179d0basm11631455ad.122.2024.06.11.21.31.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 21:31:28 -0700 (PDT)
+Date: Wed, 12 Jun 2024 13:31:22 +0900
+From: Tomasz Figa <tfiga@chromium.org>
+To: Yunfei Dong <yunfei.dong@mediatek.com>
+Cc: Jeffrey Kardatzke <jkardatzke@google.com>, 
+	=?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Yong Wu <yong.wu@mediatek.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
+	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
+	Steve Cho <stevecho@chromium.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T . J . Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v6,03/24] v4l2: verify restricted dmabufs are used in
+ restricted queue
+Message-ID: <rw6dkzasaz4lnvtmxkxlkxte5nvphpjixigjouvjkpctscpdla@bheblt7kmj4y>
+References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
+ <20240516122102.16379-4-yunfei.dong@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 3/3] ABI: pps: Add ABI documentation for Intel TIO
-To: lakshmi.sowjanya.d@intel.com, tglx@linutronix.de, giometti@enneenne.com,
- corbet@lwn.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
- eddie.dong@intel.com, christopher.s.hall@intel.com, pandith.n@intel.com,
- subramanian.mohan@intel.com, thejesh.reddy.t.r@intel.com
-References: <20240612035359.7307-1-lakshmi.sowjanya.d@intel.com>
- <20240612035359.7307-4-lakshmi.sowjanya.d@intel.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240612035359.7307-4-lakshmi.sowjanya.d@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516122102.16379-4-yunfei.dong@mediatek.com>
 
-Hi--
-
-On 6/11/24 8:53 PM, lakshmi.sowjanya.d@intel.com wrote:
-> From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+On Thu, May 16, 2024 at 08:20:41PM +0800, Yunfei Dong wrote:
+> From: Jeffrey Kardatzke <jkardatzke@google.com>
 > 
-> Document sysfs interface for Intel Timed I/O PPS driver.
+> Verfies in the dmabuf implementations that if the restricted memory
+> flag is set for a queue that the dmabuf submitted to the queue is
+> unmappable.
 > 
-> Signed-off-by: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+> Signed-off-by: Jeffrey Kardatzke <jkardatzke@google.com>
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
 > ---
->  Documentation/ABI/testing/sysfs-platform-pps-tio | 7 +++++++
->  MAINTAINERS                                      | 1 +
->  2 files changed, 8 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-platform-pps-tio
+>  drivers/media/common/videobuf2/videobuf2-dma-contig.c | 8 ++++++++
+>  drivers/media/common/videobuf2/videobuf2-dma-sg.c     | 8 ++++++++
+>  2 files changed, 16 insertions(+)
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-platform-pps-tio b/Documentation/ABI/testing/sysfs-platform-pps-tio
-> new file mode 100644
-> index 000000000000..e461cea12d60
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-platform-pps-tio
-> @@ -0,0 +1,7 @@
-> +What:		/sys/devices/platform/INTCxxxx/enable
-> +Date:		September 2024
-> +KernelVersion:	6.11
-> +Contact:	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
-> +Description:
-> +		(RW) Enable or disable PPS TIO generator output, read to
-> +		see the status of hardware (Enabled/Disabled).
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index aacccb376c28..9c623f167aa9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17946,6 +17946,7 @@ M:	Rodolfo Giometti <giometti@enneenne.com>
->  L:	linuxpps@ml.enneenne.com (subscribers-only)
->  S:	Maintained
->  W:	http://wiki.enneenne.com/index.php/LinuxPPS_support
+> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> index 3d4fd4ef5310..35a3c1c01eae 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> @@ -710,6 +710,14 @@ static int vb2_dc_map_dmabuf(void *mem_priv)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/* Verify the dmabuf is restricted if we are in restricted mode, this is done
+> +	 * by validating there is no page entry for the dmabuf.
+> +	 */
 
-I can't connect to (load) that web page above (wiki...).
-Is it correct? Does it work for other people?
+Kernel coding style [1] defines multi-line comments to start with an empty
+line.
 
+[1] https://www.kernel.org/doc/html/latest/process/coding-style.html#commenting
 
-> +F:	Documentation/ABI/testing/sysfs-platform-pps-tio
->  F:	Documentation/ABI/testing/sysfs-pps
->  F:	Documentation/devicetree/bindings/pps/pps-gpio.yaml
->  F:	Documentation/driver-api/pps.rst
+> +	if (buf->vb->vb2_queue->restricted_mem && !sg_dma_is_restricted(sgt->sgl)) {
+> +		pr_err("restricted queue requires restricted dma_buf");
+> +		return -EINVAL;
 
--- 
-~Randy
+This would leak the mapping. We need to unmap the attachment here.
+
+> +	}
+> +
+>  	/* checking if dmabuf is big enough to store contiguous chunk */
+>  	contig_size = vb2_dc_get_contiguous_size(sgt);
+>  	if (contig_size < buf->size) {
+> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+> index 6975a71d740f..2399a9c074ba 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+> @@ -570,6 +570,14 @@ static int vb2_dma_sg_map_dmabuf(void *mem_priv)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/* Verify the dmabuf is restricted if we are in restricted mode, this is done
+> +	 * by validating there is no page entry for the dmabuf.
+> +	 */
+
+Ditto.
+
+> +	if (buf->vb->vb2_queue->restricted_mem && !sg_dma_is_restricted(sgt->sgl)) {
+> +		pr_err("restricted queue requires restricted dma_buf");
+> +		return -EINVAL;
+
+Ditto.
+
+Best regards,
+Tomasz
+
+> +	}
+> +
+>  	buf->dma_sgt = sgt;
+>  	buf->vaddr = NULL;
+>  
+> -- 
+> 2.25.1
+> 
 
