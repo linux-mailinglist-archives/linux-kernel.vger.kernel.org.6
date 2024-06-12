@@ -1,147 +1,131 @@
-Return-Path: <linux-kernel+bounces-211566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD369053CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:28:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FAEA9053DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 716FC1F23623
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:28:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073521F23A63
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ED617BB27;
-	Wed, 12 Jun 2024 13:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6B617BB06;
+	Wed, 12 Jun 2024 13:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="YYyHDS22"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="H5aPaIHr"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F06F176ACD;
-	Wed, 12 Jun 2024 13:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193311EF1A;
+	Wed, 12 Jun 2024 13:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718198891; cv=none; b=G24kteH+x8PDpV25AgyPW6k7cISilaLiIZZKPJ4Pq6YVxTiSyQrYEDfD2HSdlKRM7wqgzF5eXxTsz70NNcnZArB+E70EG34sEb++As4NgzvwVMmYo1NmD4py/KbYFbrJW6Pn/bKnhgt1fT4l3HL0dFO+AEB3SVafVitnWzmgER8=
+	t=1718199254; cv=none; b=qLNWhIKrEzNKXhjpSe7HVrb+TEbM7TTtEfGWCmHS1jfUwFenXP17UBkXDlJj9QGfHtULKrTzu9gD9kI0fhi/rtvUPGc6tkwxPthhjcX9kA0zYSyRo7H+YpVJTw35whdQmJoI82RMW0LvrjOTCD+DIVr2gXnkB6Q/3Hy0clXUUeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718198891; c=relaxed/simple;
-	bh=gB2qcYBlp6AUro7UgWKhRGLkwMDMrcuWA2Fwl19jD0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=foD9B34QctGK4HKP09URoEkVKYLlLosG6eNoThMxH2dFRZNasHG85V90oV6xJ+NyzaS4aeDyv95dDvh66PZym462hL8Eq1Mqzd2X6DcYMr3Lfjy+CnP5XhJ4oNnbDwatWuzfN/+GcFv0R+7uq2XmX3v6WUUPVTcNYKF7+z8Hwhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=YYyHDS22; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=mLhQQIGQlskOYaBcJkFs0QBTdU7FLcK/wqX92dmx0i0=;
-	t=1718198889; x=1718630889; b=YYyHDS22kNlzhzFoeSSrFmLqpiE95Hxy+6P95jU51fj5/5s
-	JUy3JAy04H54tQZc/WMQ69VkZS3dVFQRaL/pSMlInnZ1axPSX59ROFB9jNsmCYWp7D6JJffyMCjyD
-	hVoX4v6My++nMziS/VwpFFY0RVJ9t2+5wUsFnBaKxc2X7RsP8owhzSt/32XdNe3DGqrxgGj33LpHO
-	SsAmysDR1SxmMvw8Eps1zrK85FVeTysjsIQLuKhlcUTNmv42hn9D82vtLtxUxhIurDweEPVP2mZ9h
-	BmHBjuiW7muq3SWlKisx5nJkFSYuN6XxqEskuEhXRk61NISl/PI4WRxx/+MKQUKQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sHO1C-0007Ep-V0; Wed, 12 Jun 2024 15:28:03 +0200
-Message-ID: <8be80682-067a-4685-9830-cfed0287e617@leemhuis.info>
-Date: Wed, 12 Jun 2024 15:28:01 +0200
+	s=arc-20240116; t=1718199254; c=relaxed/simple;
+	bh=Au1llInZEepgsoZGLTYtmExSMQ5QuJqm+PY9oVjCw+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u95dUEd/l7UCk6W4LaGi5KJTrX3Qp7DirWHY2XDijyyFRVzCuHZCZiTVDFgRe0bZqhPAS0kaljALlAvuAborUBeYH97vH9jPPsZBhy2Oj6bixzTryMpxr6MpTZsun2KcqdoTt/RwmgTreo+8uUcuVcAeQMU/a9Gis+qqP7KgbEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=H5aPaIHr; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BBC1140E016C;
+	Wed, 12 Jun 2024 13:34:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Xl_z8xHFyKYs; Wed, 12 Jun 2024 13:34:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718199240; bh=eZyz57k7uXkPLYoNDXQ8VYUt/BHQFaQ55nFSMPTlOKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H5aPaIHrEs/h1N/W9HuKXunwlA8nftqhlS9pE7BeeYgvKWZIC1ERtsbPfpYmkxKJk
+	 hntYNF7sGBh4JIO33lut5KX2ZJhA8xNm9SfUzoY7f3gTCbuaGamF8AlGlROVMXlrnT
+	 N/mGsCLozt7uFuJxl0YPSzpWY4IkfnjZbBjw75M5gB7utSK/Tc7bo8zN0xFSLLy2Bu
+	 L0N46CPQPq3agsmw24N6PaqK1wFSIXQjIInIkpctMegS6F0dKzg0pxmQM6MKQhOQLX
+	 5VLxd9Us/YmzkNFBH1MO1GaCRUZh3eCzZgzLKciZDVNHOyeyVrwpFDEGl7xgcoI1CX
+	 NdMT/6cqngYCNCCvq8/dd3kv1Ay4OCXaMPAsBtYbLuwF3Z18iDaQ/7ugJkD1mgkR6n
+	 6W9/SDV+I2P+4/Yld6p8/hg2fN61g/TVhLsXbJX70UsJTgLk3g3faymyLvCSgWhu+S
+	 G5OYMz0y9cuj71ZFdn5+1RwoXk82QclBnY80rfbb6c7Lfb6nE4y1F82F/ivDoL0p9V
+	 uu5w6mCHxknEm0DpHgOjqH8TA4+08R/C9oRodD1LSkT97TwIK3pWu4Hkj1PxzmdUAW
+	 bcFdZqQkvwANszCIOZpt+3y2vV/r5rGQNCbl8VZ3hQx6E4FJQNTZucm35leZia5wUT
+	 2kxYEsyATkKtl7k9RMzunPxo=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 25EBC40E0031;
+	Wed, 12 Jun 2024 13:33:47 +0000 (UTC)
+Date: Wed, 12 Jun 2024 15:33:40 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Xin Li (Intel)" <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, will@kernel.org,
+	peterz@infradead.org, akpm@linux-foundation.org, acme@kernel.org,
+	namhyung@kernel.org
+Subject: Re: [RESEND v1 1/3] x86/cpufeatures: Add {required,disabled} feature
+ configs
+Message-ID: <20240612133340.GBZmmjtD40dzhsWVyg@fat_crate.local>
+References: <20240509205340.275568-1-xin@zytor.com>
+ <20240509205340.275568-2-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and maximum
- rate
-To: =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>,
- Frank Oltmanns <frank@oltmanns.dev>, stable@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, =?UTF-8?Q?Guido_G=C3=BCnther?=
- <agx@sigxcpu.org>, Purism Kernel Team <kernel@puri.sm>,
- Ondrej Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
- <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
- <yw1xo78z8ez0.fsf@mansr.com>
- <c4c1229c-1ed3-4b6e-a53a-e1ace2502ded@oltmanns.dev>
- <yw1x4jap90va.fsf@mansr.com> <yw1xo78w73uv.fsf@mansr.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <yw1xo78w73uv.fsf@mansr.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718198889;f7fcbcb9;
-X-HE-SMSGID: 1sHO1C-0007Ep-V0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240509205340.275568-2-xin@zytor.com>
 
-On 23.05.24 20:58, Måns Rullgård wrote:
-> Måns Rullgård <mans@mansr.com> writes:
->> Frank Oltmanns <frank@oltmanns.dev> writes:
->>> 21.05.2024 15:43:10 Måns Rullgård <mans@mansr.com>:
->>>> Frank Oltmanns <frank@oltmanns.dev> writes:
->>>>
->>>>> The Allwinner SoC's typically have an upper and lower limit for their
->>>>> clocks' rates. Up until now, support for that has been implemented
->>>>> separately for each clock type.
->>>>>
->>>>> Implement that functionality in the sunxi-ng's common part making use of
->>>>> the CCF rate liming capabilities, so that it is available for all clock
->>>>> types.
->>>>>
->>>>> Suggested-by: Maxime Ripard <mripard@kernel.org>
->>>>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
->>>>> Cc: stable@vger.kernel.org
->>>>> ---
->>>>> drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
->>>>> drivers/clk/sunxi-ng/ccu_common.h |  3 +++
->>>>> 2 files changed, 22 insertions(+)
->>>>
->>>> This just landed in 6.6 stable, and it broke HDMI output on an A20 based
->>>> device, the clocks ending up all wrong as seen in this diff of
->>>> /sys/kernel/debug/clk/clk_summary:
-> [...]
-> 
->>>> Reverting this commit makes it work again.
->>> Thank you for your detailed report!
-> [...]
-> It turns out HDMI output is broken in v6.9 for a different reason.
-> However, this commit (b914ec33b391 clk: sunxi-ng: common: Support
-> minimum and maximum rate) requires two others as well in order not
-> to break things on the A20:
-> 
-> cedb7dd193f6 drm/sun4i: hdmi: Convert encoder to atomic
-> 9ca6bc246035 drm/sun4i: hdmi: Move mode_set into enable
-> 
-> With those two (the second depends on the first) cherry-picked on top of
-> v6.6.31, the HDMI output is working again.  Likewise on v6.8.10.
+On Thu, May 09, 2024 at 01:53:38PM -0700, Xin Li (Intel) wrote:
+> diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+> index 2a7279d80460..719302d37053 100644
+> --- a/arch/x86/Kconfig.cpu
+> +++ b/arch/x86/Kconfig.cpu
+> @@ -358,6 +358,10 @@ config X86_P6_NOP
+>  	depends on X86_64
+>  	depends on (MCORE2 || MPENTIUM4 || MPSC)
+>  
+> +config X86_REQUIRED_FEATURE_NOPL
 
-They from what I can see are not yet in 6.6.y or on their way there (6.8
-is EOL now). Did anyone ask Greg to pick this up? If not: Månsm could
-you maybe do that? CCing him on a reply and asking is likely enough if
-both changes apply cleanly.
+Can we keep the X86_{REQUIRED,DISABLED}_ prefixes solely in
+arch/x86/Kconfig.cpufeatures and not spill them out into the rest of the tree?
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+This way there will be no confusion between X86_FEATURE_, X86_REQUIRED_FEATURE_,
+X86_DISABLED_FEATURE_ and so on, and which one I am supposed to use where...
 
-#regzbot introduced: 547263745e15a0
-#regzbot fix: drm/sun4i: hdmi: Move mode_set into enable
-#regzbot poke
+> diff --git a/arch/x86/Kconfig.cpufeatures b/arch/x86/Kconfig.cpufeatures
+> new file mode 100644
+> index 000000000000..326a8410ff06
+> --- /dev/null
+> +++ b/arch/x86/Kconfig.cpufeatures
+> @@ -0,0 +1,153 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# x86 feature bits (see arch/x86/include/asm/cpufeatures.h) that are
+> +# either REQUIRED to be enabled, or DISABLED (always ignored) for this
+> +# particular compile-time configuration.  The tests for these features
+> +# are turned into compile-time constants via the generated
+> +# <asm/featuremasks.h>.
+> +#
+> +# The naming of these variables *must* match asm/cpufeatures.h.
+
+I presume they must match X86_FEATURE_<name>?
+
+And REQUIRED and DISABLED is manipulated in by the script?
+
+I guess I'll see later.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
