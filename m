@@ -1,39 +1,53 @@
-Return-Path: <linux-kernel+bounces-211233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31C8904ECD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:09:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63724904F3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55D34B2290C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:09:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AAEE1F25CF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57DE16D9A6;
-	Wed, 12 Jun 2024 09:09:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF17B33D0;
-	Wed, 12 Jun 2024 09:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B15F16DEB7;
+	Wed, 12 Jun 2024 09:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="CyKgblTM"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3C816D4F6;
+	Wed, 12 Jun 2024 09:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718183346; cv=none; b=FDuIFdVUJOI2KjNY3D272A2JVwkvmom1EydRcTHwfzjcpx7OGCgFI3lMZkOUVaDlFrIhnQdbg3fr6fiRHlvpVgaDE5stR3dbLrfLFVnRcKsE2ZmFBxPNA0s0hKmVDqOSBOBVs0GZBSRBeEzm4EfLMxu0AB2/Jhx07pOVzFLza+g=
+	t=1718184465; cv=none; b=dojyeEUMI+nkvhVeY9kjVIYqBa2t3LyABrX56ULg0sous52rkrqCj4Lr91dtgUVl87HhGVYTINUD1MED3icm9ayl7qXBpnBRuxms2Ss7S+iN0TYrAsenS4KfW4WnhjsM12cHxte9j2S7kpcBxSqePxfvMxfCksB4wMRKX5RX9VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718183346; c=relaxed/simple;
-	bh=ekVvXOtgEWGc5upJE6j41XAzTm9If7AcFpwlPUsRGRQ=;
+	s=arc-20240116; t=1718184465; c=relaxed/simple;
+	bh=PkIMFFGFnqCXMXZabI41CKNE5v4LOTpwwZ/p3AGipW8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EYBNn/t6D/fLOmZevU5yBZqYjkJxisLr9YqUGXXI/70NIOZLBCzhaKw950hWb8FVhVC/5GBimitdtHMQ+tcbCFmLvc1araGAvE9rmlqkbsPXhgctGJYESNuuQ58jK0aqgWkJXL4ORU5+kIznATSCK7NFHZyn47OISFQNEWxrZQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 479401595;
-	Wed, 12 Jun 2024 02:09:27 -0700 (PDT)
-Received: from [10.57.69.241] (unknown [10.57.69.241])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC5043F64C;
-	Wed, 12 Jun 2024 02:09:00 -0700 (PDT)
-Message-ID: <dd536c45-cf2a-4b00-b1cc-c23e3157a4b8@arm.com>
-Date: Wed, 12 Jun 2024 11:08:54 +0200
+	 In-Reply-To:Content-Type; b=P7wmv0iLUzlGCgi6ecgi9v1G0YO8ed2C7wzW0fW8EYtIEz6KJC8FMJvt744ZsbVIeOX7kPQ/hRPyu2F+uTDIXV5Gfoaz+NwWeVgKQqp1i1gUTmFJ7VeWe2NHcRUuWcoYF+kgTNEdFKUFatMgZy+QuJLXTMGK+2tp7+BWDt+U3J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=CyKgblTM; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id A05A688791;
+	Wed, 12 Jun 2024 11:27:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1718184462;
+	bh=9mQdHVFY5Rr7BuQrcz+YQZAsk9ceYLt7tNd9Bzavdng=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CyKgblTMOAs4wyaAg1GySyfcS/LQCfb9xWXE9Y8AyEsc4HI+RjPprye0Q9KFn1jP3
+	 kemXl9m7oPj8bPNnJ5DECwWs/00wBDq01eemEaz9aar2nS8Ft6qN0I6hI8EPVDvkmK
+	 qmxg6omxFPKh4jSt1vxIgTtNw7x+qMcO+Vl1lj2TUCzbIkHESgI8+lSN4DVg2ZpCuK
+	 EIIaDt6mhv1JPYcOkmjCBk0SP7ZrC3TcRarBva2zyUKvHjh9bPas4VILRrrztATZg1
+	 gpIvdutPGbqt+2jSvp5ex66EqaCrHUoq5DSTpSBrNeXG61Mf74RP1GwpPEFzWrRTK1
+	 pX+sZiXKs5IRg==
+Message-ID: <30e6d798-8dd2-42ec-b02e-ddd3f7736862@denx.de>
+Date: Wed, 12 Jun 2024 11:08:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,83 +55,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] cpufreq/cppc: Remove the desired_perf compare when set
- target
-To: Riwen Lu <luriwen@hotmail.com>
-Cc: linux-pm@vger.kernel.org, viresh.kumar@linaro.org, rafael@kernel.org,
- linux-kernel@vger.kernel.org, ionela.voinescu@arm.com,
- beata.michalska@arm.com, hotran@apm.com, Riwen Lu <luriwen@kylinos.cn>
-References: <20240530061621.36byo5a2iqc6o2az@vireshk-i7>
- <OS3P286MB249076187B3497D1EDD70988B1F32@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
+Subject: Re: [net-next,PATCH v7 7/8] net: stmmac: dwmac-stm32: Mask support
+ for PMCR configuration
+To: Christophe Roullier <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240611083606.733453-1-christophe.roullier@foss.st.com>
+ <20240611083606.733453-8-christophe.roullier@foss.st.com>
 Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <OS3P286MB249076187B3497D1EDD70988B1F32@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240611083606.733453-8-christophe.roullier@foss.st.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Hello Riwen,
-
-This function seems to be the only cpufreq function saving and comparing the
-requested frequency with the last requested frequency. This seems to be more the
-task of the cpufreq framework than the cpufreq driver.
-
-So FYIW, the patch looks good to me.
-
-On 5/30/24 13:08, Riwen Lu wrote:
-> From: Riwen Lu <luriwen@kylinos.cn>
+On 6/11/24 10:36 AM, Christophe Roullier wrote:
+> Add possibility to have second argument in syscon property to manage
+> mask. This mask will be used to address right BITFIELDS of PMCR register.
 > 
-> There is a case that desired_perf is exactly the same with the old perf,
-> but the actual current freq is not.
-> 
-> This happened in S3 while the cpufreq governor is set to powersave.
-> During cpufreq resume process, the booting CPU's new_freq obtained via
-> .get() is the highest frequency, while the policy->cur and
-> cpu->perf_ctrls.desired_perf are in the lowest level(powersave
-> governor). Causing the warning: "CPU frequency out of sync:", and set
-> policy->cur to new_freq.
+> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
 
-(new paragraph)
-
-Then the governor->limits() calls
-> cppc_cpufreq_set_target() to configures the CPU frequency and returns
-> directly because the desired_perf converted from target_freq is the
-> same with cpu->perf_ctrls.desired_perf and both are the lowest_perf.
-
-(new paragraph)
-
-> Since target_freq and policy->cur have been compared in
-> __cpufreq_driver_target(), there's no need to compare desired_perf
-> and cpu->perf_ctrls.desired_perf again in cppc_cpufreq_set_target()
-> to ensure that the CPU frequency is properly configured.
-
-NIT:
-Would it be possible to make distinct paragraphs ?
-
-> 
-> Signed-off-by: Riwen Lu <luriwen@kylinos.cn>
-> 
-> ---
-> v1 -> v2:
->   - Update commit message and email.
-> v2 -> v3:
->   - Update patch subject and commit message.
->   - Remove the desired_perf compare logic.
-> ---
->   drivers/cpufreq/cppc_cpufreq.c | 3 ---
->   1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index 15f1d41920a3..337cece61ab5 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -295,9 +295,6 @@ static int cppc_cpufreq_set_target(struct cpufreq_policy *policy,
->   	int ret = 0;
->   
->   	desired_perf = cppc_khz_to_perf(&cpu_data->perf_caps, target_freq);
-> -	/* Return if it is exactly the same perf */
-> -	if (desired_perf == cpu_data->perf_ctrls.desired_perf)
-> -		return ret;
->   
->   	cpu_data->perf_ctrls.desired_perf = desired_perf;
->   	freqs.old = policy->cur;
+Reviewed-by: Marek Vasut <marex@denx.de>
 
