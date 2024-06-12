@@ -1,159 +1,225 @@
-Return-Path: <linux-kernel+bounces-211807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDC0905729
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:39:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11AB490572D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F2A28227D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:39:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84BE41F26A4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152EB180A79;
-	Wed, 12 Jun 2024 15:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AA0180A83;
+	Wed, 12 Jun 2024 15:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TomE6Pe4"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HktmaJO2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9AB17B437;
-	Wed, 12 Jun 2024 15:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914021802D7;
+	Wed, 12 Jun 2024 15:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718206770; cv=none; b=C20MzzUoGVGJSpZFs6XoayGX6Y2t/m1vh25XJVy6zByK1f+O8wAnsssB2P505I2WJRObNZQsCuG2dj1JFCxCK0j/Sq0HlncTcrFudb/ZtTULM0lCdf30MiFSZia1i1kpTHOBb7UcCLYVNY+6R0wnNo8tDWn0cywVZsqAGiIekIU=
+	t=1718206836; cv=none; b=WCKngCDTE2dLbYM51MuwbFmFqhFNmu4xsz8gX9m1WUJHaVii9oBLk9sErqbtmiiTdGw9qINk62+s7RXNM9DkN/oCZnONrHFfmoSjEfN03gz0pVf0XK/6H6pP70Cdp9UO5Dmzl+K44vzNIrA3ayh4cppNEr0sGkLY0KUVSiY5CTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718206770; c=relaxed/simple;
-	bh=dkjw2ohFiXCup80T4CFjYApo4cuECd+cmHE4G40BA1A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=K7exRDGEzVIXqHmZROBiIY/rygz3gAMKvhAXYvw8VZ4BfBs5j9oOCYgNdDWwMpVYIw9R9Icl4DnLlcpJel4AsM5APLCWfWB5I5QvDspf4N4NJjSBeQF0Y+PQrVqTp3vtThO1XVfOQ0wFW7tGIfKNo6ZXvntSlE85IWP5+Zt0gAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TomE6Pe4; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-704090c11easo5540996b3a.2;
-        Wed, 12 Jun 2024 08:39:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718206768; x=1718811568; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=a5i7zUeG4PPBp0qWV+Ep+ZL6qU5kaVlXsxN+qELW5E4=;
-        b=TomE6Pe4Eb0OP0TCEHy53eMPTCH1L08wHp3/UlO90b8AGmJAqU7p253l9Sts/FZkpG
-         V6+erUIL6QgekCKp3j6LIk6xwmKN8kppQVGZuH/kyzyyQD89KgraRv5YG5ptioyTmt5B
-         Qy+dQwbCY0V96KCoeqPCZ/ctrflUc334+AUc8LIKR3BP1p4m4vYPEblsc9ayRE7Lsiij
-         ZsBZL6md6IL1fRDhPpu03T9INGMpaHIzwKZcAJhhX+vPx7FOaJmq40Vy04QAHVnKl0hM
-         oh43Nwk5sKjDh79y8kKhA96ybdMsLYYMBoxKJaz2rsEQEEsnDigWZA4DyDX3grXlKwSC
-         0i7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718206768; x=1718811568;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a5i7zUeG4PPBp0qWV+Ep+ZL6qU5kaVlXsxN+qELW5E4=;
-        b=MJx9z/mjxltAgnvqsysBmliA8u7UeuZlXqOqQM3MJ5Jpv/bzIpp1SQgV8TGV5+VYzF
-         TcxWSGv1iTKzuaXKuxtv6S2nn/HmdPcXHw5cvR/WmA4NHr9HL0uyKFjmtVZtb3xlBYKz
-         c38d2B2Jf9dhaJGJrrOVtJjj/OmA3oZF4SdE8o9Xyk+3wZEEb2dq946Wi7QI+XWf5d2h
-         G164U9aQ/QFvE5vcWVYHeIL3bxr892ER9sbJ0mn6ZQWLguzdoRl4H9BSOTaFgSdPyxhm
-         YLNrRKpKxJ0YyVsweq8m4VI19TGD9KHFmujhscCKWo8in6rLWpCXbPn5EurWHZW6P3uC
-         R1Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNjFtkR0uQIdFkJsJNeDVMh+5IM8f02gR7bSdEPgTfVPBVHy3khebx7LK94qVG91VVBSo/gGN0aWxOyNJSYm69PeaQdXSYFzsZ/5A7IqrFgNgKgv+cmAvClXsxpPaM9/XPC5MmrIUfcLVU5DUx83WgEQcz5p3PPB3EuCaVU0Kn
-X-Gm-Message-State: AOJu0YwmDmpuoj6KAtHZ2Wz7Y8pRzE3osTZ33daqelcViJyizQy8HVFF
-	vmK/vbIdk0bvlNiuovDHD7lL0JCPvAS+2hUkHNqBVERDAHygb8Y3EZ3kmztqN4WHHw==
-X-Google-Smtp-Source: AGHT+IG5lHab+fHfgF23kgv84wra3o3xRcQiRCRLO0Hjiemm/oKJqu5T5xBuAbkAPUeZHsR2REDBzg==
-X-Received: by 2002:a05:6a20:2584:b0:1b4:e956:ae64 with SMTP id adf61e73a8af0-1b8a9c87755mr2628969637.54.1718206768211;
-        Wed, 12 Jun 2024 08:39:28 -0700 (PDT)
-Received: from localhost ([113.143.197.225])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6ee3f30e7sm89342385ad.173.2024.06.12.08.39.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Jun 2024 08:39:27 -0700 (PDT)
-From: joswang <joswang1221@gmail.com>
-To: Thinh.Nguyen@synopsys.com
-Cc: gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Jos Wang <joswang@lenovo.com>
-Subject: [PATCH v4, 3/3] usb: dwc3: core: Workaround for CSR read timeout
-Date: Wed, 12 Jun 2024 23:39:22 +0800
-Message-Id: <20240612153922.2531-1-joswang1221@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240601092646.52139-1-joswang1221@gmail.com>
-References: <20240601092646.52139-1-joswang1221@gmail.com>
+	s=arc-20240116; t=1718206836; c=relaxed/simple;
+	bh=ure0E9PZwCCE0IY9IoqbKopYZ1g301DYRj00CAi1dLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T01wG2wIBgFLbEThR2vTP5sd/gsNIErxsE6PkUstJPT/uKSLjEfqtvKFe3QU6qDU3rjUaqiPOP09m9MpGDVAXiYvJT5am+kTB/7GQlIvWy/7FCiMvqVDJiYnxEgSEua2hWuFeUgBBB48Ox/G+gXjamPZX78g+s202y8gW1DaBnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HktmaJO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23ECAC116B1;
+	Wed, 12 Jun 2024 15:40:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718206836;
+	bh=ure0E9PZwCCE0IY9IoqbKopYZ1g301DYRj00CAi1dLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HktmaJO2RTpRTrqfSR8FlHZ+rsRypeu+fENZHR48jiez8Y2UbDMAcpNYpiD4vQx6S
+	 pEnMbNtoaD0mpi9vtHcGOBYwnFSILO/WdcUWkJNbAb3eKh9NqZ4gF6YWetox81MYuG
+	 Ue0Bi9wLpBjv8ORF4K+YUM+90DEHh9uJvbdM0hUOs/mQoRAF6H2t8d9caCfCHC2lCq
+	 GwzYHi/OmufmuheIhYrF1nnZ558EAly0Db63nSBFO5Vs0GEQC4cancE4ySQ8TXHYNV
+	 TxxaJzEZfbxzovsteb40Wbh6rLI5k1aJGoydnLgPWTgfPHvxgfQ52Bh7wIvk95IUj9
+	 ekLXkiHonZ/vw==
+Date: Wed, 12 Jun 2024 08:40:35 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: david@fromorbit.com, chandan.babu@oracle.com, brauner@kernel.org,
+	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
+	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
+	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
+	cl@os.amperecomputing.com, john.g.garry@oracle.com
+Subject: Re: [PATCH v7 03/11] filemap: allocate mapping_min_order folios in
+ the page cache
+Message-ID: <20240612154035.GB2764752@frogsfrogsfrogs>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-4-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607145902.1137853-4-kernel@pankajraghav.com>
 
-From: Jos Wang <joswang@lenovo.com>
+On Fri, Jun 07, 2024 at 02:58:54PM +0000, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
+> 
+> filemap_create_folio() and do_read_cache_folio() were always allocating
+> folio of order 0. __filemap_get_folio was trying to allocate higher
+> order folios when fgp_flags had higher order hint set but it will default
+> to order 0 folio if higher order memory allocation fails.
+> 
+> Supporting mapping_min_order implies that we guarantee each folio in the
+> page cache has at least an order of mapping_min_order. When adding new
+> folios to the page cache we must also ensure the index used is aligned to
+> the mapping_min_order as the page cache requires the index to be aligned
+> to the order of the folio.
+> 
+> Co-developed-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 
-This is a workaround for STAR 4846132, which only affects
-DWC_usb31 version2.00a operating in host mode.
+Seems pretty straightforward, so
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-There is a problem in DWC_usb31 version 2.00a operating
-in host mode that would cause a CSR read timeout When CSR
-read coincides with RAM Clock Gating Entry. By disable
-Clock Gating, sacrificing power consumption for normal
-operation.
+--D
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jos Wang <joswang@lenovo.com>
----
-v1 -> v2:
-- add "dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk" patch,
-  this patch does not make any changes
-v2 -> v3:
-- code refactor
-- modify comment, add STAR number, workaround applied in host mode
-- modify commit message, add STAR number, workaround applied in host mode
-- modify Author Jos Wang
-v3 -> v4:
-- modify commit message, add Cc: stable@vger.kernel.org
----
- drivers/usb/dwc3/core.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 3a8fbc2d6b99..61f858f64e5a 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -960,12 +960,16 @@ static bool dwc3_core_is_valid(struct dwc3 *dwc)
- 
- static void dwc3_core_setup_global_control(struct dwc3 *dwc)
- {
-+	unsigned int power_opt;
-+	unsigned int hw_mode;
- 	u32 reg;
- 
- 	reg = dwc3_readl(dwc->regs, DWC3_GCTL);
- 	reg &= ~DWC3_GCTL_SCALEDOWN_MASK;
-+	hw_mode = DWC3_GHWPARAMS0_MODE(dwc->hwparams.hwparams0);
-+	power_opt = DWC3_GHWPARAMS1_EN_PWROPT(dwc->hwparams.hwparams1);
- 
--	switch (DWC3_GHWPARAMS1_EN_PWROPT(dwc->hwparams.hwparams1)) {
-+	switch (power_opt) {
- 	case DWC3_GHWPARAMS1_EN_PWROPT_CLK:
- 		/**
- 		 * WORKAROUND: DWC3 revisions between 2.10a and 2.50a have an
-@@ -998,6 +1002,20 @@ static void dwc3_core_setup_global_control(struct dwc3 *dwc)
- 		break;
- 	}
- 
-+	/*
-+	 * This is a workaround for STAR#4846132, which only affects
-+	 * DWC_usb31 version2.00a operating in host mode.
-+	 *
-+	 * There is a problem in DWC_usb31 version 2.00a operating
-+	 * in host mode that would cause a CSR read timeout When CSR
-+	 * read coincides with RAM Clock Gating Entry. By disable
-+	 * Clock Gating, sacrificing power consumption for normal
-+	 * operation.
-+	 */
-+	if (power_opt != DWC3_GHWPARAMS1_EN_PWROPT_NO &&
-+	    hw_mode != DWC3_GHWPARAMS0_MODE_GADGET && DWC3_VER_IS(DWC31, 200A))
-+		reg |= DWC3_GCTL_DSBLCLKGTNG;
-+
- 	/* check if current dwc3 is on simulation board */
- 	if (dwc->hwparams.hwparams6 & DWC3_GHWPARAMS6_EN_FPGA) {
- 		dev_info(dwc->dev, "Running with FPGA optimizations\n");
--- 
-2.17.1
-
+> ---
+>  include/linux/pagemap.h | 20 ++++++++++++++++++++
+>  mm/filemap.c            | 26 ++++++++++++++++++--------
+>  2 files changed, 38 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 228275e7049f..899b8d751768 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -439,6 +439,26 @@ unsigned int mapping_min_folio_order(const struct address_space *mapping)
+>  	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
+>  }
+>  
+> +static inline unsigned long mapping_min_folio_nrpages(struct address_space *mapping)
+> +{
+> +	return 1UL << mapping_min_folio_order(mapping);
+> +}
+> +
+> +/**
+> + * mapping_align_start_index() - Align starting index based on the min
+> + * folio order of the page cache.
+> + * @mapping: The address_space.
+> + *
+> + * Ensure the index used is aligned to the minimum folio order when adding
+> + * new folios to the page cache by rounding down to the nearest minimum
+> + * folio number of pages.
+> + */
+> +static inline pgoff_t mapping_align_start_index(struct address_space *mapping,
+> +						pgoff_t index)
+> +{
+> +	return round_down(index, mapping_min_folio_nrpages(mapping));
+> +}
+> +
+>  /*
+>   * Large folio support currently depends on THP.  These dependencies are
+>   * being worked on but are not yet fixed.
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 46c7a6f59788..8bb0d2bc93c5 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -859,6 +859,8 @@ noinline int __filemap_add_folio(struct address_space *mapping,
+>  
+>  	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+>  	VM_BUG_ON_FOLIO(folio_test_swapbacked(folio), folio);
+> +	VM_BUG_ON_FOLIO(folio_order(folio) < mapping_min_folio_order(mapping),
+> +			folio);
+>  	mapping_set_update(&xas, mapping);
+>  
+>  	VM_BUG_ON_FOLIO(index & (folio_nr_pages(folio) - 1), folio);
+> @@ -1919,8 +1921,10 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  		folio_wait_stable(folio);
+>  no_page:
+>  	if (!folio && (fgp_flags & FGP_CREAT)) {
+> -		unsigned order = FGF_GET_ORDER(fgp_flags);
+> +		unsigned int min_order = mapping_min_folio_order(mapping);
+> +		unsigned int order = max(min_order, FGF_GET_ORDER(fgp_flags));
+>  		int err;
+> +		index = mapping_align_start_index(mapping, index);
+>  
+>  		if ((fgp_flags & FGP_WRITE) && mapping_can_writeback(mapping))
+>  			gfp |= __GFP_WRITE;
+> @@ -1943,7 +1947,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  			gfp_t alloc_gfp = gfp;
+>  
+>  			err = -ENOMEM;
+> -			if (order > 0)
+> +			if (order > min_order)
+>  				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
+>  			folio = filemap_alloc_folio(alloc_gfp, order);
+>  			if (!folio)
+> @@ -1958,7 +1962,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  				break;
+>  			folio_put(folio);
+>  			folio = NULL;
+> -		} while (order-- > 0);
+> +		} while (order-- > min_order);
+>  
+>  		if (err == -EEXIST)
+>  			goto repeat;
+> @@ -2447,13 +2451,16 @@ static int filemap_update_page(struct kiocb *iocb,
+>  }
+>  
+>  static int filemap_create_folio(struct file *file,
+> -		struct address_space *mapping, pgoff_t index,
+> +		struct address_space *mapping, loff_t pos,
+>  		struct folio_batch *fbatch)
+>  {
+>  	struct folio *folio;
+>  	int error;
+> +	unsigned int min_order = mapping_min_folio_order(mapping);
+> +	pgoff_t index;
+>  
+> -	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), 0);
+> +	folio = filemap_alloc_folio(mapping_gfp_mask(mapping),
+> +				    min_order);
+>  	if (!folio)
+>  		return -ENOMEM;
+>  
+> @@ -2471,6 +2478,8 @@ static int filemap_create_folio(struct file *file,
+>  	 * well to keep locking rules simple.
+>  	 */
+>  	filemap_invalidate_lock_shared(mapping);
+> +	/* index in PAGE units but aligned to min_order number of pages. */
+> +	index = (pos >> (PAGE_SHIFT + min_order)) << min_order;
+>  	error = filemap_add_folio(mapping, folio, index,
+>  			mapping_gfp_constraint(mapping, GFP_KERNEL));
+>  	if (error == -EEXIST)
+> @@ -2531,8 +2540,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+>  	if (!folio_batch_count(fbatch)) {
+>  		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
+>  			return -EAGAIN;
+> -		err = filemap_create_folio(filp, mapping,
+> -				iocb->ki_pos >> PAGE_SHIFT, fbatch);
+> +		err = filemap_create_folio(filp, mapping, iocb->ki_pos, fbatch);
+>  		if (err == AOP_TRUNCATED_PAGE)
+>  			goto retry;
+>  		return err;
+> @@ -3748,9 +3756,11 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
+>  repeat:
+>  	folio = filemap_get_folio(mapping, index);
+>  	if (IS_ERR(folio)) {
+> -		folio = filemap_alloc_folio(gfp, 0);
+> +		folio = filemap_alloc_folio(gfp,
+> +					    mapping_min_folio_order(mapping));
+>  		if (!folio)
+>  			return ERR_PTR(-ENOMEM);
+> +		index = mapping_align_start_index(mapping, index);
+>  		err = filemap_add_folio(mapping, folio, index, gfp);
+>  		if (unlikely(err)) {
+>  			folio_put(folio);
+> -- 
+> 2.44.1
+> 
+> 
 
