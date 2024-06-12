@@ -1,209 +1,237 @@
-Return-Path: <linux-kernel+bounces-211624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCD7905496
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:00:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8FFB905497
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FEF7B262DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:00:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D272895EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC002181B95;
-	Wed, 12 Jun 2024 13:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UWUs/fU4"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384FF181B90
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF0017DE15;
+	Wed, 12 Jun 2024 13:57:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8700117CA1D;
+	Wed, 12 Jun 2024 13:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718200605; cv=none; b=BwjITiyxNkxZh4YwE0v+UmWFd13ZKTT/UX0Q/b1ezrix8QFGFPpcGioBUj0RINXVNyyS9Sh/GRc3b0bZThYC8+3U2d3++s5T/YAhMynXI2HtDX8UHANgrEomiyCwe66FnDaJdXQtxRBdXmhya/TV02L/vk1YjcqaYrwgi0jifGY=
+	t=1718200624; cv=none; b=j86WCgBqITNz9Cdj9DbWoL8ONlkRGrYr74uz6depawMcX8PGj/7VggtEMwn18OB3q760f5Xn4PK13m77s0l8ZlD9GR1ekPET88tU3oUKEjkd4DruIebRcMyks8aVvRR4ixbzsUqzQufyu69pyzBGUK9/yBylCiAFXxWeELCmjKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718200605; c=relaxed/simple;
-	bh=B9snKeq9ZRYgjq/H6UcbA2Jvzo4lG/FH93/9EA3J98Q=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=f6p8njc7l1bqpre38Iig2MyQaYOnE6OGcLeu3Wlavh+uBjAt4NTGVXxe6q8gY7YhqTScQRseCSHiZRi60zpuCDrGXBSqJPjqFl7JNR55ooDI7VdTp5poLXJupffSiPHRgGgTAhgl4UBbgLjY/jHtdKc8mC4uKjbBGdpAEh22/2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UWUs/fU4; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-422a0f21366so2127995e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 06:56:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718200602; x=1718805402; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EmGrnZgO3t8ZPnbrwHQ5qRX6BTJ4KO1P/NylSxAXYBg=;
-        b=UWUs/fU4xO2SvlS+Cn4VV+JnImqbKOKgUbbnBY6iWAdWp0yUrp8FSIZNv8tsceXPSG
-         CroLEKR6cIcXqo16/yjJmmJFpvSWhiPekhqcJr3DxXCaikXDOhYpXlj6nli2lgAw2ZgS
-         L/dWP4sdDMQs7H3RHbXEPh6cbe60qbI5t0lNcKjsoXDIlwyhXvrW/tsPNA45wh07MxTR
-         LHAiAWUNMX431xqSJiIuzftiDTE3jItsNgGW9Fp5ZBUOtCuAZKHze/KsayGDjLaHMzZU
-         TXUBgAVKou7FSVKoLs/CkVu/jcifpfQnoObPq6lXBM6VHH1aGhx4R/p48PuaNX+LVquG
-         q3VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718200602; x=1718805402;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EmGrnZgO3t8ZPnbrwHQ5qRX6BTJ4KO1P/NylSxAXYBg=;
-        b=EW32hbw27/uU2hpSONtBS2A/8vFfum0gfYKlM8wX3sUH6m46wIviF4Qs+J7QzrxfUy
-         m1uBl1YhXbxz+dcBgFFLtYDQuLmGcivSkqEkZt9xLKQWLOe12qSLd4P+jOZ7dLBxUNxw
-         xQHhQ2lgryOGXcvRagw428lV0/vWrpxmzJNERtKGdlPLBkoQPMmwTRqdz8mrLp3nncY8
-         Hlo6UYzhoT0CF7e8PoVQs2NM1vG830Bgry3EZyum8I5EmYrXvj1hBqAUqtgNakA1/wnS
-         VhFyK0aEhNX5GbI8EmJT+uXVFq1Z4Orw1PNS28poJ3UekqNtI3AXLgMWqCdbVHc7oxrT
-         SRPA==
-X-Gm-Message-State: AOJu0YyqhDvS5q/DVrLRjnEMIJWaYCm+iSyiHOhA4qGlHdEAjGj/WErq
-	s3AiK00BC/+IaSxz6qpjmdYZzrTjABHmV4qNt7vqnBfDMyVISOzpAB++qyrYdOQrur1V8g==
-X-Google-Smtp-Source: AGHT+IFsOJdefJuFx3+Pp8lvsrui/AUtgWCOEXQHIXTVg2yNTTD6iKVMIgE75EiXY5YO2gtti/sv7rZm
-X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:118a])
- (user=ardb job=sendgmr) by 2002:a05:600c:3b87:b0:421:29c8:4ecb with SMTP id
- 5b1f17b1804b1-422865ac153mr277195e9.4.1718200602509; Wed, 12 Jun 2024
- 06:56:42 -0700 (PDT)
-Date: Wed, 12 Jun 2024 15:56:39 +0200
+	s=arc-20240116; t=1718200624; c=relaxed/simple;
+	bh=4mjR3G5pH7AZMAhzm6AMqu2uj5bQPlS9qrLFME/pKYc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n1bBsFfYjIaU4n3suYAE36JnaV4toeQ8Gha5EKV+hMPTELfHtEnwWxocU1wF8niaQ4d0H8pj1azL4GNGzcSjsRgPJob1kW/zV5sfn0IN0jKnpCaRVpTXKWi6oux7/3zqlbvWyxqLODZJvGR4YNBlKitqLje47vBI4+dGSVxBB6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57168367;
+	Wed, 12 Jun 2024 06:57:25 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 34B6A3F64C;
+	Wed, 12 Jun 2024 06:56:58 -0700 (PDT)
+Message-ID: <e9fc6ce3-d5c5-431d-a628-62742432be47@arm.com>
+Date: Wed, 12 Jun 2024 14:56:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4484; i=ardb@kernel.org;
- h=from:subject; bh=9nbCSSgNmzby1JSlEnWpnSGEjOMACQhq5RITLtxrX/A=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIS1zpfgLpcp2b3bD2JvSNT9/TLN9PW3eYoGMywWa1x3On
- JO4tWdCRykLgxgHg6yYIovA7L/vdp6eKFXrPEsWZg4rE8gQBi5OAZiI+BqGv6JcvToXPPc5M52Z
- aWb5obptXsDCEvHAI7lTt+f271a5s5uR4eDp+GmSeQXpt/48lu+sVtrIXCPAupKvQKGradmXiEc P+AE=
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240612135638.298882-2-ardb+git@google.com>
-Subject: [PATCH v3] x86/efi: Free EFI memory map only when installing a new one.
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-efi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Ashish Kalra <Ashish.Kalra@amd.com>, Dave Young <dyoung@redhat.com>, 
-	Mike Rapoport <rppt@kernel.org>, Borislav Petkov <bp@alien8.de>, Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] perf pmus: Sort/merge/aggregate PMUs like
+ mrvl_ddr_pmu
+To: Ian Rogers <irogers@google.com>, Aishwarya TCV <aishwarya.tcv@arm.com>
+Cc: Tuan Phan <tuanphan@os.amperecomputing.com>,
+ Thomas Richter <tmricht@linux.ibm.com>,
+ Bhaskara Budiredla <bbudiredla@marvell.com>,
+ Bharat Bhushan <bbhushan2@marvell.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+ Stephane Eranian <eranian@google.com>, Mark Brown <broonie@kernel.org>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>
+References: <20240515060114.3268149-1-irogers@google.com>
+ <20240515060114.3268149-2-irogers@google.com>
+ <ce31a50b-53db-4c6f-9cb1-242280b0951c@arm.com>
+ <CAP-5=fWxdZ1ibv7Pi0L38+NF-vNWZCtcDS9JVf6k3z9nDsrQQw@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <CAP-5=fWxdZ1ibv7Pi0L38+NF-vNWZCtcDS9JVf6k3z9nDsrQQw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Ard Biesheuvel <ardb@kernel.org>
+On 12/06/2024 1:32 pm, Ian Rogers wrote:
+> On Wed, Jun 12, 2024 at 4:19 AM Aishwarya TCV <aishwarya.tcv@arm.com> wrote:
+>>
+>>
+>>
+>> On 15/05/2024 07:01, Ian Rogers wrote:
+>>> The mrvl_ddr_pmu is uncore and has a hexadecimal address suffix while
+>>> the previous PMU sorting/merging code assumes uncore PMU names start
+>>> with uncore_ and have a decimal suffix. Because of the previous
+>>> assumption it isn't possible to wildcard the mrvl_ddr_pmu.
+>>>
+>>> Modify pmu_name_len_no_suffix but also remove the suffix number out
+>>> argument, this is because we don't know if a suffix number of say 100
+>>> is in hexadecimal or decimal. As the only use of the suffix number is
+>>> in comparisons, it is safe there to compare the values as hexadecimal.
+>>> Modify perf_pmu__match_ignoring_suffix so that hexadecimal suffixes
+>>> are ignored.
+>>>
+>>> Only allow hexadecimal suffixes to be greater than length 2 (ie 3 or
+>>> more) so that S390's cpum_cf PMU doesn't lose its suffix.
+>>>
+>>> Change the return type of pmu_name_len_no_suffix to size_t to
+>>> workaround GCC incorrectly determining the result could be negative.
+>>>
+>>> Signed-off-by: Ian Rogers <irogers@google.com>
+>>> ---
+>>>   tools/perf/util/pmu.c  | 33 +++++++++++++--------
+>>>   tools/perf/util/pmus.c | 67 ++++++++++++++++++++++++------------------
+>>>   tools/perf/util/pmus.h |  7 ++++-
+>>>   3 files changed, 65 insertions(+), 42 deletions(-)
+>>>
+>>
+>> Hi Ian,
+>>
+>> Perf test "perf_all_PMU_test" is failing when run against
+>> next-master(next-20240612) kernel with Arm64 on JUNO in our CI. It looks
+>> like it is failing when run on JUNO alone. Verified by running on other
+>> boards like RB5 and Ampere_altra and confirming that it does not fail on
+>> these boards. Suspecting that the suffixed 'armv8_pmuv3_0' naming could
+>> be the reason of test failure.
+>>
+>> Reverting the change (3241d46f5f54) seems to fix it.
+>>
+>> This works fine on Linux version v6.10-rc3
+>>
+>> Failure log
+>> ------------
+>> 110: perf all PMU test:
+>> --- start ---
+>> test child forked, pid 8279
+>> Testing armv8_pmuv3/br_immed_retired/
+>> Event 'armv8_pmuv3/br_immed_retired/' not printed in:
+>> # Running 'internals/synthesize' benchmark:
+>> Computing performance of single threaded perf event synthesis by
+>> synthesizing events on the perf process itself:
+>>    Average synthesis took: 1169.431 usec (+- 0.144 usec)
+>>    Average num. events: 35.000 (+- 0.000)
+>>    Average time per event 33.412 usec
+>>    Average data synthesis took: 1225.698 usec (+- 0.102 usec)
+>>    Average num. events: 119.000 (+- 0.000)
+>>    Average time per event 10.300 usec
+>>
+>>   Performance counter stats for 'perf bench internals synthesize':
+>>
+>>          3263664785      armv8_pmuv3_0/br_immed_retired/
+>>
+>>
+>>        25.472854464 seconds time elapsed
+>>
+>>         8.004791000 seconds user
+>>        17.060209000 seconds sys
+>> ---- end(-1) ----
+>> 110: perf all PMU test                                               :
+>> FAILED!
+> 
+> Hi Aishwarya,
+> 
+> Thanks for reporting an issue. The test should be pretty self
+> explanatory: it is doing a `perf stat -e
+> armv8_pmuv3/br_immed_retired/` and then looking for that in the
+> output. The event armv8_pmuv3/br_immed_retired/ comes from running
+> perf list. As you can see in the output the event did work, so perf
+> stat is working so nothing is actually broken here. What isn't working
+> is the perf stat output matching the command line event and this is
+> because of the unnecessary suffix on ARM's PMU name.
+> 
+> We have a problem that ARM have buggy PMU drivers, either from
+> introducing new naming conventions or by just being broken:
+> https://lore.kernel.org/lkml/CAP-5=fWNDkOpnYF=5v1aQkVDrDWsmw+zYX1pjS8hoiYVgZsRGA@mail.gmail.com/
+> I've also asked that ARM step up their testing, for example in the
+> event parsing testing the PMU is hardcoded to the x86 PMU name of
+> 'cpu':
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/tests/parse-events.c?h=perf-tools-next#n2317
+> On a cortex A53, then PMU is named 'armv8_cortex_a53':
+> ```
+> $ ls /sys/devices/armv8_cortex_a53/
+> caps  cpus  events  format  perf_event_mux_interval_ms  power
+> subsystem  type  uevent
+> ```
+> This name appears better, so what's up with ARM's core PMU name?
 
-The logic in __efi_memmap_init() is shared between two different
-execution flows:
-- mapping the EFI memory map early or late into the kernel VA space, so
-  that its entries can be accessed;
-- cloning the EFI memory map in order to insert new entries that are
-  created as a result of creating a memory reservation
-  (efi_arch_mem_reserve())
+With Devicetree, we are able to derive a descriptive PMU name from the 
+compatible string provided by the DT. Under ACPI, however, all we get 
+told is whether each CPU has a usable PMU or not, so the best we can do 
+is work out how many different CPU microarchitectures we have overall 
+and create a PMU instance for each type. We still don't know *what* each 
+one is, just that they're different, hence ending up with a common name 
+plus a suffix which we can increment for disambiguation if and when we 
+do see something new - userspace can still piece together the "cpus" 
+lists and MIDRs to figure out what's what, we just can't do much in the 
+kernel itself.
 
-In the former case, the underlying memory containing the kernel's view
-of the EFI memory map (which may be heavily modified by the kernel
-itself on x86) is not modified at all, and the only thing that changes
-is the virtual mapping of this memory, which is different between early
-and late boot.
+> Anyway, I'm tempted to fix this by just skipping the test on ARM given
+> ARM's overall broken state.
 
-In the latter case, an entirely new allocation is created that carries a
-new, updated version of the kernel's view of the EFI memory map. When
-installing this new version, the old version will no longer be
-referenced, and if the memory was allocated by the kernel, it will leak
-unless it gets freed.
+This isn't a driver issue, it's a "the behaviour of 'perf list' changed 
+inconsistently" issue. I also had a brief dig into this using a 
+different arm64 ACPI system, and I think I can broadly characterise the 
+cause. This is prior to 3241d46f5f54:
 
-The logic that implements this freeing currently lives on the code path
-that is shared between these two use cases, but it should only apply to
-the latter. So move it to the correct spot.
+root@crazy-taxi:~# ./perf-mainline list armv8_pmuv3
 
-While at it, move __efi_memmap_free() into its only caller, and drop the
-dummy definition for non-x86 architectures, as that is no longer needed.
+List of pre-defined events (to be used in -e or -M):
 
-Cc: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Fixes: f0ef6523475f ("efi: Fix efi_memmap_alloc() leaks")
-Link: https://lore.kernel.org/all/36ad5079-4326-45ed-85f6-928ff76483d3@amd.com
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
-v3:
-- don't move __efi_memmap_free() into what turned out not to be its only
-  caller
-- drop another CPP #define related to the dummy definition
 
-v2:
-- free old memory map only after installing the new one succeeded
-- move __efi_memmap_free() into its only caller
-- drop obsolete dummy declaration from generic code
+armv8_pmuv3_0:
+   L1-dcache-loads OR armv8_pmuv3_0/L1-dcache-loads/
+   L1-dcache-load-misses OR armv8_pmuv3_0/L1-dcache-load-misses/
+   L1-icache-loads OR armv8_pmuv3_0/L1-icache-loads/
+   L1-icache-load-misses OR armv8_pmuv3_0/L1-icache-load-misses/
+   dTLB-loads OR armv8_pmuv3_0/dTLB-loads/
+   dTLB-load-misses OR armv8_pmuv3_0/dTLB-load-misses/
+   iTLB-loads OR armv8_pmuv3_0/iTLB-loads/
+   iTLB-load-misses OR armv8_pmuv3_0/iTLB-load-misses/
+   branch-loads OR armv8_pmuv3_0/branch-loads/
+   branch-load-misses OR armv8_pmuv3_0/branch-load-misses/
+   l3d_cache_wb OR armv8_pmuv3_0/l3d_cache_wb/        [Kernel PMU event]
 
- arch/x86/include/asm/efi.h     |  1 -
- arch/x86/platform/efi/memmap.c | 12 +++++++++++-
- drivers/firmware/efi/memmap.c  |  9 ---------
- 3 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-index 1dc600fa3ba5..481096177500 100644
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -401,7 +401,6 @@ extern int __init efi_memmap_alloc(unsigned int num_entries,
- 				   struct efi_memory_map_data *data);
- extern void __efi_memmap_free(u64 phys, unsigned long size,
- 			      unsigned long flags);
--#define __efi_memmap_free __efi_memmap_free
- 
- extern int __init efi_memmap_install(struct efi_memory_map_data *data);
- extern int __init efi_memmap_split_count(efi_memory_desc_t *md,
-diff --git a/arch/x86/platform/efi/memmap.c b/arch/x86/platform/efi/memmap.c
-index 4ef20b49eb5e..6ed1935504b9 100644
---- a/arch/x86/platform/efi/memmap.c
-+++ b/arch/x86/platform/efi/memmap.c
-@@ -92,12 +92,22 @@ int __init efi_memmap_alloc(unsigned int num_entries,
-  */
- int __init efi_memmap_install(struct efi_memory_map_data *data)
- {
-+	unsigned long size = efi.memmap.desc_size * efi.memmap.nr_map;
-+	unsigned long flags = efi.memmap.flags;
-+	u64 phys = efi.memmap.phys_map;
-+	int ret;
-+
- 	efi_memmap_unmap();
- 
- 	if (efi_enabled(EFI_PARAVIRT))
- 		return 0;
- 
--	return __efi_memmap_init(data);
-+	ret = __efi_memmap_init(data);
-+	if (ret)
-+		return ret;
-+
-+	__efi_memmap_free(phys, size, flags);
-+	return 0;
- }
- 
- /**
-diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-index 3365944f7965..34109fd86c55 100644
---- a/drivers/firmware/efi/memmap.c
-+++ b/drivers/firmware/efi/memmap.c
-@@ -15,10 +15,6 @@
- #include <asm/early_ioremap.h>
- #include <asm/efi.h>
- 
--#ifndef __efi_memmap_free
--#define __efi_memmap_free(phys, size, flags) do { } while (0)
--#endif
--
- /**
-  * __efi_memmap_init - Common code for mapping the EFI memory map
-  * @data: EFI memory map data
-@@ -51,11 +47,6 @@ int __init __efi_memmap_init(struct efi_memory_map_data *data)
- 		return -ENOMEM;
- 	}
- 
--	if (efi.memmap.flags & (EFI_MEMMAP_MEMBLOCK | EFI_MEMMAP_SLAB))
--		__efi_memmap_free(efi.memmap.phys_map,
--				  efi.memmap.desc_size * efi.memmap.nr_map,
--				  efi.memmap.flags);
--
- 	map.phys_map = data->phys_map;
- 	map.nr_map = data->size / data->desc_size;
- 	map.map_end = map.map + data->size;
--- 
-2.45.2.505.gda0bf45e8d-goog
+And this is after:
 
+root@crazy-taxi:~# ./perf-next list armv8_pmuv3
+
+List of pre-defined events (to be used in -e or -M):
+
+
+armv8_pmuv3_0:
+   L1-dcache-loads OR armv8_pmuv3_0/L1-dcache-loads/
+   L1-dcache-load-misses OR armv8_pmuv3_0/L1-dcache-load-misses/
+   L1-icache-loads OR armv8_pmuv3_0/L1-icache-loads/
+   L1-icache-load-misses OR armv8_pmuv3_0/L1-icache-load-misses/
+   dTLB-loads OR armv8_pmuv3_0/dTLB-loads/
+   dTLB-load-misses OR armv8_pmuv3_0/dTLB-load-misses/
+   iTLB-loads OR armv8_pmuv3_0/iTLB-loads/
+   iTLB-load-misses OR armv8_pmuv3_0/iTLB-load-misses/
+   branch-loads OR armv8_pmuv3_0/branch-loads/
+   branch-load-misses OR armv8_pmuv3_0/branch-load-misses/
+   l3d_cache_wb OR armv8_pmuv3/l3d_cache_wb/          [Kernel PMU event]
+
+See the difference in the last line - it appears that CPU PMU events 
+which map to common hardware/cache events *do* still report the full PMU 
+name, but any PMU-type-specific events show a truncated name in list and 
+thus fail the test's strict match against the full name reported by stat.
+
+Thanks,
+Robin.
 
