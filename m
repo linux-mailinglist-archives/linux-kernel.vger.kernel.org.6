@@ -1,122 +1,174 @@
-Return-Path: <linux-kernel+bounces-211821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E24890576B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:51:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2589A905770
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B000328B8C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:51:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ACE2B22395
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC047180A8A;
-	Wed, 12 Jun 2024 15:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70575180A93;
+	Wed, 12 Jun 2024 15:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kMzwwb79"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="F59ldffT"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B804C1802AA;
-	Wed, 12 Jun 2024 15:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497D817FAB7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718207461; cv=none; b=V0mUwXtzF9ufx1x9iJtLHLa0cTBM/M7O7jKTcaybeBIhA7L3WtIWLRLx40zbOxDOw7juTsTAqdgnDw8BENL6sFrh/rnfkkUn8sdorijPLid0jpmdRBG+50JNVyZkjqS5GiWLFxWUzHmJx9kmzewNV2xm3VNI/s22oe1g75cPcnI=
+	t=1718207524; cv=none; b=iNbYpmlYrMi/LlDjIEBz10qoKpQGrxFeFArWyNrIAedMqmPFacTDV+7qPrzXtXfIbeeCbx0QgA6Dxo1obD9Fi7r0sHejC+ImltXokL+CkDl3KgDN1/G5o0TfB3xdCi4BFvY7S5HCpKzKrqn5q+rspjYlXBZ7tteKNrsNvo+P+uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718207461; c=relaxed/simple;
-	bh=klVtsJuKXbwtzbDnxkwIMDy1AWW0ZYbn+0pkQtKH7hE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=KxkSNs7cyZ6gsgmYDYHJNAuiX7hbvFxtGVEA1fWV6xnFFVRjSeKTlCpKj0/NdNhV92qpZSH2LA/UU9vZp9dDJ/CkBfYqFhaQOKjg+7KpVGu57NfBFQ/woEHmsuAmOj5RW45wS50TXi1af1z0FDcFtG9QXz61H0do7nf0fBW753o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kMzwwb79; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CAbPGg002327;
-	Wed, 12 Jun 2024 15:50:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=qfTgjrU+c9t402lfc6kXmQ
-	ihmKH9vn1aemt575x7eyM=; b=kMzwwb79xvjTbt5rROi+QsOVKszqW8CiNPVotT
-	an6WOXjjhmbazPTgeDIceny2KDKakbt+s29E+of2VB0kuM5mUUk2ehX8HLWdV7xG
-	B6+QRITkQgVjky3yF8mx6qgVGTxZT/kBISCzY5ymct/LNPgFaOg+vVfY/ev2pIwr
-	JmVov8lQ8+tkTIGumGh5d8N2f4d3s9lK/k5xXC7qckemgRyMOn76GMh8bUtXzpTw
-	qnnUdCyMC0WqgJYHVo76iZVsvpCl1bi6sGQbtb2nkI+ePec1mCIJxogdJW9iteYj
-	Kk5cveK5DSnsV7yL5lkqSwiwCaC79Q6EFHUhq8PKqZjxUlug==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yq4s8htvv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 15:50:55 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CFosb7021482
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 15:50:54 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 08:50:54 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 08:50:53 -0700
-Subject: [PATCH] fbdev: viafb: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718207524; c=relaxed/simple;
+	bh=xtBDFoQmM9KRsbYQrWoWhaDcGs4A5YynZBYJRZNzOfE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GI9HuQotOq7eG05TWDjELcb5mg6V2hfrWmVKNtOebUNMT8dmGT/KVLxkCblEUDc9WdwYgYrjnVtWJxyCj4pU/fMdx+1mGT5+mVJwPQ2ROKYCzJfJlOus8Ksu801jRlqQY2NeKmkLqYa+nL6ahGVOU4G/z61AWdke9WCufQjQcOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=F59ldffT; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 45CFFKZc007498
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:52:02 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc :
+ content-transfer-encoding : content-type : date : from : message-id :
+ mime-version : subject : to; s=s2048-2021-q4;
+ bh=I/Z6N+8GhYKAY2oDMx40QxjDLD0DkKbXD3UysbN8DvI=;
+ b=F59ldffTNBenHKBhWMmTrYlfiDKpxNy/YcsE8FHZ5mJ0eHqKohUX/2S2n7gIHsLnH/XY
+ v+tu7vrRbT7Aqa37QzcPu1YSLrCxyb3ZdPtvtEzhLkmwhlDiInTeL9MfAXXJSUFgOIyL
+ M5pChy1VRE+yWbwWshmtr1yPfFi0tF/Bzw92PCu6zleAbq8FVyqHyv7gAT+FUiRFBjmn
+ JMv9Px6Nhvy9x4Gy7Ir+7nq/Cv+pvkffzWKS8R0FuxVCwXO8+6rpy8H4Go6HF8TAz4/X
+ hKiODwIj5mLIuvXGYsiCCPLYqM2HLjQHL+13lWsi0Jc+Ttwu4JPnvof7m7Ibc2hNE6hS Vw== 
+Received: from mail.thefacebook.com ([163.114.134.2])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3yphwwak9h-5
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:52:02 -0700
+Received: from twshared15118.35.frc1.facebook.com (2620:10d:c085:208::11) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.11; Wed, 12 Jun 2024 15:51:58 +0000
+Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
+	id DCB8BF5EA644; Wed, 12 Jun 2024 08:51:47 -0700 (PDT)
+From: Keith Busch <kbusch@meta.com>
+To: <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>
+CC: <hch@lst.de>, <sagi@grimberg.me>, <paulmck@kernel.org>,
+        <davidgow@google.com>, <akpm@linux-foundation.org>,
+        <venkat88@linux.vnet.ibm.com>, Keith Busch <kbusch@kernel.org>
+Subject: [PATCH 1/2] list: introduce a new cutting helper
+Date: Wed, 12 Jun 2024 08:51:34 -0700
+Message-ID: <20240612155135.3060667-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-video-fbdev-via-v1-1-651f7cd699c4@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAN3DaWYC/x3MQQ6CMBBG4auQWTsJBZXEqxgXLfNXJpFiptiQE
- O5udfe+zdspwxSZbs1OhqJZl1ThTg2Nk09PsEo1dW13bq+u41lYTAssc1HBwjEISm3PvQwSe3c
- BMFAdvA1Rt//8/qgOPoOD+TROv+VL02fj2ecVRsfxBckNVLyLAAAA
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
-        Helge Deller
-	<deller@gmx.de>
-CC: <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Kfn7gG-BakFs6dOAKfuK3YBjxTsIjesn
-X-Proofpoint-ORIG-GUID: Kfn7gG-BakFs6dOAKfuK3YBjxTsIjesn
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: OwlQJr-qOc0LM7j4N2j5vuUeS4WkBg74
+X-Proofpoint-GUID: OwlQJr-qOc0LM7j4N2j5vuUeS4WkBg74
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-12_08,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- spamscore=0 mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
- priorityscore=1501 clxscore=1011 mlxlogscore=931 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406120114
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/via/viafb.o
+From: Keith Busch <kbusch@kernel.org>
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Provide a helper to remove elements from a list to the end, and place
+those elements in a new list.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
-Description derived from the Kconfig entry
----
- drivers/video/fbdev/via/viafbdev.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/list.h | 20 ++++++++++++++++++++
+ lib/list-test.c      | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
 
-diff --git a/drivers/video/fbdev/via/viafbdev.c b/drivers/video/fbdev/via/viafbdev.c
-index a52b1ba43a48..6da5ae7d229a 100644
---- a/drivers/video/fbdev/via/viafbdev.c
-+++ b/drivers/video/fbdev/via/viafbdev.c
-@@ -2144,5 +2144,6 @@ MODULE_PARM_DESC(viafb_lcd_port, "Specify LCD output port.");
- module_param(viafb_dvi_port, charp, S_IRUSR);
- MODULE_PARM_DESC(viafb_dvi_port, "Specify DVI output port.");
- 
-+MODULE_DESCRIPTION("VIA UniChrome (Pro) and Chrome9 display driver");
- MODULE_LICENSE("GPL");
- #endif
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-video-fbdev-via-3d7df315eee7
+diff --git a/include/linux/list.h b/include/linux/list.h
+index 5f4b0a39cf46a..f22850e854820 100644
+--- a/include/linux/list.h
++++ b/include/linux/list.h
+@@ -520,6 +520,26 @@ static inline void list_cut_before(struct list_head =
+*list,
+ 	entry->prev =3D head;
+ }
+=20
++/**
++ * list_cut - cut a list into two from the entry
++ * @list: a new list to add all removed entries
++ * @head: a list with entries
++ * @entry: an entry within head, could be the head itself
++ *
++ * This helper removes elements from @head starting at @entry until the =
+end,
++ * and appends them to @lists.
++ */
++static inline void list_cut(struct list_head *list,
++		struct list_head *head, struct list_head *entry)
++{
++	list->next =3D entry;
++	list->prev =3D head->prev;
++	head->prev =3D entry->prev;
++	entry->prev->next =3D head;
++	entry->prev =3D list;
++	list->prev->next =3D list;
++}
++
+ static inline void __list_splice(const struct list_head *list,
+ 				 struct list_head *prev,
+ 				 struct list_head *next)
+diff --git a/lib/list-test.c b/lib/list-test.c
+index 0cc27de9cec88..1507f46cf1ade 100644
+--- a/lib/list-test.c
++++ b/lib/list-test.c
+@@ -382,6 +382,34 @@ static void list_test_list_is_singular(struct kunit =
+*test)
+ 	KUNIT_EXPECT_FALSE(test, list_is_singular(&list));
+ }
+=20
++static void list_test_list_cut(struct kunit *test)
++{
++	struct list_head entries[3], *cur;
++	LIST_HEAD(list1);
++	LIST_HEAD(list2);
++	int i =3D 0;
++
++	list_add_tail(&entries[0], &list1);
++	list_add_tail(&entries[1], &list1);
++	list_add_tail(&entries[2], &list1);
++
++	/* before: [list1] -> entries[0] -> entries[1] -> entries[2] */
++	list_cut(&list2, &list1, &entries[1]);
++	/* after: [list1] -> entries[0], [list2] -> entries[1] -> entries[2] */
++
++	list_for_each(cur, &list1) {
++		KUNIT_EXPECT_PTR_EQ(test, cur, &entries[i]);
++		i++;
++	}
++
++	KUNIT_EXPECT_EQ(test, i, 1);
++
++	list_for_each(cur, &list2) {
++		KUNIT_EXPECT_PTR_EQ(test, cur, &entries[i]);
++		i++;
++	}
++}
++
+ static void list_test_list_cut_position(struct kunit *test)
+ {
+ 	struct list_head entries[3], *cur;
+@@ -780,6 +808,7 @@ static struct kunit_case list_test_cases[] =3D {
+ 	KUNIT_CASE(list_test_list_is_singular),
+ 	KUNIT_CASE(list_test_list_cut_position),
+ 	KUNIT_CASE(list_test_list_cut_before),
++	KUNIT_CASE(list_test_list_cut),
+ 	KUNIT_CASE(list_test_list_splice),
+ 	KUNIT_CASE(list_test_list_splice_tail),
+ 	KUNIT_CASE(list_test_list_splice_init),
+--=20
+2.43.0
 
 
