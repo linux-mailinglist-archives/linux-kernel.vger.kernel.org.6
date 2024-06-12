@@ -1,176 +1,93 @@
-Return-Path: <linux-kernel+bounces-211998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5F19059CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:24:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587329059D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E2D1C210CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:24:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6F1EB24C18
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616F31822C8;
-	Wed, 12 Jun 2024 17:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AC41822D2;
+	Wed, 12 Jun 2024 17:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ED6QTUpf"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0Q06Ogc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C7C1822D5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 17:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047233209;
+	Wed, 12 Jun 2024 17:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718213023; cv=none; b=YJy2i9kb0PvWZUCNuLjhfTMrtDHOiKQLYEEGdhYQD6taufN+5LuVqarLI8c8cW41fAGrcfYx0LeFjnpntzP6Sxbnl8dH47uPBwOxyFAQpyevb8THV/HWdczC8sD/a0MJSJy1NNwsGjiTWOVNB8Z7orbs2DF4YhQbIKxCBRLGmuU=
+	t=1718213055; cv=none; b=ANfIcP6cQzcLFZCQzAZ8TNSfZh3d9UIqTRr2oIgTxdqGUCC31PPJ7+Qs+w1C/e3Veguw1V6pp75XjptOuLYYV3/IxrlfzCpQW5w5oaRG+d7Tq+9arYkl5HvdZgqFeYxyH1s34/a0uvpdGvqcsdkJ8mc0YVP85qMe0Qk0OHupPsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718213023; c=relaxed/simple;
-	bh=qvzOGVZF1aFjcNNXoWdAyWZv4lQeSovWWQTrEs6pNdw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Z8sz0X2WLLDv8aORh9x0UDqc2jZ2HVuLfAePR9PjjtOm4OenNlE+6u9wZbS9dzDp7vSKosateft6Z6hvG+pr50wYwl/b31LlBfyNUTr5/4uj/v4r1sAgneZVSkTDPrYmaQTn4R5pDxQ8iza4BpodFWaW8WfERtHWTEL8bD6XKHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ED6QTUpf; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfe4f388d33so124057276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:23:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718213020; x=1718817820; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v0uZvClGSP7b0LMzzAPVM0AhM29ZDe2y2D54OZuyJ4o=;
-        b=ED6QTUpflG01XxDwADpCTuUCb3My1wmNO1KRIabL/mB6J08kl5ENGX51vmpVHsg6xR
-         jFv33Xhk3VXxWTVvpGKAaIotK7Zksj8HAw0XHs6pGvPnVz+1x1dCCWPEFUm/SJy06FLi
-         BpuEPZLYakQWef9qNxKBc3A3XsNZbfd6mt7/jBNk0WSx8e0xYM5diG+B74Wd60h/dixp
-         Ae7x+VxLhJaqlumRqtc3pPayDW5jcNJHxwn3EmaYD3cAVYZ7BtagZ8ZPWqNrRQf8GGOR
-         qUscLQNTNlkm6MS3vd2OpolLDv7GKWif+u6p98TUEVHK9IwK5SEi6mXOlkhAKEmwzS4n
-         qyAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718213020; x=1718817820;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=v0uZvClGSP7b0LMzzAPVM0AhM29ZDe2y2D54OZuyJ4o=;
-        b=ZphytQPNvuDFNDvhd30zOkiLRORgWXunze1qk3y82J7N3HqBCVWF1B9f3d03LMwqfo
-         ktcNzRPLHQ9+mdahizpUY1jGQzNNxZCjdPYlVMaSiDk3HADJMVRSeA5Omt1AkDcLXPr/
-         VLrSaN0E4E71MgTOeXEE6jzUFp5DWqSGIcEL3Knx30rEC0DlY2fqIiExlSw2Dxdfhh39
-         nQ0cSHOil8++8BWlTe6FfZXh7tH+6+7niQFdyf6uRl9kCGKhwTKCGF+WS4/7jB7N6KY3
-         k3JVJytqH4EcHYIDbf7hRang0wR+Y+/FB4FZoxM5P1Q/peesxVK3T8hgzrgIk2zbPsz2
-         gIPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUF66Eq5ikfNgNvWkrMU5Ec5AdUcsKROvBwr3SCGE7UEg7MRItoYCvBW3y++ury4fri38maRlbu9op5Pig81YujtadrcKGoZg1NTT7R
-X-Gm-Message-State: AOJu0YxUCwvWBnFdhHHuHMeJQJZGTeaDCJhIFYpyjEMec5RpxfSk4R98
-	jx96imUr7Ct7jl+1p759p8E0PyrSE2gelto+pioTGEf0vur4tcXVkF2RM6ba4hdXb0K41jUOb6/
-	+NA==
-X-Google-Smtp-Source: AGHT+IHsuziTjwu8H3LsGOZG3nq2ECdUkM7fJ/s+9lw1k304/SuAsQ64WUp2lf97WzRuhz9PeWwlSE0Bo58=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:729:b0:dfb:b4e:407a with SMTP id
- 3f1490d57ef6-dfe68035fbemr647880276.9.1718213020117; Wed, 12 Jun 2024
- 10:23:40 -0700 (PDT)
-Date: Wed, 12 Jun 2024 10:23:38 -0700
-In-Reply-To: <CAOUHufYCmYNngmS=rOSAQRB0N9ai+mA0aDrB9RopBvPHEK42Ng@mail.gmail.com>
+	s=arc-20240116; t=1718213055; c=relaxed/simple;
+	bh=VEP6/pbsoq4tingsui+FiHXJGFOhZC3JaHgSPFWU6mo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AoX3EN8ug9Qjq4arXLSaDk4YSez8yG6EFUf8f2SCn85Fr0YkIsw8RI/Fqz1usgZw7VL4HNN9KC1W/OKcfEioXGWUnhb4MftLMyuAawfduHdTv+RVeIzBpSgT6Ob9nNgVNqZo1RJ3epkHIuJv9lfDFB833Pf+/dFd558znhs0iw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0Q06Ogc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF4A2C116B1;
+	Wed, 12 Jun 2024 17:24:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718213054;
+	bh=VEP6/pbsoq4tingsui+FiHXJGFOhZC3JaHgSPFWU6mo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E0Q06Ogck67T3YyvvwKZ6YCLKjIXPGwvgIyl5znav4NfousuzZYo71KBpvEwS1p56
+	 A6rxMMP4xTnaag8d66Mh3iNk41YULjPod4ac3blokxLKvroAnWen2tfzXHEb96o5dR
+	 nEhK1WQev1bKH8ndeUmfwYukd9xDZqQd9fB5HscNC8ng3f70y5Ddq4EXh4AN8ZjwCG
+	 kOpaNMEcNPmV3FPABKbu1UvbhzKXgAmxdoqtaV2jSopaSZ8tIxBbzSuaHAbxcoQBlM
+	 ABr6jorhzTPCnmqTiq6wWIXg67BaS5sNP7QiQ1p0JVq2dXAotCldXBan3v4dNyhWfz
+	 xGnF+AOXKWkuw==
+Date: Wed, 12 Jun 2024 11:24:11 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Chaitanya Kulkarni <chaitanyak@nvidia.com>
+Cc: Keith Busch <kbusch@meta.com>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"hch@lst.de" <hch@lst.de>, "sagi@grimberg.me" <sagi@grimberg.me>,
+	"paulmck@kernel.org" <paulmck@kernel.org>,
+	"davidgow@google.com" <davidgow@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"venkat88@linux.vnet.ibm.com" <venkat88@linux.vnet.ibm.com>
+Subject: Re: [PATCH 2/2] nvme: fix namespace removal list
+Message-ID: <ZmnZu-QceHYbYf0S@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240612155135.3060667-1-kbusch@meta.com>
+ <20240612155135.3060667-2-kbusch@meta.com>
+ <5cb2c809-bfa3-4389-8f60-ea0edf742724@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240611002145.2078921-1-jthoughton@google.com>
- <20240611002145.2078921-9-jthoughton@google.com> <ZmnGlpBR91TyI3Lt@google.com>
- <CAOUHufYCmYNngmS=rOSAQRB0N9ai+mA0aDrB9RopBvPHEK42Ng@mail.gmail.com>
-Message-ID: <ZmnZmj8iVmcLf8fo@google.com>
-Subject: Re: [PATCH v5 8/9] mm: multi-gen LRU: Have secondary MMUs participate
- in aging
-From: Sean Christopherson <seanjc@google.com>
-To: Yu Zhao <yuzhao@google.com>
-Cc: James Houghton <jthoughton@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
-	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5cb2c809-bfa3-4389-8f60-ea0edf742724@nvidia.com>
 
-On Wed, Jun 12, 2024, Yu Zhao wrote:
-> On Wed, Jun 12, 2024 at 10:02=E2=80=AFAM Sean Christopherson <seanjc@goog=
-le.com> wrote:
+On Wed, Jun 12, 2024 at 05:20:48PM +0000, Chaitanya Kulkarni wrote:
+> On 6/12/24 08:51, Keith Busch wrote:
+> > From: Keith Busch<kbusch@kernel.org>
 > >
-> > On Tue, Jun 11, 2024, James Houghton wrote:
-> > > diff --git a/mm/rmap.c b/mm/rmap.c
-> > > index e8fc5ecb59b2..24a3ff639919 100644
-> > > --- a/mm/rmap.c
-> > > +++ b/mm/rmap.c
-> > > @@ -870,13 +870,10 @@ static bool folio_referenced_one(struct folio *=
-folio,
-> > >                       continue;
-> > >               }
-> > >
-> > > -             if (pvmw.pte) {
-> > > -                     if (lru_gen_enabled() &&
-> > > -                         pte_young(ptep_get(pvmw.pte))) {
-> > > -                             lru_gen_look_around(&pvmw);
-> > > +             if (lru_gen_enabled() && pvmw.pte) {
-> > > +                     if (lru_gen_look_around(&pvmw))
-> > >                               referenced++;
-> > > -                     }
-> > > -
-> > > +             } else if (pvmw.pte) {
-> > >                       if (ptep_clear_flush_young_notify(vma, address,
-> > >                                               pvmw.pte))
-> > >                               referenced++;
+> > This function wants to move a subset of a list from an element to the
+> > end to another list, so do that with the new list_cut helper instead of
+> > using the wrong list splice.
 > >
-> > Random question not really related to KVM/secondary MMU participation. =
- AFAICT,
-> > the MGLRU approach doesn't flush TLBs after aging pages.  How does MGLR=
-U mitigate
-> > false negatives on pxx_young() due to the CPU not setting Accessed bits=
- because
-> > of stale TLB entries?
->=20
-> I do think there can be false negatives but we have not been able to
-> measure their practical impacts since we disabled the flush on some
-> host MMUs long ago (NOT by MGLRU), e.g., on x86 and ppc,
-> ptep_clear_flush_young() is just ptep_test_andclear_young().
+> > Fixes: be647e2c76b27f4 ("nvme: use srcu for iterating namespace list")
+> > Reported-by: Venkat Rao Bagalkote<venkat88@linux.vnet.ibm.com>
+> > Tested-by: Venkat Rao Bagalkote<venkat88@linux.vnet.ibm.com>
+> > Signed-off-by: Keith Busch<kbusch@kernel.org>
+> 
+> not a blocker, but it'd be really useful if we can get a blktests for this,
+> I've asked OP to provide steps at least ...
 
-Aha!  That's what I was missing, I somehow didn't see x86's ptep_clear_flus=
-h_young().
+Recreate the original report: detach the highest namespace id from your
+controller. Let's say it's nsid 10, and let's assume your ctrlid is 0:
 
-That begs the question, why does KVM flush TLBs on architectures that don't=
- need
-to?  And since kvm_mmu_notifier_clear_young() explicitly doesn't flush, are=
- there
-even any KVM-supported architectures for which the flush is mandatory?
+  # nvme detach-ns /dev/nvme0 -c 0 -n 10
 
-Skipping the flush on KVM x86 seems like a complete no-brainer.
-
-Will, Marc and/or Oliver, what are arm64's requirements in this area?  E.g.=
- I see
-that arm64's version of __ptep_clear_flush_young() does TLBI but not DSB.  =
-Should
-KVM be doing something similar?  Can KVM safely skip even the TBLI?
-
-> theoretical basis is that, given the TLB coverage trend (Figure 1 in
-> [1]), when a system is running out of memory, it's unlikely to have
-> many long-lived entries in its TLB. IOW, if that system had a stable
-> working set (hot memory) that can fit into its TLB, it wouldn't hit
-> page reclaim. Again, this is based on the theory (proposition) that
-> for most systems, their TLB coverages are much smaller than their
-> memory sizes.
->=20
-> If/when the above proposition doesn't hold, the next step in the page
-> reclaim path, which is to unmap the PTE, will cause a page fault. The
-> fault can be minor or major (requires IO), depending on the race
-> between the reclaiming and accessing threads. In this case, the
-> tradeoff, in a steady state, is between the PF cost of pages we
-> shouldn't reclaim and the flush cost of pages we scan. The PF cost is
-> higher than the flush cost per page. But we scan many pages and only
-> reclaim a few of them; pages we shouldn't reclaim are a (small)
-> portion of the latter.
->=20
-> [1] https://www.usenix.org/legacy/events/osdi02/tech/full_papers/navarro/=
-navarro.pdf
+blktests supposedly has something that detaches namespaces through the
+nvmet module, but it doesn't seem to be catching anything.
 
