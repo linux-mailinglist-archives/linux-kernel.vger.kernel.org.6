@@ -1,123 +1,212 @@
-Return-Path: <linux-kernel+bounces-211310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40EA2904FC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:59:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5641E904FCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F85C1C2207E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:59:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A01FDB25B12
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4751216DEDB;
-	Wed, 12 Jun 2024 09:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CFA16E89D;
+	Wed, 12 Jun 2024 09:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R0jb8D6A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mpn2SCHB"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0B5A34
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA67716DED4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718186340; cv=none; b=ozkdE/ftMMzxNL+L+MpGzx1+75laNhV4XidhoVW264Oed463eUZtdhCVRyJJQbH+Sm2tBMy6zR3pkXoIIoR2NEEPxyHWDr/pGC3BLgkp/qjxvYqerhIX6iSFJAI/iWPbtZ2Awu4UOiip0qeMp5WlMBHA8WNybGVCUoeAQ2YxjNk=
+	t=1718186378; cv=none; b=Gb/JRO20t6TBeJhaWLfuLpOPrJYcTV8aDBf9Ba4kz5A11twUjJjcqNeYHAokY3PgPJymNLCR3iU7wREcCXzhwmGERe+PHdZSPEi6XiZ0TJkJ45chpOqetDMRXHQflfLRqpC/SbgA8QJH9meRXdYVOM0OyVZP8iP0mdqw9DzkEiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718186340; c=relaxed/simple;
-	bh=yGPmU6c0nn4fqF3A9xNUXtiVlyn/P1VcM1xKRmdmzQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oa1CLJt8YizhIAnyyat60rBDYsbcEBuqJErh02vpmGfL02GOw/cq2LxhRInUkxl9//n4N5uftwpOYK2uTjQfzKWi0wpBbWkXui4DcRAmceOB1AksprvJW45WRaStHksRaGvkMEcFRJVyhfKcmBd48nI1IQZpFtCEz+AmEYxgElw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R0jb8D6A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0851C3277B;
-	Wed, 12 Jun 2024 09:58:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718186340;
-	bh=yGPmU6c0nn4fqF3A9xNUXtiVlyn/P1VcM1xKRmdmzQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R0jb8D6AkI4ujGjIqQicZT3T/N+whcwV45ycQxxBFpXDmvWWOsXVVA14/o4hiExaW
-	 CVJXv9rLp9rPzLFdFT0w+NlDX5pm2wJNfD+Bq5Iu+vdWLzxzzPNK6/cE/IeLjB3eLJ
-	 jrPQ9bSYhEi/a211bsjYJxDUglDsuwOj2A2BYjoU=
-Date: Wed, 12 Jun 2024 11:58:57 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Lei Liu <liulei.rjpt@vivo.com>
-Cc: Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH] binder_alloc: replace kcalloc with kvcalloc to mitigate
- OOM issues
-Message-ID: <2024061216-faster-cufflink-ceac@gregkh>
-References: <20240611085629.25088-1-liulei.rjpt@vivo.com>
+	s=arc-20240116; t=1718186378; c=relaxed/simple;
+	bh=eMuODGP7W4LxxOLv4JBF6KdKVN5A3gRCCuaax4uO73I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qiMDhgKXI30MSJoQ3qjk2AQwDPwVKF9fXXJ8W2SABVL/qQYGWKJN1Czg14CvK73Z7jriB2+qxDxk/0PKIleRKMTpywkmYBcYHaAp0Gx4wJBHWgYEWeBjiQJ9b7VCQh2hTHvEFUFN0eEvMcNLApMk4fPlJgMn6BFz4tQVdpVh0BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mpn2SCHB; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52bbdc237f0so2625876e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718186375; x=1718791175; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xts/ri4+0emIXdmkFUBZxsB2Gm19lNPTdXZ/kDOdF3c=;
+        b=Mpn2SCHBu2qZuM7Ors2YnwSE3MlK5K012AuiDNrUPZCERHjcpC2+z/x+W/WW/Gij7N
+         s5R6wK+kTw8DIdHdjWgzHo0DKhO8GiXMNOrzb0jMao4bm/sIo3/TTAqOpFKkAkMGuVOR
+         8VBuXOb92y1f9OlAYxyiRq+3NatHYUM08//D3P4DWjD3P9sESwZN6gOd6KK6qEapszHt
+         blYvDyeIbfOawwa7YwgspgQx5It3zo9vZcEhJghFOU29UaO4UOkJzvzpFPcLSEgyFrq2
+         5iSlJ7bl313vwnlPIiUGY2oGqiLvvP2FMfwUO5+2jbxG43nOcrdaH02kVddJq58YD6nz
+         lUUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718186375; x=1718791175;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xts/ri4+0emIXdmkFUBZxsB2Gm19lNPTdXZ/kDOdF3c=;
+        b=Ytvu4HJ5CGJ/saUJLOoZxpHiKxGnhMS7GndygjPrsK8J9KDOe1K+L9DTdmKIQ/IXjd
+         otrG6N4jemRzI/BZozAnw2Evnd2lOI2JERC0qRN/OYOb2jv3sRdeXSrsgiaRKGzb38le
+         Ultz79Q7ue9Jn2jAN4nvXmjIAEXs2e47N3QMiATxzrW7Ohkbaka+v+qVfZtGlQEPaF3C
+         CLf6racO6aCIj0UN1sR4fliewkVm7YyXhplUxQp0nVNCw1/siOO8Zftu5tpVParw3juo
+         7eaF+SksT6sBUfFMeMjrNE4V9d968eEydeGxhKv9YDX/p9U0RX40PXkFEv1/wXBUyLhi
+         IU6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXfLxmuDntlkormiM2wsp7uBeEt/Sk976aGuWWTHwkXrSyT/i0n11qgaV+4Q0tZmelwH7gHsPBCY76Jn44m/TnhQVxCbtGuF7W93H6q
+X-Gm-Message-State: AOJu0YymN1v06Fu/R5avjf+bRwDTNM9S+9EmDT0fzt2b2q/jlugVHRcr
+	her0RK+VXTVQcX8cINRp5jA8peNL4JIApynkVUTyJladMIBHwhjtNxvRyQrG+Dc=
+X-Google-Smtp-Source: AGHT+IHCMWtdj1tPlQQ0Sr0DDMO1hg1ot8AGKkRV4GaB2yRvMXl7ylZpYCJpJPIeeQY4+5t45YW90w==
+X-Received: by 2002:ac2:5582:0:b0:52c:9052:db7f with SMTP id 2adb3069b0e04-52c9a40520emr924558e87.56.1718186374895;
+        Wed, 12 Jun 2024 02:59:34 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c8907dae9sm1408095e87.129.2024.06.12.02.59.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 02:59:34 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v6 0/6] power: supply: Lenovo Yoga C630 EC
+Date: Wed, 12 Jun 2024 12:59:31 +0300
+Message-Id: <20240612-yoga-ec-driver-v6-0-8e76ba060439@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240611085629.25088-1-liulei.rjpt@vivo.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIRxaWYC/3XOzUrEMBSG4VsZsjYl/0ldeR/i4rRJ2qDTyEkJl
+ qH3bjogjhSX3+J5z7mREjCFQp4vN4KhppLy0oZ5upBxhmUKNPm2iWBCMS0s3fIENIzUY6oBqTX
+ R26i9h+BIQ58YYvq6B1/f2o6Yr3SdMcBPRjLBNNfCsb4TQkolDeXUX9OKWzcAbmV+z/XlIy2Au
+ cs4Hdk5lTXjdn+zyiP+70dVUkalsNA7zT14/Zg6Xqrq0buTV82rCM5HgGAHc/L61xt2vq+b5zD
+ 2HNigpPjr933/BnF1r7B0AQAA
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Nikita Travkin <nikita@trvn.ru>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4716;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=eMuODGP7W4LxxOLv4JBF6KdKVN5A3gRCCuaax4uO73I=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmaXGFNd/hzHoo56I1fjpVq1NuqLinKlwZUa/wl
+ uU33Ubc6YyJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZmlxhQAKCRCLPIo+Aiko
+ 1WNsB/4puhimqcLUNR+1HNqt4pmQ1iKV+joscGjEBnKJaGRAPGnQTTgkVJi6fKLgA3CZ9ax94KI
+ Pm5Fn7wrEcRUaauMkHB+va4KHZrJMZSoWycgfgvWzYBLLlYjhEevElD+4soJIKxK3B6QcZcFJHz
+ eYKJX876lXUIkTlu2oOyOteSq0Ujn1P1lkBlZI+pQoptZUV5o8qG1TJpizHuSVDXUw1LoaodsjY
+ meZbqIAhkznUIaAy1v+25dobPUl0xYzieqNkX4Dy1h1qk06DuJsql04MWGvquOc+Oju/VQ8YQTt
+ WmAyEkSSMjmNqHbKFOp2+n3kI3HVU6cO7CpWy5lHaNcX40p5
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Tue, Jun 11, 2024 at 04:56:28PM +0800, Lei Liu wrote:
-> In binder_alloc, there is a frequent need for order3 memory allocation,
-> especially on small-memory mobile devices, which can lead to OOM and
-> cause foreground applications to be killed, resulting in flashbacks.
-> 
-> We use kvcalloc to allocate memory, which can reduce system OOM
-> occurrences, as well as decrease the time and probability of failure for
-> order3 memory allocations. Additionally, it can also improve the
-> throughput of binder (as verified by Google's binder_benchmark testing
-> tool).
-> 
-> We have conducted multiple tests on an 8GB memory phone, and the
-> performance of kvcalloc is better. Below is a partial excerpt of the
-> test data.
-> 
-> throughput = (size * Iterations)/Time
-> Benchmark-kvcalloc	Time	CPU	Iterations	throughput(Gb/s)
-> ----------------------------------------------------------------
-> BM_sendVec_binder-4096	30926 ns	20481 ns	34457	4563.66↑
-> BM_sendVec_binder-8192	42667 ns	30837 ns	22631	4345.11↑
-> BM_sendVec_binder-16384	67586 ns	52381 ns	13318	3228.51↑
-> BM_sendVec_binder-32768	116496 ns	94893 ns	7416	2085.97↑
-> BM_sendVec_binder-65536	265482 ns	209214 ns	3530	871.40↑
-> 
-> Benchmark-kvcalloc	Time	CPU	Iterations	throughput(Gb/s)
+This adds binding, driver and the DT support for the Lenovo Yoga C630
+Embedded Controller, to provide battery information.
 
-Both benchmarks are the same?  Or is this labeled incorrectly?
+Support for this EC was implemented by Bjorn, who later could not work
+on this driver. I've picked this patchset up and updated it following
+the pending review comments.
 
-> ----------------------------------------------------------------
-> BM_sendVec_binder-4096	39070 ns	24207 ns	31063	3256.56
-> BM_sendVec_binder-8192	49476 ns	35099 ns	18817	3115.62
-> BM_sendVec_binder-16384	76866 ns	58924 ns	11883	2532.86
-> BM_sendVec_binder-32768	134022 ns	102788 ns	6535	1597.78
-> BM_sendVec_binder-65536	281004 ns	220028 ns	3135	731.14
-> 
-> Signed-off-by: Lei Liu <liulei.rjpt@vivo.com>
-> ---
->  drivers/android/binder_alloc.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-> index 2e1f261ec5c8..5dcab4a5e341 100644
-> --- a/drivers/android/binder_alloc.c
-> +++ b/drivers/android/binder_alloc.c
-> @@ -836,7 +836,7 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
->  
->  	alloc->buffer = vma->vm_start;
->  
-> -	alloc->pages = kcalloc(alloc->buffer_size / PAGE_SIZE,
-> +	alloc->pages = kvcalloc(alloc->buffer_size / PAGE_SIZE,
->  			       sizeof(alloc->pages[0]),
->  			       GFP_KERNEL);
+DisplayPort support is still not a part of this patchset. It uses EC
+messages to provide AltMode information rather than implementing
+corresponding UCSI commands. However to have a cleaner uAPI story, the
+AltMode should be handled via the same Type-C port.
 
-Nit, update the indentation please.
+Merge strategy: the driver bits depend on the platform/arm64 patch,
+which adds interface for the subdrivers. I'd either ask to get that
+patch merged to the immutable branch, which then can be picked up by
+power/supply and USB trees or, to make life simpler, ack merging all
+driver bits e.g. through USB subsystem (I'm biased here since I plan to
+send more cleanups for the UCSI subsystem, which would otherwise result
+in cross-subsystem conflicts).
 
-thanks,
+---
+Changes in v6:
+- Use guard() instead of scoped_guard() (Ilpo)
+- Add a define for UCSI version register (Ilpo)
+- Added a check to prevent overflowing the address in reg16 read (Ilpo)
+- Link to v5: https://lore.kernel.org/r/20240607-yoga-ec-driver-v5-0-1ac91a0b4326@linaro.org
 
-greg k-h
+Changes in v5:
+- Added missing article in the commit message (Bryan)
+- Changed yoga_c630_ec_ucsi_get_version() to explicitly set the register
+  instead of just incrementing it (Bryan)
+- Dropped spurious debugging pr_info (Bryan)
+- Added missing includes all over the place (Ilpo)
+- Switched to scoped_guard() where it's suitable (Ilpo)
+- Defined register bits (Ilpo, Bryan)
+- Whitespace cleanup (Ilpo, Bryan)
+- Reworked yoga_c630_ucsi_notify() to use switch-case (Bryan)
+- Use ternary operators instead of if()s (Ilpo)
+- Switched power supply driver to use fwnode (Sebastian)
+- Fixed handling of the adapter's type vs usb_type (Sebastian)
+- Added SCOPE property to the battery (Sebastian)
+- Link to v4: https://lore.kernel.org/r/20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org
+
+Changes in v4:
+- Moved bindings to platform/ to follow example of other Acer Aspire1 EC
+  (Nikita Travkin)
+- Fixed dt validation for EC interrupt pin (Rob Herring)
+- Dropped separate 'scale' property (Oliver Neukum)
+- Link to v3: https://lore.kernel.org/r/20240527-yoga-ec-driver-v3-0-327a9851dad5@linaro.org
+
+Changes in v3:
+- Split the driver into core and power supply drivers,
+- Added UCSI driver part, handling USB connections,
+- Fixed Bjorn's address in DT bindings (Brian Masney)
+- Changed power-role for both ports to be "dual" per UCSI
+- Link to v2: https://lore.kernel.org/linux-arm-msm/20230205152809.2233436-1-dmitry.baryshkov@linaro.org/
+
+Changes in v2:
+- Dropped DP support for now, as the bindings are in process of being
+  discussed separately,
+- Merged dt patch into the same patchseries,
+- Removed the fixed serial number battery property,
+- Fixed indentation of dt bindings example,
+- Added property: reg and unevaluatedProperties to the connector
+  bindings.
+- Link to v1: https://lore.kernel.org/linux-arm-msm/20220810035424.2796777-1-bjorn.andersson@linaro.org/
+
+---
+Bjorn Andersson (2):
+      dt-bindings: platform: Add Lenovo Yoga C630 EC
+      arm64: dts: qcom: c630: Add Embedded Controller node
+
+Dmitry Baryshkov (4):
+      platform: arm64: add Lenovo Yoga C630 WOS EC driver
+      usb: typec: ucsi: add Lenovo Yoga C630 glue driver
+      power: supply: lenovo_yoga_c630_battery: add Lenovo C630 driver
+      arm64: dts: qcom: sdm845: describe connections of USB/DP port
+
+ .../bindings/platform/lenovo,yoga-c630-ec.yaml     |  83 ++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |  53 ++-
+ .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts      |  75 ++++
+ drivers/platform/arm64/Kconfig                     |  14 +
+ drivers/platform/arm64/Makefile                    |   1 +
+ drivers/platform/arm64/lenovo-yoga-c630.c          | 290 ++++++++++++
+ drivers/power/supply/Kconfig                       |   9 +
+ drivers/power/supply/Makefile                      |   1 +
+ drivers/power/supply/lenovo_yoga_c630_battery.c    | 500 +++++++++++++++++++++
+ drivers/usb/typec/ucsi/Kconfig                     |   9 +
+ drivers/usb/typec/ucsi/Makefile                    |   1 +
+ drivers/usb/typec/ucsi/ucsi_yoga_c630.c            | 202 +++++++++
+ include/linux/platform_data/lenovo-yoga-c630.h     |  44 ++
+ 13 files changed, 1281 insertions(+), 1 deletion(-)
+---
+base-commit: 03d44168cbd7fc57d5de56a3730427db758fc7f6
+change-id: 20240527-yoga-ec-driver-76fd7f5ddae8
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
