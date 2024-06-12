@@ -1,170 +1,188 @@
-Return-Path: <linux-kernel+bounces-212306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28880905E41
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:10:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176AB905E3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 786ABB214E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136D81C21499
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970E912B171;
-	Wed, 12 Jun 2024 22:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3C212B163;
+	Wed, 12 Jun 2024 22:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jgrN9W1Q"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WCbft5Ps"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1093391;
-	Wed, 12 Jun 2024 22:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40E8127B5A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718230231; cv=none; b=pbCmbZs619+22K4Y71sb7sS/0HDQGUllM7WUqhamFt3yBsyl7hmKyD48jrFdMlNDBW6HX4oOve4eW0AcPfWW5cD8hIzPeG7GQEq/ZeEVkbUKx9JGX04LwWOlLyLn1zNP3VJaHxwcs42PKFNNePtl5F7bWc2PNCZmlUgC0FIcsVI=
+	t=1718230146; cv=none; b=IHrNH4gQllKzDB+s3DJnhn0l8rqVpWVktLPZ5nJOVA8cMB8KeQVGcI7J9HXn34la7I6uR2Xbss+t+41+rJTX1FACYX0z2oCRKfAQMA032tmHFt2PenNalPImA/ZTLrLTiy0cIYDph1dYOikYmnSMH48/sjIo5Fx/JfrZNU2fhMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718230231; c=relaxed/simple;
-	bh=bt3bBjmTxibuENDeAjA9wUy5gOZzKPk6baZegf+NdyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IyvYeFT1S05wUuvF/yMXds+1B4YLMojZHa+V8wis7DIKDAo1Ez7hdtqBVtnkuOLOZrlc2cf6mx0XLViRYzWaiTP5wlm6ndma/Zy+297Lbvq5B8zOHDeS1xwdjFFp4uoo4PHeZFAjQ1TqhIcuCnO+IdcM05n6SNjJZ9kRsNxlDDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jgrN9W1Q; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AFaVBKZW4nApoB1IbTkcTuuDnuMN7hTpew8VlBI1fH8=; b=jgrN9W1QQsKRfHkAcQPZP4HPh6
-	nAwtS1F7uTHlvAUy/NvEJWLOlFwnjQU3TxkFJnMsf85PjKZSjKSp4DLSLryi+DiAe8arrQMB+XIFt
-	/+aVFF3nC16ci5dCVbIm8KIZcwe+Zu+QGKwy4Uelh0BBEpJWQv2TTuIEiuamqc7cIQBcje1ksQcmV
-	byDRyLMqXMoMT1g7N1e3RmOedTr+mnwalafQDuh0n+0nJGl0LcuJTQ9iG22Vch6nlMpFTm/J3SXpO
-	RUm/t4CwRoEbn4LKM7rK7qEQzC117Z49EScE6DVmzNR1+KmOwrgilC5FTgbcLXQ2yQQWNNIdjmbJu
-	pH2zHPWA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sHW8s-00000003A4E-17sI;
-	Wed, 12 Jun 2024 22:09:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 416D7300592; Thu, 13 Jun 2024 00:08:21 +0200 (CEST)
-Date: Thu, 13 Jun 2024 00:08:21 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Erick Archer <erick.archer@outlook.com>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Matthew Wilcox <mawilcox@microsoft.com>, x86@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 0/3] Hardening perf subsystem
-Message-ID: <20240612220821.GA18881@noisy.programming.kicks-ass.net>
-References: <AS8PR02MB7237F5BFDAA793E15692B3998BFD2@AS8PR02MB7237.eurprd02.prod.outlook.com>
- <202406101010.E1C77AE9D@keescook>
- <20240610200544.GY8774@noisy.programming.kicks-ass.net>
- <202406101438.BC43514F@keescook>
- <20240611075542.GD8774@noisy.programming.kicks-ass.net>
- <202406121148.688240B@keescook>
+	s=arc-20240116; t=1718230146; c=relaxed/simple;
+	bh=uf4QwjexCbqgBE5KgK6TjEHCqZfSMf9GM+zF7zleRX4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GVzqtvvCuAAHW7yoFB+EGSr9GZ0URWsQ40Gxsh552rIwLos2z93ZopgsYhhFoUKPVWfjOi/3bqHM0BR4Mg6cg/q7GAItjrRgIRVBt/KPdQpX2zSyt2DleiJ0/D5dI8k4H+fBBcdKS8Av2JZnVqwSeZ7gH2LbPIoTzLDGDqioB/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WCbft5Ps; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-6fb22ecd976so188729b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718230144; x=1718834944; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/5uG0fPgVb1UTRgqxTYPdWxSr8OQ4pJ5csv1+LzNJtI=;
+        b=WCbft5Psx+Rtd8O6uWItQynnGV0Z589CuDLIx149masc3T7X+yDJQCcAhTHs7lO1Zu
+         AUxAnSzPoOXiq2cS1a3YSvmvuPjP1VA1itDcccPnulwNyurPywAxedBEx2nSgEAwtKDk
+         /32bj91B19svsy7KO0pqKx+uv64kZm81MfNRzvt6E+Vn2QgZb8/O9/wMkHzepzAmlwgX
+         4LP5t4kEHMeaBK55loWmOqE2dMVHXE7A33csXGUtmgw+G98xAdeqvekEodIN1gLfWd6a
+         +lXW47dLoJvU+YuySCpRScl1/0eu9UcEB0h7gXtB0QxKVU7+KMW8ekU4tTd7uinP/ebR
+         CpAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718230144; x=1718834944;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/5uG0fPgVb1UTRgqxTYPdWxSr8OQ4pJ5csv1+LzNJtI=;
+        b=LgLa0dNixwUr96RisAEt+Sdxt4Px0ggftcjXJVtBbjb8XAthrlTCQ+QTezSP5IW1M5
+         zEUO8COUg51OrbtX+W29sMLQq7QPwhykOMhsHxYK69J7YKIN6AhiSPKCZdoPO922KwRg
+         g6MkVfb+U9W6xj+V/Qh+fZp0buzToGajAFvlOQoShEaza14KQ5jtd/50jOqYNJgfEZYV
+         fHMHdkt+0QxV5PifrasDxSlyFQ8NoEuWwxRs/VnU0QuHmywXGDPPk6lFHI8K9V6cqGb+
+         /XAPFx8P/yJ3XEUzuJJBopEljSNestcoSUNsNftsIOQpvjSFsgvwMy8GM4H66/mcJe46
+         j5PQ==
+X-Gm-Message-State: AOJu0Yzk9AIXZSSiK7D8Pt1rVSdRuVZIFmEzoEV4t2K1MydtoMTex2xn
+	GFsJyo9NKd+IlX+9sSoLzRfGlqcX32eFwL38Qy21BobTx2zz3PstGZPwPwC3Vv3UmSnv7Lr89BY
+	ptw==
+X-Google-Smtp-Source: AGHT+IH7XsxsWv6Xxtc9WU3EA5gUAJyix8Gbpq//kNw7QeS8GpV4XLqP4J1OWQy1QXo5sNaSavBNy6s6yRI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:181c:b0:705:c24c:70e3 with SMTP id
+ d2e1a72fcca58-705c9247ae9mr14937b3a.2.1718230144114; Wed, 12 Jun 2024
+ 15:09:04 -0700 (PDT)
+Date: Wed, 12 Jun 2024 15:09:02 -0700
+In-Reply-To: <20240207172646.3981-11-xin3.li@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202406121148.688240B@keescook>
+Mime-Version: 1.0
+References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-11-xin3.li@intel.com>
+Message-ID: <ZmocflXIH0UUsFzn@google.com>
+Subject: Re: [PATCH v2 10/25] KVM: VMX: Add support for FRED context save/restore
+From: Sean Christopherson <seanjc@google.com>
+To: Xin Li <xin3.li@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	shuah@kernel.org, vkuznets@redhat.com, peterz@infradead.org, 
+	ravi.v.shankar@intel.com, xin@zytor.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Jun 12, 2024 at 12:01:19PM -0700, Kees Cook wrote:
-> On Tue, Jun 11, 2024 at 09:55:42AM +0200, Peter Zijlstra wrote:
-> > On Mon, Jun 10, 2024 at 02:46:09PM -0700, Kees Cook wrote:
-> > 
-> > > > I really detest this thing because it makes what was trivially readable
-> > > > into something opaque. Get me that type qualifier that traps on overflow
-> > > > and write plain C. All this __builtin_overflow garbage is just that,
-> > > > unreadable nonsense.
-> > > 
-> > > It's more readable than container_of(), 
-> > 
-> > Yeah, no. container_of() is absolutely trivial and very readable.
-> > container_of_const() a lot less so.
-> 
-> I mean, we have complex macros in the kernel. This isn't uncommon. Look
-> at cleanup.h. ;)
+On Wed, Feb 07, 2024, Xin Li wrote:
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 264378c3b784..ee61d2c25cb0 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -1420,6 +1420,24 @@ static void vmx_write_guest_kernel_gs_base(struct vcpu_vmx *vmx, u64 data)
+>  	preempt_enable();
+>  	vmx->msr_guest_kernel_gs_base = data;
+>  }
+> +
+> +static u64 vmx_read_guest_fred_rsp0(struct vcpu_vmx *vmx)
+> +{
+> +	preempt_disable();
+> +	if (vmx->guest_state_loaded)
+> +		vmx->msr_guest_fred_rsp0 = read_msr(MSR_IA32_FRED_RSP0);
+> +	preempt_enable();
+> +	return vmx->msr_guest_fred_rsp0;
+> +}
+> +
+> +static void vmx_write_guest_fred_rsp0(struct vcpu_vmx *vmx, u64 data)
+> +{
+> +	preempt_disable();
+> +	if (vmx->guest_state_loaded)
+> +		wrmsrl(MSR_IA32_FRED_RSP0, data);
+> +	preempt_enable();
+> +	vmx->msr_guest_fred_rsp0 = data;
+> +}
 
-Yeah, but in those cases the macro actually saves a lot of typing. A
-mult and add is something you shouldn't be needing a macro for.
-	
-> But that's why we write kern-doc:
+This should be unnecessary when you switch to the user return framework.
 
-Right, but reading comments is asking for trouble. That is, I really
-don't even see comments -- I have a built-in pre-processor that filters
-them out. I've been burned too many times by misleading or flat out
-wrong comments.
+KERNEL_GS_BASE is a bit special because it needs to be reloaded if the kernel
+switches to a different task, i.e. before an exit to userspace.
 
-> > #define struct_size(p, member, num) \
-> > 	mult_add_no_overflow(num, sizeof(p->member), sizeof(*p))
-> > 
-> > would be *FAR* more readable. And then I still think struct_size() is
-> > less readable than its expansion. ]]
-> 
-> I'm happy to take patches. And for this bikeshed, this would be better
-> named under the size_*() helpers which are trying to keep size_t
-> calculations from overflowing (by saturating). i.e.:
-> 
-> 	size_add_mult(sizeof(*p), sizeof(*p->member), num)
+> @@ -1892,6 +1895,30 @@ static int __kvm_set_msr(struct kvm_vcpu *vcpu, u32 index, u64 data,
+>  			return 1;
+>  
+>  		data = (u32)data;
+> +		break;
+> +	case MSR_IA32_FRED_RSP0 ... MSR_IA32_FRED_CONFIG:
+> +		if (index != MSR_IA32_FRED_STKLVLS && is_noncanonical_address(data, vcpu))
+> +			return 1;
+> +		if ((index >= MSR_IA32_FRED_RSP0 && index <= MSR_IA32_FRED_RSP3) &&
+> +		    (data & GENMASK_ULL(5, 0)))
+> +			return 1;
+> +		if ((index >= MSR_IA32_FRED_SSP1 && index <= MSR_IA32_FRED_SSP3) &&
+> +		    (data & GENMASK_ULL(2, 0)))
+> +			return 1;
+> +
+> +		if (host_initiated) {
+> +			if (!kvm_cpu_cap_has(X86_FEATURE_FRED))
+> +				return 1;
+> +		} else {
+> +			/*
+> +			 * Inject #GP upon FRED MSRs accesses from a non-FRED guest,
+> +			 * which also ensures no malicious guest can write to FRED
+> +			 * MSRs to corrupt host FRED MSRs.
+> +			 */
 
-Fine I suppose, but what if we want something not size_t? Are we waiting
-for the type system extension?
+Drop the comment, if someone reading KVM code doesn't grok that attempting to
+access MSRs that shouldn't exist results in #GP, then a comment probably isn't
+going to save them.
 
-Anyway, I'll take the patch with the above. That at least is readable.
+This should also be bumped to the top, i.e. do the "does this exist check" first.
 
-The saturating thing is relying in the allocators never granting INT_MAX
-(or whatever size_t actually is) bytes?
+Lastly, the direction we are taking is to NOT exempt host-initiated writes, i.e.
+userspace has to set CPUID before MSRs.  If you base the next version on top of
+this series, it should just work (and if it doesn't, I definitely want to know):
 
-> Generalized overflow handing (check_add/sub/mul_overflow()) helpers
-> already exist and requires a destination variable to determine type
-> sizes. It is not safe to allow C semantics to perform
-> promotion/truncation, so we have to be explicit.
+https://lore.kernel.org/all/20240425181422.3250947-1-seanjc@google.com
 
-Yeah, those are a sodding trainwreck, much like the
-__builtin_*_overflow() garbage. Can't we simply have them trap on
-overflow and do away with that most terrible calling convention?
 
-If we want to be really fancy we can have a #UD instruction that encodes
-a destination register to clear/saturate/whatever.
+> +			if (!guest_can_use(vcpu, X86_FEATURE_FRED))
+> +				return 1;
+> +		}
+> +
 
-> > Some day I'll have to look at this FORTIFY_SOURCE and see what it
-> > actually does I suppose :/
-> 
-> LOL. It's basically doing compile-time (__builtin_object_size) and
-> run-time (__builtin_dynamic_object_size) bounds checking on destination
-> (and source) object sizes, mainly driven by the mentioned builtins:
-> https://gcc.gnu.org/onlinedocs/gcc/Object-Size-Checking.html
+Uh, where does the value go?  Oh, this is common code.  Ah, and it's in common
+code so that VMX can avoid having to make an extra function call for every MSR.
+Neat.
 
-Right, I got that far. I also read most of:
+>  		break;
+>  	}
+>  
+> @@ -1936,6 +1963,22 @@ int __kvm_get_msr(struct kvm_vcpu *vcpu, u32 index, u64 *data,
+>  		    !guest_cpuid_has(vcpu, X86_FEATURE_RDPID))
+>  			return 1;
+>  		break;
+> +	case MSR_IA32_FRED_RSP0 ... MSR_IA32_FRED_CONFIG:
+> +		if (host_initiated) {
+> +			if (!kvm_cpu_cap_has(X86_FEATURE_FRED))
+> +				return 1;
+> +		} else {
+> +			/*
+> +			 * Inject #GP upon FRED MSRs accesses from a non-FRED guest,
+> +			 * which also ensures no malicious guest can write to FRED
+> +			 * MSRs to corrupt host FRED MSRs.
+> +			 */
+> +			if (!guest_can_use(vcpu, X86_FEATURE_FRED))
+> +				return 1;
+> +		}
 
-  https://discourse.llvm.org/t/rfc-enforcing-bounds-safety-in-c-fbounds-safety/70854
-
-But none of that is showing me generated asm for the various cases. As
-such, I don't consider myself informed enough.
-
-> Anyway! What about the patch that takes the 2 allocations down to 1?
-> That seems like an obvious improvement.
-
-Separate it from the struct_size() nonsense and Cc the author of that
-code (Sandipan IIRC) and I might just apply it.
+Same comments here.
 
