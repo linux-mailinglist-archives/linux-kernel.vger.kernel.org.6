@@ -1,147 +1,130 @@
-Return-Path: <linux-kernel+bounces-210781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E76AA904894
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:54:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19927904898
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D8D028549C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:54:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C201E1F23BB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59ACF5CB0;
-	Wed, 12 Jun 2024 01:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556D1D29B;
+	Wed, 12 Jun 2024 01:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZtiS24+m"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IaV9SEyl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338DF4691;
-	Wed, 12 Jun 2024 01:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1913E4696;
+	Wed, 12 Jun 2024 01:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718157258; cv=none; b=SCJPXY8KWZ2IXJtYM51/QBPoFFhOyN4fpgkijF+yQcBN/MFuMBBCsPwLLivJP5nqxLFvHIpxk18TNaoVG3KzOFaBSnhq6zqPy7B1FAD2BsY9ugnh4+Fim08rbwnKLoxOLkVNfjTKD2z5b5HmKzec7MJrHFLv60wC+XVp/4rm76U=
+	t=1718157259; cv=none; b=SWTmTGdVVi9zdpoKybQ4tkWFpyo5DvkTv6S+qM/6PVHEh++r4pjrhb4/aLZUr13+Ml027PsNVRFOVcviJZnk3uwi3qthPR0RxZ7iPXK6AZL7jFn4LQvqrb1ddId1nroA/dPJjmhgqtLvsFxl4AAShnxLCi5o+v9WS0GkpRuUOzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718157258; c=relaxed/simple;
-	bh=OYtZknOWMr5YYhsoINE+HdQxQ/H6xRCXb1U7Ewu55pI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qyKba12TnYggQKeH1pZIJPw7TgP2j7hECiTEBB7MkdIVFNG+goQoUmcXk9hqbC54COACD+Xdq65ByP77VjQtrMjnRqxmUYlj/XOAiCn8aJNdOrI1F43sRlnhlR6L5K175IKq5L1I/8dtf11rLbFnGXoAcylWdAz9ts1jfOXEY9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZtiS24+m; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718157257; x=1749693257;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=OYtZknOWMr5YYhsoINE+HdQxQ/H6xRCXb1U7Ewu55pI=;
-  b=ZtiS24+mORt27gJRsBFyM09csTw+EjEcL5VH0eFCK2MgPUNhm7Y8T63r
-   XpxRpaH2cylA3x4Pmjv68LwtLvIFiK9zg7ebfdq7TPN4R2akbdrCxzUdR
-   z79HpplvzOnLpV2IGLNFVtwujUkrGP7YxX5Q7mjumExIqwk29nbTW7VcZ
-   CQA1plskKxFNeeUDfa9VlIm+SkHhNmnqNGPfEx2PC5IhOSf2SXKv1rVw2
-   DHYCgO0km9Z05Wh9FY66n1GtEvZ7ovf7zEvhqmH59QMjNrn4Z0Pgikanv
-   WHIPp2Mg2zSHrUmNMMnKSElA02VlanokroUvS+wyj2ZrFx5y82fV0YuqW
-   Q==;
-X-CSE-ConnectionGUID: QIJYO0OQRk+Ox3wc38zCOw==
-X-CSE-MsgGUID: 8nRSVI9RTp2klhQZUexqIg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="15070769"
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="15070769"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:54:17 -0700
-X-CSE-ConnectionGUID: Mo71GvFHSmaCxxsNjkz9+g==
-X-CSE-MsgGUID: 3GUS24hIR1yNUoU8ql0PAw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
-   d="scan'208";a="70831477"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.51]) ([10.124.227.51])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:54:11 -0700
-Message-ID: <2760e892-0a06-4790-9d5e-bba690dbdf91@intel.com>
-Date: Wed, 12 Jun 2024 09:54:08 +0800
+	s=arc-20240116; t=1718157259; c=relaxed/simple;
+	bh=qEP1jfUnLDqKY+Tbv7jWMRIeP29xqp5aif0Wikh853o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=VciAf8PgYMRg6AvktxQhdQD14BtHjUb7v/LDPTLphp/h5aI31aTaK1GgnZpINKo5BkcyYe4AdbEcjElhNymiOaku903t+QOsaNE1HkykreoLq12PvBYj892Ivbr0E0FCYNSiaLekWmu0bgOdWE4P539luVqE3f0SOHfxhrdVkz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IaV9SEyl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BFD0TR031044;
+	Wed, 12 Jun 2024 01:54:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=dEliYOecfFwvzvpruyOir3
+	lcTsdZk5RA15G2wEuI1WA=; b=IaV9SEylu7NSFXZfhs2n4RO2fkhanhD6kofAJS
+	L4umGZBIrLvYNKxlr/XLfKNXifOPSEkBihNiFLA5eYxZSpg3wSDdBAvKoY2Wjpjs
+	Z88/lrpPu3N32r0dOfu5dWABaOQvt2Q18AuNIV4X2kqpsEFoJhtUL387IkNMheFR
+	nupel6Yg7nZ5Tv/p4VjhmDnrhKFSVKw17pg3rPks7Gb5R+UgU7H743LMSfDM/4Lf
+	JRFF8oB3DeNvFPqm1d/tSs0ZyPt4Ssn0fqn1Ndiw10CJOLFa+lWDqU0fHIov0FPh
+	GHy71gpsg2P9P6Tx9e0FwSr7frKz8Gzx81efVgPZPrbSJ6vw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmytwj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 01:54:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C1sCPI026977
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 01:54:12 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
+ 2024 18:54:12 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 11 Jun 2024 18:54:11 -0700
+Subject: [PATCH] usb: common: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 09/10] KVM: VMX: Open code VMX preemption timer rate
- mask in its accessor
-To: Sean Christopherson <seanjc@google.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- Kai Huang <kai.huang@intel.com>, Jim Mattson <jmattson@google.com>,
- Shan Kang <shan.kang@intel.com>, Xin Li <xin3.li@intel.com>,
- Zhao Liu <zhao1.liu@intel.com>
-References: <20240605231918.2915961-1-seanjc@google.com>
- <20240605231918.2915961-10-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240605231918.2915961-10-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240611-md-drivers-usb-common-v1-1-f81555b0bd0d@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAML/aGYC/x3MwQrCMAyA4VcZORtoi1P0VcRD2kYXsK0kbgzG3
+ t3q8Tv8/wbGKmxwHTZQXsSk1Q5/GCBNVJ+MkrshuHB0J++xZMwqC6vhbBFTK6VVHMMYHF/OkVy
+ E3r6VH7L+v7d7dyRjjEo1Tb/bS+q8YiH7sMK+fwHJzxW9hgAAAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Chen
+	<peter.chen@kernel.org>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sX6MLW-0Ze7QD44XD6xCn93IH3hZr5T7
+X-Proofpoint-ORIG-GUID: sX6MLW-0Ze7QD44XD6xCn93IH3hZr5T7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_13,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1011 adultscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=797 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120010
 
-On 6/6/2024 7:19 AM, Sean Christopherson wrote:
-> From: Xin Li <xin3.li@intel.com>
-> 
-> Use vmx_misc_preemption_timer_rate() to get the rate in hardware_setup(),
-> and open code the rate's bitmask in vmx_misc_preemption_timer_rate() so
-> that the function looks like all the helpers that grab values from
-> VMX_BASIC and VMX_MISC MSR values.
-> 
-> No functional change intended.
-> 
-> Cc: Shan Kang <shan.kang@intel.com>
-> Cc: Kai Huang <kai.huang@intel.com>
-> Signed-off-by: Xin Li <xin3.li@intel.com>
-> [sean: split to separate patch, write changelog]
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
+With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/common/usb-common.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/common/usb-otg-fsm.o
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/include/asm/vmx.h | 3 +--
->   arch/x86/kvm/vmx/vmx.c     | 2 +-
->   2 files changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-> index 400819ccb42c..f7fd4369b821 100644
-> --- a/arch/x86/include/asm/vmx.h
-> +++ b/arch/x86/include/asm/vmx.h
-> @@ -153,7 +153,6 @@ static inline u64 vmx_basic_encode_vmcs_info(u32 revision, u16 size, u8 memtype)
->   	return revision | ((u64)size << 32) | ((u64)memtype << 50);
->   }
->   
-> -#define VMX_MISC_PREEMPTION_TIMER_RATE_MASK	GENMASK_ULL(4, 0)
->   #define VMX_MISC_SAVE_EFER_LMA			BIT_ULL(5)
->   #define VMX_MISC_ACTIVITY_HLT			BIT_ULL(6)
->   #define VMX_MISC_ACTIVITY_SHUTDOWN		BIT_ULL(7)
-> @@ -167,7 +166,7 @@ static inline u64 vmx_basic_encode_vmcs_info(u32 revision, u16 size, u8 memtype)
->   
->   static inline int vmx_misc_preemption_timer_rate(u64 vmx_misc)
->   {
-> -	return vmx_misc & VMX_MISC_PREEMPTION_TIMER_RATE_MASK;
-> +	return vmx_misc & GENMASK_ULL(4, 0);
->   }
->   
->   static inline int vmx_misc_cr3_count(u64 vmx_misc)
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 3141ef8679e2..69865e7a3506 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -8536,7 +8536,7 @@ __init int vmx_hardware_setup(void)
->   		u64 use_timer_freq = 5000ULL * 1000 * 1000;
->   
->   		cpu_preemption_timer_multi =
-> -			vmcs_config.misc & VMX_MISC_PREEMPTION_TIMER_RATE_MASK;
-> +			vmx_misc_preemption_timer_rate(vmcs_config.misc);
->   
->   		if (tsc_khz)
->   			use_timer_freq = (u64)tsc_khz * 1000;
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/usb/common/common.c      | 1 +
+ drivers/usb/common/usb-otg-fsm.c | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/usb/common/common.c b/drivers/usb/common/common.c
+index b84efae26e15..59b55d6cf490 100644
+--- a/drivers/usb/common/common.c
++++ b/drivers/usb/common/common.c
+@@ -433,4 +433,5 @@ static void __exit usb_common_exit(void)
+ subsys_initcall(usb_common_init);
+ module_exit(usb_common_exit);
+ 
++MODULE_DESCRIPTION("Common code for host and device side USB");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/usb/common/usb-otg-fsm.c b/drivers/usb/common/usb-otg-fsm.c
+index 0697fde51d00..e11803225775 100644
+--- a/drivers/usb/common/usb-otg-fsm.c
++++ b/drivers/usb/common/usb-otg-fsm.c
+@@ -449,4 +449,5 @@ int otg_statemachine(struct otg_fsm *fsm)
+ 	return fsm->state_changed;
+ }
+ EXPORT_SYMBOL_GPL(otg_statemachine);
++MODULE_DESCRIPTION("OTG Finite State Machine");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240611-md-drivers-usb-common-52520e97ba0b
 
 
