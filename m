@@ -1,239 +1,186 @@
-Return-Path: <linux-kernel+bounces-211648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EEB79054DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:16:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71EEE9054DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4EA41C21101
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:16:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB18CB2228B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3976C17DE35;
-	Wed, 12 Jun 2024 14:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F5417DE04;
+	Wed, 12 Jun 2024 14:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="vLGjfrze"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gdi/516v"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84889537F8;
-	Wed, 12 Jun 2024 14:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E23A17BB27
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201761; cv=none; b=cIcgiK4wms7t0Oti9R1hBIEzzr4fV4bgvaygfinbKmBh13Sks8dvisWtT1c2Y1RyMrhlianDe9P+qwQ8Z7Cs/nU7UYx8fkDAcfhbv++cw8NfFva2yalhsHFGy1Bz3ikzs8gGTiPtOUUHTZFFCMJl/KYuwYB6I/S0FMhW+fzcbdE=
+	t=1718201795; cv=none; b=Tx9kcOiunZLAqVncDR4Lz+Rg0BtK2bXABKBO7gdlezeGOBWSmC9W8xNb/KKzsyhaWTUauz+XRlfBvt+ksS8PDAh5uexKxHA65L8djSmqpLIVoa3PBEIvrSBAk0lWSRS/f4fSBN5KV/jpUij7KdQ6YmYHmDWm14e64RHr0Q1HvR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201761; c=relaxed/simple;
-	bh=a7tUhYjiqLZU8zUWY/eYD/rqkbmZxRpeJhLUl3rEhpc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HkDxl3DTPi0yXFjBy6mWbKV1azepvq95PIY6jDtbamPWBRyJ6RT2yoNxZme9tlHrDPdkV2XdGtndV2b/akhvg+snXfbhHh/GTx7trZKuC4pxCFDu1JHglKGW8etBXRwBE8JabaCDMUnRaA24GFunoc+HMKadUFNCShQD/VKFrMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=vLGjfrze; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.1.0)
- id acc0cc71f5bd0f36; Wed, 12 Jun 2024 16:15:56 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 7614617B72DA;
-	Wed, 12 Jun 2024 16:15:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1718201756;
-	bh=a7tUhYjiqLZU8zUWY/eYD/rqkbmZxRpeJhLUl3rEhpc=;
-	h=From:To:Cc:Subject:Date;
-	b=vLGjfrzeyuLfhlrGPFqxu1ZypOV6O1GMUiXfAiz944xlkIUkOUoKVlrxVlcaZvbGb
-	 oov+KKFTwMwIyVWoL6K9WTqCqKv/YvlV7EDhq1DpCGXQl5D6E2Tsw9Xyb9PAMyObaq
-	 m6U6021xoFYiGTLAY4pxlrOx1hJRFvZHVCNZprO3+SQrFjWnji6YP1pxN/6TQFdowa
-	 nMefWinnGXNSOfXADCc2aZHj7LisRcFW8/ujdh7+WriJh4yHnwoRv8oyTsSUw8YERn
-	 C0JTqhWAx+sgTdHGdGRJx6U2mFMJJ4+C/hljtLj6QOZkTZIFq+71lGv06Nuchfq3xb
-	 0MOqH3BwKR4DA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hans de Goede <hdegoede@redhat.com>, VitaliiT <vitaly.torshyn@gmail.com>,
- Armin Wolf <w_armin@gmx.de>
-Subject: [PATCH v1] ACPI: EC: Evaluate orphan _REG under EC device
-Date: Wed, 12 Jun 2024 16:15:55 +0200
-Message-ID: <12466682.O9o76ZdvQC@kreacher>
+	s=arc-20240116; t=1718201795; c=relaxed/simple;
+	bh=WQWaU2XPSa7u7FY7PxELttfz2xxEozi/YyFkdxy44JE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ox/aZkKn2q3QbGCA+1NgsSn5jP6xQh/CspsJry+9qMfde5IVX038BCBTd88oCFaR5vsjQMM7flsjynTGrI7novjOvZ1uHQyHqc0Q98E3hN3hcYf6zM/Jh5UU6OOXUiIKlvm1TjKGppJ+tEwRM7cPbTwx5Q0uVoSGgG2LohelYdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gdi/516v; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a44c2ce80so3088550a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:16:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718201792; x=1718806592; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SXFeQu/InAtcwu283qRDGnx+2udBV3ofp/Fn0b8L8Uw=;
+        b=Gdi/516v/lyCNq9XEN/ghjprrGnukQkYq3Is8xeAdoj5G2Vx7ZeqvScRaKZnZIbzfo
+         3CxQWpQryC3rDH7vlQXDNoILlYiLsMUTjv7IjIUvtidzO9SZyC/PecaQnQKHIIxQmDiT
+         VR0vudCatrOkAkniLO6uFA4ErBQXy2zy7NFlTWt9Wz/qvakltNT+PRxFB80EVO8qP+nH
+         8QKB9N47AepXxToLAgMU+IYX5wGwvhndfluJ8khO53gUtRCksBBtG6D+A5k5E9NeXiAF
+         MVuTMKp1tg6Ox69y6/t/7e6yJbJMYONPnIrQFxfF/BOiZ3hi8pCMaSxGrUBsEnyuwm20
+         gj/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718201792; x=1718806592;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SXFeQu/InAtcwu283qRDGnx+2udBV3ofp/Fn0b8L8Uw=;
+        b=dj2SYPTlNkyVR6qLpN192GQAYDgt1snH/WqkMh4M5bed1Je2sbeYI9sgaHH8+mJ8IB
+         5Cis26D+MFT/7IsTWvdFmW5ixJT63k5b8AUFTQXEiUJ9ODDAJxz8ZaeVU3W9fEqxinf2
+         3040Y2SEMbuoJVzP83wGqHfVnteXw7yPgALD7k6BEj2X1KnhV0mqxe8t9YU5ggTW3r61
+         xcFP1hZ4PLLIW1dlQ28pin2T8GNzjzFkvrwWBwzPEi9HkaZzBBMNEepZxyn80sMcpNU5
+         MGvHfPASHp+8Vw+fsT+nvApaWeDogaS6UZ2PRKy7CQr5m56OQKy0+asBxO0dARHsnAnE
+         udug==
+X-Forwarded-Encrypted: i=1; AJvYcCW/G7vI505aa1gVkdt6vSW+Cd1IRVHAvfK7fyoRdRDFLfKv6VqI2BFpIcVpPZWRuajdY6XyxxAR+Nqsmvv2d0hUBJg7sPMaiID9Bm+U
+X-Gm-Message-State: AOJu0YxpMOSN+niZiVOke3/z0RlejqQIjeUL4NXs2SVxwMcTGzS2CSQp
+	WUYE2dROasbNsezpnBf24MeG6fOGpaOFNIZ8DvoSvlviocbzLzfuQv+soPmmHrDprpPjbucF/76
+	+MaYifNzpH/bNC8kJloe9/1l/66I=
+X-Google-Smtp-Source: AGHT+IHW/hXJG+TBumCiBmHqhgd87pgriARFMrlfHwt20rM+xtCGUrKlVfeGKfk0StJxgwQF6b7D2BSQv+6WeSAyOU8=
+X-Received: by 2002:a50:9308:0:b0:57c:947c:f9cf with SMTP id
+ 4fb4d7f45d1cf-57ca975348cmr1205743a12.11.1718201792124; Wed, 12 Jun 2024
+ 07:16:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
+ <4fd9e467d49ae4a747e428bcd821c7d13125ae67.1718090413.git.baolin.wang@linux.alibaba.com>
+ <CAK1f24=Rz4qPyw9pfTHTAuQO6Yv9mFHccjCd75a0kvHvCBH3uA@mail.gmail.com> <df06474c-110f-459d-a093-76074e0b5666@linux.alibaba.com>
+In-Reply-To: <df06474c-110f-459d-a093-76074e0b5666@linux.alibaba.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Wed, 12 Jun 2024 22:16:20 +0800
+Message-ID: <CAK1f24=4tNTvT0Kr2wuERe11M1ZkYorv9rTNTtehOFmGSSt+Nw@mail.gmail.com>
+Subject: Re: [PATCH v5 6/6] mm: shmem: add mTHP counters for anonymous shmem
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org, 
+	david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com, 
+	21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com, 
+	da.gomez@samsung.com, p.raghav@samsung.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedgjeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhuggv
- ghhovgguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtohepvhhithgrlhihrdhtohhrshhhhihnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepfigprghrmhhinhesghhmgidruggv
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, Jun 12, 2024 at 5:28=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 2024/6/12 16:04, Lance Yang wrote:
+> > Hi Baolin,
+> >
+> > On Tue, Jun 11, 2024 at 6:11=E2=80=AFPM Baolin Wang
+> > <baolin.wang@linux.alibaba.com> wrote:
+> >>
+> >> Add mTHP counters for anonymous shmem.
+> >>
+> >> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> >> ---
+> >>   include/linux/huge_mm.h |  3 +++
+> >>   mm/huge_memory.c        |  6 ++++++
+> >>   mm/shmem.c              | 18 +++++++++++++++---
+> >>   3 files changed, 24 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> >> index 909cfc67521d..212cca384d7e 100644
+> >> --- a/include/linux/huge_mm.h
+> >> +++ b/include/linux/huge_mm.h
+> >> @@ -281,6 +281,9 @@ enum mthp_stat_item {
+> >>          MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+> >>          MTHP_STAT_SWPOUT,
+> >>          MTHP_STAT_SWPOUT_FALLBACK,
+> >> +       MTHP_STAT_FILE_ALLOC,
+> >> +       MTHP_STAT_FILE_FALLBACK,
+> >> +       MTHP_STAT_FILE_FALLBACK_CHARGE,
+> >>          __MTHP_STAT_COUNT
+> >>   };
+> >>
+> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> >> index 1360a1903b66..3fbcd77f5957 100644
+> >> --- a/mm/huge_memory.c
+> >> +++ b/mm/huge_memory.c
+> >> @@ -555,6 +555,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_ST=
+AT_ANON_FAULT_FALLBACK);
+> >>   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAU=
+LT_FALLBACK_CHARGE);
+> >>   DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+> >>   DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+> >> +DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
+> >> +DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
+> >> +DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_C=
+HARGE);
+> >>
+> >>   static struct attribute *stats_attrs[] =3D {
+> >>          &anon_fault_alloc_attr.attr,
+> >> @@ -562,6 +565,9 @@ static struct attribute *stats_attrs[] =3D {
+> >>          &anon_fault_fallback_charge_attr.attr,
+> >>          &swpout_attr.attr,
+> >>          &swpout_fallback_attr.attr,
+> >> +       &file_alloc_attr.attr,
+> >> +       &file_fallback_attr.attr,
+> >> +       &file_fallback_charge_attr.attr,
+> >>          NULL,
+> >>   };
+> >>
+> >> diff --git a/mm/shmem.c b/mm/shmem.c
+> >> index f5469c357be6..99bd3c34f0fb 100644
+> >> --- a/mm/shmem.c
+> >> +++ b/mm/shmem.c
+> >> @@ -1773,6 +1773,9 @@ static struct folio *shmem_alloc_and_add_folio(s=
+truct vm_fault *vmf,
+> >>
+> >>                          if (pages =3D=3D HPAGE_PMD_NR)
+> >>                                  count_vm_event(THP_FILE_FALLBACK);
+> >> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >> +                       count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK=
+);
+> >> +#endif
+> >
+> > Using the conditional compilation directives here is a bit weird :)
+> > Would there be any issues if we were to drop them?
+>
+> Will cause building errors if CONFIG_TRANSPARENT_HUGEPAGE is not enabled.
 
-After starting to install the EC address space handler at the ACPI
-namespace root, if there is an "orphan" _REG method in the EC device's
-scope, it will not be evaluated any more.  This breaks EC operation
-regions on some systems, like Asus gu605.
+Sorry, I got it wrong :p
 
-To address this, use a wrapper around an existing ACPICA function to
-look for an "orphan" _REG method in the EC device scope and evaluate
-it if present.
+>
+> >
+> > Since THP_FILE_FALLBACK is working as expected, MTHP_STAT_FILE_FALLBACK
+> > should work as well without the conditional compilation directives, IIU=
+C.
+>
+> No, you should take a look at how count_mthp_stat() is defined :)
 
-Fixes: 60fa6ae6e6d0 ("ACPI: EC: Install address space handler at the namespace root")
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218945
-Reported-by: VitaliiT <vitaly.torshyn@gmail.com>
-Tested-by: VitaliiT <vitaly.torshyn@gmail.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+You're correct. count_mthp_stat() does cause a compilation error without th=
+em
+when CONFIG_TRANSPARENT_HUGEPAGE is not defined.
 
-Yes, this includes ACPICA changes that are obviously not upstream
-and I am going to take care of pusing them to upstream, but for
-now there is a regression to fix and it is relatively late in the
-cycle.
-
----
- drivers/acpi/acpica/acevents.h |    4 +++
- drivers/acpi/acpica/evregion.c |    6 ----
- drivers/acpi/acpica/evxfregn.c |   54 +++++++++++++++++++++++++++++++++++++++++
- drivers/acpi/ec.c              |    3 ++
- include/acpi/acpixf.h          |    4 +++
- 5 files changed, 66 insertions(+), 5 deletions(-)
-
-Index: linux-pm/drivers/acpi/acpica/evxfregn.c
-===================================================================
---- linux-pm.orig/drivers/acpi/acpica/evxfregn.c
-+++ linux-pm/drivers/acpi/acpica/evxfregn.c
-@@ -306,3 +306,57 @@ acpi_execute_reg_methods(acpi_handle dev
- }
- 
- ACPI_EXPORT_SYMBOL(acpi_execute_reg_methods)
-+
-+/*******************************************************************************
-+ *
-+ * FUNCTION:    acpi_execute_orphan_reg_method
-+ *
-+ * PARAMETERS:  device          - Handle for the device
-+ *              space_id        - The address space ID
-+ *
-+ * RETURN:      Status
-+ *
-+ * DESCRIPTION: Execute an "orphan" _REG method that appears under an ACPI
-+ *              device. This is a _REG method that has no corresponding region
-+ *              within the device's scope.
-+ *
-+ ******************************************************************************/
-+acpi_status
-+acpi_execute_orphan_reg_method(acpi_handle device, acpi_adr_space_type space_id)
-+{
-+	struct acpi_namespace_node *node;
-+	acpi_status status;
-+
-+	ACPI_FUNCTION_TRACE(acpi_execute_orphan_reg_method);
-+
-+	/* Parameter validation */
-+
-+	if (!device) {
-+		return_ACPI_STATUS(AE_BAD_PARAMETER);
-+	}
-+
-+	status = acpi_ut_acquire_mutex(ACPI_MTX_NAMESPACE);
-+	if (ACPI_FAILURE(status)) {
-+		return_ACPI_STATUS(status);
-+	}
-+
-+	/* Convert and validate the device handle */
-+
-+	node = acpi_ns_validate_handle(device);
-+	if (node) {
-+
-+		/*
-+		 * If an "orphan" _REG method is present in the device's scope
-+		 * for the given address space ID, run it.
-+		 */
-+
-+		acpi_ev_execute_orphan_reg_method(node, space_id);
-+	} else {
-+		status = AE_BAD_PARAMETER;
-+	}
-+
-+	(void)acpi_ut_release_mutex(ACPI_MTX_NAMESPACE);
-+	return_ACPI_STATUS(status);
-+}
-+
-+ACPI_EXPORT_SYMBOL(acpi_execute_orphan_reg_method)
-Index: linux-pm/include/acpi/acpixf.h
-===================================================================
---- linux-pm.orig/include/acpi/acpixf.h
-+++ linux-pm/include/acpi/acpixf.h
-@@ -663,6 +663,10 @@ ACPI_EXTERNAL_RETURN_STATUS(acpi_status
- 						     acpi_adr_space_type
- 						     space_id))
- ACPI_EXTERNAL_RETURN_STATUS(acpi_status
-+			    acpi_execute_orphan_reg_method(acpi_handle device,
-+							   acpi_adr_space_type
-+							   space_id))
-+ACPI_EXTERNAL_RETURN_STATUS(acpi_status
- 			    acpi_remove_address_space_handler(acpi_handle
- 							      device,
- 							      acpi_adr_space_type
-Index: linux-pm/drivers/acpi/acpica/acevents.h
-===================================================================
---- linux-pm.orig/drivers/acpi/acpica/acevents.h
-+++ linux-pm/drivers/acpi/acpica/acevents.h
-@@ -191,6 +191,10 @@ void
- acpi_ev_execute_reg_methods(struct acpi_namespace_node *node,
- 			    acpi_adr_space_type space_id, u32 function);
- 
-+void
-+acpi_ev_execute_orphan_reg_method(struct acpi_namespace_node *node,
-+				  acpi_adr_space_type space_id);
-+
- acpi_status
- acpi_ev_execute_reg_method(union acpi_operand_object *region_obj, u32 function);
- 
-Index: linux-pm/drivers/acpi/acpica/evregion.c
-===================================================================
---- linux-pm.orig/drivers/acpi/acpica/evregion.c
-+++ linux-pm/drivers/acpi/acpica/evregion.c
-@@ -20,10 +20,6 @@ extern u8 acpi_gbl_default_address_space
- 
- /* Local prototypes */
- 
--static void
--acpi_ev_execute_orphan_reg_method(struct acpi_namespace_node *device_node,
--				  acpi_adr_space_type space_id);
--
- static acpi_status
- acpi_ev_reg_run(acpi_handle obj_handle,
- 		u32 level, void *context, void **return_value);
-@@ -818,7 +814,7 @@ acpi_ev_reg_run(acpi_handle obj_handle,
-  *
-  ******************************************************************************/
- 
--static void
-+void
- acpi_ev_execute_orphan_reg_method(struct acpi_namespace_node *device_node,
- 				  acpi_adr_space_type space_id)
- {
-Index: linux-pm/drivers/acpi/ec.c
-===================================================================
---- linux-pm.orig/drivers/acpi/ec.c
-+++ linux-pm/drivers/acpi/ec.c
-@@ -1507,6 +1507,9 @@ static int ec_install_handlers(struct ac
- 
- 	if (call_reg && !test_bit(EC_FLAGS_EC_REG_CALLED, &ec->flags)) {
- 		acpi_execute_reg_methods(scope_handle, ACPI_ADR_SPACE_EC);
-+		if (scope_handle != ec->handle)
-+			acpi_execute_orphan_reg_method(ec->handle, ACPI_ADR_SPACE_EC);
-+
- 		set_bit(EC_FLAGS_EC_REG_CALLED, &ec->flags);
- 	}
- 
-
-
-
+Thanks,
+Lance
 
