@@ -1,272 +1,88 @@
-Return-Path: <linux-kernel+bounces-212158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C37F905C07
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:32:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32D1905C09
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AED9284521
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8A11F22949
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A87083CAE;
-	Wed, 12 Jun 2024 19:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18D8839F7;
+	Wed, 12 Jun 2024 19:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjnYjxlf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="eFgF4iMw"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632A382D89;
-	Wed, 12 Jun 2024 19:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D793A29F;
+	Wed, 12 Jun 2024 19:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718220750; cv=none; b=AthpFkyqwDmQXaRGVIWDzc2NeyhQi38USW5J6TJkws/XZ51iQkfyxWvPe/E8yRHdl9BAfOzWZ+8EHou+O6rUeYEJU198IaSW5xtyY4Zw8TxgL6esvD99spFizWe3XXKiWb/9ao7nrlIDAjiJgN6rzCF3LzZAnYGL11mH3iaFrMA=
+	t=1718220824; cv=none; b=rEN3cyF7r7DDzML1UajAdQO487HDwmMFOhB5JxTE283JNdPboF6VdYBRkwpQjzCW5u7hDmy5uGvnJqL8ixJ+h81nz75U9sTx8eRbuLcwgQAUKo+cXl9HSlix+OiePFLAZc7SsG/A5qOyjm3EbifgipYcZd+dnSkYD6RCF/ZR4Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718220750; c=relaxed/simple;
-	bh=QR8c5f02TI5g8J8fSmx11sXwM4j5nLkDKdis3kzTp+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UzdtYsLWl2B+rINnZxdKsqLi7Tkq8twgpCCX3Nk1uGA0zYGrBrs9hvHeEy+n5tAmEPRAa6r3ik1fzYUpJufOLXJajLLY+KJv+hos2bRWDDgy3edTj61bd+Uz+CFiDREstm1zCMKBZsXjBPQZehyNq+4LomVJ8PBGqC0N9kp5usY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjnYjxlf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1452AC4AF48;
-	Wed, 12 Jun 2024 19:32:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718220750;
-	bh=QR8c5f02TI5g8J8fSmx11sXwM4j5nLkDKdis3kzTp+o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sjnYjxlfVl1xZt47VGNfMxiq1u0HvNksHffve0JJG+nuIFETKBxdqri8er+j1Q07H
-	 Q1CDgwoDlF7xMc4VT6uZR8QhKS4aFq4wZ1GcKP/MznqHNQXuPFRk3Hb3bLLqaTD6Xv
-	 JdhZ+JtUEVosy8beYKUBtaQHxph9tgTm9nfvnrFGD7aBqMaB+IoXhMuX+s4sDxE4I7
-	 5yV7MXiE4n7JkyicOrCgQvqA233+zk6qvpdolXnBTvR5NDsZCwtB4IYWB3fVQrt91m
-	 7gXACXJung1HIU6Rvy8wSrUOV7vlemPbtEs/qfiZ7tHRF61VgZHdBsw0SW/aG25HCu
-	 jYKIdGy601IoA==
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3d21a80b8ceso14247b6e.3;
-        Wed, 12 Jun 2024 12:32:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWSID+bE/eRuMusT8WCFBNfXJi6zc7CZk9sdh6GPI6SggH5jukYk0fb/Rg0JfGO7TbVREW46W9gxy+OjCakxa2sfUbiY8/B6fOB4ATwMwR8TkR2+i+n0xlTsq877bKDrNl4Eiy500eA07GNoRkR5RTUJcNlGaw3xeHa48jIWVBGd3khjb6A
-X-Gm-Message-State: AOJu0YyGM0aqnkbhBVmXmneeTuGRwbMkiYQni9wV36Gy7XGEFk+o462L
-	qoQMmzQ8JHbQbFuA+sOH9OmDq2XnZnxBrQCHBtKZXAYrlOScIzOEA7VPcOXqcVGrogKYj+YijZ+
-	bBANvc7I5+5phVYpLfp/IUugH1dc=
-X-Google-Smtp-Source: AGHT+IEtjdaW5DWFBXlDhShavyc8gZ15mfMvcHQHIznkc3CYe2fZiBZfliG97AisJA+Yr8HSPZgaFdqF8yZmKxV3xpc=
-X-Received: by 2002:a05:6871:741e:b0:254:d163:c3a9 with SMTP id
- 586e51a60fabf-255147735a4mr3142253fac.0.1718220749332; Wed, 12 Jun 2024
- 12:32:29 -0700 (PDT)
+	s=arc-20240116; t=1718220824; c=relaxed/simple;
+	bh=Gax1/X8fKY4aRilNx+vxa7ff0//c5oRtSKW1r+ZZUwQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZaqu6029278UDphr6Wum0+Wr3Jag4sVUkNwk43tpFed269uK9w8fEnEvLVGMqlgDm1juevKPFvqeK1RQhLabNWahMw4/odaT8r4X4Khz+G6f1kSDx0POW/En53SbrbmpvxxBvXiHyeu7eeqoZbm12a0nkakk8oa9fWK43WLcPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=eFgF4iMw; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Ak6OXrPF07tGTttAP9HDGFvaFe9ciAKjMYI3suYEzEo=; b=eFgF4iMwqL8SamlFCaLlXT9wi1
+	GAheQ0ACG+IrfSit8wAxJ1clqQNzcpdPZEtlBX4eXVhxCr0DzSDpDSIz7/wXqroTylslTQrlZJjOh
+	bFEe0KEEWGGizmzev+Kvl7Bz/wrQI1I6Ix7tnJ5jnm07esmyhXkG6SsCYQPbusAbx8EQpQxtzm3Xy
+	ToU1kFenDeKbB/Kr3LV3iSIaKWe4ug06QM9dHEiDlkOwC6aJKImaCAJozv1ln2S/qkr0WejPlfWGl
+	TY37foRlLiuRMfZHwfbo/vyHg3njCFFiihrFhi5LWkL0Mci644fhy5OD4pR6Uz0Gi/5o3PF6j0Dls
+	hUwVWazQ==;
+Received: from [2001:9e8:9cb:9501:3235:adff:fed0:37e6] (port=58678 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sHTiq-005QXv-Ou;
+	Wed, 12 Jun 2024 21:33:28 +0200
+Date: Wed, 12 Jun 2024 21:33:24 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 2/2] kbuild: package: add -e and -u options to shell
+ scripts
+Message-ID: <20240612-innocent-acrid-husky-5a6cce@lindesnes>
+References: <20240611160938.3511096-1-masahiroy@kernel.org>
+ <20240611160938.3511096-2-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZmmT56Cyvb2FCyav@kekkonen.localdomain> <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
- <ZmmY3he9vfWVWU3I@kekkonen.localdomain> <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
- <18cb82bb-51c6-4a52-80a4-6b1e3d95f99c@redhat.com> <CAJZ5v0je=Z+2LWv41OVwunujfTD7U2L9QDrNa7MoNBL+Chstnw@mail.gmail.com>
- <Zmnp8JbFj7ZoN5Vy@kekkonen.localdomain> <CAJZ5v0ie+OzJ5xd2g-j+pT=D20Ps__dA149XRnX8i9r4KKJ=ww@mail.gmail.com>
- <Zmnxy_8vxaNIJu_v@kekkonen.localdomain> <CAJZ5v0h4oF+QVk8VPb+roEjgTS1q0rG6g3STSDn9OgYz=4O6Ww@mail.gmail.com>
- <Zmn0UZ7A3gX_uMVf@kekkonen.localdomain>
-In-Reply-To: <Zmn0UZ7A3gX_uMVf@kekkonen.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Jun 2024 21:32:18 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jtGSoqH1Syy4dDpPCWQ5ghT3K=ZWFxmXo6A+kpYEPxOQ@mail.gmail.com>
-Message-ID: <CAJZ5v0jtGSoqH1Syy4dDpPCWQ5ghT3K=ZWFxmXo6A+kpYEPxOQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port nodes
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com, 
-	wentong.wu@intel.com, linux-media@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611160938.3511096-2-masahiroy@kernel.org>
 
-Hi Sakari,
+On Wed, Jun 12, 2024 at 01:08:06AM +0900, Masahiro Yamada wrote:
+> Set -e to make these scripts fail on the first error.
+> 
+> Set -u because these scripts are invoked by Makefile, and do not work
+> properly without necessary variables defined.
+> 
+> Remove the explicit "test -n ..." from scripts/package/install-extmod-build.
+> 
+> Both options are described in POSIX. [1]
+> 
+> [1]: https://pubs.opengroup.org/onlinepubs/009604499/utilities/set.html
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 
-On Wed, Jun 12, 2024 at 9:17=E2=80=AFPM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Rafael,
->
-> On Wed, Jun 12, 2024 at 09:12:59PM +0200, Rafael J. Wysocki wrote:
-> > Hi Sakari,
-> >
-> > On Wed, Jun 12, 2024 at 9:07=E2=80=AFPM Sakari Ailus
-> > <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Hi Rafael,
-> > >
-> > > On Wed, Jun 12, 2024 at 08:41:43PM +0200, Rafael J. Wysocki wrote:
-> > > > Hi Sakari,
-> > > >
-> > > > On Wed, Jun 12, 2024 at 8:33=E2=80=AFPM Sakari Ailus
-> > > > <sakari.ailus@linux.intel.com> wrote:
-> > > > >
-> > > > > Hi Rafael,
-> > > > >
-> > > > > On Wed, Jun 12, 2024 at 05:26:46PM +0200, Rafael J. Wysocki wrote=
-:
-> > > > > > Hi,
-> > > > > >
-> > > > > > On Wed, Jun 12, 2024 at 4:30=E2=80=AFPM Hans de Goede <hdegoede=
-@redhat.com> wrote:
-> > > > > > >
-> > > > > > > Hi,
-> > > > > > >
-> > > > > > > On 6/12/24 3:06 PM, Rafael J. Wysocki wrote:
-> > > > > > > > Hi Sakari,
-> > > > > > > >
-> > > > > > > > On Wed, Jun 12, 2024 at 2:47=E2=80=AFPM Sakari Ailus
-> > > > > > > > <sakari.ailus@linux.intel.com> wrote:
-> > > > > > > >>
-> > > > > > > >> Hi Rafael,
-> > > > > > > >>
-> > > > > > > >> On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysock=
-i wrote:
-> > > > > > > >>>>>>> I just hit the same problem on another Dell laptop. I=
-t seems that
-> > > > > > > >>>>>>> all Dell laptops with IPU6 camera from the Tiger Lake=
-, Alder Lake
-> > > > > > > >>>>>>> and Raptor Lake generations suffer from this problem.
-> > > > > > > >>>>>>>
-> > > > > > > >>>>>>> So instead of playing whack a mole with DMI matches w=
-e should
-> > > > > > > >>>>>>> simply disable ACPI MIPI DISCO support on all Dell la=
-ptops
-> > > > > > > >>>>>>> with those CPUs. I'm preparing a fix for this to repl=
-ace
-> > > > > > > >>>>>>> the DMI matching now.
-> > > > > > > >>>>>>
-> > > > > > > >>>>>> DisCo for Imaging support shouldn't be dropped on thes=
-e systems, and this
-> > > > > > > >>>>>> isn't what your patch does either. Instead the ACPI gr=
-aph port nodes (as
-> > > > > > > >>>>>> per Linux specific definitions) are simply dropped, i.=
-e. this isn't related
-> > > > > > > >>>>>> to DisCo for Imaging at all.
-> > > > > > > >>>>>
-> > > > > > > >>>>> So it looks like the changelog of that patch could be i=
-mproved, right?
-> > > > > > > >>>>
-> > > > > > > >>>> Well, yes. The reason the function is in the file is tha=
-t nearly all camera
-> > > > > > > >>>> related parsing is located there, not that it would be r=
-elated to DisCo for
-> > > > > > > >>>> Imaging as such.
-> > > > > > > >>>
-> > > > > > > >>> So IIUC the camera graph port nodes are created by defaul=
-t with the
-> > > > > > > >>> help of the firmware-supplied information, but if that is=
- defective a
-> > > > > > > >>> quirk can be added to skip the creation of those ports in=
- which case
-> > > > > > > >>> they will be created elsewhere.
-> > > > > > > >>>
-> > > > > > > >>> Is this correct?
-> > > > > > > >>
-> > > > > > > >> Yes.
-> > > > > > > >
-> > > > > > > > So it would be good to add a comment to this effect to
-> > > > > > > > acpi_nondev_subnode_extract() where acpi_graph_ignore_port(=
-) is
-> > > > > > > > called.
-> > > > > > > >
-> > > > > > > > And there is a somewhat tangential question that occurred t=
-o me: If
-> > > > > > > > the nodes are created elsewhere when acpi_graph_ignore_port=
-() is true,
-> > > > > > > > why is it necessary to consult the platform firmware for th=
-e
-> > > > > > > > information on them at all?  Wouldn't it be better to simpl=
-y always
-> > > > > > > > create them elsewhere?
-> > > > > > >
-> > > > > > > That is a good question. The ACPI MIPI DISCO specification is=
- an
-> > > > > > > attempt standardize how MIPI cameras and their sensors are de=
-scribed
-> > > > > > > in ACPI.
-> > > > > > >
-> > > > > > > But this is not actually being used by any Windows drivers at=
-m. The windows
-> > > > > > > drivers rely on their own custom ACPI data which gets transla=
-ted into
-> > > > > > > standard Linux device-properties by: drivers/media/pci/intel/=
-ipu-bridge.c
-> > > > > > >
-> > > > > > > and so far AFAIK there are 0 laptops where there actually is =
-100% functional
-> > > > > > > ACPI MIPI information. I believe that some work is in place t=
-o get correct
-> > > > > > > usable ACPI MIPI information in place in the ACPI tables of s=
-ome Meteor Lake
-> > > > > > > laptops. But I believe that there too it does not work yet wi=
-th the BIOS
-> > > > > > > version with which current Windows models are shipping. It is=
- being fixed
-> > > > > > > for systems which have Linux support from the vendor but I su=
-spect that
-> > > > > > > on other models if ACPI MIPI DISCO information is there it wi=
-ll not
-> > > > > > > necessarily be reliable because AFAICT Windows does not actua=
-lly use it.
-> > > > > > >
-> > > > > > > And TBH this has me worried about camera support for Meteor L=
-ake devices
-> > > > > > > going forward. We really need to have 1 reliable source of tr=
-uth here and
-> > > > > > > using information which is ignored by Windows does not seem l=
-ike the best
-> > > > > > > source to use.
-> > > > > > >
-> > > > > > > Sakari I know you have been pushing for MIPI camera descripti=
-ons under
-> > > > > > > ACPI to move to a standardized format and I can see how that =
-is a good
-> > > > > > > thing, but atm it seems to mainly cause things to break and b=
-efore
-> > > > > > > the ACPI MIPI DISCO support landed in 6.8 we did not have the=
-se issues,
-> > > > > > > since the information used by the ipu-bridge code does seem t=
-o be correct.
-> > > > > >
-> > > > > > Well, if Windows doesn't use this information, it is almost gua=
-ranteed
-> > > > > > to be garbage.
-> > > > >
-> > > > > No ACPI DSDT in production systems uses DisCo for Imaging as of n=
-ow at
-> > > > > least to my knowledge.
-> > > > >
-> > > > > >
-> > > > > > So maybe it would be better to make acpi_graph_ignore_port() re=
-turn
-> > > > > > true by default and false only when the information is known to=
- be
-> > > > > > valid.  IOW, whitelist things instead of adding blacklist entri=
-es in
-> > > > > > perpetuum.
-> > > > >
-> > > > > What could be gained from this?
-> > > >
-> > > > Generally speaking, fewer headaches for people trying to support Li=
-nux
-> > > > on Intel client platforms.
-> > >
-> > > I don't think that is the case here.
-> > >
-> > > I'd like to reiterate that none of the issues there have been so far
-> > > (including with Dell laptops) have been related to DisCo for Imaging.
-> >
-> > Well, they were (or are) related to firmware issues that cause systems
-> > to fail to boot if triggered until they get blacklisted in
-> > acpi_graph_ignore_port().
->
-> This is the first time I hear about a boot failure due to incorrect camer=
-a
-> description (on production systems). Could you point me to where this has
-> happened?
-
-https://lore.kernel.org/lkml/8afe9391b96ff3e1c60e624c1b8a3b2bd5039560.camel=
-@sapience.com/
-
-or is it not a boot failure?  If so, apologies for misunderstanding.
-
-Looks serious enough to me though.
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
