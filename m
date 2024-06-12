@@ -1,110 +1,163 @@
-Return-Path: <linux-kernel+bounces-210951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F140904AFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE81904B00
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4EC12850D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:41:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503222849FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CE636124;
-	Wed, 12 Jun 2024 05:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B0F374DD;
+	Wed, 12 Jun 2024 05:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWtCrySh"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lQ6Nx+Vh"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426F779D8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 05:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2395422092;
+	Wed, 12 Jun 2024 05:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718170871; cv=none; b=EMANWPfw/LBTw2PgDLSdkYWZRt1Xh5F4njFTQnjhJpm3ZZFYvooFxNjsxf8J0Z7ZQZ1n6zmkdLxvUXePIP4bYyUiiB/yKNXtQ+2tpMTDAXXQkd4pXHw8QpAE9RY+NJQV0UR6lNvs4mQwHPWz6jCpbwX2isPvtWviqKBxrwswil4=
+	t=1718170957; cv=none; b=F3Vzvf6YZDGNRi07vO2tBneXFeEoDTvutuMpX+bWv09lVXT4NKmtKKJG5HM8ALl4ALiC6YcVyqUzQlhpKCBpwzvsDYPO2kR4MJvDt7t9RlFfxWTTJ92q6pSaamBF3HqylpGmRKNPe8IqSbd7ZHbD9yA7U5cSZBzQL8WHgH0dXLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718170871; c=relaxed/simple;
-	bh=N2qeEuLIeQ/Sboky+rnEg8RxtodJVVIk8kOoJLibkBg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=u2Ifbs0pOSt3PY4xXObzRnNOQq4+hNXQBX30pEwccSuYO8sNYi34h61Id2YblyzzImPTaXmC7AGFxcuZ+rzvhPU4336otS04O+9jvZ84A9WDhj6ivxbx6toQkQ6TLJU+oG/JMl74lPvc7c5HDPdTa4AuthJ9eN2pYJGaN5BHQ0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWtCrySh; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1718170957; c=relaxed/simple;
+	bh=3eTHdH1CLexChiBsmBR7oeS5IoJk5ge3XGY2CXt1GOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mmbuxqgwJSkxvtJkCDCF8SWFu7PtDamledybd5R5m/ScYxG+pQBIPzAOXQnqgTXrzHa3lO86u3OtAEnpkubXn1TwUL56UoXIHK+KIWgpryJ1uq76ddw5iz10nHexj0a1rGBazfhtrLNIBcQFLlr8VaZjhcM46MbdL0+NJZNki8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lQ6Nx+Vh; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6f408b8037so16242466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:41:10 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6818e31e5baso5309755a12.1;
+        Tue, 11 Jun 2024 22:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718170868; x=1718775668; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sKVvOJDRBmXEZZQWgGpt7X0kHZm5kqDS8w/6wm0mBr4=;
-        b=RWtCryShM9qf9COQ1pgWTStsnh5gFYk0xOsPO0Nmma5ziGu4HRnOrWuykZ6bEQyMbc
-         4oaM6gHsgAfwRunIVm7NfcoKmQ53vtzgJXqhVMW0PInWdom1kQ4kddNUbjZs5kAS27TV
-         1/u351L4oLLQq5JTjlq9gXB4rlamP3SOj7RN9cUzaw3g/YyxLQFT6YHdsrQ2rdw963kO
-         i5Cd+hg0PLMVckjozKMqJyFrJGpjEumkRPMhy2RstDjHls8VBEbS/Rsc6aQcf99hOcUB
-         OwDq8jUo4okQuL2qOHfTzfIbC28bFMGl2Vvgkp5C1AwO624DalSJbz5iGeY2bxr7sNiw
-         jjWQ==
+        d=gmail.com; s=20230601; t=1718170955; x=1718775755; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zOLVUBLo6Bm7rFnndVTWve69iEQA2tjI5eQ9qpYaawU=;
+        b=lQ6Nx+VhuThrnG3SuMytHqlg0/nzPJUarU+jxdSX5Uz5BcU+OLa6V8zNu2z2kGX6Le
+         fBuZVM4nekBW21K57B2ZInTMAhyCTobmOg/4A65YP7rZz/4apbkwjeZPGKNit34Vqc/Y
+         vB6edSQCGte1GoPKSBfG08p11aUxJ80kSNGn3gPEFUfwB7sPZ9a2Ho8C7MSJMwAgeBAh
+         MxInrcGcAfr8MEMh1Ff5AhyvSbZN/7JAMaPct5R2lwfTa6Lga6hsIHG621dKoN9azNS8
+         1W1MLxyvCpgikg8ttUzTGPflW13kWqVc59+WocPQiCaO+IJnHzG+9F3CoKwrfgYNFHbs
+         U7Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718170868; x=1718775668;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sKVvOJDRBmXEZZQWgGpt7X0kHZm5kqDS8w/6wm0mBr4=;
-        b=HXCUGlxe6qzYjgQPHW62tVZ2tV9HbrV2ksQlXGZj9Vwpb526sT4k3zUyhDbBhnXLgz
-         Gs+4/M2rFS+V2OGuQwaYqGRZ+y+KkaL0vH0bDEXX21WsXf1OyfkIMbB1EyITb4LEDHvG
-         p8Gp+3Hp6LlFBqkHITRYs1byob+a1CmmXr3q8jfmJtZM3mHlstk/2hNq0swzh6jNDPdP
-         LeMc5ZDp2ferM6UJoeOVaiZrBov/8aicY3w2LN/nxABZDbfLKqNPByv0e9CTSFL8rBzD
-         2+L9b0i1alaBkyTskZLv1g8oqbiDPmKictoISuFVyuhphlXTmQdoCvXC9cvsFpvOEqnV
-         CncQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBO1wicDle7RZ/joJqSqlqQl6GFqwMF2h2peYh0wlsk/u1zC0UvF8YRjDa/Fr49laDJYC7ZrqVDZisMOcRFQHVdoqs+uviOJXpW7k6
-X-Gm-Message-State: AOJu0YwtYULXxnurEatntQF4misQDhjBYWg28grjD9NawMUUtQTBi56o
-	wDfKrPYTnB/rt5ZNIcmEWZ55TyCVEW19suhNBcGXlhP0e284kvQC
-X-Google-Smtp-Source: AGHT+IEMKTWRaBB1/ku+YH/D2e753+srFdxu59n9NNVoFvu7NyD67xXsC5R0sbrtRdeFTc4/osfwOg==
-X-Received: by 2002:a17:906:4ad0:b0:a6f:4a8d:1db with SMTP id a640c23a62f3a-a6f4a8d0254mr17225266b.4.1718170868261;
-        Tue, 11 Jun 2024 22:41:08 -0700 (PDT)
-Received: from [192.168.0.101] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80728be9sm838049066b.199.2024.06.11.22.41.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 22:41:07 -0700 (PDT)
-Message-ID: <fcf77c98-0ee5-45ce-a17f-d68dfba9f7ee@gmail.com>
-Date: Wed, 12 Jun 2024 07:41:06 +0200
+        d=1e100.net; s=20230601; t=1718170955; x=1718775755;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zOLVUBLo6Bm7rFnndVTWve69iEQA2tjI5eQ9qpYaawU=;
+        b=aKpVnOmUZjZ8SC7msuNyKbDgLRoqwko97+WECyvCemYQsH09SYpT7fPLNCKmYuEMuR
+         AIXgtkiLyo90W56t6WEIziVpEoQMFGZd+KkqE6wXzodcn/HyRNYQTM5AnQbT0zzwnpx/
+         k9B020txeryLN2/Vyr5MbGkOoc6zPSKIKQU1KNPTgR/NBWj/WLbU/EBk31lTrB8EKAl9
+         LN6lrjw6z48m+3Itfq8cJ/X3ZT0EFAjva0RlSNPpUmayWY8PNohBj1K2QAxlZTyeTyod
+         taT19pVyMOVBQudL5D3yB5JGCbyvW8zvzePvDaYOo+ZzvBrqbJizjgT9dovWij+15ee6
+         cc1w==
+X-Forwarded-Encrypted: i=1; AJvYcCV15wbxhOqdLm7A2BSu/RjlNAJr2CYUHHORgUVskscSgh1v8DmnIGaqSS3bdE7x2ZkQViuR+Gre/btvVn+h8rZx/zyc+VMEpTS2y2/T
+X-Gm-Message-State: AOJu0YxiuKF0eqhQR6N2ow/qw6ZlOps9JCiRSq8hFF1p7vqtMNkMcwbZ
+	p2mXnrvSD5kLR9u0vA5TfxWV1pOduSjaH7QbaY36zbG00cF2AbWu
+X-Google-Smtp-Source: AGHT+IFF108IBExi8ESRPaaskRirkTJnMv0sYa2Lt7pbAmuJH3hOvGjfRpVCXAISZ+1gMdz159mabw==
+X-Received: by 2002:a05:6a20:748e:b0:1b8:622a:cf8f with SMTP id adf61e73a8af0-1b8a9c7d554mr1147172637.57.1718170955232;
+        Tue, 11 Jun 2024 22:42:35 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:3077:52c7:3e56:8d61])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f71b9dec2bsm42794015ad.186.2024.06.11.22.42.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 22:42:34 -0700 (PDT)
+Date: Tue, 11 Jun 2024 22:42:32 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: goodix_berlin - use __free() cleanup in SPI transport
+Message-ID: <Zmk1SGwVt3rIbbMU@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Teddy Engel <engel.teddy@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Subject: Re: [PATCH] staging: vt6656: Fix checkpatch unnecessary parentheses
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Switch the driver to use __free(kfree) cleanup facility instead of
+freeing memory by hand.
+
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/input/touchscreen/goodix_berlin_spi.c | 24 ++++++++++---------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/input/touchscreen/goodix_berlin_spi.c b/drivers/input/touchscreen/goodix_berlin_spi.c
+index fe57390975ee..a2d80e84391b 100644
+--- a/drivers/input/touchscreen/goodix_berlin_spi.c
++++ b/drivers/input/touchscreen/goodix_berlin_spi.c
+@@ -36,13 +36,14 @@ static int goodix_berlin_spi_read(void *context, const void *reg_buf,
+ 	struct spi_transfer xfers;
+ 	struct spi_message spi_msg;
+ 	const u32 *reg = reg_buf; /* reg is stored as native u32 at start of buffer */
+-	u8 *buf;
+ 	int error;
+ 
+ 	if (reg_size != GOODIX_BERLIN_REGISTER_WIDTH)
+ 		return -EINVAL;
+ 
+-	buf = kzalloc(GOODIX_BERLIN_SPI_READ_PREFIX_LEN + val_size, GFP_KERNEL);
++	u8 *buf __free(kfree) =
++		kzalloc(GOODIX_BERLIN_SPI_READ_PREFIX_LEN + val_size,
++			GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+@@ -62,12 +63,12 @@ static int goodix_berlin_spi_read(void *context, const void *reg_buf,
+ 	spi_message_add_tail(&xfers, &spi_msg);
+ 
+ 	error = spi_sync(spi, &spi_msg);
+-	if (error < 0)
++	if (error < 0) {
+ 		dev_err(&spi->dev, "spi transfer error, %d", error);
+-	else
+-		memcpy(val_buf, buf + GOODIX_BERLIN_SPI_READ_PREFIX_LEN, val_size);
++		return error;
++	}
+ 
+-	kfree(buf);
++	memcpy(val_buf, buf + GOODIX_BERLIN_SPI_READ_PREFIX_LEN, val_size);
+ 	return error;
+ }
+ 
+@@ -79,10 +80,10 @@ static int goodix_berlin_spi_write(void *context, const void *data,
+ 	struct spi_transfer xfers;
+ 	struct spi_message spi_msg;
+ 	const u32 *reg = data; /* reg is stored as native u32 at start of buffer */
+-	u8 *buf;
+ 	int error;
+ 
+-	buf = kzalloc(GOODIX_BERLIN_SPI_WRITE_PREFIX_LEN + len, GFP_KERNEL);
++	u8 *buf __free(kfree) =
++		kzalloc(GOODIX_BERLIN_SPI_WRITE_PREFIX_LEN + len, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+@@ -100,11 +101,12 @@ static int goodix_berlin_spi_write(void *context, const void *data,
+ 	spi_message_add_tail(&xfers, &spi_msg);
+ 
+ 	error = spi_sync(spi, &spi_msg);
+-	if (error < 0)
++	if (error < 0) {
+ 		dev_err(&spi->dev, "spi transfer error, %d", error);
++		return error;
++	}
+ 
+-	kfree(buf);
+-	return error;
++	return 0;
+ }
+ 
+ static const struct regmap_config goodix_berlin_spi_regmap_conf = {
+-- 
+2.45.2.505.gda0bf45e8d-goog
 
 
-Remove unnecessary parentheses - according to checkpatch.pl strict
-
-Signed-off-by: Teddy Engel <engel.teddy@gmail.com>
-
-
-Hi Teddy,
-
-your patch creates a checkpatch warning:
-WARNING: A patch subject line should describe the change not the tool 
-that found it
-
-The next thing that worries me is that the fix does not increase the
-readability of the code for me. I think overview is better with
-brackets.
-
-I also think that you are doing two things at a time. You are changing
-the TODO file and the brackets.
-
-I would change only the TODO file.
-
-Thanks for your support.
-
-Bye Philipp
+-- 
+Dmitry
 
