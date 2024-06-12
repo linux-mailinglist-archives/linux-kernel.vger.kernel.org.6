@@ -1,181 +1,163 @@
-Return-Path: <linux-kernel+bounces-210906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D899049F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C40819049F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E621C230E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:27:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D96D11C23722
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A96325622;
-	Wed, 12 Jun 2024 04:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cxi9IGSI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9642926AD5;
+	Wed, 12 Jun 2024 04:27:08 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5571208AF;
-	Wed, 12 Jun 2024 04:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1061B10A0E;
+	Wed, 12 Jun 2024 04:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718166409; cv=none; b=Vfjb/UJooMHd496k85eZM+b/yD5vQm/cciOOY77E3wC/LjqRUceSOwCMqix5YIxI7qBW/6WOgfNG+VIQkHTpZwtc18orJKUdj+kprlZz5y0ZvneV/4QfT/ymz8M1JwsQRWoA/lRkuFQs3BjzqYd+9P0kHxzL4+BkP47WNW8JV5Y=
+	t=1718166428; cv=none; b=g/VQgSCkXzZoBuDy74WGaDnS58lB5BO5dFnfZd53zCRNwCHN9mYS1TqhCklmb49IPOsM/vR/nLXSmzqPOqlXOT3qnlC0xq3ZbD0mt4zp39U/prhKbJL7v0wCt6yMVu/WEwCLfJ/wa9DxsBb6x+Tj/JLIQGPpoOH8nUZin0i50OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718166409; c=relaxed/simple;
-	bh=Wb1KqxF48uGDnhR9pYhRPTClWOE2cIsLIRZ+lwkgF/I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ZRbwWbX9c9OrxUMkj4UB1iXOejPQidIw0eOrzhxgntoXE8AXvwuPOGLFzkHymtzpJwizwfIB4B4O69y9gwUCRcBFJO5QCFqQE2IteuDWtTHugvfkZCmn9z2MluCtzcD0eTrPAjAYKrGPEmb9FO2SmboIph3ApXVEi85bHDbpjjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cxi9IGSI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BItrvZ013278;
-	Wed, 12 Jun 2024 04:26:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=I+aDBYBh4TTYcKzX/Ar7nw
-	R5Fhbs6R4VLgGoKwD1YHY=; b=Cxi9IGSIf7UXYQ7nT9dy3TnOJ8ytCj4ngfeswq
-	US+Trdwi3hPzcJ2mfDMTlqK6X+K66o9DTx9c+g/3G2NSTn3gDMzmOf8dJ4g599sU
-	UTS/BE89s8uKgd5QC5D2RxxIlM9mbWJVQhH6/kSU+A54cyBCMuwu1HtE2gdPJekf
-	S/hlqS0X9fFggQF9OWNhP/uvHT22Bp8fF4YJOr9s1GgC5Ciw64n3O19aPBGTg4BA
-	EBmnLRhS/CvD4HToDSYYTJmeJIXMopPQ1ve//VcJR50rlyBgtisrwtD4bqqx6ks0
-	1yxwvBazae+fmr+JwprEtYLYRCte8JDiNdUQwaj9OeEtpQ7w==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm45acvs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 04:26:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C4PwIg004981
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 04:25:58 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
- 2024 21:25:57 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 11 Jun 2024 21:25:56 -0700
-Subject: [PATCH] platform/x86/siemens: add missing MODULE_DESCRIPTION()
- macros
+	s=arc-20240116; t=1718166428; c=relaxed/simple;
+	bh=MBJunRKKZCYSzLIojD7Nl18fcwI5Ptviv8JR3p0uV4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k/v22icvk1I4brtT37Zc816A0p/tDsfExsImhRHDDhoMxpLic09NN0HzJ93PLwuZGFmrdbHhZ/dGhQkoPH92X3RgIoy/Bh2VtCSvHU0oQTYKsEjaOPZXEB2GCEIHxY6bsxCXsDte7kzJ/9CNp75P8ECpeFQejnYBKP0Os5CUe6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13FFAC32786;
+	Wed, 12 Jun 2024 04:27:03 +0000 (UTC)
+Date: Wed, 12 Jun 2024 09:56:55 +0530
+From: "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>
+To: Slark Xiao <slark_xiao@163.com>
+Cc: Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Loic Poulain <loic.poulain@linaro.org>, quic_jhugo@quicinc.com,
+	Qiang Yu <quic_qianyu@quicinc.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"mhi@lists.linux.dev" <mhi@lists.linux.dev>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+Subject: Re: Re: [PATCH v1 2/2] net: wwan: Fix SDX72 ping failure issue
+Message-ID: <20240612042655.GA2645@thinkpad>
+References: <20240607100309.453122-1-slark_xiao@163.com>
+ <30d71968-d32d-4121-b221-d95a4cdfedb8@gmail.com>
+ <97a4347.18d5.19004f07932.Coremail.slark_xiao@163.com>
+ <c292fcdc-4e5b-4e6a-9317-e293e2b6b74e@gmail.com>
+ <320ba7ec.38c9.1900a687ddc.Coremail.slark_xiao@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240611-md-drivers-platform-x86-siemens-v1-1-b399d7d6ae64@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFMjaWYC/x3NQQqDMBBA0avIrDuQBLG1VyldxGSsAybKjEpAv
- HvTLt/m/xOUhEnh2ZwgdLDykivsrYEw+fwh5FgNzrjWdNZiihiFDxLFdfbbuEjC8uhQmRJlxZ7
- uwZmhD961UCur0Mjlf3i9qwevhIP4HKZfd+a8F0xeNxK4ri8ThIqXkAAAAA==
-To: Gerd Haeussler <gerd.haeussler.ext@siemens.com>,
-        Xing Tong Wu
-	<xingtong.wu@siemens.com>,
-        Tobias Schaffner <tobias.schaffner@siemens.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        =?utf-8?q?Ilpo_J=C3=A4rvinen?=
-	<ilpo.jarvinen@linux.intel.com>
-CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8ZP6ygviFXY3gvGjl2jlGXu7Ft-ub20Q
-X-Proofpoint-ORIG-GUID: 8ZP6ygviFXY3gvGjl2jlGXu7Ft-ub20Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_01,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 mlxlogscore=999 phishscore=0 malwarescore=0 suspectscore=0
- bulkscore=0 spamscore=0 clxscore=1011 priorityscore=1501 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406120029
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <320ba7ec.38c9.1900a687ddc.Coremail.slark_xiao@163.com>
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/x86/siemens/simatic-ipc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/x86/siemens/simatic-ipc-batt.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/x86/siemens/simatic-ipc-batt-apollolake.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/x86/siemens/simatic-ipc-batt-elkhartlake.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/x86/siemens/simatic-ipc-batt-f7188x.o
+On Wed, Jun 12, 2024 at 11:05:38AM +0800, Slark Xiao wrote:
+> 
+> At 2024-06-12 06:46:33, "Sergey Ryazanov" <ryazanov.s.a@gmail.com> wrote:
+> >On 11.06.2024 04:36, Slark Xiao wrote:
+> >> +More maintainer to this second patch list.
+> >> 
+> >> At 2024-06-08 06:28:48, "Sergey Ryazanov" <ryazanov.s.a@gmail.com> wrote:
+> >>> Hello Slark,
+> >>>
+> >>> without the first patch it is close to impossible to understand this
+> >>> one. Next time please send such tightly connected patches to both
+> >>> mailing lists.
+> >>>
+> >> Sorry for this mistake since it's my first commit about committing code to 2
+> >> difference area: mhi and mbim. Both the maintainers are difference.
+> >> In case a new version commit would be created, I would like to ask if
+> >> should I add both side maintainers on these 2 patches ?
+> >
+> >No worries. We finally got both sides of the puzzle. BTW, looks like the 
+> >first patch still lacks Linux netdev mailing list in the CC.
+> >
+> >Usually maintainers are responsible for applying patches to their 
+> >dedicated repositories (trees), and then eventually for sending them in 
+> >batch to the main tree. So, if a work consists of two patches, it is 
+> >better to apply them together to one of the trees. Otherwise, it can 
+> >cause a build failure in one tree due to lack of required changes that 
+> >have been applied to other. Sometimes contributors even specify a 
+> >preferred tree in a cover letter. However, it is still up to maintainers 
+> >to make a decision which tree is better when a work changes several 
+> >subsystems.
+> >
+> 
+> Thanks for your detailed explanation. 
+> Since this change was modified mainly on mhi side, I prefer to commit it to
+>  mhi side. 
+> @loic @mani, what's your opinion?
+> 
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+There is a build dependency with the MHI patch. So I'll just take both patches
+through MHI tree once I get an ACK from WWAN maintainers.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/platform/x86/siemens/simatic-ipc-batt-apollolake.c  | 1 +
- drivers/platform/x86/siemens/simatic-ipc-batt-elkhartlake.c | 1 +
- drivers/platform/x86/siemens/simatic-ipc-batt-f7188x.c      | 1 +
- drivers/platform/x86/siemens/simatic-ipc-batt.c             | 1 +
- drivers/platform/x86/siemens/simatic-ipc.c                  | 1 +
- 5 files changed, 5 insertions(+)
+> >>> On 07.06.2024 13:03, Slark Xiao wrote:
+> >>>> For SDX72 MBIM device, it starts data mux id from 112 instead of 0.
+> >>>> This would lead to device can't ping outside successfully.
+> >>>> Also MBIM side would report "bad packet session (112)".
+> >>>> So we add a link id default value for these SDX72 products which
+> >>>> works in MBIM mode.
+> >>>>
+> >>>> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+> >>>
+> >>> Since it a but fix, it needs a 'Fixes:' tag.
+> >>>
+> >> Actually, I thought it's a fix for common SDX72 product. But now I think
+> >> it should be only meet for my SDX72 MBIM product. Previous commit
+> >> has not been applied. So there is no commit id for "Fixes".
+> >> But I think I shall include that patch in V2 version.
+> >> Please ref:
+> >> https://lore.kernel.org/lkml/20240520070633.308913-1-slark_xiao@163.com/
+> >
+> >There are nothing to fix yet. Great. Then you can resend the Foxconn 
+> >SDX72 introduction work as a series that also includes these mux id 
+> >changes. Just rename this specific patch to something less terrifying. 
+> >Mean, remove the "Fix" word from the subject, please.
+> >
+> >Looks like "net: wwan: mhi: make default data link id configurable" 
+> >subject also summarize the reason of the change.
+> >
+> 
+> Currently I don't know if my previous commit which has been reviewed still
+> be effective. Since this link_id changes only works for MBIM mode of SDX72.
+> If keeps the commit of [1], then I will update this patch with v2 version which just update
+> the subject . If not, then this SDX72 series would have 3 patches: [1] + first patch
+> + second patch[v2](or 2 patches: combine [1] with first patch + second patch[v2]).
+> Please let me know which solution would be better.
+> 
 
-diff --git a/drivers/platform/x86/siemens/simatic-ipc-batt-apollolake.c b/drivers/platform/x86/siemens/simatic-ipc-batt-apollolake.c
-index 31a139d87d9a..5edc294de6e4 100644
---- a/drivers/platform/x86/siemens/simatic-ipc-batt-apollolake.c
-+++ b/drivers/platform/x86/siemens/simatic-ipc-batt-apollolake.c
-@@ -45,6 +45,7 @@ static struct platform_driver simatic_ipc_batt_driver = {
- 
- module_platform_driver(simatic_ipc_batt_driver);
- 
-+MODULE_DESCRIPTION("CMOS Battery monitoring for Simatic IPCs based on Apollo Lake GPIO");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:" KBUILD_MODNAME);
- MODULE_SOFTDEP("pre: simatic-ipc-batt platform:apollolake-pinctrl");
-diff --git a/drivers/platform/x86/siemens/simatic-ipc-batt-elkhartlake.c b/drivers/platform/x86/siemens/simatic-ipc-batt-elkhartlake.c
-index a7676f224075..e6a56d14b505 100644
---- a/drivers/platform/x86/siemens/simatic-ipc-batt-elkhartlake.c
-+++ b/drivers/platform/x86/siemens/simatic-ipc-batt-elkhartlake.c
-@@ -45,6 +45,7 @@ static struct platform_driver simatic_ipc_batt_driver = {
- 
- module_platform_driver(simatic_ipc_batt_driver);
- 
-+MODULE_DESCRIPTION("CMOS Battery monitoring for Simatic IPCs based on Elkhart Lake GPIO");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:" KBUILD_MODNAME);
- MODULE_SOFTDEP("pre: simatic-ipc-batt platform:elkhartlake-pinctrl");
-diff --git a/drivers/platform/x86/siemens/simatic-ipc-batt-f7188x.c b/drivers/platform/x86/siemens/simatic-ipc-batt-f7188x.c
-index 5e77e05fdb5d..f8849d0e48a8 100644
---- a/drivers/platform/x86/siemens/simatic-ipc-batt-f7188x.c
-+++ b/drivers/platform/x86/siemens/simatic-ipc-batt-f7188x.c
-@@ -81,6 +81,7 @@ static struct platform_driver simatic_ipc_batt_driver = {
- 
- module_platform_driver(simatic_ipc_batt_driver);
- 
-+MODULE_DESCRIPTION("CMOS Battery monitoring for Simatic IPCs based on Nuvoton GPIO");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:" KBUILD_MODNAME);
- MODULE_SOFTDEP("pre: simatic-ipc-batt gpio_f7188x platform:elkhartlake-pinctrl platform:alderlake-pinctrl");
-diff --git a/drivers/platform/x86/siemens/simatic-ipc-batt.c b/drivers/platform/x86/siemens/simatic-ipc-batt.c
-index c6dd263b4ee3..d9aff10608cf 100644
---- a/drivers/platform/x86/siemens/simatic-ipc-batt.c
-+++ b/drivers/platform/x86/siemens/simatic-ipc-batt.c
-@@ -247,6 +247,7 @@ static struct platform_driver simatic_ipc_batt_driver = {
- 
- module_platform_driver(simatic_ipc_batt_driver);
- 
-+MODULE_DESCRIPTION("CMOS core battery driver for Siemens Simatic IPCs");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:" KBUILD_MODNAME);
- MODULE_AUTHOR("Henning Schild <henning.schild@siemens.com>");
-diff --git a/drivers/platform/x86/siemens/simatic-ipc.c b/drivers/platform/x86/siemens/simatic-ipc.c
-index 8ca6e277fa03..7039874d8f11 100644
---- a/drivers/platform/x86/siemens/simatic-ipc.c
-+++ b/drivers/platform/x86/siemens/simatic-ipc.c
-@@ -231,6 +231,7 @@ static void __exit simatic_ipc_exit_module(void)
- module_init(simatic_ipc_init_module);
- module_exit(simatic_ipc_exit_module);
- 
-+MODULE_DESCRIPTION("Siemens SIMATIC IPC platform driver");
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Gerd Haeussler <gerd.haeussler.ext@siemens.com>");
- MODULE_ALIAS("dmi:*:svnSIEMENSAG:*");
+Just send v2 of both patches. There are some comments in the MHI patch as well.
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240611-md-drivers-platform-x86-siemens-9e7c20b9ca24
+> Thanks.
+> >>>> ---
+> >>>>    drivers/net/wwan/mhi_wwan_mbim.c | 3 ++-
+> >>>>    1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/drivers/net/wwan/mhi_wwan_mbim.c b/drivers/net/wwan/mhi_wwan_mbim.c
+> >>>> index 3f72ae943b29..4ca5c845394b 100644
+> >>>> --- a/drivers/net/wwan/mhi_wwan_mbim.c
+> >>>> +++ b/drivers/net/wwan/mhi_wwan_mbim.c
+> >>>> @@ -618,7 +618,8 @@ static int mhi_mbim_probe(struct mhi_device *mhi_dev, const struct mhi_device_id
+> >>>>    	mbim->rx_queue_sz = mhi_get_free_desc_count(mhi_dev, DMA_FROM_DEVICE);
+> >>>>    
+> >>>>    	/* Register wwan link ops with MHI controller representing WWAN instance */
+> >>>> -	return wwan_register_ops(&cntrl->mhi_dev->dev, &mhi_mbim_wwan_ops, mbim, 0);
+> >>>> +	return wwan_register_ops(&cntrl->mhi_dev->dev, &mhi_mbim_wwan_ops, mbim,
+> >>>> +		mhi_dev->mhi_cntrl->link_id ? mhi_dev->mhi_cntrl->link_id : 0);
+> >>>
+> >>> Is it possible to drop the ternary operator and pass the link_id directly?
+> >>>
 
+Yeah, just use link_id directly as it will be 0 by default.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
