@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-211257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9240E904F2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48BA3904F2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469B91F26787
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:24:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C089A1F2707B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD8416DEC2;
-	Wed, 12 Jun 2024 09:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C99416DEDF;
+	Wed, 12 Jun 2024 09:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DArmuAIo"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JYeHG7YJ"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE21B3EA6C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D72616DEB9
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718184271; cv=none; b=NhLCuSC7F91tT1VhcrKmUpnQ2hPDd6PG2Dbeqbldp7VX+3Kupb7B4M1rOiz3rMLZ2dSE5gFLKEI2HmVHr/LLZ5uPtux77+EUJn+PIubzh1G4DKr46RxOy6X/4r5dzttweoO9ksj8S2v0Mvpj8ApDuQtsw4KFjn6zJhEUwNlMCJ8=
+	t=1718184273; cv=none; b=HNQuPutJLmFfIGfS3S/ijke+0qf9C/UChtBKbwp24NWmjOREL8WOZqotmTCegARo7VJcKGBKrxdg+LwjfFkoK+mNKT5MJJJ0L7hUbm0TEaa2MvlaKM1gnf5uDBnPPRQ+TkhMhMuJTKDCFnp3AEeQbrT/zUT4+Vh0gZ0mYilypsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718184271; c=relaxed/simple;
-	bh=8Ud6fGyLiqk5aftCZdB6sBI3JnC6FlrDjb+mJrMNjPE=;
+	s=arc-20240116; t=1718184273; c=relaxed/simple;
+	bh=/YmAORbO3+x2lQ89cPlqc8Ys60h2WO17kQvYvC6EUd0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tjk/nXbLUUoYD2B8ELI+o+2GQZlPmfdpLDzsXOSzYPRJTQ5uv/6pLzd6fg9UKVe8zp84Lnm5g2Al0ZTe2zzLACWENaWV/2rYgDvnTTQz7XeCyLvRRMy9YWeFbd8Nov/Q8Ppdzr7Onp32GUo1CItEIw8zzfpKdVxwTRx1JTWJe/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DArmuAIo; arc=none smtp.client-ip=209.85.167.47
+	 MIME-Version; b=IDkU0/tRshpnaRMzsuEM7/toEmXxhOvSzbGSaTuuZBA0e2MB+4HOn4yUdCSQq1brv1uoV6m33HJn0y3wNS5yqvXFooQ6/1s99YOqkT6fPpB26av8PwuFglrOakmulE0TopXuYLF68DbCdLLq1EvZVfWeJu9E7QH5bzqcnAnE0JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JYeHG7YJ; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52c815e8e9eso4001692e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:24:29 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bbdc237f0so2588598e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:24:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718184268; x=1718789068; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718184270; x=1718789070; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NVq/XPrdWmMMBpDrtjBL0lbuC27j39fwjqCGgq7/OIc=;
-        b=DArmuAIoKhkuBQRHVEmHdcrux1nbFk+ZjRh9qbRlxhM5GVNnmRK6mkThF3AYf0KGNO
-         gVv5u5+s0JYi9NbJoTJG3yEXzEqNEqVGPQEXFxVU4r7tCbLnudNifehuoN1JmCgIQAWd
-         o/pq88dzYIaQr6hh1vNJiYW50hsqJzH94AN6kjLMpNuyJwkWTXAWnDSoXff7Dk20KN+D
-         66IISPQUrgl+sVPSpjMKAX6OPkLZ+3fEMC0WEe63R62KFL7mN/Ke3ptIn+CwnY0Pymla
-         19gBGDYU6+A9rOgX6faj6ooNMGNwmL0rYw8cB86rGM1sSkvilTZ87qaXwqOFszU2WWFQ
-         amdQ==
+        bh=DfH51kBtOmvN/SbHgLsWaCNr0Bu/Fg6um6oRQlR7oHY=;
+        b=JYeHG7YJjxA9XXiVI5+d7Dgip5bHXF+8A3Lt4FtmfAHSyltDKSkvOFmXmAAKBcUE4Y
+         EKUPCYAAEPPlnX6SRr0wAJKL7YVPeeQs2/Z2fCm6FEyug85WFBKC6a84OGoT9nLRxxoy
+         90IDi3G7tUSN3PgVXpAVQMOEEtM73HgE+qGkHxx2xRjHS4yfUSTamz8cCiPuOvQPxJSS
+         s0GqhLbZa4WD9B7PVBuSAPGsKuTJYHjrph74YuE/y9zdf7q4gcGcdpO7k3yYtXEsdA1z
+         HLTtxx11Y6S5OG3SwuYIDFYSoi3hazp2/rfzEk402EiOwb038bMPKMQSye+azsb2VUVN
+         0NmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718184268; x=1718789068;
+        d=1e100.net; s=20230601; t=1718184270; x=1718789070;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NVq/XPrdWmMMBpDrtjBL0lbuC27j39fwjqCGgq7/OIc=;
-        b=R9uEcI4f85RFq3TUNkYEDIdaP2OkqjbQjCK6IbQnbHfhpJCm5slU1/Zd+X8IpyS9An
-         9JzbRV4Oa42HIYqqO0LaZUSdPyS3YwB7jufwPPBoG1O6oFYfewu6wf5TQIwINrhRMNZU
-         ZkVGhmDfHQAUZNnvFzHg/Xxbr/PrJoDUitzN9QeN46r2R3y2Ddunbuh5dKV8XHI01w4m
-         JXOUyvGX4jTsGvTq7PXp8ZnYmi/NhlM3tO0mpMOh8wY1DhcFE9ai1Hp41KbGrjsNCvkI
-         p49BP4gPJkKI+ueUvnXrWt7LX30Cxpyu09gn+FSqNGTJD92Kk1qGGBIUS02xfCsnWeSp
-         914w==
-X-Forwarded-Encrypted: i=1; AJvYcCVCVV2Ppu9GZhn37BkAh5hRsE8Mmqo+1YqObQYhDc9iRwnfmQDdsWwD1R4aNuGx8nn6m6PmzP2cy0nAZ0AwQMvEgsGS7NFXzYk+9n58
-X-Gm-Message-State: AOJu0Yzefved31YqRRpkLpkJZfIs66N8637C7PWfjosFljcBMkaawPqA
-	ezgKLS2XXn5iReChvXeHqZ2zJsj5DVVXlcmiYagObVndn32IZnrJtNUX29f8yErpB4iusL83o/r
-	X
-X-Google-Smtp-Source: AGHT+IEfFP6e6pTW+1khTsjjkkVQ9dhYQOSP5hhhyY4gGwO6/jsKLIdG1CzNbeFE/N/FoWTmcrjwPw==
-X-Received: by 2002:a05:6512:401c:b0:52c:910b:9c87 with SMTP id 2adb3069b0e04-52c9a3df0f2mr896236e87.36.1718184267973;
-        Wed, 12 Jun 2024 02:24:27 -0700 (PDT)
+        bh=DfH51kBtOmvN/SbHgLsWaCNr0Bu/Fg6um6oRQlR7oHY=;
+        b=uXZUMEVokHi5Mjv6H8GfcFi5jXfNrrur9NzNBn7sBF+HFHfBj8r/vhfd+wP5lukcOn
+         ApfLwxLXS+6KImzEtFaKWKHV8WAgqQy0QiXthuBXkPifN83FJAlJdrfIjMnlL8wUszUF
+         txVNW5Uxl4efQvNcywZWINIwxXOCkUMchFgzV4kzkkiAH4LB2eD9WeSjuu/+v+FVgWmG
+         9mJyIEDWUrPpWlhEE31PKd3fsxLwkkfCC0IUo+y2bszZiFVNnxmhiI1S49mJvg5nAaNs
+         IEwoJ3OY8SgKzHA3+AP3Kd1YYgqt3rlQ+0D7SAe4hsKGpbH66zZgwUvZAPDd6d6XXF+T
+         SZqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKUxEMD2cPa3ogG2vOLAkQAuJMQzQWoCScJuYmc1u0gQ3eJ3lL070eSQT4bOtTSyuZubw8rLUUWI+wyaGL0+NPRsljY9PVSeJdz9GN
+X-Gm-Message-State: AOJu0YxHzw3vYFCbFplgkDeeRJq/F1gkfXU1/gr92jiah2lVA50xL59Z
+	ZZnq5zQhUWt6N0fAavX7IWK5SCuQVDFkzkMSL1enKl9SrYuYd4gD93DrbUAw/M0=
+X-Google-Smtp-Source: AGHT+IEF/QjW1JAYelI47//kT/YeUyUvmkw2ZBd8t575ZCaGqY/UKt62km1JBl3qUL4DuZNV4IphVA==
+X-Received: by 2002:ac2:4341:0:b0:52c:8a15:3c01 with SMTP id 2adb3069b0e04-52c9a3dfab4mr923248e87.40.1718184269730;
+        Wed, 12 Jun 2024 02:24:29 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c82faf1b7sm1623806e87.130.2024.06.12.02.24.26
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c82faf1b7sm1623806e87.130.2024.06.12.02.24.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 02:24:27 -0700 (PDT)
+        Wed, 12 Jun 2024 02:24:29 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -77,11 +76,10 @@ To: Rob Herring <robh@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alexandre Mergnat <amergnat@baylibre.com>
-Subject: [PATCH v2 2/3] arm64: dts: mediatek: mt8365: use a specific SCPSYS compatible
-Date: Wed, 12 Jun 2024 11:24:20 +0200
-Message-ID: <20240612092421.52917-2-krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 3/3] arm64: dts: mediatek: mt8173-elm: drop PMIC's syscon node
+Date: Wed, 12 Jun 2024 11:24:21 +0200
+Message-ID: <20240612092421.52917-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240612092421.52917-1-krzysztof.kozlowski@linaro.org>
 References: <20240612092421.52917-1-krzysztof.kozlowski@linaro.org>
@@ -93,38 +91,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-SoCs should use dedicated compatibles for each of their syscon nodes to
-precisely describe the block.  Using an incorrect compatible does not
-allow to properly match/validate children of the syscon device.  Replace
-SYSCFG compatible, which does not have children, with a new dedicated
-one for SCPSYS block.
+According to AngeloGioacchino Del Regno, the syscon node in PMIC is
+neither needed nor used.  It looks like a solution to expose some of the
+registers of PMIC.
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
-Tested-by: Alexandre Mergnat <amergnat@baylibre.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Drop it to solve also incorrect number of entries in the "reg" property
+and fix dtbs_check warning:
+
+  mt8173-elm.dtb: syscon@c000: reg: [[0, 49152], [0, 264]] is too long
+
+Link: https://lore.kernel.org/all/671a4b1e-3d95-438c-beae-d967e0ad1c77@collabora.com/
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 ---
 
 Changes in v2:
-1. Tags
+1. Drop the node as suggested.
 ---
- arch/arm64/boot/dts/mediatek/mt8365.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8365.dtsi b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-index 455c2ae3b30a..eb449bfa8803 100644
---- a/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-@@ -300,7 +300,7 @@ syscfg_pctl: syscfg-pctl@10005000 {
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
+index 6d962d437e02..b4d85147b77b 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
+@@ -1134,12 +1134,6 @@ mt6397_vibr_reg: ldo_vibr {
+ 		rtc: mt6397rtc {
+ 			compatible = "mediatek,mt6397-rtc";
  		};
+-
+-		syscfg_pctl_pmic: syscon@c000 {
+-			compatible = "mediatek,mt6397-pctl-pmic-syscfg",
+-				     "syscon";
+-			reg = <0 0x0000c000 0 0x0108>;
+-		};
+ 	};
+ };
  
- 		scpsys: syscon@10006000 {
--			compatible = "mediatek,mt8365-syscfg", "syscon", "simple-mfd";
-+			compatible = "mediatek,mt8365-scpsys", "syscon", "simple-mfd";
- 			reg = <0 0x10006000 0 0x1000>;
- 
- 			/* System Power Manager */
 -- 
 2.43.0
 
