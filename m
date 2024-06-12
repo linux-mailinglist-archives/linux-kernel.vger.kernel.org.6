@@ -1,105 +1,136 @@
-Return-Path: <linux-kernel+bounces-212308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F0F905E48
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F2D4905E4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D4F31C22804
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:12:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A15A1C2289C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9561712C522;
-	Wed, 12 Jun 2024 22:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C7243144;
+	Wed, 12 Jun 2024 22:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaSDEKGh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s//GaH7E"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFED11C14;
-	Wed, 12 Jun 2024 22:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1392F1272A3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718230334; cv=none; b=djZjmpp1MmBBqe1o7oS0yZ7axeJFmrznpnYAlxB6LP/n+3BEU0RN7L04NNrnnUbSRLxOiqyPCSbJjcqFdu/PxhWcREWpP1nEw1X2tG1eO432Hyb4Dyacv1O1e6YONYFXwM4iEmYF8Kb475o2U7JhwYdkH/B3if/aBZ96heiGArE=
+	t=1718230437; cv=none; b=YCIS5z2ARHZuy936fiVhkIYqrhoHZQfNzmgYZw1IQQqKvFg6GQwClxoe6Sdii5EsEN8VDkOk1f9iGjDyyXoxzr+fl+SQPqmQcrRmD8C2y0X1SQ5O6XGNUVsRYitTDHFPkv0hGuNeubYsuAm9nWoVncxfMbNyEWUn+rv+qRdJ3xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718230334; c=relaxed/simple;
-	bh=u7GHi5Z1GZsq+IxhBO/WJI3EakrV1PcZZ0OzD6obEbQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=HyPKwZdUnSo3zbtb/XE5Qbt0otBLiwmpjRBHIxIjkA8nKh0feOJto6t60Q8U2qsIdF2HJz/A052tEU98JKvn/X8psMsvvILdDvdT/5BuofPWcaZgih1K8a4rge+7npWoTacvERPXKemJxKbEF1na8P34hTa+o1I1/5WSZnU+WS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eaSDEKGh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2575C116B1;
-	Wed, 12 Jun 2024 22:12:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718230334;
-	bh=u7GHi5Z1GZsq+IxhBO/WJI3EakrV1PcZZ0OzD6obEbQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eaSDEKGhkM2xrA4E0ZxP7iIKy4aKLWT9Si877cXaIg6KBLgbkH5EkaK658PolKZ1L
-	 gtYDPLyGifDB3P8tgWQIH1mFdMHWLjcH/6VOSlSrRC9WwWzRzFipLeO2TbquXUA/PA
-	 4gzsRE1f1n+TeqCg6LaxGLDXF5crzPp52nmQxDnfLQ6MOKiGb9siOhsZOCi4T7cXOI
-	 dabEUinztOrM14elcnjXRD5q13tGc5JuwBuSfQdz4TblWEVUhtoRMVKHruDp1pw+1k
-	 Gbr5XmC2v48+mu1kijPM5DXdR6dZz8OwhKlQ1DRuVaob9gqKciRPE86gJB7MCBxUGM
-	 jkcP4qr1DwfxQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	mhiramat@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH] selftests/ftrace: Add required dependency for kprobe tests
-Date: Thu, 13 Jun 2024 07:12:10 +0900
-Message-Id: <171823033048.152840.662759412433336839.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1718230437; c=relaxed/simple;
+	bh=GwfBCcHjkevNkWnlhNs7s7LtsNgX3NNWwh13LjsHl2k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bgKdr0Sp+6xeFQNf+RDoVzsIwoYKeJooL1BsoSAwsz/97hH5rZ8Clq781FJBN0V53glleP36cSasWj3QMG/MhjcTL2mTxsnzDDrKB703aUJzlqlRjSqmaTC3cREuQlUyPKnh2yw3MAv/KMAJHA5Gdk6DBBVZz/+W4O3AYyoQiTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s//GaH7E; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfeff1ae480so603905276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:13:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718230434; x=1718835234; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bPX3/Z0GWf3goqQnQ+80IAoevnNEBGSkkJOiBvmG4jY=;
+        b=s//GaH7EOLTmaXUl1rmYJN1rO/2MMS3WFL/FmLQy72muCUwpBXJdkimk4Zp+zGmG56
+         Gad94F4y7yknfrh9EMlah0PXnZfI0yM4yiuEWqCOkvDQkuQsqz7YmRxMB7kG2hpSiTW5
+         k/5rQYS36eV21ARWug4Xl8y5srpiuW9U3KmaFWunNhB6PQwPswRGB11cwmucIx9Czx4+
+         +mNaGCiLxeqkHE6yqosioiE0B9T6M4WWaubTjRMNbuymK5tR2G0BE+x/4DDcjGMgwDJT
+         8P23GTan20gqVn7DbXDn4b2mJGh//PkuDWLHI164cWS5qr+fsYCs+hcAi62efO4tWfMK
+         FfWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718230434; x=1718835234;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bPX3/Z0GWf3goqQnQ+80IAoevnNEBGSkkJOiBvmG4jY=;
+        b=GUcM/GZDcE1nLoKy/ayZ+68iZ5WbLi8n1Aa3aSmc0aoAtdPWSYCLDQIFKP/ziRKFXh
+         EtpVf3NS0QIIXthLJcwqNc0rvGsKhBjr2eUEvSFJ42Um03Ihx1IYdbMZFxdmynYcezGZ
+         uzvYupAMkEVnkcAD6PnyXc6LXU0VC5R8LdZfSlHqYOgRL8J/ODXD/40eNdqmBnpIOTqw
+         +Sh119GjuY5DaX4IPRLlLhHDkrO+H5+WS28gHa8oHjVBqqzmUjATffYLbhSBZBfYjPcX
+         VWHtfOeps/WLNss/dBbXdaqJZsbGfCA8XsFmFsprO3hiThSeE2SGn7SKUhAYgdEqr8QZ
+         gq5w==
+X-Gm-Message-State: AOJu0YxUXtEJIVH28T1pFf6tnh3ekC3r2IGN3seE+3MFOLrR/pe/rM/A
+	GzQe992wnZAvtfZC4p5GS8u+zUZ3uI8MrcaVrKVUROXSojmPhDz3DAKfuAB0S29UDzSOjIwUztO
+	Rcw==
+X-Google-Smtp-Source: AGHT+IHQk/QK4uDOLMVdbV04IdfTlJ2Btibfi42Ivx9v36nGEO3157fO4+iqYDDxzqE9oJh20Eg6PCiUsJk=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:150f:b0:de5:2694:45ba with SMTP id
+ 3f1490d57ef6-dfe62d1ee23mr813079276.0.1718230434092; Wed, 12 Jun 2024
+ 15:13:54 -0700 (PDT)
+Date: Wed, 12 Jun 2024 15:13:52 -0700
+In-Reply-To: <20240207172646.3981-12-xin3.li@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-12-xin3.li@intel.com>
+Message-ID: <ZmodoHj_ebGza4Sj@google.com>
+Subject: Re: [PATCH v2 11/25] KVM: x86: Add kvm_is_fred_enabled()
+From: Sean Christopherson <seanjc@google.com>
+To: Xin Li <xin3.li@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	shuah@kernel.org, vkuznets@redhat.com, peterz@infradead.org, 
+	ravi.v.shankar@intel.com, xin@zytor.com
+Content-Type: text/plain; charset="us-ascii"
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Wed, Feb 07, 2024, Xin Li wrote:
+> Add kvm_is_fred_enabled() to get if FRED is enabled on a vCPU.
+> 
+> Signed-off-by: Xin Li <xin3.li@intel.com>
+> Tested-by: Shan Kang <shan.kang@intel.com>
+> ---
+> 
+> Change since v1:
+> * Explain why it is ok to only check CR4.FRED (Chao Gao).
+> ---
+>  arch/x86/kvm/kvm_cache_regs.h | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
+> index 75eae9c4998a..1d431c703fdf 100644
+> --- a/arch/x86/kvm/kvm_cache_regs.h
+> +++ b/arch/x86/kvm/kvm_cache_regs.h
+> @@ -187,6 +187,23 @@ static __always_inline bool kvm_is_cr4_bit_set(struct kvm_vcpu *vcpu,
+>  	return !!kvm_read_cr4_bits(vcpu, cr4_bit);
+>  }
+>  
+> +/*
+> + * It's enough to check just CR4.FRED (X86_CR4_FRED) to tell if
+> + * a vCPU is running with FRED enabled, because:
+> + * 1) CR4.FRED can be set to 1 only _after_ IA32_EFER.LMA = 1.
+> + * 2) To leave IA-32e mode, CR4.FRED must be cleared first.
+> + *
+> + * More details at FRED Spec 6.0 Section 4.2 Enabling in CR4.
+> + */
+> +static __always_inline bool kvm_is_fred_enabled(struct kvm_vcpu *vcpu)
 
-kprobe_args_{char,string}.tc are using available_filter_functions file
-which is provided by function tracer. Thus if function tracer is disabled,
-these tests are failed on recent kernels because tracefs_create_dir is
-not raised events by adding a dynamic event.
-Add available_filter_functions to requires line.
+Maybe just is_fred_enabled(), or even just is_fred()?  Most helpers in x86.h that
+wrap CR4/CR0 in similar ways omit the "kvm_", partly for brevity, but also because
+the check is architectural, not KVM-defined (though the state obviously comes
+from KVM).
 
-Fixes: 7c1130ea5cae ("test: ftrace: Fix kprobe test for eventfs")
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- .../ftrace/test.d/kprobe/kprobe_args_char.tc       |    2 +-
- .../ftrace/test.d/kprobe/kprobe_args_string.tc     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_char.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_char.tc
-index e21c9c27ece4..77f4c07cdcb8 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_char.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_char.tc
-@@ -1,7 +1,7 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0
- # description: Kprobe event char type argument
--# requires: kprobe_events
-+# requires: kprobe_events available_filter_functions
- 
- case `uname -m` in
- x86_64)
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-index 93217d459556..39001073f7ed 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-@@ -1,7 +1,7 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0
- # description: Kprobe event string type argument
--# requires: kprobe_events
-+# requires: kprobe_events available_filter_functions
- 
- case `uname -m` in
- x86_64)
-
+> +{
+> +#ifdef CONFIG_X86_64
+> +	return kvm_is_cr4_bit_set(vcpu, X86_CR4_FRED);
+> +#else
+> +	return false;
+> +#endif
+> +}
+> +
+>  static inline ulong kvm_read_cr3(struct kvm_vcpu *vcpu)
+>  {
+>  	if (!kvm_register_is_available(vcpu, VCPU_EXREG_CR3))
+> -- 
+> 2.43.0
+> 
 
