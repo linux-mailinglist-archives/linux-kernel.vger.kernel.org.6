@@ -1,175 +1,107 @@
-Return-Path: <linux-kernel+bounces-211636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 907649054B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:04:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FAA9054BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5611F22394
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:04:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0EAD1F2226C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C4817D8BC;
-	Wed, 12 Jun 2024 14:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCA417DE0D;
+	Wed, 12 Jun 2024 14:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dnztEUgO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mIoLAIa7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7EB17B4F1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E549171E70;
+	Wed, 12 Jun 2024 14:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201068; cv=none; b=trLDGFoOvkXxP1HaQe59EyhN/AavezlRbYxV17DPwTEK0Qoe1rW+WKUhpazZcLoYlcgcAKMyBmlwZTVWSRe42/PQUWZo9dAioQZeV8ONlkRv3qQ/s6aBgL3vReb3IzeTdxqYaB94MTzhyPk1vRB6t56Lx3a2Lo1B4GqKo0cjIXQ=
+	t=1718201257; cv=none; b=h7vbNpxrOmPVFrk/zhQ0V6R2ZdSBAwK+VAs59vTSaW1p2BMZkNKslOJHMbNDzG89w75JazX8nfgvyFDErI4hn1vtyJHiEGBMGLjmvG9YcWAsxbPYsazEfZ3aI2UlGUmXyU5mQaJd1MZneyhgLxv5ypo0Xk5LYwlnXJXW/qF9N1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201068; c=relaxed/simple;
-	bh=n6rQcdlTzLyq3J1ACt2i5X2K8jWLz6x7Pyg6vl9BQmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oRfp4piTureTm/zO4lzxKYutBTGUqQIymtlnZrpt2dwjEsjr1LVs54r4rKHSOoC0RTQUl3j/PSbR/AbbFzWe1jjkjfpWtYUnLpVm4dOhBiaF3UZkGIjJNGYPM/4lOqE9pqmyTN8cJUfH0iuteUd28fUilFkwg1wjxiZDrYKM3lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dnztEUgO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718201065;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VHS87YElUOWkANf6E72nxalS03lPC9WT8JCafxHD7gY=;
-	b=dnztEUgOc+Ad1hHvLIfeMjzJtyp3xCi3FMEQ43nVVAobscNfYjJ998CUYYCThS0vXMmeaW
-	ZQ/9Lgq4vgF7SRKWijDqeODuzvb/aEo3kg0TPJjdfxBh9/I2cQ7+Zzhr20G0NSvkbXstXb
-	94ZF+/i1INsE5/jWADxNgXFaU8R0XpA=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-434-OCQM5DUDOyqfNylMhYtB1Q-1; Wed, 12 Jun 2024 10:04:24 -0400
-X-MC-Unique: OCQM5DUDOyqfNylMhYtB1Q-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b062c433cfso24379906d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:04:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718201063; x=1718805863;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VHS87YElUOWkANf6E72nxalS03lPC9WT8JCafxHD7gY=;
-        b=RRcjoMeCQeeQ8hUOvxYOzkOar2XDKP7OErGHr7jk8mS29Tu0hfVlPvV0z3bE+Pjt9X
-         8p1pI8lUuf+mh1V7ALoF0IOyShMHa3Tn8w/xg2snXryVb2XHf0dBpowPpnoDi5a6GW5d
-         niQnlXxapt1D+MJHOfDzoOBVUwPwMm9Zm1X0wpuVm2bSlr2bNQmz8LUZXaFfoldRLfvz
-         EnOXUTCU/n7vPf0JN2i75OIQIEhgKj9ko8yinuk0lCIMM3wqY1pW/nXHhhPAYNkevmBg
-         hCyHt+BtyK3xald6men5+0lsH7C56WJsh2/m5tdVq68Lvg0mp+TEFpCV6nOh1WsD+8xt
-         /HbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIaLeHzEKF/CJEpKoifbcx/ivSf/+AQDQW+fUsp4sI59OoWZjkTepFdy7cAbVuB29jY/ow+UMJmLwRPgk5QQ9MUSuUgBSd/L02qNdx
-X-Gm-Message-State: AOJu0YynLN/t8OxHoCdA0eCmvFfHU0P3WiYm9PfG+NPVJlVLTVbdYRXf
-	xfdrkgkhEyYiEIz1sHnfaOxmUPg5Q+T52lBVpXJJDTjxc8ENjZ9BYY+Hpada4GJhsiKYeQAdu3z
-	x0EDzWUuHoi4VX+0JZXVyY4gCRZAvH+tOcZGMAkPDCcs0Hc/nGV7EVHezc411gg==
-X-Received: by 2002:a05:6214:2b90:b0:6b0:7821:4026 with SMTP id 6a1803df08f44-6b1a6c57871mr20406656d6.52.1718201062929;
-        Wed, 12 Jun 2024 07:04:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHis29s85ghN1wCvWNHSB3z3fEhPObl0T66oMycOn7F9OWRQIQYakS2Z/8aehOyVDRyZ6GOEQ==
-X-Received: by 2002:a05:6214:2b90:b0:6b0:7821:4026 with SMTP id 6a1803df08f44-6b1a6c57871mr20406306d6.52.1718201062563;
-        Wed, 12 Jun 2024 07:04:22 -0700 (PDT)
-Received: from [192.168.0.4] (ip-109-43-176-68.web.vodafone.de. [109.43.176.68])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a1515903sm958436d6.58.2024.06.12.07.04.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 07:04:22 -0700 (PDT)
-Message-ID: <6086ef5e-48e7-40f3-b0a7-ff67b20aeae3@redhat.com>
-Date: Wed, 12 Jun 2024 16:04:15 +0200
+	s=arc-20240116; t=1718201257; c=relaxed/simple;
+	bh=5uWWQPLwAdevF6gA/Ory1j8nYeVrVyX2L84YrDZuGks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7r7yCoD6iILctR4cyjMqelgwwvux5BFVfnfRqFaL2VOmwZNl4pO6Os98DLGSU4YJvMrsge3iq6NiMxKMIi2bAU1bON0EANrh3rR23CPq+4+c0T2rqCx3ORFb0IK2jpNW7FAZbfqAHbP56TWW6byR/EHYbFcXDpXykrR39ywRUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mIoLAIa7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82FC9C116B1;
+	Wed, 12 Jun 2024 14:07:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718201256;
+	bh=5uWWQPLwAdevF6gA/Ory1j8nYeVrVyX2L84YrDZuGks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mIoLAIa7GluSB4iulnGtmDSLI6HRnoK4MrJxUA4VFEaR4iImmCwNkGOuzLydFXKkr
+	 1oSnP2SCEuKYS2g+BeNgDo35J2kyyc7Y+8KOXiJH9FClpWC3PGhvvwJsdSk9KwU1Ky
+	 GbhZDNxrwrQhFlF0AOIkb9Zn+Q9Xe5Bjik22VhfQ=
+Date: Wed, 12 Jun 2024 16:07:34 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: joswang <joswang1221@gmail.com>
+Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jos Wang <joswang@lenovo.com>
+Subject: Re: [PATCH v3, 3/3] usb: dwc3: core: Workaround for CSR read timeout
+Message-ID: <2024061217-haiku-unlocked-9d72@gregkh>
+References: <20240601092646.52139-1-joswang1221@gmail.com>
+ <20240611142953.12057-1-joswang1221@gmail.com>
+ <2024061247-geranium-unstaffed-ff09@gregkh>
+ <CAMtoTm32JDwWAjpKJ4TXxA9ROqqr-fNaOR1nqui8ayMHnYzkjg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] s390/virtio_ccw: fix config change notifications
-To: Halil Pasic <pasic@linux.ibm.com>, Cornelia Huck <cohuck@redhat.com>,
- Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
- virtualization@lists.linux.dev, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Boqiao Fu <bfu@redhat.com>, Sebastian Mitterle <smitterl@redhat.com>
-References: <20240611214716.1002781-1-pasic@linux.ibm.com>
-From: Thomas Huth <thuth@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=thuth@redhat.com; keydata=
- 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
-In-Reply-To: <20240611214716.1002781-1-pasic@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMtoTm32JDwWAjpKJ4TXxA9ROqqr-fNaOR1nqui8ayMHnYzkjg@mail.gmail.com>
 
-On 11/06/2024 23.47, Halil Pasic wrote:
-> Commit e3e9bda38e6d ("s390/virtio_ccw: use DMA handle from DMA API")
-> broke configuration change notifications for virtio-ccw by putting the
-> DMA address of *indicatorp directly into ccw->cda disregarding the fact
-> that if !!(vcdev->is_thinint) then the function
-> virtio_ccw_register_adapter_ind() will overwrite that ccw->cda value
-> with the address of the virtio_thinint_area so it can actually set up
-> the adapter interrupts via CCW_CMD_SET_IND_ADAPTER.  Thus we end up
-> pointing to the wrong object for both CCW_CMD_SET_IND if setting up the
-> adapter interrupts fails, and for CCW_CMD_SET_CONF_IND regardless
-> whether it succeeds or fails.
+On Wed, Jun 12, 2024 at 09:52:04PM +0800, joswang wrote:
+> On Wed, Jun 12, 2024 at 3:58 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Jun 11, 2024 at 10:29:53PM +0800, joswang wrote:
+> > > From: Jos Wang <joswang@lenovo.com>
+> > >
+> > > This is a workaround for STAR 4846132, which only affects
+> > > DWC_usb31 version2.00a operating in host mode.
+> > >
+> > > There is a problem in DWC_usb31 version 2.00a operating
+> > > in host mode that would cause a CSR read timeout When CSR
+> > > read coincides with RAM Clock Gating Entry. By disable
+> > > Clock Gating, sacrificing power consumption for normal
+> > > operation.
+> > >
+> > > Signed-off-by: Jos Wang <joswang@lenovo.com>
+> > > ---
+> > > v1 -> v2:
+> > > - add "dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk" patch
+> > > v2 -> v3:
+> > > - code refactor
+> > > - modify comment, add STAR number, workaround applied in host mode
+> > > - modify commit message, add STAR number, workaround applied in host mode
+> > > - modify Author Jos Wang
+> > > ---
+> > >  drivers/usb/dwc3/core.c | 20 +++++++++++++++++++-
+> > >  1 file changed, 19 insertions(+), 1 deletion(-)
+> >
+> > Should this have a cc: stable line?
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
-> To fix this, let us save away the dma address of *indicatorp in a local
-> variable, and copy it to ccw->cda after the "vcdev->is_thinint" branch.
-> 
-> Reported-by: Boqiao Fu <bfu@redhat.com>
-> Reported-by: Sebastian Mitterle <smitterl@redhat.com>
-> Fixes: e3e9bda38e6d ("s390/virtio_ccw: use DMA handle from DMA API")
-> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-> ---
-> I know that checkpatch.pl complains about a missing 'Closes' tag.
-> Unfortunately I don't have an appropriate URL at hand. @Sebastian,
-> @Boqiao: do you have any suggetions?
+> I have a question here, please help me confirm
+> 1. Cc: stable@vger.kernel.org or Cc: stable@kernel.org ?
+> 2. Do I need to modify the commit message, for example:
+> Cc: stable@kernel.org
+> Signed-off-by: Jos Wang <joswang@lenovo.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jos Wang <joswang@lenovo.com>
 
-Closes: https://issues.redhat.com/browse/RHEL-39983
-?
-
-Anyway, I've tested the patch and it indeed fixes the problem with 
-virtio-balloon and the link state for me:
-
-Tested-by: Thomas Huth <thuth@redhat.com>
-
+Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
 
