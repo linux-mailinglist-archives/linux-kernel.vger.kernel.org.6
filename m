@@ -1,205 +1,178 @@
-Return-Path: <linux-kernel+bounces-211000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1C2904BDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:47:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA90904BDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D3EF1C225F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:47:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228A11F23E9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D5116B74C;
-	Wed, 12 Jun 2024 06:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B90D13BC12;
+	Wed, 12 Jun 2024 06:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H+RbCvbo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UVk9Gj5n";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2Rsr0FdZ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UVk9Gj5n";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2Rsr0FdZ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A718167D8C;
-	Wed, 12 Jun 2024 06:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E8412FB2A;
+	Wed, 12 Jun 2024 06:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718174866; cv=none; b=ENviNn3ckQPxGho5Mvt0d4A1pt6KvuZTg74nDyTfdhyVuWXnnNhu5kz4ms35nbsZgUS8dR4mJL3MgScHZoPB4v4HFmk+ltYrA7x8+EJjjuJo2L9+ueRsCXIUARJrwKCPjScHXJRxRA/qx+kx69uQxE7rLpYpuCpQFiIVHlwutqs=
+	t=1718174880; cv=none; b=rHKXvHffK/TafBpzSr5cvvtDdWiJ2BltheH4GjmoPUHlna5DsLEbUNatVUEuILdLVYGPtbYmT6+w05TAtpSee+4JcPm0ZWRIbaOdxFZPNTAlaVxCiUzngBbcMUQup5t4hq0scPWBg4x2OHb0mtxnFfoUhZFdMKuOhMMQ1/349lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718174866; c=relaxed/simple;
-	bh=kzxxVSwFKxLKMMkOIMjBzfM+XUiXIiKs8BwQuN/1pKo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XzShhPtPbGiNFWcMugWmwCtBMPf+ekKeYrCARst3WJ3Kd3uV05/PRyGZV4iH5pv6lFKWL+6xD6QPJj3Z6TGm7Yc2AR99hnMAP92+J485lXXdE24Bf613AoL3f0/hkYbsHdB2vBUoVBwSuquYuVPm+I9PMMFi2h6DhS8zoOXXbnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H+RbCvbo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BJXoAB013675;
-	Wed, 12 Jun 2024 06:47:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=kQPkCx6zZzocxE5Ej7JrPQ
-	Ihhv++WEwncAng2ajhsuY=; b=H+RbCvboshVScpM/o1H5B2Tjm4zWhi+GGWMEFn
-	lqvUppLFkxExQiI0vUiHXp4y33NWyB99OCrm6SlLeSO7eDYz9htLls9Qj/mIGKuy
-	uiu9FK46RIrSPIfqbJqeSV7biutgh7Z1QgwaIB5fFqYNhMEdz+AsS0AL8SBmdmoK
-	WzzjmNCfcYE+9USbl8WJhjwUMOMgH3dDpg2TyQfHID7SB36ZC2ovUh5fIq4GNP7D
-	+DHPCQefGp4PSL6AO8cRmNSIao+VJoAfh14n1lYjrseW2xySFc3B+sr/GdoW2+WQ
-	dr8MQY3NIRrhMrkjxD3V3ZaNV8ycm5D5EvZ1qr6TR/smIWJw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm45ancx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 06:47:42 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C6lfjb011480
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 06:47:41 GMT
-Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 11 Jun 2024 23:47:39 -0700
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>
-Subject: [PATCH v1] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
-Date: Wed, 12 Jun 2024 12:17:28 +0530
-Message-ID: <20240612064731.25651-1-quic_ekangupt@quicinc.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1718174880; c=relaxed/simple;
+	bh=oB6Do4kv1w9L09lywIyjWMYWD+ZvNAv0mbAY3LzFliI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jd/VJ16JaCYlp06NpWZmR3pcJA748Sj7EYd9RSOmGqo8eZxZreSnEfC6ZVGSrCtmUHkwqsEvZ2rQKoGseb1pK7PscUzWPK6b2jm/lP8w8/tcnyW79iwJRy9HyvPOM8x9aLH0BuKAmaZjAPBHDIiX1fGioaIZjIUEZoZTVx+CQjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UVk9Gj5n; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2Rsr0FdZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UVk9Gj5n; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2Rsr0FdZ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 142C333F93;
+	Wed, 12 Jun 2024 06:47:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718174877; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xSPjDNH15FXrHWs5yQoeykIsoNUfffN6Vbldpf/bajI=;
+	b=UVk9Gj5n9xQoJp7IRMXPuzgtUy4Xm3gZz5YwGvaYvb5x+mSMvc7eUSufwWG1yMTMm3PHWi
+	9ms/n54ERgyQcnFpIFIqJsEYGqUirN+f00E29GkViQop8rgvyCamEPEx2VwHIntZrSaYQ9
+	lq/D9mmTAlYdDlIc2SwLVVZSvsBj/Ws=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718174877;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xSPjDNH15FXrHWs5yQoeykIsoNUfffN6Vbldpf/bajI=;
+	b=2Rsr0FdZKWF8u0Ohkt2n4R6HPcDXcJ0MAWGKs1VeI/lFAl3Mmc3ooOTGoqJdp4hlb31YKC
+	5fFJKNyHOaSiZuDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=UVk9Gj5n;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=2Rsr0FdZ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718174877; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xSPjDNH15FXrHWs5yQoeykIsoNUfffN6Vbldpf/bajI=;
+	b=UVk9Gj5n9xQoJp7IRMXPuzgtUy4Xm3gZz5YwGvaYvb5x+mSMvc7eUSufwWG1yMTMm3PHWi
+	9ms/n54ERgyQcnFpIFIqJsEYGqUirN+f00E29GkViQop8rgvyCamEPEx2VwHIntZrSaYQ9
+	lq/D9mmTAlYdDlIc2SwLVVZSvsBj/Ws=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718174877;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xSPjDNH15FXrHWs5yQoeykIsoNUfffN6Vbldpf/bajI=;
+	b=2Rsr0FdZKWF8u0Ohkt2n4R6HPcDXcJ0MAWGKs1VeI/lFAl3Mmc3ooOTGoqJdp4hlb31YKC
+	5fFJKNyHOaSiZuDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E5A2137DF;
+	Wed, 12 Jun 2024 06:47:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TO0LIZxEaWYiPwAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 12 Jun 2024 06:47:56 +0000
+Message-ID: <43b8bd73-efca-45b0-9526-3c19c8cb3713@suse.de>
+Date: Wed, 12 Jun 2024 08:47:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/14] scsi: fnic: Add and integrate support for FIP
+Content-Language: en-US
+To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
+Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
+ mkai2@cisco.com, satishkh@cisco.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240610215100.673158-1-kartilak@cisco.com>
+ <20240610215100.673158-8-kartilak@cisco.com>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240610215100.673158-8-kartilak@cisco.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7LObVwv0Nb5GUSb9HP5C1bdON3wj-YHt
-X-Proofpoint-ORIG-GUID: 7LObVwv0Nb5GUSb9HP5C1bdON3wj-YHt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_03,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 mlxlogscore=646 phishscore=0 malwarescore=0 suspectscore=0
- bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406120047
+X-Rspamd-Queue-Id: 142C333F93
+X-Spam-Score: -6.50
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-6.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
-to be added for PD notifications and other missing features. Adding
-and maintaining new files from within fastrpc directory would be easy.
+On 6/10/24 23:50, Karan Tilak Kumar wrote:
+> Add and integrate support for FCoE Initialization
+> (protocol) FIP. This protocol will be exercised on
+> Cisco UCS rack servers.
+> Add support to specifically print FIP related
+> debug messages.
+> Replace existing definitions to handle new
+> data structures.
+> Clean up old and obsolete definitions.
+> 
+Aren't you getting a bit overboard here?
 
-Example of feature that is being planned to be introduced in a new C
-file:
-https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
+I am _positive_ that the original fnic driver _did_ do FIP.
+What happened to that?
+Why can't you just use that implementation?
 
-Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
----
- MAINTAINERS                          |  2 +-
- drivers/misc/Kconfig                 | 13 +------------
- drivers/misc/Makefile                |  2 +-
- drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
- drivers/misc/fastrpc/Makefile        |  2 ++
- drivers/misc/{ => fastrpc}/fastrpc.c |  0
- 6 files changed, 21 insertions(+), 14 deletions(-)
- create mode 100644 drivers/misc/fastrpc/Kconfig
- create mode 100644 drivers/misc/fastrpc/Makefile
- rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
+And if you can't use that implementation, shouldn't this rather be
+a new driver instead of replacing most if not all functionality of
+the original fnic driver?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6c90161c7bf..e9c79e9063f8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18501,7 +18501,7 @@ M:	Amol Maheshwari <amahesh@qti.qualcomm.com>
- L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
--F:	drivers/misc/fastrpc.c
-+F:	drivers/misc/fastrpc/
- F:	include/uapi/misc/fastrpc.h
- 
- QUALCOMM HEXAGON ARCHITECTURE
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index faf983680040..630e8ccd8669 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -276,18 +276,6 @@ config QCOM_COINCELL
- 	  to maintain PMIC register and RTC state in the absence of
- 	  external power.
- 
--config QCOM_FASTRPC
--	tristate "Qualcomm FastRPC"
--	depends on ARCH_QCOM || COMPILE_TEST
--	depends on RPMSG
--	select DMA_SHARED_BUFFER
--	select QCOM_SCM
--	help
--	  Provides a communication mechanism that allows for clients to
--	  make remote method invocations across processor boundary to
--	  applications DSP processor. Say M if you want to enable this
--	  module.
--
- config SGI_GRU
- 	tristate "SGI GRU driver"
- 	depends on X86_UV && SMP
-@@ -602,4 +590,5 @@ source "drivers/misc/cardreader/Kconfig"
- source "drivers/misc/uacce/Kconfig"
- source "drivers/misc/pvpanic/Kconfig"
- source "drivers/misc/mchp_pci1xxxx/Kconfig"
-+source "drivers/misc/fastrpc/Kconfig"
- endmenu
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index 153a3f4837e8..f83d73844ea5 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -16,7 +16,6 @@ obj-$(CONFIG_TIFM_CORE)       	+= tifm_core.o
- obj-$(CONFIG_TIFM_7XX1)       	+= tifm_7xx1.o
- obj-$(CONFIG_PHANTOM)		+= phantom.o
- obj-$(CONFIG_QCOM_COINCELL)	+= qcom-coincell.o
--obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
- obj-$(CONFIG_SENSORS_BH1770)	+= bh1770glc.o
- obj-$(CONFIG_SENSORS_APDS990X)	+= apds990x.o
- obj-$(CONFIG_ENCLOSURE_SERVICES) += enclosure.o
-@@ -69,3 +68,4 @@ obj-$(CONFIG_TMR_INJECT)	+= xilinx_tmr_inject.o
- obj-$(CONFIG_TPS6594_ESM)	+= tps6594-esm.o
- obj-$(CONFIG_TPS6594_PFSM)	+= tps6594-pfsm.o
- obj-$(CONFIG_NSM)		+= nsm.o
-+obj-y				+= fastrpc/
-diff --git a/drivers/misc/fastrpc/Kconfig b/drivers/misc/fastrpc/Kconfig
-new file mode 100644
-index 000000000000..3243dc56b2a0
---- /dev/null
-+++ b/drivers/misc/fastrpc/Kconfig
-@@ -0,0 +1,16 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Qualcomm FastRPC devices
-+#
-+
-+config QCOM_FASTRPC
-+	tristate "Qualcomm FastRPC"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	depends on RPMSG
-+	select DMA_SHARED_BUFFER
-+	select QCOM_SCM
-+	help
-+	  Provides a communication mechanism that allows for clients to
-+	  make remote method invocations across processor boundary to
-+	  applications DSP processor. Say M if you want to enable this
-+	  module.
-\ No newline at end of file
-diff --git a/drivers/misc/fastrpc/Makefile b/drivers/misc/fastrpc/Makefile
-new file mode 100644
-index 000000000000..77fd2b763b6b
---- /dev/null
-+++ b/drivers/misc/fastrpc/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc/fastrpc.c
-similarity index 100%
-rename from drivers/misc/fastrpc.c
-rename to drivers/misc/fastrpc/fastrpc.c
+Cheers,
+
+Hannes
 -- 
-2.43.0
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
