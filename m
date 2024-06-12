@@ -1,125 +1,107 @@
-Return-Path: <linux-kernel+bounces-211382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6BFE9050E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:52:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1E49050EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 829EDB23488
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:52:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 755901F2327A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5939716C685;
-	Wed, 12 Jun 2024 10:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A143F16EC0C;
+	Wed, 12 Jun 2024 10:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="re8qN6q0"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X1XFR+hf"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EDF16E888
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2363616E888
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718189554; cv=none; b=hS0gL2hCYFjh1tPCHWp4EuGjGIG8guW7+MSAo1LSDA0M229+Hq/z9FDxsIsqtgKPKtS4l2gAECaqHUqL7j2LpBNO1AtigZRcD8tL4jxOFoWtR/pLwGXjQctECPLRSyW3YdBfzXCg0CtYjJZdWLpz+12UFEEg1c/uf3Aawk9fscY=
+	t=1718189751; cv=none; b=ftgmjUbZgJHWBUE9GglGLjcdo6LmJdANs8Z320MhujTOmo8m92YQqiY34l5FTm6CTAxgD7a5T/vWxrhgln3QdaZX7ZJ7tbkUMSoecKJ29Xj6s1xtJHgIv6o0xNb4zBoKaWidkH+htdzywr996ZYmyRPJWbU4JvOPcTEalo+W1kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718189554; c=relaxed/simple;
-	bh=hfca2HZsexdSmcR2L0VarVPDzv56VOL6tv9ZzVNhWgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OHYiKO1aZIeeLnw/5FV5Sv/5QkBrihRc4zZeIXhk9vvAxzqIPUp0a8uVyzMvp8qeJ0OWOmIn+KnsyPq7dv/uqdu0pm/kS5pPZEAM/tPyU7QcaPhUIeKazIGw21uWchchSGMvLIFVSpIpII1XrHcyN0H6rkZrwIdqeA2vxfj/o1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=re8qN6q0; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-421eab59723so24212155e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 03:52:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718189551; x=1718794351; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPi9QkdS95dkNdofAqCFmLTLe43Jm537m7bw1KQ0ItY=;
-        b=re8qN6q0jAzkaIlLcbrQD6yb62C0s1p099HEKNJKNUFhfCdsivQdXyLRpFvZo3s1Dq
-         jth8zdP5iL2an0vn6WGN4a8rwYdyqrVpm2BrmxzkVKBoQfDve7A6TTNEkeiSPrJXXqp/
-         qBhfPCXjH7aN+xIkKr/zGO2V7K6GRY6l9TXg+B6aXccVuLDgEXs6VWupxL0SP8HCOGRC
-         nmB5WOf+RFx8htebdViPH5gsR99FMjV+mlJWWZ7w9RlycQPhwczAgVRcWtScdFxk907G
-         M7jTbvRuToRzpP8HoJAw82YMC9FoPiuKLpZoLSycT0WVdu/E0Fsgl0DaQFoE+oBAyHIG
-         Mlfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718189551; x=1718794351;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cPi9QkdS95dkNdofAqCFmLTLe43Jm537m7bw1KQ0ItY=;
-        b=ALb68QJRfN/xeF9Sh1+W3zfy7vp/EQql+rQbVd4N9z5lQUM/xmtydf953QemGyTajL
-         zct6vnGTNccQpyxMQ4AstMfkxp6e8LauCcJHxzSzaDK4aDRQeRNTDO+/985WQ4Mqz3XN
-         g2KoGjIsyDolXvoyCAmhr3ySDPoj2lirO5o9MqDB9gLGELti+htLQU/F3KWf14lm3mSj
-         Jgx6r9TQoC27MbPUv9ullhirhVj6Wy3Zi2OaGuPr0LfHS3EmzavNu6MXsUWvP+rVaCKc
-         fcHjQPsqS9dLYkpGtCNszFxyRoGz154Z0BOGbV1Wvi76Sh29GpF1NRuWT+5DjXbQ/yRr
-         kK3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVeMraGKIfSrDTCJoENy1cJxHHuI/80arkrg5opPpjn5VmwrplDmvK9FmsM5k+wvJOZXc5twxDE5B4rXrLGiDtZteMIhrXt+TSvkz7j
-X-Gm-Message-State: AOJu0Yze2KJmAaJ3oIcmvARWBf92yb+diE0/K33RIyhn1xK5sXOlVzlL
-	PHw84VmNpexD6oaddAYPpwW5VMkAbBsmuZF7+0l//wgpFPeDbvEbkaYzfSH60PY=
-X-Google-Smtp-Source: AGHT+IESwYJf6CJnIPpXgk18wMsSx3pKvDvFlcyAWNgt77NIwpqGQS3CGPJBRqxbG2fIpZ5+AFV1zA==
-X-Received: by 2002:a05:600c:74a:b0:422:8557:3c5a with SMTP id 5b1f17b1804b1-422864af026mr11662165e9.19.1718189551298;
-        Wed, 12 Jun 2024 03:52:31 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870f05edsm22074695e9.24.2024.06.12.03.52.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 03:52:30 -0700 (PDT)
-Date: Wed, 12 Jun 2024 13:52:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
-	Sasha Levin <sashal@kernel.org>, Tom Gall <tom.gall@linaro.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v5] checkpatch: check for missing Fixes tags
-Message-ID: <386af0a6-b15d-4be2-a0e7-0375e822031d@moroto.mountain>
-References: <ZmhUgZBKeF_8ixA6@moroto>
- <20240611113855.b63a6015b26a0dad49d9f2a7@linux-foundation.org>
- <b3baa059-b433-42da-96c0-588312b5a4ac@leemhuis.info>
- <6825db9f-be27-4096-9723-6ad65342a59e@moroto.mountain>
- <390652ca-a383-4953-aa39-8c4ac92f2e3d@leemhuis.info>
+	s=arc-20240116; t=1718189751; c=relaxed/simple;
+	bh=o2/azgVrwaPNaWmwIxK9yQ8UpjBGGyP25jHl/Y4SoR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GkieDtO9S6tos1YypeszjQ7iDEVwYe7Tj3VajPAIo+L09uVopBKektfOSqI057NvCnkRwkLLfAzaGWASBuJFYl7z8HDKWukFzTAOYi+Xo2kvyTVKt1HApG8AYJmw6Y8v92Chn/kr3XeikK6oBXOHhoOSSUmN1gQlv4ioripp6SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=X1XFR+hf; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45CAth2I070962;
+	Wed, 12 Jun 2024 05:55:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718189743;
+	bh=XX/2FTvcpOE83ZKsu0t3uhvjEs4L4Hnx0LHgBYjOiNw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=X1XFR+hfZ+xF5nw38IFLJl4DdTCZbIStWr+7e/46heu8L3Pvv3VCSTVVcLD6kfKfq
+	 dAUVwdlmDxgtrMFw6lQrK3jLgSMMXLMs3UY3XHjkAS43U1jphdLlzAgXeqtFVu+Laq
+	 /kabihcCFBSsOcjfhvQUypUuerwRxIIv0cxpJwFo=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45CAthKg004773
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 12 Jun 2024 05:55:43 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
+ Jun 2024 05:55:42 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 12 Jun 2024 05:55:42 -0500
+Received: from [10.24.69.66] (uda0510294.dhcp.ti.com [10.24.69.66])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45CAteSN090679;
+	Wed, 12 Jun 2024 05:55:41 -0500
+Message-ID: <ab50c7df-c2b9-4b34-9b81-dc89f76dd80a@ti.com>
+Date: Wed, 12 Jun 2024 16:25:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <390652ca-a383-4953-aa39-8c4ac92f2e3d@leemhuis.info>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mailbox: omap: Fix mailbox interrupt sharing
+To: Andrew Davis <afd@ti.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+        Hari
+ Nagalla <hnagalla@ti.com>
+CC: <linux-kernel@vger.kernel.org>
+References: <20240611170456.136795-1-afd@ti.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <20240611170456.136795-1-afd@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Jun 12, 2024 at 11:15:45AM +0200, Thorsten Leemhuis wrote:
-> I see your point and agree that it would be nice to have. At the same
-> time I've seen people on the lists that don't like to use the Fixes: tag
-> when nothing is "fixed".
 
-That's correct.  Checkpatch stuff, clean ups, and patches which silence
-*harmless* static checker warnings shouldn't get a Fixes tag.  This
-checkpatch warning doesn't affect that.  If you look at the patches
-which were flagged it's mostly because of CCing stable or syzbot.
-
-> And it would be an additional burden for
-> developers to look the commit-id up. So it could contribute to the
-> "checkpatch is asking too much here and not worth the trouble" stance
-> I've seen a few times (to which I contributed myself... :-/ ).
-
-Someone's got to do it.  It might as well be the person who writes the
-patch.
-
-There are times where you're working across function boundaries or even
-subsystem boundaries and in those cases finding the correct Fixes tag is
-difficult.  The other case where it's annoying is when the code has
-moved between files.  But it's generally a worthwhile exercise.  It
-helps to look at what the original author was trying to do when they
-introduced the bug.  And when you add a Fixes tag then checkpatch will
-CC the original author so the review is better as well.
-
-regards,
-dan carpenter
+On 11/06/24 22:34, Andrew Davis wrote:
+> Multiple mailbox users can share one interrupt line. This flag was
+> mistakenly dropped as part of the FIFO removal. Mark the IRQ as shared.
+>
+> Reported-by: Beleswar Padhi <b-padhi@ti.com>
+> Fixes: 3f58c1f4206f ("mailbox: omap: Remove kernel FIFO message queuing")
+> Signed-off-by: Andrew Davis <afd@ti.com>
+Tested-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+>   drivers/mailbox/omap-mailbox.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
+> index 46747559b438f..7a87424657a15 100644
+> --- a/drivers/mailbox/omap-mailbox.c
+> +++ b/drivers/mailbox/omap-mailbox.c
+> @@ -230,7 +230,8 @@ static int omap_mbox_startup(struct omap_mbox *mbox)
+>   	int ret = 0;
+>   
+>   	ret = request_threaded_irq(mbox->irq, NULL, mbox_interrupt,
+> -				   IRQF_ONESHOT, mbox->name, mbox);
+> +				   IRQF_SHARED | IRQF_ONESHOT, mbox->name,
+> +				   mbox);
+>   	if (unlikely(ret)) {
+>   		pr_err("failed to register mailbox interrupt:%d\n", ret);
+>   		return ret;
 
