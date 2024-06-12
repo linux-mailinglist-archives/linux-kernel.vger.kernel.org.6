@@ -1,114 +1,138 @@
-Return-Path: <linux-kernel+bounces-212096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B745E905B30
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:39:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E9A905B32
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A890F1C231F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:39:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 084331F22B0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D13C5FB8A;
-	Wed, 12 Jun 2024 18:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5E857C8D;
+	Wed, 12 Jun 2024 18:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yKPZhDZr"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="At6Tb0Q9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11C347F4B;
-	Wed, 12 Jun 2024 18:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456A13209;
+	Wed, 12 Jun 2024 18:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718217519; cv=none; b=FWQNGSbesKaIhEbctFoat6izFH++rL0LDzoGSqFf11uppaMBcvQa8ocplenzottiGYJQX+ZhpPGV/wkhlWcvFPgrCcYBIXjRiU6T8AoxQ5F+V0QQ70vH/kLZxizQ5G9I3FtZatcHciDsUxf7t4SM+lqtAO4xZdO9jnC30CT+xQQ=
+	t=1718217548; cv=none; b=mYSAMfjAFzjcJs3Wroy6VcceyD6EkK7auu6TFE+81YKv50EKLOMmy11Ly/UBPCeTweNTMhGZcRPnX2OMn4ecXT2WtKCiWjMC3sGZodboA80mHlT9CeRSBrmYWdWd0sNFD5h+mnlj6wdwtTBAppSFepvvAeu3OT9FK6KEXjMZFSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718217519; c=relaxed/simple;
-	bh=zxuJWH7+enaX20ZWWYO4My3IxIyK3wC5Qmez/L1MCtM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rHVP1V26pBKDXddcloJzWoEhlFQ3bsNMwQDf7470zRnX46U6gu/i6J/h4m78s/5pFsjdDasEO+z/r2cff9hN5QGxMN0NP6iK6eOJ+dq4GuMZe+W/DWAcH0AP4IYqoSKFAehihLTtkV+mo7CCUO1P972Sztyw5PV5KRNGBgptGcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yKPZhDZr; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45CIcSgG023851;
-	Wed, 12 Jun 2024 13:38:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718217508;
-	bh=1q/iabsvT1n5IGBz3FslQzyBnmmvqQ04qdAtxuKj2w4=;
-	h=From:To:CC:Subject:Date;
-	b=yKPZhDZr9dnom2pB6E8Q/gn2OB28x71rPgFYRbouT/PuCfDTDtyvyM8tqvSKhQ7TP
-	 GIftOzxLDqm4oPwO66n+Urz5sSibNKP4a50Os3x3gjnjwztwCrJcojpWLs82MqR++E
-	 HiiaXSmJGefxEkDBrh8pls0MuK4q/fnEG1ncaMA0=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45CIcRYm001569
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Jun 2024 13:38:27 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
- Jun 2024 13:38:27 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 12 Jun 2024 13:38:27 -0500
-Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45CIcQ77013889;
-	Wed, 12 Jun 2024 13:38:27 -0500
-From: Andrew Davis <afd@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-am642-sk: Add power supply temperature sensors
-Date: Wed, 12 Jun 2024 13:38:26 -0500
-Message-ID: <20240612183826.121856-1-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1718217548; c=relaxed/simple;
+	bh=txRDCxXysbYoGs6KmB8gDyxdmCk1ImxdaQ0ie+Vtfbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MpKbRjI5Ov4nym4UGZnHrP6yMl78QurGLzdg0TfgYQgs4XGqopXZl42FTd54XxRiY/C3VSv8M2TkIPPlCRzNHIReCNQTFroJ7ynB/81BrCiUyZSq1zjH6kok9OuTjwnVXc8V24fSTHbAcNe6p4JRpgNY9P2R3/dqm/JrOYq9Xj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=At6Tb0Q9; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718217546; x=1749753546;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=txRDCxXysbYoGs6KmB8gDyxdmCk1ImxdaQ0ie+Vtfbo=;
+  b=At6Tb0Q9wNmbqf7NZVwL6/ixeRELoeju0nlXKjpggETydT/aMjcTgIA7
+   GkVf7Q1DdBJwxJ/BBXj6hLceyLIJbYYamSepZd9pjlLNpPmCCBkUaZyGJ
+   RBmKSwPaxaghtdCizpA1KLcLvdK8PB1n4Oa/Z6d92SQ8DCp4VZaIl6jlG
+   CTCTMzdvL3LHIRu46+wumgHI6MWKsDv7GPPnlAER4lVwDCbQi8rSKptug
+   ZZWo+ObM2j0zCDf8SxBbR7jE5rGqu3Mih6X1DiAOkf+iagMQv3lFqVKkM
+   z7Yt5COz0g5dnFefKB6dDyta6yz9IfgidbC0UomjR9MobLwZgckJ1FYDS
+   w==;
+X-CSE-ConnectionGUID: UW0MLy+VTxGYTr+4lcSNhg==
+X-CSE-MsgGUID: KZYyuVTRR3iJyLkktaFKRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="15127735"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="15127735"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 11:39:06 -0700
+X-CSE-ConnectionGUID: /XxSs6BUTA+G2qwONlbcdw==
+X-CSE-MsgGUID: aA7HezJKRcWLdGIR5kNPtA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="45002458"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 11:39:05 -0700
+Date: Wed, 12 Jun 2024 11:39:05 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	"sagis@google.com" <sagis@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Aktas, Erdem" <erdemaktas@google.com>,
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"dmatlack@google.com" <dmatlack@google.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+	isaku.yamahata@linux.intel.com
+Subject: Re: [PATCH v2 11/15] KVM: x86/tdp_mmu: Reflect tearing down mirror
+ page tables
+Message-ID: <20240612183905.GJ386318@ls.amr.corp.intel.com>
+References: <20240530210714.364118-1-rick.p.edgecombe@intel.com>
+ <20240530210714.364118-12-rick.p.edgecombe@intel.com>
+ <CABgObfbA1oBc-D++DyoQ-o6uO0vEpp6R9bMo8UjvmRJ73AZzKQ@mail.gmail.com>
+ <c2bab3f7157e6f3b71723cebc0533ef0a908a3b5.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <c2bab3f7157e6f3b71723cebc0533ef0a908a3b5.camel@intel.com>
 
-The SK-AM64 board has two TMP100 temperature sensors, add these here.
+On Fri, Jun 07, 2024 at 09:46:27PM +0000,
+"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am642-sk.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> > /* Here we only care about zapping the external leaf PTEs. */
+> > if (!is_last_spte(old_spte, level))
+> > 
+> > > +       kvm_pfn_t old_pfn = spte_to_pfn(old_spte);
+> > > +       int ret;
+> > > +
+> > > +       /*
+> > > +        * Allow only leaf page to be zapped. Reclaim non-leaf page tables
+> > > page
+> > 
+> > This comment left me confused, so I'll try to rephrase and see if I
+> > can explain what happens. Correct me if I'm wrong.
+> > 
+> > The only paths to handle_removed_pt() are:
+> > - kvm_tdp_mmu_zap_leafs()
+> > - kvm_tdp_mmu_zap_invalidated_roots()
+> > 
+> > but because kvm_mmu_zap_all_fast() does not operate on mirror roots,
+> > the latter can only happen at VM destruction time.
+> > 
+> > But it's not clear why it's worth mentioning it here, or even why it
+> > is special at all. Isn't that just what handle_removed_pt() does at
+> > the end? Why does it matter that it's only done at VM destruction
+> > time?
+> > 
+> > In other words, it seems to me that this comment is TMI. And if I am
+> > wrong (which may well be), the extra information should explain the
+> > "why" in more detail, and it should be around the call to
+> > reflect_free_spt, not here.
+> 
+> TDX of course has the limitation around the ordering of the zapping S-EPT. So I
+> read the comment to be referring to how the implementation avoids zapping any
+> non-leaf PTEs during TD runtime.
+> 
+> But I'm going to have to circle back here after investigating a bit more. Isaku,
+> any comments on this comment and conditional?
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-sk.dts b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-index 5b028b3a3192f..44ecbcf1c8447 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-@@ -430,6 +430,18 @@ exp2: gpio@60 {
- 		#gpio-cells = <2>;
- 		gpio-line-names = "LED1","LED2","LED3","LED4","LED5","LED6","LED7","LED8";
- 	};
-+
-+	/* SoC power supply temperature */
-+	tmp100@48 {
-+		compatible = "ti,tmp100";
-+		reg = <0x48>;
-+	};
-+
-+	/* DDR power supply temperature */
-+	tmp100@49 {
-+		compatible = "ti,tmp100";
-+		reg = <0x49>;
-+	};
- };
- 
- /* mcu_gpio0 and mcu_gpio_intr are reserved for mcu firmware usage */
+It's for large page page merge/split.  At this point, it seems only confusing.
+We need only leaf zapping.  Maybe reflect_removed_leaf_spte() or something.
+Later we can come back when large page support.
 -- 
-2.39.2
-
+Isaku Yamahata <isaku.yamahata@intel.com>
 
