@@ -1,271 +1,266 @@
-Return-Path: <linux-kernel+bounces-212140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEBA905BC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:13:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A8C905BCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A841A1C23C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:13:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DDA71C2352A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F35382C88;
-	Wed, 12 Jun 2024 19:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C757E0F0;
+	Wed, 12 Jun 2024 19:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikyuq2oi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXtSwWVU"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D8E1EB2A;
-	Wed, 12 Jun 2024 19:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2FE17573
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 19:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718219592; cv=none; b=EI0vHjpnCjJrBVgb3vBkju/BomSFiHlBPiP/r6Hfmns/VCRP7roMcZ+YHzaxEP4TvIsp3mt8JbkJPQLhX5tzeYkbLuAx6FV1tdAg4Fjj6MOh0s2HG5WPDKVUDk13gLM/Fw/7/5H1AbWpTQCG+41FdFc9k8G4x058nQ+aVCctJxI=
+	t=1718219749; cv=none; b=GuooRD1wNtf9+smpIGZT60dioJKG8DYPZwXnd/6G0wojiHzx36wgiT0TOVaNc99HsNXcd4clFRzS9aKzAC5ra10RSz6j2KqwIjZEzY8/y6k3xIjsVeE3OSZL+Kbi6O+fWtRNtdwcglCWTrbLWj9Ema4tn7P2oe0qUDRkq+uIL5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718219592; c=relaxed/simple;
-	bh=D95BUDPDOiXvOzh2dkf+mPT2ETEOxlXOeFeNIfYAtpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TiQzywsN+LG6c966JHnlvz/Ge0m2Og0QdKMh2Ayun9McUw9CWpSBHrzmhJU2XFX3IhbJ7lWuz94yIprHA5rsvHL7OKe8/rDg5KXazr2Nl+3wLLtvtCowgDbAKXVcaHeXIOFHRkxvX0b4QzYR/TBB7j3G2/gt0nP6ofsoTP3nIJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikyuq2oi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B7DC4AF48;
-	Wed, 12 Jun 2024 19:13:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718219592;
-	bh=D95BUDPDOiXvOzh2dkf+mPT2ETEOxlXOeFeNIfYAtpI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ikyuq2oirVuje91Fz2ah+jvxTe59EKKA4pVVyhuw6u4CddK/v3cJpofYQH4z0loBu
-	 S96o38t04VEqZVur40n8/ZxuloA1O76Fpo1QsjqxBzHvYlmFWhTRod2SitJSr2siFi
-	 A6RWisPsQl9Q7w+7//J6DnDA/M/vwpIdkprXl6SE+o0KiDDFemHwb0LfOIClov5hUA
-	 UAgh9h6RSzp3xqqprIAn+aG0B9FCJAO6mig1rg5uZOb1TEq8beWhWsWiqEW2NLTEgM
-	 wGgYAJVwi4pCCKdHV5ODIh57qRlU528iL/ZDavAa5lnnnaIxiQgZbk8yJ4V19Rbil0
-	 /nU4la17QkyiQ==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-254f646b625so27187fac.0;
-        Wed, 12 Jun 2024 12:13:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWBc5RE9nfyxc2rNu6fyP+wR60OnOPeW934UhgWNzgz6F/hlUFRcMK2c73OxzFDjQ8bCQrj42EIc+zoWwUk7Lrr5oGxqSNzSC5pecPRbbLCKyqvTJNkboS2r45kdv6IXrzYLaLRkgghsn02Hr5CCP5MtAgpQvqtwYWJ1pbFqhveVCGka3I1
-X-Gm-Message-State: AOJu0YzSPd5QTDF0dI97JuVfX/TwUEbFdXCEhrFTmZXVwlOFjEiKD7AJ
-	QtIbpPakPj1UZDOfqRF5AqiMqzWQ9v+b9/TSWGCnZNPYmkb6DwRmeZTyLwhRhpimLS5kg4t+zyH
-	OV6P8PrtaGgVAIjdwJLU8NFBT/Sk=
-X-Google-Smtp-Source: AGHT+IFuGyn0gfOYtvlCb/88UiDCNDsdNgqbD+iqDzd+pTHdHpZmtW9bbN5yuBoGvspfvNjBajNSalJ5Ph8RTYmWi/U=
-X-Received: by 2002:a05:6871:5813:b0:254:d417:34ff with SMTP id
- 586e51a60fabf-255151dd450mr3086794fac.4.1718219591278; Wed, 12 Jun 2024
- 12:13:11 -0700 (PDT)
+	s=arc-20240116; t=1718219749; c=relaxed/simple;
+	bh=sQxh8nI2Im6+2VebOZxpV12os8sJqST/jxxeikxyeZ8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=ex8DmKlCKPV/Pijy7MId8aSNUUn2DroABqBZOByiK63pppMekVuTRIw1rX9nlQPDyZ8TZok2dVdbbrNm214Cv9A6IFXfeW6cAtioUnv6aF/DRAHlNpirDg6+v3EjMnRx3Mzf2DyFDcm5m38EfHzFgIN93mX+VIFWKoMP67qm2Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RXtSwWVU; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4217136a74dso2339175e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 12:15:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718219745; x=1718824545; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vo8m4KlOGhS25C6+lszMv9SlJsyAa32d/Xx151ykrH0=;
+        b=RXtSwWVUSLNeSuCPrB1hwUkvZ9SRVTvrNL7J/ijx5yccwzEHwGwllltJCFKwpO6TAh
+         RGfCg5bEAGpBfCtDUEgokBDbrNXVjIK7Gjb58TEFH9wuSrh/DrHNQJMig30RrmpGDlgX
+         gVApfzWmqFDbZY44KwuF/tSgOzSsFgFYJT0kc++/g2VD1G3pGQHzHClBTiqdj4LVl5p8
+         crRh24e7aNz0R1xr8Du27AKRgNbT+WfMMnl9Dd0lCmP35nKQuSzqKyF2lDGJwIP1jUmZ
+         j7DxcNqlSzj3jxqgGLkbWGeHlj1euGqLmonp05opSVO/yd8CjuUpH/PY6UK4B/WHOcqR
+         z5XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718219745; x=1718824545;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vo8m4KlOGhS25C6+lszMv9SlJsyAa32d/Xx151ykrH0=;
+        b=cyT+Pdkn8tnZFVyn7XHQTgtKTHMFF5L8DdcnedBJOdhnWqgUK0KyddAe5PVUN0gvbd
+         Ec5uDppwNTBNzMJsaokynZ2JV4kmgDj6jUgr3MS2zoFN+TGS+4CN2zKwi+9NyuXZHxnc
+         8GtjxLR2a5b0MFwUA99mqd0oHUMdh6KYlySo42oL2y3Ox0fSBF8b7s/yykU9pQj/9dVU
+         sKZVPmw9mx1ojUyLDR2d5KqrsYnl3JgS76SoW0FWLtoxLRNmD7MckG77zV2Yyw0bzW3X
+         v72VAIXw8xGoAzSQMjurXP9w3miTxwCqjcdOUAUWNlf+j7TSFxMNRunTzjAB3vDuswyV
+         f+Tg==
+X-Gm-Message-State: AOJu0YzWu9nWbFYerEWwwrZ6hwnSQfvjlo4RvMv10wNezQipFDqvGgy2
+	8zdZhN+4ubtmP+8/K8+PLMilnAOGPvaB3OHO27HJTycG1mJLBcjpVL3jhw==
+X-Google-Smtp-Source: AGHT+IEcUPuXZBspVjeiHXcjE1nYMSGi/Q8yEKJDCmUlsN6YIMPJ+S3B8i/XNlX/NEP7O68VcrAKNw==
+X-Received: by 2002:a05:600c:45cd:b0:422:7c50:18ff with SMTP id 5b1f17b1804b1-422866c55f9mr22454565e9.39.1718219745090;
+        Wed, 12 Jun 2024 12:15:45 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-42-203.xnet.hr. [88.207.42.203])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870f760fsm36773575e9.33.2024.06.12.12.15.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 12:15:44 -0700 (PDT)
+Message-ID: <4b7fd2f2-7ab2-412c-a65c-db172c819200@gmail.com>
+Date: Wed, 12 Jun 2024 21:15:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZmmQLt7wB-yGQBTw@kekkonen.localdomain> <CAJZ5v0ii3WFQRPdfHeeW4M9kXSWDVxxxy02zThcf25mjNwqDAw@mail.gmail.com>
- <ZmmT56Cyvb2FCyav@kekkonen.localdomain> <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
- <ZmmY3he9vfWVWU3I@kekkonen.localdomain> <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
- <18cb82bb-51c6-4a52-80a4-6b1e3d95f99c@redhat.com> <CAJZ5v0je=Z+2LWv41OVwunujfTD7U2L9QDrNa7MoNBL+Chstnw@mail.gmail.com>
- <Zmnp8JbFj7ZoN5Vy@kekkonen.localdomain> <CAJZ5v0ie+OzJ5xd2g-j+pT=D20Ps__dA149XRnX8i9r4KKJ=ww@mail.gmail.com>
- <Zmnxy_8vxaNIJu_v@kekkonen.localdomain>
-In-Reply-To: <Zmnxy_8vxaNIJu_v@kekkonen.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Jun 2024 21:12:59 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h4oF+QVk8VPb+roEjgTS1q0rG6g3STSDn9OgYz=4O6Ww@mail.gmail.com>
-Message-ID: <CAJZ5v0h4oF+QVk8VPb+roEjgTS1q0rG6g3STSDn9OgYz=4O6Ww@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port nodes
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com, 
-	wentong.wu@intel.com, linux-media@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+Subject: [BUG] 6.10-rc3 [drm:amdgpu_fill_buffer [amdgpu]] *ERROR* Trying to
+ clear memory with ring turned off
+To: linux-kernel@vger.kernel.org
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Lijo Lazar <lijo.lazar@amd.com>, Le Ma <le.ma@amd.com>,
+ Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, Ma Jun
+ <Jun.Ma2@amd.com>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ Hamza Mahfooz <hamza.mahfooz@amd.com>,
+ Aurabindo Pillai <aurabindo.pillai@amd.com>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Sakari,
+Hi, all!
 
-On Wed, Jun 12, 2024 at 9:07=E2=80=AFPM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Rafael,
->
-> On Wed, Jun 12, 2024 at 08:41:43PM +0200, Rafael J. Wysocki wrote:
-> > Hi Sakari,
-> >
-> > On Wed, Jun 12, 2024 at 8:33=E2=80=AFPM Sakari Ailus
-> > <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Hi Rafael,
-> > >
-> > > On Wed, Jun 12, 2024 at 05:26:46PM +0200, Rafael J. Wysocki wrote:
-> > > > Hi,
-> > > >
-> > > > On Wed, Jun 12, 2024 at 4:30=E2=80=AFPM Hans de Goede <hdegoede@red=
-hat.com> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > On 6/12/24 3:06 PM, Rafael J. Wysocki wrote:
-> > > > > > Hi Sakari,
-> > > > > >
-> > > > > > On Wed, Jun 12, 2024 at 2:47=E2=80=AFPM Sakari Ailus
-> > > > > > <sakari.ailus@linux.intel.com> wrote:
-> > > > > >>
-> > > > > >> Hi Rafael,
-> > > > > >>
-> > > > > >> On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysocki wr=
-ote:
-> > > > > >>>>>>> I just hit the same problem on another Dell laptop. It se=
-ems that
-> > > > > >>>>>>> all Dell laptops with IPU6 camera from the Tiger Lake, Al=
-der Lake
-> > > > > >>>>>>> and Raptor Lake generations suffer from this problem.
-> > > > > >>>>>>>
-> > > > > >>>>>>> So instead of playing whack a mole with DMI matches we sh=
-ould
-> > > > > >>>>>>> simply disable ACPI MIPI DISCO support on all Dell laptop=
-s
-> > > > > >>>>>>> with those CPUs. I'm preparing a fix for this to replace
-> > > > > >>>>>>> the DMI matching now.
-> > > > > >>>>>>
-> > > > > >>>>>> DisCo for Imaging support shouldn't be dropped on these sy=
-stems, and this
-> > > > > >>>>>> isn't what your patch does either. Instead the ACPI graph =
-port nodes (as
-> > > > > >>>>>> per Linux specific definitions) are simply dropped, i.e. t=
-his isn't related
-> > > > > >>>>>> to DisCo for Imaging at all.
-> > > > > >>>>>
-> > > > > >>>>> So it looks like the changelog of that patch could be impro=
-ved, right?
-> > > > > >>>>
-> > > > > >>>> Well, yes. The reason the function is in the file is that ne=
-arly all camera
-> > > > > >>>> related parsing is located there, not that it would be relat=
-ed to DisCo for
-> > > > > >>>> Imaging as such.
-> > > > > >>>
-> > > > > >>> So IIUC the camera graph port nodes are created by default wi=
-th the
-> > > > > >>> help of the firmware-supplied information, but if that is def=
-ective a
-> > > > > >>> quirk can be added to skip the creation of those ports in whi=
-ch case
-> > > > > >>> they will be created elsewhere.
-> > > > > >>>
-> > > > > >>> Is this correct?
-> > > > > >>
-> > > > > >> Yes.
-> > > > > >
-> > > > > > So it would be good to add a comment to this effect to
-> > > > > > acpi_nondev_subnode_extract() where acpi_graph_ignore_port() is
-> > > > > > called.
-> > > > > >
-> > > > > > And there is a somewhat tangential question that occurred to me=
-: If
-> > > > > > the nodes are created elsewhere when acpi_graph_ignore_port() i=
-s true,
-> > > > > > why is it necessary to consult the platform firmware for the
-> > > > > > information on them at all?  Wouldn't it be better to simply al=
-ways
-> > > > > > create them elsewhere?
-> > > > >
-> > > > > That is a good question. The ACPI MIPI DISCO specification is an
-> > > > > attempt standardize how MIPI cameras and their sensors are descri=
-bed
-> > > > > in ACPI.
-> > > > >
-> > > > > But this is not actually being used by any Windows drivers atm. T=
-he windows
-> > > > > drivers rely on their own custom ACPI data which gets translated =
-into
-> > > > > standard Linux device-properties by: drivers/media/pci/intel/ipu-=
-bridge.c
-> > > > >
-> > > > > and so far AFAIK there are 0 laptops where there actually is 100%=
- functional
-> > > > > ACPI MIPI information. I believe that some work is in place to ge=
-t correct
-> > > > > usable ACPI MIPI information in place in the ACPI tables of some =
-Meteor Lake
-> > > > > laptops. But I believe that there too it does not work yet with t=
-he BIOS
-> > > > > version with which current Windows models are shipping. It is bei=
-ng fixed
-> > > > > for systems which have Linux support from the vendor but I suspec=
-t that
-> > > > > on other models if ACPI MIPI DISCO information is there it will n=
-ot
-> > > > > necessarily be reliable because AFAICT Windows does not actually =
-use it.
-> > > > >
-> > > > > And TBH this has me worried about camera support for Meteor Lake =
-devices
-> > > > > going forward. We really need to have 1 reliable source of truth =
-here and
-> > > > > using information which is ignored by Windows does not seem like =
-the best
-> > > > > source to use.
-> > > > >
-> > > > > Sakari I know you have been pushing for MIPI camera descriptions =
-under
-> > > > > ACPI to move to a standardized format and I can see how that is a=
- good
-> > > > > thing, but atm it seems to mainly cause things to break and befor=
-e
-> > > > > the ACPI MIPI DISCO support landed in 6.8 we did not have these i=
-ssues,
-> > > > > since the information used by the ipu-bridge code does seem to be=
- correct.
-> > > >
-> > > > Well, if Windows doesn't use this information, it is almost guarant=
-eed
-> > > > to be garbage.
-> > >
-> > > No ACPI DSDT in production systems uses DisCo for Imaging as of now a=
-t
-> > > least to my knowledge.
-> > >
-> > > >
-> > > > So maybe it would be better to make acpi_graph_ignore_port() return
-> > > > true by default and false only when the information is known to be
-> > > > valid.  IOW, whitelist things instead of adding blacklist entries i=
-n
-> > > > perpetuum.
-> > >
-> > > What could be gained from this?
-> >
-> > Generally speaking, fewer headaches for people trying to support Linux
-> > on Intel client platforms.
->
-> I don't think that is the case here.
->
-> I'd like to reiterate that none of the issues there have been so far
-> (including with Dell laptops) have been related to DisCo for Imaging.
+Running the vanilla torvalds tree kernel 6.10-rc3, there occurred an error in boot with
+amdgpu.
 
-Well, they were (or are) related to firmware issues that cause systems
-to fail to boot if triggered until they get blacklisted in
-acpi_graph_ignore_port().
+Here is the complete output:
 
-It doesn't matter too much whether this is specifically DisCo for
-Imaging or something else.
+kernel: [    8.704024] WARNING: CPU: 24 PID: 689 at drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1379 amdgpu_bo_release_notify (drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1382 (discriminator 1)) amdgpu
+kernel: [    8.704146] Modules linked in: binfmt_misc amd_atl intel_rapl_msr intel_rapl_common edac_mce_amd kvm_amd kvm snd_hda_codec_realtek snd_hda_codec_generic amdgpu(+) crct10dif_pclmul nls_iso8859_1 snd_hda_scodec_component polyval_clmulni snd_hda_codec_hdmi polyval_generic ghash_clmulni_intel snd_hda_intel sha256_ssse3 sha1_ssse3 snd_intel_dspcfg snd_intel_sdw_acpi aesni_intel snd_hda_codec crypto_simd cryptd snd_seq_midi amdxcp snd_seq_midi_event snd_hda_core drm_exec gpu_sched joydev snd_rawmidi snd_hwdep rapl drm_buddy input_leds drm_suballoc_helper snd_seq drm_ttm_helper wmi_bmof snd_pcm snd_seq_device ttm k10temp ccp snd_timer drm_display_helper snd drm_kms_helper i2c_algo_bit soundcore mac_hid tcp_bbr sch_fq msr parport_pc ppdev lp parport efi_pstore drm ip_tables x_tables autofs4 btrfs blake2b_generic xor raid6_pq libcrc32c hid_generic usbhid hid nvme crc32_pclmul ahci i2c_piix4 nvme_core r8169 xhci_pci libahci xhci_pci_renesas realtek video wmi gpio_amdpt
+kernel: [    8.704200] CPU: 24 PID: 689 Comm: systemd-udevd Not tainted 6.10.0-rc1-next-20240528 #1
+kernel: [    8.704202] Hardware name: ASRock X670E PG Lightning/X670E PG Lightning, BIOS 1.21 04/26/2023
+kernel: [    8.704203] RIP: 0010:amdgpu_bo_release_notify (drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1382 (discriminator 1)) amdgpu
+kernel: [ 8.704324] Code: 0b e9 a3 fe ff ff 48 ba ff ff ff ff ff ff ff 7f 31 f6 4c 89 ef e8 c2 c4 dc ee eb 99 e8 eb bc dc ee eb b2 0f 0b e9 3c fe ff ff <0f> 0b eb a7 be 03 00 00 00 e8 b4 4b a1 ee eb 9b e8 4d 5c 36 ef 66
+All code
+========
+   0:	0b e9                	or     %ecx,%ebp
+   2:	a3 fe ff ff 48 ba ff 	movabs %eax,0xffffffba48fffffe
+   9:	ff ff 
+   b:	ff                   	(bad)  
+   c:	ff                   	(bad)  
+   d:	ff                   	(bad)  
+   e:	ff                   	(bad)  
+   f:	7f 31                	jg     0x42
+  11:	f6 4c 89 ef e8       	testb  $0xe8,-0x11(%rcx,%rcx,4)
+  16:	c2 c4 dc             	ret    $0xdcc4
+  19:	ee                   	out    %al,(%dx)
+  1a:	eb 99                	jmp    0xffffffffffffffb5
+  1c:	e8 eb bc dc ee       	call   0xffffffffeedcbd0c
+  21:	eb b2                	jmp    0xffffffffffffffd5
+  23:	0f 0b                	ud2    
+  25:	e9 3c fe ff ff       	jmp    0xfffffffffffffe66
+  2a:*	0f 0b                	ud2    		<-- trapping instruction
+  2c:	eb a7                	jmp    0xffffffffffffffd5
+  2e:	be 03 00 00 00       	mov    $0x3,%esi
+  33:	e8 b4 4b a1 ee       	call   0xffffffffeea14bec
+  38:	eb 9b                	jmp    0xffffffffffffffd5
+  3a:	e8 4d 5c 36 ef       	call   0xffffffffef365c8c
+  3f:	66                   	data16
 
-> >
-> > Every system that needs to be put into dmi_ignore_port_nodes[] means a
-> > boot problem for someone that needs to be addressed.
-> >
-> > And after the Hans' patch at
-> >
-> > https://patchwork.kernel.org/project/linux-acpi/patch/20240612104220.22=
-219-1-hdegoede@redhat.com/
-> >
-> > we would effectively get very close to that point anyway.
->
-> Dell systems only, and of a limited range.
->
-> >
-> > Are the ACPI tables on MTL and beyond going to be fixed?  If not,
-> > we'll probably need to add MTL to the list of platform IDs and so on.
-> > In what way is this better?
->
-> This will very probably take place post-MTL.
+Code starting with the faulting instruction
+===========================================
+   0:	0f 0b                	ud2    
+   2:	eb a7                	jmp    0xffffffffffffffab
+   4:	be 03 00 00 00       	mov    $0x3,%esi
+   9:	e8 b4 4b a1 ee       	call   0xffffffffeea14bc2
+   e:	eb 9b                	jmp    0xffffffffffffffab
+  10:	e8 4d 5c 36 ef       	call   0xffffffffef365c62
+  15:	66                   	data16
+kernel: [    8.704325] RSP: 0018:ffffb74b014d3380 EFLAGS: 00010282
+kernel: [    8.704327] RAX: 00000000ffffffea RBX: ffff940781ec5c48 RCX: 0000000000000000
+kernel: [    8.704328] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+kernel: [    8.704329] RBP: ffffb74b014d33b8 R08: 0000000000000000 R09: 0000000000000000
+kernel: [    8.704330] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9407dc80ef58
+kernel: [    8.704330] R13: ffff940781ec5c00 R14: 0000000000000000 R15: 0000000000000000
+kernel: [    8.704331] FS:  0000783805ca28c0(0000) GS:ffff941698600000(0000) knlGS:0000000000000000
+kernel: [    8.704333] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel: [    8.704334] CR2: 00007ec7be572000 CR3: 000000010f7e4000 CR4: 0000000000750ef0
+kernel: [    8.704335] PKRU: 55555554
+kernel: [    8.704335] Call Trace:
+kernel: [    8.704337]  <TASK>
+kernel: [    8.704339] ? show_regs+0x71/0x90 
+kernel: [    8.704344] ? __warn+0x88/0x140 
+kernel: [    8.704347] ? amdgpu_bo_release_notify (drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1382 (discriminator 1)) amdgpu
+kernel: [    8.704464] ? report_bug+0x1ab/0x1c0 
+kernel: [    8.704468] ? handle_bug+0x46/0x90 
+kernel: [    8.704471] ? exc_invalid_op+0x19/0x80 
+kernel: [    8.704473] ? asm_exc_invalid_op+0x1b/0x20 
+kernel: [    8.704478] ? amdgpu_bo_release_notify (drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:1382 (discriminator 1)) amdgpu
+kernel: [    8.704595] ttm_bo_release (drivers/gpu/drm/ttm/ttm_bo.c:341) ttm
+kernel: [    8.704601] ttm_bo_put (drivers/gpu/drm/ttm/ttm_bo.c:401) ttm
+kernel: [    8.704604] amdgpu_bo_free_kernel (drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:875 drivers/gpu/drm/amd/amdgpu/amdgpu_object.c:459) amdgpu
+kernel: [    8.704721] dm_helpers_free_gpu_mem (./include/linux/list.h:218 ./include/linux/list.h:229 drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_helpers.c:1085) amdgpu
+kernel: [    8.704915] dcn315_clk_mgr_construct (drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn315/dcn315_clk_mgr.c:655) amdgpu
+kernel: [    8.705113] dc_clk_mgr_create (drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/clk_mgr.c:267) amdgpu
+kernel: [    8.705302] dc_create (drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:1068 drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:1427) amdgpu
+kernel: [    8.705468] ? srso_alias_return_thunk+0x5/0xfbef5 
+kernel: [    8.705470] ? dmi_matches+0xa0/0x230 
+kernel: [    8.705474] amdgpu_dm_init+0x2b3/0x2c30 amdgpu
+kernel: [    8.705643] ? prb_read_valid+0x1c/0x30 
+kernel: [    8.705646] ? srso_alias_return_thunk+0x5/0xfbef5 
+kernel: [    8.705647] ? console_unlock+0x77/0x120 
+kernel: [    8.705649] ? srso_alias_return_thunk+0x5/0xfbef5 
+kernel: [    8.705650] ? __wake_up_klogd.part.0+0x40/0x70 
+kernel: [    8.705652] ? srso_alias_return_thunk+0x5/0xfbef5 
+kernel: [    8.705653] ? dev_printk_emit+0x86/0xc0 
+kernel: [    8.705656] ? srso_alias_return_thunk+0x5/0xfbef5 
+kernel: [    8.705661] dm_hw_init (drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:2572) amdgpu
+kernel: [    8.705806] amdgpu_device_init (drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:2653 drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:2870 drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:4303) amdgpu
+kernel: [    8.705925] ? srso_alias_return_thunk+0x5/0xfbef5 
+kernel: [    8.705927] ? pci_read_config_word+0x29/0x60 
+kernel: [    8.705929] ? srso_alias_return_thunk+0x5/0xfbef5 
+kernel: [    8.705930] ? do_pci_enable_device+0xe3/0x110 
+kernel: [    8.705934] amdgpu_driver_load_kms (drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c:146) amdgpu
+kernel: [    8.706050] amdgpu_pci_probe (drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c:2291) amdgpu
+kernel: [    8.706165] local_pci_probe+0x48/0xb0 
+kernel: [    8.706167] pci_device_probe+0xc8/0x290 
+kernel: [    8.706170] really_probe+0xf4/0x3b0 
+kernel: [    8.706173] __driver_probe_device+0x8a/0x180 
+kernel: [    8.706175] driver_probe_device+0x23/0xd0 
+kernel: [    8.706177] __driver_attach+0x10f/0x220 
+kernel: [    8.706178] ? __pfx___driver_attach+0x10/0x10 
+kernel: [    8.706180] bus_for_each_dev+0x7a/0xe0 
+kernel: [    8.706182] driver_attach+0x1e/0x30 
+kernel: [    8.706184] bus_add_driver+0x11f/0x260 
+kernel: [    8.706185] driver_register+0x64/0x140 
+kernel: [    8.706188] ? __pfx_amdgpu_init (drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c:2525) amdgpu
+kernel: [    8.706301] __pci_register_driver+0x61/0x70 
+kernel: [    8.706303] amdgpu_init (drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c:2836) amdgpu
+kernel: [    8.706416] do_one_initcall+0x46/0x330 
+kernel: [    8.706419] ? kmalloc_trace_noprof+0x115/0x340 
+kernel: [    8.706423] do_init_module+0x6a/0x270 
+kernel: [    8.706426] load_module+0x21e9/0x22b0 
+kernel: [    8.706431] init_module_from_file+0x9c/0xf0 
+kernel: [    8.706433] ? srso_alias_return_thunk+0x5/0xfbef5 
+kernel: [    8.706434] ? init_module_from_file+0x9c/0xf0 
+kernel: [    8.706437] idempotent_init_module+0x184/0x240 
+kernel: [    8.706440] __x64_sys_finit_module+0x64/0xd0 
+kernel: [    8.706442] x64_sys_call+0x1903/0x26f0 
+kernel: [    8.706444] do_syscall_64+0x70/0x130 
+kernel: [    8.706446] ? srso_alias_return_thunk+0x5/0xfbef5 
+kernel: [    8.706447] ? do_syscall_64+0x7c/0x130 
+kernel: [    8.706449] entry_SYSCALL_64_after_hwframe+0x76/0x7e 
+kernel: [    8.706451] RIP: 0033:0x783805b1e88d
+kernel: [ 8.706452] Code: 5b 41 5c c3 66 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 73 b5 0f 00 f7 d8 64 89 01 48
+All code
+========
+   0:	5b                   	pop    %rbx
+   1:	41 5c                	pop    %r12
+   3:	c3                   	ret    
+   4:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+   b:	00 00 
+   d:	f3 0f 1e fa          	endbr64 
+  11:	48 89 f8             	mov    %rdi,%rax
+  14:	48 89 f7             	mov    %rsi,%rdi
+  17:	48 89 d6             	mov    %rdx,%rsi
+  1a:	48 89 ca             	mov    %rcx,%rdx
+  1d:	4d 89 c2             	mov    %r8,%r10
+  20:	4d 89 c8             	mov    %r9,%r8
+  23:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+  28:	0f 05                	syscall 
+  2a:*	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax		<-- trapping instruction
+  30:	73 01                	jae    0x33
+  32:	c3                   	ret    
+  33:	48 8b 0d 73 b5 0f 00 	mov    0xfb573(%rip),%rcx        # 0xfb5ad
+  3a:	f7 d8                	neg    %eax
+  3c:	64 89 01             	mov    %eax,%fs:(%rcx)
+  3f:	48                   	rex.W
 
-So why don't we put MTL into the list in the Hans' patch?  Or are we
-going to wait for someone to report a boot failure on MTL because of
-this?
+Code starting with the faulting instruction
+===========================================
+   0:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax
+   6:	73 01                	jae    0x9
+   8:	c3                   	ret    
+   9:	48 8b 0d 73 b5 0f 00 	mov    0xfb573(%rip),%rcx        # 0xfb583
+  10:	f7 d8                	neg    %eax
+  12:	64 89 01             	mov    %eax,%fs:(%rcx)
+  15:	48                   	rex.W
+kernel: [    8.706453] RSP: 002b:00007ffc702d1148 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+kernel: [    8.706455] RAX: ffffffffffffffda RBX: 0000594fe0ca0410 RCX: 0000783805b1e88d
+kernel: [    8.706456] RDX: 0000000000000000 RSI: 0000594fe0e08280 RDI: 0000000000000018
+kernel: [    8.706456] RBP: 0000000000020000 R08: 0000000000000000 R09: 0000000000000002
+kernel: [    8.706457] R10: 0000000000000018 R11: 0000000000000246 R12: 0000594fe0e08280
+kernel: [    8.706458] R13: 0000594fe0df04e0 R14: 0000000000000000 R15: 0000594fe0e005f0
+kernel: [    8.706461]  </TASK>
+kernel: [    8.706462] ---[ end trace 0000000000000000 ]---
+
+Hope this helps.
+
+Best regards,
+Mirsad Todorovac
+
 
