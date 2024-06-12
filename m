@@ -1,175 +1,350 @@
-Return-Path: <linux-kernel+bounces-211156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9EDA904DC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D3A904DC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D5F9B258DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:14:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B50DB25C0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3950816C86C;
-	Wed, 12 Jun 2024 08:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1E316D322;
+	Wed, 12 Jun 2024 08:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mJsVsgyV"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2mSFth+"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F4E16C843
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80541FB5;
+	Wed, 12 Jun 2024 08:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718180081; cv=none; b=j05a0RDQ8a3GOil5zRLm+jfbUVR5kINZlUOJLxmNUMLiQf4b1BO/G8AK+Kg/JAacUXdHl+DuXNxf0+ViHMqlomNws3gyJ+8QyppII/yV+bESGqCykCXVbs0VM97if5aqaHj2An5VQC8rDcCmjQovOPkyK1PrMVL6qt/YBkOegvo=
+	t=1718180110; cv=none; b=u0i0v7yXJXX6iGCQyBSp+h0Cx5ZjfeSFvf1rUpbadkZ5MN/CWiydZyThDOyM6d3Qg20BswOuQTknFoeNo5MeqM6Nxds4y8B+Nont5LrP0kr4RkjxQ0xWdYgtTn9D9NXkj4yXWyTdOfDC1FJltGONozhVs+qrLth9D6OZS3MPRG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718180081; c=relaxed/simple;
-	bh=JcLliFmzK8Tep6OJhj8il39PMa1YxEJNDlcLj+H3oLc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CbzB9ipmbbQALIn4XP2zxjSHZ4LnEiDyUlUgoM30gdvO+UJm3E42F/PNoU52JDGpNInvbejIQFGbC2wxDC4cD15H5+fhFqJm0VNrE3R7VbaiTMlw2oUqiGscs7GxCPLYmuRedv7OWFBW6L2wWQayERoyv2XCdlRviBA3ljNFB2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mJsVsgyV; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35f223e7691so377762f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:14:39 -0700 (PDT)
+	s=arc-20240116; t=1718180110; c=relaxed/simple;
+	bh=ptjoa9q63pGOGPnQ/n0kmQAoJ+aCRDrxJ5Ou5lbiPV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HGk7endYihD4kQ32BRhgHs2sT/44diPPDMHy4xgbam7YopSGqAbZhf9L0AFNjGRko3FIsIJUgvdQHrBHxoeAMd50AYg5zeU4Nqd5J/g8QeQkZmCXzVdUnyLqtkJlkCxFlFgO9p0SM+U8pdnHimGUiFGjtCD1JUOF7UsAABo8/YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2mSFth+; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6f09eaf420so417015466b.3;
+        Wed, 12 Jun 2024 01:15:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718180078; x=1718784878; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1PdksSUg8dwtLunozeU7Sxcg4SfJDpMyI7RXzrJNAzc=;
-        b=mJsVsgyVIv8flF+Q0dcteomGAnZB8A4Q/reM0wPvkQjQNPa4/5/JaQSUTBx/BYE25v
-         pJvA+E1/DtNBeDlElAAePH8yO7zTJo1Ef+xTBo5lM54uWZt5mOcWJyUbvoWkT8rugF+u
-         niPEcxKsAJNT2RgVHULxB+aFG8tNO3HlggOz5pKaw+hRc0z1jrRR0Lcmt70TPfy1ztxw
-         pUHp1z9uyqg8apqKayMN/JgO/QarR27+/V8HwvwQfj1QiUAVAP/EgM3Fsw0jt5h3xlWM
-         E4Tg37qFlGF4bFc4HvjfZ5/JInx5AaHzkuMn6CREZfGKm7+DzBXjW8lljkQIh4Lw6DVx
-         PEzg==
+        d=gmail.com; s=20230601; t=1718180106; x=1718784906; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wXAjKTvBEAvP+svvitn9yofnK0X/5/4ahwWqCi/xEWA=;
+        b=A2mSFth+Y5PxE1DZrMUgfZ5nEM+H423GMIfx96Zw53A9zr0ooe5mdXH61Lx/0RWP4T
+         GCakmc3hKZ8opNFEFjkyZ3tLHLUWjDFSDwvUq/zdNlrPCOI6GbQzyOnzADPPizrXFB94
+         1EP1RS4O1SYdPRiI4wygJKV9WqKta0CFOvzuXBzryLJlXv1MPmgy3/fTCEntkXzG1lyM
+         ag+7yo2a8F26+EBib2cj092IrtFuCl7LvHBNk556hFX5TgjZRHIsCCW0OkYF90LefpwQ
+         f7WjoVUcr+xXbOzHIuoeMRNPXAWSh2MlNU7pVEQoU/rGmV5XZmNSoRinWtz5kUB1nRpa
+         N99Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718180078; x=1718784878;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1PdksSUg8dwtLunozeU7Sxcg4SfJDpMyI7RXzrJNAzc=;
-        b=V/Akj2re9HaW7wfMtifvxzFfBwc8IHvCZZqcjvPxMAVmmnjx4A2qtQ3jVaCIS5qmRI
-         3itiYWN4Qx9MemF314VXEAyxLwszwGy3UfY/IsgKiz9cpmGoPQI00ozc4cGtvTV5PcRm
-         qH/LVNdNyxhA/3q2pvwtX/Q3ob2RM5crKIy/cwT8hngIEU7u5FqhkbP8HKeC4scQgqmB
-         7IgR0RXf2sKTxZjFJncv0EygY7crBxHqb1sK2lOzY98/CBmDFodeVE6rRpy/EuXdzU9H
-         PAWsCXB5cfkuzlyu6EE2CpWtYUpZmc5bLQMMiP2J9bMHRlo6X552E6pSR7lk03JgkTjI
-         J59A==
-X-Forwarded-Encrypted: i=1; AJvYcCU7meLi8yQk5uePydItQK0aAJ0MfeVzaLoAQ1uEQt8XBhmb4a7w1YHyTucTjlUOMTktnsDwiGf9f0mNecsbH4ixAjv/kTqCwhd3fVlz
-X-Gm-Message-State: AOJu0YzQN0Zh85sl45F1PibpUERCbgEgtrHyxPyhktIqRyKRaQAG0A6G
-	X1jiqjJSEMsNSbiansQiQs6G/y0u1zEnxDoODLhT9UAplPelcpoDaNl+aEuit7o=
-X-Google-Smtp-Source: AGHT+IEbZutML2NJ0LZ8NN7NJ/Uudc+CSJQVZMvAjNEH6d/1TWr7ms4MOXRGR4kuhjntdsKXQXPlUw==
-X-Received: by 2002:a5d:5005:0:b0:35f:2af4:cccd with SMTP id ffacd0b85a97d-35f5a9da24amr1193697f8f.17.1718180078080;
-        Wed, 12 Jun 2024 01:14:38 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f252193d9sm7240988f8f.54.2024.06.12.01.14.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 01:14:37 -0700 (PDT)
-Message-ID: <106b6911-3097-487e-85db-f8de5958adcb@linaro.org>
-Date: Wed, 12 Jun 2024 10:14:36 +0200
+        d=1e100.net; s=20230601; t=1718180106; x=1718784906;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wXAjKTvBEAvP+svvitn9yofnK0X/5/4ahwWqCi/xEWA=;
+        b=utDviaqCHf96x3jJa7DLRdfPwmcXLzLlrwl1eGwjZtm9IVY5FlfVIL/HKNBa4NjLR/
+         9y5Pcq3nKuW190rPXG1myUn4kUQVQVKTy65REmCJePwuCvhs6McqW/Z6G+47r0hyCmnx
+         Kv+ijqqHEHe2T94zv+ydVlEx/GmG3QYeWva715XBLnZEWoXqicCc8hB6eCoIqGKBlpLz
+         yhFeMrkjE8XBTBpMtIqfKZ3Grg3B9ZSVn6dK+6thuIaD2eBzQgIIyzuYrvfIVDBuPCYg
+         1blebGG5KzvHjXJBbByvyMlUEiBReY0wXMXTzikVKJXe2+AIJn3w47hMIPsUjW7PlsYL
+         R4Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsHUO2ZVvlN0Kt2lYbpDVSeL9T2Q6i6EUlf86armZ5ORPcPc8e6zPzTJNW5e4z8A4ipusW1y6EUIsXrd2gTWeKUSnFZPqSHMbaXHVL4cUXPMsdX2I/cx7Hu+9fi7PTiTr/ICasxNI5Op64x60hdNZJk99xs9gdOlaDmLiM3AZ496ejcZlPsZnVdwAEsWPEZz20I0PFUNp96SH+g9Y=
+X-Gm-Message-State: AOJu0YxzfGe4oiVceu60ruMHV7UVXM6enojBjxSYDUTwoxYC/UMydJGN
+	3S+JQOnT/0W5hGp4VMKutP5Bkrw6qlhNpkIQOfnGFKoU7K3ZrJKw
+X-Google-Smtp-Source: AGHT+IH2Jza44/FQ9SGdlIxn5PkVhcYbkPK2nXfzm1wPEO8f0NiF848hJKQFk5hzcZUj941+u9uWPw==
+X-Received: by 2002:a17:907:f81:b0:a6f:1972:7fd with SMTP id a640c23a62f3a-a6f480272c3mr62515366b.67.1718180105733;
+        Wed, 12 Jun 2024 01:15:05 -0700 (PDT)
+Received: from localhost ([81.168.73.77])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f212aed2esm8466666f8f.26.2024.06.12.01.15.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 01:15:05 -0700 (PDT)
+Date: Wed, 12 Jun 2024 09:15:03 +0100
+From: Martin Habets <habetsm.xilinx@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Michael Chan <michael.chan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-media@vger.kernel.org, netdev@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+	sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 1/6] auxbus: make to_auxiliary_drv accept and return a
+ constant pointer
+Message-ID: <20240612081503.GA8955@gmail.com>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Michael Chan <michael.chan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-media@vger.kernel.org, netdev@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+	sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org
+References: <20240611130103.3262749-7-gregkh@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: vt8500: replace "uhci" nodename with generic
- name "usb"
-To: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240423150728.91527-1-sheharyaar48@gmail.com>
- <f60aac7f-dbba-4cba-8bb6-302b5c911b8c@linaro.org>
- <CAHTLo_=Gg-KN2zOtjOBCxQURq+Ap913Miph2FMhvkoV+GybFNA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAHTLo_=Gg-KN2zOtjOBCxQURq+Ap913Miph2FMhvkoV+GybFNA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611130103.3262749-7-gregkh@linuxfoundation.org>
 
-On 15/05/2024 06:53, Mohammad Shehar Yaar Tausif wrote:
-> On Tue, Apr 23, 2024 at 8:46 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 23/04/2024 17:07, Mohammad Shehar Yaar Tausif wrote:
->>> Replace "uhci" nodenames with "usb" as it's generic and aligns with
->>> the schema binding.
->>>
->>> Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
->>> ---
->>>  arch/arm/boot/dts/vt8500/vt8500.dtsi | 2 +-
->>>  arch/arm/boot/dts/vt8500/wm8505.dtsi | 2 +-
->>>  arch/arm/boot/dts/vt8500/wm8650.dtsi | 2 +-
->>>  arch/arm/boot/dts/vt8500/wm8750.dtsi | 4 ++--
->>>  arch/arm/boot/dts/vt8500/wm8850.dtsi | 4 ++--
->>>  5 files changed, 7 insertions(+), 7 deletions(-)
->>
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> Best regards,
->> Krzysztof
->>
+On Tue, Jun 11, 2024 at 03:01:04PM +0200, Greg Kroah-Hartman wrote:
+> In the quest to make struct device constant, start by making
+> to_auziliary_drv() return a constant pointer so that drivers that call
+> this can be fixed up before the driver core changes.
 > 
-> Hi,
+> As the return type previously was not constant, also fix up all callers
+> that were assuming that the pointer was not going to be a constant one
+> in order to not break the build.
 > 
-> Is there any further feedback or update for this ? This patch is not
-> yet merged but the related dt-binding patch that has been merged :
-> https://lore.kernel.org/all/20240423150550.91055-1-sheharyaar48@gmail.com/.
-> I understand that this is a trivial patch and the maintainers may be
-> busy with important work.
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Dave Ertman <david.m.ertman@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Bingbu Cao <bingbu.cao@intel.com>
+> Cc: Tianshu Qiu <tian.shu.qiu@intel.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Michael Chan <michael.chan@broadcom.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>
+> Cc: Tony Nguyen <anthony.l.nguyen@intel.com>
+> Cc: Saeed Mahameed <saeedm@nvidia.com>
+> Cc: Leon Romanovsky <leon@kernel.org>
+> Cc: Tariq Toukan <tariqt@nvidia.com>
+> Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+> Cc: Bard Liao <yung-chuan.liao@linux.intel.com>
+> Cc: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> Cc: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Jaroslav Kysela <perex@perex.cz>
+> Cc: Takashi Iwai <tiwai@suse.com>
+> Cc: Richard Cochran <richardcochran@gmail.com>
+> Cc: linux-media@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: intel-wired-lan@lists.osuosl.org
+> Cc: linux-rdma@vger.kernel.org
+> Cc: sound-open-firmware@alsa-project.org
+> Cc: linux-sound@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-I don't see you Cc any maintainers, so no one will pick it up.
+Reviewed-by: Martin Habets <habetsm.xilinx@gmail.com>
 
-Best regards,
-Krzysztof
-
+> ---
+>  drivers/base/auxiliary.c                      | 8 ++++----
+>  drivers/media/pci/intel/ipu6/ipu6-bus.h       | 2 +-
+>  drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c | 4 ++--
+>  drivers/net/ethernet/intel/ice/ice_ptp.c      | 2 +-
+>  drivers/net/ethernet/mellanox/mlx5/core/dev.c | 4 ++--
+>  include/linux/auxiliary_bus.h                 | 2 +-
+>  sound/soc/sof/sof-client.c                    | 4 ++--
+>  7 files changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+> index d3a2c40c2f12..5832e31bb77b 100644
+> --- a/drivers/base/auxiliary.c
+> +++ b/drivers/base/auxiliary.c
+> @@ -180,7 +180,7 @@ static const struct auxiliary_device_id *auxiliary_match_id(const struct auxilia
+>  static int auxiliary_match(struct device *dev, struct device_driver *drv)
+>  {
+>  	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
+> -	struct auxiliary_driver *auxdrv = to_auxiliary_drv(drv);
+> +	const struct auxiliary_driver *auxdrv = to_auxiliary_drv(drv);
+>  
+>  	return !!auxiliary_match_id(auxdrv->id_table, auxdev);
+>  }
+> @@ -203,7 +203,7 @@ static const struct dev_pm_ops auxiliary_dev_pm_ops = {
+>  
+>  static int auxiliary_bus_probe(struct device *dev)
+>  {
+> -	struct auxiliary_driver *auxdrv = to_auxiliary_drv(dev->driver);
+> +	const struct auxiliary_driver *auxdrv = to_auxiliary_drv(dev->driver);
+>  	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
+>  	int ret;
+>  
+> @@ -222,7 +222,7 @@ static int auxiliary_bus_probe(struct device *dev)
+>  
+>  static void auxiliary_bus_remove(struct device *dev)
+>  {
+> -	struct auxiliary_driver *auxdrv = to_auxiliary_drv(dev->driver);
+> +	const struct auxiliary_driver *auxdrv = to_auxiliary_drv(dev->driver);
+>  	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
+>  
+>  	if (auxdrv->remove)
+> @@ -232,7 +232,7 @@ static void auxiliary_bus_remove(struct device *dev)
+>  
+>  static void auxiliary_bus_shutdown(struct device *dev)
+>  {
+> -	struct auxiliary_driver *auxdrv = NULL;
+> +	const struct auxiliary_driver *auxdrv = NULL;
+>  	struct auxiliary_device *auxdev;
+>  
+>  	if (dev->driver) {
+> diff --git a/drivers/media/pci/intel/ipu6/ipu6-bus.h b/drivers/media/pci/intel/ipu6/ipu6-bus.h
+> index b26c6aee1621..bb4926dfdf08 100644
+> --- a/drivers/media/pci/intel/ipu6/ipu6-bus.h
+> +++ b/drivers/media/pci/intel/ipu6/ipu6-bus.h
+> @@ -21,7 +21,7 @@ struct ipu6_buttress_ctrl;
+>  
+>  struct ipu6_bus_device {
+>  	struct auxiliary_device auxdev;
+> -	struct auxiliary_driver *auxdrv;
+> +	const struct auxiliary_driver *auxdrv;
+>  	const struct ipu6_auxdrv_data *auxdrv_data;
+>  	struct list_head list;
+>  	void *pdata;
+> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
+> index ba3fa1c2e5d9..b9e7d3e7b15d 100644
+> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
+> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
+> @@ -239,7 +239,7 @@ void bnxt_ulp_stop(struct bnxt *bp)
+>  
+>  		adev = &aux_priv->aux_dev;
+>  		if (adev->dev.driver) {
+> -			struct auxiliary_driver *adrv;
+> +			const struct auxiliary_driver *adrv;
+>  			pm_message_t pm = {};
+>  
+>  			adrv = to_auxiliary_drv(adev->dev.driver);
+> @@ -277,7 +277,7 @@ void bnxt_ulp_start(struct bnxt *bp, int err)
+>  
+>  		adev = &aux_priv->aux_dev;
+>  		if (adev->dev.driver) {
+> -			struct auxiliary_driver *adrv;
+> +			const struct auxiliary_driver *adrv;
+>  
+>  			adrv = to_auxiliary_drv(adev->dev.driver);
+>  			edev->en_state = bp->state;
+> diff --git a/drivers/net/ethernet/intel/ice/ice_ptp.c b/drivers/net/ethernet/intel/ice/ice_ptp.c
+> index 0f17fc1181d2..7341e7c4ef24 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_ptp.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_ptp.c
+> @@ -2784,7 +2784,7 @@ static struct ice_pf *
+>  ice_ptp_aux_dev_to_owner_pf(struct auxiliary_device *aux_dev)
+>  {
+>  	struct ice_ptp_port_owner *ports_owner;
+> -	struct auxiliary_driver *aux_drv;
+> +	const struct auxiliary_driver *aux_drv;
+>  	struct ice_ptp *owner_ptp;
+>  
+>  	if (!aux_dev->dev.driver)
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/dev.c b/drivers/net/ethernet/mellanox/mlx5/core/dev.c
+> index 47e7c2639774..9a79674d27f1 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/dev.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/dev.c
+> @@ -349,7 +349,7 @@ int mlx5_attach_device(struct mlx5_core_dev *dev)
+>  {
+>  	struct mlx5_priv *priv = &dev->priv;
+>  	struct auxiliary_device *adev;
+> -	struct auxiliary_driver *adrv;
+> +	const struct auxiliary_driver *adrv;
+>  	int ret = 0, i;
+>  
+>  	devl_assert_locked(priv_to_devlink(dev));
+> @@ -406,7 +406,7 @@ void mlx5_detach_device(struct mlx5_core_dev *dev, bool suspend)
+>  {
+>  	struct mlx5_priv *priv = &dev->priv;
+>  	struct auxiliary_device *adev;
+> -	struct auxiliary_driver *adrv;
+> +	const struct auxiliary_driver *adrv;
+>  	pm_message_t pm = {};
+>  	int i;
+>  
+> diff --git a/include/linux/auxiliary_bus.h b/include/linux/auxiliary_bus.h
+> index de21d9d24a95..bdff7b85f2ae 100644
+> --- a/include/linux/auxiliary_bus.h
+> +++ b/include/linux/auxiliary_bus.h
+> @@ -203,7 +203,7 @@ static inline struct auxiliary_device *to_auxiliary_dev(struct device *dev)
+>  	return container_of(dev, struct auxiliary_device, dev);
+>  }
+>  
+> -static inline struct auxiliary_driver *to_auxiliary_drv(struct device_driver *drv)
+> +static inline const struct auxiliary_driver *to_auxiliary_drv(const struct device_driver *drv)
+>  {
+>  	return container_of(drv, struct auxiliary_driver, driver);
+>  }
+> diff --git a/sound/soc/sof/sof-client.c b/sound/soc/sof/sof-client.c
+> index 99f74def4ab6..5d6005a88e79 100644
+> --- a/sound/soc/sof/sof-client.c
+> +++ b/sound/soc/sof/sof-client.c
+> @@ -357,7 +357,7 @@ EXPORT_SYMBOL_NS_GPL(sof_client_ipc4_find_module, SND_SOC_SOF_CLIENT);
+>  
+>  int sof_suspend_clients(struct snd_sof_dev *sdev, pm_message_t state)
+>  {
+> -	struct auxiliary_driver *adrv;
+> +	const struct auxiliary_driver *adrv;
+>  	struct sof_client_dev *cdev;
+>  
+>  	mutex_lock(&sdev->ipc_client_mutex);
+> @@ -380,7 +380,7 @@ EXPORT_SYMBOL_NS_GPL(sof_suspend_clients, SND_SOC_SOF_CLIENT);
+>  
+>  int sof_resume_clients(struct snd_sof_dev *sdev)
+>  {
+> -	struct auxiliary_driver *adrv;
+> +	const struct auxiliary_driver *adrv;
+>  	struct sof_client_dev *cdev;
+>  
+>  	mutex_lock(&sdev->ipc_client_mutex);
+> -- 
+> 2.45.2
+> 
 
