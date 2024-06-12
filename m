@@ -1,244 +1,107 @@
-Return-Path: <linux-kernel+bounces-211797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D299056F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:34:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE709056F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8D5E1F279D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E0F1F27C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E63181B9B;
-	Wed, 12 Jun 2024 15:32:58 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA17181B86;
-	Wed, 12 Jun 2024 15:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E66B180A62;
+	Wed, 12 Jun 2024 15:34:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECB21802CF;
+	Wed, 12 Jun 2024 15:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718206377; cv=none; b=DB0cFH52NxOr5eg3DnrpUEfncIVepLloxbHxmIUzD5PGA9y52si5VtfreFWtM5L4cu15Phva7Ss7GVdhuMeG7VDRTY40FpFpkBaNtG0UQ/T6REJCVOPNvA8KyZAiNwOgK4+RfD0NWm6YA+Ib1O8ra6+m+WWxNsD2Dri+jyWtmFI=
+	t=1718206461; cv=none; b=IrREZPlBvPqlqJ9wd3VqRLGa0Ty0/S+LhBqYzgwa/rEh/yBFgbMEpYnt3CGpmiJvuHeHygS2A0gZyUirT5q5+Nh5xIUUAOLgK6RgXODJYkzZ0NkIUT8tmGoXhJPTPzYHw2j9WY8IIX3XbszeJ1cBikt3X/H1NEjCx10tdl83edg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718206377; c=relaxed/simple;
-	bh=6McAjyKnZGmSFtVSpXgthVIWRJTWzo3llkJs/bUceOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nnPxT6KvOHlIGvP2YjN+X1hbAzLGRT85oq1n2VeQZyYKOMxuyN+hZGmrgCy1Y8S7qZ7FmvCWPBmaNg6a6U3iO1H2eZc5hSH3ghLJeeV0YjiQw0r8BnlYn9MmcQavAhH0aYFbrw62bvFyJHzw1B3l8yf4Ft81CR1J5xVetMwSOfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 214E0C32786;
-	Wed, 12 Jun 2024 15:32:53 +0000 (UTC)
-Date: Wed, 12 Jun 2024 11:32:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
- linux-mm@kvack.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Kees Cook
- <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>, "Guilherme G.
- Piccoli" <gpiccoli@igalia.com>, linux-hardening@vger.kernel.org, Guenter
- Roeck <linux@roeck-us.net>, Ross Zwisler <zwisler@google.com>,
- wklin@google.com, Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Joel
- Fernandes <joel@joelfernandes.org>, Suleiman Souhlal <suleiman@google.com>,
- Linus Torvalds <torvalds@linuxfoundation.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Ard Biesheuvel
- <ardb@kernel.org>, Mike Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH v2 1/2] mm/memblock: Add "reserve_mem" to reserved named
- memory at boot up
-Message-ID: <20240612113251.43b9c7b9@rorschach.local.home>
-In-Reply-To: <20240612072340.hsdxusmszixebvrt@master>
-References: <20240606150143.876469296@goodmis.org>
-	<20240606150316.751642266@goodmis.org>
-	<20240611144029.h7egl4aif5mjlrwf@master>
-	<20240611111218.71e57e0f@gandalf.local.home>
-	<20240612072340.hsdxusmszixebvrt@master>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718206461; c=relaxed/simple;
+	bh=AEH1PF2oiR9AWSog4ZyajYHOgBRYvq3XpSnXr5FyMaE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=thILJJkTXVYOghb/Wn9M2OCKWKL0bWqMqXUG4YNvGuqbipPrxZPyGJiQ6J0hKrBPGPhFAOE7vDwCx5jAnxqU2akSAv6X8sn/7zE+RZW1GycGDB58G8bYP914TcPkC4/l6uooX/TmtOlCKWMNsbEYk4mac1PJe4cnpY8f3A3v5WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FA481042;
+	Wed, 12 Jun 2024 08:34:42 -0700 (PDT)
+Received: from [10.1.29.46] (e110479.arm.com [10.1.29.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E861B3F73B;
+	Wed, 12 Jun 2024 08:34:14 -0700 (PDT)
+Message-ID: <7fdc23ff-fd55-4347-ac61-dd115eff6ff1@arm.com>
+Date: Wed, 12 Jun 2024 16:34:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] mfd: axp20x: AXP717: Fix missing IRQ status
+ registers range
+To: Lee Jones <lee@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Ryan Walklin <ryan@testtoast.com>,
+ Chris Morgan <macroalpha82@gmail.com>
+References: <20240418000736.24338-1-andre.przywara@arm.com>
+ <20240418000736.24338-2-andre.przywara@arm.com>
+ <20240502093907.GM5338@google.com>
+ <56aef347-7582-497e-be02-d82eda7b3528@arm.com>
+ <20240612152510.GE1504919@google.com>
+Content-Language: en-US
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <20240612152510.GE1504919@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Wed, 12 Jun 2024 07:23:40 +0000
-Wei Yang <richard.weiyang@gmail.com> wrote:
-> >> >+struct reserve_mem_table {
-> >> >+	char			name[RESERVE_MEM_NAME_SIZE];
-> >> >+	unsigned long		start;
-> >> >+	unsigned long		size;    
-> >> 
-> >> phys_addr_t looks more precise?  
-> >
-> >For just the start variable, correct? I'm OK with updating that.
-> >  
+Hi,
+
+On 12/06/2024 16:25, Lee Jones wrote:
+> On Wed, 12 Jun 2024, Andre Przywara wrote:
 > 
-> Both start and size. When you look at the definition of memblock_region, both
-> are defined as phys_addr_t.
-
-I ended up keeping everything phys_addr_t.
-
+>> Hi Lee,
+>>
+>> On 02/05/2024 10:39, Lee Jones wrote:
+>>> On Thu, 18 Apr 2024, Andre Przywara wrote:
+>>>
+>>>> While we list the "IRQ status *and acknowledge*" registers as volatile,
+>>>> they are missing from the writable range array, so acknowledging any
+>>>> interrupts was met with an -EIO error.
+>>>>
+>>>> Add the five registers that hold those bits to the writable array.
+>>>>
+>>>> Fixes: b5bfc8ab2484 ("mfd: axp20x: Add support for AXP717 PMIC")
+>>>> Reported-by: Chris Morgan <macromorgan@hotmail.com>
+>>>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+>>>> ---
+>>>>    drivers/mfd/axp20x.c | 1 +
+>>>>    1 file changed, 1 insertion(+)
+>>>
+>>> Acked-by: Lee Jones <lee@kernel.org>
+>>
+>> Can you please take just this patch as a fix for 6.10? This fixes the power
+>> key operation.
+>> This applies cleanly on top of v6.10-rc3, so there is no need for any extra
+>> immutable branch or coordination with regulator.
+>> (The same is true independently for patch 2/5, on the regulator side).
 > 
-> >>   
-> >> >+};
-> >> >+static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRIES];
-> >> >+static int reserved_mem_count;    
-> >> 
-> >> Seems no matter we use this feature or not, these memory would be occupied?  
-> >
-> >Yes, because allocation may screw it up as well. I could add a CONFIG
-> >around it, so that those that do not want this could configure it out. But
-> >since it's just a total of (16 + 8 + 8) * 8 = 256 bytes, I'm not sure it's
-> >much of a worry to add the complexities to save that much space. As the
-> >code to save it may likely be bigger.
-> >  
+> What does the Fixes: commit break?
 > 
-> If Mike feel good to it, I am ok.
-> 
-> >>   
-> >> >+
-> >> >+/* Add wildcard region with a lookup name */
-> >> >+static int __init reserved_mem_add(unsigned long start, unsigned long size,
-> >> >+				   const char *name)
-> >> >+{
-> >> >+	struct reserve_mem_table *map;
-> >> >+
-> >> >+	if (!name || !name[0] || strlen(name) >= RESERVE_MEM_NAME_SIZE)
-> >> >+		return -EINVAL;
-> >> >+
-> >> >+	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
-> >> >+		return -1;    
-> >> 
-> >> return ENOSPC? Not good at it, but a raw value maybe not a good practice.  
-> >
-> >This is what gets returned by the command line parser. It only cares if it
-> >is zero or not.
-> >  
-> >> 
-> >> Also, we'd better do this check before allocation.  
-> >
-> >What allocation?
-> >  
-> 
-> You call reserved_mem_add() after memblock_phys_alloc(). 
-> My suggestion is do those sanity check before calling memblock_phys_alloc().
+> Or is it the case that it never worked properly?
 
-Yeah, I did add more checks before the allocation happens.
+The interrupt part never worked properly, but so far that's only needed 
+for the power key operation. Unfortunately that part wasn't tested 
+properly initially, so the patches were merged into your tree before that.
 
-
-> 
-> >>   
-> >> >+
-> >> >+	map = &reserved_mem_table[reserved_mem_count++];
-> >> >+	map->start = start;
-> >> >+	map->size = size;
-> >> >+	strscpy(map->name, name);
-> >> >+	return 0;
-> >> >+}
-> >> >+
-> >> >+/**
-> >> >+ * reserve_mem_find_by_name - Find reserved memory region with a given name
-> >> >+ * @name: The name that is attached to a reserved memory region
-> >> >+ * @start: If found, holds the start address
-> >> >+ * @size: If found, holds the size of the address.
-> >> >+ *
-> >> >+ * Returns: 1 if found or 0 if not found.
-> >> >+ */
-> >> >+int reserve_mem_find_by_name(const char *name, unsigned long *start, unsigned long *size)
-> >> >+{
-> >> >+	struct reserve_mem_table *map;
-> >> >+	int i;
-> >> >+
-> >> >+	for (i = 0; i < reserved_mem_count; i++) {
-> >> >+		map = &reserved_mem_table[i];
-> >> >+		if (!map->size)
-> >> >+			continue;
-> >> >+		if (strcmp(name, map->name) == 0) {
-> >> >+			*start = map->start;
-> >> >+			*size = map->size;
-> >> >+			return 1;
-> >> >+		}
-> >> >+	}
-> >> >+	return 0;
-> >> >+}
-> >> >+
-> >> >+/*
-> >> >+ * Parse early_reserve_mem=nn:align:name    
-> >> 
-> >> early_reserve_mem or reserve_mem ?  
-> >
-> >Oops, that was the original name. I'll change that.
-> >  
-> >>   
-> >> >+ */
-> >> >+static int __init reserve_mem(char *p)
-> >> >+{
-> >> >+	phys_addr_t start, size, align;  
-> >
-> >Hmm, I wonder if I should change size and align to unsigned long?
-> >  
-> 
-> I grep the kernel, some use u64, some use unsigned long. 
-> I think it is ok to use unsigned long here.
-
-For consistency, I switched them all to phys_addr_t.
-
-> 
-> >> >+	char *oldp;
-> >> >+	int err;
-> >> >+
-> >> >+	if (!p)
-> >> >+		return -EINVAL;
-> >> >+
-> >> >+	oldp = p;
-> >> >+	size = memparse(p, &p);
-> >> >+	if (p == oldp)
-> >> >+		return -EINVAL;
-> >> >+
-> >> >+	if (*p != ':')
-> >> >+		return -EINVAL;
-> >> >+
-> >> >+	align = memparse(p+1, &p);
-> >> >+	if (*p != ':')
-> >> >+		return -EINVAL;
-> >> >+    
-> >> 
-> >> Better to check if the name is valid here.   
-> >
-> >You mean that it has text and is not blank?
-> >  
-> >> 
-> >> Make sure command line parameters are valid before doing the allocation.  
-> >
-> >You mean that size is non zero?
-> >  
-> 
-> I mean do those sanity check before real allocation.
-
-Yep, I hope I caught everything (of course I need to check if the name
-exists first).
-
-> 
-> >I don't know if we care what the align is. Zero is valid.
-> >  
-> 
-> memblock internal would check the alignment. If it is zero, it will change to
-> SMP_CACHE_BYTES with dump_stack().
-
-I saw that and added:
-
-	if (align < SMP_CACHE_BYTES)
-		align = SMP_CACHE_BYTES;
-
-so that SMP_CACHE_BYTES will be the minimum alignment.
-
-Thanks for looking at this.
-
--- Steve
+Cheers,
+Andre
 
