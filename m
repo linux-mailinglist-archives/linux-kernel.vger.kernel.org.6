@@ -1,110 +1,113 @@
-Return-Path: <linux-kernel+bounces-211783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0659056BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:24:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839E29056C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA4ABB2274C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A9741F237CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90C317FAD6;
-	Wed, 12 Jun 2024 15:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE36E17F4EB;
+	Wed, 12 Jun 2024 15:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5fxdoXk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b="XWT290kS"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1014178CE2;
-	Wed, 12 Jun 2024 15:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828BB3D388
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718205846; cv=none; b=F0vcjfmBEfjp4wZ9VcJzX/INDIXbpYiEEGr5HZ0Ik+wBmMosqVHfvKOCURa8sBT2FvD3oJbSGHyVCrNk6ZpzY58CM31vusqtm+Du44SuMhg1TFsNgAikhQebpLBVqmCzA4srirpLrNy/HnJ0ewn/nrbG0dvkBECZarVHZ82kK7E=
+	t=1718205899; cv=none; b=Pt2oF19ODb17jUzC7qoQJSC45uAm/uh6kGBR55wRf4VG6QBUAmdWY8OpDXWEWuRN9gm+wELPpDAYI9MW/SjQdJD0jJg7sE6ZOnadGtNoH7WiuAgrerbRBXn00lGv7e53/c1WOby0K3YIaA6TQGjoXqGx/+e65PA9M9ZVk0huBzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718205846; c=relaxed/simple;
-	bh=fUZ+mbaSNdcCsJSK/yWLJwUy2bPRSRlb6UhOxTORqE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P5h0hNE0AKpULB3OuBSIEYKBDNNcLqJBjdKnfg8h+e/y7MKUKMY/aO2NBkoco+BGP7e2eY1bjJPBUQggqK6WSQbb5/Oy4F/s7jIpeKasAL9M8qVn1UHJ4Gv+4i6/N8/bxJ0AekGofiZ9twKSy2f5IDuukdbzuf1kNKTCkvZyI+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5fxdoXk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79703C116B1;
-	Wed, 12 Jun 2024 15:24:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718205845;
-	bh=fUZ+mbaSNdcCsJSK/yWLJwUy2bPRSRlb6UhOxTORqE0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e5fxdoXkLnhAyXr3At8tTK6JNXGcMLYj4TZElKo8O6bHPtdB46ztAIvKtqZGzm8MK
-	 /Fy+PECw+KWsFQ8MOC65zLNKOktZIDNtDQTVlXZgnQfnnlP0lLQTd/42Ot85SQcE5i
-	 HfTx/l3vxkxLm+xpNuRJD0/L5Acc7rTMJHYlZF2thN8mrqxvAhDSoqIxCvKGbuxOTH
-	 Fiz1KxvFum6I0WTNydoSDdYCTgL3CctoOkxwFNHk355IjTjldwAaMWaM+fbsCtExvG
-	 O2UVqGSEot75v2/Nb3PW15haxVw7QpAJ4lLD8Z/yeav6hdE1urR0x0dMh2RghqlAFK
-	 yBzZWH96Pef7Q==
-Date: Wed, 12 Jun 2024 17:24:00 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Tony Luck <tony.luck@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev,
- linux-media@vger.kernel.org, linux-staging@lists.linux.dev, Andy Shevchenko
- <andy@kernel.org>
-Subject: Re: [PATCH v6 05/49 RESEND] media: atomisp: Switch to new Intel CPU
- model defines
-Message-ID: <20240612172355.11c470a3@coco.lan>
-In-Reply-To: <38336785-cb59-464f-b2a7-49812f4c2ce0@redhat.com>
-References: <20240611173406.352874-1-tony.luck@intel.com>
-	<38336785-cb59-464f-b2a7-49812f4c2ce0@redhat.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1718205899; c=relaxed/simple;
+	bh=8pixPtYD7EDO7nYBMOz6fC5qpHZbTKS1XI1/tr5+VE0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=eS/8Yw3jerK2pwXIjyowYbcVS9LfIonHW7acuLZyh57teWVYdCNXYF/onTPUBOtc5ZFvDRFtE+Th+cbXOuZRCll9KzPbIW0yel+NeP3fbflVzxuuFshTh5mZFU4fzADzydVoSLe3GXPsNbLfJvbpTF1DJbXA1njmAt5kn/1Qo10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com; spf=pass smtp.mailfrom=jrtc27.com; dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b=XWT290kS; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jrtc27.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eaea28868dso70996051fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:24:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jrtc27.com; s=gmail.jrtc27.user; t=1718205896; x=1718810696; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cfHSD2ohGFo1bJLqaYnJWptznLHGgS8ba5sojTCQFak=;
+        b=XWT290kS5WE8l1ZSxF9F0bGicx5ZaPQH79t5W2gH76OEL+2Rd4odfcYy54hjhktQjC
+         iVwCo/+yk/YL0JKNYwiSgtW3AG/uCs2ulMqUUAdfFWAPXluQOHN/bUrB1I5DmCL6+plQ
+         APQ+mGUXTUKRXc00dE1FCDp0r43MQOHsx9ETDhY7sOrO5aKcpXFvbrVbLIk+yIwQp/bU
+         slfxtkQCNz4gsVuR0rQwVm/QEH4VhVuAPPstJLXvBb/XH9iqAOeFG1xw+CJtwe742dWz
+         k1s8j0x4ysqbLy1Ai5jc7hW3Ol0HeCFUAe1nmjSrCSu+00fX6V+KlF0Jnf1JEP3Tcr/3
+         dQaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718205896; x=1718810696;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cfHSD2ohGFo1bJLqaYnJWptznLHGgS8ba5sojTCQFak=;
+        b=iCnDQ58NxD3Y+rointIuhmpRypWPG+/fmhrNF3cwCoDhCxJsW7nMj6QHsfGtfUw8v8
+         xGwTQhc16xTAvrLyHrR0/pW6SRRIEtBeYBFmVOhC37RjMcrN+pXR1NEXKZvyPdztFkkg
+         KsdYQhi9G6+gGGkqeR7eR9WI19gBh0F9+rD/Mh/VZkVBIixraYnD91otSzRZFVxJshGy
+         lUYFGOjCTTMFLlI0JAMtMHKX+tqnU9SFyATSHfHzTZg7K4AdFyzCK7Wse40rcHhU5tTo
+         ovB+8VJ61i1qjRDpBjwaYayYhIhvIQeKfZxqwAfPLHFZSc+rLNtEOwnBFS4K4YtQEUNc
+         fHvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVP8AhzVBTaCH8i5B2DO1hCXSpsHJtan6yzkGhrywTT8qHZz5bfJ4pTfAbYfDaj5Qq2k+O5br0iKrKq71gssv3k9KR/C1obzml7wfBU
+X-Gm-Message-State: AOJu0Yy+DjTYUP+fEtTpz277R1IZ1CFRcI6kMOuAecSpItdL4dPqFWDt
+	iIRcFaiGU2T4AZyChEplsgj7dV8x8O3DkRfLeN8HTCLNRuo3MrvCeCuig7zchi4=
+X-Google-Smtp-Source: AGHT+IH4zw3EWMR8z6Xw4xToTAnfHYkARCSUOo+5ApT7OA4n06T70RJ8V+bqVpKPZ0cStqBJHw7VNA==
+X-Received: by 2002:a2e:7d04:0:b0:2eb:d963:d8cc with SMTP id 38308e7fff4ca-2ebfca4766cmr16758761fa.49.1718205895563;
+        Wed, 12 Jun 2024 08:24:55 -0700 (PDT)
+Received: from smtpclient.apple ([131.111.5.201])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422899b0cdbsm16835855e9.0.2024.06.12.08.24.54
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2024 08:24:55 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v1] riscv: dts: starfive: add PCIe dts configuration for
+ JH7110
+From: Jessica Clarke <jrtc27@jrtc27.com>
+In-Reply-To: <20240611015200.40996-1-minda.chen@starfivetech.com>
+Date: Wed, 12 Jun 2024 16:24:44 +0100
+Cc: Conor Dooley <conor@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ linux-riscv <linux-riscv@lists.infradead.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>
 Content-Transfer-Encoding: 7bit
+Message-Id: <98031697-93AE-43AC-B192-44B12CB43EC5@jrtc27.com>
+References: <20240611015200.40996-1-minda.chen@starfivetech.com>
+To: Minda Chen <minda.chen@starfivetech.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-Em Wed, 12 Jun 2024 10:10:14 +0200
-Hans de Goede <hdegoede@redhat.com> escreveu:
-
-> Hi Tony,
+On 11 Jun 2024, at 02:52, Minda Chen <minda.chen@starfivetech.com> wrote:
 > 
-> On 6/11/24 7:34 PM, Tony Luck wrote:
-> > New CPU #defines encode vendor and family as well as model.
-> > 
-> > Signed-off-by: Tony Luck <tony.luck@intel.com>
-> > Reviewed-by: Andy Shevchenko <andy@kernel.org>
-> > Acked-by: Hans de Goede <hdegoede@redhat.com>
-> > ---
-> > 
-> > Mauro, Hans, Greg: Which one of you owns this one. Can you take
-> > a look please. Let me know if changes are needed.  
+> Add PCIe dts configuraion for JH7110 SoC platform.
 > 
-> I'll pick this one up. But atomisp support is a side project,
-> so I only work on this every few weeks.
-> 
-> My intent is to get this send to Mauro (media-next) in time
-> for the 6.11 merge window.
+> Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
+> Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
+> ---
+> .../boot/dts/starfive/jh7110-common.dtsi      | 64 ++++++++++++++
+> arch/riscv/boot/dts/starfive/jh7110.dtsi      | 86 +++++++++++++++++++
+> 2 files changed, 150 insertions(+)
 
-Hans,
+Is there a corresponding YAML schema?
 
-It seems that you already acked to this one, right?
+Jess
 
-If so, please add my acked-by, if this will end being merged
-via some other tree.
-
-Tony,
-
-I don't object having this merged via your tree with Hans
-ack.
-
-We may also have it merged on media via Hans tree. He usually
-send me one or two pull requests per Kernel cycle with lots
-of atomisp patches on it.
-
-Regards,
-Mauro
-
-Thanks,
-Mauro
 
