@@ -1,135 +1,125 @@
-Return-Path: <linux-kernel+bounces-211383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E159050EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:53:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BFE9050E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF957284BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:53:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 829EDB23488
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DBE16F0C1;
-	Wed, 12 Jun 2024 10:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5939716C685;
+	Wed, 12 Jun 2024 10:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ABjKWT+1"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="re8qN6q0"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E94316EC08;
-	Wed, 12 Jun 2024 10:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EDF16E888
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718189584; cv=none; b=O/C4z8fjEcSn1RN0qZwX4LymQL1FpMpyO4bKqGfQp6O5C1ElmPeDLfiorF2t8wVO64fJxzClwdMgmNXB045QgKloYEY3tkopFsuq/spLpsRSfobCkyzEgY4/LhsiCuk1Yk5bIfwauxcNCqIeL0VWONBgHorRoi15WOuupmQ5250=
+	t=1718189554; cv=none; b=hS0gL2hCYFjh1tPCHWp4EuGjGIG8guW7+MSAo1LSDA0M229+Hq/z9FDxsIsqtgKPKtS4l2gAECaqHUqL7j2LpBNO1AtigZRcD8tL4jxOFoWtR/pLwGXjQctECPLRSyW3YdBfzXCg0CtYjJZdWLpz+12UFEEg1c/uf3Aawk9fscY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718189584; c=relaxed/simple;
-	bh=2kj58qBP7FxoSCa5xKHPmCM/1eQ+8Ps7f9qbYfMXyVI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MlFsYir5Vvsx9IPm4jCy1sipfWRXb6aheD9rJcju6aw6IbHdTVpR6NG0e75dp7N7tJ39UZrV3rUVk8iLqShYspK1o2QHtYPF2dSHylOnG6HBfUjb4HivXfIjLCAl40x94ydYZPSBrhXFJvNMTLA2gxYNCvewxCe45QaCN5rWrVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ABjKWT+1; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-79550284502so134848285a.2;
-        Wed, 12 Jun 2024 03:53:02 -0700 (PDT)
+	s=arc-20240116; t=1718189554; c=relaxed/simple;
+	bh=hfca2HZsexdSmcR2L0VarVPDzv56VOL6tv9ZzVNhWgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OHYiKO1aZIeeLnw/5FV5Sv/5QkBrihRc4zZeIXhk9vvAxzqIPUp0a8uVyzMvp8qeJ0OWOmIn+KnsyPq7dv/uqdu0pm/kS5pPZEAM/tPyU7QcaPhUIeKazIGw21uWchchSGMvLIFVSpIpII1XrHcyN0H6rkZrwIdqeA2vxfj/o1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=re8qN6q0; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-421eab59723so24212155e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 03:52:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718189582; x=1718794382; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=flZgWFKhxWxGjaqOkdyMdJqS0YRaXDWOZAS2UaEwY1c=;
-        b=ABjKWT+1WyEGVqbp+dcguFpWD6MP5C1fAcrEFHRr02MjYHMvTdV17Fnoc7CGlBvadr
-         wvsAZWVqoW82WU/XAmrshMi6n5bcU4woW0ZLaSq/01s340gY/dHyopNy8tvzy01pFQCi
-         ZxZsgdissD0Moe0bTQizdNsxYM9j1GG/TraDW7VeABjId+1F6eKD472B/DFtLQJUzckY
-         TgBSNyX1zE0H9ydTdvfz/7s1Nw2vRKFxX3cOqMl+avXsoCTUGwUhJg+TcisYTHwBFE8f
-         Eg4gCT7WuLDJMDPZKpMs4uPuwFXdhE8PbtbqgUeVwAQLQYoEEGQRBttfnvStSk7QHYXs
-         hQKA==
+        d=linaro.org; s=google; t=1718189551; x=1718794351; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cPi9QkdS95dkNdofAqCFmLTLe43Jm537m7bw1KQ0ItY=;
+        b=re8qN6q0jAzkaIlLcbrQD6yb62C0s1p099HEKNJKNUFhfCdsivQdXyLRpFvZo3s1Dq
+         jth8zdP5iL2an0vn6WGN4a8rwYdyqrVpm2BrmxzkVKBoQfDve7A6TTNEkeiSPrJXXqp/
+         qBhfPCXjH7aN+xIkKr/zGO2V7K6GRY6l9TXg+B6aXccVuLDgEXs6VWupxL0SP8HCOGRC
+         nmB5WOf+RFx8htebdViPH5gsR99FMjV+mlJWWZ7w9RlycQPhwczAgVRcWtScdFxk907G
+         M7jTbvRuToRzpP8HoJAw82YMC9FoPiuKLpZoLSycT0WVdu/E0Fsgl0DaQFoE+oBAyHIG
+         Mlfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718189582; x=1718794382;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=flZgWFKhxWxGjaqOkdyMdJqS0YRaXDWOZAS2UaEwY1c=;
-        b=VNNh9UHGIgpYTz6vpOYy6jvcN9vWpVPzfNKL1Wc8+NjUi1NDlwy7Rpavuy1mpIpOFn
-         P4mwSthWsbC73ouGKEfL7jrPUbncc+u8mDVsfXKI/QpBjUHl6pUI7SLOVEs27SToWOxD
-         KESu7eXRnU2Hg5JEqGDBKmcdp37jkQy+CjvX5kWbqUlgCbOPQGeQfWzlHHQLw2CqGWv4
-         k6nFOGQyf2H5IMOuTF0QKS1EldiA3Mb9XbZlrkGpY9z9ol5pxpM/PLgFuL0gaxuLk2mS
-         dGbjqcYjzjKoNNFYY2AgHn/9393RzMl03bV4VegYEcpk+bzp7TkSvLZuCvObXLkdRUmN
-         a6WA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4pkwZibhYXiwvG84MFotJBgHP06UCISwtXEXmEdo5U3KrO/68P8CUJrQWvGA0bc4hixaZTqUDhBC13fddk6KKskegVZaUNHBnKl3WomY67Ah5jMAFJ0OVWWy4/R9mGYOmalIEqcXybo0=
-X-Gm-Message-State: AOJu0YxVEx0IVwUSVRFD3YMzxBktjxck9BB95b6Eu96/c9NqcsgN9UNR
-	kl8Pu2HZqdmK+pTvO6YgguroEXnOVfvuoIXL/kiLpQNDRqPCFkfF
-X-Google-Smtp-Source: AGHT+IG03VCubVJFPRBzLaPxCBDKnO23hWH4/PaX1JLdVSVW8yvfzl9Kojj1v/Si3ZT7YU3BdzOFcw==
-X-Received: by 2002:a05:620a:28c7:b0:795:4f8b:88ee with SMTP id af79cd13be357-797f613e827mr127082385a.76.1718189581831;
-        Wed, 12 Jun 2024 03:53:01 -0700 (PDT)
-Received: from sheun-Legion-5-15IAH7H.phub.net.cable.rogers.com ([2607:fea8:bad7:5400:f2b7:e8f6:98dd:a423])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7954c3580aasm447074385a.136.2024.06.12.03.53.00
+        d=1e100.net; s=20230601; t=1718189551; x=1718794351;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cPi9QkdS95dkNdofAqCFmLTLe43Jm537m7bw1KQ0ItY=;
+        b=ALb68QJRfN/xeF9Sh1+W3zfy7vp/EQql+rQbVd4N9z5lQUM/xmtydf953QemGyTajL
+         zct6vnGTNccQpyxMQ4AstMfkxp6e8LauCcJHxzSzaDK4aDRQeRNTDO+/985WQ4Mqz3XN
+         g2KoGjIsyDolXvoyCAmhr3ySDPoj2lirO5o9MqDB9gLGELti+htLQU/F3KWf14lm3mSj
+         Jgx6r9TQoC27MbPUv9ullhirhVj6Wy3Zi2OaGuPr0LfHS3EmzavNu6MXsUWvP+rVaCKc
+         fcHjQPsqS9dLYkpGtCNszFxyRoGz154Z0BOGbV1Wvi76Sh29GpF1NRuWT+5DjXbQ/yRr
+         kK3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVeMraGKIfSrDTCJoENy1cJxHHuI/80arkrg5opPpjn5VmwrplDmvK9FmsM5k+wvJOZXc5twxDE5B4rXrLGiDtZteMIhrXt+TSvkz7j
+X-Gm-Message-State: AOJu0Yze2KJmAaJ3oIcmvARWBf92yb+diE0/K33RIyhn1xK5sXOlVzlL
+	PHw84VmNpexD6oaddAYPpwW5VMkAbBsmuZF7+0l//wgpFPeDbvEbkaYzfSH60PY=
+X-Google-Smtp-Source: AGHT+IESwYJf6CJnIPpXgk18wMsSx3pKvDvFlcyAWNgt77NIwpqGQS3CGPJBRqxbG2fIpZ5+AFV1zA==
+X-Received: by 2002:a05:600c:74a:b0:422:8557:3c5a with SMTP id 5b1f17b1804b1-422864af026mr11662165e9.19.1718189551298;
+        Wed, 12 Jun 2024 03:52:31 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870f05edsm22074695e9.24.2024.06.12.03.52.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 03:53:01 -0700 (PDT)
-From: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-To: sakari.ailus@linux.intel.com,
-	dave.stevenson@raspberrypi.com,
-	jacopo@jmondi.org,
-	mchehab@kernel.org
-Cc: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
-	linux-media@vger.kernel.org,
+        Wed, 12 Jun 2024 03:52:30 -0700 (PDT)
+Date: Wed, 12 Jun 2024 13:52:27 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	julia.lawall@inria.fr
-Subject: [PATCH v2] media: i2c: ov5647: replacing of_node_put with __free(device_node)
-Date: Wed, 12 Jun 2024 06:51:58 -0400
-Message-ID: <20240612105232.400361-1-abdulrasaqolawani@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+	Sasha Levin <sashal@kernel.org>, Tom Gall <tom.gall@linaro.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v5] checkpatch: check for missing Fixes tags
+Message-ID: <386af0a6-b15d-4be2-a0e7-0375e822031d@moroto.mountain>
+References: <ZmhUgZBKeF_8ixA6@moroto>
+ <20240611113855.b63a6015b26a0dad49d9f2a7@linux-foundation.org>
+ <b3baa059-b433-42da-96c0-588312b5a4ac@leemhuis.info>
+ <6825db9f-be27-4096-9723-6ad65342a59e@moroto.mountain>
+ <390652ca-a383-4953-aa39-8c4ac92f2e3d@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <390652ca-a383-4953-aa39-8c4ac92f2e3d@leemhuis.info>
 
-Replace instance of of_node_put with __free(device_node)
-to protect against any memory leaks due to future changes
-in control flow.
+On Wed, Jun 12, 2024 at 11:15:45AM +0200, Thorsten Leemhuis wrote:
+> I see your point and agree that it would be nice to have. At the same
+> time I've seen people on the lists that don't like to use the Fixes: tag
+> when nothing is "fixed".
 
-Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
----
- drivers/media/i2c/ov5647.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+That's correct.  Checkpatch stuff, clean ups, and patches which silence
+*harmless* static checker warnings shouldn't get a Fixes tag.  This
+checkpatch warning doesn't affect that.  If you look at the patches
+which were flagged it's mostly because of CCing stable or syzbot.
 
-diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-index 7e1ecdf2485f..0fb4d7bff9d1 100644
---- a/drivers/media/i2c/ov5647.c
-+++ b/drivers/media/i2c/ov5647.c
-@@ -1360,24 +1360,21 @@ static int ov5647_parse_dt(struct ov5647 *sensor, struct device_node *np)
- 	struct v4l2_fwnode_endpoint bus_cfg = {
- 		.bus_type = V4L2_MBUS_CSI2_DPHY,
- 	};
--	struct device_node *ep;
-+	struct device_node *ep __free(device_node) =
-+		of_graph_get_endpoint_by_regs(np, 0, -1);
- 	int ret;
- 
--	ep = of_graph_get_endpoint_by_regs(np, 0, -1);
- 	if (!ep)
- 		return -EINVAL;
- 
- 	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &bus_cfg);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	sensor->clock_ncont = bus_cfg.bus.mipi_csi2.flags &
- 			      V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK;
- 
--out:
--	of_node_put(ep);
--
--	return ret;
-+	return 0;
- }
- 
- static int ov5647_probe(struct i2c_client *client)
--- 
-2.43.0
+> And it would be an additional burden for
+> developers to look the commit-id up. So it could contribute to the
+> "checkpatch is asking too much here and not worth the trouble" stance
+> I've seen a few times (to which I contributed myself... :-/ ).
 
+Someone's got to do it.  It might as well be the person who writes the
+patch.
+
+There are times where you're working across function boundaries or even
+subsystem boundaries and in those cases finding the correct Fixes tag is
+difficult.  The other case where it's annoying is when the code has
+moved between files.  But it's generally a worthwhile exercise.  It
+helps to look at what the original author was trying to do when they
+introduced the bug.  And when you add a Fixes tag then checkpatch will
+CC the original author so the review is better as well.
+
+regards,
+dan carpenter
 
