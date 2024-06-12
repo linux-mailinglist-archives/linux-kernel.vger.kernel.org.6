@@ -1,107 +1,178 @@
-Return-Path: <linux-kernel+bounces-211633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4409054AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:03:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70749054B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBF2F287EC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:03:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54FE3B2698E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BB817D880;
-	Wed, 12 Jun 2024 14:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="PD796aNp"
-Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEA917B4F1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C0417DE2B;
+	Wed, 12 Jun 2024 14:03:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D981417D8A3;
+	Wed, 12 Jun 2024 14:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718200993; cv=none; b=XZ+nKew/WGR+TawxZZdgvLW7LmuIRZl7Z2M6XYLbkltooo5/JPawcKl4n6Zgc7vEj+Mdwjvu3uBkmmCQ6bsNT2Ff9yrLMuw88hEh6RF2g2+pmH35c5o9xnXKxlQPIPJR9n4ndpSJDfbTGX+37ktZshD6zVr/HzSfGhxIPBAyyb4=
+	t=1718201015; cv=none; b=J6XK26aPExL0dI5icWlFyUiNXuhBdrugMdvi9kgH0bQmlirbrYpEWYjin6LREQ1+RzIafoQPAIC5N2Beu4RUNy5vBinFF4iN3BqDs6H7MGPa9ZyORIjX8eb+vEMKnDhV3+rj7MMr4DOcWpO7yzZB5/O91OMHWQa+3mbG+GERSlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718200993; c=relaxed/simple;
-	bh=lKi0c8jAEfL3qdMzM21uvINYprAZcpnmkKF5YkiTWRo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Mjz3GJnlHFa6zLDXqVTJox6brTvAu8wrkF+++6NweZOwiEHddZaEo+q50l/0dO79fgIfSysYVDtZGdo1tyHT4FEbFu8QXs/EO8ByjDsawZKkDu7/3O4A5zquxA6KEf3gKOZqefEpLEmEY9BsMj1E2bFIdui6hYrJgVa3cCTsZp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=PD796aNp; arc=none smtp.client-ip=49.12.199.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12F62DACB4;
-	Wed, 12 Jun 2024 16:02:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1718200980; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=bYjuWPJtQLDvvNKeuoBi+ek+WEDnKSAN6kpuXyK3u9k=;
-	b=PD796aNpkXHvz8SAhnG7fTfPeHYl7rHIPpI2lEGEsNcS7uYKFqqp/1YgWIJnWX9tW4ExBO
-	bAoFpATYy5TrdzbtMa4JtInjBqPMZdDbHv1F9RHQ1BBUFIXDNsWMX62x+OkbUHOempzkaC
-	anYJdCIckPKsHpQssp83kRk9A8HAK1j0Sdh6AQQneicfUO19YKJFwTv+McAReEo/+Dybzo
-	M21nty71dQPdaAK/R/UnxL+RCb5p8RHvhnzS+mtuVcX1z47YbL4dx76GId50TYuhX/m72t
-	wgjnxOAgExDprlCgZKDLoxusSk/b/gGFimhh8YbdOIiVy+EHGJWJ/MRv2k8M5A==
-From: Daniel Wagner <dwagner@suse.de>
-Date: Wed, 12 Jun 2024 16:02:40 +0200
-Subject: [PATCH] nvmet-passthru: propagate status from id override
- functions
+	s=arc-20240116; t=1718201015; c=relaxed/simple;
+	bh=Z8v6VN3VTXwQnLuxWiCD7XiHXxTlypzscfkEhk+/2RU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GIYHCyDXOEh1PfzzWMPk608LCvyB6Xu7EhD5v4jiCH1KTsO5b8SR7JsXfHlltyGDJG9/qt4Ta2Ap7fvuA+6lxIu9R6iusgz4zAdsVrnxaxqxzezusPrqm5j1UOhRjvsRjeilBAWEuJ1zsL/1AkLlFWGa3fPtDCypcaad4j3GkmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B448D367;
+	Wed, 12 Jun 2024 07:03:57 -0700 (PDT)
+Received: from e127643.broadband (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E43413F64C;
+	Wed, 12 Jun 2024 07:03:30 -0700 (PDT)
+From: James Clark <james.clark@arm.com>
+To: linux-perf-users@vger.kernel.org
+Cc: James Clark <james.clark@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Spoorthy S <spoorts2@in.ibm.com>,
+	German Gomez <german.gomez@arm.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf test: Make test_arm_callgraph_fp.sh more robust
+Date: Wed, 12 Jun 2024 15:03:14 +0100
+Message-Id: <20240612140316.3006660-1-james.clark@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240612-nvmet-passthru-fix-v1-1-f583f8affa2f@suse.de>
-X-B4-Tracking: v=1; b=H4sIAH+qaWYC/x2MSQqAMAwAvyI5G7Ct+1fEg2i0OVil0SIU/27xO
- AMzEYQ8k0CfRfAUWPhwCVSewWwntxHykhh0ocuiVhpd2OnCcxK5rL9x5Qerpirn2qy6My2k8PS
- U9D8dxvf9ALgLIIBkAAAA
-To: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
- Keith Busch <kbusch@kernel.org>
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Daniel Wagner <dwagner@suse.de>
-X-Mailer: b4 0.13.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-The id override functions return a status which is not propagated to the
-caller.
+The 2 second sleep can cause the test to fail on very slow network file
+systems because Perf ends up being killed before it finishes starting
+up.
 
-Fixes: c1fef73f793b ("nvmet: add passthru code to process commands")
-Signed-off-by: Daniel Wagner <dwagner@suse.de>
+Fix it by making the leafloop workload end after a fixed time like the
+other workloads so there is no need to kill it after 2 seconds.
+
+Also remove the 1 second start sampling delay because it is similarly
+fragile. Instead, search through all samples for a matching one, rather
+than just checking the first sample and hoping it's in the right place.
+
+Fixes: cd6382d82752 ("perf test arm64: Test unwinding using fame-pointer (fp) mode")
+Signed-off-by: James Clark <james.clark@arm.com>
 ---
-While reading up on something else, I discovered this part and it looked a bit
-sus. Only compile tested.
----
- drivers/nvme/target/passthru.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../perf/tests/shell/test_arm_callgraph_fp.sh | 27 +++++++------------
+ tools/perf/tests/workloads/leafloop.c         | 20 +++++++++++---
+ 2 files changed, 26 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/nvme/target/passthru.c b/drivers/nvme/target/passthru.c
-index bb4a69d538fd..f003782d4ecf 100644
---- a/drivers/nvme/target/passthru.c
-+++ b/drivers/nvme/target/passthru.c
-@@ -226,13 +226,13 @@ static void nvmet_passthru_execute_cmd_work(struct work_struct *w)
- 	    req->cmd->common.opcode == nvme_admin_identify) {
- 		switch (req->cmd->identify.cns) {
- 		case NVME_ID_CNS_CTRL:
--			nvmet_passthru_override_id_ctrl(req);
-+			status = nvmet_passthru_override_id_ctrl(req);
- 			break;
- 		case NVME_ID_CNS_NS:
--			nvmet_passthru_override_id_ns(req);
-+			status = nvmet_passthru_override_id_ns(req);
- 			break;
- 		case NVME_ID_CNS_NS_DESC_LIST:
--			nvmet_passthru_override_id_descs(req);
-+			status = nvmet_passthru_override_id_descs(req);
- 			break;
- 		}
- 	} else if (status < 0)
-
----
-base-commit: 6bfd66808f973cf1bb234e54d0cd51a15bba2996
-change-id: 20240612-nvmet-passthru-fix-5754c63f2938
-
-Best regards,
+diff --git a/tools/perf/tests/shell/test_arm_callgraph_fp.sh b/tools/perf/tests/shell/test_arm_callgraph_fp.sh
+index 61898e256616..9caa36130175 100755
+--- a/tools/perf/tests/shell/test_arm_callgraph_fp.sh
++++ b/tools/perf/tests/shell/test_arm_callgraph_fp.sh
+@@ -28,28 +28,21 @@ cleanup_files()
+ 
+ trap cleanup_files EXIT TERM INT
+ 
+-# Add a 1 second delay to skip samples that are not in the leaf() function
+ # shellcheck disable=SC2086
+-perf record -o "$PERF_DATA" --call-graph fp -e cycles//u -D 1000 --user-callchains -- $TEST_PROGRAM 2> /dev/null &
+-PID=$!
++perf record -o "$PERF_DATA" --call-graph fp -e cycles//u --user-callchains -- $TEST_PROGRAM
+ 
+-echo " + Recording (PID=$PID)..."
+-sleep 2
+-echo " + Stopping perf-record..."
+-
+-kill $PID
+-wait $PID
++# Try opening the file so any immediate errors are visible in the log
++perf script -i "$PERF_DATA" -F comm,ip,sym | head -n4
+ 
+-# expected perf-script output:
++# expected perf-script output if 'leaf' has been inserted correctly:
+ #
+-# program
++# perf
+ # 	728 leaf
+ # 	753 parent
+ # 	76c leafloop
+-# ...
++# ... remaining stack to main() ...
+ 
+-perf script -i "$PERF_DATA" -F comm,ip,sym | head -n4
+-perf script -i "$PERF_DATA" -F comm,ip,sym | head -n4 | \
+-	awk '{ if ($2 != "") sym[i++] = $2 } END { if (sym[0] != "leaf" ||
+-						       sym[1] != "parent" ||
+-						       sym[2] != "leafloop") exit 1 }'
++# Each frame is separated by a tab, some spaces and an address
++SEP="[[:space:]]+ [[:xdigit:]]+"
++perf script -i "$PERF_DATA" -F comm,ip,sym | tr '\n' ' ' | \
++	grep -E -q "perf $SEP leaf $SEP parent $SEP leafloop"
+diff --git a/tools/perf/tests/workloads/leafloop.c b/tools/perf/tests/workloads/leafloop.c
+index 1bf5cc97649b..f7561767e32c 100644
+--- a/tools/perf/tests/workloads/leafloop.c
++++ b/tools/perf/tests/workloads/leafloop.c
+@@ -1,6 +1,8 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++#include <signal.h>
+ #include <stdlib.h>
+ #include <linux/compiler.h>
++#include <unistd.h>
+ #include "../tests.h"
+ 
+ /* We want to check these symbols in perf script */
+@@ -8,10 +10,16 @@ noinline void leaf(volatile int b);
+ noinline void parent(volatile int b);
+ 
+ static volatile int a;
++static volatile sig_atomic_t done;
++
++static void sighandler(int sig __maybe_unused)
++{
++	done = 1;
++}
+ 
+ noinline void leaf(volatile int b)
+ {
+-	for (;;)
++	while (!done)
+ 		a += b;
+ }
+ 
+@@ -22,12 +30,16 @@ noinline void parent(volatile int b)
+ 
+ static int leafloop(int argc, const char **argv)
+ {
+-	int c = 1;
++	int sec = 1;
+ 
+ 	if (argc > 0)
+-		c = atoi(argv[0]);
++		sec = atoi(argv[0]);
++
++	signal(SIGINT, sighandler);
++	signal(SIGALRM, sighandler);
++	alarm(sec);
+ 
+-	parent(c);
++	parent(sec);
+ 	return 0;
+ }
+ 
 -- 
-Daniel Wagner <dwagner@suse.de>
+2.34.1
 
 
