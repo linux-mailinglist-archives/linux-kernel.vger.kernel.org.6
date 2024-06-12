@@ -1,188 +1,143 @@
-Return-Path: <linux-kernel+bounces-211645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA849054D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:13:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D0F9054D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72A25B22F98
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:13:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76C0DB23294
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1884417E8E8;
-	Wed, 12 Jun 2024 14:12:50 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E1117DE21;
+	Wed, 12 Jun 2024 14:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHWXG39v"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947CA5336D;
-	Wed, 12 Jun 2024 14:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228F817BB23;
+	Wed, 12 Jun 2024 14:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201569; cv=none; b=evKe0sodGpgmMnlW2V9CxSjR36jSCBYTqV3e0gyDXXKB0+S+vEEFBF6O/v05AJuay2Jfmjl8o7zbakqkMy0Q2yPaUSYNsFlOAM3Xbv5XA0NUU/ryQIlzxNeIZNlXHGC/R+4EJCswbbbrBJmabVvKLdlSD2O757B4nf7BZwe5eac=
+	t=1718201684; cv=none; b=gUa2J2fWgx8hoCF00SDfPrBkVO+sBjWlbcL29k4kVzvZiNapUsYWZurlKwhj6qJO8zTLaV5DNkrVSzYZs8Oq9jajBEjw0fz6ei6ofyIdIDfiNviS+2xW1t3y+Gicn4Ra6Y7rt5XqG56I2UseUDc/eJczYfPnBpKzvTM6ESVf1cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201569; c=relaxed/simple;
-	bh=iOMYlsNUD4In4rhG3CCxDYocCLMlHDu5Sy6BBOT1Ab8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CSdm7JBfbZxg+btfWba1KIqoAS3Zb17kiIyckxeR9IhlKrXxmnvdIaGyWV4gBZvWmU2MKUS144yd5WA8IR4w6uyU/IVRFTn0YZsPZbNl4hcZ7nZbkKXkJI8hEXdBqa95GDs8BaJuIYB8jCa6rTZ2AE4TGIPOCGoBpcgaIRXwEBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D923BC4AF1A;
-	Wed, 12 Jun 2024 14:12:45 +0000 (UTC)
-Date: Wed, 12 Jun 2024 10:12:44 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Vincent Donnefort
- <vdonnefort@google.com>, Joel Fernandes <joel@joelfernandes.org>, Daniel
- Bristot de Oliveira <bristot@redhat.com>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, suleiman@google.com, Thomas Gleixner
- <tglx@linutronix.de>, Vineeth Pillai <vineeth@bitbyteword.org>, Youssef
- Esmat <youssefesmat@google.com>, Beau Belgrave <beaub@linux.microsoft.com>,
- Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>, Borislav
- Petkov <bp@alien8.de>, "Paul E. McKenney" <paulmck@kernel.org>, David
- Howells <dhowells@redhat.com>, Mike Rapoport <rppt@kernel.org>, Dave Hansen
- <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>, Guenter
- Roeck <linux@roeck-us.net>, Ross Zwisler <zwisler@google.com>, Kees Cook
- <keescook@chromium.org>
-Subject: Re: [PATCH v5 01/13] ring-buffer: Allow mapped field to be set
- without mapping
-Message-ID: <20240612101245.1a6a5836@rorschach.local.home>
-In-Reply-To: <20240612021722.239841009@goodmis.org>
-References: <20240612021642.941740855@goodmis.org>
-	<20240612021722.239841009@goodmis.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718201684; c=relaxed/simple;
+	bh=Wx/8/Myl4DsLtzdvgYRN+HtlVbAaQQR3l/UprCAbXt0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qChyF72rLCSQV7VEoJh1Px6kJyhWs23zJux12n4mq5Hm42u3OVnU6hxl5jErwy3iV4SmiCeGQiKDwkT3k4zMfs+yZTnqpn/NoqG8OGUbRBJdbGXcdLyKR0C/DPrYHWd6DTdcUVprwBFnaPCXcVCXWR59Fs8v+JX1AK8c5n/E+wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHWXG39v; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5ba090b0336so1076760eaf.1;
+        Wed, 12 Jun 2024 07:14:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718201682; x=1718806482; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n3gvyllWWIRnYeJ4DjIIbMhoNnKxuOATp9pxj4Zd4Gc=;
+        b=OHWXG39vBUWcxymMj17KNiJJ+F6B0jugF7STSxQTcUjFvUZQ69uIJCIMAUp3uj1r+/
+         NeBVvgH/rONSIJmictvhHvBUgqMa+q751Y6Jz7DR7NXj+xfHCbzMqqn1J7NZ21mkMtn2
+         Mqg66UmfjzcTddFZgLaMsdxByvNNTs+gJhrk6PKu4SCwJFumwDzFp9EJARzyRlI+k5xE
+         E66aps+/0iTuurBYmsHg1bCVY2FbkwMimd84Klu4pb/bXgULevnc/uJ4SkYDMqzuzLxB
+         1zK8ndvYU5bOYdQev4oU6kQcp6tTgt0VQZgSjWwL9wjgU08gFAR0Tji0DNLczIyzD+Q5
+         jGbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718201682; x=1718806482;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n3gvyllWWIRnYeJ4DjIIbMhoNnKxuOATp9pxj4Zd4Gc=;
+        b=iXQ1DMt6MCcUFtU8DHtbH9dTiQGqf9m/92XcN9t2EzdwyKRdK5Eizdr7EkMLlhATZe
+         mOCM/ib+BWgZflGxRUcjNOR8x2N0w/bEG9ifWZQaZgiTNlVejSRFa4lsz2u7oGlrfi+u
+         hw+5g4YHKlYc18Fpk6eHAdHz8kaNS4fipiCgaSPd68wOxtdK1rU9Vw0iy4YPgDT+YT7r
+         /RmhJq7xTtmNbq+jyTZrs9yU2kYGnBdqiw2fmp3bMN9n+R0EcW4pBfVeKLu8SwzRix+f
+         fK0FlFI/dG+3NUr2ZCm0ek2aRbrWSgHGgIBvIvOOrsQT4yHcmKXY5XOk3KEm5qa0y3I4
+         QDWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBUQZW5z/kwGMlpy9asDXVvWqzvNM2VO61NkgcYsFW2WNB7csnYRyG+fsl7Ibu0NVBTKpwRJkvlvx/o4TywSSieg/X6VrtJHYtw7kMZ29CLa7srygQP6Tw4YMxyllxhktzv23/98ImK3PY3AizTD5G5YcdRvc412QY4w4FoDMb5Mw1mm4z
+X-Gm-Message-State: AOJu0Yzi97YxA/pHd36mtTRbwxMdzc3HLN/LJbVS/tSYoG5XTxUMWyDm
+	jbu7vhbFga95Z9W255D8b/9KaTsoUnd63/uTUC7Ljw4DOHR+p+sn
+X-Google-Smtp-Source: AGHT+IF8CtqpWGiINl3F7vHplq9qsdpwtyxs1QhLloQcjIXSAU91XSon8YqOspasNQsi7Nyhp4WKDw==
+X-Received: by 2002:a05:6358:e4a6:b0:19f:4a60:e6f4 with SMTP id e5c5f4694b2df-19f69d54bb3mr242855355d.17.1718201681857;
+        Wed, 12 Jun 2024 07:14:41 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6f7c4580888sm2268804a12.61.2024.06.12.07.14.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 07:14:40 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 12 Jun 2024 07:14:39 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Amna Waseem <Amna.Waseem@axis.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@axis.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: ti,ina2xx: Add
+ ti,alert-polarity-active-high property
+Message-ID: <f960ba3e-6673-41ae-b58e-5b6b2e700082@roeck-us.net>
+References: <20240603-apol-ina2xx-fix-v3-0-b9eff3158e4e@axis.com>
+ <20240603-apol-ina2xx-fix-v3-1-b9eff3158e4e@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603-apol-ina2xx-fix-v3-1-b9eff3158e4e@axis.com>
 
-On Tue, 11 Jun 2024 22:16:43 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Mon, Jun 03, 2024 at 12:08:34PM +0200, Amna Waseem wrote:
+> Add a property to the binding to configure the Alert Polarity.
+> Alert pin is asserted based on the value of Alert Polarity bit of
+> Mask/Enable register. It is by default 0 which means Alert pin is
+> configured to be active low open collector. Value of 1 maps to
+> Inverted (active high open collector).
+> 
+> Signed-off-by: Amna Waseem <Amna.Waseem@axis.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> 
-> In preparation for having the ring buffer mapped to a dedicated location,
-> which will have the same restrictions as user space memory mapped buffers,
-> allow it to use the "mapped" field of the ring_buffer_per_cpu structure
-> without having the user space meta page mapping.
-> 
-> When this starts using the mapped field, it will need to handle adding a
-> user space mapping (and removing it) from a ring buffer that is using a
-> dedicated memory range.
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Applied.
+
+Note this is v3 which includes the Reviewed-by: tag since v4
+does not have any other changes.
+
+I removed the trailing whitespace while applying the patch.
+
+Guenter
+
 > ---
->  kernel/trace/ring_buffer.c | 24 +++++++++++++++++-------
->  1 file changed, 17 insertions(+), 7 deletions(-)
+>  Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index 28853966aa9a..aa8eb878e0d4 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -491,6 +491,7 @@ struct ring_buffer_per_cpu {
->  	unsigned long			pages_removed;
+> diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+> index df86c2c92037..9190ef0bda54 100644
+> --- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+> +++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+> @@ -66,6 +66,14 @@ properties:
+>      description: phandle to the regulator that provides the VS supply typically
+>        in range from 2.7 V to 5.5 V.
 >  
->  	unsigned int			mapped;
-> +	unsigned int			user_mapped;	/* first user space mapping */
-
-This actually needs to be a counter and not just save the mapped value
-when it first gets set :-p
-
-As the mappings could technically be incremented and decremented
-differently.
-
-I'll send a new patch. But since my long test keeps failing for subtle
-things, I'm not going to post another series until the full test passes.
-
--- Steve
-
-
->  	struct mutex			mapping_lock;
->  	unsigned long			*subbuf_ids;	/* ID to subbuf VA */
->  	struct trace_buffer_meta	*meta_page;
-> @@ -5224,6 +5225,9 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
->  {
->  	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
->  
-> +	if (!meta)
-> +		return;
+> +  ti,alert-polarity-active-high:
+> +    description: Alert pin is asserted based on the value of Alert polarity Bit
+> +      of Mask/Enable register. Default value is Normal (0 which maps to
+> +      active-low open collector). The other value is Inverted
+> +      (1 which maps to active-high open collector). Specify this property to set
+> +      the alert polarity to active-high. 
+> +    $ref: /schemas/types.yaml#/definitions/flag
 > +
->  	meta->reader.read = cpu_buffer->reader_page->read;
->  	meta->reader.id = cpu_buffer->reader_page->id;
->  	meta->reader.lost_events = cpu_buffer->lost_events;
-> @@ -6167,7 +6171,7 @@ rb_get_mapped_buffer(struct trace_buffer *buffer, int cpu)
->  
->  	mutex_lock(&cpu_buffer->mapping_lock);
->  
-> -	if (!cpu_buffer->mapped) {
-> +	if (!cpu_buffer->mapped || !cpu_buffer->meta_page) {
->  		mutex_unlock(&cpu_buffer->mapping_lock);
->  		return ERR_PTR(-ENODEV);
->  	}
-> @@ -6194,7 +6198,7 @@ static int __rb_inc_dec_mapped(struct ring_buffer_per_cpu *cpu_buffer,
->  	if (inc && cpu_buffer->mapped == UINT_MAX)
->  		return -EBUSY;
->  
-> -	if (WARN_ON(!inc && cpu_buffer->mapped == 0))
-> +	if (WARN_ON(!inc && cpu_buffer->mapped < cpu_buffer->user_mapped))
->  		return -EINVAL;
->  
->  	mutex_lock(&cpu_buffer->buffer->mutex);
-> @@ -6328,7 +6332,7 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
->  
->  	mutex_lock(&cpu_buffer->mapping_lock);
->  
-> -	if (cpu_buffer->mapped) {
-> +	if (cpu_buffer->user_mapped) {
->  		err = __rb_map_vma(cpu_buffer, vma);
->  		if (!err)
->  			err = __rb_inc_dec_mapped(cpu_buffer, true);
-> @@ -6359,12 +6363,15 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
->  	 */
->  	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
->  	rb_setup_ids_meta_page(cpu_buffer, subbuf_ids);
-> +
->  	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
->  
->  	err = __rb_map_vma(cpu_buffer, vma);
->  	if (!err) {
->  		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-> -		cpu_buffer->mapped = 1;
-> +		/* This is the first time it is mapped externally */
-> +		cpu_buffer->mapped++;
-> +		cpu_buffer->user_mapped = cpu_buffer->mapped;
->  		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
->  	} else {
->  		kfree(cpu_buffer->subbuf_ids);
-> @@ -6392,10 +6399,10 @@ int ring_buffer_unmap(struct trace_buffer *buffer, int cpu)
->  
->  	mutex_lock(&cpu_buffer->mapping_lock);
->  
-> -	if (!cpu_buffer->mapped) {
-> +	if (!cpu_buffer->user_mapped) {
->  		err = -ENODEV;
->  		goto out;
-> -	} else if (cpu_buffer->mapped > 1) {
-> +	} else if (cpu_buffer->mapped > cpu_buffer->user_mapped) {
->  		__rb_inc_dec_mapped(cpu_buffer, false);
->  		goto out;
->  	}
-> @@ -6403,7 +6410,10 @@ int ring_buffer_unmap(struct trace_buffer *buffer, int cpu)
->  	mutex_lock(&buffer->mutex);
->  	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
->  
-> -	cpu_buffer->mapped = 0;
-> +	/* This is the last user space mapping */
-> +	if (!WARN_ON_ONCE(cpu_buffer->mapped != cpu_buffer->user_mapped))
-> +		cpu_buffer->mapped--;
-> +	cpu_buffer->user_mapped = 0;
->  
->  	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
->  
-
+>  required:
+>    - compatible
+>    - reg
+> @@ -88,5 +96,6 @@ examples:
+>              label = "vdd_3v0";
+>              shunt-resistor = <1000>;
+>              vs-supply = <&vdd_3v0>;
+> +            ti,alert-polarity-active-high;
+>          };
+>      };
 
