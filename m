@@ -1,111 +1,92 @@
-Return-Path: <linux-kernel+bounces-211538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E2390535B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:11:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E12790535F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DAFC1C23491
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:11:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31F761C23108
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E3D17B42A;
-	Wed, 12 Jun 2024 13:11:38 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964651791F2
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC8A17A930;
+	Wed, 12 Jun 2024 13:12:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8683178398;
+	Wed, 12 Jun 2024 13:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718197897; cv=none; b=TGFRaAlQ2W3h1U6BT6K6grAAvxhHTfO1uyG/rnQnSzTUx8Ja4Hyu0gMN/PtIlmLO11BhBp0X9iO/gzFy/RTjI7kixIomkuoIgr7HsEK1W1OmrZ5Ija3mOP0ZwbF6Y3yTKIhV0QbOleSaenDkADmFcsaM9/RiHDbinhy33n3L9bY=
+	t=1718197924; cv=none; b=EZXmyD4NTA64ZWaThIUOYsTVTF/qQhZMT5ANKhQuEPgEseI2c+HnUkf2OVDfpC6E70zPBY8sTMbc7ifsxsZXoBB0JAsfW78LOPrQ2+FLz0+yVjJn+TScy06cPokIs3TvUJtc6f0xVNX+WYChtZn3X6sTXymAvaAsI6QbIrQk+es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718197897; c=relaxed/simple;
-	bh=czAqBHpoC4R18fkt9IcXsTUqM0PCW2MD+urROxhSelU=;
+	s=arc-20240116; t=1718197924; c=relaxed/simple;
+	bh=05E8YIXcYEKZbFBmH7OWTFPApHry0piYXwzmqZ+ohLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YV9Bk7wS/vrw2SEOUirwcSOYi2pWmtRSVh48McomIXgyWTkParOKO1DKp1IzEyQYS/FhC7XWlZgeTPHiu9YSiZ0snaKOPTYUbngAfek3k1LuyJZSReApXpZQlCRC/D9vHqiaTzrQA8uWawsON5a1d84bPJ/c6cqhj8G1WHH+uDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sHNlE-0000Qm-Qz; Wed, 12 Jun 2024 15:11:32 +0200
-Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sHNlD-001nKm-V2; Wed, 12 Jun 2024 15:11:31 +0200
-Received: from sha by dude02.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sHNlD-0084Du-2p;
-	Wed, 12 Jun 2024 15:11:31 +0200
-Date: Wed, 12 Jun 2024 15:11:31 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	briannorris@chromium.org, kvalo@kernel.org, francesco@dolcini.it,
-	tsung-hsien.hsieh@nxp.com,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v10 2/2] wifi: mwifiex: add host mlme for AP mode
-Message-ID: <Zmmeg15YQtiChZ70@pengutronix.de>
-References: <20240418060626.431202-1-yu-hao.lin@nxp.com>
- <20240418060626.431202-3-yu-hao.lin@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gJkh3vVxyJEtLKfIxlfLQKa9scajPKBgPpd9Me/ShAPomF7LMoJndtVdX0CRmyy/TQwZey9QMsbCjyUx8TJ0q9kC2kiJ8DUJ4glKPtf3WgfaOyZ8yg91nAZMRof3CxevWD8q0ZH0g3LC069dFah7E62Faza+9hYGX0XlIrawoII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C81971595;
+	Wed, 12 Jun 2024 06:12:25 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BEC0D3F64C;
+	Wed, 12 Jun 2024 06:11:59 -0700 (PDT)
+Date: Wed, 12 Jun 2024 14:11:57 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: arm,juno-fpga-apb-regs: document
+ FPGA syscon
+Message-ID: <ZmmenchJPyxrbIXi@bogus>
+References: <20240518203903.119608-1-krzysztof.kozlowski@linaro.org>
+ <171741897752.2195655.18414699008765504203.b4-ty@arm.com>
+ <47ddbc43-889a-4def-8e39-e4f166eae667@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240418060626.431202-3-yu-hao.lin@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <47ddbc43-889a-4def-8e39-e4f166eae667@linaro.org>
 
-Hi David,
+On Wed, Jun 12, 2024 at 11:13:32AM +0200, Krzysztof Kozlowski wrote:
+> On 03/06/2024 14:51, Sudeep Holla wrote:
+> > On Sat, 18 May 2024 22:39:02 +0200, Krzysztof Kozlowski wrote:
+> >> Add dedicated bindings for the FPGA syscon registers on ARM Juno board,
+> >> to fully document the block and also fix dtbs_check warning:
+> >>
+> >>   juno.dtb: apbregs@10000: compatible: ['syscon', 'simple-mfd'] is too short
+> >
+> > Applied to sudeep.holla/linux (for-next/vexpress/updates), thanks!
+> >
+> > [1/2] dt-bindings: arm: arm,juno-fpga-apb-regs: document FPGA syscon
+> >       https://git.kernel.org/sudeep.holla/c/3e295d8b4731
+> > [2/2] arm64: dts: juno: add dedicated FPGA syscon compatible
+> >       https://git.kernel.org/sudeep.holla/c/2e84e7ed7b02
+>
+> Thanks. It seems your tree is not in the linux-next or this branch is
+> not in next, because these patches are not available in next after a
+> week. Maybe you need to update the branches being fed to next (including
+> pending-fixes etc.).
+>
 
-On Thu, Apr 18, 2024 at 02:06:26PM +0800, David Lin wrote:
-> Add host based MLME to enable WPA3 functionalities in AP mode.
-> This feature required a firmware with the corresponding V2 Key API
-> support. The feature (WPA3) is currently enabled and verified only
-> on IW416. Also, verified no regression with change when host MLME
-> is disabled.
-> 
-> Signed-off-by: David Lin <yu-hao.lin@nxp.com>
-> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> ---
-> 
+Done now. It is just that I missed to push the updates to my for-linux-next.
+I got it ready when I responded to this thread and forgot to push. I didn't
+queue anything after that and completely lost track 😄.
 
-> diff --git a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> index 491e36611909..073c665183b3 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> @@ -72,6 +72,10 @@ int mwifiex_set_secure_params(struct mwifiex_private *priv,
->  				bss_config->key_mgmt = KEY_MGMT_PSK;
->  			}
->  			break;
-> +		case WLAN_AKM_SUITE_SAE:
-> +			bss_config->protocol = PROTOCOL_WPA2;
-> +			bss_config->key_mgmt = KEY_MGMT_SAE;
-> +			break;
-
-Shouldn't this be |= PROTOCOL_WPA2 and |= KEY_MGMT_SAE?
-Clearing the other flags when SAE is enabled looks wrong to me.
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--
+Regards,
+Sudeep
 
