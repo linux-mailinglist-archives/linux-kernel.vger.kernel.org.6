@@ -1,128 +1,173 @@
-Return-Path: <linux-kernel+bounces-211250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3ED3904F11
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:21:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57447904F19
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C5122811C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0473282D40
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DA716D9D8;
-	Wed, 12 Jun 2024 09:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D0416D9D9;
+	Wed, 12 Jun 2024 09:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oR9ID2QC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="la1s47sD"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0C016B72E;
-	Wed, 12 Jun 2024 09:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7343416D9B6;
+	Wed, 12 Jun 2024 09:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718184082; cv=none; b=upCour+BONAoD78oS7IVzfo22DpiAPv0Mse5iOpfI4I3lepD8IRKnsgJfuMWosN8oMJUnfe4X6XoElXTretahgRDOt/8kk7JTkNwkH9Y2/vGWZ2gEdcrWw6XODmzS8dKz3FtoVEryPN1767nJ+BzcMn6r6U5f0dTcx0YTPXA39g=
+	t=1718184132; cv=none; b=lBYrYX6n2Y7hWITbReQfSJuNYjjyO+HLD6eAZcMYZbrv3MzajkH22huVkiuLjLn2B2Dbsv8WxWyPauy0nPyXkqQ2oJCGV73NHiGUEU5vkzOkYC31pjXdEI+0nHsklxRMQLKn3Q66MbzBcIUAtNeXOZtdJX6uUvlSfgFhH9E3CHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718184082; c=relaxed/simple;
-	bh=EsJGTO6GTs/SJhhsrjmi78vqJQP8kwuegjOox6ZFSPQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GnWe0Gx49R3nBMJdrIOh8siIAv1XMuPNAWy4T7lX4F2cYX0iHJdPyzvaV9wQh9jUxXYgGwvPTG7I6ba4oL79jjwJoUK0ZSkIxUOA7kYLZut0lB997X0RqnlVKyQClTjc3aTYTbXc0LfDwc3iVqbWrhbqdwQeDv+e2cdt+I0hgxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oR9ID2QC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C8DqqC018413;
-	Wed, 12 Jun 2024 09:21:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xRrvXtowPvfK9lgsi7WMphP5
-	miUwkL2U7ntiBaCwewY=; b=oR9ID2QCdZIzQD3/QaEFhZ+8DABB/ZG7/gGgA+8e
-	CXr5TCSFGAvjYLCcq1RgcKVQhatCBr488V2aJ5ssGIEahH0snBcZnWWyzogFgY+6
-	rGZaHonvgvY75LYvohargShjrHu6Qq7idQWLvOAbl6b5CkwNMCBQhclWdKjAqUkC
-	w3DJTCcNGEKSSexDDBGAs7UgKWpO/WZO7OQefOswiOtHXcMJ+ejowgRZN9SgenFl
-	+6OxprqVVqzuO3BesqeKKuFP/I06FJ+QbKmzQse9BXIF396IAHQiP0af4ecAAVnR
-	OExWsLUsBjSHwHl31dlYUA6cNmg9aFSi8vDbaQEKocH6Qw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm6bb0up-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 09:21:17 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C9LGRf016236
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 09:21:16 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Jun 2024 02:21:13 -0700
-Date: Wed, 12 Jun 2024 14:51:09 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Komal Bajaj <quic_kbajaj@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] dt-bindings: cache: qcom,llcc: Fix QDU1000
- description
-Message-ID: <ZmlohTUi6Ppl4k6f@hu-mojha-hyd.qualcomm.com>
-References: <20240612062719.31724-1-quic_kbajaj@quicinc.com>
- <20240612062719.31724-3-quic_kbajaj@quicinc.com>
- <175bd8b0-83b8-45d0-99bd-1e9384fed3f7@kernel.org>
+	s=arc-20240116; t=1718184132; c=relaxed/simple;
+	bh=tjRBnL+U95mxLjYxw8lNZ4R6vRNCRqp5XMgG+Dw5UzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EPAuV1Fo30ABh29Wc/XPNHXEIvKNNmSAjF5CvjDYB8e8+rxnUlJli9sKX/bizjgtlxxIvSjOxh9CjCZ0tUwvhSUviTHq6qMEXLJD9VqUtUexxy5gXvYh/KfT/DBsS4ZbjlcGA1qsLpygDSmN74E+3s8umRRJwZ0jLL5gcayUOI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=la1s47sD; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C1221230;
+	Wed, 12 Jun 2024 11:21:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718184116;
+	bh=tjRBnL+U95mxLjYxw8lNZ4R6vRNCRqp5XMgG+Dw5UzQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=la1s47sD3gMnEGWTG8491o7cU9Rj6mfJGdKbN4MhUTwKPhlGQZ3X9qL65ZIIGZUYD
+	 QH+ESQPpMVLXq4LtBrq9Bh1BExJxME4EuiMnA9nnvfttxmYWM/OzkoKil5tE6gpNa5
+	 543V/OFWg1C2Bj6cn53nZTrPPdIEh7MfeRETUkYM=
+Date: Wed, 12 Jun 2024 12:21:48 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"hn.chen" <hn.chen@sunplusit.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v10 4/6] media: uvcvideo: Allow hw clock updates with
+ buffers not full
+Message-ID: <20240612092148.GG28989@pendragon.ideasonboard.com>
+References: <20240323-resend-hwtimestamp-v10-0-b08e590d97c7@chromium.org>
+ <20240323-resend-hwtimestamp-v10-4-b08e590d97c7@chromium.org>
+ <4kck7oedsnj6kfiv7ykwsjg35qodg5bdktu5t5w3xtg2xuscto@2yh6kfdqwimc>
+ <20240610114306.GR18479@pendragon.ideasonboard.com>
+ <CAAFQd5DAXq6fTrp6jF42URrwzwE+tGz_jJCRM2bhieD76u+QpA@mail.gmail.com>
+ <20240612074342.GA28989@pendragon.ideasonboard.com>
+ <CAAFQd5AS_h_ydkNnKU-y--Cd_SSoMyyQhj6tXeZ_oydoqzwFFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <175bd8b0-83b8-45d0-99bd-1e9384fed3f7@kernel.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -FPgc8fuaJdhcs7nza0EowJ3NumJrYYq
-X-Proofpoint-GUID: -FPgc8fuaJdhcs7nza0EowJ3NumJrYYq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_05,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- mlxlogscore=999 impostorscore=0 spamscore=0 priorityscore=1501
- lowpriorityscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406120067
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAFQd5AS_h_ydkNnKU-y--Cd_SSoMyyQhj6tXeZ_oydoqzwFFw@mail.gmail.com>
 
-On Wed, Jun 12, 2024 at 09:58:50AM +0200, Krzysztof Kozlowski wrote:
-> On 12/06/2024 08:27, Komal Bajaj wrote:
-> > QDU1000 DTSI comes with one LLCC0-7 base addresses. Updating
-> > dt-bindings accordingly.
-> > 
-> > Fixes: f0f99f371822 ("dt-bindings: cache: qcom,llcc: correct QDU1000 reg entries")
+On Wed, Jun 12, 2024 at 05:35:38PM +0900, Tomasz Figa wrote:
+> On Wed, Jun 12, 2024 at 4:44 PM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> >
+> > On Wed, Jun 12, 2024 at 12:28:56PM +0900, Tomasz Figa wrote:
+> > > On Mon, Jun 10, 2024 at 8:43 PM Laurent Pinchart wrote:
+> > > > On Wed, May 29, 2024 at 05:03:08PM +0900, Tomasz Figa wrote:
+> > > > > On Sat, Mar 23, 2024 at 10:48:05AM +0000, Ricardo Ribalda wrote:
+> > > > > > With UVC 1.5 we get as little as one clock sample per frame. Which means
+> > > > > > that it takes 32 frames to move from the software timestamp to the
+> > > > > > hardware timestamp method.
+> > > > > >
+> > > > > > This results in abrupt changes in the timestamping after 32 frames (~1
+> > > > > > second), resulting in noticeable artifacts when used for encoding.
+> > > > > >
+> > > > > > With this patch we modify the update algorithm to work with whatever
+> > > > > > amount of values are available.
+> > > > > >
+> > > > > > Tested-by: HungNien Chen <hn.chen@sunplusit.com>
+> > > > > > Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> > > > > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > > > ---
+> > > > > >  drivers/media/usb/uvc/uvc_video.c | 16 ++++++++++++++--
+> > > > > >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> > > > > > index d6ca383f643e3..af25b9f1b53fe 100644
+> > > > > > --- a/drivers/media/usb/uvc/uvc_video.c
+> > > > > > +++ b/drivers/media/usb/uvc/uvc_video.c
+> > > > > > @@ -768,10 +768,10 @@ void uvc_video_clock_update(struct uvc_streaming *stream,
+> > > > > >
+> > > > > >     spin_lock_irqsave(&clock->lock, flags);
+> > > > > >
+> > > > > > -   if (clock->count < clock->size)
+> > > > > > +   if (clock->count < 2)
+> > > > > >             goto done;
+> > > > > >
+> > > > > > -   first = &clock->samples[clock->head];
+> > > > > > +   first = &clock->samples[(clock->head - clock->count + clock->size) % clock->size];
+> > > > > >     last = &clock->samples[(clock->head - 1 + clock->size) % clock->size];
+> > > > > >
+> > > > > >     /* First step, PTS to SOF conversion. */
+> > > > > > @@ -786,6 +786,18 @@ void uvc_video_clock_update(struct uvc_streaming *stream,
+> > > > > >     if (y2 < y1)
+> > > > > >             y2 += 2048 << 16;
+> > > > > >
+> > > > > > +   /*
+> > > > > > +    * Have at least 1/4 of a second of timestamps before we
+> > > > > > +    * try to do any calculation. Otherwise we do not have enough
+> > > > > > +    * precision. This value was determined by running Android CTS
+> > > > > > +    * on different devices.
+> > > > > > +    *
+> > > > > > +    * dev_sof runs at 1KHz, and we have a fixed point precision of
+> > > > > > +    * 16 bits.
+> > > > > > +    */
+> > > > > > +   if ((y2 - y1) < ((1000 / 4) << 16))
+> > > > > > +           goto done;
+> > > > >
+> > > > > Not a comment for this patch directly, but...
+> > > > >
+> > > > > This kind of makes me wonder if we don't want to have some documentation
+> > > > > that specifies what the userspace can expect from the timestamps, so
+> > > > > that this isn't changed randomly in the future breaking what was fixed
+> > > > > by this patch.
+> > > >
+> > > > I think timestamp handling should really be moved to userspace. It will
+> > > > be easier to handle with floating-point arithmetic there. That would
+> > > > have been difficult to manage for applications a while ago, but now that
+> > > > we have libcamera, we could implement it there. This isn't high on my
+> > > > todo list though.
+> > >
+> > > While indeed that would probably be a better way to handle the complex
+> > > logic if we designed the driver today, we already have userspace that
+> > > expects the timestamps to be handled correctly in the kernel. I
+> > > suspect moving it to the userspace would require some core V4L2
+> > > changes to define a new timestamp handling mode, where multiple raw
+> > > hardware timestamps are exposed to the userspace, instead of the high
+> > > level system monotonic one.
+> >
+> > The uvcvideo driver already supports exposing the packet headers to
+> > userspace through a metadata capture device, so I think we have all the
+> > components we need. The only missing thing would be the implementation
+> > in libcamera :-)
 > 
-> You are basically reverting without saying this is a revert and without
-> explanation.
+> Okay, I see. That would make it easier indeed. :)
 > 
-> What's happening with QDU1000? Why it is such a mess that DTS was
-> totally not matching bindings drivers and now suddenly we need to revert
-> commits?
+> That said, we still need to provide some valid timestamps in the
+> v4l2_buffer struct returned from DQBUF, as per the current API
+> contract, so we can't simply remove the timestamp handling code from
+> the kernel completely.
 
-I think, this happened because of the refactoring happened in LLCC driver
-and at the same time QDU1000 device tree change picked while other SoCs
-change was made like 
+We could pass the system timestamp, the same way the driver used to
+before getting clock recovery support. That being said, I'm not calling
+for this code to be dropped overnight, it can stay there.
 
-e.g
-https://lore.kernel.org/r/20230314080443.64635-11-manivannan.sadhasivam@linaro.org
-https://lore.kernel.org/r/20230517-topic-kailua-llcc-v1-2-d57bd860c43e@linaro.org
+-- 
+Regards,
 
-
-However, this change missed for QDU1000, later f0f99f371822 ("dt-bindings: cache: qcom,llcc: correct QDU1000 reg entries")
-happened and now realized the driver does not work anymore with current
-binding and hence fixing was required.
-
--Mukesh
+Laurent Pinchart
 
