@@ -1,186 +1,227 @@
-Return-Path: <linux-kernel+bounces-212327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA392905E86
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:29:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF9F4905E8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 460CA2817AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:29:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7336A281B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58230129E94;
-	Wed, 12 Jun 2024 22:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED2C12C498;
+	Wed, 12 Jun 2024 22:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gfkHK+Ch"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yl7ZBO3F"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E52484D11
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C88D2CCB4;
+	Wed, 12 Jun 2024 22:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718231329; cv=none; b=jM34jtIIylp0jlj/KB1M9bVF9VlDjU/w9c1TBZYYvhAtFYTFzGqWW5Ic+FL5O0Jssd6zNZyafdnIKvH8DIsls7kFQwGlk2TexWztqz6K1XwF/iB8Lsb2Bfpj34Yx2ViD5Y1XINdbMAliFJZNJ2JD0DcYMl4hENKDbV9kodxGk5c=
+	t=1718231464; cv=none; b=Oc0p1+wGoy0MRpsudwfRUBH+KNvaZdtnCYvurnP4Xw2V2ArDCSnwLaw2a/BsHF69sACimRRgySFE5OvjMopgvE60LHbf0U7EXbGmRPYuTfPeI0L8QoeK5e0Zrb1lBW2LuJ9CBFnLlk08a0YRikuHEgPmezbmOHKpwNr5C29kgJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718231329; c=relaxed/simple;
-	bh=0YYBkjwBMNK9jlWYzSWYFWWhvwfI5jrnzT5YzQooxbQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GxAZqRUB06NbjDrZhJpuMGxLkk7CT/z1VlSeXh6/R6nUPVDJVXgCSRyZEnX6qSIPpo/KsRKx6/5HdWl13oTLWJYI9WimSxdKUVz7AJeN0ER6/QBERv4weT2DHb3pLf2yewQ9/yImkmwWMGMdO/KqqC7fByaaCYE9sE3PGZO1J1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gfkHK+Ch; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c2dee9d9a1so240504a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:28:47 -0700 (PDT)
+	s=arc-20240116; t=1718231464; c=relaxed/simple;
+	bh=jnIZy7v6gRkoBg8xknS0zEjcBUhw4V/Kkf/pzr9ZLKk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S9mxJj8xywFa63PbgzZIpzMe91aMe0A74eAmkO55M8agceNmz5zZPQcJ67IlCLHTgyHXgd4PNlf/fmhiny6taJ7A6Ah+HRM6UIpXjDLraBm+fRBSF56Z3KJtsZFnp4LW4idRXIbRW7/GlFSkUVY4ie8n3j2a9mk4Rrj+VaxWnrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yl7ZBO3F; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b0745efaeeso1762376d6.1;
+        Wed, 12 Jun 2024 15:31:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718231327; x=1718836127; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GlLfBbnX9FblBpW76gVStblANR7z9T1g0t5a6w4/nbU=;
-        b=gfkHK+ChkSFh+w/NVzSJJsuTIMrRcp/tKjaMKQciHGSPZTSKHm9kkkN4oS8mUlftDU
-         rHFBs54t4sO4htN/cEEBqRYs9aJijgUnE8Z3yU3ik9zEoJa7v7IQUy/DTgBXDDTiKZa7
-         pbZ/Ej/owDBNt2fYjo1tCKY/LErTho2b0e1lA=
+        d=gmail.com; s=20230601; t=1718231461; x=1718836261; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=HaKXS0ZZbil+kikiY7Uq0U6QIK8rKqbj9kgNRJOfwg0=;
+        b=Yl7ZBO3FsoaBbzlSK/kCw40FIVRb6hIvjlbeUtQ6+NcXwSh+7dEFSIKg19YVebG3lE
+         dgoLvT7aMVdr21IKp2gnvvLtBzO0lD7UqoBMfzXLfF8v8QnWG79SuN+K8bBC5OnLZpD7
+         AAwmpxOGw+8rCgTwBgrz4AAEYv6evZeEH58Uf72fAch7nq8mTuYlLamgRkA02SFZsZuY
+         aojcODXalMqXBUq/bEJoenyPweMCoYDynwejo8qnJ97qS6XmQiKIu8OJaL72nqjUadlE
+         NJZF7hB/nvn9g3ClIVW++YI+ZClyFtiBWCAm+nWI6G0/zIG9/qn/5sKhP8VpY2TyV3/4
+         htlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718231327; x=1718836127;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GlLfBbnX9FblBpW76gVStblANR7z9T1g0t5a6w4/nbU=;
-        b=YIRunZ8H4lN8uiEFuYqYv6U2TO9O69w+RoINfpxl41DH8rMDEUunOlHJgWFkZdivGN
-         v58yjqgvcUl36vI1x8shUZP5GeagiJMzeBZvWF4waKagalmyA36PNCxOxgN8/JIWA1Gl
-         1V6Me0s4ApPZU1GWp1evNGSO3aPqhKeAtii2ZsONiIH2klSYPhP32u373gSp0ewRpAfr
-         5zQsn8BqaDQSGoNKL3lNFVLItiV8bMI+fhkFUsr4QsIhEdXMKKXttPcj8j0+BY3TVHzA
-         HEj/C1b8YXrPfGt5cp3HiM3QkqZeGqVItnIDpv+MBK6lEuNFvIWjvalKk3QKlj3hmwwD
-         nnlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBFCyjhiYozwDauL/bbAtY2XV88hjaZRMjObUEbwB1FCE845hjWoXDrcIc2TdfM0Pp0epFd4umpT26XHgCnUqvBkPXFpStT6Ig6ZVa
-X-Gm-Message-State: AOJu0Yz56SvtgctOsWND4MFi6W1BNrtTZDNtHtJwgymKDctqixC5Icwg
-	TsGICcFFj6bgpoM2ol9FecGjougicn47fBe9g0AWQBJpFx92SCLfnsAD6NGwTw==
-X-Google-Smtp-Source: AGHT+IHPZkmR/uiNsfI6yDfoiz6DjupPzvyE09FKeunOtYBdIdMpSm5jxkYUgJB/lptf93zhOTJSfQ==
-X-Received: by 2002:a17:90b:4ad2:b0:2c4:ab32:b723 with SMTP id 98e67ed59e1d1-2c4ab32b8c3mr2926957a91.29.1718231327185;
-        Wed, 12 Jun 2024 15:28:47 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:2816:6a42:9074:18cc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6f336d172sm87788575ad.247.2024.06.12.15.28.43
+        d=1e100.net; s=20230601; t=1718231461; x=1718836261;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HaKXS0ZZbil+kikiY7Uq0U6QIK8rKqbj9kgNRJOfwg0=;
+        b=wy4jVgNQcEuSFa0QwLJrtf/NAQq3mXUUm/0XOhbXO6AcKFMAsR9a1+NNxmLl7Q9aUc
+         UftpwYp4CbjZacuBLMpB17TzikjhwaAmI4sWGbOsEwLSTbaljYuFUNu1q02+XO5IdWQu
+         hHz/VmBR+MpUdp1eaKn/WJBeaFMi/48NV6dE1KNGji+tK++xc15022B3VIvoz6BiumF7
+         jtk1LKpcMQ+anNWZnIo9baXUoWv4e7PLba9FvWrP8n+lnGn69o5QOjlyk+sGr4g1Jpc6
+         YSWV1IhfS//jxCSiOoevy2O0V7fp0k7jSQVnqJ7nb/hp8vmAMVvfL/bQNilMni3To67J
+         Zasg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhYWVmtd4vW1ezGvtK7Y7ctoCSzkxQKG66eFjUIahFINIQA0t1y98hRQmOS6c9Bj9VvRcINz69x8UH7po9Mek6ADUDmiApsNfCLBfQjqLrJ6Mfn6SieL1UbbhGJDxJmqR+VIyFY6BlfnvJlBlVqzE1TMhDskdyyf8ToKWYRGmYWXoGXqygBY0=
+X-Gm-Message-State: AOJu0YzirqeRUZX2i7Xo5ufmDzXtUJVBuBL/1c/xCg2hSWT315+ec9v1
+	l0sgmW3w48Dl9gXrVcbh8NVN43iZlGrG+H7/Wx9edw+QescToTLa
+X-Google-Smtp-Source: AGHT+IE24GnzXvXHctahz7LCplx76fc3qiNipMvkxpU+kgWUnnS/78AStzuLW5X4k22oyxY3TY7sSg==
+X-Received: by 2002:a05:6214:3a81:b0:6b0:7a61:c69a with SMTP id 6a1803df08f44-6b1b5c07c5dmr41069396d6.53.1718231461421;
+        Wed, 12 Jun 2024 15:31:01 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5bf2321sm482416d6.6.2024.06.12.15.31.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 15:28:46 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: dri-devel@lists.freedesktop.org,
-	Maxime Ripard <mripard@kernel.org>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Aurabindo Pillai <aurabindo.pillai@amd.com>,
-	Candice Li <candice.li@amd.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Hamza Mahfooz <hamza.mahfooz@amd.com>,
-	Hawking Zhang <Hawking.Zhang@amd.com>,
-	Le Ma <le.ma@amd.com>,
-	Lijo Lazar <lijo.lazar@amd.com>,
-	Ma Jun <Jun.Ma2@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Shashank Sharma <shashank.sharma@amd.com>,
-	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Victor Lu <victorchengchi.lu@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	chenxuebing <chenxb_99091@126.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] drm/amdgpu: Call drm_atomic_helper_shutdown() at shutdown time
-Date: Wed, 12 Jun 2024 15:28:04 -0700
-Message-ID: <20240612152752.v2.8.I27914059cc822b52db9bf72b4013b525b60e06fd@changeid>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-In-Reply-To: <20240612222435.3188234-1-dianders@chromium.org>
-References: <20240612222435.3188234-1-dianders@chromium.org>
+        Wed, 12 Jun 2024 15:31:00 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id C53A11200068;
+	Wed, 12 Jun 2024 18:30:59 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Wed, 12 Jun 2024 18:30:59 -0400
+X-ME-Sender: <xms:oyFqZiQ-WvmBIvD0sqlLQ-lCnX5rKwuTMCezlDN_9AZRb37MfaWDAg>
+    <xme:oyFqZnzpZgjrA7KE1MyLYUmJ1Jasf838cGNRKYBR9cmN-h06r_Mm-7wCTJuUGNvQc
+    IMvl745UYclYNnkKw>
+X-ME-Received: <xmr:oyFqZv0pR8czYrFZBfwaMrhVaEqTrYZVrO9_z--9aWvZMiUzf4Wz98__H1Fr9g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduhedgudduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeejtdffueetfeetgfelvdetueeltefgieeiuedttdehuddtleeiheekfeeghfdv
+    veenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhm
+    vghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekhe
+    ehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghm
+    vg
+X-ME-Proxy: <xmx:oyFqZuCaJSmS98VfGA9zj4mLRpiD3i2pZpHBIt5wTZ-V36xK3e8jlA>
+    <xmx:oyFqZrj165BCm8jCn54D3GXblgeQirQz_th-secKNAdOJxOikWdt1Q>
+    <xmx:oyFqZqqLwUmFLJ8aBEPTTYMt-szbs8GMM4Ijnul9ZAv6NhPqd4_7jg>
+    <xmx:oyFqZujEOOoAmrN3ioIqfRL96eY3-oRwa5UK4xUgOcgTFNQhaF-aUQ>
+    <xmx:oyFqZqQTpXnFfijf9j2bwNis1Cv9YzF90IF3jt93gVKYbNv_DRLnXnDD>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Jun 2024 18:30:58 -0400 (EDT)
+From: Boqun Feng <boqun.feng@gmail.com>
+To: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev
+Cc: Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,	elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+	linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
+	Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com
+Subject: [RFC 0/2] Initial LKMM atomics support in Rust
+Date: Wed, 12 Jun 2024 15:30:23 -0700
+Message-ID: <20240612223025.1158537-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Based on grepping through the source code this driver appears to be
-missing a call to drm_atomic_helper_shutdown() at system shutdown
-time. Among other things, this means that if a panel is in use that it
-won't be cleanly powered off at system shutdown time.
+Hi,
 
-The fact that we should call drm_atomic_helper_shutdown() in the case
-of OS shutdown/restart comes straight out of the kernel doc "driver
-instance overview" in drm_drv.c.
+This is a follow-up of [1]. Thanks for all the inputs from that thread.
+I use Mark's outline atomic scripts, but make them specific for atomics
+in Rust. The reason is that I want to use Gary's work [2], and inline
+atomics if possible in Rust code. My local test can confirm it works:
 
-Suggested-by: Maxime Ripard <mripard@kernel.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: Christian König <christian.koenig@amd.com>
-Cc: Xinhui Pan <Xinhui.Pan@amd.com>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-This commit is only compile-time tested.
+With RUST_LTO_HELPERS=n
 
-...and further, I'd say that this patch is more of a plea for help
-than a patch I think is actually right. I'm _fairly_ certain that
-drm/amdgpu needs this call at shutdown time but the logic is a bit
-hard for me to follow. I'd appreciate if anyone who actually knows
-what this should look like could illuminate me, or perhaps even just
-post a patch themselves!
+  224edc:       52800180        mov     w0, #0xc                        // #12
+  224ee0:       94000000        bl      219640 <rust_helper_atomic_fetch_add_relaxed>
 
-(no changes since v1)
+With RUST_LTO_HELPERS=y
 
- drivers/gpu/drm/amd/amdgpu/amdgpu.h        |  1 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 10 ++++++++++
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    |  2 ++
- 3 files changed, 13 insertions(+)
+  222fd4:       52800189        mov     w9, #0xc                        // #12
+  222fd8:       b8290108        ldadd   w9, w8, [x8]
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-index f87d53e183c3..c202a1d5ff5f 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-@@ -1197,6 +1197,7 @@ static inline struct amdgpu_device *amdgpu_ttm_adev(struct ttm_device *bdev)
- int amdgpu_device_init(struct amdgpu_device *adev,
- 		       uint32_t flags);
- void amdgpu_device_fini_hw(struct amdgpu_device *adev);
-+void amdgpu_device_shutdown_hw(struct amdgpu_device *adev);
- void amdgpu_device_fini_sw(struct amdgpu_device *adev);
- 
- int amdgpu_gpu_wait_for_idle(struct amdgpu_device *adev);
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index 861ccff78af9..a8c4b8412e04 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -4531,6 +4531,16 @@ void amdgpu_device_fini_hw(struct amdgpu_device *adev)
- 
- }
- 
-+void amdgpu_device_shutdown_hw(struct amdgpu_device *adev)
-+{
-+	if (adev->mode_info.mode_config_initialized) {
-+		if (!drm_drv_uses_atomic_modeset(adev_to_drm(adev)))
-+			drm_helper_force_disable_all(adev_to_drm(adev));
-+		else
-+			drm_atomic_helper_shutdown(adev_to_drm(adev));
-+	}
-+}
-+
- void amdgpu_device_fini_sw(struct amdgpu_device *adev)
+
+Only AtomicI32 (atomic_t) and AtomicI64 (atomic64_t) are added, and for
+AtomicPtr (atomic pointers) I plan to implement with compile-time
+selection on either of these two.
+
+You can find a branch contains this series and Gray's patchset at:
+
+	https://github.com/fbq/linux.git dev/rust/atomic-rfc
+
+
+For testing, I randomly picked up some function and inspected the
+generated code, plus Rust code can use the function document as tests,
+so I added two tests there. Ideally we should have something similar to
+lib/atomic64_test.c, but I want to get some feedback on the
+implementation part first, plus it's just using C functions, so as long
+as C code passes the tests, it should be fine (famous last words).
+
+ARM64 maintainers, I use the following to simulate cases where LSE is
+configured but not available from hardware:
+
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 48e7029f1054..99e6e2b2867f 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1601,6 +1601,8 @@ static bool
+ has_cpuid_feature(const struct arm64_cpu_capabilities *entry, int scope)
  {
- 	int idx;
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index ea14f1c8f430..b34bf9259d5c 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -2409,6 +2409,8 @@ amdgpu_pci_shutdown(struct pci_dev *pdev)
- 	struct drm_device *dev = pci_get_drvdata(pdev);
- 	struct amdgpu_device *adev = drm_to_adev(dev);
- 
-+	amdgpu_device_shutdown_hw(adev);
-+
- 	if (amdgpu_ras_intr_triggered())
- 		return;
- 
+        u64 val = read_scoped_sysreg(entry, scope);
++       if (entry->capability == ARM64_HAS_LSE_ATOMICS)
++               return false;
+        return feature_matches(val, entry);
+ }
+
+and my tests in a qemu emulated VM passed for both RUST_LTO_HELPERS=n
+and =y cases. Let me know what I can also do to test this.
+
+
+Notes for people who are working on Rust code and need atomics, my
+target of this set of APIs is 6.11 or 6.12 (will work hard on it, but no
+guarantee ;-)). If you are currently using Rust own atomics, it's OK, we
+can always clean up quickly after this merged.
+
+Regards,
+Boqun
+
+[1]: https://lore.kernel.org/rust-for-linux/20240322233838.868874-1-boqun.feng@gmail.com/
+[2]: https://lore.kernel.org/rust-for-linux/20240529202817.3641974-1-gary@garyguo.net/
+
+Boqun Feng (2):
+  rust: Introduce atomic API helpers
+  rust: sync: Add atomic support
+
+ MAINTAINERS                               |    4 +-
+ arch/arm64/kernel/cpufeature.c            |    2 +
+ rust/atomic_helpers.h                     | 1035 ++++++++++++++++
+ rust/helpers.c                            |    2 +
+ rust/kernel/sync.rs                       |    1 +
+ rust/kernel/sync/atomic.rs                |   63 +
+ rust/kernel/sync/atomic/impl.rs           | 1375 +++++++++++++++++++++
+ scripts/atomic/gen-atomics.sh             |    2 +
+ scripts/atomic/gen-rust-atomic-helpers.sh |   64 +
+ scripts/atomic/gen-rust-atomic.sh         |  136 ++
+ 10 files changed, 2683 insertions(+), 1 deletion(-)
+ create mode 100644 rust/atomic_helpers.h
+ create mode 100644 rust/kernel/sync/atomic.rs
+ create mode 100644 rust/kernel/sync/atomic/impl.rs
+ create mode 100755 scripts/atomic/gen-rust-atomic-helpers.sh
+ create mode 100755 scripts/atomic/gen-rust-atomic.sh
+
 -- 
-2.45.2.505.gda0bf45e8d-goog
+2.45.2
 
 
