@@ -1,274 +1,137 @@
-Return-Path: <linux-kernel+bounces-211610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A8090545F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:56:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6981905451
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8B0CB22E95
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:56:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA7161C20E55
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 13:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF9317D377;
-	Wed, 12 Jun 2024 13:53:24 +0000 (UTC)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B3517F4EB;
+	Wed, 12 Jun 2024 13:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvKnVWA6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19A71802B8;
-	Wed, 12 Jun 2024 13:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B7C17F386;
+	Wed, 12 Jun 2024 13:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718200403; cv=none; b=hu0DSFnAI5iStNkA2t6f5zP1xqrkF4k1Z+lhxqDYDv24nCi7FR5S/+mKzbqlhsZLn0AAJlP9g63EkpyqFQXsHWix2gDCDcpiYQc2zTKH0fS9mfBqdONcFoHWPt7ogMiwClDFwtAfHdJlHQmeMHvlBZwEQFhaG11CXsx639WtXwQ=
+	t=1718200393; cv=none; b=Dd+6ZCK/ng7/RLzLdaAtqzvnvdxSmYCgXBUtIC/+0j2yRS5qWZdCOIUpGCd0AW67mCVxK4Aj9L9n5FmJoUjRR2N3krOhxBRjA5puPvy98ATl7dq1F9RZpCJ6+h7u0bVxZn83RVCc1pcCFw91MpuRuorDsmp8ysuJex52VSiVLUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718200403; c=relaxed/simple;
-	bh=Lhzd/BXorU4/wEhxcXs0r7FJ4VlqgdRpbDmk+vD47pk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AOezjPaBLLruwlUS4QYPG5r8MJdipAEowjzkwbAegV323unJb3015N5pu4C2hyp5pJ2TpfJNqdPBttmXP8C0UApCQLgJFwbCV/qYHFrhyZp+99lUGSZYC2+QkurxqrU1BwL1CLXJ9e2w7E3dxBEpctV8XZzvTzy9BTCtu43xcG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-421a1b834acso28986495e9.3;
-        Wed, 12 Jun 2024 06:53:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718200400; x=1718805200;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VEuYpCh3XjM5GPcfydkJgiyDWJJzYzsPQgvZ1sCjljI=;
-        b=UNC1W2zD8jGnZLPhl2Uysf5jt1N2eLgHeZbPUmeFZJ08yphuZaWn6aQgQ4TwmAtmgw
-         jPZ+OsnfcVZPn2Uqy4mJ14m2evRGRSd68tAuOSOUbKW6MVeRaWesvjC8PZwFhmCzJhnd
-         VRTl5k4d40T23q3211TqOYiRqb8dYi+qVdNxpeeuUVWkIe3N7sVgFmzwgDxYHzTj7EmH
-         nX3CxMWzN+TUtllD0lSR475GazOtuk16ZvRX6F6GYKVDBCN4RqYAUc1IBIIt5seJa8M6
-         Qf6nHK9eZuXprQDf6B3CCOQLseWNm3/gGKOW1s8bjcHBtt9H2nwzwINNvmJfvLzemv81
-         b7nA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmY6aBNZhgW3MAeio4+hlC29QLgpa2BqLUi5us258In1jGP18su396MNRJf0CQ9kCg+ddANgldkQyRo23A8xW7RuodwiNRysxgy/0McfoiRuBgmAkHTGGAHDFcChPXWW3cJ57q/1gUUw2ls3xjhLExGQSHqcfOPql8HNYin9VhkilP0ZAZ
-X-Gm-Message-State: AOJu0YxEIg6ww3V+RWrIAVKt4Led4V87OZzpoRNo8rfBqzwlQ2nFy4d7
-	Kd8YO5++LE2knOpDf05VJVUyM49v66FD8Vi6UUxWHbqylk/4ejgx
-X-Google-Smtp-Source: AGHT+IHXyaNzrcBPeDigrcv5sVOrfalp6CstFjfzQPxgWGQHwRBknXSb0FuvFQr5BVQNXu8vkORxVQ==
-X-Received: by 2002:a05:600c:4f49:b0:422:1def:e17f with SMTP id 5b1f17b1804b1-422866bc707mr16912265e9.31.1718200400311;
-        Wed, 12 Jun 2024 06:53:20 -0700 (PDT)
-Received: from ramallet.home (cst-prg-45-36.cust.vodafone.cz. [46.135.45.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422871ec9e6sm28201695e9.38.2024.06.12.06.53.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 06:53:19 -0700 (PDT)
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Wed, 12 Jun 2024 15:53:02 +0200
-Subject: [PATCH 9/9] accel/rocket: Add IOCTLs for synchronizing memory
- accesses
+	s=arc-20240116; t=1718200393; c=relaxed/simple;
+	bh=9ZhMiQb8F+YQkrSmW/uvqq+sOj8IhPHHedOkJlMaFF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S495T8X2nM/VLsUsOARHVIyzKT7Wj45+vN0xYrrmqr4ncIHF+I03RMeSAHOHccBNX/YBMo667UmD23eV//CJj4rqCszCGQrsiTOLfQcjii4SyNPoriTllxRQKpz3eKIWoQOw3tXZACtkYQ/pbNa6G5YmvAL1hSSvgA00jtL183M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvKnVWA6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27E7AC4AF4D;
+	Wed, 12 Jun 2024 13:53:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718200393;
+	bh=9ZhMiQb8F+YQkrSmW/uvqq+sOj8IhPHHedOkJlMaFF4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fvKnVWA67l2XCec23FfIZmoq1TS+spuTVbQympdCm7UMttUJCZLZZLe64EqSf6FXI
+	 8SCU86o5e5aoAixswN3wUaJ9u6l7ri5xkVbcLVW9bKm/5jiyPilSe5xkPiYXKmwTis
+	 NtSzPwrdd/y9XD64ii4OrGOevxIt0b3ekkUY846QVMYQnINaBz9qk+4D3+o9V5Ql2q
+	 IFHVXcjOrFJi/a6jiLCUYoxUEV5tPmGfvBAInTaRGLW8plyEHBDjz2GPCXSQ06H6TE
+	 t7Lgu1AcIMYvUQUtQseFJiMcExfYzQi8SHvi6GCrBOQaWL5mV533wS4UAq6Eh618B6
+	 4jbj+ACrX4XAg==
+Date: Wed, 12 Jun 2024 15:53:08 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, James Clark <james.clark@arm.com>, ltp@lists.linux.it, 
+	linux-nfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+Message-ID: <20240612-nennung-ungnade-ae9bdc5f8c4c@brauner>
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240612-6-10-rocket-v1-9-060e48eea250@tomeuvizoso.net>
-References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
-In-Reply-To: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
- Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
- Tomeu Vizoso <tomeu@tomeuvizoso.net>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <171817619547.14261.975798725161704336@noble.neil.brown.name>
 
-The NPU cores have their own access to the memory bus, and this isn't
-cache coherent with the CPUs.
+On Wed, Jun 12, 2024 at 05:09:55PM +1000, NeilBrown wrote:
+> 
+> When a file is opened and created with open(..., O_CREAT) we get
+> both the CREATE and OPEN fsnotify events and would expect them in that
+> order.   For most filesystems we get them in that order because
+> open_last_lookups() calls fsnofify_create() and then do_open() (from
+> path_openat()) calls vfs_open()->do_dentry_open() which calls
+> fsnotify_open().
+> 
+> However when ->atomic_open is used, the
+>    do_dentry_open() -> fsnotify_open()
+> call happens from finish_open() which is called from the ->atomic_open
+> handler in lookup_open() which is called *before* open_last_lookups()
+> calls fsnotify_create.  So we get the "open" notification before
+> "create" - which is backwards.  ltp testcase inotify02 tests this and
+> reports the inconsistency.
+> 
+> This patch lifts the fsnotify_open() call out of do_dentry_open() and
+> places it higher up the call stack.  There are three callers of
+> do_dentry_open().
+> 
+> For vfs_open() and kernel_file_open() the fsnotify_open() is placed
+> directly in that caller so there should be no behavioural change.
+> 
+> For finish_open() there are two cases:
+>  - finish_open is used in ->atomic_open handlers.  For these we add a
+>    call to fsnotify_open() at the top of do_open() if FMODE_OPENED is
+>    set - which means do_dentry_open() has been called.
+>  - finish_open is used in ->tmpfile() handlers.  For these a similar
+>    call to fsnotify_open() is added to vfs_tmpfile()
+> 
+> With this patch NFSv3 is restored to its previous behaviour (before
+> ->atomic_open support was added) of generating CREATE notifications
+> before OPEN, and NFSv4 now has that same correct ordering that is has
+> not had before.  I haven't tested other filesystems.
+> 
+> Fixes: 7c6c5249f061 ("NFS: add atomic_open for NFSv3 to handle O_TRUNC correctly.")
+> Reported-by: James Clark <james.clark@arm.com>
+> Closes: https://lore.kernel.org/all/01c3bf2e-eb1f-4b7f-a54f-d2a05dd3d8c8@arm.com
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> ---
 
-Add IOCTLs so userspace can mark when the caches need to be flushed, and
-also when a writer job needs to be waited for before the buffer can be
-accessed from the CPU.
+We should take this is a bugfix because it doesn't change behavior.
 
-Initially based on the same IOCTLs from the Etnaviv driver.
+But then we should follow this up with a patch series that tries to
+rectify the open/close imbalance because I find that pretty ugly. That's
+at least my opinion.
 
-Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
----
- drivers/accel/rocket/rocket_drv.c |  2 ++
- drivers/accel/rocket/rocket_gem.c | 68 +++++++++++++++++++++++++++++++++++++++
- drivers/accel/rocket/rocket_gem.h |  7 +++-
- include/uapi/drm/rocket_accel.h   | 20 +++++++++++-
- 4 files changed, 95 insertions(+), 2 deletions(-)
+We should aim to only generate an open event when may_open() succeeds
+and don't generate a close event when the open has failed. Maybe:
 
-diff --git a/drivers/accel/rocket/rocket_drv.c b/drivers/accel/rocket/rocket_drv.c
-index adcb9a685dd8..d41a4f4b330d 100644
---- a/drivers/accel/rocket/rocket_drv.c
-+++ b/drivers/accel/rocket/rocket_drv.c
-@@ -73,6 +73,8 @@ static const struct drm_ioctl_desc rocket_drm_driver_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(ROCKET_##n, rocket_ioctl_##func, 0)
- 
- 	ROCKET_IOCTL(CREATE_BO, create_bo),
-+	ROCKET_IOCTL(PREP_BO, prep_bo),
-+	ROCKET_IOCTL(FINI_BO, fini_bo),
- 	ROCKET_IOCTL(SUBMIT, submit),
- };
- 
-diff --git a/drivers/accel/rocket/rocket_gem.c b/drivers/accel/rocket/rocket_gem.c
-index e10eb886f150..afacdf91491e 100644
---- a/drivers/accel/rocket/rocket_gem.c
-+++ b/drivers/accel/rocket/rocket_gem.c
-@@ -2,7 +2,9 @@
- /* Copyright 2024 Tomeu Vizoso <tomeu@tomeuvizoso.net> */
- 
- #include <drm/drm_device.h>
-+#include <drm/drm_utils.h>
- #include <drm/rocket_accel.h>
-+#include <linux/dma-mapping.h>
- 
- #include "rocket_gem.h"
- 
-@@ -66,3 +68,69 @@ int rocket_ioctl_create_bo(struct drm_device *dev, void *data, struct drm_file *
- 
- 	return ret;
- }
-+
-+static inline enum dma_data_direction rocket_op_to_dma_dir(u32 op)
-+{
-+	if (op & ROCKET_PREP_READ)
-+		return DMA_FROM_DEVICE;
-+	else if (op & ROCKET_PREP_WRITE)
-+		return DMA_TO_DEVICE;
-+	else
-+		return DMA_BIDIRECTIONAL;
-+}
-+
-+int rocket_ioctl_prep_bo(struct drm_device *dev, void *data, struct drm_file *file)
-+{
-+	struct drm_rocket_prep_bo *args = data;
-+	unsigned long timeout = drm_timeout_abs_to_jiffies(args->timeout_ns);
-+	struct drm_gem_object *gem_obj;
-+	struct drm_gem_shmem_object *shmem_obj;
-+	bool write = !!(args->op & ROCKET_PREP_WRITE);
-+	long ret = 0;
-+
-+	if (args->op & ~(ROCKET_PREP_READ | ROCKET_PREP_WRITE))
-+		return -EINVAL;
-+
-+	gem_obj = drm_gem_object_lookup(file, args->handle);
-+	if (!gem_obj)
-+		return -ENOENT;
-+
-+	ret = dma_resv_wait_timeout(gem_obj->resv, dma_resv_usage_rw(write),
-+				    true, timeout);
-+	if (!ret)
-+		ret = timeout ? -ETIMEDOUT : -EBUSY;
-+
-+	shmem_obj = &to_rocket_bo(gem_obj)->base;
-+
-+	dma_sync_sgtable_for_cpu(dev->dev, shmem_obj->sgt, rocket_op_to_dma_dir(args->op));
-+	to_rocket_bo(gem_obj)->last_cpu_prep_op = args->op;
-+
-+	drm_gem_object_put(gem_obj);
-+
-+	return ret;
-+}
-+
-+int rocket_ioctl_fini_bo(struct drm_device *dev, void *data, struct drm_file *file)
-+{
-+	struct drm_rocket_fini_bo *args = data;
-+	struct drm_gem_object *gem_obj;
-+	struct rocket_gem_object *rkt_obj;
-+	struct drm_gem_shmem_object *shmem_obj;
-+
-+	gem_obj = drm_gem_object_lookup(file, args->handle);
-+	if (!gem_obj)
-+		return -ENOENT;
-+
-+	rkt_obj = to_rocket_bo(gem_obj);
-+	shmem_obj = &rkt_obj->base;
-+
-+	WARN_ON(rkt_obj->last_cpu_prep_op == 0);
-+
-+	dma_sync_sgtable_for_device(dev->dev, shmem_obj->sgt,
-+				    rocket_op_to_dma_dir(rkt_obj->last_cpu_prep_op));
-+	rkt_obj->last_cpu_prep_op = 0;
-+
-+	drm_gem_object_put(gem_obj);
-+
-+	return 0;
-+}
-diff --git a/drivers/accel/rocket/rocket_gem.h b/drivers/accel/rocket/rocket_gem.h
-index 2cb294f25c19..9b1c485ec600 100644
---- a/drivers/accel/rocket/rocket_gem.h
-+++ b/drivers/accel/rocket/rocket_gem.h
-@@ -13,16 +13,21 @@ struct rocket_gem_object {
- 	struct mutex mutex;
- 	size_t size;
- 	u32 offset;
-+	u32 last_cpu_prep_op;
- };
- 
- struct drm_gem_object *rocket_gem_create_object(struct drm_device *dev, size_t size);
- 
- int rocket_ioctl_create_bo(struct drm_device *dev, void *data, struct drm_file *file);
- 
-+int rocket_ioctl_prep_bo(struct drm_device *dev, void *data, struct drm_file *file);
-+
-+int rocket_ioctl_fini_bo(struct drm_device *dev, void *data, struct drm_file *file);
-+
- static inline
- struct  rocket_gem_object *to_rocket_bo(struct drm_gem_object *obj)
- {
- 	return container_of(to_drm_gem_shmem_obj(obj), struct rocket_gem_object, base);
- }
- 
--#endif
-\ No newline at end of file
++#ifdef CONFIG_FSNOTIFY
++#define file_nonotify(f) ((f)->f_mode |= __FMODE_NONOTIFY)
++#else
++#define file_nonotify(f) ((void)(f))
 +#endif
-diff --git a/include/uapi/drm/rocket_accel.h b/include/uapi/drm/rocket_accel.h
-index 888c9413e4cd..1539af0af4fe 100644
---- a/include/uapi/drm/rocket_accel.h
-+++ b/include/uapi/drm/rocket_accel.h
-@@ -12,9 +12,13 @@ extern "C" {
- #endif
- 
- #define DRM_ROCKET_CREATE_BO			0x00
--#define DRM_ROCKET_SUBMIT			0x01
-+#define DRM_ROCKET_PREP_BO			0x01
-+#define DRM_ROCKET_FINI_BO			0x02
-+#define DRM_ROCKET_SUBMIT			0x03
- 
- #define DRM_IOCTL_ROCKET_CREATE_BO		DRM_IOWR(DRM_COMMAND_BASE + DRM_ROCKET_CREATE_BO, struct drm_rocket_create_bo)
-+#define DRM_IOCTL_ROCKET_PREP_BO		DRM_IOW(DRM_COMMAND_BASE + DRM_ROCKET_PREP_BO, struct drm_rocket_prep_bo)
-+#define DRM_IOCTL_ROCKET_FINI_BO		DRM_IOW(DRM_COMMAND_BASE + DRM_ROCKET_FINI_BO, struct drm_rocket_fini_bo)
- #define DRM_IOCTL_ROCKET_SUBMIT			DRM_IOW(DRM_COMMAND_BASE + DRM_ROCKET_SUBMIT, struct drm_rocket_submit)
- 
- /**
-@@ -38,6 +42,20 @@ struct drm_rocket_create_bo {
- 	__u64 offset;
- };
- 
-+#define ROCKET_PREP_READ        0x01
-+#define ROCKET_PREP_WRITE       0x02
-+
-+struct drm_rocket_prep_bo {
-+	__u32 handle;		/* in */
-+	__u32 op;		/* in, mask of ROCKET_PREP_x */
-+	__s64 timeout_ns;	/* in */
-+};
-+
-+struct drm_rocket_fini_bo {
-+	__u32 handle;		/* in */
-+	__u32 flags;		/* in, placeholder for now, no defined values */
-+};
-+
- /**
-  * struct drm_rocket_task - A task to be run on the NPU
-  *
 
--- 
-2.45.2
+will do.
 
+Basic open permissions failing should count as failure to open and thus
+also turn of a close event.
+
+The somewhat ugly part is imho that security hooks introduce another
+layer of complexity. While we do count security_file_permission() as
+a failure to open we wouldn't e.g., count security_file_post_open() as a
+failure to open (Though granted here that "*_post_open()" makes it
+easier.). But it is really ugly that LSMs get to say "no" _after_ the
+file has been opened. I suspect this is some IMA or EVM thing where they
+hash the contents or something but it's royally ugly and I complained
+about this before. But maybe such things should just generate an LSM
+layer event via fsnotify in the future (FSNOTIFY_MAC) or something...
+Then userspace can see "Hey, the VFS said yes but then the MAC stuff
+said no."
 
