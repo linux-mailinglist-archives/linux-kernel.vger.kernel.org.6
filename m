@@ -1,104 +1,116 @@
-Return-Path: <linux-kernel+bounces-210846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605EB904945
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:01:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED477904948
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0939A284FDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:01:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C964B230EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBA037707;
-	Wed, 12 Jun 2024 03:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXtI/rnI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B000F171C4;
+	Wed, 12 Jun 2024 03:02:46 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959E32D60C;
-	Wed, 12 Jun 2024 03:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0017811182
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 03:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718161238; cv=none; b=G7h6qmdqkTTNPdKYzR5oyKnXUru59bugaomz6xAyWChabsPgJRSise71y3AhjdbEDZB5ev2hRAC9xq3hkBxtRIKzvAdGqg/9oxfjJAke3QofqkIz0ChaRGS7xsBDoiU0mMTCZncIjIuvy5gb7gkUKwZabF4oLoyLM7RLHBmimlc=
+	t=1718161366; cv=none; b=HZ8/bBpx4mTdryk80F9t74E6XxuA+mVLYiMcxqTX1H64lVNkIO4xtQOkkjeatQWPBAL8jF+x3x4uF81WmTI2CnKlQeRaQFzX9JdIyJIn+3bd9BY2mFAzTg+4z6zULX8+2kEG7mhT1Ys3cUFPgXupqNtGcrxUZgoW1O4VNc5eW3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718161238; c=relaxed/simple;
-	bh=J/kQkK84KQJAkIFQhoiCtHTv4yGPIAirFnvd3aW3x2Q=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Z8p7BhrjtcL+nrHSo5LEoXvtoOqHT1+A6PEHMNBJy1m4muDilMQcIGo7I2AOau4m8daw7ZLl+zmVpIEk5eXamW9xzIMvm0WyWz+WXj4w5j3hzzxNMBJvd/VUtzaTDGfgU2aE2APIWQh0lcLLajTAVyzMF538VdDqdVDCLrGQzHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXtI/rnI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 71BCCC32786;
-	Wed, 12 Jun 2024 03:00:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718161238;
-	bh=J/kQkK84KQJAkIFQhoiCtHTv4yGPIAirFnvd3aW3x2Q=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=SXtI/rnIth8j9oQDxbtTNNpSDTVyRo+yikew61JFqkGM+8i73aXqcSL2ukTqWHDeJ
-	 gQPEUPk8JQljrLwi0Kr+ZkWDir80ErunONy/7gFX9F3wfZ/q9KD09hp9du1X5ULZyE
-	 +mBwDDae6qMLsTXQsCpPTGw2CW1Yhqpu44crupj9nZXmQAntGHNo/qc0n6nCY4WGPw
-	 5Uu1zfZ4I9kRM5qIj0mRbrLBfBWk7n/haowc/UkR4R95M4WS3cNeGOCjpj4U5UfqXR
-	 gvAGukxWrcKdsPTKyjDsANM9682YMuP2scfeT2VvdA3/GTGPXF/jlJQ0M0IWTaFrrP
-	 3+ip3ZYHe4Szg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 636AAC54BB2;
-	Wed, 12 Jun 2024 03:00:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718161366; c=relaxed/simple;
+	bh=z7SFNGqX2BtgFOLZtTPrHEcCw9sjTaEi9gADm24RfGk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:Content-Type; b=hsWm0D9BGMQuMTWMHraQMVSwwjdPmQMu/rwS/6C9MyQbMQKaJCU/OlAojreIjCkY6mfyS4YQteRplxbGNNP8AliqGuwztbxvDIpjXKIjY+No2lYm4YsmUQZk52gyOAS+/AmqB1Rd2yTMv5wMzm99gnh2BuJBwUIX7EDgd4Exqsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VzVbm3Snxz1SC4h;
+	Wed, 12 Jun 2024 10:58:28 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
+	by mail.maildlp.com (Postfix) with ESMTPS id B4A56140EEF;
+	Wed, 12 Jun 2024 11:02:33 +0800 (CST)
+Received: from [10.67.111.176] (10.67.111.176) by
+ kwepemd500012.china.huawei.com (7.221.188.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 12 Jun 2024 11:02:33 +0800
+Message-ID: <c740ef8f-1bb4-0c4a-4b88-77dab19f3e31@huawei.com>
+Date: Wed, 12 Jun 2024 11:02:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/6] selftests: mptcp: use net/lib.sh to manage
- netns
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171816123840.11889.13593974623249727089.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Jun 2024 03:00:38 +0000
-References: <20240607-upstream-net-next-20240607-selftests-mptcp-net-lib-v1-0-e36986faac94@kernel.org>
-In-Reply-To: <20240607-upstream-net-next-20240607-selftests-mptcp-net-lib-v1-0-e36986faac94@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org, martineau@kernel.org,
- geliang@kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, tanggeliang@kylinos.cn
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Content-Language: en-US
+From: Li Zetao <lizetao1@huawei.com>
+Subject: riscv: link error when supporting KCSAN
+To: <linux-riscv@lists.infradead.org>
+CC: <dvyukov@google.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggpeml100015.china.huawei.com (7.185.36.168) To
+ kwepemd500012.china.huawei.com (7.221.188.25)
 
-Hello:
+Hi all,
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+I'm developing support for KCSAN on riscv but getting the following link 
+error:
 
-On Fri, 07 Jun 2024 18:31:01 +0200 you wrote:
-> The goal of this series is to use helpers from net/lib.sh with MPTCP
-> selftests.
-> 
-> - Patches 1 to 4 are some clean-ups and preparation in net/lib.sh:
-> 
->   - Patch 1 simplifies the code handling errexit by ignoring possible
->     errors instead of disabling errexit temporary.
-> 
-> [...]
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L996':
+core.c:(.text+0x2b62): undefined reference to `__atomic_exchange_1'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1015':
+core.c:(.text+0x2c40): undefined reference to `__atomic_fetch_add_1'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1034':
+core.c:(.text+0x2d1e): undefined reference to `__atomic_fetch_sub_1'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1053':
+core.c:(.text+0x2dfc): undefined reference to `__atomic_fetch_and_1'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1071':
+core.c:(.text+0x2eda): undefined reference to `__atomic_fetch_or_1'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1090':
+core.c:(.text+0x2fb8): undefined reference to `__atomic_fetch_xor_1'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1109':
+core.c:(.text+0x3096): undefined reference to `__atomic_fetch_nand_1'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1128':
+core.c:(.text+0x3182): undefined reference to `__atomic_compare_exchange_1'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1147':
+core.c:(.text+0x3274): undefined reference to `__atomic_compare_exchange_1'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1166':
+core.c:(.text+0x3366): undefined reference to `__atomic_compare_exchange_1'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1220':
+core.c:(.text+0x35ec): undefined reference to `__atomic_exchange_2'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1239':
+core.c:(.text+0x36ce): undefined reference to `__atomic_fetch_add_2'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1258':
+core.c:(.text+0x37b0): undefined reference to `__atomic_fetch_sub_2'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1277':
+core.c:(.text+0x3892): undefined reference to `__atomic_fetch_and_2'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1296':
+core.c:(.text+0x3974): undefined reference to `__atomic_fetch_or_2'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1315':
+core.c:(.text+0x3a56): undefined reference to `__atomic_fetch_xor_2'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1334':
+core.c:(.text+0x3b38): undefined reference to `__atomic_fetch_nand_2'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1353':
+core.c:(.text+0x3c28): undefined reference to `__atomic_compare_exchange_2'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1372':
+core.c:(.text+0x3d1e): undefined reference to `__atomic_compare_exchange_2'
+riscv64-linux-gnu-ld: kernel/kcsan/core.o: in function `.L1391':
+core.c:(.text+0x3e14): undefined reference to `__atomic_compare_exchange_2'
+make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
+make[1]: *** [/home/l00517538/PrIntFuzz/third_party/linux/Makefile:1171: 
+vmlinux] Error 2
 
-Here is the summary with links:
-  - [net-next,1/6] selftests: net: lib: ignore possible errors
-    https://git.kernel.org/netdev/net-next/c/7e0620bc6a5e
-  - [net-next,2/6] selftests: net: lib: remove ns from list after clean-up
-    https://git.kernel.org/netdev/net-next/c/92fe5670271a
-  - [net-next,3/6] selftests: net: lib: do not set ns var as readonly
-    https://git.kernel.org/netdev/net-next/c/577db6bd5750
-  - [net-next,4/6] selftests: net: lib: remove 'ns' var in setup_ns
-    https://git.kernel.org/netdev/net-next/c/f8a2d2f874b7
-  - [net-next,5/6] selftests: mptcp: lib: use setup/cleanup_ns helpers
-    https://git.kernel.org/netdev/net-next/c/f265d3119a29
-  - [net-next,6/6] selftests: mptcp: lib: use wait_local_port_listen helper
-    https://git.kernel.org/netdev/net-next/c/1af3bc912eac
+The reason for the error is that riscv only supports 32-bit or 64-bit 
+atomic operations.As far as I know, this error is solved through the 
+no-outline-atomics option on arm64. How can I solve this problem on riscv?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Best regards,
+Li Zetao
 
