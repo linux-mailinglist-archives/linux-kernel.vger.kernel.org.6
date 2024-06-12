@@ -1,111 +1,128 @@
-Return-Path: <linux-kernel+bounces-210761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F6F904860
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:23:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730E2904841
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64A2BB233AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261761F23F9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586A44A20;
-	Wed, 12 Jun 2024 01:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4D78C1E;
+	Wed, 12 Jun 2024 01:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R5+0wxIW"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MhKWQPkS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9634411
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B88BAD56;
+	Wed, 12 Jun 2024 01:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718155417; cv=none; b=M0UK6PQj+WNPFOAwZy7TEmgITAJ4fiMt4M62a2c3MIoTFnmM4bZ+EPFTAVNH4CS59j5C1xJSGGRftdf0Bqiqgp8I3wszjTugsRrPuwMNU1Br3FqwSLi39CgprdeqjSK3o8d9Wxry+38RDVRmkvnirnd3wvOQHvlyLTyRI8dfRJw=
+	t=1718155156; cv=none; b=AT2Fo++pwkep2cIFXrqWvh5KmtEEnuECS42qE0UbpYLwGmVt1sOVmhotmrbML5hnElGmyxjXQKQ51Jfa05JykHbuLo5GBpy8nwDzpeOdxva6EBmQVVUVJ6yI8y+t4Id9cA/BnJuwdtSPYqpm8UWWb5wYjDycDrGNay7503z80ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718155417; c=relaxed/simple;
-	bh=9joCK+5QYCvw814DBtCIuJ51y0uYUX8Tgug9gGwYU58=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RaID2bKXAtlETvonqqFSXd1NHFC9GocDwayxJ/Z6EAvf4b80eppDX54bcQ6LOt/ZXrKcjcZI7BvKG4dpFbZuzZasLNYesHK38Zu8vdQ3/c/aSXrm5wHlZQDFsZRUcPfLTAMcYroju8BeIMbgWeXHuzzBTCABoc+tRDR2w/KY8Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R5+0wxIW; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfa77d54cd2so9779536276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 18:23:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718155415; x=1718760215; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9RzYaJguaQI8ezMD1wLQZOMHWWd0f/qf7YACXyF/8fY=;
-        b=R5+0wxIWSbXYi5W3HQoiMfntIpjoSAqwbPLG/wTzn1CPAAg3NTzLTYY8zOs8Ljl+NA
-         adq18X8NIhl45m1IJX721TW/A8Otu5wOYlz7yhbkpUWjPXJqpcRtIzL0ld0rcjmbbLsI
-         ohlaxfeJpjDZRNfQYDk4Ykzz0mWmuWlnCoz3Y2R8GDR/fKJuXETn91b/KiCwWaN/Phwf
-         bcZN+1I9Jq6b2p2fkmoZtrt0wuf3OLbMLd/pT23z7Tjkdc13tu1hgqyA1NKMbUwzUisd
-         LIem6s1loda08mc3qCmFIDQENMCwfS++TZG9ELpnD9dQzxnCPNK1RHoFDoKJ7Qu0wCiX
-         nDCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718155415; x=1718760215;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9RzYaJguaQI8ezMD1wLQZOMHWWd0f/qf7YACXyF/8fY=;
-        b=vZ+aPLn9sKD9Hwl2MI1Ppqms2sRlRj3uUsd/FImwKQ5CLmC1eRqXX3ouARTf9OafeL
-         TQ9/6yT9Yfxk+3bMIJ10z3O8AQnvsQEmonu5abumo95Yd3FjbkJqjuNAtM2Ev+awk+I2
-         qAd2UczUYgdJjKnNSG9dbWA9r67+c0soQUCpMFCqcSx+BOkWwxIf+itDgCkF0kTJfLP+
-         WKxI87Dti3A7EAXzfOm0y8sX97b3ck2KI0WBOp22B3jQ715AORI/S4LYUR5L+XD9wicc
-         zPmhlQxx/EeGmvYJagjLdW0+9UeQ8PGRBEwN4eHvxNcy7tE/FQEBF0O8+yuDgcdg2Q4X
-         dJ5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWIo4nt1+O4NVWIAJ3W66F7FQsS/dDx6abVelIz1giQsLQV7upY3flSl1Q0JHH/q3gdwu2oIFpJq/MEn2jF9dG4hubBnVaXrEO5M0LI
-X-Gm-Message-State: AOJu0Yy3wzIoUZl1v2A+wC3wr7xaG0Pn/WpfZUaxIWog4Yym9afhv+6Q
-	7YLSiHLj0Xut88EJ900/JHL4lJILpQNGQVtGcewlUjU6JcXVOvauRMx5r45HZnFehhk7YEJbvao
-	E1Q==
-X-Google-Smtp-Source: AGHT+IEjJZGRKCQcHh9FXJ7J1f//y7xo6LzdBEJEvjj24wLGzsUbimQAjBo7Ve3dQ7CFgjY96N6Qv0fPgkU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:2b0c:b0:dfa:b47e:b99f with SMTP id
- 3f1490d57ef6-dfe65f78355mr33849276.2.1718155415290; Tue, 11 Jun 2024 18:23:35
- -0700 (PDT)
-Date: Tue, 11 Jun 2024 18:18:46 -0700
-In-Reply-To: <20240507133103.15052-1-wei.w.wang@intel.com>
+	s=arc-20240116; t=1718155156; c=relaxed/simple;
+	bh=kSYXv9nIPkIFXOkJTequSQ7Wqj4nVqUZe+e6mX6ay74=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=r/bgN1Dc/sWKqKXQvyy4+482U1Qwl6hzRvp5NXsr9AV7zLXPefcB1MkCxADw7gW0p3B1pIFMpA/HmsVsv2AMqB2dzR9c/rMTbbvBeKuiaPkLGkVj8G2QvPS9CBdHAE7WkM9rjwFaD5qxfOg+rQul/IxGXFKhs+1BN4t77UV+gnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MhKWQPkS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BHHrFi001180;
+	Wed, 12 Jun 2024 01:19:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=yw0xmqzsIr/6r5+9NKqm3b
+	RLhcjjifZCyGq40TyF3tI=; b=MhKWQPkSpWuFqtV+qjM+Hfbb2rIgsO+IXEG7DM
+	/9FtdsfJnM9LwQy2LG4u1nryfpf6VNZkMjpklq46ZLNkmZuUgwtqawWnXtXBB8kD
+	pAsAGtu/Mcx0ezs/4KzdxxLNW0qz4SvsGZcYaw+9fI/bQuaRJwCVLG9YL/jjmwou
+	K7VtbXoK/10sAIEiDWgmmr2zZkrblrP+1hIutyN0Wz+c2BeOCR5ijvi/7CF4AloY
+	LEZKGxb4OxW2Rdm7QamL+3jCpswV5OucWkN1lfabD2X+w9TYxpAJq9OlLpnMGxm4
+	3JDKDcvgbPuHFzT6tscp9Zyw5MQ8q+87riWuVjCEQq/hrYiA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yptuy0ux8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 01:19:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C1JCOk026642
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 01:19:12 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
+ 2024 18:19:11 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 11 Jun 2024 18:19:10 -0700
+Subject: [PATCH] usb: phy: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240507133103.15052-1-wei.w.wang@intel.com>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <171805499012.3417292.16148545321570928307.b4-ty@google.com>
-Subject: Re: [PATCH v4 0/3] KVM/x86: Enhancements to static calls
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, Wei Wang <wei.w.wang@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240611-md-drivers-usb-phy-v1-1-1cacb41280c3@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAI33aGYC/x3MTQ6CMBBA4auQWTsJrWLUqxgX/ZnaSaSSGSAYw
+ t0pLr/FeysoCZPCo1lBaGblb6kwpwZCduVNyLEabGsv7dUY7CNG4ZlEcVKPQ/6hvdlzl7q7Syl
+ ADQehxMt/+nxVe6eEXlwJ+Vh9uEwL9k5HEti2Hcikx+2DAAAA
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: oAh1paW8K3R4STJ9BfoJwCvCotDadggY
+X-Proofpoint-ORIG-GUID: oAh1paW8K3R4STJ9BfoJwCvCotDadggY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_13,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 mlxlogscore=643 phishscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120006
 
-On Tue, 07 May 2024 21:31:00 +0800, Wei Wang wrote:
-> This patchset introduces the kvm_x86_call() and kvm_pmu_call() macros to
-> streamline the usage of static calls of kvm_x86_ops and kvm_pmu_ops. The
-> current static_call() usage is a bit verbose and can lead to code
-> alignment challenges, and the addition of kvm_x86_ prefix to hooks at the
-> static_call() sites hinders code readability and navigation. The use of
-> static_call_cond() is essentially the same as static_call() on x86, so it
-> is replaced by static_call() to simplify the code. The changes have gone
-> through my tests (guest launch, a few vPMU tests, live migration tests)
-> without an issue.
-> 
-> [...]
+With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/phy/phy-am335x-control.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/phy/phy-am335x.o
 
-Applied to kvm-x86 static_calls.  I may or may not rebase these commits
-depending on what all gets queued for 6.10.  There are already three conflicts
-that I know of, but they aren't _that_ annoying.  Yet.  :-)
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-Thanks!
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/usb/phy/phy-am335x-control.c | 1 +
+ drivers/usb/phy/phy-am335x.c         | 1 +
+ 2 files changed, 2 insertions(+)
 
-[1/3] KVM: x86: Replace static_call_cond() with static_call()
-      https://github.com/kvm-x86/linux/commit/161827082760
-[2/3] KVM: x86: Introduce kvm_x86_call() to simplify static calls of kvm_x86_ops
-      https://github.com/kvm-x86/linux/commit/aebed32e4985
-[3/3] KVM: x86/pmu: Add kvm_pmu_call() to simplify static calls of kvm_pmu_ops
-      https://github.com/kvm-x86/linux/commit/4dbd1f66c5bf
+diff --git a/drivers/usb/phy/phy-am335x-control.c b/drivers/usb/phy/phy-am335x-control.c
+index 97e6603c7149..ada508be090a 100644
+--- a/drivers/usb/phy/phy-am335x-control.c
++++ b/drivers/usb/phy/phy-am335x-control.c
+@@ -189,4 +189,5 @@ static struct platform_driver am335x_control_driver = {
+ };
+ 
+ module_platform_driver(am335x_control_driver);
++MODULE_DESCRIPTION("AM335x USB PHY Control Driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/usb/phy/phy-am335x.c b/drivers/usb/phy/phy-am335x.c
+index e39665cf4b4a..6db88e00f127 100644
+--- a/drivers/usb/phy/phy-am335x.c
++++ b/drivers/usb/phy/phy-am335x.c
+@@ -142,4 +142,5 @@ static struct platform_driver am335x_phy_driver = {
+ };
+ 
+ module_platform_driver(am335x_phy_driver);
++MODULE_DESCRIPTION("AM335x USB PHY Driver");
+ MODULE_LICENSE("GPL v2");
 
---
-https://github.com/kvm-x86/linux/tree/next
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240611-md-drivers-usb-phy-28235f59affc
+
 
