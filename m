@@ -1,313 +1,276 @@
-Return-Path: <linux-kernel+bounces-210957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F17904B1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:02:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F56C904B54
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB61B1C22DFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:02:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88FA6284338
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68A584DFE;
-	Wed, 12 Jun 2024 06:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24E313C838;
+	Wed, 12 Jun 2024 06:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NuGVPfHq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/KRC5yP"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF4D84A48
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 06:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718172120; cv=fail; b=L0WK7v5Z3+iwDdAVIXwXRal8kcLWVJLhVw/Ji9awWMRKUTxFxIyxoKn/Oemq1ywbP1VnPHVvYmmIknDgVzAKY4TzA+3GZ7YE7Pho6lUkfcEBkGXzCtJGY6ib4bvFARJHkU5biCzeNGhjae91Rk2bHatPEMjkOOLlxYKx9h9PfMM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718172120; c=relaxed/simple;
-	bh=G28djTwuQ/tvMFor9GaahciBLwrEJS8B5UdBmXRkyTg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eg0nTWSx3j27aNiYFvGUhVwgx2gnqWRp4O/RsVxbWN2z5NbR5CzY7vw/HZoLlyQ43yIGtjlpEj051lbby2TpjDAlUjefILDPMZHoZekZc8HwGzD17EghbVVFjcJP88ZRTfowVG9LG6X4rD8vXPQophyfe5bVv28L9kcFnbRTRF4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NuGVPfHq; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718172118; x=1749708118;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=G28djTwuQ/tvMFor9GaahciBLwrEJS8B5UdBmXRkyTg=;
-  b=NuGVPfHqXRi83WIWR3ywpFZTFodDy7xOVXv4h6DvR2SrBo3VmDPgaYUJ
-   wBGA7BzeNTgP+qhrzylo8usoPog3wwFFUftmqhw776WGqNMSNM94KMvsu
-   46G/V3MdjbPDip9JD09F/iJGPfcCNyKvAtJfpXKA+YaUx87GlhdSeB5lb
-   DNwaKwDCQFj6BfGEzhnxFhYUrfMmI/Qke4V4B2jfF4IifvTDI38I2jY5L
-   LksopR5czCsZ0Y9oPL7t7GUdiF3KmePhmwikLZYdutiy+cm2tPisZ27zS
-   EzTznGzx+kuSMDIxRoWmYYIGUokEeIdqf6uao0v6s0dRYTFw84NYaw7D1
-   w==;
-X-CSE-ConnectionGUID: hSxzRvu6R/OT8NE7jXLSyg==
-X-CSE-MsgGUID: nJBpGEn8Qz+3AYVQ8dC/rg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="40324714"
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="40324714"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 23:01:53 -0700
-X-CSE-ConnectionGUID: 7WCGN17NRxq5OJwDnfRsbQ==
-X-CSE-MsgGUID: gOmoFSnSRgaGJZLhQrlkKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="40380427"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Jun 2024 23:01:54 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 11 Jun 2024 23:01:51 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 11 Jun 2024 23:01:51 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.176)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 11 Jun 2024 23:01:51 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IHZuOAzQjBvfAxaCZz3pUqk1bqJrfwwe3nxgG4y/w6MjaSuJBOP4UYXqsNmiEbSHb4PuMa/lLKL54a94TrNfqOnx+ybESqDJqPTBvHtmkUvUiHrJCBOSGpSCVcJLusrmGTAHWYUbxMX6zrdA/XQi+oMo8jF6SahDjYumgeDYUIypAQBe0myi42flpeObohamC6WUGGOvdidGC5SFfr5WBMZsnk7FmtOXsZyoIrZL8zuWnRInDHldMulKw/2lmTEVuKDy15BHp4uB62+8x1riBzj3eI8023p9FuDqJ+oIWXkqEISc9XHRPgw0pNBP4i4kHoTaVhAhcGp1tk75EoaIFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=omtajww5hqPkiwD0qg+DbQzlVE6bdf4lGcUyAZ9Ga6s=;
- b=kTWHvucFGOzvOB/xxobo4eENlDHCgUl9SFDV+0JqJvbbRBUSbyf13kLrPEixBk0MAgEFCSuPI47txj98wOhX+5lk+n9nP1PsPXnduPE/QhX3iZWW3lhcb6QXUTdVAde2uHH84hhUzuFNkWTAI7FH27h8y1q3XELkk8ylJbK2TEXRsS03MNMUJEGymmcGaGvnKZ2f5CFotWAUvdPGWkt0QTXd9s4EaZsGyIzTVwvZaJ89nEnvE6ivyYbghX1t/fs1QcdDvjkllpZG3QhzI9Cx4BqMAYWUPvm81S6C5jnXiMlDdRXKSVUR90QBL2UpSKReifORfyftLoyBQDHdQoF9Qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by CH3PR11MB8094.namprd11.prod.outlook.com (2603:10b6:610:156::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Wed, 12 Jun
- 2024 06:01:49 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%2]) with mapi id 15.20.7633.037; Wed, 12 Jun 2024
- 06:01:49 +0000
-Date: Wed, 12 Jun 2024 14:01:40 +0800
-From: Oliver Sang <oliver.sang@intel.com>
-To: Yang Shi <shy828301@gmail.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, Christopher Lameter
-	<cl@linux.com>, David Hildenbrand <david@redhat.com>, Jason Gunthorpe
-	<jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, Peter Xu
-	<peterx@redhat.com>, Rik van Riel <riel@surriel.com>, Vivek Kasireddy
-	<vivek.kasireddy@intel.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <lkp@intel.com>, <oe-lkp@lists.linux.dev>,
-	<oliver.sang@intel.com>
-Subject: Re: [linus:master] [mm] efa7df3e3b:
- kernel_BUG_at_include/linux/page_ref.h
-Message-ID: <Zmk5xAF+vHYLwzoG@xsang-OptiPlex-9020>
-References: <f4599bd2-72af-4e8d-a0fe-153b69816133@redhat.com>
- <CAHbLzkrOspjVuQw=BN2+RZmV_Ydpz_50yY7FEakJw8Zm14Y9-Q@mail.gmail.com>
- <a088b5cf-503e-4ed7-b427-f17a9ec5d1a8@redhat.com>
- <CAHbLzkpnDPYWq=HnaJcKhKnppdNikX4YG+1Ysu8Z+XJCoKK4SQ@mail.gmail.com>
- <CAHbLzkr5K=4Shiyb5KgPTQ20jE2Zo08wK=mT3Ez9ADEdJe0Z9A@mail.gmail.com>
- <Zl3M7iniPQaPFDrW@xsang-OptiPlex-9020>
- <CAHbLzkrOTAaYahG4JYMNrJDhQNZZxW9u+2n71J=v1XYJEVpUdw@mail.gmail.com>
- <CAHbLzkr16YZ80ES5U4BEWJ+ueL22nDJtgH=eOztdHfy080diPw@mail.gmail.com>
- <ZmEb2mdAbBQ/9PMP@xsang-OptiPlex-9020>
- <CAHbLzkqORuPjr3p7aZGPKSLfdptrg=z1624rcxjud_zs3+HnCA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHbLzkqORuPjr3p7aZGPKSLfdptrg=z1624rcxjud_zs3+HnCA@mail.gmail.com>
-X-ClientProxiedBy: TYXPR01CA0047.jpnprd01.prod.outlook.com
- (2603:1096:403:a::17) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34C9137760;
+	Wed, 12 Jun 2024 06:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718172427; cv=none; b=j6Z9bcTrv11eQlh+RDTuPo/z7uDv+NWqUOwvzfvi/y90jLRWiWCCh3spUBevI16DbvaB2ZT5rgYj98//m1IZ8q+gOnR324+HdwFyuDOCHtuhza5IhbmkLbnH5Bp9xwqZ85qSDyECWETLmnhoI16dlmq6qw+rbPpOU/GfoXm80gU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718172427; c=relaxed/simple;
+	bh=V+VtcDKehDg+XGeapL2ycNNuuLj1XBVLl3z15ff2BMM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bdOweSHxKXCc2fzWPXoXqJQf1OyYJFgDdCoz59FXsS9qc+IHdLTbzqYIrdoVRNuumdCl+Aj2gSwJyzXRKdPcCT9xkG8UNHTTX07QNzptTc8RV6lP0FmRRxKgpGfGHcr8gHeb44ApapDGogDgq6AdX/KSrXN0IhNiksps9vniHXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m/KRC5yP; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52c815e8e9eso3839698e87.0;
+        Tue, 11 Jun 2024 23:07:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718172424; x=1718777224; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G+MuZO7Xor+xkcjHeUgTwAiU3h8NYp0iOQXXGvr4MDM=;
+        b=m/KRC5yP33zqzlJJeUZEI40HJBTVklsYb7lZVSSccEm8LOKvOYNnjF+4oPGUlHWa4g
+         FQ29M/fLySUxU7PcKzlsiqKTBpa5eWNPc3F1OYsNf9DIMG+a8ZzDHm62SW743wg5Bxek
+         vJo77KtnMY37FbITOWRdd0wZWWD7UZMaqnxBwMEYyCn8Zk2JdrEUMIxZkkN6fOuWeWaD
+         BE7XoYHR0a7070veXs+DZrkJJlsOaR2DXxnQZBHEIJesSvJnp+e68ooogFwzIBuD3cwI
+         ZVUFyvDwd556eq0k+bpAacCeLbUUG4MdneODl3JvrNDQ4+ABVAsne2sQhtCsL60oU3aS
+         UUPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718172424; x=1718777224;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G+MuZO7Xor+xkcjHeUgTwAiU3h8NYp0iOQXXGvr4MDM=;
+        b=CtDHCCtkIadLPV685yb0MBZGsLIFED31Bqt8kREVq2CFPNXZh/f2Pks8/vaOPpUSYV
+         KxoVi6CwmpQe+4rrLotQJ12f0KYPnX1QCx4U4Ssvy5UGTVxir5f5PRuKn5Eq0RyBOgU9
+         Fdy84tUDk3xUilhJPf4w1hZVPrTrKHEFjDZT0eD5T+U3VIzQk78Xp+I5ETO9RmM7kfC2
+         wjYvMQxfFM5v2uYvsLr16E7l5vSq/3zc75tA0irl6cYK4bE4xcyJdtL9RZ8mlzrcg/ki
+         iEbla4mXPc0EmoBSM9hSKCFVPrvg++P7T03HKDJYUe69IdpnoMKsMm0C1MT1bLv5vqJE
+         EQQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGrw4EHYattsMUtfTdH7rXjONQOVdQJ/JKnoTdlloajuxD++nHX70cx0mzCXudOgD0IvrtST5Z8xXfv4bFauEaZwX+yQY7XOmi7Vniv1d5bT1UDinYhyRAnscg7Wdc6rbP0XoCoTO12tMZ+r3ghH+TpRBQV9bz0Lzbc3h1NFPVpEKt+A==
+X-Gm-Message-State: AOJu0YzYunD0Yzt4b0T3RBB/K/1tmSA8oJy7VV8t8SfWQSApuCrAR3WW
+	/ugVac4/KA4hErsWxL8FztqyAhkN4aDatZqZLvu/OIeww0/aGhNL
+X-Google-Smtp-Source: AGHT+IH681YlFGeuqiX78zzXEw57ln5oqtxrcjvcxxRLHyWBpNRp9Piq4PLI9snx3C29hUPSeQFXeQ==
+X-Received: by 2002:a05:6512:401c:b0:52c:910b:9c87 with SMTP id 2adb3069b0e04-52c9a3df0f2mr497275e87.36.1718172423352;
+        Tue, 11 Jun 2024 23:07:03 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52c9690f0fbsm364943e87.56.2024.06.11.23.07.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 23:07:02 -0700 (PDT)
+Message-ID: <c9c0d585-617d-4181-afa2-c5743848f5c9@gmail.com>
+Date: Wed, 12 Jun 2024 09:07:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|CH3PR11MB8094:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b72f2e3-f8a4-4f87-2861-08dc8aa525eb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230032|376006|7416006|366008|1800799016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VHhrMTJlN0ZkL0pONjloWEJ6aFZWWlVHWjdLUWdZU3ZpWmFJNC9PK0ZzTE1L?=
- =?utf-8?B?MG1mcFc5U3dUeFB0aTdyc2JpR3pJZUlkNFFHTTlrVlBEUW8vZ0dKYWIrczBZ?=
- =?utf-8?B?YWpVSGRRV3YwRnlOendtSTBCQ0NHcndHbGFBdjFvVGIzRWtQVzUvT0JvcXgr?=
- =?utf-8?B?Wk1GWUQ2VldwMEQxVzJBMDR6bzlmR1NQejNwOTA5T29ORTdXUjlEUElTNFdr?=
- =?utf-8?B?Rk05QzhOTXpsSzlvZXNPdlB5VjR5QSs2RWhZejc2MzZQVTJDUVNXcDZMMG9C?=
- =?utf-8?B?TlNDdGtzTm82MFE2ZDlhSm1nU2h2OTBNVE1xS0tjSHBjdXhRcE5nNDc5ZDNC?=
- =?utf-8?B?QVptWnJJTnFCMGVxeVI5K3RpNUtQY1Rrdlg0VlIrcmkzUzlwSEkvTmVHT3I1?=
- =?utf-8?B?T2NLbWpEazlrT3FObFp0UUswNnNraS9IZEhqMlRrMjZOMEM5U0k3YWlYT3lC?=
- =?utf-8?B?eURjSHBReGlTdEY3WnpYVE9pc01tc3lRTGord3BuQ25PdTVITFBxUzJDMzFD?=
- =?utf-8?B?NStaenYrZXhqT05IS28wazlzUkVMRU5neUFYMTNUdzBzRzI4UnFpZUtkMmh5?=
- =?utf-8?B?djRZYUtaVXVmeHJ6OVFVRElZZExCekM4REVxRHVhVFJPaGZkbG1VaUx6UE0z?=
- =?utf-8?B?UCs3bElxYVpRWTNhVVNzdVJGeG1wZ2JrTFBJb3dpZDhUdVR2YXBqV2crVXVK?=
- =?utf-8?B?WnpqdDVVVmRQR2xsbHYwdSt4cXlKVktvZE9vTThZWFJjN2huOFhYbER5dHVB?=
- =?utf-8?B?Smw5czdMUmo4SXhHOHhaTE8zblVpWTRUYmZ6VnJnSitpMmhRTWo5b2UxVWJq?=
- =?utf-8?B?NytWcTRJQ1ZqWnFSRTRpYnVEQnNKSU9lK0s4SFlKazVWVVBoUGdSam5tbUdH?=
- =?utf-8?B?RXVWaHd6ZS9NRkx3ZEpjKzhMeXBuMHB1T2FyRWM5d1JiOFpFTHBPbjhJTUZS?=
- =?utf-8?B?OXkzamxTNnVCTXJsZE10TjdNTERzQU9nY1lPMmwxYjhwU0ptZGZHN3RnM3RU?=
- =?utf-8?B?WERDVVVKcncrTm4zT3I5Tk9OUUM5czhac3Q0d2JxNHBveExmV2dnL3FIMUgw?=
- =?utf-8?B?RVdQMGt2WFlFbkJHdG16dVFKNHN6eTRuOUtKQ3N1U2pqaVpWWGdWKzc1ZGhE?=
- =?utf-8?B?U09xY3ZGYmNnQWFrcGRDRDV5RkM0RnpFNFUvT04raktDTGxsVm5yRG5uclNv?=
- =?utf-8?B?bHBGWnRzb3luaUJWaW41ajliNzBmd09PQ21qRVBOeHhxZHhDQ2kyWjFQWFR1?=
- =?utf-8?B?Mk9hUmFJVHJIUmdHNHpuekgzSnA4NG5UVGlySStpa0haeTRuWUQzd0JieTF5?=
- =?utf-8?B?Q1RrNEJKWElwM1NjSGNKeFJEbWZuYk1ub2x6KzFTVUpYVnA1b2cwd2RKV0RR?=
- =?utf-8?B?MlFyUDZQMnhiS2dvOFN5TWlYa3cwamxBeWNLanlzYW04TXJJc3hHZHJyclp3?=
- =?utf-8?B?MXBBWXhKMW0wRmhoelFkWU1kWnBMWE1MRVBvN3c0YzZKZ1F4TkkyZFdxd1dP?=
- =?utf-8?B?M1FybjZja29SKzczdElLOUVIM2orTTArVFRncy8wV09RZXo1V0NkTlBmSnNZ?=
- =?utf-8?B?TFo3a3hBWU1Hd3N3UnNKaUJQd0tDVkF4VkhvQ3I2YmJYTlpudTI3VVFPaDQz?=
- =?utf-8?B?elVvZXF1a1pvc1BSVERQQ0R5S3drUDBLTFJIaStuY0llS3JGamNxRks5M0tY?=
- =?utf-8?B?MllyREdHblJUeGk5a05OZ1FUVmx2YnF3VHo3RUlJRlcwL0UwQVNiL1pzR3dB?=
- =?utf-8?Q?jyTbuaoWbPlq8PX578VIwkDVO7mBr9WFxEjlZw2?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230032)(376006)(7416006)(366008)(1800799016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bHJFeHd6Z0VsV3hpUkwyOENFZVZIbWlKNzdRd0k4SFJFNTIwTmNMdzJmNkFs?=
- =?utf-8?B?aVA1VzJGRlpaVERLSHhoSWtFN3VTQit4RnhDY1BlTUZWOTV4Vzhnd0xSbkYr?=
- =?utf-8?B?aU1ZeFcxRVkxanlRR2gvQXBCU3dxbjVCeXdzeVNIc3BGazVydWpLaVBsMmRa?=
- =?utf-8?B?d04xYlJIajVzRTgvSFdvMlJBS0tVSHlHbmx3VFhFR0lON2FybzZZTzl3KzQ1?=
- =?utf-8?B?cHdrUG9FOXYwNGNUR1VNWjF6Zis1TnQyVW16d2Q0OWVDSHFxaWhpQTdQdFpO?=
- =?utf-8?B?M24ySDZiUURhWTBadG5CMWtWeW5OR2dENGQxMzFvcE5CY21wTVdFUzNqQ1dM?=
- =?utf-8?B?cE8ydjJQUGxOb2FqTkNZY3FZcTllK2V4RnZkZzlSdmhoVmRlWkExQm5HYlhz?=
- =?utf-8?B?WWE5N0Z3VXJVZ0JaNlhvYUZZWUpUc0FtQTNMWXdmUVRHRzFNNmhrM3BQZVQ1?=
- =?utf-8?B?VHpuTWYzYkRDWkFlQWhyblBETzJXV2ppTXlZWHQ1WnZ6WjhZS1E0U0U2Zmxp?=
- =?utf-8?B?Y1M1RXBBYUlUWHM4M3FHZDlRVkh0SDdlYWRpOFQ0Z0dzbEZQTktmQ0hTc2sx?=
- =?utf-8?B?diszMEZGVDJKbVRuVEh5bWFZb0NGczVraG5aZG51NWE2Tjd4T1duNzdpY3ZK?=
- =?utf-8?B?enV2aWIzZnk4WnhpOTVSQi9rbDZFQmFBVDI0cGpYRmorZU4zOWFFb3cwVXI4?=
- =?utf-8?B?cUxCRXJpbVhEdTNaWldlWjIwOXVBaHBYNnJLTUNSS1BYYUdaVmhLaHlwMWE2?=
- =?utf-8?B?U0FWT2xxcVREQVY5NUlCQ000ZEhzak9uaGZpRXAzRHBnVVZVZ3ErOEd4WTBl?=
- =?utf-8?B?dVdhQXRYQ2xoS21acERmU0JPZlZqVEozMFJsOGRpV0srOCtyTUNUNHNSWnhD?=
- =?utf-8?B?emhqKzQ4ZDV0eHZUWHdxOGxZWjlBanZFRW5wUFoxUWYxQzRhaUFUcWY1VDFz?=
- =?utf-8?B?cUJ2a2NGTjhHQndYbklyTnExMTZYTVFNWXBxMGgwdk8vdE1ULzdab3JpWU1M?=
- =?utf-8?B?amFVc0NsM3hMc0tVZ1JrdEMwT2Fucit1ejBISHNLRUVqcGNseGVyS0dpWW56?=
- =?utf-8?B?SEZSU2MxMmpod2s5UkhRUFd0N2VSYW9td0tFQllEb2hwcXdMUGpmT09VbVV3?=
- =?utf-8?B?aW90c0kzMlh1MTJ4UENyTFBlVHdDTnRCZmJCV2tRVFVVakoybFFidGozOWxz?=
- =?utf-8?B?MnRCNmpLVXVyTDU2KzUyZnRGSkxwRDJtRWx3WDdsTzlhUXExN2VQQWNzdDFJ?=
- =?utf-8?B?WE9zVUg0VTdKWjJGSGpnaUw3TGJaaDdLY0IzK1dBMjBUS3NoNEI3ZlpNVlQ2?=
- =?utf-8?B?TTVVRjZKOU1zd3ozd3c3SHpUUjVYY2Niamc3VWlaSStIUkV2c2dYK0dvczVh?=
- =?utf-8?B?ak1aZTI5TFdHVHc0Rlp1WkxSMTVRMTJMWHFGUFNUTitEWjBUVGZibzJHY0RP?=
- =?utf-8?B?QlVVVlJjV3BkZkdML01aaEM3NG9TVnQ3RHVLNzYwZnJXU3J3OS96ai9Pb1RU?=
- =?utf-8?B?NHVMeDJ4bkN6UTN0dlFuaWJncUttSDZwdFBmLzI4ZXhWM2dWZmJIZHhSSVJP?=
- =?utf-8?B?S1pReXdLeDdkM0UvQkdhQzBrKzdpbjNaNmZNWU4yb1hFUkh3ZEIwMUx0Wmdp?=
- =?utf-8?B?WFhDbndiOXM5aUsrZzRsOUdTZlJLdDVOTzF3T1VXQjZmdjV2a2R4U21kVjRh?=
- =?utf-8?B?NDZjSytoT2dsZnFkVHJxbTc0QnAzbi9yV1BxcnVIWDJsaGpPVWIrZDh1ZXBH?=
- =?utf-8?B?bEZQc1orMG9hbzhRQmlhSFhIc010U3BDTXhTOTN4SXVVMytEdWFmVUN4VVJE?=
- =?utf-8?B?MU01eVpsellsSTFMdG8yTDhFeUhRa2JxUWpjcSt5VG9RNlI1Z0VjM0dIQnpo?=
- =?utf-8?B?NlJ1MXF5SUMzdzRMRGFOYzVielZJWjF6VXhxQ1o5ajE3ZkJOblJKTUREKy9P?=
- =?utf-8?B?L3dEZ29XSTZkcmthQnhDT0hyRFRWY2EyODVieGRrVnlxNUNHSHZVNVlmVVND?=
- =?utf-8?B?cXFPQlJldCttaWdLY21GaXpraEN0d09RRzVVTDRIQlgzOEIyejBwU09lb1Ar?=
- =?utf-8?B?b1pjczBlZHg1VEdTRE5mbGo2WEdLSWxtRFRsUFgzMnJCSHZaUUkxdVNJQXR6?=
- =?utf-8?B?VG5xU2FEQzQzUVhtd1JyYk9rWVJuektiSzBNcEtRQlFTZHkzUWZkREM4U2ht?=
- =?utf-8?B?a0E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b72f2e3-f8a4-4f87-2861-08dc8aa525eb
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 06:01:49.1984
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HZ0+sMAJFuncbHHjaH9XvE5Sif7FqGro77wCPohHkda1qTwncOiCa+rVC3NRAP7SSJ6N3DBLci02vEzuhWqetg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8094
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] iio: light: ROHM BH1745 colour sensor
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+ Mudit Sharma <muditsharma.info@gmail.com>, lars@metafoo.de,
+ krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org,
+ ivan.orlov0322@gmail.com, javier.carrasco.cruz@gmail.com,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ "Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>,
+ "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>
+References: <20240606162948.83903-1-muditsharma.info@gmail.com>
+ <20240606162948.83903-2-muditsharma.info@gmail.com>
+ <20240608172227.17996c75@jic23-huawei>
+ <CANhJrGM9czj0RL3OLCgRHEKc2QOjG9P0AZTrZxvYUk65TCpHRg@mail.gmail.com>
+ <20240611181407.00003f61@Huawei.com>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240611181407.00003f61@Huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-hi, Yang Shi,
-
-On Wed, Jun 05, 2024 at 08:44:37PM -0700, Yang Shi wrote:
-> Oliver Sang <oliver.sang@intel.com>于2024年6月5日 周三19:16写道：
+On 6/11/24 20:14, Jonathan Cameron wrote:
+> On Mon, 10 Jun 2024 08:58:44 +0300
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 > 
-> > hi, Yang Shi,
-> >
-> > On Tue, Jun 04, 2024 at 04:53:56PM -0700, Yang Shi wrote:
-> > > On Mon, Jun 3, 2024 at 9:54 AM Yang Shi <shy828301@gmail.com> wrote:
-> > > >
-> > > > On Mon, Jun 3, 2024 at 7:02 AM Oliver Sang <oliver.sang@intel.com>
-> > wrote:
-> > > > >
-> > > > > hi, Yang Shi,
-> > > > >
-> > > > > On Fri, May 31, 2024 at 01:57:06PM -0700, Yang Shi wrote:
-> > > > > > Hi Oliver,
-> > > > > >
-> > > > > > I just came up with a quick patch (just build test) per the
-> > discussion
-> > > > > > and attached, can you please to give it a try? Once it is
-> > verified, I
-> > > > > > will refine the patch and submit for review.
-> > > > >
-> > > > > what's the base of this patch? I tried to apply it upon efa7df3e3b or
-> > > > > v6.10-rc2. both failed.
-> > > >
-> > > > Its base is mm-unstable. The head commit is 8e06d6b9274d ("mm: add
-> > > > swappiness= arg to memory.reclaim"). Sorry for the confusion, I should
-> > > > have mentioned this.
-> > >
-> > > I just figured out a bug in the patch. Anyway, we are going to take a
-> > > different approach to fix the issue per the discussion. I already sent
-> > > the series to the mailing list. Please refer to
-> > >
-> > https://lore.kernel.org/linux-mm/20240604234858.948986-1-yang@os.amperecomputing.com/
-> >
-> > got it. seems you will submit v2? should we wait v2 to do the tests?
+>> la 8. kesäk. 2024 klo 19.22 Jonathan Cameron (jic23@kernel.org) kirjoitti:
+>>>
+>>> On Thu,  6 Jun 2024 17:29:42 +0100
+>>> Mudit Sharma <muditsharma.info@gmail.com> wrote:
+>>>   
+>>>> Add support for BH1745, which is an I2C colour sensor with red, green,
+>>>> blue and clear channels. It has a programmable active low interrupt
+>>>> pin. Interrupt occurs when the signal from the selected interrupt
+>>>> source channel crosses set interrupt threshold high or low level.
+>>>>
+>>>> This driver includes device attributes to configure the following:
+>>>> - Interrupt pin latch: The interrupt pin can be configured to
+>>>>    be latched (until interrupt register (0x60) is read or initialized)
+>>>>    or update after each measurement.
+>>>> - Interrupt source: The colour channel that will cause the interrupt
+>>>>    when channel will cross the set threshold high or low level.
+>>>>
+>>>> This driver also includes device attributes to present valid
+>>>> configuration options/values for:
+>>>> - Integration time
+>>>> - Interrupt colour source
+>>>> - Hardware gain
+>>>>   
+>>
+>>>> +
+>>>> +#define BH1745_CHANNEL(_colour, _si, _addr)                                   \
+>>>> +     {                                                                     \
+>>>> +             .type = IIO_INTENSITY, .modified = 1,                         \
+>>>> +             .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),                 \
+>>>> +             .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_HARDWAREGAIN) | \
+>>>
+>>> Provide _SCALE instead of HARDWAREGAIN
+>>> As it's an intensity channel (and units are tricky for color sensors given
+>>> frequency dependence etc) all you need to do is ensure that if you halve
+>>> the _scale and measure the same light source, the computed
+>>> _RAW * _SCALE value remains constant.
+>>
+>> ...Which is likely to cause also the integration time setting to
+>> impact the SCALE.
+>>
+>> You may or may not want to see the GTS-helpers
+>> (drivers/iio/industrialio-gts-helper.c) - which have their own tricky
+>> corners. I think Jonathan once suggested to me to keep the
+>> HARDWAREGAIN as a read-only attribute to ease seeing what is going on.
+>> For the last couple of days I've been reworking the BU27034 driver to
+>> work with the new sensor variant - and I can definitely see the value
+>> of the read-only HARDWAREGAIN when we have per channel gain settings +
+>> integration time setting which all contribute to the scale...
 > 
-> 
-> The real fix is patch #1, that doesn’t need v2. So you just need to test
-> that.
+> I'm wondering if that was good advice, but it's definitely better
+> than letting userspace control the gain and integration time separately
 
-we've finished tests and confirmed patch #1 fixed the issue.
-we also tested upon patch #2, still clean.
+I woke up last night at 03.14 AM thinking of this :rolleyes:
 
-our bot applied your patch upon 306dde9ce5c951 as below
+> as there is no sensible way to know how to control that beyond -
 
-5d45cc9b1beb57 mm: gup: do not call try_grab_folio() in slow path
-fd3fc964468925 mm: page_ref: remove folio_try_get_rcu()
-306dde9ce5c951 foo
+I agree and disagree :)
+I agree that it is simpler to just change the scale when readings get 
+saturated - or when more accuracy is needed. Hence, implementing the 
+scale change as is done now makes very much sense.
 
-on 306dde9ce5c951, we still observed the issue we reported. clean on both patch
-#1 and #2
+However, I can imagine that sometimes the measurement time plays a role 
+- and people would like to have more fine grained control over things. 
+In that case, if driver only allows changing things via the scale, then 
+the driver is probably doing autonomous choices regarding the 
+integration time - which may not be optimal for all cases (*citation 
+needed).
 
-306dde9ce5c9516d fd3fc96446892528af48d6271a3 5d45cc9b1beb57386992c005669
----------------- --------------------------- ---------------------------
-       fail:runs  %reproduction    fail:runs  %reproduction    fail:runs
-           |             |             |             |             |
-         47:50         -94%            :50         -94%            :50    dmesg.Kernel_panic-not_syncing:Fatal_exception
-         47:50         -94%            :50         -94%            :50    dmesg.Oops:invalid_opcode:#[##]KASAN
-         47:50         -94%            :50         -94%            :50    dmesg.RIP:try_get_folio
-         47:50         -94%            :50         -94%            :50    dmesg.kernel_BUG_at_include/linux/page_ref.h
+As you may remember, I implemented the ROHM RGB and ALS sensors (the 
+BU270xx series) so that the integration time can be set as well as the 
+gain. These sensors (at least the BU27034, don't remember all the dirty 
+details of the RGB sensors) had per-channel gain and a global 
+integration time settings. Hence, the scale can be set separately for 
+each channel. I invented a restriction that setting the per-channel 
+scale tried to maintain the integration time and change the gain - but 
+if it was not possible, the scale change changes also the integration 
+time in order to yield the desired scale.
 
+Problem was that the integration time was a global setting, and changing 
+it for one channel results scale change also on the other channel(s).
 
-> 
-> For patch #2, I haven’t received any comment yet and I’m going to travel so
-> I’m not going to submit v2 soon .
-> 
-> And I heard if hugepd is going to be gone soon, so I may wait for that then
-> rebase on top of it. Anyway it is just a clean up.
-> 
-> 
-> 
-> >
-> > sorry that due to resource constraint, we cannot respond test request very
-> > quickly now.
-> >
-> > >
-> > > >
-> > > > >
-> > > > > >
-> > > > > > Thanks,
-> > > > > > Yang
-> > > > > >
-> > > > > > >
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > --
-> > > > > > > > Cheers,
-> > > > > > > >
-> > > > > > > > David / dhildenb
-> > > > > > > >
-> > > > >
-> > > > >
-> > >
-> >
+To mitigate such side-effects I implemented logic that the scale change 
+for other channels (caused by the integration time change) is 
+compensated by changing the gain for these unrelated channels. Eg, if 
+scale change for channel #1 required doubling the integration time - 
+which effectively doubled the "gain contributed by integration time" 
+also for the channel #2 and #3 - then the HARDWAREGAIN for the unrelated 
+channels #2 and #3 is halved in order to keep their scale unchanged. Great.
+
+Except that this is not always possible. The HWGAIN for these unrelated 
+channels may have been already set to the other extreme, and further 
+reducing/increasing is not possible. Or, there may be unsupported 
+multipliers (gaps) in the gain range, so that setting the hardwaregain 
+to required value is not possible.
+
+Here I just decided to return an error to caller and disallow such scale 
+change.
+
+This is very much annoying solution but I ran out of good ideas. Adding 
+more logic to the driver to work around this felt like asking for a 
+nose-bleed. I was sure I ended up adding a bug or two, and resulting 
+code that was so hairy I could never look at it again :) We can call 
+that as an unmaintainable mess.
+
+Still, what makes this even more annoying is that it might be possible 
+to support the requested scale by selecting yet another integration 
+time. Eg, imagine a situation where we have 2 channels. Both channels 
+support gains
+
+1x, 2x, 8x, 16x, 32x. 4x is not supported.
+
+Let's further say we have integration times 50mS 100mS, 200mS, 400mS - 
+causing "effective gains" 1x, 2x, 4x and, 8x
+
+Now, say channel #1 is using gain 2x, channel #2 is using 8x. 
+Integration time is set to 400mS.
+
+Assume the user would like to double the scale for channel #2. This 
+means the "total gain" should be halved. The HWGAIN can't be halved 
+because 8x => 4x is not supported, so driver decides to drop the 
+integration time from 400mS to 200mS instead. That'd do the trick.
+
+Then the driver goes to check if the channel #1 can maintain the scale 
+with this integration time. Gain caused by integration time is now 
+halved so HWGAIN for channel #1 should be doubled to mitigate the 
+effect. Well, the new gain for channel #1 should now go from 2x => 4x - 
+which is not supported, and the driver returns error and rejects the change.
+
+Still, the hardware could be set-up to use integration time 50mS 
+(dropping the gain for channels from 8x => 1x eg. 8 times smaller), and 
+channel #2 HWGAIN go from 8x => 2x (4 times smaller) thus doubling the 
+scale. The channel #1 wants to maintain scale, so HWGAIN for channel #1 
+should go 8 times greater, from 2x => 16x which is possible.
+
+To make this even more annoying - the available_scales lists the 'halved 
+scale' for the channel #1 as supported because there is a way to achieve 
+it. So, the user can't really easily figure out what went wrong. Having 
+the read-only HARDWAREGAIN and knowing the gains sensor's channels 
+support would give a hint - but this is far from obvious. listing the 
+supported hardwaregains might make things a bit better - but using the 
+standard "available" entry in sysfs might make user to assume setting 
+the hardwaregain is possible.
+
+We may invent a new entry to list the supported hardwaregains - and I 
+believe adding the logic to find supported gain-timing combinations is 
+then easier (and less error-prone) in user-land applications than it is 
+in driver - but I am wondering if it actually would be better just allow 
+setting both the hardwaregain and integration time individually for 
+those applications which may care... Well, I am probably just missing 
+some culprit supporting setting the hardwaregain causes.
+
+I believe there are many use-cases where it would work if we just 
+allowed the channel #1 scale to change as a side-effect of changing 
+channel #1 scale. Still, I am very reluctant to do this as there could 
+be different type of data coming from these channels, and different 
+consumers for this data. Allowing another application to unintentionally 
+change the data for other app would in my opinion be very nasty.
+
+The problem is not exactly urgent though and I am not working on an 
+application suffering from it. But it managed to interrupt my glymphatic 
+system while it was cleaning-up my brains last night. I will use it as 
+an excuse if you find any errors from this babbling :)
+
+Yours
+	-- Matti
+
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
+
 
