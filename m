@@ -1,266 +1,121 @@
-Return-Path: <linux-kernel+bounces-212079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1314905AFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:32:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE91905AEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1073FB2615C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:32:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25BD91F23464
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A477A140;
-	Wed, 12 Jun 2024 18:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773B24A9B0;
+	Wed, 12 Jun 2024 18:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oWWnaHwE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcN1LmqV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C747D3E6;
-	Wed, 12 Jun 2024 18:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3632904;
+	Wed, 12 Jun 2024 18:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718217087; cv=none; b=QCLbWxlAIp6S7AJpNui/uU92oC+Dm1V+Ycths5wSVAdYURc2Ta4HrYXgXYn1OpKW7ryw4DRO4RVBrzwf+cFi6VWQ0w1odioH30IRpGj6XU7A3PO10BUKhQcIvtC/lBrcgQs6TTI7TpxRt5vtwX064TVTw7n9+bMU+tltc5ef+uk=
+	t=1718217056; cv=none; b=QMpC2AnTN94zW2MQLUZIBZCdIOYlWjeP/tJwCQdmwHt22HiZNdkLFDWn0sba0hbjIXC4AqTubKTS6Inaix5+xZWYsUHGqfXawmeTQg7Icjh/S4ZxAL+b75gBqxUFUcSZ98dPtbJkhQneM8kByNe1+S8nmPwEemriTXGL4dv8Q2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718217087; c=relaxed/simple;
-	bh=ocVubkKQ96kVzKM4QbkjIdbxB6c4E946f8IIYTiRzhI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kcSdxsOy2iIQpkR5ztCt3jeejJYeKs2Q4bvKF9kq6Qs5ef+3t9BKBCL/66qausZ9m/IXqwxNhUGyFguE2HwGdkvlB+GAxwQojsHkJJNMsIE7+pRshNZ0m24hhi1Gc1V9ItyVxnwZj/ouqktksopMsw6/tR4lZ/iODTaik3eOGWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oWWnaHwE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CDql6L019108;
-	Wed, 12 Jun 2024 18:31:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UayRK+g1ykW09sj34BOBncD2wtsm03055H6q+izTpjU=; b=oWWnaHwEJmBeMbs5
-	wz56NWOTSpa41eX8RHFFL309C0Fe4EvXYfuBq94yTwjNTa5GLbzYZHad6zzTAqwT
-	x1Dvyqgp3XQrOmCMN5PeyTlPV2lZDlvMaN7uCE5SxxoOh2utfqqXKUJvLCkyKLAy
-	FSWtPAkKZvtFVxFAk3RzBDNBMasPz3RAo0idVkIwNIXNwgMrrNjAJTII5CH7xHsL
-	NU0I4238rh55IkbAv8HrZGi4/P2/1tFMxQLPLSdedySGQp+SqqgWseR6UICRDgma
-	enCyBspCxZTizkncidHI3RjBZH9giQc04L3b5v4mAipI9+2QVAnCoTxL5zQSN29A
-	IwfZCA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yqcxtgxng-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 18:31:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CIVHFv028515
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 18:31:17 GMT
-Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Jun 2024 11:31:13 -0700
-From: Sibi Sankar <quic_sibis@quicinc.com>
-To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
-        <quic_sibis@quicinc.com>, <conor+dt@kernel.org>
-Subject: [RFC V2 4/4] arm64: dts: qcom: x1e80100: Enable LLCC/DDR/DDR_QOS dvfs
-Date: Thu, 13 Jun 2024 00:00:31 +0530
-Message-ID: <20240612183031.219906-5-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240612183031.219906-1-quic_sibis@quicinc.com>
-References: <20240612183031.219906-1-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1718217056; c=relaxed/simple;
+	bh=e3QzXrAaU67B/41FElb0xb11by+jePMPQ9A+1cBeILs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rDAKUX/4gGxufVdPuVUrMYOXA0N+h6jWw9JdwbF3w5uAotapO8h5BWuyZcYKGgX3+9V87oaRHUTXPtt4Xo08mPPlJ0UM2VCe9hbPkOC/DCiqJ5ZLW2T/mki/+WBKUVkAqOCb9cxntBQCHNt2EHU6j04egvL89C//Z6bdxxkVCIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcN1LmqV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA306C116B1;
+	Wed, 12 Jun 2024 18:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718217056;
+	bh=e3QzXrAaU67B/41FElb0xb11by+jePMPQ9A+1cBeILs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pcN1LmqVDCujeGcsZoS9HdgBzlkuVNCDq07GI+9cpH8K5pC1eVzYA0EJ1U+5Us3S6
+	 8XS6xBsIILjM86ioB0/3ul9dJdGy3rwr7nHauYBjgGCgr8BPYWtxh3zJgc1oZTxbaY
+	 uUuFBemjxteVBFqOxC30bM9JizYIgAFgmgfj9fUE+C5nY0PYGVpMzFcw+C3fvvr+hz
+	 +6oKQKeBrB2U3zhHGXnsLjgs9PCMOHkX4PdmiR41VkKu5Jez/H/cOWI+tXr3B/GXkc
+	 LMpXgSRf+g6u/4EfHaLitBTwNO+7XigGtjyoYl5WY/+f9wL/CDHIqaI5Mrc9zDgwFF
+	 o2pqi914O6sqw==
+Date: Wed, 12 Jun 2024 21:30:51 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	linux-hardening@vger.kernel.org, netdev@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Kees Cook <keescook@chromium.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Long Li <longli@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH net-next v4] net: mana: Allow variable size indirection
+ table
+Message-ID: <20240612183051.GE4966@unreal>
+References: <1718015319-9609-1-git-send-email-shradhagupta@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: HTq18ZmtrIq5aVdHg_yquhLO_zgx_AgX
-X-Proofpoint-GUID: HTq18ZmtrIq5aVdHg_yquhLO_zgx_AgX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_10,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=899 spamscore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406120132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1718015319-9609-1-git-send-email-shradhagupta@linux.microsoft.com>
 
-Enable LLCC/DDR/DDR_QOS dvfs through the Qualcomm's SCMI vendor protocol.
+On Mon, Jun 10, 2024 at 03:28:39AM -0700, Shradha Gupta wrote:
+> Allow variable size indirection table allocation in MANA instead
+> of using a constant value MANA_INDIRECT_TABLE_SIZE.
+> The size is now derived from the MANA_QUERY_VPORT_CONFIG and the
+> indirection table is allocated dynamically.
+> 
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> Reviewed-by: Dexuan Cui <decui@microsoft.com>
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> ---
+>  Changes in v4:
+>  * Skip NULLify after free
+>  * Log proper errors in mana_probe() if mana_attach(), mana_probe_port()
+>    fails
+>  * Implement mana_cleanup_indir_table() to avoid code duplication.
+> 
+>  Changes in v3:
+>  * Fixed the memory leak(save_table) in mana_set_rxfh()
+> 
+>  Changes in v2:
+>  * Rebased to latest net-next tree
+>  * Rearranged cleanup code in mana_probe_port to avoid extra operations
+> ---
+>  drivers/infiniband/hw/mana/qp.c               | 10 +--
+>  drivers/net/ethernet/microsoft/mana/mana_en.c | 85 ++++++++++++++++---
+>  .../ethernet/microsoft/mana/mana_ethtool.c    | 27 ++++--
+>  include/net/mana/gdma.h                       |  4 +-
+>  include/net/mana/mana.h                       |  9 +-
+>  5 files changed, 104 insertions(+), 31 deletions(-)
 
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
----
+Hi Jakub,
 
-V1:
-* Use alternate bindings. [Dmitry/Konrad]
-* Cleanups/Fixes suggested for the client driver. [Dmitry/Konrad/Cristian]
-* Use opp-tables instead of memfreq-tbl. [Dmitry/Konrad]
-* Add support for DDR_QOS mem_type.
+Like we talked, I created new shared branch for this patch:
+https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/log/?h=mana-shared
 
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 136 +++++++++++++++++++++++++
- 1 file changed, 136 insertions(+)
+Because it took time, the base of this branch is v6.10-rc3 as I'm eager
+to get the commit c9d52fb313d3 ("PCI: Revert the cfg_access_lock lockdep mechanism")
+from Linus's master, and this shared patch gives me the reason to pull
+the fix.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index d134dc4c7425..d4f690d6f91e 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -17,6 +17,7 @@
- #include <dt-bindings/power/qcom-rpmpd.h>
- #include <dt-bindings/soc/qcom,gpr.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
-+#include <dt-bindings/soc/qcom,scmi-vendor.h>
- #include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
- 
- / {
-@@ -323,6 +324,141 @@ scmi_dvfs: protocol@13 {
- 				reg = <0x13>;
- 				#power-domain-cells = <1>;
- 			};
-+
-+			scmi_vendor: protocol@80 {
-+				reg = <0x80>;
-+
-+				memlat-dvfs {
-+					memory-0 {
-+						qcom,memory-type = <QCOM_MEM_TYPE_DDR>;
-+						freq-table-hz = /bits/ 64 <200000000 4224000000>;
-+
-+						monitor-0 {
-+							qcom,cpulist = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7 &CPU8 &CPU9 &CPU10 &CPU11>;
-+							qcom,ipm-ceil = <20000000>;
-+							operating-points-v2 = <&memory0_monitor0_opp_table>;
-+
-+							memory0_monitor0_opp_table: opp-table {
-+								compatible = "operating-points-v2";
-+
-+								opp-999000000 {
-+									opp-hz = /bits/ 64 <999000000 547000000>;
-+								};
-+
-+								opp-1440000000 {
-+									opp-hz = /bits/ 64 <1440000000 768000000>;
-+								};
-+
-+								opp-1671000000 {
-+									opp-hz = /bits/ 64 <1671000000 1555000000>;
-+								};
-+
-+								opp-2189000000 {
-+									opp-hz = /bits/ 64 <2189000000 2092000000>;
-+								};
-+
-+								opp-2516000000 {
-+									opp-hz = /bits/ 64 <2516000000 3187000000>;
-+								};
-+
-+								opp-3860000000 {
-+									opp-hz = /bits/ 64 <3860000000 4224000000>;
-+								};
-+							};
-+						};
-+
-+						monitor-1 {
-+							qcom,cpulist = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7 &CPU8 &CPU9 &CPU10 &CPU11>;
-+							operating-points-v2 = <&memory0_monitor1_opp_table>;
-+							qcom,compute-type;
-+
-+							memory0_monitor1_opp_table: opp-table {
-+								compatible = "operating-points-v2";
-+
-+								opp-1440000000 {
-+									opp-hz = /bits/ 64 <1440000000 200000000>;
-+								};
-+
-+								opp-2189000000 {
-+									opp-hz = /bits/ 64 <2189000000 768000000>;
-+								};
-+
-+								opp-2516000000 {
-+									opp-hz = /bits/ 64 <2516000000 1555000000>;
-+								};
-+
-+								opp-3860000000 {
-+									opp-hz = /bits/ 64 <3860000000 4224000000>;
-+								};
-+							};
-+						};
-+					};
-+
-+					memory-1 {
-+						qcom,memory-type = <QCOM_MEM_TYPE_LLCC>;
-+						freq-table-hz = /bits/ 64 <300000000 1067000000>;
-+
-+						monitor-0 {
-+							qcom,cpulist = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7 &CPU8 &CPU9 &CPU10 &CPU11>;
-+							qcom,ipm-ceil = <20000000>;
-+							operating-points-v2 = <&memory1_monitor0_opp_table>;
-+
-+							memory1_monitor0_opp_table: opp-table {
-+								compatible = "operating-points-v2";
-+
-+								opp-999000000 {
-+									opp-hz = /bits/ 64 <999000000 300000000>;
-+								};
-+
-+								opp-1440000000 {
-+									opp-hz = /bits/ 64 <1440000000 466000000>;
-+								};
-+
-+								opp-1671000000 {
-+									opp-hz = /bits/ 64 <1671000000 600000000>;
-+								};
-+
-+								opp-2189000000 {
-+									opp-hz = /bits/ 64 <2189000000 806000000>;
-+								};
-+
-+								opp-2516000000 {
-+									opp-hz = /bits/ 64 <2516000000 933000000>;
-+								};
-+
-+								opp-3860000000 {
-+									opp-hz = /bits/ 64 <3860000000 1066000000>;
-+								};
-+							};
-+						};
-+					};
-+
-+					memory-2 {
-+						qcom,memory-type = <QCOM_MEM_TYPE_DDR_QOS>;
-+						freq-table-hz = /bits/ 64 <QCOM_DDR_LEVEL_AUTO QCOM_DDR_LEVEL_PERF>;
-+
-+						monitor-0 {
-+							qcom,ipm-ceil = <20000000>;
-+							qcom,cpulist = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7 &CPU8 &CPU9 &CPU10 &CPU11>;
-+							operating-points-v2 = <&memory2_monitor0_opp_table>;
-+
-+							memory2_monitor0_opp_table: opp-table {
-+								compatible = "operating-points-v2";
-+
-+								opp-2189000000 {
-+									opp-hz = /bits/ 64 <2189000000>;
-+									opp-level = <QCOM_DDR_LEVEL_AUTO>;
-+								};
-+
-+								opp-3860000000 {
-+									opp-hz = /bits/ 64 <3860000000>;
-+									opp-level = <QCOM_DDR_LEVEL_PERF>;
-+								};
-+							};
-+						};
-+					};
-+				};
-+			};
- 		};
- 	};
- 
--- 
-2.34.1
+I see that your net-next didn't get -rc3 tag yet, so please pull it after you
+advance net-next. After that I'll do the same in RDMA tree.
 
+Thanks
 
