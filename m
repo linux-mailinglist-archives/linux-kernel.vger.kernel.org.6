@@ -1,150 +1,181 @@
-Return-Path: <linux-kernel+bounces-211642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FACC9054CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:12:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF979054D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D6841C20F85
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:12:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4671B1F21D35
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C3A17DE0D;
-	Wed, 12 Jun 2024 14:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FE717DE1E;
+	Wed, 12 Jun 2024 14:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="hHxbjwxy"
-Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="StgvcIY0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A32F17D8A3
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806A217D8A3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201530; cv=none; b=s1zjJ17M662PwUd3J9/prTPXRH/IewyEmbTMtS5cR6E+z1IxoxROVOyp1yA3EQrkvewOtV2PkiRcdRXIeevhycODvc62R3v7zBKBH5wNakAj/F9EN5iXs//j5//gueC9DjVvONadQCq6LCm7y1Cnts0asYQIDKSF2iKNOy2DSY0=
+	t=1718201563; cv=none; b=rJ9T/sfjhsiRQi+iA103NwnaxaPaDgsti9yPsgIAafL9WMUb2nHZ0UhO+dQSvCFbzNvMRwEazvp/6I4iyKVirbN0O5zNBEP0j/btfw+dNzDes2T+RuEidlU20+RcUUfeoVAq9QVB/fhuJGCyMuFCaw5rfvuEqj034j1CSvjHyao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201530; c=relaxed/simple;
-	bh=e9SfW1metR3R0MWFRe7yGcE0JtmhD5pGML2QZDcch80=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Bb0VV/NCmfTiWqgXOi1E93Zkcx9eloHzEDLKISnYduOloniucIdm48vUQeh5SUKtxXKQwGApFNjK63Kuo4CGcY8I+Xmyrghh0nUIoIanN2vB8EZ4mSpNnWRIHhT9/EGbh/2xWgnYztMG9S0qVC1FZf6YgrHpUoIrzInLBAopPOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=hHxbjwxy; arc=none smtp.client-ip=49.12.199.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4F806DACB4;
-	Wed, 12 Jun 2024 16:12:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1718201525; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=CawtlzSDLIzCAFolNyvw3t+/DIyp3iWGJk127IQAYQM=;
-	b=hHxbjwxyiicmDv4Ay69x8UspKJlWzAvmbt+SEDwDXspfUm0qc2ljxlxH8fcrsf9D17qXcd
-	FlRGaKnqqBaGCjI39cQLuUXE+HOVW5umgz8+HfnMYfhuJEmOzoxJTLrDH6X7Bc6LNFuadX
-	VFtYp0trfz46WFxej59BpuuGU+KNcCbVkQC6r3dejFoiW6O1Rhnqkj0D1Xw4CDbYx9+R1U
-	D2dsmcTupEZuh90xCb5rrG6vzuExTCaFFJOEjj17OxSWqQymDRy+rUDwpvRwWeY4UUtgx+
-	Ew1gHPuF0k0BZ8aU2ABX390uTc1rxCDBSiUECikbKen0u5st2nUhnVa3msM1rQ==
-From: Daniel Wagner <dwagner@suse.de>
-Date: Wed, 12 Jun 2024 16:11:59 +0200
-Subject: [PATCH] nvmet: always initialize cqe.result
+	s=arc-20240116; t=1718201563; c=relaxed/simple;
+	bh=e6CithrYoqvWAZTwPj/kYCtycBNrDIODo8TF0DmX2ss=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Onf0VWN/D96xWwLfPckuXuHpLPfQNaRjwtA1MS/U5kfa6zUv94rrFBXa0FuFJ5QxBY0Jo/TVBbHadrUg1DShwKi0j1QwpuKjNiINy3GfSwlhmxZ8jq01TNqGKYFn1MdA4tXX6es3w2izC07g4tcx8i6yIvf7mPLjram0t045S6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=StgvcIY0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718201560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=41mm6L+5qDMknpvTMwkuAgq3SgjPtSkdBwaxW2ijW5Q=;
+	b=StgvcIY01GgvOEzsnVnPOKpkrULziz5Nc5fAQIQ32FTAtcj5QTOSbxASJzkdFsKQSZ/ROB
+	q3MzJqcKrSg3BVLog03jwLJF9Lyci8srSvQah5MCfLN/5OvLVU76YSLVSdVpth9APFi1bH
+	8Xk+laGiFmAQPbjl7MtNNY20YPhghIU=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-504--jUkXuEEPD-MEb8-RDjFyQ-1; Wed, 12 Jun 2024 10:12:39 -0400
+X-MC-Unique: -jUkXuEEPD-MEb8-RDjFyQ-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-79557d418e0so141991385a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:12:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718201558; x=1718806358;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=41mm6L+5qDMknpvTMwkuAgq3SgjPtSkdBwaxW2ijW5Q=;
+        b=LT6ETxM3LZc885u+aMSiWUBlMGTLz3ulxpV/yuLy5ENYMOC54BPhlYiNKPfM5p81Vm
+         DisWZqXtPtFQKb0RqrXtG9reYW3Q8al9yXhufOjEk50y7KfR4PjOi4MKEYwPLhajL3Cc
+         3epADHM2gsxMHcRiecOylrfrkityqA7mD5u++RVxenkIGwJenZxrUEk3V/NcInDEAZ5b
+         TpDmCvUMk74tnXiySyG+cb3vTwwc92OMq9fWIaDOB4SBi6N8HK6rwhzmFcKTzcFJdHu7
+         Y/h0VzqxabuaAUrkW76QnS6dVxKCobit+B9s38CvC/ijgaNbc9UjZzJqkaVTzVJS1iS6
+         ZpLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVP6dKqfP4YAC4Q6SOQH/o5+XWi8rv32/eQib3lKTFF8oPSxAjacJ/3kX/eJSrV9HdWBCScHhxMUMJVZl57siFzhG9edgib53ZSpac2
+X-Gm-Message-State: AOJu0Yx2IPDWXaec07FGLSM1uCwwn9rsD//O2hMQU0D6a3WdQ66SZZc7
+	/zLna+xMCHyC0JUIGy4smufggCy2gGZzS+w4Ud9n7xjrN0ZngFF1B6cV2A7dNR6+0Xbte/9s4dt
+	xXHSscp04Qsqgluws6pZKM9pLedYEDzeHlGVj8Xmm89e7Q1CRI3OqUo5yt3F10A==
+X-Received: by 2002:a05:620a:190f:b0:797:84e7:9046 with SMTP id af79cd13be357-797f4db30e5mr352017185a.4.1718201558718;
+        Wed, 12 Jun 2024 07:12:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHB5vrOLZcD6InRm6Qvq4YB5P6QAVqAA61aZvOvCoo3qbREicdPR4c13qRvHDbOEOnZ6c3QTQ==
+X-Received: by 2002:a05:620a:190f:b0:797:84e7:9046 with SMTP id af79cd13be357-797f4db30e5mr352013285a.4.1718201558298;
+        Wed, 12 Jun 2024 07:12:38 -0700 (PDT)
+Received: from fionn ([74.12.5.183])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7954de1c077sm453970885a.48.2024.06.12.07.12.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 07:12:37 -0700 (PDT)
+Date: Wed, 12 Jun 2024 10:12:26 -0400 (EDT)
+From: John Kacur <jkacur@redhat.com>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+cc: Daniel Bristot de Oliveira <bristot@kernel.org>, 
+    Steven Rostedt <rostedt@goodmis.org>, Clark Williams <williams@redhat.com>, 
+    linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtla/osnoise: Better report when histogram is empty
+In-Reply-To: <Zml6JmH5cbS7-HfZ@uudg.org>
+Message-ID: <9d283173-4ff6-fbac-bcc3-e712daa99572@redhat.com>
+References: <Zml6JmH5cbS7-HfZ@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240612-nvmet-always-init-v1-1-0c0fd94461f0@suse.de>
-X-B4-Tracking: v=1; b=H4sIAK6saWYC/x2MSwqAIBQAryJvnaAi/a4SLSSf9aAsNKwI7560m
- 1nMvBAxEEbo2QsBE0XafRFZMZgW42fkZIuDEkqLWiru04YnN+tlnsjJU+Gm063QaB1aKN0R0NH
- 9P4cx5w8p7K03YwAAAA==
-To: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
- Hannes Reinecke <hare@suse.de>
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Daniel Wagner <dwagner@suse.de>
-X-Mailer: b4 0.13.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=US-ASCII
 
-The spec doesn't mandate that the first two double words (aka results)
-for the command queue entry need to be set to 0 when they are not
-used (not specified). Though, the target implemention returns 0 for TCP
-and FC but not for RDMA.
 
-Let's make RDMA behave the same and thus explicitly initializing the
-result field. This prevents leaking any data from the stack.
 
-Signed-off-by: Daniel Wagner <dwagner@suse.de>
----
-Followup on the prevsious discussion on this topic[1]. I think we should add
-this one to avoid transfering random stack values to the host when using RDMA.
+On Wed, 12 Jun 2024, Luis Claudio R. Goncalves wrote:
 
-[1] https://lore.kernel.org/linux-nvme/20240412061056.GA32319@lst.de/
----
- drivers/nvme/target/core.c             | 1 +
- drivers/nvme/target/fabrics-cmd-auth.c | 3 ---
- drivers/nvme/target/fabrics-cmd.c      | 6 ------
- 3 files changed, 1 insertion(+), 9 deletions(-)
+> When osnoise hist does not observe any samples above the threshold,
+> no entries are recorded and the final report shows empty entries
+> for the usual statistics (count, min, max, avg):
+> 
+>     [~]# osnoise hist -d 5s -T 500
+>     # RTLA osnoise histogram
+>     # Time unit is microseconds (us)
+>     # Duration:   0 00:00:05
+>     Index
+>     over: 
+>     count:
+>     min:  
+>     avg:  
+>     max:  
+> 
+> That could lead users to confusing interpretations of the results.
+> 
+> A simple solution is to report 0 for count and the statistics, making it
+> clear that no noise (above the defined threshold) was observed:
+> 
+>     [~]# osnoise hist -d 5s -T 500
+>     # RTLA osnoise histogram
+>     # Time unit is microseconds (us)
+>     # Duration:   0 00:00:05
+>     Index
+>     over: 0
+>     count: 0
+>     min: 0
+>     avg: 0
+>     max: 0
+> 
+> 
+> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+> ---
+>  tools/tracing/rtla/src/osnoise_hist.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
+> index 7be17d09f7e85..214e2c93fde01 100644
+> --- a/tools/tracing/rtla/src/osnoise_hist.c
+> +++ b/tools/tracing/rtla/src/osnoise_hist.c
+> @@ -374,6 +374,7 @@ osnoise_print_stats(struct osnoise_hist_params *params, struct osnoise_tool *too
+>  {
+>  	struct osnoise_hist_data *data = tool->data;
+>  	struct trace_instance *trace = &tool->trace;
+> +	int has_samples = 0;
+>  	int bucket, cpu;
+>  	int total;
+>  
+> @@ -402,11 +403,25 @@ osnoise_print_stats(struct osnoise_hist_params *params, struct osnoise_tool *too
+>  			continue;
+>  		}
+>  
+> +		/* There are samples above the threshold */
+IMHO The comment isn't needed because the variable had_samples is 
+descriptive, but it's not a big deal either
 
-diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
-index 06f0c587f343..4ff460ba2826 100644
---- a/drivers/nvme/target/core.c
-+++ b/drivers/nvme/target/core.c
-@@ -957,6 +957,7 @@ bool nvmet_req_init(struct nvmet_req *req, struct nvmet_cq *cq,
- 	req->metadata_sg_cnt = 0;
- 	req->transfer_len = 0;
- 	req->metadata_len = 0;
-+	req->cqe->result.u64 = 0;
- 	req->cqe->status = 0;
- 	req->cqe->sq_head = 0;
- 	req->ns = NULL;
-diff --git a/drivers/nvme/target/fabrics-cmd-auth.c b/drivers/nvme/target/fabrics-cmd-auth.c
-index d61b8c6ff3b2..cb34d644ed08 100644
---- a/drivers/nvme/target/fabrics-cmd-auth.c
-+++ b/drivers/nvme/target/fabrics-cmd-auth.c
-@@ -333,7 +333,6 @@ void nvmet_execute_auth_send(struct nvmet_req *req)
- 		pr_debug("%s: ctrl %d qid %d nvme status %x error loc %d\n",
- 			 __func__, ctrl->cntlid, req->sq->qid,
- 			 status, req->error_loc);
--	req->cqe->result.u64 = 0;
- 	if (req->sq->dhchap_step != NVME_AUTH_DHCHAP_MESSAGE_SUCCESS2 &&
- 	    req->sq->dhchap_step != NVME_AUTH_DHCHAP_MESSAGE_FAILURE2) {
- 		unsigned long auth_expire_secs = ctrl->kato ? ctrl->kato : 120;
-@@ -516,8 +515,6 @@ void nvmet_execute_auth_receive(struct nvmet_req *req)
- 	status = nvmet_copy_to_sgl(req, 0, d, al);
- 	kfree(d);
- done:
--	req->cqe->result.u64 = 0;
--
- 	if (req->sq->dhchap_step == NVME_AUTH_DHCHAP_MESSAGE_SUCCESS2)
- 		nvmet_auth_sq_free(req->sq);
- 	else if (req->sq->dhchap_step == NVME_AUTH_DHCHAP_MESSAGE_FAILURE1) {
-diff --git a/drivers/nvme/target/fabrics-cmd.c b/drivers/nvme/target/fabrics-cmd.c
-index 042b379cbb36..69d77d34bec1 100644
---- a/drivers/nvme/target/fabrics-cmd.c
-+++ b/drivers/nvme/target/fabrics-cmd.c
-@@ -226,9 +226,6 @@ static void nvmet_execute_admin_connect(struct nvmet_req *req)
- 	if (status)
- 		goto out;
- 
--	/* zero out initial completion result, assign values as needed */
--	req->cqe->result.u32 = 0;
--
- 	if (c->recfmt != 0) {
- 		pr_warn("invalid connect version (%d).\n",
- 			le16_to_cpu(c->recfmt));
-@@ -305,9 +302,6 @@ static void nvmet_execute_io_connect(struct nvmet_req *req)
- 	if (status)
- 		goto out;
- 
--	/* zero out initial completion result, assign values as needed */
--	req->cqe->result.u32 = 0;
--
- 	if (c->recfmt != 0) {
- 		pr_warn("invalid connect version (%d).\n",
- 			le16_to_cpu(c->recfmt));
 
----
-base-commit: 6bfd66808f973cf1bb234e54d0cd51a15bba2996
-change-id: 20240612-nvmet-always-init-a794804edfed
+> +		has_samples = 1;
+>  		trace_seq_printf(trace->seq, "\n");
+>  		trace_seq_do_printf(trace->seq);
+>  		trace_seq_reset(trace->seq);
+>  	}
+>  
+> +	/*
+> +	 * If no samples were recorded, skip calculations, print zeroed statistics
+> +	 * and return.
+> +	 */
+> +	if (!has_samples) {
+> +		trace_seq_reset(trace->seq);
+> +		trace_seq_printf(trace->seq, "over: 0\ncount: 0\nmin: 0\navg: 0\nmax: 0\n");
+> +		trace_seq_do_printf(trace->seq);
+> +		trace_seq_reset(trace->seq);
+> +		return;
+> +	}
+> +
+>  	if (!params->no_index)
+>  		trace_seq_printf(trace->seq, "over: ");
+>  
+> 
+> 
+> 
 
-Best regards,
--- 
-Daniel Wagner <dwagner@suse.de>
+
+Reviewed-by: John Kacur <jkacur@redhat.com>
 
 
