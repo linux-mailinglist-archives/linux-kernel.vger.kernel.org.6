@@ -1,106 +1,89 @@
-Return-Path: <linux-kernel+bounces-210942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2CE904AC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:22:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C5DA904AC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8928D1F244B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:22:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CD8C283AED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662C0374D1;
-	Wed, 12 Jun 2024 05:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D617C36AF2;
+	Wed, 12 Jun 2024 05:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJzKow9T"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AvHtM/Aq"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA041C2D;
-	Wed, 12 Jun 2024 05:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2754E36124
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 05:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718169721; cv=none; b=Z0BrEpUP8MXTH2peVm5uAlDQsBSpW+gWOoIm7ZjzdYMu5yI1TXSgm2t18hgzFtNIdLOZoHcBi0XKSfgGNREiDIaPDbJacuU9eOvjvk79m6xyN/wXK+Dw0GEH7nIcmPAqK0FlxIgGvp2FWnwKNLiJayaF27OKuwSySM4pGgbo1nQ=
+	t=1718169769; cv=none; b=o+oQurxafVrR/QpKMS8JUYfLuEKx1Zl2o5Yb7XzXJ22wDfQeD4G0CQ3g7L8UaSig8h9wboI1yUxLwyw9YsNEm5q1Kc6voC3lewKETrkRmUMX5B4MtWsV9Q4LGhdUACGpNI/itQ9ruQjb+PIJrRcGflVYACTdV56MFlB+kuYQDJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718169721; c=relaxed/simple;
-	bh=8SGOda8tYPcw0wzFjbPUAUG2mv09WHxbpDwu0cNWIFc=;
+	s=arc-20240116; t=1718169769; c=relaxed/simple;
+	bh=r9wMIeC0DedienMoh4i0ppIt0OayZ+q1adMyvBDCkMM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ml2166lDugBjm/EL2ajqF0bxCUR2z61W15m7gJFNOv8KD1CcvnlVdPH9GtwnHxYe0PAanA9BVZmHtIhOG5UcYjMDAUKZmPQHRRE9bO1OZJ66GuklIttK7HCRUMU6RpIYowMXRhWnQa/b9A862ZyRgyFtdFN9WqSMKPTfHbsfuek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJzKow9T; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-48c4a821d76so1015381137.2;
-        Tue, 11 Jun 2024 22:22:00 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FpnolQ8vZ5IMt5Yr+y+2h2PPj+fYIIyeEyvCyUWjmaUAfRmGfYuEJN0qDahXgi4NtElJN0BBw0UfWz4lahqw6xvhewlVbjqXF0H7QkV7BU0bMqz4UIr3181+AwqYukyEbp+CN16qHprgUnao4Px+jd2NhZCe2w1FC/jK7mPWTXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AvHtM/Aq; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-62fffd5d36bso1129607b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 22:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718169719; x=1718774519; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1718169767; x=1718774567; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fjEwJgRoG92FC9Vw5huQBkdZy2fxtlgBnuBKB/008U0=;
-        b=XJzKow9TKqUCW9TmDa5rKNQxTtDpSNeVcSt6QWMhIkRzm/zQ90nWoZa/w5xw6RVmwz
-         2p3ABsv2oCNQkIP//1cvDC2mNCeXFwbcE6bv1C6WQBVHFvLCLQNp2xgV4RC6lb1vCdk1
-         jxqBpojj3DIlgYbIQnc/lxTv9Ut/YSiRL36duXOYAA0cdwZ5bEDdQ/yfVr+0GrB6VNo4
-         N+/BllgyLD2CLVeluJddcdMY907nAyxB52dzUAOy6JcGvsjLOqPmlqYrrhaF1oYPKp3M
-         2Scnug70Gr/XJFCOf/WOp8wET8Xce27/AhfpHhH9522MB5oYaIbaguI8mszk8kAAi6te
-         KjPA==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dhTcYBsCM+Mbg92p9SQKrJMtUFN9/26AX/bqLUidx8Y=;
+        b=AvHtM/AqQTzWCt/jpMqkv9LBhQKEzmGMoh6FTzT1uL1j4iOFeoZE5gYMMj+uu5Osj5
+         +GHoOuwi9AJMkwN79KwEeoH1+wMwihEzEuHqgQ+qMaqL5mYkepXIMC1pEo6VkR6nUMNq
+         x5v8wnjt54JtF4Pwd9/QO7DDGXFpVTlft6pWA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718169719; x=1718774519;
+        d=1e100.net; s=20230601; t=1718169767; x=1718774567;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fjEwJgRoG92FC9Vw5huQBkdZy2fxtlgBnuBKB/008U0=;
-        b=D/BO4D1LGzsQDFSHkCbYQXHf1c5cFGyDCvpz7TBSf0cMheYHsUselzsrOCbvHk4hP+
-         /ewKgDIHbJ18ebTLDB3BvTeYahnwIj7zTIwx1pFftAg0wYI58GoRzHpPny+uyh3bzSLq
-         CAfXRWmofFBuAv1mlf0OAAJYI474o4edw0zJ1jfRs4vEutaYFfOoAAXEtiDnUY3wVSPg
-         nu+UtP+HDu5S2jevb9hFPArEdMIVVVa+pcR7i08lDUyivosvxoIz8d3piSxFBSEDXg3Q
-         wHV3cRiSqfTDDtuR3XkMLZc1UXNl9EWwljyn7XaEKqaqJKM40R53hIoJ98tB88/0Kk3f
-         Z1bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJzdieaVpq9Aj3C8/Tfm8stcTPcxwr37x3qhfwtnmXG9R9j5H+5ODzFwc2I+tWgXsbCK/wd9CT7BD6uIGhLzREwnlQSiFwcrrUnZN4
-X-Gm-Message-State: AOJu0YxaSKl4eg5JtCqr+jjzUUz3vbeILHzFyJJnePFlE6ztSy2yU0KT
-	VhTdlwV4T5xK3ZXfTpLC+Sk4DswdO3RfrjkRMEptFKsTOaw/yLx6
-X-Google-Smtp-Source: AGHT+IFDvF86CuK3Kg24+xx5dBk2/UDjJk+sWB47rTKVHiKT+QQs97LesjLepl9XawzJSkfEe8TcLw==
-X-Received: by 2002:a67:b641:0:b0:48c:4d59:6295 with SMTP id ada2fe7eead31-48d91de3080mr974801137.19.1718169719138;
-        Tue, 11 Jun 2024 22:21:59 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-797a2b7f956sm186654985a.6.2024.06.11.22.21.58
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dhTcYBsCM+Mbg92p9SQKrJMtUFN9/26AX/bqLUidx8Y=;
+        b=ictD5qQGFP19XuL2oRdE4FoG5y1mXHllNzoJT0ztWOANmx98itV4o5bcRONYHU/IMF
+         BLT9+CqGClLv+j43TWhuk26cDLpFahtjIz2Ceg6luogxdZKCxb4NSEr+d2sfhfORrI45
+         w87BxWY/wsxNeWr9q/KDJ5wkEungTuR5ZG59UwPmy3WiVQvQ1S4XZZVRAoSsoiyjSR0k
+         S+iwcNh4v36jy0C5lOzJ+V3MMluMIJbMeyF2fCDzTou8CveZDI+jiQOMvJBLBFyDAfTv
+         xLmXjvP5HhVAgfFgBPoxAAi3vmXRBYuGb6njF/AjdFR/10AXWdgiL/dLHxsuMYFXrZ++
+         oCCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUn+ffgzw8uwypNkFtgEzyY+lKo8VShp1OhGWz3llxTBCCwNJd7V0UGqtuwKEChbQSETbw3EaxwZEqpCAinjXNrUG9C9MDuL8O9C6fx
+X-Gm-Message-State: AOJu0YxbgOrJhj/yveRsCaIlCWk1nkEnh/wv+7NwVMfKJ6k2koFYGoS2
+	QsfNquOCwYmesmxwtDdwbgJU50jUHNQ2lwIKJBBuGw5Gm/CEx9TONpiFe20ndg==
+X-Google-Smtp-Source: AGHT+IEppKCyK/JSHnKcsXHzDq3ew+qYkvjNGKJpUa5VhAjqTgQihMv3DtChdSvf6MwsluIQgolTGg==
+X-Received: by 2002:a05:690c:6612:b0:61b:14a8:7944 with SMTP id 00721157ae682-62fc9ebfa84mr8344767b3.39.1718169766976;
+        Tue, 11 Jun 2024 22:22:46 -0700 (PDT)
+Received: from chromium.org (174.71.80.34.bc.googleusercontent.com. [34.80.71.174])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6ef51579csm76355645ad.112.2024.06.11.22.22.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 22:21:58 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 2893D1200043;
-	Wed, 12 Jun 2024 01:21:58 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 12 Jun 2024 01:21:58 -0400
-X-ME-Sender: <xms:djBpZjepV48rA8difPCs5QQIvsblVI7GqyooEM7GVBuLcH16ihDHFQ>
-    <xme:djBpZpOSBMMS1yv7MEuoR35VjkeF488ge73Jx5kJkC22K4G57GbHOnZgXqssf0WWB
-    LlpdvgelIy0Snt0_w>
-X-ME-Received: <xmr:djBpZsjShrWrBibnu9O0Z5xGTsFQUDKh4aBvdzdl2xYg3fHO5SgeEPA-Iw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedufedgledvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
-    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:djBpZk_bCnEb_qh7jne4GYOzjhOCd-swKy33lBc1UEW6ZbCk2qtrLA>
-    <xmx:djBpZvsewM13dmMZPARhg3iAt4WCJZFI0JeqkrOkJGXIIwT-aoIvfg>
-    <xmx:djBpZjFP7fB-7itURqGUpDkD_-jG_qeF881mb10M5DIalgYd3C57Fw>
-    <xmx:djBpZmNP-rupTPcCkq3RtbEC-2Lk_76CXmNW5bi2IfkV9fzr5J-n7g>
-    <xmx:djBpZgOM2_4tEuUKI0CjzbgPmeiKi1FhZDowT24t05GD5MTbv4HMNHp5>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Jun 2024 01:21:57 -0400 (EDT)
-Date: Tue, 11 Jun 2024 22:21:56 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org
-Subject: Re: [PATCH rcu 0/6] Grace-period memory-barrier adjustments for v6.11
-Message-ID: <ZmkwdFhXK2SsVWa4@Boquns-Mac-mini.home>
-References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
+        Tue, 11 Jun 2024 22:22:46 -0700 (PDT)
+Date: Wed, 12 Jun 2024 14:22:40 +0900
+From: Tomasz Figa <tfiga@chromium.org>
+To: Yunfei Dong <yunfei.dong@mediatek.com>
+Cc: Jeffrey Kardatzke <jkardatzke@google.com>, 
+	=?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Yong Wu <yong.wu@mediatek.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
+	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
+	Steve Cho <stevecho@chromium.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T . J . Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v6,12/24] media: mediatek: vcodec: add interface to
+ allocate/free secure memory
+Message-ID: <4a5tf2cl744xzqslox4ddzmdpuvwksr54g3qk2jl4soatdts45@e6xmmm2ijmv6>
+References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
+ <20240516122102.16379-13-yunfei.dong@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,48 +92,251 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
+In-Reply-To: <20240516122102.16379-13-yunfei.dong@mediatek.com>
 
-On Tue, Jun 04, 2024 at 03:26:46PM -0700, Paul E. McKenney wrote:
-> Hello!
+On Thu, May 16, 2024 at 08:20:50PM +0800, Yunfei Dong wrote:
+> Need to call dma heap interface to allocate/free secure memory when playing
+> secure video.
 > 
-> This series removes redundant memory barriers from the grace-period
-> code paths:
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> ---
+>  .../media/platform/mediatek/vcodec/Kconfig    |   1 +
+>  .../mediatek/vcodec/common/mtk_vcodec_util.c  | 122 +++++++++++++++++-
+>  .../mediatek/vcodec/common/mtk_vcodec_util.h  |   3 +
+>  3 files changed, 123 insertions(+), 3 deletions(-)
 > 
-> 1.	Remove full ordering on second EQS snapshot, courtesy of Frederic
-> 	Weisbecker.
-> 
-> 2.	Remove superfluous full memory barrier upon first EQS snapshot,
-> 	courtesy of Frederic Weisbecker.
-> 
-> 3.	rcu/exp: Remove superfluous full memory barrier upon first EQS
-> 	snapshot, courtesy of Frederic Weisbecker.
-> 
-> 4.	Remove full memory barrier on boot time eqs sanity check,
-> 	courtesy of Frederic Weisbecker.
-> 
-> 5.	Remove full memory barrier on RCU stall printout, courtesy of
-> 	Frederic Weisbecker.
-> 
-> 6.	rcu/exp: Remove redundant full memory barrier at the end of GP,
-> 	courtesy of Frederic Weisbecker.
-> 
+> diff --git a/drivers/media/platform/mediatek/vcodec/Kconfig b/drivers/media/platform/mediatek/vcodec/Kconfig
+> index bc8292232530..707865703e61 100644
+> --- a/drivers/media/platform/mediatek/vcodec/Kconfig
+> +++ b/drivers/media/platform/mediatek/vcodec/Kconfig
+> @@ -17,6 +17,7 @@ config VIDEO_MEDIATEK_VCODEC
+>  	depends on VIDEO_MEDIATEK_VPU || !VIDEO_MEDIATEK_VPU
+>  	depends on MTK_SCP || !MTK_SCP
+>  	depends on MTK_SMI || (COMPILE_TEST && MTK_SMI=n)
+> +	depends on DMABUF_HEAPS
+>  	select VIDEOBUF2_DMA_CONTIG
+>  	select V4L2_MEM2MEM_DEV
+>  	select VIDEO_MEDIATEK_VCODEC_VPU if VIDEO_MEDIATEK_VPU
+> diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_util.c b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_util.c
+> index c60e4c193b25..5958dcd7965a 100644
+> --- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_util.c
+> +++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_util.c
+> @@ -5,9 +5,11 @@
+>  *	Tiffany Lin <tiffany.lin@mediatek.com>
+>  */
+>  
+> +#include <linux/dma-heap.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/regmap.h>
+> +#include <uapi/linux/dma-heap.h>
+>  
+>  #include "../decoder/mtk_vcodec_dec_drv.h"
+>  #include "../encoder/mtk_vcodec_enc_drv.h"
+> @@ -45,7 +47,7 @@ int mtk_vcodec_write_vdecsys(struct mtk_vcodec_dec_ctx *ctx, unsigned int reg,
+>  }
+>  EXPORT_SYMBOL(mtk_vcodec_write_vdecsys);
+>  
+> -int mtk_vcodec_mem_alloc(void *priv, struct mtk_vcodec_mem *mem)
+> +static int mtk_vcodec_mem_alloc_nor(void *priv, struct mtk_vcodec_mem *mem)
+>  {
+>  	enum mtk_instance_type inst_type = *((unsigned int *)priv);
+>  	struct platform_device *plat_dev;
+> @@ -75,9 +77,71 @@ int mtk_vcodec_mem_alloc(void *priv, struct mtk_vcodec_mem *mem)
+>  
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL(mtk_vcodec_mem_alloc);
+>  
+> -void mtk_vcodec_mem_free(void *priv, struct mtk_vcodec_mem *mem)
+> +static int mtk_vcodec_mem_alloc_sec(struct mtk_vcodec_dec_ctx *ctx, struct mtk_vcodec_mem *mem)
+> +{
+> +	struct device *dev = &ctx->dev->plat_dev->dev;
+> +	struct dma_buf *dma_buffer;
+> +	struct dma_heap *vdec_heap;
+> +	struct dma_buf_attachment *attach;
+> +	struct sg_table *sgt;
+> +	unsigned long size = mem->size;
+> +	int ret = 0;
+> +
+> +	if (!size)
+> +		return -EINVAL;
+> +
+> +	vdec_heap = dma_heap_find("restricted_mtk_cma");
+> +	if (!vdec_heap) {
+> +		mtk_v4l2_vdec_err(ctx, "dma heap find failed!");
+> +		return -EPERM;
+> +	}
 
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+How is the heap name determined here? My recollection is that the heap
+name comes from the heap node in the DT, so it may vary depending on the
+board.
 
-Regards,
-Boqun
+Is the heap name documented anywhere in the DT bindings?
 
-> 						Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
->  b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst |    6 +--
->  b/kernel/rcu/tree.c                                                     |    2 -
->  b/kernel/rcu/tree_exp.h                                                 |    8 +++-
->  b/kernel/rcu/tree_stall.h                                               |    4 +-
->  kernel/rcu/tree.c                                                       |   19 +++-------
->  kernel/rcu/tree_exp.h                                                   |    8 +++-
->  6 files changed, 26 insertions(+), 21 deletions(-)
+Shouldn't we rather query DT for a phandle to the right heap?
+
+> +
+> +	dma_buffer = dma_heap_buffer_alloc(vdec_heap, size, DMA_HEAP_VALID_FD_FLAGS,
+> +					   DMA_HEAP_VALID_HEAP_FLAGS);
+> +	if (IS_ERR_OR_NULL(dma_buffer)) {
+> +		mtk_v4l2_vdec_err(ctx, "dma heap alloc size=0x%lx failed!", size);
+> +		return PTR_ERR(dma_buffer);
+
+This will be incorrect if NULL was returned, because the function will
+return 0. Does dma_heap_buffer_alloc() actually return NULL?
+
+> +	}
+> +
+> +	attach = dma_buf_attach(dma_buffer, dev);
+> +	if (IS_ERR_OR_NULL(attach)) {
+> +		mtk_v4l2_vdec_err(ctx, "dma attach size=0x%lx failed!", size);
+> +		ret = PTR_ERR(attach);
+
+Ditto.
+
+> +		goto err_attach;
+> +	}
+> +
+> +	sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
+> +	if (IS_ERR_OR_NULL(sgt)) {
+> +		mtk_v4l2_vdec_err(ctx, "dma map attach size=0x%lx failed!", size);
+> +		ret = PTR_ERR(sgt);
+
+Ditto.
+
+> +		goto err_sgt;
+> +	}
+> +
+> +	mem->va = dma_buffer;
+
+Isn't this field supposed to point to the kernel mapping of the buffer
+itself? If we need to store the dma_buf pointer, we should probably add
+a separate field to avoid (potentially serious) bugs.
+
+> +	mem->dma_addr = (dma_addr_t)sg_dma_address((sgt)->sgl);
+
+Why is this type cast necessary here?
+
+> +
+> +	if (!mem->va || !mem->dma_addr) {
+
+I don't think any of these 2 conditions are possible, since we already
+checked for successful completion of the functions above. Also 0 is a
+valid DMA address, so it shouldn't be considered an error.
+
+> +		mtk_v4l2_vdec_err(ctx, "dma buffer size=0x%lx failed!", size);
+> +		ret = -EPERM;
+> +		goto err_addr;
+> +	}
+> +
+> +	mem->attach = attach;
+> +	mem->sgt = sgt;
+> +
+> +	return 0;
+> +err_addr:
+
+Please name the labels according to the clean-up step they perform
+first, because it will make it much easier to validate at the goto point
+whether it jumps to the right place.
+
+> +	dma_buf_unmap_attachment(attach, sgt, DMA_BIDIRECTIONAL);
+> +err_sgt:
+> +	dma_buf_detach(dma_buffer, attach);
+> +err_attach:
+> +	dma_buf_put(dma_buffer);
+> +
+> +	return ret;
+> +}
+> +
+> +static void mtk_vcodec_mem_free_nor(void *priv, struct mtk_vcodec_mem *mem)
+>  {
+>  	enum mtk_instance_type inst_type = *((unsigned int *)priv);
+>  	struct platform_device *plat_dev;
+> @@ -110,6 +174,57 @@ void mtk_vcodec_mem_free(void *priv, struct mtk_vcodec_mem *mem)
+>  	mem->dma_addr = 0;
+>  	mem->size = 0;
+>  }
+> +
+> +static void mtk_vcodec_mem_free_sec(struct mtk_vcodec_mem *mem)
+> +{
+> +	if (mem->sgt)
+> +		dma_buf_unmap_attachment(mem->attach, mem->sgt, DMA_BIDIRECTIONAL);
+> +	dma_buf_detach((struct dma_buf *)mem->va, mem->attach);
+> +	dma_buf_put((struct dma_buf *)mem->va);
+> +
+> +	mem->attach = NULL;
+> +	mem->sgt = NULL;
+> +	mem->va = NULL;
+> +	mem->dma_addr = 0;
+> +	mem->size = 0;
+> +}
+> +
+> +int mtk_vcodec_mem_alloc(void *priv, struct mtk_vcodec_mem *mem)
+> +{
+> +	enum mtk_instance_type inst_type = *((unsigned int *)priv);
+> +	int ret;
+> +
+> +	if (inst_type == MTK_INST_DECODER) {
+> +		struct mtk_vcodec_dec_ctx *dec_ctx = priv;
+> +
+> +		if (dec_ctx->is_secure_playback) {
+> +			ret = mtk_vcodec_mem_alloc_sec(dec_ctx, mem);
+> +			goto alloc_end;
+
+Why not just return here directly?
+
+Best regards,
+Tomasz
+
+> +		}
+> +	}
+> +
+> +	ret = mtk_vcodec_mem_alloc_nor(priv, mem);
+> +alloc_end:
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(mtk_vcodec_mem_alloc);
+> +
+> +void mtk_vcodec_mem_free(void *priv, struct mtk_vcodec_mem *mem)
+> +{
+> +	enum mtk_instance_type inst_type = *((unsigned int *)priv);
+> +
+> +	if (inst_type == MTK_INST_DECODER) {
+> +		struct mtk_vcodec_dec_ctx *dec_ctx = priv;
+> +
+> +		if (dec_ctx->is_secure_playback) {
+> +			mtk_vcodec_mem_free_sec(mem);
+> +			return;
+> +		}
+> +	}
+> +
+> +	mtk_vcodec_mem_free_nor(priv, mem);
+> +}
+>  EXPORT_SYMBOL(mtk_vcodec_mem_free);
+>  
+>  void *mtk_vcodec_get_hw_dev(struct mtk_vcodec_dec_dev *dev, int hw_idx)
+> @@ -171,3 +286,4 @@ EXPORT_SYMBOL(mtk_vcodec_get_curr_ctx);
+>  
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_DESCRIPTION("Mediatek video codec driver");
+> +MODULE_IMPORT_NS(DMA_BUF);
+> diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_util.h b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_util.h
+> index 85f615cdd4d3..22078e757ed0 100644
+> --- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_util.h
+> +++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_util.h
+> @@ -18,6 +18,9 @@ struct mtk_vcodec_mem {
+>  	size_t size;
+>  	void *va;
+>  	dma_addr_t dma_addr;
+> +
+> +	struct dma_buf_attachment *attach;
+> +	struct sg_table *sgt;
+>  };
+>  
+>  struct mtk_vcodec_fb {
+> -- 
+> 2.25.1
 > 
 
