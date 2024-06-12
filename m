@@ -1,88 +1,117 @@
-Return-Path: <linux-kernel+bounces-212159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32D1905C09
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C875905C62
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8A11F22949
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:33:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA62628425D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18D8839F7;
-	Wed, 12 Jun 2024 19:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9EC83CC9;
+	Wed, 12 Jun 2024 19:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="eFgF4iMw"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="lVUUBpWF"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D793A29F;
-	Wed, 12 Jun 2024 19:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A433C381C4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 19:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718220824; cv=none; b=rEN3cyF7r7DDzML1UajAdQO487HDwmMFOhB5JxTE283JNdPboF6VdYBRkwpQjzCW5u7hDmy5uGvnJqL8ixJ+h81nz75U9sTx8eRbuLcwgQAUKo+cXl9HSlix+OiePFLAZc7SsG/A5qOyjm3EbifgipYcZd+dnSkYD6RCF/ZR4Hg=
+	t=1718222150; cv=none; b=ZQU6NMVvuQo8kO8/Hx6EkotrbO50AsyPRKTTFIdo9KelaqihDypbyWNbNBW688RV5f+5FtclxemYTqTLxVO+FBQLVsVVNt3wX0dkGHRsMecmVyQF/vJACDruNEm73ZzHLIyDshK0lgylsN9uYAneVA4n3xKnzvEAAgDxDQ/1SXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718220824; c=relaxed/simple;
-	bh=Gax1/X8fKY4aRilNx+vxa7ff0//c5oRtSKW1r+ZZUwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZaqu6029278UDphr6Wum0+Wr3Jag4sVUkNwk43tpFed269uK9w8fEnEvLVGMqlgDm1juevKPFvqeK1RQhLabNWahMw4/odaT8r4X4Khz+G6f1kSDx0POW/En53SbrbmpvxxBvXiHyeu7eeqoZbm12a0nkakk8oa9fWK43WLcPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=eFgF4iMw; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Ak6OXrPF07tGTttAP9HDGFvaFe9ciAKjMYI3suYEzEo=; b=eFgF4iMwqL8SamlFCaLlXT9wi1
-	GAheQ0ACG+IrfSit8wAxJ1clqQNzcpdPZEtlBX4eXVhxCr0DzSDpDSIz7/wXqroTylslTQrlZJjOh
-	bFEe0KEEWGGizmzev+Kvl7Bz/wrQI1I6Ix7tnJ5jnm07esmyhXkG6SsCYQPbusAbx8EQpQxtzm3Xy
-	ToU1kFenDeKbB/Kr3LV3iSIaKWe4ug06QM9dHEiDlkOwC6aJKImaCAJozv1ln2S/qkr0WejPlfWGl
-	TY37foRlLiuRMfZHwfbo/vyHg3njCFFiihrFhi5LWkL0Mci644fhy5OD4pR6Uz0Gi/5o3PF6j0Dls
-	hUwVWazQ==;
-Received: from [2001:9e8:9cb:9501:3235:adff:fed0:37e6] (port=58678 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sHTiq-005QXv-Ou;
-	Wed, 12 Jun 2024 21:33:28 +0200
-Date: Wed, 12 Jun 2024 21:33:24 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 2/2] kbuild: package: add -e and -u options to shell
- scripts
-Message-ID: <20240612-innocent-acrid-husky-5a6cce@lindesnes>
-References: <20240611160938.3511096-1-masahiroy@kernel.org>
- <20240611160938.3511096-2-masahiroy@kernel.org>
+	s=arc-20240116; t=1718222150; c=relaxed/simple;
+	bh=XJdyLcK8t8NoaJ10fulIo7C0zbtjGLK4RqYX+yDpnNU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Nh2xHrzP6Ca8a7b8wKDSv0eKfdhA4z0dj5fJ/31rl8w3u1+n2RbKM6EfFTfsly/UWnEPCvsEVLDLcHgp4dzHPY7EIND/KKp8V4E06lYSFqFuezn7ItXvOfIpznxUR7TDdb2oSIL0ST29XQzm1oC36bS34ZJHFHqhZhFHpt2wyh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=lVUUBpWF; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=IoIedJhtd8jVuc+UJluRtTNuNTSW0KI62AWD3MB81eQ=; b=lVUUBpWFqGBHwEjx3P2DuTZteT
+	gHqtCj/eLyz6hwlWKxkQSA9OgXvOg1+RrrWhxOg+OP90UWr4U+nugCcJMZz6klcYK8LbyUafegAXa
+	TCzZ+WQDBP319uGm+hd7fyEUKu/A4K+fUI+0WPdRJUu+hvQrpvRq9caBaUflthlZPbGjieaOZVYr7
+	IF0l0IVKSUbj90imKNB6mOuftjHIi6oZ0V4aHrRh9eqbo4jErC1O6VidtAGR5sr7PLEq+6YKW6R41
+	IER4xm1uLi3OwxhCLcIM1KiYxUtfaYTkAZorDlIyzC5WVKoQDTkuQht/fD2OKYxQc1q9q5UjpCAyc
+	8iZ/HuMA==;
+Received: from [191.204.194.169] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sHTmc-002RtF-5P; Wed, 12 Jun 2024 21:37:22 +0200
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel-dev@igalia.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Simon Ser <contact@emersion.fr>,
+	Pekka Paalanen <ppaalanen@gmail.com>,
+	daniel@ffwll.ch,
+	Daniel Stone <daniel@fooishbar.org>,
+	=?UTF-8?q?=27Marek=20Ol=C5=A1=C3=A1k=27?= <maraeo@gmail.com>,
+	Dave Airlie <airlied@gmail.com>,
+	ville.syrjala@linux.intel.com,
+	Xaver Hugl <xaver.hugl@gmail.com>,
+	Joshua Ashton <joshua@froggi.es>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v5 0/3] drm/atomic: Allow drivers to write their own plane check for async
+Date: Wed, 12 Jun 2024 16:37:10 -0300
+Message-ID: <20240612193713.167448-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611160938.3511096-2-masahiroy@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024 at 01:08:06AM +0900, Masahiro Yamada wrote:
-> Set -e to make these scripts fail on the first error.
-> 
-> Set -u because these scripts are invoked by Makefile, and do not work
-> properly without necessary variables defined.
-> 
-> Remove the explicit "test -n ..." from scripts/package/install-extmod-build.
-> 
-> Both options are described in POSIX. [1]
-> 
-> [1]: https://pubs.opengroup.org/onlinepubs/009604499/utilities/set.html
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
+Hi,
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+AMD hardware can do async flips with overlay planes, so this patchset does a
+small redesign to allow drivers to choose per plane type if they can or cannot
+do async flips.
+
+It also allows async commits with IN_FENCE_ID in any driver.
+
+Changes from v4:
+- Rebased on top current drm-misc/drm-misc-next
+
+Changes from v3:
+- Major patchset redesign 
+v3: https://lore.kernel.org/lkml/20240128212515.630345-1-andrealmeid@igalia.com/
+
+Changes from v2:
+ - Allow IN_FENCE_ID for any driver
+ - Allow overlay planes again
+v2: https://lore.kernel.org/lkml/20240119181235.255060-1-andrealmeid@igalia.com/
+
+Changes from v1:
+ - Drop overlay planes option for now
+v1: https://lore.kernel.org/dri-devel/20240116045159.1015510-1-andrealmeid@igalia.com/
+
+André Almeida (3):
+  drm/atomic: Allow userspace to use explicit sync with atomic async
+    flips
+  drm: Allow drivers to choose plane types to async flip
+  drm/amdgpu: Make it possible to async flip overlay planes
+
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 1 +
+ drivers/gpu/drm/drm_atomic_uapi.c                       | 4 +++-
+ include/drm/drm_plane.h                                 | 5 +++++
+ 3 files changed, 9 insertions(+), 1 deletion(-)
+
+-- 
+2.45.2
+
 
