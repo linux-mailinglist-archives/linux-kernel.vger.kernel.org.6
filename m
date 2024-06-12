@@ -1,105 +1,118 @@
-Return-Path: <linux-kernel+bounces-211276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133CA904F5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:33:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C43904F63
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42F72875B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:33:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CCD71F21758
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E7016DECC;
-	Wed, 12 Jun 2024 09:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C4C16DEC8;
+	Wed, 12 Jun 2024 09:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TKpsIqZb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kFirGuZb"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0C116D9AC;
-	Wed, 12 Jun 2024 09:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6977F16DEA9
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718184800; cv=none; b=S4Jrbxy08IaT/y+JXLKqfGSoQVmeoSRhi+zHDu2d/daiOES1crUV7vn5DiO/0VmWYtkXcXkQdtTsN3TKt/JqtHIey60GiznLPXumPPc9idrdVdCqLAv7nlB9f5VsEaLrWdhZlEX+2ySrmIdRvNUZTADHjHmKFdhvIq8qU7Mj1jc=
+	t=1718184999; cv=none; b=qUTmjf9QEkXXYOse1tOr84MQuHMx/+fkGGCEXMLs+tq4aqi2nxalITaN+ldUL6BgHzlec+s4JGB56+YahNG5xfL9KDHE2uptPrrrlPvnlSaaKEA+YF4k53rbazfEOHikLmd8+rsPfHuyE+oXPchcqUzqg74u7A8pSjFCMU5DvMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718184800; c=relaxed/simple;
-	bh=GL4nKRoUa9GkN2VIgnRKxP5jpO2kVuOsRHsPt3n+/2U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Vuor3PGXkFmxKAgZO9S8PaDfhY/YtNihUijf11P8Fl1uBSR2RiGBGl3h5hENbzHTP8StWD+ZpxEMLlP0BnM9oiOwyaoAodu0Wp0Dfhqk7Y4QffgUhjMfzVAmNamuP49OD3V0s2bCSKbFR0S76JBAexZUr8dV+BMRB8o5FsmK88w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TKpsIqZb; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718184799; x=1749720799;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=GL4nKRoUa9GkN2VIgnRKxP5jpO2kVuOsRHsPt3n+/2U=;
-  b=TKpsIqZb/6SFjYVhzMCk4xx2lkNBM48MSVaouHpoNPVBBBTf57JQJUl3
-   lKEc9GrBEIiCM2lwY/MYEAF/xGwMFqc4Md9E+4e5Q1uwDZJXoMG1CVL0U
-   gZ/hQkjtsipTegqOjEHn/0CeXBHs585lVM+sW33tRS2Z2OoD5Mh4O1lqG
-   1bMje3ZoXm0qJUJsyVhG3gTNf0Y4x54oGmgCFa23dG8NyqU0xmfnKkCSB
-   qFvbDvqfhzRq5ygpHF78UZdHPisUhS8ye/kv4xg9jUea45QBPkwq60lNG
-   Yc6aQNxkEbYy21obL21vpH+/XQcJf24AgwiJV2493ralKal1eesfKzQUh
-   Q==;
-X-CSE-ConnectionGUID: UZEA+910SMSGM794WBBwXw==
-X-CSE-MsgGUID: LpWoGJ/VSkqZTsrue/CDnA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14661123"
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="14661123"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 02:33:19 -0700
-X-CSE-ConnectionGUID: 5O+HJgx5Qi22kyyQsudUDQ==
-X-CSE-MsgGUID: A8EnF27yTNi4C3qy2+2GRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="39589102"
-Received: from unknown (HELO localhost) ([10.245.247.204])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 02:33:09 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 1/1] PCI: Remove extra parenthesis from calculate_mem_align()
-Date: Wed, 12 Jun 2024 12:32:49 +0300
-Message-Id: <20240612093250.17544-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1718184999; c=relaxed/simple;
+	bh=1DBKN6+Dh1Qa+D6idOan20UzNrMjKS7NMiz55q78mDk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=olV4laoghnZGCIXe/8JXt9h/a4e+UihgAkybd0eXbWq6HWfD/oSFt7UK0qWgCgw6oOsh8jcNPt75/8NOa+v9qJF4YckXkUah6J/RotUgKgZkDfHdMaaOk28MQNspUBTZlBNKZ6R9XKKig6RGC9ZPzUCSHZIj3SuI0mV43tskN+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kFirGuZb; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5ba70a0ed75so1069094eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:36:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718184997; x=1718789797; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zls2PjeN96MBj/tRd+drvu+9AaG+9o/48mGsjcvAGWw=;
+        b=kFirGuZbjujrg7Fksp0/wPZcE/6pjfgfw62j/0dE4c9rS2xG50O7L6e2UQHTL7SBNL
+         Qu/FXbO3KtnpltMSnY4d/77N8zMZi9E2aRPsgONZ03X9jLh748eet/r9F4x7WJdUkvyY
+         Wuem/N1aWtmI1HdOBFJdd31xA27NIAqvpBUoA/hrhMpy4EWyMrk47WOTP3CmtFpgrS40
+         qhTgnHLbXbLPyWfSUBSbhBD/8A4AH4hIo4qf/6+7A+9FAPE0gtPEad94yHwIOwsw1Yv+
+         wyyMIZ4bEJhmJhw8paR2LL+T/qYVx+VIxTIU6hoEJYVRuX8WQ5SmjaSX0XfUhzYWD/Uj
+         kg8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718184997; x=1718789797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zls2PjeN96MBj/tRd+drvu+9AaG+9o/48mGsjcvAGWw=;
+        b=ij58/uhJKkADXRfAIB6hSWsLWI65Zk60pt/nL+gYrUXuMcutTN1SxBYNlgh6fFQNDs
+         MNxQxO9sxUMXByadJgLOOuhOALNlFk/tZFS329Lp7cM1KGY/X/yT4EF3bnoWHr1QSA+3
+         mkmz5Lgxmqn40k5vLWwNkCJfdGPcAPc8fO2tzHEiry78aPVe6W07QkjKjfrPF5Xx5Ff/
+         pZZIVRLJKkNFpqefc2QgQEWdXZDriYPuVD36kbGHVBalUvP5JoU9Lk8dZOywilPoNjIh
+         EbbgNexiyb+kLgO/eYoMR2kC99EOvncb9irt/E5GfmHxE2zWXEkFvHfFs/3epe1wibQO
+         +XcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSvaOGuVNctWq7zoeTHv9yAyruNlhP6rN/R8s7DgAcSHJIBa7kMOoyxZ4jpFWUfOoqMeYQQT+vUeZaBjcqZhQfTP1MfD33xMXEFWbY
+X-Gm-Message-State: AOJu0YxAyoqdH7FaGSdx+U/yeT3AR/6AVvENt01TEGBlr8h8+Cmj2RPf
+	OyRrEgPmeOJGzcf4SuLaIOVmsDSKMRKPA/AksPEs1V7o2rv2A5BeeX+raS9AveC2Arr9Odts8v+
+	2+I5v40Dy1/MFiX7M/TxYMVDFfsz/8Hx8UitPNg==
+X-Google-Smtp-Source: AGHT+IE41xMremI9KFQUhCySgvLj9p73+kYjRPEZjElNgdLOUBTOPohyPwVNwxRkyxdmcQDgsd5j+uZYm1dpTqpuuoA=
+X-Received: by 2002:a05:6820:612:b0:5ba:bb77:bf51 with SMTP id
+ 006d021491bc7-5bb3b9410a1mr1738733eaf.2.1718184996962; Wed, 12 Jun 2024
+ 02:36:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org> <20240507-samsung-usb-phy-fixes-v1-4-4ccba5afa7cc@linaro.org>
+In-Reply-To: <20240507-samsung-usb-phy-fixes-v1-4-4ccba5afa7cc@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 12 Jun 2024 10:36:25 +0100
+Message-ID: <CADrjBPqM-6vu-9+ZZ-=BKqnAn+vngELBgrLtU1ua_DMrDaWjXQ@mail.gmail.com>
+Subject: Re: [PATCH 4/5] phy: exynos5-usbdrd: fix definition of EXYNOS5_FSEL_26MHZ
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-RHS of <<= does not need parenthesis so remove them.
+Hi Andr=C3=A9,
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
+On Tue, 7 May 2024 at 15:14, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
+>
+> Using 0x82 seems odd, where everything else is just a sequence.
+>
+> On E850, this macro isn't used (as a register value), only to assign
+> its value to the 'extrefclk' variable, which is otherwise unused on
+> that platform. Older platforms don't appear to support 26MHz in the
+> first place (since this macro was added for E850).
+>
+> Furthermore, the downstream driver uses 0x82 to denote
+> USBPHY_REFCLK_DIFF_26MHZ (whatever that means exactly), but for all the
+> other values we match downstream's non-DIFF macros.
+>
+> Update to avoid confusion. No functional change intended.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
 
-This patch can be folded into the commit 658bf5d36dc5 ("PCI: Make
-minimum bridge window alignment reference more obvious") in
-pci/resource if so desired.
----
- drivers/pci/setup-bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
 
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 11ee60b9ca71..23082bc0ca37 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -960,7 +960,7 @@ static inline resource_size_t calculate_mem_align(resource_size_t *aligns,
- 	for (order = 0; order <= max_order; order++) {
- 		resource_size_t align1 = 1;
- 
--		align1 <<= (order + __ffs(SZ_1M));
-+		align1 <<= order + __ffs(SZ_1M);
- 
- 		if (!align)
- 			min_align = align1;
--- 
-2.39.2
+regards,
 
+Peter
+
+[..]
 
