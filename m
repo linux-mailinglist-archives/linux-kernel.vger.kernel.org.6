@@ -1,236 +1,139 @@
-Return-Path: <linux-kernel+bounces-211929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB9FE905903
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:42:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B3C905910
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF3781C21DC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:42:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6B81C21303
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA7E181D08;
-	Wed, 12 Jun 2024 16:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9975181BAE;
+	Wed, 12 Jun 2024 16:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XQ458FYO"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfOFfJYl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B1E181B90;
-	Wed, 12 Jun 2024 16:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB18B181338;
+	Wed, 12 Jun 2024 16:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718210544; cv=none; b=WUbba6j2CchPfJVD/qmfVGaBf+dOSI9E5AjROcKgU001hdsOcWBJKezivQZnCGtSGb9qfL9ghQJt3ftJfgN56y9/dj6biMr5SBGcaYv+xpJJzX+AtRAeCEfMFLejLwMgqA6e55JHYXAj0HKwKGuer0ygDIrrNPbrnRb93dgXf4U=
+	t=1718210597; cv=none; b=f6ZZ6ZKMQL4dolPnbotE69WIfy5DEyIoz4nA7+2+o1vD+rDhbgyb4OdyIcG0X/TWh6W6d0secIR0NWRtP6n4bXK60VpbzW9sQZk7ffWZl+/tFi6IlZoYV0XCRyFdmz6jvQ7hkp9zpw/1oShelBZtFyBaSmmODJ7r+hjwwOrtFBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718210544; c=relaxed/simple;
-	bh=FZHOMpGaEYP5IB+9r4ZvFHZhBO9oepJfS8PBFrnej8M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=jJvA3K4NiJqU1R0ONzJevOJm8tiRPAwwuOrN0umy2yidpBo3wSa4zNVZnn4W1yrcV4PUkp6vzwI1mGnXN8Bmy8+zldRMqRlCmJGq90zTdQxdN299kFMmksks3DG60hZmn2JR5JAsakcshChTxowYulo7REH6MKnwQ+NlXY5FbPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XQ458FYO; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45CGgBdP029403;
-	Wed, 12 Jun 2024 11:42:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718210531;
-	bh=pIKhvca1G0LsgNQvLd70jtD8/EP9eisPHDT+bocufdE=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=XQ458FYOQ/hcjslKmWPvZNRpnx6J+5aHV+JEzjr8MGYVf0QP1f1xgt1nk3f1YWdq4
-	 bJMRNEzEh//xkqaWx+gVv7jelPpon+uNhNhwnQzhD5wzIHYarRSbCHfidYvsPjVXMj
-	 w4KfYFQD+zVFXJWuX3gwbVfmG0Dc+xl3QIU0ulQU=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45CGgBtp079736
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Jun 2024 11:42:11 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 12
- Jun 2024 11:42:11 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 12 Jun 2024 11:42:10 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45CGgBdW099389;
-	Wed, 12 Jun 2024 11:42:11 -0500
-From: Bryan Brattlof <bb@ti.com>
-Date: Wed, 12 Jun 2024 11:41:54 -0500
-Subject: [PATCH 5/5] DONOTMERGE: arm64: dts: ti: k3-am62a: add in opp table
+	s=arc-20240116; t=1718210597; c=relaxed/simple;
+	bh=qreY//fAnwwkk5hLrRnCWnJ+QKjVx1QnAEwqG8yApo0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XYGbjOKC6jD2ISC8HojW7mWtSj32RD97ta6WgI42M9HobsA3JPtvsglOlEaUvlJ/zTunBKuyj8CbUCMUN3iMzHYBvIk4hkomV6C8PMur/7pp6XvxhO0yiHUNGP+jy0U05zckEl3493tk2enbQagJMbLe+OTBh6Q7/0d6P294+C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfOFfJYl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B27C116B1;
+	Wed, 12 Jun 2024 16:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718210596;
+	bh=qreY//fAnwwkk5hLrRnCWnJ+QKjVx1QnAEwqG8yApo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QfOFfJYl+At6SDp9QB2/9KYlRNFBxjcMd3sjevdUTbcPc9/nkSDqUsmp+QKjMB468
+	 AnPPsM4PcmeWyrvZw8ofSIObzpyis7XpqdTeLJFggSg0Y8ddhM/l8WqHIQEOixuylV
+	 cln7ccJa0R8i2k0q0EXtVYv80x5NXYe9NDi4oNx3HcciIwfi6LxWJMK/Gq7f51zPGJ
+	 zszizSTfiQRQE5MXfLRHS7aoFNLb9zxPe2rh7m/CjT4zs5yrTTzyRTe732LlIYzcQ3
+	 TpJNlI1WpoNFtlCIuv0RCwYItf1RbaJtqwcTQtZGwIajthNMXaRPnl6gxaNaI8w3Ym
+	 +eeqRUUXPNL3w==
+Date: Wed, 12 Jun 2024 17:43:12 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Burton <paulburton@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org
+Subject: Re: [PATCH v2 8/8] dt-bindings: mips: img: Add devices binding
+Message-ID: <20240612-styling-deafening-2cdae7cf0b55@spud>
+References: <20240612-boston-syscon-v2-0-9f8e1a07fa63@flygoat.com>
+ <20240612-boston-syscon-v2-8-9f8e1a07fa63@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-ti-opp-updates-v1-5-3551c31d9872@ti.com>
-References: <20240612-ti-opp-updates-v1-0-3551c31d9872@ti.com>
-In-Reply-To: <20240612-ti-opp-updates-v1-0-3551c31d9872@ti.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar
-	<viresh.kumar@linaro.org>, Lee Jones <lee@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>
-CC: Vibhore Vardhan <vibhore@ti.com>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Bryan Brattlof <bb@ti.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3800; i=bb@ti.com;
- h=from:subject:message-id; bh=FZHOMpGaEYP5IB+9r4ZvFHZhBO9oepJfS8PBFrnej8M=;
- b=owNCWmg5MUFZJlNZuKejSQAAaP///vf5+2u0e9rzv/P3++//b/rn6dc/2/Mz/3vu197z62awA
- RsYkPRAAAAAADIGgAaAyANAABoGhoAAHqAAAAPUD1Gh6TJ6QGjaaTynkIgA0GgADQGgGgyNADQG
- h6gyDQABmoDTymhkAGmmTRtTIANADRtTQMmgPU0aPUOhkaNDQBppiaAyNMjTQNMg0yaaaGIAMgM
- jIAMmjRkDRkyANAA00GmQaGINDQAIE2CVISOBxmCSBwYWEix1m/Pnok2upFe4gWtDwwBK4agMx5
- UDlE0W4xlDAyDwSZUQJtkaMr1I0BHImeLOxRE4nWrCMpeqwyxAIEVRZFiY+2qQkFqXcnz5UudBm
- guPPcktcqNHd9YrXYgAuxQFky7xzWbD6CsSp51PSwJ+FenRJqoFDHw5Ncv1hm5vtRoCWdPQTQM1
- E7PlKdOt+IzmAJQhgLzCf59H0khUlGKJ/HFpUwkwwmcEb3ByZEGQMPQUT0o98IM4H4Ikyp+4vK7
- GTzbdwTDYKKQ4iX6xiqFwEZvLUJotOiS9AoYnaEIkMqUveaIRpqEfzjVdKCoKO/kLPqm85ZE2DB
- HoUn0rQfoB8b7q7lSAXwrEBy9nXXFwxxymYAwUbMkTz3Ykr6fcPCtYxJ6iLeV844LctcwrzZ+2U
- XLTBpJEAcyJ/i7kinChIXFPRpI=
-X-Developer-Key: i=bb@ti.com; a=openpgp;
- fpr=D3D177E40A38DF4D1853FEEF41B90D5D71D56CE0
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tzuLAazgu/3W4bpO"
+Content-Disposition: inline
+In-Reply-To: <20240612-boston-syscon-v2-8-9f8e1a07fa63@flygoat.com>
 
-To help reduce power consumption, reduce the frequency of the CPU cores
-when they sit idle by specifying their supported OPP entries.
 
-Signed-off-by: Bryan Brattlof <bb@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi |  5 +++
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts     |  9 +++++
- arch/arm64/boot/dts/ti/k3-am62a7.dtsi       | 51 +++++++++++++++++++++++++++++
- 3 files changed, 65 insertions(+)
+--tzuLAazgu/3W4bpO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-index 98043e9aa316b..bf16b29c3953b 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-@@ -13,6 +13,11 @@ wkup_conf: syscon@43000000 {
- 		#size-cells = <1>;
- 		ranges = <0x00 0x00 0x43000000 0x20000>;
- 
-+		opp_efuse_table: syscon@18 {
-+			compatible = "ti,am62-opp-efuse-table", "syscon";
-+			reg = <0x18 0x4>;
-+		};
-+
- 		chipid: chipid@14 {
- 			compatible = "ti,am654-chipid";
- 			reg = <0x14 0x4>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-index f241637a5642a..852a066585d6d 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-@@ -59,6 +59,15 @@ wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
- 		};
- 	};
- 
-+	opp-table {
-+		/* Add 1.4GHz OPP for am62p5-sk board. Requires VDD_CORE at 0v85 */
-+		opp-1400000000 {
-+			opp-hz = /bits/ 64 <1400000000>;
-+			opp-supported-hw = <0x01 0x0004>;
-+			clock-latency-ns = <6000000>;
-+		};
-+	};
-+
- 	vmain_pd: regulator-0 {
- 		/* TPS25750 PD CONTROLLER OUTPUT */
- 		compatible = "regulator-fixed";
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-index f86a23404e6dd..b77390b66efa5 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-@@ -48,6 +48,8 @@ cpu0: cpu@0 {
- 			d-cache-line-size = <64>;
- 			d-cache-sets = <128>;
- 			next-level-cache = <&L2_0>;
-+			operating-points-v2 = <&a53_opp_table>;
-+			clocks = <&k3_clks 135 0>;
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -62,6 +64,8 @@ cpu1: cpu@1 {
- 			d-cache-line-size = <64>;
- 			d-cache-sets = <128>;
- 			next-level-cache = <&L2_0>;
-+			operating-points-v2 = <&a53_opp_table>;
-+			clocks = <&k3_clks 136 0>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -76,6 +80,8 @@ cpu2: cpu@2 {
- 			d-cache-line-size = <64>;
- 			d-cache-sets = <128>;
- 			next-level-cache = <&L2_0>;
-+			operating-points-v2 = <&a53_opp_table>;
-+			clocks = <&k3_clks 137 0>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -90,6 +96,51 @@ cpu3: cpu@3 {
- 			d-cache-line-size = <64>;
- 			d-cache-sets = <128>;
- 			next-level-cache = <&L2_0>;
-+			operating-points-v2 = <&a53_opp_table>;
-+			clocks = <&k3_clks 138 0>;
-+		};
-+	};
-+
-+	a53_opp_table: opp-table {
-+		compatible = "operating-points-v2-ti-cpu";
-+		opp-shared;
-+		syscon = <&wkup_conf>;
-+
-+		opp-200000000 {
-+			opp-hz = /bits/ 64 <200000000>;
-+			opp-supported-hw = <0x01 0x0007>;
-+			clock-latency-ns = <6000000>;
-+		};
-+
-+		opp-400000000 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-supported-hw = <0x01 0x0007>;
-+			clock-latency-ns = <6000000>;
-+		};
-+
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-supported-hw = <0x01 0x0007>;
-+			clock-latency-ns = <6000000>;
-+		};
-+
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-supported-hw = <0x01 0x0007>;
-+			clock-latency-ns = <6000000>;
-+		};
-+
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-supported-hw = <0x01 0x0006>;
-+			clock-latency-ns = <6000000>;
-+		};
-+
-+		opp-1250000000 {
-+			opp-hz = /bits/ 64 <1250000000>;
-+			opp-supported-hw = <0x01 0x0004>;
-+			clock-latency-ns = <6000000>;
-+			opp-suspend;
- 		};
- 	};
- 
+On Wed, Jun 12, 2024 at 12:56:27PM +0100, Jiaxun Yang wrote:
+> Add devices binding for various Imagination Technologies
+> MIPS based Platforms.
+>=20
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+>  .../devicetree/bindings/mips/img/devices.yaml      | 33 ++++++++++++++++=
+++++++
+>  1 file changed, 33 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mips/img/devices.yaml b/Do=
+cumentation/devicetree/bindings/mips/img/devices.yaml
+> new file mode 100644
+> index 000000000000..460ca96577ad
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mips/img/devices.yaml
+> @@ -0,0 +1,33 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mips/img/devices.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Imagination Technologies MIPS based Platforms
+> +
+> +maintainers:
+> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +
+> +      - description: IMG Boston
+> +        const: img,boston
+> +
+> +      - description: IMG Marduk (Creator Ci40)
+> +        items:
+> +          - const: img,pistachio-marduk
+> +          - const: img,pistachio
+> +
+> +      - description: Imagination University Program MIPSfpga
+> +        items:
+> +          - const: img,xilfpga
+> +          - const: digilent,nexys4ddr
 
--- 
-2.45.2
+Usually the order used here is something like:
+compatible =3D "vendor,soc-board", "vendor,soc"
+The pistachio one seems to follow that, but AFAICT "boston" is a board
+and the order in this one is something like:
+compatible =3D "vendor,soc", "vendor,generic-fpga-board"
 
+--tzuLAazgu/3W4bpO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmnQIAAKCRB4tDGHoIJi
+0h5jAP4hD5OB8U5paykiNEvhqV4ngCLkQcx7w24WR7mJaH7JwAD+JhirqZfMIhHi
+eGZTIm9niUbibg1zRSo7OgnwY3iE9As=
+=YVxZ
+-----END PGP SIGNATURE-----
+
+--tzuLAazgu/3W4bpO--
 
