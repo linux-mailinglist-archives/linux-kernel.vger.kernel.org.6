@@ -1,236 +1,364 @@
-Return-Path: <linux-kernel+bounces-210896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925259049D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:58:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9439049D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1472D1F22175
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:58:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD5301C20D33
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3585021360;
-	Wed, 12 Jun 2024 03:58:23 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB6C2031D;
+	Wed, 12 Jun 2024 04:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NA6HMCrn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9D51F602
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 03:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD7F257D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718164702; cv=none; b=RJ2ObmgoMU4e0jQV9GRXNAKlwQXb+//gMmIGDxRX9B87JYDWQLM12efBxAygLKSJZI6jVM5Ttm299Z3qZ3exiDQrR05WaKQql+YdDP+ESBoxO9NWejrMjWQDqMPU+AG3Ki0eCr2NI0eSLZQsaebrA1FOl36QAqM+v1DRnaJSCTA=
+	t=1718164918; cv=none; b=om6DwbZx+mgSPYh2sMjh5A/4ASsnGy9Vt3tpfViLHSSXHXwnj+d1uY1DLn5zXuuqzHPdIaodOtK2H74xjwGzkwJxbDKEmsgrGMUh3bAoBbVbEH263WXenco7DQdbYTadprAxhMCkECZU8SDqVI+b3I6jHRTuCtjWgTfjD4R2ADM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718164702; c=relaxed/simple;
-	bh=p5asosSazmrpu9azCDUZZ3UQaRdGUAIgeUXqhMl8NOI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cNay1JXlQ30FWn+vfLK2H2HDIW++ucQOelNAvxMQk4KHybfGHxlkP5Ix0mdxUCUEOFtdEkzIN9oj1CvO+8o1Jy8Pdk3QmKDwF6PAh8o/8Rt+95krxQqMBrUksELB7nwBOH1KTZEr3Lu4a9E0/+PTUzMOqlP1rs2TFjoR+VFasIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e91ad684e4so753919439f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 20:58:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718164700; x=1718769500;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uQYH2TrsZ7NiWNhWZFT6JrJyWqlVIePoFA0pYyW0Cx4=;
-        b=AgFLHeQHJ6sZXZX0tR1CIeeUY0R630UlPhGZwX3i4LOjZrbzO5E2liPRF+2MarjZMs
-         nzrF+vU8kvm1bO1FLOCPJRWyYZwO9Sz72IaDo0WMkNcK/uFrCqE8okmDSN/ixXWah4Vf
-         Pk9BxrI4rQaGzrxcN4fPRoW2PMwj6Rf3//lmcnEQfZ1j1Cxs1Km14jnL7Sk76aA6pJss
-         AHgtB76D3iRM233aHuSXyUlYdWcM9ZZGuaBofRRiAi7X9Ah/xUQ0rsPt2vcKwdiLQ6Bj
-         rchUPiVZSMSQON3Tas75fxkfVbgmLlXWqkq5HvWuIWGTH+weRXH3NC5SHVVrdKNi4BMe
-         E5Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJd0oRVuJarudXV5dQeV+5aeBTTCmndPch8IN0qM/u7lUmtZ3FeKdoOZmWJM7Xv8K1ChO0jzYhac5KKnZ5Ma3D0g60wAmi3C78V+fz
-X-Gm-Message-State: AOJu0YwvfQP5ZCNDNUMuOeoHq0CoP9Tp3HWxIyXCz5KRivP4b4cIKu2f
-	UYd+bm1nBF91Gi1CTQjFxeGfg+EXbwiDDA/rNtsMaC0vilcIPBuANSET29jrgsbvPtea9dy6+oV
-	sYFszD0JCi9KtJttgqFIIIwU/ecNaNJ2mvIvpaeKj0OoFJtiOKEHUmLs=
-X-Google-Smtp-Source: AGHT+IFASV8Vk3JgLpJ72mZl5rw1jV7jwFDVFaAzb6S696/uQM71nQ2XvbaoAdpj6txWhskk4dEcRTQEXK/6NEjy2WzOgDohGyix
+	s=arc-20240116; t=1718164918; c=relaxed/simple;
+	bh=gjtyHI4QB+FpgOlio3YAsgP32wZTXCkuSmCH1/dYMRA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OA/7ACTJ47ztkugRSU7f+OrgXCigMdSEnmS1nCpj/9lD980Q94wxU0gynoGdV/2ADvz3hPdSUSxiJXlXAHwfNkG//10omOxqtwOQ9iRzIYwEwDIVA/T3C6M0zc8plkKAsXaLcRMdQt3txSBFTt+K+H/cvrdhNg2FiPqLa1/GPcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NA6HMCrn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AF0DC4AF1A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:01:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718164918;
+	bh=gjtyHI4QB+FpgOlio3YAsgP32wZTXCkuSmCH1/dYMRA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NA6HMCrn/rdNEYHOQXKMWvztT72R+kdx2mgDh39bes6y1IIn2vi5BWA5hZhRYJWwS
+	 9AfhXHZ1hJGm3UDloQaTn2Ti9IZvOIenS66KFT0xS6SIslxNWSHbV6gp9s/YIffVN0
+	 TxYaO8d065usdG3Rv5glLwzkyGU0sSBLfALTBh3pED9AtvrI0KFKPi6bdAQ0l0uAzr
+	 F0kSuQBNNYa1j+3SXAIbgEdf5kvvzfeF3JsPdNzQnisXPe6Cm9GPwitNIpPgrWlj4t
+	 PU1tJ0PHGLJzhl2l1/SDmcHEssixJDcu40bbAvMcfE6fsc12Fvk+jp44qRlgcjT+RC
+	 +OerYHwH8wK6g==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63a96so8334460a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:01:58 -0700 (PDT)
+X-Gm-Message-State: AOJu0YybyrpH4elZbwEeb9jRmFZOtm876XGNngFNVNfW7mxpjVN0Q9xV
+	nUvlRg3LoMEKIAdMcRVdiIz1fyfAeuywgfoFkILC0PDdFWfqV5BhyV9wMTL/08QuluSY5QcZfyN
+	hD12TPsGbjcRu5EFuOGyL5C/lHks=
+X-Google-Smtp-Source: AGHT+IHw36HvpC+MJUZdbfcsxF7w5XwbQWoQIeecCsksTJli3x90sscnNk1xk7j0TN6+QO2kHnzPrnnqtQcz3WCQRoY=
+X-Received: by 2002:a50:955b:0:b0:57c:6248:62b7 with SMTP id
+ 4fb4d7f45d1cf-57ca9750ce6mr294770a12.13.1718164916807; Tue, 11 Jun 2024
+ 21:01:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:22d3:b0:4b9:2c27:3586 with SMTP id
- 8926c6da1cb9f-4b93eb97394mr47880173.1.1718164700097; Tue, 11 Jun 2024
- 20:58:20 -0700 (PDT)
-Date: Tue, 11 Jun 2024 20:58:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009d7f32061aa964a3@google.com>
-Subject: [syzbot] [overlayfs?] possible deadlock in ovl_copy_up_start (4)
-From: syzbot <syzbot+6d34d0b636fea8b593eb@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
-	syzkaller-bugs@googlegroups.com
+References: <20240611123348.8374-1-gaosong@loongson.cn>
+In-Reply-To: <20240611123348.8374-1-gaosong@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Wed, 12 Jun 2024 12:01:45 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H58j=VBfhCo0Yb5H-pJ1GSfoM-hBMuW5s_TNHEr6Gx74g@mail.gmail.com>
+Message-ID: <CAAhV-H58j=VBfhCo0Yb5H-pJ1GSfoM-hBMuW5s_TNHEr6Gx74g@mail.gmail.com>
+Subject: Re: [PATCH v2] irqchip/loongson-eiointc: Add extioi virt extension support
+To: Song Gao <gaosong@loongson.cn>
+Cc: linux-kernel@vger.kernel.org, jiaxun.yang@flygoat.com, tglx@linutronix.de, 
+	maobibo@loongson.cn
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi, Song,
 
-syzbot found the following issue on:
+On Tue, Jun 11, 2024 at 8:51=E2=80=AFPM Song Gao <gaosong@loongson.cn> wrot=
+e:
+>
+> Interrupts can be routed to maximal four virtual CPUs with one external
+> hardware interrupt. Add the extioi virt extension support so that
+> Interrupts can be routed to 256 vcpus on hypervior mode.
+>
+> Signed-off-by: Song Gao <gaosong@loongson.cn>
+> ---
+> v2:
+> - Simplify commit messages and code.
+> - Follow the documented tip tree coding style.
+> - Add the virtual extended interrupt model to the documentation.
+> - Link to v1: https://lore.kernel.org/all/20240605070229.2569875-1-gaoson=
+g@loongson.cn/
+>
+>  .../arch/loongarch/irq-chip-model.rst         |  28 +++++
+>  arch/loongarch/include/asm/irq.h              |   1 +
+>  drivers/irqchip/irq-loongson-eiointc.c        | 104 ++++++++++++++----
+>  3 files changed, 113 insertions(+), 20 deletions(-)
+>
+> diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentat=
+ion/arch/loongarch/irq-chip-model.rst
+> index 7988f4192363..7c10d070b318 100644
+> --- a/Documentation/arch/loongarch/irq-chip-model.rst
+> +++ b/Documentation/arch/loongarch/irq-chip-model.rst
+> @@ -85,6 +85,34 @@ to CPUINTC directly::
+>      | Devices |
+>      +---------+
+>
+> +Virt extended IRQ model
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Use "Virtual extended IRQ model".
 
-HEAD commit:    771ed66105de Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11d2d41c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9a6ac4277fffe3ea
-dashboard link: https://syzkaller.appspot.com/bug?extid=6d34d0b636fea8b593eb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> +
+> +This model only work on hypervior mode. In this model, IPI (Inter-Proces=
+sor Interrupt)
+> +and CPU Local Timer interrupt go to CPUINTC directly, CPU UARTS interrup=
+ts go to
+> +PCH_PIC, while all other devices interrupts go to PCH-PIC/PCH-LPC/PCH-MS=
+I and
+> +gathered by V-EIOINTC(Virt Extended I/O Interrupt Controller), and then =
+go to
+> +CPUINTC directly::
+> +
+> +       +-----+    +-------------------+     +-------+
+> +       | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
+> +       +-----+    +-------------------+     +-------+
+> +                            ^
+> +                            |
+> +                      +-----------+
+> +                      | V-EIOINTC |
+> +                      +-----------+
+> +                       ^         ^
+> +                       |         |
+> +                +---------+ +---------+
+> +                | PCH-PIC | | PCH-MSI |
+> +                +---------+ +---------+
+> +                  ^      ^          ^
+> +                  |      |          |
+> +           +--------+ +---------+ +---------+
+> +           | UARTs  | | Devices | | Devices |
+> +           +--------+ +---------+ +---------+
+> +
+You need to introduce virtual registers here, since there is no other
+place to understand them.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+And please also update the Chinese document.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/424f71634ac4/disk-771ed661.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5b5e8a406642/vmlinux-771ed661.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ad23424a0851/bzImage-771ed661.xz
+Huacai
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6d34d0b636fea8b593eb@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc2-syzkaller-00366-g771ed66105de #0 Not tainted
-------------------------------------------------------
-syz-executor.2/5264 is trying to acquire lock:
-ffff888055db1698 (&ovl_i_lock_key[depth]){+.+.}-{3:3}, at: ovl_inode_lock_interruptible fs/overlayfs/overlayfs.h:657 [inline]
-ffff888055db1698 (&ovl_i_lock_key[depth]){+.+.}-{3:3}, at: ovl_copy_up_start+0x53/0x310 fs/overlayfs/util.c:719
-
-but task is already holding lock:
-ffff88802fbb6420 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (sb_writers#4){.+.+}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1655 [inline]
-       sb_start_write include/linux/fs.h:1791 [inline]
-       ovl_start_write+0x11d/0x290 fs/overlayfs/util.c:31
-       ovl_do_copy_up fs/overlayfs/copy_up.c:967 [inline]
-       ovl_copy_up_one fs/overlayfs/copy_up.c:1168 [inline]
-       ovl_copy_up_flags+0x1110/0x4470 fs/overlayfs/copy_up.c:1223
-       ovl_create_object+0x113/0x370 fs/overlayfs/dir.c:638
-       lookup_open fs/namei.c:3505 [inline]
-       open_last_lookups fs/namei.c:3574 [inline]
-       path_openat+0x1425/0x3280 fs/namei.c:3804
-       do_filp_open+0x235/0x490 fs/namei.c:3834
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
-       do_sys_open fs/open.c:1420 [inline]
-       __do_sys_openat fs/open.c:1436 [inline]
-       __se_sys_openat fs/open.c:1431 [inline]
-       __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&ovl_i_lock_key[depth]){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       ovl_inode_lock_interruptible fs/overlayfs/overlayfs.h:657 [inline]
-       ovl_copy_up_start+0x53/0x310 fs/overlayfs/util.c:719
-       ovl_copy_up_one fs/overlayfs/copy_up.c:1161 [inline]
-       ovl_copy_up_flags+0xbc1/0x4470 fs/overlayfs/copy_up.c:1223
-       ovl_create_tmpfile fs/overlayfs/dir.c:1317 [inline]
-       ovl_tmpfile+0x262/0x6d0 fs/overlayfs/dir.c:1373
-       vfs_tmpfile+0x396/0x510 fs/namei.c:3701
-       do_tmpfile+0x156/0x340 fs/namei.c:3764
-       path_openat+0x2ab8/0x3280 fs/namei.c:3798
-       do_filp_open+0x235/0x490 fs/namei.c:3834
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
-       do_sys_open fs/open.c:1420 [inline]
-       __do_sys_open fs/open.c:1428 [inline]
-       __se_sys_open fs/open.c:1424 [inline]
-       __x64_sys_open+0x225/0x270 fs/open.c:1424
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(sb_writers#4);
-                               lock(&ovl_i_lock_key[depth]);
-                               lock(sb_writers#4);
-  lock(&ovl_i_lock_key[depth]);
-
- *** DEADLOCK ***
-
-2 locks held by syz-executor.2/5264:
- #0: ffff888060236420 (sb_writers#13){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
- #1: ffff88802fbb6420 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
-
-stack backtrace:
-CPU: 0 PID: 5264 Comm: syz-executor.2 Not tainted 6.10.0-rc2-syzkaller-00366-g771ed66105de #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- ovl_inode_lock_interruptible fs/overlayfs/overlayfs.h:657 [inline]
- ovl_copy_up_start+0x53/0x310 fs/overlayfs/util.c:719
- ovl_copy_up_one fs/overlayfs/copy_up.c:1161 [inline]
- ovl_copy_up_flags+0xbc1/0x4470 fs/overlayfs/copy_up.c:1223
- ovl_create_tmpfile fs/overlayfs/dir.c:1317 [inline]
- ovl_tmpfile+0x262/0x6d0 fs/overlayfs/dir.c:1373
- vfs_tmpfile+0x396/0x510 fs/namei.c:3701
- do_tmpfile+0x156/0x340 fs/namei.c:3764
- path_openat+0x2ab8/0x3280 fs/namei.c:3798
- do_filp_open+0x235/0x490 fs/namei.c:3834
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
- do_sys_open fs/open.c:1420 [inline]
- __do_sys_open fs/open.c:1428 [inline]
- __se_sys_open fs/open.c:1424 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1424
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff91547cf69
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ff91627e0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007ff9155b3f80 RCX: 00007ff91547cf69
-RDX: 0000000000000000 RSI: 0000000000591002 RDI: 0000000020000100
-RBP: 00007ff9154da6fe R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007ff9155b3f80 R15: 00007ffe78e13ca8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>  ACPI-related definitions
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> diff --git a/arch/loongarch/include/asm/irq.h b/arch/loongarch/include/as=
+m/irq.h
+> index 480418bc5071..c97a7ab0e56f 100644
+> --- a/arch/loongarch/include/asm/irq.h
+> +++ b/arch/loongarch/include/asm/irq.h
+> @@ -53,6 +53,7 @@ struct acpi_vector_group {
+>  extern struct acpi_vector_group pch_group[MAX_IO_PICS];
+>  extern struct acpi_vector_group msi_group[MAX_IO_PICS];
+>
+> +#define MAX_CORES_PER_EIO_NODE 256
+>  #define CORES_PER_EIO_NODE     4
+>
+>  #define LOONGSON_CPU_UART0_VEC         10 /* CPU UART0 */
+> diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq=
+-loongson-eiointc.c
+> index c7ddebf312ad..430fda9e8ce5 100644
+> --- a/drivers/irqchip/irq-loongson-eiointc.c
+> +++ b/drivers/irqchip/irq-loongson-eiointc.c
+> @@ -23,15 +23,43 @@
+>  #define EIOINTC_REG_ISR                0x1800
+>  #define EIOINTC_REG_ROUTE      0x1c00
+>
+> +#define EXTIOI_VIRT_FEATURES           0x40000000
+> +#define  EXTIOI_HAS_VIRT_EXTENSION     BIT(0)
+> +#define  EXTIOI_HAS_ENABLE_OPTION      BIT(1)
+> +#define  EXTIOI_HAS_INT_ENCODE         BIT(2)
+> +#define  EXTIOI_HAS_CPU_ENCODE         BIT(3)
+> +#define EXTIOI_VIRT_CONFIG             0x40000004
+> +#define  EXTIOI_ENABLE                 BIT(1)
+> +#define  EXTIOI_ENABLE_INT_ENCODE      BIT(2)
+> +#define  EXTIOI_ENABLE_CPU_ENCODE      BIT(3)
+> +
+>  #define VEC_REG_COUNT          4
+>  #define VEC_COUNT_PER_REG      64
+>  #define VEC_COUNT              (VEC_REG_COUNT * VEC_COUNT_PER_REG)
+>  #define VEC_REG_IDX(irq_id)    ((irq_id) / VEC_COUNT_PER_REG)
+>  #define VEC_REG_BIT(irq_id)     ((irq_id) % VEC_COUNT_PER_REG)
+>  #define EIOINTC_ALL_ENABLE     0xffffffff
+> +#define EIOINTC_ALL_ENABLE_VEC_MASK(vector)    \
+> +       (EIOINTC_ALL_ENABLE & ~BIT(vector & 0x1F))
+> +#define EIOINTC_REG_ENABLE_VEC(vector)         \
+> +       (EIOINTC_REG_ENABLE + ((vector >> 5) << 2))
+>
+>  #define MAX_EIO_NODES          (NR_CPUS / CORES_PER_EIO_NODE)
+>
+> +/*
+> + * Routing registers contain four vectors and have an offset of four to
+> + * the base. The routing information is 8 bit wide.
+> + */
+> +
+> +#define EIOINTC_REG_ROUTE_VEC(vector)          \
+> +       (EIOINTC_REG_ROUTE + (vector & ~0x03))
+> +
+> +#define EIOINTC_REG_ROUTE_VEC_SHIFT(vector)    \
+> +       ((vector & 0x03) << 3)
+> +
+> +#define EIOINTC_REG_ROUTE_VEC_MASK(vector)     \
+> +       (0xff << EIOINTC_REG_ROUTE_VEC_SHIFT(vector))
+> +
+>  static int nr_pics;
+>
+>  struct eiointc_priv {
+> @@ -41,6 +69,7 @@ struct eiointc_priv {
+>         cpumask_t               cpuspan_map;
+>         struct fwnode_handle    *domain_handle;
+>         struct irq_domain       *eiointc_domain;
+> +       bool                    cpu_encoded;
+>  };
+>
+>  static struct eiointc_priv *eiointc_priv[MAX_IO_PICS];
+> @@ -56,7 +85,9 @@ static void eiointc_enable(void)
+>
+>  static int cpu_to_eio_node(int cpu)
+>  {
+> -       return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
+> +       int cores =3D cpu_has_hypervisor ? MAX_CORES_PER_EIO_NODE : CORES=
+_PER_EIO_NODE;
+> +
+> +       return cpu_logical_map(cpu) / cores;
+>  }
+>
+>  #ifdef CONFIG_SMP
+> @@ -88,6 +119,16 @@ static void eiointc_set_irq_route(int pos, unsigned i=
+nt cpu, unsigned int mnode,
+>
+>  static DEFINE_RAW_SPINLOCK(affinity_lock);
+>
+> +static void virt_extioi_set_irq_route(unsigned int vector, unsigned int =
+cpu)
+> +{
+> +       unsigned long reg =3D EIOINTC_REG_ROUTE_VEC(vector);
+> +       u32 data =3D iocsr_read32(reg);
+> +
+> +       data &=3D ~EIOINTC_REG_ROUTE_VEC_MASK(vector);
+> +       data |=3D cpu_logical_map(cpu) << EIOINTC_REG_ROUTE_VEC_SHIFT(vec=
+tor);
+> +       iocsr_write32(data, reg);
+> +}
+> +
+>  static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpu=
+mask *affinity, bool force)
+>  {
+>         unsigned int cpu;
+> @@ -104,18 +145,24 @@ static int eiointc_set_irq_affinity(struct irq_data=
+ *d, const struct cpumask *af
+>         }
+>
+>         vector =3D d->hwirq;
+> -       regaddr =3D EIOINTC_REG_ENABLE + ((vector >> 5) << 2);
+> -
+> -       /* Mask target vector */
+> -       csr_any_send(regaddr, EIOINTC_ALL_ENABLE & (~BIT(vector & 0x1F)),
+> -                       0x0, priv->node * CORES_PER_EIO_NODE);
+> -
+> -       /* Set route for target vector */
+> -       eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
+> -
+> -       /* Unmask target vector */
+> -       csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
+> -                       0x0, priv->node * CORES_PER_EIO_NODE);
+> +       regaddr =3D EIOINTC_REG_ENABLE_VEC(vector);
+> +
+> +       if (priv->cpu_encoded) {
+> +               iocsr_write32(EIOINTC_ALL_ENABLE_VEC_MASK(vector), regadd=
+r);
+> +               virt_extioi_set_irq_route(vector, cpu);
+> +               iocsr_write32(EIOINTC_ALL_ENABLE, regaddr);
+> +       } else {
+> +               /* Mask target vector */
+> +               csr_any_send(regaddr, EIOINTC_ALL_ENABLE_VEC_MASK(vector)=
+,
+> +                            0x0, priv->node * CORES_PER_EIO_NODE);
+> +
+> +               /* Set route for target vector */
+> +               eiointc_set_irq_route(vector, cpu, priv->node, &priv->nod=
+e_map);
+> +
+> +               /* Unmask target vector */
+> +               csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
+> +                            0x0, priv->node * CORES_PER_EIO_NODE);
+> +       }
+>
+>         irq_data_update_effective_affinity(d, cpumask_of(cpu));
+>
+> @@ -139,17 +186,20 @@ static int eiointc_index(int node)
+>
+>  static int eiointc_router_init(unsigned int cpu)
+>  {
+> -       int i, bit;
+> -       uint32_t data;
+> -       uint32_t node =3D cpu_to_eio_node(cpu);
+> -       int index =3D eiointc_index(node);
+> +       uint32_t data, node;
+> +       int i, bit, cores, index;
+> +
+> +       node =3D cpu_to_eio_node(cpu);
+> +       index =3D eiointc_index(node);
+>
+>         if (index < 0) {
+>                 pr_err("Error: invalid nodemap!\n");
+> -               return -1;
+> +               return -EINVAL;
+>         }
+>
+> -       if ((cpu_logical_map(cpu) % CORES_PER_EIO_NODE) =3D=3D 0) {
+> +       cores =3D (cpu_has_hypervisor ? MAX_CORES_PER_EIO_NODE : CORES_PE=
+R_EIO_NODE);
+> +
+> +       if ((cpu_logical_map(cpu) % cores) =3D=3D 0) {
+>                 eiointc_enable();
+>
+>                 for (i =3D 0; i < eiointc_priv[0]->vec_count / 32; i++) {
+> @@ -165,7 +215,9 @@ static int eiointc_router_init(unsigned int cpu)
+>
+>                 for (i =3D 0; i < eiointc_priv[0]->vec_count / 4; i++) {
+>                         /* Route to Node-0 Core-0 */
+> -                       if (index =3D=3D 0)
+> +                       if (eiointc_priv[index]->cpu_encoded)
+> +                               bit =3D cpu_logical_map(0);
+> +                       else if (index =3D=3D 0)
+>                                 bit =3D BIT(cpu_logical_map(0));
+>                         else
+>                                 bit =3D (eiointc_priv[index]->node << 4) =
+| 1;
+> @@ -369,6 +421,7 @@ static int __init acpi_cascade_irqdomain_init(void)
+>  static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq=
+,
+>                                u64 node_map)
+>  {
+> +       u32 val;
+>         int i;
+>
+>         node_map =3D node_map ? node_map : -1ULL;
+> @@ -389,6 +442,17 @@ static int __init eiointc_init(struct eiointc_priv *=
+priv, int parent_irq,
+>                 return -ENOMEM;
+>         }
+>
+> +       if (cpu_has_hypervisor) {
+> +               val =3D iocsr_read32(EXTIOI_VIRT_FEATURES);
+> +               if (val & BIT(EXTIOI_HAS_CPU_ENCODE)) {
+> +                       val =3D iocsr_read32(EXTIOI_VIRT_CONFIG);
+> +                       val |=3D BIT(EXTIOI_ENABLE_CPU_ENCODE);
+> +                       iocsr_write32(val, EXTIOI_VIRT_CONFIG);
+> +                       priv->cpu_encoded =3D true;
+> +                       pr_info("loongson-extioi: enable cpu encodig \n")=
+;
+> +               }
+> +       }
+> +
+>         eiointc_priv[nr_pics++] =3D priv;
+>         eiointc_router_init(0);
+>         irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch=
+, priv);
+> --
+> 2.39.3
+>
 
