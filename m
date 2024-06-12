@@ -1,105 +1,119 @@
-Return-Path: <linux-kernel+bounces-211867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217A9905820
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:07:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C6A905878
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC91E284FAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:07:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78EEDB2629B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB71181D12;
-	Wed, 12 Jun 2024 16:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA64180A91;
+	Wed, 12 Jun 2024 16:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMeJkFwC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KJ6DJ6kM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2465B181BAF;
-	Wed, 12 Jun 2024 16:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE9316D4F6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 16:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718208315; cv=none; b=LPS9C6HKkCmbwNz+Db6nMjHMGz8u8tvReYUNO79+A6ZLqXmHHI+UutlXAwrAyEZfcz2co64mXcKpdL3WKb45jvJkKPqDxQNHsjMdjh2EscaqiB4nFohznMtn+e1NVdfSRzqJO6RtXxV3Ory497T4oQdx4zlTJrZz435YCz0IWKA=
+	t=1718208385; cv=none; b=syre7/O9JX33oTagmz9RXCAvXZIFjhuOgEz2DiZ5kP9rHJIbLPHI9bXleld4xfjNgpe2xr1522RgXKTJjjJswCoZbABxZLjlQlAZNiyeSVafSn1Z68kzRqVtxeXJ16BXeWisG38nTMpVxAj+iOkLbNAkU2Jkugb7Fhvwy8LyiiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718208315; c=relaxed/simple;
-	bh=Ny4Zo9sSjpAd2us+A20fiV+uPm/Io6ALD4EkL1KRJLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rU6iGPZb0gLl2KGW7PrAIjYhJYPt7o3rlqmgQz4x5yCPsduQXE6TrDsTmt9ALbcHWZAbY830+VGpzfpsvwv6YLCJtBgJ1FUrX3UsqiUaQLM3jgmVRV1PlCMdQUNqhRZSAcPVzRIdwssYxybaVFAhFqpxucrPxyW+seRPXoDHeA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMeJkFwC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9465AC116B1;
-	Wed, 12 Jun 2024 16:05:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718208314;
-	bh=Ny4Zo9sSjpAd2us+A20fiV+uPm/Io6ALD4EkL1KRJLk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pMeJkFwCZ0WTDF4ljPjlGfDMyqVn+v64jg2pWTV/0ZblFt2n9uKbnTRBP/Yj7P8yw
-	 8b+s8FesDan3H+w6UiNCQknu/4ogxBnU+JGARIQ6JPGzImR5qyingt2CvuB1HlNOWg
-	 1Hip5h7QoNRv4zau38l6ho6RseBnXOrGPnHS/x9IIgx1CN5JoxcuhZi3t6LSDuZ71p
-	 JSiyZlVIaCpotS3SV8sYW//MbhDZMbTsSugtkHLgFGSPB8OcLWtxy2+5jEkCsFW1O+
-	 VfuJniHXFgVSh+lEcLmlgbtFvKUpcV9MjU83c74ym5qXQeH+l2/1UbZldnHBO0B7KC
-	 3uSAYR4rnnXGg==
-Date: Wed, 12 Jun 2024 09:05:14 -0700
-From: Kees Cook <kees@kernel.org>
-To: David Gow <davidgow@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Vitor Massaru Iha <vitor@massaru.org>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Rae Moar <rmoar@google.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] usercopy: Convert test_user_copy to KUnit test
-Message-ID: <202406120903.D0EF1C6@keescook>
-References: <20240610213055.it.075-kees@kernel.org>
- <20240610213330.1310156-2-kees@kernel.org>
- <CABVgOSmFL50_qYOBROkE9LZx__W6MLnHWahGnAVuLBDVO4k1zQ@mail.gmail.com>
+	s=arc-20240116; t=1718208385; c=relaxed/simple;
+	bh=NHtYjSmTMtNed9N2wRZmQj/KeFSv++nlwQX6y2LLOZw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qi+8WWpUH7+EcH2kqbMdTon8F5aqg0n/tF5fWm83vlqukFMwMGcsYJX4eBIh3ZftkZYDjassxDhaOx/Ph60D9lh09H3EtkC6/UFRPPQyGq6ZOiB+/jZReAIUrrcOkHS+jVktRfZQ1n67xfpr7uIpYg61ga4Z+o5DW8ukiujtk2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KJ6DJ6kM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718208382;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NHtYjSmTMtNed9N2wRZmQj/KeFSv++nlwQX6y2LLOZw=;
+	b=KJ6DJ6kMAqyfbkcRIIPrmLF0eaAp5eTIbIRJRV5Jsmksm6NmQjGxDeLGl8XeTCZGJxGTtA
+	AIc90Fe19obCqA4OG7I6UPbqQ6RlwzPqWMM/oXh2D5l0nsR1Ce1MtUUXwkm6ns6V6hZ2lj
+	HrMHCi4IvaYTS0yryheS96QFC9+0YyQ=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-156--_enJGe7PWijzfjGTDn1uA-1; Wed, 12 Jun 2024 12:06:21 -0400
+X-MC-Unique: -_enJGe7PWijzfjGTDn1uA-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35f29246a35so20302f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:06:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718208380; x=1718813180;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NHtYjSmTMtNed9N2wRZmQj/KeFSv++nlwQX6y2LLOZw=;
+        b=WcsFxf/wkChThs4Oc4xL/TlQnKzZBuHVya8Onplz9M+hfnlQJ+o0vPjHPAUEXL6E+a
+         RooFJxnPyJEiYmUw4yxDFQKR76GQMxBIPeKyXGy9h8zwjpbzBSXXYSOIdfU1rmKcDUv4
+         2LbEk8Bs9bnQJfRGoAO0gkO/+A52R/48mLbVfRRLhRwPP+BgsJ7+JOb+qEGe1XWmlbDJ
+         thg2K7iOeBctldPsnLvbGFC7VrNPJ6H95mUlVxbQzCpX2cip4T6XL0sN8xMko5kyQJEG
+         cQEsKpTVhL7g6Lxu1D1VROLITNaVZ4dlXGX1ixOY3x81OXkx6xACpG9J/vKqs9KPFc5j
+         kZTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCi8RxLV7tcD5GKVdEho1ITFc5PseCoFAhLeBxuGVXLb8xLr8s/p2QdujC5ApqCe530ZfYHM5JHQ8PDdxc4YyYKHlHRqAhEVpm1O5C
+X-Gm-Message-State: AOJu0YyH3UWQdQxvxfcZxhXbtb1gO6PCTtNvRCtN4IEgkiz+4uPmgZbP
+	CZ35Rc4FlWpRgk96qTHG15Ac/f7M95UjtB5lycEYAWGLw+XWjrdGNEndJIMSHlv8nbwapFJo2dP
+	O1iJKqD//Jo9IdHfLZz1+pnAJ3oaHxztd5R40eLr8N7OycLvtrNRQsThnme++liQvwPiK4GEIMH
+	uxQrwRHmALYT9k41sLUOBtCaQvaGlBSOladl65
+X-Received: by 2002:a05:6000:bd0:b0:35f:1522:10b1 with SMTP id ffacd0b85a97d-35fe8910281mr1694733f8f.52.1718208380032;
+        Wed, 12 Jun 2024 09:06:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHkRfD7FvnoG5vFiDBFq1+esQSuEl5w50A3ZLaNfGGB3jdeoZnUnL8EYolRcw3lA91SzLS5T7kDSZg7qE2+M94=
+X-Received: by 2002:a05:6000:bd0:b0:35f:1522:10b1 with SMTP id
+ ffacd0b85a97d-35fe8910281mr1694710f8f.52.1718208379663; Wed, 12 Jun 2024
+ 09:06:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABVgOSmFL50_qYOBROkE9LZx__W6MLnHWahGnAVuLBDVO4k1zQ@mail.gmail.com>
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <9c4547ea234a2ba09ebe05219f180f08ac6fc2e3.1708933498.git.isaku.yamahata@intel.com>
+ <ZiJ3Krs_HoqdfyWN@google.com> <aefee0c0-6931-4677-932e-e61db73b63a2@linux.intel.com>
+ <CABgObfb9DC744cQeaDeP5hbKhgVisCvxBew=pCP5JB6U1=oz-A@mail.gmail.com> <f4029895-01c2-453a-9104-71475cd821ab@linux.intel.com>
+In-Reply-To: <f4029895-01c2-453a-9104-71475cd821ab@linux.intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Wed, 12 Jun 2024 18:06:08 +0200
+Message-ID: <CABgObfZ+Xvh1+ewJiCB4uqzPSYo2JvTz0aEUzT-CNruf35_D+A@mail.gmail.com>
+Subject: Re: [PATCH v19 116/130] KVM: TDX: Silently discard SMI request
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Sean Christopherson <seanjc@google.com>, isaku.yamahata@intel.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com, erdemaktas@google.com, 
+	Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>, chen.bo@intel.com, 
+	hang.yuan@intel.com, tina.zhang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 05:13:39PM +0800, David Gow wrote:
-> On Tue, 11 Jun 2024 at 05:33, Kees Cook <kees@kernel.org> wrote:
-> >
-> > Convert the runtime tests of hardened usercopy to standard KUnit tests.
-> >
-> > Co-developed-by: Vitor Massaru Iha <vitor@massaru.org>
-> > Signed-off-by: Vitor Massaru Iha <vitor@massaru.org>
-> > Link: https://lore.kernel.org/r/20200721174654.72132-1-vitor@massaru.org
-> > Tested-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> 
-> This looks good, particularly with the x86 fix applied.
+On Wed, Jun 12, 2024 at 3:06=E2=80=AFPM Binbin Wu <binbin.wu@linux.intel.co=
+m> wrote:
+> On 6/11/2024 10:11 PM, Paolo Bonzini wrote:
+> > On Tue, Jun 11, 2024 at 3:18=E2=80=AFPM Binbin Wu <binbin.wu@linux.inte=
+l.com> wrote:
+> > > is_td_vcpu() is defined in tdx.h.
+> > > Do you mind using open code to check whether the VM is TD in vmx.c?
+> > > "vcpu->kvm->arch.vm_type =3D=3D KVM_X86_TDX_VM"
+> > I'd move it to some place that main.c can see.
+>
+> is_td_vcpu() can be seen in main.c
 
-Thanks!
+Ok.
 
-> It's still hanging on m68k -- I think at the 'illegal reversed
-> copy_to_user passed' test -- but I'll admit to not having tried to
-> debug it further.
+> > Or vmx.c as Sean says
+> > below, but I am not sure I like the idea too much.
+>
+> Which you may not like? Remove the vt_* wrapper or use KVM_BUG_ON()?
 
-For my own future reference, I have reproduced this with:
+Removing the vt_* wrapper.
 
-$ sudo apt install gcc-m68k-linux-gnu
-$ tools/testing/kunit/kunit.py run --arch m68k --make_option CROSS_COMPILE=m68k-linux-gnu- usercopy
+Paolo
 
-I'll figure it out...
-
-> One other (set of) notes below about using KUNIT_EXPECT_MEMEQ_MSG(),
-> otherwise (assuming the m68k stuff isn't actually a regression, which
-> I haven't tested but I imagine is unlikely),
-
-I should really read all the API docs every few releases. :) I will
-switch to KUNIT_EXPECT_MEMEQ_MSG!
-
--- 
-Kees Cook
 
