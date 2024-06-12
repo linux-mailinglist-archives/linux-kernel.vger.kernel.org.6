@@ -1,174 +1,143 @@
-Return-Path: <linux-kernel+bounces-211019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23EF5904C21
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:58:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF899904C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C4BB282131
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:58:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D2E0B24ACE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D714616C695;
-	Wed, 12 Jun 2024 06:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D21E16C6A6;
+	Wed, 12 Jun 2024 06:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IbHQKHwZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vW+wRif2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Xc0xvbdW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Gqx4kh3O"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdMX8FwO"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16241649A8;
-	Wed, 12 Jun 2024 06:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D2515665D;
+	Wed, 12 Jun 2024 06:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718175453; cv=none; b=IVZ3N+rjP1XIX14upqglymnCGzNhz6xsJz9ciU6Dv7huPH3x4toliGi990DpeO6sOiPSIn7v8er2sQjg3HRHUQMpTcq0t9LfAwJ5f1wyUilxNLXsW1Wflq3nfoX65WgMhzhatMWE97pIFysQja9YBHYm6r/mnXneWA8UHzklJHY=
+	t=1718175493; cv=none; b=c7du4lxyhtZMbxFbW8R2A7h1tWNYo1sC0Sut89ytLAJEHgHKWGyU60xHnkld1fV4mYQMuMAcvB3YkO+8oJM37UTifRr2rNK/P/vQckeO5ybiz77OVHUmB+X0Z2tuDZGyME9746LS+ew4lPs68z8XAGQRpbXJ9F5EyYPtfEGC/8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718175453; c=relaxed/simple;
-	bh=PuRF5uL5gkel7TuOzm4BKjwimavIPSTHOtuBU3/JB1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VMwFgsOgsLWhnFsN31mI9b+JJwTnsDjhSN5IcA8jqP688aacKPtFYgEVs6KUwud02SwY4yoFvWkl7OO4Debr5jkKpEiCDGc9kW61qyK07ZBBcrjmgzee+BPI2/pHRZ7OPYFMA7PliktpMb+9HPb6TlZ3d2ln8S91483UsPd8jJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IbHQKHwZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vW+wRif2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Xc0xvbdW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Gqx4kh3O; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ED2EC33FAD;
-	Wed, 12 Jun 2024 06:57:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718175449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ys6yrvEFJNjiCngEJoyTvh6mPLPjtXpIrnMnP0tED8=;
-	b=IbHQKHwZZNARoZ4mIBZd37JAqx/SG9h+L6uGf8q8jrL4PQNil9kIp0QNEg3WkJbzT8YiTr
-	3RbYVPRJJuPL80uT3jV8jDITqzfCSdMMA3IyR1wvwWJAdMFz68gfTGE3gcXBp7/y45Zzug
-	fODSGbDN6Ztwc0LNjYZBcDqEkP2BRXQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718175449;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ys6yrvEFJNjiCngEJoyTvh6mPLPjtXpIrnMnP0tED8=;
-	b=vW+wRif2fwRXFrtNMPJElHiLkiMQPyfgDeewIjTTvLeeOSvhnT6VZo/oWaZ9740sn3vuod
-	dkinC6zc256rUuBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718175448; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ys6yrvEFJNjiCngEJoyTvh6mPLPjtXpIrnMnP0tED8=;
-	b=Xc0xvbdWejA09lEJdutnxliBxPYWFNnRzeyMil2QQqjsNCg97CqK2FhThCu8zEF4eVkUFm
-	noHxf7i3fGd1eXBHyn8wulo+lmYF3+ADQ3bqR568zq8wPK0vSHUBgmg43xZDrIlzCkZkTy
-	SBn56YU/n/OGPcnStRYUNatXVicdpJo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718175448;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ys6yrvEFJNjiCngEJoyTvh6mPLPjtXpIrnMnP0tED8=;
-	b=Gqx4kh3OCq71J8ahfziiEJARHt8oZgkaYWtB2xtRoEiXGZMSajSmibqGrSSSR6CpHXea5o
-	4pJ2t2rllFozN5Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 90604137DF;
-	Wed, 12 Jun 2024 06:57:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id L5OSIdhGaWarQQAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 12 Jun 2024 06:57:28 +0000
-Message-ID: <f992c0f2-8f70-4dc0-b679-e522e3fd6101@suse.de>
-Date: Wed, 12 Jun 2024 08:57:28 +0200
+	s=arc-20240116; t=1718175493; c=relaxed/simple;
+	bh=p1rkqdX4nFpn8dCZsYXZyvKTd/fDJuHOGVOHqkwMsmA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PnGWMXrgigUjoNsja+LB7UQHXAvXnq/zdejZs5ClpHtqcwYhm4JOC99tKVNiI5ztikgQx0rJDpx0x8JK9Kf52GuB9BmWVAQUu8EwDYpwnHH0LlJXENAXYzy4DBHAU0tIRRHdx2iLn9CjVY3EveA8jsyBL2EH1eagakUNGD67lls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TdMX8FwO; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c2ecbc109fso3088007a91.1;
+        Tue, 11 Jun 2024 23:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718175491; x=1718780291; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yf54Wa1SE9vp/tJ3cJNQWcthR5DhTfYZVQgtWp1NLZ8=;
+        b=TdMX8FwON+kV+LnnozYX0wo8klbSfzyZCrjysLUghnJVr4cSMoXhxA3kEoAeVg5Avy
+         eoUJpmqRbm/iLG/HC+1iuQBluLfMBH/aVDjk6i9KOB4zqYNTIX41i/3O+4kGlvk3ypM6
+         5HCqSZxmxxwa5W3Wem2kYoDyDWxWkBcYnPD/gV0bCBSznJUmBKjdpDfT8h8Rr0VU1voy
+         vBPuvAyM13SSEKtl5WZswCHtiGBKsNjonBb7bIN9FlVxLu/nchBG7ytrltT+mBP7QpBV
+         liixU0v0QZasC59xNMrX+W8e0u9HYCwVsLlOB3ev+6cInaOuoM1sSiDd6EANHAvtN/hb
+         i1vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718175491; x=1718780291;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yf54Wa1SE9vp/tJ3cJNQWcthR5DhTfYZVQgtWp1NLZ8=;
+        b=kEJtdEDu8Q0Bk5TL2Wgwah5PX8XL+/raQvNQto2Czr7ywn+et+T255uXqBzsCG+OlG
+         AVWrDoCWg/qORmd35uQR4fZqRaSAcCJ2moAnkRaoHf04iY+ckdlUtXWp6CRvd5vv7KJ/
+         xi8d5XUp8rfklp96QoI6cl5d/X6Bye08wDNpj/SnPWEgbX/IbBl8nZjrF/1ih7wgASJ/
+         R8dPmxRNvZ59pXVuaQC4B48nzqaw0AJdC1fazZEwjS+EUAvpu/b1wf+Sa2dT110iHnHJ
+         lB09rNV76WZWV0xwhrZ210C1z4WAtvS1hF+WFxPE0YOtnEA0cqadX89V2BAKkzjaVwlY
+         UMfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBMtJvAvfnxuCfpLIX3BRZqO3OOekwIqYyUZDZEqfP5rXiiK2636IIkSU9y0dcSmH0/zY+4sw0nMBE1nZXL9ZHgKy79AeURUl7QE/gtWZABsI2ESeYXNJjKfKuk7PrdIBmIO7FnvANkXLj02+xjqvoITZ3MhHsuNk++RZwB4LODQ==
+X-Gm-Message-State: AOJu0YxjqFvSyfe6xdoQg9RUEK0r6jma2FQgAisSVUx3QCprPruFtbCY
+	BxFJz3UfUrmhut3ezYyUmDrYa/UFUr1Vjqy5+GqXo3F/Kcg8pRnIl3AdkhJI614yGAsPVyfva+w
+	FQPCqm+nY8Wx/sKbApTOVtgSnm7ViwEtKC5Q=
+X-Google-Smtp-Source: AGHT+IHq6UY650bqkZXEO4Gyq7SUgAT79l/h3ccYb+ytWMAxBcDebAD+GbEVhvRZDVgYp4BMB/TR1C01JO23VwA/DWc=
+X-Received: by 2002:a17:90a:8985:b0:2c3:274b:dfb0 with SMTP id
+ 98e67ed59e1d1-2c4a7629f13mr949448a91.17.1718175491330; Tue, 11 Jun 2024
+ 23:58:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/14] scsi: fnic: Add functionality in fnic to support
- FDLS
-Content-Language: en-US
-To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
-Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
- mkai2@cisco.com, satishkh@cisco.com, jejb@linux.ibm.com,
- martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240610215100.673158-1-kartilak@cisco.com>
- <20240610215100.673158-9-kartilak@cisco.com>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240610215100.673158-9-kartilak@cisco.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo,cisco.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -4.29
-X-Spam-Level: 
+References: <20240611110058.3444968-1-andrii@kernel.org> <20240611115950.35197b36eafe0a804ecaa0de@linux-foundation.org>
+In-Reply-To: <20240611115950.35197b36eafe0a804ecaa0de@linux-foundation.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 12 Jun 2024 07:57:59 +0100
+Message-ID: <CAEf4BzZKYTnj-=PBSQ_74-o4rzKx2_VO4PRLwyq4szCcZvoGbQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] ioctl()-based API to query VMAs from /proc/<pid>/maps
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	gregkh@linuxfoundation.org, linux-mm@kvack.org, liam.howlett@oracle.com, 
+	surenb@google.com, rppt@kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/10/24 23:50, Karan Tilak Kumar wrote:
-> Add interfaces in fnic to use FDLS services.
-> Modify link up and link down functionality to use FDLS.
-> Replace existing interfaces to handle new functionality
-> provided by FDLS.
-> Modify data types of some data members to handle new
-> functionality.
-> Add processing of tports and handling of tports.
-> 
-> Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
-> Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-> Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
-> Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
-> ---
->   drivers/scsi/fnic/fdls_disc.c |  74 +++++
->   drivers/scsi/fnic/fip.c       |  27 +-
->   drivers/scsi/fnic/fnic.h      |  20 +-
->   drivers/scsi/fnic/fnic_fcs.c  | 498 ++++++++++++++++++++++++----------
->   drivers/scsi/fnic/fnic_main.c |  10 +-
->   drivers/scsi/fnic/fnic_scsi.c | 127 +++++++--
->   6 files changed, 587 insertions(+), 169 deletions(-)
-> 
-This seems to not just _add_ the functionality to use FDLS, but rather 
-_replace_ the existing functionality with FDLS.
-IE it seems that after this change the driver will always do FDLS, 
-causing a possible service interruption with existing setups.
-Hmm?
+On Tue, Jun 11, 2024 at 7:59=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+>
+> (Please cc Alexey on procfs changes)
 
-Cheers,
+ack, will do
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+>
+> On Tue, 11 Jun 2024 04:00:48 -0700 Andrii Nakryiko <andrii@kernel.org> wr=
+ote:
+>
+> > Implement binary ioctl()-based interface to /proc/<pid>/maps file to al=
+low
+> > applications to query VMA information more efficiently than reading *al=
+l* VMAs
+> > nonselectively through text-based interface of /proc/<pid>/maps file.
+>
+> Looks nice but I'll await further reviewer input.
+>
 
+Thanks! I'll work on adding more tests meanwhile.
+
+> >
+> > ...
+> >
+> >  Documentation/filesystems/proc.rst          |   9 +
+> >  fs/proc/task_mmu.c                          | 366 +++++++++++--
+> >  include/uapi/linux/fs.h                     | 156 +++++-
+> >  tools/include/uapi/linux/fs.h               | 550 ++++++++++++++++++++
+> >  tools/testing/selftests/bpf/.gitignore      |   1 +
+> >  tools/testing/selftests/bpf/Makefile        |   2 +-
+> >  tools/testing/selftests/bpf/procfs_query.c  | 386 ++++++++++++++
+> >  tools/testing/selftests/bpf/test_progs.c    |   3 +
+> >  tools/testing/selftests/bpf/test_progs.h    |   2 +
+> >  tools/testing/selftests/bpf/trace_helpers.c | 104 +++-
+> >  10 files changed, 1508 insertions(+), 71 deletions(-)
+> >  create mode 100644 tools/include/uapi/linux/fs.h
+> >  create mode 100644 tools/testing/selftests/bpf/procfs_query.c
+>
+> Should the selftests be under bpf/?  This is a procfs feature which
+> could be used by many things apart from bpf and it really isn't a bpf
+> thing at all.  Wouldn't tools/testing/selftests/proc/ be a more
+> appropriate place?
+>
+
+Yep, agreed. I used BPF selftests as a quick and simple way to
+validate it's working end-to-end (because we use /proc/<pid>/maps
+across a bunch of pre-existing BPF selftests, so that gave me good
+coverage and signal). I'll look into adding more tests under
+selftests/proc for the next revision.
+
+As for the procfs_query.c, it's not really a test, rather a custom
+testing/benchmarking tool convenient for development, so I think I'll
+drop it from the patch set for the next revision (and maybe will put
+it up in a separate repo on Github or something).
 
