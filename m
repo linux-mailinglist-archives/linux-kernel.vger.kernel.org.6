@@ -1,97 +1,175 @@
-Return-Path: <linux-kernel+bounces-211634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D739054B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:03:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 907649054B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1C43B268B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:03:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5611F22394
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5A117D8B1;
-	Wed, 12 Jun 2024 14:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C4817D8BC;
+	Wed, 12 Jun 2024 14:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VrG6lVNe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dnztEUgO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B63017B4F1;
-	Wed, 12 Jun 2024 14:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7EB17B4F1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201013; cv=none; b=gFWDvzWqGpP2X1/A5RT6uXH8atDRiHKraLQhHT282OngWlQ/JrOEdEg4Koif5I4+kT+dTKwiMuAnx3OoiKGMMBOiJLERac0UPg85yzT/ZEfqb6eAbUbHAIddmFvZlKjZNsGGYn6ECZhYYo40ZiSWyp5ghO5iMxgf3VVqzaLUaJw=
+	t=1718201068; cv=none; b=trLDGFoOvkXxP1HaQe59EyhN/AavezlRbYxV17DPwTEK0Qoe1rW+WKUhpazZcLoYlcgcAKMyBmlwZTVWSRe42/PQUWZo9dAioQZeV8ONlkRv3qQ/s6aBgL3vReb3IzeTdxqYaB94MTzhyPk1vRB6t56Lx3a2Lo1B4GqKo0cjIXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201013; c=relaxed/simple;
-	bh=T+d5/w/TrCDK3gbxr4NrNSoQldtcv42SmPQU3MNE7+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ag0gI6I0fRmAXQRjrvfo/kDZn8u8+EYVUt8Ulbx4GUTmrZ+N4GSBoo2NRVRWdOd6/rJpfX9Jy3Xqc/Ibe9f+di6PXuHc3oe2LlD60rOa0PiyrTYKXljHKwdtXdacUnwhR6tVvHowdCuGUxZ8ubTCpPd2iOgrAVqXIxuES5Xzfg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VrG6lVNe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A89C4AF1A;
-	Wed, 12 Jun 2024 14:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718201010;
-	bh=T+d5/w/TrCDK3gbxr4NrNSoQldtcv42SmPQU3MNE7+8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VrG6lVNebfEEcNcaKfdsPm/90t3QuvUTE9d47oKtx4M8Hbu/H24D/4BKoxQvOElGM
-	 l6ebdhLXq3nsuvcxOoKZ4q1OCoWRiaklCEdcwQwY+602efpNbpkIQNZIsdkGpD9zqW
-	 es7b2cN3IyrSvOOrepEQRYs1sJvRXVyujYHVJqSDFowzt3nJSABh7+wbPgbMg28Qud
-	 Op3T3ShwqploZFnEfzphqXkXVpi2cHRvgy8t6LJzjtaALblib8gPTorAkfTiLkjnKN
-	 LcZ7XLjaJUUiiUInxUgIIswwiN3BTNhS0fpiOcChJuLCNUMOURhj6og2Y7bIMO4JNw
-	 nCaaW6BLdJ77w==
-Date: Wed, 12 Jun 2024 15:03:26 +0100
-From: Lee Jones <lee@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	broonie@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] dt-bindings: mfd: twl: Fix example
-Message-ID: <20240612140326.GD1504919@google.com>
-References: <20240612134039.1089839-1-andreas@kemnade.info>
+	s=arc-20240116; t=1718201068; c=relaxed/simple;
+	bh=n6rQcdlTzLyq3J1ACt2i5X2K8jWLz6x7Pyg6vl9BQmw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oRfp4piTureTm/zO4lzxKYutBTGUqQIymtlnZrpt2dwjEsjr1LVs54r4rKHSOoC0RTQUl3j/PSbR/AbbFzWe1jjkjfpWtYUnLpVm4dOhBiaF3UZkGIjJNGYPM/4lOqE9pqmyTN8cJUfH0iuteUd28fUilFkwg1wjxiZDrYKM3lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dnztEUgO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718201065;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VHS87YElUOWkANf6E72nxalS03lPC9WT8JCafxHD7gY=;
+	b=dnztEUgOc+Ad1hHvLIfeMjzJtyp3xCi3FMEQ43nVVAobscNfYjJ998CUYYCThS0vXMmeaW
+	ZQ/9Lgq4vgF7SRKWijDqeODuzvb/aEo3kg0TPJjdfxBh9/I2cQ7+Zzhr20G0NSvkbXstXb
+	94ZF+/i1INsE5/jWADxNgXFaU8R0XpA=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-434-OCQM5DUDOyqfNylMhYtB1Q-1; Wed, 12 Jun 2024 10:04:24 -0400
+X-MC-Unique: OCQM5DUDOyqfNylMhYtB1Q-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b062c433cfso24379906d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:04:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718201063; x=1718805863;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VHS87YElUOWkANf6E72nxalS03lPC9WT8JCafxHD7gY=;
+        b=RRcjoMeCQeeQ8hUOvxYOzkOar2XDKP7OErGHr7jk8mS29Tu0hfVlPvV0z3bE+Pjt9X
+         8p1pI8lUuf+mh1V7ALoF0IOyShMHa3Tn8w/xg2snXryVb2XHf0dBpowPpnoDi5a6GW5d
+         niQnlXxapt1D+MJHOfDzoOBVUwPwMm9Zm1X0wpuVm2bSlr2bNQmz8LUZXaFfoldRLfvz
+         EnOXUTCU/n7vPf0JN2i75OIQIEhgKj9ko8yinuk0lCIMM3wqY1pW/nXHhhPAYNkevmBg
+         hCyHt+BtyK3xald6men5+0lsH7C56WJsh2/m5tdVq68Lvg0mp+TEFpCV6nOh1WsD+8xt
+         /HbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIaLeHzEKF/CJEpKoifbcx/ivSf/+AQDQW+fUsp4sI59OoWZjkTepFdy7cAbVuB29jY/ow+UMJmLwRPgk5QQ9MUSuUgBSd/L02qNdx
+X-Gm-Message-State: AOJu0YynLN/t8OxHoCdA0eCmvFfHU0P3WiYm9PfG+NPVJlVLTVbdYRXf
+	xfdrkgkhEyYiEIz1sHnfaOxmUPg5Q+T52lBVpXJJDTjxc8ENjZ9BYY+Hpada4GJhsiKYeQAdu3z
+	x0EDzWUuHoi4VX+0JZXVyY4gCRZAvH+tOcZGMAkPDCcs0Hc/nGV7EVHezc411gg==
+X-Received: by 2002:a05:6214:2b90:b0:6b0:7821:4026 with SMTP id 6a1803df08f44-6b1a6c57871mr20406656d6.52.1718201062929;
+        Wed, 12 Jun 2024 07:04:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHis29s85ghN1wCvWNHSB3z3fEhPObl0T66oMycOn7F9OWRQIQYakS2Z/8aehOyVDRyZ6GOEQ==
+X-Received: by 2002:a05:6214:2b90:b0:6b0:7821:4026 with SMTP id 6a1803df08f44-6b1a6c57871mr20406306d6.52.1718201062563;
+        Wed, 12 Jun 2024 07:04:22 -0700 (PDT)
+Received: from [192.168.0.4] (ip-109-43-176-68.web.vodafone.de. [109.43.176.68])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a1515903sm958436d6.58.2024.06.12.07.04.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 07:04:22 -0700 (PDT)
+Message-ID: <6086ef5e-48e7-40f3-b0a7-ff67b20aeae3@redhat.com>
+Date: Wed, 12 Jun 2024 16:04:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240612134039.1089839-1-andreas@kemnade.info>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] s390/virtio_ccw: fix config change notifications
+To: Halil Pasic <pasic@linux.ibm.com>, Cornelia Huck <cohuck@redhat.com>,
+ Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+ virtualization@lists.linux.dev, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Boqiao Fu <bfu@redhat.com>, Sebastian Mitterle <smitterl@redhat.com>
+References: <20240611214716.1002781-1-pasic@linux.ibm.com>
+From: Thomas Huth <thuth@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=thuth@redhat.com; keydata=
+ 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
+In-Reply-To: <20240611214716.1002781-1-pasic@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 12 Jun 2024, Andreas Kemnade wrote:
-
-> Fix example to also conform to rules specified in the separate
-> not-included gpadc binding.
+On 11/06/2024 23.47, Halil Pasic wrote:
+> Commit e3e9bda38e6d ("s390/virtio_ccw: use DMA handle from DMA API")
+> broke configuration change notifications for virtio-ccw by putting the
+> DMA address of *indicatorp directly into ccw->cda disregarding the fact
+> that if !!(vcdev->is_thinint) then the function
+> virtio_ccw_register_adapter_ind() will overwrite that ccw->cda value
+> with the address of the virtio_thinint_area so it can actually set up
+> the adapter interrupts via CCW_CMD_SET_IND_ADAPTER.  Thus we end up
+> pointing to the wrong object for both CCW_CMD_SET_IND if setting up the
+> adapter interrupts fails, and for CCW_CMD_SET_CONF_IND regardless
+> whether it succeeds or fails.
 > 
-> Fixes: 62e4f3396197 ("dt-bindings: regulator: twl-regulator: convert to yaml")
-
-If this was applied via Regulator, that's where the fix will need to go.
-
-Acked-by: Lee Jones <lee@kernel.org>
-
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> To fix this, let us save away the dma address of *indicatorp in a local
+> variable, and copy it to ccw->cda after the "vcdev->is_thinint" branch.
+> 
+> Reported-by: Boqiao Fu <bfu@redhat.com>
+> Reported-by: Sebastian Mitterle <smitterl@redhat.com>
+> Fixes: e3e9bda38e6d ("s390/virtio_ccw: use DMA handle from DMA API")
+> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
 > ---
->  Documentation/devicetree/bindings/mfd/ti,twl.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> index 2cbdd238f48f..e94b0fd7af0f 100644
-> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> @@ -225,6 +225,7 @@ examples:
->          gpadc {
->            compatible = "ti,twl6030-gpadc";
->            interrupts = <6>;
-> +          #io-channel-cells = <1>;
->          };
->  
->          rtc {
-> -- 
-> 2.39.2
-> 
+> I know that checkpatch.pl complains about a missing 'Closes' tag.
+> Unfortunately I don't have an appropriate URL at hand. @Sebastian,
+> @Boqiao: do you have any suggetions?
 
--- 
-Lee Jones [李琼斯]
+Closes: https://issues.redhat.com/browse/RHEL-39983
+?
+
+Anyway, I've tested the patch and it indeed fixes the problem with 
+virtio-balloon and the link state for me:
+
+Tested-by: Thomas Huth <thuth@redhat.com>
+
 
