@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-212193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D439A905C8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:10:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58A6905C97
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E87E1F24DBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:10:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43DBD28573F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0957584A48;
-	Wed, 12 Jun 2024 20:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635A584E07;
+	Wed, 12 Jun 2024 20:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="UsfHvtpL"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YcyBl6ma"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7902784DE9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 20:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C6B1C14;
+	Wed, 12 Jun 2024 20:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718222975; cv=none; b=lgRwNwVAtp6EnfT8IwRMwHCVNn56DhNPUbbt6Uf8WJS8MLxK7xYKAwN/amxDuz54qYJacBGnxNa6RPb/N8aA5UVvGpiJ1tcIuwX2eQpw2VCypvr4sD4FxtwXcS1nip1YB3kWWpRsFXoNDwaLreDcWvRRwWJvKdDPkB99zA63/9o=
+	t=1718223143; cv=none; b=AdaIgr0GwVEiEipOz/lB7Q82EFpeyxdt59gYFy82NUC/LOKwkCQqrANYh7/SPF6i4II+kOP79JGRhuOXwvMkbONLAvIWPEdqNDOqvSjErrfJwNSnUPUksqbvqr0G9M9hlNfmVC3hEgBYOGuX7NR5DrZ2onk+qJs9t/k5C+7iC1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718222975; c=relaxed/simple;
-	bh=jF2I4eWVfCTC/mgwsHEU1ahkjsFYbbCMnQ/zLeO8He4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=owXbE0x1T8S3FS93vB7nuARlTU3lmSyEARsUEZ+DJJup/vbNKM+wSdNV2I4BYXhFSB7odSQgWemqwfeLNQQYuqjSZAPh1crJIoZNbdeSyp209tCNiyJ+nLArOU6YtIv1r3DJ/uF38aJ0Vdu/mBJpQuCIjC4WRQnZb7n3Ee+9qXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=UsfHvtpL; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f717ee193fso2421705ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 13:09:33 -0700 (PDT)
+	s=arc-20240116; t=1718223143; c=relaxed/simple;
+	bh=vTRvMcmQ67qBx2Si3u2LtonShyXfmrbl+BRv5Bd+fyk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H9/5lwMXLcmrvUWfOAAoWW7EAUiVR8nfUUbNHKwercZmfguReuSe69E/ihAOMT0fBZYrSBLFrDazEMhrgBHhrR1qXRn4FQWJsmb/xL9DZa3OzyMMSMFK6EuThONWPef3Rsu0gMmG3FMonmXNsJerwUDQXf+vewuKA2gklYhVTcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YcyBl6ma; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-35dc1d8867eso294761f8f.0;
+        Wed, 12 Jun 2024 13:12:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1718222973; x=1718827773; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0s8R7PiKG7ygOhXdI8mYQIM9Nw0ZpcuydO4wtHx1EMs=;
-        b=UsfHvtpLFxcnz6Eg7k9HqLBR2W9wJddrq0qRVGl+/pFoD4gFyeL16BorqUOgk+advY
-         o4MKvWS9tnNwds5F4CoWROlvBGysb79w2F709ZszgFh01jH8kpHH+aR/cuN95Cb5IgPz
-         kF3z36z8NkiA115cExOQFBWxqge6nbaiwQK6Q=
+        d=gmail.com; s=20230601; t=1718223140; x=1718827940; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1eed+2CfpyC5UVd4nAFeDZB/9Ij+Vk+m/v76FicPbdk=;
+        b=YcyBl6maGy5+TEcKzFrBYqIusHBay3y2EIdhfvuxrRSXpARF9zy+CYZYDOLyh22JEc
+         EslbmIzinX26BxjDRK3IVpyocqt3dVO+a0WziOtCbMiZOUwLyjC505jUl5NtyYaxsPsM
+         pAkRK1B50+IcTM17zhPPksprYa/S93njUsPURjvwFZo9HXugNWFMID3ciTkM+FBxy/7u
+         pgNN81e6BpMi9llWU/OhyAFLh0RPlFKXockCmlFq0qDYwkTAIkJyObb4Kk5yjpxe+b+I
+         +f/XsSsQJYUofpnV43tSu6CMZJJ+VpLFMcjvoLM4sNISnSCScTRVkr4TBU9GXAXaW6Hx
+         FFCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718222973; x=1718827773;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0s8R7PiKG7ygOhXdI8mYQIM9Nw0ZpcuydO4wtHx1EMs=;
-        b=k0s6mvzU4un988tbuBtL1nbusjHIJfTGh5Kq1ypQ9O9eXk7kEoQlyFAjbm5MKTd8S7
-         /1G//aelmMj8dhlSu0nsjPN36vokTyRhjESF3k5scW/q9zOOQb3rVG7DNU26AMzpbDDT
-         oQ33pBNqdv6P/dHc05GiHL63lgLqgzj7g+bRhaH9zaAqE/X9iTC8v8Kcy5TraQmGZkOG
-         v67AtAMl+FjksilRdYbvy9ty2AxUrYMbnkcSM6dckGxi4ZDzGQtZqFp2/xrBTJB3xh/u
-         Vbn8cYFG2pVbdM5C/85oC3bK3MB7+O1h6KF28hUEiWIG7qHuLFae1IHDPJikrYS4hDa6
-         aEJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIM4ws36HGR3BvNlxZ8utuZRYG5q0LjJyRPA0Q9rVnplvu2FUHmQRx1d8GAL+8M922w/vWkzo709FvdezrJCzYv5XxgDnEn+LxXqZ8
-X-Gm-Message-State: AOJu0Yy064TaGp6NLLKcJu8Jf4w4bziGiBJsUDjob4s3t3wqxlVscdf3
-	1Mcv/2Kq2m05x3ed5JfBJJrTCnTJlXB/omr/F67T0acHxvHLOf3n0qrLZn98dc70OwVY9nUTaCL
-	E
-X-Google-Smtp-Source: AGHT+IHNCHnF1MmZHVxSU7HnVfRcpDsxPSWFUTjrM9Uz154aliKZf70E5jtEhSMhN5KO+k991iL49g==
-X-Received: by 2002:a17:903:1c9:b0:1f7:123e:2c6f with SMTP id d9443c01a7336-1f83b6788eemr35571165ad.37.1718222972808;
-        Wed, 12 Jun 2024 13:09:32 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6ee3d5a17sm91506805ad.146.2024.06.12.13.09.31
+        d=1e100.net; s=20230601; t=1718223140; x=1718827940;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1eed+2CfpyC5UVd4nAFeDZB/9Ij+Vk+m/v76FicPbdk=;
+        b=G0xr3OUb9yOPaMcN7leQPtPy1m2LcIs2EZpMmaUYW9D/ZVXUdFhIrsyjTjfSu+D7Cv
+         WgCc3KGzbpEjU6nOJPeTZ8ZRc6oqdE2DQFq0WBhEQrp1Jh7XiEOdXvvnNXxsn49IZmGe
+         htZ4Cken7Hg0BUNVHEUVyNBGeb6Ff+q1y/zuqz6PDWt019b4NmTjvUNvGdct72wR/b3M
+         Kv3q5aPo8WcogUpupLTj9MCdwN8sX1Iz7wK/V6bDrN5sQg4l26fXXOWUYP0OfQg8Bf+a
+         ufVKSCOI4hdfpfetx6aiTGsnyr9GG+cWYLMXhKaG+jT9EZeJGwPy3MVZkZ4faC5cOC87
+         68XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/u6ZnL2u7CVq5yknKala52wGaGdz/wVzh5EtgLN6FPYhF2QHrcU0rgDQfqTfTioX63zRp/Zd5qP27yNRH0L1t8Dudc57xgPNSM6kgkvTOfVxebY0DtL7CLMaER5sDyTCJI/INlA==
+X-Gm-Message-State: AOJu0YyPd/9dkNVJ6I8er1Skp9afEyQSamvsYQE/Ys89DEJU2KUbhL1u
+	gynhfyyOIFuKtrd/SmqjEwygX4rXubI+rICIl58uP4hHjGi4h4RH
+X-Google-Smtp-Source: AGHT+IFzhJSmsSeyPWsFkquVLF4ZsYUhdbk+Ko+VxAggBeLczkroAq1sV7RZSMvKVmWBaruhdXyaWg==
+X-Received: by 2002:a05:600c:4590:b0:421:a1b4:c1d4 with SMTP id 5b1f17b1804b1-422863a8ce8mr28675025e9.13.1718223140088;
+        Wed, 12 Jun 2024 13:12:20 -0700 (PDT)
+Received: from ALPER-PC.. ([178.233.24.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe7670sm38110205e9.6.2024.06.12.13.12.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 13:09:32 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: nalramli@fastly.com,
-	Joe Damato <jdamato@fastly.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	linux-rdma@vger.kernel.org (open list:MELLANOX MLX5 core VPI driver)
-Subject: [net-next v5 2/2] net/mlx5e: Add per queue netdev-genl stats
-Date: Wed, 12 Jun 2024 20:08:57 +0000
-Message-Id: <20240612200900.246492-3-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240612200900.246492-1-jdamato@fastly.com>
-References: <20240612200900.246492-1-jdamato@fastly.com>
+        Wed, 12 Jun 2024 13:12:19 -0700 (PDT)
+From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org,
+	Alper Nebi Yasak <alpernebiyasak@gmail.com>
+Subject: [PATCH RESEND v2 1/2] clk: mediatek: mt8173-infracfg: Handle unallocated infracfg when module
+Date: Wed, 12 Jun 2024 23:11:00 +0300
+Message-ID: <20240612201211.91683-1-alpernebiyasak@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,223 +92,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-./cli.py --spec netlink/specs/netdev.yaml \
-         --dump qstats-get --json '{"scope": "queue"}'
+The MT8173 infracfg clock driver does initialization in two steps, via a
+CLK_OF_DECLARE_DRIVER declaration. However its early init function
+doesn't get to run when it's built as a module, presumably since it's
+not loaded by the time it would have been called by of_clk_init(). This
+causes its second-step probe() to return -ENOMEM when trying to register
+clocks, as the necessary clock_data struct isn't initialized by the
+first step.
 
-...snip
+MT2701 and MT6797 clock drivers also use this mechanism, but they try to
+allocate the necessary clock_data structure if missing in the second
+step. Mimic that for the MT8173 infracfg clock as well to make it work
+as a module.
 
- {'ifindex': 7,
-  'queue-id': 62,
-  'queue-type': 'rx',
-  'rx-alloc-fail': 0,
-  'rx-bytes': 105965251,
-  'rx-packets': 179790},
- {'ifindex': 7,
-  'queue-id': 0,
-  'queue-type': 'tx',
-  'tx-bytes': 9402665,
-  'tx-packets': 17551},
-
-...snip
-
-Also tested with the script tools/testing/selftests/drivers/net/stats.py
-in several scenarios to ensure stats tallying was correct:
-
-- on boot (default queue counts)
-- adjusting queue count up or down (ethtool -L eth0 combined ...)
-
-The tools/testing/selftests/drivers/net/stats.py brings the device up,
-so to test with the device down, I did the following:
-
-$ ip link show eth4
-7: eth4: <BROADCAST,MULTICAST> mtu 9000 qdisc mq state DOWN [..snip..]
-  [..snip..]
-
-$ cat /proc/net/dev | grep eth4
-eth4: 235710489  434811 [..snip rx..] 2878744 21227  [..snip tx..]
-
-$ ./cli.py --spec ../../../Documentation/netlink/specs/netdev.yaml \
-           --dump qstats-get --json '{"ifindex": 7}'
-[{'ifindex': 7,
-  'rx-alloc-fail': 0,
-  'rx-bytes': 235710489,
-  'rx-packets': 434811,
-  'tx-bytes': 2878744,
-  'tx-packets': 21227}]
-
-Compare the values in /proc/net/dev match the output of cli for the same
-device, even while the device is down.
-
-Note that while the device is down, per queue stats output nothing
-(because the device is down there are no queues):
-
-$ ./cli.py --spec ../../../Documentation/netlink/specs/netdev.yaml \
-           --dump qstats-get --json '{"scope": "queue", "ifindex": 7}'
-[]
-
-Signed-off-by: Joe Damato <jdamato@fastly.com>
+Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
 ---
- .../net/ethernet/mellanox/mlx5/core/en_main.c | 132 ++++++++++++++++++
- 1 file changed, 132 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-index c548e2fdc58f..d3f38b4b18eb 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -39,6 +39,7 @@
- #include <linux/debugfs.h>
- #include <linux/if_bridge.h>
- #include <linux/filter.h>
-+#include <net/netdev_queues.h>
- #include <net/page_pool/types.h>
- #include <net/pkt_sched.h>
- #include <net/xdp_sock_drv.h>
-@@ -5299,6 +5300,136 @@ static bool mlx5e_tunnel_any_tx_proto_supported(struct mlx5_core_dev *mdev)
- 	return (mlx5_vxlan_allowed(mdev->vxlan) || mlx5_geneve_tx_allowed(mdev));
- }
- 
-+static void mlx5e_get_queue_stats_rx(struct net_device *dev, int i,
-+				     struct netdev_queue_stats_rx *stats)
-+{
-+	struct mlx5e_priv *priv = netdev_priv(dev);
-+	struct mlx5e_channel_stats *channel_stats;
-+	struct mlx5e_rq_stats *xskrq_stats;
-+	struct mlx5e_rq_stats *rq_stats;
-+
-+	ASSERT_RTNL();
-+	if (mlx5e_is_uplink_rep(priv))
-+		return;
-+
-+	channel_stats = priv->channel_stats[i];
-+	xskrq_stats = &channel_stats->xskrq;
-+	rq_stats = &channel_stats->rq;
-+
-+	stats->packets = rq_stats->packets + xskrq_stats->packets;
-+	stats->bytes = rq_stats->bytes + xskrq_stats->bytes;
-+	stats->alloc_fail = rq_stats->buff_alloc_err +
-+			    xskrq_stats->buff_alloc_err;
-+}
-+
-+static void mlx5e_get_queue_stats_tx(struct net_device *dev, int i,
-+				     struct netdev_queue_stats_tx *stats)
-+{
-+	struct mlx5e_priv *priv = netdev_priv(dev);
-+	struct mlx5e_sq_stats *sq_stats;
-+
-+	ASSERT_RTNL();
-+	/* no special case needed for ptp htb etc since txq2sq_stats is kept up
-+	 * to date for active sq_stats, otherwise get_base_stats takes care of
-+	 * inactive sqs.
-+	 */
-+	sq_stats = priv->txq2sq_stats[i];
-+	stats->packets = sq_stats->packets;
-+	stats->bytes = sq_stats->bytes;
-+}
-+
-+static void mlx5e_get_base_stats(struct net_device *dev,
-+				 struct netdev_queue_stats_rx *rx,
-+				 struct netdev_queue_stats_tx *tx)
-+{
-+	struct mlx5e_priv *priv = netdev_priv(dev);
-+	struct mlx5e_ptp *ptp_channel;
-+	int i, tc;
-+
-+	ASSERT_RTNL();
-+	if (!mlx5e_is_uplink_rep(priv)) {
-+		rx->packets = 0;
-+		rx->bytes = 0;
-+		rx->alloc_fail = 0;
-+
-+		for (i = priv->channels.params.num_channels; i < priv->stats_nch; i++) {
-+			struct netdev_queue_stats_rx rx_i = {0};
-+
-+			mlx5e_get_queue_stats_rx(dev, i, &rx_i);
-+
-+			rx->packets += rx_i.packets;
-+			rx->bytes += rx_i.bytes;
-+			rx->alloc_fail += rx_i.alloc_fail;
-+		}
-+
-+		/* always report PTP RX stats from base as there is no
-+		 * corresponding channel to report them under in
-+		 * mlx5e_get_queue_stats_rx.
-+		 */
-+		if (priv->rx_ptp_opened) {
-+			struct mlx5e_rq_stats *rq_stats = &priv->ptp_stats.rq;
-+
-+			rx->packets += rq_stats->packets;
-+			rx->bytes += rq_stats->bytes;
-+		}
-+	}
-+
-+	tx->packets = 0;
-+	tx->bytes = 0;
-+
-+	for (i = 0; i < priv->stats_nch; i++) {
-+		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
-+
-+		/* handle two cases:
-+		 *
-+		 *  1. channels which are active. In this case,
-+		 *     report only deactivated TCs on these channels.
-+		 *
-+		 *  2. channels which were deactivated
-+		 *     (i > priv->channels.params.num_channels)
-+		 *     must have all of their TCs [0 .. priv->max_opened_tc)
-+		 *     examined because deactivated channels will not be in the
-+		 *     range of [0..real_num_tx_queues) and will not have their
-+		 *     stats reported by mlx5e_get_queue_stats_tx.
-+		 */
-+		if (i < priv->channels.params.num_channels)
-+			tc = mlx5e_get_dcb_num_tc(&priv->channels.params);
-+		else
-+			tc = 0;
-+
-+		for (; tc < priv->max_opened_tc; tc++) {
-+			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[tc];
-+
-+			tx->packets += sq_stats->packets;
-+			tx->bytes += sq_stats->bytes;
-+		}
-+	}
-+
-+	/* if PTP TX was opened at some point and has since either:
-+	 *    -  been shutdown and set to NULL, or
-+	 *    -  simply disabled (bit unset)
-+	 *
-+	 * report stats directly from the ptp_stats structures as these queues
-+	 * are now unavailable and there is no txq index to retrieve these
-+	 * stats via calls to mlx5e_get_queue_stats_tx.
-+	 */
-+	ptp_channel = priv->channels.ptp;
-+	if (priv->tx_ptp_opened && (!ptp_channel || !test_bit(MLX5E_PTP_STATE_TX, ptp_channel->state))) {
-+		for (tc = 0; tc < priv->max_opened_tc; tc++) {
-+			struct mlx5e_sq_stats *sq_stats = &priv->ptp_stats.sq[tc];
-+
-+			tx->packets += sq_stats->packets;
-+			tx->bytes   += sq_stats->bytes;
-+		}
-+	}
-+}
-+
-+static const struct netdev_stat_ops mlx5e_stat_ops = {
-+	.get_queue_stats_rx  = mlx5e_get_queue_stats_rx,
-+	.get_queue_stats_tx  = mlx5e_get_queue_stats_tx,
-+	.get_base_stats      = mlx5e_get_base_stats,
-+};
-+
- static void mlx5e_build_nic_netdev(struct net_device *netdev)
+Changes in v2:
+- Rewrite patch subject for consistency
+
+v1: https://lore.kernel.org/lkml/20231108213734.140707-1-alpernebiyasak@gmail.com/
+
+ drivers/clk/mediatek/clk-mt8173-infracfg.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt8173-infracfg.c b/drivers/clk/mediatek/clk-mt8173-infracfg.c
+index 2f2f074e231a..ecc8b0063ea5 100644
+--- a/drivers/clk/mediatek/clk-mt8173-infracfg.c
++++ b/drivers/clk/mediatek/clk-mt8173-infracfg.c
+@@ -98,7 +98,17 @@ CLK_OF_DECLARE_DRIVER(mtk_infrasys, "mediatek,mt8173-infracfg",
+ static int clk_mt8173_infracfg_probe(struct platform_device *pdev)
  {
- 	struct mlx5e_priv *priv = netdev_priv(netdev);
-@@ -5316,6 +5447,7 @@ static void mlx5e_build_nic_netdev(struct net_device *netdev)
+ 	struct device_node *node = pdev->dev.of_node;
+-	int r;
++	int r, i;
++
++	if (!infra_clk_data) {
++		infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
++		if (!infra_clk_data)
++			return -ENOMEM;
++	} else {
++		for (i = 0; i < CLK_INFRA_NR_CLK; i++)
++			if (infra_clk_data->hws[i] == ERR_PTR(-EPROBE_DEFER))
++				infra_clk_data->hws[i] = ERR_PTR(-ENOENT);
++	}
  
- 	netdev->watchdog_timeo    = 15 * HZ;
- 
-+	netdev->stat_ops	  = &mlx5e_stat_ops;
- 	netdev->ethtool_ops	  = &mlx5e_ethtool_ops;
- 
- 	netdev->vlan_features    |= NETIF_F_SG;
+ 	r = mtk_clk_register_gates(&pdev->dev, node, infra_gates,
+ 				   ARRAY_SIZE(infra_gates), infra_clk_data);
+
+base-commit: 03d44168cbd7fc57d5de56a3730427db758fc7f6
 -- 
-2.25.1
+2.45.1
 
 
