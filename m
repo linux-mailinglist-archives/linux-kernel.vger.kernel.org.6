@@ -1,174 +1,200 @@
-Return-Path: <linux-kernel+bounces-210915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAE4904A19
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3E5904A20
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D221C1F21C91
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:38:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FF751F249DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761ED286A6;
-	Wed, 12 Jun 2024 04:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E52728399;
+	Wed, 12 Jun 2024 04:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NlcAwWQW"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ap3df75/"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308B222092
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032FD20DFF
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718167074; cv=none; b=RefqF6XBXjznJxjmpNV6ToDFRsGNDVLy0IkrG1gHTNjqQJKr+hniahCDYtfVaRsyRKtTO3h42hG6PmBoA2BEKYGyPIi9+J4wcDKW7Pzw1uEwNsaFAcoJufv9pHp7Jq7Gh9CTh33OhIhlKtiSFTHQmflU1e/10flIPBAYWfYsM+8=
+	t=1718167257; cv=none; b=AhrVe/I8g5pufDlCKW0nXDy0aeiqCDbWsgMK8+OCs9hfNbvD/vv1+qe04FyDy23sfEWv56hqfYXvfc2wAq2o8kOk+gkX+EQi3vNEyBdoj12UZ5oeQawLNF6v9CLlul6bLKGmaGK24rByk4Hy9rYe71ylHj9I9OPDeWc1iWy2sjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718167074; c=relaxed/simple;
-	bh=K9aejVQOgTXMFEuZnxUdcghhw58vkvOpgwwON1tbHew=;
+	s=arc-20240116; t=1718167257; c=relaxed/simple;
+	bh=1gLwKb9OxHOVAk7+EmjyO/V2qkvJVd8cvMeHIOPMXRc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HG+uJGmEI+UsTGgicPNZsBfMvQBm4flcUEo8cq+V8iC61PmugV4XvxyB29sgo5lVKT1U2LvglQ8XQi+c86sQnCVCLEobe5/SdfqY6P1ngyTeE+HNZ4nkxaf2pYE50igxTf9Wysq2KimUuK4KPSBOxliSM5mCdA9g1gbmLlm5CfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NlcAwWQW; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-24c9f630e51so3126176fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:37:52 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dOka7lbOtBNXAV1qj5PKMcStt8M4T9PK/PwSIU5bcd/n/ECC1i1UzQhTOvAdrLXk3vbUjDno1rxmdKgwJherDYnYJKaZxp/eQw9SNoyj4JyOg8R4c+F1RycT9Q07rP05V17FKAEvfRVA6Gx1vXs/MidwS7Rz010q1RL4kRjxbIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ap3df75/; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6e57506bb2dso1451475a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:40:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718167072; x=1718771872; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DkRmaXYdVwSedvVUVG2r+hTZqVuOSK1T8k/kpQ+eeNI=;
-        b=NlcAwWQWcz7Z43HUdTxaoSN6Km0dUneoMmRIyxrmoucBy1mrgowwqJ54pGWruJBWV+
-         xGxl0N970BCrC/SE6DNUhKn7Wy9AW89lz0EPYVOJz2Sj8+lWlvf7GjlvEOvxkdjyjHdf
-         GKjDkVD/aL0OoKLbBbItzawWxwPGQIrUWgRLA=
+        d=linaro.org; s=google; t=1718167255; x=1718772055; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AGgkSoW1xRk7TfsRGt2QaxlKvCEt9TPGalxUOEqx2iw=;
+        b=ap3df75/wCXHU8qY0th7cbYD8vX89MLozR6Jnx63zmSY4pBM2FmlqKDnJTzBtyGTZr
+         LC4geehH3tM8YbltezthqKLxZJTEuot/ZnrsjBiFoC/hgpivtPNJOIHW2+bB7QewMI8W
+         qRTQw4dvEM5NdiRStba1wiNO7Pz9CrA5VhvrXPzerWqFMReXKPDuUGqkrlRNx7RZxuog
+         TYvOMvN5jmnqvd2BSY4mWJZKanlpfveXskXpJ0GpUk0mMHo+mMaQfy1w5F28NhAJV+v8
+         qrvtFslvuqZFUobC6ENOdfv29V+AWmfpFdEYgAGErDjeiZEoProFKA90MQwyf+s36NkA
+         BwOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718167072; x=1718771872;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DkRmaXYdVwSedvVUVG2r+hTZqVuOSK1T8k/kpQ+eeNI=;
-        b=X/tmAF1TbKz6QIcSBDhRoQn7hW5vOuXdSjeQUTX3jYUtBbfVHDOVXnh3nLOyvlT7Ka
-         Eguqn9qdRrM4cbkkRIdovVDN/IG+z7Tg1FoeLRHSH521+SCRcFnq3vsXBRaM1NFqwuv0
-         GBYGoyC+Ii3mdC3/Oe6kU+2EeC2xKVBkEFwu5l7cw52vWU3cHi9F4UGrkMfb/Xe0I6rc
-         Tscj8JOBV3B9Ssp7+oTlDBb/jERWWRRfT8mk9Xc+7bMHL1e79rFI/IhRAnYYDpHWd7M8
-         EfhQRQXtP/dkD03WKFyLjHQJGZd9QlwD5CzqU2i+Gk/qNLmmpIojTEb1LstbSf77o/je
-         uWIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYrMaVNv+vJEYEhuqm+RUSEF9yD7NPuAGpJmFPz0k5M+RebTiAPv4W753mBMVaf+RE1hZaThkD3MhfkRub2rD6x7RZKai4/QUmszCa
-X-Gm-Message-State: AOJu0YzXovEPvu+Q45GiYtD7DjcXVf0wfHTafahinhXAP6pLEbvjx5oZ
-	z8sYZ6U5wiJEk4N/Ku7XLWUIkcg0SfumexzwEABp5iQXsaBUO5IfPMHbybi6WA==
-X-Google-Smtp-Source: AGHT+IG7f6MklQ9uaEK4A66ROk94t0wNZGlsKVegXA6Omzsq6FR8KOS6Vlm+0Pwr/7yo2CTKXViBuw==
-X-Received: by 2002:a05:6870:f112:b0:250:7a43:aefd with SMTP id 586e51a60fabf-25514b4e1a3mr793220fac.2.1718167072112;
-        Tue, 11 Jun 2024 21:37:52 -0700 (PDT)
-Received: from chromium.org (174.71.80.34.bc.googleusercontent.com. [34.80.71.174])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7042a10c359sm6519597b3a.183.2024.06.11.21.37.47
+        d=1e100.net; s=20230601; t=1718167255; x=1718772055;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AGgkSoW1xRk7TfsRGt2QaxlKvCEt9TPGalxUOEqx2iw=;
+        b=rMoVNIR5kx2r1wHyfuAQl911LrljRv0VerfePbfne5O3QdZY3VjN4P3dVRvfpXKWRx
+         z9hIeQVieDyjzjeoj8z/ZCl2Orh0nCejZyBv0nZ6+JQFG25UTLgK+9foTd81rkk5FtQ3
+         vpetege0BcETuUTxx1Lmzj0kes+uV3aCB4hJk8vMaY/JvHEjCljkilHmLurtl/i3Ns5J
+         gvA1Ie1gGEHD9em7S7g4gq5hRUWumWrjHkg8eLNyrnDG2k6snNFWgkwzw8IP139JV4UP
+         LuraN+9cnY/1RIuF1n5+w8AGi58PhBYTGR1Vh9um1ceNlWKhOEkd1HinipQPnBCBGxZp
+         wSTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXmOAg5F2tlhI5eLnX36ae49KVQ6XBDPBM3hSU5eeQ9U013Dj0P++YnIxxdQ4G/hcsZMrTMYGFUEe02E7Q0hcFqMWerkmGpVYbQpFJQ
+X-Gm-Message-State: AOJu0YynPjLLg6W5fhXgQZQPMTXhJHq1w/2d7oHkKwx7P/md07M07U9e
+	G/yApLWmDUQIEthKjBxcLGzNCLac4OV5R9LSZapiRwMWvnhmJJPmbUd3rCq1pg==
+X-Google-Smtp-Source: AGHT+IHjmwXkPl2CoS61MVk4s0QUMvhfjSBZVGN5YFxLjxkMoDt0N5w7V28ODjcUkdbko4OD0lbEsQ==
+X-Received: by 2002:a05:6a20:8417:b0:1b5:d143:72e7 with SMTP id adf61e73a8af0-1b8a9b8c091mr959952637.32.1718167254831;
+        Tue, 11 Jun 2024 21:40:54 -0700 (PDT)
+Received: from thinkpad ([120.60.129.29])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a9c2fa34sm481444a91.38.2024.06.11.21.40.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 21:37:51 -0700 (PDT)
-Date: Wed, 12 Jun 2024 13:37:46 +0900
-From: Tomasz Figa <tfiga@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Yunfei Dong <yunfei.dong@mediatek.com>, 
-	Jeffrey Kardatzke <jkardatzke@google.com>, 
-	=?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Chen-Yu Tsai <wenst@chromium.org>, 
-	Yong Wu <yong.wu@mediatek.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
-	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	Steve Cho <stevecho@chromium.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T . J . Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v6,04/24] v4l: add documentation for restricted memory
- flag
-Message-ID: <bhgv5djcjc4yt75pyug2yirrymeucjyslthnvq6k2kpp7axfph@jzo5wpcbgwun>
-References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
- <20240516122102.16379-5-yunfei.dong@mediatek.com>
- <20240522111622.GA31185@pendragon.ideasonboard.com>
+        Tue, 11 Jun 2024 21:40:54 -0700 (PDT)
+Date: Wed, 12 Jun 2024 10:10:47 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: kirin: fix memory leak in kirin_pcie_parse_port()
+Message-ID: <20240612044047.GD2645@thinkpad>
+References: <20240609-pcie-kirin-memleak-v1-1-62b45b879576@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240522111622.GA31185@pendragon.ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240609-pcie-kirin-memleak-v1-1-62b45b879576@gmail.com>
 
-On Wed, May 22, 2024 at 02:16:22PM +0300, Laurent Pinchart wrote:
-> Hi Jefrey,
+On Sun, Jun 09, 2024 at 12:56:14PM +0200, Javier Carrasco wrote:
+> The conversion of this file to use the agnostic GPIO API has introduced
+> a new early return where the refcounts of two device nodes (parent and
+> child) are not decremented.
 > 
-> Thank you for the patch.
+> Given that the device nodes are not required outside the loops where
+> they are used, and to avoid potential bugs every time a new error path
+> is introduced to the loop, the _scoped() versions of the macros have
+> been applied. The bug was introduced recently, and the fix is not
+> relevant for old stable kernels that might not support the scoped()
+> variant.
 > 
-> On Thu, May 16, 2024 at 08:20:42PM +0800, Yunfei Dong wrote:
-> > From: Jeffrey Kardatzke <jkardatzke@google.com>
-> > 
-> > Adds documentation for V4L2_MEMORY_FLAG_RESTRICTED.
-> > 
-> > Signed-off-by: Jeffrey Kardatzke <jkardatzke@google.com>
-> > Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-> > ---
-> >  Documentation/userspace-api/media/v4l/buffer.rst | 10 +++++++++-
-> >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/userspace-api/media/v4l/buffer.rst b/Documentation/userspace-api/media/v4l/buffer.rst
-> > index 52bbee81c080..807e43bfed2b 100644
-> > --- a/Documentation/userspace-api/media/v4l/buffer.rst
-> > +++ b/Documentation/userspace-api/media/v4l/buffer.rst
-> > @@ -696,7 +696,7 @@ enum v4l2_memory
-> >  
-> >  .. _memory-flags:
-> >  
-> > -Memory Consistency Flags
-> > +Memory Flags
-> >  ------------------------
-> >  
-> >  .. raw:: latex
-> > @@ -728,6 +728,14 @@ Memory Consistency Flags
-> >  	only if the buffer is used for :ref:`memory mapping <mmap>` I/O and the
-> >  	queue reports the :ref:`V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS
-> >  	<V4L2-BUF-CAP-SUPPORTS-MMAP-CACHE-HINTS>` capability.
-> > +    * .. _`V4L2-MEMORY-FLAG-RESTRICTED`:
-> > +
-> > +      - ``V4L2_MEMORY_FLAG_RESTRICTED``
-> > +      - 0x00000002
-> > +      - The queued buffers are expected to be in restricted memory. If not, an
-> > +	error will be returned. This flag can only be used with ``V4L2_MEMORY_DMABUF``.
-> > +	Typically restricted buffers are allocated using a restricted dma-heap. This flag
-> > +	can only be specified if the ``V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM`` is set.
+> Fixes: 1d38f9d89f85 ("PCI: kirin: Convert to use agnostic GPIO API")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+> ---
+> This bug was found while analyzing the code and I don't have hardware to
+> validate it beyond compilation and static analysis. Any test with real
+> hardware to make sure there are no regressions is always welcome.
 > 
-> Why is this flag needed ? Given that the usage model requires the V4L2
-> device to be a dma buf importer, why would userspace set the
-> V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM flag and pass a non-restricted
-> buffer to the device ?
+> The dev_err() messages have not been converted into dev_err_probe() to
+> keep the current format, but I am open to convert them if preferred.
 
-Given that the flag is specified at REQBUF / CREATE_BUFS time, it's
-actually useful to tell the driver the queue is operating in restricted
-(aka secure) mode.
+Sure, please do it in a separate patch.
 
-I suppose we could handle that at the time of a first QBUF, but that
-would make the driver initialization and validation quite a bit of pain.
-So I'd say that the design being proposed here makes things simpler and
-more clear, even if it doesn't add any extra functionality.
+- Mani
 
+> ---
+>  drivers/pci/controller/dwc/pcie-kirin.c | 21 ++++++---------------
+>  1 file changed, 6 insertions(+), 15 deletions(-)
 > 
-> The V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM flag also needs to be
-> documented in the relevant section, I don't think that's done in this
-> series.
+> diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+> index d1f54f188e71..0a29136491b8 100644
+> --- a/drivers/pci/controller/dwc/pcie-kirin.c
+> +++ b/drivers/pci/controller/dwc/pcie-kirin.c
+> @@ -403,11 +403,10 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+>  				 struct device_node *node)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	struct device_node *parent, *child;
+>  	int ret, slot, i;
+>  
+> -	for_each_available_child_of_node(node, parent) {
+> -		for_each_available_child_of_node(parent, child) {
+> +	for_each_available_child_of_node_scoped(node, parent) {
+> +		for_each_available_child_of_node_scoped(parent, child) {
+>  			i = pcie->num_slots;
+>  
+>  			pcie->id_reset_gpio[i] = devm_fwnode_gpiod_get_index(dev,
+> @@ -424,14 +423,13 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+>  			pcie->num_slots++;
+>  			if (pcie->num_slots > MAX_PCI_SLOTS) {
+>  				dev_err(dev, "Too many PCI slots!\n");
+> -				ret = -EINVAL;
+> -				goto put_node;
+> +				return -EINVAL;
+>  			}
+>  
+>  			ret = of_pci_get_devfn(child);
+>  			if (ret < 0) {
+>  				dev_err(dev, "failed to parse devfn: %d\n", ret);
+> -				goto put_node;
+> +				return ret;
+>  			}
+>  
+>  			slot = PCI_SLOT(ret);
+> @@ -439,10 +437,8 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+>  			pcie->reset_names[i] = devm_kasprintf(dev, GFP_KERNEL,
+>  							      "pcie_perst_%d",
+>  							      slot);
+> -			if (!pcie->reset_names[i]) {
+> -				ret = -ENOMEM;
+> -				goto put_node;
+> -			}
+> +			if (!pcie->reset_names[i])
+> +				return -ENOMEM;
+>  
+>  			gpiod_set_consumer_name(pcie->id_reset_gpio[i],
+>  						pcie->reset_names[i]);
+> @@ -450,11 +446,6 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+>  	}
+>  
+>  	return 0;
+> -
+> -put_node:
+> -	of_node_put(child);
+> -	of_node_put(parent);
+> -	return ret;
+>  }
+>  
+>  static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
 > 
-
-+1
-
-Best regards,
-Tomasz
-
-> >  
-> >  .. raw:: latex
-> >  
+> ---
+> base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+> change-id: 20240609-pcie-kirin-memleak-18c83a31d111
 > 
+> Best regards,
 > -- 
-> Regards,
+> Javier Carrasco <javier.carrasco.cruz@gmail.com>
 > 
-> Laurent Pinchart
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
