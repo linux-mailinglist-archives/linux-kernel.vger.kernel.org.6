@@ -1,227 +1,131 @@
-Return-Path: <linux-kernel+bounces-211178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0795F904E15
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:24:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB02E904E18
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABF3D28A074
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:24:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 237FCB233F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8152216C87F;
-	Wed, 12 Jun 2024 08:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AD716C871;
+	Wed, 12 Jun 2024 08:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mm5prvdn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G9DsUJ2w"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D8D156228
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05722156228
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718180673; cv=none; b=OZI56VT6kHQ5eC1oMYg41JhYlPZOPbTnE3iGrhjiAQGe61iILXAFuGVfsG6t+RNDBLSV6wzx3uJePBJSKFyqD4KYXRFYhzLadX5KSPy4R/ctcdst6TTaolre7TOfwMZNvV8VVe0J7ESGjEMwKaHLrOh2tcRDLkQ+VPQECHOQkj8=
+	t=1718180782; cv=none; b=ZfPJwSuRCkfWRPVxL0VYgLCK4foR9WsKw0oFPUUgCXhjlVG3ppgdbO9DgP9ni0KkxaqtdL97UXWSFSgq+IDYaFgQoZV0XBxLDIiN7povq9/9PP5CcLdwoo2vHHQdu36I1B8PXZpbATK2EnafiE/3GvgCstBfXmV91Fa6daKlKAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718180673; c=relaxed/simple;
-	bh=te1Q20Vth9MWwmn9a+KpPufbUwhGd2AwZ3ZB/0nsgxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QMDJROy8I2DqnIbzhrSIA+985fg1zP8OkNbt6XQJyWy1Zt0o2WxLrzDL6NOEJwPSb4Hfgv2vH/wbIagoTXc9oGWEs6Tq+3bHmO9QhKczto+jSAKnI00B7a5ha+njw+aNEzDjWvkLiwAQB/vg1U4zDdxPixWWHw4L5DZNpWveNMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mm5prvdn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718180671;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=x4SAin/ZbIr0LKUcDWptj03+6GW7XfZLpNKJdBjC5OY=;
-	b=Mm5prvdn+1W5HcmqAYoPl/RX8gmi+IO7wGoErYa9sUjjx3SsYfC5xPIGVAQu1A2AxNhT/1
-	HE/id+XmH3T7y03tctBa99FwToOrguUQRTYzxrLzLXgJKN37QiXa//5RV6ho6upGRLXOyk
-	EhzUacJ3hGcGTO0d8too9H4pavz6IMk=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-456-hI4RDzfINkynBFf5p0NtJw-1; Wed, 12 Jun 2024 04:24:26 -0400
-X-MC-Unique: hI4RDzfINkynBFf5p0NtJw-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a6f2662cfd8so102757166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:24:26 -0700 (PDT)
+	s=arc-20240116; t=1718180782; c=relaxed/simple;
+	bh=KQrSCqlzTrL7oFDzlM6tAW3pOhgm9VGMl0hJCXrUo+c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YvJZ+JnsdDffmo2ovFs17ZtPdMLenOZe28oWkc/bmsuirJsJD5p9why+Vixl1Eb/+UiU9zci86/H8a2YIzry6ZPKkS/sjRwNQKyqy4jkDixvogtWmW+D9h8P9/0h6vDsc/Tb9u+R0ETWOqc6A4FFcORF5By5pyOyVTUnUPR2GTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G9DsUJ2w; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-35f1c209893so4069940f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 01:26:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718180779; x=1718785579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RD/AnD8jYjxQt+A8JZVZ4x+a3sskE6EWblVU1rCcOAs=;
+        b=G9DsUJ2wA+M//WqZcDmUj7DcquMBBrdbYlqV5QB/trUzQ/JHo6VZqD0QDSB3q4qYbU
+         fSt5zlLiKd3xBVpwGvJf/ohna73B+NIbZ7X7lr3yRJAPgDBljFdXO4d0Vh3HhYTzoVrz
+         dmjL7knjBzdV7wSNITlwb8JVwuYb1nEWgwntxS8WlHt2XTr8dNy9Af4Q57ilSBCIY0Gc
+         DnZ4Na7C9yOGize18Oj3gQweCWUaqgtNcgYuGTzpth0xvVadSpCjQYJPh+cUuujFW/+2
+         uWRyStzA24PDG/IwltiUpv9uOEIFfiCxpyH5RoPFOQJOVAN5CmBpNGy98vpub2pS+W4H
+         ZAdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718180665; x=1718785465;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=x4SAin/ZbIr0LKUcDWptj03+6GW7XfZLpNKJdBjC5OY=;
-        b=jAhUOcJPsb/NRB5lNrd7aNsb/wbbdpZXXmJNUEEoT8CS+48n5IGportjfh6OcggdUI
-         vXQtiKFeao4wE1SuazIdEBPA9I1k3t3oXeXwUNU9xuLr5kUqQUzzCeZI6iaUvmXx5rcA
-         aOpfUv/8sQYsOP4oWRyqIGKWxAfFhRuWWvdesTztQBexPiVDZLeU5QQjVqtLSBXN4vpR
-         K0msNUMtDzzLZXEN6usHbv5XX5q/8ptgJHsttNW/sPoqkLh1r9Bazn5pyY/hRn7K9Fnl
-         C5N+68MTA/ZAknNqrfoJeBvmZFnRTy8XfWLbyPUG4Jg3ssnB6OxL+Yx7m2XsACJQIYco
-         Rr+A==
-X-Forwarded-Encrypted: i=1; AJvYcCV3c02NDPZEeZKn9yRIWIveHCTmUyOiUq3xZY1s+BljZOP/5w31VIbnZf9RmJeNYoyLUr1UgPyLJPH35CpHMZeSNjHLXPWHK6C0Hpbk
-X-Gm-Message-State: AOJu0YwJttDvSXvFxQaH6zPjXGy9yKVWEJ8DO93PvtwN42x8UN2bAZSd
-	fgD7WyLGkIbp8YGvzTDtK/vgsZ4bSsEEnJ9KdW0Sykyyfs/wQEe/s8VhHPdrM3XT8AuQ+6KgCFL
-	5WFeqa69WyEHMXmR2o4f2vohEJosKrnbYLbyS0a0JnzLNIY1b77Eh+A7HAvJ9yw==
-X-Received: by 2002:a17:906:394:b0:a6f:230:b73e with SMTP id a640c23a62f3a-a6f47c9e0edmr58641666b.20.1718180665205;
-        Wed, 12 Jun 2024 01:24:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGA1q7iuoA2WDuKe96aglvJScAbJcl9LmxJfQ259oiHHm3zp6kG7M8iBlW3Pg+ABx1QAfqvBg==
-X-Received: by 2002:a17:906:394:b0:a6f:230:b73e with SMTP id a640c23a62f3a-a6f47c9e0edmr58640066b.20.1718180664753;
-        Wed, 12 Jun 2024 01:24:24 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c702:bf00:abf6:cc3a:24d6:fa55? (p200300cbc702bf00abf6cc3a24d6fa55.dip0.t-ipconnect.de. [2003:cb:c702:bf00:abf6:cc3a:24d6:fa55])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2169fc45sm8386092f8f.10.2024.06.12.01.24.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 01:24:24 -0700 (PDT)
-Message-ID: <17b503f8-5d0c-48a3-9eeb-85b01583f9bb@redhat.com>
-Date: Wed, 12 Jun 2024 10:24:22 +0200
+        d=1e100.net; s=20230601; t=1718180779; x=1718785579;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RD/AnD8jYjxQt+A8JZVZ4x+a3sskE6EWblVU1rCcOAs=;
+        b=LZv6E1RDRCCGtiLYA1whMDrJslwpDjPlTRi7OQDSLg4o783lKiZlRp3sIm4ss9YCgw
+         Xlx9iY4U/8+j4Ma9Vemg8mFXt+I1vRaXZMoEy1RQsPenRAiDjhydu1XkktU8s/LBZYFy
+         m8XIYG2V11S3UwpuIlLA38NdaRnJr8gfZOfn+SO+yBinYiEAM3ZnnszchGE3kDPJ5TT2
+         0MYSAWIl9z1S5hOkNjB0B8eU8eNwkaDXsWq6+bzYPTIb+0t8xZ9kcTNORBS3NB2e432O
+         XWbN+ZwvLrx2fZWp9ceMAnYwHZBagq5C3jBPmRLA0QVb9kwagGSdCxSK2i6vstiS43hL
+         qDeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmWy0CbImd8EdPfg/W6yRiofUd5JAijBnIPTvEVkxZCj1Q4bMfG5Ev76v1jS3a4hkqQogZbbgxoWOScS2fjDipFb1i0WFaqehLTDvy
+X-Gm-Message-State: AOJu0YyDhC6hJTsZk8f+DmMfl3Yc/CJ7ijiK1Tep2HUJVqB/XWYUx/jM
+	OKHy9XMsinp0OXxgcxfprW3w7RUhTwymjgWjWgKk2xEv6IpKPRua7x1LcHpsZKI=
+X-Google-Smtp-Source: AGHT+IErb8RFlvw6xH91ueUYnFs5XI7s0QBkhIDzPd1VcUWd7DB8bzcwthOaKdk+oT+Uq6R345A4uA==
+X-Received: by 2002:adf:e6c2:0:b0:35f:225e:400f with SMTP id ffacd0b85a97d-35fe1c0a063mr870657f8f.30.1718180779272;
+        Wed, 12 Jun 2024 01:26:19 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2d756539sm3702255f8f.90.2024.06.12.01.26.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 01:26:18 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Esben Haabendal <esben@geanix.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: (subset) [PATCH v3 1/3] memory: fsl_ifc: Make FSL_IFC config visible and selectable
+Date: Wed, 12 Jun 2024 10:26:14 +0200
+Message-ID: <171818062457.17232.8716946182820856760.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240530-fsl-ifc-config-v3-1-1fd2c3d233dd@geanix.com>
+References: <20240530-fsl-ifc-config-v3-0-1fd2c3d233dd@geanix.com> <20240530-fsl-ifc-config-v3-1-1fd2c3d233dd@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] cleanups, fixes, and progress towards avoiding "make
- headers"
-To: John Hubbard <jhubbard@nvidia.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
- Shuah Khan <shuah@kernel.org>
-Cc: Andrei Vagin <avagin@google.com>,
- Axel Rasmussen <axelrasmussen@google.com>,
- Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240608021023.176027-1-jhubbard@nvidia.com>
- <b5dd99c7-866b-467c-9f76-d043e887394c@redhat.com>
- <c1277bf6-a211-49eb-80af-726f16ca1802@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <c1277bf6-a211-49eb-80af-726f16ca1802@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 11.06.24 22:54, John Hubbard wrote:
-> On 6/11/24 2:36 AM, David Hildenbrand wrote:
->> On 08.06.24 04:10, John Hubbard wrote:
->>> Eventually, once the build succeeds on a sufficiently old distro, the
->>> idea is to delete $(KHDR_INCLUDES) from the selftests/mm build, and then
->>> after that, from selftests/lib.mk and all of the other selftest builds.
->>>
->>> For now, this series merely achieves a clean build of selftests/mm on a
->>> not-so-old distro: Ubuntu 23.04:
->>
->> Wasn't the plan to rely on the tools/include headers, and pull in there whatever we need?
+
+On Thu, 30 May 2024 16:46:36 +0200, Esben Haabendal wrote:
+> While use of fsl_ifc driver with NAND flash is fine, as the fsl_ifc_nand
+> driver selects FSL_IFC automatically, we need the CONFIG_FSL_IFC option to
+> be selectable for platforms using fsl_ifc with NOR flash.
 > 
-> Yes, it is. You are correct.
 > 
->>
->>>
->>> 1. Add __NR_mseal.
->>>
->>
->> For example, making sure that tools/include/uapi/asm-generic/unistd.h is updated to contain __NR_mseal?
-> 
-> Well, here it gets less clear cut, because the selftests pull in *lots* of
-> system headers. In this case /usr/include/unistd.h gets pulled in. If we
-> force tools/include/uapi/asm-generic/unistd.h to be included, then we'll
-> get many many warnings of redefinitions of __NR_* items.
 
-I think, there is a difference between unistd.h and linux/unistd.h. We 
-want to continue including unistd.h from the distro, but might want to 
-stop including the linux one from the distro.
+Applied first patch only, because:
+1. I did not get acks for the defconfigs,
+2. I do not consider stable defconfig as a hard-bisectability requirment, thus
+it can break within one release as long as next is not affected.
 
-My thinking was that we start maintaining our own linux headers copy 
-in-tree, and start converting our tests from including <linux/> supplied 
-by the distro to include the in-tree ones.
+The last statement is kind of not true, because next is now affected, so,
+Esben, I think you should resend the defconfigs to respective platform
+maintainers. To recall: arm64 goes via your SoC subarch/platform maintainers,
+not arm64 maintainers.
 
-For mseal_test.c, that might mean stopping including "linux/mman.h", and 
-instead including the in-tree one.
+Applied, thanks!
 
-> 
-> So what's really going on here is that we have this uneasy mix of system
-> headers from the test machine, and newer versions of some of those headers
-> in the kernel tree. And some of those are easier to combine with system
-> headers, than others. unistd.h is clearly not going quietly, which is
-> why, I believe, the "#ifndef __NR_* " approach has flowered in the
-> selftests.
+[1/3] memory: fsl_ifc: Make FSL_IFC config visible and selectable
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/9ba0cae3cac07c21c583f9ff194f74043f90d29c
 
-Right, these mixtures are not what we want I think. But I have no idea 
-how easy it would be to convert individual tests.
-
-Maybe all it takes is updating the in-tree headers and then including 
-"TBD/linux/whatever.h" instead of <linux/whatever.h>
-
-In QEMU, we maintain some (not all) kernel headers ourselves, and 
-include them via
-
-"standard-headers/linux/whatever.h"
-
-> 
->>
->> ... to avoid hand-crafted defines we have to maintain for selftests.
->>
->> But maybe I am remembering something outdated.
->>
-> 
-> You remembered correctly, but the situation is slighly muddier than
-> one would prefer. :)
-
-
-Absolutely, and I appreciate that you are trying to improve the situation.
-
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
-
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
