@@ -1,114 +1,178 @@
-Return-Path: <linux-kernel+bounces-212066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E5D905AD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:26:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C94905AD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76E89286683
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:26:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BBB282F57
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 18:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB5240867;
-	Wed, 12 Jun 2024 18:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDFC41A84;
+	Wed, 12 Jun 2024 18:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2rTv7Hj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXSn4v3p"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E943131A83;
-	Wed, 12 Jun 2024 18:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD81C31A83;
+	Wed, 12 Jun 2024 18:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718216794; cv=none; b=Ui1wYeg1dq0KgVFRqshb6ZmBKD7WNbftwvCR6yFKCdJ6z/xGdt8QVq+80yAaEE2uAu4dG1MFRlQsaaYfrdeffipYrwRb5LlUQNyCllP2ktHU1S8a+LA6pzuVlbzTP5tdtzwE94IY9xYm6XdlPC2zSy+Y2OYznYDX+nK8Nonxkx4=
+	t=1718216856; cv=none; b=q9eYkv/TwJWD9FYPqHk7dsVuxWgm1XbXH1Nd/B5TppAjORQu0gcESwj0UD41uThK7+QrZQokdj9d/u8kIHaG743nTIbYlH8DIFUE0ZT5eodpzojX5X80k2Er+JFlr7EcSYlyosqUTI71WL7E5fjF7WDfx4QnJzJW4oLUM7K3flo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718216794; c=relaxed/simple;
-	bh=Oflo0Z6FTwnUSLl+h7B3P+bMflqpd3ukTy2UKe/HuwQ=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Zx/oxdui90mYrLicBN3MNlM+c9b7J6RAjRBDRFzl7Qza4mCGk05ofooAEaJGnb40Q6el4n3QcMju+nTjshOXYp5c5J1pDWeXuAtathp+RyrjjpMvXtjZnBp2zzu9cRHf+PLlEDH5wO+aGBqiEg73/GdrOKsj+t9dtlOMQ3m9t7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2rTv7Hj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A9FDC116B1;
-	Wed, 12 Jun 2024 18:26:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718216793;
-	bh=Oflo0Z6FTwnUSLl+h7B3P+bMflqpd3ukTy2UKe/HuwQ=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=Z2rTv7HjFJLHLPmxLkfFWfoZVsrpsDg33wNt8pzWfR7haHlnF4ZXXBt7JS9wd0sj+
-	 NyaplEUsjtqORao/P+OHiBdXmg3h9qrAjRfkVORmcXZJm1QcQw2SMXjzLnd415nA5V
-	 3P2Oq/HC0AFfuMYJREx7iez2ND0CQ5H4yyKUp6psJoNSMKffXSc/PIIH3xUR8dZVgk
-	 vvgYJHc9lcFUtCoTE6vxIJGAifJqbNXw5GDAB93aBlClGjN0kHJ960JnfE9Zf0jwZu
-	 yAJ+494ULgRbE7G5qv5rU1+MUmoArKGRMq14/aHZ1qpOhFQT8vNsiFNswrRq9lCLMb
-	 Ut32pJ4Hs0aEA==
-Date: Wed, 12 Jun 2024 12:26:32 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1718216856; c=relaxed/simple;
+	bh=WYLiTDYrtmqxZDYMH2fKtRR5JLxjg/IcLpait4AyIuo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QqVGkDNhFUXt7dtMgO5t5K3y/TWFsTNCqjN0uvaKdDYt+COrYmuRB0yEgzzRwNTuJeL4rmzZpCEV0b6NsgdXJQzBb3qkY4QxCLdX2dRwj494iQMhxG1sf595HX8eDyotXpYTBLMbDjLHvO4KNcoO8QZBH/CtV6Ud9RsSQUecpvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KXSn4v3p; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52bc27cfb14so323501e87.0;
+        Wed, 12 Jun 2024 11:27:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718216853; x=1718821653; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oQSGxEg3iN0gqxDb6TEEcUHjyTvJD6k44q7b9dlYWfg=;
+        b=KXSn4v3p90NHcxgoa2l7BWcpf463nlNa1tlrS7r9Vsr3Wa715EGKcRF2e0o8C9vvoF
+         bjde44/S+OOstn9XoS72pfQQJElcsniHMCfYrMr3ZyzN1h1Lp+M6CAYOCni8XnUiYfns
+         /8AbGHYJS3/W1k0gxZ6wQ+VEh7C3PHPgOOjyxQtvi5lvPtfsD0SzG5JdG4ie21Nr3dIv
+         wnv/qt6iah5qx7jhqknl5nKDav3kmhd5nnGUP2JaR/VUrE79VJw3F9Tjd1KnxdQXTl9Z
+         l1B7x/fsFbyp3iswKF4bZcBSrhpOR0MWjXY7O49g1Gnf2BiaLgUJN1ARszmkwztxzj0r
+         cSGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718216853; x=1718821653;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oQSGxEg3iN0gqxDb6TEEcUHjyTvJD6k44q7b9dlYWfg=;
+        b=iUhcPLAQiSMDVL7PsL4HyP/OFZ3awKSz0uyU/bz5s/jHSAHE+NgVYrqNkJNsvD3TEu
+         3+9LJ3pPm+sk/UHibxXGm5YtHFKZYPYj/yP3suu0wLEpBLq8jn6hZ1yZc+AhmqaiK5mP
+         UGD1pLGbp8yaPNy79maU6AWIXx/A1b73q0i8EK1eO7tAwK2T01X+jMnxpIrM3iBZRZvZ
+         OcJFTTf/U345H37O6Zb+RyIq63Wg89fF09XF/cbER1/7oKFsM9fu82QH3+9afgmAkgP9
+         qUfWo8akdJArQ4nIq3kgaaWGjugXzesWIkGzPqVDuy7ACV6mKHk0fX4fDV1xyVOi/j70
+         6gvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEcOkGJlSnMCSJErndD79CUe38QxSmHTc3aHLa8o1aR5u+JdXirjURqAfrXIpxUnxq5i2MZCtNKNMbVn8MfMaLMxjACwDS6LEqpw21nVs6aZXfuiurAvuMbFHrir40Byqz571gRW2MeA4eXQ==
+X-Gm-Message-State: AOJu0YxYIXbBHgp8wKvh4zcaA186Se8UheMYNyk0fx7pJyTxlmV83iUa
+	/3uI35BcixtbWZ+6m1dEzhKO9/UGuTFCOo1OC77eG/V4k9UX/lFWUXNZIpu9sSQDq0DqB8oq7/t
+	AtdyPvc+Q/agyeSBjeP7TWc5xKFU=
+X-Google-Smtp-Source: AGHT+IHE2u7bq8RlQP5/SHfWvC1F277raGWkjpZrHWs1rSZohmb9Dws1p52jKqTwp6CnTOoFDhbJ8wrhrtmgKGZnhf0=
+X-Received: by 2002:ac2:494b:0:b0:52c:868f:a28d with SMTP id
+ 2adb3069b0e04-52c9a4036d2mr1943419e87.50.1718216852798; Wed, 12 Jun 2024
+ 11:27:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
- devicetree@vger.kernel.org, 
- Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
- Jianfeng Liu <liujianfeng1994@gmail.com>, 
- linux-rockchip@lists.infradead.org, 
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>, 
- Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>, kernel@collabora.com, 
- Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Philipp Zabel <p.zabel@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>
-In-Reply-To: <20240612173213.42827-2-sebastian.reichel@collabora.com>
-References: <20240612173213.42827-1-sebastian.reichel@collabora.com>
- <20240612173213.42827-2-sebastian.reichel@collabora.com>
-Message-Id: <171821679246.3419351.9732124883795406633.robh@kernel.org>
-Subject: Re: [PATCH v5 1/5] media: dt-bindings: rk3568-vepu: Add RK3588
- VEPU121
+References: <20240612164715.614843-1-mjguzik@gmail.com>
+In-Reply-To: <20240612164715.614843-1-mjguzik@gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 12 Jun 2024 20:27:20 +0200
+Message-ID: <CAGudoHFc3NiC+GS68BcU0QX8zjtWFUcJsN5QsZuwLvMBnnVGLw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: move d_lockref out of the area used by RCU lookup
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+While I 100% stand behind the patch I found the lockref issue
+mentioned below reproduces almost reliably on my box if given enough
+time, thus I'm going to need to fix it first.
 
-On Wed, 12 Jun 2024 19:15:41 +0200, Sebastian Reichel wrote:
-> From: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
-> 
-> This encoder-only device is present four times on this SoC, and should
-> support everything the rk3568 vepu supports (so JPEG, H.264 and VP8
-> encoding). No fallback compatible has been added, since the operating
-> systems might already support RK3568 VEPU and want to avoid registering
-> four of them separately considering they can be used as a cluster.
-> 
-> Signed-off-by: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+As such consider this patch posting as a heads up, don't pull it.
+
+On Wed, Jun 12, 2024 at 6:47=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
+rote:
+>
+> Stock kernel scales worse than FreeBSD when doing a 20-way stat(2) on
+> the same tmpfs-backed file.
+>
+> According to perf top:
+>   38.09%  [kernel]              [k] lockref_put_return
+>   26.08%  [kernel]              [k] lockref_get_not_dead
+>   25.60%  [kernel]              [k] __d_lookup_rcu
+>    0.89%  [kernel]              [k] clear_bhb_loop
+>
+> __d_lookup_rcu is participating in cacheline ping pong due to the
+> embedded name sharing a cacheline with lockref.
+>
+> Moving it out resolves the problem:
+>   41.50%  [kernel]                  [k] lockref_put_return
+>   41.03%  [kernel]                  [k] lockref_get_not_dead
+>    1.54%  [kernel]                  [k] clear_bhb_loop
+>
+> benchmark (will-it-scale, Sapphire Rapids, tmpfs, ops/s):
+> FreeBSD:7219334
+> before: 5038006
+> after:  7842883 (+55%)
+>
+> One minor remark: the 'after' result is unstable, fluctuating between
+> ~7.8 mln and ~9 mln between restarts of the test. I picked the lower
+> bound.
+>
+> An important remark: lockref API has a deficiency where if the spinlock
+> is taken for any reason and there is a continuous stream of incs/decs,
+> it will never recover back to atomic op -- everyone will be stuck taking
+> the lock. I used to run into it on occasion when spawning 'perf top'
+> while benchmarking, but now that the pressure on lockref itself is
+> increased I randomly see it merely when benchmarking.
+>
+> It looks like this:
+> min:308703 max:429561 total:8217844     <-- nice start
+> min:152207 max:178380 total:3501879     <-- things are degrading
+> min:65563 max:70106 total:1349677       <-- everyone is stuck locking
+> min:69001 max:72873 total:1424714
+> min:68993 max:73084 total:1425902
+>
+> The fix would be to add a variant which will wait for the lock to be
+> released for some number of spins, and only take it after to still
+> guarantee forward progress. I'm going to look into it. Mentioned in the
+> commit message if someone runs into it as is.
+>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 > ---
->  .../devicetree/bindings/media/rockchip,rk3568-vepu.yaml      | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
+>  include/linux/dcache.h | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+> index bf53e3894aae..326dbccc3736 100644
+> --- a/include/linux/dcache.h
+> +++ b/include/linux/dcache.h
+> @@ -89,13 +89,18 @@ struct dentry {
+>         struct inode *d_inode;          /* Where the name belongs to - NU=
+LL is
+>                                          * negative */
+>         unsigned char d_iname[DNAME_INLINE_LEN];        /* small names */
+> +       /* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
+>
+>         /* Ref lookup also touches following */
+> -       struct lockref d_lockref;       /* per-dentry lock and refcount *=
+/
+>         const struct dentry_operations *d_op;
+>         struct super_block *d_sb;       /* The root of the dentry tree */
+>         unsigned long d_time;           /* used by d_revalidate */
+>         void *d_fsdata;                 /* fs-specific data */
+> +       /* --- cacheline 2 boundary (128 bytes) --- */
+> +       struct lockref d_lockref;       /* per-dentry lock and refcount
+> +                                        * keep separate from RCU lookup =
+area if
+> +                                        * possible!
+> +                                        */
+>
+>         union {
+>                 struct list_head d_lru;         /* LRU list */
+> --
+> 2.43.0
+>
 
-My bot found errors running 'make dt_binding_check' on your patch:
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/rockchip,rk3568-vepu.yaml: properties:compatible:oneOf: [{'const': 'rockchip,rk3568-vepu'}, {'const': 'rockchip,rk3588-vepu121'}] should not be valid under {'items': {'propertyNames': {'const': 'const'}, 'required': ['const']}}
-	hint: Use 'enum' rather than 'oneOf' + 'const' entries
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240612173213.42827-2-sebastian.reichel@collabora.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
