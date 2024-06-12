@@ -1,142 +1,178 @@
-Return-Path: <linux-kernel+bounces-211731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA61390561D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:01:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F83990562A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EA4C1F22EEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C3F1C24992
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952551802D0;
-	Wed, 12 Jun 2024 15:00:27 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C5917DE1C;
+	Wed, 12 Jun 2024 15:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="LRd3yhTA"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B5617E90D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A47E1DDF6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718204427; cv=none; b=Nn+L9lKoYt5cZKfqCNozdC5WHsdRV012GFyNx/JXZWNY/F2feo/4HwJIQU9Bf7GGmzfJz+Dx4lbKcrjUMkvshc0tuLwdwS+ZwufxZkngFnud42MHuiqTXHyvFGFRJNCeUn6flz6vukBzNyEG4P4B7Tpku6QfR/BHqWUyc9itrrg=
+	t=1718204451; cv=none; b=UEB3Adsg8KDZ7GPiWQqedjYXRHLV+rBPXX0FC/7TcoarUAT5hVMLgJTIzCvu92cCuNTJk69iuZIBjbN6OWXulZ9ZlDe/egS+YwbQ6y6nq0Qp/8oW+BT6E6TrTCpCxVDfy6jiEQ2/QB12/wfvyl67xPnn9I/o6ILnn+yas3iZIMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718204427; c=relaxed/simple;
-	bh=3eMaFVhay/i0vo7c+Hz/UuCWshmGXLFqDysYaOiFKVE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WfquAdrSQNk2vP2W1p+6JNiatBRq/l2PgNeEdJ8gMwXbcab+/kJ4jfPojPIzXkwU62gNlMHRuH9fjnoausipu3Stc6zX7jl+B1m1cp9UPXLNOZMSSH6xu6mNoTRHa7HrYTu4k8IjXc8VZBJb9LyDX9cGpdUDDYMJQi8h1C52Gbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-374b2adee08so8066935ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:00:25 -0700 (PDT)
+	s=arc-20240116; t=1718204451; c=relaxed/simple;
+	bh=Tn8E0RJxVE72zdWYPLEmPNrIueTtsug4CMVf4uXYplM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JMbOIWhkO+sjRUfAV4y3pIAyiOJLtt4NSEaDzHcnxKeiH2uWlImFMGjzoYG9jlQmilRDJG+TQ9Ognb5sgW64zwknUxNOVMyub25zujrxuhmRgc3pEBGCHjA17b4trbJq2g1WkTywTr2tB6+dejpKHMFDZsMy8GLJ7SepHj6LUcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=LRd3yhTA; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35f0b9a1dd7so684939f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 08:00:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1718204448; x=1718809248; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vga4bYp9jxqSv9eCBMzwANuaNkrPnKBob/TvPmGImHU=;
+        b=LRd3yhTAvWlO5g1OqGrjXf99GDXXQHdAeKDIu9jsNC21UjZyZY5RPg0/ju+cp5BE0c
+         U/kylHsIVRXTTtueFVR8/e2PLuown7fdYl36THduqooJFe/OYBx3BVCf8r2/TTNn2EE2
+         t7hucqY9ui+2UyGekTmqXHz5HJz1JT5oeykBU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718204425; x=1718809225;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bbeKAD+PQktYXehGoaYBo7fgZr7EtmHmdBdx3YMLw+8=;
-        b=ODyu7t3P1gDDjxjGnWwDB8yo5t8Vus6xoATiRb5rk9Om6+8kYtm6VySW+wXe6aDfc/
-         saj6tv5Q51yFr/J3p0ndm1LS0zWLYxDH1EOKdKdSppe3yQIoLjMSKTrohPpgpwqU3HSw
-         wnMSQ8BOwDoBjBINPYO3OtSJ7CO0iokcEhyH9QBa2Ci61nHIuTXLELIjJWic9M/tCy6Y
-         dBH+BRyiXc3HL7PGB9DyT/ZkQAvPe6CSHQ3neYDFxk5l02jleXjsL/CtPAfbzuj4IVEE
-         CW2vII9wWzM/rOSChOjKrpoUScGe6zcnGa/zy7xBI8pttLeH7ktTrtodxhmipuF/q/I6
-         6bLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAJDK5LBAhtZXQxKONx6ES9Bb3i9ag6RhHsflHq39PzZkTZd0kmhZOUYL/uevKMvgAmvyZxghnyo4aD2onkLAOVf4T4fRmf+USQ7Hv
-X-Gm-Message-State: AOJu0Yw1Fa2UTAah0F+DKt6zdYO9EpL7qrpknWfH27Dc28IBL1vxinlV
-	q1kdqDw8Mbh13wpyE95Dt+HXTmA+rP2z5XxtYKmrqTJlik0wQMO5nFUHNsrPWggS2H3FZ53H/D6
-	xuTaqgQnhdvWGSvmN+j1LrFiAiA/K+ImLo3B+h80yM0CdPVeLkomnWgs=
-X-Google-Smtp-Source: AGHT+IH3R32w1VW7Y2KaLY6PKpWL/Q9c51grIOOxTjW+pjUsEJNpELXxCAVB7ZiQGeyWSoEcdBoZj0tbye8niqMEx6mmZWpU4TE/
+        d=1e100.net; s=20230601; t=1718204448; x=1718809248;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vga4bYp9jxqSv9eCBMzwANuaNkrPnKBob/TvPmGImHU=;
+        b=r5CB1k/2q6WWZj5qfQZyhX5mNJp2GQVQNfmJtMqlhhnMu7uYa0o307G15ZyAIhPqPt
+         M4dG0zLPzHBapDRvoQV4otTKRcWhYn9AqqY/M0rPi8Ja6g3E9Dal+fsSDcuG2xru7QMt
+         ZDUFWvKtBI4Bk/33JME1WzJXP5MNAWxqdyKhssawfjdYQqPJHHiRVCFH288Mu7xUfRtP
+         imb6Ji+xJmO1TY2/ndt6uRmvFdTKZKspwnPIp6my4g9Lf1pa8H35DBXjsZNxq+kkgxvH
+         +VMM98aazk590D2bkCL/FuwOAIVs4cl1qvMBDBgOdN3QP44KCrZfyNSi1Hyi5uKApb7B
+         C9kA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgDrfDnbhc0wNfqePjVkJC/CXZRt/2/fZVgtLyH3RJBBwKKdWjRHfSkEGKL89b1K4rOpkJBSJoA2VXPoI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrDSxp7SZ7HQ/V2TxsZqVe17R/q/rHrSSf0qjJWTFhvgFsLLiF
+	gIGea0SPCqCF52aIvJBIiBKXsmTqtjFK4ZGPYamO4yr2lTk1bYXs1xwBIxXeEGc=
+X-Google-Smtp-Source: AGHT+IFSC1i2V0ypqWkq76qJSJvokwb8rd6Yp8fMrGyYSDy7uditWcjWH2yTATEfSucgGwiy+8PrEw==
+X-Received: by 2002:a5d:59a1:0:b0:35f:2f97:e890 with SMTP id ffacd0b85a97d-35fd4b30419mr1419392f8f.0.1718204447552;
+        Wed, 12 Jun 2024 08:00:47 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f25aa8fb6sm7982282f8f.92.2024.06.12.08.00.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 08:00:47 -0700 (PDT)
+Date: Wed, 12 Jun 2024 17:00:45 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Peng Fan <peng.fan@nxp.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/fbdev-dma: fix getting smem_start
+Message-ID: <Zmm4HSkia-x_oRWR@phenom.ffwll.local>
+Mail-Followup-To: Thomas Zimmermann <tzimmermann@suse.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240604080328.4024838-1-peng.fan@oss.nxp.com>
+ <8f4a6d80-dd3e-422f-88af-d26f50c973ff@suse.de>
+ <e307fdc0-553d-4946-9017-ed3a28e9cae2@suse.de>
+ <87cyomsiqt.fsf@minerva.mail-host-address-is-not-set>
+ <14a7c534-af3f-43b8-a24c-501a9af97936@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd88:0:b0:374:9ea3:a2e with SMTP id
- e9e14a558f8ab-375cc8768b6mr1765605ab.1.1718204424911; Wed, 12 Jun 2024
- 08:00:24 -0700 (PDT)
-Date: Wed, 12 Jun 2024 08:00:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000660926061ab2a441@google.com>
-Subject: [syzbot] [btrfs?] KMSAN: uninit-value in iov_iter_alignment_iovec
-From: syzbot <syzbot+f2a9c06bfaa027217ebb@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <14a7c534-af3f-43b8-a24c-501a9af97936@suse.de>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-Hello,
+On Wed, Jun 12, 2024 at 10:37:14AM +0200, Thomas Zimmermann wrote:
+> Hi Javier
+> 
+> Am 12.06.24 um 09:49 schrieb Javier Martinez Canillas:
+> > Thomas Zimmermann <tzimmermann@suse.de> writes:
+> > 
+> > Hello Thomas,
+> > 
+> > > Hi
+> > > 
+> > > Am 10.06.24 um 10:47 schrieb Thomas Zimmermann:
+> > > > Hi
+> > > > 
+> > > > Am 04.06.24 um 10:03 schrieb Peng Fan (OSS):
+> > > > > From: Peng Fan <peng.fan@nxp.com>
+> > > > > 
+> > > > > If 'info->screen_buffer' locates in vmalloc address space, virt_to_page
+> > > > > will not be able to get correct results. With CONFIG_DEBUG_VM and
+> > > > > CONFIG_DEBUG_VIRTUAL enabled on ARM64, there is dump below:
+> > > > Which graphics driver triggers this bug?
+> > > > 
+> > > > > [    3.536043] ------------[ cut here ]------------
+> > > > > [    3.540716] virt_to_phys used for non-linear address:
+> > > > > 000000007fc4f540 (0xffff800086001000)
+> > > > > [    3.552628] WARNING: CPU: 4 PID: 61 at arch/arm64/mm/physaddr.c:12
+> > > > > __virt_to_phys+0x68/0x98
+> > > > > [    3.565455] Modules linked in:
+> > > > > [    3.568525] CPU: 4 PID: 61 Comm: kworker/u12:5 Not tainted
+> > > > > 6.6.23-06226-g4986cc3e1b75-dirty #250
+> > > > > [    3.577310] Hardware name: NXP i.MX95 19X19 board (DT)
+> > > > > [    3.582452] Workqueue: events_unbound deferred_probe_work_func
+> > > > > [    3.588291] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS
+> > > > > BTYPE=--)
+> > > > > [    3.595233] pc : __virt_to_phys+0x68/0x98
+> > > > > [    3.599246] lr : __virt_to_phys+0x68/0x98
+> > > > > [    3.603276] sp : ffff800083603990
+> > > > > [    3.677939] Call trace:
+> > > > > [    3.680393]  __virt_to_phys+0x68/0x98
+> > > > > [    3.684067]  drm_fbdev_dma_helper_fb_probe+0x138/0x238
+> > > > > [    3.689214] __drm_fb_helper_initial_config_and_unlock+0x2b0/0x4c0
+> > > > > [    3.695385]  drm_fb_helper_initial_config+0x4c/0x68
+> > > > > [    3.700264]  drm_fbdev_dma_client_hotplug+0x8c/0xe0
+> > > > > [    3.705161]  drm_client_register+0x60/0xb0
+> > > > > [    3.709269]  drm_fbdev_dma_setup+0x94/0x148
+> > > > > 
+> > > > > So add a check 'is_vmalloc_addr'.
+> > > > > 
+> > > > > Fixes: b79fe9abd58b ("drm/fbdev-dma: Implement fbdev emulation for
+> > > > > GEM DMA helpers")
+> > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > > Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+> > > I'm taking back my r-b. The memory is expected to by be physically
+> > > contiguous and vmalloc() won't guarantee that.
+> > > 
+> > Agreed.
+> 
+> These smem_ fields are clearly designed for PCI BARs of traditional graphics
+> cards. So can we even assume contiguous memory for DMA? That was my
+> assumption, but with IOMMUs it might not be the case. Fbdev-dma only sets
+> smem_start to support a single old userspace driver. Maybe we should further
+> restrict usage of this field by making it opt-in for each driver. Best
+> regards Thomas
 
-syzbot found the following issue on:
+We could make it all conditional on CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM, and
+remove the FBINFO_HIDE_SMEM_START flag. The reason I've done the flag is
+that with the old fb_mmap code we had to always fill out smem_start to
+make mmap work. But now that the various drm fbdev helpers have all their
+own mmap implementation, we could make this a lot cleaner.
 
-HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=166b7286980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-dashboard link: https://syzkaller.appspot.com/bug?extid=f2a9c06bfaa027217ebb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=113f7f16980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11698dce980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/b8b22127e3de/mount_2.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f2a9c06bfaa027217ebb@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in iov_iter_alignment_iovec+0x1a8/0x470 lib/iov_iter.c:788
- iov_iter_alignment_iovec+0x1a8/0x470 lib/iov_iter.c:788
- iov_iter_alignment+0x1aa/0x290 lib/iov_iter.c:833
- check_direct_IO fs/btrfs/file.c:1452 [inline]
- check_direct_read fs/btrfs/file.c:3736 [inline]
- btrfs_direct_read fs/btrfs/file.c:3765 [inline]
- btrfs_file_read_iter+0x46f/0xc70 fs/btrfs/file.c:3826
- call_read_iter include/linux/fs.h:2114 [inline]
- aio_read+0x4b3/0x690 fs/aio.c:1611
- io_submit_one+0x2809/0x3280 fs/aio.c:2061
- __do_sys_io_submit fs/aio.c:2120 [inline]
- __se_sys_io_submit+0x275/0x700 fs/aio.c:2090
- __x64_sys_io_submit+0x96/0xe0 fs/aio.c:2090
- x64_sys_call+0x3620/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:210
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Local variable inline_vecs created at:
- aio_read+0x4c/0x690 fs/aio.c:1592
- io_submit_one+0x2809/0x3280 fs/aio.c:2061
-
-CPU: 1 PID: 5053 Comm: syz-executor335 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+If I haven't missed anything, that is.
+-Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
