@@ -1,143 +1,106 @@
-Return-Path: <linux-kernel+bounces-211020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF899904C26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 08:59:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4244904C33
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D2E0B24ACE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:59:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 194DC282926
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 07:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D21E16C6A6;
-	Wed, 12 Jun 2024 06:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0285516C44C;
+	Wed, 12 Jun 2024 07:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdMX8FwO"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyn5Jzs3"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D2515665D;
-	Wed, 12 Jun 2024 06:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E740E16B735;
+	Wed, 12 Jun 2024 07:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718175493; cv=none; b=c7du4lxyhtZMbxFbW8R2A7h1tWNYo1sC0Sut89ytLAJEHgHKWGyU60xHnkld1fV4mYQMuMAcvB3YkO+8oJM37UTifRr2rNK/P/vQckeO5ybiz77OVHUmB+X0Z2tuDZGyME9746LS+ew4lPs68z8XAGQRpbXJ9F5EyYPtfEGC/8w=
+	t=1718175606; cv=none; b=YJEPxN04yUtVgi6qpBeK5PJnAZ0hkP6ek1iGWnvmVE8eIxnm0omxE/5vMsWK8SXpzQ3HDuj0yUcBGAuq6vboPvVM4ofMGI+dPUk1wrS9Nocfh4Rl5tpTQERh1MGDUGmv4xcjMGXQlyn0jda3JAx+4uyU98WXSCtwBv8/8RC06C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718175493; c=relaxed/simple;
-	bh=p1rkqdX4nFpn8dCZsYXZyvKTd/fDJuHOGVOHqkwMsmA=;
+	s=arc-20240116; t=1718175606; c=relaxed/simple;
+	bh=l2FWL3MaYkxGpNjR5SVeqc1ygoLE6HrOrfvSJrnDPZA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PnGWMXrgigUjoNsja+LB7UQHXAvXnq/zdejZs5ClpHtqcwYhm4JOC99tKVNiI5ztikgQx0rJDpx0x8JK9Kf52GuB9BmWVAQUu8EwDYpwnHH0LlJXENAXYzy4DBHAU0tIRRHdx2iLn9CjVY3EveA8jsyBL2EH1eagakUNGD67lls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TdMX8FwO; arc=none smtp.client-ip=209.85.216.54
+	 To:Content-Type; b=KTTaUp+9UUxt4L5GCNcMfh6w0sdYYHcPjd5neskr6VGpsw8+76di7iZYDpjpjkVNvwnmBxcsF9RIM2OyMd2AQQr4n3Pgff9B5VlkZJkCOtiXPF0ZyqjeiMSMirDILF2pXDkZFWIuU33r9463HQ//JKQtObdjzXiXSjNlzlgEbgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gyn5Jzs3; arc=none smtp.client-ip=209.85.128.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c2ecbc109fso3088007a91.1;
-        Tue, 11 Jun 2024 23:58:11 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62f39fcb010so11676767b3.1;
+        Wed, 12 Jun 2024 00:00:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718175491; x=1718780291; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1718175604; x=1718780404; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yf54Wa1SE9vp/tJ3cJNQWcthR5DhTfYZVQgtWp1NLZ8=;
-        b=TdMX8FwON+kV+LnnozYX0wo8klbSfzyZCrjysLUghnJVr4cSMoXhxA3kEoAeVg5Avy
-         eoUJpmqRbm/iLG/HC+1iuQBluLfMBH/aVDjk6i9KOB4zqYNTIX41i/3O+4kGlvk3ypM6
-         5HCqSZxmxxwa5W3Wem2kYoDyDWxWkBcYnPD/gV0bCBSznJUmBKjdpDfT8h8Rr0VU1voy
-         vBPuvAyM13SSEKtl5WZswCHtiGBKsNjonBb7bIN9FlVxLu/nchBG7ytrltT+mBP7QpBV
-         liixU0v0QZasC59xNMrX+W8e0u9HYCwVsLlOB3ev+6cInaOuoM1sSiDd6EANHAvtN/hb
-         i1vw==
+        bh=l2FWL3MaYkxGpNjR5SVeqc1ygoLE6HrOrfvSJrnDPZA=;
+        b=gyn5Jzs3KjQgaZ8ZQo2xL3Jgvu9v8j3ZmrmBH9X6MGPFbLIOod81gcOrWBq3L8kAeG
+         z53IkFc+cA9SmFCOAM0KoKlMtYGjRU+AgP6mtoLw3Fi1Dl2SVcDMwPpkHDhRFhyKQhTf
+         MbFRgJTgMwBOkJ9UA3+FTutuwDDRSqH/9F7NdBLsKZvHOYvOv6VI1KdVLWJ98ayipWGi
+         2bavyBYSVzX9d3zW71v8I2ndk+co3vmddJwVYCHa2JulziFLP3b3cr4LoBQ2VqcrzLq3
+         YAUvP/dL5wPZn+9+rN3axUzXmatVKAFEKXHEeaXjjVvVl57hgEWRjOME16JP33KxULEk
+         z6rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718175491; x=1718780291;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1718175604; x=1718780404;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yf54Wa1SE9vp/tJ3cJNQWcthR5DhTfYZVQgtWp1NLZ8=;
-        b=kEJtdEDu8Q0Bk5TL2Wgwah5PX8XL+/raQvNQto2Czr7ywn+et+T255uXqBzsCG+OlG
-         AVWrDoCWg/qORmd35uQR4fZqRaSAcCJ2moAnkRaoHf04iY+ckdlUtXWp6CRvd5vv7KJ/
-         xi8d5XUp8rfklp96QoI6cl5d/X6Bye08wDNpj/SnPWEgbX/IbBl8nZjrF/1ih7wgASJ/
-         R8dPmxRNvZ59pXVuaQC4B48nzqaw0AJdC1fazZEwjS+EUAvpu/b1wf+Sa2dT110iHnHJ
-         lB09rNV76WZWV0xwhrZ210C1z4WAtvS1hF+WFxPE0YOtnEA0cqadX89V2BAKkzjaVwlY
-         UMfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBMtJvAvfnxuCfpLIX3BRZqO3OOekwIqYyUZDZEqfP5rXiiK2636IIkSU9y0dcSmH0/zY+4sw0nMBE1nZXL9ZHgKy79AeURUl7QE/gtWZABsI2ESeYXNJjKfKuk7PrdIBmIO7FnvANkXLj02+xjqvoITZ3MhHsuNk++RZwB4LODQ==
-X-Gm-Message-State: AOJu0YxjqFvSyfe6xdoQg9RUEK0r6jma2FQgAisSVUx3QCprPruFtbCY
-	BxFJz3UfUrmhut3ezYyUmDrYa/UFUr1Vjqy5+GqXo3F/Kcg8pRnIl3AdkhJI614yGAsPVyfva+w
-	FQPCqm+nY8Wx/sKbApTOVtgSnm7ViwEtKC5Q=
-X-Google-Smtp-Source: AGHT+IHq6UY650bqkZXEO4Gyq7SUgAT79l/h3ccYb+ytWMAxBcDebAD+GbEVhvRZDVgYp4BMB/TR1C01JO23VwA/DWc=
-X-Received: by 2002:a17:90a:8985:b0:2c3:274b:dfb0 with SMTP id
- 98e67ed59e1d1-2c4a7629f13mr949448a91.17.1718175491330; Tue, 11 Jun 2024
- 23:58:11 -0700 (PDT)
+        bh=l2FWL3MaYkxGpNjR5SVeqc1ygoLE6HrOrfvSJrnDPZA=;
+        b=rxxwgifvHoA43Uk89+A2xeYBXpgGNxBsrHbVmLf7fMo7A8JuMi8KSXfEoPSdBbytDV
+         HLfR42KS5MUMSe/2fJtt/E3ZS3lKEBy7TR9rgtT6dGC57N01/zXR/GcckLzDtURiNYeU
+         NyPUhNoQM/AjIHPHtPqJiy8iowRiuC3H3nYhYkPAYQX52OuyMzGIQOzNa/XIeKpMz2p4
+         vun+Z34f3emfQDt7TO9Ee0d5VxDN4LR4W5F26TPuiQYM2Q7hAzmPWWivDxy8Lwo/Hnx4
+         RD5pm/69emqO7T0jAPvgfh4LIhq69QR2KV6W3KQ/fcrKd4PqrlMYPbdIUUjfUr/gB0OS
+         ssCg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+oR2O7L+9TlQ6596bEQBhfidzWaYuDzLKeYuzQMl9ZPR6cOxsmihGvA9XLkENxWRt9msI5xT3oA/EuSGjM47ASGG6bmVs7i6x5oFomsVIl5gZywGCBwK626HYLxNX6YBqUuvDKpQ=
+X-Gm-Message-State: AOJu0YzAAKHMjhAiAqo7mGUdTbi64h1YYWXTGQJClkKbebxeEu6DQQQA
+	cTfcfDfRjhpXsFMo9PUsjzYMRM+xeldCrsEfeE8GEFPiSNxb1AiuDgjx+VE6dN93eWkldQc10uj
+	P2QaTmNzt59MTNB1J9bRfvGGREms=
+X-Google-Smtp-Source: AGHT+IH0PCdMZtOPs327plhtNOg8Po5yi4NuZcxFq+L5xNI8cUuoAoqhrkeCv0yXRtHtv34xRnq5okoYZehy6aEu55Y=
+X-Received: by 2002:a0d:f443:0:b0:61b:3356:d28c with SMTP id
+ 00721157ae682-62fbb7f673emr9479367b3.2.1718175603741; Wed, 12 Jun 2024
+ 00:00:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611110058.3444968-1-andrii@kernel.org> <20240611115950.35197b36eafe0a804ecaa0de@linux-foundation.org>
-In-Reply-To: <20240611115950.35197b36eafe0a804ecaa0de@linux-foundation.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 12 Jun 2024 07:57:59 +0100
-Message-ID: <CAEf4BzZKYTnj-=PBSQ_74-o4rzKx2_VO4PRLwyq4szCcZvoGbQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] ioctl()-based API to query VMAs from /proc/<pid>/maps
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	gregkh@linuxfoundation.org, linux-mm@kvack.org, liam.howlett@oracle.com, 
-	surenb@google.com, rppt@kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
+References: <CADZouDTYSbyxzo3cXq08Kk4i0-rLOwuCMRTFTett_vTTmLauQA@mail.gmail.com>
+ <9baaad14-0639-4780-809a-0548e842556f@gmail.com>
+In-Reply-To: <9baaad14-0639-4780-809a-0548e842556f@gmail.com>
+From: chase xd <sl1589472800@gmail.com>
+Date: Wed, 12 Jun 2024 08:59:54 +0200
+Message-ID: <CADZouDRyyPKQyckxQ0SpEO=AJiZuh=r4PfMN6EU4nUJJTaOFbw@mail.gmail.com>
+Subject: Re: [io-uring] WARNING in __put_task_struct
+To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 7:59=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
->
-> (Please cc Alexey on procfs changes)
+Repro hit the bug with a low probability, so maybe you need to try
+more times on the branch I reported. Also, this bug still exists in
+branch 6.10.0-rc1-00004-gff802a9f35cf-dirty #7.
 
-ack, will do
-
+Pavel Begunkov <asml.silence@gmail.com> =E4=BA=8E2024=E5=B9=B46=E6=9C=8812=
+=E6=97=A5=E5=91=A8=E4=B8=89 03:17=E5=86=99=E9=81=93=EF=BC=9A
 >
-> On Tue, 11 Jun 2024 04:00:48 -0700 Andrii Nakryiko <andrii@kernel.org> wr=
-ote:
->
-> > Implement binary ioctl()-based interface to /proc/<pid>/maps file to al=
-low
-> > applications to query VMA information more efficiently than reading *al=
-l* VMAs
-> > nonselectively through text-based interface of /proc/<pid>/maps file.
->
-> Looks nice but I'll await further reviewer input.
->
-
-Thanks! I'll work on adding more tests meanwhile.
-
+> On 6/7/24 18:15, chase xd wrote:
+> > Dear Linux kernel maintainers,
 > >
-> > ...
-> >
-> >  Documentation/filesystems/proc.rst          |   9 +
-> >  fs/proc/task_mmu.c                          | 366 +++++++++++--
-> >  include/uapi/linux/fs.h                     | 156 +++++-
-> >  tools/include/uapi/linux/fs.h               | 550 ++++++++++++++++++++
-> >  tools/testing/selftests/bpf/.gitignore      |   1 +
-> >  tools/testing/selftests/bpf/Makefile        |   2 +-
-> >  tools/testing/selftests/bpf/procfs_query.c  | 386 ++++++++++++++
-> >  tools/testing/selftests/bpf/test_progs.c    |   3 +
-> >  tools/testing/selftests/bpf/test_progs.h    |   2 +
-> >  tools/testing/selftests/bpf/trace_helpers.c | 104 +++-
-> >  10 files changed, 1508 insertions(+), 71 deletions(-)
-> >  create mode 100644 tools/include/uapi/linux/fs.h
-> >  create mode 100644 tools/testing/selftests/bpf/procfs_query.c
+> > Syzkaller reports this previously unknown bug on Linux
+> > 6.8.0-rc3-00043-ga69d20885494-dirty #4. Seems like the bug was
+> > silently or unintendedly fixed in the latest version.
 >
-> Should the selftests be under bpf/?  This is a procfs feature which
-> could be used by many things apart from bpf and it really isn't a bpf
-> thing at all.  Wouldn't tools/testing/selftests/proc/ be a more
-> appropriate place?
+> I can't reproduce it neither with upstream nor a69d20885494,
+> it's likely some funkiness of that branch, and sounds like
+> you already tested newer kernels with no success. You can
+> also try it with a stable kernel to see if you can hit it.
 >
-
-Yep, agreed. I used BPF selftests as a quick and simple way to
-validate it's working end-to-end (because we use /proc/<pid>/maps
-across a bunch of pre-existing BPF selftests, so that gave me good
-coverage and signal). I'll look into adding more tests under
-selftests/proc for the next revision.
-
-As for the procfs_query.c, it's not really a test, rather a custom
-testing/benchmarking tool convenient for development, so I think I'll
-drop it from the patch set for the next revision (and maybe will put
-it up in a separate repo on Github or something).
+> --
+> Pavel Begunkov
 
