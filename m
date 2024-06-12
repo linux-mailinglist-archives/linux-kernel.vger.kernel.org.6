@@ -1,152 +1,157 @@
-Return-Path: <linux-kernel+bounces-211705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F06E9055BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:51:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7069055C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 16:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD8BE2830FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:51:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09D3AB219FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C7C17F392;
-	Wed, 12 Jun 2024 14:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1DD17F396;
+	Wed, 12 Jun 2024 14:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fKK+eTCM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MJYcE4KY"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A083717F37A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6175017F37B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 14:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718203911; cv=none; b=Oj/rAfGpdf1ptWB5rv5mKluhcDB2lrymBIh1U5wWSuDovQXEsc2tUYaXrlD0cifYuUhAuLMduj+o0SNFiFYgsFENUVneoVTR/UBjYm28uf9wcSCUfqftnkl79EGUaN8V+qVm7nIV0LknZmHtRYiCyeKMdYobHpF3ocq2h1tgEvg=
+	t=1718203920; cv=none; b=h7E8A9NGZouoXPBQ+vHr0106bNp6CDAfKr4eZgaqkqTKy1nv7Uumz34ejdyyKlZKmwYtBUG/iIMp0opcQB0ZYFjNXzOeXTNofnvImgrGFDKZKyPCe+8GwYIO8/MdvpTcL1SI31KJlk+KDW3GVyWt9D+vP6FGrK8AH7+z/BM2WFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718203911; c=relaxed/simple;
-	bh=uQnPob09RXsb+k15cJ24zoa5K6h1QNmp6SDtPOiGCwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d60844IFqQVc7PiFABz7vk9+RdYyWdhtva41YAaLggMZYhWLrTSvcMa75u452g6T9TiSFIpdQ3raMxVukOKkl/lx3Xe0O7xmamEkJkwsrU4Q/5KDkGZyoslhG9UY89bqYRezPV7gstGL/KcQgW6JIM4w+cdlH1LsD59T2ezo5pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fKK+eTCM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718203908;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zVmTidelMG1PiYfixcVkCNJNOeFZsMw+GcpMsMjUemA=;
-	b=fKK+eTCMktY8/OT/jreSyfik6twXjIWkeZwKMVUfy05lhV3Hd1vWgEGPwgFrltPVNFHdMx
-	iraHV64Wf9wCbmel3I+OcTqJ1zfZk/csYfSC6Qi2i3FBEwvGK7vZbIdUYNXbogb+OQMIWU
-	iFiIY59oBisK8hNGFGUVOu3aqy5SJfk=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-501-hpAR25ixM8ayzx1X-aL49g-1; Wed, 12 Jun 2024 10:51:46 -0400
-X-MC-Unique: hpAR25ixM8ayzx1X-aL49g-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a6f4af1c655so39791766b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:51:46 -0700 (PDT)
+	s=arc-20240116; t=1718203920; c=relaxed/simple;
+	bh=AeqMoyy136EGDb0dzZP8XtwJcrC4ZlwbNxyV6GvQdiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VfWhUqKJdNZRSIiBKA+xDh3uGxUdULMnCybQLF/mnNkVqRvfPrT3XrVnbUuMxEkN5Bs6ZX9L05R26dqu6xKZM5wCTAbe/w/VnwWy/q4MwVeMOPE011J5Wnp6K0OgT0+sZgER5GnOn7GzB7uPw0WsQ+twAE+7f7VpjRsDdtLkzUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MJYcE4KY; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-6eab07ae82bso1963710a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 07:51:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718203918; x=1718808718; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pdm0MxlnE9mvGLW6dM72J7+DWmReIl//Ic2Mk/zy3V0=;
+        b=MJYcE4KYrgYajp92pF0JkPnJDSf3Sy48hRTuQ3mg0GWbGMJt/2AT9OEE68x/Y6FHsT
+         eoH4U6vB6LHYqhIPX0o+Bd4JXY/4cZ3tKW15dJTl8Zu/WrorJTje5DrNXi/AXTzovd4/
+         cKdwr2oh9CaInA+wwKVPUUF0Iv9HzikU1KaorOwn6EJHo+4r0zjjbX57xKQ2aHZlrv42
+         SElfcUoq6qZ75YMCxyw7yk0TUsm/0WwiLTh8mpWFZHSCVSYmJdm2y6aAL0v8YgPcO0Pu
+         j7lwzjRpUfdIhIfpGHrGvYazuaer/78uGWypCILPoebZQXZHDsGkFMRsl2KrUCceE/3a
+         Dj4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718203905; x=1718808705;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zVmTidelMG1PiYfixcVkCNJNOeFZsMw+GcpMsMjUemA=;
-        b=DoaBw6MlyOwhEq7+A25mAQ+p4IkvKVzURCS+XDjGmOLxPyikGmmq1LR93D96hMMldY
-         QjdeLqWQeGHqR1fAXxuwpNcgivBWozB7aY7WHmA2xVtC7LFPG+pKnwYfAAk7aLZHGjPp
-         sNUfzHZb3oUQHqD0TPQ38syzJdUucnXi1W8+aRCJNHfxWeDgs9xHPrPRxHn0RAxL/pE6
-         nllXiL6yBUqMHI6zMF1uAU9Cm5sBhQwHunzffaz2xmX1xnXb3psz29RND9E9pvG3DUpn
-         JrstW4D6oCCS4uZQb3vgWtypJAz90N6klUfNeD/uqVBGzg0JyBi8YY3PZZAsTGtRRJ8D
-         YykA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWWNfUBrY+9NCRzzesbe2VqAuHZbUYw/Wq9z3Hn+zLnGmiuGgvyWZWrFvQ0UTxFx08p7swXlkQIUpKRPHdGogDGBnXMChYOhJPn8pf
-X-Gm-Message-State: AOJu0YyfMZ/A2J+aA9AkkqhF1cD6VjaQPrjRwigepbJnDVr0K4pYdgyG
-	r0d4zmlxi5bmKhXM0n0lzPF5Y34J/R7QJDf1APj+WnDeyw8c/9v2DMkI2EPZF4txMo5OPotNJQ3
-	EKqwKBBsiXT3qeF/uUS6Q299g9A/c247Ewc5b1jC4424jUj/1dYYVTNImKzbrhQ==
-X-Received: by 2002:a17:907:7e87:b0:a6f:e36:abae with SMTP id a640c23a62f3a-a6f47ce6c8bmr168031266b.42.1718203905079;
-        Wed, 12 Jun 2024 07:51:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHbGf3kVGrfya669fPpWGOZYpQmZGTofto5bcgn7UtgXwLAm8zLWXejA536NlRPQkJg4vVVqg==
-X-Received: by 2002:a17:907:7e87:b0:a6f:e36:abae with SMTP id a640c23a62f3a-a6f47ce6c8bmr168029066b.42.1718203904649;
-        Wed, 12 Jun 2024 07:51:44 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:4b3f:ee94:abf:b8ff:feee:998b? ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f102c4494sm539231766b.112.2024.06.12.07.51.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 07:51:44 -0700 (PDT)
-Message-ID: <d74edb73-1dba-43f4-a50c-36354c39d758@redhat.com>
-Date: Wed, 12 Jun 2024 16:51:42 +0200
+        d=1e100.net; s=20230601; t=1718203918; x=1718808718;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pdm0MxlnE9mvGLW6dM72J7+DWmReIl//Ic2Mk/zy3V0=;
+        b=ksowH6IdN5EQc1w92WsTaSx+mcCMDKFPjuogHzO2QKB8+M6Zdbbn4v7ow2ggFUgzEv
+         1H/kAOXUW4F7Kb2AeENSqEgGw6Dszul5ZNkUnuE927TSQNYtXH4xfxlIY/rXE19FQ/Au
+         qZt4c8YBNzZc5cg4z9R3Ab9ljIog6tR0NDU2ipVvzt8L4qkZHCSHd5/vCVE2dn+WutZe
+         eUiHft+YwzTrc3zULaJh5j2sy8+lyp6XlZfqpRoMnoYLSnq6nZuOuDBzBQIdoZF0n6gF
+         LdAG+XrrtvMDCgmAenTrKuWc+faEudRzfuE56ByVijNRGvWxRTQIWx/qi9Sv3ky9vhMA
+         57iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpCrN+UsT4IGizC5grh/vV02qz0ug3Pew1DIqgMPe0B0mhM6IiJAB2cYPWwIC3DUdknEPmepNHjZKPIZ+JL8phyvd961WM/19hB82b
+X-Gm-Message-State: AOJu0YxRnKZZFhpTUQg1c7DFCswUyFl6M22eyuYjBcq9fhinmSe0jmnY
+	8dNcJPsaZOFtFrsEGekB+an0xcPmWWA27c8+9zDi8OKmZzM/kcjLJT1vtQKzxA==
+X-Google-Smtp-Source: AGHT+IEEszIpfWjt+j2J+ofzaMw29P0ZLiOqhilxxHJLGEkXkLRKQGtaaf54uh3t5ga5appr/f9iEw==
+X-Received: by 2002:a05:6a20:430f:b0:1b7:d050:93e5 with SMTP id adf61e73a8af0-1b8a9b4de5bmr2487914637.15.1718203918415;
+        Wed, 12 Jun 2024 07:51:58 -0700 (PDT)
+Received: from thinkpad ([120.60.129.29])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a76ab1c8sm1863792a91.52.2024.06.12.07.51.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 07:51:58 -0700 (PDT)
+Date: Wed, 12 Jun 2024 20:21:47 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc: Slark Xiao <slark_xiao@163.com>, loic.poulain@linaro.org,
+	ryazanov.s.a@gmail.com, johannes@sipsolutions.net,
+	netdev@vger.kernel.org, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] bus: mhi: host: Import mux_id item
+Message-ID: <20240612145147.GB58302@thinkpad>
+References: <20240612093842.359805-1-slark_xiao@163.com>
+ <20240612094609.GA58302@thinkpad>
+ <87aecf24-cdbb-70d2-a3d1-8d1cacf18401@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] rust: add abstraction for struct device
-To: Boqun Feng <boqun.feng@gmail.com>, Greg KH <gregkh@linuxfoundation.org>
-Cc: rafael@kernel.org, mcgrof@kernel.org, russell.h.weight@intel.com,
- ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
- fujita.tomonori@gmail.com, pstanner@redhat.com, ajanulgu@redhat.com,
- lyude@redhat.com, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240610180318.72152-1-dakr@redhat.com>
- <20240610180318.72152-2-dakr@redhat.com> <ZmdID8AlXtoxUfC1@boqun-archlinux>
- <ZmhPW9yq7y6jbmIg@pollux> <2024061136-unbridle-confirm-c653@gregkh>
- <Zmh3oN9sWamaYHOD@Boquns-Mac-mini.home>
-Content-Language: en-US
-From: Danilo Krummrich <dakr@redhat.com>
-Organization: RedHat
-In-Reply-To: <Zmh3oN9sWamaYHOD@Boquns-Mac-mini.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87aecf24-cdbb-70d2-a3d1-8d1cacf18401@quicinc.com>
 
-On 6/11/24 18:13, Boqun Feng wrote:
-> On Tue, Jun 11, 2024 at 03:29:22PM +0200, Greg KH wrote:
->> On Tue, Jun 11, 2024 at 03:21:31PM +0200, Danilo Krummrich wrote:
->>> ...hence, I agree we should indeed add to the #Invariants and #Safety section
->>> that `->release` must be callable  from any thread.
->>>
->>> However, this is just theory, do we actually have cases where `device::release`
+On Wed, Jun 12, 2024 at 08:19:13AM -0600, Jeffrey Hugo wrote:
+> On 6/12/2024 3:46 AM, Manivannan Sadhasivam wrote:
+> > On Wed, Jun 12, 2024 at 05:38:42PM +0800, Slark Xiao wrote:
+> > 
+> > Subject could be improved:
+> > 
+> > bus: mhi: host: Add configurable mux_id for MBIM mode
+> > 
+> > > For SDX72 MBIM mode, it starts data mux id from 112 instead of 0.
+> > > This would lead to device can't ping outside successfully.
+> > > Also MBIM side would report "bad packet session (112)".
+> > > So we add a default mux_id value for SDX72. And this value
+> > > would be transferred to wwan mbim side.
+> > > 
+> > > Signed-off-by: Slark Xiao <slark_xiao@163.com>
+> > > ---
+> > >   drivers/bus/mhi/host/pci_generic.c | 3 +++
+> > >   include/linux/mhi.h                | 2 ++
+> > >   2 files changed, 5 insertions(+)
+> > > 
+> > > diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> > > index 0b483c7c76a1..9e9adf8320d2 100644
+> > > --- a/drivers/bus/mhi/host/pci_generic.c
+> > > +++ b/drivers/bus/mhi/host/pci_generic.c
+> > > @@ -53,6 +53,7 @@ struct mhi_pci_dev_info {
+> > >   	unsigned int dma_data_width;
+> > >   	unsigned int mru_default;
+> > >   	bool sideband_wake;
+> > > +	unsigned int mux_id;
+> > >   };
+> > >   #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
+> > > @@ -469,6 +470,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
+> > >   	.dma_data_width = 32,
+> > >   	.mru_default = 32768,
+> > >   	.sideband_wake = false,
+> > > +	.mux_id = 112,
+> > >   };
+> > >   static const struct mhi_channel_config mhi_mv3x_channels[] = {
+> > > @@ -1035,6 +1037,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> > >   	mhi_cntrl->runtime_get = mhi_pci_runtime_get;
+> > >   	mhi_cntrl->runtime_put = mhi_pci_runtime_put;
+> > >   	mhi_cntrl->mru = info->mru_default;
+> > > +	mhi_cntrl->link_id = info->mux_id;
+> > 
+> > Again, 'link_id' is just a WWAN term. Use 'mux_id' here also.
 > 
-> @Danilo, right, it's only theorical, but it's good to call it out since
-> it's the requirement for a safe Rust abstraction.
-
-Similar to my previous reply, if we want to call this out as safety requirement
-in `Device::from_raw`, we probably want to add it to the documentation of the C
-`struct device`, such that we can argue that this is an invariant of C's
-`struct device`.
-
-Otherwise we'd have to write something like:
-
-"It must also be ensured that the `->release` function of a `struct device` can
-be called from any non-atomic context. While not being officially documented this
-is guaranteed by the invariant of `struct device`."
-
-> 
->>> is not allowed to be called from any thread? If so, this would be very confusing
->>> for a reference counted type from a design point of view...
->>
->> What do you mean exactly "by any thread"?  Maybe not from interrupt
-> 
-> The `Send` trait here doesn't really differ between interrupt contexts
-> and process contexts, so "by any thread", it includes all the contexts.
-> However, we rely on klint[1] to detect context mismatch in compile time
-> (it's still a WIP though). For this case, we would need to mark the
-> `Device::dec_ref` function as might sleep.
-> 
-> Regards,
-> Boqun
-> 
-> [1]: https://rust-for-linux.com/klint
-> 
->> context, but any other normal thread (i.e. that you can sleep in), it
->> should be fine to call release() in.
->>
->> thanks,
->>
->> greg k-h
+> Does this really belong in MHI?  If this was DT, I don't think we would put
+> this value in DT, but rather have the driver (MBIM) detect the device and
+> code in the required value.
 > 
 
+I believe this is a modem value rather than MHI. But I was OK with keeping it in
+MHI driver since we kind of keep modem specific config.
+
+But if WWAN can detect the device and apply the config, I'm all over it.
+
+- Mani
+
+> Furthermore, if this is included in MHI, it seems to be a property of the
+> channel, and not the controller.
+> 
+> -Jeff
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
