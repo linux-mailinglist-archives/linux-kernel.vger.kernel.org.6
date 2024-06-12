@@ -1,122 +1,173 @@
-Return-Path: <linux-kernel+bounces-212009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B1A9059F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:30:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933BF9059F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0091C1F24115
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:30:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A890E1C222F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAF6183085;
-	Wed, 12 Jun 2024 17:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B65C1822DB;
+	Wed, 12 Jun 2024 17:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5T7VXSb"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yZgdmIRv"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD29B1822D4;
-	Wed, 12 Jun 2024 17:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7AD155CA3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 17:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718213376; cv=none; b=MqOkIgAYhwjza4QwWA1F5wMV2VlfXwC6hMXXJpy2D5rYOyxNU8U6w65NnCc0/W46L9vfKs7basI7onDoanu1yzp56CWyRRfOIZQwXOG7eoNjOE870EX800PEbf2/aGUbtEJw6LCnt4S6WbNnXRqBpThZBXhXBjzyiev3EHiw7IM=
+	t=1718213492; cv=none; b=TQ0if0tPY5LHcroBZizB+DT3UWcNLKzg1E1B7N4+MPGazo/9RcB4wTa1r5RRMs6OPpkPWkFyqwyRqOCuNoPsOE7enSCBLRQiDHDXqosEmIUnP7mbPVg6Dc8EesKQaG3biNCC4ctwlu8iJVS8jKOj1NHMTBQSaLpUwCZ4RHyAewU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718213376; c=relaxed/simple;
-	bh=Ba6GyynrpGuIi2Xb7JlSRrHrUtyBqSQwFHKrMZhcRb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MxYpD4UQhiFeT2OkNLmjIbFR8l8fm1rcggJXLBbbvfaUPWc5WxUz8p4kNSFKWvv1AVx9e23KpFp95L5w+lnHBCvLMdr8nxnpP4VQpD+GVvKmIuMkZTWI0DXC/C9nviFNX5BY/7LtVdf6gQgs1V6jLZdiF9T6j6XHAfJxqBqBiKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5T7VXSb; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6e7e23b42c3so51906a12.1;
-        Wed, 12 Jun 2024 10:29:34 -0700 (PDT)
+	s=arc-20240116; t=1718213492; c=relaxed/simple;
+	bh=BVxVglBu/aJdIm8zaMwOg3iRpiLrT6XOkxr2cN79Qtg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=e4HgCJZvdnYayysDROLD96eQZoz8Yc6zspl4ud88fYhWhVIVffpRgdxm54zih0j/klw/wACAxlWVc6GzhKdMqrhRQX5cXlhtatYw0vy03zFakqczQcVM08Y9S6N0pQFCyH1ap+Zibj9i9jUGkg+FD45kQio993kWAUTpbVE5hZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yZgdmIRv; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1f71d5a85f9so1532985ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:31:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718213374; x=1718818174; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/7EZE8kZJ8YwXGxhpq3/arcNZCvvFBiX+mbM6jw0kdY=;
-        b=l5T7VXSblow1UfHW7uXzGe8JE9/Fu95k4EG2JKAuDFqZIpd/LTS+PvTjurrPo2YF86
-         yTXvbyHadkhA37K8PNdhYGUmWFeGtA5SV4HvDUGm4sKuG28oMwOwR6fFi7je7eaK6RM/
-         sqLvAGlHiOb8O1KwH4QOCuGEhWiEMC5PXkLyXrSiBl1gYLRxL/mQxxR3+YOkwRq0EH9v
-         Rvtgladx4GBLBtJ02DvlfYk7q6gQs3lnf6kIx50TgpJWZs2FaiTl3135EnPkNgjFcrNy
-         PLz2epUJ/L1YUYNO5FJnJA21JOAjGLZ2kM7rM4bYqb7rY6HR+dOkBiN2YcRe826VDmfk
-         30lg==
+        d=google.com; s=20230601; t=1718213489; x=1718818289; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZttrWbEybPZrU6j9LIdJZge1/Pd2kmv/UPX9FdzbJ4o=;
+        b=yZgdmIRv2moEI8Zld6u/VkhMeDaPNBowLD5mqzgUawyckf+6uKgiEpnvneIfP4v8FV
+         WOmAWW33+keA4TocyR7SUMJNYlJpph+hMQPsIC1mrHssbSFAHZTXAqQI2k+94Z3JGRZn
+         ssrk2ZmjVaV6UA0nwa0tJ4gqdz4iSiDj1mEE2QfORsmHVs/vuIIHBKIISR8+YIwFMihi
+         uWyFttAx4xGdHXoGdh0ZviEmhP6pdwqNgaKk7Jk1eMhE78nW8BaFAkeky4PAgXWNl+0N
+         cPERpKsYDxaqxIt6hjIe2mhbLo4cc0aMRh490Ha3fAaChpygl6QgWdjucY1jWosdeXr3
+         b4Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718213374; x=1718818174;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/7EZE8kZJ8YwXGxhpq3/arcNZCvvFBiX+mbM6jw0kdY=;
-        b=Z9MhGeeT+RkDPwvKpN7sKzmwDJJ/PchxAOC/UxlDDyUEg77mkRYmUPrKciDo+ve3E4
-         rd0x7mBYP7ypnhZv4n4hHBfKeyJ7gQwjzs+XTbwbTH9/tCpYAX3t0xjesPjeqna2p+Fs
-         dPOWD0HaO9eveXOZF52Hwp6NgHZNI/3Ntz0zOXB0JMsWmXwJHoG5MvSylmJTpCr+tTqM
-         dEaGAiNj8AeYUDcX9xhzM2nubymDeJs1TrwnZcZ9KGoT2/+Wm7+32gW3/bA2gfwBVb94
-         MHiY8dKYte6CGPymy6F4VeI6raIXLoOgtFH9q4jJiNECC52Hsdess6AA89sEY416DJdc
-         Q5XA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrlQTfePZyknSgT4Jh36Yeuir/xfChUGN5nt2dfA0l5Uzav1GzbFeRF0kp/+/9is2ILBKNhZTDpEzVT2Yc/VaVHtdCzFfm6tNRl8NF
-X-Gm-Message-State: AOJu0YwqWmywzFh9z+0CEA1tfT+a4J+MT/14/Z8GrGcPBFT6i74JnvRW
-	hyqJ9H0jJsfhZh8BSeLqeXU7y2da8eG0jXYYhjODu8CcWZSPgMjE
-X-Google-Smtp-Source: AGHT+IGd7Tv1NYL8MvHZP7GP4sML4J19g55sFnTvjguJaFG888Hs+XWIgGoJVs8gxFkgyVjNU8c+yw==
-X-Received: by 2002:a17:902:eccc:b0:1f7:3bb3:abb5 with SMTP id d9443c01a7336-1f83b64ac13mr27474335ad.8.1718213373929;
-        Wed, 12 Jun 2024 10:29:33 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f72a6c5a5fsm39546885ad.233.2024.06.12.10.29.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 10:29:33 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 12 Jun 2024 07:29:32 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Martin Oliveira <martin.oliveira@eideticom.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Artemy Kovalyov <artemyko@nvidia.com>
-Subject: Re: [PATCH v2 1/4] kernfs: remove page_mkwrite() from
- vm_operations_struct
-Message-ID: <Zmna_AmrLgTgfdHw@slm.duckdns.org>
-References: <20240611182732.360317-1-martin.oliveira@eideticom.com>
- <20240611182732.360317-2-martin.oliveira@eideticom.com>
+        d=1e100.net; s=20230601; t=1718213489; x=1718818289;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZttrWbEybPZrU6j9LIdJZge1/Pd2kmv/UPX9FdzbJ4o=;
+        b=IbK2vK5ttWVGwOb2UMEcL2KU88oP2L/SAtrxbTa/cPJzwPg9iJ6DszKvxqmYVG90SJ
+         dmJLOJGjggM74ZeaWkvUOyhdctS/fBjTgTk++Ff3Gn2J/SoOVxKl7JoR9PrJqkCt672w
+         sy31s8yrJsp+syFNns/UHnBRTK5s27JxhiUNPDPBBu5Pc1u275P+4wKhbi0JFW3otD1w
+         jqbonl/5/oead3lKof6ziMQ9c+crX0PkDvgpYnbwCs8m2HWtvH1EqRymCAFKFaTsrhvM
+         fdN4STTwvkc3QnDr7TfgUc8JqdBw4TE+u4EwcCgMc63nVT7ZTZ7QO/dMQIYOC7PwE90X
+         0SrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ3aJp4R0v5UF5v8UZvaURhmx4eWDXe0usju2vjt7t6vevDQfbpsHFDscuKXHqsvFrkw+r17HLCYlLA8Hfv1D4XlubwD6yvnPyc0fz
+X-Gm-Message-State: AOJu0YxK+8E3im7/vaViyfyMpeyWQ4vlYoqpL6YTv3ION3kc5icPQVky
+	CYxHP0NVmkE5e7HZFzInu3Wqku7l3+pgcKE9lxMpjXTeAnvDSXBa1txQKIZ0Z4Erx0fooNwBZQl
+	xEw==
+X-Google-Smtp-Source: AGHT+IEfEUqjAJd5HwtcI3SellD9wJyKICC45AOG2hDSPfUBXvAeRlQriWUGwdY0fjJOl8E1dOYOBVVBc8s=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:903:182:b0:1f3:4b2a:1acb with SMTP id
+ d9443c01a7336-1f83b23ddb1mr79315ad.0.1718213489334; Wed, 12 Jun 2024 10:31:29
+ -0700 (PDT)
+Date: Wed, 12 Jun 2024 10:31:27 -0700
+In-Reply-To: <Zmm9SdVfg18RECT5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611182732.360317-2-martin.oliveira@eideticom.com>
+Mime-Version: 1.0
+References: <20240405115815.3226315-2-pbonzini@redhat.com> <20240412104408.GA27645@willie-the-truck>
+ <86jzl2sovz.wl-maz@kernel.org> <ZhlLHtfeSHk9gRRO@google.com>
+ <86h6g5si0m.wl-maz@kernel.org> <Zh1d94Pl6gneVoDd@google.com>
+ <20240418141932.GA1855@willie-the-truck> <ZiF6NgGYLSsPNEOg@google.com>
+ <20240419112432.GB2972@willie-the-truck> <Zmm9SdVfg18RECT5@google.com>
+Message-ID: <Zmnbb-Xlyz4VXNHI@google.com>
+Subject: Re: [PATCH 1/4] KVM: delete .change_pte MMU notifier callback
+From: Sean Christopherson <seanjc@google.com>
+To: Will Deacon <will@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Nicholas Piggin <npiggin@gmail.com>, 
+	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Jun 11, 2024 at 12:27:29PM -0600, Martin Oliveira wrote:
-> The .page_mkwrite operator of kernfs just calls file_update_time().
-> This is the same behaviour that the fault code does if .page_mkwrite is
-> not set.
+On Wed, Jun 12, 2024, Sean Christopherson wrote:
+> On Fri, Apr 19, 2024, Will Deacon wrote:
+> > On Thu, Apr 18, 2024 at 12:53:26PM -0700, Sean Christopherson wrote:
+> > > On Thu, Apr 18, 2024, Will Deacon wrote:
+> > > > > I assume the idea would be to let arch code do single-page invalidations of
+> > > > > stage-2 entries for each gfn?
+> > > > 
+> > > > Right, as it's the only code which knows which ptes actually ended up
+> > > > being aged.
+> > > > 
+> > > > > Unless I'm having a brain fart, x86 can't make use of that functionality.  Intel
+> > > > > doesn't provide any way to do targeted invalidation of stage-2 mappings.  AMD
+> > > > > provides an instruction to do broadcast invalidations, but it takes a virtual
+> > > > > address, i.e. a stage-1 address.  I can't tell if it's a host virtual address or
+> > > > > a guest virtual address, but it's a moot point because KVM doen't have the guest
+> > > > > virtual address, and if it's a host virtual address, there would need to be valid
+> > > > > mappings in the host page tables for it to work, which KVM can't guarantee.
+> > > > 
+> > > > Ah, so it sounds like it would need to be an arch opt-in then.
+> > > 
+> > > Even if x86 (or some other arch code) could use the precise tracking, I think it
+> > > would make sense to have the behavior be arch specific.  Adding infrastructure
+> > > to get information from arch code, only to turn around and give it back to arch
+> > > code would be odd.
+> > 
+> > Sorry, yes, that's what I had in mind. Basically, a way for the arch code
+> > to say "I've handled the TLBI, don't worry about it."
+> > 
+> > > Unless arm64 can't do the invalidation immediately after aging the stage-2 PTE,
+> > > the best/easiest solution would be to let arm64 opt out of the common TLB flush
+> > > when a SPTE is made young.
+> > > 
+> > > With the range-based flushing bundled in, this?
+> > > 
+> > > ---
+> > >  include/linux/kvm_host.h |  2 ++
+> > >  virt/kvm/kvm_main.c      | 40 +++++++++++++++++++++++++---------------
+> > >  2 files changed, 27 insertions(+), 15 deletions(-)
+> > > 
+> > > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > > index afbc99264ffa..8fe5f5e16919 100644
+> > > --- a/include/linux/kvm_host.h
+> > > +++ b/include/linux/kvm_host.h
+> > > @@ -2010,6 +2010,8 @@ extern const struct kvm_stats_header kvm_vcpu_stats_header;
+> > >  extern const struct _kvm_stats_desc kvm_vcpu_stats_desc[];
+> > >  
+> > >  #ifdef CONFIG_KVM_GENERIC_MMU_NOTIFIER
+> > > +int kvm_arch_flush_tlb_if_young(void);
+> > > +
+> > >  static inline int mmu_invalidate_retry(struct kvm *kvm, unsigned long mmu_seq)
+> > >  {
+> > >  	if (unlikely(kvm->mmu_invalidate_in_progress))
+> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > > index 38b498669ef9..5ebef8ef239c 100644
+> > > --- a/virt/kvm/kvm_main.c
+> > > +++ b/virt/kvm/kvm_main.c
+> > > @@ -595,6 +595,11 @@ static void kvm_null_fn(void)
+> > >  }
+> > >  #define IS_KVM_NULL_FN(fn) ((fn) == (void *)kvm_null_fn)
+> > >  
+> > > +int __weak kvm_arch_flush_tlb_if_young(void)
+> > > +{
+> > > +	return true;
+> > > +}
+> > 
+> > I tend to find __weak functions a little ugly, but I think the gist of the
+> > diff looks good to me. Thanks for putting it together!
 > 
-> Furthermore, having the page_mkwrite() operator causes
-> writable_file_mapping_allowed() to fail due to
-> vma_needs_dirty_tracking() on the gup flow, which is a pre-requisite for
-> enabling P2PDMA over RDMA.
-> 
-> There are no users of .page_mkwrite and no known valid use cases, so
-> just remove the .page_mkwrite from kernfs_ops and return -EINVAL if an
-> mmap() implementation sets .page_mkwrite.
-> 
-> Co-developed-by: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Martin Oliveira <martin.oliveira@eideticom.com>
+> Circling back to this, I don't think we should pursue this specific tweak, at
+> least not without hard data for a concrete use case.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Ha, I spoke too soon.  Based on the learning from the KVM+MGLRU thread[*], it
+looks like KVM should omit the TLB flush when aging pages whenever possible.  If
+that's not doable on all architectures for whatever reason, then something like
+this is probably the way to go.
 
-Thanks.
-
--- 
-tejun
+[*] https://lore.kernel.org/all/CAOUHufYCmYNngmS=rOSAQRB0N9ai+mA0aDrB9RopBvPHEK42Ng@mail.gmail.com
 
