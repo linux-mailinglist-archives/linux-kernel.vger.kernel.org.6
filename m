@@ -1,132 +1,160 @@
-Return-Path: <linux-kernel+bounces-211335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26CA2905030
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FEB9050B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAE5F2830B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:11:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47A6F2876EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125C816E87C;
-	Wed, 12 Jun 2024 10:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FdY2uucs"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF9D16F265;
+	Wed, 12 Jun 2024 10:47:19 +0000 (UTC)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2116.outbound.protection.partner.outlook.cn [139.219.17.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DA733FE
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718187104; cv=none; b=B38u5Ron5Zcb5fV5TgeXciZXPkWtjpUHvNtyLjkONpEiR8Z+zJp0KCNOKXv6eZ92T8kmhtUSW1tz18oF/hUStB8CZthxyDRW5Rs5Zp2Wl3nKfnb2IQstVylkEgc8lHdYMkMzirDVm7bCExkXTrJ3WBYzEzmZIWCGbmO+Izu5bpo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718187104; c=relaxed/simple;
-	bh=KFf2FT18RPV8C8MRIqXhIhGb0bt0t/RSv998zsVKsOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tuLWbaGf98JL/pT+L5BH35GB8bfjKGTXSzDMm5cCVK7GIYI2NNUJI63aDhkcW6l9awvcWGZXTwnhR8HGMmlS1ubHnFxuLxSGuVGp3oACwYalm0vDLJYXcFPQXC7xtxHXxDl5GfEhTvtUkAK7w0r/TWl5to9SwhpWOnE+LQRkr6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FdY2uucs; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1ee5f3123d8so109505ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 03:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718187102; x=1718791902; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JB137Y60BhwWEDBjTqvHulcYwQ9jTNh9hWVkbeGFpbY=;
-        b=FdY2uucssI/Pc5Gx5pwQ8/ZrpiX0jO/VHBFMJ5EZnOXBWMYEN1W8F6fMe/yOPJqADR
-         pWYFhotDZJj2z5ag4jZFl1IWZtlTI8L20gmaB5AiPqTVlF/hb+/D4fLeQdu4Z/LhelVu
-         KzshCLBt5Hv3tds9nRCzi/QIrXURpJ8OPP7+JZm01TkBekIoFrRXRYdWHa9NclPcLwNR
-         4Pm/MWg7Sxycj9AnFv7IPYyaZONdVkfFhcxg38tv50CbDm3VkweoBGHSiP2RGxQgCmaQ
-         8C45mkIqnVnjbUlquUtWIf+ttoXONNGYJ+/1RWpslj76hOLEHaHuyr/bqBdCN3NTVYAK
-         MgpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718187102; x=1718791902;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JB137Y60BhwWEDBjTqvHulcYwQ9jTNh9hWVkbeGFpbY=;
-        b=stR4TUSL9lOtpXqnM63Dv0gxR9Go4C42bDQTfOko/2eiDKyYs5kvbf36XpSqxUaqhc
-         vr8HEeyTHF7/kcZP/5stwEki/L0P6PYspQ+LMXJ5n6uDDhXAsPNWvzp28Phfnbcwtamu
-         fH0NEGDAcqRvoZw+E7WkWJw/4+JlhzlO7WG1iIRlMSEFaKG9FK/7gih0kwmZaAGgUrVu
-         GDkN1KUFklLzvlA2IwnAGZjcKQtDgDg/CGccd9DhDG/t6uS7bEIsMn0wjmwul7E2HLbc
-         Fabm2eT9jUEA8Z2+6lE7/bDyFazSS4ulAULZhpvz1kLIsPQsnFIsC1i6ZKR58l/kFN6K
-         BH3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWgdBlq0wSXm3488gcFRaodRCTt1fT9pz+2HXIY5ervxD/sBWlphEqhPzEZQ2AFO0wzqu63d/ttyTbO0r9Lp5uBhX/tyzy9idoIjYN9
-X-Gm-Message-State: AOJu0YyMrWez9Nh8EAGlQWknkrfFlsIXBMDvyHCMSmfgcYZRmxBUIlsK
-	lAexYkxF6bqlZwBqdX7e4Qm7j9NyPnWQNiqAiNtL7femLIEn+vkJxNRFTxjRPROUWoRL+ueR1N7
-	7aJBHdu240JPQXG5Yzb2VquIGR3VxtaEPr1BU
-X-Google-Smtp-Source: AGHT+IFt0QaTJrjbAM5Lih+9Ea8MU4NOCHo2x5tga3NpRGP3FmXtBmDy4kPOtkuS4PyhJ27G4ZzU8X9NtVD5QjNUA9Y=
-X-Received: by 2002:a17:902:c40a:b0:1e0:c571:d652 with SMTP id
- d9443c01a7336-1f83b371decmr2105695ad.1.1718187101848; Wed, 12 Jun 2024
- 03:11:41 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B032F84A21;
+	Wed, 12 Jun 2024 10:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.116
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718189238; cv=fail; b=gus+oKt7UU1H4ZNkeCAB1yfvM3Z4gGcC0gV35GsQ9G8ub6Mm00Zrut+HmzEh9acDbDAKp3CHHq0CpssSz/36OlW++q0IV4zfbDiEMUveUln5UpJBGqZfEzdaItqqz+WdRB+HIvt9kEjXsmMQMKDNSPUnJ+Vt7BR5yf81QuOpjjk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718189238; c=relaxed/simple;
+	bh=oyU59uWBlhpz/dzB2XbZ8yS2oKF/Gg+L7snJYcG1WqI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Sgmt4UW3+RomKX21pB3HM+eyfjskJvOB873Tg6Z5futpk3X+uV7+utHuvDEM6mIf4OA7qPHSjbVs/U0ZuIAdhJyWPQ78n5j8JW2NoKFwCXCpC8TvXf7IjWwz6Gawvqxh+c5DkaSJ5dOJDX9HbnQT9VcZNdeFC2Rct6NE5YmBZxc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FDRU6lqY1/DolojgXzt27iZ3VwKZyUCCNHdb2T85p3eyYr9jb/PpjgyRYGZXPxm+Ur5LOJ9LAxLAt+8KxkmljtfOZUK8y5XBBP3SVLpTT21gfh/tfF0yb/SQplDTIHn3toPB/VxHe8k6+6AI+g1vUnIHX/VIePR4qbLCHGDstcMQ9AXDKqq1n6EEJ8Ue4D4Oedr2SyWzRNGpcRC+wex2lNF4N7aljNTumRJXBvbJToiKAq/srwxmigkaQtwFzvp+W2hFJaAANNrff03tZ2AnKKmmd+kks25igiFv6PiYWkzr2sCYGQZ8Mw9o9XE55s+Q7AZQPdl+359Gb4AvObAphg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rYC7lAMr84vaQfxhFj4YJDGk3n1eyG8mtZC7ZDEewNs=;
+ b=jifHtrJghjNGTL3L/ThHzX1Apv+7jnWYz+tLbmNvpqUQg7ExozK484CKZNBBqrXUjHMs1VmbbeQwH8uAoA0kp9vNE40/A3ib6HXNnstzLcMEKubfTmdlaKXLrZz5IWX9vjLUt0D+EMGYrhttQq9KMeXuVpr/3AZhz18PzL1aHfCMKIUtutxlSY/5hwCw45/CKP5titGVjhmpLJWA1TfF2pr+QWUS8kMLQfEIh4h2ckbAESTc1XeKvASqfwtY5AnOks8K9krcFvhnD+8dVPGLGHsaaFZ2FNIMI6B8KL3JXDUg+8UxjmLhwrEziIsfkvJM0/r8gEfWFuXctICLrnbeBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:10::10) by NT0PR01MB0976.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:d::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.38; Wed, 12 Jun
+ 2024 10:13:30 +0000
+Received: from NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e3b:43f8:2e6d:ecce]) by NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e3b:43f8:2e6d:ecce%7]) with mapi id 15.20.7611.039; Wed, 12 Jun 2024
+ 10:13:30 +0000
+From: JiaJie Ho <jiajie.ho@starfivetech.com>
+To: Vinod Koul <vkoul@kernel.org>
+CC: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
+	<davem@davemloft.net>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
+Subject: RE: [PATCH v5 1/3] dmaengine: dw-axi-dmac: Support hardware quirks
+Thread-Topic: [PATCH v5 1/3] dmaengine: dw-axi-dmac: Support hardware quirks
+Thread-Index: AQHasj8OTzZ9CEf8H0CgWgm1ave3tbHC60wAgAD2s5A=
+Date: Wed, 12 Jun 2024 10:13:30 +0000
+Message-ID:
+ <NT0PR01MB11826C9F142FCD1A1199A11B8AC02@NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn>
+References: <20240530031112.4952-1-jiajie.ho@starfivetech.com>
+ <20240530031112.4952-2-jiajie.ho@starfivetech.com> <ZmiOemWQrG-3EdIB@matsya>
+In-Reply-To: <ZmiOemWQrG-3EdIB@matsya>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: NT0PR01MB1182:EE_|NT0PR01MB0976:EE_
+x-ms-office365-filtering-correlation-id: 4da55e4d-2239-401f-1d49-08dc8ac84ee8
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230032|1800799016|366008|41320700005|38070700010;
+x-microsoft-antispam-message-info:
+ 8iPYnKZOuakbiVm3Ik2TSg8G7Yfm3uw55Kcsyj1GgGiTW+tAOq1YJvcYuSiBksxDu6VzznTy2Bim+JRNlkQEd7WE+h9kbJa0jDJAGBk/6qK3Gdxx+hzvwHsYnKQI+Bpcw55qsbvyK5UduLA964hrzdiq9KXzYYL5MIaXgYfFA/diVlKBJMl6x3TFPqEGcCKaTmdN0H1x+bAjRaGKzdqq0XIFP4Ij07ni2iU6Lc3ViKRgQqWeDCkYCpR0q5gWyLVF4AYWsZJmxx1yLJICS7TB/4YmqrHO8RUFlm1fUNG03Gc9ifxm1s6dtUXteAzqx4SFDDJNQAltgtfEhVn5l+kDMbj2YDF9mLw8nQMI6+Ntr7V7ty7ol4vG8AELtSQiz+BsZxTsvDSRhaXtQX2W0xdnG98HmLRhhF9N3/QLcMwcyiHu+fy0uJSd0uNG2RIu1ngPEFJRUYmuy9GTp/Gau8LSOTdS8kEJxhgS0FI1F5JDP+Aoe41qOv/crqxSEjhy7Pgf/VuSm2ervrAi9EG9vjBoFNSXnDgRAlFrqbmJfeo3W/Fc8NIZ+nTo7NGWoOsysoXpvF/sGE7a74kC+ZuPVDiPYCXWYnelpOFD+wwDJ4l3K0r4Bfk7szgBRXwGy/9dxOUc
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230032)(1800799016)(366008)(41320700005)(38070700010);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?N7MMaoVQ+kFd/cXVfNKZnOicOPoV0UCbS2IqDuM1up/xUJ3IzV/xsiEaQD+H?=
+ =?us-ascii?Q?nOANXakc1Sjj39THpAaotiwtU6gfdSXKrCH+jsOzQ98CKvsN42vJ+5DwHi79?=
+ =?us-ascii?Q?ysNxgnbKpKOW756xhmMQPeCODIoubGJSRdS44anZCXPtvNLjlcWYltkIhKZW?=
+ =?us-ascii?Q?MYnuv0iabBhFw5tPLmVVP2O3zEby6XKTU7u5WeYuMYCOUr+DRPhN+jpZH1qj?=
+ =?us-ascii?Q?bjMiQ0vuGwT3gTe7IuL19EUsW8ytBmcNYlu4vmvaXLdIgBfQ4YbmTX7J0483?=
+ =?us-ascii?Q?aWd9nYcwJqgSmSPDCSSFz2nh6FUBgQFTS/yLJoUcQxZi+BK79/vLXwPE5Aku?=
+ =?us-ascii?Q?rusA6evO4MH07Q5ogEHG6x+3S3tZcwf6nm7nCrRJqwToqtrisaNmYS0lLY9B?=
+ =?us-ascii?Q?ti5O+TyzUCrl32l9qA86IJZcwzgDp1+M9cPKoZZKK5fVVL3kqifmw0lyHN1f?=
+ =?us-ascii?Q?uhxQjXyoJElh1su/NsJ31tlMTRea9ZBky0ZdIsOVGee6xwvOn2J3vCxDl4Zm?=
+ =?us-ascii?Q?ihHPxUrOmDtxYq2KjHeUIaLjrRZC5snnhnFW/U7CVWQPlgEJ/rc4onlY+SU/?=
+ =?us-ascii?Q?zPB58G5fcLFbkzDCIOOynlOv/H3h6vhI3zYOoNNOSKFIeDyMIW82OC/xD291?=
+ =?us-ascii?Q?t12CMrS2WtiX9lqhn8j+xZWykWia52TR7y/aqok1bXvBdvDRDtGGsbYCXsku?=
+ =?us-ascii?Q?S09I3eZSBSAQMaj7OqBOTC0SwJV4LuAI60MH5JlOgmTJ+JaGUSKLxK07q3n1?=
+ =?us-ascii?Q?uP4D2wr/+uM0GuFFsQR1SWz8VNkmZOuzNX/esodT3R43qV6CnB8J9SzOq6/D?=
+ =?us-ascii?Q?z4sq+9BZrQtBhzDFWReqfBHQifjkNuGFABQFAasm71xEaImwCnyvSXXBijBZ?=
+ =?us-ascii?Q?tGN2/Hu+CVgi1jIoPrtDT59Y9cJvySLmqLk6g/nXQ9Xuhv6T6VkCE+xIGxt9?=
+ =?us-ascii?Q?gP28UUeW7RAkxYpCzzlE90ICwSL/VpUdP4cQwYBhsR1f5m52rCu3AEv0PSao?=
+ =?us-ascii?Q?poTgCueJnXO6NFQ1nHlkmO6EM+RaF9FdlZdTBcX7EmxJZj5zQ5y5s/UyKAdC?=
+ =?us-ascii?Q?D5vHPYZNwFUWb4hDpkvFD0q9oJB11xUCwTmUDh95EY4OoIXvr+wfsHfO/uUX?=
+ =?us-ascii?Q?F/3zhDf4eB35R7wKJPmUk+PO9s0gP5EEvf+mKzOLMeHlVk8KnlPSXwU4Po5k?=
+ =?us-ascii?Q?kSh4LLtj2R/eWpuGg+Nx71bMcXBvpYJnih1uH6tKUnjOQNEL5u1FLTeul+TS?=
+ =?us-ascii?Q?SkahqnNKz9KcQTR5J4k14uJ/+wKWNJwZ3ea4qBkXelGeSCSOc7OSorp1vKym?=
+ =?us-ascii?Q?6ucwOGNI8FJLO2d99Ixys1r0AQ8nDnyK7vnVHzj14xAlVq2sMdn2/oDerUhd?=
+ =?us-ascii?Q?ykLpRu1J/y0q0pse/flj+6LAANlmvN3StIy0w6kE2I+szuiPBVorHN8Jv0gV?=
+ =?us-ascii?Q?aPDJ9D0Tj1ZXO/0afC03slH8IXFkfbmubzpImAgz0k6D4zEcmh/Ilfv/mXWv?=
+ =?us-ascii?Q?JZuia86XfeqddoGwTKUav6YqKsOp4Mt1fjE6B+l/se75Px8G3ecbHEGmB3i1?=
+ =?us-ascii?Q?ldCpegvp78NoSCwsuUKLfn3SvoCurdGj7U0YPU7oPbJizBSrCsizmUum38cP?=
+ =?us-ascii?Q?LQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611133229.527822-1-nogikh@google.com> <20240611115133.fa80466e924ad34ed4ad73cb@linux-foundation.org>
-In-Reply-To: <20240611115133.fa80466e924ad34ed4ad73cb@linux-foundation.org>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Wed, 12 Jun 2024 12:11:30 +0200
-Message-ID: <CANp29Y6TqZ2T5xKzwW8RJ4o7+4w+mWs2awNebXo1dyaw154Opg@mail.gmail.com>
-Subject: Re: [PATCH] kcov: don't lose track of remote references during softirqs
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: dvyukov@google.com, andreyknvl@gmail.com, arnd@arndb.de, elver@google.com, 
-	glider@google.com, syzkaller@googlegroups.com, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4da55e4d-2239-401f-1d49-08dc8ac84ee8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2024 10:13:30.1315
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2OgE7UjI5WoQnBE/y2wNfXSDyRm9a42EWu71RqBm9UjapoDiYs2l+vfisZYoJI1PABgytSquvVcLZtALGHjvs82VAc2LGYMI80zKicfRL8w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NT0PR01MB0976
 
-On Tue, Jun 11, 2024 at 8:51=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Tue, 11 Jun 2024 15:32:29 +0200 Aleksandr Nogikh <nogikh@google.com> w=
-rote:
->
-> > In kcov_remote_start()/kcov_remote_stop(), we swap the previous KCOV
-> > metadata of the current task into a per-CPU variable. However, the
-> > kcov_mode_enabled(mode) check is not sufficient in the case of remote
-> > KCOV coverage: current->kcov_mode always remains KCOV_MODE_DISABLED
-> > for remote KCOV objects.
-> >
-> > If the original task that has invoked the KCOV_REMOTE_ENABLE ioctl
-> > happens to get interrupted and kcov_remote_start() is called, it
-> > ultimately leads to kcov_remote_stop() NOT restoring the original
-> > KCOV reference. So when the task exits, all registered remote KCOV
-> > handles remain active forever.
-> >
-> > Fix it by introducing a special kcov_mode that is assigned to the
-> > task that owns a KCOV remote object. It makes kcov_mode_enabled()
-> > return true and yet does not trigger coverage collection in
-> > __sanitizer_cov_trace_pc() and write_comp_data().
->
-> What are the userspace visible effects of this bug?  I *think* it's
-> just an efficiency thing, but how significant?  In other words, should
-> we backport this fix?
->
+> On 30-05-24, 11:11, Jia Jie Ho wrote:
+>=20
+> > +
+> > +struct dw_axi_peripheral_config {
+> > +#define DWAXIDMAC_STARFIVE_SM_ALGO	BIT(0)
+>=20
+> what does this quirk mean?
+>=20
+> > +	u32 quirks;
+>=20
+> Can you explain why you need this to be exposed. I would prefer we use
+> existing interfaces and not define a new one...
+>=20
 
-The most uncomfortable effect (at least for syzkaller) is that the bug
-prevents the reuse of the same /sys/kernel/debug/kcov descriptor. If
-we obtain it in the parent process and then e.g. drop some
-capabilities and continuously fork to execute individual programs, at
-some point current->kcov of the forked process is lost,
-kcov_task_exit() takes no action, and all KCOV_REMOTE_ENABLE ioctls
-calls from subsequent forks fail.
+Hi Vinod,
+Thanks for reviewing this.
+This is a dedicated dma controller for the crypto engine.
+I am adding this quirk to:
+1. Select the src and dest AXI master for transfers between mem and dev.=20
+    Driver currently only uses AXI0 for both.
+2. Workaround a hardware limitation on the crypto engine to
+     transfer data > 256B by incrementing the peripheral FIFO offset.
 
-And, yes, the efficiency is also affected if we keep on losing remote
-kcov objects.
-a) kcov_remote_map keeps on growing forever.
-b) (If I'm not mistaken), we're also not freeing the memory referenced
-by kcov->area.
+What is the recommended way to handle such cases besides using=20
+peripheral_config in dma_slave_config?
 
-I think it would be nice to backport the fix to the stable trees.
-
---=20
-Aleksandr
+Best regards,
+Jia Jie
 
