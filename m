@@ -1,185 +1,134 @@
-Return-Path: <linux-kernel+bounces-211484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F96905271
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:29:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8683D905273
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 14:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55ED1C20A99
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:29:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D86E282421
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59792170846;
-	Wed, 12 Jun 2024 12:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4AC16FF50;
+	Wed, 12 Jun 2024 12:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Cnb93r0h"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2050.outbound.protection.outlook.com [40.107.223.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tim77IQF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC28817083B;
-	Wed, 12 Jun 2024 12:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718195373; cv=fail; b=X4nq/WY2h1uYJ3pbACdAEo5kPdDaXWWVS5giSpcEj96H8jBCVWYYu/hgZdZjHAdhKvONEoCXrG2kYoe1UNFml36Du74UbzeylSXVf4AkQ/MRu3yZhspL5wpw/gOHV0p3/+C8ipfvtm72omJigtj+4t4YzCh5pI7YXQ53WDZDmEs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718195373; c=relaxed/simple;
-	bh=IKCBTuFXCb4aLgO6D8WPL5gvh7z+R3CWhBVs1461xxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WrDKufG1CRd8IzZTwVIizZ3P/fBXobk5AzklB8puyIogQiAT/iR0KXrovxn6nCWvXhZ/u9l+UTXeiBAQq5gid8djy3sKsVbQYYuho9FQ4XgyUlU4jsQ4gfOIEyB/W6+GtKPOX8XlVnNrgAbrSnpK0D0bQcyO4IiinVm8CbIwJk4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Cnb93r0h; arc=fail smtp.client-ip=40.107.223.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fOM92iowVJsmYl3ZHVEIbZ/cjiTwlYTCTR7hAqYydG/Exu9EKWv+aYNObameAIlxH11NLXsBaUVJWCFva69+m9g5o5xI4NA9Z/c7WfVRH3spRRfG5PpKR1PnrHof+R0xjp6R4+iEWYgYmn9PqeE3lQYzDa/qKrLpC3Jz828bJ9BiS77/0/CVfHRk1FAa4V73lejpWtOo94+FrwNvx3MyTYHpEqfOyogH1VaccuV5/fTVTj14MD95TpRfExXdXFiFxVDxC1rcE0WtF4cV9Btd/T9/wSl/9/uHokLO36M1LwO8VRav8NB5o/WBx5xNt9bdUu1SdIUsqRpxG4G62yVy3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Xrw/i1OPbtzNYGbUoWslMUHqEGrdu/ieWhMtinu6zyU=;
- b=fAcy6Q2B6Gv+456SVI49SrZXY6GNBHdAPl5bGQuzzA1uR6hM9FAHni/v2U3LNSdBkBfxYq6PwYArmolVoDR9x+J2b18SmmvTZ2jBsAyiirBiUB540VjQOvVrIRUje2gi6MgyqPGJGFGvT5feYF7I1qVo5FiBmTJJIATIrRDXMLdatSkRvPXLjNtHAsDPIm+dLgAOCbOfW1MjX3ltgVG2zwJKdPMfWy8b3oRks0NlZW3wE2k24rhLHqju1Ko7nZfo/tU5qiLW6Z6exa7kPxtJt6wreL2IbtCIYFnBickio9/Yx8u4gdaQwzV+jaRUOvzAP4Po9dD4EpKW6nGB8E5JoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xrw/i1OPbtzNYGbUoWslMUHqEGrdu/ieWhMtinu6zyU=;
- b=Cnb93r0hvpAzAml2ovDtaJYbs42ljTk8cKWeda7n7PLUzkuufzCeXaafwdnsrXjlkswEF0TWjMJjk9S4NyAPmqOVrUeO9vjrUQtzxPVQOnHwzPD6wfaAw02KlJ8duN9rahj2rLYu6DX6xLhV38PUAqndqyyd31QIKdEonZsYVH7CpX+p3sOeVmUDZ+SunsSo0yvVNVQwc0rJRnVuFJQXeNzrbvfgV1UNlwGj4Kn3We/pgKjgdJ46ozs9Fmkzb3KMx+KNQ5nWxf9nHzkvd/JPMdh6QZ/Fs7Jx/K7WF8PM13r+nIOeomV+IG38AZFJzd4GoFDvy9Orwo0+Wqyw7zh2ug==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by SN7PR12MB7130.namprd12.prod.outlook.com (2603:10b6:806:2a2::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Wed, 12 Jun
- 2024 12:29:27 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7633.036; Wed, 12 Jun 2024
- 12:29:27 +0000
-Date: Wed, 12 Jun 2024 09:29:25 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v8 5/6] iommu/arm-smmu-v3: Add in-kernel support for
- NVIDIA Tegra241 (Grace) CMDQV
-Message-ID: <20240612122925.GA19897@nvidia.com>
-References: <cover.1716883239.git.nicolinc@nvidia.com>
- <e7dab374702aaac8dc81b95ddf89c94befe409dd.1716883239.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e7dab374702aaac8dc81b95ddf89c94befe409dd.1716883239.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: BL0PR02CA0057.namprd02.prod.outlook.com
- (2603:10b6:207:3d::34) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A6116F8F6;
+	Wed, 12 Jun 2024 12:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718195388; cv=none; b=UzXEjMWIU/bMAyfTtHb2BKK3csPtB9FQ14R4TftFBz41cq2egnF/kghehKbge+Ql1jD0APtNB11EG+iDTI8mkr3bwN1kh1oUAGjNbVzvWrO05wsJDjgcjgfyiToA0XRFVJiJoxLhQ3N8fNmRJrf3zmNDGvP5UFBDcWPqgBWcGdw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718195388; c=relaxed/simple;
+	bh=DVXSUJOaMF5A5vgI0u1mTlSeNnf28DMvlwMQBXdQQ4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lx1NBpGOxVqunghaZFyvKP9jtbLhRo3n5uyYC4GJrNDi+YE3lrDs7e92tWkut48hy8g9E5uIomomsWKQQUu8gwkAhO6prcf1qWVhx2LOk133D97Ddp8pBnsQIoJgil7EWeA6WsWLHWvCFc5dVISwYKXWKEatNNoSXEn21wPePR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tim77IQF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD2DC4AF50;
+	Wed, 12 Jun 2024 12:29:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718195387;
+	bh=DVXSUJOaMF5A5vgI0u1mTlSeNnf28DMvlwMQBXdQQ4A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Tim77IQF7Ywd3tAiYO9QS12w1d8sYyt1Nxh8aNBQJ8d8pxT6mrwTRo04sa6YR5ZnU
+	 Y9gkOKGnd0uFQY2pTYKLVETkrwe+A7Gm9gFaYHH1Y69Q3kbynsUJnw9tcQ9jz4B93R
+	 GG9/iQgXMwZCrR8QjV3D5T3gmMggEPoKT5wpe5/WNO+HPZ0HJ1hc2BTC8xLLrmjNvy
+	 fhWDA6y1g9Bz1qigUHZElCF1uP0bvgQ3So/RMbu+8jap6zxO7qMtl6N6SEQuENnHWs
+	 t6LwwzBzk5SnRrYsM1pmmnokjslbrfgofhzhyT+QKH4ZqtpioVIJ+m89ao8oVoSIWN
+	 4bebiQBkanSKA==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eadaac1d28so60854571fa.3;
+        Wed, 12 Jun 2024 05:29:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUwLoFF8LH9yYsb6cw9jgrU0im/7huQ8/5czkYU226CcH//Nesy3uttfQ/uW9j51UaoPkha4p73ae7MznEPvIhwW6K+jd+yq1R062+xlLspIwidF7wPSCSKvHYx7Qe9Y+rPrFaODrpp
+X-Gm-Message-State: AOJu0YzgjIJK/Z+D4j3XWT+V9nFy/UcyF7eg6xqr4JKJEdhkvJh+np7E
+	dvJm/TDxc0aLY6rSztVcy0eng6DPJGYeYfSS2cad5NQFcL6e9iyCbc3PTAd+9t/87mHeGshNHwv
+	7kN1O+Rtd0cNi7wp+1iASlyDrTQg=
+X-Google-Smtp-Source: AGHT+IFArMXnRwoF8dtHUt96Zs78sLN9Kol1ue+QkkbZ4HKFDi5TTYrgCCsxPCVIlsJejAhdJlhKLrQXQIAVc/9MBNY=
+X-Received: by 2002:a2e:3201:0:b0:2eb:e3a7:8b with SMTP id 38308e7fff4ca-2ebfc9f727bmr11339351fa.26.1718195386258;
+ Wed, 12 Jun 2024 05:29:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|SN7PR12MB7130:EE_
-X-MS-Office365-Filtering-Correlation-Id: e50d5fca-b95d-44a1-3441-08dc8adb4d0c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230032|1800799016|366008|376006;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oSVwulcCRonY5QYbPCHNQ25JD4myzfQLDmddkqSYJ9jv4SnXdOiObfDUXyTB?=
- =?us-ascii?Q?HsiQC9PpOo1LQOWRg1/iLNCP4Ps/ahkN9zjMBN0nuopeoYu93tGGZ9ymhG63?=
- =?us-ascii?Q?GJzToRlwAiFxYqSaoQxDbqx2WuUZtEJ1u52r6W1bQ/YXU4V/bIG8Fmzz3o1n?=
- =?us-ascii?Q?5kJt94/6NLXaeP4NCGjmcRrhL50UkwiUUe4yeo15qiKlJjPeYZBUTpBS6bOP?=
- =?us-ascii?Q?SBjndVDxWaaDpK/IQjnqw3iQMIh+CxbUP/v7mcprOoFKNdWMvNmvijh0OuNk?=
- =?us-ascii?Q?SWkjh5fzWNFQ+DAmFyhB0jre3kMBoQMG+pt6BpfZqRBeAbqOc2RNLY8SJ+IX?=
- =?us-ascii?Q?2P8im2rXA6reGldtlfq+ddYNoaJil/oXIj1oxXh4AzpozTPqfocc07lVOlvV?=
- =?us-ascii?Q?PDcDx4iYFbAtmU2DrOk37QBoXaOXwmLc97LzvN/GevJtuzYVtRiMoM6mpsHa?=
- =?us-ascii?Q?cLpfSi6B6kctNcI+LLozM+qPfHNCpZtNMHVQuykLjzC+89k4Krf/T/JLDfHc?=
- =?us-ascii?Q?H6K1LRx1tf6ewVQm9RQaiNaCUerPP9nI7CNt0eWJjJxFvEfpzjWYPZHy5fD2?=
- =?us-ascii?Q?BXrPWZbcHEqSXjFZ6yO3CHlXcQvDlCEukhxN+OaJqNpiUvpEZoe7B7hfeC08?=
- =?us-ascii?Q?h31EaSQDt6S0pLyqkbtBUbrfobwsxdvshUaIfIgy1W1YxfSxtYRHJhTDc4Xr?=
- =?us-ascii?Q?c681f61ar2y/0mAIv+1dATm5mCOZxuPaVhP+OMmA2iscjj+TzHPrp/qtMw++?=
- =?us-ascii?Q?ltPytEseI2hmuiq6JEYzJgDkv2944GhA4hLVZjTxfdJ7gi9m079D9h0xRll2?=
- =?us-ascii?Q?eZ4a4FYXWt9nnEbqNdk//YhGoVpe8GK01fm9AB8uzne3MJema2ssinnmtEtK?=
- =?us-ascii?Q?HqA/SakgWVhrrUv/Cb/XgYsLBtwHBtiP2GSR7xeezdefvlco8kKrXEBw0Aja?=
- =?us-ascii?Q?ThQnNp6yICEqI0yn2uXg5zxyKn2L/HjSg9wP23yOFT0yAMiNm24eLGx9uh6V?=
- =?us-ascii?Q?rfOpeAi12De2rJeN0yx0LJMoN1/KdGeTuJOeXPH9SECzhe38XHgFX3B7mPXc?=
- =?us-ascii?Q?aF8KlSEdzRabCUJXn/cFW7TbYooumei+HGwI/WXuFvA75saZnniqdX5GYc2M?=
- =?us-ascii?Q?etuaHiRoR/Zeg3gHK9DtE4a9YNQqedMisi3cRJVk2WhBSR1M4bxNLo5LnxsJ?=
- =?us-ascii?Q?KCerNgKRxUzhLeNrz3eJ8llJP8Q1hSKKBdhGyA4XXPCELh4ThkABz3b5Wx7z?=
- =?us-ascii?Q?lG7lkzZF56x1JKSX4rrx6aqLAxZwD6FEfC07DC8zUapRluOJIXy7XFEbb4hq?=
- =?us-ascii?Q?8xIdfPbcIu4CveosN33bM92y?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230032)(1800799016)(366008)(376006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QuLqTRIZKlz5lULHJdvBTqCngBdUj/k5PnwTL/aUkEnO1nnOhtKwhleMiJmk?=
- =?us-ascii?Q?fyiBKsdRgXrd2chiO065ju0Fu/FgalWinwI+jprPN6x/XJlDMsUOaWaGkAnS?=
- =?us-ascii?Q?fliy4W3C8lFgVokRmNxGVvD8KohNK/VeDdXuVCEM30Pc3AdV62+rccal5a2A?=
- =?us-ascii?Q?WQhx5fb/xcvN9rCtZTa+8/3raEwYSjDaXHNHCqQ0NPnQ0o9PeL50JvDoXVtG?=
- =?us-ascii?Q?+FZE9hRhGo9pSXZReaMjLjol6DqFysXcG2ZzkrN5us3tppWqyw2dPqhpMJtF?=
- =?us-ascii?Q?aIMhoE7jVwfl6YcHib4c+f8BfcGEk30GwBkA/8WAI18l+0JIMS1Ub5j+rMmF?=
- =?us-ascii?Q?A1OfjhTs9wuJe+TIg7C9GKIXnNlwyiVHhaSEu0b5Od7KlEILD8/tv9r8CRH9?=
- =?us-ascii?Q?PuL8yP9jM9MNQ2b5kziJ+whxoKmfGdgLcOCk3f1xMPJ4ytHYZMLRq4p2LQzs?=
- =?us-ascii?Q?yUlAMdQ/SU/UEmu1YWa8hs8qHcwb+2nmCAYvbfdwfYlW602QwPUXDlLhykU6?=
- =?us-ascii?Q?v3HPV74ilqzjF1N0a354aPVNSDFaVAAeQPk/DqMVB6zHKVfiWcAE3lCPMkGa?=
- =?us-ascii?Q?uL0se7Uw3XvGdGpnN+wunGzET7mWBcF6uvQobfWPDqEDVDPqfNM+zdQBYJnV?=
- =?us-ascii?Q?DMKVUh4ECiamvNtb5jPiyXnQvftqlrzHrAb85Vc9ZqNmtdxKFj+w+pL6Dwqs?=
- =?us-ascii?Q?LnMn2kX5NVmWAS+agbC1MH4ZRDeqzx5OnDD4RQmuaKpZ1VD3trvrfCbMMqzA?=
- =?us-ascii?Q?tEICdsZ5a4Ud4oj7E8adnAv1aRBzS5UigSfbHbJvXP0XlMTfcgLu5Tv5FGo1?=
- =?us-ascii?Q?e4mrrdeObuXlv+jxIvsk7W+IrgzIraLYrtbaKrXNy3LA6Z3OOB6BGQxsyDba?=
- =?us-ascii?Q?bSmhRslX10k3eQp8AGwZ6/k7/Osx52lQjkDjlhEHNT0F/j71g/+d/cOOCAqG?=
- =?us-ascii?Q?HZ3r4bWjHRA6zBKIPDwHvUHNsQACXl7Lp2zbgaPeKlkMyXgJzC5sNARK8DXc?=
- =?us-ascii?Q?1L15NPi5Ik/7o39zOv+R/Mhj9VimM5xf6oaOS+B0exbdR1gmNQFxyLoLjBVk?=
- =?us-ascii?Q?3n3DIzgM07ymJiLKHAmPM7lSNnpD6p2fLvJYLXmIfJCrb1StNj6doIYDWMLg?=
- =?us-ascii?Q?OJRkr21Dod7j4ys0dZy1MJZNoMV2DpBaPAVXiKHB9Q98QY7oQSpnSt5eJLb6?=
- =?us-ascii?Q?StQfVCZTcAS1z+Iqxzz5p9xgIa1jQYpNOGZsQu9cAxDqKjPZne+4ypV5vOF9?=
- =?us-ascii?Q?dzmtbX6mJrpSPWU9X9L+nBF2Zaw3qSMhCyX06lMuTZSYL0IvOSANjWo/KXwD?=
- =?us-ascii?Q?QgVZFK2cW/zQdoo+nsZO2x1bgaGjT/G8XI2Na/ORJQf/SRpA7nDzgwBF2paz?=
- =?us-ascii?Q?maRAWc+MveNsjMzpcv1JS8MMBYVBcLbQTFHSON8/EB+p0QN6MOx2Z5xS2WyP?=
- =?us-ascii?Q?Cp602kWhGwjViqzdU8ocMVNrU3elDGYwnnvg+yKHZxAb1Z7WIoZ8BVwB6LPm?=
- =?us-ascii?Q?WAGh/1vTlSTHPk5MGwGg7cmcH1yrvEV/5McVB+a8yYdfW63M0Ru69LlxAHSi?=
- =?us-ascii?Q?gSYCTR/onMPkYIlOWag=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e50d5fca-b95d-44a1-3441-08dc8adb4d0c
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 12:29:27.6055
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k5otz7KFcQdejhsR5m2x+NgGRaJrG5J0MV7w1O+iA84xdbsFhw2fJbOBzzdpwfTn
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7130
+References: <20240610140932.2489527-2-ardb+git@google.com> <CALu+AoREA7f=UBrmbvH92nDp66LyB99QEu84e_8HSurnjLqdUw@mail.gmail.com>
+In-Reply-To: <CALu+AoREA7f=UBrmbvH92nDp66LyB99QEu84e_8HSurnjLqdUw@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 12 Jun 2024 14:29:35 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFxEwoSjHHt+1CFqMHwQyC6UVbt=5AqFvE1S5B46AbnOA@mail.gmail.com>
+Message-ID: <CAMj1kXFxEwoSjHHt+1CFqMHwQyC6UVbt=5AqFvE1S5B46AbnOA@mail.gmail.com>
+Subject: Re: [PATCH] x86/efi: Free EFI memory map only when installing a new one.
+To: Dave Young <dyoung@redhat.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ashish Kalra <Ashish.Kalra@amd.com>, Mike Rapoport <rppt@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 28, 2024 at 01:09:53AM -0700, Nicolin Chen wrote:
+On Wed, 12 Jun 2024 at 12:36, Dave Young <dyoung@redhat.com> wrote:
+>
+> On Mon, 10 Jun 2024 at 22:09, Ard Biesheuvel <ardb+git@google.com> wrote:
+> >
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > The logic in __efi_memmap_init() is shared between two different
+> > execution flows:
+> > - mapping the EFI memory map early or late into the kernel VA space, so
+> >   that its entries can be accessed;
+> > - cloning the EFI memory map in order to insert new entries that are
+> >   created as a result of creating a memory reservation
+> >   (efi_arch_mem_reserve())
+> >
+> > In the former case, the underlying memory containing the kernel's view
+> > of the EFI memory map (which may be heavily modified by the kernel
+> > itself on x86) is not modified at all, and the only thing that changes
+> > is the virtual mapping of this memory, which is different between early
+> > and late boot.
+> >
+> > In the latter case, an entirely new allocation is created that carries a
+> > new, updated version of the kernel's view of the EFI memory map. When
+> > installing this new version, the old version will no longer be
+> > referenced, and if the memory was allocated by the kernel, it will leak
+> > unless it gets freed.
+> >
+> > The logic that implements this freeing currently lives on the code path
+> > that is shared between these two use cases, but it should only apply to
+> > the latter. So move it to the correct spot.
+> >
+> > Cc: Ashish Kalra <Ashish.Kalra@amd.com>
+> > Cc: Dave Young <dyoung@redhat.com>
+> > Cc: Mike Rapoport <rppt@kernel.org>
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Link: https://lore.kernel.org/all/36ad5079-4326-45ed-85f6-928ff76483d3@amd.com
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >  arch/x86/platform/efi/memmap.c | 5 +++++
+> >  drivers/firmware/efi/memmap.c  | 5 -----
+> >  2 files changed, 5 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/arch/x86/platform/efi/memmap.c b/arch/x86/platform/efi/memmap.c
+> > index 4ef20b49eb5e..4990244e5168 100644
+> > --- a/arch/x86/platform/efi/memmap.c
+> > +++ b/arch/x86/platform/efi/memmap.c
+> > @@ -97,6 +97,11 @@ int __init efi_memmap_install(struct efi_memory_map_data *data)
+> >         if (efi_enabled(EFI_PARAVIRT))
+> >                 return 0;
+> >
+> > +       if (efi.memmap.flags & (EFI_MEMMAP_MEMBLOCK | EFI_MEMMAP_SLAB))
+> > +               __efi_memmap_free(efi.memmap.phys_map,
+> > +                                 efi.memmap.desc_size * efi.memmap.nr_map,
+> > +                                 efi.memmap.flags);
+> > +
+> >         return __efi_memmap_init(data);
+>
+> Nice fix!  but would it be better to save the old addr/size/flag and
+> free them only when __efi_memmap_init succeed?
+>
 
-> +/* MMIO helpers */
-> +#define REG_CMDQV(_cmdqv, _regname) \
-> +	((_cmdqv)->base + TEGRA241_CMDQV_##_regname)
-> +#define REG_VINTF(_vintf, _regname) \
-> +	((_vintf)->base + TEGRA241_VINTF_##_regname)
-> +#define REG_VCMDQ_PAGE0(_vcmdq, _regname) \
-> +	((_vcmdq)->page0 + TEGRA241_VCMDQ_##_regname)
-> +#define REG_VCMDQ_PAGE1(_vcmdq, _regname) \
-> +	((_vcmdq)->page1 + TEGRA241_VCMDQ_##_regname)
-
-This looks OK now
-
-I didn't see any thing else really important in this patch
-
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-
-> +static inline int cmdqv_write_config(struct tegra241_cmdqv *cmdqv, u32 regval)
-> +{
-> +	return tegra241_cmdqv_write_config(cmdqv,
-> +					   cmdqv->base + TEGRA241_CMDQV_CONFIG,
-> +					   cmdqv->base + TEGRA241_CMDQV_STATUS,
-> +					   regval, "CMDQV: ", NULL);
-
-However it would be good to go and fix these case to use the REG_xx
-macros, I noticed several.
-
-Jason
+Yeah. I guess the same applies to the original code, but now is as
+good a time as ever to fix that as well.
 
