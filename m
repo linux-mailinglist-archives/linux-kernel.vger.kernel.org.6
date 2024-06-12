@@ -1,133 +1,178 @@
-Return-Path: <linux-kernel+bounces-211344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5B61905056
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:26:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0012190505C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 12:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1FB1F2340A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:26:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A432628496F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 10:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C5A16EBF3;
-	Wed, 12 Jun 2024 10:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJwAf12h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C046016E881;
-	Wed, 12 Jun 2024 10:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C990B16EBF5;
+	Wed, 12 Jun 2024 10:28:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C2E33FE;
+	Wed, 12 Jun 2024 10:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718187968; cv=none; b=aWI6yjfXHRttAGH/khQhJgn+lDt8Hlrdf9RteFIy9/XWxM+RmJNJzuneVuLnjuLgfFlAVya0H/PCyhMe2XZP/qiMNH63n2Whmz09nry0KovcvAOwe7N15I4+e/sYsYhXMrqoYX4alvlm3a/3ZYoASDBcX9CqV0Zfg6sobEC+T1w=
+	t=1718188093; cv=none; b=kz86xPdOvop/WoJ4RUv/w+feBPS7AoQNw8OoVoKYMeoLSOMbY6nv6y0QgAmJMwnAtfJ9X8zk5INI2OZKqrR6DN55SNk3OGM52aR29tTNZMh9tDlbH8kWQU+4GM2wKNe+GyGxLrt5dewz2IOCjLGCVE07Ozc3sI3qifdHYwqsNMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718187968; c=relaxed/simple;
-	bh=Hy009I4Y0Qv6ns/yhERDJ2MDP1boihPeApgieoNPYl8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CYVNsWUVrzy6DnJALpiJ3JQEM8dX0hPvJ/QUdWqzDSKzqeVgpbIdzF5TvFmKzo1XsZNA9Ew0ARIU52gO1fE6HkJbLeiFMI71jKSAT4dlRiVIjYEXhdVanMrIAUI+PJ2MeiBYEoyHj7mD5Cnbkp1i0VCClBafRsc6ojN1HSz9mrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJwAf12h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DEDAC4AF4D;
-	Wed, 12 Jun 2024 10:26:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718187968;
-	bh=Hy009I4Y0Qv6ns/yhERDJ2MDP1boihPeApgieoNPYl8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jJwAf12hDyb8KkzUlwPaUpF7c/GBZv98SWRj4Lf7Q2TMs+Q7tb62d+3GheBOkS15W
-	 xEmMKdXRGR07q4E6e6O74S6NCtdLoEfSXxxwCJUrRvlBux5vAYNphgNW3GI/q1Kr9Q
-	 Ro0jgAAEzgD8sv7AFfAA1IoyTJMRM8i9wgI8jST5/pkVHYodWEtyPJ2rOohUXwzqJZ
-	 jZtuKEmQNSSV2kG4rl5awH4k4PeoAiPU9AIsyqkxD4epaYkNKR4toQkFf2iyHmgWZQ
-	 qOb4nkxbQ231vnHuorFvhl6zvOr7j/bGl6Rm+Hjfb+MtS2CUEdU0ictQb8sLW2hZ7u
-	 Ecq1omUKx1+CA==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5bae827df63so242046eaf.3;
-        Wed, 12 Jun 2024 03:26:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUR0yjgWHnjgsr51a7bx+JOSW8J2YmHCkFAjZNS8YVgetoin7BeOtl8Wzh3y+0ciY1SYhHv6+faHh2owHnCfKwYOn/uZLcyosVBXTLcegkAJMJUeBoffosQX0iTKS4SNXekCCvnsZJXP6dcfXB04jRxZC/0m3kpd+aiIOFd5+e83Pxg13KP
-X-Gm-Message-State: AOJu0YzVylCKlYEkBc49Rzx84kRODoAm6Dm/w25hVxY9AQWczdNfaScx
-	OSaM5jBQvafG2DlGLKUHzRPmbfESkrtmzEH6LvSRr+oyHGqijSAZDR1ohA1qX0RKOBSVl+IEDlF
-	ZAoNw4pxht54o9/YiHAvk42lcYIg=
-X-Google-Smtp-Source: AGHT+IEhytvAjKaqXjVi4XDP6ekYnjP36qmWXpwgUUaoF04z3nVKwdXo5pIyTnVxdO7jVFV/WIeaQcFKeLMLVefzXso=
-X-Received: by 2002:a4a:3101:0:b0:5ba:ca8a:6598 with SMTP id
- 006d021491bc7-5bb3b7b972bmr1488238eaf.0.1718187967599; Wed, 12 Jun 2024
- 03:26:07 -0700 (PDT)
+	s=arc-20240116; t=1718188093; c=relaxed/simple;
+	bh=rSPBzzdIJLUEGcdR8A4hR1o8UmxzKN/0Aj1VBQv05ao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ys/yUB1xLL9DTfWuhbPjKW4xTGOKLScOP+/HRVGrgJG4gONZpQfXkWOFbHgd+1j8jFOFPi5vhlY2OTG930BUCVy7WIqxZLHXIDhLj2Pipkp4KuVogf6Q7wcrU/MZE9pFTxZ+nQcwGbbbVAR4CxEkgscqwkcI2mka5Z8jb45tJdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8498A1595;
+	Wed, 12 Jun 2024 03:28:28 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3A4F3F73B;
+	Wed, 12 Jun 2024 03:28:02 -0700 (PDT)
+Message-ID: <2c5c43b0-c3ad-4536-b839-cfd1f5b8911b@arm.com>
+Date: Wed, 12 Jun 2024 11:27:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <988e48090982c89ce0c906954832fdfb09a1ce34.camel@sapience.com>
- <20240528084413.2624435-1-sakari.ailus@linux.intel.com> <a05df025-a0be-49cd-84a9-7d7fb2eeb33e@redhat.com>
- <e9062095-b312-44df-a9e3-0b09f3ec9eff@redhat.com> <4b387b4d-f778-4891-9f07-df5fc0a093cd@redhat.com>
-In-Reply-To: <4b387b4d-f778-4891-9f07-df5fc0a093cd@redhat.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Jun 2024 12:25:55 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0itb45-hWS-JV5Nx8CQ7=CiS-dhJG8xJbrPNkY2=jN4jg@mail.gmail.com>
-Message-ID: <CAJZ5v0itb45-hWS-JV5Nx8CQ7=CiS-dhJG8xJbrPNkY2=jN4jg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port nodes
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Genes Lists <lists@sapience.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com, 
-	wentong.wu@intel.com, linux-media@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+To: NeilBrown <neilb@suse.de>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>, ltp@lists.linux.it,
+ linux-nfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 12, 2024 at 12:08=E2=80=AFPM Hans de Goede <hdegoede@redhat.com=
-> wrote:
->
-> Hi,
->
-> On 6/6/24 8:12 PM, Hans de Goede wrote:
-> > Hi,
-> >
-> > +To: Rafael since this was Cc-ed to linux-acpi but never send
-> > to Rafael directly.
-> >
-> > Rafael this fixes a crash in 6.10-rc1 for some users and is necessary
-> > to make the cameras work on the Dell XPS 13 plus 9320 .
-> >
-> > On 5/28/24 7:09 PM, Hans de Goede wrote:
-> >> Hi Sakari,
-> >>
-> >> On 5/28/24 10:44 AM, Sakari Ailus wrote:
-> >>> Ignore camera related graph port nodes on Dell XPS 9320. They data in=
- BIOS
-> >>> is buggy, just like it is for Dell XPS 9315. The corresponding softwa=
-re
-> >>> nodes are created by the ipu-bridge.
-> >>>
-> >>> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> >>> ---
-> >>> Hi,
-> >>>
-> >>> Could you test this and see whether it fixes the warning?
-> >>>
-> >>> The camera might work with this change, too.
-> >>
-> >> Thank you I just received a Dell XPS 13 plus 9320 myself to use
-> >> for VSC testing and I can confirm that with this patch 6.10.0-rc1
-> >> works, including giving a picture with the libcamera software ISP +
-> >> 3 small libcamera patches.
-> >
-> > I forgot to add:
-> >
-> > Tested-by: Hans de Goede <hdegoede@redhat.com>
-> > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
->
-> I just hit the same problem on another Dell laptop. It seems that
-> all Dell laptops with IPU6 camera from the Tiger Lake, Alder Lake
-> and Raptor Lake generations suffer from this problem.
->
-> So instead of playing whack a mole with DMI matches we should
-> simply disable ACPI MIPI DISCO support on all Dell laptops
-> with those CPUs. I'm preparing a fix for this to replace
-> the DMI matching now.
->
-> Rafael, please drop this patch, my more generic fix will replace it
-> and backporting will be easier without having the intermediate fix
-> in the middle.
 
-Dropping, thanks!
+
+On 12/06/2024 08:09, NeilBrown wrote:
+> 
+> When a file is opened and created with open(..., O_CREAT) we get
+> both the CREATE and OPEN fsnotify events and would expect them in that
+> order.   For most filesystems we get them in that order because
+> open_last_lookups() calls fsnofify_create() and then do_open() (from
+> path_openat()) calls vfs_open()->do_dentry_open() which calls
+> fsnotify_open().
+> 
+> However when ->atomic_open is used, the
+>    do_dentry_open() -> fsnotify_open()
+> call happens from finish_open() which is called from the ->atomic_open
+> handler in lookup_open() which is called *before* open_last_lookups()
+> calls fsnotify_create.  So we get the "open" notification before
+> "create" - which is backwards.  ltp testcase inotify02 tests this and
+> reports the inconsistency.
+> 
+> This patch lifts the fsnotify_open() call out of do_dentry_open() and
+> places it higher up the call stack.  There are three callers of
+> do_dentry_open().
+> 
+> For vfs_open() and kernel_file_open() the fsnotify_open() is placed
+> directly in that caller so there should be no behavioural change.
+> 
+> For finish_open() there are two cases:
+>  - finish_open is used in ->atomic_open handlers.  For these we add a
+>    call to fsnotify_open() at the top of do_open() if FMODE_OPENED is
+>    set - which means do_dentry_open() has been called.
+>  - finish_open is used in ->tmpfile() handlers.  For these a similar
+>    call to fsnotify_open() is added to vfs_tmpfile()
+> 
+> With this patch NFSv3 is restored to its previous behaviour (before
+> ->atomic_open support was added) of generating CREATE notifications
+> before OPEN, and NFSv4 now has that same correct ordering that is has
+> not had before.  I haven't tested other filesystems.
+> 
+> Fixes: 7c6c5249f061 ("NFS: add atomic_open for NFSv3 to handle O_TRUNC correctly.")
+> Reported-by: James Clark <james.clark@arm.com>
+> Closes: https://lore.kernel.org/all/01c3bf2e-eb1f-4b7f-a54f-d2a05dd3d8c8@arm.com
+> Signed-off-by: NeilBrown <neilb@suse.de>
+
+That's passing for me now on NFSv3:
+
+Tested-by: James Clark <james.clark@arm.com>
+
+> ---
+>  fs/namei.c |  5 +++++
+>  fs/open.c  | 19 ++++++++++++-------
+>  2 files changed, 17 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 37fb0a8aa09a..057afacc4b60 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
+>  	int acc_mode;
+>  	int error;
+>  
+> +	if (file->f_mode & FMODE_OPENED)
+> +		fsnotify_open(file);
+> +
+>  	if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
+>  		error = complete_walk(nd);
+>  		if (error)
+> @@ -3700,6 +3703,8 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
+>  	mode = vfs_prepare_mode(idmap, dir, mode, mode, mode);
+>  	error = dir->i_op->tmpfile(idmap, dir, file, mode);
+>  	dput(child);
+> +	if (file->f_mode & FMODE_OPENED)
+> +		fsnotify_open(file);
+>  	if (error)
+>  		return error;
+>  	/* Don't check for other permissions, the inode was just created */
+> diff --git a/fs/open.c b/fs/open.c
+> index 89cafb572061..970f299c0e77 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1004,11 +1004,6 @@ static int do_dentry_open(struct file *f,
+>  		}
+>  	}
+>  
+> -	/*
+> -	 * Once we return a file with FMODE_OPENED, __fput() will call
+> -	 * fsnotify_close(), so we need fsnotify_open() here for symmetry.
+> -	 */
+> -	fsnotify_open(f);
+>  	return 0;
+>  
+>  cleanup_all:
+> @@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
+>   */
+>  int vfs_open(const struct path *path, struct file *file)
+>  {
+> +	int ret;
+> +
+>  	file->f_path = *path;
+> -	return do_dentry_open(file, NULL);
+> +	ret = do_dentry_open(file, NULL);
+> +	if (!ret)
+> +		/*
+> +		 * Once we return a file with FMODE_OPENED, __fput() will call
+> +		 * fsnotify_close(), so we need fsnotify_open() here for symmetry.
+> +		 */
+> +		fsnotify_open(file);
+> +	return ret;
+>  }
+>  
+>  struct file *dentry_open(const struct path *path, int flags,
+> @@ -1178,7 +1182,8 @@ struct file *kernel_file_open(const struct path *path, int flags,
+>  	if (error) {
+>  		fput(f);
+>  		f = ERR_PTR(error);
+> -	}
+> +	} else
+> +		fsnotify_open(f);
+>  	return f;
+>  }
+>  EXPORT_SYMBOL_GPL(kernel_file_open);
 
