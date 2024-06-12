@@ -1,156 +1,135 @@
-Return-Path: <linux-kernel+bounces-212221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05FC1905CD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:27:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E156A905CB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADEAA1F25213
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8678D1F24F68
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 20:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B0F84A51;
-	Wed, 12 Jun 2024 20:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745C484D0E;
+	Wed, 12 Jun 2024 20:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HwgdMkpr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r+CigeT+";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HwgdMkpr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r+CigeT+"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="igmSRE9K"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B75F84A56
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 20:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC9484A56;
+	Wed, 12 Jun 2024 20:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718224026; cv=none; b=AC2wYnT5/1g4EZE0EHf7MgaYTCJpUuXapcMCrWTE4XHpn/vPWhZAm12wDfzx+m9bbXOFXHqdMI4M7CnYXs/vlZmMwWDjFqNixQT78EwFQju9FfhF8gRen67hLajNptvcss7WhbcdGkpkN70b6ywpA9MDroe+xirh9vRlwB+y8K0=
+	t=1718223760; cv=none; b=B7YbD/n0hli7TB/0P78b7IFKGtrElT5bZoF/ts+Fncve4lES73zWKnQxBcqSxmBzozNDne0ZRFHUABXmFdhPpPXDAGJ+6kIAf+Dz+IutxBWLmeV4HMw3FknD/LrhYJ6AxtrvTaOO7lOFb28IZ5SNE4bPBYdhccVv8FKN/6nXNpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718224026; c=relaxed/simple;
-	bh=D9xEEAQmTsgEo9UDUmSclz/a0tD4gHdbLxDsMPCyR4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jda25kE8F7Vqjp43mEdRD/CuoEiFurWZ4nAJ2mfjcuZtG7d//k/tL1azQYY+/jGzJansgjtcMqh+3sIkKaC4c2FbRpElq+hP+Pw2qbgvPw6gGkT4rUZgrmDNtxkklCoxv6E6gUU86D4857fEb8jPks81I+acoGzCLXzm/EKxexY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HwgdMkpr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r+CigeT+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HwgdMkpr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r+CigeT+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9FB255C700;
-	Wed, 12 Jun 2024 20:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718224022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1VFuCUnuEepepF/nbFXGdMItjf3Q4jDShXXipYKEUy8=;
-	b=HwgdMkprsrWlowzdN0AurD8/qlL6BHBjM6iGkmzEsFQj49bK4dWsgjwEQhzNU8IjlliE2P
-	q8Rj948CkYMq6aAJEv9T7SQdsJ7kZMcySRHaWDAyoY/4FG0eNN5Yy9CjqLmw8RV01AeIgi
-	jCGk7koUgSzmqlnbp255TDiGsLoh2TY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718224022;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1VFuCUnuEepepF/nbFXGdMItjf3Q4jDShXXipYKEUy8=;
-	b=r+CigeT+ebgc3nxPN7HvLvku6DTB0GTcJ722AIQzu2pPI/HhvI7fPocDaWO2+mvfHPDoDO
-	RJ7SUIc0ePmkmVCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HwgdMkpr;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=r+CigeT+
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718224022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1VFuCUnuEepepF/nbFXGdMItjf3Q4jDShXXipYKEUy8=;
-	b=HwgdMkprsrWlowzdN0AurD8/qlL6BHBjM6iGkmzEsFQj49bK4dWsgjwEQhzNU8IjlliE2P
-	q8Rj948CkYMq6aAJEv9T7SQdsJ7kZMcySRHaWDAyoY/4FG0eNN5Yy9CjqLmw8RV01AeIgi
-	jCGk7koUgSzmqlnbp255TDiGsLoh2TY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718224022;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1VFuCUnuEepepF/nbFXGdMItjf3Q4jDShXXipYKEUy8=;
-	b=r+CigeT+ebgc3nxPN7HvLvku6DTB0GTcJ722AIQzu2pPI/HhvI7fPocDaWO2+mvfHPDoDO
-	RJ7SUIc0ePmkmVCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 47F9C1372E;
-	Wed, 12 Jun 2024 20:27:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IbqSDpYEambxKgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 12 Jun 2024 20:27:02 +0000
-Date: Wed, 12 Jun 2024 22:27:00 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Muchun Song <muchun.song@linux.dev>,
-	Vishal Moola <vishal.moola@gmail.com>
-Subject: Re: [PATCH] mm/hugetlb: Move vmf_anon_prepare upfront in hugetlb_wp
-Message-ID: <ZmoElLHB4BAOXD7c@localhost.localdomain>
-References: <20240521073446.23185-1-osalvador@suse.de>
+	s=arc-20240116; t=1718223760; c=relaxed/simple;
+	bh=8WTD6sYve58aB6+RW7KFovQtTgqjvA9DP8iUKon4+mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n6Pb7TU0m1AECL8gfRkcz2bnFWf+YCKUs/V9ZvAP05DYdNSUNl7H/OhPk8m3xhVQctO3UIH2hGphLeklxlSM6fo0f4IRCfVUkLOCn2TRs/WW8efuCc4Kq/4KEb9PNPLmtE3bhVQzhctGZEI17xfLGFtTV/JpVXQFyhyvjxP+MbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=igmSRE9K; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718223759; x=1749759759;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=8WTD6sYve58aB6+RW7KFovQtTgqjvA9DP8iUKon4+mA=;
+  b=igmSRE9KuZZI71SEX5gbREGV1TbLt8b8RtjA8YHhISKjaHYK3qQ1ZCpa
+   EuU0YsVbYfZmzmHimSPsS3iRyL40Srf/fK+70FmHZdh+T5rliZYVufBdb
+   3EkHnL8f/OTvoaaG8VXdJW4PfD3mU+3qp9eyeP6FfwKvNQPJ8ZJ4QZFwv
+   RMcZfGxwCmGMZfNnAs12NEOHI6RnkzHI200Z5AEHLhdrvmp6O6Ph4Au1E
+   GTU6n8WwzBvxDSZJsReAbbhFiuJ8FFDdd6sbmS4WieZcNPo0r4zyhwuhs
+   82KzRbdgD7M3MzNT42psrIZHN3On1kMHXYR6nsyR/iIlXVLK2uumqNw2V
+   w==;
+X-CSE-ConnectionGUID: zDlTbO8GRSyfkSDqhJBpvw==
+X-CSE-MsgGUID: 8gIT4jzSTWSsXES11It+5g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="14974327"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="14974327"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 13:22:39 -0700
+X-CSE-ConnectionGUID: iGF4IHCHRwOQDfhlcK79FA==
+X-CSE-MsgGUID: 0lpd7zF+RReLIylyivdOTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="45028858"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 13:22:39 -0700
+Date: Wed, 12 Jun 2024 13:27:41 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: X86 Kernel <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>, Zeng Guang
+ <guang.zeng@intel.com>, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v2 5/6] perf/x86: Enable NMI source reporting for
+ perfmon
+Message-ID: <20240612132741.10f58458@jacob-builder>
+In-Reply-To: <8afef909-974e-40fe-a39c-3c1e4e6d6938@zytor.com>
+References: <20240611165457.156364-1-jacob.jun.pan@linux.intel.com>
+	<20240611165457.156364-6-jacob.jun.pan@linux.intel.com>
+	<8afef909-974e-40fe-a39c-3c1e4e6d6938@zytor.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521073446.23185-1-osalvador@suse.de>
-X-Rspamd-Queue-Id: 9FB255C700
-X-Spam-Score: -5.01
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,linux.dev,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 09:34:46AM +0200, Oscar Salvador wrote:
-> hugetlb_wp calls vmf_anon_prepare() after having allocated a page, which
-> means that we might need to call restore_reserve_on_error() upon error.
-> vmf_anon_prepare() releases the vma lock before returning, but
-> restore_reserve_on_error() expects the vma lock to be held by the caller.
-> 
-> Fix it by calling vmf_anon_prepare() before allocating the page.
-> 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> Fixes: 9acad7ba3e25 ("hugetlb: use vmf_anon_prepare() instead of anon_vma_prepare()")
+Hi H.,
 
-Let me just revamp this and run away
- 
+On Tue, 11 Jun 2024 12:10:52 -0700, "H. Peter Anvin" <hpa@zytor.com> wrote:
 
--- 
-Oscar Salvador
-SUSE Labs
+> On 6/11/24 09:54, Jacob Pan wrote:
+> > 
+> > diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> > index 1ef2201e48ac..db8c30881f5c 100644
+> > --- a/arch/x86/events/core.c
+> > +++ b/arch/x86/events/core.c
+> > @@ -46,6 +46,7 @@
+> >   
+> >   struct x86_pmu x86_pmu __read_mostly;
+> >   static struct pmu pmu;
+> > +u32 apic_perfmon_ctr = APIC_DM_NMI;
+> >   
+> >   DEFINE_PER_CPU(struct cpu_hw_events, cpu_hw_events) = {
+> >   	.enabled = 1,
+> > @@ -1680,7 +1681,7 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
+> >   	 * This generic handler doesn't seem to have any issues where
+> > the
+> >   	 * unmasking occurs so it was left at the top.
+> >   	 */
+> > -	apic_write(APIC_LVTPC, APIC_DM_NMI);
+> > +	apic_write(APIC_LVTPC, apic_perfmon_ctr);
+> >   
+> >   	for (idx = 0; idx < x86_pmu.num_counters; idx++) {
+> >   		if (!test_bit(idx, cpuc->active_mask))
+> > @@ -1723,7 +1724,10 @@ void perf_events_lapic_init(void)
+> >   	/*
+> >   	 * Always use NMI for PMU
+> >   	 */
+> > -	apic_write(APIC_LVTPC, APIC_DM_NMI);
+> > +	if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE))
+> > +		apic_perfmon_ctr |= NMI_SOURCE_VEC_PMI;
+> > +
+> > +	apic_write(APIC_LVTPC, apic_perfmon_ctr);
+> >   }
+> >  
+> There really is no reason to not do this unconditinoally. If NMI source 
+> is not supported it is simply a noop.
+Yes, will do.
+
+I was being paranoid in case some old CPUs don't ignore the vector field.
+
+Thanks,
+
+Jacob
 
