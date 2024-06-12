@@ -1,200 +1,222 @@
-Return-Path: <linux-kernel+bounces-210901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CCF9049EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:20:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED449049EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7576A1C22FAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:20:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1055B234ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D332577B;
-	Wed, 12 Jun 2024 04:20:34 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3771B20DF7;
+	Wed, 12 Jun 2024 04:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PiJFSARW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0828E1F60A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718166033; cv=none; b=Cs4o/iXnhGJF1sHFyUJsn7nLAXl25iOt8bN9kKaCSgixKCvw68Cj4fjcQFkcYT/JbWCgK6poI7uxl7w9GHkd5qmsiKN5rWFjmQn89+TS0pLUAE0X40MVSR0nBwOsjgLBqVUip1E6VDLpr7HuYHucEycELy2kBOHw5wKeJGTsSf4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718166033; c=relaxed/simple;
-	bh=GctkiOdVRpfP7LUutwUwpfgSAb/wlxs4NY6m/Ij4VrI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oKBEkPdyeFkyO9Uf6/uFOmpexTnnjPaneDiSmkYj8XTnv+05QqAHtvpRs/7qen57GEOT1sSHfFUF5cIQGcj8JOarlw3r26w0zDA8E+Yh9wZt6XoZegThzDeP+WuL5nrbxFq98tjRYr9UUP3BYOQ3OnCKL+NPmbAm5r4O70Z1dsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7eb50e42c6aso692957339f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:20:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718166031; x=1718770831;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dnEcZQSlSSfWGLe3U4JPeUiGUJ9V4peTlbScVRNrxNs=;
-        b=dQXuahvC+UVfK992ji0OrFdIveGPMgAWB8f4EmHAr0Qr40EPxWcu83Yb84Txy5AkzU
-         WSePV00TmVqOgkt6oO8u9WxTpkae6/3z4sw5AdHkhunk+GpbaitzQBc5mirrBtTeOikE
-         zt/bnb3spjgIcOVKlIMvEtchElyVZbukA3Sh9kFChGocOZPxAwppuwTDA5R9tqxBQl00
-         PnR9HWPdBMri2Jwg+AF2wQw6zWVSau8qirIIDtTzN+hYrt057uQxS1p6ZpX08JY9QMp1
-         lrukS9m84K+evABHZ9vulplf8Gi8BghfcFPEQ9XMgNf+6YBEZvK+F1tMwU+D15v4KgR/
-         x3Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOpf/tu+or8WQIh6Dj01NPpMZ3vZdTVqaa24+Hoiaq3zv6IGzDYYCT8irG+Kb4UVPlPiR7twOaqER/60DyxevZZdcbzTHwOChgpuyI
-X-Gm-Message-State: AOJu0Yy3Ap1SzP9FiNaUf7rBrcWnb/k+yCyu51F/LA3J6rv8vnunBGyF
-	u1HyroDHkNvuTPb5bf3SFeXrDNreT/Lzf3wOThck70d7H8n+5z7vC1OVc053vVIVajLBqqxRDqU
-	/q1isgmf5u3IzF4Sb8ro8XME9FTfbiqwWk3Y66gataGDSSg82CNuReTI=
-X-Google-Smtp-Source: AGHT+IFkTHvhhUdoUr2ZTibKNN6lcj7J6RVdaWsARGNYjEPc/B+AzfjC6+2yOQ4dNQPTLPLLJ81bK6hiZ5Ht25sDs/lEC7M/Z4TX
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BE910A0E;
+	Wed, 12 Jun 2024 04:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718166131; cv=fail; b=OZ+8AxOq4UfInaPclGHKU8Bs+r/FxQLms4z7by0YHbn1yZAsnSriUeRaBuvnyaF2frbJxtJ/FcXX9Uc74+1e59XnMK+OF8XyRXQrOxhecubTsHlzSy+wx0pHRYnnuwMNDv02PbleRhSpdi1nSLD0QDljEA1roHe9HzJaP8fq0xY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718166131; c=relaxed/simple;
+	bh=jdTBA6s1PkxhLW4fHAgunCHCMC2NRbblWhnDJoRjodI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OQOrU9v3nPzX5yz+72PQqXUlyJVOeCjb5de4FXTBlvNQeYxsbyeUD0QkR5N1gUhrfYK9kV00u89erphYMBD7lR1WiMCnl/PIWqPhmCGYqO4KWQ1xmPhsydpDUfXTXncWOZ5yTig7qR5hYlHJCg1WdW9Nt0gcGhdAe6bzPO4M85I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PiJFSARW; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718166129; x=1749702129;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=jdTBA6s1PkxhLW4fHAgunCHCMC2NRbblWhnDJoRjodI=;
+  b=PiJFSARWuDMz+1bjI7CP+7rtQeHefvDnvW65TBK2N3l7nRQrXOg/Tgg2
+   zS+uW5CXWJPj6ust4d0fgmw57j5YSm7wYvWPUjh3Y6K+ps6LXVvGr7Bxi
+   rLcXt31fbU7vSLE/71tOBgO6smxYSDh8Y5xNbh39gEKo8PscA0xdbsnCg
+   vUpBxusmWTJ0NhNZmEkN2lRu8ur6J+xdY1TBzuEVfeO5YliNTOjwwktvd
+   CtaCyCdvmbSz5sA4famfd5682CoU9Au8sH6hD5Ok/3BKBoK9KyEJJcMXk
+   f9rrisIp3cH5CgVlTpSTjv/beAFrd7XVP6ipMBCe8Q65jYNc1FKGAWfu7
+   g==;
+X-CSE-ConnectionGUID: ZvmSrgDPRN6Qi1ZcwJp80g==
+X-CSE-MsgGUID: Fk9h0X5XRRSl//60Gpbi2A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="18690958"
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="18690958"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 21:22:09 -0700
+X-CSE-ConnectionGUID: H/ssiqIJR5+3SogLSHvy3Q==
+X-CSE-MsgGUID: eXA9dp65RoKozCzg3nTP5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
+   d="scan'208";a="39718130"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Jun 2024 21:22:08 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 11 Jun 2024 21:22:08 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 11 Jun 2024 21:22:08 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 11 Jun 2024 21:22:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=i7G7aCON2A5BKd6I2EcmSkIqruOoG+MbTBLH4FyXlYPMaNKGyhFVcvW6o0vzQ35St3vHv646Xcrqv5u1wLuqAxjSJsNt2WDCWE2thN2wWnSVAumUTwckXXv2HoKGJsKPwYCafQs5GyfYyiKAkHWrL+0KYVsD+iFbkqhDb+OdDCBcyjw7bqAEluGdUIxgWNtQC1BGCp+txw9BO0sIZa66tJUi3eeaq5ODfuPRKFLwDzbDZAAVYW6Vqcg3qOtbPC43wcYD1cZaLUE4t8DYM1YjdVWgS7O0t80mKfNqFmDYyGI+G6ADQP0kkFg3YKQ55mVQW5ONhJQc5dkXv5xMsg/3Yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2BceySZLpXtBF6StyXeFE2zFXl4uqZItpn+G1tqA9Lg=;
+ b=O384Lzqnseb4NFmM87LlimId9R112hmr56SF5L1SrwJgDA5A69vDWcqxyMeTVw0hmp9ol8RA31u1DKOssJps+kUZwS2JJUis5+pasuj7qB/DjO9yvdkf/47u0E9EEZsc/OWqO38dQuB/ia/EVFklsU2YnYgj1cffSmTDPBX7+YRMcvXcRjmhKHTt84248OqGSUSAa7EaBl0bluMIzhtpk/1M5PzWX/OdCFSogFMqU+TVkPrrEhhm0+SiYecWJDtUmYiH3YsvIHcZhIMIYqtZQA+IiR98VRXbKWjHegPcM7Qx2Bn1c7zg8x83aqzhq6NIrOiFDdxuF2Cn2qpG7nkt+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by BL1PR11MB5224.namprd11.prod.outlook.com (2603:10b6:208:30a::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Wed, 12 Jun
+ 2024 04:22:06 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.7633.021; Wed, 12 Jun 2024
+ 04:22:03 +0000
+Date: Tue, 11 Jun 2024 21:22:00 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Huang Ying <ying.huang@intel.com>, Dan Williams <dan.j.williams@intel.com>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Huang Ying
+	<ying.huang@intel.com>, Andrew Morton <akpm@linux-foundation.org>, "Jonathan
+ Cameron" <Jonathan.Cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>,
+	Bharata B Rao <bharata@amd.com>, Alistair Popple <apopple@nvidia.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH -V2] cxl/region: Support to calculate memory tier
+ abstract distance
+Message-ID: <66692268d4745_310129469@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20240611055423.470574-1-ying.huang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240611055423.470574-1-ying.huang@intel.com>
+X-ClientProxiedBy: MW4P220CA0028.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:303:115::33) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8414:b0:4b9:13c9:b0fb with SMTP id
- 8926c6da1cb9f-4b93eef52camr57346173.5.1718166031186; Tue, 11 Jun 2024
- 21:20:31 -0700 (PDT)
-Date: Tue, 11 Jun 2024 21:20:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f45085061aa9b37e@google.com>
-Subject: [syzbot] [bluetooth?] [usb?] BUG: soft lockup in hci_cmd_timeout
-From: syzbot <syzbot+1b2abad17596ad03dcff@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, luiz.dentz@gmail.com, 
-	marcel@holtmann.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|BL1PR11MB5224:EE_
+X-MS-Office365-Filtering-Correlation-Id: b5ab5986-7e0d-4322-8112-08dc8a973608
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230032|376006|366008|1800799016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?wCC1mPoqspM+GWCElq/iHWJq1ZooEYcT+5l1HI+Z+ammj9/8y1ag2XKiwjO7?=
+ =?us-ascii?Q?WCreKN2iHLR33fK4towQi8XRpGskPm4afwQkdZ7nRP5wwymSJLGx/I5WRhAg?=
+ =?us-ascii?Q?eG47+KiNIDRoGS+KE4NxFop7kA+HJkefsoanPHr7N3NoBarC/7YAf42JWbi0?=
+ =?us-ascii?Q?F8jtEXluutYsEzhSFBtI43WmuhxLNKhtxjQhOSFzokH9+Q0Qialiqp3dOoZS?=
+ =?us-ascii?Q?JCCy8uw3Z80QkRzcgU8HR9v6sMdQ6dwDeTvsoJohRdoOH/im/p6/4OFwPcNM?=
+ =?us-ascii?Q?1XBNWTYDDfI3gQfOsy3IZixhkjUxf05mJmdoZ0THaDcqR3RKQGol6oBTa89C?=
+ =?us-ascii?Q?4bQeTALhSPYDzBsiDD6TUmfh+9hp2ThMhlKAcsOyFuoZaV4CFWZRiuHgrdR8?=
+ =?us-ascii?Q?hDJ1zACGYOa0//23K+vYy5jCu2aTtOIWpqbAhibCbkebVmkDSg2zbmmk99P2?=
+ =?us-ascii?Q?29UMUo5bVY6eLPDPrgo/+qIFAzuNzUTlnUfkjILZ6rAi2jNtaP7oDfAADVKF?=
+ =?us-ascii?Q?Pm6pTBhdoHcKh9Qi7WJFT/cBng72wdmDM90aVP4MVdoymaQjYfZbwv9ZnUqw?=
+ =?us-ascii?Q?L9MpTuVUy5KeCtaC2CSMCDpeM7qXP1FaO9U6rU6+FCC1xuVBi7dLXkZgXz+7?=
+ =?us-ascii?Q?aIV+RuMahiGqD1g3GY79soY8l7QmpQ9KkSHlaNDwqiq/mGFLjK7n6zMFeUCG?=
+ =?us-ascii?Q?PpaUXm81ntV3vbng4ixsqUllKp6jJHdg9uBEmId0kO4rc+l5jF7UfiL/UmBr?=
+ =?us-ascii?Q?dUcqhPc+xz86q1vPNIoMsOcplDQt65Pl748hzsRdaHz9/WAl1+2fah+OXy56?=
+ =?us-ascii?Q?I9m1+f/XoNBu2eURjVYuWGuyfXu06JklA8y6beSPNCAOe1RP6gDqoJPSwH9t?=
+ =?us-ascii?Q?0nwtpwo0EJus0R/QnELsLo0OTLjxb59M5nrHs58t0i1qJfLQ/YlV3HagIbAR?=
+ =?us-ascii?Q?Jd/6AZwAiYseiy59W6q2OPDASFwA+057aUUnq33dkYZmQg+ESs9atXJd9NHj?=
+ =?us-ascii?Q?bHp2gFB0XgJhhm4HtW9ZyFe6ChbXPopisYBNSnOjcr9Zoj2DbbzaOleSlzBP?=
+ =?us-ascii?Q?80mAghgAdkKCFauhReuV1VeDMRu7CFTZSKeFt9dAEnndG5HjAzC35cxGSju0?=
+ =?us-ascii?Q?X3NoEiAT3yThvYlgu6NUBuUf+kE3B9Kb5PYl3mkDt0+HQkB88F9KTcBMsx8B?=
+ =?us-ascii?Q?2qZNzwRLm7bfa0MxSMoAsZfedjgMS/ztmR/GuqgjIn/213iGtszMA1fbh4/7?=
+ =?us-ascii?Q?rV89oRAfepLex1ERVyTkyeq9xjEdjQHu5DIVVdBbF6duSsZCDtJrN22gDQVr?=
+ =?us-ascii?Q?8mjXY7pwd3UeEg2D0uYFc0xm?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230032)(376006)(366008)(1800799016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YvrgYxZS39K6VWkT8FSH9NChuz8r9fMNdYnV2A62bqWq3hqUgXOdDV160w3f?=
+ =?us-ascii?Q?NPqICmGSvI23ckRArxGOfMGsRvvwOT5AT8ObG4Gwn7Mlo75+caK2LISog3vO?=
+ =?us-ascii?Q?YM0g/5igaS8sr4wHME6za8zy3bAdf8VoTJj4N9mxmmRBUnfRrbl8lkndvKDN?=
+ =?us-ascii?Q?I9rnApkmYHQcWYRzOOJi4xPZHo9R7+KAB7Yausc/54gsVzn7PEM4Bl5zSac7?=
+ =?us-ascii?Q?+EVHY0nGai8H1lFmphy3DkUGtnoBI40JLUfmBU4xyvM1cGtHk05Zbbud+uUA?=
+ =?us-ascii?Q?nsKU57VNfBv7h/s8cJUrnO1r/4m1hNJZ06QqRyG59j52jXG5wsu78P2KUOFe?=
+ =?us-ascii?Q?gz72Rr0zLJ6fIVkSH6SlRKfAg7P/Hx80zeWHV2AytGvEa/9EBUgaNPbRhKnq?=
+ =?us-ascii?Q?sl2DtItY0ulnN2dMmktHYAPU1FLPMxP86zpdt8p92sY39HXiLWDV3q1NO8iz?=
+ =?us-ascii?Q?yRwgjtjsoOh3Zj5jRLd8V3JL3ih9Oy/U2LDbKdvySw4xXreYMxwrC0D1hEZO?=
+ =?us-ascii?Q?qIYa+eYo0dvR6zL5UIJhtvPZmCgcvhY8Bbk0b0t7V5jok0NC6phAOXmPyNFf?=
+ =?us-ascii?Q?c9LFqjBsZRCIZE6jh48wuZyN6689HyKiRGKldS3RwofXNvsbS5doyvxaMo6V?=
+ =?us-ascii?Q?16SRXqUGzGv3KbG+A7bfChrOFuHEm6D+nptv4EVljHaazZVXVVYnDsTh5cuH?=
+ =?us-ascii?Q?yUDXgWDQAUYqBflDqPttb96cdx2+OD3D3YQ7yiNtdaNYrNSGqX69UCSbwVyG?=
+ =?us-ascii?Q?7nB44CovXzl+eNE6qJKUUsf7XgTi7yMFd0KITkeRKi3F8xGTgLjs+T4Fr40V?=
+ =?us-ascii?Q?ChJBt6IKtAd1Vd//GappurMUJDtyohBazUQ5HoQPDve4tIb3Yw2HsRAVbdIR?=
+ =?us-ascii?Q?G8OLare1XA6inOHaW0ePmdTIxoeAgQRInBqeM3B7vyHap/Z4GYgkdTQ0rKjW?=
+ =?us-ascii?Q?tkLrV+lIw4K//aagfpWjFCEwfrutCkFJV4F7gfkWUhxakfhvjCilJpU9crI9?=
+ =?us-ascii?Q?DmiXyxbjTiKCD2sPIf8oPTVIeGrW9uDpMze5RGLIU/Yc3dUesVvTequHPk7I?=
+ =?us-ascii?Q?KdJdQxapT9rcYkMkzfwvUgd7X/vTLKqzAEXCkwtqerwMs/GjPYzgi6ifdmy/?=
+ =?us-ascii?Q?bjG4vo9A5OO5ry3zB1lg+SipaKmE9Z8RdHC0nZ2v0cULFN2EeLreqdlhGPmb?=
+ =?us-ascii?Q?QuVH2rKse69pzDIrzu0aanCCchNckjtXZpxgiEMXcX1TExpJ+YHLR2J6nEON?=
+ =?us-ascii?Q?VZwBHKPn+/FmXSVgIreLhQzuvPlS3U53HqeZcdloD6DNiBcd5Srf7BSrlHM7?=
+ =?us-ascii?Q?2n/h9GmIjWgXYalAcBANo5labVQORDsSNfUcLsO/Ds3zJMK4IO0n+aA7AEkW?=
+ =?us-ascii?Q?SpOLCe3TNq7ow7Lec+2m/gjxrwDpc6AonPqOae2CsyG76tjp3yveeeuwij7d?=
+ =?us-ascii?Q?+1+YYPaHDd+kSwt8/XSmgnV71DzP0TcSZNKq78FKdYLHh88sVJuwdQ6WF0Oe?=
+ =?us-ascii?Q?SjmxVIIbNAA8EYIJjNkxdS/AxYsmqnPIZH732dlpcWpGXTOTHTmkjNO1rnF8?=
+ =?us-ascii?Q?qeX4Svq8VXZUaRsWsSlsuGQdi3UOqefrtBOFyQ3T+wQ9w829Fxau/bXPu/DR?=
+ =?us-ascii?Q?Ww=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5ab5986-7e0d-4322-8112-08dc8a973608
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 04:22:03.2047
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Rsc4OMGXEhGMKydX36Mfykg2mAhRplYP34+wSv9HhAnnXPL7ckUP32InOYhypo6xOZTPNX8lQO/54qw1zr1+ZLdNJ/NN4KJc+2iqxh8XRbk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB5224
+X-OriginatorOrg: intel.com
 
-Hello,
+Huang Ying wrote:
+> To place memory nodes backed by CXL regions in the appropriate memory
+> tiers.  So that, pages can be promoted/demoted with the existing
+> memory tiering mechanism.
+> 
+> The abstract distance is calculated based on the memory access latency
+> and bandwidth of CXL regions.  Which in turn comes from the HMAT
+> and CDAT, etc.
+> 
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Bharata B Rao <bharata@amd.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> ---
+> Changes:
+> 
+> v2:
+> 
+> - Added comments to struct cxl_region and minor fixes (Thanks Jonathan!)
+> - Link to v1: https://lore.kernel.org/linux-cxl/20240531024852.282767-1-ying.huang@intel.com/
+> 
+> ---
+>  drivers/cxl/core/region.c | 40 +++++++++++++++++++++++++++++++++++----
+>  drivers/cxl/cxl.h         |  2 ++
+>  2 files changed, 38 insertions(+), 4 deletions(-)
 
-syzbot found the following issue on:
+Looks straigtforward to me,
 
-HEAD commit:    8867bbd4a056 mm: arm64: Fix the out-of-bounds issue in con..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=112ad20a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b4350cf56c61c80
-dashboard link: https://syzkaller.appspot.com/bug?extid=1b2abad17596ad03dcff
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1112d2ce980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c37286980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6ea21f50498b/disk-8867bbd4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e2fed09364aa/vmlinux-8867bbd4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4860173c7a18/Image-8867bbd4.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1b2abad17596ad03dcff@syzkaller.appspotmail.com
-
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-watchdog: BUG: soft lockup - CPU#0 stuck for 27s! [kworker/u9:2:6293]
-CPU#0 Utilization every 4s during lockup:
-	#1:  97% system,	  1% softirq,	  4% hardirq,	  0% idle
-	#2:  98% system,	  1% softirq,	  3% hardirq,	  0% idle
-	#3:  97% system,	  0% softirq,	  3% hardirq,	  0% idle
-	#4:  98% system,	  1% softirq,	  3% hardirq,	  0% idle
-	#5:  98% system,	  1% softirq,	  3% hardirq,	  0% idle
-Modules linked in:
-irq event stamp: 150196
-hardirqs last  enabled at (150195): [<ffff80008037bc00>] console_emit_next_record kernel/printk/printk.c:2935 [inline]
-hardirqs last  enabled at (150195): [<ffff80008037bc00>] console_flush_all+0x650/0xb74 kernel/printk/printk.c:2994
-hardirqs last disabled at (150196): [<ffff80008af10b00>] __el1_irq arch/arm64/kernel/entry-common.c:533 [inline]
-hardirqs last disabled at (150196): [<ffff80008af10b00>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:551
-softirqs last  enabled at (150190): [<ffff8000801ea530>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (150190): [<ffff8000801ea530>] handle_softirqs+0xa60/0xc34 kernel/softirq.c:582
-softirqs last disabled at (150185): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
-CPU: 0 PID: 6293 Comm: kworker/u9:2 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Workqueue: hci0 hci_cmd_timeout
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:176 [inline]
-pc : arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
-pc : console_emit_next_record kernel/printk/printk.c:2935 [inline]
-pc : console_flush_all+0x67c/0xb74 kernel/printk/printk.c:2994
-lr : console_emit_next_record kernel/printk/printk.c:2935 [inline]
-lr : console_flush_all+0x678/0xb74 kernel/printk/printk.c:2994
-sp : ffff8000993f7360
-x29: ffff8000993f7460 x28: ffff8000993f7510 x27: 0000000000000001
-x26: ffff80009090b530 x25: ffff80009090b520 x24: dfff800000000000
-x23: 1ffff000121216af x22: dfff800000000000 x21: ffff80009090b578
-x20: 0000000000000000 x19: 00000000000000c0 x18: ffff8000993f7298
-x17: 6965636572207375 x16: ffff80008033878c x15: 0000000000000001
-x14: 1ffff00011e379c8 x13: 0000000000000000 x12: 0000000000000003
-x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d3a39e40 x7 : ffff800080381d44 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000006 x1 : 0000000000000080 x0 : 0000000000000000
-Call trace:
- __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline]
- arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
- console_emit_next_record kernel/printk/printk.c:2935 [inline]
- console_flush_all+0x67c/0xb74 kernel/printk/printk.c:2994
- console_unlock+0xec/0x3d4 kernel/printk/printk.c:3063
- vprintk_emit+0x1ec/0x350 kernel/printk/printk.c:2345
- vprintk_default+0xa0/0xe4 kernel/printk/printk.c:2360
- vprintk+0x200/0x2d4 kernel/printk/printk_safe.c:45
- _printk+0xdc/0x128 kernel/printk/printk.c:2370
- bt_err+0xfc/0x144 net/bluetooth/lib.c:296
- hci_cmd_timeout+0xd8/0x1cc net/bluetooth/hci_core.c:1528
- process_one_work+0x7b0/0x15e8 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x938/0xef4 kernel/workqueue.c:3393
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 0 Comm: swapper/1 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : arch_local_irq_enable+0x8/0xc arch/arm64/include/asm/irqflags.h:50
-lr : default_idle_call+0xf8/0x128 kernel/sched/idle.c:124
-sp : ffff800093e97d10
-x29: ffff800093e97d10 x28: dfff800000000000 x27: 1ffff000127d2fb0
-x26: ffff80008efed000 x25: 0000000000000000 x24: 0000000000000002
-x23: 1ffff00011dfdaad x22: ffff80008efed568 x21: 0000000000000000
-x20: ffff0000c1b70000 x19: ffff8000802e6e08 x18: 1fffe000367b6bde
-x17: ffff80008efed000 x16: ffff8000802e66cc x15: 0000000000000001
-x14: 1fffe000367b8941 x13: 0000000000000000 x12: 0000000000000003
-x11: 0000000000000001 x10: 0000000000000003 x9 : 0000000000000000
-x8 : 00000000000b17a9 x7 : ffff80008047f238 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff80008af14fe8
-x2 : 0000000000000000 x1 : ffff80008b0900a0 x0 : ffff800124e80000
-Call trace:
- __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline]
- arch_local_irq_enable+0x8/0xc arch/arm64/include/asm/irqflags.h:48
- cpuidle_idle_call kernel/sched/idle.c:191 [inline]
- do_idle+0x1f0/0x4e4 kernel/sched/idle.c:332
- cpu_startup_entry+0x5c/0x74 kernel/sched/idle.c:430
- secondary_start_kernel+0x1bc/0x1e4 arch/arm64/kernel/smp.c:279
- __secondary_switched+0xb8/0xbc arch/arm64/kernel/head.S:417
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Acked-by: Dan Williams <dan.j.williams@intel.com>
 
