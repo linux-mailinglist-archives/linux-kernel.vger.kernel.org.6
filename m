@@ -1,149 +1,147 @@
-Return-Path: <linux-kernel+bounces-210783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF5090489A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:55:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E76AA904894
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3B831F23870
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D8D028549C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 01:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD118820;
-	Wed, 12 Jun 2024 01:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59ACF5CB0;
+	Wed, 12 Jun 2024 01:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nngteK8L"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZtiS24+m"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E95217BA1;
-	Wed, 12 Jun 2024 01:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338DF4691;
+	Wed, 12 Jun 2024 01:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718157273; cv=none; b=kjUM2Z59/o0goTlCTm6le74+4fSCSoKtP+3ApIEy4Vemv31FDhMnjlOMaLYmYEzWAyOuKuVLhQl1thmh5hXx/tEWFVF2Bmw5vuwTlBK3Grj3G/3e+shgTFak8MCHqojibmhtDnwSN9+ra3wnVpBW+Zf3afB370aw0emHsHrWOwU=
+	t=1718157258; cv=none; b=SCJPXY8KWZ2IXJtYM51/QBPoFFhOyN4fpgkijF+yQcBN/MFuMBBCsPwLLivJP5nqxLFvHIpxk18TNaoVG3KzOFaBSnhq6zqPy7B1FAD2BsY9ugnh4+Fim08rbwnKLoxOLkVNfjTKD2z5b5HmKzec7MJrHFLv60wC+XVp/4rm76U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718157273; c=relaxed/simple;
-	bh=w1xnUv5Kz3/tY/ryCxn3oTJxNlt53fqlci48thBjbm8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BKSU0v8/zPIhcNm4sxc/Aybt8tzFmbbnx+oSOuyOPpTSxOXC+rzRQosMGsm5s4JBNLt+Wd5GuwhrGGhDjjZ9+YUWG1O6wBD7C9Wq5eElrlIHOtUhsFSnOkAkNiZQ9OJDAbey2In7BgxpVRkuzR3ZsWbtXJPuCMOimICm8vAEx7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nngteK8L; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5baeab9fd60so1452757eaf.2;
-        Tue, 11 Jun 2024 18:54:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718157271; x=1718762071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JwItdTmcPCVbWWTJKIwknMPMvZjx8Ik6YysUYQY2Gk4=;
-        b=nngteK8LPCYdacW2VfNvMaCDiBMFpVCS2BT43gA4FzMsrcfOIR0Nx2AMKuVnsDkSMD
-         yhVkghDaZ4zz+DnjjXN0CTIbA8OQ0/zhrTzkUtJvuuVUB9xdbpuIUUq1dNy4M7NHJwZV
-         GG7tBlIHXkiAouORIiwX7Tch5O/Qz0acJDh32oP4uTMRQEF5v4bPvxsh4Tg2TFLN6A/9
-         SjrQByYBVqSRsDY+9cKSb96HFsWEhW+4MjiwZ/904K3wmAWVBv5vV+47irc1u5lqejqi
-         JkMN8VOa6KE06SGUe+XTe4/q6PV//Ud08+Bmoafpm/EBLZnd10yxG+VORHtjSeWVX5U+
-         4lAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718157271; x=1718762071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JwItdTmcPCVbWWTJKIwknMPMvZjx8Ik6YysUYQY2Gk4=;
-        b=j7HpVRgNdkEd1nVUR/e/+ErxlVdH8Dmi5yDoDXG2kazMho5wwb3ATR+dUkELk3smtJ
-         B+SFz4kIRIY6qO4QHFVJsgEyCbsbNDnSxfWnqVtuhfb3PJMqRz88Udo7bkd5ZL6r9CmU
-         llCyzJ9JGErOWqKYbtSJqKxMShiTLQeDBvd+Avj7Zjxp3spsQay8DaSYZ+gfgnUWDa+h
-         g+CrFxePIHCGDdFs2/gGzmR/P3bfMTrKKxkctuPhmjPGUpKwFBzlf3TKPJp8RKf8gXJH
-         rjikE4z3YgF/hKJG9x5T+/DWEqYxEKbnHaMBeLoGesurhCNzjbf2Ien43LWl531BA5tD
-         LsIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeFcxz5ZKPQJj0IFYAss+mUVaMSff7RBBFrT0qvnxBSORw4n/tlzNfQFnmsQ2fVV6dtHeiikXrxTpCZarEPF7GaMp0cdkunCz9KY5AFxR4tMRvGZpMyo6pn0/z58VYYc8LWRo+dPyZ
-X-Gm-Message-State: AOJu0YzgIPBYI0I1uRMk1Y+1IfuCRRgSr3MCG/LQo1/+lhfi7KnCECa7
-	QF9GzEUNGg9bxw3YohyIczrVZq3il8JUV2tJ4Kt9NNXU7hZZje4WsaPexsVK59UF9JDu98smt6j
-	SzxaLS5YpAHMI8hxzj1hWLWr8a34=
-X-Google-Smtp-Source: AGHT+IHKvXcsY6mlaFymMXwEWQLlYamCRCx2QwoAcHfH+QCs99TtpseiJAvy+X5wop0X5Jh0s7SF0rgNTsAUHA1+5tk=
-X-Received: by 2002:a05:6820:22a0:b0:5b9:f2f4:6a95 with SMTP id
- 006d021491bc7-5bb3ba15b36mr529150eaf.5.1718157271162; Tue, 11 Jun 2024
- 18:54:31 -0700 (PDT)
+	s=arc-20240116; t=1718157258; c=relaxed/simple;
+	bh=OYtZknOWMr5YYhsoINE+HdQxQ/H6xRCXb1U7Ewu55pI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qyKba12TnYggQKeH1pZIJPw7TgP2j7hECiTEBB7MkdIVFNG+goQoUmcXk9hqbC54COACD+Xdq65ByP77VjQtrMjnRqxmUYlj/XOAiCn8aJNdOrI1F43sRlnhlR6L5K175IKq5L1I/8dtf11rLbFnGXoAcylWdAz9ts1jfOXEY9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZtiS24+m; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718157257; x=1749693257;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OYtZknOWMr5YYhsoINE+HdQxQ/H6xRCXb1U7Ewu55pI=;
+  b=ZtiS24+mORt27gJRsBFyM09csTw+EjEcL5VH0eFCK2MgPUNhm7Y8T63r
+   XpxRpaH2cylA3x4Pmjv68LwtLvIFiK9zg7ebfdq7TPN4R2akbdrCxzUdR
+   z79HpplvzOnLpV2IGLNFVtwujUkrGP7YxX5Q7mjumExIqwk29nbTW7VcZ
+   CQA1plskKxFNeeUDfa9VlIm+SkHhNmnqNGPfEx2PC5IhOSf2SXKv1rVw2
+   DHYCgO0km9Z05Wh9FY66n1GtEvZ7ovf7zEvhqmH59QMjNrn4Z0Pgikanv
+   WHIPp2Mg2zSHrUmNMMnKSElA02VlanokroUvS+wyj2ZrFx5y82fV0YuqW
+   Q==;
+X-CSE-ConnectionGUID: QIJYO0OQRk+Ox3wc38zCOw==
+X-CSE-MsgGUID: 8nRSVI9RTp2klhQZUexqIg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="15070769"
+X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
+   d="scan'208";a="15070769"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:54:17 -0700
+X-CSE-ConnectionGUID: Mo71GvFHSmaCxxsNjkz9+g==
+X-CSE-MsgGUID: 3GUS24hIR1yNUoU8ql0PAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,231,1712646000"; 
+   d="scan'208";a="70831477"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.51]) ([10.124.227.51])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 18:54:11 -0700
+Message-ID: <2760e892-0a06-4790-9d5e-bba690dbdf91@intel.com>
+Date: Wed, 12 Jun 2024 09:54:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611044358.25689-1-dzm91@hust.edu.cn> <1c3c4698-c70f-4b04-ae96-a83c3b9bbc4d@gmail.com>
- <CAD-N9QXY8frJmxp+LWM9g2_8UdubzMushMEPGyM9Z-UFEHfN3A@mail.gmail.com> <5961a584-dbb5-40e7-8e25-69eb7aefcdb1@gmail.com>
-In-Reply-To: <5961a584-dbb5-40e7-8e25-69eb7aefcdb1@gmail.com>
-From: Dongliang Mu <mudongliangabcd@gmail.com>
-Date: Wed, 12 Jun 2024 09:54:05 +0800
-Message-ID: <CAD-N9QV-LqraTPVgt3CayyPKreVRR3S4SvFkwkqPKkVpuegJcw@mail.gmail.com>
-Subject: Re: [PATCH] docs/zh_CN: Update the translation of dev-tools/testing-overview
-To: Alex Shi <seakeel@gmail.com>
-Cc: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>, 
-	Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>, 
-	Hu Haowen <2023002089@link.tyut.edu.cn>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 09/10] KVM: VMX: Open code VMX preemption timer rate
+ mask in its accessor
+To: Sean Christopherson <seanjc@google.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ Kai Huang <kai.huang@intel.com>, Jim Mattson <jmattson@google.com>,
+ Shan Kang <shan.kang@intel.com>, Xin Li <xin3.li@intel.com>,
+ Zhao Liu <zhao1.liu@intel.com>
+References: <20240605231918.2915961-1-seanjc@google.com>
+ <20240605231918.2915961-10-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20240605231918.2915961-10-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 12, 2024 at 9:36=E2=80=AFAM Alex Shi <seakeel@gmail.com> wrote:
->
->
->
-> On 6/11/24 2:50 PM, Dongliang Mu wrote:
-> > On Tue, Jun 11, 2024 at 2:36=E2=80=AFPM Alex Shi <seakeel@gmail.com> wr=
-ote:
-> >>
-> >>
-> >>
-> >> On 6/11/24 12:43 PM, Dongliang Mu wrote:
-> >>> Update to commit 42fb9cfd5b18 ("Documentation: dev-tools:
-> >>> Add link to RV docs")
-> >>>
-> >>> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
-> >>> ---
-> >>>  Documentation/translations/zh_CN/dev-tools/testing-overview.rst | 2 =
-++
-> >>>  1 file changed, 2 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/translations/zh_CN/dev-tools/testing-overv=
-iew.rst b/Documentation/translations/zh_CN/dev-tools/testing-overview.rst
-> >>> index c91f9b60f9f1..d89d0ec1d4cc 100644
-> >>> --- a/Documentation/translations/zh_CN/dev-tools/testing-overview.rst
-> >>> +++ b/Documentation/translations/zh_CN/dev-tools/testing-overview.rst
-> >>> @@ -99,6 +99,8 @@ Documentation/dev-tools/kcov.rst =E6=98=AF=E8=83=BD=
-=E5=A4=9F=E6=9E=84=E5=BB=BA=E5=9C=A8=E5=86=85=E6=A0=B8=E4=B9=8B=E4=B8=AD=EF=
-=BC=8C=E7=94=A8=E4=BA=8E=E5=9C=A8=E6=AF=8F
-> >>>    =E5=8F=82=E9=98=85 Documentation/dev-tools/kfence.rst
-> >>>  * lockdep=E6=98=AF=E4=B8=80=E4=B8=AA=E9=94=81=E5=AE=9A=E6=AD=A3=E7=
-=A1=AE=E6=80=A7=E6=A3=80=E6=B5=8B=E5=99=A8=E3=80=82=E5=8F=82=E9=98=85
-> >>>    Documentation/locking/lockdep-design.rst
-> >>> +* Runtime Verification (RV) =E6=94=AF=E6=8C=81=E6=A3=80=E6=9F=A5=E7=
-=BB=99=E5=AE=9A=E5=AD=90=E7=B3=BB=E7=BB=9F=E7=9A=84=E7=89=B9=E5=AE=9A=E8=A1=
-=8C=E4=B8=BA=E3=80=82=E5=8F=82=E9=98=85
-> >>
-> >> Why not translate the words 'Runtime Verification' here?
-> >
-> > If you translate it into "=E5=8A=A8=E6=80=81=E7=A1=AE=E8=AE=A4", this s=
-ounds like a very general term.
-> > So I keep the original English.
->
-> Runtime is often translated as '=E8=BF=90=E8=A1=8C=E6=97=B6', so could be=
- =E2=80=98=E8=BF=90=E8=A1=8C=E6=97=B6=E7=A1=AE=E8=AE=A4=E2=80=99
+On 6/6/2024 7:19 AM, Sean Christopherson wrote:
+> From: Xin Li <xin3.li@intel.com>
+> 
+> Use vmx_misc_preemption_timer_rate() to get the rate in hardware_setup(),
+> and open code the rate's bitmask in vmx_misc_preemption_timer_rate() so
+> that the function looks like all the helpers that grab values from
+> VMX_BASIC and VMX_MISC MSR values.
+> 
+> No functional change intended.
+> 
+> Cc: Shan Kang <shan.kang@intel.com>
+> Cc: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: Xin Li <xin3.li@intel.com>
+> [sean: split to separate patch, write changelog]
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
 
-How about =E8=BF=90=E8=A1=8C=E6=97=B6=E7=A1=AE=E8=AE=A4=EF=BC=88Runtime Ver=
-ification=EF=BC=89=EF=BC=9F
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
->
-> >
-> >>
-> >> Thanks!
-> >> Alex
-> >>> +  Documentation/trace/rv/runtime-verification.rst=E3=80=82
-> >>>  * =E9=99=A4=E6=AD=A4=E4=BB=A5=E5=A4=96=EF=BC=8C=E5=9C=A8=E5=86=85=E6=
-=A0=B8=E4=B8=AD=E8=BF=98=E6=9C=89=E4=B8=80=E4=BA=9B=E5=85=B6=E5=AE=83=E7=9A=
-=84=E8=B0=83=E8=AF=95=E5=B7=A5=E5=85=B7=EF=BC=8C=E5=A4=A7=E5=A4=9A=E6=95=B0=
-=E8=83=BD=E5=9C=A8
-> >>>    lib/Kconfig.debug =E4=B8=AD=E6=89=BE=E5=88=B0=E3=80=82
-> >>>
-> >>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   arch/x86/include/asm/vmx.h | 3 +--
+>   arch/x86/kvm/vmx/vmx.c     | 2 +-
+>   2 files changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
+> index 400819ccb42c..f7fd4369b821 100644
+> --- a/arch/x86/include/asm/vmx.h
+> +++ b/arch/x86/include/asm/vmx.h
+> @@ -153,7 +153,6 @@ static inline u64 vmx_basic_encode_vmcs_info(u32 revision, u16 size, u8 memtype)
+>   	return revision | ((u64)size << 32) | ((u64)memtype << 50);
+>   }
+>   
+> -#define VMX_MISC_PREEMPTION_TIMER_RATE_MASK	GENMASK_ULL(4, 0)
+>   #define VMX_MISC_SAVE_EFER_LMA			BIT_ULL(5)
+>   #define VMX_MISC_ACTIVITY_HLT			BIT_ULL(6)
+>   #define VMX_MISC_ACTIVITY_SHUTDOWN		BIT_ULL(7)
+> @@ -167,7 +166,7 @@ static inline u64 vmx_basic_encode_vmcs_info(u32 revision, u16 size, u8 memtype)
+>   
+>   static inline int vmx_misc_preemption_timer_rate(u64 vmx_misc)
+>   {
+> -	return vmx_misc & VMX_MISC_PREEMPTION_TIMER_RATE_MASK;
+> +	return vmx_misc & GENMASK_ULL(4, 0);
+>   }
+>   
+>   static inline int vmx_misc_cr3_count(u64 vmx_misc)
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 3141ef8679e2..69865e7a3506 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -8536,7 +8536,7 @@ __init int vmx_hardware_setup(void)
+>   		u64 use_timer_freq = 5000ULL * 1000 * 1000;
+>   
+>   		cpu_preemption_timer_multi =
+> -			vmcs_config.misc & VMX_MISC_PREEMPTION_TIMER_RATE_MASK;
+> +			vmx_misc_preemption_timer_rate(vmcs_config.misc);
+>   
+>   		if (tsc_khz)
+>   			use_timer_freq = (u64)tsc_khz * 1000;
+
 
