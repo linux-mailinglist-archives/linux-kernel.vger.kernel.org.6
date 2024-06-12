@@ -1,241 +1,157 @@
-Return-Path: <linux-kernel+bounces-212174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB0E905C47
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:48:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500CB905C44
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 21:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 518341F21BFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:48:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A967FB24142
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4143883CDA;
-	Wed, 12 Jun 2024 19:48:03 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C192884DE9;
+	Wed, 12 Jun 2024 19:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3n2VsgT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90002381C4;
-	Wed, 12 Jun 2024 19:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06A72F50;
+	Wed, 12 Jun 2024 19:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718221682; cv=none; b=HKbS54U+5abECphQbw5Vz5fYPYBEzJ5Yv6Rv40C5zg7XvFr1E+AuQINaHFmLk52w8o3q4/UopYyYcX+n6rjqls5/fx3Cl6FHByO+W7GVeshGbsY6Y403pCTN+mekxmR1wmwflrJncjbO4vpBraA9gukA84BKg982N/s2TwiM+PU=
+	t=1718221661; cv=none; b=dWTKmM65ZY5mq/NZs0iraOWfo2EMGykYOYLHcfx8ttdquouHoiXF3Knp2afC8LjDhdDrG4pay2ndULw/ftSH1OdoAPJdtprE2CHFH6JfjwcmMiQLzhgSMUfYBnKZJY8y/ibQjMv4HDz/0T8z6+7qGF+Tu/vTh38pLBLArRYjhbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718221682; c=relaxed/simple;
-	bh=VcP5QPo8mMAZf3HOjnC3ir8/AgsIrP19dT5MjMMl7GY=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=jJUd+VDN3k7cSJfCRMVoW7GGeIEPJZJ4PeIkJ0bIYNfhtFuxnyGLPQPZRq4g9Wd04S+sdPubc8cvBJ1hl7UNfWAWfEgCAk/M8bYM2UgdrkJLlTcURcRNP1+nh3bt1MLoIKIzF++Oa12B5X9pzBViMStrNYsdKBgqyBFhHvxtrR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=9907278693=ms@dev.tdt.de>)
-	id 1sHTwc-00DaCD-Bk; Wed, 12 Jun 2024 21:47:42 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1sHTwb-00DaC7-CV; Wed, 12 Jun 2024 21:47:41 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id D6AE7240053;
-	Wed, 12 Jun 2024 21:47:40 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 334C7240050;
-	Wed, 12 Jun 2024 21:47:40 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id 759433773C;
-	Wed, 12 Jun 2024 21:47:39 +0200 (CEST)
+	s=arc-20240116; t=1718221661; c=relaxed/simple;
+	bh=8FQ9c7Ch3FC/45m1f2sv/N9cm5NEyghZRzqrKFkzdcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XduqL8uip+lQyqhMEQLlkTuTTViGjIV80UnHgcYnHOyBFIaNVhm1U6UwKdwenqN4Je0qq7PBzs+4N8/It3COslxy8gmpyLm7179h44gG+h2XzAGibHFcHnrnITN/68v2LezdSl2AgCacLMq4j7k2DFOvkVDpQwDI5p8PUhXKW8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3n2VsgT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0E3C32786;
+	Wed, 12 Jun 2024 19:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718221660;
+	bh=8FQ9c7Ch3FC/45m1f2sv/N9cm5NEyghZRzqrKFkzdcc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t3n2VsgTo08P0X+ucMW5nAE/Jvi9bmuYntTSGWbfOVXyyUq+OavQcZ4zmCAVQnZpv
+	 +i6acaHOQFmJDaIa632xABI/nodaQrNGRsnz75tgXcuWQJJAfJ2tIpZV/bu/xhlA8p
+	 CG4jNiNFNskT1asWdp4RKIYVhwfkIcjGQxFxA1U8bG7+cwLhd/2cSAXDl8w/VGK9Cw
+	 YTRdjK5Vzg5lAtN4p1q4kPEobXuvszyijmAYOr7nMJFj+qijmGCB+sAFS9hN59DeN9
+	 g55JEtguQDdCLfgG9tqwF1AxhD2eeNBL/41lPRER0tTmJIdgbRfqyvtgy38zWi0knR
+	 5xAiZJGcQ69aA==
+Date: Wed, 12 Jun 2024 12:47:39 -0700
+From: Kees Cook <kees@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, David Gow <davidgow@google.com>,
+	Vitor Massaru Iha <vitor@massaru.org>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-hardening@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org
+Subject: Re: [PATCH v2 2/2] usercopy: Convert test_user_copy to KUnit test
+Message-ID: <202406121245.D3536D45D@keescook>
+References: <20240610213055.it.075-kees@kernel.org>
+ <20240610213330.1310156-2-kees@kernel.org>
+ <CABVgOSmFL50_qYOBROkE9LZx__W6MLnHWahGnAVuLBDVO4k1zQ@mail.gmail.com>
+ <202406120927.3C64ACD6@keescook>
+ <CAMuHMdUsjy86z3=s6ipFSQrbsycPaExNv8oxrcL_8FhzabMoTg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 12 Jun 2024 21:47:39 +0200
-From: Martin Schiller <ms@dev.tdt.de>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: hauke@hauke-m.de, tsbogend@alpha.franken.de, rdunlap@infradead.org,
- robh@kernel.org, bhelgaas@google.com, linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
-Organization: TDT AG
-In-Reply-To: <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
-References: <20240607090400.1816612-1-ms@dev.tdt.de>
- <ZmnfQWFoIw5UCV-k@google.com> <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
-Message-ID: <b6bea9239050ed39ce3a051a5985b86d@dev.tdt.de>
-X-Sender: ms@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-type: clean
-X-purgate: clean
-X-purgate-ID: 151534::1718221662-C3C498CF-BD03A402/0/0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUsjy86z3=s6ipFSQrbsycPaExNv8oxrcL_8FhzabMoTg@mail.gmail.com>
 
-On 2024-06-12 20:39, Martin Schiller wrote:
-> On 2024-06-12 19:47, Dmitry Torokhov wrote:
->> Hi Marton,
+On Wed, Jun 12, 2024 at 09:21:52PM +0200, Geert Uytterhoeven wrote:
+> Hi Kees,
 > 
-> Hi Dmitry,
+> On Wed, Jun 12, 2024 at 6:51 PM Kees Cook <kees@kernel.org> wrote:
+> > On Wed, Jun 12, 2024 at 05:13:39PM +0800, David Gow wrote:
+> > > On Tue, 11 Jun 2024 at 05:33, Kees Cook <kees@kernel.org> wrote:
+> > > > Convert the runtime tests of hardened usercopy to standard KUnit tests.
+> > > >
+> > > > Co-developed-by: Vitor Massaru Iha <vitor@massaru.org>
+> > > > Signed-off-by: Vitor Massaru Iha <vitor@massaru.org>
+> > > > Link: https://lore.kernel.org/r/20200721174654.72132-1-vitor@massaru.org
+> > > > Tested-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> > > > Signed-off-by: Kees Cook <kees@kernel.org>
+> > > > ---
+> > >
+> > > This looks good, particularly with the x86 fix applied.
+> > >
+> > > It's still hanging on m68k -- I think at the 'illegal reversed
+> > > copy_to_user passed' test -- but I'll admit to not having tried to
+> > > debug it further.
+> > >
+> > > One other (set of) notes below about using KUNIT_EXPECT_MEMEQ_MSG(),
+> > > otherwise (assuming the m68k stuff isn't actually a regression, which
+> > > I haven't tested but I imagine is unlikely),
+> >
+> > I'm trying to debug a hang on m68k in the usercopy behavioral testing
+> > routines. It's testing for the pathological case of having inverted
+> > arguments to copy_to_user():
+> >
+> >         user_addr = kunit_vm_mmap(test, NULL, 0, priv->size,
+> >                             PROT_READ | PROT_WRITE | PROT_EXEC,
+> >                             MAP_ANONYMOUS | MAP_PRIVATE, 0);
+> >         ...
+> >         bad_usermem = (char *)user_addr;
+> >         ...
+> >         KUNIT_EXPECT_NE_MSG(test, copy_to_user((char __user *)kmem, bad_usermem,
+> >                                                PAGE_SIZE), 0,
+> >                 "illegal reversed copy_to_user passed");
+> >
+> > On other architectures, this immediate fails because the access_ok()
+> > check rejects it. On m68k with CONFIG_ALTERNATE_USER_ADDRESS_SPACE,
+> > access_ok() short-circuits to "true". I've tried reading
+> > arch/m68k/include/asm/uaccess.h but I'm not sure what's happening under
+> > CONFIG_CPU_HAS_ADDRESS_SPACES.
 > 
->> 
->> On Fri, Jun 07, 2024 at 11:04:00AM +0200, Martin Schiller wrote:
->>> Commit 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API") 
->>> not
->>> only switched to the gpiod API, but also inverted / changed the 
->>> polarity
->>> of the GPIO.
->>> 
->>> According to the PCI specification, the RST# pin is an active-low
->>> signal. However, most of the device trees that have been widely used 
->>> for
->>> a long time (mainly in the openWrt project) define this GPIO as
->>> active-high and the old driver code inverted the signal internally.
->>> 
->>> Apparently there are actually boards where the reset gpio must be
->>> operated inverted. For this reason, we cannot use the 
->>> GPIOD_OUT_LOW/HIGH
->>> flag for initialization. Instead, we must explicitly set the gpio to
->>> value 1 in order to take into account any "GPIO_ACTIVE_LOW" flag that
->>> may have been set.
->> 
->> Do you have example of such boards? They could not have worked before
->> 90c2d2eb7ab5 because it was actively setting the reset line to 
->> physical
->> high, which should leave the device in reset state if there is an
->> inverter between the AP and the device.
-> 
-> Oh, you're right. I totally missed that '__gpio_set_value' was used in
-> the original code and that raw accesses took place without paying
-> attention to the GPIO_ACTIVE_* flags.
-> 
-> You can find the device trees I am talking about in [1].
-> 
-> @Thomas Bogendoerfer:
-> Would it be possible to stop the merging of this patch?
-> I think We have to do do some further/other changes.
-> 
->> 
->>> 
->>> In order to remain compatible with all these existing device trees, 
->>> we
->>> should therefore keep the logic as it was before the commit.
->> 
->> With gpiod API operating with logical states there's still difference 
->> in
->> logic:
->> 
->> 	gpiod_set_value_cansleep(reset_gpio, 1);
->> 
->> will leave GPIO at 1 if it is described as GPIO_ACTIVE_HIGH (which is
->> apparently what you want for boards with broken DTS) but for boards
->> that accurately describe GPIO as GPIO_ACTIVE_LOW it well drive GPIO to
->> 0, leaving the card in reset state.
->> 
->> You should either use gpiod_set_raw_value_calsleep() or we can try and
->> quirk it in gpiolib (like we do for many other cases of incorrect GPIO
->> polarity descriptions and which is my preference).
+> On m68k CPUs that support CPU_HAS_ADDRESS_SPACES (i.e. all traditional
+> 680x0 that can run real Linux), the CPU has separate address spaces
+> for kernel and user addresses.  Accessing userspace addresses is done
+> using the special "moves" instruction, so we can just use the MMU to
+> catch invalid accesses.
 
-So you mean we should add an entry for "lantiq,pci-xway" to the
-of_gpio_try_fixup_polarity()?
-Do you know any dts / device outside the openWrt universe which is using
-this driver.
+Okay, that's what I suspected. I think I'll need to just not test this
+particular case for archs with separate address spaces, since it would
+be meaningless.
 
-For the lantiq targets in openWrt, the devicetree blob is appended to
-the kernel image and therefore also updated when doing a firmware
-upgrade. So, maybe it would also be an option to fix the driver (using
-GPIO_ACTIVE_* flag for the initial level and set it to 0 -> 1 -> 0) and
-rework all the dts files to use GPIO_ACTIVE_LOW.
+> 
+> > For now I've excluded that test for m68k, but I'm not sure what's
+> > expected to happen here on m68k for this set of bad arguments. Can you
+> > advise?
+> 
+> Perhaps the kernel address is actually a valid user address, or
+> vice versa?
 
-Then we won't need any quirks.
+Right -- I think that's what's happened.
 
->> 
->> This still leaves the question about boards that require inversion. 
->> Are
->> you saying that they have real signal inverter on the line or that 
->> their
->> device trees correctly describe the signal as GPIO_ACTIVE_LOW?
->> 
->> BTW, please consider getting DTS trees for your devices into mainline.
->> Why do you keep them separate?
 > 
-> Unfortunately, these are not "my" devices and I can't even test them.
-> I've got feedback from some users when I updated the lantiq target to
-> linux 6.1 in openwrt.
+> Does the test work on systems that use 4G/4G for kernel/userspace
+> instead of the usual 1G/3G split?
 > 
-> 
-> Let's assume that all boards physically expect an active-low signal.
-> 
-> If the GPIO_ACTIVE_LOW flag were now set in the device tree, the
-> original (old) driver would have an incorrect initial level (LOW 
-> instead
-> of HIGH) due to the
-> 
-> 	gpio_direction_output(reset_gpio, 1);
-> 
-> This is probably the reason why the flag GPIO_ACTIVE_HIGH is set in
-> almost all dts files in openwrt.
-> 
-> But with commit 90c2d2eb7ab5 the initial level (LOW) is guaranteed to 
-> be
-> wrong because of the "GPIOD_OUT_LOW" and cannot be changed by "wrong"
-> device tree settings.
-> 
-> The signal curve is LOW -> LOW -> HIGH instead of HIGH -> LOW -> HIGH.
-> 
->> 
->>> 
->>> Fixes: 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
->>> ---
->>>  arch/mips/pci/pci-lantiq.c | 8 ++++----
->>>  1 file changed, 4 insertions(+), 4 deletions(-)
->>> 
->>> diff --git a/arch/mips/pci/pci-lantiq.c b/arch/mips/pci/pci-lantiq.c
->>> index 68a8cefed420..0844db34022e 100644
->>> --- a/arch/mips/pci/pci-lantiq.c
->>> +++ b/arch/mips/pci/pci-lantiq.c
->>> @@ -124,14 +124,14 @@ static int ltq_pci_startup(struct 
->>> platform_device *pdev)
->>>  		clk_disable(clk_external);
->>> 
->>>  	/* setup reset gpio used by pci */
->>> -	reset_gpio = devm_gpiod_get_optional(&pdev->dev, "reset",
->>> -					     GPIOD_OUT_LOW);
->>> +	reset_gpio = devm_gpiod_get_optional(&pdev->dev, "reset", 
->>> GPIOD_ASIS);
->>>  	error = PTR_ERR_OR_ZERO(reset_gpio);
->>>  	if (error) {
->>>  		dev_err(&pdev->dev, "failed to request gpio: %d\n", error);
->>>  		return error;
->>>  	}
->>>  	gpiod_set_consumer_name(reset_gpio, "pci_reset");
->>> +	gpiod_direction_output(reset_gpio, 1);
->>> 
->>>  	/* enable auto-switching between PCI and EBU */
->>>  	ltq_pci_w32(0xa, PCI_CR_CLK_CTRL);
->>> @@ -194,10 +194,10 @@ static int ltq_pci_startup(struct 
->>> platform_device *pdev)
->>> 
->>>  	/* toggle reset pin */
->>>  	if (reset_gpio) {
->>> -		gpiod_set_value_cansleep(reset_gpio, 1);
->>> +		gpiod_set_value_cansleep(reset_gpio, 0);
->>>  		wmb();
->>>  		mdelay(1);
->>> -		gpiod_set_value_cansleep(reset_gpio, 0);
->>> +		gpiod_set_value_cansleep(reset_gpio, 1);
->>>  	}
->>>  	return 0;
->>>  }
->>> --
->>> 2.39.2
->>> 
->> 
->> Thanks.
-> 
-> [1]
-> https://git.openwrt.org/?p=openwrt/openwrt.git;a=tree;f=target/linux/lantiq/files/arch/mips/boot/dts/lantiq
+> /me runs the old test_user_copy.ko on ARAnyM
+> Seems to take a while? Or it hangs, too?
+
+Sounds like the same behavior.
+
+> Related reading material
+> https://lore.kernel.org/all/CAMuHMdUzHwm5_TL7TNAOF+uqheJnKgsqF+_vzqGRzB_3eufKug@mail.gmail.com/
+> https://lore.kernel.org/all/CAMuHMdVQ93ihgcxUbjptTaHdPjxXLyVAsAr-m3tWBJV0krS2vw@mail.gmail.com/
+
+Thanks!
+
+-Kees
+
+-- 
+Kees Cook
 
