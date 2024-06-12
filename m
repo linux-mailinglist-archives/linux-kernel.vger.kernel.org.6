@@ -1,135 +1,176 @@
-Return-Path: <linux-kernel+bounces-211997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 107D09059CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:23:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5F19059CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 19:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6DB71F21999
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:23:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E2D1C210CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6181822D1;
-	Wed, 12 Jun 2024 17:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616F31822C8;
+	Wed, 12 Jun 2024 17:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqrTaVqb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ED6QTUpf"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3FD181BB3;
-	Wed, 12 Jun 2024 17:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C7C1822D5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 17:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718213020; cv=none; b=Mdmlg/VVeVwnTsRBAVLMELn+hjql7mlKBjO/LDohSwYjfnE8ApZKaEfCCJYUArGZ3y4QhjBWfyuQ2Sz0rezghNdqG+Wns6lJD2/iSGcAn5IenW49VYChWhUIVCGsDrrq6FOrhcm3YGOWgR9k0ERQEB2gVXsQtq+WuNnjJ1GHi1k=
+	t=1718213023; cv=none; b=YJy2i9kb0PvWZUCNuLjhfTMrtDHOiKQLYEEGdhYQD6taufN+5LuVqarLI8c8cW41fAGrcfYx0LeFjnpntzP6Sxbnl8dH47uPBwOxyFAQpyevb8THV/HWdczC8sD/a0MJSJy1NNwsGjiTWOVNB8Z7orbs2DF4YhQbIKxCBRLGmuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718213020; c=relaxed/simple;
-	bh=SmhgWhV+k+k1Jn01Ck0bRn6varewMhGpbVWsepDCohQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g3sDqbfmFnMzPmE0DGAsvkphsvkw3t7xDLGx3efagXOdohSs2sIakU9rb8+WGir5I6/sPn0gF7ia0HMCefdgbzR23L3t6SF/5qqXxLTxIRwTm1OkctpTrlmT4m9Kh9lH4lPqNHmpmiPz19KYwzwh5pxA51HEWk9cjZ5xXlLlXrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqrTaVqb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94953C4AF1A;
-	Wed, 12 Jun 2024 17:23:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718213019;
-	bh=SmhgWhV+k+k1Jn01Ck0bRn6varewMhGpbVWsepDCohQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pqrTaVqbhIjv/5M8kgJm/nWlZnSpwPKvcvfMYVmqbQDycCvmXpxhINXk0quLhfJji
-	 1tzAVwHYvTQgsXIAFqkJn1XZTdNgEiZWlgI04X/YzeTS91XRmErFPijdGVuxMV4xlT
-	 Fx+sQkld9jE73/EbIUyLBv3oLxx4puivwceUHjwZu8JjN6zgDb7AIoUBvooMLllAFq
-	 /Fs8A8/4om3TAYNL775gT2Z4Z0QRbBJSxKelhXDCoPcE7qiDklNkc0eclRMMxJKUw3
-	 xrd4Zm29I4LsOkbZUCSGMQDMRZ0j7WBR6ia/TOnXdbkaq5LUGuvdoXqwcq1D83o4/Z
-	 H2A+c+5PqbVyg==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5baf76164fbso16367eaf.1;
-        Wed, 12 Jun 2024 10:23:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVA4ZcvnHvngM8gCKcTfiNl/wpKcbYdq4a7dWHiLNnRN1veVs8MHcnGhsCG7cRH767eJTSS3QGNKXWhdiiJ5mC4rQw7BHLO5AG2WoP5
-X-Gm-Message-State: AOJu0YxpkgS/4txa8yLVwN/vCnSc/+ySX+js3AoVe9eNo6htIhUxfOvM
-	vBOP8F5aCIS+pMzFavrOFHGHk9ZQ3I1/oOVSjv64AM+U3eAnc20y2/s5HK7xwiLdsnCaIzVn01D
-	wQbHvQG+owwS1jUeLtn1mvP2lTRM=
-X-Google-Smtp-Source: AGHT+IGHa3GWElLGP/C9oYLMX2fq5ZVD08YJMHCa8lDrMbl1m3XVOVMRcQJFtQ9HX4T2TFlR2IblQMhR3cRApH+VIiA=
-X-Received: by 2002:a05:6871:286:b0:254:d417:351f with SMTP id
- 586e51a60fabf-25514bfd75fmr2688487fac.1.1718213018901; Wed, 12 Jun 2024
- 10:23:38 -0700 (PDT)
+	s=arc-20240116; t=1718213023; c=relaxed/simple;
+	bh=qvzOGVZF1aFjcNNXoWdAyWZv4lQeSovWWQTrEs6pNdw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Z8sz0X2WLLDv8aORh9x0UDqc2jZ2HVuLfAePR9PjjtOm4OenNlE+6u9wZbS9dzDp7vSKosateft6Z6hvG+pr50wYwl/b31LlBfyNUTr5/4uj/v4r1sAgneZVSkTDPrYmaQTn4R5pDxQ8iza4BpodFWaW8WfERtHWTEL8bD6XKHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ED6QTUpf; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfe4f388d33so124057276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 10:23:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718213020; x=1718817820; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v0uZvClGSP7b0LMzzAPVM0AhM29ZDe2y2D54OZuyJ4o=;
+        b=ED6QTUpflG01XxDwADpCTuUCb3My1wmNO1KRIabL/mB6J08kl5ENGX51vmpVHsg6xR
+         jFv33Xhk3VXxWTVvpGKAaIotK7Zksj8HAw0XHs6pGvPnVz+1x1dCCWPEFUm/SJy06FLi
+         BpuEPZLYakQWef9qNxKBc3A3XsNZbfd6mt7/jBNk0WSx8e0xYM5diG+B74Wd60h/dixp
+         Ae7x+VxLhJaqlumRqtc3pPayDW5jcNJHxwn3EmaYD3cAVYZ7BtagZ8ZPWqNrRQf8GGOR
+         qUscLQNTNlkm6MS3vd2OpolLDv7GKWif+u6p98TUEVHK9IwK5SEi6mXOlkhAKEmwzS4n
+         qyAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718213020; x=1718817820;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v0uZvClGSP7b0LMzzAPVM0AhM29ZDe2y2D54OZuyJ4o=;
+        b=ZphytQPNvuDFNDvhd30zOkiLRORgWXunze1qk3y82J7N3HqBCVWF1B9f3d03LMwqfo
+         ktcNzRPLHQ9+mdahizpUY1jGQzNNxZCjdPYlVMaSiDk3HADJMVRSeA5Omt1AkDcLXPr/
+         VLrSaN0E4E71MgTOeXEE6jzUFp5DWqSGIcEL3Knx30rEC0DlY2fqIiExlSw2Dxdfhh39
+         nQ0cSHOil8++8BWlTe6FfZXh7tH+6+7niQFdyf6uRl9kCGKhwTKCGF+WS4/7jB7N6KY3
+         k3JVJytqH4EcHYIDbf7hRang0wR+Y+/FB4FZoxM5P1Q/peesxVK3T8hgzrgIk2zbPsz2
+         gIPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUF66Eq5ikfNgNvWkrMU5Ec5AdUcsKROvBwr3SCGE7UEg7MRItoYCvBW3y++ury4fri38maRlbu9op5Pig81YujtadrcKGoZg1NTT7R
+X-Gm-Message-State: AOJu0YxUCwvWBnFdhHHuHMeJQJZGTeaDCJhIFYpyjEMec5RpxfSk4R98
+	jx96imUr7Ct7jl+1p759p8E0PyrSE2gelto+pioTGEf0vur4tcXVkF2RM6ba4hdXb0K41jUOb6/
+	+NA==
+X-Google-Smtp-Source: AGHT+IHsuziTjwu8H3LsGOZG3nq2ECdUkM7fJ/s+9lw1k304/SuAsQ64WUp2lf97WzRuhz9PeWwlSE0Bo58=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:729:b0:dfb:b4e:407a with SMTP id
+ 3f1490d57ef6-dfe68035fbemr647880276.9.1718213020117; Wed, 12 Jun 2024
+ 10:23:40 -0700 (PDT)
+Date: Wed, 12 Jun 2024 10:23:38 -0700
+In-Reply-To: <CAOUHufYCmYNngmS=rOSAQRB0N9ai+mA0aDrB9RopBvPHEK42Ng@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
- <7f4a777b-88f6-4429-b168-d1337d291386@yahoo.de> <435867b5-029b-419f-bb7f-2d4902c62556@leemhuis.info>
- <a97f9f4d-17f1-44cf-a0f4-634fd38aba2a@yahoo.de> <CAJZ5v0jwvq6W0u7Zx4GzQxJOnrF4KvN1RHtqqDcaMvN6yp0hDg@mail.gmail.com>
- <312649b1-eea9-4346-af93-76a821e88eb7@yahoo.de> <CAJZ5v0jfvRWK0M3Xf=36e74cVQ9rN5T1WdZZVnuk1XmZ=xu==g@mail.gmail.com>
- <78549853-1763-40cf-9974-3fc737fad093@yahoo.de> <CAJZ5v0h5pQDaA-bEOmcz_TpE87kFqWLFLJC+=OLjg5ZtF3hxpQ@mail.gmail.com>
- <91d94429-fc7e-4828-914d-1a251ee1ba99@yahoo.de> <CAJZ5v0gPZHDfuK1FRdTAG8Eqjf0NWUQdf-_GCWsWf6dCBE=1dg@mail.gmail.com>
- <543787c3-db5b-4f63-b5e0-df508300db73@yahoo.de> <CAJZ5v0h7jDw3yX689nZdB+YeJbCk0vFoUgVb4Yi0cqDxjL5chQ@mail.gmail.com>
- <40ec1e53-2bc8-48aa-9909-fac9072adb57@yahoo.de> <CAJZ5v0jtjXfvr4GXukjyO9XsEO6K2Nfux3otpFPP4vWS_9_qEQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jtjXfvr4GXukjyO9XsEO6K2Nfux3otpFPP4vWS_9_qEQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Jun 2024 19:23:26 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hcX0JAMBA+EVZURDH1BTQ2zL-W_4BjSx0a=1oRaR90ug@mail.gmail.com>
-Message-ID: <CAJZ5v0hcX0JAMBA+EVZURDH1BTQ2zL-W_4BjSx0a=1oRaR90ug@mail.gmail.com>
-Subject: Re: Regression, thermal: core: battery reading wrong after wake from
- S3 [Was: Bug Report according to thermal_core.c]
-To: "fhortner@yahoo.de" <fhortner@yahoo.de>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: multipart/mixed; boundary="000000000000a420a8061ab4a412"
-
---000000000000a420a8061ab4a412
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240611002145.2078921-1-jthoughton@google.com>
+ <20240611002145.2078921-9-jthoughton@google.com> <ZmnGlpBR91TyI3Lt@google.com>
+ <CAOUHufYCmYNngmS=rOSAQRB0N9ai+mA0aDrB9RopBvPHEK42Ng@mail.gmail.com>
+Message-ID: <ZmnZmj8iVmcLf8fo@google.com>
+Subject: Re: [PATCH v5 8/9] mm: multi-gen LRU: Have secondary MMUs participate
+ in aging
+From: Sean Christopherson <seanjc@google.com>
+To: Yu Zhao <yuzhao@google.com>
+Cc: James Houghton <jthoughton@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Restored list CCs.
-
-On Wed, Jun 12, 2024 at 3:41=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Wed, Jun 12, 2024 at 11:56=E2=80=AFAM fhortner@yahoo.de <fhortner@yaho=
-o.de> wrote:
+On Wed, Jun 12, 2024, Yu Zhao wrote:
+> On Wed, Jun 12, 2024 at 10:02=E2=80=AFAM Sean Christopherson <seanjc@goog=
+le.com> wrote:
 > >
-> > Am 11.06.24 um 16:42 schrieb Rafael J. Wysocki:
+> > On Tue, Jun 11, 2024, James Houghton wrote:
+> > > diff --git a/mm/rmap.c b/mm/rmap.c
+> > > index e8fc5ecb59b2..24a3ff639919 100644
+> > > --- a/mm/rmap.c
+> > > +++ b/mm/rmap.c
+> > > @@ -870,13 +870,10 @@ static bool folio_referenced_one(struct folio *=
+folio,
+> > >                       continue;
+> > >               }
+> > >
+> > > -             if (pvmw.pte) {
+> > > -                     if (lru_gen_enabled() &&
+> > > -                         pte_young(ptep_get(pvmw.pte))) {
+> > > -                             lru_gen_look_around(&pvmw);
+> > > +             if (lru_gen_enabled() && pvmw.pte) {
+> > > +                     if (lru_gen_look_around(&pvmw))
+> > >                               referenced++;
+> > > -                     }
+> > > -
+> > > +             } else if (pvmw.pte) {
+> > >                       if (ptep_clear_flush_young_notify(vma, address,
+> > >                                               pvmw.pte))
+> > >                               referenced++;
 > >
-> > This doesn't make them run in a different order, it just delays both
-> > of them, because the notifiers are called sequentially.
-> >
-> > However, if you added the msleep() at the beginning of
-> > thermal_zone_device_resume(), it would change the ordering of this
-> > function with respect to the PM notifiers, so please try doing this.
-> >
-> > I did so and added msleep(1000) to thermal_core.c line 1634
-> > I have also reverted the patch you sent me.
-> >
-> > The battery readings after resume from S3 sleep where fine.
-> > I have tried 2 reboots with 4 sleep/wake cycles, respectively
->
-> Thanks!
->
-> This means that the two code paths in question somehow interfere
-> destructively when they are running in parallel with each other.
+> > Random question not really related to KVM/secondary MMU participation. =
+ AFAICT,
+> > the MGLRU approach doesn't flush TLBs after aging pages.  How does MGLR=
+U mitigate
+> > false negatives on pxx_young() due to the CPU not setting Accessed bits=
+ because
+> > of stale TLB entries?
+>=20
+> I do think there can be false negatives but we have not been able to
+> measure their practical impacts since we disabled the flush on some
+> host MMUs long ago (NOT by MGLRU), e.g., on x86 and ppc,
+> ptep_clear_flush_young() is just ptep_test_andclear_young().
 
-One more thing to try is the attached patch (independent of the
-previous one) to lower the priority of the thermal PM notifier to make
-it run always after the ACPI battery one.
+Aha!  That's what I was missing, I somehow didn't see x86's ptep_clear_flus=
+h_young().
 
-Please test this one too and let me know if it works for you.
+That begs the question, why does KVM flush TLBs on architectures that don't=
+ need
+to?  And since kvm_mmu_notifier_clear_young() explicitly doesn't flush, are=
+ there
+even any KVM-supported architectures for which the flush is mandatory?
 
---000000000000a420a8061ab4a412
-Content-Type: text/x-patch; charset="US-ASCII"; name="thermal-core-resume-prio.patch"
-Content-Disposition: attachment; filename="thermal-core-resume-prio.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lxc3mpe90>
-X-Attachment-Id: f_lxc3mpe90
+Skipping the flush on KVM x86 seems like a complete no-brainer.
 
-LS0tCiBkcml2ZXJzL3RoZXJtYWwvdGhlcm1hbF9jb3JlLmMgfCAgICAxICsKIDEgZmlsZSBjaGFu
-Z2VkLCAxIGluc2VydGlvbigrKQoKSW5kZXg6IGxpbnV4LXBtL2RyaXZlcnMvdGhlcm1hbC90aGVy
-bWFsX2NvcmUuYwo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09Ci0tLSBsaW51eC1wbS5vcmlnL2RyaXZlcnMvdGhlcm1hbC90
-aGVybWFsX2NvcmUuYworKysgbGludXgtcG0vZHJpdmVycy90aGVybWFsL3RoZXJtYWxfY29yZS5j
-CkBAIC0xNzEyLDYgKzE3MTIsNyBAQCBzdGF0aWMgaW50IHRoZXJtYWxfcG1fbm90aWZ5KHN0cnVj
-dCBub3RpCiAKIHN0YXRpYyBzdHJ1Y3Qgbm90aWZpZXJfYmxvY2sgdGhlcm1hbF9wbV9uYiA9IHsK
-IAkubm90aWZpZXJfY2FsbCA9IHRoZXJtYWxfcG1fbm90aWZ5LAorCS5wcmlvcml0eSA9IC0xLAog
-fTsKIAogc3RhdGljIGludCBfX2luaXQgdGhlcm1hbF9pbml0KHZvaWQpCg==
---000000000000a420a8061ab4a412--
+Will, Marc and/or Oliver, what are arm64's requirements in this area?  E.g.=
+ I see
+that arm64's version of __ptep_clear_flush_young() does TLBI but not DSB.  =
+Should
+KVM be doing something similar?  Can KVM safely skip even the TBLI?
+
+> theoretical basis is that, given the TLB coverage trend (Figure 1 in
+> [1]), when a system is running out of memory, it's unlikely to have
+> many long-lived entries in its TLB. IOW, if that system had a stable
+> working set (hot memory) that can fit into its TLB, it wouldn't hit
+> page reclaim. Again, this is based on the theory (proposition) that
+> for most systems, their TLB coverages are much smaller than their
+> memory sizes.
+>=20
+> If/when the above proposition doesn't hold, the next step in the page
+> reclaim path, which is to unmap the PTE, will cause a page fault. The
+> fault can be minor or major (requires IO), depending on the race
+> between the reclaiming and accessing threads. In this case, the
+> tradeoff, in a steady state, is between the PF cost of pages we
+> shouldn't reclaim and the flush cost of pages we scan. The PF cost is
+> higher than the flush cost per page. But we scan many pages and only
+> reclaim a few of them; pages we shouldn't reclaim are a (small)
+> portion of the latter.
+>=20
+> [1] https://www.usenix.org/legacy/events/osdi02/tech/full_papers/navarro/=
+navarro.pdf
 
