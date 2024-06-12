@@ -1,264 +1,140 @@
-Return-Path: <linux-kernel+bounces-211813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91E5905745
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:46:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93357905754
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 17:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F36C51C2270E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:46:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C2701F21EB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 15:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C4717FACA;
-	Wed, 12 Jun 2024 15:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F2F180A9D;
+	Wed, 12 Jun 2024 15:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A7xCF2Wy"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUUDhFkB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18C11C6BD;
-	Wed, 12 Jun 2024 15:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B2A1EB2A;
+	Wed, 12 Jun 2024 15:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718207201; cv=none; b=GSxtz80cwKtPyptmp7KspnsEcDFDrnbij/Gceus8gpxsNIMr2mXjpAXMvuQqVO9gxKj7pseRtHfEebelP2Xp1Ueyb6hGf0Wojvsqz7BFXNq1qN2mQiCFvKuQtk4Ysb9qrtUHiBDA6i2cddYuw3AyLfp8nLNF9evwZfDCj6Ym4Cg=
+	t=1718207265; cv=none; b=UNsoko0/78auhNQrD8urD4Ib7rK6/elCCmCstZaFp1PutZF6iRykHAsGVCM/kJQMtnRkL2v/3QigjQduSxdqJsNJUD9xt8W3jesyFZj7Hr78F1dcg/H8i2y1ptjm4HnY3j+W9m/waF8G2xt7TyjnNuAyqQtlrBQ/F3plqa21wH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718207201; c=relaxed/simple;
-	bh=pwyXV2gqwAitEUVkBUVsSUVYSSTgx/UCYaTnnIaHQ8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=pskcxRlKoo/JyheRsg+Uiz3vtqqkD2maLwsln6QD0D7Le16gXlA44szd0Dk4mfKN3QcW/a+aenfbUAya/iKdPoys3TkQ0G2MLOQ7dVBrRmQhDGyg9oUKmJM6Pry88fsiEmAm/ieDH5rNV6Y+RuqIpZ3TJxDj5T/Hp4G2k1O3zbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A7xCF2Wy; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-627ebbefd85so81287457b3.3;
-        Wed, 12 Jun 2024 08:46:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718207199; x=1718811999; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PwyckEkEliCj8lDpHS+Ob3WHasbxDcvL14yeYreRWFw=;
-        b=A7xCF2Wy5rfg1lBBr4vAESoChNqR5an0O7hE7MDlXIu+ggUWVcY+Xb0dIJs8tmw0Gp
-         V6wRtk6PV2emcSJWIhtPEkF2cYHqRyhdP51JQvzKwltdakwagXsrUe5rrju4nkFJMkAn
-         AgT/MxSWK86AlRHEdUDtmNL9x6KLVT6wiep92uC4NLsaSZtswDgHvwS/9w9aLfWRv5kP
-         jwhVjKrBQ73Q7mFMUk9XCbEd1WHhOrVaBxV3PFOWjYIUmrFtxktHorQmyCOls2BdqEcq
-         I6BD0ekJXlCxlw5R97WI4aX1DCMmJEjDyD3GDK00AQenuGsWFnJb8BGEpsXvzKnMkycM
-         zWWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718207199; x=1718811999;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PwyckEkEliCj8lDpHS+Ob3WHasbxDcvL14yeYreRWFw=;
-        b=r6e/8IIGTV/JDj3wLze/m+qAatXys1+ePLsbNgBZKeCqwW1DlwhjYVMamJdiVzrklJ
-         sapn3YMSZS5b0invAa4c3SyRTiplogLrSDYXinOBrA3d7EykXf5awu1cBIzNyGPgO2YY
-         bjkllBM4QESSN9duEcU07qmg2EVxEmA9KGec7KTAusyNvsbi+PsaqHFmawWo5oPMzF7i
-         8qYhH/Y+4teh9DP1CMpZjB5o5/gGgYhrBa5uAWFbeuWC1AkFrlGsUuJwkvUwZCoZC2ct
-         4DQgtfKbvOhmoEshQIiiGrJXTKqhQ2ydqpCVlZKQniCwd6DhXWcGaOtHOD8/yLZgQL4Q
-         +bDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVgn3SxjYM1BBMoK6oM48/wXDqaqsoNa8kkRvZarcIGjHjbjcMIaZoHOfaWUjmgoQaBngIJa0GN3kXe2/VRUGgCTM+AHiC8bVSUbx77fl1wG7ZNGHJcoKWxLZEaVSrs75HeSXTQJk=
-X-Gm-Message-State: AOJu0Yx9ygg6npd6LuCZJyAVloH7GV0OFC+YIXnVRpORKt5NBUjYOjPI
-	6GJ/MXggAniiyeSdxmZZLzVBCRkrYmVf5xTvgYwMJXEdtUe/h6CTnZQM844+mJT1SDgM0USiD1i
-	dRoxDmmFaB7NBI6MfliRBZus22gWzHRyUn0c=
-X-Google-Smtp-Source: AGHT+IGjQ3bMnaoz14Ziqp08zGvMzQCqh0n9PJaygB1It1xMzxUvIdJW08/jr16vIotLNiQydeZzTqLOoDtFAgrFuLQ=
-X-Received: by 2002:a0d:c0c4:0:b0:62d:315:2a7d with SMTP id
- 00721157ae682-62fbdba8ab0mr19639417b3.51.1718207198877; Wed, 12 Jun 2024
- 08:46:38 -0700 (PDT)
+	s=arc-20240116; t=1718207265; c=relaxed/simple;
+	bh=RcO8kJK1SPBxidMQCBZS6Nufe2pEKnWn1BExnfdFDhs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H5RBiW4jLym8vj659wwxhgGumRTWDTtjLtvKARwuNZ+bKSnrnMR62SQGWlXoPniqOLLkA0NaAqgFd+KLtl4fmjvhlaLmKmWq+ZrYM/Vu4/V/vBHpWsr54vdG6WxebUjBEVGUJUmSxw+koReJDsrSSwBTT0+7ilvhgYfSnwk1OTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUUDhFkB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CCFC116B1;
+	Wed, 12 Jun 2024 15:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718207264;
+	bh=RcO8kJK1SPBxidMQCBZS6Nufe2pEKnWn1BExnfdFDhs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tUUDhFkBvtiENrkhGjsuaqjXStFu2y4QmRyEz8Z44+BNeCUMT1FwXpmM/Z+ZWMWEt
+	 xzcTbt93S5t/Z2Gjbj8/IPxqyEriOfVzDPo8HuhM4xgnSUgcbkjoEHG3d2MQTSOFzv
+	 0qw54/7Zv6wsSjSdQQTHNp9M57WuCZdau/mlvGyNsjZNzhUF8fmviXzmsmm/taiwEh
+	 UVHIkfWuUcjER2VhozjXME73U59vBlXDJxWYNfGXzCU6uWRy+oqe9bZwHjAo8SrVfr
+	 B8TqlIFed1ii275iDSfF4yGkhIgvyJBVxzUfGA6GSAus8H08zqOCQJNpZ4tAB3Ft9h
+	 9EyHQ6Et14wWw==
+Message-ID: <12fd227b-5f6a-4929-baaa-7f657933cde6@kernel.org>
+Date: Wed, 12 Jun 2024 09:47:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CADZouDR_Qz7dNVDsJyVSK8HfeSPpoO2ts=C-VbzhvHs3xE53AA@mail.gmail.com>
- <24c12c7d-71fd-4ff8-b67b-20cdfb67bd86@gmail.com>
-In-Reply-To: <24c12c7d-71fd-4ff8-b67b-20cdfb67bd86@gmail.com>
-From: chase xd <sl1589472800@gmail.com>
-Date: Wed, 12 Jun 2024 17:46:29 +0200
-Message-ID: <CADZouDSYKVjDry_w535s8d8+3eXyLnMdrnOtbeYSMYWqxFkKbA@mail.gmail.com>
-Subject: Re: [io-uring] WARNING in io_issue_sqe
-To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
+ custom page providers
+Content-Language: en-US
+To: Jason Gunthorpe <jgg@ziepe.ca>, Mina Almasry <almasrymina@google.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
+ Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
+ <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
+References: <eb237e6e-3626-4435-8af5-11ed3931b0ac@gmail.com>
+ <be2d140f-db0f-4d15-967c-972ea6586b5c@kernel.org>
+ <20240607145247.GG791043@ziepe.ca>
+ <45803740-442c-4298-b47e-2d87ae5a6012@davidwei.uk>
+ <54975459-7a5a-46ff-a9ae-dc16ceffbab4@gmail.com>
+ <20240610121625.GI791043@ziepe.ca>
+ <59443d14-1f1d-42bb-8be3-73e6e4a0b683@kernel.org>
+ <00c67cf0-2bf3-4eaf-b200-ffe00d91593b@gmail.com>
+ <20240610221500.GN791043@ziepe.ca>
+ <CAHS8izNRd=f=jHgrYKKfzgcU3JzkZA1NkZnbQM+hfYd8-0NyBQ@mail.gmail.com>
+ <20240612120602.GQ791043@ziepe.ca>
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <20240612120602.GQ791043@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-here you go
+On 6/12/24 6:06 AM, Jason Gunthorpe wrote:
+> On Tue, Jun 11, 2024 at 11:09:15AM -0700, Mina Almasry wrote:
+> 
+>> Just curious: in Pavel's effort, io_uring - which is not a device - is
+>> trying to share memory with the page_pool, which is also not a device.
+>> And Pavel is being asked to wrap the memory in a dmabuf. Is dmabuf
+>> going to be the kernel's standard for any memory sharing between any 2
+>> components in the future, even when they're not devices?
+> 
+> dmabuf is how we are refcounting non-struct page memory, there is
+> nothing about it that says it has to be MMIO memory, or even that the
+> memory doesn't have struct pages.
+> 
+> All it says is that the memory is alive according to dmabuf
+> refcounting rules. And the importer obviously don't get to touch the
+> underlying folios, if any.
+> 
 
-```
-# {Threaded:false Repeat:true RepeatTimes:0 Procs:1 Slowdown:1
-Sandbox: SandboxArg:0 Leak:false NetInjection:false NetDevices:false
-NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false
-KCSAN:false DevlinkPCI:false NicVF:false USB:false VhciInjection:false
-Wifi:false IEEE802154:false Sysctl:false Swap:false UseTmpDir:false
-HandleSegv:true Repro:false Trace:false LegacyOptions:{Collide:false
-Fault:false FaultCall:0 FaultNth:0}}
-r0 =3D syz_io_uring_setup(0x4d84, &(0x7f0000000000)=3D{0x0, 0x649b, 0x80,
-0x0, 0x4315}, &(0x7f0000000080)=3D<r1=3D>0x0, &(0x7f00000000c0)=3D<r2=3D>0x=
-0)
-open(&(0x7f0000000100)=3D'./file0\x00', 0x214400, 0x84)
-r3 =3D open$dir(&(0x7f0000000140)=3D'./file0\x00', 0x0, 0x0)
-r4 =3D socket(0x2a, 0x80800, 0x4)
-epoll_create1(0x0)
-eventfd2(0xffffffff, 0x100800)
-io_uring_register$IORING_UNREGISTER_IOWQ_AFF(r0, 0x12, 0x0, 0x0)
-syz_io_uring_submit(r1, r2, &(0x7f00000001c0)=3D@IORING_OP_ACCEPT=3D{0xd,
-0x10, 0x1, @sock=3Dr4, &(0x7f0000000200)=3D0x80,
-&(0x7f0000000240)=3D@tipc=3D@name, 0x0, 0x800})
-io_uring_enter(r0, 0x1, 0x1, 0x9, 0x0, 0x0)
-syz_io_uring_complete(r1, &(0x7f0000000380))
-io_uring_register$IORING_REGISTER_PROBE(r0, 0x8,
-&(0x7f0000002900)=3D{0x0, 0x0, 0x0, '\x00', [{}, {}, {}, {}, {}, {}, {},
-{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-{}, {}, {}, {}, {}]}, 0x2e)
-clock_gettime(0x0, 0x0)
-syz_io_uring_submit(r1, r2, 0x0)
-syz_io_uring_submit(r1, r2,
-&(0x7f0000001680)=3D@IORING_OP_SYMLINKAT=3D{0x26, 0x22, 0x0, @fd_dir=3Dr3,
-&(0x7f0000000180)=3D'./file0\x00', &(0x7f0000000380)=3D'./file0\x00'})
-syz_io_uring_submit(r1, r2,
-&(0x7f0000002a80)=3D@IORING_OP_ASYNC_CANCEL=3D{0xe, 0x0, 0x0, 0x0, 0x0,
-0x0, 0x0, 0x4, 0x1})
-syz_io_uring_submit(r1, r2,
-&(0x7f0000002ac0)=3D@IORING_OP_ASYNC_CANCEL=3D{0xe, 0x0, 0x0, 0x0, 0x0,
-0x0, 0x0, 0x10, 0x1})
-io_uring_enter(r0, 0x4, 0x4, 0x5, 0x0, 0x0)
-syz_io_uring_complete(r1, 0x0)
-```
+In addition, the io_uring developers should be considering the use case
+of device memory. There is no reason for this design to be limited to
+host memory. io_uring should not care (it is not peeking inside the
+memory buffers); it is just memory references.
 
+One of io_uring's primary benefits is avoiding system calls. io_uring
+works with TCP sockets. Let it work with any dmabuf without concern of
+memory type. The performance benefits the Google crowd sees with system
+call based apps should be even better with io_uring.
 
-On Wed, Jun 12, 2024 at 5:41=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> On 6/12/24 15:29, chase xd wrote:
-> > Hi,
-> >
-> > Syzkaller hits a new bug in branch 6.10.0-rc1-00004-gff802a9f35cf-dirty=
- #7.
-> > Note: this is also not a reliable repro, might need to try more times
->
-> Do you have a syz repro? It's easier to understand what it's doing,
-> which request types are used and such.
->
->
-> >
-> > ```
-> >
-> > [  153.857557][T21250] apt-get (21250) used greatest stack depth:
-> > 22240 bytes left
-> > [  249.711259][T57846] ------------[ cut here ]------------
-> > [  249.711626][T57846] WARNING: CPU: 1 PID: 57846 at
-> > io_uring/refs.h:38 io_issue_sqe+0x10dc/0x1720
-> > [  249.712188][T57846] Modules linked in:
-> > [  249.712431][T57846] CPU: 1 PID: 57846 Comm: iou-wrk-57845 Not
-> > tainted 6.10.0-rc1-00004-gff802a9f35cf-dirty #7
-> > [  249.713020][T57846] Hardware name: QEMU Standard PC (i440FX + PIIX,
-> > 1996), BIOS 1.15.0-1 04/01/2014
-> > [  249.713566][T57846] RIP: 0010:io_issue_sqe+0x10dc/0x1720
-> > [  249.713894][T57846] Code: fc ff df 4c 89 e2 48 c1 ea 03 80 3c 02 00
-> > 0f 85 c6 05 00 00 49 89 1c 24 49f
-> > [  249.715023][T57846] RSP: 0018:ffffc9000e84fc00 EFLAGS: 00010293
-> > [  249.715389][T57846] RAX: 0000000000000000 RBX: 0000000000000000
-> > RCX: ffffffff84139c3c
-> > [  249.715855][T57846] RDX: ffff88801eaad640 RSI: ffffffff8413a70b
-> > RDI: 0000000000000007
-> > [  249.716300][T57846] RBP: ffffc9000e84fc80 R08: 0000000000000007
-> > R09: 0000000000000000
-> > [  249.716676][T57846] R10: 0000000000000000 R11: 0000000000000000
-> > R12: ffff8880001c3a00
-> > [  249.717042][T57846] R13: 0000000000000000 R14: ffff888010600040
-> > R15: ffff8880001c3a48
-> > [  249.717428][T57846] FS:  00007f58ce931800(0000)
-> > GS:ffff88807ec00000(0000) knlGS:0000000000000000
-> > [  249.717837][T57846] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003=
-3
-> > [  249.718135][T57846] CR2: 00007f58ce932128 CR3: 000000001b08a000
-> > CR4: 00000000000006f0
-> > [  249.718497][T57846] Call Trace:
-> > [  249.718668][T57846]  <TASK>
-> > [  249.718810][T57846]  ? __warn+0xc7/0x2f0
-> > [  249.719003][T57846]  ? io_issue_sqe+0x10dc/0x1720
-> > [  249.719233][T57846]  ? report_bug+0x347/0x410
-> > [  249.719451][T57846]  ? handle_bug+0x3d/0x80
-> > [  249.719654][T57846]  ? exc_invalid_op+0x18/0x50
-> > [  249.719872][T57846]  ? asm_exc_invalid_op+0x1a/0x20
-> > [  249.720127][T57846]  ? io_issue_sqe+0x60c/0x1720
-> > [  249.720420][T57846]  ? io_issue_sqe+0x10db/0x1720
-> > [  249.720711][T57846]  ? io_issue_sqe+0x10dc/0x1720
-> > [  249.721012][T57846]  ? __fget_files+0x1bc/0x3d0
-> > [  249.722194][T57846]  ? io_wq_submit_work+0x264/0xcb0
-> > [  249.722521][T57846]  io_wq_submit_work+0x264/0xcb0
-> > [  249.722826][T57846]  io_worker_handle_work+0x97e/0x1790
-> > [  249.723159][T57846]  io_wq_worker+0x38e/0xe50
-> > [  249.723435][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.723687][T57846]  ? ret_from_fork+0x16/0x70
-> > [  249.723907][T57846]  ? __pfx_lock_release+0x10/0x10
-> > [  249.724139][T57846]  ? do_raw_spin_lock+0x12c/0x2b0
-> > [  249.724392][T57846]  ? __pfx_do_raw_spin_lock+0x10/0x10
-> > [  249.724706][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.725015][T57846]  ret_from_fork+0x2f/0x70
-> > [  249.725300][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.725603][T57846]  ret_from_fork_asm+0x1a/0x30
-> > [  249.725897][T57846]  </TASK>
-> > [  249.726083][T57846] Kernel panic - not syncing: kernel: panic_on_war=
-n set ...
-> > [  249.726521][T57846] CPU: 1 PID: 57846 Comm: iou-wrk-57845 Not
-> > tainted 6.10.0-rc1-00004-gff802a9f35cf-dirty #7
-> > [  249.727110][T57846] Hardware name: QEMU Standard PC (i440FX + PIIX,
-> > 1996), BIOS 1.15.0-1 04/01/2014
-> > [  249.727647][T57846] Call Trace:
-> > [  249.727842][T57846]  <TASK>
-> > [  249.728018][T57846]  panic+0x4fa/0x5a0
-> > [  249.728252][T57846]  ? __pfx_panic+0x10/0x10
-> > [  249.728516][T57846]  ? show_trace_log_lvl+0x284/0x390
-> > [  249.728832][T57846]  ? io_issue_sqe+0x10dc/0x1720
-> > [  249.729120][T57846]  check_panic_on_warn+0x61/0x80
-> > [  249.729416][T57846]  __warn+0xd3/0x2f0
-> > [  249.729650][T57846]  ? io_issue_sqe+0x10dc/0x1720
-> > [  249.729941][T57846]  report_bug+0x347/0x410
-> > [  249.730206][T57846]  handle_bug+0x3d/0x80
-> > [  249.730460][T57846]  exc_invalid_op+0x18/0x50
-> > [  249.730730][T57846]  asm_exc_invalid_op+0x1a/0x20
-> > [  249.731031][T57846] RIP: 0010:io_issue_sqe+0x10dc/0x1720
-> > [  249.731365][T57846] Code: fc ff df 4c 89 e2 48 c1 ea 03 80 3c 02 00
-> > 0f 85 c6 05 00 00 49 89 1c 24 49f
-> > [  249.732508][T57846] RSP: 0018:ffffc9000e84fc00 EFLAGS: 00010293
-> > [  249.732873][T57846] RAX: 0000000000000000 RBX: 0000000000000000
-> > RCX: ffffffff84139c3c
-> > [  249.733351][T57846] RDX: ffff88801eaad640 RSI: ffffffff8413a70b
-> > RDI: 0000000000000007
-> > [  249.733822][T57846] RBP: ffffc9000e84fc80 R08: 0000000000000007
-> > R09: 0000000000000000
-> > [  249.734285][T57846] R10: 0000000000000000 R11: 0000000000000000
-> > R12: ffff8880001c3a00
-> > [  249.734757][T57846] R13: 0000000000000000 R14: ffff888010600040
-> > R15: ffff8880001c3a48
-> > [  249.735236][T57846]  ? io_issue_sqe+0x60c/0x1720
-> > [  249.735529][T57846]  ? io_issue_sqe+0x10db/0x1720
-> > [  249.735825][T57846]  ? __fget_files+0x1bc/0x3d0
-> > [  249.736116][T57846]  ? io_wq_submit_work+0x264/0xcb0
-> > [  249.736428][T57846]  io_wq_submit_work+0x264/0xcb0
-> > [  249.736731][T57846]  io_worker_handle_work+0x97e/0x1790
-> > [  249.737061][T57846]  io_wq_worker+0x38e/0xe50
-> > [  249.737353][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.737646][T57846]  ? ret_from_fork+0x16/0x70
-> > [  249.737861][T57846]  ? __pfx_lock_release+0x10/0x10
-> > [  249.738091][T57846]  ? do_raw_spin_lock+0x12c/0x2b0
-> > [  249.738398][T57846]  ? __pfx_do_raw_spin_lock+0x10/0x10
-> > [  249.738729][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.739033][T57846]  ret_from_fork+0x2f/0x70
-> > [  249.739308][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.739617][T57846]  ret_from_fork_asm+0x1a/0x30
-> > [  249.739913][T57846]  </TASK>
-> > [  249.740236][T57846] Kernel Offset: disabled
-> > [  249.740518][T57846] Rebooting in 86400 seconds..
-> >
-> > ```
-> >
-> > crepro is in attachments.
-> >
-> > Regards
->
-> --
-> Pavel Begunkov
+Focus on primitives, building blocks with solid APIs for other
+subsystems to leverage and let them be wired up in ways you cannot
+imagine today.
+
 
