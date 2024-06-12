@@ -1,75 +1,80 @@
-Return-Path: <linux-kernel+bounces-211255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-211254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D64904F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:23:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2FEE904F22
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 11:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BA021C216B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815331F2678D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 09:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E080A16D9DA;
-	Wed, 12 Jun 2024 09:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474A516D9DB;
+	Wed, 12 Jun 2024 09:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lojtGIjS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yr0/iviL"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE1716D9B6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C509A34
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 09:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718184227; cv=none; b=N9j6M4R9VMNF5irdS9XBYiZtPkZ04SV0olnkpOm1itUtMJGFAFzCPU0iRK0oapjrLQ4hRKieSoB8UDzcjt3sOlta/2U7tjHNQzo+p3KkJjtHaVE7377ylgDHEpgSAcq9OaD/KQWlXoFszATzuQd7e4YeBhMIPTWsOhzekeQ14Fs=
+	t=1718184193; cv=none; b=ui5aj21J8doYbmnFMq+O1df9dZb/lQGTOKhqIll63EiAuK6o7/0KV2FPtO4L+X0jj5hyGc41S9pqJBEk9i9Ovf4vD0wpoA3cnvjUxRS6BscV6XO3i75YMgG+YA6m4MtstuwGqrJJJxNFLPRa+QWlmokHO7MP1yDf5n+2DyKf5ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718184227; c=relaxed/simple;
-	bh=ZvwVGq/DOAm7MLGhiAWzs091RDFEP8xc94bPoYEzRW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sP3ZR1Gqk89O92xrYjxFeR9X5cTz7iffwYFTGF9rXPdsRFASUclqHxxsicMSh90MpAYTLwCdFIG7krQloJnX2701woTkKMnog5XuiOL0niLXtI59Rz1F/y4pDSJkBsj7p0qQ/PaEP6WhZIbBqQ75j2929izY0whOwzl1+flmI+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lojtGIjS; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718184225; x=1749720225;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ZvwVGq/DOAm7MLGhiAWzs091RDFEP8xc94bPoYEzRW4=;
-  b=lojtGIjSH5/8H++qQ/QOtCEuJsalgpTVYSo5A906IU+qeCcpKYgyitUW
-   y01VI6hSLVwb+lkxsWel7C6YI2OJGAlY1qpX9OScQRVMWgxwd/II3Tg5K
-   IrmQZcuVoYppeXaxqoYWUUMNWhJ2wuoXqCmBN2ZXfg96qidpI2jwngj4d
-   uA20yyU4bouC8eD9GkdPVPyl1BhonUnRo5ClJDbBuJyfkPJTdZUkuNE1Z
-   twAmpMjGnF8cjsHA8ZleXeHIelj2Sy0rYf0ytyu080GT8J40+PKSSK0Mq
-   85R+UgZEDsBbCBIQI4RZuDPp71Cmdq4CREku10HN9ytjHn8/oUk6JfTJI
-   w==;
-X-CSE-ConnectionGUID: 5o0++gaWQ/mZa61fa1Y7ZA==
-X-CSE-MsgGUID: DLwpJr3KT0qp6bkWhvakbQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="14810419"
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="14810419"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 02:23:44 -0700
-X-CSE-ConnectionGUID: 9t9oGSUXTwCXOmhjaBLNJg==
-X-CSE-MsgGUID: TQOP55KYQaGBFAfWn8TpzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="70530895"
-Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 12 Jun 2024 02:23:42 -0700
-Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sHKCi-0001PF-0n;
-	Wed, 12 Jun 2024 09:23:40 +0000
-Date: Wed, 12 Jun 2024 17:22:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Luca Weiss <luca@z3ntu.xyz>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: arch/arm64/boot/dts/qcom/pmi632.dtsi:155.19-163.5: Warning
- (avoid_unnecessary_addr_size): /soc@0/spmi@200f000/pmic@3/pwm: unnecessary
- #address-cells/#size-cells without "ranges" or child "reg" property
-Message-ID: <202406121706.nEgDZGXa-lkp@intel.com>
+	s=arc-20240116; t=1718184193; c=relaxed/simple;
+	bh=L6aQlkYdf1XjFaD3aaJ4kmtrRKD/GnbI/GjZRBMbZjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WOJkphCLRF8uICcWiV8HRQxgbZan8bb2nyTSGwZ01B9dCQ0WvtxNpktkE+DBpUY2sCU4vgRe0cRxVcai7+xJNZzeWbrWoSHCYQTdYJxpqHGT6CmapS5Q9uxjhPKKi1Mve+zgliGzHhcTzvF8vHX0uBSZA7XO/9JCaTG58SsX6I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yr0/iviL; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35f1c209893so4121742f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 02:23:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718184190; x=1718788990; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=px3FWD61KwYUoVLXs51y4wh/lB5F1voz4oJ3Gukra6M=;
+        b=yr0/iviLd0x+N6izlpoVwFHchZVFq0+B/C4HXaQcEE9/WbMxy9Wjm21AtJpmPeLL5d
+         aO5VI1CC6NBddliXGJS+J2uZjOGlV7ad3uSMWNYb+Fyk8INe0Gw7fbfRqjCZTyl7lOMc
+         k23dAlQk+wIyN57fIHhkxtULBXIVVXCCjqIf0kv5SF33rv7nsyjDYr8l44xaHmJMh9/v
+         xFm2QtSj8xCGVkTgM2mJhoqj0KlzYfRyf9/locAICanKC8TQPmG1+o8jR+rMF/o+fNiH
+         WkrnX8bQkrhPdnawTqnBuMEQTYk/Xy3mMfJy7RRN2z5BU4euqLec+NwN4rBccdkoj+ob
+         aPig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718184190; x=1718788990;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=px3FWD61KwYUoVLXs51y4wh/lB5F1voz4oJ3Gukra6M=;
+        b=VnPlT8WES6W5HPMnLfB6CjOKSR+MCPX3+F3W0vYBMwzn5aN34cWht1cjoBczVOpdcx
+         3wVHe9Gb2s0yafi0SISR9cawSoN4CfjDMEpxWB1PkqIXW/gXEYf4FtmGd4hs/YOm6dq2
+         83qIGpiPJlhHbcQwOjnL1uRKuBaXp7Rb1iA/Ay4W2/YWZNY3IZSZDUU7g2LaQQaIVlfn
+         QfawAFxGmYiJRJTK/SyH8ATYTsUnLPMdvufXfZvPLygdKqC6xVQ+dUGO+ujwvKsgCnZw
+         Wp4qxyl/eiK/NxVQ1Qdr/wJbsIX4kvpLCtg3hBSWRGU7y6HEmKta24Q2OWbQx3TQdyYv
+         ZzeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaZBbQUeKehpnodsw63iePF5zjKVnI8AEQnkpGEOkbO+ZOVnHlHIWFrbRN5xuO5tb9y/vVbMZV8pKaJq/CMaLIyR+dt22gJNiw0t9Z
+X-Gm-Message-State: AOJu0YzozU49vpzpl/+N54yP/gjf0vvn3qcf5Ublc2NekLaDF+4zeXvq
+	AnYSb5rPMcEk9z33WD6rmqGE98rrLol0PqqT4hHlJwNdmYrPSf2/2iijZ6d93IE=
+X-Google-Smtp-Source: AGHT+IFOMCjOwX/KFQg+pTTAbiYMRIrI6LiOBW6EbiPB1eB/0gA7Kzf223cvhK/M1n6QlFI50LRw1w==
+X-Received: by 2002:a5d:4f8f:0:b0:35f:1cec:3cf with SMTP id ffacd0b85a97d-35fe89395bcmr1062754f8f.65.1718184190317;
+        Wed, 12 Jun 2024 02:23:10 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f2598ac1esm7109636f8f.93.2024.06.12.02.23.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 02:23:09 -0700 (PDT)
+Date: Wed, 12 Jun 2024 12:23:05 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Joy Chakraborty <joychakr@google.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] rtc: cmos: Fix return value of nvmem callbacks
+Message-ID: <f2156a50-0ee0-479d-8d60-3255f3619ae5@moroto.mountain>
+References: <20240612083635.1253039-1-joychakr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,152 +83,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240612083635.1253039-1-joychakr@google.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2ef5971ff345d3c000873725db555085e0131961
-commit: 0c4f10917d22e6f36080617bfe71de1ae854ee58 arm64: dts: qcom: sdm632-fairphone-fp3: Add notification LED
-date:   1 year, 1 month ago
-config: arm64-randconfig-r113-20240606 (https://download.01.org/0day-ci/archive/20240612/202406121706.nEgDZGXa-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-reproduce: (https://download.01.org/0day-ci/archive/20240612/202406121706.nEgDZGXa-lkp@intel.com/reproduce)
+On Wed, Jun 12, 2024 at 08:36:35AM +0000, Joy Chakraborty wrote:
+> Read/write callbacks registered with nvmem core expect 0 to be returned
+> on success and a negative value to be returned on failure.
+> 
+> cmos_nvram_read()/cmos_nvram_write() currently return the number of
+> bytes read or written, fix to return 0 on success and -EIO incase number
+> of bytes requested was not read or written.
+> 
+> Fixes: 8b5b7958fd1c ("rtc: cmos: use generic nvmem")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Joy Chakraborty <joychakr@google.com>
+> ---
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406121706.nEgDZGXa-lkp@intel.com/
+Thanks!
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/qcom/msm8953.dtsi:175.9-179.4: Warning (unit_address_vs_reg): /memory: node has a reg or ranges property, but no unit name
-   arch/arm64/boot/dts/qcom/msm8953.dtsi:865.22-915.6: Warning (avoid_unnecessary_addr_size): /soc@0/display-subsystem@1a00000/dsi@1a94000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-   arch/arm64/boot/dts/qcom/pmi632.dtsi:149.9-164.4: Warning (avoid_unnecessary_addr_size): /soc@0/spmi@200f000/pmic@3: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
->> arch/arm64/boot/dts/qcom/pmi632.dtsi:155.19-163.5: Warning (avoid_unnecessary_addr_size): /soc@0/spmi@200f000/pmic@3/pwm: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-vim +155 arch/arm64/boot/dts/qcom/pmi632.dtsi
+After we fix all the these, can we add a warning once message to detect
+when people introduce new bugs?  It could either go into
+__nvmem_reg_read/write() or bin_attr_nvmem_read/write().  I think
+bin_attr_nvmem_read() is the only caller where the buggy functions work
+but that's the caller that most people use I guess.
 
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   40  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   41  &spmi_bus {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   42  	pmic@2 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   43  		compatible = "qcom,pmi632", "qcom,spmi-pmic";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   44  		reg = <0x2 SPMI_USID>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   45  		#address-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   46  		#size-cells = <0>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   47  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   48  		pmi632_temp: temp-alarm@2400 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   49  			compatible = "qcom,spmi-temp-alarm";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   50  			reg = <0x2400>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   51  			interrupts = <0x2 0x24 0x0 IRQ_TYPE_EDGE_BOTH>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   52  			#thermal-sensor-cells = <0>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   53  		};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   54  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   55  		pmi632_adc: adc@3100 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   56  			compatible = "qcom,spmi-adc5";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   57  			reg = <0x3100>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   58  			#address-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   59  			#size-cells = <0>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   60  			#io-channel-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   61  			interrupts = <0x2 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   62  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   63  			channel@0 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   64  				reg = <ADC5_REF_GND>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   65  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   66  				label = "ref_gnd";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   67  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   68  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   69  			channel@1 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   70  				reg = <ADC5_1P25VREF>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   71  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   72  				label = "vref_1p25";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   73  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   74  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   75  			channel@6 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   76  				reg = <ADC5_DIE_TEMP>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   77  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   78  				label = "die_temp";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   79  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   80  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   81  			channel@7 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   82  				reg = <ADC5_USB_IN_I>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   83  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   84  				label = "usb_in_i_uv";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   85  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   86  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   87  			channel@8 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   88  				reg = <ADC5_USB_IN_V_16>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   89  				qcom,pre-scaling = <1 16>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   90  				label = "usb_in_v_div_16";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   91  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   92  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   93  			channel@9 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   94  				reg = <ADC5_CHG_TEMP>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   95  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   96  				label = "chg_temp";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   97  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   98  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23   99  			channel@4b {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  100  				reg = <ADC5_BAT_ID_100K_PU>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  101  				qcom,hw-settle-time = <200>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  102  				qcom,pre-scaling = <1 1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  103  				qcom,ratiometric;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  104  				label = "bat_id";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  105  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  106  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  107  			channel@83 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  108  				reg = <ADC5_VPH_PWR>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  109  				qcom,pre-scaling = <1 3>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  110  				label = "vph_pwr";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  111  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  112  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  113  			channel@84 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  114  				reg = <ADC5_VBAT_SNS>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  115  				qcom,pre-scaling = <1 3>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  116  				label = "vbat_sns";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  117  			};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  118  		};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  119  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  120  		pmi632_adc_tm: adc-tm@3500 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  121  			compatible = "qcom,spmi-adc-tm5";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  122  			reg = <0x3500>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  123  			interrupts = <0x2 0x35 0x0 IRQ_TYPE_EDGE_RISING>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  124  			#thermal-sensor-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  125  			#address-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  126  			#size-cells = <0>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  127  			status = "disabled";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  128  		};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  129  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  130  		pmi632_sdam_7: nvram@b600 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  131  			compatible = "qcom,spmi-sdam";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  132  			reg = <0xb600>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  133  			#address-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  134  			#size-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  135  			ranges = <0 0xb600 0x100>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  136  		};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  137  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  138  		pmi632_gpios: gpio@c000 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  139  			compatible = "qcom,pmi632-gpio", "qcom,spmi-gpio";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  140  			reg = <0xc000>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  141  			gpio-controller;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  142  			gpio-ranges = <&pmi632_gpios 0 0 8>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  143  			#gpio-cells = <2>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  144  			interrupt-controller;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  145  			#interrupt-cells = <2>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  146  		};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  147  	};
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  148  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  149  	pmic@3 {
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  150  		compatible = "qcom,pmi632", "qcom,spmi-pmic";
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  151  		reg = <0x3 SPMI_USID>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  152  		#address-cells = <1>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  153  		#size-cells = <0>;
-a1f0f2ebb044c7 Luca Weiss 2023-05-23  154  
-a1f0f2ebb044c7 Luca Weiss 2023-05-23 @155  		pmi632_lpg: pwm {
+regards,
+dan carpenter
 
-:::::: The code at line 155 was first introduced by commit
-:::::: a1f0f2ebb044c7248c3f30b98de0f151505bd4bd arm64: dts: qcom: Add PMI632 PMIC
-
-:::::: TO: Luca Weiss <luca@z3ntu.xyz>
-:::::: CC: Bjorn Andersson <andersson@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
