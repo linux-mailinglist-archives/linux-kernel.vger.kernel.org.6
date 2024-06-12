@@ -1,170 +1,222 @@
-Return-Path: <linux-kernel+bounces-212313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49202905E5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:21:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1136B905E65
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7FA8B242DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:21:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 163EF1C21A67
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AF112BF23;
-	Wed, 12 Jun 2024 22:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5008112B170;
+	Wed, 12 Jun 2024 22:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4wrKYE+o"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XXfhtB10"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A154D1DFF0;
-	Wed, 12 Jun 2024 22:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D884255C08
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718230862; cv=none; b=STCgZ9AloMKSizPz2IAxrAsqiNVS4XrBbLmvdqRHI/ji6ngNmrA5GaNMBP51x1BYNucD+BI1ivK4JSVv/S5Rq99lbab3Kg6cEnZRh8uiMlkvksc4Ak1i1BegXXvBCJHdaMDpdq0N5K7ZSsf0ZNQaes2WsgQJo+CGq8wAQd17njE=
+	t=1718231085; cv=none; b=iVaFXiYcV3NPSvuKgrO6wJztxBjJlYko7iHtcVyJW2RMmgFqOUKPK8GRYJSlISDh2P2VxXaawb3YId6F3DXB4aCWm0xnBsxa89a0bzmKloiLJT6ko9dG4MdNLqSDVyR6Dkhbos1bHyoYzf8LEvn4oYgL5wxLvkAIDkTX/7UWaVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718230862; c=relaxed/simple;
-	bh=z6S78JodWNuADElHskPehWDvqD/HSQ05v50azD0XDU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gvSS5fY8onE2EJu1lGVw/2C84bj7NCt54LIXtESMoUSOeAumfce3iJjFrTLI5lz7+rgyu4hxSbUqjc+LCnBGhI4juTTFh74yUgUCV7MYfViIDJf7MOtluevWD3AyhKHn5bzOgXG/5ctL5pi99TEe5DlwVAnb6a4ht0aX2MKBuCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4wrKYE+o; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718230858;
-	bh=z6S78JodWNuADElHskPehWDvqD/HSQ05v50azD0XDU0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=4wrKYE+oAXWGyeA4J+OREQFqe0MxZHe+9mW95n0gTbaGx42th4Uxk3SHZJyHGNEef
-	 /zxCJZA6nGfVgomHsVv0MdEC/nZxaEyJeTiR0HKfJNLaO1l0wTHhuXXKbz28wACs7g
-	 /F+NpfIw3rAVgVHV+b4XmdPdMqugLVCXVkKWAW0x6yJPx6B5mk/S3kTkBayuGCPY+S
-	 UdYX7Rsavr27VU486ZXami/ExF0Mc1p1FjWF/0KLB+0CKsANr2+1G0YIjUJId9Q1OH
-	 bt7gqm92sMaL0X1VhC6r1U1/4sYbVPQg/zsCutfGEG1nzEv9NraGzElM5PQSeM0xs4
-	 pMI5ZuPFNnqbQ==
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6ED2137820F9;
-	Wed, 12 Jun 2024 22:20:58 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id E54E110608F7; Thu, 13 Jun 2024 00:20:57 +0200 (CEST)
-Date: Thu, 13 Jun 2024 00:20:57 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
-	devicetree@vger.kernel.org, Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
-	Jianfeng Liu <liujianfeng1994@gmail.com>, linux-rockchip@lists.infradead.org, 
-	Nicolas Frattaroli <frattaroli.nicolas@gmail.com>, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>, 
-	kernel@collabora.com, Heiko Stuebner <heiko@sntech.de>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v5 1/5] media: dt-bindings: rk3568-vepu: Add RK3588
- VEPU121
-Message-ID: <t5yyanxuweou6edj3subsbtndow6nwwexcgkhctfx3mdkoi7dl@zjtqmvklwzz4>
-References: <20240612173213.42827-1-sebastian.reichel@collabora.com>
- <20240612173213.42827-2-sebastian.reichel@collabora.com>
- <171821679246.3419351.9732124883795406633.robh@kernel.org>
+	s=arc-20240116; t=1718231085; c=relaxed/simple;
+	bh=p/wmu+4wYl/wqNke/QhUcX7EKLyt1KgUpm4CzyEB4AE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RDK5GhZAz9YMpE/NjLjh/4D48WfJ7fmr1hNCvgcs4ctJaLEsTge8vwpAiqzkhf2SVUaRwWjYQKtYO4f14g0RtLPqRGdxwKktkFaHx/UR6O9+qHfc+VPeMOGqwS8TuZjJAyaiFVgIf2r6rEi56uoK6SHJS5m6Xhq/RD01buDNjAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XXfhtB10; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f47f07acd3so4101545ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:24:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718231083; x=1718835883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hvJdqdXbOsMsvfolWLIhz5jKfl0lZRFyGewDbo4ybFE=;
+        b=XXfhtB10ztNzpumwlwt2rnGNCPYoTiOj7Tws/arWbAR+ymXKP27s9nmRy8iMvm9SIG
+         79+6AXFi/l4jdaF1lF4nBhozQWSUhZlS/NAKeKP1pQK6KGl9io3EPEdBdYkrQUIFA3Qn
+         3Gx8QEtZ4osTugneQmGVpo3XaV1sBgysHGRG0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718231083; x=1718835883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hvJdqdXbOsMsvfolWLIhz5jKfl0lZRFyGewDbo4ybFE=;
+        b=plQRzf3545mhcE8etrQsSmmBk/bVDXjGYzmVRPwrz6Ab2R3yhKDObQ6rtWTYVZtLFa
+         SNlUuXH1GnjZiVVvqWn2f1aqGLwOTkLIwp8JZyTTPKDC+HUbtMYcYd6hCuAzpgHGL14i
+         j3EbjRbXtlORAOddu3BRAX6zy7nwnkWBy+h25znMGxlqquURsI9qQCn6z5GQ3ZvJPhvJ
+         hmMIAhgoO29JdzqMqPDcXpcF/ho2oVnFxf+KegLYaV4TOsL81nmSIquvzvf1sa5hnM1I
+         foiogXBEZ+vdKgr7Mgay3uBYYHpletbQr8BrhYkU0J/dJ7fL3JiHoOSXe+dNLkwdGgHn
+         8k1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVsZRI7Qb1GSc4pZLDmFfISk2uXBIa56+r52zgVs/OFVRJDvarzkF41EQa+p/u5DQLzC4fN7ppp2cnaCXmM/1f9dYo4FZM65oeWMWcP
+X-Gm-Message-State: AOJu0YymKjc9f+vbAiU23wzZVawcFfR4mkkCHnrLcpG1KWKyIeBK9Is3
+	XVjeenjuifnxZ7nZAeBUHSUaA121ScRlUhsrvIiLHpmdt6BZbUCi7z/iNdup5Q==
+X-Google-Smtp-Source: AGHT+IFAyr/OLXB4J5n0QdHaEa3zXIRNItrD8acC+tRkbc51QXKJOk4EcFMZStf7hJ6gv4GGb6OcUA==
+X-Received: by 2002:a17:902:e851:b0:1f6:65d3:296 with SMTP id d9443c01a7336-1f83b637bdcmr34717685ad.29.1718231083000;
+        Wed, 12 Jun 2024 15:24:43 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:2816:6a42:9074:18cc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6f30acda9sm87914105ad.198.2024.06.12.15.24.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 15:24:42 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: dri-devel@lists.freedesktop.org,
+	Maxime Ripard <mripard@kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	Aurabindo Pillai <aurabindo.pillai@amd.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Candice Li <candice.li@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>,
+	Edmund Dea <edmund.j.dea@intel.com>,
+	Hamza Mahfooz <hamza.mahfooz@amd.com>,
+	Hawking Zhang <Hawking.Zhang@amd.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Karol Herbst <kherbst@redhat.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Le Ma <le.ma@amd.com>,
+	Lijo Lazar <lijo.lazar@amd.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Ma Jun <Jun.Ma2@amd.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
+	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Shashank Sharma <shashank.sharma@amd.com>,
+	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+	Steven Price <steven.price@arm.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Victor Lu <victorchengchi.lu@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	chenxuebing <chenxb_99091@126.com>,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	nouveau@lists.freedesktop.org
+Subject: [PATCH v2 0/8] drm: make leftover drivers call drm_atomic_helper_shutdown() at the right times
+Date: Wed, 12 Jun 2024 15:23:40 -0700
+Message-ID: <20240612222435.3188234-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ntp3lma6src7nirh"
-Content-Disposition: inline
-In-Reply-To: <171821679246.3419351.9732124883795406633.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---ntp3lma6src7nirh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch series is the leftovers of a patch series sent in September
+2023 [1] in an attempt to get some of the patches landed finally.
 
-Hi,
+This patch series originally came about after a _long_ discussion
+between me and Maxime Ripard in response to a different patch I sent
+out [2]. As part of that discussion, we realized that it would be good
+if DRM drivers consistently called drm_atomic_helper_shutdown()
+properly at shutdown and driver remove time as it's documented that
+they should do. The eventual goal of this would be to enable removing
+some hacky code from panel drivers where they had to hook into
+shutdown themselves because the DRM driver wasn't calling them.
 
-On Wed, Jun 12, 2024 at 12:26:32PM GMT, Rob Herring (Arm) wrote:
-> On Wed, 12 Jun 2024 19:15:41 +0200, Sebastian Reichel wrote:
-> > From: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
-> >=20
-> > This encoder-only device is present four times on this SoC, and should
-> > support everything the rk3568 vepu supports (so JPEG, H.264 and VP8
-> > encoding). No fallback compatible has been added, since the operating
-> > systems might already support RK3568 VEPU and want to avoid registering
-> > four of them separately considering they can be used as a cluster.
-> >=20
-> > Signed-off-by: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > ---
-> >  .../devicetree/bindings/media/rockchip,rk3568-vepu.yaml      | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >=20
->=20
-> My bot found errors running 'make dt_binding_check' on your patch:
->=20
-> yamllint warnings/errors:
->=20
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/m=
-edia/rockchip,rk3568-vepu.yaml: properties:compatible:oneOf: [{'const': 'ro=
-ckchip,rk3568-vepu'}, {'const': 'rockchip,rk3588-vepu121'}] should not be v=
-alid under {'items': {'propertyNames': {'const': 'const'}, 'required': ['co=
-nst']}}
-> 	hint: Use 'enum' rather than 'oneOf' + 'const' entries
-> 	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
->=20
-> doc reference errors (make refcheckdocs):
->=20
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/202406=
-12173213.42827-2-sebastian.reichel@collabora.com
->=20
-> The base for the series is generally the latest rc1. A different dependen=
-cy
-> should be noted in *this* patch.
->=20
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
->=20
-> pip3 install dtschema --upgrade
->=20
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your sch=
-ema.
+It turns out that quite a lot of drivers seemed to be missing
+drm_atomic_helper_shutdown() in one or both places that it was
+supposed to be. This patch series attempts to fix all the drivers that
+I was able to identify.
 
-oops. That's on me for not doing another test and doing something
-stupid. I obviously wanted this and didn't recheck the bindings
-after dropping the fallback compatible.
+NOTE: fixing this wasn't exactly cookie cutter. Each driver has its
+own unique way of setting itself up and tearing itself down. Some
+drivers also use the component model, which adds extra fun. I've made
+my best guess at solving this and I've run a bunch of compile tests
+(specifically, allmodconfig for amd64, arm64, and powerpc). That being
+said, these code changes are not totally trivial and I've done zero
+real testing on them. Making these patches was also a little mind
+numbing and I'm certain my eyes glazed over at several points when
+writing them. What I'm trying to say is to please double-check that I
+didn't do anything too silly, like cast your driver's drvdata to the
+wrong type. Even better, test these patches!
 
-enum:
-  - rockchip,rk3568-vepu
-  - rockchip,rk3588-vepu121
+Apparently most of these drivers now land through drm-misc [3], so
+hopefully they can land. The two that don't (amdgpu and radeon) are
+the ones I'm most ucertain about anyway so I've stuck them at the end.
+If I've totally buggered those up feel free to take my patch as a bug
+report and submit your own proper fix. ...or if there's some reason
+that we don't need to do anything for those drivers then let me know
+and we can drop them.
 
-I will change it in v6 if people are fine with this solution.
+I'd like to call out a few drivers that I _didn't_ fix in this series
+and why. If any of these drivers should be fixed then please yell.
+- DRM drivers backed by usb_driver (like gud, gm12u320, udl): I didn't
+  add the call to drm_atomic_helper_shutdown() at shutdown time
+  because there's no ".shutdown" callback for them USB drivers. Given
+  that USB is hotpluggable, I'm assuming that they are robust against
+  this and the special shutdown callback isn't needed.
+- ofdrm and simpledrm: These didn't have drm_atomic_helper_shutdown()
+  in either shutdown or remove, but I didn't add it. I think that's OK
+  since they're sorta special and not really directly controlling
+  hardware power sequencing.
+- virtio, vkms, vmwgfx, xen: I believe these are all virtual (thus
+  they wouldn't directly drive a panel) and adding the shutdown
+  didn't look straightforward, so I skipped them.
 
--- Sebastian
+I've let each patch in the series get CCed straight from
+get_maintainer. That means not everyone will have received every patch
+but everyone should be on the cover letter. I know some people dislike
+this but when touching this many drivers there's not much
+choice. dri-devel and lkml have been CCed and lore/lei exist, so
+hopefully that's enough for folks. I'm happy to add people to the
+whole series for future posts.
 
---ntp3lma6src7nirh
-Content-Type: application/pgp-signature; name="signature.asc"
+[1] https://lore.kernel.org/r/20230901234202.566951-1-dianders@chromium.org
+[2] https://lore.kernel.org/r/20230804140605.RFC.4.I930069a32baab6faf46d6b234f89613b5cec0f14@changeid
+[3] https://lore.kernel.org/r/Zmm6_27GikpmT3HQ@phenom.ffwll.local
 
------BEGIN PGP SIGNATURE-----
+Changes in v2:
+- Gathered whatever hadn't landed, rebased, and reposted.
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZqH0IACgkQ2O7X88g7
-+pqdoA/9EV2En/+YR2Jzd8BcFmaqKhPrT3iarETgvi+l5Pil5FpQk+4uPvpRYTpJ
-XsvG36RWz2jDBnHwqIwcqbU6fzM/YdEQbyk6RzCQwbJ7aZrDgq+Va4+RzlwNb9YG
-Cvd00NTkP+Nvj1vdP7YQ4hkB9jHpGNAU6AsF+Te+A3K/YDkqvSMwDAyAL+n5bN8D
-i8n3x0R5DOUVKibVFZgQgf+onqXPf9HGOfZhxGzyPArnK8i9ccyu6BGSjwcQYWIr
-q24mfPKWIKmRR8+7BQvyG0gA/YPhtYzmCei4zAVXEmM9ZzK3CjNub7jHOBsBTdX/
-BEAWc/S1LBboiHF1Nk3eDZr7GyUGL3i+mnMS7VJ9i35GKMNqUo/dLc9su+UVWHGK
-V4T89f+yADLH1ojY4aUB9Ay3f96D3bVnHlH+RcqNvS4L0R+0lhEJ7DS5NW6yq+kn
-MR+odxWpNJoQvbQJ66vb0xCr57YmKSOXNqq+k4IBXUbLG8fQf7XytmqVstZ90iGy
-/PEfFTG1gjpySqENBccrQd2liRWtxsEfF/AQe3N1tthyXMORiCc1805FThm7IsFr
-tTN2vaFTZt5FCv/07WzT5KyP6iQkxwiKnshN6L7wIhovNj/yo6HkW1GJ1jZx/Eab
-QnzlBXW2SJpf4q6z3PMLd7ZzjBaYio+FIBDsv4PvO3mOymc6lMs=
-=977a
------END PGP SIGNATURE-----
+Douglas Anderson (8):
+  drm/kmb: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/nouveau: Call drm_atomic_helper_shutdown() or equiv at shutdown
+    time
+  drm/tegra: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/arcpgu: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/sprd: Call drm_atomic_helper_shutdown() at remove time
+  drm/gma500: Call drm_helper_force_disable_all() at shutdown/remove
+    time
+  drm/radeon: Call drm_helper_force_disable_all() at shutdown/remove
+    time
+  drm/amdgpu: Call drm_atomic_helper_shutdown() at shutdown time
 
---ntp3lma6src7nirh--
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h        |  1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 10 ++++++++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    |  2 ++
+ drivers/gpu/drm/gma500/psb_drv.c           |  8 ++++++++
+ drivers/gpu/drm/kmb/kmb_drv.c              |  6 ++++++
+ drivers/gpu/drm/nouveau/nouveau_display.c  |  9 +++++++++
+ drivers/gpu/drm/nouveau/nouveau_display.h  |  1 +
+ drivers/gpu/drm/nouveau/nouveau_drm.c      | 13 +++++++++++++
+ drivers/gpu/drm/nouveau/nouveau_drv.h      |  1 +
+ drivers/gpu/drm/nouveau/nouveau_platform.c |  6 ++++++
+ drivers/gpu/drm/radeon/radeon_drv.c        |  7 ++++++-
+ drivers/gpu/drm/sprd/sprd_drm.c            |  4 +++-
+ drivers/gpu/drm/tegra/drm.c                |  6 ++++++
+ drivers/gpu/drm/tiny/arcpgu.c              |  6 ++++++
+ 14 files changed, 78 insertions(+), 2 deletions(-)
+
+-- 
+2.45.2.505.gda0bf45e8d-goog
+
 
