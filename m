@@ -1,157 +1,167 @@
-Return-Path: <linux-kernel+bounces-210843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC86904939
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:57:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9C99049AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 05:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7B721F2348E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 02:57:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6F7282D0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 03:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D97BF9E6;
-	Wed, 12 Jun 2024 02:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7X9r7QQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66102208D6;
+	Wed, 12 Jun 2024 03:30:29 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2111.outbound.protection.partner.outlook.cn [139.219.146.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B894A1B;
-	Wed, 12 Jun 2024 02:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0773EF4FA;
+	Wed, 12 Jun 2024 03:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.219.146.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718161051; cv=none; b=GIB+rUGTEHpiZ+/KD5SmLJHGyqnw5/ySpiRqfwHjLmNrviEqhmGi1SM0eWV9tSgJRel8SGzOdJZDPShnjOEZyQzbThOsQA4j99dhmEHDv4tnm0DuhtEB9/0UVQ5WtJ6JVsbfUo6CcZ2QRoIgs+ox1QNGxIoODxJka9UlW7/+tWE=
+	t=1718163028; cv=none; b=EIL3nzmO0dXVmdeYV7M6DlH5S0SRF8njznfLKbTUuKMmU8JmEvXUpgIOOPrwlTbGt8x7iuojRgV/ltwqTESRKqT49tg+sQ2EcwLhXrzblz14Bnw2ganDnV6yjdevQzk76Y8XJWu2fWTOgeydepZvSM/tZvua6qtsTwhG8V6v6WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718161051; c=relaxed/simple;
-	bh=Lx1//KtDjXhN3gOtqkYpZDXLlUXymjn1NFe3pPMA3JQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KXZvNEkshQ3L/UBZRN0Gzf4kNVWhneg3dJewfgEw6m/hgpxFH94gdQ3pgiaDPZhQ0FY4Z+6vkiuJtMwTAJkvFFChHRiwYh3nUSBj1DqznV+UsLdbLz5jIAZN4kK49I7BmombnT7h1vHxpFjPmteQHvyh8pDtw6w47hI8j2PNpXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7X9r7QQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DCBC2BD10;
-	Wed, 12 Jun 2024 02:57:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718161050;
-	bh=Lx1//KtDjXhN3gOtqkYpZDXLlUXymjn1NFe3pPMA3JQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=b7X9r7QQPvMEpHtSYVEHEXtaF9ZCNUKgVw6Bvxx8q6uNxa6N0Giu0UPXGVWXNlcH+
-	 Mr5QpelutejxQc9GY0lz8FFPHiBEqbzdDL5lbcs+mnhLPM34fVvJtiSH26y0Nb7Scp
-	 3a7cTWe80szAn1LFrIuSc9EGgm+9kTBclYY3cIGnAZWir8iQTpg8UscGHS2E0n0apH
-	 OYA7HHyS7Cb6L1W5nZPed6SHtFnF30fM1kEo2F1EJ5fZXE+yVMD79gBXgiwOQZsfM6
-	 TJusoauNwVJi9mwkVQFJxs1hHxHA7Wqroc+i0s91vg1Mg/DjXdoUalRx0k4maDuiT3
-	 neDpi6F5H8tCQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 024F1CE250F; Tue, 11 Jun 2024 19:57:29 -0700 (PDT)
-Date: Tue, 11 Jun 2024 19:57:29 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, lance@osuosl.org,
-	mark.rutland@arm.com
-Subject: Re: [PATCH V3] rcutorture: Add CFcommon.arch for the various arch's
- need
-Message-ID: <def32dd4-b205-45b8-a5ed-e6e28a0ac4f4@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240612013527.1325751-1-zhouzhouyi@gmail.com>
+	s=arc-20240116; t=1718163028; c=relaxed/simple;
+	bh=kLKAbzi0xsqXvRGTpQFmPAYjqFrDThP5VWGEQnR2Icw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=UtdBKit8mDuFyg6FUwvp1lIezUypelhUnmcOZxtgE5trEtwLdfAnZ3qZjLf16EG/KvFB88T/KFNCCYc6fm3Xcp3N8BK6VWMsiyWc5qWUBzRKkZTBAXW68/j3y6yU34Yj6TZNpcAqf7n+0j7xPHC6O8qK82U0mwn3u5BjFJ4kwAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=none smtp.client-ip=139.219.146.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+Received: from NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:10::10) by NT0PR01MB1023.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:2::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.38; Wed, 12 Jun
+ 2024 02:58:19 +0000
+Received: from NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e3b:43f8:2e6d:ecce]) by NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e3b:43f8:2e6d:ecce%7]) with mapi id 15.20.7611.039; Wed, 12 Jun 2024
+ 02:58:18 +0000
+From: JiaJie Ho <jiajie.ho@starfivetech.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "David S . Miller" <davem@davemloft.net>, "linux-crypto@vger.kernel.org"
+	<linux-crypto@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] crypto: starfive - Align rsa input data to 32-bit
+Thread-Topic: [PATCH] crypto: starfive - Align rsa input data to 32-bit
+Thread-Index: AQHasV7JGIR2o9Gsw0quf+yEyIC5HbG8Na+AgAdOR4A=
+Date: Wed, 12 Jun 2024 02:58:18 +0000
+Message-ID:
+ <NT0PR01MB11824BA0DD4F7C638A91E80C8AC02@NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn>
+References: <20240529002553.1372257-1-jiajie.ho@starfivetech.com>
+ <ZmLsK9Apy9NwNEQi@gondor.apana.org.au>
+In-Reply-To: <ZmLsK9Apy9NwNEQi@gondor.apana.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: NT0PR01MB1182:EE_|NT0PR01MB1023:EE_
+x-ms-office365-filtering-correlation-id: 00809498-56e6-4ffe-bcac-08dc8a8b8364
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230032|41320700005|366008|1800799016|38070700010;
+x-microsoft-antispam-message-info:
+ 6BoecWKvpDpVjmNu8LUkwK6zwPA9uEmbO3qvlGVeHNPr88Q9UPxSlDZMUjw58AWJnrwYfhs2Zh5ccZ9HoM+d0g8N8BCcCP70ckGMXG2ArZW0cUreNEtFa+zGqVQZSDMksfDL7ALEVQ2rAxGiVLWaPVRPxVFo26IdR9hThbZJ/tapYhfMjTsRxW0Vgimfw7APubWSGBq68t2chXuQ8KBiKyGEj5v3d4MLnmWiGIrC6a/SgqmV3oZinRYLi75Z4XHbUfmNY4/ju9XQ88cOpClh2Zf6cMnBTathTx2f0Myct4rVhRSvV2aotUZBLVOclzfAcc4m3XRHGylEYhvqz9J2i6nzvL53hrvafM+s0d7PuVahljwjEWWnFs0aoEu814cYQXoYCbNc8VydbxoS40ay9/HGJBg40w0JW1LzX/UOYLujQHcLuF7WOpAeqZkYf1kx15JAogA+ulL6Yzjd/Rn7rsxYRelx1WBqQMSTX2o1QXezp/rjZrNiux73dDKQUR4SzQx95rWwTBr8gqhexduGQPl4P1tb2j7nI8gAq4JfjRBjNDHAUD049odPvPI+noJdEJ1fm75igpEHmJ95rltB2/wIIC/ARtWdeojnx19ZkMrwnIP89o6YDYHdr57CSjws
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230032)(41320700005)(366008)(1800799016)(38070700010);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?lW/5V8zycOjf4o3J2rWMKA2F98T1zCsR2wFwRdkDT7UF3xLDlq/K1UrIkzf+?=
+ =?us-ascii?Q?nImXyR1pmQYkhR5ydxcIQv+8OK7BrFkxbhyBWTpkS5bFhZ6Pu1026UODyBkb?=
+ =?us-ascii?Q?nMjpYLqbHeE7EAHZhIwK5CdkFsJ36jwc+sd1HfO/vAvax1nn6sSzVBF1Sn+7?=
+ =?us-ascii?Q?IYddaf7Q4olGZhc9ts8hPiYHVIrdGXTWxGtQSaVM/mz4YYJkKqDkTfe1De3T?=
+ =?us-ascii?Q?4mv/IFgUC5I2SsBYHBVkM9AbglbWeANKO0nZCDKETFutIbXuomB1qNAKxSfS?=
+ =?us-ascii?Q?oJz8eGU5hK20i2rC6IQ5PlI71I0wvyBT248/zFzw7b9LiJno0MxV+ANv/TBY?=
+ =?us-ascii?Q?nrkbLz3svKZNIlypsHz+9V6+ofMyLYA9ndi8iezs1S3qTqCMBBgOI0PVzaD/?=
+ =?us-ascii?Q?UD6K2WenHXoO9ZxfQE1Q4c26OGioV3YU7ViHc57tmJ1O8n/55t9fPDDtD+J2?=
+ =?us-ascii?Q?/qZ8tbrnILUEbhz3LFG1h2zElb1U+ovuA45mdpRhVd4l8RTt9qQMGGiPfXvS?=
+ =?us-ascii?Q?frFfeoMlJ/idYfIYtTaRCQ4X6WTvsQFDXqiy2sCV6/Z5l4QEg92ZKfYJMbQY?=
+ =?us-ascii?Q?iuD+2cge3CzN16JRvYjAJHzv+WAFPzzobJU+DE0Llww/vdpkMnj3g6JbTz2n?=
+ =?us-ascii?Q?iIH9uZ4cpTOpZ+wM2L4dIHlO8EJR1tgqJr5zmiHprnUf8xfxsSJtp7CzbAeB?=
+ =?us-ascii?Q?ICFAuFUkCCNxBqUuGrFWzzjbpql1y5ZvlPO13wmk5X7pk0MZDqq9efBH1CKC?=
+ =?us-ascii?Q?UzIBNkR0RO464z6vFl0s76IknFzwg2qEirEV3rmkwrfEC/05dFGumVctr3Fa?=
+ =?us-ascii?Q?JCqWcngVM+f8bPOrgudJ1X+DAgYE7IP99RVOecz8ygUxBOAhxu+V7+E0M3C7?=
+ =?us-ascii?Q?isrM1qZa6nCclaFayixMPF3+t1bB2QGKlGfRLC3sCbJ9BP0YuSLhbRh8yyCH?=
+ =?us-ascii?Q?9lKiuKytL6E9+KvX1RTGSnHe8e2TWB4B9930dSGSWw+9xysxMNknAoVGAcXv?=
+ =?us-ascii?Q?eP8v+9dOexvaY9GxGZcMTnjsOyQsidMJkRKj8Zy37jRI6PiPFKK+XCN4a/qi?=
+ =?us-ascii?Q?QA/U3sIE5j+/RzwQTiisq6FpUxrMSb4GC5PMJKnVsjcPkk+jKe13z/s9ApGa?=
+ =?us-ascii?Q?ZS9dLdAsbMiHTNRQT/uVIegi8a+AtFA88mo1vO+8X9DRADBkDgdZennYFNUN?=
+ =?us-ascii?Q?7HbIbWtgcxauAYJoH7DaodhgcjvjlpArb1zrwDezsPQQxRUr88tlJS1YxjM6?=
+ =?us-ascii?Q?D5GCfuKFnVvuwHAj4SM9UGEPzkhqGagMBfCQudSTgL4LsTfash7zeedQEvuT?=
+ =?us-ascii?Q?RV9IlhgdyQHsa1Ay2DzfsjPm2+7Vi/GRo+RX5Oia3cLEGjm3SyNmOFJwzsNF?=
+ =?us-ascii?Q?QFnUijbvCpFazexgZdEeuzLYMknu/RxCPIS7Uk/uFKcvNW3n5YtUnuK3/3N9?=
+ =?us-ascii?Q?Yj4o4kbVQvBf9a90xPi76P+jmdut5tIPlz4zdldtAeLSOM9oQjOUNIfx6IYV?=
+ =?us-ascii?Q?SWZSE9oyKwUUYDTAjXBPtziEqm5TT/Zqt81ma2j1swPTm3xw/qCGilu1CAkm?=
+ =?us-ascii?Q?AtZjThcg9XBYrlUubaO2d5VO5aADxb+ZfuQ02jcXhN8T/qPQvjt2Zkjnjw+W?=
+ =?us-ascii?Q?lA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612013527.1325751-1-zhouzhouyi@gmail.com>
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00809498-56e6-4ffe-bcac-08dc8a8b8364
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2024 02:58:18.9125
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zt44A0KgQ86sjgO5RCVvzzLEJsp44L3oqx1hcRqmIHeWozRqbmLtbCmTU8BtDzhKYVzZjZvxJFm8nbxai4Sqo0xMZ1emJYbEvJybZOQRS1Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NT0PR01MB1023
 
-On Wed, Jun 12, 2024 at 01:35:27AM +0000, Zhouyi Zhou wrote:
-> Add CFcommon.arch for the various arch's need for rcutorture.
-> 
-> According to [1] and [2], this patch
-> Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options") by moving
-> x86 specific kernel option CONFIG_HYPERVISOR_GUEST to CFcommon.arch
-> 
-> The patch has been revised and improved under
-> Paul E. McKenney's guidance [3].
-> 
-> [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
-> [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
-> [3] https://lore.kernel.org/lkml/cd3709dc-2c08-4ac2-a19b-d8edb66195e3@paulmck-laptop/T/
-> 
-> Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
-> 
-> Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+> On Wed, May 29, 2024 at 08:25:53AM +0800, Jia Jie Ho wrote:
+> > Hardware expects RSA input plain/ciphertext to be 32-bit aligned.
+> > Allocate aligned buffer and shift data accordingly.
+> >
+> > Signed-off-by: Jia Jie Ho <jiajie.ho@starfivetech.com>
+> > ---
+> >  drivers/crypto/starfive/jh7110-cryp.h |  3 +--
+> > drivers/crypto/starfive/jh7110-rsa.c  | 17 ++++++++++-------
+> >  2 files changed, 11 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/crypto/starfive/jh7110-cryp.h
+> > b/drivers/crypto/starfive/jh7110-cryp.h
+> > index 494a74f52706..eeb4e2b9655f 100644
+> > --- a/drivers/crypto/starfive/jh7110-cryp.h
+> > +++ b/drivers/crypto/starfive/jh7110-cryp.h
+> > @@ -217,12 +217,11 @@ struct starfive_cryp_request_ctx {
+> >  	struct scatterlist			*out_sg;
+> >  	struct ahash_request			ahash_fbk_req;
+> >  	size_t					total;
+> > -	size_t					nents;
+> >  	unsigned int				blksize;
+> >  	unsigned int				digsize;
+> >  	unsigned long				in_sg_len;
+> >  	unsigned char				*adata;
+> > -	u8 rsa_data[] __aligned(sizeof(u32));
+> > +	u8					*rsa_data;
+>=20
+> You didn't explain why this is moving from a pre-allocated buffer to one =
+that's
+> allocated on the run.  It would appear that there is no reason why you ca=
+n't
+> build the extra space used for shifting into reqsize.
+>=20
+Hi Herbert,
 
-Much better, thank you!
+Can I fix the buffer length of the pre-allocated buffer to 256 bytes instea=
+d of
+the current variable length buffer?=20
 
-I queued and pushed for review and testing with the usual editing,
-so please let me know if I messed anything up.
+-        u8 rsa_data[] __aligned(sizeof(u32));
++       u8 rsa_data[STARFIVE_RSA_MAX_KEYSZ];
 
-I added Mark on CC in case he has thoughts from an ARM perspective.
+That's the maximum length supported by the hardware and=20
+most applications now use rsa2048 and above.
 
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 29cf4c63d04b9752a32e33d46a57717121353ef7
-Author: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Date:   Wed Jun 12 01:35:27 2024 +0000
-
-    rcutorture: Add CFcommon.arch for the various arch's need
-    
-    Add CFcommon.arch for the various arch's need for rcutorture.
-    
-    In accordance with [1] and [2], this patch moves x86 specific kernel
-    option CONFIG_HYPERVISOR_GUEST to CFcommon.arch
-    
-    [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
-    [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
-    
-    Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
-    
-    Link: https://lore.kernel.org/lkml/cd3709dc-2c08-4ac2-a19b-d8edb66195e3@paulmck-laptop/T/
-    
-    Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
-    Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-    Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-    Cc: Mark Rutland <mark.rutland@arm.com>
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-index b33cd87536899..ad79784e552d2 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-@@ -68,6 +68,8 @@ config_override_param "--gdb options" KcList "$TORTURE_KCONFIG_GDB_ARG"
- config_override_param "--kasan options" KcList "$TORTURE_KCONFIG_KASAN_ARG"
- config_override_param "--kcsan options" KcList "$TORTURE_KCONFIG_KCSAN_ARG"
- config_override_param "--kconfig argument" KcList "$TORTURE_KCONFIG_ARG"
-+config_override_param "$config_dir/CFcommon.$(uname -m)" KcList \
-+		      "`cat $config_dir/CFcommon.$(uname -m) 2> /dev/null`"
- cp $T/KcList $resdir/ConfigFragment
- 
- base_resdir=`echo $resdir | sed -e 's/\.[0-9]\+$//'`
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-index 0e92d85313aa7..cf0387ae53584 100644
---- a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-@@ -1,6 +1,5 @@
- CONFIG_RCU_TORTURE_TEST=y
- CONFIG_PRINTK_TIME=y
--CONFIG_HYPERVISOR_GUEST=y
- CONFIG_PARAVIRT=y
- CONFIG_KVM_GUEST=y
- CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC=n
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-new file mode 100644
-index 0000000000000..2770560d56a0c
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-@@ -0,0 +1 @@
-+CONFIG_HYPERVISOR_GUEST=y
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-new file mode 100644
-index 0000000000000..2770560d56a0c
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-@@ -0,0 +1 @@
-+CONFIG_HYPERVISOR_GUEST=y
+Thanks,
+Jia Jie
 
