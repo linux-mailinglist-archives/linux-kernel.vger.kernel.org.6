@@ -1,102 +1,116 @@
-Return-Path: <linux-kernel+bounces-212344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E8D9905EDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:55:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F77905EDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 065FBB22BCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:55:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A3841C20FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 22:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B41A12C482;
-	Wed, 12 Jun 2024 22:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133C012C819;
+	Wed, 12 Jun 2024 22:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gtaB1vl/"
-Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YW3Y7PjC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E634F28385
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1763028385;
+	Wed, 12 Jun 2024 22:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718232921; cv=none; b=DnRbNNu1bqDykSXeeANtidMgcqt7+i0XSUrVMYV8M0uwcawuJDbITmjE94pl8OHEuee5NntPtQtawex7JVN/fmPh+gG91j2QK7xUK4fATL5hB8A5kWhSHElorMJxCMENlgMIpBMvtmvWaQpr3U88KNdha4hV9kbcOEpp0LC+LJQ=
+	t=1718233114; cv=none; b=QHziIrvuIHTJOaDZkBqLBCPDugMttCsZXHrKLBx442R7cdZPL+WJfQK5lVmj4nsCNvPRv0WQoYYyRG9u6nmoUh+BKUGJYGaeJBIjTiCuuiCACcS7OV9E0Sj42WGS1SWSvllkiI4z2jUem7n9kc5iTCCxxV2IvYbFfuwVwAY+pvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718232921; c=relaxed/simple;
-	bh=z3tDDj89rfmINXLMcGNLsdLB8zuhZpOsRvntGzdiYrg=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=V47ang+dqEV2khBtOVaPyKuwpDKqhFVlTWXYqB+E8JwNrmPK4SLxc2gcmBhrRIaxyJlG4CiwVuPyABdiicWRmO+4dz8M5Wy2Fa24LpKWhS3hrDtZunL1ocwTTTPIXaeR1f2tpGzducGUT/LoAVMrEyHHKAgKse3Gs8bufFDN+v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gtaB1vl/; arc=none smtp.client-ip=209.85.208.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-57c6011d75dso234229a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 15:55:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718232918; x=1718837718; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+z8cRZiNQCnctDH6K7s1jA+oKJEoOHKff33HnBHJMQ4=;
-        b=gtaB1vl/A2zQBgGo1xApo2MKrURJRIICOBi2wJ+P26fobSFX39uzgyWVADlCUNDOHo
-         ySHBFZJlB2VXNAuUa4KeuRtE699luLM2w5yLxA59pNGmCFTa7k8RMGWZpQztrp7tev98
-         aQ1zYuPzsKd4dRRf+xClQ1zhbtNWoAmAJgyOo+ng9GZ1cfdBezXuGfx6keyhopWHyb3M
-         vSacf9suiztPaunmRxKHoWxDxYwQd5y7XngdldLQdU/LRRCvQlaB5/TsmZF0fqOb7A2w
-         f2r/XAjlUtpwrrQ82NPFdgr4OmdhVzqovJzsO5lJJ4KAA0BmnZKyG6lNcJurCce9Alkl
-         V4iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718232918; x=1718837718;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+z8cRZiNQCnctDH6K7s1jA+oKJEoOHKff33HnBHJMQ4=;
-        b=t89tG58EplBk/3Qp2AhTPI1Lsk6aSYDntpGXqaMJR2Al8Drpz5QvYdSm6eIFa1kema
-         knqskjSYFnExVnVCxnUq+/ziIOG73Rkt1FuqIkTAFsLyHcL1JTpeerpblXbWPHncEuLJ
-         jbG6j7GmdCSy9bK71hEYuUs1v2QieqPpPjUQM81O2mXnqk2YKWuCZsdMeoXv89lpQeNz
-         UykZ4gE8iqKzZoGy1h0CfG6x5ISg/ypa0KZqmK78GoxEC8xFoVL16kdEhDif9p1/e3Tr
-         Ls2toqO0+tDY2UYQ/0JOz6KJvUI01LzEWen+60/qre62m1x+7v2p7+dbiHaJJ0htgo4G
-         hD0A==
-X-Gm-Message-State: AOJu0YxmLXZcPUwLwpeaybMK02dh4Gqo4yir72cQo16Z8yR8Ky4kKbnb
-	NFjLVe5phVPKIEg8mA1BCdEU57rzFAmLdgUpA7vn2mBqBWmboU6DWVplkFu31XH6z7hKfBXg300
-	XVmxiRVkjkQIqInnKezHwMX32Q6KakzMosccn/NL+
-X-Google-Smtp-Source: AGHT+IE90+6n9IVKxvz9kiCU5LH4M/Bhiiz08Ttd8EB0jju6bTB7B9qwXJaJ3ioR0L62+0YkA/Sz4nr+zIKq626h8RA=
-X-Received: by 2002:a50:cd42:0:b0:57a:2400:6fb9 with SMTP id
- 4fb4d7f45d1cf-57ca977baddmr2483051a12.20.1718232917661; Wed, 12 Jun 2024
- 15:55:17 -0700 (PDT)
+	s=arc-20240116; t=1718233114; c=relaxed/simple;
+	bh=kBo3PrZiEdUdqC/4BbLA7KGTFYsksjNhvJlPCWpd8U0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=X5YQ5/zW7WdJnekWX1+LegSv1EzHgCS9mCkMNOgEJfRZ+9aP+sSVRBMXR9VlY9cST1w26+8otBnhnFLM5ePEtXRtd96HS8KyAQ6sDuxqSKd/G6y1RRDlWYueitui+F7KyYbv7iEVTvtkwIiAiA64BKjqI/XKwHeqplL6sDPJcNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YW3Y7PjC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CKnNOC022525;
+	Wed, 12 Jun 2024 22:58:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=KVruShR2VdwkCpzyg19f+X
+	RXwOT8ljeHnXvU1gTxSnw=; b=YW3Y7PjCFNWgGtpVXutUr9enKD6MYiUSW031XH
+	wius+sEmZ0byo4wS4py7gx12lEG4dsE5De2VD4q8ip3I+zFZsuur5AlaxfJADB/f
+	xFN4F35FScJLmm/PQisgEEdnPAu6TVB1UUxqY1GVn1I9v41S+xQXabQvQZqor+4/
+	TEpljxYmTbTzJ4PYo11hwTb+oePylvN2EqRbr18gnWACYxLnAz6ods4ybm19a6K9
+	fX1NvW8CcBOrw8QY8om1wvnqcICqPorAkfayxk9n4uMw0lhQ9ykEY/HooE54G3ze
+	A6Wkp/CimF04e46ePmYfNyZSp43LlFOzgX64XpVdAeGB3YHg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yq4s8jqh1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 22:58:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CMwRnD028747
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 22:58:27 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 15:58:26 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 12 Jun 2024 15:58:25 -0700
+Subject: [PATCH] media: rc: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: mitch conner <mitchconner291@gmail.com>
-Date: Wed, 12 Jun 2024 15:55:07 -0700
-Message-ID: <CA+gwC3Xz2gqTBW97GAVZ8ZRz8+zdzRnwZT4MxY1tvcj4gx65Bg@mail.gmail.com>
-Subject: linux high mem mode? module/s?
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240612-md-drivers-media-rc-v1-1-3c3458bb73e8@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABAoamYC/x3M0QrCMAyF4VcZuTawVinoq4gXWZu5gK2S6BiMv
+ fsyLz8O51/BWIUNbt0KyrOYvJsjnDrIE7UnoxQ3xD5e+hQi1oJFZWY1rFyEUDOGq09jSvmcEvj
+ zozzK8q/eH+6BjHFQank6Wi9pvwUr2ZcVtm0HzskoFoQAAAA=
+To: Sean Young <sean@mess.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QQIRi8NXxO5Y2mMnDx-rjRb8chdcF3R5
+X-Proofpoint-ORIG-GUID: QQIRi8NXxO5Y2mMnDx-rjRb8chdcF3R5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_10,2024-06-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ spamscore=0 mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1011 mlxlogscore=941 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120164
 
-i dont know kernel programming and space too well so bear with me lol =/
+With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/rc/rc-core.o
 
-this is how much ram im using with fedora 40, spotify, and firefox
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-total        used        free      shared  buff/cache   available
-Mem:          128492        4426      120359          55        4863      124066
-Swap:           8191           0        8191
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/media/rc/rc-main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-which is cool, everythings snappy, fast, well rendered in nvidia
+diff --git a/drivers/media/rc/rc-main.c b/drivers/media/rc/rc-main.c
+index 6bdad6341844..a4c539b17cf3 100644
+--- a/drivers/media/rc/rc-main.c
++++ b/drivers/media/rc/rc-main.c
+@@ -2092,4 +2092,5 @@ subsys_initcall(rc_core_init);
+ module_exit(rc_core_exit);
+ 
+ MODULE_AUTHOR("Mauro Carvalho Chehab");
++MODULE_DESCRIPTION("Remote Controller core module");
+ MODULE_LICENSE("GPL v2");
 
-but if there can be an option in the kernel or a module that can do stuff like
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240612-md-drivers-media-rc-19061f66c366
 
-dynamically cache libraries and binaries into memory or gpu space
-(could lead to upwards of 10% speed boost with speedy ram, maybe the
-entire /usr/!/bin dir)
-dynamically cache files and file system stuff into ram
-possibly provide an interface to storing large portions of data into
-the kernel (would be nice for video editing i think)
-maybe some kind of organization for memory for a speed boost (like defragging?)
-maybe some kind of paralellization for ram reads? could be a little
-speed boost (ie instead of *mem = *alloc(); you can do *mem = alloc()
-? range0 : range1, or thread everyhing or something, could save
-possibly an instruction by spending some time)
-
-this is the best i can do.. looking forward to messing with 2.6 to
-learn about kernel programming in a vm
 
