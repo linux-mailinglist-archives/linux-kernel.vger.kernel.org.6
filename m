@@ -1,139 +1,121 @@
-Return-Path: <linux-kernel+bounces-210920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-210921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E11904A35
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:47:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DB8904A38
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 06:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0BBF1C23B51
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C08FF28557D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2024 04:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC90282ED;
-	Wed, 12 Jun 2024 04:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C337D2C6A3;
+	Wed, 12 Jun 2024 04:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EKjrNjIb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YjsDia+M"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68352224C9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD70C26AD0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 04:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718167663; cv=none; b=uaRi/UWzKSPCgJOMsuSHWzGSUaW7+DMsTW9dp5Gcoa/TBn/jCJCrv388HO5sFCyn7Xnru7SftXk9OZN4pH5xVumsLUlcAypzfBR5q5LnreJtx/jjentBau9JZA1YVX3lxSxzSDsLFMwzIjOkSMfYTM48EUousF5mZ93E/1PkpKY=
+	t=1718167711; cv=none; b=BbN6rxbDkUcEdpkToWB/F9HQ2+vmgKXefEZkXLaP5K0G5FlZkoWC3Cqft5X/7kwlBqVO27DjlWu4jO8rVm6c1pwbYVgMsYjL/sTuCN7VE3G5+RRbqYndyZfkEu3el70nw6XRWsi02hwSCMRmezc7kDdjgRBnabMeo/+f4BpS1Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718167663; c=relaxed/simple;
-	bh=DwOaQl3v4kXfyBw+OsCGIk1eo2nvMrlf7McHTzHa+40=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I1OprKngicLn9vpY8Dg/8GVIqyIhw3JvznMkk1P+diUuKEzVjAw7BcsYjlziAEusbYS5evHHHcOju4tw+FtIQ+Nqi1gGhQbBXUjXsLwzHSTH9sI9pjhH+9JbzaUMdVez5cmAMWJv4JtT+vjq6D7/abqURyFLsRm3Sk28dwka1HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EKjrNjIb; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718167661; x=1749703661;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=DwOaQl3v4kXfyBw+OsCGIk1eo2nvMrlf7McHTzHa+40=;
-  b=EKjrNjIblNlrJ7SMZJ/QkQIAgxj5bp8OG6GyFAmVw/ysR0G24ySvXJWc
-   k4Sl7FOasJzgyist/CkcuQhp0E2QA7cgYjs0LjDcqIb2uJEkX6Ff99ixO
-   E2AP1KkYrD9kwiY8RRK73zW1SdGg0ENXPr5t6h6Ppyl3zh7IAOKa6zVT0
-   A9U+on1tk23ZfQI0OCqBcTXUiycptbzqlfm51+ggzJ8QyHtw9p5UNDOhd
-   pbBVIi2Ldj79Jjv1JK/CbrkWkIbDBTFCd4eZRlcc3gsRiaZiLSk5vaYz0
-   9omQwQUEbwdzTeynxzS3DYHyIjY48hwWxlt2GyH1vCBzFlkUae1mgQvNw
-   Q==;
-X-CSE-ConnectionGUID: FQkuoO9qTRitQaKmYnv8Pg==
-X-CSE-MsgGUID: AI1sFhL3RC2wgtH0OM88uw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="15038684"
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="15038684"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 21:47:40 -0700
-X-CSE-ConnectionGUID: arkobFfVQEynY0OdfwYIeA==
-X-CSE-MsgGUID: Vq54Ex0LRrep1F5oIRtuhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="39630490"
-Received: from iweiny-mobl.amr.corp.intel.com (HELO localhost) ([10.213.170.70])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 21:47:39 -0700
-From: Ira Weiny <ira.weiny@intel.com>
-Date: Tue, 11 Jun 2024 23:47:31 -0500
-Subject: [PATCH] testing: nvdimm: Add MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1718167711; c=relaxed/simple;
+	bh=uN30+iX5HS6j0Alppcs0vu8flXzHQALuudsUtjcgloQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fzUp+49ObxfJQUm1Hgsp2BkbssqYKGuNVKuutdYf/sblbb3fSoDu3hTMA+INxnfU+3EDdweodE8MI6tGafH7ZdZ8YXVUfVTo2kAVo1qgwVKL58C5FkV6rkIvGkPdvcPTkihYUM7mZ+PCVYTPKaPzUE3W17VrB01chQq4bVsO8pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YjsDia+M; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f480624d0fso15449735ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2024 21:48:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718167708; x=1718772508; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1qYwyTzuhCwYdAhfUrXP4v1Mpi8PB2fy3oQFcPcQ+CI=;
+        b=YjsDia+May9JSw0JF1XHBnw8i6wegczxMVo3R52euItHWCwKaj9ac41Fo1ficLCTgo
+         4YhnPTJFQUrUONJmqjVSXpMPrfuM8sericRU607BZX1NldQKYLBwGU32ahIJCZx/0G/L
+         yHLcjN9jKv/ByotsDADX9vnkJsyY1rZoFTroY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718167708; x=1718772508;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1qYwyTzuhCwYdAhfUrXP4v1Mpi8PB2fy3oQFcPcQ+CI=;
+        b=BmVlzh01h22mTbO/hJL5MGi5t1AZVk/NdEhUzyZXuhgMsAUc7TI60TPdXt8YQoWnlG
+         xwBgB3euwVn6s4ylN+NR9zHAEf7w52TXo5aVxIB9hz8keun6nCwSywv6vsAtskqnbOjQ
+         R5F6fJb2MFbZ9+GR1+EEdEq7xcBk8q+/gtqsbYAGzQd6b96Jncv1w5gkO0F5kEHq++0y
+         /NlX/H52aUXxvS5zud1X3DQB9if0uIXBbNYjh46w2z8ZTAinfcOXnjBbN5eaq7cZStWs
+         P3EhWgiByP3gKInK80+eX+UAwJpZ3uTYWbfk1kutsj8HuzKVvHaj4oWhDZxhmeEBQYUw
+         BUTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVv2B1zFWrqAT9EwHM14pxSPpbTQCJ9scLVL/wVDwbXDk4A2ndOHeb2RLn5PkhzidntagzHqlPLYpIleWnbEhmGAfFeyXy+TaCp4ARl
+X-Gm-Message-State: AOJu0YyXNRy6lyV41g75RjxPf8a4tgFjmppdzYucHHcO4l3CZ1HgAHw8
+	pFSsR4C7gO+YF9GIeBCjnyJik5kSCAVIr889MFXGp4CEZ2NMEPnBlIos8TrwVMO2guZhPaDJCXw
+	=
+X-Google-Smtp-Source: AGHT+IHa7syXHI3rg/TDkmLHd/W/wad2Ic6mZcgQXhfvS6L1vWlzXJEt3fg9ITGX4GY3sGg8jzRMBw==
+X-Received: by 2002:a17:902:ce8d:b0:1f6:3b15:82a0 with SMTP id d9443c01a7336-1f83b71650amr9861365ad.64.1718167707882;
+        Tue, 11 Jun 2024 21:48:27 -0700 (PDT)
+Received: from rekanorman3.syd.corp.google.com ([2401:fa00:9:14:58af:8c3:44cb:ad1b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7e5cc4sm114479215ad.235.2024.06.11.21.48.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 21:48:27 -0700 (PDT)
+From: Reka Norman <rekanorman@chromium.org>
+To: Mathias Nyman <mathias.nyman@intel.com>
+Cc: Reka Norman <rekanorman@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH] xhci: Apply XHCI_RESET_TO_DEFAULT quirk to TGL
+Date: Wed, 12 Jun 2024 14:47:38 +1000
+Message-ID: <20240612044759.3193928-1-rekanorman@chromium.org>
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240611-nvdimm-test-mod-warn-v1-1-4a583be68c17@intel.com>
-X-B4-Tracking: v=1; b=H4sIAGIoaWYC/x3MQQqAIBBA0avErBvQjIyuEi1Mp5qFFhoWRHdPW
- r7F/w8kikwJhuqBSJkT76FA1hXYzYSVkF0xNKJpRSclhuzYezwpneh3h5eJAXu7aK1UJ2aloaR
- HpIXvfztO7/sBL1PC5GYAAAA=
-To: nvdimm@lists.linux.dev
-Cc: Dan Williams <dan.j.williams@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
- linux-kernel@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>, 
- Ira Weiny <ira.weiny@intel.com>
-X-Mailer: b4 0.13-dev-2d940
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718167658; l=1841;
- i=ira.weiny@intel.com; s=20221211; h=from:subject:message-id;
- bh=DwOaQl3v4kXfyBw+OsCGIk1eo2nvMrlf7McHTzHa+40=;
- b=ZG57LJpHjEvng6K4xUdJD9QsKjnJk8zQ84LIS2EZlf3lc9O9OLmWe+xKxyiXGQec7tOHXhbFL
- 43sQTJ5p5T7Do5vn4Wob8GoIMKsVpGJBLWDbsw6X+G+jHO3c+JbRF0M
-X-Developer-Key: i=ira.weiny@intel.com; a=ed25519;
- pk=noldbkG+Wp1qXRrrkfY1QJpDf7QsOEthbOT7vm0PqsE=
+Content-Transfer-Encoding: 8bit
 
-When building with W=1 the following errors are seen:
+TGL systems have the same issue as ADL, where a large boot firmware
+delay is seen if USB ports are left in U3 at shutdown. So apply the
+XHCI_RESET_TO_DEFAULT quirk to TGL as well.
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in tools/testing/nvdimm/test/nfit_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in tools/testing/nvdimm/test/ndtest.o
+The issue it fixes is a ~20s boot time delay when booting from S5. It
+affects TGL devices, and TGL support was added starting from v5.3.
 
-Add the required MODULE_DESCRIPTION() to the test platform device
-drivers.
-
-Suggested-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Reka Norman <rekanorman@chromium.org>
 ---
-Jeff I'm not seeing a patch to cover these cases for the missing module
-descriptions you have been sending out.  If you have an outstanding
-patch I missed could you point me to it?  Otherwise I believe this
-cleans up the nvdimm tree.
----
- tools/testing/nvdimm/test/ndtest.c | 1 +
- tools/testing/nvdimm/test/nfit.c   | 1 +
- 2 files changed, 2 insertions(+)
 
-diff --git a/tools/testing/nvdimm/test/ndtest.c b/tools/testing/nvdimm/test/ndtest.c
-index b438f3d053ee..892e990c034a 100644
---- a/tools/testing/nvdimm/test/ndtest.c
-+++ b/tools/testing/nvdimm/test/ndtest.c
-@@ -987,5 +987,6 @@ static __exit void ndtest_exit(void)
+ drivers/usb/host/xhci-pci.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index c040d816e626..137bd3da1128 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -49,6 +49,7 @@
+ #define PCI_DEVICE_ID_INTEL_DENVERTON_XHCI		0x19d0
+ #define PCI_DEVICE_ID_INTEL_ICE_LAKE_XHCI		0x8a13
+ #define PCI_DEVICE_ID_INTEL_TIGER_LAKE_XHCI		0x9a13
++#define PCI_DEVICE_ID_INTEL_TIGER_LAKE_PCH_XHCI		0xa0ed
+ #define PCI_DEVICE_ID_INTEL_COMET_LAKE_XHCI		0xa3af
+ #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_PCH_XHCI		0x51ed
+ #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_N_PCH_XHCI	0x54ed
+@@ -372,7 +373,8 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 		xhci->quirks |= XHCI_MISSING_CAS;
  
- module_init(ndtest_init);
- module_exit(ndtest_exit);
-+MODULE_DESCRIPTION("Test non-NFIT devices");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("IBM Corporation");
-diff --git a/tools/testing/nvdimm/test/nfit.c b/tools/testing/nvdimm/test/nfit.c
-index a61df347a33d..cfd4378e2129 100644
---- a/tools/testing/nvdimm/test/nfit.c
-+++ b/tools/testing/nvdimm/test/nfit.c
-@@ -3382,5 +3382,6 @@ static __exit void nfit_test_exit(void)
+ 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
+-	    (pdev->device == PCI_DEVICE_ID_INTEL_ALDER_LAKE_PCH_XHCI ||
++	    (pdev->device == PCI_DEVICE_ID_INTEL_TIGER_LAKE_PCH_XHCI ||
++	     pdev->device == PCI_DEVICE_ID_INTEL_ALDER_LAKE_PCH_XHCI ||
+ 	     pdev->device == PCI_DEVICE_ID_INTEL_ALDER_LAKE_N_PCH_XHCI))
+ 		xhci->quirks |= XHCI_RESET_TO_DEFAULT;
  
- module_init(nfit_test_init);
- module_exit(nfit_test_exit);
-+MODULE_DESCRIPTION("Test ACPI NFIT devices");
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Intel Corporation");
-
----
-base-commit: 2df0193e62cf887f373995fb8a91068562784adc
-change-id: 20240611-nvdimm-test-mod-warn-8cf773360b37
-
-Best regards,
 -- 
-Ira Weiny <ira.weiny@intel.com>
+2.45.2.505.gda0bf45e8d-goog
 
 
