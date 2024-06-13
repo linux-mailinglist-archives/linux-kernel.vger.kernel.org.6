@@ -1,147 +1,125 @@
-Return-Path: <linux-kernel+bounces-213181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B95AA906F33
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F091906F67
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0591C23607
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:17:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46AD51C22767
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F311459EE;
-	Thu, 13 Jun 2024 12:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F7E146010;
+	Thu, 13 Jun 2024 12:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gwOmERsC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LNtBgVTj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gwOmERsC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LNtBgVTj"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lq5oDNTn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32100136E00;
-	Thu, 13 Jun 2024 12:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208D5145FF6;
+	Thu, 13 Jun 2024 12:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718280894; cv=none; b=qHTK5I3SZ6sSiIB/J4m9/3yUz7sQdLXwUgKaoOpOpQb3mRZXMW5N2FqvdoorSf9X0ZGUcU2cnUpnoX2I/nVTfCQgo9bYvWEYJHxR5hQfvwRbHrreV5w5QrFdlNECFecOBockXiauzHO6yGBmS5+SPoCQo1CCUk1WE8eTetbheeI=
+	t=1718281016; cv=none; b=EUygJpU0bk86WvF6m98wzE9qlZMsFDKlDYzsddOpYnjfNxE2P6G8VOARh/0LgiZ0uEP7mjP5ql91rzBP1N1kc5kwVV2zz7qJXonmv0rSqbSCWKvzO1Oqi93y91WEisOZnZCeBiTO4NRmRIqJ/qTJnmq/v4cilC+br1wA0OD6S7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718280894; c=relaxed/simple;
-	bh=W/olXCZwszEAqxRxi7UK7tdlp0kJsV3lR1lSw6UxG70=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u/svjaIWbvSPyP2wb7V3QwfYmWaYSzDhE7bP5suBWJCZ5glsf68D5b+BJeSX7JlqyenIwB+9SRy3KACi1WFIFwJ2bD9Ai468Kzzs35h8wG6DMSKeO5uuHkFzWIHfkg8aAkg6sveQ0sIvYhsg6EwbFAYMDU4dlMU+/X9Gx9LzPLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gwOmERsC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LNtBgVTj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gwOmERsC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LNtBgVTj; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 42B9C353C5;
-	Thu, 13 Jun 2024 12:14:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718280891; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XYJJaDAiE8Jnnmi5U+ASAdIZI7iCR9QVodqnRXuBBqg=;
-	b=gwOmERsCN9Jisej0D2mWfR0CF+yYvljzggdkpfJj7qVd+VT2vQLVdGERnIaT5PubIfvJaA
-	4+efjBLW+2xKCPfQcc/KwR7VYsq3/I9Co9iGvsvyensynFWmfISCuu79w9v7NB8u16GPzW
-	Gc+c//495/7gzJkPPIP8ltmP8bvg+0E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718280891;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XYJJaDAiE8Jnnmi5U+ASAdIZI7iCR9QVodqnRXuBBqg=;
-	b=LNtBgVTjWRTqpp2XQ2vE+B3wRBXOSf2UaZHbBQZLjh+X35P/f4BcmZ11zvnrlim0rN2m+C
-	B9/+VIQ7Dajm98BQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718280891; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XYJJaDAiE8Jnnmi5U+ASAdIZI7iCR9QVodqnRXuBBqg=;
-	b=gwOmERsCN9Jisej0D2mWfR0CF+yYvljzggdkpfJj7qVd+VT2vQLVdGERnIaT5PubIfvJaA
-	4+efjBLW+2xKCPfQcc/KwR7VYsq3/I9Co9iGvsvyensynFWmfISCuu79w9v7NB8u16GPzW
-	Gc+c//495/7gzJkPPIP8ltmP8bvg+0E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718280891;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XYJJaDAiE8Jnnmi5U+ASAdIZI7iCR9QVodqnRXuBBqg=;
-	b=LNtBgVTjWRTqpp2XQ2vE+B3wRBXOSf2UaZHbBQZLjh+X35P/f4BcmZ11zvnrlim0rN2m+C
-	B9/+VIQ7Dajm98BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 112BD13A7F;
-	Thu, 13 Jun 2024 12:14:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0PcLA7viambcIwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 13 Jun 2024 12:14:51 +0000
-Date: Thu, 13 Jun 2024 14:15:14 +0200
-Message-ID: <87bk45ninh.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: linux@treblig.org
-Cc: oleksandr_andrushchenko@epam.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	xen-devel@lists.xenproject.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: xen-front: remove unused struct 'alsa_sndif_hw_param'
-In-Reply-To: <20240601232604.198662-1-linux@treblig.org>
-References: <20240601232604.198662-1-linux@treblig.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1718281016; c=relaxed/simple;
+	bh=tekr1M6Lsc3KhBXnhzbB36yW495Ts1ygNA+MzUsdHb0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=beVz5CmK+Xm/DIYLB79lTpz7rttUH5f37botuXo8OAxfxbny0J0q9qVo5aUmaW13iWiJ6l9h0c6OHolFjgN7oteWxm6161TBCoRcKLpJL9ioI9B1p5BrVHh6eFq1hNboYXCru9qMcmiS8b3+8kKpWjIJ9fGT5tTBRucnDcbFWMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lq5oDNTn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9439AC32786;
+	Thu, 13 Jun 2024 12:16:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718281015;
+	bh=tekr1M6Lsc3KhBXnhzbB36yW495Ts1ygNA+MzUsdHb0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=lq5oDNTn+e1GkKZ2nErzc+Njjzk3f52tL6j9vfiYZlU8WgXI+UpcwQJxOKN/rk7Fm
+	 qQdynARCd0DS6dac+uRLTrHLod7Q08bNUC/wUxbPvD85vTV4DK78xDBNFfULBYXbiP
+	 cr8BS6tLMpX6+xu2ANvyxuXV7IOkPuD6xkNo84i4cxau3ETBA9xWPwBExsK0QwCcJ/
+	 TKOosv2sMMdZsCMAMJLPAvTkNJw2SratzDmSk+15sGUz7ipTBUP7FiQi9plh0hqiTy
+	 bM88EBFVkXdKc5NMZz3jSQS/RBCmem1xPVmk5jdPVfWtPaGkfh5fMYXzBllPlP/0hc
+	 PJ5pq1lek8cww==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v2 0/5] nfsd/sunrpc: allow starting/stopping pooled NFS
+ server via netlink
+Date: Thu, 13 Jun 2024 08:16:37 -0400
+Message-Id: <20240613-nfsd-next-v2-0-20bf690d65fb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.25
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.25 / 50.00];
-	BAYES_HAM(-2.95)[99.79%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACXjamYC/23MQQrDIBCF4auEWXeKERHTVe9RsrCZMZEWLRokI
+ Xj32qy7/B+P74DMyXOGW3dA4uKzj6GFvHQwLTbMjJ5agxRSCS0UBpcJA28rPoWaBEkygx2g/T+
+ Jnd9O6zG2XnxeY9pPuvS/9Z9SehRoyGmjLeue+P7iFPh9jWmGsdb6BWk77s2jAAAA
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>, 
+ Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1609; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=tekr1M6Lsc3KhBXnhzbB36yW495Ts1ygNA+MzUsdHb0=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmauMwl+985IQvKqH1qc1BTaAnAhPDnAv2mUgCR
+ fhb3t2xv0SJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZmrjMAAKCRAADmhBGVaC
+ FfJgD/92YQiqGXFcQHYnJqPTc8bw/oPZQ01N6W5Re6kJaxOZIJfWD6wTMvt+qWDbkH3GX95e7wV
+ LunethNs8AlRxEv21yEP+J+aOsxfHqZj8vVXdMFb9dtmwfKjKR0nEqTz72QvzfBrrNCQozm5k5m
+ L+TeHAK+/RX/C/xHLhtinRe6Em8C1k3/wsWfFrDcn9yPaUngYVmJWFSqyVxipR0t+Gz3fYEwbpU
+ yWVSl6o2U1VLvicPNiOGEK74plqqNbii3P+Fa6eWpWoCpaEaUF3EiGzz64xY/GTukm7WdawwsuV
+ cm4g4LwsJ5iKkrF87H75YA/GG3edbW3cGXE8uWCkqTQcxIw3X6OMWbZAZz8dWy66hXOJGFEBcB+
+ 08utiAE/waDVmkoAfsjpS8MSqegcE5zMl+I97XVSg8krFlakqYrzIwCzLCwKU1y4qdgVjlEbUqZ
+ kLwoCvrJOrq33AoV83TJEryOy4vDvO4UflzQOvaK0SWDpjJgjuFW7pGcqTa9V2SGaFJZBNSIO0g
+ 4gx7JN5g+I9bfawYzP29AMoV2bfUfQlfaotMfjP2OZzPzf+M2J6xdYx5EqLDN8w56troetwYTZy
+ 2K0B+VVBtCKX5nXgFlhvVdiNfDY4JTSbFwp9Esn3La7zF+9rWXdNQOgqrR/CcCknQQqxTJb1zze
+ 18NNpl9xiH9zMMg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Sun, 02 Jun 2024 01:26:04 +0200,
-linux@treblig.org wrote:
-> 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> 'alsa_sndif_hw_param' has been unused since the original
-> commit 1cee559351a7 ("ALSA: xen-front: Implement ALSA virtual sound
-> driver").
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+This is a resend of the patchset I sent a little over a week ago, with
+a couple of new patches that allow setting the pool-mode via netlink.
 
-Thanks, applied.
+This patchset first attempts to detangle the pooled/non-pooled service
+handling in the sunrpc layer, unifies the codepaths that start the
+pooled vs. non-pooled nfsd, and then wires up the new netlink threads
+interface to allow you to start a pooled server by specifying an
+array of thread counts.
 
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v2:
+- add new pool-mode set/get netlink calls
 
-Takashi
+---
+Jeff Layton (5):
+      sunrpc: fix up the special handling of sv_nrpools == 1
+      nfsd: make nfsd_svc call nfsd_set_nrthreads
+      nfsd: allow passing in array of thread counts via netlink
+      sunrpc: refactor pool_mode setting code
+      nfsd: new netlink ops to get/set server pool_mode
+
+ Documentation/netlink/specs/nfsd.yaml |  27 +++++++++
+ fs/nfsd/netlink.c                     |  17 ++++++
+ fs/nfsd/netlink.h                     |   2 +
+ fs/nfsd/nfsctl.c                      | 102 +++++++++++++++++++++++++++++-----
+ fs/nfsd/nfsd.h                        |   3 +-
+ fs/nfsd/nfssvc.c                      |  30 +++++-----
+ include/linux/sunrpc/svc.h            |   3 +
+ include/uapi/linux/nfsd_netlink.h     |  10 ++++
+ net/sunrpc/svc.c                      | 102 +++++++++++++++++++++-------------
+ 9 files changed, 225 insertions(+), 71 deletions(-)
+---
+base-commit: fec4124bac55ad92c47585fe537e646fe108b8fa
+change-id: 20240604-nfsd-next-b04c0d2d89a9
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
