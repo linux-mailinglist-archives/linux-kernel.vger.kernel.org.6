@@ -1,224 +1,165 @@
-Return-Path: <linux-kernel+bounces-212919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9205A906832
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:11:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB51906837
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA4DE1C21971
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:11:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA0E11F2356D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD91613DDB2;
-	Thu, 13 Jun 2024 09:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C3513DDDB;
+	Thu, 13 Jun 2024 09:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b9tAYuE/"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kQumoIDA"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356B113D8B2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446F613D8B2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718269856; cv=none; b=tPEx5TP8ixeAUu+Li8tr9Jl5op8F/cPF7mzm9PCc6mZ0msnhQTVPInHqf3mTAn/uE89+GL+aArbolw4HdXcmnHGhSB8H/4tzKQQI55TmQUfB7snuYYeU7VI5geqETK4oE3gK0AFutwOmh77VOn8DeDp1JZ5os4jtaiLlTZq4/Mk=
+	t=1718269871; cv=none; b=hLlxWbxb1RMv152d6Eos7idrFod/FSJ8ijk2ineeHt4uu7tsplfo3rWI/c/T7Afeer7cN43n9kazJA68nf37LaS6mxUVvS4s6bEm1t9ofmvtOoj3WUGXxrQheqfKRww93HDuPUNaKCoz/QSYegomceUUCzu15GVPGHpEI8vLTVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718269856; c=relaxed/simple;
-	bh=30NWkqAV4R92RmhF2xlzh6uxyE5XgPuxEMk8Ttj6tog=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kmwGVQljz6x97F8qD0amSNhSpz3xCZQ0dR3jecIcFCNybpchlHgfJuHOJvqv5wpX9He5G9LdycWaj/jDRbzqz/eRQGPOgv5lBYUVxfdCsZgK9+y6WTHdP7Rv7rZAwnZrrpgyAqQjC1A2n+K4FoWiBg8Q4OH0hkj7FEiutojrhWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b9tAYuE/; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so7983871fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:10:53 -0700 (PDT)
+	s=arc-20240116; t=1718269871; c=relaxed/simple;
+	bh=XbkxxAE0o+n8aBNZeIkGPbKXffCFUoK/zqH/o0Uwb4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y2T6h28vMAzv9kv3Ujq/IasJrkYkI8hwvfDiQPcO7alaxkJlnAdVEk5aMapXr8mf36RP8yFrX1Z4vM8tHfddYGk4mhdbigM18b63vaYCw+2MYo2pYyMGFq4Rpji4m7titXiUyVZm4CwYMpvFKhenk4WIB/01matL2Jrehw+rG/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kQumoIDA; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bc1261e8fso978913e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:11:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718269852; x=1718874652; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0qMad1s8HI1EFGHqapCwasRBkvGmdeiF4NnLv9ZSDU4=;
-        b=b9tAYuE/ONzZjRb2zbpj1Shgn0Pj4GEvpPgMwBXfoyEjk89ZxyRPhbhxmJu4Fe24Sm
-         KNm3GUk/eKuzXc6zE31kOSaLdxRXZo6bTaCADg/UGiRGtH5//qIbG7JUnz7Hch+ttXOy
-         nm4TXgAc5zpaOGjqEFF4rAprNt9/2Ju3OK0Bg=
+        d=linaro.org; s=google; t=1718269867; x=1718874667; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ssbYSRQgHiqW8KXtbPaweqL5MRA5/R+69ZodellWjGg=;
+        b=kQumoIDAp4N9txyjFS0rq8Ioa0g/ZpizZgqoMMQA4TT17vXUGczTmGgwILs3+nemoG
+         3yt1zByjh1ut9WYXGAYPcCMSEz+uFf8i2uXC7CowSt7cAx6WZmSzPaAU4MfGzTe1Sbcs
+         j6ceWB6+fXR3JfQljb5NqZ/oTf9IjEx03iSPABwfvM+XA4+DDOtLq5lwtWiizQskZFdu
+         jAP89s9THoBxCDKV9PtmeIwaFP2WXbHNNz259YyWQUi3Nr3XsNScrV9SAhwaFCim1ylR
+         gQTc/TmGnM2D4ehw5JUjjIgBCSNte1K2H/fphLS0dtBO1nvUPehJOzLTLWDOTbe1RyWF
+         IoMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718269852; x=1718874652;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0qMad1s8HI1EFGHqapCwasRBkvGmdeiF4NnLv9ZSDU4=;
-        b=Kecgb9VUQrxl3zVWSi/NRc6a+CmeHTmks1oxP8k9AtH/EzmZInbVR7SinbVbTINdPu
-         nnEgrOIvBXAwUeSGtgrIP/5rOrRil1SWwPzTUAWi7qYkHCjRNzcy3qiM18rhesscoOJf
-         S2e6mGJTu/0kb57kqa4EVArboizy++BJ9y17xNFWxU+cD87aoruNVXpXPxYR4GKcwJiy
-         kQTOT3vYwm11+m9EXQvIkuwPmy7N1ADqtxxf1Df5Yme7FY0NDCrTNme1GiDCPeqZqHk6
-         KI5DiiwArMa3fvm13jEDoZfOy3idChRpmb2WyuA1ctedMWoue6V5p2SjIBpI0JneObhN
-         P5Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcJxOlIuZoTqAX9u9Vq8a/6rdzrIRCQ5+/pDVkukT2pOOxVW3EHjxnxGx384ev260Y53wk2KSEeAH5eMKXKoNVLxQtHFIcPNaXEOs0
-X-Gm-Message-State: AOJu0YycZg21RwHxdNkByhLI8M8vXz593LLUT+d/G8oBlzoAoJhHCAT5
-	7yEwyg6/neSLVspi5Wki1Bn9OuPct/46I5Uy2TH95DkuY1pejarfn1sGrDTMIaBMV2cxJofIoj4
-	itY3Bu0FHQ0fsNIuieyhlsH5CSaINf8pJLjJV
-X-Google-Smtp-Source: AGHT+IFE16q+3aJZ+pDB8j2rm8rHPIGnaWtqcWZM+SpiuLNffT3VD8BSWouvI+m971OdxrGKrmk+TlmqOWpCQUtBEeQ=
-X-Received: by 2002:a05:651c:19a6:b0:2eb:d77a:850c with SMTP id
- 38308e7fff4ca-2ebfc8f0545mr43873481fa.4.1718269852401; Thu, 13 Jun 2024
- 02:10:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718269867; x=1718874667;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ssbYSRQgHiqW8KXtbPaweqL5MRA5/R+69ZodellWjGg=;
+        b=qQCGTfq1yGG8i6RmdSbbGdHF5YNhs7WMWQ+r9qPOyoLD9aiZoUEv2iEEhOqbQNFa3H
+         2+NhWOp3pgIGGVguRYPEkpnqfNQggVtBJc4G42SSV9q9HiAmpXoaK5j+T9spIu7Iza1+
+         LNVsX0rfA2tF7AdXbXmERFqApHnUcBcKiEdFPTcfCJ2k6xRK9mXO71wxt5KZOYY0LGoW
+         Qpn+bp/ehZYgdgiLb0EwYbNtXvojMFarGTysEIP/w3dtILzKygOCsPyQcxQrk/3WZWzu
+         6VPyCRlyT8C1A1D7V6O9DtfaM6l+hOsArUZCx4SfCvm/0GMkXEvHOjeM0q7BMaR453/0
+         wiPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUy0oCZ2OoejXzY4mptp+X24tBmWI2YU/lexewEv7LBxhF5SBRYPEL6uuowyxOM9vI2eYvRtPCU1NhN1euee48PEkJDzmukFSbTIIL0
+X-Gm-Message-State: AOJu0YyYZWB2rQ9+EjIOGb7LlrrF3ICveGh18pt0z3swx4mFn96G4Jgq
+	ZbJHvb4RbuK8qVYXaUopohRP4uCzgm3jen3UD2XgywTHruHHtvjaqOWH9l2gWh8=
+X-Google-Smtp-Source: AGHT+IGZckTwTpPwJpRSZbj+Ai6kyEIH4Kh4Mxy/9XGztt/MuSZp3E6p1vdUrofR1qJZ34Tm1k6n9A==
+X-Received: by 2002:a05:6512:2349:b0:52c:898b:d6cd with SMTP id 2adb3069b0e04-52c9a3b8f30mr3546072e87.12.1718269867352;
+        Thu, 13 Jun 2024 02:11:07 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320c16sm16121435e9.38.2024.06.13.02.11.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 02:11:06 -0700 (PDT)
+Message-ID: <9e9cbc0b-f9fd-439c-93d1-054179f7b07f@linaro.org>
+Date: Thu, 13 Jun 2024 11:11:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530083513.4135052-1-wenst@chromium.org> <20240530083513.4135052-4-wenst@chromium.org>
- <cc5847a486a760921375f069a4f65cd29453a624.camel@imgtec.com> <CAGXv+5FBqcXjTc+DO8VQierzcxTYhyNxpw+AuuB4U1H_Xo6wPg@mail.gmail.com>
-In-Reply-To: <CAGXv+5FBqcXjTc+DO8VQierzcxTYhyNxpw+AuuB4U1H_Xo6wPg@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 13 Jun 2024 17:10:41 +0800
-Message-ID: <CAGXv+5HC_spBAc-t4cS+aCOQKdfWRzMkXK94HmD1Qg02ML4Uug@mail.gmail.com>
-Subject: Re: [PATCH 3/6] dt-bindings: gpu: powervr-rogue: Add MediaTek MT8173 GPU
-To: Frank Binns <Frank.Binns@imgtec.com>, Adam Ford <aford173@gmail.com>
-Cc: "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	Matt Coster <Matt.Coster@imgtec.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-	"mripard@kernel.org" <mripard@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100-crd: fix DAI used for
+ headset recording
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20240611142555.994675-1-krzysztof.kozlowski@linaro.org>
+ <20240611142555.994675-2-krzysztof.kozlowski@linaro.org>
+ <90f5ad41-7192-4c01-90c0-ad9c54094917@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <90f5ad41-7192-4c01-90c0-ad9c54094917@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 4, 2024 at 12:18=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
->
-> On Fri, May 31, 2024 at 9:37=E2=80=AFPM Frank Binns <Frank.Binns@imgtec.c=
-om> wrote:
-> >
-> > Hi ChenYu,
-> >
-> > On Thu, 2024-05-30 at 16:35 +0800, Chen-Yu Tsai wrote:
-> > > The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is one
-> > > of the Series6XT GPUs, another sub-family of the Rogue family.
-> >
-> > I've added Adam Ford who sent out some DT related patches [1] for the R=
-enesas
-> > variant of GX6250 and the GX6650 (another Series6XT GPU).
-> >
-> > >
-> > > This was part of the very first few versions of the PowerVR submissio=
-n,
-> > > but was later dropped. The compatible string has been updated to foll=
-ow
-> > > the new naming scheme adopted for the AXE series.
-> > >
-> > > In a previous iteration of the PowerVR binding submission [1], the
-> > > number of clocks required for the 6XT family was mentioned to be
-> > > always 3. This is also reflected here.
-> > >
-> > > [1] https://lore.kernel.org/dri-devel/6eeccb26e09aad67fb30ffcd523c793=
-a43c79c2a.camel@imgtec.com/
-> > >
-> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > ---
-> > >  .../bindings/gpu/img,powervr-rogue.yaml       | 24 +++++++++++++++--=
---
-> > >  1 file changed, 20 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.=
-yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > index 256e252f8087..48aa205b66b4 100644
-> > > --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > @@ -12,10 +12,17 @@ maintainers:
-> > >
-> > >  properties:
-> > >    compatible:
-> > > -    items:
-> > > -      - enum:
-> > > -          - ti,am62-gpu
-> > > -      - const: img,img-axe # IMG AXE GPU model/revision is fully dis=
-coverable
-> > > +    oneOf:
-> > > +      - items:
-> > > +          - enum:
-> > > +              - mediatek,mt8173-gpu
-> > > +          # PowerVR 6XT GPU model/revision is fully discoverable
-> > > +          - const: img,powervr-6xt
-> > > +      - items:
-> > > +          - enum:
-> > > +              - ti,am62-gpu
-> > > +          # IMG AXE GPU model/revision is fully discoverable
-> > > +          - const: img,img-axe
-> >
-> > The Series6XT GPU models have differing numbers of power domains (eithe=
-r 2, 4 or
-> > 5). Whereas, the AXE GPUs have a single power domain, so I assume there=
- should
-> > be a related change here.
-> >
-> > The GX6250 has two power domains (lets call them A and B). There's a co=
-nstraint
-> > that if domain B is powered then domain A must also be powered.
-> >
-> > In patch 6 [2] it's setting the power domain to MT8173_POWER_DOMAIN_MFG=
-, which I
-> > believe corresponds to power domain B. I assume this works because the =
-MTK power
-> > controller driver is encoding the constraint above, meaning that when w=
-e disable
-> > or enable MT8173_POWER_DOMAIN_MFG it's also disabling/enabling MT8173_P=
-OWER_DOMA
-> > IN_MFG_2D (domain A).
->
-> It could also be that the power domains are split in the glue layer and t=
-here
-> is some sequencing handled there. I'll reach out to MediaTek to see if th=
-ey
-> can dig up some design specifics.
+On 13/06/2024 09:45, Konrad Dybcio wrote:
+> 
+> 
+> On 6/11/24 16:25, Krzysztof Kozlowski wrote:
+>> The SWR2 Soundwire instance has 1 output and 4 input ports, so for the
+>> headset recording (via the WCD9385 codec and the TX macro codec) we want
+>> to use the next DAI, not the first one (see qcom,dout-ports and
+>> qcom,din-ports for soundwire@6d30000 node).
+>>
+>> Original code was copied from other devices like SM8450 and SM8550.  On
+>> the SM8450 this was a correct setting, however on the SM8550 this worked
+>> probably only by coincidence, because the DTS defined no output ports on
+>> SWR2 Soundwire.
+> 
+> Planning to send a fix for that?
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Unfortunately they said they no longer have that information.
+Not really, because microphone works on these targets and changing it
+would require testing. I don't have boards suitable for testing, so
+let's just leave it.
 
-> I assume you would like to see the separate power domains properly modele=
-d
-> in the device tree?
+Best regards,
+Krzysztof
 
-So how should we go about this? Adam, do you have this information for
-your platform?
-
-Thanks
-ChenYu
-
->
-> Thanks
-> ChenYu
->
-> > Thanks
-> > Frank
-> >
-> > [1] https://lists.freedesktop.org/archives/dri-devel/2024-February/4435=
-48.html
-> > [2] https://lists.freedesktop.org/archives/dri-devel/2024-May/455833.ht=
-ml
-> >
-> > >
-> > >    reg:
-> > >      maxItems: 1
-> > > @@ -56,6 +63,15 @@ allOf:
-> > >        properties:
-> > >          clocks:
-> > >            maxItems: 1
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: img,powervr-6xt
-> > > +    then:
-> > > +      properties:
-> > > +        clocks:
-> > > +          minItems: 3
-> > >
-> > >  examples:
-> > >    - |
 
