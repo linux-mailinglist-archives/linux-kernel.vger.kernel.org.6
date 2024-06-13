@@ -1,83 +1,98 @@
-Return-Path: <linux-kernel+bounces-213588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBBCD907746
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:46:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B99C907761
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68FEA28E50C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:46:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10D321F24C94
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5365A158D65;
-	Thu, 13 Jun 2024 15:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6645C15ADAA;
+	Thu, 13 Jun 2024 15:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DekLwn8J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ERvfPeDP"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3847E15886E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E21614198E;
+	Thu, 13 Jun 2024 15:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718293224; cv=none; b=NQCrivA/Zz/oYyH0Sd+zP0AWUzJH1YULy9KWj8P6DAz/ictw0OOvo0h4+eaX0AfdoGfl3MxrZAFKQBKNYrD2fwFcbZyCWsYniFtIB9/1CPzTdLwd3eHQIbxnCn7OdF2pfxnhtfmpiH89rlIV7PvL51YxcYKX3atUWPVqSUFfP0s=
+	t=1718293244; cv=none; b=WPGW7YT4TVM3fRcih2Jn5yS7D9uECaOAyWIRNs2fMquz9fmgam9qAiOc6tj5mNsrvgcwKlP80wmmlNonsYhbk8/aYM6BU2mRSgJX5itCPhdmFYwupb9xcTL18BHfcSSelK3EdocqUpHtXzcN0Q55Me1157B34xavcSLT+n+jJlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718293224; c=relaxed/simple;
-	bh=bA3t750aLVe9+kIvYa78qWA/d7Nucom/3lQQGHdYrOI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=po23SH8e4+RFZyVquwGtDbC3FAuPsFmxLoQpEWEtvjlGDpReugOEfYrcEJdh/jgw/2eqiQ3lEcE1ZCrSe3gNZDzoEUdCrmfVki8/Nb7p4KSDzG+GqmFp2p3eZfd4MlXGpIFj5hpVcWeu8tJevtTsLgDVbN1Wkl1yJjq+TEMc0v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DekLwn8J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A279C4AF4D;
-	Thu, 13 Jun 2024 15:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718293223;
-	bh=bA3t750aLVe9+kIvYa78qWA/d7Nucom/3lQQGHdYrOI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DekLwn8JNT4JQ5q8mjiYg5MEqhVrqr8EX0gHPo/9Foy15v21VeCsBRf6g44VmHFaZ
-	 FuUS4dk9vhT0HG8Kqbmuu61WjrB+oiAaD1rMaY+OjNobK4smH1K8IDKgF0/8yfqMVA
-	 yPF0kAOJJ0i+gOXOGLoFJZFO5Qry+z8OMNS1adDhiOC1I98jJh25UtNwSAm9UK+5ij
-	 pXjX0z5NdJa14su4CU9Jf6Wn+MZUaLStoiwrijiS2XMdT6Morcm+yoGShbUN8BnL3L
-	 sCtZjDrnSzS5wFwQ195mGSQAe6UnSMlaP3e4tjKQmoNxb4sq3k7m9sxK0hUSc9ZAm8
-	 tJEKXP74llFAg==
-From: Maxime Ripard <mripard@kernel.org>
-To: linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org, 
- sui.jingfeng@linux.dev, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
- rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, sam@ravnborg.org, 
- Jayesh Choudhary <j-choudhary@ti.com>
-Cc: jonas@kwiboo.se, jernej.skrabec@gmail.com, 
- maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, 
- daniel@ffwll.ch, a-bhatia1@ti.com, dri-devel@lists.freedesktop.org
-In-Reply-To: <20240613083805.439337-1-j-choudhary@ti.com>
-References: <20240613083805.439337-1-j-choudhary@ti.com>
-Subject: Re: [PATCH v5 0/3] SII902X HDMI Bridge fixups
-Message-Id: <171829322089.1494794.15521482935825350505.b4-ty@kernel.org>
-Date: Thu, 13 Jun 2024 17:40:20 +0200
+	s=arc-20240116; t=1718293244; c=relaxed/simple;
+	bh=N+sDX7ZbU5QCuJT6w9YMdnRaDrdkZf5y5viAAmIsDG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mAPN0fhNG/U2WIQWOwP/SKv2yuhXuRC5KV/AeLzX+KKGDNWPxWHvcFY0QhQ8AvpftHbYV5ASR6HR0ExkFJg5TGZVM38t+laPyoaDh29MOxtFyluSYIMUteD4IgvzMOeGD/wRLC4JRZp0Uw0uqtJ05enr2qFFSAyeyVgtosVeecs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ERvfPeDP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yzkTNbdD0a2c3NKP5uSb0sKP6o4WHMSdtJob2Y7Lf9Y=; b=ERvfPeDPd5l14AF4yJ+ldt9Nxz
+	7bS1JZiLy38Xf8wDo1A0V82qM67Vcpl4Hd18YEIdOpUE2l68glcOxjLeR/M86injkZp45uVvSyGwB
+	7Ag/sfbWYK4LDA+e6kncbnlWIOp5gMidKClL5x4raeJIt40QGuz0wb8qQx/slJbGswml3lq/zlmQX
+	B13i8h5Xj460i6GnPDJUEGQ8RtYJVZP5fPBsBjxRS0nQ5SkIRy8Pi/WcHqAn9a5oXDNjfmapzJ/Lt
+	C/i9zs92LoKtssDB0DvCPnBXCIbOZKLAHY2YqGxy9Gwk4NKmxB+PiaqN6Rqo1yofXq7sFl8G/2p0e
+	+8LPn/RA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sHmYu-0000000Furm-1Tae;
+	Thu, 13 Jun 2024 15:40:28 +0000
+Date: Thu, 13 Jun 2024 16:40:28 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
+	yang@os.amperecomputing.com, linmiaohe@huawei.com,
+	muchun.song@linux.dev, osalvador@suse.de,
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+	hare@suse.de, linux-kernel@vger.kernel.org,
+	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
+	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	john.g.garry@oracle.com
+Subject: Re: [PATCH v7 06/11] filemap: cap PTE range to be created to allowed
+ zero fill in folio_map_range()
+Message-ID: <ZmsS7JipzuBxJm92@casper.infradead.org>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-7-kernel@pankajraghav.com>
+ <ZmnyH_ozCxr_NN_Z@casper.infradead.org>
+ <ZmqmWrzmL5Wx2DoF@bombadil.infradead.org>
+ <818f69fa-9dc7-4ca0-b3ab-a667cd1fb16d@redhat.com>
+ <ZmqqIrv4Fms-Vi6E@bombadil.infradead.org>
+ <b3fef638-4f4a-4688-8a39-8dfa4ae88836@redhat.com>
+ <ZmsP36zmg2-hgtak@bombadil.infradead.org>
+ <ZmsRC8YF-JEc_dQ0@casper.infradead.org>
+ <ZmsSZzIGCfOXPKjj@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmsSZzIGCfOXPKjj@bombadil.infradead.org>
 
-On Thu, 13 Jun 2024 14:08:02 +0530, Jayesh Choudhary wrote:
-> - Move the mode_valid hook to drm_bridge_funcs structure to take care
->   of the case when the encoder attaches the bridge chain with the
->   DRM_BRIDGE_ATTACH_NO_CONNECTOR flag in which case, the connector is
->   not initialized in the bridge's attach call and mode_valid is not
->   called.
+On Thu, Jun 13, 2024 at 08:38:15AM -0700, Luis Chamberlain wrote:
+> On Thu, Jun 13, 2024 at 04:32:27PM +0100, Matthew Wilcox wrote:
+> > On Thu, Jun 13, 2024 at 08:27:27AM -0700, Luis Chamberlain wrote:
+> > > The case I tested that failed the test was tmpfs with huge pages (not
+> > > large folios). So should we then have this:
+> > 
+> > No.
 > 
-> - Also add this check to the atomic_check call as suggested by Maxime in
->   v1 patch.
-> 
-> [...]
+> OK so this does have a change for tmpfs with huge pages enabled, do we
+> take the position then this is a fix for that?
 
-Applied to misc/kernel.git (drm-misc-next).
+You literally said it was a fix just a few messages up thread?
 
-Thanks!
-Maxime
-
+Besides, the behaviour changes (currently) depending on whether
+you specify "within_size" or "always".  This patch makes it consistent.
 
