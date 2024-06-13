@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-212419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E1F2905FE1
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2571905FE2
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B98D31F2210A
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3CD11C21256
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C68D530;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7515DDDB2;
 	Thu, 13 Jun 2024 01:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HE6nAKp5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIV9YnqU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED0E652;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED4D20E3;
 	Thu, 13 Jun 2024 01:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718240431; cv=none; b=qwTasA09K9SyENLx7wzRx+HA4zWJzeAqCFDstjEFvlfwWw3rBRp48i4l/c2dr1Pgr55cKEmJKBFAtsj3JhNYhPCTTXUKLRF4/pz3wIK12FnPTkS0urk4Sb0mwVdURDb4TSe88X7xZxByiYc7mJlaXQoxFztjHJIwOY2pKLQRVfI=
+	t=1718240431; cv=none; b=NQ+gSfnIXbHGpv5D0buFtfBC++ChymIF6dWTQVvAV42JzCLFGoHc2c68YUK4B2lnH2hpuSik2T0B7XYIi99UDKh22hkDLIjIdeQyVGp0UhOUFNMeus5qtatnxDgyJuYWFZy6WOhyae5gV7xRm6FliXF/xjhjkS11QQ0mS58lrqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718240431; c=relaxed/simple;
-	bh=pFYd5dnt9JC+PVxse7/Tyb5tD3NHqqNXEcsD4Ej/9lc=;
+	bh=A90udtY5N2r40p7F+o+B46r7+DdZME9ofup2TjtLCow=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=IwQb7VCJ4da+0nctt863U5nnx/U1isVKh0H7SBvDkgaUbdttSKEE4DVoJprd8CdDp5WT1fE0Uwd4FbvDy3F99ckIdS3YMn5MPNQeUgFAYDUpLRZz+QT1S0Fw7i4WTvkFIRUi8VTNH7b0mSLoQEyTYxNigpfNcHDNZ92E4Q9xVHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HE6nAKp5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D606FC3277B;
-	Thu, 13 Jun 2024 01:00:30 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=QSm0ghOguSggbLlta3Dy4Ylf7hLZlwnp7MW33rYfXnu0mcULs2EIYIMRL6UrEYHipL1YSNnEw6zv/ZGcO0UTp8+NEOkcgxH3h9QCOGr97vNwgwKb+dDLaVcZO6wq5jNbW1BL17xY7cE2Vg3b2evq16DqPrL9LuCSPerdS72SDlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIV9YnqU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 51F7CC4AF54;
+	Thu, 13 Jun 2024 01:00:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718240430;
-	bh=pFYd5dnt9JC+PVxse7/Tyb5tD3NHqqNXEcsD4Ej/9lc=;
+	s=k20201202; t=1718240431;
+	bh=A90udtY5N2r40p7F+o+B46r7+DdZME9ofup2TjtLCow=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=HE6nAKp5SQI14CCKCUR2Ltva6iqDvuPYbLR4nW+jFyiJPamVqx2Mx4hJ88AwOYK91
-	 h1VJA/x4C9Djryg6VxQtSNqanyhX2WnndLZGk2vEq6JrMMDBTi3vfoHnPMe454Pysj
-	 K3TO5VA/cn4iM/8H0+wIFEHV60+b/BwxN3R0oh4U1m3OQx9hUY67DWglJxoezwgoCY
-	 tSrZ6CPZxkRrEOdYYaUeYxYOa09CZE1wZwO2gDhcIe0bhlzK3uV4TMxW2MxGv4cKeX
-	 5z1f8yvF1giK9/Ns7ZpgXO4FexsnrrL8nishrx2WrNx7CrcqTB+jHf9lqkJtV0y0Tj
-	 c02IJv/LvAoGw==
+	b=cIV9YnqU0Fetft+Iy7/EqPcRFVN5LthTleLM43LfB6NqCWVVR7AENsWDgUYeG78pN
+	 v4Dk9iQoywLI0WfkVlzStU4Xmt03+6viYsWaiDa32FzBi+SoksJcFfxHE+YFav9tS0
+	 Inh/67YRR2tirdiNV+1snTGe9eis941fvfkNm6ewKMcQhDgPxspNlLHdoi/Xbm1Q4h
+	 AwP8kWs1V0QN0gkDRm3Cprqs+oENyZd4tMTNNvbdh77s82r25ZiBZS9m4zpWQKLDEa
+	 +lsHWG6LtFp+GEtv7kFLekOpT4XjAepYAiFyCOPiGNjm8HJK/XL+NXUvJ51+VyReKc
+	 E+tzQjqHYHMJQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C12AAC43619;
-	Thu, 13 Jun 2024 01:00:30 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 452EEC43613;
+	Thu, 13 Jun 2024 01:00:31 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,40 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net/ipv6: Fix the RT cache flush via sysctl using a
- previous delay
+Subject: Re: [PATCH net-next v6] net: ethernet: mtk_eth_soc: ppe: add support for
+ multiple PPEs
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171824043078.29237.14154022901138989230.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Jun 2024 01:00:30 +0000
-References: <20240607112828.30285-1-petr.pavlu@suse.com>
-In-Reply-To: <20240607112828.30285-1-petr.pavlu@suse.com>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, dsahern@kernel.org, thinker.li@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+ <171824043128.29237.10490597706474690291.git-patchwork-notify@kernel.org>
+Date: Thu, 13 Jun 2024 01:00:31 +0000
+References: <20240607082155.20021-1-eladwf@gmail.com>
+In-Reply-To: <20240607082155.20021-1-eladwf@gmail.com>
+To: Elad Yifee <eladwf@gmail.com>
+Cc: daniel@makrotopia.org, nbd@nbd.name, sean.wang@mediatek.com,
+ Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ linux@armlinux.org.uk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
 
 Hello:
 
-This patch was applied to bpf/bpf.git (master)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri,  7 Jun 2024 13:28:28 +0200 you wrote:
-> The net.ipv6.route.flush system parameter takes a value which specifies
-> a delay used during the flush operation for aging exception routes. The
-> written value is however not used in the currently requested flush and
-> instead utilized only in the next one.
-> 
-> A problem is that ipv6_sysctl_rtcache_flush() first reads the old value
-> of net->ipv6.sysctl.flush_delay into a local delay variable and then
-> calls proc_dointvec() which actually updates the sysctl based on the
-> provided input.
+On Fri,  7 Jun 2024 11:21:50 +0300 you wrote:
+> Add the missing pieces to allow multiple PPEs units, one for each GMAC.
+> mtk_gdm_config has been modified to work on targted mac ID,
+> the inner loop moved outside of the function to allow unrelated
+> operations like setting the MAC's PPE index.
+> Introduce a sanity check in flow_offload_replace to account for
+> non-MTK ingress devices.
+> Additional field 'ppe_idx' was added to struct mtk_mac in order
+> to keep track on the assigned PPE unit.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v2] net/ipv6: Fix the RT cache flush via sysctl using a previous delay
-    https://git.kernel.org/bpf/bpf/c/14a20e5b4ad9
+  - [net-next,v6] net: ethernet: mtk_eth_soc: ppe: add support for multiple PPEs
+    https://git.kernel.org/netdev/net-next/c/dee4dd10c79a
 
 You are awesome, thank you!
 -- 
