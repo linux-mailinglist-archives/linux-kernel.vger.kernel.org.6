@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-212507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B8C906235
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:57:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A69A906233
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98EDB1C216A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:57:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E2E1C2156C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EBF12CDBC;
-	Thu, 13 Jun 2024 02:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F0B12CD8C;
+	Thu, 13 Jun 2024 02:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="SjQTVGkp"
-Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="r+lqTVY7"
+Received: from mail-40141.protonmail.ch (mail-40141.protonmail.ch [185.70.40.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC2012D770;
-	Thu, 13 Jun 2024 02:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDD112CD8B;
+	Thu, 13 Jun 2024 02:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718247444; cv=none; b=umRqKuSyM5KbEhA0p3lxDwTs6f+QaSKdZTfoLM3i2XWhnNtrc5F8VOqdbAnuUnmNTQdi7IO9bBt+MEKELQWNPEfHlYs8UhtOnYnGTLWBcisTWNCF85NvKk8M3KBqXp3JDTYIQjBPmd/1a9o5CM+thej4Y5A/qU3ZJG1q36uPvyw=
+	t=1718247438; cv=none; b=Rc48VVEfo7aFNmsmedkljQ4CKVgt+oi/8yAy2mxFVdTgIfoctVjd0AGatYKkptqP/DWOGIWAyeRPab7qfkhhex3thSGAiyAnFZbMaRMzL1R6badscDxap8ljKciW730kNNbxM02AIJ0WYtmqDdGlsQ0xJHzbF0iQOp+HLY72NW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718247444; c=relaxed/simple;
-	bh=X2R/Lqe3yyTPproE8laMoHIAUueppVslkaDZtKIU3AQ=;
+	s=arc-20240116; t=1718247438; c=relaxed/simple;
+	bh=f0f6wp31zL2RwkHRjXOVz/EH4HhEHMCWvKWESd4pTcA=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dqZpLpokESbjNhMSOh4OG7opkRn9IfPbFT892zh8DhW/pazVU6e/fsQVfVPT4b2SpeDyJ9nBjwWQPIoVltC43nkaDZCbVFpD5TUi7FNF8uJYxlCkXAA2MrJ4GNo3NeatNTiJD9iDwQDVhBaMFb+Eenwzh/dNbGQXGT0EwZdLrL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=SjQTVGkp; arc=none smtp.client-ip=51.77.79.158
+	 MIME-Version:Content-Type; b=lCVw9oYmajsgdOCYkcV8wHQNIY/s5yUld7ukhJXK23Rpqq6219t07Lo6osZZNjbwNOMOqf3mzZmAVPadvAPOzPrj0Nc/xT7Dddj+/9qiQ6cisycrMAjNy7zI2R+j7nVVK62FZ471Iwo2XImBhw3DIWiyOU2D7Fj1gAuW/82fYqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=r+lqTVY7; arc=none smtp.client-ip=185.70.40.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1718247427; x=1718506627;
-	bh=lXG+SXSI+bu0iO+6Eh0TYcpfoJKVKHkixFTF9yc6DLw=;
+	s=protonmail3; t=1718247435; x=1718506635;
+	bh=f0f6wp31zL2RwkHRjXOVz/EH4HhEHMCWvKWESd4pTcA=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector;
-	b=SjQTVGkpRORQEtDZgCjPpsln5nZcY6btSqE059m0Flg3aogO3BIOuuR+RiSvKVJV7
-	 1eXwK5pZvA7a/AFX/003FIobvdUEAv1tbQRlxSUF660i11z0l7K09zOai1M73McPpR
-	 AqAX/Ohex+ACZ/dfMWvOtIRT7IhvH0wr7QT3Mr0V2C0Kb+sMVQnEq8X8othklufWvg
-	 ykNQSyWy3xL/6hCN8PqeqHyDi2cmPuVLif7XzIjdE+gUtrBIsDO9R2ZP7KEnzCHmFN
-	 CyvAR8920QfUKfmASd/oM5AQjL9oblex0xhLsCsxF3fGeP5db4/h45N0aGVEhxOUhi
-	 6Js/91rQwVyjQ==
-Date: Thu, 13 Jun 2024 02:57:03 +0000
+	b=r+lqTVY7WHJsHcd3KfQF7BiczX9O3mP903LHB6xgqzmvbsiDZ2CcNtWGmAIRpmze0
+	 78ZbJaCCO0BUC1HglrvpRBBFmJMHYObdGg7pmxCq9/ihWFBdKWzef/RuJ/UXApPBC6
+	 qf+oZ2LLg/bDCFgtmoOq5YT+qESseW8BOFp3VTfF9F0MutckXsoFBBUp4xWWvqnKgF
+	 7O9czbvgthXt4JmtaRpwKJX4HW27i8452qiONCA/8f+ctuWd+B5sOMSZKLKal3xMQV
+	 MSWCV90AtLThim8oW+msHS8L5kn6PKDTMaq4K6gHUsRnAO4MC409A6vda5jco23EAz
+	 LPp5zDniodh0A==
+Date: Thu, 13 Jun 2024 02:57:11 +0000
 To: linux-kernel@vger.kernel.org
 From: Raymond Hackley <raymondhackley@protonmail.com>
 Cc: Markuss Broks <markuss.broks@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, Nikita Travkin <nikita@trvn.ru>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: [PATCH v2 2/3] dt-bindings: input/touchscreen: imagis: Document ist3038
-Message-ID: <20240613025631.5425-3-raymondhackley@protonmail.com>
+Subject: [PATCH v2 3/3] input/touchscreen: imagis: Add supports for Imagis IST3038
+Message-ID: <20240613025631.5425-4-raymondhackley@protonmail.com>
 In-Reply-To: <20240613025631.5425-1-raymondhackley@protonmail.com>
 References: <20240613025631.5425-1-raymondhackley@protonmail.com>
 Feedback-ID: 49437091:user:proton
-X-Pm-Message-ID: 77572c561c77337988721220ea7e60757b362388
+X-Pm-Message-ID: dbec9617af97a207be017b2482ca9ba7250f143f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,30 +61,86 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Imagis IST3038 is a variant of Imagis touchscreen IC. Document it in
-imagis,ist3038c bindings.
+Imagis IST3038 is another variant of Imagis IST3038 IC, which has
+a different register interface from IST3038C (possibly firmware defined).
+
+Unlike IST3038C/IST3032C, IST3038 has different registers for commands,
+which means IST3038 doesn't use protocol B.
+Similar to IST3032C and maybe the other variants, IST3038 has touch keys
+support, which provides KEY_APPSELECT and KEY_BACK.
+
+Add support for IST3038 with touch keys.
 
 Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
 ---
- .../devicetree/bindings/input/touchscreen/imagis,ist3038c.yaml   | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/touchscreen/imagis.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/imagis,ist=
-3038c.yaml b/Documentation/devicetree/bindings/input/touchscreen/imagis,ist=
-3038c.yaml
-index 77ba280b3bdc..e24cbd960993 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/imagis,ist3038c.y=
-aml
-+++ b/Documentation/devicetree/bindings/input/touchscreen/imagis,ist3038c.y=
-aml
-@@ -16,6 +16,7 @@ properties:
-   compatible:
-     enum:
-       - imagis,ist3032c
-+      - imagis,ist3038
-       - imagis,ist3038b
-       - imagis,ist3038c
+diff --git a/drivers/input/touchscreen/imagis.c b/drivers/input/touchscreen=
+/imagis.c
+index 886bcfc8497a..aeabf8d057de 100644
+--- a/drivers/input/touchscreen/imagis.c
++++ b/drivers/input/touchscreen/imagis.c
+@@ -12,9 +12,17 @@
+ #include <linux/property.h>
+ #include <linux/regulator/consumer.h>
 =20
++#define IST30XX_REG_STATUS=09=090x20
++#define IST30XX_REG_CHIPID=09=09(0x40000000 | IST3038C_DIRECT_ACCESS)
++
++#define IST30XX_WHOAMI=09=09=090x30003000
++#define IST30XXA_WHOAMI=09=09=090x300a300a
++#define IST30XXB_WHOAMI=09=09=090x300b300b
++#define IST3038_WHOAMI=09=09=090x30383038
++
+ #define IST3032C_WHOAMI=09=09=090x32c
++#define IST3038C_WHOAMI=09=09=090x38c
+=20
+-#define IST3038B_REG_STATUS=09=090x20
+ #define IST3038B_REG_CHIPID=09=090x30
+ #define IST3038B_WHOAMI=09=09=090x30380b
+=20
+@@ -25,7 +33,6 @@
+ #define IST3038C_REG_TOUCH_STATUS=09(IST3038C_REG_HIB_BASE | IST3038C_HIB_=
+ACCESS)
+ #define IST3038C_REG_TOUCH_COORD=09(IST3038C_REG_HIB_BASE | IST3038C_HIB_A=
+CCESS | 0x8)
+ #define IST3038C_REG_INTR_MESSAGE=09(IST3038C_REG_HIB_BASE | IST3038C_HIB_=
+ACCESS | 0x4)
+-#define IST3038C_WHOAMI=09=09=090x38c
+ #define IST3038C_CHIP_ON_DELAY_MS=0960
+ #define IST3038C_I2C_RETRY_COUNT=093
+ #define IST3038C_MAX_FINGER_NUM=09=0910
+@@ -397,9 +404,17 @@ static const struct imagis_properties imagis_3032c_dat=
+a =3D {
+ =09.protocol_b =3D true,
+ };
+=20
++static const struct imagis_properties imagis_3038_data =3D {
++=09.interrupt_msg_cmd =3D IST30XX_REG_STATUS,
++=09.touch_coord_cmd =3D IST30XX_REG_STATUS,
++=09.whoami_cmd =3D IST30XX_REG_CHIPID,
++=09.whoami_val =3D IST3038_WHOAMI,
++=09.touch_keys_supported =3D true,
++};
++
+ static const struct imagis_properties imagis_3038b_data =3D {
+-=09.interrupt_msg_cmd =3D IST3038B_REG_STATUS,
+-=09.touch_coord_cmd =3D IST3038B_REG_STATUS,
++=09.interrupt_msg_cmd =3D IST30XX_REG_STATUS,
++=09.touch_coord_cmd =3D IST30XX_REG_STATUS,
+ =09.whoami_cmd =3D IST3038B_REG_CHIPID,
+ =09.whoami_val =3D IST3038B_WHOAMI,
+ };
+@@ -415,6 +430,7 @@ static const struct imagis_properties imagis_3038c_data=
+ =3D {
+ #ifdef CONFIG_OF
+ static const struct of_device_id imagis_of_match[] =3D {
+ =09{ .compatible =3D "imagis,ist3032c", .data =3D &imagis_3032c_data },
++=09{ .compatible =3D "imagis,ist3038", .data =3D &imagis_3038_data },
+ =09{ .compatible =3D "imagis,ist3038b", .data =3D &imagis_3038b_data },
+ =09{ .compatible =3D "imagis,ist3038c", .data =3D &imagis_3038c_data },
+ =09{ },
 --=20
 2.39.2
 
