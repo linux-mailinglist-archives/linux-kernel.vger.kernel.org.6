@@ -1,285 +1,217 @@
-Return-Path: <linux-kernel+bounces-212922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E2D90683B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:12:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC1290683E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAF2E2837E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:12:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EB7128556C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EC713DB88;
-	Thu, 13 Jun 2024 09:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PyEwYDHt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2955613E3F5;
+	Thu, 13 Jun 2024 09:12:32 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593613209
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4A313D881
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718269942; cv=none; b=IXx25Q4CfUXGch//Ruo3CvWlOFqClRXcfPhc3Qg/Ue5kK96+H68dZyQMbsXaMJemPhPMpLQJaP/whcJ1PhVdKockBzaH73lmmK3GoXU2H5ATu7D3MKCD5tr5w8KwTwd4r11i/rqrrdpJBZ5yPuHTYNZHhHiLaDQowDd7RNndY9o=
+	t=1718269951; cv=none; b=CAoHnP5NyPhBgWTb/nDvDjlyPt5Ql3dpgNmefl6Uvu8AOeqclka5GqE3NiwJs6kdB0cgk+FYT+cEkLglVwW75gyKdphHmk2jmbWqZ8NrlzJp2a1AHdQwCB3zr9mb4q47e5JnTwX15FOIrf5ZFLdD7U1cMW4eqVUaHFixK38BLX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718269942; c=relaxed/simple;
-	bh=fGFUp1NoACohEoxufmyPJijhVfpe2tV4xDdBE2nRE0w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WxIxQsC9UEiwvYmxz6rHJeO+ges/WcVE450FKafEYIFULkMtbYZFk1Rm4lzd3dF4GtIPwA51v5/Df4LDMGjsNmf7S4TxONVJkBuZb3TA1dxzHSj74VDBX6sv1hTLAnxUoIzPPF9RMW/PHAG7PCdD5kafe1z+EYaeyvhqUwVzXN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PyEwYDHt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718269938;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lKg8FRLvO2h6+zLHelU8XoF5WlQLp4n8H5qg7CdtG78=;
-	b=PyEwYDHtdfqtrnF/UmAH/mKhAJytJ8OAAIAETT3HDtiIFktd0TWl44j5JOYKEpOOrfx8BW
-	xq9HNZN6oSRNhE78m6Wt+GBQXre6dA268yVCnyhVO9rQNsd+HTygatdtAW+fo2DZ8fMOvl
-	IQtziv9w3DwbyjNXdH7wiKk8vs3ZGMM=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-183-tiDaHTHROyy0sV9vCVR9qQ-1; Thu, 13 Jun 2024 05:12:14 -0400
-X-MC-Unique: tiDaHTHROyy0sV9vCVR9qQ-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ebe83e7a98so5835021fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:12:14 -0700 (PDT)
+	s=arc-20240116; t=1718269951; c=relaxed/simple;
+	bh=v3xP34y2Kqz9tAvkUGjtqaPysCSq513+rEw0ux33bZU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DgWIi3JLsJ6F2LIVVV4YUCiCJx4wr+iDpHbHArzbxq2pmYvFjJSyB6urxwTT3c4EHoNnomVP6yB8YqOF/c3Zfl/OQ5IfWZhcva7U2MNqP9oF+bHgtkUAtE7Gs5NwKodvG3JWlzdfzcW2PCN4W1PcpdxgpQRoTv2QanQ6BSWUB+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-375da99c867so2712955ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:12:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718269933; x=1718874733;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lKg8FRLvO2h6+zLHelU8XoF5WlQLp4n8H5qg7CdtG78=;
-        b=rxHGeRNeWpKc6FAQNvCJTyzYTDBnnPZfCP9o54+oWZwM6nUXcGKaq+0dRaGgO2BEPF
-         M02JmFhn4AkvV2jY/bg9Cq6rig594PFAQeC85aaXZNi2rK4w2REBWZIfJIv7cWMBon0J
-         8WiZK6srvv1gjJ5Q6WEo9tnt9zl7E0xHs6/k7sbAK8J8HGyXEBi5FE+BithvDLh9Aps+
-         jI3Q+qtqZHg/403qZRrY4LcH2FB+I9tkPO0LvVKo1O8JuJV9K8K3xdQWL3Glzl+OlZ4Z
-         +8UNpCuX58aok96Ylz76gdRQwLXgwq7DwApnkFzozvnlWV0JU4DT/NIqzWQ1RF/hx7UV
-         3tpA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7zSQqnl62dVKk+xHf1I84qqvb+eRgiQdzu1Nvw7jjWRaPeWcQdLehKv8wUGJC1v41H/tWqB9Kx2H327bMolEx5iccqvu4UxT+Iblo
-X-Gm-Message-State: AOJu0YwANc0FaZyzDpqyET512PMfZAXRk67z+nQHYi5dX53EXNf06kls
-	bXBraBGpXdQsYCs6Hj80B3hiU3nQHN4XQTqnqEA2+7KeL1fsm3hbMatwp1RzHE0CuJuAXmmnyAs
-	qmBtGjuRMj8KRAP1xD+1Ty2lPBnItyjPanfcc6Tqu4U6zHfTfLgiietPTr2tr2A==
-X-Received: by 2002:ac2:5962:0:b0:52c:856a:d45f with SMTP id 2adb3069b0e04-52c9a3d1c8emr2437948e87.19.1718269933061;
-        Thu, 13 Jun 2024 02:12:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFOpfd9bA/hvqTmEKf+8HMvX4M2/dlAtAEXK/Rm3o8FB52pIEoRqv0XItTKiX+2aEAMV8IldA==
-X-Received: by 2002:ac2:5962:0:b0:52c:856a:d45f with SMTP id 2adb3069b0e04-52c9a3d1c8emr2437933e87.19.1718269932619;
-        Thu, 13 Jun 2024 02:12:12 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c703:fe00:10fe:298:6bf1:d163? (p200300cbc703fe0010fe02986bf1d163.dip0.t-ipconnect.de. [2003:cb:c703:fe00:10fe:298:6bf1:d163])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509348esm1089278f8f.17.2024.06.13.02.12.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 02:12:12 -0700 (PDT)
-Message-ID: <cac7d354-bcf3-4d7f-866a-9665568a50a0@redhat.com>
-Date: Thu, 13 Jun 2024 11:12:10 +0200
+        d=1e100.net; s=20230601; t=1718269949; x=1718874749;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nLMUrKsMG2Xf4e/PTbl5dpOWAgPgPt620Z5seuQUYCY=;
+        b=Qvz7Zp5naKB28qiaodEKOID+oMxAehxu6DNz1BCux8/1hTHgzn2SdzEX1OT1E3eEjT
+         qpbdggNHtCa18e4yTq2oju10NgxgVhCzG+oz9JvLJysTkL5kMoYulErfa284rUPB3IRE
+         bdi4N2Dq3M3KWnLB5X5jG7BPjG/iJ4rTwnnTJN1C0ZV8JfS7Krk4lv41T+B3sdWdOw+k
+         +ls7+oixYfkCrMqRCXb5Ei7/Ku8PRswfYqjxD9IeJ9GAvz7B6jyMLi2Se3eqM46y6Zjx
+         2m/ygD0ckSQGNEJJBRrgb/yqZ6fclnsM6lzxgMBYJR4VT4NE/Se++nqmweXzJiZqpZZn
+         dgWw==
+X-Forwarded-Encrypted: i=1; AJvYcCURYIl4Bj0szUTNla3yfJqh2msqFnBex1dM8p+bwQGym3j198K7c9/1DrPzUOit1AVczPQx12v39OsmfidydqEjtMqnQVRbbLTfYxZF
+X-Gm-Message-State: AOJu0YxvK2jBV18y7ti0Jlr6pJ7ZxhYfkeCwbJwhRe4L1qs9o1YQRbNY
+	ryZhMP/phDAHbPguqnkve1hVCSGJ7rOoZJwzMqA0pFoH6sMVAhnbRwDqoLmHcFZKgbqJ9zMRHrB
+	VV/yPFJ9qRsvnR/PdH+GDNQXVWYiWuAMvqP9TGOoYRWNPes2DJs3czDg=
+X-Google-Smtp-Source: AGHT+IEaTJHT00Vr7hkv4iPBqju355oH0gjr0pKcus/2z4NhB+o4fK56Kcuy5h+dtz1VI5HvFWdVZZpl5EJ8LUsfF/UEXX8H3RKK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/3] mm: remove folio_test_anon(folio)==false path in
- __folio_add_anon_rmap()
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org,
- linux-kernel@vger.kernel.org, mhocko@suse.com, ryan.roberts@arm.com,
- baolin.wang@linux.alibaba.com, yosryahmed@google.com, shy828301@gmail.com,
- surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org,
- ying.huang@intel.com, yuzhao@google.com
-References: <20240613000721.23093-1-21cnbao@gmail.com>
- <20240613000721.23093-4-21cnbao@gmail.com>
- <CAGsJ_4zx3Rp9ye=LFhzEN+JypAq1zb_gLQZgyiRvYJZTMpLCHA@mail.gmail.com>
- <b0b4a134-1d40-4eef-94f3-5c4593b55e78@redhat.com>
- <CAGsJ_4zDoevXiNOTbSefU4WfoPEpbkhArc1niTBFRPsMHu5j8w@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAGsJ_4zDoevXiNOTbSefU4WfoPEpbkhArc1niTBFRPsMHu5j8w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1feb:b0:374:70ae:e86e with SMTP id
+ e9e14a558f8ab-375cd24a4f3mr2695675ab.6.1718269949074; Thu, 13 Jun 2024
+ 02:12:29 -0700 (PDT)
+Date: Thu, 13 Jun 2024 02:12:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f17182061ac1e554@google.com>
+Subject: [syzbot] [ppp?] INFO: task hung in ppp_exit_net (4)
+From: syzbot <syzbot+32bd764abd98eb40dea8@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 13.06.24 11:06, Barry Song wrote:
-> On Thu, Jun 13, 2024 at 8:49 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 13.06.24 10:46, Barry Song wrote:
->>> On Thu, Jun 13, 2024 at 12:08 PM Barry Song <21cnbao@gmail.com> wrote:
->>>>
->>>> From: Barry Song <v-songbaohua@oppo.com>
->>>>
->>>> The folio_test_anon(folio)==false case within do_swap_page() has been
->>>> relocated to folio_add_new_anon_rmap(). Additionally, two other callers
->>>> consistently pass anonymous folios.
->>>>
->>>> stack 1:
->>>> remove_migration_pmd
->>>>      -> folio_add_anon_rmap_pmd
->>>>        -> __folio_add_anon_rmap
->>>>
->>>> stack 2:
->>>> __split_huge_pmd_locked
->>>>      -> folio_add_anon_rmap_ptes
->>>>         -> __folio_add_anon_rmap
->>>>
->>>> __folio_add_anon_rmap() only needs to handle the cases
->>>> folio_test_anon(folio)==true now.
->>>
->>> My team reported a case where swapoff() is calling
->>> folio_add_anon_rmap_pte *not* folio_add_anon_rmap_ptes
->>> with one new anon  (!folio_test_anon(folio)).
->>>
->>> I will double check all folio_add_anon_rmap_pte() cases.
->>
->> Right, swapoff() path is a bit special (e.g., we don't do any kind of
->> batching on the swapoff() path).
->>
->> But we should never get a new large anon folio there, or could that now
->> happen?
-> 
-> My team encountered the following issue while testing this RFC
-> series on real hardware. Let me take a look to identify the
-> problem.
-> 
-> [  261.214195][T11285] page:000000004cdd779e refcount:4 mapcount:1
-> mapping:00000000ba142c22 index:0x1 pfn:0x1b30a6
-> [  261.214213][T11285] memcg:ffffff8003678000
-> [  261.214217][T11285] aops:swap_aops
-> [  261.214233][T11285] flags:
-> 0x2000000000081009(locked|uptodate|owner_priv_1|swapbacked|zone=1|kasantag=0x0)
-> [  261.214241][T11285] page_type: 0x0()
-> [  261.214246][T11285] raw: 2000000000081009 0000000000000000
-> dead000000000122 0000000000000000
-> [  261.214251][T11285] raw: 0000000000000001 00000000000d84b3
-> 0000000400000000 ffffff8003678000
-> [  261.214254][T11285] page dumped because:
-> VM_WARN_ON_FOLIO(!folio_test_anon(folio))
-> [  261.214257][T11285] page_owner tracks the page as allocated
-> [  261.214260][T11285] page last allocated via order 0, migratetype
-> Movable, gfp_mask 0x2140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), pid
-> 11285, tgid 11285 (swapoff), ts 261214177545, free_ts 261151875699
-> [  261.214268][T11285]  post_alloc_hook+0x1b8/0x1c0
-> [  261.214284][T11285]  prep_new_page+0x28/0x13c
-> [  261.214291][T11285]  get_page_from_freelist+0x198c/0x1aa4
-> [  261.214298][T11285]  __alloc_pages+0x15c/0x330
-> [  261.214304][T11285]  __folio_alloc+0x1c/0x4c
-> [  261.214310][T11285]  __read_swap_cache_async+0xd8/0x48c
-> [  261.214320][T11285]  swap_cluster_readahead+0x158/0x324
-> [  261.214326][T11285]  swapin_readahead+0x64/0x448
-> [  261.214331][T11285]  __arm64_sys_swapoff+0x6ec/0x14b0
-> [  261.214337][T11285]  invoke_syscall+0x58/0x114
-> [  261.214353][T11285]  el0_svc_common+0xac/0xe0
-> [  261.214360][T11285]  do_el0_svc+0x1c/0x28
-> [  261.214366][T11285]  el0_svc+0x38/0x68
-> [  261.214372][T11285]  el0t_64_sync_handler+0x68/0xbc
-> [  261.214376][T11285]  el0t_64_sync+0x1a8/0x1ac
-> [  261.214381][T11285] page last free pid 90 tgid 90 stack trace:
-> [  261.214386][T11285]  free_unref_page_prepare+0x338/0x374
-> [  261.214395][T11285]  free_unref_page_list+0x84/0x378
-> [  261.214400][T11285]  shrink_folio_list+0x1234/0x13e4
-> [  261.214409][T11285]  evict_folios+0x1458/0x19b4
-> [  261.214417][T11285]  try_to_shrink_lruvec+0x1c8/0x264
-> [  261.214422][T11285]  shrink_one+0xa8/0x234
-> [  261.214427][T11285]  shrink_node+0xb38/0xde0
-> [  261.214432][T11285]  balance_pgdat+0x7a4/0xdb4
-> [  261.214437][T11285]  kswapd+0x290/0x4e4
-> [  261.214442][T11285]  kthread+0x114/0x1bc
-> [  261.214459][T11285]  ret_from_fork+0x10/0x20
-> [  261.214477][T11285] ------------[ cut here ]------------
-> [  261.214480][T11285] WARNING: CPU: 3 PID: 11285 at mm/rmap.c:1305
-> folio_add_anon_rmap_ptes+0x2b4/0x330
-> 
-> [  261.215403][T11285] pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT
-> -SSBS BTYPE=--)
-> [  261.215423][T11285] pc : folio_add_anon_rmap_ptes+0x2b4/0x330
-> [  261.215428][T11285] lr : folio_add_anon_rmap_ptes+0x2b4/0x330
-> [  261.215433][T11285] sp : ffffffc0a7dbbbf0
-> [  261.215437][T11285] x29: ffffffc0a7dbbbf0 x28: ffffff8040860a08
-> x27: ffffff80db480000
-> [  261.215445][T11285] x26: fffffffe04cc2980 x25: ffffff808f77f120
-> x24: 0000007b44941000
-> [  261.215452][T11285] x23: 0000000000000001 x22: 0000000000000001
-> x21: fffffffe04cc2980
-> [  261.215459][T11285] x20: ffffff80db480000 x19: fffffffe04cc2980
-> x18: ffffffed011dae80
-> [  261.215465][T11285] x17: 0000000000000001 x16: ffffffffffffffff
-> x15: 0000000000000004
-> [  261.215471][T11285] x14: ffffff82fb73fac0 x13: 0000000000000003
-> x12: 0000000000000003
-> [  261.215476][T11285] x11: 00000000fffeffff x10: c0000000fffeffff x9
-> : 0d46c0889b468e00
-> [  261.215483][T11285] x8 : 0d46c0889b468e00 x7 : 545b5d3935343431 x6
-> : 322e31363220205b
-> [  261.215489][T11285] x5 : ffffffed013de407 x4 : ffffffed00698967 x3
-> : 0000000000000000
-> [  261.215495][T11285] x2 : 0000000000000000 x1 : ffffffc0a7dbb8c0 x0
-> : ffffff8068c15c80
-> [  261.215501][T11285] Call trace:
-> [  261.215504][T11285]  folio_add_anon_rmap_ptes+0x2b4/0x330
-> [  261.215509][T11285]  __arm64_sys_swapoff+0x8cc/0x14b0
-> [  261.215516][T11285]  invoke_syscall+0x58/0x114
-> [  261.215526][T11285]  el0_svc_common+0xac/0xe0
-> [  261.215532][T11285]  do_el0_svc+0x1c/0x28
-> [  261.215539][T11285]  el0_svc+0x38/0x68
-> [  261.215544][T11285]  el0t_64_sync_handler+0x68/0xbc
-> [  261.215548][T11285]  el0t_64_sync+0x1a8/0x1ac
-> [  261.215552][T11285] ---[ end trace 0000000000000000 ]---
+Hello,
 
-Ah, yes. in unuse_pte(), you'll have to do the right thing if 
-!folio_test(anon) before doing the folio_add_anon_rmap_pte().
+syzbot found the following issue on:
 
-You might have a fresh anon folio in the swapcache that was never mapped 
-(hopefully order-0, otherwise we'd likely be in trouble).
+HEAD commit:    2ef5971ff345 Merge tag 'vfs-6.10-rc4.fixes' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13e22cee980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
+dashboard link: https://syzkaller.appspot.com/bug?extid=32bd764abd98eb40dea8
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
--- 
-Cheers,
+Unfortunately, I don't have any reproducer for this issue yet.
 
-David / dhildenb
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/db17be0247f3/disk-2ef5971f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/af92d227f130/vmlinux-2ef5971f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f98ae987ba14/bzImage-2ef5971f.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+32bd764abd98eb40dea8@syzkaller.appspotmail.com
+
+INFO: task kworker/u8:4:61 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc3-syzkaller-00021-g2ef5971ff345 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u8:4    state:D stack:22928 pid:61    tgid:61    ppid:2      flags:0x00004000
+Workqueue: netns cleanup_net
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ ppp_exit_net+0xae/0x3b0 drivers/net/ppp/ppp_generic.c:1131
+ ops_exit_list+0xb0/0x180 net/core/net_namespace.c:173
+ cleanup_net+0x5b7/0xbf0 net/core/net_namespace.c:640
+ process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task syz-executor.2:8975 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc3-syzkaller-00021-g2ef5971ff345 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.2  state:D stack:26656 pid:8975  tgid:8973  ppid:5107   flags:0x00000006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ rtnl_lock net/core/rtnetlink.c:79 [inline]
+ rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6632
+ netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2564
+ netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+ netlink_unicast+0x542/0x820 net/netlink/af_netlink.c:1361
+ netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1905
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg net/socket.c:745 [inline]
+ ____sys_sendmsg+0xab5/0xc90 net/socket.c:2585
+ ___sys_sendmsg+0x135/0x1e0 net/socket.c:2639
+ __sys_sendmsg+0x117/0x1f0 net/socket.c:2668
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fcb2b07cea9
+RSP: 002b:00007fcb2bead0c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fcb2b1b3f80 RCX: 00007fcb2b07cea9
+RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000003
+RBP: 00007fcb2b0ebff4 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fcb2b1b3f80 R15: 00007ffcd9ec90f8
+ </TASK>
+INFO: task syz-executor.4:9029 blocked for more than 144 seconds.
+      Not tainted 6.10.0-rc3-syzkaller-00021-g2ef5971ff345 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.4  state:D stack:25968 pid:9029  tgid:9022  ppid:5111   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+ register_nexthop_notifier+0x1b/0x70 net/ipv4/nexthop.c:3871
+ ops_init+0xb9/0x650 net/core/net_namespace.c:139
+ setup_net+0x435/0xb40 net/core/net_namespace.c:343
+ copy_net_ns+0x2f0/0x670 net/core/net_namespace.c:508
+ create_new_namespaces+0x3ea/0xb10 kernel/nsproxy.c:110
+ unshare_nsproxy_namespaces+0xc0/0x1f0 kernel/nsproxy.c:228
+ ksys_unshare+0x419/0x970 kernel/fork.c:3323
+ __do_sys_unshare kernel/fork.c:3394 [inline]
+ __se_sys_unshare kernel/fork.c:3392 [inline]
+ __x64_sys_unshare+0x31/0x40 kernel/fork.c:3392
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9f8ae7cea9
+RSP: 002b:00007f9f8bb220c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00007f9f8afb4120 RCX: 00007f9f8ae7cea9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000064000600
+RBP: 00007f9f8aeebff4 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f9f8afb4120 R15: 00007ffd19e177f8
+ </TASK>
+INFO: task syz-executor.0:9026 blocked for more than 144 seconds.
+      Not tainted 6.10.0-rc3-syzkaller-00021-g2ef5971ff345 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.0  state:D stack:27968 pid:9026  tgid:9023  ppid:6840   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
