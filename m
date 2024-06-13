@@ -1,130 +1,150 @@
-Return-Path: <linux-kernel+bounces-213192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1A1907003
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:25:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA76907011
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56DD91F22F72
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:25:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9DBC1F22DD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B26C145332;
-	Thu, 13 Jun 2024 12:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745FB145A17;
+	Thu, 13 Jun 2024 12:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="hfCrzpDL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rWr+RYog"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF725143C46;
-	Thu, 13 Jun 2024 12:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10EF145A05;
+	Thu, 13 Jun 2024 12:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718281371; cv=none; b=PsM8I/KnMWmEPIOIERLRTKFoIf1LpGEc6gb7bb/n+7fH7QFbAffVl33vm+HJ85OSYFyMbMPmsPZjZYMtqlTvJljS8vbsaZG0QNMfsarY3CLyZrXSegE4rQXMfu/pOnNWzI0efTcjap0F3ASMvoauX9OLHRk4b8HyM8sTRUUuAlA=
+	t=1718281388; cv=none; b=W5sIGvQqCfATYf9570meFaieyzqiVCLqWB+bxRZxCKIBNUYz2nAhsR27aiMkC3JJNDjbhRbCM9DQSg/00W2FLyjCUgcDP0aZWZcUvwAF65XtW51LZw26JUYJicyDdzwwPG0PMlkeWIYhkKugdBOeamHPFbl/xCbGRjtFM3prOLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718281371; c=relaxed/simple;
-	bh=D26C2QGAWbo4I1JNfd9NGM4IGwcESsf+jS9RBEkH0RY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CY2Yf/1cbSaCVVOeeAxNbsOnX+tYIvAsLI9WFjekWGPkWUMJRoL3ndlyyjSUGu0y9Axo7h/waDAzS4qvbVyCwxOs5bS804ZvBbLlepwsBScxrw0nH89G4ue1zovf+WzyWCsaqo+q9l63mSEgfv2GUwoCJHCsDMgBI5hJvC9rTEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=hfCrzpDL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46929C32786;
-	Thu, 13 Jun 2024 12:22:49 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="hfCrzpDL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1718281367;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zijv6FPIt5hCtiuqrLBHgYuKfY1FOvo07a77dKOwqRA=;
-	b=hfCrzpDLzmbNtF/sSyUwD/q4E2PbjKj9Fna9CH4V+V4vPbeuYBlZyE1WHIwBmUUgtmwa4e
-	hkAMHeSicVC3lwYY/+b0ttk/c79NH8Y9GniehbCUO4Tz+G6YoeBDfmgGgVjY7xbdbEJGet
-	Tjg4BjizrxilahviyNABzJbhoTcy7oY=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 199f6b88 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 13 Jun 2024 12:22:46 +0000 (UTC)
-Date: Thu, 13 Jun 2024 14:22:41 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
-	linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <Zmrkkel0Fo4_g75a@zx2c4.com>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <Zmov7ZaL-54T9GiM@zx2c4.com>
- <Zmo9-YGraiCj5-MI@zx2c4.com>
- <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
+	s=arc-20240116; t=1718281388; c=relaxed/simple;
+	bh=7BhglA9P1ktApG4exvx07jkQ2/kEZPDx3zbnhN9Zbjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FAMTWcQecIKwTGmQI4aFhXJTbx4J3rD34IkJUrpRs64FRrSZ66IlnQUx+Lg/Fxa+msztOGJ9SFODwClxZX2wy7X6b+9pr6v/c9kt679YpnY5kjpuy2gF8OelXaMXw4sY4myuO1iHZwU4yIhw4o50E5XMeRYfYqeSLgsJ9+wY764=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rWr+RYog; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45DCMwxn027663;
+	Thu, 13 Jun 2024 07:22:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718281378;
+	bh=L70UNxdpaq0S2wJPrq0c1IXObwK10+BK3AYf6wz/scc=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=rWr+RYogOHS6KQGFq65jT4uAdN0Dq72bXcDtwvzFkX3PJgOSJ7ysXNL09uPLtvsin
+	 DNk5jNnaPBxUTqQix74q9HIdirkv/+FWHpi/2Kw9EOgdOHajz8lpjLskyEYn+maedp
+	 nL8k2nfsMaJXMN736KJ5iPF/fq+2A3IYII1OVdJU=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45DCMw74001144
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 13 Jun 2024 07:22:58 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
+ Jun 2024 07:22:57 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 13 Jun 2024 07:22:57 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45DCMvMT007951;
+	Thu, 13 Jun 2024 07:22:57 -0500
+Message-ID: <4d7c1525-a3d1-48f3-9e9c-eb61527a1b23@ti.com>
+Date: Thu, 13 Jun 2024 07:22:57 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/13] OMAP mailbox FIFO removal
+To: Dominic Rath <dominic.rath@ibv-augsburg.net>,
+        Jassi Brar
+	<jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
+        Nick Saulnier
+	<nsaulnier@ti.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240410135942.61667-1-afd@ti.com>
+ <b5c8d134-edcb-4a1a-8940-b26047c9b79d@ibv-augsburg.net>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <b5c8d134-edcb-4a1a-8940-b26047c9b79d@ibv-augsburg.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Jun 12, 2024 at 08:38:02PM -0700, Paul E. McKenney wrote:
-> o	Make the current kmem_cache_destroy() asynchronously wait for
-> 	all memory to be returned, then complete the destruction.
-> 	(This gets rid of a valuable debugging technique because
-> 	in normal use, it is a bug to attempt to destroy a kmem_cache
-> 	that has objects still allocated.)
+On 6/13/24 2:58 AM, Dominic Rath wrote:
+> Hello Andrew,
 > 
-> o	Make a kmem_cache_destroy_rcu() that asynchronously waits for
-> 	all memory to be returned, then completes the destruction.
-> 	(This raises the question of what to is it takes a "long time"
-> 	for the objects to be freed.)
-
-These seem like the best two options.
-
-> o	Make a kmem_cache_free_barrier() that blocks until all
-> 	objects in the specified kmem_cache have been freed.
+> On 10.04.2024 15:59, Andrew Davis wrote:
+>> Changes for v2:
+>>   - Use threaded irq as suggested by Hari and to
+>>       fix possible "scheduling while atomic" issue
 > 
-> o	Make a kmem_cache_destroy_wait() that waits for all memory to
-> 	be returned, then does the destruction.  This is equivalent to:
+> sorry for beeing late, I noticed this already got merged.
 > 
-> 		kmem_cache_free_barrier(&mycache);
-> 		kmem_cache_destroy(&mycache);
+> I was wondering what the reason was for ending up with the
+> threaded irq.
+> 
+> In your v1 thread your final conclusion appeared to be
+> 
+>> So for now I just kept this using the regular IRQ context as before.
+> 
+> We looked into this some time ago, and noticed that the IRQ approach caused problems in the virtio/rpmsg code. I'd like to understand if your change was for the same reason, or something else we missed before.
+> 
 
-These also seem fine, but I'm less keen about blocking behavior.
+It is most likely the same reason. Seems despite its name, rproc_vq_interrupt() cannot
+be called from an IRQ/atomic context. As the following backtrace shows, that function
+calls down into functions which are not IRQ safe. So we needed to keep it threaded:
 
-Though, along the ideas of kmem_cache_destroy_rcu(), you might also
-consider renaming this last one to kmem_cache_destroy_rcu_wait/barrier().
-This way, it's RCU focused, and you can deal directly with the question
-of, "how long is too long to block/to memleak?"
+[    5.389374] BUG: scheduling while atomic: (udev-worker)/232/0x00010002
+[    5.395917] Modules linked in: videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 phy_j721e_wiz display_connector omap_mailbox(+) videodev tps6594_i2c(+) videobuf2_common phy_can_transceiver at24 cd6
+[    5.433562] CPU: 0 PID: 232 Comm: (udev-worker) Not tainted 6.10.0-rc1-next-20240528-dirty #10
+[    5.442158] Hardware name: Texas Instruments AM69 SK (DT)
+[    5.447540] Call trace:
+[    5.449976]  dump_backtrace+0x94/0xec
+[    5.453640]  show_stack+0x18/0x24
+[    5.456944]  dump_stack_lvl+0x78/0x90
+[    5.460598]  dump_stack+0x18/0x24
+[    5.463900]  __schedule_bug+0x50/0x68
+[    5.467552]  __schedule+0x80c/0xb0c
+[    5.471029]  schedule+0x34/0x104
+[    5.474243]  schedule_preempt_disabled+0x24/0x40
+[    5.478845]  rwsem_down_write_slowpath+0x31c/0x56c
+[    5.483622]  down_write+0x90/0x94
+[    5.486924]  kernfs_add_one+0x3c/0x148
+[    5.490661]  kernfs_create_dir_ns+0x50/0x94
+[    5.494830]  sysfs_create_dir_ns+0x70/0x10c
+[    5.498999]  kobject_add_internal+0x98/0x26c
+[    5.503254]  kobject_add+0x9c/0x10c
+[    5.506729]  device_add+0xc0/0x790
+[    5.510120]  rpmsg_register_device_override+0x10c/0x1c0
+[    5.515333]  rpmsg_register_device+0x14/0x20
+[    5.519590]  virtio_rpmsg_create_channel+0xb0/0x104
+[    5.524452]  rpmsg_create_channel+0x28/0x60
+[    5.528622]  rpmsg_ns_cb+0x100/0x1dc
+[    5.532185]  rpmsg_recv_done+0x114/0x2e4
+[    5.536094]  vring_interrupt+0x68/0xa4
+[    5.539833]  rproc_vq_interrupt+0x2c/0x48
+[    5.543830]  k3_r5_rproc_mbox_callback+0x84/0x90 [ti_k3_r5_remoteproc]
+[    5.550348]  mbox_chan_received_data+0x1c/0x2c
+[    5.554779]  mbox_interrupt+0xa0/0x17c [omap_mailbox]
+[    5.559820]  __handle_irq_event_percpu+0x48/0x13c
+[    5.564511]  handle_irq_event+0x4c/0xac
 
-Specifically what I mean is that we can still claim a memory leak has
-occurred if one batched kfree_rcu freeing grace period has elapsed since
-the last call to kmem_cache_destroy_rcu_wait/barrier() or
-kmem_cache_destroy_rcu(). In that case, you quit blocking, or you quit
-asynchronously waiting, and then you splat about a memleak like we have
-now.
+Andrew
 
-But then, if that mechanism generally works, we don't really need a new
-function and we can just go with the first option of making
-kmem_cache_destroy() asynchronously wait. It'll wait, as you described,
-but then we adjust the tail of every kfree_rcu batch freeing cycle to
-check if there are _still_ any old outstanding kmem_cache_destroy()
-requests. If so, then we can splat and keep the old debugging info we
-currently have for finding memleaks.
-
-Jason
+> Regards,
+> 
+> Dominic
 
