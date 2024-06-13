@@ -1,174 +1,82 @@
-Return-Path: <linux-kernel+bounces-214128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4100907FED
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:50:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08376907FF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAE361C215C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:50:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CC63B225E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3340A15533C;
-	Thu, 13 Jun 2024 23:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660E514EC7E;
+	Thu, 13 Jun 2024 23:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TUtAKIc6"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CEcDfSl2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6E814E2F2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D82139D04;
+	Thu, 13 Jun 2024 23:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718322652; cv=none; b=Ei6ohaewfhB1jI4FjL3oX02y7FrZ9P1tsLL2DLLEpzIPpYXHYPjHx4jubWgvZhB0RgW8gmJfZf2ysftdPCjy9dbO791CIqopjWzXKRAqVquKAQcNDk4Db9vLNyavxU21toi768dCJ9aj2Ny7qbo/hSWGFGsG0PkQKkg9InBeKqo=
+	t=1718322938; cv=none; b=subisvm9yMx8evFqd2QdPjJnngaCPmLN88KSeDXO1DtcjISzTWwO6a7PX5eraWlw45H1U0JWktit7/aGtTPUzefBMy5OgZDZ+ttiLazvAgZZA3/9GFr0Ji7JpKo0fEHcDK/saKMmwSGdbUq6g6qNp8wJKY8yAvuGWCA6hVRP85E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718322652; c=relaxed/simple;
-	bh=ahRoGy5moLopddVlGfclLvv26he0ry7BCYTrh8QCNpc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=f1U2+lV+hH59+gAVyuwI+EQ8ismym3eiZPFHbDX5/hdWPlp2FNVM3wr+zWCGivKF8Jc/vHTm+743CL/xQXjaBIqtzBMQ8p885tmS8L3WgNDtW17jE+EeRDuRdGYOX8R7ErJX9i3CWFxsR2t4ZHqplEM9JLhHoiy+W2OgXsbVTMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TUtAKIc6; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfab38b7f6bso2446735276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718322650; x=1718927450; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q/2GD2P1P7CEf4LO1djLMe1zjWvI2Hkpb11N2GxkTnU=;
-        b=TUtAKIc6Q/bwQn/MFPoxJzZfU0sMRrTfbZBgwm1+0ctTj7WUUus7DO9LlNjo8jScjQ
-         fQ2SAwV0XEc4UeY5tsE0NTVJYB7OFEIgKwsYNAPuVbw+kZwczIrqy8sEXJa/DVZeHblc
-         pFbfbmpuh+UlkcFikqnTrrpmHVZCU1u8k5JGR1Ua4F9Thl+1UyzeGSLaZiwe6DUeXAXn
-         T3xCiO5kwqdzuVuTIZIipyEGvKfmvn0P4DPNtP9rSQ6vRXmKkRwvKG4FWD0KmUFxL4lO
-         OZVqbngfJMLqv7gNEYRxciCmiVcLm4W5QCRFKwNEm/5oZEnJH/ri8xlgSIOPBrpgXPRJ
-         8YBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718322650; x=1718927450;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q/2GD2P1P7CEf4LO1djLMe1zjWvI2Hkpb11N2GxkTnU=;
-        b=F490qGUe38VwSr7A6+OlUJBKUJDvheq6ljkGa/UdFautBQBWc5t//Qq2m1Z2ezuA3B
-         8KOY/zvX1pOR09iMunMeYkzIQKotY1F+PvCdrnl7nWqItKM3Z4M8Zkv7q6h1gKS0Floc
-         fwDAhUAb706cMaL/FiVaYCcMqo2TAGxR27FElOTohJpHgqEJ3/1Zv5Gs3omYoUB4KqVQ
-         BEL3XQI9rGeTbDEsN75wNJw2ZF3RTya++Wmln9M5c9qxKKi9FBjY7qD6YTjW6jWmJqEF
-         75DKVSEUYPK9EHJOWQq++s7LvLkIn5XjSJ7j7lYkzBUB8tHCquslCaJM3hBjiSsI7ZMP
-         FdvA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8Hdp2DEMhuUd1j7d+I0rjZkOeglkzjUMrXM5qspuJHdODF4KjJeZIt1GvLIznjlfAmAHPC7mZsVjFKf+uOPah359vPawSrOoGBVo6
-X-Gm-Message-State: AOJu0Yyk9eMBpiq52hnmT03Gpyujldh+AEfnz9yMaEfY+p69kbu/EHRw
-	om72xc4MhLoK+Fe5EbiATvawoUlkJlvwYBCb20NORPxMwgMjGfAaxIBUVFwfetG4Cn7eMreTzcP
-	4pw==
-X-Google-Smtp-Source: AGHT+IGdwT4otzma8gQNBf9ykyP8JCZXHjwasEwBqEvekHLX0RYn2KS31UOPwPFM3LcoNrjyVrWpomgD6Og=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:2e13:b0:dfb:bf0:59cd with SMTP id
- 3f1490d57ef6-dff153b2e10mr184365276.7.1718322649837; Thu, 13 Jun 2024
- 16:50:49 -0700 (PDT)
-Date: Thu, 13 Jun 2024 16:50:48 -0700
-In-Reply-To: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
+	s=arc-20240116; t=1718322938; c=relaxed/simple;
+	bh=eqePGDayfWp7FPSRufOIkB+/WyCJz0Trx1EWkkzz/iI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aiOTDtVadRVrIM1nQGiot4zrdwreHUMWfVfNVPrUm2aeQTGGGD0K2OU4rTjGGlRoGoFNHQrJUTtLCVcnJIT0dOZG5anoE9NKS2m4hLUODQ5yz6rY6tpomzegQYWMQy0sS8lka5FAcZRW4OB5yvfueCLOm5NPTn0/yz/7mmZ2ybM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CEcDfSl2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC851C2BBFC;
+	Thu, 13 Jun 2024 23:55:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718322938;
+	bh=eqePGDayfWp7FPSRufOIkB+/WyCJz0Trx1EWkkzz/iI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CEcDfSl2U5KNFpkBg09FreU2iA3V72xfryij8oOcNRdHwLaIrWUPHznVjC9erB5kO
+	 246oI/xJsIJZ183/wheIZvpXwOSWioWP/XfrRIZPGjysdAJFIVqEWgzmEtk0c6tdqD
+	 VKeUT0zUp2N5/p+zKSKsDSuEqGBc9F5ekgKQwms7uSuww9ds3HF7BTg6f+ZB9sotOS
+	 91c9C66pUITn5ZtCYGj2nGbFuaLgqiOfpsm7ciUOhI/2BvfJy7+gVCUdpck5TCu8VG
+	 aJ/Yi6pp0Qko0KLhYTB6CXKVJPdrS26yufJnrrSYq1486aC45nRf3NSokpFAzTl+NA
+	 JhRB9D80hSnhA==
+Date: Fri, 14 Jun 2024 00:55:34 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+Cc: Markus Elfring <Markus.Elfring@web.de>, 
+	Robert Richter <rric@kernel.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] i2c: octeon: refactor hlc r/w operations
+Message-ID: <lx2mv6kbblao5ubjfxg4we6h62g63osbwct2hyuwygmp2u5nxz@j3iyezth2zd2>
+References: <20240613025412.3848629-1-aryan.srivastava@alliedtelesis.co.nz>
+ <20240613025412.3848629-2-aryan.srivastava@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
-Message-ID: <ZmuF2PsVot33fS1x@google.com>
-Subject: Re: [PATCH] KVM: fix an error code in kvm_create_vm()
-From: Sean Christopherson <seanjc@google.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Yi Wang <foxywang@tencent.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613025412.3848629-2-aryan.srivastava@alliedtelesis.co.nz>
 
-On Thu, Jun 13, 2024, Dan Carpenter wrote:
-> This error path used to return -ENOMEM from the where r is initialized
-> at the top of the function.  But a new "r = kvm_init_irq_routing(kvm);"
-> was introduced in the middle of the function so now the error code is
-> not set and it eventually leads to a NULL dereference.  Set the error
-> code back to -ENOMEM.
-> 
-> Fixes: fbe4a7e881d4 ("KVM: Setup empty IRQ routing when creating a VM")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  virt/kvm/kvm_main.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 07ec9b67a202..ea7e32d722c9 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -1212,8 +1212,10 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
->  	for (i = 0; i < KVM_NR_BUSES; i++) {
->  		rcu_assign_pointer(kvm->buses[i],
->  			kzalloc(sizeof(struct kvm_io_bus), GFP_KERNEL_ACCOUNT));
-> -		if (!kvm->buses[i])
-> +		if (!kvm->buses[i]) {
-> +			r = -ENOMEM;
->  			goto out_err_no_arch_destroy_vm;
-> +		}
->  	}
+Hi Aryan,
 
-Drat.  Any objection to tweaking this slightly to guard against similar bugs in
-the future?  If not, I'll apply+push the below.
+> +/* Construct and send i2c transaction core cmd for read ops */
+> +static int octeon_i2c_hlc_read_cmd(struct octeon_i2c *i2c, struct i2c_msg msg, u64 cmd)
+> +{
+> +	u64 ext = 0;
+> +
+> +	if (octeon_i2c_hlc_ext(i2c, msg, &cmd, &ext))
+> +		octeon_i2c_writeq_flush(ext, i2c->twsi_base + SW_TWSI_EXT(i2c));
 
-Thanks!
+I think this check here is the only logical change I see. Right?
 
---
-From: Dan Carpenter <dan.carpenter@linaro.org>
-Date: Thu, 13 Jun 2024 17:33:16 +0300
-Subject: [PATCH] KVM: fix an error code in kvm_create_vm()
+If so, can you please describe in the log why you made this
+change?
 
-This error path used to return -ENOMEM from the where r is initialized
-at the top of the function.  But a new "r = kvm_init_irq_routing(kvm);"
-was introduced in the middle of the function so now the error code is
-not set and it eventually leads to a NULL dereference.  Set the error
-code back to -ENOMEM.
+Thanks,
+Andi
 
-Opportunistically tweak the logic to pre-set "r = -ENOMEM" immediately
-before the flows that can fail due to memory allocation failure to make
-it less likely that the bug recurs in the future.
-
-Fixes: fbe4a7e881d4 ("KVM: Setup empty IRQ routing when creating a VM")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Link: https://lore.kernel.org/r/02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain
-[sean: tweak all of the "r = -ENOMEM" sites]
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- virt/kvm/kvm_main.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index b60186b9c1d3..436ca41f61e5 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1143,8 +1143,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
- {
- 	struct kvm *kvm = kvm_arch_alloc_vm();
- 	struct kvm_memslots *slots;
--	int r = -ENOMEM;
--	int i, j;
-+	int r, i, j;
- 
- 	if (!kvm)
- 		return ERR_PTR(-ENOMEM);
-@@ -1181,6 +1180,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
- 	snprintf(kvm->stats_id, sizeof(kvm->stats_id), "kvm-%d",
- 		 task_pid_nr(current));
- 
-+	r = -ENOMEM;
- 	if (init_srcu_struct(&kvm->srcu))
- 		goto out_err_no_srcu;
- 	if (init_srcu_struct(&kvm->irq_srcu))
-@@ -1209,6 +1209,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
- 		rcu_assign_pointer(kvm->memslots[i], &kvm->__memslots[i][0]);
- 	}
- 
-+	r = -ENOMEM;
- 	for (i = 0; i < KVM_NR_BUSES; i++) {
- 		rcu_assign_pointer(kvm->buses[i],
- 			kzalloc(sizeof(struct kvm_io_bus), GFP_KERNEL_ACCOUNT));
-
-base-commit: 3dee3b187499b317a6587e2b8e9bf3d5050e5288
--- 
+> +	return octeon_i2c_hlc_cmd_send(i2c, cmd);
+> +}
 
