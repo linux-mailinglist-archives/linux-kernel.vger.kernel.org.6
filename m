@@ -1,111 +1,199 @@
-Return-Path: <linux-kernel+bounces-214108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD9E907F86
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:35:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670E7907F88
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6CB282EE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:35:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C1FF1C20D65
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8689A14D703;
-	Thu, 13 Jun 2024 23:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4sasEoIn"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79E0156C61;
+	Thu, 13 Jun 2024 23:34:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7549C14E2E7
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3460314D6FB;
+	Thu, 13 Jun 2024 23:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718321608; cv=none; b=WnF2DyOHa5Hpc+yRKyAkbDznrd3rUGh6Xx8AK97l+BVUKMG73EbIglHDPWDMgdwgfFa2ywP659Y06SdzcbPj7GCzFe/Ne3eO4boGDJHB7sthoGDJzqNgh3CXwmSn+FOlRU/k3QqH9xSSMkQn9OX7Tu9TrS5i0dGaKO4y15D6Nlc=
+	t=1718321665; cv=none; b=drdQlMH9LvkIkL8iWB1s8WtcKiqdo3vwDonw+KzQb1wivUFdCf4trHuwnAIEsIfi9fAgjMppkjYcldLd7SoTZN8oGjJy5Hr4GfzdK0fH3AVvN7YVr6RzWDXIa3HJSQtLBHkYkJ+V624wjDsPs/gc5lsO8yLjKHYaJDpZNmlPcnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718321608; c=relaxed/simple;
-	bh=qAt2UhvpvEnOSzh/aTun94gQOxAFglIb1x68LgT5u/U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Fh/tQs0cMeULRIvW5fohMdGvGC0k+XPf+aqEhRFkWiIE73MwZ5D2yir9Crp5etxMGYHdFO3hie8WS1JbZkRge1pwCNCPsv154a6TA8uxSK88HBGEUoaRDXgQ6ozYdWBk2S0e+Ku+FHKTxuzhO4jjBcZNt3m4xGyhuMavThr8eb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4sasEoIn; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfeff072f65so2455518276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:33:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718321606; x=1718926406; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S/IekIUszeeugklFzZ/8PWVNYpSQN15CTup3urqE43g=;
-        b=4sasEoInUqj1CeNY/ryElq34gXJktIoRPvl46p/YjtKF/YaLvsItdqF90lJeAoBwHr
-         xuj/4z8sx9kBxvVigH9tIzjDRKfVqaak12gq8Tt0Ra5mdgHJwbUStxyCr9CzKGBmmPOw
-         xcroUBlF0+aF4gEQqz5YuJ5ERwKRzlNHPHijfPa7364q9DElP3vccPzSjSyIyPbUzaa3
-         Bnq8iB5XkxlIgZYOgawDvc7CutvMu3Wokx1UKihu6heFWIfnmRqQNKGgrBewUfqsiLF9
-         tDkbWQ+Bk1DmlLBQFygDsmBzuvgZh9x8a3CjTSQ/RMmDw89BAfLYhhsF6bgVFE42Sqdi
-         Tm7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718321606; x=1718926406;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S/IekIUszeeugklFzZ/8PWVNYpSQN15CTup3urqE43g=;
-        b=RoAuFup3gplj3qkp5qfw69mHMJGcp1mbjDDfGT7BuuDAAa3VA4IjGnM2lbwce9VFXR
-         JQ+avyG0XTaiHrESgv3vv/jcvDWOlunE7syrLC6rlJfEeMFSYdiaA9QoyGJLij5J52LX
-         53qSE4wOfnyBB8QJ+d51e9nIA82r1t42wAqu6R9pBrN7wlQ3665buzbBu1LJdEhDVizC
-         KUJYlmKr/ZI1ff8aEad23X+AwCdF/KEtEjsME8RiWb6yH+YX1Pvfd7U0X8EmtdjeYFB1
-         x/Fc6SFIBMtGjc8zFkJDNsdkXsXLvLMAbR3n/vf8FZjJ7T01vcwCreI/L/IoAOELK9R8
-         QXkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVM8BNmIWWOQtW5lZUWV2FjdldEd4+sy/E6WEnaBpOy9hgA9rQyg10hjk6yca3T1oQ+Gf0KYbDoqUYepo8rwhSYJUzSEbM6JCC8osx
-X-Gm-Message-State: AOJu0YyF/4jzm6MTZV+TcdUa9OWpfTLzH5HQzNjZ2NRvbJ6ENeOmLX4J
-	ITBJJ8D860B30vCjnSEc3SbfPRMNLo9/Fxy2eX0jjTvqNXgGQpJfq9rJPUNuTat+Kb6ZtR/VdUT
-	miA==
-X-Google-Smtp-Source: AGHT+IELUA3WIM5Wphps0xkQTRhby+UDCJjkk/RQ2PxIjMMY045f/NVk5on7zOgMXu0rVeJlBwRipETmKZ0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:adcf:0:b0:dfb:c58:6beb with SMTP id
- 3f1490d57ef6-dff153d0fdfmr32821276.4.1718321606405; Thu, 13 Jun 2024 16:33:26
- -0700 (PDT)
-Date: Thu, 13 Jun 2024 16:33:24 -0700
-In-Reply-To: <ZmthZVGmgcM5NQEm@google.com>
+	s=arc-20240116; t=1718321665; c=relaxed/simple;
+	bh=zi+QiPlY4W2TaesV1AIQgrf3hq4puQ7YAO+tN75xudg=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=PZWsSCRGBEZAht6qzTFerfoi2BcPUMNn6B0wZEGHWSRd1egMyFkK8oRgPe5Ho6qBwOTlcSD0gUKPGolBQiVGh9KBc1o+tigE7aD2+0q8xC9Hd7kZUI2aS3f5LIMNR6IZmiOAoSo80AIQTWpd45P22Do9sTmNwxn9iT1SS+JOt/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB16BC4AF1C;
+	Thu, 13 Jun 2024 23:34:24 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.97)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1sHtxu-00000001m4X-0POz;
+	Thu, 13 Jun 2024 19:34:46 -0400
+Message-ID: <20240613233415.734483785@goodmis.org>
+User-Agent: quilt/0.68
+Date: Thu, 13 Jun 2024 19:34:15 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Vincent Donnefort <vdonnefort@google.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ suleiman@google.com,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Vineeth Pillai <vineeth@bitbyteword.org>,
+ Youssef Esmat <youssefesmat@google.com>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Alexander Graf <graf@amazon.com>,
+ Baoquan He <bhe@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ David Howells <dhowells@redhat.com>,
+ Mike Rapoport <rppt@kernel.org>
+Subject: [PATCH v7 0/2] mm/memblock: Add "reserve_mem" to reserved named  memory at boot up
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240611215805.340664-1-seanjc@google.com> <ZmthZVGmgcM5NQEm@google.com>
-Message-ID: <ZmuBxFwWLAReYUn1@google.com>
-Subject: Re: [PATCH] KVM: x86/mmu: Clean up function comments for dirty
- logging APIs
-From: Sean Christopherson <seanjc@google.com>
-To: David Matlack <dmatlack@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Jun 13, 2024, David Matlack wrote:
-> On 2024-06-11 02:58 PM, Sean Christopherson wrote:
-> > I don't actually care too much about the comment itself, I really just want to
-> > get rid of the annoying warnings (I was *very* tempted to just delete the extra
-> > asterisk), so if anyone has any opinion whatsoever...
-> 
-> I vote to drop it and document the nuance around PML in the function
+Reserve unspecified location of physical memory from kernel command line
 
-As in, drop the function comment entirely?  I'm definitely a-ok with that too.
+Background:
 
-> > @@ -1373,14 +1354,26 @@ static void kvm_mmu_clear_dirty_pt_masked(struct kvm *kvm,
-> >  }
-> >  
-> >  /**
-> > - * kvm_arch_mmu_enable_log_dirty_pt_masked - enable dirty logging for selected
-> > - * PT level pages.
-> > + * kvm_arch_mmu_enable_log_dirty_pt_masked - (Re)Enable dirty logging for a set
-> > + * of GFNs
-> >   *
-> > - * It calls kvm_mmu_write_protect_pt_masked to write protect selected pages to
-> > - * enable dirty logging for them.
-> > + * @kvm: kvm instance
-> > + * @slot: slot to containing the gfns to dirty log
-> > + * @gfn_offset: start of the BITS_PER_LONG pages we care about
-> 
-> Someone once told me to avoid using "we" in comments :)
+In ChromeOS, we have 1 MB of pstore ramoops reserved so that we can extract
+dmesg output and some other information when a crash happens in the field.
+(This is only done when the user selects "Allow Google to collect data for
+ improving the system"). But there are cases when there's a bug that
+requires more data to be retrieved to figure out what is happening. We would
+like to increase the pstore size, either temporarily, or maybe even
+permanently. The pstore on these devices are at a fixed location in RAM (as
+the RAM is not cleared on soft reboots nor crashes). The location is chosen
+by the BIOS (coreboot) and passed to the kernel via ACPI tables on x86.
+There's a driver that queries for this to initialize the pstore for
+ChromeOS:
 
-Darn copy+paste.
+  See drivers/platform/chrome/chromeos_pstore.c
+
+Problem:
+
+The problem is that, even though there's a process to change the kernel on
+these systems, and is done regularly to install updates, the firmware is
+updated much less frequently. Choosing the place in RAM also takes special
+care, and may be in a different address for different boards. Updating the
+size via firmware is a large effort and not something that many are willing
+to do for a temporary pstore size change.
+
+Requirement:
+
+Need a way to reserve memory that will be at a consistent location for
+every boot, if the kernel and system are the same. Does not need to work
+if rebooting to a different kernel, or if the system can change the
+memory layout between boots.
+
+The reserved memory can not be an hard coded address, as the same kernel /
+command line needs to run on several different machines. The picked memory
+reservation just needs to be the same for a given machine, but may be
+different for different machines.
+
+Solution:
+
+The solution I have come up with is to introduce a new "reserve_mem=" kernel
+command line. This parameter takes the following format:
+
+  reserve_mem=nn:align:label
+
+Where nn is the size of memory to reserve, the align is the alignment of
+that memory, and label is the way for other sub-systems to find that memory.
+This way the kernel command line could have:
+
+  reserve_mem=12M:4096:oops   ramoops.mem_name=oops
+
+At boot up, the kernel will search for 12 megabytes in usable memory regions
+with an alignment of 4096. It will start at the highest regions and work its
+way down (for those old devices that want access to lower address DMA). When
+it finds a region, it will save it off in a small table and mark it with the
+"oops" label. Then the pstore ramoops sub-system could ask for that memory
+and location, and it will map itself there.
+
+This prototype allows for 8 different mappings (which may be overkill, 4 is
+probably plenty) with 16 byte size to store the label.
+
+I have tested this and it works for us to solve the above problem. We can
+update the kernel and command line and increase the size of pstore without
+needing to update the firmware, or knowing every memory layout of each
+board. I only tested this locally, it has not been tested in the field.
+
+Changes since v6: https://lore.kernel.org/all/20240613155506.811013916@goodmis.org/
+
+- Fixed typo of s/reserver/reserve/
+
+Changes since v5: https://lore.kernel.org/all/20240613003435.401549779@goodmis.org/
+
+
+- Stressed more that this is a best effort use case
+
+- Updated ramoops.rst to document this new feature
+
+- Used a new variable "tmp" to use in reserve_mem_find_by_name() instead
+  of using "size" and possibly corrupting it.
+
+Changes since v4: https://lore.kernel.org/all/20240611215610.548854415@goodmis.org/
+
+- Add all checks about reserve_mem before allocation.
+  This means reserved_mem_add() is now a void function.
+
+- Check for name duplications.
+
+- Fix compare of align to SMP_CACHE_BYTES ("<" instead of "<=")
+
+Changes since v3: https://lore.kernel.org/all/20240611144911.327227285@goodmis.org/
+
+- Changed table type of start and size from unsigned long to phys_addr_t
+  (as well as the parameters to the functions that use them)
+
+- Changed old reference to "early_reserve_mem" to "reserve_mem"
+
+- Check before reservering memory:
+  o Size is non-zero
+  o name has text in it
+
+- If align is less than SMP_CACHE_BYTES, make it SMP_CACHE_BYTES
+
+- Remove the silly check of testing *p == '\0' after a p += strlen(p)
+
+Changes since v2: https://lore.kernel.org/all/20240606150143.876469296@goodmis.org/
+
+- Fixed typo of "reserver"
+
+- Added EXPORT_SYMBOL_GPL() for reserve_mem_find_by_name()
+
+- Removed "built-in" from module description that was changed from v1.
+
+
+Changes since v1: https://lore.kernel.org/all/20240603233330.801075898@goodmis.org/
+
+- Updated the change log of the first patch as well as added an entry
+  into kernel-parameters.txt about how reserve_mem is for soft reboots
+  and may not be reliable. 
+
+
+Steven Rostedt (Google) (2):
+      mm/memblock: Add "reserve_mem" to reserved named memory at boot up
+      pstore/ramoops: Add ramoops.mem_name= command line option
+
+----
+ Documentation/admin-guide/kernel-parameters.txt |  22 +++++
+ Documentation/admin-guide/ramoops.rst           |  13 +++
+ fs/pstore/ram.c                                 |  14 +++
+ include/linux/mm.h                              |   2 +
+ mm/memblock.c                                   | 117 ++++++++++++++++++++++++
+ 5 files changed, 168 insertions(+)
 
