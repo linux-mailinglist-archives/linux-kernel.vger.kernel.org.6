@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-213157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F24906DB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:03:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C58B906DC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 457721C22AE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:03:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368791C2499C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBC2143C52;
-	Thu, 13 Jun 2024 11:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCC31494B3;
+	Thu, 13 Jun 2024 11:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VhM/Gqmj"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="MeI8MH8G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314651494B3
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B7A1465A5;
+	Thu, 13 Jun 2024 11:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718279950; cv=none; b=s+JVRw1GSOxOKatvzqYWOGHday3jPudbPhprpWyHv/pVmfQyq2gcQWeIr1TkN6kjg79GQgpBGNRdo4e75Q85jTYwLTGykk4qh0fO89WJYOo24I5/mNZpwIakL4IdLg69xhBoOfK3tG0BRtwe2pk+EnJ3msDnfpjKNMsO+f5ZD1k=
+	t=1718279953; cv=none; b=eEym6XUlUHeUQRetdQhs0+47Dkdfu2OTsn15opGPDEGokTYX2GBZeCdngY2X+SvKdyopFI47HtfHEPBnGyGFt3z2xNMu1/qTfvERLK4nNiELDL55B5LO89rU95IDYtpRRsB1+QQxNWUD7YUaAW1BzXwoRKjoc5rueP5urWanqiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718279950; c=relaxed/simple;
-	bh=XA3LxLv++dOYbRHQaJqJk1tOLTd7fkkXOPEi1MhFA5M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=phMj57pcZKtt3w54j05GU/VC8/bxyEVM8JqLJBkG3A06fHkGjgFpHdHnGNxBhl9gp4Tomv4dvaGqUm70H1Imw3jqOKywURh1GJoeqSlcL5J25Mhigxsek+ykVj1nRMCFeybQJz3AapiwHMO8d47gzObYMDg8mnsMDXkdKWVDavQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VhM/Gqmj; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-6bce380eb9bso558965a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:59:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718279948; x=1718884748; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6xHqGzbGEnyXYOufhYAT+1jOvdAL9AF1EdfNf7hRahk=;
-        b=VhM/Gqmj5Sk+iKoMxUn182nhiKnlhswED2r/JucIutDDU+0o1DOvyhpfuY5vOCc5P7
-         ZXa1EpODmbECGpa9bkJRZdqF5XyW3ooQsbKYUlvM8+j3h3K9o69ff3cPldq65vz4Fkzr
-         mYba7ydIURhr8utka/7uLIGxJVfRGgR+2QSWM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718279948; x=1718884748;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6xHqGzbGEnyXYOufhYAT+1jOvdAL9AF1EdfNf7hRahk=;
-        b=Mv/KX531Ht/3bTvSq+/5eG3mZceyVeoOdfpJEaaFMzo4sSYkZphPb7zDX++vhZnZqY
-         ccfK9jh9o5EGPDiy+mfSX3rF8Xrs17AxaRoiukP48Dwt8tc6Ouo7Ht++cqeVXeUyoW2C
-         DuaLfA9JIf2Vx8O7Ikq1tsX8ajTsHZV9IUIJbjvbJbCTczT14OQhwrxSyC2p9z3iO80Q
-         uh0Z3yT0skYpKgxB9SZDGy6VlmoCi4Sr5SorhsaadVSEccD2lLNgk6KnfTVRho6R6Lh+
-         ylAQzhDoClKTbGriYisGIqk4YDTwJtqdgbQrYsZ7u8vgXd7JuPDt2lrx9aflf3Q/7tY7
-         bg1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVQILVQlFwwHm0wKuP0cQOE6o2p1U3Y4302BDeSZqgVPnGFUVWzfi32uRVI9PEZUzn0nhT1hd/KO+WEytj1GAA4aJgNhSMn11JcAUnp
-X-Gm-Message-State: AOJu0Yzudmr6jS3uOFzUtxxr5VHyDJ0OhPcd+Y+8wyObzr4635afQm33
-	b2tAV1qUiYapILAfAlE9UOUKNwDkWLDTJ4jKP7cxvCmt39IqrsnNtFMvIy7SnA==
-X-Google-Smtp-Source: AGHT+IEUzLyoz7lt27fPBDlUwSbmLIUoS+0m0haC8TQCTmDUAzTepAUQd32xctUWuwr+KsV5RI+pwg==
-X-Received: by 2002:a17:90a:5d98:b0:2c2:4107:1fc3 with SMTP id 98e67ed59e1d1-2c4a76d3777mr4729921a91.38.1718279948594;
-        Thu, 13 Jun 2024 04:59:08 -0700 (PDT)
-Received: from yuanhsinte.c.googlers.com (60.252.199.104.bc.googleusercontent.com. [104.199.252.60])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4c466c3desm1453505a91.46.2024.06.13.04.59.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 04:59:08 -0700 (PDT)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Thu, 13 Jun 2024 11:58:55 +0000
-Subject: [PATCH v2 2/2] arm64: dts: rockchip: rk3399-gru: Fix the value of
- `dlg,jack-det-rate` mismatch
+	s=arc-20240116; t=1718279953; c=relaxed/simple;
+	bh=0ciGaQw5y4u0nJS5KStWIT6J+uYIGGdbCRp7w2Mw+jw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YchvrFWeIFsKcYdk0GjcYRko0HN+7Eacstq6pQecX1GLwEXVAvWZVQFnwrgu4p+yfUgU91pP0/8IWfllQKeW8B5E5pfOqa0CRICQOB+/YQ28Xvz2DkqNXc6jF110/wxOJyvEEskBploeA+/sL1HwsfZ+7y1fulsRpE/nZrTKmlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=MeI8MH8G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FEAAC4AF4D;
+	Thu, 13 Jun 2024 11:59:10 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="MeI8MH8G"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1718279946;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2oQoeraeqQaQpCY62eMS55dJmmDU2cLnySqsO1DV0bg=;
+	b=MeI8MH8G9GaVwTubn3zbemt8iMGjhWu2xlRT5g6xh1L4MS9g8vj3/b4L5Io4CIm+PbC/28
+	K4kTBBhke2rM7bNZ2dv8VC/fK7/9r4oKXzXHf3Yt4ENzPLvg7XFBUp90WP45io3c2/cs6Q
+	JMbCSdFZKlgC96+RmMCLxV7PaJ3gRO0=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ebdb63be (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 13 Jun 2024 11:59:05 +0000 (UTC)
+Date: Thu, 13 Jun 2024 13:58:59 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+	linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <ZmrfA1p2zSVIaYam@zx2c4.com>
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+ <20240612143305.451abf58@kernel.org>
+ <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240613-jack-rate-v2-2-ebc5f9f37931@chromium.org>
-References: <20240613-jack-rate-v2-0-ebc5f9f37931@chromium.org>
-In-Reply-To: <20240613-jack-rate-v2-0-ebc5f9f37931@chromium.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
 
-According to Documentation/devicetree/bindings/sound/dialog,da7219.yaml,
-the value of `dlg,jack-det-rate` property should be "32_64" instead of
-"32ms_64ms".
+On Wed, Jun 12, 2024 at 03:37:55PM -0700, Paul E. McKenney wrote:
+> On Wed, Jun 12, 2024 at 02:33:05PM -0700, Jakub Kicinski wrote:
+> > On Sun,  9 Jun 2024 10:27:12 +0200 Julia Lawall wrote:
+> > > Since SLOB was removed, it is not necessary to use call_rcu
+> > > when the callback only performs kmem_cache_free. Use
+> > > kfree_rcu() directly.
+> > > 
+> > > The changes were done using the following Coccinelle semantic patch.
+> > > This semantic patch is designed to ignore cases where the callback
+> > > function is used in another way.
+> > 
+> > How does the discussion on:
+> >   [PATCH] Revert "batman-adv: prefer kfree_rcu() over call_rcu() with free-only callbacks"
+> >   https://lore.kernel.org/all/20240612133357.2596-1-linus.luessing@c0d3.blue/
+> > reflect on this series? IIUC we should hold off..
+> 
+> We do need to hold off for the ones in kernel modules (such as 07/14)
+> where the kmem_cache is destroyed during module unload.
+> 
+> OK, I might as well go through them...
+> 
+> [PATCH 01/14] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+> 	Needs to wait, see wg_allowedips_slab_uninit().
 
-Fixes: dc0ff0fa3a9b ("ASoC: da7219: Add Jack insertion detection polarity")
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
----
- arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Also, notably, this patch needs additionally:
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-index 789fd0dcc88b..3cd63d1e8f15 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-@@ -450,7 +450,7 @@ da7219_aad {
- 			dlg,btn-cfg = <50>;
- 			dlg,mic-det-thr = <500>;
- 			dlg,jack-ins-deb = <20>;
--			dlg,jack-det-rate = "32ms_64ms";
-+			dlg,jack-det-rate = "32_64";
- 			dlg,jack-rem-deb = <1>;
- 
- 			dlg,a-d-btn-thr = <0xa>;
+diff --git a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/allowedips.c
+index e4e1638fce1b..c95f6937c3f1 100644
+--- a/drivers/net/wireguard/allowedips.c
++++ b/drivers/net/wireguard/allowedips.c
+@@ -377,7 +377,6 @@ int __init wg_allowedips_slab_init(void)
 
--- 
-2.45.2.505.gda0bf45e8d-goog
+ void wg_allowedips_slab_uninit(void)
+ {
+-	rcu_barrier();
+ 	kmem_cache_destroy(node_cache);
+ }
 
+Once kmem_cache_destroy has been fixed to be deferrable.
+
+I assume the other patches are similar -- an rcu_barrier() can be
+removed. So some manual meddling of these might be in order.
+
+Jason
 
