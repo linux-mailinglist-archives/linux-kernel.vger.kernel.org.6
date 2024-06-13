@@ -1,224 +1,220 @@
-Return-Path: <linux-kernel+bounces-212588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF5C9063B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:02:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF529063B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 334E81F216C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99831F236B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2B21369A0;
-	Thu, 13 Jun 2024 06:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvkO8eyv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B2F13699A;
+	Thu, 13 Jun 2024 06:02:02 +0000 (UTC)
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E1837C;
-	Thu, 13 Jun 2024 06:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D1D37C;
+	Thu, 13 Jun 2024 06:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718258567; cv=none; b=OR7yxlnDFhChAm13ywu4sNOpr17SI1eRaYX9Sc1vDwTzGUnr6BVBoV4KgYokU/oHxrmq+XfJESOegvFekpz1zyARRDjNyEZYJdp5F3Ym9JnYlKFIq4UDin56F53zcAa3MPa25YABO++p57DCWPcJsHJe/9XIKyIwrzD4Cu57mp0=
+	t=1718258521; cv=none; b=HTAv8449X0u1bORL3LJVu+sa4i3MA00UkJkopxIbObFhcxpy0KXxAe/Dy3AYOWMe2KxjCJUCaAAK6OUzAN0FyCvUN6kwt2DvUBvGbjniN2zmGnT98y/EpVbrhQTgaCjjugHcX06+2H1PwWfOhCYyvRXa94/n2gPf33iIxBSm8mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718258567; c=relaxed/simple;
-	bh=3sL49NFvnClvD1y18UTPpLyD+rkcg9Qkf8lGulrYlEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efMhuAsbtUlZ0wobXcipPZ6QYVYz/MY5S73mU7nb90LjcvvumjcgYsqkcwlQojP7n+w9QGMg+V9iAIpEH1dDsoIQinGDCdgtfNDAXKmQUZS/G9rZmeGItm8AMSnTOCw8xjFsC0I9sCj0iIsnQPRsLSrQMtjTy7XUj1yhXUeTVZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvkO8eyv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 637B4C2BBFC;
-	Thu, 13 Jun 2024 06:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718258567;
-	bh=3sL49NFvnClvD1y18UTPpLyD+rkcg9Qkf8lGulrYlEI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bvkO8eyvvIQKPJoZWLyWMTfK6O5N03AQA4XC6mijqToSBsMszcXr9Ps7YULdd+mwQ
-	 CMIxPSG6EFndRhrbMBaKeL08MauHHAIYDLjAKQjgKU9NWCkcTVyFrvmFQ8r91xLE5G
-	 KwzQ4EytMRXAmkLSDbDYk3Jw+MQeBKW52A481j5Gd4DtQ4Vuoxq/v80A/v3kTyKhUZ
-	 ykIEmOFhBgNH6uX8WEQThF4xIbon1RXDG+QAmVAq9AD4LNVqnG0TVN+3QEi1q60q0h
-	 oN9NkQffZog6Xl9BoKMpr+ebDOPGgNSA3sS4mGDmYKBzRXD9g7BgXpjse/6BO5DZDa
-	 qaftLWaQdNBdA==
-Date: Thu, 13 Jun 2024 09:00:31 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	Ross Zwisler <zwisler@google.com>, wklin@google.com,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Linus Torvalds <torvalds@linuxfoundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v5 1/2] mm/memblock: Add "reserve_mem" to reserved named
- memory at boot up
-Message-ID: <ZmqK_zeGus_VxAHN@kernel.org>
-References: <20240613003435.401549779@goodmis.org>
- <20240613003508.752963299@goodmis.org>
+	s=arc-20240116; t=1718258521; c=relaxed/simple;
+	bh=hmOOc21yf/tAgKaxOaNGQyF8RRQ7+21Xky3Lkd+n81Q=;
+	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
+	 References:Message-ID; b=fv+0BWCdnN6M4uTQdJoNf3EkZy76e28pC97k7EO9ff6STCykiz4AzCc4vA+kXKDXmh2enW+yux99XuhUsUcNEs6QDF/PhhlnUuBt64xoHM+seLXnh408Lw57Im89gJ5J+mL/iC1fksIq0gVEutV2O05Nu7igQVVX6ee+mWQ1qqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
+Received: from [127.0.0.1] (helo=localhost)
+	by relay.expurgate.net with smtp (Exim 4.92)
+	(envelope-from <prvs=99085fba10=ms@dev.tdt.de>)
+	id 1sHdWr-00FGeX-6Z; Thu, 13 Jun 2024 08:01:45 +0200
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ms@dev.tdt.de>)
+	id 1sHdWq-000M6s-59; Thu, 13 Jun 2024 08:01:44 +0200
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+	by securemail.tdt.de (Postfix) with ESMTP id B66A4240054;
+	Thu, 13 Jun 2024 08:01:43 +0200 (CEST)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+	by securemail.tdt.de (Postfix) with ESMTP id 09632240053;
+	Thu, 13 Jun 2024 08:01:43 +0200 (CEST)
+Received: from mail.dev.tdt.de (localhost [IPv6:::1])
+	by mail.dev.tdt.de (Postfix) with ESMTP id 6E79838543;
+	Thu, 13 Jun 2024 08:01:42 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613003508.752963299@goodmis.org>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Thu, 13 Jun 2024 08:01:42 +0200
+From: Martin Schiller <ms@dev.tdt.de>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, olek2@wp.pl
+Cc: hauke@hauke-m.de, tsbogend@alpha.franken.de, rdunlap@infradead.org,
+ robh@kernel.org, bhelgaas@google.com, linux-mips@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
+Organization: TDT AG
+In-Reply-To: <Zmov-8IGm-misoRs@google.com>
+References: <20240607090400.1816612-1-ms@dev.tdt.de>
+ <ZmnfQWFoIw5UCV-k@google.com> <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
+ <b6bea9239050ed39ce3a051a5985b86d@dev.tdt.de> <ZmoXAR79emQBNyhj@google.com>
+ <Zmov-8IGm-misoRs@google.com>
+Message-ID: <5452d21c1491d2c8c8ea07ac319b3850@dev.tdt.de>
+X-Sender: ms@dev.tdt.de
+User-Agent: Roundcube Webmail/1.3.17
+X-purgate-ID: 151534::1718258504-1DCDF522-A67FD917/0/0
+X-purgate-type: clean
+X-purgate: clean
 
-On Wed, Jun 12, 2024 at 08:34:36PM -0400, Steven Rostedt wrote:
-> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+On 2024-06-13 01:32, Dmitry Torokhov wrote:
+> On Wed, Jun 12, 2024 at 02:45:37PM -0700, Dmitry Torokhov wrote:
+>> On Wed, Jun 12, 2024 at 09:47:39PM +0200, Martin Schiller wrote:
+>> > On 2024-06-12 20:39, Martin Schiller wrote:
+>> > > On 2024-06-12 19:47, Dmitry Torokhov wrote:
+>> > > > Hi Marton,
+>> > >
+>> > > Hi Dmitry,
+>> > >
+>> > > >
+>> > > > On Fri, Jun 07, 2024 at 11:04:00AM +0200, Martin Schiller wrote:
+>> > > > > Commit 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod
+>> > > > > API") not
+>> > > > > only switched to the gpiod API, but also inverted / changed the
+>> > > > > polarity
+>> > > > > of the GPIO.
+>> > > > >
+>> > > > > According to the PCI specification, the RST# pin is an active-low
+>> > > > > signal. However, most of the device trees that have been widely
+>> > > > > used for
+>> > > > > a long time (mainly in the openWrt project) define this GPIO as
+>> > > > > active-high and the old driver code inverted the signal internally.
+>> > > > >
+>> > > > > Apparently there are actually boards where the reset gpio must be
+>> > > > > operated inverted. For this reason, we cannot use the
+>> > > > > GPIOD_OUT_LOW/HIGH
+>> > > > > flag for initialization. Instead, we must explicitly set the gpio to
+>> > > > > value 1 in order to take into account any "GPIO_ACTIVE_LOW" flag that
+>> > > > > may have been set.
+>> > > >
+>> > > > Do you have example of such boards? They could not have worked before
+>> > > > 90c2d2eb7ab5 because it was actively setting the reset line to
+>> > > > physical
+>> > > > high, which should leave the device in reset state if there is an
+>> > > > inverter between the AP and the device.
+>> > >
+>> > > Oh, you're right. I totally missed that '__gpio_set_value' was used in
+>> > > the original code and that raw accesses took place without paying
+>> > > attention to the GPIO_ACTIVE_* flags.
+>> > >
+>> > > You can find the device trees I am talking about in [1].
+>> > >
+>> > > @Thomas Bogendoerfer:
+>> > > Would it be possible to stop the merging of this patch?
+>> > > I think We have to do do some further/other changes.
+>> > >
+>> > > >
+>> > > > >
+>> > > > > In order to remain compatible with all these existing device
+>> > > > > trees, we
+>> > > > > should therefore keep the logic as it was before the commit.
+>> > > >
+>> > > > With gpiod API operating with logical states there's still
+>> > > > difference in
+>> > > > logic:
+>> > > >
+>> > > > 	gpiod_set_value_cansleep(reset_gpio, 1);
+>> > > >
+>> > > > will leave GPIO at 1 if it is described as GPIO_ACTIVE_HIGH (which is
+>> > > > apparently what you want for boards with broken DTS) but for boards
+>> > > > that accurately describe GPIO as GPIO_ACTIVE_LOW it well drive GPIO to
+>> > > > 0, leaving the card in reset state.
+>> > > >
+>> > > > You should either use gpiod_set_raw_value_calsleep() or we can try and
+>> > > > quirk it in gpiolib (like we do for many other cases of incorrect GPIO
+>> > > > polarity descriptions and which is my preference).
+>> >
+>> > So you mean we should add an entry for "lantiq,pci-xway" to the
+>> > of_gpio_try_fixup_polarity()?
+>> > Do you know any dts / device outside the openWrt universe which is using
+>> > this driver.
+>> 
+>> No, I don't.
+>> 
+>> Could you please try this:
+>> 
+>> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+>> index 59c7f8a2431a..4948ecaa422c 100644
+>> --- a/drivers/gpio/gpiolib-of.c
+>> +++ b/drivers/gpio/gpiolib-of.c
+>> @@ -203,6 +203,16 @@ static void of_gpio_try_fixup_polarity(const 
+>> struct device_node *np,
+>>  		 */
+>>  		{ "qi,lb60",		"rb-gpios",	true },
+>>  #endif
+>> +#if IS_ENABLED(CONFIG_PCI_LANTIQ)
+>> +		/*
+>> +		 * According to the PCI specification, the RST# pin is an
+>> +		 * active-low signal. However, most of the device trees that
+>> +		 * have been widely used for a long time incorrectly describe
+>> +		 * reset GPIO as active-high, and were also using wrong name
+>> +		 * for the property.
+>> +		 */
+>> +		{ "lantiq,pci-xway",	"gpios-reset",	false },
 > 
-> In order to allow for requesting a memory region that can be used for
-> things like pstore on multiple machines where the memory layout is not the
-> same, add a new option to the kernel command line called "reserve_mem".
+> Sorry, "gpios-reset" is wrong, the driver used "gpio-reset". So:
 > 
-> The format is:  reserve_mem=nn:align:name
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index 59c7f8a2431a..d21085830632 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -203,6 +203,16 @@ static void of_gpio_try_fixup_polarity(const
+> struct device_node *np,
+>  		 */
+>  		{ "qi,lb60",		"rb-gpios",	true },
+>  #endif
+> +#if IS_ENABLED(CONFIG_PCI_LANTIQ)
+> +		/*
+> +		 * According to the PCI specification, the RST# pin is an
+> +		 * active-low signal. However, most of the device trees that
+> +		 * have been widely used for a long time incorrectly describe
+> +		 * reset GPIO as active-high, and were also using wrong name
+> +		 * for the property.
+> +		 */
+> +		{ "lantiq,pci-xway",	"gpio-reset",	false },
+> +#endif
+>  #if IS_ENABLED(CONFIG_TOUCHSCREEN_TSC2005)
+>  		/*
+>  		 * DTS for Nokia N900 incorrectly specified "active high"
+> @@ -512,9 +522,9 @@ static struct gpio_desc
+> *of_find_gpio_rename(struct device_node *np,
+>  		{ "reset",	"reset-n-io",	"marvell,nfc-uart" },
+>  		{ "reset",	"reset-n-io",	"mrvl,nfc-uart" },
+>  #endif
+> -#if !IS_ENABLED(CONFIG_PCI_LANTIQ)
+> +#if IS_ENABLED(CONFIG_PCI_LANTIQ)
+>  		/* MIPS Lantiq PCI */
+> -		{ "reset",	"gpios-reset",	"lantiq,pci-xway" },
+> +		{ "reset",	"gpio-reset",	"lantiq,pci-xway" },
+>  #endif
 > 
-> Where it will find nn amount of memory at the given alignment of align.
-> The name field is to allow another subsystem to retrieve where the memory
-> was found. For example:
-> 
->   reserve_mem=12M:4096:oops ramoops.mem_name=oops
-> 
-> Where ramoops.mem_name will tell ramoops that memory was reserved for it
-> via the reserve_mem option and it can find it by calling:
-> 
->   if (reserve_mem_find_by_name("oops", &start, &size)) {
-> 	// start holds the start address and size holds the size given
-> 
-> This is typically used for systems that do not wipe the RAM, and this
-> command line will try to reserve the same physical memory on soft reboots.
-> Note, it is not guaranteed to be the same location. For example, if KASLR
-> places the kernel at the location of where the RAM reservation was from a
-> previous boot, the new reservation will be at a different location.  Any
-> subsystem using this feature must add a way to verify that the contents of
-> the physical memory is from a previous boot, as there may be cases where
-> the memory will not be located at the same location.
-> 
-> Not all systems may work either. There could be bit flips if the reboot
-> goes through the BIOS. Using kexec to reboot the machine is likely to
-> have better results in such cases.
-> 
-> Link: https://lore.kernel.org/all/ZjJVnZUX3NZiGW6q@kernel.org/
-> 
-> Suggested-by: Mike Rapoport <rppt@kernel.org>
-> Tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
-> Changes since v4: https://lore.kernel.org/linux-trace-kernel/20240611215801.443593152@goodmis.org
-> 
-> - Add all checks about reserve_mem before allocation.
->   This means reserved_mem_add() is now a void function.
-> 
-> - Check for name duplications.
-> 
-> - Fix compare of align to SMP_CACHE_BYTES ("<" instead of "<=")
-> 
->  .../admin-guide/kernel-parameters.txt         |  20 +++
->  include/linux/mm.h                            |   2 +
->  mm/memblock.c                                 | 117 ++++++++++++++++++
->  3 files changed, 139 insertions(+)
-> 
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index d09136e040d3..739d106a9165 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
+>  		/*
 
-...
+I wonder, when this renaming did not work so far, why did we not see the
+error message "failed to request gpio" in the log?
 
-> +/*
-> + * Parse reserve_mem=nn:align:name
-> + */
-> +static int __init reserve_mem(char *p)
-> +{
-> +	phys_addr_t start, size, align;
-> +	char *name;
-> +	char *oldp;
-> +	int len;
-> +
-> +	if (!p)
-> +		return -EINVAL;
-> +
-> +	/* Check if there's room for more reserved memory */
-> +	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
-> +		return -EBUSY;
-> +
-> +	oldp = p;
-> +	size = memparse(p, &p);
-> +	if (!size || p == oldp)
-> +		return -EINVAL;
-> +
-> +	if (*p != ':')
-> +		return -EINVAL;
-> +
-> +	align = memparse(p+1, &p);
-> +	if (*p != ':')
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * memblock_phys_alloc() doesn't like a zero size align,
-> +	 * but it is OK for this command to have it.
-> +	 */
-> +	if (align < SMP_CACHE_BYTES)
-> +		align = SMP_CACHE_BYTES;
-> +
-> +	name = p + 1;
-> +	len = strlen(name);
-> +
-> +	/* name needs to have length but not too big */
-> +	if (!len || len >= RESERVE_MEM_NAME_SIZE)
-> +		return -EINVAL;
-> +
-> +	/* Make sure that name has text */
-> +	for (p = name; *p; p++) {
-> +		if (!isspace(*p))
-> +			break;
-> +	}
-> +	if (!*p)
-> +		return -EINVAL;
-> +
-> +	/* Make sure the name is not already used (size is only updated if found) */
-> +	if (reserve_mem_find_by_name(name, &start, &size))
-> +		return -EBUSY;
+@Aleksander Jan Bajkowski:
+You had problems with the PCI connection when you switched to linux 6.1
+and also have corresponding devices to test.
 
-I'd prefer another variable here rather than size. Will be more robust IMO.
-
-> +
-> +	start = memblock_phys_alloc(size, align);
-> +	if (!start)
-> +		return -ENOMEM;
-> +
-> +	reserved_mem_add(start, size, name);
-> +
-> +	return 0;
-> +}
-> +__setup("reserve_mem=", reserve_mem);
-> +
->  #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
->  static const char * const flagname[] = {
->  	[ilog2(MEMBLOCK_HOTPLUG)] = "HOTPLUG",
-> -- 
-> 2.43.0
-> 
-> 
-
--- 
-Sincerely yours,
-Mike.
+Could you please remove my patch in the latest openWrt and try out
+Dmitry's change?
 
