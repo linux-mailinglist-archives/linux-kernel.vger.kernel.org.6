@@ -1,148 +1,290 @@
-Return-Path: <linux-kernel+bounces-212403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A09C905FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:32:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B38905FC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37AF01C21182
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1023A1F2294E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D0AAD2F;
-	Thu, 13 Jun 2024 00:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eF1VsvRJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F82AB669;
+	Thu, 13 Jun 2024 00:34:54 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA15C652;
-	Thu, 13 Jun 2024 00:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9667C8C09;
+	Thu, 13 Jun 2024 00:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718238723; cv=none; b=kz9IZJ9RGCIZLnXXGS6F/hkIPFo0YG7XXGqdkRhoh61r72EGJLJozUcb4hR1sRD47Uq0BQeFESSWH45fbtz465gmzMWcnSItmUK84AI4gn0ghPzgcu5J/Vc2MnA8FGHDvYMNONreYzWtk9uSWZPzNBdquN1fC6Glp7CVYF4ah80=
+	t=1718238893; cv=none; b=qpUSPYzeYxme72usGv0cj/NZJ9yNEB1lJ8TDjMop0Zy1fBYgP5fx5vz8MJ7H7IlgYVwEhg/6aU2WzcFKRsfAzpPWK96tnWOI0+hvO++uhVn5NG25KFCLeJWNXtbdEicnM4vpvj+8WPMWr4aTruA8dL3eG8YiwhAPtrHkxd400Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718238723; c=relaxed/simple;
-	bh=+UbqprezWqxEbhKmSRaDsTwuur4mIfjSb1NUN/fCVbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4dh9MDL+JHFhrN4K326PI0WduhfcrP0KhZ1vsSROdINZ2B3ogPVKOXnB1Uo+H6O0BytOPqf++V2LhEY9pWfWM0ZnHgVJz2s55AWHMeKQlVmJQpe5brMpR3xllEF7YQuuU8s60sUHVwGOlPGsfkvyKPqZdAOSthwo7h2J7Y9lRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=eF1VsvRJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45E47C116B1;
-	Thu, 13 Jun 2024 00:32:00 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eF1VsvRJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1718238717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GLUb85oLbjyoG+FcfWhggv8KT8bN6SBWkCY+yvZAHV8=;
-	b=eF1VsvRJdSDlt+jjhJiKZ5eDDi+CCrqpbP2qILiWHB7HfEnI5D10gtd4TmY1udoArULYFC
-	3p47U2iNEXteOz8cl56PqFBBedrFExfiroU7FcnCZmp/raJumk5hGsmXBZe7KI+jDx3FRz
-	mt6afVKn9JVqLJRPjTB0wjVVNYzZzWI=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0c052d48 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 13 Jun 2024 00:31:57 +0000 (UTC)
-Date: Thu, 13 Jun 2024 02:31:53 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
-	linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <Zmo9-YGraiCj5-MI@zx2c4.com>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <Zmov7ZaL-54T9GiM@zx2c4.com>
+	s=arc-20240116; t=1718238893; c=relaxed/simple;
+	bh=sm99DwASeQO1ECKvTnDxPmJJ6qHTDXWNprQagI7uP4s=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=QAHnADwHgXmG+rGGaFmNuYMetRsO3nrBtMZFP98lLsgwxy5G4LGqInD7Xg9r2XFgvXpJLW8UdLZMP7U/Nu7kXdNEa2sATvmLZ9LKMFNalA9oj65TtC6Apm01LBQELrYOYGTaGg+WWOs+PR0kX1xsWnkzZ0q8QWyPq7ZfZc+igxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92C3DC116B1;
+	Thu, 13 Jun 2024 00:34:52 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.97)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1sHYQm-00000001eMY-32F3;
+	Wed, 12 Jun 2024 20:35:08 -0400
+Message-ID: <20240613003435.401549779@goodmis.org>
+User-Agent: quilt/0.68
+Date: Wed, 12 Jun 2024 20:34:35 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ Lorenzo Stoakes <lstoakes@gmail.com>,
+ linux-mm@kvack.org,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Kees Cook <keescook@chromium.org>,
+ Tony Luck <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ linux-hardening@vger.kernel.org,
+ Guenter Roeck <linux@roeck-us.net>,
+ Ross Zwisler <zwisler@google.com>,
+ wklin@google.com,
+ Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>,
+ Linus Torvalds <torvalds@linuxfoundation.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ Mike Rapoport <rppt@kernel.org>
+Subject: [PATCH v5 0/2] mm/memblock: Add "reserve_mem" to reserved named  memory at boot up
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zmov7ZaL-54T9GiM@zx2c4.com>
 
-On Thu, Jun 13, 2024 at 01:31:57AM +0200, Jason A. Donenfeld wrote:
-> On Wed, Jun 12, 2024 at 03:37:55PM -0700, Paul E. McKenney wrote:
-> > On Wed, Jun 12, 2024 at 02:33:05PM -0700, Jakub Kicinski wrote:
-> > > On Sun,  9 Jun 2024 10:27:12 +0200 Julia Lawall wrote:
-> > > > Since SLOB was removed, it is not necessary to use call_rcu
-> > > > when the callback only performs kmem_cache_free. Use
-> > > > kfree_rcu() directly.
-> > > > 
-> > > > The changes were done using the following Coccinelle semantic patch.
-> > > > This semantic patch is designed to ignore cases where the callback
-> > > > function is used in another way.
-> > > 
-> > > How does the discussion on:
-> > >   [PATCH] Revert "batman-adv: prefer kfree_rcu() over call_rcu() with free-only callbacks"
-> > >   https://lore.kernel.org/all/20240612133357.2596-1-linus.luessing@c0d3.blue/
-> > > reflect on this series? IIUC we should hold off..
-> > 
-> > We do need to hold off for the ones in kernel modules (such as 07/14)
-> > where the kmem_cache is destroyed during module unload.
-> > 
-> > OK, I might as well go through them...
-> > 
-> > [PATCH 01/14] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-> > 	Needs to wait, see wg_allowedips_slab_uninit().
-> 
-> Right, this has exactly the same pattern as the batman-adv issue:
-> 
->     void wg_allowedips_slab_uninit(void)
->     {
->             rcu_barrier();
->             kmem_cache_destroy(node_cache);
->     }
-> 
-> I'll hold off on sending that up until this matter is resolved.
+Reserve unspecified location of physical memory from kernel command line
 
-BTW, I think this whole thing might be caused by:
+Background:
 
-    a35d16905efc ("rcu: Add basic support for kfree_rcu() batching")
+In ChromeOS, we have 1 MB of pstore ramoops reserved so that we can extract
+dmesg output and some other information when a crash happens in the field.
+(This is only done when the user selects "Allow Google to collect data for
+ improving the system"). But there are cases when there's a bug that
+requires more data to be retrieved to figure out what is happening. We would
+like to increase the pstore size, either temporarily, or maybe even
+permanently. The pstore on these devices are at a fixed location in RAM (as
+the RAM is not cleared on soft reboots nor crashes). The location is chosen
+by the BIOS (coreboot) and passed to the kernel via ACPI tables on x86.
+There's a driver that queries for this to initialize the pstore for
+ChromeOS:
 
-The commit message there mentions:
+  See drivers/platform/chrome/chromeos_pstore.c
 
-    There is an implication with rcu_barrier() with this patch. Since the
-    kfree_rcu() calls can be batched, and may not be handed yet to the RCU
-    machinery in fact, the monitor may not have even run yet to do the
-    queue_rcu_work(), there seems no easy way of implementing rcu_barrier()
-    to wait for those kfree_rcu()s that are already made. So this means a
-    kfree_rcu() followed by an rcu_barrier() does not imply that memory will
-    be freed once rcu_barrier() returns.
+Problem:
 
-Before that, a kfree_rcu() used to just add a normal call_rcu() into the
-list, but with the function offset < 4096 as a special marker. So the
-kfree_rcu() calls would be treated alongside the other call_rcu() ones
-and thus affected by rcu_barrier(). Looks like that behavior is no more
-since this commit.
+The problem is that, even though there's a process to change the kernel on
+these systems, and is done regularly to install updates, the firmware is
+updated much less frequently. Choosing the place in RAM also takes special
+care, and may be in a different address for different boards. Updating the
+size via firmware is a large effort and not something that many are willing
+to do for a temporary pstore size change.
 
-Rather than getting rid of the batching, which seems good for
-efficiency, I wonder if the right fix to this would be adding a
-`should_destroy` boolean to kmem_cache, which kmem_cache_destroy() sets
-to true. And then right after it checks `if (number_of_allocations == 0)
-actually_destroy()`, and likewise on each kmem_cache_free(), it could
-check `if (should_destroy && number_of_allocations == 0)
-actually_destroy()`. This way, the work is delayed until it's safe to do
-so. This might also mitigate other lurking bugs of bad code that calls
-kmem_cache_destroy() before kmem_cache_free().
+Requirement:
 
-Jason
+Need a way to reserve memory that will be at a consistent location for
+every boot, if the kernel and system are the same. Does not need to work
+if rebooting to a different kernel, or if the system can change the
+memory layout between boots.
+
+The reserved memory can not be an hard coded address, as the same kernel /
+command line needs to run on several different machines. The picked memory
+reservation just needs to be the same for a given machine, but may be
+different for different machines.
+
+Solution:
+
+The solution I have come up with is to introduce a new "reserve_mem=" kernel
+command line. This parameter takes the following format:
+
+  reserve_mem=nn:align:label
+
+Where nn is the size of memory to reserve, the align is the alignment of
+that memory, and label is the way for other sub-systems to find that memory.
+This way the kernel command line could have:
+
+  reserve_mem=12M:4096:oops   ramoops.mem_name=oops
+
+At boot up, the kernel will search for 12 megabytes in usable memory regions
+with an alignment of 4096. It will start at the highest regions and work its
+way down (for those old devices that want access to lower address DMA). When
+it finds a region, it will save it off in a small table and mark it with the
+"oops" label. Then the pstore ramoops sub-system could ask for that memory
+and location, and it will map itself there.
+
+This prototype allows for 8 different mappings (which may be overkill, 4 is
+probably plenty) with 16 byte size to store the label.
+
+I have tested this and it works for us to solve the above problem. We can
+update the kernel and command line and increase the size of pstore without
+needing to update the firmware, or knowing every memory layout of each
+board. I only tested this locally, it has not been tested in the field.
+
+Changes since v4: https://lore.kernel.org/all/20240611215610.548854415@goodmis.org/
+
+[ patch at bottom showing differences ]
+
+- Add all checks about reserve_mem before allocation.
+  This means reserved_mem_add() is now a void function.
+
+- Check for name duplications.
+
+- Fix compare of align to SMP_CACHE_BYTES ("<" instead of "<=")
+
+Changes since v3: https://lore.kernel.org/all/20240611144911.327227285@goodmis.org/
+
+- Changed table type of start and size from unsigned long to phys_addr_t
+  (as well as the parameters to the functions that use them)
+
+- Changed old reference to "early_reserve_mem" to "reserve_mem"
+
+- Check before reservering memory:
+  o Size is non-zero
+  o name has text in it
+
+- If align is less than SMP_CACHE_BYTES, make it SMP_CACHE_BYTES
+
+- Remove the silly check of testing *p == '\0' after a p += strlen(p)
+
+Changes since v2: https://lore.kernel.org/all/20240606150143.876469296@goodmis.org/
+
+- Fixed typo of "reserver"
+
+- Added EXPORT_SYMBOL_GPL() for reserve_mem_find_by_name()
+
+- Removed "built-in" from module description that was changed from v1.
+
+
+Changes since v1: https://lore.kernel.org/all/20240603233330.801075898@goodmis.org/
+
+- Updated the change log of the first patch as well as added an entry
+  into kernel-parameters.txt about how reserve_mem is for soft reboots
+  and may not be reliable. 
+
+
+Steven Rostedt (Google) (2):
+      mm/memblock: Add "reserve_mem" to reserved named memory at boot up
+      pstore/ramoops: Add ramoops.mem_name= command line option
+
+----
+ Documentation/admin-guide/kernel-parameters.txt |  20 ++++
+ fs/pstore/ram.c                                 |  14 +++
+ include/linux/mm.h                              |   2 +
+ mm/memblock.c                                   | 117 ++++++++++++++++++++++++
+ 4 files changed, 153 insertions(+)
+
+
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 044ddce8f085..739d106a9165 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -2256,22 +2256,15 @@ static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRIES];
+ static int reserved_mem_count;
+ 
+ /* Add wildcard region with a lookup name */
+-static int __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
++static void __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
+ 				   const char *name)
+ {
+ 	struct reserve_mem_table *map;
+ 
+-	if (!name || !name[0] || strlen(name) >= RESERVE_MEM_NAME_SIZE)
+-		return -EINVAL;
+-
+-	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
+-		return -1;
+-
+ 	map = &reserved_mem_table[reserved_mem_count++];
+ 	map->start = start;
+ 	map->size = size;
+ 	strscpy(map->name, name);
+-	return 0;
+ }
+ 
+ /**
+@@ -2280,6 +2273,8 @@ static int __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
+  * @start: If found, holds the start address
+  * @size: If found, holds the size of the address.
+  *
++ * @start and @size are only updated if @name is found.
++ *
+  * Returns: 1 if found or 0 if not found.
+  */
+ int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phys_addr_t *size)
+@@ -2309,11 +2304,15 @@ static int __init reserve_mem(char *p)
+ 	phys_addr_t start, size, align;
+ 	char *name;
+ 	char *oldp;
+-	int err;
++	int len;
+ 
+ 	if (!p)
+ 		return -EINVAL;
+ 
++	/* Check if there's room for more reserved memory */
++	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
++		return -EBUSY;
++
+ 	oldp = p;
+ 	size = memparse(p, &p);
+ 	if (!size || p == oldp)
+@@ -2330,11 +2329,14 @@ static int __init reserve_mem(char *p)
+ 	 * memblock_phys_alloc() doesn't like a zero size align,
+ 	 * but it is OK for this command to have it.
+ 	 */
+-	if (align <= SMP_CACHE_BYTES)
++	if (align < SMP_CACHE_BYTES)
+ 		align = SMP_CACHE_BYTES;
+ 
+ 	name = p + 1;
+-	if (!strlen(name))
++	len = strlen(name);
++
++	/* name needs to have length but not too big */
++	if (!len || len >= RESERVE_MEM_NAME_SIZE)
+ 		return -EINVAL;
+ 
+ 	/* Make sure that name has text */
+@@ -2345,15 +2347,15 @@ static int __init reserve_mem(char *p)
+ 	if (!*p)
+ 		return -EINVAL;
+ 
++	/* Make sure the name is not already used (size is only updated if found) */
++	if (reserve_mem_find_by_name(name, &start, &size))
++		return -EBUSY;
++
+ 	start = memblock_phys_alloc(size, align);
+ 	if (!start)
+ 		return -ENOMEM;
+ 
+-	err = reserved_mem_add(start, size, name);
+-	if (err) {
+-		memblock_phys_free(start, size);
+-		return err;
+-	}
++	reserved_mem_add(start, size, name);
+ 
+ 	return 0;
+ }
 
