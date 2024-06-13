@@ -1,150 +1,143 @@
-Return-Path: <linux-kernel+bounces-214003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319D9907DA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:46:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B7C907DA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 231C61C21B60
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:46:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED5E281BE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08E413B787;
-	Thu, 13 Jun 2024 20:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36EA13BAC6;
+	Thu, 13 Jun 2024 20:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BxZtckS7"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i0ZuYLut"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E69613B588
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 20:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B112D1386C9;
+	Thu, 13 Jun 2024 20:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718311596; cv=none; b=poP5tTHRlDoXs+V3HAsTaqP9hS4w/IqLL75rSUt558IumW210gqBVjYxLuBBUSXehUAEeZbA9Vrj7k08xYMkvlSbKVUubDkLFrorikpc7IgkleoCRGdi3TdpGqFwLOALexgCK38xJTBG64e0jqM5TLdpu04hrXjKYMV/N6wzc7M=
+	t=1718311683; cv=none; b=XruXv2jHqmBMdt/qIkXFUdgETGEA5tYVgxioksjCdnwFHpcoSaKm7OrzUKnWfIrdencXHy3Mp0qW2uD6tEBLVxT3pI8hVz5CbNOJCl7/gg+aVgQ6bY3pMfSKcOHn8Ga8ooLPVStc+v66hBsJ47wjJMTuFzC9cIFD52891bHTS6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718311596; c=relaxed/simple;
-	bh=CnHZb9z25XNpR7nxuaGQfAj2reg5e5IRMmuc2RvoCGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5XZ19BAc6fXl4IbjHSKk46jfvl+6hBF/bemTs7/q1UB1cWZ0G+tlJICsTf70GRNMfbc311g/QKW3rlR1X0zM+0TZsP9WNAhe/d6WdhrUIhZsajgdy+0BzvbUdonD82GGNgG9OL9xAXyxU9TyyAK6yl+KhGwQIOxb4IgAUoPeb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BxZtckS7; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57a44c2ce80so1648945a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718311592; x=1718916392; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N5+He79jybhHTCYOhSX8BgQBoEHtDE3sqg7uCiPqItM=;
-        b=BxZtckS75VxW0r54FGyng3f1WF/gyGjXrvLUAwjbE/yWooVn+6jjGY0OEPEhpJSNhZ
-         aO58ICN1SUi/U/TJiVT4L6Gv6ur9FAbQ9tYTRmRIn8fwcTyNPeQ5MXDUI3S6kOFqpJx7
-         FmE/DNso4IYf5lA9gzgaf6PB8sLD+tTUhNLRo2/uQbFAT7s1kLE0Z27nJ2ctCp67uOkU
-         TXugI4mjzg3Mm+dvc241j2J8xDStZ1hZ1L93rn1Yt0NSm+NbjKsxa4ZXHxhpA5kU7hP3
-         Brj07GUwzvk2VRWp/R6/kTq+Ksu200pDAZ50+wonggcdRa/PwC0+TBcITT3uorg/oh6a
-         CKLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718311592; x=1718916392;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N5+He79jybhHTCYOhSX8BgQBoEHtDE3sqg7uCiPqItM=;
-        b=lu+QMfpkX7Oa3DOSthSFe7VoXiCTdzDndUdgXRc9/cmfNxdIrx+zvK0W9aCFw2rfC6
-         znkBd/BJJ6lw9Js0JPgGM+9QxHSfF08PwbbVvwnUFIct0/SrrXIkPuCEhYcKMy7lRg9p
-         LxjwzPNrIxuuk9+KW/IVVci1PifI6B7TBY8loZKq04Xt1HnYgS0PMRpMQKuC+bDVZi37
-         v872aQUNZ4TvAaZbZrlZMmuOfxcG7OHSSJPFPVjmXep5oTCypy3V3Z/iBQfc1BsCeZsS
-         U0wzMITIiCJUC20LFHXuLHaikaOc4V6/tSjXAK33R45xkq03RiVbouEmJGvkUXPfp39M
-         Z1ow==
-X-Forwarded-Encrypted: i=1; AJvYcCUCKujJvq4O+Bf4IMxA5yTgsZEldxGajOoomWt1qr6q6cqbBQQ3TCNEyEwAQ9WyBW3R8/d/LEQX/EDFFNkk+Yw+WVYL0Fy71bgCC3tB
-X-Gm-Message-State: AOJu0Yx02Syd9yJn/rBh5294qCD//pB2bo9aIvTfH3qTnM2pihFQW+xk
-	kAZmUUdC7JvuiXwJKS/4/hGF1z91kNP7tHlJyvrt4HassHgBt9SKiYp97xKfO8o=
-X-Google-Smtp-Source: AGHT+IFtpOzE8kKqoKpYLmM4FbNCxftMEW9YZ0CGmabwa7MvW6sl7qRnrlLjm9/uGQPw+uKoNnSNBg==
-X-Received: by 2002:a50:a45c:0:b0:57c:b83a:fef5 with SMTP id 4fb4d7f45d1cf-57cbd8b9be3mr598711a12.34.1718311592344;
-        Thu, 13 Jun 2024 13:46:32 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:78cd:4cb6:e3af:4473])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb741e702sm1342351a12.70.2024.06.13.13.46.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 13:46:31 -0700 (PDT)
-Date: Thu, 13 Jun 2024 22:46:30 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: 
-	Kelvin Zhang via B4 Relay <devnull+kelvin.zhang.amlogic.com@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, kelvin.zhang@amlogic.com, linux-pwm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Junyi Zhao <junyi.zhao@amlogic.com>
-Subject: Re: [PATCH v8 1/2] pwm: meson: Add support for Amlogic S4 PWM
-Message-ID: <tnwdnwiruoty5yd42bmkupgg6hjxib5lblhqcyouoyx5y3zvnq@2d7cnrei24m4>
-References: <20240613-s4-pwm-v8-0-b5bd0a768282@amlogic.com>
- <20240613-s4-pwm-v8-1-b5bd0a768282@amlogic.com>
- <1jfrtgj0so.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1718311683; c=relaxed/simple;
+	bh=6BS/ly5LvjKO90g7ZkMuzmvpyc38t0RX0vtsYlXIktQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=GzuPNyKL9SHTr2F/TvUFtYwYNpGQVzLT/rQubgYQ/RW+z0LMkgqJLCrmPBQNFpl6cV9WhfCQURV2VIpGDgO2Ub9tveOjxMP13RmOs5KD7k6HqUj+8NiqSQX1pDkHOrjfhB2rojqmN++//+WNxHwDFRUHaDODDpIl0KBt8npfItw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i0ZuYLut; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DJGdhx029245;
+	Thu, 13 Jun 2024 20:47:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=zDk10OmL3EGJ9oNDxRF5WL
+	p7TSm5maTr8R+cE1Q4DaE=; b=i0ZuYLutqQbs/KUG3dhc4HXwSWzusCSNFLj4ah
+	MosVa+o7J2mdnfF1BnM4/dcKwyCTSR7EcvxpeNhm5psUN8Lb6sIDA4oa0H7UV+NQ
+	Qp/vt+C846nYHgFxv1tG9q6P1OfgYNaUY+JQYmH+MlRtJ9NbrwqFG2+YGxrUskjT
+	JNAsOCY/T/umAYnMF3PPzSAV/mQJKiKB9yANZhi5/WtloD+v7fobbY4B6hmv18ir
+	zIoAEMBUV+49jUhX6x+ct/kXn8c/W6JBzOjjhiuSyeNrlnZbtDPAQWXvEGyjhtlf
+	Ln63KrXCipB4zFHTF6JhB+hmP7I9mabYqe7xxAMHVykm4Yvw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6q289ab-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 20:47:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DKlpmq031384
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 20:47:51 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
+ 2024 13:47:50 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 13 Jun 2024 13:47:49 -0700
+Subject: [PATCH] hwrng: add missing Arm & Cavium MODULE_DESCRIPTION()
+ macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="atnwtc63iuembv37"
-Content-Disposition: inline
-In-Reply-To: <1jfrtgj0so.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240613-md-arm64-drivers-char-hw_random-v1-1-8bc3cc208333@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAPRaa2YC/x2N0QrCMAwAf2Xk2UBXR7H+ioh0bbQB20ky52Ds3
+ 60+Hhx3GygJk8K520BoYeWpNugPHcQc6oOQU2Owxg7G9UcsCYMUN2ASXkgUmyaYPzcJNU0FTXT
+ OeG9PwTtolZfQndf/4XJtPAYlHJsc86/75PpesQSdSWDfv9z2N5WQAAAA
+To: Olivia Mackall <olivia@selenic.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: eLATcnT8dpxCzaatrOWlj12MwzQQLOIX
+X-Proofpoint-ORIG-GUID: eLATcnT8dpxCzaatrOWlj12MwzQQLOIX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_13,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ bulkscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ malwarescore=0 mlxlogscore=903 suspectscore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406130149
 
+With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/cavium-rng.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/cavium-rng-vf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/arm_smccc_trng.o
 
---atnwtc63iuembv37
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-Hello,
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/char/hw_random/arm_smccc_trng.c | 1 +
+ drivers/char/hw_random/cavium-rng-vf.c  | 1 +
+ drivers/char/hw_random/cavium-rng.c     | 1 +
+ 3 files changed, 3 insertions(+)
 
-On Thu, Jun 13, 2024 at 05:54:31PM +0200, Jerome Brunet wrote:
-> > +	for (i =3D 0; i < MESON_NUM_PWMS; i++) {
-> > +		meson->channels[i].clk =3D of_clk_get(np, i);
-> > +		if (IS_ERR(meson->channels[i].clk))
-> > +			return dev_err_probe(dev,
-> > +					     PTR_ERR(meson->channels[i].clk),
-> > +					     "Failed to get clk\n");
->=20
-> here it is ok but ..
->=20
-> > +
-> > +		ret =3D devm_add_action_or_reset(dev, meson_pwm_s4_put_clk,
-> > +					       meson->channels[i].clk);
-> > +		if (ret)
-> > +			return dev_err_probe(dev, ret,
-> > +					     "Failed to add clk_put action\n");
->=20
-> ... here, devm_add_action_or_reset cannot defer, so dev_err_probe is not =
-useful.
-> dev_err() if you must print something. Just "return ret;" would be fine
-> by me
+diff --git a/drivers/char/hw_random/arm_smccc_trng.c b/drivers/char/hw_random/arm_smccc_trng.c
+index 7e954341b09f..dcb8e7f37f25 100644
+--- a/drivers/char/hw_random/arm_smccc_trng.c
++++ b/drivers/char/hw_random/arm_smccc_trng.c
+@@ -118,4 +118,5 @@ module_platform_driver(smccc_trng_driver);
+ 
+ MODULE_ALIAS("platform:smccc_trng");
+ MODULE_AUTHOR("Andre Przywara");
++MODULE_DESCRIPTION("Arm SMCCC TRNG firmware interface support");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/hw_random/cavium-rng-vf.c b/drivers/char/hw_random/cavium-rng-vf.c
+index c99c54cd99c6..c1b8918b2292 100644
+--- a/drivers/char/hw_random/cavium-rng-vf.c
++++ b/drivers/char/hw_random/cavium-rng-vf.c
+@@ -266,4 +266,5 @@ static struct pci_driver cavium_rng_vf_driver = {
+ module_pci_driver(cavium_rng_vf_driver);
+ 
+ MODULE_AUTHOR("Omer Khaliq <okhaliq@caviumnetworks.com>");
++MODULE_DESCRIPTION("Cavium ThunderX Random Number Generator VF support");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/char/hw_random/cavium-rng.c b/drivers/char/hw_random/cavium-rng.c
+index b96579222408..d9d7b6038c06 100644
+--- a/drivers/char/hw_random/cavium-rng.c
++++ b/drivers/char/hw_random/cavium-rng.c
+@@ -88,4 +88,5 @@ static struct pci_driver cavium_rng_pf_driver = {
+ 
+ module_pci_driver(cavium_rng_pf_driver);
+ MODULE_AUTHOR("Omer Khaliq <okhaliq@caviumnetworks.com>");
++MODULE_DESCRIPTION("Cavium ThunderX Random Number Generator support");
+ MODULE_LICENSE("GPL v2");
 
-I don't agree. dev_err_probe() has several purposes. Only one of them is
-handling -EPROBE_DEFER. See also commit
-532888a59505da2a3fbb4abac6adad381cedb374.
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240613-md-arm64-drivers-char-hw_random-0c6609928a96
 
-So yes, please use dev_err_probe() also to handle
-devm_add_action_or_reset().
-
-Best regards
-Uwe
-
---atnwtc63iuembv37
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZrWqIACgkQj4D7WH0S
-/k7GIggAqVAdsuyCU4qUCiRosJKIKXIHaUcrhQLdIciPH7mkNTw3UOw9RTgdygIt
-RRtsP2rXk6hKJtbI/SA234syDPp/2zlmkDOk475vviRgmnxGpQiw1/C9/emfGYX4
-bOHhBHkSQvxKjGIWhuFSHo3dy2h0iAYYZFZSiNfvrydjAOA3ERRtgJf/hZUS8zpt
-ogHtoO6hD545xuoG8gLPIMest9lvd/W0PdyyQnqyx5+X4V6QyBBAmjuKnSMMpr0W
-5NtJr0vvFaiH+NAvi38WFBUzF5KkQyUF/Qi2PQf7r1wzIULlWdC7CiDFcLDA5+l5
-aEYn8Zg3ghfFXda0jlvgTNItV0D8sA==
-=7F+E
------END PGP SIGNATURE-----
-
---atnwtc63iuembv37--
 
