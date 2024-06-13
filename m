@@ -1,85 +1,53 @@
-Return-Path: <linux-kernel+bounces-212401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CD7905FA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:13:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6492D905FBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29DAF1F2260A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:13:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 782191C21400
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82A86FD5;
-	Thu, 13 Jun 2024 00:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FD9D535;
+	Thu, 13 Jun 2024 00:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nF3hm3Lx"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RP3f3zHl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3C52F30;
-	Thu, 13 Jun 2024 00:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD54BE7F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 00:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718237556; cv=none; b=QROAfvEkOT1WZgW+F53++ebcs0YhIK7VaEI20cNwPyPcXfO34qWUiUnN5NRyBZ7WJwKD1sb39ZaZ/WmkvMEoQ42UFo+enpU3bscyozQznwehoSah8fUaiVhNbSwar1bM/k0vi03Qur/TSH7nJ+WJhEkdD4hFFkktOKjzkepuRuU=
+	t=1718238724; cv=none; b=F5UJqyVm//sDDUe6d7Faj3Q3p6K5dGILY7dHg6Ag64olBtNr7MqWxU9FUaef9yRf9q9qzyUPRH4TE9TKt6NaATstDIJLn+JXOGuD8qWzLWibvsmjgMRx3fML6QWWyPYBIWs0ECFBKwaPS1f6krC1wUlD3a44DuhlWzLmxFqM3Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718237556; c=relaxed/simple;
-	bh=4CN0BABw9P45+dIm5MM8+Z9BGuyxpCqM9kUy0ysbb6w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e+oT7Ytn7hwhyefLv/TpScCiuZkh2RqpGIGSh57tKijvMqskVT2VPwF5HkAoFArzU6n+WZopq7GwJzlWB39CXrQhqFbAJiyztgTmiqyL7Wc7ElVhBiFjSM/o0DLd7W2RpoMebQ26Px1m7fvWr3Ov8bDRpKHDVniV7DnE9zIOhRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nF3hm3Lx; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35f24fabb81so458043f8f.3;
-        Wed, 12 Jun 2024 17:12:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718237553; x=1718842353; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=skJsGTfQA/atlXrCIf+eUs5ghWrbbjUT30HKSoC+DWs=;
-        b=nF3hm3LxSxoGBHe/AmZlRSjhYXKvn/ywUys3ny+yNNOIzvmjNF+VRVZdYv6lrQ48ba
-         U7pnqs0AlTVF5P3XCC0CZSrXA9dQKRkHeWdPC2Zetkbx28K7nXpZb9Ez9QGhzhhzikQe
-         qzOL01R83/CiKsauLWL3yX7ptIyNSDgtV8Kb7rW9gee584GSYyo3r/fkhX0jBxfZYn2r
-         q0+6U0HrqnaRr46P7QAcRMBJzl0VDEli6SdGPli4neYRZSJmTlcZ9+JFNEyD31zhC3fj
-         XSrmwH4v5GWhSLDjOj9OIdVUqH0S+8HDURHh5OkhqbPHMgz6Te2Zu2Zon53DaA9EAjEs
-         18jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718237553; x=1718842353;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=skJsGTfQA/atlXrCIf+eUs5ghWrbbjUT30HKSoC+DWs=;
-        b=j/SQsuYKvJDXYIgmGgAlqPGjUz1M/S0oz8KAAB5Wx2DUbQ1O3Dbv7e7ZhN3PyolNcM
-         G4MHvNNX7msyX+/mD/1yO+807cnS2HZ3003Gu4mWWXBMscSCz6OFPFBsVm0QsJ1ly8X0
-         HAs5YTmYKUnJ3kVHcy/OWDUeRK0KMoh+c1SnT/ga74GIahPS95zzcFZ6aSjdSJ4MM+cW
-         Nix/V20QV43hdJ7oGOAmpmEC+o6PwAhe7FSSjzXyppkPPlnOWbX9kl3tK4dtvF6QLsmn
-         dG/Q6toNIB+ShZlGZNbj9Bp76DBQMAK4zL7WKK1eFJtkt7c62RmyV71jwgO5+pDbHRWP
-         e/Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWguGp7RSQihVUi4KuiT2efIWy2GH7ffli5jm2j7vT/uzsweCLCEFFnH2INz4epJY1FBve6EiMjbjhV+rbqqPN1XUmd+p1sxQ/WaWXykZCRkHwlHm/helV7yiIx8wyKiy1ORB7H+KM1F2L3yg==
-X-Gm-Message-State: AOJu0YwKtOTdpOgJFj8t6ZKPTUXUcXlkZAlcEQLQGliKhFewC8L31OHf
-	56oIqJwdkjUxMWHmbSXE3zHaLCnC9xaLAV5lgXyihv8keHWJNj6bD/gfFg==
-X-Google-Smtp-Source: AGHT+IFmdvPhq1t2HVQXAKgkUAxLvn/tCNhQ3cEx2SPcDqi3MH5JN7s2+xM+NatUFQjLGS7UgRfuAQ==
-X-Received: by 2002:a5d:4d01:0:b0:35f:1c34:adfc with SMTP id ffacd0b85a97d-35fe8937f33mr2232162f8f.67.1718237552999;
-        Wed, 12 Jun 2024 17:12:32 -0700 (PDT)
-Received: from f.. (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750f2489sm145114f8f.69.2024.06.12.17.12.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 17:12:32 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: torvalds@linux-foundation.org
-Cc: brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH 2/2] vfs: move d_lockref out of the area used by RCU lookup
-Date: Thu, 13 Jun 2024 02:12:15 +0200
-Message-ID: <20240613001215.648829-3-mjguzik@gmail.com>
+	s=arc-20240116; t=1718238724; c=relaxed/simple;
+	bh=CzUcaUEwid9QP2s+ip8EXYQc/owNHwh0AeSROulmsmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RYAbzm9OOxNh172sfo+WouRtBc4kI7/wll1wDCTiRH1O7AVIZzj4xLdUsTZvnNLvAULdE7YaRn4jNS4+w8i2S+3qp1lhpZJ9vk/9Ew/xiNef/2jckDlieH1OQ3l3hzhaS9H/2tKNzm5dh0hJ4TeSfNG+GsxEGmS/5U+qzou51xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RP3f3zHl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D945DC4AF1D;
+	Thu, 13 Jun 2024 00:32:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718238723;
+	bh=CzUcaUEwid9QP2s+ip8EXYQc/owNHwh0AeSROulmsmQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RP3f3zHljgB69meR2mgyyG8IzWJoRo8SVqkFr5jfvu+xVTg/9RN/q30+sHnDWuMxl
+	 cOlOAXD7rIeLJKCCvtMVWLt31QrLWRSCcAch7K95GAH7Mnc8G3A4wMkATg977X20iB
+	 B+MLf8f0KbV/kqBoxlbbN6+gSMztY/CT1fFGniRjB+HV6/iIiM38HY0y0dxQJDP2Tn
+	 HCsE9Pp9aryZMOnBs/QgAmmtmWj72asyKJPsBCxG8LAtAv8LJPLxo5rrd0QtPjJBR0
+	 RlRcvvz+zp5UFD2kSU2GUzfqgLdpXX3xs/Egop2Q/h6r7oizsqbu7GbHCqiuDGHOFA
+	 3QXMDfaZ6ZFNg==
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64/lib: copy_page: s/stnp/stp
+Date: Thu, 13 Jun 2024 08:18:12 +0800
+Message-ID: <20240613001812.2141-1-jszhang@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240613001215.648829-1-mjguzik@gmail.com>
-References: <20240613001215.648829-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,74 +56,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Stock kernel scales worse than FreeBSD when doing a 20-way stat(2) on
-the same tmpfs-backed file.
+stnp performs non-temporal store, give a hints to the memory system
+that caching is not useful for this data. But the scenario where
+copy_page() used may not have this implication, although I must admit
+there's such case where stnp helps performance(good). In this good
+case, we can rely on the HW write streaming mechanism in some
+implementations such as cortex-a55 to detect the case and take actions.
 
-According to perf top:
-  38.09%  lockref_put_return
-  26.08%  lockref_get_not_dead
-  25.60%  __d_lookup_rcu
-   0.89%  clear_bhb_loop
+testing with https://github.com/apinski-cavium/copy_page_benchmark
+this patch can reduce the time by about 3% on cortex-a55 platforms.
 
-__d_lookup_rcu is participating in cacheline ping pong due to the
-embedded name sharing a cacheline with lockref.
-
-Moving it out resolves the problem:
-  41.50%  lockref_put_return
-  41.03%  lockref_get_not_dead
-   1.54%  clear_bhb_loop
-
-benchmark (will-it-scale, Sapphire Rapids, tmpfs, ops/s):
-FreeBSD:7219334
-before:	5038006
-after:	7842883 (+55%)
-
-One minor remark: the 'after' result is unstable, fluctuating in the
-range ~7.8 mln to ~9 mln during different runs.
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- include/linux/dcache.h | 7 ++++++-
- lib/lockref.c          | 2 +-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ arch/arm64/lib/copy_page.S | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index bf53e3894aae..326dbccc3736 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -89,13 +89,18 @@ struct dentry {
- 	struct inode *d_inode;		/* Where the name belongs to - NULL is
- 					 * negative */
- 	unsigned char d_iname[DNAME_INLINE_LEN];	/* small names */
-+	/* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
+diff --git a/arch/arm64/lib/copy_page.S b/arch/arm64/lib/copy_page.S
+index 6a56d7cf309d..4c74fe2d8bd6 100644
+--- a/arch/arm64/lib/copy_page.S
++++ b/arch/arm64/lib/copy_page.S
+@@ -32,21 +32,21 @@ SYM_FUNC_START(__pi_copy_page)
+ 1:
+ 	tst	x0, #(PAGE_SIZE - 1)
  
- 	/* Ref lookup also touches following */
--	struct lockref d_lockref;	/* per-dentry lock and refcount */
- 	const struct dentry_operations *d_op;
- 	struct super_block *d_sb;	/* The root of the dentry tree */
- 	unsigned long d_time;		/* used by d_revalidate */
- 	void *d_fsdata;			/* fs-specific data */
-+	/* --- cacheline 2 boundary (128 bytes) --- */
-+	struct lockref d_lockref;	/* per-dentry lock and refcount
-+					 * keep separate from RCU lookup area if
-+					 * possible!
-+					 */
+-	stnp	x2, x3, [x0, #-256]
++	stp	x2, x3, [x0, #-256]
+ 	ldp	x2, x3, [x1]
+-	stnp	x4, x5, [x0, #16 - 256]
++	stp	x4, x5, [x0, #16 - 256]
+ 	ldp	x4, x5, [x1, #16]
+-	stnp	x6, x7, [x0, #32 - 256]
++	stp	x6, x7, [x0, #32 - 256]
+ 	ldp	x6, x7, [x1, #32]
+-	stnp	x8, x9, [x0, #48 - 256]
++	stp	x8, x9, [x0, #48 - 256]
+ 	ldp	x8, x9, [x1, #48]
+-	stnp	x10, x11, [x0, #64 - 256]
++	stp	x10, x11, [x0, #64 - 256]
+ 	ldp	x10, x11, [x1, #64]
+-	stnp	x12, x13, [x0, #80 - 256]
++	stp	x12, x13, [x0, #80 - 256]
+ 	ldp	x12, x13, [x1, #80]
+-	stnp	x14, x15, [x0, #96 - 256]
++	stp	x14, x15, [x0, #96 - 256]
+ 	ldp	x14, x15, [x1, #96]
+-	stnp	x16, x17, [x0, #112 - 256]
++	stp	x16, x17, [x0, #112 - 256]
+ 	ldp	x16, x17, [x1, #112]
  
- 	union {
- 		struct list_head d_lru;		/* LRU list */
-diff --git a/lib/lockref.c b/lib/lockref.c
-index 596b521bc1f1..c1e2736a7bac 100644
---- a/lib/lockref.c
-+++ b/lib/lockref.c
-@@ -45,7 +45,7 @@
- static inline bool lockref_trywait_unlocked(struct lockref *lockref)
- {
- 	struct lockref old;
--	int retry = 100;
-+	int retry = 256;
+ 	add	x0, x0, #128
+@@ -54,14 +54,14 @@ SYM_FUNC_START(__pi_copy_page)
  
- 	for (;;) {
- 		cpu_relax();
+ 	b.ne	1b
+ 
+-	stnp	x2, x3, [x0, #-256]
+-	stnp	x4, x5, [x0, #16 - 256]
+-	stnp	x6, x7, [x0, #32 - 256]
+-	stnp	x8, x9, [x0, #48 - 256]
+-	stnp	x10, x11, [x0, #64 - 256]
+-	stnp	x12, x13, [x0, #80 - 256]
+-	stnp	x14, x15, [x0, #96 - 256]
+-	stnp	x16, x17, [x0, #112 - 256]
++	stp	x2, x3, [x0, #-256]
++	stp	x4, x5, [x0, #16 - 256]
++	stp	x6, x7, [x0, #32 - 256]
++	stp	x8, x9, [x0, #48 - 256]
++	stp	x10, x11, [x0, #64 - 256]
++	stp	x12, x13, [x0, #80 - 256]
++	stp	x14, x15, [x0, #96 - 256]
++	stp	x16, x17, [x0, #112 - 256]
+ 
+ 	ret
+ SYM_FUNC_END(__pi_copy_page)
 -- 
 2.43.0
 
