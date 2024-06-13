@@ -1,109 +1,93 @@
-Return-Path: <linux-kernel+bounces-213814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F466907B11
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:20:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53F82907B19
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17E781F21CE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:20:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376A31C234BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CE914AD22;
-	Thu, 13 Jun 2024 18:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A9D14B08A;
+	Thu, 13 Jun 2024 18:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="K5Tq4sbm"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0pOpo0S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB17A14A617;
-	Thu, 13 Jun 2024 18:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3983714AD1E;
+	Thu, 13 Jun 2024 18:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718302815; cv=none; b=uWR6fGAhhQUNIuMt/UsuYC97beaSsUYXSZUhV5yDpoPmZzIT8iKudDMNEQJDD7r2+feX93Rcp0ywZ5w/S7j3h0ZOO9ta69shpIpepCQwBIY1i+0h2TI3jroYWFqpVDRDFKlyh3UCvBrxYPhwf21YEn6lzu05VN+0X5vTKQTg0aY=
+	t=1718302831; cv=none; b=OCki5gR8nauUdFHkxl7lwNXzn9ZwKRzhznyJOLBGBMSWOcRPNtMIH41czfwBnoBr83tT8NnK5q2teCY7/T9S/WtrKJnWJoAMPyGF6ybKJsphPnFgRCg+LQuEOTYFpfi3zB80o30JlTVv1dEherVouIYWuxbfHo10DnCJtCkuX0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718302815; c=relaxed/simple;
-	bh=TOatw6k1CBHe6gpw+mH/HeqeppZsp3vmIJFGZFpVvXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sp0mWKY52Mt3lfOdVo9bsmFRABV1EMLuJk+pPyBCUNoj37YKxUX+VlRYPaTRrf6hMYjgJ21p3CtOdN8QdGDZm4j8wQihp92LlGiocMW6qh2HoVjj67ZrQZJJiG26azoCDhj9Rr26HhxPLMOpUQaK546hrYsxODkGjH21CK5PlQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=K5Tq4sbm; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=MFcS3b+KeKQkV59PFBLNqWqobt/CiM0335GMv/JZlvo=; b=K5Tq4sbm0tlVf4ZuqWLDIzEa0C
-	EzfP2Ai6ZiPZeNKXwoUeBMPn8vLVNc0eZDJz7ZSasFRD9iY86GSJehBQaVEaAWRF3vuGMvFnUWC0R
-	7GaQdTKJC+7Smw7nMnofWsPx9oDV5Adw5wjU56kqvuQuUqy+XdQRgeFk8S0P3zHiQMZmWKXGxSODI
-	kEDcFEWd/tgtbCNH1IvL1TzrViB03FvBLl1zwvcF88m5UFU4BldfYu4H5TPLHN6ThAWZ58OlUzFPS
-	wx8/gNpCtJ5l7ZV7qdanx3T+BGxGDsBQ2FyypyozxYdJAikkJl/lp7RxnTBcNoFQ9epayhX5Kbp9g
-	jc+O7m6w==;
-Received: from [191.205.188.103] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sHp3K-002pj6-Bc; Thu, 13 Jun 2024 20:20:02 +0200
-Message-ID: <6a6bd674-48ca-f7fc-d572-51e52e6899d9@igalia.com>
-Date: Thu, 13 Jun 2024 15:19:50 -0300
+	s=arc-20240116; t=1718302831; c=relaxed/simple;
+	bh=pgSDVWzajqamfEJi3ukbUVIaY2PON1AST8CHsFiaqSU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=QoBQy7fNUDPkRicGNEJuuSlM4mImX3vNUMcyAbmwrsVIgC+X3hJJQRIE5+o+LRhQKgHabmcjQht19m/NQGcylie24D/d8uVlTmNM0qO+pfy0Va81aNyv5OP5uxpLgKDh9YmTG43hLODcP54MstOaHl+zi0Qj04Xlvbau9yZ62Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0pOpo0S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BD56DC3277B;
+	Thu, 13 Jun 2024 18:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718302830;
+	bh=pgSDVWzajqamfEJi3ukbUVIaY2PON1AST8CHsFiaqSU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=a0pOpo0S/OlS28H73rxI2e/f9sP4RLVPpzd5GM9w6ccUV8Mv5vRG7gO2y9x1vKt4R
+	 myc3IUGeI60b9v1lfOIrTc4OylxCAZRRSwL8bAnq97qIiXjK/VO/a1Km1JsUhUZf8r
+	 qRVWHSErfQiRgs8+ibu7yAn90y2bk9tk7tInqHJqPu+nFOpmxgL0nqY7ExH51Y08QP
+	 PZby7p9nBxkFkZC1KA3iOlnqDHMxC9A1QWANdqcNmPo0St/7GrwSws4UOFMWIs45ej
+	 0rWPdQQmAiqDpaEFvJKnvb9HzVl+K3NBxm478RbXrsNEDG4Gm/OGGsMcMHE+xyv/k3
+	 YNv7H2XISrulA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B1AE1C43612;
+	Thu, 13 Jun 2024 18:20:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v6 2/2] pstore/ramoops: Add ramoops.mem_name= command line
- option
-To: Steven Rostedt <rostedt@goodmis.org>, Mike Rapoport <rppt@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Vincent Donnefort <vdonnefort@google.com>,
- Joel Fernandes <joel@joelfernandes.org>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- suleiman@google.com, Thomas Gleixner <tglx@linutronix.de>,
- Vineeth Pillai <vineeth@bitbyteword.org>,
- Youssef Esmat <youssefesmat@google.com>,
- Beau Belgrave <beaub@linux.microsoft.com>, Alexander Graf <graf@amazon.com>,
- Baoquan He <bhe@redhat.com>, Borislav Petkov <bp@alien8.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, David Howells <dhowells@redhat.com>
-References: <20240613155506.811013916@goodmis.org>
- <20240613155527.591647061@goodmis.org>
-Content-Language: en-US
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20240613155527.591647061@goodmis.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next 0/2] Fixes for kfunc prototype generation
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171830283072.12313.15051014857766473661.git-patchwork-notify@kernel.org>
+Date: Thu, 13 Jun 2024 18:20:30 +0000
+References: <cover.1718295425.git.dxu@dxuuu.xyz>
+In-Reply-To: <cover.1718295425.git.dxu@dxuuu.xyz>
+To: Daniel Xu <dxu@dxuuu.xyz>
+Cc: ast@kernel.org, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, llvm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, , ""@meta.com
 
-Thanks Steve, re-tested in my VM and it's working fine.
-Just a minor below...
+Hello:
 
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-On 13/06/2024 12:55, Steven Rostedt wrote:
+On Thu, 13 Jun 2024 10:19:24 -0600 you wrote:
+> This patchset fixes new warnings and errors that kfunc prototype
+> generation caused.
+> 
+> Daniel Xu (2):
+>   bpf: Fix bpf_dynptr documentation comments
+>   bpf: selftests: Do not use generated kfunc prototypes for arena progs
+> 
 > [...]
-> + D. Using a region of memory reserved via ``reserve_mem`` command line
-> +    parameter. The address and size will be defined by the ``reserve_mem``
-> +    parameter. Note, that ``reserve_mem`` may not always allocate memory
-> +    in the same location, and cannot be relied upon. Testing will need
-> +    to be done, and it may not work on every machine, nor every kernel.
-> +    Consider this a "best effort" approach. The ``reserve_mem`` option
-> +    takes a size, alignment and name as arguments. The name is used
-> +    to map the memory to a label that can be retrieved by ramoops.
-> +
-> +	reserver_mem=2M:4096:oops  ramoops.mem_name=oops
-> +
 
-Likely this could be fixed on merge, to avoid another version, but...
+Here is the summary with links:
+  - [bpf-next,1/2] bpf: Fix bpf_dynptr documentation comments
+    https://git.kernel.org/bpf/bpf-next/c/78746f93e903
+  - [bpf-next,2/2] bpf: selftests: Do not use generated kfunc prototypes for arena progs
+    https://git.kernel.org/bpf/bpf-next/c/6a8260147745
 
-s/reserver_mem/reserve_mem
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-Cheers!
 
