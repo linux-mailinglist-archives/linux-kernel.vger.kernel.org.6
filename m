@@ -1,114 +1,105 @@
-Return-Path: <linux-kernel+bounces-212426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5596C906046
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:08:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EECF390604B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 662431C2125B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:08:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C166283826
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00659B664;
-	Thu, 13 Jun 2024 01:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDAFC2F2;
+	Thu, 13 Jun 2024 01:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CavwT/PL"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8wmudT/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD19E8F62
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459208C1D;
+	Thu, 13 Jun 2024 01:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718240931; cv=none; b=EcSRRGthPunD3a6w1yYTFVdkgxCVWJ+UDQoGLYTxBB/bItu7Zuf9CafcpRwChhen+5ZRlgYmAs7nhm5wdQsWKpIUXEmhK9GKlDtrI/eHxd3Fn9Ak3eh/KOArqOXDKs3cRblUdAP1/QcKxC91broGaVq0p+4pGyOoxf6ABfb8i10=
+	t=1718241031; cv=none; b=HTnnJi5MeUbJB8fEObP8ZFIGos7mNzeCdrn/syJ6tkCjOzdA/o5gN9dTL6kZOIiIKOj2ZvZ/guvO9Tq6n3MUkZFzONAbyVPXeGukwlLVFmeOsqdMNT+h7APhcKxQE5MowEp/Rqw9eK2LmN0V63RPYs9L+GOK5I+KyrZA2wCJwTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718240931; c=relaxed/simple;
-	bh=vQy2E1LRcS1YLhFfzyvBITScg58VETb76RUverloGLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S6l557A3judLFyxFJ9yu8TLzdnbg9akJjf1myU5Htjv0WToiihxIsQPxrebsZVAhGS0CMrL7yk/C2aaQb22V3rq0giOWIb42UurAWxY43H/wXvusfqXdy8uovQdpo35Zu0sVVGhMRdBjXDeEyXez8EhVWPOO1QOzkSgo4Z2rDTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CavwT/PL; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718240920; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=frrlRZLq7WnZ116ncXcEtLFOrq8M38OfqlEQUKfVJM0=;
-	b=CavwT/PL0HSehRlaxyo9xds9ChWff+1VXVPiZpH1DjlJmsQyAhUPYIQkAkLuGgJ+3zxE8imakQx4r235A01iR0sCKV3CPtWoKnzmf9k8zQGpLXF+zEriWHkjq0/YBjPlkREfyrXnEk66mPyENf8HhlVhDp1YnjPM0RptWV9wnTw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R461e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W8M6-yY_1718240918;
-Received: from 30.97.56.57(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8M6-yY_1718240918)
-          by smtp.aliyun-inc.com;
-          Thu, 13 Jun 2024 09:08:39 +0800
-Message-ID: <d86e2e7f-4141-432b-b2ba-c6691f36ef0b@linux.alibaba.com>
-Date: Thu, 13 Jun 2024 09:08:37 +0800
+	s=arc-20240116; t=1718241031; c=relaxed/simple;
+	bh=c0lZUPwRpq5mEKJuM9qgYgJrToeU1Q+bgLPAqjtxcfE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=sCdrohVY0BfqsSXfZFtZZH/sojew0jCVJzNc6PMpiDHyfersfwLuFtie+FKoVhyCBZcawEk2IXAEUVl/G1WDh3b0MK6hy78qOfBl1awQ08WvykAcITyjDAKi3jZ/6ltEz7fbBESy5d65Rox7A1YBGd1/PmWUkl6aFuD/0Yce7+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8wmudT/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0124CC3277B;
+	Thu, 13 Jun 2024 01:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718241031;
+	bh=c0lZUPwRpq5mEKJuM9qgYgJrToeU1Q+bgLPAqjtxcfE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=F8wmudT/Tp5E7U+PbUtnv+Ijz5V2i5VX7aQ4f8oOpDJ7LYw80lmChazTNBC2JiAxs
+	 ChkOc2hiozk5O4rUHpXNn4Kb7u4selmkawUHKYrEiVrIuN6UqbfI8TOLNtKKAkMBAu
+	 ouGBYre+IYT5pjllBE7muFH10Us122oWCMm3aAiPuuwLLVbQwfrK0IuXkjpl/mnuO1
+	 p8ZyJEzXo/W/a+YiSNwotoXvhrIyxb0ZaS8eTey6vWIAM9ZvD6teGtzm68sJDKqdoa
+	 hQm+YxrmlyP0ugd06ax3KeCNz+iXETT+SQApE57ucxbQpuIhIxptpkLcTRO1VH3nSv
+	 msOyyIcJd5b0A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DCA08C43613;
+	Thu, 13 Jun 2024 01:10:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/6] mm: shmem: add mTHP counters for anonymous shmem
-To: Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
- david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com,
- 21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com,
- ziy@nvidia.com, da.gomez@samsung.com, p.raghav@samsung.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
- <4fd9e467d49ae4a747e428bcd821c7d13125ae67.1718090413.git.baolin.wang@linux.alibaba.com>
- <CAK1f24k0bYk2zGAj3znkkT=XnweTxF64XhLP9Xg_HUHeNtrAXA@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAK1f24k0bYk2zGAj3znkkT=XnweTxF64XhLP9Xg_HUHeNtrAXA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 0/5] net: flower: validate encapsulation control
+ flags
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171824103090.1775.1813584315398438736.git-patchwork-notify@kernel.org>
+Date: Thu, 13 Jun 2024 01:10:30 +0000
+References: <20240609173358.193178-1-ast@fiberby.net>
+In-Reply-To: <20240609173358.193178-1-ast@fiberby.net>
+To: =?utf-8?b?QXNiasO4cm4gU2xvdGggVMO4bm5lc2VuIDxhc3RAZmliZXJieS5uZXQ+?=@codeaurora.org
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, ecree.xilinx@gmail.com,
+ habetsm.xilinx@gmail.com, linux-net-drivers@amd.com, saeedm@nvidia.com,
+ leon@kernel.org, tariqt@nvidia.com, linux-rdma@vger.kernel.org,
+ jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
+ intel-wired-lan@lists.osuosl.org, louis.peens@corigine.com,
+ oss-drivers@corigine.com, linux-kernel@vger.kernel.org, dcaratti@redhat.com,
+ i.maximets@ovn.org
 
+Hello:
 
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 2024/6/12 22:18, Lance Yang wrote:
-> On Tue, Jun 11, 2024 at 6:11 PM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
->>
->> Add mTHP counters for anonymous shmem.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+On Sun,  9 Jun 2024 17:33:50 +0000 you wrote:
+> Now that all drivers properly rejects unsupported flower control flags
+> used with FLOW_DISSECTOR_KEY_CONTROL, then time has come to add similar
+> checks to the drivers supporting FLOW_DISSECTOR_KEY_ENC_CONTROL.
 > 
-> LGTM. Feel free to add:
-> Reviewed-by: Lance Yang <ioworker0@gmail.com>
-
-Thanks.
-
+> There are currently just 4 drivers supporting this key, and
+> 3 of those currently doesn't validate encapsulated control flags.
 > 
-> Just a friendly reminder: We also need to update the documentation
-> for the counters in transhuge.rst.
+> [...]
 
-Indeed.
+Here is the summary with links:
+  - [net-next,1/5] flow_offload: add encapsulation control flag helpers
+    https://git.kernel.org/netdev/net-next/c/b48a1540b73a
+  - [net-next,2/5] sfc: use flow_rule_is_supp_enc_control_flags()
+    https://git.kernel.org/netdev/net-next/c/2ede54f8786f
+  - [net-next,3/5] net/mlx5e: flower: validate encapsulation control flags
+    https://git.kernel.org/netdev/net-next/c/28d19ec91755
+  - [net-next,4/5] nfp: flower: validate encapsulation control flags
+    https://git.kernel.org/netdev/net-next/c/34cdd9847820
+  - [net-next,5/5] ice: flower: validate encapsulation control flags
+    https://git.kernel.org/netdev/net-next/c/5a1b015d521d
 
-Andrew, could you help to fold following changes into this patch? Thanks.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst 
-b/Documentation/admin-guide/mm/transhuge.rst
-index e7232b46fe14..8f6ffbfc4b16 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -501,6 +501,19 @@ swpout_fallback
-         Usually because failed to allocate some continuous swap space
-         for the huge page.
 
-+file_alloc
-+        is incremented every time a file huge page is successfully
-+        allocated.
-+
-+file_fallback
-+        is incremented if a file huge page is attempted to be allocated
-+        but fails and instead falls back to using small pages.
-+
-+file_fallback_charge
-+        is incremented if a file huge page cannot be charged and instead
-+        falls back to using small pages even though the allocation was
-+        successful.
-+
-  As the system ages, allocating huge pages may be expensive as the
-  system uses memory compaction to copy data around memory to free a
-  huge page for use. There are some counters in ``/proc/vmstat`` to help
 
