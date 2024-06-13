@@ -1,195 +1,129 @@
-Return-Path: <linux-kernel+bounces-214034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C3A907E42
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:38:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ABB8907E45
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D391F25255
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:38:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048701F22C4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C764E1494BC;
-	Thu, 13 Jun 2024 21:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B979E14659E;
+	Thu, 13 Jun 2024 21:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3U5j0THM"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JoZvBjA2"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9401F13D246;
-	Thu, 13 Jun 2024 21:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA210143868;
+	Thu, 13 Jun 2024 21:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718314689; cv=none; b=fgGA6JWGEWZB8va4KXwgPNyqMIqjq2CFwMGSSZNYLIwhGPbErTt8Rq1jaCk+WVdWQPMdG3effF6J9jSOFZj6N7/qQamxCk5b9tYjlM22WPWmrnFM7elSWDv6mdHuF5dHJtH8+0E7Rh1955H/RX3SqrzDv+1mS55EeoBEdKgEifc=
+	t=1718314716; cv=none; b=USDQaXb5Xay/i1ASofX4uKuA20ZYcnd+ISjqDaZmezXiOwPudpRkPy8UZM96ZTSbhGg2wOudhSGCSQosoTWgE5yViJ8ykPvw9W0PYZrqVeazcl8meSHNHsw7/qovS3X1wJ7SsMgv7Vq+fUtOGSpnLA2Q7u6ZLAKO5uUsIxZ3ij0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718314689; c=relaxed/simple;
-	bh=wQRJ+B8dKBMEN9aK4yJ8U5SXpzhbb+OTGleMQUKuqZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RAq81ykO64xqv/IVCaAtAS6vWxanKrlfZU2V7PB1WZ5N8CTuB2+m2901MfDS4zXu6+VzuNklPLanGwyeIfh/QvrM+i0Q0uqoYSidzQ+V+8kIOZuRTntOKlB27kb8mFJn7c0wIZE3w0DMtY3HULowkSUQa32/3pgDkr04xePnEmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3U5j0THM; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718314684;
-	bh=wQRJ+B8dKBMEN9aK4yJ8U5SXpzhbb+OTGleMQUKuqZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=3U5j0THMUJ8g3TXgXNLOldlc/L+6S0af1DsD+nf4VruKtFSMI9zfD7UEWckCp6Oe8
-	 xZdSCfQlC3YXT8JdgSZ5UO18t5lpRAfiYVksp8zxTVVRSL429X3chvDThh6rWSF664
-	 O/FDXk+Ieg9s1fDnggez30MDPHvzEN5q6zgAcB0PCbplAgyNUyjqH1gOrfIC4ODqj3
-	 Im14L91ZzI2t/oSZ8T1c5L/GGpCrWjyFEqLuH1NKJl+2qdFQwyZN2HSFjCERToNIuJ
-	 5fRECQaz9HWZAIhveINAE+sdcQ9LjAo4W8RDFS3P57rk06CEq1r8xF8g8qkfkuUnnQ
-	 vigHnKwXkfKYQ==
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8A2AB37820CD;
-	Thu, 13 Jun 2024 21:38:04 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id 046AC10608F7; Thu, 13 Jun 2024 23:38:04 +0200 (CEST)
-Date: Thu, 13 Jun 2024 23:38:03 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 2/9] iommu/rockchip: Attach multiple power domains
-Message-ID: <vmgk4wmlxbsb7lphq2ep3xnxx3mbv6e6lecihtftxoyp5lidvy@mectcwirrlek>
-References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
- <20240612-6-10-rocket-v1-2-060e48eea250@tomeuvizoso.net>
- <ffviz6ak6qsn2reg5y35aerzy7wxfx6fzix6xjyminbhfcguus@clszdjakdcjd>
- <CAAObsKCx+r5UuESnrPem1Rb1-BF4i8FVwu6uozWhABOWoq+M4Q@mail.gmail.com>
- <CAAObsKChaBZ2C5ezWsiZ_LoN6R2HFhFA9=UNSRYB6cyeo-jreg@mail.gmail.com>
+	s=arc-20240116; t=1718314716; c=relaxed/simple;
+	bh=KU+Xae0sCdy5dDGu7hPb6YuLV1+s82d6WqA7AyKo9fw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jq6RidlHDNZLd3wfkUU7J0OpqpM73n8Z/iHHFWK6L43h5WX7If6zXlXTeSMODkIgAIs60iQfPnPEll4w93LFQd8zoyQ/V1afoJivvEB2oTLAFyMnQ+xOTuh4DtFzBluzNKd3nY+st1ko/IgWNrCav840O9UvL+s25eeIvoDjSLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JoZvBjA2; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DLQrci015607;
+	Thu, 13 Jun 2024 21:38:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-transfer-encoding
+	:mime-version; s=pp1; bh=JIQefO2Y629EhI//dNmGRknLby3XjVSZEG49EIW
+	exvo=; b=JoZvBjA2OytBTtfitsYFtIkwLAittKu6wxUSsyuMOUz/FdKHVD9CS+I
+	qSt5RMQ3PfZbk7VAzj4XMst1MO+gkcxbA49H+OAvzKVoTbhkkxT1SnGm5dUilwWS
+	K0rI4T3BfhY02NnHBUvmR57+XvSJ/f5eP80P9/inBxYqmIyPpqogMUJpE5pD8MRn
+	mNxg8UP2jlw23ynzNUBPXzHFOnJueDJp8FtWrtNopHwHDRgDOyOpLZxSDOh2M6Ot
+	EdztNG46SexTKXI38Qpno3cYBhSJfrqOgkpKbKw+e6SV6t1rTaNnb9nPmWSXM6cp
+	lGYMVKotGLOSwamDUxHAVutNZ6UZW9Q==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yr896g33f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 21:38:26 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45DKPUoS028690;
+	Thu, 13 Jun 2024 21:38:25 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn1muv16y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 21:38:25 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45DLcMDO35717592
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Jun 2024 21:38:25 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DDCD35805D;
+	Thu, 13 Jun 2024 21:38:22 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 65CD358055;
+	Thu, 13 Jun 2024 21:38:22 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 13 Jun 2024 21:38:22 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.ibm.com>
+To: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, jarkko@kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+Subject: [PATCH] crypto: ecc - Fix off-by-one missing to clear most significant digit
+Date: Thu, 13 Jun 2024 17:38:20 -0400
+Message-ID: <20240613213820.995832-1-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 1-AyOHSzyoWrGvIBVSbWjBe9kIa_aCXp
+X-Proofpoint-GUID: 1-AyOHSzyoWrGvIBVSbWjBe9kIa_aCXp
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3uic2ihq2a6l3k3w"
-Content-Disposition: inline
-In-Reply-To: <CAAObsKChaBZ2C5ezWsiZ_LoN6R2HFhFA9=UNSRYB6cyeo-jreg@mail.gmail.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_13,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ phishscore=0 spamscore=0 mlxlogscore=910 mlxscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406130154
 
+Fix an off-by-one error where the most significant digit was not
+initialized leading to signature verification failures by the testmgr.
 
---3uic2ihq2a6l3k3w
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Example: If a curve requires ndigits (=9) and diff (=2) indicates that
+2 digits need to be set to zero then start with digit 'ndigits - diff' (=7)
+and clear 'diff' digits starting from there, so 7 and 8.
 
-Hi,
+Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+Closes: https://lore.kernel.org/linux-crypto/619bc2de-b18a-4939-a652-9ca886bf6349@linux.ibm.com/T/#m045d8812409ce233c17fcdb8b88b6629c671f9f4
+Fixes: 2fd2a82ccbfc ("crypto: ecdsa - Use ecc_digits_from_bytes to create hash digits array")
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ crypto/ecc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Jun 13, 2024 at 11:34:02AM GMT, Tomeu Vizoso wrote:
-> On Thu, Jun 13, 2024 at 11:24=E2=80=AFAM Tomeu Vizoso <tomeu@tomeuvizoso.=
-net> wrote:
-> > On Thu, Jun 13, 2024 at 2:05=E2=80=AFAM Sebastian Reichel
-> > <sebastian.reichel@collabora.com> wrote:
-> > > On Wed, Jun 12, 2024 at 03:52:55PM GMT, Tomeu Vizoso wrote:
-> > > > IOMMUs with multiple base addresses can also have multiple power
-> > > > domains.
-> > > >
-> > > > The base framework only takes care of a single power domain, as some
-> > > > devices will need for these power domains to be powered on in a spe=
-cific
-> > > > order.
-> > > >
-> > > > Use a helper function to stablish links in the order in which they =
-are
-> > > > in the DT.
-> > > >
-> > > > This is needed by the IOMMU used by the NPU in the RK3588.
-> > > >
-> > > > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> > > > ---
-> > >
-> > > To me it looks like this is multiple IOMMUs, which should each get
-> > > their own node. I don't see a good reason for merging these
-> > > together.
-> >
-> > I have made quite a few attempts at splitting the IOMMUs and also the
-> > cores, but I wasn't able to get things working stably. The TRM is
-> > really scant about how the 4 IOMMU instances relate to each other, and
-> > what the fourth one is for.
-> >
-> > Given that the vendor driver treats them as a single IOMMU with four
-> > instances and we don't have any information on them, I resigned myself
-> > to just have them as a single device.
-> >
-> > I would love to be proved wrong though and find a way fo getting
-> > things stably as different devices so they can be powered on and off
-> > as needed. We could save quite some code as well.
->=20
-> FWIW, here a few ways how I tried to structure the DT nodes, none of
-> these worked reliably:
->=20
-> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-de=
-vices-power/arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1163
-> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-schema-subn=
-odes//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1162
-> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-de=
-vices//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1163
-> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-io=
-mmus//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L2669
->=20
-> I can very well imagine I missed some way of getting this to work, but
-> for every attempt, the domains, iommus and cores were resumed in
-> different orders that presumably caused problems during concurrent
-> execution fo workloads.
->=20
-> So I fell back to what the vendor driver does, which works reliably
-> (but all cores have to be powered on at the same time).
+diff --git a/crypto/ecc.c b/crypto/ecc.c
+index fe761256e335..dd48d9928a21 100644
+--- a/crypto/ecc.c
++++ b/crypto/ecc.c
+@@ -78,7 +78,7 @@ void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
+ 	/* diff > 0: not enough input bytes: set most significant digits to 0 */
+ 	if (diff > 0) {
+ 		ndigits -= diff;
+-		memset(&out[ndigits - 1], 0, diff * sizeof(u64));
++		memset(&out[ndigits], 0, diff * sizeof(u64));
+ 	}
+ 
+ 	if (o) {
+-- 
+2.44.0
 
-Mh. The "6.10-rocket-multiple-iommus" branch seems wrong. There is
-only one iommu node in that. I would have expected a test with
-
-rknn {
-    // combined device
-
-    iommus =3D <&iommu1>, <&iommu2>, ...;
-};
-
-Otherwise I think I would go with the schema-subnodes variant. The
-driver can initially walk through the sub-nodes and collect the
-resources into the main device, so on the driver side nothing would
-really change. But that has a couple of advantages:
-
-1. DT and DT binding are easier to read
-2. It's similar to e.g. CPU cores each having their own node
-3. Easy to extend to more cores in the future
-4. The kernel can easily switch to proper per-core device model when
-   the problem has been identified
-
--- Sebastian
-
---3uic2ihq2a6l3k3w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZrZrgACgkQ2O7X88g7
-+pqvVQ//cIZokM7uuQmsxYEnzeSuLFKCBJ+oWnWgh4a++M1EuS1b/w0P6VZVbhIW
-iEJSHCfTPBss/DPmCD1r7EbFZNZAV4YUo+rk8mwj+BXs2UqekcEFIsyaHoMKvqGo
-i8NJGn2b2vqDx0UJg7vyjE84lETeT1d5MbVF6wPoP8JaUztKLIx4fl80aT88LTdS
-i8gbGH7lSQzRcGm15LRYo63i8jlD5uB+nCoeZ0cVWgCBO0pTFAZd4rcrfl3YubT2
-qozKnZYjsOnsWuoul/3CAqoXSci6wmvnkEQAo3CnIWAjHBW6/ym9qE4WhHM/TTVs
-yeSaIOV6tBrSGM4JOrHRGv3yPNHG+ZitS2Kbu3W8Am0wtKcyzff52LoOvaM8wgVV
-UBxrpXaFg7wuVU9t2wdb8vCwrl6N8zHk/hVUBA2pR+NI64eQ7oCCakzet3ZecegK
-npkoGWt7nX+fihR62gS04M36rL1KPEuvPgp6BpFklhndvXeOxgRlaGI0fDxooHXM
-KIzNF6cHZSDspUenm7oYNGzw5hRfOvy64fuyRXzOTOiNMrNZKS69I76SDqEuC3fw
-k3Y3O9GHR0DwIH7N9OoW0b7YDkUXerqTrghj88+VsEQPU7ObVS/NO+HHWbVAuv40
-weMFQJ5Ceqsm4+9tAMmJKZpoOPubYnRaYD+u8yxwoNVdPb3DEIo=
-=08Xd
------END PGP SIGNATURE-----
-
---3uic2ihq2a6l3k3w--
 
