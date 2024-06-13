@@ -1,84 +1,87 @@
-Return-Path: <linux-kernel+bounces-213730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6168907995
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:19:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50605907997
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2201F23B43
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:19:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9F5E28351F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E4414A4FF;
-	Thu, 13 Jun 2024 17:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDA214A4C1;
+	Thu, 13 Jun 2024 17:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPMe2W5q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gALb+9xc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DBC12D76D;
-	Thu, 13 Jun 2024 17:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368FF145FFD;
+	Thu, 13 Jun 2024 17:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299141; cv=none; b=XoCYcwZNvLtYv3fz4QUuG0MG+pKOWMqa8fTteWShVG/F+12w5yhhibgE8J8X9TMI9mjdpsiO6FQX8IpvsKxgS97Ud04bMuXsKHqxE1P9Y+44PJiez1G8c5LPCJA6me6BA4RLpfmXZOf4jBMXmoZ4GXupJ7v90Lk98+KENdGXBj0=
+	t=1718299149; cv=none; b=nlcdYlx0eJxwHChuUXDmg6NLa5K1xTwrKy3A8ok8HgfVDNvG5XqIcnzh+qs7XRcLJ3KMm/xMKoIix3cjBMxLSD3aPt97RJpWQoH1GWhE8mvN4MROTitgQYjsVFzUPVD2tRdKeKTL9K3SEp27i/15jeed6YKEl4gOBJAwkuWfMdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299141; c=relaxed/simple;
-	bh=/FRqBJ2+W9oi2BU9wQ0dzEOCrTnN9o8UYQjQ6KKGegg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BraO1iE34dENe+TcYwNIZreSgStr8/GDIigQyXiz0mguWVGMBfqfYxzR/YAiPj8Pw8h/3W3fO4Ic+mq7qeBLQfWedYMBHXzpM5Nib4mYPSxwkhtuJ5wFNn1ehKsG1Eu0K6gbBxOMLDpKRIiNILomBeQKL9zRaw4Cs/wfWwFwA3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPMe2W5q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEB0AC2BBFC;
-	Thu, 13 Jun 2024 17:18:58 +0000 (UTC)
+	s=arc-20240116; t=1718299149; c=relaxed/simple;
+	bh=vyo5JPqBjQqokL5N08Ay4QkIPAz+KsrhBNfZtMwO5GM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mChZ7N585f62gVn3XRVDits9L+Br/nJzevOG11UtgRWe5yRfHUEnPcg+XjY8PBrGWAHZaMjxLhJX58SY+c34Ud9OAvBChuv18q2rhDR3hA5o3udiWv8tvXaA7NHMDG7t7BlWh+qXj1VzkDcGLxb7gozMPkZ0n9bYHhjd6viPrmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gALb+9xc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0358C2BBFC;
+	Thu, 13 Jun 2024 17:19:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718299140;
-	bh=/FRqBJ2+W9oi2BU9wQ0dzEOCrTnN9o8UYQjQ6KKGegg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=QPMe2W5qRO49VpynzkQuyjHER7fJc/OxSZSqr+1Xx9xtGDumzv7UBy9TSDnOdKKub
-	 bD6ldak9xEoJTTwfRO3is+ngcveTbe2DdZy9aVkjit7bJAl3+NBuRImqcEiTan15Yd
-	 /c4j47b5mVPzW33yO5C92LsJm5yr1qxX8pAuYzhR2zSVx+sBnjiPoojsjiV0uyJJMa
-	 8lht12SgN+ELZgs8SWoHMuCkyVuucbl01YMwvjuAfYYK1mnfaF/wFM/PX16tayzNWK
-	 MwyDu2XWxMYD8jE3545aYxKhyRtIIboV//Do5w4qXTJCLqXUCqo8+6f2gDFPrhyX83
-	 SoNs6J7D7g89Q==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- stable@vger.kernel.org
-In-Reply-To: <20240611-leds-mt6360-memleak-v1-1-93642eb5011e@gmail.com>
-References: <20240611-leds-mt6360-memleak-v1-1-93642eb5011e@gmail.com>
-Subject: Re: (subset) [PATCH] leds: mt6360: fix memory leak in
- mt6360_init_isnk_properties()
-Message-Id: <171829913865.2730656.15082928550080844498.b4-ty@kernel.org>
-Date: Thu, 13 Jun 2024 18:18:58 +0100
+	s=k20201202; t=1718299148;
+	bh=vyo5JPqBjQqokL5N08Ay4QkIPAz+KsrhBNfZtMwO5GM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gALb+9xcsU6ktLqxXndFAycDyTg1rqbF2YGaFyHNdGiV0X1gPZzITBXqjwyNv4d/h
+	 kzLOB0rr6eq91aq4v2CrcU0yn+pnIBqLyQkztrN4U/DWo4EHbzbZXVZWIJUSc9fjDR
+	 KodTOJ+frN66euL64i2GuUvbkR/R6S7BrvEVavZM6X2BPquyekXDJ5T0KqoKanOmPT
+	 ac1KhcG+Nm7H0X8mV3pWbIufWsmhrOdigWZczRMD7+kSyntWFpZOnnCjjLac82pPTI
+	 832phiylLQLJjsKDzjfsyR79GlOaFQnTGvWnIlhV25hqM+4R8m6D2kXSwAfww5i471
+	 rTYfWQE/qYvIQ==
+From: SeongJae Park <sj@kernel.org>
+To: Honggyu Kim <honggyu.kim@sk.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Gregory Price <gregory.price@memverge.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	42.hyeyoo@gmail.com,
+	art.jeongseob@gmail.com,
+	kernel_team@skhynix.com
+Subject: Re: [PATCH v5 2/8] mm: rename alloc_demote_folio to alloc_migrate_folio
+Date: Thu, 13 Jun 2024 10:19:05 -0700
+Message-Id: <20240613171905.63316-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240613132056.608-3-honggyu.kim@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
 
-On Tue, 11 Jun 2024 00:40:26 +0200, Javier Carrasco wrote:
-> The fwnode_for_each_child_node() loop requires manual intervention to
-> decrement the child refcount in case of an early return.
+On Thu, 13 Jun 2024 22:20:49 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
+
+> The alloc_demote_folio can also be used for general migration including
+> both demotion and promotion so it'd be better to rename it from
+> alloc_demote_folio to alloc_migrate_folio.
 > 
-> Add the missing calls to fwnode_handle_put(child) to avoid memory leaks
-> in the error paths.
-> 
-> 
-> [...]
+> Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
 
-Applied, thanks!
+Reviewed-by: SeongJae Park <sj@kernel.org>
 
-[1/1] leds: mt6360: fix memory leak in mt6360_init_isnk_properties()
-      commit: 6e0b2281085191fbf34fb24ef272cb44a82de4f0
 
---
-Lee Jones [李琼斯]
+Thanks,
+SJ
 
+[...]
 
