@@ -1,429 +1,775 @@
-Return-Path: <linux-kernel+bounces-213029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76840906A12
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:32:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E76F5906A13
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F3121C224E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72491281238
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81CF1428F4;
-	Thu, 13 Jun 2024 10:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C40136663;
+	Thu, 13 Jun 2024 10:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BG4Dd3CN";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ul9Y68fS"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="VusTyUGY"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2071.outbound.protection.outlook.com [40.107.103.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88416136663;
-	Thu, 13 Jun 2024 10:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA4E1422D1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718274747; cv=fail; b=o5ZIW3NU+Gvx6whQ5lH4Z2uCI6GGy0qy0r0VpVRzbHAnBD87Wnd3eGXVurnNivM0zRuFLHeYrxlKqAk+VXaYyzlwLIQ8G6WPbYNG0xvft2B4z6jzj9/NxV9n3ohX+P9oKD+ZG6NqixkJ0RH0GyO9IdeC00F8LvTrd0jX+mBXG74=
+	t=1718274766; cv=fail; b=EdUUU8pswKSihxg8V0Ma6XZj4p3PcJjCJ7zuC1x/hZrU29FouGck1ayrDdpBhwRfonCxohOOGkWa7qJ5ozZ18VrapFNo/ojHSmWBCxBidmoiYBJuIsMrv7ex26lYOKn5/JG1Kyox9bab3hiTZC6JGsjiM+KsTxl/E21vysDrQgU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718274747; c=relaxed/simple;
-	bh=Rk6tkhRa6N9PrvFDvunoTN3EKUxxnvVda4OiAYSRZDs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZB0GHj15NvVsONp1BL96FN+ukQn/33pQai4WAdOTp6RmSYzPjEWFt9ljkroh1EgWEpfk/g9Iup8PzVMC9BIkPoycaiPY5g5zwfjctW7e0Zw6gZyQpVa3MIM+EicxidLO+hAHKQ23+uGzDZJvicGkv6V60yNSxRRnHrvHxPuhyI0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BG4Dd3CN; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ul9Y68fS; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45D7tSlH017559;
-	Thu, 13 Jun 2024 10:31:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=e2g9oa2B60IwdNJK8WfuLBcUdYuBfePSmZFjS9FvUd0=; b=
-	BG4Dd3CNuikc5gTizu/hHNMTBiUb9RSFBatnX3DdlvtQshvL1t69ff1BZwjlgOEx
-	2+/k83nQd4Qtzy0i5rspYys7c0w09PcbJm5KiEwn5G2Z3Qu4eg8O21caT411XKyE
-	zje5/Ee32z/wlznQ2YjyML+buIvqRLdKaHjOd19gPOiddh2NuSUTXfNBOIIQ5ysS
-	KDLQa1Fa8YY7AJMaqi5e3McsIw1Wz83JchUYcAdHKrtMNh/iE6wQYHfVTgrTptnG
-	ZV63Iez8NKhj4OZcqxO/xxRTmG7QviQfmrIGUnE9sXufpRDCnGvcUqmXiVOJobu7
-	VyIBgP236XSxQ9DS4bijDg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymhaj98eh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Jun 2024 10:31:46 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45D9cWkx027073;
-	Thu, 13 Jun 2024 10:31:44 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2043.outbound.protection.outlook.com [104.47.66.43])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yncdw1dr0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Jun 2024 10:31:44 +0000
+	s=arc-20240116; t=1718274766; c=relaxed/simple;
+	bh=jIrM1FStStyYVvSuaqoSjoWT/w2B/gOwFtydKEIBPR8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ljj2nB+frT9VVFq2V+TWVTLkKSDP6s2Rps4wLI0WEiD6Doz5lpD+dRUEGHccnKJTDFIVvMdPDr+1yQsHZ1Vq7EApzP4WBvOEbqws8S7yMfBbyUL68OHMImJWXUL3vpI1Te7G/C+by2C/jVpKgLsIddERGX7aX7XJTVL7Ksscx4Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=VusTyUGY; arc=fail smtp.client-ip=40.107.103.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xyn5IQMN0ql9am+RKVL8TM2IQBo3Ynbv5VUA3IkhOYg9MH+KSEBV4dk/hffhhZ9XRBzW5Xsik4SvgtSx+xoJiJ84WmmAHh4CNYKruZPmqWss1upaY4QbHSJW4dfrSQBzmnxjyuRG//quDe55F+cgohfbi60lOOs6iPvrLNJ0nyHipUMg98sMUVeCfUP0NZfxPsObj3XeodbE2icv2IzPP+it0UO+/RHK48Hr3A0DCTx6OTolVf75DqumoWy9mvcb2ADSzmRhXwkvbpcdO6kXI6IQfE8I6zKM1dByFu1wJPQJ8aZEF8+QeRnwg2IEHkA9VxozLKV1+7h/EpLRJbbJvg==
+ b=mmuP8ZXpgSa09izGCb+u1jPQvBWW2RT0KcbsMH1austUAgWWKPrd3hR8zWfB3M/tf5TJhQlk52ZROcFs+wz8vY3xJroBXSAdUM5/IVwa+zygS8bhB6gvOhbo7pvBhi4nUZGnlM/zqpvZea7aPr9Y7LUI5Znem3rssDweGVZm8PZETd+ENmn144U3iHx6+jGAjmIJQ6Nfxjy6NIHzQUOl/JZPXrv42tEnPWXC6xXjQ5SDb5R5mefQUuJhw2ZyOjf5kUSdgHSlfxDoTiMbk6SSAtyW3sroqrg41siBalSRPaRd2BCJHsu2egq/XuuZQg5GHl8ueG5vkABNT2MSsBx64g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e2g9oa2B60IwdNJK8WfuLBcUdYuBfePSmZFjS9FvUd0=;
- b=eUiBOTQZ7E6p/N8M3icKNax1+dnU2DmHwNl1bqCm2QPefYgCYF2HQ6LP01eh/S43kBBYXHBADGNp4Kb/GBZrJ7sCRAwcIU55Bf0VT6f8QuNjScEsN9ykf9qhvSxeFgzT4B0gV6H50dqVpam4N+8rd5smRDA8UaetapFf3b9FizxLycDRRC82oUmHKlJPf11dk0xg65oG4VJFN3b4plqwHKkEg0/2laVM4o/rkFxhi7TF6lQIko/50NZKdutFPbbhp4EXQPFv1tcZMRETT6HMIAvilp48UDZm+6bedlj8KS4oNxFDB2bxu93uAPQ2m0GLgVf1FzSIg2KnEkOJyrsw/w==
+ bh=qUuiCSVGGcdbmr/Hwl404RBEnKUpfu9J9HzmbKctP+0=;
+ b=R6+SBSNDwbkFJkadVcNQbUCBmUeYwg0y1jcOQoYZ1XlRT6n4V/ETfQBGZYnqygcWQ8i76Su0lRLgjyEj6+MQz96mes0145cwANDC3sc4/zfVxXYme8U4FgP9PSK7y+/4KfI4wyqGZGjUrF57NXqDaTzeTeLkLwTwIiV3To4rzxYCQ3DCejbmLdMnTQRlOWWeab+MPDw2qT1LENOegILFmNbT/+zkRLBqmf2/wEuQSoq86KGLoOWqfkj4D9IcGkwf7sRb47pZPmHWxfCqkWZI0MwkVCwRx519Dm3RkEc5kF4k7gUlKybi6lTfY/TNImYWg4bKBkqF42tuooVFhbt2ZA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e2g9oa2B60IwdNJK8WfuLBcUdYuBfePSmZFjS9FvUd0=;
- b=ul9Y68fSTDjevuz0iDOoHyUauXpc28aLeDBdd5WCOsfe7pW90WJi0caRETN/tRB76SK7Z4i6O2gTWyrae8O+QXUZuHPwp6s+r8p9c1L2WDAtmZkiQIxL7nL0qgKe+0ADvKG+3Jv/UC46kzmp889Ay3odibzsM1TcRO/pEFlTuI0=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by PH7PR10MB6457.namprd10.prod.outlook.com (2603:10b6:510:1ec::10) with
+ bh=qUuiCSVGGcdbmr/Hwl404RBEnKUpfu9J9HzmbKctP+0=;
+ b=VusTyUGYdqDJ/pUmUAN/FkCwiDH2JxkBjK/9TUeWMAokHJOB1bO3Hj4QbJU36uqknSu17I6Gh02ZnLJj4N77c2VhcGBvxPwJ1BEhElSkxTn0BO8Tu/8ILqhRQgeAcOIdR+sU4sAoMnVAeA9RC1fIBbQaLXfymdn+MCVRgguw4hw=
+Received: from AS1PR04MB9559.eurprd04.prod.outlook.com (2603:10a6:20b:483::21)
+ by DU0PR04MB9495.eurprd04.prod.outlook.com (2603:10a6:10:32f::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.24; Thu, 13 Jun
- 2024 10:31:42 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.7633.036; Thu, 13 Jun 2024
- 10:31:41 +0000
-Message-ID: <59255aa1-a769-437b-8fbb-71f53fd7920f@oracle.com>
-Date: Thu, 13 Jun 2024 11:31:35 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/22] iomap: Allow filesystems set IO block zeroing
- size
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: axboe@kernel.dk, tytso@mit.edu, dchinner@redhat.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.com,
-        chandan.babu@oracle.com, hch@lst.de, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-        gfs2@lists.linux.dev, linux-xfs@vger.kernel.org,
-        catherine.hoang@oracle.com, ritesh.list@gmail.com, mcgrof@kernel.org,
-        mikulas@artax.karlin.mff.cuni.cz, agruenba@redhat.com,
-        miklos@szeredi.hu, martin.petersen@oracle.com
-References: <20240607143919.2622319-1-john.g.garry@oracle.com>
- <20240607143919.2622319-3-john.g.garry@oracle.com>
- <20240612213235.GK2764752@frogsfrogsfrogs>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Thu, 13 Jun
+ 2024 10:32:39 +0000
+Received: from AS1PR04MB9559.eurprd04.prod.outlook.com
+ ([fe80::4fdc:8a62:6d92:3123]) by AS1PR04MB9559.eurprd04.prod.outlook.com
+ ([fe80::4fdc:8a62:6d92:3123%3]) with mapi id 15.20.7633.037; Thu, 13 Jun 2024
+ 10:32:39 +0000
+From: Zhai He <zhai.he@nxp.com>
+To: Barry Song <baohua@kernel.org>
+CC: Andrew Morton <akpm@linux-foundation.org>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Zhipeng Wang
+	<zhipeng.wang_1@nxp.com>, Jindong Yue <jindong.yue@nxp.com>, Christoph
+ Hellwig <hch@lst.de>
+Subject: RE: [EXT] Re: [PATCH v2] Supports to use the default CMA when the
+ device-specified CMA memory is not enough.
+Thread-Topic: [EXT] Re: [PATCH v2] Supports to use the default CMA when the
+ device-specified CMA memory is not enough.
+Thread-Index:
+ AQHavKBGxUJQI1jHm0WeihrG1yRS87HEeMkAgAAvWICAAE1E8IAAFNsAgAAdaCCAABFDAIAAAPqggAAWC4CAAAmTEIAAGZ0AgAAM5vA=
+Date: Thu, 13 Jun 2024 10:32:39 +0000
+Message-ID:
+ <AS1PR04MB955948B8D1D36D9D12F9E237EAC12@AS1PR04MB9559.eurprd04.prod.outlook.com>
+References: <20240612081216.1319089-1-zhai.he@nxp.com>
+ <20240612114748.bf5983b50634f23d674bc749@linux-foundation.org>
+ <CAGsJ_4wsAh8C08PXutYZx9xV3rLRwLG-E6Mq-JgoSO5LA1ns=A@mail.gmail.com>
+ <AS1PR04MB9559D82F720BC9A64077186AEAC12@AS1PR04MB9559.eurprd04.prod.outlook.com>
+ <CAGsJ_4zGRnGhn1zA1=H+TgqL8z59_Dy7x7YVKsKY0wRFt4tu9w@mail.gmail.com>
+ <AS1PR04MB955915A33F184E141BCD69A2EAC12@AS1PR04MB9559.eurprd04.prod.outlook.com>
+ <CAGsJ_4w=MYMOoQnY7c9nE-iCdzP9amCyYTkje-PNGYe35u+1Kg@mail.gmail.com>
+ <AS1PR04MB955988579ADFC6B5CCC8BBB3EAC12@AS1PR04MB9559.eurprd04.prod.outlook.com>
+ <CAGsJ_4wyQnAhzq_KoAoMp6g89DHgjKo3VfmE=o=g3HANGj6n+Q@mail.gmail.com>
+ <AS1PR04MB95593F3D6C60573707DFFF0DEAC12@AS1PR04MB9559.eurprd04.prod.outlook.com>
+ <CAGsJ_4xXwU0ebCPcwpC3PCOGwV4sZQAAzVTvFW+uuz4cwOnS4w@mail.gmail.com>
+In-Reply-To:
+ <CAGsJ_4xXwU0ebCPcwpC3PCOGwV4sZQAAzVTvFW+uuz4cwOnS4w@mail.gmail.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20240612213235.GK2764752@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0006.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:150::11) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS1PR04MB9559:EE_|DU0PR04MB9495:EE_
+x-ms-office365-filtering-correlation-id: 1de7858b-2a18-452e-68f1-08dc8b942659
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230034|376008|1800799018|366010|38070700012;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?U3FrdElOWlo0czdxTG5kK3pWVXZxUVRnRHNVNWlUODNpZE5Md3NaSkJSTnR6?=
+ =?utf-8?B?SVpPYzZOWVJVU1I5WFJzSVZRbUNubEcwTXRGbk5Xd2RmNFdrYkFBYXdicUVu?=
+ =?utf-8?B?SkNtbUFFN3VSWlZJcE1vMEtPTHo1VmJNMWJ6eCt0bERiMUorcm5WVzE5MXhN?=
+ =?utf-8?B?R2R0UFVEaTdEWUxEQVdHblcrNDUzQWI2YkpYdHRHL1hJN2tqQldHTHJZOWov?=
+ =?utf-8?B?N3ZoTnhqd2NFNDRjUnFBNnFaejFnTG93ZkRFNHh3Z2p0ZkNGbDIyZ2NkWVlw?=
+ =?utf-8?B?ZEFPb0w3clJnQzJwa0NWRDd1WnE3K081RXo3WGtjTGkxYmQzb3gxdnZPbmpO?=
+ =?utf-8?B?MXB0Mk1XZlZaQ29STUVjWlFLQ3ZpMjVOS2VFN0MwbytnUmNqaGg4Snh6L3BG?=
+ =?utf-8?B?S01aYmRLb2JYS3grZDdDS3BOVW41OWJiNytMc3lCa0R6K2p2OHBreDhuNHdB?=
+ =?utf-8?B?V3dqYmg1UDhNaVRyLzVwallRTU9nL1BCMXVrVmZmWHVFUlpGT05DQVdqUUU0?=
+ =?utf-8?B?OUFWNUIrTnZHYU5HeWJpaGZvamNNN1NISHdtWEtNTno4TmRWMFoyRTdVaDZi?=
+ =?utf-8?B?QlBZM2JBcGVYYnYyUkRaQlF6TGNsRlhZVCtDNVRoajM3QVovTmZIKy84OXps?=
+ =?utf-8?B?ZlVRejd4dldFaG1qSDdvSUsrUG1LcUtDZ1hWd0F0bnEvY2cwSVJaZkpBVWJW?=
+ =?utf-8?B?Z0p5K2R3bFNjdDNuRFhpckdxTHBSVysvYy91TldsZWZkT1RWbGlBY2hhUGd6?=
+ =?utf-8?B?T3RqTGlSenVFcWFsaHBBZUduRllwdnlFM0p6TDBkUWpYeUhMNEdjbG1MdnBs?=
+ =?utf-8?B?WURobmJOWkFlYnVpeVF1cUhDSFBxY0lDTERUU3k0RjBRd2U2R2VMOVV3WThS?=
+ =?utf-8?B?cUtqWnRsUERBb1l5VzFUM2Z5NmJQWEVUb0pFRjZLcVhjTWxTa0ZzTHVvWlE2?=
+ =?utf-8?B?ajZKdVZQU3pkaUNEMUVxcVhYRDBQeWJYYlhPUDBjdTR1K1pwQWR5T2c5Mzh4?=
+ =?utf-8?B?MWFtUzdETHE4ZFVtajRXV0NsWThTUk0wMzVEQldESkVaZnFWL3kwVy9mOWdl?=
+ =?utf-8?B?ZS9mQTRPUytyK3BaRnNocDNBN0dKL2dqNjk3ZjB0R3BPT2RCaXpuV0s2NnBS?=
+ =?utf-8?B?TUE4SmZiV2hFV1cvdmYzd2tOdDd4NkhWTGZDTXV2UkNvRkRHb3RjYUhEUnhS?=
+ =?utf-8?B?cEltZ0lOVUJ4LytxSTFwRkxTV1RiWTNLaU1tRlh2VDlweWdOQ3V2YlBoREND?=
+ =?utf-8?B?K1VNMHh6eFJnNkJDaGY1M0hxc0ZlSFlReGVrbVNCS0hjd1pwNW1TZ0Y3S2dL?=
+ =?utf-8?B?ZDVsLzZMTHpDRXZ3VkF0YWs3emNsTDRIQjJtRWtsYkdjQjhxRWwxSkF5aHZ5?=
+ =?utf-8?B?UFBySFYxRzFQRnpoaUhUS2lQdHpXYkE4TGNsbFR0UE9TYVo0L2hSOTcrYVBh?=
+ =?utf-8?B?eG5TU3djN3pBTXpseDl4bS9JWWNlbCtCRDJReVY2SENpZWZORWFMZExzdEt4?=
+ =?utf-8?B?ZEQ0cDFURXk4MldIOVZZb1F2TEJxV2M3WEZRK2IrQVA2TURqT3BDa3JEYUxu?=
+ =?utf-8?B?R1h3WlR6U3ZoeDN6U2xMWWZxbnE2MUQ5ZUFtMnZCSzZZY2tUWFdIaFRwV250?=
+ =?utf-8?B?K1JDZnAwd1JMdjNPMjI5QklUam44ZU1NenMzNU9KUFd6Z0FtRHloMFBiRWVZ?=
+ =?utf-8?B?a3ZEdjJMRGZFMFhkcHo5VUpjM2pYbUhLT2VUNjN5ZWVoQXo2bkxrellRQm1K?=
+ =?utf-8?B?T1JkK3dWaUF4RGF5c1VEVlp6OWZPWDMxTkpxZFNNQXZ3TDgxcDVvdmVBTzUz?=
+ =?utf-8?B?M213NUg3SS9rdUsybG5sREdRWVg2aTRIK3AxbFpuYmt3TjNpUzFzc2NvNTFD?=
+ =?utf-8?Q?VLMeLJLSUUJH/?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1PR04MB9559.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230034)(376008)(1800799018)(366010)(38070700012);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?ZWZpdkVQdVJvSWl3a2x6NDNkUENLM3RickQ4SzlYak9Ycmd2clNGUWEyMDdX?=
+ =?utf-8?B?WTNpVTJXZk4zeGRsNDZ0dWhGUW92cHdlZStWTm5xN0g2RjFLVTZlanlCcDlI?=
+ =?utf-8?B?YlZpajJ0WTh5OWJwUUNOMFNheVA2ZytRUHVjdmFOQmw2RlZxblZGOHZWS0NZ?=
+ =?utf-8?B?dlJMTXZLNlNjNzZCRzRQTkRkd0R5YzNqcTJsRysrdE1WZVpaMkpNYUxaWkcx?=
+ =?utf-8?B?WnEvSlJFNnZQdHg1b01vSWIrQ2c2YzlvVWZaSENlSitJZjdaY1VaZEIrM3FT?=
+ =?utf-8?B?K1FTMUxwN3ZCVTZhSGZiaG9lSjJoWUY2R1RIN0lUYnU2SzNmZGl0U0YwYkl3?=
+ =?utf-8?B?elZMaXpWM1FvZFFyT25CMjV6REovRTBWcmVJY2IxT2xWMkxwaDBZYjNvN3cr?=
+ =?utf-8?B?SG14RFJzMXFySGVkdkliSkZWVkpQN0FDaDNwMHc3U1RYODBKbGs4QzNIRWtC?=
+ =?utf-8?B?Qi9XenFCQWNXTGpjY25KNGMvQkRQbkI2Q1VWekl6MlVDeXNIVnFJVERHWldR?=
+ =?utf-8?B?aEwwcmxKdGREWGliMmFqZk9kT29lRXNKSEE1N3ZkRHpPc3ROT05hc0R0dW9s?=
+ =?utf-8?B?VTZ5OGw1T2ZHSnRLd2MxYlRNSk9XVGtxM1FEdlJtTys5bmhIS0c4SElpVXhu?=
+ =?utf-8?B?QjlYUzJnSVpEVmFtbnRyUHhiQ25aMlBjMEt5R0hXclRPNFJMeGVWK3h2RGJp?=
+ =?utf-8?B?ZFVmSlorYnA4SnZ3OWxYbVVGU2NUTFVEeTJQN1cweSt3akNybnJLOWZ6TjJp?=
+ =?utf-8?B?VFFVa0FGNFlPZEV5VHdPQldBcjZ1U3E0ZkVNM1A4MGdGcDI3VGFBYXNVb2dW?=
+ =?utf-8?B?QW9iTzJGNUFzdk1ubGlpVm9wOHZRWUNoeGdzSzZJdG9DVDRaT1BNQWRvQnVE?=
+ =?utf-8?B?Wk1mZE5SS1FzZkNpc1MyRG1YdjR2YWlBMXN0Z3czY3J1WDdSK1RKL3IyV1k2?=
+ =?utf-8?B?ODNMUm9naGNheUxNRkprVTJRMW5MdmlOU1pJazVob1d3TUZZeHZoMmdkWHVX?=
+ =?utf-8?B?dEZsZ3dicm4zOWluc3lFd2tRdmhVM0k3cHpZc04wbFd0dkxaTEhmMEV6UFJW?=
+ =?utf-8?B?N21oeU5tL1V1YWFZamt4WlFpRzRKZVNHOENmL2Y2cmxhcU9yYi81cldJRVBH?=
+ =?utf-8?B?VURnMUhDVjhUNnc5ZTFMdTFjSEZUTXJtMDZjU0tWdDdRVUh3Wi9WdUI0dG5L?=
+ =?utf-8?B?R2RWbGpzdk1ZWjVJR21ubFFudHVCOTgrb1A2RlZCY0kvMVRzelpYc0Z3TFAx?=
+ =?utf-8?B?cHZCeTNUN1Znb1FjTDErZkcxZkVOcVZGSTV6NUhpdUc3bkZBRkh6TWg5ZEt5?=
+ =?utf-8?B?bEduZnhRV3dJWU5aM0JCYzhUVVRCbUFveCtVYVhPU3RzdmRGdDhUdTlGS0lh?=
+ =?utf-8?B?SGUrU3NudCtrMXlPMnIzanJsMjg1T21BdDladXQ5UWk3a2Z3RjQxODhlS3pj?=
+ =?utf-8?B?YWE2OTRaSGJUMXlSVHRieHRBWWQ3V2czbTNiTG5mU080dWlSd1A0YVBlWDZa?=
+ =?utf-8?B?VStaSGhDa2dyZmJkaU0yeks3L1dqZEViMjhnbkZRaVU1NTJMa1hPWXZxRW5w?=
+ =?utf-8?B?NDB4LzgrNEVQdnF6Qlc3NGsybXlTY21mb3BKQUUxNDc5b3Y1Q0NJTFJDY1Vl?=
+ =?utf-8?B?aW9kMllRT01GQVBVRjVmRW1vMUdsdkV1cWlJSDhBY0dUOWJkT0h2MUtVajN3?=
+ =?utf-8?B?eFA0VEtxYkpEMHJJR2dZYUdUTEVJY1lVMFU4M1h3QjZNRUM4U1JEendFVnhP?=
+ =?utf-8?B?bDlQSjhuRmpOc0c5dk4yZy83SktxOEQ5Yy9RRmQrRW9zam9PMlV4MTlaTTRY?=
+ =?utf-8?B?YkV3WHV5RlJpWENoUCtndllBWFE0WHBCNHc3R3VMSm5RdmtET1NXV1RPcnM0?=
+ =?utf-8?B?S3dGNEhvNzl1bElQMmpMWGhhRVQ1WnFaNTFiOXZaV0hWNWhxMEVITFc2emV2?=
+ =?utf-8?B?REtrR0JsVjZiaTNNM3JROWpFcXVMaGlTM3NSUEpIcGJGU0plVWxhUmZJREtx?=
+ =?utf-8?B?Rmk1TEpTbkRMd04yMmMvcDZtMVJ0a1lGdXJRR2xzaHlNSFJJbTJhY1czTzQz?=
+ =?utf-8?B?YXQyWVl1cXVtVGJUZ3VzWWV6UmRHaENYQVJ5V3MrTGdtTmFZWkMrMTk1TEIy?=
+ =?utf-8?Q?cMzg=3D?=
+Content-Type: multipart/signed;
+	protocol="application/x-pkcs7-signature";
+	micalg=SHA1;
+	boundary="----=_NextPart_000_01D2_01DABDC0.103B1950"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH7PR10MB6457:EE_
-X-MS-Office365-Filtering-Correlation-Id: ec6cb7f6-7014-459f-1491-08dc8b9403e4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230034|7416008|366010|1800799018|376008;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?UHltYjQzS2RaaGtQS2ZmdFZmSmVEV005TVJXODBmNkE2aTFhM3NoU2ZPMFZj?=
- =?utf-8?B?bTdwMWJra0htdDArMlJ3MEFSMTNEVXFCZHMwK1d4S2tSVHp5U05OZ01IeHRl?=
- =?utf-8?B?L1JHblliMTN4QldnUm5sYWNxdXB1bFp6TlNYYlRoejdQRnFwTUYyalMxcmpl?=
- =?utf-8?B?cmFneDRXNm5ISyswTWwzMEd5ZGtTckVqRmIwOHE4MUlQRmJKdEV3RmtOUVgv?=
- =?utf-8?B?WnpIUUtINEJMZ0lVSDlZSVhVWm5MbTNDZlpOREh0TGNHb3hicGx0WGowWG4v?=
- =?utf-8?B?NmZydGIvQkhXSGRtZUtVUmlnTlBUWVgxdGNLcUVnejhXZ1N1K3hZazZudWdZ?=
- =?utf-8?B?UWtob3NTOTBwWjg1Q0lFRG1sUWZwemRVbjNRT013cUNuY0JIMzhGUFRFeVNo?=
- =?utf-8?B?Q3FSQ1l6NUhqNzhZVXFKbmN4Vm5oODBDL3RNNXljeStwZXFETVFVeVdaQUxn?=
- =?utf-8?B?RE0xcU90Unc5ei9kMWNISE94N2JKT2gzL1pOUkw3RlBxOTRZSW5Qa0tNR0xY?=
- =?utf-8?B?Z29CSVQvbjNmSk5zbG9pTVZwZGlBYVJuY1VrYWxVRnh5SE5ieXFkVHNZMTBE?=
- =?utf-8?B?WFlKL2xxb1VtcVdITzNzcE4xUis4dWM2NzBYYWY3SS9zUWNGNGt0SzVqbkM1?=
- =?utf-8?B?RFIrRzA0cVI4OXBpYkNWRGV1SnZBY0c3VWE5QllCTjlWcngrd0c4T25KNmZK?=
- =?utf-8?B?QmZSZHRma05SWHlPeXc3SlJsMi92WmFDcmF3ai90WTVvTVJ6N0s1bnZseHoy?=
- =?utf-8?B?WEtIVFVrU0tpaCsxV0h0RTkvQXRZVzcyS21ST3kwam9McHdIdnM0emtiUUdH?=
- =?utf-8?B?V2M0amkxNXZlNlZucGc3a2ZuaWErQmVtRGxWa0xPSWlYTXJxMGp2YXpqZDc1?=
- =?utf-8?B?MkxKZ3NnZHhjdXJmcGR0ejJRMEZGYXh3RlAxRkduS2J1UFVndkhHNjR0YWVo?=
- =?utf-8?B?dHd6Mk4waFhXRVhIL0NvRm1RcDBpQ3laQzBQVVJOaGRnM2dRaUpGOTlUcXNO?=
- =?utf-8?B?Q2xjQzY2eTEzNHBIb1B4WFFlcmtxblVpR1lPdWNtSG84bDg3UitJNWt0QkVW?=
- =?utf-8?B?ZWhUYkUyb204RzZoRkxxL2Rna3FycVF5OVdVM0dhLzg1cWNib3I0Wk54SGxx?=
- =?utf-8?B?TVBhQ0ljQ2J0dXJzMXR4QWErVUF1Vmc1d2ZHQUpxRWxuZlZGSzVDRzkxdUo4?=
- =?utf-8?B?ZVU5aS9USnd2dVhHS0lzNEU5ekU3N0dYZUJJQVhPVi9iczBhZzRlUU9kYzRR?=
- =?utf-8?B?UHFSMGFjYVFvZFlnVmtjSXRxT0x5dHVDK0JhTTNuTUdTU2NrRzJBMzdPTGUy?=
- =?utf-8?B?SFVSNjk3dGp1eUluN2hkUVU0U3RnK3lKLzBCbjhLTkFXM1ZQWjNZOEZqblVq?=
- =?utf-8?B?aEE2MjhpVGJQMi9rSTNDWmZSSzFOWnd0M0Y0VWJWeVY1TlowZmRybmtBa0xI?=
- =?utf-8?B?bC83VWNrQWJWMUZRM3ZPakdlaU44eitjREFzKzRsZTEwaUc2c1ZjNVArRWV4?=
- =?utf-8?B?V2k0VzZyNi9Xcjh1U0Y4OWFlWVA3cGFhYXl5OFQvVjN5L3ZaQ3VWTFMwdmd5?=
- =?utf-8?B?a0xjU3BONWtZNUQwcTB6ZGdCcnNRMjU5MEJWdmdOQ3JZemtnNHhPRmtCbGIv?=
- =?utf-8?B?QXh3OUVXOWxURXdaUG9nUG1Mc2pmSktyN0hiQ0NsdHJORXR2a3QyR25nUzkx?=
- =?utf-8?B?Ri9QamNrKzEvWXIzMkJIalFYNnhDekdUNzBnVDcwOVFyczdZVWlicHlNVlUz?=
- =?utf-8?Q?tZIEIV0G4+lnxdkWLQhp0rbXsbKDASTsUMkATKh?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230034)(7416008)(366010)(1800799018)(376008);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?WUh6L0pNSVo0b0hZQngrYlFoR29kWGd1UDVJUVA1UzhvbVRTWUQ1WlpMbmVZ?=
- =?utf-8?B?UXNpWkFabWM5c1RVTDZyZ2pPZ3o3VVI5Z3pOWkFqV0R1RzQrK0NVU2lQVktE?=
- =?utf-8?B?M3lIeTNoMGJ1bDJuREJYeXNWUC9hNytjRkF6MHBIQ2tRWnl0SnZDNkZ2VWIr?=
- =?utf-8?B?enA3ZDV4dFhTU3VJNGhTditrRkM3c01QL3IwSDJ5K0hkS1JiUnZjWDlwREdz?=
- =?utf-8?B?allqWkt4WXV4MDQzMGZxdGJaczVkanVMRHBuanRkNUhBTzkzclFGRCt1UjZN?=
- =?utf-8?B?TlZ0b1duTnQyWDh4dGNkYWVpVmQ5Zjh5cXMxUWEwdXlmUXpvcGUyR3ZWMHEw?=
- =?utf-8?B?aGUrRlBsVEhpWDhZUldxbVRmN3dQVUJrM0FXV0dkRUM2b0NXTk15dmwzVFM5?=
- =?utf-8?B?MHBVbGVWN0Z1T3ZOcVlVajBIODd6b2dGOWtBdDJhc1FMY2lNWUtGTFZzSG8y?=
- =?utf-8?B?M3lqdHhOVkFIT2xzeTlUMWUxWUI3eVRkenJ6eTVtVnR1b3JaTzIwbnZOZkgv?=
- =?utf-8?B?M1Rmc3dVTU5jNW8rdXZVMVVJQzJFWW5STVVKSnN6ci9mVjNQbS9OaGN5QlJr?=
- =?utf-8?B?SElTQ2xnNys3bG1yYzNKUVBKNkIwOWZabVc5OU9md3FWV3FjbWM3K1ZmOG1n?=
- =?utf-8?B?TGd1VGt1N2twdm9vZUpYOHIxQnZaYlZ2R2psWmJTVFlRdVFHSnJqTGMvVndC?=
- =?utf-8?B?Vm9WYTZPeThCbytjWEtjWm1wSGJZYUxUMitFOERRSjcva0puM3JkbUVNeUk2?=
- =?utf-8?B?RjBwZWxPdm44NzZEK2x5aFE1UUxPZkhET0o3aGxqV2ZOS29lQmFuYlprWGN2?=
- =?utf-8?B?UEplQmxlYnIzUng2YXpKVlRkUW9sRlNoRDFDNndEWHU0a2hFajVEczEweTFl?=
- =?utf-8?B?VjUrSGFiS3JWMTFtWUtQMGtoVHlnVnE2MU9yYk9sNk9MT1ZwMVFrT2xaWUM3?=
- =?utf-8?B?MU1UL05odUxjTHF4bnJlK2JpTmYxNzJRZURsNjh1bmp1c0tuUVdRdWdoaVoy?=
- =?utf-8?B?Zmh2MEZxMEhIYXZ2NWs1U2huUXZHMlRDVVFPWExNKzRuL1ZhRmMwYlIvN3Ar?=
- =?utf-8?B?dFppN1FaaGJhdWVaY3BmVXdkVFFqMHJVQ1RLYzVIK0NGbUluZS9IZDNLM25W?=
- =?utf-8?B?VlV3NWRsWDBaV2JEYTVkTGdWcjY5Wk44dzhQTVFYZ09rS3VrOXV0UjdBRUtI?=
- =?utf-8?B?QmV1b0JUenBpeGxvMjJHZ1Zoa1pzVk4xeWVCeDFFQTIrZkh0cktyNGwvbzlO?=
- =?utf-8?B?RzFtcTVqdVRIMHJMRkE2SE1pNGprbEZmQ2dYMEpQRGI2ZmNDZXJEWHlKN01N?=
- =?utf-8?B?UGxWYUFpYWxkUXJjQWRqL0IxMDB4S3YvZnZ5cFJxb2pDc0tpU2tUTDkvS0NK?=
- =?utf-8?B?c3Vxc1l5RTZnZkxUMDg1czl5MmYyRktYWHBTMU9xcExWNFN3NDM2ZndOT3RT?=
- =?utf-8?B?dlgzTzZEMHdMRjFjeE90SDltNUJhZzhQb1JMd3pGMWVmem4vdEN6UXl0SU1Y?=
- =?utf-8?B?bk00cllYdXFBZTJPVG9icWpzaWtXYThpUmJwQ1UxczVncVVOR3BWbXo5WHdx?=
- =?utf-8?B?VjE2VTNDUWhrd3I2bW10aWNXVld6MWdGTThiSVVqbTNTdmtPUlRoak9NNzA0?=
- =?utf-8?B?OWVYTnNJOWtLWXg5S3c3V2Q0TTUwdE96WG9reTBacmc0SnA2LzVocVg4RUpK?=
- =?utf-8?B?cVZCSHUxVEQ4SDRYWGoxemFnZzg1aTZ1UXgvVzNQSlVvSUZlT29keHV6QzJx?=
- =?utf-8?B?OWN0R0V6YVpSSVRJU3BZbWpNMmtzT0ZJWXQ1b2VnZkxtLzcyMUg4ZW42Q1FU?=
- =?utf-8?B?SU5zVEhwZjNBbkt0VFJSWVByaGpXN2JwU09JcU4rcTB6Zm9NTlc3UFZuYXF6?=
- =?utf-8?B?TmFCakpVSjgyVVh0RC9XaG51NnM3Ulk2VzZxdmUxQ0RaaUJKWjZCRWRNMzFz?=
- =?utf-8?B?K2F1dVVWa25lT3JoNWx3SklsZHIrS0xCb0VYd1JXNmkzNXJwSk5jb05LMmh0?=
- =?utf-8?B?TnBQVlFGU2srSlZ6bnhjbHdscWEwc1plbi82ZEtHZ1NEbS9VdVV1eTNWNm56?=
- =?utf-8?B?b3dGaS9QSEN1RGkxQ2lwKzBCR1lJV0JsemVIVy9BaXoyT3pkNnBSakpJYXIr?=
- =?utf-8?B?UUlvUzBIWHBQdlh1RTIvMEl4dHdIeS9aYW9hclpDVzZLcVA0dHpqN1NGUGdO?=
- =?utf-8?B?dGc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	jU4HRuctEbqUTC+TcAenVs2K4m38PED9sqbARQ8Z305tiL2F1DvI+bkZEuNWlICFhHSjDHxKUSPmeRshcLgpDOPmoFMvqEMTeIMABXxDbccj/WGmYfPGzbrR8VOXMGFZUCDqzHK8TVgHQmM4u6OYie57p2oLtukOEaKMyRbpIOJ6N63KXJt9AWu/az02FLOQshEx7AzSHnQCncmjPS3nnMtdPpFdFFrCeiQi24q9XVbCc79UeO2G+Z1TNr1MrkMlzKskuW4G3C0EJnh+oZ5O4jXEDrhkj92EKUM/Cmb1QX+LBerbbUc0fz8xyyexjxgp2/X+LkEJnO5shQS47IXapEJ0bysAoy3ymxXC8sLksoUnNk/xjl82ZF1/p3bCc//GzQHFf5klilICdcd2cjmPucM/bo78pKPkpu8WqAsDNHz9CW7J+nEP8DHgmDKOK6L8+fKp2yhrkloDbaEythT2korOcOZUn4z4BYHiuZ7OaOWVM5gqquQAcV65fpqHGakWdCb4r+e6SRkVz/kDz1tXLRXhH72MqV0Onv6VMEDZAFiKSqecC2KM6sNlIfigSNA1C3rMdmUEeBV4hYWmI0BbVujSzFsCFas2/+tX9zr4EBI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec6cb7f6-7014-459f-1491-08dc8b9403e4
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2024 10:31:41.8422
+X-MS-Exchange-CrossTenant-AuthSource: AS1PR04MB9559.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1de7858b-2a18-452e-68f1-08dc8b942659
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2024 10:32:39.4087
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tEfW4n+vYNEVvxx72wyckd+mJEE77qfxi9nAF8jGbidsqZHxjvGe+2enGyLWPOAm4AohStajcf5QjaV34rpOGg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6457
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_02,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 suspectscore=0 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406130075
-X-Proofpoint-GUID: jbd1m1jFLZ2n70RJpKyphd4Hm1NMlsJj
-X-Proofpoint-ORIG-GUID: jbd1m1jFLZ2n70RJpKyphd4Hm1NMlsJj
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QHsz7nC+LboScvFsIPgMmUAN6tYGcGsM5rw/igiXKEf9wJkmPMwQaLPYMtR93efh
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9495
 
-On 12/06/2024 22:32, Darrick J. Wong wrote:
->> unsigned int fs_block_size = i_blocksize(inode), pad;
->> +	u64 io_block_size = iomap->io_block_size;
-> I wonder, should iomap be nice and not require filesystems to set
-> io_block_size themselves unless they really need it? 
+------=_NextPart_000_01D2_01DABDC0.103B1950
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-That's what I had in v3, like:
+> -----Original Message-----
+> From: Barry Song <baohua@kernel.org>
+> Sent: Thursday, June 13, 2024 5:44 PM
+> To: Zhai He <zhai.he@nxp.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>; sboyd@kernel.org;
+> linux-mm@kvack.org; linux-kernel@vger.kernel.org; Zhipeng Wang
+> <zhipeng.wang_1@nxp.com>; Jindong Yue <jindong.yue@nxp.com>; Christoph
+> Hellwig <hch@lst.de>
+> Subject: Re: [EXT] Re: [PATCH v2] Supports to use the default CMA when =
+the
+> device-specified CMA memory is not enough.
+>=20
+> Caution: This is an external email. Please take care when clicking =
+links or
+> opening attachments. When in doubt, report the message using the =
+'Report this
+> email' button
+>=20
+>=20
+> On Thu, Jun 13, 2024 at 8:49=E2=80=AFPM Zhai He <zhai.he@nxp.com> =
+wrote:
+> >
+> > > -----Original Message-----
+> > > From: Barry Song <baohua@kernel.org>
+> > > Sent: Thursday, June 13, 2024 3:38 PM
+> > > To: Zhai He <zhai.he@nxp.com>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>; sboyd@kernel.org;
+> > > linux-mm@kvack.org; linux-kernel@vger.kernel.org; Zhipeng Wang
+> > > <zhipeng.wang_1@nxp.com>; Jindong Yue <jindong.yue@nxp.com>;
+> > > Christoph Hellwig <hch@lst.de>
+> > > Subject: Re: [EXT] Re: [PATCH v2] Supports to use the default CMA
+> > > when the device-specified CMA memory is not enough.
+> > >
+> > > Caution: This is an external email. Please take care when clicking
+> > > links or opening attachments. When in doubt, report the message
+> > > using the 'Report this email' button
+> > >
+> > >
+> > > On Thu, Jun 13, 2024 at 7:11=E2=80=AFPM Zhai He <zhai.he@nxp.com> =
+wrote:
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: Barry Song <baohua@kernel.org>
+> > > > > Sent: Thursday, June 13, 2024 2:15 PM
+> > > > > To: Zhai He <zhai.he@nxp.com>
+> > > > > Cc: Andrew Morton <akpm@linux-foundation.org>; =
+sboyd@kernel.org;
+> > > > > linux-mm@kvack.org; linux-kernel@vger.kernel.org; Zhipeng Wang
+> > > > > <zhipeng.wang_1@nxp.com>; Jindong Yue <jindong.yue@nxp.com>;
+> > > > > Christoph Hellwig <hch@lst.de>
+> > > > > Subject: Re: [EXT] Re: [PATCH v2] Supports to use the default
+> > > > > CMA when the device-specified CMA memory is not enough.
+> > > > >
+> > > > > Caution: This is an external email. Please take care when
+> > > > > clicking links or opening attachments. When in doubt, report =
+the
+> > > > > message using the 'Report this email' button
+> > > > >
+> > > > >
+> > > > > On Thu, Jun 13, 2024 at 5:32=E2=80=AFPM Zhai He =
+<zhai.he@nxp.com> wrote:
+> > > > > >
+> > > > > > > -----Original Message-----
+> > > > > > > From: Barry Song <baohua@kernel.org>
+> > > > > > > Sent: Thursday, June 13, 2024 11:28 AM
+> > > > > > > To: Zhai He <zhai.he@nxp.com>
+> > > > > > > Cc: Andrew Morton <akpm@linux-foundation.org>;
+> > > > > > > sboyd@kernel.org; linux-mm@kvack.org;
+> > > > > > > linux-kernel@vger.kernel.org; Zhipeng Wang
+> > > > > > > <zhipeng.wang_1@nxp.com>; Jindong Yue =
+<jindong.yue@nxp.com>;
+> > > > > > > Christoph Hellwig <hch@lst.de>
+> > > > > > > Subject: Re: [EXT] Re: [PATCH v2] Supports to use the
+> > > > > > > default CMA when the device-specified CMA memory is not =
+enough.
+> > > > > > >
+> > > > > > > Caution: This is an external email. Please take care when
+> > > > > > > clicking links or opening attachments. When in doubt, =
+report
+> > > > > > > the message using the 'Report this email' button
+> > > > > > >
+> > > > > > >
+> > > > > > > On Thu, Jun 13, 2024 at 2:34=E2=80=AFPM Zhai He =
+<zhai.he@nxp.com> wrote:
+> > > > > > > >
+> > > > > > > > > -----Original Message-----
+> > > > > > > > > From: Barry Song <baohua@kernel.org>
+> > > > > > > > > Sent: Thursday, June 13, 2024 5:37 AM
+> > > > > > > > > To: Andrew Morton <akpm@linux-foundation.org>
+> > > > > > > > > Cc: Zhai He <zhai.he@nxp.com>; sboyd@kernel.org;
+> > > > > > > > > linux-mm@kvack.org; linux-kernel@vger.kernel.org;
+> > > > > > > > > stable@vger.kernel.org; Zhipeng Wang
+> > > > > > > > > <zhipeng.wang_1@nxp.com>; Jindong Yue
+> > > > > > > > > <jindong.yue@nxp.com>; Christoph Hellwig <hch@lst.de>
+> > > > > > > > > Subject: [EXT] Re: [PATCH v2] Supports to use the
+> > > > > > > > > default CMA when the device-specified CMA memory is =
+not
+> enough.
+> > > > > > > > >
+> > > > > > > > > Caution: This is an external email. Please take care
+> > > > > > > > > when clicking links or opening attachments. When in
+> > > > > > > > > doubt, report the message using the 'Report this =
+email'
+> > > > > > > > > button
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > On Thu, Jun 13, 2024 at 6:47=E2=80=AFAM Andrew Morton
+> > > > > > > > > <akpm@linux-foundation.org>
+> > > > > > > > > wrote:
+> > > > > > > > > >
+> > > > > > > > > > On Wed, 12 Jun 2024 16:12:16 +0800 "zhai.he"
+> > > > > > > > > > <zhai.he@nxp.com>
+> > > > > > > wrote:
+> > > > > > > > > >
+> > > > > > > > > > > From: He Zhai <zhai.he@nxp.com>
+> > > > > > > > > >
+> > > > > > > > > > (cc Barry & Christoph)
+> > > > > > > > > >
+> > > > > > > > > > What was your reason for adding cc:stable to the =
+email
+> headers?
+> > > > > > > > > > Does this address some serious problem?  If so, =
+please
+> > > > > > > > > > fully describe that problem.
+> > > > > > > > > >
+> > > > > > > > > > > In the current code logic, if the device-specified
+> > > > > > > > > > > CMA memory allocation fails, memory will not be
+> > > > > > > > > > > allocated from the
+> > > > > default CMA area.
+> > > > > > > > > > > This patch will use the default cma region when =
+the
+> > > > > > > > > > > device's specified CMA is not enough.
+> > > > > > > > > > >
+> > > > > > > > > > > In addition, the log level of allocation failure =
+is changed to
+> debug.
+> > > > > > > > > > > Because these logs will be printed when memory
+> > > > > > > > > > > allocation from the device specified CMA fails, =
+but
+> > > > > > > > > > > if the allocation fails, it will be allocated from
+> > > > > > > > > > > the default cma area. It can easily mislead
+> > > > > > > developers'
+> > > > > > > > > > > judgment.
+> > > > > > > > >
+> > > > > > > > > I am not convinced that this patch is correct. If
+> > > > > > > > > device-specific CMA is too small, why not increase it =
+in
+> > > > > > > > > the device
+> > > tree?
+> > > > > > > > > Conversely, if the default CMA size is too large, why
+> > > > > > > > > not reduce it via the cmdline?  CMA offers all kinds =
+of
+> > > > > > > > > flexible configuration options based
+> > > > > > > on users=E2=80=99 needs.
+> > > > > > > > >
+> > > > > > > > > One significant benefit of device-specific CMA is that
+> > > > > > > > > it helps decrease fragmentation in the common CMA =
+pool.
+> > > > > > > > > While many devices allocate memory from the same pool,
+> > > > > > > > > they have different memory requirements in terms of
+> > > > > > > > > sizes and alignments. Occasions of memory allocation =
+and
+> > > > > > > > > release can lead to situations where the CMA pool has
+> > > > > > > > > enough free space, yet someone fails to obtain
+> > > > > contiguous memory from it.
+> > > > > > > > >
+> > > > > > > > > This patch entirely negates the advantage we gain from
+> > > > > > > > > device-specific
+> > > > > CMA.
+> > > > > > > > > My point is that instead of modifying the core code,
+> > > > > > > > > please consider correcting your device tree or cmdline
+> configurations.
+> > > > > > > > >
+> > > > > > > > Because we enabled secure heap to support widevine DRM,
+> > > > > > > > and secure heap requires security configuration, its
+> > > > > > > > starting address cannot be specified arbitrarily, which
+> > > > > > > > causes the default CMA to be reduced. So we
+> > > > > > > reduced the CMA, but in order to avoid the impact of
+> > > > > > > reducing the CMA, we used a multi-segment CMA and gave one
+> > > > > > > segment to the
+> > > VPU.
+> > > > > > > >
+> > > > > > > > However, under our memory configuration, the
+> > > > > > > > device-specific CMA is not
+> > > > > > > enough to support the VPU decoding high-resolution code
+> > > > > > > streams, so this patch is added so that the VPU can work =
+properly.
+> > > > > > > > Thanks.
+> > > > > > >
+> > > > > > > I don=E2=80=99t quite understand what you are saying. Why =
+can=E2=80=99t you
+> > > > > > > increase VPU=E2=80=99s CMA size?
+> > > > > > Thanks for your quick reply.
+> > > > > > Because we added a secure heap to support Widevine DRM, this
+> > > > > > heap
+> > > > > requires hardware protection, so its starting address cannot =
+be
+> > > > > specified arbitrarily. This causes the secure heap to occupy
+> > > > > part of the default CMA, and the default CMA is therefore
+> > > > > reduced, so in order to avoid default CMA Shrinking introduces
+> > > > > other problems. We added a specific CMA area for the VPU.
+> > > > > However, due to the large size of the secure heap and default
+> > > > > CMA, There is no remaining memory
+> > > available to increase specific CMA for VPU.
+> > > > >
+> > > > > I assume the secure heap you are referring to is a section of
+> > > > > memory that should only be accessed by TrustZone and not be
+> > > > > visible to Linux running in non-secure mode. How do you =
+allocate
+> > > > > this secure heap
+> > > from the default CMA?
+> > > >
+> > > > No, secure heap is a reserved memory, secure heap is not =
+allocated
+> > > > from CMA,
+> > > secure heap has been reserved during the kernel startup phase.
+> > > > And this reserved memory is protected by hardware. Only specific
+> > > > hardware
+> > > and secure world can accessed it.
+> > > > For example:
+> > > > &{/reserved-memory/} {
+> > > >         secure_region: secure {
+> > > >                 compatible =3D "imx-secure-ion-pool";
+> > > >                 reg =3D <0x0 0xA0000000 0 0x1EF00000>;
+> > > >         };
+> > > > };
+> > > >
+> > > > > Do you use the cma_alloc() APIs or the dma_alloc_coherent() =
+APIs?
+> > > > > Given that the VPU has its own device-specific CMA, why is =
+this
+> > > > > secure heap allocated from the default CMA instead of the =
+VPU's CMA?
+> > > > >
+> > > > The VPU driver will use dma_alloc_coherent() to allocate =
+contiguous
+> memory.
+> > > The secure heap is not allocated from the CMA, but because the
+> > > secure heap is enabled, it occupies some contiguous memory, =
+causing
+> > > the default CMA to be reduced.
+> > > >
+> > > > > If this secure heap was allocated before the kernel booted, =
+why
+> > > > > did the kernel(your dts) fail to mark this area as
+> > > > > nomap/reserved to prevent the default CMA from intersecting =
+with it?
+> > > > >
+> > > > Secure heap does not intersect with the CMA.
+> > > > for example:
+> > > > before secure heap enabled:
+> > > > 0xA000 0000 ~ 0xFFFFFFFF: default CMA after secure heap enabled:
+> > > > 0x9000 0000 ~0x9FFF FFFF is the CMA specified by VPU,
+> > > > 0xA000 0000 ~0xAFFF FFFF is secure heap, (the start address =
+cannot
+> > > > be
+> > > specified arbitrarily, because this memory is protected by =
+hardware,
+> > > if the start address is 0x9000 0000, uboot will use this memory, =
+but
+> > > uboot can't access this memory because of hardware protection. So =
+we
+> > > find a section of memory that UBOOT will not use as secure heap.
+> > > > Note: The memory of uboot can be adjusted, but avoiding the =
+secure
+> > > > heap will limit the memory range that uboot can use, causing
+> > > > problems such as the uboot stack)
+> > > > 0xB000 0000 ~0xFFFFFFFF is default CMA.
+> > > > So default CMA is reduced.
+> > >
+> > > How is that related to your patch? I assume the default CMA is
+> > > reduced because you modified it in the DTS after enabling the =
+secure
+> > > heap, as the CMA size is set by you. The default CMA size won't
+> > > automatically decrease due to the secure heap. To me,
+> 0xB0000000-0xFFFFFFFF(1.25GiB) is still too large a CMA.
+> > >
+> >
+> > Sorry, This example is just an example. In fact, the size of our =
+default CMA is
+> less than 1.25GiB.
+> > Our current memory distribution is as follows. Now the size of "c" =
+(default
+> CMA) could not meet the needs of our requirement. And "b" (reserved =
+memory
+> for secure) is fixed, so we couldn't expand "c" (default CMA) through =
+modify DTS.
+> Then we reserved "a" (specific CMA) for VPU. However, we have =
+confirmed with
+> the multimedia team that the maximum size required is It is uncertain, =
+so
+> specify "a" for VPU to use first, and "c" for other devices that =
+require continuous
+> memory. If "a" is not enough, use "c".
+> > That's the purpose of this patch.
+> >         --------------------------------------------------
+> >         | a. VPU specific cma             |
+> >         --------------------------------------------------
+> >         | b. reserved memory for secure    |
+> >         ---------------------------------------------------
+> >     | c. default CMA                 |
+> >     ---------------------------------------------------
+> > > >
+>=20
+> Ok, I understand your problem. Because B is enabled, you can't have C =
+as large
+> as you would without B. So you add A, but A might have insufficient =
+space for
+> high-resolution video. You also don't know the exact size needed for =
+A. In the
+> corner case of encoding/decoding high-resolution video, A might be =
+insufficient,
+> forcing you to borrow memory from C.  Because B is situated between A =
+and C,
+> creating a gap, you cannot merge A and C into a single default CMA.
+>=20
+> This does indeed seem like a valid requirement. Please ensure to =
+clearly describe
+> the problem next time. However, as a general rule, allowing =
+device-specific
+> CMAs to borrow from the default CMA is not advisable. This would =
+undermine
+> the reasons why we started supporting device-specific CMAs in the =
+first place.
+>=20
+> So the problem is that memory holes may prevent the formation of large =
+CMAs.
+>=20
+> This situation raises a question: can we have two or more default CMAs =
+due to
+> memory holes like B, which might hinder the system from obtaining a =
+sufficiently
+> large default CMA?
+>=20
+> If you could define both A and C as default CMAs, you wouldn't require =
+these
+> kinds of fallbacks. Is it possible for you to make =
+dma_contiguous_default_area a
+> list rather than a global variant ?
+>=20
+> Another option is that we allow devices to have more than one =
+memory-region,
+> we can use device tree to fallback.
+> memory-region =3D <&mem1, &mem2>;
+>=20
+> My perspective is that I acknowledge your problem as a valid =
+requirement.
+> However, I find the approach to be too aggressive.
+>=20
+OK, thanks very much for your suggestions.=20
+I will try the method you proposed but I'm not sure I can implement it, =
+it's a bit difficult for me. ^_^
+All in all, thank you for your patient reply.
 
-if (iomap->io_block_size)
-	io_block_size = iomap->io_block_size;
-else
-	io_block_size = i_block_size(inode)
+> > > > > >
+> > > > > > > It seems you mean that only in some corner cases do you =
+need
+> > > > > > > a large CMA, but most of the time, you don=E2=80=99t need =
+it to be
+> > > > > > > this big? So you have
+> > > > > to "borrow"
+> > > > > > > memory from the
+> > > > > > > default CMA. but why not move that portion from the =
+default
+> > > > > > > CMA to your VPU=E2=80=99s CMA?
+> > > > > > >
+> > > > > > This is a method, but because for VPU, the continuous memory
+> > > > > > size allocated
+> > > > > by the driver is based on the video stream, we cannot =
+determine
+> > > > > the maximum size of memory required by the VPU. This makes it
+> > > > > impossible for us to determine the size of the specific CMA =
+assigned to
+> the VPU. Thanks.
+> > > > >
+> > > > > I don't understand how this can happen. You should precisely
+> > > > > know the maximum size required for the VPU based on your
+> > > > > multimedia pipeline and resolutions.
+> > > > >
+> > > > We cannot estimate the maximum contiguous memory required by the
+> > > > VPU
+> > > because it depends on how the video is encoded.
+> > > > Thanks very much.
+> > >
+> > > Yes, you can. Please ask your multimedia team; they will give you =
+a number.
+> > >
+> > > >
+> > > > > I still don't understand your scenarios or the problem you are =
+facing.
+> > > >
+> > > >
+> > >
+>=20
+> Thanks
+> Barry
 
-but it was suggested to change that (to like what I have here).
+------=_NextPart_000_01D2_01DABDC0.103B1950
+Content-Type: application/pkcs7-signature;
+	name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="smime.p7s"
 
-> Anyone working on
-> an iomap port while this patchset is in progress may or may not remember
-> to add this bit if they get their port merged after atomicwrites is
-> merged; and you might not remember to prevent the bitrot if the reverse
-> order happens.
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIhTTCCBaIw
+ggOKoAMCAQICCE4Rpu+H69FRMA0GCSqGSIb3DQEBCwUAMGUxIjAgBgNVBAMMGU5YUCBJbnRlcm5h
+bCBQb2xpY3kgQ0EgRzIxCzAJBgNVBAsMAklUMREwDwYDVQQKDAhOWFAgQi5WLjESMBAGA1UEBwwJ
+RWluZGhvdmVuMQswCQYDVQQGEwJOTDAeFw0yMzA0MjEwNjQzNDVaFw0yODA0MTkwNjQzNDVaMIG2
+MRwwGgYDVQQDDBNOWFAgRW50ZXJwcmlzZSBDQSA1MQswCQYDVQQLDAJJVDERMA8GA1UECgwITlhQ
+IEIuVi4xEjAQBgNVBAcMCUVpbmRob3ZlbjEWMBQGA1UECAwNTm9vcmQtQnJhYmFudDETMBEGCgmS
+JomT8ixkARkWA3diaTETMBEGCgmSJomT8ixkARkWA254cDETMBEGCgmSJomT8ixkARkWA2NvbTEL
+MAkGA1UEBhMCTkwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDAWrnSkYP60A8wj4AO
+kATDjnbdgLv6waFfyXE/hvatdWz2YYtb1YSRi5/wXW+Pz8rsTmSj7iusI+FcLP8WEaMVLn4sEIQY
+NI8KJUCz21tsIArYs0hMKEUFeCq3mxTJfPqzdj9CExJBlZ5vWS4er8eJI8U8kZrt4CoY7De0FdJh
+35Pi5QGzUFmFuaLgXfV1N5yukTzEhqz36kODoSRw+eDHH9YqbzefzEHK9d93TNiLaVlln42O0qaI
+MmxK1aNcZx+nQkFsF/VrV9M9iLGA+Qb/MFmR20MJAU5kRGkJ2/QzgVQM3Nlmp/bF/3HWOJ2j2mpg
+axvzxHNN+5rSNvkG2vSpAgMBAAGjggECMIH/MFIGCCsGAQUFBwEBBEYwRDBCBggrBgEFBQcwAoY2
+aHR0cDovL253dy5wa2kubnhwLmNvbS9jZXJ0cy9OWFBJbnRlcm5hbFBvbGljeUNBRzIuY2VyMB0G
+A1UdDgQWBBRYlWDuTnTvZSKqve0ZqSt6jhedBzASBgNVHRMBAf8ECDAGAQH/AgEAMEUGA1UdHwQ+
+MDwwOqA4oDaGNGh0dHA6Ly9ud3cucGtpLm54cC5jb20vY3JsL05YUEludGVybmFsUG9saWN5Q0FH
+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
+MqAfBgorBgEEAYI3FAIDoBEMD3poYWkuaGVAbnhwLmNvbYEPemhhaS5oZUBueHAuY29tMB0GA1Ud
+DgQWBBRnNp0/tSrFNJlgS+ZRdCT+c5yRQDAfBgNVHSMEGDAWgBRYlWDuTnTvZSKqve0ZqSt6jhed
+BzCCAUYGA1UdHwSCAT0wggE5MIIBNaCCATGgggEthoHIbGRhcDovLy9DTj1OWFAlMjBFbnRlcnBy
+aXNlJTIwQ0ElMjA1LENOPW5sYW1zcGtpMDAwNSxDTj1DRFAsQ049UHVibGljJTIwS2V5JTIwU2Vy
+dmljZXMsQ049U2VydmljZXMsQ049Q29uZmlndXJhdGlvbixEQz13YmksREM9bnhwLERDPWNvbT9j
+ZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0P2Jhc2U/b2JqZWN0Q2xhc3M9Y1JMRGlzdHJpYnV0aW9u
+UG9pbnSGL2h0dHA6Ly9ud3cucGtpLm54cC5jb20vY3JsL05YUEVudGVycHJpc2VDQTUuY3Jshi9o
+dHRwOi8vd3d3LnBraS5ueHAuY29tL2NybC9OWFBFbnRlcnByaXNlQ0E1LmNybDCCARAGCCsGAQUF
+BwEBBIIBAjCB/zCBuwYIKwYBBQUHMAKGga5sZGFwOi8vL0NOPU5YUCUyMEVudGVycHJpc2UlMjBD
+QSUyMDUsQ049QUlBLENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNv
+bmZpZ3VyYXRpb24sREM9d2JpLERDPW54cCxEQz1jb20/Y0FDZXJ0aWZpY2F0ZT9iYXNlP29iamVj
+dENsYXNzPWNlcnRpZmljYXRpb25BdXRob3JpdHkwPwYIKwYBBQUHMAKGM2h0dHA6Ly9ud3cucGtp
+Lm54cC5jb20vY2VydHMvTlhQLUVudGVycHJpc2UtQ0E1LmNlcjANBgkqhkiG9w0BAQsFAAOCAQEA
+ggGwWe/YcZgJiMbIhUsSO/bYD09itDFnYO+uQqGwvPalRuHk3rA6pXfNb4DoA+gFZLgVDHNul0YA
+oS8u+LYHUwXe/tP1HZvoInRRnUjPCP7o3uoQFcX2Ay0pVz3AoByHaFAqF3zCCsAdDhTksMPZu2eQ
+oapJc06m3ZaIBpjT6aVZOXnRFVcHUjaMAZrpm2jqv3jJt58kP0dRsCrfKUkeTflak885rGuUypZC
+j9tjOii+7/qAsUR/JqMZADUo2cD+PvCwHZRPpj0x1b5Ain8/3mRDTCaa7mMOUApMdd7De9fNjosF
+LLTdnTiUXO+gnVgwXLvMOhuHTI6aWS+Z9pD1tTCCCDgwggcgoAMCAQICEy0AC58oXPwK6O6UsbsA
+AQALnygwDQYJKoZIhvcNAQELBQAwgbYxHDAaBgNVBAMME05YUCBFbnRlcnByaXNlIENBIDUxCzAJ
+BgNVBAsMAklUMREwDwYDVQQKDAhOWFAgQi5WLjESMBAGA1UEBwwJRWluZGhvdmVuMRYwFAYDVQQI
+DA1Ob29yZC1CcmFiYW50MRMwEQYKCZImiZPyLGQBGRYDd2JpMRMwEQYKCZImiZPyLGQBGRYDbnhw
+MRMwEQYKCZImiZPyLGQBGRYDY29tMQswCQYDVQQGEwJOTDAeFw0yNDAyMjcwMTIyMzNaFw0yNjAy
+MjYwMTIyMzNaMIGaMRMwEQYKCZImiZPyLGQBGRYDY29tMRMwEQYKCZImiZPyLGQBGRYDbnhwMRMw
+EQYKCZImiZPyLGQBGRYDd2JpMQwwCgYDVQQLEwNOWFAxCzAJBgNVBAsTAkNOMRYwFAYDVQQLEw1N
+YW5hZ2VkIFVzZXJzMRMwEQYDVQQLEwpEZXZlbG9wZXJzMREwDwYDVQQDEwhueGY2NDU5ODCCASIw
+DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAOFpbP807BLOCF4Zt9RudYkITj3hHgHYcWcIYUiT
+PmR5wym2ussl7jezDSHHlEvPmzhgdSx/PVPpYcv80hjMDHFw3aoV0qyOU+W/pOT2oCL/7S/fHWUe
+2Sahoup+MvYXycNdoONBohwwdCcWt71fxvxzsCq0XtnkUdgoTXFlZb53vhD3rAHvP/QhY8jLGvMa
+I/xK5kFNYIC5EBH5m+atfPB7qERZIUU9nCacRfJVAZpkK0j8L1YBjG28Xm9OcDdgQAsOVRFdkFxk
+3YVjHiSmGfDmd8QdvPJrlIDb/mdVXR/FGSl95J16mkithq2e3DBNOJtWrxxj3XDkmXpr9iAUGpEC
+AwEAAaOCBFcwggRTMDwGCSsGAQQBgjcVBwQvMC0GJSsGAQQBgjcVCIWCwH6BjvRVhu2FOILrmUua
+klY/heaKboS14X4CAWQCAUEwEwYDVR0lBAwwCgYIKwYBBQUHAwQwDgYDVR0PAQH/BAQDAgUgMAwG
+A1UdEwEB/wQCMAAwGwYJKwYBBAGCNxUKBA4wDDAKBggrBgEFBQcDBDCBlAYJKoZIhvcNAQkPBIGG
+MIGDMAsGCWCGSAFlAwQBKjALBglghkgBZQMEAS0wCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBGTAL
+BglghkgBZQMEAQIwCwYJYIZIAWUDBAEFMAoGCCqGSIb3DQMHMAcGBSsOAwIHMA4GCCqGSIb3DQMC
+AgIAgDAOBggqhkiG9w0DBAICAgAwUQYJKwYBBAGCNxkCBEQwQqBABgorBgEEAYI3GQIBoDIEMFMt
+MS01LTIxLTE5MTUyMDcwMTMtMjYxNTA0MDM2OC0zMDc2OTI5NDU4LTk0NzgwMjA7BgNVHREENDAy
+oB8GCisGAQQBgjcUAgOgEQwPemhhaS5oZUBueHAuY29tgQ96aGFpLmhlQG54cC5jb20wHQYDVR0O
+BBYEFDrgyxq3zDcnhNi/Mb2VXLlr7Mn3MB8GA1UdIwQYMBaAFFiVYO5OdO9lIqq97RmpK3qOF50H
+MIIBRgYDVR0fBIIBPTCCATkwggE1oIIBMaCCAS2GgchsZGFwOi8vL0NOPU5YUCUyMEVudGVycHJp
+c2UlMjBDQSUyMDUsQ049bmxhbXNwa2kwMDA1LENOPUNEUCxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2
+aWNlcyxDTj1TZXJ2aWNlcyxDTj1Db25maWd1cmF0aW9uLERDPXdiaSxEQz1ueHAsREM9Y29tP2Nl
+cnRpZmljYXRlUmV2b2NhdGlvbkxpc3Q/YmFzZT9vYmplY3RDbGFzcz1jUkxEaXN0cmlidXRpb25Q
+b2ludIYvaHR0cDovL253dy5wa2kubnhwLmNvbS9jcmwvTlhQRW50ZXJwcmlzZUNBNS5jcmyGL2h0
+dHA6Ly93d3cucGtpLm54cC5jb20vY3JsL05YUEVudGVycHJpc2VDQTUuY3JsMIIBEAYIKwYBBQUH
+AQEEggECMIH/MIG7BggrBgEFBQcwAoaBrmxkYXA6Ly8vQ049TlhQJTIwRW50ZXJwcmlzZSUyMENB
+JTIwNSxDTj1BSUEsQ049UHVibGljJTIwS2V5JTIwU2VydmljZXMsQ049U2VydmljZXMsQ049Q29u
+ZmlndXJhdGlvbixEQz13YmksREM9bnhwLERDPWNvbT9jQUNlcnRpZmljYXRlP2Jhc2U/b2JqZWN0
+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
 
-Sure, I get your point.
-
-However, OTOH, if we check xfs_bmbt_to_iomap(), it does set all or close 
-to all members of struct iomap, so we are just continuing that trend, 
-i.e. it is the job of the FS callback to set all these members.
-
-> 
-> 	u64 io_block_size = iomap->io_block_size ?: i_blocksize(inode);
-> 
->>   	loff_t length = iomap_length(iter);
->>   	loff_t pos = iter->pos;
->>   	blk_opf_t bio_opf;
->> @@ -287,6 +287,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->>   	int nr_pages, ret = 0;
->>   	size_t copied = 0;
->>   	size_t orig_count;
->> +	unsigned int pad;
->>   
->>   	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
->>   	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
->> @@ -355,7 +356,14 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->>   
->>   	if (need_zeroout) {
->>   		/* zero out from the start of the block to the write offset */
->> -		pad = pos & (fs_block_size - 1);
->> +		if (is_power_of_2(io_block_size)) {
->> +			pad = pos & (io_block_size - 1);
->> +		} else {
->> +			loff_t _pos = pos;
->> +
->> +			pad = do_div(_pos, io_block_size);
->> +		}
-> Please don't opencode this twice.
-> 
-> static unsigned int offset_in_block(loff_t pos, u64 blocksize)
-> {
-> 	if (likely(is_power_of_2(blocksize)))
-> 		return pos & (blocksize - 1);
-> 	return do_div(pos, blocksize);
-> }
-
-ok, fine
-
-> 
-> 		pad = offset_in_block(pos, io_block_size);
-> 		if (pad)
-> 			...
-> 
-> Also, what happens if pos-pad points to a byte before the mapping?
-
-It's the job of the FS to map in something aligned to io_block_size. 
-Having said that, I don't think we are doing that for XFS (which sets 
-io_block_size > i_block_size(inode)), so I need to check that.
-
-> 
->> +
->>   		if (pad)
->>   			iomap_dio_zero(iter, dio, pos - pad, pad);
->>   	}
->> @@ -429,9 +437,16 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->>   	if (need_zeroout ||
->>   	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode))) {
->>   		/* zero out from the end of the write to the end of the block */
->> -		pad = pos & (fs_block_size - 1);
->> +		if (is_power_of_2(io_block_size)) {
->> +			pad = pos & (io_block_size - 1);
->> +		} else {
->> +			loff_t _pos = pos;
->> +
->> +			pad = do_div(_pos, io_block_size);
->> +		}
->> +
->>   		if (pad)
->> -			iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
->> +			iomap_dio_zero(iter, dio, pos, io_block_size - pad);
-> What if pos + io_block_size - pad points to a byte after the end of the
-> mapping?
-
-as above, we expect this to be mapped in (so ok to zero)
-
-> 
->>   	}
->>   out:
->>   	/* Undo iter limitation to current extent */
->> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
->> index 378342673925..ecb4cae88248 100644
->> --- a/fs/xfs/xfs_iomap.c
->> +++ b/fs/xfs/xfs_iomap.c
->> @@ -127,6 +127,7 @@ xfs_bmbt_to_iomap(
->>   	}
->>   	iomap->offset = XFS_FSB_TO_B(mp, imap->br_startoff);
->>   	iomap->length = XFS_FSB_TO_B(mp, imap->br_blockcount);
->> +	iomap->io_block_size = i_blocksize(VFS_I(ip));
->>   	if (mapping_flags & IOMAP_DAX)
->>   		iomap->dax_dev = target->bt_daxdev;
->>   	else
->> diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
->> index 3b103715acc9..bf2cc4bee309 100644
->> --- a/fs/zonefs/file.c
->> +++ b/fs/zonefs/file.c
->> @@ -50,6 +50,7 @@ static int zonefs_read_iomap_begin(struct inode *inode, loff_t offset,
->>   		iomap->addr = (z->z_sector << SECTOR_SHIFT) + iomap->offset;
->>   		iomap->length = isize - iomap->offset;
->>   	}
->> +	iomap->io_block_size = i_blocksize(inode);
->>   	mutex_unlock(&zi->i_truncate_mutex);
->>   
->>   	trace_zonefs_iomap_begin(inode, iomap);
->> @@ -99,6 +100,7 @@ static int zonefs_write_iomap_begin(struct inode *inode, loff_t offset,
->>   		iomap->type = IOMAP_MAPPED;
->>   		iomap->length = isize - iomap->offset;
->>   	}
->> +	iomap->io_block_size = i_blocksize(inode);
->>   	mutex_unlock(&zi->i_truncate_mutex);
->>   
->>   	trace_zonefs_iomap_begin(inode, iomap);
->> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
->> index 6fc1c858013d..d63a35b77907 100644
->> --- a/include/linux/iomap.h
->> +++ b/include/linux/iomap.h
->> @@ -103,6 +103,8 @@ struct iomap {
->>   	void			*private; /* filesystem private */
->>   	const struct iomap_folio_ops *folio_ops;
->>   	u64			validity_cookie; /* used with .iomap_valid() */
->> +	/* io block zeroing size, not necessarily a power-of-2  */
-> size in bytes?
-> 
-> I'm not sure what "io block zeroing" means. 
-
-Naming is hard. Essentally we are trying to reuse the sub-fs block 
-zeroing code for sub-extent granule writes. More below.
-
-> What are you trying to
-> accomplish here?  Let's say the fsblock size is 4k and the allocation
-> unit (aka the atomic write size) is 16k. 
-
-ok, so I say here that the extent granule is 16k
-
-> Userspace wants a direct write
-> to file offset 8192-12287, and that space is unwritten:
-> 
-> uuuu
->    ^
-> 
-> Currently we'd just write the 4k and run the io completion handler, so
-> the final state is:
-> 
-> uuWu
-> 
-> Instead, if the fs sets io_block_size to 16384, does this direct write
-> now amplify into a full 16k write?  
-
-Yes, but only when the extent is newly allocated and we require zeroing.
-
-> With the end result being:
-> ZZWZ
-
-Yes
-
-> 
-> only.... I don't see the unwritten areas being converted to written?
-
-See xfs_iomap_write_unwritten() change in the next patch
-
-> I guess for an atomic write you'd require the user to write 0-16383?
-
-Not exactly
-
-> 
-> <still confused about why we need to do this, maybe i'll figure it out
-> as I go along>
-
-This zeroing is just really required for atomic writes. The purpose is 
-to zero the extent granule for any write within a newly allocated granule.
-
-Consider we have uuWu, above. If the user then attempts to write the 
-full 16K as an atomic write, the iomap iter code would generate writes 
-for sizes 8k, 4k, and 4k, i.e. not a single 16K write. This is not 
-acceptable. So the idea is to zero the full extent granule when 
-allocated, so we have ZZWZ after the 4k write at offset 8192, above. As 
-such, if we then attempt this 16K atomic write, we get a single 16K BIO, 
-i.e. there is no unwritten extent conversion.
-
-I am not sure if we should be doing this only for atomic writes inodes, 
-or also forcealign only or RT.
-
-Thanks,
-John
-
-
+------=_NextPart_000_01D2_01DABDC0.103B1950--
 
