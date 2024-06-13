@@ -1,275 +1,169 @@
-Return-Path: <linux-kernel+bounces-212987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 063A2906969
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:55:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEAA590696C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBAB1C22992
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:55:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5981AB25145
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97AB1411CE;
-	Thu, 13 Jun 2024 09:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5EC14199F;
+	Thu, 13 Jun 2024 09:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gc9UWQbl"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="UASGHpkB"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518291304AA;
-	Thu, 13 Jun 2024 09:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336771411C2;
+	Thu, 13 Jun 2024 09:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718272496; cv=none; b=YYIx//dYhigempq6cyENvhS0dXc8AmsG+pn0pg2B/Kf5Mq8GaDpEY55UaQfsQoLxnMcjoGPb0a2BU4+oKn0jUoSffWIIy/X5E1NM3xyqQwlYNtznKrD4IeZl1/51mHGveuLUbItOmOBde44SwGm45UTtOmbRYwwa/nn3mfcrLBI=
+	t=1718272502; cv=none; b=bxn8ppWDsvNfwdviMu0ZsdpyEE0Ds0bjFWB1HvTsYzlHj0/3PpMfoUpsQU3ox9jxH8jQSuFpDmSrqfZOliKjRJma6uFJDEI7YkIZAG5ks41tBzIsuKURiJL7bOXK2+o5Aow1CAxYiyvzRLU26BikKgD+WExUF7yMf84IHFVtyAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718272496; c=relaxed/simple;
-	bh=nyhD0QEQnN8q2PdwNwl3A2WK3my9sXc9o7+HfIXyEhI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cYFBUKQg91KIa9VujSIU2/BoNgdvkdr8WDstilAozftdyNoMg/LjYQDUw6FQysTcSGhHC4CAdf2JvlD1IpceqxGYwxcn+Cqq6Nlzoh2vXXE7OOVrVxpZYN19iOu9xHfua7jxPfOSdSRaQYBa02bfUE4G24Jvj+/c7zHAkSnIMAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gc9UWQbl; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3737b412ad6so2773795ab.2;
-        Thu, 13 Jun 2024 02:54:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718272494; x=1718877294; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aCTkK4uPvyN5EPmGILT+j3bzlqaQqHiiUqqzBMYByzw=;
-        b=gc9UWQblb+7TEr7dxfsAwX9s34Wc/H5Tww87AvfXViDN41tC1LOb/1oAEskk0b7jD0
-         6op/xBjKA6x1KUF6ADIhYypPsoL/gYwD6aI6PEj760DY7lv99gFaNQu4+bJ0aXlv4nLO
-         p8UrX2lvcXJ9XV3N2oOqvBCOlppnWYEhyTLREI9em6uuTEu6Whpn/ZUbFotXf37KI7jF
-         1JsjfcHlYLyiWoSo3XQMpUKtdt3Xqu61j+56E0PsOtJr/MShBE8QLgh5aPp7U1LJ69H0
-         9pq9D4gB0VmWbL+bvoO0EKrfuN6N/JC1+fZ9QdOOP+0H+mah0lLWLzJS7Q8XchKXT7Zt
-         LNIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718272494; x=1718877294;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aCTkK4uPvyN5EPmGILT+j3bzlqaQqHiiUqqzBMYByzw=;
-        b=U1KXOcOFherf7kLFRSqttGbLeHu9z1RduryJrQeC05LwTQ1+uwZwvZXn6J0zJaSlOc
-         kPQA8N4J4dVMiP8HO98fh6BFCy1sa+1tgb+w56kDO8WwPwRu3BaAQq+avsSQf/Q5s9kS
-         xnAFfk6YPqey9BY8HjIdQj89vd6A/RHgkhkN4FtLxwhEHb+8NBtcVLLaMeOYjpEqVEHf
-         bllK662//EHQuUbtHTGdZ83u9E139ICqN4OdRfWIYLvoAhlgQolp8sKRGB82e5yAMdRH
-         B4lQGjN7GfMZYhTnIQfxzK40cbEHMScn7nwG6UM74L4VDBUuzxUhAisCVsC/mMRfx5cD
-         yrLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbiDZGCNuXI7tUWN4LLZosYU5wNBA40TOgMIQXRaY7I+7trvfy1vfaQw8oRKSR3Ah+3lIdjOeSaYe6gTphj7S6UW3Zh3kbkg0fk85tOkwlM8R6WxW/yD656xU1sUCsRjLOkOFFIXP9kGMopIp5m+twgv6xr7LQZlP28aW8t7Rjfx3qag==
-X-Gm-Message-State: AOJu0YwLvZMb7If5tiylblln1TByuNwt+AxZLNo5NZ8/44+4gT5L/5Ck
-	cM6zaMiSFQSowMvGxQLY43vF9h4HyNLJDuZmsNhIRkj6EpcaXvWUZ1xWPUbOGXdaND+G4kY/TPg
-	mP7h4hh51pE34C4zZxsRtDyd0ah8=
-X-Google-Smtp-Source: AGHT+IFkGYszJ8Pxt+FoagUvuCBZnHXe7jEhNqmAbHSu7AHwUCTs61Vo3LTkzuqt+xiaFuC26Hoyuoh1r6np/kDlF5M=
-X-Received: by 2002:a92:cf11:0:b0:375:a04d:e1e0 with SMTP id
- e9e14a558f8ab-375cd1973edmr33811725ab.24.1718272494318; Thu, 13 Jun 2024
- 02:54:54 -0700 (PDT)
+	s=arc-20240116; t=1718272502; c=relaxed/simple;
+	bh=XnuWg2Emch0/204csrIJ1PmV8H0Z4/Kb0XfctwfzmfE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pmscpmDmFelP0j5STxZ2Z2ae6gIHEDwrp4jlie2KTPMarFeh3MsrHqJ/gDBwSoiezFY+hcD9HEr2miOPvLUIH6YCczLsr1TaVg34lJ1VBCOloozOQgCt37fvkeUqAxDLeRyYScaT2ezDHScJUCPT8YNyd9NUTL6iA2PzaS5QC4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=UASGHpkB; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+From: Denis Arefev <arefev@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1718272488;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JxF9v+MgG1oJK9K0GvDYFSNk1WRmKVVkPVwWZtJ2zws=;
+	b=UASGHpkBaR6P9fcZXpMWF0YLq5RGEUYvq+MNYp3J85MYXz8EVrrWVtOPUALLMILWch8hRQ
+	gfAET9Tvo0BxyyWAjbJVQonuuQRO+LA/BO/NgeP+bXQ4GtF/htEu/mMSFRjBbLr6ZJ53mT
+	eQjArYsXZ3KR6NL1zUWnxaj7vkD5+uw=
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	lvc-project@linuxtesting.org
+Subject: [PATCH v2] net: missing check virtio
+Date: Thu, 13 Jun 2024 12:54:48 +0300
+Message-Id: <20240613095448.27118-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
- <1718243482-18552-3-git-send-email-shengjiu.wang@nxp.com> <20240613081949.yty3hznopp3u2qwq@pengutronix.de>
- <CAA+D8AMc9=bzHKNXyMH5LLerr2kgmKTxacP=1LhocTHgP9Thfw@mail.gmail.com> <20240613093906.trc2rahodmhqd4lt@pengutronix.de>
-In-Reply-To: <20240613093906.trc2rahodmhqd4lt@pengutronix.de>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Thu, 13 Jun 2024 17:54:43 +0800
-Message-ID: <CAA+D8ANzP1hFGQ0HTtKmwDf4-RnAkZDxpQ5Uf1X7ObiAZGnvWw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/5] clk: imx: clk-audiomix: Add reset controller
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, p.zabel@pengutronix.de, abelvesa@kernel.org, 
-	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 13, 2024 at 5:39=E2=80=AFPM Marco Felsch <m.felsch@pengutronix.=
-de> wrote:
->
-> On 24-06-13, Shengjiu Wang wrote:
-> > On Thu, Jun 13, 2024 at 4:20=E2=80=AFPM Marco Felsch <m.felsch@pengutro=
-nix.de> wrote:
-> > >
-> > > On 24-06-13, Shengjiu Wang wrote:
-> > > > Audiomix block control can be a reset controller for
-> > > > Enhanced Audio Return Channel (EARC), which is one of
-> > > > modules in this audiomix subsystem.
-> > > >
-> > > > The reset controller is supported by the auxiliary device
-> > > > framework.
-> > > >
-> > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > > ---
-> > > >  drivers/clk/imx/Kconfig               |  1 +
-> > > >  drivers/clk/imx/clk-imx8mp-audiomix.c | 63 +++++++++++++++++++++++=
-++++
-> > > >  2 files changed, 64 insertions(+)
-> > > >
-> > > > diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-> > > > index 6da0fba68225..9edfb030bea9 100644
-> > > > --- a/drivers/clk/imx/Kconfig
-> > > > +++ b/drivers/clk/imx/Kconfig
-> > > > @@ -81,6 +81,7 @@ config CLK_IMX8MP
-> > > >       tristate "IMX8MP CCM Clock Driver"
-> > > >       depends on ARCH_MXC || COMPILE_TEST
-> > > >       select MXC_CLK
-> > > > +     select AUXILIARY_BUS
-> > >
-> > >         select AUXILIARY_BUS if RESET_CONTROLLER
-> >
-> > Do we really need this change?
-> >
-> > I checked other drivers like MCHP_CLK_MPFS, but they don't have
-> > this condition also.
->
-> Since you made the whole reset optional I would like to pull reset
-> dependency optional as well e.g. pulling it only if you really use it.
-> In the end the RESET_CONTROLLER is enabled most the time.
+Two missing check in virtio_net_hdr_to_skb() allowed syzbot
+to crash kernels again
 
-ok, will add it.
+1. After the skb_segment function the buffer may become non-linear
+(nr_frags != 0), but since the SKBTX_SHARED_FRAG flag is not set anywhere
+the __skb_linearize function will not be executed, then the buffer will
+remain non-linear. Then the condition (offset >= skb_headlen(skb))
+becomes true, which causes WARN_ON_ONCE in skb_checksum_help.
 
-best regards
-Shengjiu Wang
->
-> > > >       help
-> > > >           Build the driver for i.MX8MP CCM Clock Driver
-> > > >
-> > > > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/im=
-x/clk-imx8mp-audiomix.c
-> > > > index b381d6f784c8..517b1f88661b 100644
-> > > > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > > @@ -5,6 +5,7 @@
-> > > >   * Copyright (C) 2022 Marek Vasut <marex@denx.de>
-> > > >   */
-> > > >
-> > > > +#include <linux/auxiliary_bus.h>
-> > > >  #include <linux/clk-provider.h>
-> > > >  #include <linux/device.h>
-> > > >  #include <linux/io.h>
-> > > > @@ -13,6 +14,7 @@
-> > > >  #include <linux/of.h>
-> > > >  #include <linux/platform_device.h>
-> > > >  #include <linux/pm_runtime.h>
-> > > > +#include <linux/slab.h>
-> > >                 ^
-> > > This is an unrelated change.
-> >
-> > This is for the fix of this issue
-> >
-> > https://lore.kernel.org/oe-kbuild-all/202405201844.zf7UkDmq-lkp@intel.c=
-om/
->
-> Thanks for the link.
->
-> Regards,
->   Marco
->
-> > Best regards
-> > Shengjiu wang
-> >
-> > >
-> > > Regards,
-> > >   Marco
-> > >
-> > > >
-> > > >  #include <dt-bindings/clock/imx8mp-clock.h>
-> > > >
-> > > > @@ -217,6 +219,63 @@ struct clk_imx8mp_audiomix_priv {
-> > > >       struct clk_hw_onecell_data clk_data;
-> > > >  };
-> > > >
-> > > > +#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
-> > > > +
-> > > > +static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
-> > > > +{
-> > > > +     struct auxiliary_device *adev =3D _adev;
-> > > > +
-> > > > +     auxiliary_device_delete(adev);
-> > > > +     auxiliary_device_uninit(adev);
-> > > > +}
-> > > > +
-> > > > +static void clk_imx8mp_audiomix_reset_adev_release(struct device *=
-dev)
-> > > > +{
-> > > > +     struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> > > > +
-> > > > +     kfree(adev);
-> > > > +}
-> > > > +
-> > > > +static int clk_imx8mp_audiomix_reset_controller_register(struct de=
-vice *dev,
-> > > > +                                                      struct clk_i=
-mx8mp_audiomix_priv *priv)
-> > > > +{
-> > > > +     struct auxiliary_device *adev __free(kfree) =3D NULL;
-> > > > +     int ret;
-> > > > +
-> > > > +     if (!of_property_present(dev->of_node, "#reset-cells"))
-> > > > +             return 0;
-> > > > +
-> > > > +     adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
-> > > > +     if (!adev)
-> > > > +             return -ENOMEM;
-> > > > +
-> > > > +     adev->name =3D "reset";
-> > > > +     adev->dev.parent =3D dev;
-> > > > +     adev->dev.release =3D clk_imx8mp_audiomix_reset_adev_release;
-> > > > +
-> > > > +     ret =3D auxiliary_device_init(adev);
-> > > > +     if (ret)
-> > > > +             return ret;
-> > > > +
-> > > > +     ret =3D auxiliary_device_add(adev);
-> > > > +     if (ret) {
-> > > > +             auxiliary_device_uninit(adev);
-> > > > +             return ret;
-> > > > +     }
-> > > > +
-> > > > +     return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_rese=
-t_unregister_adev,
-> > > > +                                     no_free_ptr(adev));
-> > > > +}
-> > > > +
-> > > > +#else /* !CONFIG_RESET_CONTROLLER */
-> > > > +
-> > > > +static int clk_imx8mp_audiomix_reset_controller_register(struct cl=
-k_imx8mp_audiomix_priv *priv)
-> > > > +{
-> > > > +     return 0;
-> > > > +}
-> > > > +
-> > > > +#endif /* !CONFIG_RESET_CONTROLLER */
-> > > > +
-> > > >  static void clk_imx8mp_audiomix_save_restore(struct device *dev, b=
-ool save)
-> > > >  {
-> > > >       struct clk_imx8mp_audiomix_priv *priv =3D dev_get_drvdata(dev=
-);
-> > > > @@ -337,6 +396,10 @@ static int clk_imx8mp_audiomix_probe(struct pl=
-atform_device *pdev)
-> > > >       if (ret)
-> > > >               goto err_clk_register;
-> > > >
-> > > > +     ret =3D clk_imx8mp_audiomix_reset_controller_register(dev, pr=
-iv);
-> > > > +     if (ret)
-> > > > +             goto err_clk_register;
-> > > > +
-> > > >       pm_runtime_put_sync(dev);
-> > > >       return 0;
-> > > >
-> > > > --
-> > > > 2.34.1
-> > > >
-> > > >
-> > > >
-> >
+2. The struct sk_buff and struct virtio_net_hdr members must be
+mathematically related.
+(gso_size) must be greater than (needed) otherwise WARN_ON_ONCE.
+(remainder) must be greater than (needed) otherwise WARN_ON_ONCE.
+(remainder) may be 0 if division is without remainder.
+
+offset+2 (4191) > skb_headlen() (1116)
+WARNING: CPU: 1 PID: 5084 at net/core/dev.c:3303 skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
+Modules linked in:
+CPU: 1 PID: 5084 Comm: syz-executor336 Not tainted 6.7.0-rc3-syzkaller-00014-gdf60cee26a2e #0
+Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 11/10/2023
+RIP: 0010:skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
+Code: 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 52 01 00 00 44 89 e2 2b 53 74 4c 89 ee 48 c7 c7 40 57 e9 8b e8 af 8f dd f8 90 <0f> 0b 90 90 e9 87 fe ff ff e8 40 0f 6e f9 e9 4b fa ff ff 48 89 ef
+RSP: 0018:ffffc90003a9f338 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff888025125780 RCX: ffffffff814db209
+RDX: ffff888015393b80 RSI: ffffffff814db216 RDI: 0000000000000001
+RBP: ffff8880251257f4 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: 000000000000045c
+R13: 000000000000105f R14: ffff8880251257f0 R15: 000000000000105d
+FS:  0000555555c24380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000f000 CR3: 0000000023151000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ip_do_fragment+0xa1b/0x18b0 net/ipv4/ip_output.c:777
+ ip_fragment.constprop.0+0x161/0x230 net/ipv4/ip_output.c:584
+ ip_finish_output_gso net/ipv4/ip_output.c:286 [inline]
+ __ip_finish_output net/ipv4/ip_output.c:308 [inline]
+ __ip_finish_output+0x49c/0x650 net/ipv4/ip_output.c:295
+ ip_finish_output+0x31/0x310 net/ipv4/ip_output.c:323
+ NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+ ip_output+0x13b/0x2a0 net/ipv4/ip_output.c:433
+ dst_output include/net/dst.h:451 [inline]
+ ip_local_out+0xaf/0x1a0 net/ipv4/ip_output.c:129
+ iptunnel_xmit+0x5b4/0x9b0 net/ipv4/ip_tunnel_core.c:82
+ ipip6_tunnel_xmit net/ipv6/sit.c:1034 [inline]
+ sit_tunnel_xmit+0xed2/0x28f0 net/ipv6/sit.c:1076
+ __netdev_start_xmit include/linux/netdevice.h:4940 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4954 [inline]
+ xmit_one net/core/dev.c:3545 [inline]
+ dev_hard_start_xmit+0x13d/0x6d0 net/core/dev.c:3561
+ __dev_queue_xmit+0x7c1/0x3d60 net/core/dev.c:4346
+ dev_queue_xmit include/linux/netdevice.h:3134 [inline]
+ packet_xmit+0x257/0x380 net/packet/af_packet.c:276
+ packet_snd net/packet/af_packet.c:3087 [inline]
+ packet_sendmsg+0x24ca/0x5240 net/packet/af_packet.c:3119
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0xd5/0x180 net/socket.c:745
+ __sys_sendto+0x255/0x340 net/socket.c:2190
+ __do_sys_sendto net/socket.c:2202 [inline]
+ __se_sys_sendto net/socket.c:2198 [inline]
+ __x64_sys_sendto+0xe0/0x1b0 net/socket.c:2198
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller
+
+Signed-off-by: Denis Arefev <arefev@swemel.ru>
+---
+ V1 -> V2: incorrect type in argument 2
+ include/linux/virtio_net.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
+index 4dfa9b69ca8d..d1d7825318c3 100644
+--- a/include/linux/virtio_net.h
++++ b/include/linux/virtio_net.h
+@@ -56,6 +56,7 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
+ 	unsigned int thlen = 0;
+ 	unsigned int p_off = 0;
+ 	unsigned int ip_proto;
++	u64 ret, remainder, gso_size;
+ 
+ 	if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
+ 		switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
+@@ -98,6 +99,16 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
+ 		u32 off = __virtio16_to_cpu(little_endian, hdr->csum_offset);
+ 		u32 needed = start + max_t(u32, thlen, off + sizeof(__sum16));
+ 
++		if (hdr->gso_size) {
++			gso_size = __virtio16_to_cpu(little_endian, hdr->gso_size);
++			ret = div64_u64_rem(skb->len, gso_size, &remainder);
++			if (!(ret && (hdr->gso_size > needed) &&
++						((remainder > needed) || (remainder == 0)))) {
++				return -EINVAL;
++			}
++			skb_shinfo(skb)->tx_flags |= SKBFL_SHARED_FRAG;
++		}
++
+ 		if (!pskb_may_pull(skb, needed))
+ 			return -EINVAL;
+ 
+-- 
+2.25.1
+
 
