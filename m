@@ -1,85 +1,53 @@
-Return-Path: <linux-kernel+bounces-213003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A17BC9069B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:10:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C459069B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A31F1F245E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4521C210D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCB81419AA;
-	Thu, 13 Jun 2024 10:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S+jejdCP"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1BD1411E0
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1D91411FF;
+	Thu, 13 Jun 2024 10:10:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFC8140E5E;
+	Thu, 13 Jun 2024 10:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718273441; cv=none; b=Ko3e3vzVd/hhi+/n00veSGavkRZ7Rz0oy5W+pCtstpOgTeC6AcVGSxFz4aEn88XibCC/K34S+vWDD2dzelv7mdEu/nwILOBoEXHoG7Sw6UNwJSy/0ro6bQHDnfbh8nLqD13NjdsuC2Zw75sO0P68887CkEMMr0zJ49NOhZ28eHY=
+	t=1718273458; cv=none; b=XgB8RQO5Vh39K6/NDnxXJb2pTXyE9qBLcZhlxjUnMcDaKVKdrvPB7IdW4uaH+qTLTo8QiHCkRw+BntVT+aRNgLcLv8pHF7+72IUSpFiK6pcrullLHzfpkpPE1MdMuv3YQdfildAO9JpE3GWgVIc15mc5aS1qhF2rEsVbUQZlzqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718273441; c=relaxed/simple;
-	bh=mOMZE1BImQgQqVos0pSrYVwUrtiIOEk/BT5krayXtjI=;
+	s=arc-20240116; t=1718273458; c=relaxed/simple;
+	bh=TlbJyx+7DYGqEN8p9zg1Ig4eLs1UO4SOV9WpXUZtOrg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XIWVNVuYnTQq0RtbCH5hzB+SG5cXise955oVKV0eZbnGimwKLUx1iiYiAXZFHEdJXPez4UfnsejNxIRN419NeK/za39ljeSHBJ0qgOBGIJBsWVsDpueg3nzrIewg7EfuG1JRz1XFXLteaaxP4n+NBMU/dFAnCA3D7r1i+kMSYrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S+jejdCP; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52c8c0d73d3so1050572e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 03:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718273437; x=1718878237; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VnOXzfBQPF+LHXjU6pXBEMJF3WvZiisnuKFTk0ZYuAo=;
-        b=S+jejdCPSgiDz1ZDqAOPS79cij4ikRaQJnFPWZjdD6wTKuVVopRz3lllO8SKqrvFSw
-         C90yFR52ZUGIC0jUbbhnFrMnlGlJw2Rb7NxesuEnfpSPlotY+yvJbQkmKJLZBR6MxRiE
-         rROuYy8ZlhB4EEa7viqg/m7j/qZ5OjoTPN6qMxxzgCfv6PNH4qg6xNGwyfKbValyW/LL
-         KQ6omeOHDMuupUUycGOIoea0n/vhIJIND5ooye/jIqWVIy8A/3WbkuPnVyHoG/3WXX5l
-         gFnbiNT9GeExEqiCHSl77azExi6zvAVccfQfR/TbFMaq5WWCzZgevXbU5Ev5FhxqKuOM
-         Biiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718273437; x=1718878237;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VnOXzfBQPF+LHXjU6pXBEMJF3WvZiisnuKFTk0ZYuAo=;
-        b=PmGrfpg2snawJ9WqcX5k1UiYZZXYNjATU7sO9oJ4m5nNoJXVRdXiUGSCCw5Y62R3sO
-         LXqXboF1tHMc9R/SiIuA6/ZfpnTLWyCWJuIaA6Mg4+KlMULZfXAfPdgBhWKXyB9IfnjO
-         C93Yj2Uy2Jb5IXojF1Nk9kdcihWusH9bIukWJwHY3DnDsuXgirX+FHinnvlLAmi6+JVj
-         2DSf11IyQx0iz1m1asM7J+ZqsALeIWtp/9hCwuBoCxVA09MkHKQE85Hife6LKL/9Lib9
-         TwW0zIG5VPRqBtJ0vJxR1Bo74jib5ajpzYwsZs7Aamhyi+vtaeHni9YD4zzVb9QM+bHA
-         3ttw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWF84p/f//DRaTbE8eti6sUkPdw2qKb5b3idYgaxsaFCDi4T8PVTOoh7FF1HOXPuv2hez3pQnowmOGmRq9OHP6FJjOtRYsIvDPqsyh
-X-Gm-Message-State: AOJu0YzktI05qvsRyjeXm2hpaNcBKLuZKqbxQ6vFDmTWapyCNLIqIcUZ
-	namw08L0TrUXfMyk7bdW1m5LtsjWjvqi6wYSloqHrprv75tq51Wlyng2OywvYIM=
-X-Google-Smtp-Source: AGHT+IEnmrWgnM5SGxICW1vWwc2O/mTW96VNMeI3/JiExHdDPaxx2NlTGNeh1bZrVaDWkM08FDbyLQ==
-X-Received: by 2002:a05:6512:44a:b0:52c:8a4e:f4bf with SMTP id 2adb3069b0e04-52c9a400d27mr2332640e87.51.1718273437098;
-        Thu, 13 Jun 2024 03:10:37 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca287ad17sm146604e87.225.2024.06.13.03.10.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 03:10:36 -0700 (PDT)
-Date: Thu, 13 Jun 2024 13:10:35 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100-crd: fix DAI used for
- headset recording
-Message-ID: <7rfoogp7w3gmtyawmil5lilx4blbpnb3nzl5tv2onydmzblcqw@qooqesspnrp4>
-References: <20240611142555.994675-1-krzysztof.kozlowski@linaro.org>
- <20240611142555.994675-2-krzysztof.kozlowski@linaro.org>
- <90f5ad41-7192-4c01-90c0-ad9c54094917@linaro.org>
- <9e9cbc0b-f9fd-439c-93d1-054179f7b07f@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qds0B/LN5p0OcSsYrIGPB5r8gT4Xcy9xY2jMrdqLMYOVCEOIUWTrFl9kB11mDWFctsPlAcKSt8l32I3ZVAreW3VUAqk/NDWx9vhOP5E4CsWdV/16I5I//NPq3w6oZtJ9BqWJqgcCdzs+I7rcrLcyDApUe/kBD79Sg5fcxeGZYtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F01A1063;
+	Thu, 13 Jun 2024 03:11:20 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A4B3A3F5A1;
+	Thu, 13 Jun 2024 03:10:53 -0700 (PDT)
+Date: Thu, 13 Jun 2024 11:10:48 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	will@kernel.org, catalin.marinas@arm.com,
+	Mark Brown <broonie@kernel.org>, James Clark <james.clark@arm.com>,
+	Rob Herring <robh@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Suzuki Poulose <suzuki.poulose@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH V18 1/9] arm64/sysreg: Add BRBE registers and fields
+Message-ID: <ZmrFqMqNo3_rhdIo@J2N7QTR9R3>
+References: <20240613061731.3109448-1-anshuman.khandual@arm.com>
+ <20240613061731.3109448-2-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,34 +56,241 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9e9cbc0b-f9fd-439c-93d1-054179f7b07f@linaro.org>
+In-Reply-To: <20240613061731.3109448-2-anshuman.khandual@arm.com>
 
-On Thu, Jun 13, 2024 at 11:11:05AM +0200, Krzysztof Kozlowski wrote:
-> On 13/06/2024 09:45, Konrad Dybcio wrote:
-> > 
-> > 
-> > On 6/11/24 16:25, Krzysztof Kozlowski wrote:
-> >> The SWR2 Soundwire instance has 1 output and 4 input ports, so for the
-> >> headset recording (via the WCD9385 codec and the TX macro codec) we want
-> >> to use the next DAI, not the first one (see qcom,dout-ports and
-> >> qcom,din-ports for soundwire@6d30000 node).
-> >>
-> >> Original code was copied from other devices like SM8450 and SM8550.  On
-> >> the SM8450 this was a correct setting, however on the SM8550 this worked
-> >> probably only by coincidence, because the DTS defined no output ports on
-> >> SWR2 Soundwire.
-> > 
-> > Planning to send a fix for that?
-> > 
-> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+On Thu, Jun 13, 2024 at 11:47:23AM +0530, Anshuman Khandual wrote:
+> This patch adds definitions related to the Branch Record Buffer Extension
+> (BRBE) as per ARM DDI 0487K.a. These will be used by KVM and a BRBE driver
+> in subsequent patches.
 > 
-> Not really, because microphone works on these targets and changing it
-> would require testing. I don't have boards suitable for testing, so
-> let's just leave it.
+> Some existing BRBE definitions in asm/sysreg.h are replaced with equivalent
+> generated definitions.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ----
+> Changes in V18:
+> 
+> - Changed BRBIDR0_EL1 register fields CC and FORMAT, updated the commit message
 
-If you provide instructions, I can test microphones on SM8450 HDK.
+Thanks, I see that matches my requsts on v17, so this looks good to me.
 
--- 
-With best wishes
-Dmitry
+> 
+>  arch/arm64/include/asm/sysreg.h |  17 ++---
+>  arch/arm64/tools/sysreg         | 131 ++++++++++++++++++++++++++++++++
+>  2 files changed, 137 insertions(+), 11 deletions(-)
+> ---
+>  arch/arm64/include/asm/sysreg.h |  17 ++---
+>  arch/arm64/tools/sysreg         | 131 ++++++++++++++++++++++++++++++++
+>  2 files changed, 137 insertions(+), 11 deletions(-)
+
+Something went wrong here to have this teice, but that doesn't affect
+the actual patch.
+
+Mark.
+
+> 
+> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> index af3b206fa423..cb3c9c83dc7a 100644
+> --- a/arch/arm64/include/asm/sysreg.h
+> +++ b/arch/arm64/include/asm/sysreg.h
+> @@ -195,16 +195,8 @@
+>  #define SYS_DBGVCR32_EL2		sys_reg(2, 4, 0, 7, 0)
+>  
+>  #define SYS_BRBINF_EL1(n)		sys_reg(2, 1, 8, (n & 15), (((n & 16) >> 2) | 0))
+> -#define SYS_BRBINFINJ_EL1		sys_reg(2, 1, 9, 1, 0)
+>  #define SYS_BRBSRC_EL1(n)		sys_reg(2, 1, 8, (n & 15), (((n & 16) >> 2) | 1))
+> -#define SYS_BRBSRCINJ_EL1		sys_reg(2, 1, 9, 1, 1)
+>  #define SYS_BRBTGT_EL1(n)		sys_reg(2, 1, 8, (n & 15), (((n & 16) >> 2) | 2))
+> -#define SYS_BRBTGTINJ_EL1		sys_reg(2, 1, 9, 1, 2)
+> -#define SYS_BRBTS_EL1			sys_reg(2, 1, 9, 0, 2)
+> -
+> -#define SYS_BRBCR_EL1			sys_reg(2, 1, 9, 0, 0)
+> -#define SYS_BRBFCR_EL1			sys_reg(2, 1, 9, 0, 1)
+> -#define SYS_BRBIDR0_EL1			sys_reg(2, 1, 9, 2, 0)
+>  
+>  #define SYS_TRCITECR_EL1		sys_reg(3, 0, 1, 2, 3)
+>  #define SYS_TRCACATR(m)			sys_reg(2, 1, 2, ((m & 7) << 1), (2 | (m >> 3)))
+> @@ -270,8 +262,6 @@
+>  /* ETM */
+>  #define SYS_TRCOSLAR			sys_reg(2, 1, 1, 0, 4)
+>  
+> -#define SYS_BRBCR_EL2			sys_reg(2, 4, 9, 0, 0)
+> -
+>  #define SYS_MIDR_EL1			sys_reg(3, 0, 0, 0, 0)
+>  #define SYS_MPIDR_EL1			sys_reg(3, 0, 0, 0, 5)
+>  #define SYS_REVIDR_EL1			sys_reg(3, 0, 0, 0, 6)
+> @@ -601,7 +591,6 @@
+>  #define SYS_CNTHV_CVAL_EL2		sys_reg(3, 4, 14, 3, 2)
+>  
+>  /* VHE encodings for architectural EL0/1 system registers */
+> -#define SYS_BRBCR_EL12			sys_reg(2, 5, 9, 0, 0)
+>  #define SYS_SCTLR_EL12			sys_reg(3, 5, 1, 0, 0)
+>  #define SYS_CPACR_EL12			sys_reg(3, 5, 1, 0, 2)
+>  #define SYS_SCTLR2_EL12			sys_reg(3, 5, 1, 0, 3)
+> @@ -794,6 +783,12 @@
+>  #define OP_COSP_RCTX			sys_insn(1, 3, 7, 3, 6)
+>  #define OP_CPP_RCTX			sys_insn(1, 3, 7, 3, 7)
+>  
+> +/*
+> + * BRBE Instructions
+> + */
+> +#define BRB_IALL_INSN	__emit_inst(0xd5000000 | OP_BRB_IALL | (0x1f))
+> +#define BRB_INJ_INSN	__emit_inst(0xd5000000 | OP_BRB_INJ  | (0x1f))
+> +
+>  /* Common SCTLR_ELx flags. */
+>  #define SCTLR_ELx_ENTP2	(BIT(60))
+>  #define SCTLR_ELx_DSSBS	(BIT(44))
+> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+> index a4c1dd4741a4..c6d3390f39ee 100644
+> --- a/arch/arm64/tools/sysreg
+> +++ b/arch/arm64/tools/sysreg
+> @@ -1025,6 +1025,137 @@ UnsignedEnum	3:0	MTEPERM
+>  EndEnum
+>  EndSysreg
+>  
+> +
+> +SysregFields BRBINFx_EL1
+> +Res0	63:47
+> +Field	46	CCU
+> +Field	45:32	CC
+> +Res0	31:18
+> +Field	17	LASTFAILED
+> +Field	16	T
+> +Res0	15:14
+> +Enum	13:8		TYPE
+> +	0b000000	DIRECT_UNCOND
+> +	0b000001	INDIRECT
+> +	0b000010	DIRECT_LINK
+> +	0b000011	INDIRECT_LINK
+> +	0b000101	RET
+> +	0b000111	ERET
+> +	0b001000	DIRECT_COND
+> +	0b100001	DEBUG_HALT
+> +	0b100010	CALL
+> +	0b100011	TRAP
+> +	0b100100	SERROR
+> +	0b100110	INSN_DEBUG
+> +	0b100111	DATA_DEBUG
+> +	0b101010	ALIGN_FAULT
+> +	0b101011	INSN_FAULT
+> +	0b101100	DATA_FAULT
+> +	0b101110	IRQ
+> +	0b101111	FIQ
+> +	0b110000	IMPDEF_TRAP_EL3
+> +	0b111001	DEBUG_EXIT
+> +EndEnum
+> +Enum	7:6	EL
+> +	0b00	EL0
+> +	0b01	EL1
+> +	0b10	EL2
+> +	0b11	EL3
+> +EndEnum
+> +Field	5	MPRED
+> +Res0	4:2
+> +Enum	1:0	VALID
+> +	0b00	NONE
+> +	0b01	TARGET
+> +	0b10	SOURCE
+> +	0b11	FULL
+> +EndEnum
+> +EndSysregFields
+> +
+> +SysregFields	BRBCR_ELx
+> +Res0	63:24
+> +Field	23 	EXCEPTION
+> +Field	22 	ERTN
+> +Res0	21:10
+> +Field	9	FZPSS
+> +Field	8 	FZP
+> +Res0	7
+> +Enum	6:5	TS
+> +	0b01	VIRTUAL
+> +	0b10	GUEST_PHYSICAL
+> +	0b11	PHYSICAL
+> +EndEnum
+> +Field	4	MPRED
+> +Field	3	CC
+> +Res0	2
+> +Field	1	ExBRE
+> +Field	0	E0BRE
+> +EndSysregFields
+> +
+> +Sysreg	BRBCR_EL1	2	1	9	0	0
+> +Fields	BRBCR_ELx
+> +EndSysreg
+> +
+> +Sysreg	BRBFCR_EL1	2	1	9	0	1
+> +Res0	63:30
+> +Enum	29:28	BANK
+> +	0b00	BANK_0
+> +	0b01	BANK_1
+> +EndEnum
+> +Res0	27:23
+> +Field	22	CONDDIR
+> +Field	21	DIRCALL
+> +Field	20	INDCALL
+> +Field	19	RTN
+> +Field	18	INDIRECT
+> +Field	17	DIRECT
+> +Field	16	EnI
+> +Res0	15:8
+> +Field	7	PAUSED
+> +Field	6	LASTFAILED
+> +Res0	5:0
+> +EndSysreg
+> +
+> +Sysreg	BRBTS_EL1	2	1	9	0	2
+> +Field	63:0	TS
+> +EndSysreg
+> +
+> +Sysreg	BRBINFINJ_EL1	2	1	9	1	0
+> +Fields BRBINFx_EL1
+> +EndSysreg
+> +
+> +Sysreg	BRBSRCINJ_EL1	2	1	9	1	1
+> +Field	63:0 ADDRESS
+> +EndSysreg
+> +
+> +Sysreg	BRBTGTINJ_EL1	2	1	9	1	2
+> +Field	63:0 ADDRESS
+> +EndSysreg
+> +
+> +Sysreg	BRBIDR0_EL1	2	1	9	2	0
+> +Res0	63:16
+> +Enum	15:12	CC
+> +	0b0101	20_BIT
+> +EndEnum
+> +Enum	11:8	FORMAT
+> +	0b0000	FORMAT_0
+> +EndEnum
+> +Enum	7:0		NUMREC
+> +	0b00001000	8
+> +	0b00010000	16
+> +	0b00100000	32
+> +	0b01000000	64
+> +EndEnum
+> +EndSysreg
+> +
+> +Sysreg	BRBCR_EL2	2	4	9	0	0
+> +Fields	BRBCR_ELx
+> +EndSysreg
+> +
+> +Sysreg	BRBCR_EL12	2	5	9	0	0
+> +Fields	BRBCR_ELx
+> +EndSysreg
+> +
+>  Sysreg	ID_AA64ZFR0_EL1	3	0	0	4	4
+>  Res0	63:60
+>  UnsignedEnum	59:56	F64MM
+> -- 
+> 2.25.1
+> 
 
