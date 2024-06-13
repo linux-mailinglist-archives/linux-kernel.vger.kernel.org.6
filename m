@@ -1,101 +1,143 @@
-Return-Path: <linux-kernel+bounces-212754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06AAF9065B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:55:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46CF09065CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD80C1F26954
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:55:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD341C23801
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C94913C9BD;
-	Thu, 13 Jun 2024 07:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27B713CA8E;
+	Thu, 13 Jun 2024 07:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="J6hNF/eB"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="hk2ucAmF"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E9D13C8E8;
-	Thu, 13 Jun 2024 07:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C524D13C902;
+	Thu, 13 Jun 2024 07:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718265301; cv=none; b=MpsdkSgVnukQWvkhIUAMEPWr8FcIIjVrob+Dg/X+rtcytfIFLcW+o88VfedUiinnZ/D4dsKZtZboadUhAsn36ncucCkAcTJeMwNmWjKuWWr7mkMkg0b59KfWmQbP6sk+sfvrRNSzdUghHulw22+ymjk6edQxd0h0ozUNHKSOl+A=
+	t=1718265355; cv=none; b=hp8b7PcZ0qzuLJ8PjNyh7lXF9OL1P7rxWW4pUdKdRay+YOD/5RIsRC1BCgH0fYQE8+DbvXI+1gNWKvuHPFP6XJWSQL+CshZKmQL5tYI7hrLBlfxY48Tdz1NK2DLtov2p5Xo7fkuAfGPxPGMpRwHpOOzBZl+6HNxEn+y4FlLleDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718265301; c=relaxed/simple;
-	bh=IlUPSgkK7p1HuO+/td3WBezslkq7GVsamNMvlKZWO84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rOsu18TW0SB8JsTr6aJlu6WIVZx/u/hG57G8OxD6nFBM0TrTiAqFucMYKf/JHPvAJ3LTfruE4F3yT6YmdfoAXa8OkM9MSLftROVPBMStqSqENHhAIlpM/b5jAR0fzZ98SvZNqhvH9CRD3Cp0C4bgMBXkHZ/xGUJAtq9OG9seE/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=J6hNF/eB; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=B3aRTXsDCKGjz5H0M1vcgLuL/l8L7HFeO7Ru892md5A=; b=J6hNF/eBSwlcxxvuHLCJgTtrpY
-	VE86/JVsrj51j2BA9f3Q4uaN/XWazpq8ZzELbOdqz2ygRpj3LrrxuVbaNBkHw45JuXSqSeh07BIHO
-	vBCANAwXYGDM7oGTkeEIpBiRRHLvusdB3X78kVNEswRnJNgbDQvp+3A1KaG5/WZhf0VgR5j2QnsnN
-	NyU7NTDBhbjeE+96uTGuxwErtdGC7BLkjMC5LyNIjqqQvIitc5evuimHOShtJVec4Zuw7dvcYaTAY
-	P4jgm7Ii9BGBxtoXpHTOz0tVPqVo3TlC4YuvqUujJeMECXwZn924osFQ/hccOOO98q+iQWvjUP9T7
-	Vq58hLGQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50602)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sHfI8-0005jK-18;
-	Thu, 13 Jun 2024 08:54:40 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sHfI7-000145-31; Thu, 13 Jun 2024 08:54:39 +0100
-Date: Thu, 13 Jun 2024 08:54:38 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
-	corbet@lwn.net, vladimir.oltean@nxp.com, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] net: phy: introduce core support for
- phy-mode = "10g-qxgmii"
-Message-ID: <Zmqlvn2gOlxoy5Gm@shell.armlinux.org.uk>
-References: <20240612095317.1261855-1-quic_luoj@quicinc.com>
- <20240612095317.1261855-2-quic_luoj@quicinc.com>
+	s=arc-20240116; t=1718265355; c=relaxed/simple;
+	bh=FqVEJgSnNNwmjR23vP+xW2rempYJsJcSnuTqB3mNp1A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k1fgQKLMwDIZU2vlvO063vrLhqWHRRGcI2V/ErsUALERqzBxNo7zrE+a3PrCokWZgJuclQKuNtmzM5PYTp5IPeyQNf7qXa5XnNtP2m3b2LonK6N2SxS/uEx0uRxa0fTtlrp5lxuk4XIfbfqLn/Iu5WKj4z7Fut0kEa0OSxrIpv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=hk2ucAmF; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 58310304295a11efa22eafcdcd04c131-20240613
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=sB3TQ1hsgFFVf1bnMvCxYjBr6NFgk3dyfi1svtfepEQ=;
+	b=hk2ucAmFmOhz4yvnIJdx3aecMSJi8DIoPhEud71nfjdJ6U3de6/+5o2ksYHVHrHmuB79M902lMnhK9sDiZqUqFyc7Qq/jun7ckxkeyieS8AHeHvYTe+ldafUyhGMSKv073BXOsLQApoKRGWPizO/x1lMyBvGkhljGhZuMf1MpXI=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:576efb56-9924-4aef-aa15-9c006b88b048,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:393d96e,CLOUDID:d8ac8988-8d4f-477b-89d2-1e3bdbef96d1,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 58310304295a11efa22eafcdcd04c131-20240613
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
+	(envelope-from <yunfei.dong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 113585200; Thu, 13 Jun 2024 15:55:47 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 13 Jun 2024 15:55:46 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 13 Jun 2024 15:55:45 +0800
+From: Yunfei Dong <yunfei.dong@mediatek.com>
+To: =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
+	<nfraprado@collabora.com>, Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+CC: Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
+	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>, Yunfei
+ Dong <yunfei.dong@mediatek.com>, <linux-media@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v3 0/7] media: mediatek: vcodec: fix v4l2_ctrl_request_complete fail
+Date: Thu, 13 Jun 2024 15:55:25 +0800
+Message-ID: <20240613075532.32128-1-yunfei.dong@mediatek.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612095317.1261855-2-quic_luoj@quicinc.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Wed, Jun 12, 2024 at 05:53:16PM +0800, Luo Jie wrote:
-> @@ -1865,7 +1872,8 @@ static int phylink_validate_phy(struct phylink *pl, struct phy_device *phy,
->  	if (phy->is_c45 && state->rate_matching == RATE_MATCH_NONE &&
->  	    state->interface != PHY_INTERFACE_MODE_RXAUI &&
->  	    state->interface != PHY_INTERFACE_MODE_XAUI &&
-> -	    state->interface != PHY_INTERFACE_MODE_USXGMII)
-> +	    state->interface != PHY_INTERFACE_MODE_USXGMII &&
-> +	    state->interface != PHY_INTERFACE_MODE_10G_QXGMII)
->  		state->interface = PHY_INTERFACE_MODE_NA;
+v4l2_m2m_buf_done is called in lat work queue, v4l2_ctrl_request_complete
+is called in core queue. The request status of output queue will be set to
+MEDIA_REQUEST_STATE_COMPLETE when v4l2_m2m_buf_done is called, leading to
+output queue request complete fail. Must move v4l2_ctrl_request_complete
+in front of v4l2_m2m_buf_done.
 
-It would be better, rather than extending this workaround, instead to
-have the PHY driver set phy->possible_interfaces in its .config_init
-method. phy->possible_interfaces should be the set of interfaces that
-the PHY _will_ use given its configuration for the different media
-speeds. I think that means just PHY_INTERFACE_MODE_10G_QXGMII for
-your configuration.
+Patch 1 setting request complete before buffer done
+Patch 2 change flush decode from capture to output when stream off
+Patch 3 flush decoder before remove all source buffer
+Patch 4 using input information to get vb2 buffer
+Patch 5 store source vb2 buffer
+Patch 6 replace v4l2_m2m_next_src_buf with v4l2_m2m_src_buf_remove
+Patch 7 remove media request checking
 
-Thanks.
+---
+compared with v2:
+- add patch 5/6/7 to fix decode again issue
+- add fluster test result with mt8195 platform(same with no changed):
+  1> ./fluster.py run -d GStreamer-VP8-V4L2SL-Gst1.0 -j1 -t 90
+     VP8-TEST-VECTORS 59/61
+  2> ./fluster.py run -d GStreamer-VP9-V4L2SL-Gst1.0 -j1 -t 90
+     VP9-TEST-VECTORS 276/305
+  3> ./fluster.py run -d GStreamer-AV1-V4L2SL-Gst1.0 -j1 -t 90
+     AV1-TEST-VECTORS 237/239
+  4> ./fluster.py run -d GStreamer-H.264-V4L2SL-Gst1.0 -j1 -t 90
+     JVT-AVC_V1       95/135
+  5> ./fluster.py run -d GStreamer-H.265-V4L2SL-Gst1.0 -j1 -t 90
+     JCT-VC-HEVC_V1   142/147
+
+compared with v1:
+- add patch 2/3/4 to fix timing issue.
+---
+Yunfei Dong (7):
+  media: mediatek: vcodec: setting request complete before buffer done
+  media: mediatek: vcodec: change flush decode from capture to output
+    when stream off
+  media: mediatek: vcodec: flush decoder before remove all source buffer
+  media: mediatek: vcodec: using input information to get vb2 buffer
+  media: mediatek: vcodec: store source vb2 buffer
+  media: mediatek: vcodec: replace v4l2_m2m_next_src_buf with
+    v4l2_m2m_src_buf_remove
+  media: mediatek: vcodec: remove media request checking
+
+ .../mediatek/vcodec/decoder/mtk_vcodec_dec.c  | 52 +++++++++----------
+ .../vcodec/decoder/mtk_vcodec_dec_drv.h       |  4 +-
+ .../vcodec/decoder/mtk_vcodec_dec_stateless.c | 48 ++++++++++++-----
+ .../vcodec/decoder/vdec/vdec_av1_req_lat_if.c | 18 ++++---
+ .../decoder/vdec/vdec_h264_req_multi_if.c     |  4 +-
+ .../decoder/vdec/vdec_hevc_req_multi_if.c     |  4 +-
+ .../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c | 19 ++++---
+ .../mediatek/vcodec/decoder/vdec_msg_queue.h  |  4 +-
+ 8 files changed, 89 insertions(+), 64 deletions(-)
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.18.0
+
 
