@@ -1,195 +1,163 @@
-Return-Path: <linux-kernel+bounces-213661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9950907877
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:42:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5097090787A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CA591C23390
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:42:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563C71C237ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46FC149E0A;
-	Thu, 13 Jun 2024 16:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADEA149C5A;
+	Thu, 13 Jun 2024 16:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="D3ryXTgo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aU9zLKU3"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kamjskX+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4909A1494D6;
-	Thu, 13 Jun 2024 16:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013DE1494C2;
+	Thu, 13 Jun 2024 16:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718296902; cv=none; b=DMKwFKsCGY9R2pL6GtqmYoop+ZBxxJQGC44sp7cpDymXcF2x6pIeIUf2mbvMo3JJA0pgccFpaWi3TsCkU4Ys0dyAPnyxLT+ztQO2z2Yu+M/6lP0fnXz1vWeqh+cIo9gsAmmJkdmYdZOce3nz79MUzoKaJJh7VkZjRToI/XbltQE=
+	t=1718296919; cv=none; b=luflvezkm7IyY4yohq/SlTXOHQHpjeybyGyPIOWmQlwav1GSoT+g+nGbVUvP/YvDjiEWsbWbAQ7HR8deg11Wgf9oLtZurIHWJgYvoJWAjTCCwAqsThGbIorGIK1fZUhTbZ0ge5U/GsNOLyCi/luI7ZxzWpj6dshkgHaKIWxOguA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718296902; c=relaxed/simple;
-	bh=YmkuZ5nOlN7lTRobe6yTymBK842DdK3E0zbosM2LIRM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Crgnc2nBBHOtSsxSY798Zl2trO8Dvgi3lSGS8g0Br1SfdPr7Pb6ydxrqCasFP4qCLzuWQtErc881TtubEngT8FyO2jiarVL+ehHMuaYnWuHdNEMxQGxSGf+g9CDOElBx7QurXuwfoMNn/5rMKREMCeU3yJMytJoNXkuHNffKqZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=D3ryXTgo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aU9zLKU3; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 948FB13800DC;
-	Thu, 13 Jun 2024 12:41:40 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 13 Jun 2024 12:41:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1718296900;
-	 x=1718383300; bh=q3BMSOZk6lkY4K+5BlAtTxK+Qw2IzmkiuHwEpbHFuP0=; b=
-	D3ryXTgoNtMu9sQx05ewSRp87/hy+hD7r2s0dsMxwkwUV3jxkXhDRb9BXZlEBfCc
-	6WqdFCKMYaFFSaPo6LYTAdbinSm9HKWODRXAntVV8og0dEgkc8LjuOA9kKvxADzH
-	NY37NvFDVzmvHEVo8sjdwB/V0AZO5ZhRCkYyOyU/vLYIuiOSWIbMU41Xo3iMtdgZ
-	dfUykBYHmjeVGNBT7Y4z2cf2IBztL07rdc5aGa6mEHaJ2b2ttDUrkgzgyepSKUch
-	BgEzHEAK68/PybRxTM6SN4MJvhDTJ6EK7avRnaF8nuATkmIwa57YWEgdyuKVJjJ0
-	bYP9QnkHSnC9eIdpXBolzg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718296900; x=
-	1718383300; bh=q3BMSOZk6lkY4K+5BlAtTxK+Qw2IzmkiuHwEpbHFuP0=; b=a
-	U9zLKU37Y1qEJcuXPOnI0Bjq7WNrukkZb7kbwcVG6V1Z3ItDtdIc0QqQjfWwlkuP
-	z+9c4PrZu0T5tPnsSutsM4lbZbyOQEDthqlSrbZDsXV1oqTCWzpIODAPAuUDQRDQ
-	LiYT6T6N6/9qFrbSxE/g0ot8vMQ9pN888+lpTE2oeEt2jVtq5DvoVmuMAWO03QpF
-	0BXqZFQ+N4hXZeFrnz8MXnVJZx5VW/4W8uhnndllT/nYqqU9pqs9Tgn6kAToAYm2
-	jbL8hCdOEjp/83mGFiL03W7kRars5GAC/M2owE9H3mb5/Cf1i08KO+VB6CrKAKgp
-	vCiOhfwofKJ5NF9aPi/KQ==
-X-ME-Sender: <xms:RCFrZhA7YaaGsG0rauE9FK1iQmc3WKRRJMIKx95YFxivAFwu1BoANw>
-    <xme:RCFrZvihLM0WjxQilwyvjWEmo61vkZsi-UmaxJe5nLwQe1mqO1AmhFIoPcVhNFWWq
-    Nd5END0gO9kO48lLnI>
-X-ME-Received: <xmr:RCFrZskehs3dZKhvf31XwzikUL-MhtMASbkw7KqWLubVXN5gTBBhV1o>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedguddtudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomheplfhi
-    rgiguhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqe
-    enucggtffrrghtthgvrhhnpeeuhfekvdefgfehgfetveehveeuiefhgffgkedukeduvdfh
-    ueevveeigeetkeevhfenucffohhmrghinhepshhushhpvghnuggprghsmhdrshgsnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhn
-    rdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:RCFrZrwd8_Wi4nI_VgaZjsh8cSbL56vUQ-LC3E4yFHI10DoWwD4p9w>
-    <xmx:RCFrZmRVztJpfTz0L7bIis4mf8MQttBTtoG6Z_BaGNGwOcosAofJZg>
-    <xmx:RCFrZubPqBMpmRvcQWubOtOSUx-WLB_3XHrWSM-ULCPKvbfLZkGnUg>
-    <xmx:RCFrZnS6TphDw47-VUDD3i2Kdrzyw2TXfqK0PuCewfsom6t9WUqLGA>
-    <xmx:RCFrZlGE02-3Pk2Z_lzETUg9OxgKuCI6v4_ta47L3q1oIbD1SYjopsJD>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 13 Jun 2024 12:41:39 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Thu, 13 Jun 2024 17:41:35 +0100
-Subject: [PATCH 2/2] LoongArch: Fix ACPI standard register based S3 support
+	s=arc-20240116; t=1718296919; c=relaxed/simple;
+	bh=vsXFKBT+cSrkgehHrImlatR7bWrZFbEWVqJGyHEVB8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NI6ahHgD5e3QmkE6/6BxGzRWooGxUiJ7oPp1FRJyeeecMNYkySoh6oKYwGcMtURjZljV6xl/0ModwxiH0esp0y40+NaJmNqNQBiHKxtSs87idlorio6JCNx28anMiw+RbxDlGEA7XUj6w/vHXA2UT7zc5MfFXRDWl72CdqZjbi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kamjskX+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F41B8C32786;
+	Thu, 13 Jun 2024 16:41:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718296918;
+	bh=vsXFKBT+cSrkgehHrImlatR7bWrZFbEWVqJGyHEVB8g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kamjskX+1DHnEM5Qq8CuMsKFatQSlkozsBYZC9ATYruNzKLVszlk+scp82PsvBcCb
+	 P+UdGu/2EtHqz0I/nJ4wtUwJT5ywO/vPfpDzP5X+gZEbjQfsFmQF3B8C+1q7z9GhmE
+	 gKodOoGMIEHLjmk+fyBqucpN/I3oYLbV8LiCvfgtgqhjDIhyS6hpcK0z3eAQ+qypqr
+	 ZwdvYxFSheCWa/ZYq5WxtwLYtNRvqQe7MMO0vVNIQikg8ZpC1X5vikLlqWCbkiYAAn
+	 B7798lI3ncnzys9kxPNaK4VP43FBIVbbR46FrG0d69snNIRC3JvU+OhSH3zh2bHFEb
+	 xP+fFuyuSz6Fw==
+Date: Thu, 13 Jun 2024 17:41:52 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alisa-Dariana Roman <alisadariana@gmail.com>
+Cc: Alisa-Dariana Roman <alisa.roman@analog.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexandru Tachici <alexandru.tachici@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v4 2/5] dt-bindings: iio: adc: ad7192: Update clock config
+Message-ID: <20240613-vineyard-doing-87ada1b7a8ed@spud>
+References: <20240613114001.270233-1-alisa.roman@analog.com>
+ <20240613114001.270233-3-alisa.roman@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240613-loongarch64-sleep-v1-2-a245232af5e4@flygoat.com>
-References: <20240613-loongarch64-sleep-v1-0-a245232af5e4@flygoat.com>
-In-Reply-To: <20240613-loongarch64-sleep-v1-0-a245232af5e4@flygoat.com>
-To: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Jiaxun Yang <jiaxun.yang@flygoat.com>, stable@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2868;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=YmkuZ5nOlN7lTRobe6yTymBK842DdK3E0zbosM2LIRM=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhrRsRftNZkdPzC62P7/Hdrq3+TL33KMK76vaPvKKe65vC
- K97Wnm3o5SFQYyLQVZMkSVEQKlvQ+PFBdcfZP2BmcPKBDKEgYtTACYSHsHw3/PO7o7LyTuEvj/d
- 9+1DXqMdy/73nVe/nvn780+2jjDH38OMDLMend1h4nfmyq3MzE+bOJ3540Nbe/2zbzdZNywQZw3
- xZgEA
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="m9XQa0OBbOvIhW8/"
+Content-Disposition: inline
+In-Reply-To: <20240613114001.270233-3-alisa.roman@analog.com>
 
-Most LoongArch 64 machines are using custom "SADR" ACPI extension
-to perform ACPI S3 sleep. However the standard ACPI way to perform
-sleep is to write a value to ACPI PM1/SLEEP_CTL register, and this
-is never supported properly in kernel.
 
-Fix standard S3 sleep by providing a fallback DoSuspend function
-which calls ACPI's acpi_enter_sleep_state routine when SADR is
-not provided by the firmware.
+--m9XQa0OBbOvIhW8/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also fix suspend assembly code so that ra is set properly before
-go into sleep routine. (Previously linked address of jirl was set
-to a0, some firmware do require return address in a0 but it's
-already set with la.pcrel before).
+On Thu, Jun 13, 2024 at 02:39:58PM +0300, Alisa-Dariana Roman wrote:
+> There are actually 4 configuration modes of clock source for AD719X
+> devices. Either a crystal can be attached externally between MCLK1 and
+> MCLK2 pins, or an external CMOS-compatible clock can drive the MCLK2
+> pin. The other 2 modes make use of the 4.92MHz internal clock.
+>=20
+> Add clock name xtal alongside mclk. When an external crystal is
+> attached, xtal should be chosen. When an external clock is used, mclk
+> should be chosen.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- arch/loongarch/power/platform.c    | 24 ++++++++++++++++++------
- arch/loongarch/power/suspend_asm.S |  2 +-
- 2 files changed, 19 insertions(+), 7 deletions(-)
+This is still missing an explanation of why a new name is needed.
+Hint: do you need to change register settings to use one versus the
+other?
 
-diff --git a/arch/loongarch/power/platform.c b/arch/loongarch/power/platform.c
-index 3ea8e07aa225..2aea41f8e3ff 100644
---- a/arch/loongarch/power/platform.c
-+++ b/arch/loongarch/power/platform.c
-@@ -34,22 +34,34 @@ void enable_pci_wakeup(void)
- 		acpi_write_bit_register(ACPI_BITREG_PCIEXP_WAKE_DISABLE, 0);
- }
- 
-+static void acpi_suspend_register_fallback(void)
-+{
-+	acpi_enter_sleep_state(ACPI_STATE_S3);
-+}
-+
- static int __init loongson3_acpi_suspend_init(void)
- {
- #ifdef CONFIG_ACPI
- 	acpi_status status;
- 	uint64_t suspend_addr = 0;
- 
--	if (acpi_disabled || acpi_gbl_reduced_hardware)
-+	if (acpi_disabled)
- 		return 0;
- 
--	acpi_write_bit_register(ACPI_BITREG_SCI_ENABLE, 1);
-+	if (!acpi_sleep_state_supported(ACPI_STATE_S3))
-+		return 0;
-+
-+	if (!acpi_gbl_reduced_hardware)
-+		acpi_write_bit_register(ACPI_BITREG_SCI_ENABLE, 1);
-+
- 	status = acpi_evaluate_integer(NULL, "\\SADR", NULL, &suspend_addr);
--	if (ACPI_FAILURE(status) || !suspend_addr) {
--		pr_err("ACPI S3 is not support!\n");
--		return -1;
-+	if (!ACPI_FAILURE(status) && suspend_addr) {
-+		loongson_sysconf.suspend_addr = (u64)phys_to_virt(PHYSADDR(suspend_addr));
-+		return 0;
- 	}
--	loongson_sysconf.suspend_addr = (u64)phys_to_virt(PHYSADDR(suspend_addr));
-+
-+	pr_info("ACPI S3 supported with hw register fallback\n");
-+	loongson_sysconf.suspend_addr = (u64)acpi_suspend_register_fallback;
- #endif
- 	return 0;
- }
-diff --git a/arch/loongarch/power/suspend_asm.S b/arch/loongarch/power/suspend_asm.S
-index 6fdd74eb219b..fe08dbb73c87 100644
---- a/arch/loongarch/power/suspend_asm.S
-+++ b/arch/loongarch/power/suspend_asm.S
-@@ -66,7 +66,7 @@ SYM_FUNC_START(loongarch_suspend_enter)
- 	la.pcrel	a0, loongarch_wakeup_start
- 	la.pcrel	t0, loongarch_suspend_addr
- 	ld.d		t0, t0, 0
--	jirl		a0, t0, 0 /* Call BIOS's STR sleep routine */
-+	jirl		ra, t0, 0 /* Call BIOS's STR sleep routine */
- 
- 	/*
- 	 * This is where we return upon wakeup.
+>=20
+> The presence of an external clock source is optional, not required. When
+> absent, internal clock is used. Modify required property accordingly and
+> modify second example to showcase this.
+>=20
+> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad7192.yaml    | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+> index a03da9489ed9..3ae2f860d24c 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+> @@ -39,11 +39,15 @@ properties:
+> =20
+>    clocks:
+>      maxItems: 1
+> -    description: phandle to the master clock (mclk)
+> +    description: |
+> +      Optionally, either a crystal can be attached externally between MC=
+LK1 and
+> +      MCLK2 pins, or an external CMOS-compatible clock can drive the MCL=
+K2
+> +      pin. If absent, internal 4.92MHz clock is used.
+> =20
+>    clock-names:
+> -    items:
+> -      - const: mclk
+> +    enum:
+> +      - xtal
+> +      - mclk
+> =20
+>    interrupts:
+>      maxItems: 1
+> @@ -135,8 +139,6 @@ patternProperties:
+>  required:
+>    - compatible
+>    - reg
+> -  - clocks
+> -  - clock-names
+>    - interrupts
+>    - dvdd-supply
+>    - avdd-supply
+> @@ -202,8 +204,6 @@ examples:
+>              spi-max-frequency =3D <1000000>;
+>              spi-cpol;
+>              spi-cpha;
+> -            clocks =3D <&ad7192_mclk>;
+> -            clock-names =3D "mclk";
+>              interrupts =3D <25 0x2>;
+>              interrupt-parent =3D <&gpio>;
+>              aincom-supply =3D <&aincom>;
+> --=20
+> 2.34.1
+>=20
 
--- 
-2.43.0
+--m9XQa0OBbOvIhW8/
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmshUAAKCRB4tDGHoIJi
+0j40AQC/5ubIJbIF44JX0Xp18MLiKZANhOQVvlyxU5cJNPT6FwD/clq35TXv6JWP
+NmWCp4wPP5eoWvB4SVNvRsbXOAGxAgs=
+=/uC6
+-----END PGP SIGNATURE-----
+
+--m9XQa0OBbOvIhW8/--
 
