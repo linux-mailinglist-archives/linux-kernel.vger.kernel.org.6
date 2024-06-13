@@ -1,82 +1,49 @@
-Return-Path: <linux-kernel+bounces-213525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30B190766A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:18:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC83390766E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96B8D1F25442
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:18:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A2A428157D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615D0149C45;
-	Thu, 13 Jun 2024 15:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7017149C57;
+	Thu, 13 Jun 2024 15:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKOcT5SD"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrCgFSlb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF0414A4D0
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF400144312;
+	Thu, 13 Jun 2024 15:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718291869; cv=none; b=XBgj1qiRiwhIe9rte+R5aI6241vGopkniYVeAWqm0whohDYeG6UpXJQQWUUtLhpCPVOD36Xvd9nagci4golGZEFB6OsXwnmUPxo/R8nKmUXhfD+GxSSpdTuDuaHWIOy3MMBzL+CdQctHOa26l7QXZfk0KoJjVvH2Yb4mbD0gbqQ=
+	t=1718292030; cv=none; b=pWXXJjjVLbB+SAxtPlBMJV5ieZVAlL2V3TdqBLGHjWDXnitW5iMvzFr6NSDFU7bxiMkeeLjFIj1/R3DD/85c314j0KQ+rwpR3Zy20/BrtmdMiI2jU0dwv9TmE42M2opQd/aqrZOX+LxEq/mq4EuUXCppjQldRCGRjiQF2uZ+W3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718291869; c=relaxed/simple;
-	bh=A7Z2pNuahnQTHPxYxgbC81iuG8UWkVYNqmAEGoD+kuA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AURdP1Gm0B0QhpTff1uMix+Pc4Y+m6LQzmuWEnPQtOhiAXu+WSEiQj5DDoRxH4DlC6x2luwWfu2PqhJtBuGaDqL2yciyoTYnP4NMHppHXjESm2oI+QFd2fDSXrjTAXcSccwQC7Q77ZISRnBkGLK3Nj6HBSQW6tEH9n5NN9rWW9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iKOcT5SD; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35f1bc2ab37so1123930f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:17:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718291866; x=1718896666; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xPaCGuMACw1TWMHFIb28HSglVp7CXEoBq/vp9txrrWI=;
-        b=iKOcT5SD+Z0MTAR1zsM8qtAwbNYTl0k4RcMf8P0F6bqoeUxfn9aVkI3FiRh4a6e8C+
-         YUPiGA4beH1g4zojc/VRa3CMKpjv1Lf9WhozpnKgrK54OgvXa1qRYLUIgnpCQ2xMMao/
-         /9L9Lnw7O4HHuXrE6rYijcQPKhFjHFK48mIbhOpD6gL7BIQYEii3BGXb0D7d88v59nLn
-         mvMKYJCT3V6Wa+uOPPod6HiFFRLBjdW4LyCqIuqODCPUUPFvCYE/ScmTRq8BeUHdylBA
-         nPmb8CabfFADSlT66UzYDHekZHNwhqdnWc6Y8/oCJGB+RZuFrFb0G8VYnHmE8gbkHt+L
-         uDUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718291866; x=1718896666;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xPaCGuMACw1TWMHFIb28HSglVp7CXEoBq/vp9txrrWI=;
-        b=v4NrYl05iJP8a8rEfIL3I7D8kQaWayuRzQniIuao5SHPXDJkEn2O0h9jmZzoho1Qc2
-         qOrdMLsM/J/HCUBh9MaybirjUhF9EwPpmJD54JhHlgxLWhn9M7BxfIbJnbvC2EJx0vvm
-         xzIMLgQCwGHJPH16ZxR3VKWQTWrZHL6fdjH5o0Tm9OaDy3Yx4FuqFN/E3gjOzfSOt2NL
-         yQbK8MS7lqXawgnMw8CXMg91z+X1OYTGED0gc+PVcScX+Dt7wPawR3U7rdSUJixWAT3T
-         58+0eOrnNLJ4Ig5U0BHxBXVygSu5Oyrr47pWzPYDgAjce7OtSVaW9NcbxSeNC8a9sqQA
-         MI/A==
-X-Forwarded-Encrypted: i=1; AJvYcCU7pCZQXtbyUEP7TLbtWHKjEHN2nN4uLyXNiSQAOFBmc7JXqmABpaDR7cVwbqJRMMWZsvOIL/86sBZO0d4yfqkJR1maqwqVaQrh33cb
-X-Gm-Message-State: AOJu0YwrPXJ8Fw2fDmVSfQBm/UATpFkYQ3dSyYz6vILl1/g6dFDBktLw
-	m6nYWr1JSrDodzHKiGa1kSDcFPawoP7FOOvyoe8wC1o+XeKicoR6
-X-Google-Smtp-Source: AGHT+IGGAq1T0qklGDhjiu70NrGM6D4AW7xx5q3tlIKfPGCaY0I4BD1ue5u9m+TKfrrNKPRQfT77uA==
-X-Received: by 2002:a5d:400a:0:b0:35f:25aa:1b1c with SMTP id ffacd0b85a97d-35fdf79a22fmr4180254f8f.7.1718291866212;
-        Thu, 13 Jun 2024 08:17:46 -0700 (PDT)
-Received: from localhost.localdomain ([31.120.167.14])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36076515a80sm1856978f8f.76.2024.06.13.08.17.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 08:17:45 -0700 (PDT)
-From: Teddy Engel <engel.teddy@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Teddy Engel <engel.teddy@gmail.com>
-Subject: [PATCH 6/6] staging: rtl8192e: Remove unnecessary pre-declaration of struct net_device
-Date: Thu, 13 Jun 2024 16:16:37 +0100
-Message-Id: <5669c01c390e31b1014f96c5b1ddd0272a6f1f8c.1718291024.git.engel.teddy@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1718291024.git.engel.teddy@gmail.com>
-References: <cover.1718291024.git.engel.teddy@gmail.com>
+	s=arc-20240116; t=1718292030; c=relaxed/simple;
+	bh=1XT4r0mKPz5fePD/fYIIGKxk2aGH3p0jZ4pSt9Z/9ok=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=R492JdaWiDpbr2YIyIdHyRRTVPVwvR0nwvDhUP9MfeF3hTw6Qr++AUvvgBzkAz8rBLDsHHqmzAz/ORGyJdzSFj3KXIfVvtlkVkKc9uaoncLZhZ9GDpqVo7BkcElw7A6cPfrRfi3ybEZRUaAK4uIppPt8GLsAYZXMh04PSnypymY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrCgFSlb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6ED86C32789;
+	Thu, 13 Jun 2024 15:20:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718292029;
+	bh=1XT4r0mKPz5fePD/fYIIGKxk2aGH3p0jZ4pSt9Z/9ok=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=LrCgFSlbDeqzNUG/i5nO/v1VKeH23uZ4yNItjtZQsX+tkIJN8wP7AuQjHAjx3TO0x
+	 hhkApAGwmCiQduL5+4tghi6BRppb5ov4Fa3ZPfETx4KDTZRc4/CEYzxKbR8+0PjJ7Y
+	 Fdh1PkMSRNqp9VIglTjM0KA1naO+z1w7WvrZae/WxWcU4o2ZSNr69aVbfb5+PEBmJ8
+	 5CMGBYQCmE3rvP4+HgVoYJMKoy8veGRrsYR6ZgttdvFjTvIg6+It4SH1nekTEGLuiG
+	 1+tTuJcU+cDZ1jWJLQpNg9/gKaFTi+lEVJ6VEOPLspc+Alcfb5ctRe50W9uRl2MoM0
+	 uHfVDm4e/PNHw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5D83EC43619;
+	Thu, 13 Jun 2024 15:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,40 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
+ cros_ec_lpc_mec_read_bytes()
+From: patchwork-bot+chrome-platform@kernel.org
+Message-Id: 
+ <171829202937.32437.8819458024238678415.git-patchwork-notify@kernel.org>
+Date: Thu, 13 Jun 2024 15:20:29 +0000
+References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+In-Reply-To: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: ben@jubnut.com, bleung@chromium.org, tzungbi@kernel.org,
+ groeck@chromium.org, chrome-platform@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove pre-declaration of struct.
+Hello:
 
-Signed-off-by: Teddy Engel <engel.teddy@gmail.com>
----
- drivers/staging/rtl8192e/rtl8192e/rtl_cam.h | 1 -
- drivers/staging/rtl8192e/rtl8192e/rtl_pci.h | 1 -
- 2 files changed, 2 deletions(-)
+This patch was applied to chrome-platform/linux.git (for-kernelci)
+by Tzung-Bi Shih <tzungbi@kernel.org>:
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.h b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.h
-index 615b84bca9b8..3a5635494385 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.h
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.h
-@@ -11,7 +11,6 @@
- #define _RTL_CAM_H
- 
- #include <linux/types.h>
--struct net_device;
- 
- void rtl92e_cam_reset(struct net_device *dev);
- void rtl92e_enable_hw_security_config(struct net_device *dev);
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_pci.h b/drivers/staging/rtl8192e/rtl8192e/rtl_pci.h
-index 866e0efbc4fd..c645775b2150 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_pci.h
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_pci.h
-@@ -13,7 +13,6 @@
- #include <linux/types.h>
- #include <linux/pci.h>
- 
--struct net_device;
- bool rtl92e_check_adapter(struct pci_dev *pdev, struct net_device *dev);
- 
- #endif
+On Thu, 13 Jun 2024 16:55:14 +0300 you wrote:
+> We changed these functions to returning negative error codes, but this
+> first error path was accidentally overlooked.  It leads to a Smatch
+> warning:
+> 
+>     drivers/platform/chrome/cros_ec_lpc.c:181 ec_response_timed_out()
+>     error: uninitialized symbol 'data'.
+> 
+> [...]
+
+Here is the summary with links:
+  - platform/chrome: cros_ec_lpc: Fix error code in cros_ec_lpc_mec_read_bytes()
+    https://git.kernel.org/chrome-platform/c/77a714325d09
+
+You are awesome, thank you!
 -- 
-2.39.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
