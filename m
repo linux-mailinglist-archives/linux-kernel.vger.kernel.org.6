@@ -1,174 +1,149 @@
-Return-Path: <linux-kernel+bounces-214040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39171907E59
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:51:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0356E907E57
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4053D1C2207D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 168B41C215E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236E514A4F8;
-	Thu, 13 Jun 2024 21:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFC214B09F;
+	Thu, 13 Jun 2024 21:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vHZ/nct7"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ahtnjbfp"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FD114A609
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 21:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D08E5A4FD;
+	Thu, 13 Jun 2024 21:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718315473; cv=none; b=QLiF80iLDxnMkvvwAE2HEvOzE/6112b55JhgRk4mwg9uYQlK+jHA82I9NS6kb5lKnHVsvHHiMNBaiot0XTtJvzPVsogCd9hXOSqShhDB8/SuLb87hAMWqh09u9AFDdeYgRuZZwYNLVFthptQ49EEZtQyIxjOydZs1Uxo2vBRvoo=
+	t=1718315449; cv=none; b=NujhTdHsm0fJKRTdPpULNJ1hrlBtJOcvYbPFwEf5gcaZQhhFrhZkfW0EfdYmpHqnaowgMn5oYzx/27qRXERGcnHcU8EkWjqYN/0sWEpjAfwE7m/XZWibh4IFw/YT0fFg2hhTEmvCZ5FYrgz0CrJTEH1CDi+jbcUYQ3hMwBAcA8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718315473; c=relaxed/simple;
-	bh=h7ZYaLUnbyEDCV5YGCPdni1FFJfjSHwyfBet/qMVQeQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C5Y0/iLcVR+57FThz4Y899Ac/pBZoHmePsKBtZaQOSoukqkk4LspSSgdeOYBalZ3sqmATjKMXWR//168w6mxI8IkrPzKT/V18dm+SxI8F6/kNXnaw2StYrrtGq30+OYUPEwSk9Ii2V2AGJhlqd/sjp9m5CccsWyi+KoexlWuePc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vHZ/nct7; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f11a2d18aso210113766b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:51:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718315470; x=1718920270; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H6bz8L/h1k+FIBPPZpQUcXkrKApwtkDytHjPb/V0heg=;
-        b=vHZ/nct78bQ9Qj0uf1dmWAclTuqBB149HZ/RticJAsD7N/rCY4Kis/RvzbZ2YM5BAG
-         HGQOOEiFSw8GX/fwb5UXj+B8+Zqt+3hGpc71qPhQS0ujNjKxdwv77+LIW5uhavYOMyog
-         Ualwz8NjU40IZG3d/j4/vGGjgFVOvNKuiav6frXuA6TdROKo0L/i1kqOe7vaXfotpTM2
-         ffwlMOW5pZNV31MhcuvfIStgiU4qnn+cEReqsHzPbA3cPbHxNPyhd9A9GFHSWVqguloC
-         4dNK46g3kNvj55XVYh6fyZtcWQABVwVa1SkZHKpvf8gCiYUcNN8hCWoMTUeleYBYnr8y
-         8hlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718315470; x=1718920270;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H6bz8L/h1k+FIBPPZpQUcXkrKApwtkDytHjPb/V0heg=;
-        b=pUOjPfk41yhGVsHRECKs4UUKj5RrB2x8qnNnqWWFXjDbbYeR445oU3BBm0GeMfITeN
-         zMvX704Fc+5sVb5OV+yCyvypMEEsrXVPx68qMp89sZNGHax7qb64muejbU18NehI93qe
-         Y8Pv27foGodpEArJNYiQzG9plBc4pQs559gBI067oIsEM0Z0iE66qKqbs/6yEdUzCqls
-         W/bor41Muv3+2PhZYrkwl1AOtHEwxDJLheJ+Wx+rzOq2GKve/f6dBUq1kXgQBM6Liedu
-         m0bQc/ZzJHQ0FAFCU8iaN5uO2xaDXKt0dKnyjRdfWF+RsXMdgLm3X0412giWfOiH90Ci
-         771Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX4v5T7IQSw9WSzen/C2CrtuECD3r/HW5vEzQHPsfpKGmBu5MJDovdjuQlsDfR2DzcyyqoaJYNfEFqLlt8vTzNw55zE4VoLFMJs4I1I
-X-Gm-Message-State: AOJu0YwyU7C4ymCPoyEbWygV8Kd0b7JbxSIzZ+it0dc4AljNQoRI7T4A
-	p8sO5ne0FZvgPDWXvUHFEDV+c7ufPBgQeIGJ/MpRR6soDLTO3knvdiRO41/b3dF/PEd/CWjTi3r
-	A7hNnyqzWdpuXKli82le0QgNo8y4kmdXf7aEb
-X-Google-Smtp-Source: AGHT+IEcxkIl9tLNWOgQbELckRaul7UJVzCCnWvSHXBXg+3D9gzHygpatFOn1ltiQVUjW6rxD+m6IWXCgP1wqe4il98=
-X-Received: by 2002:a17:906:adc5:b0:a6f:2d9a:cec1 with SMTP id
- a640c23a62f3a-a6f60de607bmr53114366b.76.1718315469521; Thu, 13 Jun 2024
- 14:51:09 -0700 (PDT)
+	s=arc-20240116; t=1718315449; c=relaxed/simple;
+	bh=E1LZ2qD4h47Nm0fqTgahufLnfYId7G2BDN4j2DBKUCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Y6chLNkbTkTC0BEKwlxEavS7GIuMrDqzUmw5Ec9KYihUuduoRQRLXT6EGdfsVpjDK8oJTF5ulxRr0bONlEmGIVZWq718KvDBS4xiTdd8mV1RXS4TOZ6pjQnVpdgD+YqsHOQRcm9iKJpJHqXEOdlhYiAM36ppxYZZbp2d5EiPCYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ahtnjbfp; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DLlh9b031385;
+	Thu, 13 Jun 2024 21:50:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=pp1; bh=XfZH3QdHnUhyEF5FH3erh0hNNk8
+	Aq0lyphP1+FusXOQ=; b=AhtnjbfpjiJr5bCvMnSzcUf8TyNL9iGvyW019pquIcV
+	5h5PwSosD+VKRTVPhuC4Al2vgT+BmchWoJ/ySStw/IDgz8THzr4UspieTGYvViVC
+	ScNoLnms23vLDeh6JiDWAq18fZDK08aVd3Aml3pE0D2De6V4lE9ASxfmP3SXz1bB
+	ZN577x3kGLyq5bAhBd6dLLEq4O25S0fEMGxqlQRJdAAiJMCIhP1xZkChx/nJO0A2
+	kVudq5s6/jGHe+PlzlJ/L2NIVd5Dx4xd28mh5/m2zUDemIb3vvVjN6Kmo2/7Be/s
+	S+WWofgE77M6VwD4nisZ8UoxVn6ZeODTrqwZNUwON8w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yr76mg9hh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 21:50:45 +0000 (GMT)
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45DLojbd002840;
+	Thu, 13 Jun 2024 21:50:45 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yr76mg9hf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 21:50:45 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45DKZtQm027243;
+	Thu, 13 Jun 2024 21:50:44 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn211c1r2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 21:50:44 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45DLocP956688914
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Jun 2024 21:50:40 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9CF8220040;
+	Thu, 13 Jun 2024 21:50:38 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 070F720043;
+	Thu, 13 Jun 2024 21:50:38 +0000 (GMT)
+Received: from localhost (unknown [9.171.17.6])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 13 Jun 2024 21:50:37 +0000 (GMT)
+Date: Thu, 13 Jun 2024 23:50:36 +0200
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: Halil Pasic <pasic@linux.ibm.com>
+Cc: Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+        Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+        virtualization@lists.linux.dev, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Boqiao Fu <bfu@redhat.com>,
+        Sebastian Mitterle <smitterl@redhat.com>
+Subject: Re: [PATCH 1/1] s390/virtio_ccw: fix config change notifications
+Message-ID: <your-ad-here.call-01718315436-ext-6568@work.hours>
+References: <20240611214716.1002781-1-pasic@linux.ibm.com>
+ <6086ef5e-48e7-40f3-b0a7-ff67b20aeae3@redhat.com>
+ <20240613152115.48b00798.pasic@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240613152115.48b00798.pasic@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Zh5pS27zY4hCl2nM5Z-JIj_yqJcTPm8n
+X-Proofpoint-GUID: ISNNOKrlGBlJTnIO7-XUbGs6B1Of3jyG
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610121820.328876-1-usamaarif642@gmail.com>
-In-Reply-To: <20240610121820.328876-1-usamaarif642@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 13 Jun 2024 14:50:31 -0700
-Message-ID: <CAJD7tkZdx7xJiDcvayH1aRW9Q6GQaZnF58UhspEOe=GQMBqFiQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] mm: store zero pages to be swapped out in a bitmap
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, david@redhat.com, 
-	ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_13,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=447 bulkscore=0 suspectscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 clxscore=1011 phishscore=0
+ spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406130154
 
-On Mon, Jun 10, 2024 at 5:18=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
- wrote:
->
-> Going back to the v1 implementation of the patchseries. The main reason
-> is that a correct version of v2 implementation requires another rmap
-> walk in shrink_folio_list to change the ptes from swap entry to zero page=
-s to
-> work (i.e. more CPU used) [1], is more complex to implement compared to v=
-1
-> and is harder to verify correctness compared to v1, where everything is
-> handled by swap.
->
-> ---
-> As shown in the patchseries that introduced the zswap same-filled
-> optimization [2], 10-20% of the pages stored in zswap are same-filled.
-> This is also observed across Meta's server fleet.
-> By using VM counters in swap_writepage (not included in this
-> patchseries) it was found that less than 1% of the same-filled
-> pages to be swapped out are non-zero pages.
->
-> For conventional swap setup (without zswap), rather than reading/writing
-> these pages to flash resulting in increased I/O and flash wear, a bitmap
-> can be used to mark these pages as zero at write time, and the pages can
-> be filled at read time if the bit corresponding to the page is set.
->
-> When using zswap with swap, this also means that a zswap_entry does not
-> need to be allocated for zero filled pages resulting in memory savings
-> which would offset the memory used for the bitmap.
->
-> A similar attempt was made earlier in [3] where zswap would only track
-> zero-filled pages instead of same-filled.
-> This patchseries adds zero-filled pages optimization to swap
-> (hence it can be used even if zswap is disabled) and removes the
-> same-filled code from zswap (as only 1% of the same-filled pages are
-> non-zero), simplifying code.
+On Thu, Jun 13, 2024 at 03:21:15PM +0200, Halil Pasic wrote:
+> On Wed, 12 Jun 2024 16:04:15 +0200
+> Thomas Huth <thuth@redhat.com> wrote:
+> 
+> > On 11/06/2024 23.47, Halil Pasic wrote:
+> > > Commit e3e9bda38e6d ("s390/virtio_ccw: use DMA handle from DMA API")
+> > > broke configuration change notifications for virtio-ccw by putting the
+> > > DMA address of *indicatorp directly into ccw->cda disregarding the fact
+> > > that if !!(vcdev->is_thinint) then the function
+> > > virtio_ccw_register_adapter_ind() will overwrite that ccw->cda value
+> > > with the address of the virtio_thinint_area so it can actually set up
+> > > the adapter interrupts via CCW_CMD_SET_IND_ADAPTER.  Thus we end up
+> > > pointing to the wrong object for both CCW_CMD_SET_IND if setting up the
+> > > adapter interrupts fails, and for CCW_CMD_SET_CONF_IND regardless
+> > > whether it succeeds or fails.
+> > > 
+> > > To fix this, let us save away the dma address of *indicatorp in a local
+> > > variable, and copy it to ccw->cda after the "vcdev->is_thinint" branch.
+> > > 
+> > > Reported-by: Boqiao Fu <bfu@redhat.com>
+> > > Reported-by: Sebastian Mitterle <smitterl@redhat.com>
+> > > Fixes: e3e9bda38e6d ("s390/virtio_ccw: use DMA handle from DMA API")
+> > > Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+> > > ---
+> > > I know that checkpatch.pl complains about a missing 'Closes' tag.
+> > > Unfortunately I don't have an appropriate URL at hand. @Sebastian,
+> > > @Boqiao: do you have any suggetions?  
+> > 
+> > Closes: https://issues.redhat.com/browse/RHEL-39983
+> > ?
+> 
+> Yep! That is a public bug tracker bug. Qualifies!
+> @Vasily: Can you guys pick hat one up when picking the patch?
 
-There is also code to handle same-filled pages in zram, should we
-remove this as well? It is worth noting that the handling in zram was
-initially for zero-filled pages only, but it was extended to cover
-same-filled pages as well by commit 8e19d540d107 ("zram: extend zero
-pages to same element pages"). Apparently in a test on Android, about
-2.5% of the swapped out pages were non-zero same-filled pages.
-
-However, the leap from handling zero-filled pages to handling all
-same-filled pages in zram wasn't a stretch. But now that zero-filled
-pages handling in zram is redundant with this series, I wonder if it's
-still worth keeping the same-filled pages handling.
-
-Adding Minchan and Sergey here.
-
->
-> This patchseries is based on mm-unstable.
->
->
-> [1] https://lore.kernel.org/all/e4d167fe-cb1e-41d1-a144-00bfa14b7148@gmai=
-l.com/
-> [2] https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03=
-d1344dde9fce0@epcms5p1/
-> [3] https://lore.kernel.org/lkml/20240325235018.2028408-1-yosryahmed@goog=
-le.com/
->
-> ---
-> v2->v3:
-> - Going back to the v1 version of the implementation (David and Shakeel)
-> - convert unatomic bitmap_set/clear to atomic set/clear_bit (Johannes)
-> - use clear_highpage instead of folio_page_zero_fill (Yosry)
->
-> v1 -> v2:
-> - instead of using a bitmap in swap, clear pte for zero pages and let
->   do_pte_missing handle this page at page fault. (Yosry and Matthew)
-> - Check end of page first when checking if folio is zero filled as
->   it could lead to better performance. (Yosry)
->
-> Usama Arif (2):
->   mm: store zero pages to be swapped out in a bitmap
->   mm: remove code to handle same filled pages
->
->  include/linux/swap.h |  1 +
->  mm/page_io.c         | 92 +++++++++++++++++++++++++++++++++++++++++++-
->  mm/swapfile.c        | 21 +++++++++-
->  mm/zswap.c           | 86 ++++-------------------------------------
->  4 files changed, 119 insertions(+), 81 deletions(-)
->
-> --
-> 2.43.0
->
+Sure, applied. Thanks!
 
