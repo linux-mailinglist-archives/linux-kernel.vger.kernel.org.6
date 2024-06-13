@@ -1,82 +1,150 @@
-Return-Path: <linux-kernel+bounces-213258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775F9907336
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:13:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2649907308
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76AC01C20B21
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:13:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B32A81C21E1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7745C144313;
-	Thu, 13 Jun 2024 13:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A418143C55;
+	Thu, 13 Jun 2024 12:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZk4d1co"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1NWlxKM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84DC143C67;
-	Thu, 13 Jun 2024 13:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCB8137914;
+	Thu, 13 Jun 2024 12:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718284385; cv=none; b=t+oAD3M7tmkkV7c2gZLDCtjDOesfHfm+vXD7aHayd4BK8NtAlGHJmRAiZgqDuRF5hZPAe/WxMWLFlT26ncob7lG/UzYrJLkEpsCkd/F+FvE9W0NLpWE6weFNlm3k6N/V0n6KD14WlrcIjePah6JFRW3K/yPZJIT2piMykQ+NMik=
+	t=1718283550; cv=none; b=Mo1QMqWchiWwJBgw1jI81A6wxFW6X5ZaA2xT+4y82qY9f3R1jVDRXwrgNjKj2UjtrcitO9wpc4DIPfEQ+nRmRqXKzy/a67u1p+PQYrNZCprnQh8QjmGdKm9PvxgM1eWS/xFB44M18TMPz2bpe1dpj9lhC0iQsNefU7R6fF9d87k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718284385; c=relaxed/simple;
-	bh=kNVg6hB3W8Ii/Oj3Os+AjniHpIN6BBnVmAS6GNrz1BY=;
+	s=arc-20240116; t=1718283550; c=relaxed/simple;
+	bh=etrALkXwRl8zDxAotSVCh3RhyEbTiNBpltd+VXvzvNk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y0Ot/XYyQSriOjnnvjj4EIXZpVgpmjOTLaYyjJSDlai/DmR9hfEVu1+cPAwYHhUvCFMHJyJAbUqagvldWWZ79fEgjcThng6AtLDT0eGcoiHp7XJ420Dj+jzOhOEygz8Ugp3428cN6UT6WaXQAyOLJh0wI+9+FTKoPSk4LPvoj2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZk4d1co; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2927CC32786;
-	Thu, 13 Jun 2024 13:13:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=n+GbObZKTtjcK/mrWipLzdURNpy7LW+c4V9TL+kuH4HEr0CZzjSldi6Ehk/CKElcsxYkQ8OQXwUTr8VjWp5pnlfaUF4PwzbuXMaedQlqSAa9ZemeXHRVklsjS3LRwxqwPaQbkkh2IzlKu968aexzwTlYHw0D3pWUSEif2aWTcf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1NWlxKM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96739C2BBFC;
+	Thu, 13 Jun 2024 12:59:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718284385;
-	bh=kNVg6hB3W8Ii/Oj3Os+AjniHpIN6BBnVmAS6GNrz1BY=;
+	s=k20201202; t=1718283550;
+	bh=etrALkXwRl8zDxAotSVCh3RhyEbTiNBpltd+VXvzvNk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LZk4d1coZpAUddGWJ8gYqQ4YEdJ5gsepRTel61MxdLvcgw3qwxEEdIJHRdHmDr/9t
-	 nugkWbCIIjPBu+brQIWXpO7KJZXFEwdJqmKEzpe9ef4dwODRyn2qFIU9Ts79G+5gRd
-	 47YmWMIpaN/AiiyEnRyvzqIsyfzJ4YoeXJo3LXd9ddiw6iMLF8fsBK2y+aB0S5lUCI
-	 0E4SxfZoTYZ/khfuLMiXfIuiQS0cKHoZp9SSIlARy+4xl5HNZqKqmhY74KM9oMUmUd
-	 K77T+UYmn0YSRMiYkKFb5ObRzVWn640ZfTju3bpu9I0+8mkEVH8FK4VeioEzEb5zH/
-	 +0kGe434Eqchg==
-Date: Thu, 13 Jun 2024 20:58:55 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH] zram: use copy_page for full page copy
-Message-ID: <ZmrtD5NsKcDkY4Ll@xhacker>
-References: <20240613000422.1918-1-jszhang@kernel.org>
- <20240613031731.GB479513@google.com>
+	b=k1NWlxKMENC+Q3DhMuln06VopaAL/VXRxy5sDVDqSt4L6aFwMy1L2JXzTdhs3Kkg2
+	 C2Wv66R/o66EYxKbWHPKQNP9Q2Ewp9mXJhKwnm8y0/7r8+ONjxD0Mc46y7MkLZG6wf
+	 kEiebLSKL8Ww98b2EuFV/tlH+9KkPGi1KPVzEjygpRzr962oNqBv0z38jAl07JXinL
+	 yhHp/n3MH0fJovw7iyVKz/zm3iMHLCJUeh6iGepW0l/wiUsss7oVA0a3FDTowfypfa
+	 BehIamiT6sp6zDy1g1TnJIh7pDfTr1xTYC6+5bohSeBS2NlwxCwZ/xc74Epj+O3+6s
+	 kqwl8Y8Ta1nkg==
+Date: Thu, 13 Jun 2024 09:59:06 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, mic@digikod.net, gnoack@google.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v4] perf trace: BTF-based enum pretty printing
+Message-ID: <ZmrtGuhdMlbssODG@x1>
+References: <20240613042747.3770204-1-howardchu95@gmail.com>
+ <ZmrqQs64TvAt8XjK@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613031731.GB479513@google.com>
+In-Reply-To: <ZmrqQs64TvAt8XjK@x1>
 
-On Thu, Jun 13, 2024 at 12:17:31PM +0900, Sergey Senozhatsky wrote:
-> On (24/06/13 08:04), Jisheng Zhang wrote:
-> > commit 42e99bd975fd ("zram: optimize memory operations with
-> > clear_page()/copy_page()") optimize page copy/clean operations, but
-> > then commit d72e9a7a93e4 ("zram: do not use copy_page with non-page
-> > aligned address") removes the optimization because there's memory
-> > corruption at that time, the reason was well explained. But after
-> > commit 1f7319c74275 ("zram: partial IO refactoring"), partial IO uses
-> > alloc_page() instead of kmalloc to allocate a page, so we can bring
-> > back the optimization.
-> > 
-> > commit 80ba4caf8ba9 ("zram: use copy_page for full page copy") brings
-> > back partial optimization, missed one point in zram_write_page().
-> > optimize the full page copying in zram_write_page() with copy_page()
+On Thu, Jun 13, 2024 at 09:47:02AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Thu, Jun 13, 2024 at 12:27:47PM +0800, Howard Chu wrote:
+> > changes in v4:
+
+> > - Add enum support to tracepoint arguments
+ 
+> That is cool, but see below the comment as having this as a separate
+> patch.
 > 
-> Is copy_page() really more optimal than memcpy(PAGE_SIZE)?
+> Also please, on the patch that introduces ! syscall tracepoint enum args
+> BTF augmentation include examples of tracepoints being augmented. I'll
 
-I think yes copy_page performs better than memcpy(PAGE_SIZE)
-commit afb2d666d025 ("zsmalloc: use copy_page for full page copy")
-also shows the result.
+You did it as a notes for v4, great, I missed that.
+
+> try here while testing the patch as-is.
+
+The landlock_add_rule continues to work, using the same test program I 
+posted when testing your v1 patch: 
+
+root@x1:~# perf trace -e landlock_add_rule
+     0.000 ( 0.016 ms): landlock_add_r/475518 landlock_add_rule(ruleset_fd: 1, rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7ffd790ff690) = -1 EBADFD (File descriptor in bad state)
+     0.115 ( 0.003 ms): landlock_add_r/475518 landlock_add_rule(ruleset_fd: 2, rule_type: LANDLOCK_RULE_NET_PORT, rule_attr: 0x7ffd790ff690) = -1 EBADFD (File descriptor in bad state)
+
+Now lets try with some of the !syscalls tracepoints with enum args:
+
+root@x1:~# perf trace -e timer:hrtimer_start --max-events=5
+     0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff225050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
+18446744073709.551 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff2a5050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
+     0.007 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff325050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
+     0.007 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff3a5050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
+18446744073709.543 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff425050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
+root@x1:~# 
+
+Cool, it works!
+
+Now lets try and use it with filters, to get something other than HRTIMER_MODE_ABS:
+
+root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS' --max-events=5
+No resolver (strtoul) for "mode" in "timer:hrtimer_start", can't set filter "(mode!=HRTIMER_MODE_ABS) && (common_pid != 475859 && common_pid != 4041)"
+root@x1:~#
+
+
+oops, that is the next step then :-)
+
+If I do:
+
+root@x1:~# pahole --contains_enumerator=HRTIMER_MODE_ABS
+enum hrtimer_mode {
+	HRTIMER_MODE_ABS             = 0,
+	HRTIMER_MODE_REL             = 1,
+	HRTIMER_MODE_PINNED          = 2,
+	HRTIMER_MODE_SOFT            = 4,
+	HRTIMER_MODE_HARD            = 8,
+	HRTIMER_MODE_ABS_PINNED      = 2,
+	HRTIMER_MODE_REL_PINNED      = 3,
+	HRTIMER_MODE_ABS_SOFT        = 4,
+	HRTIMER_MODE_REL_SOFT        = 5,
+	HRTIMER_MODE_ABS_PINNED_SOFT = 6,
+	HRTIMER_MODE_REL_PINNED_SOFT = 7,
+	HRTIMER_MODE_ABS_HARD        = 8,
+	HRTIMER_MODE_REL_HARD        = 9,
+	HRTIMER_MODE_ABS_PINNED_HARD = 10,
+	HRTIMER_MODE_REL_PINNED_HARD = 11,
+}
+root@x1:~#
+
+And then use the value for HRTIMER_MODE_ABS instead:
+
+root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=0' --max-events=1
+     0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff225050, function: 0xffffffff9e22ddd0, expires: 210759990000000, softexpires: 210759990000000, mode: HRTIMER_MODE_ABS_PINNED_HARD)
+root@x1:~#
+
+Now also filtering HRTIMER_MODE_ABS_PINNED_HARD:
+
+root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=0 && mode != 10' --max-events=2
+     0.000 podman/178137 timer:hrtimer_start(hrtimer: 0xffffa2024468fda8, function: 0xffffffff9e2170c0, expires: 210886679225214, softexpires: 210886679175214, mode: HRTIMER_MODE_REL)
+    32.935 podman/5046 timer:hrtimer_start(hrtimer: 0xffffa20244fabc40, function: 0xffffffff9e2170c0, expires: 210886712159707, softexpires: 210886712109707, mode: HRTIMER_MODE_REL)
+root@x1:~#
+
+But this then should be a _third_ patch :-)
+
+We're making progress!
+
+- Arnaldo
 
