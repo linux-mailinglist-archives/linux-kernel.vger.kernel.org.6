@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-213869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF50907BD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:57:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C902907BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C3D1F21F2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 613B51C24E39
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EA514BF92;
-	Thu, 13 Jun 2024 18:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8418F14BFBF;
+	Thu, 13 Jun 2024 18:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TWTylQ82"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G+ueFLQP"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7BD84A48;
-	Thu, 13 Jun 2024 18:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEAA14A4E7
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718305042; cv=none; b=caHUItubC/ogHtFhSZN+JiNllO5icJKDZweX8HMhXnO7remb6T1F1VJB3LzYely9LMQPjgmhuSe/Y8X/7M8ZtDhvjUTCb4FuSc97HtMTASUcrp0mkUJBOt9qDrgfFAG0D6CjoKPsRN6E3gJFsJ0Vz4VsHF/4UHUKWpZ4AZB5Zpc=
+	t=1718305053; cv=none; b=rFCi+nw9Mh/KwwUZl/3SxE4rwjGIKv/mUmb0E6jreRBbPV3jI6b91z+8jGwSsg1ifYg1x7M5k+zWb8+7X/CrdtUkZKe+K8MuMYweJcXFbp4IjZB9AKgF//rR8C0Oip2PprFt6QEPum8aA/Z0Z7VkOig3QSSqasfe/+02FVrmbxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718305042; c=relaxed/simple;
-	bh=P+m1t5xHvMIr3fsmh88GE/n8OkuO/B9/k7oOyAh8rho=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=epZP867SUKcn0RGYpsjyt5P8G3UjzxUi/jlHB+zFWJ7oiDrtF+3Xq/Qj3uWOj6oNjaoFV8Z0s2gDaOShcwY/pdLCZxK0QxINVCNOVyFnHO22Yw9pHE8wts0h1AxPLwLd+STGHjeY4sy9eO0vwuWG0bZS9xkeQYyi5Bkaa0dMVlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TWTylQ82; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DItMOb025340;
-	Thu, 13 Jun 2024 18:57:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=viNaj7mF1w8XPWkPxnYdqR
-	wOXEPjbFp19wKj6++NNc8=; b=TWTylQ8287387TU2hcOnqKISKdlZi2ggrPjvEF
-	ZajMPQZVBGxWHzi8Jy+xtjAA13wfWTnUTfv3S6Oh6fwWImBTWDRZgyz0swJNq6rq
-	bGQd/SKBdLSEVrVENtsxJqLAHOgpyuu/Zzt8ZlHqC8YmyArGdLseEUMZuPYvc+er
-	pTsDizxYjHz1Ao+pMS1TkIXBE+KK5mlT9+bIu7NH2rbYsu2LlL95k1Utck6UmXgI
-	rKyj7k/B8InHv2C1v6SPebr0BcHzo3vAHaxajh5ZqgTy4BT4btm80S+ti0jtyf1s
-	kYRaz/+dDUYfDiHmSRBjI0jijmMgix9qUwixvt4rJYEoUfqA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6fc007w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 18:57:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DIvGll001891
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 18:57:16 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
- 2024 11:57:16 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 13 Jun 2024 11:57:14 -0700
-Subject: [PATCH] dmaengine: fsl-dpaa2-qdma: add missing
- MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718305053; c=relaxed/simple;
+	bh=tSGg8GhzkVKrJZ6e6lZkA8/ZUCa4bAOubkF1I12udL4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CHvsZIAwdcBPSSZUnVSbb1EHwQ02oJDfH4JpKqoBc26nLxfGMisjyPwKoe2bDz1l/5jB0gSFeZ5ryAR0oA8m+3SnjJR8qQhLIbEm9xYrNXh12cepRHRf8NGUt0l+fciej+Ifl1JxZi29lwFmOtqDOLzYkByqxF1CgYqN34VTEEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G+ueFLQP; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6312750ce56so16596527b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:57:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718305051; x=1718909851; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C5Fndbx/eA449NVcOCPdnOjxiUO14w1zakbsrpN7bkY=;
+        b=G+ueFLQPrvYGJO1ILHQSKacSbWHY318hzKz/2Cxe6D+AkjO2OisZeOGFNsiXDXX4Hi
+         BFR4lTMpdFPcR+PTZzmlBkctfvO6ZCz27Ul1tEP9zu9uEoKvgHhVpL4DwPelKTOyV/Pw
+         BUV/I1ZXnnTpSDlVGNwXr8eeAuQI2sl5j4+l1fjU5cm+u9phuTOMjPiMKqUx9TmkiEkm
+         rQJon4fE7Uo2hLHbq1H4wAdV2CycVtfkzJYntR64dcbPeWpZwpYupuFJy7BS1KaoVB+T
+         GLuXNUNOZCKBq2zT5nFBHZJaGclkxF86ISe0fbIYlkco5+pYasz+H8JOyHFg2ForjwX1
+         Qr5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718305051; x=1718909851;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C5Fndbx/eA449NVcOCPdnOjxiUO14w1zakbsrpN7bkY=;
+        b=X3EShak4AvDCOsRUuXJ9Sca70TDVW6c1leySC+4k8vQroEr9mTEyQ+lNgx5ayQWE+o
+         5SvH7Z4f5lR5HN3bIYLDuQYbmz1G2tIc/P7LOHthKWBvMwzh4t9ErOwugxxh7PILXvPD
+         oId9C+35pxxAATwQpEvcISJwvKOtGFHopB6jDMNFXW1QeVD5lE+vH7jAr3s0fXxMsjQL
+         fvUpV29ZWiulLeQN8P7tNpeor4tpKEpL26Q3vKgnqwS/VOXZnCm+skVL9sL0skavjGLP
+         PlM5SXLg2mg/NKWjbvxpGiFrt9mOhI4wqUzbUp0kk+x7m4hpNg/gocRySpiBMX3Obe2x
+         Eeyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwG8VVVs9uw46CzayiI0b/vskhKzIlgrAjDjEt7tJwQYbcUIXFOBhcDzzdDMtLHsq0Rcvr1KVxZZWBxjJI3a94PUX6jSJSHUQJXbbl
+X-Gm-Message-State: AOJu0YzpgilE0EJFv2iow+6bD0Xjd/oHAGxaW8l9MzXYTMJ76KyFYGkF
+	3pUpNLRk9/mpe0oz5pxCdslU3BsEGHOkfYoYjusEd5caOECbB2nws42I5/MI895Cy9DURawWHLw
+	zxQ==
+X-Google-Smtp-Source: AGHT+IEtwzPPtdTb/6r1+Lt3zX+YRN2khdPMq6WUaa3M6+7UwQdtsLyL+FOBLDIaz3NH6he0KFHlOzU1XFo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:398:b0:61b:e689:7347 with SMTP id
+ 00721157ae682-6322216bf24mr873747b3.2.1718305051510; Thu, 13 Jun 2024
+ 11:57:31 -0700 (PDT)
+Date: Thu, 13 Jun 2024 11:57:30 -0700
+In-Reply-To: <ade2de8f-8f63-45fb-a01a-096d048dd971@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240613-md-arm64-drivers-dma-fsl-dpaa2-qdma-v1-1-815d148740e6@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAApBa2YC/x3NTQ6CQAxA4auQrm0y/GSiXsW4KExHmjAjtkhIC
- Hd3cPlt3tvBWIUN7tUOyquYvHNBfalgGCm/GCUUQ+Oazvm6xRSQNPkOg8rKahgSYbQJw0zU4Oc
- kX2NovWtvniOU0qwcZftfHs/inoyxV8rDeLYnyd8NE9nCCsfxA2JndWuUAAAA
-To: Vinod Koul <vkoul@kernel.org>
-CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: aqG4T4zqVCsGGekInVM5wzIzHXv-g2UY
-X-Proofpoint-GUID: aqG4T4zqVCsGGekInVM5wzIzHXv-g2UY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_11,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- bulkscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=866
- priorityscore=1501 mlxscore=0 spamscore=0 impostorscore=0 malwarescore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130135
+Mime-Version: 1.0
+References: <20240612104500.425012-1-usama.anjum@collabora.com>
+ <20240612104500.425012-2-usama.anjum@collabora.com> <Zmnwhx0Y0qh0x03J@google.com>
+ <ade2de8f-8f63-45fb-a01a-096d048dd971@collabora.com>
+Message-ID: <ZmtBGn1rgFu8tcgl@google.com>
+Subject: Re: [PATCH 2/2] selftests: kvm: replace exit() with ksft_exit_fail_msg()
+From: Sean Christopherson <seanjc@google.com>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Anup Patel <anup@brainfault.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, kernel@collabora.com, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/fsl-dpaa2-qdma/dpdmai.o
+On Thu, Jun 13, 2024, Muhammad Usama Anjum wrote:
+> > As above, AFAICT it comes from Google's internal test infrastructure (KVM selftests
+> > came from Google).
+> > 
+> >> Its even better if we use ksft_exit_fail_msg() which will print out "Bail
+> >> out" meaning the test exited without completing. This string is TAP protocol
+> >> specific.
+> > 
+> > This is debatable and not obviously correct.  The documentation says:
+> > 
+> >   Bail out!
+> >   As an emergency measure a test script can decide that further tests are
+> >   useless (e.g. missing dependencies) and testing should stop immediately. In
+> >   that case the test script prints the magic words
+> > 
+> > which suggests that a test should only emit "Bail out!" if it wants to stop
+> > entirely.  We definitely don't want KVM selftests to bail out if a TEST_ASSERT()
+> > fails in one testcase.
+> But KVM tests are bailing out if assert fails, exit(254) is being called
+> which stops the further execution of the test cases.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/dma/fsl-dpaa2-qdma/dpdmai.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/dma/fsl-dpaa2-qdma/dpdmai.c b/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
-index 36897b41ee7e..b4323d243d6d 100644
---- a/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
-+++ b/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
-@@ -367,4 +367,5 @@ int dpdmai_get_tx_queue(struct fsl_mc_io *mc_io, u32 cmd_flags,
- }
- EXPORT_SYMBOL_GPL(dpdmai_get_tx_queue);
- 
-+MODULE_DESCRIPTION("NXP DPAA2 QDMA driver");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240613-md-arm64-drivers-dma-fsl-dpaa2-qdma-e8fd360396ef
-
+Not if the TEST_ASSERT() fires from within a test fixture, in which case the
+magic in tools/testing/selftests/kselftest_harness.h captures the failure but
+continues on with the next test.
 
