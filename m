@@ -1,147 +1,167 @@
-Return-Path: <linux-kernel+bounces-213097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245E7906B0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:34:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD7D906B0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D14D1C24822
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042CA1F2426D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD5C143C41;
-	Thu, 13 Jun 2024 11:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55108142E8E;
+	Thu, 13 Jun 2024 11:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BxvJ92s9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="dsezFuET"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFC713791B;
-	Thu, 13 Jun 2024 11:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9BD1422B5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718278420; cv=none; b=cKM6r04GNYQ7/YRGMcaUJRQrD20lfnflw0RbPXCdAsrWQXsjwdu4IWCBkSCnRFFdkAIZdvM977Tz4JAWD4du8kJd/HKa4XrCsbG8yvBWxYffhzZ7I71UONoEWGcpZWwo/NBtB4a/OtiD6OqzYM7rPMhv4Y5PJ8bKqJH2vi7g9fM=
+	t=1718278456; cv=none; b=IF1iX3JFa5M1noVFABv6R6YhKbvOTShuHjQ5XiHEbQJNHHzGNZcJpRGYRe0kqoSaxXrbskZO40Ggurlm2Rve/zxcEgaGsT7XYMors1blNKDAiL4g0ilqHfxEXLm7Ymmq4jTuIOoayPgEaKMQ2NtxEK0eUCl0GIKJX9HIH3R0U3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718278420; c=relaxed/simple;
-	bh=tYDOTnZN4WaMj/eRey1nKzm34RYJ/l/vK+gS9mH/eLg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7htQS8KLoqO3z2KAysj7vKTm0iOjJSV/uyWadmkk7MKVIvYGw1PjOlqnkWE3Xbn6DUprGYEF5w1OIV07OE1knww5n3t0r+G3iblimujyP7EA1PXXwWrDNGCHojCvO49xbTuuMqx/6eKo/BjIr9YDBQho4ur28bai0Ro87mj8mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BxvJ92s9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADBB5C2BBFC;
-	Thu, 13 Jun 2024 11:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718278420;
-	bh=tYDOTnZN4WaMj/eRey1nKzm34RYJ/l/vK+gS9mH/eLg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BxvJ92s90ZNTNMAoWAKt2fgASuD522HcKk4RnTPwXX/bbP5uSA7bW0D9lW3D1cVWc
-	 icfLjlRNOVbLiUlFXnepLSwWxqbrLzPn0RhNwB4ABsZdSH3RcbEKzh5bd6RobMeGtf
-	 JdpIhGpIREndf1numOH4L2xJLOeQSo5KXty5ipvk=
-Date: Thu, 13 Jun 2024 13:33:37 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v8 2/2] misc: gpio-virtuser: new virtual testing driver
- for the GPIO API
-Message-ID: <2024061336-scooter-immortal-ec5f@gregkh>
-References: <20240613092830.15761-1-brgl@bgdev.pl>
- <20240613092830.15761-3-brgl@bgdev.pl>
- <2024061356-uptake-ideology-e57b@gregkh>
- <CAMRc=MfjQdFR_8ALGibxQnr5tzoHykCBpkBxjH78c5HuD43rBg@mail.gmail.com>
+	s=arc-20240116; t=1718278456; c=relaxed/simple;
+	bh=cSldylOADan04Rn9YvO2UHvgx9cydhYHmv6mP+L6OXM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EUKzenbxMrcXvsKwuELcy2SSTxZ8xWbvqfqJfzwzZgGPUZL86WCMdUA/J8H/anIuNGhMRt3zz+pgcT+5NIhbs3wzd2B5YgtEIvvYLFDzCYR88NEglUqjx1BiqTJWWzFOHy5joIhtwbOa0yHKdAImDwKF4mqZpS5BlSvBKTRrIA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=dsezFuET; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1718278451;
+	bh=1z2hwHmg3zI5iDN7nSTa67ma/S6hUmgaCaCPmbI3jNE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=dsezFuET6MQptgoIk4Rz2FdLfx112u9Qx789Kb6J4Llwv43suNMkBgJJQYDjUaf9q
+	 9PMwVN7VPdH247bgCo1MtVFVRMvX9fR6R77cwc5faN800byW7JZ3yd4LEAg1R352Za
+	 GU2G8AD91GMmg4rc9l/tuhy8UCB4yoFI1Fii2QrtjRvJM9MTy3xamznmntrzLqAHHb
+	 HhxI6DCtBAo9qAO13nYTcavzOmCFWaiRW3wb1ls8xA1LodFnSv8bpxNI+KoAEzNxvw
+	 ndZyvDgLKpZ/Uwiu7IVXY9PytAJ77PvqQwUHX+Wx4c7Ia/Euss5oBGDBynHlU7wdUY
+	 63G7z56OX18aA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4W0L0L4qfsz4wcJ;
+	Thu, 13 Jun 2024 21:34:10 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: "Nysal Jan K.A." <nysal@linux.ibm.com>, Thomas Gleixner
+ <tglx@linutronix.de>
+Cc: Tyrel Datwyler <tyreld@linux.ibm.com>, Michal Suchanek
+ <msuchanek@suse.de>, "Nysal Jan K.A" <nysal@linux.ibm.com>, Nicholas
+ Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
+ <naveen.n.rao@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Laurent Dufour <ldufour@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Skip offline cores when enabling SMT on PowerPC
+In-Reply-To: <20240612185046.1826891-1-nysal@linux.ibm.com>
+References: <20240612185046.1826891-1-nysal@linux.ibm.com>
+Date: Thu, 13 Jun 2024 21:34:10 +1000
+Message-ID: <875xudoz4d.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MfjQdFR_8ALGibxQnr5tzoHykCBpkBxjH78c5HuD43rBg@mail.gmail.com>
+Content-Type: text/plain
 
-On Thu, Jun 13, 2024 at 01:22:58PM +0200, Bartosz Golaszewski wrote:
-> On Thu, Jun 13, 2024 at 12:02 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Thu, Jun 13, 2024 at 11:28:30AM +0200, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > The GPIO subsystem used to have a serious problem with undefined behavior
-> > > and use-after-free bugs on hot-unplug of GPIO chips. This can be
-> > > considered a corner-case by some as most GPIO controllers are enabled
-> > > early in the boot process and live until the system goes down but most
-> > > GPIO drivers do allow unbind over sysfs, many are loadable modules that
-> > > can be (force) unloaded and there are also GPIO devices that can be
-> > > dynamically detached, for instance CP2112 which is a USB GPIO expender.
-> > >
-> > > Bugs can be triggered both from user-space as well as by in-kernel users.
-> > > We have the means of testing it from user-space via the character device
-> > > but the issues manifest themselves differently in the kernel.
-> > >
-> > > This is a proposition of adding a new virtual driver - a configurable
-> > > GPIO consumer that can be configured over configfs (similarly to
-> > > gpio-sim) or described on the device-tree.
-> > >
-> > > This driver is aimed as a helper in spotting any regressions in
-> > > hot-unplug handling in GPIOLIB.
-> > >
-> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > ---
-> > >  .../admin-guide/gpio/gpio-virtuser.rst        |  176 ++
-> > >  Documentation/admin-guide/gpio/index.rst      |    1 +
-> >
-> > sysfs documentation needs to go in Documentation/ABI/ not in a random
-> > .rst file where the tools that check this will not catch it.
-> >
-> 
-> This is a testing driver, not representing real hardware. Do we hold
-> such modules to the same standard?
+"Nysal Jan K.A." <nysal@linux.ibm.com> writes:
+> From: "Nysal Jan K.A" <nysal@linux.ibm.com>
+>
+> After the addition of HOTPLUG_SMT support for PowerPC [1] there was a
+> regression reported [2] when enabling SMT.
 
-Yes.
+This implies it was a kernel regression. But it can't be a kernel
+regression because previously there was no support at all for the sysfs
+interface on powerpc.
 
-> > >  MAINTAINERS                                   |    8 +
-> > >  drivers/misc/Kconfig                          |    8 +
-> > >  drivers/misc/Makefile                         |    1 +
-> > >  drivers/misc/gpio-virtuser.c                  | 1790 +++++++++++++++++
-> >
-> > Why not put this in drivers/gpio/?  Why misc?
-> >
-> 
-> Because it's quite... well "misc". It's not a GPIO chip provider
-> (drivers/gpio/ is for GPIO providers), it's only a GPIO consumer. It
-> also has an interface that doesn't fit any particular subsystem.
+IIUIC the regression was in the ppc64_cpu userspace tool, which switched
+to using the new kernel interface without taking into account the way it
+behaves.
 
-but it's gpio-specific, please put it there.
+Or are you saying the kernel behaviour changed on x86 after the powerpc
+HOTPLUG_SMT was added?
 
-> > > +Both attributes allow to read and set arrays of GPIO values. User must pass
-> > > +exactly the number of values that the array contains in the form of a string
-> > > +containing zeroes and ones representing inactive and active GPIO states
-> > > +respectively. In this example: ``echo 11 > values``.
-> >
-> > sysfs is "one value per file", so why are there multiple values here?
-> >
-> > If you want to just use this for testing, and want to put whatever you
-> > want in the files, just use debugfs, that's what it is there for, not
-> > sysfs.
-> >
-> 
-> Debugfs doesn't allow me to attach attributes to a particular device
-> which is what I want here.
+> On a system with at least
+> one offline core, when enabling SMT, the expectation is that no CPUs
+> of offline cores are made online.
+>
+> On a POWER9 system with 4 cores in SMT4 mode:
+> $ ppc64_cpu --info
+> Core   0:    0*    1*    2*    3*
+> Core   1:    4*    5*    6*    7*
+> Core   2:    8*    9*   10*   11*
+> Core   3:   12*   13*   14*   15*
+>
+> Turn only one core on:
+> $ ppc64_cpu --cores-on=1
+> $ ppc64_cpu --info
+> Core   0:    0*    1*    2*    3*
+> Core   1:    4     5     6     7
+> Core   2:    8     9    10    11
+> Core   3:   12    13    14    15
+>
+> Change the SMT level to 2:
+> $ ppc64_cpu --smt=2
+> $ ppc64_cpu --info
+> Core   0:    0*    1*    2     3
+> Core   1:    4     5     6     7
+> Core   2:    8     9    10    11
+> Core   3:   12    13    14    15
+>
+> As expected we see only two CPUs of core 0 are online
+>
+> Change the SMT level to 4:
+> $ ppc64_cpu --smt=4
+> $ ppc64_cpu --info
+> Core   0:    0*    1*    2*    3*
+> Core   1:    4*    5*    6*    7*
+> Core   2:    8*    9*   10*   11*
+> Core   3:   12*   13*   14*   15*
+>
+> The CPUs of offline cores are made online. If a core is offline then
+> enabling SMT should not online CPUs of this core.
 
-Yes it does, you just have to create the tree yourself.  Many subsystems
-do this today just fine.
+That's the way the ppc64_cpu tool behaves, but it's not necessarily what
+other arches want.
 
-Please do not abuse sysfs for something that it is not designed for,
-please use debugfs, that is EXACTLY what it is designed for.
+> An arch specific
+> function topology_is_core_online() is proposed to address this.
+> Another approach is to check the topology_sibling_cpumask() for any
+> online siblings. This avoids the need for an arch specific function
+> but is less efficient and more importantly this introduces a change
+> in existing behaviour on other architectures.
 
-thanks,
+It's only x86 and powerpc right?
 
-greg k-h
+Having different behaviour on the only two arches that support the
+interface does not seem like a good result.
+
+> What is the expected behaviour on x86 when enabling SMT and certain cores
+> are offline? 
+
+AFAIK no one really touches SMT on x86 other than to turn it off for
+security reasons.
+
+cheers
+
+> [1] https://lore.kernel.org/lkml/20230705145143.40545-1-ldufour@linux.ibm.com/
+> [2] https://groups.google.com/g/powerpc-utils-devel/c/wrwVzAAnRlI/m/5KJSoqP4BAAJ
+>
+> Nysal Jan K.A (2):
+>   cpu/SMT: Enable SMT only if a core is online
+>   powerpc/topology: Check if a core is online
+>
+>  arch/powerpc/include/asm/topology.h | 13 +++++++++++++
+>  kernel/cpu.c                        | 12 +++++++++++-
+>  2 files changed, 24 insertions(+), 1 deletion(-)
+>
+>
+> base-commit: c760b3725e52403dc1b28644fb09c47a83cacea6
+> -- 
+> 2.35.3
 
