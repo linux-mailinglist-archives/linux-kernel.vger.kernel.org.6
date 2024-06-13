@@ -1,238 +1,522 @@
-Return-Path: <linux-kernel+bounces-214090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71682907F3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:10:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9165F907F3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E31B728311A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 137B91F23B8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A67C156652;
-	Thu, 13 Jun 2024 23:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16F314D6FA;
+	Thu, 13 Jun 2024 23:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b="CvMvjDLr"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2100.outbound.protection.outlook.com [40.107.94.100])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="XQpl9Jbh"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F48155A53;
-	Thu, 13 Jun 2024 23:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.100
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718320175; cv=fail; b=tAM6m6EwJaSY84UE36du/oCAQ49agKOPysqxam1W19pgns8xuoWu3LIV09wS+yZYeeBeeMe2mFZr2qdZlrEOyhOgu367JA9Njg+VNjP95wG7CoBkOE/RXxP8CSSJtSYqvwhjlsLjMIeDJ9tpq+LTOWj8CTWAkcbJCmPfNkQEhzw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718320175; c=relaxed/simple;
-	bh=4oZXwEDiVyLO+9N0qDy5i+1bfow2trWq/3Vq/dBY5eA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KHuUsw+ivMR1K7TK/DIJ7cdFQKvl1N9iixnTa1IkgrMg4PowqQU6/8INRS0uro+HbIKXDa2sPGRrNsA+6LPUyKZoWkJM0ZMT9BTxaVGTLbO/rD/WolYAhc1qiYKhtzIUwpLBhPvFPb+6vlj0rAkQx6bQzNnhEbPrLiBN/LGGO6g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com; spf=pass smtp.mailfrom=phytec.com; dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b=CvMvjDLr; arc=fail smtp.client-ip=40.107.94.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Mv7Aq7WrimvncS8bOurHREOCxsc965IniHUuSiUPWXj4Ok8Bky7AElR5qEpWU60UnNwo3vXeAzgFbNyuT1d82z3isdvq10e6IZ1ZDKC10cHq9IJvFSsksfDxvY6o2yDCRVXjHMu8vDlqoLj2X8dWf11sQ2RGvQmDPmmmlI5jxqBqMvHuN57/TIClEzJiFJNbl1jJJYDbaUPnT7Py5HBydQtEG+UHumzwDiDu/VlDcwEBGWPqIbyi1fWa92NwSPPZsBKK4GlCav/Qb7w+YAHjXJ9kZx8ZgzlNUmU59LYO/Pp4kvs7p/BqJMIKXd3M2ypQ7cqALEI0HXKLzt+SfSsyYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MVV2UPhrcZq6BZwNL3cLfOxS7NTppWhGYN1Qfj7Bl5U=;
- b=mKP8YD5HtQwH3Em8iyQ2zpMmkaZcz64udNPsX/RHRnB/vUbqJxRHfRoekeFUsZrFT76zw6T/YMgyj9KH+rFCapqg8fcaZNvwe/C18cM/1WOPwXUAIc1QkxPtSHw7+LPF+EaT88x4nFxybDYyAfzr8rWsi30dF06ohokkKNVWZv8KzpOHbpiVIVys2C0eGRuYScKqO96gFdOGGpARDcvUN7ncoQJpBxZiHBoRwF5hQgRu1SifPut2M9bdKZDg+y4x8iZ7B4asiiuvHPosyUYxhBrGiMaQUHcBVZjt6J+4Ws0uY/tEgoAJnxmY6YbR4uaGXWIvRE37sBRiUWPCLfW55Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=phytec.com; dmarc=pass action=none header.from=phytec.com;
- dkim=pass header.d=phytec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MVV2UPhrcZq6BZwNL3cLfOxS7NTppWhGYN1Qfj7Bl5U=;
- b=CvMvjDLrztFDQP82BVz9+ujzBi5IQJ9v+5NlC0IPHk1lSazyMA7XhvUbk9kZ8u5Lt8YcLkqEVgZ8K2AwtP/CnB3c5YT2Os+iVYmOkrzisj4+bgPM/tz08InFgfGV48Wnf9ILVw5YsaPlX4111/fkXVeGjoQucGfPoUtqHmv8sbI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=phytec.com;
-Received: from SA1PR22MB5636.namprd22.prod.outlook.com (2603:10b6:806:3e2::15)
- by DM4PR22MB3423.namprd22.prod.outlook.com (2603:10b6:8:46::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Thu, 13 Jun
- 2024 23:09:29 +0000
-Received: from SA1PR22MB5636.namprd22.prod.outlook.com
- ([fe80::aaeb:2d53:9f16:db45]) by SA1PR22MB5636.namprd22.prod.outlook.com
- ([fe80::aaeb:2d53:9f16:db45%4]) with mapi id 15.20.7677.024; Thu, 13 Jun 2024
- 23:09:29 +0000
-From: Nathan Morrisson <nmorrisson@phytec.com>
-To: nm@ti.com,
-	vigneshr@ti.com,
-	kristo@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	upstream@lists.phytec.de,
-	w.egorov@phytec.de
-Subject: [PATCH v3 4/4] arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disable spi nor
-Date: Thu, 13 Jun 2024 16:07:59 -0700
-Message-Id: <20240613230759.1984966-5-nmorrisson@phytec.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240613230759.1984966-1-nmorrisson@phytec.com>
-References: <20240613230759.1984966-1-nmorrisson@phytec.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CH0PR03CA0234.namprd03.prod.outlook.com
- (2603:10b6:610:e7::29) To SA1PR22MB5636.namprd22.prod.outlook.com
- (2603:10b6:806:3e2::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D8F13B797;
+	Thu, 13 Jun 2024 23:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718320300; cv=none; b=i4/829xUCIM+TNrVj7ZFlvh12wM60kBKOT+f2tirBL33Giiid4aatoxTSiOh96E1/twFXA88x2pWDQfsuOV5yyqvQ4+7ezgPxjDCA3IeLIQP1O8Fs7HWkeXV6ib/saAZiRtoqRZzOgfNpc6HjKaicIrQ4PClzvexvZmM/DXibB4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718320300; c=relaxed/simple;
+	bh=+YldGtQj37QKKviAQA5kIXNW0aaOtSmZoGsS/yjcJ2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uexpHGWwkI9KG7/WTW2zPPuGdI2m+t7y1J7703OJ0zqTSia6GZMYCLBnhiBI4JAL4yuqtfgrTLTi/9WFlRauW0y+/2Czb87Ro+wAKA1uTqYHJqRRUW/3+pgyMhkeQzpRtS92a46Z+N7uE7FS3T0Aadm3+V8/zPbzMSngKUx41nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=XQpl9Jbh; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1718320290; x=1718925090; i=w_armin@gmx.de;
+	bh=JmSqbki9ZVxHtusgNP4SdXHx7bVIZ8Y8P/rsSR4sfP0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=XQpl9JbhBIqkJyIx5wd1kIHlGgW7aqc/8pZDRePGwsRCq2Gg5EWK7hbWUreKvKL4
+	 3m+QLZGDn0cTBNa2Z+wCCCoAZV4VngccNKNzsa6UFpEnPN1uuW23S8Kejj6dT8RYI
+	 kRHfB3W6wt5uOJvxMEypAUDiK9ZDm/UdFc46yU9hlpmMwz1sAp8BAYtEMQZe4xLyd
+	 J182xAEXqy7uVfZaKScM9Vd+efCJwuiymebN/b+jpaNIz1bx0D+VBSdG29v1RMRO1
+	 l6y123e3NwfUg876pPlCvYogGSm3fQb257BtAUnS/tTsjZF7JOCt8DIHwiUIEnKCZ
+	 FuuqEfL/sFwVUMcsfA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M8ykg-1sMpHw1Xhm-00BA7A; Fri, 14
+ Jun 2024 01:11:30 +0200
+Message-ID: <76dff03c-08f6-4edc-af57-c0b8dbf55293@gmx.de>
+Date: Fri, 14 Jun 2024 01:11:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR22MB5636:EE_|DM4PR22MB3423:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ebdadaf-841a-40ad-4932-08dc8bfde0d7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230035|1800799019|366011|7416009|376009|52116009|38350700009;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TgOccfOsAvsW/1cy+NaCUIRfDwrEfg28i405W3Zc/YvsSyXAxXQHr0I59a1i?=
- =?us-ascii?Q?Cm5ZmAyEGHmuUZJKytuxZyCsrPXlIktxNgiRliPju+wOaoY1NB5sbqKvpybc?=
- =?us-ascii?Q?6nqy6CMGTQbD2L2VLd1aWMRKappkdLJs+QqO5MjVEj/b4tK1x9Sih8DCbAF1?=
- =?us-ascii?Q?6hhyZ7vJr4LBcx/FUnRnmb1EljMLaR7R3SmAPOJ1RLLttGduCvIlKsfAsZ7C?=
- =?us-ascii?Q?YOnEUvygg5O9UZ1d9Jd1U2YIjfMAvBMHuXpX++iddtC9HAbNf0owZimOWsFN?=
- =?us-ascii?Q?PhY65dEMA4S3pEGMoyF9fqofTEnHVfObqwO1HCcJcIMFWC+DgCDCfxZMjru7?=
- =?us-ascii?Q?qhftqz2hq/zLchyI837mgqrctwCdmP4HosQ+5dHO5fogz9+hGBlyRvtwiWdz?=
- =?us-ascii?Q?3YOkmgvkd+0uPiWC06if0qY+z0s6E5TY6sBmzKQep9+i6zKul0FIHowOFb4w?=
- =?us-ascii?Q?8YhVeI3jvA+lTyRQisM1rD4QeDuZJaxUTuR0vNb3+NcNI+lMwiKHJvtU6HBZ?=
- =?us-ascii?Q?p3DmiGvYXtguT2t2fnmqut+cUJI/dyxDwf/WtHEs7MQQdnPSoUdVdsF2Pa9k?=
- =?us-ascii?Q?3aDA1zzilY88tfYC/8zkGgZypKiUmdCVEptH5e/TJsqStGEgwXbcklDQqxKM?=
- =?us-ascii?Q?qOmn1GLbh7hXPCn4wnVj/oSwWUMsCSEsIG3iJW4kuwtZMEwU3kehpmAOoF9E?=
- =?us-ascii?Q?yJ2JTk9WCoqi1B1wwJtTTGKa3ojOC3zfQyeJoDj58Xqs4YCm85VH6Iyo0dhp?=
- =?us-ascii?Q?JxuHv2VboqpDVRi4ZctzSwsejdqVi7LPcZJsrBk0VlPaxwasFJKjECFktxDa?=
- =?us-ascii?Q?th/Ak1ShRQyGUQ7nNNnKY1oAxcKO4SHeYP3h2xapAnUApJcihyuwNrp8Yde2?=
- =?us-ascii?Q?Q9eYgm4FJ4nye5SoVaaC3+neac79UsidqYPDa7fKEOCI5uvzNssd6MjdPpM/?=
- =?us-ascii?Q?MN+QzofifjlS6S2mw+js/EaE10Lvqb4vABhUVa+KXBL2tJhpDDFs6bVJaHtc?=
- =?us-ascii?Q?ci951wNUiduXGpDIN/HcWkq1PnhBW8yytcWtoTHwjMJvR1duL1nYrwVVjetq?=
- =?us-ascii?Q?mGwuTNYAcBHjur9mKVAaz3K16w4TWEmEKuN4NjaP1oNR3ABQTplpu6sgHDIG?=
- =?us-ascii?Q?I5B4EEffesh1z1HGYZocbrdrUyEFcVB4aoHGxSQz+retLj5bhGXG+7/t/mtR?=
- =?us-ascii?Q?JZLnH2EnMeWiIhNQyqvTF1VTkxACGJV5m3s8uScMx1uZ+lKs2ynYkEm9NK8y?=
- =?us-ascii?Q?QlTvnuPBlIEON3n/K/rgnOytk4nOp4Qk0ZU+ijXThD2EMm39tewK+3iidxsu?=
- =?us-ascii?Q?+mdD+gvjYlh7PG8WyLXNIhItgutsqqb0S6l97BCGRwkZbFsm1C4leIwUmTyl?=
- =?us-ascii?Q?jaDpSUo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR22MB5636.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230035)(1800799019)(366011)(7416009)(376009)(52116009)(38350700009);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/xwsrjmEcMGu07GSbpVeA6u2YDtbCZ7ohHCJ/Nwl4XYqaqnUH8vlfaEPebcZ?=
- =?us-ascii?Q?d5rApZsqp77f5q9Pqj9KKDppZQOA9g2+nov6zjAVs/fyRuPBpQsytADlRo+J?=
- =?us-ascii?Q?JydwT93SFtJpm1t0rQTdsWuiBxpyToiaH2Zlg7Sa1Fu2UG3N4T6DB9wPtY6U?=
- =?us-ascii?Q?UiAgcs9ojVG3AGFcIcv/mTWFW2hQUrOW2MyVlfN8NfYf/7FE8Qd4Fnd34VDa?=
- =?us-ascii?Q?MuN6cb67cLsUNVBVMTFez93PH230gjdT01iAKatVk24X/e1vks/y3g7iN9vn?=
- =?us-ascii?Q?nG/7tiUuGAraUBr/RIuM8ugiQQCbdOss5KqgZsDXBkuvXd7PqeYCFdnX7zm3?=
- =?us-ascii?Q?DMjQQqgsSw2nNPyTsrzgN1IEn9zTxiBEHFHKpMA/LxRmFD62pjCuduhYoTx5?=
- =?us-ascii?Q?XQMmgKe6Y98+JmGKzhGTDLKtvdHUUxJ9XWh+dPOJ41L7gTPh3exYhbLTn3Fb?=
- =?us-ascii?Q?QGGnp0thJ83R0hMDsrQOdcNSJ3+iHJW+tK+iHXnxhphcB+RRuiCOmTVqbmzN?=
- =?us-ascii?Q?q//t0Cn+VWWKI9iUe9Wkwx5zgN0kuM53NFOy2A8arRVrCc6bgK+gMyli3jqx?=
- =?us-ascii?Q?UwA9SCUoioneZrWh/gkzhZKKaFFZq03j9b+NULDgGSegAjxB1tUASz9VZILK?=
- =?us-ascii?Q?Dv73seVlzhaWBu6QpaGetAG6p5WS1QGMtHHbvBSHahFWUDXTfHSWVsOhkuoA?=
- =?us-ascii?Q?SEYk4Ml8rgqN5wMkvwCZpo2S/5ucX5HcKgNCGfLBqeXkZeaqePM7KmIsoqJV?=
- =?us-ascii?Q?6+ZTV58elWmafdgA7LyyQwqXR70+ApS8kNFuwm4hYNzsvTNPBFSjSYU/p32C?=
- =?us-ascii?Q?EFyfl9Slyl6N/TLc7b+OLjefWC90R9mbwuQPsriEvJPDL5KwHPLikhP+BZSt?=
- =?us-ascii?Q?zNuYj78+eooeE2LsmDfbC3KtEbnoaQGZsIyqDuMwp6q9xxKaqE2Yi/kf0BGM?=
- =?us-ascii?Q?gD3g7WB8Qy4WZVoNlIR5Jsf8Fp53SZWoVx3G7JfPK2V5m2YTfvvFd8cdWIYG?=
- =?us-ascii?Q?7F5APbOJUTEKbMJF7qHIJCQvsgzcpxoqttCxMaWXCwc0f8Sk4BMCxEnJfVfq?=
- =?us-ascii?Q?D+N3HSGArYtT+bjo6paJzFRveSF3dAeZVuPEKbjg4c7NLSIoWRndWlAbVs94?=
- =?us-ascii?Q?GQQy+E030h9VwyeBZc6rLUSimFuTnRp9Bx4z3gvxmzjQ4BwcCURvR8nTvkNC?=
- =?us-ascii?Q?9Xq6TmvLBL7Gv3CkcgxFI1bCAX1WMoNzjqa8823Y0FoI1Xx8c3tyEuJjq5cx?=
- =?us-ascii?Q?yH97muRNEtD31zfdBhz5T8Js3nTai7Isbsqte7VeLEcsb29nONDJ46vegFAo?=
- =?us-ascii?Q?1UG0JzE5rB3/zIVvLnh66liUH84Ci0bXeTSfAHIFrPTcsfmDd1pB3dMup0d8?=
- =?us-ascii?Q?exbaOSZ1aBZ+Yo1HTPcLLs4IN9LijQZnVEvIRBeSx9DCYxdwm9UQxPlWrp3Z?=
- =?us-ascii?Q?kpCG/hRpGbE8Jaku80F4xmjpSTfL3mTILODBy2VMvD/RORAFQFvT9g3OuOlN?=
- =?us-ascii?Q?iRhH73E711crP0L7q5pQLydc180A/CPfW7PPvVQSOkNXPfm/cyjke/p1Tdu1?=
- =?us-ascii?Q?4jqmVPbI8DylSALMScmE1MV1bHatZnIAz6Xyj7OI?=
-X-OriginatorOrg: phytec.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ebdadaf-841a-40ad-4932-08dc8bfde0d7
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR22MB5636.namprd22.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2024 23:09:29.5991
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 67bcab1a-5db0-4ee8-86f4-1533d0b4b5c7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BU+3A9DJumzNZyJN04w7fkb6iO659o2n1fmBvAcOML/22m6RYnnEe3uHsUEKMCTVA/Z/fKqaqlNVR+vf+R43kw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR22MB3423
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 3/5] power: supply: core: implement extension API
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Sebastian Reichel <sre@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240608-power-supply-extensions-v2-0-2dcd35b012ad@weissschuh.net>
+ <20240608-power-supply-extensions-v2-3-2dcd35b012ad@weissschuh.net>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20240608-power-supply-extensions-v2-3-2dcd35b012ad@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3Lv72fYWQDF/nbYhUCEMNgXhkHdwt5fwyhWVfLLEZOFxHAy5Eri
+ /sbJ3lhfD0Db3h4CtWd4zd2LqftjXUzOEQ/CT4X0SrPvCyT0Cz6oKBZj0/i62vPGs54al8z
+ o6WshcmuY0Gk61IRsbZXdOP8Ifwv6xQ41Oh1fd3CsSNTB+wTNGJDWBfCswfv1YsToHSlEhV
+ 1/dmaBfninrKl1lIl1t/A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4rd53bpqqSQ=;gz/XHxMSvjjxi7crjacU5wMO9+L
+ Z6iVlxXqnh2vHbreaQBSDyATUlNtG3TiVlPFx8X5dmEZYPrzxH6O4FYPTXLhygY3mmLZS/1QP
+ CYhJvK1fanhVQH/TMeFrO7UmSbq36u+Wbs3qex8ay7aBzOLtgOINLcOYjrQTpTRdIpiVZsAH8
+ lq36IoiBfZaeih0/lf+feiTym6osWQGghHp7MuHH74EpHGdeqgXD8FR9W7mdlrlWPJ/9QqLb8
+ BCgkjizWBOehd13uDddccZmCXJqtJcoWGOJYnEQR6i/bHSMJewvA7Lf1zooTQ6CgI9/zhTexb
+ jHRb+k8LTe9Q0syl0mdJFXcpL9cjKW22h2C2eocZ8Hg2ju3WDohdvtEZOyMMrxUmoUufoM1h1
+ JZez7AzqszM1+Is0+W5oYpJ2kHuYQ7yuJeuQx04g/FyKOfzyHO6vaHOgJUX5E4DSy3Fb5GN66
+ tT53ATsrNvxZdqCoBngZc5nnju80Tpd7oeqLbYLLbJpaWhFC17l41AvRETzv239dc+6I6YWCv
+ idlChsADCVybQpq72j2VFcnT+BZV7PvD1f//bqgn980w9tz6iD0rN7aWny4EH/OWhXBY1Fj2k
+ 7GpOVghBNk8BEjnKCRAl7NecbYw6No8Sf8OZFcid1xFmfBuS9MvUfX+ms7KcnA+qFGamFqOIZ
+ GXXGWcsjkDkuxxvRVDcVEs4bBwxOq7Y1IIZdqZ5fhQFwMUud7NpQOp5o3A/WpIajoB2/BuVfb
+ Dm59uPZ5Od0uwLCbCxyPG6jhwzTBNqn4TKaLr+Hzy+PcTpqW1TF2LKBAH6cjpUvYDvtPZjxul
+ C27yyfLwlpWaWDPHPensVCKuDqp/f3pJZLGw72/1toAPU=
 
-Add an overlay to disable the spi nor for all am6xx-phycore-som
-boards.
-The EEPROM on am6xx-phycore-soms contains information about the
-configuration of the SOM. The standard configuration of the SOM
-has an ospi nor, but if no nor is populated, the EEPROM will indicate
-that change and we can use this overlay to cleanly disable the
-spi nor.
+Am 08.06.24 um 21:19 schrieb Thomas Wei=C3=9Fschuh:
 
-Signed-off-by: Nathan Morrisson <nmorrisson@phytec.com>
----
-v3:
-  - Explain why we are adding the overlay in the commit message
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+>   drivers/power/supply/power_supply.h       |  13 ++-
+>   drivers/power/supply/power_supply_core.c  | 128 ++++++++++++++++++++++=
+++++++--
+>   drivers/power/supply/power_supply_hwmon.c |   2 +-
+>   drivers/power/supply/power_supply_sysfs.c |  37 ++++++++-
+>   include/linux/power_supply.h              |  26 ++++++
+>   5 files changed, 192 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/power/supply/power_supply.h b/drivers/power/supply/=
+power_supply.h
+> index 622be1f0a180..686b66161900 100644
+> --- a/drivers/power/supply/power_supply.h
+> +++ b/drivers/power/supply/power_supply.h
+> @@ -13,8 +13,17 @@ struct device;
+>   struct device_type;
+>   struct power_supply;
+>
+> -extern bool power_supply_has_property(const struct power_supply_desc *p=
+sy_desc,
+> -				      enum power_supply_property psp);
+> +struct psy_ext_registration {
+> +	struct list_head list_head;
+> +	const struct power_supply_ext *ext;
+> +};
+> +
+> +#define psy_for_each_extension(psy, pos) list_for_each_entry(pos, &(psy=
+)->extensions, list_head)
 
-v2:
-  - Add build time tests in makefile
+Hi,
 
- arch/arm64/boot/dts/ti/Makefile                   |  5 +++++
- .../dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso  | 15 +++++++++++++++
- 2 files changed, 20 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso
+sorry for taking so long to respond, the patch looks good to me except one=
+ single thing:
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index 3d0e87a78e09..8d8fc8bfaf7e 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -57,6 +57,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am64-tqma64xxl-mbax4xxl-wlan.dtbo
- # Common overlays for the phyCORE-AM6* family of boards
- dtb-$(CONFIG_ARCH_K3) += k3-am6xx-phycore-disable-eth-phy.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am6xx-phycore-disable-rtc.dtbo
-+dtb-$(CONFIG_ARCH_K3) += k3-am6xx-phycore-disable-spi-nor.dtbo
- 
- # Boards with AM65x SoC
- k3-am654-gp-evm-dtbs := k3-am654-base-board.dtb \
-@@ -115,6 +116,8 @@ k3-am625-phyboard-lyra-disable-eth-phy-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
- 	k3-am6xx-phycore-disable-eth-phy.dtbo
- k3-am625-phyboard-lyra-disable-rtc-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
- 	k3-am6xx-phycore-disable-rtc.dtbo
-+k3-am625-phyboard-lyra-disable-spi-nor-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
-+	k3-am6xx-phycore-disable-spi-nor.dtbo
- k3-am625-phyboard-lyra-gpio-fan-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
- 	k3-am62x-phyboard-lyra-gpio-fan.dtbo
- k3-am625-sk-csi2-imx219-dtbs := k3-am625-sk.dtb \
-@@ -144,6 +147,8 @@ k3-am642-phyboard-electra-disable-eth-phy-dtbs := \
- 	k3-am642-phyboard-electra-rdk.dtb k3-am6xx-phycore-disable-eth-phy.dtbo
- k3-am642-phyboard-electra-disable-rtc-dtbs := \
- 	k3-am642-phyboard-electra-rdk.dtb k3-am6xx-phycore-disable-rtc.dtbo
-+k3-am642-phyboard-electra-disable-spi-nor-dtbs := \
-+	k3-am642-phyboard-electra-rdk.dtb k3-am6xx-phycore-disable-spi-nor.dtbo
- k3-am642-phyboard-electra-gpio-fan-dtbs := \
- 	k3-am642-phyboard-electra-rdk.dtb k3-am642-phyboard-electra-gpio-fan.dtbo
- k3-am642-tqma64xxl-mbax4xxl-sdcard-dtbs := \
-diff --git a/arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso b/arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso
-new file mode 100644
-index 000000000000..cc0cf269b6e4
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am6xx-phycore-disable-spi-nor.dtso
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/*
-+ * Copyright (C) 2023 PHYTEC America, LLC
-+ * Author: Garrett Giordano <ggiordano@phytec.com>
-+ *
-+ * Copyright (C) 2024 PHYTEC America, LLC
-+ * Author: Nathan Morrisson <nmorrisson@phytec.com>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&serial_flash {
-+	status = "disabled";
-+};
--- 
-2.25.1
+when removing a power supply extension, the driver has to be sure that no =
+one is still using
+the removed extension. So you might want to add some sort of locking when =
+using a power supply
+extension.
 
+Thanks,
+Armin Wolf
+
+> +
+> +bool power_supply_has_property(const struct power_supply *psy,
+> +			       enum power_supply_property psp);
+> +bool power_supply_ext_has_property(const struct power_supply_ext *psy_e=
+xt,
+> +				   enum power_supply_property psp);
+>
+>   #ifdef CONFIG_SYSFS
+>
+> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/su=
+pply/power_supply_core.c
+> index d57ecdd966e0..fcdfedf3df7c 100644
+> --- a/drivers/power/supply/power_supply_core.c
+> +++ b/drivers/power/supply/power_supply_core.c
+> @@ -1183,8 +1183,8 @@ bool power_supply_battery_bti_in_range(struct powe=
+r_supply_battery_info *info,
+>   }
+>   EXPORT_SYMBOL_GPL(power_supply_battery_bti_in_range);
+>
+> -bool power_supply_has_property(const struct power_supply_desc *psy_desc=
+,
+> -			       enum power_supply_property psp)
+> +static bool psy_desc_has_property(const struct power_supply_desc *psy_d=
+esc,
+> +				  enum power_supply_property psp)
+>   {
+>   	bool found =3D false;
+>   	int i;
+> @@ -1199,17 +1199,55 @@ bool power_supply_has_property(const struct powe=
+r_supply_desc *psy_desc,
+>   	return found;
+>   }
+>
+> +bool power_supply_ext_has_property(const struct power_supply_ext *psy_e=
+xt,
+> +				   enum power_supply_property psp)
+> +{
+> +	bool found =3D false;
+> +	int i;
+> +
+> +	if (!psy_ext)
+> +		return false;
+> +
+> +	for (i =3D 0; i < psy_ext->num_properties; i++) {
+> +		if (psy_ext->properties[i] =3D=3D psp) {
+> +			found =3D true;
+> +			break;
+> +		}
+> +	}
+> +
+> +	return found;
+> +}
+> +
+> +bool power_supply_has_property(const struct power_supply *psy,
+> +			       enum power_supply_property psp)
+> +{
+> +	struct psy_ext_registration *reg;
+> +
+> +	psy_for_each_extension(psy, reg)
+> +		if (power_supply_ext_has_property(reg->ext, psp))
+> +			return true;
+> +
+> +	return psy_desc_has_property(psy->desc, psp);
+> +}
+> +
+>   int power_supply_get_property(struct power_supply *psy,
+>   			    enum power_supply_property psp,
+>   			    union power_supply_propval *val)
+>   {
+> +	struct psy_ext_registration *reg;
+> +
+>   	if (atomic_read(&psy->use_cnt) <=3D 0) {
+>   		if (!psy->initialized)
+>   			return -EAGAIN;
+>   		return -ENODEV;
+>   	}
+>
+> -	if (power_supply_has_property(psy->desc, psp))
+> +	psy_for_each_extension(psy, reg) {
+> +		if (power_supply_ext_has_property(reg->ext, psp))
+> +			return reg->ext->get_property(psy, reg->ext, psp, val);
+> +	}
+> +
+> +	if (psy_desc_has_property(psy->desc, psp))
+>   		return psy->desc->get_property(psy, psp, val);
+>   	else if (power_supply_battery_info_has_prop(psy->battery_info, psp))
+>   		return power_supply_battery_info_get_prop(psy->battery_info, psp, va=
+l);
+> @@ -1222,7 +1260,21 @@ int power_supply_set_property(struct power_supply=
+ *psy,
+>   			    enum power_supply_property psp,
+>   			    const union power_supply_propval *val)
+>   {
+> -	if (atomic_read(&psy->use_cnt) <=3D 0 || !psy->desc->set_property)
+> +	struct psy_ext_registration *reg;
+> +
+> +	if (atomic_read(&psy->use_cnt) <=3D 0)
+> +		return -ENODEV;
+> +
+> +	psy_for_each_extension(psy, reg) {
+> +		if (power_supply_ext_has_property(reg->ext, psp)) {
+> +			if (reg->ext->set_property)
+> +				return reg->ext->set_property(psy, reg->ext, psp, val);
+> +			else
+> +				return -ENODEV;
+> +		}
+> +	}
+> +
+> +	if (!psy->desc->set_property)
+>   		return -ENODEV;
+>
+>   	return psy->desc->set_property(psy, psp, val);
+> @@ -1232,8 +1284,21 @@ EXPORT_SYMBOL_GPL(power_supply_set_property);
+>   int power_supply_property_is_writeable(struct power_supply *psy,
+>   					enum power_supply_property psp)
+>   {
+> -	if (atomic_read(&psy->use_cnt) <=3D 0 ||
+> -			!psy->desc->property_is_writeable)
+> +	struct psy_ext_registration *reg;
+> +
+> +	if (atomic_read(&psy->use_cnt) <=3D 0)
+> +		return -ENODEV;
+> +
+> +	psy_for_each_extension(psy, reg) {
+> +		if (power_supply_ext_has_property(reg->ext, psp)) {
+> +			if (reg->ext->property_is_writeable)
+> +				return reg->ext->property_is_writeable(psy, reg->ext, psp);
+> +			else
+> +				return -ENODEV;
+> +		}
+> +	}
+> +
+> +	if (!psy->desc->property_is_writeable)
+>   		return -ENODEV;
+>
+>   	return psy->desc->property_is_writeable(psy, psp);
+> @@ -1256,6 +1321,52 @@ int power_supply_powers(struct power_supply *psy,=
+ struct device *dev)
+>   }
+>   EXPORT_SYMBOL_GPL(power_supply_powers);
+>
+> +static int power_supply_update_groups(struct power_supply *psy)
+> +{
+> +	int ret;
+> +
+> +	ret =3D sysfs_update_groups(&psy->dev.kobj, power_supply_dev_type.grou=
+ps);
+> +	power_supply_changed(psy);
+> +	return ret;
+> +}
+> +
+> +int power_supply_register_extension(struct power_supply *psy, const str=
+uct power_supply_ext *ext)
+> +{
+> +	struct psy_ext_registration *reg;
+> +	size_t i;
+> +
+> +	for (i =3D 0; i < ext->num_properties; i++) {
+> +		if (power_supply_has_property(psy, ext->properties[i]))
+> +			return -EEXIST;
+> +	}
+> +
+> +	reg =3D devm_kmalloc(&psy->dev, sizeof(*reg), GFP_KERNEL);
+> +	if (!reg)
+> +		return -ENOMEM;
+> +
+> +	reg->ext =3D ext;
+> +	list_add(&reg->list_head, &psy->extensions);
+> +
+> +	return power_supply_update_groups(psy);
+> +}
+> +EXPORT_SYMBOL_GPL(power_supply_register_extension);
+> +
+> +void power_supply_unregister_extension(struct power_supply *psy, const =
+struct power_supply_ext *ext)
+> +{
+> +	struct psy_ext_registration *reg;
+> +
+> +	psy_for_each_extension(psy, reg) {
+> +		if (reg->ext =3D=3D ext) {
+> +			list_del(&reg->list_head);
+> +			power_supply_update_groups(psy);
+> +			return;
+> +		}
+> +	}
+> +
+> +	dev_warn(&psy->dev, "Trying to unregister invalid extension");
+> +}
+> +EXPORT_SYMBOL_GPL(power_supply_unregister_extension);
+> +
+>   static void power_supply_dev_release(struct device *dev)
+>   {
+>   	struct power_supply *psy =3D to_power_supply(dev);
+> @@ -1308,7 +1419,7 @@ static int psy_register_thermal(struct power_suppl=
+y *psy)
+>   		return 0;
+>
+>   	/* Register battery zone device psy reports temperature */
+> -	if (power_supply_has_property(psy->desc, POWER_SUPPLY_PROP_TEMP)) {
+> +	if (power_supply_has_property(psy, POWER_SUPPLY_PROP_TEMP)) {
+>   		/* Prefer our hwmon device and avoid duplicates */
+>   		struct thermal_zone_params tzp =3D {
+>   			.no_hwmon =3D IS_ENABLED(CONFIG_POWER_SUPPLY_HWMON)
+> @@ -1361,7 +1472,7 @@ __power_supply_register(struct device *parent,
+>   		pr_warn("%s: Expected proper parent device for '%s'\n",
+>   			__func__, desc->name);
+>
+> -	if (power_supply_has_property(desc, POWER_SUPPLY_PROP_USB_TYPE) &&
+> +	if (psy_desc_has_property(desc, POWER_SUPPLY_PROP_USB_TYPE) &&
+>   	    (!desc->usb_types || !desc->num_usb_types))
+>   		return ERR_PTR(-EINVAL);
+>
+> @@ -1415,6 +1526,7 @@ __power_supply_register(struct device *parent,
+>   	}
+>
+>   	spin_lock_init(&psy->changed_lock);
+> +	INIT_LIST_HEAD(&psy->extensions);
+>   	rc =3D device_add(dev);
+>   	if (rc)
+>   		goto device_add_failed;
+> diff --git a/drivers/power/supply/power_supply_hwmon.c b/drivers/power/s=
+upply/power_supply_hwmon.c
+> index 2ecbe4a74c25..8cb852a734b1 100644
+> --- a/drivers/power/supply/power_supply_hwmon.c
+> +++ b/drivers/power/supply/power_supply_hwmon.c
+> @@ -374,7 +374,7 @@ int power_supply_add_hwmon_sysfs(struct power_supply=
+ *psy)
+>   	for (i =3D 0; i < ARRAY_SIZE(power_supply_hwmon_props); i++) {
+>   		const enum power_supply_property prop =3D power_supply_hwmon_props[i=
+];
+>
+> -		if (power_supply_has_property(psy->desc, prop))
+> +		if (power_supply_has_property(psy, prop))
+>   			set_bit(prop, psyhw->props);
+>   	}
+>
+> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/s=
+upply/power_supply_sysfs.c
+> index abd44ebfe6fe..8f29ddea08d0 100644
+> --- a/drivers/power/supply/power_supply_sysfs.c
+> +++ b/drivers/power/supply/power_supply_sysfs.c
+> @@ -271,6 +271,23 @@ static ssize_t power_supply_show_usb_type(struct de=
+vice *dev,
+>   	return count;
+>   }
+>
+> +static ssize_t power_supply_show_charge_behaviour(struct device *dev,
+> +						  struct power_supply *psy,
+> +						  union power_supply_propval *value,
+> +						  char *buf)
+> +{
+> +	struct psy_ext_registration *reg;
+> +
+> +	psy_for_each_extension(psy, reg) {
+> +		if (power_supply_ext_has_property(reg->ext, POWER_SUPPLY_PROP_CHARGE_=
+BEHAVIOUR))
+> +			return power_supply_charge_behaviour_show(dev, reg->ext->charge_beha=
+viours,
+> +								  value->intval, buf);
+> +	}
+> +
+> +	return power_supply_charge_behaviour_show(dev, psy->desc->charge_behav=
+iours,
+> +						  value->intval, buf);
+> +}
+> +
+>   static ssize_t power_supply_show_property(struct device *dev,
+>   					  struct device_attribute *attr,
+>   					  char *buf) {
+> @@ -304,8 +321,7 @@ static ssize_t power_supply_show_property(struct dev=
+ice *dev,
+>   						&value, buf);
+>   		break;
+>   	case POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR:
+> -		ret =3D power_supply_charge_behaviour_show(dev, psy->desc->charge_beh=
+aviours,
+> -							 value.intval, buf);
+> +		ret =3D power_supply_show_charge_behaviour(dev, psy, &value, buf);
+>   		break;
+>   	case POWER_SUPPLY_PROP_MODEL_NAME ... POWER_SUPPLY_PROP_SERIAL_NUMBER=
+:
+>   		ret =3D sysfs_emit(buf, "%s\n", value.strval);
+> @@ -374,7 +390,7 @@ static umode_t power_supply_attr_is_visible(struct k=
+object *kobj,
+>   	if (attrno =3D=3D POWER_SUPPLY_PROP_TYPE)
+>   		return mode;
+>
+> -	if (power_supply_has_property(psy->desc, attrno)) {
+> +	if (power_supply_has_property(psy, attrno)) {
+>   		if (power_supply_property_is_writeable(psy, attrno) > 0)
+>   			mode |=3D S_IWUSR;
+>   		return mode;
+> @@ -459,6 +475,7 @@ int power_supply_uevent(const struct device *dev, st=
+ruct kobj_uevent_env *env)
+>   		power_supply_battery_info_properties;
+>   	unsigned long psy_drv_properties[POWER_SUPPLY_ATTR_CNT /
+>   					 sizeof(unsigned long) + 1] =3D {0};
+> +	struct psy_ext_registration *ext;
+>   	int ret =3D 0, j;
+>   	char *prop_buf;
+>
+> @@ -486,7 +503,21 @@ int power_supply_uevent(const struct device *dev, s=
+truct kobj_uevent_env *env)
+>   	if (ret)
+>   		goto out;
+>
+> +	psy_for_each_extension(psy, ext) {
+> +		for (j =3D 0; j < ext->ext->num_properties; j++) {
+> +			if (test_bit(ext->ext->properties[j], psy_drv_properties))
+> +				continue;
+> +			set_bit(ext->ext->properties[j], psy_drv_properties);
+> +			ret =3D add_prop_uevent(dev, env, ext->ext->properties[j],
+> +					      prop_buf);
+> +			if (ret)
+> +				goto out;
+> +		}
+> +	}
+> +
+>   	for (j =3D 0; j < psy->desc->num_properties; j++) {
+> +		if (test_bit(psy->desc->properties[j], psy_drv_properties))
+> +			continue;
+>   		set_bit(psy->desc->properties[j], psy_drv_properties);
+>   		ret =3D add_prop_uevent(dev, env, psy->desc->properties[j],
+>   				      prop_buf);
+> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+> index 8e5705a56b85..128e7a67f268 100644
+> --- a/include/linux/power_supply.h
+> +++ b/include/linux/power_supply.h
+> @@ -15,6 +15,7 @@
+>   #include <linux/device.h>
+>   #include <linux/workqueue.h>
+>   #include <linux/leds.h>
+> +#include <linux/list.h>
+>   #include <linux/spinlock.h>
+>   #include <linux/notifier.h>
+>
+> @@ -280,6 +281,25 @@ struct power_supply_desc {
+>   	int use_for_apm;
+>   };
+>
+> +struct power_supply_ext {
+> +	u8 charge_behaviours;
+> +	const enum power_supply_property *properties;
+> +	size_t num_properties;
+> +
+> +	int (*get_property)(struct power_supply *psy,
+> +			    const struct power_supply_ext *ext,
+> +			    enum power_supply_property psp,
+> +			    union power_supply_propval *val);
+> +	int (*set_property)(struct power_supply *psy,
+> +			    const struct power_supply_ext *ext,
+> +			    enum power_supply_property psp,
+> +			    const union power_supply_propval *val);
+> +
+> +	int (*property_is_writeable)(struct power_supply *psy,
+> +				     const struct power_supply_ext *ext,
+> +				     enum power_supply_property psp);
+> +};
+> +
+>   struct power_supply {
+>   	const struct power_supply_desc *desc;
+>
+> @@ -303,6 +323,7 @@ struct power_supply {
+>   	bool removing;
+>   	atomic_t use_cnt;
+>   	struct power_supply_battery_info *battery_info;
+> +	struct list_head extensions;
+>   #ifdef CONFIG_THERMAL
+>   	struct thermal_zone_device *tzd;
+>   	struct thermal_cooling_device *tcd;
+> @@ -892,6 +913,11 @@ devm_power_supply_register_no_ws(struct device *par=
+ent,
+>   extern void power_supply_unregister(struct power_supply *psy);
+>   extern int power_supply_powers(struct power_supply *psy, struct device=
+ *dev);
+>
+> +extern int power_supply_register_extension(struct power_supply *psy,
+> +					   const struct power_supply_ext *ext);
+> +extern void power_supply_unregister_extension(struct power_supply *psy,
+> +					      const struct power_supply_ext *ext);
+> +
+>   #define to_power_supply(device) container_of(device, struct power_supp=
+ly, dev)
+>
+>   extern void *power_supply_get_drvdata(struct power_supply *psy);
+>
 
