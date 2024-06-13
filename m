@@ -1,131 +1,138 @@
-Return-Path: <linux-kernel+bounces-213173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98BE2906E97
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:12:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D513906EA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CEB3B25BE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:12:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863911C22B19
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6527A13D635;
-	Thu, 13 Jun 2024 12:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E77146591;
+	Thu, 13 Jun 2024 12:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y5KZGu0e"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="bZPrxzej"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A888145A1B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0121448F2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718280479; cv=none; b=fpffJ4eGmhq1Zo+srVpnOn3c9HjNoQ4T9xQb4Y9anr1ACq65ZUM5RCiU4fSwBov4IiPUkKy5+xmFPZLtx3ZoQJWLKYg18gRV14GqX/k8n2WFytulCb1266Xo3bk0bwoz6taXemh3Xi48aSdMN15lFHMoevLf9+r6pCC4wiHMS1U=
+	t=1718280522; cv=none; b=ok+BeAAeExWEMLlhz4mPxFNzAdLccZc6sXXS7bQeCYIaOh0QMXqPnUfW8hypiy8FIpfwVltG9JE0Ynaalq7qHTYnBiXHxKnkcEGwplnzPWwYKTY/IcIG909tE6HgSmmRbZW13ke55YTLaoQn5gIbMRtouoWZk1sfOVjhlGxPSDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718280479; c=relaxed/simple;
-	bh=ApfIUmMvEtf39ojiOQllZCMOwnzalBblmip9w0Xdo7w=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VvBKw9kAKD9dO6klCsnkIRUu1ciQgZxyv0ol4pNufEdlUDEOXSwBWICzMsBiPyZZsCL7zL/+eIAQ4vEL+GvULNu5yAym/aD9ol+MmKAuBdjc4CIANJn6oCOyLl2P06FE4FywAmxJQEESDImOvsbG/dY0D8uu8PphWS9JVbCupAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y5KZGu0e; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfe9ef3a637so1506179276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:07:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718280476; x=1718885276; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oGodyiYjLAsD0yJbNMBI7MVLGuadjuXw3TChSJWxUzw=;
-        b=Y5KZGu0eWU7udil0ghLJo1dz+yZJZd3vOg/d4XuoALJpL8oih1QPKMH2E0hqh34cPl
-         zX2kggXpIOTjfibED34a7YAe5DETTBoU7YWyaVKXmUdloQc8t8EJ7sAs/A+FMey1a0eK
-         O/50qErDCVAcUjAeOYUcyMmxlewXrHhJ/Tr8Zw6NRlXCrV+cXA5Yu5L1J2xf23e5D2V6
-         AfdAAWnccsCjGD+jslmcgvHw0dVvJ5TawZoIPA2dskdB44ljcDb2TgytmRLAGoywhQ78
-         9c0gnNgUYuUICaJkLRIbebXBd9vbu9AWAEUyCpTrgzzEWMbcU6oFWqDCd4lK88A7dbEG
-         TD3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718280476; x=1718885276;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oGodyiYjLAsD0yJbNMBI7MVLGuadjuXw3TChSJWxUzw=;
-        b=m/quFnDRLx8gaFRWw+frNQorKqz8zcK+mgrLdENczln5UFDjNGK8LCMdggrLAMJHS5
-         m4zl18HjUA+EV02kieLDQhL9STWZ+ssP4l3NG2ondGBxL4EBOE4FSn2HrUcnJlE1e9/m
-         taA9jivG0Tnlg5AM58jNGhz5EbUSnsOWYLPlFNNyxhpMtNxvpnGu5qw1kB2w5+v6Q25k
-         0ShkA/olr5cllQT4tbfocnIeVUSqx5j300Lc8W5E5sUnyNJ/1oniJv3+xXEiKrR4RGnj
-         s6jbAztDZyQt7jYGf0TUJpji+9f3WPPdEmhwgw6mSFJ8Rhnk7cy3H3l4BxM+7N3Yc9bk
-         G5EA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwIhOXUPK8r1aNUW2EiyKZwc7ATCpaiEWdWfO4Z/K/GAk2CAswAj/keFOmI+t1ZPvN/RJ9r7gmCQxkIU0DwQTjDoNDEDJhe5FWRlc+
-X-Gm-Message-State: AOJu0YxdUN9IwL3cceSNu/ilhMRS29XCl2Hr28xx2BbSpsBMy4rVUBs1
-	2zcOCd9kcJ8CVQkZ6Y9OQNR37q7otPgjhN3YoflkK/h+lITAxpkBu/Y1V20URgSc4hZJeymCwgL
-	QNNoY8IIUJA==
-X-Google-Smtp-Source: AGHT+IHXow2FDhm75pimKLZX48hWrRy1U08wctHSj/K1NF6TSMVXN+j/Fjh1IvFkAupdAwJLYkrs5thABS5WRA==
-X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
- (user=joychakr job=sendgmr) by 2002:a05:6902:1001:b0:dfa:dec3:7480 with SMTP
- id 3f1490d57ef6-dfe69005926mr357042276.12.1718280476322; Thu, 13 Jun 2024
- 05:07:56 -0700 (PDT)
-Date: Thu, 13 Jun 2024 12:07:50 +0000
+	s=arc-20240116; t=1718280522; c=relaxed/simple;
+	bh=WuA9U6X5yxQnrH5pEU9/6y5D10PqSgAOLq9u7rAvJ+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=G0G6OVJcirmzaGNTzJ9ECD0EuUykE24UYcrNrmGGZzcZZ4o1drvZZNkO+juMeNM+9U6Z27fChqXbNieCJGT7ON53/1cEK0fhdqaLLRM4zhzAbZVmExHUOpm0El3yuXthbQvE4lVViTEQmKIvCwNx56b1feZMXdvqIn1rHsWjZX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=bZPrxzej; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718280511; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=+ybivgLRs3V47AmWOiMtdHW+UOwYmEorpegVchSb5tE=;
+	b=bZPrxzejA+HrSv47ojA222RcmyjKqim5k/VeQsxLMy7HaOavFqQgDSYqdHcGbmzM0rtQrRNDnbAcAZp563J3w4Che76ArLzx6FlUcHAQZvGY7T7PdzrsC+sg2zMOiAdiw2MKae5RA6PJA1EbjnpLeTbbVnK3kgS23+zzrTkUMwU=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R601e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W8O.f6t_1718280510;
+Received: from 30.97.56.57(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8O.f6t_1718280510)
+          by smtp.aliyun-inc.com;
+          Thu, 13 Jun 2024 20:08:30 +0800
+Message-ID: <4e578713-c907-4bec-b2c2-f585772eae13@linux.alibaba.com>
+Date: Thu, 13 Jun 2024 20:08:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240613120750.1455209-1-joychakr@google.com>
-Subject: [PATCH v2] rtc: abx80x: Fix return value of nvmem callback on read
-From: Joy Chakraborty <joychakr@google.com>
-To: Sean Anderson <sean.anderson@seco.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Joy Chakraborty <joychakr@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in finish_fault
+To: syzbot <syzbot+d6e5c328862b5ae6cbfe@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ syzkaller-bugs@googlegroups.com
+References: <000000000000e21956061ac3eff0@google.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <000000000000e21956061ac3eff0@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Read callbacks registered with nvmem core expect 0 to be returned on
-success and a negative value to be returned on failure.
 
-abx80x_nvmem_xfer() on read calls i2c_smbus_read_i2c_block_data() which
-returns the number of bytes read on success as per its api description,
-this return value is handled as an error and returned to nvmem even on
-success.
 
-Fix to handle all possible values that would be returned by
-i2c_smbus_read_i2c_block_data().
+On 2024/6/13 19:38, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    d35b2284e966 Add linux-next specific files for 20240607
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=178b77ba980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d8bf5cd6bcca7343
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d6e5c328862b5ae6cbfe
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174c680a980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111b9696980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/e0055a00a2cb/disk-d35b2284.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/192cbb8cf833/vmlinux-d35b2284.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/57804c9c9319/bzImage-d35b2284.xz
+> 
+> The issue was bisected to:
+> 
+> commit 1c05047ad01693ad92bdf8347fad3b5c2b25e8bb
+> Author: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Date:   Tue Jun 4 10:17:45 2024 +0000
+> 
+>      mm: memory: extend finish_fault() to support large folio
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11267f94980000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=13267f94980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15267f94980000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+d6e5c328862b5ae6cbfe@syzkaller.appspotmail.com
+> Fixes: 1c05047ad016 ("mm: memory: extend finish_fault() to support large folio")
+> 
+> ==================================================================
+> BUG: KASAN: use-after-free in ptep_get include/linux/pgtable.h:317 [inline]
+> BUG: KASAN: use-after-free in ptep_get_lockless include/linux/pgtable.h:581 [inline]
+> BUG: KASAN: use-after-free in pte_range_none mm/memory.c:4409 [inline]
+> BUG: KASAN: use-after-free in finish_fault+0xf87/0x1460 mm/memory.c:4905
+> Read of size 8 at addr ffff88807bfb7000 by task syz-executor149/5117
+> 
+> CPU: 0 PID: 5117 Comm: syz-executor149 Not tainted 6.10.0-rc2-next-20240607-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+> Call Trace:
+>   <TASK>
+>   __dump_stack lib/dump_stack.c:91 [inline]
+>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:117
+>   print_address_description mm/kasan/report.c:377 [inline]
+>   print_report+0x169/0x550 mm/kasan/report.c:488
+>   kasan_report+0x143/0x180 mm/kasan/report.c:601
+>   ptep_get include/linux/pgtable.h:317 [inline]
+>   ptep_get_lockless include/linux/pgtable.h:581 [inline]
+>   pte_range_none mm/memory.c:4409 [inline]
+>   finish_fault+0xf87/0x1460 mm/memory.c:4905
+>   do_read_fault mm/memory.c:5052 [inline]
+>   do_fault mm/memory.c:5178 [inline]
+>   do_pte_missing mm/memory.c:3948 [inline]
+>   handle_pte_fault+0x3db5/0x7130 mm/memory.c:5502
+>   __handle_mm_fault mm/memory.c:5645 [inline]
+>   handle_mm_fault+0x10df/0x1ba0 mm/memory.c:5810
+>   faultin_page mm/gup.c:1339 [inline]
+>   __get_user_pages+0x6ef/0x1590 mm/gup.c:1638
+>   populate_vma_page_range+0x264/0x330 mm/gup.c:2078
+>   __mm_populate+0x27a/0x460 mm/gup.c:2181
+>   mm_populate include/linux/mm.h:3442 [inline]
+>   __do_sys_remap_file_pages mm/mmap.c:3177 [inline]
+>   __se_sys_remap_file_pages+0x7a1/0x9a0 mm/mmap.c:3103
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Fixes: e90ff8ede777 ("rtc: abx80x: Add nvmem support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Joy Chakraborty <joychakr@google.com>
----
- drivers/rtc/rtc-abx80x.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/rtc/rtc-abx80x.c b/drivers/rtc/rtc-abx80x.c
-index fde2b8054c2e..1298962402ff 100644
---- a/drivers/rtc/rtc-abx80x.c
-+++ b/drivers/rtc/rtc-abx80x.c
-@@ -705,14 +705,18 @@ static int abx80x_nvmem_xfer(struct abx80x_priv *priv, unsigned int offset,
- 		if (ret)
- 			return ret;
- 
--		if (write)
-+		if (write) {
- 			ret = i2c_smbus_write_i2c_block_data(priv->client, reg,
- 							     len, val);
--		else
-+			if (ret)
-+				return ret;
-+		} else {
- 			ret = i2c_smbus_read_i2c_block_data(priv->client, reg,
- 							    len, val);
--		if (ret)
--			return ret;
-+			if (ret <= 0)
-+				return ret ? ret : -EIO;
-+			len = ret;
-+		}
- 
- 		offset += len;
- 		val += len;
--- 
-2.45.2.505.gda0bf45e8d-goog
-
+Thanks for reporting. I think the problem is I should also consider the 
+pagetable of PMD size in case the pte entry overflows. I will fix this 
+issue ASAP.
 
