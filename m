@@ -1,157 +1,123 @@
-Return-Path: <linux-kernel+bounces-213700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A439078E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:57:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE279078EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6AAC286A38
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2AF5287122
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6B61494D6;
-	Thu, 13 Jun 2024 16:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5037E149C4E;
+	Thu, 13 Jun 2024 16:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bwh7SOf/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0/fb2Y2b"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FAF517FD;
-	Thu, 13 Jun 2024 16:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0D217FD
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718297854; cv=none; b=Jec0euAeDKS2fC+TjHml3QJEHnFUAXGBgu2QV+xORebozGdMWbGg/vLOowIzBeqPXhzN1O9FnUli0NyPunEel3A0694c3t4gYzAUFfEYRf89LECpv7Slrd+Dqefd7h0EF3zRNciWzvybUY6OiiLBfVlRs1dlHbHGFvF0jq4+uFg=
+	t=1718297865; cv=none; b=WMgBwczHcwRm5TlyTiYtV8i/jxXYdvi5MV/sZugQYE4Z1m8I6nH//Zda7cAsgQLzviEid8zpOFYWn0VzCg7aDQTo6sJE4mIEOrcHBi1F0eCoQA/i20gn6Id5OyOv3y0F4x5W1BLrNd1FrhEP6r9876foTfn5B1Dz6kdDxkd2VtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718297854; c=relaxed/simple;
-	bh=hd9vc6MALzfwEyeQxQIYvuAxlS8U6K9tjwKHqZH1mZE=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CHrnFiKL2IsmzAucmb6tacNXltLRfiKscR5bgpMQLjF/1R59gQGeSpYtJNKX9c9grk2yBrXPLvpcotvo52od+d1xSbAP2ze/wMfUgv7DJD/OXuIaWJdMYUDbllamoiwTs1KaEzvmmToKOcNTPp2ZwqjfNHDP6RVuv1kCeQA2Jao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bwh7SOf/; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718297853; x=1749833853;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=hd9vc6MALzfwEyeQxQIYvuAxlS8U6K9tjwKHqZH1mZE=;
-  b=Bwh7SOf/OpYPpLHJwLaimVviGaQpLiod2oxqt1DDVF+F0s7oz7UAPq2K
-   Nid5ClzaXhcEP3UAsUk+dpQ0/q0nabJzrjF2Bb9Zbpn+Pc4504FBGkY9r
-   y2EHPBzVoLAdagoQgRNO1jvB+baKzltpI6zgPFBUKobOxJKdHTmua2PST
-   dKjJwhVbn+5HY7OGGnrJT6JqdgTFQ41IL0QZax60dlZc0uZoJI11W0HLR
-   ID0XSTNfNfImatXX/YVYGfqocLhd12F7/4TF63/dEpwB6ngul9XrubAmQ
-   hXN9+MJL//LjXBxSN6uRhWpHP8msCqRBCH35tkI+OrP20O35k6lVdJC4N
-   w==;
-X-CSE-ConnectionGUID: QIPi6kfHSQOeF6Is1ig83A==
-X-CSE-MsgGUID: y80ol5GVQOOWxem56xeAQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="26561749"
-X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
-   d="scan'208";a="26561749"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 09:57:32 -0700
-X-CSE-ConnectionGUID: raO9RN/gQDSJ86BMnHowAA==
-X-CSE-MsgGUID: Y90vooGuQBaEo/L6sctEwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
-   d="scan'208";a="71007612"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.209])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 09:57:28 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 13 Jun 2024 19:57:24 +0300 (EEST)
-To: Philipp Stanner <pstanner@redhat.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-    Maxime Ripard <mripard@kernel.org>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-    Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, 
-    Sam Ravnborg <sam@ravnborg.org>, dakr@redhat.com, 
-    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-pci@vger.kernel.org
-Subject: Re: [PATCH v7 01/13] PCI: Add and use devres helper for bit masks
-In-Reply-To: <20240605081605.18769-3-pstanner@redhat.com>
-Message-ID: <c1ae8732-357a-fce7-8853-9ea7051d306d@linux.intel.com>
-References: <20240605081605.18769-2-pstanner@redhat.com> <20240605081605.18769-3-pstanner@redhat.com>
+	s=arc-20240116; t=1718297865; c=relaxed/simple;
+	bh=vL3n1P+q2IBBOi6oygriT7cY6UeZAqtzHG3QyT41Bkk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=C1NXM6Ts3tXlyNPAtPcgHr4LlDLwM0XM7M7O6FnAFnBaxYjvhIOoW4p1i+wvGr43HJkRly6Bj1R11dfDjEG9tz8lxPJnXawvAXaubWZgjjeWziaD20gvrv7N5oDz9K9Kito9FsyD4kR5Luvl5FlnDlw5JLsElTomj1fznAyvHYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0/fb2Y2b; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6312dd49229so15919567b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:57:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718297863; x=1718902663; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4d54lSkwQxb+qpzxsG/q3gJ1Ug5mGtZ+nd2FA07+/50=;
+        b=0/fb2Y2bOgaCrpafZwTD9ZWi+uqEz6qzoiuoaRcMDmxKVwE7jOQIDH1lWZVxE7ZJPm
+         Gm9K2IyGlOtkq5tbQoiZFviBLeKDX7tfLK+iWHF66m489WHVLObKNoSsFugQgVn+WpVf
+         KG55Z9TKkQ7qfoDzjLZWAAIn8UnOpo32J234a3jV9fCh3DWBes5VwPnie0DDhdAyhouU
+         0fNAp2ECFb6Ws4g6MfGoGT9oSqL78qLuD/0EeprzD2l9XizwZZCUHe4xUglLSW6PYSoe
+         d89ns3zEQZssnwOXTViWaZc1HJ2fE8XrbE2zZEjf15HjLRw2lurXChV/a21feJaHE7Lr
+         f3AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718297863; x=1718902663;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4d54lSkwQxb+qpzxsG/q3gJ1Ug5mGtZ+nd2FA07+/50=;
+        b=NEJ3RdhhXe9M72hFi0wnXFzcKwiAsMypWATxvB1OBocLPeW+Xa/Vh2bsYVH+iAXbvV
+         RO6VQfH87QOjjcREmH3WqOog+8xeHCnOI1Kfn38FrahREquYfAqj4vR1UToPQ1pTztD6
+         tFtYCMwLDvf7d3seRec1P15RWMot0o4+8y2pK5xrqtVzVscGIS0O6TkfvMV9HjfI+Tub
+         +Uaw+rDQDQAWbtsX4oW/RUk8nUBnT+c002Be43g1w4oGu0+9idV9UdVtbjNTCpAHp70w
+         0bBIXYVr0Lh0J5rcbglspQeVsOHMqOXhS2KuQRgxGsrkiv4Pt7K1yMTe9TWUiH0rFZyD
+         XGdg==
+X-Gm-Message-State: AOJu0Yxmy+NbbP2yGBA+4LFZlxbwxXL+BDupmDCJcSWuNkmGwVkWELGE
+	kusatuQvSNbYbyszVsCukmT6prbwGANs7Jx+2sOMN7y3wO4n8fVeq8I3bssmNpFNPnmNXKXuvmg
+	oNg==
+X-Google-Smtp-Source: AGHT+IEYQjre4Uvteh6kfBtG71/rE+jFaH2gbIc1og+uNbgyV0WUL2F6w9jh8gI3FyDLev3v/l4STVjq0oQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:6706:b0:622:cd98:3b89 with SMTP id
+ 00721157ae682-63224b005fcmr8987b3.9.1718297863344; Thu, 13 Jun 2024 09:57:43
+ -0700 (PDT)
+Date: Thu, 13 Jun 2024 09:57:41 -0700
+In-Reply-To: <20240207172646.3981-13-xin3.li@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
+References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-13-xin3.li@intel.com>
+Message-ID: <ZmslBVWkRHAjIXrE@google.com>
+Subject: Re: [PATCH v2 12/25] KVM: VMX: Handle FRED event data
+From: Sean Christopherson <seanjc@google.com>
+To: Xin Li <xin3.li@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	shuah@kernel.org, vkuznets@redhat.com, peterz@infradead.org, 
+	ravi.v.shankar@intel.com, xin@zytor.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 5 Jun 2024, Philipp Stanner wrote:
+On Wed, Feb 07, 2024, Xin Li wrote:
+> @@ -7382,6 +7419,24 @@ static noinstr void vmx_vcpu_enter_exit(struct kvm_vcpu *vcpu,
+>  
+>  	vmx_disable_fb_clear(vmx);
+>  
+> +	/*
+> +	 * %cr2 needs to be saved after a VM exit and restored before a VM
+> +	 * entry in case a VM exit happens immediately after delivery of a
+> +	 * guest #PF but before guest reads %cr2.
+> +	 *
+> +	 * A FRED guest should read its #PF faulting linear address from
+> +	 * the event data field in its FRED stack frame instead of %cr2.
+> +	 * But the FRED 5.0 spec still requires a FRED CPU to update %cr2
+> +	 * in the normal way, thus %cr2 is still updated even for a FRED
+> +	 * guest.
+> +	 *
+> +	 * Note, an NMI could interrupt KVM:
+> +	 *   1) after VM exit but before CR2 is saved.
+> +	 *   2) after CR2 is restored but before VM entry.
+> +	 * And a #PF could happen durng NMI handlng, which overwrites %cr2.
+> +	 * Thus exc_nmi() should save and restore %cr2 upon entering and
+> +	 * before leaving to make sure %cr2 not corrupted.
+> +	 */
 
-> The current derves implementation uses manual shift operations to check
-> whether a bit in a mask is set. The code can be made more readable by
-> writing a small helper function for that.
-> 
-> Implement mask_contains_bar() and use it where applicable.
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
->  drivers/pci/devres.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-> index 2c562b9eaf80..f13edd4a3873 100644
-> --- a/drivers/pci/devres.c
-> +++ b/drivers/pci/devres.c
-> @@ -161,6 +161,10 @@ int pcim_set_mwi(struct pci_dev *dev)
->  }
->  EXPORT_SYMBOL(pcim_set_mwi);
->  
-> +static inline bool mask_contains_bar(int mask, int bar)
+This is 99.9% noise.  What software does or does not do with respect to CR2 is
+completely irrelevant.  The *only* thing that matters is the architectural
+behavior, and architecturally guest CR2 _must_ be up-to-date at all times because
+CR2 accesses cannot be intercepted.  So, just say:
 
-Why these are signed? Using & for signed values is an indication that the 
-types should have been unsigned. The typing change has ripple effects to 
-caller-side typing.
+	/*
+	 * Note, even though FRED delivers the faulting linear address via the
+	 * event data field on the stack, CR2 is still updated.
+	 */
 
-> +{
-> +	return mask & BIT(bar);
-> +}
-
--- 
- i.
-
+>  	if (vcpu->arch.cr2 != native_read_cr2())
+>  		native_write_cr2(vcpu->arch.cr2);
 >  
->  static void pcim_release(struct device *gendev, void *res)
->  {
-> @@ -169,7 +173,7 @@ static void pcim_release(struct device *gendev, void *res)
->  	int i;
->  
->  	for (i = 0; i < DEVICE_COUNT_RESOURCE; i++)
-> -		if (this->region_mask & (1 << i))
-> +		if (mask_contains_bar(this->region_mask, i))
->  			pci_release_region(dev, i);
->  
->  	if (this->mwi)
-> @@ -363,7 +367,7 @@ int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char *name)
->  	for (i = 0; i < DEVICE_COUNT_RESOURCE; i++) {
->  		unsigned long len;
->  
-> -		if (!(mask & (1 << i)))
-> +		if (!mask_contains_bar(mask, i))
->  			continue;
->  
->  		rc = -EINVAL;
-> @@ -386,7 +390,7 @@ int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char *name)
->  	pci_release_region(pdev, i);
->   err_inval:
->  	while (--i >= 0) {
-> -		if (!(mask & (1 << i)))
-> +		if (!mask_contains_bar(mask, i))
->  			continue;
->  		pcim_iounmap(pdev, iomap[i]);
->  		pci_release_region(pdev, i);
-> @@ -438,7 +442,7 @@ void pcim_iounmap_regions(struct pci_dev *pdev, int mask)
->  		return;
->  
->  	for (i = 0; i < PCIM_IOMAP_MAX; i++) {
-> -		if (!(mask & (1 << i)))
-> +		if (!mask_contains_bar(mask, i))
->  			continue;
->  
->  		pcim_iounmap(pdev, iomap[i]);
-> 
 
