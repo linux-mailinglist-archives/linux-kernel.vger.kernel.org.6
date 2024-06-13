@@ -1,113 +1,170 @@
-Return-Path: <linux-kernel+bounces-213503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57393907623
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BFF2907627
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5833B22DEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086B51F258B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E929149C7F;
-	Thu, 13 Jun 2024 15:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81396149C6A;
+	Thu, 13 Jun 2024 15:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KLnXcahS"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tx68Lz/j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED58F145FE2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA7F149C4B;
+	Thu, 13 Jun 2024 15:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718291451; cv=none; b=I5yOSTmhKq9IISDBvw+2LcvUVcRYNeaZhHADgVgChSETMCLhkbWCFnAuuLJsqR7GyQPSIZgCKiypPg/+uErqPi/gkt5kZvH5xRNV0P4dPu9PEvqeYpkR7nGA8Foyu2uFLBM0ojpuenSyVWytG1tYEA1rH1cQZ44RhSGtOuTdLLQ=
+	t=1718291460; cv=none; b=a3boukS7aZ0hGNRfGOm1asWG4GEbCUqUfCTfV58MrOvpk6Vd8yED9tkkn1ETspPetOpOfNt5BCLZPZeKdEDmkQ+SgW12T7qwAZklIxhx5iuMx5/KeAClDqJ6EG+l6NbcMdpaUtaHebJx4zN+YT2zP6BIimO3oVML14Ng5Jy+AFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718291451; c=relaxed/simple;
-	bh=C8+7Q95rup1dkVkxvwEADGOn4f1wiUjE8zc+qzXfe+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DQ5xXXJhVK5o4YXM3Jjv6yqtNH4RA8UNK9qLXXxMNuTmaCxLNGjoVbYjBrWzN4eeCc9wkSXYHmUuKdcYAjgAfylceSeXgyyYkAkjqpumrBVFZjxIYq9z+YHhQZt9llXwHNYz/JLDDQ75AbGfXHIlbP2ufe7dSRZxua7eG5Z0NMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KLnXcahS; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718291448;
-	bh=C8+7Q95rup1dkVkxvwEADGOn4f1wiUjE8zc+qzXfe+Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KLnXcahSEZeK/t/aaFTH9g6LlvAreuAyF7Vdo8TqyJgJo02hdBpdL68O9e1kJxZDG
-	 2M49xoEHuYbm8BbzvCqhm4rPXkSTfB5MxYiLIrjONwAowwLW/uniUYmlDtCP0GBYJQ
-	 /ue3dtE2/Brkacxf8qdJ2KCb77QH87xi+vwiioByi9skyq+uvIlgZdTFMHvSgn1dyh
-	 ZgTmzLk4ENU9+u57Jvw3dWdjGiPobqGin7ShB3k5VsbB5kF9mfSAGBdlgcGSCFBeyZ
-	 tzoz2oGGj2hPO4VSNtTXhXkrbXx3W9AGqCtb4OV6ltl4fXIEzfDjvUhL1qkktCbZNx
-	 cm3XYdNJHyzIA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 752B937809CE;
-	Thu, 13 Jun 2024 15:10:47 +0000 (UTC)
-Message-ID: <8ef254cb-ac65-405d-bcee-d0990536fb32@collabora.com>
-Date: Thu, 13 Jun 2024 17:10:46 +0200
+	s=arc-20240116; t=1718291460; c=relaxed/simple;
+	bh=KEXcr6Qoi1UOFLMTPPqZR4F4hcqSnV5GgodnaogfRVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U9bWK3cEmP7YzrWy9/nJaxmfOASke1mzqCnkOIoHPlAJIvOdKrHHv1M4OwYFvZ5Cyav+2apLTwWxUe/RHqvjePesMBnEM9O06Vpzo61axgDibG4y4gYuB04BFRr7iEZJkRp9SE+eRlGWUqTmSInfCxRk4LqwcPy6Du2x04/T3NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tx68Lz/j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41676C4AF49;
+	Thu, 13 Jun 2024 15:11:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718291460;
+	bh=KEXcr6Qoi1UOFLMTPPqZR4F4hcqSnV5GgodnaogfRVQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tx68Lz/jYiv25eoBL7oqfcUkd0kEGRiwX9e+hvytTB0AU3CYT+0SY55E0Hx1/TXEE
+	 Y4gsftI68RBk+RT6C/Ll0CpHl8u8hs0PQSY+hAkYkAqzuTNRLCLdcyIyvrZhZBcnzS
+	 avA+ZuW/kdYPdbfwEJOsDn/OC5s6WpDk9o7g2LDzEKlD6L8gbpIGF8jvDwOXDjsPDZ
+	 DTv95nHqQLDA7KiNjdXaAqVSV4k9wHFSyI5DoQGolB58QRUYX6no+D2wblqlJRdqRQ
+	 av+qBZHGPedqvjY+o4UYwH/K3pC2E3TDOOR8qQN6AsTZPaFXwRWn64jpC15YrFdvyg
+	 iSuXSbw1oONaQ==
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6f177b78dcso156331966b.1;
+        Thu, 13 Jun 2024 08:11:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVrhM2F/HwWHmn5RZ54Gka2TAQOd/+tBvCPZyvTW/soDacMFYVPu7eO/V8KDCqQb5qyQtoBZ0elsiXeJKH8kFZT8Pn8WzK0629UvM4cPuPVbtl6ydq4ihcqPeDiQJIRaCL50ClEzW9yDLVRYrgQRzJ3qC/ClJtuOcOgi0PEADRDGiGYr1cp3/vGg7/oIuioLxM/oSVf1M6CeJgOOzkGcLY=
+X-Gm-Message-State: AOJu0YwhClA+zZnq0p+9Fi3wmSuGRLgA2CSWE4iWjb6UUV9Ye3vw2/hi
+	XBokq27ZdVY4b1JBB508fFAG4hYfPm3yARlk3HdCSjJ8pS62xPaAnJyjh0V0GeJxSyozy7zodb+
+	zoH1i/FTlp8zfLcdzZUvBw93GgX8=
+X-Google-Smtp-Source: AGHT+IGKNP0sdxhLdeP60+uyQGarAo1kFcz7UY2k9bl7YpOANQuMJ5e0qwSraH31Wrs/+OIKEhu08Ba/9OtrjZJ5cS8=
+X-Received: by 2002:a17:906:b0d9:b0:a6e:f8b9:361f with SMTP id
+ a640c23a62f3a-a6f60d1d1bamr3615966b.24.1718291458750; Thu, 13 Jun 2024
+ 08:10:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mailbox: mtk-cmdq: Add unregister mailbox controller in
- cmdq_remove()
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
- Jassi Brar <jassisinghbrar@gmail.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
- Singo Chang <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20240613150626.25280-1-jason-jh.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240613150626.25280-1-jason-jh.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240613-loongson1-dma-v9-0-6181f2c7dece@gmail.com>
+In-Reply-To: <20240613-loongson1-dma-v9-0-6181f2c7dece@gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 13 Jun 2024 23:10:52 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4nZqYi4ccsmw=1fmWySVL-kjoZ+_PQU4P9YKSrWGKdDw@mail.gmail.com>
+Message-ID: <CAAhV-H4nZqYi4ccsmw=1fmWySVL-kjoZ+_PQU4P9YKSrWGKdDw@mail.gmail.com>
+Subject: Re: [PATCH v9 0/2] Add support for Loongson1 APB DMA
+To: keguang.zhang@gmail.com
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-mips@vger.kernel.org, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 13/06/24 17:06, Jason-JH.Lin ha scritto:
-> Add unregister mailbox controller in cmdq_remove to fix cmdq unbind
-> WARN_ON message from pm_runtime_get_sync() in cmdq_mbox_shutdown().
-> 
-> Fixes: 623a6143a845 ("mailbox: mediatek: Add Mediatek CMDQ driver")
-> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+Hi, Keguang,
 
-Hello,
+On Thu, Jun 13, 2024 at 8:03=E2=80=AFPM Keguang Zhang via B4 Relay
+<devnull+keguang.zhang.gmail.com@kernel.org> wrote:
+>
+> Add the driver and dt-binding document for Loongson1 APB DMA.
+I still suggest using ls1x-apb-dma.c as the file name, for consistency
+in the same subsystem. But as I said before, I will also accept some
+of your suggestions, so I use loongson3_cpufreq.c here.
 
-I think you forgot about...
+https://lore.kernel.org/loongarch/20240612064205.2041548-1-chenhuacai@loong=
+son.cn/T/#t
 
-https://lore.kernel.org/all/6fcd48b14e865c25e6db7559fe6b946537bfa0ce.camel@mediatek.com/
-
-...as that would also resolve this one without any hacks.
-
-Cheers,
-Angelo
-
+Huacai
+>
 > ---
->   drivers/mailbox/mtk-cmdq-mailbox.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-> index 4aa394e91109..1399e18a39a4 100644
-> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
-> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-> @@ -371,6 +371,8 @@ static void cmdq_remove(struct platform_device *pdev)
->   {
->   	struct cmdq *cmdq = platform_get_drvdata(pdev);
->   
-> +	devm_mbox_controller_unregister(&pdev->dev, &cmdq->mbox);
-> +
->   	if (cmdq->pdata->sw_ddr_en)
->   		cmdq_sw_ddr_enable(cmdq, false);
->   
-
-
+> Changes in v9:
+> - Fix all the errors and warnings when building with W=3D1 and C=3D1
+> - Link to v8: https://lore.kernel.org/r/20240607-loongson1-dma-v8-0-f9992=
+d257250@gmail.com
+>
+> Changes in v8:
+> - Change 'interrupts' property to an items list
+> - Link to v7: https://lore.kernel.org/r/20240329-loongson1-dma-v7-0-37db5=
+8608de5@gmail.com
+>
+> Changes in v7:
+> - Change the comptible to 'loongson,ls1*-apbdma' (suggested by Huacai Che=
+n)
+> - Update the title and description part accordingly
+> - Rename the file to loongson,ls1b-apbdma.yaml
+> - Add a compatible string for LS1A
+> - Delete minItems of 'interrupts'
+> - Change patterns of 'interrupt-names' to const
+> - Rename the file to loongson1-apb-dma.c to keep the consistency
+> - Update Kconfig and Makefile accordingly
+> - Link to v6: https://lore.kernel.org/r/20240316-loongson1-dma-v6-0-90de2=
+c3cc928@gmail.com
+>
+> Changes in v6:
+> - Change the compatible to the fallback
+> - Implement .device_prep_dma_cyclic for Loongson1 sound driver,
+> - as well as .device_pause and .device_resume.
+> - Set the limitation LS1X_DMA_MAX_DESC and put all descriptors
+> - into one page to save memory
+> - Move dma_pool_zalloc() into ls1x_dma_alloc_desc()
+> - Drop dma_slave_config structure
+> - Use .remove_new instead of .remove
+> - Use KBUILD_MODNAME for the driver name
+> - Improve the debug information
+> - Some minor fixes
+>
+> Changes in v5:
+> - Add the dt-binding document
+> - Add DT support
+> - Use DT information instead of platform data
+> - Use chan_id of struct dma_chan instead of own id
+> - Use of_dma_xlate_by_chan_id() instead of ls1x_dma_filter()
+> - Update the author information to my official name
+>
+> Changes in v4:
+> - Use dma_slave_map to find the proper channel.
+> - Explicitly call devm_request_irq() and tasklet_kill().
+> - Fix namespace issue.
+> - Some minor fixes and cleanups.
+>
+> Changes in v3:
+> - Rename ls1x_dma_filter_fn to ls1x_dma_filter.
+>
+> Changes in v2:
+> - Change the config from 'DMA_LOONGSON1' to 'LOONGSON1_DMA',
+> - and rearrange it in alphabetical order in Kconfig and Makefile.
+> - Fix comment style.
+>
+> ---
+> Keguang Zhang (2):
+>       dt-bindings: dma: Add Loongson-1 APB DMA
+>       dmaengine: Loongson1: Add Loongson-1 APB DMA driver
+>
+>  .../bindings/dma/loongson,ls1b-apbdma.yaml         |  67 +++
+>  drivers/dma/Kconfig                                |   9 +
+>  drivers/dma/Makefile                               |   1 +
+>  drivers/dma/loongson1-apb-dma.c                    | 665 +++++++++++++++=
+++++++
+>  4 files changed, 742 insertions(+)
+> ---
+> base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+> change-id: 20231120-loongson1-dma-163afe5708b9
+>
+> Best regards,
+> --
+> Keguang Zhang <keguang.zhang@gmail.com>
+>
+>
+>
 
