@@ -1,140 +1,136 @@
-Return-Path: <linux-kernel+bounces-213111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E6E906BC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:44:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021B7906BDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0C88B213D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:44:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F7761F23226
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BADA1448E4;
-	Thu, 13 Jun 2024 11:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62239143C60;
+	Thu, 13 Jun 2024 11:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0ClGfHU"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vy/JgZiA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6586143739;
-	Thu, 13 Jun 2024 11:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49BB143C51
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718279002; cv=none; b=H9gSS/u9BYpCmhy9mXV1enJByJbgXNeGovTOKab1oaVkOLrmXuSDgjPCc8Qa5TWXCW0xPNJE6v9huhntBtSanikaWJn3XCk3C32kgA2fTuosIjOk/bkc4ehDrjuRrMcTWEc8DlGV0egosMrB07F2s1w0GUhQPVzPM4DamDK19fM=
+	t=1718279064; cv=none; b=mWpcI/aOIg6ersW3TIzEkq0yEP5XrxAV0AjFGks8mjYA6zZ+8XD9ARmH31qln+0w/v0V/ReEv7Iu9WIcgGzXopJ7OzdheatopW++QS6nHRGHV03jIfYOS1vnT5aGs55+IJo2F97W4K7pKF1XNthQytSYtsyIiZqeaQ2ysyfxsdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718279002; c=relaxed/simple;
-	bh=mcDgRVbRrAqzkf7QdkeGKeRLT0SPhoINNm+D1NB5bgc=;
+	s=arc-20240116; t=1718279064; c=relaxed/simple;
+	bh=CJaBd2s3Dq0cWvdxftsetDuzthTx2fYfrrCKX/uQt4g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DEZ6iiKnQFqR3xss5n14M1sLYHlYOPKBS3mQQfpvl18D7Tts6WdpsHzcHxVcwJMyJ/91p93S4j3/kp1GgBwMgwQE6J6Mngq+lZ1R5oaWmENyeAHpbu/U0KYtOjEQfxl5Aw8drKoHX8duKcWhKAn/SKM3MVewqbsApKeeuUe1mA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R0ClGfHU; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57a31d63b6bso1120303a12.0;
-        Thu, 13 Jun 2024 04:43:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718278999; x=1718883799; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ap6edeidspAUVCx1fQWUKPf2+SgKd686FNENvkCeyJk=;
-        b=R0ClGfHUCTYy3sAZCH81Od27vSnY4VYytm227IRXbg6DX4fnvEr6cuRK5vkZnOeuC/
-         Y5welOKycMCtok7UyS6f/xhYIDsz+sDVB558Hkxh4B4PR90C8X2eJTJ/21/lRByumLqm
-         7Zi/0FdNuWpPZACCdEs1PhPDqSPh5uJ1IYFTkoxrZTej00/Se9vYbf0VkudJIXYOFsVz
-         CTfLN8eG7aS116C+QV5XWIftQQKTu86xspHDCAh0r18NZUISa/FlwH17M7cXyeQcjhNh
-         vaPd0oAss0uU1zCwmFvjfpnZZ8o7R3dbehP0Y/XJmIhfTjtpmPt6kjX3Hl/fGmWfyWNU
-         9rjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718278999; x=1718883799;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ap6edeidspAUVCx1fQWUKPf2+SgKd686FNENvkCeyJk=;
-        b=XEkqEcHVRklJr3WLIswXuzb1imdu+SK+Hul6ARIRqYhtpJsXzSq1kq7W6PcVbNkEj8
-         Juldgh6ge9yGRGxLqU/cO+voO1l3S6btDiN975Q5yj8u2waZfphWYTWC8UY53qI1S5n3
-         KUmp+wmGyu7xUOEP84HD76EgCzHb8YJ1A6s9836XXZGBxp2XVh1yK3IGDJ7Z+5hWhQt4
-         F12fjt5R4cZPmZb1CwhXCpC71qsPbOVVR/Nb5jFc1gWw8vCjm3Uk0eUeP/0o4Fu5dVAk
-         ZSbuKbHMjGZTdd2bkB/LJC4ToHGec8WMnzlHMFeO4Ka+zeUvlazvPEwFYSQ6bpBj1l4X
-         h+2A==
-X-Forwarded-Encrypted: i=1; AJvYcCV4yRhNBjwcdQw158R/m0nyAWDH7OMd7PUXiPH97PQlJZxcWdNtR8UaD3BJMmaNSJHIrf/Sb28ZwbiM+APes6OGuImiEqlMcC2E6X0dmUs/mOHRe9k/2RpRERvQlpPP8lCir/oIJMy09IVUIITfHvU0Ri62l2UUKqJHqxY2PhZhsw==
-X-Gm-Message-State: AOJu0YyCI9MJOLaa+uH733L19104wdCfE3KTdI9I6flOGInUyhrwA6Ds
-	KdtmF68GjOQ8NlTuEl5ZU5ch9pGHe4MmFWAieau5/AVbRfHLnt0T
-X-Google-Smtp-Source: AGHT+IHYys4W1g0+RpexvZWivwflF+jQm+3VaVBVwgK+dbQoo2xi3SiyvIOQ6QLl2vVuHmSTnCTOgA==
-X-Received: by 2002:a17:906:a259:b0:a6e:feae:e1df with SMTP id a640c23a62f3a-a6f47f894a7mr299540966b.21.1718278998542;
-        Thu, 13 Jun 2024 04:43:18 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f42877sm62794966b.182.2024.06.13.04.43.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 04:43:16 -0700 (PDT)
-Date: Thu, 13 Jun 2024 14:43:14 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: John Thomson <git@johnthomson.fastmail.com.au>
-Cc: daniel@makrotopia.org, andrew@lunn.ch, f.fainelli@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC net-next] net: dsa: generate port ifname if exists or
- invalid
-Message-ID: <20240613114314.jxmjkdbycqqiu5wn@skbuf>
-References: <20240608014724.2541990-1-git@johnthomson.fastmail.com.au>
- <20240608014724.2541990-1-git@johnthomson.fastmail.com.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f2QWDr+06+cXp2t60+R4V++nWBHgjBRuDOI80NxtixcRl39GmETpDw0SV9CV3kSYZhW15aL/fot1ZUe4XEQaG0Oxii3qQdSYt76NWi/3TplVBWmcVjkOOpKs7jNoM/jz7gidR/BxaVNrVJ+SPwzZ2YyeXmY2gaGxMBrB5THqgIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vy/JgZiA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E656CC2BBFC;
+	Thu, 13 Jun 2024 11:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718279064;
+	bh=CJaBd2s3Dq0cWvdxftsetDuzthTx2fYfrrCKX/uQt4g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vy/JgZiA9hLKZeOQSaWLZqpCTsMXOez7AWCU0tW3y2NC1s9CFpICD46QgRjb/ob9T
+	 CgL+H+FSvyRNnmD+J9S5hUDFlRTB1hyf3jOCKFjrFEEZqeUwOW1gb4zdMAb70XjFnJ
+	 acghkkGRzVkOfbnJxhgZBs3eKiswNd+mvvxRIxqFc5cWBh4GD6vBL/Go3pro7CpoB8
+	 NAjkDHC4SX0CBXy5GNf2aIzB+9yXiHjcd7W+rWFvNEccA7+lBs8etxbBM386LrfLo1
+	 ti0BdTUVBosnJccplm5LXlhCMARrcNEPEPDEA6SVkNVvTx0Ect+jRQP4UzlJxXfcjw
+	 quoBqeRQkHigA==
+Date: Thu, 13 Jun 2024 12:44:20 +0100
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michal Hocko <mhocko@suse.com>, cve@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Felix Kuehling <felix.kuehling@amd.com>
+Subject: Re: CVE-2024-26628: drm/amdkfd: Fix lock dependency warning
+Message-ID: <20240613114420.GM1504919@google.com>
+References: <2024030649-CVE-2024-26628-f6ce@gregkh>
+ <Zerheyn-4rB5kySt@tiehlicka>
+ <20240314110938.GM1522089@google.com>
+ <ZfsBpal_29lihveI@tiehlicka>
+ <20240320154734.GU1522089@google.com>
+ <Zmq8uSVv0X5f7xx+@duo.ucw.cz>
+ <2024061335-wistful-brownnose-28ea@gregkh>
+ <ZmrMo6qFbt9/3xoh@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240608014724.2541990-1-git@johnthomson.fastmail.com.au>
- <20240608014724.2541990-1-git@johnthomson.fastmail.com.au>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZmrMo6qFbt9/3xoh@duo.ucw.cz>
 
-On Sat, Jun 08, 2024 at 11:47:24AM +1000, John Thomson wrote:
-> RFC:
-> Not a full solution.
-> 
-> Not sure if supported, I cannot see any users in tree DTS,
-> but I guess I would need to skip these checks (and should mark as
-> NEM_NAME_ENUM) if port->name contains '%'.
-> 
-> name is also used in alloc_netdev_mqs, and I have not worked out if any
-> of the functionality between alloc_netdev_mqs and the register_netdevice
-> uses name, so I added these test early, but believe without a rntl lock,
-> a colliding name could still be allocated to another device between this
-> introduced test, and where this device does lock and register_netdevice
-> near the end of this function.
-> To deal with this looks to require moving the rntl_lock before
-> these tests, which would lock around significantly more.
-> 
-> As an alternative, could we possibly always register an enumerated name,
-> then (if name valid) dev_change_name (not exported), while still within
-> the lock after register_netdevice?
-> 
-> Or could we introduce a parameter or switch-level DTS property that forces
-> DSA to ignore port labels, so that all network devices names can be
-> managed from userspace (using the existing port DSA label as intended name,
-> as this still seems the best place to define device labels, even if the
-> driver does not use this label)?
+On Thu, 13 Jun 2024, Pavel Machek wrote:
 
-Why not just _not_ use the 'label' device tree property, and bring
-a decent udev implementation into OpenWrt which can handle persistent
-naming according to the labels on the box? Even within DSA, it is
-considered better practice to use udev rather than 'label'. Not to
-mention that once available, udev is a uniform solution for all network
-interfaces, unlike 'label'.
+> On Thu 2024-06-13 12:16:50, Greg Kroah-Hartman wrote:
+> > On Thu, Jun 13, 2024 at 11:32:41AM +0200, Pavel Machek wrote:
+> > > On Wed 2024-03-20 15:47:34, Lee Jones wrote:
+> > > > On Wed, 20 Mar 2024, Michal Hocko wrote:
+> > > > 
+> > > > > On Thu 14-03-24 11:09:38, Lee Jones wrote:
+> > > > > > On Fri, 08 Mar 2024, Michal Hocko wrote:
+> > > > > > 
+> > > > > > > On Wed 06-03-24 06:46:11, Greg KH wrote:
+> > > > > > > [...]
+> > > > > > > >  Possible unsafe locking scenario:
+> > > > > > > > 
+> > > > > > > >        CPU0                    CPU1
+> > > > > > > >        ----                    ----
+> > > > > > > >   lock(&svms->lock);
+> > > > > > > >                                lock(&mm->mmap_lock);
+> > > > > > > >                                lock(&svms->lock);
+> > > > > > > >   lock((work_completion)(&svm_bo->eviction_work));
+> > > > > > > > 
+> > > > > > > > I believe this cannot really lead to a deadlock in practice, because
+> > > > > > > > svm_range_evict_svm_bo_worker only takes the mmap_read_lock if the BO
+> > > > > > > > refcount is non-0. That means it's impossible that svm_range_bo_release
+> > > > > > > > is running concurrently. However, there is no good way to annotate this.
+> > > > > > > 
+> > > > > > > OK, so is this even a bug (not to mention a security/weakness)?
+> > > > > > 
+> > > > > > Looks like the patch fixes a warning which can crash some kernels.  So
+> > > > > > the CVE appears to be fixing that, rather than the impossible deadlock.
+> > > > > 
+> > > > > Are you talking about lockdep warning or anything else?
+> > > > 
+> > > > Anything that triggers a BUG() or a WARN() (as per the splat in the
+> > > > commit message).  Many in-field kernels are configured to panic on
+> > > > BUG()s and WARN()s, thus triggering them are presently considered local
+> > > > DoS and attract CVE status.
+> > > 
+> > > So... because it is possible to configure machine to reboot on
+> > > warning, now every warning is a security issue?
+> > > 
+> > > Lockdep is for debugging, if someone uses it in production with panic
+> > > on reboot, they are getting exactly what they are asking for.
+> > > 
+> > > Not a security problem.
+> > 
+> > And we agree, I don't know what you are arguing about here, please stop.
+> 
+> So you agree that WARN triggering randomly is not a security problem?
+> 
+> Following communication did not say so.
+> 
+> "The splat in the circular lockdep detection code appears to be generated
+> using some stacked pr_warn() calls, rather than a WARN()."
 
-Full disclosure: I myself tried for about 30 minutes to convert the udev
-rules below into an /etc/hotplug.d script that procd would run, before
-getting the impression it's never going to work as intended, because by
-the time all relevant "add" actions run (built-in drivers), user space
-hasn't even loaded, and thus hasn't got a chance to run any hooks.
-I haven't actually opened the source code to compare how other uevent
-handlers deal with this.
+We agree that the lockdep detection is a debugging feature AND that even
+though the splat looks like a WARN(), it does not behave like one.
+Therefore it does not constitute a security issue.
 
-ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.5", DRIVERS=="mscc_felix", ATTR{phys_port_name}=="p0", NAME="swp0"
-ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.5", DRIVERS=="mscc_felix", ATTR{phys_port_name}=="p1", NAME="swp1"
-ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.5", DRIVERS=="mscc_felix", ATTR{phys_port_name}=="p2", NAME="swp2"
-ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.5", DRIVERS=="mscc_felix", ATTR{phys_port_name}=="p3", NAME="swp3"
-ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.5", DRIVERS=="mscc_felix", ATTR{phys_port_name}=="p4", NAME="swp4"
-ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.5", DRIVERS=="mscc_felix", ATTR{phys_port_name}=="p5", NAME="swp5"
+However, yes, we believe that if an attacker can trip a WARN() and
+reboot a victim's machine on demand then this is equivalent to a local
+DoS attack and merits CVE status.
+
+-- 
+Lee Jones [李琼斯]
 
