@@ -1,247 +1,160 @@
-Return-Path: <linux-kernel+bounces-213891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD68907C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:15:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3325B907C20
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C407F1C24709
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:15:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78A03B22F0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD50E14C59A;
-	Thu, 13 Jun 2024 19:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986E914C585;
+	Thu, 13 Jun 2024 19:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzUl1M7v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="NCFslb8p"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34EA2F50;
-	Thu, 13 Jun 2024 19:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F212F50
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718306138; cv=none; b=EzuA9AZT/fi1M7WuvgklvfEqFSRnsTpLB2hobTW+XUPt/Ng6E82B+qo4xeMq1FxT3U4JMCzUBcpsf+lWKfLqUuAq03BjfnBBPmZqCzK8gA+pQhqTWtMa3nbEJWp96ligESEBCLUDBjiO8N56H7KqEc8W6tSZxflH6fl+Mt7OgCw=
+	t=1718306198; cv=none; b=TUaudZnfEfGp70xFlkF1KcgSvQ0+8B8Rmrg86tpq6IXb/6j7XnNxRCLdO8vWJuGkaep2fLlkifa5kTobUOa5fJQS/qaVZAdkFqRJvVxthQQr8Ifet1h2VDnFQVjfA0vNhEBBNK7YT7f/HStu9xQ1D/Pa7VJ55a4eACeVhDrssvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718306138; c=relaxed/simple;
-	bh=PxaAEnheuEVKucWpehjXgII5Lh2MtTO4KEUYjKFPDkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvhPNU7EhOb67xRf4bsrKXkVYCTuXNrFTyZcLnTTlv0BUR0DUiKT/Bc8hroNU+izhfe27yF3YHo+8zCF3wJdCxWWLw8JZpBEJPIj08A4p89MUwEJ9Kh1Xs9zpRsTVgO/fq8p+WB9TCUAPMzPlPBbCWL03YWYtbu28QxNkz4QmPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzUl1M7v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D34C2BBFC;
-	Thu, 13 Jun 2024 19:15:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718306137;
-	bh=PxaAEnheuEVKucWpehjXgII5Lh2MtTO4KEUYjKFPDkw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gzUl1M7vQrd2T8fS4MvHteaVlR1Jg0QGhIBkzYQ8VNBg0lTX2rpjj0pAC/eLgQY/e
-	 6AQ8nRPOww0PlBfjVxVpfPv9MUz/a0mQzYdvhCAdVq8F4IuRuq8llzgQ03mjrSFBMp
-	 +5mY9eOtmwMrpRXlt0ZSoID0xDfxfeHSYywgaxLNGv6CeG735rEWHy6IGMeMIJIypf
-	 oxzJxsAAuj5LA/6v4XLmFfCiKZWRQQi9QIOcrOCZGCcOykdQ8kub+XLk8yPJGzfQuE
-	 hSFCbKTpsZMyLng1o5+VvInMLoNLXzvLGq8w3AV1ghg3gNmXN1ETemlf7jYNXWkpH6
-	 xNhP+d2XQzwLg==
-Date: Thu, 13 Jun 2024 13:15:35 -0600
-From: Rob Herring <robh@kernel.org>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Heiko Stuebner <heiko@sntech.de>,
+	s=arc-20240116; t=1718306198; c=relaxed/simple;
+	bh=xwz2gGVasPLG4WICRlhAaUV6zxKEkVvjxfn+L/yOsK8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L6eerDq6v0hiI+iqmuXG9jkmBG8cs1Z+BM7Ea950SNtZbrPXziR80uC0LMtFesc7HfK2a6ONPLS6bVtClNgQ9TO64M5BoIKnlscjP+scJjtbqCth0VkUnL+uzVMbyju+Vd51pctOXjavp2wxDkOYG50aIFuWP90DBv+/FS9SMO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=NCFslb8p; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f64ecb1766so11601915ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718306195; x=1718910995; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hpOwinj0W1yetvQNtkELpr5Kiud2ruzeFCMoj01VdbY=;
+        b=NCFslb8pBIwyyil2TGL5uUyQi3bwW3CfWqDmgEpcXozuF5NHnSAZLFDm7gOSY3yGhR
+         VZeyg5FgRmFzK36fWdCinVqVftCeaDx3sPxSp0qMZrfCd+IIKdLZjpP6ig6igmNimKIG
+         SzZ13IxlTAKAfTvspd/xAfe0GGedWsRNcG8W5DTH1VJ2TztylOTfVOp8hCFC/w8o112a
+         PHKjQUzOVH5YranCPXjRcuv9MKTzSxXU3OhPlfNsgSXBh1Clei2uLnDgFwBhrds9bKTW
+         T3TMOotDrNHH7Q1SqSfCzufuZ6lJb+EiLnawL/VMi3v6alVUwwM2z7hgNIOruqAOIOLK
+         01sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718306195; x=1718910995;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hpOwinj0W1yetvQNtkELpr5Kiud2ruzeFCMoj01VdbY=;
+        b=gNSk5Hy1xN8sRx1XHNUlTIdvASkKmZMqPC7ToSojEBFUmrthNP6YylGqh1v70HFoHe
+         56pN4rgePYhUMEV4zZAVA3SQcTNimmNzeGTH0uG3ZIkbnbCbrBYk8zvLPVhnsvulVMGL
+         +kq6XTBtEYIYyVHYF+cfJh35y7TlXSiebny3FIabL92Xy1zd8NLnodT/0wJfoKIPstuR
+         6Q7pQ5VScHY90xRooAiao90GDZ63JijgmaV6yJurg9oL4VWSFDuWgu63jlmYA8gVOMEk
+         X+1rLst3MNYwba/Uxa1VCTcQMr0Sdc73rSOuUPe+qTQC0SRZAk03ltK7/Q+Nbu2X0shH
+         fmDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUW8ME1qzhN3OtUmfMh3rA68WFlelxoLCVOVMaQsW6NZgOTku3elFD1lkRydgKoKX8yLQdlZQR1sZASBLAejxT2vUO4x4J13/um3WmH
+X-Gm-Message-State: AOJu0Yx3yuE/L5kLF2r2n8tztFf3q7yTG3QC3YJ31wO17RlqkLdh5Y94
+	Rk6V9E1L7s9UHo/6tslcyDM+B1nGkPDEQPHXz3FCuNwlthN4N2r8E11f9wq/KAE=
+X-Google-Smtp-Source: AGHT+IHHy8Y/gbuqVUoKIBAHl3Kik8dEPGS63zG9zTuBzI8FXFYH9pTlmfj7DD0pHAJEd7bxMGtqFw==
+X-Received: by 2002:a17:903:1249:b0:1f7:393c:fcdf with SMTP id d9443c01a7336-1f8625c0537mr7044225ad.6.1718306195179;
+        Thu, 13 Jun 2024 12:16:35 -0700 (PDT)
+Received: from jesse-desktop.. (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e7ca78sm17471015ad.106.2024.06.13.12.16.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 12:16:34 -0700 (PDT)
+From: Jesse Taube <jesse@rivosinc.com>
+To: linux-riscv@lists.infradead.org
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 3/9] dt-bindings: mailbox: rockchip,rknn: Add bindings
-Message-ID: <20240613191535.GA2319626-robh@kernel.org>
-References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
- <20240612-6-10-rocket-v1-3-060e48eea250@tomeuvizoso.net>
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Evan Green <evan@rivosinc.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Jesse Taube <jesse@rivosinc.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Xiao Wang <xiao.w.wang@intel.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Greentime Hu <greentime.hu@sifive.com>,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Zong Li <zong.li@sifive.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Ben Dooks <ben.dooks@codethink.co.uk>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Erick Archer <erick.archer@gmx.com>,
+	Joel Granados <j.granados@samsung.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/6] RISC-V: Detect and report speed of unaligned vector accesses
+Date: Thu, 13 Jun 2024 15:16:09 -0400
+Message-ID: <20240613191616.2101821-1-jesse@rivosinc.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612-6-10-rocket-v1-3-060e48eea250@tomeuvizoso.net>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024 at 03:52:56PM +0200, Tomeu Vizoso wrote:
-> Add the bindings for the Neural Processing Unit IP from Rockchip.
+Adds support for detecting and reporting the speed of unaligned vector
+accesses on RISC-V CPUs. Adds vec_misaligned_speed key to the hwprobe
+adds Zicclsm to cpufeature and fixes the check for scalar unaligned
+emulated all CPUs. The vec_misaligned_speed key keeps the same format
+as the scalar unaligned access speed key.
 
-Subject is wrong. Not a mailbox...
+This set does not emulate unaligned vector accesses on CPUs that do not
+support them. Only reports if userspace can run them and speed of
+unaligned vector accesses if supported.
 
-> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> ---
->  .../devicetree/bindings/npu/rockchip,rknn.yaml     | 123 +++++++++++++++++++++
->  1 file changed, 123 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/npu/rockchip,rknn.yaml b/Documentation/devicetree/bindings/npu/rockchip,rknn.yaml
-> new file mode 100644
-> index 000000000000..570a4889c11c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/npu/rockchip,rknn.yaml
-> @@ -0,0 +1,123 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/npu/rockchip,rknn.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Neural Processing Unit IP from Rockchip, based on NVIDIA's NVDLA
-> +
-> +maintainers:
-> +  - Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> +
-> +description: |+
-> +  Rockchip IP for accelerating inference of neural networks, based on NVIDIA's open source NVDLA IP.
+If Zicclsm is present, the kernel will set both scalar and vector unaligned access speed to FAST.
 
-Wrap at 80.
+This patch requires the following patche to be applied first:
+RISC-V: fix vector insn load/store width mask
+https://lore.kernel.org/all/20240606182800.415831-1-jesse@rivosinc.com/
 
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - rockchip,rk3588-rknn
-> +      - const: rockchip,rknn
+Jesse Taube (6):
+  RISC-V: Add Zicclsm to cpufeature and hwprobe
+  dt-bindings: riscv: Add Zicclsm ISA extension description.
+  RISC-V: Check scalar unaligned access on all CPUs
+  RISC-V: Detect unaligned vector accesses supported.
+  RISC-V: Report vector unaligned access speed hwprobe
+  RISC-V: hwprobe: Document unaligned vector perf key
 
-Is there any evidence this block is 'the same' on multiple chips?
+ Documentation/arch/riscv/hwprobe.rst          |  19 +++
+ .../devicetree/bindings/riscv/extensions.yaml |   7 +
+ arch/riscv/Kconfig                            |  59 +++++++
+ arch/riscv/include/asm/cpufeature.h           |   7 +-
+ arch/riscv/include/asm/entry-common.h         |  11 --
+ arch/riscv/include/asm/hwcap.h                |   1 +
+ arch/riscv/include/asm/hwprobe.h              |   2 +-
+ arch/riscv/include/asm/vector.h               |   1 +
+ arch/riscv/include/uapi/asm/hwprobe.h         |   6 +
+ arch/riscv/kernel/Makefile                    |   7 +-
+ arch/riscv/kernel/copy-unaligned.h            |   5 +
+ arch/riscv/kernel/cpufeature.c                |   1 +
+ arch/riscv/kernel/sys_hwprobe.c               |  48 ++++++
+ arch/riscv/kernel/traps_misaligned.c          | 142 +++++++++++++---
+ arch/riscv/kernel/unaligned_access_speed.c    | 154 +++++++++++++++++-
+ arch/riscv/kernel/vec-copy-unaligned.S        |  58 +++++++
+ arch/riscv/kernel/vector.c                    |   2 +-
+ 17 files changed, 484 insertions(+), 46 deletions(-)
+ create mode 100644 arch/riscv/kernel/vec-copy-unaligned.S
 
-> +
-> +  reg:
-> +    description: Base registers for NPU cores
-> +    minItems: 1
-> +    maxItems: 20
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 20
-> +
-> +  interrupt-names:
-> +    minItems: 1
-> +    maxItems: 20
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 20
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 20
-> +
-> +  assigned-clocks:
-> +    maxItems: 1
-> +
-> +  assigned-clock-rates:
-> +    maxItems: 1
+-- 
+2.43.0
 
-You don't need assigned-clocks in schemas.
-
-> +
-> +  resets:
-> +    minItems: 1
-> +    maxItems: 20
-> +
-> +  reset-names:
-> +    minItems: 1
-> +    maxItems: 20
-> +
-> +  power-domains:
-> +    minItems: 1
-> +    maxItems: 20
-> +
-> +  power-domain-names:
-> +    minItems: 1
-> +    maxItems: 20
-> +
-> +  iommus:
-> +    items:
-> +      - description: IOMMU for all cores
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - clocks
-> +  - clock-names
-> +  - assigned-clocks
-> +  - assigned-clock-rates
-
-And never should be required.
-
-> +  - resets
-> +  - reset-names
-> +  - power-domains
-> +  - power-domain-names
-> +  - iommus
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    bus {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        rknn: npu@fdab0000 {
-> +          compatible = "rockchip,rk3588-rknn", "rockchip,rknn";
-> +          reg = <0x0 0xfdab0000 0x0 0x9000>,
-> +                <0x0 0xfdac0000 0x0 0x9000>,
-> +                <0x0 0xfdad0000 0x0 0x9000>;
-> +          interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                       <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                       <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH 0>;
-> +          interrupt-names = "npu0_irq", "npu1_irq", "npu2_irq";
-
-'irq' is redundant. Names with the index are also kind of pointless
-unless they can be not contiguous.
-
-> +          clocks = <&scmi_clk 0>, <&cru 1>,
-> +                   <&cru 2>, <&cru 3>,
-> +                   <&cru 4>, <&cru 5>,
-> +                   <&cru 6>, <&cru 7>;
-> +          clock-names = "clk_npu",
-
-'clk_' is redundant.
-
-> +                  "aclk0", "aclk1", "aclk2",
-> +                  "hclk0", "hclk1", "hclk2",
-> +                  "pclk";
-
-Assuming 0, 1, 2 are cores and may vary, put all the fixed clocks first 
-and then better to do "aclk0", "hclk0", "aclk1", "hclk1",...
-
-> +          assigned-clocks = <&scmi_clk 0>;
-> +          assigned-clock-rates = <200000000>;
-> +          resets = <&cru 0>, <&cru 1>, <&cru 2>,
-> +                   <&cru 3>, <&cru 4>, <&cru 5>;
-> +          reset-names = "srst_a0", "srst_a1", "srst_a2",
-> +                        "srst_h0", "srst_h1", "srst_h2";
-
-And similar order here.
-
-> +          power-domains = <&power 0>, <&power 1>, <&power 2>;
-> +          power-domain-names = "npu0", "npu1", "npu2";
-> +          iommus = <&rknpu_mmu>;
-> +          status = "disabled";
-> +        };
-> +    };
-> +...
-> 
-> -- 
-> 2.45.2
-> 
 
