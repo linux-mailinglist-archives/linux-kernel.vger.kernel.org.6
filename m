@@ -1,57 +1,83 @@
-Return-Path: <linux-kernel+bounces-212994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5488590698E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:02:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31F3906991
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592981C22E2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:02:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2836EB2467E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6A61411E0;
-	Thu, 13 Jun 2024 10:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8F11411DA;
+	Thu, 13 Jun 2024 10:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wjFovTTG"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NqNPZhTJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9FB13E3E4;
-	Thu, 13 Jun 2024 10:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BCF134409;
+	Thu, 13 Jun 2024 10:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718272969; cv=none; b=C4F3Vr2i61kmiGc97oLniheU0lpn8a/9YnGQrZoSeThwjzB77pQh+VZTrTBMD1UxjRHG7SM+HpcLbFGvJV/xPYUd1qxEZ3hln+iYe3YmUUC8voMLBQrrwBhwLQzmz1DFlG6R0pprkqXOarSaOR6Rh4zR6/n63rLLgQsuRsxIV9E=
+	t=1718272987; cv=none; b=tC7jmHQ9xKhItrBQXQmYz3FNHLKDQNA0/x0CHLf9TVenGVNn4eNR4TcU+00DL7Sm9HaKSjipj1LZizmpsgkEwqggt6xygjDcKKX0z4PFYt5QVB0Y+b0ixzCXi2vkzdT11MbzgukLnXhFWUqry13PeW52lraB/drG9bw09kCCeHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718272969; c=relaxed/simple;
-	bh=dmAgdhlc7Gnm/ltgQqlFO1EFzEj4GRIQgQbICwLzST8=;
+	s=arc-20240116; t=1718272987; c=relaxed/simple;
+	bh=CqHO2/KK7eIKe3EFoA4TtHPEMTMPdLClBxAJ4UmrvLg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqOr3n32TJ/yJjooS4zJ0XQ5Y1ArVlExp0wByOuIfH5kTZ+19SX1Cn9uLsq270rwgw43q4VVm3tkkz5hEJAQ9213DNk/1hjVy7NHbaxBM+KzdXG2+2+u9id1Oy0zNBsqe6SzLNdbktR1EZjAY796RogCKpgfgdOpJpXKU8TrepA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wjFovTTG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB3FEC2BBFC;
-	Thu, 13 Jun 2024 10:02:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXEbRwvpUv0yDre/bda07f9U93V5poLFzW8WRCqXVi3juaBI/RjmH5CmvqwrsdZwxAgvZ1OnCZMwtzsoVbOQotE8mnl7Vg5APzQQAAT21ifCZBx9XtcMwA58yBnjXizWxf/jHl6pVkA6HIdkNwFI2GvoXODN9gU1Ylu4Ss34FHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NqNPZhTJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18679C2BBFC;
+	Thu, 13 Jun 2024 10:03:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718272969;
-	bh=dmAgdhlc7Gnm/ltgQqlFO1EFzEj4GRIQgQbICwLzST8=;
+	s=korg; t=1718272986;
+	bh=CqHO2/KK7eIKe3EFoA4TtHPEMTMPdLClBxAJ4UmrvLg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wjFovTTGE/hRHbavqCKGnoyUSGeQb1ZTJt/Q59XK+5haCIQevZ6/10MMsdrA4o1tE
-	 jVqPLsckgVY1v7kQscD5dgE6gTB/IhSMCSTUuO3yqWiNg3YKNxUhl/8RzaWZpr0+Gl
-	 cR1tc/Ddi4d21UQnhzo/7EtBG+ELHZoyin6CYcPQ=
-Date: Thu, 13 Jun 2024 12:02:46 +0200
+	b=NqNPZhTJEpyCvzXfGU5AnNh2gavLMwsYzQ5eTYx5mLDPdSSIqSRAKZLJPIpCHaYJR
+	 ZbGmNlNWp/ql5XfAGCsjaIZewR5YWdNBQPF/JbE+b4CeU2YsQUlvxT4PItgpgWF4TL
+	 CUhzvnxOEk/9SvVUdnWqARHGMUiC0hjz2Vn2kezE=
+Date: Thu, 13 Jun 2024 12:03:03 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v8 1/2] drivers: export to_ext_attr()
-Message-ID: <2024061330-clarinet-favorable-02da@gregkh>
-References: <20240613092830.15761-1-brgl@bgdev.pl>
- <20240613092830.15761-2-brgl@bgdev.pl>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>,
+	dakr@redhat.com
+Subject: Re: [RFC 1/2] rust: Introduce atomic API helpers
+Message-ID: <2024061353-stillness-unearned-dc4f@gregkh>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-2-boqun.feng@gmail.com>
+ <2024061341-whole-snowfall-89a6@gregkh>
+ <20240613091747.GB17707@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,17 +86,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613092830.15761-2-brgl@bgdev.pl>
+In-Reply-To: <20240613091747.GB17707@noisy.programming.kicks-ass.net>
 
-On Thu, Jun 13, 2024 at 11:28:29AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Jun 13, 2024 at 11:17:47AM +0200, Peter Zijlstra wrote:
+> On Thu, Jun 13, 2024 at 07:38:51AM +0200, Greg Kroah-Hartman wrote:
+> > On Wed, Jun 12, 2024 at 03:30:24PM -0700, Boqun Feng wrote:
+> > > +// Generated by scripts/atomic/gen-rust-atomic-helpers.sh
+> > > +// DO NOT MODIFY THIS FILE DIRECTLY
+> > 
+> > Why not just build this at build time and not check the file into the
+> > tree if it is always automatically generated?  That way it never gets
+> > out of sync.  We do this for other types of auto-generated files in the
+> > kernel today already.
 > 
-> Make to_ext_attr() available to code that wants to reuse struct
-> dev_ext_attribute. While at it: make it into a static inline function.
+> Part of the problem is, is that a *TON* of files depend on the atomic.h
+> headers. If we'd generate it on every build, you'd basically get to
+> rebuild the whole kernel every single time.
+> 
+> Also, these files don't change too often. And if you look, there's a
+> hash in those files which is used to check if things somehow got stale.
 
-Please don't use this, why is it needed?
-
-thanks,
-
-greg k-h
+Ok, fair enough, if you all don't think this will change often...
 
