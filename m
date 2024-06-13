@@ -1,147 +1,112 @@
-Return-Path: <linux-kernel+bounces-213952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A43A907CF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:51:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4A2907CF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A441C23EC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:51:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1671F1F2361A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CC57EF1F;
-	Thu, 13 Jun 2024 19:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F377E57C;
+	Thu, 13 Jun 2024 19:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7QG8eqQ"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fIrj4a6P"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2482F6F073;
-	Thu, 13 Jun 2024 19:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7589A757E0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718308303; cv=none; b=S/1CL+71eOiUkvBx6ILNc5wLXkJFj+Q6iiQei/umNpAW8eunxz3oeaXBprPzSo/mW9lLlue4F0dbAzwxXKWiEVg6aMqwk1M+TZIXoObmZ4X+rXmnYRTzx3EAGBi6RsIIabh/zPlUPNiCfCCo6wOJYgE6lx+YJnPsdIdIbR1hoAA=
+	t=1718308342; cv=none; b=hfaX+nxMTwDUb0kFCH2aS0wfj/QL+XTwfMGbdZx65VOgkhYbyA4PlC7ILectmmde4+zbo9SX1vCFOpbFcY48W7WWLXJ2bqRYtKh8O3obJfskleDNaIYEgpdC3HAcKczsglfNdwWKZcQYgWcBmqKqMwQa49XZn0ruiqh/Wh++O9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718308303; c=relaxed/simple;
-	bh=2FR65H6oQRmxvXkcwUoWkYMkK7DPPvgBTT5D29nbwpU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XlDf+uH7DzQ23k/IT/h6FDj/G7Sh5Pt8Sua0D0VaSyYPz0cK9RQhL4P/3it+YZMUqNCO7WJXVzO7ZUQu3AnMK4I2Ue+aSkdSKqS1/Eas5R1AF8eIU+wR3o92NQJv+pOyrT8KkC/GV2zQQFCLVSDY844X3I5obQy5RfnAvIfuQxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a7QG8eqQ; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6f1cf00b3aso230421066b.0;
-        Thu, 13 Jun 2024 12:51:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718308299; x=1718913099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wd49EutyMLwKOtVYeW3XG9F3kbsUtYIJI3CsIowTYE4=;
-        b=a7QG8eqQl2v8SbteBTK4ct/C5pVfvek6y+L/QYaEoNc1QMvr/UbyYVA8Nj8/p7Qjfx
-         u1AxwmEIyF8jVuG221mDrrrBAaSJ+OXOOdTc7KbDwpRDGdWkUcLr1AY9ZLU4y1rTDTmc
-         BOkZ/WLp5ON35EXgZTYY+B8lkYmYG5UzcQAldEUmDlSAD1ysdC+m1F1tORw2yqnR+DrJ
-         79Yk6TBzr5INsPbQ78ZO6+A4cD7Myvmvpjm4jGZH5eopaG5/slW+AKKi/vkROKvm/Kra
-         fWtd2lhq61eYlHScJgF8bgql3lWbky0MtFboRAyDmmQpJsahhQI1mfwR1Y8YOz2OMPm0
-         5mSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718308299; x=1718913099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wd49EutyMLwKOtVYeW3XG9F3kbsUtYIJI3CsIowTYE4=;
-        b=bWr9yLTtjy7xZfm0tjPrRki+F4OjBDg2N7FpgUEz+7PeeUCaNuW2cG/KfSV2GLQXKY
-         29B0m0NnCPNysipvHqooHYkKZyc0qsX1OLphQWsd7Jhn1+jLNlrL9tEBRElHwY5VoLiF
-         m7dZlZN5TTtF5v5l+Lvbn7LTO3Mv6idXVVEd+bSholBre7Wen+uwuipqyrRZ/chmkyFg
-         9XQnJRTZvdl2ENNIkVN+aMZAzJhna9tvTzQlVrYyWaZaEb3lJZ4eKJmerenP5JwcF/B3
-         rg4M8X/l+F+BUgXAmc0vNtddRYTK0E1Q7CKSRSsBMKNurF70LarHjCJx3aKMTm9QT6Fh
-         LV9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWeGw1N2wGZDvdgKRpSzJnkGMdqSiHqdLk/kX4WaGdmIibk+zSEk3T2/mTJ2Q7nWXpHmGy8R9eAWT78TwnJGLid0gTe53JbXeM8yOf59J07S9rjWlj7ZWoHGTdGf3VrE6M4EXfp7RQcmXjfi4+cM7Aub21mjdCn6E5s6z+cqBxl71QUwF/p
-X-Gm-Message-State: AOJu0Yzl2rGDuKVnj+lcScOMFAM4lKI7+ChSrjkRlqj5IsfdtpGpiyyY
-	noQRCG1AQ3RXX6gBqWd1xbVZ9cTVD2IEVZfqWCVU9TS9LKSrLmaVpLHBn3ksmlBHYAALfa8StrH
-	XRCr49HmbAX5KICaDORiI6NxMjRY=
-X-Google-Smtp-Source: AGHT+IErRieTi+saRfAiHY1ySQX0ddVIoYhrdonTqyNzBa1+IpOMd/MmGEDmPaGqQkjrTu7v+AA2L9lTIH5K61Z97aQ=
-X-Received: by 2002:a17:906:7629:b0:a6f:1285:5799 with SMTP id
- a640c23a62f3a-a6f52474235mr242477566b.36.1718308299119; Thu, 13 Jun 2024
- 12:51:39 -0700 (PDT)
+	s=arc-20240116; t=1718308342; c=relaxed/simple;
+	bh=KFvrXf67RTEBCYQPpIVoPpW00n6DFoY1qOKUUMRVFhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DM91Tczd3dP8t5akFsRoXO5b3dq9AQNiwAExDPQpI7wn/ZhH/D4PbJlXKcQUd5lqLjL8u08ecLBUDPm8oeU4In0RNpgXcHgYUFAJhYsljYTuaOMy//E4xwMiXYwh8pxFZY8Wl6uYDXlA8DY1V7h9lTjRso+0+y2wwxC9Xcwcvmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fIrj4a6P; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=KFvr
+	Xf67RTEBCYQPpIVoPpW00n6DFoY1qOKUUMRVFhw=; b=fIrj4a6P5X5mKjhJlPjb
+	xpwhdFMdeWwkfdwt3+qq3u1tW0Iz+MiOg0vzvsR9bBQr6CTlyi0bPju5wo7BuacB
+	OzJMAVS/dNAF/mY8N7GFT/foi9LZ+6oTCBx0UAaJIHpYQz66vz1BQyk1rUnd6SpI
+	t6U0Q7qyUrgs/ksJsQOveTNrXbestG9l6qAEW9NzDoY7Hy8LaiuQfq099u1JBrZB
+	IZGc1aX7m4a1wMihU33mc+qj00xb+m+7ECZLBCzjp0p9rHGjedPjXFKDDX+WXNiP
+	XTXjBUhIO6Xnrbh0adihsxQMDNx9Cop8jMdX7pFsl/uUwV+zFHAjms2jnjUfFiMJ
+	pw==
+Received: (qmail 1285280 invoked from network); 13 Jun 2024 21:52:16 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jun 2024 21:52:16 +0200
+X-UD-Smtp-Session: l3s3148p1@D1kD1soatMFehh9j
+Date: Thu, 13 Jun 2024 21:52:16 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: linux-i2c@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] docs: i2c: summary: document use of inclusive
+ language
+Message-ID: <z7j5debqyetpts7xdufguiprzqvd4swupnbdenhl7brx4dtt3j@j67j5ufyzrtn>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-i2c@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240610081023.8118-1-wsa+renesas@sang-engineering.com>
+ <20240610081023.8118-5-wsa+renesas@sang-engineering.com>
+ <8e051ecf-a355-4aef-bc40-007f9b709ba6@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612012019.19078-1-zhi.mao@mediatek.com> <20240612012019.19078-3-zhi.mao@mediatek.com>
- <7c71534f-9815-4ea3-969f-c04d249d35d2@collabora.com> <18d2c28fc8b47889689a1506957ea2a308c80fa2.camel@mediatek.com>
- <171823714905.1550852.13442340621133903705@ping.linuxembedded.co.uk>
-In-Reply-To: <171823714905.1550852.13442340621133903705@ping.linuxembedded.co.uk>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 13 Jun 2024 21:51:03 +0200
-Message-ID: <CAHp75VcA9yZ6bVt+10FrzB3L3wPj8fW5UBB9D7p0iHjLaxWCpA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] media: i2c: Add GT97xx VCM driver
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: =?UTF-8?B?WmhpIE1hbyDmr5vmmbo=?= <zhi.mao@mediatek.com>, 
-	angelogioacchino.delregno@collabora.com, conor+dt@kernel.org, 
-	krzk+dt@kernel.org, mchehab@kernel.org, robh@kernel.org, 
-	dongchun.zhu@mediatek.com, "heiko@sntech.de" <heiko@sntech.de>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"laurent.pinchart+renesas@ideasonboard.com" <laurent.pinchart+renesas@ideasonboard.com>, 
-	"yunkec@chromium.org" <yunkec@chromium.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "hdegoede@redhat.com" <hdegoede@redhat.com>, 
-	"bingbu.cao@intel.com" <bingbu.cao@intel.com>, 
-	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	=?UTF-8?B?WWF5YSBDaGFuZyDlvLXpm4XmuIU=?= <Yaya.Chang@mediatek.com>, 
-	=?UTF-8?B?U2hlbmduYW4gV2FuZyDnjovlnKPnlLc=?= <shengnan.wang@mediatek.com>, 
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	"alain.volmat@foss.st.com" <alain.volmat@foss.st.com>, 
-	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, 
-	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>, "10572168@qq.com" <10572168@qq.com>, 
-	"hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
-	"mehdi.djait@bootlin.com" <mehdi.djait@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jun 13, 2024 at 2:05=E2=80=AFAM Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
-> Also - Cc: Dongchun Zhu <dongchun.zhu@mediatek.com> who is listed as the
-> DW9768 VCM driver author...
-> Quoting Zhi Mao (=E6=AF=9B=E6=99=BA) (2024-06-12 12:13:40)
-> > On Wed, 2024-06-12 at 09:07 +0200, AngeloGioacchino Del Regno wrote:
-
-...
-
-> > Our project uses Giantec VCM hardware.
-> > For detailed vendor information, please visit: (
-> > https://en.giantec-semi.com/yqmd/164).
-> > The VCM datasheet we are referencing is provided by Giantec.
-> > Currently, the relationship between Giantec VCM and Dongwoon VCM is
-> > unclear, but Dongwoon seems to be another manufacturer of VCM
-> > hardware.
-
-There may be plenty of manufacturers of the same/similar IPs, but it's
-not an excuse to have a duplication like this.
-
-> > From the perspective of software driver development and maintenance, it
-> > makes sense for each vendor's hardware should have its own software
-> > driver.
->
-> Personally, I don't think so. If two vendors make identical parts, we
-> shouldn't have two identical drivers.
-
-Exactly! That's why we have compatible strings or other means of
-reusing the same code base as much as possible. This in particular
-reduces maintenance costs (of all means!) _a lot_.
-
-> I still have plans to refactor VCM drivers if I get some spare-time(tm)
-> as almost each driver does the same identical task. They're all just
-> copies of the boilerplate.  That seems like something we should reduce,
-> not increase.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gyl7wq2x5obpwocp"
+Content-Disposition: inline
+In-Reply-To: <8e051ecf-a355-4aef-bc40-007f9b709ba6@linux.microsoft.com>
 
 
---=20
-With Best Regards,
-Andy Shevchenko
+--gyl7wq2x5obpwocp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+
+> > +Outdated terminology
+> > +--------------------
+> > +
+> > +Historically, controller was named "master" and client was named "slave". These
+
+Ahhh, while reworking the series I finally saw that I wrote "client" in
+the line above. That was an oversight, it should have been "target", of
+course. Next time, please quote directly below the errornous line, that
+makes it easier for me to understand what we are talking about.
+
+Nonetheless, the rework is not in vain. I think the texts have gotten a
+tad better.
+
+
+--gyl7wq2x5obpwocp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZrTewACgkQFA3kzBSg
+KbZggA/9HEci6D5G4Hzeuv5wNp0PKU/K5dEE3ujqwPK3MstPwDeqdPYEYz77cxQl
+6VitfxdO5jYh0ycGZHZXv3C5LRM/VlMz3Q5CHNmDUxybIAtNVVzbs3pe5mdtSK1B
+hTbY5SJHKHVzVTLXxc8TM4f3tCV2izy28RiMpDBQbPH07YZjY+Ds6+7XK72BUzQp
+BYNMWCVEXmsMKdbsxgEAGvgq3PoEIBUleZ/xvYIIRQEFGZmWShB4u1UsG7Z6WypI
+BQsT6tFFogRSzXqI5KpvkOSWQxfER3GLf1YzLj61FFC6bgHgiD1SdbjJPA38WNiz
+1gAKaxKe5SM2G2Jf2TW48kLOLr4BspUiCLuTRoWLLhp2TjeAyGNQ7ERrYwBT2NzB
+dVC1PkKYAlHpCrQfhu90/ST13eIhK52bpE1lwc6gdMC4z3Y8bf2o2Run08p9Nqt/
+tbPf2ixUcNDHGQtrHxam1N4qcZdXkatf0H7cuHbt8Se9e0mgNBE5BukFobmucSSz
+xE7KmbsqDcNwrfbI+QZvx1G7ZjUO8FVdGcd6CUjk7Nw9E8cU3fCGFR8vsyyXWpYo
+kc1E2mY5BDuOxyHgSKnNhztX5x9cj8EZhNJ0aS9JfTxg9CYVmbChVwZC0p03T/EQ
+6fqHxT8djanPPHKvcbHSHIo+b9Jo7HYZ0DabwBXSlfP1cSsbgLU=
+=AGnG
+-----END PGP SIGNATURE-----
+
+--gyl7wq2x5obpwocp--
 
