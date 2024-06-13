@@ -1,229 +1,224 @@
-Return-Path: <linux-kernel+bounces-213786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA03A907A72
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:58:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCB55907A76
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A45D1F234AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:58:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B831F1C22F88
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1619414AD3A;
-	Thu, 13 Jun 2024 17:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3D314A602;
+	Thu, 13 Jun 2024 17:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxdQi8MT"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MWGtiwtB"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CD314A4F1;
-	Thu, 13 Jun 2024 17:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF17F14A4F0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718301509; cv=none; b=pF3BCtVXHigOXZOD7SV4FoymkUnWm/E0EqmxgB8dAfa1EzbrBxrZ+aEDVed3Iuezqph0HtWCKAHRwhA3bF0U4TycREXjW/Sy30zz8OCBLbn8cyPS60EzaFXOKUv0cDA799JM9sSMDhKwXxMpnpp7g4QRcHdm/zNVWPoyHx9JtwY=
+	t=1718301564; cv=none; b=Y8Jd74kvRbwBBs3tM5CVtGsXXt46dxvBcnW5IV0Zci8m6yOfLpQXVy0xWrnfot/8S5lBTN/BkDmt0/9f4k5VzgDfXeNOXtwvx4FRtl3YkiWSfjkZi59jlPSvj9Lz4ODA1L+PZd1wMEFq1gDr7eXpnlgsYvms/0OM5dxp6c5m1cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718301509; c=relaxed/simple;
-	bh=4uaYQwMmXudEVQoqF/PT02d+uOaxbMCHRjXCjlN4PKo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8sTLnMfAb43ea8ht7mcZTcIufQYuJpJ2Dy8SVlK9cHtzhJBxUKYAf3PosXtLvi/QcZkDFK37OzCcr6XMe7Ra8uodxb2fRc1S5aZEXyuJbmKqI+ZxFjVWA77sC7rxPLk2RmOvMKJfR9jDq1xwYVYo0l2EQ/7f9y9nbhQlVUhjWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxdQi8MT; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebeefb9a6eso12823551fa.1;
-        Thu, 13 Jun 2024 10:58:23 -0700 (PDT)
+	s=arc-20240116; t=1718301564; c=relaxed/simple;
+	bh=MtUHYD2l4xxuwtdUTX926xYNHDRxYGGX0kXtv3HnGb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t2x/VMmySimzJB+LxgvSsGBf2eaYNo1dFtCohPE8OHzum3pgpvN0ngYTYUzTOKytmov5eGppqr7UHhAARqld/R3nnhuoWrQWSvtaM/W/pabGX+fGRcMe0X01bGbgUo8yeEsDetCWXzsQ/9I0kiyFtrG/39GIDWiQcHzsa5aX3bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MWGtiwtB; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7960454db4fso73406785a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:59:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718301502; x=1718906302; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LJdaR0AKwDxb6UxD8VgG/YvgQDgT5IhbR4y3pM8S3I4=;
-        b=gxdQi8MT2mBK+cIvN1bzHVSFXdCDRIzqWXPKRlDoKYG1+9VHQw8ZMFIbD5sWwtN+C8
-         6oGgS/eZILskXm6ekmgTJxrU+K2LA65A0QLhYO3+EpUaiUC9MNV+9mAp3wO4xZ28M2u2
-         kffoGnj99GK1YIwlP+qf3+iR8V3A8MDXLvcJgMnsAwBtr3/rN5OSro2WihzHE+ayht8w
-         fSeHYqtf2BzipRgXXO6sz5F2e7Hi044/IMLrVF0z4408IAazATOtuijJCiTe4xruRYvE
-         Zexk0/OIKS7CfC16w81KChBvGIqP4rfl50bAODeBPbyVIyz7dBl5N/GjkJvpVoGzu/Gx
-         qTCg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718301561; x=1718906361; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8DxvYUGVHxRZE8NgyFyBxxrydXJ+gJq/RSG2sz2esD8=;
+        b=MWGtiwtBdurSak7iHInbxSCOdVMLkgIt4lhchazaQ0i7CU7at9pZ+oI1X2+tL4q+ZO
+         eNniHYm/K9VSFerKCkSvPbEFl7ViYaIqq8lk0fpP5QyI6IBaBPvyIpcKOzjGMxpUjlCB
+         BZazGGk35D12gW7QV5rxccO9v0pkO9NCFGDyO8Mekl446KMrBeZ+1CftoOfPr1EATfj9
+         l7BFHeja2dkVrbHLb9IjhZwXkip8KQc9i0uIlaKD7cr0VvC7GgEB1ZL9UG5MdeBs15v6
+         YqLJS1CGXkQYtuGSmYyHdpsFNwzUDe/RBsAafeL47ONyYrpI/EJoFAKm/gzAnas7djbO
+         l8Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718301502; x=1718906302;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
+        d=1e100.net; s=20230601; t=1718301561; x=1718906361;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LJdaR0AKwDxb6UxD8VgG/YvgQDgT5IhbR4y3pM8S3I4=;
-        b=oIXS8PsFlx6670eod1y/rzVluSH0xsVmjWMs5X7uMyhhj334DuAViuQT4WGpndghqg
-         2dlCcY0lz0zLglHNyCm0e+Wrr5ghd0V5mAVgOQ4pi1Q3I5UIU60zYi1UZdvZ69O4/RnN
-         iJSm53oTmSNZYqdzxKOKN6TMLRfVxL9f210M88bnt4V7Y6VhqjXJfaDQO9K+25jxD+oS
-         TlIhbYDEhNmkLoSc77WKJhlbHex/X9qGruc5vMVTka6bza5pDsBHB05uhTRVRN4SvO1U
-         1G6YHf4gaUX+O6UvH0l11HZ+ma6QTcQ5G+aDuQShQpCKbkC5a2mP2VsU/zeLNuwT3K51
-         m6oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnlJfSlU1ejMY5agGgfzoqVqExKDkL01j+SgOEWUrvHxlqqI0UpOQgp9k0Hb0s9x7qIYSlDcbOSLomy5K7c7aKeDQAJEFUgI/CEGEmCtE6xwvIkIz0hXTuZBpK7o4LxQaUVd0l5AakKqxxqbyLwXxlaKFMe+tvIUTEqfww712I3gdScCBkluI1E5scC5SRZRUFDBBMHAYPsPFy0jRi7N+eWJy33jP4OYQrCT7p60kvNzJfcFcTcpgMLlKcGJTpr8gtW9Li4qKnGF7sHSgqraxsddX3vdkiNHCuPrpbidzihnjoIagC/DEvfCuFW+sbEvjhf3zy8LzdaJ7nvRQNyt1jHa95GZHxbT+zQ7hWlUVJXYIFGA1JCuIoakCTMOyCyVTBKKvGjmYOfyU9oi03Z7rHpNtbcusT5LIHl5qoygM+nSRZveeS3ZTKfxhMJg==
-X-Gm-Message-State: AOJu0Ywmmidv8wu28dUHWE8YtCXwxZaQP/eH+APwOwJvaGa2jzkWZfxu
-	p+ySaSKYOkpHJhq3OsPPU/9L3d7LbSibNpBD+FQfROlb1MXwDVoH
-X-Google-Smtp-Source: AGHT+IEhErzyVFwc5vrtNZW2dG954f3qNIGROFYFFTe33sAR7d1zhfiUTqk8uRw2thbyuYd+W2q+QA==
-X-Received: by 2002:a2e:9dd4:0:b0:2ec:453:e46e with SMTP id 38308e7fff4ca-2ec0e5a0442mr3954341fa.42.1718301501351;
-        Thu, 13 Jun 2024 10:58:21 -0700 (PDT)
-Received: from pc636 (host-90-233-218-141.mobileonline.telia.com. [90.233.218.141])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c8a85esm3330101fa.117.2024.06.13.10.58.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 10:58:20 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 13 Jun 2024 19:58:17 +0200
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <ZmszOd5idhf2Cb-v@pc636>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <ZmrfA1p2zSVIaYam@zx2c4.com>
- <80e03b02-7e24-4342-af0b-ba5117b19828@paulmck-laptop>
- <Zmru7hhz8kPDPsyz@pc636>
- <7efde25f-6af5-4a67-abea-b26732a8aca1@paulmck-laptop>
- <Zmsuswo8OPIhY5KJ@pc636>
- <cb51bc57-47b8-456a-9ac0-f8aa0931b144@paulmck-laptop>
+        bh=8DxvYUGVHxRZE8NgyFyBxxrydXJ+gJq/RSG2sz2esD8=;
+        b=iSEV0P0mjDSSWixtkSa92Hl7PuyB/P+yqZZHpB/kqJZdJ4K4kbh3J7iB0BIbzrdWpu
+         oNyzxE2/9N9JhwfohzEd0NkABTU1YMqD0KkL6Iqc41iA/GFoYFyfz2qNv7wnlJGKM+cU
+         X6gIyzbwJyXe3jCmft2JEqcTfA4KE1bS/nO5rjiSwLVLcOe3EpMFCDoQvamGoErMkOYg
+         EhA0rZ9E7bHMYt1qqCvoSulkrLXXJXa1bzW6OjxzMOnlG36H2PGYlWHatZ/2F99TGS6a
+         o+9wMeITR89nwqkAl+q9S73hL5VET/JhI6XUrdfE0RAvOKRENXCCCEpgisgJE2dIztUp
+         gY/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVuHwP0MMBVg1vgYVDVg75mSIjMEiAXFfa2sb5lrFnjBEmQD9EKf9PNN6ZwHuTLjcuFKNWipLwujeAirKv7SQSOMXojAVUMHUcu6VT0
+X-Gm-Message-State: AOJu0YxKv5gL1NLyPXTTaUDH9eNt4Kgw4nXBQshssx6ec9S6WvQNxUzv
+	/qYZdk3q4Pn5FLeuI2FHf2+wOg+qAQZRy5FkKqI8bw6lBA0hnVtVo4JKYikeeek=
+X-Google-Smtp-Source: AGHT+IHYu0HIgU07HmWdvzdf4u4qWBn8WlIILCE4f7D5lT6HmhfiWx5mZ5m4ZVSvcO8gHLmSoTykaQ==
+X-Received: by 2002:a05:620a:44d1:b0:795:4d93:9e86 with SMTP id af79cd13be357-798d2411207mr28622885a.22.1718301560815;
+        Thu, 13 Jun 2024 10:59:20 -0700 (PDT)
+Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798a9d8fb49sm73268185a.0.2024.06.13.10.59.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 10:59:20 -0700 (PDT)
+Message-ID: <0003e57b-4c6a-470b-a0d8-20a13091d325@baylibre.com>
+Date: Thu, 13 Jun 2024 13:59:14 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND][PATCH] iio: simplify with regmap_set_bits(),
+ regmap_clear_bits()
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Lucas Stankus <lucas.p.stankus@gmail.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>,
+ Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+ Cosmin Tanislav <cosmin.tanislav@analog.com>, Chen-Yu Tsai <wens@csie.org>,
+ Hans de Goede <hdegoede@redhat.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Saravanan Sekar <sravanhome@gmail.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Crt Mori
+ <cmo@melexis.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, linux-amlogic@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20240611165214.4091591-1-tgamblin@baylibre.com>
+ <20240613182021.00005072@Huawei.com>
+Content-Language: en-US
+From: Trevor Gamblin <tgamblin@baylibre.com>
+In-Reply-To: <20240613182021.00005072@Huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <cb51bc57-47b8-456a-9ac0-f8aa0931b144@paulmck-laptop>
 
-On Thu, Jun 13, 2024 at 10:45:59AM -0700, Paul E. McKenney wrote:
-> On Thu, Jun 13, 2024 at 07:38:59PM +0200, Uladzislau Rezki wrote:
-> > On Thu, Jun 13, 2024 at 08:06:30AM -0700, Paul E. McKenney wrote:
-> > > On Thu, Jun 13, 2024 at 03:06:54PM +0200, Uladzislau Rezki wrote:
-> > > > On Thu, Jun 13, 2024 at 05:47:08AM -0700, Paul E. McKenney wrote:
-> > > > > On Thu, Jun 13, 2024 at 01:58:59PM +0200, Jason A. Donenfeld wrote:
-> > > > > > On Wed, Jun 12, 2024 at 03:37:55PM -0700, Paul E. McKenney wrote:
-> > > > > > > On Wed, Jun 12, 2024 at 02:33:05PM -0700, Jakub Kicinski wrote:
-> > > > > > > > On Sun,  9 Jun 2024 10:27:12 +0200 Julia Lawall wrote:
-> > > > > > > > > Since SLOB was removed, it is not necessary to use call_rcu
-> > > > > > > > > when the callback only performs kmem_cache_free. Use
-> > > > > > > > > kfree_rcu() directly.
-> > > > > > > > > 
-> > > > > > > > > The changes were done using the following Coccinelle semantic patch.
-> > > > > > > > > This semantic patch is designed to ignore cases where the callback
-> > > > > > > > > function is used in another way.
-> > > > > > > > 
-> > > > > > > > How does the discussion on:
-> > > > > > > >   [PATCH] Revert "batman-adv: prefer kfree_rcu() over call_rcu() with free-only callbacks"
-> > > > > > > >   https://lore.kernel.org/all/20240612133357.2596-1-linus.luessing@c0d3.blue/
-> > > > > > > > reflect on this series? IIUC we should hold off..
-> > > > > > > 
-> > > > > > > We do need to hold off for the ones in kernel modules (such as 07/14)
-> > > > > > > where the kmem_cache is destroyed during module unload.
-> > > > > > > 
-> > > > > > > OK, I might as well go through them...
-> > > > > > > 
-> > > > > > > [PATCH 01/14] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-> > > > > > > 	Needs to wait, see wg_allowedips_slab_uninit().
-> > > > > > 
-> > > > > > Also, notably, this patch needs additionally:
-> > > > > > 
-> > > > > > diff --git a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/allowedips.c
-> > > > > > index e4e1638fce1b..c95f6937c3f1 100644
-> > > > > > --- a/drivers/net/wireguard/allowedips.c
-> > > > > > +++ b/drivers/net/wireguard/allowedips.c
-> > > > > > @@ -377,7 +377,6 @@ int __init wg_allowedips_slab_init(void)
-> > > > > > 
-> > > > > >  void wg_allowedips_slab_uninit(void)
-> > > > > >  {
-> > > > > > -	rcu_barrier();
-> > > > > >  	kmem_cache_destroy(node_cache);
-> > > > > >  }
-> > > > > > 
-> > > > > > Once kmem_cache_destroy has been fixed to be deferrable.
-> > > > > > 
-> > > > > > I assume the other patches are similar -- an rcu_barrier() can be
-> > > > > > removed. So some manual meddling of these might be in order.
-> > > > > 
-> > > > > Assuming that the deferrable kmem_cache_destroy() is the option chosen,
-> > > > > agreed.
-> > > > >
-> > > > <snip>
-> > > > void kmem_cache_destroy(struct kmem_cache *s)
-> > > > {
-> > > > 	int err = -EBUSY;
-> > > > 	bool rcu_set;
-> > > > 
-> > > > 	if (unlikely(!s) || !kasan_check_byte(s))
-> > > > 		return;
-> > > > 
-> > > > 	cpus_read_lock();
-> > > > 	mutex_lock(&slab_mutex);
-> > > > 
-> > > > 	rcu_set = s->flags & SLAB_TYPESAFE_BY_RCU;
-> > > > 
-> > > > 	s->refcount--;
-> > > > 	if (s->refcount)
-> > > > 		goto out_unlock;
-> > > > 
-> > > > 	err = shutdown_cache(s);
-> > > > 	WARN(err, "%s %s: Slab cache still has objects when called from %pS",
-> > > > 	     __func__, s->name, (void *)_RET_IP_);
-> > > > ...
-> > > > 	cpus_read_unlock();
-> > > > 	if (!err && !rcu_set)
-> > > > 		kmem_cache_release(s);
-> > > > }
-> > > > <snip>
-> > > > 
-> > > > so we have SLAB_TYPESAFE_BY_RCU flag that defers freeing slab-pages
-> > > > and a cache by a grace period. Similar flag can be added, like
-> > > > SLAB_DESTROY_ONCE_FULLY_FREED, in this case a worker rearm itself
-> > > > if there are still objects which should be freed.
-> > > > 
-> > > > Any thoughts here?
-> > > 
-> > > Wouldn't we also need some additional code to later check for all objects
-> > > being freed to the slab, whether or not that code is  initiated from
-> > > kmem_cache_destroy()?
-> > >
-> > Same away as SLAB_TYPESAFE_BY_RCU is handled from the kmem_cache_destroy() function.
-> > It checks that flag and if it is true and extra worker is scheduled to perform a
-> > deferred(instead of right away) destroy after rcu_barrier() finishes.
-> 
-> Like this?
-> 
-> 	SLAB_DESTROY_ONCE_FULLY_FREED
-> 
-> 	Instead of adding a new kmem_cache_destroy_rcu()
-> 	or kmem_cache_destroy_wait() API member, instead add a
-> 	SLAB_DESTROY_ONCE_FULLY_FREED flag that can be passed to the
-> 	existing kmem_cache_destroy() function.  Use of this flag would
-> 	suppress any warnings that would otherwise be issued if there
-> 	was still slab memory yet to be freed, and it would also spawn
-> 	workqueues (or timers or whatever) to do any needed cleanup work.
-> 
+
+On 2024-06-13 1:20 p.m., Jonathan Cameron wrote:
+> On Tue, 11 Jun 2024 12:52:06 -0400
+> Trevor Gamblin <tgamblin@baylibre.com> wrote:
 >
-The flag is passed as all others during creating a cache:
+>> Simplify the way regmap is accessed in iio drivers.
+>>
+>> Instead of using regmap_update_bits() and passing the mask twice, use
+>> regmap_set_bits().
+>>
+>> Instead of using regmap_update_bits() and passing val = 0, use
+>> regmap_clear_bits().
+>>
+>> Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+>> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+> Looks like a good change in general. However...
+>
+> The problem with a change like this is it results in
+> non trivial backporting if we need to due to a fix in related
+> code.
+>
+> As such, whilst it will obviously generate a lot of patches, I'd
+> like this split up into a series so each patch touches only one driver.
+> Fine to keep a single patch for the multiple module for a single
+> device cases though.
+>
+> Also some very long lines that need the line breaks put back.
 
-  slab = kmem_cache_create(name, size, ..., SLAB_DESTROY_ONCE_FULLY_FREED | OTHER_FLAGS, NULL);
+Thank you. I'll resubmit as a series of separate patches with those 
+fixes soon.
 
-the rest description is correct to me.
+Trevor
 
---
-Uladzislau Rezki
+>
+> Jonathan
+>
+>
+>> diff --git a/drivers/iio/accel/msa311.c b/drivers/iio/accel/msa311.c
+>> index b8ddbfd98f11..40e605c57adb 100644
+>> --- a/drivers/iio/accel/msa311.c
+>> +++ b/drivers/iio/accel/msa311.c
+>> @@ -1034,10 +1034,8 @@ static int msa311_chip_init(struct msa311_priv *msa311)
+>>   				     "failed to unmap map0/map1 interrupts\n");
+>>   
+>>   	/* Disable all axes by default */
+>> -	err = regmap_update_bits(msa311->regs, MSA311_ODR_REG,
+>> -				 MSA311_GENMASK(F_X_AXIS_DIS) |
+>> -				 MSA311_GENMASK(F_Y_AXIS_DIS) |
+>> -				 MSA311_GENMASK(F_Z_AXIS_DIS), 0);
+>> +	err = regmap_clear_bits(msa311->regs, MSA311_ODR_REG,
+>> +				MSA311_GENMASK(F_X_AXIS_DIS) | MSA311_GENMASK(F_Y_AXIS_DIS) | MSA311_GENMASK(F_Z_AXIS_DIS));
+> Too long
+>
+>> diff --git a/drivers/iio/adc/cpcap-adc.c b/drivers/iio/adc/cpcap-adc.c
+>> index b6c4ef70484e..8fabf748c36b 100644
+>> --- a/drivers/iio/adc/cpcap-adc.c
+>> +++ b/drivers/iio/adc/cpcap-adc.c
+>> @@ -385,9 +385,8 @@ static irqreturn_t cpcap_adc_irq_thread(int irq, void *data)
+>> @@ -424,23 +423,17 @@ static void cpcap_adc_setup_calibrate(struct cpcap_adc *ddata,
+>>   	if (error)
+>>   		return;
+>>   
+>> -	error = regmap_update_bits(ddata->reg, CPCAP_REG_ADCC2,
+>> -				   CPCAP_BIT_ATOX_PS_FACTOR |
+>> -				   CPCAP_BIT_ADC_PS_FACTOR1 |
+>> -				   CPCAP_BIT_ADC_PS_FACTOR0,
+>> -				   0);
+>> +	error = regmap_clear_bits(ddata->reg, CPCAP_REG_ADCC2,
+>> +				  CPCAP_BIT_ATOX_PS_FACTOR | CPCAP_BIT_ADC_PS_FACTOR1 | CPCAP_BIT_ADC_PS_FACTOR0);
+> That one is over 100!
+>>   	if (error)
+>> diff --git a/drivers/iio/gyro/mpu3050-core.c b/drivers/iio/gyro/mpu3050-core.c
+>> index a791ba3a693a..ff1c81553045 100644
+>> --- a/drivers/iio/gyro/mpu3050-core.c
+>> +++ b/drivers/iio/gyro/mpu3050-core.c
+>>   
+>> @@ -513,12 +513,8 @@ static irqreturn_t mpu3050_trigger_handler(int irq, void *p)
+>>   				 "FIFO overflow! Emptying and resetting FIFO\n");
+>>   			fifo_overflow = true;
+>>   			/* Reset and enable the FIFO */
+>> -			ret = regmap_update_bits(mpu3050->map,
+>> -						 MPU3050_USR_CTRL,
+>> -						 MPU3050_USR_CTRL_FIFO_EN |
+>> -						 MPU3050_USR_CTRL_FIFO_RST,
+>> -						 MPU3050_USR_CTRL_FIFO_EN |
+>> -						 MPU3050_USR_CTRL_FIFO_RST);
+>> +			ret = regmap_set_bits(mpu3050->map, MPU3050_USR_CTRL,
+>> +					      MPU3050_USR_CTRL_FIFO_EN | MPU3050_USR_CTRL_FIFO_RST);
+> Keep the line break to stay under 80 chars.
+>
+>> @@ -997,11 +991,8 @@ static int mpu3050_drdy_trigger_set_state(struct iio_trigger *trig,
+>>   			return ret;
+>>   
+>>   		/* Reset and enable the FIFO */
+>> -		ret = regmap_update_bits(mpu3050->map, MPU3050_USR_CTRL,
+>> -					 MPU3050_USR_CTRL_FIFO_EN |
+>> -					 MPU3050_USR_CTRL_FIFO_RST,
+>> -					 MPU3050_USR_CTRL_FIFO_EN |
+>> -					 MPU3050_USR_CTRL_FIFO_RST);
+>> +		ret = regmap_set_bits(mpu3050->map, MPU3050_USR_CTRL,
+>> +				      MPU3050_USR_CTRL_FIFO_EN | MPU3050_USR_CTRL_FIFO_RST);
+> For IIO stuff try and stay under 80 chars unless there is a strong
+> readability argument for going longer.  Here there isn't one.
+>
+>>   		if (ret)
+>>   			return ret;
+>>   
 
