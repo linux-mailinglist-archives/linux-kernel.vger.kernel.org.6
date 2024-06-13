@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-213744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC959079CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:27:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79DD9079CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64CCE1F24FD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:27:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A02B1F250D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB46214A0AD;
-	Thu, 13 Jun 2024 17:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0432514A630;
+	Thu, 13 Jun 2024 17:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiGYcrq4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+Bsy4LV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA751304BF;
-	Thu, 13 Jun 2024 17:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E27D14A602;
+	Thu, 13 Jun 2024 17:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299636; cv=none; b=eg5gvG8ztsn0nhL7T5q0wBa7mx4u0gyR8PPYNGuW0fiRmXfdg9kxmTTQ2l1pn9AUd3Nd56u/MHLsCanysBKNSfXRAkHxVoGiZpxps7YTuxPxdv/uJX3NCH28g0LNbO2GDltUBTsJkQ9RxYVA+hpUhtwYiA8eoWCntPH+TbXyXd8=
+	t=1718299638; cv=none; b=f7fQHaAmfD2jK60+eXPCKQbHepFjvb6E4C10TZRY6odNbAQxUNZ89ItnfBXTKy18LtiY7DgrkTrr74Cv8Z+CYx1UKP9q0t/D1q8F+nn3YoTuYzKRCNFy2el94ybatyK/KGq/8FEdLr1KoLFgc286Y2FKnXrKD4/DmX1EZV8n+9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299636; c=relaxed/simple;
-	bh=QmGHUd+e/PjYuv8/57wzZ877J2mB2nvVZfL6iFjG7tM=;
+	s=arc-20240116; t=1718299638; c=relaxed/simple;
+	bh=opDT7KR3b/7zSgo/k+eb6uhV3+Agy5mHhqWVAV0NPaE=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=oObb6WdxTtnmju3EdDK7IoZJ0abily8vw6o2qHP+hzmUoAiBCvsjmYY/v/DTJweu0dRO5+t+FLuDSSkYcwNCWJP8bDb7ogtIXcpWseusP08BMNvdf6q8vJQCy4vOqDBATO4GuSZYF2lf52bRlrfed+zjOS7g3xfo2wHWwRneGhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiGYcrq4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 537E7C2BBFC;
-	Thu, 13 Jun 2024 17:27:15 +0000 (UTC)
+	 Message-Id:Subject; b=doMdIiQMu6LazTSC+s50zLLrCOPoiLw8lw5RunbMSkt/KykO4tdsCR4quLwRC03MpmQw88u9SNVuDKrXI5azCv1i8LjPnyiHj0iszDXMUxF8+NcvPEdzwW76JNTnwaekfTVDp8WaDpaL4WwJeZcg0TLWBfAZDHWp/r1U51Apscs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+Bsy4LV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2747AC2BBFC;
+	Thu, 13 Jun 2024 17:27:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718299635;
-	bh=QmGHUd+e/PjYuv8/57wzZ877J2mB2nvVZfL6iFjG7tM=;
+	s=k20201202; t=1718299637;
+	bh=opDT7KR3b/7zSgo/k+eb6uhV3+Agy5mHhqWVAV0NPaE=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=BiGYcrq4OSaFZAawU5+kEhyxy5h9CTqza9TtHfxn3ERWJgkMm1uufUVzzRyJeWQKN
-	 mMioEzlk1qcVFL6eZfhz19bNI0MTTChoFv716sLJH34QBE0BmkyDRv2s4EAPhxeUWq
-	 d0mGe/ptW83ZDRpc4bnZzH+9D+6a8SSHzHG9czpVmDl2tgTwYXQQ6AFaOLOL4o4jPA
-	 r0869V14us0L+/UtZ/SoWWiZMvJMetGEPXIWTX4WYR5zKlg3uIQJAuNEUdE5Decbly
-	 /FZK2DrIe2JU8KAw1R7RGuYzLkG9VSHyVXVGYGdNUfm5E0dRkRkYbqv4aDv5i6YSHX
-	 Ji+9V66juyIRA==
-Date: Thu, 13 Jun 2024 11:27:14 -0600
+	b=Y+Bsy4LVeheYOVXZrOYJG5COt6xXLdymsCT0DX3EfwzBbiMh5HmUPu6UEHQQ/d9cb
+	 HWzh7yHQZBMwuOm6r0eYA7B/EpAwZkePtqoqInyKSHyoQzpGElhBZFQHBaGXK6UxXO
+	 auYJL3sL6o5d+cyPhTHz77sVqZjWl/LDbb7fPurAjAqOC07EdG5PrhjuTh47GUtDD8
+	 Gi1RhWgovtVdG39zJZX1X5KY3fGAjwb5ybaCQjNMHWSDswavq56ETkw2msQsItJI3K
+	 jaUiRIPeo8L1jONLDopd5pT0Gtg7CmvvDmQq6oSJIurYIUIb5JsWNn39LgDnneESAH
+	 6yfZypumrPUFQ==
+Date: Thu, 13 Jun 2024 11:27:15 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,54 +50,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Sebastian Kropatsch <seb-dev@mail.de>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- devicetree@vger.kernel.org
-In-Reply-To: <20240612205056.397204-1-seb-dev@mail.de>
-References: <20240612205056.397204-1-seb-dev@mail.de>
-Message-Id: <171829929814.2050024.4291220614091376028.robh@kernel.org>
-Subject: Re: [PATCH 0/5] Refactor, fix and improve NanoPi R6 series
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, iommu@lists.linux.dev, 
+ David Airlie <airlied@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Conor Dooley <conor+dt@kernel.org>, 
+ Oded Gabbay <ogabbay@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, 
+ linux-arm-kernel@lists.infradead.org, Maxime Ripard <mripard@kernel.org>, 
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-rockchip@lists.infradead.org, Robin Murphy <robin.murphy@arm.com>, 
+ linux-media@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, linaro-mm-sig@lists.linaro.org, 
+ Will Deacon <will@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
+References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
+Message-Id: <171829929988.2050064.4076911589675234408.robh@kernel.org>
+Subject: Re: [PATCH 0/9] New DRM accel driver for Rockchip's RKNN NPU
 
 
-On Wed, 12 Jun 2024 22:48:09 +0200, Sebastian Kropatsch wrote:
-> Hello,
+On Wed, 12 Jun 2024 15:52:53 +0200, Tomeu Vizoso wrote:
+> This series adds a new driver for the NPU that Rockchip includes in its
+> newer SoCs, developed by them on the NVDLA base.
 > 
-> This patch series fixes a lot of minor issues in the current devicetree
-> for the FriendlyElec NanoPi R6 series (R6C and R6S), as well as adding
-> support for the GPU and one USB3 port which was previously disabled.
+> In its current form, it supports the specific NPU in the RK3588 SoC.
 > 
-> To aid with these patches, I have refactored the devicetrees in such a
-> way that they will now share a common dtsi source file in a similar
-> fashion than what the NanoPi R5C and R5S are already doing.
-> This makes changes which only affect one of the boards easier, less
-> error-prone and more maintainable. Also we don't need to work with
-> /delete-node/ and /delete-property/ this way :)
+> The userspace driver is part of Mesa and an initial draft can be found at:
 > 
-> Cheers,
-> Sebastian
+> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/29698
 > 
-> PS: Additional comments in patch 2 and 3.
-> 
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
 > ---
+> Tomeu Vizoso (9):
+>       iommu/rockchip: Add compatible for rockchip,rk3588-iommu
+>       iommu/rockchip: Attach multiple power domains
+>       dt-bindings: mailbox: rockchip,rknn: Add bindings
+>       arm64: dts: rockchip: Add nodes for NPU and its MMU to rk3588s
+>       arm64: dts: rockchip: Enable the NPU on quartzpro64
+>       accel/rocket: Add a new driver for Rockchip's NPU
+>       accel/rocket: Add IOCTL for BO creation
+>       accel/rocket: Add job submission IOCTL
+>       accel/rocket: Add IOCTLs for synchronizing memory accesses
 > 
-> Sebastian Kropatsch (5):
->   arm64: dts: rockchip: Add common definitions for NanoPi R6C and R6S
->   arm64: dts: rockchip: Fix regulators, gmac and naming on NanoPi
->     R6C/R6S
->   arm64: dts: rockchip: Improve LEDs on NanoPi R6C/R6S
->   arm64: dts: rockchip: Enable lower USB3 port on NanoPi R6C/R6S
->   arm64: dts: rockchip: Enable GPU on NanoPi R6C/R6S
+>  .../devicetree/bindings/npu/rockchip,rknn.yaml     |  123 +
+>  MAINTAINERS                                        |    8 +
+>  .../arm64/boot/dts/rockchip/rk3588-quartzpro64.dts |    8 +
+>  arch/arm64/boot/dts/rockchip/rk3588s.dtsi          |   53 +
+>  drivers/accel/Kconfig                              |    1 +
+>  drivers/accel/Makefile                             |    1 +
+>  drivers/accel/rocket/Kconfig                       |   13 +
+>  drivers/accel/rocket/Makefile                      |   10 +
+>  drivers/accel/rocket/rocket_core.c                 |  155 +
+>  drivers/accel/rocket/rocket_core.h                 |   48 +
+>  drivers/accel/rocket/rocket_device.c               |   39 +
+>  drivers/accel/rocket/rocket_device.h               |   40 +
+>  drivers/accel/rocket/rocket_drv.c                  |  243 ++
+>  drivers/accel/rocket/rocket_drv.h                  |   16 +
+>  drivers/accel/rocket/rocket_gem.c                  |  136 +
+>  drivers/accel/rocket/rocket_gem.h                  |   33 +
+>  drivers/accel/rocket/rocket_job.c                  |  708 ++++
+>  drivers/accel/rocket/rocket_job.h                  |   49 +
+>  drivers/accel/rocket/rocket_registers.h            | 4449 ++++++++++++++++++++
+>  drivers/iommu/rockchip-iommu.c                     |   39 +
+>  include/uapi/drm/rocket_accel.h                    |  116 +
+>  21 files changed, 6288 insertions(+)
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240612-6-10-rocket-9316defc14c7
 > 
->  ...-nanopi-r6s.dts => rk3588s-nanopi-r6.dtsi} | 242 +++---
->  .../boot/dts/rockchip/rk3588s-nanopi-r6c.dts  |  48 +-
->  .../boot/dts/rockchip/rk3588s-nanopi-r6s.dts  | 743 +-----------------
->  3 files changed, 193 insertions(+), 840 deletions(-)
->  copy arch/arm64/boot/dts/rockchip/{rk3588s-nanopi-r6s.dts => rk3588s-nanopi-r6.dtsi} (81%)
-> 
+> Best regards,
 > --
-> 2.43.0
+> Tomeu Vizoso <tomeu@tomeuvizoso.net>
 > 
 > 
 > 
@@ -117,53 +141,28 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y rockchip/rk3588s-nanopi-r6c.dtb rockchip/rk3588s-nanopi-r6s.dtb' for 20240612205056.397204-1-seb-dev@mail.de:
+New warnings running 'make CHECK_DTBS=y rockchip/rk3588-quartzpro64.dtb' for 20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net:
 
-arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: leds: led-1:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
-	'stmmac-0:01:link' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'disk-read', 'disk-write', 'timer', 'pattern', 'audio-micmute', 'audio-mute', 'bluetooth-power', 'flash', 'kbd-capslock', 'mtd', 'nand-disk', 'none', 'torch', 'usb-gadget', 'usb-host', 'usbport']
-	'stmmac-0:01:link' does not match '^cpu[0-9]*$'
-	'stmmac-0:01:link' does not match '^hci[0-9]+-power$'
-	'stmmac-0:01:link' does not match '^mmc[0-9]+$'
-	'stmmac-0:01:link' does not match '^phy[0-9]+tx$'
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: leds: led-1: Unevaluated properties are not allowed ('linux,default-trigger' was unexpected)
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: leds: led-2:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
-	'r8169-3-3100:00:link' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'disk-read', 'disk-write', 'timer', 'pattern', 'audio-micmute', 'audio-mute', 'bluetooth-power', 'flash', 'kbd-capslock', 'mtd', 'nand-disk', 'none', 'torch', 'usb-gadget', 'usb-host', 'usbport']
-	'r8169-3-3100:00:link' does not match '^cpu[0-9]*$'
-	'r8169-3-3100:00:link' does not match '^hci[0-9]+-power$'
-	'r8169-3-3100:00:link' does not match '^mmc[0-9]+$'
-	'r8169-3-3100:00:link' does not match '^phy[0-9]+tx$'
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: leds: led-2: Unevaluated properties are not allowed ('linux,default-trigger' was unexpected)
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: leds: led-1:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
-	'stmmac-0:01:link' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'disk-read', 'disk-write', 'timer', 'pattern', 'audio-micmute', 'audio-mute', 'bluetooth-power', 'flash', 'kbd-capslock', 'mtd', 'nand-disk', 'none', 'torch', 'usb-gadget', 'usb-host', 'usbport']
-	'stmmac-0:01:link' does not match '^cpu[0-9]*$'
-	'stmmac-0:01:link' does not match '^hci[0-9]+-power$'
-	'stmmac-0:01:link' does not match '^mmc[0-9]+$'
-	'stmmac-0:01:link' does not match '^phy[0-9]+tx$'
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: leds: led-1: Unevaluated properties are not allowed ('linux,default-trigger' was unexpected)
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: leds: led-2:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
-	'r8169-3-3100:00:link' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'disk-read', 'disk-write', 'timer', 'pattern', 'audio-micmute', 'audio-mute', 'bluetooth-power', 'flash', 'kbd-capslock', 'mtd', 'nand-disk', 'none', 'torch', 'usb-gadget', 'usb-host', 'usbport']
-	'r8169-3-3100:00:link' does not match '^cpu[0-9]*$'
-	'r8169-3-3100:00:link' does not match '^hci[0-9]+-power$'
-	'r8169-3-3100:00:link' does not match '^mmc[0-9]+$'
-	'r8169-3-3100:00:link' does not match '^phy[0-9]+tx$'
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: leds: led-2: Unevaluated properties are not allowed ('linux,default-trigger' was unexpected)
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: leds: led-3:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
-	'r8169-4-4100:00:link' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'disk-read', 'disk-write', 'timer', 'pattern', 'audio-micmute', 'audio-mute', 'bluetooth-power', 'flash', 'kbd-capslock', 'mtd', 'nand-disk', 'none', 'torch', 'usb-gadget', 'usb-host', 'usbport']
-	'r8169-4-4100:00:link' does not match '^cpu[0-9]*$'
-	'r8169-4-4100:00:link' does not match '^hci[0-9]+-power$'
-	'r8169-4-4100:00:link' does not match '^mmc[0-9]+$'
-	'r8169-4-4100:00:link' does not match '^phy[0-9]+tx$'
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: leds: led-3: Unevaluated properties are not allowed ('linux,default-trigger' was unexpected)
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-iommu'] is too short
+	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
+	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
+	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
+	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
+	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
+	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
+	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
+	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
+	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
 
 
 
