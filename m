@@ -1,217 +1,157 @@
-Return-Path: <linux-kernel+bounces-212923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC1290683E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81504906842
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EB7128556C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC3428686E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2955613E3F5;
-	Thu, 13 Jun 2024 09:12:32 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B11C13DDB8;
+	Thu, 13 Jun 2024 09:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vt19qWGJ"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4A313D881
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66563209
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718269951; cv=none; b=CAoHnP5NyPhBgWTb/nDvDjlyPt5Ql3dpgNmefl6Uvu8AOeqclka5GqE3NiwJs6kdB0cgk+FYT+cEkLglVwW75gyKdphHmk2jmbWqZ8NrlzJp2a1AHdQwCB3zr9mb4q47e5JnTwX15FOIrf5ZFLdD7U1cMW4eqVUaHFixK38BLX4=
+	t=1718269990; cv=none; b=SZc+KLMjHpdG39a85mpn3u21YlnOHKk8RE8AWymOMoZR9QlHSD3vbx6lmOPLyU7wSvnTXZTi8LGc/gnz6N/9bnN471zNKNj+gm23MuBg3O2heRI50eGEtZ6j7QKewKsGmQqaCbKdudDJCZ6amCMjVwOBKAJPHoXNoO+BM/ezSoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718269951; c=relaxed/simple;
-	bh=v3xP34y2Kqz9tAvkUGjtqaPysCSq513+rEw0ux33bZU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DgWIi3JLsJ6F2LIVVV4YUCiCJx4wr+iDpHbHArzbxq2pmYvFjJSyB6urxwTT3c4EHoNnomVP6yB8YqOF/c3Zfl/OQ5IfWZhcva7U2MNqP9oF+bHgtkUAtE7Gs5NwKodvG3JWlzdfzcW2PCN4W1PcpdxgpQRoTv2QanQ6BSWUB+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-375da99c867so2712955ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:12:29 -0700 (PDT)
+	s=arc-20240116; t=1718269990; c=relaxed/simple;
+	bh=chBCFZsoyeYNNgwF3trl0wRLM6NJk5eql0o4EWrZIqo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P7FMLX3LeMxo4u/IbenQLM74mkwySndYTB5Qy7d5s2Q8IcXqd+uDMPSvqkEuHI8HI8zHC1wbNLwFEC4txaAhZMbTs2VHE10B8rMZJVB03Xg68Ne/EegxWer06xR5vwNa3I6rSE00c7tlqXLhfDZxrQTP0jsZqnpriz5C1TGdl4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vt19qWGJ; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52b7ffd9f6eso874790e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718269987; x=1718874787; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=tC/xjcrjFJo0No2NJtBl1Trd5UcmBwU7b4n6sOTwHQk=;
+        b=vt19qWGJ6eSBhxZzIOP4sldb2qphOHO5TKd7P3YI8ytgq69Hyw7gQYwh8SXtCLui8L
+         1d4l2gDl/Vbp5OPIlpLWtqPJS9Gqi+0drqS3pcWSMwsoFG2Wng4H73IShu2wNFifTh7b
+         D8Wv6zkJ4ByWS0ugRjbxUpZuPTWJsrNIWAKvzl0cEW1c19lXzkZ818iovNsU5COmwai5
+         QNNjV6fmw/2su+/Mqpm1xEr94HSdscjWM0D6aBD6WWxEVmMgUUpd8UBNF4YYyn2Pllg6
+         x1QqTf/P1OlASA1/5IRWml5bG+i9G98GwUfWdk46pLOzH1jEDQ6l0eJwSqvisUxKJcQh
+         fOwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718269949; x=1718874749;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nLMUrKsMG2Xf4e/PTbl5dpOWAgPgPt620Z5seuQUYCY=;
-        b=Qvz7Zp5naKB28qiaodEKOID+oMxAehxu6DNz1BCux8/1hTHgzn2SdzEX1OT1E3eEjT
-         qpbdggNHtCa18e4yTq2oju10NgxgVhCzG+oz9JvLJysTkL5kMoYulErfa284rUPB3IRE
-         bdi4N2Dq3M3KWnLB5X5jG7BPjG/iJ4rTwnnTJN1C0ZV8JfS7Krk4lv41T+B3sdWdOw+k
-         +ls7+oixYfkCrMqRCXb5Ei7/Ku8PRswfYqjxD9IeJ9GAvz7B6jyMLi2Se3eqM46y6Zjx
-         2m/ygD0ckSQGNEJJBRrgb/yqZ6fclnsM6lzxgMBYJR4VT4NE/Se++nqmweXzJiZqpZZn
-         dgWw==
-X-Forwarded-Encrypted: i=1; AJvYcCURYIl4Bj0szUTNla3yfJqh2msqFnBex1dM8p+bwQGym3j198K7c9/1DrPzUOit1AVczPQx12v39OsmfidydqEjtMqnQVRbbLTfYxZF
-X-Gm-Message-State: AOJu0YxvK2jBV18y7ti0Jlr6pJ7ZxhYfkeCwbJwhRe4L1qs9o1YQRbNY
-	ryZhMP/phDAHbPguqnkve1hVCSGJ7rOoZJwzMqA0pFoH6sMVAhnbRwDqoLmHcFZKgbqJ9zMRHrB
-	VV/yPFJ9qRsvnR/PdH+GDNQXVWYiWuAMvqP9TGOoYRWNPes2DJs3czDg=
-X-Google-Smtp-Source: AGHT+IEaTJHT00Vr7hkv4iPBqju355oH0gjr0pKcus/2z4NhB+o4fK56Kcuy5h+dtz1VI5HvFWdVZZpl5EJ8LUsfF/UEXX8H3RKK
+        d=1e100.net; s=20230601; t=1718269987; x=1718874787;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tC/xjcrjFJo0No2NJtBl1Trd5UcmBwU7b4n6sOTwHQk=;
+        b=w8gIGtJhSJuVhI6nqbUhfj29Zl63SvcklmqYxi/e5iXl5P9LB05F8t0zOJvjhH0UwM
+         AFHiSJtaZWyAlLMyM2iJurRfQEZmiZQRs6crExIsiWdxpPTcSnZrMXm6QHu/4/w1uE8q
+         THyUivfrh5buBR1Ds8t9E/2GtAKkWzFUK/xtKoeakC/QKEF0udEKXxnEHn6Z8kWYVC/m
+         OHDVo8mPWcjp4TWN66QU8G5oXtAL+hZDkoPrGQvnKoA6jH16Vom3Sp3au2q1X7e5Y0Ca
+         Y6Om7C92isiqKlPaW/sbyJPM+pvdKtwNjpCKylTe9rrdjP+CNI/vH02T/D9rf20XmGd0
+         PaRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIdp4JHpJc41WXJRALKl+37rnEIlYTjCGYlOcqH+4H7G3xNLaMMh3tHIOquvufY93HBAwGrapgWHv9rJfbkBlv+zdxDvOds+qWt0/K
+X-Gm-Message-State: AOJu0YyTvqT6IoEb2AfM8GaStpojt0LXOkaxTZ2aPdngvSt+KtPH9F8O
+	j5wR60xWG6JrHUZeUL9G+UEu20y9eIzrPrCZbr991uST5fUI+3BM4jcdsD5wowM=
+X-Google-Smtp-Source: AGHT+IHjySitS/JVozozvQQru+fBOOLFkwqD3nOCSx9EabUL6DrL8FoHu8mrXfKNms6T1KaySaF0vw==
+X-Received: by 2002:ac2:4c4a:0:b0:52c:8a12:3d3b with SMTP id 2adb3069b0e04-52c9a4053ccmr3147259e87.56.1718269987115;
+        Thu, 13 Jun 2024 02:13:07 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870e9681sm54021205e9.28.2024.06.13.02.13.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 02:13:06 -0700 (PDT)
+Message-ID: <6a54ea62-05b9-4e8e-876f-285fbe213310@linaro.org>
+Date: Thu, 13 Jun 2024 11:13:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1feb:b0:374:70ae:e86e with SMTP id
- e9e14a558f8ab-375cd24a4f3mr2695675ab.6.1718269949074; Thu, 13 Jun 2024
- 02:12:29 -0700 (PDT)
-Date: Thu, 13 Jun 2024 02:12:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f17182061ac1e554@google.com>
-Subject: [syzbot] [ppp?] INFO: task hung in ppp_exit_net (4)
-From: syzbot <syzbot+32bd764abd98eb40dea8@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: input/touchscreen: imagis: Document
+ ist3038
+To: Raymond Hackley <raymondhackley@protonmail.com>,
+ linux-kernel@vger.kernel.org
+Cc: Markuss Broks <markuss.broks@gmail.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Stephan Gerhold <stephan@gerhold.net>, Nikita Travkin <nikita@trvn.ru>,
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20240613025631.5425-1-raymondhackley@protonmail.com>
+ <20240613025631.5425-3-raymondhackley@protonmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240613025631.5425-3-raymondhackley@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 13/06/2024 04:57, Raymond Hackley wrote:
+> Imagis IST3038 is a variant of Imagis touchscreen IC. Document it in
+> imagis,ist3038c bindings.
+> 
+> Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
+> ---
+>  .../devicetree/bindings/input/touchscreen/imagis,ist3038c.yaml   | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-syzbot found the following issue on:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-HEAD commit:    2ef5971ff345 Merge tag 'vfs-6.10-rc4.fixes' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13e22cee980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
-dashboard link: https://syzkaller.appspot.com/bug?extid=32bd764abd98eb40dea8
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Best regards,
+Krzysztof
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/db17be0247f3/disk-2ef5971f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/af92d227f130/vmlinux-2ef5971f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f98ae987ba14/bzImage-2ef5971f.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+32bd764abd98eb40dea8@syzkaller.appspotmail.com
-
-INFO: task kworker/u8:4:61 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc3-syzkaller-00021-g2ef5971ff345 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:4    state:D stack:22928 pid:61    tgid:61    ppid:2      flags:0x00004000
-Workqueue: netns cleanup_net
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- ppp_exit_net+0xae/0x3b0 drivers/net/ppp/ppp_generic.c:1131
- ops_exit_list+0xb0/0x180 net/core/net_namespace.c:173
- cleanup_net+0x5b7/0xbf0 net/core/net_namespace.c:640
- process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task syz-executor.2:8975 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc3-syzkaller-00021-g2ef5971ff345 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.2  state:D stack:26656 pid:8975  tgid:8973  ppid:5107   flags:0x00000006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- rtnl_lock net/core/rtnetlink.c:79 [inline]
- rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6632
- netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2564
- netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
- netlink_unicast+0x542/0x820 net/netlink/af_netlink.c:1361
- netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1905
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg net/socket.c:745 [inline]
- ____sys_sendmsg+0xab5/0xc90 net/socket.c:2585
- ___sys_sendmsg+0x135/0x1e0 net/socket.c:2639
- __sys_sendmsg+0x117/0x1f0 net/socket.c:2668
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fcb2b07cea9
-RSP: 002b:00007fcb2bead0c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fcb2b1b3f80 RCX: 00007fcb2b07cea9
-RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000003
-RBP: 00007fcb2b0ebff4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fcb2b1b3f80 R15: 00007ffcd9ec90f8
- </TASK>
-INFO: task syz-executor.4:9029 blocked for more than 144 seconds.
-      Not tainted 6.10.0-rc3-syzkaller-00021-g2ef5971ff345 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.4  state:D stack:25968 pid:9029  tgid:9022  ppid:5111   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- register_nexthop_notifier+0x1b/0x70 net/ipv4/nexthop.c:3871
- ops_init+0xb9/0x650 net/core/net_namespace.c:139
- setup_net+0x435/0xb40 net/core/net_namespace.c:343
- copy_net_ns+0x2f0/0x670 net/core/net_namespace.c:508
- create_new_namespaces+0x3ea/0xb10 kernel/nsproxy.c:110
- unshare_nsproxy_namespaces+0xc0/0x1f0 kernel/nsproxy.c:228
- ksys_unshare+0x419/0x970 kernel/fork.c:3323
- __do_sys_unshare kernel/fork.c:3394 [inline]
- __se_sys_unshare kernel/fork.c:3392 [inline]
- __x64_sys_unshare+0x31/0x40 kernel/fork.c:3392
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9f8ae7cea9
-RSP: 002b:00007f9f8bb220c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
-RAX: ffffffffffffffda RBX: 00007f9f8afb4120 RCX: 00007f9f8ae7cea9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000064000600
-RBP: 00007f9f8aeebff4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007f9f8afb4120 R15: 00007ffd19e177f8
- </TASK>
-INFO: task syz-executor.0:9026 blocked for more than 144 seconds.
-      Not tainted 6.10.0-rc3-syzkaller-00021-g2ef5971ff345 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.0  state:D stack:27968 pid:9026  tgid:9023  ppid:6840   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
