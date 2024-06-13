@@ -1,118 +1,449 @@
-Return-Path: <linux-kernel+bounces-214048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C34B8907E90
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:06:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F2F907E94
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7788A1F218E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:06:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64D8F1F21B2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E728114B94F;
-	Thu, 13 Jun 2024 22:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8BD14BF8B;
+	Thu, 13 Jun 2024 22:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JUc888+3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="YTCTKdIP"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BFB13B580;
-	Thu, 13 Jun 2024 22:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33ED013A3F4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 22:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718316346; cv=none; b=RvEvNXVFYqPrJ9icU6Yu2qNJTd0E3PQXuHbD4MwPcxrbo7LduBOOOpRC/143Bt0d38GPsbuVyU8DSWMntbNj4r88A+sDdK0enLNWGkPfF9pqfNss+z7pdv1PL1+uAQoNucsSDDkLZFNoMebAVTfaEhLSZHMd3z/oE8YGSFuHYjE=
+	t=1718316415; cv=none; b=WCPykYgTPDSmIQyy2pjUEK66cyrfI/DufqiqDiXGBYLlNYSQ6lcTfhLFhWj87UO7sV7mMv2vq+iDpKTTBlg/GR/4xm/DQHjXCU3QtJOgpYE1Rd4zTFRZjSVbu1s9i3y+WIhZHhdZr24ZuVHUbYxM640IxZA0wuPIYG3uyE4NppA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718316346; c=relaxed/simple;
-	bh=WuU0Otsxtb3nAM3EXl2IyA1s7y0nsvgxdh2n60UdKBA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=qJtFIa8spllgY4mY7zVLFFYrTngqTvcX3Zk5AyxFg2Czz6cLYU/t04c+U4MZoWdVT4h/tPEzWjjkLhWU0odvzJmv5172aLXVA+4DHZyyfixlar73aDE+1jp+hGqocDSAHLNKiJ3WRUb3qDfjigz2bGHkujaZ0+zVvtbvYJOcq3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JUc888+3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DJGNWr024639;
-	Thu, 13 Jun 2024 22:05:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=DfHGecqntcfd2j0ieWJNv1
-	YMjUiBfoV83KSHmttNx48=; b=JUc888+3xCIl/Y8axV5N4n/Id39LVtNCJqpzX8
-	u2JSQTgW8L3qHLb1oj8X1rXQVnt0sWxbXJ5xzROoR9MSWRh+pgqQ/8nhjoiuLJx5
-	ZaEkS6HZH4azpIPWLXVkWwscZ85illKmorolB3PDDSebY14eNm7QoVpuDmUocRke
-	rrc0MDq7qnDTPnrBobBzG1NXBxt5ANApRpcMpYE5uj/sunEa/iFz+ka4OmyVJozM
-	374CKAHgJBOxCHQLJ9DERrAuFc6h3zBTH0JM20/zw88EmHubM9FPV/Y07VwI1PoP
-	82q1xRXUYL9ZBM0HoK0Kosnp1p9i0YMP/ARQGnvky0wKCO9g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6q4rd0n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 22:05:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DM5aMo011063
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 22:05:36 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
- 2024 15:05:35 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 13 Jun 2024 15:05:33 -0700
-Subject: [PATCH] bus: vexpress-config: add missing MODULE_DESCRIPTION()
- macro
+	s=arc-20240116; t=1718316415; c=relaxed/simple;
+	bh=CazWH89dZeGn1QX8nJAFgNWM/Gnj2fhcLA09Rg3lGjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H7jg5+/vIxglE0Hzm8YTqQ1/bZSxwk7tQPUdoJ/csL0kFivQc9FbQKpQ2Rsb4nk0z6FQlUip0AnYNUSgDdy+HnYoUKdYzoxDWfY9+bo/VlU030dwzBZOGE1MrvVcrpwfEJE5JpP9a5klz/r4Fp7XgN8DmSGZvB24jDluAGtunIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=YTCTKdIP; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-705cffc5bcfso1055512b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:06:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1718316411; x=1718921211; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tDY1xrAK0krXRdo7yQW2Mp/9R1z+FeZBNPgWfuGRw6k=;
+        b=YTCTKdIPnNH+xhrTRyqvKAFL598Y5+fLY5aPbXMV1stDpAfrRuq9El9ZqO4BZFfk9D
+         91i9TfUfSUz1FA5gOzNzs8j87028zf+DBV+7bmIvyLjxZqVNzZTWMtPKvKu/cMNd3KRA
+         V4BCQvk789nBSaC9ZtKw5IDctVauS/OgKKBHc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718316411; x=1718921211;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tDY1xrAK0krXRdo7yQW2Mp/9R1z+FeZBNPgWfuGRw6k=;
+        b=cTHgzZcQxQf3fiExtLQLQvdTYgqPiBY/JW2174n7M7AgGHSgjBsKstb8iU2RGPwX3I
+         CewHJiKvABDlgU3EetS1HBJUHX1r5qNZIGV9i3l6zxr2uZHJfxRjKOytwTT1wXtzTpP1
+         faWTxIgaZ4ZsS3FnIkH6mOdlfEnUUThrsMsTSTfZFC3KUJjIJQ65jgNlDuCH8YKYKIbw
+         Rlt6P1u8QAjKciac8UJUASyCZduEzNEAfVkxekCzQvjjRLovIm8zE1gGOOdzRojXWQ1t
+         g9PqV0XadYHMUBnluZjakOKnxyVUrtik24GIyyFGcTOK/8NvbRyAKRT+ovjcU1wz2vhm
+         se5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVPMUgr2v6OAEWR1t4J3Y1Kw5p75A7R0ffzhSM/K/SPQgU7qhT2o8I5LjKBZQxXDSOnxewLqyM+mVIW6OPkQQAKnbVa/uCx4DZ3I3F4
+X-Gm-Message-State: AOJu0Yy41DkA9iBolCInBdSfAATEueem6pFG7Q32FFKiaw5aOFetPN/+
+	YQ00tGZzxPW58bp/3LIDCJfbrkZ3rQCjqNiu/SFp1L2MlBma9P+5TfcVU71Z+Xw=
+X-Google-Smtp-Source: AGHT+IFEOd3uHRmADgrg1vbHN7c2vYEyoMhSfR6xDBTHw/eb4YUq9yA70822yfRewXj+jnfzglH55A==
+X-Received: by 2002:a05:6a20:1586:b0:1ba:ecf7:be20 with SMTP id adf61e73a8af0-1baecf7c180mr145024637.58.1718316411305;
+        Thu, 13 Jun 2024 15:06:51 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4ca4997b3sm2065623a91.54.2024.06.13.15.06.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 15:06:50 -0700 (PDT)
+Date: Thu, 13 Jun 2024 15:06:47 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Tariq Toukan <ttoukan.linux@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nalramli@fastly.com, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [net-next v5 2/2] net/mlx5e: Add per queue netdev-genl stats
+Message-ID: <Zmttd81M4g_FF7A9@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Tariq Toukan <ttoukan.linux@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, nalramli@fastly.com,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>
+References: <20240612200900.246492-1-jdamato@fastly.com>
+ <20240612200900.246492-3-jdamato@fastly.com>
+ <0a38f58a-2b1e-4d78-90e1-eb8539f65306@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240613-md-arm64-drivers-bus-v1-1-e8162434e0ca@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIACxta2YC/x3MwQqDMAyA4VeRnBeo1nWwVxk7pDbTgO1GoiKI7
- 75ux+/w/wcYq7DBvTlAeROTd6loLw0ME5WRUVI1dK7rXWg95oSkOfSYVDZWw7gauuBdijfyzFe
- o6Uf5Jft/+3hWRzLGqFSG6Tebpaw7ZrKFFc7zCzJfbemFAAAA
-To: Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DnxrYvnKzcXaH35lUmEqjj1wltVmnSz7
-X-Proofpoint-GUID: DnxrYvnKzcXaH35lUmEqjj1wltVmnSz7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_13,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- impostorscore=0 adultscore=0 malwarescore=0 priorityscore=1501
- mlxlogscore=999 lowpriorityscore=0 phishscore=0 spamscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130159
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a38f58a-2b1e-4d78-90e1-eb8539f65306@gmail.com>
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/bus/vexpress-config.o
+On Thu, Jun 13, 2024 at 11:25:12PM +0300, Tariq Toukan wrote:
+> 
+> 
+> On 12/06/2024 23:08, Joe Damato wrote:
+> > ./cli.py --spec netlink/specs/netdev.yaml \
+> >           --dump qstats-get --json '{"scope": "queue"}'
+> > 
+> > ...snip
+> > 
+> >   {'ifindex': 7,
+> >    'queue-id': 62,
+> >    'queue-type': 'rx',
+> >    'rx-alloc-fail': 0,
+> >    'rx-bytes': 105965251,
+> >    'rx-packets': 179790},
+> >   {'ifindex': 7,
+> >    'queue-id': 0,
+> >    'queue-type': 'tx',
+> >    'tx-bytes': 9402665,
+> >    'tx-packets': 17551},
+> > 
+> > ...snip
+> > 
+> > Also tested with the script tools/testing/selftests/drivers/net/stats.py
+> > in several scenarios to ensure stats tallying was correct:
+> > 
+> > - on boot (default queue counts)
+> > - adjusting queue count up or down (ethtool -L eth0 combined ...)
+> > 
+> > The tools/testing/selftests/drivers/net/stats.py brings the device up,
+> > so to test with the device down, I did the following:
+> > 
+> > $ ip link show eth4
+> > 7: eth4: <BROADCAST,MULTICAST> mtu 9000 qdisc mq state DOWN [..snip..]
+> >    [..snip..]
+> > 
+> > $ cat /proc/net/dev | grep eth4
+> > eth4: 235710489  434811 [..snip rx..] 2878744 21227  [..snip tx..]
+> > 
+> > $ ./cli.py --spec ../../../Documentation/netlink/specs/netdev.yaml \
+> >             --dump qstats-get --json '{"ifindex": 7}'
+> > [{'ifindex': 7,
+> >    'rx-alloc-fail': 0,
+> >    'rx-bytes': 235710489,
+> >    'rx-packets': 434811,
+> >    'tx-bytes': 2878744,
+> >    'tx-packets': 21227}]
+> > 
+> > Compare the values in /proc/net/dev match the output of cli for the same
+> > device, even while the device is down.
+> > 
+> > Note that while the device is down, per queue stats output nothing
+> > (because the device is down there are no queues):
+> 
+> Yeah, the query doesn't reach the device driver...
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Yes. Are you suggesting that I update the commit message? I can do
+so, if you think that is needed?
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/bus/vexpress-config.c | 1 +
- 1 file changed, 1 insertion(+)
+> > 
+> > $ ./cli.py --spec ../../../Documentation/netlink/specs/netdev.yaml \
+> >             --dump qstats-get --json '{"scope": "queue", "ifindex": 7}'
+> > []
+> > 
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > ---
+> >   .../net/ethernet/mellanox/mlx5/core/en_main.c | 132 ++++++++++++++++++
+> >   1 file changed, 132 insertions(+)
+> > 
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> > index c548e2fdc58f..d3f38b4b18eb 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> > @@ -39,6 +39,7 @@
+> >   #include <linux/debugfs.h>
+> >   #include <linux/if_bridge.h>
+> >   #include <linux/filter.h>
+> > +#include <net/netdev_queues.h>
+> >   #include <net/page_pool/types.h>
+> >   #include <net/pkt_sched.h>
+> >   #include <net/xdp_sock_drv.h>
+> > @@ -5299,6 +5300,136 @@ static bool mlx5e_tunnel_any_tx_proto_supported(struct mlx5_core_dev *mdev)
+> >   	return (mlx5_vxlan_allowed(mdev->vxlan) || mlx5_geneve_tx_allowed(mdev));
+> >   }
+> > +static void mlx5e_get_queue_stats_rx(struct net_device *dev, int i,
+> > +				     struct netdev_queue_stats_rx *stats)
+> > +{
+> > +	struct mlx5e_priv *priv = netdev_priv(dev);
+> > +	struct mlx5e_channel_stats *channel_stats;
+> > +	struct mlx5e_rq_stats *xskrq_stats;
+> > +	struct mlx5e_rq_stats *rq_stats;
+> > +
+> > +	ASSERT_RTNL();
+> > +	if (mlx5e_is_uplink_rep(priv))
+> > +		return;
+> > +
+> > +	channel_stats = priv->channel_stats[i];
+> > +	xskrq_stats = &channel_stats->xskrq;
+> > +	rq_stats = &channel_stats->rq;
+> > +
+> > +	stats->packets = rq_stats->packets + xskrq_stats->packets;
+> > +	stats->bytes = rq_stats->bytes + xskrq_stats->bytes;
+> > +	stats->alloc_fail = rq_stats->buff_alloc_err +
+> > +			    xskrq_stats->buff_alloc_err;
+> > +}
+> > +
+> > +static void mlx5e_get_queue_stats_tx(struct net_device *dev, int i,
+> > +				     struct netdev_queue_stats_tx *stats)
+> > +{
+> > +	struct mlx5e_priv *priv = netdev_priv(dev);
+> > +	struct mlx5e_sq_stats *sq_stats;
+> > +
+> > +	ASSERT_RTNL();
+> > +	/* no special case needed for ptp htb etc since txq2sq_stats is kept up
+> > +	 * to date for active sq_stats, otherwise get_base_stats takes care of
+> > +	 * inactive sqs.
+> > +	 */
+> > +	sq_stats = priv->txq2sq_stats[i];
+> > +	stats->packets = sq_stats->packets;
+> > +	stats->bytes = sq_stats->bytes;
+> > +}
+> > +
+> > +static void mlx5e_get_base_stats(struct net_device *dev,
+> > +				 struct netdev_queue_stats_rx *rx,
+> > +				 struct netdev_queue_stats_tx *tx)
+> > +{
+> > +	struct mlx5e_priv *priv = netdev_priv(dev);
+> > +	struct mlx5e_ptp *ptp_channel;
+> > +	int i, tc;
+> > +
+> > +	ASSERT_RTNL();
+> > +	if (!mlx5e_is_uplink_rep(priv)) {
+> > +		rx->packets = 0;
+> > +		rx->bytes = 0;
+> > +		rx->alloc_fail = 0;
+> > +
+> > +		for (i = priv->channels.params.num_channels; i < priv->stats_nch; i++) {
+> 
+> IIUC, per the current kernel implementation, the lower parts won't be
+> completed in a loop over [0..real_num_rx_queues-1], as that loop is
+> conditional, happening only if the queues are active.
 
-diff --git a/drivers/bus/vexpress-config.c b/drivers/bus/vexpress-config.c
-index d2c7ada90186..64ee920721ee 100644
---- a/drivers/bus/vexpress-config.c
-+++ b/drivers/bus/vexpress-config.c
-@@ -414,4 +414,5 @@ static struct platform_driver vexpress_syscfg_driver = {
- 	.probe = vexpress_syscfg_probe,
- };
- module_platform_driver(vexpress_syscfg_driver);
-+MODULE_DESCRIPTION("Versatile Express configuration bus");
- MODULE_LICENSE("GPL v2");
+Sorry, but I'm probably missing something -- you said:
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240613-md-arm64-drivers-bus-0630db7a3ee5
+> as that loop is conditional, happening only if the queues are active.
 
+I don't think so? Please continue reading for an example with code.
+
+Let me clarify one thing, please? When you say "the lower parts"
+here you mean [0...priv->channels.params.num_channels], is that
+right?
+
+If yes, I don't understand why the code in this v5 is wrong. It looks correct
+to me, if my understanding of "lower parts" is right.
+
+Here's an example:
+
+1. Machine boots with 32 queues by default.
+2. User runs ethtool -L eth0 combined 4
+
+From mlx5/core/en_ethtool.c, mlx5e_ethtool_set_channels:
+
+  new_params = *cur_params;
+  new_params.num_channels = count;
+
+So, priv->channels.params.num_channels = 4, [0...4) are the active
+queues.
+
+The above loop in mlx5e_get_base_stats sums [4...32), which were previously
+active but have since been deactivated by a call to ethtool:
+
+   for (i = priv->channels.params.num_channels; i < priv->stats_nch; i++)
+
+The (snipped) code for netdev-genl, net/core/netdev-genl.c
+netdev_nl_stats_by_netdev (which does NOT check IFF_UP) does this:
+
+  /* ... */
+  ops->get_base_stats(netdev, &rx_sum, &tx_sum);
+
+  /* ... */
+  for (i = 0; i < netdev->real_num_rx_queues; i++) {
+    memset(&rx, 0xff, sizeof(rx));
+    if (ops->get_queue_stats_rx)
+            ops->get_queue_stats_rx(netdev, i, &rx);
+    netdev_nl_stats_add(&rx_sum, &rx, sizeof(rx));
+  } 
+
+ /* ... */
+   ... same for netdev->real_num_tx_queues
+
+The above code gets the base stats (which in my example is [4..32)) and then
+gets the stats for the active RX (and if you continue reading, TX) based on
+real_num_rx_queues and real_num_tx_queues (which would be [0..4)).
+
+This is why in the commit message, my example:
+
+$ ./cli.py --spec ../../../Documentation/netlink/specs/netdev.yaml \
+            --dump qstats-get --json '{"ifindex": 7}'
+
+The numbers match /proc/net/dev even when the device is down because all queues
+active and deactivated are summed properly.
+
+Do you agree with me so far?
+
+The other case is the per-queue case, which is expressed like this (note the
+different "scope"):
+
+./cli.py --spec netlink/specs/netdev.yaml \
+          --dump qstats-get --json '{"scope": "queue"}'
+
+In this case the user is querying stats on a per queue basis, not overall
+across the device.
+
+In this case:
+  1. If the device is marked as !IFF_UP (down), an empty set is returned.
+  2. Otherwise, as seen in netdev_nl_stats_by_queue (from net/core/netdev-genl.c):
+
+    while (ops->get_queue_stats_rx && i < netdev->real_num_rx_queues) {
+      err = netdev_nl_stats_queue(netdev, rsp, NETDEV_QUEUE_TYPE_RX, i, info); 
+      /* ... */
+    
+    /* the same for real_num_tx_queues */	
+
+And so the individual stats for the active queues are returned (as shown in the
+commit message example).
+
+If you disagree, can you please provide a detailed example so that I can
+understand where I am going wrong?
+
+> I would like the kernel to drop that condition, and stop forcing the device
+> driver to conditionally include this part in the base.
+
+I personally don't think the condition should be dropped, but this is a
+question for the implementor, who I believe is Jakub.
+
+CC: Jakub on Tariq's request/question above.
+
+> Otherwise, the lower parts need to be added here.
+
+My understanding is that get_base is only called for the summary stats for the
+entire device, not the per-queue stats, so I don't think the "lower parts"
+(which I take to mean [0...priv->channels.params.num_channels)) need to be added here.
+
+The per-queue stats are only called for a specific queue number that is valid
+and will be returned by the other functions, not base.
+
+Of course, I could be wrong and would appreciate insight from Jakub
+on this, if possible.
+
+> > +			struct netdev_queue_stats_rx rx_i = {0};
+> > +
+> > +			mlx5e_get_queue_stats_rx(dev, i, &rx_i);
+> > +
+> > +			rx->packets += rx_i.packets;
+> > +			rx->bytes += rx_i.bytes;
+> > +			rx->alloc_fail += rx_i.alloc_fail;
+> > +		}
+> > +
+> > +		/* always report PTP RX stats from base as there is no
+> > +		 * corresponding channel to report them under in
+> > +		 * mlx5e_get_queue_stats_rx.
+> > +		 */
+> > +		if (priv->rx_ptp_opened) {
+> > +			struct mlx5e_rq_stats *rq_stats = &priv->ptp_stats.rq;
+> > +
+> > +			rx->packets += rq_stats->packets;
+> > +			rx->bytes += rq_stats->bytes;
+> > +		}
+> > +	}
+> > +
+> > +	tx->packets = 0;
+> > +	tx->bytes = 0;
+> > +
+> > +	for (i = 0; i < priv->stats_nch; i++) { > +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+> > +
+> > +		/* handle two cases:
+> > +		 *
+> > +		 *  1. channels which are active. In this case,
+> > +		 *     report only deactivated TCs on these channels.
+> > +		 *
+> > +		 *  2. channels which were deactivated
+> > +		 *     (i > priv->channels.params.num_channels)
+> > +		 *     must have all of their TCs [0 .. priv->max_opened_tc)
+> > +		 *     examined because deactivated channels will not be in the
+> > +		 *     range of [0..real_num_tx_queues) and will not have their
+> > +		 *     stats reported by mlx5e_get_queue_stats_tx.
+> > +		 */
+> > +		if (i < priv->channels.params.num_channels)
+> > +			tc = mlx5e_get_dcb_num_tc(&priv->channels.params);
+> > +		else
+> > +			tc = 0;
+> > +
+> > +		for (; tc < priv->max_opened_tc; tc++) {
+> > +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[tc];
+> > +
+> > +			tx->packets += sq_stats->packets;
+> > +			tx->bytes += sq_stats->bytes;
+> > +		}
+> 
+> Again, what about the lower part in case queues are not active?
+
+I am not trying to be difficult here; I appreciate your time and energy, but I
+think there is still some misunderstanding here.
+
+Probably on my side ;)
+
+But, if the queues are not active then any queue above
+priv->channels.params.num_channels (the non active queues) will have all TCs
+summed.
+
+> > +	}
+> > +
+> > +	/* if PTP TX was opened at some point and has since either:
+> > +	 *    -  been shutdown and set to NULL, or
+> > +	 *    -  simply disabled (bit unset)
+> > +	 *
+> > +	 * report stats directly from the ptp_stats structures as these queues
+> > +	 * are now unavailable and there is no txq index to retrieve these
+> > +	 * stats via calls to mlx5e_get_queue_stats_tx.
+> > +	 */
+> > +	ptp_channel = priv->channels.ptp;
+> > +	if (priv->tx_ptp_opened && (!ptp_channel || !test_bit(MLX5E_PTP_STATE_TX, ptp_channel->state))) {
+> > +		for (tc = 0; tc < priv->max_opened_tc; tc++) {
+> > +			struct mlx5e_sq_stats *sq_stats = &priv->ptp_stats.sq[tc];
+> > +
+> > +			tx->packets += sq_stats->packets;
+> > +			tx->bytes   += sq_stats->bytes;
+> > +		}
+> > +	}
+> > +}
+> > +
+> > +static const struct netdev_stat_ops mlx5e_stat_ops = {
+> > +	.get_queue_stats_rx  = mlx5e_get_queue_stats_rx,
+> > +	.get_queue_stats_tx  = mlx5e_get_queue_stats_tx,
+> > +	.get_base_stats      = mlx5e_get_base_stats,
+> > +};
+> > +
+> >   static void mlx5e_build_nic_netdev(struct net_device *netdev)
+> >   {
+> >   	struct mlx5e_priv *priv = netdev_priv(netdev);
+> > @@ -5316,6 +5447,7 @@ static void mlx5e_build_nic_netdev(struct net_device *netdev)
+> >   	netdev->watchdog_timeo    = 15 * HZ;
+> > +	netdev->stat_ops	  = &mlx5e_stat_ops;
+> >   	netdev->ethtool_ops	  = &mlx5e_ethtool_ops;
+> >   	netdev->vlan_features    |= NETIF_F_SG;
 
