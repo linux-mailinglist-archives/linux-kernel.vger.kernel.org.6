@@ -1,190 +1,295 @@
-Return-Path: <linux-kernel+bounces-213168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A95906E3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:09:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D9B906E25
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C75F9B277B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:09:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 326BF1F233F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FC8148FEB;
-	Thu, 13 Jun 2024 12:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DDD145FF5;
+	Thu, 13 Jun 2024 12:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZJ6cB3Vw"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CaDcuE5E"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26317146A6E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2851422AB
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718280245; cv=none; b=eUGcRYZ7MGGeDzySECJgB/r64ykR3csjJtTuF7o7UFHtDLw3o9dSP8vZ0THCOXo/dZVOIEl+/8YOUwU/jwp572YJfiymwuAvVXTzDy44MIx1/BvBEnD/Rj1i6wb4o3TDxH6+ylpIlIaRymv108pte9qcZWDQAL4GdKFNa2Z+fMM=
+	t=1718280183; cv=none; b=bTp7WPpJq0QzTBiZ2gYum+ZpHiMuzM2mP8Rpb5zvIrCEhf/nNs8JaCHdg8a1zJkLuWDkw5h6UEsKzzaL24DiiilIkre8ovCMIFMMT0DxaEghLT51LdE2pRdB3SsKy0sUg0DG6EcoPkM55TslNR/treB4wzv5H0eSjSyDUIuUYKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718280245; c=relaxed/simple;
-	bh=fP45qnHS7ZSggt8umHviAsm18dm3J4F6ExvyZg7VXIk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rfLBBiOFil0d3YS69ETus7IwNIciNOI+K4Iq8Tlv9RDNQ+VeXzbDLBL00CpbTCqq12wcWKadAO0HTk0xVSZVjthS8nb1GhURzF58XuhbdKtC4iedD9WcWPSclPrsfn3KeIyN8s6f9YHdBZOu36Nl328feosnwmMePAiZR4hI4Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZJ6cB3Vw; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-681ad26f4a5so555703a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:04:02 -0700 (PDT)
+	s=arc-20240116; t=1718280183; c=relaxed/simple;
+	bh=BOQnWw+R6xqgs1kCZYtL4uxwTR527cu00+c0814eQK0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=PZft8iB+x6RT6WsqobTWmsYpOD/Prgoigc4EiN0w9GrSpsmvAFfnHP6AvADDDBK8nNKhZvZnEVtXdeT2AUBEYm/RMbzZLAIQtgmN/9+DUV5dw+Jgo2avk0xOct/sfoHzqxz56rP39IMjK8RrLYPRSvtX3HzUXVV0j6bwPwtXXtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CaDcuE5E; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4403bb543a4so5276251cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:03:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718280242; x=1718885042; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QxNvAdBgAMQdvpKI1GM9shXDCJ+gMP7loa4UaiuKm4A=;
-        b=ZJ6cB3VwEmD6PLGuHEbrQi+iDh7k4K+x5ffC8EyUS2370P8MpbAmFKCcpCtDor4TC3
-         tHABjd6GgDpd0eAWNnFaFiqYnQ1yszs4enoGahv+hbim1lxnm/6w0dGGcuMY2HFSyK3s
-         idprJximVBRNaMzAa98XCLXChhgD6paSYgMqY=
+        d=gmail.com; s=20230601; t=1718280181; x=1718884981; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RKA/VUM/a9F8ecl/GN0yeGv3buwPv6S6vu54++YIlkQ=;
+        b=CaDcuE5E6LSky8Lz5xx+BdZnQb6Vp/mmciM6QceIcg8w5O6driYnbxhnlyT9k8RTc3
+         jnHB9Z2F4aw5/RzCknvdCSuW3UwG5xBrVWUnB8e1LwTLKSPDUnIXPLyLqY++3Uru+lqP
+         4dip5zTtdC/YCM/Gzrth/8qUyiOjiUldMYsg3xfeX/F/sozG2WlAn30870aF7LPlRe7r
+         /qP3xnSZ3y/mYgsXYqGE6NKcF+p9R7FkaYXk6lEINvqxrZUBJ7bBZ3v7tmW6jkt/y2gk
+         E3GCGotECEooHEY/CJlYaTYd/tNULwChVbA/YMwNjZohLnAA89PCH7vDZGgP/ZiwG130
+         QVFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718280242; x=1718885042;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QxNvAdBgAMQdvpKI1GM9shXDCJ+gMP7loa4UaiuKm4A=;
-        b=KIU7k4ZOtfMdFmS7WTlmDZiySSAmjA9whX9kgHj82mhD4F8ec2eSXDOqXLL8WoXT5K
-         GXp/zFCinLlr7Ck5Q2YN9E22F80Q5YKHJQgx2tyhBxhRAYBKeP74A8HvOOhGldwPirnG
-         R73gBAiO7kcxW7LIUPiOUSUtqcbVyzRI4qQa9Kmf5YphDRb7XDr4BtwBp+D6SoK/SmBz
-         n9WdaWThN9taXs0QaZAH2ROX3KDDXQ0NyKT5WCdauf5oNTuxB3OmtXyiU7GHQzB8IDOt
-         aEYLdGk3AnzLr1BgmgZKAiGkZQ4qF1PyA/BFs1a84gBfydUl04NxhqxLO3AXt0RGt25P
-         WCcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUB5I8IDIHh53FEFX7fdwVuHGWI9z1WNmuso+2h9Wmf+h4kGrV9CpIn3sMoYY9RSGjUpRGSRTzx8ToXb9MOvhXdZg6Eig6fVoCHhqX
-X-Gm-Message-State: AOJu0YzJXOLA8Wrzw8FsgvWtJwnr/UJB1LcHUHfDkTB/KmqmRXgs5gFf
-	BYyh+IpH3HP6ET75kM1TOFLM1iSZBA9qiphJFOSQ4kVzeaTfpmxr5PL7DMmWFA==
-X-Google-Smtp-Source: AGHT+IG7JmmQJ1D22RvlI2mag+I47j5v8zkLdt6T5ia98XKZPueFumCinSH/YrV+4xJ3M0w9ZvXmvQ==
-X-Received: by 2002:a17:902:d4cb:b0:1f7:3763:5ffb with SMTP id d9443c01a7336-1f83b74d134mr48485165ad.59.1718280242316;
-        Thu, 13 Jun 2024 05:04:02 -0700 (PDT)
-Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:f133:ea93:c14c:93d9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f4ad2bsm12163295ad.285.2024.06.13.05.04.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 05:04:01 -0700 (PDT)
-From: Pin-yen Lin <treapking@chromium.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	linux-clk@vger.kernel.org,
-	Pin-yen Lin <treapking@chromium.org>
-Subject: [PATCH] clk: mediatek: mt8183: Only enable runtime PM on mt8183-mfgcfg
-Date: Thu, 13 Jun 2024 20:02:28 +0800
-Message-ID: <20240613120357.1043342-1-treapking@chromium.org>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+        d=1e100.net; s=20230601; t=1718280181; x=1718884981;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RKA/VUM/a9F8ecl/GN0yeGv3buwPv6S6vu54++YIlkQ=;
+        b=O5SrGpA07mlLW47+BP1zdJJe4q/uWrWZlbBfrIWiG4LgB4U4mA9M1Xwrdj2bBfcTH9
+         Hr4DU85hmcknXpmpuIaentlwjvvHv4yVxl4ENmrZydszNNLxuPrl3A09X0Clbuv34jif
+         9m5pC4ZDRN90rj3zpHGQIIXKxwZZW4SocZeRKD7HQs9UkizhYfJjlsSR3xK46XZqzC5f
+         Fa9M//ejMaHm6CTFaQrjcHqqlk8bG6k6DKfDY3BDsHHvE1RMms1DXlmfuRJWNUWg1eJN
+         8olpenyM9OVOxTKRuXR8bmkM+L9CHW41AHfRuNJ6kuGNSl4tdZDPqeeAeztjCzwQ8nJ9
+         el7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUTtb52SmGkka/O5/a4QqVpIFcBBFTpr6Bsptio/goH72AFxetlnVe1ogPkHdIS32pP00ZWCjHuXwDKGm24BQvMFemDdfL4F0Kl0rli
+X-Gm-Message-State: AOJu0YwxT2GQvWJ5yA70wui9ZxuV6zLkAMe7j5ci47nkLLyFHeQjOiqI
+	wKQ4sYU2noLtPRLMM2e1ZNtwxMLh/GHsYtO/aoT/KMlPZI2kJ9K9
+X-Google-Smtp-Source: AGHT+IGCdlBNx+UdD2COQJefxBq4y25R0s3uGI+GGxizPiw8cQb2P6BlSO90Fys7OfxecCi6G8rzoQ==
+X-Received: by 2002:a05:6214:4903:b0:6b0:825b:2406 with SMTP id 6a1803df08f44-6b1a6b5dcffmr53055686d6.51.1718280180264;
+        Thu, 13 Jun 2024 05:03:00 -0700 (PDT)
+Received: from smtpclient.apple (174.137.59.200.16clouds.com. [174.137.59.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5ec5e8esm5971466d6.88.2024.06.13.05.02.52
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2024 05:02:59 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
+Subject: Re: [PATCH v2] sched/fair: Reschedule the cfs_rq when current is
+ ineligible
+From: Chunxin Zang <spring.cxz@gmail.com>
+In-Reply-To: <Zmrd2hwqHB8RQjqB@chenyu5-mobl2>
+Date: Thu, 13 Jun 2024 20:02:37 +0800
+Cc: Honglei Wang <jameshongleiwang@126.com>,
+ mingo@redhat.com,
+ Peter Zijlstra <peterz@infradead.org>,
+ juri.lelli@redhat.com,
+ vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com,
+ rostedt@goodmis.org,
+ bsegall@google.com,
+ mgorman@suse.de,
+ bristot@redhat.com,
+ vschneid@redhat.com,
+ Mike Galbraith <efault@gmx.de>,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ linux-kernel@vger.kernel.org,
+ yangchen11@lixiang.com,
+ Jerry Zhou <zhouchunhua@lixiang.com>,
+ Chunxin Zang <zangchunxin@lixiang.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <112FECA8-5D21-406F-814C-ACBE63351CBB@gmail.com>
+References: <20240529141806.16029-1-spring.cxz@gmail.com>
+ <ZmKVjmuC4kGrUH5V@chenyu5-mobl2>
+ <2E6EB0D6-D913-4205-B7DD-35EF4FA25667@gmail.com>
+ <Zmrd2hwqHB8RQjqB@chenyu5-mobl2>
+To: Chen Yu <yu.c.chen@intel.com>
+X-Mailer: Apple Mail (2.3731.700.6)
 
-Commit 2f7b1d8b5505 ("clk: mediatek: Do a runtime PM get on controllers
-during probe") enabled runtime PM for all mediatek clock controllers,
-but this introduced an issue on the resume path.
 
-If a device resumes earlier than the clock controller and calls
-clk_prepare() when runtime PM is enabled on the controller, it will end
-up calling clk_pm_runtime_get(). But the subsequent
-pm_runtime_resume_and_get() call will fail because the runtime PM is
-temporarily disabled during suspend.
 
-To workaround this, introduce a need_runtime_pm flag and only enable it
-on mt8183-mfgcfg, which is the driver that observed deadlock previously.
-Hopefully mt8183-cfgcfg won't run into the issue at the resume stage
-because the GPU should have stopped rendering before the system calls
-suspend.
+> On Jun 13, 2024, at 19:54, Chen Yu <yu.c.chen@intel.com> wrote:
+>=20
+> On 2024-06-12 at 18:39:11 +0800, Chunxin Zang wrote:
+>>=20
+>>=20
+>>> On Jun 7, 2024, at 13:07, Chen Yu <yu.c.chen@intel.com> wrote:
+>>>=20
+>>> On 2024-05-29 at 22:18:06 +0800, Chunxin Zang wrote:
+>>>> I found that some tasks have been running for a long enough time =
+and
+>>>> have become illegal, but they are still not releasing the CPU. This
+>>>> will increase the scheduling delay of other processes. Therefore, I
+>>>> tried checking the current process in wakeup_preempt and =
+entity_tick,
+>>>> and if it is illegal, reschedule that cfs queue.
+>>>>=20
+>>>> When RUN_TO_PARITY is enabled, its behavior essentially remains
+>>>> consistent with the original process. When NO_RUN_TO_PARITY is =
+enabled,
+>>>> some additional preemptions will be introduced, but not too many.
+>>>>=20
+>>>> I have pasted some test results below.
+>>>> I isolated four cores for testing and ran hackbench in the =
+background,
+>>>> and observed the test results of cyclictest.
+>>>>=20
+>>>> hackbench -g 4 -l 100000000 &
+>>>> cyclictest --mlockall -D 5m -q
+>>>>=20
+>>>>                                EEVDF      PATCH  EEVDF-NO_PARITY  =
+PATCH-NO_PARITY
+>>>>=20
+>>>>               # Min Latencies: 00006      00006      00006      =
+00006
+>>>> LNICE(-19)    # Avg Latencies: 00191      00133      00089      =
+00066
+>>>>               # Max Latencies: 15442      08466      14133      =
+07713
+>>>>=20
+>>>>               # Min Latencies: 00006      00010      00006      =
+00006
+>>>> LNICE(0)      # Avg Latencies: 00466      00326      00289      =
+00257
+>>>>               # Max Latencies: 38917      13945      32665      =
+17710
+>>>>=20
+>>>>               # Min Latencies: 00019      00053      00010      =
+00013
+>>>> LNICE(19)     # Avg Latencies: 37151      25852      18293      =
+23035
+>>>>               # Max Latencies: 2688299    4643635    426196     =
+425708
+>>>>=20
+>>>> I captured and compared the number of preempt occurrences in =
+wakeup_preempt
+>>>> to see if it introduced any additional overhead.
+>>>>=20
+>>>> Similarly, hackbench is used to stress the utilization of four =
+cores to
+>>>> 100%, and the method for capturing the number of PREEMPT =
+occurrences is
+>>>> referenced from [1].
+>>>>=20
+>>>> schedstats                          EEVDF       PATCH   =
+EEVDF-NO_PARITY  PATCH-NO_PARITY  CFS(6.5)
+>>>> .stats.check_preempt_count          5053054     5045388    5018589  =
+  5029585
+>>>> .stats.patch_preempt_count          -------     0020495    -------  =
+  0700670    -------
+>>>> .stats.need_preempt_count           0570520     0458947    3380513  =
+  3116966    1140821
+>>>>=20
+>>>> =46rom the above test results, there is a slight increase in the =
+number of
+>>>> preempt occurrences in wakeup_preempt. However, the results vary =
+with each
+>>>> test, and sometimes the difference is not that significant.
+>>>>=20
+>>>> [1]: =
+https://lore.kernel.org/all/20230816134059.GC982867@hirez.programming.kick=
+s-ass.net/T/#m52057282ceb6203318be1ce9f835363de3bef5cb
+>>>>=20
+>>>> Signed-off-by: Chunxin Zang <zangchunxin@lixiang.com>
+>>>> Reviewed-by: Chen Yang <yangchen11@lixiang.com>
+>>>>=20
+>>>> ------
+>>>> Changes in v2:
+>>>> - Make the logic that determines the current process as ineligible =
+and
+>>>> triggers preemption effective only when NO_RUN_TO_PARITY is =
+enabled.
+>>>> - Update the commit message
+>>>> ---
+>>>> kernel/sched/fair.c | 17 +++++++++++++++++
+>>>> 1 file changed, 17 insertions(+)
+>>>>=20
+>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>> index 03be0d1330a6..fa2c512139e5 100644
+>>>> --- a/kernel/sched/fair.c
+>>>> +++ b/kernel/sched/fair.c
+>>>> @@ -745,6 +745,17 @@ int entity_eligible(struct cfs_rq *cfs_rq, =
+struct sched_entity *se)
+>>>> return vruntime_eligible(cfs_rq, se->vruntime);
+>>>> }
+>>>>=20
+>>>> +static bool check_entity_need_preempt(struct cfs_rq *cfs_rq, =
+struct sched_entity *se)
+>>>> +{
+>>>> + if (sched_feat(RUN_TO_PARITY) && se->vlag !=3D se->deadline)
+>>>> + return true;
+>>>=20
+>>> If I understand correctly, here it intends to check if the current =
+se
+>>> has consumed its 1st slice after been picked at set_next_entity(), =
+and if yes do a reschedule.
+>>> check_entity_need_preempt() is added at the end of entity_tick(), =
+which could overwrite
+>>> the police to reschedule current: =
+(entity_tick()->update_curr()->update_deadline()), only there
+>>> are more than 1 runnable tasks will the current be preempted, even =
+if it has expired the 1st
+>>> requested slice.
+>>>=20
+>>=20
+>> The purpose of the modification is to increase preemption =
+opportunities without breaking the
+>> RUN_TO_PARITY rule. However, it clearly introduces some additional =
+preemptions, or perhaps
+>> there should be a check for the eligibility of the se. Also, to avoid =
+overwriting the scheduling
+>> strategy in entity_tick, would a modification like the following be =
+more appropriate?
+>>=20
+>=20
+> I wonder if we can only take care of the NO_RUN_TO_PARITY case? =
+Something like this,
+>=20
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 03be0d1330a6..5e49a15bbdd3 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -745,6 +745,21 @@ int entity_eligible(struct cfs_rq *cfs_rq, =
+struct sched_entity *se)
+>>        return vruntime_eligible(cfs_rq, se->vruntime);
+>> }
+>>=20
+>> +static bool check_entity_need_preempt(struct cfs_rq *cfs_rq, struct =
+sched_entity *se)
+>> +{
+> if (sched_feat(RUN_TO_PARITY) || cfs_rq->nr_running <=3D 1 ||
+>     !entity_eligible(cfs_rq, se))
+> return false;
+>=20
+> return true;
+>=20
+> Thoughts?
+>=20
 
-Fixes: 2f7b1d8b5505 ("clk: mediatek: Do a runtime PM get on controllers during probe")
-Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+This does indeed look better. In that case, do I need to make the =
+changes this way and send
+out a version 3?
 
----
+thanks=20
+Chunxin
 
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c |  1 +
- drivers/clk/mediatek/clk-mtk.c           | 24 ++++++++++++++----------
- drivers/clk/mediatek/clk-mtk.h           |  2 ++
- 3 files changed, 17 insertions(+), 10 deletions(-)
+> thanks,
+> Chenyu
+>=20
+>> +       if (cfs_rq->nr_running <=3D 1)
+>> +               return false;
+>> +
+>> +       if (sched_feat(RUN_TO_PARITY) && se->vlag !=3D se->deadline
+>> +                                     && !entity_eligible(cfs_rq, =
+se))
+>> +               return true;
+>> +
+>> +       if (!sched_feat(RUN_TO_PARITY) && !entity_eligible(cfs_rq, =
+se))
+>> +               return true;
+>> +
+>> +       return false;
+>> +}
+>> +
 
-diff --git a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-index c89c3d58fedc..b1e802bbfaef 100644
---- a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-+++ b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-@@ -29,6 +29,7 @@ static const struct mtk_gate mfg_clks[] = {
- static const struct mtk_clk_desc mfg_desc = {
- 	.clks = mfg_clks,
- 	.num_clks = ARRAY_SIZE(mfg_clks),
-+	.need_runtime_pm = true,
- };
- 
- static const struct of_device_id of_match_clk_mt8183_mfg[] = {
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index bd37ab4d1a9b..ba1d1c495bc2 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -496,14 +496,16 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
- 	}
- 
- 
--	devm_pm_runtime_enable(&pdev->dev);
--	/*
--	 * Do a pm_runtime_resume_and_get() to workaround a possible
--	 * deadlock between clk_register() and the genpd framework.
--	 */
--	r = pm_runtime_resume_and_get(&pdev->dev);
--	if (r)
--		return r;
-+	if (mcd->need_runtime_pm) {
-+		devm_pm_runtime_enable(&pdev->dev);
-+		/*
-+		 * Do a pm_runtime_resume_and_get() to workaround a possible
-+		 * deadlock between clk_register() and the genpd framework.
-+		 */
-+		r = pm_runtime_resume_and_get(&pdev->dev);
-+		if (r)
-+			return r;
-+	}
- 
- 	/* Calculate how many clk_hw_onecell_data entries to allocate */
- 	num_clks = mcd->num_clks + mcd->num_composite_clks;
-@@ -585,7 +587,8 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
- 			goto unregister_clks;
- 	}
- 
--	pm_runtime_put(&pdev->dev);
-+	if (mcd->need_runtime_pm)
-+		pm_runtime_put(&pdev->dev);
- 
- 	return r;
- 
-@@ -618,7 +621,8 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
- 	if (mcd->shared_io && base)
- 		iounmap(base);
- 
--	pm_runtime_put(&pdev->dev);
-+	if (mcd->need_runtime_pm)
-+		pm_runtime_put(&pdev->dev);
- 	return r;
- }
- 
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 22096501a60a..c17fe1c2d732 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -237,6 +237,8 @@ struct mtk_clk_desc {
- 
- 	int (*clk_notifier_func)(struct device *dev, struct clk *clk);
- 	unsigned int mfg_clk_idx;
-+
-+	bool need_runtime_pm;
- };
- 
- int mtk_clk_pdev_probe(struct platform_device *pdev);
--- 
-2.45.2.505.gda0bf45e8d-goog
 
 
