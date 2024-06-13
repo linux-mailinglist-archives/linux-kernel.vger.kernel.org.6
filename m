@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-212780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09BF4906637
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:10:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354DB906640
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8B521F22873
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:10:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A9F283CE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7DC13D252;
-	Thu, 13 Jun 2024 08:10:24 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F2513CAA7;
-	Thu, 13 Jun 2024 08:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346BC13D257;
+	Thu, 13 Jun 2024 08:11:30 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20D813BC0D;
+	Thu, 13 Jun 2024 08:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718266224; cv=none; b=ulsTYWzP2c4VsBNS/W9dX8SVuLFzcjZrtioOQVj4g9XwsdEBT6xs6tyr05LoEiD3WT8vBKNxQ/Fk6lnJUbVwqpjqD70PGIb6r/DxKiRUioZF0KD88gmat1X5kLzsP012BdvCQ9ophW2fznUgh7ct3wRKUmrowOzP0xXM1OMxWkI=
+	t=1718266289; cv=none; b=BsURrG9/MfILn26B/BU5VMalCsheFE1kQU9JnVr+XmilUpPEeuGYtz1faY4j8ao5z+Ok+i182JkmP28gIfVDNY451cAVG7OqHr8jtAKr/ciKkGHfjx4IW+fsESRDO3BGkBItjuP8/L9iOtZRRCEjthWk+bVdNJRXbFC1YO9FLKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718266224; c=relaxed/simple;
-	bh=kuCRy/dvwvgH5lryVQtV60zwp/KBdbHgxITSfmkLE3Q=;
+	s=arc-20240116; t=1718266289; c=relaxed/simple;
+	bh=0Whgikdh0A9ZjDD2kwRWTabvViRWZPhQsbf62STcyTg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BfIZncIYiBmpui/bXL/BZ8yaBDINm3u5hNiB0mf+7uJOc3Wqj5ycFfLu4EvU/r8Q+DLMcpyT94uw4qsZWHoegh0pRhJIllJGiRCXd46wejdSnSlaQLV6S/c35HwvPdw4Y5IGejYe+K5bv0l7uRnKSfSw7xTaJ883D9okiWG3hB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id E4E6268AFE; Thu, 13 Jun 2024 10:10:16 +0200 (CEST)
-Date: Thu, 13 Jun 2024 10:10:16 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	hch@lst.de, sagi@grimberg.me, paulmck@kernel.org,
-	davidgow@google.com, akpm@linux-foundation.org,
-	venkat88@linux.vnet.ibm.com, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH 1/2] list: introduce a new cutting helper
-Message-ID: <20240613081016.GA21500@lst.de>
-References: <20240612155135.3060667-1-kbusch@meta.com> <f0e4c51c-8227-4f5c-876f-38fbb4a0e1bf@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cx82eNc3lrto1naevJphmz+inPXkN7UmJAAxttzew6B96jclhqpoucoSmFGUGFl5dy3h1thuevtUREnpK4MbdTTAkw3YKXTHJrOcvAkNzMUrrVAwQMKU8TvbosYgwzlJi6PyHnOvshuhYqGL7B7StfGGmiJ9L78ViLMxlCJW6C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sHfXo-0007LL-00; Thu, 13 Jun 2024 10:10:52 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 9EE03C0120; Thu, 13 Jun 2024 10:10:22 +0200 (CEST)
+Date: Thu, 13 Jun 2024 10:10:22 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, hauke@hauke-m.de,
+	rdunlap@infradead.org, robh@kernel.org, bhelgaas@google.com,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
+Message-ID: <ZmqpbpiDTAfChn8T@alpha.franken.de>
+References: <20240607090400.1816612-1-ms@dev.tdt.de>
+ <ZmnfQWFoIw5UCV-k@google.com>
+ <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +50,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f0e4c51c-8227-4f5c-876f-38fbb4a0e1bf@linux.ibm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
 
-On Thu, Jun 13, 2024 at 10:26:11AM +0530, Nilay Shroff wrote:
-> I am wondering whether we really need the _rcu version of list_cut here?
-> I think that @head could point to an _rcu protected list and that's true 
-> for this patch. So there might be concurrent readers accessing @head using
-> _rcu list-traversal primitives, such as list_for_each_entry_rcu().
+On Wed, Jun 12, 2024 at 08:39:59PM +0200, Martin Schiller wrote:
+> @Thomas Bogendoerfer:
+> Would it be possible to stop the merging of this patch?
+> I think We have to do do some further/other changes.
 
-Yes, I can't see how this works for a RCU lists without very careful
-memory ordering.
+I'll revert the patch in mips-fixes.
 
-Btw, another thing - the old vs new list ordering is reversed vs
-list_splice*, which is a bit confusing (as are the parameter names
-both for list_splice* and this new helper).  Can you switch them
-around to match?
+Thomas.
 
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
