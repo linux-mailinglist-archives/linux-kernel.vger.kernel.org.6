@@ -1,131 +1,95 @@
-Return-Path: <linux-kernel+bounces-213476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DFD79075D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:57:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED6B90757D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 338B41F24AAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:57:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794481F233C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C1014659D;
-	Thu, 13 Jun 2024 14:56:55 +0000 (UTC)
-Received: from EXCEDGE02.prodrive.nl (mail.prodrive-technologies.com [212.61.153.67])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6158F145FF4;
+	Thu, 13 Jun 2024 14:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6yADqQa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D242AEE9;
-	Thu, 13 Jun 2024 14:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0B4145A02;
+	Thu, 13 Jun 2024 14:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718290615; cv=none; b=e4nEQBRLH4saBWw9vmYh+YTWW9Z/NBLe2C0/GsG635YlSZ7TsiTj01FpaYdtHr9/R03QRQrily0bL5NHosxXPelpkMjdDZamtOyxAOIw3Fp60IPpEyjOMVnxoJZ4T6X13iaXHRzemM8BUJZABROxiQbqKwtsGDeJMJkH43P9cdk=
+	t=1718289702; cv=none; b=JMkEjKKonIvjP7WCtVFN5FviDxCCIH9WT/1LFr2MGnP8ZgRUZ73HNNCM1+6Pgk6pvHAy5foKqxJo8FDeu9OHtaFnRdWRlNoybeY1Ry/XwXJton4RGF1hzzODuDz9qDys7hacZnaKl4/NIp8Ah0OF7GZejyxQtuLa+M22gDAS7DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718290615; c=relaxed/simple;
-	bh=JBD5JZgYoYP7sSdaelVg7aP3qlQnjwjxKiVYCRSyL+E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Axx2SXDaikXzFTDUgyboaOzGlVHOACk744fCddn97dLmIIvF+HsN1BTCqPZPQvcKTQEdGXsfLGx3w3L5Vsil93XrDa5UvA1AHcLVcm8RTYrE0ZTXtgv+7dUJlinGP3PhcBqYIQPjSnxDlSGy24q38c8tg4nqy0Kqm6YU3pBEHWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
-Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by webmail.prodrive.nl
- (192.168.102.63) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Jun
- 2024 16:41:42 +0200
-Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
- (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Thu, 13 Jun
- 2024 16:41:41 +0200
-Received: from lnxdevrm02.bk.prodrive.nl (10.1.1.121) by
- EXCOP01.bk.prodrive.nl (10.1.0.22) with Microsoft SMTP Server id 15.2.1258.12
- via Frontend Transport; Thu, 13 Jun 2024 16:41:41 +0200
-Received: from paugeu by lnxdevrm02.bk.prodrive.nl with local (Exim 4.94.2)
-	(envelope-from <paul.geurts@prodrive-technologies.com>)
-	id 1sHle1-001Uou-3r; Thu, 13 Jun 2024 16:41:41 +0200
-From: Paul Geurts <paul.geurts@prodrive-technologies.com>
-To: <wei.fang@nxp.com>, <shenwei.wang@nxp.com>, <xiaoning.wang@nxp.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Paul Geurts <paul.geurts@prodrive-technologies.com>
-Subject: [PATCH] fec_main: Register net device before initializing the MDIO bus
-Date: Thu, 13 Jun 2024 16:41:11 +0200
-Message-ID: <20240613144112.349707-1-paul.geurts@prodrive-technologies.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1718289702; c=relaxed/simple;
+	bh=Y1nxcwMSb+zTs1BaeXHDgxqyBzVPA1iJTb7yBxsR4gw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e01pVjp+R/v17Z5wYlI+snFcB24l4qJclPelHH3t477KdUzVHexY4Zq6pQrW5KsblxDwZfh0ruKQExnAh1O9NkledCD6R4JI3jH7w0NoCQFJ66e9mZt+u8f/btbsD9WF5HqEHcjE6Ts72m9vJ6vU6zB+t8BJs4kUPByucnN2cj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6yADqQa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D208C2BBFC;
+	Thu, 13 Jun 2024 14:41:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718289702;
+	bh=Y1nxcwMSb+zTs1BaeXHDgxqyBzVPA1iJTb7yBxsR4gw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N6yADqQa/bBRMUtbfHabAB0TtXRZRfVHI5RqyYkEDB3OzODghkwDfLsUXFXpkKnIJ
+	 GLu55tuDvw1qbkzaMxcpMBOnb5zr9Tq7YCYB1csGtyGQyNLJJG+bvK6X7Shqva2Tdo
+	 t4hfYXDWb2Z+IKIDC+tTSMsBV/ZVCeE04afmCxtBa39bOts6sOjG/5CPnsiVQSL1S1
+	 xJxIMEtf9sXkRvFkKmMiN2yfqD1ipHVQ+6Jd9BlZ/6dpUZDGvZZ/84INmS7fpMCU9L
+	 A7qkgE6N5OqeS8vzaiSJX3MDGJfpjLfkFOMgsNYVF54BJdfEY5UAxleSV7ROfqIJf8
+	 g+7kI28dnb0EA==
+Date: Thu, 13 Jun 2024 15:41:37 +0100
+From: Lee Jones <lee@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Dustin Howett <dustin@howett.net>, Pavel Machek <pavel@ucw.cz>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 0/5] ChromeOS Embedded Controller LED driver
+Message-ID: <20240613144137.GG2561462@google.com>
+References: <20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net>
+ <CA+BfgNJf1Av7fRVUjpU3r6aRw6DWTHfkCuOYXP2ykhPzGTVzfw@mail.gmail.com>
+ <264dd508-93c5-48d6-ac69-27458acd29c5@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <264dd508-93c5-48d6-ac69-27458acd29c5@t-8ch.de>
 
-Registration of the FEC MDIO bus triggers a probe of all devices
-connected to that bus. DSA based Ethernet switch devices connect to the
-uplink Ethernet port during probe. When a DSA based, MDIO controlled
-Ethernet switch is connected to FEC, it cannot connect the uplink port,
-as the FEC MDIO port is registered before the net device is being
-registered. This causes an unnecessary defer of the Ethernet switch
-driver probe.
+On Mon, 03 Jun 2024, Thomas Weißschuh wrote:
 
-Register the net device before initializing and registering the MDIO
-bus.
+> On 2024-06-02 18:30:06+0000, Dustin Howett wrote:
+> > On Fri, May 31, 2024 at 11:33 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
+> > >
+> > > Add a LED driver that supports the LED devices exposed by the
+> > > ChromeOS Embedded Controller.
+> > 
+> > I've tested this out on the Framework Laptop 13, 11th gen intel core
+> > and AMD Ryzen 7040 editions.
+> > 
+> > It works fairly well! I found a couple minor issues in day-to-day use:
+> 
+> Thanks!
+> 
+> > - Restoring the trigger to chromeos-auto does not always put the EC
+> > back in control, e.g. the side lights no longer return to reporting
+> > charge status.
+> >   I believe this happens when you move from any trigger except "none"
+> > to chromeos-auto, without first setting "none".
+> 
+> Thanks for the report, I'll investigate that.
 
-Fixes: e6b043d512fa ("netdev/fec.c: add phylib supporting to enable carrier detection (v2)")
-Signed-off-by: Paul Geurts <paul.geurts@prodrive-technologies.com>
----
- drivers/net/ethernet/freescale/fec_main.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+So am I reviewing this set or waiting for the next version?
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 881ece735dcf..ed71f1f25ab9 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -4500,10 +4500,6 @@ fec_probe(struct platform_device *pdev)
- 	/* Decide which interrupt line is wakeup capable */
- 	fec_enet_get_wakeup_irq(pdev);
- 
--	ret = fec_enet_mii_init(pdev);
--	if (ret)
--		goto failed_mii_init;
--
- 	/* Carrier starts down, phylib will bring it up */
- 	netif_carrier_off(ndev);
- 	fec_enet_clk_enable(ndev, false);
-@@ -4515,6 +4511,10 @@ fec_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto failed_register;
- 
-+	ret = fec_enet_mii_init(pdev);
-+	if (ret)
-+		goto failed_mii_init;
-+
- 	device_init_wakeup(&ndev->dev, fep->wol_flag &
- 			   FEC_WOL_HAS_MAGIC_PACKET);
- 
-@@ -4528,9 +4528,9 @@ fec_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--failed_register:
--	fec_enet_mii_remove(fep);
- failed_mii_init:
-+	unregister_netdev(ndev);
-+failed_register:
- failed_irq:
- 	fec_enet_deinit(ndev);
- failed_init:
-@@ -4577,8 +4577,8 @@ fec_drv_remove(struct platform_device *pdev)
- 
- 	cancel_work_sync(&fep->tx_timeout_work);
- 	fec_ptp_stop(pdev);
--	unregister_netdev(ndev);
- 	fec_enet_mii_remove(fep);
-+	unregister_netdev(ndev);
- 	if (fep->reg_phy)
- 		regulator_disable(fep->reg_phy);
- 
 -- 
-2.30.2
-
+Lee Jones [李琼斯]
 
