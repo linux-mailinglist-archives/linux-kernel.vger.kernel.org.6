@@ -1,155 +1,266 @@
-Return-Path: <linux-kernel+bounces-212420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9155905FE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:01:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6762905FE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34FC628436C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:01:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A68551C20FD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0479BB646;
-	Thu, 13 Jun 2024 01:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DFEB646;
+	Thu, 13 Jun 2024 01:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OreWM1oc"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="c+d2pZS8"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2014.outbound.protection.outlook.com [40.92.42.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB2A652
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718240462; cv=none; b=ceWluvJ4WAYHtJ2BqAP+SzHOHK1XVQ7x3QQ20txb0c2pMMPjOQ/k45r99tAi093ujh+WHr78Z6+1w09QcYwhbCXOcIvF+j6rXTTUOax8seP1Ol5sUdrrsjBVvyO3Ds4JE8pNz1ax9jm2iQW7v1z8l2mEaUO0Kzu/Yzgrl5LKiLU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718240462; c=relaxed/simple;
-	bh=2dVZ2VKYYxFiE5EetqZFnF70kjNdVQwXc8iG8IoqYYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IAosvp23Kks0GD7cGTFbwL3tCiVHOz6LVQH2wQeJrKItzRcMc9IISq330N3xsP8Vjqk+BJHsKdw0QD2/nGNa3TFjJT/QXFiwzyz3/Q+h0b7NT5UcmXXYXOco+b2C19r/E6XMjiMndhNv0wT1u5bfcpMnkV7/X+ziuIM+/7bPxGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OreWM1oc; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718240451; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=aAWlJ3M4tOKjB01RLyyTgaKsXtqHNDmd0vljFJx8Ors=;
-	b=OreWM1oc/Kwb/qtWhjMSHV5eRW4nJ5Tx9CcDr74wKMJU6tl+K2jrsIhdFLbZXFX0jIW8T6J4ZCySj3JBCCfk5WthuSX2umL2+XczdoV09vWtgPBg+gOunY90iyposlHK43jPe6Umnll5MAkCCCOCYdZBXApCRf2a0cvY1IWrgO4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R271e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W8M4Sn5_1718240449;
-Received: from 30.97.56.57(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8M4Sn5_1718240449)
-          by smtp.aliyun-inc.com;
-          Thu, 13 Jun 2024 09:00:50 +0800
-Message-ID: <d3580388-6ecb-428a-993f-b4afa811ca1b@linux.alibaba.com>
-Date: Thu, 13 Jun 2024 09:00:48 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F898F62;
+	Thu, 13 Jun 2024 01:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718240484; cv=fail; b=JTlap/4D9HiJLp+abM3jcGoJQ2BQLHs6ye4823qn+ecJtX4oy8NjhsuXcbJNoQqrkdR26nFyyqNCzGeU8t9s0Lz4UWvalqzoTDgvJX+7ssnJ1bWuW0NcbQgwsk3yXcFjpovLfvRT1CFmI8HSN2Du5vtSLyRU1zqmvsLlH4dImxo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718240484; c=relaxed/simple;
+	bh=o3rCOBA3qupSRdPMC4wDZoro/howIlDR3H8fMhQK108=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fXpbW3tKFVMM0ZAIHtGTtFZVQIS8M/y5OqGTyQJcCeI0hvDHEZCQolMPm2jyCpCFtl/wB5QcucnajpDFi+KurG2uXDvSiPo1L0YaSwWOz4Hu6HBI8QhgsrsXVZ3RysHMrmogNrfMg6FaOf0l46kiJ6EvG/qOu2bICAkr3DSuWdc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=c+d2pZS8; arc=fail smtp.client-ip=40.92.42.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QQe66JkKVctTxmUk0/GStWtsmuEUYDAmp2fUe8JHP4V37Ogw1xqMrmtuvgNqlUvusgGiFZ3EdkYJAcFgj/oKQed6eXrQ2N3p6vFalzs29JPW3lgOJaZm+Q5vAvvBNRD79tzgpPDiSmBaA+dmxYfsPQwBsZv68hsNt77i/Na1dYsd+k/y/yU2B01thsczxznamN3yuCYiOiyOmKuDkfu0vXFUbwlwiTmVx8QUDITzhlgz/7ZdzTidrpVZEGzavN+jGQsKIIbFTluuB6XX6djZcGcCQlO8TwXFtmWsJfvPX7pS62Q3a4rDchSr/N3o6MoDISdMekP+fKC77wGDntxdzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vjZRgSD0JDqASChwMK4iAf/lX6XO66PXuvaqgvV9OYE=;
+ b=J8ECmiwsucWZSCN1ZbPtbQDsRHt3PRtmoGX3DaBdHxs1D8iEKVFABkCCKAqNdz/ppR6p/zFz7pjKcZNuMJjvmc2dhxyZzU/812mRe9HYPri4VI+8eAnd94bmlSx0fQf/T0Oc7bP2nBHy6n6wLqyjWghM+RYR6aXDP1qrboqUY+RXSzIjXIytGi03i/0xHiIqd6QGgGhaOV47H9PhoqsawqSgoOn1qaEplyjURFDqy2o6aZTrwRaBWOgthWig3D6qMgMxuC059hgvfV5hxgp0vKXftGJYQ+0LXPH23GDaDSziBVRe7e4DkYMj5aSEOVBZy2HrgiYcEFRytAFpUKE0ew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vjZRgSD0JDqASChwMK4iAf/lX6XO66PXuvaqgvV9OYE=;
+ b=c+d2pZS84ubp149UGd9DYqvg01j/tH82q6qWja4/vJe/QD1XYf5AhYfi4SBLml7IIxbE0skCQUbvSw4Miyu/PC0F7+R53ndDI/mnR+2p2rHNSDV5bJY9ibz+3TuTOFYJuX0ADvLxXXWQbGOZGEGdOL+pNMpuVYxIFU0ml//1j6l/JqAu5Fqf2ft9RFzPAFwNh19mraXzLkluNLVP4P/9FBGfvUGnb8Osa4q0tR/Y5XvBjEgiqPSQXFuKWfQndAmJ8HsGi76Ggr2ST3S8MUsGOAnUnypEerO1SW1MGViTWfP+vzRxsLv9ueFcyDncwO7ySnWacIFujhyvItNQFDigew==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by CH2PR02MB6522.namprd02.prod.outlook.com (2603:10b6:610:36::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.21; Thu, 13 Jun
+ 2024 01:01:19 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7633.036; Thu, 13 Jun 2024
+ 01:01:19 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Easwar Hariharan <eahariha@linux.microsoft.com>, "kys@microsoft.com"
+	<kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
+	<decui@microsoft.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>
+Subject: RE: [PATCH 1/1] Documentation: hyperv: Add overview of Confidential
+ Computing VM support
+Thread-Topic: [PATCH 1/1] Documentation: hyperv: Add overview of Confidential
+ Computing VM support
+Thread-Index: AQHau3TUvOHXX6OB+EKZI1Zfm6ByWLHETxSAgACQwaA=
+Date: Thu, 13 Jun 2024 01:01:19 +0000
+Message-ID:
+ <SN6PR02MB4157CA088C0F84C8B72C8EE3D4C12@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240610202810.193452-1-mhklinux@outlook.com>
+ <cabdb509-83a2-4de7-8e10-4eea7e4c96f2@linux.microsoft.com>
+In-Reply-To: <cabdb509-83a2-4de7-8e10-4eea7e4c96f2@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [XxqY/4Lwqq0UUN+GDg5J/O8bvCqO7WD0]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CH2PR02MB6522:EE_
+x-ms-office365-filtering-correlation-id: e2170da5-52a7-4272-a27e-08dc8b4455f2
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199022|56899027|1602099006|4302099007|440099022|102099026|3412199019;
+x-microsoft-antispam-message-info:
+ +ohc+odWdjFc05BbjRirdwPeqQY8IqM1xdmNQ5KE4zKxSPpYQiBs881a0cu/oS5YyPbuunbJhRfzqLKhowRgDzr4UH7gDpnHl4Ayya6CXvlP52x2aS/C282z4yvLVdFOELxXI2rjFsK/q1PXnVQuWaDaFaRpckPDQTONhEbGJ6ZWEOxBHf2YjYfso/G5CZiCXy0+K2GxC4eSrGD3/PQEf+nrtKw9vbTjgaEWCGC3/EjBDgtDJ7tPeeHJpxsAOmwsSeVdSfAqSo5EwsbnmfH6vSEOeKBXBxx3/AkDIoVOgZHxeOY8NTWnI2AXnH46KQMS1p4fhnNtq3l5Sesj5ML4xJQ0LuW6PQZwCtUCyKAtKSuKnkrWHhDOU0WbNxp0RzAdgpNWY74z7KOxLN2iHygsFNb6K3WpsjrSVqEprXnGOBTeEp5AZlAGy7oQTadlpJfUy0lI3g6snuib6iLP8RNiH8QgPP+7QPa98pvDsC7Dfiy1aTzw8ZzkLzGhcCCSAcyvaK2oazQV8XCsejlK8l0M6FiCd3hZRH/N2lat8jw/E3iPI365UiBjPd0ZlZXwDKDdgjVcFUPgKeDXbahsrHRimj3nb1dHhfazyijrx6uqZRVBXQV/OWsLgVSb6niRVRLSGy2xEmXfWrrYlxG+D2RFsWyWTPZThDaNKMqO4ffj8MhmDonPBvYr9m7oRBght/dG
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?WmkLZSMt1zd5QRN6bwhlV4WTLN7pgNeL+yU5ZXYUF0mfDKRxUku1QcGD3nmM?=
+ =?us-ascii?Q?uG2NADgPDp7pVW8U6io52Y9WY/mpg4dmaL4AWttjmbRrnStGgvaNovpBaqT9?=
+ =?us-ascii?Q?ss95R8nGuHUWGfqw0J4eHLaw2BYOhaOhAnbURvMxfuNlkQJu3i+sM3IqnWyr?=
+ =?us-ascii?Q?ReJfrOXiTL4O9zQF9uKdGcMuRXIR3w4h/64v4I9CmMiSS5rWmTxj7RMNz6Al?=
+ =?us-ascii?Q?MqQb0hWJMTCuI50wxha6L4f1qkbinJ0jmFEThVmL9lxOXF90Pw3Koa9vxkda?=
+ =?us-ascii?Q?pId6td14ktepIcSYSzCogh9gf4sWpNc9DgJUuboLng4FOED7wn+eV5ucNKnq?=
+ =?us-ascii?Q?E2ZQFFHFgvv7xidwAcOi2O9Vb3K7bFIp0LWngch2/B/iO1Alay1msvdAyL4H?=
+ =?us-ascii?Q?SvWLc1i3fdCQSniFN/vmL+oA3hi7uvg3RykYarlBRpwff7ycsViO/gSQvrQc?=
+ =?us-ascii?Q?bYr9gu/Bvx0eO/y+VH9CDfmSg7ouQNMKJm6v6vsxdiosE+KRoxNP6+/sX7qV?=
+ =?us-ascii?Q?msFanVinC0THrlGNdJgex7f2XhB7ilWuOI/UWYJTMVM/6K+GSHBiOSigjdtO?=
+ =?us-ascii?Q?bA7OXrTrN+iMFS4ItcHiiWWmslSnJzzFrQxQxup0ynARJNQN/LCulyDYe7v3?=
+ =?us-ascii?Q?FvLZBiZpiiXEYo52fpnhXdCoK8E8HsDgE3e/R3PFl0nnyEVU0I7K6NLMsFoX?=
+ =?us-ascii?Q?PcTpy1ySRozC9IYRS+PAUgE0ESVY6NBBIi2Td75Ii43i+YyiF0qKVEFsEx6A?=
+ =?us-ascii?Q?5wng2FepN/uCkGI8/SwNl6zuU1IMSA2KYiKMjNla2o+SxFvrbTtoGcKXDNRj?=
+ =?us-ascii?Q?i+Vv5KKtDjTLmwM/TZw9Nfsfp+2E8uAKHvcwP5NmFp8DjXnEq1Oupf80KOm8?=
+ =?us-ascii?Q?Nhg8T/sReSJgG+i+eZ/OmlcjdkkUHqJlhSVBpAb1WXP7Bcmv+4WnuFG8WMnf?=
+ =?us-ascii?Q?svr4WAhPk6kdI6+ptLqWyjp9C/4s9+7d9xvjp84rBu38wet4aQ22tCiiGd9s?=
+ =?us-ascii?Q?lxe0J9WkjRrxn4R5dVTOgi92hFaqbXJDDjolE2dBScJxNsHN/6DGTpXs/jmp?=
+ =?us-ascii?Q?FfoEljI6/90SBIkXrmTSJxcHs+IuQl/gkYuNB2wS9DQEvohC/Oc3+qhy9LUk?=
+ =?us-ascii?Q?qcbwtd0w3YZAysAzOi9+dhJx1fA9exT13DabgD8JFGjIc4Fto90TNAMzwiVF?=
+ =?us-ascii?Q?Kf0C3YtZPPBxv40JvD8u8uW+CHb3ETDn3tddIKrFbHeh4lP8fWiKEKYhbw4?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/6] mm: shmem: add mTHP counters for anonymous shmem
-To: Kefeng Wang <wangkefeng.wang@huawei.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, david@redhat.com, ying.huang@intel.com,
- 21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com,
- ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
- p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
- <4fd9e467d49ae4a747e428bcd821c7d13125ae67.1718090413.git.baolin.wang@linux.alibaba.com>
- <e60808c6-5d50-42c4-a736-f1f417f85327@huawei.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <e60808c6-5d50-42c4-a736-f1f417f85327@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2170da5-52a7-4272-a27e-08dc8b4455f2
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2024 01:01:19.5717
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6522
 
+From: Easwar Hariharan <eahariha@linux.microsoft.com> Sent: Wednesday, June=
+ 12, 2024 9:10 AM
 
+[snip]
 
-On 2024/6/12 21:46, Kefeng Wang wrote:
-> 
-> 
-> On 2024/6/11 18:11, Baolin Wang wrote:
->> Add mTHP counters for anonymous shmem.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   include/linux/huge_mm.h |  3 +++
->>   mm/huge_memory.c        |  6 ++++++
->>   mm/shmem.c              | 18 +++++++++++++++---
->>   3 files changed, 24 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index 909cfc67521d..212cca384d7e 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -281,6 +281,9 @@ enum mthp_stat_item {
->>       MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
->>       MTHP_STAT_SWPOUT,
->>       MTHP_STAT_SWPOUT_FALLBACK,
->> +    MTHP_STAT_FILE_ALLOC,
->> +    MTHP_STAT_FILE_FALLBACK,
->> +    MTHP_STAT_FILE_FALLBACK_CHARGE,
->>       __MTHP_STAT_COUNT
->>   };
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 1360a1903b66..3fbcd77f5957 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -555,6 +555,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, 
->> MTHP_STAT_ANON_FAULT_FALLBACK);
->>   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, 
->> MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->>   DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
->>   DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
->> +DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
->> +DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
->> +DEFINE_MTHP_STAT_ATTR(file_fallback_charge, 
->> MTHP_STAT_FILE_FALLBACK_CHARGE);
->>   static struct attribute *stats_attrs[] = {
->>       &anon_fault_alloc_attr.attr,
->> @@ -562,6 +565,9 @@ static struct attribute *stats_attrs[] = {
->>       &anon_fault_fallback_charge_attr.attr,
->>       &swpout_attr.attr,
->>       &swpout_fallback_attr.attr,
->> +    &file_alloc_attr.attr,
->> +    &file_fallback_attr.attr,
->> +    &file_fallback_charge_attr.attr,
->>       NULL,
->>   };
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index f5469c357be6..99bd3c34f0fb 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -1773,6 +1773,9 @@ static struct folio 
->> *shmem_alloc_and_add_folio(struct vm_fault *vmf,
->>               if (pages == HPAGE_PMD_NR)
->>                   count_vm_event(THP_FILE_FALLBACK);
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +            count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
->> +#endif
->>               order = next_order(&suitable_orders, order);
->>           }
->>       } else {
->> @@ -1792,9 +1795,15 @@ static struct folio 
->> *shmem_alloc_and_add_folio(struct vm_fault *vmf,
->>           if (xa_find(&mapping->i_pages, &index,
->>                   index + pages - 1, XA_PRESENT)) {
->>               error = -EEXIST;
->> -        } else if (pages == HPAGE_PMD_NR) {
->> -            count_vm_event(THP_FILE_FALLBACK);
->> -            count_vm_event(THP_FILE_FALLBACK_CHARGE);
->> +        } else if (pages > 1) {
->> +            if (pages == HPAGE_PMD_NR) {
->> +                count_vm_event(THP_FILE_FALLBACK);
->> +                count_vm_event(THP_FILE_FALLBACK_CHARGE);
->> +            }
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +            count_mthp_stat(folio_order(folio), 
->> MTHP_STAT_FILE_FALLBACK);
->> +            count_mthp_stat(folio_order(folio), 
->> MTHP_STAT_FILE_FALLBACK_CHARGE);
-> 
-> pages > 1, we have correct order, count_mthp_stat(order, MTHP_XXX) ?
+> > +Operational Modes
+> > +-----------------
+> > +Hyper-V CoCo VMs can run in two modes. The mode is selected when the V=
+M is
+> > +created and cannot be changed during the life of the VM.
+> > +
+> > +* Fully-enlightened mode. In this mode, the guest operating system is
+> > +  enlightened to understand and manage all aspects of running as a CoC=
+o VM.
+> > +
+> > +* Paravisor mode. In this mode, a paravisor layer between the guest an=
+d the
+> > +  host provides some operations needed to run as a CoCo VM. The guest =
+operating
+> > +  system can have fewer CoCo enlightenments than is required in the
+> > +  fully-enlightened case.
+> > +
+> > +Conceptually, fully-enlightened mode and paravisor mode may be treated=
+ as
+> > +points on a spectrum spanning the degree of guest enlightenment needed=
+ to run
+> > +as a CoCo VM. Fully-enlightened mode is one end of the spectrum. A ful=
+l
+> > +implementation of paravisor mode is the other end of the spectrum, whe=
+re all
+> > +aspects of running as a CoCo VM are handled by the paravisor, and a no=
+rmal
+> > +guest OS with no knowledge of memory encryption or other aspects of Co=
+Co VMs
+> > +can run successfully. However, the Hyper-V implementation of paravisor=
+ mode
+> > +does not go this far, and is somewhere in the middle of the spectrum. =
+Some
+> > +aspects of CoCo VMs are handled by the Hyper-V paravisor while the gue=
+st OS
+> > +must be enlightened for other aspects. Unfortunately, there is no
+> > +standardized enumeration of feature/functions that might be provided i=
+n the
+> > +paravisor, and there is no standardized mechanism for a guest OS to qu=
+ery the
+> > +paravisor for the feature/functions it provides. The understanding of =
+what
+> > +the paravisor provides is hard-coded in the guest OS.
+> > +
+> > +Paravisor mode has similarities to the Coconut project, which aims to =
+provide
+> > +a limited paravisor to provide services to the guest such as a virtual=
+ TPM.
+>=20
+> Would it be useful to add an external link to the Coconut project here?
+> https://github.com/coconut-svsm/svsm
+>=20
 
-Yes, I can use 'order' instead if a new version is needed.
+Yes, I'll add the link in a v2.
+
+> > +However, the Hyper-V paravisor generally handles more aspects of CoCo =
+VMs
+> > +than is currently envisioned for Coconut, and so is further toward the=
+ "no
+> > +guest enlightenments required" end of the spectrum.
+> > +
+> > +In the CoCo VM threat model, the paravisor is in the guest security do=
+main
+> > +and must be trusted by the guest OS. By implication, the hypervisor/VM=
+M must
+> > +protect itself against a potentially malicious paravisor just like it
+> > +protects against a potentially malicious guest.
+>=20
+> Tangential to this patch, can the guest provide its own paravisor since
+> it needs to be trusted and apparently the only way to find out if a
+> paravisor will be used is to rely on the (possibly) malicious
+> hypervisor/VMM to provide a synthetic MSR?
+
+Conceptually, yes, you want the guest to be able to provide its own
+paravisor implementation, or at least to be able to audit the source code
+of the default paravisor provided by Hyper-V/Azure. The paravisor is part
+of the guest security domain, so the guest must trust the paravisor. It's
+easy to envision that customers who are very security-conscious might
+want to provide their own Linux and paravisor.
+
+But that's all conceptual. I'm not in the loop any longer on what
+Microsoft is currently offering, or planning to offer, along these lines as
+product functionality available to customers. As you say, it's somewhat
+tangential to the Linux kernel itself. But if someone who knows wants to
+flesh out the big picture with a link to existing public documentation,
+please do so!
+
+And thanks for your review. :-)
+
+Michael
+
+>=20
+> > +
+> > +The hardware architectural approach to fully-enlightened vs. paravisor=
+ mode
+> > +varies depending on the underlying processor.
+> > +
+> > +* With AMD SEV-SNP processors, in fully-enlightened mode the guest OS =
+runs in
+> > +  VMPL 0 and has full control of the guest context. In paravisor mode,=
+ the
+> > +  guest OS runs in VMPL 2 and the paravisor runs in VMPL 0. The paravi=
+sor
+> > +  running in VMPL 0 has privileges that the guest OS in VMPL 2 does no=
+t have.
+> > +  Certain operations require the guest to invoke the paravisor. Furthe=
+rmore, in
+> > +  paravisor mode the guest OS operates in "virtual Top Of Memory" (vTO=
+M) mode
+> > +  as defined by the SEV-SNP architecture. This mode simplifies guest m=
+anagement
+> > +  of memory encryption when a paravisor is used.
+> > +
+> > +* With Intel TDX processor, in fully-enlightened mode the guest OS run=
+s in an
+> > +  L1 VM. In paravisor mode, TD partitioning is used. The paravisor run=
+s in the
+> > +  L1 VM, and the guest OS runs in a nested L2 VM.
+> > +
+> > +Hyper-V exposes a synthetic MSR to guests that describes the CoCo mode=
+. This
+> > +MSR indicates if the underlying processor uses AMD SEV-SNP or Intel TD=
+X, and
+> > +whether a paravisor is being used. It is straightforward to build a si=
+ngle
+> > +kernel image that can boot and run properly on either architecture, an=
+d in
+> > +either mode.
+> > +
 
