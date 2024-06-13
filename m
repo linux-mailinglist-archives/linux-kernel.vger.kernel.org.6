@@ -1,84 +1,176 @@
-Return-Path: <linux-kernel+bounces-214011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35739907DCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:06:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41811907DD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF3411F22ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:06:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B516AB22C82
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2AC13BC03;
-	Thu, 13 Jun 2024 21:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EE613C9CF;
+	Thu, 13 Jun 2024 21:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYPR2Ky4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="sivM0bTx"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAB4139CE2;
-	Thu, 13 Jun 2024 21:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A1D139CE2;
+	Thu, 13 Jun 2024 21:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718312777; cv=none; b=jjy0DLzkDPSpqUS9XEbXYRsRSDu8NJQ+Mj0yof9GfNMq1F3HkFSqsb/8bTzOD7FTLVybfFt1b9SDQOS8Kv/JpBcQJfuOCMPfOr1U8zKrTv2uDK2lX1O5JuOpwo7IJJidJlpTTR7jxKlvLQdnPGv++0dcNLrIPHh6nU1UR+uEeU0=
+	t=1718313016; cv=none; b=R+LgeZeAZeRwqKc6K+P6kZsu/LOY36KsD+hNyJXpcbOhe84sNAIiUz/MrOsrmX8NO3jgY53kBrlLgQhSI6aql9aEghcSlvrLM0aAz43GItNz7X7Y0JvH26qlzstBIZCPeo/6Qa+kjeDOgQrNhvHB9D5M6eavHfWzTZQ6127voO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718312777; c=relaxed/simple;
-	bh=dZba39hnCowmc0pZmrIXvEi2zoYdUdHjuntIBlNjS8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=HyN1C/1vCGK4E722uuYr0Ykcs4WXoEbCffkzexCYBnJ25BGG21VuQ598OIea2TxQF6zcgEZpzBWuu3v1KaLqbmCxXHjNIG4KT1BRf0oLCz8YuUHPzvzi5avFTsphhV5hKbfw/yX2Kv0UaA/s1Cbg8gPAm/LQb44tIiEpWQmCq4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYPR2Ky4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54530C2BBFC;
-	Thu, 13 Jun 2024 21:06:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718312776;
-	bh=dZba39hnCowmc0pZmrIXvEi2zoYdUdHjuntIBlNjS8E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=BYPR2Ky4Du7wsrS+bltF98D9HrMCtHL4ExMmzEOpEKnRxdTDqkwRpQ4yPby6cTU01
-	 q//gRWX7lSxAEigiQ9CqUrSw9S+kAnm7PZQkUkr0P0IElkYBWjHJhX9sB/NnGi7FpD
-	 yRipPbdfd9g+pIAc8AdvuxAPNwCIQ33vTGpzwnvDhjyGmbDDzxjk0363KxJWVEKZxy
-	 48UF8xEmOVWq5Z/Dktpf4n8oR8X5nr9bo3za1TYgAN0DYd4/hata3qOKou2/yKPke6
-	 mKPhASsvQ2J9zWml1w0GqcX/YxG1jV8NdKx6v5TWPccjnXWMInKgB8sN02iUOpK5RC
-	 E2e7d80jw9jmA==
-Date: Thu, 13 Jun 2024 16:06:14 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Sam Ravnborg <sam@ravnborg.org>, dakr@redhat.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v9 10/13] PCI: Give pci_intx() its own devres callback
-Message-ID: <20240613210614.GA1081813@bhelgaas>
+	s=arc-20240116; t=1718313016; c=relaxed/simple;
+	bh=1J4WLBtZ95L8XtXYwCU1lBJTRVbRe4D591TuQlCYEHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=HnrjlAuleO0nRK4dPAt1Y3F5lKR8qMtYWsNK2Q6HRogDTwDnJay4YN8Lwg9hTlt8xthdTgv9i2nA4eoArFTntde5zGGiFi4o/hf2MuA7Dg6LVCIbNuLLFT7b37xsHs1Uy4iiyXXc+dmqupQlDjEhDQGYAOOthEkzMaZ5c18amuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=sivM0bTx; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W0Zmy33WLz9sPq;
+	Thu, 13 Jun 2024 23:10:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
+	t=1718313010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zf/D0AMDmsG7+mRQtcpHFjZ6BvLst9hXH1WNYtGV8o0=;
+	b=sivM0bTxsqdxmFANQaTA5jst3UhQRRoBhxKaU4DCdHIjOp5u+0tVO/l4/8oPPdfXBuy0su
+	q+0bDukQL6xZ7573zc92yW924ivLssKZ/Q8gC3PFvj28t3GYmeC8IMJGYwB4MoH4LEUsNL
+	l9OC6FT83P2hXD0KbUyBkf3gETKgGWi2HWrwOtOII/lpj250pXPiKG+4xjzlaZ4xTwPSQI
+	0paINADGZDr8vTYHVc6eFPgXFa8L5N1mNNeL8MI7oBI9UE2negABMB8ecTyrhtuM2UYUX3
+	DnxZvp8BhZvWQCqLDhPup9ze6paM7fLaxfvKXM+6k7zHTas63jgmI63sCx6XiA==
+Message-ID: <93428cdd-301a-46d7-84ef-e5c8ad42f495@hauke-m.de>
+Date: Thu, 13 Jun 2024 23:09:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613115032.29098-11-pstanner@redhat.com>
+Subject: Re: [PATCH v2 2/9] block: partitions: populate fwnode
+To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
+ Christian Brauner <brauner@kernel.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Al Viro <viro@zeniv.linux.org.uk>, Li Lingfeng <lilingfeng3@huawei.com>,
+ Christian Heusel <christian@heusel.eu>, Min Li <min15.li@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Hannes Reinecke <hare@suse.de>, Mikko Rapeli <mikko.rapeli@linaro.org>,
+ Yeqi Fu <asuk4.q@gmail.com>, Victor Shih <victor.shih@genesyslogic.com.tw>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Li Zhijian <lizhijian@fujitsu.com>,
+ "Ricardo B. Marliere" <ricardo@marliere.net>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-block@vger.kernel.org
+References: <cover.1717031992.git.daniel@makrotopia.org>
+ <3329bf2fa25695934b392944ff977ae95dc8c02d.1717031992.git.daniel@makrotopia.org>
+Content-Language: en-US
+From: Hauke Mehrtens <hauke@hauke-m.de>
+In-Reply-To: <3329bf2fa25695934b392944ff977ae95dc8c02d.1717031992.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4W0Zmy33WLz9sPq
 
-On Thu, Jun 13, 2024 at 01:50:23PM +0200, Philipp Stanner wrote:
-> pci_intx() is one of the functions that have "hybrid mode" (i.e.,
-> sometimes managed, sometimes not). Providing a separate pcim_intx()
-> function with its own device resource and cleanup callback allows for
-> removing further large parts of the legacy PCI devres implementation.
+Hi Daniel,
+
+On 5/30/24 04:13, Daniel Golle wrote:
+> Let block partitions to be represented by a firmware node and hence
+> allow them to being referenced e.g. for use with blk-nvmem.
 > 
-> As in the region-request-functions, pci_intx() has to call into its
-> managed counterpart for backwards compatibility.
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+>   block/partitions/core.c | 41 +++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 41 insertions(+)
 > 
-> As pci_intx() is an outdated function, pcim_intx() shall not be made
-> visible to drivers via a public API.
+> diff --git a/block/partitions/core.c b/block/partitions/core.c
+> index ab76e64f0f6c..93d109409905 100644
+> --- a/block/partitions/core.c
+> +++ b/block/partitions/core.c
+> @@ -10,6 +10,8 @@
+>   #include <linux/ctype.h>
+>   #include <linux/vmalloc.h>
+>   #include <linux/raid/detect.h>
+> +#include <linux/property.h>
+> +
+>   #include "check.h"
+>   
+>   static int (*const check_part[])(struct parsed_partitions *) = {
+> @@ -281,6 +283,43 @@ static ssize_t whole_disk_show(struct device *dev,
+>   }
+>   static const DEVICE_ATTR(whole_disk, 0444, whole_disk_show, NULL);
+>   
+> +static struct fwnode_handle *find_partition_fwnode(struct block_device *bdev)
+> +{
+> +	struct fwnode_handle *fw_parts, *fw_part;
+> +	struct device *ddev = disk_to_dev(bdev->bd_disk);
+> +	const char *partname, *uuid;
+> +	u32 partno;
+> +
+> +	fw_parts = device_get_named_child_node(ddev, "partitions");
+> +	if (!fw_parts)
+> +		fw_parts = device_get_named_child_node(ddev->parent, "partitions");
 
-What makes pci_intx() outdated?  If it's outdated, we should mention
-why and what the 30+ callers (including a couple in drivers/pci/)
-should use instead.
+Could you please explain why you try to get the node from the device and 
+the parent when it is not available? I think this should go into the 
+commit description.
 
-Bjorn
+> +
+> +	if (!fw_parts)
+> +		return NULL;
+> +
+> +	fwnode_for_each_child_node(fw_parts, fw_part) {
+> +		if (!fwnode_property_read_string(fw_part, "uuid", &uuid) &&
+> +		    (!bdev->bd_meta_info || strncmp(uuid,
+> +						    bdev->bd_meta_info->uuid,
+> +						    PARTITION_META_INFO_UUIDLTH)))
+
+I think you should check that the uuid provided in the device tree is 
+not longer than PARTITION_META_INFO_UUIDLTH. Same for the volume name.
+
+> +			continue;
+> +
+> +		if (!fwnode_property_read_string(fw_part, "partname", &partname) &&
+> +		    (!bdev->bd_meta_info || strncmp(partname,
+> +						    bdev->bd_meta_info->volname,
+> +						    PARTITION_META_INFO_VOLNAMELTH)))
+> +			continue;
+> +
+> +		if (!fwnode_property_read_u32(fw_part, "partno", &partno) &&
+> +		    bdev_partno(bdev) != partno)
+> +			continue;
+> +
+> +		return fw_part;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+>   /*
+>    * Must be called either with open_mutex held, before a disk can be opened or
+>    * after all disk users are gone.
+> @@ -355,6 +394,8 @@ static struct block_device *add_partition(struct gendisk *disk, int partno,
+>   			goto out_put;
+>   	}
+>   
+> +	device_set_node(pdev, find_partition_fwnode(bdev));
+> +
+>   	/* delay uevent until 'holders' subdir is created */
+>   	dev_set_uevent_suppress(pdev, 1);
+>   	err = device_add(pdev);
+
+Hauke
+
 
