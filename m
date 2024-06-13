@@ -1,85 +1,81 @@
-Return-Path: <linux-kernel+bounces-213641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3268A90783A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:24:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0A790783D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6139282F31
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:24:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 164A1B23904
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86964146A71;
-	Thu, 13 Jun 2024 16:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4DC1487D8;
+	Thu, 13 Jun 2024 16:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZVdLj6I"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l6iF9Mjl"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BE41494CD;
-	Thu, 13 Jun 2024 16:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F0C12FB0B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718295854; cv=none; b=T72lwmaWEsAD/P/HlTqEXiUkupuCki6OThn0z+XItil3wc1VF8Xbhrr25YEJWifr2FsYuRm6mza2TVTQKjWrhEZbpkWK/cBKNVDwN5/r+vAfShYHXNT/2DD3GfG62fyqF4tZssC01V/fj4tmlPq9me8SfS1IMZzdLyd4KKY6lyI=
+	t=1718295890; cv=none; b=g/hlUSbM8Ph//FiHcbGJx2xe++JGrBtEGbjYfotY/y7ciLFwSor9Uxh+KtaY579x4l8yMuBWJcSZmw3qXnZKuszkbHhw5rALfpIpd+JUCrGd/l2fFfYtVbsVi5zjv7lCJ+DdHESRmphnWUPu6bla+dlsNnj8j+lzWD/DH34++9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718295854; c=relaxed/simple;
-	bh=ZMO54sEj6G7+dnyZmApzdzks0Br8TpFhp9WbA1x5IPA=;
+	s=arc-20240116; t=1718295890; c=relaxed/simple;
+	bh=dBw9nOUl9fF7SB1r66qOP+3MBsu7aeGgqc4RXD6dJOw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=euHEoexNhH6CsEtcJGjNTTCzfy8ZwPxqoNaj7pvozuaIhfEqew9RsGwUTFaxro7Efk7+1iQbg9Okfw9URnF/CtRICo2FsQAjBna/+aldp4/AgfMOcHv6UhKv5Behk8P9ahXwxOXyZh70IcshbZ2SO4xJ0G++J3N1KYivvqEQayU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZVdLj6I; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f4c7b022f8so11816525ad.1;
-        Thu, 13 Jun 2024 09:24:13 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pPYbAQ0UCufwJU2Mtsqqoy+ugdEhgAKAfUW1VzGhzMPYRJA4kpLcCM9H4CNsjGvKidYdiclZ5F85UivpCb38CsRlMYeIITQNwNLCX0Iwr4s43oH3keuHmSR4F79uvZCNRKhWK1O/X79fxnWxEqv6TQo87leGwpxkdsnoU7cbV1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l6iF9Mjl; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35f1bc63981so1486363f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:24:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718295853; x=1718900653; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718295887; x=1718900687; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jtbozP1bj1RT/YO+b6J5IfcQJsTgR/wm/yUx2H9BANo=;
-        b=FZVdLj6IMG9bQs7sjZnutLDt8p9W+WrSFL6DbnRsvZhW5SZ6ggZe4uM9GpSxFH5ajn
-         Gg7yNYBpLysmWC36WMU1ELjBGOJo1FsKTlBJFMzOFvFRwFTzsaBatidhMOWBvIKGeMbJ
-         usHfX8vCoy8E2dCNAhNhq8Rr5ujP1w9Yei/C8blswkk3ps5opiRxVG3xcCA+MYDYNQUB
-         Nmodoj0Pk3adfvDUwYFlo+YtBuwm+f6NfiB+mH9ggh2wMeazaBBGirBQE8rGlmVGdjPz
-         n2JWkv5f55XrHM7h8LRPkdvGsMBQmZduBNtKbMcDUIoep3Gd8B/iDZkvwJaHEMxrbLT9
-         bcXw==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xm9fvtFl5M9ClXulLO7X4Jg5vRT4Wu2KsAzkRuWsuxo=;
+        b=l6iF9MjloMNMalTqu4bJrNkh63RZPCb1R5TIjRuPBlINZJSC7upsx+9qirtNl7sSv5
+         O8vTP9L4hmvWcVV7UA/pMK9brbYTPMnPV4PLyqKxfMvwDXsiyO4mcxcBzkbobN8JO/Sh
+         a+QvisXIhJgw7O4ArHisT22shqw7OQuzTSz0krJJsDRvEBXSjM9xt8fSC7OxZ6EFwNav
+         hc8tpJH6YnwquW09IddFRLQJ2fE0DQcXW6BUrbc7dpy0CxyT/JJsC2Zav3bMus3jJtGD
+         DLOBx4ISE/bu05Dh5e66vQV7jdb+eA+w5jMg9wosvc87ZPO64OP7FQbzQ2XluXkeuj4u
+         fNcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718295853; x=1718900653;
+        d=1e100.net; s=20230601; t=1718295887; x=1718900687;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jtbozP1bj1RT/YO+b6J5IfcQJsTgR/wm/yUx2H9BANo=;
-        b=LdLjEwwBId7lLKe3msliuQXYOXPr9FQ6s0htxmVBO4zYOJ7AZpMcVArvRKoVWo+9uE
-         izV0pdHkpQjrAnQnVoMD+oh986CT0n5TQhETWnVI6Vwns1datQDqkEbz7V3dDotCK8jh
-         Z4JZ5FoighzikEy9pd3a43dxlRVLwUpuAgz8pV+LjQuf2eYfjt+5AVgd4vU6kvLWUzKL
-         fukjXlr9e94ktQ//PE9HLaWqluHzVgFeX8GBN5mLUxpbgqB7d2U2e0+0bsWD9WQ53fQG
-         FDygWjwzO8Dhuv6LFD4Dwen9gGGvhwrwzmbCeE1eG0kTrV8O3YfTej/OCZ/LIEcP4Wpw
-         J9XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX79GXQM+o4ZuYqSeavqAIp0WP/uGgboqoyMJ+553uY8Ls0dGw19lqXhMs9RznCuLh49bBV3ctCNA5hagBfLaqyxm/Ap0jrHfF77dXi
-X-Gm-Message-State: AOJu0Ywetf7kRF0dSA15w718YkqdK+pP+fLKpSLfpKyWPs/lwrenwlHg
-	UNEQbgB6mgFWY+6vA2h3DhOyfpe+EiAtwqmuWbSPeoP75GK+FRKN2AX+tA==
-X-Google-Smtp-Source: AGHT+IFwXiHO/szr9rGN1ZzQ5d1mtO9VMwLAtzaq4KCnnCjvlmgsVWLYkjqN8iqF2OT683d0Mi5l0g==
-X-Received: by 2002:a17:902:b587:b0:1f7:2051:c816 with SMTP id d9443c01a7336-1f8627ea802mr1470735ad.35.1718295852641;
-        Thu, 13 Jun 2024 09:24:12 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e55e5fsm15906145ad.59.2024.06.13.09.24.11
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xm9fvtFl5M9ClXulLO7X4Jg5vRT4Wu2KsAzkRuWsuxo=;
+        b=K05kSVlefD7+RpZJn13aJvsmaOfqXQ4amkPTO4l/IKr7yvgHEe5gP0OPRdFZ7b21Fg
+         gLjpfJBND0+xf3g5f32eePwG9eP7ZIetjzlEumwwRRK6DVAjtA3waj6I+ngqMdhUrfI5
+         EWfFOhsS8hQ8JLqpE2w/n7F5yyjG7RLzwHnLx0tozDxdJ8OI975TF41/lcoml7cC04SJ
+         uERshvFw02lbGwiJG3mztwx2nYsWUzgcnCQ1IhxH5VOUV+UiQL9ySFZtmJlwLlJNYdG8
+         77INRih3pjoYPh1dr1bXqMCj3/yatyGZFzofup3U+Qc2/DjvCG1IuHIqC7/8FkMazFyL
+         ++LA==
+X-Forwarded-Encrypted: i=1; AJvYcCUd93CseFMZE7h9tfmgkTXKue2cBugw8ZufYOLvtjKTvihyEqKbNI6ewcKG/j2d/64Qul4yMOWXxkREQu9HAGbBTbTZrDYwhgGZ9dCE
+X-Gm-Message-State: AOJu0YzzczoG0gLkb9nLVWxEv468Vyqf7wG6FAWesH6daEdfdRJep/Df
+	sLjl8BrcFmy0Z6WBcN+H7ZmUwqSUjhLtFHZdXpucOTkGnWT5Jp/beJnIss9SpKU=
+X-Google-Smtp-Source: AGHT+IGBrxpjL2E0pgPBIEJnLIDsTzjWGoMfXeByIRcty/Uu7p3y+ZFY9bPpjqA6DX/92MrGE37OOQ==
+X-Received: by 2002:adf:f88c:0:b0:360:7386:1a49 with SMTP id ffacd0b85a97d-36073861df9mr2356972f8f.32.1718295887142;
+        Thu, 13 Jun 2024 09:24:47 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750ad20bsm2130332f8f.54.2024.06.13.09.24.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 09:24:11 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 13 Jun 2024 09:24:09 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 4.19 000/213] 4.19.316-rc1 review
-Message-ID: <5adf6fda-7936-4a45-8372-dde37f993afb@roeck-us.net>
-References: <20240613113227.969123070@linuxfoundation.org>
+        Thu, 13 Jun 2024 09:24:46 -0700 (PDT)
+Date: Thu, 13 Jun 2024 17:24:45 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Patrick Gansterer <paroga@paroga.com>, Lee Jones <lee@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] backlight: lm3509_bl: Fix NULL vs IS_ERR() check in
+ register() function
+Message-ID: <20240613162445.GA24098@aspen.lan>
+References: <187b5bc5-a010-46c2-8ead-980df9efae79@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,28 +84,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613113227.969123070@linuxfoundation.org>
+In-Reply-To: <187b5bc5-a010-46c2-8ead-980df9efae79@moroto.mountain>
 
-On Thu, Jun 13, 2024 at 01:30:48PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.316 release.
-> There are 213 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
-> Anything received after that time might be too late.
+On Thu, Jun 06, 2024 at 04:10:23PM +0300, Dan Carpenter wrote:
+> The devm_backlight_device_register() doesn't return NULL, it returns
+> error pointers.  Update the error checking to match.
 >
+> Fixes: b72755f5b577 ("backlight: Add new lm3509 backlight driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-$ git grep remove_new
-drivers/hsi/controllers/omap_ssi_core.c:        .remove_new = ssi_remove,
-drivers/hsi/controllers/omap_ssi_port.c:        .remove_new = ssi_port_remove,
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-There is no remove_new callback in v4.19.y, so this results in
 
-drivers/hsi/controllers/omap_ssi_core.c:653:3: error:
-      field designator 'remove_new' does not refer to any field in type
-      'struct platform_driver'
-  653 |         .remove_new = ssi_remove,
-
-Guenter
+Daniel.
 
