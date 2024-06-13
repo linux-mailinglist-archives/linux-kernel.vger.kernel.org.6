@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-213116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A136906C2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:47:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA13906C2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F7C21C20988
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:47:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C782814BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE331459E9;
-	Thu, 13 Jun 2024 11:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70476145A06;
+	Thu, 13 Jun 2024 11:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2r2oqPX"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuKQCQsR"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D12613D624;
-	Thu, 13 Jun 2024 11:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD5D13D512;
+	Thu, 13 Jun 2024 11:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718279189; cv=none; b=MgQEHSCh4zf4kGILU4EisJGaOfDEFLaOfJq2r0OLessAfV7xFMFFePHfjKt8s5Y8vjNQonw5Lcz3fM9NeoHob4UJKlo440qZuAT0BQF9XiEUlQ6vu2jvucVDGeWEp/30JEoq2fQ0O2ZHqqRHpAdNQHL8fLXCSjIOgx2Atu5HPLk=
+	t=1718279189; cv=none; b=M3ep9ftr6F7sS/RQWQDyn4p7uapKZxTIqGY3LGobpH2r6Jk+buF/uk9wKUXLCiVEsiFknlaaeLQxap2NlQ8GlFdP/xcT4tW6KWh4/reSBkCoXLkQb3ObUlAxa0H0goSgJhoRSK4DjM6uifvLv/t9BJ6yz6Pb3sq1so2IjPhhVvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718279189; c=relaxed/simple;
-	bh=XL5bLefMESkGprNixyB/mXYAJulY/6UDjT3qRR8obhU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a+e1DKL1GmxZ0TfVyD8lWuMTJxDY2ccmvobTcrWxqX9cFVdpm4c2GNbKrZSlci2o8AjzQtyBlzoWoRzmqyaKnDGLrOCdXYTVwaLQYXuXwKeWCr1pc1nW3q2AlHX/4fKPXV++Bz05kIzXkRTEeeNv84aL9np3XODru5eIDXI3Bf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2r2oqPX; arc=none smtp.client-ip=209.85.218.42
+	bh=IDbexf2eZfmUwoSFLiwp25cs6cJ31ZbydyJsNFer6vM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=apEyVAgbCLrdS1uqtCLytY2GSRISLmgLA8qojxsSkay6rAE4mVwzlNIofz+nuJbbN1D4ueqUKjde/WQj7nl59IoiHqPBtawvTrs55qEdWOU3f2FCsJKrBDm89Pz+iAorWb0l7hnwECW0rqTMmM+i5pTPTzX9M2V2ohUHuUVI8FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuKQCQsR; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6ef8bf500dso106517466b.0;
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6e43dad8ecso167259366b.1;
         Thu, 13 Jun 2024 04:46:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1718279186; x=1718883986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4vYosH7aQ7gj462DMyx1t1RhUFmgYdVe9MWybhGXFWA=;
-        b=k2r2oqPXRaxpqdkdedphQPkGZXZvuHHdjMDPggVH+ls3Yu64gByKM4D1ZjFJb/PUwr
-         silYrWaORbDQjEg3Nc0YOqbyDZGzV2KYFBtHfQJgr94vgLg+gwZKxCeE6Ce12d3PPbEz
-         yEZ2Ryg0Zf4WSzzN812prE+fUrxlEnQSB/tRrwDf1mFCz/Kx+Zxy+xYx+Ffgib9xunGC
-         nIg5piD1R23GQUN4mz9OCRAEboqKCWa33gn0vmoQgyRj85aLBMEbTySUHJ3PvGdqEdJu
-         R+FMXVuq0BkTiWxVdGtKGMuzlWX7w4qCsyqQrLrEQeX9BHyuxncPiYplFX4XVNyTJ5si
-         FfqA==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dyyJwIzTGdI7/cKBl1ZpQe515OjfKK1XStdbGSx2zjg=;
+        b=RuKQCQsR5AReDVCdbLjgkHCUKscLQ+rh+DnQkGLsSJyx0ePRScIq4QJat7GO6aflum
+         znJ9jThvvy6GZH0o+bNLPe/9zBvdaUwzRsDfaWSdvrR8czmUdNHI7fXqL5L742y1phbs
+         p1Q1f9UuKicpwJb3kShh86gGvuYA77y7tHT+cDhiD0V837GKpWvV/jmRrzGW8F97e6lw
+         4IXVuFJNXPADvE5I2wiCC0XUNG8Wt00S4KZb9uk33exEEo/mzJfri9aBHc7F05FTvavb
+         alpSKzDE3B8Sc4x/j4q4a0S91I0InoJ7q4p8q2uSFj1bBJF9tj+2nj/f8yPhdh7qlZw5
+         8NeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718279186; x=1718883986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4vYosH7aQ7gj462DMyx1t1RhUFmgYdVe9MWybhGXFWA=;
-        b=Urigf9EU0pE9WkJyimR+PnZtiMxBfyId7IXn4OmhEiMV8U5DNlwcK/FPkPWeAc/2s8
-         uAa/ILgCMBoGP3b7RR7mxQ+kNAa5wMqsYyI3fZv3t3zkNRFlAMAoEz9B2jXJ6Ix7+X88
-         WCIw8tQ9dqQzOBFS861pIKcDx53j17O6WyduLU8uk98gH1MxKLBH/GOXcqBsUAbBEBiS
-         tz0WLLsX6Oyd/9HRUWJ1VPNR9YyCGl6+qSPRWe4MEFGyqUW6Ysb+BJy/YTvl4TDT35wv
-         w2c6octZvQyoWPPEoE/FBDMC58yVUeWaM6iQE2MlLrfAlLCp9FI3B/F3RxF9hks6WDcm
-         vp9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWXOR4xGKx9Jg07N707aTdMlV/s6aUw7VOJ174vQPmZyw79eZSgTCf/35o5M8GOf2ckVmcynoUlhxW7Ihj/gqnvpBoper6vPkTi3GUa+nvmYSxRV9jgfygeIWuJajXCZAStgWwV3/j+Id8YUAH6f5ilY+OCvcrbzAL81sKSvlpx
-X-Gm-Message-State: AOJu0YyEhrft+uNnhcjs3AaW1q0W6H9s4WBjOty1nQXPInJEMWBgGheA
-	LwLBuflVVws2ubGfJmo52NVXtoGzrWbQ8t1UN2EdtrIIWMnVsWf7UYtnIitbQfCakz82Au41e7c
-	MmcDk2BmK8Pw75ZNbQIicYD4uk10=
-X-Google-Smtp-Source: AGHT+IF5r80EbGny6WBJIFoR4Q7nNI93cgnqLPNyWt21N0qDvZSFHgQwtrvWP/eyDmYl+2kXuJgiGRi4UlT5k9PxIUI=
-X-Received: by 2002:a17:906:d8ae:b0:a6f:4be5:a65a with SMTP id
- a640c23a62f3a-a6f4be5a7b6mr279101366b.45.1718279185681; Thu, 13 Jun 2024
- 04:46:25 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dyyJwIzTGdI7/cKBl1ZpQe515OjfKK1XStdbGSx2zjg=;
+        b=mXtwp4GaWSv/dAhNFF3No4bm0DUkk8dGXUmNAeiZvyCjl0jCk6KxsDe1cFWH/gZiR6
+         r6NhjdwYvuv4IApXxLYDAJt0A/OPfBosu75qeQQYIDvrx8o4vFiXIOdugcS5+yOZ+Pbn
+         9RUy28lvVcXbRz3P0TLTQYE3CRQRX+v8i33XdBJfp/8895ajIhiTxCh8AeB7p+Xj/USv
+         6B8Gn8aZswAiEH4+f0ohywB7A8hjbFHdxmt+ElgJKKfkwdRfpkthLtUt0PmqxfPJutRI
+         E0vMkY0AiqRCPD/+ztiZmKVCK6KXK9MOiIuBPKzh7jMHxYu492Pi+1CQa41gaEVFK9dI
+         XPFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrXlWytVTRWGvs6EX2Fqg03TfugV79HBK8tMDjTEC57kXCIwHQdY0J8/wJF4wFBiWymRzTeY3ilfaBORtdWYWzw0tfsy8obXDGEpKpwkxHGhuu+i3Slu70w4W06jd1Hy2U0l9v+K72Wv3xydpgrhtXhtmjWOxssttQiUERpVvRhA==
+X-Gm-Message-State: AOJu0YyXaWzwYN8O5MahthgKvBGjUBmL/Hn031vm69jOQbH8MFqBizJV
+	+Tg63oe8+AWMmFMGiugzh+C8UzXJlwMMOet922Xfh310OKoo0fGt
+X-Google-Smtp-Source: AGHT+IGTrcMO1Z2soAspslbJyyJxA7M8r8c8TUltY/hfEEHSRlZqeuP8QinLuR7qrTKZJfOegaHRCA==
+X-Received: by 2002:a17:907:6d11:b0:a6f:3b3b:b7cb with SMTP id a640c23a62f3a-a6f523eae18mr224121666b.7.1718279185893;
+        Thu, 13 Jun 2024 04:46:25 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cbbb5576csm165439a12.89.2024.06.13.04.46.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 04:46:25 -0700 (PDT)
+Date: Thu, 13 Jun 2024 14:46:22 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
+	f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 01/12] dt-bindings: net: dsa: lantiq,gswip:
+ convert to YAML schema
+Message-ID: <20240613114622.hajwrbcrzm3mtg6f@skbuf>
+References: <20240611135434.3180973-1-ms@dev.tdt.de>
+ <20240611135434.3180973-1-ms@dev.tdt.de>
+ <20240611135434.3180973-2-ms@dev.tdt.de>
+ <20240611135434.3180973-2-ms@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240601092646.52139-1-joswang1221@gmail.com> <20240612153922.2531-1-joswang1221@gmail.com>
- <2024061203-good-sneeze-f118@gregkh>
-In-Reply-To: <2024061203-good-sneeze-f118@gregkh>
-From: joswang <joswang1221@gmail.com>
-Date: Thu, 13 Jun 2024 19:46:14 +0800
-Message-ID: <CAMtoTm0NWV_1sGNzpULAEH6qAzQgKT_xWz7oPaLrKeu49r2RzA@mail.gmail.com>
-Subject: Re: [PATCH v4, 3/3] usb: dwc3: core: Workaround for CSR read timeout
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Jos Wang <joswang@lenovo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611135434.3180973-2-ms@dev.tdt.de>
+ <20240611135434.3180973-2-ms@dev.tdt.de>
 
-On Thu, Jun 13, 2024 at 1:04=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Wed, Jun 12, 2024 at 11:39:22PM +0800, joswang wrote:
-> > From: Jos Wang <joswang@lenovo.com>
-> >
-> > This is a workaround for STAR 4846132, which only affects
-> > DWC_usb31 version2.00a operating in host mode.
-> >
-> > There is a problem in DWC_usb31 version 2.00a operating
-> > in host mode that would cause a CSR read timeout When CSR
-> > read coincides with RAM Clock Gating Entry. By disable
-> > Clock Gating, sacrificing power consumption for normal
-> > operation.
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Jos Wang <joswang@lenovo.com>
-> > ---
-> > v1 -> v2:
-> > - add "dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk" patch,
-> >   this patch does not make any changes
-> > v2 -> v3:
-> > - code refactor
-> > - modify comment, add STAR number, workaround applied in host mode
-> > - modify commit message, add STAR number, workaround applied in host mo=
-de
-> > - modify Author Jos Wang
-> > v3 -> v4:
-> > - modify commit message, add Cc: stable@vger.kernel.org
->
-> This thread is crazy, look at:
->         https://lore.kernel.org/all/20240612153922.2531-1-joswang1221@gma=
-il.com/
-> for how it looks.  How do I pick out the proper patches to review/apply
-> there at all?  What would you do if you were in my position except just
-> delete the whole thing?
->
-> Just properly submit new versions of patches (hint, without the ','), as
-> the documentation file says to, as new threads each time, with all
-> commits, and all should be fine.
->
-> We even have tools that can do this for you semi-automatically, why not
-> use them?
->
-> thanks,
->
-> greg k-h
+On Tue, Jun 11, 2024 at 03:54:23PM +0200, Martin Schiller wrote:
+> Convert the lantiq,gswip bindings to YAML format.
+> 
+> Also add this new file to the MAINTAINERS file.
+> 
+> Furthermore, the CPU port has to specify a phy-mode and either a phy or
+> a fixed-link. Since GSWIP is connected using a SoC internal protocol
+> there's no PHY involved. Add phy-mode = "internal" and a fixed-link to
+> the example code to describe the communication between the PMAC
+> (Ethernet controller) and GSWIP switch.
+> 
+> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+> ---
 
-We apologize for any inconvenience this may cause.
-The following incorrect operation caused the problem you mentioned:
-git send-email --in-reply-to command sends the new version patch
-git format-patch --subject-prefix=3D'PATCH v3
-
-Should I resend the v5 patch now?
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
