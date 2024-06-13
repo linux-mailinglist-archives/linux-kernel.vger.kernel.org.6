@@ -1,395 +1,238 @@
-Return-Path: <linux-kernel+bounces-213056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B24906A6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:50:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7043E906A71
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A113D1F23362
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:50:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BB25281846
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A218C143739;
-	Thu, 13 Jun 2024 10:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C85813DB99;
+	Thu, 13 Jun 2024 10:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BvXnKsvm"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Suh0MZp8"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5596613D534
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B433142631;
+	Thu, 13 Jun 2024 10:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718275790; cv=none; b=WJuOw4MXf+KLHbsgryRsAjhcW1bQfgQJOxXTpurxvvHLD/LBF1OPrBxZxQRcrakP+vpYdPP746ich0MSUZoSzuTY7LC4tf3NaXdcdcoOgW5bms4ry4uC1YPJoAYKB1xdb0G6FdMYwpFHQ7Acb1ALuzOdQH7rFIsVyFEL4JWoT4A=
+	t=1718275848; cv=none; b=V1k6sAotTYnRP2i7c8x98m1nnkSI+UextxQIm/oSp6kIg7gYC3Du8OV/sCrOgrfyjriTAkFt+fv9qKl6JBYtvDBCw3rpM3rDBSWlTSkrfz8+qlhjD7iIZz2KvUmxQvlHb04GS6dYDT1GBMO4oK4rEXyz6i1Kliq377oaWHdKpRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718275790; c=relaxed/simple;
-	bh=Q5qXrkmMMKvYiQVQS+98K9kxshLYVF15IXhA4UaxwHU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SGSOHnD16N0wmWsMvYeHXLD/uNvvi95RPz0eHtDl2hDy+1khnLoYG5XYwv2lcVAISsuUDlXSN12ujoHM213Y4XEBEI9OS6oXyBr7QDTP8RRN3mBTgus9dn6rPr1vQ09UXJgZl9Yihl+/7PQVTmuioZM4S4Dd1YdUtBJiJCerkYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BvXnKsvm; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebd95f136bso9157701fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 03:49:48 -0700 (PDT)
+	s=arc-20240116; t=1718275848; c=relaxed/simple;
+	bh=5PRbk3AfRxbmJsHY0erLSVKn/uDgUayeXpe4gOIVmlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oIvGN64D/Mo6K1X2HtTjk6vf2BwmLBy3CSZrIespwsZKsZYkgAP5n60Zr433haHwYXBDc8NH/yKKZRLIqRGBY21n7DP2je1cLEzyAR8aSJVJYwRd+WqIKYkO3LyQGrDunFky0vT2TBJe3qXS6OqJeShwfr1c1I15g3OMROg7N4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Suh0MZp8; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52c89d6b4adso863037e87.3;
+        Thu, 13 Jun 2024 03:50:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718275786; x=1718880586; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+EFZ7aGP5K8ollcI2eEzGJdE98yax1we/UmwmsJYk5M=;
-        b=BvXnKsvmxlqNnozhhu8nxzIylyde9jxabZGCT5hdLQhuw+beNGMXzWGpHskh8R+k8y
-         S0M9JzO8epb2libnRTjDFk4dfdFEJlnG2lJ+IItrXM2iWncM2lz4CvkpJGJ6UPYVe7LN
-         a5h5l6gkStZB8vCxj/K6EQJApIoE5zB+9ROgGV0YpRgW8vweP5CYnNRsP2uCWtn44wPC
-         suVFLbCmC4Cya19h8JwFTyOhlUBXBf09rnC/ZlQCdI2dKZ7a0wbabypBlts9jUuVrGSp
-         dt5piVqfcwylq728I1MoWSRdVjF2guZl6pr0mnuVe18hMezmX1BAonV9fQq5zanssWcV
-         6K+Q==
+        d=gmail.com; s=20230601; t=1718275844; x=1718880644; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fUOHZLqPwwXewI3YyWEmg6L7w15o022jE/kig0+VapA=;
+        b=Suh0MZp8YF4qHrKXVTrCOdV8n9EPWY7fM2h4RzPB/Gckxu/0f9/RsgSs6k/CXA0Jyb
+         sFX+x3Wc/EYc9qMl1VB3oN6GuFtflBVzhPnBoZIBrGLeFwL0JruSqVN2SyVL0boKWPws
+         fvHoEAmbsepM2PmVOGE2P83PPBvvuxpZnA85++heeXiPztUsyDokSmLbCPzAqeZkyCX6
+         ACtFplHHb38yA413WjLGPWWaN0gBLQnxDJ5FjgoMDHzPzpA+e5EvaWxvanIh7x0W6FrQ
+         GVlLE17z+CByZu4+W9gMnziA6Trnp/uWaK+e2KTWJePI4TPdfwP4udlXU9of6YhRa8Ev
+         WWdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718275786; x=1718880586;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+EFZ7aGP5K8ollcI2eEzGJdE98yax1we/UmwmsJYk5M=;
-        b=EepWmwC8yzJZ183uHRZUqJ6DUqOvcnCjOFBLrQ0fS4jDxA/5Nql35KJFO+Hx6YYWgM
-         uL03BaSAbW3BmcmDdM+Y4Nv9dIq7ZtjslGVTQmc9eUmUbutCEt62gOwoyDtb7i2tRv/e
-         cM6DkvU3wHTQ8RTACznC20FbJDS5Z9VF6KSwy4XdeOSoyMeWxv4Q+SCO38zK121myF+5
-         RZxK0eUTjYrnHOedzixlNEyE6k0LVlZgeTO2eEGNOmdTTbvPi1qMCRt8n68dfZGdJ2Ie
-         9Y/DmeBTDjHI6H/DWFT4iwIg5wZOuKVHtINbO0gLpTwn85e7ghAntGUMOKa78UbLgrb1
-         Yh2g==
-X-Forwarded-Encrypted: i=1; AJvYcCW2gy/Q2zBe3qTw2gFpP7CIC1st+YKkg+oXDRwmL3NuSKtjIMhpkwBoNQT2AGcGe3c4DkZpBa61ZCaETuTdnTGS7MDp2/1cxCrhvAJU
-X-Gm-Message-State: AOJu0YwtHCWQwKAA7jD6fVtab9emlYG771b34W4t1OGzEUhqYG3RjQ0d
-	bOk7hZJagnOFdjS2RxK7z3JU3hkIm2qQc6OMK73v4MOmKmBgZLWO4ETNCgfkht0=
-X-Google-Smtp-Source: AGHT+IEo0/iwZawg1zUJqiJfhp3mWJ6WuqCeA7on9TRDsYPTsORcLXQl+8T8rl/FlvDttieQdP7p6A==
-X-Received: by 2002:a2e:be90:0:b0:2e9:841d:dacb with SMTP id 38308e7fff4ca-2ebfca55763mr31590221fa.40.1718275786409;
-        Thu, 13 Jun 2024 03:49:46 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72cdf2bsm762618a12.17.2024.06.13.03.49.44
+        d=1e100.net; s=20230601; t=1718275844; x=1718880644;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fUOHZLqPwwXewI3YyWEmg6L7w15o022jE/kig0+VapA=;
+        b=VQDoaYVhzUITmCDZMPKZXb2xpxPMaZb2+yUxf29VdsOYzikXbxb7YySVxb85cFMfXf
+         Yz6d3P1DKa5otS3/UIKwKEJB5cyzoPR7UGN/85OcdlpB1Gs1bPs8qQKiW7wyp2l1PT/C
+         I5p/0qstw6Xw2GQ8klcIRHqYr3YN/Hk7Erq329C3HA0XeKH/725HPeapi+w/zL2ZqpUT
+         Zg7Md7GihogsKDLGZrLQkrHv9ShOlTWxTVR+ORPzjQkoi20Lus8ulve1HMNEk0TAoXay
+         Q8yw5ApyqY2BwRrgy6MYNzdZ5CHpFzUNuGJtrWamlaB7mjM4cqYBCkYc3MUbDI2qeXrh
+         R4dw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFHxWFtPh4LbYJ0cF81yKk4oVD07u4cmm1kqAX9/flP+Bv9dQDwcPmaPV/XnZZDz59/EXBKp+dZpSITch+1BN3zE/6Lb3vwMFhJGquNmLxjFhRn/lcBXJ1kGlHGXmCV0ZbUBZKWhSq3L4Kaw==
+X-Gm-Message-State: AOJu0Yxw4tSWyDpxFwWwjevQfnkDmvWQI6+g6irwFyOgmd0uJAPdMepQ
+	HHwKgEy62jD9JgTG9uR0pAfwkX1PobY+wZmvEpSysFOl9eiIa9qR
+X-Google-Smtp-Source: AGHT+IH93LYEQhVEqIb57xnnF/55QOQGdtPtYnsX4yJPnd4maXAVHK2AIf1PLyUJrGR3305p67PJKA==
+X-Received: by 2002:a05:6512:34cd:b0:52c:9c33:986b with SMTP id 2adb3069b0e04-52c9c339b6dmr2319972e87.8.1718275843953;
+        Thu, 13 Jun 2024 03:50:43 -0700 (PDT)
+Received: from f (cst-prg-88-61.cust.vodafone.cz. [46.135.88.61])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422869d4f2esm57976275e9.0.2024.06.13.03.50.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 03:49:44 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Thu, 13 Jun 2024 11:49:33 +0100
-Subject: [PATCH v4 3/3] ASoC: codec: lpass-rx-macro: add support for 2.5
- codec version
+        Thu, 13 Jun 2024 03:50:43 -0700 (PDT)
+Date: Thu, 13 Jun 2024 12:50:35 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
+Message-ID: <ly3nx2r4cbnvhlwcficugq7zj62xij54mzuyjowcwaucbvkwns@nuxskfzj6lvc>
+References: <20240606140515.216424-1-mjguzik@gmail.com>
+ <ZmJqyrgPXXjY2Iem@dread.disaster.area>
+ <bujynmx7n32tzl2xro7vz6zddt5p7lf5ultnaljaz2p2ler64c@acr7jih3wad7>
+ <ZmgkLHa6LoV8yzab@dread.disaster.area>
+ <20240611112846.qesh7qhhuk3qp4dy@quack3>
+ <ZmjJCpWKFNZC2YAQ@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240612-lpass-codec-v25-v4-3-f63d3676dbc4@linaro.org>
-References: <20240612-lpass-codec-v25-v4-0-f63d3676dbc4@linaro.org>
-In-Reply-To: <20240612-lpass-codec-v25-v4-0-f63d3676dbc4@linaro.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Banajit Goswami <bgoswami@quicinc.com>
-Cc: neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, 
- krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11767;
- i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
- bh=Q5qXrkmMMKvYiQVQS+98K9kxshLYVF15IXhA4UaxwHU=;
- b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmas7E+sPjEpcG5qIMu8TlnucpB+aedEuBBHIpQ
- H1WTRgCbkqJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZmrOxAAKCRB6of1ZxzRV
- N13aB/9xtAjRcCvZTtQqy6qrfVwfEmp4ZuM9k21caEBhHFoSfkfqYGMAz29tBD5GuwEdtmB0lqy
- F8fbznZOFFq8hl62vogaUgRispeVx3slVwN6qfy4tVRv+HmzHSkwFAM8lHMy9a1E27KgK1oqYVI
- XTkbb940KWQZFufbljl76vFqID5CcrjlxBDHbxPNzUJfJO4286MSq+cHeT2xFh+myOtXx76sC5V
- ruENdAzVGMPhDlwfrpU7xxOjiyJx07c8wl6D+BGVpv6y/wZ14GMA/hJwzx40LIwxGjP15cqN0eJ
- 7JpgIjIqU2VbLNjRPMaYRIv0yJttmnkFK0tjPbQkAxZzum07
-X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
- fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZmjJCpWKFNZC2YAQ@dread.disaster.area>
 
-LPASS Codec v2.5 has significant changes in the rx register strides.
-Due to this headset playback on SM8550, SM8650, x1e80100 and all SoCs
-after SM8450 have only Left working.
+On Wed, Jun 12, 2024 at 08:00:42AM +1000, Dave Chinner wrote:
+> On Tue, Jun 11, 2024 at 01:28:46PM +0200, Jan Kara wrote:
+> > On Tue 11-06-24 20:17:16, Dave Chinner wrote:
+> > > Your patch, however, just converts *some* of the lookup API
+> > > operations to use RCU. It adds complexity for things like inserts
+> > > which are going to need inode hash locking if the RCU lookup fails,
+> > > anyway.
+> > > 
+> > > Hence your patch optimises the case where the inode is in cache but
+> > > the dentry isn't, but we'll still get massive contention on lookup
+> > > when the RCU lookup on the inode cache and inserts are always going
+> > > to be required.
+> > > 
+> > > IOWs, even RCU lookups are not going to prevent inode hash lock
+> > > contention for parallel cold cache lookups. Hence, with RCU,
+> > > applications are going to see unpredictable contention behaviour
+> > > dependent on the memory footprint of the caches at the time of the
+> > > lookup. Users will have no way of predicting when the behaviour will
+> > > change, let alone have any way of mitigating it. Unpredictable
+> > > variable behaviour is the thing we want to avoid the most with core
+> > > OS caches.
+> > 
+> > I don't believe this is what Mateusz's patches do (but maybe I've terribly
+> > misread them). iget_locked() does:
+> > 
+> > 	spin_lock(&inode_hash_lock);
+> > 	inode = find_inode_fast(...);
+> > 	spin_unlock(&inode_hash_lock);
+> > 	if (inode)
+> > 		we are happy and return
+> > 	inode = alloc_inode(sb);
+> > 	spin_lock(&inode_hash_lock);
+> > 	old = find_inode_fast(...)
+> > 	the rest of insert code
+> > 	spin_unlock(&inode_hash_lock);
+> > 
+> > And Mateusz got rid of the first lock-unlock pair by teaching
+> > find_inode_fast() to *also* operate under RCU. The second lookup &
+> > insertion stays under inode_hash_lock as it is now.
+> 
+> Yes, I understand that. I also understand what that does to
+> performance characteristics when memory pressure causes the working
+> set cache footprint to change. This will result in currently 
+> workloads that hit the fast path falling off the fast path and
+> hitting contention and performing no better than they do today.
+> 
+> Remember, the inode has lock is taken when inode are evicted from
+> memory, too, so contention on the inode hash lock will be much worse
+> when we are cycling inodes through the cache compared to when we are
+> just doing hot cache lookups.
+> 
+> > So his optimization is
+> > orthogonal to your hash bit lock improvements AFAICT.
+> 
+> Not really. RCU for lookups is not necessary when hash-bl is used.
+> The new apis and conditional locking changes needed for RCU to work
+> are not needed with hash-bl. hash-bl scales and performs the same
+> regardless of whether the workload is cache hot or cache-cold.
+> 
+> And the work is almost all done already - it just needs someone with
+> time to polish it for merge.
+> 
+> > Sure his optimization
+> > just ~halves the lock hold time for uncached cases (for cached it
+> > completely eliminates the lock acquisition but I agree these are not that
+> > interesting) so it is not a fundamental scalability improvement but still
+> > it is a nice win for a contended lock AFAICT.
+> 
+> Yes, but my point is that it doesn't get rid of the scalability
+> problem - it just kicks it down the road for small machines and
+> people with big machines will continue to suffer from the global
+> lock contention cycling inodes through the inode cache causes...
+> 
+> That's kinda my point - adding RCU doesn't fix the scalability
+> problem, it simply hides a specific symptom of the problem *in some
+> environments* for *some worklaods*. hash-bl works for everyone,
+> everywhere and for all workloads, doesn't require new APIs or
+> conditional locking changes, and th work is mostly done. Why take a
+> poor solution when the same amount of verification effort would
+> finish off a complete solution?
+> 
+> The hash-bl patchset is out there - I don't have time to finish it,
+> so anyone who has time to work on inode hash lock scalability issues
+> is free to take it and work on it. I may have written it, but I
+> don't care who gets credit for getting it merged. Again: why take
+> a poor solution just because the person who wants the scalability
+> problem fixed won't pick up the almost finished work that has all
+> ready been done?
+> 
 
-This patch adjusts the registers to accomdate 2.5 changes. With this
-fixed now L and R are functional on Headset playback.
+My patch submission explicitly states that it does not fix the
+scalability problem but merely reduces it, so we are in agreement on
+this bit. My primary point being that absent full solutions the
+benefit/effort ratio is pretty good, but people are free to disagree
+with it.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
----
- sound/soc/codecs/lpass-rx-macro.c | 198 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 198 insertions(+)
+This conversation is going in circles, so how about this as a way
+forward:
 
-diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
-index 360c9003a890..d962a9599694 100644
---- a/sound/soc/codecs/lpass-rx-macro.c
-+++ b/sound/soc/codecs/lpass-rx-macro.c
-@@ -262,6 +262,53 @@
- #define CDC_RX_RX2_RX_PATH_MIX_SEC0	(0x0544)
- #define CDC_RX_RX2_RX_PATH_MIX_SEC1	(0x0548)
- #define CDC_RX_RX2_RX_PATH_DSM_CTL	(0x054C)
-+
-+/* LPASS CODEC version 2.5 rx reg offsets */
-+#define CDC_2_5_RX_RX1_RX_PATH_CTL		(0x04c0)
-+#define CDC_2_5_RX_RX1_RX_PATH_CFG0		(0x04c4)
-+#define CDC_2_5_RX_RX1_RX_PATH_CFG1		(0x04c8)
-+#define CDC_2_5_RX_RX1_RX_PATH_CFG2		(0x04cC)
-+#define CDC_2_5_RX_RX1_RX_PATH_CFG3		(0x04d0)
-+#define CDC_2_5_RX_RX1_RX_VOL_CTL		(0x04d4)
-+#define CDC_2_5_RX_RX1_RX_PATH_MIX_CTL		(0x04d8)
-+#define CDC_2_5_RX_RX1_RX_PATH_MIX_CFG		(0x04dC)
-+#define CDC_2_5_RX_RX1_RX_VOL_MIX_CTL		(0x04e0)
-+#define CDC_2_5_RX_RX1_RX_PATH_SEC1		(0x04e4)
-+#define CDC_2_5_RX_RX1_RX_PATH_SEC2		(0x04e8)
-+#define CDC_2_5_RX_RX1_RX_PATH_SEC3		(0x04eC)
-+#define CDC_2_5_RX_RX1_RX_PATH_SEC4		(0x04f0)
-+#define CDC_2_5_RX_RX1_RX_PATH_SEC7		(0x04f4)
-+#define CDC_2_5_RX_RX1_RX_PATH_MIX_SEC0		(0x04f8)
-+#define CDC_2_5_RX_RX1_RX_PATH_MIX_SEC1		(0x04fC)
-+#define CDC_2_5_RX_RX1_RX_PATH_DSM_CTL		(0x0500)
-+#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA1	(0x0504)
-+#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA2	(0x0508)
-+#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA3	(0x050C)
-+#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA4	(0x0510)
-+#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA5	(0x0514)
-+#define CDC_2_5_RX_RX1_RX_PATH_DSM_DATA6	(0x0518)
-+
-+#define CDC_2_5_RX_RX2_RX_PATH_CTL		(0x0580)
-+#define CDC_2_5_RX_RX2_RX_PATH_CFG0		(0x0584)
-+#define CDC_2_5_RX_RX2_RX_PATH_CFG1		(0x0588)
-+#define CDC_2_5_RX_RX2_RX_PATH_CFG2		(0x058C)
-+#define CDC_2_5_RX_RX2_RX_PATH_CFG3		(0x0590)
-+#define CDC_2_5_RX_RX2_RX_VOL_CTL		(0x0594)
-+#define CDC_2_5_RX_RX2_RX_PATH_MIX_CTL		(0x0598)
-+#define CDC_2_5_RX_RX2_RX_PATH_MIX_CFG		(0x059C)
-+#define CDC_2_5_RX_RX2_RX_VOL_MIX_CTL		(0x05a0)
-+#define CDC_2_5_RX_RX2_RX_PATH_SEC0		(0x05a4)
-+#define CDC_2_5_RX_RX2_RX_PATH_SEC1		(0x05a8)
-+#define CDC_2_5_RX_RX2_RX_PATH_SEC2		(0x05aC)
-+#define CDC_2_5_RX_RX2_RX_PATH_SEC3		(0x05b0)
-+#define CDC_2_5_RX_RX2_RX_PATH_SEC4		(0x05b4)
-+#define CDC_2_5_RX_RX2_RX_PATH_SEC5		(0x05b8)
-+#define CDC_2_5_RX_RX2_RX_PATH_SEC6		(0x05bC)
-+#define CDC_2_5_RX_RX2_RX_PATH_SEC7		(0x05c0)
-+#define CDC_2_5_RX_RX2_RX_PATH_MIX_SEC0		(0x05c4)
-+#define CDC_2_5_RX_RX2_RX_PATH_MIX_SEC1		(0x05c8)
-+#define CDC_2_5_RX_RX2_RX_PATH_DSM_CTL		(0x05cC)
-+
- #define CDC_RX_IDLE_DETECT_PATH_CTL	(0x0780)
- #define CDC_RX_IDLE_DETECT_CFG0		(0x0784)
- #define CDC_RX_IDLE_DETECT_CFG1		(0x0788)
-@@ -764,6 +811,8 @@ static SOC_ENUM_SINGLE_DECL(rx_int0_dem_inp_enum, CDC_RX_RX0_RX_PATH_CFG1, 0,
- 			    rx_int_dem_inp_mux_text);
- static SOC_ENUM_SINGLE_DECL(rx_int1_dem_inp_enum, CDC_RX_RX1_RX_PATH_CFG1, 0,
- 			    rx_int_dem_inp_mux_text);
-+static SOC_ENUM_SINGLE_DECL(rx_2_5_int1_dem_inp_enum, CDC_2_5_RX_RX1_RX_PATH_CFG1, 0,
-+			    rx_int_dem_inp_mux_text);
- 
- static SOC_ENUM_SINGLE_DECL(rx_macro_rx0_enum, SND_SOC_NOPM, 0, rx_macro_mux_text);
- static SOC_ENUM_SINGLE_DECL(rx_macro_rx1_enum, SND_SOC_NOPM, 0, rx_macro_mux_text);
-@@ -1083,6 +1132,52 @@ static const struct reg_default rx_defaults[] = {
- 	{ CDC_RX_DSD1_CFG2, 0x96 },
- };
- 
-+static const struct reg_default rx_2_5_defaults[] = {
-+	{ CDC_2_5_RX_RX1_RX_PATH_CTL, 0x04 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_CFG0, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_CFG1, 0x64 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_CFG2, 0x8F },
-+	{ CDC_2_5_RX_RX1_RX_PATH_CFG3, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_VOL_CTL, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_MIX_CTL, 0x04 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_MIX_CFG, 0x7E },
-+	{ CDC_2_5_RX_RX1_RX_VOL_MIX_CTL, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_SEC1, 0x08 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_SEC2, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_SEC3, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_SEC4, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_SEC7, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_MIX_SEC0, 0x08 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_MIX_SEC1, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_DSM_CTL, 0x08 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA1, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA2, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA3, 0x00 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA4, 0x55 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA5, 0x55 },
-+	{ CDC_2_5_RX_RX1_RX_PATH_DSM_DATA6, 0x55 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_CTL, 0x04 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_CFG0, 0x00 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_CFG1, 0x64 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_CFG2, 0x8F },
-+	{ CDC_2_5_RX_RX2_RX_PATH_CFG3, 0x00 },
-+	{ CDC_2_5_RX_RX2_RX_VOL_CTL, 0x00 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_MIX_CTL, 0x04 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_MIX_CFG, 0x7E },
-+	{ CDC_2_5_RX_RX2_RX_VOL_MIX_CTL, 0x00 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_SEC0, 0x04 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_SEC1, 0x08 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_SEC2, 0x00 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_SEC3, 0x00 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_SEC4, 0x00 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_SEC5, 0x00 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_SEC6, 0x00 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_SEC7, 0x00 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_MIX_SEC0, 0x08 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_MIX_SEC1, 0x00 },
-+	{ CDC_2_5_RX_RX2_RX_PATH_DSM_CTL, 0x00 },
-+};
-+
- static const struct reg_default rx_pre_2_5_defaults[] = {
- 	{ CDC_RX_RX1_RX_PATH_CTL, 0x04 },
- 	{ CDC_RX_RX1_RX_PATH_CFG0, 0x00 },
-@@ -1236,6 +1331,58 @@ static bool rx_pre_2_5_is_rw_register(struct device *dev, unsigned int reg)
- 	return false;
- }
- 
-+static bool rx_2_5_is_rw_register(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case CDC_2_5_RX_RX1_RX_PATH_CTL:
-+	case CDC_2_5_RX_RX1_RX_PATH_CFG0:
-+	case CDC_2_5_RX_RX1_RX_PATH_CFG1:
-+	case CDC_2_5_RX_RX1_RX_PATH_CFG2:
-+	case CDC_2_5_RX_RX1_RX_PATH_CFG3:
-+	case CDC_2_5_RX_RX1_RX_VOL_CTL:
-+	case CDC_2_5_RX_RX1_RX_PATH_MIX_CTL:
-+	case CDC_2_5_RX_RX1_RX_PATH_MIX_CFG:
-+	case CDC_2_5_RX_RX1_RX_VOL_MIX_CTL:
-+	case CDC_2_5_RX_RX1_RX_PATH_SEC1:
-+	case CDC_2_5_RX_RX1_RX_PATH_SEC2:
-+	case CDC_2_5_RX_RX1_RX_PATH_SEC3:
-+	case CDC_2_5_RX_RX1_RX_PATH_SEC4:
-+	case CDC_2_5_RX_RX1_RX_PATH_SEC7:
-+	case CDC_2_5_RX_RX1_RX_PATH_MIX_SEC0:
-+	case CDC_2_5_RX_RX1_RX_PATH_MIX_SEC1:
-+	case CDC_2_5_RX_RX1_RX_PATH_DSM_CTL:
-+	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA1:
-+	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA2:
-+	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA3:
-+	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA4:
-+	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA5:
-+	case CDC_2_5_RX_RX1_RX_PATH_DSM_DATA6:
-+	case CDC_2_5_RX_RX2_RX_PATH_CTL:
-+	case CDC_2_5_RX_RX2_RX_PATH_CFG0:
-+	case CDC_2_5_RX_RX2_RX_PATH_CFG1:
-+	case CDC_2_5_RX_RX2_RX_PATH_CFG2:
-+	case CDC_2_5_RX_RX2_RX_PATH_CFG3:
-+	case CDC_2_5_RX_RX2_RX_VOL_CTL:
-+	case CDC_2_5_RX_RX2_RX_PATH_MIX_CTL:
-+	case CDC_2_5_RX_RX2_RX_PATH_MIX_CFG:
-+	case CDC_2_5_RX_RX2_RX_VOL_MIX_CTL:
-+	case CDC_2_5_RX_RX2_RX_PATH_SEC0:
-+	case CDC_2_5_RX_RX2_RX_PATH_SEC1:
-+	case CDC_2_5_RX_RX2_RX_PATH_SEC2:
-+	case CDC_2_5_RX_RX2_RX_PATH_SEC3:
-+	case CDC_2_5_RX_RX2_RX_PATH_SEC4:
-+	case CDC_2_5_RX_RX2_RX_PATH_SEC5:
-+	case CDC_2_5_RX_RX2_RX_PATH_SEC6:
-+	case CDC_2_5_RX_RX2_RX_PATH_SEC7:
-+	case CDC_2_5_RX_RX2_RX_PATH_MIX_SEC0:
-+	case CDC_2_5_RX_RX2_RX_PATH_MIX_SEC1:
-+	case CDC_2_5_RX_RX2_RX_PATH_DSM_CTL:
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static bool rx_is_rw_register(struct device *dev, unsigned int reg)
- {
- 	struct rx_macro *rx = dev_get_drvdata(dev);
-@@ -1461,6 +1608,11 @@ static bool rx_is_rw_register(struct device *dev, unsigned int reg)
- 	case LPASS_CODEC_VERSION_1_2:
- 	case LPASS_CODEC_VERSION_2_0:
- 		return rx_pre_2_5_is_rw_register(dev, reg);
-+	case LPASS_CODEC_VERSION_2_5:
-+	case LPASS_CODEC_VERSION_2_6:
-+	case LPASS_CODEC_VERSION_2_7:
-+	case LPASS_CODEC_VERSION_2_8:
-+		return rx_2_5_is_rw_register(dev, reg);
- 	default:
- 		break;
- 	}
-@@ -1563,6 +1715,10 @@ static const struct snd_kcontrol_new rx_int1_dem_inp_mux =
- 		SOC_DAPM_ENUM_EXT("rx_int1_dem_inp", rx_int1_dem_inp_enum,
- 		  snd_soc_dapm_get_enum_double, rx_macro_int_dem_inp_mux_put);
- 
-+static const struct snd_kcontrol_new rx_2_5_int1_dem_inp_mux =
-+		SOC_DAPM_ENUM_EXT("rx_int1_dem_inp", rx_2_5_int1_dem_inp_enum,
-+		  snd_soc_dapm_get_enum_double, rx_macro_int_dem_inp_mux_put);
-+
- static int rx_macro_set_prim_interpolator_rate(struct snd_soc_dai *dai,
- 					       int rate_reg_val, u32 sample_rate)
- {
-@@ -2847,6 +3003,18 @@ static const struct snd_kcontrol_new rx_macro_def_snd_controls[] = {
- 			  -84, 40, digital_gain),
- };
- 
-+static const struct snd_kcontrol_new rx_macro_2_5_snd_controls[] = {
-+
-+	SOC_SINGLE_S8_TLV("RX_RX1 Digital Volume", CDC_2_5_RX_RX1_RX_VOL_CTL,
-+			  -84, 40, digital_gain),
-+	SOC_SINGLE_S8_TLV("RX_RX2 Digital Volume", CDC_2_5_RX_RX2_RX_VOL_CTL,
-+			  -84, 40, digital_gain),
-+	SOC_SINGLE_S8_TLV("RX_RX1 Mix Digital Volume", CDC_2_5_RX_RX1_RX_VOL_MIX_CTL,
-+			  -84, 40, digital_gain),
-+	SOC_SINGLE_S8_TLV("RX_RX2 Mix Digital Volume", CDC_2_5_RX_RX2_RX_VOL_MIX_CTL,
-+			  -84, 40, digital_gain),
-+};
-+
- static const struct snd_kcontrol_new rx_macro_snd_controls[] = {
- 	SOC_SINGLE_S8_TLV("RX_RX0 Digital Volume", CDC_RX_RX0_RX_VOL_CTL,
- 			  -84, 40, digital_gain),
-@@ -2968,6 +3136,12 @@ static int rx_macro_enable_echo(struct snd_soc_dapm_widget *w,
- 
- 	return 0;
- }
-+
-+static const struct snd_soc_dapm_widget rx_macro_2_5_dapm_widgets[] = {
-+	SND_SOC_DAPM_MUX("RX INT1 DEM MUX", SND_SOC_NOPM, 0, 0,
-+			 &rx_2_5_int1_dem_inp_mux),
-+};
-+
- static const struct snd_soc_dapm_widget rx_macro_def_dapm_widgets[] = {
- 	SND_SOC_DAPM_MUX("RX INT1 DEM MUX", SND_SOC_NOPM, 0, 0,
- 			 &rx_int1_dem_inp_mux),
-@@ -3476,6 +3650,15 @@ static int rx_macro_component_probe(struct snd_soc_component *component)
- 		widgets = rx_macro_def_dapm_widgets;
- 		num_widgets = ARRAY_SIZE(rx_macro_def_dapm_widgets);
- 		break;
-+	case LPASS_CODEC_VERSION_2_5:
-+	case LPASS_CODEC_VERSION_2_6:
-+	case LPASS_CODEC_VERSION_2_7:
-+	case LPASS_CODEC_VERSION_2_8:
-+		controls = rx_macro_2_5_snd_controls;
-+		num_controls = ARRAY_SIZE(rx_macro_2_5_snd_controls);
-+		widgets = rx_macro_2_5_dapm_widgets;
-+		num_widgets = ARRAY_SIZE(rx_macro_2_5_dapm_widgets);
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -3646,6 +3829,21 @@ static int rx_macro_probe(struct platform_device *pdev)
- 		memcpy(&reg_defaults[ARRAY_SIZE(rx_defaults)],
- 				rx_pre_2_5_defaults, sizeof(rx_pre_2_5_defaults));
- 		break;
-+	case LPASS_CODEC_VERSION_2_5:
-+	case LPASS_CODEC_VERSION_2_6:
-+	case LPASS_CODEC_VERSION_2_7:
-+	case LPASS_CODEC_VERSION_2_8:
-+		rx->rxn_reg_stride = 0xc0;
-+		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_2_5_defaults);
-+		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
-+		if (!reg_defaults) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
-+		memcpy(&reg_defaults[0], rx_defaults, sizeof(rx_defaults));
-+		memcpy(&reg_defaults[ARRAY_SIZE(rx_defaults)],
-+				rx_2_5_defaults, sizeof(rx_2_5_defaults));
-+		break;
- 	default:
- 		dev_err(rx->dev, "Unsupported Codec version (%d)\n", rx->codec_version);
- 		ret = -EINVAL;
+1. you could isolate the hash-bl parts from your original patchset (+
+rebase) and write a quick rundown what needs to be done for this to be
+committable
+2. if you think you can find the time to do the work yourself in the
+foreseeable future you could state the rough timeline (the thing will
+probably want to miss this merge cycle anyway so there is plenty of
+time)
+3. if you can't commit to the work yourself you can look for someone to
+do it for you. while you suggested that on the list there were no takers
+(for example someone else could have stepped in after I said I'm not
+going to do it, but that did not happen). perhaps you can prod people at
+your dayjob and whatever non-list spots.
 
--- 
-2.25.1
+If you can't do the work in the foreseeable future (understandable) and
+there are no takers (realistically I suspect there wont be) then you are
+going to have stop opposing my patch on the grounds that hash-bl exists.
 
+I don't know how much work is needed to sort it out, it is definitely
+much more than what was needed for my thing, which is in part why I did
+not go for hash-bl myself.
+
+Of course there may be reasons to not include my patch regardless of the
+state of hash-bl. If you have any then I suggest you state them for the
+vfs folk to consider. If you intend to write it should not go in on the
+because it does not fully fix the problem, then I note the commit
+message both concedes there is a limitation and provides a justification
+for inclusion despite of it. Merely stating there is still a scalability
+ceiling does not address it. Claiming it adds too much complexity for
+the reported benefit is imo not legit, but again it is a judgment call
+to make by the vfs folk.
+
+Right now the v4 landed in a vfs.inode.rcu branch. It really does not
+have to reach master if someone gets hash-bl to a state where the vfs
+cabal is happy with it. I don't know if Christian intends to submit it
+to master in the upcomming merge cycle, it is perfectly fine with me if
+it does not happen. Perhaps it even should not happen if the hash-bl
+gets a sensible timeline. Even so, should my patch land in master and
+hash-bl get work done at a much later date, there is no difficulty added
+to it stemming from my thing -- at worst some trivial editing to resolve
+a merge conflict.
+
+And with this message I'm done with the entire ordeal, with 2 exceptions:
+- if there is a bug reported against my patch i'm going to investigate
+- if my patch is stalled in the vfs.inode.rcu branch for weeks and there
+  is no replacement in sight (hash-bl, rhashtable, ${whatever_else}), I'm
+  going to prod about it
+
+Cheers.
 
