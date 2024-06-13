@@ -1,154 +1,116 @@
-Return-Path: <linux-kernel+bounces-213930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D387F907CAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:34:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03246907CB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D798A1C24935
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:34:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43CF1C202F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A49714E2C2;
-	Thu, 13 Jun 2024 19:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3ED214A4C1;
+	Thu, 13 Jun 2024 19:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B41kXFrk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IW0NQsVR"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7548814D6ED;
-	Thu, 13 Jun 2024 19:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB4B14A4EA
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307248; cv=none; b=qvtMmUZJKcwv/e1BDHRUqVxNwQIh0TI4mnleboKKXEmb68H1uoA7/MgLvqBp8bvv49/1NdzlsC/IOL3Po8nnTm0H0Sj/7kd9L9FjMtDDllx/MmXjYuEUwl8b0eQQpP2ll8mmF8lxXSNzaKeFsmKgJcYikfYkqOfrF+25p6Bm6xA=
+	t=1718307261; cv=none; b=Ngi8k0W+CIngraMlUndydeFAjvaHR3yKYqSaytPipSJZo5dM9o58K+nZ4vM1agNoBfBYlyL7jj2tthVdVU4FH5uvqZN2jVYVo7FMOErgQ+qXQbgsaOQh3+Vmsc/3Q5UGEK3K6gGhIleqXSkkYMQGYoUz+6Akq0DtIQsX9rKZUzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307248; c=relaxed/simple;
-	bh=bbhYqO6arj3VX7+rFvR2uC0Q/DGG5UGkw2Zn5smw2UQ=;
+	s=arc-20240116; t=1718307261; c=relaxed/simple;
+	bh=Lwk7smutNQj9Ma2l6ms8QeeuTagK4tf2FFnHtSPVUfU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PAyETDcKcfQ1p53f9kc2GPmolnMDIJigLrhsPVxVrjGZHYQv+xu+hN9gO7GMDGJL4z0zuMrtomFfwXpxgvMB2QYWB5N1h17+HieKEqAfb3LOLWCo1tVCJP8HixrriW3Eyonyi23TL9OMlRCPo5YMJ+/upWDQ/d7W6Wgqw6QY6mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B41kXFrk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05C8BC4AF5F;
-	Thu, 13 Jun 2024 19:34:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718307248;
-	bh=bbhYqO6arj3VX7+rFvR2uC0Q/DGG5UGkw2Zn5smw2UQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=B41kXFrkKcs4UOo8evdjfW2C4ZW/UK3nX+H2W1bKE/9jnhsi9R8uzcuv9pzz6ywsb
-	 6NhZCORscpyhVztgHvNjw3zpk55iVAc1L0EFo/y4foNJrvrcatI3hN81iUWnxfWWqM
-	 dhIxGhrOj6STl5dzuYjwHEDitl/LBsXb/Svl43pRVS2JBt6HEIw/7xVClMj8T5rFT/
-	 JHKdVb6kn36tDqT1mDPflFVMatAdDbR0NlcXUw7HaBP6pvGrVp4usRe/VJjjtZ9hzS
-	 WUQh84AAlYl0fS8jZNieg+F3pi+hcb2rgKQGkpaD42bC3N5LrlMhdhJSl70coKt9Tz
-	 2KHOrsydpjYmg==
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d21c5b48f5so211526b6e.0;
-        Thu, 13 Jun 2024 12:34:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVugk0YH1nqMjWV+m4nZ5RULE7ZhMRc3ACxi5TSllsT6EJpv7vdDEu+hQ+0+8+DA/osDIknL21ySlUIRk7++bxhF1mmoYZORiHkY5HyOOJWLLE8FmVfYjbPPKsCTC92E86x1i7OnZGgpgHulLQ2C7wOfQdNKuzFroD1f/oyJigqdxK9
-X-Gm-Message-State: AOJu0YwxV52g8Oy+BRQTWYPWKsv3MOdlQhr23zOnjLP08M9Yb8HHHAwD
-	+1zd/qldE+cfIYcsFvY1FNpZxNUDk0hkDmrN9CzwtaQwCNsigszq2zP4P7CJ+b1P/Fr8VrrTbE3
-	1HmhxFURNbVLkurbDxISs45I1njQ=
-X-Google-Smtp-Source: AGHT+IG0G9y36mr+Dlfv2THcm6PYAW/FOqGLOg/QX0txRvOhtSWL6wvDXmnU00jM0TAGeT4jIFVoyY40op2reHRrX9s=
-X-Received: by 2002:a4a:e1da:0:b0:5ba:ead2:c742 with SMTP id
- 006d021491bc7-5bdad9f0343mr742290eaf.0.1718307247027; Thu, 13 Jun 2024
- 12:34:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=HHEbEowI2RaHP8oLOhuqXQgY03cV7EdKXNXBJZixy+D/M/TBCi/HhAOhk1ZOSDDzrg6zGwYaFUFEQdcRXZSEjfp/8PuiEYXJaTQm0VonTQaEnNb/kkjBtFWd2QVzgI5jqebbtZTRJELywZHJWQEizeYlQWfqvQtCiY1UnNTJCl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IW0NQsVR; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso2041051a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:34:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718307257; x=1718912057; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BZg0hrY0cl/sTszXcVnYwhyU3X3/PKHb3J+JILn3ksY=;
+        b=IW0NQsVRX3Wf9NS48HWHJMiflIPZgwaLXPZm7Y8ivxdlBbR05Up0IQLkY7k58de6gJ
+         faCCH/nASJG30RZcVoA+/4ErLh9YWlP4QCOQYpPqKGngTlKn00lBqRQcTseQI2OJeoQS
+         Wanz8ICQM0pUsi/ikf+HpMgUVUa8P9LNjuXnA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718307257; x=1718912057;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BZg0hrY0cl/sTszXcVnYwhyU3X3/PKHb3J+JILn3ksY=;
+        b=ZwmZFEGivwgimLjLmGDRonIvoX+SRHEfC/1eiTRs7BnWgG3r3Fk582UnJ0XsiCnokO
+         ERWOLoxSoVx6iXsP5p4gvMRd3QHtBn0Bf//WViZLCSxk6jJhwKIH/fRbAE/qmV/lasCs
+         BDMMEnW0o8YHHtLUvn2raO3A7NH/rnWL2rIDoCKRVWFs5bU2QlKq/nNgxHdbOQ3VCxwP
+         gbwlw2f0siuT+5VcwNWwnZVSDpDTqJe4f3LiAwyX4UzDJh6JABKAzZJmzCgYFVYXIL36
+         McPnj+QKov/r9NBYPBrl/irQVJ3pEEbe0ScrmxfXmwUpT8m9fIl8krBKf4Y3IqBhhiwx
+         D+oA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8WHREnnucpeEvHtU54lPHfM+3y/c+k7/ukx6Ud3K3cjm2i0QJAtBWFvM3iaC9bg4FWRpgAOEbcqbPRMSgg7cx1dICWMm0DK63LxJW
+X-Gm-Message-State: AOJu0YwkjDjKC6Nm+HULZI11aSA7t4xKQpU5ivaIQEpYZNXqEKJvSqPJ
+	PfQGYhmiYxPtw/utc774u9QFO4LldglF3vCEQD2doJKPrcsNYK6gEkPBhI+fVjXWdx4EgICN/wv
+	o7ExpqA==
+X-Google-Smtp-Source: AGHT+IFM3hJiUS1fJT6N/yGjn6oBIqxqgZ2tZSBwAeZ08NUOg12nkffoHLM5JajXkfljajTzO8v6Og==
+X-Received: by 2002:a17:906:b7da:b0:a6f:4b5b:4ba7 with SMTP id a640c23a62f3a-a6f60de2641mr44359366b.67.1718307257410;
+        Thu, 13 Jun 2024 12:34:17 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f42ddfsm103139766b.171.2024.06.13.12.34.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 12:34:16 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a62ef52e837so195614966b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:34:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1xlyHmOYhsbZFejKJGq+M67HoaUj4JCJWTgzmMvvrJHHeoB2o5PYN5mWSVMJA25jJebundGSW1PEaiA41FkLBiVAPVv/OvzGX66vi
+X-Received: by 2002:a17:906:f105:b0:a6f:586b:6c2 with SMTP id
+ a640c23a62f3a-a6f60dc4faemr43433766b.60.1718307256510; Thu, 13 Jun 2024
+ 12:34:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610-cros_ec-charge-control-v3-0-135e37252094@weissschuh.net> <20240610-cros_ec-charge-control-v3-1-135e37252094@weissschuh.net>
-In-Reply-To: <20240610-cros_ec-charge-control-v3-1-135e37252094@weissschuh.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 13 Jun 2024 21:33:56 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iUjvrs+57_meCkK7fcokH0j8sTAG3xXai5av_n5OHJwA@mail.gmail.com>
-Message-ID: <CAJZ5v0iUjvrs+57_meCkK7fcokH0j8sTAG3xXai5av_n5OHJwA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] ACPI: battery: add devm_battery_hook_register()
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
-	Sebastian Reichel <sre@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>, 
-	Dustin Howett <dustin@howett.net>, Stephen Horvath <s.horvath@outlook.com.au>, 
-	Rajas Paranjpe <paranjperajas@gmail.com>, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, Matt Hartley <matt.hartley@gmail.com>
+References: <20240613001215.648829-1-mjguzik@gmail.com> <20240613001215.648829-2-mjguzik@gmail.com>
+ <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
+ <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
+ <5cixyyivolodhsru23y5gf5f6w6ov2zs5rbkxleljeu6qvc4gu@ivawdfkvus3p>
+ <20240613-pumpen-durst-fdc20c301a08@brauner> <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
+ <CAGudoHHWL_CftUXyeZNU96qHsi5DT_OTL5ZLOWoCGiB45HvzVA@mail.gmail.com>
+ <CAHk-=wi4xCJKiCRzmDDpva+VhsrBuZfawGFb9vY6QXV2-_bELw@mail.gmail.com>
+ <CAGudoHGdWQYH8pRu1B5NLRa_6EKPR6hm5vOf+fyjvUzm1po8VQ@mail.gmail.com> <CAHk-=whjwqO+HSv8P4zvOyX=WNKjcXsiquT=DOaj_fQiidb3rQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whjwqO+HSv8P4zvOyX=WNKjcXsiquT=DOaj_fQiidb3rQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 13 Jun 2024 12:33:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whtoqTSCcAvV-X-KPqoDWxS4vxmWpuKLB+Vv8=FtUd5vA@mail.gmail.com>
+Message-ID: <CAHk-=whtoqTSCcAvV-X-KPqoDWxS4vxmWpuKLB+Vv8=FtUd5vA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
+ be released
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 5:52=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
+On Thu, 13 Jun 2024 at 11:56, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Add a utility function for device-managed registration of battery hooks.
-> The function makes it easier to manage the lifecycle of a hook.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> I didn't *think* anything in the dentry struct should care about
+> debugging, but clearly that sequence number thing did.
 
-Please feel free to add
+Looking at the 32-bit build, it looks like out current 'struct dentry'
+is 136 bytes in size, not 128.
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Looks like DNAME_INLINE_LEN should be reduced to 36 on 32-bit.
 
-to this patch and route it along with the rest of the series as needed.
+And moving d_lockref to after d_fsdata works there too.
 
-Thanks!
+Not that anybody really cares, but let's make sure it's actually
+properly done when this is changed. Christian?
 
-> ---
->  drivers/acpi/battery.c | 15 +++++++++++++++
->  include/acpi/battery.h |  2 ++
->  2 files changed, 17 insertions(+)
->
-> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-> index b379401ff1c2..6ea979f76f84 100644
-> --- a/drivers/acpi/battery.c
-> +++ b/drivers/acpi/battery.c
-> @@ -756,6 +756,21 @@ void battery_hook_register(struct acpi_battery_hook =
-*hook)
->  }
->  EXPORT_SYMBOL_GPL(battery_hook_register);
->
-> +static void devm_battery_hook_unregister(void *data)
-> +{
-> +       struct acpi_battery_hook *hook =3D data;
-> +
-> +       battery_hook_unregister(hook);
-> +}
-> +
-> +int devm_battery_hook_register(struct device *dev, struct acpi_battery_h=
-ook *hook)
-> +{
-> +       battery_hook_register(hook);
-> +
-> +       return devm_add_action_or_reset(dev, devm_battery_hook_unregister=
-, hook);
-> +}
-> +EXPORT_SYMBOL_GPL(devm_battery_hook_register);
-> +
->  /*
->   * This function gets called right after the battery sysfs
->   * attributes have been added, so that the drivers that
-> diff --git a/include/acpi/battery.h b/include/acpi/battery.h
-> index 611a2561a014..c93f16dfb944 100644
-> --- a/include/acpi/battery.h
-> +++ b/include/acpi/battery.h
-> @@ -2,6 +2,7 @@
->  #ifndef __ACPI_BATTERY_H
->  #define __ACPI_BATTERY_H
->
-> +#include <linux/device.h>
->  #include <linux/power_supply.h>
->
->  #define ACPI_BATTERY_CLASS "battery"
-> @@ -19,5 +20,6 @@ struct acpi_battery_hook {
->
->  void battery_hook_register(struct acpi_battery_hook *hook);
->  void battery_hook_unregister(struct acpi_battery_hook *hook);
-> +int devm_battery_hook_register(struct device *dev, struct acpi_battery_h=
-ook *hook);
->
->  #endif
->
-> --
-> 2.45.2
->
->
+              Linus
 
