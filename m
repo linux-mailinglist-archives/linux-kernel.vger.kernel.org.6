@@ -1,152 +1,192 @@
-Return-Path: <linux-kernel+bounces-213348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB96907412
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:42:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A35E9907414
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA751C22D33
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:42:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A90BB1C22F71
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11DD1448FA;
-	Thu, 13 Jun 2024 13:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63ABE1448E4;
+	Thu, 13 Jun 2024 13:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7FWSrgI"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nwk3vody"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CEE1448E8;
-	Thu, 13 Jun 2024 13:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8352A144D36;
+	Thu, 13 Jun 2024 13:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718286131; cv=none; b=uEVbYxFCRV1J7OUFpmwO+M5k171Rwu1giMcqzjjQzXMTtmGQK/8k3Eg9ShRD/3cjZhFbr6ZpdeYjXe4EkmBv0HwQOvoS0dnTndRtkTSaL0Rz6vQB5FkpwlAuYHreB0oDiOV2BQEHsoswEpirowHpQ8dlv2/enX6Fk3+pE2vr1ww=
+	t=1718286137; cv=none; b=P7DU1vObWSTBuxWX0CI/Hwzf7MDDCZl0E0zY9PvNV7mWLDM2v8s9PrZ/jummO4OKT4def1dF/I/9GUpFVkaBL50KExMDNr24GIJ+RsgZ1MbfZnur964OXCcPgrRZHdQB+n8x+OcLBr3SFc8x5C0B8QgxF2Jcu111BTR4VisUiyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718286131; c=relaxed/simple;
-	bh=+z1xN1OTCuBZhemyLLfzhdSbywBRDNkNMUnB3Ii0GhY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sHw6cXYIlrKXFugNx18ZdcplJkTC7GMEEdHwTNY+kmfxdtyheFpXjzE/jc/0BP+Od0LYhAajWfPWwcy2KDyGqCfjYHfazSx1qevaOPtoZNcJNZFJtpuMtSx2xY7vAdk0OU2Id1pEpNkE2wr/OZCck5cEoI+sqNDrMdtREOU5/IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7FWSrgI; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42172ed3597so6816805e9.0;
-        Thu, 13 Jun 2024 06:42:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718286128; x=1718890928; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lubbqAl7HTS/g4vv056FMCQ1RskN3TIsl6kZl33uIes=;
-        b=h7FWSrgIy3fJLTt9aVCU/IXjSNaF8051yHKUXrjDg3Gqz5da+bGsmGSnbCG6M1a3aZ
-         pCsvyqu1FucByrpSSjHECTuZvdiY85jwuJmdfSTe+Eq0lrLiZdgERbmvDqiJv11jbZj4
-         pSRO9WSCz5u+Dp0cmVtc/XRV+mwDkA3iwCzk+ssJSl6p57yak98YeSIP/X/nBMtS4W4i
-         wc7K7Kr6R+LFC3qWhDXHB8/3lFVwcFnSpEMUNCDU10ofLwfd4sqcOpocVJjeiiIH/bkb
-         oMBX+EoQVCWGY/Eqb4mRrMUXW2TaNtGxhCiDZf4jk3TZcK8XGGxapQC0zu3UzZ3/k+1/
-         7tWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718286128; x=1718890928;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lubbqAl7HTS/g4vv056FMCQ1RskN3TIsl6kZl33uIes=;
-        b=U0+TOjEBvTRCssXz906lDIgJigqnqath3BsbYVi+E8vFMvNO9SYrFrF0RWRhHZHzHF
-         sOJ6KvNnc+0bK/yAfRQu95zPOIlc6/oH6kcrGfAOftek9u1e6DJuJd7sa883oUyy/rOe
-         yc8A4bVEKk1NG6BL8ZgAFt3aSwjcC4dheFy3pDtGbvLTFxA5GSexibGeBzXRH9Oa2KKr
-         BVcRrhPPO17hq5XEwKi6glrmcFD/vbTjBMBD3Sps0d1fnRulXG/AnJYQRUYtqHhiaAPC
-         ePnGLzabevEb4KcFqT7bH9iZn/LW2qh0/uaIxuCM/jIs9KdTcs/vddxJx/YxXUhOYHff
-         uSqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSOqfl2xre0nz0AACO7stYnjxN+wxBGTGpWGbrQIQJYKwRo81C9LhFfrQHvg3PrHToY5IZACf8j+fxwoV1H8Cxr+8L1mSvHjZb4F4XOHE1mTNLpmFsdkXNlsyYx7pOIQPxyKWUKJ7UXA==
-X-Gm-Message-State: AOJu0Yxjw8LliIirKqfIGWN5Xqi+V9UHUTXQO+VEZSXFGvzvp1PJBAue
-	xiqfC1ajaZCNfz0PeyvIy5gzCQnTWBN8WzhdIn5GMhtdi93DAEjj
-X-Google-Smtp-Source: AGHT+IGIY6ndnCADtxtse3SR/xy0iRVIQrBFXYYemePOyTtkI45JeF87lLvJm1bcyxDFEq0ydLiMKw==
-X-Received: by 2002:a05:600c:4f81:b0:422:1446:378 with SMTP id 5b1f17b1804b1-422b6dc80cdmr28634765e9.2.1718286127564;
-        Thu, 13 Jun 2024 06:42:07 -0700 (PDT)
-Received: from vitor-nb.. ([2001:8a0:e622:f700:d16e:d9b2:b631:537a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e73b1sm63852415e9.45.2024.06.13.06.42.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 06:42:07 -0700 (PDT)
-From: Vitor Soares <ivitro@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Vitor Soares <vitor.soares@toradex.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	ivitro@gmail.com
-Subject: [PATCH v1] arm64: dts: imx8mm-verdin: add TPM device
-Date: Thu, 13 Jun 2024 14:41:50 +0100
-Message-Id: <20240613134150.318755-1-ivitro@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718286137; c=relaxed/simple;
+	bh=gEBQjHna2XbzIzD705NXiOjgONId5w03PKl+TxkD1yE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PbXz4nVB2Cf/osaZ173qjWATdDrygcjKaNVeM1ygUS6TEG1Vbb90yR2s9ho3FcDb+OBO5CjBuiTqjOOfs3gfirSb+81ZYQZTdzqCr5PSOObdsDTd54CJqc7ePWrSaAA6DfGfpgPxKQFfxlBbY+xu5bkigMmalnw44F8SBHj5aLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nwk3vody; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DDKYdr011166;
+	Thu, 13 Jun 2024 13:42:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=B
+	h3yFA46dPP9BP4RFwHcMW7E8X0pV417kdUP+kIvhw4=; b=nwk3vodyUucAMrLTx
+	7XAVhau3ZuTPC5JX/Hza/L9n7LJdAq3wmTPM+Ly8kB3Eq/aHWhbjnvVkEaKYZB9i
+	IR1E69N4uG7yYjBiUgOwlS6oExV6lVDVlFlGZqufpuWGqolUtWFMoe8JhYwupQce
+	DEDztcOey/E4f8tOSUxrI6Ow/VWX4vgU8BmxdFk0DCQ+szftCz2M+ZpZcZBECQx3
+	MqT4FIGxNtSqUzpPN3csCrpy8F2dkFFl44oZyEvGOusQrF+mKvj3SpyayiVsIqUY
+	ofMD6We5foSbZXK+kG9zXcJQdC70E45ELfKbaknOWt+oA1cVEEZnb6M/uiJXyb0a
+	1+dWw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqq4u1p32-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 13:42:02 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45DDf9Pa011175;
+	Thu, 13 Jun 2024 13:42:01 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqq4u1p2y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 13:42:01 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45DD24WS027246;
+	Thu, 13 Jun 2024 13:42:01 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn21183u2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 13:42:01 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45DDfwi123528170
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Jun 2024 13:42:00 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A88E25803F;
+	Thu, 13 Jun 2024 13:41:58 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A573A5804E;
+	Thu, 13 Jun 2024 13:41:54 +0000 (GMT)
+Received: from [9.109.198.180] (unknown [9.109.198.180])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 13 Jun 2024 13:41:54 +0000 (GMT)
+Message-ID: <c475f0d8-3bc9-4d65-8fce-586f4b75b4fc@linux.ibm.com>
+Date: Thu, 13 Jun 2024 19:11:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] list: introduce a new cutting helper
+To: Keith Busch <kbusch@kernel.org>
+Cc: Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        hch@lst.de, sagi@grimberg.me, paulmck@kernel.org, davidgow@google.com,
+        akpm@linux-foundation.org, venkat88@linux.vnet.ibm.com
+References: <20240612155135.3060667-1-kbusch@meta.com>
+ <f0e4c51c-8227-4f5c-876f-38fbb4a0e1bf@linux.ibm.com>
+ <ZmrscxG51gFRDVlM@kbusch-mbp>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <ZmrscxG51gFRDVlM@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yOj-B8kJC8OQ0h8P5quDiiU1kMCIz3af
+X-Proofpoint-ORIG-GUID: iQODFnnSfOi94haZX-PGOdDd8fq0PmCa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_05,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ clxscore=1015 impostorscore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406130098
 
-From: Vitor Soares <vitor.soares@toradex.com>
 
-Add TPM device found on Verdin iMX8M Mini PID4 0090 variant.
 
-Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
----
- arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+On 6/13/24 18:26, Keith Busch wrote:
+> On Thu, Jun 13, 2024 at 10:26:11AM +0530, Nilay Shroff wrote:
+>> On 6/12/24 21:21, Keith Busch wrote:
+>>> +static inline void list_cut(struct list_head *list,
+>>> +		struct list_head *head, struct list_head *entry)
+>>> +{
+>>> +	list->next = entry;
+>>> +	list->prev = head->prev;
+>>> +	head->prev = entry->prev;
+>>> +	entry->prev->next = head;
+>>> +	entry->prev = list;
+>>> +	list->prev->next = list;
+>>> +}
+>> I am wondering whether we really need the _rcu version of list_cut here?
+>> I think that @head could point to an _rcu protected list and that's true 
+>> for this patch. So there might be concurrent readers accessing @head using
+>> _rcu list-traversal primitives, such as list_for_each_entry_rcu().
+>>
+>> An _rcu version of list_cut():
+>>
+>> static inline void list_cut_rcu(struct list_head *list,
+>> 		struct list_head *head, struct list_head *entry)
+>> {
+>> 	list->next = entry;
+>> 	list->prev = head->prev;
+>> 	head->prev = entry->prev;
+>> 	rcu_assign_pointer(list_next_rcu(entry->prev), head);
+>> 	entry->prev = list;
+>> 	list->prev->next = list;
+>> }
+> 
+> I was initially thinking similiar, but this is really just doing a
+> "list_del", and the rcu version calls the same generic __list_del()
+> helper. To make this more clear, we could change
+> 
+> 	head->prev = entry->prev;
+> 	entry->prev->next = head;
+> 
+> To just this:
+> 
+> 	__list_del(entry->prev, head);
+> 
+> And that also gets the "WRITE_ONCE" usage right.
+Yeah this sounds reasonable.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-index 4768b05fd765..c9ae5f0bb526 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-@@ -227,15 +227,16 @@ &ecspi2 {
- 	pinctrl-0 = <&pinctrl_ecspi2>;
- };
+> 
+> But that's not the problem for the rcu case. It's the last line that's
+> the problem:
+> 
+>  	list->prev->next = list;
+> 
+> We can't change forward pointers for any element being detached from
+> @head because a reader iterating the list may see that new pointer value
+> and end up in the wrong list, breaking iteration. A synchronize rcu
+> needs to happen before forward pointers can be mucked with, so it still
+> needs to be done in two steps. Oh bother...
+
+Agree and probably we may break it down using this API:
+static inline void list_cut_rcu(struct list_head *list,
+ 		struct list_head *head, struct list_head *entry, 
+		void (*sync)(void))
+{
+ 	list->next = entry;
+ 	list->prev = head->prev;
+	__list_del(entry->prev, head);
+	sync();
+ 	entry->prev = list;
+ 	list->prev->next = list;
+}
+
+Thanks,
+--Nilay
+
+
  
--/* Verdin CAN_1 (On-module) */
-+/* On-module SPI */
- &ecspi3 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
--	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>;
-+	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>, <&gpio4 19 GPIO_ACTIVE_LOW>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_ecspi3>;
-+	pinctrl-0 = <&pinctrl_ecspi3>, <&pinctrl_pmic_tpm_ena>;
- 	status = "okay";
- 
-+	/* Verdin CAN_1 */
- 	can1: can@0 {
- 		compatible = "microchip,mcp251xfd";
- 		clocks = <&clk40m>;
-@@ -245,6 +246,12 @@ can1: can@0 {
- 		reg = <0>;
- 		spi-max-frequency = <8500000>;
- 	};
-+
-+	verdin_som_tpm: tpm@1 {
-+		compatible = "atmel,attpm20p", "tcg,tpm_tis-spi";
-+		reg = <0x1>;
-+		spi-max-frequency = <36000000>;
-+	};
- };
- 
- /* Verdin ETH_1 (On-module PHY) */
-@@ -807,8 +814,7 @@ &iomuxc {
- 	pinctrl-0 = <&pinctrl_gpio1>, <&pinctrl_gpio2>,
- 		    <&pinctrl_gpio3>, <&pinctrl_gpio4>,
- 		    <&pinctrl_gpio7>, <&pinctrl_gpio8>,
--		    <&pinctrl_gpio_hog1>, <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>,
--		    <&pinctrl_pmic_tpm_ena>;
-+		    <&pinctrl_gpio_hog1>, <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>;
- 
- 	pinctrl_can1_int: can1intgrp {
- 		fsl,pins =
--- 
-2.34.1
+
+
 
 
