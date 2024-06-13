@@ -1,89 +1,94 @@
-Return-Path: <linux-kernel+bounces-213264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D00907347
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:14:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71B1907348
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795E01C211C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42CEDB21575
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0046B143C7A;
-	Thu, 13 Jun 2024 13:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA33D1448C3;
+	Thu, 13 Jun 2024 13:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="nr8Heike";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AZU3OYwm"
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="JdpUn8lC";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HqPOEfgc"
 Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484EA143C46
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7238143C41
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718284486; cv=none; b=gbM4QZ/g0Ink2ehjBaCL6KSm1ThVUGefmM+G/05/yoUNs4HRHBPoyLe41f53JBRDuCDkCnXpZGpibm0k3rw4D85eFpvHDUdmVMfU/xySPQxLEdRAK+kJSKrxGnDOpibEowEMP3aU0YeU7by/k6NM89/2geX3mVhSrUgvbZO6JMw=
+	t=1718284488; cv=none; b=C2dUjHNk8CwRd6H8m4HsMcsgrEOhq5vWV2gmw0T/BbIVl2QIxXfx40WNYiVZf0886NU8cP4iaXmyI6eDjwSF/G1Pmf72CFIBd86MY8ESX3iSwv22SccvbqmngsCsBjGzeSv9P51IWk9VZ98YgiyQoG9qAAwYyVTXzjvpzlys/HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718284486; c=relaxed/simple;
-	bh=fUbjzeTWfb/eILkE1v3hYNjfcAhaVAv9dJj5NuPanpY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JXXZa+/9B9F5+79UQoP9jQ0uUNpkNDERMjkkanvdTdw35Rks2DHvWvs8TjSkTGk6eh7IEcJN33W/vILkFe+t3sCm071epBoo0YzHrhdIPQyPbAkcoR0ViCBW/R2AL/SEhuMgVKr/ya2cmy1VOhEZkHLsd6KuBV4IaWxIuebdO/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=nr8Heike; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AZU3OYwm; arc=none smtp.client-ip=103.168.172.156
+	s=arc-20240116; t=1718284488; c=relaxed/simple;
+	bh=vPxnk30Zd1siuecB0EfxylME7Zg+Lw/YtROsl5nnZFc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dqc95BbApvhhGXUf1PwDL4IYHXWkllw7KcxKwPGJs1cZXZdyqUMxBEuDcSTifgSZCm9rINp3ClW6/Zr+uRLt5/S+1dMvQjFipf7J1LHPAL/odPMrfpSTtxi5gSGxnf4AZXmL5aaykXXORKhozlIlUxNg+hhdpk3x8SSL8fQFQUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=JdpUn8lC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HqPOEfgc; arc=none smtp.client-ip=103.168.172.156
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 66F0711401D2;
-	Thu, 13 Jun 2024 09:14:44 -0400 (EDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id DD7451140116;
+	Thu, 13 Jun 2024 09:14:45 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 13 Jun 2024 09:14:44 -0400
+  by compute1.internal (MEProxy); Thu, 13 Jun 2024 09:14:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm1; t=1718284484; x=1718370884; bh=P1562d71NK
-	6Q3gwSAvpUv5imcbgap8NODNrDu/VOPAc=; b=nr8HeikeoDJplTeazpG0Af3UM8
-	/SXrM5StOrgF5+jW6Tt9nR9WQNx7grZzSShB40sXhz8ZXmBZfPbYb6VKtS1AJOin
-	dk+zBOxG3qR+1q724OghcaSyagV21kf55uEyimZQUWsK+kxbyEuSrh1nFYyy5GpN
-	urGoStEv6kCMG9pe/gO8SFw42wYoBxwKogtmoMYGxMDHVEysaUwGUdEkrzz31v5m
-	+XDMn6NDggewaHp6eSZEN2Vxph8QMhlePQH01iJep+EcWl7cGr0aFdKRqSxvYWRb
-	2q/2VaSh5kZ7XLbM94n8jAXz3iXV28Kj2/MKQjFH8jr+UvmL0QRmVeXJcV1w==
+	:from:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1718284485; x=
+	1718370885; bh=NvQzQ47m1U5OGfyvPMSQ/8AM7Gju2h3IEllXTQfsmL0=; b=J
+	dpUn8lCinPAti/1z3AaRXC2eM8IzqpM0hH9khCFIarnMriHSG47ChkNMekxTtTaN
+	vJELFnO5d6D47MDBcw569ePg3UK+Fi4QGilXslv0HnteLJLAX36nRjraB+PQGgrc
+	q5jz7J88wkBKDpfO9I/Tf9scns8/bM/cSKfvWTtDOG9BgQLP2UcF4UE6+h0Om36B
+	cZNmEaN0gWFJSB4B+J+GpmoahmdnR6FyFcrfsFlzQ2b3TcGBXLUU8LGoMwG9LIhE
+	rBYEbQweNKQfgHLB0Tkym1CcrdapEycC8wloqwfYOg6G3MgBEaMxvL/eoTckmSt1
+	04hLPhPOjX+pJUvyKtV/Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718284484; x=1718370884; bh=P1562d71NK6Q3gwSAvpUv5imcbga
-	p8NODNrDu/VOPAc=; b=AZU3OYwmXiG2ym7qIZjZTP1n7QzHpklfveFFSya7ABeZ
-	UVP3U/OXulooEVkiQJu0OUZ1mVBQGsEKjxXo2CG4/3IUyV6gQQZZEls3KnjoGOTk
-	tIF2i8SoGMC4zyatsYxg0mDAymFtVBllkQQuDgCGY2r9S+BmTUOFdfA5eCJixc2S
-	0M/J706X1lReQKl4kbdRyjtSSJPzsEU2WNBZD/KfT+Cwa4oZfe9pNq1huMXnWnkT
-	wJLUeK9ZJ2t38Is71m41VDH6DoBqa896bKiuLsfgt+/+YPf8oW68T2bX+JIguXc9
-	ycP5yxochGD3cc9aQtm+lCHlUYejcaYBo9lChXUKjA==
-X-ME-Sender: <xms:xPBqZpHm0dB3YwsefIy7Hp9DgMCdP5L3L1L7Bh03rrW0X-_KgbNZ1Q>
-    <xme:xPBqZuWNJxK0AZ7N-nZNIkcqfMavX4K15zZzMeuro5_feuJcuMYWKjIvfepaxWD4B
-    oMPjeT2CPG9VqbWQOg>
-X-ME-Received: <xmr:xPBqZrKAz6BbmlAAOC5f06xD2JQE4wcUTcZhCq0bI2tZZ2fgRAFjJTIzI2wQluh6wjKW1J6hky3pQ7Oj7MCEPdXWBNqL88UXwxQpalT_lYGNVw>
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718284485; x=
+	1718370885; bh=NvQzQ47m1U5OGfyvPMSQ/8AM7Gju2h3IEllXTQfsmL0=; b=H
+	qPOEfgcXQbBaeAEtVCT5Fk7rdzcZ3hkCI+IyP+7WKn/+uh7xziPBErRS8e98760b
+	ckaokiZSAjbTbJu0TkWmaDYqkSx164Vt9yQ+cQ/g7SCbVy6SjAOoZCoT0+rOrRFj
+	k0YlWvWBySkw+Z6cgFiSpTSJLWUBLnmMEAh1QkyTyC/EUTjcZwTd4KwW/qlv9bmF
+	B9d+E42SsKIyz397cReb9M6OGIvON3DtXR4JOJfiwfaYiNsaKi6Zt5Y5/NTk/Ou5
+	RHIfzPU5IwDVGBQEWT2WQNep6tEVJpibEsz/XoJ6Sm2LIPBR7ZV/GgDzteddm96N
+	y9QjPrepyQfTMh0I9LqVA==
+X-ME-Sender: <xms:xfBqZncGP4svRLI5v7UBNwpJhcsXP5HPO11JGa0vMr6-ot-3uwou_Q>
+    <xme:xfBqZtPGTlnKP_jqn7bAPEc3KvBSbPvw1bOs291pzbZ-fe6v7yL0rLuvcDNeOyWpl
+    0nEYIZ6AlNe_riBEsM>
+X-ME-Received: <xmr:xfBqZgiSEAnnizMclsCoe9M5aNYdWS6x0t3bE-iw77It_pI-DE1JKFa8IYLAHU0lSu1G0B_fQYR_x9zE7CpS_GON8qrQMeZR01jyQKOauxfAuw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedgheelucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
-    ertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
-    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeffvdeuleffve
-    ekudfhteejudffgefhtedtgfeutdfgvdfgueefudehveehveekkeenucevlhhushhtvghr
-    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrg
-    hkrghmohgttghhihdrjhhp
-X-ME-Proxy: <xmx:xPBqZvEj9SrK-6F1Hl0lcmSYzrUUUmMGGIuhPQo6xzvRk5fLal7azA>
-    <xmx:xPBqZvWXGuWCPiUD7PgudFbOpsKzE1S6A_fHRKbsyu0fwZ8v5mOG1Q>
-    <xmx:xPBqZqNtm33v6LeQF9_But69uJJzRk1ehQpsCZtRAjLPMDZvvjqOLw>
-    <xmx:xPBqZu2xj_7_hh6fUk95UzR5O00vXV_Z7lUnZXttEVc_JXtCLQVAZA>
-    <xmx:xPBqZsjOAusaF6Am4HZbTMUYe8Rj216eZCVKaMjalhyKO-fOr5Y3wIZF>
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtke
+    ertdertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghk
+    rghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpedvjefgje
+    euvdfguddukeelveetgfdtvefhtdfffeeigfevueetffeivdffkedvtdenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhise
+    hsrghkrghmohgttghhihdrjhhp
+X-ME-Proxy: <xmx:xfBqZo_JhJNMj_sXP2PpjpdIELxLQlm7gHoNgue3RmMszD28VvQSOQ>
+    <xmx:xfBqZjsQuCp8zV5xc-GkpvRu34OjpRQKhgSTFesv-rFl-kuB_40SSw>
+    <xmx:xfBqZnGHPjCGuSuNAhAqooQt_YKeVRIRdOtfBka_EJMMTHKlWy4BRg>
+    <xmx:xfBqZqPCGAXChUau8omklrFcPEEMJ2ZGkWmaUYzUHuJz4h1qDDDZnw>
+    <xmx:xfBqZs7JII7FS7ENQ9cuT3iXSIYHCEoHyOrrvjEcuKf5DOWDM9_U-IEp>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 13 Jun 2024 09:14:43 -0400 (EDT)
+ 13 Jun 2024 09:14:44 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 0/8] firewire: store the numeric identifier of card in data structure for tracepoint events
-Date: Thu, 13 Jun 2024 22:14:32 +0900
-Message-ID: <20240613131440.431766-1-o-takashi@sakamocchi.jp>
+Subject: [PATCH 1/8] firewire: core: record card index in tracepoinrts events derived from async_outbound_complete_template
+Date: Thu, 13 Jun 2024 22:14:33 +0900
+Message-ID: <20240613131440.431766-2-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240613131440.431766-1-o-takashi@sakamocchi.jp>
+References: <20240613131440.431766-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,48 +97,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+The asynchronous transaction is initiated on one of 1394 OHCI controller,
+however the existing tracepoints events has the lack of data about it.
 
-In v6.10 kernel, some tracepoints events are added to record
-IEEE 1394 asynchronous communication. In the case that multiple 1394 OHCI
-controllers are available in Linux system, it is hard to distinguish
-the controller used for the communication, since these events have no
-member in their data structure to express the used controller. It is a
-bit inconvenient to diagnose things.
+This commit adds card_index member into event structure to store the index
+of host controller in use, and prints it.
 
-This series of patches is an attempt to solve the issue. In Linux
-FireWire core, the available controllers are maintained in list, and
-each of them has its own numeric identifier (=card_index). In this
-series, the index value is added to the data structure.
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-transaction.c |  6 +++---
+ include/trace/events/firewire.h     | 17 ++++++++++-------
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
-I would like to put the change to v6.10-rc4 (or later) as the part of
-fixes if receiving no objections.
-
-Takashi Sakamoto (8):
-  firewire: core: record card index in tracepoinrts events derived from
-    async_outbound_complete_template
-  firewire: core: record card index in tracepoinrts events derived from
-    async_outbound_initiate_template
-  firewire: core: record card index in tracepoinrts events derived from
-    async_inbound_template
-  firewire: core: record card index in async_phy_outbound_initiate
-    tracepoints event
-  firewire: core: record card index in async_phy_outbound_complete
-    tracepoints event
-  firewire: core: record card index in async_phy_inbound tracepoints
-    event
-  firewire: core: record card index in tracepoinrts events derived from
-    bus_reset_arrange_template
-  firewire: core: record card index in bus_reset_handle tracepoints
-    event
-
- drivers/firewire/core-card.c        |   6 +-
- drivers/firewire/core-cdev.c        |   6 +-
- drivers/firewire/core-topology.c    |   2 +-
- drivers/firewire/core-transaction.c |  30 ++++----
- include/trace/events/firewire.h     | 113 +++++++++++++++++-----------
- 5 files changed, 92 insertions(+), 65 deletions(-)
-
+diff --git a/drivers/firewire/core-transaction.c b/drivers/firewire/core-transaction.c
+index 571fdff65c2b..de75e758fd07 100644
+--- a/drivers/firewire/core-transaction.c
++++ b/drivers/firewire/core-transaction.c
+@@ -174,8 +174,8 @@ static void transmit_complete_callback(struct fw_packet *packet,
+ 	struct fw_transaction *t =
+ 	    container_of(packet, struct fw_transaction, packet);
+ 
+-	trace_async_request_outbound_complete((uintptr_t)t, packet->generation, packet->speed,
+-					      status, packet->timestamp);
++	trace_async_request_outbound_complete((uintptr_t)t, card->index, packet->generation,
++					      packet->speed, status, packet->timestamp);
+ 
+ 	switch (status) {
+ 	case ACK_COMPLETE:
+@@ -674,7 +674,7 @@ static void free_response_callback(struct fw_packet *packet,
+ {
+ 	struct fw_request *request = container_of(packet, struct fw_request, response);
+ 
+-	trace_async_response_outbound_complete((uintptr_t)request, packet->generation,
++	trace_async_response_outbound_complete((uintptr_t)request, card->index, packet->generation,
+ 					       packet->speed, status, packet->timestamp);
+ 
+ 	// Decrease the reference count since not at in-flight.
+diff --git a/include/trace/events/firewire.h b/include/trace/events/firewire.h
+index d695a560673f..ca6ea9bd1eba 100644
+--- a/include/trace/events/firewire.h
++++ b/include/trace/events/firewire.h
+@@ -71,10 +71,11 @@ DECLARE_EVENT_CLASS(async_outbound_initiate_template,
+ 
+ // The value of status is one of ack codes and rcodes specific to Linux FireWire subsystem.
+ DECLARE_EVENT_CLASS(async_outbound_complete_template,
+-	TP_PROTO(u64 transaction, unsigned int generation, unsigned int scode, unsigned int status, unsigned int timestamp),
+-	TP_ARGS(transaction, generation, scode, status, timestamp),
++	TP_PROTO(u64 transaction, unsigned int card_index, unsigned int generation, unsigned int scode, unsigned int status, unsigned int timestamp),
++	TP_ARGS(transaction, card_index, generation, scode, status, timestamp),
+ 	TP_STRUCT__entry(
+ 		__field(u64, transaction)
++		__field(u8, card_index)
+ 		__field(u8, generation)
+ 		__field(u8, scode)
+ 		__field(u8, status)
+@@ -82,14 +83,16 @@ DECLARE_EVENT_CLASS(async_outbound_complete_template,
+ 	),
+ 	TP_fast_assign(
+ 		__entry->transaction = transaction;
++		__entry->card_index = card_index;
+ 		__entry->generation = generation;
+ 		__entry->scode = scode;
+ 		__entry->status = status;
+ 		__entry->timestamp = timestamp;
+ 	),
+ 	TP_printk(
+-		"transaction=0x%llx generation=%u scode=%u status=%u timestamp=0x%04x",
++		"transaction=0x%llx card_index=%u generation=%u scode=%u status=%u timestamp=0x%04x",
+ 		__entry->transaction,
++		__entry->card_index,
+ 		__entry->generation,
+ 		__entry->scode,
+ 		__entry->status,
+@@ -144,8 +147,8 @@ DEFINE_EVENT(async_outbound_initiate_template, async_request_outbound_initiate,
+ );
+ 
+ DEFINE_EVENT(async_outbound_complete_template, async_request_outbound_complete,
+-	TP_PROTO(u64 transaction, unsigned int generation, unsigned int scode, unsigned int status, unsigned int timestamp),
+-	TP_ARGS(transaction, generation, scode, status, timestamp)
++	TP_PROTO(u64 transaction, unsigned int card_index, unsigned int generation, unsigned int scode, unsigned int status, unsigned int timestamp),
++	TP_ARGS(transaction, card_index, generation, scode, status, timestamp)
+ );
+ 
+ DEFINE_EVENT(async_inbound_template, async_response_inbound,
+@@ -194,8 +197,8 @@ DEFINE_EVENT_PRINT(async_outbound_initiate_template, async_response_outbound_ini
+ );
+ 
+ DEFINE_EVENT(async_outbound_complete_template, async_response_outbound_complete,
+-	TP_PROTO(u64 transaction, unsigned int generation, unsigned int scode, unsigned int status, unsigned int timestamp),
+-	TP_ARGS(transaction, generation, scode, status, timestamp)
++	TP_PROTO(u64 transaction, unsigned int card_index, unsigned int generation, unsigned int scode, unsigned int status, unsigned int timestamp),
++	TP_ARGS(transaction, card_index, generation, scode, status, timestamp)
+ );
+ 
+ #undef ASYNC_HEADER_GET_DESTINATION
 -- 
 2.43.0
 
