@@ -1,99 +1,116 @@
-Return-Path: <linux-kernel+bounces-213085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62529906AE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:23:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A72906AEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8663B2179F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC196285FC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC88D142E99;
-	Thu, 13 Jun 2024 11:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98FD139CFE;
+	Thu, 13 Jun 2024 11:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="hbVeMKrJ"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IoMHuSLZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F200713C9DE
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3885BACF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718277786; cv=none; b=J0jlCVTOWBGi6jwHeTY0CKDnYQRWMhrCfze0Ub/4Pi1HPZCA96Crrd6UAkSVdYP8dk9pKifdlAkUfcN9KbNKx/3GbjEAo0424KfTv7ruK4g993xeJ2s/mMIDt3elww2sIEfWhEAqJQLOdGD7Q7y5i13SFACNTI1etcC0imp7oW8=
+	t=1718277829; cv=none; b=YXUTitsIi4jwcnrVTdMTZKvwJ6h7y/7Sq2aHjzLLkAgK/B6PaYrNAFJQUmMu+hcEngFB6uXDuT6o4vIWk2NeFC6CmvRvosaLZPCOqKM2SAGf88viaZ8pcp7FPtCYVjHrwjN1MqyyI38la7fM2wZQtXxdL2f99fw2dzNrbrd9s8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718277786; c=relaxed/simple;
-	bh=CDyNStZ50/nTcxN8ymQWd9ggFhJ6lu1rYVQY4z6nbQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jv0hzEdwElWp7mN3d3HjjHnmKMjCd/xJNAFpIgCciG9bKVHufBzv8Yl3UYHNQdmYX4H4LwKB004m31VbHD0iDAfnj9DPya93Pqwig72p5UIUWrMCbqoW5oWJiKxFK4TX8b8nIo+3ffRvq2op9vysuqRCV0sSNjRxyu0cxBGF5KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=hbVeMKrJ; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 4331A1C0082; Thu, 13 Jun 2024 13:23:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1718277782;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DMzo8GPEsm06S3emcaw3hI99WSQx/4NdFDt55Ih5P4Y=;
-	b=hbVeMKrJ93oi3atxOde0i3ihAU0Cax1a0a+sIIpRVrjNjHPEe7o1O8ESCkAhhd+45S2Z2J
-	jRvCyHiePTgEweGMZo9VE4SmyPKfuRrkeOqXpWcphHMZe1e7s2iSowJPl90CA+Q1jkJDbw
-	5HdJ9jLc28oJ9UWpRLgiFg0m6YHKUDI=
-Date: Thu, 13 Jun 2024 13:23:01 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: "Artem S. Tashkinov" <aros@gmx.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Takashi Iwai <tiwai@suse.de>,
-	Stas Sergeev <stsp@users.sourceforge.net>,
-	Vsevolod Volkov <home+kernel@vvv.kiev.ua>
-Subject: Re: PC speaker doesn't work under Linux, works in GRUB/EFI
-Message-ID: <ZmrWlflQxZa0rdv1@duo.ucw.cz>
-References: <186367bb-9ed4-42de-add2-59d3f50ec170@gmx.com>
+	s=arc-20240116; t=1718277829; c=relaxed/simple;
+	bh=sqgBrvb1tQtLs7yqLxnsmPlbQsKBTcgqd4+WVYki8NA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sQh32ssqWVgb8qCFYHeGavKCw06Fw5WOqgGo8TemFdfSL2I+PLJRaA036cpv/lRJurjX6JKy3BF8H9oYH0ZVQ80+N/udS0XE7VoTok7WTZfZKeZHUSKrnHn/cOdYFIVSqYbaATvc/OqGYTgXSe0Vn9a0zrEv82HnIE5uL7cImKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IoMHuSLZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80EFAC2BBFC;
+	Thu, 13 Jun 2024 11:23:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718277828;
+	bh=sqgBrvb1tQtLs7yqLxnsmPlbQsKBTcgqd4+WVYki8NA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IoMHuSLZR5RB4BxswtmmHoKCuhmA8LeQyKKu7kjBWRojZcKSGvSAl3zJD70QMsHY7
+	 GUFhpEUG/upkV7fXsNVUY+Armma8CD4dh1xu3ewwcN23nzVSGMnEn1NsXjHrI5IeJl
+	 jbGnNl3AMVn/xzd+ZPwvsNh2p274JM51VV08EMJTJA1HxKLRAr8RIiC46EDux+1J8X
+	 V8c1/ri8+BdyFnGoHvXzrIT3e3UOxqUehJKI+91zuL8MrY0WhuNC2+PwkLko2KNOFj
+	 Niu12/k+oLeM7edwHke4V6CD4rg95qw5R5WUyJUJpXSxcBHOQLNyzOVA0a6o8kEgh0
+	 WuJMouCa/o75A==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sHiYU-003Wgr-9U;
+	Thu, 13 Jun 2024 12:23:46 +0100
+Date: Thu, 13 Jun 2024 12:23:46 +0100
+Message-ID: <86y179jdbx.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	mark.rutland@arm.com,
+	ryan.roberts@arm.com,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/mm: Drop ESR_ELx_FSC_TYPE
+In-Reply-To: <20240613094538.3263536-1-anshuman.khandual@arm.com>
+References: <20240613094538.3263536-1-anshuman.khandual@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JidO8v5d520oD7f5"
-Content-Disposition: inline
-In-Reply-To: <186367bb-9ed4-42de-add2-59d3f50ec170@gmx.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, ryan.roberts@arm.com, catalin.marinas@arm.com, will@kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Thu, 13 Jun 2024 10:45:38 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> 
+> Fault status codes at page table level 0, 1, 2 and 3 for access, permission
+> and translation faults are architecturally organized in a way, that masking
+> out ESR_ELx_FSC_TYPE, fetches Level 0 status code for the respective fault.
+> 
+> Helpers like esr_fsc_is_[translation|permission|access_flag]_fault() mask
+> out ESR_ELx_FSC_TYPE before comparing against corresponding Level 0 status
+> code as the kernel does not yet care about the page table level, the fault
+> really occurred previously.
+> 
+> This scheme is starting to crumble after FEAT_LPA2 when level -1 got added.
+> Fault status code for translation fault at level -1 is 0x2B which does not
+> follow ESR_ELx_FSC_TYPE, requiring esr_fsc_is_translation_fault() changes.
+> 
+> This changes above helpers to compare against individual fault status code
+> values for each page table level and drop ESR_ELx_FSC_TYPE which is losing
+> its value as a common mask.
 
---JidO8v5d520oD7f5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'd rather we do not drop the existing #defines, for a very
+self-serving reason:
 
-On Sun 2024-06-02 12:53:26, Artem S. Tashkinov wrote:
-> Hello,
->=20
-> There's a bug filed in the kernel bugzilla where Vsevolod is unable to
-> figure out why he cannot make his pc speaker work under Linux:
->=20
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D218918
->=20
-> Strangely, it works just fine as an EFI module and a GRUB module.
->=20
-> What are the ways to debug the issue?
+NV requires an implementation to synthesise fault syndromes, and these
+definition are extensively used to compose the syndrome information
+(see the NV MMU series at [1]). This is also heavily use to emulate
+the AT instructions (fault reporting in PAR_EL1.FST).
 
-Is PC speaker even expected to work under linux?
-								Pavel
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
+Having additional helpers is fine. Dropping the base definitions
+isn't, and I'd like to avoid reintroducing them.
 
---JidO8v5d520oD7f5
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
+	M.
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZmrWlQAKCRAw5/Bqldv6
-8ndeAKCldggASaBdopEBSXepw7RNcKk4GQCeJJGe1NPMOWXCop/o353nZM/Swc0=
-=wBSl
------END PGP SIGNATURE-----
+[1] http://lore.kernel.org/r/20240529145628.3272630-1-maz@kernel.org
 
---JidO8v5d520oD7f5--
+-- 
+Without deviation from the norm, progress is not possible.
 
