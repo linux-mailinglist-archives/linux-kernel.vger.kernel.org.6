@@ -1,114 +1,126 @@
-Return-Path: <linux-kernel+bounces-213757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F559079FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:36:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF299079FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48291F23143
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:36:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0EE284B6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBB114A0B6;
-	Thu, 13 Jun 2024 17:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E9414A0A4;
+	Thu, 13 Jun 2024 17:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Qcx6dxXR"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="fFfUIfNl"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE8314A0B5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FBC12D765
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718300180; cv=none; b=CNOTW1r1HmgZ3Zg/kftAf9p5Kf6htuxyQya/7u9Ta8oelLtSzNpQh+jH0nC+Ns89VJi9aIXV/kr78E+T/zKlJerVYhMDfigE2SJIS85dwWd43WRAh4kw5NQUq3Kepv50Hxf8ESnhBzriEpsXjfIH2z+WJc5pmOv+NpWcssJnx3o=
+	t=1718300246; cv=none; b=J9uFb92ud5d5LvM76blg2pBwO0n5IwV+/lIYp0H2USuocqQmouUwk5KGzdVRdmBDG6OVXH3rqNBkbFRTinTsALeysQn4HYIw73SZFzwNyGnTyhJOnv9pxx+VWk2dDFieBRYN+OrdlLN2+LtarNcCDkuS2H8tA3iNzBYIyOV/3gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718300180; c=relaxed/simple;
-	bh=wpYAeO3qLDmEbVwjk+bLqgGvh+uERDkZc9Q/nNwO7LM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y1i/kEEm+FZ33E0ghXoWzSTEjUXMmVupcaZFvqrbioc3mEHLvpKN4y6fsJRYn8B0L4QqfJGNAELZSMONFCril6RXIqLIkWkJBS8uB6MKfiCyTwcTabriQAQ/dOHmgIRT7mvYRKAtu0hTnq87p5KTP/D2mqjLvl5rQZM2lwu8Aho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Qcx6dxXR; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dff06b3f413so922989276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:36:18 -0700 (PDT)
+	s=arc-20240116; t=1718300246; c=relaxed/simple;
+	bh=tXc/IPw9F2ZzPAzq8zhKW3NQ/NzXgn/tJsZW2snLyt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jPiGhDWKGmG5AR96zdNbLLxH+g5TvCjydqLOp6oAL77bAmPFXrfq15TcdI4LyufXIqJAfiEasj8hFHyrssGzH2gWHBLvw1+pLU9hZcWgPc4D2w9BFuTCuSGLyengHltVaY0m/swnkI/MKWC3GyAQ2G3FbuLQzYpXie10uq9MGk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=fFfUIfNl; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2c2e31d319eso1056244a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:37:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718300177; x=1718904977; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GErvgxd9rMF9jDiySOwKqOC0vAMN90Lf+q/hWMcRinA=;
-        b=Qcx6dxXR7cTRqw4bTrXKAE9KIAZDV7W2/9M3fk92BTGuLOGbURN+ts6xyNb5MpBtOu
-         GnbfZa5FbTpeiYdAwaqMN+cXcuDRDCpZ7Cy2uNbrag4NY83LdHrTEpqz1FPgixmS8y0p
-         YRAMK1wyls5lHikDrJRsKRJeFuDQI1Q8BaO2LXQ39KeYUHlrykmx9WYiEw9f3DRMq0Eb
-         lLcVQXrXw6/2Uoy0kP76NZrQ2Bz2q9QuyTsccNlV3Qe7wW0btrzNsBsEq578UJ5yCPTk
-         Z5i9cZ2J8LLwpEXxH5D3MLklVBV/6VbjyB3RYmClkxCf4qdyBPWFF2AHchWdy+XU6n73
-         d4nQ==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718300243; x=1718905043; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HeXCvOjfZUoc8Yy0DfPd4nvN0/4du747GE3bH4Ko4l8=;
+        b=fFfUIfNl6S4bipDTkvQBkYQzciacTD4M95mnlnbGJRfhYDY5uGfeocLh3fcjZ/IuDe
+         9WbOo9TXes/ZrIclogkM0FlRxlrunuEFnePhRlbDDQtnpKmK28StJmp9xabue5KsRJlf
+         23B6YwXgWIDFb+YPxU+ulmYnJxz6gXfzMGtpaD7jFHWlJL8iq4RZlhc88ROjCNwNl0AL
+         H1dOxV0PpB9pSChW7X1bLhrjkkqBnISkYnIc5llgxOtHKB9DSmnbBwpmgLUEcRaMBnGg
+         jl+Ny4DOmmFXQrxAUwc/grfvyVIPc1G5r+KnbcLAwmkhOQUQixYdHVvatnDprnJwCk+u
+         e91Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718300177; x=1718904977;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GErvgxd9rMF9jDiySOwKqOC0vAMN90Lf+q/hWMcRinA=;
-        b=BaiohNp6A0Gyw4qaZqpyqB0aKU8OIvUI/bYpaWP/IOEk8UHeVpN9tlf6Ubr3HkgtaL
-         v2DvXWJAE2W6L5X8BcT1whoG2PX55zAmPnQ+iPwsj3ISlRQREMEcAAHIlcuvw6Yr5Hhv
-         MSgYh8CL6QIQ5xWGNx0GSDYkpVFUWXbtd0mxjC2VDGG/EL+gukZK0ITqwN1QZ0eUgdq6
-         ggJE98QCefStpWjgCROyVWVIGxMiNoplXrjk6qzh3rI1rZ22PRwSxwq9LGKeE8yfmpfc
-         dF4qdqujieGvK30K7QouL6HCzjD2Y8CscLl4N+EtXobG6DqWwwozWMZtVM+QVYZQB8YM
-         g+0g==
-X-Gm-Message-State: AOJu0Yz5OkDM1dwi2QZ7oT8CMbui83A8qdkkRLEgBXMdM15W8hMeBRSn
-	bPdIx46yiUAXFLb7X1xMZlDMdz1Y7xCz/740NbOZUB9nmH4zW+zaD/FTnqe9iqQIg/nwOPnYHWB
-	bzc68EqK3LuusCBU3CgRKApnb8iSP/fvMT7nn
-X-Google-Smtp-Source: AGHT+IFHmbiArDsXZWAVYs3rjmdh3ys4tk76bUfvWftcy8jvKjto9zOVodRX/SH/AwXV4pGdCMt5fhvB8xha1GEmN7I=
-X-Received: by 2002:a25:260b:0:b0:dfb:d69:5657 with SMTP id
- 3f1490d57ef6-dff1534f118mr168388276.9.1718300177648; Thu, 13 Jun 2024
- 10:36:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718300243; x=1718905043;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HeXCvOjfZUoc8Yy0DfPd4nvN0/4du747GE3bH4Ko4l8=;
+        b=hBStsr47dkumRhKPOBXfN2yM2yQt9QWydZ9emhqhoD38rDthh09m2Utvj/SIuSAPm1
+         JpaYbNaGWCZgaRri3VsJHYojrB7OajB1CAp5rfNCywPCbQCnmGSGwVbM4nT7uPGycLGp
+         VzN+Ea2XYKeO56+eUvcPeMUv8QHirVrzQ4wl209KKUSaeDnzFNEu7Gjht6Kx+bgpH4A0
+         T3JIZEWt+hPV6dJ/XD3tsQkjSp/d80GIwdN00ALsEaNXS2J1ilZE37rdaQXqImrn4WG/
+         Xi+C1RvI5derLAmYSSuHpY0qEBSAzyAzr4ajekJQd4fK4TgupqA+2lUi3ckb/rav/M+p
+         R57w==
+X-Forwarded-Encrypted: i=1; AJvYcCXzna4kf7ProHLwDQ49lY8bX2MOettyQq2dZBgM6lKVKxfML1v1uR78Vjfc3e6xIFSZeBA1on/5dYyO83kc2VA12OHVlfNBbaSlBb/F
+X-Gm-Message-State: AOJu0YwnTrywP2qMYoOLJBmDWzZZq/JaRFGhFKt0zahmx2W+mRdMb3ir
+	6IxL/7dcTEagsmpm4B+kmGIRABeVHFSR9qY5js2B3rqCkaFmum729BC1wlgaHlY=
+X-Google-Smtp-Source: AGHT+IHlqr2Gr/wVcfUHyYVtjtoS+IIJeHCrMCvXHq1erzaUkYT056DbAUb1350ehkSOSzCBD/aMgQ==
+X-Received: by 2002:a17:90a:1150:b0:2c2:cefc:abea with SMTP id 98e67ed59e1d1-2c4dbb43d8fmr471729a91.32.1718300243218;
+        Thu, 13 Jun 2024 10:37:23 -0700 (PDT)
+Received: from ghost (c-67-164-127-253.hsd1.ca.comcast.net. [67.164.127.253])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a76a9f14sm4303029a91.48.2024.06.13.10.37.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 10:37:21 -0700 (PDT)
+Date: Thu, 13 Jun 2024 10:37:19 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Evan Green <evan@rivosinc.com>, Andy Chiu <andy.chiu@sifive.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] riscv: Separate vendor extensions from standard
+ extensions
+Message-ID: <ZmsuTyVcxelGvGw+@ghost>
+References: <20240609-support_vendor_extensions-v2-0-9a43f1fdcbb9@rivosinc.com>
+ <20240613-deepness-refried-c6dea811f6f6@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYvWXuWyd3NiX3WwRyorRiDRbxGmRW_7aVnBVKUVA_TaGg@mail.gmail.com>
-In-Reply-To: <CA+G9fYvWXuWyd3NiX3WwRyorRiDRbxGmRW_7aVnBVKUVA_TaGg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 13 Jun 2024 13:36:06 -0400
-Message-ID: <CAHC9VhSeNGo4fPY0H5eM_fFsPSQ18xWUYMvyHBChEysXk-+00Q@mail.gmail.com>
-Subject: Re: security: ima_policy.c:427:17: error: too many arguments to
- function 'ima_filter_rule_init'
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, GUO Zihua <guozihua@huawei.com>, 
-	John Johansen <john.johansen@canonical.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613-deepness-refried-c6dea811f6f6@spud>
 
-On Thu, Jun 13, 2024 at 8:43=E2=80=AFAM Naresh Kamboju
-<naresh.kamboju@linaro.org> wrote:
->
-> The arm and arm64 kselftests builds started failing on Linux next-2024061=
-3 tag.
-> Please find the build log and related links below.
->
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+On Thu, Jun 13, 2024 at 03:45:33PM +0100, Conor Dooley wrote:
+> On Sun, Jun 09, 2024 at 09:34:13PM -0700, Charlie Jenkins wrote:
+> > All extensions, both standard and vendor, live in one struct
+> > "riscv_isa_ext". There is currently one vendor extension, xandespmu, but
+> > it is likely that more vendor extensions will be added to the kernel in
+> > the future. As more vendor extensions (and standard extensions) are
+> > added, riscv_isa_ext will become more bloated with a mix of vendor and
+> > standard extensions.
+> > 
+> > This also allows each vendor to be conditionally enabled through
+> > Kconfig.
+> > 
+> > ---
+> > This has been split out from the previous series that contained the
+> > addition of xtheadvector due to lack of reviews. The xtheadvector
+> > support will be posted again separately from this.
+> 
+> I think that's a good call.
+> 
+> > The reviewed-bys on "riscv: Extend cpufeature.c to detect vendor extensions"
+> > and "riscv: Introduce vendor variants of extension helpers" have been
+> > dropped in this series. The majority of the code is the same in these
+> > patches, but thead-specific code is swapped out with andes-specific
+> > code. The changes are minimal, but I decided to drop the reviews in case
+> > I inadvertently introduced issues.
+> 
+> Actually, you only completely did that on the first of the two patches
+> you mention, but I don't mind.
 
-Thank you, the same error was reported by the kernel test robot
-overnight.  I'm going to look at it today, I suspect it is a conflict
-between the LSM and IMA/EVM branches.  FWIW, I compiled and booted a
-kernel using the LSM changes yesterday without problem.
+You reviewed the third patch of this series in the first revision of
+this series and I should have updated this comment.
 
-> Build error:
-> --------
-> security/integrity/ima/ima_policy.c: In function 'ima_lsm_copy_rule':
-> security/integrity/ima/ima_policy.c:427:17: error: too many arguments
-> to function 'ima_filter_rule_init'
->   427 |                 ima_filter_rule_init(nentry->lsm[i].type, Audit_e=
-qual,
->       |                 ^~~~~~~~~~~~~~~~~~~~
+- Charlie
 
---=20
-paul-moore.com
 
