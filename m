@@ -1,276 +1,144 @@
-Return-Path: <linux-kernel+bounces-213392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BDD907485
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:03:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E5A4907484
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 771941C239F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150B21F22750
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1F4145A1E;
-	Thu, 13 Jun 2024 14:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZVTVORNW"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E247314374B;
+	Thu, 13 Jun 2024 14:02:48 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CEF13F45B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E80C8C7;
+	Thu, 13 Jun 2024 14:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718287369; cv=none; b=piXAHn3jTNPei0ZghHLE7/MbqInJdcQXZGlrkO/4PZkHDezoAYHLsFoEHEBVyZUHjtiorB6jelZejT7AxWSIqFG3qLYagYKnX9zAG8RNRUyDlfFLcZMuIE33QLxLy+fZJezH2JX1jQeZcuLfSJpBYdoVzFHHFMDBEbbMOU+Uq8o=
+	t=1718287368; cv=none; b=fpXNGgz+1ardcXrod2Ky8QdT/Nw5QpPeBHtRc1OsWrqqXXe33w+qMEknMB9Hd5/FcyN82HAxicB9uG3sqGDagp/KYPhL9b3ctXFEiLCkr7NNRqfLuIDI9uQqCkN06KJtzvwKU1zIufdCClwgHy7kVFsReoAwLKA/rib09ohIOI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718287369; c=relaxed/simple;
-	bh=mH1sIFrMKVp2VTZGTEn6etrgD7V5Q/aaBfZYJ9JQGL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ACXSG1+yY5FLT8/qdhvLZlapxydGVP0m3gKpfeEJv6cGvYLSxQVQCr15e2ggItNJn8BVNw77y7ECv9KGLkvYk5Y8z9tfj3FNAvyUTWU5i6a7I3T6StzAsL6KHoCuUyNKFheqP6inv7p1eNOtTFFgCdvuBVpZdQ0afG+DVphEiT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZVTVORNW; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b072522bd5so5106536d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:02:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718287364; x=1718892164; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MVfQj5frZvhfPIr2bLnPL/vOVro3gTAkFcKcEKhSFvQ=;
-        b=ZVTVORNW3tDz8LfgJTcL/5bkRqMhAvp3QeNaKbVOUQEmKgFQ9GKO84uLn0LsgD6tnN
-         xw+5SrH5bwsAWoLEnIVyaoVo4JqJpVhZ9kt4lsBIL9nu6/58pKNHKgTOZi6BofGu1QCo
-         l/tGjTk06viG0wnx4L+YRFb6w+XPyPvgLanO0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718287364; x=1718892164;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MVfQj5frZvhfPIr2bLnPL/vOVro3gTAkFcKcEKhSFvQ=;
-        b=ud8q80AXBsTJx0KfJeKSiYbhnU+MmVYXF5r/Nu2qxCh0+uD3jDrLmzO96xakSgQWLt
-         M38e5jJl8gNVwpjtBKa+PwxVZpr/Kv/3b0XaF9inmVA3U4/H82pgde96gd1SXYvKn8Mz
-         qHprMCHvzfObpxUTvQaQJs88R5E9p55wA8M8cFgnhiwVDD/lJrLQZ2aAItK9bUf9Ko67
-         0w8M26t9n0pxVt5xwdWVIXkZhoIM8KAsJ5c1vuDfXKHI2GSA25kbrQrUkYJmletnUMrt
-         BsRPuQh3sTYo5vl0Bi+A9HGljvAt2RZzWEo7UdOrVvFsSqdP+brnEhRh8UlbygjXZEA6
-         zNSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWG6qqIRtkCghAEPiTI3nKqQzcuVZJijHA+993AWqnMqjlgE3uNY2c0UdXWcK2EERfzNJVGsye1ZEU00F0RBYMGHPXmJBrH8TD89BwG
-X-Gm-Message-State: AOJu0YyRivegzx/pD7iNINIqn2IC/Ghxo3JpqyKEv/pROE6UBUl8Trj0
-	6Wifobl80SAIJP1JV4Rrhd9APg7eU7PlD3pRN+ziqwj+0XEMZQlRNxtlSNVWV+mC0oD5AIqZBM0
-	=
-X-Google-Smtp-Source: AGHT+IHtpRLPHM6HBhnQ/9N2/QKNEonsejUd8xLe4bNRHJQPZG6TYecVg+uTJwmtlwtnbUGng4eg6A==
-X-Received: by 2002:a05:6214:5348:b0:6b0:86ec:2e74 with SMTP id 6a1803df08f44-6b1a79dbf93mr58112956d6.61.1718287363854;
-        Thu, 13 Jun 2024 07:02:43 -0700 (PDT)
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com. [209.85.160.177])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5eb4a31sm6925726d6.91.2024.06.13.07.02.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 07:02:43 -0700 (PDT)
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4405cf01a7fso342241cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:02:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXAMa12T8YIF5zcDW4QKxwO/6GVYO0Kuz1RvKmshnYco7gvI9pxykJktlGefw8kYkQpBfeac+RF5znox+pfgwjm/mt37EnQ98dJ9MDV
-X-Received: by 2002:a05:622a:4ccd:b0:441:6177:c228 with SMTP id
- d75a77b69052e-441e243c107mr3525071cf.7.1718287362280; Thu, 13 Jun 2024
- 07:02:42 -0700 (PDT)
+	s=arc-20240116; t=1718287368; c=relaxed/simple;
+	bh=ba31KMcH9Sse/E6nlGBlFa3LctbVyEL7XIQ4TSKCYZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mxX5eH4U1kSPfrI1rbAJuvus/4cUC9TfBhB/jc5etkFUbaxNluGooM9F4LQkGT49dh/gqWbraKI7XetnM91tdVqdbMHKG7zcB79uCUIUvE2dm+Ro1TcfolSqCXVbSlmF/JsB9LrFA8b78a195+iYh1p/zRXtJPPtQxnhXZBCVDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W0PG21FHXzdcjZ;
+	Thu, 13 Jun 2024 22:01:14 +0800 (CST)
+Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1584F18007C;
+	Thu, 13 Jun 2024 22:02:42 +0800 (CST)
+Received: from [10.174.177.174] (10.174.177.174) by
+ dggpeml100021.china.huawei.com (7.185.36.148) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 13 Jun 2024 22:02:41 +0800
+Message-ID: <935974c5-89b1-4811-bdef-6652937829a1@huawei.com>
+Date: Thu, 13 Jun 2024 22:02:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610222515.3023730-1-dianders@chromium.org>
- <20240610152420.v4.2.I65a6430ab75f74d20c28b5c5f819dd5b8455933d@changeid>
- <0bb414fa-851b-40cf-ede9-fc6252c6b173@linux.intel.com> <CAD=FV=WWrTHRdwrbOFBrZ94HpWQo6v6FkLTxa1vgN31SC6GqDA@mail.gmail.com>
- <ed012fe3-e704-de86-2b5d-bc8d71ebbeaa@linux.intel.com>
-In-Reply-To: <ed012fe3-e704-de86-2b5d-bc8d71ebbeaa@linux.intel.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 13 Jun 2024 07:02:25 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Un8+gVfZCx_CEdO2Vh5aprTJfBZ0TVdpVBtGdEhnE3Dg@mail.gmail.com>
-Message-ID: <CAD=FV=Un8+gVfZCx_CEdO2Vh5aprTJfBZ0TVdpVBtGdEhnE3Dg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/8] tty: serial: Add uart_fifo_timeout_ms()
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Tony Lindgren <tony@atomide.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Johan Hovold <johan+linaro@kernel.org>, 
-	John Ogness <john.ogness@linutronix.de>, linux-arm-msm@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Stephen Boyd <swboyd@chromium.org>, linux-serial <linux-serial@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: CVE-2024-36966: erofs: reliably distinguish block based and
+ fscache mode
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Gao Xiang <hsiangkao@linux.alibaba.com>, <cve@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-cve-announce@vger.kernel.org>, Baokun
+ Li <libaokun@huaweicloud.com>, <yangerkun@huawei.com>
+References: <2024060804-CVE-2024-36966-8bbb@gregkh>
+ <686626cd-7dcd-4931-bf55-108522b9bfeb@linux.alibaba.com>
+ <362b1e1b-dcdb-4801-a9fc-18d019e7c775@huawei.com>
+ <2024061323-ibuprofen-dreamy-ae0b@gregkh>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <2024061323-ibuprofen-dreamy-ae0b@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml100021.china.huawei.com (7.185.36.148)
 
-Hi,
-
-On Wed, Jun 12, 2024 at 11:56=E2=80=AFPM Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
+On 2024/6/13 21:55, Greg Kroah-Hartman wrote:
+> On Thu, Jun 13, 2024 at 07:21:14PM +0800, Baokun Li wrote:
+>> On 2024/6/13 17:38, Gao Xiang wrote:
+>>> Hi,
+>>>
+>>> (+Cc Baokun Li)
+>>>
+>>> On 2024/6/8 20:53, Greg Kroah-Hartman wrote:
+>>>> Description
+>>>> ===========
+>>>>
+>>>> In the Linux kernel, the following vulnerability has been resolved:
+>>>>
+>>>> erofs: reliably distinguish block based and fscache mode
+>>>>
+>>>> When erofs_kill_sb() is called in block dev based mode, s_bdev may not
+>>>> have been initialised yet, and if CONFIG_EROFS_FS_ONDEMAND is enabled,
+>>>> it will be mistaken for fscache mode, and then attempt to free an
+>>>> anon_dev
+>>>> that has never been allocated, triggering the following warning:
+>>>>
+>>>> ============================================
+>>>> ida_free called for id=0 which is not allocated.
+>>>> WARNING: CPU: 14 PID: 926 at lib/idr.c:525 ida_free+0x134/0x140
+>>>> Modules linked in:
+>>>> CPU: 14 PID: 926 Comm: mount Not tainted 6.9.0-rc3-dirty #630
+>>>> RIP: 0010:ida_free+0x134/0x140
+>>>> Call Trace:
+>>>>    <TASK>
+>>>>    erofs_kill_sb+0x81/0x90
+>>>>    deactivate_locked_super+0x35/0x80
+>>>>    get_tree_bdev+0x136/0x1e0
+>>>>    vfs_get_tree+0x2c/0xf0
+>>>>    do_new_mount+0x190/0x2f0
+>>>>    [...]
+>>>> ============================================
+>>>>
+>>>> Now when erofs_kill_sb() is called, erofs_sb_info must have been
+>>>> initialised, so use sbi->fsid to distinguish between the two modes.
+>>>>
+>>>> The Linux kernel CVE team has assigned CVE-2024-36966 to this issue.
+>>>>
+>>>>
+>>>> Affected and fixed versions
+>>>> ===========================
+>>>>
+>>>>      Fixed in 6.6.32 with commit f9b877a7ee31
+>>>>      Fixed in 6.8.11 with commit dcdd49701e42
+>>>>      Fixed in 6.9 with commit 7af2ae1b1531
+>>> For reference, this issue doesn't affect Linux kernel below 6.6.
+>>>
+>>> This behavior ("s_bdev may not be initialized in erofs_kill_sb()")
+>>> is introduced due to commit aca740cecbe5 ("fs: open block device after
+>>> superblock creation").
+>>>
+>>> In other words, previously .kill_sb() was called only after
+>>> fill_super failed and problematic erofs_kill_sb() called due to
+>>> setup_bdev_super() failure can only happen since Linux 6.6.
+>>>
+>>> Thanks,
+>>> Gao Xiang
+>> Exactly! I'm so sorry I forgot to add the Fixes tag.
+> No worries.  I've updated the CVE database with this information and the
+> json file and web site will show the new information soon when it gets
+> propagated.
 >
-> On Wed, 12 Jun 2024, Doug Anderson wrote:
-> > On Wed, Jun 12, 2024 at 12:38=E2=80=AFAM Ilpo J=C3=A4rvinen
-> > <ilpo.jarvinen@linux.intel.com> wrote:
-> > >
-> > > On Mon, 10 Jun 2024, Douglas Anderson wrote:
-> > >
-> > > > The current uart_fifo_timeout() returns jiffies, which is not alway=
-s
-> > > > the most convenient for callers. Add a variant uart_fifo_timeout_ms=
-()
-> > > > that returns the timeout in milliseconds.
-> > > >
-> > > > NOTES:
-> > > > - msecs_to_jiffies() rounds up, unlike nsecs_to_jiffies(). This is
-> > > >   because msecs_to_jiffies() is actually intended for device driver=
-s
-> > > >   to calculate timeout value. This means we don't need to take the =
-max
-> > > >   of the timeout and "1" since the timeout will always be > 0 ms (w=
-e
-> > > >   add 20 ms of slop).
-> > > > - uart_fifo_timeout_ms() returns "unsigned int" but we leave
-> > > >   uart_fifo_timeout() returning "unsigned long". This matches the
-> > > >   types of msecs_to_jiffies().
-> > > >
-> > > > Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> > > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > > > ---
-> > > >
-> > > > Changes in v4:
-> > > > - New
-> > > >
-> > > >  include/linux/serial_core.h | 15 +++++++++++----
-> > > >  1 file changed, 11 insertions(+), 4 deletions(-)
-> > > >
-> > > > diff --git a/include/linux/serial_core.h b/include/linux/serial_cor=
-e.h
-> > > > index 8cb65f50e830..97968acfd564 100644
-> > > > --- a/include/linux/serial_core.h
-> > > > +++ b/include/linux/serial_core.h
-> > > > @@ -889,14 +889,21 @@ unsigned int uart_get_divisor(struct uart_por=
-t *port, unsigned int baud);
-> > > >  /*
-> > > >   * Calculates FIFO drain time.
-> > > >   */
-> > > > -static inline unsigned long uart_fifo_timeout(struct uart_port *po=
-rt)
-> > > > +static inline unsigned int uart_fifo_timeout_ms(struct uart_port *=
-port)
-> > > >  {
-> > > >       u64 fifo_timeout =3D (u64)READ_ONCE(port->frame_time) * port-=
->fifosize;
-> > > > +     unsigned int fifo_timeout_ms =3D div_u64(fifo_timeout, NSEC_P=
-ER_MSEC);
-> > > >
-> > > > -     /* Add .02 seconds of slop */
-> > > > -     fifo_timeout +=3D 20 * NSEC_PER_MSEC;
-> > > > +     /*
-> > > > +      * Add .02 seconds of slop. This also helps account for the f=
-act that
-> > > > +      * when we converted from ns to ms that we didn't round up.
-> > > > +      */
-> > > > +     return fifo_timeout_ms + 20;
-> > > > +}
-> > > >
-> > > > -     return max(nsecs_to_jiffies(fifo_timeout), 1UL);
-> > > > +static inline unsigned long uart_fifo_timeout(struct uart_port *po=
-rt)
-> > > > +{
-> > > > +     return msecs_to_jiffies(uart_fifo_timeout_ms(port));
-> > > >  }
-> > >
-> > > Hi,
-> > >
-> > > This is definitely towards the right direction! However, it now does
-> > > double conversion, first div_u64() and then msecs_to_jiffies(). Perha=
-ps it
-> > > would be better to retain the nsecs version (maybe rename it to _ns f=
-or
-> > > consistency) and add _ms variant that does the nsec -> msec conversio=
-n.
-> >
-> > I spent a bit of time thinking about it and I don't agree. If you feel
-> > very strongly about it or someone else wants to jump in and break the
-> > tie then I can look again, but:
-> >
-> > 1. The comment before nsecs_to_jiffies() specifically states that it's
-> > not supposed to be used for this purpose. Specifically, it says:
-> >
-> >  * Unlike {m,u}secs_to_jiffies, type of input is not unsigned int but u=
-64.
-> >  * And this doesn't return MAX_JIFFY_OFFSET since this function is desi=
-gned
-> >  * for scheduler, not for use in device drivers to calculate timeout va=
-lue.
-> >
-> > ...so switching away from nsecs_to_jiffies() to msecs_to_jiffies() is
-> > arguably a "bugfix", or at least avoids using the API in a way that's
-> > against the documentation.
+> thanks,
 >
-> Okay, I see. However, there's no way around using u64 here even with your
-> version that does not use nsecs_to_jiffies() because nsecs is the most
-> useful form of input when starting from frame_time, usecs is a bit
-> coarse-grained for higher data rates.
+> greg k-h
 
-Right. We have to start with u64 because the frame time is in ns and
-we can only fit ~4 seconds worth of ns in 32-bits. That seems iffy.
+Thank you very much for the update!
 
+-- 
+With Best Regards,
+Baokun Li
 
-> > 2. As mentioned in the commit message, nsecs_to_jiffies() truncates
-> > where msecs_to_jiffies() rounds up. Presumably this difference is
-> > related to the comment above where the "ns" version is intended for
-> > the scheduler. Using the "ms" version allows us to get rid of the
-> > extra call to "max()" which is a benefit. Technically since the
-> > timeout is at least 20 ms the minimum HZ is 100 I guess we didn't need
-> > the max anyway, but I guess someone thought it was cleaner and now we
-> > can definitely get rid of it.
-> >
-> > 3. These functions are inline anyway, so I don't think it's causing a
-> > huge bloat of instructions. In fact, moving from 64-bit math to 32-bit
-> > math sooner could make the code smaller.
-> >
-> > 4. I don't feel like it hurts the readability to convert down to ms
-> > and then to jiffies. In fact, IMO it helps since it makes it more
-> > obvious that we're working with ms.
->
-> I'd be lying if I'd say I feel strongly about it
-
-Fair enough. If someone wants to throw in an opinion and tiebreak then they=
- can.
-
-
-> but my only argument
-> involves doing an extra divide which is somewhat costly. It's a
-> plain 32-bit divide though so not as bad as the u64 one that is
-> unavoidable.
-
-We shouldn't be calling this in a loop anyway, so it's unlikely to
-matter. In any case, I'd note that with the old code we had:
-
-1. 64-bit multiply (time * fifosize)
-2. 64-bit addition (result + 20ms)
-3. 64-bit =3D> 32-bit division (to jiffies)
-4. 32-bit comparison against the value 1.
-5. Conditional setting of the value to 1.
-
-Now we have:
-
-1. 64-bit multiply (time * fifosize)
-2. 64-bit =3D> 32-bit division (to ms)
-3. 32-bit addition with a small immediate (20)
-4. 32-bit addition (div round up) if HZ !=3D 1000
-5. 32-bit division (div round up) if HZ !=3D 1000
-
-I didn't try disassembling to see what the compiler did and it would
-be different for each compiler / ISA / optimization level / value of
-HZ, but I guess my point is that while we have one more divide (unless
-HZ =3D=3D 1000) we may have one less conditional. We're also tending to do
-our math with small immediates which some ISAs can handle more
-efficiently.
-
-I think the real answer, though, is that this doesn't really matter
-and that we should pick the solution that's cleaner/easier to
-understand. I'm still in favor of the patch as it is. As I said, if
-folks feel really strongly then it doesn't matter and I can change it,
-but otherwise I'd rather keep it the way it is.
-
-
--Doug
 
