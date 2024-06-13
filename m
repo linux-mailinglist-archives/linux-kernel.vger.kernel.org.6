@@ -1,112 +1,115 @@
-Return-Path: <linux-kernel+bounces-213469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8283F9075B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:51:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E2E9075DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9890B1C240FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:51:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8FF31F23081
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CDE1411D6;
-	Thu, 13 Jun 2024 14:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C61B148304;
+	Thu, 13 Jun 2024 14:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Racm8eZ+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ubimet.com header.i=@ubimet.com header.b="WZGBza/v"
+Received: from mx2-at.ubimet.com (mx2-at.ubimet.com [141.98.226.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE541B646
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749122AEFE;
+	Thu, 13 Jun 2024 14:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.98.226.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718290265; cv=none; b=Xjqm3oXP1saoThqeyTUoeSFBknnQbLi+c2klJduSdc/S/V6SPDk9pBQH1sntmkxTmjEXjwxkqM5O+Jxok6nIxBWw3K3GtxFOM2XZSuqfyIdJBknS16ELCo1h7ygRkFryHF0mXZSIqVlHVG1bFk/vwtC4YHzZiztghyDz5KP2Mhk=
+	t=1718290744; cv=none; b=CM8PgE/jM9f65dbyQZDfglXGwRxOe33xnnY1sjVRDCJWyff+GZW7X/hmIp/FhnzNdcqOjEyCH+/t9tc5awDkDeSuIpYwkvFzwPuh1tzI81Kp3xly682ePnLKL3DXO4tJw8NfGBMjZeUzmtYTl2J/uzmm+sPr0oCljq5ON+o6XyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718290265; c=relaxed/simple;
-	bh=Y0WoLZ5dKwSO1CNiA0o+3a8cM1lM7Z8l0lW7Mgayr54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mZZChuGes8OGo/4tIqa8Zty9OZN9kh+67Dsq+RSUXXrh8sjBDsJKAKvy7d3wO8b5qDZHoE+CdgnWa+DoH0WD0/j0bz/pMB3ER4KgBczhB4Zyf5CjcQGkGdtTwQdf3RQ2/lqMcPZXdW9bzuOHBUnenCGeuT+pVvAZTqUa0fEJlAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Racm8eZ+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718290262;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y0WoLZ5dKwSO1CNiA0o+3a8cM1lM7Z8l0lW7Mgayr54=;
-	b=Racm8eZ+LTuYGpK9hihgvG7enTEonFAoGw7ThPxDApJPEZxz8VKG6QRKxhQPD7JlnTYa+0
-	zt9CveUh9yPHmAIOoUx6vKiTAKp1YF+Q6gtsFbe3IivQEaSIUEbK3m8Dy1+6ioi5Zd2AW7
-	V6T6EZL49srdoJPkAd7WiP0caC1YwLQ=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-510-1jGJsdWNP2esv4ksrP1ypw-1; Thu,
- 13 Jun 2024 10:50:59 -0400
-X-MC-Unique: 1jGJsdWNP2esv4ksrP1ypw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D14C19560BE;
-	Thu, 13 Jun 2024 14:50:53 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.233])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5DCE819560AF;
-	Thu, 13 Jun 2024 14:50:45 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 13 Jun 2024 16:49:23 +0200 (CEST)
-Date: Thu, 13 Jun 2024 16:49:13 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Wei Fu <fuweid89@gmail.com>
-Cc: ebiederm@xmission.com, Sudhanva.Huruli@microsoft.com,
-	akpm@linux-foundation.org, apais@linux.microsoft.com,
-	axboe@kernel.dk, boqun.feng@gmail.com, brauner@kernel.org,
-	frederic@kernel.org, j.granados@samsung.com, jiangshanlai@gmail.com,
-	joel@joelfernandes.org, josh@joshtriplett.org,
-	linux-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com,
-	michael.christie@oracle.com, mjguzik@gmail.com,
-	neeraj.upadhyay@kernel.org, paulmck@kernel.org,
-	qiang.zhang1211@gmail.com, rachelmenge@linux.microsoft.com,
-	rcu@vger.kernel.org, rostedt@goodmis.org
-Subject: Re: [PATCH] zap_pid_ns_processes: clear TIF_NOTIFY_SIGNAL along with
- TIF_SIGPENDING
-Message-ID: <20240613144913.GA18218@redhat.com>
-References: <87a5jpqamx.fsf@email.froward.int.ebiederm.org>
- <20240613140216.30327-1-fuweid89@gmail.com>
+	s=arc-20240116; t=1718290744; c=relaxed/simple;
+	bh=PkwrnxW49KXKombbCY1USp7kfKxbA1A4Nxf0R8gfIwo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rUKrco1NV2UDI75RlqZQRnSTMBh7m9FMk9PyX5mnbgRdQgbTgePgH2lvSUkAktYogYo0nt9oA2zsGq2mYYW9c3dKFuwJYmGLb44J9BmxXLFseCTEj2+n9Z+FVaGBdZ0CyLOoezAU+P1SjX9dB9XNrzqVdgyrxcdkTrm7u01i3Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ubimet.com; spf=pass smtp.mailfrom=ubimet.com; dkim=pass (2048-bit key) header.d=ubimet.com header.i=@ubimet.com header.b=WZGBza/v; arc=none smtp.client-ip=141.98.226.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ubimet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ubimet.com
+Received: from localhost (localhost [127.0.0.1])
+	by mx2-at.ubimet.com (Postfix) with ESMTP id C44B481186;
+	Thu, 13 Jun 2024 14:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ubimet.com;
+	s=20200131mdel; t=1718290299;
+	bh=PkwrnxW49KXKombbCY1USp7kfKxbA1A4Nxf0R8gfIwo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WZGBza/vR1BVuAri/u2N54duL+y8duDubz4EbM9DsDI9P4j3hPMe43QbdFOsL38/4
+	 cLptxKndvu2vcCAEj4isopnHxeQe4lCsPg/ggqHS2tV5aBOszZtEyM6GnN0VWuQo+g
+	 0aa2kKnPXVxztjMt/R0MAefJceEZkzdyh7/6fqTWqsJcc0n7kTjV4os//ZovOr+54L
+	 gBft2rFd7cTRcCCIzji6cJ77fSBE+mF6q6pTBOpAQcfjR67oZyfKQwzscIoWbQ0ixj
+	 5u24Ref3Up6u/+zN5WvhghGUmg1zfeve/bUY3iydHn19dqNvKAbu7kdoBCsWwfQM1F
+	 Zqg249FAnq6fA==
+Received: from mx2-at.ubimet.com ([127.0.0.1])
+	by localhost (mx02.dmz.dc.at.ubimet.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id WwTyPJ8Qhyk8; Thu, 13 Jun 2024 14:51:39 +0000 (UTC)
+Received: from zimbra-mta01.ext.dc.at.ubimet.com (zimbra-mta01.ext.dc.at.ubimet.com [10.1.18.22])
+	by mx2-at.ubimet.com (Postfix) with ESMTPS id A425B81110;
+	Thu, 13 Jun 2024 14:51:39 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra-mta01.ext.dc.at.ubimet.com (Postfix) with ESMTP id 91C3080771;
+	Thu, 13 Jun 2024 14:51:39 +0000 (UTC)
+Received: from zimbra-mta01.ext.dc.at.ubimet.com ([127.0.0.1])
+ by localhost (zimbra-mta01.ext.dc.at.ubimet.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id VXqqTe2gBYSc; Thu, 13 Jun 2024 14:51:38 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra-mta01.ext.dc.at.ubimet.com (Postfix) with ESMTP id BD03380782;
+	Thu, 13 Jun 2024 14:51:38 +0000 (UTC)
+X-Virus-Scanned: amavis at zimbra-mta01.ext.dc.at.ubimet.com
+Received: from zimbra-mta01.ext.dc.at.ubimet.com ([127.0.0.1])
+ by localhost (zimbra-mta01.ext.dc.at.ubimet.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id hVaxFwn5rYsh; Thu, 13 Jun 2024 14:51:38 +0000 (UTC)
+Received: from pcn112.wl97.hub.at.ubimet.com (pcn112.it.hub.at.ubimet.com [10.15.66.143])
+	by zimbra-mta01.ext.dc.at.ubimet.com (Postfix) with ESMTPSA id 7210A80771;
+	Thu, 13 Jun 2024 14:51:38 +0000 (UTC)
+From: =?UTF-8?q?Jo=C3=A3o=20Rodrigues?= <jrodrigues@ubimet.com>
+To: 
+Cc: jrodrigues@ubimet.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org (open list:ETHERNET PHY LIBRARY),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next 0/3] net: phy: dp83867: add cable diag support
+Date: Thu, 13 Jun 2024 16:51:50 +0200
+Message-Id: <20240613145153.2345826-1-jrodrigues@ubimet.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613140216.30327-1-fuweid89@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 06/13, Wei Fu wrote:
->
-> I think there is a case that TIF_NOTIFY_SIGNAL remains set.
+This series adds more diagnostics of the physical medium to the DP83867.
+The TDR reporting is similar to DP83869, so there might be some interest
+in porting this changes to that driver.
+The TDR reporting in PD83867 is divided into segments (from which a
+cable length can be extracted). Because the reported lengths do not come
+in regular intervals, when doing cable-test-tdr from ethtool, the value
+of the reflection is reported, but not the length at which occurred
+(even though the PHY reports it).
+Likewise, the configuration of measurement lengths is also not
+supported in this series, for the same reason (it is theoretically
+possible to do it, with more complex configuration)
 
-[...snip...]
+Jo=C3=A3o Rodrigues (3):
+  net: phy: dp83867: Add SQI support
+  net: phy: dp83867: add cable test support
+  net: phy: dp83867: Add support for amplitude graph
 
-Of course! but please forget about io_uring even if currently io_uring/
-is the only user of TWA_SIGNAL.
+ drivers/net/phy/dp83867.c | 353 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 353 insertions(+)
 
-Just suppose that the exiting task/thread races with task_workd_add(TWA_SIGNAL),
-TIF_NOTIFY_SIGNAL won't be cleared.
-
-This is fine in that the exiting task T will do exit_task_work() and after that
-task_work_add(T) can't succeed with or without TWA_SIGNAL. So it can't miss the
-pending work.
-
-But I think we can forget about TIF_NOTIFY_SIGNAL. To me, the problem is that
-the state of signal_pending() of the exiting task was never clearly defined, and
-I can't even recall how many times I mentioned this in the previous discussions.
-TIF_NOTIFY_SIGNAL doesn't add more confusion, imo.
-
-Oleg.
+--=20
+2.25.1
 
 
