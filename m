@@ -1,213 +1,157 @@
-Return-Path: <linux-kernel+bounces-213008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 437649069C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:14:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1799069C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F081F26664
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:14:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B1BD1C20F3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3A71420C8;
-	Thu, 13 Jun 2024 10:14:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D0613D276;
-	Thu, 13 Jun 2024 10:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1F01420BE;
+	Thu, 13 Jun 2024 10:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEEc3b4R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351071419B1;
+	Thu, 13 Jun 2024 10:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718273676; cv=none; b=otPRHSr79sQtMrNIxX9FkG7omdPRBSkirsSwJpHuiOvCBYjsQb1wLXDPiDpvbCl4lzJVOYVmWzo9I3dh1ZPMBMfnbyyJz/Dfr5Tbft5le4xle2EIPnjo5NLrrHCIhtqZ6cC4Qk30cBztGcX08F+d7UJiiNLCHgycBPxw5NrAeLM=
+	t=1718273713; cv=none; b=PJqLa78CkEKIdIF6UUN/6EX2nKAGjlOHrLyDDSNPyLB2+Uei8ec6P8sIvVgRML3Hpm0oA8skHUTwNFGbHxRVdXngw0ZlN/GJD714dDMHLApMaamcggFAjgPglz5YEkDffMi+Ep9qrtW/grfuSGpq37KNzY2mARAzCNIsSJzIUoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718273676; c=relaxed/simple;
-	bh=CyQWMPToyExjoNN6qnJYA/rimhYaa+vuwjXWKSRN3v0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h0jYFd4Z55bCuCpP3FjbQ5yQigsVt4dDmveSUgfyT8tOQ0jXPF8BuykWaUleHr3Q94YrL2EWF6riv43zqoFroj80YGZrhV7RJ8rvuXTFsRduaxGyYXJiw5iKP9mC1poNR7XitKrbEvJIwXeLk9kOVtvfEgkIro0P+OswLcQh0ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 739A01063;
-	Thu, 13 Jun 2024 03:14:57 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2517E3F5A1;
-	Thu, 13 Jun 2024 03:14:30 -0700 (PDT)
-Date: Thu, 13 Jun 2024 11:14:27 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	will@kernel.org, catalin.marinas@arm.com,
-	Mark Brown <broonie@kernel.org>, James Clark <james.clark@arm.com>,
-	Rob Herring <robh@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>, kvmarm@lists.linux.dev
-Subject: Re: [PATCH V18 2/9] KVM: arm64: Explicitly handle BRBE traps as
- UNDEFINED
-Message-ID: <ZmrGg_-NaSODhmN2@J2N7QTR9R3>
-References: <20240613061731.3109448-1-anshuman.khandual@arm.com>
- <20240613061731.3109448-3-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1718273713; c=relaxed/simple;
+	bh=r2cm43AgLQ2yKiamt7FvGWb3+PXn+YHNEap/3gysXyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fk9FDjgBMAcTa2tWZ4TNWj9RPlpq007EQAKutAOrvS65NbRps/O6Xqw7+YW9ka20DkG1QA8jE0V0KXZ4+vMmcvNSLLKoBf90eU+zd1rZ8ytyWr0+98fAt0JgAaYR8Pq76BWs8H1i/+aAy0nzgUjypdmBYxxIX9HVubRQhi46LFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JEEc3b4R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5708EC4AF1A;
+	Thu, 13 Jun 2024 10:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718273713;
+	bh=r2cm43AgLQ2yKiamt7FvGWb3+PXn+YHNEap/3gysXyg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JEEc3b4ROFtvvtkrHsp9EDLXYzpCnbIPqPuV8ftYU8F8h2QUNorwMTSb7NjRp5NAl
+	 aJu+FWPejgLrKx4cR28QqcNUgNAPinXNlXi7GnIJf13KhDoJuvf7oLddGTVxp6JZVM
+	 azxag9RwVMSFocDeOLuRLV12SoEBUNOpiZNAfOVzww34HiITjc/rJ5UUgzYYt33TjG
+	 4rlOyeHkA+kg5VHFuGyGW2u3g/08snUf171mrAr0grkSD6mLrbRo7XU8KYCiDK+7BH
+	 69PgLZAbtzy4OzC1KWRXDb6z6m3ZRBr/nhAVFlea678l4FipkNQU9opgcpfDTOgyOk
+	 FDjtUvxpT3x8g==
+Message-ID: <e62a723c-30dc-4667-bbd5-85cb8c583432@kernel.org>
+Date: Thu, 13 Jun 2024 12:15:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613061731.3109448-3-anshuman.khandual@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: phy: rockchip-emmc-phy: Convert to
+ dtschema
+To: Shresth Prasad <shresthprasad7@gmail.com>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ heiko@sntech.de, sebastian.reichel@collabora.com, s.hauer@pengutronix.de,
+ cristian.ciocaltea@collabora.com, andy.yan@rock-chips.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ javier.carrasco.cruz@gmail.com
+References: <20240613085812.4020-2-shresthprasad7@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240613085812.4020-2-shresthprasad7@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 11:47:24AM +0530, Anshuman Khandual wrote:
-> The Branch Record Buffer Extension (BRBE) adds a number of system registers
-> and instructions, which we don't currently intend to expose to guests. Our
-> existing logic handles this safely, but this could be improved with some
-> explicit handling of BRBE.
+On 13/06/2024 10:58, Shresth Prasad wrote:
+> Convert txt bindings of Rockchip EMMC PHY to dtschema to allow
+> for validation.
 > 
-> The presence of BRBE is currently hidden from guests as the cpufeature
-> code's ftr_id_aa64dfr0[] table doesn't have an entry for the BRBE field,
-> and so this will be zero in the sanitised value of ID_AA64DFR0 exposed to
-> guests via read_sanitised_id_aa64dfr0_el1(). As the ftr_id_aa64dfr0[] table
-> may gain an entry for the BRBE field in future, for robustness we should
-> explicitly mask out the BRBE field in read_sanitised_id_aa64dfr0_el1().
-> 
-> The BRBE system registers and instructions are currently trapped by the
-> existing configuration of the fine-grained traps. As neither the registers
-> nor the instructions are described in the sys_reg_descs[] table,
-> emulate_sys_reg() will warn that these are unknown before injecting an
-> UNDEFINED exception into the guest.
-> 
-> Well-behaved guests shouldn't try to use the registers or instructions, but
-> badly-behaved guests could use these, resulting in unnecessary warnings. To
-> avoid those warnings, we should explicitly handle the BRBE registers and
-> instructions as UNDEFINED.
-> 
-> Address the above by having read_sanitised_id_aa64dfr0_el1() mask out the
-> ID_AA64DFR0.BRBE field, and explicitly handling all of the BRBE system
-> registers and instructions as UNDEFINED.
-> 
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: kvmarm@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-
-> ----
-> Changes in V18:
-> 
-> - Updated the commit message
-> 
->  arch/arm64/kvm/sys_regs.c | 56 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
-> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
 > ---
->  arch/arm64/kvm/sys_regs.c | 56 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
+> Changes in v3:
+>     - fix `reg` in example being too long
+> 
+> Tested against `rockchip/rk3399-firefly.dtb`, `rockchip/rk3399-orangepi.dtb`
+> and `rockchip/rk3399-pinebook-pro.dtb`.
 
-Something has gone wrong here, but that doesn't affect the patch itself.
 
-Mark.
 
 > 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 22b45a15d068..3d4686abe5ee 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -1304,6 +1304,11 @@ static int set_pmcr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
->  	return 0;
->  }
->  
-> +#define BRB_INF_SRC_TGT_EL1(n)				\
-> +	{ SYS_DESC(SYS_BRBINF_EL1(n)), undef_access },	\
-> +	{ SYS_DESC(SYS_BRBSRC_EL1(n)), undef_access },	\
-> +	{ SYS_DESC(SYS_BRBTGT_EL1(n)), undef_access }	\
-> +
->  /* Silly macro to expand the DBG{BCR,BVR,WVR,WCR}n_EL1 registers in one go */
->  #define DBG_BCR_BVR_WCR_WVR_EL1(n)					\
->  	{ SYS_DESC(SYS_DBGBVRn_EL1(n)),					\
-> @@ -1722,6 +1727,9 @@ static u64 read_sanitised_id_aa64dfr0_el1(struct kvm_vcpu *vcpu,
->  	/* Hide SPE from guests */
->  	val &= ~ID_AA64DFR0_EL1_PMSVer_MASK;
->  
-> +	/* Hide BRBE from guests */
-> +	val &= ~ID_AA64DFR0_EL1_BRBE_MASK;
-> +
->  	return val;
->  }
->  
-> @@ -2240,6 +2248,52 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	{ SYS_DESC(SYS_DBGCLAIMCLR_EL1), trap_raz_wi },
->  	{ SYS_DESC(SYS_DBGAUTHSTATUS_EL1), trap_dbgauthstatus_el1 },
->  
-> +	/*
-> +	 * BRBE branch record sysreg address space is interleaved between
-> +	 * corresponding BRBINF<N>_EL1, BRBSRC<N>_EL1, and BRBTGT<N>_EL1.
-> +	 */
-> +	BRB_INF_SRC_TGT_EL1(0),
-> +	BRB_INF_SRC_TGT_EL1(16),
-> +	BRB_INF_SRC_TGT_EL1(1),
-> +	BRB_INF_SRC_TGT_EL1(17),
-> +	BRB_INF_SRC_TGT_EL1(2),
-> +	BRB_INF_SRC_TGT_EL1(18),
-> +	BRB_INF_SRC_TGT_EL1(3),
-> +	BRB_INF_SRC_TGT_EL1(19),
-> +	BRB_INF_SRC_TGT_EL1(4),
-> +	BRB_INF_SRC_TGT_EL1(20),
-> +	BRB_INF_SRC_TGT_EL1(5),
-> +	BRB_INF_SRC_TGT_EL1(21),
-> +	BRB_INF_SRC_TGT_EL1(6),
-> +	BRB_INF_SRC_TGT_EL1(22),
-> +	BRB_INF_SRC_TGT_EL1(7),
-> +	BRB_INF_SRC_TGT_EL1(23),
-> +	BRB_INF_SRC_TGT_EL1(8),
-> +	BRB_INF_SRC_TGT_EL1(24),
-> +	BRB_INF_SRC_TGT_EL1(9),
-> +	BRB_INF_SRC_TGT_EL1(25),
-> +	BRB_INF_SRC_TGT_EL1(10),
-> +	BRB_INF_SRC_TGT_EL1(26),
-> +	BRB_INF_SRC_TGT_EL1(11),
-> +	BRB_INF_SRC_TGT_EL1(27),
-> +	BRB_INF_SRC_TGT_EL1(12),
-> +	BRB_INF_SRC_TGT_EL1(28),
-> +	BRB_INF_SRC_TGT_EL1(13),
-> +	BRB_INF_SRC_TGT_EL1(29),
-> +	BRB_INF_SRC_TGT_EL1(14),
-> +	BRB_INF_SRC_TGT_EL1(30),
-> +	BRB_INF_SRC_TGT_EL1(15),
-> +	BRB_INF_SRC_TGT_EL1(31),
-> +
-> +	/* Remaining BRBE sysreg addresses space */
-> +	{ SYS_DESC(SYS_BRBCR_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBFCR_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBTS_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBINFINJ_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBSRCINJ_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBTGTINJ_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBIDR0_EL1), undef_access },
-> +
->  	{ SYS_DESC(SYS_MDCCSR_EL0), trap_raz_wi },
->  	{ SYS_DESC(SYS_DBGDTR_EL0), trap_raz_wi },
->  	// DBGDTR[TR]X_EL0 share the same encoding
-> @@ -2751,6 +2805,8 @@ static struct sys_reg_desc sys_insn_descs[] = {
->  	{ SYS_DESC(SYS_DC_CISW), access_dcsw },
->  	{ SYS_DESC(SYS_DC_CIGSW), access_dcgsw },
->  	{ SYS_DESC(SYS_DC_CIGDSW), access_dcgsw },
-> +	{ SYS_DESC(OP_BRB_IALL), undef_access },
-> +	{ SYS_DESC(OP_BRB_INJ), undef_access },
->  };
->  
->  static const struct sys_reg_desc *first_idreg;
-> -- 
-> 2.25.1
-> 
+>  .../bindings/phy/rockchip,emmc-phy.yaml       | 79 +++++++++++++++++++
+>  .../bindings/phy/rockchip-emmc-phy.txt        | 43 ----------
+>  .../devicetree/bindings/soc/rockchip/grf.yaml |  2 +-
+>  3 files changed, 80 insertions(+), 44 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml
+
+Filename matching compatible.
+
+...
+
+Please look at other bindings how the conversion works and get it
+reviewed/acked through your mentors before you post.
+
+> -};
+> diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+> index 79798c747476..1f88416657cc 100644
+> --- a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+> +++ b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+> @@ -178,7 +178,7 @@ allOf:
+>        patternProperties:
+>          "phy@[0-9a-f]+$":
+>            description:
+> -            Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
+> +            Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml
+
+Nope, look at the rest of the file and do not implement things differently.
+
+Best regards,
+Krzysztof
+
 
