@@ -1,155 +1,118 @@
-Return-Path: <linux-kernel+bounces-212970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF84C90691C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96347906925
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8BADB23599
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:40:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96F591C23761
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC15514036F;
-	Thu, 13 Jun 2024 09:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307A214036A;
+	Thu, 13 Jun 2024 09:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lcSy/Oml"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gLOjkhsc"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FE513D529;
-	Thu, 13 Jun 2024 09:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AB913F449
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718271622; cv=none; b=tFJWmbAMwVaIO4eEFtOCNUD39l1/idpgMk95PAWVE1E5YEXjcUnBS0eIgmGvVGHoWNxqSaa38rnuZBUhPEjxJvLudqj3j3v8pQdYAmn/flK3tjRt+jn/wyJPevXpjstpOJ+ty8R08X8eBadmudHTsCmh1VdDBwnbe7SRqQUi8+I=
+	t=1718271771; cv=none; b=hFpqGhBHug9szK2ZCWgfNUbo3mFupZdYHwZCbkpbYBi7LB/J6mx8JMfNnhfKt4PiYDTv7q/v4VW4PD5mJ+m0+dLzllsxeHVIiw5yLmZ1F6vYZIusgD0+2K5DRfCqnEPr7u8eV1fDFsWVAQo0KeOicVtqzmRoQS73vXFiMq0xTdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718271622; c=relaxed/simple;
-	bh=vMaFPwlw0HLYH4RGrie7jpHqjxtGpMU+nm3oIZ2lvow=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BecGR2TYdpE44NGugZOtEYLDhBX3LJto+ktGF9q+wKw+oJK1svYHNB0ZeeRN2tOdLeQJnLcF4QZkSa2PY4FclfUssJB7/S5siTnsHL2xY9NBXhQx39wZN880vXJL2kE6npIqSbQaxtIyG8Uai15DotmpIFf836deqmLeqo8ds/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lcSy/Oml; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718271618;
-	bh=vMaFPwlw0HLYH4RGrie7jpHqjxtGpMU+nm3oIZ2lvow=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=lcSy/OmlmhheqOSRTid2O6w+F/ISxNDi3TeEZG6QZLOnLb9n06ULi7foDiNaym8Oz
-	 2evCFFkIasc5tSwR8LYfT7jl6GTtZIQP8qi51e4lvBcVc23SrlZC7lNK56NLX3gSQl
-	 Z6ieimKTy5EC3QKCECZ6rdahc0JMZzTsBoHEiIRZgpz4GZLbCJ8X9OIQwAlwZfciIw
-	 83wlfix2vMrQc1QXqs0GP8yhjw7wPFQZQoHFMl8IEM5zDsGlbz/R93//THwKEaUhir
-	 H5sH+lxNDkUCYK7wt4CZnAsE9a3hgwwTEuDlA2SMj/8LQJkFsZbd7VoZzer+EeqU/4
-	 f5+jbkuwO/6AA==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DC4943781139;
-	Thu, 13 Jun 2024 09:40:15 +0000 (UTC)
-Message-ID: <ade2de8f-8f63-45fb-a01a-096d048dd971@collabora.com>
-Date: Thu, 13 Jun 2024 14:40:52 +0500
+	s=arc-20240116; t=1718271771; c=relaxed/simple;
+	bh=/csI6K3GGf47jgq9/8chaqlW9Z0I9qjMXHACV/hlBtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b63yZsfgUb/33enjLNgS4E7/LXNqMcSXDu3PP9SHy7ZiuMLiyF/JRRHXHw7UslR6ZjrGlxcNa6JYgHE7A/PMFvKui4hIErRZpzGuvU9K0XtUH7TyLXiUhEYMozd4QK7vwrrek9S5mzFcQqo4I8eYQSgA2OjlHAGMWLVlhcnvxYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gLOjkhsc; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f4603237e0so591652b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:42:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718271769; x=1718876569; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cu6cspdF8T8P6HUKOhK2SCIjh0ZPJfUV0xoeJIiJuuI=;
+        b=gLOjkhscYWEpYmkbANAeOuz1Q6HRkWzu2UnKXStgEBCaLsfc0VXCB0rlQAjyRcZvSo
+         GEdzXaoFLTi8JKKco31WtKNBtWUXx8SSqKqYIOnCOSinSCUdpGLd6x7sKbmo1Rcvokk5
+         YpXwAI/CQ0TeJuemxnfegNzQcDzmCqCKDtOWmK4QVaCvgQE5Hi0azm9q1p6MFI3qkOIv
+         zrDcQhkGdp9TsPpErG4pbnf/lkSDrZl3CTcP7u28M1USbe3UIX3EaGk6wFD4R5Rqm1ax
+         deZaYKvuqN9aXwQOYJLvL6HN0aIfboXYNINMgKA5uzNBIIA9ILvRjvIS/ENX16DGheZ7
+         xTVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718271769; x=1718876569;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cu6cspdF8T8P6HUKOhK2SCIjh0ZPJfUV0xoeJIiJuuI=;
+        b=XTe7KdMq1ReCq/Dm/EN3lHV+he2fitlOYRdoTVUbqrn8n6xkxyBAO2eqsFbGxll2tG
+         sNmw+HVUI+S13O1ggVNsgT0T7vqvYdq6L4v/gGQvUoLNp5OatUv5JmjSDdWfxzf11ggP
+         ezZToeW8zugcWeFx5DrCowAnlUlDiDKrwAHbGNs9693LE/DJXKagB7NNRqUqOiExUQDq
+         3TFQ6wUNR8Toyb7CUdGM60HIEvNuOCyh/c4qHCBT/kWR+UCzXOQMUjpRlIMCHUZZJal+
+         OnyeAxdh1JKbpLSFTCBSAv3VtfFvFUQBMV5K/K4NBKn5bXDOL2tSgDN85oJeu/8w4tOV
+         ifkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVibql82AetRe8O0bcNwDDNCDnH2O13kfECRFPzy/Wt7JnQCdcUtESeAiAyRY9OBVKROWCiHaAWFuq+SilQHGeWHjom72WB5X68xsdb
+X-Gm-Message-State: AOJu0Yy6BNgMtpAzyGk91x3+LGtyVzCZi88FrPw27b1fMrm5Q7mQW42R
+	xrd6lmTagOr+QdVdB3hceKaB9kCEkyosHsVZN+tKA4djwHwX/0sqK2W5ufzNaX9fxx3D/X+UpDd
+	8
+X-Google-Smtp-Source: AGHT+IF5LpX8illGnH4Jh3LBbYZDLJzJWGwRolEuYaWWdqEDgfDtAQKDUpG9IAQVHyZdB2FSGLL+Mw==
+X-Received: by 2002:a05:6a00:1913:b0:705:cbcd:ebdc with SMTP id d2e1a72fcca58-705cbcdef6bmr2231556b3a.10.1718271768328;
+        Thu, 13 Jun 2024 02:42:48 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc96b6f0sm944991b3a.69.2024.06.13.02.42.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 02:42:47 -0700 (PDT)
+Date: Thu, 13 Jun 2024 15:12:45 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Riwen Lu <luriwen@hotmail.com>
+Cc: ionela.voinescu@arm.com, rafael@kernel.org, pierre.gondois@arm.com,
+	beata.michalska@arm.com, hotran@apm.com, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Riwen Lu <luriwen@kylinos.cn>
+Subject: Re: [PATCH v4] cpufreq/cppc: Remove the desired_perf compare when
+ set target
+Message-ID: <20240613094245.cidth5miv4zxfg56@vireshk-i7>
+References: <OS3P286MB2490EB027398DDB852BE2169B1C02@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
- Anup Patel <anup@brainfault.org>, Oliver Upton <oliver.upton@linux.dev>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, kernel@collabora.com,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] selftests: kvm: replace exit() with
- ksft_exit_fail_msg()
-To: Sean Christopherson <seanjc@google.com>
-References: <20240612104500.425012-1-usama.anjum@collabora.com>
- <20240612104500.425012-2-usama.anjum@collabora.com>
- <Zmnwhx0Y0qh0x03J@google.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <Zmnwhx0Y0qh0x03J@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OS3P286MB2490EB027398DDB852BE2169B1C02@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
 
-Hi Sean,
+On 12-06-24, 19:46, Riwen Lu wrote:
+> From: Riwen Lu <luriwen@kylinos.cn>
+> 
+> There is a case that desired_perf is exactly the same with the old perf,
+> but the actual current freq is not.
+> 
+> This happened in S3 while the cpufreq governor is set to powersave.
+> During cpufreq resume process, the booting CPU's new_freq obtained via
+> .get() is the highest frequency, while the policy->cur and
+> cpu->perf_ctrls.desired_perf are in the lowest level(powersave
+> governor). Causing the warning: "CPU frequency out of sync:", and set
+> policy->cur to new_freq.
+> 
+> Then the governor->limits() calls cppc_cpufreq_set_target() to
+> configures the CPU frequency and returns directly because the
+> desired_perf converted from target_freq is the same with
+> cpu->perf_ctrls.desired_perf and both are the lowest_perf.
+> 
+> Since target_freq and policy->cur have been compared in
+> __cpufreq_driver_target(), there's no need to compare desired_perf and
+> cpu->perf_ctrls.desired_perf again in cppc_cpufreq_set_target() to
+> ensure that the CPU frequency is properly configured.
+> 
+> Signed-off-by: Riwen Lu <luriwen@kylinos.cn>
 
-Thank you for replying in detail. I wasn't aware of true origin of these tests.
-
-On 6/13/24 12:01 AM, Sean Christopherson wrote:
-> On Wed, Jun 12, 2024, Muhammad Usama Anjum wrote:
->> The KSFT_FAIL, exit code must be used instead of exit(254).
-> 
-> This needs more justification.  KVM selftests have worked just fine for 6+ years
-> using exit(254), so stating they "must" use KSFT_FAIL is obviously not true.
-The selftests scripts read the exit code and mark the test status
-pass/fail. Maybe selftests run_tests target isn't being used or this code
-path wasn't being triggered.
-
-> 
-> I'm not personally opposed to switching to KSFT_FAIL, but it is a potentially
-> breaking change.  E.g. some of Google's internal test infrastructure explicitly
-> relies on the exit code being 254.  I don't _think_ that infrastructure interacts
-> with KVM selftests, nor do I think that forcing upstream KVM selftests to sacrifice
-> TAP compliance just to play nice with someone's crusty test infrastructure is a
-> good tradeoff, but this and all of the TAP compliance work needs to be done with
-> more thought and care.
-You have given your perspective from KVM selftest suite perspective. I've
-been thinking from kselftests subsystem perspective that how TAP compliance
-and exit codes help the entire subsystem. It is understandable from KVM
-suite's perspective as not all the suites are compliant and work the same.
-
-> 
->> The 254 code here seems like anciant relic.
-> 
-> As above, AFAICT it comes from Google's internal test infrastructure (KVM selftests
-> came from Google).
-> 
->> Its even better if we use ksft_exit_fail_msg() which will print out "Bail
->> out" meaning the test exited without completing. This string is TAP protocol
->> specific.
-> 
-> This is debatable and not obviously correct.  The documentation says:
-> 
->   Bail out!
->   As an emergency measure a test script can decide that further tests are
->   useless (e.g. missing dependencies) and testing should stop immediately. In
->   that case the test script prints the magic words
-> 
-> which suggests that a test should only emit "Bail out!" if it wants to stop
-> entirely.  We definitely don't want KVM selftests to bail out if a TEST_ASSERT()
-> fails in one testcase.
-But KVM tests are bailing out if assert fails, exit(254) is being called
-which stops the further execution of the test cases. It is same as
-ksft_exit_fail_msg() behavior.
-
-> 
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>  tools/testing/selftests/kvm/lib/assert.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/kvm/lib/assert.c b/tools/testing/selftests/kvm/lib/assert.c
->> index 33651f5b3a7fd..db648a7ac429b 100644
->> --- a/tools/testing/selftests/kvm/lib/assert.c
->> +++ b/tools/testing/selftests/kvm/lib/assert.c
->> @@ -87,7 +87,7 @@ test_assert(bool exp, const char *exp_str,
->>  
->>  		if (errno == EACCES)
->>  			ksft_exit_skip("Access denied - Exiting\n");
->> -		exit(254);
->> +		ksft_exit_fail_msg("\n");
->>  	}
->>  
->>  	return;
->> -- 
->> 2.39.2
->>
-> 
+Applied. Thanks.
 
 -- 
-BR,
-Muhammad Usama Anjum
+viresh
 
