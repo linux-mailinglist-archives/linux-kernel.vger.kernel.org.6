@@ -1,206 +1,87 @@
-Return-Path: <linux-kernel+bounces-213927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF14E907CA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:32:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9088907CA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:33:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F4E1F2425F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:32:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810F81F24966
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989D414B091;
-	Thu, 13 Jun 2024 19:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4279414C583;
+	Thu, 13 Jun 2024 19:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="J+jPP3kU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E56+plvU"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2WNkZWTO"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AE92F50;
-	Thu, 13 Jun 2024 19:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4A512D203;
+	Thu, 13 Jun 2024 19:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307128; cv=none; b=R+uZHpMWqn9h4tA32ZNCfpe/yWXfQWQveB7BtsDBFkSwUESQRa8BenAGhdwoRqW5IkxCwi/xg0y0w6sVCVC0orVnQjkWhvPjHN/h8F67wHlJU9b3t49KP7oRu4Yz0gNPqMw4zFe1iQ2yM9rmRaf9oXxHotnlGKL1s6/+vNDs5XY=
+	t=1718307193; cv=none; b=qovTL2u/UqjrpXLNpf1fwirymNWh9JEg7gLq8aq+J14va+fvO99BXKUkKT0iSlNWDN9flCalKJVAvwLv2JzZwc73t+MyjlqZZDEDPROvFVLIblG01BBT3mkR+loZ8EueTY9hf3QSeHAY0Eyno+veOpN0T8V0THra31cAIFt1Z18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307128; c=relaxed/simple;
-	bh=7SxxRthBao7cElNlUWiApM5FlMLnMOaKyIDs5ynswf0=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=pIDkRr5wChR1bk9jQpJSnKmjdLZlfbd2ywIOz/6wI9RyGaOdLacf07DqLazF8+q8nc04wpECWO6KN6e6lWrmadi97CF04Xsq3AHt+J82CwEhevh0RrBVGkKEf4NvQ4MhxLlepSRXWDg6q89N/OG0KZLMj/F4O2pSjRjASyVg6k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=J+jPP3kU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E56+plvU; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 1CB9A13800BB;
-	Thu, 13 Jun 2024 15:32:06 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Thu, 13 Jun 2024 15:32:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1718307126;
-	 x=1718393526; bh=Qtdq9rJNyFwVn/RbNhPVjnJth7o/5tp1gNYGUREYPVw=; b=
-	J+jPP3kUiQB+p0OzFv69I7crLebKK0KJTmOseeQZrgu83Emb5ApmO0mXKG42ULu7
-	PlAj4D2UAM4ZD4cV6ulNdlZ7hph+1v4A6Ie+fATkwBjH3TkrHpZl6l41yqM/eBkW
-	K5XoaqW2m75lCmVn289jO8lcP7QPOccSVRGnVW3cy41f7t3cIDyC5L0B7HnohqYw
-	Gcvo8bOeb/tbdi37m7XNMZdBRGVupsFRatCaX48DWeFA/c/1+2AbhgDCBHhdQFOe
-	/ev1H+KAISfBwRKX+X8GAXRCrll6eD1c5RRknwzllVDlRGO8+ZezkawtTsOl/7/a
-	nJMRILl6UDrcqkikMX7+OQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718307126; x=
-	1718393526; bh=Qtdq9rJNyFwVn/RbNhPVjnJth7o/5tp1gNYGUREYPVw=; b=E
-	56+plvUJ27Zj8HPv789bSPdsiRumPzds6J54ktB4SNqqK23v61XPKVOmDYHZpFrG
-	ujZhP5zWC9Ytn87SMVL+FgwFtFi0h9R6bY2Ytt/0/Ots5B+PD+AdUuJtfRzHd+TZ
-	ajcbSN3FyppWNR/T/JYcgiYtj3MyVWGClXXPS7kqPAuvMwD1PzVCq1fY0oaaRx8k
-	iyLXF1z7uXpkgUCzhoHaMSkhgTrfo660nb/8kqsdeIAvjDJHj4qws08GiJdm9uYM
-	8tGxZFXmOP6rDUL+uFMzeY8AgXjQGJqXyScyitSBZtVTUjnJXKOLOz4e7TVQXJiq
-	HiHFJmAvkf0fS78fj3GTg==
-X-ME-Sender: <xms:NUlrZmwu8udUXVB1tpCehjs1rbV0hfLeND86JgU-6bcZaYNnXuorUQ>
-    <xme:NUlrZiToWBOKkzlGX9jaK5Tg5sYg-rZNI0GhUdG1e7h0KnLFtO6FPL5XL3xjJjvGn
-    B8A-iA-XntPtIK7t-8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedgudefhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    lfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtg
-    homheqnecuggftrfgrthhtvghrnhepjedutdeuhfdvjeevgfehudeitdehiefgveelheff
-    uddulefhkeeihfehudehgfevnecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgr
-    gihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:NUlrZoWH-01odsK7Zl-L6Cyvx_7KHhGAMpMqUu0kmkxPq10C3H2XaQ>
-    <xmx:NUlrZsidWbnC40N5cHcOCMChghCfZJzdvacF8q5YgIadXzHkgjVOTA>
-    <xmx:NUlrZoCijY_ait4cLZBkx0mJQnDaj-t1eSJBSFbr4FjclinJ6njgoA>
-    <xmx:NUlrZtLMM65QDsmKhc_AzoNvF3o5pcb7GYJtmtf7wQdsMe-Xvm0auQ>
-    <xmx:NklrZk1b30NEU0lDy1VRCU1ixKoSHJgHzjKqattoKeOeg2UR4cRAUsD1>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 7992036A0076; Thu, 13 Jun 2024 15:32:05 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
+	s=arc-20240116; t=1718307193; c=relaxed/simple;
+	bh=5sD1IK/8V8bWGT1IDN8YyNkWTWo86CTAtfNysGwYtMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=htRDNu90PcLSLlLt5fP9nY0jbq+0Ik9Emq/xbfC3JOVH4rlgw9CGlrlyo47lXqWeFIC8cKmXU1ANP+AvnUTM41X3tBj1Ai7AjPsH0zPNI2ejtTpLf+nlamldAH+CJnY8xS34Z0fMGFSYIgzgbSi59ReY8fVZd0ppX3sALp76GwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2WNkZWTO; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=bX9yCP+ayyPjjEYI3UrDUQu6a798S/7dzFInHc8v3yQ=; b=2WNkZWTO+1TR8M5CZwDs3LIfpy
+	5lrJlm/B++8FhrKOzInyPI4hBgsxTRsd7VCeAf3sIGdbw6ufMIjv9mkVp/dsrZ6vDt3W6vbc+I87g
+	dmPAjIy4CCYaJk41uX3M4Uii5cnUQgswbxLf9dsTDXadxZYjsctJ6mrtJ9cxMbzRtLhg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sHqBx-00005Z-0Z; Thu, 13 Jun 2024 21:33:01 +0200
+Date: Thu, 13 Jun 2024 21:33:01 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	stable@vger.kernel.org, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net v1 2/2] net: phy: dp83tg720: get initial master/slave
+ configuration
+Message-ID: <f88abfe3-a66c-4e65-b627-7adf7f04580f@lunn.ch>
+References: <20240613183034.2407798-1-o.rempel@pengutronix.de>
+ <20240613183034.2407798-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <bbbd52c2-aaf2-4777-bee4-855d805923b5@app.fastmail.com>
-In-Reply-To: <20240613190429.GA2309072-robh@kernel.org>
-References: <20240612-boston-syscon-v2-0-9f8e1a07fa63@flygoat.com>
- <20240612-boston-syscon-v2-6-9f8e1a07fa63@flygoat.com>
- <20240613190429.GA2309072-robh@kernel.org>
-Date: Thu, 13 Jun 2024 20:31:46 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Rob Herring" <robh@kernel.org>
-Cc: "Lee Jones" <lee@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v2 6/8] dt-bindings: mfd: Add img,boston-platform-regs
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613183034.2407798-2-o.rempel@pengutronix.de>
 
+On Thu, Jun 13, 2024 at 08:30:34PM +0200, Oleksij Rempel wrote:
+> Get initial master/slave configuration, otherwise ethtool
+> wont be able to provide this information until link is
+> established. This makes troubleshooting harder, since wrong
+> role configuration would prevent the link start.
 
+I looked at how genphy_c45_read_status() works. If we have
+phydev->autoneg == AUTONEG_ENABLE then genphy_c45_baset1_read_status()
+is called which sets phydev->master_slave_get. If not AUTONEG_ENABLE
+it calls genphy_c45_read_pma() which ends up calling
+genphy_c45_pma_baset1_read_master_slave().
 
-=E5=9C=A82024=E5=B9=B46=E6=9C=8813=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
-=8D=888:04=EF=BC=8CRob Herring=E5=86=99=E9=81=93=EF=BC=9A
-> On Wed, Jun 12, 2024 at 12:56:25PM +0100, Jiaxun Yang wrote:
->> This compatible has been used in arch/mips/boot/dts/img/boston.dts
->> for a while but never documented properly.
->>=20
->> Write a new binding for this device.
->> This also covers old img,boston-clock binding so remove that binding.
->>=20
->> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->> ---
->>  .../devicetree/bindings/clock/img,boston-clock.txt | 31 ---------
->>  .../bindings/mfd/img,boston-platform-regs.yaml     | 74 ++++++++++++=
-++++++++++
->>  2 files changed, 74 insertions(+), 31 deletions(-)
->>=20
->> diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock=
-.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
->> deleted file mode 100644
->> index 7bc5e9ffb624..000000000000
->> --- a/Documentation/devicetree/bindings/clock/img,boston-clock.txt
->> +++ /dev/null
->> @@ -1,31 +0,0 @@
->> -Binding for Imagination Technologies MIPS Boston clock sources.
->> -
->> -This binding uses the common clock binding[1].
->> -
->> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->> -
->> -The device node must be a child node of the syscon node correspondin=
-g to the
->> -Boston system's platform registers.
->> -
->> -Required properties:
->> -- compatible : Should be "img,boston-clock".
->> -- #clock-cells : Should be set to 1.
->> -  Values available for clock consumers can be found in the header fi=
-le:
->> -    <dt-bindings/clock/boston-clock.h>
->> -
->> -Example:
->> -
->> -	system-controller@17ffd000 {
->> -		compatible =3D "img,boston-platform-regs", "syscon";
->> -		reg =3D <0x17ffd000 0x1000>;
->> -
->> -		clk_boston: clock {
->> -			compatible =3D "img,boston-clock";
->> -			#clock-cells =3D <1>;
->> -		};
->> -	};
->> -
->> -	uart0: uart@17ffe000 {
->> -		/* ... */
->> -		clocks =3D <&clk_boston BOSTON_CLK_SYS>;
->> -	};
->> diff --git a/Documentation/devicetree/bindings/mfd/img,boston-platfor=
-m-regs.yaml b/Documentation/devicetree/bindings/mfd/img,boston-platform-=
-regs.yaml
->> new file mode 100644
->> index 000000000000..bf94de38a89f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/img,boston-platform-regs.=
-yaml
->> @@ -0,0 +1,74 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mfd/img,boston-platform-regs.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Imagination Technologies Boston Platform Registers
->> +
->> +maintainers:
->> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: img,boston-platform-regs
->> +      - const: syscon
->> +      - const: simple-mfd
->
-> Why did you add 'simple-mfd'? That's not what is in use.
->
+So it seems like the .read_status op should be setting master/slave
+each time it is called, and not one time during .config_init.
 
-U-Boot needs this to probe sub-nodes such as reboot and clock :-(
+What do you think?
 
-I had updated dts in an earlier patch of this series.
-
-Thanks
->>
-
---=20
-- Jiaxun
+    Andrew
 
