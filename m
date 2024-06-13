@@ -1,137 +1,104 @@
-Return-Path: <linux-kernel+bounces-213394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7685F907489
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:03:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9766690748A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 099A5B24A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:03:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49ED41F2400C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D318145FF1;
-	Thu, 13 Jun 2024 14:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5953F13F45B;
+	Thu, 13 Jun 2024 14:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4HtnEC9e"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rVCE3pN+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A33E1459F7
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C06144D36;
+	Thu, 13 Jun 2024 14:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718287384; cv=none; b=HBcdovfGiuIG3MiaTlVHrEJMRgsNuSvAAfomVNuU+f20IhmIOtFiBFbRgy3AgAp0uXEtGu4Zoe6aX+sJMV0TICnV68eKNzGhTF9+k1xyBcZxrOIOUL3XqOAAsNbK7Bz+RGa1XQk42jglbgyyuBzpl5UeWyFr1Z3G9/55jqGL3QE=
+	t=1718287417; cv=none; b=RVQ4TUy1/KwBug8ICV+5Z9hOQXrpvQH8B5XH3IrBs6AQl4tPhXEo4Q4axDP14vcZXKuoU9FnqmNyWC5HXVUj/pC291dsqg75tK+zuy4io9wVcXHAxbfwrj/idETJsJeA6YFStPNHPSDUKib6ii98pbasouDMKrmLZGzphnLPOZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718287384; c=relaxed/simple;
-	bh=1wx770iYfJxVeyB/o0cEcpJdRc6wURsrq5BJtNrgFUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eTlX94AGHEPdrM09QVZPVCzj1SjMV/yWBuUgyi7ksujcenbrmKgGxHSwjoCARV20YVNB5LMfPGPI4ijySHG9fgz9HHQrWzF9zFwfdoMyaQ5gPR5qWne2DFW+Og7vQjSRkRTA7PwFJrJ7KiQYMd2+rRTW8R37KVkqIqKKMWDreWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4HtnEC9e; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57c8bd6b655so17542a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:03:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718287381; x=1718892181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cAfB75h0kuFNnnSc8B1rhVQt/y/45xq3MCcns9r1vWo=;
-        b=4HtnEC9e7a8Ic3mWVjZiqHc1hzWc41HOr+/ksoo9maBlYd3WbpkEDNQkzi1yl09MKr
-         i4bktiO7O1/sUS8KH0r+To3rMqI+Y36/xT07jdBFAQr+zmNSIYDcZuz9YWixwqTGdI38
-         buFqYk+QJ0zPKWGm8Qy/C078y1s/dBiyPM72pttPkRo+9tbOhfDVmgrBnTNA3LJoEpbP
-         b5BhRd1JDQVMtL6I6EaVkqmqf7vDAC9FX0jNNs/4FWNbxyKCEB/Fheg+ORJlZqM7BZAZ
-         c51akZuobhU+jDpkas8dMMZSKykpzBkYOQ9Yr5DsjvQVfQ+evY/9K1sTUhRT62oNluLg
-         sdOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718287381; x=1718892181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cAfB75h0kuFNnnSc8B1rhVQt/y/45xq3MCcns9r1vWo=;
-        b=NNJP/QB3LNsJH0vggWemoXL4Oz/dMZdfJ3EUMd/WcGvfY3xb4H9f3YEu8n6fAcnkeO
-         bNvmNNN6LnZx3YdxEucL8okrTUAokg7ffww21dVhwohq5eMfIMmAIQyy7oOgBYmZW2uw
-         LQF4a9UpDi7yCqh7WEuxPBp1XocdZZd7UebvxNZ6Gu/4pbaQKnzR0qxTXsL7gPWAfPSP
-         LYRoOjJrPccSNb4FU7dzj0EVtNxyLUzdlVPbTBTKNNF+tse73izSOX/Nc1zS75+ZVLQd
-         JtGwbJ1WWJrxY20g5+SOcrICgX4hHU/0Lr6Y7ty7M4HxKpdntfROuzlMDCGVAu65WShu
-         O7WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcxDOAwlKVPnNuU7Ad7zsuZXSKzliICrcQGrtSPli/07KNg1I8jlCzCwDBUz7IaXpKgjp7yAzogEdeAXHK1M7ccvCWHBtYeiUtJIdi
-X-Gm-Message-State: AOJu0Yz6SeFvijD52I6G5Nk0LQ3XFs7IwrwXwjkeZiPJFlH/2VsmXWsa
-	Vwv+1zjVKUTIm12SZx3dOVNGpJLcCHqw3wsk3YNpnFw516qeOQhKgnjgoQxnwYd29gdn1ZtJRk5
-	awNaHjLSFa3cikG8u2/WycWlg6CK9UUP/mNqg
-X-Google-Smtp-Source: AGHT+IH0NnlPmn5HlqCKL6WJ0KQphhB9Nf2R+bPra/NjP86oZDQMsRCEH2X8d9emIYgu9fIz8hVm2OJD4zGwQrasNjU=
-X-Received: by 2002:a05:6402:51ce:b0:57c:b799:2537 with SMTP id
- 4fb4d7f45d1cf-57cb79928eemr148226a12.3.1718287380997; Thu, 13 Jun 2024
- 07:03:00 -0700 (PDT)
+	s=arc-20240116; t=1718287417; c=relaxed/simple;
+	bh=ZEB6dzh79zObt/arRlHAONB0K6ulFY49wVE8g2mqSDQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To; b=DATOrv48xT3vo4qkgpH9KCVMeaD/tTmNYyua+sV+bOBMbm2WuKpWL9sarExOjVTvhhSbTnSm0rHS5vPqbnGGKfho43n6XqAr7d0ad/VNByf/g9cpJPECmMNZLu6V7K4vV0sQMmaPnJHVublwrC3PnBqWGMXLMS/ZR9HdEn/alvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rVCE3pN+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA84DC2BBFC;
+	Thu, 13 Jun 2024 14:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718287417;
+	bh=ZEB6dzh79zObt/arRlHAONB0K6ulFY49wVE8g2mqSDQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:From;
+	b=rVCE3pN+CZIlRQ3pVHTyddDPv54KujZjVQXZOR5yrzQreclhZO6QdwQXA61WK94KR
+	 FI6RAMT1WM3quDNPt9wDIXlvn8WXx+0uUV8a6tvuFpzSyGt3rQpnI6N83WZ9stVaVA
+	 svtBvuCzW4IwnBhO49YJ7RibVJaMLkOqXHnXFjjSHrAjW/fSyPHrcrEZJdgvZZ2GIC
+	 9Ve3IgV1IErMm4BU++/30tPoP/EDPU3MignAdvcsPOje3FuOT1ON68IrjDfL+kvpyo
+	 EauqeymaSlKV7NrdCyfu01gQY7EQVoD5xoKT63ld5vg0PX6B4vbKKMPUdX95R41hLg
+	 zfgaMdGSBThsg==
+From: SeongJae Park <sj@kernel.org>
+To: Honggyu Kim <honggyu.kim@sk.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Gregory Price <gregory.price@memverge.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	42.hyeyoo@gmail.com,
+	art.jeongseob@gmail.com,
+	kernel_team@skhynix.com
+Subject: Re: [PATCH v5 7/8] Docs/admin-guide/mm/damon/usage: add missing actions
+Date: Thu, 13 Jun 2024 07:03:19 -0700
+Message-Id: <20240613140319.27075-1-sj@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240613132056.608-8-honggyu.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
-In-Reply-To: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
-From: Guenter Roeck <groeck@google.com>
-Date: Thu, 13 Jun 2024 07:02:46 -0700
-Message-ID: <CABXOdTcvie8ZBX8aFLve_7Lbh2SD0XPWxVn0nneOz8LJQEE79Q@mail.gmail.com>
-Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in cros_ec_lpc_mec_read_bytes()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Ben Walsh <ben@jubnut.com>, Benson Leung <bleung@chromium.org>, 
-	Tzung-Bi Shih <tzungbi@kernel.org>, Guenter Roeck <groeck@chromium.org>, 
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 6:55=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> We changed these functions to returning negative error codes, but this
-> first error path was accidentally overlooked.  It leads to a Smatch
-> warning:
->
->     drivers/platform/chrome/cros_ec_lpc.c:181 ec_response_timed_out()
->     error: uninitialized symbol 'data'.
->
-> Fix this by returning the error code instead of success.
->
-> Fixes: 68dbac0a58ef ("platform/chrome: cros_ec_lpc: MEC access can return=
- error code")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Hi Honggyu,
 
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
+On Thu, 13 Jun 2024 22:20:54 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
 
+> "lru_prio" and "lru_deprio" are missing in the damos action list so they
+> have to be added properly at damon usage document.
+> 
+> Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
 > ---
->  drivers/platform/chrome/cros_ec_lpc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chr=
-ome/cros_ec_lpc.c
-> index ebe9fb143840..f0470248b109 100644
-> --- a/drivers/platform/chrome/cros_ec_lpc.c
-> +++ b/drivers/platform/chrome/cros_ec_lpc.c
-> @@ -139,7 +139,7 @@ static int cros_ec_lpc_mec_read_bytes(unsigned int of=
-fset, unsigned int length,
->         int in_range =3D cros_ec_lpc_mec_in_range(offset, length);
->
->         if (in_range < 0)
-> -               return 0;
-> +               return in_range;
->
->         return in_range ?
->                 cros_ec_lpc_io_bytes_mec(MEC_IO_READ,
-> @@ -158,7 +158,7 @@ static int cros_ec_lpc_mec_write_bytes(unsigned int o=
-ffset, unsigned int length,
->         int in_range =3D cros_ec_lpc_mec_in_range(offset, length);
->
->         if (in_range < 0)
-> -               return 0;
-> +               return in_range;
->
->         return in_range ?
->                 cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE,
-> --
-> 2.43.0
->
+>  Documentation/admin-guide/mm/damon/usage.rst | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/mm/damon/usage.rst b/Documentation/admin-guide/mm/damon/usage.rst
+> index e58ceb89ea2a..7bff54963975 100644
+> --- a/Documentation/admin-guide/mm/damon/usage.rst
+> +++ b/Documentation/admin-guide/mm/damon/usage.rst
+> @@ -757,7 +757,9 @@ list on :ref:`design doc <damon_design_damos_action>`.
+>   - 2: ``pageout``
+>   - 3: ``hugepage``
+>   - 4: ``nohugepage``
+> - - 5: ``stat``
+> + - 5: ``lru_prio``
+> + - 6: ``lru_deprio``
+> + - 7: ``stat``
+
+This section is for DAMON debugfs interface, which is deprecated.  After the
+deprecation, we stopped supporting new DAMOS actions.  This section is not
+documenting lru_[de]prio for the reason.  I think this patch is not needed.
+
+Please let me know if I'm missing something, though.
+
+
+Thanks,
+SJ
+
+[...]
 
