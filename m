@@ -1,105 +1,98 @@
-Return-Path: <linux-kernel+bounces-213064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C012906A8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F656906A8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 323791C24332
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:57:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2C8D1C24353
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA661142648;
-	Thu, 13 Jun 2024 10:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="kNWiB2Mg"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855891428EE;
+	Thu, 13 Jun 2024 10:58:08 +0000 (UTC)
+Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3923DDB1;
-	Thu, 13 Jun 2024 10:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4AE13D534
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718276225; cv=none; b=WQ6ReaxENkJ2zzp3cz9IBhFI4tmCMKdnHVpaX4BguL63j02Sim6edxdOAmx1fT5z1Xb+WVNovyeze90bAWnTmj7pJ6gyFr3bv3s6O85a5492KJQr88Kb6MqVnrNaLdY7bg7lO6sRbOtdbqVxbv1Qpm03r0YrJagfCUkuhRr5Y3Y=
+	t=1718276288; cv=none; b=K3+HygPMhJ+zc0iZm+4WZwV2up+A/M2sc6k0WFAVpopKIr7yAFfa5DFbahtFXiI7XoXJyLmltYP8NoH1GeKHKKB1+iR2BcPS1V/vaihx8lmgC+xSN8oCsO4/hixoNkOKN7cPnAv5rvsL0/7HUWmhCUCktQyfIEpVD5uryebwOjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718276225; c=relaxed/simple;
-	bh=k2Ywj6S/aj3jQl2/FwtOonbWt/mPoRiF349h2px3ZHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rTPymj0I5s38VWP8lUZsPU7lJS0iZKPF+Qx3hupUoP9e7m3l9ZTUNPuJfA3D+q54E6zp8fc3N7EbuXOFUyMTONtaigNMqhzEspTOthDQ0vVhiV2pzFAbyC7yKzmr47b/6PDSDV3NP9od3pFsSPaIUQxgx/aIbYejHRfFq5jibn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=kNWiB2Mg; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-	t=1718276219; bh=k2Ywj6S/aj3jQl2/FwtOonbWt/mPoRiF349h2px3ZHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kNWiB2MgXS5oqh0omzHtXljggate1ANe/pYoqNHtmgQky1JjtpDSVyGzq43PnVDFi
-	 3FysTeQYLJWyRc5kjvADTbh+igXkT17n22sQLQ2/Wc/E8dwa/Uwn0+W4MiV6qly2gP
-	 sebS1XCYc2ppMwwJu6LRGrNZhHkt0BnjxMdDcCs0=
-Date: Thu, 13 Jun 2024 12:56:59 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-To: Charles Wang <charles.goodix@gmail.com>
-Cc: dmitry.torokhov@gmail.com, jikos@kernel.org, bentiss@kernel.org, 
-	hbarnor@chromium.org, dianders@chromium.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] HID: hid-goodix: Add Goodix HID-over-SPI driver
-Message-ID: <a6f557c6-4ebc-4c47-af32-5d8d695681ce@t-8ch.de>
-References: <20240607133709.3518-1-charles.goodix@gmail.com>
+	s=arc-20240116; t=1718276288; c=relaxed/simple;
+	bh=8/8N98dtnuGnocrm29FSFaydJECYzafJ/9Ktn7njb+c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=AsZj9vD08UMIPYWdOcdrZcccNd8U9QozouSaHOsjFXvqYCGBcbohCm7R9GnrKLmUWKXf0/7pX9ZeANm5UAbLZCpwKpshy2TNnLK1WCaK7xACG/Mer6PQvRILU+tY9gDisovvEPdLjV/bdY8D3VUicnygHvy7Ri7g/Ii9E+TVqFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.64.164])
+	by sina.com (172.16.235.25) with ESMTP
+	id 666AD0AE00007EA1; Thu, 13 Jun 2024 18:57:53 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 4686634210564
+X-SMAIL-UIID: 56118CC1132A43D5AEE54EB72863AB41-20240613-185753-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [nilfs?] [mm?] KASAN: slab-use-after-free Read in lru_add_fn
+Date: Thu, 13 Jun 2024 18:57:41 +0800
+Message-Id: <20240613105741.2380-1-hdanton@sina.com>
+In-Reply-To: <000000000000cae276061aa12d5e@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607133709.3518-1-charles.goodix@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On 2024-06-07 21:36:02+0000, Charles Wang wrote:
+On Tue, 11 Jun 2024 11:10:20 -0700
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    83a7eefedc9b Linux 6.10-rc3
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c645e2980000
 
-<snip>
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
 
-> diff --git a/drivers/hid/hid-goodix-spi.c b/drivers/hid/hid-goodix-spi.c
-> new file mode 100644
-> index 000000000..7ba7016e1
-> --- /dev/null
-> +++ b/drivers/hid/hid-goodix-spi.c
-> @@ -0,0 +1,687 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Goodix GT7986U SPI Driver Code for HID.
-> + *
-> + * Copyright (C) 2024 Godix, Inc.
-
-Goodix, Inc
-
-> + */
-> +#include <asm/unaligned.h>
-> +#include <linux/delay.h>
-> +#include <linux/hid.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/sizes.h>
-> +#include <linux/spi/spi.h>
-
-<snip>
-
-> +static struct hid_ll_driver goodix_hid_ll_driver = {
-
-const
-
-> +	.parse = goodix_hid_parse,
-> +	.start = goodix_hid_start,
-> +	.stop = goodix_hid_stop,
-> +	.open = goodix_hid_open,
-> +	.close = goodix_hid_close,
-> +	.raw_request = goodix_hid_raw_request
-
-comma
-
-> +};
-
-<snip>
+--- x/fs/read_write.c
++++ y/fs/read_write.c
+@@ -570,6 +570,7 @@ EXPORT_SYMBOL(kernel_write);
+ ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_t *pos)
+ {
+ 	ssize_t ret;
++	struct super_block *sb;
+ 
+ 	if (!(file->f_mode & FMODE_WRITE))
+ 		return -EBADF;
+@@ -583,6 +584,9 @@ ssize_t vfs_write(struct file *file, con
+ 		return ret;
+ 	if (count > MAX_RW_COUNT)
+ 		count =  MAX_RW_COUNT;
++	sb = file_inode(file)->i_sb;
++	if (!down_read_trylock(&sb->s_umount))
++		return -EINVAL;
+ 	file_start_write(file);
+ 	if (file->f_op->write)
+ 		ret = file->f_op->write(file, buf, count, pos);
+@@ -596,6 +600,7 @@ ssize_t vfs_write(struct file *file, con
+ 	}
+ 	inc_syscw(current);
+ 	file_end_write(file);
++	up_read(&sb->s_umount);
+ 	return ret;
+ }
+ 
+--
 
