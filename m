@@ -1,132 +1,215 @@
-Return-Path: <linux-kernel+bounces-212546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB739062F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:04:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D789062F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A1931C21DCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:04:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEFD6B22045
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C94132131;
-	Thu, 13 Jun 2024 04:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A19132123;
+	Thu, 13 Jun 2024 04:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YZmmFZhO"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="misHY6wx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E20E446CF;
-	Thu, 13 Jun 2024 04:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48527131E33
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718251480; cv=none; b=lWhg8SaLltMoCPO+mK4Dy1P1n43aHQn41fmgglNkpVUAQyu69IBjioJk0UxzGzaUrvagM/X+Lm3/jOy/t6t0CIvkbE02208gN+AJr/NgIb+gveqZ0oJAyT79Roa4AEOlkKllKAiMINwTS54xU7qm05FHumA7Z83oWYl/ioQHPus=
+	t=1718251731; cv=none; b=aY+V7Gk05bBgBfBZZmxm9iHFQ8bHyi2uY4fcxJxNgVEN52NhjkW6m+aTxHAkw0NudbGVhCMFWV0L5YZeIS1SQh7tMBHIu7p795kpChivzdF0uTdgF52tGEVdXWnLe+fFV4EwrIQP4AfiadjEJ37degAnHBKRQ8vkORKSqLs6OWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718251480; c=relaxed/simple;
-	bh=fItqccY2e+LX0/xef6qOrGcZXE8iCNnlc9p51+vfxf8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=LK0IZziZt/5PokDEqZhUc36Dgetq1UpGYAjfS1qqFnNzG9pBlfAsoiYyTp5yG4giLenmbxNxNCAj23JkxTq/zfgZz0mbJ/Kj8ES1guQ1EaPhBEmqJ9dkDhtRLdqHIjwtowX1e01iPUa9WknUez686pctbIShVqhk3OdqqxT6Kac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YZmmFZhO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CKnDag022998;
-	Thu, 13 Jun 2024 04:04:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=8UXXDwdj6KhWMtqkYrSrKw
-	t/7aWzNHFkhU1nSbKWx6Q=; b=YZmmFZhO8kjVZMHR2nEVI+xlIEmgHy4uMzLPQ7
-	yR4Nox685l4/pNYOsVRxG6Oa2TXJ+ltYmAyf6EaLmjJxJiIbax1iI0rcqgJJJKfM
-	kdJEeqNpFSCI4RZOGAz1YmPpNGcoNEgA5+FWlqR9xr4k6vHiViqHmaLtivfJF5zq
-	DUmwD0sYb4n5LWjlVEA0jIsqyNfqe9x8giijy6bBxjRHW0F92SydHaYm/y4SCKdB
-	WnckxDbgLHgeBRtGR+foo57FOnZmFWBEZ8fB2ZlSlWXBWUsUmjPFotGhecTW95d0
-	DQVMEgi+PQqB2oPghocCcv0DssDlfm7JBzkrYo/za4JscBsQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypmjawhum-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 04:04:33 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45D44WVT024451
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 04:04:32 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 21:04:31 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 21:04:30 -0700
-Subject: [PATCH] media: dvb-usb: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1718251731; c=relaxed/simple;
+	bh=ajeT9+Gf5biNuSQMg2imTr9noC4B0yFdWOKjAHdIKMw=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AuLtoNlGEwOT2mLgE0AxC0Us6a+0ksU/B4WsjBXgyGbDaBunidG6sF359Kb5wStEkG6Rfy6FT4MdVCl9XMVXk1MBopuUpLjibDP5MaDJ/dEaa+KCzENk6pNSrHYqmhMw4luKV9uvggaD2pYdMP4myE6MF7Hfhj0Ifhcg1lqiTUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=misHY6wx; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718251730; x=1749787730;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ajeT9+Gf5biNuSQMg2imTr9noC4B0yFdWOKjAHdIKMw=;
+  b=misHY6wxucf7hWmho/PnCdTZfRYzHAGpKi6Kraw6l4UfMbBGZzdOKdq3
+   7NVseoS++Yg3UWN9VUY+LcxBS6ErEiwJLxne6xdG0j495px1d8RH3/svi
+   Bt3v/FrRzCN7YdCfCPU01rczz10OkDI3xuehZqXL5imtOsoW4Vrq0LGpE
+   mTbkSys9Kr9VP7orDSghmd7AT4Oo/HwFRfPKfJYbqmg8H4UoQfn+jVbtB
+   51w7bCuWwJ38XWr4+XKI8mqUsfgjRS83ZbSh+gf3NHqu+5bA9RLB/V7Ip
+   ODA6jNOyVNO4IeusDs1MgFp20t7ENnFJAjJmzgsfm25Pnaa2NtIFGlW6H
+   w==;
+X-CSE-ConnectionGUID: Fn/3mSDgQNKYBtKqFvawoA==
+X-CSE-MsgGUID: H6nReVDGRtiVH8ooKCBcCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="15201640"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="15201640"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 21:08:49 -0700
+X-CSE-ConnectionGUID: 8I+I/9rBRAeDwe2qqr6GJg==
+X-CSE-MsgGUID: ze7hntVvT7q1BWCe2u/eCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="45134745"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa004.jf.intel.com with ESMTP; 12 Jun 2024 21:08:45 -0700
+Message-ID: <28cc9b55-3c2f-47cf-9961-853a1e5f7790@linux.intel.com>
+Date: Thu, 13 Jun 2024 12:06:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ Joel Granados <j.granados@samsung.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "virtualization@lists.linux-foundation.org"
+ <virtualization@lists.linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 02/10] iommu: Remove sva handle list
+To: Jason Gunthorpe <jgg@ziepe.ca>, "Tian, Kevin" <kevin.tian@intel.com>
+References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
+ <20240527040517.38561-3-baolu.lu@linux.intel.com>
+ <BN9PR11MB527658A85092F88329EB73E98CF92@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <afaf133b-7175-467f-a254-060b66b9cb4e@linux.intel.com>
+ <BN9PR11MB527693E470478D92564A31718CFB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20240612130554.GR791043@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240612130554.GR791043@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-media-usb-dvb-usb-v1-1-bd185bf55cdc@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAM1vamYC/x3MwQrCMAyA4VcZORtIx5zgq4iHdokuYKskrgzG3
- t260893+TdwMRWHa7eBSVXXd2kIpw6mOZanoHIz9NQPNIYeMyObVjHHLKwRF0/INR09E1EgHod
- AF2iLj8lD12N/uzen6ILJYpnm//SlZVkxR/+Kwb7/AB0lWcqNAAAA
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HSU738p-PIs5TZzgz4v68mETA-FWNvn5
-X-Proofpoint-ORIG-GUID: HSU738p-PIs5TZzgz4v68mETA-FWNvn5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_12,2024-06-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- clxscore=1015 mlxscore=0 impostorscore=0 mlxlogscore=618
- lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130026
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/usb/dvb-usb/dvb-usb-dibusb-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/usb/dvb-usb/dvb-usb-dibusb-mc-common.o
+On 6/12/24 9:05 PM, Jason Gunthorpe wrote:
+> On Fri, Jun 07, 2024 at 09:35:23AM +0000, Tian, Kevin wrote:
+>>> From: Baolu Lu <baolu.lu@linux.intel.com>
+>>> Sent: Thursday, June 6, 2024 2:07 PM
+>>>
+>>> On 6/5/24 4:15 PM, Tian, Kevin wrote:
+>>>>> From: Lu Baolu <baolu.lu@linux.intel.com>
+>>>>> Sent: Monday, May 27, 2024 12:05 PM
+>>>>>
+>>>>> -	list_for_each_entry(handle, &mm->iommu_mm->sva_handles,
+>>>>> handle_item) {
+>>>>> -		if (handle->dev == dev) {
+>>>>> -			refcount_inc(&handle->users);
+>>>>> -			mutex_unlock(&iommu_sva_lock);
+>>>>> -			return handle;
+>>>>> -		}
+>>>>> +	/* A bond already exists, just take a reference`. */
+>>>>> +	attach_handle = iommu_attach_handle_get(group, iommu_mm-
+>>>>>> pasid, IOMMU_DOMAIN_SVA);
+>>>>> +	if (!IS_ERR(attach_handle)) {
+>>>>> +		handle = container_of(attach_handle, struct iommu_sva,
+>>>>> handle);
+>>>>> +		refcount_inc(&handle->users);
+>>>>> +		mutex_unlock(&iommu_sva_lock);
+>>>>> +		return handle;
+>>>>>    	}
+>>>>
+>>>> It's counter-intuitive to move forward when an error is returned.
+>>>>
+>>>> e.g. if it's -EBUSY indicating the pasid already used for another type then
+>>>> following attempts shouldn't been tried.
+> 
+> Yes, it looks like iommu_sva_bind_device() should fail with EBUSY if
+> the PASID is already in use and is not exactly the same SVA as being
+> asked for here.
+> 
+> It will eventually do this naturally when iommu_attach_device_pasid()
+> is called with an in-use PASID, but may as well do it here for
+> clarity.
+> 
+> Also, is there a missing test for the same mm too?
+> 
+> I'd maybe change iommu_attach_handle() to return NULL if there is no
+> handle and then write it like:
+> 
+> if (IS_ERR(attach_handle) && PTR_ERR(attach_handle) != -ENOENT) {
+> 	ret = PTR_ERR(attach_handle);
+> 	goto out_unlock;
+> }
+> 
+> if (!IS_ERR(attach_handle) && attach_handle->domain->mm == mm) {
+>     /* Can re-use the existing SVA attachment */
+> }
+> 
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+Okay, I will change it like below:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/media/usb/dvb-usb/dibusb-common.c    | 1 +
- drivers/media/usb/dvb-usb/dibusb-mc-common.c | 1 +
- 2 files changed, 2 insertions(+)
+--- a/drivers/iommu/iommu-sva.c
++++ b/drivers/iommu/iommu-sva.c
+@@ -91,11 +91,20 @@ struct iommu_sva *iommu_sva_bind_device(struct 
+device *dev, struct mm_struct *mm
+         attach_handle = iommu_attach_handle_get(group, iommu_mm->pasid, 
+IOMMU_DOMAIN_SVA);
+         if (!IS_ERR(attach_handle)) {
+                 handle = container_of(attach_handle, struct iommu_sva, 
+handle);
++               if (attach_handle->domain->mm != mm) {
++                       ret = -EBUSY;
++                       goto out_unlock;
++               }
+                 refcount_inc(&handle->users);
+                 mutex_unlock(&iommu_sva_lock);
+                 return handle;
+         }
 
-diff --git a/drivers/media/usb/dvb-usb/dibusb-common.c b/drivers/media/usb/dvb-usb/dibusb-common.c
-index aff60c10cb0b..20f1ef3393a5 100644
---- a/drivers/media/usb/dvb-usb/dibusb-common.c
-+++ b/drivers/media/usb/dvb-usb/dibusb-common.c
-@@ -14,6 +14,7 @@
- static int debug;
- module_param(debug, int, 0644);
- MODULE_PARM_DESC(debug, "set debugging level (1=info (|-able))." DVB_USB_DEBUG_STATUS);
-+MODULE_DESCRIPTION("Common methods for dibusb-based receivers");
- MODULE_LICENSE("GPL");
- 
- #define deb_info(args...) dprintk(debug,0x01,args)
-diff --git a/drivers/media/usb/dvb-usb/dibusb-mc-common.c b/drivers/media/usb/dvb-usb/dibusb-mc-common.c
-index b8cde4cded33..36bc7762acf4 100644
---- a/drivers/media/usb/dvb-usb/dibusb-mc-common.c
-+++ b/drivers/media/usb/dvb-usb/dibusb-mc-common.c
-@@ -8,6 +8,7 @@
- 
- #include "dibusb.h"
- 
-+MODULE_DESCRIPTION("Common methods for DIB3000MC");
- MODULE_LICENSE("GPL");
- 
- /* 3000MC/P stuff */
++       if (PTR_ERR(attach_handle) != -ENOENT) {
++               ret = PTR_ERR(attach_handle);
++               goto out_unlock;
++       }
++
+         handle = kzalloc(sizeof(*handle), GFP_KERNEL);
+         if (!handle) {
+                 ret = -ENOMEM;
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-media-usb-dvb-usb-500010d64107
+>>>> Does it suggest that having the caller to always provide a handle
+>>>> makes more sense?
+> 
+> I was thinking no just to avoid memory allocation.. But how does the
+> caller not provide a handle? My original draft of this concept used an
+> XA_MARK to indicate if the xarray pointed to a handle or a domain
+> 
+> This seems to require the handle:
+> 
+> -	curr = xa_cmpxchg(&group->pasid_array, pasid, NULL, domain, GFP_KERNEL);
+> -	if (curr) {
+> -		ret = xa_err(curr) ? : -EBUSY;
+> +	ret = xa_insert(&group->pasid_array, pasid, handle, GFP_KERNEL);
+> 
+> Confused.
 
+XA_MARK was used to indicate whether the stored pointer was an iommu
+domain or an attach handle. Since this series removes
+iommu_get_domain_for_dev_pasid(), there is no longer any need to store
+the domain pointer at all.
+
+> 
+>>> I'm neutral on this since only sva bind and iopf path delivery currently
+>>> require an attach handle.
+>>
+>> let's hear Jason's opinion.
+> 
+> At least iommu_attach_handle_get() should not return NULL if there is
+> no handle, it should return EBUSY as though it couldn't match the
+> type.
+
+Agreed.
+
+> 
+> Jason
+
+Best regards,
+baolu
 
