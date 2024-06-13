@@ -1,99 +1,163 @@
-Return-Path: <linux-kernel+bounces-214007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C923907DB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:56:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564E9907DBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CC211F24A82
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:56:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A51A1C22AC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BC613B798;
-	Thu, 13 Jun 2024 20:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C1913BACC;
+	Thu, 13 Jun 2024 20:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E+M2v+Bu"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+NZO3rk"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2508D763E7
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 20:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363BF2F50;
+	Thu, 13 Jun 2024 20:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718312167; cv=none; b=GwSHfwcigvWOzZLVRlyQbty5ga8D7hxLvvA4wiQ04JGrKrFBb4E9NtcqTS10pxgQ354lJXPNlVpshaJ18arSVghgKZtaK1Ygw/FKbPagN5onmr4FpIHWWU8/xXd1SpoDJdCpVs1hp2lC18mQIKr3hpqnvYGXy+013OMUT1RC9tc=
+	t=1718312375; cv=none; b=JK/kN/fxmQMNBdgkox8YU25wiY83ge7qHSpZTm7gEADDejqh3LdXso0Rr/LY8DaMED2EINCBNFh2mhmgXq0DWl68cq3PWQZhqsUgNl8puLhzg6lDB+dJYU5eJGG5D51X7tjLf1jzj+iMlUkxlumSGjeLUSH6ReHQ03hkDxTofZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718312167; c=relaxed/simple;
-	bh=/o9SMZeH0JArvECk6xRjNeh2FTZ6kHf/xA91ncCt6Lw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rU/4RJhbC86m1SQY8EjWi1ln7MB7orrOb2g+wlHg4k0gecrYfbJrAByDQyt3pz6nhnHpC8s8UxJvcWqUEmneNqygb9XUC4LSkF6ajXDqt9GWRHRPf70iWoMhBbuUL9Qxvr7jxUd+tUahvYTC9RRNfQf0ioMKqWu5kSweGG6pCTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E+M2v+Bu; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35f1e35156cso1433314f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:56:05 -0700 (PDT)
+	s=arc-20240116; t=1718312375; c=relaxed/simple;
+	bh=nVm6c8dzPN6w85JqRXEcHGl1cDE6oCtq/cbPfbXWx+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gSx5gXUq+o/F7hquZtBb+Ms+BvDpHabaICkwqBeI77yQlnmNmL3gQlz6agoELCMVo0BCXjRyBwU/7xZR9t3ZDfdJsHrOBOXgFvuaJLvRRuHzVr/9DTkbhquOptBHTRIefKlLHzaTyEyClVZEW2sUCU+CPrvO5NC9yfYMhX1dMno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+NZO3rk; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-80b8fd76e6dso752500241.1;
+        Thu, 13 Jun 2024 13:59:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718312164; x=1718916964; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zCVlCd3UjUTBV+cEEBJwXjWu4fzORp+M3gwsYSHFfxk=;
-        b=E+M2v+BuevQ0z9OLal/ypHByaJksoyg6ZQixe6R/NgjrUz5TIArdn8DXahbbZFt33t
-         9Rd9U0bvFXLzs6iFIkOoO4K2iAdHIXzNugDXbAp6om6r59ikcd3foa+IRTie/ksfnCAy
-         yh97coeLqnaJiqTaO4w75P85QB/nG2TW4LmE4Oq++8s4kvHTiEUhxPZv6iukdUTxkwIq
-         nVPAQrvG9paL2Q0KAxduFppw5nvQ82IAdfb/1Tl/vzdbSL3V0DiF4OzbUTazp/ApGsnt
-         U8rMF5o5ol2ovR2ICZZRWfs/CEWapOD/Ic/lX2BJKkKV2uvyYO4hx/DlNq95a/RM5Syg
-         QEZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718312164; x=1718916964;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718312373; x=1718917173; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zCVlCd3UjUTBV+cEEBJwXjWu4fzORp+M3gwsYSHFfxk=;
-        b=LAdwKKNoc39yJeM7QzsYcqLEa891LXHAtxyyIZ/6Z1Cu44LCpPh/EBBLAG2rbHiA/p
-         UsF7mcT0HXxLjBhkI7tW+vVpJMrBNxY2l6hSWbsYJy6UWY55R8qARuhKCXBZRIZJ44qu
-         nkV1Ni0jA/76YTKetV1tpcZ6AEIpXt+7BNdCNKTz9sRA2SqDSLmNBemjnzsG50HqsFvU
-         rwcDNZ/yLTXm450wxuQ/OChdqGDWkIeof8mGGgUOzQ/tHmNU54K2NceQ8PSjA9l2mfxL
-         2OH7oLbS8oq+W65KPbwnp96pRAJIKDyFwVuiIh+vxAKEEl0OfmKIp8ULB6Y8Swl/w2Q7
-         gdpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrpG4E2YwsUO+SrXbJPmz+r+u6O0sDcojJu4ibT6uLT03/z3aWAAOdeO4Tctllv2jgls5p/ySZz7X9078pDLhLicZOVV5o9Co4ZGNU
-X-Gm-Message-State: AOJu0YzvO8pgHCG2bg2W095OfH5NwEzYuFeN+wwJdXbpYJAj0kTM/rQ9
-	4nqO8APtNs8Z3HZ+uu1wRFMD50a+PhZQ8TPHno0P74WJTJpe1cHygdlHq6CuRRg=
-X-Google-Smtp-Source: AGHT+IHTv39w8lYeW6DtnAHirUWaWA+9uDEYHURyMfqcjKzNxs7TKlVdAHjocyZ0l2HAT3NjGfz7iQ==
-X-Received: by 2002:a05:6000:1882:b0:360:6f9e:8a85 with SMTP id ffacd0b85a97d-3607a7d978fmr569390f8f.43.1718312164263;
-        Thu, 13 Jun 2024 13:56:04 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750ad216sm2631782f8f.57.2024.06.13.13.56.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 13:56:03 -0700 (PDT)
-Date: Thu, 13 Jun 2024 23:55:59 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Teddy Engel <engel.teddy@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8192e: Remove unused constant IC_VersionCut_C
-Message-ID: <ed5db92f-68a0-42ef-898c-236d8342c25f@moroto.mountain>
-References: <20240612143326.6764-1-engel.teddy@gmail.com>
+        bh=TGK4HgLF/G5T6sS6MVCIimC13eAz1/g4TH5Np1XTe5Y=;
+        b=g+NZO3rk2/U10AQNTg6EdbyYHp7Kmw/w61tIxOh9tJm5FxgJ/woImgKhINmsXI863b
+         hjuWmkJTUkuMXxzgwpQQnG8dE5kASU7r9u5FGKuTDtiSqxsdBOcIMLJy3PZuFnxCNoYa
+         iFpf/biiQUDB+iELWASvN3fY62GlgK2CuHE8odrKxXPEWEHz59RDOebHh5FUswOjX+rf
+         somkX3dGx7XbujoYfIORod9ehd7t4uZwI/LDUZzq1SNMvEKuDVD7diztgVUlAs9yNnFh
+         PK0DtZMW404K1IpPcLUFjm43RC0Q/y34uHGxRuhJypkqS0eTssAHIWODOgUV7w8OiDAK
+         fAzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718312373; x=1718917173;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TGK4HgLF/G5T6sS6MVCIimC13eAz1/g4TH5Np1XTe5Y=;
+        b=XaZYSkAC+pnfG/3Lit2KBaflzKUq8ulAVmTwxs+5jnujR1O8VOGWdKIfwDgmkxeruF
+         T1Ol2ATWE8XQ7TBA5QdF8h0sEPNf7jEdDM0QF5Nq2UiPma/dwwP4BsPOGlrbB1FElLuf
+         Cmn6WkEY34LXuVF6fzE516YfT3ooDbzoGXzHu+34hz7ZOZAPne3BNUCFNEE53iqGX9GD
+         wmQZp0Pu8T3EkmDrLPmNa4dC0D0XgC8y6P0UbTqiN5Ps8U/bs47tdtvdTgqY5lodC3mn
+         3HZeA+FORWhvQu0w3fZUpdiLGiOFoVljalu08QhEzgjWED31qDwVRgV8MDC11ag/07dj
+         Jhfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoBjNvF4fj844tD5SQ31qzHqbon0BH7UP5yodCgJVxgpL7OLSrpikzAaDm1RQAN9wsKB1Cow3mSmTXw9Toid0TKumFcjP6VLbRYxa7qZAHxEAlmGcOAeAXWuGiRBvMWYmwFbaf1dphXgNUKd009aR9Yz9nKaDvNvID3a5G2ur3kuimOZb3TR/kjBGww7bX4ShhtE/Xte1AgRMS9ESv5WwF5y5YnsTU
+X-Gm-Message-State: AOJu0Yy72TStiW6Hjbiy9/G6glPyL38WBrPcNzWuqa2T7WWFGZsZ6uLb
+	Z1S177dAC6tgzna1yo8lamTAarYIVg6UzXeEX7U7yUdIvY8+3W15LL0E91GfbuMTt4poKNa4mvn
+	NbLVfWLPOYQPJt8KIUDtIaNpELYI=
+X-Google-Smtp-Source: AGHT+IGuEfez6CK1timgXxVp0xE5gnGcSK4bdjdOKc2Wa+djQb/95R1GNpVB6fXgqVQEpt/AJ+Xe3ejMsNulcikviis=
+X-Received: by 2002:a05:6102:22cf:b0:48d:a0d8:8ac4 with SMTP id
+ ada2fe7eead31-48dad965b79mr1460181137.2.1718312372353; Thu, 13 Jun 2024
+ 13:59:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612143326.6764-1-engel.teddy@gmail.com>
+References: <20240612234930.211119-1-allen.lkml@gmail.com> <17eadeab-ecd5-4302-94b3-bbcf4f9d8dfc@intel.com>
+In-Reply-To: <17eadeab-ecd5-4302-94b3-bbcf4f9d8dfc@intel.com>
+From: Allen <allen.lkml@gmail.com>
+Date: Thu, 13 Jun 2024 13:59:21 -0700
+Message-ID: <CAOMdWSLRuzrytH_6t2POHeDNLvZ2SDk5z5ahfSE5dYa7fKKs-Q@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: Convert from tasklet to BH workqueue
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Aubin Constans <aubin.constans@microchip.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Manuel Lauss <manuel.lauss@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
+	Jaehoon Chung <jh80.chung@samsung.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Alex Dubov <oakad@yahoo.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Bruce Chang <brucechang@via.com.tw>, Harald Welte <HaraldWelte@viatech.com>, 
+	Pierre Ossman <pierre@ossman.eu>, Christian Loehle <christian.loehle@arm.com>, linux-mmc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 03:33:26PM +0100, Teddy Engel wrote:
-> Remove unused constant.
-> 
-> Signed-off-by: Teddy Engel <engel.teddy@gmail.com>
-> ---
+> > The only generic interface to execute asynchronously in the BH context =
+is
+> > tasklet; however, it's marked deprecated and has some design flaws. To
+> > replace tasklets, BH workqueue support was recently added. A BH workque=
+ue
+> > behaves similarly to regular workqueues except that the queued work ite=
+ms
+> > are executed in the BH context.
+> >
+> > This patch converts drivers/mmc/* from tasklet to BH workqueue.
+> >
+> > Based on the work done by Tejun Heo <tj@kernel.org>
+> >
+> > Tested-by: Christian Loehle <christian.loehle@arm.com>
+> > Tested-by: Aubin Constans <aubin.constans@microchip.com>
+> > Acked-by: Aubin Constans <aubin.constans@microchip.com>
+> > Acked-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> > Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+> > Signed-off-by: Allen Pais <allen.lkml@gmail.com>
+> > ---
+> > v2:
+> >    - fixed patch styling issues
+> >    - rename work to bh_work
+> >
+> > Link to v1:
+> > https://lore.kernel.org/all/20240327160314.9982-10-apais@linux.microsof=
+t.com/
+> >
+>
+> [SNIP]
+>
+> > diff --git a/drivers/mmc/host/sdhci-bcm-kona.c b/drivers/mmc/host/sdhci=
+-bcm-kona.c
+> > index cb9152c6a65d..9c215db81b2b 100644
+> > --- a/drivers/mmc/host/sdhci-bcm-kona.c
+> > +++ b/drivers/mmc/host/sdhci-bcm-kona.c
+> > @@ -107,7 +107,7 @@ static void sdhci_bcm_kona_sd_init(struct sdhci_hos=
+t *host)
+> >   * Software emulation of the SD card insertion/removal. Set insert=3D1=
+ for insert
+> >   * and insert=3D0 for removal. The card detection is done by GPIO. For=
+ Broadcom
+> >   * IP to function properly the bit 0 of CORESTAT register needs to be =
+set/reset
+> > - * to generate the CD IRQ handled in sdhci.c which schedules card_task=
+let.
+> > + * to generate the CD IRQ handled in sdhci.c which schedules card_bh_w=
+ork.
+>
+> The comment was stale because sdhci.c has not had a card_tasklet for
+> a long time.  Just drop the " which schedules card_tasklet"
+>
 
-Hi Greg,
+ Will do. Thanks.
 
-Please don't apply this one.  Teddy sent a follow up.
+- Allen
 
-regards,
-dan carpenter
+> >   */
+> >  static int sdhci_bcm_kona_sd_card_emulate(struct sdhci_host *host, int=
+ insert)
+> >  {
+>
 
+
+--=20
+       - Allen
 
