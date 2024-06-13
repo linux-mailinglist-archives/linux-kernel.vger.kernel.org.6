@@ -1,90 +1,103 @@
-Return-Path: <linux-kernel+bounces-213435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FA090754E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:38:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270F0907552
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA7A4282143
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:38:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9C8F282C3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C658145B2B;
-	Thu, 13 Jun 2024 14:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A968145FED;
+	Thu, 13 Jun 2024 14:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhIpNOlH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WT5iNy5e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C82114430A;
-	Thu, 13 Jun 2024 14:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935AC145B10;
+	Thu, 13 Jun 2024 14:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718289505; cv=none; b=f/SZPuqirTNL3Pd5gN4uqKcNG0RtjZSYgKkkgDH7fVRJvxiCG3IY4/TgmXlXsWyylK6ekIOJffaWYb7FOgzmVLptsiB7FtEk/B8V7segrTRUK4PiQloSnmkM4whQ4Ub+GBw2kAsVq+i8wat5u6CQrCaBgBEZ/o/1LeTifM1nB3c=
+	t=1718289522; cv=none; b=IQ622s/K0gimWTdmGtNllJxJSHj0RJQGtmBxr5fDK/mNETdagWNtMJwqUtP/cUc+NQqbEmAnbVbvDzmiUnKTj7A/W8mjK1EQr8MrpWC9wHW7K8PczrRgJWIqcUs4ZCRJGBjD9q95h8jY7RgBE7+lpFUjMqd2SeQ7T7Fh5aWSQwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718289505; c=relaxed/simple;
-	bh=YCyWvXs7ccGLcK7Bb9cOb1o2iNUCARltormWAwDzO3o=;
+	s=arc-20240116; t=1718289522; c=relaxed/simple;
+	bh=NAAlrhBw8905EbYOUOmpTvwtHyyaFTaE9nUl4deDWHM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pF51sxMdKsbUOza700Fwten3cMYQJMEmBWQ/L8A5uWkV2Jous1dBJ6EZ2kIqQFDTqyNfCpsevEZN4Ia42BVjLXy4h7Kv9RdREqeNI7agTNc62BOfad1H1IrMrAOymFI6h/ubmdq3CJyC2O+pTuaX6MhVOp1vFyjxMFkUNuvipwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhIpNOlH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1A1EC2BBFC;
-	Thu, 13 Jun 2024 14:38:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=K0cW9RSwwd69tY5zzXYXhmOrJ7CKIrSuKuyrbAlVUfuyr8h93yOqqrIZiN50Wkh0LIy+5HwfxMnl3qPQS3dGYF+DI8Vl3fWcxtX1sKdF/EWU78U26nGkWdZmXka2SIAzoYRaterwJyXSaa1EFLJr9wfy5g1exC1ASl0P+RuSwiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WT5iNy5e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA585C2BBFC;
+	Thu, 13 Jun 2024 14:38:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718289505;
-	bh=YCyWvXs7ccGLcK7Bb9cOb1o2iNUCARltormWAwDzO3o=;
+	s=k20201202; t=1718289522;
+	bh=NAAlrhBw8905EbYOUOmpTvwtHyyaFTaE9nUl4deDWHM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fhIpNOlH9gZP1QbHOCGOF9z/cnp5aJn36mwQjFK35+/iMus4YgxB5rfIpCA1Lvuns
-	 AhUK7l9X7/H/vOA3JlpZaouOcMctQkQvPOru4uZWRw+fag9SASVkiY/gZ3kKQHnWJ0
-	 ZOIiKBrowT7808QpX+UUbNM/70PZp/wrehvmr85awAOdFi/I/YGVCfxaC8fU1CA/K/
-	 pEoM+88rwjxYGJIBC3tVrFLoVPYZCFaHNw+DR4t0xU5RGZcXG78csLg1mNze9cf2Xj
-	 W2r5y933KUwlM7fb/dAyRv7Eyh5jH5Auzfv+x/uoSZm426Hpthec5tTS/AAp8RUKKR
-	 YYV69gFd5WkdQ==
-Date: Thu, 13 Jun 2024 08:38:23 -0600
-From: Rob Herring <robh@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: lee@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	broonie@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] dt-bindings: mfd: twl: Fix example
-Message-ID: <20240613143823.GA1612105-robh@kernel.org>
-References: <20240612134039.1089839-1-andreas@kemnade.info>
+	b=WT5iNy5eziDZMHQYY5VkVW0WSf/ab41Vu/M/2Ps0gzFEgQ+w+QD6liVWUUSEz/qPp
+	 gl7Y/x1kH2dcpDsLxtpyXnaup5D7Et20HSibtcQohhawFwHJaXMwxdEIAWQlxWabU9
+	 eEa1UG/7KUP7wXkhc72AN/5mp2quzFtXGHEPuYr363BmeZIiW/Uk8NCoaoed7EYUpk
+	 O7NP3rVRp8XJEPMUP2nZWeu590BkqE9LvubrQ2R3lLKdGzUf1kjyeQcZQsUWkZpx0v
+	 G61ELzeYZOdui/dkN4Ewj6R+17+X9sOz3kANdEnlFgf1Kzc3xKwcPSPkEyiuYkn1v2
+	 WZfecjyUpbH9w==
+Date: Thu, 13 Jun 2024 15:38:35 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v2 08/13] riscv: Add xtheadvector instruction definitions
+Message-ID: <20240613-skipper-datebook-ac170f7a9ad5@spud>
+References: <20240610-xtheadvector-v2-0-97a48613ad64@rivosinc.com>
+ <20240610-xtheadvector-v2-8-97a48613ad64@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="sqinyBkDFO4zELOw"
+Content-Disposition: inline
+In-Reply-To: <20240610-xtheadvector-v2-8-97a48613ad64@rivosinc.com>
+
+
+--sqinyBkDFO4zELOw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240612134039.1089839-1-andreas@kemnade.info>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 03:40:39PM +0200, Andreas Kemnade wrote:
-> Fix example to also conform to rules specified in the separate
-> not-included gpadc binding.
-> 
-> Fixes: 62e4f3396197 ("dt-bindings: regulator: twl-regulator: convert to yaml")
+On Mon, Jun 10, 2024 at 03:56:45PM -0700, Charlie Jenkins wrote:
+> xtheadvector uses different encodings than standard vector for
+> vsetvli and vector loads/stores. Write the instruction formats to be
+> used in assembly code.
+>=20
+> Co-developed-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 
-Reported-by: Rob Herring (Arm) <robh@kernel.org>
+Where did Heiko's signoff go?
 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  Documentation/devicetree/bindings/mfd/ti,twl.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> index 2cbdd238f48f..e94b0fd7af0f 100644
-> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> @@ -225,6 +225,7 @@ examples:
->          gpadc {
->            compatible = "ti,twl6030-gpadc";
->            interrupts = <6>;
-> +          #io-channel-cells = <1>;
->          };
->  
->          rtc {
-> -- 
-> 2.39.2
-> 
+--sqinyBkDFO4zELOw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmsEawAKCRB4tDGHoIJi
+0p2LAQCpFlZN+A/TCImkor3h1aTtu5LXLeAEwNXlTj5csNSu4gD9GhkXiH2Q4/EJ
+ItTvEGIUQODpFkCmvLkOB3rllIA5ewQ=
+=OscO
+-----END PGP SIGNATURE-----
+
+--sqinyBkDFO4zELOw--
 
