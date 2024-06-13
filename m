@@ -1,139 +1,258 @@
-Return-Path: <linux-kernel+bounces-212391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C73905F81
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:03:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7AA905F85
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61BFDB225AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:03:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A0E6B228E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197BA7E1;
-	Thu, 13 Jun 2024 00:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39247FD;
+	Thu, 13 Jun 2024 00:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0r43pNO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VGWO3s68"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5186F384;
-	Thu, 13 Jun 2024 00:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43796633;
+	Thu, 13 Jun 2024 00:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718237010; cv=none; b=H/QN3dDgRF2OILy+7luAyDpxuigCFdUE36CKhiBKevDQp/fmwH+jgescmX1n1rInl/RM3vrgV6f0MY6OpslCVZ4cvfyy9citEaa5CnVHXY23JTVFZJH8tOxg85H/hKTAid0KtPLlBLksfptO3ZOKD5C4tFsmBch4lgys9EYhKUc=
+	t=1718237106; cv=none; b=QTKvLz4Srh+l1sfAxgiS2R71T1cDP103a4d09fCouJMhWN+eXfuF9GH4Onkam/GDAEBFi1k51GP2TdEF7acv0a5y926TWzDNqKGaT35wIK/mVPdRwqGelJwWWE8RffjXUvg7UzWxTeKGEzTIBKL5JQsWG3JTeVeseJk2VWsGyKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718237010; c=relaxed/simple;
-	bh=HoGlSe0N5SWiepAaoNUfiwFL0UGEp7h7dXK2pz4uuM4=;
+	s=arc-20240116; t=1718237106; c=relaxed/simple;
+	bh=EgNRkgtKSQMKcbGvUe+V6oqG4AaVX1eRRYE+mhCHvzc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuEzXHGKGURehq3+H8AIYbEJu4DRqTg96Eh4T+XMtx79Rq680uKc5L3/LzYrs6LpKmv78Gefw4wozxnFlQ++7X4U3MDDXftliJjJ09ygcQJrAOUpYpije0nEQqB015XCPZHRDxshbL3geQjLu+07JKZg/1XfGFvzxHRga0/7mq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0r43pNO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AB1AC116B1;
-	Thu, 13 Jun 2024 00:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718237009;
-	bh=HoGlSe0N5SWiepAaoNUfiwFL0UGEp7h7dXK2pz4uuM4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=MPDODq0CGBKrk4yGFbS5Qxxo4M8C1zc1E5BHKdC4f//8ejakAMk29VkaUxmCAPnTXoxoQE5gqvVQm7zeGllaLgu3gsGXTP5nnNX09VrU2iyDc/+pCCdV5NHHRDKWeKDepPCbf/5g5zHEd+v9S2An2PZy1QBoa9PxlGLYgzECGcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VGWO3s68; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718237103;
+	bh=EgNRkgtKSQMKcbGvUe+V6oqG4AaVX1eRRYE+mhCHvzc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G0r43pNO+/5I4sFv6eAE/XWds5XSaFKgPCcOlWFgPYaHsfHzcQbVZ5Ltlscd7/fZz
-	 4gDObGv9vVerQziiK+vB0Rr/fuDcJCdCDquIsJky7CJpNAmzBvCOkyzWjTGkW1EnJm
-	 ebEw5UvEKTaY31aMWzqiLUAaJA/e8Jd1FXXrmCUwlDjeymiCOoHJ0mXIEXMqDKPEet
-	 jt+ewaEunHdVmVsI88upFJGkKAs3Yp340SPpgBWaroXxE3GUDinYkXpcS6oygoKENN
-	 tU96lXTUyCeI/n3nbUMuymgfaoZDkNCR/1ZOsGu4OzJxODOI9hZdcbOSKMcSMoZosr
-	 CSN4DRWoillww==
-Date: Wed, 12 Jun 2024 17:03:27 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: Re: [PATCH] modpost: Enable section warning from *driver to
- .exit.text
-Message-ID: <20240613000327.GB1596562@thelio-3990X>
-References: <20240611205900.2145880-2-u.kleine-koenig@baylibre.com>
+	b=VGWO3s68lz90z2VBw1rqhyNBsljHnWPPD4vU+WhwzTWyTxa+7Vg6Q6Wp1t/FtYZlw
+	 4g7qz3BIkNmGZ0GGWTo2U9U1ukx6L1bp60KaPD++3hbjnJyOUQgiDTkx0JFsmvm79q
+	 nWuCe/X7rOXxkwnfprLajkmBn+5YrG5jQ/PZccuPgf2XzIp4fyALbJ+FjcwrpSLjTg
+	 bwvARlbxf2ouUdMzLvASzTh7IM5cR6GcjQPgNI9vU2L/K0YRsFYGsSE6dAeNcEwGrk
+	 gtpWxmnztR7mK2uSjufE0qtb9Qtipyaqn+gMlj7XHdz1ndQhje3pPcYzVT8N0dU9et
+	 sM9g7S/FP4AJA==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1B7FA3782172;
+	Thu, 13 Jun 2024 00:05:03 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 8B55A10608F7; Thu, 13 Jun 2024 02:05:02 +0200 (CEST)
+Date: Thu, 13 Jun 2024 02:05:02 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 2/9] iommu/rockchip: Attach multiple power domains
+Message-ID: <ffviz6ak6qsn2reg5y35aerzy7wxfx6fzix6xjyminbhfcguus@clszdjakdcjd>
+References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
+ <20240612-6-10-rocket-v1-2-060e48eea250@tomeuvizoso.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="klltttveuxmaguyk"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240611205900.2145880-2-u.kleine-koenig@baylibre.com>
+In-Reply-To: <20240612-6-10-rocket-v1-2-060e48eea250@tomeuvizoso.net>
 
-On Tue, Jun 11, 2024 at 10:59:00PM +0200, Uwe Kleine-König wrote:
-> There used to be several offenders, but now that for all of them patches
-> were sent and most of them were applied, enable the warning also for
-> builds without W=1.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 
-Seems reasonable to me, this is just a modpost warning, so it should not
-matter too much if there are a few instances lagging behind for a bit
-(but it would be good for that to get back on people's radar).
+--klltttveuxmaguyk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Hi,
 
+On Wed, Jun 12, 2024 at 03:52:55PM GMT, Tomeu Vizoso wrote:
+> IOMMUs with multiple base addresses can also have multiple power
+> domains.
+>=20
+> The base framework only takes care of a single power domain, as some
+> devices will need for these power domains to be powered on in a specific
+> order.
+>=20
+> Use a helper function to stablish links in the order in which they are
+> in the DT.
+>=20
+> This is needed by the IOMMU used by the NPU in the RK3588.
+>=20
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
 > ---
-> Hello,
-> 
-> as of v6.10-rc2 there are two known offenders:
-> 
->  - drivers/virt/coco/sev-guest/sev-guest.c
->    patch submitted in March, available at
->    https://lore.kernel.org/all/4a81b0e87728a58904283e2d1f18f73abc69c2a1.1711748999.git.u.kleine-koenig@pengutronix.de
-> 
->  - drivers/parport/parport_amiga.c
->    fixed in next (commit 73fedc31fed3 ("parport: amiga: Mark driver
->    struct with __refdata to prevent section mismatch"))
-> 
-> I tested this patch using allmodconfig builds for arm64, riscv, s390 and
-> x86_64 which didn't expose further drivers with this problem.
-> 
-> In my eyes this is good enough to enable the warning for all builds (and
-> not only with W=1).
-> 
-> Best regards
-> Uwe
-> 
->  scripts/mod/modpost.c | 11 -----------
->  1 file changed, 11 deletions(-)
-> 
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 937294ff164f..30881d94f00e 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -965,17 +965,6 @@ static int secref_whitelist(const char *fromsec, const char *fromsym,
->  	    match(fromsym, PATTERNS("*_ops", "*_probe", "*_console")))
->  		return 0;
->  
-> -	/*
-> -	 * symbols in data sections must not refer to .exit.*, but there are
-> -	 * quite a few offenders, so hide these unless for W=1 builds until
-> -	 * these are fixed.
-> -	 */
-> -	if (!extra_warn &&
-> -	    match(fromsec, PATTERNS(DATA_SECTIONS)) &&
-> -	    match(tosec, PATTERNS(ALL_EXIT_SECTIONS)) &&
-> -	    match(fromsym, PATTERNS("*driver")))
-> -		return 0;
-> -
->  	/* Check for pattern 3 */
->  	if (strstarts(fromsec, ".head.text") &&
->  	    match(tosec, PATTERNS(ALL_INIT_SECTIONS)))
-> 
-> base-commit: c3f38fa61af77b49866b006939479069cd451173
-> prerequisite-patch-id: 7300dede00db637042647e12d558fe1dd57c20cc
-> prerequisite-patch-id: 82cfe8597f709f05b9fbbd3e4eca8be35e077e2b
-> -- 
-> 2.43.0
-> 
+
+To me it looks like this is multiple IOMMUs, which should each get
+their own node. I don't see a good reason for merging these
+together.
+
+I will still review this assuming there is one. That would require
+to first of all update the DT binding:
+
+Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
+
+1. It does not allow using "power-domain-names" property
+2. It limits the number of allowed power-domains to 1
+3. It limits the number of allowed base addresses to 2
+
+Looking at the DT patch you also add more interrupts and clocks,
+which are also limited by the binding. You should see a bunch of
+warnings when you check the DTBS via 'make dtbs_check'
+
+>  drivers/iommu/rockchip-iommu.c | 36 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>=20
+> diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iomm=
+u.c
+> index f5629515bd78..673b0ebb6262 100644
+> --- a/drivers/iommu/rockchip-iommu.c
+> +++ b/drivers/iommu/rockchip-iommu.c
+> @@ -6,6 +6,8 @@
+>   *			Daniel Kurtz <djkurtz@chromium.org>
+>   */
+> =20
+> +#include "linux/err.h"
+> +#include "linux/pm_domain.h"
+>  #include <linux/clk.h>
+>  #include <linux/compiler.h>
+>  #include <linux/delay.h>
+> @@ -115,6 +117,7 @@ struct rk_iommu {
+>  	struct iommu_device iommu;
+>  	struct list_head node; /* entry in rk_iommu_domain.iommus */
+>  	struct iommu_domain *domain; /* domain to which iommu is attached */
+> +	struct dev_pm_domain_list *pmdomains;
+>  };
+> =20
+>  struct rk_iommudata {
+> @@ -1186,6 +1189,7 @@ static int rk_iommu_probe(struct platform_device *p=
+dev)
+>  	struct resource *res;
+>  	const struct rk_iommu_ops *ops;
+>  	int num_res =3D pdev->num_resources;
+> +	int pm_domain_count;
+>  	int err, i;
+> =20
+>  	iommu =3D devm_kzalloc(dev, sizeof(*iommu), GFP_KERNEL);
+> @@ -1271,6 +1275,35 @@ static int rk_iommu_probe(struct platform_device *=
+pdev)
+>  	if (!dma_dev)
+>  		dma_dev =3D &pdev->dev;
+> =20
+> +	pm_domain_count =3D of_property_count_strings(iommu->dev->of_node, "pow=
+er-domain-names");
+
+pm_domain_count =3D device_property_string_array_count(iommu->dev, "power-d=
+omain-names");
+
+When possible using device_property_ is prefered, since it allows
+reusing code for systems not using DT.
+
+> +	if (pm_domain_count > 0) {
+> +		const char **pm_domains =3D kvmalloc_array(pm_domain_count, sizeof(*pm=
+_domains), GFP_KERNEL);
+> +		struct dev_pm_domain_attach_data pm_domain_data =3D {
+> +			.pd_names =3D pm_domains,
+> +			.num_pd_names =3D pm_domain_count,
+> +			.pd_flags =3D PD_FLAG_DEV_LINK_ON,
+> +		};
+> +		int i;
+> +
+> +		if (!pm_domain_data.pd_names) {
+> +			err =3D -ENOMEM;
+> +			goto err_remove_sysfs;
+> +		}
+> +
+> +		for (i =3D 0; i < pm_domain_count; i++) {
+> +			err =3D of_property_read_string_index(iommu->dev->of_node, "power-dom=
+ain-names", i, &pm_domains[i]);
+> +			if (err) {
+> +				kfree(pm_domains);
+> +				goto err_remove_sysfs;
+> +			}
+> +		}
+
+There is a helper to read a string array:
+
+err =3D device_property_read_string_array(iommu->dev, "power-domain-names",=
+ pm_domains, pm_domain_count);
+
+-- Sebastian
+
+> +
+> +		err =3D dev_pm_domain_attach_list(iommu->dev, &pm_domain_data, &iommu-=
+>pmdomains);
+> +		kfree(pm_domains);
+> +		if (err < 0)
+> +			goto err_remove_sysfs;
+> +	}
+> +
+>  	pm_runtime_enable(dev);
+> =20
+>  	for (i =3D 0; i < iommu->num_irq; i++) {
+> @@ -1292,6 +1325,7 @@ static int rk_iommu_probe(struct platform_device *p=
+dev)
+>  	return 0;
+>  err_pm_disable:
+>  	pm_runtime_disable(dev);
+> +	dev_pm_domain_detach_list(iommu->pmdomains);
+>  err_remove_sysfs:
+>  	iommu_device_sysfs_remove(&iommu->iommu);
+>  err_unprepare_clocks:
+> @@ -1310,6 +1344,8 @@ static void rk_iommu_shutdown(struct platform_devic=
+e *pdev)
+>  		devm_free_irq(iommu->dev, irq, iommu);
+>  	}
+> =20
+> +	dev_pm_domain_detach_list(iommu->pmdomains);
+> +
+>  	pm_runtime_force_suspend(&pdev->dev);
+>  }
+> =20
+>=20
+> --=20
+> 2.45.2
+>=20
+>=20
+
+--klltttveuxmaguyk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZqN6sACgkQ2O7X88g7
++pqVmxAAg7JgRVo1N7aZb+AgIqo70yZ1n7UTJR7CiUdmCaLG0E03/qnaFUfttJqQ
+CGGew5eHLIg83Frbx3+Ksg+G01emakM5YoT0lGHe/sL80Iz+VZAMldIsWxBJ9U6y
+bArvV1dFuXik6ZqYfTQ05KhtY1SfCisXl2BuzxPFSFyMJBPiZS/n2QFFAu3KoNTa
+EKA0I73nytEMoBsk/RmcJdU1wRMI7YgJlkjjIRH/YhzjHJfccyfBP53UemiEo4mV
+ybb+/IqXhUqW3HQk4BYrovTMw2HaLknvR/C7Lz1PdVvOFWX9cStytD9JHZM3XGcn
+PGcDHALBksgsIhgZaos55MgWPPdxwRA6VR0pQTaOzg52vuHShZKjgzQbKzlYLMfb
+UzkEpRbJycI212XVJdwVGH+JhvIr+fd13yjd0RQbdEVUqnIzTBmUTW/CO3kX36Go
+AMmGEg8UEHtZtJqzdtIXNJ9/Ef6iLVXxCNQ4pz6EzSOdKbotE2pUS+jOshcNJlFk
+c3ePBJQ3DtKEWsFh3yGtH5Kg/m/LddhUeVoIMTmSlrz73vDecD2IASEE+of8Mho8
+7y3+c/PqBfzyfPYVaqEFlO+//llf5xDeRLHXOW8Mm1BtIrMgyD/401KD4wj/63By
+bLyO2NRg/FXI4kXtQFjBLq7wLmPxujL+S89RolLYMPbbbkxSlsQ=
+=6VfK
+-----END PGP SIGNATURE-----
+
+--klltttveuxmaguyk--
 
