@@ -1,134 +1,112 @@
-Return-Path: <linux-kernel+bounces-212816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D57C9066BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:31:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C126A9066E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95C8EB24C2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:31:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B6BA1F24231
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423561422A7;
-	Thu, 13 Jun 2024 08:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5844C13D898;
+	Thu, 13 Jun 2024 08:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPRKEOuv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="luL7cXI2"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849C113E020;
-	Thu, 13 Jun 2024 08:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF83713D510
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718267298; cv=none; b=iotrDPVf/Wo8g88reSqUP92D62RjpCAqAh0aOU9k5/IzrBqVBK5YFXJlMXbj6k7ki6Nqrsfaix1PZmd0V7xBX0gH5NbUUbooHu1jU8fMjsSK7PHatz8MEWFbwFLlbBGVtOa22do5kDi+aRpFcEGibhCS7QKsTKnfcxHrCSwqxt8=
+	t=1718267418; cv=none; b=LGv5SkYcWeG8cO69LQG98LdoEAvHKM62ygiTgod4QL801Iyy3qkeFXkkaBKHKpCX0zDhrzh4gya859dSoSC17M3Pd1mLl8lPcIeRthbQLRwrGTaEbSZmMdngZC8WxaIv9P4dbb9ciKrFQdWpFTadR6RXcDtJxraYMnQzv7CRCGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718267298; c=relaxed/simple;
-	bh=4n7R2Wjj5XV2Iowlqp+1RuKz8iVi3GSvTL7mxRY+v00=;
+	s=arc-20240116; t=1718267418; c=relaxed/simple;
+	bh=zam1WrTcB2a6hkMQ4oXaEjlytSYEYESNLp+E26hWmRs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PNP46cjSF/IbPsVT00LQaQCFolLUDDrDHgcMiThB9gJORS+TvxJ9qLbTRaGn+REcAxDp6GYRTiiIP2tXg/EcQKkcGN4MXbaSmbcjAnIYSB9b9Ylce+3lNBdh3GLbAYrOLTUa8nkuJOh7sDIvZcM1G75e/ylmFgQlrRPQjdq7XCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPRKEOuv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19A5EC4AF1A;
-	Thu, 13 Jun 2024 08:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718267298;
-	bh=4n7R2Wjj5XV2Iowlqp+1RuKz8iVi3GSvTL7mxRY+v00=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WPRKEOuv0mOgEHMKvZqGsfkAm5933mmOgHZsOo8HgG0hHGM0fmhkiYDoJxdVQ7neb
-	 78YJvklk3YNXcRwTpwUNo80U56Lp7Ac6EmxxgqNYDdGyN45FskVXr7fUrjdCwhceI8
-	 Rst5HcwSNfxxM40X2+ixoW5++42/N2kk4oHC8AWOxt18giExrEkjOQL4XwT9c+PqI8
-	 lNTjL2aArQUcMKoHfrG0SLzgUXLNL6Tfn3iswvrmteS7U2x8B6ZnTlth6RV8IR212A
-	 gz6IKqaWyXAyxns4pvW3FYgTbihGzZbwBaM0al9h35jUt92yPCWUVoj8RW6KcJf5rc
-	 EafLYUZ8V5kXQ==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52bbdb15dd5so953877e87.3;
-        Thu, 13 Jun 2024 01:28:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV6I/ptSkCY81QGJQDstixRArkxrKF4x3k55YqHgDaUemq8E10FuUV5QZA7UeC3kvb1CmJxOhFqPH/ahjINoRNDpAZUFSLBECihyk+P
-X-Gm-Message-State: AOJu0Yw3cQsOdk4e+pICgi9HsfPUufWX61uv+yl3jgqWwH3IwZJl0F2j
-	2AobLcn0zyY7hvSs8cDK17XkEP+ttk6eVIG8dBhbIwGAHWbpM/nXxYIZU9D7AtwiP+YAKxEjOLb
-	Z+/dT3YqDq1INuryzS+cK6G6blkM=
-X-Google-Smtp-Source: AGHT+IG/j++akO5qxY65t0GL+p9ootSMH/RUNfNAQtZCPHxEx6h0eAbolyYYMinKC3GqQKHGKcStF6NdQU+9RZWagDU=
-X-Received: by 2002:a05:6512:1d2:b0:52c:8271:5252 with SMTP id
- 2adb3069b0e04-52c9a3c6f75mr2286027e87.16.1718267296466; Thu, 13 Jun 2024
- 01:28:16 -0700 (PDT)
+	 To:Content-Type; b=Y1JGqt6MTflO5FJr0IXDlh9J+K+PeegVh8j28MA1z06CW8t2aPGr1fpdcev8PY37XFhWOLMARdnqF1K6/H+IAoSx5XlIRys+hDx7xPnSGCasmnm6mEfYM+lkLMbvy6LAxbakuYFDlHVGzVinQhnSlb9nCANsCxHoBTk5P6B/oek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=luL7cXI2; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebd95f136bso7614461fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:30:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718267415; x=1718872215; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zam1WrTcB2a6hkMQ4oXaEjlytSYEYESNLp+E26hWmRs=;
+        b=luL7cXI2uXReVUpyONbENCMEi7I9yoLTix+iLnOkFpkrA/V4JUuAuSoDMGTWH1Wy8N
+         PXxa3LAa/kbSSZny2qmZ0mOJ/365zW4j+kBDKYhrfKvYdnLOAquY1TeRvlck0TZIEEvd
+         914TUsc+Yo+49WfyOo8o9uJDDa4P4ICEIPf6viBYg8XEJlqB9B7uz9b1IFEAuOw9NP8s
+         XYbCuPk9LtLmsYJxr1Zptm5KYjUbdL7ygzSLDedtaYLEvozmj/tnui8sORAT/7oJDapz
+         1Vp9IwKJkqnyKUzP9MT6v1sTZOfcukL9+XkROz6xIBXj0u96Ui3z/5LG4NLzuiMpZnI2
+         ZFEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718267415; x=1718872215;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zam1WrTcB2a6hkMQ4oXaEjlytSYEYESNLp+E26hWmRs=;
+        b=Bv6Oq8O9CiZvA2s9otREfqx9UYp16bJRavhWQbN5p+9Mtjd07399RPweeljnvnev0e
+         YBGBhEqskfEpDAH/tXAcKHaD/JLeb4pGIpPKtN6Odwyoy+PDUFG+ZDsrItBkOhxgJFrQ
+         SAdLcjzePYjv/exoFMblm3mKRYMBE6k6kyJk9KWd9aPIaVGvSgFIVMyQ2Rx9iO0leOdp
+         Vr9wBrSWCRsxqgzrukohcyCvrfrH8wwq9hximjUjuM/w5Do9eSXVa4Al6+Hu1aNEvu5n
+         2GUx2kjpChncnV+gOpjD9lqgjEZAFFaZKmydJvVVXd21qRCfzh11fuEQ/pIaKO53W3EQ
+         NAVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQS1RHkARcp/hAo2CfyjtSbUOQbZmPhviksrkzsUAopMnZKRCwYir7WxNQlgV1djis0Vxebu7s7aBbXkRJt0NjxSAgwBNese6EYHXZ
+X-Gm-Message-State: AOJu0YyCQuf2wUqVat1LN+MoFfMsyjOW8Obb6jBruARhxe7s22nqgfHX
+	0skI4pBzz7veR5CQoqw2EH0M6Awngsqy2c1/I0G/q83YkM5Lj5M6d29FKUA1ox4rRWdi2xFkexX
+	7mpZmuOO8QvonVxsNqPhH4rDRqC/il0uzqhGdk0LDpOFRuxlxUW8=
+X-Google-Smtp-Source: AGHT+IF9f/c3s4Qe7ACe43UALugVI7gRig0w/mlgAWUWAzqd6KqBUe7rTJtYZn5+66dcrw87a/NrWnfZ6ZkrDnaAHOg=
+X-Received: by 2002:a2e:9185:0:b0:2eb:e542:cab0 with SMTP id
+ 38308e7fff4ca-2ebfc9d020cmr22506241fa.14.1718267415106; Thu, 13 Jun 2024
+ 01:30:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612135638.298882-2-ardb+git@google.com>
-In-Reply-To: <20240612135638.298882-2-ardb+git@google.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 13 Jun 2024 10:28:05 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEgAStastV+sMhXt0pUmvM=nr9D-oDctwb8iiYxt9+fAQ@mail.gmail.com>
-Message-ID: <CAMj1kXEgAStastV+sMhXt0pUmvM=nr9D-oDctwb8iiYxt9+fAQ@mail.gmail.com>
-Subject: Re: [PATCH v3] x86/efi: Free EFI memory map only when installing a
- new one.
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ashish Kalra <Ashish.Kalra@amd.com>, Dave Young <dyoung@redhat.com>, 
-	Mike Rapoport <rppt@kernel.org>, Borislav Petkov <bp@alien8.de>, Dan Williams <dan.j.williams@intel.com>
+References: <20240610112700.80819-1-wsa+renesas@sang-engineering.com>
+ <20240610112700.80819-2-wsa+renesas@sang-engineering.com> <CAMRc=MfZ11U+kAh1+K=DxtJ=QL+cY7Q_sBN4sQDF-RNgjpV0QA@mail.gmail.com>
+ <jvnvx7a4pn6evrp5ehfrt4qsiuprq6ogvrue2a3uupwtydmgcm@2rvat7ibvgb4>
+In-Reply-To: <jvnvx7a4pn6evrp5ehfrt4qsiuprq6ogvrue2a3uupwtydmgcm@2rvat7ibvgb4>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 13 Jun 2024 10:30:03 +0200
+Message-ID: <CACRpkdYYy_0QnzO-qPusYPFK2qFs=NG-t-X=GRjLg5DHX_k82w@mail.gmail.com>
+Subject: Re: [PATCH v9 1/1] gpio: add sloppy logic analyzer using polling
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	linux-renesas-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
+	Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 12 Jun 2024 at 15:56, Ard Biesheuvel <ardb+git@google.com> wrote:
->
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> The logic in __efi_memmap_init() is shared between two different
-> execution flows:
-> - mapping the EFI memory map early or late into the kernel VA space, so
->   that its entries can be accessed;
-> - cloning the EFI memory map in order to insert new entries that are
->   created as a result of creating a memory reservation
->   (efi_arch_mem_reserve())
->
-> In the former case, the underlying memory containing the kernel's view
-> of the EFI memory map (which may be heavily modified by the kernel
-> itself on x86) is not modified at all, and the only thing that changes
-> is the virtual mapping of this memory, which is different between early
-> and late boot.
->
-> In the latter case, an entirely new allocation is created that carries a
-> new, updated version of the kernel's view of the EFI memory map. When
-> installing this new version, the old version will no longer be
-> referenced, and if the memory was allocated by the kernel, it will leak
-> unless it gets freed.
->
-> The logic that implements this freeing currently lives on the code path
-> that is shared between these two use cases, but it should only apply to
-> the latter. So move it to the correct spot.
->
-> While at it, move __efi_memmap_free() into its only caller, and drop the
-> dummy definition for non-x86 architectures, as that is no longer needed.
->
-> Cc: Ashish Kalra <Ashish.Kalra@amd.com>
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Fixes: f0ef6523475f ("efi: Fix efi_memmap_alloc() leaks")
-> Link: https://lore.kernel.org/all/36ad5079-4326-45ed-85f6-928ff76483d3@amd.com
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> ---
-> v3:
-> - don't move __efi_memmap_free() into what turned out not to be its only
->   caller
-> - drop another CPP #define related to the dummy definition
->
-> v2:
-> - free old memory map only after installing the new one succeeded
-> - move __efi_memmap_free() into its only caller
-> - drop obsolete dummy declaration from generic code
->
->  arch/x86/include/asm/efi.h     |  1 -
->  arch/x86/platform/efi/memmap.c | 12 +++++++++++-
->  drivers/firmware/efi/memmap.c  |  9 ---------
->  3 files changed, 11 insertions(+), 11 deletions(-)
->
+On Wed, Jun 12, 2024 at 6:03=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 
-Given that this fixes an actual use-after-free bug that is not
-specific to TDX/SEV or kexec, I'm inclined to queue this up as a fix.
+> [Bart]
+> > I really dislike drivers being called in an ambiguous way like
+> > "simple" or - in this case "sloppy". I understand why it is - in fact
+> > - sloppy but can we call it anything else? Like
+> > "gpio-logic-analyzer.c"?
+>
+> Sure, we can if you prefer. I named it like this to make the limitations
+> super-clear. And even with that in place, I still got a private email
+> where someone wanted to build a 400MHz-RPi-based logic analyzer device
+> with it. Which would not only have the latency problems, but also
+> likely have a max sampling speed of whopping 400kHz.
 
-@Boris: Mind if I take this as an EFI fix? Otherwise, can you queue
-this up? Thanks.
+What about "gpio-low-fidelity-logic-analyzer.c"
+
+(+/- Kconfig etc adjusted accordingly)
+
+It says what it is, not really sloppy but really low-fi.
+
+Yours,
+Linus Walleij
 
