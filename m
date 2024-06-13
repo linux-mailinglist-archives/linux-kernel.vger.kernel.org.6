@@ -1,648 +1,123 @@
-Return-Path: <linux-kernel+bounces-212461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B7990614E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:49:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C16906150
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C10F6B21F6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:49:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D5A1C209A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F241A28D;
-	Thu, 13 Jun 2024 01:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536EE18651;
+	Thu, 13 Jun 2024 01:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QAYNa+tu"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AJ9MZTqp"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890B685C7D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1A58472
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718243287; cv=none; b=agD5QEx2Qith9bVZLrVYF2r4pTAjEHnNxFAsCBka4nguaTYlDN+lIwoNFPpDZewDPL5AN6O8hL8HYDrZ/kby6qPMJ0EmAbyGluYZ7nD2Sz646OifexztlzsB4EliM+krxr4wlMkN65nJM3c2Trm7901pz9L0hXJWk7Kz5JvhSqQ=
+	t=1718243361; cv=none; b=WoC/7zL7FEO8gk78XeLA7FQAJQ4XrqocWq6N1jwenBgQI+HxwiQtjWudBPnm6WphSX/up3aUy1OQ57EGMckiEtRbfKskfeRUiwqEvCktZAXQ85G1lldKU0z3HeaC09eCrgtrUpg/GOUvV+ROIlLjG6hM9sD8r4LbUiz3X8lETjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718243287; c=relaxed/simple;
-	bh=wHKWcwMH4E7sKq/9/wn/IfKrcUOOB+vf8Q5P5Uwzu7I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Moz4QeFISC1gbgCMEfzGA4LZgtClgoJ+S5JTiPzsNNh8ST0OlISqpENcZdhgSFo/UDrOjZuEpC8lljTkOZLtWfgq1OgB/sr9z4dYlJHWY+cGk4ua89QrRHtfCoXd9YGt6aK4vm9StfHTem9FbgbfCkCLQxyG4CEuDS+bhypqr3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ziweixiao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QAYNa+tu; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ziweixiao.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62d032a07a9so9716577b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:48:05 -0700 (PDT)
+	s=arc-20240116; t=1718243361; c=relaxed/simple;
+	bh=MKXNxvjvDMlEDAFGJ+FZDsHfj2sWvELkDCT2U73q0SI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I8QOfCsUy5xg85+56A0tUTCfILJ5hKWwQAmr8oirJiI1Bl+J7lTrXMGfmh1vE8PexJZGV2DEc8uyKGyDFgjbYskSjzvrkfv6Uvcb2cSMXchhWXMLtv9Zk+xzoNKVJNVjNuWhpfdkbLlI4Q0S+lKt9MUfN58ZdwSCfPxnWDS+w5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AJ9MZTqp; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57c778b5742so344483a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:49:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718243284; x=1718848084; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UpdkDZRCbUKedWW1x0pNi2K8NLHPzXzcCEaOEymoFww=;
-        b=QAYNa+tubPrcE6dYO06RblxfTLRjHIYq3x3ZjklzKnFjMOmcTEsJ4KQhtVL5DJuXRu
-         JzUCi6KTX+HwXEvUSLgak2HGqfbZj+yMPC9ksa77C9U97qGKxHQey9F2+zZV3WbRmwhV
-         1WI8tOeTgx/dZbPVm4qzztl/gM5ogZHZPu47UU2U3B+D/FyZQ5NSkTlPMy8rDUv3P2wL
-         qRg6H/d9Xyy1a/z2qqFwcCwi2k3ApLYHiQh8GDRBWRwCNwptip8E7wojQpv3zQBuJmJl
-         JOz+5TdYntUkeHrzX6LSgHwPmU4In5kIcJEzT+l1k/+QgRhZMJW0sflvtI28vD0e0whE
-         7+fg==
+        d=linux-foundation.org; s=google; t=1718243358; x=1718848158; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=u7oeDTF4u1EiwyzNNT5qA5Y4WKuC5XsAbUMmFlcK0R8=;
+        b=AJ9MZTqpsDIki8eGBZhJhIpVC3BYX0NdDln2KSv2lGxd3t48V5x9Wxr6U+fMpINALR
+         QtIn0liIvzPSYKEvHPa8RaAx37Qr/KvCecrzp7cAzb3Ivh650dTX7Y4nxTRxr3R0gmv0
+         jpPvoDtTSQ6wS5WaoMseGleCRxEs+ahv9R83o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718243284; x=1718848084;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UpdkDZRCbUKedWW1x0pNi2K8NLHPzXzcCEaOEymoFww=;
-        b=XV1x/Gy3QUYHMgnl3n+JLgjAd/m/rkHZqfJuAxaxuWMZJU/Qua6Cr5JLvuXGalCPlN
-         6v5vb1lGYbf6OElJyS2DXhgqCHZClFiguXyBGVQ3F64Ku2y2i/Zcbd/5G80zBiElDg2Y
-         oiVJo5QU7dZ03DEU112By67BF3U5VHnIxnybFGYmL4BVOnrrNkKChBcwKbvDk+YW84Rp
-         6wmQauLCmgrVkjxFzQ+DK/boMp2KimkZABNg38KlChtSnCnMlUyjRJbNI7h6VCG/v50d
-         zA8ruRnwZaWLUOwaYvU/AmxOa+/gvsJAgXOTOSj+IlBV0ExLn3lL+2xiQoX7Exlhvcsw
-         SAMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvAD8WEvankVYQWTN7vH7ZWzKi7N3BGLGcAGpAbBC0oa+NKFfyIxMSyR4wsMHYulAD3KmznVCB4ec5G535kxQQsJtrSec5GU5mw/Ng
-X-Gm-Message-State: AOJu0Yz4tZibyx3obcHZOz2ra/AKazahmljAxGD+7Xm/nVz8bMKl+V7e
-	r/+RXdeuPQwTWW2ksfhYlueSx4LmRgzPE28jj5GyaPuM4v5Yx5O2CCYEDbNKP7CJNe4bjxHCzhi
-	JjZklBx8mumGlxA==
-X-Google-Smtp-Source: AGHT+IHuYYKsZJuWTZMGBXSbvLcOBJC1ekkk+yurU/2uShZPpA6AHpgzoXyfDhxgI6msuvWuGzVNWEQ2VFqQEmk=
-X-Received: from ziwei-gti.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:9b0])
- (user=ziweixiao job=sendgmr) by 2002:a05:690c:4c0b:b0:623:abfb:a5f7 with SMTP
- id 00721157ae682-62fbbce400cmr8243167b3.7.1718243284613; Wed, 12 Jun 2024
- 18:48:04 -0700 (PDT)
-Date: Thu, 13 Jun 2024 01:47:44 +0000
-In-Reply-To: <20240613014744.1370943-1-ziweixiao@google.com>
+        d=1e100.net; s=20230601; t=1718243358; x=1718848158;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u7oeDTF4u1EiwyzNNT5qA5Y4WKuC5XsAbUMmFlcK0R8=;
+        b=EX7zEw25joGChBOAQs2ytHXvyj4bLCHL+B6lFdQgnFdxZFq+knAYC3qqJzayHSQtzC
+         Y4BRjrvSetu+EQjdGVmpOERxq8B/YlW30vf41vW+zgpdsqPk2oSfb2rov2BP1rQ5oDyy
+         e958k2SGubibCUOF5XovDyLAhQqQYleD5RcNcu7QKkZSSYcPDhRzg2v5QYKHU63+VL+u
+         31qQOMUZfj0EIQLkMTELrQyXpjEz3CWxDh2/RD1ONPocf8WJQhNuRAJqiLbwBYd46KUH
+         0qTQOFCASi8S2Aa4w0wFChK2V3is5tRpan7P45zNoCfGZPpAdQuijJ0f/abX8/ReavX3
+         3qzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUhYUgGyDO+uDwgkaDiEctXqLYNV/GY4W4BR+J+pPQ6qfXNziEh7FQk1m33MigCfvlG990qZcUzosWVSZLYDf+Y8917cmk2WUCakN5
+X-Gm-Message-State: AOJu0YwQVatEImS7o4FPKY83GPDOy+ydbv8wT7YART7UP7yjq2EfS/qL
+	uSKpbkP0PW09nW6f+RZ/j2Oka9aEvv/igLDgrcbYemTd4PkbGp+UyQhTUF5UF5ahEvRWULxNfhS
+	ZptdyuQ==
+X-Google-Smtp-Source: AGHT+IH2pk+qXSab7PBC9mpL4F79sOCDpEzfcBg6k0HqUdQsIkqkC9UB2udFg72DlqKyAI/KCEcrRw==
+X-Received: by 2002:a50:cc88:0:b0:57c:61a4:e56 with SMTP id 4fb4d7f45d1cf-57ca97697b5mr1957903a12.19.1718243357591;
+        Wed, 12 Jun 2024 18:49:17 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72da713sm236362a12.30.2024.06.12.18.49.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 18:49:16 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6f21ff4e6dso73484866b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:49:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVYiepbWCKJRs/f45f7IlpmP3u1P2QvG2lwKTN2JGTUXkrw+9vhM8GjCLsBYpyNULKowGSvnzCBqPPZncyiIJHZJHuoktGjRAajcxh5
+X-Received: by 2002:a17:907:eac:b0:a6f:5815:f5d9 with SMTP id
+ a640c23a62f3a-a6f5815f6f8mr12518166b.52.1718243356240; Wed, 12 Jun 2024
+ 18:49:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240613014744.1370943-1-ziweixiao@google.com>
-X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-Message-ID: <20240613014744.1370943-6-ziweixiao@google.com>
-Subject: [PATCH net-next v2 5/5] gve: Add flow steering ethtool support
-From: Ziwei Xiao <ziweixiao@google.com>
-To: netdev@vger.kernel.org
-Cc: jeroendb@google.com, pkaligineedi@google.com, shailend@google.com, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	willemb@google.com, hramamurthy@google.com, ziweixiao@google.com, 
-	rushilg@google.com, horms@kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+References: <20240613001215.648829-1-mjguzik@gmail.com> <20240613001215.648829-2-mjguzik@gmail.com>
+ <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
+In-Reply-To: <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 12 Jun 2024 18:49:00 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
+Message-ID: <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
+ be released
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-From: Jeroen de Borst <jeroendb@google.com>
+On Wed, 12 Jun 2024 at 18:23, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> The natural thing to do is to just make the "wait for unlocked" be
+> part of the same loop.
 
-Implement the ethtool commands that can be used to configure and query
-flow-steering rules. For these ethtool commands, the driver will
-temporarily drop the rtnl lock to reduce the latency for the flow
-steering commands on separate NICs. It will then be protected by the new
-added adminq lock.
+Oh, and while I like my approach a lot more than your patch, I do
+think that the real issue here is likely that something takes the
+d_lock way too much.
 
-A large part of this change consists of translating the ethtool
-representation of 'ntuples' to our internal gve_flow_rule and vice-versa
-in the new created gve_flow_rule.c
+One of the ideas behind the reflux was that locking should be an
+exceptional thing when something special happens. So things like final
+dput() and friends.
 
-Considering the possible large amount of flow rules, the driver doesn't
-store all the rules locally. When the user runs 'ethtool -n <nic>' to
-check the registered rules, the driver will send adminq command to
-query a limited amount of rules/rule ids(that filled in a 4096 bytes dma
-memory) at a time as a cache for the ethtool queries. The adminq query
-commands will be repeated for several times until the ethtool has
-queried all the needed rules.
+What I *think* is going on - judging by your description of how you
+triggered this - is that sadly our libfs 'readdir()' thing is pretty
+nasty.
 
-Signed-off-by: Jeroen de Borst <jeroendb@google.com>
-Co-developed-by: Ziwei Xiao <ziweixiao@google.com>
-Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
-Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
-Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
-Reviewed-by: Willem de Bruijn <willemb@google.com>
----
-Changes in v2:
-	- Fix the sparse warning of be16_to_cpu by switching to use the
-	  new added structure gve_adminq_queried_flow_rule from the
-	  previous patch to do the be16_to_cpu operations
-	- Use kvfree instead of kfree for the rule allocated by kvzalloc
-	- Delete the check that disallows rx queue count changing when
-	  there are rules alive because it already has a check in
-	  net/ethtool/channels.c that ensures rx queue count change to
-	  be failed if requested channel counts are too low for existing
-	  ntuple filter settings
+It does use d_lock a lot for the cursor handling, and things like
+scan_positives() in particular.
 
- drivers/net/ethernet/google/gve/Makefile      |   2 +-
- drivers/net/ethernet/google/gve/gve.h         |   8 +-
- drivers/net/ethernet/google/gve/gve_ethtool.c |  80 ++++-
- .../net/ethernet/google/gve/gve_flow_rule.c   | 298 ++++++++++++++++++
- drivers/net/ethernet/google/gve/gve_main.c    |  32 +-
- 5 files changed, 411 insertions(+), 9 deletions(-)
- create mode 100644 drivers/net/ethernet/google/gve/gve_flow_rule.c
+I understand *why* it does that, and maybe it's practically unfixable,
+but I do think the most likely deeper reason for that "go into slow
+mode" is the cursor on the directory causing issues.
 
-diff --git a/drivers/net/ethernet/google/gve/Makefile b/drivers/net/ethernet/google/gve/Makefile
-index b9a6be76531b..9ed07080b38a 100644
---- a/drivers/net/ethernet/google/gve/Makefile
-+++ b/drivers/net/ethernet/google/gve/Makefile
-@@ -1,4 +1,4 @@
- # Makefile for the Google virtual Ethernet (gve) driver
- 
- obj-$(CONFIG_GVE) += gve.o
--gve-objs := gve_main.o gve_tx.o gve_tx_dqo.o gve_rx.o gve_rx_dqo.o gve_ethtool.o gve_adminq.o gve_utils.o
-+gve-objs := gve_main.o gve_tx.o gve_tx_dqo.o gve_rx.o gve_rx_dqo.o gve_ethtool.o gve_adminq.o gve_utils.o gve_flow_rule.o
-diff --git a/drivers/net/ethernet/google/gve/gve.h b/drivers/net/ethernet/google/gve/gve.h
-index b9e9dd958f3c..84ac004d3953 100644
---- a/drivers/net/ethernet/google/gve/gve.h
-+++ b/drivers/net/ethernet/google/gve/gve.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: (GPL-2.0 OR MIT)
-  * Google virtual Ethernet (gve) driver
-  *
-- * Copyright (C) 2015-2021 Google, Inc.
-+ * Copyright (C) 2015-2024 Google LLC
-  */
- 
- #ifndef _GVE_H_
-@@ -1170,6 +1170,12 @@ int gve_adjust_config(struct gve_priv *priv,
- int gve_adjust_queues(struct gve_priv *priv,
- 		      struct gve_queue_config new_rx_config,
- 		      struct gve_queue_config new_tx_config);
-+/* flow steering rule */
-+int gve_get_flow_rule_entry(struct gve_priv *priv, struct ethtool_rxnfc *cmd);
-+int gve_get_flow_rule_ids(struct gve_priv *priv, struct ethtool_rxnfc *cmd, u32 *rule_locs);
-+int gve_add_flow_rule(struct gve_priv *priv, struct ethtool_rxnfc *cmd);
-+int gve_del_flow_rule(struct gve_priv *priv, struct ethtool_rxnfc *cmd);
-+int gve_flow_rules_reset(struct gve_priv *priv);
- /* report stats handling */
- void gve_handle_report_stats(struct gve_priv *priv);
- /* exported by ethtool.c */
-diff --git a/drivers/net/ethernet/google/gve/gve_ethtool.c b/drivers/net/ethernet/google/gve/gve_ethtool.c
-index ffaa878d67bc..01ff72be0dca 100644
---- a/drivers/net/ethernet/google/gve/gve_ethtool.c
-+++ b/drivers/net/ethernet/google/gve/gve_ethtool.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: (GPL-2.0 OR MIT)
- /* Google virtual Ethernet (gve) driver
-  *
-- * Copyright (C) 2015-2021 Google, Inc.
-+ * Copyright (C) 2015-2024 Google LLC
-  */
- 
- #include <linux/rtnetlink.h>
-@@ -775,6 +775,82 @@ static int gve_set_coalesce(struct net_device *netdev,
- 	return 0;
- }
- 
-+static int gve_set_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *cmd)
-+{
-+	struct gve_priv *priv = netdev_priv(netdev);
-+	int err = 0;
-+
-+	if (!(netdev->features & NETIF_F_NTUPLE))
-+		return -EOPNOTSUPP;
-+
-+	dev_hold(netdev);
-+	rtnl_unlock();
-+
-+	switch (cmd->cmd) {
-+	case ETHTOOL_SRXCLSRLINS:
-+		err = gve_add_flow_rule(priv, cmd);
-+		break;
-+	case ETHTOOL_SRXCLSRLDEL:
-+		err = gve_del_flow_rule(priv, cmd);
-+		break;
-+	case ETHTOOL_SRXFH:
-+		err = -EOPNOTSUPP;
-+		break;
-+	default:
-+		err = -EOPNOTSUPP;
-+		break;
-+	}
-+
-+	rtnl_lock();
-+	dev_put(netdev);
-+	return err;
-+}
-+
-+static int gve_get_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *cmd, u32 *rule_locs)
-+{
-+	struct gve_priv *priv = netdev_priv(netdev);
-+	int err = 0;
-+
-+	dev_hold(netdev);
-+	rtnl_unlock();
-+
-+	switch (cmd->cmd) {
-+	case ETHTOOL_GRXRINGS:
-+		cmd->data = priv->rx_cfg.num_queues;
-+		break;
-+	case ETHTOOL_GRXCLSRLCNT:
-+		if (!priv->max_flow_rules) {
-+			err = -EOPNOTSUPP;
-+			goto out;
-+		}
-+
-+		err = gve_adminq_query_flow_rules(priv, GVE_FLOW_RULE_QUERY_STATS, 0);
-+		if (err)
-+			goto out;
-+
-+		cmd->rule_cnt = priv->num_flow_rules;
-+		cmd->data = priv->max_flow_rules;
-+		break;
-+	case ETHTOOL_GRXCLSRULE:
-+		err = gve_get_flow_rule_entry(priv, cmd);
-+		break;
-+	case ETHTOOL_GRXCLSRLALL:
-+		err = gve_get_flow_rule_ids(priv, cmd, (u32 *)rule_locs);
-+		break;
-+	case ETHTOOL_GRXFH:
-+		err = -EOPNOTSUPP;
-+		break;
-+	default:
-+		err = -EOPNOTSUPP;
-+		break;
-+	}
-+
-+out:
-+	rtnl_lock();
-+	dev_put(netdev);
-+	return err;
-+}
-+
- const struct ethtool_ops gve_ethtool_ops = {
- 	.supported_coalesce_params = ETHTOOL_COALESCE_USECS,
- 	.supported_ring_params = ETHTOOL_RING_USE_TCP_DATA_SPLIT,
-@@ -786,6 +862,8 @@ const struct ethtool_ops gve_ethtool_ops = {
- 	.get_msglevel = gve_get_msglevel,
- 	.set_channels = gve_set_channels,
- 	.get_channels = gve_get_channels,
-+	.set_rxnfc = gve_set_rxnfc,
-+	.get_rxnfc = gve_get_rxnfc,
- 	.get_link = ethtool_op_get_link,
- 	.get_coalesce = gve_get_coalesce,
- 	.set_coalesce = gve_set_coalesce,
-diff --git a/drivers/net/ethernet/google/gve/gve_flow_rule.c b/drivers/net/ethernet/google/gve/gve_flow_rule.c
-new file mode 100644
-index 000000000000..0bb8cd1876a3
---- /dev/null
-+++ b/drivers/net/ethernet/google/gve/gve_flow_rule.c
-@@ -0,0 +1,298 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/* Google virtual Ethernet (gve) driver
-+ *
-+ * Copyright (C) 2015-2024 Google LLC
-+ */
-+
-+#include "gve.h"
-+#include "gve_adminq.h"
-+
-+static
-+int gve_fill_ethtool_flow_spec(struct ethtool_rx_flow_spec *fsp,
-+			       struct gve_adminq_queried_flow_rule *rule)
-+{
-+	struct gve_adminq_flow_rule *flow_rule = &rule->flow_rule;
-+	static const u16 flow_type_lut[] = {
-+		[GVE_FLOW_TYPE_TCPV4]	= TCP_V4_FLOW,
-+		[GVE_FLOW_TYPE_UDPV4]	= UDP_V4_FLOW,
-+		[GVE_FLOW_TYPE_SCTPV4]	= SCTP_V4_FLOW,
-+		[GVE_FLOW_TYPE_AHV4]	= AH_V4_FLOW,
-+		[GVE_FLOW_TYPE_ESPV4]	= ESP_V4_FLOW,
-+		[GVE_FLOW_TYPE_TCPV6]	= TCP_V6_FLOW,
-+		[GVE_FLOW_TYPE_UDPV6]	= UDP_V6_FLOW,
-+		[GVE_FLOW_TYPE_SCTPV6]	= SCTP_V6_FLOW,
-+		[GVE_FLOW_TYPE_AHV6]	= AH_V6_FLOW,
-+		[GVE_FLOW_TYPE_ESPV6]	= ESP_V6_FLOW,
-+	};
-+
-+	if (be16_to_cpu(flow_rule->flow_type) >= ARRAY_SIZE(flow_type_lut))
-+		return -EINVAL;
-+
-+	fsp->flow_type = flow_type_lut[be16_to_cpu(flow_rule->flow_type)];
-+
-+	memset(&fsp->h_u, 0, sizeof(fsp->h_u));
-+	memset(&fsp->h_ext, 0, sizeof(fsp->h_ext));
-+	memset(&fsp->m_u, 0, sizeof(fsp->m_u));
-+	memset(&fsp->m_ext, 0, sizeof(fsp->m_ext));
-+
-+	switch (fsp->flow_type) {
-+	case TCP_V4_FLOW:
-+	case UDP_V4_FLOW:
-+	case SCTP_V4_FLOW:
-+		fsp->h_u.tcp_ip4_spec.ip4src = flow_rule->key.src_ip[0];
-+		fsp->h_u.tcp_ip4_spec.ip4dst = flow_rule->key.dst_ip[0];
-+		fsp->h_u.tcp_ip4_spec.psrc = flow_rule->key.src_port;
-+		fsp->h_u.tcp_ip4_spec.pdst = flow_rule->key.dst_port;
-+		fsp->h_u.tcp_ip4_spec.tos = flow_rule->key.tos;
-+		fsp->m_u.tcp_ip4_spec.ip4src = flow_rule->mask.src_ip[0];
-+		fsp->m_u.tcp_ip4_spec.ip4dst = flow_rule->mask.dst_ip[0];
-+		fsp->m_u.tcp_ip4_spec.psrc = flow_rule->mask.src_port;
-+		fsp->m_u.tcp_ip4_spec.pdst = flow_rule->mask.dst_port;
-+		fsp->m_u.tcp_ip4_spec.tos = flow_rule->mask.tos;
-+		break;
-+	case AH_V4_FLOW:
-+	case ESP_V4_FLOW:
-+		fsp->h_u.ah_ip4_spec.ip4src = flow_rule->key.src_ip[0];
-+		fsp->h_u.ah_ip4_spec.ip4dst = flow_rule->key.dst_ip[0];
-+		fsp->h_u.ah_ip4_spec.spi = flow_rule->key.spi;
-+		fsp->h_u.ah_ip4_spec.tos = flow_rule->key.tos;
-+		fsp->m_u.ah_ip4_spec.ip4src = flow_rule->mask.src_ip[0];
-+		fsp->m_u.ah_ip4_spec.ip4dst = flow_rule->mask.dst_ip[0];
-+		fsp->m_u.ah_ip4_spec.spi = flow_rule->mask.spi;
-+		fsp->m_u.ah_ip4_spec.tos = flow_rule->mask.tos;
-+		break;
-+	case TCP_V6_FLOW:
-+	case UDP_V6_FLOW:
-+	case SCTP_V6_FLOW:
-+		memcpy(fsp->h_u.tcp_ip6_spec.ip6src, &flow_rule->key.src_ip,
-+		       sizeof(struct in6_addr));
-+		memcpy(fsp->h_u.tcp_ip6_spec.ip6dst, &flow_rule->key.dst_ip,
-+		       sizeof(struct in6_addr));
-+		fsp->h_u.tcp_ip6_spec.psrc = flow_rule->key.src_port;
-+		fsp->h_u.tcp_ip6_spec.pdst = flow_rule->key.dst_port;
-+		fsp->h_u.tcp_ip6_spec.tclass = flow_rule->key.tclass;
-+		memcpy(fsp->m_u.tcp_ip6_spec.ip6src, &flow_rule->mask.src_ip,
-+		       sizeof(struct in6_addr));
-+		memcpy(fsp->m_u.tcp_ip6_spec.ip6dst, &flow_rule->mask.dst_ip,
-+		       sizeof(struct in6_addr));
-+		fsp->m_u.tcp_ip6_spec.psrc = flow_rule->mask.src_port;
-+		fsp->m_u.tcp_ip6_spec.pdst = flow_rule->mask.dst_port;
-+		fsp->m_u.tcp_ip6_spec.tclass = flow_rule->mask.tclass;
-+		break;
-+	case AH_V6_FLOW:
-+	case ESP_V6_FLOW:
-+		memcpy(fsp->h_u.ah_ip6_spec.ip6src, &flow_rule->key.src_ip,
-+		       sizeof(struct in6_addr));
-+		memcpy(fsp->h_u.ah_ip6_spec.ip6dst, &flow_rule->key.dst_ip,
-+		       sizeof(struct in6_addr));
-+		fsp->h_u.ah_ip6_spec.spi = flow_rule->key.spi;
-+		fsp->h_u.ah_ip6_spec.tclass = flow_rule->key.tclass;
-+		memcpy(fsp->m_u.ah_ip6_spec.ip6src, &flow_rule->mask.src_ip,
-+		       sizeof(struct in6_addr));
-+		memcpy(fsp->m_u.ah_ip6_spec.ip6dst, &flow_rule->mask.dst_ip,
-+		       sizeof(struct in6_addr));
-+		fsp->m_u.ah_ip6_spec.spi = flow_rule->mask.spi;
-+		fsp->m_u.ah_ip6_spec.tclass = flow_rule->mask.tclass;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	fsp->ring_cookie = be16_to_cpu(flow_rule->action);
-+
-+	return 0;
-+}
-+
-+static int gve_generate_flow_rule(struct gve_priv *priv, struct ethtool_rx_flow_spec *fsp,
-+				  struct gve_adminq_flow_rule *rule)
-+{
-+	static const u16 flow_type_lut[] = {
-+		[TCP_V4_FLOW]	= GVE_FLOW_TYPE_TCPV4,
-+		[UDP_V4_FLOW]	= GVE_FLOW_TYPE_UDPV4,
-+		[SCTP_V4_FLOW]	= GVE_FLOW_TYPE_SCTPV4,
-+		[AH_V4_FLOW]	= GVE_FLOW_TYPE_AHV4,
-+		[ESP_V4_FLOW]	= GVE_FLOW_TYPE_ESPV4,
-+		[TCP_V6_FLOW]	= GVE_FLOW_TYPE_TCPV6,
-+		[UDP_V6_FLOW]	= GVE_FLOW_TYPE_UDPV6,
-+		[SCTP_V6_FLOW]	= GVE_FLOW_TYPE_SCTPV6,
-+		[AH_V6_FLOW]	= GVE_FLOW_TYPE_AHV6,
-+		[ESP_V6_FLOW]	= GVE_FLOW_TYPE_ESPV6,
-+	};
-+	u32 flow_type;
-+
-+	if (fsp->ring_cookie == RX_CLS_FLOW_DISC)
-+		return -EOPNOTSUPP;
-+
-+	if (fsp->ring_cookie >= priv->rx_cfg.num_queues)
-+		return -EINVAL;
-+
-+	rule->action = cpu_to_be16(fsp->ring_cookie);
-+
-+	flow_type = fsp->flow_type & ~(FLOW_EXT | FLOW_MAC_EXT | FLOW_RSS);
-+	if (!flow_type || flow_type >= ARRAY_SIZE(flow_type_lut))
-+		return -EINVAL;
-+
-+	rule->flow_type = cpu_to_be16(flow_type_lut[flow_type]);
-+
-+	switch (flow_type) {
-+	case TCP_V4_FLOW:
-+	case UDP_V4_FLOW:
-+	case SCTP_V4_FLOW:
-+		rule->key.src_ip[0] = fsp->h_u.tcp_ip4_spec.ip4src;
-+		rule->key.dst_ip[0] = fsp->h_u.tcp_ip4_spec.ip4dst;
-+		rule->key.src_port = fsp->h_u.tcp_ip4_spec.psrc;
-+		rule->key.dst_port = fsp->h_u.tcp_ip4_spec.pdst;
-+		rule->mask.src_ip[0] = fsp->m_u.tcp_ip4_spec.ip4src;
-+		rule->mask.dst_ip[0] = fsp->m_u.tcp_ip4_spec.ip4dst;
-+		rule->mask.src_port = fsp->m_u.tcp_ip4_spec.psrc;
-+		rule->mask.dst_port = fsp->m_u.tcp_ip4_spec.pdst;
-+		break;
-+	case AH_V4_FLOW:
-+	case ESP_V4_FLOW:
-+		rule->key.src_ip[0] = fsp->h_u.tcp_ip4_spec.ip4src;
-+		rule->key.dst_ip[0] = fsp->h_u.tcp_ip4_spec.ip4dst;
-+		rule->key.spi = fsp->h_u.ah_ip4_spec.spi;
-+		rule->mask.src_ip[0] = fsp->m_u.tcp_ip4_spec.ip4src;
-+		rule->mask.dst_ip[0] = fsp->m_u.tcp_ip4_spec.ip4dst;
-+		rule->mask.spi = fsp->m_u.ah_ip4_spec.spi;
-+		break;
-+	case TCP_V6_FLOW:
-+	case UDP_V6_FLOW:
-+	case SCTP_V6_FLOW:
-+		memcpy(&rule->key.src_ip, fsp->h_u.tcp_ip6_spec.ip6src,
-+		       sizeof(struct in6_addr));
-+		memcpy(&rule->key.dst_ip, fsp->h_u.tcp_ip6_spec.ip6dst,
-+		       sizeof(struct in6_addr));
-+		rule->key.src_port = fsp->h_u.tcp_ip6_spec.psrc;
-+		rule->key.dst_port = fsp->h_u.tcp_ip6_spec.pdst;
-+		memcpy(&rule->mask.src_ip, fsp->m_u.tcp_ip6_spec.ip6src,
-+		       sizeof(struct in6_addr));
-+		memcpy(&rule->mask.dst_ip, fsp->m_u.tcp_ip6_spec.ip6dst,
-+		       sizeof(struct in6_addr));
-+		rule->mask.src_port = fsp->m_u.tcp_ip6_spec.psrc;
-+		rule->mask.dst_port = fsp->m_u.tcp_ip6_spec.pdst;
-+		break;
-+	case AH_V6_FLOW:
-+	case ESP_V6_FLOW:
-+		memcpy(&rule->key.src_ip, fsp->h_u.usr_ip6_spec.ip6src,
-+		       sizeof(struct in6_addr));
-+		memcpy(&rule->key.dst_ip, fsp->h_u.usr_ip6_spec.ip6dst,
-+		       sizeof(struct in6_addr));
-+		rule->key.spi = fsp->h_u.ah_ip6_spec.spi;
-+		memcpy(&rule->mask.src_ip, fsp->m_u.usr_ip6_spec.ip6src,
-+		       sizeof(struct in6_addr));
-+		memcpy(&rule->mask.dst_ip, fsp->m_u.usr_ip6_spec.ip6dst,
-+		       sizeof(struct in6_addr));
-+		rule->key.spi = fsp->h_u.ah_ip6_spec.spi;
-+		break;
-+	default:
-+		/* not doing un-parsed flow types */
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+int gve_get_flow_rule_entry(struct gve_priv *priv, struct ethtool_rxnfc *cmd)
-+{
-+	struct gve_adminq_queried_flow_rule *rules_cache = priv->flow_rules_cache.rules_cache;
-+	struct ethtool_rx_flow_spec *fsp = (struct ethtool_rx_flow_spec *)&cmd->fs;
-+	u32 *cache_num = &priv->flow_rules_cache.rules_cache_num;
-+	struct gve_adminq_queried_flow_rule *rule = NULL;
-+	int err = 0;
-+	u32 i;
-+
-+	if (!priv->max_flow_rules)
-+		return -EOPNOTSUPP;
-+
-+	if (!priv->flow_rules_cache.rules_cache_synced ||
-+	    fsp->location < be32_to_cpu(rules_cache[0].location) ||
-+	    fsp->location > be32_to_cpu(rules_cache[*cache_num - 1].location)) {
-+		err = gve_adminq_query_flow_rules(priv, GVE_FLOW_RULE_QUERY_RULES, fsp->location);
-+		if (err)
-+			return err;
-+
-+		priv->flow_rules_cache.rules_cache_synced = true;
-+	}
-+
-+	for (i = 0; i < *cache_num; i++) {
-+		if (fsp->location == be32_to_cpu(rules_cache[i].location)) {
-+			rule = &rules_cache[i];
-+			break;
-+		}
-+	}
-+
-+	if (!rule)
-+		return -EINVAL;
-+
-+	err = gve_fill_ethtool_flow_spec(fsp, rule);
-+
-+	return err;
-+}
-+
-+int gve_get_flow_rule_ids(struct gve_priv *priv, struct ethtool_rxnfc *cmd, u32 *rule_locs)
-+{
-+	__be32 *rule_ids_cache = priv->flow_rules_cache.rule_ids_cache;
-+	u32 *cache_num = &priv->flow_rules_cache.rule_ids_cache_num;
-+	u32 starting_rule_id = 0;
-+	u32 i = 0, j = 0;
-+	int err = 0;
-+
-+	if (!priv->max_flow_rules)
-+		return -EOPNOTSUPP;
-+
-+	do {
-+		err = gve_adminq_query_flow_rules(priv, GVE_FLOW_RULE_QUERY_IDS,
-+						  starting_rule_id);
-+		if (err)
-+			return err;
-+
-+		for (i = 0; i < *cache_num; i++) {
-+			if (j >= cmd->rule_cnt)
-+				return -EMSGSIZE;
-+
-+			rule_locs[j++] = be32_to_cpu(rule_ids_cache[i]);
-+			starting_rule_id = be32_to_cpu(rule_ids_cache[i]) + 1;
-+		}
-+	} while (*cache_num != 0);
-+	cmd->data = priv->max_flow_rules;
-+
-+	return err;
-+}
-+
-+int gve_add_flow_rule(struct gve_priv *priv, struct ethtool_rxnfc *cmd)
-+{
-+	struct ethtool_rx_flow_spec *fsp = &cmd->fs;
-+	struct gve_adminq_flow_rule *rule = NULL;
-+	int err;
-+
-+	if (!priv->max_flow_rules)
-+		return -EOPNOTSUPP;
-+
-+	rule = kvzalloc(sizeof(*rule), GFP_KERNEL);
-+	if (!rule)
-+		return -ENOMEM;
-+
-+	err = gve_generate_flow_rule(priv, fsp, rule);
-+	if (err)
-+		goto out;
-+
-+	err = gve_adminq_add_flow_rule(priv, rule, fsp->location);
-+
-+out:
-+	kvfree(rule);
-+	if (err)
-+		dev_err(&priv->pdev->dev, "Failed to add the flow rule: %u", fsp->location);
-+
-+	return err;
-+}
-+
-+int gve_del_flow_rule(struct gve_priv *priv, struct ethtool_rxnfc *cmd)
-+{
-+	struct ethtool_rx_flow_spec *fsp = (struct ethtool_rx_flow_spec *)&cmd->fs;
-+
-+	if (!priv->max_flow_rules)
-+		return -EOPNOTSUPP;
-+
-+	return gve_adminq_del_flow_rule(priv, fsp->location);
-+}
-diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
-index fc142856e189..9744b426940e 100644
---- a/drivers/net/ethernet/google/gve/gve_main.c
-+++ b/drivers/net/ethernet/google/gve/gve_main.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: (GPL-2.0 OR MIT)
- /* Google virtual Ethernet (gve) driver
-  *
-- * Copyright (C) 2015-2021 Google, Inc.
-+ * Copyright (C) 2015-2024 Google LLC
-  */
- 
- #include <linux/bpf.h>
-@@ -635,6 +635,12 @@ static void gve_teardown_device_resources(struct gve_priv *priv)
- 
- 	/* Tell device its resources are being freed */
- 	if (gve_get_device_resources_ok(priv)) {
-+		err = gve_flow_rules_reset(priv);
-+		if (err) {
-+			dev_err(&priv->pdev->dev,
-+				"Failed to reset flow rules: err=%d\n", err);
-+			gve_trigger_reset(priv);
-+		}
- 		/* detach the stats report */
- 		err = gve_adminq_report_stats(priv, 0, 0x0, GVE_STATS_REPORT_TIMER_PERIOD);
- 		if (err) {
-@@ -1779,6 +1785,14 @@ static int gve_xdp(struct net_device *dev, struct netdev_bpf *xdp)
- 	}
- }
- 
-+int gve_flow_rules_reset(struct gve_priv *priv)
-+{
-+	if (!priv->max_flow_rules)
-+		return 0;
-+
-+	return gve_adminq_reset_flow_rules(priv);
-+}
-+
- int gve_adjust_config(struct gve_priv *priv,
- 		      struct gve_tx_alloc_rings_cfg *tx_alloc_cfg,
- 		      struct gve_rx_alloc_rings_cfg *rx_alloc_cfg)
-@@ -2052,15 +2066,21 @@ static int gve_set_features(struct net_device *netdev,
- 		netdev->features ^= NETIF_F_LRO;
- 		if (netif_carrier_ok(netdev)) {
- 			err = gve_adjust_config(priv, &tx_alloc_cfg, &rx_alloc_cfg);
--			if (err) {
--				/* Revert the change on error. */
--				netdev->features = orig_features;
--				return err;
--			}
-+			if (err)
-+				goto revert_features;
- 		}
- 	}
-+	if ((netdev->features & NETIF_F_NTUPLE) && !(features & NETIF_F_NTUPLE)) {
-+		err = gve_flow_rules_reset(priv);
-+		if (err)
-+			goto revert_features;
-+	}
- 
- 	return 0;
-+
-+revert_features:
-+	netdev->features = orig_features;
-+	return err;
- }
- 
- static const struct net_device_ops gve_netdev_ops = {
--- 
-2.45.2.627.g7a2c4fd464-goog
+Put another way: while I think doing the retry loop will help
+benchmarks, it would be lovely if you were to look at that arguably
+deeper issue of the 'd_sib' list.
 
+                   Linus
 
