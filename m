@@ -1,54 +1,44 @@
-Return-Path: <linux-kernel+bounces-213196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051E9907038
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:26:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B40907087
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BD981C20F82
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75320282F4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FAB143C5F;
-	Thu, 13 Jun 2024 12:24:50 +0000 (UTC)
-Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDED143862
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98EE143C5F;
+	Thu, 13 Jun 2024 12:28:09 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEFC8614D;
+	Thu, 13 Jun 2024 12:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718281490; cv=none; b=Ft3oLOgr/8SK8IioDGgZqa6Vq/yyR1HGYM+i0LYGMxIKhyW19u2cVDemUFQ+eZvis8VmzpzOs2cwiarXVmWcBkKLtMB2cKg8KuwQqSF64ogVcojuXcClwR+9JRggbsOr03MR7PjWE9pgusJWZF91NO852uHrEzrXzpQweoEqSvU=
+	t=1718281689; cv=none; b=eUtz9rEsPmSM0YjF/IpAIYWItvOyscnEs+7ZBTrauiIo2GJWxHGE0BoJwzucYuOyvsolP2Tud/U7Q5wNVk/88kJghrtcrVT8Uwj90HzRmeeWEiK7kYlrxBHhnq3p/tsbe+GaogTYSDe3WtnIBTceqBC0pbCbz6qhTtkDa0TQIxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718281490; c=relaxed/simple;
-	bh=7We2bvNl5nFvDw809iHtNB16S7nkGWtlhJVZX9TGoRs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W3WFPvBb2dtNH7imLdmJop1FUxaBdOMrvzVnpIA0rKzup43Cg57XxqqxhJrMWzI2bip8LoX7xwOzhsR18z79zj3TgUx1GLU3Q9vk76khnZtMt7BenvugU93UB8Q92Eu6FORZb1UVg57MrNw62m5zRaa4fx2zkvxKztwC1qIM2L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.64.164])
-	by sina.com (172.16.235.25) with ESMTP
-	id 666AE50500000A9D; Thu, 13 Jun 2024 20:24:39 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 84370834210205
-X-SMAIL-UIID: 37D6C9A50F9D47B690E611B413EC973A-20240613-202439-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [nilfs?] [mm?] KASAN: slab-use-after-free Read in lru_add_fn
-Date: Thu, 13 Jun 2024 20:24:28 +0800
-Message-Id: <20240613122428.2455-1-hdanton@sina.com>
-In-Reply-To: <000000000000cae276061aa12d5e@google.com>
-References: 
+	s=arc-20240116; t=1718281689; c=relaxed/simple;
+	bh=t+YxrqktIQ1UgUE74tLuPrJjYqGy3UZK/hCvf3JLA5c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ijsgbmzA/QKahcMJ7pcKUa/82i2/+Yl84P15WICGJebTDcXr8cnYxMHqTatL/dQOKsHqTp1i0GRB8qq0C5QfZr1tVi9cIk5WM09BQMRL6GW6wZH4fFZG3AeYsfXNN534CEv4bTUcGgWNskDLZeDgf3QlxL/YM6OcjaIGJQquRaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8BxrOrU5Wpm1oEGAA--.26381S3;
+	Thu, 13 Jun 2024 20:28:04 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxacbU5WpmB7UeAA--.9477S2;
+	Thu, 13 Jun 2024 20:28:04 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: Discard zero mask with function kvm_dirty_ring_reset
+Date: Thu, 13 Jun 2024 20:28:03 +0800
+Message-Id: <20240613122803.1031511-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,43 +46,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8CxacbU5WpmB7UeAA--.9477S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-On Tue, 11 Jun 2024 11:10:20 -0700
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    83a7eefedc9b Linux 6.10-rc3
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c645e2980000
+Function kvm_reset_dirty_gfn may be called with parameters cur_slot /
+cur_offset / mask are all zero, it does not represent real dirty page.
+It is not necessary to clear dirty page in this condition. Also return
+value of macro __fls() is undefined if mask is zero which is called in
+funciton kvm_reset_dirty_gfn(). Here just discard it.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+ virt/kvm/dirty_ring.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- x/fs/read_write.c
-+++ y/fs/read_write.c
-@@ -570,6 +570,7 @@ EXPORT_SYMBOL(kernel_write);
- ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_t *pos)
- {
- 	ssize_t ret;
-+	struct super_block *sb;
- 
- 	if (!(file->f_mode & FMODE_WRITE))
- 		return -EBADF;
-@@ -583,6 +584,9 @@ ssize_t vfs_write(struct file *file, con
- 		return ret;
- 	if (count > MAX_RW_COUNT)
- 		count =  MAX_RW_COUNT;
-+	sb = file_inode(file)->i_sb;
-+	if (!atomic_inc_not_zero(&sb->s_active))
-+		return -EINVAL;
- 	file_start_write(file);
- 	if (file->f_op->write)
- 		ret = file->f_op->write(file, buf, count, pos);
-@@ -596,6 +600,7 @@ ssize_t vfs_write(struct file *file, con
+diff --git a/virt/kvm/dirty_ring.c b/virt/kvm/dirty_ring.c
+index 86d267db87bb..05f4c1c40cc7 100644
+--- a/virt/kvm/dirty_ring.c
++++ b/virt/kvm/dirty_ring.c
+@@ -147,14 +147,16 @@ int kvm_dirty_ring_reset(struct kvm *kvm, struct kvm_dirty_ring *ring)
+ 				continue;
+ 			}
+ 		}
+-		kvm_reset_dirty_gfn(kvm, cur_slot, cur_offset, mask);
++		if (mask)
++			kvm_reset_dirty_gfn(kvm, cur_slot, cur_offset, mask);
+ 		cur_slot = next_slot;
+ 		cur_offset = next_offset;
+ 		mask = 1;
+ 		first_round = false;
  	}
- 	inc_syscw(current);
- 	file_end_write(file);
-+	deactivate_super(sb);
- 	return ret;
- }
  
---
+-	kvm_reset_dirty_gfn(kvm, cur_slot, cur_offset, mask);
++	if (mask)
++		kvm_reset_dirty_gfn(kvm, cur_slot, cur_offset, mask);
+ 
+ 	/*
+ 	 * The request KVM_REQ_DIRTY_RING_SOFT_FULL will be cleared
+
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+-- 
+2.39.3
+
 
