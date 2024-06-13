@@ -1,149 +1,190 @@
-Return-Path: <linux-kernel+bounces-212770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5324C906610
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:00:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF861906616
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052191F25311
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:00:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C28C51C23EB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA8A13CAB2;
-	Thu, 13 Jun 2024 08:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RHafRWEV"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81CAF13D250;
+	Thu, 13 Jun 2024 08:01:23 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CBD13CA87
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC13113CA8D;
+	Thu, 13 Jun 2024 08:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718265612; cv=none; b=Di9nHKVClkzcbUvoFx2aTEQz5UPGzFXawhcaPkDFFFQ0A9XMdABc2yT0Dl4PWaC9QVtgN27B/XjhjPQefTPIwoWYZsVKmcu73TxOdNFwKnxwbI9GdBCdaHC8FcMfMQYVJVG1YVstJFbUMoXWhFOg6KsQRKlHcw09PruzRh7qcS4=
+	t=1718265683; cv=none; b=Apo05thg5jzCqd/sH2oqy0/ocJWw30fz4+zmY19Heyyfk332wX6iTxR6ueiHkQei4qsCFS/+b1R1Q6DCh+xyg4DtzSLXvHKWII3VwyOEBtCNy8HMWFx41t3ow7PLuoIX8uzt6+EyeFlOrdAUEtqNF95cUn+oN3Ab6sbp1LgMELA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718265612; c=relaxed/simple;
-	bh=aP1VI8hpnO5c/PN7JVXiD6QGSaUwXPkX1stVwfI+GHU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p9vROWY8Nh+OlV1we6xBouf/hRHA9y49nxVyoj4I30NHfyxAirqtzD++tTBB8ws2G0E2eApV/g6Mq6ZE+0chwIxneulwQbS3J/IOkecA7yGVqryajoCe8/f51NNDQmf7l6ENG+UE/5VWBc+ut64PC2jIOdSkZdbUHFc4Mqi2bdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RHafRWEV; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-48d7a81a594so298943137.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:00:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718265610; x=1718870410; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lM83IWwh2VbLqKmQaNYtAMo8vBQQpf/F1x4aBeU7dk=;
-        b=RHafRWEVTpVa7IxhdKkF0S26sKFMjpf7QTYAS0jtrqKiUqsHIpBx7RueJt0DfXhktN
-         z6Kuf34NHPd9yG1RxmmeS9yDwiO7GE4Jyes64KnaiMFlUmVSvXGN756ijffhrZ/WguEg
-         +tBphioowjkJuB9oZs+wVOmaDN0w3QNJyaO8lBp6fayJdLQsE4TNi3LtTCJF/oc/+pJu
-         V/IBo8lgl7xx63gK3wfiVSeGKduziY33PWk0b9VTdeJp9ZY9W/c3Pz4GBuArR+/SnALt
-         +WsA/Fo3JWT0E4RDzqr364biWnB3/ReNIMkl4p2OOl0ptsP8mIJ3pfU4fBOSqEIEq3Cg
-         sOaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718265610; x=1718870410;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4lM83IWwh2VbLqKmQaNYtAMo8vBQQpf/F1x4aBeU7dk=;
-        b=aslLv6YDhQVOYnIsYNegs2bTTOW1S3P+I00E+P6qDcjk8RSyGYPAHjmGFKCuL+FsWK
-         mC/r/KDNES/7/lmogiIVBYDhYtvlTap02L53ZPmW4wGZj7b8K/OD2XvOhulf1MQv9O3W
-         u8tu3JBAzYF0PEf7FMPP7H7QV3np4ej25hoSMbP4MlPJ+jC6/S/kC5A5JjoQjk4FXf3M
-         0bIFJEryX9p5bKhKEx3mMbRj/trQtVrKrTp0q/OSDWP3UwpSet+brRFUVrxaW1QLbrkT
-         GFrl8iw846ECwqIUuyBz5Z2LiFAkr/CqGxXGup7gE05cmymn6v4jqp+W47BJIn+RTwHE
-         ZSSg==
-X-Gm-Message-State: AOJu0YzSD/U+TnByanhlhZ4LfcPtbz9axWlztruSzT2kjJuFTjAHYjfw
-	LKBv4v+NogAk+/odA3QnHg2qG5dQ0BOsuALP3aZmlkDobHir6RXIBXMyDBn39Frj86shGjIRWYT
-	HBS9rdd+BGBnYQERzfSKd1vbQ8+1cX2hjQUjisA==
-X-Google-Smtp-Source: AGHT+IHa+yQFZDiDKFCzXo7TDWxbukykmun218hV+HF2r0JkUJXC4XsljW/zY4b5VQ/5CvvZTE6qL59TZOfDJ6sVLdA=
-X-Received: by 2002:a05:6102:2cb:b0:48c:47c3:7857 with SMTP id
- ada2fe7eead31-48d91e6b719mr4159186137.29.1718265610035; Thu, 13 Jun 2024
- 01:00:10 -0700 (PDT)
+	s=arc-20240116; t=1718265683; c=relaxed/simple;
+	bh=ijIgL4trQAoJvWli1jZxpI3we8f18cgQdunh1oh+b3w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JFn7AqD7Ebo6+yHfeCEpdRkQmPZ65obgubisJClry1tiO9TQTtqtJqCSIzF6q4nJI185uTmWcPOa8K+3Rbz2m2W2oxoR1TXfzrOtZA8PREYTVj3KW6qTK/mc96YGmqt0ybw9p0V32SQz9+OBEmE0jf0yFKWYHKvM6hmFsUDXJ9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875be5.versanet.de ([83.135.91.229] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sHfOQ-0007fB-G8; Thu, 13 Jun 2024 10:01:10 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jianfeng Liu <liujianfeng1994@gmail.com>,
+ Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com
+Subject: Re: [PATCH v5 3/5] media: hantro: Add RK3588 VEPU121 support
+Date: Thu, 13 Jun 2024 10:01:09 +0200
+Message-ID: <14943967.O6BkTfRZtg@diego>
+In-Reply-To: <g3zzuwv2pti6oudc5xlab3cdjpqbhjsdxdsphzch4mtcaisqxl@iwkxgillwi2f>
+References:
+ <20240612173213.42827-1-sebastian.reichel@collabora.com>
+ <1739853.izSxrag8PF@diego>
+ <g3zzuwv2pti6oudc5xlab3cdjpqbhjsdxdsphzch4mtcaisqxl@iwkxgillwi2f>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYsSVJQZH=nM=1cjTc94PgSnMF9y65BnOv6XSoCG_b6wmw@mail.gmail.com>
- <20240612125130.2c1d6d2d@rorschach.local.home> <20240612171748.0bc6d9cb@rorschach.local.home>
-In-Reply-To: <20240612171748.0bc6d9cb@rorschach.local.home>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 13 Jun 2024 13:29:58 +0530
-Message-ID: <CA+G9fYu+GbYyw5J0XBy_W8VcHPdEf5Yu-gV7nhZTZioz9G6q_A@mail.gmail.com>
-Subject: Re: LTP tracing crashed on arm64 rk3399-rock-pi-4 - pc : ftrace_ops_test
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Thu, 13 Jun 2024 at 02:47, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Wed, 12 Jun 2024 12:51:30 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> > > [  100.600222] Hardware name: Radxa ROCK Pi 4B (DT)
-> > > [  100.600229] pstate: 800003c5 (Nzcv DAIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > > [  100.600239] pc : ftrace_ops_test+0x34/0x138
-> >
-> > Hmm, could you show the exact line of the above code? Specifically we have:
-> >
-> >       rcu_assign_pointer(hash.filter_hash, ops->func_hash->filter_hash);
-> >       rcu_assign_pointer(hash.notrace_hash, ops->func_hash->notrace_hash);
-> >
-> > Hmm, it's a NULL pointer dereference at 0x8, so ops is likely not NULL,
-> > as func_hash is much farther down. But if func_hash is NULL,
-> > filter_hash is at the 0x8 offset.
-> >
-> > So now the question is, how did func_hash become NULL. It should always
-> > be pointing at something. May have to do with the subops. Will investigate.
-> >
->
-> >
-> >
-> > > [  100.600258] lr : function_graph_enter+0x144/0x208
->
-> I wonder if we need the following patch:
->
-> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> index 8317d1a7f43a..fc205ad167a9 100644
-> --- a/kernel/trace/fgraph.c
-> +++ b/kernel/trace/fgraph.c
-> @@ -641,7 +641,7 @@ int function_graph_enter(unsigned long ret, unsigned long func,
->         {
->                 for_each_set_bit(i, &fgraph_array_bitmask,
->                                          sizeof(fgraph_array_bitmask) * BITS_PER_BYTE) {
-> -                       struct fgraph_ops *gops = fgraph_array[i];
-> +                       struct fgraph_ops *gops = READ_ONCE(fgraph_array[i]);
->                         int save_curr_ret_stack;
->
->                         if (gops == &fgraph_stub)
->
->
-> Because if the compiler decides to re-read gops from fgraph_array[i] after the
-> above check for the following line that does:
->
->                         save_curr_ret_stack = current->curr_ret_stack;
->                         if (ftrace_ops_test(&gops->ops, func, NULL) &&
->                             gops->entryfunc(&trace, gops))
->                                 bitmap |= BIT(i);
->
->
-> and gops now points to fgraph_stub, it will trigger this bug.
->
-> Can you apply the above change and see if the bug goes away?
+Am Donnerstag, 13. Juni 2024, 00:44:38 CEST schrieb Sebastian Reichel:
+> Hi,
+>=20
+> On Wed, Jun 12, 2024 at 08:08:51PM GMT, Heiko St=FCbner wrote:
+> > Am Mittwoch, 12. Juni 2024, 19:15:43 CEST schrieb Sebastian Reichel:
+> > > Avoid exposing each of the 4 Hantro H1 cores separately to userspace.
+> > > For now just expose the first one.
+> > >=20
+> > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > > ---
+> > >  .../media/platform/verisilicon/hantro_drv.c   | 38 +++++++++++++++++=
+++
+> > >  1 file changed, 38 insertions(+)
+> > >=20
+> > > diff --git a/drivers/media/platform/verisilicon/hantro_drv.c b/driver=
+s/media/platform/verisilicon/hantro_drv.c
+> > > index 34b123dafd89..b722a20c5fe3 100644
+> > > --- a/drivers/media/platform/verisilicon/hantro_drv.c
+> > > +++ b/drivers/media/platform/verisilicon/hantro_drv.c
+> > > @@ -722,6 +722,7 @@ static const struct of_device_id of_hantro_match[=
+] =3D {
+> > >  	{ .compatible =3D "rockchip,rk3399-vpu", .data =3D &rk3399_vpu_vari=
+ant, },
+> > >  	{ .compatible =3D "rockchip,rk3568-vepu", .data =3D &rk3568_vepu_va=
+riant, },
+> > >  	{ .compatible =3D "rockchip,rk3568-vpu", .data =3D &rk3568_vpu_vari=
+ant, },
+> > > +	{ .compatible =3D "rockchip,rk3588-vepu121", .data =3D &rk3568_vpu_=
+variant, },
+> > >  	{ .compatible =3D "rockchip,rk3588-av1-vpu", .data =3D &rk3588_vpu9=
+81_variant, },
+> > >  #endif
+> > >  #ifdef CONFIG_VIDEO_HANTRO_IMX8M
+> > > @@ -992,6 +993,39 @@ static const struct media_device_ops hantro_m2m_=
+media_ops =3D {
+> > >  	.req_queue =3D v4l2_m2m_request_queue,
+> > >  };
+> > > =20
+> > > +/*
+> > > + * Some SoCs, like RK3588 have multiple identical Hantro cores, but =
+the
+> > > + * kernel is currently missing support for multi-core handling. Expo=
+sing
+> > > + * separate devices for each core to userspace is bad, since that do=
+es
+> > > + * not allow scheduling tasks properly (and creates ABI). With this =
+workaround
+> > > + * the driver will only probe for the first core and early exit for =
+the other
+> > > + * cores. Once the driver gains multi-core support, the same techniq=
+ue
+> > > + * for detecting the main core can be used to cluster all cores toge=
+ther.
+> > > + */
+> > > +static int hantro_disable_multicore(struct hantro_dev *vpu)
+> > > +{
+> > > +	const char *compatible;
+> > > +	struct device_node *node;
+> > > +	int ret;
+> > > +
+> > > +	/* Intentionally ignores the fallback strings */
+> > > +	ret =3D of_property_read_string(vpu->dev->of_node, "compatible", &c=
+ompatible);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	/* first compatible node found from the root node is considered the=
+ main core */
+> > > +	node =3D of_find_compatible_node(NULL, NULL, compatible);
+> > > +	if (!node)
+> > > +		return -EINVAL; /* broken DT? */
+> > > +
+> > > +	if (vpu->dev->of_node !=3D node) {
+> > > +		dev_info(vpu->dev, "missing multi-core support, ignoring this inst=
+ance\n");
+> > > +		return -ENODEV;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  static int hantro_probe(struct platform_device *pdev)
+> > >  {
+> > >  	const struct of_device_id *match;
+> > > @@ -1011,6 +1045,10 @@ static int hantro_probe(struct platform_device=
+ *pdev)
+> > >  	match =3D of_match_node(of_hantro_match, pdev->dev.of_node);
+> > >  	vpu->variant =3D match->data;
+> > > =20
+> > > +	ret =3D hantro_disable_multicore(vpu);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> >=20
+> > I think this might be better as two patches?
+> >=20
+> > As this patch stands, the disable-multicore handling is done for _all_
+> > hantro variants, so part of me wants this to be labeled as such.
+> >=20
+> > The whole reasoning is completely ok, but somehow having this under
+> > the "add rk3588" umbrella feels strange ;-)
+>=20
+> I can do that, but the 'rockchip,rk3588-vepu121' part is only needed
+> because of the multicore handling. If the kernel already had this bit
+> in the past, the RK3568 compatible could be used for RK3588 (as a
+> fallback compatible), just like for VPU121.
 
-I will apply this patch and run the test in a loop.
-Since it is only seen once. Not sure I could validate this and confirm.
+I meant, you're doing hantro_disable_multicore() here also for everyone
+else (i.MX etc), hence I'd like that to be a separate commit in this
+series like:
 
->
-> Thanks,
->
-> -- Steve
+=2D---- 8< ------
+media: hantro: Disable multi-core handling for the time being
 
-- Naresh
+The VSI doc for the Hantro codec describes the grouping of up to 4 instance=
+s.
+The kernel currently doesn't handle multi-core processing .... foo bar ....
+=2D---- 8< ------
+
+And then add rk3588 support on top of that.
+
+
+Heiko
+
+
 
