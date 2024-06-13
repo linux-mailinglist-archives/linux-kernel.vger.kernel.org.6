@@ -1,259 +1,123 @@
-Return-Path: <linux-kernel+bounces-213215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2226490717E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:37:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4E1907179
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C33BB2825B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825CC1F26083
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B920F143878;
-	Thu, 13 Jun 2024 12:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494F714199C;
+	Thu, 13 Jun 2024 12:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TT64gkUy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="if3XD65s"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD41020ED;
-	Thu, 13 Jun 2024 12:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E690F20ED
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718282241; cv=none; b=Ikl9kuIZ+SnlzbgtuafMLlrgHooc6/FdEQcP4h6yzKda5/Dv0QD4C1F5en4RhX1sTQBhrdrODeFNAcvmsvyZguFCZqILaHWVLmA/dxYkSRMrobNzvH4J0lPF55v4ugVSfUDTs5gHiXRB+kRyEnoJPpsnoq7k+lZCFmWtfXDcI4Q=
+	t=1718282236; cv=none; b=dT6NzH7OGeLNeXuxx8rbtU+XVSlYlw/aIiy9gguZ0ai9+jS5IW7SqYaiGB8WPR3y2jAWuO0vPIqqJ0JojOPvHWsdZYzjwgvo9HgwJNabuyEJ4w+MUe8FnohUdbM/pWomzBDYHZX0toX5D9sF55lKv4V4zIBZrJzQMI40IdGhNwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718282241; c=relaxed/simple;
-	bh=VDJefMT8xEQw6dtn2VOdumNzxAyhkyOn6nPBaW3ZJiI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mjfk6G0Jb4fzxKY5NPHBXzkRGLd6KWqplgc0S4RevfveQlZBZwIUXRAlfJylry0/eiEiEDfUIiBsVuBG57f56irAif0W5mcD+r4PVxoWfvEF5mTGcLLU4PpMQ2nquoo+mi2ALEwbxCfXKqVGIqItzm+O5u6MMHm45bjKXks5ryA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TT64gkUy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D807C4AF53;
-	Thu, 13 Jun 2024 12:37:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718282241;
-	bh=VDJefMT8xEQw6dtn2VOdumNzxAyhkyOn6nPBaW3ZJiI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TT64gkUypWGpN57uf31YfLVd6Oqds94a3mJKRp0vfTVwexIHa2PHxnUkuIolWZg5Q
-	 zVI5g/L1svui4NPbN8DWXstFNwDSpy6G7ik0uXNbyE2WyloZt3tFMSJ4aHJz/qJyN5
-	 icnSJVk83GVjDCHJ8NsvbNcX8uUbi2cXzeo2fn/FHf4VmphJpN+ec5/hbI1mDCAXXA
-	 5mEI89vMLBYjxmHMHtbIduJQqnjjQZN0Zctylwv4P+qf3Pp59Y0kJwosGLdC65EPAe
-	 t7bK+FyJOxueWeJd22ryfPioTdnFg4CmFga9wgsl/UQekLcdwZ1mkJW6qit5znbWcy
-	 NZ3O8G/4+Dodg==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5bad7941dcfso37758eaf.3;
-        Thu, 13 Jun 2024 05:37:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUy+8V/HgYUKkNrKs+M52VcDniDcbjXbBsC9x0BxHLpI933OpFO9AW4MZmUL1qxGxFldm6aP/f3Nd+9nU/L65jGetUWGmYYtxwOsnzWf0q/QwaXt59qX4GgO/7jt9hPQDRbJ3Ysx6+GpumMJDtsLoC+Cn9I8hUoohegC6nOxN7dcu3Akawc
-X-Gm-Message-State: AOJu0Yx+8Q/sHUNxDhYyeCTZL04xHT1Is73lc5fiz20o+9ehu1WWAbzA
-	Kl0+jg2VTRKEG+NkFovnvra6qOq9nj5N2Czbrj9FIjdaZkwsPgum3vVg9jyHvjBf15Q/Js2xm1K
-	7h+JTUh4HC/89Lbuoy5ufR5E3gEc=
-X-Google-Smtp-Source: AGHT+IF3D9bX2FCgBxRWF3J91JRycIDlipicsuGKj32M8JQW0MoP4JJyINqoxlncsVsvD3FsRtlEpauxLEFmyLYNnDU=
-X-Received: by 2002:a4a:e9f6:0:b0:5bd:87a0:66d with SMTP id
- 006d021491bc7-5bdabe6f5a3mr189994eaf.1.1718282240455; Thu, 13 Jun 2024
- 05:37:20 -0700 (PDT)
+	s=arc-20240116; t=1718282236; c=relaxed/simple;
+	bh=/13ngaRTyPeB4vBu9MQ8WJijEgAX5lH/Z0IZ+QKcV+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXVFGGAMJ+jNxSwoS9Leh1e4lnfCxmfOEvEp+pNPP6Bsa8PvO7LGKpN+lm+mreKP9y3hlhKSJoy52yabHmvH5AdMY8v0g9McHqJ/wCaPfaWOXLKcZgH/uBLOFkE2TsS/GfWapBoQchyxmfsQc361UZgksBkoDWK+1RKSHrT2NHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=if3XD65s; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso15649a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:37:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718282233; x=1718887033; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MznSC12yYzkye/+ENgqiPXuQSrlPFjsWMKgcvI0Z2PU=;
+        b=if3XD65s+cw5yGk+YkOEH9hfN6QWVFfV+HKtdiUNN3QPgCIW1KaBs5+SkfeWFlM9m4
+         RrbWiBkeM5mBPi49f5NUouwYgHR/j5cvivHnWNDxVFj+5VV2jy5uouh1vy64Pw9Y8J5b
+         UYrCqqYiZIkFQcktjkeVBR2b+1Z/GRrmRsf9JUImYYOo38S3ZB3YbhfQ4/JFxk+AMZKz
+         tyPswwxCNRgci/xIOc6lAt9wrdBsIouUsOiR3LdihNqnW2dFPEs8W2N6yVPhu7f027Xr
+         qZuWD3OCqrMtJ/+2j+o21/z/Tk3A910iRv8QN4Yrmvz9nXLccwbKeZ3gyVcDRxLqmIHR
+         cmcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718282233; x=1718887033;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MznSC12yYzkye/+ENgqiPXuQSrlPFjsWMKgcvI0Z2PU=;
+        b=Srp60DGAfp3mTe0heIge1sweDbL0AlbsTe5ekB8JBjL0EO8NRNuw0uiVEFX1wJOb+y
+         9AzsRnmJ4n1u7gAVlEEzDXBQelnU3Wqr7wbsPRbwTrWCtBUeKEQchjBvxnJcCpDMbEg4
+         8api0AHFRmO9OwqXEQqqPNJwXbN6uncnkz8zn19UR4bsexJ/nnP8eiDRrH94hLnbMt6m
+         N0DW11H95jy8Ncs1pwi/ddc61BT8ZB8K8gghrVKuSK2DObQzMT6w6MaBx2G1r55JuuWU
+         JrRgp3y6LV98kNCWtXp1ig7DJVwoYxbYL/aPHikBui2fN9vNoZTWkYMlePjIgW6gDQyR
+         JkuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVEIW6lehv9GRzSQd+fSwtR0sie7at19o096kZKTcaxbMkMeA/HX+7ZNorDzzeoxArznjF9DO1Bp9L3gGOzxUb/AzlRyIiK4Ba7kBm
+X-Gm-Message-State: AOJu0YwL3iSXSlgwccbSDxXgBIRpqDRKAtcnLyAMontDSF8t5E9oWVru
+	oWe2NeqHPAOa2CBYISZbkMUfZU9IxUe/RSHa2FLun5J8+HSjcQToeusXhWOnjg==
+X-Google-Smtp-Source: AGHT+IFP8djsGWBB5M7AJLJBWEREHC1E9615rPjaCU+riDmr7PzZ+qpZx22Wb8eUXNrKQ7Be+vXNdg==
+X-Received: by 2002:a05:6402:524f:b0:57c:b799:2527 with SMTP id 4fb4d7f45d1cf-57cb7992890mr126050a12.7.1718282232985;
+        Thu, 13 Jun 2024 05:37:12 -0700 (PDT)
+Received: from google.com (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509c890sm1628667f8f.28.2024.06.13.05.37.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 05:37:12 -0700 (PDT)
+Date: Thu, 13 Jun 2024 12:37:10 +0000
+From: Sebastian Ene <sebastianene@google.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: catalin.marinas@arm.com, james.morse@arm.com, jean-philippe@linaro.org,
+	maz@kernel.org, oliver.upton@linux.dev, qperret@google.com,
+	qwandor@google.com, suzuki.poulose@arm.com, tabba@google.com,
+	will@kernel.org, yuzenghui@huawei.com, lpieralisi@kernel.org,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2 3/4] KVM: arm64: Fix the identification range for the
+ FF-A smcs
+Message-ID: <Zmrn9u8pJ0nduxfQ@google.com>
+References: <20240515172258.1680881-1-sebastianene@google.com>
+ <20240515172258.1680881-4-sebastianene@google.com>
+ <Zmmy4pmgLFZNhXqp@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZmmT56Cyvb2FCyav@kekkonen.localdomain> <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
- <ZmmY3he9vfWVWU3I@kekkonen.localdomain> <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
- <ZmnnFueL-Cgw5Eqp@kekkonen.localdomain> <CAJZ5v0gtK9yusimCOVV2dGkQWDwQ6=r=vfbgC-eE60Cg-5wk_Q@mail.gmail.com>
- <ZmnrtIEla9R24egi@kekkonen.localdomain> <CAJZ5v0hXU62QiXxWfkbiovciNNEk0h49kRdScmz5qONTMDA+4A@mail.gmail.com>
- <20240612200012.GP28989@pendragon.ideasonboard.com> <CAJZ5v0hF+6_RCyP-Rr+ajNNEKe0YenFR8x6wX3dG1Pq+vguTwg@mail.gmail.com>
- <20240612204114.GV28989@pendragon.ideasonboard.com>
-In-Reply-To: <20240612204114.GV28989@pendragon.ideasonboard.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 13 Jun 2024 14:37:09 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0geGXHM-yHR-CWN8JremnbnSNFkWJEB+8ZZ=jPbUNy6kA@mail.gmail.com>
-Message-ID: <CAJZ5v0geGXHM-yHR-CWN8JremnbnSNFkWJEB+8ZZ=jPbUNy6kA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port nodes
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Hans de Goede <hdegoede@redhat.com>, Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org, 
-	mchehab@kernel.org, hverkuil-cisco@xs4all.nl, wentong.wu@intel.com, 
-	linux-media@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zmmy4pmgLFZNhXqp@bogus>
 
-On Wed, Jun 12, 2024 at 10:41=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Wed, Jun 12, 2024 at 10:31:06PM +0200, Rafael J. Wysocki wrote:
-> > On Wed, Jun 12, 2024 at 10:00=E2=80=AFPM Laurent Pinchart
-> > <laurent.pinchart@ideasonboard.com> wrote:
-> > >
-> > > On Wed, Jun 12, 2024 at 08:50:57PM +0200, Rafael J. Wysocki wrote:
-> > > > On Wed, Jun 12, 2024 at 8:41=E2=80=AFPM Sakari Ailus wrote:
-> > > > > On Wed, Jun 12, 2024 at 08:29:21PM +0200, Rafael J. Wysocki wrote=
-:
-> > > > > > On Wed, Jun 12, 2024 at 8:21=E2=80=AFPM Sakari Ailus wrote:
-> > > > > > > On Wed, Jun 12, 2024 at 03:06:53PM +0200, Rafael J. Wysocki w=
-rote:
-> > > > > > > > On Wed, Jun 12, 2024 at 2:47=E2=80=AFPM Sakari Ailus wrote:
-> > > > > > > > > On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysoc=
-ki wrote:
-> > > > > > > > > > > > > > I just hit the same problem on another Dell lap=
-top. It seems that
-> > > > > > > > > > > > > > all Dell laptops with IPU6 camera from the Tige=
-r Lake, Alder Lake
-> > > > > > > > > > > > > > and Raptor Lake generations suffer from this pr=
-oblem.
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > So instead of playing whack a mole with DMI mat=
-ches we should
-> > > > > > > > > > > > > > simply disable ACPI MIPI DISCO support on all D=
-ell laptops
-> > > > > > > > > > > > > > with those CPUs. I'm preparing a fix for this t=
-o replace
-> > > > > > > > > > > > > > the DMI matching now.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > DisCo for Imaging support shouldn't be dropped on=
- these systems, and this
-> > > > > > > > > > > > > isn't what your patch does either. Instead the AC=
-PI graph port nodes (as
-> > > > > > > > > > > > > per Linux specific definitions) are simply droppe=
-d, i.e. this isn't related
-> > > > > > > > > > > > > to DisCo for Imaging at all.
-> > > > > > > > > > > >
-> > > > > > > > > > > > So it looks like the changelog of that patch could =
-be improved, right?
-> > > > > > > > > > >
-> > > > > > > > > > > Well, yes. The reason the function is in the file is =
-that nearly all camera
-> > > > > > > > > > > related parsing is located there, not that it would b=
-e related to DisCo for
-> > > > > > > > > > > Imaging as such.
-> > > > > > > > > >
-> > > > > > > > > > So IIUC the camera graph port nodes are created by defa=
-ult with the
-> > > > > > > > > > help of the firmware-supplied information, but if that =
-is defective a
-> > > > > > > > > > quirk can be added to skip the creation of those ports =
-in which case
-> > > > > > > > > > they will be created elsewhere.
-> > > > > > > > > >
-> > > > > > > > > > Is this correct?
-> > > > > > > > >
-> > > > > > > > > Yes.
-> > > > > > > >
-> > > > > > > > So it would be good to add a comment to this effect to
-> > > > > > > > acpi_nondev_subnode_extract() where acpi_graph_ignore_port(=
-) is
-> > > > > > > > called.
-> > > > > > > >
-> > > > > > > > And there is a somewhat tangential question that occurred t=
-o me: If
-> > > > > > > > the nodes are created elsewhere when acpi_graph_ignore_port=
-() is true,
-> > > > > > > > why is it necessary to consult the platform firmware for th=
-e
-> > > > > > > > information on them at all?  Wouldn't it be better to simpl=
-y always
-> > > > > > > > create them elsewhere?
-> > > > > > >
-> > > > > > > Simple answer: for the same reason why in general system spec=
-ific
-> > > > > > > information comes from ACPI and not from platform data compil=
-ed into the
-> > > > > > > kernel.
-> > > > > > >
-> > > > > > > Of course this is technically possible but it does not scale.
-> > > > > >
-> > > > > > While I agree in general, in this particular case the platform =
-data
-> > > > > > compiled into the kernel needs to be present anyway, at least
-> > > > > > apparently, in case the data coming from the platform firmware =
-is
-> > > > > > invalid.
-> > > > > >
-> > > > > > So we need to do 3 things: compile in the platform data into th=
-e
-> > > > > > kernel and expect the platform firmware to provide the necessar=
-y
-> > > > > > information, and add quirks for the systems where it is known i=
-nvalid.
-> > > > > >
-> > > > > > Isn't this a bit too much?
-> > > > >
-> > > > > Isn't this pretty much how ACPI works currently?
-> > > >
-> > > > No, we don't need to put platform data into the kernel for every bi=
-t
-> > > > of information that can be retrieved from the platform firmware via
-> > > > ACPI.
-> > > >
-> > > > The vast majority of information in the ACPI tables is actually
-> > > > correct and if quirks are needed, they usually are limited in scope=
-.
-> > > >
-> > > > Where it breaks is when the ACPI tables are not sufficiently valida=
-ted
-> > > > by OEMs which mostly happens when the data in question are not need=
-ed
-> > > > to pass some sort of certification or admission tests.
-> > >
-> > > We have to be careful here. Part of the job of the ACPI methods for
-> > > camera objects is to control the camera sensor PMIC and set up the ri=
-ght
-> > > voltages (many PMICs have programmable output levels). In many cases
-> > > we've seen with the IPU3, broken ACPI support means the methods will =
-try
-> > > to do something completely bogus, like accessing a PMIC at an incorre=
-ct
-> > > I2C address. That's mostly fine, it will result in the camera not bei=
-ng
-> > > detected. We could however have broken ACPI implementation that would
-> > > program the PMIC to output voltages that would damage the sensor. Use=
-rs
-> > > won't be happy.
+On Wed, Jun 12, 2024 at 03:38:26PM +0100, Sudeep Holla wrote:
+> On Wed, May 15, 2024 at 05:22:57PM +0000, Sebastian Ene wrote:
+> > The FF-A spec 1.2 reserves the following ranges for identifying FF-A
+> > calls:
+> > 0x84000060-0x840000FF: FF-A 32-bit calls
+> > 0xC4000060-0xC40000FF: FF-A 64-bit calls.
 > >
-> > My point is basically that if that data were also used by Windows,
-> > then chances are that breakage of this sort would be caught during
-> > Windows validation before shipping the machines and so it wouldn't
-> > affect Linux as well.
+> > Use the range identification according to the spec and allow calls that
+> > are currently out of the range(eg. FFA_MSG_SEND_DIRECT_REQ2) to be
+> > identified correctly.
 > >
-> > However, if OEMs have no vehicle to validate their systems against,
-> > bad things can happen indeed.
-> >
-> > Also, if an OEM has no incentive to carry out the requisite checks,
-> > the result is likely to be invalid data in the platform firmware.
->
-> We're exactly on the same page. The only solution [*] I can see for this
-> problem is to get the Windows drivers to use the same ACPI data as the
-> Linux drivers.
+> 
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> 
+> Not sure if this needs to be fixes though. With addition of notifications
+> in the FF-A driver(since v6.7), host can send FF-A messages beyond 0x7F.
+> But since the pKVM FF-A proxy support is not yet updated to v1.1, so I
+> don't think it needs to be tagged as fix. Just thought I will mention it
+> here anyways.
 
-That is long-term, however, and in the meantime something needs to be
-done about it too.
+Yes, good point. I will rewrite the title of the commit to remove the
+fixes tag.
 
-Sakari is telling me that the warning on boot triggered by firmware
-issues was in a new driver and it has been addressed in 6.10-rc3
-already.
+> 
+> --
+> Regards,
+> Sudeep
 
-This is good, as we don't need to worry about people reporting a
-regression because of it any more.
-
-Still, IIUC, the driver simply fails to probe if it doesn't get
-correct information from the platform firmware and a quirk needs to be
-added to the ACPI enumeration code for the driver to use a different
-source of information.
-
-I'm wondering if the driver could be modified to switch over to the
-different source of information automatically if the firmware-provided
-data don't make any sense to it, after logging an FW_BUG message.  It
-could even use the other source of information to sanity-check the
-firmware-provided data in principle.  It's all software, so it should
-be doable.
-
-> * Another solution would be for OEMs to stop caring about Windows and
-> testing their machines with Linux only, essentially reversing the
-> current situation. Chances of this happening however seem even tinier
-> :-)
-
-Seriously though, we could create a Linux-based utility that would
-retrieve all of the relevant information from the firmware using the
-existing kernel code and they say "this is what I would do to the
-hardware based on this information".  That could help people to do
-basic checks if they cared.
+Thanks,
+Seb
 
