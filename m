@@ -1,173 +1,162 @@
-Return-Path: <linux-kernel+bounces-213859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09783907BBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:48:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B45907BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1830F1C2150D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:48:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EB96B21CAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63F414B950;
-	Thu, 13 Jun 2024 18:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hdc0pr7q"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C3114B960;
+	Thu, 13 Jun 2024 18:48:22 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85234139CFE;
-	Thu, 13 Jun 2024 18:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E068149E01
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718304485; cv=none; b=r9sdCIh3yax/6Q85GNLnUDbjzovFrjf1tevvDaJ/zusdJXoNKiI9jQbRvcXcuWG+MMvu0tsztgJIDfOUWWrotuLmuBRn31Xi7Ku5W3hlJj8UHHRVmdcs10vle6Q4gH7tu9h0HheJIZKIcngXmqPfvaFO31rxgZ0JjsNEY7z3QZk=
+	t=1718304502; cv=none; b=nuYhwKxzaxWHzJTYBv72GNV91+FrqyvmXs9XLUvoOzAA8DE6ymWSB0bCRgcb7ZVpYHTb4LAVaIIYJt/IvbMJtRZXhD4G161nLv463AcmxOL9zPLKIeeOEKefA7BO9Ccv2lYpTelXl419McNb3HitRPofFuQsLg30wvzKbxaT5FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718304485; c=relaxed/simple;
-	bh=jDC2WopaP8wwQT8tkhJXoTaLu7lhe4KWedRpM6w6EXs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=njCH4w/4m8WvMo+N+7KyZcD0WDZNJ2Wb1P7yqgPf8jlMTsf857OWojkTiHK0Um863A6TCHFfX3l18MlPjROPrII7xcyRcluc8rT+FkEHYXf9b/Gow3x4Reo9OAfCR+vcNsdC8QliSqWbVIGP63Iyd2XHKz9PunSuaAJ0eClwQ20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hdc0pr7q; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ebdfe26217so12394981fa.2;
-        Thu, 13 Jun 2024 11:48:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718304482; x=1718909282; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yAHHUmlI1HZMnU0nOLjhl7EwWJ339LXWesOFBL1gGLM=;
-        b=Hdc0pr7qUgMfT7F+JUPcEQrK2D8elIzUhPMx1EGtt412ohgY1Rue/+19K+nxn1TpWm
-         VV+gWQWtzJ4UJvxPkEczsB8TvX7a67RfPIDtieaZCaJEXCQQ6CcUc2bFBFmv/4U5khmm
-         +mEyWqPU/eF2zFGAZmSyk2LxMnfbnZFNPCyfm5kr7L+fuENeAf02nhg59rwxaWMDx0a/
-         jSfLc1uZ0YjJBI5GJTDWoFOrQHdU51qMptMXj3LG9vKacfqXRc3KQtyskehHOG4etPyg
-         fNq0uQhouxK0iJfkEUFIgtrnRcg7nvO3/zkAZ79/wHWu3JvtfzPKYwymhX5Cw+ri7Gdi
-         s/Cw==
+	s=arc-20240116; t=1718304502; c=relaxed/simple;
+	bh=wx3k+i3agiHH4+ORkqU7DyofWGzMTOiicsO35nuhukc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LkxCn8jqQO7ZS6EGt+o9Dt6hWAOlYKFOs8rv3f4QIf+HZRIjgypF90HcZH/fqAiK7IScr6Wu2IseVd4YiddoDR8Vo90NkPlYG310RsLa2CzJ3gojP3aZZ/QvOqjyNBMknOcEFgOeAozoZf0AFLQkbtLO567pt1KpCtXOig7/6Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-375a26a094dso12828425ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:48:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718304482; x=1718909282;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yAHHUmlI1HZMnU0nOLjhl7EwWJ339LXWesOFBL1gGLM=;
-        b=nZpzQQCc1r/NwRNnOip/uUGGcPgXDXajkrEQHKpxdH9FEMGIOp9fqP3ehX9Mz4MUNc
-         mgM4FAlCSuIvWocO5NpHEhuUtYHaXeRyht4sNzfSM26SyL9rXQfOSZknnKithoJtbcWE
-         LpYpddV+KPTXAU91OHx4tN+M7SQ+oz3jwThHK9zcz/tP5/WChzId+1xFQETuhEiEQaSY
-         +KFWJn8D3TjJOaxgPLUm7pO6iS+c3FKssPXGG1D1k/FUR//2WfKJ9Kh4yqdlABayzPIp
-         m/+7pyd3H3m8eXjP/hDwqb0zOwZl+mS9D3nGph3acGdT+8zWlvabSOdKHImSdrkgpNXI
-         3v0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUlr8Pz+962dn/U+ro8zatCL0qLPAFQaFEM7C/h63FX80u0Jz81AABAxmabf8ZfLERzyx+G1tRkY1mKDHFWtotW3syL2fLKJ0/jEEGBCu2o0Bt32p22wOJI4aHLmWf6fCYEtFuOn600f7GVvw==
-X-Gm-Message-State: AOJu0Ywf6k58ClPjp3g0vmslV5M2uu2hfuaXcf8OKkQfUpCwIxG0n8fO
-	E/6mCz+RNyC01RmL9lHY422A0wFXqXlEwGyEIZws/QC5Kncg5x+Wb8Kh1naWR3NWuBjQnIJpjNp
-	58kc3Q45v2bWkSZIKpptmgbD5cDPK7ipk
-X-Google-Smtp-Source: AGHT+IFz8yJ3m4VI8jyKyRrwDoI/7jlv6e++V4B/+LeXuJPq/nrLb4KGGPX1Q4uF7XPcFXDmpEXVGDW+meFXYTwCWn8=
-X-Received: by 2002:a2e:9658:0:b0:2eb:68d0:88be with SMTP id
- 38308e7fff4ca-2ec0e46df16mr4446241fa.12.1718304481334; Thu, 13 Jun 2024
- 11:48:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718304500; x=1718909300;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DvpztZBo2tX9vOs/pwnVvpMkIdjcMdrXY9Ek/ytdwpY=;
+        b=rNvZM/ejjiPkOWpKoHhx3xftKEDyNHOBOQDtbqoipx3+VD41gUo6AS+laseGz3GtzS
+         b/LOQFdXR3x3R590MXVaF0UJ5d1MoHWbweM1I8ds8mH+3Aa0o1zehuO3tV7V1YxnHAc+
+         kpb+2CoXYqKfwTspgSHmwTx/zjSRIL7mZBn+mtgPcCnO0ABqU2OyWm3OuSyll2eQFtsy
+         rOmWSmCtu+Td8xfkVQUFG2UzA4n0nDv01Cu1mITgMP7y7ge3g4LzSjxzuCJUAhVdS6jK
+         CmOrBLCxVr/XGGwkiD1gnHu7ySdfm2Gfo03KolEiWzUF1PMSp0jqyaafQr75vb3vHamq
+         ghLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHRr8hcZen3DtcHHCmdHO50+Uf7lvQ43ieH2rC2W8D7XMbRU1bZ8PxP6lW1fweEHIqyOim+gfi6aTVAaHIZcMa2GBn/JrBvvVTmm0S
+X-Gm-Message-State: AOJu0Yy82UP21cqrAICWkEw5XM4g4Dl9lQpdmkpDSYCPucSuaEmYm1LD
+	WCbGebDn0p1Q4taTBp2Cca3fYKfR/LpYCmHPEI54EqKcAIAknOmVIZMRm2shKlebBa/9Y5QNZBt
+	X3tacJnmt2oT0f50uirG/cTvwDb+jAJgbZtoXogWw/F2tMzRY3v5IVQQ=
+X-Google-Smtp-Source: AGHT+IFbHtnRQArLIorwEZreB5TSpsVZE9Cz+SF/xb1dkqf8JeuT4e67I4k7yavL8KXqI9nRmCNQ2XoSLEbwcqk6XIjp8Z3IRhaL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613001215.648829-1-mjguzik@gmail.com> <20240613001215.648829-2-mjguzik@gmail.com>
- <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
- <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
- <5cixyyivolodhsru23y5gf5f6w6ov2zs5rbkxleljeu6qvc4gu@ivawdfkvus3p>
- <20240613-pumpen-durst-fdc20c301a08@brauner> <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
- <CAGudoHHWL_CftUXyeZNU96qHsi5DT_OTL5ZLOWoCGiB45HvzVA@mail.gmail.com> <CAHk-=wi4xCJKiCRzmDDpva+VhsrBuZfawGFb9vY6QXV2-_bELw@mail.gmail.com>
-In-Reply-To: <CAHk-=wi4xCJKiCRzmDDpva+VhsrBuZfawGFb9vY6QXV2-_bELw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 13 Jun 2024 20:47:49 +0200
-Message-ID: <CAGudoHGdWQYH8pRu1B5NLRa_6EKPR6hm5vOf+fyjvUzm1po8VQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
- be released
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+X-Received: by 2002:a05:6e02:164e:b0:375:a40f:97d1 with SMTP id
+ e9e14a558f8ab-375e0ec20dcmr310605ab.4.1718304499749; Thu, 13 Jun 2024
+ 11:48:19 -0700 (PDT)
+Date: Thu, 13 Jun 2024 11:48:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000052e5c5061ac9f158@google.com>
+Subject: [syzbot] [net?] INFO: task hung in devinet_ioctl (5)
+From: syzbot <syzbot+78761e13e81f4bfbb554@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 8:43=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, 13 Jun 2024 at 11:13, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > I would assume the rule is pretty much well known and instead an
-> > indicator where is what (as added in my comments) would be welcome.
->
-> Oh, the rule is well-known, but I think what is worth pointing out is
-> the different classes of fields, and the name[] field in particular.
->
-> This ordering was last really updated back in 2011, by commit
-> 44a7d7a878c9 ("fs: cache optimise dentry and inode for rcu-walk"). And
-> it was actually somewhat intentional at the time. Quoting from that
-> commit:
->
->     We also fit in 8 bytes of inline name in the first 64 bytes, so for s=
-hort
->     names, only 64 bytes needs to be touched to perform the lookup. We sh=
-ould
->     get rid of the hash->prev pointer from the first 64 bytes, and fit 16=
- bytes
->     of name in there, which will take care of 81% rather than 32% of the =
-kernel
->     tree.
->
+Hello,
 
-Right. Things degrading by accident is why I suggested BUILD_BUG_ON.
+syzbot found the following issue on:
 
-> but what has actually really changed - and that I didn't even realize
-> until I now did a 'pahole' on it, was that this was all COMPLETELY
-> broken by
->
->        seqcount_spinlock_t        d_seq;
->
-> because seqcount_spinlock_t has been entirely broken and went from
-> being 4 bytes back when, to now being 64 bytes.
->
-> Crazy crazy.
->
-> How did that happen?
->
+HEAD commit:    83a7eefedc9b Linux 6.10-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e752e2980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c79815c08cc14227
+dashboard link: https://syzkaller.appspot.com/bug?extid=78761e13e81f4bfbb554
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-perhaps lockdep in your config?
+Unfortunately, I don't have any reproducer for this issue yet.
 
-this is the layout on my prod config:
-struct dentry {
-        unsigned int               d_flags;              /*     0     4 */
-        seqcount_spinlock_t        d_seq;                /*     4     4 */
-        struct hlist_bl_node       d_hash;               /*     8    16 */
-        struct dentry *            d_parent;             /*    24     8 */
-        struct qstr                d_name;               /*    32    16 */
-        struct inode *             d_inode;              /*    48     8 */
-        unsigned char              d_iname[40];          /*    56    40 */
-        /* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
-        const struct dentry_operations  * d_op;          /*    96     8 */
-        struct super_block *       d_sb;                 /*   104     8 */
-        long unsigned int          d_time;               /*   112     8 */
-        void *                     d_fsdata;             /*   120     8 */
-        /* --- cacheline 2 boundary (128 bytes) --- */
-        struct lockref             d_lockref
-__attribute__((__aligned__(8))); /*   128     8 */
-        union {
-                struct list_head   d_lru;                /*   136    16 */
-                wait_queue_head_t * d_wait;              /*   136     8 */
-        };                                               /*   136    16 */
-        struct hlist_node          d_sib;                /*   152    16 */
-        struct hlist_head          d_children;           /*   168     8 */
-        union {
-                struct hlist_node  d_alias;              /*   176    16 */
-                struct hlist_bl_node d_in_lookup_hash;   /*   176    16 */
-                struct callback_head d_rcu
-__attribute__((__aligned__(8))); /*   176    16 */
-        } d_u __attribute__((__aligned__(8)));           /*   176    16 */
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3e8762812d56/disk-83a7eefe.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/29ef4962890d/vmlinux-83a7eefe.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1a5e4d91d135/bzImage-83a7eefe.xz
 
-        /* size: 192, cachelines: 3, members: 16 */
-        /* forced alignments: 2 */
-} __attribute__((__aligned__(8)));
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+78761e13e81f4bfbb554@syzkaller.appspotmail.com
+
+INFO: task dhcpcd:4751 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc3-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:dhcpcd          state:D stack:20384 pid:4751  tgid:4751  ppid:4750   flags:0x00004002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ devinet_ioctl+0x2ce/0x1bc0 net/ipv4/devinet.c:1101
+ inet_ioctl+0x3d7/0x4f0 net/ipv4/af_inet.c:1003
+ sock_do_ioctl+0x158/0x460 net/socket.c:1222
+ sock_ioctl+0x629/0x8e0 net/socket.c:1341
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f583bfd7d49
+RSP: 002b:00007ffe78ed73c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f583bf096c0 RCX: 00007f583bfd7d49
+RDX: 00007ffe78ee75b8 RSI: 0000000000008914 RDI: 0000000000000018
+RBP: 00007ffe78ef7778 R08: 00007ffe78ee7578 R09: 00007ffe78ee7528
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe78ee75b8 R14: 0000000000000028 R15: 0000000000008914
+ </TASK>
+INFO: task kworker/0:5:5155 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc3-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:5     state:D stack:22384 pid:5155  tgid:5155  ppid:2      flags:0x00004000
+Workqueue: events linkwatch_event
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ linkwatch_event+0xe/0x60 net/core/link_watch.c:276
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
 
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
