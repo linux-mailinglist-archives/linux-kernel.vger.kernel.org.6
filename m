@@ -1,73 +1,58 @@
-Return-Path: <linux-kernel+bounces-213049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E936906A58
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:46:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D99906A5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13B281F238C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:46:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 744DA1C23758
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0A51411E0;
-	Thu, 13 Jun 2024 10:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F234C1428F8;
+	Thu, 13 Jun 2024 10:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="sf2Xdutx"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="x3fqht00"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1090713DB99;
-	Thu, 13 Jun 2024 10:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D84A1411E1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718275565; cv=none; b=HSg1k6lbfmUIgBT/qJHK3CzadcdE62BOV21Lcq5YXPdXYGbk61wc405GnvS2kcGxr2eA3LjCDbc+CVU/ZDuakgCeNF2WfzsP4Efgof5AcZBR/n/jGnE+DqJICFKsIdVfSvQ+IRTHVfBBvdmgWOAWRkjz7zUzwzMQgBKym2ZW/Nw=
+	t=1718275596; cv=none; b=bi358ntmuxuVPCTu8igNVFchim6XZarj60AbVzLA12dFQNBQGNCaGOAxXrWJaMz/Ee6U1NHzU3N2x/anjnZh/orzgxVys1EqRh1bCQ+H7c2iHfY2jS9SYfViP10YFpn0alIgh9PevB8aJ+2iOQZzNx6bi3yd+tJ2kHNA5SM/M1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718275565; c=relaxed/simple;
-	bh=h3HhNWpSBhM6/iN5PFWNZTn7S3jV9LLHYO1udt3vOvM=;
+	s=arc-20240116; t=1718275596; c=relaxed/simple;
+	bh=zvynH4+/ZKi6EO3xPqDT8KhKU9w/4hcTOIDyS5SoVso=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S5wFOY141PcY99phtsiOoCMrPc7TPaN2hAAbbVfWxhESuBO9r97lq8kXsv4E6hfsuhgoT5MJh54ViHMrU33DyYxZVCboAj0POxDtc4uRSpwh8Eea4/l1ZHGtRFmQZJapdGP0oaEKHxNpg9BbtnkN+Yr+JkLZQNBoVWYLtdD2U50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=sf2Xdutx; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=e+9UQV1d9d8KOTY7gdJbPM2YDvK2G13gbviN0cq/CYE=; b=sf2XdutxFvey3XPuvpJP3f7V/R
-	MuxpK/NV/vYwyBlVubMTfpEhHCQTvq6YzTiiSv5Npcoee9hEP9PS7VAgFqUea41iExFV0mgPXdMl2
-	RinKRQuur9Ni3tOmEvVcf8tR/IPfRH6iNwW2NUPdaFVhbd9LrdtbUjih54tQLeepMyOnVhv/yKCgY
-	wsWBG/y/zpbg2qNtoHPN3EPHa+tkCXa2V2mcFWAbXi/l6pNG07fFOiTMGvMTFILO+9hoVvLCx67P8
-	2Y2DjIQowBEaEonVYc4GN1jiA+S+FKY0QsDE+jMe+p78KPeDXuzzET5xFMjqxbWjE9WoygvRCfisJ
-	e3VY74rQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37832)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sHhxh-00068q-33;
-	Thu, 13 Jun 2024 11:45:46 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sHhxh-0001AC-7C; Thu, 13 Jun 2024 11:45:45 +0100
-Date: Thu, 13 Jun 2024 11:45:45 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Furong Xu <0x1207@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>,
-	Corinna Vinschen <vinschen@redhat.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xfr@outlook.com, rock.xu@nio.com
-Subject: Re: [PATCH net-next v1] net: stmmac: Enable TSO on VLANs
-Message-ID: <ZmrN2W8Fye450TKs@shell.armlinux.org.uk>
-References: <20240613023808.448495-1-0x1207@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYUhjLfZewBD9M3jno/ETk53TY8PJfAw1ubdAeJ5/DsnEI7CRyHGmQ+Okl+jlDVBlPeZfKwz2qnluTdqbEDlDn90v/TpxNuEUe/QKVGnGyhClmcsqm+VI2VzQE2FvDKz5mTV8lCQPST3melF3ArsmEJKFk/jsyP2P9T7eBiYuQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=x3fqht00; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42AA3C2BBFC;
+	Thu, 13 Jun 2024 10:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718275595;
+	bh=zvynH4+/ZKi6EO3xPqDT8KhKU9w/4hcTOIDyS5SoVso=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=x3fqht00QKPezzBfAiCoYVWYrvvO3do7G5v+OSlQ+tzyhRAtJ/m/a7+3BlPMb86J9
+	 eiUKrY5u6QHs2fILzIvkTxMSMgupzI0Zc5hXsn/aYEjAf+Et+vuGtMc/ghpTePgL7b
+	 eEyqjeX7HEnc1NBC2EBMhsOgIoHUMzB6OUldDlLA=
+Date: Thu, 13 Jun 2024 12:46:33 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Lee Jones <lee@kernel.org>, Michal Hocko <mhocko@suse.com>,
+	cve@kernel.org, linux-kernel@vger.kernel.org,
+	Felix Kuehling <felix.kuehling@amd.com>
+Subject: Re: CVE-2024-26628: drm/amdkfd: Fix lock dependency warning
+Message-ID: <2024061312-freebee-buffalo-4bd5@gregkh>
+References: <2024030649-CVE-2024-26628-f6ce@gregkh>
+ <Zerheyn-4rB5kySt@tiehlicka>
+ <20240314110938.GM1522089@google.com>
+ <ZfsBpal_29lihveI@tiehlicka>
+ <20240320154734.GU1522089@google.com>
+ <Zmq8uSVv0X5f7xx+@duo.ucw.cz>
+ <2024061335-wistful-brownnose-28ea@gregkh>
+ <ZmrMo6qFbt9/3xoh@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,56 +61,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613023808.448495-1-0x1207@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <ZmrMo6qFbt9/3xoh@duo.ucw.cz>
 
-On Thu, Jun 13, 2024 at 10:38:08AM +0800, Furong Xu wrote:
-> @@ -4239,16 +4239,32 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
->  	struct stmmac_txq_stats *txq_stats;
->  	int tmp_pay_len = 0, first_tx;
->  	struct stmmac_tx_queue *tx_q;
-> -	bool has_vlan, set_ic;
-> +	bool set_ic;
->  	u8 proto_hdr_len, hdr;
->  	u32 pay_len, mss;
->  	dma_addr_t des;
->  	int i;
-> +	struct vlan_ethhdr *veth;
->  
->  	tx_q = &priv->dma_conf.tx_queue[queue];
->  	txq_stats = &priv->xstats.txq_stats[queue];
->  	first_tx = tx_q->cur_tx;
->  
-> +	if (skb_vlan_tag_present(skb)) {
-> +		/* Always insert VLAN tag to SKB payload for TSO frames.
-> +		 *
-> +		 * Never insert VLAN tag by HW, since segments splited by
-> +		 * TSO engine will be un-tagged by mistake.
-> +		 */
-> +		skb_push(skb, VLAN_HLEN);
-> +		memmove(skb->data, skb->data + VLAN_HLEN, ETH_ALEN * 2);
-> +
-> +		veth = skb_vlan_eth_hdr(skb);
-> +		veth->h_vlan_proto = skb->vlan_proto;
-> +		veth->h_vlan_TCI = htons(skb_vlan_tag_get(skb));
-> +		__vlan_hwaccel_clear_tag(skb);
-> +	}
+On Thu, Jun 13, 2024 at 12:40:35PM +0200, Pavel Machek wrote:
+> On Thu 2024-06-13 12:16:50, Greg Kroah-Hartman wrote:
+> > On Thu, Jun 13, 2024 at 11:32:41AM +0200, Pavel Machek wrote:
+> > > On Wed 2024-03-20 15:47:34, Lee Jones wrote:
+> > > > On Wed, 20 Mar 2024, Michal Hocko wrote:
+> > > > 
+> > > > > On Thu 14-03-24 11:09:38, Lee Jones wrote:
+> > > > > > On Fri, 08 Mar 2024, Michal Hocko wrote:
+> > > > > > 
+> > > > > > > On Wed 06-03-24 06:46:11, Greg KH wrote:
+> > > > > > > [...]
+> > > > > > > >  Possible unsafe locking scenario:
+> > > > > > > > 
+> > > > > > > >        CPU0                    CPU1
+> > > > > > > >        ----                    ----
+> > > > > > > >   lock(&svms->lock);
+> > > > > > > >                                lock(&mm->mmap_lock);
+> > > > > > > >                                lock(&svms->lock);
+> > > > > > > >   lock((work_completion)(&svm_bo->eviction_work));
+> > > > > > > > 
+> > > > > > > > I believe this cannot really lead to a deadlock in practice, because
+> > > > > > > > svm_range_evict_svm_bo_worker only takes the mmap_read_lock if the BO
+> > > > > > > > refcount is non-0. That means it's impossible that svm_range_bo_release
+> > > > > > > > is running concurrently. However, there is no good way to annotate this.
+> > > > > > > 
+> > > > > > > OK, so is this even a bug (not to mention a security/weakness)?
+> > > > > > 
+> > > > > > Looks like the patch fixes a warning which can crash some kernels.  So
+> > > > > > the CVE appears to be fixing that, rather than the impossible deadlock.
+> > > > > 
+> > > > > Are you talking about lockdep warning or anything else?
+> > > > 
+> > > > Anything that triggers a BUG() or a WARN() (as per the splat in the
+> > > > commit message).  Many in-field kernels are configured to panic on
+> > > > BUG()s and WARN()s, thus triggering them are presently considered local
+> > > > DoS and attract CVE status.
+> > > 
+> > > So... because it is possible to configure machine to reboot on
+> > > warning, now every warning is a security issue?
+> > > 
+> > > Lockdep is for debugging, if someone uses it in production with panic
+> > > on reboot, they are getting exactly what they are asking for.
+> > > 
+> > > Not a security problem.
+> > 
+> > And we agree, I don't know what you are arguing about here, please stop.
+> 
+> So you agree that WARN triggering randomly is not a security problem?
+> 
+> Following communication did not say so.
+> 
+> "The splat in the circular lockdep detection code appears to be generated
+> using some stacked pr_warn() calls, rather than a WARN()."
 
-I think drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c::
-otx2_sq_append_skb() does something similar, but uses a helper
-instead:
-
-        if (skb_shinfo(skb)->gso_size && !is_hw_tso_supported(pfvf, skb)) {
-                /* Insert vlan tag before giving pkt to tso */
-                if (skb_vlan_tag_present(skb))
-                        skb = __vlan_hwaccel_push_inside(skb);
-                otx2_sq_append_tso(pfvf, sq, skb, qidx);
-                return true;
-        }
-
-Maybe __vlan_hwaccel_push_inside() should be used here?
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+*plonk*
 
