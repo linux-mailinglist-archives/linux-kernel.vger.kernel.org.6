@@ -1,116 +1,95 @@
-Return-Path: <linux-kernel+bounces-213020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0005D9069EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:26:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971019069F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10C3B1C21F53
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:26:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25744285183
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4586A142631;
-	Thu, 13 Jun 2024 10:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PA0RVrMT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BD51411E1;
-	Thu, 13 Jun 2024 10:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC271142629;
+	Thu, 13 Jun 2024 10:27:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14011422D1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718274409; cv=none; b=aAN36COMhAgOfq6ze3xCr2kmtZRHMqeCn9hDiSvfinm5mi9yOr9vFFPvTyp5Ayx7e3F9RrpMf0qKJS7HQF3XOjb30yMZBnc/2UMHZrchjTrN7xBBZFJA7kQcqnqjuu03k3/vOPS+DCUE6lF/9zgqbKQ1aB1qwZe2nPQ2ktX7L1c=
+	t=1718274443; cv=none; b=KEsXuW63v7hC+NMaI6A7orAd/6/0idJyXNuzRFkbBGDogK3difxFljf7ktZC6RXKF1l0QfXziPRFERydx6VY4It8tbX2w6xrvZhW1BELoYpP7ptt+OYPlZkoOF3IidCm+fmeYoxO2aKqr8CM29oHQWo20JbC3A85Tg0bhzs8Ycc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718274409; c=relaxed/simple;
-	bh=Sq96bddyN3uQbKrX2FL+o0E8D1f+IXdLxMXMd2DRuUU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=He1I7B8LELVf1pn5sbkd8gdF9Vn6TqoDtRjSaSxJtNmld1E55eFKM4Zz9yYYZTgRF6XtSxspYo1Y0oNnntWpWG2iFCKtEsmnLktIJLlKj0sg5KqJLUsx92IUhdrAJqnLcpikPeiDNcY9M7aqdelbwlfBT6Wv7lykySbvex8Rjks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PA0RVrMT; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718274408; x=1749810408;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Sq96bddyN3uQbKrX2FL+o0E8D1f+IXdLxMXMd2DRuUU=;
-  b=PA0RVrMTkOgG0CGKw18c12Ozum9DES7odnHPUWsQ4VhyoyXz36pCB0U5
-   nXgc6srDgTKSqHoCqrt5JFU3gXKAQQGmLHjTd44/9vew5YtwYLj2zpOqX
-   UAfuPbzJGwGJxqLqkxa5R/4Zn/M6rhyMdGBPcRVHkxGdFouE6qlaXzmBM
-   u5zzwLybtHbrz3+tAiaRs3D24D6XwzQSZ5m848wEDYdXl2ugFHmofkeac
-   5eohNHSL5nopSM7QHCupS+w4LuzxiRqE0Tcmueev9xedltiKNcHQ8M0Yb
-   1q2NwNSd9hWFs7tNEX2k6dbiW0KGf4P1chEpfv97zyocrc+Qi+QNBcFHP
-   Q==;
-X-CSE-ConnectionGUID: a+RZUv2LQX2AEilByGqMvQ==
-X-CSE-MsgGUID: IaMzSQr3S/2zDiGNhnjRGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="18865623"
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="18865623"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 03:26:48 -0700
-X-CSE-ConnectionGUID: PMeSFWF3RlC3GURBkJtjIg==
-X-CSE-MsgGUID: WTVeKHLzTR647YZAzf3QJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="63277918"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 03:26:43 -0700
-Message-ID: <6abf540f-5f11-4b2b-b8c1-69783a71277b@intel.com>
-Date: Thu, 13 Jun 2024 13:26:39 +0300
+	s=arc-20240116; t=1718274443; c=relaxed/simple;
+	bh=nbuOukV7CZ02btKXgW0+RmyN5gVD4F0yYWswrEiINzQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YPg29+VUXtH+sLie+xltnd/mij99nn/FtkdjcgJ7MPbKAKJDCAkkBw8ohAVKs024yJGuBHBE3vrCRFBM6ZqF9fMY/uPx3MVO6+K8BWhuqA9/w1lC8d0lIgAAIQA5rsDzdr0EpvNlUj9MD2ROoCmYAbz8Qaj0j7Za4vQljSchFU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC2071063;
+	Thu, 13 Jun 2024 03:27:44 -0700 (PDT)
+Received: from a077893.arm.com (unknown [10.163.44.128])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A08723F5A1;
+	Thu, 13 Jun 2024 03:27:16 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: mark.rutland@arm.com,
+	ryan.roberts@arm.com,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V2 0/2] arm64: Drop ID_AA64PFR0_EL1_ELx_[64BIT_ONLY|32BIT_64BIT]
+Date: Thu, 13 Jun 2024 15:57:08 +0530
+Message-Id: <20240613102710.3295108-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] perf: disasm: prefer symsrc_filename for filename
-To: duchangbin <changbin.du@huawei.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "llvm@lists.linux.dev" <llvm@lists.linux.dev>
-References: <20240613063510.348692-1-changbin.du@huawei.com>
- <20240613063510.348692-3-changbin.du@huawei.com>
- <395cfff7-9692-4123-96b6-353752007f46@intel.com>
- <39be46d6a5194b6390ed31be67689c6c@huawei.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <39be46d6a5194b6390ed31be67689c6c@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 13/06/24 12:43, duchangbin wrote:
-> On Thu, Jun 13, 2024 at 11:15:28AM +0300, Adrian Hunter wrote:
->> On 13/06/24 09:35, Changbin Du wrote:
->>> If we already found a debugging version when loading symbols for that dso,
->>> then use the same file for disasm instead of looking up in buildid-cache.
->>
->> In the past, there have been cases where the debugging version has not
->> worked for reading object code.  I don't remember the details, but the
->> symbols and debugging information was OK while the object code was not.
->>
->> In general, using anything other than the file that was actually executed
->> for reading object code seems like a bad idea.
->>
-> Is this a platform specific issue? AFAIK, the binary code in debugging and
-> non-debugging version should be identical. 
+This series replaces custom macros usage for ID_AA64PFR0_EL1_ELx_64BIT_ONLY
+and ID_AA64PFR0_EL1_ELx_32BIT_64BIT fields, thus finally just dropping them
+off completely. This series applies on v6.10-rc3
 
-"should be" != "guaranteed to be".  Simpler to avoid the issue and
-stick with the file that was actually executed.  We already support
-having separate symbol sources, so there should not really be a
-problem.
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: kvmarm@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+
+Changes in V2:
+
+- Replaced FIELD_PREP() with SYS_FIELD_PREP_ENUM() as per Marc
+
+Changes in V1:
+
+https://lore.kernel.org/all/20240418053804.2573071-1-anshuman.khandual@arm.com/
+
+Anshuman Khandual (2):
+  KVM: arm64: Replace custom macros with fields from ID_AA64PFR0_EL1
+  arm64/cpufeature: Replace custom macros with fields from ID_AA64PFR0_EL1
+
+ arch/arm64/include/asm/cpufeature.h            |  4 ++--
+ arch/arm64/include/asm/sysreg.h                |  4 ----
+ arch/arm64/kernel/cpufeature.c                 |  4 ++--
+ arch/arm64/kvm/hyp/include/nvhe/fixed_config.h | 10 +++++-----
+ arch/arm64/kvm/hyp/nvhe/pkvm.c                 |  4 ++--
+ arch/arm64/kvm/hyp/nvhe/sys_regs.c             |  2 +-
+ 6 files changed, 12 insertions(+), 16 deletions(-)
+
+-- 
+2.30.2
 
 
