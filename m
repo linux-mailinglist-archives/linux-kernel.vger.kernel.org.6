@@ -1,144 +1,137 @@
-Return-Path: <linux-kernel+bounces-213391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E5A4907484
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:03:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7685F907489
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150B21F22750
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:03:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 099A5B24A71
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E247314374B;
-	Thu, 13 Jun 2024 14:02:48 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D318145FF1;
+	Thu, 13 Jun 2024 14:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4HtnEC9e"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E80C8C7;
-	Thu, 13 Jun 2024 14:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A33E1459F7
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718287368; cv=none; b=fpXNGgz+1ardcXrod2Ky8QdT/Nw5QpPeBHtRc1OsWrqqXXe33w+qMEknMB9Hd5/FcyN82HAxicB9uG3sqGDagp/KYPhL9b3ctXFEiLCkr7NNRqfLuIDI9uQqCkN06KJtzvwKU1zIufdCClwgHy7kVFsReoAwLKA/rib09ohIOI4=
+	t=1718287384; cv=none; b=HBcdovfGiuIG3MiaTlVHrEJMRgsNuSvAAfomVNuU+f20IhmIOtFiBFbRgy3AgAp0uXEtGu4Zoe6aX+sJMV0TICnV68eKNzGhTF9+k1xyBcZxrOIOUL3XqOAAsNbK7Bz+RGa1XQk42jglbgyyuBzpl5UeWyFr1Z3G9/55jqGL3QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718287368; c=relaxed/simple;
-	bh=ba31KMcH9Sse/E6nlGBlFa3LctbVyEL7XIQ4TSKCYZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mxX5eH4U1kSPfrI1rbAJuvus/4cUC9TfBhB/jc5etkFUbaxNluGooM9F4LQkGT49dh/gqWbraKI7XetnM91tdVqdbMHKG7zcB79uCUIUvE2dm+Ro1TcfolSqCXVbSlmF/JsB9LrFA8b78a195+iYh1p/zRXtJPPtQxnhXZBCVDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W0PG21FHXzdcjZ;
-	Thu, 13 Jun 2024 22:01:14 +0800 (CST)
-Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1584F18007C;
-	Thu, 13 Jun 2024 22:02:42 +0800 (CST)
-Received: from [10.174.177.174] (10.174.177.174) by
- dggpeml100021.china.huawei.com (7.185.36.148) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 13 Jun 2024 22:02:41 +0800
-Message-ID: <935974c5-89b1-4811-bdef-6652937829a1@huawei.com>
-Date: Thu, 13 Jun 2024 22:02:41 +0800
+	s=arc-20240116; t=1718287384; c=relaxed/simple;
+	bh=1wx770iYfJxVeyB/o0cEcpJdRc6wURsrq5BJtNrgFUM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eTlX94AGHEPdrM09QVZPVCzj1SjMV/yWBuUgyi7ksujcenbrmKgGxHSwjoCARV20YVNB5LMfPGPI4ijySHG9fgz9HHQrWzF9zFwfdoMyaQ5gPR5qWne2DFW+Og7vQjSRkRTA7PwFJrJ7KiQYMd2+rRTW8R37KVkqIqKKMWDreWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4HtnEC9e; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57c8bd6b655so17542a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:03:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718287381; x=1718892181; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cAfB75h0kuFNnnSc8B1rhVQt/y/45xq3MCcns9r1vWo=;
+        b=4HtnEC9e7a8Ic3mWVjZiqHc1hzWc41HOr+/ksoo9maBlYd3WbpkEDNQkzi1yl09MKr
+         i4bktiO7O1/sUS8KH0r+To3rMqI+Y36/xT07jdBFAQr+zmNSIYDcZuz9YWixwqTGdI38
+         buFqYk+QJ0zPKWGm8Qy/C078y1s/dBiyPM72pttPkRo+9tbOhfDVmgrBnTNA3LJoEpbP
+         b5BhRd1JDQVMtL6I6EaVkqmqf7vDAC9FX0jNNs/4FWNbxyKCEB/Fheg+ORJlZqM7BZAZ
+         c51akZuobhU+jDpkas8dMMZSKykpzBkYOQ9Yr5DsjvQVfQ+evY/9K1sTUhRT62oNluLg
+         sdOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718287381; x=1718892181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cAfB75h0kuFNnnSc8B1rhVQt/y/45xq3MCcns9r1vWo=;
+        b=NNJP/QB3LNsJH0vggWemoXL4Oz/dMZdfJ3EUMd/WcGvfY3xb4H9f3YEu8n6fAcnkeO
+         bNvmNNN6LnZx3YdxEucL8okrTUAokg7ffww21dVhwohq5eMfIMmAIQyy7oOgBYmZW2uw
+         LQF4a9UpDi7yCqh7WEuxPBp1XocdZZd7UebvxNZ6Gu/4pbaQKnzR0qxTXsL7gPWAfPSP
+         LYRoOjJrPccSNb4FU7dzj0EVtNxyLUzdlVPbTBTKNNF+tse73izSOX/Nc1zS75+ZVLQd
+         JtGwbJ1WWJrxY20g5+SOcrICgX4hHU/0Lr6Y7ty7M4HxKpdntfROuzlMDCGVAu65WShu
+         O7WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcxDOAwlKVPnNuU7Ad7zsuZXSKzliICrcQGrtSPli/07KNg1I8jlCzCwDBUz7IaXpKgjp7yAzogEdeAXHK1M7ccvCWHBtYeiUtJIdi
+X-Gm-Message-State: AOJu0Yz6SeFvijD52I6G5Nk0LQ3XFs7IwrwXwjkeZiPJFlH/2VsmXWsa
+	Vwv+1zjVKUTIm12SZx3dOVNGpJLcCHqw3wsk3YNpnFw516qeOQhKgnjgoQxnwYd29gdn1ZtJRk5
+	awNaHjLSFa3cikG8u2/WycWlg6CK9UUP/mNqg
+X-Google-Smtp-Source: AGHT+IH0NnlPmn5HlqCKL6WJ0KQphhB9Nf2R+bPra/NjP86oZDQMsRCEH2X8d9emIYgu9fIz8hVm2OJD4zGwQrasNjU=
+X-Received: by 2002:a05:6402:51ce:b0:57c:b799:2537 with SMTP id
+ 4fb4d7f45d1cf-57cb79928eemr148226a12.3.1718287380997; Thu, 13 Jun 2024
+ 07:03:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: CVE-2024-36966: erofs: reliably distinguish block based and
- fscache mode
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Gao Xiang <hsiangkao@linux.alibaba.com>, <cve@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-cve-announce@vger.kernel.org>, Baokun
- Li <libaokun@huaweicloud.com>, <yangerkun@huawei.com>
-References: <2024060804-CVE-2024-36966-8bbb@gregkh>
- <686626cd-7dcd-4931-bf55-108522b9bfeb@linux.alibaba.com>
- <362b1e1b-dcdb-4801-a9fc-18d019e7c775@huawei.com>
- <2024061323-ibuprofen-dreamy-ae0b@gregkh>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <2024061323-ibuprofen-dreamy-ae0b@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml100021.china.huawei.com (7.185.36.148)
+References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+In-Reply-To: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+From: Guenter Roeck <groeck@google.com>
+Date: Thu, 13 Jun 2024 07:02:46 -0700
+Message-ID: <CABXOdTcvie8ZBX8aFLve_7Lbh2SD0XPWxVn0nneOz8LJQEE79Q@mail.gmail.com>
+Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in cros_ec_lpc_mec_read_bytes()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Ben Walsh <ben@jubnut.com>, Benson Leung <bleung@chromium.org>, 
+	Tzung-Bi Shih <tzungbi@kernel.org>, Guenter Roeck <groeck@chromium.org>, 
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/6/13 21:55, Greg Kroah-Hartman wrote:
-> On Thu, Jun 13, 2024 at 07:21:14PM +0800, Baokun Li wrote:
->> On 2024/6/13 17:38, Gao Xiang wrote:
->>> Hi,
->>>
->>> (+Cc Baokun Li)
->>>
->>> On 2024/6/8 20:53, Greg Kroah-Hartman wrote:
->>>> Description
->>>> ===========
->>>>
->>>> In the Linux kernel, the following vulnerability has been resolved:
->>>>
->>>> erofs: reliably distinguish block based and fscache mode
->>>>
->>>> When erofs_kill_sb() is called in block dev based mode, s_bdev may not
->>>> have been initialised yet, and if CONFIG_EROFS_FS_ONDEMAND is enabled,
->>>> it will be mistaken for fscache mode, and then attempt to free an
->>>> anon_dev
->>>> that has never been allocated, triggering the following warning:
->>>>
->>>> ============================================
->>>> ida_free called for id=0 which is not allocated.
->>>> WARNING: CPU: 14 PID: 926 at lib/idr.c:525 ida_free+0x134/0x140
->>>> Modules linked in:
->>>> CPU: 14 PID: 926 Comm: mount Not tainted 6.9.0-rc3-dirty #630
->>>> RIP: 0010:ida_free+0x134/0x140
->>>> Call Trace:
->>>>    <TASK>
->>>>    erofs_kill_sb+0x81/0x90
->>>>    deactivate_locked_super+0x35/0x80
->>>>    get_tree_bdev+0x136/0x1e0
->>>>    vfs_get_tree+0x2c/0xf0
->>>>    do_new_mount+0x190/0x2f0
->>>>    [...]
->>>> ============================================
->>>>
->>>> Now when erofs_kill_sb() is called, erofs_sb_info must have been
->>>> initialised, so use sbi->fsid to distinguish between the two modes.
->>>>
->>>> The Linux kernel CVE team has assigned CVE-2024-36966 to this issue.
->>>>
->>>>
->>>> Affected and fixed versions
->>>> ===========================
->>>>
->>>>      Fixed in 6.6.32 with commit f9b877a7ee31
->>>>      Fixed in 6.8.11 with commit dcdd49701e42
->>>>      Fixed in 6.9 with commit 7af2ae1b1531
->>> For reference, this issue doesn't affect Linux kernel below 6.6.
->>>
->>> This behavior ("s_bdev may not be initialized in erofs_kill_sb()")
->>> is introduced due to commit aca740cecbe5 ("fs: open block device after
->>> superblock creation").
->>>
->>> In other words, previously .kill_sb() was called only after
->>> fill_super failed and problematic erofs_kill_sb() called due to
->>> setup_bdev_super() failure can only happen since Linux 6.6.
->>>
->>> Thanks,
->>> Gao Xiang
->> Exactly! I'm so sorry I forgot to add the Fixes tag.
-> No worries.  I've updated the CVE database with this information and the
-> json file and web site will show the new information soon when it gets
-> propagated.
+On Thu, Jun 13, 2024 at 6:55=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
 >
-> thanks,
+> We changed these functions to returning negative error codes, but this
+> first error path was accidentally overlooked.  It leads to a Smatch
+> warning:
 >
-> greg k-h
+>     drivers/platform/chrome/cros_ec_lpc.c:181 ec_response_timed_out()
+>     error: uninitialized symbol 'data'.
+>
+> Fix this by returning the error code instead of success.
+>
+> Fixes: 68dbac0a58ef ("platform/chrome: cros_ec_lpc: MEC access can return=
+ error code")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Thank you very much for the update!
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
--- 
-With Best Regards,
-Baokun Li
-
+> ---
+>  drivers/platform/chrome/cros_ec_lpc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chr=
+ome/cros_ec_lpc.c
+> index ebe9fb143840..f0470248b109 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc.c
+> @@ -139,7 +139,7 @@ static int cros_ec_lpc_mec_read_bytes(unsigned int of=
+fset, unsigned int length,
+>         int in_range =3D cros_ec_lpc_mec_in_range(offset, length);
+>
+>         if (in_range < 0)
+> -               return 0;
+> +               return in_range;
+>
+>         return in_range ?
+>                 cros_ec_lpc_io_bytes_mec(MEC_IO_READ,
+> @@ -158,7 +158,7 @@ static int cros_ec_lpc_mec_write_bytes(unsigned int o=
+ffset, unsigned int length,
+>         int in_range =3D cros_ec_lpc_mec_in_range(offset, length);
+>
+>         if (in_range < 0)
+> -               return 0;
+> +               return in_range;
+>
+>         return in_range ?
+>                 cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE,
+> --
+> 2.43.0
+>
 
