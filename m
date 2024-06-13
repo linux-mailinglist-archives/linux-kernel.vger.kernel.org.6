@@ -1,159 +1,149 @@
-Return-Path: <linux-kernel+bounces-213512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152AA907645
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:14:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C3F907648
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2A6287404
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:14:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3794A2824C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2AD1494C5;
-	Thu, 13 Jun 2024 15:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0691494B8;
+	Thu, 13 Jun 2024 15:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6Z2kT5R"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijlEn8zx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8B41494B5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2108D1448ED;
+	Thu, 13 Jun 2024 15:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718291636; cv=none; b=BGufS9N5kOE47VU/sUbE8ZyHThda5Q6MC7kxw8uP8tXpnyutPTPf0kmMrUfnJgMsVAbAdG43t3KWR+ZAJrvAKm6Np5msvTxldz+HwH291oQw3pYo2cMOj+HoLxoRHmlO7q+JNw3vx6ECrGxj7Vxivb22SCaiVnFBWr5ui87EgWY=
+	t=1718291682; cv=none; b=gMnWIfgdKb+ZLO4cSDXu06GvpK4mMk2P35kdIPxyZLt3mg68V5VzjNFmIU1oFFbW2Vvw5xZJC/04MQqdapuCfOckP1x36Fk3AFBrVMwhVxxXfzYnOX6BDeeQj0e9uyFrqpare2Z6x9XqTjCiRPN3HXsEOL56ySltbEmZ5X5k0Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718291636; c=relaxed/simple;
-	bh=14Z/QPjhD+7BffP2eGAJ+9YQJulua94nuc8mbHlPwaE=;
+	s=arc-20240116; t=1718291682; c=relaxed/simple;
+	bh=OSIoFPP6ehaEIJXs+89MIW5R38UOvWK3VJSPoOB54oA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NY7mSRcU4c/d8qaVTSj80Q5ygsqB4QZoSu3XX4i50TKVtTTZbYhECLxHH5nXJf1zYO+dmKaimiHfIUcYL10rRj3MnJvvQCsktkH39TdODS+Dt7BLocIuRCtz/8icM+7mWC/410b7FMpGMus9Ky3Pyiafvz1lxHrBagsT6HdlTkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N6Z2kT5R; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-80b58104615so334401241.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:13:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718291633; x=1718896433; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YrxYBwFmJZ2ShtzXRL4Y2grRkz6qOWp2v7p/c2wyXj0=;
-        b=N6Z2kT5RuXj/Meim/CCyrYJX41k/FWONmJcxc5dAF1lNhYbtPsg7bQGgM4Md6JEYE4
-         unbpr0/6Y4VLyZXsF5XozdYmYCEnZtdyZ/FjIYXUyag2OnQtlQwtViXnT2GqjKK2DYvg
-         2C2XI9cxxfvaDZzndaL2WX2ZKBLTt00UL97ZUHGkaAZB4AImGFa3oRwvlYIqjfbcQ622
-         4ZneCaF59d9e9XjhfhRUTfnMiAtaI7ySxFeGkXlaKyslCB4z4JtUQO5nDpEuTgUirNCe
-         iCttsdSgPjcAAPDCvCN3s3JIxN32IJfGg+Gpag+nXDoYMpqG34TGB2SRMmJ+mvM5/xDc
-         TzzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718291633; x=1718896433;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YrxYBwFmJZ2ShtzXRL4Y2grRkz6qOWp2v7p/c2wyXj0=;
-        b=W1vrv3m46fCBX2BoUzKgMNLtLcxrr5GhcjwV36TCmuptWLmLysutNuOOPZuSHgbF6R
-         +INBmLY6EUjX+iAzJc+uI0t/RD+e+H7HV1XVwVPkdnKQ2win0Yj434g1wnZ1yAsZ3xG4
-         O9zRzNLs4XUeLwr/kvAEID9YDoPiF77NNZIuwXjn1XEs+LTzsHYlVmr8+JBq9baFm0xq
-         cM6HivlXMZc6GnD++kw0AS3LytOwH2cEV0Q1p5FSHvB/fvwLkRjZFPtAbOIjx5INEXTU
-         GcaoWVeYmKq8IOOBB3neBjjaoBRZEE2hLR1+zJPMqvbv5SMVIBd0PCwka7VG82RNU21d
-         YEqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXe1C+LD5+EUS5Plj4/2e9o3s0JKgEC7x3tYF+qlLP32CVIrQO4cV5qE9MER6PjwLtjhYwwY1y38HZXe7SaffJAShWk70EC29c+aBf4
-X-Gm-Message-State: AOJu0YxS0F9XHx531KvEfXkcBUiAaEYedgezrT7JAf6oSSgOQPXw6QBB
-	f4Hw4yqDAw08MnRk9sBPBrv6cG2KmZPLLnyMJld0kRk/iTWGSHzTxGEMqP1V7qIs+8vRPDaH5Ii
-	TxE3/gh+YTecbRt/HoRrpaEKmM5Fml6CSKFtUmw==
-X-Google-Smtp-Source: AGHT+IEN/IxLFSZi+7ySH7Yli8WEc2cF1WYEl0a+Gfrx6rp5ZdvnxPevY6/6w7U4zj4C97saSZZh8hfOmFU6AZ7IZKI=
-X-Received: by 2002:a05:6122:c9f:b0:4ed:80:bd85 with SMTP id
- 71dfb90a1353d-4ee3df992c1mr183882e0c.5.1718291633421; Thu, 13 Jun 2024
- 08:13:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=T0H3NvMkHlsvCKR5Iloq+mzg2jOufut3Zijt8EAbsWFXqzWC5L+g5HwmJtrqMbjc8zeWspi7cvWUaUH0GDkNfK/NACDJ2lO23naXJ6XDOTbBqaIt8xcAuzC4TnP0jInjG1nk0JKK3Edm853OUnd9Vx8fu55HFtSZb7kMOeNms0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijlEn8zx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B067EC2BBFC;
+	Thu, 13 Jun 2024 15:14:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718291681;
+	bh=OSIoFPP6ehaEIJXs+89MIW5R38UOvWK3VJSPoOB54oA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ijlEn8zxPhPR00qsRkxvJ35VZGdeRjO0h5xFd/XDzboC7Xu4f8r+0MNMxHDqWnLZN
+	 PuxUMKDS68lsFAyxvvqUTPbgh6i+0ODEuHejFHF7MF4eAWAARs5nfTjO/ExuAMvLce
+	 icIh1xcYqw5bzS2bqrC7QYw2f0kCOrgq8IcpFQ4E9j/IMZ+6uPljgPpH00oaNhCCIE
+	 e87cm49l9EsATTdgauu1Gpkb11smfXl+lvRiWLHKV5myUAI4cZ4uKO1Yt/WPRaMQUj
+	 TpQgizCrCx7Yt+1Q/86vBQpEHpgrIbC6JCLgJ8lmOlZq25AqxCLO+98k7Yk0996OuH
+	 47oA8Gwsk0tDQ==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5bad112b623so38694eaf.3;
+        Thu, 13 Jun 2024 08:14:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXFC2oMDMtU3/azuVdTu3dOF6BhZKjCdiCjkIEDaqHjTeFaJ6/MLjs693O4ow+E5ZAs7v7wCeY6fzfU1BbYJtY0m2qT8tjslOT/dGPI
+X-Gm-Message-State: AOJu0YzsXqW3Iaq3FIgYeCCQ1fop++YqTKmyZ3QU0wuvgnI7KP1fM8qk
+	q9kTckVnFEeuruaxTD5wdNj/py2TZLhvQYDcADilo22occecG5OGnJ7emc+SF1OiR8ytOINlqGy
+	Lpy6QcXyRf1Ere4LPa0oFrVE/k8Q=
+X-Google-Smtp-Source: AGHT+IHYvaAwxGtXqI5rPPSqH9crCQlvA3HdSLCIiKQW22jl1kgK8okggtUecAAkWCBRX2CtT92znfX3IEUSA3o3JXM=
+X-Received: by 2002:a4a:b4c1:0:b0:5bb:815d:e2ab with SMTP id
+ 006d021491bc7-5bdabf41a2bmr663673eaf.1.1718291680932; Thu, 13 Jun 2024
+ 08:14:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613113247.525431100@linuxfoundation.org>
-In-Reply-To: <20240613113247.525431100@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 13 Jun 2024 20:43:41 +0530
-Message-ID: <CA+G9fYvnVJi1RFhO5f6ZH2mpagZ6jcEdoQAxnSBxWPHsEVQwYg@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/317] 5.10.219-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, Anders Roxell <anders.roxell@linaro.org>, 
-	Guo Ren <guoren@linux.alibaba.com>, Guo Ren <guoren@kernel.org>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, clang-built-linux <llvm@lists.linux.dev>
+References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
+ <7f4a777b-88f6-4429-b168-d1337d291386@yahoo.de> <435867b5-029b-419f-bb7f-2d4902c62556@leemhuis.info>
+ <a97f9f4d-17f1-44cf-a0f4-634fd38aba2a@yahoo.de> <CAJZ5v0jwvq6W0u7Zx4GzQxJOnrF4KvN1RHtqqDcaMvN6yp0hDg@mail.gmail.com>
+ <312649b1-eea9-4346-af93-76a821e88eb7@yahoo.de> <CAJZ5v0jfvRWK0M3Xf=36e74cVQ9rN5T1WdZZVnuk1XmZ=xu==g@mail.gmail.com>
+ <78549853-1763-40cf-9974-3fc737fad093@yahoo.de> <CAJZ5v0h5pQDaA-bEOmcz_TpE87kFqWLFLJC+=OLjg5ZtF3hxpQ@mail.gmail.com>
+ <91d94429-fc7e-4828-914d-1a251ee1ba99@yahoo.de> <CAJZ5v0gPZHDfuK1FRdTAG8Eqjf0NWUQdf-_GCWsWf6dCBE=1dg@mail.gmail.com>
+ <543787c3-db5b-4f63-b5e0-df508300db73@yahoo.de> <CAJZ5v0h7jDw3yX689nZdB+YeJbCk0vFoUgVb4Yi0cqDxjL5chQ@mail.gmail.com>
+ <40ec1e53-2bc8-48aa-9909-fac9072adb57@yahoo.de> <CAJZ5v0jtjXfvr4GXukjyO9XsEO6K2Nfux3otpFPP4vWS_9_qEQ@mail.gmail.com>
+ <CAJZ5v0hcX0JAMBA+EVZURDH1BTQ2zL-W_4BjSx0a=1oRaR90ug@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hcX0JAMBA+EVZURDH1BTQ2zL-W_4BjSx0a=1oRaR90ug@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Jun 2024 17:14:27 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jGGV=i8Swu=c8f9bwo--AckUfqZrt0zeqDWKBijG+Z3A@mail.gmail.com>
+Message-ID: <CAJZ5v0jGGV=i8Swu=c8f9bwo--AckUfqZrt0zeqDWKBijG+Z3A@mail.gmail.com>
+Subject: Re: Regression, thermal: core: battery reading wrong after wake from
+ S3 [Was: Bug Report according to thermal_core.c]
+To: "fhortner@yahoo.de" <fhortner@yahoo.de>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>
+Content-Type: multipart/mixed; boundary="000000000000437c47061ac6f571"
+
+--000000000000437c47061ac6f571
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Jun 2024 at 17:43, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Wed, Jun 12, 2024 at 7:23=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
 >
-> This is the start of the stable review cycle for the 5.10.219 release.
-> There are 317 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> Restored list CCs.
 >
-> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
-> Anything received after that time might be too late.
+> On Wed, Jun 12, 2024 at 3:41=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
+> >
+> > On Wed, Jun 12, 2024 at 11:56=E2=80=AFAM fhortner@yahoo.de <fhortner@ya=
+hoo.de> wrote:
+> > >
+> > > Am 11.06.24 um 16:42 schrieb Rafael J. Wysocki:
+> > >
+> > > This doesn't make them run in a different order, it just delays both
+> > > of them, because the notifiers are called sequentially.
+> > >
+> > > However, if you added the msleep() at the beginning of
+> > > thermal_zone_device_resume(), it would change the ordering of this
+> > > function with respect to the PM notifiers, so please try doing this.
+> > >
+> > > I did so and added msleep(1000) to thermal_core.c line 1634
+> > > I have also reverted the patch you sent me.
+> > >
+> > > The battery readings after resume from S3 sleep where fine.
+> > > I have tried 2 reboots with 4 sleep/wake cycles, respectively
+> >
+> > Thanks!
+> >
+> > This means that the two code paths in question somehow interfere
+> > destructively when they are running in parallel with each other.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.219-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+> One more thing to try is the attached patch (independent of the
+> previous one) to lower the priority of the thermal PM notifier to make
+> it run always after the ACPI battery one.
 >
-> thanks,
->
-> greg k-h
+> Please test this one too and let me know if it works for you.
 
+Attached is a slightly modified version of the last patch I sent.
+Please test it and let me know if it addresses the problem you are
+seeing.
 
-The following build errors are noticed on riscv with clang-18 toolchain
-but gcc-12 builds pass.
+If it helps, I think we are done with this at least for now.
 
-However, compared with older releases this is a build regression on
-stable-rc 5.10.
+--000000000000437c47061ac6f571
+Content-Type: text/x-patch; charset="US-ASCII"; name="thermal-core-resume-prio.patch"
+Content-Disposition: attachment; filename="thermal-core-resume-prio.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lxdeempy0>
+X-Attachment-Id: f_lxdeempy0
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-riscv:
- defconfig - gcc-12 - PASS
- defconfig - clang-18 - FAILED
-
-Build error:
-------
-arch/riscv/kernel/stacktrace.c:75:52: error: incompatible pointer to
-integer conversion passing 'void *' to parameter of type 'unsigned
-long' [-Wint-conversion]
-   75 |                                 if
-(unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
-      |
-                ^~~
-include/linux/compiler.h:78:42: note: expanded from macro 'unlikely'
-   78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-      |                                             ^
-arch/riscv/kernel/stacktrace.c:75:57: error: incompatible integer to
-pointer conversion passing 'unsigned long' to parameter of type 'void
-*' [-Wint-conversion]
-   75 |                                 if
-(unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
-      |
-                     ^~
-include/linux/compiler.h:78:42: note: expanded from macro 'unlikely'
-   78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-      |                                             ^
-2 errors generated.
-make[3]: *** [scripts/Makefile.build:286:
-arch/riscv/kernel/stacktrace.o] Error 1
-
-
-Links:
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.218-318-g853b71b570fb/testrun/24322227/suite/build/test/clang-18-defconfig/details/
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.218-318-g853b71b570fb/testrun/24322227/suite/build/test/clang-18-defconfig/history/
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2hp7bDTOjqzNr8hqqSWyMf943W8/
-
---
-Linaro LKFT
-https://lkft.linaro.org
+LS0tCiBkcml2ZXJzL3RoZXJtYWwvdGhlcm1hbF9jb3JlLmMgfCAgICA2ICsrKysrKwogMSBmaWxl
+IGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKQoKSW5kZXg6IGxpbnV4LXBtL2RyaXZlcnMvdGhlcm1h
+bC90aGVybWFsX2NvcmUuYwo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09Ci0tLSBsaW51eC1wbS5vcmlnL2RyaXZlcnMvdGhl
+cm1hbC90aGVybWFsX2NvcmUuYworKysgbGludXgtcG0vZHJpdmVycy90aGVybWFsL3RoZXJtYWxf
+Y29yZS5jCkBAIC0xNzEyLDYgKzE3MTIsMTIgQEAgc3RhdGljIGludCB0aGVybWFsX3BtX25vdGlm
+eShzdHJ1Y3Qgbm90aQogCiBzdGF0aWMgc3RydWN0IG5vdGlmaWVyX2Jsb2NrIHRoZXJtYWxfcG1f
+bmIgPSB7CiAJLm5vdGlmaWVyX2NhbGwgPSB0aGVybWFsX3BtX25vdGlmeSwKKwkvKgorCSAqIFJ1
+biBhdCB0aGUgbG93ZXN0IHByaW9yaXR5IHRvIGF2b2lkIGludGVyZmVyZW5jZSBiZXR3ZWVuIHRo
+ZSB0aGVybWFsCisJICogem9uZSByZXN1bWUgd29yayBpdGVtcyBzcGF3bmVkIGJ5IHRoZXJtYWxf
+cG1fbm90aWZ5KCkgYW5kIHRoZSBvdGhlcgorCSAqIFBNIG5vdGlmaWVycy4KKwkgKi8KKwkucHJp
+b3JpdHkgPSBJTlRfTUlOLAogfTsKIAogc3RhdGljIGludCBfX2luaXQgdGhlcm1hbF9pbml0KHZv
+aWQpCg==
+--000000000000437c47061ac6f571--
 
