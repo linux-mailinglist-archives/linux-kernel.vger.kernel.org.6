@@ -1,525 +1,423 @@
-Return-Path: <linux-kernel+bounces-213419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3078190751D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:27:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BD3907521
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B66E42825F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:27:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 197B71F22874
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B7D145B02;
-	Thu, 13 Jun 2024 14:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C087145B12;
+	Thu, 13 Jun 2024 14:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CWaUNos3";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="K70wxvj/"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b0eT7jzH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D9C144D18
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1143514534B;
+	Thu, 13 Jun 2024 14:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718288840; cv=fail; b=J115eO3enbrye9LkeZUofh5xYHbBcx2f4blvdTzCpwNA5iTDSvncsiJUYL99zT9XFAn6W9oqDH5MOopNxV/LU76CGSOSZsD5H3wYvU6PIs4u2ZhLbTu/SbKuZm8Bo88twg/VXzqEAVZhZ2nS11e5rClQA8b9e39vxkjovTjr3/Y=
+	t=1718288961; cv=fail; b=hrurZvKd3eR89auQc7ieJKMNirk3GOLq4cn6Vyf4SlE5wjYJztdQwGTtw5u+SyF0F1JbBst3xkSfoGi2qUDXC6UPdXRQ984NQRuICvN7HMltnRU1M17ncAbrAai7SvYLsFkPafObUhADY9mrwlFauuujW4x2YIVLGio9gIkObz4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718288840; c=relaxed/simple;
-	bh=y8uiszbAwFVaLW9e5OYtRdpkCfW/dQvuviQ0jsBDo5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=q4UNaBBgluKzLFdYdUeC9+mYbZEi6BfDMupCHD4KaU1UMnOQGOov4FniTegi+OCFQtPE8Mz9b6I5pwm6xXpLPjMr1pXcDCCXy7MKXjkJGDKX3MK/5RUTp59+RWLpK/1LE6Pit8tibZgvnauRnx6iqRNK+0hlt1xwRb0C9yuA+o8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CWaUNos3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=K70wxvj/; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DBtRon011444;
-	Thu, 13 Jun 2024 14:27:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=m9QxhsIUeWMnays
-	XNVoa8ytZymnj6z9ruAoHCptuM54=; b=CWaUNos31GzV/BovDgvGdoHg1PvIx29
-	xVUpg5cPqWGx2+VJ4Qzk3IzmZbqXNPmFB7FDhpNWbqD78iRiNwsxMmC6rP7MLT7n
-	aWWxR7epWZQW2GR45wfYOPDof5+TXplJv6Ulrwx79nI9rhgFWEiyc+RRmccuqn3w
-	OwnIhW8MG6ioo52zlkW9FKEEd0Lu5Rr00JTGqv5u0sGs4KRiL3fLKGkcPaVyIPVQ
-	sAd7IjnDu9ZHB6/zGprX7gAgd5EM95Q04RJDh9/xgfKhnmkc6yyHd3ED8t/qQPDl
-	Kw6E7D2L0+WRtlv5vbeuyH/YldNqkUymCXPfvcEIwQLCXDQZ+Cjf1HQ==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymh1mhq29-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Jun 2024 14:27:06 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45DE6JnG027051;
-	Thu, 13 Jun 2024 14:27:05 GMT
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2048.outbound.protection.outlook.com [104.47.51.48])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yncdwarrf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Jun 2024 14:27:05 +0000
+	s=arc-20240116; t=1718288961; c=relaxed/simple;
+	bh=fJ135ZLexwrDBQvhRWP+XpBUxY8EShU4b+ge3dQNahg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gR/BJhkxo5uMHAFSDEjsNBkp4ChmSEi7zu3z4M+Qkrb6EhE9b302sXv2ma0hw+DSGpazuQTjKrDByNtqF+J+ifXqWTFcopIAwp1XmdFpQey2Q9OKZT5HQ9W1daF0BNvv2vP/x2WAs7zRJdNmv6DSTy9ca/ZryBpM4Y+iNnVKaSY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b0eT7jzH; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718288960; x=1749824960;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=fJ135ZLexwrDBQvhRWP+XpBUxY8EShU4b+ge3dQNahg=;
+  b=b0eT7jzHBhIfDIIwhmT7EU1gI47Qw2YTuZE4ClwxlTjaEgWOo7yBguV/
+   o3KqiKdCm38XzTUdFTDdtNVuGhuOYokak1TnYQGOFiayzTCQcN4QNPlsc
+   L5eQKr15ZKbf8G5yuMQRFhdrjgQQNG/xbumYOI5fi0DBwfdB84gmy1eL6
+   KhDbnS5UjTLHqjTjaeUOK5HhSxA98z1Jj2AxdhzSwg+q2DErAO3PcaGP/
+   bQNdka93bD8NnzKUNSP5coMQv0pfEqyMmql8488TF873fCgreoTpxiLeZ
+   HToO7O2Ffp3/GeygIF+lvdEU+unGJybqzfYG5bPOReox+HZDfMGJia21g
+   A==;
+X-CSE-ConnectionGUID: kyArFNfkR5id2Bnoc/fNKA==
+X-CSE-MsgGUID: 2BvS0/2HRcCFYegbnL0eBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="14949416"
+X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
+   d="scan'208";a="14949416"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 07:29:18 -0700
+X-CSE-ConnectionGUID: 9s6J67y1SJ+I6RuMq8ihWA==
+X-CSE-MsgGUID: 7Q+3SwAVRo6vq43e9t+TCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
+   d="scan'208";a="40020644"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Jun 2024 07:29:18 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 13 Jun 2024 07:29:18 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 13 Jun 2024 07:29:18 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.45) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 13 Jun 2024 07:29:17 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LRp0RjsY41aKD6gdGl67WkTjZ5c1I7/OJsv4GvG/y7PsEJo3Vu+uvoFmvsDF5oL/koFgGxzdKAUh2LvnND+oLgKcGwAu8EbYL1da6mcPEXqW4M+IRnQX/KZhfCb2L46tlwmnV6PsmJkoU5H+SyQCAmklfT1pD8DVGQP5SIepNmWaOrTUaynZxCyqn42c9+QjLJU9GaqQqC2S0pqIU1u78B5iKyFcW1va/aFaQwUrJlwUX7jiRGLELyMiACRiYTzWtazYwDS7eFmmEYhf0nHU/KJTl6qW5jPOO4SjRzUT5xmneZVVTy5kdEY721x1zOnHct8F2heiLqTtgEpNBICP4g==
+ b=NjdNlEjSKfwE15IFC7JCLUbbwedHwIXxh5L/zw78+vPwkCIy50Id20LKjN+NV75nDMBB7ynBn0DnZKar7pDAAfGpKVT4HueZGVQVENp1lza3USODIwveTtTE8M8r1KrtSLecfVjEE2dyHhbP/NvTmROM0yUaRIvbcxYorzhFKAyR8K24tdiKRjA9H0xkv9WwWHiLLVJywlJuhU3r3v0bOVyqV7eVZs/U83IaQQrZ2YDONnNZlLdV39CvxMT6Cz49NzfT2YxoeUeWtKfFjLurfYATPq0vlB1RPp0IOERNC6b9X5xn4U9R0Yrg9E1faoF00cA8aQzrCnZPKCQx3KF5Ww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m9QxhsIUeWMnaysXNVoa8ytZymnj6z9ruAoHCptuM54=;
- b=Imt+Hr1LNQ/cvClWXc2hxGie7TmzfBNajXEa7d9jIXPgG5Hm93slZ9iKCo1pT3ig3lRQXPOcglpRc1VrKTB3IgjvYqTRpNkhOMeiG+3uNmm6di92dAL//iy8wLTWJBt6rmBLlBaENGhAHAxARrNXP0M4B/u1nh9Y9WGUgtzo42+CbIITFL7C/n1BoVD85rwFkBi9B/4+kW7SYt52iwytxual5jz4eVuX/LLRoX4mSIV5U/i4XBQWjiXDVcHfuln7sOyMbn6MHJZ5UsVFS/eepSKGq0RK9XkO7BMeAQHs7tlzH/NSMM6ZFfM3E+5NHaKgD23kttK2wGDpvyXJB+PtVQ==
+ bh=O99ajDBkfYcoHribsbgQSRfh8/SHwV7D+L4pMnToJg4=;
+ b=M1e64ekHfxyLPzV9g2D+lBPLK2MXgYYeNjc5McHweCaS7o5Dka62dHfRWbQkZ5mlarqvvKvVozsvSk79PT2p7YDbC7Y0rl6zf2j8lHlkeDLqXDB2O7WsdQ3VYb9zvN6ByAEVCTnT2jo3Ga/WpHNzJALWdAtuSZzkOH5D84my9GH0RwNKu5yPf9+DqiUN+Acczu+Kp4/5/hVx87X0TMtK0qV1praM/W6o2tTlkZPfvohiBQ2F7yN+8kBa7f2Kaj2Jbup5NlR7WVJ2ueb+G3uWbVjnPREoM6JgXFvkncBQIFwqyJyHiqrgJ53FoHuRATuEvYg+fBSTcLGqsOXXTIYN9Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m9QxhsIUeWMnaysXNVoa8ytZymnj6z9ruAoHCptuM54=;
- b=K70wxvj/mMGJiK11WtFVB6fLL/Mu8gcsDYeucmCp5YOwrVJvok3HfgrPvwrSe4LJMyWZU5eeJYK0VMq0pySXbIXqLxd1vEwlQJyj99yRNwe4hcQ3IX+Zv5mK0qBFXDzMlt9icDEpwGcsaSlqJdb5vSWrYQIEvR398I9s/3MevA8=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by PH0PR10MB6434.namprd10.prod.outlook.com (2603:10b6:510:21c::6) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ0PR11MB5865.namprd11.prod.outlook.com (2603:10b6:a03:428::13)
+ by PH0PR11MB4807.namprd11.prod.outlook.com (2603:10b6:510:3a::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Thu, 13 Jun
- 2024 14:27:03 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.7633.037; Thu, 13 Jun 2024
- 14:27:03 +0000
-Date: Thu, 13 Jun 2024 10:27:00 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org, willy@infradead.org
-Subject: Re: [PATCH v2 04/16] maple_tree: introduce mas_wr_store_type()
-Message-ID: <sf7x5jprzaphl67s5qvw5wgpx3t5hpfmhx6wpvysswm66qwkjn@nit3os7x45xc>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org, 
-	linux-mm@kvack.org, akpm@linux-foundation.org, willy@infradead.org
-References: <20240607185257.963768-1-sidhartha.kumar@oracle.com>
- <20240607185257.963768-5-sidhartha.kumar@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607185257.963768-5-sidhartha.kumar@oracle.com>
-User-Agent: NeoMutt/20231103
-X-ClientProxiedBy: YT4P288CA0036.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:b01:d3::13) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+ 2024 14:29:15 +0000
+Received: from SJ0PR11MB5865.namprd11.prod.outlook.com
+ ([fe80::b615:4475:b6d7:8bc5]) by SJ0PR11MB5865.namprd11.prod.outlook.com
+ ([fe80::b615:4475:b6d7:8bc5%5]) with mapi id 15.20.7633.036; Thu, 13 Jun 2024
+ 14:29:15 +0000
+From: "Romanowski, Rafal" <rafal.romanowski@intel.com>
+To: Karthik Sundaravel <ksundara@redhat.com>, "Brandeburg, Jesse"
+	<jesse.brandeburg@intel.com>, "Drewek, Wojciech" <wojciech.drewek@intel.com>,
+	"sumang@marvell.com" <sumang@marvell.com>, "Keller, Jacob E"
+	<jacob.e.keller@intel.com>, "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "intel-wired-lan@lists.osuosl.org"
+	<intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "horms@kernel.org" <horms@kernel.org>
+CC: "pmenzel@molgen.mpg.de" <pmenzel@molgen.mpg.de>, "aharivel@redhat.com"
+	<aharivel@redhat.com>, "jiri@resnulli.us" <jiri@resnulli.us>,
+	"cfontain@redhat.com" <cfontain@redhat.com>, "vchundur@redhat.com"
+	<vchundur@redhat.com>, "michal.swiatkowski@linux.intel.com"
+	<michal.swiatkowski@linux.intel.com>, "bcreeley@amd.com" <bcreeley@amd.com>,
+	"rjarry@redhat.com" <rjarry@redhat.com>
+Subject: RE: [Intel-wired-lan] [PATCH iwl-next v12] ice: Add get/set hw
+ address for VFs using devlink commands
+Thread-Topic: [Intel-wired-lan] [PATCH iwl-next v12] ice: Add get/set hw
+ address for VFs using devlink commands
+Thread-Index: AQHasRBGNFWYoEs7ckCc8YW5q7YvxbHF2deA
+Date: Thu, 13 Jun 2024 14:29:15 +0000
+Message-ID: <SJ0PR11MB5865343B3F6627340F8B9BF88FC12@SJ0PR11MB5865.namprd11.prod.outlook.com>
+References: <20240528150213.16771-1-ksundara@redhat.com>
+ <20240528150213.16771-2-ksundara@redhat.com>
+In-Reply-To: <20240528150213.16771-2-ksundara@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR11MB5865:EE_|PH0PR11MB4807:EE_
+x-ms-office365-filtering-correlation-id: 63604311-2550-4421-b0d6-08dc8bb5339c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230035|1800799019|366011|7416009|376009|38070700013|921015;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Kw2NETtrfAWX01zgRe5jdIBdxAmVTyFgpHKYJucQHEFmiX401jGPoN6YuMb6?=
+ =?us-ascii?Q?xWj24yxV4yNXmVvwvJuVMLaX660V2ESnNNrgt5msUSA6ToT0PF89i6UCOJ7C?=
+ =?us-ascii?Q?MspyM0j7MD1g6fKtd4RXytWFJ/hqpItxfjaSNM61YPU5BdQZl3moz0lMmya6?=
+ =?us-ascii?Q?fXrrSi6ymRe9ibQUAlclg/X7Kmwj1BU2LuolRqF0KaPuepGMM+Yzh649VzVf?=
+ =?us-ascii?Q?lKLkcJHHa4nnyspkQdsoPa2PRyXWOzw3GKUzkRAUQnZ12G7wZAuQJoFYh1aW?=
+ =?us-ascii?Q?cI/wIKyjZCUldvzlL90SJChtE5tsc3nxmxD5Zy1InYGNInmGd1QmMixAeIlE?=
+ =?us-ascii?Q?LhnSarrXvmN+R4OPObaEj2/gujMddkgmkCOqztDBHnTXuCoi2tYZi5lT+JMf?=
+ =?us-ascii?Q?BNw7f9Ooy8mo6MH4gm/tHzxkmA2uby7aT9qwiwTWJS/pMUVrgeKtZpQ+jDYQ?=
+ =?us-ascii?Q?nV1hG6Tde1sCqroTYEWPuAwKbdKi8GTnAKio8HT6OQM1k/t8VrdPegr+AXmu?=
+ =?us-ascii?Q?9gbTPLVY0RDmDuq9vHpP+kMxvZ9gEmQSHhb1D4KArl0nsgAaWM93y6ew1Ojq?=
+ =?us-ascii?Q?cANeruttDXdM6IyhnomvhF88IGQmiMXgduij4ZcKejt8W6pjO0s0iuw9t661?=
+ =?us-ascii?Q?5h56soZz7GXO28UekRijOP7AYIkI+gpklOEeMvXf1avnip4SiCE6xxD+I2iX?=
+ =?us-ascii?Q?BUMuOcz8yZDUeVoLjzLPrpSpcoXh7mt710FxrrvFbUvAJQD6Qv6V1mWZMx87?=
+ =?us-ascii?Q?h4kXmaH/IPHiB54U2xQ8M7iLK1PfZ1oza0rXFG7upg+1uF9lRDi7ItAqilHA?=
+ =?us-ascii?Q?VaK/KNUzTYNAkIvy9/YaaWW1ZFzBhMtupEsAGLQlHaTUmPs2hGY2ULuYZOja?=
+ =?us-ascii?Q?ELqGzOqv3IfRQkuXJ/8wTjwfDbxMpN+37Y0ANhORtxnY9KrKzU8ojMbueg1g?=
+ =?us-ascii?Q?lmaRyUOaPaWT0vpmu/bRPzx8aRNMv7295TZoPL97g8hfgFWqAqJAQixfFOa+?=
+ =?us-ascii?Q?yIH3v7LoCOyP7FWYh5obdjADGLbhu6nXUHuuqYayDuBIQTz0uVV08tW8+inK?=
+ =?us-ascii?Q?eUMyehVgFWt+zh3eltRxtbnzjjIPCblV2OHbWRNABA1OHPHsdaZffQg7fFzn?=
+ =?us-ascii?Q?nfb+6feCXOrDlmZJy5qssEUj2ucU2iorQT4yzw4Zl9GMkwnO2UO0X0PSdqsE?=
+ =?us-ascii?Q?HmE1pwHBuuBhwQ0XJFsyEgQbXfsbf376SOlg8+tuCiZn8+KVZHq1BLGrbZa4?=
+ =?us-ascii?Q?k8Uvarzd6G86SSKwy1+MPyLQjg5WQyuOjTMP2TlS2Z7Rhvyan4fK84+uXSSW?=
+ =?us-ascii?Q?AijPOu203DPu1m5qCOmL0b9ahq8J4VQmOAKl6DTlYVamG3wMmGnDCMqtMZft?=
+ =?us-ascii?Q?cdEOnA57JSDZoD/fbniAID/jlqNi?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5865.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230035)(1800799019)(366011)(7416009)(376009)(38070700013)(921015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?d/9NL9a+lzkRw+0OSg1OtDw1ylYjzP3z5Dq0jfB/v1PX5Fu5Joosjm+y0w+T?=
+ =?us-ascii?Q?smRttWsdZfzK/93tqMvHdNCvoq31d+U9HrUBDNoVx0tqfPptVugTz608AcLN?=
+ =?us-ascii?Q?v6u1fJ4n/k9LhtqBB11Nzu1uLZUd/ABwFquWZN7qFlnBK8ofXSfT7/kJ/hUz?=
+ =?us-ascii?Q?oaRM3n6OZtDOdesTYZ881ptlGOjyGIpobVmQ/7MCd8OadPurRQ9OhTYFNkS1?=
+ =?us-ascii?Q?vVDib7J6NcFdmNyeul2MnatSO6/iVJfO3erJyoae4rfaKHHd475/9BA/pwV/?=
+ =?us-ascii?Q?E1vs7/G18RYLgNWZ6FfC92VZ/f4xInvMsU52MBR1eJi+1NdP2Id3D9/skAs9?=
+ =?us-ascii?Q?6v/g9TawP/ZKH+YIK5KCm1PUpw92RCTvpXocZscDWcZIlL5yV/gWlvDZzf6r?=
+ =?us-ascii?Q?I6udyn8gCOzT/IslcW3NVGFVc8pdttvr9uE6VBEJCq0DrgI6IVLKmVhstutl?=
+ =?us-ascii?Q?1SZrZ2okXrcK610t6Dr2WhxSXhhNQ57iRSiyIH6Ben39p7KnICc6kU174dRh?=
+ =?us-ascii?Q?G3mnb5AY4Nt4h3/sosS374TvU025MgLkcNnEbJ6faNiTtIy6H0VtIxLXGdmf?=
+ =?us-ascii?Q?vdDZqR2SYn+iRwp0BEez5mrQUg/+OHOOVQIYdu2SszV7kZJLwcULat6VJ+xO?=
+ =?us-ascii?Q?FvZb/23pYh0CrOb5Ibo+AnD/CDSbBv2S7VOS9bhU3HZGtTIbqktFPmKw/aLK?=
+ =?us-ascii?Q?mG7SZBqTFblDY79xiYDPn2H1EiJ85KhjW0DnZzBSikOT2haiPHczdNA5Bf2O?=
+ =?us-ascii?Q?BAVQdDh+esm5ELhvHauc3GGmhytzcYFR0/n/4mifLmBo+h0qXdVGUoCkN3nb?=
+ =?us-ascii?Q?S9koyMXdfPy0CJ7J8zzeGnjpRJNenPPnGdYJ78idlm9NuDl+YP+cdLhojkem?=
+ =?us-ascii?Q?1D+eEH3wtz1KhHpvJOjRh6TwztNcHsUGocsh/gTP5Sh5NP8uTC/11JZFRhRY?=
+ =?us-ascii?Q?yYT+ar2D2o0JMN7i0TuqJ9Fd1cwqqW3SFmUx4NaM1W0ZtMzPFshmzDdDw+V1?=
+ =?us-ascii?Q?TN5sPKAk5epKuP5s6gidlTRJIGahKdjkYsSHmMhFCJqUJmUrKCNAzRtavQmp?=
+ =?us-ascii?Q?8PkdkXYwcY6xDOXL4YnHbHAcZr3LsvSZ4EMfdkmog5ScqJJyRdCXJa0aRSMp?=
+ =?us-ascii?Q?mHubPY/53ECyZCzvLi1WxK2ext1lKx3900Ry4cLbsvGj1mkhwjqmpW7+OkEm?=
+ =?us-ascii?Q?5oNUxabHmJkgFpmTgpauuggXEjRFqoBJrdE+002FSqwm9zqJwe/Mp2BaXmj9?=
+ =?us-ascii?Q?4geBCNJeerEKjRWkNs5I2kkg4cW++YRfcj629mVz3kSRIHkWbuRzD/QlHbYK?=
+ =?us-ascii?Q?MHWHpYLgRGcy1yA5lyN1G8HexoETi6m67JvzUwrp0POJUREp/SdxHrkgcU4E?=
+ =?us-ascii?Q?1o1ubtr9LErwDR+x2GLvaLeSZ3C4TH/jMuPfYo1EzpA0rN2cryEJ/nVIX4Lm?=
+ =?us-ascii?Q?B96tWsYv5AlkO0OBbnpJvPR8eomWsBvXR9ggUB6pQrX8qlSf85cym0XoF58W?=
+ =?us-ascii?Q?yGiL2OQcbj/WUsh1yLQk4CFSAEb+ccgB0d3ztai+Y4eTIue6wXfY6rREYrre?=
+ =?us-ascii?Q?uIm18mRlrCZ92jLPI4HSXNj8Ukf37AuUhP4TrxaMVfYLmnAeGQFJJjS/ZdnZ?=
+ =?us-ascii?Q?XA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|PH0PR10MB6434:EE_
-X-MS-Office365-Filtering-Correlation-Id: a371db60-9574-467f-8744-08dc8bb4e4d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230035|1800799019|366011|376009;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?fUW0nTc8JpUQ72yFoEZ405bhZjttAdrBn7qwtEon2KHkw9PrPxKAL4Ik73VP?=
- =?us-ascii?Q?N9iDacs4h6Y6Okoxo6pRS+1nnP9R8ObjPxMARTwZYagl2SgiD1ztkHmbtqPW?=
- =?us-ascii?Q?8HRD3qvd89RexHa7zXio8qNkfKb5ScncGoJBblG15wLJ9ic3+GWEqaiax41C?=
- =?us-ascii?Q?QkqZNCFRX07DZQhtfI1UChZuQcX/8s4itrluwkGt1YL3/S5gaWMSQUThuOam?=
- =?us-ascii?Q?znrkIl6bMVZ+uetAZyMgj+GNMotgCjdSbIo4fVw4QWLp/wKcj/VOVVwGS+Dj?=
- =?us-ascii?Q?d9tw29L3udLs09/n5UXXNQwK7hWg8AiEa4a9hWQG5Nvspo3iYaBar5gZHN45?=
- =?us-ascii?Q?fLwI3uwvWg3EPuKT5b4WJieHbQTVougXIkELzqO8Vgjq02rtgoibvX7AsNrF?=
- =?us-ascii?Q?2Oap3FPJTWZxL//kqrgPQ6Kt6OGu1G8Y5lp7khMqyxQU/olR22Pa+0fYMomz?=
- =?us-ascii?Q?eB49vVlFE78kWQBCV3GyG3mI8mOWF5RBGC63bV/Xp+3T87E08eF8XKmjn+dR?=
- =?us-ascii?Q?cRK9iO+DQqv2LTcD4IGE3ZpgwYnFKKlLDxfFYU0QClHuwZRi7WqlxY2xjIvp?=
- =?us-ascii?Q?BV9FcF6cVZ70p0cRHioJrGxLkVKiPniB0EejLRqwW59gGzjBdxEQjHTGTWTJ?=
- =?us-ascii?Q?FbDPbhdwPyK35wzcQ82I45s1OGITr9uyIioHSuUh2AsVYLYn9daFw3UXpAQ7?=
- =?us-ascii?Q?blL3+qGXFFY/D4jBfsct3EnZcP7xWJM2Q7f6pa5ioww0h8jHDil7AIyYE94n?=
- =?us-ascii?Q?9/r0dqZgiHB73NlBQVCGPEi/YrZtvuBPses/4amNL99ciEUAF5XQWw93vUPZ?=
- =?us-ascii?Q?o56bXb/sARaZXkic+mXjdfnbWSeqYRZ5DkE7NkvOfoKer6gJcLctQ29+NA5T?=
- =?us-ascii?Q?R0Y1GpMUT6fSKs3GY0TINqliha3B2GbODpPfBcOnHzCwOWAtfyQIjofU56Rq?=
- =?us-ascii?Q?9U7LFhFKZuQCbjcZj6ZxOtGPoAKYY65INMv0uyCElsiagyz7Qcph12pr7+Db?=
- =?us-ascii?Q?UOZZiVGCXRDtKI0W6iKSBouUwpM7WOP3AA8YT3ksOBcFf+IS6Kiz0RoEn6mP?=
- =?us-ascii?Q?wfJQ4AcTGQJYwDP0fUErsxrwg2q99SXdFiEM7LuwDHjzJoYXxO6oSo/uhNS4?=
- =?us-ascii?Q?1TYOiuwbioC82sR9K8vvDnGcieFmBbl3GKwClRgylfK+vVVyzXjFIP4+39cq?=
- =?us-ascii?Q?rzSqIWT5Md8AydgYg0kTLg0SaMdiZ8H3T2CVZCjNwdRy6gYoiSKb8Uj9nMRK?=
- =?us-ascii?Q?7q42rbOUA600hteZpGYFtHzJFZbpt3gD0sHHRtM+a7+9ih2pn0BSYBFurc/U?=
- =?us-ascii?Q?RUQQIVbqvqT4tv20NqIHFIwE?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230035)(1800799019)(366011)(376009);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?zgMyCk7Peaa8o2UwjvhtLFwQTz2S3dwIcjrAh8Pi4hrMx4oRXsqb+GZMxFtO?=
- =?us-ascii?Q?2fSpRJkxLFqHGFDI6p+hVeCDQP3MuI9se+qItuSnIcK8+/QbysTy3wuBerb9?=
- =?us-ascii?Q?NvofHVeNQirMjFkHwT0qLF/zt7lwlB03QCxgCIcFJWnG7X3Z3hvOvXNvlvcJ?=
- =?us-ascii?Q?Bz58WxTjqIV8Ep3Uxn75nHcCqajM3bZ4uz62pK8sY9H5NuylFwMSboyEYoif?=
- =?us-ascii?Q?eDGn4g6ETuRS7/XvpMPWZhLXceqRsmCqj59UxynfPkQPqj2QfXzLR0BfnNoE?=
- =?us-ascii?Q?e+NvD2oBIdzFuISU9NXyIXB9/U251lRYA2sVnqcvIL2XGsIkv1myL8lIN70n?=
- =?us-ascii?Q?vXV7eGzevQuQmG7AqcSgUj3+txGVq79xlKDj9zSrdz2rusGIGLYxHc+OHiTk?=
- =?us-ascii?Q?okdjiqZCeRXWECpQIwr+/kn/gCHCgFpN53Ql7iVx8fi6KVP+OXPusmlPkb0U?=
- =?us-ascii?Q?LJ2IOleykZzazQZHocBASyKZceEw5iXNiN4/GR220wwoqAcBriwhaax7c+7s?=
- =?us-ascii?Q?Ff5hX13qd5qTFjXqB1dHCl/wRu+uV2zpMbIhY7VJDuAVHRCJ2J4dSdRGDFsk?=
- =?us-ascii?Q?I/373gWHMZieVXKQlxjdSkzzQ9l1TwD2KJsEo4uCqjRJulOAM5TwqlCgNXpC?=
- =?us-ascii?Q?tHkhghJUNSSe0nckQM+WA0uKeuxH7Ne4tT9+FSLs2FQhyr4cPg/pTYVKqqQ2?=
- =?us-ascii?Q?ltRnzmf2/U+TCydwvloPHTuyOpNIki0PtRK7Tx79eztpsLQYpUNsRrl77LOc?=
- =?us-ascii?Q?vDpWqz7yoZqlX4yEICqZ7ISvbEi+Rnqoz4HJQgE8J9hhAwF66X3LfgPKN7zD?=
- =?us-ascii?Q?gfwbDrYg2M1HO2GxqSHMjf4AewOoubuDYnphg0826yyV4lgot9fbYjz4D198?=
- =?us-ascii?Q?mNi3oWTu3/g7DhWoJayoKXY/GMxL7yftxx9H5ibDBmhgPV3BhHISkkwvvGSA?=
- =?us-ascii?Q?impu35MysHNzba+8I8EUk+paybLVWTMy+163EOYIb+12yvpd0YKmlzViwRQF?=
- =?us-ascii?Q?oKYqfnLF7naN6CG3QSYRtSnbumeS1zWfRg07WA5rrf+ZSXFZDH1aRzxcvNYg?=
- =?us-ascii?Q?CjGg2RB0CE0oczYY8PDB47wKjycZ3CklykzC18j93gWI1FFJ3zGBi31+b9K3?=
- =?us-ascii?Q?LT3GHLmbxYD2BmOXWeQ39iJb7HJ5ngmRf0kCgkDfPHieILq1O4ODc1Wj3XFL?=
- =?us-ascii?Q?OkuAn59pJIpjTP2ULiX6ItbkJI6AAwULpFl/gN7nBr+X3AJD0Tlik/D3v5GH?=
- =?us-ascii?Q?mYzyMFP2SOY9CC+dScpl3BgquXsEy9Ch8u8Ka711WvvKSExve6f2PjZonrB6?=
- =?us-ascii?Q?YTKjgSGa+2B2Iiez6tEhpdvyh1RO7BEjuPMWSkJ3AwvUN6pRMcU9yDAq6lZx?=
- =?us-ascii?Q?Plt4hCTr8tX5iOlGDEgu2AnymRvbcuKUTFjSE4I4r8HRwTTJdmpRRoX54yk0?=
- =?us-ascii?Q?mHXa2Y7Ht4TMsghUrHCDWObmdrPyxbJFSUDJk9Q5RfkoCsGoil/SbJPpWg4K?=
- =?us-ascii?Q?kCSHC5L2A4Tl56aQ0BtqSWbiLeDLLXBFSfwp35EBfUckuhWF7f0CA+zu7naO?=
- =?us-ascii?Q?o99ITVIlz1nmG58S3Wl42oFAIinYLByBf3awo3EhUQf6qZnOJxPphhBOJJwy?=
- =?us-ascii?Q?wQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	95/1y3pAFStu00oDtLBqZCocomT0kYv5GVXONFaOOv8ldvQ1CS/9v5kKAFmLnrnzeA6qMetMTBE9lXjS/fXvzfEjRoISq0fgG5gljnMtVJgZ4iMMwIjXeL+5UnFT1yCQngnnezzToYZvbQSujryaCgpEfMfCKn2pe4/Ka2cT6s2s90QEpLKcmizlkyvtGRNRXrrAJL5mU0iNQ/+RKUqL7A/jMPdl6nNJLa6e3pRftkoQ0kTRdrT8iSXwfMI7tp5o2Bu39ZSvJfLxGtSqSRIwtXAMBfI5QpNqrJMckNQvEiFxqhwoq4uyqTY58347XiwIGrsqw7gVw9//GAEMBMx7NT54Z57tfXDmv+LEgHXZTtmOoGFgLC9ARPF7tcSx1yu5/BpuW1i3KQ6PvoOmZLzNwI3zI04RC9FQQw2lwjzsmgaJbu1qsMy8n2UV/tfDyiFbhmzO7TebvkALzFEcDiM2z6Kuc44X4J3/hXp0RtHzQQLUrE9tL1mViEi9I5QkwziLaH5IyTUeRoduLOsJfVGOENkBjlJntjICmBXpHEnEvuA1bdkEeuFGiWB/3nEQOKR9yfNr625sEqgOW6ASCvWJ+ETcuzAECEBCmEoHfA8v84g=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a371db60-9574-467f-8744-08dc8bb4e4d6
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2024 14:27:03.1397
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5865.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63604311-2550-4421-b0d6-08dc8bb5339c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2024 14:29:15.0603
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Vz4Hz+iafFOeH0+OJqRImt0rIAzaQKddPj1o3BVMJbCPFLcQ8njRKWmRq1fAZ8X4X5aqmDGvTT0L39UZ42gnNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB6434
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_07,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 suspectscore=0 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406130105
-X-Proofpoint-ORIG-GUID: nTVvLZ070bL9-PJdxLXfqC-EvqeBdlAd
-X-Proofpoint-GUID: nTVvLZ070bL9-PJdxLXfqC-EvqeBdlAd
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PuCwHOFj/yWNRgDM1TlF7txenIMmP9K5GZEVizWlDlIZWYOLra27s4HWTN7rMvuMIztZZ+5CC+RMl7sbP7PwsOgh/ruwFeJM8YxKAfk0APA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4807
+X-OriginatorOrg: intel.com
 
-* Sidhartha Kumar <sidhartha.kumar@oracle.com> [240607 14:53]:
-> Introduce mas_wr_store_type() which will set the correct store type
-> based on a walk of the tree.
-> 
-> mas_prealloc_calc() is also introduced to abstract the calculation used
-> to determine the number of nodes needed for a store operation.
-> 
-> In this change a call to mas_reset() is removed in the error case of
-> mas_prealloc(). This is only needed in the MA_STATE_REBALANCE case of
-> mas_destroy(). We can move the call to mas_reset() directly to
-> mas_destroy().
-> 
-> Also, add a test case to validate the order that we check the store type
-> in is correct. This test models a vma expanding and then shrinking which
-> is part of the boot process.
-> 
-> Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+> Karthik Sundaravel
+> Sent: Tuesday, May 28, 2024 5:02 PM
+> To: Brandeburg, Jesse <jesse.brandeburg@intel.com>; Drewek, Wojciech
+> <wojciech.drewek@intel.com>; sumang@marvell.com; Keller, Jacob E
+> <jacob.e.keller@intel.com>; Nguyen, Anthony L <anthony.l.nguyen@intel.com=
+>;
+> davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> pabeni@redhat.com; intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.o=
+rg;
+> linux-kernel@vger.kernel.org; horms@kernel.org
+> Cc: pmenzel@molgen.mpg.de; aharivel@redhat.com; jiri@resnulli.us;
+> cfontain@redhat.com; vchundur@redhat.com; ksundara@redhat.com;
+> michal.swiatkowski@linux.intel.com; bcreeley@amd.com; rjarry@redhat.com
+> Subject: [Intel-wired-lan] [PATCH iwl-next v12] ice: Add get/set hw addre=
+ss for
+> VFs using devlink commands
+>=20
+> Changing the MAC address of the VFs is currently unsupported via devlink.
+> Add the function handlers to set and get the HW address for the VFs.
+>=20
+> Signed-off-by: Karthik Sundaravel <ksundara@redhat.com>
 > ---
->  lib/maple_tree.c                 | 214 ++++++++++++++++++++++---------
->  tools/testing/radix-tree/maple.c |  38 ++++++
->  2 files changed, 192 insertions(+), 60 deletions(-)
-> 
-> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> index 2558d15bb748..a7f585ed488c 100644
-> --- a/lib/maple_tree.c
-> +++ b/lib/maple_tree.c
-> @@ -4278,6 +4278,151 @@ static inline void mas_wr_prealloc_setup(struct ma_wr_state *wr_mas)
->  	wr_mas->content = mas_start(mas);
+>  .../ethernet/intel/ice/devlink/devlink_port.c | 59 ++++++++++++++++++-
+>  drivers/net/ethernet/intel/ice/ice_sriov.c    | 34 ++++++++---
+>  drivers/net/ethernet/intel/ice/ice_sriov.h    |  8 +++
+>  3 files changed, 91 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+> b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+> index c9fbeebf7fb9..00fed5a61d62 100644
+> --- a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+> +++ b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+> @@ -372,6 +372,62 @@ void ice_devlink_destroy_pf_port(struct ice_pf *pf)
+>  	devl_port_unregister(&pf->devlink_port);
 >  }
->  
+>=20
 > +/**
-> + * mas_prealloc_calc() - Calculate number of nodes needed for a
-> + * given store oepration
-> + * @mas: The maple state
-> + * @entry: The entry to store into the tree
+> + * ice_devlink_port_get_vf_fn_mac - .port_fn_hw_addr_get devlink
+> +handler
+> + * @port: devlink port structure
+> + * @hw_addr: MAC address of the port
+> + * @hw_addr_len: length of MAC address
+> + * @extack: extended netdev ack structure
 > + *
-> + * Return: Number of nodes required for preallocation.
+> + * Callback for the devlink .port_fn_hw_addr_get operation
+> + * Return: zero on success or an error code on failure.
 > + */
-> +static inline int mas_prealloc_calc(struct ma_state *mas, void *entry)
+> +static int ice_devlink_port_get_vf_fn_mac(struct devlink_port *port,
+> +					  u8 *hw_addr, int *hw_addr_len,
+> +					  struct netlink_ext_ack *extack)
 > +{
-> +	int ret = mas_mt_height(mas) * 3 + 1;
+> +	struct ice_vf *vf =3D container_of(port, struct ice_vf, devlink_port);
 > +
-> +	switch (mas->store_type) {
-> +	case wr_invalid:
-> +		WARN_ON_ONCE(1);
-> +		break;
-> +	case wr_new_root:
-> +		ret = 1;
-> +		break;
-> +	case wr_store_root:
-> +		if (likely((mas->last != 0) || (mas->index != 0)))
-> +			ret = 1;
-> +		else if (((unsigned long) (entry) & 3) == 2)
-> +			ret = 1;
-> +		else
-> +			ret = 0;
-> +		break;
-> +	case wr_spanning_store:
-> +		ret =  mas_mt_height(mas) * 3 + 1;
-> +		break;
-> +	case wr_split_store:
-> +		ret =  mas_mt_height(mas) * 2 + 1;
-> +		break;
-> +	case wr_rebalance:
-> +		ret =  mas_mt_height(mas) * 2 - 1;
-> +		break;
-> +	case wr_node_store:
-> +	case wr_bnode:
-> +		ret = mt_in_rcu(mas->tree) ? 1 : 0;
-> +		break;
-> +	case wr_append:
-> +	case wr_exact_fit:
-> +	case wr_slot_store:
-> +		ret = 0;
-> +	}
+> +	ether_addr_copy(hw_addr, vf->dev_lan_addr);
+> +	*hw_addr_len =3D ETH_ALEN;
 > +
-> +	return ret;
-> +}
-> +
-> +/*
-> + * mas_wr_store_type() - Set the store type for a given
-> + * store operation.
-> + * @wr_mas: The maple write state
-> + */
-> +static inline void mas_wr_store_type(struct ma_wr_state *wr_mas)
-> +{
-> +	struct ma_state *mas = wr_mas->mas;
-> +	unsigned char new_end;
-> +
-> +	if (unlikely(mas_is_none(mas) || mas_is_ptr(mas))) {
-> +		mas->store_type = wr_store_root;
-> +		return;
-> +	}
-> +
-> +	if (unlikely(!mas_wr_walk(wr_mas))) {
-> +		mas->store_type = wr_spanning_store;
-> +		return;
-> +	}
-> +
-> +	/* At this point, we are at the leaf node that needs to be altered. */
-> +	mas_wr_end_piv(wr_mas);
-> +	if (!wr_mas->entry)
-> +		mas_wr_extend_null(wr_mas);
-> +
-> +	new_end = mas_wr_new_end(wr_mas);
-> +	if ((wr_mas->r_min == mas->index) && (wr_mas->r_max == mas->last)) {
-> +		mas->store_type = wr_exact_fit;
-> +		return;
-> +	}
-> +
-> +	if (unlikely(!mas->index && mas->last == ULONG_MAX)) {
-> +		mas->store_type = wr_new_root;
-> +		return;
-> +	}
-> +
-> +	/* Potential spanning rebalance collapsing a node */
-> +	if (new_end < mt_min_slots[wr_mas->type]) {
-> +		if (!mte_is_root(mas->node)) {
-> +			mas->store_type = wr_rebalance;
-> +			return;
-> +		}
-> +		mas->store_type = wr_node_store;
-> +		return;
-> +	}
-> +
-> +	if (new_end >= mt_slots[wr_mas->type]) {
-> +		mas->store_type = wr_split_store;
-> +		return;
-> +	}
-> +
-> +	if (!mt_in_rcu(mas->tree) && (mas->offset == mas->end)) {
-> +		mas->store_type = wr_append;
-> +		return;
-> +	}
-> +
-> +	if ((new_end == mas->end) && (!mt_in_rcu(mas->tree) ||
-> +		(wr_mas->offset_end - mas->offset == 1))) {
-> +		mas->store_type = wr_slot_store;
-> +		return;
-> +	}
-> +
-> +	if (mte_is_root(mas->node) || !(new_end <= mt_min_slots[wr_mas->type]) ||
-> +		(mas->mas_flags & MA_STATE_BULK)) {
-> +		mas->store_type = wr_node_store;
-> +		return;
-> +	}
-> +
-> +	mas->store_type = wr_bnode;
-> +}
-> +
-> +/**
-> + * mas_wr_preallocate() - Preallocate enough nodes for a store operation
-> + * @wr_mas: The maple write state
-> + * @entry: The entry that will be stored
-> + * @gfp: The GFP_FLAGS to use for allocations.
-> + *
-> + */
-> +static inline void mas_wr_preallocate(struct ma_wr_state *wr_mas, void *entry, gfp_t gfp)
-> +{
-> +	struct ma_state *mas = wr_mas->mas;
-> +	int request;
-> +
-> +	mas_wr_prealloc_setup(wr_mas);
-> +	mas_wr_store_type(wr_mas);
-> +	request = mas_prealloc_calc(mas, entry);
-> +	if (!request)
-> +		return;
-> +
-> +	mas_node_count_gfp(mas, request, gfp);
-> +	if (likely(!mas_is_err(mas)))
-> +		return;
-> +
-> +	mas_set_alloc_req(mas, 0);
-> +}
-> +
->  /**
->   * mas_insert() - Internal call to insert a value
->   * @mas: The maple state
-> @@ -5506,69 +5651,17 @@ EXPORT_SYMBOL_GPL(mas_store_prealloc);
->  int mas_preallocate(struct ma_state *mas, void *entry, gfp_t gfp)
->  {
->  	MA_WR_STATE(wr_mas, mas, entry);
-> -	unsigned char node_size;
-> -	int request = 1;
-> -	int ret;
-> -
-> -
-> -	if (unlikely(!mas->index && mas->last == ULONG_MAX))
-> -		goto ask_now;
-> -
-> -	mas_wr_prealloc_setup(&wr_mas);
-> -	/* Root expand */
-> -	if (unlikely(mas_is_none(mas) || mas_is_ptr(mas)))
-> -		goto ask_now;
-> -
-> -	if (unlikely(!mas_wr_walk(&wr_mas))) {
-> -		/* Spanning store, use worst case for now */
-> -		request = 1 + mas_mt_height(mas) * 3;
-> -		goto ask_now;
-> -	}
-> -
-> -	/* At this point, we are at the leaf node that needs to be altered. */
-> -	/* Exact fit, no nodes needed. */
-> -	if (wr_mas.r_min == mas->index && wr_mas.r_max == mas->last)
-> -		return 0;
-> -
-> -	mas_wr_end_piv(&wr_mas);
-> -	node_size = mas_wr_new_end(&wr_mas);
-> -
-> -	/* Slot store, does not require additional nodes */
-> -	if (node_size == mas->end) {
-> -		/* reuse node */
-> -		if (!mt_in_rcu(mas->tree))
-> -			return 0;
-> -		/* shifting boundary */
-> -		if (wr_mas.offset_end - mas->offset == 1)
-> -			return 0;
-> -	}
-> +	int ret = 0;
->  
-> -	if (node_size >= mt_slots[wr_mas.type]) {
-> -		/* Split, worst case for now. */
-> -		request = 1 + mas_mt_height(mas) * 2;
-> -		goto ask_now;
-> +	mas_wr_preallocate(&wr_mas, entry, gfp);
-> +	if (mas_is_err(mas)) {
-> +		ret = xa_err(mas->node);
-> +		mas_destroy(mas);
-> +		mas_reset(mas);
-> +		return ret;
->  	}
->  
-> -	/* New root needs a single node */
-> -	if (unlikely(mte_is_root(mas->node)))
-> -		goto ask_now;
-> -
-> -	/* Potential spanning rebalance collapsing a node, use worst-case */
-> -	if (node_size  - 1 <= mt_min_slots[wr_mas.type])
-> -		request = mas_mt_height(mas) * 2 - 1;
-> -
-> -	/* node store, slot store needs one node */
-> -ask_now:
-> -	mas_node_count_gfp(mas, request, gfp);
->  	mas->mas_flags |= MA_STATE_PREALLOC;
-> -	if (likely(!mas_is_err(mas)))
-> -		return 0;
-> -
-> -	mas_set_alloc_req(mas, 0);
-> -	ret = xa_err(mas->node);
-> -	mas_reset(mas);
-> -	mas_destroy(mas);
-> -	mas_reset(mas);
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(mas_preallocate);
-> @@ -5594,7 +5687,8 @@ void mas_destroy(struct ma_state *mas)
->  	 */
->  	if (mas->mas_flags & MA_STATE_REBALANCE) {
->  		unsigned char end;
-> -
-
-nit: This new line should remain.
-
-> +		if (mas_is_err(mas))
-> +			mas_reset(mas);
->  		mas_start(mas);
->  		mtree_range_walk(mas);
->  		end = mas->end + 1;
-> diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
-> index f1caf4bcf937..1c68ccc1b475 100644
-> --- a/tools/testing/radix-tree/maple.c
-> +++ b/tools/testing/radix-tree/maple.c
-> @@ -36223,6 +36223,40 @@ static noinline void __init check_mtree_dup(struct maple_tree *mt)
->  
->  extern void test_kmem_cache_bulk(void);
->  
-> +
-
-nit: This new line should not be added.
-
-> + /* test to simulate expanding a vma from [0x7fffffffe000, 0x7ffffffff000)
-> +  * to [0x7ffde4ca1000, 0x7ffffffff000) and then shrinking the vma to
-> +  * [0x7ffde4ca1000, 0x7ffde4ca2000)
-> +  */
-> +static inline int check_vma_modification(struct maple_tree *mt)
-> +{
-> +	MA_STATE(mas, mt, 0, 0);
-> +
-> +	mtree_lock(mt);
-> +	/* vma with old start and old end */
-> +	__mas_set_range(&mas, 0x7fffffffe000, 0x7ffffffff000 - 1);
-> +	mas_preallocate(&mas, xa_mk_value(1), GFP_KERNEL);
-> +	mas_store_prealloc(&mas, xa_mk_value(1));
-> +
-> +	/* next write occurs partly in previous range [0, 0x7fffffffe000)*/
-> +	mas_prev_range(&mas, 0);
-> +	/* expand vma to {0x7ffde4ca1000, 0x7ffffffff000) */
-> +	__mas_set_range(&mas, 0x7ffde4ca1000, 0x7ffffffff000 - 1);
-> +	mas_preallocate(&mas, xa_mk_value(1), GFP_KERNEL);
-> +	mas_store_prealloc(&mas, xa_mk_value(1));
-> +
-> +	/* shrink vma to [0x7ffde4ca1000, 7ffde4ca2000) */
-> +	__mas_set_range(&mas, 0x7ffde4ca2000, 0x7ffffffff000 - 1);
-> +	mas_preallocate(&mas, NULL, GFP_KERNEL);
-> +	mas_store_prealloc(&mas, NULL);
-> +	mt_dump(mt, mt_dump_hex);
-> +
-> +	mas_destroy(&mas);
-> +	mtree_unlock(mt);
 > +	return 0;
 > +}
 > +
+> +/**
+> + * ice_devlink_port_set_vf_fn_mac - .port_fn_hw_addr_set devlink
+> +handler
+> + * @port: devlink port structure
+> + * @hw_addr: MAC address of the port
+> + * @hw_addr_len: length of MAC address
+> + * @extack: extended netdev ack structure
+> + *
+> + * Callback for the devlink .port_fn_hw_addr_set operation
+> + * Return: zero on success or an error code on failure.
+> + */
+> +static int ice_devlink_port_set_vf_fn_mac(struct devlink_port *port,
+> +					  const u8 *hw_addr,
+> +					  int hw_addr_len,
+> +					  struct netlink_ext_ack *extack)
 > +
-
-nit: This new line should not be added.
-
->  void farmer_tests(void)
+> +{
+> +	struct devlink_port_attrs *attrs =3D &port->attrs;
+> +	struct devlink_port_pci_vf_attrs *pci_vf;
+> +	struct devlink *devlink =3D port->devlink;
+> +	struct ice_pf *pf;
+> +	u16 vf_id;
+> +
+> +	pf =3D devlink_priv(devlink);
+> +	pci_vf =3D &attrs->pci_vf;
+> +	vf_id =3D pci_vf->vf;
+> +
+> +	return __ice_set_vf_mac(pf, vf_id, hw_addr); }
+> +
+> +static const struct devlink_port_ops ice_devlink_vf_port_ops =3D {
+> +	.port_fn_hw_addr_get =3D ice_devlink_port_get_vf_fn_mac,
+> +	.port_fn_hw_addr_set =3D ice_devlink_port_set_vf_fn_mac, };
+> +
+>  /**
+>   * ice_devlink_create_vf_port - Create a devlink port for this VF
+>   * @vf: the VF to create a port for
+> @@ -407,7 +463,8 @@ int ice_devlink_create_vf_port(struct ice_vf *vf)
+>  	devlink_port_attrs_set(devlink_port, &attrs);
+>  	devlink =3D priv_to_devlink(pf);
+>=20
+> -	err =3D devl_port_register(devlink, devlink_port, vsi->idx);
+> +	err =3D devl_port_register_with_ops(devlink, devlink_port, vsi->idx,
+> +					  &ice_devlink_vf_port_ops);
+>  	if (err) {
+>  		dev_err(dev, "Failed to create devlink port for VF %d, error
+> %d\n",
+>  			vf->vf_id, err);
+> diff --git a/drivers/net/ethernet/intel/ice/ice_sriov.c
+> b/drivers/net/ethernet/intel/ice/ice_sriov.c
+> index 067712f4923f..55ef33208456 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_sriov.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_sriov.c
+> @@ -1416,21 +1416,23 @@ ice_get_vf_cfg(struct net_device *netdev, int vf_=
+id,
+> struct ifla_vf_info *ivi)  }
+>=20
+>  /**
+> - * ice_set_vf_mac
+> - * @netdev: network interface device structure
+> + * __ice_set_vf_mac - program VF MAC address
+> + * @pf: PF to be configure
+>   * @vf_id: VF identifier
+>   * @mac: MAC address
+>   *
+>   * program VF MAC address
+> + * Return: zero on success or an error code on failure
+>   */
+> -int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
+> +int __ice_set_vf_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac)
 >  {
->  	struct maple_node *node;
-> @@ -36230,6 +36264,10 @@ void farmer_tests(void)
->  
->  	mt_dump(&tree, mt_dump_dec);
->  
-> +	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE | MT_FLAGS_LOCK_EXTERN | MT_FLAGS_USE_RCU);
-> +	check_vma_modification(&tree);
-> +	mtree_destroy(&tree);
+> -	struct ice_pf *pf =3D ice_netdev_to_pf(netdev);
+> +	struct device *dev;
+>  	struct ice_vf *vf;
+>  	int ret;
+>=20
+> +	dev =3D ice_pf_to_dev(pf);
+>  	if (is_multicast_ether_addr(mac)) {
+> -		netdev_err(netdev, "%pM not a valid unicast address\n", mac);
+> +		dev_err(dev, "%pM not a valid unicast address\n", mac);
+>  		return -EINVAL;
+>  	}
+>=20
+> @@ -1459,13 +1461,13 @@ int ice_set_vf_mac(struct net_device *netdev, int
+> vf_id, u8 *mac)
+>  	if (is_zero_ether_addr(mac)) {
+>  		/* VF will send VIRTCHNL_OP_ADD_ETH_ADDR message with its
+> MAC */
+>  		vf->pf_set_mac =3D false;
+> -		netdev_info(netdev, "Removing MAC on VF %d. VF driver will be
+> reinitialized\n",
+> -			    vf->vf_id);
+> +		dev_info(dev, "Removing MAC on VF %d. VF driver will be
+> reinitialized\n",
+> +			 vf->vf_id);
+>  	} else {
+>  		/* PF will add MAC rule for the VF */
+>  		vf->pf_set_mac =3D true;
+> -		netdev_info(netdev, "Setting MAC %pM on VF %d. VF driver will
+> be reinitialized\n",
+> -			    mac, vf_id);
+> +		dev_info(dev, "Setting MAC %pM on VF %d. VF driver will be
+> reinitialized\n",
+> +			 mac, vf_id);
+>  	}
+>=20
+>  	ice_reset_vf(vf, ICE_VF_RESET_NOTIFY); @@ -1476,6 +1478,20 @@ int
+> ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
+>  	return ret;
+>  }
+>=20
+> +/**
+> + * ice_set_vf_mac - .ndo_set_vf_mac handler
+> + * @netdev: network interface device structure
+> + * @vf_id: VF identifier
+> + * @mac: MAC address
+> + *
+> + * program VF MAC address
+> + * Return: zero on success or an error code on failure  */ int
+> +ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac) {
+> +	return __ice_set_vf_mac(ice_netdev_to_pf(netdev), vf_id, mac); }
 > +
->  	tree.ma_root = xa_mk_value(0);
->  	mt_dump(&tree, mt_dump_dec);
->  
-> -- 
-> 2.45.2
-> 
+>  /**
+>   * ice_set_vf_trust
+>   * @netdev: network interface device structure diff --git
+> a/drivers/net/ethernet/intel/ice/ice_sriov.h
+> b/drivers/net/ethernet/intel/ice/ice_sriov.h
+> index 8f22313474d6..96549ca5c52c 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_sriov.h
+> +++ b/drivers/net/ethernet/intel/ice/ice_sriov.h
+> @@ -28,6 +28,7 @@
+>  #ifdef CONFIG_PCI_IOV
+>  void ice_process_vflr_event(struct ice_pf *pf);  int ice_sriov_configure=
+(struct
+> pci_dev *pdev, int num_vfs);
+> +int __ice_set_vf_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac);
+>  int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac);  int
+> ice_get_vf_cfg(struct net_device *netdev, int vf_id, struct ifla_vf_info =
+*ivi); @@ -
+> 80,6 +81,13 @@ ice_sriov_configure(struct pci_dev __always_unused *pdev,
+>  	return -EOPNOTSUPP;
+>  }
+>=20
+> +static inline int
+> +__ice_set_vf_mac(struct ice_pf __always_unused *pf,
+> +		 u16 __always_unused vf_id, const u8 __always_unused *mac) {
+> +	return -EOPNOTSUPP;
+> +}
+> +
+>  static inline int
+>  ice_set_vf_mac(struct net_device __always_unused *netdev,
+>  	       int __always_unused vf_id, u8 __always_unused *mac)
+> --
+> 2.39.3 (Apple Git-146)
+
+
+Tested-by: Rafal Romanowski <rafal.romanowski@intel.com>
+
+
 
