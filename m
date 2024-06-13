@@ -1,111 +1,121 @@
-Return-Path: <linux-kernel+bounces-213450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81C9907584
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:43:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3138907585
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 440B6281E04
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:43:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 660F71F22D76
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303A3146019;
-	Thu, 13 Jun 2024 14:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917311411D6;
+	Thu, 13 Jun 2024 14:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8px7EUm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gb72+7xO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B081411D6;
-	Thu, 13 Jun 2024 14:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D545D399;
+	Thu, 13 Jun 2024 14:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718289816; cv=none; b=NnFTQMn3LXfyF60Bh/eMSesf1fBs7cgYVK1uk/F9krd1FN3E07BQDNadsSH7hYbfGnTVduH969xDvQ+SUwfOEPb3aDlIQ5Zd/Zu7A4BpYkvOgV02pSQzaeLtmlq69h/B+43i6JnOue/okhU3sqEudgOgCiRaaCc7vKLgw1iV2PA=
+	t=1718289821; cv=none; b=PS1oML7q8f8unvNgLHE+TkqkyH8r9ovoHmO6Gj2aYmhPkqbpZDn69LNSE6Mg8vnk19aIVjEB32ZBUdqgw7sf/LDIEUSZrg6YP4w7r4kmCyATV8VQv+TAGc0ThCaExJaNVaYSxMvPyDweauVVh3nj81/+VIuw0uxT/nuknSqpKWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718289816; c=relaxed/simple;
-	bh=ENTr3coAsQURUsjgzm57k8qmYmYqJPesZfILsIqW9hs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G4OxAm4391w+2VJPRuLw1sh+sR/viHEE0ZY4CZvqq5vqjIkldG5l2l38NNuI6YDopq5IgeVudVw/yGykdoVPbDA9qneSlquRsXnEThNOxmUd8d7ZOX1FB9oG8QIfUrOIHui/GpsMm8aMwUUIDR63FDGiVJnojYHpaP4xC+N3jO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8px7EUm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE122C32786;
-	Thu, 13 Jun 2024 14:43:35 +0000 (UTC)
+	s=arc-20240116; t=1718289821; c=relaxed/simple;
+	bh=U2lp9FtQVPZjq8CdUltsKztb3aNzK34AI2dW7bwkUFA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=FLZN/ANtZ4GvXfDbmaQ8kVYWeIUEFe7surlh/gG2EdTgktttkM0zH0Kkbdjnd47BoI2eJqfQ8GvfSObuQ/2OuxLpEvyaID6QTDf43klqbrmy0UsxWIiUgePzeg623tTsTBQY/XUMOHu/NLB6d4TGFGdrMnZNAGlx5/m4ekomCBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gb72+7xO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E64C2BBFC;
+	Thu, 13 Jun 2024 14:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718289815;
-	bh=ENTr3coAsQURUsjgzm57k8qmYmYqJPesZfILsIqW9hs=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=k8px7EUmjvL9L3g1sw13b1cWKwG9k2bUEtNZ3rRAi96pkn27aWBb44BxZK4vA1GHZ
-	 BYd//uvON2++hb/5T6rd0VVE7Pw6AR45lCrbinXcISP/w2GBN8i30xn92uBDIjUB/7
-	 TxzBxp9eJUxB1UDbT8gZEA+JC+qQNXV8+Q/KIMuos3QW0phwzJRd5s7+BJiMl6xLAF
-	 1m61ir9x7Hfmm8gs57p/iftOVqB/KS32IYPP7FuXP9DznI3eVvYPb5Kyp4h3K15yws
-	 s/8w9p6g0nni+YtNvy9Y/6TZejvXV5YkUfnjKhHUfmAGmwMytbAK2l+LXz3VLO79mO
-	 vyPxyQ91dynkg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 7A371CE09E0; Thu, 13 Jun 2024 07:43:35 -0700 (PDT)
-Date: Thu, 13 Jun 2024 07:43:35 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Nilay Shroff <nilay@linux.ibm.com>, l@kbusch-mbp.dhcp.thefacebook.com,
-	Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	hch@lst.de, sagi@grimberg.me, davidgow@google.com,
-	akpm@linux-foundation.org, venkat88@linux.vnet.ibm.com
-Subject: Re: [PATCH 1/2] list: introduce a new cutting helper
-Message-ID: <31eb40f9-d68d-4348-b1fd-3cf057939297@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240612155135.3060667-1-kbusch@meta.com>
- <f0e4c51c-8227-4f5c-876f-38fbb4a0e1bf@linux.ibm.com>
- <ZmrscxG51gFRDVlM@kbusch-mbp>
- <c475f0d8-3bc9-4d65-8fce-586f4b75b4fc@linux.ibm.com>
- <ZmsD_HDLBQAqOOU3@kbusch-mbp.dhcp.thefacebook.com>
+	s=k20201202; t=1718289821;
+	bh=U2lp9FtQVPZjq8CdUltsKztb3aNzK34AI2dW7bwkUFA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Gb72+7xOsUioNvlfIMYnfYpFkYPIAFwYVTWDro3Xhj9C3l6dKw1P+l+FEUMNJVTxP
+	 4cCQ6ja8fXMPXI5Ws7i7Bv41+TO1UKMEb27xGC+6xHAOJEolkmVUz13zHajOLyaGcI
+	 znLtHPBFvHtTC/XnwYa+5XewLAEzrBd7JFDu01z8hKys+lBk/h5Tz9edw/sAS6bryR
+	 QzkyIyvbGLK6nwgv0rL7HCLaZ+fCY1Th30sTehEI/YSh3OzULykG9aFvsqcPT7o8sY
+	 00e/ty+6MfKpi0cFYwYyJSCS+tIZSqi5JyPpeNB4YyptYuPsxcDdSB9CIukKnoFjUR
+	 58crVjJqaQq7g==
+Date: Thu, 13 Jun 2024 23:43:37 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Naresh Kamboju
+ <naresh.kamboju@linaro.org>
+Subject: Re: [PATCH] function_graph: Add READ_ONCE() when accessing
+ fgraph_array[]
+Message-Id: <20240613234337.cdd71759ab3d93d22eef7cf1@kernel.org>
+In-Reply-To: <20240613095223.1f07e3a4@rorschach.local.home>
+References: <20240613095223.1f07e3a4@rorschach.local.home>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmsD_HDLBQAqOOU3@kbusch-mbp.dhcp.thefacebook.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 08:36:44AM -0600, Keith Busch wrote:
-> On Thu, Jun 13, 2024 at 07:11:52PM +0530, Nilay Shroff wrote:
-> > On 6/13/24 18:26, Keith Busch wrote:
-> > > But that's not the problem for the rcu case. It's the last line that's
-> > > the problem:
-> > > 
-> > >  	list->prev->next = list;
-> > > 
-> > > We can't change forward pointers for any element being detached from
-> > > @head because a reader iterating the list may see that new pointer value
-> > > and end up in the wrong list, breaking iteration. A synchronize rcu
-> > > needs to happen before forward pointers can be mucked with, so it still
-> > > needs to be done in two steps. Oh bother...
-> > 
-> > Agree and probably we may break it down using this API:
-> > static inline void list_cut_rcu(struct list_head *list,
-> >  		struct list_head *head, struct list_head *entry, 
-> > 		void (*sync)(void))
-> > {
-> >  	list->next = entry;
-> >  	list->prev = head->prev;
-> > 	__list_del(entry->prev, head);
-> > 	sync();
-> >  	entry->prev = list;
-> >  	list->prev->next = list;
-> > }
+On Thu, 13 Jun 2024 09:52:23 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 > 
-> Yes, that's the pattern, but I think we need an _srcu() variant: the
-> "sync" callback needs to know the srcu_struct.
+> In function_graph_enter() there's a loop that looks at fgraph_array[]
+> elements which are fgraph_ops. It first tests if it is a fgraph_stub op,
+> and if so skips it, as that's just there as a place holder. Then it checks
+> the fgraph_ops filters to see if the ops wants to trace the current
+> function.
+> 
+> But if the compiler reloads the fgraph_array[] after the check against
+> fgraph_stub, it could race with the fgraph_array[] being updated with the
+> fgraph_stub. That would cause the stub to be processed. But the stub has a
+> null "func_hash" field which will cause a NULL pointer dereference.
+> 
+> Add a READ_ONCE() so that the gops that is compared against the
+> fgraph_stub is also the gops that is processed later.
+> 
+> Link: https://lore.kernel.org/all/CA+G9fYsSVJQZH=nM=1cjTc94PgSnMF9y65BnOv6XSoCG_b6wmw@mail.gmail.com/
+> 
+> Fixes: cc60ee813b503 ("function_graph: Use static_call and branch to optimize entry function")
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Just make a helper function like this:
+Looks good to me.
 
-	static void my_synchronize_srcu(void)
-	{
-		synchronize_srcu(&my_srcu_struct);
-	}
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Or am I missing something subtle here?
+Thanks.
 
-							Thanx, Paul
+> ---
+>  kernel/trace/fgraph.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index 8317d1a7f43a..fc205ad167a9 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -641,7 +641,7 @@ int function_graph_enter(unsigned long ret, unsigned long func,
+>  	{
+>  		for_each_set_bit(i, &fgraph_array_bitmask,
+>  					 sizeof(fgraph_array_bitmask) * BITS_PER_BYTE) {
+> -			struct fgraph_ops *gops = fgraph_array[i];
+> +			struct fgraph_ops *gops = READ_ONCE(fgraph_array[i]);
+>  			int save_curr_ret_stack;
+>  
+>  			if (gops == &fgraph_stub)
+> -- 
+> 2.43.0
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
