@@ -1,136 +1,479 @@
-Return-Path: <linux-kernel+bounces-214042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1840907E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:57:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86849907E64
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACF611C2269A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 144E3284F35
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ED814A62B;
-	Thu, 13 Jun 2024 21:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0007314B06A;
+	Thu, 13 Jun 2024 21:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3HKDcdv"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LeLfrc4r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B1A145A11;
-	Thu, 13 Jun 2024 21:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58645A4FD;
+	Thu, 13 Jun 2024 21:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718315853; cv=none; b=ZKgvSFHwbKZpUmHkM6hgN/IfQ9DLRqLWc6sA0OZs62PredSn9RNXf2n9uuoJkaWbEREBNeFje8qBUj7/T5UsdVA9cEAgWTGT4we7ORRuZEFMXiO6e3xaEtre7URJ+V8aox6h7UakBQAaPbBc9KQlPMqSIhiUhBs1oaLPHWtqXXw=
+	t=1718315865; cv=none; b=c3pX2Jl06IKIFkOB4yXDX6Yt6WBLk9PdIf+w3fK5D0NLzbnpj7zh5rjdZqZmUHQvXrHKrRFTojMWUhSGqSvNCpJVIV2XVH8AosUE4LpZ6K/mKt7gb9csZddNxrJcsBlv9dK1UiMx/+Z9cYsEzRtSS62WXyteEPkm/kI10/FRTMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718315853; c=relaxed/simple;
-	bh=3V/7338jp67od7cu+kOPTYkCysA1/BAci9WSQHsUlEk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rgl7Da8/ntinni5qb6fb7S5CxZQ08J0w2eA3WDV90xZ5/csbKrnUHrbCBfNHAJP8EG625SQK+FUWfMj30aW3Y6iTYc5r3gMtFXGFkVlxiaXbtQhO4Ia4dT1xAxiheNk408rTM+6eNM2XawdsKgcAWlpKQHNpohRibi6KJgGfQZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h3HKDcdv; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57c5c51cb89so1673009a12.2;
-        Thu, 13 Jun 2024 14:57:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718315850; x=1718920650; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Srockrd4TWAIr2NvGJ4jjCz5NsXjkOxmfb8MBOetxt8=;
-        b=h3HKDcdvp5sgoDWlG8+P3qTsZalDsFJ7xSCgSgx0eFbR4klehltAS+6MXEihyuyqeC
-         HSkE/6Cm92treK6k4nFI85ddzG8bVpBlf1yml6dn9LrTq7MaEUg8si+UK0OzCgXkxUQB
-         4qwFeV+gQRwRi78/2QXuljUlsuffh97ckmbCKN4VAYHRx4T/vRok2wChoVqoASGI++CI
-         beUi5kuijqza1hzKrUQije4yvXsaZl4wyYs9F2rdAm9vhr36VRP1UmymfahTD2WAxEju
-         pllhQSOKaNZ/Zuj7XmulJuAcR73ra0JQ6/AZhUltEcuZ+6kTG+qgiqLLR8XSn3SALeIL
-         Igrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718315850; x=1718920650;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Srockrd4TWAIr2NvGJ4jjCz5NsXjkOxmfb8MBOetxt8=;
-        b=mXdfIO+LMXmIl364dEN3Vluk5IGosOG7GiLLx3MpK7G0N3kR3OYrxPs+82uK+Fldg3
-         UytiE8xizeI0lTwSg22ltcui8KWUMDLN4Xy1e6iqdmEP3Tp/U29WW37K5FQQogllsuBH
-         TOpX1MMHl9d4M+OdxCm9geIfirCupMPk9at8ehOEQsYSQTBbjkDfQ6/66qeSjfRNiZVH
-         TQlyiijtVKznKDjAS6tsqh2xrdMYanbQobKdQf64eqx/fiZHz9LBhSQ3Gq6PYfMBTCx1
-         4fencZYkR+nJIz5pCSNURpjvL+8YNxpE8zlBeybcQhz7gxoIiq84KtM3ygSMFb2VHkcJ
-         z6vA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRheQ5VMx1/qNyVmK5pbmqnL5t5mB2tEIoL2zQUo/ehKgK1zfEpzIK14+VZOlr3EaQiZ8+bkGATR/t6tQyZ9D7g2pyXA+Dr12DhMr9
-X-Gm-Message-State: AOJu0Ywt+/8qFZH3iPFxalIxp3qWcEVsL6rPJLT9UdpxPp9vM4bKDGES
-	LU2wKdUAxHXBc5jvFyc6QhGmwyr6V4DLninvpeeVeJUu6EnVkOlb
-X-Google-Smtp-Source: AGHT+IHn01AdUmN6xxiNDM0C/T273A07MvSQ7Sl6A8jAy9uIOMLs9C09dMtNjHL6xPZ4k0t8S/nujQ==
-X-Received: by 2002:a17:907:9689:b0:a68:fcc9:6c1c with SMTP id a640c23a62f3a-a6f60bdc4d3mr86099466b.0.1718315849519;
-        Thu, 13 Jun 2024 14:57:29 -0700 (PDT)
-Received: from [127.0.1.1] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f416dfsm112391666b.164.2024.06.13.14.57.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 14:57:29 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 13 Jun 2024 23:57:25 +0200
-Subject: [PATCH] hwmon: (pmbus/mp9941) Add missing bitfield header
+	s=arc-20240116; t=1718315865; c=relaxed/simple;
+	bh=MFWktKXGuccjs7bY6+gTdl9Pdrqwh0eA89XN/LyB+Y8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=M/BYaSnUsoTNAKFsy4N+7aUN7ddE5HLmNFE+7Tu0RKqgrTZ63yzz0YvzhCHGc4R+YFfbNWAPThXQmpszX+HyCl7TPH5pg3e3TxTkZ7HMH2Z8wQ3HpqbbiFw1e388VoXYpPpEH9Fiexak4A7Os8HRqLEBCeiDNVpFNo3kNfEPp+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LeLfrc4r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC137C2BBFC;
+	Thu, 13 Jun 2024 21:57:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718315865;
+	bh=MFWktKXGuccjs7bY6+gTdl9Pdrqwh0eA89XN/LyB+Y8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=LeLfrc4rxDq11v4JskN32UcgMrGmRK5xjKIxeIYKBfNnHe8Ins7JiGqxxAMJdppyl
+	 FrQatQ0mLLcJPdUO00Ho40YmGxPbEWnKDM2YXkgKyLXZaRZIXNPxvw7VB7ComeBtk3
+	 5jGzaPrIBRLZzxOoMtHvBYuS5IE+DJisKPD8rB0uVbdQ6ddz9IgbxArnQa/8uEGP0O
+	 SVE5CzpaYG08IjvTMJ4fsXsteeBwFqdOZWMc+4DbwhL4ACdkfwM2918DcmsBgy3AZS
+	 hWPYEdiJ/xaY4iqQ11+E8ijGOF6/QMxiXlAGwd9eOHk1D7gyHCAAaBXzcXoRoJATSI
+	 CNkuWHlKkXUEA==
+Date: Thu, 13 Jun 2024 16:57:43 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Sam Ravnborg <sam@ravnborg.org>, dakr@redhat.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v9 00/13] Make PCI's devres API more consistent
+Message-ID: <20240613215743.GA1085850@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240613-mp9941_bitfield_h-v1-1-681afa8aa498@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAERra2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDM0Nj3dwCS0sTw/ikzJK0zNSclPgMXVPL5OREC+PEVCNjYyWgvoKi1LT
- MCrCZ0bG1tQB+xX3IYwAAAA==
-To: Noah Wang <noahwang.wang@outlook.com>, Jean Delvare <jdelvare@suse.com>, 
- Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel test robot <lkp@intel.com>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718315848; l=1389;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=3V/7338jp67od7cu+kOPTYkCysA1/BAci9WSQHsUlEk=;
- b=r5ZC/uW7Wh1ZE6r0sgrh6jGJutNNmQuY0fUkhsODtov8buhDr9ZHbh/bI4ZJ3bfw/NHhBkouW
- 8C+msojM9ctASfUBCi4KL4dZZdw9vzE0DL9sScPCXEsR99a+p1Mdqms
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240613115032.29098-1-pstanner@redhat.com>
 
-The recently added driver for the MP99441 is missing the bitfield
-header. Without it, gcc fails to find FIELD_PREP and FIELD_GET.
+On Thu, Jun 13, 2024 at 01:50:13PM +0200, Philipp Stanner wrote:
+> Changes in v9:
+>   - Remove forgotten dead code ('enabled' bit in struct pci_dev) in
+>     patch No.8 ("Move pinned status bit...")
+>   - Rework patch No.3:
+>       - Change title from "Reimplement plural devres functions"
+>         to "Add partial-BAR devres support".
+>       - Drop excessive details about the general cleanup from the commit
+> 	message. Only motivate why this patch's new infrastructure is
+> 	necessary.
+>   - Fix some minor spelling issues (s/pci/PCI ...)
+> 
+> Changes in v8:
+>   - Rebase the series on the already merged patches which were slightly
+>     modified by Bjorn Helgaas.
+>   - Reword the pci_intx() commit message so it clearly states it's about
+>     reworking pci_intx().
+>   - Move the removal of find_pci_dr() from patch "Remove legacy
+>     pcim_release()" to patch "Give pci_intx() its own devres callback"
+>     since this later patch already removed all calls to that function.
+>   - In patch "Give pci_intx() its own devres callback": use
+>     pci_is_enabled() (and, thus, the enabled_cnt in struct pci_dev)
+>     instead of a separate enabled field. (Bjorn)
+> 
+> Changes in v7:
+>   - Split the entire series in smaller, more atomic chunks / patches
+>     (Bjorn)
+>   - Remove functions (such as pcim_iomap_region_range()) that do not yet
+>     have a user (Bjorn)
+>   - Don't export interfaces publicly anymore, except for
+>     pcim_iomap_range(), needed by vboxvideo (Bjorn)
+>   - Mention the actual (vboxvideo) bug in "PCI: Warn users..." commit
+>     (Bjorn)
+>   - Drop docstring warnings on PCI-internal functions (Bjorn)
+>   - Rework docstring warnings
+>   - Fix spelling in a few places. Rewrapp paragraphs (Bjorn)
+> 
+> Changes in v6:
+>   - Restructure the cleanup in pcim_iomap_regions_request_all() so that
+>     it doesn't trigger a (false positive) test robot warning. No
+>     behavior change intended. (Dan Carpenter)
+> 
+> Changes in v5:
+>   - Add Hans's Reviewed-by to vboxvideo patch (Hans de Goede)
+>   - Remove stable-kernel from CC in vboxvideo patch (Hans de Goede)
+> 
+> Changes in v4:
+>   - Rebase against linux-next
+> 
+> Changes in v3:
+>   - Use the term "PCI devres API" at some forgotten places.
+>   - Fix more grammar errors in patch #3.
+>   - Remove the comment advising to call (the outdated) pcim_intx() in pci.c
+>   - Rename __pcim_request_region_range() flags-field "exclusive" to
+>     "req_flags", since this is what the int actually represents.
+>   - Remove the call to pcim_region_request() from patch #10. (Hans)
+> 
+> Changes in v2:
+>   - Make commit head lines congruent with PCI's style (Bjorn)
+>   - Add missing error checks for devm_add_action(). (Andy)
+>   - Repair the "Returns: " marks for docu generation (Andy)
+>   - Initialize the addr_devres struct with memset(). (Andy)
+>   - Make pcim_intx() a PCI-internal function so that new drivers won't
+>     be encouraged to use the outdated pci_intx() mechanism.
+>     (Andy / Philipp)
+>   - Fix grammar and spelling (Bjorn)
+>   - Be more precise on why pcim_iomap_table() is problematic (Bjorn)
+>   - Provide the actual structs' and functions' names in the commit
+>     messages (Bjorn)
+>   - Remove redundant variable initializers (Andy)
+>   - Regroup PM bitfield members in struct pci_dev (Andy)
+>   - Make pcim_intx() visible only for the PCI subsystem so that new    
+>     drivers won't use this outdated API (Andy, Myself)
+>   - Add a NOTE to pcim_iomap() to warn about this function being the one
+>     exception that does just return NULL.
+>   - Consistently use the term "PCI devres API"; also in Patch #10 (Bjorn)
+> 
+> 
+> ¡Hola!
+> 
+> PCI's devres API suffers several weaknesses:
+> 
+> 1. There are functions prefixed with pcim_. Those are always managed
+>    counterparts to never-managed functions prefixed with pci_ – or so one
+>    would like to think. There are some apparently unmanaged functions
+>    (all region-request / release functions, and pci_intx()) which
+>    suddenly become managed once the user has initialized the device with
+>    pcim_enable_device() instead of pci_enable_device(). This "sometimes
+>    yes, sometimes no" nature of those functions is confusing and
+>    therefore bug-provoking. In fact, it has already caused a bug in DRM.
+>    The last patch in this series fixes that bug.
+> 2. iomappings: Instead of giving each mapping its own callback, the
+>    existing API uses a statically allocated struct tracking one mapping
+>    per bar. This is not extensible. Especially, you can't create
+>    _ranged_ managed mappings that way, which many drivers want.
+> 3. Managed request functions only exist as "plural versions" with a
+>    bit-mask as a parameter. That's quite over-engineered considering
+>    that each user only ever mapps one, maybe two bars.
+> 
+> This series:
+> - add a set of new "singular" devres functions that use devres the way
+>   its intended, with one callback per resource.
+> - deprecates the existing iomap-table mechanism.
+> - deprecates the hybrid nature of pci_ functions.
+> - preserves backwards compatibility so that drivers using the existing
+>   API won't notice any changes.
+> - adds documentation, especially some warning users about the
+>   complicated nature of PCI's devres.
+> 
+> 
+> Note that this series is based on my "unify pci_iounmap"-series from a
+> few weeks ago. [1]
+> 
+> I tested this on a x86 VM with a simple pci test-device with two
+> regions. Operates and reserves resources as intended on my system.
+> Kasan and kmemleak didn't find any problems.
+> 
+> I believe this series cleans the API up as much as possible without
+> having to port all existing drivers to the new API. Especially, I think
+> that this implementation is easy to extend if the need for new managed
+> functions arises :)
+> 
+> Greetings,
+> P.
+> 
+> Philipp Stanner (13):
+>   PCI: Add and use devres helper for bit masks
+>   PCI: Add devres helpers for iomap table
+>   PCI: Add partial-BAR devres support
+>   PCI: Deprecate two surplus devres functions
+>   PCI: Make devres region requests consistent
+>   PCI: Warn users about complicated devres nature
+>   PCI: Remove enabled status bit from pci_devres
+>   PCI: Move pinned status bit to struct pci_dev
+>   PCI: Give pcim_set_mwi() its own devres callback
+>   PCI: Give pci_intx() its own devres callback
+>   PCI: Remove legacy pcim_release()
+>   PCI: Add pcim_iomap_range()
+>   drm/vboxvideo: fix mapping leaks
+> 
+>  drivers/gpu/drm/vboxvideo/vbox_main.c |  20 +-
+>  drivers/pci/devres.c                  | 903 +++++++++++++++++++++-----
+>  drivers/pci/iomap.c                   |  16 +
+>  drivers/pci/pci.c                     |  94 ++-
+>  drivers/pci/pci.h                     |  23 +-
+>  include/linux/pci.h                   |   5 +-
+>  6 files changed, 858 insertions(+), 203 deletions(-)
 
-Add the missing <linux/bitfield.h>
+This is on pci/devres with some commit log rework and the following
+diffs.  I think the bar short/int thing is the only actual code
+change.  Happy to squash in any other updates or things I botched.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Fixes: c16fa6967781 ("hwmon: add MP9941 driver")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-This patch fixes the errors reported by the kernel test robot about
-the MP9941 in the hwmon subsystem. It does not close the error report
-from the BUILD REGRESSION 6906a84c482f098d31486df8dc98cead21cce2d0,
-that includes, among others, this issue. The report attached to the
-mentioned build regression actually covers a different bug.
-Hence why no Closes: tag was added.
----
- drivers/hwmon/pmbus/mp9941.c | 1 +
- 1 file changed, 1 insertion(+)
+Planned for v6.11.
 
-diff --git a/drivers/hwmon/pmbus/mp9941.c b/drivers/hwmon/pmbus/mp9941.c
-index b7b0eda5b552..475221b738f5 100644
---- a/drivers/hwmon/pmbus/mp9941.c
-+++ b/drivers/hwmon/pmbus/mp9941.c
-@@ -3,6 +3,7 @@
-  * Hardware monitoring driver for MPS Multi-phase Digital VR Controllers(MP9941)
-  */
+diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+index 2f0379a4e58f..d9b78a0d903a 100644
+--- a/drivers/pci/devres.c
++++ b/drivers/pci/devres.c
+@@ -11,7 +11,7 @@
+  * 1. It is very strongly tied to the statically allocated mapping table in
+  *    struct pcim_iomap_devres below. This is mostly solved in the sense of the
+  *    pcim_ functions in this file providing things like ranged mapping by
+- *    bypassing this table, wheras the functions that were present in the old
++ *    bypassing this table, whereas the functions that were present in the old
+  *    API still enter the mapping addresses into the table for users of the old
+  *    API.
+  *
+@@ -25,10 +25,11 @@
+  *    Consequently, in the new API, region requests performed by the pcim_
+  *    functions are automatically cleaned up through the devres callback
+  *    pcim_addr_resource_release().
+- *    Users utilizing pcim_enable_device() + pci_*region*() are redirected in
++ *
++ *    Users of pcim_enable_device() + pci_*region*() are redirected in
+  *    pci.c to the managed functions here in this file. This isn't exactly
+- *    perfect, but the only alternative way would be to port ALL drivers using
+- *    said combination to pcim_ functions.
++ *    perfect, but the only alternative way would be to port ALL drivers
++ *    using said combination to pcim_ functions.
+  *
+  * TODO:
+  * Remove the legacy table entirely once all calls to pcim_iomap_table() in
+@@ -42,7 +43,7 @@ struct pcim_iomap_devres {
+ 	void __iomem *table[PCI_STD_NUM_BARS];
+ };
  
-+#include <linux/bitfield.h>
- #include <linux/i2c.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
-
----
-base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
-change-id: 20240613-mp9941_bitfield_h-59cca83ae233
-
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+-/* Used to restore the old intx state on driver detach. */
++/* Used to restore the old INTx state on driver detach. */
+ struct pcim_intx_devres {
+ 	int orig_intx;
+ };
+@@ -77,7 +78,7 @@ struct pcim_addr_devres {
+ 	void __iomem *baseaddr;
+ 	unsigned long offset;
+ 	unsigned long len;
+-	short bar;
++	int bar;
+ };
+ 
+ static inline void pcim_addr_devres_clear(struct pcim_addr_devres *res)
+@@ -108,8 +109,9 @@ static inline void pcim_addr_devres_clear(struct pcim_addr_devres *res)
+  * Request a range within a device's PCI BAR.  Sanity check the input.
+  */
+ static int __pcim_request_region_range(struct pci_dev *pdev, int bar,
+-		unsigned long offset, unsigned long maxlen,
+-		const char *name, int req_flags)
++				       unsigned long offset,
++				       unsigned long maxlen,
++				       const char *name, int req_flags)
+ {
+ 	resource_size_t start = pci_resource_start(pdev, bar);
+ 	resource_size_t len = pci_resource_len(pdev, bar);
+@@ -118,7 +120,7 @@ static int __pcim_request_region_range(struct pci_dev *pdev, int bar,
+ 	if (start == 0 || len == 0) /* Unused BAR. */
+ 		return 0;
+ 	if (len <= offset)
+-		return  -EINVAL;
++		return -EINVAL;
+ 
+ 	start += offset;
+ 	len -= offset;
+@@ -141,7 +143,8 @@ static int __pcim_request_region_range(struct pci_dev *pdev, int bar,
+ }
+ 
+ static void __pcim_release_region_range(struct pci_dev *pdev, int bar,
+-		unsigned long offset, unsigned long maxlen)
++					unsigned long offset,
++					unsigned long maxlen)
+ {
+ 	resource_size_t start = pci_resource_start(pdev, bar);
+ 	resource_size_t len = pci_resource_len(pdev, bar);
+@@ -166,7 +169,7 @@ static void __pcim_release_region_range(struct pci_dev *pdev, int bar,
+ }
+ 
+ static int __pcim_request_region(struct pci_dev *pdev, int bar,
+-		const char *name, int flags)
++				 const char *name, int flags)
+ {
+ 	unsigned long offset = 0;
+ 	unsigned long len = pci_resource_len(pdev, bar);
+@@ -208,7 +211,7 @@ static struct pcim_addr_devres *pcim_addr_devres_alloc(struct pci_dev *pdev)
+ 	struct pcim_addr_devres *res;
+ 
+ 	res = devres_alloc_node(pcim_addr_resource_release, sizeof(*res),
+-			GFP_KERNEL, dev_to_node(&pdev->dev));
++				GFP_KERNEL, dev_to_node(&pdev->dev));
+ 	if (res)
+ 		pcim_addr_devres_clear(res);
+ 	return res;
+@@ -223,7 +226,8 @@ static inline void pcim_addr_devres_free(struct pcim_addr_devres *res)
+ /*
+  * Used by devres to identify a pcim_addr_devres.
+  */
+-static int pcim_addr_resources_match(struct device *dev, void *a_raw, void *b_raw)
++static int pcim_addr_resources_match(struct device *dev,
++				     void *a_raw, void *b_raw)
+ {
+ 	struct pcim_addr_devres *a, *b;
+ 
+@@ -402,7 +406,6 @@ int pcim_set_mwi(struct pci_dev *pdev)
+ }
+ EXPORT_SYMBOL(pcim_set_mwi);
+ 
+-
+ static inline bool mask_contains_bar(int mask, int bar)
+ {
+ 	return mask & BIT(bar);
+@@ -438,8 +441,8 @@ static struct pcim_intx_devres *get_or_create_intx_devres(struct device *dev)
+  *
+  * Returns: 0 on success, -ENOMEM on error.
+  *
+- * Enables/disables PCI INTx for device @pdev.
+- * Restores the original state on driver detach.
++ * Enable/disable PCI INTx for device @pdev.
++ * Restore the original state on driver detach.
+  */
+ int pcim_intx(struct pci_dev *pdev, int enable)
+ {
+@@ -492,7 +495,7 @@ int pcim_enable_device(struct pci_dev *pdev)
+ 
+ 	/*
+ 	 * We prefer removing the action in case of an error over
+-	 * devm_add_action_or_reset() because the later could theoretically be
++	 * devm_add_action_or_reset() because the latter could theoretically be
+ 	 * disturbed by users having pinned the device too soon.
+ 	 */
+ 	ret = pci_enable_device(pdev);
+@@ -618,7 +621,7 @@ static void pcim_remove_mapping_from_legacy_table(struct pci_dev *pdev,
+  * The same as pcim_remove_mapping_from_legacy_table(), but identifies the
+  * mapping by its BAR index.
+  */
+-static void pcim_remove_bar_from_legacy_table(struct pci_dev *pdev, short bar)
++static void pcim_remove_bar_from_legacy_table(struct pci_dev *pdev, int bar)
+ {
+ 	void __iomem **legacy_iomap_table;
+ 
+@@ -783,7 +786,7 @@ static void pcim_iounmap_region(struct pci_dev *pdev, int bar)
+ int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char *name)
+ {
+ 	int ret;
+-	short bar;
++	int bar;
+ 	void __iomem *mapping;
+ 
+ 	for (bar = 0; bar < DEVICE_COUNT_RESOURCE; bar++) {
+@@ -813,7 +816,7 @@ int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char *name)
+ EXPORT_SYMBOL(pcim_iomap_regions);
+ 
+ static int _pcim_request_region(struct pci_dev *pdev, int bar, const char *name,
+-		int request_flags)
++				int request_flags)
+ {
+ 	int ret;
+ 	struct pcim_addr_devres *res;
+@@ -903,7 +906,7 @@ void pcim_release_region(struct pci_dev *pdev, int bar)
+  */
+ static void pcim_release_all_regions(struct pci_dev *pdev)
+ {
+-	short bar;
++	int bar;
+ 
+ 	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
+ 		pcim_release_region(pdev, bar);
+@@ -923,7 +926,7 @@ static void pcim_release_all_regions(struct pci_dev *pdev)
+ static int pcim_request_all_regions(struct pci_dev *pdev, const char *name)
+ {
+ 	int ret;
+-	short bar;
++	int bar;
+ 
+ 	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
+ 		ret = pcim_request_region(pdev, bar, name);
+@@ -960,7 +963,7 @@ static int pcim_request_all_regions(struct pci_dev *pdev, const char *name)
+ int pcim_iomap_regions_request_all(struct pci_dev *pdev, int mask,
+ 				   const char *name)
+ {
+-	short bar;
++	int bar;
+ 	int ret;
+ 	void __iomem **legacy_iomap_table;
+ 
+@@ -1004,14 +1007,14 @@ EXPORT_SYMBOL(pcim_iomap_regions_request_all);
+  */
+ void pcim_iounmap_regions(struct pci_dev *pdev, int mask)
+ {
+-	short bar;
++	int i;
+ 
+-	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
+-		if (!mask_contains_bar(mask, bar))
++	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
++		if (!mask_contains_bar(mask, i))
+ 			continue;
+ 
+-		pcim_iounmap_region(pdev, bar);
+-		pcim_remove_bar_from_legacy_table(pdev, bar);
++		pcim_iounmap_region(pdev, i);
++		pcim_remove_bar_from_legacy_table(pdev, i);
+ 	}
+ }
+ EXPORT_SYMBOL(pcim_iounmap_regions);
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 1b4832a60047..807f8be043cd 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -4073,6 +4073,11 @@ EXPORT_SYMBOL(pci_release_regions);
+  *
+  * Returns 0 on success, or %EBUSY on error.  A warning
+  * message is also printed on failure.
++ *
++ * NOTE:
++ * This is a "hybrid" function: It's normally unmanaged, but becomes managed
++ * when pcim_enable_device() has been called in advance. This hybrid feature is
++ * DEPRECATED! If you want managed cleanup, use the pcim_* functions instead.
+  */
+ int pci_request_regions(struct pci_dev *pdev, const char *res_name)
+ {
+@@ -4437,17 +4442,13 @@ void pci_disable_parity(struct pci_dev *dev)
+  * NOTE:
+  * This is a "hybrid" function: It's normally unmanaged, but becomes managed
+  * when pcim_enable_device() has been called in advance. This hybrid feature is
+- * DEPRECATED!
++ * DEPRECATED! If you want managed cleanup, use pcim_intx() instead.
+  */
+ void pci_intx(struct pci_dev *pdev, int enable)
+ {
+ 	u16 pci_command, new;
+ 
+-	/*
+-	 * This is done for backwards compatibility, because the old PCI devres
+-	 * API had a mode in which this function became managed if the dev had
+-	 * been enabled with pcim_enable_device() instead of pci_enable_device().
+-	 */
++	/* Preserve the "hybrid" behavior for backwards compatibility */
+ 	if (pci_is_managed(pdev)) {
+ 		WARN_ON_ONCE(pcim_intx(pdev, enable) != 0);
+ 		return;
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index e51e6fa79fcc..e6d299b93c21 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -813,7 +813,8 @@ static inline pci_power_t mid_pci_get_power_state(struct pci_dev *pdev)
+ int pcim_intx(struct pci_dev *dev, int enable);
+ 
+ int pcim_request_region(struct pci_dev *pdev, int bar, const char *name);
+-int pcim_request_region_exclusive(struct pci_dev *pdev, int bar, const char *name);
++int pcim_request_region_exclusive(struct pci_dev *pdev, int bar,
++				  const char *name);
+ void pcim_release_region(struct pci_dev *pdev, int bar);
+ 
+ /*
 
