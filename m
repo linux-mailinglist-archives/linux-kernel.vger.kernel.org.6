@@ -1,218 +1,176 @@
-Return-Path: <linux-kernel+bounces-212896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F559067EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:59:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6E99067F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D81C41C22E31
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:59:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E314928212E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B84513D52C;
-	Thu, 13 Jun 2024 08:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iJu7aqYA"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2054.outbound.protection.outlook.com [40.107.243.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950E113D88D;
+	Thu, 13 Jun 2024 09:01:12 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8AA39FCE;
-	Thu, 13 Jun 2024 08:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718269158; cv=fail; b=gWd03xXchpCyQIqmlKkTRfFjadPtSm+Mz+Tfp5U7lPeCH+HDIvCwp2/8NfyyNHrNFzleCQj6aW2LW5uoIikRRahQMSrtqO241ctznI6QPsYXRZI6A/RcX9QH5kO/HAv9sRH29mdpRs9O3A/bUHdUvOPjbmDYflKZTU6Asqw/2bQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718269158; c=relaxed/simple;
-	bh=jbaAIDeLIersN65OKKSE4N135PVrtqENapV48zJL1JM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=asYz4oTWLnF7BuyCMsv02UA/2a5xFCpcREPPSQHnoy/PBgo5/im1XL6KhMeABdNSVwISZ8iKVA3/VBnCoeJER06SJwsSsqajh9wPPZ2cGLbEQiwDdjlyZ5LmTVg1z3NJLhr/WFMdTWgfJYTrYS0oo6mlSKIf1Vg4WhIOo/mpt/c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iJu7aqYA; arc=fail smtp.client-ip=40.107.243.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OCmThgywxbLjKd45J9N5FcBACNYJtb+oNiEH8aabP7x0R0P5cnEDG4kq31zig/ATmz4xVIokqgc/2/OykBoe05lwFLOF4/j6yO5W17dBs8pxC7WjGgTC4A188xmjY2znXu9aB8BrADclIMXu67mMBXc7TcYTG+OKpmu64Wfj+KrfPs5qy/l8hm42fXWV5QWwXNMdZkG552yQDNC/jc0w/ssrt/5XFsvkBzY4G9LXC6mP62BLbS19dDCG6hgKyaARoXLU2kxacwidiJdZIaibYwoRxKbUfqjMc2CQW9LclDaZ+kLRz/DRi9U/OXSFKMLxCkFg1Yyj8ef8CVy4fDp5NQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jbaAIDeLIersN65OKKSE4N135PVrtqENapV48zJL1JM=;
- b=FhYUQNjjKburDI8+9a2aE/QXmvR5LQDoOBDAFfHb4oiA3yVSJfCadf07WICw/bJkx5qCW5s8CqeV/OO5Htr8rfvIaqtT3PesH/wPW7X3VbWq+vOb8U68eUD8arzZwyocprOGxSS+tbh6WfOWogoVyeDWmuuboY0FlN97zPbAHvBIs+2A69MDnaE2/h+ks6IDOzzLtV+S+nowK8Td6fhfDzBsEw5qczeu1grkMaVJ7nZivrix9XacHPeDrEq4e2a4PoLxLBLMlYOlrg4IhhZ+QBLMzZtfOM1nsBXi8T3CyKLJB/e5gvEpwGTQ1m9lr5OTnR6Goe/Dsd2n/Gg0Qepn0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jbaAIDeLIersN65OKKSE4N135PVrtqENapV48zJL1JM=;
- b=iJu7aqYAUfjkt2rpOvSp4CbN7EaGkRyDjOgWpz7lP10UcFNPoW3oCRO+tjr+Sj6Tmngl/L6qqYC8lsUqHgYJs0FnFEYpFGuUE5Dx25d9QRwRTG5Rl4q1ylDuPhFLCvaaCsdkxZNHcG3hjitJEy1eqyBbkodyDuved3XZMXbe+do=
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
- by BL1PR12MB5803.namprd12.prod.outlook.com (2603:10b6:208:393::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Thu, 13 Jun
- 2024 08:59:12 +0000
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf%6]) with mapi id 15.20.7633.037; Thu, 13 Jun 2024
- 08:59:11 +0000
-From: "Yuan, Perry" <Perry.Yuan@amd.com>
-To: Borislav Petkov <bp@alien8.de>, "Limonciello, Mario"
-	<Mario.Limonciello@amd.com>
-CC: "Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
-	"rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-	"viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "Huang, Ray"
-	<Ray.Huang@amd.com>, "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-	"Huang, Shimmer" <Shimmer.Huang@amd.com>, "Du, Xiaojian"
-	<Xiaojian.Du@amd.com>, "Meng, Li (Jassmine)" <Li.Meng@amd.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 08/10] x86/cpufeatures: Add feature bits for AMD
- heterogeneous processor
-Thread-Topic: [PATCH v3 08/10] x86/cpufeatures: Add feature bits for AMD
- heterogeneous processor
-Thread-Index: AQHau90G8QVrcguDBEaZ7RGMpjsNobHCYyuAgAA9UQCAAAIegIACxTWQ
-Date: Thu, 13 Jun 2024 08:59:11 +0000
-Message-ID:
- <CYYPR12MB8655D1333B53BB6DC83E45649CC12@CYYPR12MB8655.namprd12.prod.outlook.com>
-References: <cover.1718095377.git.perry.yuan@amd.com>
- <7a2817ce6e8e6a2787bed8285dba8d81423d8414.1718095377.git.perry.yuan@amd.com>
- <20240611105216.GAZmgsYC-J_yLfdupF@fat_crate.local>
- <e41fd460-6b50-4792-9328-3eda370672e4@amd.com>
- <20240611143929.GEZmhhoW1qCvIWS0SK@fat_crate.local>
-In-Reply-To: <20240611143929.GEZmhhoW1qCvIWS0SK@fat_crate.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=065c465c-63a0-4c64-8a9e-248229debf76;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-06-13T08:57:49Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|BL1PR12MB5803:EE_
-x-ms-office365-filtering-correlation-id: 946150f1-527a-4470-f64b-08dc8b8717fd
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230034|376008|1800799018|366010|38070700012;
-x-microsoft-antispam-message-info:
- =?utf-8?B?WkNteVRCNE9XTmRmRW5hSHBvanJnOVlGMjBxZmhLbk0zOFA3QUo5ZXEvNE5n?=
- =?utf-8?B?SU1URGlyTW5TUFhCUWVkMmJ5cXZCOXl0RnlUeFZyanZDczRQdnIyOFRsa0Yx?=
- =?utf-8?B?RHY5eFBNVFg4VVdCZUZzOVJGZ2dMaEpiOG9YSWNDbzV3M1p5dGVDbEd3STVz?=
- =?utf-8?B?aU5VWGY1N1N3Z1ZMamNDK3M5dFdyK29Vc0U0WnZaRzY1anhnQy9rL0ZWNFJJ?=
- =?utf-8?B?L1hNem95Qk9adEQwZ3pXNXd1WlgvOXVHRjdvMDNUU000anJ1M3ZuTVRWbWlS?=
- =?utf-8?B?TzMvUXVzS2tpeVVqdjdxcTFweTdSVWdNUzFVQjBWK0NTNVQ4WVhtZ0wrZG9N?=
- =?utf-8?B?WVJPSmFaUzVoUXJnQXFkZjJWN0tKR0FRbWhCOTliSFJIcnh3LzJYSnF1ZElS?=
- =?utf-8?B?Mk5Fck5pRnRnNktXUEZwdkpUQVB6Mi9nYTJxZVNGMkY5cnU4d2VCdnIwS2RT?=
- =?utf-8?B?S0dwT25BU0pHRmd1Ym56VyttZHQzNjNROEVDNy9wRzBrZ2Fhd2xXc1hNVHlQ?=
- =?utf-8?B?Y1VId3Y2V3RPeUpOYUYxMVQ1eHVyODRvaENUdXY5YlhDbUdjT3g0Nm5mYkpi?=
- =?utf-8?B?cGRwbTl0T2pqOWhVbTNIWXM0dHRyQ3ZvTTVhMzMrcFMwWHpVSU5KTXBvc0VT?=
- =?utf-8?B?bGprWXBmc1FqTE13MFFxS3E0QVpTZGVDOGpVajQ1TXJyMks4NkQ1OU8vUDdE?=
- =?utf-8?B?NXBBVVoxSU5FRVZuUk95aS9yT1dYdFZKMmRmRDA1cnJSOTUrUWUwc3I4em9J?=
- =?utf-8?B?QURTclVyc1BnM0xSN0hrd0VmZjZhSzZaNWsrRzZTbzAzM1pNTnluYWFjR1k0?=
- =?utf-8?B?QWorelcrSloyYnpJVVU0S2M5TWhWR25tT01yV1JRQTZIdnVrM2NlQ204clQz?=
- =?utf-8?B?NE51cVhmSnJGVTI1RFhDczdDSmh3OWR3QmJIaGtUTFpvRzA0c0d0bW5FQUkz?=
- =?utf-8?B?Yjh2dHVXaGVNN3NPM25HTTNDNDFTVFhRMXFGZVN1eHRPOGo5RkhXRis1b2Uv?=
- =?utf-8?B?djNEb3NmaXo2R2dRQ3NKYVZNVHlOTk92eXZGSDZla2RQRjN6M2F2bnJUMTFK?=
- =?utf-8?B?YXpkc1ZLUENFcVloVVJ6OGY1NUlCU2NDTDhUSUVrS1JaVUlzY3hFL2VRcnIr?=
- =?utf-8?B?Y0VCMTVQMWNuT01pNTdMVWIxczE0QmtZTklWYnkxT0FOUUhVMnVkbVJDb0hN?=
- =?utf-8?B?bVZTSUpQb1p0amhwbzhhaGFLZTJBMXJobGR5OGZUbXhCUVNuN0l1cnpYeXlK?=
- =?utf-8?B?V1pjNmpZeVdWYmljS1dCN0gxNlhmamhEMTRtd092OGRDTW4vakNmZWwzZzU0?=
- =?utf-8?B?U0l6OU81SUpVK2svaHFIRVExYUJjczQwem5JejJVSVdHektobjFnU3k0Rm5v?=
- =?utf-8?B?VGFFTFowZVZBOVdvR1l2cGJmSERaQzl5NzdTeVFzbWwzSkxtNGNkeVQzTGht?=
- =?utf-8?B?Q2JMMUtOZXViR2lhNDlkb2ZURjJ1bHVqeXdCVTg0Rk95Nk0xdFlPK1NuS2dy?=
- =?utf-8?B?TSt5ZjgxTzY0RnEzbkM1bXh4OVVCREY5NGJaR2VTRmxYZ3dNVlZBbVRzR1E4?=
- =?utf-8?B?WHZhbjRJeUNFWWh2YVg1VTBVN3RiNjZkNTlRSSszUG9VbmhxOHNSd3IzWlFs?=
- =?utf-8?B?a0xjT29xNExjQ1UyTXppOEVvMmZ4Tm9vMi83SWFJMUZTVVNMaXB5ME44MEhB?=
- =?utf-8?B?KzRTa2lQc2xLL2hrQ3FTTTU4QWZ2R2dZZ1pwYysrcHRUckRzK1k5aS9RK3BG?=
- =?utf-8?B?U20wNzJyZWlPWW01NkpYY2o3WG55SDNXV01UWDhOaFh3RE9hdVdWenlrazVQ?=
- =?utf-8?Q?CWROHQinvvK6HtxEkJK9tO7sV4GE3KXetmT5M=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230034)(376008)(1800799018)(366010)(38070700012);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?clFEakdkeUtmNnRQMjY0cnRlWCtCTFQ3TVJLUVJpM0hSOWl5YkNkUUtIOHQz?=
- =?utf-8?B?RlUxWmJ4SUNmOVM3OHk2Vkt5czVWK0l1U3Q0UGE4cDZRSjBOMlNLMzRlMmti?=
- =?utf-8?B?amIzeHI5Z3NuUEZ6S1NQZ0s5U0NhUnNUaEJyMktmbXowNW1OZmI2OUxjbXg4?=
- =?utf-8?B?TDV2OXFnVlVnbmdGdzJqMUdmTGo4LzY1bWlqeVdEcjgrcTRQVnJRd3NhOE9u?=
- =?utf-8?B?cmtKTDh4MXd3eXRZbitDTUJHYitsOFFVRnBzTkRCMGhxSEJDTjdtN3dzNWdy?=
- =?utf-8?B?SXE4M20yanFVZkM2bXF1N1lIdnE2Q1VEK2dWUDc4T003dGtVem9tWUVBcTh5?=
- =?utf-8?B?a2h6RzRHbDc1ZXAxbWVvdTV4WWRVQkpFcTIrMUxJZmVRRHBQZTRwcTJENXF6?=
- =?utf-8?B?OGdGZS9wajhrK282THdwQzVwU2lRK0VvSmVraFBqdEF1enJZWGhtUE9WK2NL?=
- =?utf-8?B?R3hPQWdUdzNYSVgxdW1CRUZMSE0xOWpaQmtINnVoeXY3aU1CWWdmKzU4TEVi?=
- =?utf-8?B?RnlrWjFacXdZVTFNTi9TeEdVZ2VFSlRmK1ovVUdhOTY4Vk9pdndsQ1Jydkk1?=
- =?utf-8?B?MmYvVURsV0w0bkxKTXlkRDhaRWVFVXFJVkZOWi9IMjdwcUppQ3l4emE3QzdC?=
- =?utf-8?B?bFpqTFA4ZER5b2JVd0xUQm05amcvS2pNNGJDbmR6TVZpdmNMMnh1c3pObnVk?=
- =?utf-8?B?SnNlM3FXVDFGZytZSzFvenkvOGZSaEFCTVpXY0E4K3h5blB5T0lXTXROY0Js?=
- =?utf-8?B?c0JyOG1nbWRROVVLbEJhNG5STnMwc0tpT1JBeVJqeFIxQlZxU0lFNDZkdE1L?=
- =?utf-8?B?VjhZTXB0eGRLTDAwNDI2VDlhL25NTU4rTnB0NmFqbGRodjNGVVJ5QWdyY3Yv?=
- =?utf-8?B?Mjd1dkx1eUIybXh2cXE5aEN3THE5U04wZ2EwNFBjUHQ4WTJ2NC9WOUFHSHFR?=
- =?utf-8?B?RUx4STlsdml3NDhBWUpEU1RHRnlRNng0Ylp6VTFuU21NSCtYTklrTDVsT3d3?=
- =?utf-8?B?YTNENGdRU09CbC9YdVQyU3l2bmwxMUJJajFDWHhFcDVWSXNwTmRLdjJkbG1s?=
- =?utf-8?B?bVJyZnV3dU5PVi90QytaNXFHVGJZMUtKcGgyTHdTRHNGb0lJWjYyOS96VDBw?=
- =?utf-8?B?YnN2ZjQyL0hoeXFVeDdoSlZtYkVDUFFEaUtHMTY2Y3QyZGJ1WFZrSVoxMEhL?=
- =?utf-8?B?a0JtTWdHZzFqQUJHZDhNNVNnL1loa3ZXMmRwMjZrNzhPTDk2NWRvMFU1TVJw?=
- =?utf-8?B?cGRrem9JRnpPK2dvT3lIUVJwWXpaZHBsblRIZUJxNDFLTTJsSU5xbndYZlpl?=
- =?utf-8?B?SDZBd010RndkVU1jeERSUDF6NklldkVLc1U5OElEaUVqYTFZYnp4WHUvTk9W?=
- =?utf-8?B?NmFDU0wwdmpZUXk0WllSdDVNOTI5eWJReDQvblVWcG1oRTh5OHNwa29QNE5p?=
- =?utf-8?B?UkhBNTc0aGdyd0kwVHBhZGlUNmVPUFFlU2FoMjJwMjdJMXB3OVdmUFRlUHhx?=
- =?utf-8?B?dm9tMVJwTEdId2ljWmx6Z0w4dldtNjRiditzTHVqbktDWEVrK1MwYzNpS09q?=
- =?utf-8?B?enNNbFBYZzN1anlKZGlpUUs2bGdWenR3WXIzbXR5c01SRWxMeDlXMmk5QUcr?=
- =?utf-8?B?OUdCUjRCV0ZMQjROOXlSOG1TUUQ1d3Q1Rm4zMktodERvcDFBc0RZK2ZmbkZt?=
- =?utf-8?B?NDNFWTFmYVlVeGlOZmJidjVwQitwVHJXeEptSzdPaVVrMXI1Sml3RHpnUzll?=
- =?utf-8?B?ZXdMbTBXcm5zdHRWTXRFdnUydWk4M1g1dWlEVExiWHVSL1lPcjlTOUJmVXFa?=
- =?utf-8?B?dHUwcWEvMHVtakxPNDAyQ1hPQm12c0hkTnRYRXJvZjZhemZtdVZFV1g0Wnow?=
- =?utf-8?B?ZklXVTEvSzRkdzJJL2FucjFxaC9iTmNlN3ZhcFNtUTE0bkJ1QXIzYlZKbWJW?=
- =?utf-8?B?Vnl6a0hJelRSYnl6d0RYQkJiV05Eb0NLYjl4UDAvSnQ0VXZmaGxaMXYvVmJF?=
- =?utf-8?B?aVpDblNpZGFxODhnMVpiQUFvQXFzb2NheXJjK0tBOUhVUXZvTko4OXp2Wkdz?=
- =?utf-8?B?SHJ2SW5FcCtVaGhwSG9lZzExRGNldkUxZzVNZTFqMUNLR25JYzE2SzZTdzJZ?=
- =?utf-8?Q?ru08=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA3B84D03;
+	Thu, 13 Jun 2024 09:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718269272; cv=none; b=KBiVh27tb5VHsiXBI9TYI8kbqIdMTqsKfIFffzSM/AkahjVWMV7WM7+NbMJkCM9xE5XwkF0GPpwnTzh42yl8kDPlaLDJc7j9W5CHN/hKbDM80D5yezpEgQplutScKyoQDdOBYWue/APqwaNYt6a9DDjB+3teTfudEk4QmdKSj78=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718269272; c=relaxed/simple;
+	bh=smK+jc7dSgvkAp6lPonVm1WD+q8MJwaXm8XGmu7+Ecg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KvpbdzLteBuMI9HSNMYmNZT13NjesQHzqzvQy8/vXDHFJS5YPRw4kNhzDMcnFjCoJY/wGUdgeYseK3O5TRmvfBOXalgwF4WAWIbKniqY0eWmITVou4PGA9wsh8HcTwMnMYlLV0HiNNRXml53/n7NA0yyUXPvhp4jxp+aqf5FAXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4W0GbX3Vm2z4f3jMS;
+	Thu, 13 Jun 2024 17:00:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 8C8E61A0181;
+	Thu, 13 Jun 2024 17:01:06 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgBXKBFOtWpmHK1uPQ--.16895S4;
+	Thu, 13 Jun 2024 17:01:04 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	brauner@kernel.org,
+	david@fromorbit.com,
+	chandanbabu@kernel.org,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH -next v5 0/8] iomap/xfs: fix stale data exposure when truncating realtime inodes
+Date: Thu, 13 Jun 2024 17:00:25 +0800
+Message-Id: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 946150f1-527a-4470-f64b-08dc8b8717fd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2024 08:59:11.8695
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9gcBY92eyTgI+XN+vUHsC8XfSiVayS2jfs9ah6kChmG/Jcgx9v4leyxr1vkOs5Ndwxi+CCUHI5u+vpUuUGQ04w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5803
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBXKBFOtWpmHK1uPQ--.16895S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw1xWrW5AFW7Cr1kXr47urg_yoWrXw4kpF
+	ZxKay5Cr4kJ34furyxZa4DXw45u3Z7CFWjkFy7GrsxC3W5Xr1Ivr1vqF4F93yjkrs7uFs0
+	vrsYyFWxur1qyFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+	UZa9-UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KSGkgQm9yaXMsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQm9y
-aXNsYXYgUGV0a292IDxicEBhbGllbjguZGU+DQo+IFNlbnQ6IFR1ZXNkYXksIEp1bmUgMTEsIDIw
-MjQgMTA6MzkgUE0NCj4gVG86IExpbW9uY2llbGxvLCBNYXJpbyA8TWFyaW8uTGltb25jaWVsbG9A
-YW1kLmNvbT4NCj4gQ2M6IFl1YW4sIFBlcnJ5IDxQZXJyeS5ZdWFuQGFtZC5jb20+OyBTaGVub3ks
-IEdhdXRoYW0gUmFuamFsDQo+IDxnYXV0aGFtLnNoZW5veUBhbWQuY29tPjsgcmFmYWVsLmoud3lz
-b2NraUBpbnRlbC5jb207DQo+IHZpcmVzaC5rdW1hckBsaW5hcm8ub3JnOyBIdWFuZywgUmF5IDxS
-YXkuSHVhbmdAYW1kLmNvbT47IERldWNoZXIsDQo+IEFsZXhhbmRlciA8QWxleGFuZGVyLkRldWNo
-ZXJAYW1kLmNvbT47IEh1YW5nLCBTaGltbWVyDQo+IDxTaGltbWVyLkh1YW5nQGFtZC5jb20+OyBE
-dSwgWGlhb2ppYW4gPFhpYW9qaWFuLkR1QGFtZC5jb20+OyBNZW5nLA0KPiBMaSAoSmFzc21pbmUp
-IDxMaS5NZW5nQGFtZC5jb20+OyBsaW51eC1wbUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBr
-ZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjMgMDgvMTBdIHg4
-Ni9jcHVmZWF0dXJlczogQWRkIGZlYXR1cmUgYml0cyBmb3IgQU1EDQo+IGhldGVyb2dlbmVvdXMg
-cHJvY2Vzc29yDQo+DQo+IE9uIFR1ZSwgSnVuIDExLCAyMDI0IGF0IDA5OjMxOjU0QU0gLTA1MDAs
-IE1hcmlvIExpbW9uY2llbGxvIHdyb3RlOg0KPiA+IEFub3RoZXIgb3B0aW9uIGlzIHRvIHVwbG9h
-ZCBpdCBhIG5vbiBlcGhlbWVyYWwgbG9jYXRpb24gbGlrZSBhIGtlcm5lbA0KPiA+IEJ1Z3ppbGxh
-IGFuZCBsaW5rIHRvIHRoYXQuICBJIGRvIHJlY2FsbCB0aGVyZSBpcyBhIGJ1ZyBhbHJlYWR5IG9w
-ZW5lZA0KPiA+IGZvciB0aGlzIHB1cnBvc2UgaW4gdGhlIHBhc3QuDQo+DQo+IFlvdSBtZWFuLCBh
-ZnRlciB3aGF0LCAzMCB5ZWFycyBvZiBzZWFyY2ggZW5naW5lIHRlY2hub2xvZ3kgdGhleSBjYW4n
-dCBkbw0KPiBvbmUgc2ltcGxlIHRoaW5nIG9mIGZpbmRpbmcgYSBkb2Mgb24gdGhlIHdlYiBhZnRl
-ciBpbmRleGluZyBpdHMgbmV3IGxvY2F0aW9uDQo+IGVhY2ggdGltZSB0aGUgY29ycG9yYXRlIHdl
-YnNpdGUgZGVjaWRlcyB0byB1cGRhdGUgdG8gdGhlIGxhdGVzdCBmYW5jeSBDUk0NCj4gZ2x1ZT8N
-Cj4NCj4gOi1QDQo+DQo+IC0tDQo+IFJlZ2FyZHMvR3J1c3MsDQoNCldpbGwgdXBkYXRlIHRoZSBQ
-UFIgcmVmZXJlbmNlIGxpa2UgYmVsb3cgaW4gVjQuDQoNCiAgICBMaW5rOiBodHRwczovL3d3dy5h
-bWQuY29tL2NvbnRlbnQvZGFtL2FtZC9lbi9kb2N1bWVudHMvcHJvY2Vzc29yLXRlY2gtZG9jcy9w
-cm9ncmFtbWVyLXJlZmVyZW5jZXMvNTY3MTMtQjFfM18wNS56aXANCiAgICBTZWUgdGhlIHBhZ2Ug
-MTE5IG9mIFBQUiBmb3IgQU1EIEZhbWlseSAxOWggTW9kZWwgNjFoIEIxLCBkb2NJRCA1NjcxMw0K
-DQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+ICAgICBCb3Jpcy4NCj4NCj4gaHR0cHM6
-Ly9wZW9wbGUua2VybmVsLm9yZy90Z2x4L25vdGVzLWFib3V0LW5ldGlxdWV0dGUNCg==
+From: Zhang Yi <yi.zhang@huawei.com>
+
+Changes since v4:
+ - Drop the first patch in v4 "iomap: zeroing needs to be pagecache
+   aware" since this series is not strongly depends on it, that patch
+   still needs furtuer analyse and also should add to handle the case of
+   a pending COW extent that extends over a data fork hole. This is a
+   big job, so let's fix the exposure stale data issue and brings back
+   the changes in iomap_write_end() first, don't block the ext4 buffered
+   iomap conversion.
+ - In patch 1, drop the 'ifndef rem_u64'.
+ - In patch 4, factor out a helper xfs_setattr_truncate_data() to handle
+   the zero out, update i_size, write back and drop pagecache on
+   truncate.
+ - In patch 5, switch to use xfs_inode_alloc_unitsize() in
+   xfs_itruncate_extents_flags().
+ - In patch 6, changes to reserve blocks for rtextsize > 1 realtime
+   inodes on truncate down.
+ - In patch 7, drop the unwritten convert threshold, always convert tail
+   blocks to unwritten on truncate down realtime inodes.
+ - Add patch 8 to bring back 'commit 943bc0882ceb ("iomap: don't
+   increase i_size if it's not a write operation")'.
+
+Changes since v3:
+ - Factor out a new helper to get the remainder in math64.h as Darrick
+   suggested.
+ - Adjust the truncating order to prevent too much redundant blocking
+   writes as Dave suggested.
+ - Improve to convert the tail extent to unwritten when truncating down
+   an inode with large rtextsize as Darrick and Dave suggested.
+
+Since 'commit 943bc0882ceb ("iomap: don't increase i_size if it's not a
+write operation")' merged, Chandan reported a stale data exposure issue
+when running fstests generic/561 on xfs with realtime device [1]. This
+issue has been fix on 6.10 by revert this commit through commit
+'0841ea4a3b41 ("iomap: keep on increasing i_size in iomap_write_end()")',
+but the real problem is xfs_setattr_size() doesn't zero out enough range
+when truncate down a realtime inode. So this series fix this problem by
+zeroing out allocation unitsize and convert the tail blocks to unwritten
+when truncate down realtime inodes, finally we could bring commit
+943bc0882ceb back.
+
+Patch 1-3 modify iomap_truncate_page() and dax_truncate_page() to pass
+filesystem identified blocksize, and drop the assumption of
+i_blocksize() as Dave suggested.
+
+Patch 4-5 refactor and adjust the truncating down processing order to
+first zero out the tail aligned blocks, then write back and update
+i_size, finally drop cache beyond aligned EOF. Fix the data exposure
+issue by zeroing out the entire EOF extent.
+
+Patch 6-7 improves truncate down performace on realtime inodes with
+big rtextsize(>1 fsblock) by converting the tail unaligned extent to
+unwritten.
+
+Patch 8 reverts commit 0841ea4a3b41 and brings commit 943bc0882ceb back,
+don't increase i_size on IOMAP_ZERO and IOMAP_UNSHARE.
+
+I've tested this series on fstests (1) with reflink=0, (2) with
+reflink=1, (3) with 28K RT device and (4) with dax, no new failures
+detected, and it passed generic/561 on RT device over 1000+ rounds,
+please let me know if it needs other tests.
+
+[1] https://lore.kernel.org/linux-xfs/87ttj8ircu.fsf@debian-BULLSEYE-live-builder-AMD64/
+
+Thanks,
+Yi.
+
+Zhang Yi (8):
+  math64: add rem_u64() to just return the remainder
+  iomap: pass blocksize to iomap_truncate_page()
+  fsdax: pass blocksize to dax_truncate_page()
+  xfs: refactor the truncating order
+  xfs: correct the truncate blocksize of realtime inode
+  xfs: reserve blocks for truncating large realtime inode
+  xfs: speed up truncating down a big realtime inode
+  iomap: don't increase i_size in iomap_write_end()
+
+ fs/dax.c               |   8 +-
+ fs/ext2/inode.c        |   4 +-
+ fs/iomap/buffered-io.c |  61 +++++++-------
+ fs/xfs/xfs_inode.c     |   9 ++-
+ fs/xfs/xfs_iomap.c     |   5 +-
+ fs/xfs/xfs_iomap.h     |   3 +-
+ fs/xfs/xfs_iops.c      | 180 ++++++++++++++++++++++++++++-------------
+ include/linux/dax.h    |   4 +-
+ include/linux/iomap.h  |   4 +-
+ include/linux/math64.h |  22 +++++
+ 10 files changed, 204 insertions(+), 96 deletions(-)
+
+-- 
+2.39.2
+
 
