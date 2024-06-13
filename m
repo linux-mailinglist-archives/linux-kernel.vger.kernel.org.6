@@ -1,88 +1,96 @@
-Return-Path: <linux-kernel+bounces-213407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37C49074C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:12:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD77E9074B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E73D285283
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C131F220FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2308146A72;
-	Thu, 13 Jun 2024 14:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7D9145A1E;
+	Thu, 13 Jun 2024 14:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2+F/1YC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egs4SJDu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6B0146A63;
-	Thu, 13 Jun 2024 14:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76A71459F3;
+	Thu, 13 Jun 2024 14:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718287906; cv=none; b=JG0MU4eCIyO2w/KRmoDd/C5xf82lYIBX1FDRubn4ZTzChJznngwCi0vOM7tObQXxuW+08EYL/L1KsK3kJRF2l87avXwB9sBvdGoa+t3ws7GQiCslZxPQT2e9sRR0nGi9XM0+rtGnBh3y56+/DZUwPtcOg4dQef3GlyiAMwpbA+A=
+	t=1718287848; cv=none; b=Q2Gl3aJZ2Rxdn2DpW5WzJnZnkHtSYAsN3ThzLa/pwCKZLvaqM5GFp3mBWPN3ccv9wPVwkp3alt/ImBfhT/veitG+lQ2KGAdxNMXlniFZfRZTLEUuAiW8CX6Uailnn3rdTd23NZhcprD7lI3iBMqONxAnqnTTafeyTzSEGvfs/ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718287906; c=relaxed/simple;
-	bh=g3mPo55/Gt1FBgk79gnSHReqipxiT916wmvC5/CqQlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qM37Z9TyHePq3o4oBi3CetGr3OZbliRXK0ET7lUxDFP3AkEOc7Nl4eMVnzP741wYPKe9Qo/kGAduwGRiKewPTjbz7ncshqKGDbvUGUInVyEgWTvv0ZwTItS+bUkAZZe+bm+3gHWij57sxI/SYDAbrpaEQktPyAMkRG2Hf54A+5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2+F/1YC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A1F4C2BBFC;
-	Thu, 13 Jun 2024 14:11:42 +0000 (UTC)
+	s=arc-20240116; t=1718287848; c=relaxed/simple;
+	bh=dv9A01TA9xjZbgc+DNQkcTYDgrGwnMovOaQAcNnXn3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gUYSsYWp+NXdzhXUzQImvbkaLX2zeLrmSzukHLiwL3K2E9RQWT3ZW61HFEsl38I+CQ+ZnAAh+7FZSA8icX+SNox7IMviJ5lmk54RgWCaj4pbUCQyN42cZ3J25lXmnP4SoPdnne+79aEvEiWuvejDAaB2Yn2Sijr78bnSMosyBa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egs4SJDu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D53FC2BBFC;
+	Thu, 13 Jun 2024 14:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718287906;
-	bh=g3mPo55/Gt1FBgk79gnSHReqipxiT916wmvC5/CqQlk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=V2+F/1YC3QM+UAga0rqtKPdNgFHTPaW2EKtXOWvRtmwd32p6O2alJ9fzG3HBTegtY
-	 pN9CthUgAaV7LkRjBHpadqfziegxidT6KX5+JyJB+FH3Ht/u+xI9eKDy+uzUJrcGnt
-	 CiQWRGrPytaQyEueoX7BKOtUstryK7qczuZudIx9BJKoJHNEpk3xAkBScApk4qUWTJ
-	 MZeQXYQKjF4bhdAKdRsT0gItmsN51557UxnqivtuzF+yE9d4zULLMX6byvVzHvNpLB
-	 jbHu6tk4XhtQBkZv4sFcUszjl85vJbJM+4BHU9deVo1s+qtSYZQ+nRFDOPE6hcWg5u
-	 w80fLFhGgSH/g==
-Date: Thu, 13 Jun 2024 17:09:36 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>, Jan Beulich <jbeulich@suse.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Narasimhan V <Narasimhan.V@amd.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>, stable@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] memblock:fix validation of NUMA coverage
-Message-ID: <Zmr9oBecxdufMTeP@kernel.org>
+	s=k20201202; t=1718287848;
+	bh=dv9A01TA9xjZbgc+DNQkcTYDgrGwnMovOaQAcNnXn3k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=egs4SJDumCcvLr8/Jqc+1qr2WuYchZktSRDlH1/iIjL9FbXnK0w3AZt6A+HbeaEKK
+	 KqydAZbU2Bik7JkZCZvfnEA8aRnbPA/ztR2mPbJCkung14wOFpbM2xmHsJfeV3/QrP
+	 hUBJZZc2795HhCLeo/wzKwXATuyl6/BBEWas+N/Q5YmorDTsd02PSLTsyQMxQqFvSY
+	 DaKU4z8JZ5rfDFkM6pAfiouYwy1Mkh4AyQhF6n8jWOdzlwQ5UfAlAjMhWKJ0pg0cUv
+	 q+DqDzcHt8E41sA+6IPwtwsUJpp5+LhaNwaJ6tQgPwdfhmwXd+RjMrqd1y1Nqbq8n5
+	 j2QycU/UMjryw==
+Date: Thu, 13 Jun 2024 11:10:41 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, mic@digikod.net, gnoack@google.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v4] perf trace: BTF-based enum pretty printing
+Message-ID: <Zmr94cx8pYvXi9Hj@x1>
+References: <20240613042747.3770204-1-howardchu95@gmail.com>
+ <ZmrqQs64TvAt8XjK@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZmrqQs64TvAt8XjK@x1>
 
-Hi Linus,
+On Thu, Jun 13, 2024 at 09:47:02AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Thu, Jun 13, 2024 at 12:27:47PM +0800, Howard Chu wrote:
+> > perf $ ./perf trace -e landlock_add_rule
+> >      0.000 ( 0.029 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_NET_PORT)                  = -1 EBADFD (File descriptor in bad state)
+> >      0.036 ( 0.004 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_PATH_BENEATH)              = -1 EBADFD (File descriptor in bad state)
+> > ```
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+And when someone suggests you do something and you implement it, a
+Suggested-by: tag is as documented in:
 
-are available in the Git repository at:
+⬢[acme@toolbox perf-tools-next]$ grep -A5 Suggested-by Documentation/process/submitting-patches.rst
+Using Reported-by:, Tested-by:, Reviewed-by:, Suggested-by: and Fixes:
+----------------------------------------------------------------------
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock 
+The Reported-by tag gives credit to people who find bugs and report them and it
+hopefully inspires them to help us again in the future. The tag is intended for
+bugs; please do not use it to credit feature requests. The tag should be
+--
+A Suggested-by: tag indicates that the patch idea is suggested by the person
+named and ensures credit to the person for the idea. Please note that this
+tag should not be added without the reporter's permission, especially if the
+idea was not posted in a public forum. That said, if we diligently credit our
+idea reporters, they will, hopefully, be inspired to help us again in the
+future.
+⬢[acme@toolbox perf-tools-next]$
 
-for you to fetch changes up to 3ac36aa7307363b7247ccb6f6a804e11496b2b36:
-
-  x86/mm/numa: Use NUMA_NO_NODE when calling memblock_set_node() (2024-06-06 22:20:39 +0300)
-
-----------------------------------------------------------------
-Jan Beulich (2):
-      memblock: make memblock_set_node() also warn about use of MAX_NUMNODES
-      x86/mm/numa: Use NUMA_NO_NODE when calling memblock_set_node()
-
- arch/x86/mm/numa.c | 6 +++---
- mm/memblock.c      | 4 ++++
- 2 files changed, 7 insertions(+), 3 deletions(-)
-
--- 
-Sincerely yours,
-Mike.
+- Arnaldo
 
