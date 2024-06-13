@@ -1,93 +1,180 @@
-Return-Path: <linux-kernel+bounces-213501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91AB90761F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:10:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F07907622
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A775D1C22D18
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35F3280D62
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238AC1494CF;
-	Thu, 13 Jun 2024 15:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pe5P0v+k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D74D1487CD;
-	Thu, 13 Jun 2024 15:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3B71494D1;
+	Thu, 13 Jun 2024 15:10:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3B713C691;
+	Thu, 13 Jun 2024 15:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718291430; cv=none; b=RDceNvyruP+UiEeINxGeXP4j7zH/LxmDpsPWqFYSWcFpn2pvRo5Ibm7EmJrPr78/qRD8GiFDAOUSI/heZBkMLBS/2GXp0ju87ckMWN/PX8kXMgmd5i/zFSstesY199Dh8Dz22DWYZD+d57ELFI9Jcc0ouO4SQ9MQQcOt+kWkvUg=
+	t=1718291450; cv=none; b=GiV/NJHFYXHEFoMvWrCHqzVFlgrooCl+ruSP3Ayy4tQRBUp6EvHqcnF4Gjkv9ET1oqqzMBOv3FVJwIJ4m+phRCKHJK5INsc4AXbtcwkbStJXdt8Cf6dx32rqkE2qm90B3hpg1m8NG//0usg4VMHQs1NMLUSO2gCh9siVYM+Ft4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718291430; c=relaxed/simple;
-	bh=mH4t85OK7LJEv4wy7C9LOqpgb8ccwZIPq8ZKg5t2YHE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=NQGw95gvoYsrRv3cp2hQbUkLZkgtbtdItbxztCfbmF1zOwPI3yfMSaS2iCEgnKmmV2mQpi3zp1vfwIHoFriSHzL2y9YEeaNxI0kyZIg87SPUHOcPuBbet344q2/8BaxYezRqamsGaV0EmLEVuh/N0bhdRsuuBsQIIfyxW+/Z45o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pe5P0v+k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 03C95C32786;
-	Thu, 13 Jun 2024 15:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718291430;
-	bh=mH4t85OK7LJEv4wy7C9LOqpgb8ccwZIPq8ZKg5t2YHE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Pe5P0v+kFyC/X3IQE1nd6ZaB3GljwuPUNv5mHvxqlDlihq0D4llkvDx7b0Z+BCJF0
-	 dN0OLo9tEYfPKoTKhU5EKzUwk8V1IgJb8FJSYouRywSUTCQfIFN7HK1JgmE6HuH9T9
-	 FQmG/m7WPl54UIOOB45kpmNONWfwf5O04sx9+1shuAI4nqk6nP1N7GT/ePsBeifofs
-	 t7vT4a9jYP8xzZ7FCYjiunVWV4Me1fjfq+GcQwLd3QDLJdKR2YRWxwbmab8KfBVtq+
-	 75f0Xb6Bp4+z3agPG02Mj7rVCNxsD7Hcb0cbZlHS6TIS1x0GiDlYhPRudR3jOpD34K
-	 Z2sxArIBuyY3Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E29EEC43619;
-	Thu, 13 Jun 2024 15:10:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718291450; c=relaxed/simple;
+	bh=7NXk+p80KoKxvILnhkPLqOnRPGa7Kr/UOYr9kzKZ6zU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Os937KiRPWMsZcQMaUFL4yA2hyBpkk67a3hgbGTT1p1jy0o6+HzsScHxaKqoJRUszR9alkbGPWA066lNsxB90m41HLBSJe8ki7otqbRaq5GlIgzaXUZ8a5CHyOlBtP74T9vsubY65lDwZA6beIrVrUnNECX2DE1Q8Rb0/hJd03A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2DB91FEC;
+	Thu, 13 Jun 2024 08:11:11 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3ADB23F73B;
+	Thu, 13 Jun 2024 08:10:41 -0700 (PDT)
+Message-ID: <9814866a-8f9d-4d82-ad2d-4b36203aa196@arm.com>
+Date: Thu, 13 Jun 2024 16:10:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] bnxt_en: Adjust logging of firmware messages in case
- of released token in __hwrm_send()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171829142992.24472.4309474315730518205.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Jun 2024 15:10:29 +0000
-References: <20240611082547.12178-1-amishin@t-argos.ru>
-In-Reply-To: <20240611082547.12178-1-amishin@t-argos.ru>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: edwin.peer@broadcom.com, michael.chan@broadcom.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org, wojciech.drewek@intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/7] Refactor perf python module build
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
+ Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
+ <aliceryhl@google.com>, Nick Terrell <terrelln@fb.com>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, Kees Cook <keescook@chromium.org>,
+ Andrei Vagin <avagin@google.com>, Athira Jajeev
+ <atrajeev@linux.vnet.ibm.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Ze Gao <zegao2021@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org,
+ coresight@lists.linaro.org, rust-for-linux@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20240612183205.3120248-1-irogers@google.com>
+ <bdf1ab6e-b887-4182-a0ae-7653bd835907@arm.com> <Zmr_CfhYsvKePZFt@x1>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <Zmr_CfhYsvKePZFt@x1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 11 Jun 2024 11:25:46 +0300 you wrote:
-> In case of token is released due to token->state == BNXT_HWRM_DEFERRED,
-> released token (set to NULL) is used in log messages. This issue is
-> expected to be prevented by HWRM_ERR_CODE_PF_UNAVAILABLE error code. But
-> this error code is returned by recent firmware. So some firmware may not
-> return it. This may lead to NULL pointer dereference.
-> Adjust this issue by adding token pointer check.
+On 13/06/2024 15:15, Arnaldo Carvalho de Melo wrote:
+> On Thu, Jun 13, 2024 at 10:27:15AM +0100, James Clark wrote:
+>> On 12/06/2024 19:31, Ian Rogers wrote:
+>>> Refactor the perf python module build to instead of building C files
+>>> it links libraries. To support this make static libraries for tests,
+>>> ui, util and pmu-events. Doing this allows fewer functions to be
+>>> stubbed out, importantly parse_events is no longer stubbed out which
+>>> will improve the ability to work with heterogeneous cores.
+>>>
+>>> Patches 1 to 5 add static libraries for existing parts of the perf
+>>> build.
+>>>
+>>> Patch 6 adds the python build using libraries rather than C source
+>>> files.
+>>>
+>>> Patch 7 cleans up the python dependencies and removes the no longer
+>>> needed python-ext-sources.
+>>>
+>>
+>> Reviewed-by: James Clark <james.clark@arm.com>
+>>
+>> It does require a clean build to avoid some -fPIC errors presumably
+>> because not everything that requires it gets rebuilt, for anyone who
+>> gets stuck on that.
 > 
-> [...]
+> We need to find a way to avoid requiring the 'make clean' :-/
+> 
+> - Arnaldo
+>  
 
-Here is the summary with links:
-  - [net,v3] bnxt_en: Adjust logging of firmware messages in case of released token in __hwrm_send()
-    https://git.kernel.org/netdev/net/c/a9b9741854a9
+Do we need to make it so that if any of the Makefiles are touched it
+does a clean? I'm assuming that was the cause of the issue I experienced
+here and that the Makefile and/or Build files aren't mentioned as
+dependencies of any target.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>>> Ian Rogers (7):
+>>>   perf ui: Make ui its own library
+>>>   perf pmu-events: Make pmu-events a library
+>>>   perf test: Make tests its own library
+>>>   perf bench: Make bench its own library
+>>>   perf util: Make util its own library
+>>>   perf python: Switch module to linking libraries from building source
+>>>   perf python: Clean up build dependencies
+>>>
+>>>  tools/perf/Build                              |  14 +-
+>>>  tools/perf/Makefile.config                    |   5 +
+>>>  tools/perf/Makefile.perf                      |  66 ++-
+>>>  tools/perf/arch/Build                         |   4 +-
+>>>  tools/perf/arch/arm/Build                     |   4 +-
+>>>  tools/perf/arch/arm/tests/Build               |   8 +-
+>>>  tools/perf/arch/arm/util/Build                |  10 +-
+>>>  tools/perf/arch/arm64/Build                   |   4 +-
+>>>  tools/perf/arch/arm64/tests/Build             |   8 +-
+>>>  tools/perf/arch/arm64/util/Build              |  20 +-
+>>>  tools/perf/arch/csky/Build                    |   2 +-
+>>>  tools/perf/arch/csky/util/Build               |   6 +-
+>>>  tools/perf/arch/loongarch/Build               |   2 +-
+>>>  tools/perf/arch/loongarch/util/Build          |   8 +-
+>>>  tools/perf/arch/mips/Build                    |   2 +-
+>>>  tools/perf/arch/mips/util/Build               |   6 +-
+>>>  tools/perf/arch/powerpc/Build                 |   4 +-
+>>>  tools/perf/arch/powerpc/tests/Build           |   6 +-
+>>>  tools/perf/arch/powerpc/util/Build            |  24 +-
+>>>  tools/perf/arch/riscv/Build                   |   2 +-
+>>>  tools/perf/arch/riscv/util/Build              |   8 +-
+>>>  tools/perf/arch/s390/Build                    |   2 +-
+>>>  tools/perf/arch/s390/util/Build               |  16 +-
+>>>  tools/perf/arch/sh/Build                      |   2 +-
+>>>  tools/perf/arch/sh/util/Build                 |   2 +-
+>>>  tools/perf/arch/sparc/Build                   |   2 +-
+>>>  tools/perf/arch/sparc/util/Build              |   2 +-
+>>>  tools/perf/arch/x86/Build                     |   6 +-
+>>>  tools/perf/arch/x86/tests/Build               |  20 +-
+>>>  tools/perf/arch/x86/util/Build                |  42 +-
+>>>  tools/perf/bench/Build                        |  46 +-
+>>>  tools/perf/scripts/Build                      |   4 +-
+>>>  tools/perf/scripts/perl/Perf-Trace-Util/Build |   2 +-
+>>>  .../perf/scripts/python/Perf-Trace-Util/Build |   2 +-
+>>>  tools/perf/tests/Build                        | 140 +++----
+>>>  tools/perf/tests/workloads/Build              |  12 +-
+>>>  tools/perf/ui/Build                           |  18 +-
+>>>  tools/perf/ui/browsers/Build                  |  14 +-
+>>>  tools/perf/ui/tui/Build                       |   8 +-
+>>>  tools/perf/util/Build                         | 394 +++++++++---------
+>>>  tools/perf/util/arm-spe-decoder/Build         |   2 +-
+>>>  tools/perf/util/cs-etm-decoder/Build          |   2 +-
+>>>  tools/perf/util/hisi-ptt-decoder/Build        |   2 +-
+>>>  tools/perf/util/intel-pt-decoder/Build        |   2 +-
+>>>  tools/perf/util/perf-regs-arch/Build          |  18 +-
+>>>  tools/perf/util/python-ext-sources            |  53 ---
+>>>  tools/perf/util/python.c                      | 271 +++++-------
+>>>  tools/perf/util/scripting-engines/Build       |   4 +-
+>>>  tools/perf/util/setup.py                      |  33 +-
+>>>  49 files changed, 612 insertions(+), 722 deletions(-)
+>>>  delete mode 100644 tools/perf/util/python-ext-sources
+>>>
 
