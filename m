@@ -1,210 +1,213 @@
-Return-Path: <linux-kernel+bounces-213657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E48B90786E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:39:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2124890786F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 870671F23565
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:39:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 980841F236EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379CB1494BF;
-	Thu, 13 Jun 2024 16:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FB11487DF;
+	Thu, 13 Jun 2024 16:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Nqv9h1tq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H4grW3Fo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Nqv9h1tq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H4grW3Fo"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iSYJRjgH"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8861A130E40;
-	Thu, 13 Jun 2024 16:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085C212D757
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718296731; cv=none; b=lC3kWV4UNcGrTNG7CSkLcojVa5DO+2KV3yImemGzzPqlylzu0aPB23WAGjGIAqt2RbrjuSBshjePX1we3NEJ/pFqNNHQFXnepd6tIGZlUs/oWC6AQIB/9yDrt5tBFgeMdVfyfIWKf/iZKBPKz9u7dgayvTDTgYn5GT+R90KMwTM=
+	t=1718296741; cv=none; b=POykN/35/eaSxtwLelsZn95Fy9Ztu4UJkVTa3OdZR6GfeafuwQ/3+PMAo3r2dcFnZD3p9Jo+jyGYYyQlnJFUr0M0luKz3NYhptklcaSv3jmHxUPC+8fQllAoipj6ucJOnkvZ+0CfDqsELTpZgmeZV6KnwtQXfhOlkqbz78OcDjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718296731; c=relaxed/simple;
-	bh=WIWoLopAa7nL+GTMFCvAMWUmXOkjTNiVhQy5GnVLsQo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IfpprU1R4AeVe00ciwo+68oCPirDF8fW3Os9ix+Ge0fuAGoZG5ybVz9C5VCE6iUzQTn5jFnoLIisxcdPIVlDk9HMndWdO8u2bL4JlUJmbsHZIB06EJFzVkS07UeEuZ754LNKMsVdc2Kpntr3sCNgL+9dnSK+2BwWORRyAI7rgs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Nqv9h1tq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H4grW3Fo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Nqv9h1tq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H4grW3Fo; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8541E5D596;
-	Thu, 13 Jun 2024 16:38:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718296727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=pg4nUkg9NVlWWxj+lARzOpGjJQ4KFFGWnMZ6IxK3R6c=;
-	b=Nqv9h1tq8d3V5f+og17WGxk/37rb/aEO5qZ5oqjJHZmE5rJZ/SCjLSy53FnJcfEHDXlvOi
-	KQCvgaZI5DsHstd4akI6QisHQUEsVrc4b8z92WwXlLXBv62kyPG/51g80e4oe4jPL1Z5T7
-	ONYqBM8DInf1wItp2EKprryCcRMuoJc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718296727;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=pg4nUkg9NVlWWxj+lARzOpGjJQ4KFFGWnMZ6IxK3R6c=;
-	b=H4grW3FoOR5J/zk+YHBtiilUpvsivCaHAvdqfTocg1FQ5LMlZ09UTE9/lgmQ4VHdU0s42Y
-	amnMoUtJm2js2LBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718296727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=pg4nUkg9NVlWWxj+lARzOpGjJQ4KFFGWnMZ6IxK3R6c=;
-	b=Nqv9h1tq8d3V5f+og17WGxk/37rb/aEO5qZ5oqjJHZmE5rJZ/SCjLSy53FnJcfEHDXlvOi
-	KQCvgaZI5DsHstd4akI6QisHQUEsVrc4b8z92WwXlLXBv62kyPG/51g80e4oe4jPL1Z5T7
-	ONYqBM8DInf1wItp2EKprryCcRMuoJc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718296727;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=pg4nUkg9NVlWWxj+lARzOpGjJQ4KFFGWnMZ6IxK3R6c=;
-	b=H4grW3FoOR5J/zk+YHBtiilUpvsivCaHAvdqfTocg1FQ5LMlZ09UTE9/lgmQ4VHdU0s42Y
-	amnMoUtJm2js2LBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 74D9713A7F;
-	Thu, 13 Jun 2024 16:38:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 06U5G5cga2Y1dwAAD6G6ig
-	(envelope-from <chrubis@suse.cz>); Thu, 13 Jun 2024 16:38:47 +0000
-From: Cyril Hrubis <chrubis@suse.cz>
-To: Christoph Hellwig <hch@infradead.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Cyril Hrubis <chrubis@suse.cz>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH v2] loop: Disable fallocate() zero and discard if not supported
-Date: Thu, 13 Jun 2024 18:38:17 +0200
-Message-ID: <20240613163817.22640-1-chrubis@suse.cz>
-X-Mailer: git-send-email 2.44.2
+	s=arc-20240116; t=1718296741; c=relaxed/simple;
+	bh=92t4P2j0X0NUI7+L37aNZ9vtNckVXpfJBPANovmwbBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b6bwhzLm/2IhD14SjvskAnkRe+A4cgFX1XlSs3Ws/igEt93WhXYacDspRnkBHiFuS3T3xRQq8/uGls4QRmm1WIYToeGPPSI5tIpapXyaSc5D/U9JJHhM2ET5Ml1zvG+uw5OeYOMiJon8G2+GWYE64tKunpaniUDlmsD3t+Trxyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iSYJRjgH; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6ef793f4b8so144807666b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:38:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718296738; x=1718901538; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=f0+hUYfcg/6wCMFIjwJOq9go/0av2eejFWyVyZxl9Js=;
+        b=iSYJRjgHWSwdy9nEaJoZZffA3jzlVt3TrVsk5wKUc488a/4eSqqBXLzl/EVHhW9DAW
+         wsZ4c+Hy2WYXcECLWEaTGeNRnd286S+OjMHuBtm1guMrkp6kerVdjHE/v8NO4dWCMlVS
+         6AvKzlNQzEdQhaIgmfKcBOKU9cgM4pqczzpWsfsbsYT8LXoDzAbkKeMc5UiTpbRcM0Vq
+         SlY3xMlURjPeMv4XFIC0NTihB/4sKDihMfVJDHl2ALA0li9SKE8FN9qqf1DG3SMSYsPR
+         /eMu8Kq/h991jzus+2YAC0ZomSsjdrOAmD9oeNuA190moIjyMu19Sd5rS0qRz+RgJxTv
+         VlXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718296738; x=1718901538;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f0+hUYfcg/6wCMFIjwJOq9go/0av2eejFWyVyZxl9Js=;
+        b=IaqNMRjPacINm5NU/MiupvFXiPBwsqec3y5WBoEY22a1FKtMy4BpKn5yBpJsJRkNs8
+         J3MAWkuvkaQFmoRzxju+P3/cNUwrTRebkSaNDKSIDU4voWNMk9wNqj7jVJUTdxQ73OiT
+         P1T5EcJIzgtQVyLZeZbtRU0EwZUfXYbSW8w1u/UQbHO5NnBXvDlMRH8PMfKoOsBgWswC
+         jT9tfOaSyX9i6rRl4b7iP5oAUwYLGO/hHqI87l6/urMcjDAm8x7XVEVqtf8m5KQMKOC6
+         pWqTEn8bsx1rzjtt2EzMrXeQbHijwhs4b/4x/hFG0BXMCUVnx43EoJvCBIm8Np03d72b
+         eLUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwz07rKyTOnGCJmvwHbe51ILqH9QPw0EIqP89c+8W3vXPnWN9IRfckC4T1JvVfh/JTVKrqhliS5AGAxCQRDh8WgTvZIefFwGt7UtCN
+X-Gm-Message-State: AOJu0YyghU/hqOe2pNtwIYam1n7ywgS1ii0VbZTTZwy5MuTkdugqlDDj
+	1GTKN1qR1w8JC2vY/i/LeSeq2kRSI5ZB0xZJLYMv8EtDW802YanL7JjAb2nbT+uUI8HjjG/bbCz
+	uL6XxdwIDmL/tosgIxSfcJjqQsLdborla5IsL
+X-Google-Smtp-Source: AGHT+IEvGD4fSm3ydygWLoTfbaCnK79SffQTu/wBgZUu6TR1D/t/B12H5lg4vCBg6YG63Pn4824qOynOJfGllokJ1aE=
+X-Received: by 2002:a17:906:3ec4:b0:a6f:48b2:aac5 with SMTP id
+ a640c23a62f3a-a6f60cf44efmr19942566b.15.1718296737931; Thu, 13 Jun 2024
+ 09:38:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo];
-	RCVD_TLS_ALL(0.00)[]
+References: <20240612124750.2220726-1-usamaarif642@gmail.com>
+ <20240612124750.2220726-2-usamaarif642@gmail.com> <ZmoBf6RPJzC2RaqM@google.com>
+ <85804484-9973-41a1-a05d-000833285f39@gmail.com>
+In-Reply-To: <85804484-9973-41a1-a05d-000833285f39@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 13 Jun 2024 09:38:19 -0700
+Message-ID: <CAJD7tkYBxN4uAHLacAx=m2+B9zPidz0V5pGP030yvNYLTnk=VQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, shakeel.butt@linux.dev, 
+	david@redhat.com, ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
+	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-If fallcate is implemented but zero and discard operations are not
-supported by the filesystem the backing file is on we continue to fill
-dmesg with errors from the blk_mq_end_request() since each time we call
-fallocate() on the loop device the EOPNOTSUPP error from lo_fallocate()
-ends up propagated into the block layer. In the end syscall succeeds
-since the blkdev_issue_zeroout() falls back to writing zeroes which
-makes the errors even more misleading and confusing.
+[..]
+>
+> >
+> >> +    for (i = 0; i < SWAPFILE_CLUSTER; i++)
+> >> +            clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
+> > Could you explain why we need to clear the zeromap here?
+> >
+> > swap_cluster_schedule_discard() is called from:
+> > - swap_free_cluster() -> free_cluster()
+> >
+> > This is already covered below.
+> >
+> > - swap_entry_free() -> dec_cluster_info_page() -> free_cluster()
+> >
+> > Each entry in the cluster should have its zeromap bit cleared in
+> > swap_entry_free() before the entire cluster is free and we call
+> > free_cluster().
+> >
+> > Am I missing something?
+>
+> Yes, it looks like this one is not needed as swap_entry_free and
+> swap_free_cluster would already have cleared the bit. Will remove it.
+>
+> I had initially started checking what codepaths zeromap would need to be
+> cleared. But then thought I could do it wherever si->swap_map is cleared
+> or set to SWAP_MAP_BAD, which is why I added it here.
+>
+> >>
+> >>      cluster_list_add_tail(&si->discard_clusters, si->cluster_info, idx);
+> >>
+> >> @@ -482,7 +491,7 @@ static void __free_cluster(struct swap_info_struct *si, unsigned long idx)
+> >>   static void swap_do_scheduled_discard(struct swap_info_struct *si)
+> >>   {
+> >>      struct swap_cluster_info *info, *ci;
+> >> -    unsigned int idx;
+> >> +    unsigned int idx, i;
+> >>
+> >>      info = si->cluster_info;
+> >>
+> >> @@ -498,6 +507,8 @@ static void swap_do_scheduled_discard(struct swap_info_struct *si)
+> >>              __free_cluster(si, idx);
+> >>              memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+> >>                              0, SWAPFILE_CLUSTER);
+> >> +            for (i = 0; i < SWAPFILE_CLUSTER; i++)
+> >> +                    clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
+> > Same here. I didn't look into the specific code paths, but shouldn't the
+> > cluster be unused (and hence its zeromap bits already cleared?).
+> >
+> I think this one is needed (or atleast very good to have). There are 2
+> paths:
+>
+> 1) swap_cluster_schedule_discard (clears zeromap) -> swap_discard_work
+> -> swap_do_scheduled_discard (clears zeromap)
+>
+> Path 1 doesnt need it as swap_cluster_schedule_discard already clears it.
+>
+> 2) scan_swap_map_slots -> scan_swap_map_try_ssd_cluster ->
+> swap_do_scheduled_discard (clears zeromap)
+>
+> Path 2 might need it as zeromap isnt cleared earlier I believe
+> (eventhough I think it might already be 0).
 
-How to reproduce:
+Aren't the clusters in the discard list free by definition? It seems
+like we add a cluster there from swap_cluster_schedule_discard(),
+which we establish above that it gets called on a free cluster, right?
 
-1. make sure /tmp is mounted as tmpfs
-2. dd if=/dev/zero of=/tmp/disk.img bs=1M count=100
-3. losetup /dev/loop0 /tmp/disk.img
-4. mkfs.ext2 /dev/loop0
-5. dmesg |tail
+>
+> Even if its cleared in path 2, I think its good to keep this one, as the
+> function is swap_do_scheduled_discard, i.e. incase it gets directly
+> called or si->discard_work gets scheduled anywhere else in the future,
+> it should do as the function name suggests, i.e. swap discard(clear
+> zeromap).
 
-[710690.898214] operation not supported error, dev loop0, sector 204672 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.898279] operation not supported error, dev loop0, sector 522 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.898603] operation not supported error, dev loop0, sector 16906 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.898917] operation not supported error, dev loop0, sector 32774 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.899218] operation not supported error, dev loop0, sector 49674 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.899484] operation not supported error, dev loop0, sector 65542 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.899743] operation not supported error, dev loop0, sector 82442 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.900015] operation not supported error, dev loop0, sector 98310 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.900276] operation not supported error, dev loop0, sector 115210 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-[710690.900546] operation not supported error, dev loop0, sector 131078 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
+I think we just set the swap map to SWAP_MAP_BAD in
+swap_cluster_schedule_discard() and then clear it in
+swap_do_scheduled_discard(), and the clusters are already freed at
+that point. Ying could set me straight if I am wrong here.
 
-This patch changes the lo_fallocate() to clear the flags for zero and
-discard operations if we get EOPNOTSUPP from the backing file fallocate
-callback, that way we at least stop spewing errors after the first
-unsuccessful try.
+It is confusing to me to keep an unnecessary call tbh, it makes sense
+to clear zeromap bits once, when the swap entry/cluster is not being
+used anymore and before it's reallocated.
 
-CC: Jan Kara <jack@suse.cz>
-Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
----
+>
+> >>              unlock_cluster(ci);
+> >>      }
+> >>   }
+> >> @@ -1059,9 +1070,12 @@ static void swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
+> >>   {
+> >>      unsigned long offset = idx * SWAPFILE_CLUSTER;
+> >>      struct swap_cluster_info *ci;
+> >> +    unsigned int i;
+> >>
+> >>      ci = lock_cluster(si, offset);
+> >>      memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
+> >> +    for (i = 0; i < SWAPFILE_CLUSTER; i++)
+> >> +            clear_bit(offset + i, si->zeromap);
+> >>      cluster_set_count_flag(ci, 0, 0);
+> >>      free_cluster(si, idx);
+> >>      unlock_cluster(ci);
+> >> @@ -1336,6 +1350,7 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
+> >>      count = p->swap_map[offset];
+> >>      VM_BUG_ON(count != SWAP_HAS_CACHE);
+> >>      p->swap_map[offset] = 0;
+> >> +    clear_bit(offset, p->zeromap);
+> > I think instead of clearing the zeromap in swap_free_cluster() and here
+> > separately, we can just do it in swap_range_free(). I suspect this may
+> > be the only place we really need to clear the zero in the swapfile code.
+>
+> Sure, we could move it to swap_range_free, but then also move the
+> clearing of swap_map.
+>
+> When it comes to clearing zeromap, I think its just generally a good
+> idea to clear it wherever swap_map is cleared.
 
-v2:
-   - move the code into a separate function
-   - use unlikely() in the condigtion
+I am not convinced about this argument. The swap_map is used for
+multiple reasons beyond just keeping track of whether a swap entry is
+in-use. The zeromap on the other hand is simpler and just needs to be
+cleared once when an entry is being freed.
 
- drivers/block/loop.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Unless others disagree, I prefer to only clear the zeromap once in
+swap_range_free() and keep the swap_map code as-is for now. If we
+think there is value in moving clearing the swap_map to
+swap_range_free(), it should at least be in a separate patch to be
+evaluated separately.
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 93780f41646b..1153721bc7c2 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -302,6 +302,21 @@ static int lo_read_simple(struct loop_device *lo, struct request *rq,
- 	return 0;
- }
- 
-+static void loop_clear_limits(struct loop_device *lo, int mode)
-+{
-+	struct queue_limits lim = queue_limits_start_update(lo->lo_queue);
-+
-+	if (mode & FALLOC_FL_ZERO_RANGE)
-+		lim.max_write_zeroes_sectors = 0;
-+
-+	if (mode & FALLOC_FL_PUNCH_HOLE) {
-+		lim.max_hw_discard_sectors = 0;
-+		lim.discard_granularity = 0;
-+	}
-+
-+	queue_limits_commit_update(lo->lo_queue, &lim);
-+}
-+
- static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
- 			int mode)
- {
-@@ -320,6 +335,14 @@ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
- 	ret = file->f_op->fallocate(file, mode, pos, blk_rq_bytes(rq));
- 	if (unlikely(ret && ret != -EINVAL && ret != -EOPNOTSUPP))
- 		return -EIO;
-+
-+	/*
-+	 * We initially configure the limits in a hope that fallocate is
-+	 * supported and clear them here if that turns out not to be true.
-+	 */
-+	if (unlikely(ret == -EOPNOTSUPP))
-+		loop_clear_limits(lo, mode);
-+
- 	return ret;
- }
- 
--- 
-2.44.2
-
+Just my 2c.
 
