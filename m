@@ -1,108 +1,185 @@
-Return-Path: <linux-kernel+bounces-213211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6B1907147
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:35:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF92590715D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7A22830C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:35:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650E51F24AF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B51142E81;
-	Thu, 13 Jun 2024 12:35:14 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EDA2F5A;
+	Thu, 13 Jun 2024 12:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fq/BtvHX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kNhNRnGy";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PrPVfGbD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="q2LD2wmz"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA87E14199C;
-	Thu, 13 Jun 2024 12:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC80F441D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718282114; cv=none; b=dDF5bkMBkcvhFCshFNXo+RtZIXea+pRx/YB3QwB4GdDwIeSl13bxwWax37VjuM/CZAD8k4ob8/GeBvkFFDFFJT+wDUZAySK28pKB1rCWOaqp50EnYujxofhw+0/HIoVG9kzPwel5ezAovcX41OEjKX5/OZMn3eeAtNxurYTHqzU=
+	t=1718282175; cv=none; b=t+RPdaPaIOhb+hi33bzCCDOBjDYkkCoReDTOH5J6+TVChX2ycN7E7x9thvb/xBs51rLboXL5duxb6JK4j/9C2x+XKifTQGiVKiNA3/4LFax5Pa3KysoPQyV/t43mjk0bR4jQChMFuMrZNf2o6Mh6YyjdnX4Lo+A4NulPu0Lx/lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718282114; c=relaxed/simple;
-	bh=Toz5hjv/Fc2vhd9W5Bvfsxt4JvCxbgfNTxqzBTzdYNc=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=EksosMMe8+omhYxMC0R/Ty0b5t7y6qejudvjJ1u/H3qStL3n2LzVRfPSn6Pk5zDgamhY7s+q9/GehUsiorL4Qz31+f1UunwFKI9swRrJCgJ5wRrmPoyLrPp+Ng9QcJ7CqyTF+ChB8QTs3evbBqo9Fz4NKHCwa6Z4lRJNgwTrS0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=99085fba10=ms@dev.tdt.de>)
-	id 1sHjfa-00234K-PE; Thu, 13 Jun 2024 14:35:10 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1sHjfa-00FOry-80; Thu, 13 Jun 2024 14:35:10 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id F01BF240053;
-	Thu, 13 Jun 2024 14:35:09 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 8594D240050;
-	Thu, 13 Jun 2024 14:35:09 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id 25B803852A;
-	Thu, 13 Jun 2024 14:35:09 +0200 (CEST)
+	s=arc-20240116; t=1718282175; c=relaxed/simple;
+	bh=sFnumGq0FcH5zMjWPpjF2N6XyYSbcjK42uJL+OPfYEE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uRhxyILxLspGguOrjQdieFxoxFhuQCdQpk+3IZzky71Mw9M7wPHGlOHhS6gvkxAGbxZchOpW69RyqecBdE2ylxypEVTbXO131/7uwfat0fxHTHiOEAvI/uWBVXDzOGBtCIqscZbu8yeGaccM4jjfAdJoIQrAJ/hWPj28gtrM8EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fq/BtvHX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kNhNRnGy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PrPVfGbD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=q2LD2wmz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 887D63716C;
+	Thu, 13 Jun 2024 12:36:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718282171; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8U3dMXngmkBtVM3jPXHQhakytYCFzeNC5q9L/Q2hlTk=;
+	b=fq/BtvHXeWeaW2fBbFu1piuFVL91QUYziFWuovljmLtXSM1wARITzV4v5hAb3p0T9GtdMu
+	cbeOVfgawaLNfVttoQI/+NSIR3ESDe4Zr4WaTvl4Zsk9gB1tgIixMksoN+cdWio4EOD5Ss
+	8PsDmEoThwxFs3MzuYYqObfUyyslZeo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718282171;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8U3dMXngmkBtVM3jPXHQhakytYCFzeNC5q9L/Q2hlTk=;
+	b=kNhNRnGy30F54VQ3nBLBAzWP4P8m/vJBknWX6qm4tTHBcbwR6NZ0WViLKejL8prK8uH2zG
+	iMu6+AlwXmqKuwCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718282170; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8U3dMXngmkBtVM3jPXHQhakytYCFzeNC5q9L/Q2hlTk=;
+	b=PrPVfGbD05wbWXCgHVx7uzlNJQzPaR7ERYV5ZDP7KSmFm8k3hUBNWCNXT9eM7/9bN0OiDX
+	W/gcnCYXMDxEZ9YT8hRcrb2ujpU5MyfYQLNnudMkt6lOsQrvbzU8uw/00K/hk+z9ccsmSr
+	kurw9B1+M+Ft3LaoVA5YM1srJzjAJjc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718282170;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8U3dMXngmkBtVM3jPXHQhakytYCFzeNC5q9L/Q2hlTk=;
+	b=q2LD2wmz1GNmgPoLxza3WPYPcaD+ta5OXdqDbnEG2wYT7MxmmLATMHRZE24PmTm0OVQ/Fb
+	rRY/4DC77Eb4DVBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 16B2E13A7F;
+	Thu, 13 Jun 2024 12:36:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LbD0A7rnamaQKgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 13 Jun 2024 12:36:10 +0000
+Date: Thu, 13 Jun 2024 14:36:33 +0200
+Message-ID: <875xudnhny.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: <robh+dt@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>,
+	<lgirdwood@gmail.com>,
+	<perex@perex.cz>,
+	<pierre-louis.bossart@linux.intel.com>,
+	<kevin-lu@ti.com>,
+	<shenghao-ding@ti.com>,
+	<navada@ti.com>,
+	<13916275206@139.com>,
+	<v-hampiholi@ti.com>,
+	<v-po@ti.com>,
+	<niranjan.hy@ti.com>,
+	<alsa-devel@alsa-project.org>,
+	<linux-kernel@vger.kernel.org>,
+	<liam.r.girdwood@intel.com>,
+	<yung-chuan.liao@linux.intel.com>,
+	<broonie@kernel.org>,
+	<soyer@irl.hu>
+Subject: Re: [PATCH v7 1/1] ALSA: hda/tas2781: Add tas2781 hda driver based on SPI
+In-Reply-To: <20240613082633.388-2-baojun.xu@ti.com>
+References: <20240613082633.388-1-baojun.xu@ti.com>
+	<20240613082633.388-2-baojun.xu@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Thu, 13 Jun 2024 14:35:09 +0200
-From: Martin Schiller <ms@dev.tdt.de>
-To: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
- f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 08/12] net: dsa: lantiq_gswip: Change literal
- 6 to ETH_ALEN
-Organization: TDT AG
-In-Reply-To: <20240611135434.3180973-9-ms@dev.tdt.de>
-References: <20240611135434.3180973-1-ms@dev.tdt.de>
- <20240611135434.3180973-9-ms@dev.tdt.de>
-Message-ID: <234a55f08593f7c8d003d87b3ff1aac9@dev.tdt.de>
-X-Sender: ms@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-type: clean
-X-purgate: clean
-X-purgate-ID: 151534::1718282110-DD5928CF-66249D3A/0/0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -1.80
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[dt];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,gmail.com,perex.cz,ti.com,139.com,alsa-project.org,vger.kernel.org,intel.com,irl.hu];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-On 2024-06-11 15:54, Martin Schiller wrote:
-> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> 
-> The addr variable in gswip_port_fdb_dump() stores a mac address. Use
-> ETH_ALEN to make this consistent across other drivers.
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
-> Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
-> ---
->  drivers/net/dsa/lantiq_gswip.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/dsa/lantiq_gswip.c 
-> b/drivers/net/dsa/lantiq_gswip.c
-> index 58c069f964dd..525a62a21601 100644
-> --- a/drivers/net/dsa/lantiq_gswip.c
-> +++ b/drivers/net/dsa/lantiq_gswip.c
-> @@ -1413,7 +1413,7 @@ static int gswip_port_fdb_dump(struct dsa_switch
-> *ds, int port,
->  {
->  	struct gswip_priv *priv = ds->priv;
->  	struct gswip_pce_table_entry mac_bridge = {0,};
-> -	unsigned char addr[6];
-> +	unsigned char addr[ETH_ALEN];
->  	int i;
->  	int err;
+On Thu, 13 Jun 2024 10:26:33 +0200,
+Baojun Xu wrote:
+> --- a/sound/pci/hda/Makefile
+> +++ b/sound/pci/hda/Makefile
+> @@ -70,6 +70,8 @@ obj-$(CONFIG_SND_HDA_SCODEC_CS35L56_SPI) += snd-hda-scodec-cs35l56-spi.o
+>  obj-$(CONFIG_SND_HDA_CS_DSP_CONTROLS) += snd-hda-cs-dsp-ctls.o
+>  obj-$(CONFIG_SND_HDA_SCODEC_COMPONENT) += snd-hda-scodec-component.o
+>  obj-$(CONFIG_SND_HDA_SCODEC_TAS2781_I2C) += snd-hda-scodec-tas2781-i2c.o
+> +obj-$(CONFIG_SND_HDA_SCODEC_TAS2781_SPI) += snd-hda-scodec-tas2781-spi.o
+> +snd-hda-scodec-tas2781-spi-y :=	tas2781_hda_spi.o tas2781_spi_fwlib.o
 
-Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+Try to put *-y addition to the right place.  There are the section
+defining snd-hda-codec-*-y.
+
+> +#define TASDEVICE_REG(book, page, reg)	(((book & GENMASK(7, 0)) << 16) + \
+> +					 ((page & GENMASK(7, 0)) << 8) + \
+> +					  ((reg & GENMASK(6, 0)) << 1))
+
+Usually bits are combined with '|', not '+'.
+
+> +/* Firmware block Checksum */
+> +#define TASDEVICE_Checksum		TASDEVICE_REG(0x0, 0x0, 0x7e)
+
+Use capital letters.
+
+
+... and at this point, I noticed that the patch doesn't contain the
+code for sound/pci/hda/tas2781_spi_fwlib.c at all.  The patch must be
+utterly broken.
+
+*PLEASE* try to apply and build the patch to submit beforehand from
+the clean state and verify it really works.
+
+
+thanks,
+
+Takashi
+
 
