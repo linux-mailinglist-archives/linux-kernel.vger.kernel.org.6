@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-213983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A1A907D4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:17:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 788D3907D4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F12641F259E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:17:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F7F286E2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F9213B5BB;
-	Thu, 13 Jun 2024 20:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E9814B064;
+	Thu, 13 Jun 2024 20:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLYaxXCS"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVu1jITG"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A3B13A884
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 20:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF99713B2B2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 20:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718309790; cv=none; b=sfvcsYeHyNv3Tc/b0gPBt55vNFVoQmHVvsttMEGAXMDIoXkvqcrYNCy8QYkE/mqMHeHIhHzzK2ViOI8MVurIfz1OsdxmLj43XRzAdyI2WlleOntE8zo3lnEJ7YctJ6oly7koPXFGq4WHgM1ZM/6ZJ3Eipbd+lD994lQfG4cCTkE=
+	t=1718309791; cv=none; b=WQzMiFeZ8vJFKRzT+MdRAnbT9IMHhk4G3FiPZggGThwyrYBby7OUC9aVvqP7L0wgQMo04GuTiMx/laIqIe3QHq+1/gw/ed3JTEmlironY7t2KW1u51nPKYLc6pnvPwkNDyUnNMeP+me/uYhKaggWmVpqLxjL/YYQ8Hn9OZQViUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718309790; c=relaxed/simple;
-	bh=qQRjjZZws/Ma6VIvIPN2Ic4SkHiuVcNFQMuhJXO9qHw=;
+	s=arc-20240116; t=1718309791; c=relaxed/simple;
+	bh=zN1UETXXdqrh3WBTxRV+3WqwL49VqCIOmitMRKZXlLU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GR8K9UmpIr3/Hlu8L7PkPtcoszagYmEmMv8EUY/oTJ8jokZhTLvPoTJ9Dkz2gu5J95O2I1FcC+2ANCPnoEKZr2YR0PYG8/w0r/T4o1f7bu/BODvV7Pxij61eRD8lasIQbDcgn8rm4pkv9y4XBKznFTs4Zhuuy1ki0zHwMS+L5lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLYaxXCS; arc=none smtp.client-ip=209.85.128.47
+	 MIME-Version; b=Gpb87IDbh6bX/L2oizoZ00diJ5123WOI89Q0AFTSFKXqbvBdbQs/DeIPb3l5AechlHkwJUGlwMxWeBO5ZuJCvUl05OU+m90FVMKTo0rNKA7PmPXPBPFZWDfPh8TagXvTTk5kbPTFcaq6VmDqm9BphWk/Y6TAs0hvFiffM+lbh0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PVu1jITG; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4217dbeb4caso12494845e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:16:28 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42138eadf64so12381705e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:16:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718309787; x=1718914587; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718309788; x=1718914588; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tcEzKvcxuUEgSwRZ+SIVZqsXz/1BXJpqKsYkBURq044=;
-        b=mLYaxXCSH9xaVVqrOVuEV4TSGA8U5taGNLEhz4Ydpt0L7RSZPkLWr43AX9kYg6xyf7
-         vdg+CjDkwmqCbIHAflC8BTp6UnJEBmijF25e/MOuSbsVKagjpwzbRZD8Htj26u5vWkGb
-         FlP0PxN2QIJ6z0qjyPdcAscx/lKdzxydmVJM9JWW4nEZRpu+O2DziuYYlnDGZ4MH5MLl
-         IYUcETGSb6rKgZLYk8LcTmn9FvYBzzd08vc8vKY2V8EXK8oquJqzCiNoQXfrvjoErAzA
-         VhKGR/DF+U9XNc56Tzb/Y4nyqJbPCay7ALHQlUGvX3ZUoUDHhS93CE3sxAng1NEDOOEJ
-         A/Fg==
+        bh=6BG0M0s1xfKWqVwW2SMl3OjEYd7P2vlsk2ol4M6/ryk=;
+        b=PVu1jITGIxE49j21Aa1N6UrjqxcJx8Z3KR9I8oPj0f3D5o5MzuJ7VX3LwVcGe/Fdr/
+         JEpau6mB5X5HXOvvWfiWkhmCrsio7yFc5Ak8uwi0DRhmmNBDxus+zksj1oikmiSvVS1l
+         DpTNQyoHclXcf6oLUeDrLYvWiG9JYuTrgSMVifFr34r5Q2+Ltne9Vj1gU8mx4iUVqUAH
+         BQ9H6ugHcgLgnu61Yn6/lMCexYz9RUmVH0mUz0PApTJ4ilcCGuCZseeOofnO7m7bAUj8
+         xXOiaFLh9sx4TMB5AT7b0ApNggQRVTkohl9eU2BodHUHzRSs6+p4y+vIPlDyGhIg8u3j
+         n9vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718309787; x=1718914587;
+        d=1e100.net; s=20230601; t=1718309788; x=1718914588;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tcEzKvcxuUEgSwRZ+SIVZqsXz/1BXJpqKsYkBURq044=;
-        b=SSQpr6c8DkjJfaKiVZHNwOy/57+qJ9w0rG0fh7sz2msI+vvGgTKbXb0L+dpprQ/1mz
-         iiUJYaq1K7aghn6Qt3KOqHxcKXUd6xjqoPEIDaEUprWDIJWlAv1i6LzeQNtYA98OjTCC
-         EGRvoaBV3ZS1Lq6O2juwbVSahM4sQtou2zdLjBipbcmmxl5jPN6DYnbrT7bqvFDr0ApF
-         MEVU3dFm4XWIyyfOEoC0lUzV76uLl4IHoI5ilUXCo3SwHVu5lmcQzf9DiVVEjlvnQ7zB
-         lY5hlMwL/uwqvIZ5g8Niuc/1VqLllY3AgEkJo5ADVKqc71xwNbg9beKWI1CZWWiLeNCV
-         Icow==
-X-Forwarded-Encrypted: i=1; AJvYcCUfycKBJiLD0wGUVJDRcrBmTO1CrezWVOC8r5ptd6/VAQxbvHxVzrEuwAHYvV0Omgxm6NoEeI6RU1A2mPYNznxRe+ngZj7jv7LFl/37
-X-Gm-Message-State: AOJu0YzXtErXB5zwK9LmoDBGGmzTKnn29wIMRSjcrOh8wRmUlZWWTz41
-	62PED7iUYigV3M9AWOfl8Pi6lFom/JQjOBoGGdqEM8umyCrBWfZP
-X-Google-Smtp-Source: AGHT+IFkgtJwQYsiJ7l7nJncpcRDWZmQnU7mEqNo1TRcNXmKckGuFg2Um4jfRmaXp4EMGNkF5dmDPg==
-X-Received: by 2002:a05:600c:4f91:b0:422:683b:df2a with SMTP id 5b1f17b1804b1-423048273d2mr7764455e9.13.1718309787038;
-        Thu, 13 Jun 2024 13:16:27 -0700 (PDT)
+        bh=6BG0M0s1xfKWqVwW2SMl3OjEYd7P2vlsk2ol4M6/ryk=;
+        b=WyF2xxg1CILxs+vf77ofwbXJ8d+g1irGjojgsuvDOZL47eUnWCWim+J5khIO9kwncq
+         1PV0w6+wVMVPgSN1nEIN8ZYMe4b092Cg6PSobtSTDLrZjGFkRR9Nz33Uxj6UL6xOv22a
+         4fsuoxgie3rYWUrUKlbEbvwrdj3r+1CJ330e/Ljsz7d4B30NFMTudKmlyx4kVBbvvIMf
+         cgIqwQgf9Veqcum8ap14OiBNuNOQglK+3S1lQRYwCNwN52ma4ocLUFbf/RGVjdI9bhjK
+         mAaa6aGpqRshCqAhsu80Nhk78vDfFi6530YiZ0ddCf07Dp30GYWcih5XYwqrpEm7VU+w
+         tFTw==
+X-Forwarded-Encrypted: i=1; AJvYcCV04OmI2RRataUTyA4do6ax+2PRwvUsewddrr12sl5jxMQAIXUUSMRlNVelWjzuClhycu1X0xbzeS2puyjRFB/rZhKsNiCozxFFS01B
+X-Gm-Message-State: AOJu0Ywl/UQ7RoWUe5M+xwcrQspce9Cni6lUsBilfeqDHYyHbW8FsLr7
+	gPiuDu6sp1uF5DKEbji78pMzCnGWQ0f6hIr7mnB/txQKB2igftJ4
+X-Google-Smtp-Source: AGHT+IEaJ7Ed8Sv5fg75UJQdq9VXVVTixwx6aZDvrX/K5bOwOehbhYmpJOCoZkoYu25P5zqQRZ6fbg==
+X-Received: by 2002:a05:600c:1ca8:b0:421:7198:3d76 with SMTP id 5b1f17b1804b1-4230484eb81mr6933945e9.28.1718309788154;
+        Thu, 13 Jun 2024 13:16:28 -0700 (PDT)
 Received: from localhost.localdomain ([31.120.167.14])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de618sm73817195e9.37.2024.06.13.13.16.25
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de618sm73817195e9.37.2024.06.13.13.16.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 13:16:26 -0700 (PDT)
+        Thu, 13 Jun 2024 13:16:27 -0700 (PDT)
 From: Teddy Engel <engel.teddy@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Teddy Engel <engel.teddy@gmail.com>
-Subject: [PATCH v2 3/5] staging: rtl8192e: Capitalize constant RegC38_TH
-Date: Thu, 13 Jun 2024 21:15:09 +0100
-Message-Id: <e78f4c30a838d8e98794d80126ca246614b14b68.1718309120.git.engel.teddy@gmail.com>
+Subject: [PATCH v2 4/5] staging: rtl8192e: Remove unused macro dm_tx_bb_gain_idx_to_amplify
+Date: Thu, 13 Jun 2024 21:15:10 +0100
+Message-Id: <5ee3df2b02a84e6aeb2d1c4903cb018161d78b1b.1718309120.git.engel.teddy@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <cover.1718309120.git.engel.teddy@gmail.com>
 References: <cover.1718309120.git.engel.teddy@gmail.com>
@@ -85,48 +85,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-According to kernel coding style, capitalize defined constant.
+Remove unused macro.
 
 Signed-off-by: Teddy Engel <engel.teddy@gmail.com>
 ---
- drivers/staging/rtl8192e/rtl8192e/rtl_dm.c | 4 ++--
- drivers/staging/rtl8192e/rtl8192e/rtl_dm.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/rtl8192e/rtl8192e/rtl_dm.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-index 5392d2daf870..4863ced04916 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-@@ -1752,7 +1752,7 @@ static void _rtl92e_dm_check_fsync(struct net_device *dev)
- 
- 		if (priv->rtllib->link_state == MAC80211_LINKED) {
- 			if (priv->undecorated_smoothed_pwdb <=
--			    RegC38_TH) {
-+			    REG_C38_TH) {
- 				if (reg_c38_State !=
- 				    RegC38_NonFsync_Other_AP) {
- 					rtl92e_writeb(dev,
-@@ -1763,7 +1763,7 @@ static void _rtl92e_dm_check_fsync(struct net_device *dev)
- 					     RegC38_NonFsync_Other_AP;
- 				}
- 			} else if (priv->undecorated_smoothed_pwdb >=
--				   (RegC38_TH + 5)) {
-+				   (REG_C38_TH + 5)) {
- 				if (reg_c38_State) {
- 					rtl92e_writeb(dev,
- 						rOFDM0_RxDetector3,
 diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.h b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.h
-index 863af8ef9f94..3add5aa933b8 100644
+index 3add5aa933b8..55641f17412b 100644
 --- a/drivers/staging/rtl8192e/rtl8192e/rtl_dm.h
 +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_dm.h
-@@ -42,7 +42,7 @@
- #define		CURRENT_TX_RATE_REG		0x1e0
- #define		INITIAL_TX_RATE_REG		0x1e1
- #define		TX_RETRY_COUNT_REG		0x1ac
--#define		RegC38_TH				 20
-+#define		REG_C38_TH				 20
+@@ -133,8 +133,6 @@ extern	struct dig_t dm_digtable;
+ extern const u32 dm_tx_bb_gain[TX_BB_GAIN_TABLE_LEN];
+ extern const u8 dm_cck_tx_bb_gain[CCK_TX_BB_GAIN_TABLE_LEN][8];
+ extern const u8 dm_cck_tx_bb_gain_ch14[CCK_TX_BB_GAIN_TABLE_LEN][8];
+-/* Maps table index to iq amplify gain (dB, 12 to -24dB) */
+-#define dm_tx_bb_gain_idx_to_amplify(idx) (-idx + 12)
  
- /*--------------------------Define Parameters-------------------------------*/
+ /*------------------------Export global variable----------------------------*/
  
 -- 
 2.39.2
