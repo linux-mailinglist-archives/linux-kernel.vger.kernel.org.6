@@ -1,86 +1,85 @@
-Return-Path: <linux-kernel+bounces-213698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEC49078E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1F29078E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AEB1F242E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:56:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C389F286757
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC2286136;
-	Thu, 13 Jun 2024 16:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C49D14A4C0;
+	Thu, 13 Jun 2024 16:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4Xvw7Bg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhIGzCPJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4926C146A7B;
-	Thu, 13 Jun 2024 16:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A741146A7B;
+	Thu, 13 Jun 2024 16:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718297764; cv=none; b=tR+9bOEsDV/Dsc2xG4ywnjpTneyWU0M8I2rXnIKdfxJ3AwBU/VcsSVuUnBjq/BJHm4FDNpCtO2f6fpqCwylMZiW6AWhlyzLZYL0FXoYrEptZuNpDRT4PrYsTLoxc4m0CRFDPCXws6yhQBuDa9FnN8bHX60Kgw7EHwR9QJr23r9M=
+	t=1718297774; cv=none; b=ZDim49y+LmokfGY9fu8zY5YHPEakfuEoo1vqGd6XMv5sVx/D+TnEJLK9jdHNe7pXuD+PVXYZVgPMjw2W+enyLIit5hb9FxuibxfMX0wNm1BoIA8kdltXFpWj5GNRk2lY64fDL9QRaeTd3wGx3h797GP1SylTGl1qfVpZPQyXEB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718297764; c=relaxed/simple;
-	bh=j9VKT+5uLDR/9V3z3CWPlahYa1LVlU+XKjjYY+mzRPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p/MX8htWAdV0ikO8YRzX8GSbnuaECO79rXv5gP85GD5rpLPtPJqOxAvzZ5uCFS57WNR64cPT4WXZYkqc8hHIq1ersbmo6Kup15N2lHy5vi8pQlLPLkeTa+tWDA8Lv9a9ZscyiwzHjS4xTQK6EzaSQEkekc8VJmKyECYbGcgoHP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4Xvw7Bg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAA8AC2BBFC;
-	Thu, 13 Jun 2024 16:56:03 +0000 (UTC)
+	s=arc-20240116; t=1718297774; c=relaxed/simple;
+	bh=AFsjejU6WOUxpZm3KWb1MCdL1at46hZYCD2xgeBCuII=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TnoSVfHfJH9TGvUlJoG92m/z797z9yJLVdJsNtbWWHZT2R9LxdI4bOG46fjc360M6IqZ87IloUxM4NFWPEtTQEBWvh5sT9MWr7tin5zuTL/H9uzuE9sIWciK92Cj+kaI9QobCU90h4297F4JogwGMAnXXzfs05McMjbqwb7yfFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NhIGzCPJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 269C1C32786;
+	Thu, 13 Jun 2024 16:56:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718297764;
-	bh=j9VKT+5uLDR/9V3z3CWPlahYa1LVlU+XKjjYY+mzRPY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I4Xvw7Bge6TLJ4L6tzwg58eqzAlvAmp3tCERy+VkJBbXTpl+GisshBcA0hwSox2DH
-	 QVMogq717E0lGUPBOzW5oV4XBoqJVDi79siVvbClwp6WKQIxocJZ8bBmPbdpNc4C16
-	 HvvuRJRxPew+X64K965+jkSS5TRhHqG01Pv5qZEBclhgiB154fe4HKcm7X5HmWIxAT
-	 yaGXEMtU2GVKRWl9JWVdo0Dl1yK8P1FK6Kk011hr0GoIneB+GkGrCo1p5t7wC9Qr9B
-	 sgRp3nDLHm/I6AfuYzvgWPoTrH7TA+PkMWAx3yNJU2l1YIeUa/It9UaBxUj+JSi/hE
-	 yJZm7KK//3JFQ==
-Date: Thu, 13 Jun 2024 10:56:02 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Krishna Potthuri <sai.krishna.potthuri@amd.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michal Simek <michal.simek@amd.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: pinctrl: xilinx: Add support for
- function with pins
-Message-ID: <171829776082.2018524.17283616546345596945.robh@kernel.org>
-References: <20240610223550.2449230-1-sean.anderson@linux.dev>
- <20240610223550.2449230-2-sean.anderson@linux.dev>
+	s=k20201202; t=1718297774;
+	bh=AFsjejU6WOUxpZm3KWb1MCdL1at46hZYCD2xgeBCuII=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=NhIGzCPJrsdHU5NRJPqliKJGNxWHDBZFky42hoImrCL3ysQrgM0XboZ7+9jfsUkPD
+	 CZYVOk2/77hkOSdD2opFzY9m/I+Eo0jXl9rcQJLZyRHVCrw9SvAZxCiX73S+Cg4w7D
+	 qQwtCIT7n26dt/9C/jK6LrDFMZ8lL5GxNcZVGO5ZOc+c5rhn2Wrpi6rww3hdEQPZw6
+	 01h2op1LtrRFXzrlw0AuzQFNsCefHpl3F0DP3r8Biht1B7upxyE6ZkwcMXj5tzTEWW
+	 yRAFD/zaHaeS1Gmn5c9GmyvaufF5e51c6Xip0LCOG4zhjuMXDiw6p8UddTV7y3PPUl
+	 phX0DMLCr84HQ==
+From: Lee Jones <lee@kernel.org>
+To: Andy Shevchenko <andy@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
+ Sudeep Holla <sudeep.holla@arm.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
+References: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
+Subject: Re: (subset) [PATCH] mfd: add missing MODULE_DESCRIPTION() macros
+Message-Id: <171829777189.2716745.4962313737090017638.b4-ty@kernel.org>
+Date: Thu, 13 Jun 2024 17:56:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610223550.2449230-2-sean.anderson@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
+On Sun, 09 Jun 2024 19:21:28 -0700, Jeff Johnson wrote:
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gpio.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/timberdale.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/ssbi.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/intel_soc_pmic_bxtwc.o
+> 
+> [...]
 
-On Mon, 10 Jun 2024 18:35:49 -0400, Sean Anderson wrote:
-> Support specifying the function per-pin. The driver doesn't care
-> whether you use pins or groups for this purpose.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
-> 
-> Changes in v3:
-> - Express groups/pins exclusivity using oneOf
-> 
->  .../bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml | 349 +++++++++---------
->  1 file changed, 180 insertions(+), 169 deletions(-)
-> 
+Applied, thanks!
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+[1/1] mfd: add missing MODULE_DESCRIPTION() macros
+      commit: b3e691c26f55731fd937c4b7ccbc150e10aa30a3
+
+--
+Lee Jones [李琼斯]
 
 
