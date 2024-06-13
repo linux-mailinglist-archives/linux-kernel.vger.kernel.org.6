@@ -1,137 +1,80 @@
-Return-Path: <linux-kernel+bounces-212513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1C590626E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 05:07:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C02990626B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 05:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DECF1C21AF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:07:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0362C284623
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645F712D765;
-	Thu, 13 Jun 2024 03:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345C112D762;
+	Thu, 13 Jun 2024 03:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hcIsf7JK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIAndfv2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B2312CDBC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 03:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7035612CD8C;
+	Thu, 13 Jun 2024 03:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718248045; cv=none; b=qOaZFVXbQsmA9U7u+r/d4Rt0gdeLPcffHz67fwYmuBefvUmI4w6G+saKPGWw1qcxLxruua8sz118/QqDPZIDbLPu85ueO5IOB94ZBY0Vm/SqitIqQM1Cj+50ufbiOyx5+OV68PdnhUuRHKCxJE4SnH8irVo6hB3kNp1+WG6P52c=
+	t=1718247935; cv=none; b=nhjAa+Ojkvp0PZhmQ4Q2lzjsi32U52VPiT31mz2qKK7zwhqNcUTm3BqEiC9i516sqGeMutGfTn8qClcwJBcEPGsBNUJjB6WTTveG6LHQ55OOEYwqhvS9B/YOYGJ1G07PP1I0ZUMy/+OG9rKtTrf0Nazi+gUjwVO49gOGCXp71G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718248045; c=relaxed/simple;
-	bh=OIcere13pVOettULjJywtuj49HytiD3Jo1GU9kFl7kg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SttugUaKqqWotaRrE/PafZ/qoMsLIDNIe/LSSEAIjbL3BiFy/FnXsG4ei55aysRLwZ796tHpqUW0FT4uIZeoaRXRjUpywEMT+3f3TiK/8+tHB+q8AVMA58yRBc2P5c0YLv7her7BnWeHiERJiEIhrHM3I4DsZSRhSMBxnJsz0sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hcIsf7JK; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718248044; x=1749784044;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=OIcere13pVOettULjJywtuj49HytiD3Jo1GU9kFl7kg=;
-  b=hcIsf7JKw87/p+ergjHsQfQDbAbUJS+WQfq0vK/THS7SVkklCVm8Sf9X
-   tiTA8inJH+ei26J5uoMFtl6AqnRsd7KQyLc6NB1okMXVotS1qm0ptdX2B
-   vojaI6YLN+MzW809mIkzSkgVtp0lSoQeZxGddR+oVylIrQxEhYJs27zQr
-   MOW7ZvKVgVvKxnuRJ/L5ws2MjTYJG5GNMithq5JpQ+YnaKZ7JxcBVoqjA
-   bpuElm9cvW39OH+5EZqU2FYdYLFxfQXu35wS2EtHeO/0lCYb6HbrVHRja
-   hIIIfuQJ38MAxDD7ktL61g7GYUr9+RPvSqZ6rYRu080HqTX71ljmzH2Y9
-   Q==;
-X-CSE-ConnectionGUID: +biPwoENRbW7jpviXFhWvg==
-X-CSE-MsgGUID: oJNpQ20rQ5KEOsb6A8cdcA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="40449406"
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="40449406"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 20:07:19 -0700
-X-CSE-ConnectionGUID: n9i8A+gXSge7LiRP9GEd9w==
-X-CSE-MsgGUID: LLvptQCXTimLNEyV7eOA+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="39911926"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by orviesa010.jf.intel.com with ESMTP; 12 Jun 2024 20:07:16 -0700
-Message-ID: <ec07f4f3-d537-4687-bacb-b88af2d2667c@linux.intel.com>
-Date: Thu, 13 Jun 2024 11:04:57 +0800
+	s=arc-20240116; t=1718247935; c=relaxed/simple;
+	bh=4/qP8iALJ2CgmtztzTTE52P6OmpNtjaTkKxP969Ql0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WOgR1Xfypk5L+MMXBW7PTmxoP9X4aktMze0r6sAHsXpNZ02uui6itIw+/je5Lynb6P+hhP0jcbp5d+r4FiKCncmhzeWPKkE92TYe64qpD8bFmRSSCNZAlRnOHJGVk/KAaQa0U2m5/jyNxjTn6vuMaU0HDI8DG7CDcO5Pa567C/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIAndfv2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EADF9C116B1;
+	Thu, 13 Jun 2024 03:05:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718247935;
+	bh=4/qP8iALJ2CgmtztzTTE52P6OmpNtjaTkKxP969Ql0s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WIAndfv2ZIidRa65O52I4HSr4r8H/g+BFE/EF6QsC9dVxzBl1iFCW5zRvkRnVMuyv
+	 kx4HEi6GaRS7ZzL7lkvaeMhd7or24QGINZTZzVmYgPlVsFL3u8EEJ3hFvNPRV5rAoK
+	 NRTWWD20N2/v9Aiuy+azJISDH10vhOefMCndLitusHCxoMK0f7S+6G5U5+7tjt1f62
+	 TWiCkzmwllU/4j5WQ1B/4ZXCp+XOhz5a9uAHF9aHqqa+htgc2mfreuOtgeSfMsRZvu
+	 JuyuicE2bafavvKEzILB4tZI7uBVKPDhNCnn7AbnF9pmvuyO+tayKQClWhF8Nl4mGJ
+	 3zIuOIGtbmhjQ==
+Date: Wed, 12 Jun 2024 20:05:34 -0700
+From: Kees Cook <kees@kernel.org>
+To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+	mw@semihalf.com, netdev@vger.kernel.org, pabeni@redhat.com
+Subject: Re: [PATCH v1] net: mvpp2: use slab_build_skb for oversized frames
+Message-ID: <202406122003.E02C37ADD1@keescook>
+References: <20240611193318.5ed8003a@kernel.org>
+ <20240613024900.3842238-1-aryan.srivastava@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "Tian, Kevin" <kevin.tian@intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 01/10] iommu: Introduce domain attachment handle
-To: Jason Gunthorpe <jgg@ziepe.ca>
-References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
- <20240527040517.38561-2-baolu.lu@linux.intel.com>
- <BN9PR11MB52767B3B1F441D9AA656AC258CF92@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ae7c05b0-104e-4c71-99aa-fed2a4f209fb@linux.intel.com>
- <20240612131059.GS791043@ziepe.ca>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240612131059.GS791043@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613024900.3842238-1-aryan.srivastava@alliedtelesis.co.nz>
 
-On 6/12/24 9:10 PM, Jason Gunthorpe wrote:
-> On Thu, Jun 06, 2024 at 01:33:29PM +0800, Baolu Lu wrote:
+On Thu, Jun 13, 2024 at 02:49:00PM +1200, Aryan Srivastava wrote:
+> Setting frag_size to 0 to indicate kmalloc has been deprecated,
+> use slab_build_skb directly.
 > 
->>> But if certain path (other than iopf) in the iommu core needs to know
->>> the exact domain pointer then this change breaks it.
->>
->> The iommu core should not fetch the domain pointer in paths other than
->> attach/detach/replace. There is currently no reference counter for an
->> iommu domain, hence fetching the domain for other purposes will
->> potentially lead to a use-after-free issue.
-> 
-> If you are doing this then we should get rid of
-> iommu_get_domain_for_dev_pasid, and always return the handle
-> there. Making it clear that all those flows require handles to work.
+> Fixes: ce098da1497c ("skbuff: Introduce slab_build_skb()")
+> Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+> ---
+> Changes in v1:
+> - Added Fixes tag
 
-I removed iommu_get_domain_for_dev_pasid() in this series. The iopf
-handling is the only path that requires fetching domain, where we
-requires attach handle to work.
+This looks like similar updates like commit 99b415fe8986 ("tg3: Use
+slab_build_skb() when needed")
 
-> 
-> But is this really OK? What happened to the patch fixing the error
-> unwind in attach_pasid? Doesn't it always need the domain to undo a
-> failed attach?
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-attach_pasid switches from being unassigned to being assigned with a
-real domain, so the unwind operation simply involves calling
-iommu_ops->remove_dev_pasid.
-
-In the future, probably we will introduce a replace interface for pasid.
-In that scenario, the caller should explicitly pass both the old and new
-domains. If the replace operation fails, the interface will revert to
-the old domain.
-
-In my mind, the iommu core should only manage the default domain for
-kernel DMA. All domains that are allocated by domain_alloc interfaces
-should be managed by the callers and passed through the attach/detach
-/replace interfaces.
-
-> 
-> Jason
-> 
-
-Best regards,
-baolu
+-- 
+Kees Cook
 
