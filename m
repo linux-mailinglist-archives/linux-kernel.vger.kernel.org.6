@@ -1,128 +1,84 @@
-Return-Path: <linux-kernel+bounces-213728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC8A90798F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:18:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6168907995
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0311C24236
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:18:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2201F23B43
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C03149E01;
-	Thu, 13 Jun 2024 17:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E4414A4FF;
+	Thu, 13 Jun 2024 17:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmWy2cfD"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPMe2W5q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC3013CF85;
-	Thu, 13 Jun 2024 17:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DBC12D76D;
+	Thu, 13 Jun 2024 17:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299128; cv=none; b=a21j1Y0Un0mwEEiKfD4wBslbN56/PKf9BKDD5/fbY0Zos6Ks+1UzmTSJfT29fXynonV74rCaMdhsl3at2i3EJm0e7rygm0zQMVaeh3hGq9B6lnYrREp2kcou/3h+hGEnw/gMknRE6DWCuJzX1O4sVtNuVgIGeOgEJVfAjXvck4Y=
+	t=1718299141; cv=none; b=XoCYcwZNvLtYv3fz4QUuG0MG+pKOWMqa8fTteWShVG/F+12w5yhhibgE8J8X9TMI9mjdpsiO6FQX8IpvsKxgS97Ud04bMuXsKHqxE1P9Y+44PJiez1G8c5LPCJA6me6BA4RLpfmXZOf4jBMXmoZ4GXupJ7v90Lk98+KENdGXBj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299128; c=relaxed/simple;
-	bh=NzeNxgZX0C2quUpUoW26DoTjgXYHI3/jLgEVyVXZHik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZcCTRn50TraI2FURXwW7Efayfk7np3/5+cVaTUz06DqtZ+mvbzTPysLJTrvladC0E9PHWSGCfhHiifar/Mz/FtkMp5ly+ECqgw43IwZTBUFkjWXgLvFP/ED9Do2fckahUHdMQNAFBxyfMuaE4mKjEx5Zzo/98sVG9KGna0TFmHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YmWy2cfD; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso1828804a12.3;
-        Thu, 13 Jun 2024 10:18:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718299125; x=1718903925; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cwcCGDwb60DzgqVPFb1/1oCx//cSi4Srw7sRj+1jaLY=;
-        b=YmWy2cfDrWvGbG39HT/AvfE2BBqW/X05HQ84DgElPv9DyHomx7Uba4EQjTXNAU6Nnn
-         pj89kAiJE5n10o3AejfJexgIBeZnG+rNN5rjNJ84Nnd+xCDRZyR5rUcl+QE47xQvgxPy
-         3C3egfmdNdrxoiJWZvm8TbZe92C6kN2TqN90ZKmxedXiw2VRTsvb/tuDcX9+TO0HaIuH
-         w9ow1SRBdS9iov2pPXYT5Yxjz5nB61Ji+HFnnQ+UvD3umw7Mm4S2DiyvUEAgpeLyrqtO
-         gCjaZBO1VomvgNqmP2/V1rGZdbho+laiTf6AhyoLDr4VILAZmP6soguvAIYAwfabZ3uE
-         gsKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718299125; x=1718903925;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cwcCGDwb60DzgqVPFb1/1oCx//cSi4Srw7sRj+1jaLY=;
-        b=vga9/COw24xLx/fJF3GOuGAQD2DUiQse0ZpOzcaKOS/JQ4oCkurmb0Nr6DZn0CDdr9
-         N/r/7RXUJ3RCeBMC9MsrWq9/I2jzWK1gmPvCr++7pVjLy5QY5HuC72UX+Salkn8HbDHG
-         qMtvhl0qQta9gjIT1OQrfNY4uj4roRqj3CyC3rh1yKzB1EE30GRC/qTC7grWSdw+mliB
-         GrJrMcDtYC/Dwb22zckDssTjL2tC6NvXQ9o5ZskI6b7FZiObbL8MGSex2OLD9yQ8LHp3
-         aDcmpB28bfEDB0qtfb8nf/3EKwFwFHXfimwBYumtYkIdWhqcTq+9b5uy7P9lofHccpnb
-         3YNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1kJhHsmGpA0+Xnx6UUliIkdXjcJK3N8aOHW2AaXwCi+FHxGpD1CX2/rLjjjArboUPP7/mm6qavTqydRTJGg8CoCKHX70mDVArXG8ikFlvlbNthomV2OvrCxqVUuKooeixcIBIBC8Z0bRMHXREGVI9h4i8eSNP6oLuQrWs7wRP78azEIZAiEs+/eiHn4konOaZ4xgcqZPgHD+YqXRfqEzq6gFFOg==
-X-Gm-Message-State: AOJu0YxGE/xZIzuZNA6nSlpeLezvWQvi3/mk/LgKLhs/y/UwZLWQNvXY
-	9LxcFGTPB6PGis4hSnnoY4+ZYgq+Y/82whbPl17szLIIAPofMgvH
-X-Google-Smtp-Source: AGHT+IGdIR8K+VU7ZoWeYaXJouZP25nKSmNr2Ci+hRTo46h3PKiZ1ed05PMzYhGyYbF+2HCHDXPaJw==
-X-Received: by 2002:a50:8e18:0:b0:57a:2fe7:6699 with SMTP id 4fb4d7f45d1cf-57cbd66272cmr286625a12.14.1718299125009;
-        Thu, 13 Jun 2024 10:18:45 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb741e7a5sm1139124a12.75.2024.06.13.10.18.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 10:18:44 -0700 (PDT)
-Date: Thu, 13 Jun 2024 19:18:42 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	phone-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: qcom: motorola-falcon: add accelerometer,
- magnetometer
-Message-ID: <Zmsp8kPRCE/fIPQk@standask-GA-A55M-S2HP>
-References: <ZmWMh6fuLasvGkR/@standask-GA-A55M-S2HP>
- <2b39d763-5b79-4b21-85f9-22fee9f87468@linaro.org>
+	s=arc-20240116; t=1718299141; c=relaxed/simple;
+	bh=/FRqBJ2+W9oi2BU9wQ0dzEOCrTnN9o8UYQjQ6KKGegg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=BraO1iE34dENe+TcYwNIZreSgStr8/GDIigQyXiz0mguWVGMBfqfYxzR/YAiPj8Pw8h/3W3fO4Ic+mq7qeBLQfWedYMBHXzpM5Nib4mYPSxwkhtuJ5wFNn1ehKsG1Eu0K6gbBxOMLDpKRIiNILomBeQKL9zRaw4Cs/wfWwFwA3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPMe2W5q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEB0AC2BBFC;
+	Thu, 13 Jun 2024 17:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718299140;
+	bh=/FRqBJ2+W9oi2BU9wQ0dzEOCrTnN9o8UYQjQ6KKGegg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=QPMe2W5qRO49VpynzkQuyjHER7fJc/OxSZSqr+1Xx9xtGDumzv7UBy9TSDnOdKKub
+	 bD6ldak9xEoJTTwfRO3is+ngcveTbe2DdZy9aVkjit7bJAl3+NBuRImqcEiTan15Yd
+	 /c4j47b5mVPzW33yO5C92LsJm5yr1qxX8pAuYzhR2zSVx+sBnjiPoojsjiV0uyJJMa
+	 8lht12SgN+ELZgs8SWoHMuCkyVuucbl01YMwvjuAfYYK1mnfaF/wFM/PX16tayzNWK
+	 MwyDu2XWxMYD8jE3545aYxKhyRtIIboV//Do5w4qXTJCLqXUCqo8+6f2gDFPrhyX83
+	 SoNs6J7D7g89Q==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ stable@vger.kernel.org
+In-Reply-To: <20240611-leds-mt6360-memleak-v1-1-93642eb5011e@gmail.com>
+References: <20240611-leds-mt6360-memleak-v1-1-93642eb5011e@gmail.com>
+Subject: Re: (subset) [PATCH] leds: mt6360: fix memory leak in
+ mt6360_init_isnk_properties()
+Message-Id: <171829913865.2730656.15082928550080844498.b4-ty@kernel.org>
+Date: Thu, 13 Jun 2024 18:18:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2b39d763-5b79-4b21-85f9-22fee9f87468@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Thu, Jun 13, 2024 at 09:48:26AM +0200, Konrad Dybcio wrote:
+On Tue, 11 Jun 2024 00:40:26 +0200, Javier Carrasco wrote:
+> The fwnode_for_each_child_node() loop requires manual intervention to
+> decrement the child refcount in case of an early return.
 > 
+> Add the missing calls to fwnode_handle_put(child) to avoid memory leaks
+> in the error paths.
 > 
-> On 6/9/24 13:05, Stanislav Jakubek wrote:
-> > Add the accelerometer and magnetometer that are present on the Motorola
-> > Moto G (2013) device.
-> > 
-> > Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
-> > ---
 > 
 > [...]
-> 
-> > +&blsp1_i2c2 {
-> 
-> Consider setting a clock-frequency = <>
 
-Hi Konrad,
+Applied, thanks!
 
-checking downstream [1], qcom,i2c-bus-freq for I2C2 is 100000, which seems
-to be the default. Should I specify it anyway?
+[1/1] leds: mt6360: fix memory leak in mt6360_init_isnk_properties()
+      commit: 6e0b2281085191fbf34fb24ef272cb44a82de4f0
 
-Though, now that I've checked, it seems that I missed the clock-frequency
-for I2C3, for which qcom,i2c-bus-freq is 400000...
-The currently supported HW on it seems to work fine though ¯\_(ツ)_/¯
+--
+Lee Jones [李琼斯]
 
-[1] https://github.com/LineageOS/android_kernel_motorola_msm8226/blob/cm-14.1/arch/arm/boot/dts/msm8226.dtsi#L983
-
-Stanislav
-
-> 
-> With that:
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> Konrad
 
