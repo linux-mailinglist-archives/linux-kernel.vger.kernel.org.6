@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-213941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B88907CD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:42:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41526907CD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20288B22A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:42:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3C20B26495
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829BA14C583;
-	Thu, 13 Jun 2024 19:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C2C14D712;
+	Thu, 13 Jun 2024 19:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="H8n2FqwP"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fPRCophs"
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA435134407
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C1714C59A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307719; cv=none; b=j3FCeRwlPgUazE7dd5rDsF6IdidLXu02pJoFXlrK3e1UeDy0d9hU/JrGIljfHzoeyvaex61nK5F/aiQHU42GvBCs08kbydLGIGAQ0jFunj//r3mX65Dme3a72zYE85P4avGTkq6bR8iWSizl0QitOAACffixgBxH2JwpfRFnnoM=
+	t=1718307722; cv=none; b=gY9a6GvH6yCuDSB9FH0EzDuw/LLktX1JnKsLXpSEVPMBl3FtKWom69b5HJ64+WYTWvc+NgcsLrQMX5nypt8M8jCi1gST2LxBqKElRaIt9rR9GkV5Cl1lX8jtiLolokcDnzrle3mmwA4zYBDpaGqOh89i99FBL5ThppFE0uw6otc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307719; c=relaxed/simple;
+	s=arc-20240116; t=1718307722; c=relaxed/simple;
 	bh=XAZMt9N0NCglaqew8dSYutoepiDFHTvY9wdHf9ybtaM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EHifgB5vT6kN4PIbNnWfz64PFoN3UtabgXUafXDkLtokrzc5XueEyoxXHct1cGCed/DpqG4TJFPBYK9dJmh0ccxONKxAz2issHpEkJGMwZc/rGRtlRu5IrNVXB5ndCRP/9dixR3/c8uaLgNCh3VO40bICw2zcYzEAEI04xgsNOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=H8n2FqwP; arc=none smtp.client-ip=213.167.242.64
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=odawNCo48RUHW3YlWoDIG6DRhq6NbRH/bjSjwQe82gG5KP34XuWekx8ygVA7MLWvohoemb48Dty2crq2eIiI4d3C2UYeiVsjwpaYwBQky9Yeape6FG3pRzPFU0ErW70d4x5ofoXZbbxCuvl86dYREYLns+35gfmGq6gYjuIIVyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fPRCophs; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B82CF4CF;
-	Thu, 13 Jun 2024 21:41:39 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1A9E2675;
+	Thu, 13 Jun 2024 21:41:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718307700;
+	s=mail; t=1718307704;
 	bh=XAZMt9N0NCglaqew8dSYutoepiDFHTvY9wdHf9ybtaM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=H8n2FqwPsn9XaUAxAi9ViKjzn9H+1Tkzuk/1K3gSDTwc6yMFsT1158JD9PRUBOYRr
-	 Y/dH1FDyJsknVhZrgFl14dWZcxuZdpYGQcs6jm234HLZK05ZeADGcVq+/VgCaJmfLv
-	 nsb1V5NLPlAgYYg99kkhmzjrb4ijc+POsIHLxAR4=
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fPRCophsCkL/oJokmlFr3G1tmx1YfRvarY1fKLc6go9/IO43NxaSWvcUDfAVgaKmC
+	 FnMs0BeA70P0XsBxkmBzb1WBBAbyf66Ri7U4acX8fll9sORbQbJJxF7JJNjbsNTXqL
+	 W7lQyOl3ceJajuufSI6wD6q/56Zamqmd+/hhG/sY=
 From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 To: Umang Jain <umang.jain@ideasonboard.com>,
 	Florian Fainelli <florian.fainelli@broadcom.com>,
@@ -55,9 +56,11 @@ Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
 	linux-staging@lists.linux.dev (open list:STAGING SUBSYSTEM),
 	linux-kernel@vger.kernel.org (open list)
 Subject: [PATCH] staging: vc04_services: vchiq_arm: Fix initialisation check
-Date: Thu, 13 Jun 2024 20:41:45 +0100
-Message-Id: <20240613194150.2915202-1-kieran.bingham@ideasonboard.com>
+Date: Thu, 13 Jun 2024 20:41:46 +0100
+Message-Id: <20240613194150.2915202-2-kieran.bingham@ideasonboard.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240613194150.2915202-1-kieran.bingham@ideasonboard.com>
+References: <20240613194150.2915202-1-kieran.bingham@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
