@@ -1,179 +1,108 @@
-Return-Path: <linux-kernel+bounces-212890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE139067D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC20A9067DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD822289C01
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:56:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67E7C2892E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC9813E04A;
-	Thu, 13 Jun 2024 08:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F6914037E;
+	Thu, 13 Jun 2024 08:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTxXsssk"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FCRHpAur"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7478413E036
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E2A13E036;
+	Thu, 13 Jun 2024 08:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718268894; cv=none; b=NZ8/MinB5RpJqeq9LXNd83THzjHrM8gMF0C9M/+AtSWgaV/9Q+QfoyrO/Lb3fX+UFMZBuwRmqr+eN2bfjGmvcuAMDnhjokSlMaJAWdmNsR1OAw+d2mKCuJIFBu7u5Txo8nvDnMYpnKQulVfr67WwY73nzOqvEVE8dxKLh557MNs=
+	t=1718268923; cv=none; b=nRkzT2XUPwB79u02I5/WbrUx6d8789A0zfCoxGgk5bLHnVB/5vJnxN5ykdRmlVWrjuOxZlDvC/PJafVoLjrMv3++ITatyie1fhbCaqeTcbRmlq9AsrrMW/BwAKgrBocG26ByL9M0WBRSH0KA3gN8NK0oqPKJe7QzPGq9aM89hjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718268894; c=relaxed/simple;
-	bh=w3c++bE92mjoUTBy6ui0MjrF7z2S+BQxrMh1kRI8r+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ixw+T+GAMpbt9/1HD1Lfdh55w7MmM39Kba35Oh3a/fdZ1+GAyREjl9o8VsSzCmsP5BpWGz6j7gYMrF631q1R1qoILmrrPZQvzfWirZP1nFXl+/o2DczGurB2CZRClsA5Bm5QsMwdUh6GLx679yr8M24rzOUPAm9YtZM8hZRz0jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTxXsssk; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57c73a3b3d7so624691a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:54:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718268891; x=1718873691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OBp2kHYj7n2BHev/+gQZZjKm6K2+dc661niSqj6ZNLM=;
-        b=kTxXssskbczZ/Oqk8lCYkHRdhPoh7UQJbAoyULP2seUuLfwJT/00eYBPnwxbHoM7PE
-         l3Ky2BUPnuYJMsaylboNLpZRxnYav9Z7/2VTLeYrn1ETggKppkNLoJJrziNQ3vLPSj3T
-         NVY8nCn+KWkbVa84tbbWJOo7381jehpzd1HzPLTeCWopjBSPxyjl3VAz96yWrQBlEsnb
-         Jb9ngJxGZW5Awi1kpRJZuntt22adguVk0naWg55HudcU7Sx464Kfa+cW7ShH4CtKe+WI
-         VJf8gnMz6aa4xEZ0Ze/fRA6lkLnnu0Tzi0X8UU6uAMR6Ja6HHXpAHSbdGpVIZBLX1Krz
-         ytGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718268891; x=1718873691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OBp2kHYj7n2BHev/+gQZZjKm6K2+dc661niSqj6ZNLM=;
-        b=jv/Ue2+/6iPDRGNl26qv8GllGYe+IWukgsaL6RO0X8mZHZY2eFyn0UdcO4uoU5jGyQ
-         1IVYtOgx32vPx8g/puOv+0zTtUvMjqxAExezX6uaovqTWiskt2AnRiWkJhyEJwWTy/mW
-         CKSQ5lmJq8Z7lvzsNhHTfRHfbJWrC0f92BnZXoHibABBXnDwhg0iBn5ctM5Fb8UOE2I7
-         DDkvyZobviJ+KVXYQ1bGRkollDnHzp5hH3iBLtXQPAJG1d9zOIYmuHOPrUxyTQf1iFVg
-         O4Do+KCUVUpj+04EIlIi6p5IXWCs4+Cw1+Nxv/vaSLVMy07XJ3018P9MPmK351oc3OEY
-         UKPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXG7kYAGFP82pKbs3CH91XuE1NM2IH/gydh4/t3sozIMtIQgbcEf+LQRHP0XMqEdj/DULxToREHu5O6m8ZguSm8bNhyK/zaVtNcMOe
-X-Gm-Message-State: AOJu0Yzu2NFKqWcgMQMXwIrGbpl9ZOGZKsjoDHs0hsvcq8C6s661jHj0
-	m8HGE23zyWXjHptEiJnsI01/HntUVXFNqRCduMqg89/dFv8IijqyAIfd/ggwOlNJoom3RXfSWEp
-	iM7lrq7YnMmzROrp8gFJ4nZ1Q00Y=
-X-Google-Smtp-Source: AGHT+IEwoe0EZaXf2PrzoKl8chusq2h4Z4pgkoaMd1lJq7IJtqO/rZQGTBpSkdFC3XbRdmQJaT5hP993q0PSngJXOS0=
-X-Received: by 2002:a50:9557:0:b0:57c:740a:c4e4 with SMTP id
- 4fb4d7f45d1cf-57ca976ace5mr2623522a12.25.1718268890474; Thu, 13 Jun 2024
- 01:54:50 -0700 (PDT)
+	s=arc-20240116; t=1718268923; c=relaxed/simple;
+	bh=Mbx86OvHeq6gyJt0/wrbcA7csW4sD7XcvVlcTa4GkFA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=quQCWGSRx2vQJbrbqOJXLZ1ulBdkozJakDvfYNfYYPGJd2NZCqZcbZRQ5S3ScQ6K1Z83uiZ3VCka1WAagExiudIrNLz27Uex0zNglJ92mOfIxCdho6hz6rXYSc+jCTycVFygBjbnBMfqnsDFKjTSgR+vmEtxdFOboR8ywWgl538=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FCRHpAur; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3C24740E016C;
+	Thu, 13 Jun 2024 08:55:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id bZBfFqES31R9; Thu, 13 Jun 2024 08:55:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718268915; bh=3Dzk+C3x6/O7l/Mmw+O7gTZjYw/iV38/2gr+mmH9V9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FCRHpAurF+Wm/EOGZM65m6GLwmaYdiGwKyoDw/JKgAHLBrGG3jBdRefQOXpURQTgq
+	 pRL5nPED5jvwl8KeUqkAUCH6sFbGufzeSw3VpJopkeeMYQpYB5G33X3y52FuuSOjEa
+	 UoE0qjM8ngZca0OcO5ZFtgGSmJIlYEFoQ9sPzGXPtbMAnZ8Gn9WfDQIIJ816tJwGLT
+	 HEbNzybwLGzKBYTBuA4MgSO2lVzwWn5HKCcGbG6bE9NSaMPRKIgy4Zdg6UWCbU5EP3
+	 O94BGrYUpFVF0msJz0MP6Klh6B/upITbg7aWriz3jVjxxBdVbdIL0SkQe7DoAsJH5w
+	 D2AfKnd4qR7iU40tp4HAhSuErQrS+q3Fi3cBakIuJTKvkhIab+WFMJ7YXhB8uBu0hU
+	 d4S71CrP5lW6ej2pT4Lb2Pi0Wi5oxXRQ+mFEaTJjmm2f6KiNzzazG2HILEb0Pka/l8
+	 mtn6YgY/hyo9gxaLihpmwJvvXkkL0AGJbQEv1hcIOKqkPOsjOpKD7o3Rh1XNFh6pfK
+	 cpvZI+lQ8IESc/H9E4rdWOWCqmhHivDRq5HfiVodUvng//j5tZ6aldkWgGSHhrA0l+
+	 Qu1UJsBfoHjn8sLTURFd2GcB//vOtSFVFBnGjrDp6HhZfQBMHzkK+FuKZ0vq0+8f1c
+	 O4IIWM8GAvZiDWb5079/AjxQ=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9031940E0081;
+	Thu, 13 Jun 2024 08:55:06 +0000 (UTC)
+Date: Thu, 13 Jun 2024 10:55:05 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ashish Kalra <Ashish.Kalra@amd.com>, Dave Young <dyoung@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v3] x86/efi: Free EFI memory map only when installing a
+ new one.
+Message-ID: <20240613085505.GDZmqz6UWxZ1QxKeHu@fat_crate.local>
+References: <20240612135638.298882-2-ardb+git@google.com>
+ <CAMj1kXEgAStastV+sMhXt0pUmvM=nr9D-oDctwb8iiYxt9+fAQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610120209.66311-1-ioworker0@gmail.com> <20240610120209.66311-3-ioworker0@gmail.com>
- <b0d551a9-ee70-46a7-a0d6-c422f0baf91e@redhat.com>
-In-Reply-To: <b0d551a9-ee70-46a7-a0d6-c422f0baf91e@redhat.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Thu, 13 Jun 2024 16:54:39 +0800
-Message-ID: <CAK1f24mZk8hKDSPk+y7fP=cLoTuWxGaju_JqnKd_6BYQbZr6zg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/4] mm/rmap: add helper to restart pgtable walk on changes
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
-	baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com, 
-	ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com, 
-	fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com, 
-	xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com, 
-	songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXEgAStastV+sMhXt0pUmvM=nr9D-oDctwb8iiYxt9+fAQ@mail.gmail.com>
 
-On Thu, Jun 13, 2024 at 4:30=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 10.06.24 14:02, Lance Yang wrote:
-> > Introduce the page_vma_mapped_walk_restart() helper to handle scenarios
-> > where the page table walk needs to be restarted due to changes in the p=
-age
-> > table, such as when a PMD is split. It releases the PTL held during the
-> > previous walk and resets the state, allowing a new walk to start at the
-> > current address stored in pvmw->address.
-> >
-> > Suggested-by: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> > ---
-> >   include/linux/rmap.h | 22 ++++++++++++++++++++++
-> >   1 file changed, 22 insertions(+)
-> >
-> > diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-> > index 7229b9baf20d..5f18509610cc 100644
-> > --- a/include/linux/rmap.h
-> > +++ b/include/linux/rmap.h
-> > @@ -710,6 +710,28 @@ static inline void page_vma_mapped_walk_done(struc=
-t page_vma_mapped_walk *pvmw)
-> >               spin_unlock(pvmw->ptl);
-> >   }
-> >
-> > +/**
-> > + * page_vma_mapped_walk_restart - Restart the page table walk.
-> > + * @pvmw: Pointer to struct page_vma_mapped_walk.
-> > + *
-> > + * It restarts the page table walk when changes occur in the page
-> > + * table, such as splitting a PMD. Ensures that the PTL held during
-> > + * the previous walk is released and resets the state to allow for
-> > + * a new walk starting at the current address stored in pvmw->address.
-> > + */
-> > +static inline void
-> > +page_vma_mapped_walk_restart(struct page_vma_mapped_walk *pvmw)
-> > +{
-> > +     WARN_ON_ONCE(!pvmw->pmd);
->
-> Can we have this more general, like
->
-> WARN_ON_ONCE(!pvmw->pmd && !pvmw->pte);
+On Thu, Jun 13, 2024 at 10:28:05AM +0200, Ard Biesheuvel wrote:
+> Given that this fixes an actual use-after-free bug that is not
+> specific to TDX/SEV or kexec, I'm inclined to queue this up as a fix.
+> 
+> @Boris: Mind if I take this as an EFI fix? Otherwise, can you queue
+> this up? Thanks.
 
-Sure, let=E2=80=99s make it more general.
+Sure, go ahead:
 
->
-> And then setting both to NULL below?
->
->
-> > +     WARN_ON_ONCE(!pvmw->ptl);
->
-> This is confusing: you check for ptl below. What would be clearer is
->
-> if (likely(pvmw->ptl))
->         spin_unlock(pvmw->ptl);
-> else
->         WARN_ON_ONCE(1);
+$ git log master..tip/master arch/x86/platform/efi/memmap.c
+$ 
 
-Will adjust as you suggested, thanks!
+Should be fine, conflict-wise.
 
->
->
-> > +
-> > +     if (pvmw->ptl)
-> > +             spin_unlock(pvmw->ptl);
-> > +
-> > +     pvmw->ptl =3D NULL;
-> > +     pvmw->pmd =3D NULL;
-> > +}
-> > +
-> >   bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw);
-> >
-> >   /*
->
-> I'd suggest squashing that into the next patch.
+:-)
 
-Got it.
+Thx.
 
-Thanks,
-Lance
+-- 
+Regards/Gruss,
+    Boris.
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+https://people.kernel.org/tglx/notes-about-netiquette
 
