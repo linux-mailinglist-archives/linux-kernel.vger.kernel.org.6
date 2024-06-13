@@ -1,108 +1,76 @@
-Return-Path: <linux-kernel+bounces-213862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62B0C907BC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:51:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB12A907BC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB510B21ECC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:51:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815941F22041
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E350614B941;
-	Thu, 13 Jun 2024 18:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B30A14B95B;
+	Thu, 13 Jun 2024 18:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="T9QPArPz"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XSbKrK5h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DA6139CFE;
-	Thu, 13 Jun 2024 18:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2D484A48;
+	Thu, 13 Jun 2024 18:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718304708; cv=none; b=CIYD3dR2Qmxwb2SM6ovINvcd5ZKpDsJQxgY9wQ/j9tD4L3tODouxDdLt6Bu03lGAtOT1jul/JuHOgVDrM8uKrNFK7VuJkaSJpPW8jBuPV7O6J5bcOU//syuiP4EwD4Ox6PzqRRSOYmMq+4d3BcIlWKOEgpaDccNLB9xYVcBd5+w=
+	t=1718304871; cv=none; b=kjVFEZ8C+lgcRhNd7MsmgsstjzJwiqsAOK3XwDoieqlZAEEejw5F1mfisGkHd7ut6Qk2/yBvp+3LPxxHgqAzit1bU/LoXLa8crzj6nn/aF8AIchbugHN/nZnQHHP0NReeKVCdTrbB46KQq+zxcgjQGNB2HOLqfuo2siCmKYjWmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718304708; c=relaxed/simple;
-	bh=iV4q/X0Wj6UHGCAGLqeS48rT8zJY+mCSDmYajJv0QZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ft6LY3JUsNnEGrEOe525Ep/35PUUz9SMtHrIg9voXALGVHia1JIS4rUiRTS59m9Jj0naRrTIJ7ncWgQTr5+e+4KB02u2OoTlI399/5hdO6L+VZ3DoW5rbmSsfXlufeU4wD9cEB1h9p8vnxoZVpiynwWCCGvg/P1jrZlAEBc03Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=T9QPArPz; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9HN5Q9m3aml9BDWCtbf5XAXVRqLbIQ29IsCzgD1YK88=; b=T9QPArPzVGnD7tA9lxmswDYhaG
-	wPXm01yGP4vRBLtzkEUoyEmxb9ADjsu0ud+8cU6NUJarVry86LAS+wwRm8xOJ/5E+miXe5hnNcTes
-	386fiCZjvRoOLfX9Pr3r/+EqJRdlBb7Ag+muNAfmJHJz5+O63ScJ1a+OHHMj4WvvOxKhsWkbBGslB
-	jV0Kd3OUFl2ZezEQuB814vQ1FQbBxWl8Q5H3SDg8e4ke+gIp8VK7eypVNDc6iFhfIr7TyLvFVPuu6
-	YgEgfqFVaYYCn1FI5Z8NyA6i4WdwLgHAvW9jYfuBW4BL5SSSvDpObf9QTEOWEMSohbAZAaVZAyXFT
-	sANcU5YA==;
-Received: from [191.205.188.103] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sHpXs-002qHg-Lq; Thu, 13 Jun 2024 20:51:36 +0200
-Message-ID: <3c6f4c1c-6dca-aa82-341f-758c9c3d4ffa@igalia.com>
-Date: Thu, 13 Jun 2024 15:51:25 -0300
+	s=arc-20240116; t=1718304871; c=relaxed/simple;
+	bh=hCGrtrINHBpW558RK/yFkwqvKEYoovaZ98BUv0iszyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zw9A5bTIVGqcwtWVkSfmP4ACp+iV/8rfMhMsqEGocjV4CqCpYvTNFaA70GcaUIOvyYwI66tjUBwiAXxNj2vWBS2B2vl/AXZ/3O6GXvFnPYKHbRkQysU3JSRE+H0/gxCnD6DemnXHG9st2Q6SOezCIW3+B+gEl2bXITNh2fgpvlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XSbKrK5h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AB4CC2BBFC;
+	Thu, 13 Jun 2024 18:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718304870;
+	bh=hCGrtrINHBpW558RK/yFkwqvKEYoovaZ98BUv0iszyQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XSbKrK5h6M94wYR07RnLRhLTlp4okpucVLIZ0XEjbyeIu5mkqekKQzLrnWh/BQyVc
+	 1Bvvq1lLxSI6vyASrGqqah4MNNQBFhDKzSnH3tekXWuDTZmFS0NqDThgOSFrudG05k
+	 9ce0vUokhDDtxmS7CJKQWo5OzeJvz9PtDXWXhn6I=
+Date: Thu, 13 Jun 2024 14:54:29 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Networking for v6.10-rc4
+Message-ID: <20240613-satisfied-righteous-mongrel-73ab7d@meerkat>
+References: <20240613163542.130374-1-kuba@kernel.org>
+ <CAHk-=wiNgwEpfTpz0c9NXvZvLFPVs15LeFfmhAUO_XhQTXfahQ@mail.gmail.com>
+ <20240613113726.795caf6f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v6 2/2] pstore/ramoops: Add ramoops.mem_name= command line
- option
-Content-Language: en-US
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mike Rapoport <rppt@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Vincent Donnefort <vdonnefort@google.com>,
- Joel Fernandes <joel@joelfernandes.org>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- suleiman@google.com, Thomas Gleixner <tglx@linutronix.de>,
- Vineeth Pillai <vineeth@bitbyteword.org>,
- Youssef Esmat <youssefesmat@google.com>,
- Beau Belgrave <beaub@linux.microsoft.com>, Alexander Graf <graf@amazon.com>,
- Baoquan He <bhe@redhat.com>, Borislav Petkov <bp@alien8.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, David Howells <dhowells@redhat.com>
-References: <20240613155506.811013916@goodmis.org>
- <20240613155527.591647061@goodmis.org>
- <6a6bd674-48ca-f7fc-d572-51e52e6899d9@igalia.com>
- <20240613144248.2251b189@rorschach.local.home>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20240613144248.2251b189@rorschach.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240613113726.795caf6f@kernel.org>
 
-On 13/06/2024 15:42, Steven Rostedt wrote:
-> On Thu, 13 Jun 2024 15:19:50 -0300
-> "Guilherme G. Piccoli" <gpiccoli@igalia.com> wrote:
-> 
->>> +
->>> +	reserver_mem=2M:4096:oops  ramoops.mem_name=oops
->>> +  
->>
->> Likely this could be fixed on merge, to avoid another version, but...
->>
->> s/reserver_mem/reserve_mem
-> 
-> That 'r' is my nemesis! Almost every time I type "reserve" I write it
-> as "reserver" and have to go back and delete it. :-p
+On Thu, Jun 13, 2024 at 11:37:26AM GMT, Jakub Kicinski wrote:
+> I only uploaded the refreshed keys to the servers ~minutes before
+> sending the PR. Next sync should hopefully get it into pgpkeys.git.
 
-LOL, I thought the same! And I even wondered if you're not a vim user
-that makes use of 'r' for replacing text and double typed that - I do
-that all the time, with r and i.
+I run the sync from keyservers about once every 2 weeks. My key has to be
+present to sign it, so it's not a job I can fully automate. I just so happened
+to be running it today, so it's already included in the latest batch of
+updates.
 
-Anyway, thanks for fixing that.
-Cheers!
+> Not to excuse my incompetence but git tag -s didn't scream at me last
+> week that my key is about to expire :(
+
+The "your key is about to expire" notification bot has been on my todo list
+for the longest time.
+
+-K
 
