@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-212556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0521A906326
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:47:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC10906328
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB1891F21D9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:47:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8261B1C21FB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1DD135A51;
-	Thu, 13 Jun 2024 04:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD96F132C3B;
+	Thu, 13 Jun 2024 04:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="baDAHnUV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YT2QtwFa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975DC3CF74;
-	Thu, 13 Jun 2024 04:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58852446CF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718254037; cv=none; b=UYmtFw6y0wzgkuHwaHX+TFdBgLzB7wffDr0c5iosDd8i5+eAe1+ycNiE18tkFvcNnmeVvZ0k2t21V+SbI6l4QwabFtJPLGO5vZbF0dUsySYtweJ001DobzXRU8W3sn/tjTEhTa6HAQWTIDBOpIzdCtEVtUNJCDWmcYsGouXtpCU=
+	t=1718254220; cv=none; b=J1JGzNRYCKNiXYd7I89J2lMG7CRMmiG5DOamsJEwh0NVOvgCVkI0UZ3zqxyMp0qYgx03ZLr7kQTB2fnykPNbR+gsoqgyjTT5e4ChkH1UX/4nFBDXEPg25wGRZq8N2hkGqc83QpnWchadoum93lud6OT5mQQQJdCV684F8pa1sQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718254037; c=relaxed/simple;
-	bh=+UMlre/jILmPi2MBsSzppHR9F2E+8mwySeNePP8et2o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=FefHyuJVRttY6ATNUS+Or3BP/R5e/36jHsBzHs/LZ5e8zzg6ed/QA0mhyyExrSXjSt3dDXOB+CyVZNjvtn/NpUwOVcSIdwa9GyKTUSgsNYKI0FeH0+kv91OS7aeMFBIMdLQtu2hEmrULZjdOW0CRdWPZPA9ALSQYSguN4l3cfcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=baDAHnUV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CKn7Sj028125;
-	Thu, 13 Jun 2024 04:47:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Ik54hdy3eBlrM2wrP1J9ym
-	szxZU4S3qs30TYbwtuuAs=; b=baDAHnUVHqB/FMtCn1ooRXVtGK6nno9e4o9Tvg
-	mtM9okKPByV9IHi8U0J2ixi7/yS0MHpPysVBJ0h31BXW54/NrglhlUBuSc1tyvTX
-	O5EOVnK8uIKvUIQpExqsWnBvJ4t246W//SCVg2wlsS09trS2nNmplEYhY0GgXP/U
-	olnE7ksWQJ7X3pS23/HlbbPbEWRXNct+BMFfhbASMFuLEFgsBkCw9RCboDzC80E9
-	qFlqRuCDjM/jNpCYVoOstbLBRGbaV91qKXh0T+qV0JFC4e+whWYTUUtWhgbymE4Z
-	NemAsofD92FVHjseWe4gKA9UoEDV7a7H8jGlcgwzX8hlL/Cw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yq83wj5ud-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 04:47:10 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45D4l9iE019830
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 04:47:09 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 21:47:09 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 21:46:59 -0700
-Subject: [PATCH] scsi: ufs: qcom: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718254220; c=relaxed/simple;
+	bh=CZrtrf8crQja7wO1mkA1ifii1KCTrpRJ1BM17B9Ba/8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fYrwUVNw7kCKzz9LcLXQ+K5Yrktv8MjIqpFR4JtmpIkEHdPfb5HddLuArpMkGSkzKsuCxWRiZnpJ1+0WoXmc9/yxfIQQ3dpEHuY1+i++RwvWqRoMtxBBe+Vu4BwTTXIoSPSoIYIyt8rZIiaTRnZyiRppKqsCa28WQaJMG187QeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YT2QtwFa; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718254218; x=1749790218;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CZrtrf8crQja7wO1mkA1ifii1KCTrpRJ1BM17B9Ba/8=;
+  b=YT2QtwFah9d1Io/sU8f/zpoJMHNGyjnrUkhbsU9a26yJt51mCsh1QGkJ
+   42QTzFuFflK6R0LwviJOKfbH4RfxV6ZnpWQP7E/urnHeiNAl0bWTmjzWt
+   bxPWgw8iq4uSJ102PQjBkFJQ6r++pQIiZWDas/TTgvMBAzOYEIMO71tKX
+   pcyLg4cF6s5rlnrgAWMFHADArOKwD0zZe4cRGib2JRoTGYZh+OPHymb7n
+   N3+Zugik7ILkMvbSYUCnu3l41xrqSXKfxmOq5Yq7GXV8YrfBNFMErnoDq
+   R6o/el+DP9xfxYXILrFbfSGyI7ZhukxTDFA2N2p+ZGHOIgqnuZZMwkgO+
+   Q==;
+X-CSE-ConnectionGUID: /S0QqsOoR7m+Ys14LA61Mw==
+X-CSE-MsgGUID: Y1kVRwkVQ7OnV+ZyF0NPoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="12047529"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="12047529"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 21:50:18 -0700
+X-CSE-ConnectionGUID: x5UnoJ9AQvmH++aW966J8w==
+X-CSE-MsgGUID: eiM8bmmaTjywYF1Vu6P/KQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="44968157"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa005.jf.intel.com with ESMTP; 12 Jun 2024 21:50:15 -0700
+Message-ID: <bc702b48-627f-4145-8c9b-684880a73edb@linux.intel.com>
+Date: Thu, 13 Jun 2024 12:47:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Kevin Tian <kevin.tian@intel.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
+ virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 04/10] iommu: Extend domain attach group with handle
+ support
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
+ <20240527040517.38561-5-baolu.lu@linux.intel.com>
+ <20240612134120.GX791043@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240612134120.GX791043@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-ufs-host-v1-1-df35924685b8@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMJ5amYC/x3MwQqDMAyA4VeRnBeo3RybrzJ2iDa1gVklURHEd
- 1+343f4/wOMVdigrQ5Q3sRkygX1pYI+UR4YJRSDd/7m7rXHMWBQ2VgN12iYJluQHuSIQnN9Rge
- lnJWj7P/r613ckTF2SrlPv9dH8rrjSLawwnl+Ab3yIYeEAAAA
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "James E.J.
- Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
-	<martin.petersen@oracle.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rTYAFI87eMfRd-5RPJNBNsxEYMhOsfCD
-X-Proofpoint-ORIG-GUID: rTYAFI87eMfRd-5RPJNBNsxEYMhOsfCD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_12,2024-06-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- bulkscore=0 spamscore=0 mlxlogscore=999 suspectscore=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 priorityscore=1501 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130031
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/ufs/host/ufs-qcom.o
+On 6/12/24 9:41 PM, Jason Gunthorpe wrote:
+> On Mon, May 27, 2024 at 12:05:11PM +0800, Lu Baolu wrote:
+>> Unlike the SVA case where each PASID of a device has an SVA domain
+>> attached to it, the I/O page faults are handled by the fault handler
+>> of the SVA domain. The I/O page faults for a user page table might
+>> be handled by the domain attached to RID or the domain attached to
+>> the PASID, depending on whether the PASID table is managed by user
+>> space or kernel. As a result, there is a need for the domain attach
+>> group interfaces to have attach handle support. The attach handle
+>> will be forwarded to the fault handler of the user domain.
+>>
+>> Add some variants of the domain attaching group interfaces so that they
+>> could support the attach handle and export them for use in IOMMUFD.
+>>
+>> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+>> ---
+>>   drivers/iommu/iommu-priv.h |  8 +++
+>>   drivers/iommu/iommu.c      | 99 ++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 107 insertions(+)
+> I don't have an objection to it like this, but I wonder if we could be
+> smaller to teach iommu_attach_device_pasid to use IOMMU_NO_PASID to
+> attach the handle to the rid?
+> 
+> It would have an if there to call the  __iommu_attach_group() instead
+> of the pasid attach ?
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+This is a good idea. I guess that in the future, we will have
+iommu_attach_device_pasid(IOMMU_NO_PASID) to replace
+iommu_attach_group(). The group->domain and domain_ops::attach_dev will
+also be removed.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/ufs/host/ufs-qcom.c | 1 +
- 1 file changed, 1 insertion(+)
+I'd suggest making such refactoring in a separate series with wider
+discussions. For now, let's make this special interface for iommufd.
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index cca190d1c577..72f95e2779ce 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -1883,4 +1883,5 @@ static struct platform_driver ufs_qcom_pltform = {
- };
- module_platform_driver(ufs_qcom_pltform);
- 
-+MODULE_DESCRIPTION("QCOM specific hooks to UFS controller platform driver");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-ufs-host-a8a0aad539f0
-
+Best regards,
+baolu
 
