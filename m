@@ -1,285 +1,152 @@
-Return-Path: <linux-kernel+bounces-213929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D1D907CAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:34:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F7E907CAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38A9AB27AF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:34:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D543E1C2231B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCEE14B976;
-	Thu, 13 Jun 2024 19:34:05 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202B214D6EB;
+	Thu, 13 Jun 2024 19:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i5QAehiW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB782F34;
-	Thu, 13 Jun 2024 19:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF691474A8
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307245; cv=none; b=q6tP0ychUBmKHzCipco5HjOXlTNdO/Oln6VCOtWe+BjmkV+6rjprQnZiidbrWHm8lX4f6/m8zOLjkoWQ+D5BAGY968eDiytfX3IR7ldSFFMSnW276DlmFpYvl5je0cGPPNErgZuDeKdls90YuGsMF1U0ssFX3g9K0oaknmgTFmQ=
+	t=1718307260; cv=none; b=s3sPCeEqcOpfEoNdUewsFR1BJgPZq059jpOkUaDVMKcBrcJT1oJFPbP7L8JETv7KsomFIpRFGITU9LfLmNoDhoGter9DqTCy+NxVZ/MF3TJQjADGNardEsC0udSVxhjaOnTNkyd9YIAqGakmPObZ/YfImg3+Gpq6ZAdm+1GJtws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307245; c=relaxed/simple;
-	bh=wQgy/X/ZKA/Ff/1MORDRSuKE/dgil05TxOFG6mU+pjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u6o/xWIR6Fbo+zDXC0d+KzeHTBnwxG4eI0jCtWhz2ofDWgZaj6ApsKbm7EbDWE+auiNGSqwgpRx31Cnu0euYl+krb3s8FV9nA71K1N+3f9yJ82ADbdotBgFOAklESIGeO6bCJsEje8OOcPRq1iY/K1+nAAZlMuIdbhUz02Dpky0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13E94C2BBFC;
-	Thu, 13 Jun 2024 19:34:03 +0000 (UTC)
-Date: Thu, 13 Jun 2024 15:34:02 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-security-module@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] linux++: delete some forward declarations
-Message-ID: <20240613153402.3b067d4b@rorschach.local.home>
-In-Reply-To: <5ad5556c-7c32-45b7-89cf-f723c9d7332b@p183>
-References: <5ad5556c-7c32-45b7-89cf-f723c9d7332b@p183>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718307260; c=relaxed/simple;
+	bh=7aG7kDyVxZ+xKhQ+yxWUmVgAOGSJ6gommzR9sbbVuMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DGSQ2iqgMDsTlZOce7asJoZQAX9n5L/3bzPmAa+HIVcimyTASka4lUK9a0OBMX+K8HvMBU3ygyXk4MHTdyr5brDbUyr2CYtQBQKwnZ9QIaD2NdUyzRZYPfwE0fwSDInr+TLhOCUqZJsX7jNr3CLzXkvX1/ECdBr3zjRfjNCzwM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i5QAehiW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718307257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/IsYvLqgq+E3FY1k2F2Fg9bKLYI4WtRPTLB94zlxiIg=;
+	b=i5QAehiWG9IHpX9BaE6WNpALHW42Wwz/QrUC4TSsqK43fx6MviyVB7r/SsWVus5cXLYrpy
+	6ZS/YMoKauj+hHGu4PFv+yi0HMxJ13zp9riAjBkD2e6m36a3TB+t1VqzdaoP9odCL0TASh
+	xQBRKc47bGDYO4/n+xIz1wOBWR8VEdo=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-640-gIfM_Ai-N3qrrdUE-CjFCA-1; Thu, 13 Jun 2024 15:34:16 -0400
+X-MC-Unique: gIfM_Ai-N3qrrdUE-CjFCA-1
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-62f4a731ad4so27420217b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:34:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718307255; x=1718912055;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/IsYvLqgq+E3FY1k2F2Fg9bKLYI4WtRPTLB94zlxiIg=;
+        b=Z1V2+A/lSDwGnOgGI8xC6BYRMEjcm/HZptSQItx25fuppDFE1Rir5Ma2YScaGnakD0
+         rYOO+w4zt5V4Px8rQzSNVO56taR/ehzWT9ZMZ63P+pmz5mliwUNtaOLWq1mPzDN+UcCX
+         dAeOpQGAyUQCsXGi/+BSF+hivm6rrxv845yFt75O1+8WiijNISI0ruq9G5CpMsEKQAC4
+         TlfiQc88C1V1LhHRmdCx5Hrwk6XdXEu8EKGbalxQvwVXmUfqorEJ1xE/pgdLOgSwaJ6B
+         kGOz2stWagkmAtHcc0qL8JNV+mtQSsUzcedI/3JC/Ox65iA04/0yWMt+lgAh/4GFcc2x
+         reCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWvaSSMUa5tVzslnRrqDt0PUBaDE4gbMBX0eCkBHLImmrT+xwF8cqrIQeNTSsccaxxNNhfC4VeYH1l4gYGEsXUH47xeuoIhE6Veuqo
+X-Gm-Message-State: AOJu0YyE2V65QZjXf82PZQl4fMcCI7geYe8p+ZO/eYrYp5/yx1jJtVsp
+	4LMzsQaH9XQbZNfSjS5XPtVXUE4UOYOVyQc1vx6Vw9p+99HqcWpvlOkZVUnOTz6padXU7g1Lh0V
+	khd0EGp7WKomEwbrgH7WmmSFBngJIC2dgkFSqIItTAmeG18W+TdWX3DeACzJyqraAJiuuXA==
+X-Received: by 2002:a25:d041:0:b0:dfb:96e:1f15 with SMTP id 3f1490d57ef6-dff1549168cmr469717276.42.1718307255322;
+        Thu, 13 Jun 2024 12:34:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGr91FD/R6YxAjrE+liHylnQVNjnoxStaUZFpGCZ5A09J3aRTJXCfWk80vcxy79HA4dylVI2Q==
+X-Received: by 2002:a25:d041:0:b0:dfb:96e:1f15 with SMTP id 3f1490d57ef6-dff1549168cmr469682276.42.1718307254907;
+        Thu, 13 Jun 2024 12:34:14 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5c27786sm9995666d6.55.2024.06.13.12.34.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 12:34:14 -0700 (PDT)
+Date: Thu, 13 Jun 2024 14:34:12 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Joel Slebodnick <jslebodn@redhat.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, peter.wang@mediatek.com, 
+	manivannan.sadhasivam@linaro.org, beanhuo@micron.com
+Subject: Re: [PATCH] scsi: ufs: core: Free memory allocated for model before
+ reinit
+Message-ID: <6krasewc6bps43ivmk6eez2v7clnpoxczpctnp7jhgthpjpaqz@hk2yip3wknsc>
+References: <20240613182728.2521951-1-jslebodn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613182728.2521951-1-jslebodn@redhat.com>
 
-On Thu, 13 Jun 2024 22:22:18 +0300
-Alexey Dobriyan <adobriyan@gmail.com> wrote:
+On Thu, Jun 13, 2024 at 02:27:28PM GMT, Joel Slebodnick wrote:
+> Under the conditions that a device is to be reinitialized within
+> ufshcd_probe_hba, the device must first be fully reset.
+> 
+> Resetting the device should include freeing U8 model (member of
+> dev_info)  but does not, and this causes a memory leak.
+> ufs_put_device_desc is responsible for freeing model.
+> 
+> unreferenced object 0xffff3f63008bee60 (size 32):
+>   comm "kworker/u33:1", pid 60, jiffies 4294892642
+>   hex dump (first 32 bytes):
+>     54 48 47 4a 46 47 54 30 54 32 35 42 41 5a 5a 41  THGJFGT0T25BAZZA
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace (crc ed7ff1a9):
+>     [<ffffb86705f1243c>] kmemleak_alloc+0x34/0x40
+>     [<ffffb8670511cee4>] __kmalloc_noprof+0x1e4/0x2fc
+>     [<ffffb86705c247fc>] ufshcd_read_string_desc+0x94/0x190
+>     [<ffffb86705c26854>] ufshcd_device_init+0x480/0xdf8
+>     [<ffffb86705c27b68>] ufshcd_probe_hba+0x3c/0x404
+>     [<ffffb86705c29264>] ufshcd_async_scan+0x40/0x370
+>     [<ffffb86704f43e9c>] async_run_entry_fn+0x34/0xe0
+>     [<ffffb86704f34638>] process_one_work+0x154/0x298
+>     [<ffffb86704f34a74>] worker_thread+0x2f8/0x408
+>     [<ffffb86704f3cfa4>] kthread+0x114/0x118
+>     [<ffffb86704e955a0>] ret_from_fork+0x10/0x20
+> 
 
-> g++ doesn't like forward enum declarations:
->=20
-> 	error: use of enum =E2=80=98E=E2=80=99 without previous declaration
-> 	   64 | enum E;
+With the following in place:
 
-But we don't care about g++. Do we?
+    Fixes: 96a7141da332 ("scsi: ufs: core: Add support for reinitializing the UFS device")
+    Cc: stable@vger.kernel.org
 
-I would make that a separate patch.
+feel free to add:
 
->=20
-> Delete those which aren't used.
->=20
-> Delete some unused/unnecessary forward struct declarations for a change.
+    Reviewed-by: Andrew Halaney <ahalaney@redhat.com>
 
-This is a clean up, but should have a better change log. Just something
-simple like:
-
-  Delete unnecessary forward struct declarations.
-
-Thanks,
-
--- Steve
-
-
->=20
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> Signed-off-by: Joel Slebodnick <jslebodn@redhat.com>
 > ---
->=20
->  fs/ramfs/inode.c         |    1 -
->  include/linux/console.h  |    2 --
->  include/linux/device.h   |    3 ---
->  include/linux/ftrace.h   |    4 ----
->  include/linux/security.h |    6 ------
->  include/linux/signal.h   |    2 --
->  include/linux/syscalls.h |    7 -------
->  include/linux/sysfs.h    |    2 --
->  mm/internal.h            |    4 ----
->  mm/shmem.c               |    1 -
->  10 files changed, 32 deletions(-)
->=20
-> --- a/fs/ramfs/inode.c
-> +++ b/fs/ramfs/inode.c
-> @@ -51,7 +51,6 @@ struct ramfs_fs_info {
-> =20
->  #define RAMFS_DEFAULT_MODE	0755
-> =20
-> -static const struct super_operations ramfs_ops;
->  static const struct inode_operations ramfs_dir_inode_operations;
-> =20
->  struct inode *ramfs_get_inode(struct super_block *sb,
-> --- a/include/linux/console.h
-> +++ b/include/linux/console.h
-> @@ -21,10 +21,8 @@
->  #include <linux/vesa.h>
-> =20
->  struct vc_data;
-> -struct console_font_op;
->  struct console_font;
->  struct module;
-> -struct tty_struct;
->  struct notifier_block;
-> =20
->  enum con_scroll {
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -36,10 +36,7 @@
->  struct device;
->  struct device_private;
->  struct device_driver;
-> -struct driver_private;
->  struct module;
-> -struct class;
-> -struct subsys_private;
->  struct device_node;
->  struct fwnode_handle;
->  struct iommu_group;
-> --- a/include/linux/ftrace.h
-> +++ b/include/linux/ftrace.h
-> @@ -531,8 +531,6 @@ extern const void *ftrace_expected;
-> =20
->  void ftrace_bug(int err, struct dyn_ftrace *rec);
-> =20
-> -struct seq_file;
-> -
->  extern int ftrace_text_reserved(const void *start, const void *end);
-> =20
->  struct ftrace_ops *ftrace_ops_trampoline(unsigned long addr);
-> @@ -1147,8 +1145,6 @@ static inline void unpause_graph_tracing(void) { }
->  #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
-> =20
->  #ifdef CONFIG_TRACING
-> -enum ftrace_dump_mode;
-> -
->  #define MAX_TRACER_SIZE		100
->  extern char ftrace_dump_on_oops[];
->  extern int ftrace_dump_on_oops_enabled(void);
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -41,7 +41,6 @@ struct rlimit;
->  struct kernel_siginfo;
->  struct sembuf;
->  struct kern_ipc_perm;
-> -struct audit_context;
->  struct super_block;
->  struct inode;
->  struct dentry;
-> @@ -59,8 +58,6 @@ struct xfrm_sec_ctx;
->  struct mm_struct;
->  struct fs_context;
->  struct fs_parameter;
-> -enum fs_value_type;
-> -struct watch;
->  struct watch_notification;
->  struct lsm_ctx;
-> =20
-> @@ -183,8 +180,6 @@ struct sock;
->  struct sockaddr;
->  struct socket;
->  struct flowi_common;
-> -struct dst_entry;
-> -struct xfrm_selector;
->  struct xfrm_policy;
->  struct xfrm_state;
->  struct xfrm_user_sec_ctx;
-> @@ -219,7 +214,6 @@ extern unsigned long dac_mmap_min_addr;
->  #define LSM_PRLIMIT_WRITE 2
-> =20
->  /* forward declares to avoid warnings */
-> -struct sched_param;
->  struct request_sock;
-> =20
->  /* bprm->unsafe reasons */
-> --- a/include/linux/signal.h
-> +++ b/include/linux/signal.h
-> @@ -274,8 +274,6 @@ static inline int valid_signal(unsigned long sig)
->  	return sig <=3D _NSIG ? 1 : 0;
->  }
-> =20
-> -struct timespec;
-> -struct pt_regs;
->  enum pid_type;
-> =20
->  extern int next_signal(struct sigpending *pending, sigset_t *mask);
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -11,8 +11,6 @@
-> =20
->  struct __aio_sigset;
->  struct epoll_event;
-> -struct iattr;
-> -struct inode;
->  struct iocb;
->  struct io_event;
->  struct iovec;
-> @@ -20,14 +18,12 @@ struct __kernel_old_itimerval;
->  struct kexec_segment;
->  struct linux_dirent;
->  struct linux_dirent64;
-> -struct list_head;
->  struct mmap_arg_struct;
->  struct msgbuf;
->  struct user_msghdr;
->  struct mmsghdr;
->  struct msqid_ds;
->  struct new_utsname;
-> -struct nfsctl_arg;
->  struct __old_kernel_stat;
->  struct oldold_utsname;
->  struct old_utsname;
-> @@ -38,7 +34,6 @@ struct rusage;
->  struct sched_param;
->  struct sched_attr;
->  struct sel_arg_struct;
-> -struct semaphore;
->  struct sembuf;
->  struct shmid_ds;
->  struct sockaddr;
-> @@ -48,14 +43,12 @@ struct statfs;
->  struct statfs64;
->  struct statx;
->  struct sysinfo;
-> -struct timespec;
->  struct __kernel_old_timeval;
->  struct __kernel_timex;
->  struct timezone;
->  struct tms;
->  struct utimbuf;
->  struct mq_attr;
-> -struct compat_stat;
->  struct old_timeval32;
->  struct robust_list_head;
->  struct futex_waitv;
-> --- a/include/linux/sysfs.h
-> +++ b/include/linux/sysfs.h
-> @@ -23,9 +23,7 @@
->  #include <linux/atomic.h>
-> =20
->  struct kobject;
-> -struct module;
->  struct bin_attribute;
-> -enum kobj_ns_type;
-> =20
->  struct attribute {
->  	const char		*name;
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -1095,10 +1095,6 @@ unsigned int reclaim_clean_pages_from_list(struct =
-zone *zone,
->  /* Flags that allow allocations below the min watermark. */
->  #define ALLOC_RESERVES (ALLOC_NON_BLOCK|ALLOC_MIN_RESERVE|ALLOC_HIGHATOM=
-IC|ALLOC_OOM)
-> =20
-> -enum ttu_flags;
-> -struct tlbflush_unmap_batch;
-> -
-> -
->  /*
->   * only for MM internal work items which do not depend on
->   * any allocations or locks which might depend on allocations
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -261,7 +261,6 @@ static const struct inode_operations shmem_dir_inode_=
-operations;
->  static const struct inode_operations shmem_special_inode_operations;
->  static const struct vm_operations_struct shmem_vm_ops;
->  static const struct vm_operations_struct shmem_anon_vm_ops;
-> -static struct file_system_type shmem_fs_type;
-> =20
->  bool shmem_mapping(struct address_space *mapping)
->  {
+>  drivers/ufs/core/ufshcd.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 0cf07194bbe8..a0407b9213ca 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -8787,6 +8787,7 @@ static int ufshcd_probe_hba(struct ufs_hba *hba, bool init_dev_params)
+>  	    (hba->quirks & UFSHCD_QUIRK_REINIT_AFTER_MAX_GEAR_SWITCH)) {
+>  		/* Reset the device and controller before doing reinit */
+>  		ufshcd_device_reset(hba);
+> +		ufs_put_device_desc(hba);
+>  		ufshcd_hba_stop(hba);
+>  		ufshcd_vops_reinit_notify(hba);
+>  		ret = ufshcd_hba_enable(hba);
+> -- 
+> 2.40.1
+> 
 
 
