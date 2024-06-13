@@ -1,233 +1,197 @@
-Return-Path: <linux-kernel+bounces-213034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2077906A2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72663906A35
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1F9DB22C98
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:37:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C66E6B21CB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444EA1420A6;
-	Thu, 13 Jun 2024 10:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F528142659;
+	Thu, 13 Jun 2024 10:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZlIEPqtf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="NoKSWkoM"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED791411CF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C0A13C9DE;
+	Thu, 13 Jun 2024 10:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718275049; cv=none; b=BKL4ibTVFeIEw/J6eeOu17bIjhOnrVbwTZDFId9OGJLMSO939ybUcELBYpvZEQHbfb1U9Rsc2tGhstL+r/Px0TaG8DfKDS2OFpffigXhfZTY1n7tXXgMVnkgLCUHLBvKCQ5CLrVwgW0zhi/om1XbXvEdft1u+9q5rRDQ37bh4H8=
+	t=1718275287; cv=none; b=n7ktauOyOsFTlHM0f9/cUgQrJYkyOjXj7eyt+5aitEyEYOrzRVLgWofsr7CmqkzQWQJk0jQOko/DSYyOvameX89ch2B4k3A0lkMHgBANqUDmQgFLZRdDA8Q717rrMVPxDqi31GaWH/A0edVq4XT1KKvZFzlsP16+VMo2s56yqHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718275049; c=relaxed/simple;
-	bh=quLA5esiCm2HMg2eSY2xi2POtwQLpdCaoSQxbxBySVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GQaaq62EagU40vI3oQRmn+ZeU0f8TR6WIYCmso8VKl1FPmCJdhDq59WtrslA3OMElrUoEyHfGQE2LTFeq2+m6EkDIjOvZjc/vPW+8RuSqyEcOO1PFrLjDKHrZT7R4NsyQQu/LTE/1OHe4RRIVC/+163kBJ2yA5wGhCW5kkcOeYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZlIEPqtf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718275046;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=p3orlKu9G5WAiwy9U5KYUWqOEvRBazGCmCZ8DjzU2w4=;
-	b=ZlIEPqtfmIEZjNw6hhBbdvAk1nWuTCUmEteGtUZ2His6UHBaQEWyU6pzFp+/SuzJMOUaea
-	+A3dIQl3gvau1tMox4DTizX8wriKzwB9mrGOUySrWKfaEv0x9AOR5pH8+oYBBSvhkZ7x4E
-	AJlBsEXGZFRqHdNYGTyRIqPS2Wkqseo=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-241-4l8N0CIxNV2FDYeYEN3mww-1; Thu, 13 Jun 2024 06:37:24 -0400
-X-MC-Unique: 4l8N0CIxNV2FDYeYEN3mww-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42117a61bccso6844855e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 03:37:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718275043; x=1718879843;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=p3orlKu9G5WAiwy9U5KYUWqOEvRBazGCmCZ8DjzU2w4=;
-        b=YHJXGuAS+X0nixvYxQWxhD2lYIz1xa14nEMNn56pFzhcePX8kqDqGYvXh4N66cgYUE
-         5IrrFttaggXaN/FURlojtg8LskEScwGI9GZUMcM8eq9+H/VcKySRU11ZrPPF0SbJJjrT
-         TjrMLtPdy250SCvGQxM1Ek5L3Cgd63Kh+Yjd0abWLMaYP08wGYxjcmVffphnaP86HgQK
-         jibmDN0q41H2Ff4oMmkCDQkl/slgZAUVUNv+HABhX8FjR33rjxO6tIvXrZirFbSwCeQ+
-         ucBdqfsmivKyUZZZINv+juO5vxMDliPiAFaBhJs4yUYKkE/3vVQ+ULhNYMT/41Gt5Fdq
-         miUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU07tkLGj3Lt3GZDIoOaG1GPZljx2WQ8ybOParcEq6/qaWTeoJsJLUPfUj0M+9B38iA/L5g7gAHR7H0SdmV/kOvT6ThbJBfHVCRpsz+
-X-Gm-Message-State: AOJu0Yxo9M8H2MeK5uLAFR7u8G7RHIEmH3w0A7uattJTkD8balrdGPnT
-	OyPFVs8YAaSaSBEJYvHHu9DGZpOn0U/s1qnvcNGNULw+GYyjvhaoU8BomHf9CCueV0p1wVTZZvb
-	Ixo/a5KVWSElMGu8cf8HRjjuQRO9v3m+q4tI3h9JIWuJT05oCSLivgjGXczFhMQ==
-X-Received: by 2002:a05:600c:4e52:b0:421:de31:89 with SMTP id 5b1f17b1804b1-422863b6249mr36082905e9.18.1718275043146;
-        Thu, 13 Jun 2024 03:37:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHz4PjZVukIPv1g908el5+hsGnMSj8k4u13d8cQTHjAd7ZE+SQV81th6emTDm/u1t1rVDWHSA==
-X-Received: by 2002:a05:600c:4e52:b0:421:de31:89 with SMTP id 5b1f17b1804b1-422863b6249mr36082725e9.18.1718275042740;
-        Thu, 13 Jun 2024 03:37:22 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c703:fe00:10fe:298:6bf1:d163? (p200300cbc703fe0010fe02986bf1d163.dip0.t-ipconnect.de. [2003:cb:c703:fe00:10fe:298:6bf1:d163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4229c60f758sm42713775e9.20.2024.06.13.03.37.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 03:37:22 -0700 (PDT)
-Message-ID: <6ac8ff4d-7099-4547-9e76-528d14f171d8@redhat.com>
-Date: Thu, 13 Jun 2024 12:37:21 +0200
+	s=arc-20240116; t=1718275287; c=relaxed/simple;
+	bh=2YvGGYwj17TliUkCw3/sGw/yu3r0BvPn3lY/DzB+BwE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UR/Q/TDg89QiyPb2tdjmLWfq/w2aQyteCOBF76YM5Q+BD0h1OdntDyZ/MASP5FVRraoE6bVbwi1de2QKa61qyHikc8D7ZluioFp30+nIw1GYf9xkDva8rBtcxK0qoUfjniC8RcsuIKRI7kUuMgXQujBAIWSgpf67ZiW2UBgBb5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=NoKSWkoM; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 77dcab74297111efa22eafcdcd04c131-20240613
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=bYl5pSl2HjwLJjDCYGRQ01twN9nVzCw5LEjgUTb4KAE=;
+	b=NoKSWkoMEhQHekNJc/erHEd2eUE97P7PlIhspp82F5v2iUZWrBfklNDQGIV2NFuMUuwu7VpjYYVi/ZdC2ny99wf5FBuOTLab2cJLRGfVPI+QfBHVoWtTYRuQvyhSOFwof20Vo/VbFCFabygdwsdpuqgWB259wQd4LI0bchT97Hc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:4b5c2670-5418-409e-8a72-80f5e2f76895,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:393d96e,CLOUDID:83ef8844-4544-4d06-b2b2-d7e12813c598,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 77dcab74297111efa22eafcdcd04c131-20240613
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <skylake.huang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 811398516; Thu, 13 Jun 2024 18:41:19 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 13 Jun 2024 18:41:16 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 13 Jun 2024 18:41:16 +0800
+From: Sky Huang <SkyLake.Huang@mediatek.com>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Daniel Golle
+	<daniel@makrotopia.org>, Qingfang Deng <dqfext@gmail.com>, SkyLake Huang
+	<SkyLake.Huang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+CC: Steven Liu <Steven.Liu@mediatek.com>, SkyLake.Huang
+	<skylake.huang@mediatek.com>
+Subject: [PATCH net-next v7 0/5] net: phy: mediatek: Introduce mtk-phy-lib and add 2.5Gphy support
+Date: Thu, 13 Jun 2024 18:40:18 +0800
+Message-ID: <20240613104023.13044-1-SkyLake.Huang@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/3] mm: do_swap_page: use folio_add_new_anon_rmap()
- if folio_test_anon(folio)==false
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org,
- linux-kernel@vger.kernel.org, mhocko@suse.com, ryan.roberts@arm.com,
- baolin.wang@linux.alibaba.com, yosryahmed@google.com, shy828301@gmail.com,
- surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org,
- ying.huang@intel.com, yuzhao@google.com
-References: <20240613000721.23093-1-21cnbao@gmail.com>
- <20240613000721.23093-3-21cnbao@gmail.com>
- <77da1feb-2257-4545-9427-5729250ceb2b@redhat.com>
- <CAGsJ_4xi6xuBzF1bhShGJJ6aPzpnzOk0JQ542=LpMiJ7ExqNJQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAGsJ_4xi6xuBzF1bhShGJJ6aPzpnzOk0JQ542=LpMiJ7ExqNJQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--5.801800-8.000000
+X-TMASE-MatchedRID: e1D+mFe0mXuGeTbGWdRz1qUebN0FQAbYvtVce6w5+K9xUZeguPBDQcbK
+	+pu0ZYwR6NJ1g8TkaiY/4sXBdVnb/U2VnXMRzIBj4bl1FkKDELchotH7bEpEMmecrqZc3vabN1L
+	b3d91KD/symnxq9L1AixzufF6vmDubw8f/jlV5scdxBAG5/hkW1sChor7BLiN10wPNIuvyi/Akt
+	gDJtZ0AmMl2fVuI+54nGl+g77/qoc/REwOA9OGte7KTDtx8CggLE3mrqeLTCsOUs4CTUgKy0MHU
+	R1yMHZ62JwKrFIIzlEaMs2ZphvTvQRCoiooUu1OA9lly13c/gHP5QiZIw0wxWRuoH6AAg50sSZN
+	qeM/MnPi8zVgXoAltsIJ+4gwXrEtec3QM3secWb9FrvjN37cjs6dVk653dl9gVlcaoETd3QgU0m
+	9IDxSzqeMhmfVt3m0lExlQIQeRG0=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--5.801800-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	7E0AEE2C83F0514728601953A5884EA2C46D46FA75B4FAADF7D439653A1F5D422000:8
+X-MTK: N
 
-On 13.06.24 11:58, Barry Song wrote:
-> On Thu, Jun 13, 2024 at 9:23 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 13.06.24 02:07, Barry Song wrote:
->>> From: Barry Song <v-songbaohua@oppo.com>
->>>
->>> For the !folio_test_anon(folio) case, we can now invoke folio_add_new_anon_rmap()
->>> with the rmap flags set to either EXCLUSIVE or non-EXCLUSIVE. This action will
->>> suppress the VM_WARN_ON_FOLIO check within __folio_add_anon_rmap() while initiating
->>> the process of bringing up mTHP swapin.
->>>
->>>    static __always_inline void __folio_add_anon_rmap(struct folio *folio,
->>>                    struct page *page, int nr_pages, struct vm_area_struct *vma,
->>>                    unsigned long address, rmap_t flags, enum rmap_level level)
->>>    {
->>>            ...
->>>            if (unlikely(!folio_test_anon(folio))) {
->>>                    VM_WARN_ON_FOLIO(folio_test_large(folio) &&
->>>                                     level != RMAP_LEVEL_PMD, folio);
->>>            }
->>>            ...
->>>    }
->>>
->>> It also enhances the code’s readability.
->>>
->>> Suggested-by: David Hildenbrand <david@redhat.com>
->>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
->>> ---
->>>    mm/memory.c | 2 ++
->>>    1 file changed, 2 insertions(+)
->>>
->>> diff --git a/mm/memory.c b/mm/memory.c
->>> index 2f94921091fb..9c962f62f928 100644
->>> --- a/mm/memory.c
->>> +++ b/mm/memory.c
->>> @@ -4339,6 +4339,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->>>        if (unlikely(folio != swapcache && swapcache)) {
->>>                folio_add_new_anon_rmap(folio, vma, address, RMAP_EXCLUSIVE);
->>>                folio_add_lru_vma(folio, vma);
->>> +     } else if (!folio_test_anon(folio)) {
->>> +             folio_add_new_anon_rmap(folio, vma, address, rmap_flags);
->>
->> So, with large folio swapin, we would never end up here if any swp PTE
->> is !exclusive, because we would make sure to allocate a large folio only
->> for suitable regions, correct?
->>
->> It can certainly happen during swapout + refault with large folios. But
->> there, we will always have folio_test_anon() still set and wouldn't run
->> into this code path.
->>
->> (it will all be better with per-folio PAE bit, but that will take some
->> more time until I actually get to implement it properly, handling all
->> the nasty corner cases)
->>
->> Better add a comment regarding why we are sure that the complete thing
->> is exclusive (e.g., currently only small folios).
-> 
-> No, patch 1/3 enables both cases to call folio_add_new_anon_rmap(). Currently,
-> small folios could be non-exclusive. I suppose your question is
-> whether we should
-> ensure that all pages within a mTHP have the same exclusivity status,
-> rather than
-> always being exclusive?
+From: "SkyLake.Huang" <skylake.huang@mediatek.com>
 
-We must never end up calling folio_add_new_anon_rmap(folio, vma, 
-address, RMAP_EXCLUSIVE) if part of the folio is non-exclusive.
+This patch series integrate MediaTek's built-in Ethernet PHY helper functions
+into mtk-phy-lib and add more functions into it. Also, add support for 2.5Gphy
+on MT7988 SoC.
 
-I think we *may* call folio_add_new_anon_rmap(folio, vma, address, 0) if 
-part of the folio is exclusive [it go swapped out, so there cannot be 
-GUP references]. But, to be future proof (single PAE bit per folio), we 
-better avoid that on swapin if possible.
+Signed-off-by: SkyLake.Huang <skylake.huang@mediatek.com>
+---
+Changes in v2:
+- Apply correct PATCH tag.
+- Break LED/Token ring/Extend-link-pulse-time features into 3 patches.
+- Fix contents according to v1 comments.
 
-For small folios, it's clear that it cannot be partially exclusive 
-(single page).
+Changes in v3:
+- Rebase code and now this patch series can apply to net-next tree.
+[PATCH 4/5]
+Refactor mtk_gphy_cl22_read_status() with genphy_read_status().
+[PATCH 5/5]
+1. Add range check for firmware.
+2. Fix c45_ids.mmds_present in probe function.
+3. Still use genphy_update_link() in read_status because
+genphy_c45_read_link() can't correct detect link on this phy.
 
-We better comment why we obey to the above. Like
+Changes in v4:
+[PATCH 4/5]
+1. Change extend_an_new_lp_cnt_limit()'s return type and all return values
+2. Refactor comments in extend_an_new_lp_cnt_limit()
+[PATCH 5/5]
+1. Move firmware loading function to mt798x_2p5ge_phy_load_fw()
+2. Add AN disable warning in mt798x_2p5ge_phy_config_aneg()
+3. Clarify the HDX comments in mt798x_2p5ge_phy_get_features()
 
-"We currently ensure that new folios cannot be partially exclusive: they 
-are either fully exclusive or fully shared."
+Changes in v5:
+- Fix syntax errors of comments in drivers/net/phy/mediatek/*
+[PATCH 1/5]
+- Change MEDIATEK_GE_SOC_PHY from bool back to tristate.
+[PATCH 5/5]
+1. Move md32_en_cfg_base & pmb_addr to local variables to achieve
+symmetric code.
+2. Print out firmware date code & version.
+3. Don't return error if LED pinctrl switching fails. Also, add
+comments to this unusual operations.
+4. Return -EOPNOTSUPP for AN off case in config_aneg().
+
+Changes in v6:
+- Re-arrange patch and changes description in cover letter.
+- Contraint code inside 80 columns wide.
+[PATCH 4/5]
+1. Add LP_DETECTED so extend_an_new_lp_cnt_limit() won't be called every
+time we poll the PHY for its status. It'll be called only when cable is
+plugged in and 1G training starts.
+2. Call phy_read_paged() instead of calling phy_select_page() &
+phy_restore_page() pair.
+[PATCH 5/5]
+1. Force casting (fw->data + MT7988_2P5GE_PMB_SIZE - 8) with __be16.
+2. Remove parens on RHS of "phydev->c45_ids.mmds_present |=".
+3. Add PHY_INTERFACE_MODE_INTERNAL check in
+mt798x_2p5ge_phy_get_rate_matching()
+4. Arrange local variables in reverse Xmas tree order.
+
+Changes in v7:
+[PATCH 5/5]
+1. Add phy mode check(PHY_INTERFACE_MODE_INTERNAL) in config_init().
+2. Always return RATE_MATCH_PAUSE in get_rate_matching().
+---
+SkyLake.Huang (5):
+  net: phy: mediatek: Re-organize MediaTek ethernet phy drivers
+  net: phy: mediatek: Move LED and read/write page helper functions into
+    mtk phy lib
+  net: phy: mediatek: Add token ring access helper functions in
+    mtk-phy-lib
+  net: phy: mediatek: Extend 1G TX/RX link pulse time
+  net: phy: add driver for built-in 2.5G ethernet PHY on MT7988
+
+ MAINTAINERS                                   |   7 +-
+ drivers/net/phy/Kconfig                       |  17 +-
+ drivers/net/phy/Makefile                      |   3 +-
+ drivers/net/phy/mediatek-ge.c                 | 111 ---
+ drivers/net/phy/mediatek/Kconfig              |  38 ++
+ drivers/net/phy/mediatek/Makefile             |   5 +
+ drivers/net/phy/mediatek/mtk-2p5ge.c          | 436 ++++++++++++
+ .../mtk-ge-soc.c}                             | 640 ++++++++----------
+ drivers/net/phy/mediatek/mtk-ge.c             | 249 +++++++
+ drivers/net/phy/mediatek/mtk-phy-lib.c        | 427 ++++++++++++
+ drivers/net/phy/mediatek/mtk.h                | 116 ++++
+ 11 files changed, 1545 insertions(+), 504 deletions(-)
+ delete mode 100644 drivers/net/phy/mediatek-ge.c
+ create mode 100644 drivers/net/phy/mediatek/Kconfig
+ create mode 100644 drivers/net/phy/mediatek/Makefile
+ create mode 100644 drivers/net/phy/mediatek/mtk-2p5ge.c
+ rename drivers/net/phy/{mediatek-ge-soc.c => mediatek/mtk-ge-soc.c} (74%)
+ create mode 100644 drivers/net/phy/mediatek/mtk-ge.c
+ create mode 100644 drivers/net/phy/mediatek/mtk-phy-lib.c
+ create mode 100644 drivers/net/phy/mediatek/mtk.h
 
 -- 
-Cheers,
-
-David / dhildenb
+2.18.0
 
 
