@@ -1,147 +1,130 @@
-Return-Path: <linux-kernel+bounces-213749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9068A9079DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:30:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E429079DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E28D2859B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:30:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72FC81F22430
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BDD14A093;
-	Thu, 13 Jun 2024 17:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE2F14A091;
+	Thu, 13 Jun 2024 17:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mRNagtEj"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X7J/3Kki"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B3A132127
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5702714A4FB
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299797; cv=none; b=kpp1BLcd0u3rX7O2kqdJALivJTVbTjtw4I6K82bE4MK+K5zpvBXIAc8d2DrmkndKZ1NDT1uMd3GskVUyr5SzMkqWOfTT25InLCpFZYIkEpl4blj3wYGzBSgM/bR0i3WSutnRmAlk4QXi+iQqVf04r8aMNbW0nSOJh1MLMzqhrHA=
+	t=1718299805; cv=none; b=VVEpgfkOEqyqsQcTVrS/k9MqR9d8Ovezrf30D129DEvaIzGb/b8qaCOo8UI8mEX8+6tLBECPqeKTg6dWEmmPX+E+3iC5f9sAaa4qHwdYKSPaV7FpnXsuZV+NEGrUPwHE04jluOlA4XnZQB3Z7zkT3zNLCG3WE+K4MW1GrsD6Si8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299797; c=relaxed/simple;
-	bh=2/MuPD57b1tuIc1l+f2U+9XahTbdBJZ/tB6BvLC3x9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DoA85pdRr/uVeAlpjriWWxOdPmi12dkxeF6bj9A0ym2aggz2LwILCW0QlcadEWZ+LPPpRQsY1AYCHy3d8011mci/uV17F0g8LFJ1nAs3+J9aC8uNGXGwzWQSznn7xgDQKl3FabxbHjo1AqGQ2c6wCVoJxZcthUAOKTKwgz7/AoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mRNagtEj; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: baolin.wang@linux.alibaba.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718299792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5BMcMwBPxDlarhQmjLOpd07R+w3HA8xQy3QehMnpjFU=;
-	b=mRNagtEj61wMgmJ/sFaeI4+wuUKpqcBLNLg67O2bDU6V0/S28nuhKXoYg3nBhJbMiJabth
-	MjHTuFI87AibCIXRY01zH35QYJtkHQYy4o3w7msyAoYhBrhs/WrhW3YBkHTEU+KRUr2iR/
-	OrulvKPy4ORS3YzxiNOrCJIjA682jy8=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: hughd@google.com
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: nphamcs@gmail.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Thu, 13 Jun 2024 10:29:47 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, hannes@cmpxchg.org, 
-	nphamcs@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: shmem: fix getting incorrect lruvec when replacing a
- shmem folio
-Message-ID: <puv5snjuaehyr64c4terkdrqcjdi4mzbvjs6ubdozc4daj3td5@62wto6b5wc33>
-References: <3c11000dd6c1df83015a8321a859e9775ebbc23e.1718266112.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1718299805; c=relaxed/simple;
+	bh=nQiDweVW/klqoccVHaFCqThejMLRDTDiNKGZP8SERFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WxWLtEQ8NrA38YoTtcEwY1tIZIdIzwHQGN+LwX0gFpTYqVwfGkm3JaKaIPkkrDMHTm3s0MNu3E1F60bJu95lmjOQqYBm/3KiW1yG/dpwFvbrR+qUXw2Gkl3aahGR/fft9nPTRcyy+xycr3fiEX9bNSIu1+iaePKJo4tOwgnhqIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X7J/3Kki; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2eae5b2ddd8so21297231fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:30:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718299800; x=1718904600; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sWKAFEWXLrDJc52wb2CYS7tZPMyOOyhZnNSlFzB+HrM=;
+        b=X7J/3Kkihoj2iI84ibKwbukASjpmL35Y+rqH/K5n6lkuuE5P5+e2RtbJAbAiBqdnCl
+         e8K4Juh2GhPHzSqzU247V8hta/S5ihNYjQRQv14NDLjRDdKQUMzGnsjDSG885qhtXncI
+         TCsxgj9ewTWN2rRgx1wrwABH8v4zB2OdqeF72oGhMGJ5gy1z4R1gt84bft/DFtBTz/GW
+         oEo0L1iLNPzH0nteRHZk7xcr92zSNJhypresnj1bjSsgxup2De8nIPGKO7bURUiKREs+
+         AAcWOtnQmsc4s9kGLQ/dI0xzQCYepHbqTJZkDrViPhu/IYsS4nzRqfWpEMOUMjGkEbrm
+         w5zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718299800; x=1718904600;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sWKAFEWXLrDJc52wb2CYS7tZPMyOOyhZnNSlFzB+HrM=;
+        b=NqyQvLH14SqLC4OMWJH2wj0g7Bk2VaDOdF0k3ZjgjyfSJs7f7w0j2sNXmcqm+K9vw9
+         jVX23kDNK5srVBg9O3SivcN6rSEzGBgU2dxMSgpVScbTEWJmHaF2qDjVEZweCGt/FxlI
+         p5rBowUn22NhNnVyk6zitZgU2J3zxKYqTlh2qgq4wzS7ho83rO7sZt/5I1f9auoa2Et4
+         UrsDpQV5/txDsb4KZ1OPlx+hRXQD7Wa1iOaNTTbaL2APx6fDRRVjrVhXtzgszpalgYoz
+         K4tEiqUBYfCZ444sE2SGFmJnXlkRsxwpX/Uo18HSc8DAU43u77rBwbjRVfzGZ8DsUErw
+         iWWw==
+X-Gm-Message-State: AOJu0YwycQZmcDPUJhYjwttZLZFj09krb7pqd6D6PKu9AApjAK7Q2su8
+	PSIo9u0VOOQL0/oKmsGtBZThPmLcS3SK3m9qbeSJdpe0/y/WoEETvcOol2tOqQY=
+X-Google-Smtp-Source: AGHT+IGt6b57iPGgKOMlgH4lEbT/mnoJM6KeEbuePOr4Y0cQ9OdVWNFNg4ifNbIJ64ZbC30ao5/7/Q==
+X-Received: by 2002:a19:e04a:0:b0:52c:6464:a7b1 with SMTP id 2adb3069b0e04-52ca046458dmr845484e87.28.1718299800458;
+        Thu, 13 Jun 2024 10:30:00 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:900a:a4b1:9ab2:4d92:821a:bb76? ([2a00:f41:900a:a4b1:9ab2:4d92:821a:bb76])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca287aaccsm295981e87.223.2024.06.13.10.29.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 10:30:00 -0700 (PDT)
+Message-ID: <75d675f6-d827-4b8d-8c88-29ac5785e5c2@linaro.org>
+Date: Thu, 13 Jun 2024 19:29:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3c11000dd6c1df83015a8321a859e9775ebbc23e.1718266112.git.baolin.wang@linux.alibaba.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: qcom: icc-bwmon: Fix refcount imbalance seen during
+ bwmon_remove
+To: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, thara.gopinath@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, abel.vesa@linaro.org
+References: <20240613164506.982068-1-quic_sibis@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240613164506.982068-1-quic_sibis@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 04:21:19PM GMT, Baolin Wang wrote:
-> When testing shmem swapin, I encountered the warning below on my machine.
-> The reason is that replacing an old shmem folio with a new one causes
-> mem_cgroup_migrate() to clear the old folio's memcg data. As a result,
-> the old folio cannot get the correct memcg's lruvec needed to remove itself
-> from the LRU list when it is being freed. This could lead to possible serious
-> problems, such as LRU list crashes due to holding the wrong LRU lock, and
-> incorrect LRU statistics.
-> 
-> To fix this issue, we can fallback to use the mem_cgroup_replace_folio()
-> to replace the old shmem folio.
-> 
-> [ 5241.100311] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5d9960
-> [ 5241.100317] head: order:4 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> [ 5241.100319] flags: 0x17fffe0000040068(uptodate|lru|head|swapbacked|node=0|zone=2|lastcpupid=0x3ffff)
-> [ 5241.100323] raw: 17fffe0000040068 fffffdffd6687948 fffffdffd69ae008 0000000000000000
-> [ 5241.100325] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> [ 5241.100326] head: 17fffe0000040068 fffffdffd6687948 fffffdffd69ae008 0000000000000000
-> [ 5241.100327] head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> [ 5241.100328] head: 17fffe0000000204 fffffdffd6665801 ffffffffffffffff 0000000000000000
-> [ 5241.100329] head: 0000000a00000010 0000000000000000 00000000ffffffff 0000000000000000
-> [ 5241.100330] page dumped because: VM_WARN_ON_ONCE_FOLIO(!memcg && !mem_cgroup_disabled())
-> [ 5241.100338] ------------[ cut here ]------------
-> [ 5241.100339] WARNING: CPU: 19 PID: 78402 at include/linux/memcontrol.h:775 folio_lruvec_lock_irqsave+0x140/0x150
-> [...]
-> [ 5241.100374] pc : folio_lruvec_lock_irqsave+0x140/0x150
-> [ 5241.100375] lr : folio_lruvec_lock_irqsave+0x138/0x150
-> [ 5241.100376] sp : ffff80008b38b930
-> [...]
-> [ 5241.100398] Call trace:
-> [ 5241.100399]  folio_lruvec_lock_irqsave+0x140/0x150
-> [ 5241.100401]  __page_cache_release+0x90/0x300
-> [ 5241.100404]  __folio_put+0x50/0x108
-> [ 5241.100406]  shmem_replace_folio+0x1b4/0x240
-> [ 5241.100409]  shmem_swapin_folio+0x314/0x528
-> [ 5241.100411]  shmem_get_folio_gfp+0x3b4/0x930
-> [ 5241.100412]  shmem_fault+0x74/0x160
-> [ 5241.100414]  __do_fault+0x40/0x218
-> [ 5241.100417]  do_shared_fault+0x34/0x1b0
-> [ 5241.100419]  do_fault+0x40/0x168
-> [ 5241.100420]  handle_pte_fault+0x80/0x228
-> [ 5241.100422]  __handle_mm_fault+0x1c4/0x440
-> [ 5241.100424]  handle_mm_fault+0x60/0x1f0
-> [ 5241.100426]  do_page_fault+0x120/0x488
-> [ 5241.100429]  do_translation_fault+0x4c/0x68
-> [ 5241.100431]  do_mem_abort+0x48/0xa0
-> [ 5241.100434]  el0_da+0x38/0xc0
-> [ 5241.100436]  el0t_64_sync_handler+0x68/0xc0
-> [ 5241.100437]  el0t_64_sync+0x14c/0x150
-> [ 5241.100439] ---[ end trace 0000000000000000 ]---
-> 
-> Fixes: 85ce2c517ade ("memcontrol: only transfer the memcg data for migration")
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-This is a good find. I wonder if we should put
-VM_BUG_ON_FOLIO(folio_test_lru(folio), folio) in mem_cgroup_migrate().
 
+On 6/13/24 18:45, Sibi Sankar wrote:
+> The following warning is seen during bwmon_remove due to refcount
+> imbalance, fix this by releasing the OPPs after use.
+> 
+> Logs:
+> WARNING: at drivers/opp/core.c:1640 _opp_table_kref_release+0x150/0x158
+> Hardware name: Qualcomm Technologies, Inc. X1E80100 CRD (DT)
+> ...
+> Call trace:
+> _opp_table_kref_release+0x150/0x158
+> dev_pm_opp_remove_table+0x100/0x1b4
+> devm_pm_opp_of_table_release+0x10/0x1c
+> devm_action_release+0x14/0x20
+> devres_release_all+0xa4/0x104
+> device_unbind_cleanup+0x18/0x60
+> device_release_driver_internal+0x1ec/0x228
+> driver_detach+0x50/0x98
+> bus_remove_driver+0x6c/0xbc
+> driver_unregister+0x30/0x60
+> platform_driver_unregister+0x14/0x20
+> bwmon_driver_exit+0x18/0x524 [icc_bwmon]
+> __arm64_sys_delete_module+0x184/0x264
+> invoke_syscall+0x48/0x118
+> el0_svc_common.constprop.0+0xc8/0xe8
+> do_el0_svc+0x20/0x2c
+> el0_svc+0x34/0xdc
+> el0t_64_sync_handler+0x13c/0x158
+> el0t_64_sync+0x190/0x194
+> --[ end trace 0000000000000000 ]---
+> 
+> Fixes: 0276f69f13e2 ("soc: qcom: icc-bwmon: Set default thresholds dynamically")
+> Fixes: b9c2ae6cac40 ("soc: qcom: icc-bwmon: Add bandwidth monitoring driver")
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 > ---
->  mm/shmem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 99bd3c34f0fb..4acaf02bfe44 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1908,7 +1908,7 @@ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
->  	xa_lock_irq(&swap_mapping->i_pages);
->  	error = shmem_replace_entry(swap_mapping, swap_index, old, new);
->  	if (!error) {
-> -		mem_cgroup_migrate(old, new);
-> +		mem_cgroup_replace_folio(old, new);
->  		__lruvec_stat_mod_folio(new, NR_FILE_PAGES, 1);
->  		__lruvec_stat_mod_folio(new, NR_SHMEM, 1);
->  		__lruvec_stat_mod_folio(old, NR_FILE_PAGES, -1);
-> -- 
-> 2.39.3
-> 
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
 
