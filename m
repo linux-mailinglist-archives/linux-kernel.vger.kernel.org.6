@@ -1,192 +1,117 @@
-Return-Path: <linux-kernel+bounces-213349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35E9907414
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:42:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1054907415
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A90BB1C22F71
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:42:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47D791F2362C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63ABE1448E4;
-	Thu, 13 Jun 2024 13:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD911459EC;
+	Thu, 13 Jun 2024 13:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nwk3vody"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SDWbPVRe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8352A144D36;
-	Thu, 13 Jun 2024 13:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5384D1428F5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718286137; cv=none; b=P7DU1vObWSTBuxWX0CI/Hwzf7MDDCZl0E0zY9PvNV7mWLDM2v8s9PrZ/jummO4OKT4def1dF/I/9GUpFVkaBL50KExMDNr24GIJ+RsgZ1MbfZnur964OXCcPgrRZHdQB+n8x+OcLBr3SFc8x5C0B8QgxF2Jcu111BTR4VisUiyQ=
+	t=1718286142; cv=none; b=GJsPWD7dCw5vawr/lIGRtwNzxvetmq4PQziVah9/DhOd40DU/VuoK9XkgAEnDouHHgZP1hVMd9CQtCUIuMaVXzKrpeovKBGyXmA4hKR28MF1piQ/pOe+8b3zIRDYskOhD8WZdV5cPgEydIXqXs9hBchKOzwXYP/2psialKQCCVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718286137; c=relaxed/simple;
-	bh=gEBQjHna2XbzIzD705NXiOjgONId5w03PKl+TxkD1yE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PbXz4nVB2Cf/osaZ173qjWATdDrygcjKaNVeM1ygUS6TEG1Vbb90yR2s9ho3FcDb+OBO5CjBuiTqjOOfs3gfirSb+81ZYQZTdzqCr5PSOObdsDTd54CJqc7ePWrSaAA6DfGfpgPxKQFfxlBbY+xu5bkigMmalnw44F8SBHj5aLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nwk3vody; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DDKYdr011166;
-	Thu, 13 Jun 2024 13:42:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=B
-	h3yFA46dPP9BP4RFwHcMW7E8X0pV417kdUP+kIvhw4=; b=nwk3vodyUucAMrLTx
-	7XAVhau3ZuTPC5JX/Hza/L9n7LJdAq3wmTPM+Ly8kB3Eq/aHWhbjnvVkEaKYZB9i
-	IR1E69N4uG7yYjBiUgOwlS6oExV6lVDVlFlGZqufpuWGqolUtWFMoe8JhYwupQce
-	DEDztcOey/E4f8tOSUxrI6Ow/VWX4vgU8BmxdFk0DCQ+szftCz2M+ZpZcZBECQx3
-	MqT4FIGxNtSqUzpPN3csCrpy8F2dkFFl44oZyEvGOusQrF+mKvj3SpyayiVsIqUY
-	ofMD6We5foSbZXK+kG9zXcJQdC70E45ELfKbaknOWt+oA1cVEEZnb6M/uiJXyb0a
-	1+dWw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqq4u1p32-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 13:42:02 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45DDf9Pa011175;
-	Thu, 13 Jun 2024 13:42:01 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqq4u1p2y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 13:42:01 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45DD24WS027246;
-	Thu, 13 Jun 2024 13:42:01 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn21183u2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 13:42:01 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45DDfwi123528170
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Jun 2024 13:42:00 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A88E25803F;
-	Thu, 13 Jun 2024 13:41:58 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A573A5804E;
-	Thu, 13 Jun 2024 13:41:54 +0000 (GMT)
-Received: from [9.109.198.180] (unknown [9.109.198.180])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Jun 2024 13:41:54 +0000 (GMT)
-Message-ID: <c475f0d8-3bc9-4d65-8fce-586f4b75b4fc@linux.ibm.com>
-Date: Thu, 13 Jun 2024 19:11:52 +0530
+	s=arc-20240116; t=1718286142; c=relaxed/simple;
+	bh=qybj4kTNkAom9T8KJOd5ib0qCqBjwxZEWgukBBToPfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cJClDs4YPm5DJzdMOowEo0FrBe/pgsifP8827bWd5W1k41HGuAvt7i38A6EhhG0qwaIzj1XjzohP+oDAwJJX70c/ql86TyxIBwRoH2kOw4XYHLo3r5b0DdpA2WJL13fvmg72M2qqj69gQHEn668hj9OY1FlM5IoRReZ/Tn5FJ1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SDWbPVRe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D1C6C4AF1A;
+	Thu, 13 Jun 2024 13:42:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718286141;
+	bh=qybj4kTNkAom9T8KJOd5ib0qCqBjwxZEWgukBBToPfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SDWbPVReyj0w+2/jm+UGM5juXWMlKFdZYCYcxU6WlAR4en0p8iFahz4fSmccnr+3h
+	 zYsitfb2fwMQ3EuClrUOmEMjMVAq+vRwIf0YkPgKP0BmIfT68RjwGgeCGpTGBaWcUN
+	 TMmn5aDR9KLnGUw2Uvoq4DcM/KfQRKRHgDEd40qU=
+Date: Thu, 13 Jun 2024 15:42:18 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Lei Liu <liulei.rjpt@vivo.com>
+Cc: Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH] binder_alloc: replace kcalloc with kvcalloc to mitigate
+ OOM issues
+Message-ID: <2024061359-deniable-boundless-96c3@gregkh>
+References: <20240611085629.25088-1-liulei.rjpt@vivo.com>
+ <2024061216-faster-cufflink-ceac@gregkh>
+ <39eaba63-0e18-439a-82ac-834505e6473e@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] list: introduce a new cutting helper
-To: Keith Busch <kbusch@kernel.org>
-Cc: Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        hch@lst.de, sagi@grimberg.me, paulmck@kernel.org, davidgow@google.com,
-        akpm@linux-foundation.org, venkat88@linux.vnet.ibm.com
-References: <20240612155135.3060667-1-kbusch@meta.com>
- <f0e4c51c-8227-4f5c-876f-38fbb4a0e1bf@linux.ibm.com>
- <ZmrscxG51gFRDVlM@kbusch-mbp>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <ZmrscxG51gFRDVlM@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: yOj-B8kJC8OQ0h8P5quDiiU1kMCIz3af
-X-Proofpoint-ORIG-GUID: iQODFnnSfOi94haZX-PGOdDd8fq0PmCa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_05,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- clxscore=1015 impostorscore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130098
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <39eaba63-0e18-439a-82ac-834505e6473e@vivo.com>
 
-
-
-On 6/13/24 18:26, Keith Busch wrote:
-> On Thu, Jun 13, 2024 at 10:26:11AM +0530, Nilay Shroff wrote:
->> On 6/12/24 21:21, Keith Busch wrote:
->>> +static inline void list_cut(struct list_head *list,
->>> +		struct list_head *head, struct list_head *entry)
->>> +{
->>> +	list->next = entry;
->>> +	list->prev = head->prev;
->>> +	head->prev = entry->prev;
->>> +	entry->prev->next = head;
->>> +	entry->prev = list;
->>> +	list->prev->next = list;
->>> +}
->> I am wondering whether we really need the _rcu version of list_cut here?
->> I think that @head could point to an _rcu protected list and that's true 
->> for this patch. So there might be concurrent readers accessing @head using
->> _rcu list-traversal primitives, such as list_for_each_entry_rcu().
->>
->> An _rcu version of list_cut():
->>
->> static inline void list_cut_rcu(struct list_head *list,
->> 		struct list_head *head, struct list_head *entry)
->> {
->> 	list->next = entry;
->> 	list->prev = head->prev;
->> 	head->prev = entry->prev;
->> 	rcu_assign_pointer(list_next_rcu(entry->prev), head);
->> 	entry->prev = list;
->> 	list->prev->next = list;
->> }
+On Thu, Jun 13, 2024 at 08:01:39PM +0800, Lei Liu wrote:
+> On 2024/6/12 17:58, Greg Kroah-Hartman wrote:
+> > On Tue, Jun 11, 2024 at 04:56:28PM +0800, Lei Liu wrote:
+> > 
+> > > In binder_alloc, there is a frequent need for order3 memory
+> > > allocation, especially on small-memory mobile devices, which can
+> > > lead to OOM and cause foreground applications to be killed,
+> > > resulting in flashbacks. We use kvcalloc to allocate memory, which
+> > > can reduce system OOM occurrences, as well as decrease the time and
+> > > probability of failure for order3 memory allocations. Additionally,
+> > > it can also improve the throughput of binder (as verified by
+> > > Google's binder_benchmark testing tool). We have conducted multiple
+> > > tests on an 8GB memory phone, and the performance of kvcalloc is
+> > > better. Below is a partial excerpt of the test data. throughput =
+> > > (size * Iterations)/Time Benchmark-kvcalloc Time CPU Iterations
+> > > throughput(Gb/s)
+> > > ----------------------------------------------------------------
+> > > BM_sendVec_binder-4096 30926 ns 20481 ns 34457 4563.66↑
+> > > BM_sendVec_binder-8192 42667 ns 30837 ns 22631 4345.11↑
+> > > BM_sendVec_binder-16384 67586 ns 52381 ns 13318 3228.51↑
+> > > BM_sendVec_binder-32768 116496 ns 94893 ns 7416 2085.97↑
+> > > BM_sendVec_binder-65536 265482 ns 209214 ns 3530 871.40↑
+> > > Benchmark-kvcalloc Time CPU Iterations throughput(Gb/s)
+> > Both benchmarks are the same? Or is this labeled incorrectly?
+> I'm really sorry, I got the title of the table wrong, here are the updated
+> data:
+> throughput = (size * Iterations)/Time
+> kvcalloc->kvmalloc:
+> Benchmark-kvcalloc    Time    CPU    Iterations    throughput(Gb/s)
+> ----------------------------------------------------------------
+> BM_sendVec_binder-4096    30926 ns    20481 ns    34457    4563.66↑
+> BM_sendVec_binder-8192    42667 ns    30837 ns    22631    4345.11↑
+> BM_sendVec_binder-16384    67586 ns    52381 ns    13318    3228.51↑
+> BM_sendVec_binder-32768    116496 ns    94893 ns    7416    2085.97↑
+> BM_sendVec_binder-65536    265482 ns    209214 ns    3530    871.40↑
 > 
-> I was initially thinking similiar, but this is really just doing a
-> "list_del", and the rcu version calls the same generic __list_del()
-> helper. To make this more clear, we could change
-> 
-> 	head->prev = entry->prev;
-> 	entry->prev->next = head;
-> 
-> To just this:
-> 
-> 	__list_del(entry->prev, head);
-> 
-> And that also gets the "WRITE_ONCE" usage right.
-Yeah this sounds reasonable.
+> kcalloc->kmalloc
+> Benchmark-kcalloc    Time    CPU    Iterations    throughput(Gb/s)
+> ----------------------------------------------------------------
+> BM_sendVec_binder-4096    39070 ns    24207 ns    31063    3256.56
+> BM_sendVec_binder-8192    49476 ns    35099 ns    18817    3115.62
+> BM_sendVec_binder-16384    76866 ns    58924 ns    11883    2532.86
+> BM_sendVec_binder-32768    134022 ns    102788 ns    6535    1597.78
+> BM_sendVec_binder-65536    281004 ns    220028 ns    3135    731.14
 
-> 
-> But that's not the problem for the rcu case. It's the last line that's
-> the problem:
-> 
->  	list->prev->next = list;
-> 
-> We can't change forward pointers for any element being detached from
-> @head because a reader iterating the list may see that new pointer value
-> and end up in the wrong list, breaking iteration. A synchronize rcu
-> needs to happen before forward pointers can be mucked with, so it still
-> needs to be done in two steps. Oh bother...
+Great, can you please resend this as a new version?
 
-Agree and probably we may break it down using this API:
-static inline void list_cut_rcu(struct list_head *list,
- 		struct list_head *head, struct list_head *entry, 
-		void (*sync)(void))
-{
- 	list->next = entry;
- 	list->prev = head->prev;
-	__list_del(entry->prev, head);
-	sync();
- 	entry->prev = list;
- 	list->prev->next = list;
-}
+thanks,
 
-Thanks,
---Nilay
-
-
- 
-
-
-
+greg k-h
 
