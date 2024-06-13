@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-213207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69346907104
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:33:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD1D907117
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E722821E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:33:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B60F41F214BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6228161;
-	Thu, 13 Jun 2024 12:32:47 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C5D1448C3;
+	Thu, 13 Jun 2024 12:33:18 +0000 (UTC)
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076A31E49B;
-	Thu, 13 Jun 2024 12:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D92E13E3F9;
+	Thu, 13 Jun 2024 12:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.224.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718281967; cv=none; b=XMn0CD+AnsMnQ2YtYJ09neAq/PWd/Av1i4MYk1rjytW0S7z2vT5FHAf7tRM9zOmHQn0672+XqcuEWktB7dqyrA0qzkbCutANubUPHunM0hTtmOMhivER1Qs5okYZRgT38Ll5tWelwtkoMlAziJ0zPhc6GhGGj233opdYtyUpqeY=
+	t=1718281997; cv=none; b=PRL+LnUiAYqUq38MTSC6numaDMgovg8Xx47wg9cyN/fhSuuNABK70eD59EPIcUrP1lanOwSLV/HFcvFnSOsg7HZZMSsyzE6UMIq2nMBPngqiQacth+SeY93AGTuWB/EEYrCHs07UTVR38ixyHatB7C1uHRYISb/SjC26b5G2ig4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718281967; c=relaxed/simple;
-	bh=8z8mryihkPsMHrmTcB0xChWOv0muhpjdmBAMz3ALaUg=;
+	s=arc-20240116; t=1718281997; c=relaxed/simple;
+	bh=ULg8Fs3ylKzlzeu4L15VUpi6+aXnakKnXxBv8V2L7ac=;
 	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=KBUoHG3A7FjQ7evkpLXVtHuqYcRFPlyskTpxzuhtCtdi0xEEhrh4VEhXngdb2/3iKPsJwRzVleGgKfve53gWFpIyYn9BKFWlAu4VeUAuzeQEhl4lM/7785iXVl1ZB1MGJRCjRibat8+ymOJVflF8Q9+pXutezSrHPTuh58rT2h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
+	 References:Message-ID; b=ilFwWLLEY6fDn9RKUsK+iXZF0m3vOf3SI6Nka+io3XKb0Dm7X/SHTwbnJIBF1SRuPpLNwdp5+QsmdRkq79jI1SkhcOmcnuhBtP2/mtcV+6Hzk1dU8582umaU6HBTD/pIKENDYpoEXU+pXr1IDLxRHXk0fMQjmu7OUXUEbYi64FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=91.198.224.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
 Received: from [127.0.0.1] (helo=localhost)
 	by relay.expurgate.net with smtp (Exim 4.92)
 	(envelope-from <prvs=99085fba10=ms@dev.tdt.de>)
-	id 1sHjdD-000Vos-Tw; Thu, 13 Jun 2024 14:32:43 +0200
+	id 1sHjdc-002CGp-PB; Thu, 13 Jun 2024 14:33:08 +0200
 Received: from [195.243.126.94] (helo=securemail.tdt.de)
 	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ms@dev.tdt.de>)
-	id 1sHjdD-00FNJt-Bx; Thu, 13 Jun 2024 14:32:43 +0200
+	id 1sHjdc-000WTx-7V; Thu, 13 Jun 2024 14:33:08 +0200
 Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 1A0F2240053;
-	Thu, 13 Jun 2024 14:32:43 +0200 (CEST)
+	by securemail.tdt.de (Postfix) with ESMTP id E9337240053;
+	Thu, 13 Jun 2024 14:33:07 +0200 (CEST)
 Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 9F606240050;
-	Thu, 13 Jun 2024 14:32:42 +0200 (CEST)
+	by securemail.tdt.de (Postfix) with ESMTP id 7E5D1240050;
+	Thu, 13 Jun 2024 14:33:07 +0200 (CEST)
 Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id 062B73852A;
-	Thu, 13 Jun 2024 14:32:42 +0200 (CEST)
+	by mail.dev.tdt.de (Postfix) with ESMTP id 2CCC53852A;
+	Thu, 13 Jun 2024 14:33:07 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Thu, 13 Jun 2024 14:32:42 +0200
+Date: Thu, 13 Jun 2024 14:33:07 +0200
 From: Martin Schiller <ms@dev.tdt.de>
 To: Vladimir Oltean <olteanv@gmail.com>
 Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
@@ -63,32 +63,26 @@ Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
  kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
  conor+dt@kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 04/12] net: dsa: lantiq_gswip: Use
- dev_err_probe where appropriate
+Subject: Re: [PATCH net-next v5 05/12] net: dsa: lantiq_gswip: Don't manually
+ call gswip_port_enable()
 Organization: TDT AG
-In-Reply-To: <20240613115137.ignzu35jxmmorxys@skbuf>
+In-Reply-To: <20240613115226.luvvmfwsdkp6bmx3@skbuf>
 References: <20240611135434.3180973-1-ms@dev.tdt.de>
- <20240611135434.3180973-1-ms@dev.tdt.de>
- <20240611135434.3180973-5-ms@dev.tdt.de>
- <20240611135434.3180973-5-ms@dev.tdt.de>
- <20240613115137.ignzu35jxmmorxys@skbuf>
-Message-ID: <8592951129cec26ef55b43a99c5aa913@dev.tdt.de>
+ <20240611135434.3180973-6-ms@dev.tdt.de>
+ <20240613115226.luvvmfwsdkp6bmx3@skbuf>
+Message-ID: <f76cb6f2ba50c43e950f9e690c3aa90a@dev.tdt.de>
 X-Sender: ms@dev.tdt.de
 User-Agent: Roundcube Webmail/1.3.17
 X-purgate: clean
 X-purgate-type: clean
-X-purgate-ID: 151534::1718281963-36936522-5FB1A390/0/0
+X-purgate-ID: 151534::1718281988-F1CA462D-6B8E3CDD/0/0
 
-On 2024-06-13 13:51, Vladimir Oltean wrote:
-> On Tue, Jun 11, 2024 at 03:54:26PM +0200, Martin Schiller wrote:
+On 2024-06-13 13:52, Vladimir Oltean wrote:
+> On Tue, Jun 11, 2024 at 03:54:27PM +0200, Martin Schiller wrote:
 >> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 >> 
->> dev_err_probe() can be used to simplify the existing code. Also it 
->> means
->> we get rid of the following warning which is seen whenever the PMAC
->> (Ethernet controller which connects to GSWIP's CPU port) has not been
->> probed yet:
->>   gswip 1e108000.switch: dsa switch register failed: -517
+>> We don't need to manually call gswip_port_enable() from within
+>> gswip_setup() for the CPU port. DSA does this automatically for us.
 >> 
 >> Signed-off-by: Martin Blumenstingl 
 >> <martin.blumenstingl@googlemail.com>
