@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-214027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B679D907E1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 712C8907E21
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB421F25ACA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:27:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F08D51F23725
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331052F50;
-	Thu, 13 Jun 2024 21:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163A3143733;
+	Thu, 13 Jun 2024 21:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zw56GY+4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oZtYBjiv"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2089.outbound.protection.outlook.com [40.107.244.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AB85F876;
-	Thu, 13 Jun 2024 21:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718314007; cv=none; b=Yr4yUrsqu/dz4rn92VLCuuSsAxCJFmdU3O65C7hLsFZ3LMb+JH6RlpLXBPqUZp2KmG7l2UGnG2NV359L4yOuMEjJdfa1DEccz1SceWlrBzghWpPtBlMvWRrESF8NLYRjZFjLviW5PZ4kYirDqAl6khHkADVFombJ/raxn15tU0w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718314007; c=relaxed/simple;
-	bh=/dsgC1O4XfHN86562SNESM1KB8oXQGHcFgFn21xIy6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=udaX7U5iWYWTZVbvAB9ZwOC4zgAOxbLc7oqMil5coGLJhYGVJqVMSTOeSI0YSfZH7fXBgEHy9N48a33QFiuLvQQOZkk2Q3D+DGH9rOxxJmxu/Cu91czr6CzIG0ybbnp8UJxSITeWCrdCSOoiO94nKEHMv072Kcvf56WBpriASXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zw56GY+4; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718314006; x=1749850006;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/dsgC1O4XfHN86562SNESM1KB8oXQGHcFgFn21xIy6w=;
-  b=Zw56GY+4TfTDsYHxFF6BZ/GNfvrUaXiTE/MyceL658O05tb7Im3Xdspj
-   fVWs9H7ad7EQ+YNiAfIU+SUNnp/xZOgbPcZ6c2VgN6ueOmGxw+K0kCtY4
-   gpwE39iNLOQAyZhrwCMTg2eGJbsPpni+yY+qTKc19uhs0zuJ9KYnCT40F
-   c5EllXEuhqEi83l36w/VabaaMdM11aduw5DTdC7Kn3jYjhgIOKpgsGBhG
-   QBRlwtiaV6jIEYliM9GKsuTtRwlspBteoRpaV2cdSqPqJ5HB2M+yOYjFH
-   9qyNtp9S70eK47vaZKu27zqWLvPnn+TpYKBeDd/Mdar1fChOXRsXiZtOy
-   g==;
-X-CSE-ConnectionGUID: ajFQ1uxERhyzpIDd/66WlQ==
-X-CSE-MsgGUID: hxU0tIJpR/W53ksDxJWJxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="18958801"
-X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
-   d="scan'208";a="18958801"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 14:26:45 -0700
-X-CSE-ConnectionGUID: 4F0zvwCORKmPCpXRfr0cEg==
-X-CSE-MsgGUID: rDaE7UXYTeGHIIuzz9pTTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
-   d="scan'208";a="71070869"
-Received: from sramkris-mobl1.amr.corp.intel.com (HELO [10.124.223.37]) ([10.124.223.37])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 14:26:43 -0700
-Message-ID: <53a3795b-4ccd-458e-88cd-d510031bc6b6@linux.intel.com>
-Date: Thu, 13 Jun 2024 14:26:42 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E072F50;
+	Thu, 13 Jun 2024 21:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718314072; cv=fail; b=X4c1hZ7Q3TdPdhp2d82M48B67ndz0BEtwsT0optz4PYcqEJf/889AtJGzJSJYadKEVyXTCfGKwMG4QIBdEk1vW4YPmG1CgPs9tYFyjN7r81P6JHGQwFPfpBYPPNdfLiypUg4Y4BFxVZQwd+qiay1Onsjo+b9u1Fo2wOrGCp1TUk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718314072; c=relaxed/simple;
+	bh=X9ntUHDT6FhFfsHO3dp5GBcHryuJB6ipgdU7OyhQ0/0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=seUTbLaYICT8RXSviwvpXUFxz6WXjNrjEwic1u0/Ev4TKKjx8O2xbfKmL/82QUWQb4w4W3szGZQOXUE2y41IB4H+W03d/tQKrExVdR4BtNRKJv1JeEm6DOhWJE8lUnclTCU6yB63ZFsh24zRrUhk2iyVdNxpX9xmN+LAd1+m55A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oZtYBjiv; arc=fail smtp.client-ip=40.107.244.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UyArAknt/HGxWpjlI3G7HUAJWntj1HFIlnkassHcsliKpp0OU2buY7wTpiG8eeOKflURpgnTPYAgme2mAEiT0B/cWiqOSbF4+eeEvqRgSnHCDZrQkWJ0CFwsBJUDEcQwWbKGCzZ+CdE2K4Qqf0zNvXAFwrU5+VW2hqgYT39ZxJy/Me/hm9rCF2ViEdI3UqsKoz/LfAkGJ58jcxzkbrhoHO+/+3FVqXbTR4MGlm7/sqJknyGYC8qEuDdayhCIalhb64A6cBuPyIV44WlkASaE0ssqQZ9zUu+p7l2B/EKKv65HJUCn5r+t6Zp4QAnAsti2jr0BCUzRyFDE47PFGk3snA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MCD2K9stkfF+DF07OeBSfogi05llm/h2UUmjAdU3Hww=;
+ b=SzzlnIWkvpGp8yECZe2t7A0GO0uuv/qz/1Eg9mwSqZ81e07CUV9VuozQxVpKeWILwWRCggout9TbvW/wPfpQBX0VN23FFXgRkEmc57LSXcA/UxtCZz3WtJI+/PI701kUoW4bxhZXMdwyaaGTDXsz7zpevq5QlsrDrhgMxvNLU81yGhcwBeQbcCUhAm/Xz0ZK93cndPWinTXFIoJD5BEpJx+AoINWTEr2IHehmgqKPtjN3hOKvi+m3d9PfcSGy0syN7SzFX0rh1rtpnpba7zPU1sJePX08hkfoMuwHPuXBD7u9iRrpncgZWgUFeTK9JDDUS4wrKAfgHC4yeNNRJHXvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MCD2K9stkfF+DF07OeBSfogi05llm/h2UUmjAdU3Hww=;
+ b=oZtYBjiv5VCSDJ+ZeZovd+EmpSFF3QHew1ZQEAw4ETfXB5s7u+gijYgMlj2ZEREDTXIhTL1255GnsnO8Ks8XP3/480ug+jd3GsfnPed4XiUx8ZRcRVw0hp20qx6n1eIMZdT+oSzN2uJNEqB1TaduBEX2t4QPfBlZcWt7VrY0YmTdvYetxHLV8HI3xAK49miNnKWY0Ra/1O7xMLncfwJQVQARZGqRfxeXvi0fqoMAC2SX7y19O/RnLXQicXomK6CzofdXpKp5CrW2BUZ4352b9n5iPeqXGJcEmcBy8XY4qp2PDHKllh+OdG1nUxF13/K7rk09VT6t7LCSB35fNVINEQ==
+Received: from PH8PR05CA0020.namprd05.prod.outlook.com (2603:10b6:510:2cc::27)
+ by PH8PR12MB7301.namprd12.prod.outlook.com (2603:10b6:510:222::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Thu, 13 Jun
+ 2024 21:27:47 +0000
+Received: from CY4PEPF0000EDD5.namprd03.prod.outlook.com
+ (2603:10b6:510:2cc:cafe::f6) by PH8PR05CA0020.outlook.office365.com
+ (2603:10b6:510:2cc::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.14 via Frontend
+ Transport; Thu, 13 Jun 2024 21:27:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000EDD5.mail.protection.outlook.com (10.167.241.201) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.15 via Frontend Transport; Thu, 13 Jun 2024 21:27:47 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 13 Jun
+ 2024 14:27:32 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 13 Jun
+ 2024 14:27:31 -0700
+Message-ID: <2c6f86b4-8151-4bb8-8400-3ea546ca10ac@nvidia.com>
+Date: Thu, 13 Jun 2024 14:27:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,178 +83,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] PCI/AER: Store UNCOR_STATUS bits that might be
- ANFE in aer_err_info
-To: Zhenzhong Duan <zhenzhong.duan@intel.com>, linux-pci@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
- rafael@kernel.org, lenb@kernel.org, james.morse@arm.com,
- tony.luck@intel.com, bp@alien8.de, dave@stgolabs.net,
- jonathan.cameron@huawei.com, dave.jiang@intel.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
- bhelgaas@google.com, helgaas@kernel.org, mahesh@linux.ibm.com,
- oohall@gmail.com, linmiaohe@huawei.com, shiju.jose@huawei.com,
- adam.c.preble@intel.com, lukas@wunner.de,
- Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
- linux-cxl@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-kernel@vger.kernel.org, erwin.tsaur@intel.com,
- sathyanarayanan.kuppuswamy@intel.com, dan.j.williams@intel.com,
- feiting.wanyan@intel.com, yudong.wang@intel.com, chao.p.peng@intel.com,
- qingshun.wang@linux.intel.com
-References: <20240509084833.2147767-1-zhenzhong.duan@intel.com>
- <20240509084833.2147767-2-zhenzhong.duan@intel.com>
+Subject: Re: [PATCH 0/5] cleanups, fixes, and progress towards avoiding "make
+ headers"
+From: John Hubbard <jhubbard@nvidia.com>
+To: David Hildenbrand <david@redhat.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>, Shuah Khan
+	<shuah@kernel.org>
+CC: Andrei Vagin <avagin@google.com>, Axel Rasmussen
+	<axelrasmussen@google.com>, Christian Brauner <brauner@kernel.org>, Kees Cook
+	<kees@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, "Liam R .
+ Howlett" <Liam.Howlett@oracle.com>, Muhammad Usama Anjum
+	<usama.anjum@collabora.com>, Peter Xu <peterx@redhat.com>, Rich Felker
+	<dalias@libc.org>, <linux-mm@kvack.org>, <linux-kselftest@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+References: <20240608021023.176027-1-jhubbard@nvidia.com>
+ <b5dd99c7-866b-467c-9f76-d043e887394c@redhat.com>
+ <c1277bf6-a211-49eb-80af-726f16ca1802@nvidia.com>
+ <17b503f8-5d0c-48a3-9eeb-85b01583f9bb@redhat.com>
+ <b60c8c02-5497-4c6c-ae60-86309e55f1bd@nvidia.com>
 Content-Language: en-US
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20240509084833.2147767-2-zhenzhong.duan@intel.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <b60c8c02-5497-4c6c-ae60-86309e55f1bd@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD5:EE_|PH8PR12MB7301:EE_
+X-MS-Office365-Filtering-Correlation-Id: 93452456-e830-405f-57a4-08dc8befabb2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230035|376009|7416009|82310400021|1800799019|36860700008;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a2JHYVZSa1FTQXZZL0tiQzZGWmdnU1JUVTUyVlJLK1Exc3IzRHloQ3Rhbk5p?=
+ =?utf-8?B?WWticStQTW0vQ1FoN09nMWZwbDI3SmtBOTZ4U1VUY08yTVdMOXlNRzZCTUVT?=
+ =?utf-8?B?ZzgwM2hwYmNSTWdIK3NLZDZGS3h3WVlSM2tOVTB3Qk1uaWpjaG5JOEtxSmF4?=
+ =?utf-8?B?VlNCOW83Z3NRaW9aTlVYTmNpQzUxSlBuTUlrUWorYjM1bXN1ZzZnTTdxQi9N?=
+ =?utf-8?B?aFFNWTc4ak5vVk5CRUJUZUx2SnBqN2RWd0RBbVFnRkQvMW9wWXlKTDFQOVlv?=
+ =?utf-8?B?YWJnZy9NN3U0TEJ2RDJXWlE0NG5HZS9ILzczQXhvcnB2akl2TElMOWNjTndX?=
+ =?utf-8?B?bE1hblFIZkIxNGhHUXVZTTdCZXFpbjVVaklUVU9MOGtObFFGQkJrS202U0ww?=
+ =?utf-8?B?UVc4NmlOdmJzMFYvRnN2WGlFRFRxMUdkKzg4TG1nVDNXclFpb0JVNFY2K3BK?=
+ =?utf-8?B?Vnpwc1ZEbjZwbDE2OWtrY0drdTFCUjE1d1dyMktOdjhBc1BiR3FWUWJFanB3?=
+ =?utf-8?B?MkFpWmxGYTE4RDc1b3R4c2Y0d3NlWWU4ZUp5VFBOUHVYRmNoZFBWUUgrUmlS?=
+ =?utf-8?B?ekdSUXFRaituTlUxRXI3c0RxNmpCbVY2aDVwRlVLK3BnY3lIUERNUzNtTkFD?=
+ =?utf-8?B?NkhWbGZwVXNkZlBkaFhnUzE4S3Z6Y2szOS9rTGppM0NmZzZvbStJS2tycDRH?=
+ =?utf-8?B?WVYrSjVyKzFRMXFnbnlDTWlJQVo1WVZ0eXVQTkVMK3NtQ0thWTVoUUk2TjIx?=
+ =?utf-8?B?Z3ovcit0eXVaVTRzZ2UyUVV0ei90WXZaRkxwb2pJcUZBb2NJd0Vqbzc0dzl1?=
+ =?utf-8?B?Q2dPakJKK0FqMXFJSWpWSm1zVXhiSWN0dVRFQW1pSjc2ZXRuUHFMNi9Sa0Uv?=
+ =?utf-8?B?RFpPR2ZNSTZLMkJCUlNQYUF3TzIzTE94Wk5CeUZwU25HaUp6QWU4NW0yTitT?=
+ =?utf-8?B?QUJ0YlFXNlI3TFJmWEx3OHBmSlpsQXNUNzhhbENaRWZLVnRLQi84Zi9acUdZ?=
+ =?utf-8?B?VlNTb1F4WUU5TVVQVzdtYzUxdVZRcHZzT1ZBL2IycHlqbXJxQUV6bGVxM1JR?=
+ =?utf-8?B?YVJPQnphbkZCN0Vnd2FhUTBkenVCNXRoZVZRL2tUcFVpSmxGMCtNTXJrT3ZC?=
+ =?utf-8?B?clphbDZjTCszQ3hFVnNmNkMrY0U4Z1UrU21tV0JJUFc5RitHMi9ZMkhPK1RK?=
+ =?utf-8?B?VFlNUVVaZjZSNGhMVWY4SXpyVnpWeDArbkQybnNjcnVCTEdXY1ZoeksyN0U0?=
+ =?utf-8?B?bEVkaHJ2UkVJYXE2SWhRWHBWanFtRmdraVd1T24xa09zWUZjQlNZS1JyNXF6?=
+ =?utf-8?B?c3lzaEdJOXp1NnhtZUt4YStvRGJKVWRSMjRHaTJvUVdtMStqdmhpQ1FjenRL?=
+ =?utf-8?B?UUcwZDR3eW5yaGNreEhtRFlkM0Vqc1psdXIrbTVmc255MnNyTDdOcUZDa0RK?=
+ =?utf-8?B?RzB3a0dsdlZ4Q1cybnRwQVI0MWVqNmxvRTcxMDhyVU4wRDA2ZGVyampnZ3Vo?=
+ =?utf-8?B?a05uU2o2b1FaN2RMaEZCQUp5RWhZMmdxQjVoYktJZUxCZ0JKZXkvVXJ3RENa?=
+ =?utf-8?B?QmJ6ZHd1SkZPTHlIVXI5ZEhDV2o0T0hSL0lrUFZtWjcySCt0Q0VVaFdzQkxF?=
+ =?utf-8?B?Y2E2SGI1OG5uT0paUElFK2twQllQN04wODJjTUMxd0NQZFgwZk43MTJsZ3VH?=
+ =?utf-8?B?M2M5czlXeHZ0QVN6UUJqS0FRaVZydkNISThodjJDbTBnclI0WW1Cc3FhaDZK?=
+ =?utf-8?B?SmdGbjI5YjF3TmdEeDZxcm5ueW5KMGY5RWZoMVFja09Mb0F1c041c1gvdWt2?=
+ =?utf-8?B?Y1BmUnpZYzFncnFiTkdyMW1MaDExemw0Vk9MSkdqQldFZVM5UFNwNlF4SG9H?=
+ =?utf-8?B?YmE1SUI1SkkrRFg4TnVsVWk5aklLY2dnNjF5U2plbVVZTUE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230035)(376009)(7416009)(82310400021)(1800799019)(36860700008);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2024 21:27:47.2866
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93452456-e830-405f-57a4-08dc8befabb2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EDD5.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7301
 
-Hi,
+On 6/12/24 7:11 PM, John Hubbard wrote:
+> On 6/12/24 1:24 AM, David Hildenbrand wrote:
+>> On 11.06.24 22:54, John Hubbard wrote:
+>>> On 6/11/24 2:36 AM, David Hildenbrand wrote:
+>>>> On 08.06.24 04:10, John Hubbard wrote:
+...
+>>> You remembered correctly, but the situation is slighly muddier than
+>>> one would prefer. :)
+>>
+>>
+>> Absolutely, and I appreciate that you are trying to improve the situation.
+>>
+> 
+> I think the attempts to further tease apart the include headers could
+> go into a separate, subsequent series, yes? And let this one go in
+> unmolested for now?
+  
 
-On 5/9/24 1:48 AM, Zhenzhong Duan wrote:
-> In some cases the detector of a Non-Fatal Error(NFE) is not the most
-> appropriate agent to determine the type of the error. For example,
-> when software performs a configuration read from a non-existent
-> device or Function, completer will send an ERR_NONFATAL Message.
-> On some platforms, ERR_NONFATAL results in a System Error, which
-> breaks normal software probing.
->
-> Advisory Non-Fatal Error(ANFE) is a special case that can be used
-> in above scenario. It is predominantly determined by the role of the
-> detecting agent (Requester, Completer, or Receiver) and the specific
-> error. In such cases, an agent with AER signals the NFE (if enabled)
-> by sending an ERR_COR Message as an advisory to software, instead of
-> sending ERR_NONFATAL.
->
-> When processing an ANFE, ideally both correctable error(CE) status and
-> uncorrectable error(UE) status should be cleared. However, there is no
-> way to fully identify the UE associated with ANFE. Even worse, Non-Fatal
-> Error(NFE) may set the same UE status bit as ANFE. Treating an ANFE as
-> NFE will reproduce above mentioned issue, i.e., breaking softwore probing;
-> treating NFE as ANFE will make us ignoring some UEs which need active
-> recover operation. To avoid clearing UEs that are not ANFE by accident,
-> the most conservative route is taken here: If any of the NFE Detected
-> bits is set in Device Status, do not touch UE status, they should be
-> cleared later by the UE handler. Otherwise, a specific set of UEs that
-> may be raised as ANFE according to the PCIe specification will be cleared
-> if their corresponding severity is Non-Fatal.
->
-> To achieve above purpose, store UNCOR_STATUS bits that might be ANFE
-> in aer_err_info.anfe_status. So that those bits could be printed and
-> processed later.
->
-> Tested-by: Yudong Wang <yudong.wang@intel.com>
-> Co-developed-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
-> Signed-off-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
-> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@intel.com>
-> ---
->  drivers/pci/pci.h      |  1 +
->  drivers/pci/pcie/aer.c | 53 ++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 54 insertions(+)
->
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 17fed1846847..3f9eb807f9fd 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -412,6 +412,7 @@ struct aer_err_info {
->  
->  	unsigned int status;		/* COR/UNCOR Error Status */
->  	unsigned int mask;		/* COR/UNCOR Error Mask */
-> +	unsigned int anfe_status;	/* UNCOR Error Status for ANFE */
->  	struct pcie_tlp_log tlp;	/* TLP Header */
->  };
->  
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index ac6293c24976..f2839b51321a 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -107,6 +107,12 @@ struct aer_stats {
->  					PCI_ERR_ROOT_MULTI_COR_RCV |	\
->  					PCI_ERR_ROOT_MULTI_UNCOR_RCV)
->  
-> +#define AER_ERR_ANFE_UNC_MASK		(PCI_ERR_UNC_POISON_TLP |	\
-> +					PCI_ERR_UNC_COMP_TIME |		\
-> +					PCI_ERR_UNC_COMP_ABORT |	\
-> +					PCI_ERR_UNC_UNX_COMP |		\
-> +					PCI_ERR_UNC_UNSUP)
-> +
->  static int pcie_aer_disable;
->  static pci_ers_result_t aer_root_reset(struct pci_dev *dev);
->  
-> @@ -1196,6 +1202,49 @@ void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
->  EXPORT_SYMBOL_GPL(aer_recover_queue);
->  #endif
->  
-> +static void anfe_get_uc_status(struct pci_dev *dev, struct aer_err_info *info)
-> +{
-> +	u32 uncor_mask, uncor_status, anfe_status;
-> +	u16 device_status;
-> +	int aer = dev->aer_cap;
-> +
-> +	pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS, &uncor_status);
-> +	pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_MASK, &uncor_mask);
-> +	/*
-> +	 * According to PCIe Base Specification Revision 6.1,
-> +	 * Section 6.2.3.2.4, if an UNCOR error is raised as
-> +	 * Advisory Non-Fatal error, it will match the following
-> +	 * conditions:
-> +	 *	a. The severity of the error is Non-Fatal.
-> +	 *	b. The error is one of the following:
-> +	 *		1. Poisoned TLP           (Section 6.2.3.2.4.3)
-> +	 *		2. Completion Timeout     (Section 6.2.3.2.4.4)
-> +	 *		3. Completer Abort        (Section 6.2.3.2.4.1)
-> +	 *		4. Unexpected Completion  (Section 6.2.3.2.4.5)
-> +	 *		5. Unsupported Request    (Section 6.2.3.2.4.1)
-> +	 */
-> +	anfe_status = uncor_status & ~uncor_mask & ~info->severity &
-> +		      AER_ERR_ANFE_UNC_MASK;
-> +
-> +	if (pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &device_status))
-> +		return;
-> +	/*
-> +	 * Take the most conservative route here. If there are Non-Fatal errors
-> +	 * detected, do not assume any bit in uncor_status is set by ANFE.
-> +	 */
-> +	if (device_status & PCI_EXP_DEVSTA_NFED)
-> +		return;
+On second thought, it is actually much easier than I thought, let me
+post a v2 with the unistd.h header fixes, after all.
 
-You can move this check to the top of the function. You don't need to check
-the rest if NFE error is detected in device status.
-
-> +
-> +	/*
-> +	 * If there is another ANFE between reading uncor_status and clearing
-> +	 * PCI_ERR_COR_ADV_NFAT bit in cor_status register, that ANFE isn't
-> +	 * recorded in info->anfe_status. It will be read out as NFE in
-> +	 * following uncor_status register reading and processed by NFE
-> +	 * handler.
-> +	 */
-> +	info->anfe_status = anfe_status;
-> +}
-> +
->  /**
->   * aer_get_device_error_info - read error status from dev and store it to info
->   * @dev: pointer to the device expected to have a error record
-> @@ -1213,6 +1262,7 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
->  
->  	/* Must reset in this function */
->  	info->status = 0;
-> +	info->anfe_status = 0;
->  	info->tlp_header_valid = 0;
->  
->  	/* The device might not support AER */
-> @@ -1226,6 +1276,9 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
->  			&info->mask);
->  		if (!(info->status & ~info->mask))
->  			return 0;
-> +
-> +		if (info->status & PCI_ERR_COR_ADV_NFAT)
-> +			anfe_get_uc_status(dev, info);
->  	} else if (type == PCI_EXP_TYPE_ROOT_PORT ||
->  		   type == PCI_EXP_TYPE_RC_EC ||
->  		   type == PCI_EXP_TYPE_DOWNSTREAM ||
-
+thanks,
 -- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+John Hubbard
+NVIDIA
 
 
