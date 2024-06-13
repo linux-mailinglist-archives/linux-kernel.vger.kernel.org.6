@@ -1,149 +1,179 @@
-Return-Path: <linux-kernel+bounces-212839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527FE906720
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:39:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE139067D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7B59281E93
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:39:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD822289C01
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797CD13E03A;
-	Thu, 13 Jun 2024 08:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC9813E04A;
+	Thu, 13 Jun 2024 08:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F6Mcol+M"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTxXsssk"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0A813D88D;
-	Thu, 13 Jun 2024 08:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7478413E036
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718267870; cv=none; b=Avlpods+50apZBOAxOxMmTx5pBWmpn2rbYoLx6R7j6jax4ylXrvhgwLzRLwggFYUDLasLLSguCW7tb2UBSkT/0Hu9fTh8GvRmfTdOq0tvWSlOgNdUFKvgOQFLI9rglfzOKt6aI5SFATByhk2CpkKJkcRnkzZLZXMIP+gbZhbbZY=
+	t=1718268894; cv=none; b=NZ8/MinB5RpJqeq9LXNd83THzjHrM8gMF0C9M/+AtSWgaV/9Q+QfoyrO/Lb3fX+UFMZBuwRmqr+eN2bfjGmvcuAMDnhjokSlMaJAWdmNsR1OAw+d2mKCuJIFBu7u5Txo8nvDnMYpnKQulVfr67WwY73nzOqvEVE8dxKLh557MNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718267870; c=relaxed/simple;
-	bh=ex1BfUqwBKGcn6bmqOhnx0hqarbIcWjP42s/m1fBXKk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VHmWcsXDR3jLa2MgTViWRJcC1bm65ZVo18rDkcAtq1L8rve61zkIQTd6kH/5fZztUqFAacVA3RARF+mH/DOgAIw5M1RXbGG1ZdME1suEOQumjggpHUPCraaU2ea9M9kFxFreUtYaYZsIJ4ugns3fTXcOHKouwBjZdJPrHd3wBAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F6Mcol+M; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718267868; x=1749803868;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ex1BfUqwBKGcn6bmqOhnx0hqarbIcWjP42s/m1fBXKk=;
-  b=F6Mcol+Mf98mG1lU3NY66ovG0avOWsIf+PchjUeipeuKGvLy4QpZoFXA
-   US4AqVBct/15sXjrp8QH8nqXcFac5/vo/38rU+GonHo9X+K5kfZ8P+hfT
-   pgMB0Rto70FzmFAFNnkmlRDVsn0qDJ2RXAd1lEqm8hBUYbI9KN/DbGu59
-   7k4JLWgsL4nmGws7ybiSE9InDAm2IaafWYWFF069oI8HdzCRvV1j8iIxp
-   TzN1DLT7H/qj3/keqiOIUundjyBm0fw8u7QkqlyGJM9fd4Wgq4kY1NZdK
-   rxQAFuAzzTk56drDRSoJKQUrj/6CWi0sBwpfJu6ivffHMDfA3FSgBKLNM
-   g==;
-X-CSE-ConnectionGUID: yMLOk7s5TKuKYwmLQvtHiA==
-X-CSE-MsgGUID: IVxGmJ8iSpOhX4tqAcozKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="25749297"
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="25749297"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 01:37:47 -0700
-X-CSE-ConnectionGUID: 1gvnnVjqQ6yZUNEZ9djjdQ==
-X-CSE-MsgGUID: sHA/Q8m2T2yX18P2Q81yoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="40033851"
-Received: from unknown (HELO haibo-OptiPlex-7090.sh.intel.com) ([10.239.159.132])
-  by fmviesa008.fm.intel.com with ESMTP; 13 Jun 2024 01:37:38 -0700
-From: Haibo Xu <haibo1.xu@intel.com>
-To: sunilvl@ventanamicro.com,
-	arnd@arndb.de
-Cc: xiaobo55x@gmail.com,
-	ajones@ventanamicro.com,
-	Haibo Xu <haibo1.xu@intel.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Baoquan He <bhe@redhat.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Zong Li <zong.li@sifive.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Chen Jiahao <chenjiahao16@huawei.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	James Morse <james.morse@arm.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Yang Li <yang.lee@linux.alibaba.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Robert Richter <rrichter@amd.com>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-acpi@vger.kernel.org
-Subject: [PATCH v4 4/4] ACPI: NUMA: replace pr_info with pr_debug in arch_acpi_numa_init
-Date: Thu, 13 Jun 2024 16:54:36 +0800
-Message-Id: <109354315a02cd22145d2effa4a8c571b69d3e56.1718268003.git.haibo1.xu@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1718268003.git.haibo1.xu@intel.com>
-References: <cover.1718268003.git.haibo1.xu@intel.com>
+	s=arc-20240116; t=1718268894; c=relaxed/simple;
+	bh=w3c++bE92mjoUTBy6ui0MjrF7z2S+BQxrMh1kRI8r+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ixw+T+GAMpbt9/1HD1Lfdh55w7MmM39Kba35Oh3a/fdZ1+GAyREjl9o8VsSzCmsP5BpWGz6j7gYMrF631q1R1qoILmrrPZQvzfWirZP1nFXl+/o2DczGurB2CZRClsA5Bm5QsMwdUh6GLx679yr8M24rzOUPAm9YtZM8hZRz0jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTxXsssk; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57c73a3b3d7so624691a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:54:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718268891; x=1718873691; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OBp2kHYj7n2BHev/+gQZZjKm6K2+dc661niSqj6ZNLM=;
+        b=kTxXssskbczZ/Oqk8lCYkHRdhPoh7UQJbAoyULP2seUuLfwJT/00eYBPnwxbHoM7PE
+         l3Ky2BUPnuYJMsaylboNLpZRxnYav9Z7/2VTLeYrn1ETggKppkNLoJJrziNQ3vLPSj3T
+         NVY8nCn+KWkbVa84tbbWJOo7381jehpzd1HzPLTeCWopjBSPxyjl3VAz96yWrQBlEsnb
+         Jb9ngJxGZW5Awi1kpRJZuntt22adguVk0naWg55HudcU7Sx464Kfa+cW7ShH4CtKe+WI
+         VJf8gnMz6aa4xEZ0Ze/fRA6lkLnnu0Tzi0X8UU6uAMR6Ja6HHXpAHSbdGpVIZBLX1Krz
+         ytGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718268891; x=1718873691;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OBp2kHYj7n2BHev/+gQZZjKm6K2+dc661niSqj6ZNLM=;
+        b=jv/Ue2+/6iPDRGNl26qv8GllGYe+IWukgsaL6RO0X8mZHZY2eFyn0UdcO4uoU5jGyQ
+         1IVYtOgx32vPx8g/puOv+0zTtUvMjqxAExezX6uaovqTWiskt2AnRiWkJhyEJwWTy/mW
+         CKSQ5lmJq8Z7lvzsNhHTfRHfbJWrC0f92BnZXoHibABBXnDwhg0iBn5ctM5Fb8UOE2I7
+         DDkvyZobviJ+KVXYQ1bGRkollDnHzp5hH3iBLtXQPAJG1d9zOIYmuHOPrUxyTQf1iFVg
+         O4Do+KCUVUpj+04EIlIi6p5IXWCs4+Cw1+Nxv/vaSLVMy07XJ3018P9MPmK351oc3OEY
+         UKPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXG7kYAGFP82pKbs3CH91XuE1NM2IH/gydh4/t3sozIMtIQgbcEf+LQRHP0XMqEdj/DULxToREHu5O6m8ZguSm8bNhyK/zaVtNcMOe
+X-Gm-Message-State: AOJu0Yzu2NFKqWcgMQMXwIrGbpl9ZOGZKsjoDHs0hsvcq8C6s661jHj0
+	m8HGE23zyWXjHptEiJnsI01/HntUVXFNqRCduMqg89/dFv8IijqyAIfd/ggwOlNJoom3RXfSWEp
+	iM7lrq7YnMmzROrp8gFJ4nZ1Q00Y=
+X-Google-Smtp-Source: AGHT+IEwoe0EZaXf2PrzoKl8chusq2h4Z4pgkoaMd1lJq7IJtqO/rZQGTBpSkdFC3XbRdmQJaT5hP993q0PSngJXOS0=
+X-Received: by 2002:a50:9557:0:b0:57c:740a:c4e4 with SMTP id
+ 4fb4d7f45d1cf-57ca976ace5mr2623522a12.25.1718268890474; Thu, 13 Jun 2024
+ 01:54:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240610120209.66311-1-ioworker0@gmail.com> <20240610120209.66311-3-ioworker0@gmail.com>
+ <b0d551a9-ee70-46a7-a0d6-c422f0baf91e@redhat.com>
+In-Reply-To: <b0d551a9-ee70-46a7-a0d6-c422f0baf91e@redhat.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Thu, 13 Jun 2024 16:54:39 +0800
+Message-ID: <CAK1f24mZk8hKDSPk+y7fP=cLoTuWxGaju_JqnKd_6BYQbZr6zg@mail.gmail.com>
+Subject: Re: [PATCH v7 2/4] mm/rmap: add helper to restart pgtable walk on changes
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
+	baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com, 
+	ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com, 
+	fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com, 
+	xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com, 
+	songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There are lots of ACPI enabled systems that aren't NUMA and If the
-firmware didn't provide the SRAT/SLIT, then there will be a message
-"Failed to initialise from firmware" from arch_acpi_numa_init() which
-adding noise to the boot on all of those kind of systems. Replace the
-pr_info with pr_debug in arch_acpi_numa_init() to avoid it.
+On Thu, Jun 13, 2024 at 4:30=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 10.06.24 14:02, Lance Yang wrote:
+> > Introduce the page_vma_mapped_walk_restart() helper to handle scenarios
+> > where the page table walk needs to be restarted due to changes in the p=
+age
+> > table, such as when a PMD is split. It releases the PTL held during the
+> > previous walk and resets the state, allowing a new walk to start at the
+> > current address stored in pvmw->address.
+> >
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> > ---
+> >   include/linux/rmap.h | 22 ++++++++++++++++++++++
+> >   1 file changed, 22 insertions(+)
+> >
+> > diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+> > index 7229b9baf20d..5f18509610cc 100644
+> > --- a/include/linux/rmap.h
+> > +++ b/include/linux/rmap.h
+> > @@ -710,6 +710,28 @@ static inline void page_vma_mapped_walk_done(struc=
+t page_vma_mapped_walk *pvmw)
+> >               spin_unlock(pvmw->ptl);
+> >   }
+> >
+> > +/**
+> > + * page_vma_mapped_walk_restart - Restart the page table walk.
+> > + * @pvmw: Pointer to struct page_vma_mapped_walk.
+> > + *
+> > + * It restarts the page table walk when changes occur in the page
+> > + * table, such as splitting a PMD. Ensures that the PTL held during
+> > + * the previous walk is released and resets the state to allow for
+> > + * a new walk starting at the current address stored in pvmw->address.
+> > + */
+> > +static inline void
+> > +page_vma_mapped_walk_restart(struct page_vma_mapped_walk *pvmw)
+> > +{
+> > +     WARN_ON_ONCE(!pvmw->pmd);
+>
+> Can we have this more general, like
+>
+> WARN_ON_ONCE(!pvmw->pmd && !pvmw->pte);
 
-Suggested-by: Sunil V L <sunilvl@ventanamicro.com>
-Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
-Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
----
- drivers/base/arch_numa.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sure, let=E2=80=99s make it more general.
 
-diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
-index 5b59d133b6af..555aee3ee8e7 100644
---- a/drivers/base/arch_numa.c
-+++ b/drivers/base/arch_numa.c
-@@ -445,7 +445,7 @@ static int __init arch_acpi_numa_init(void)
- 
- 	ret = acpi_numa_init();
- 	if (ret) {
--		pr_info("Failed to initialise from firmware\n");
-+		pr_debug("Failed to initialise from firmware\n");
- 		return ret;
- 	}
- 
--- 
-2.34.1
+>
+> And then setting both to NULL below?
+>
+>
+> > +     WARN_ON_ONCE(!pvmw->ptl);
+>
+> This is confusing: you check for ptl below. What would be clearer is
+>
+> if (likely(pvmw->ptl))
+>         spin_unlock(pvmw->ptl);
+> else
+>         WARN_ON_ONCE(1);
 
+Will adjust as you suggested, thanks!
+
+>
+>
+> > +
+> > +     if (pvmw->ptl)
+> > +             spin_unlock(pvmw->ptl);
+> > +
+> > +     pvmw->ptl =3D NULL;
+> > +     pvmw->pmd =3D NULL;
+> > +}
+> > +
+> >   bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw);
+> >
+> >   /*
+>
+> I'd suggest squashing that into the next patch.
+
+Got it.
+
+Thanks,
+Lance
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
