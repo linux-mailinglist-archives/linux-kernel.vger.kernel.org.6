@@ -1,134 +1,109 @@
-Return-Path: <linux-kernel+bounces-212855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0699F906741
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:44:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB56906747
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5591C20E20
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:44:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CADA7B28C2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA5A13777D;
-	Thu, 13 Jun 2024 08:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B92E1419AD;
+	Thu, 13 Jun 2024 08:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J17GTGLY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FtkKBH20"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GsEmIpuS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A329526AE4;
-	Thu, 13 Jun 2024 08:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA7543144;
+	Thu, 13 Jun 2024 08:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718268110; cv=none; b=eWT4WciF80nOALngo8cdMixlz/7obvXPOTRhemsE7FVObDTGEgzJIpST+e9yiGrXk0WpGg3122IaAk2EtPmN7LPEsbcFL+Ld02akSpmYRk0VgLh1UsO6FqJ/opjin5R79tFefBZMyS6jgUvbxfpmgurpjwj/4bF2HGdFIuXChpE=
+	t=1718268136; cv=none; b=nuU0oXaSJzxnwC62DrfZoPCSa1VHvwQToI+7Aj/B9Gc+HiwKL9TwXy9RFJc44PdvIT1VCbAoom13jV4CJX5ZhPq++Lj9FplUxP5aaGw7Ce/+kaILO23CbZ0JxRZePHk10o9moSyc5KY6F4xw9xrKhVEvTLVtRL+dgdxlvW6gxBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718268110; c=relaxed/simple;
-	bh=1ZJ/uxN8Pb7qwYIgbsTKzzdLKnI4ejAlfOoGuc1Nl6A=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=HTB7lZqA1ocj8pS5BJar/swymLXVbb6o83Lp58KJO0eBW4H+NyTTMM6z545qYaEDH4n1hFIONfOoOQxSKujXD2KNi9xqpCTWDjLHS8FOZRiHI1MiDlXfJzVvw2UTRL9ugbRRvrjgySSKFb1DZqtBXtEUlAEj5xhEMVtaGaGVXZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J17GTGLY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FtkKBH20; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 13 Jun 2024 08:41:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718268106;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=05oMZ/uaU2LNUMzjQkqwNiFcFWF1pVwE3ycVjjdx3f0=;
-	b=J17GTGLY0h9QF8mqNBHCSAKz2rR8jhbG2pfBLmpsVAKDpAToGLlTWklsUz9WM770F0j4NW
-	etOt7GRO/JE2RAJ6IBPeVEe10JRK0kr1L2bAi33FIppsT4t60z4Mu/zCh0BSDuTLWZ9bpb
-	ka822TwfHdyidqh4JKL78lkPYIhM9MdpjBKEE8UOwEU6rBEcaVqKcqFKTd0b9uf46xqqY3
-	j1JceW7A2UwRAHZsHuLiWRyqYUl+qKiaUEZkKR86GUSSJGBuc/EHDEpmJTMfQNr1/qiKdr
-	ZtUPrF+dVKJp/R87DK2IZZxtKvZ1Dg9oiDJe9KuN4GmImM7fg47YI7LR40N31A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718268106;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=05oMZ/uaU2LNUMzjQkqwNiFcFWF1pVwE3ycVjjdx3f0=;
-	b=FtkKBH203/SnzCcJbfsbZo+LZ6t2VVS5XrYxcnApx/u1nMo2Ji+i2ei6nbv86ZlmhNMzg+
-	3hwpZ0ecfvmc0qDw==
-From: "tip-bot2 for Benjamin Segall" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/boot: Don't add the EFI stub to targets, again
-Cc: Ben Segall <bsegall@google.com>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ard Biesheuvel <ardb@kernel.org>, stable@vger.kernel.org,
-	#@tip-bot2.tec.linutronix.de, v6.1+@tip-bot2.tec.linutronix.de,
-	x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <xm267ceukksz.fsf@bsegall.svl.corp.google.com>
-References: <xm267ceukksz.fsf@bsegall.svl.corp.google.com>
+	s=arc-20240116; t=1718268136; c=relaxed/simple;
+	bh=4DwpPwkA6d/p4ccA/BSLWy4Hrj0gghbBTVqHDH0Z++Q=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wg0gu7hN0JAJlPfGBhyXM5l6Bur5zQjSJXltYs8lAt4pkzJKUbx0S+RjM4mSAuAsnjgo7SJ6HrZjNKpjj56FBR468Xdwc27aTQqEE7WYUM14LXIrML0nbIBiKrx6JXj1Ovj+yH0PkPmN/GyanZrDXWdqZ0dC0Rpt87P4rBuiG94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GsEmIpuS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 078A6C2BBFC;
+	Thu, 13 Jun 2024 08:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718268136;
+	bh=4DwpPwkA6d/p4ccA/BSLWy4Hrj0gghbBTVqHDH0Z++Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GsEmIpuSpzvHxJjmq/ZuB0OjgbYPlf+U7Auma22lPgAsd1ViTHQZIa3XYkeUqURrM
+	 f2LnudOXXDNv15BFUFdWeXjgxjptS7NWx0lP5MslfZ1WxK+KBpJ1SoKovz1EiP0QSe
+	 4FbcVEsd+CQCaoKjx1CuneKkQJ/xrpeDh/5JEgxwac2T2srqM+RqGP8X1693Sp41Z+
+	 1phlJf5D/vj2EU8DFCSSthmofK+r9Q8aEw8Ggy+o8apNcovNvBNi7r17+EQ4EwQTNI
+	 Ez+YB2pwNDIpAaQSwczIZLkk4jWD+/pyblk2Wa3ZIOkIqi9oHA1jorvObl3f3dUdOv
+	 Vtp/IMZfd4LPA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sHg29-003Tbn-Hm;
+	Thu, 13 Jun 2024 09:42:13 +0100
+Date: Thu, 13 Jun 2024 09:42:13 +0100
+Message-ID: <86zfrpjkt6.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Shaoqin Huang <shahuang@redhat.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	kvmarm@lists.linux.dev,
+	Eric Auger <eauger@redhat.com>,
+	Sebastian Ott <sebott@redhat.com>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	James Morse
+ <james.morse@arm.com>,
+	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [RFC PATCH v1 0/2] KVM: arm64: Making BT Field in ID_AA64PFR1_EL1 writable
+In-Reply-To: <7f1ca739-42f5-4e3a-a0c9-b1eac4522a97@redhat.com>
+References: <20240612023553.127813-1-shahuang@redhat.com>
+	<Zmkyi39Pz6Wqll-7@linux.dev>
+	<8634pilbja.wl-maz@kernel.org>
+	<7f1ca739-42f5-4e3a-a0c9-b1eac4522a97@redhat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <171826810609.10875.7242823258662782011.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: shahuang@redhat.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, eauger@redhat.com, sebott@redhat.com, cohuck@redhat.com, catalin.marinas@arm.com, james.morse@arm.com, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, pbonzini@redhat.com, shuah@kernel.org, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Thu, 13 Jun 2024 09:31:45 +0100,
+Shaoqin Huang <shahuang@redhat.com> wrote:
+> 
+> If we don't care about the FEAT_CNTSC right now. Could I fix the
+> compile issue and respin this again without the background of enabling
+> migration between MtCollins and AmpereOne, and just keep the
+> information of the different BT field between different machine?
 
-Commit-ID:     b2747f108b8034271fd5289bd8f3a7003e0775a3
-Gitweb:        https://git.kernel.org/tip/b2747f108b8034271fd5289bd8f3a7003e0775a3
-Author:        Benjamin Segall <bsegall@google.com>
-AuthorDate:    Wed, 12 Jun 2024 12:44:44 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Thu, 13 Jun 2024 10:32:36 +02:00
+As I said, I think this patch is valuable. But maybe you should
+consider tackling the full register, rather than only addressing a
+single field.
 
-x86/boot: Don't add the EFI stub to targets, again
+Thanks,
 
-This is a re-commit of
+	M.
 
-  da05b143a308 ("x86/boot: Don't add the EFI stub to targets")
-
-after the tagged patch incorrectly reverted it.
-
-vmlinux-objs-y is added to targets, with an assumption that they are all
-relative to $(obj); adding a $(objtree)/drivers/...  path causes the
-build to incorrectly create a useless
-arch/x86/boot/compressed/drivers/...  directory tree.
-
-Fix this just by using a different make variable for the EFI stub.
-
-Fixes: cb8bda8ad443 ("x86/boot/compressed: Rename efi_thunk_64.S to efi-mixed.S")
-Signed-off-by: Ben Segall <bsegall@google.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Cc: stable@vger.kernel.org # v6.1+
-Link: https://lore.kernel.org/r/xm267ceukksz.fsf@bsegall.svl.corp.google.com
----
- arch/x86/boot/compressed/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 243ee86..f205164 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -105,9 +105,9 @@ vmlinux-objs-$(CONFIG_UNACCEPTED_MEMORY) += $(obj)/mem.o
- 
- vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
- vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_mixed.o
--vmlinux-objs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-+vmlinux-libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
- 
--$(obj)/vmlinux: $(vmlinux-objs-y) FORCE
-+$(obj)/vmlinux: $(vmlinux-objs-y) $(vmlinux-libs-y) FORCE
- 	$(call if_changed,ld)
- 
- OBJCOPYFLAGS_vmlinux.bin :=  -R .comment -S
+-- 
+Without deviation from the norm, progress is not possible.
 
