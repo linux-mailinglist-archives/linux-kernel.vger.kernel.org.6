@@ -1,86 +1,117 @@
-Return-Path: <linux-kernel+bounces-213868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCF3907BD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:56:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF50907BD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 027271C24E34
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:56:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C3D1F21F2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0034314D290;
-	Thu, 13 Jun 2024 18:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EA514BF92;
+	Thu, 13 Jun 2024 18:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEpBy4AW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TWTylQ82"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C08D84A48;
-	Thu, 13 Jun 2024 18:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7BD84A48;
+	Thu, 13 Jun 2024 18:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718305005; cv=none; b=j84zK5OWYNbC3roLALFf24bma8pFI/ylz8uC2pRN+eFh0aPZCGy4qkyoRFkpAmnrs+k08mJHN2lSGbr5dK8e6M5qSaS9wE8xIQR9LaXRlirFB2meaqIXj4mj3KqQWTbqyxrHOp/09DiqNZsaHaVgadLeU5FGDQEa/7sZi1t/XIA=
+	t=1718305042; cv=none; b=caHUItubC/ogHtFhSZN+JiNllO5icJKDZweX8HMhXnO7remb6T1F1VJB3LzYely9LMQPjgmhuSe/Y8X/7M8ZtDhvjUTCb4FuSc97HtMTASUcrp0mkUJBOt9qDrgfFAG0D6CjoKPsRN6E3gJFsJ0Vz4VsHF/4UHUKWpZ4AZB5Zpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718305005; c=relaxed/simple;
-	bh=uXZ6E3qLulF11MXklHIIJ7cF2VnS2wrgifX9PKqnW/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=COSDACE9bJZsv6yVSa2JxFOAUlYkE1M1WB4wRgsngl7uoMQRAPa9uCucKraAbSTYtj2l5L11j2kBTtMr6qDRsjACtW9Zer2OBWuqqqX9Fqs1OLqj25Tt/j/tcaMoGeVwU+AYC+yzpD9U2NXeep+Elkq1CjWifcrGe6V6EzoUUug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEpBy4AW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89072C2BBFC;
-	Thu, 13 Jun 2024 18:56:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718305004;
-	bh=uXZ6E3qLulF11MXklHIIJ7cF2VnS2wrgifX9PKqnW/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HEpBy4AWf00yasdrAG8ob50nhRdDj6UEr+ZcraYk6G0ghQc92pMgtg+7vHy/8xAgz
-	 Izcz5SHhOYQCAE47ut3D+8wRx6Ub1jicZMwheORS6rPOUXpvC+AnuJxjFZFPawvMqv
-	 Au05q4mikZ4hiTvP0A6LxOgp1CQ/sbG6Ri5Nrst7HSvDp8sJchiwUSiXosYJPYjdm8
-	 qlZp9xWTJTEmkfHqxL9Vhrp/Ht9ATdzfruB00OKrd5FZKHnHBNZLjoBg4AELEHK4lL
-	 iSJA5hDEuAFAOboQdXo8+lodEBNABg2uwQ1qbtCkKLT+tvC37agekMfM70NfD4GKfu
-	 TABcWm6HCf/gg==
-Date: Thu, 13 Jun 2024 12:56:43 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Burton <paulburton@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org
-Subject: Re: [PATCH v2 8/8] dt-bindings: mips: img: Add devices binding
-Message-ID: <20240613185643.GA2286020-robh@kernel.org>
-References: <20240612-boston-syscon-v2-0-9f8e1a07fa63@flygoat.com>
- <20240612-boston-syscon-v2-8-9f8e1a07fa63@flygoat.com>
+	s=arc-20240116; t=1718305042; c=relaxed/simple;
+	bh=P+m1t5xHvMIr3fsmh88GE/n8OkuO/B9/k7oOyAh8rho=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=epZP867SUKcn0RGYpsjyt5P8G3UjzxUi/jlHB+zFWJ7oiDrtF+3Xq/Qj3uWOj6oNjaoFV8Z0s2gDaOShcwY/pdLCZxK0QxINVCNOVyFnHO22Yw9pHE8wts0h1AxPLwLd+STGHjeY4sy9eO0vwuWG0bZS9xkeQYyi5Bkaa0dMVlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TWTylQ82; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DItMOb025340;
+	Thu, 13 Jun 2024 18:57:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=viNaj7mF1w8XPWkPxnYdqR
+	wOXEPjbFp19wKj6++NNc8=; b=TWTylQ8287387TU2hcOnqKISKdlZi2ggrPjvEF
+	ZajMPQZVBGxWHzi8Jy+xtjAA13wfWTnUTfv3S6Oh6fwWImBTWDRZgyz0swJNq6rq
+	bGQd/SKBdLSEVrVENtsxJqLAHOgpyuu/Zzt8ZlHqC8YmyArGdLseEUMZuPYvc+er
+	pTsDizxYjHz1Ao+pMS1TkIXBE+KK5mlT9+bIu7NH2rbYsu2LlL95k1Utck6UmXgI
+	rKyj7k/B8InHv2C1v6SPebr0BcHzo3vAHaxajh5ZqgTy4BT4btm80S+ti0jtyf1s
+	kYRaz/+dDUYfDiHmSRBjI0jijmMgix9qUwixvt4rJYEoUfqA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6fc007w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 18:57:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DIvGll001891
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 18:57:16 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
+ 2024 11:57:16 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 13 Jun 2024 11:57:14 -0700
+Subject: [PATCH] dmaengine: fsl-dpaa2-qdma: add missing
+ MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612-boston-syscon-v2-8-9f8e1a07fa63@flygoat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240613-md-arm64-drivers-dma-fsl-dpaa2-qdma-v1-1-815d148740e6@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAApBa2YC/x3NTQ6CQAxA4auQrm0y/GSiXsW4KExHmjAjtkhIC
+ Hd3cPlt3tvBWIUN7tUOyquYvHNBfalgGCm/GCUUQ+Oazvm6xRSQNPkOg8rKahgSYbQJw0zU4Oc
+ kX2NovWtvniOU0qwcZftfHs/inoyxV8rDeLYnyd8NE9nCCsfxA2JndWuUAAAA
+To: Vinod Koul <vkoul@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: aqG4T4zqVCsGGekInVM5wzIzHXv-g2UY
+X-Proofpoint-GUID: aqG4T4zqVCsGGekInVM5wzIzHXv-g2UY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_11,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ bulkscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=866
+ priorityscore=1501 mlxscore=0 spamscore=0 impostorscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406130135
 
-On Wed, Jun 12, 2024 at 12:56:27PM +0100, Jiaxun Yang wrote:
-> Add devices binding for various Imagination Technologies
-> MIPS based Platforms.
-> 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->  .../devicetree/bindings/mips/img/devices.yaml      | 33 ++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
+With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/fsl-dpaa2-qdma/dpdmai.o
 
-Please drop the old bindings or at least the portion covered by 
-this. That's 
-Documentation/devicetree/bindings/mips/img/pistachio-marduk.txt, 
-pistachio.txt, and xilfpga.txt. 
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Some of the description can go in here. CPU nodes are documented 
-elsewhere by schemas already and can be dropped. The boot protocol isn't 
-really DT bindings, so that belongs elsewhere if you want to keep it. 
-Documentation/arch/mips/ perhaps?
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/dma/fsl-dpaa2-qdma/dpdmai.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Rob
+diff --git a/drivers/dma/fsl-dpaa2-qdma/dpdmai.c b/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
+index 36897b41ee7e..b4323d243d6d 100644
+--- a/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
++++ b/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
+@@ -367,4 +367,5 @@ int dpdmai_get_tx_queue(struct fsl_mc_io *mc_io, u32 cmd_flags,
+ }
+ EXPORT_SYMBOL_GPL(dpdmai_get_tx_queue);
+ 
++MODULE_DESCRIPTION("NXP DPAA2 QDMA driver");
+ MODULE_LICENSE("GPL v2");
+
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240613-md-arm64-drivers-dma-fsl-dpaa2-qdma-e8fd360396ef
+
 
