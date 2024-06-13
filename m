@@ -1,110 +1,100 @@
-Return-Path: <linux-kernel+bounces-213830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EBDE907B56
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:31:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 545D7907B5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DBB01C23B72
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:31:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7BF28547C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466AF14B949;
-	Thu, 13 Jun 2024 18:30:59 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7165A14D43D;
+	Thu, 13 Jun 2024 18:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ifu5bx+2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E585149C6A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB10714B075;
+	Thu, 13 Jun 2024 18:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718303458; cv=none; b=aNaXd+javdxks3puLdH3ApqPTneMIJ34Gp84ZvysJC8K+qowPzrqYesKf3gXQ4A/7CjZrNqg9D9vP6jj2T7FOBlyASimF5IdTiuocXigvnxm9t8s6V8dYdmqAfGtdUV/Vwwq0mi5SaFQq5y+19VwBolJob0BoB0WU0sCdgOhFxw=
+	t=1718303465; cv=none; b=WgVZKN+ODBW5W9JGpgq6m17qgk25Y5Bxhx7RNF+8GodAylhofACGEXx8fsM5qpdR5CdcaTaLUa0AV03PwpmNWIWpoNf91gw1RWKV4X2maLWKTn8r3y4/Q2DQxAX/suGr0Giy7EUkOQ6sKF7bK4EsUM7GR9tPB3tykyw3x3zH2n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718303458; c=relaxed/simple;
-	bh=0e+G3kQB6Uq5qxJSceMPJhaKZk0F5S/1gS0TWqkhT+Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SmMDHm24Mf6DJFYqhFzan6tnbEgmGbLfEKOQDczPSgTNxHVi0fyWsZR5I+V98DIslTVncvGLIUBBK77A8iVdOEcWBZW+eVnFD2AGU1G3gUY2nRftvRxXa9QJN1EZ1Q3fig4vYL/Bmxy8fP6nk20f/1+ag/PSeFJytc0w8Xt2o3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sHpDZ-0003UW-7p; Thu, 13 Jun 2024 20:30:37 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sHpDX-0025Xk-UN; Thu, 13 Jun 2024 20:30:35 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sHpDX-00A6Nx-2p;
-	Thu, 13 Jun 2024 20:30:35 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	stable@vger.kernel.org,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net v1 2/2] net: phy: dp83tg720: get initial master/slave configuration
-Date: Thu, 13 Jun 2024 20:30:34 +0200
-Message-Id: <20240613183034.2407798-2-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240613183034.2407798-1-o.rempel@pengutronix.de>
-References: <20240613183034.2407798-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1718303465; c=relaxed/simple;
+	bh=SbD+xFGqIOxNc3/m8vp1hOh4RjDlhrkQYNrPi7kWyJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hMDts+3kebQP8kVu309Tk7dzk8v3g7+5ReVIaAX96MaKXzXieKaEvy2Vltr0+LFUZLbuUsWjpj4CLqHDvZoQFo8Z8+p2zWVuTx1Vaf5q2Y6myCiPKNI8TmgZ+SrRKDz5b0LQ6veEtys+3GR2UGCJ1GhxfaBT071L69KXbguCjqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ifu5bx+2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 484B3C4AF60;
+	Thu, 13 Jun 2024 18:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718303465;
+	bh=SbD+xFGqIOxNc3/m8vp1hOh4RjDlhrkQYNrPi7kWyJA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ifu5bx+2566LUFmGEIG7+laLHwP4lqzAAHCKfJ+Nvt0gRMTC34O7Pv90k0CH+qR6s
+	 i4cF+ykdxk7YeR0P9ZL5S73xkw51DTWtY1L6BvScZah2q8Gu9cs64C2TAUDzEW+75y
+	 NhCzRDwha+vkLfIOjO2nePO2KzHw+RWrh+PEwbu8HJKmbj/SCguU8bezXaaJdYJNrv
+	 VROnYaTbW0w7fjQH7lwuTAlYUsdaG3sEN7SCHEmPNnlDwzZ74NfI0zEJ9Es6K/Ro6r
+	 Z+S1Svzdrv9yPHk2LYIPSh42LVOmUuWQKo3ZZ9WwgW50LAbkDaNg52EukfSu4Su0EM
+	 Xnhb3H5PBZOpQ==
+Date: Thu, 13 Jun 2024 19:30:56 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dumitru Ceclan via B4 Relay
+ <devnull+dumitru.ceclan.analog.com@kernel.org>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Conor Dooley <conor.dooley@microchip.com>, Nuno Sa <nuno.sa@analog.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v7 0/9] Add support for AD411x
+Message-ID: <20240613193056.3fa3804c@jic23-huawei>
+In-Reply-To: <20240608173720.29ee4aee@jic23-huawei>
+References: <20240607-ad4111-v7-0-97e3855900a0@analog.com>
+	<20240608173720.29ee4aee@jic23-huawei>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Get initial master/slave configuration, otherwise ethtool
-wont be able to provide this information until link is
-established. This makes troubleshooting harder, since wrong
-role configuration would prevent the link start.
+On Sat, 8 Jun 2024 17:37:20 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Fixes: cb80ee2f9bee1 ("net: phy: Add support for the DP83TG720S Ethernet PHY")
-Cc: stable@vger.kernel.org
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/phy/dp83tg720.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+> On Fri, 07 Jun 2024 17:53:06 +0300
+> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+> 
+> > This patch series adds support for the Analog Devices AD4111, AD4112,
+> >  AD4114, AD4115, AD4116 within the existing AD7173 driver.  
+> 
+> Looks good to me.  However given you had lots of good review and
+> it was a Friday afternoon posting, I'm not going to pick it up until
+> Nuno and David have had a day or two to take a look if they want to
+> (and hopefully add a few more tags! :)
+> 
+> If I seem to have lost it (rarely happens now I use patchwork to track
+> things) feel free to give me a poke.
+> 
+> Thanks,
+Ah - I forgot we have a dependency on a fix that went the quick path.
+As a result I'll have to hold this until after a 1st pull request.
 
-diff --git a/drivers/net/phy/dp83tg720.c b/drivers/net/phy/dp83tg720.c
-index 1186dfc70fb3c..84256827a03bf 100644
---- a/drivers/net/phy/dp83tg720.c
-+++ b/drivers/net/phy/dp83tg720.c
-@@ -168,8 +168,12 @@ static int dp83tg720_config_init(struct phy_device *phydev)
- 	/* In case the PHY is bootstrapped in managed mode, we need to
- 	 * wake it.
- 	 */
--	return phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_LPS_CFG3,
--			     DP83TG720S_LPS_CFG3_PWR_MODE_0);
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_LPS_CFG3,
-+			    DP83TG720S_LPS_CFG3_PWR_MODE_0);
-+	if (ret)
-+		return ret;
-+
-+	return genphy_c45_pma_baset1_read_master_slave(phydev);
- }
- 
- static struct phy_driver dp83tg720_driver[] = {
--- 
-2.39.2
+Whilst the merge resolution is trivial i need to do a pull anyway
+to resolve a more complex one.  Hence let's take the easy but
+slightly slower path for this as well.
+
+Jonathan
+> 
+> Jonathan
+> 
 
 
