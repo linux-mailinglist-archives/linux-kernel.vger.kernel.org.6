@@ -1,125 +1,93 @@
-Return-Path: <linux-kernel+bounces-213500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCFD90761B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:10:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D91AB90761F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C19151C22E52
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A775D1C22D18
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1101494A7;
-	Thu, 13 Jun 2024 15:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238AC1494CF;
+	Thu, 13 Jun 2024 15:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JNrnrdOQ"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pe5P0v+k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1951474A8
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D74D1487CD;
+	Thu, 13 Jun 2024 15:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718291412; cv=none; b=Yc+vouV7QRDyAmEbdj03qRXKmL237em2SHw8iDvNu4KdT7bqvLw478xt9U/kQkqnHvjnqqv3QYua6bhSHX8LA0q/N2sstPHuRo0LN5fOTBbWdFYrrKabn3J9xXZLQzTwUCw5GiY/hDjq/RIMJ78b/HIVV7X2WNyLfWHQosKIvLc=
+	t=1718291430; cv=none; b=RDceNvyruP+UiEeINxGeXP4j7zH/LxmDpsPWqFYSWcFpn2pvRo5Ibm7EmJrPr78/qRD8GiFDAOUSI/heZBkMLBS/2GXp0ju87ckMWN/PX8kXMgmd5i/zFSstesY199Dh8Dz22DWYZD+d57ELFI9Jcc0ouO4SQ9MQQcOt+kWkvUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718291412; c=relaxed/simple;
-	bh=zgLUNykya9wnvckHbmFmydV6QZiIUXVYlktMP2XJO2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YexNOCCp68KPnANUo3Hg/6HVRy4yBUwAiod9rIzxrfCdYPLcPyC9lhjgEz1C2f6MfnDHfUYdP/iUS1ubgf+78TfjWicBdR3SsHJoS1/3uq/X4o4K6w7Us1St7CzeId12GJBu7htLO03PBJMQsUHLluKivEzFDbvNBpXUiB2/eZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JNrnrdOQ; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f176c5c10so143845366b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:10:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1718291409; x=1718896209; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DUpmZmbwF/doBo8lYAmVjQsaX/5wvkCX86E3yP6G0po=;
-        b=JNrnrdOQY0imuMaMdfx0WQNxn249JweCXcfCQb9boCM0uq65mPwCmDpa+5m5Axsz3M
-         w9dgx4+LvPG8FSK+URaa6ZeI/bRgRQa+vDWPisyNNFexRZ2mDWGYpbUBko/kOC4m00Cd
-         IIdRKxj3Ck0zOBoUQlA4YlOJfg49thyieNqT1QXfpqjWK5QVOi5/1Fb7+aU+fpbK7L28
-         TvDEfavicpRRSGbt5U0RI52MrpEghgw1d0meuIPLsCzc8h66g1fL7ef59L/ErU2chx5h
-         ri1HO1czEHkesO1Uo1KmSp40UdBcM9WR/9MhUguBcW00OVmpkmTRmhu/Ipgota/CQD6i
-         AHGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718291409; x=1718896209;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DUpmZmbwF/doBo8lYAmVjQsaX/5wvkCX86E3yP6G0po=;
-        b=MV9lXcun3QUWQQTUtJdPgn4AwrB6wPoFZVe1mPRJ0ksKftxKB4ZFI/sKo44jWwe2gT
-         cMtx7ENffW7vo9v5QYUezomKPrZAUHU9foE+0LBFfKEJ+mP/d56oo8vamcWN7n7FnCzg
-         3WUe78zqeqgp4pGXJOTZP+ANEAjvwfhuU3IS/zG7KiiQeb/ncCw++s0z537KZdglM2Ds
-         EQsw5K/jTKPuEaUpiEYaIPsIxOEjP8Kh3Yh2docul1nBevIpRrhrjCliX97/XofRZmNe
-         8kNI9lQhvwETEyGVv9fzcjOORNF4OBvfcAP1pMFE5r8St3OBI2WsTW9Mn2xkYeke/oka
-         s30A==
-X-Forwarded-Encrypted: i=1; AJvYcCUIeqM+I7jlUZNaarWT+Q1A3x7R97B1cj5gVEbCR7mZBG++ZINH9NImOivfKv5WyTLmNwY0spZEt5dGiDEVQXplbClUOLFmSoJ5SPRm
-X-Gm-Message-State: AOJu0YxGhMvW6Jyo3OXI25XKNn2lF7H164Vw5Qtp2AN/bUQ776BszgqW
-	Rm456jBua3Vu9CnCWSkIVD2LnMimfIl/uoL3QMjF8KHmc1O9WLuMYpEKoS+i36a8htWO+6z2kST
-	z
-X-Google-Smtp-Source: AGHT+IGhZSDXO3OlTkt48qN4Tm3rQALl+Oy3tqRzh0oEKuCjs5BVYKycZjzJeA8iIIgrtPkt7OhmNw==
-X-Received: by 2002:a17:906:382:b0:a6e:f72f:4aa9 with SMTP id a640c23a62f3a-a6f60d297famr2017366b.25.1718291408729;
-        Thu, 13 Jun 2024 08:10:08 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ecdce5sm81101366b.108.2024.06.13.08.10.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 08:10:08 -0700 (PDT)
-Date: Thu, 13 Jun 2024 17:10:06 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk: nbcon_atomic_flush_pending() is safe only when
- there is no boot console
-Message-ID: <ZmsLzumVmE3SaG0z@pathway.suse.cz>
-References: <20240603232453.33992-1-john.ogness@linutronix.de>
- <20240603232453.33992-6-john.ogness@linutronix.de>
- <ZmrpxWxUb8k4swrA@pathway.suse.cz>
- <ZmrrhCf5GRUdGwh9@pathway.suse.cz>
+	s=arc-20240116; t=1718291430; c=relaxed/simple;
+	bh=mH4t85OK7LJEv4wy7C9LOqpgb8ccwZIPq8ZKg5t2YHE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=NQGw95gvoYsrRv3cp2hQbUkLZkgtbtdItbxztCfbmF1zOwPI3yfMSaS2iCEgnKmmV2mQpi3zp1vfwIHoFriSHzL2y9YEeaNxI0kyZIg87SPUHOcPuBbet344q2/8BaxYezRqamsGaV0EmLEVuh/N0bhdRsuuBsQIIfyxW+/Z45o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pe5P0v+k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 03C95C32786;
+	Thu, 13 Jun 2024 15:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718291430;
+	bh=mH4t85OK7LJEv4wy7C9LOqpgb8ccwZIPq8ZKg5t2YHE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Pe5P0v+kFyC/X3IQE1nd6ZaB3GljwuPUNv5mHvxqlDlihq0D4llkvDx7b0Z+BCJF0
+	 dN0OLo9tEYfPKoTKhU5EKzUwk8V1IgJb8FJSYouRywSUTCQfIFN7HK1JgmE6HuH9T9
+	 FQmG/m7WPl54UIOOB45kpmNONWfwf5O04sx9+1shuAI4nqk6nP1N7GT/ePsBeifofs
+	 t7vT4a9jYP8xzZ7FCYjiunVWV4Me1fjfq+GcQwLd3QDLJdKR2YRWxwbmab8KfBVtq+
+	 75f0Xb6Bp4+z3agPG02Mj7rVCNxsD7Hcb0cbZlHS6TIS1x0GiDlYhPRudR3jOpD34K
+	 Z2sxArIBuyY3Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E29EEC43619;
+	Thu, 13 Jun 2024 15:10:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmrrhCf5GRUdGwh9@pathway.suse.cz>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v3] bnxt_en: Adjust logging of firmware messages in case
+ of released token in __hwrm_send()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171829142992.24472.4309474315730518205.git-patchwork-notify@kernel.org>
+Date: Thu, 13 Jun 2024 15:10:29 +0000
+References: <20240611082547.12178-1-amishin@t-argos.ru>
+In-Reply-To: <20240611082547.12178-1-amishin@t-argos.ru>
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: edwin.peer@broadcom.com, michael.chan@broadcom.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org, wojciech.drewek@intel.com
 
-On Thu 2024-06-13 14:52:24, Petr Mladek wrote:
-> Boot consoles are not serialized with the nbcon consoles via the nbcon
-> console context or con->device_lock(). The serialization is possible only
-> via the legacy console_lock().
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 11 Jun 2024 11:25:46 +0300 you wrote:
+> In case of token is released due to token->state == BNXT_HWRM_DEFERRED,
+> released token (set to NULL) is used in log messages. This issue is
+> expected to be prevented by HWRM_ERR_CODE_PF_UNAVAILABLE error code. But
+> this error code is returned by recent firmware. So some firmware may not
+> return it. This may lead to NULL pointer dereference.
+> Adjust this issue by adding token pointer check.
 > 
-> The decision whether nbcon_atomic_flush_pending() should and can be
-> called safely is similar and closely related to the decision
-> whether the legacy loop should be used.
-> 
-> Define printing_via_context_safe symmetrically with printing_via_unlock.
-> Allow to call nbcon_atomic_flush_pending() only when it is needed and safe.
-> 
-> --- a/kernel/printk/internal.h
-> +++ b/kernel/printk/internal.h
-> @@ -192,6 +193,15 @@ extern bool have_legacy_console;
->   */
->  #define printing_via_unlock (have_legacy_console || have_boot_console)
->  
-> +/*
-> + * Specifies if printing on nbcon consoles is needed and also safe
-> + * when serialized only by the nbcon context. If @have_boot_console
-> + * is true, the nbcon consoles must be serialized with the boot
-> + * consoles using the legacy console_lock().
-> + */
-> +#define printing_via_context_safe (have_nbcon_console || !have_boot_console)
+> [...]
 
-Oops, this should be:
+Here is the summary with links:
+  - [net,v3] bnxt_en: Adjust logging of firmware messages in case of released token in __hwrm_send()
+    https://git.kernel.org/netdev/net/c/a9b9741854a9
 
-#define printing_via_context_safe (have_nbcon_console && !have_boot_console)
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-Best Regards,
-Petr
 
