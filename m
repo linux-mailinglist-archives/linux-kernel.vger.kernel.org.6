@@ -1,114 +1,110 @@
-Return-Path: <linux-kernel+bounces-212734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5AB906576
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:43:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 920AF906572
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3504285CB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:43:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925BA1C2036F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA1C13CAA7;
-	Thu, 13 Jun 2024 07:43:12 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A3213C9D5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF5413C8FF;
 	Thu, 13 Jun 2024 07:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O6GWlopt"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4A513C8FB
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718264592; cv=none; b=mvYbzmnx5qwnW7iuGu6nUpeE93EhQ+4plKltEoU30fkhKNzBYpqkYqjh80QMvoJq6KReqJOlB9xZF/4f/G9emvedvip9nQqPGchFEjLEanIJTC2DUSqY1Sdn+lqlHONLZwhTcCh46rE8PfSoOGG4hxbKvwfoC2RTTxzEQ0RdDjs=
+	t=1718264587; cv=none; b=JFwX99Uv39l9PkNjw98lxdH8rDs9br/ExnwYKohX2C0N55WENX7aMXRds86b65NKJJiLmtIQEwRCFKe3lZUC46TMeIea+wOYig+3SnEgfOaX4/Uzyd4C+eMOH1bvafEsnHkrwAup6cZC3ucczKtn1nXFOH7Yww3G/2mZefgX6RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718264592; c=relaxed/simple;
-	bh=YehfgFC2fciO3pRMzakftx9BA51/qmvAe+pwvzKRskQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=guCLtaW+5LIKrn9ftAsFlv9qHCyU/+gUy1ExaY/8nZhFfX7Y0ymdZuUqqzRAKTiZIFX6JARp+rkMpVJ5pacWCmwoWIbg0ddKGKnJv7bUminZOEFa+hBSlMvcy7DCMOiZUdy3E0m8e8ekKk3gM814vW987dk8wqPFrEVDubCDPsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.180.133.93])
-	by gateway (Coremail) with SMTP id _____8Cxe+oLo2pmEW0GAA--.26167S3;
-	Thu, 13 Jun 2024 15:43:07 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.180.133.93])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxusYKo2pmd2AeAA--.9308S2;
-	Thu, 13 Jun 2024 15:43:06 +0800 (CST)
-From: Hongchen Zhang <zhanghongchen@loongson.cn>
-To: Markus Elfring <Markus.Elfring@web.de>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Belits <abelits@marvell.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Nitesh Narayan Lal <nitesh@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	Hongchen Zhang <zhanghongchen@loongson.cn>,
-	stable@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH v3] PCI: pci_call_probe: call local_pci_probe() when selected cpu is offline
-Date: Thu, 13 Jun 2024 15:42:58 +0800
-Message-Id: <20240613074258.4124603-1-zhanghongchen@loongson.cn>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1718264587; c=relaxed/simple;
+	bh=Oh2VIm7LM70YX19wn1LBpKXluX+l95XGAHjH23O4UWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uNYqviPtnBPFbCAVu9TzeEY4z7E6Sol6yX3tCYLPiDxlHPNVbkCgTNiaoK8nck/wwu52TJRjMIBF/TZihN0/bYojHK6bkdxLpqiiaRznnzAddhShhm6NKn+/J7ipy6Wxp5fJzFXD8HMf4Cq7TEqfaS05xwYW4t2ih+dnZtYybJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O6GWlopt; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52c7f7fdd24so1047003e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 00:43:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718264584; x=1718869384; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wZOybXwAmI6sCFAiKuwFaCnejrVzOy82tLHhHkRl/yc=;
+        b=O6GWloptzZVIlynNBd9b1HYPFeqt0Y/O+DMoS9thPxUFjzdPOUOghummvAFI+Vu70C
+         w7LVh/Gjnbf2b7alzSCo09ExJwbuRmMHjcq9zHRhc7E5KKeRa/uuycxqSzjLi47b41RS
+         N3p0TTeC0UFJ64bbTwuSruSuUz4cyZsXekUY7PJMbxAisLXeenuP/xBfcPdFwyMWtKiT
+         1q4+1TEMCdjfqiRspbiDX5ihBOlD5fqJs8EXzTQTUF834OGqLLVB6+o1XxpYi0HMB6Cd
+         XrSsBnzA60Yok6B0geWeD2hevMQnVMpzx8MiLYce5VF3i9ng00fVWBINwRVbudezgUsV
+         1UoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718264584; x=1718869384;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wZOybXwAmI6sCFAiKuwFaCnejrVzOy82tLHhHkRl/yc=;
+        b=HgL6I0VvgQkFB8WxyXM/a+mf6u16H3hahmS+R/glUxm15IeqhynHsBVKSlo4qA78Sj
+         Q2ZkYs2u26IvkozCxOv79Xx+ZSWj+L77M+YxOXmZEjy8zJKdDXLOkh2WbV3Pcd9Pk4qF
+         gCRM6pi6SXz5bneG01ZQeIGEH4mzdOSqHc4Cg0mYNfLn1r7mfjNYw9IXssGu9zLgoGgF
+         o0tpScaEaW1sUe3Vs0nD+nBtneUaVtVLbQxgwJjq/6yCwnFxc/YLj68noN3WeedQJQN2
+         eIF4MPiUKwsD77QhOTotkqxJuk0V6nW29tS9Q8OeTSZvGAOVms+EoRnvLxP+OmN/yfgF
+         u/RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWBGrl4qu19A0PUM8VQnGi//mAVQc25RiZz1cc+LLua3fDHHPc7Ii26rRTYv0/8Lqw/dnwlx/PQljUd1C44KN90kHyaLAQO35FZiAA
+X-Gm-Message-State: AOJu0YwBhxW9/k7Ah6QcIO+Ttbg3csbhVKrsIZFr8y3JlarQsmuSELWl
+	3m/Ayns6JZjlP8eyGrw5yhxP9zALXD03Q35+oBZCNqHOSvDFBM/HBVVioJP9ZF0=
+X-Google-Smtp-Source: AGHT+IFe/gSwHRfx1q7ZYMPUTWA0VfmkZpZ1Y1lZIoSjnPH4fuB+TI++MzvmI2FSLoRbqfPZzNXVvQ==
+X-Received: by 2002:a19:7513:0:b0:52b:c14d:733c with SMTP id 2adb3069b0e04-52c9a406a18mr1685954e87.68.1718264584176;
+        Thu, 13 Jun 2024 00:43:04 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:900a:a4b1:c71b:4253:8a9f:c478? ([2a00:f41:900a:a4b1:c71b:4253:8a9f:c478])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca28723a4sm113108e87.145.2024.06.13.00.43.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 00:43:03 -0700 (PDT)
+Message-ID: <10fd543e-7b3b-48ef-9a09-acf8d17662a1@linaro.org>
+Date: Thu, 13 Jun 2024 09:43:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8DxusYKo2pmd2AeAA--.9308S2
-X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/1tbiAQAHB2ZqUJQEggACsN
-X-Coremail-Antispam: 1Uk129KBj93XoW7ZF1DKryktr1ktw1rJrWfXrc_yoW8Gr1fpF
-	ZrG34Skr4kJF4UG3Wqqay8uFyFganrJa429a1xCwnxZFZxAF10y3Z7ArW3Jr1UWrWkZr1a
-	v3WDAryUGFWUArbCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: fix WCD audio codec
+ TX port mapping
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20240611142555.994675-1-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240611142555.994675-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Call work_on_cpu(cpu, fn, arg) in pci_call_probe() while the argument
-@cpu is a offline cpu would cause system stuck forever.
 
-This can be happen if a node is online while all its CPUs are
-offline (We can use "maxcpus=1" without "nr_cpus=1" to reproduce it).
 
-So, in the above case, let pci_call_probe() call local_pci_probe()
-instead of work_on_cpu() when the best selected cpu is offline.
+On 6/11/24 16:25, Krzysztof Kozlowski wrote:
+> Starting with the LPASS v11 (SM8550 also X1E80100), there is an
+> additional output port on SWR2 Soundwire instance, thus WCD9385 audio
+> codec TX port mapping should be shifted by one.  This is a necessary fix
+> for proper audio recording via analogue microphones connected to WCD9385
+> codec (e.g. headset AMIC2).
+> 
+> Fixes: 229c9ce0fd11 ("arm64: dts: qcom: x1e80100-crd: add WCD9385 Audio Codec")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Fixes: 69a18b18699b ("PCI: Restrict probe functions to housekeeping CPUs")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
----
-v2 -> v3: Modify commit message according to Markus's suggestion
-v1 -> v2: Add a method to reproduce the problem
----
- drivers/pci/pci-driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index af2996d0d17f..32a99828e6a3 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -386,7 +386,7 @@ static int pci_call_probe(struct pci_driver *drv, struct pci_dev *dev,
- 		free_cpumask_var(wq_domain_mask);
- 	}
- 
--	if (cpu < nr_cpu_ids)
-+	if ((cpu < nr_cpu_ids) && cpu_online(cpu))
- 		error = work_on_cpu(cpu, local_pci_probe, &ddi);
- 	else
- 		error = local_pci_probe(&ddi);
--- 
-2.33.0
-
+Konrad
 
