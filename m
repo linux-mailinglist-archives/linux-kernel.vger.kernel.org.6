@@ -1,136 +1,156 @@
-Return-Path: <linux-kernel+bounces-213882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D699B907BF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:03:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7823907BF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 606D0B224A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:03:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AF1EB212F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B93C14A092;
-	Thu, 13 Jun 2024 19:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CF314D2B8;
+	Thu, 13 Jun 2024 19:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GURyw/7o"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7QnFhPG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61604F9F8;
-	Thu, 13 Jun 2024 19:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56EE14C596;
+	Thu, 13 Jun 2024 19:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718305391; cv=none; b=r43EstKY0SyQpB1frZt+TiThx/H0UI9eiGsKBlguxXpz2mD8xgwePXQii6t8o/b8oiSpb3qGc0yetrBSPbsLtTFetQGFlnbHZCskQ0cYLz+EVEh8p34+Y3dy+9G+CLXkdr5gd5NbypqFHTFYu94I2ZVEZTwjlW2IS45+M/9mpg8=
+	t=1718305394; cv=none; b=BtdJL8JByOkur+D4BTRXjeGEV3PO/OO99F2qP86LVqJ58oheVC11XQ4Uhe2+as+lb3KpAInyKCXLfflPVWEQrVZWZRBqEt7FZAKn8b1XmZknvtGFr5TOCdRVebbcwSM+KACxlrpfyoa/xgGcJcCQFLoU/zwIT29PczWLDrx37Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718305391; c=relaxed/simple;
-	bh=2ColOHilvAymurU4w1OWFs4F4z//pAKjnBGR9Fvov6o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HnapLeHm7pA2v3Tki48kF98Jf/g2BzK00l1WXFawhqVd82rqLSlhHQ/VP+Dmi1lDM1UpXTbmg0/EC/PzCnBA7OzXQDy6nTvbxBpz12dSfw4X/qQcWePY/lJD4Mf6jxLXaLq79hFpw2KDEzV6vMEhVZx7JT/XCOY+j5rCdBhg4oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GURyw/7o; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6efae34c83so186239466b.0;
-        Thu, 13 Jun 2024 12:03:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718305389; x=1718910189; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ColOHilvAymurU4w1OWFs4F4z//pAKjnBGR9Fvov6o=;
-        b=GURyw/7o+M0eDYcYf5PJaCOqwqdPCOJbAgJW3SAhVJc0J2nWXCag2uKHRADCOrNoyd
-         Twofwri5kKng+2Fi3OIZzwe8fbk4KghX9tLSiVplhKiBjhMNFRGFPH0r0CCohuI4hBQW
-         wrwk1JqfOPdwVk+XhEQNUFbIH75N1vyhMRSmts0bEtcYkAva0BSNGBeqcZhss485057G
-         hc4lrdpXLs7FIZAS8jjwd/9wqNAIKF7mtWrOjcFfUNX/TYpcbpLeWeTrwfKu9gZMnAmV
-         VjTmCvEHPxHXuxrhXTj3NgeqpOefc/XYHPNj3exbD6kPuPiNW21HDyYwk1zYb8/E9s/Y
-         x+zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718305389; x=1718910189;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2ColOHilvAymurU4w1OWFs4F4z//pAKjnBGR9Fvov6o=;
-        b=K4DiSyq9NgRa2c7lw+7b9qz7gco4TYJ0Mg84KWHCNalI4u5I6i3sTcREuLTdDFkBDt
-         EonSxDpy01zVe+HGl0c9dFzUH1PYNq/0npgAwrt7M6radTQctxAG0xVc9Y4TpowtKul3
-         UMsWGyAfDldSagKL8MPbATkbBXW7Lv8jEeIWu5XkCtHpIhPlbsvZQNGwEXAZ/ezxPleu
-         f54RaVEhboftd46Ch1nQjFtaY8mebGkUx9CIwaXs6WqzbEWkHcucFWnHAblQ9KUKP32e
-         29tiGRUIABW3i5tpAMye3xcTEbb9xVvwewlTrbNncuCvXpvtqaiCEVyPPKTi23vNzSmb
-         Rp9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUEmcOYb++r1AJ+zPFSn4p6YG0EpBfnQpw4tjHdlkdmo0QdAR9vm1vKQzPs6nBf3qZ4xEcZKdCZH1n5wwVl+GYJ2qkKy0v+xnCv6Xmh0if+r4bKXPezu36lWzfkjdHuThkIdIfx+ujVCfiJjg==
-X-Gm-Message-State: AOJu0YxAKGainh+AgK/ZSnEsJ72mmVO7sEFoM2GObSXL5ppzIP6gatJ6
-	o393dL8xYH68wzBkYfKjJbX+fdhcdMVW3JOBDZ8u+17/JMDUMWO9y7Ve1kPBk7tBbfrpqk7piFm
-	2Ssn8JDKZrYtmQuPjdnZq5UxcXsNsMPlw
-X-Google-Smtp-Source: AGHT+IH1cjL5yZRWt2b1Phzo67bgNGK9oJaaZGjd6lIEGOOzuMWjo+6fJjVIQAtLebiJD3oeqKux9SpAsn2W4gRAz3Q=
-X-Received: by 2002:a17:906:398d:b0:a6f:feb:7f1c with SMTP id
- a640c23a62f3a-a6f60cf404dmr46211166b.1.1718305388297; Thu, 13 Jun 2024
- 12:03:08 -0700 (PDT)
+	s=arc-20240116; t=1718305394; c=relaxed/simple;
+	bh=J7cjlLIue33fN1P81zj/HS/X682Np1JLj5Zw5G6EfkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fr8A9WaqgZ6DpUj5QHd0kSq1XpN/L2fazLPORkaibrMxR+GRuA7WI8jFCTm/TTRQ0FteQny/v9DokAMHhhashmvTV0HiEA1nR7buR1PfG/IKhLwKpWPu6eOuqsigwrDk2a1dXjHPaAQtcgSXsgkOEabCiPTFP2FHbqpzmG0sH2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7QnFhPG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99DBDC3277B;
+	Thu, 13 Jun 2024 19:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718305394;
+	bh=J7cjlLIue33fN1P81zj/HS/X682Np1JLj5Zw5G6EfkA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u7QnFhPG9ILAFLaiY8xJltIu9yOXrDIpcrJrxDVTpPeWDMCbemzGp4vKOr07V8CU3
+	 UqYVzuz2EgiVKLdBKBEY54YtYKRke5XwRPYt+cNFU0IR7+dk4qmHJv7ZEN+6PDGnp2
+	 IPoJSdp/Zw6ctrLZ5BPnZcvdhjq3ltOKNPzm0slGnY83YlOlAWQ/YJ1FNxl/l5fwui
+	 w2MnWCnjsNoBppM3cvKlUE+QN82H7VP6Zibl4O4nqiYJasTN2fLcE4TiT0/8TwA/Ki
+	 cPkrOVLptbWzRt0l4NrE2VH27GwrWmbp3ns0KCU2DX/gUyKmW5zq3O+pZ//PuyfeU0
+	 3+IyrFWlBLx3Q==
+Date: Thu, 13 Jun 2024 22:03:09 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Anand Khoje <anand.a.khoje@oracle.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, rama.nichanamatlu@oracle.com,
+	manjunath.b.patil@oracle.com
+Subject: Re: [PATCH v2] RDMA/mlx5 : Reclaim max 50K pages at once
+Message-ID: <20240613190309.GI4966@unreal>
+References: <20240613121252.93315-1-anand.a.khoje@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613001215.648829-1-mjguzik@gmail.com> <20240613001215.648829-2-mjguzik@gmail.com>
- <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
- <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
- <5cixyyivolodhsru23y5gf5f6w6ov2zs5rbkxleljeu6qvc4gu@ivawdfkvus3p>
- <20240613-pumpen-durst-fdc20c301a08@brauner> <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
- <CAGudoHHWL_CftUXyeZNU96qHsi5DT_OTL5ZLOWoCGiB45HvzVA@mail.gmail.com>
- <CAHk-=wi4xCJKiCRzmDDpva+VhsrBuZfawGFb9vY6QXV2-_bELw@mail.gmail.com>
- <CAGudoHGdWQYH8pRu1B5NLRa_6EKPR6hm5vOf+fyjvUzm1po8VQ@mail.gmail.com> <CAHk-=whjwqO+HSv8P4zvOyX=WNKjcXsiquT=DOaj_fQiidb3rQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whjwqO+HSv8P4zvOyX=WNKjcXsiquT=DOaj_fQiidb3rQ@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 13 Jun 2024 21:02:56 +0200
-Message-ID: <CAGudoHFYr7X7u5pXdnt5A5ALLrG6v7gobso6NjP3ctOv31X3_A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
- be released
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240613121252.93315-1-anand.a.khoje@oracle.com>
 
-On Thu, Jun 13, 2024 at 8:56=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, 13 Jun 2024 at 11:48, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > perhaps lockdep in your config?
->
-> Yes, happily it was just lockdep, and the fact that my regular tree
-> doesn't have debug info, so I looked at my allmodconfig tree.
->
-> I didn't *think* anything in the dentry struct should care about
-> debugging, but clearly that sequence number thing did.
->
-> But with that fixed, it's still the case that "we used to know about
-> this", but what you actually fixed is the case of larger names than 8
-> bytes.
->
-> You did mention the name clashing in your commit message, but I think
-> that should be the important part in the code comments too: make them
-> about "these fields are hot and pretty much read-only", "these fields
-> don't matter" and "this field is hot and written, and shouldn't be
-> near the read-only ones".
->
-> The exact byte counts may change, the basic notion doesn't.
->
-> (Of course, putting it at the *end* of the structure then possibly
-> causes cache conflicts with the next one - we don't force the dentries
-> be cacheline aligned even if we've tried to make them generally work
-> that way)
->
+On Thu, Jun 13, 2024 at 05:42:52PM +0530, Anand Khoje wrote:
+> In non FLR context, at times CX-5 requests release of ~8 million FW pages.
+> This needs humongous number of cmd mailboxes, which to be released once
+> the pages are reclaimed. Release of humongous number of cmd mailboxes is
+> consuming cpu time running into many seconds. Which with non preemptible
+> kernels is leading to critical process starving on that cpu’s RQ.
+> To alleviate this, this change restricts the total number of pages
+> a worker will try to reclaim maximum 50K pages in one go.
+> The limit 50K is aligned with the current firmware capacity/limit of
+> releasing 50K pages at once per MLX5_CMD_OP_MANAGE_PAGES + MLX5_PAGES_TAKE
+> device command.
+> 
+> Our tests have shown significant benefit of this change in terms of
+> time consumed by dma_pool_free().
+> During a test where an event was raised by HCA
+> to release 1.3 Million pages, following observations were made:
+> 
+> - Without this change:
+> Number of mailbox messages allocated was around 20K, to accommodate
+> the DMA addresses of 1.3 million pages.
+> The average time spent by dma_pool_free() to free the DMA pool is between
+> 16 usec to 32 usec.
+>            value  ------------- Distribution ------------- count
+>              256 |                                         0
+>              512 |@                                        287
+>             1024 |@@@                                      1332
+>             2048 |@                                        656
+>             4096 |@@@@@                                    2599
+>             8192 |@@@@@@@@@@                               4755
+>            16384 |@@@@@@@@@@@@@@@                          7545
+>            32768 |@@@@@                                    2501
+>            65536 |                                         0
+> 
+> - With this change:
+> Number of mailbox messages allocated was around 800; this was to
+> accommodate DMA addresses of only 50K pages.
+> The average time spent by dma_pool_free() to free the DMA pool in this case
+> lies between 1 usec to 2 usec.
+>            value  ------------- Distribution ------------- count
+>              256 |                                         0
+>              512 |@@@@@@@@@@@@@@@@@@                       346
+>             1024 |@@@@@@@@@@@@@@@@@@@@@@                   435
+>             2048 |                                         0
+>             4096 |                                         0
+>             8192 |                                         1
+>            16384 |                                         0
+> 
+> Signed-off-by: Anand Khoje <anand.a.khoje@oracle.com>
+> ---
+> Changes in v2:
+>  - In v1, CPUs were yielded if more than 2 msec are spent in
+>    mlx5_free_cmd_msg(). The approach to limit the time spent is changed
+>    in this version.
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+> index 1b38397..b1cf97d 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+> @@ -482,12 +482,16 @@ static int reclaim_pages(struct mlx5_core_dev *dev, u32 func_id, int npages,
+>  	return err;
+>  }
+>  
+> +#define MAX_RECLAIM_NPAGES -50000
+>  static void pages_work_handler(struct work_struct *work)
+>  {
+>  	struct mlx5_pages_req *req = container_of(work, struct mlx5_pages_req, work);
+>  	struct mlx5_core_dev *dev = req->dev;
+>  	int err = 0;
+>  
+> +	if (req->npages < MAX_RECLAIM_NPAGES)
+> +		req->npages = MAX_RECLAIM_NPAGES;
 
-Look mate, I'm not going to go back and forth about this bit.
+I like this change more than previous variant with yield.
+Regarding the patch:
+1. Please limit the number of pages in req_pages_handler() and not int pages_work_handler().
+2. Patch title should be "net/mlx5: Reclaim max 50K pages at once" and not "RDMA...".
+3. You should run get_maintainer.pl script to find the right maintainers and add them to the TO or CC list.
 
-Nobody is getting a turing award for moving a field elsewhere, so as
-far as I am concerned you are free to write your own version of the
-patch, I don't even need to be mentioned. You are also free to grab
-the commit message in whatever capacity (I guess you would at least
-bench results?).
+And I still think that you will get better performance by parallelizing the reclaim process.
 
-As long as lockref (the facility) and d_lockref are out of the way I'm
-a happy camper.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Thanks
+
+> +
+>  	if (req->release_all)
+>  		release_all_pages(dev, req->func_id, req->ec_function);
+>  	else if (req->npages < 0)
+> -- 
+> 1.8.3.1
+> 
+> 
 
