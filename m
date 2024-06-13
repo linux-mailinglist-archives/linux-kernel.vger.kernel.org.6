@@ -1,137 +1,187 @@
-Return-Path: <linux-kernel+bounces-212405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E66905FC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:35:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CDE905FC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E17D1C21796
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:35:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34A7281B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838808BEE;
-	Thu, 13 Jun 2024 00:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216918C11;
+	Thu, 13 Jun 2024 00:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sldmAuZn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153A0811;
-	Thu, 13 Jun 2024 00:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581EC811;
+	Thu, 13 Jun 2024 00:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718238893; cv=none; b=dqqsFwt22fTkIV/kIVMQZBNCrtMUY3vSsEMvHHzZO71hGUb9X1BO8znpJ2/dPCF2XrfYL01PmywysnYduRqGycQ66hDsnqBALb4jNGL6FQr04i4ISOZojQuJE3v0C4LmVG+sNM6sqQlXvRA+8UsIlsUBqc8Bf+c3uveHL5NcH10=
+	t=1718238907; cv=none; b=LV9b7KVCEmzrKAC8ZhppKnKwLmIjeiXYRjtA6WispQ7XhlBkoBYH998Yq/nCbe9wr2Z1oiLizwdnXp4TUTGNDtpYMp8RDkE1gNOD9lFiGG4s3wZl5eBk/m2rKpHLYrYH6+243slshl3rsQ9AF96NEDGp2yERNEgiVjmcCJhcoT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718238893; c=relaxed/simple;
-	bh=RCywxSRqgN9zs+tmyibAJXz51CnsmORFuB06u95Pauw=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=uJg6vPYzj0wpspl+UxnSGXuYuX/VcScB90bwixTIjXmNzXvQCfcED9hYTsaKN99w+mTCqEcFUbqPD4dOvhdq6cZrKJ3e4avWKXhW/fiQOTg96AiDb3+uVvj45TFrMh0c70sLoa9f6VKEiNjfOXzArefzaufFrrNLN2p0+HMTckU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99BC8C4AF1C;
-	Thu, 13 Jun 2024 00:34:52 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.97)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1sHYQn-00000001eNW-0G6T;
-	Wed, 12 Jun 2024 20:35:09 -0400
-Message-ID: <20240613003508.918902349@goodmis.org>
-User-Agent: quilt/0.68
-Date: Wed, 12 Jun 2024 20:34:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- Lorenzo Stoakes <lstoakes@gmail.com>,
- linux-mm@kvack.org,
- Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Kees Cook <keescook@chromium.org>,
- Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- linux-hardening@vger.kernel.org,
- Guenter Roeck <linux@roeck-us.net>,
- Ross Zwisler <zwisler@google.com>,
- wklin@google.com,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>,
- Linus Torvalds <torvalds@linuxfoundation.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>,
- Mike Rapoport <rppt@kernel.org>
-Subject: [PATCH v5 2/2] pstore/ramoops: Add ramoops.mem_name= command line option
-References: <20240613003435.401549779@goodmis.org>
+	s=arc-20240116; t=1718238907; c=relaxed/simple;
+	bh=7aFwdpvO8clQ9xKAqhUlOO2UkMwgfchXYP7k1Pjo6Vo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R3y3CI8cn8YWvi8Zemhg5+PNh0ezOS9Ty6iH8NSun07yd8yNzz7sQ5ID3J4EcOiU3GtO+UiE+20Ha3dgh0ec42QOQP2GBcu/LBkcqVlzM8/Gmkh8AFwv/zhep/yLFslJiK3HhSxh/PKbJUygY6dXgCEDFMKX23g00DmP+Iykseg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sldmAuZn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C1E7C116B1;
+	Thu, 13 Jun 2024 00:35:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718238906;
+	bh=7aFwdpvO8clQ9xKAqhUlOO2UkMwgfchXYP7k1Pjo6Vo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sldmAuZnJENedopcvWeRCvrXft2hCUcbTKilyv/5emcLiCG19LtMYKl2vfkT41URe
+	 Sp8F3O0p1RmCg86TkEMCXQIQNIZccbuWGV+5X0lYlqJEl1WejrmCRTNFgR8ZUklchq
+	 WWwMJKU5GKTSJA+bmQtrqcJamBmCJrs0aGUIDYiD34J9+1tkpSQAQSiV1ENjtb5F6B
+	 fFmE/SfBFmXPOkNkxRQQd2ROfKv1cn3Vw2vPyH7vV/bxGa/mpFo19X6p/XyVDt8xMB
+	 u0uup4U0Z5j28elLAuterpisNV/dFHo9yZ4jCowIRUjkXnKYzBNAWDsvEWOCOCk4eb
+	 0HzIqviYZlVQg==
+Date: Wed, 12 Jun 2024 17:35:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <andrew@lunn.ch>,
+ <jiri@resnulli.us>, <horms@kernel.org>, <rkannoth@marvell.com>,
+ <pkshih@realtek.com>, <larry.chiu@realtek.com>
+Subject: Re: [PATCH net-next v20 10/13] rtase: Implement ethtool function
+Message-ID: <20240612173505.095c4117@kernel.org>
+In-Reply-To: <20240607084321.7254-11-justinlai0215@realtek.com>
+References: <20240607084321.7254-1-justinlai0215@realtek.com>
+	<20240607084321.7254-11-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+On Fri, 7 Jun 2024 16:43:18 +0800 Justin Lai wrote:
+> Implement the ethtool function to support users to obtain network card
+> information, including obtaining various device settings, Report whether
+> physical link is up, Report pause parameters, Set pause parameters,
+> Return a set of strings that describe the requested objects, Get number
+> of strings that @get_strings will write, Return extended statistics
+> about the device.
 
-Add a method to find a region specified by reserve_mem=nn:align:name for
-ramoops. Adding a kernel command line parameter:
+You don't implement get_strings any more.
 
-  reserve_mem=12M:4096:oops ramoops.mem_name=oops
+> +static void rtase_get_drvinfo(struct net_device *dev,
+> +			      struct ethtool_drvinfo *drvinfo)
+> +{
+> +	const struct rtase_private *tp = netdev_priv(dev);
+> +
+> +	strscpy(drvinfo->driver, KBUILD_MODNAME, 32);
 
-Will use the size and location defined by the memmap parameter where it
-finds the memory and labels it "oops". The "oops" in the ramoops option
-is used to search for it.
+sizeof(drvinfo->driver) instead of the literal 32?
 
-This allows for arbitrary RAM to be used for ramoops if it is known that
-the memory is not cleared on kernel crashes or soft reboots.
+> +	strscpy(drvinfo->bus_info, pci_name(tp->pdev), 32);
 
-Tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- fs/pstore/ram.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Can you double check that overwriting these fields is actually needed?
+I think core will fill this in for you in ethtool_get_drvinfo()
 
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index b1a455f42e93..4311fcbc84f2 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -50,6 +50,10 @@ module_param_hw(mem_address, ullong, other, 0400);
- MODULE_PARM_DESC(mem_address,
- 		"start of reserved RAM used to store oops/panic logs");
- 
-+static char *mem_name;
-+module_param_named(mem_name, mem_name, charp, 0400);
-+MODULE_PARM_DESC(mem_name, "name of kernel param that holds addr");
-+
- static ulong mem_size;
- module_param(mem_size, ulong, 0400);
- MODULE_PARM_DESC(mem_size,
-@@ -914,6 +918,16 @@ static void __init ramoops_register_dummy(void)
- {
- 	struct ramoops_platform_data pdata;
- 
-+	if (mem_name) {
-+		phys_addr_t start;
-+		phys_addr_t size;
-+
-+		if (reserve_mem_find_by_name(mem_name, &start, &size)) {
-+			mem_address = start;
-+			mem_size = size;
-+		}
-+	}
-+
- 	/*
- 	 * Prepare a dummy platform data structure to carry the module
- 	 * parameters. If mem_size isn't set, then there are no module
--- 
-2.43.0
+> +	if ((value & (RTASE_FORCE_TXFLOW_EN | RTASE_FORCE_RXFLOW_EN)) ==
+> +	    (RTASE_FORCE_TXFLOW_EN | RTASE_FORCE_RXFLOW_EN)) {
+> +		pause->rx_pause = 1;
+> +		pause->tx_pause = 1;
+> +	} else if ((value & RTASE_FORCE_TXFLOW_EN)) {
 
+unnecessary parenthesis
+
+> +		pause->tx_pause = 1;
+> +	} else if ((value & RTASE_FORCE_RXFLOW_EN)) {
+
+same here
+
+> +		pause->rx_pause = 1;
+> +	}
+> +}
+> +
+> +static int rtase_set_pauseparam(struct net_device *dev,
+> +				struct ethtool_pauseparam *pause)
+> +{
+> +	const struct rtase_private *tp = netdev_priv(dev);
+> +	u16 value = rtase_r16(tp, RTASE_CPLUS_CMD);
+> +
+> +	if (pause->autoneg)
+> +		return -EOPNOTSUPP;
+> +
+> +	value &= ~(RTASE_FORCE_TXFLOW_EN | RTASE_FORCE_RXFLOW_EN);
+> +
+> +	if (pause->tx_pause)
+> +		value |= RTASE_FORCE_TXFLOW_EN;
+> +
+> +	if (pause->rx_pause)
+> +		value |= RTASE_FORCE_RXFLOW_EN;
+> +
+> +	rtase_w16(tp, RTASE_CPLUS_CMD, value);
+> +	return 0;
+> +}
+> +
+> +static void rtase_get_eth_mac_stats(struct net_device *dev,
+> +				    struct ethtool_eth_mac_stats *stats)
+> +{
+> +	struct rtase_private *tp = netdev_priv(dev);
+> +	const struct rtase_counters *counters;
+> +
+> +	counters = tp->tally_vaddr;
+> +	if (!counters)
+
+you fail probe if this is NULL, why check if here?
+
+> +		return;
+> +
+> +	rtase_dump_tally_counter(tp);
+> +
+> +	stats->FramesTransmittedOK = le64_to_cpu(counters->tx_packets);
+> +	stats->SingleCollisionFrames = le32_to_cpu(counters->tx_one_collision);
+> +	stats->MultipleCollisionFrames =
+> +		le32_to_cpu(counters->tx_multi_collision);
+> +	stats->FramesReceivedOK = le64_to_cpu(counters->rx_packets);
+> +	stats->FrameCheckSequenceErrors = le32_to_cpu(counters->rx_errors);
+
+You dont report this in rtase_get_stats64() as crc errors, are these
+really CRC / FCS errors or other errors?
+
+> +	stats->AlignmentErrors = le16_to_cpu(counters->align_errors);
+> +	stats->FramesAbortedDueToXSColls = le16_to_cpu(counters->tx_aborted);
+> +	stats->FramesLostDueToIntMACXmitError =
+> +		le64_to_cpu(counters->tx_errors);
+> +	stats->FramesLostDueToIntMACRcvError =
+> +		le16_to_cpu(counters->rx_missed);
+
+Are you sure this is the correct statistic to report as?
+What's the definition of rx_missed in the datasheet?
+
+Also is 16 bits enough for a packet counter at 5Gbps?
+Don't you have to periodically accumulate this counter so that it
+doesn't wrap around?
+
+> +	stats->MulticastFramesReceivedOK = le32_to_cpu(counters->rx_multicast);
+> +	stats->BroadcastFramesReceivedOK = le64_to_cpu(counters->rx_broadcast);
+> +}
+> +
+> +static const struct ethtool_ops rtase_ethtool_ops = {
+> +	.get_drvinfo = rtase_get_drvinfo,
+> +	.get_link = ethtool_op_get_link,
+> +	.get_link_ksettings = rtase_get_settings,
+> +	.get_pauseparam = rtase_get_pauseparam,
+> +	.set_pauseparam = rtase_set_pauseparam,
+> +	.get_eth_mac_stats = rtase_get_eth_mac_stats,
+> +	.get_ts_info = ethtool_op_get_ts_info,
+> +};
+> +
+>  static void rtase_init_netdev_ops(struct net_device *dev)
+>  {
+>  	dev->netdev_ops = &rtase_netdev_ops;
+> +	dev->ethtool_ops = &rtase_ethtool_ops;
+>  }
+>  
+>  static void rtase_reset_interrupt(struct pci_dev *pdev,
 
 
