@@ -1,176 +1,139 @@
-Return-Path: <linux-kernel+bounces-214012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41811907DD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:10:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDBA8907DDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B516AB22C82
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:10:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69E0FB23352
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EE613C9CF;
-	Thu, 13 Jun 2024 21:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBC213C681;
+	Thu, 13 Jun 2024 21:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="sivM0bTx"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="K8wN2Jgg"
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A1D139CE2;
-	Thu, 13 Jun 2024 21:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEE1139CE2;
+	Thu, 13 Jun 2024 21:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718313016; cv=none; b=R+LgeZeAZeRwqKc6K+P6kZsu/LOY36KsD+hNyJXpcbOhe84sNAIiUz/MrOsrmX8NO3jgY53kBrlLgQhSI6aql9aEghcSlvrLM0aAz43GItNz7X7Y0JvH26qlzstBIZCPeo/6Qa+kjeDOgQrNhvHB9D5M6eavHfWzTZQ6127voO4=
+	t=1718313025; cv=none; b=QroPcWfD2V7LOCsAClA0NWdZ8WrQ84bK6kRRkFd13hkgmB3Fk4qP47K3LPkflHMMDZIpNUlKzzOakOMsoq89+n03PAFnQph6rYaTsPpIpJUNCwkDncPQrQRrQzpeoLCaKZLIGzZZnGmiLLLBwabqCVY9/Nwmgwof7MPxE8SOaWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718313016; c=relaxed/simple;
-	bh=1J4WLBtZ95L8XtXYwCU1lBJTRVbRe4D591TuQlCYEHM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HnrjlAuleO0nRK4dPAt1Y3F5lKR8qMtYWsNK2Q6HRogDTwDnJay4YN8Lwg9hTlt8xthdTgv9i2nA4eoArFTntde5zGGiFi4o/hf2MuA7Dg6LVCIbNuLLFT7b37xsHs1Uy4iiyXXc+dmqupQlDjEhDQGYAOOthEkzMaZ5c18amuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=sivM0bTx; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W0Zmy33WLz9sPq;
-	Thu, 13 Jun 2024 23:10:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1718313010;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zf/D0AMDmsG7+mRQtcpHFjZ6BvLst9hXH1WNYtGV8o0=;
-	b=sivM0bTxsqdxmFANQaTA5jst3UhQRRoBhxKaU4DCdHIjOp5u+0tVO/l4/8oPPdfXBuy0su
-	q+0bDukQL6xZ7573zc92yW924ivLssKZ/Q8gC3PFvj28t3GYmeC8IMJGYwB4MoH4LEUsNL
-	l9OC6FT83P2hXD0KbUyBkf3gETKgGWi2HWrwOtOII/lpj250pXPiKG+4xjzlaZ4xTwPSQI
-	0paINADGZDr8vTYHVc6eFPgXFa8L5N1mNNeL8MI7oBI9UE2negABMB8ecTyrhtuM2UYUX3
-	DnxZvp8BhZvWQCqLDhPup9ze6paM7fLaxfvKXM+6k7zHTas63jgmI63sCx6XiA==
-Message-ID: <93428cdd-301a-46d7-84ef-e5c8ad42f495@hauke-m.de>
-Date: Thu, 13 Jun 2024 23:09:55 +0200
+	s=arc-20240116; t=1718313025; c=relaxed/simple;
+	bh=yI2pM6glGsJJWxvQAAeW+lCGZZ32jQj4MnUR25Blips=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MHw/O8iBZ3gjQm7MWDr32KkdbfSJjxuMoTLuTHfuap/aPQF1DP0z7sXrgqs6kmDvCQQew8pQbUrpAPR6JBpRkFxyVPDLeApo6xS0MnE6C3ss90rOvzgaSRohyaIFoZ2ulnTiQ3D0wYXR4exm01SepdfHEaJhde3kN98AmrONfaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=K8wN2Jgg; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1718313024; x=1749849024;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bFPHb1i9S0EjfPl1sZl0nOIw+Pf+rfxtOrLIDnf0FG8=;
+  b=K8wN2Jgg+miWwYsM8umXPqdwxUKg5eLNvpCFIcA7Hs2vIYm535NsWFZ7
+   pmG8FRoFF1/G9e6E4H7etRf9285n8BJOaVSbNK8mcGfTybT/ZOuM6a9ce
+   IizeI/P5gyD12XT4qCPDPtCCHEMgLpcO5JvwHibYDo8eevKb/zWXkxZUc
+   M=;
+X-IronPort-AV: E=Sophos;i="6.08,236,1712620800"; 
+   d="scan'208";a="302075455"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 21:10:24 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:3454]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.35.14:2525] with esmtp (Farcaster)
+ id 50c18be9-c072-4499-aed4-f6d36ec1fcc8; Thu, 13 Jun 2024 21:10:23 +0000 (UTC)
+X-Farcaster-Flow-ID: 50c18be9-c072-4499-aed4-f6d36ec1fcc8
+Received: from EX19D030UWB002.ant.amazon.com (10.13.139.182) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 13 Jun 2024 21:10:23 +0000
+Received: from u1e958862c3245e.ant.amazon.com (10.119.132.17) by
+ EX19D030UWB002.ant.amazon.com (10.13.139.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 13 Jun 2024 21:10:22 +0000
+From: Suraj Jitindar Singh <surajjs@amazon.com>
+To: <linux-acpi@vger.kernel.org>
+CC: <acpica-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<surajjs@amazon.com>, <sjitindarsingh@gmail.com>, <robert.moore@intel.com>,
+	<rafael.j.wysocki@intel.com>, <lenb@kernel.org>, <okaya@kernel.org>,
+	<stable@vger.kernel.org>
+Subject: [PATCH] acpi: Support CONFIG_ACPI without CONFIG_PCI
+Date: Thu, 13 Jun 2024 14:10:11 -0700
+Message-ID: <20240613211011.413120-1-surajjs@amazon.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/9] block: partitions: populate fwnode
-To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Jens Axboe <axboe@kernel.dk>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
- Christian Brauner <brauner@kernel.org>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Al Viro <viro@zeniv.linux.org.uk>, Li Lingfeng <lilingfeng3@huawei.com>,
- Christian Heusel <christian@heusel.eu>, Min Li <min15.li@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Hannes Reinecke <hare@suse.de>, Mikko Rapeli <mikko.rapeli@linaro.org>,
- Yeqi Fu <asuk4.q@gmail.com>, Victor Shih <victor.shih@genesyslogic.com.tw>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Li Zhijian <lizhijian@fujitsu.com>,
- "Ricardo B. Marliere" <ricardo@marliere.net>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-block@vger.kernel.org
-References: <cover.1717031992.git.daniel@makrotopia.org>
- <3329bf2fa25695934b392944ff977ae95dc8c02d.1717031992.git.daniel@makrotopia.org>
-Content-Language: en-US
-From: Hauke Mehrtens <hauke@hauke-m.de>
-In-Reply-To: <3329bf2fa25695934b392944ff977ae95dc8c02d.1717031992.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4W0Zmy33WLz9sPq
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D041UWA003.ant.amazon.com (10.13.139.105) To
+ EX19D030UWB002.ant.amazon.com (10.13.139.182)
 
-Hi Daniel,
+Make is possible to use ACPI without having CONFIG_PCI set.
 
-On 5/30/24 04:13, Daniel Golle wrote:
-> Let block partitions to be represented by a firmware node and hence
-> allow them to being referenced e.g. for use with blk-nvmem.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
->   block/partitions/core.c | 41 +++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 41 insertions(+)
-> 
-> diff --git a/block/partitions/core.c b/block/partitions/core.c
-> index ab76e64f0f6c..93d109409905 100644
-> --- a/block/partitions/core.c
-> +++ b/block/partitions/core.c
-> @@ -10,6 +10,8 @@
->   #include <linux/ctype.h>
->   #include <linux/vmalloc.h>
->   #include <linux/raid/detect.h>
-> +#include <linux/property.h>
-> +
->   #include "check.h"
->   
->   static int (*const check_part[])(struct parsed_partitions *) = {
-> @@ -281,6 +283,43 @@ static ssize_t whole_disk_show(struct device *dev,
->   }
->   static const DEVICE_ATTR(whole_disk, 0444, whole_disk_show, NULL);
->   
-> +static struct fwnode_handle *find_partition_fwnode(struct block_device *bdev)
-> +{
-> +	struct fwnode_handle *fw_parts, *fw_part;
-> +	struct device *ddev = disk_to_dev(bdev->bd_disk);
-> +	const char *partname, *uuid;
-> +	u32 partno;
-> +
-> +	fw_parts = device_get_named_child_node(ddev, "partitions");
-> +	if (!fw_parts)
-> +		fw_parts = device_get_named_child_node(ddev->parent, "partitions");
+When initialising ACPI the following call chain occurs:
 
-Could you please explain why you try to get the node from the device and 
-the parent when it is not available? I think this should go into the 
-commit description.
+  acpi_init() ->
+    acpi_bus_init() ->
+      acpi_load_tables() ->
+        acpi_ev_install_region_handlers() ->
 
-> +
-> +	if (!fw_parts)
-> +		return NULL;
-> +
-> +	fwnode_for_each_child_node(fw_parts, fw_part) {
-> +		if (!fwnode_property_read_string(fw_part, "uuid", &uuid) &&
-> +		    (!bdev->bd_meta_info || strncmp(uuid,
-> +						    bdev->bd_meta_info->uuid,
-> +						    PARTITION_META_INFO_UUIDLTH)))
+acpi_ev_install_region_handlers() calls acpi_ev_install_space_handler() on
+each of the default address spaces defined as:
 
-I think you should check that the uuid provided in the device tree is 
-not longer than PARTITION_META_INFO_UUIDLTH. Same for the volume name.
+  u8 acpi_gbl_default_address_spaces[ACPI_NUM_DEFAULT_SPACES] = {
+          ACPI_ADR_SPACE_SYSTEM_MEMORY,
+          ACPI_ADR_SPACE_SYSTEM_IO,
+          ACPI_ADR_SPACE_PCI_CONFIG,
+          ACPI_ADR_SPACE_DATA_TABLE
+  };
 
-> +			continue;
-> +
-> +		if (!fwnode_property_read_string(fw_part, "partname", &partname) &&
-> +		    (!bdev->bd_meta_info || strncmp(partname,
-> +						    bdev->bd_meta_info->volname,
-> +						    PARTITION_META_INFO_VOLNAMELTH)))
-> +			continue;
-> +
-> +		if (!fwnode_property_read_u32(fw_part, "partno", &partno) &&
-> +		    bdev_partno(bdev) != partno)
-> +			continue;
-> +
-> +		return fw_part;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->   /*
->    * Must be called either with open_mutex held, before a disk can be opened or
->    * after all disk users are gone.
-> @@ -355,6 +394,8 @@ static struct block_device *add_partition(struct gendisk *disk, int partno,
->   			goto out_put;
->   	}
->   
-> +	device_set_node(pdev, find_partition_fwnode(bdev));
-> +
->   	/* delay uevent until 'holders' subdir is created */
->   	dev_set_uevent_suppress(pdev, 1);
->   	err = device_add(pdev);
+However in acpi_ev_install_space_handler() the case statement for
+ACPI_ADR_SPACE_PCI_CONFIG is ifdef'd as:
 
-Hauke
+  #ifdef ACPI_PCI_CONFIGURED
+                  case ACPI_ADR_SPACE_PCI_CONFIG:
+
+                          handler = acpi_ex_pci_config_space_handler;
+                          setup = acpi_ev_pci_config_region_setup;
+                          break;
+  #endif
+
+ACPI_PCI_CONFIGURED is not defined if CONFIG_PCI is not enabled, thus the
+attempt to install the handler fails.
+
+Fix this by ifdef'ing ACPI_ADR_SPACE_PCI_CONFIG in the list of default
+address spaces.
+
+Fixes: bd23fac3eaaa ("ACPICA: Remove PCI bits from ACPICA when CONFIG_PCI is unset")
+CC: stable@vger.kernel.org # 5.0.x-
+Signed-off-by: Suraj Jitindar Singh <surajjs@amazon.com>
+---
+ drivers/acpi/acpica/evhandler.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/acpi/acpica/evhandler.c b/drivers/acpi/acpica/evhandler.c
+index 1c8cb6d924df..371093acb362 100644
+--- a/drivers/acpi/acpica/evhandler.c
++++ b/drivers/acpi/acpica/evhandler.c
+@@ -26,7 +26,9 @@ acpi_ev_install_handler(acpi_handle obj_handle,
+ u8 acpi_gbl_default_address_spaces[ACPI_NUM_DEFAULT_SPACES] = {
+ 	ACPI_ADR_SPACE_SYSTEM_MEMORY,
+ 	ACPI_ADR_SPACE_SYSTEM_IO,
++#ifdef ACPI_PCI_CONFIGURED
+ 	ACPI_ADR_SPACE_PCI_CONFIG,
++#endif
+ 	ACPI_ADR_SPACE_DATA_TABLE
+ };
+ 
+-- 
+2.34.1
 
 
