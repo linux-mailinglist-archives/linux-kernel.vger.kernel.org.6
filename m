@@ -1,128 +1,130 @@
-Return-Path: <linux-kernel+bounces-213667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10016907884
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:43:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394BD907897
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7121C20C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:43:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55A8C287DD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67431494D1;
-	Thu, 13 Jun 2024 16:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BEF149C47;
+	Thu, 13 Jun 2024 16:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MeCNc+eZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UTmvtuSy"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B11C149C4E;
-	Thu, 13 Jun 2024 16:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5440812D757
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718296989; cv=none; b=Aa4F5daOqbO7VrbOrwT7ifkEb4sU+ovS5QMdF7CoZXJzYCAM+8B361l4MEa5qrh5DnHJ8cuw+OHk3pfl3SgR+GRpdU6Q+knMFgOht/Ig38v90S23W702kZgLjzLvwHHHXsf0CP91aDNGyzuWwqQSAXh98GQWaoowwRiVukMOvFc=
+	t=1718297022; cv=none; b=OzXQzFpzgWQiJhijzhWSs3IBWdutHMXWFCHnyaAmw7/0DQtmGlVocHTyW1sa+nmESKgaTmciD9tbXUx8hY2BV6ynhXT4dodlI2wYvKvM4oxFWTZoUGMstP6vh3f8MMUh9FldWhAhuliO3Jt4wPVJml1FBdn+W+9JV9hybnhh28s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718296989; c=relaxed/simple;
-	bh=5N86/34S9SsY993i4OkYsoiBIKBqPyqnwe4IRziKYTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fxfRBSMaclnoUV6hKAbaVBRl4l0p5i6ZXd+P3X8z+DKFDRJmnDGFP+8b1XGDfIH+attj1hirgIkAWDYagJRmiWCpv0KfpV58pXbVz37Chw/pqiBwax6IF11xJuAu1rbWlz9IyM3dXzvx3OsCrCgb9uok6kQsb3GtfQqh7GMjYTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MeCNc+eZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A67BFC32786;
-	Thu, 13 Jun 2024 16:43:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718296988;
-	bh=5N86/34S9SsY993i4OkYsoiBIKBqPyqnwe4IRziKYTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MeCNc+eZYG9ORTjLRsHrCVE8nxJrUu5YEgZ+GmPJIdJL17zuVlPmMEw5NRZ+Hee2u
-	 iyEdpY+bLyH0yoWJj2S0bdZgMpCshE/5SQC78dHWgtcNGWqNVqzCSDVxzufAmc95Up
-	 J92LVZmVkSXO5sy1DSlArRFK2tRL2FDVBwXeJr2tpe/f5lwCLGm2Z16WL3Vy/UQCMp
-	 M/EJYLLqfSi9Qgr4gB6qQtHEckyPmNMcvn4wMBNCyKHWZX4Mtjd0o3rhpx35Y/PC+K
-	 hekuJ2Ab5ob1sqFUtPxx+i2bm14JZPbOzQRXav2bdG/XtZGV37bgqnUy/nPCWJx3AD
-	 6KBcbZ0PteVKA==
-Date: Thu, 13 Jun 2024 17:43:03 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alisa-Dariana Roman <alisadariana@gmail.com>
-Cc: Alisa-Dariana Roman <alisa.roman@analog.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexandru Tachici <alexandru.tachici@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 4/5] dt-bindings: iio: adc: ad7192: Add clock provider
-Message-ID: <20240613-porthole-hedging-6655d32072a8@spud>
-References: <20240613114001.270233-1-alisa.roman@analog.com>
- <20240613114001.270233-5-alisa.roman@analog.com>
+	s=arc-20240116; t=1718297022; c=relaxed/simple;
+	bh=Mez2tR7LHp61PQ+7LTtQTabYS9beKcDIfS/XBjc8Prg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KHKwMDviL3U3YlYLmCyrt4RYmFcFu3Wx8PGljGquYAfCtyn4c5As+ayODkt50+r0rXW/SgIF0muHqeH+9K8MxQBi58YaFiVVckT6wuPQqLj/hIFyjwFAnZwn2/xOqAEH7MwbKSdKxizbT4r6iYwwdyk8p1HEw35iI5gXKahe6XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UTmvtuSy; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfa73db88dcso1771792276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:43:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718297020; x=1718901820; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bxjiAwnYIG7/luxCNc9XCi7cU7Sed/5iGmGsAhazkBY=;
+        b=UTmvtuSyEysg7WUL3TFNRubIr5PQuSpKq2aeJNOk7tARaJRwE6FytWLmWYGZtjONDY
+         tdXZpRiKf3r3dL6Yw/hVfRMvzTjkYxTbAFo7xeyBpHz2ckwcal1DAadOTC1P1xS7CPbW
+         mVzKg/SZHlcrlgMwEWWX9TXA3sfWtGFoNgW/wk4ZrGWASbYhkSA/auDOtOJOW36jlwBV
+         pmbxpxCoEoTGB+Kf61RL8yAfJUvEISQ/Rn673r1mgNG0GloLmLt5vcKdiBpzbtmL4gDQ
+         m404kRMnIXhL6BtlRTGClBd7jWQd/6a8YP8Vz6N7AoE4TSD+aHKRCFWWPtzT4mMF4Nhl
+         uHWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718297020; x=1718901820;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bxjiAwnYIG7/luxCNc9XCi7cU7Sed/5iGmGsAhazkBY=;
+        b=UmJc8Q+IuTFUZ/J0lyaz6s7lz2zpEXmiqkho8PBgCN1Q5NNIVUPT2f8Eq4P+ZhfgTz
+         p/Fa4Vf/WAny6E7krH9MUe93Acwd1WL4BpKJLHEjd6q+DCbskQfBDwjXHxFPfNY6G0pb
+         EFHe8kDYwcl0dssHa4IpEuhyoWTLTXxwXKdBOMNZcLwp56JkfdyQqYJyyERCZzpNDPAy
+         cQYllMGXNLaTFGGPYZkuNdLCI0I4ys4sDnLYKnEpbbRlmMbgw+HlNJPXUwVLUGZrXqTg
+         3U279/DhNgSHjV4vz8jOaPfDGFEaPaYh6FaB1v18/hBGguM0mCgfuEgMWL+MyTDmbwco
+         OrUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWm2cLV3M/LVEyUP5uTaV72kQYTTpTsL9i7l/iBAhKuOTB2FMV4K6nC0gW7ZyRlSGzmt5pLDoHgKlVUucgDfAw2sN4CpMCoTEiE9/6C
+X-Gm-Message-State: AOJu0YzVNgFxKZBR+s6f+4p+V557SHRpd7iil4MIcsuHpN9pkCLOHWj/
+	AJzq4TeoBE467GvNa8lq7vpOs3tJi8JmvaoR9sO0SGURs2VjXnbUZy/PSOYL2qRq/FbV9CNnUJ+
+	7TQ==
+X-Google-Smtp-Source: AGHT+IFKpKXtwVbLs4PzFwLiw9YWvLbNmcmB33v/EKY4vQAK4mBZLe56XhpTFNo1A0lAEiWi5fzJeut5/74=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:18d0:b0:dfe:ed69:7861 with SMTP id
+ 3f1490d57ef6-dff1535946emr370276.1.1718297020402; Thu, 13 Jun 2024 09:43:40
+ -0700 (PDT)
+Date: Thu, 13 Jun 2024 09:43:38 -0700
+In-Reply-To: <20240613122803.1031511-1-maobibo@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZG98mhyg/OXpjdLh"
-Content-Disposition: inline
-In-Reply-To: <20240613114001.270233-5-alisa.roman@analog.com>
+Mime-Version: 1.0
+References: <20240613122803.1031511-1-maobibo@loongson.cn>
+Message-ID: <Zmsg8ciwSp1a_864@google.com>
+Subject: Re: [PATCH] KVM: Discard zero mask with function kvm_dirty_ring_reset
+From: Sean Christopherson <seanjc@google.com>
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-
---ZG98mhyg/OXpjdLh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jun 13, 2024 at 02:40:00PM +0300, Alisa-Dariana Roman wrote:
-> Internal clock of AD719X devices can be made available on MCLK2 pin. Add
-> clock provider to support this functionality.
->=20
-> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
+On Thu, Jun 13, 2024, Bibo Mao wrote:
+> Function kvm_reset_dirty_gfn may be called with parameters cur_slot /
+> cur_offset / mask are all zero, it does not represent real dirty page.
+> It is not necessary to clear dirty page in this condition. Also return
+> value of macro __fls() is undefined if mask is zero which is called in
+> funciton kvm_reset_dirty_gfn(). Here just discard it.
+> 
+> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
 > ---
->  .../devicetree/bindings/iio/adc/adi,ad7192.yaml       | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-> index 3ae2f860d24c..1434d89c2880 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-> @@ -42,13 +42,20 @@ properties:
->      description: |
->        Optionally, either a crystal can be attached externally between MC=
-LK1 and
->        MCLK2 pins, or an external CMOS-compatible clock can drive the MCL=
-K2
-> -      pin. If absent, internal 4.92MHz clock is used.
-> +      pin. If absent, internal 4.92MHz clock is used, which can be made
-> +      available on MCLK2 pin.
-> =20
->    clock-names:
->      enum:
->        - xtal
->        - mclk
-> =20
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clock-output-names:
-> +    maxItems: 1
+>  virt/kvm/dirty_ring.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/virt/kvm/dirty_ring.c b/virt/kvm/dirty_ring.c
+> index 86d267db87bb..05f4c1c40cc7 100644
+> --- a/virt/kvm/dirty_ring.c
+> +++ b/virt/kvm/dirty_ring.c
+> @@ -147,14 +147,16 @@ int kvm_dirty_ring_reset(struct kvm *kvm, struct kvm_dirty_ring *ring)
+>  				continue;
+>  			}
+>  		}
+> -		kvm_reset_dirty_gfn(kvm, cur_slot, cur_offset, mask);
+> +		if (mask)
+> +			kvm_reset_dirty_gfn(kvm, cur_slot, cur_offset, mask);
+>  		cur_slot = next_slot;
+>  		cur_offset = next_offset;
+>  		mask = 1;
+>  		first_round = false;
+>  	}
+>  
+> -	kvm_reset_dirty_gfn(kvm, cur_slot, cur_offset, mask);
+> +	if (mask)
+> +		kvm_reset_dirty_gfn(kvm, cur_slot, cur_offset, mask);
 
-Why do you need an output name when you have exactly one clock?
+Given that mask must be checked before __fls(), just do:
 
---ZG98mhyg/OXpjdLh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmshlwAKCRB4tDGHoIJi
-0rN5AQDwx3OuFGaIq92gAW9SP4SawMqQkqEvdf2NqApMoU8puQD9E/24Paa8Ot5p
-Yw14vSKM8xuL+pvJgvu9QbMx9HMcywE=
-=1M/8
------END PGP SIGNATURE-----
-
---ZG98mhyg/OXpjdLh--
+diff --git a/virt/kvm/dirty_ring.c b/virt/kvm/dirty_ring.c
+index 86d267db87bb..7bc74969a819 100644
+--- a/virt/kvm/dirty_ring.c
++++ b/virt/kvm/dirty_ring.c
+@@ -55,6 +55,9 @@ static void kvm_reset_dirty_gfn(struct kvm *kvm, u32 slot, u64 offset, u64 mask)
+        struct kvm_memory_slot *memslot;
+        int as_id, id;
+ 
++       if (!mask)
++               return;
++
+        as_id = slot >> 16;
+        id = (u16)slot;
 
