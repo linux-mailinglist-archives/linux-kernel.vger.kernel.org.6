@@ -1,92 +1,108 @@
-Return-Path: <linux-kernel+bounces-213526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796C190766F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:20:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD93907673
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116C42816DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:20:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14EB11F21FB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DCC149C52;
-	Thu, 13 Jun 2024 15:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059491494CD;
+	Thu, 13 Jun 2024 15:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgFyyKCP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pnEt3aK4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qleynsmI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3C0143759;
-	Thu, 13 Jun 2024 15:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AA213CF85
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718292030; cv=none; b=SG82+jTuFZ1jTSwTE89GfHdcp3O2xoAqwg3D2+lUlejrmu9KvHBCfQds9VNXn1LwkVVHdXxEJJKo1amGFTU1O4TMqaVY4cC2h7p9w2e1JdLh8KovskwJqlRcOaB1KRpt4My8BYybe4MdV0e6VoWbLG1sQa5+XmUMn3nuLrasSho=
+	t=1718292097; cv=none; b=rXZ56Mpl8yjxR2FS169DH5hjyHi8GJr3DVxD3JO+0haWJ8kxqYV5jqP07re1bSAxYz7hvF96AULR6BpAbO3vwdHoFq01c2wVwtrluRBJoZX1qsSOKecbge5Ga4lsGz8tYxxuN18OecTBZyxhuyn1nvozA12NrSPoVzd65dZJ1m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718292030; c=relaxed/simple;
-	bh=Gh4uOL7q5FWJwHSZwLXH0gmGi2mBbI+MxDTZqV4SHus=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=bZICnqI2yDViA4kJFoDRVq9PbtFPqk+G3SxSTtcL5oqvTSfsudjWmgaG5wYCjdF2sFv/nV7EUXNkmV1W3T/OygnIr4swa0TfRcSXADqlhmAh7ZBkQs4GlxLt3i7WNatNkWcO43FefBX3mcruNtQTz+hYJHBF1qgMONMMWqu5s/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgFyyKCP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9BD45C4AF1D;
-	Thu, 13 Jun 2024 15:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718292029;
-	bh=Gh4uOL7q5FWJwHSZwLXH0gmGi2mBbI+MxDTZqV4SHus=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=dgFyyKCPkQ2AWAucyYxvXgGGEdjAmEahdwAzJL0hmiGVf/xOBsRTpUnuLnKerkT5K
-	 /z71z8nGBj9bc3d3yjm2p+BeM4V5FArE/p8ASSKwaq1uKKuh2cVrlqRqZlCFayKPu0
-	 HB5cGAm3W9OAXnEZAiAJVf8x3cAecwxSPU87SD8yHfvC5qRV3r2xTQswANMpFUlPf/
-	 s2T1CVFeHwgun1q09AAbkLNVppvwueqNGY0qzLO0qmUnnCJZK3buIcOTG8sGskUztV
-	 TKcCxtZoRmrKWv84iJta1HO4OntuTXWr3Z2PzFfuOOw71LEadSICaU9PNkzfY/Zyzp
-	 mfeZ1dKAEHUpA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8F9C0C43612;
-	Thu, 13 Jun 2024 15:20:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718292097; c=relaxed/simple;
+	bh=iIrB4ExCt8BUVfEVtMt1w8/a6BsbAd07dBKrkPoLw6I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ErBKxstcM9SXuYNRnm1OhLM8ycULkMByV0Q2KGUJEa84xGeREywe5mQXWzPdjbtaxcj9IFqQG8BaD3Sq7yNc9ADLKQ9H6ZrwBTvPqyUT7r5rJ9ZYa+xBw3PRqqvDCdzHsJuKM3mzl5+akyhrVX+QfFMyRtQ/ilKC6w0N1b3rNP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pnEt3aK4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qleynsmI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718292094;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aywo/MKB8or5V5hzcLoPZZQeZHEBi9nR93fDmZDQq5w=;
+	b=pnEt3aK41An9rW+8tAxPcg825WB3bQmcfTIzxyILP/ZYNrVk+ZCW2dBBfdN5PT8AOr234i
+	D+ksfgnMw6QtWUSFiCRUEyG+e6fv4zVy3eZtMXAuyfu5sxrr7NpOA+JsQubolrtOg/aiGv
+	+nZIwYWUfK+Ga4FVmFf8DPYv+Vc6a+n9tRxsA01FieI5sLdbea+aw1Ve9GpMyChVJB2WWb
+	SjG5FASwSUbHIsdgMINAfLbD4E8wbZVeGR31EtwQU1HT7MPO6nqyPmwVITbYHLepXuEuqx
+	2aVjqjonOVx4XTmbDRR0iQjwvGwrnYdA4k3TXI1NIeiPJ1x/avJy3qnL01QfSg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718292094;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aywo/MKB8or5V5hzcLoPZZQeZHEBi9nR93fDmZDQq5w=;
+	b=qleynsmIUAOWSmvsVv020dVUNcecZsvrchPTOFh1hZPGQfVdejRJFmnfsC9tjkCLWZQX2Q
+	ujHqEC5FsiJBmZDQ==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v2 04/18] printk: nbcon: Introduce printing kthreads
+In-Reply-To: <87sexipmrk.fsf@jogness.linutronix.de>
+References: <20240603232453.33992-1-john.ogness@linutronix.de>
+ <20240603232453.33992-5-john.ogness@linutronix.de>
+ <ZmMIOWEAMgXz4j-U@pathway.suse.cz> <87ed95j8yh.fsf@jogness.linutronix.de>
+ <ZmhkVAC_3FMohrEr@pathway.suse.cz> <87sexipmrk.fsf@jogness.linutronix.de>
+Date: Thu, 13 Jun 2024 17:27:33 +0206
+Message-ID: <87jzis50n6.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
- cros_ec_lpc_mec_read_bytes()
-From: patchwork-bot+chrome-platform@kernel.org
-Message-Id: 
- <171829202958.32437.16739284609802669464.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Jun 2024 15:20:29 +0000
-References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
-In-Reply-To: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: ben@jubnut.com, bleung@chromium.org, tzungbi@kernel.org,
- groeck@chromium.org, chrome-platform@lists.linux.dev,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain
 
-Hello:
+On 2024-06-11, Petr Mladek <pmladek@suse.com> wrote:
+> Honestly, if the system is not able to start the kthread then
+> it is probably useless anyway. I would prefer if printk keeps working
+> so that people know what is going on ;-)
 
-This patch was applied to chrome-platform/linux.git (for-next)
-by Tzung-Bi Shih <tzungbi@kernel.org>:
+I have been looking into and thinking about this some more. I do not
+like the idea of the system doing some sort of fallback if some of the
+kthreads fail to start. Not only does it complicate the code, but it
+greatly increases the variants of how the system during runtime.
 
-On Thu, 13 Jun 2024 16:55:14 +0300 you wrote:
-> We changed these functions to returning negative error codes, but this
-> first error path was accidentally overlooked.  It leads to a Smatch
-> warning:
-> 
->     drivers/platform/chrome/cros_ec_lpc.c:181 ec_response_timed_out()
->     error: uninitialized symbol 'data'.
-> 
-> [...]
+I (strongly) suggest the following:
 
-Here is the summary with links:
-  - platform/chrome: cros_ec_lpc: Fix error code in cros_ec_lpc_mec_read_bytes()
-    https://git.kernel.org/chrome-platform/c/77a714325d09
+- The kthread is created in nbcon_alloc(). If the kthread fails, then
+  nbcon_alloc() fails and the console will not register.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+- nbcon_kthread_should_wakeup() will return false if the console is not
+  registered or if @have_boot_console=1.
 
+Then there would be no need to ever check con->kthread. Instead we can
+rely on the global state of the system transitioning to relying on
+threading.
 
+I think it is totally appropriate that register_console() fails if the
+kthread cannot be created, just as it already fails if the kmalloc() for
+the pbufs fails.
+
+Any objections?
+
+John
+
+P.S. There are other minor details involved, such as calling
+kthread_stop() before removing a console from the list. But I have gone
+through all these and it appears to generally simplify things a lot.
 
