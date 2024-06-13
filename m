@@ -1,150 +1,193 @@
-Return-Path: <linux-kernel+bounces-213251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D2590731A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:05:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F12907324
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81334B24FDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:04:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9583284E38
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAD5143892;
-	Thu, 13 Jun 2024 13:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25401448DE;
+	Thu, 13 Jun 2024 13:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ytyL+Chq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kQ1oyxPn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHpKLv4x"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033631EEE0;
-	Thu, 13 Jun 2024 13:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BC613D524;
+	Thu, 13 Jun 2024 13:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718283860; cv=none; b=FZS5TLF9QMtr0m42oXvwnYT1rkhPcwDDJ28y6bt+w7ctqAcWDXOnht2rXhd63ve2p/JBjGnXKD45mzOldPbBSlES2K3p28ewoBRe4oSq6uWZxgNYs4voRPh6W+mIsggyFoGIWZz2mkXNOQGidAxRWd4ySCqmVzV4vV/3PAOvgvg=
+	t=1718284023; cv=none; b=Bl7QObNjP8niiKvmzHmdJBehCOVq0AOydaZ4zVgL4TClo3wtv7irghSlhya2ptebmR+J0LuJPmRYrh0t0tRGU+yvG2T938FW2IT74pMJPYhvBSQT65iuC6lxBI2tpTtvrhbyWTVSBvYZgp197niPngLBc0y6u1uoPmrVgPaA3JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718283860; c=relaxed/simple;
-	bh=mKAl+a9mmmclcosB7j5A0sAeDvfxEAyVo6VDqHuuXQ0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Is61WxHVt5U8AaVXfof7js+Kn39r92UFKc7CsX0agAWf2enIZLLMMgFBnJHgHGmKkuUITRTMYN5mgd18dkBqXSeD8GEE+yy6u4dyOGoXXYyZ50XbnBXJRsM6YIAKsAEbeHiwIyFEzhpp16DPT3zBbYhTyzsrk0VM4zyJZJzELkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ytyL+Chq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kQ1oyxPn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 13 Jun 2024 13:04:16 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718283856;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H/3iuphe/fIWOpdHUippxColCYX9TrQ9EQsd6uv0J2A=;
-	b=ytyL+ChqQjidiIFqxK8MU9d8/+448qkLt6zmdtlx7DCkvugCVmSzZrJE/tkf/JYPGHoXuJ
-	/bWKWSq0M0MncobM781xP9Bbfcn9MVA/pAXmRwWORjzsAQNlfBCrO4/TL8SpKhRV9ka34o
-	t3Oumd0H8MywIFMRf+FjCI+WxdjxrUl8Pju5YwuZwZkWLRnQaFlGXFBZL/Tz2wlzaIvnWi
-	XJsJdJZmQh8iU+g5km2qMRQZ8L1z+nTxQQnDtB8LErKL9Y6dX7JwAbu3dv4qRrqniJTETA
-	T5N/JeeUsQA2XR99CbxcgpYR5651Y+BzD/jWTJTZLRcuoAaDiyD+Miva4q2x4A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718283856;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H/3iuphe/fIWOpdHUippxColCYX9TrQ9EQsd6uv0J2A=;
-	b=kQ1oyxPnCrsTznNHpdSKLaiJDAw5tOKkaALaGA4Sj4ABZFgh/ATNlL93zdMEa2s1R+UNGB
-	wU5oZSIPc2VmXjDQ==
-From: "tip-bot2 for Mateusz Guzik" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/CPU/AMD: Always inline amd_clear_divider()
-Cc: Mateusz Guzik <mjguzik@gmail.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240613082637.659133-1-mjguzik@gmail.com>
-References: <20240613082637.659133-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1718284023; c=relaxed/simple;
+	bh=xu1792XvTnU3jDP3FYbYyhez1VlS5TvvwKQ4Hm46MoY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMl6W2nbddR8smhTMtvq+NX2WBQ6+9UlYFkbq0cjlqi4H0E1TDiEb29Z9kMH5ySAW6siXGdzD1Rc7gynLibbVYQNLIo/8Lqf54J+tQwR8gGClC7LOpOyFbVosThruIh9DYPFByW0m8nE/B4UTPudc9w7egnYPldBNTvkH1K86+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHpKLv4x; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebd95f136bso10801621fa.0;
+        Thu, 13 Jun 2024 06:07:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718284018; x=1718888818; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=H4qMOlVAmB1+8562nApjJnNhlZQHZLqU1OXBwVXRF78=;
+        b=lHpKLv4xuroqczJt/Ywx8NPgMxPogcx8+78+YIa89Ws8ZSLTpvqmGLUKFxVOQlfbZ2
+         p3z4te5c2HO9g8+O3suERoCg3RYPQchSX4iaJKU9fTNvKa/phzJDhr/z+7O4He/OFnYe
+         z+vy7B7UjBYhkRKHHAgrEPhH4074IEBeknApcjudzORfl08aww/jACSaVNTHc49iqOiP
+         drFuPeWeAkgd4GIMCvMuXfuaJaLYPxgxDLEfl+zbBD5dr6xQh9GDMZGsOOW0TDX7hqdq
+         Wmyds3YQtfZYaUZYYr9qcQMkWfHkD3bTytLzUklplf9Y3kOro87R3TAWy2r1NWhBbd5E
+         2oNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718284018; x=1718888818;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H4qMOlVAmB1+8562nApjJnNhlZQHZLqU1OXBwVXRF78=;
+        b=GSH+vuq+atblt2ONCh+TkgHMtZj6fOeBynKrQoCsTlIJASZ6Wj8CgpRYRpv9wPBe3y
+         Rc00TTMV9AlDxmeiSr8HjG2BQTE2dw8zqVNaIgjCmLP5u0teTCPGsGClfXOjWWOF6RM+
+         +/Q4HBoS6kytkJWCK+z3vxAp0OJWKQ5O/qp46b9takYihnLKO6HficNw0CJaABaf7bQl
+         Pdw0940qcxRcHwCXr7KlVjmi6anSBwnoh8dwEYl0Ggi+3mMaShds13A4iEzt+AGbBT+P
+         E9qtJLwB3XcJKJCNjWEoLFmXhebCh4tNbeqkO83AJ9VD3kd86x9w5Ei4KKasIHEUKt8b
+         FklA==
+X-Forwarded-Encrypted: i=1; AJvYcCXP46oBl9LWEeWZOi/nFO9LpfvD0XoXbjOze/y6JDCJBg8tWdMdYajFUlftwyFss9puNTTuHwlKWEIIvIB2jFDl6S48mcaLkYGvh3GMmxC3Nt7i+fd7S0YTjq14gSIWCGOIz0tm6QmrFpxoSLz8uRKbO8OTaPBJykm7iugHg1JzlEzIfwKDGF/EhovOdHI061peiiqbOINYoAEeU8K1Oe31BYZvY0y1xg+p1lCaTCormFL9CGyW9JeCT1+otoXW5Kd6RyhZTAoY612Xsx5F/mExtE0TYRhCV+ArQ8PWpgtBVcGCf0U6qpHyLh1EPdyPWuDnOHi1kTMjytStGOpgxFoZwZnvmOqDI51dN1oLq7M9bcwwBLl1hzW9WwMflZBwbFPR+WwOkcenlUHpYB+la126LQmDHWl6VPD6WGL7woF4mnRQphN7tnjdYSRfwg==
+X-Gm-Message-State: AOJu0YweF5XV8H+UF6myYCXms8mjJEFBK244riqhJzn46zyVY064vIwI
+	b8ZopXLnuMlBjdjlq08IeFphupqb91cIJ/K5Rd/IpLx94tfX950p
+X-Google-Smtp-Source: AGHT+IFNjIqLDbiiJvyVQ+CTYUUPuuKLx47d3/3uk6kw1RXtVGPymnVcCEA7pTqKhgYonTHLU10trQ==
+X-Received: by 2002:a2e:878f:0:b0:2eb:ecba:444a with SMTP id 38308e7fff4ca-2ebfc9fac80mr27236611fa.23.1718284018170;
+        Thu, 13 Jun 2024 06:06:58 -0700 (PDT)
+Received: from pc636 (host-90-233-218-141.mobileonline.telia.com. [90.233.218.141])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c05f56sm2099851fa.42.2024.06.13.06.06.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 06:06:57 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Thu, 13 Jun 2024 15:06:54 +0200
+To: "Paul E. McKenney" <paulmck@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <Zmru7hhz8kPDPsyz@pc636>
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+ <20240612143305.451abf58@kernel.org>
+ <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
+ <ZmrfA1p2zSVIaYam@zx2c4.com>
+ <80e03b02-7e24-4342-af0b-ba5117b19828@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171828385610.10875.14518435557314345594.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80e03b02-7e24-4342-af0b-ba5117b19828@paulmck-laptop>
 
-The following commit has been merged into the x86/cpu branch of tip:
+On Thu, Jun 13, 2024 at 05:47:08AM -0700, Paul E. McKenney wrote:
+> On Thu, Jun 13, 2024 at 01:58:59PM +0200, Jason A. Donenfeld wrote:
+> > On Wed, Jun 12, 2024 at 03:37:55PM -0700, Paul E. McKenney wrote:
+> > > On Wed, Jun 12, 2024 at 02:33:05PM -0700, Jakub Kicinski wrote:
+> > > > On Sun,  9 Jun 2024 10:27:12 +0200 Julia Lawall wrote:
+> > > > > Since SLOB was removed, it is not necessary to use call_rcu
+> > > > > when the callback only performs kmem_cache_free. Use
+> > > > > kfree_rcu() directly.
+> > > > > 
+> > > > > The changes were done using the following Coccinelle semantic patch.
+> > > > > This semantic patch is designed to ignore cases where the callback
+> > > > > function is used in another way.
+> > > > 
+> > > > How does the discussion on:
+> > > >   [PATCH] Revert "batman-adv: prefer kfree_rcu() over call_rcu() with free-only callbacks"
+> > > >   https://lore.kernel.org/all/20240612133357.2596-1-linus.luessing@c0d3.blue/
+> > > > reflect on this series? IIUC we should hold off..
+> > > 
+> > > We do need to hold off for the ones in kernel modules (such as 07/14)
+> > > where the kmem_cache is destroyed during module unload.
+> > > 
+> > > OK, I might as well go through them...
+> > > 
+> > > [PATCH 01/14] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+> > > 	Needs to wait, see wg_allowedips_slab_uninit().
+> > 
+> > Also, notably, this patch needs additionally:
+> > 
+> > diff --git a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/allowedips.c
+> > index e4e1638fce1b..c95f6937c3f1 100644
+> > --- a/drivers/net/wireguard/allowedips.c
+> > +++ b/drivers/net/wireguard/allowedips.c
+> > @@ -377,7 +377,6 @@ int __init wg_allowedips_slab_init(void)
+> > 
+> >  void wg_allowedips_slab_uninit(void)
+> >  {
+> > -	rcu_barrier();
+> >  	kmem_cache_destroy(node_cache);
+> >  }
+> > 
+> > Once kmem_cache_destroy has been fixed to be deferrable.
+> > 
+> > I assume the other patches are similar -- an rcu_barrier() can be
+> > removed. So some manual meddling of these might be in order.
+> 
+> Assuming that the deferrable kmem_cache_destroy() is the option chosen,
+> agreed.
+>
+<snip>
+void kmem_cache_destroy(struct kmem_cache *s)
+{
+	int err = -EBUSY;
+	bool rcu_set;
 
-Commit-ID:     501bd734f933f4eb5c080b87936e9d43f471d723
-Gitweb:        https://git.kernel.org/tip/501bd734f933f4eb5c080b87936e9d43f471d723
-Author:        Mateusz Guzik <mjguzik@gmail.com>
-AuthorDate:    Thu, 13 Jun 2024 10:26:37 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Thu, 13 Jun 2024 14:40:29 +02:00
+	if (unlikely(!s) || !kasan_check_byte(s))
+		return;
 
-x86/CPU/AMD: Always inline amd_clear_divider()
+	cpus_read_lock();
+	mutex_lock(&slab_mutex);
 
-The routine is used on syscall exit and on non-AMD CPUs is guaranteed to
-be empty.
+	rcu_set = s->flags & SLAB_TYPESAFE_BY_RCU;
 
-It probably does not need to be a function call even on CPUs which do need the
-mitigation.
+	s->refcount--;
+	if (s->refcount)
+		goto out_unlock;
 
-  [ bp: Make sure it is always inlined so that noinstr marking works. ]
+	err = shutdown_cache(s);
+	WARN(err, "%s %s: Slab cache still has objects when called from %pS",
+	     __func__, s->name, (void *)_RET_IP_);
+...
+	cpus_read_unlock();
+	if (!err && !rcu_set)
+		kmem_cache_release(s);
+}
+<snip>
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20240613082637.659133-1-mjguzik@gmail.com
----
- arch/x86/include/asm/processor.h | 12 +++++++++++-
- arch/x86/kernel/cpu/amd.c        | 11 -----------
- 2 files changed, 11 insertions(+), 12 deletions(-)
+so we have SLAB_TYPESAFE_BY_RCU flag that defers freeing slab-pages
+and a cache by a grace period. Similar flag can be added, like
+SLAB_DESTROY_ONCE_FULLY_FREED, in this case a worker rearm itself
+if there are still objects which should be freed.
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index cb4f6c5..a75a07f 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -692,7 +692,17 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
- 
- #ifdef CONFIG_CPU_SUP_AMD
- extern u32 amd_get_highest_perf(void);
--extern void amd_clear_divider(void);
-+
-+/*
-+ * Issue a DIV 0/1 insn to clear any division data from previous DIV
-+ * operations.
-+ */
-+static __always_inline void amd_clear_divider(void)
-+{
-+	asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
-+		     :: "a" (0), "d" (0), "r" (1));
-+}
-+
- extern void amd_check_microcode(void);
- #else
- static inline u32 amd_get_highest_perf(void)		{ return 0; }
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 44df3f1..be5889b 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -1220,14 +1220,3 @@ void amd_check_microcode(void)
- 
- 	on_each_cpu(zenbleed_check_cpu, NULL, 1);
- }
--
--/*
-- * Issue a DIV 0/1 insn to clear any division data from previous DIV
-- * operations.
-- */
--void noinstr amd_clear_divider(void)
--{
--	asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
--		     :: "a" (0), "d" (0), "r" (1));
--}
--EXPORT_SYMBOL_GPL(amd_clear_divider);
+Any thoughts here?
+
+--
+Uladzislau Rezki
 
