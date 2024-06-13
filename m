@@ -1,270 +1,362 @@
-Return-Path: <linux-kernel+bounces-212472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6ECC906170
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:58:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E10F906173
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2B151C2106B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648621C212E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9D217756;
-	Thu, 13 Jun 2024 01:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X48SWAHP"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5590020317;
+	Thu, 13 Jun 2024 01:59:28 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2A9DDB2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA02417756
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718243929; cv=none; b=sAhwqIDlrBgWHnp31ESLTVvSHCqi+bt13jLPF6B0dlCySJM7PCF+GMFF0apKAzrhxuwzh+CmzaW6j2blGpqJyN7oWLuoMIgj+6/yw4k+ZvieFssuGMSJ9z3zl8istdNFoY38dSmsVlvrgTIHI8rKNAfPTH6Vpa1CdmzPr1nN0mY=
+	t=1718243967; cv=none; b=c6B7+SdAIdPIVFUFfKLyP4tPgzA6g4XQwvkgsTSV2XpSaPSXvX5M6Re85xgjv6xKlh3m6q7advCiDC6H5HLhAB1xd8Afy9BL/VEPW6iX0NKyooX4c+BDmEpJTkxpj+EWJdK7i3SmEqhgfQxMwf0GKZgODI+SBj5lcnLVFgo7bzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718243929; c=relaxed/simple;
-	bh=/GlDiqg+KT0hvfrqYVGZ6+VHfiJkr8ffTpTsneUid4o=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ppj7e+cm2mpdN7d2DbVLKDlYs8Kvrs+Btti7ScTVWqdjHVlY6dMEQOyrqFCoye33820ZHI23DYSI45Tf7TA5VpliclLEYLWjwhz0KQ/P2yMXx2W2D3ytGOwezy5DxaKXiHe/4ycQJSumjok9g2oUsy0EgHZStkrrQCnxM359U2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X48SWAHP; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1f71d5a85f9so5175465ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718243927; x=1718848727; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XR6AMFWe1KXkR6OV27ESv59bBQmo8YjxA22W97Ip+bk=;
-        b=X48SWAHP6d6txsFUjt7hCHfmzFg8ZP+uqklUuNP7mpWAkh3Yz31/xPTEQR3/pJr/rC
-         dXCg0YFU5VDzkLyQGNlHKtCVqzMxbNG1yJKVaxNW6aJb7S/lws8kPu5799rNGghlJtrZ
-         vRUrttGz2S1H6+pcbW69livHsIROFmk/X0oY1Zi/FR3WH0Ff832/+/hwV/lhMrSGpSn+
-         ZzamLRBD8lBk2poCrY0sy6oxKY7KoVsjKcMdANmgsqAtKczS8nIZzqQ4pgtgBJK7I2c7
-         RUyWtRYrjyiuKBqTtROt2CadmjabG8Pb+Ou8zE0mxEVShf4rRrZwDeeezOKhAp1RMLSf
-         ykDQ==
+	s=arc-20240116; t=1718243967; c=relaxed/simple;
+	bh=DhwdmDTYYdS/KgBMvVC3FESO/ezNcJYLdBLHBP5oquY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=umk1ClHh4jyDmECIWegLGYIqUhR7LSjSQAvLykVyrZmPWxPe1pOSIpZUpsTHyBqobklnbtC5XEmCD8h6SeH55u0fvK9cbimFde0AcmW25/fpiSJ5OCPhfw8gvLxbNE9jqw08KNJpZBCwYPegkClLMpTdahk/CJQ1vA7SGiZP+GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-375cf2b931dso4802595ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:59:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718243927; x=1718848727;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=1e100.net; s=20230601; t=1718243965; x=1718848765;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XR6AMFWe1KXkR6OV27ESv59bBQmo8YjxA22W97Ip+bk=;
-        b=ryCnbUocvIVq33r2wyLPknsTKXYrMP/dcnBrEyzR6mV97WOeZegq5I0sUQC+6cFXrw
-         aqLKoH4D88DvJp8de0Q7kQ6t1kO2DEEo4h7NzM5PUZj3Rgvs0mj16OMZSNEqZXZIb9iG
-         pod5Ar7MCMLWys5jyBhyJbBs4Vcqp11MU/7QZcWMwgGi6B7tnGz2FyJYVGDEotpC7MEm
-         0LF0fnDkQnQddZakFsmcG4IqB259ay57aazEU1mxRI5Z//oJPCrhVAwDQKrpkPwJg+DN
-         jfdZgKdrOridy+5oHdt0H22S8ldDpIrBQDlIZi9Jn42z2jWNFOMsAeyPevFx5YejDny+
-         sOzQ==
-X-Gm-Message-State: AOJu0Yx+DhIlFpSwIR5F5L/DdAXCq/541Nd29C8WqjANKIhSit9fqd5x
-	6kkiL/qIoFrkG5X1YJ6PR6zTebhwZ1ZwaV7geTy7+CYzvy1ACntXIx2A51YBa/Upe9+gCZs8BOZ
-	FkJ+sUomQC4O4YNkxzO3V9YswpnQtxVPOwdSorybD0FUAHIasa8K/vCSArVbowhuyfv3a2FgHTy
-	DYZfu6BP/0DJS0nmqmM4N2L+6vevBRGL8dIvbnnZU7V0hY
-X-Google-Smtp-Source: AGHT+IFBu+oz1w3gdyRfGKsJE5EGR1AZzcvTCAn4ny9jrZvXbOGcU2MB1osfdZu9By8mF6ih6dacw7cWjzIS
-X-Received: from jstultz-noogler2.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:600])
- (user=jstultz job=sendgmr) by 2002:a17:902:c40e:b0:1f6:f3ea:f7a2 with SMTP id
- d9443c01a7336-1f83b53a3acmr102595ad.2.1718243924485; Wed, 12 Jun 2024
- 18:58:44 -0700 (PDT)
-Date: Wed, 12 Jun 2024 18:58:26 -0700
+        bh=/LPamGuf5auMpJc0VNkSXfd3XFXO0t7m5Gs9owLkQwM=;
+        b=nT981F7vpEK9d5uEx/NGu4XXWsFehoXWWRTocbeZy5MT+09jKcNq6cnf+dOsh29AmB
+         w0QKZqasJf+Ml6S5QGp60ewRAXtvXhemMFBXj/d9rvmZqqZcVmZZpXD5CZ8xxGF5gSig
+         F3IWyPKc0bDmNX2/7dRrlN0pULDBZ3M60/iemBjibmXsEUuqpb3ZGum1GekotT9BLeff
+         dVK21WnApDd81d7JRdd2FReDm64r5gsFulltVHRFMteoJQLreZrmWPjxGrGTmIPuR2FA
+         L2Uur2CK44WwBhtM/KB6qvPVPdx1uwhC1I/M8q+SIYuLGKa32yBJ2nETj92yggPxu3KI
+         RYRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhYVaRullaRNQpeG42qjNrH3ryDXMmdI8s0qGRZo2wSoVmYWxENqpEGYbU0pjR/QXK48oUSxW7YJxLs65Onyz+VG1IQwtJqPKoo9o7
+X-Gm-Message-State: AOJu0Yyyi6YjYh/ic5LfTykU2BfLni5aKU2IPs6UKs/9VPHRbcyoelL7
+	NQXUYJKmcc4FbHxe9itfKVgKDAqWf7dPYiTPzbZtW4X8FodxLqzz6bnWdhQBv3PlajJviFFmavo
+	sJM27J5iPQsRdEhvp8iMNhEEaM9R4BCnySNxgkb+cuD9TnDjRyQ0Tt/E=
+X-Google-Smtp-Source: AGHT+IELFhcMnbtKp/UxLs6gt5XUnBCHticu1wv7+7jR2HuEj4cHcI5w/+8OVw8l0/y/34WkAOeO9Io26xzQjJ+hVI7vdLoPPlj8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240613015837.4132703-1-jstultz@google.com>
-Subject: [PATCH] RFC: sched: Rework task_sched_runtime to avoid calling update_rq_clock
-From: John Stultz <jstultz@google.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Qais Yousef <qyousef@layalina.io>, Joel Fernandes <joel@joelfernandes.org>, kernel-team@android.com
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1d8b:b0:375:9deb:ceb8 with SMTP id
+ e9e14a558f8ab-375cd13c005mr1906045ab.3.1718243964697; Wed, 12 Jun 2024
+ 18:59:24 -0700 (PDT)
+Date: Wed, 12 Jun 2024 18:59:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000274a3a061abbd928@google.com>
+Subject: [syzbot] [btrfs?] possible deadlock in btrfs_log_inode
+From: syzbot <syzbot+8576cfa84070dce4d59b@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-I recently got a bug report that
-clock_gettime(CLOCK_THREAD_CPUTIME_ID,...) had regressed between
-5.10 and 6.1. Its not a huge regression in absolute time
-(~30-40ns), but is >10% change.
+Hello,
 
-I narrowed the cause down to the addition of
-psi_account_irqtime() in update_rq_clock_task(), in commit
-52b1364ba0b1 ("sched/psi: Add PSI_IRQ to track IRQ/SOFTIRQ
-pressure")
+syzbot found the following issue on:
 
-So that explains the behavior change, but it also seems odd that
-we're doing psi irq accounting from a syscall that is just
-trying to read the thread's cputime.
+HEAD commit:    061d1af7b030 Merge tag 'for-linus-2024060801' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=170743fc980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=96fd46a1ee1615e0
+dashboard link: https://syzkaller.appspot.com/bug?extid=8576cfa84070dce4d59b
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-Thinking about it more, it seems the re-use of update_rq_clock()
-to handle accounting for any in-progress time for the current
-task has the potential for side effects and unnecessary work.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-So instead rework the logic so we calculate the current cpu
-runtime in a read-only fashion.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-061d1af7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/91e6b5bb0acf/vmlinux-061d1af7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3cc757eadf33/bzImage-061d1af7.xz
 
-This has the side benefit of improving
-clock_gettime(CLOCK_THREAD_CPUTIME_ID,...) performance by ~12%
-over the behavior in 5.10, and ~21% over the 6.1 behavior.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8576cfa84070dce4d59b@syzkaller.appspotmail.com
 
-NOTE: I'm not 100% sure this is correct yet. There may be some
-edge cases I've overlooked, so I'd greatly appreciate any
-review or feedback.
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc2-syzkaller-00361-g061d1af7b030 #0 Not tainted
+------------------------------------------------------
+syz-executor.1/9919 is trying to acquire lock:
+ffffffff8dd3aac0 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:334 [inline]
+ffffffff8dd3aac0 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:3891 [inline]
+ffffffff8dd3aac0 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:3981 [inline]
+ffffffff8dd3aac0 (fs_reclaim){+.+.}-{0:0}, at: kmem_cache_alloc_lru_noprof+0x58/0x2f0 mm/slub.c:4020
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Qais Yousef <qyousef@layalina.io>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: kernel-team@android.com
-Signed-off-by: John Stultz <jstultz@google.com>
+but task is already holding lock:
+ffff88804b569358 (&ei->log_mutex){+.+.}-{3:3}, at: btrfs_log_inode+0x39c/0x4660 fs/btrfs/tree-log.c:6481
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&ei->log_mutex){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       btrfs_log_inode+0x39c/0x4660 fs/btrfs/tree-log.c:6481
+       btrfs_log_inode_parent+0x8cb/0x2a90 fs/btrfs/tree-log.c:7079
+       btrfs_log_dentry_safe+0x59/0x80 fs/btrfs/tree-log.c:7180
+       btrfs_sync_file+0x9c1/0xe10 fs/btrfs/file.c:1959
+       vfs_fsync_range+0x141/0x230 fs/sync.c:188
+       generic_write_sync include/linux/fs.h:2794 [inline]
+       btrfs_do_write_iter+0x584/0x10c0 fs/btrfs/file.c:1705
+       new_sync_write fs/read_write.c:497 [inline]
+       vfs_write+0x6b6/0x1140 fs/read_write.c:590
+       ksys_write+0x12f/0x260 fs/read_write.c:643
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #2 (btrfs_trans_num_extwriters){++++}-{0:0}:
+       join_transaction+0x164/0xf40 fs/btrfs/transaction.c:315
+       start_transaction+0x427/0x1a70 fs/btrfs/transaction.c:700
+       btrfs_commit_super+0xa1/0x110 fs/btrfs/disk-io.c:4170
+       close_ctree+0xcb0/0xf90 fs/btrfs/disk-io.c:4324
+       generic_shutdown_super+0x159/0x3d0 fs/super.c:642
+       kill_anon_super+0x3a/0x60 fs/super.c:1226
+       btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2096
+       deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
+       deactivate_super+0xde/0x100 fs/super.c:506
+       cleanup_mnt+0x222/0x450 fs/namespace.c:1267
+       task_work_run+0x14e/0x250 kernel/task_work.c:180
+       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+       syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
+       __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:389
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #1 (btrfs_trans_num_writers){++++}-{0:0}:
+       __lock_release kernel/locking/lockdep.c:5468 [inline]
+       lock_release+0x33e/0x6c0 kernel/locking/lockdep.c:5774
+       percpu_up_read include/linux/percpu-rwsem.h:99 [inline]
+       __sb_end_write include/linux/fs.h:1650 [inline]
+       sb_end_intwrite include/linux/fs.h:1767 [inline]
+       __btrfs_end_transaction+0x5ca/0x920 fs/btrfs/transaction.c:1071
+       btrfs_commit_inode_delayed_inode+0x228/0x330 fs/btrfs/delayed-inode.c:1301
+       btrfs_evict_inode+0x960/0xe80 fs/btrfs/inode.c:5291
+       evict+0x2ed/0x6c0 fs/inode.c:667
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       dput.part.0+0x4b1/0x9b0 fs/dcache.c:845
+       dput+0x1f/0x30 fs/dcache.c:835
+       ovl_stack_put+0x60/0x90 fs/overlayfs/util.c:132
+       ovl_destroy_inode+0xc6/0x190 fs/overlayfs/super.c:182
+       destroy_inode+0xc4/0x1b0 fs/inode.c:311
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       shrink_kill fs/dcache.c:1048 [inline]
+       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+       super_cache_scan+0x32a/0x550 fs/super.c:221
+       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+       shrink_slab_memcg mm/shrinker.c:548 [inline]
+       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+       shrink_one+0x493/0x7c0 mm/vmscan.c:4790
+       shrink_many mm/vmscan.c:4851 [inline]
+       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
+       shrink_node mm/vmscan.c:5910 [inline]
+       kswapd_shrink_node mm/vmscan.c:6720 [inline]
+       balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
+       kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 (fs_reclaim){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
+       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
+       might_alloc include/linux/sched/mm.h:334 [inline]
+       slab_pre_alloc_hook mm/slub.c:3891 [inline]
+       slab_alloc_node mm/slub.c:3981 [inline]
+       kmem_cache_alloc_lru_noprof+0x58/0x2f0 mm/slub.c:4020
+       btrfs_alloc_inode+0x118/0xb20 fs/btrfs/inode.c:8411
+       alloc_inode+0x5d/0x230 fs/inode.c:261
+       iget5_locked fs/inode.c:1235 [inline]
+       iget5_locked+0x1c9/0x2c0 fs/inode.c:1228
+       btrfs_iget_locked fs/btrfs/inode.c:5590 [inline]
+       btrfs_iget_path fs/btrfs/inode.c:5607 [inline]
+       btrfs_iget+0xfb/0x230 fs/btrfs/inode.c:5636
+       add_conflicting_inode fs/btrfs/tree-log.c:5657 [inline]
+       copy_inode_items_to_log+0x1039/0x1e30 fs/btrfs/tree-log.c:5928
+       btrfs_log_inode+0xa48/0x4660 fs/btrfs/tree-log.c:6592
+       log_new_delayed_dentries fs/btrfs/tree-log.c:6363 [inline]
+       btrfs_log_inode+0x27dd/0x4660 fs/btrfs/tree-log.c:6718
+       btrfs_log_all_parents fs/btrfs/tree-log.c:6833 [inline]
+       btrfs_log_inode_parent+0x22ba/0x2a90 fs/btrfs/tree-log.c:7141
+       btrfs_log_dentry_safe+0x59/0x80 fs/btrfs/tree-log.c:7180
+       btrfs_sync_file+0x9c1/0xe10 fs/btrfs/file.c:1959
+       vfs_fsync_range+0x141/0x230 fs/sync.c:188
+       generic_write_sync include/linux/fs.h:2794 [inline]
+       btrfs_do_write_iter+0x584/0x10c0 fs/btrfs/file.c:1705
+       do_iter_readv_writev+0x504/0x780 fs/read_write.c:741
+       vfs_writev+0x36f/0xde0 fs/read_write.c:971
+       do_pwritev+0x1b2/0x260 fs/read_write.c:1072
+       __do_compat_sys_pwritev2 fs/read_write.c:1218 [inline]
+       __se_compat_sys_pwritev2 fs/read_write.c:1210 [inline]
+       __ia32_compat_sys_pwritev2+0x121/0x1b0 fs/read_write.c:1210
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+other info that might help us debug this:
+
+Chain exists of:
+  fs_reclaim --> btrfs_trans_num_extwriters --> &ei->log_mutex
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ei->log_mutex);
+                               lock(btrfs_trans_num_extwriters);
+                               lock(&ei->log_mutex);
+  lock(fs_reclaim);
+
+ *** DEADLOCK ***
+
+7 locks held by syz-executor.1/9919:
+ #0: ffff88802be20420 (sb_writers#23){.+.+}-{0:0}, at: do_pwritev+0x1b2/0x260 fs/read_write.c:1072
+ #1: ffff888065c0f8f0 (&sb->s_type->i_mutex_key#33){++++}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
+ #1: ffff888065c0f8f0 (&sb->s_type->i_mutex_key#33){++++}-{3:3}, at: btrfs_inode_lock+0xc8/0x110 fs/btrfs/inode.c:385
+ #2: ffff888065c0f778 (&ei->i_mmap_lock){++++}-{3:3}, at: btrfs_inode_lock+0xee/0x110 fs/btrfs/inode.c:388
+ #3: ffff88802be20610 (sb_internal#4){.+.+}-{0:0}, at: btrfs_sync_file+0x95b/0xe10 fs/btrfs/file.c:1952
+ #4: ffff8880546323f0 (btrfs_trans_num_writers){++++}-{0:0}, at: join_transaction+0x430/0xf40 fs/btrfs/transaction.c:290
+ #5: ffff888054632418 (btrfs_trans_num_extwriters){++++}-{0:0}, at: join_transaction+0x430/0xf40 fs/btrfs/transaction.c:290
+ #6: ffff88804b569358 (&ei->log_mutex){+.+.}-{3:3}, at: btrfs_log_inode+0x39c/0x4660 fs/btrfs/tree-log.c:6481
+
+stack backtrace:
+CPU: 2 PID: 9919 Comm: syz-executor.1 Not tainted 6.10.0-rc2-syzkaller-00361-g061d1af7b030 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
+ fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
+ might_alloc include/linux/sched/mm.h:334 [inline]
+ slab_pre_alloc_hook mm/slub.c:3891 [inline]
+ slab_alloc_node mm/slub.c:3981 [inline]
+ kmem_cache_alloc_lru_noprof+0x58/0x2f0 mm/slub.c:4020
+ btrfs_alloc_inode+0x118/0xb20 fs/btrfs/inode.c:8411
+ alloc_inode+0x5d/0x230 fs/inode.c:261
+ iget5_locked fs/inode.c:1235 [inline]
+ iget5_locked+0x1c9/0x2c0 fs/inode.c:1228
+ btrfs_iget_locked fs/btrfs/inode.c:5590 [inline]
+ btrfs_iget_path fs/btrfs/inode.c:5607 [inline]
+ btrfs_iget+0xfb/0x230 fs/btrfs/inode.c:5636
+ add_conflicting_inode fs/btrfs/tree-log.c:5657 [inline]
+ copy_inode_items_to_log+0x1039/0x1e30 fs/btrfs/tree-log.c:5928
+ btrfs_log_inode+0xa48/0x4660 fs/btrfs/tree-log.c:6592
+ log_new_delayed_dentries fs/btrfs/tree-log.c:6363 [inline]
+ btrfs_log_inode+0x27dd/0x4660 fs/btrfs/tree-log.c:6718
+ btrfs_log_all_parents fs/btrfs/tree-log.c:6833 [inline]
+ btrfs_log_inode_parent+0x22ba/0x2a90 fs/btrfs/tree-log.c:7141
+ btrfs_log_dentry_safe+0x59/0x80 fs/btrfs/tree-log.c:7180
+ btrfs_sync_file+0x9c1/0xe10 fs/btrfs/file.c:1959
+ vfs_fsync_range+0x141/0x230 fs/sync.c:188
+ generic_write_sync include/linux/fs.h:2794 [inline]
+ btrfs_do_write_iter+0x584/0x10c0 fs/btrfs/file.c:1705
+ do_iter_readv_writev+0x504/0x780 fs/read_write.c:741
+ vfs_writev+0x36f/0xde0 fs/read_write.c:971
+ do_pwritev+0x1b2/0x260 fs/read_write.c:1072
+ __do_compat_sys_pwritev2 fs/read_write.c:1218 [inline]
+ __se_compat_sys_pwritev2 fs/read_write.c:1210 [inline]
+ __ia32_compat_sys_pwritev2+0x121/0x1b0 fs/read_write.c:1210
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf7334579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5f265ac EFLAGS: 00000292 ORIG_RAX: 000000000000017b
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00000000200002c0
+RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+
+
 ---
- kernel/sched/core.c | 82 ++++++++++++++++++++++++++-------------------
- 1 file changed, 47 insertions(+), 35 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bcf2c4cc0522..b29cde5ded84 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -692,16 +692,11 @@ struct rq *task_rq_lock(struct task_struct *p, struct rq_flags *rf)
-  * RQ-clock updating methods:
-  */
- 
--static void update_rq_clock_task(struct rq *rq, s64 delta)
--{
--/*
-- * In theory, the compile should just see 0 here, and optimize out the call
-- * to sched_rt_avg_update. But I don't trust it...
-- */
--	s64 __maybe_unused steal = 0, irq_delta = 0;
- 
- #ifdef CONFIG_IRQ_TIME_ACCOUNTING
--	irq_delta = irq_time_read(cpu_of(rq)) - rq->prev_irq_time;
-+static inline s64 get_irq_delta(struct rq *rq, s64 delta)
-+{
-+	s64 irq_delta = irq_time_read(cpu_of(rq)) - rq->prev_irq_time;
- 
- 	/*
- 	 * Since irq_time is only updated on {soft,}irq_exit, we might run into
-@@ -720,7 +715,45 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- 	 */
- 	if (irq_delta > delta)
- 		irq_delta = delta;
-+	return irq_delta;
-+}
-+#else
-+static inline s64 get_irq_delta(struct rq *rq, s64 delta)
-+{
-+	return 0;
-+}
-+#endif
-+
-+#ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
-+static inline s64 get_steal_time(struct rq *rq, s64 delta)
-+{
-+	s64 steal;
- 
-+	if (!static_key_false(&paravirt_steal_rq_enabled))
-+		return 0;
-+	steal = paravirt_steal_clock(cpu_of(rq));
-+	steal -= rq->prev_steal_time_rq;
-+	if (unlikely(steal > delta))
-+		steal = delta;
-+	return steal;
-+}
-+#else
-+static inline s64 get_steal_time(struct rq *rq, s64 delta)
-+{
-+	return 0;
-+}
-+#endif
-+
-+static void update_rq_clock_task(struct rq *rq, s64 delta)
-+{
-+/*
-+ * In theory, the compile should just see 0 here, and optimize out the call
-+ * to sched_rt_avg_update. But I don't trust it...
-+ */
-+	s64 __maybe_unused steal = 0, irq_delta = 0;
-+
-+#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-+	irq_delta = get_irq_delta(rq, delta);
- 	rq->prev_irq_time += irq_delta;
- 	delta -= irq_delta;
- 	psi_account_irqtime(rq->curr, irq_delta);
-@@ -728,12 +761,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- #endif
- #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
- 	if (static_key_false((&paravirt_steal_rq_enabled))) {
--		steal = paravirt_steal_clock(cpu_of(rq));
--		steal -= rq->prev_steal_time_rq;
--
--		if (unlikely(steal > delta))
--			steal = delta;
--
-+		steal = get_steal_time(rq, delta);
- 		rq->prev_steal_time_rq += steal;
- 		delta -= steal;
- 	}
-@@ -5547,23 +5575,6 @@ DEFINE_PER_CPU(struct kernel_cpustat, kernel_cpustat);
- EXPORT_PER_CPU_SYMBOL(kstat);
- EXPORT_PER_CPU_SYMBOL(kernel_cpustat);
- 
--/*
-- * The function fair_sched_class.update_curr accesses the struct curr
-- * and its field curr->exec_start; when called from task_sched_runtime(),
-- * we observe a high rate of cache misses in practice.
-- * Prefetching this data results in improved performance.
-- */
--static inline void prefetch_curr_exec_start(struct task_struct *p)
--{
--#ifdef CONFIG_FAIR_GROUP_SCHED
--	struct sched_entity *curr = (&p->se)->cfs_rq->curr;
--#else
--	struct sched_entity *curr = (&task_rq(p)->cfs)->curr;
--#endif
--	prefetch(curr);
--	prefetch(&curr->exec_start);
--}
--
- /*
-  * Return accounted runtime for the task.
-  * In case the task is currently running, return the runtime plus current's
-@@ -5573,6 +5584,7 @@ unsigned long long task_sched_runtime(struct task_struct *p)
- {
- 	struct rq_flags rf;
- 	struct rq *rq;
-+	s64 delta_exec = 0;
- 	u64 ns;
- 
- #if defined(CONFIG_64BIT) && defined(CONFIG_SMP)
-@@ -5598,11 +5610,11 @@ unsigned long long task_sched_runtime(struct task_struct *p)
- 	 * thread, breaking clock_gettime().
- 	 */
- 	if (task_current(rq, p) && task_on_rq_queued(p)) {
--		prefetch_curr_exec_start(p);
--		update_rq_clock(rq);
--		p->sched_class->update_curr(rq);
-+		delta_exec = sched_clock_cpu(cpu_of(rq)) - p->se.exec_start;
-+		delta_exec -= get_irq_delta(rq, delta_exec);
-+		delta_exec -= get_steal_time(rq, delta_exec);
- 	}
--	ns = p->se.sum_exec_runtime;
-+	ns = p->se.sum_exec_runtime + delta_exec;
- 	task_rq_unlock(rq, p, &rf);
- 
- 	return ns;
--- 
-2.45.2.505.gda0bf45e8d-goog
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
