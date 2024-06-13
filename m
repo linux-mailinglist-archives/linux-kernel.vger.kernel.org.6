@@ -1,92 +1,145 @@
-Return-Path: <linux-kernel+bounces-214096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A02907F5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 001AF907F5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 014BE285B6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:29:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF488285BA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E38D14D2BC;
-	Thu, 13 Jun 2024 23:29:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E1114D43B;
+	Thu, 13 Jun 2024 23:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZtjrlNte"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE45131E33
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EC75A4FD;
+	Thu, 13 Jun 2024 23:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718321344; cv=none; b=SZtp/ZPKSKoF1acXBg9UanRCRviReBd2QbmC88Aczu8Db5tpPDsqW2dNAG41cpoJ9PJlb+AQtcg7wmKtgIUJzJK0fUk9fOE5cm8bGXjVoOiiwtDVbSpXdITt5gUWAXA7dt7F1fsEz8Ra/NJ8ZvMPd/uJ4wqyyktCFnDugZQgMZA=
+	t=1718321449; cv=none; b=Ikk80dkzjQbqSNak06EbPOa26lq8o7R8MrfhvUaVzjJz1eK2Dtb19PMks4RMmi8PgLnmIVcRTZTkHD9Q7ZXznczFiCP7rqCPTiKemiMqQwELTQuDzz+ubR3zh4IdHy9OH2q989Q61hvZmS+z1e/r7NeIPjU5EeuXM8YpJ4M9Zbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718321344; c=relaxed/simple;
-	bh=8qRkv4JDhXNVbBxzzCAqYqap7zwZhPbwcUkX+pgF4ck=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nyTFQEplCxbW/JBxNY40aN7BXI7awgoIpBeMqKlVLRMFZXxgVicoFB4tGkS4Q7Nj8GjSJKemFil7dXgmrJs4HLpwsHObU39qKJgw8d1JI7KUN+k9VAbXZj1APN6O2frwmgx0MA5RDEk93U9PRPWpjaEjnx/eGKYWvHZnVFWyqzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-375ced380e4so15855745ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:29:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718321342; x=1718926142;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JNCFKE8KjRWgs0jjtF3OmdpVV4maq/X63oowejSXhNs=;
-        b=vGDtINOy1fWqmQz2Y36j3IT7gI2zqi9+yusxoabtlxpsL5BQoPPGbjepFYWKHdH6NH
-         Kvr7lh+MxMhB6DcEsTjMGfuQMk4iBSM5jYr+CZ7t1FVJoEEo7jTp+FgvYE/EBYSBZcry
-         4DPqQ2iotFKuaAhjDN1ZwzwZB9Ojw98VRyImhtbVyPGvG1NISOYLIXdDLVEcAK3ZdMlV
-         qxzvguqDiZbvs4sDEe1DEcfSiGm2QLemJf8lXl102gJ8A1AW1WRcuNi0TuCy5zbC6FVF
-         LYWB49GwAS95PtW8z76Sjw5RClnCNCWoGB6tWouG02HNJ5uDt7OoOOBoVb/jdWrG5XtG
-         LBlw==
-X-Gm-Message-State: AOJu0YxvdF0hbIq0RvoyZ9F/RLP9ImpirEreAVcg18wQYdYR2gTBY4Kc
-	p6zad/z+GWKR+iLAuiaZMgF4s47p70L1IrENHcDz4NjM6OONEUYDZ//DD0ijg9LnI7e2RO8Rzz6
-	lkvTsEc1NmlkCcZW6B+dklRw4svV3snK3tHGecGL3eUAVlA6QoxQ3jd0=
-X-Google-Smtp-Source: AGHT+IH0wMl0cGmiWLcSxhu41ruXfJkh+q+YfXVjSH21s+UVSrYmpwN0JSzspToac2S43DqDHD4/UOELK8UWTTcADFN0jKFuTvkd
+	s=arc-20240116; t=1718321449; c=relaxed/simple;
+	bh=PW00fcWzZ7rP+l8wtSRyUhUcthMcm78zijiC8gH1ZzQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uVicknJBq4KzoUReVGE6Opowgq2Ad7dUCpCxTFVSmw+YY1kpqz1sTsoJZbt7v+OcLuXFnUJBDzI5fwUR7D1HS8Bdx+t1m0IRnbjaaHpp+ZAAQ3Mg8uYVpnArCYZhyhwGYVuZDxOoDzJGprfaxXv3bfl8s6MvUk+lKQyEbX5RQ9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZtjrlNte; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1F9DC2BBFC;
+	Thu, 13 Jun 2024 23:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718321448;
+	bh=PW00fcWzZ7rP+l8wtSRyUhUcthMcm78zijiC8gH1ZzQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZtjrlNtei/CJSiX6UYG5KNZw73izRuSmLgW6A1GZEsLtaRKZQtHYNomLZTK9GNhnb
+	 ctaZmJz31OO7MhKgOyloDCSRsTVCQ+3pymkq++vM5g/ycWf8GL6sC9XILt/hqm1hN4
+	 u8lHbBjbxkwwFRKscoBM45TSTGv1ij52Ox2IUN8DcZrvbZNM5eOKMxd1RJDRDNDQwh
+	 21olhu2jjss3qs9lfSmbXZtoDpRBSeZWqXnerR22r1spRA4hNhRgB/oG9ZXebs5Mcd
+	 WjbOYVgj981QV1rjP5Tutpr6MxPKlhTEs4jJQ2/Kofj5DRn1fURfmmU5ZJ37suFRxw
+	 jDUBTjYRCc4Mg==
+From: SeongJae Park <sj@kernel.org>
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Marco Elver <elver@google.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Pekka Enberg <penberg@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-s390@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Sven Schnelle <svens@linux.ibm.com>
+Subject: Re: [PATCH v4 12/35] kmsan: Support SLAB_POISON
+Date: Thu, 13 Jun 2024 16:30:44 -0700
+Message-Id: <20240613233044.117000-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240613153924.961511-13-iii@linux.ibm.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4a:0:b0:375:a202:254d with SMTP id
- e9e14a558f8ab-375e0df97d8mr413065ab.1.1718321342405; Thu, 13 Jun 2024
- 16:29:02 -0700 (PDT)
-Date: Thu, 13 Jun 2024 16:29:02 -0700
-In-Reply-To: <c261e607-78da-4536-95e3-114b5d766918@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000396d68061acddd90@google.com>
-Subject: Re: [syzbot] [bluetooth?] WARNING in hci_conn_del
-From: syzbot <syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, paskripkin@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi Ilya,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
+On Thu, 13 Jun 2024 17:34:14 +0200 Ilya Leoshkevich <iii@linux.ibm.com> wrote:
 
-2024/06/13 23:28:26 ignoring optional flag "sandboxArg"="0"
-2024/06/13 23:28:27 parsed 1 programs
-2024/06/13 23:28:27 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
-mkdir(/syzcgroup) failed: 17
-mount(binfmt_misc) failed: 16
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
- (errno 16: Device or resource busy)
+> Avoid false KMSAN negatives with SLUB_DEBUG by allowing
+> kmsan_slab_free() to poison the freed memory, and by preventing
+> init_object() from unpoisoning new allocations by using __memset().
+> 
+> There are two alternatives to this approach. First, init_object()
+> can be marked with __no_sanitize_memory. This annotation should be used
+> with great care, because it drops all instrumentation from the
+> function, and any shadow writes will be lost. Even though this is not a
+> concern with the current init_object() implementation, this may change
+> in the future.
+> 
+> Second, kmsan_poison_memory() calls may be added after memset() calls.
+> The downside is that init_object() is called from
+> free_debug_processing(), in which case poisoning will erase the
+> distinction between simply uninitialized memory and UAF.
+> 
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+> ---
+>  mm/kmsan/hooks.c |  2 +-
+>  mm/slub.c        | 13 +++++++++----
+>  2 files changed, 10 insertions(+), 5 deletions(-)
+> 
+[...]
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -1139,7 +1139,12 @@ static void init_object(struct kmem_cache *s, void *object, u8 val)
+>  	unsigned int poison_size = s->object_size;
+>  
+>  	if (s->flags & SLAB_RED_ZONE) {
+> -		memset(p - s->red_left_pad, val, s->red_left_pad);
+> +		/*
+> +		 * Use __memset() here and below in order to avoid overwriting
+> +		 * the KMSAN shadow. Keeping the shadow makes it possible to
+> +		 * distinguish uninit-value from use-after-free.
+> +		 */
+> +		__memset(p - s->red_left_pad, val, s->red_left_pad);
+
+I found my build test[1] fails with below error on latest mm-unstable branch.
+'git bisect' points me this patch.
+
+      CC      mm/slub.o
+    /mm/slub.c: In function 'init_object':
+    /mm/slub.c:1147:17: error: implicit declaration of function '__memset'; did you mean 'memset'? [-Werror=implicit-function-declaration]
+     1147 |                 __memset(p - s->red_left_pad, val, s->red_left_pad);
+          |                 ^~~~~~~~
+          |                 memset
+    cc1: some warnings being treated as errors
+
+I haven't looked in deep, but reporting first.  Do you have any idea?
+
+[1] https://github.com/awslabs/damon-tests/blob/next/corr/tests/build_m68k.sh
 
 
-Tested on:
+Thanks,
+SJ
 
-commit:         d20f6b3d Merge tag 'net-6.10-rc4' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=108934a2980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
-dashboard link: https://syzkaller.appspot.com/bug?extid=b2545b087a01a7319474
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13f923e2980000
-
+[...]
 
