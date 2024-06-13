@@ -1,221 +1,318 @@
-Return-Path: <linux-kernel+bounces-213079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC2A906AD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:15:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE2E906AD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CECF1F2313A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:15:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B885B284FBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0111C142E95;
-	Thu, 13 Jun 2024 11:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A47143733;
+	Thu, 13 Jun 2024 11:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="fP9ojm/D";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TaMZADIa"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qclio1o2"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C121813C9C0;
-	Thu, 13 Jun 2024 11:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99779132135
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718277334; cv=none; b=Ud2+dqIm1Yk6BInrYIgzsOtb0oc2874TtkxvBFpj+Azfa2ZfQzH7242P8BZJtJxFPUdHXXlXyawJ+zjVmQe0783YF7/TPb/GJe5SJFPljyNM5id7PnSw+zJUl5l3UOCChKH5KS4KH07B4JBFS55WtVmQbgMKS8nSnoVn8o+M3Ic=
+	t=1718277439; cv=none; b=jQzAKYnwbGmS7VOCaKGctTyTGCO/sZ0XSwWRLRX8+6V7iY6sMlNxua5bNTPjw/BK2yi9ZRCbCnJB6YYXpbZv+h7qlN6gLU+5gF9jAUxpGTq4sfPH+XuebHHhrJf4ohbYmbZY/x2NKNJ38e4t3PuxwGxxWHs1PqbFcTle5rH/qK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718277334; c=relaxed/simple;
-	bh=0rqa/fHwKGmnIoA1MtAA/yL/+W5i/RGmhNKvuI9ctHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gp/DJ/wITRstiOfMtPvzu2Y/wD6AXw789KpWke3qXyovFRcdvKTOdRYzRQAsOL+qUvByQ8Em4BvegJpoEr3+U08Ieoz1zy3yIC5yoK4/jnID4V0HsbScZOs4PPTAnyWHj3yrHD165vIhMwv3usmchXP4NuMKZKlRIdRLGPK4ybY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=fP9ojm/D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TaMZADIa; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id EDD461380518;
-	Thu, 13 Jun 2024 07:15:30 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 13 Jun 2024 07:15:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718277330; x=1718363730; bh=0Wxo1KWcaI
-	+Qb9/p5w1SxDBWK8h/US2u4Q60jeymu50=; b=fP9ojm/DwGMBXctq/uO9wegv76
-	RzY7j06fgUwARiysF8orJZGzEPSVmfNezQa5WHITvUG013du2Z0c+5H2y352QEzF
-	V1Jk5Ff7XwrKDLmdWrFppkJlZzy8Vmsqe9OFMvBrxCyBjMs4QKwqopTldilQ8ZEy
-	a8UsHXsm3Tj828Ma41C7tKxBLDnr66qBay/lv5Yu4YSknJn50CdkPQq0KPDT4kui
-	d+pimju3AbaAedbTdzBItePj7EazVPxwvspYtVAn9dtolMdJUXwcUa9fBnSqDKg1
-	6/2aPfSZWwtWuoEbFzin2GjEToxpbO6OO20C4ee8nWqOGFnH3riDTr276LxQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718277330; x=1718363730; bh=0Wxo1KWcaI+Qb9/p5w1SxDBWK8h/
-	US2u4Q60jeymu50=; b=TaMZADIaDJzwTWJsRLoJfHNJkNC4PLbPjwEnEIb9HlUb
-	xUTLW+1n76zW1KG4xMgUk7BTP9BUHsQejV3iWxSQBEA67Qph7xw6BNnUaYcdELGM
-	Ag/mtIc+icHNmJQC3Ho0ZbdbBBD7Ix2TPNNTJ1dkpcYcdFb3JoFf7dPsSlmeQHDx
-	OOzBvSfhghNivYzFi6Meqiq5VOQdVAvM20KFcB1TLoq40O+d5HMwnrQ2ZHQ4Artm
-	u5yTOgJ5svDygC84KTnS+g4RU4IaN3UcDrL2blW3GkLA2aUuqNheH4sN0JJ4qFE+
-	BX/dEKNDQyX5lYTY/uZPQlyiu7R2KUOmcxvb0bZQQQ==
-X-ME-Sender: <xms:0tRqZm3HNRTpEm5nBwBgN1Ak0AqeSRZz0MG7icE9ipZ5lHMEkHB6kg>
-    <xme:0tRqZpHzg5Jf3c96O_GQ_Dr509vwIPH3wvr986hbLiBwhiTmu7lbfNW519DvYrb-t
-    QmtPAZIOjwA0A>
-X-ME-Received: <xmr:0tRqZu5SDy4zxNZj_EDOKXWr-fEyZj-BrbDbUGCrQK1JXYFwYIWYwII3IwI48sgNkovq8RayhDuMvppbAKsdTTeF05U9QwBiMLQkvQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedgfeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepgeehue
-    ehgfdtledutdelkeefgeejteegieekheefudeiffdvudeffeelvedttddvnecuffhomhgr
-    ihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
-X-ME-Proxy: <xmx:0tRqZn2PU30OTVsKUWc_94Sg0FkdxCju0vnA1FkDjIVwGclLgHQl8w>
-    <xmx:0tRqZpEq_ljdRTUml0Ck-kpXYizKwKF4Ip-fj46KBqu-HQwxqoDVYw>
-    <xmx:0tRqZg8CCbvoYLYLQt9bmmoy6_owdQH8KYrMpSgfjFWI7ZB3Dp5zyQ>
-    <xmx:0tRqZunrIBXyEkw6wK1khvhZp-xeNYJ_PKWEBAaMOC2LFG9jI5_hUg>
-    <xmx:0tRqZsYqExcfM26dwx2qj05Bett4hOmuVv4o6Kz1b6TmzuoxngSMyu-C>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 13 Jun 2024 07:15:29 -0400 (EDT)
-Date: Thu, 13 Jun 2024 13:15:27 +0200
-From: Greg KH <greg@kroah.com>
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: "Isaac J. Manjarres" <isaacmanjarres@google.com>,
-	stable@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Lu Baolu <baolu.lu@linux.intel.com>,
-	Tom Murphy <murphyt7@tcd.ie>,
-	Saravana Kannan <saravanak@google.com>,
-	Joerg Roedel <jroedel@suse.de>, kernel-team@android.com,
-	iommu@lists.linux-foundation.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5.15.y] iommu/dma: Trace bounce buffer usage when mapping
- buffers
-Message-ID: <2024061311-washable-ranch-abc5@gregkh>
-References: <2024012226-unmanned-marshy-5819@gregkh>
- <20240122203758.1435127-1-isaacmanjarres@google.com>
- <ZmrKZYJ0+z3mRZXx@hu-bibekkum-hyd.qualcomm.com>
+	s=arc-20240116; t=1718277439; c=relaxed/simple;
+	bh=zaLnXtjhSfMjwxXHUXTz+nqXne4h6uGPzcAAHGpZsK0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Xw/aKFHyjoOa49kDmIBVutfW2I4THP7Ec8XsCwd+5wEptPkTAyKgbEfrmdEnU+QIOqGAtYMPBcw282fzPHj3fsPlblxiHVgolUxAdQDkAmdHeEiDZ9snlYtHGqskYWjF1+g8S0r3CxXSBguRAwVe0ZRMVRdeJFWMggILQ4L6qDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qclio1o2; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ebe3bac675so8364941fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:17:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718277435; x=1718882235; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lRg9QU9KEyvIM7hg+h8JQRq1rNS69OHbVb2oGuE/2Vw=;
+        b=Qclio1o2C9JP1GeDOzy9FRaZSRHsYoK3vJdPLQYKRdrdgKoxguaClz9At4WcGnLYUb
+         m+0ilw3etZgd0YPJPFqt5/xRXzoxQvn8FAj4DpjopRsACgwJWGmAHGphNXctjq1qHYRt
+         ZZhUhQO3jn0PWF1QG1JFR3J414HHpFVsc0e/RxN5wxjlv1GwszBuFF+g++qvg9YmeKs6
+         oRublDQsw6NZhKHQeKEMwD871R3JV4tkIuTAcOzp4XtNE4JadbD8Aoa79mwDQ0lPpb4n
+         VgeJoepzhprig2/xA6HwTbSdhLvBxm5usnxtSYKvqKo4a0eHV0N/gI3Hv8IIem5WMx6d
+         WZiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718277435; x=1718882235;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lRg9QU9KEyvIM7hg+h8JQRq1rNS69OHbVb2oGuE/2Vw=;
+        b=Lr+11Iooa2Kz0nP/4V7hoyo6lV8Q0UcOFxWCA0BmSn9xqQqkEylKYZYmHkQB4NXYht
+         KT6GXE9clicA9MNUaAtNuFVM2SvX+Aqh+Cqv7NPGwJbxZNPCUJlwKHhBnlft/KQRLAhr
+         4mK1iz7NScY15E8fk5gVq1RHK2rjfj3Z5Axcu6v3HYbEdO8mr7ZnKsH7EF7IRj6hzeoN
+         LexkOQbpqSIbPOtsCRy/0JWkc/ZOJ8iQe0bvFb+UhttZ747zSYZ+IRDLDTPxVVuxQksK
+         HVs+npAj9v0qPRhGqj+HdQWZ9uaCUWPAcWm4JDwhSVIiBYAs6FAAc9dfiVE04VoIbacS
+         CMeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqAH/8HM6CbHKOybYel4PjX49IRfKvditFQ2D4pjJr5pR9A6JPc5cTChiivon2Ib0OgtREepZO91OIv9rv6WWRCmVFqWfGcz9QEZ+Z
+X-Gm-Message-State: AOJu0Yzrbz7u0S4lvMxpjk1WJBRWSvND7a+0iVdsRxFXgOXEaOE7+D0R
+	obBbDbqUALCCzeIjn7fnbZyElwNLmQy7+lSPkHy2BNkoUQxrP72QkWopZaAFsu0=
+X-Google-Smtp-Source: AGHT+IH4B65GpoKnV2+iqbQRge/DOF9VS0xG4DmrQy0bcpXk4rksSN3R9r+SKa/I+WNnGRzCuubh3A==
+X-Received: by 2002:a2e:2e18:0:b0:2ea:8d49:c063 with SMTP id 38308e7fff4ca-2ec02b833a9mr7435201fa.13.1718277434685;
+        Thu, 13 Jun 2024 04:17:14 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c8ad55sm1777841fa.127.2024.06.13.04.17.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 04:17:14 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 13 Jun 2024 14:17:10 +0300
+Subject: [PATCH RFC v2] drm/msm/dpu: Configure DP INTF/PHY selector
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmrKZYJ0+z3mRZXx@hu-bibekkum-hyd.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240613-dp-phy-sel-v2-1-99af348c9bae@linaro.org>
+X-B4-Tracking: v=1; b=H4sIADXVamYC/x2NwQ6CMBBEf4Xs2SVtIQU9mZj4AV4NMdCuskZbb
+ JVICP9u5fhmMm9miBSYIuyyGQKNHNm7BGqTgelbdyNkmxiUUKXQskA74NBPGOmBshPamrImWxW
+ QBkOgK39X2RlOxwM0Kew5vn2Y1oNRrlVyFcmllJKirHJZ17oSW5T4+rC5dHcfWmdp/yd2Jjf+C
+ c2yLD/JjptWrAAAAA==
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7931;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=hMo4/f/X4bTvPKBSY1eiPzqCzsv0HlfgBHiWpPsAB+A=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmatU5p8Vmt1ZBzaa2WuGh6VVAHU4Zc48m3ZwjO
+ X5UV1r1hW6JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZmrVOQAKCRCLPIo+Aiko
+ 1ahOCACMePI9NdSjS7z9SGdbjxqBdBYT6C5PN6TLg2aam5taE06jX+6+I87P8FQucTTyHcz03eu
+ /3orohBbVWvzPl0lDT08/7Cq3GPnJxSyOYAm+plYxE8BHiMixTqgnu4/J06gn3vM5XdoLPgZVeI
+ tp16EvEcTBvP5tkSIs8CoVCx5figzwRMDibOVcUcYSLv9wMRUDvhhgJx3UkNy2t7eNvr8YCkmKW
+ 1GLD1VgoCvuquVCBJR+UGPjc/QB7k1LZ8m9XF5sZzqx5U6xiQqdVRIX5tD5xrWKdQUBUBpQPyub
+ WQWyI+kLD+22VArXFBfqSTDVNf2h8Dgj84iBO+L35btfv6kb
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Thu, Jun 13, 2024 at 04:01:01PM +0530, Bibek Kumar Patro wrote:
-> On Mon, Jan 22, 2024 at 12:37:54PM -0800, Isaac J. Manjarres wrote:
-> > When commit 82612d66d51d ("iommu: Allow the dma-iommu api to
-> > use bounce buffers") was introduced, it did not add the logic
-> > for tracing the bounce buffer usage from iommu_dma_map_page().
-> > 
-> > All of the users of swiotlb_tbl_map_single() trace their bounce
-> > buffer usage, except iommu_dma_map_page(). This makes it difficult
-> > to track SWIOTLB usage from that function. Thus, trace bounce buffer
-> > usage from iommu_dma_map_page().
-> > 
-> > Fixes: 82612d66d51d ("iommu: Allow the dma-iommu api to use bounce buffers")
-> > Cc: stable@vger.kernel.org # v5.15+
-> > Cc: Tom Murphy <murphyt7@tcd.ie>
-> > Cc: Lu Baolu <baolu.lu@linux.intel.com>
-> > Cc: Saravana Kannan <saravanak@google.com>
-> > Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
-> > Link: https://lore.kernel.org/r/20231208234141.2356157-1-isaacmanjarres@google.com
-> > Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> > (cherry picked from commit a63c357b9fd56ad5fe64616f5b22835252c6a76a)
-> > Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
-> > ---
-> >  drivers/iommu/dma-iommu.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> > index 48c6f7ff4aef..8cd63e6ccd2c 100644
-> > --- a/drivers/iommu/dma-iommu.c
-> > +++ b/drivers/iommu/dma-iommu.c
-> > @@ -25,6 +25,7 @@
-> >  #include <linux/vmalloc.h>
-> >  #include <linux/crash_dump.h>
-> >  #include <linux/dma-direct.h>
-> > +#include <trace/events/swiotlb.h>
-> >  
-> >  struct iommu_dma_msi_page {
-> >  	struct list_head	list;
-> > @@ -817,6 +818,8 @@ static dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
-> >  		void *padding_start;
-> >  		size_t padding_size, aligned_size;
-> >  
-> > +		trace_swiotlb_bounced(dev, phys, size, swiotlb_force);
-> > +
-> 
-> Hi, this backported patch trying to access swiotlb_force variable is
-> causing a build conflict where CONFIG_SWIOTLB is not enabled.
-> 
-> In file included from kernel/drivers/iommu/dma-iommu.c:28:
-> kernel/include/trace/events/swiotlb.h:15:9: error: declaration of 'enum SWIOTLB_NO_FORCE' will not be visible outside of this function [-Werror,-Wvisibility]
->                  enum swiotlb_force swiotlb_force),
->                       ^
-> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
-> #define swiotlb_force SWIOTLB_NO_FORCE
->                       ^
-> In file included from kernel/drivers/iommu/dma-iommu.c:28:
-> kernel/include/trace/events/swiotlb.h:15:9: error: declaration of 'enum SWIOTLB_NO_FORCE' will not be visible outside of this function [-Werror,-Wvisibility]
-> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
-> #define swiotlb_force SWIOTLB_NO_FORCE
->                       ^
-> In file included from kernel/drivers/iommu/dma-iommu.c:28:
-> kernel/include/trace/events/swiotlb.h:15:9: error: declaration of 'enum SWIOTLB_NO_FORCE' will not be visible outside of this function [-Werror,-Wvisibility]
-> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
-> #define swiotlb_force SWIOTLB_NO_FORCE
->                       ^
-> In file included from kernel/drivers/iommu/dma-iommu.c:28:
-> kernel/include/trace/events/swiotlb.h:15:9: error: declaration of 'enum SWIOTLB_NO_FORCE' will not be visible outside of this function [-Werror,-Wvisibility]
-> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
-> #define swiotlb_force SWIOTLB_NO_FORCE
->                       ^
-> kernel/drivers/iommu/dma-iommu.c:865:42: error: argument type 'enum SWIOTLB_NO_FORCE' is incomplete
->                                        trace_swiotlb_bounced(dev, phys, size, swiotlb_force);
->                                                                               ^~~~~~~~~~~~~
-> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
-> #define swiotlb_force SWIOTLB_NO_FORCE
->                       ^~~~~~~~~~~~~~~~
-> kernel/include/trace/events/swiotlb.h:15:9: note: forward declaration of 'enum SWIOTLB_NO_FORCE'
-> enum swiotlb_force swiotlb_force),
->      ^
-> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
-> #define swiotlb_force SWIOTLB_NO_FORCE
-> 
-> --------------------------------------------------------------------------------------------------------------------------------------------------
-> 
-> I have a simple proposed fix which can resolve this compile time conflict when CONFIG_SWIOTLB is disabled.
-> 
-> --- a/include/trace/events/swiotlb.h
-> +++ b/include/trace/events/swiotlb.h
-> @@ -7,6 +7,7 @@
-> 
->  #include <linux/tracepoint.h>
-> 
-> +#ifdef CONFIG_SWIOTLB
->  TRACE_EVENT(swiotlb_bounced,
-> 
->         TP_PROTO(struct device *dev,
-> @@ -43,6 +44,9 @@ TRACE_EVENT(swiotlb_bounced,
->                         { SWIOTLB_FORCE,        "FORCE" },
->                         { SWIOTLB_NO_FORCE,     "NO_FORCE" }))
->  );
-> +#else
-> +#define trace_swiotlb_bounced(dev, phys, size, swiotlb_force)
-> +#endif /* CONFIG_SWIOTLB */
-> 
->  #endif /*  _TRACE_SWIOTLB_H */
-> 
-> 
+From: Bjorn Andersson <andersson@kernel.org>
 
-Why not just take whatever change upstream fixes this instead of a
-one-off change?
+Some platforms provides a mechanism for configuring the mapping between
+(one or two) DisplayPort intfs and their PHYs.
 
-thanks
+In particular SC8180X provides this functionality, without a default
+configuration, resulting in no connection between its two external
+DisplayPort controllers and any PHYs.
 
-greg k-h
+The change implements the logic for optionally configuring which PHY
+each of the DP INTFs should be connected to and marks the SC8180X DPU to
+program 2 entries.
+
+For now the request is simply to program the mapping 1:1, any support
+for alternative mappings is left until the use case arrise.
+
+Note that e.g. msm-4.14 unconditionally maps INTF 0 to PHY 0 on all
+rlatforms, so perhaps this is needed in order to get DisplayPort working
+on some other platforms as well.
+
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+Co-developed-by: Bjorn Andersson <andersson@kernel.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Removed entry from the catalog.
+- Reworked the interface of dpu_hw_dp_phy_intf_sel(). Pass two entries
+  for the PHYs instead of three entries.
+- It seems the register isn't present on sdm845, enabled the callback
+  only for DPU >= 5.x
+- Added a comment regarding the data being platform-specific.
+- Link to v1: https://lore.kernel.org/r/20230612221047.1886709-1-quic_bjorande@quicinc.com
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c | 39 +++++++++++++++++++++++++++---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h | 18 ++++++++++++--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h   |  7 ++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c    | 11 ++++++++-
+ 4 files changed, 69 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
+index 05e48cf4ec1d..a11fdbefc8d2 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
+@@ -231,8 +231,38 @@ static void dpu_hw_intf_audio_select(struct dpu_hw_mdp *mdp)
+ 	DPU_REG_WRITE(c, HDMI_DP_CORE_SELECT, 0x1);
+ }
+ 
++static void dpu_hw_dp_phy_intf_sel(struct dpu_hw_mdp *mdp,
++				   enum dpu_dp_phy_sel phys[2])
++{
++	struct dpu_hw_blk_reg_map *c = &mdp->hw;
++	unsigned int intf;
++	u32 sel = 0;
++
++	sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_INTF0, phys[0]);
++	sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_INTF1, phys[1]);
++
++	for (intf = 0; intf < 2; intf++) {
++		switch (phys[intf]) {
++		case DPU_DP_PHY_0:
++			sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY0, intf + 1);
++			break;
++		case DPU_DP_PHY_1:
++			sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY1, intf + 1);
++			break;
++		case DPU_DP_PHY_2:
++			sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY2, intf + 1);
++			break;
++		default:
++			/* ignore */
++			break;
++		}
++	}
++
++	DPU_REG_WRITE(c, MDP_DP_PHY_INTF_SEL, sel);
++}
++
+ static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
+-		unsigned long cap)
++		unsigned long cap, const struct dpu_mdss_version *mdss_rev)
+ {
+ 	ops->setup_split_pipe = dpu_hw_setup_split_pipe;
+ 	ops->setup_clk_force_ctrl = dpu_hw_setup_clk_force_ctrl;
+@@ -245,6 +275,9 @@ static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
+ 
+ 	ops->get_safe_status = dpu_hw_get_safe_status;
+ 
++	if (mdss_rev->core_major_ver >= 5)
++		ops->dp_phy_intf_sel = dpu_hw_dp_phy_intf_sel;
++
+ 	if (cap & BIT(DPU_MDP_AUDIO_SELECT))
+ 		ops->intf_audio_select = dpu_hw_intf_audio_select;
+ }
+@@ -252,7 +285,7 @@ static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
+ struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
+ 				      const struct dpu_mdp_cfg *cfg,
+ 				      void __iomem *addr,
+-				      const struct dpu_mdss_cfg *m)
++				      const struct dpu_mdss_version *mdss_rev)
+ {
+ 	struct dpu_hw_mdp *mdp;
+ 
+@@ -270,7 +303,7 @@ struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
+ 	 * Assign ops
+ 	 */
+ 	mdp->caps = cfg;
+-	_setup_mdp_ops(&mdp->ops, mdp->caps->features);
++	_setup_mdp_ops(&mdp->ops, mdp->caps->features, mdss_rev);
+ 
+ 	return mdp;
+ }
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
+index 6f3dc98087df..3a17e63b851c 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
+@@ -67,6 +67,13 @@ struct dpu_vsync_source_cfg {
+ 	u32 vsync_source;
+ };
+ 
++enum dpu_dp_phy_sel {
++	DPU_DP_PHY_NONE,
++	DPU_DP_PHY_0,
++	DPU_DP_PHY_1,
++	DPU_DP_PHY_2,
++};
++
+ /**
+  * struct dpu_hw_mdp_ops - interface to the MDP TOP Hw driver functions
+  * Assumption is these functions will be called after clocks are enabled.
+@@ -125,6 +132,13 @@ struct dpu_hw_mdp_ops {
+ 	void (*get_safe_status)(struct dpu_hw_mdp *mdp,
+ 			struct dpu_danger_safe_status *status);
+ 
++	/**
++	 * dp_phy_intf_sel - configure intf to phy mapping
++	 * @mdp: mdp top context driver
++	 * @phys: list of phys the DP interfaces should be connected to. 0 disables the INTF.
++	 */
++	void (*dp_phy_intf_sel)(struct dpu_hw_mdp *mdp, enum dpu_dp_phy_sel phys[2]);
++
+ 	/**
+ 	 * intf_audio_select - select the external interface for audio
+ 	 * @mdp: mdp top context driver
+@@ -148,12 +162,12 @@ struct dpu_hw_mdp {
+  * @dev:  Corresponding device for devres management
+  * @cfg:  MDP TOP configuration from catalog
+  * @addr: Mapped register io address of MDP
+- * @m:    Pointer to mdss catalog data
++ * @mdss_rev: dpu core's major and minor versions
+  */
+ struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
+ 				      const struct dpu_mdp_cfg *cfg,
+ 				      void __iomem *addr,
+-				      const struct dpu_mdss_cfg *m);
++				      const struct dpu_mdss_version *mdss_rev);
+ 
+ void dpu_hw_mdp_destroy(struct dpu_hw_mdp *mdp);
+ 
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
+index 5acd5683d25a..f1acc04089af 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
+@@ -60,6 +60,13 @@
+ #define MDP_WD_TIMER_4_LOAD_VALUE       0x448
+ #define DCE_SEL                         0x450
+ 
++#define MDP_DP_PHY_INTF_SEL             0x460
++#define MDP_DP_PHY_INTF_SEL_INTF0		GENMASK(3, 0)
++#define MDP_DP_PHY_INTF_SEL_INTF1		GENMASK(6, 3)
++#define MDP_DP_PHY_INTF_SEL_PHY0		GENMASK(9, 6)
++#define MDP_DP_PHY_INTF_SEL_PHY1		GENMASK(12, 9)
++#define MDP_DP_PHY_INTF_SEL_PHY2		GENMASK(15, 12)
++
+ #define MDP_PERIPH_TOP0			MDP_WD_TIMER_0_CTL
+ #define MDP_PERIPH_TOP0_END		CLK_CTRL3
+ 
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+index 1955848b1b78..9db5a784c92f 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+@@ -1102,7 +1102,7 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
+ 	dpu_kms->hw_mdp = dpu_hw_mdptop_init(dev,
+ 					     dpu_kms->catalog->mdp,
+ 					     dpu_kms->mmio,
+-					     dpu_kms->catalog);
++					     dpu_kms->catalog->mdss_ver);
+ 	if (IS_ERR(dpu_kms->hw_mdp)) {
+ 		rc = PTR_ERR(dpu_kms->hw_mdp);
+ 		DPU_ERROR("failed to get hw_mdp: %d\n", rc);
+@@ -1137,6 +1137,15 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
+ 		goto err_pm_put;
+ 	}
+ 
++	/*
++	 * We need to program DP <-> PHY relationship only for SC8180X.  If any
++	 * other platform requires the same kind of programming, or if the INTF
++	 * <->DP relationship isn't static anymore, this needs to be configured
++	 * through the DT.
++	 */
++	if (of_device_is_compatible(dpu_kms->pdev->dev.of_node, "qcom,sc8180x-dpu"))
++		dpu_kms->hw_mdp->ops.dp_phy_intf_sel(dpu_kms->hw_mdp, (unsigned int[]){ 1, 2, });
++
+ 	dpu_kms->hw_intr = dpu_hw_intr_init(dev, dpu_kms->mmio, dpu_kms->catalog);
+ 	if (IS_ERR(dpu_kms->hw_intr)) {
+ 		rc = PTR_ERR(dpu_kms->hw_intr);
+
+---
+base-commit: 03d44168cbd7fc57d5de56a3730427db758fc7f6
+change-id: 20240613-dp-phy-sel-1b06dc48ed73
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
