@@ -1,415 +1,373 @@
-Return-Path: <linux-kernel+bounces-212835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD02A90670E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:38:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C225C9066FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46E04B24C26
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:38:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42FE41F236AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4E91411C1;
-	Thu, 13 Jun 2024 08:36:37 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD3413D523;
-	Thu, 13 Jun 2024 08:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3763813D88F;
+	Thu, 13 Jun 2024 08:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fOhCO1gA"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68D213D531
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718267796; cv=none; b=XgqrWfWk/XX93h5daw2VrEPSJg9MTLgABEoNm/OxxpyWtcP0QqLFAafGCkJf+Tzl680GUPaGQBWcFF659gTIhJH3xTUrI/xQ8gWD828Ag0ZLuAJJTPOLc5bp5BA5S/zyfWU8uupR5VJ9Fn8VmkdWOSRvybRjoHRRBzziMhZhpiY=
+	t=1718267777; cv=none; b=MhngkfTbUe4GRgj+Zsskk3I9euK7ZCE+Mr8UxG7XGDTC8A2noy6qYCVD7Tdhpa25TWzI8GFhV8g5RHDDmR1lJ1wXh0XK7lRbsur4Hy8EpwX+6V+5YlOcQ1Q0/m/ZaV3sgSVCWydfMkWWW4P6aHuV84PXNsj99C/8XWVrXSn5tWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718267796; c=relaxed/simple;
-	bh=a09l5h73FaDd7vlH/86BhnM3rl737CKNI/vH4xhurWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O3xYxf9gK6xC3N5Mpz4HeWQCx4Mq7mSpbPgx0IrKmY3bKrG+NpG9iEnvEgBHZaleLt1rz0AsoXeeJ1tb0awTiwCvkyPZb6dmfjPefIWBSIUmRgG2WjtjIZvK0SEiXPxvPDvV4a17DRKwn5MuWtS0Xu2ksJ4J4TigY0A4Ir2bycQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.08,234,1712588400"; 
-   d="asc'?scan'208";a="207767857"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 13 Jun 2024 17:36:22 +0900
-Received: from [10.226.93.204] (unknown [10.226.93.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 422B94203313;
-	Thu, 13 Jun 2024 17:36:00 +0900 (JST)
-Message-ID: <322e7317-61dc-4f1e-8706-7db6f5f7a030@bp.renesas.com>
-Date: Thu, 13 Jun 2024 09:36:00 +0100
+	s=arc-20240116; t=1718267777; c=relaxed/simple;
+	bh=B+p84waxXOwElG0/87eHt/laWADkBk6xlYgmpwgMmxU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S6oPVuO+U1i/RITHn1LUYoZf1wA+2oO1x7q/CUzpIEt7YmfmdmZD+ibz7lDGgwXbXRho3KAe5ir/XEU3g1kHmDnIxja7oyKdFxpVLI8JLzQtAH0QEIjPD5Lh759D9T5Oi3ueRyU16gObcqqBNwCosNq8sRyPvsG2whDCpPRZEVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fOhCO1gA; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ebe6495aedso6398711fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:36:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718267772; x=1718872572; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ybIQ5CeAWwcGafjH4//aR+7GcflfnxnbdHeF4JEy5gs=;
+        b=fOhCO1gAmYExSLlCF/JODwFzoWVfSTIxqJdzLfaivaQNkGL5KK/71hGGtMJyLx32VI
+         DZ02GpvOTTTEn23T7eA1ufoFYfpN0aHqVOSqCtHyhXWZ7kreDxf49H+Th5+uYBSWSSf0
+         9xrZM8GjsgvC4Kln57Nhi4WLuj1czG80fqBdo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718267772; x=1718872572;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ybIQ5CeAWwcGafjH4//aR+7GcflfnxnbdHeF4JEy5gs=;
+        b=cuA/zOvNAbFdiCYif9ovsVuyYMHaHIotbeSCOsXU2MyWEsSA9bH5oEOtltF9wFwAUB
+         RCoL+TVlmkqjOWA24PtWttL4ClTPiQWymzP2T8D2fkWvd69/E9NhC9CIr0rH7Cw6qQ6W
+         FFH9Uf40CjHaguLLQOu70v3RcY66akQFlUzxMtcHjcVIlsxnyf32I4Tc+sJd9wO6IhIh
+         Xnd2i8P1RLPR4sJCBsvRKPuGThq0pMcnhPXnZFKNRe4abF8KpoggjMoZsiB9tuHm9aZ1
+         NKXyLNKk2LHWObbH9fPIKk35m5iau6The5ZlNrXKdgEhJQ21hRf52GybUpw/CVZRZdNA
+         Vh/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU/oDAgmUd2xd5KEab+4m0BduPMer4vmTlvENV6X5t/x1mtaDu4U587GHKvu4CXd/PHcTI3UJ3jKEqTza/Wu3Ds92ns3Qa63z359v8b
+X-Gm-Message-State: AOJu0Yxi7EQIoL8tR2LCFtBC2SSWKP70EaqF7yK/8rTe+Ie6tMxt4e92
+	wzjubT2Dmmrt2rtKcUoluSKNEYk6e7mp2BQ7phYTgR1Hk9uhRiWZuEnxkZnjuuaWu/gotkRDDvt
+	mg5q+2BKLKq1XPoNcV7vOv/R3fYptC3hvghbC
+X-Google-Smtp-Source: AGHT+IGMz0ZJMbYjSjQWA7KRhtlPsL+Cs6+uv48MtLgUAzgV0vU9/yghyhVPr647rsH0k2Jr1hfdruYMQ+IWpwmgdx0=
+X-Received: by 2002:ac2:562a:0:b0:52c:831d:7eb3 with SMTP id
+ 2adb3069b0e04-52c9a3c74b7mr2536749e87.18.1718267771892; Thu, 13 Jun 2024
+ 01:36:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 05/13] page_pool: convert to use netmem
-Content-Language: en-GB
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Sergey Shtylyov <s.shtylyov@omp.ru>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Nikolay Aleksandrov <razor@blackwall.org>,
- Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
- Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>,
- Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
-References: <20240613013557.1169171-1-almasrymina@google.com>
- <20240613013557.1169171-6-almasrymina@google.com>
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-Organization: Renesas Electronics Corporation
-In-Reply-To: <20240613013557.1169171-6-almasrymina@google.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------2BCbfj48rMDr1Ni41u40ZNJI"
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------2BCbfj48rMDr1Ni41u40ZNJI
-Content-Type: multipart/mixed; boundary="------------GGmF9Y2iOanb3ZPuNcD0T337";
- protected-headers="v1"
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Sergey Shtylyov <s.shtylyov@omp.ru>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Nikolay Aleksandrov <razor@blackwall.org>,
- Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
- Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>,
- Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
-Message-ID: <322e7317-61dc-4f1e-8706-7db6f5f7a030@bp.renesas.com>
-Subject: Re: [PATCH net-next v12 05/13] page_pool: convert to use netmem
-References: <20240613013557.1169171-1-almasrymina@google.com>
- <20240613013557.1169171-6-almasrymina@google.com>
-In-Reply-To: <20240613013557.1169171-6-almasrymina@google.com>
-
---------------GGmF9Y2iOanb3ZPuNcD0T337
-Content-Type: multipart/mixed; boundary="------------VLyD3IZiBv1Y2W5pY0JQYGkf"
-
---------------VLyD3IZiBv1Y2W5pY0JQYGkf
-Content-Type: text/plain; charset=UTF-8
+References: <20240605094843.4141730-1-wenst@chromium.org> <CAFLszTiZ8PUvxHx4kfLZf18RqSczRwxCmCxZ_y6J2rpu03pA=w@mail.gmail.com>
+ <CAGXv+5EWqzj3w=KaKBfviBXPms0baKx28S0n+bGZcLc3=fGK+g@mail.gmail.com>
+In-Reply-To: <CAGXv+5EWqzj3w=KaKBfviBXPms0baKx28S0n+bGZcLc3=fGK+g@mail.gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 13 Jun 2024 16:36:00 +0800
+Message-ID: <CAGXv+5Gt5B35OEvQva7sh=MEHU=QYGD3fWzxbK_ZT-K13pf81w@mail.gmail.com>
+Subject: Re: [PATCH] scripts/make_fit: Support decomposing DTBs
+To: Simon Glass <sjg@chromium.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 13/06/2024 02:35, Mina Almasry wrote:
-> Abstrace the memory type from the page_pool so we can later add support=
-
-
-s/Abstrace/Abstract/
-
-> for new memory types. Convert the page_pool to use the new netmem type
-> abstraction, rather than use struct page directly.
->=20
-> As of this patch the netmem type is a no-op abstraction: it's always a
-> struct page underneath. All the page pool internals are converted to
-> use struct netmem instead of struct page, and the page pool now exports=
-
-> 2 APIs:
->=20
-> 1. The existing struct page API.
-> 2. The new struct netmem API.
->=20
-> Keeping the existing API is transitional; we do not want to refactor al=
+On Thu, Jun 13, 2024 at 3:45=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
+rote:
+>
+> On Wed, Jun 12, 2024 at 4:01=E2=80=AFAM Simon Glass <sjg@chromium.org> wr=
+ote:
+> >
+> > Hi Chen-Yu,
+> >
+> > On Wed, 5 Jun 2024 at 03:48, Chen-Yu Tsai <wenst@chromium.org> wrote:
+> > >
+> > > The kernel tree builds some "composite" DTBs, where the final DTB is =
+the
+> > > result of applying one or more DTB overlays on top of a base DTB with
+> > > fdtoverlay.
+> > >
+> > > The FIT image specification already supports configurations having on=
+e
+> > > base DTB and overlays applied on top. It is then up to the bootloader=
+ to
+> > > apply said overlays and either use or pass on the final result. This
+> > > allows the FIT image builder to reuse the same FDT images for multipl=
+e
+> > > configurations, if such cases exist.
+> > >
+> > > The decomposition function depends on the kernel build system, readin=
+g
+> > > back the .cmd files for the to-be-packaged DTB files to check for the
+> > > fdtoverlay command being called. This will not work outside the kerne=
 l
-> the current drivers using the page pool at once.
->=20
-> The netmem abstraction is currently a no-op. The page_pool uses
-> page_to_netmem() to convert allocated pages to netmem, and uses
-> netmem_to_page() to convert the netmem back to pages to pass to mm APIs=
-,
->=20
-> Follow up patches to this series add non-paged netmem support to the
-> page_pool. This change is factored out on its own to limit the code
-> churn to this 1 patch, for ease of code review.
->=20
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
->=20
-> ---
->=20
-> v12:
-> - Fix allmodconfig build error. Very recently renesas/ravb_main.c added=
+> > > tree. The function is off by default to keep compatibility with possi=
+ble
+> > > existing users.
+> > >
+> > > To facilitate the decomposition and keep the code clean, the model an=
+d
+> > > compatitble string extraction have been moved out of the output_dtb
+> > > function. The FDT image description is replaced with the base file na=
+me
+> > > of the included image.
+> > >
+> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > > ---
+> > > This is a feature I alluded to in my replies to Simon's original
+> > > submission of the make_fit.py script [1].
+> > >
+> > > This is again made a runtime argument as not all firmware out there
+> > > that boot FIT images support applying overlays. Like my previous
+> > > submission for disabling compression for included FDT images, the
+> > > bootloader found in RK3399 and MT8173 Chromebooks do not support
+> > > applying overlays. Another case of this is U-boot shipped by developm=
+ent
+> > > board vendors in binary form (without upstream) in an image or in
+> > > SPI flash on the board that were built with OF_LIBFDT_OVERLAY=3Dn.
+> > > These would fail to boot FIT images with DT overlays. One such
+> > > example is my Hummingboard Pulse. In these cases the firmware is
+> > > either not upgradable or very hard to upgrade.
+> > >
+> > > I believe there is value in supporting these cases. A common script
+> > > shipped with the kernel source that can be shared by distros means
+> > > the distro people don't have to reimplement this in their downstream
+> > > repos or meta-packages. For ChromeOS this means reducing the amount
+> > > of package code we have in shell script.
+> > >
+> > > [1] https://lore.kernel.org/linux-kbuild/20231207142723.GA3187877@goo=
+gle.com/
+> > > [2]
+> > >
+> > >  scripts/Makefile.lib |  1 +
+> > >  scripts/make_fit.py  | 70 ++++++++++++++++++++++++++++++------------=
+--
+> > >  2 files changed, 49 insertions(+), 22 deletions(-)
+> >
+> > Reviewed-by: Simon Glass <sjg@chromium.org>
+> >
+> > Some possible nits / changes below
+> >
+> > >
+> > > diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> > > index 9f06f6aaf7fc..d78b5d38beaa 100644
+> > > --- a/scripts/Makefile.lib
+> > > +++ b/scripts/Makefile.lib
+> > > @@ -522,6 +522,7 @@ quiet_cmd_fit =3D FIT     $@
+> > >        cmd_fit =3D $(MAKE_FIT) -o $@ --arch $(UIMAGE_ARCH) --os linux=
+ \
+> > >                 --name '$(UIMAGE_NAME)' \
+> > >                 $(if $(findstring 1,$(KBUILD_VERBOSE)),-v) \
+> > > +               $(if $(FIT_DECOMPOSE_DTBS),--decompose-dtbs) \
+> > >                 --compress $(FIT_COMPRESSION) -k $< @$(word 2,$^)
+> > >
+> > >  # XZ
+> > > diff --git a/scripts/make_fit.py b/scripts/make_fit.py
+> > > index 263147df80a4..120f13e1323c 100755
+> > > --- a/scripts/make_fit.py
+> > > +++ b/scripts/make_fit.py
+> > > @@ -22,6 +22,11 @@ the entire FIT.
+> > >  Use -c to compress the data, using bzip2, gzip, lz4, lzma, lzo and
+> > >  zstd algorithms.
+> > >
+> > > +Use -d to decompose "composite" DTBs into their base components and
+> > > +deduplicate the resulting base DTBs and DTB overlays. This requires =
+the
+> > > +DTBs to be sourced from the kernel build directory, as the implement=
+ation
+> > > +looks at the .cmd files produced by the kernel build.
+> > > +
+> > >  The resulting FIT can be booted by bootloaders which support FIT, su=
+ch
+> > >  as U-Boot, Linuxboot, Tianocore, etc.
+> > >
+> > > @@ -64,6 +69,8 @@ def parse_args():
+> > >            help=3D'Specifies the architecture')
+> > >      parser.add_argument('-c', '--compress', type=3Dstr, default=3D'n=
+one',
+> > >            help=3D'Specifies the compression')
+> > > +    parser.add_argument('-d', '--decompose-dtbs', action=3D'store_tr=
+ue',
+> > > +          help=3D'Decompose composite DTBs into base DTB and overlay=
+s')
+> >
+> > I wonder if we should reserve -d for --debug? I don't have a strong
+> > opinion though.
+>
+> Seems reasonable. I'll make it use the capital -D then.
+>
+> > >      parser.add_argument('-E', '--external', action=3D'store_true',
+> > >            help=3D'Convert the FIT to use external data')
+> > >      parser.add_argument('-n', '--name', type=3Dstr, required=3DTrue,
+> > > @@ -140,12 +147,12 @@ def finish_fit(fsw, entries):
+> > >      fsw.end_node()
+> > >      seq =3D 0
+> > >      with fsw.add_node('configurations'):
+> > > -        for model, compat in entries:
+> > > +        for model, compat, files in entries:
+> > >              seq +=3D 1
+> > >              with fsw.add_node(f'conf-{seq}'):
+> > >                  fsw.property('compatible', bytes(compat))
+> > >                  fsw.property_string('description', model)
+> > > -                fsw.property_string('fdt', f'fdt-{seq}')
+> > > +                fsw.property('fdt', b''.join([b'fdt-%d\x00' % x for =
+x in files]))
+> >
+> > This looks right to me. It would be nice to use an f string but I
+> > don't know how to do that with bytes.
+>
+> Me neither. Switching the format to an f string doesn't work:
+>
+>   File "/ssd1/wenst/linux/src/scripts/make_fit.py", line 324, in <module>
+>     sys.exit(run_make_fit())
+>              ^^^^^^^^^^^^^^
+>   File "/ssd1/wenst/linux/src/scripts/make_fit.py", line 298, in run_make=
+_fit
+>     out_data, count, size =3D build_fit(args)
+>                             ^^^^^^^^^^^^^^^
+>   File "/ssd1/wenst/linux/src/scripts/make_fit.py", line 288, in build_fi=
+t
+>     finish_fit(fsw, entries)
+>   File "/ssd1/wenst/linux/src/scripts/make_fit.py", line 161, in finish_f=
+it
+>     fsw.property('fdt', b''.join([f'fdt-%d\x00' % x for x in files]))
+>                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> TypeError: sequence item 0: expected a bytes-like object, str found
 
->   a dependency on page_pool that I missed in my rebase. The dependency
->   calls page_pool_alloc() directly as it wants to set a custom gfp_mask=
-,
->   which is unique as all other drivers call a wrapper to that function.=
+    bytes(''.join(f'fdt-{x}\x00' for x in files), "ascii")
 
->   Fix it by adding netmem_to_page() in the driver.> - Fix printing netm=
-em trace printing (Pavel).
->=20
-> v11:
-> - Fix typing to remove sparse warning. (Paolo/Steven)
->=20
-> v9:
-> - Fix sparse error (Simon).
->=20
-> v8:
-> - Fix napi_pp_put_page() taking netmem instead of page to fix
->   patch-by-patch build error.
-> - Add net/netmem.h include in this patch to fix patch-by-patch build
->   error.
->=20
-> v6:
->=20
-> - Rebased on top of the merged netmem_ref type.
->=20
-> Cc: linux-mm@kvack.org
-> Cc: Matthew Wilcox <willy@infradead.org>
->=20
-> ---
->  drivers/net/ethernet/renesas/ravb_main.c |   5 +-
->  include/linux/skbuff_ref.h               |   4 +-
->  include/net/netmem.h                     |  15 ++
->  include/net/page_pool/helpers.h          | 120 ++++++---
->  include/net/page_pool/types.h            |  14 +-
->  include/trace/events/page_pool.h         |  30 +--
->  net/bpf/test_run.c                       |   5 +-
->  net/core/page_pool.c                     | 304 ++++++++++++-----------=
+Seems to work.
 
->  net/core/skbuff.c                        |   8 +-
->  9 files changed, 305 insertions(+), 200 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/eth=
-ernet/renesas/ravb_main.c
-> index c1546b916e4ef..093236ebfeecb 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -303,8 +303,9 @@ ravb_alloc_rx_buffer(struct net_device *ndev, int q=
-, u32 entry, gfp_t gfp_mask,
-> =20
->  	rx_buff =3D &priv->rx_buffers[q][entry];
->  	size =3D info->rx_buffer_size;
-> -	rx_buff->page =3D page_pool_alloc(priv->rx_pool[q], &rx_buff->offset,=
+ChenYu
 
-> -					&size, gfp_mask);
-> +	rx_buff->page =3D netmem_to_page(page_pool_alloc(priv->rx_pool[q],
-> +						       &rx_buff->offset,
-> +						       &size, gfp_mask));
->  	if (unlikely(!rx_buff->page)) {
->  		/* We just set the data size to 0 for a failed mapping which
->  		 * should prevent DMA from happening...
-
-[snip]
-
-> =20
-> -static inline struct page *page_pool_alloc(struct page_pool *pool,
-> -					   unsigned int *offset,
-> -					   unsigned int *size, gfp_t gfp)
-> +static inline netmem_ref page_pool_alloc(struct page_pool *pool,
-> +					 unsigned int *offset,
-> +					 unsigned int *size, gfp_t gfp)
->  {
->  	unsigned int max_size =3D PAGE_SIZE << pool->p.order;
-> -	struct page *page;
-> +	netmem_ref netmem;
-> =20
->  	if ((*size << 1) > max_size) {
->  		*size =3D max_size;
->  		*offset =3D 0;
-> -		return page_pool_alloc_pages(pool, gfp);
-> +		return page_pool_alloc_netmem(pool, gfp);
->  	}
-> =20
-> -	page =3D page_pool_alloc_frag(pool, offset, *size, gfp);
-> -	if (unlikely(!page))
-> -		return NULL;
-> +	netmem =3D page_pool_alloc_frag_netmem(pool, offset, *size, gfp);
-> +	if (unlikely(!netmem))
-> +		return 0;
-> =20
->  	/* There is very likely not enough space for another fragment, so app=
-end
->  	 * the remaining size to the current fragment to avoid truesize
-> @@ -140,7 +142,7 @@ static inline struct page *page_pool_alloc(struct p=
-age_pool *pool,
->  		pool->frag_offset =3D max_size;
->  	}
-> =20
-> -	return page;
-> +	return netmem;
->  }
-> =20
->  /**
-> @@ -154,7 +156,7 @@ static inline struct page *page_pool_alloc(struct p=
-age_pool *pool,
->   * utilization and performance penalty.
->   *
->   * Return:
-> - * Return allocated page or page fragment, otherwise return NULL.
-> + * Return allocated page or page fragment, otherwise return 0.
->   */
->  static inline struct page *page_pool_dev_alloc(struct page_pool *pool,=
-
->  					       unsigned int *offset,
-> @@ -162,7 +164,7 @@ static inline struct page *page_pool_dev_alloc(stru=
-ct page_pool *pool,
->  {
->  	gfp_t gfp =3D (GFP_ATOMIC | __GFP_NOWARN);
-> =20
-> -	return page_pool_alloc(pool, offset, size, gfp);
-> +	return netmem_to_page(page_pool_alloc(pool, offset, size, gfp));
->  }
-
-I find this API change confusing - why should page_pool_alloc() return a
-netmem_ref but page_pool_dev_alloc() return a struct page *?
-
-Is there any reason to change page_pool_alloc() anyway? It calls
-page_pool_alloc_pages() or page_pool_alloc_frag() as appropriate, both
-of which your patch already converts to wrappers around the appropriate
-_netmem() functions. In all instances where page_pool_alloc() is called
-in this patch, you wrap it with netmem_to_page() anyway, there are no
-calls to page_pool_alloc() added which actually want a netmem_ref.
-
-Thanks,
-
---=20
-Paul Barker
---------------VLyD3IZiBv1Y2W5pY0JQYGkf
-Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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3D
-=3DsIIN
------END PGP PUBLIC KEY BLOCK-----
-
---------------VLyD3IZiBv1Y2W5pY0JQYGkf--
-
---------------GGmF9Y2iOanb3ZPuNcD0T337--
-
---------------2BCbfj48rMDr1Ni41u40ZNJI
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZmqvcAUDAAAAAAAKCRDbaV4Vf/JGvUxW
-AP4uKbMQBWqrwm4N0a12WI8fJo+BUUCc25C9JJxwln5cIQEAkBtvIuJdTLFRhcetWpSP/iJbKgG5
-snTgszJnAOLlDAE=
-=U1fu
------END PGP SIGNATURE-----
-
---------------2BCbfj48rMDr1Ni41u40ZNJI--
+> > But do you need the inner [] ?
+>
+> Nope. Will remove.
+>
+> >
+> > >                  fsw.property_string('kernel', 'kernel')
+> > >      fsw.end_node()
+> > >
+> > > @@ -193,21 +200,9 @@ def output_dtb(fsw, seq, fname, arch, compress):
+> > >          fname (str): Filename containing the DTB
+> > >          arch: FIT architecture, e.g. 'arm64'
+> > >          compress (str): Compressed algorithm, e.g. 'gzip'
+> > > -
+> > > -    Returns:
+> > > -        tuple:
+> > > -            str: Model name
+> > > -            bytes: Compatible stringlist
+> > >      """
+> > >      with fsw.add_node(f'fdt-{seq}'):
+> > > -        # Get the compatible / model information
+> > > -        with open(fname, 'rb') as inf:
+> > > -            data =3D inf.read()
+> > > -        fdt =3D libfdt.FdtRo(data)
+> > > -        model =3D fdt.getprop(0, 'model').as_str()
+> > > -        compat =3D fdt.getprop(0, 'compatible')
+> > > -
+> > > -        fsw.property_string('description', model)
+> > > +        fsw.property_string('description', os.path.basename(fname))
+> > >          fsw.property_string('type', 'flat_dt')
+> > >          fsw.property_string('arch', arch)
+> > >          fsw.property_string('compression', compress)
+> > > @@ -215,7 +210,6 @@ def output_dtb(fsw, seq, fname, arch, compress):
+> > >          with open(fname, 'rb') as inf:
+> > >              compressed =3D compress_data(inf, compress)
+> > >          fsw.property('data', compressed)
+> > > -    return model, compat
+> > >
+> > >
+> > >  def build_fit(args):
+> > > @@ -235,6 +229,7 @@ def build_fit(args):
+> > >      fsw =3D libfdt.FdtSw()
+> > >      setup_fit(fsw, args.name)
+> > >      entries =3D []
+> > > +    fdts =3D collections.OrderedDict()
+> > >
+> > >      # Handle the kernel
+> > >      with open(args.kernel, 'rb') as inf:
+> > > @@ -243,12 +238,43 @@ def build_fit(args):
+> > >      write_kernel(fsw, comp_data, args)
+> > >
+> > >      for fname in args.dtbs:
+> > > -        # Ignore overlay (.dtbo) files
+> > > -        if os.path.splitext(fname)[1] =3D=3D '.dtb':
+> > > -            seq +=3D 1
+> > > -            size +=3D os.path.getsize(fname)
+> > > -            model, compat =3D output_dtb(fsw, seq, fname, args.arch,=
+ args.compress)
+> > > -            entries.append([model, compat])
+> > > +        # Ignore non-DTB (*.dtb) files
+> > > +        if os.path.splitext(fname)[1] !=3D '.dtb':
+> > > +            continue
+> > > +
+> > > +        # Get the compatible / model information
+> > > +        with open(fname, 'rb') as inf:
+> > > +            data =3D inf.read()
+> > > +        fdt =3D libfdt.FdtRo(data)
+> > > +        model =3D fdt.getprop(0, 'model').as_str()
+> > > +        compat =3D fdt.getprop(0, 'compatible')
+> > > +
+> > > +        if args.decompose_dtbs:
+> > > +            # Check if the DTB needs to be decomposed
+> > > +            path, basename =3D os.path.split(fname)
+> > > +            cmd_fname =3D os.path.join(path, f'.{basename}.cmd')
+> > > +            with open(cmd_fname, 'r', encoding=3D'ascii') as inf:
+> > > +                cmd =3D inf.read()
+> > > +
+> > > +            if 'scripts/dtc/fdtoverlay' in cmd:
+> > > +                # This depends on the structure of the composite DTB=
+ command
+> > > +                files =3D cmd.split()
+> > > +                files =3D files[files.index('-i')+1:]
+> >
+> > spaces around +
+>
+> Will fix.
+>
+> > > +            else:
+> > > +                files =3D [fname]
+> > > +        else:
+> > > +            files =3D [fname]
+> >
+> > I do wonder if the code from '# Get the compatible' to here would be
+> > better in a separate, documented function, to keep things easier to
+> > understand?
+>
+> I'll see what I can do. In that case I'll drop your Reviewed-by.
+>
+>
+> Thanks
+> ChenYu
+>
+> > > +
+> > > +        for fn in files:
+> > > +            if fn not in fdts:
+> > > +                seq +=3D 1
+> > > +                size +=3D os.path.getsize(fn)
+> > > +                output_dtb(fsw, seq, fn, args.arch, args.compress)
+> > > +                fdts[fn] =3D seq
+> > > +
+> > > +        files_seq =3D [fdts[fn] for fn in files]
+> > > +
+> > > +        entries.append([model, compat, files_seq])
+> > >
+> > >      finish_fit(fsw, entries)
+> > >
+> > > --
+> > > 2.45.1.288.g0e0cd299f1-goog
+> > >
+> >
+> > Regards,
+> > Simon
 
