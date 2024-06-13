@@ -1,98 +1,77 @@
-Return-Path: <linux-kernel+bounces-213351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74393907416
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:42:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 480D1907419
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E07FB260FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:42:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9761C23C67
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FA1144D1F;
-	Thu, 13 Jun 2024 13:42:44 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83AA144D28;
+	Thu, 13 Jun 2024 13:42:58 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5711448E4;
-	Thu, 13 Jun 2024 13:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7E2143C7E;
+	Thu, 13 Jun 2024 13:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718286164; cv=none; b=DxXqKSZWOku/j18lZ0IYxwb+hTfJv2pL/53ImdE/HotUYG7J9EmJlngl3T+WIx2Rf6k2W6UXMEcjZIGdgqtK1KJfsUBtGVOHE2kip9RRTB7nj4xhUIo4LLXe17I7StwUI/4nSdXEMTEHjcqaxqu/LlMI6M8ENOiREwVoFj/bvDU=
+	t=1718286178; cv=none; b=XwArnr5m3SYJPBofLaCcDz8BcIrsTAwJZzC8Xu5ggDZtj5CqFimx4aJOmnBUQEVkGSJ128C+ztRv150uey4/Ddkc8eEzu8Mr+auaCFsBWQXU05cRApeGJW4j48CYS4cnV4GERI4cLUaskUr8HhkIJHsp5qLnU2Kj5CDtQdPWP4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718286164; c=relaxed/simple;
-	bh=BYkU2H0S4zNO8fR5V5JXw4c7o2fqGO6rVne/z+EvD1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qCIP/QZXRjGKnwiowSF8LAAxhKLRRYTUKjmphwZI3LAINKYg0EPXNfAiUnoNQo5lRzV/PmvbFyUamirgJPv3iLdR5aSf3qkqduh6s70+T8ejfTHMhl0BwQ0ECK6PmobyKj03HQlrS9n2JXpUhYnbfdn4NidHDEKcgptbzZJDVlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D36EC2BBFC;
-	Thu, 13 Jun 2024 13:42:42 +0000 (UTC)
-Date: Thu, 13 Jun 2024 09:42:41 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
- Linux Regressions <regressions@lists.linux.dev>, Dan Carpenter
- <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: LTP tracing crashed on arm64 rk3399-rock-pi-4 - pc :
- ftrace_ops_test
-Message-ID: <20240613094241.549038df@rorschach.local.home>
-In-Reply-To: <CA+G9fYu+GbYyw5J0XBy_W8VcHPdEf5Yu-gV7nhZTZioz9G6q_A@mail.gmail.com>
-References: <CA+G9fYsSVJQZH=nM=1cjTc94PgSnMF9y65BnOv6XSoCG_b6wmw@mail.gmail.com>
-	<20240612125130.2c1d6d2d@rorschach.local.home>
-	<20240612171748.0bc6d9cb@rorschach.local.home>
-	<CA+G9fYu+GbYyw5J0XBy_W8VcHPdEf5Yu-gV7nhZTZioz9G6q_A@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718286178; c=relaxed/simple;
+	bh=Ec9s1B8/QF2gw96Rd/is0XIs6OGbUlCjx4IVYntIBkI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MhFjLYA74/4uVGL1H9YYXpXXA8ci3/y1ZT7CLdLGPhCSD2egIpUVkPKaAtjA1wOdPbseSipm+eA0bTn3U5KsBi1/7QBK0TagmVYoyiowl+pHCF33T51BAEw/tEBzxJ6E6Q3wyRQNJsKoju91GZyxS8FBgJ+ZBenftAUhN88OmiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W0NqH041mz6H78J;
+	Thu, 13 Jun 2024 21:41:31 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id D5589140B2F;
+	Thu, 13 Jun 2024 21:42:53 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Jun
+ 2024 14:42:53 +0100
+Date: Thu, 13 Jun 2024 14:42:52 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>, "Lorenzo
+ Pieralisi" <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, <linux-kernel@vger.kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	"Robert Richter" <rric@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 3/3] PCI: Use align and resource helpers, and SZ_* in
+ quirk_s3_64M()
+Message-ID: <20240613144252.000070f4@Huawei.com>
+In-Reply-To: <20240612085629.5015-4-ilpo.jarvinen@linux.intel.com>
+References: <20240612085629.5015-1-ilpo.jarvinen@linux.intel.com>
+	<20240612085629.5015-4-ilpo.jarvinen@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Thu, 13 Jun 2024 13:29:58 +0530
-Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+On Wed, 12 Jun 2024 11:56:29 +0300
+Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
 
-> > --- a/kernel/trace/fgraph.c
-> > +++ b/kernel/trace/fgraph.c
-> > @@ -641,7 +641,7 @@ int function_graph_enter(unsigned long ret, unsigned long func,
-> >         {
-> >                 for_each_set_bit(i, &fgraph_array_bitmask,
-> >                                          sizeof(fgraph_array_bitmask) * BITS_PER_BYTE) {
-> > -                       struct fgraph_ops *gops = fgraph_array[i];
-> > +                       struct fgraph_ops *gops = READ_ONCE(fgraph_array[i]);
-> >                         int save_curr_ret_stack;
-> >
-> >                         if (gops == &fgraph_stub)
-> >
-> >
-> > Because if the compiler decides to re-read gops from fgraph_array[i] after the
-> > above check for the following line that does:
-> >
-> >                         save_curr_ret_stack = current->curr_ret_stack;
-> >                         if (ftrace_ops_test(&gops->ops, func, NULL) &&
-> >                             gops->entryfunc(&trace, gops))
-> >                                 bitmap |= BIT(i);
-> >
-> >
-> > and gops now points to fgraph_stub, it will trigger this bug.
-> >
-> > Can you apply the above change and see if the bug goes away?  
-> 
-> I will apply this patch and run the test in a loop.
-> Since it is only seen once. Not sure I could validate this and confirm.
+> Use IS_ALIGNED(), resource_size(), and SZ_* defines in quirk_s3_64M().
+>=20
+> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-We could just look at the code that clang produced and see if it
-accesses the fgraph_array[] again. If this was the cause, it would show
-up it in the code.
-
-But regardless, I think I'm going to add that READ_ONCE() anyway,
-because it is legitimate for the compiler to do the above without it.
-
-Thanks,
-
--- Steve
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
