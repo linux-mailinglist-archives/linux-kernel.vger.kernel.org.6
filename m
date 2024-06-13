@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-213572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9073F90772D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:43:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1170907712
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B23D1F236C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:43:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3013EB22828
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E807E156230;
-	Thu, 13 Jun 2024 15:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7508314A4EF;
+	Thu, 13 Jun 2024 15:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="H2sbdGrW"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bWFHZS/g"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97A2149DFD;
-	Thu, 13 Jun 2024 15:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34A312EBCE;
+	Thu, 13 Jun 2024 15:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718293214; cv=none; b=NWfGk6y7Rqh62ZhjTxt/cGWtYBoTqzR/zjcONlgcH1g+hrq3WkQUwLj+scNpqEszFiaPmNC6r6Ai6SOLPyQ4YSQ0ddIggSHaP6TfFL9+ZWs2hePMt5Xgg8ByFZUEnhcoasFr/R8v/ExLpEi5FlDXDcFdunUZ5a/qnfCigHUUdjg=
+	t=1718293211; cv=none; b=lcNq9AOabRCw4DoDxCx8+d12O+vOtlnKuAt9Fxq/Ett8jVcGsJETlgNA8cQWoQ9Hl4sri/9ng9E6Jz1QvrNZlJEBYUZmMCgjdGcGcpuYz9aR3W6Jc1Iqp1XG0+p44xIaytTP8HubN55E8Yi1m2JhULRk3Zf/QTB7k6VWaAri6HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718293214; c=relaxed/simple;
-	bh=hd8sbg8tGqz1COtgGdWuFQfBNCggANb8Dl36KHM1HXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aG0VFZtZmmx6slk8JcCLHilZaixTlT+XzYMhXl8Qbnly2CdyDszFL5fZMooJ7oKhlL8KeCXxoUKZ0QOnJiicSis2qoUqATmvaAPPTgMLwFSmuOvU2OvUJJ3qMmTgpXBhHOsYvESqmeHpOT4mUs81YRgOQmSWKreb5/M6S4EdoxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=H2sbdGrW; arc=none smtp.client-ip=148.163.156.1
+	s=arc-20240116; t=1718293211; c=relaxed/simple;
+	bh=TS7j8OYTMgexxVYGN8ZxcxfDc5L85drPnyb9v4vf9FM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UUlHx2hkPstGwn3dflGmXbK9/YGp4HeFNaSgWueL7ID30eDRFd4ryha1g4gjcXhftxJ5xX2KHKRdTjBZ1YWfTr3+Dp9+4lx7B5/cu6Su3dDZPuG9DzJHG2qMLclRvgtItFRq0vKk0c4eIldiy2wge5XDSQBs4HAV2lZ+6Zg74Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bWFHZS/g; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DFPivk001998;
-	Thu, 13 Jun 2024 15:39:40 GMT
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DEQVaB026718;
+	Thu, 13 Jun 2024 15:39:41 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:content-transfer-encoding
-	:mime-version; s=pp1; bh=gbdYbORHBggEAMihYZ79uciBWOZ8cFup1GK6fqg
-	EVTE=; b=H2sbdGrWufioShsVoXmKMKYBAxxY9MI+Uy9Y9negvRX9423bbSSeoXX
-	VrnDB2ZSboL4Uem8EVlfbvPpnCJmA5YTljvv5QWeJ/wJNh1iVzi+Pmd8H4521hKk
-	ws2ygfpQYTCle6273BJnNQdm9uDfXc7ieU5HCdXyI/0a9qs3wus/Xqi8YJrk+rQW
-	DPcYd8II1QV7rafacfFFSDViulA+9BoWpTXSCkF2gABfSRr07/QDirP15hJlUXxD
-	NhjCAp1iyiphMnBYiqEUMH8FTA2LaE9IifuP3ETMGdjTgLujjMR2k8Cthrm29TYz
-	G6eOcJrDCV6BYJ6e1DdBqa10A/o8zGw==
+	:to:cc:subject:date:message-id:in-reply-to:references
+	:content-transfer-encoding:mime-version; s=pp1; bh=L2b4MdNWoGrmh
+	ueYrJgLdkWwOUUS/TDjtdF9PAJHumU=; b=bWFHZS/gCs3+ozyXGHsIpEgSVpzyh
+	bzelX599SlzpTGlgXKqkkTAC7MF0k5k7BqCp3QwEhA+Iaovt5FqaBZqF2dGjGC/0
+	kky7C0ii7uQwNvujLjMiYpa3CF40vJm3fcia3OgAk0yg8lZ1tKNXD93vFDDL6R+0
+	6vxudZ9Eo13YTozbVzDFCC85aZ9EkNkaqX3ZmMl2m9P/1zPR7NnB7WKZgIH8fS77
+	enhMDFDvQ9U0PCBOVoez3vwiMphgIInJTZSfw64J8OVolyar+1Eksm09tATgvG26
+	RcJAEPVlzEhn+SIfw4i0Tf8Ew2gn5gfSvtdBy8yDhWa1MMNfkDg36gcjg==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqq4rt36b-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqq4u236h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 15:39:41 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45DFde84009379;
+	Thu, 13 Jun 2024 15:39:40 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqq4u236c-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 13 Jun 2024 15:39:40 +0000 (GMT)
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45DFddrD026714;
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45DF3D9l020045;
 	Thu, 13 Jun 2024 15:39:39 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqq4rt365-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 15:39:39 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45DELP7M008731;
-	Thu, 13 Jun 2024 15:39:38 GMT
 Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn4b3rk01-1
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn34nh0bb-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 15:39:38 +0000
+	Thu, 13 Jun 2024 15:39:39 +0000
 Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45DFdX3C33292934
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45DFdXFd34603580
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Thu, 13 Jun 2024 15:39:35 GMT
 Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E24412006A;
-	Thu, 13 Jun 2024 15:39:32 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 6D0C520043;
+	Thu, 13 Jun 2024 15:39:33 +0000 (GMT)
 Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 60CDD20065;
+	by IMSVA (Postfix) with ESMTP id EBA3E2005A;
 	Thu, 13 Jun 2024 15:39:32 +0000 (GMT)
 Received: from black.boeblingen.de.ibm.com (unknown [9.155.200.166])
 	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
@@ -92,13 +93,15 @@ Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
         Roman Gushchin <roman.gushchin@linux.dev>,
         Sven Schnelle <svens@linux.ibm.com>,
         Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v4 00/35] kmsan: Enable on s390
-Date: Thu, 13 Jun 2024 17:34:02 +0200
-Message-ID: <20240613153924.961511-1-iii@linux.ibm.com>
+Subject: [PATCH v4 01/35] ftrace: Unpoison ftrace_regs in ftrace_ops_list_func()
+Date: Thu, 13 Jun 2024 17:34:03 +0200
+Message-ID: <20240613153924.961511-2-iii@linux.ibm.com>
 X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240613153924.961511-1-iii@linux.ibm.com>
+References: <20240613153924.961511-1-iii@linux.ibm.com>
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qnmHc0KAbWUlA4xk_JpMbkaaf2iKvy9B
-X-Proofpoint-GUID: yJiNbIz8eZt6EvVuayS5N8D-uKmwJYPf
+X-Proofpoint-GUID: xm45VOErXn2zx--ADqKb53zaUOSWviMh
+X-Proofpoint-ORIG-GUID: Z8_ju8nlqZv5xj4EN8MEBuP8KnX5onjx
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
@@ -110,150 +113,45 @@ MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-13_08,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- spamscore=0 mlxscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- lowpriorityscore=0 clxscore=1015 impostorscore=0 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ clxscore=1015 impostorscore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2405170001 definitions=main-2406130109
 
-v3: https://lore.kernel.org/lkml/20231213233605.661251-1-iii@linux.ibm.com/
-v3 -> v4: Rebase.
-          Elaborate why ftrace_ops_list_func() change is needed on
-          x64_64 (Steven).
-          Add a comment to the DFLTCC patch (Alexander P.).
-          Simplify diag224();
-          Improve __arch_local_irq_attributes style;
-          Use IS_ENABLED(CONFIG_KMSAN) for vmalloc area (Heiko).
-          Align vmalloc area on _SEGMENT_SIZE (Alexander G.).
+Architectures use assembly code to initialize ftrace_regs and call
+ftrace_ops_list_func(). Therefore, from the KMSAN's point of view,
+ftrace_regs is poisoned on ftrace_ops_list_func entry(). This causes
+KMSAN warnings when running the ftrace testsuite.
 
-v2: https://lore.kernel.org/lkml/20231121220155.1217090-1-iii@linux.ibm.com/
-v2 -> v3: Drop kmsan_memmove_metadata() and strlcpy() patches;
-          Remove kmsan_get_metadata() stub;
-          Move kmsan_enable_current() and kmsan_disable_current() to
-          include/linux/kmsan.h, explain why a counter is needed;
-          Drop the memset_no_sanitize_memory() patch;
-          Use __memset() in the SLAB_POISON patch;
-          Add kmsan-checks.h to the DFLTCC patch;
-          Add recursion check to the arch_kmsan_get_meta_or_null()
-          patch (Alexander P.).
+Fix by trusting the architecture-specific assembly code and always
+unpoisoning ftrace_regs in ftrace_ops_list_func.
 
-          Fix inline + __no_kmsan_checks issues.
-          New patch for s390/irqflags, that resolves a lockdep warning.
-          New patch for s390/diag, that resolves a false positive when
-          running on an LPAR.
-          New patch for STCCTM, same as above.
-          New patch for check_bytes_and_report() that resolves a false
-          positive that occurs even on Intel.
+The issue was not encountered on x86_64 so far only by accident:
+assembly-allocated ftrace_regs was overlapping a stale partially
+unpoisoned stack frame. Poisoning stack frames before returns [1]
+makes the issue appear on x86_64 as well.
 
-v1: https://lore.kernel.org/lkml/20231115203401.2495875-1-iii@linux.ibm.com/
-v1 -> v2: Add comments, sort #includes, introduce
-          memset_no_sanitize_memory() and use it to avoid unpoisoning
-          of redzones, change vmalloc alignment to _REGION3_SIZE, add
-          R-bs (Alexander P.).
+[1] https://github.com/iii-i/llvm-project/commits/msan-poison-allocas-before-returning-2024-06-12/
 
-          Fix building
-          [PATCH 28/33] s390/string: Add KMSAN support
-          with FORTIFY_SOURCE.
-          Reported-by: kernel test robot <lkp@intel.com>
-          Closes: https://lore.kernel.org/oe-kbuild-all/202311170550.bSBo44ix-lkp@intel.com/
+Reviewed-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+---
+ kernel/trace/ftrace.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Hi,
-
-This series provides the minimal support for Kernel Memory Sanitizer on
-s390. Kernel Memory Sanitizer is clang-only instrumentation for finding
-accesses to uninitialized memory. The clang support for s390 has already
-been merged [1].
-
-With this series, I can successfully boot s390 defconfig and
-debug_defconfig with kmsan.panic=1. The tool found one real
-s390-specific bug (fixed in master).
-
-Best regards,
-Ilya
-
-[1] https://reviews.llvm.org/D148596
-
-Ilya Leoshkevich (35):
-  ftrace: Unpoison ftrace_regs in ftrace_ops_list_func()
-  kmsan: Make the tests compatible with kmsan.panic=1
-  kmsan: Disable KMSAN when DEFERRED_STRUCT_PAGE_INIT is enabled
-  kmsan: Increase the maximum store size to 4096
-  kmsan: Fix is_bad_asm_addr() on arches with overlapping address spaces
-  kmsan: Fix kmsan_copy_to_user() on arches with overlapping address
-    spaces
-  kmsan: Remove a useless assignment from
-    kmsan_vmap_pages_range_noflush()
-  kmsan: Remove an x86-specific #include from kmsan.h
-  kmsan: Expose kmsan_get_metadata()
-  kmsan: Export panic_on_kmsan
-  kmsan: Allow disabling KMSAN checks for the current task
-  kmsan: Support SLAB_POISON
-  kmsan: Use ALIGN_DOWN() in kmsan_get_metadata()
-  kmsan: Do not round up pg_data_t size
-  mm: slub: Let KMSAN access metadata
-  mm: slub: Unpoison the memchr_inv() return value
-  mm: kfence: Disable KMSAN when checking the canary
-  lib/zlib: Unpoison DFLTCC output buffers
-  kmsan: Accept ranges starting with 0 on s390
-  s390/boot: Turn off KMSAN
-  s390: Use a larger stack for KMSAN
-  s390/boot: Add the KMSAN runtime stub
-  s390/checksum: Add a KMSAN check
-  s390/cpacf: Unpoison the results of cpacf_trng()
-  s390/cpumf: Unpoison STCCTM output buffer
-  s390/diag: Unpoison diag224() output buffer
-  s390/ftrace: Unpoison ftrace_regs in kprobe_ftrace_handler()
-  s390/irqflags: Do not instrument arch_local_irq_*() with KMSAN
-  s390/mm: Define KMSAN metadata for vmalloc and modules
-  s390/string: Add KMSAN support
-  s390/traps: Unpoison the kernel_stack_overflow()'s pt_regs
-  s390/uaccess: Add KMSAN support to put_user() and get_user()
-  s390/unwind: Disable KMSAN checks
-  s390: Implement the architecture-specific KMSAN functions
-  kmsan: Enable on s390
-
- Documentation/dev-tools/kmsan.rst   |   4 +-
- arch/s390/Kconfig                   |   1 +
- arch/s390/Makefile                  |   2 +-
- arch/s390/boot/Makefile             |   3 +
- arch/s390/boot/kmsan.c              |   6 ++
- arch/s390/boot/startup.c            |   7 ++
- arch/s390/boot/string.c             |  16 ++++
- arch/s390/include/asm/checksum.h    |   2 +
- arch/s390/include/asm/cpacf.h       |   3 +
- arch/s390/include/asm/cpu_mf.h      |   6 ++
- arch/s390/include/asm/irqflags.h    |  17 ++++-
- arch/s390/include/asm/kmsan.h       |  43 +++++++++++
- arch/s390/include/asm/pgtable.h     |   8 ++
- arch/s390/include/asm/string.h      |  20 +++--
- arch/s390/include/asm/thread_info.h |   2 +-
- arch/s390/include/asm/uaccess.h     | 111 ++++++++++++++++++++--------
- arch/s390/kernel/diag.c             |  10 ++-
- arch/s390/kernel/ftrace.c           |   2 +
- arch/s390/kernel/traps.c            |   6 ++
- arch/s390/kernel/unwind_bc.c        |   4 +
- drivers/s390/char/sclp.c            |   2 +-
- include/linux/kmsan.h               |  33 +++++++++
- include/linux/kmsan_types.h         |   2 +-
- kernel/trace/ftrace.c               |   1 +
- lib/zlib_dfltcc/dfltcc.h            |   1 +
- lib/zlib_dfltcc/dfltcc_util.h       |  28 +++++++
- mm/Kconfig                          |   1 +
- mm/kfence/core.c                    |  11 ++-
- mm/kmsan/core.c                     |   1 -
- mm/kmsan/hooks.c                    |  23 ++++--
- mm/kmsan/init.c                     |   7 +-
- mm/kmsan/instrumentation.c          |  11 +--
- mm/kmsan/kmsan.h                    |   9 +--
- mm/kmsan/kmsan_test.c               |   5 ++
- mm/kmsan/report.c                   |   8 +-
- mm/kmsan/shadow.c                   |   9 +--
- mm/slub.c                           |  17 ++++-
- tools/objtool/check.c               |   2 +
- 38 files changed, 361 insertions(+), 83 deletions(-)
- create mode 100644 arch/s390/boot/kmsan.c
- create mode 100644 arch/s390/include/asm/kmsan.h
-
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 65208d3b5ed9..c35ad4362d71 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -7407,6 +7407,7 @@ __ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
+ void arch_ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
+ 			       struct ftrace_ops *op, struct ftrace_regs *fregs)
+ {
++	kmsan_unpoison_memory(fregs, sizeof(*fregs));
+ 	__ftrace_ops_list_func(ip, parent_ip, NULL, fregs);
+ }
+ #else
 -- 
 2.45.1
 
