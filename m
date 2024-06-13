@@ -1,110 +1,139 @@
-Return-Path: <linux-kernel+bounces-213629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD85B907815
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:17:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF768907819
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 409DCB241B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 805081F2271B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4881448E6;
-	Thu, 13 Jun 2024 16:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CA5146585;
+	Thu, 13 Jun 2024 16:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UAbku8va"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="DZClKZ3z"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D21A23
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0911448E6
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718295467; cv=none; b=RJIJwmZQkpKhLwQqh2pM29Hn7bQEVQ8j637BGQ9Kp3MH99APF+SW1uXb0w+O/X9XasnaaO0VDonoKxxdH3mRoNZGQ3dHBYMOX9cWslhOl5LKojwHsvVo6mp7voQUZQU+gzSCypLKGK+nyGvUDDGyciJjVRkYzQCOvql6Ay5bT1g=
+	t=1718295513; cv=none; b=WdysXtqDGsxXw2RGskzm35wZO4H0SdmZ9GuIQSB7bNsPuv0uVFPLMWtwEF9YVli2R5sFtqSbJOA/5CgMs3tFzc1GRuM9HKshDIbu8p2PeEuacCqPXlLucCN22VJDxSU2+oyLrJiXxZmFWRHUHa+L4eSGAfWxZjcPR2Q4/2PW0y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718295467; c=relaxed/simple;
-	bh=NxetfL+8UA5elqSQR6Cen3UPmfvfE9TG7qcJTxAigXs=;
+	s=arc-20240116; t=1718295513; c=relaxed/simple;
+	bh=KZCa6znuMKXC8bkLoWWIPiVEbKqZN3WV5EwnSOH8WJ4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iGzPrNlrfOtTUXK69Upnw9dg+Fj4aJoRuXhHNo4nT4/ir6q7PcE4ENpvwLM5ObbwDAIk/viMnYXn48JIOi2zQEvl6ugVoTGRHjhSOosRrDQrCYBo2O1ZM2yomtB0J/CNXLnTtZWtC3bAfNRHyQv6O33m+QISjrS/U+u2XlzNz2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UAbku8va; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a63359aaaa6so175772066b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:17:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=e90KlCJ3wLStDZYowyc0CrMheXaTNDlOdWam7qbaxnAkos9fm2W6VjpjCHVXGTT2p3ESSve3xYJjeAHQfSpLLuSP1gA3Ynb0EaZ2BRyqyKCNuq0Zse+8y1T9cc1nG0fVTUi6EaBO7qApGNi5RElczEjLNByKCvnggVukgyrcAxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=DZClKZ3z; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfe1aa7cce2so1449176276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:18:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718295463; x=1718900263; darn=vger.kernel.org;
+        d=raspberrypi.com; s=google; t=1718295510; x=1718900310; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UBOcYXNoCGPTWNLnO75nM0G5NCzcYXH2vvEcL0OCf+o=;
-        b=UAbku8va09FbrXzbl8QncyS4ScME2TG1EZGLgETVnT3wDVzYrzl3ICLpBzopO/z9QX
-         dSIhmOYsEDhVXk7RrfYgMLt+o/nHom08akVpQtxTwCgWdvwY3am9CQAe2hlr2srIqXsh
-         KkxLJaatef3LNhNh8zowd84zUIdkw94zF1fa0=
+        bh=GZBbzPtIS9puZD9LsDe5Aioc6E2UGfepOTkRRP9sOes=;
+        b=DZClKZ3z+ATu1lMzTx7GBSAZidBtv/LCC3jJkRPgnpDPiug7a4XCXp9RRKvC9m+0tN
+         ZKSjuXW91JL65khSw+o9Xzd/JLdCRQzdfPyEGWOqy3Dte8XpcvX2h/OiZQLZCyEpvoYb
+         kUV+hHBPeM8YXvH5uMzlBwL+qCjcM8ncg2LWQAujcg23mYs2He5bubyrGUbn9R7v5IJb
+         yuZCkD2Gzb4q1GuRWC1zMmKGxq1mhHnrsc8Vh+vsjsizrRaQBcC4iHGj9cypIlm02mCX
+         jA5RoxYLSG6ZMBoVFtH8Y8Jx2+79JCM3w3ji14bRwnyRb+6wSL82HEHsKkQ+dezXh0/l
+         6SuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718295463; x=1718900263;
+        d=1e100.net; s=20230601; t=1718295510; x=1718900310;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UBOcYXNoCGPTWNLnO75nM0G5NCzcYXH2vvEcL0OCf+o=;
-        b=aTRHJgpYkhReyd0sS02X1WgXh1U450aO0zWJWU9aWdMrsRI4KYULX6mFf6mqp1qJrJ
-         4H21ym826ZMKwQmzwM6aB65z2KfEbvqvMtVjnP/ZmyyDI5lAOT0c1vwlV0CEP5CFAgQ7
-         +2cmKNIyasxAoQDdWCx+AAA/bTIRMW3RwOGSMeFvzazR7Mh4GsDz2Qb3kg+8nknwWJZs
-         uZBs6C8pbTKSuvySFi5DEy/qh8MTiPoKC76ZvU7mp8TUsmqP//LK47WpcMDIAp8PlEs9
-         pI4cWolE9TMx8Rf9Owsbg4jtHUVY/EnVAL1P+rXelItNzUbkmo3CE4vGN5JS/elf32g2
-         qSCQ==
-X-Gm-Message-State: AOJu0YwMhlLTn0R9Mxu8L7guaOCohFESyHJsVVBNgVNOY7nxgYLhd+6s
-	MpTIVcdwVQNKdmqz7beDxIOafza3AfYNNPR5xFdOBziRzw4WZOXKHL4FcLFXX7JIYNlu6Z3RGDQ
-	rL/gqDQ==
-X-Google-Smtp-Source: AGHT+IHVRlaCf4kVN7PvAgTRgImSZ/pPFHIfq4vMy4kZzWlR89s1mPRjg8faCoM2imY5wwdI42vx+Q==
-X-Received: by 2002:a17:906:b858:b0:a68:ece7:8db5 with SMTP id a640c23a62f3a-a6f60d2c9e0mr14073066b.31.1718295463247;
-        Thu, 13 Jun 2024 09:17:43 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db681fsm87224366b.72.2024.06.13.09.17.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 09:17:43 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57cb9a370ddso1134576a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:17:42 -0700 (PDT)
-X-Received: by 2002:a50:a6d8:0:b0:57c:6e94:a1a9 with SMTP id
- 4fb4d7f45d1cf-57cbd66c9d3mr182768a12.17.1718295462010; Thu, 13 Jun 2024
- 09:17:42 -0700 (PDT)
+        bh=GZBbzPtIS9puZD9LsDe5Aioc6E2UGfepOTkRRP9sOes=;
+        b=VU7GTsZAfy1RhU+kautloil5bLbl27B2pfXTSC9yryiN0EwABse8pLivPsfyZEevyY
+         Wvm/84lnEq8Eu6gCdnCSXunRRtfv3slHXYds6ieRpuQTNsHUX02VtUtL2riBAeuWS3bJ
+         RaYec3yQSHn6JPZyfLRV+rMJQ/3QmgiCjXF8j8ygWcUuOkK79GdYW++HHPxgfZZ4l/vr
+         EoJyrYM9GgWPw0FMMJwqNUY5XFUPjSQc7PnUoEofkBbT0e7+Nf33pXZ/tNTZZ+ndHP6Y
+         ZbI4A07vkNzFbZMTN+Pj83mRZUtv49N9gc8SFCx9O+Y7peSy/d5NqMM+laFeZD0Xn9qR
+         cy3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWr5vmt1WDFqGqdQxqVYAOJnOVcahZbDaaBQg9uzNaTp2qXCy7SbpRRqNy8BDN5nmuOfX4toqUYKTqyYs4cvcFUG6NnwdFRfSS2wgJv
+X-Gm-Message-State: AOJu0YwRo0iHq/E4QxPi0w7MQVJKaktzjwd1JVtx9m5GVF8+dg1I+UVd
+	Cz/xeKvDCfXC7oABD69Kh2yEJioaLz7VdsXEPZl0wuAEZtChIxaWV+DCFiXyUai/OiKfcZIF1n0
+	AxtmfMAN4omU+xux2dzf8+5DjVViLCYzMWGx9RL2zSbdASlYp
+X-Google-Smtp-Source: AGHT+IEZkQCpgQWnHPnqmV72SlpJSSYgy+aR2OvtQyA4oEofTAHLBz7bN09buIDJU6nT5s+qaUGywS58qIOzm6CBeeA=
+X-Received: by 2002:a25:18a:0:b0:dfa:c4b8:630e with SMTP id
+ 3f1490d57ef6-dfe66a6574dmr4785136276.33.1718295510404; Thu, 13 Jun 2024
+ 09:18:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wjQv_CSPzhjOMoOjGO3FmuHe5hzm6Ds69zZSFPa4PeuCA@mail.gmail.com>
- <ZmrTZozoi0t/tuva@duo.ucw.cz>
-In-Reply-To: <ZmrTZozoi0t/tuva@duo.ucw.cz>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 13 Jun 2024 09:17:24 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjqHL7KjOWYBVKFewcKPWL7CJxddWfJnvL3AfOqfR8vMg@mail.gmail.com>
-Message-ID: <CAHk-=wjqHL7KjOWYBVKFewcKPWL7CJxddWfJnvL3AfOqfR8vMg@mail.gmail.com>
-Subject: Re: Linux 6.10-rc1
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20240612105232.400361-1-abdulrasaqolawani@gmail.com>
+In-Reply-To: <20240612105232.400361-1-abdulrasaqolawani@gmail.com>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Thu, 13 Jun 2024 17:18:13 +0100
+Message-ID: <CAPY8ntDcSRbJL9q+RuVXU_CAw3QXLAqYrdN4D+V-B2Bdz4VRKA@mail.gmail.com>
+Subject: Re: [PATCH v2] media: i2c: ov5647: replacing of_node_put with __free(device_node)
+To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+Cc: sakari.ailus@linux.intel.com, jacopo@jmondi.org, mchehab@kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com, 
+	julia.lawall@inria.fr
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 13 Jun 2024 at 04:09, Pavel Machek <pavel@ucw.cz> wrote:
+On Wed, 12 Jun 2024 at 11:53, Abdulrasaq Lawani
+<abdulrasaqolawani@gmail.com> wrote:
 >
-> I tried ~6.10-rc1 for a week or so, and it something was very wrong with
-> the performance, likely to do with graphics. Thinkpad X220.
+> Replace instance of of_node_put with __free(device_node)
+> to protect against any memory leaks due to future changes
+> in control flow.
 >
-> It looked like GPU is working way harder than usual, leading to
-> machine overheating and thermal throttling, making machine _really_
-> unusable.
->
-> I went back to 6.9, and things seem better. At least "have to buy new
-> machine" feeling is gone.
->
-> Unfortunately, these GPU perfromance issues are not exactly to
-> confirm/debug. Hints would be welcome.
+> Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
 
-Well, it sounds like it is a big enough performance issue that you can
-definitely feel it fairly easily.
+Conditional ack had already been given on v1.
+I don't know this new __free well enough to give an R-b, but it looks sane.
 
-Which would make a bisection possible?
+Acked-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 
-                 Linus
+> ---
+>  drivers/media/i2c/ov5647.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
+> index 7e1ecdf2485f..0fb4d7bff9d1 100644
+> --- a/drivers/media/i2c/ov5647.c
+> +++ b/drivers/media/i2c/ov5647.c
+> @@ -1360,24 +1360,21 @@ static int ov5647_parse_dt(struct ov5647 *sensor, struct device_node *np)
+>         struct v4l2_fwnode_endpoint bus_cfg = {
+>                 .bus_type = V4L2_MBUS_CSI2_DPHY,
+>         };
+> -       struct device_node *ep;
+> +       struct device_node *ep __free(device_node) =
+> +               of_graph_get_endpoint_by_regs(np, 0, -1);
+>         int ret;
+>
+> -       ep = of_graph_get_endpoint_by_regs(np, 0, -1);
+>         if (!ep)
+>                 return -EINVAL;
+>
+>         ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &bus_cfg);
+>         if (ret)
+> -               goto out;
+> +               return ret;
+>
+>         sensor->clock_ncont = bus_cfg.bus.mipi_csi2.flags &
+>                               V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK;
+>
+> -out:
+> -       of_node_put(ep);
+> -
+> -       return ret;
+> +       return 0;
+>  }
+>
+>  static int ov5647_probe(struct i2c_client *client)
+> --
+> 2.43.0
+>
 
