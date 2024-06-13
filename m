@@ -1,100 +1,117 @@
-Return-Path: <linux-kernel+bounces-213623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A42F49077E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:10:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881CE9077EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 271AD285E2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:10:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95355B22CD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3F9145B03;
-	Thu, 13 Jun 2024 16:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35AE130A73;
+	Thu, 13 Jun 2024 16:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R9HOqj8R"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGawiitr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421A2A23;
-	Thu, 13 Jun 2024 16:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40805A23;
+	Thu, 13 Jun 2024 16:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718295006; cv=none; b=YZkYb1KkM+Q7r9Pb/+tkquWu6f4gQa8syCu/FOD5CjedJdSfb3Gjar/YaBOZznv5B5z3mX8q2SDMv/YIqo0+BweyBWTEafRK0KE+AnaONzVD9MB/49MC1JAT7qtqAj5rAIQU8wmsAX27ktL0L5pxU3mnNGANsOEyZqPz9SVDbHU=
+	t=1718295042; cv=none; b=j5U2JMmTLh8Lr7f4rkWZu9lgTpwHDhfS1AO2kx0fpEC/sX0z5WCITcCj0wFUT9iW5TtEabRcTTBqCY10M/YxUwkbjJ2f5vBqQubyS1S8ZbuiUwZcickKZXoj8NF2ZZRhyoOgyBPPPITrIzc2ZU4csJo8p482n5KKARxPKWb3scM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718295006; c=relaxed/simple;
-	bh=HzWixo5RmZhsbV2y5X28R62OYc7ao/16u7JRIiYCfE0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tCGTpfVvj9fSMo59f2PexIbztBCH1cKEc85iyu8FiiAztrzJktcikXzYmEuMKriKyAniP6LZar6SR1BV4K3ZMGDVzVXJybM+9vzCkXYvrdNSS7gCB7TOCXhjAOxD8V5Ohs/aYAo6/12eFKsnDtO+/+5RSzf5wwh59zKcle27plY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R9HOqj8R; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3c9cc681ee0so554783b6e.0;
-        Thu, 13 Jun 2024 09:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718295004; x=1718899804; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HzWixo5RmZhsbV2y5X28R62OYc7ao/16u7JRIiYCfE0=;
-        b=R9HOqj8RQKoJ3euQ38WCNHBDU6NpmteaSZvqE1l9V0Q6pFkjJjFtvw0xI2hifni84+
-         68tsO1fHAzZvE3D/bbvQrpTSx0w2faodbdcjQ6b1JrqBeEu7fI9TVn8JJ1CI9I3Sv3r3
-         jG2pN6ASbr+lGq9v2hyz/QMn0UR+jKeEpg7PVaranR/QHdNyB/UVygEykQDV9muGnBCV
-         BwK0GvYw4NHtqmHOfwQ25+l3jHIA43hf59Q7ffYcNh7iayt++x9XQqFIHS8SSuR3gT5F
-         A5zQH24WW0nISwwWKLEKkob+PqZhCgkNFGMct5MHub63kCbcFpqiu1S4HEzIeyBnI5ww
-         xnow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718295004; x=1718899804;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HzWixo5RmZhsbV2y5X28R62OYc7ao/16u7JRIiYCfE0=;
-        b=GC61HIMuC6p3kDsHZWv76re5bDYSbhUPeqqiHRwnJXKR7jYv5UiJTO/OYdb9Y0/vx1
-         TwRR1kNVHe5WUeivwgQocw3lPoSlKb+CnvqUjSaoxl8/in4M2gYK2p4WPfBE7DpclUAt
-         erFgiOvs2Z8DnT6EeQXbtJzJjo+YBIZ2j8iBqiSUAiEeQS5NRiT3ajK6GW2OBuH7FngB
-         uTicKRy09mrXafzjnfoNqB0VkEY8D+dlWrLHbg1C29xXYLtA3WnKfVIjbmsR4R2/KViV
-         vr8b90m7P3kV5ahsvUWh/mXdR1q54udFUxhlqF5xxYiWgsCFyPbIKSrBETth7ZymnvfP
-         o8+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVj6eNOQBSYs7815TmjL3ka52EAIZJ6ob2n5NldWQPe1ifa3yIY4WySofRWZkVQFT2yJ+XD/OcUZAalymNRt235/sd3on4BgGGXlb9FHHKVGeL0j27z8Fl0kz3qjlNcN/s+9i4LsNr6
-X-Gm-Message-State: AOJu0Yw9leg3UZBWDn/G0X2ea0WeBRqOnu+Jp7GnowPopFgOVj1IRXJo
-	MhL8bBi3VIu95vmzO/8G6CJnZehJEhh2v6+lc/JXDpE+J8n9LoPw8fzK69WaQNukqLemEyKZi9A
-	woCjPpARzDL9AoBoJ8h9xird8EVs=
-X-Google-Smtp-Source: AGHT+IH+Bi6NtcqxsKHAPZncuhjTLy486P0VaxPYnmqtM3swNG6QVuiL2cbPhnJUTmJHKYoMc4gmRe8XDaSOuEkp9z8=
-X-Received: by 2002:a05:6358:7e86:b0:19f:3fc3:1f8a with SMTP id
- e5c5f4694b2df-19fb4e6497cmr22960555d.8.1718295004203; Thu, 13 Jun 2024
- 09:10:04 -0700 (PDT)
+	s=arc-20240116; t=1718295042; c=relaxed/simple;
+	bh=hg3ZFX1ZdZkhCBl0cycfGdCXZQ4o5gfmME3tRBWguwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ij5dOvtD1DwK0BK5c78hukgtG3mK+EQZC2GfrdF842A51a9YMH5m7qxQUX/6HbUPTCHuLXXCEAyJ9RWnvC/L9Sk7IfSkrOyS11bsJ0pCFpfxl4usfuuawXaXTknqJ3JP0iIyTlYrKivwgZuDo49HtFiw0MLk2QkRnxIT9QgK+hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGawiitr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E47BBC2BBFC;
+	Thu, 13 Jun 2024 16:10:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718295041;
+	bh=hg3ZFX1ZdZkhCBl0cycfGdCXZQ4o5gfmME3tRBWguwM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BGawiitrSTl4D4rivmIxK2Oi0t9rHJYvZejrrvqg/cKKXIBd3EO7svZMgXA2PUpzl
+	 UP/u0Z0iqXD/ywWs2CrkUjY7ovZAvm0ZJpzDd5aX5Oms9EaHiZLletbxjOsA+4lYbr
+	 fwz5YexiuheI88zZR9yQwv0SBnNQipiVQmNTypdNkyt2eVPqRKku+QfV28PKZSAg3m
+	 x7MByJYAMGn7iezYywecmd+wUyjXeIbkHtv0YJ/vgYtFPzW2ILqzh4naVVwp2wB/5a
+	 Id7suEadAY11JqGsf6bfPQDdlIS53V0a+Esj+8wHpIFZewp/q+0I5/Vlnd+3iH5prr
+	 0TJnH/oMecg/g==
+Date: Thu, 13 Jun 2024 10:10:38 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Nilay Shroff <nilay@linux.ibm.com>, Keith Busch <kbusch@meta.com>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, hch@lst.de, sagi@grimberg.me,
+	davidgow@google.com, akpm@linux-foundation.org,
+	venkat88@linux.vnet.ibm.com
+Subject: Re: [PATCH 1/2] list: introduce a new cutting helper
+Message-ID: <ZmsZ_lKgOlB6Wypy@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240612155135.3060667-1-kbusch@meta.com>
+ <f0e4c51c-8227-4f5c-876f-38fbb4a0e1bf@linux.ibm.com>
+ <ZmrscxG51gFRDVlM@kbusch-mbp>
+ <c475f0d8-3bc9-4d65-8fce-586f4b75b4fc@linux.ibm.com>
+ <ZmsD_HDLBQAqOOU3@kbusch-mbp.dhcp.thefacebook.com>
+ <31eb40f9-d68d-4348-b1fd-3cf057939297@paulmck-laptop>
+ <ZmsGfle1aZQauzRb@kbusch-mbp.dhcp.thefacebook.com>
+ <73b994eb-c689-48e0-b09c-a414041a0525@paulmck-laptop>
+ <ZmsS9DZWl8TccvKz@kbusch-mbp.dhcp.thefacebook.com>
+ <046f42c5-34b5-41a2-9680-5ef86ef25c01@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608155316.451600-1-flintglass@gmail.com> <20240608155316.451600-2-flintglass@gmail.com>
- <CAKEwX=MiMMCrQCq2j1DDOR_U6==6pwbqqCnsaoigQ4aEqhgaaw@mail.gmail.com>
-In-Reply-To: <CAKEwX=MiMMCrQCq2j1DDOR_U6==6pwbqqCnsaoigQ4aEqhgaaw@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 13 Jun 2024 09:09:52 -0700
-Message-ID: <CAKEwX=MKbXw6=Qab_CR4c8pbSFyWERESFqhUUKXzeqJVMn8sCA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] mm: zswap: fix global shrinker memcg iteration
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <046f42c5-34b5-41a2-9680-5ef86ef25c01@paulmck-laptop>
 
-On Thu, Jun 13, 2024 at 9:08=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote=
-:
->
-> 5. At the end of the inner loop, the selected memcg is known to not
-> have its cleaner started yet (since it is online with zswap_pools_lock
-> held). Our selection will undo the cleaner and hold the memcg hostage
-> forever.
+On Thu, Jun 13, 2024 at 09:01:47AM -0700, Paul E. McKenney wrote:
+> 
+> Is there a way to avoid this issue by making this be a statement parameter
+> to a macro?
 
-/s/will undo/will not undo
+Something like this? It appears to work for the intended use, at least.
 
-My apologies - English is hard :)
+---
+diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+index 3dc1e58865f77..cdd2e5c0d5cdb 100644
+--- a/include/linux/rculist.h
++++ b/include/linux/rculist.h
+@@ -204,6 +204,30 @@ static inline void list_replace_rcu(struct list_head *old,
+ 	old->prev = LIST_POISON2;
+ }
+ 
++
++static inline void __list_cut_start(struct list_head *list,
++				    struct list_head *head,
++				    struct list_head *entry)
++{
++	list->next = entry;
++	list->prev = head->prev;
++	__list_del(entry->prev, head);
++}
++
++static inline void __list_cut_end(struct list_head *list,
++				  struct list_head *entry)
++{
++	entry->prev = list;
++	list->prev->next = list;
++}
++
++#define list_cut_rcu(list, head, entry, sync)		\
++	do {						\
++		__list_cut_start(list, head, entry);	\
++		sync;					\
++		__list_cut_end(list, entry); 		\
++	} while (0)
++
+ /**
+  * __list_splice_init_rcu - join an RCU-protected list into an existing list.
+  * @list:	the RCU-protected list to splice
+--
 
