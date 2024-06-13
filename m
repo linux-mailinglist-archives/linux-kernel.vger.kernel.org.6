@@ -1,137 +1,218 @@
-Return-Path: <linux-kernel+bounces-213190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB589906FD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9979906FF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ECFC1F220DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:23:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45B451F22ED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC7314659F;
-	Thu, 13 Jun 2024 12:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5591A143C7A;
+	Thu, 13 Jun 2024 12:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="1RW4gJcB"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T0Qrorxk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B4F146012;
-	Thu, 13 Jun 2024 12:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EBA44C6F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718281291; cv=none; b=Iqi7MwIR8xpG0Z5FJkQZ+a/ITwklsOGsQkC72KUi9zAs5wLdITk/G+RGPQ+4ktmegIXI/xXYl4LZ3m+bzinC9aD7J3fB17RnLvI0IL+ao1cK0ye+gI8CecxJo3jbKNgy1lVQb7oPiY0HnFpsrEmwlm68CppNjEISz1NSI10q3Ls=
+	t=1718281357; cv=none; b=sIlb+UMpzSX49uNiquApTMKT6wzW7ht1PVszk/OgBucK7eHMxRf2dI9TIIYsEzsPr9ORhvhdFZH22T2lQXHNrSvh9eEQbjcwtSBCozOLn7Z/Ltyz2cgW+M34UozwwE4ZvtkFdmrq6+BnzdF/zTAnJRc5p3gafRfvxKcqIvt0tnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718281291; c=relaxed/simple;
-	bh=Zf2QVQHYtZG5xZ24nVmTxdSDgQEn6skWNU7CifTDirE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c4vtrPeRQnT5cxGidXzCo1LY4InY5lrJhIZ4JnPl7OEArB0ARocqGsMtfEM2bY3jh7VVohmEAgTSYMOHL1nvtH+MQL/SG6/u2M7RwFkdmkBnBC5NdNMcAP9V3wZNs3jN7K08ZALxp6D3uVHhTnV0zimKgWxYZvhMDVAa/iF5BX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=1RW4gJcB; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718281289; x=1749817289;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Zf2QVQHYtZG5xZ24nVmTxdSDgQEn6skWNU7CifTDirE=;
-  b=1RW4gJcBdif/sLD30beWcWEooBbA5wCeYT55eLro3Puy+M2xA0SqhdZk
-   DYgv/OVumtwJAWFZBU3EuA92JEoGZAr0Pygdgk0GtGmsirH13e6SgYl/f
-   SGfc10JqqUjRKeJSquleLhKBnI7E3CIpdRrDs2Ev+KKsxUSvCAsaJ2ruT
-   fpptMvkwSrF8g70Qc+9+mM5k2G9PvIq+tAnmwT+nasjlorrZcVngCNMqV
-   wpK3DObmQoUIxgCZzjYPQp3bSHC5wHi/UJHJFM4y8ahNIhuWsixI+D+7V
-   xto4Wo21ZytYzSSR5a9TRCDm8dOuQK2CvknHWgA+WSBUMmPjYrq4JjRDI
-   g==;
-X-CSE-ConnectionGUID: 09xoRfvrQXi848V3FCW5zA==
-X-CSE-MsgGUID: 8vF5tNClTD+xXwD0werExw==
-X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
-   d="asc'?scan'208";a="27390180"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Jun 2024 05:21:23 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 13 Jun 2024 05:21:01 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Thu, 13 Jun 2024 05:20:58 -0700
-Date: Thu, 13 Jun 2024 13:20:41 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Lee Jones <lee@kernel.org>
-CC: Bryan Brattlof <bb@ti.com>, Conor Dooley <conor@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Vibhore Vardhan
-	<vibhore@ti.com>, <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/5] DONOTMERGE: dt-bindings: mfd: syscon: add TI's opp
- table compatible
-Message-ID: <20240613-suspend-synapse-4c7596888198@wendy>
-References: <20240612-ti-opp-updates-v1-0-3551c31d9872@ti.com>
- <20240612-ti-opp-updates-v1-3-3551c31d9872@ti.com>
- <20240612-unranked-unsalted-b32674a98d4a@spud>
- <20240612175457.b6q37nm6x4vsdnks@bryanbrattlof.com>
- <20240613120923.GP1504919@google.com>
+	s=arc-20240116; t=1718281357; c=relaxed/simple;
+	bh=tFRzojTDUSFvsvrvIfBq83Iefr9prpj0FsVzc4sRZcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tSEpZb0zxF/erhMDi/l4Dt3LtzJdtjoXSQoOfWjW1STJAHoBdw8SiYJoIMmGyfa39Ch9jK8eNlkv+D10xn7JfwE1FjzBZhsPsljz1It7FmTVjEHLKY7keW6soMsnoObyrn81+5ljZluzZOOsqDLTZead+ijsJJSASnr7UoUsSsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T0Qrorxk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718281354;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9bREAov0qeqdC1R+IP3cuQHiAdwt4/67Pzt58ig6NBc=;
+	b=T0QrorxkJ8SBUnxodgAJS5LDXK1Db6wbRC8+dWtS4ut/9HhdqplJ379b/KK0Kd0b6dZ60D
+	y4i9sUrlcyTvzAtzEaNWGXtacJVCeUm0WpQ6xKSdamQ2ZPiywq2FjG7+lNYVq742chAL7+
+	dKcY7zBaZurjFutR8SgSElUEzviBADE=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-284-vKUkstL5OQGYKKDsb8sg4A-1; Thu, 13 Jun 2024 08:22:33 -0400
+X-MC-Unique: vKUkstL5OQGYKKDsb8sg4A-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-52bbd8ac2c1so668596e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:22:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718281351; x=1718886151;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9bREAov0qeqdC1R+IP3cuQHiAdwt4/67Pzt58ig6NBc=;
+        b=LuY4DieihH8V7Zbyi+3islEbTyIoNBI0b92uDi8r+njRp78st1fRyYenhs16gf+IwG
+         aH2niabnbA9jxT/hZ+MuVH34Acl+K5BFPOcuMMib0cCYVDWCp3QHweNJ6lflFwAqfObC
+         WBLzrm5O/juKYuaRsNAc+YCjHDkNCbap5przie1fdEsTszMMpnusXHDQTaATOTkoETio
+         bn/UFhOQPO54LqWcCaZccLDbkcv78oA6GvKiGYZzJcCf853ruDtvm7W3rREKZhE3LvpN
+         xIWG/Qk2pFuvuJseOupcqPfMbIFqwKoWJitKyQnKe/OMKxzsIUAKdpYnTOJAhUoUIDwf
+         v6UA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6mpsKsQuXPVqoEV8Gw2bZ/IgbH0K9hocIjSXDolJWoBYMbp8Ml/zThw/I/IBstIhFQOM2H9/H/QFAQ4zIfs0PotjL90XLhFh5rXVb
+X-Gm-Message-State: AOJu0YymfNfPYE0drnpkpgM6//NIYqRH4K2wBTryygR34ManoKQcthxb
+	vAmoZFXIW9Wadm/hBz+l526rTGe0R1Ws3QQocZmdfSRCKjpEj6WtObsoSuLRWcuvNw/odIIhon5
+	PKOT8nAXKDZgc8iYyX6/K8CpKnKeMtN3qz2tBbz+S0bUxscMAx8L/q7fCK8CgZg==
+X-Received: by 2002:a05:6512:1095:b0:52c:90ba:96f9 with SMTP id 2adb3069b0e04-52c9a3fe0b1mr3885824e87.46.1718281351575;
+        Thu, 13 Jun 2024 05:22:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGcn6oO67nyAU+DJNaPbAgvWuyctBbodumVqTuS6V/O2nuBxav+b+bW9vkQfhc9KiQd2ydG4w==
+X-Received: by 2002:a05:6512:1095:b0:52c:90ba:96f9 with SMTP id 2adb3069b0e04-52c9a3fe0b1mr3885786e87.46.1718281350865;
+        Thu, 13 Jun 2024 05:22:30 -0700 (PDT)
+Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f602efc4sm23256965e9.15.2024.06.13.05.22.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 05:22:30 -0700 (PDT)
+Date: Thu, 13 Jun 2024 14:22:27 +0200
+From: Danilo Krummrich <dakr@redhat.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, rafael@kernel.org, mcgrof@kernel.org,
+	russell.h.weight@intel.com, ojeda@kernel.org, alex.gaynor@gmail.com,
+	wedsonaf@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] rust: add abstraction for struct device
+Message-ID: <Zmrkg7oOceWWV4nz@pollux>
+References: <2024061136-unbridle-confirm-c653@gregkh>
+ <Zmh3oN9sWamaYHOD@Boquns-Mac-mini.home>
+ <d74edb73-1dba-43f4-a50c-36354c39d758@redhat.com>
+ <2024061245-kangaroo-clothes-76e1@gregkh>
+ <ZmnAOfCUFkZqhDji@pollux>
+ <2024061214-dusk-channel-e124@gregkh>
+ <ZmnKXoBYf0qOcPU4@pollux>
+ <2024061254-scoured-gallantly-5e41@gregkh>
+ <ZmoLi57aT4EB_97W@pollux>
+ <2024061345-troubling-visiting-830a@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4dSQxpXPdh66Ws15"
-Content-Disposition: inline
-In-Reply-To: <20240613120923.GP1504919@google.com>
-
---4dSQxpXPdh66Ws15
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2024061345-troubling-visiting-830a@gregkh>
 
-On Thu, Jun 13, 2024 at 01:09:23PM +0100, Lee Jones wrote:
-> On Wed, 12 Jun 2024, Bryan Brattlof wrote:
->=20
-> > On June 12, 2024 thus sayeth Conor Dooley:
-> > > On Wed, Jun 12, 2024 at 11:41:52AM -0500, Bryan Brattlof wrote:
-> > > > The JTAG_USER_ID_USERCODE efuse address, which is located inside the
-> > > > WKUP_CTRL_MMR0 range holds information to identify the speed grades=
- of
-> > > > various components on TI's K3 SoCs. Add a compatible to allow the
-> > > > cpufreq driver to obtain the data to limit the maximum frequency fo=
-r the
-> > > > CPUs under Linux control.
-> > > >=20
-> > > > Signed-off-by: Bryan Brattlof <bb@ti.com>
-> > >=20
-> > > $subject: DONOTMERGE: dt-bindings: mfd: syscon: add TI's opp table co=
-mpatible
-> > >=20
-> > > Okay, if this isn't for merging then I won't Ack it.
-> >=20
-> > Ha! Nice. If I don't hear anything from anyone else I'll send a v2 in a=
-=20
-> > few hours.
->=20
-> What's the point of all the DONOTMERGE nonsense?
+On Thu, Jun 13, 2024 at 07:47:13AM +0200, Greg KH wrote:
+> On Wed, Jun 12, 2024 at 10:56:43PM +0200, Danilo Krummrich wrote:
+> > > > Oh, I fully agree with that. Let me try to explain a bit what this is about:
+> > > > 
+> > > > In Rust we have the `Send` and `Sync` marker traits. If a type (e.g. `Device`)
+> > > > implements `Send` it means that it's safe to pass an instance of this type
+> > > > between threads. Which is clearly something we want to do with a `Device`.
+> > > > 
+> > > > If I don't implement `Sync` for `Device` the compiler will prevent me from
+> > > > sending it between threads, e.g. by disallowing me to put an instance of
+> > > > `Device` into another data structure that is potentially passed between threads.
+> > > > 
+> > > > If I implement `Sync` I have to add a safety comment on why it is safe to pass
+> > > > `Device` between threads. And here we have what Boqun pointed out: `Device` can
+> > > > only be passed between threads when we're allowed to drop the last reference
+> > > > from any thread. In the case of the kernel this can be any non-atomic context,
+> > > > any context or any other subset. But I have to write something here that is
+> > > > a defined rule and can be relied on.
+> > > 
+> > > You really have two things here, a matrix of:
+> > > 	can transfer between threads
+> > > 	can call in irq context
+> > > that are independent and not related to each other at all.
+> > > 
+> > > Looks like Rust has built in support for the first.  And nothing for the
+> > > second as that is a very kernel-specific thing.
+> > 
+> > The language documentation defines `Send` as "can be transferred between
+> > threads", likely because it's written from a userspace perspective. But in
+> > the kernel context it actually means can be transferred between any context,
+> > thread, IRQ, etc.
+> > 
+> > If this isn't true, then we have to add a comment what is allowed (e.g. any
+> > non-atomic context) and what's not allowed.
+> 
+> That isn't good, you are going to have to change how `Send` works here
+> if you think it's safe to do stuff in all of those different contexts,
+> as that is almost never going to be true.
+> 
+> Why not just stick with "accessed from another thread" and leave it at
+> that, as again, the combinations here are a matrix, not a boolean yes/no
+> type of thing.
 
-AFAICT, TI live in fear of subsystem maintainers merging the dts patches,
-so they do this.
+I probably didn't phrase this very well, let me try again.
 
---4dSQxpXPdh66Ws15
-Content-Type: application/pgp-signature; name="signature.asc"
+What the compiler can do for us currently is to check whether a data structure
+is kept only in it's current context or whether it is send to another one - it
+can't distinguish context types though.
 
------BEGIN PGP SIGNATURE-----
+So, the actual definition of `Send` isn't really "can be send across threads",
+but "is not restricted to be kept in a single context".
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmrkGQAKCRB4tDGHoIJi
-0p4nAP430IFUcjQwXnJpjpJNoZ23njiywSse6cUKT5szXvWGFgEA7QsOTBsgoK0z
-SbwDcjhRJ+ruyIk8Pub0q/56L5mPTQw=
-=Qv5H
------END PGP SIGNATURE-----
+This means that if something is "is not restricted to be kept in a single
+context", but limited to certain context type, we, unfortunately, just have to
+make it `Send`, but document the restriction.
 
---4dSQxpXPdh66Ws15--
+> 
+> > > So let's not confuse the two please.  `Send` and `Sync` should be fine
+> > > for a device pointer to be passed around, as long as the reference is
+> > > incremented, as that's what all of the kernel C code does today.  Let's
+> > > not worry about irq context at all, that's independent and can be
+> > > handled at a later time, if at all, with a different "marking" as it's
+> > > independent of the current two things.
+> > 
+> > That'd be great, but as mentioned above, we only have `Send`, but nothing like
+> > `SendIrq`, hence `Send` really means any context.
+> > 
+> > Given your proposal, to just say it's fine to pass between (actual) threads and
+> > ignore IRQ context for now, we have to implement `Send`, but document that IRQ
+> > context is not covered.
+> > 
+> > We can either do that in the Rust abstraction as safety requirement, or we can,
+> > as proposed previously, add a comment to the C `struct device` documentation
+> > that implementers of release() must *at least* make sure that it can be called
+> > from any non-atomic context. We can then refer to that.
+> 
+> As someone who has written comments in code for functions that are
+> always ignored, I am happy to see you think that this is actually going
+> to do anything :)
+
+One advantage we have in Rust is, that if something has a specific requirement
+we mark it as `unsafe` and the user of the API has to put it in an `unsafe`
+block, which we require a sfety comment for, where the user of the API has to
+explain why this is the correct thing to do in this case.
+
+In other words we can technically enforce that people read the comment and
+explain how they ensure to fulfill what the comment asks for.
+
+> 
+> Heck, I have put huge messages in kernel code for when people implement
+> the api wrong[1], and they still ignore that at runtime.  Only way to get
+> it noticed is if you break someone's build.
+
+You only see the ones who still do it wrong. You probably don't have visibility
+of the ones who did it right due to your effort to write it down. :-)
+
+> 
+> So you all need to really define what `Send` means, as it sounds like a
+> userspace thing that isn't going to fit in well within the kernel model.
+
+Please see the explanation above.
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> [1] See the pr_debug() calls in kobject_cleanup() as proof, people just
+>     create an "empty" release function to shut them up, thinking that is
+>     the correct solution when obviously it is not...
+> 
+
 
