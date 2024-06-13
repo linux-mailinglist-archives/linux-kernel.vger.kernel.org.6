@@ -1,167 +1,117 @@
-Return-Path: <linux-kernel+bounces-214015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A75907DE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:13:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E7D907DEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD82A285223
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357A51C229BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26E413D24E;
-	Thu, 13 Jun 2024 21:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="OzNTpt+G"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB83A13BAE4;
+	Thu, 13 Jun 2024 21:15:17 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CEF1877;
-	Thu, 13 Jun 2024 21:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA82712FB2F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 21:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718313174; cv=none; b=a1KOR1ICI95ziX/nSk4QKVVmTsmTVqNAQaWqiJD49/yrBf/LCB41ps62IWTAC/Vpi9AzzndrBbVSR8b1PVTmOH06pQJM9fU9yFLxFI3uv79GND1IWhwnHwgMkWkEYnkVoTPMS1zeqYsM7dk76SpZ8V+FqZjwJMtkuXqy+4gEbbs=
+	t=1718313317; cv=none; b=ESeUh20NGzvvxKVniKN8Jsbho2oIcbyDjFcJhmot5VB4Wa4x6zgH3J6tVoouMHnBVd8lsiJeQcQPogegmL48xgDh/xF4w5pd/WNhQrEMVsQtXJ8f4IBT6HeMoKIxFGnio2l5FwMdCenCWez1hDTNY8MzKKZx+y62c9ZOIhJI6Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718313174; c=relaxed/simple;
-	bh=9tQSYSgyBhMSDag4XhwdfDSaNudYfQHJ7twOkn5RodU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gmT+crXiV3z2IZ4FRUp0JscQChr2V2X7FAAC01jmT7ekevq2G0x3HlTKP4dxhLfPg2qpcJefc9UA6uuo6JEQl3zlTqpmBSuqhX75t3lH/g0iaksUzTbdGGo6zAAJnRqVTFljxJ9X0Qr00qR9CjlvQ2zyi/1UsJLifzZXc8J5cbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=OzNTpt+G; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1718313163; x=1718917963; i=deller@gmx.de;
-	bh=CTyDv+PUvlT1RKfroSpzt4fEEz6wcmrhbKFLHShyk/s=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=OzNTpt+GNyXg5g/VPjh7EQ+GTHBLNXRBNuaRDtLYeENJ8FL+VrIHI5eSTqYp5uMO
-	 gYn9YPJr2WswRq8l0bbE9JTBnXf4syy3KgVq9MwZ/upXUCwNijoBAwwWWGWspAAJR
-	 jrI3w407I0XIyr0plyOHTq8i6FOE83GdoAL0ukdDze6XK42gSwaK9Z1bFZqArQLP/
-	 4ilzqpy4e3xvdgL2K8n0A4RSKrOn6S5peTnmGfGjN8Ubxq5RBYk73QE+9LroaJUk6
-	 0nrpHzL273qiEsnGTEbYslFV9Vlq32+oYu+Wztij4L6iB0ErPMC3U30KD+qWhVf39
-	 5p4VyXxezCpBmh9YfA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([83.135.217.92]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mj8mb-1swRpe1tqf-00l3MM; Thu, 13
- Jun 2024 23:12:43 +0200
-Message-ID: <3adfc015-b54e-4ff6-831c-60d55118079b@gmx.de>
-Date: Thu, 13 Jun 2024 23:12:42 +0200
+	s=arc-20240116; t=1718313317; c=relaxed/simple;
+	bh=jRCJn6pKK0raBeLscR5rO0fcRUe6TsRVT8ZrmD/VoN8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=U81xdipzelBLQq1XMFG+nr9LR3dSdgqSbx94yxN7PvOKMM4vh/z2VXkPEB6EzIrEMr/pO6T6cWXWi4EjPfi9XqJOLEV+fzci3b3NH2PFvFfdH9rCXPactk6te4dtPgt7Y4U6K0vIM+Ugm30KVTPF42qcdtJgX9iDhggkd853+qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3747f77bafcso14226225ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:15:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718313315; x=1718918115;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5p1KnB+2D55/YsDGcRX9ymfnMwBijEHG4ncB1kxeSsQ=;
+        b=tOdBBwMcn0P/lrX2/Qov44d5ouAOzAto2mwcNqBF78hv3xMFMPEJJlZwhUo8yAy3WA
+         ZJCXjWWNXhu9rg6aRdJrB2Gadx3l5cPTsBMyoyCELgI++H+lpTFC1IQJO5/1RyZq6m+U
+         mlCaaMT1ilnj3XBVW+y7SKMRswoCoOnmxYWgDHgeUns+wjwaIef3jgrrIxA7sLlnCb/v
+         DI5Cm3JI7IOvVes1HIXUJOu9eGhMNQa9wlXdu/vjyOl1mIr0F4VVPRGybxMamCbMp2uQ
+         veYbpMxrA16m9fV8VtgBSdFhRH+FQTnpM8HiT3i2e7tVVdq9JWemeYUUHrcTtteNbULF
+         E6dA==
+X-Gm-Message-State: AOJu0YyTxUqdraQZaMH2ZJWadmofQdkfZaxsQWLiaNvXukxQZz15RU/6
+	iaU6j4o/538gvhUZRbsZvU0wNA2Ai97hRtK3AjMh+Gxwp5ecf1inDMHSWWovJsZTSmGI+Q9Giyh
+	FIO/MfQ0Hfj+4MdQv1ypBBYtAIE6DvEigUxbfgWJqOjiRLmU0hQO0wxTqyA==
+X-Google-Smtp-Source: AGHT+IFV1XKEfEOUkEFRIdjPnJT+YbYnYqm2Jk6NOSjOJJGqedxB2NpO2OPz5unzFbIPGrFOdM6CdD9AhFErbnLoo05fRvoBfZWi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: vfb: add missing MODULE_DESCRIPTION() macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20240612-md-drivers-video-fbdev-vfb-v1-1-9bcbc286aac4@quicinc.com>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20240612-md-drivers-video-fbdev-vfb-v1-1-9bcbc286aac4@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jIUSLwIzNEpQok55aYoZICYDlbc7/7+gm3YIqdUOA2gwA8qy3nv
- 7FpWYj/aUzZTdd6gCOH7VSplne1xQBuirUbuafoa2ysu1mBvWe59NYfWxlmTX3ATHoVR/Yr
- OpjHj8IkEfQW2a++VB370xWF0n8o6IwDOHz1/lNhH+UvSkW7mZVjXgYqrKHXyDJV1Qv/yDP
- mvZl0dHnMG+fBlPN32k9A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FvdmspNuxYE=;1hmwyW7XroWlZjZTcT7rWWJOlux
- JtMiLQJWmbPnsICiW+BGaYnLZK3MicdcmcQbXgs4YFF3yUq6+UUTmynC5qQfgLj2P2coug0/1
- NQ11mdHxSxgxJ/7zer0Nqp2Ic7z7bJuirZf6MyobIdZvw1gHIu0ZdHSj9gFsntu+m5C8AswIn
- A05LbbWZgBwyTOeX2/GphJwRFNZqu0IB6xYbztur8DUoL63V17H2UQss+Kow67Jvs6DF/WngU
- HMHzD1hJcoWLWjCwN8Dydv66JDQdIcLPzYB7VNYyyqrieDYwt6b6rfuaVY00quorqnTbHqA7j
- YKNUkmC4P5ZFj/v1GHc4kuNquunTPEM9xW1PJxVznDe6MjKD6fzMiRPvbkxacedOTtLPS0kfP
- fEvaKWE45tI/ovcXMfcubjlK+8d9TCBj/1fgzdweCG/raJ49XkkYTrNjCyEiaFLxH+K4cIV66
- Khp5xsARKuNcymotKTZVRiJzs/4aGgvEu4djKso71eYqwePUnwmqT0EzVofBuDVSW2KPwioz3
- QWG8x/dEZycnPO0e03xMGpTXhYkw05fVaIwQ5ZbPVX+I9dyXSANFDifw3ziTyi2RTY5voXfCJ
- glCOFd7xdCeYjlWEW5xgzyFwWdemDCRMhQlEZTX6u391dpKT+HT82GwdE/R3PdZqVclwBoAQF
- 6ynuPN6ymqCWwtjCcPjqmukksd3oMxrliiRI29q6xzgkx84WQ9vyHc0P8Odh7u/a2hyuvirUv
- fLpuAmDpZQ4L9uqBAxmKlgYFstvVWAcdbVm3kwXdz4l25NUXQHCA+coFRASLHokymeY+x9YqD
- TogiN6PCf2uXica4v9EVrUZVuFmEYGrEQfvOqkAhEEKY8=
+X-Received: by 2002:a05:6e02:152b:b0:375:d7ba:4dd8 with SMTP id
+ e9e14a558f8ab-375e10957afmr325755ab.5.1718313315156; Thu, 13 Jun 2024
+ 14:15:15 -0700 (PDT)
+Date: Thu, 13 Jun 2024 14:15:15 -0700
+In-Reply-To: <000000000000bf4687061269eb1b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c35b60061acbfe99@google.com>
+Subject: Re: [syzbot] Re: WARNING in hci_conn_del
+From: syzbot <syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/13/24 04:44, Jeff Johnson wrote:
-> With ARCH=3Dx86, make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/vf=
-b.o
->
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-All 6 fbdev driver patches applied to fbdev git tree.
-Thank you Jeff!
+***
 
-Helge
+Subject: Re: WARNING in hci_conn_del
+Author: paskripkin@gmail.com
 
-> ---
->   drivers/video/fbdev/vfb.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/video/fbdev/vfb.c b/drivers/video/fbdev/vfb.c
-> index f86149ba3835..158e48385c24 100644
-> --- a/drivers/video/fbdev/vfb.c
-> +++ b/drivers/video/fbdev/vfb.c
-> @@ -546,5 +546,6 @@ static void __exit vfb_exit(void)
->
->   module_exit(vfb_exit);
->
-> +MODULE_DESCRIPTION("Virtual Frame Buffer driver");
->   MODULE_LICENSE("GPL");
->   #endif				/* MODULE */
->
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240612-md-drivers-video-fbdev-vfb-a4ed3808e861
->
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit: 603c04e27c3e Merge tag 'parisc-for-6.8-rc6' of git://git.k..
+> git tree: upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=12d065aa180000
+> kernel config: https://syzkaller.appspot.com/x/.config?x=eff9f3183d0a20dd
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b2545b087a01a7319474
+> compiler: Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro: https://syzkaller.appspot.com/x/repro.syz?x=17960122180000
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?x=15d70222180000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/ffe1f52b2e32/disk-603c04e2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/76775e0b335d/vmlinux-603c04e2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/8cd3c1c87eef/bzImage-603c04e2.xz
+> 
+> The issue was bisected to:
+> 
+> commit 181a42edddf51d5d9697ecdf365d72ebeab5afb0
+> Author: Ziyang Xuan <william.x...@huawei.com>
+> Date: Wed Oct 11 09:57:31 2023 +0000
+> 
+> Bluetooth: Make handle of hci_conn be unique
+> 
+> bisection log: https://syzkaller.appspot.com/x/bisect.txt?x=1357945c180000
+> final oops: https://syzkaller.appspot.com/x/report.txt?x=10d7945c180000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1757945c180000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+b2545b...@syzkaller.appspotmail.com
+> Fixes: 181a42edddf5 ("Bluetooth: Make handle of hci_conn be unique") 
 
+#syz test 
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+
+
+-- 
+With regards,
+Pavel Skripkin
 
