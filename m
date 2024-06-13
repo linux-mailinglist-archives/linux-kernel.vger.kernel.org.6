@@ -1,109 +1,128 @@
-Return-Path: <linux-kernel+bounces-213665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED44907880
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:43:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10016907884
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EF911C239BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:43:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7121C20C14
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E774B149C79;
-	Thu, 13 Jun 2024 16:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67431494D1;
+	Thu, 13 Jun 2024 16:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kncp641X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MeCNc+eZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0261369B0;
-	Thu, 13 Jun 2024 16:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B11C149C4E;
+	Thu, 13 Jun 2024 16:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718296966; cv=none; b=r96Bmg1QrWH+Zm60bI5NHivV3p5QawgMoUa4KXsWl0INhMdV3D6WOte9zM2YCyqHNEfCgwQ/u2JJXn67tez+JhYaWbybF+xN65QFm/hgf4zmMXfdn9sY9PBsiOHdKjY2k46EnqJ6x+gg3EWGgH5zvJayZR6FMwAW0Y9Inc4pH9U=
+	t=1718296989; cv=none; b=Aa4F5daOqbO7VrbOrwT7ifkEb4sU+ovS5QMdF7CoZXJzYCAM+8B361l4MEa5qrh5DnHJ8cuw+OHk3pfl3SgR+GRpdU6Q+knMFgOht/Ig38v90S23W702kZgLjzLvwHHHXsf0CP91aDNGyzuWwqQSAXh98GQWaoowwRiVukMOvFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718296966; c=relaxed/simple;
-	bh=k6RZFuL5RbQMXBfC1QGbjlIe42D9eii5Ww819cD7sCA=;
+	s=arc-20240116; t=1718296989; c=relaxed/simple;
+	bh=5N86/34S9SsY993i4OkYsoiBIKBqPyqnwe4IRziKYTs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZkiwHwpjkQxfCP3ZCVo169M1G08W7ohH5o9sWfjMJQCMLKgg4DzRNhnFAIWiGaZ13jeZLRQk340ym7YtVEM4fMKPU3Bl3SzD2JRa3LqeSGz4JrtNSYvLMqflNvIUljoeiQ3IEQ3tKFSrXuospUeSSd8VoKR3juG6+dJjjkTNLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kncp641X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95BE0C2BBFC;
-	Thu, 13 Jun 2024 16:42:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fxfRBSMaclnoUV6hKAbaVBRl4l0p5i6ZXd+P3X8z+DKFDRJmnDGFP+8b1XGDfIH+attj1hirgIkAWDYagJRmiWCpv0KfpV58pXbVz37Chw/pqiBwax6IF11xJuAu1rbWlz9IyM3dXzvx3OsCrCgb9uok6kQsb3GtfQqh7GMjYTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MeCNc+eZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A67BFC32786;
+	Thu, 13 Jun 2024 16:43:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718296965;
-	bh=k6RZFuL5RbQMXBfC1QGbjlIe42D9eii5Ww819cD7sCA=;
+	s=k20201202; t=1718296988;
+	bh=5N86/34S9SsY993i4OkYsoiBIKBqPyqnwe4IRziKYTs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kncp641X+UbghLKCtc6JUOvH5mOgzmtoEz/z4YK0RdIZ59bV2tVcBnppQgJB7g00v
-	 i4Qt+uGMjBwLFzx7fAkeb157E4AROuJI7qDYEjm5YCRB/qqM7NM4gFCBJj7BA5VnjP
-	 E2tFErP3LenNAcCr5q0F7sW641LObjwlB617yjTOuM1nNokJcs4HhsJBamqM7EyxKY
-	 WcfEHR3bIWoFqAOg7nDg4s9M4b11HZ77dTcXzFF+1gE4aY2onT15YV/Rcp8P6tQ4yo
-	 KjN8x5hP+GNpgpY9YCN2taV1QCRnSLox7fcvKDApOMcG8tvy+4Lz6u0t59RFrYeUCY
-	 czqPkuBZpIaWg==
-Date: Thu, 13 Jun 2024 10:42:44 -0600
-From: Rob Herring <robh@kernel.org>
-To: Conor Dooley <conor@kernel.org>, Viacheslav <adeep@lexina.in>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
+	b=MeCNc+eZYG9ORTjLRsHrCVE8nxJrUu5YEgZ+GmPJIdJL17zuVlPmMEw5NRZ+Hee2u
+	 iyEdpY+bLyH0yoWJj2S0bdZgMpCshE/5SQC78dHWgtcNGWqNVqzCSDVxzufAmc95Up
+	 J92LVZmVkSXO5sy1DSlArRFK2tRL2FDVBwXeJr2tpe/f5lwCLGm2Z16WL3Vy/UQCMp
+	 M/EJYLLqfSi9Qgr4gB6qQtHEckyPmNMcvn4wMBNCyKHWZX4Mtjd0o3rhpx35Y/PC+K
+	 hekuJ2Ab5ob1sqFUtPxx+i2bm14JZPbOzQRXav2bdG/XtZGV37bgqnUy/nPCWJx3AD
+	 6KBcbZ0PteVKA==
+Date: Thu, 13 Jun 2024 17:43:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alisa-Dariana Roman <alisadariana@gmail.com>
+Cc: Alisa-Dariana Roman <alisa.roman@analog.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexandru Tachici <alexandru.tachici@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] dt-bindings: arm: amlogic:
- amlogic,meson-gx-ao-secure: add secure-monitor property
-Message-ID: <20240613164244.GA1999034-robh@kernel.org>
-References: <20240610084032.3096614-1-adeep@lexina.in>
- <20240610084032.3096614-4-adeep@lexina.in>
- <20240610-dropout-compress-6d6a9b749524@spud>
- <4866f6d4-2e3c-40c7-a8cb-ba4e422ffef6@lexina.in>
- <20240611-undying-earthy-00236ac251aa@spud>
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v4 4/5] dt-bindings: iio: adc: ad7192: Add clock provider
+Message-ID: <20240613-porthole-hedging-6655d32072a8@spud>
+References: <20240613114001.270233-1-alisa.roman@analog.com>
+ <20240613114001.270233-5-alisa.roman@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZG98mhyg/OXpjdLh"
+Content-Disposition: inline
+In-Reply-To: <20240613114001.270233-5-alisa.roman@analog.com>
+
+
+--ZG98mhyg/OXpjdLh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240611-undying-earthy-00236ac251aa@spud>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 07:07:28PM +0100, Conor Dooley wrote:
-> On Tue, Jun 11, 2024 at 01:25:11PM +0300, Viacheslav wrote:
-> > Hi!
-> > 
-> > 10/06/2024 19.08, Conor Dooley wrote:
-> > > On Mon, Jun 10, 2024 at 11:39:49AM +0300, Viacheslav Bocharov wrote:
-> > > > Add secure-monitor property to schema for meson-gx-socinfo-sm driver.
-> > > 
-> > > "bindings are for hardware, not drivers". Why purpose does the "secure
-> > > monitor" serve that the secure firmware needs a reference to it?
-> > 
-> > This driver is an extension to the meson-gx-socinfo driver: it supplements
-> > information obtained from the register with information from the
-> > SM_GET_CHIP_ID secure monitor call. Due to the specifics of the module
-> > loading order, we cannot do away with meson-gx-socinfo, as it is used for
-> > platform identification in some drivers. Therefore, the extended information
-> > is formatted as a separate driver, which is loaded after the secure-monitor
-> > driver.
-> 
-> Please stop talking about drivers, this is a binding which is about
-> hardware. Please provide, in your next version, a commit message that
-> justifies adding this property without talking about driver probing
-> order etc, and instead focuses on what service the "secure monitor"
-> provides etc.
+On Thu, Jun 13, 2024 at 02:40:00PM +0300, Alisa-Dariana Roman wrote:
+> Internal clock of AD719X devices can be made available on MCLK2 pin. Add
+> clock provider to support this functionality.
+>=20
+> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad7192.yaml       | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+> index 3ae2f860d24c..1434d89c2880 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+> @@ -42,13 +42,20 @@ properties:
+>      description: |
+>        Optionally, either a crystal can be attached externally between MC=
+LK1 and
+>        MCLK2 pins, or an external CMOS-compatible clock can drive the MCL=
+K2
+> -      pin. If absent, internal 4.92MHz clock is used.
+> +      pin. If absent, internal 4.92MHz clock is used, which can be made
+> +      available on MCLK2 pin.
+> =20
+>    clock-names:
+>      enum:
+>        - xtal
+>        - mclk
+> =20
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  clock-output-names:
+> +    maxItems: 1
 
-To put it another way, how many secure monitors does 1 system have? 
+Why do you need an output name when you have exactly one clock?
 
-What do you do if the property is not present? You didn't make it 
-required which is good because that would be an ABI break.
+--ZG98mhyg/OXpjdLh
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You only need a link in DT if there are different possible providers or 
-some per consumer information to describe (e.g. an interrupt number or 
-clock ID). You don't have the latter and likely there is only 1 possible 
-provider. 
+-----BEGIN PGP SIGNATURE-----
 
-Rob
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmshlwAKCRB4tDGHoIJi
+0rN5AQDwx3OuFGaIq92gAW9SP4SawMqQkqEvdf2NqApMoU8puQD9E/24Paa8Ot5p
+Yw14vSKM8xuL+pvJgvu9QbMx9HMcywE=
+=1M/8
+-----END PGP SIGNATURE-----
 
+--ZG98mhyg/OXpjdLh--
 
