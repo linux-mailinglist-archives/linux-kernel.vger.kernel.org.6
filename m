@@ -1,89 +1,68 @@
-Return-Path: <linux-kernel+bounces-213313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4C49073A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:26:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564739073A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0E521C248C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:26:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0497A28A22A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0481465A5;
-	Thu, 13 Jun 2024 13:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D31614430C;
+	Thu, 13 Jun 2024 13:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lVYHjfpX"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="o4Z1i9mg"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF01145FFF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D554A1E49B;
+	Thu, 13 Jun 2024 13:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718285064; cv=none; b=P9oA+i8aeSObNaw7JQdYQ5G9ev9wkK2J/OlmIHU9o2FZMetwm0OloL5GLj49wa6rR3CYQZI7AQY3DnpaFKZRMqmS/+wNt0k10vWiwHVaVfxeIwHUUsI4+t+9FVRq7/vJJwCxBucI+uUEb/F7CctTpeg5yWPXoDJQLAFRytDY0aU=
+	t=1718285143; cv=none; b=WIJB+xckQQvJLx2QSQaUVTjER2px9gSquUyfqcuhJmg6uMc+/39TA9niPOKOba0iV6XGWGBy9Aph2t3jZnL2CclEU8xERRCgV0j0bvgs+dK+8qeO/l6/THI5FaJEDRb/BTlvq4wqQPFqqBktsnF0Ok3rTXa41HMK4s/+PVsP4o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718285064; c=relaxed/simple;
-	bh=ei6MygeSgJsE+wcqS+H6XtwKC909xyCYznIa430bejg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aZ+LYcO6NiXW2/aqKZbU9CUIeC4yV/M0yN+d52Vl45uIC3qQsBbgBcOsoP/bbaUCMyMnwQak7ud7A+JbdOF020k53r9O0eWga3Ezq8MH1W1TTokcj+ErcncJV987MAo6uszUw9xUqQ8GkUNRaDQzzEVGPMvPwXXZbDcXe4DvF6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lVYHjfpX; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4217136a74dso9658415e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:24:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718285061; x=1718889861; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FIdfAng31JZ7AXh+5wJJBwNTBQjKsoPR8mg2mxmZaFA=;
-        b=lVYHjfpXkOBC6G1ZkUaQ+V7WtKaalI0UX/StJ63ftEgS53JTpaDbxmYKC4QhwUaXo4
-         4JpN2r8r5xJugiOvqOjhJi7aEI3D8Asc5w0GVZ2fbMHj2qyoySpCkubNUr1A1JrKdBir
-         lvyi9fR/C6snMQTOZplZyZGGmJpr8uDpKzHLvoKRbasEhFw6jFrI8M9scovaRQn+3fOu
-         EbSQk2vqlrKn+FTPzNHlkYIQ/GgvUF/LjjDKGojpfPUXU6zvjA7NQTr7GEiZcr/wJbAt
-         tGl+DpllKo39/DFAlJNIkgeMZg9ZQb4a/b1KtmcNCNzRw4BmmFk5DsaY0MnMNEEI/ZAj
-         OMcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718285061; x=1718889861;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FIdfAng31JZ7AXh+5wJJBwNTBQjKsoPR8mg2mxmZaFA=;
-        b=CAYKKGBzKtFp/AFNziX6V5Qy78NQSem8IQblK6/c72KA74HCMd3Ez2Ax6IdCJAvY2T
-         dJ+M5QeDwbtXaI+Oy/3n5Uqvuf3NcJGtNLI/ZSDOrelatwj0NtUUWjAi57cSnfsleETD
-         khv1EMLtpsMb+CXvR/W0pr5a9hGIR5Bd+w9BfN+aElV42eYBANVZz6WVMB864sVvvM/N
-         rHEfKAwUMmdmokyEJ9Qcewkq04ZAa2FM8beeVzzpM3z+VY0jGwBY0ajUqj7B5M0wjKU1
-         RNuSMxyO5Iw/9l0YwwowWFTgcdzJTjAt2OFPVL9orqNj/wRHuQvBN9rkUD9KeQSOuKAq
-         JBBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVr5Uuw2qd+CLjH17xsoSNIXX5cSy4kjeG8tDBY7Hi3qOqyxhkA0oQKEAsObBBYnqzHQbHwXhl3yAROpAMBuwVcFV1dnZKLogK5tjSH
-X-Gm-Message-State: AOJu0Ywh1UHeTd1TiZs7wTFOeVRf3+kklPH+RC4opOJdKsulR8BBdA9j
-	IBdm4qkr/MA4ygVqLLyOBjYFaTSf9byBPzTorM7yM6bkOr1NMtYri7zD91uAqSE=
-X-Google-Smtp-Source: AGHT+IEaGyMoVlH5DAEAQTeEGpbxwW1clV0twr/chrl0KmoLh9fV5Vaxzf96/t1WHAqzFEyPkITxdw==
-X-Received: by 2002:a05:600c:190d:b0:421:82ed:28d1 with SMTP id 5b1f17b1804b1-422867c02f1mr39073585e9.41.1718285061285;
-        Thu, 13 Jun 2024 06:24:21 -0700 (PDT)
-Received: from blaptop.baylibre (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f5f33c6esm25086225e9.4.2024.06.13.06.24.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 06:24:20 -0700 (PDT)
-From: Alexandre Bailon <abailon@baylibre.com>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexandre Bailon <abailon@baylibre.com>
-Subject: [PATCH v4 4/4] ARM64: mt8195: Use thermal aggregation for big and little cpu
-Date: Thu, 13 Jun 2024 15:24:10 +0200
-Message-ID: <20240613132410.161663-5-abailon@baylibre.com>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20240613132410.161663-1-abailon@baylibre.com>
-References: <20240613132410.161663-1-abailon@baylibre.com>
+	s=arc-20240116; t=1718285143; c=relaxed/simple;
+	bh=otKnNwmTl47Y+PbQBlbwCrWVzfE2P+8LqNZPwfX67D4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lQTC+/mxpRtMw/mG7+TWr6s3cJF04lZng7QEONQacczThEvs6fgBZhxEyhvfFFjf7QUnyvX8D61a/v0kMyiKkV3scG120Ga3bLq9IoBsaGLDQgZC+070+51gpP/BccbNEoY0/6M+G9XNJCPkaChqPqXL+L8EJv2LH+x7Sw9CQXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=o4Z1i9mg; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45D4sfko018676;
+	Thu, 13 Jun 2024 08:25:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=bb9yvMb9fDm9Pe8Y
+	FL1Np+oq8NPrqD6syse4d2JmCE0=; b=o4Z1i9mgK8jBPKUtHNPNfchKEolX6vDS
+	Kv58V64gt21MO5Fd6XOnnC3YOC264HWG4f+sOa5yySE8xgXMfZzoZFmI73aueW9a
+	TpIzoflSDuiB5TY5JScz9FxB8nw65SAeya2JfDRgaYpXmspFilOwMfM3koa1UgjC
+	jfE7aB+RO3mY/3SdABQFq9gWujA2q4gOC+OB2vAGnueeVaU0fHS6LZse6oOsJtKV
+	6alLTOx7okBOI4q+8jW85xpLiyVotQvp8+Ri1z/9W4Sroam4yHK1d04bTMvJmTCd
+	ybfUsr6/6VMGS1NYLvmN8CSPxjSGrmHf8L64Pj8nIMRagkfdePvazQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3yqb8ehbvx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 08:25:28 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
+ 2024 14:25:27 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Thu, 13 Jun 2024 14:25:27 +0100
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 32276820248;
+	Thu, 13 Jun 2024 13:25:27 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>
+Subject: [PATCH v2] ASoC: cs35l56: Disconnect ASP1 TX sources when ASP1 DAI is hooked up
+Date: Thu, 13 Jun 2024 14:25:27 +0100
+Message-ID: <20240613132527.46537-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,283 +70,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: RXCkLoGtsnwYlYJ9qJ1LyLQ8Yd7zjW6c
+X-Proofpoint-GUID: RXCkLoGtsnwYlYJ9qJ1LyLQ8Yd7zjW6c
+X-Proofpoint-Spam-Reason: safe
 
-This uses the thermal aggregation for the mt8195 to get the maximal
-temperature of big and little cpu clusters.
+If the ASP1 DAI is hooked up by the machine driver the ASP TX mixer
+sources should be initialized to disconnected. There aren't currently
+any available products using the ASP so this doesn't affect any
+existing systems.
 
-Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
+The cs35l56 does not have any fixed default for the mixer source
+registers. When the cs35l56 boots, its firmware patches these registers
+to setup a system-specific routing; this is so that Windows can use
+generic SDCA drivers instead of needing knowledge of chip-specific
+registers. The setup varies between end-products, which each have
+customized firmware, and so the default register state varies between
+end-products. It can also change if the firmware on an end-product is
+upgraded - for example if a change was needed to the routing for Windows
+use-cases. It must be emphasized that the settings applied by the
+firmware are not internal magic tuning; they are statically implementing
+use-case setup that on Linux would be done via ALSA controls.
+
+The driver is currently syncing the mixer controls with whatever
+initial state the firmware wrote to the registers, so that they report
+the actual audio routing. But if the ASP DAI is hooked up this can create
+a powered-up DAPM graph without anything intentionally setting up a path.
+This can lead to parts of the audio system powering up unexpectedly.
+
+For example when cs35l56 is connected to cs42l43 using a codec-codec link,
+this can create a complete DAPM graph which then powers-up cs42l43. But
+the cs42l43 can only be clocked from its SoundWire bus so this causes a
+bunch of errors in the kernel log where cs42l43 is unexpectedly powered-up
+without a clock.
+
+If the host is taking ownership of the ASP (either directly or as a
+codec-to-codec link) there is no need to keep the mixer settings that the
+firmware wrote. The driver has ALSA controls for setting these using
+standard Linux mechanisms. So if the machine driver hooks up the ASP the
+ASP mixers are initialized to "None" (no input). This prevents unintended
+DAPM-graph power-ups, and means the initial state of the mixers is
+always going to be None.
+
+Since the initial state of the mixers can vary from system to system and
+potentially between firmware upgrades, no use-case manager can currently
+assume that cs35l56 has a known initial state. The firmware could just as
+easily default them to "None" as to any input source. So defaulting them
+to "None" in the driver is not increasing the entropy of the system.
+
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8195.dtsi | 210 +++--------------------
- 1 file changed, 25 insertions(+), 185 deletions(-)
+ sound/soc/codecs/cs35l56-shared.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-index 5d8b68f86ce4..90778c609ceb 100644
---- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-@@ -3600,50 +3600,30 @@ dp_tx: dp-tx@1c600000 {
- 	};
+diff --git a/sound/soc/codecs/cs35l56-shared.c b/sound/soc/codecs/cs35l56-shared.c
+index e89027cd40d1..27869e14e9c8 100644
+--- a/sound/soc/codecs/cs35l56-shared.c
++++ b/sound/soc/codecs/cs35l56-shared.c
+@@ -215,6 +215,10 @@ static const struct reg_sequence cs35l56_asp1_defaults[] = {
+ 	REG_SEQ0(CS35L56_ASP1_FRAME_CONTROL5,	0x00020100),
+ 	REG_SEQ0(CS35L56_ASP1_DATA_CONTROL1,	0x00000018),
+ 	REG_SEQ0(CS35L56_ASP1_DATA_CONTROL5,	0x00000018),
++	REG_SEQ0(CS35L56_ASP1TX1_INPUT,		0x00000000),
++	REG_SEQ0(CS35L56_ASP1TX2_INPUT,		0x00000000),
++	REG_SEQ0(CS35L56_ASP1TX3_INPUT,		0x00000000),
++	REG_SEQ0(CS35L56_ASP1TX4_INPUT,		0x00000000),
+ };
  
- 	thermal_zones: thermal-zones {
--		cpu0-thermal {
-+		cpu-little {
- 			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_LITTLE_CPU0>;
-+			polling-delay-passive = <100>;
-+			thermal-sensors = <&lvts_mcu MT8195_MCU_LITTLE_CPU0>,
-+					  <&lvts_mcu MT8195_MCU_LITTLE_CPU1>,
-+					  <&lvts_mcu MT8195_MCU_LITTLE_CPU2>,
-+					  <&lvts_mcu MT8195_MCU_LITTLE_CPU3>;
-+			sustainable-power = <1500>;
- 
- 			trips {
--				cpu0_alert: trip-alert {
--					temperature = <85000>;
-+				cpu_little_threshold: trip-point {
-+					temperature = <68000>;
- 					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu0_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu0_alert>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu1-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_LITTLE_CPU1>;
--
--			trips {
--				cpu1_alert: trip-alert {
-+				cpu_little_target: target {
- 					temperature = <85000>;
- 					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu1_crit: trip-crit {
--					temperature = <100000>;
-+				cpu_little_soc_max_crit: soc-max-crit {
-+					temperature = <115000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
-@@ -3651,7 +3631,7 @@ cpu1_crit: trip-crit {
- 
- 			cooling-maps {
- 				map0 {
--					trip = <&cpu1_alert>;
-+					trip = <&cpu_little_target>;
- 					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
- 								<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
- 								<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-@@ -3660,170 +3640,30 @@ map0 {
- 			};
- 		};
- 
--		cpu2-thermal {
-+		cpu-big {
- 			polling-delay = <1000>;
- 			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_LITTLE_CPU2>;
-+			thermal-sensors = <&lvts_mcu MT8195_MCU_BIG_CPU0>,
-+					  <&lvts_mcu MT8195_MCU_BIG_CPU1>,
-+					  <&lvts_mcu MT8195_MCU_BIG_CPU2>,
-+					  <&lvts_mcu MT8195_MCU_BIG_CPU3>;
-+			sustainable-power = <1500>;
- 
- 			trips {
--				cpu2_alert: trip-alert {
--					temperature = <85000>;
-+				cpu_big_threshold: trip-point {
-+					temperature = <68000>;
- 					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu2_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu2_alert>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu3-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_LITTLE_CPU3>;
--
--			trips {
--				cpu3_alert: trip-alert {
--					temperature = <85000>;
--					hysteresis = <2000>;
--					type = "passive";
--				};
--
--				cpu3_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu3_alert>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu4-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_BIG_CPU0>;
--
--			trips {
--				cpu4_alert: trip-alert {
-+				cpu_big_target: target {
- 					temperature = <85000>;
- 					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu4_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu4_alert>;
--					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu5-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_BIG_CPU1>;
--
--			trips {
--				cpu5_alert: trip-alert {
--					temperature = <85000>;
--					hysteresis = <2000>;
--					type = "passive";
--				};
--
--				cpu5_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu5_alert>;
--					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu6-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_BIG_CPU2>;
--
--			trips {
--				cpu6_alert: trip-alert {
--					temperature = <85000>;
--					hysteresis = <2000>;
--					type = "passive";
--				};
--
--				cpu6_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu6_alert>;
--					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu7-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_BIG_CPU3>;
--
--			trips {
--				cpu7_alert: trip-alert {
--					temperature = <85000>;
--					hysteresis = <2000>;
--					type = "passive";
--				};
--
--				cpu7_crit: trip-crit {
--					temperature = <100000>;
-+				cpu_big_soc_max_crit: soc-max-crit {
-+					temperature = <115000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
-@@ -3831,7 +3671,7 @@ cpu7_crit: trip-crit {
- 
- 			cooling-maps {
- 				map0 {
--					trip = <&cpu7_alert>;
-+					trip = <&cpu_big_target>;
- 					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
- 								<&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
- 								<&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+ /*
 -- 
-2.44.1
+2.39.2
 
 
