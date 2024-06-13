@@ -1,335 +1,174 @@
-Return-Path: <linux-kernel+bounces-214038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB87907E51
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:49:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39171907E59
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68DA3282A50
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:49:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4053D1C2207D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA91914B941;
-	Thu, 13 Jun 2024 21:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236E514A4F8;
+	Thu, 13 Jun 2024 21:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3EnM92Rk"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vHZ/nct7"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9A65A4FD;
-	Thu, 13 Jun 2024 21:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FD114A609
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 21:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718315378; cv=none; b=hnXP4lfClevBt2I9dYO1zFBZz9iarqBaYg6ilY8tLqQSGTcqNgC4HRYSF+Wav4oTrjM9naU19NRu220RZupTH7ltUzTqUqFjBKjw/9kKLPFMu5ILm+L4FR/qPk0aePcpZSJ8L4BlhEDbjjTQvCLdEXBh104kBabD904PFb1as5A=
+	t=1718315473; cv=none; b=QLiF80iLDxnMkvvwAE2HEvOzE/6112b55JhgRk4mwg9uYQlK+jHA82I9NS6kb5lKnHVsvHHiMNBaiot0XTtJvzPVsogCd9hXOSqShhDB8/SuLb87hAMWqh09u9AFDdeYgRuZZwYNLVFthptQ49EEZtQyIxjOydZs1Uxo2vBRvoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718315378; c=relaxed/simple;
-	bh=ETYgORMuqtSoTr818gKpIfKridOj8I0R7TG0CAFQppc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M7WPuz0bR/wZdo8uVSLCI8miQNvHsETG/2B+rp1rvCv9n5aaEDfauWxqoYrfmZTXmWTpvIGrs7W6D2SZ9MaBX0JWrj5Bog66opt0c7osOyPYrZIagSnkSYMexhhVRl9w8pZQgC9XulPSFobKeyI/Qjh8Ct7LJkn6QiA7fKuOhCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3EnM92Rk; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2tgawcyxp7e6LF/gNJHmG9oPpwqaaAvXUh9+M7UWf7c=; b=3EnM92Rk7DmDJc+RAa3EiMUH1m
-	hHpvDI0GQPzxsTAWddB2Q20QiDM/mMCPCPtKzRZ1hi+4tCZ+WoImbaFDu5RTREUPfcIN6iStA3T9J
-	/pA8sqcDg0PcH5KpLpk6yqSMBIufj7NfpabiOrUoHNLerqkOxh/pkPonVcnEdcTsWSVk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sHsK5-0000ZS-5O; Thu, 13 Jun 2024 23:49:33 +0200
-Date: Thu, 13 Jun 2024 23:49:33 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Omer Shpigelman <oshpigelman@habana.ai>
-Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	ogabbay@kernel.org, zyehudai@habana.ai
-Subject: Re: [PATCH 09/15] net: hbl_en: add habanalabs Ethernet driver
-Message-ID: <10902044-fb02-4328-bf88-0b386ee51c78@lunn.ch>
-References: <20240613082208.1439968-1-oshpigelman@habana.ai>
- <20240613082208.1439968-10-oshpigelman@habana.ai>
+	s=arc-20240116; t=1718315473; c=relaxed/simple;
+	bh=h7ZYaLUnbyEDCV5YGCPdni1FFJfjSHwyfBet/qMVQeQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C5Y0/iLcVR+57FThz4Y899Ac/pBZoHmePsKBtZaQOSoukqkk4LspSSgdeOYBalZ3sqmATjKMXWR//168w6mxI8IkrPzKT/V18dm+SxI8F6/kNXnaw2StYrrtGq30+OYUPEwSk9Ii2V2AGJhlqd/sjp9m5CccsWyi+KoexlWuePc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vHZ/nct7; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f11a2d18aso210113766b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:51:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718315470; x=1718920270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H6bz8L/h1k+FIBPPZpQUcXkrKApwtkDytHjPb/V0heg=;
+        b=vHZ/nct78bQ9Qj0uf1dmWAclTuqBB149HZ/RticJAsD7N/rCY4Kis/RvzbZ2YM5BAG
+         HGQOOEiFSw8GX/fwb5UXj+B8+Zqt+3hGpc71qPhQS0ujNjKxdwv77+LIW5uhavYOMyog
+         Ualwz8NjU40IZG3d/j4/vGGjgFVOvNKuiav6frXuA6TdROKo0L/i1kqOe7vaXfotpTM2
+         ffwlMOW5pZNV31MhcuvfIStgiU4qnn+cEReqsHzPbA3cPbHxNPyhd9A9GFHSWVqguloC
+         4dNK46g3kNvj55XVYh6fyZtcWQABVwVa1SkZHKpvf8gCiYUcNN8hCWoMTUeleYBYnr8y
+         8hlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718315470; x=1718920270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H6bz8L/h1k+FIBPPZpQUcXkrKApwtkDytHjPb/V0heg=;
+        b=pUOjPfk41yhGVsHRECKs4UUKj5RrB2x8qnNnqWWFXjDbbYeR445oU3BBm0GeMfITeN
+         zMvX704Fc+5sVb5OV+yCyvypMEEsrXVPx68qMp89sZNGHax7qb64muejbU18NehI93qe
+         Y8Pv27foGodpEArJNYiQzG9plBc4pQs559gBI067oIsEM0Z0iE66qKqbs/6yEdUzCqls
+         W/bor41Muv3+2PhZYrkwl1AOtHEwxDJLheJ+Wx+rzOq2GKve/f6dBUq1kXgQBM6Liedu
+         m0bQc/ZzJHQ0FAFCU8iaN5uO2xaDXKt0dKnyjRdfWF+RsXMdgLm3X0412giWfOiH90Ci
+         771Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX4v5T7IQSw9WSzen/C2CrtuECD3r/HW5vEzQHPsfpKGmBu5MJDovdjuQlsDfR2DzcyyqoaJYNfEFqLlt8vTzNw55zE4VoLFMJs4I1I
+X-Gm-Message-State: AOJu0YwyU7C4ymCPoyEbWygV8Kd0b7JbxSIzZ+it0dc4AljNQoRI7T4A
+	p8sO5ne0FZvgPDWXvUHFEDV+c7ufPBgQeIGJ/MpRR6soDLTO3knvdiRO41/b3dF/PEd/CWjTi3r
+	A7hNnyqzWdpuXKli82le0QgNo8y4kmdXf7aEb
+X-Google-Smtp-Source: AGHT+IEcxkIl9tLNWOgQbELckRaul7UJVzCCnWvSHXBXg+3D9gzHygpatFOn1ltiQVUjW6rxD+m6IWXCgP1wqe4il98=
+X-Received: by 2002:a17:906:adc5:b0:a6f:2d9a:cec1 with SMTP id
+ a640c23a62f3a-a6f60de607bmr53114366b.76.1718315469521; Thu, 13 Jun 2024
+ 14:51:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613082208.1439968-10-oshpigelman@habana.ai>
+References: <20240610121820.328876-1-usamaarif642@gmail.com>
+In-Reply-To: <20240610121820.328876-1-usamaarif642@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 13 Jun 2024 14:50:31 -0700
+Message-ID: <CAJD7tkZdx7xJiDcvayH1aRW9Q6GQaZnF58UhspEOe=GQMBqFiQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] mm: store zero pages to be swapped out in a bitmap
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, david@redhat.com, 
+	ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
+	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+	Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +static int hbl_en_napi_poll(struct napi_struct *napi, int budget);
-> +static int hbl_en_port_open(struct hbl_en_port *port);
+On Mon, Jun 10, 2024 at 5:18=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
+>
+> Going back to the v1 implementation of the patchseries. The main reason
+> is that a correct version of v2 implementation requires another rmap
+> walk in shrink_folio_list to change the ptes from swap entry to zero page=
+s to
+> work (i.e. more CPU used) [1], is more complex to implement compared to v=
+1
+> and is harder to verify correctness compared to v1, where everything is
+> handled by swap.
+>
+> ---
+> As shown in the patchseries that introduced the zswap same-filled
+> optimization [2], 10-20% of the pages stored in zswap are same-filled.
+> This is also observed across Meta's server fleet.
+> By using VM counters in swap_writepage (not included in this
+> patchseries) it was found that less than 1% of the same-filled
+> pages to be swapped out are non-zero pages.
+>
+> For conventional swap setup (without zswap), rather than reading/writing
+> these pages to flash resulting in increased I/O and flash wear, a bitmap
+> can be used to mark these pages as zero at write time, and the pages can
+> be filled at read time if the bit corresponding to the page is set.
+>
+> When using zswap with swap, this also means that a zswap_entry does not
+> need to be allocated for zero filled pages resulting in memory savings
+> which would offset the memory used for the bitmap.
+>
+> A similar attempt was made earlier in [3] where zswap would only track
+> zero-filled pages instead of same-filled.
+> This patchseries adds zero-filled pages optimization to swap
+> (hence it can be used even if zswap is disabled) and removes the
+> same-filled code from zswap (as only 1% of the same-filled pages are
+> non-zero), simplifying code.
 
-When you do the Intel internal review, i expect this is crop up. No
-forward declarations please. Put the code in the right order so they
-are not needed.
+There is also code to handle same-filled pages in zram, should we
+remove this as well? It is worth noting that the handling in zram was
+initially for zero-filled pages only, but it was extended to cover
+same-filled pages as well by commit 8e19d540d107 ("zram: extend zero
+pages to same element pages"). Apparently in a test on Android, about
+2.5% of the swapped out pages were non-zero same-filled pages.
 
-> +static int hbl_en_get_src_ip(struct hbl_aux_dev *aux_dev, u32 port_idx, u32 *src_ip)
-> +{
-> +	struct hbl_en_port *port = HBL_EN_PORT(aux_dev, port_idx);
-> +	struct net_device *ndev = port->ndev;
-> +	struct in_device *in_dev;
-> +	struct in_ifaddr *ifa;
-> +	int rc = 0;
-> +
-> +	/* for the case where no src IP is configured */
-> +	*src_ip = 0;
-> +
-> +	/* rtnl lock should be acquired in relevant flows before taking configuration lock */
-> +	if (!rtnl_is_locked()) {
-> +		netdev_err(port->ndev, "Rtnl lock is not acquired, can't proceed\n");
-> +		rc = -EFAULT;
-> +		goto out;
-> +	}
+However, the leap from handling zero-filled pages to handling all
+same-filled pages in zram wasn't a stretch. But now that zero-filled
+pages handling in zram is redundant with this series, I wonder if it's
+still worth keeping the same-filled pages handling.
 
-You will find all other drivers just do:
+Adding Minchan and Sergey here.
 
-	ASSERT_RTNL().
-
-If your locking is broken, you are probably dead anyway, so you might
-as well keep going and try to explode in the most interesting way
-possible.
-
-> +static void hbl_en_reset_stats(struct hbl_aux_dev *aux_dev, u32 port_idx)
-> +{
-> +	struct hbl_en_port *port = HBL_EN_PORT(aux_dev, port_idx);
-> +
-> +	port->net_stats.rx_packets = 0;
-> +	port->net_stats.tx_packets = 0;
-> +	port->net_stats.rx_bytes = 0;
-> +	port->net_stats.tx_bytes = 0;
-> +	port->net_stats.tx_errors = 0;
-> +	atomic64_set(&port->net_stats.rx_dropped, 0);
-> +	atomic64_set(&port->net_stats.tx_dropped, 0);
-
-Why atomic64_set? Atomics are expensive, so you should not be using
-them. netdev has other cheaper methods, which other Intel developers
-should be happy to tell you all about.
-
-> +static u32 hbl_en_get_mtu(struct hbl_aux_dev *aux_dev, u32 port_idx)
-> +{
-> +	struct hbl_en_port *port = HBL_EN_PORT(aux_dev, port_idx);
-> +	struct net_device *ndev = port->ndev;
-> +	u32 mtu;
-> +
-> +	if (atomic_cmpxchg(&port->in_reset, 0, 1)) {
-> +		netdev_err(ndev, "port is in reset, can't get MTU\n");
-> +		return 0;
-> +	}
-> +
-> +	mtu = ndev->mtu;
-
-I think you need a better error message. All this does is access
-ndev->mtu. What does it matter if the port is in reset? You don't
-access it.
-
-> +static int hbl_en_close(struct net_device *netdev)
-> +{
-> +	struct hbl_en_port *port = hbl_netdev_priv(netdev);
-> +	struct hbl_en_device *hdev = port->hdev;
-> +	ktime_t timeout;
-> +
-> +	/* Looks like the return value of this function is not checked, so we can't just return
-> +	 * EBUSY if the port is under reset. We need to wait until the reset is finished and then
-> +	 * close the port. Otherwise the netdev will set the port as closed although port_close()
-> +	 * wasn't called. Only if we waited long enough and the reset hasn't finished, we can return
-> +	 * an error without actually closing the port as it is a fatal flow anyway.
-> +	 */
-> +	timeout = ktime_add_ms(ktime_get(), PORT_RESET_TIMEOUT_MSEC);
-> +	while (atomic_cmpxchg(&port->in_reset, 0, 1)) {
-> +		/* If this is called from unregister_netdev() then the port was already closed and
-> +		 * hence we can safely return.
-> +		 * We could have just check the port_open boolean, but that might hide some future
-> +		 * bugs. Hence it is better to use a dedicated flag for that.
-> +		 */
-> +		if (READ_ONCE(hdev->in_teardown))
-> +			return 0;
-> +
-> +		usleep_range(50, 200);
-> +		if (ktime_compare(ktime_get(), timeout) > 0) {
-> +			netdev_crit(netdev,
-> +				    "Timeout while waiting for port to finish reset, can't close it\n"
-> +				    );
-> +			return -EBUSY;
-> +		}
-
-This has the usual bug. Please look at include/linux/iopoll.h. 
-
-> +		timeout = ktime_add_ms(ktime_get(), PORT_RESET_TIMEOUT_MSEC);
-> +		while (atomic_cmpxchg(&port->in_reset, 0, 1)) {
-> +			usleep_range(50, 200);
-> +			if (ktime_compare(ktime_get(), timeout) > 0) {
-> +				netdev_crit(port->ndev,
-> +					    "Timeout while waiting for port %d to finish reset\n",
-> +					    port->idx);
-> +				break;
-> +			}
-> +		}
-
-and again. Don't roll your own timeout loops like this, use the core
-version.
-
-> +static int hbl_en_change_mtu(struct net_device *netdev, int new_mtu)
-> +{
-> +	struct hbl_en_port *port = hbl_netdev_priv(netdev);
-> +	int rc = 0;
-> +
-> +	if (atomic_cmpxchg(&port->in_reset, 0, 1)) {
-> +		netdev_err(netdev, "port is in reset, can't change MTU\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	if (netif_running(port->ndev)) {
-> +		hbl_en_port_close(port);
-> +
-> +		/* Sleep in order to let obsolete events to be dropped before re-opening the port */
-> +		msleep(20);
-> +
-> +		netdev->mtu = new_mtu;
-> +
-> +		rc = hbl_en_port_open(port);
-> +		if (rc)
-> +			netdev_err(netdev, "Failed to reinit port for MTU change, rc %d\n", rc);
-
-Does that mean the port is FUBAR?
-
-Most operations like this are expected to roll back to the previous
-working configuration on failure. So if changing the MTU requires new
-buffers in your ring, you should first allocate the new buffers, then
-free the old buffers, so that if allocation fails, you still have
-buffers, and the device can continue operating.
-
-> +module_param(poll_enable, bool, 0444);
-> +MODULE_PARM_DESC(poll_enable,
-> +		 "Enable Rx polling rather than IRQ + NAPI (0 = no, 1 = yes, default: no)");
-
-Module parameters are not liked. This probably needs to go away.
-
-> +static int hbl_en_ethtool_get_module_info(struct net_device *ndev, struct ethtool_modinfo *modinfo)
-> +{
-> +	modinfo->eeprom_len = ETH_MODULE_SFF_8636_LEN;
-> +	modinfo->type = ETH_MODULE_SFF_8636;
-
-Is this an SFF, not an SFP? How else can you know what module it is
-without doing an I2C transfer to ask the module what it is?
-
-> +static int hbl_en_ethtool_get_module_eeprom(struct net_device *ndev, struct ethtool_eeprom *ee,
-> +					    u8 *data)
-> +{
-
-This is the old API. Please update to the new API so there is access
-to all the pages of the SFF/SFP.
-
-> +static int hbl_en_ethtool_get_link_ksettings(struct net_device *ndev,
-> +					     struct ethtool_link_ksettings *cmd)
-> +{
-> +	struct hbl_en_aux_ops *aux_ops;
-> +	struct hbl_aux_dev *aux_dev;
-> +	struct hbl_en_device *hdev;
-> +	struct hbl_en_port *port;
-> +	u32 port_idx, speed;
-> +
-> +	port = hbl_netdev_priv(ndev);
-> +	hdev = port->hdev;
-> +	port_idx = port->idx;
-> +	aux_dev = hdev->aux_dev;
-> +	aux_ops = aux_dev->aux_ops;
-> +	speed = aux_ops->get_speed(aux_dev, port_idx);
-> +
-> +	cmd->base.speed = speed;
-> +	cmd->base.duplex = DUPLEX_FULL;
-> +
-> +	ethtool_link_ksettings_zero_link_mode(cmd, supported);
-> +	ethtool_link_ksettings_zero_link_mode(cmd, advertising);
-> +
-> +	switch (speed) {
-> +	case SPEED_100000:
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 100000baseCR4_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 100000baseSR4_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 100000baseKR4_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 100000baseLR4_ER4_Full);
-> +
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 100000baseCR4_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 100000baseSR4_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 100000baseKR4_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 100000baseLR4_ER4_Full);
-> +
-> +		cmd->base.port = PORT_FIBRE;
-> +
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, FIBRE);
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, FIBRE);
-> +
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, Backplane);
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, Backplane);
-> +		break;
-> +	case SPEED_50000:
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 50000baseSR2_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 50000baseCR2_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 50000baseKR2_Full);
-> +
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 50000baseSR2_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 50000baseCR2_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 50000baseKR2_Full);
-> +		break;
-> +	case SPEED_25000:
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 25000baseCR_Full);
-> +
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 25000baseCR_Full);
-> +		break;
-> +	case SPEED_200000:
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 200000baseCR4_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 200000baseKR4_Full);
-> +
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 200000baseCR4_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 200000baseKR4_Full);
-> +		break;
-> +	case SPEED_400000:
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 400000baseCR4_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 400000baseKR4_Full);
-> +
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 400000baseCR4_Full);
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 400000baseKR4_Full);
-> +		break;
-> +	default:
-> +		netdev_err(port->ndev, "unknown speed %d\n", speed);
-> +		return -EFAULT;
-> +	}
-> +
-> +	ethtool_link_ksettings_add_link_mode(cmd, supported, Autoneg);
-> +
-> +	if (port->auto_neg_enable) {
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, Autoneg);
-> +		cmd->base.autoneg = AUTONEG_ENABLE;
-> +		if (port->auto_neg_resolved)
-> +			ethtool_link_ksettings_add_link_mode(cmd, lp_advertising, Autoneg);
-
-That looks odd. Care to explain?
-
-> +	} else {
-> +		cmd->base.autoneg = AUTONEG_DISABLE;
-> +	}
-> +
-> +	ethtool_link_ksettings_add_link_mode(cmd, supported, Pause);
-> +
-> +	if (port->pfc_enable)
-> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, Pause);
-
-And is suspect that is wrong. Everybody gets pause wrong. Please
-double check my previous posts about pause.
-
-> +	if (auto_neg && !(hdev->auto_neg_mask & BIT(port_idx))) {
-> +		netdev_err(port->ndev, "port autoneg is disabled by BMC\n");
-> +		rc = -EFAULT;
-> +		goto out;
-
-Don't say you support autoneg in supported if that is the case.
-
-And EFAULT is about memory problems. EINVAL, maybe EPERM? or
-EOPNOTSUPP.
-
-	Andrew
+>
+> This patchseries is based on mm-unstable.
+>
+>
+> [1] https://lore.kernel.org/all/e4d167fe-cb1e-41d1-a144-00bfa14b7148@gmai=
+l.com/
+> [2] https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03=
+d1344dde9fce0@epcms5p1/
+> [3] https://lore.kernel.org/lkml/20240325235018.2028408-1-yosryahmed@goog=
+le.com/
+>
+> ---
+> v2->v3:
+> - Going back to the v1 version of the implementation (David and Shakeel)
+> - convert unatomic bitmap_set/clear to atomic set/clear_bit (Johannes)
+> - use clear_highpage instead of folio_page_zero_fill (Yosry)
+>
+> v1 -> v2:
+> - instead of using a bitmap in swap, clear pte for zero pages and let
+>   do_pte_missing handle this page at page fault. (Yosry and Matthew)
+> - Check end of page first when checking if folio is zero filled as
+>   it could lead to better performance. (Yosry)
+>
+> Usama Arif (2):
+>   mm: store zero pages to be swapped out in a bitmap
+>   mm: remove code to handle same filled pages
+>
+>  include/linux/swap.h |  1 +
+>  mm/page_io.c         | 92 +++++++++++++++++++++++++++++++++++++++++++-
+>  mm/swapfile.c        | 21 +++++++++-
+>  mm/zswap.c           | 86 ++++-------------------------------------
+>  4 files changed, 119 insertions(+), 81 deletions(-)
+>
+> --
+> 2.43.0
+>
 
