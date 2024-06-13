@@ -1,254 +1,179 @@
-Return-Path: <linux-kernel+bounces-212660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DCF906478
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:55:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59EB3906427
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A1B61C218B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:55:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF9C8B22A80
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94974137C29;
-	Thu, 13 Jun 2024 06:54:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E605C137756;
+	Thu, 13 Jun 2024 06:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h6SNfWEm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902C5130485;
-	Thu, 13 Jun 2024 06:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2BB136E39;
+	Thu, 13 Jun 2024 06:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718261692; cv=none; b=qhjtXCuHrA77GiYXnl/15TCW/DaJ5NmO8sgCPnHVkUoj++bzmqzZd33iYK9rCDUWbUDT4G5hKpyGkaOXNnr6yMBYeByGuvbwYelMUAD8ZAs5HZFFWszOhf3S9bTlt/BEfb+YTftdxEM1R6COt2Ta2q15KC9EWZxCVuvHhZFTzRU=
+	t=1718260608; cv=none; b=qelY61g+8754knatA7VZOX4IlHKlofJb6+Kau9DY5UUqFXxA73lB7+OKq9CvjX+rUVNnr3FcPTBKXagSwvanTFr8WrJCRdIkpC+CzbPm8jjppP0CXxTtOsDMW8pQCkyLe7GMUZmGSmILG6OWp1KdPEqhjZxHGsIkcaM2ltWSqlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718261692; c=relaxed/simple;
-	bh=+wWCU9wxebj83eVjJ1vug75971p3yKW39gwkpdnUOwg=;
-	h=From:Subject:To:Cc:Date:Message-ID:References:MIME-Version:
-	 Content-Type; b=FCytK85HVchJhqC8lqChC1XITHT8K/i1UIMJ8v2ewMBRW5JEmHaIXvYrJEXd9DBoXhK4lfnT92rb7ACihx9nal7qCO0xQRz8DOXfE+RuHajgHRzXGnouYAKxEJ0W0GH6VRf/poWAxzv6yEe1G6SfwLTd+kOxecsitP5rsZC2OLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: cfdbbd62295111ef9305a59a3cc225df-20240613
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:99bdfd23-e773-46f1-89d0-c59e2fe1a5d9,IP:20,
-	URL:0,TC:-9,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:-4
-X-CID-INFO: VERSION:1.1.38,REQID:99bdfd23-e773-46f1-89d0-c59e2fe1a5d9,IP:20,UR
-	L:0,TC:-9,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-4
-X-CID-META: VersionHash:82c5f88,CLOUDID:f344da92e50a7d72ac931ed3d94fa5fe,BulkI
-	D:24061314544474018DS1,BulkQuantity:0,Recheck:0,SF:24|17|19|44|66|38|102,T
-	C:1,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,C
-	OL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: cfdbbd62295111ef9305a59a3cc225df-20240613
-Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
-	(envelope-from <mengfanhui@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1768197539; Thu, 13 Jun 2024 14:54:42 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 85834B80758A;
-	Thu, 13 Jun 2024 14:54:42 +0800 (CST)
-Received: by node2.com.cn (NSMail, from userid 0)
-	id 77ADCB80758A; Thu, 13 Jun 2024 14:54:42 +0800 (CST)
-From: =?UTF-8?B?5a2f5Yeh6L6J?= <mengfanhui@kylinos.cn>
-Subject: =?UTF-8?B?5Zue5aSNOiBbUEFUQ0ggMS8yXSBzY3NpOiBtZWdhcmFpZF9zYXM6IEZpeCBEQ01EIGlzc3VlIGNvbW1hbmQgaGFuZGxpbmc=?=
-To: 	=?UTF-8?B?5a2f5Yeh6L6J?= <mengfanhui@kylinos.cn>,
-	=?UTF-8?B?a2FzaHlhcC5kZXNhaQ==?= <kashyap.desai@broadcom.com>,
-	=?UTF-8?B?c3VtaXQuc2F4ZW5h?= <sumit.saxena@broadcom.com>,
-	=?UTF-8?B?c2hpdmFzaGFyYW4uc3Jpa2FudGVzaHdhcmE=?= <shivasharan.srikanteshwara@broadcom.com>,
-	=?UTF-8?B?Y2hhbmRyYWthbnRoLnBhdGls?= <chandrakanth.patil@broadcom.com>,
-	=?UTF-8?B?bGludXgtc2NzaQ==?= <linux-scsi@vger.kernel.org>,
-Cc: 	=?UTF-8?B?5YiY5LqR?= <liuyun01@kylinos.cn>,
-	=?UTF-8?B?bGludXgtc2NzaQ==?= <linux-scsi@vger.kernel.org>,
-	=?UTF-8?B?bGludXgta2VybmVs?= <linux-kernel@vger.kernel.org>,
-	=?UTF-8?B?Z2VsaWFuZw==?= <geliang@kernel.org>,
-Date: Thu, 13 Jun 2024 14:54:41 +0800
-X-Mailer: NSMAIL 7.0.0
-Message-ID: <207rguynjl7-207u0qlhn8s@nsmail7.0.0--kylin--1>
-References: 20240530094514.2750723-1-mengfanhui@kylinos.cn
-X-Israising: 0
-X-Seclevel-1: 0
-X-Seclevel: 0
-X-Delaysendtime: Thu, 13 Jun 2024 14:54:41 +0800
+	s=arc-20240116; t=1718260608; c=relaxed/simple;
+	bh=eDdu2f2vHJxLbLwxDJ+vmJ3c8IHG3EBc5uQ2lTCDa7s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PIVS1Pe1HMd1JXZVrf3fIHDWa/tcxFOMRXAmBfpADUdKNKHLgnCoYe3bTbb8rC2ewB4XlGsYTLuzddROus2YJOfws2K38LlF/DwZ4mGWl0aCSgLhLwpT/PPGdv/jJDaGuEF8C7u4Ye3+y4cPWoRX0eCcvNrS/3wbwh90lmeYNdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h6SNfWEm; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718260607; x=1749796607;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=eDdu2f2vHJxLbLwxDJ+vmJ3c8IHG3EBc5uQ2lTCDa7s=;
+  b=h6SNfWEmXtIIAdEVmvrC6x1VdCDdsa3a5VA8IBMlIgsGk39HNcY0JHjZ
+   fnD9sGmcehX9HdYIR12QFRGJd+4M4YmpyLvsM8W69aXtfOLde0nykT010
+   WlPab/bBOMlApWRbVSOnATJzkhVCCflecZ9MIQl2qoqg4gdCs8fEeCn9T
+   zUf59U6CEFqSefBNCuQVwNjoU7LPgbYHc9Upzy0HCJkx7MIAV/gqXhrrP
+   vY36pa75S9Pk8r+AAVyc2XBHvLbJF/JwjbgGe9pYug/+A9nok8k1Cyi4I
+   mtRpTnOrMPiVh/+ML5eYI3AgQEhJLbtnOMtc/wJ2DhHJpjMa28kum+6am
+   Q==;
+X-CSE-ConnectionGUID: UJQ44+lNTgG8SZd1vZ5ulg==
+X-CSE-MsgGUID: Q/VVXnwmT62fStltw4RI8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="14780589"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="14780589"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 23:36:46 -0700
+X-CSE-ConnectionGUID: J12hYHyfTnGD4ai7Jeh/5A==
+X-CSE-MsgGUID: 9MGimWN5SvWDIfmjW64BAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="44939106"
+Received: from unknown (HELO haibo-OptiPlex-7090.sh.intel.com) ([10.239.159.132])
+  by orviesa003.jf.intel.com with ESMTP; 12 Jun 2024 23:36:43 -0700
+From: Haibo Xu <haibo1.xu@intel.com>
+To: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-efi@vger.kernel.org
+Cc: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	ardb@kernel.org,
+	sunilvl@ventanamicro.com,
+	xiaobo55x@gmail.com,
+	Haibo Xu <haibo1.xu@intel.com>,
+	Atish Patra <atishp@rivosinc.com>
+Subject: [PATCH v3] riscv: dmi: Add SMBIOS/DMI support
+Date: Thu, 13 Jun 2024 14:55:07 +0800
+Message-Id: <20240613065507.287577-1-haibo1.xu@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary=nsmail-23fe32kf3se-23ffd0du5m7
-X-ns-mid: webmail-666a97b1-238nmlaz
-X-ope-from: <mengfanhui@kylinos.cn>
+Content-Transfer-Encoding: 8bit
 
-This message is in MIME format.
+Enable the dmi driver for riscv which would allow access the
+SMBIOS info through some userspace file(/sys/firmware/dmi/*).
 
---nsmail-23fe32kf3se-23ffd0du5m7
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+The change was based on that of arm64 and has been verified
+by dmidecode tool.
 
-PHByZSBjbGFzcz0ibW96LXF1b3RlLXByZSI+Q2FuIHNvbWVvbmUgaGVscCBy
-ZXZpZXcgaXQ/IFRoYW5rIHlvdSE8YnI+PGJyPi0tLS08L3ByZT4KPGRpdiBp
-ZD0iY3MyY19tYWlsX3NpZ2F0dXJlIj48L2Rpdj4KPHA+Jm5ic3A7PC9wPgo8
-ZGl2IGlkPSJyZSIgc3R5bGU9Im1hcmdpbi1sZWZ0OiAwLjVlbTsgcGFkZGlu
-Zy1sZWZ0OiAwLjVlbTsgYm9yZGVyLWxlZnQ6IDFweCBzb2xpZCBncmVlbjsi
-Pjxicj48YnI+PGJyPgo8ZGl2IHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiAj
-ZjVmN2ZhOyI+PHN0cm9uZz7kuLvjgIDpopjvvJo8L3N0cm9uZz48c3BhbiBp
-ZD0ic3ViamVjdCI+W1BBVENIIDEvMl0gc2NzaTogbWVnYXJhaWRfc2FzOiBG
-aXggRENNRCBpc3N1ZSBjb21tYW5kIGhhbmRsaW5nPC9zcGFuPiA8YnI+PHN0
-cm9uZz7ml6XjgIDmnJ/vvJo8L3N0cm9uZz48c3BhbiBpZD0iZGF0ZSI+MjAy
-NC0wNS0zMCAxNzo0NTwvc3Bhbj4gPGJyPjxzdHJvbmc+5Y+R5Lu25Lq677ya
-PC9zdHJvbmc+PHNwYW4gaWQ9ImZyb20iPuWtn+WHoei+iTwvc3Bhbj4gPGJy
-PjxzdHJvbmc+5pS25Lu25Lq677yaPC9zdHJvbmc+PHNwYW4gaWQ9InRvIiBz
-dHlsZT0id29yZC1icmVhazogYnJlYWstYWxsOyI+a2FzaHlhcC5kZXNhaTtz
-dW1pdC5zYXhlbmE7c2hpdmFzaGFyYW4uc3Jpa2FudGVzaHdhcmE7Y2hhbmRy
-YWthbnRoLnBhdGlsO+Wtn+WHoei+iTs8L3NwYW4+PC9kaXY+Cjxicj4KPGRp
-diBpZD0iY29udGVudCI+CjxkaXYgY2xhc3M9InZpZXdlcl9wYXJ0IiBzdHls
-ZT0icG9zaXRpb246IHJlbGF0aXZlOyI+CjxkaXY+SWYgRENNRCB0aW1lb3V0
-IG5vdCBoYW5kbGVkLCB0aGUgbmV4dCBpbnRlcmFjdGlvbiBiZXR3ZWVuIHRo
-ZSBkcml2ZXIgYW5kIGZpcm13YXJlIHdpbGwgc3RpbGw8YnI+cmVzdWx0IGlu
-IERDTUQgdGltZW91dCwgd2hpY2ggbWF5IGNhdXNlIHN5c3RlbSBjcmFzaGVz
-IG9yIGhhbmcgdXA8YnI+PGJyPlRoaXMgcGF0Y2ggd2lsbCBkbyBwcm9wZXIg
-ZXJyb3IgaGFuZGxpbmcgZm9yIERDTUQgY29tbWFuZDxicj5mb3IgRnVzaW9u
-IGFkYXB0ZXJzOjxicj48YnI+MS4gV2hhdCBhY3Rpb24gbmVlZHMgdG8gYmUg
-dGFrZW4gaW4gY2FzZSBvZiBEQ01EIHRpbWVvdXQgaXMgZGVjaWRlZCBieTxi
-cj5mdW5jdGlvbiBkY21kX3RpbWVvdXRfb2NyX3Bvc3NpYmxlKCkuIERDTUQg
-dGltZW91dCBjYXVzaW5nIE9DUiBpczxicj5hcHBsaWNhYmxlIHRvIHRoZSBm
-b2xsb3dpbmcgc2l0dWF0aW9uOjxicj5JTklUSUFURV9PQ1I8YnI+S0lMTF9B
-REFQVEVSPGJyPklHTk9SRV9USU1FT1VUPGJyPjxicj4yLiBJZiB0aG9zZSBE
-Q01EcyBmYWlsLCBkcml2ZXIgYmFpbHMgb3V0Ljxicj48YnI+RXJyb3IgbG9n
-Ojxicj5bIDIwMS42ODk3NTldIG1lZ2FyYWlkX3NhcyAwMDAxOjA1OjAwLjA6
-IG1lZ2FzYXNfc3luY19wZF9zZXFfbnVtIERDTUQgdGltZWQgb3V0LCBjb250
-aW51ZSB3aXRob3V0IEpCT0Qgc2VxdWVuY2UgbWFwPGJyPlsgMjQyLjY0OTA2
-MV0gW10gbWVnYXNhc19pbml0KzB4MTE0LzB4NDAwMCBbbWVnYXJhaWRfc2Fz
-XTxicj5bIDM2My40ODEwMDldIFtdIG1lZ2FzYXNfaXNzdWVfYmxvY2tlZF9j
-bWQrMHgxZDgvMHgyNjggW21lZ2FyYWlkX3Nhc108YnI+WyAzNjMuNDgxMTU5
-XSBbXSBtZWdhc2FzX2dldF9wZF9saXN0KzB4NTQ4LzB4Njg4IFttZWdhcmFp
-ZF9zYXNdPGJyPlsgMzYzLjQ4MTMwOV0gW10gbWVnYXNhc19pbml0X2Z3KzB4
-YjM4LzB4MTEwNCBbbWVnYXJhaWRfc2FzXTxicj5bIDM2My40ODE0NTldIFtd
-IG1lZ2FzYXNfcHJvYmVfb25lKzB4MWY0LzB4NWM0IFttZWdhcmFpZF9zYXNd
-PGJyPlsgMzYzLjQ4MjQxOV0gW10gbWVnYXNhc19pbml0KzB4MTE0LzB4NDAw
-MCBbbWVnYXJhaWRfc2FzXTxicj5bIDM4MS45MTIyOThdIG1lZ2FyYWlkX3Nh
-cyAwMDAxOjA1OjAwLjA6IERDTUQob3Bjb2RlOiAweDIwMTAxMDApIGlzIHRp
-bWVkIG91dCwgZnVuYzptZWdhc2FzX2lzc3VlX2Jsb2NrZWRfY21kPGJyPlsg
-MzgxLjkxMjk3OV0gbWVnYXJhaWRfc2FzIDAwMDE6MDU6MDAuMDogSWdub3Jl
-IERDTUQgdGltZW91dDogbWVnYXNhc19nZXRfcGRfbGlzdCA0NzI3PGJyPlsg
-NDg0LjMxMzUyNl0gW10gbWVnYXNhc19pbml0KzB4MTE0LzB4NDAwMCBbbWVn
-YXJhaWRfc2FzXTxicj5bIDU2Mi4xMzYyOTRdIG1lZ2FyYWlkX3NhcyAwMDAx
-OjA1OjAwLjA6IERDTUQob3Bjb2RlOiAweDMwMTAxMDApIGlzIHRpbWVkIG91
-dCwgZnVuYzptZWdhc2FzX2lzc3VlX2Jsb2NrZWRfY21kPGJyPlsgNTYyLjEz
-NzA3NF0gbWVnYXJhaWRfc2FzIDAwMDE6MDU6MDAuMDogSWdub3JlIERDTUQg
-dGltZW91dDogbWVnYXNhc19sZF9saXN0X3F1ZXJ5IDQ5NzM8YnI+WyA1NjIu
-MTM3MDgxXSBtZWdhcmFpZF9zYXMgMDAwMTowNTowMC4wOiBmYWlsZWQgdG8g
-Z2V0IExEIGxpc3Q8YnI+WyA1NjIuMTM3NDI1XSBtZWdhcmFpZF9zYXMgMDAw
-MTowNTowMC4wOiBtZWdhc2FzX2luaXRfZnc6IG1lZ2FzYXNfZ2V0X2Rldmlj
-ZV9saXN0IGZhaWxlZDxicj5bIDU2Mi4xMzc3NjddIG1lZ2FyYWlkX3NhcyAw
-MDAxOjA1OjAwLjA6IG1lZ2FzYXNfZGlzYWJsZV9pbnRyX2Z1c2lvbiBpcyBj
-YWxsZWQgb3V0Ym91bmRfaW50cl9tYXNrOjB4NDAwMDAwMDk8YnI+WyA1NjIu
-MTM5MjMyXSBtZWdhcmFpZF9zYXMgMDAwMTowNTowMC4wOiBGYWlsZWQgZnJv
-bSBtZWdhc2FzX2luaXRfZncgNjU3Mjxicj48YnI+Q28tZGV2ZWxvcGVkLWJ5
-OiBKYWNraWUgTGl1IDxicj5TaWduZWQtb2ZmLWJ5OiBKYWNraWUgTGl1IDxi
-cj5TaWduZWQtb2ZmLWJ5OiBtZW5nZmFuaHVpIDxicj5TdWdnZXN0ZWQtYnk6
-IEdlbGlhbmcgVGFuZyA8YnI+LS0tPGJyPmRyaXZlcnMvc2NzaS9tZWdhcmFp
-ZC9tZWdhcmFpZF9zYXMuaCB8IDEgKzxicj5kcml2ZXJzL3Njc2kvbWVnYXJh
-aWQvbWVnYXJhaWRfc2FzX2Jhc2UuYyB8IDQgKy08YnI+ZHJpdmVycy9zY3Np
-L21lZ2FyYWlkL21lZ2FyYWlkX3Nhc19mdXNpb24uYyB8IDcxICsrKysrKysr
-KysrKysrKysrLS0tLTxicj4zIGZpbGVzIGNoYW5nZWQsIDYyIGluc2VydGlv
-bnMoKyksIDE0IGRlbGV0aW9ucygtKTxicj48YnI+ZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvc2NzaS9tZWdhcmFpZC9tZWdhcmFpZF9zYXMuaCBiL2RyaXZlcnMv
-c2NzaS9tZWdhcmFpZC9tZWdhcmFpZF9zYXMuaDxicj5pbmRleCA1NjgwYzZj
-ZGIyMjEuLjkxNTcwYzVlODQ1NiAxMDA2NDQ8YnI+LS0tIGEvZHJpdmVycy9z
-Y3NpL21lZ2FyYWlkL21lZ2FyYWlkX3Nhcy5oPGJyPisrKyBiL2RyaXZlcnMv
-c2NzaS9tZWdhcmFpZC9tZWdhcmFpZF9zYXMuaDxicj5AQCAtMjc2MCw1ICsy
-NzYwLDYgQEAgdm9pZCBtZWdhc2FzX2V4aXRfZGVidWdmcyh2b2lkKTs8YnI+
-dm9pZCBtZWdhc2FzX3NldHVwX2RlYnVnZnMoc3RydWN0IG1lZ2FzYXNfaW5z
-dGFuY2UgKmluc3RhbmNlKTs8YnI+dm9pZCBtZWdhc2FzX2Rlc3Ryb3lfZGVi
-dWdmcyhzdHJ1Y3QgbWVnYXNhc19pbnN0YW5jZSAqaW5zdGFuY2UpOzxicj5p
-bnQgbWVnYXNhc19ibGtfbXFfcG9sbChzdHJ1Y3QgU2NzaV9Ib3N0ICpzaG9z
-dCwgdW5zaWduZWQgaW50IHF1ZXVlX251bSk7PGJyPitpbnQgZGNtZF90aW1l
-b3V0X29jcl9wb3NzaWJsZShzdHJ1Y3QgbWVnYXNhc19pbnN0YW5jZSAqaW5z
-dGFuY2UpOzxicj48YnI+I2VuZGlmIC8qTFNJX01FR0FSQUlEX1NBU19IICov
-PGJyPmRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvbWVnYXJhaWQvbWVnYXJh
-aWRfc2FzX2Jhc2UuYyBiL2RyaXZlcnMvc2NzaS9tZWdhcmFpZC9tZWdhcmFp
-ZF9zYXNfYmFzZS5jPGJyPmluZGV4IDE3MGIzOGYwNDY1NS4uYmE4MDYxZWEy
-MDc4IDEwMDY0NDxicj4tLS0gYS9kcml2ZXJzL3Njc2kvbWVnYXJhaWQvbWVn
-YXJhaWRfc2FzX2Jhc2UuYzxicj4rKysgYi9kcml2ZXJzL3Njc2kvbWVnYXJh
-aWQvbWVnYXJhaWRfc2FzX2Jhc2UuYzxicj5AQCAtNDUxOCw4ICs0NTE4LDgg
-QEAgaW50IG1lZ2FzYXNfYWxsb2NfY21kcyhzdHJ1Y3QgbWVnYXNhc19pbnN0
-YW5jZSAqaW5zdGFuY2UpPGJyPiogUmV0dXJuIDAgZm9yIG9ubHkgRnVzaW9u
-IGFkYXB0ZXIsIGlmIGRyaXZlciBsb2FkL3VubG9hZCBpcyBub3QgaW4gcHJv
-Z3Jlc3M8YnI+KiBvciBGVyBpcyBub3QgdW5kZXIgT0NSLjxicj4qLzxicj4t
-aW5saW5lIGludDxicj4tZGNtZF90aW1lb3V0X29jcl9wb3NzaWJsZShzdHJ1
-Y3QgbWVnYXNhc19pbnN0YW5jZSAqaW5zdGFuY2UpIHs8YnI+K2ludCBkY21k
-X3RpbWVvdXRfb2NyX3Bvc3NpYmxlKHN0cnVjdCBtZWdhc2FzX2luc3RhbmNl
-ICppbnN0YW5jZSk8YnI+K3s8YnI+PGJyPmlmIChpbnN0YW5jZS0mZ3Q7YWRh
-cHRlcl90eXBlID09IE1GSV9TRVJJRVMpPGJyPnJldHVybiBLSUxMX0FEQVBU
-RVI7PGJyPmRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvbWVnYXJhaWQvbWVn
-YXJhaWRfc2FzX2Z1c2lvbi5jIGIvZHJpdmVycy9zY3NpL21lZ2FyYWlkL21l
-Z2FyYWlkX3Nhc19mdXNpb24uYzxicj5pbmRleCA2YzFmYjgxNDk1NTMuLmYw
-YWViMWVlODNhMiAxMDA2NDQ8YnI+LS0tIGEvZHJpdmVycy9zY3NpL21lZ2Fy
-YWlkL21lZ2FyYWlkX3Nhc19mdXNpb24uYzxicj4rKysgYi9kcml2ZXJzL3Nj
-c2kvbWVnYXJhaWQvbWVnYXJhaWRfc2FzX2Z1c2lvbi5jPGJyPkBAIC0xMzYz
-LDE3ICsxMzYzLDQyIEBAIG1lZ2FzYXNfc3luY19wZF9zZXFfbnVtKHN0cnVj
-dCBtZWdhc2FzX2luc3RhbmNlICppbnN0YW5jZSwgYm9vbCBwZW5kKSB7PGJy
-PiJkcml2ZXIgc3VwcG9ydHMgbWF4ICVkIEpCT0QsIGJ1dCBGVyByZXBvcnRz
-ICVkXG4iLDxicj5NQVhfUEhZU0lDQUxfREVWSUNFUywgbGUzMl90b19jcHUo
-cGRfc3luYy0mZ3Q7Y291bnQpKTs8YnI+cmV0ID0gLUVJTlZBTDs8YnI+KyBn
-b3RvIG91dDs8YnI+fTxicj48YnI+LSBpZiAocmV0ID09IERDTURfVElNRU9V
-VCk8YnI+LSBkZXZfd2FybigmYW1wO2luc3RhbmNlLSZndDtwZGV2LSZndDtk
-ZXYsPGJyPi0gIiVzIERDTUQgdGltZWQgb3V0LCBjb250aW51ZSB3aXRob3V0
-IEpCT0Qgc2VxdWVuY2UgbWFwXG4iLDxicj4tIF9fZnVuY19fKTs8YnI+LTxi
-cj4tIGlmIChyZXQgPT0gRENNRF9TVUNDRVNTKTxicj4rIHN3aXRjaCAocmV0
-KSB7PGJyPisgY2FzZSBEQ01EX1NVQ0NFU1M6PGJyPmluc3RhbmNlLSZndDtw
-ZF9zZXFfbWFwX2lkKys7PGJyPisgYnJlYWs7PGJyPisgY2FzZSBEQ01EX1RJ
-TUVPVVQ6PGJyPisgc3dpdGNoIChkY21kX3RpbWVvdXRfb2NyX3Bvc3NpYmxl
-KGluc3RhbmNlKSkgezxicj4rIGNhc2UgSU5JVElBVEVfT0NSOjxicj4rIGNt
-ZC0mZ3Q7ZmxhZ3MgfD0gRFJWX0RDTURfU0tJUF9SRUZJUkU7PGJyPisgbXV0
-ZXhfdW5sb2NrKCZhbXA7aW5zdGFuY2UtJmd0O3Jlc2V0X211dGV4KTs8YnI+
-KyBtZWdhc2FzX3Jlc2V0X2Z1c2lvbihpbnN0YW5jZS0mZ3Q7aG9zdCw8YnI+
-KyBNRklfSU9fVElNRU9VVF9PQ1IpOzxicj4rIG11dGV4X2xvY2soJmFtcDtp
-bnN0YW5jZS0mZ3Q7cmVzZXRfbXV0ZXgpOzxicj4rIGJyZWFrOzxicj4rIGNh
-c2UgS0lMTF9BREFQVEVSOjxicj4rIG1lZ2FyYWlkX3Nhc19raWxsX2hiYShp
-bnN0YW5jZSk7PGJyPisgYnJlYWs7PGJyPisgY2FzZSBJR05PUkVfVElNRU9V
-VDo8YnI+KyBkZXZfaW5mbygmYW1wO2luc3RhbmNlLSZndDtwZGV2LSZndDtk
-ZXYsICJJZ25vcmUgRENNRCB0aW1lb3V0OiAlcyAlZFxuIiw8YnI+KyBfX2Z1
-bmNfXywgX19MSU5FX18pOzxicj4rIGJyZWFrOzxicj4rIH08YnI+KyBicmVh
-azs8YnI+KyBjYXNlIERDTURfRkFJTEVEOjxicj4rIGRldl9lcnIoJmFtcDtp
-bnN0YW5jZS0mZ3Q7cGRldi0mZ3Q7ZGV2LDxicj4rICIlczogTVJfRENNRF9T
-WVNURU1fUERfTUFQX0dFVF9JTkZPIGZhaWxlZFxuIiw8YnI+KyBfX2Z1bmNf
-Xyk7PGJyPisgYnJlYWs7PGJyPisgfTxicj4rPGJyPitvdXQ6PGJyPisgaWYg
-KHJldCAhPSBEQ01EX1RJTUVPVVQpPGJyPisgbWVnYXNhc19yZXR1cm5fY21k
-KGluc3RhbmNlLCBjbWQpOzxicj48YnI+LSBtZWdhc2FzX3JldHVybl9jbWQo
-aW5zdGFuY2UsIGNtZCk7PGJyPnJldHVybiByZXQ7PGJyPn08YnI+PGJyPkBA
-IC0xNDQ5LDEyICsxNDc0LDM0IEBAIG1lZ2FzYXNfZ2V0X2xkX21hcF9pbmZv
-KHN0cnVjdCBtZWdhc2FzX2luc3RhbmNlICppbnN0YW5jZSk8YnI+ZWxzZTxi
-cj5yZXQgPSBtZWdhc2FzX2lzc3VlX3BvbGxlZChpbnN0YW5jZSwgY21kKTs8
-YnI+PGJyPi0gaWYgKHJldCA9PSBEQ01EX1RJTUVPVVQpPGJyPi0gZGV2X3dh
-cm4oJmFtcDtpbnN0YW5jZS0mZ3Q7cGRldi0mZ3Q7ZGV2LDxicj4tICIlcyBE
-Q01EIHRpbWVkIG91dCwgUkFJRCBtYXAgaXMgZGlzYWJsZWRcbiIsPGJyPi0g
-X19mdW5jX18pOzxicj4rIHN3aXRjaCAocmV0KSB7PGJyPisgY2FzZSBEQ01E
-X1RJTUVPVVQ6PGJyPisgc3dpdGNoIChkY21kX3RpbWVvdXRfb2NyX3Bvc3Np
-YmxlKGluc3RhbmNlKSkgezxicj4rIGNhc2UgSU5JVElBVEVfT0NSOjxicj4r
-IGNtZC0mZ3Q7ZmxhZ3MgfD0gRFJWX0RDTURfU0tJUF9SRUZJUkU7PGJyPisg
-bXV0ZXhfdW5sb2NrKCZhbXA7aW5zdGFuY2UtJmd0O3Jlc2V0X211dGV4KTs8
-YnI+KyBtZWdhc2FzX3Jlc2V0X2Z1c2lvbihpbnN0YW5jZS0mZ3Q7aG9zdCw8
-YnI+KyBNRklfSU9fVElNRU9VVF9PQ1IpOzxicj4rIG11dGV4X2xvY2soJmFt
-cDtpbnN0YW5jZS0mZ3Q7cmVzZXRfbXV0ZXgpOzxicj4rIGJyZWFrOzxicj4r
-IGNhc2UgS0lMTF9BREFQVEVSOjxicj4rIG1lZ2FyYWlkX3Nhc19raWxsX2hi
-YShpbnN0YW5jZSk7PGJyPisgYnJlYWs7PGJyPisgY2FzZSBJR05PUkVfVElN
-RU9VVDo8YnI+KyBkZXZfaW5mbygmYW1wO2luc3RhbmNlLSZndDtwZGV2LSZn
-dDtkZXYsICJJZ25vcmUgRENNRCB0aW1lb3V0OiAlcyAlZFxuIiw8YnI+KyBf
-X2Z1bmNfXywgX19MSU5FX18pOzxicj4rIGJyZWFrOzxicj4rIH08YnI+KyBi
-cmVhazs8YnI+KyBjYXNlIERDTURfRkFJTEVEOjxicj4rIGRldl9lcnIoJmFt
-cDtpbnN0YW5jZS0mZ3Q7cGRldi0mZ3Q7ZGV2LDxicj4rICIlczogTVJfRENN
-RF9MRF9NQVBfR0VUX0lORk8gZmFpbGVkXG4iLDxicj4rIF9fZnVuY19fKTs8
-YnI+KyBicmVhazs8YnI+KyB9PGJyPjxicj4tIG1lZ2FzYXNfcmV0dXJuX2Nt
-ZChpbnN0YW5jZSwgY21kKTs8YnI+KyBpZiAocmV0ICE9IERDTURfVElNRU9V
-VCk8YnI+KyBtZWdhc2FzX3JldHVybl9jbWQoaW5zdGFuY2UsIGNtZCk7PGJy
-Pjxicj5yZXR1cm4gcmV0Ozxicj59PGJyPi0tIDxicj4yLjI1LjE8YnI+PGJy
-PjwvZGl2Pgo8L2Rpdj4KPC9kaXY+CjwvZGl2Pg==
+Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
+---
+ Changes since v2
+   - Rebase to Linux 6.10-rc3
+   - Add Reviewed-by tag
+---
+ arch/riscv/Kconfig                   | 11 +++++++++++
+ arch/riscv/include/asm/dmi.h         | 24 ++++++++++++++++++++++++
+ drivers/firmware/efi/riscv-runtime.c | 13 +++++++++++++
+ 3 files changed, 48 insertions(+)
+ create mode 100644 arch/riscv/include/asm/dmi.h
 
---nsmail-23fe32kf3se-23ffd0du5m7--
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 0525ee2d63c7..b1fc6db48e7a 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -967,6 +967,17 @@ config EFI
+ 	  allow the kernel to be booted as an EFI application. This
+ 	  is only useful on systems that have UEFI firmware.
+ 
++config DMI
++	bool "Enable support for SMBIOS (DMI) tables"
++	depends on EFI
++	default y
++	help
++	  This enables SMBIOS/DMI feature for systems.
++
++	  This option is only useful on systems that have UEFI firmware.
++	  However, even with this option, the resultant kernel should
++	  continue to boot on existing non-UEFI platforms.
++
+ config CC_HAVE_STACKPROTECTOR_TLS
+ 	def_bool $(cc-option,-mstack-protector-guard=tls -mstack-protector-guard-reg=tp -mstack-protector-guard-offset=0)
+ 
+diff --git a/arch/riscv/include/asm/dmi.h b/arch/riscv/include/asm/dmi.h
+new file mode 100644
+index 000000000000..ca7cce557ef7
+--- /dev/null
++++ b/arch/riscv/include/asm/dmi.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2024 Intel Corporation
++ *
++ * based on arch/arm64/include/asm/dmi.h
++ *
++ * This file is subject to the terms and conditions of the GNU General Public
++ * License.  See the file "COPYING" in the main directory of this archive
++ * for more details.
++ */
++
++#ifndef __ASM_DMI_H
++#define __ASM_DMI_H
++
++#include <linux/io.h>
++#include <linux/slab.h>
++
++#define dmi_early_remap(x, l)		memremap(x, l, MEMREMAP_WB)
++#define dmi_early_unmap(x, l)		memunmap(x)
++#define dmi_remap(x, l)			memremap(x, l, MEMREMAP_WB)
++#define dmi_unmap(x)			memunmap(x)
++#define dmi_alloc(l)			kzalloc(l, GFP_KERNEL)
++
++#endif
+diff --git a/drivers/firmware/efi/riscv-runtime.c b/drivers/firmware/efi/riscv-runtime.c
+index 01f0f90ea418..fa71cd898120 100644
+--- a/drivers/firmware/efi/riscv-runtime.c
++++ b/drivers/firmware/efi/riscv-runtime.c
+@@ -152,3 +152,16 @@ void arch_efi_call_virt_teardown(void)
+ {
+ 	efi_virtmap_unload();
+ }
++
++static int __init riscv_dmi_init(void)
++{
++	/*
++	 * On riscv, DMI depends on UEFI, and dmi_setup() needs to
++	 * be called early because dmi_id_init(), which is an arch_initcall
++	 * itself, depends on dmi_scan_machine() having been called already.
++	 */
++	dmi_setup();
++
++	return 0;
++}
++core_initcall(riscv_dmi_init);
+-- 
+2.34.1
+
 
