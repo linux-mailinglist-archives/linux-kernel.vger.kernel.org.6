@@ -1,132 +1,335 @@
-Return-Path: <linux-kernel+bounces-214037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333F6907E4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:49:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB87907E51
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A652BB22B37
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:48:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68DA3282A50
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECD414B064;
-	Thu, 13 Jun 2024 21:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA91914B941;
+	Thu, 13 Jun 2024 21:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D1dsGlfO"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3EnM92Rk"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39865136E3B;
-	Thu, 13 Jun 2024 21:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9A65A4FD;
+	Thu, 13 Jun 2024 21:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718315329; cv=none; b=A3e44RbTzcPMx+nSD2L//kPq4UPIXRRzTUBt4nDcJ5XaX97roA4c7QkepXPPuHgJBMt7j/drDshFsDVi2l0NdCxosxaCqywhceL9z7Mbtn4c1XIG2YF5FGqNWGMPzaus7GXq8JBJ8aGMUTTWWbsWJ0XSHz8JBNMB9Mh2m/UMAqI=
+	t=1718315378; cv=none; b=hnXP4lfClevBt2I9dYO1zFBZz9iarqBaYg6ilY8tLqQSGTcqNgC4HRYSF+Wav4oTrjM9naU19NRu220RZupTH7ltUzTqUqFjBKjw/9kKLPFMu5ILm+L4FR/qPk0aePcpZSJ8L4BlhEDbjjTQvCLdEXBh104kBabD904PFb1as5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718315329; c=relaxed/simple;
-	bh=0E5aK+rK+8mWd3EYjuWk54URc/yrnOGrMi4oOy/HQyI=;
+	s=arc-20240116; t=1718315378; c=relaxed/simple;
+	bh=ETYgORMuqtSoTr818gKpIfKridOj8I0R7TG0CAFQppc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dq/NwuFobqsKpyFIREnBpQ/7B/+4LbHkCh1R+ZWd29Re/7FbtnXYAA/X2U5y/oqrfOJhG8hKx6GMyNkVpZOw7Ou3Q0ppyU7LhIHaJhgf3xAelmqX7Nx0EPFt+iPfKuqdWSrP+DNntu05vhr0VcAD3Pu8OsVoMJUIdsfSzSdNGj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D1dsGlfO; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718315326;
-	bh=0E5aK+rK+8mWd3EYjuWk54URc/yrnOGrMi4oOy/HQyI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D1dsGlfOsQMs9j42IllEL504XJcPhi+v4uVHVFUDh9dkLitaQA92h9SgvyHWm9Jy7
-	 CYBkT/f5cvRmgi45ATQGnmHpqoGyiOhn0ObacdtPpyVKklC8r1RAfWsajgT+L4dJ0G
-	 dqD605+2loqPTusv5fDX6nfFTc9uA0yVsnrD+IiZ9AcaCGKQl5moXMv21yes06rTtt
-	 KY72REId3auGznJNeBm6Nde92mF8qEHlAQ4B3h2a4RVqi9FskzzgqaD1UI5IY9OFpO
-	 v9qhbcgeV6KgXt9oTRO4QgDMwwb/rFnBmOBnog6tiYiFKBCl2Okp0QHypUIpOzyOx6
-	 8R7ButkRiVz+A==
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3F5FB37820CD;
-	Thu, 13 Jun 2024 21:48:46 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id A9EA010608F7; Thu, 13 Jun 2024 23:48:45 +0200 (CEST)
-Date: Thu, 13 Jun 2024 23:48:45 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 5/9] arm64: dts: rockchip: Enable the NPU on quartzpro64
-Message-ID: <mq5clkj2io6vzkawm7s6wvzb6rlk74oyy5lylgivosvyavojms@fppwpj5m3qqw>
-References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
- <20240612-6-10-rocket-v1-5-060e48eea250@tomeuvizoso.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M7WPuz0bR/wZdo8uVSLCI8miQNvHsETG/2B+rp1rvCv9n5aaEDfauWxqoYrfmZTXmWTpvIGrs7W6D2SZ9MaBX0JWrj5Bog66opt0c7osOyPYrZIagSnkSYMexhhVRl9w8pZQgC9XulPSFobKeyI/Qjh8Ct7LJkn6QiA7fKuOhCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3EnM92Rk; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=2tgawcyxp7e6LF/gNJHmG9oPpwqaaAvXUh9+M7UWf7c=; b=3EnM92Rk7DmDJc+RAa3EiMUH1m
+	hHpvDI0GQPzxsTAWddB2Q20QiDM/mMCPCPtKzRZ1hi+4tCZ+WoImbaFDu5RTREUPfcIN6iStA3T9J
+	/pA8sqcDg0PcH5KpLpk6yqSMBIufj7NfpabiOrUoHNLerqkOxh/pkPonVcnEdcTsWSVk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sHsK5-0000ZS-5O; Thu, 13 Jun 2024 23:49:33 +0200
+Date: Thu, 13 Jun 2024 23:49:33 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Omer Shpigelman <oshpigelman@habana.ai>
+Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	ogabbay@kernel.org, zyehudai@habana.ai
+Subject: Re: [PATCH 09/15] net: hbl_en: add habanalabs Ethernet driver
+Message-ID: <10902044-fb02-4328-bf88-0b386ee51c78@lunn.ch>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+ <20240613082208.1439968-10-oshpigelman@habana.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vlxe36ggc7o455an"
-Content-Disposition: inline
-In-Reply-To: <20240612-6-10-rocket-v1-5-060e48eea250@tomeuvizoso.net>
-
-
---vlxe36ggc7o455an
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240613082208.1439968-10-oshpigelman@habana.ai>
 
-Hi,
+> +static int hbl_en_napi_poll(struct napi_struct *napi, int budget);
+> +static int hbl_en_port_open(struct hbl_en_port *port);
 
-On Wed, Jun 12, 2024 at 03:52:58PM GMT, Tomeu Vizoso wrote:
-> Enable the nodes added in a previous commit to the rk3588s device tree.
->=20
-> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> ---
+When you do the Intel internal review, i expect this is crop up. No
+forward declarations please. Put the code in the right order so they
+are not needed.
 
-There is a separate regulator for the NPU. For QuartzPro64, which is
-basically the same as EVB1, it should look like this (obviously the
-"npu-supply" and "sram-supply" need to become part of the binding):
+> +static int hbl_en_get_src_ip(struct hbl_aux_dev *aux_dev, u32 port_idx, u32 *src_ip)
+> +{
+> +	struct hbl_en_port *port = HBL_EN_PORT(aux_dev, port_idx);
+> +	struct net_device *ndev = port->ndev;
+> +	struct in_device *in_dev;
+> +	struct in_ifaddr *ifa;
+> +	int rc = 0;
+> +
+> +	/* for the case where no src IP is configured */
+> +	*src_ip = 0;
+> +
+> +	/* rtnl lock should be acquired in relevant flows before taking configuration lock */
+> +	if (!rtnl_is_locked()) {
+> +		netdev_err(port->ndev, "Rtnl lock is not acquired, can't proceed\n");
+> +		rc = -EFAULT;
+> +		goto out;
+> +	}
 
-&rknn {
-	npu-supply =3D <&vdd_npu_s0>;
-	sram-supply =3D <&vdd_npu_mem_s0>;
-};
+You will find all other drivers just do:
 
-Also the references are supposed to be done alphabetically in the
-DT file (so &rknn should not be added before &i2c).
+	ASSERT_RTNL().
 
-Greetings,
+If your locking is broken, you are probably dead anyway, so you might
+as well keep going and try to explode in the most interesting way
+possible.
 
--- Sebastian
+> +static void hbl_en_reset_stats(struct hbl_aux_dev *aux_dev, u32 port_idx)
+> +{
+> +	struct hbl_en_port *port = HBL_EN_PORT(aux_dev, port_idx);
+> +
+> +	port->net_stats.rx_packets = 0;
+> +	port->net_stats.tx_packets = 0;
+> +	port->net_stats.rx_bytes = 0;
+> +	port->net_stats.tx_bytes = 0;
+> +	port->net_stats.tx_errors = 0;
+> +	atomic64_set(&port->net_stats.rx_dropped, 0);
+> +	atomic64_set(&port->net_stats.tx_dropped, 0);
 
---vlxe36ggc7o455an
-Content-Type: application/pgp-signature; name="signature.asc"
+Why atomic64_set? Atomics are expensive, so you should not be using
+them. netdev has other cheaper methods, which other Intel developers
+should be happy to tell you all about.
 
------BEGIN PGP SIGNATURE-----
+> +static u32 hbl_en_get_mtu(struct hbl_aux_dev *aux_dev, u32 port_idx)
+> +{
+> +	struct hbl_en_port *port = HBL_EN_PORT(aux_dev, port_idx);
+> +	struct net_device *ndev = port->ndev;
+> +	u32 mtu;
+> +
+> +	if (atomic_cmpxchg(&port->in_reset, 0, 1)) {
+> +		netdev_err(ndev, "port is in reset, can't get MTU\n");
+> +		return 0;
+> +	}
+> +
+> +	mtu = ndev->mtu;
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZraToACgkQ2O7X88g7
-+ppnfQ/+JqtXPucUyRx8LXjWs85ElMTUelkoio7nG3hMKa+kIhgFzXsAklBUmELg
-SeopwGrOOSJCb478Eb3uL3M7BBA31blIKAdDnlpFB4R1iimlnGf6gqTkcQumGc2M
-zkgt/YqBdQ4W5HhLCb21fL87PkHZDTgP0SNQlVg4z9xo2KBVuHZe7gfM0/t5MRhC
-P6euSXEhkSUGHb+gq0LBf0MZnoHF6KWcMSsEXm7u/Sv2ftVrC6SyBDUtAAK7WOce
-DHyytzRfGFjoW8/rkxrkdNnw8eQCLd3LZkWhloahInps1t1o4Npk5/o8zEBjHZyY
-Jk7ocIrRnoiMy47QH0zAwr4VtHl6fhRnaZS/0xwBA7jlIGW96U6bNNJkgw1Wj1b1
-capv5ZDibYnlT0JB2NVs+OocykO4MskKtvn6gng3Bu22sGxQ2zWAT41TtrTzklS1
-WRbcIdHwpvtUSvxbWsfpjVuPCfuaVDPKP3ERnWdSTozQ6rZFTY+JN9/FT+wO/b2h
-V0vPx5d6KvskXRd8nOEdd56gTisxnjBEx2njFoQ3fST/blAJs1N37sYHkxeFQnom
-gvk/hVj1zCZV3h5tC+nYJnPM2s2WD49T4R+TgNrCqwLSr+CydHChFnQsm8h+GaXW
-dRZ3RCqZvDopo0LEKn0BLxGfwFzMU/FUPM37m7o3NQo0xfawtBU=
-=SaHD
------END PGP SIGNATURE-----
+I think you need a better error message. All this does is access
+ndev->mtu. What does it matter if the port is in reset? You don't
+access it.
 
---vlxe36ggc7o455an--
+> +static int hbl_en_close(struct net_device *netdev)
+> +{
+> +	struct hbl_en_port *port = hbl_netdev_priv(netdev);
+> +	struct hbl_en_device *hdev = port->hdev;
+> +	ktime_t timeout;
+> +
+> +	/* Looks like the return value of this function is not checked, so we can't just return
+> +	 * EBUSY if the port is under reset. We need to wait until the reset is finished and then
+> +	 * close the port. Otherwise the netdev will set the port as closed although port_close()
+> +	 * wasn't called. Only if we waited long enough and the reset hasn't finished, we can return
+> +	 * an error without actually closing the port as it is a fatal flow anyway.
+> +	 */
+> +	timeout = ktime_add_ms(ktime_get(), PORT_RESET_TIMEOUT_MSEC);
+> +	while (atomic_cmpxchg(&port->in_reset, 0, 1)) {
+> +		/* If this is called from unregister_netdev() then the port was already closed and
+> +		 * hence we can safely return.
+> +		 * We could have just check the port_open boolean, but that might hide some future
+> +		 * bugs. Hence it is better to use a dedicated flag for that.
+> +		 */
+> +		if (READ_ONCE(hdev->in_teardown))
+> +			return 0;
+> +
+> +		usleep_range(50, 200);
+> +		if (ktime_compare(ktime_get(), timeout) > 0) {
+> +			netdev_crit(netdev,
+> +				    "Timeout while waiting for port to finish reset, can't close it\n"
+> +				    );
+> +			return -EBUSY;
+> +		}
+
+This has the usual bug. Please look at include/linux/iopoll.h. 
+
+> +		timeout = ktime_add_ms(ktime_get(), PORT_RESET_TIMEOUT_MSEC);
+> +		while (atomic_cmpxchg(&port->in_reset, 0, 1)) {
+> +			usleep_range(50, 200);
+> +			if (ktime_compare(ktime_get(), timeout) > 0) {
+> +				netdev_crit(port->ndev,
+> +					    "Timeout while waiting for port %d to finish reset\n",
+> +					    port->idx);
+> +				break;
+> +			}
+> +		}
+
+and again. Don't roll your own timeout loops like this, use the core
+version.
+
+> +static int hbl_en_change_mtu(struct net_device *netdev, int new_mtu)
+> +{
+> +	struct hbl_en_port *port = hbl_netdev_priv(netdev);
+> +	int rc = 0;
+> +
+> +	if (atomic_cmpxchg(&port->in_reset, 0, 1)) {
+> +		netdev_err(netdev, "port is in reset, can't change MTU\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	if (netif_running(port->ndev)) {
+> +		hbl_en_port_close(port);
+> +
+> +		/* Sleep in order to let obsolete events to be dropped before re-opening the port */
+> +		msleep(20);
+> +
+> +		netdev->mtu = new_mtu;
+> +
+> +		rc = hbl_en_port_open(port);
+> +		if (rc)
+> +			netdev_err(netdev, "Failed to reinit port for MTU change, rc %d\n", rc);
+
+Does that mean the port is FUBAR?
+
+Most operations like this are expected to roll back to the previous
+working configuration on failure. So if changing the MTU requires new
+buffers in your ring, you should first allocate the new buffers, then
+free the old buffers, so that if allocation fails, you still have
+buffers, and the device can continue operating.
+
+> +module_param(poll_enable, bool, 0444);
+> +MODULE_PARM_DESC(poll_enable,
+> +		 "Enable Rx polling rather than IRQ + NAPI (0 = no, 1 = yes, default: no)");
+
+Module parameters are not liked. This probably needs to go away.
+
+> +static int hbl_en_ethtool_get_module_info(struct net_device *ndev, struct ethtool_modinfo *modinfo)
+> +{
+> +	modinfo->eeprom_len = ETH_MODULE_SFF_8636_LEN;
+> +	modinfo->type = ETH_MODULE_SFF_8636;
+
+Is this an SFF, not an SFP? How else can you know what module it is
+without doing an I2C transfer to ask the module what it is?
+
+> +static int hbl_en_ethtool_get_module_eeprom(struct net_device *ndev, struct ethtool_eeprom *ee,
+> +					    u8 *data)
+> +{
+
+This is the old API. Please update to the new API so there is access
+to all the pages of the SFF/SFP.
+
+> +static int hbl_en_ethtool_get_link_ksettings(struct net_device *ndev,
+> +					     struct ethtool_link_ksettings *cmd)
+> +{
+> +	struct hbl_en_aux_ops *aux_ops;
+> +	struct hbl_aux_dev *aux_dev;
+> +	struct hbl_en_device *hdev;
+> +	struct hbl_en_port *port;
+> +	u32 port_idx, speed;
+> +
+> +	port = hbl_netdev_priv(ndev);
+> +	hdev = port->hdev;
+> +	port_idx = port->idx;
+> +	aux_dev = hdev->aux_dev;
+> +	aux_ops = aux_dev->aux_ops;
+> +	speed = aux_ops->get_speed(aux_dev, port_idx);
+> +
+> +	cmd->base.speed = speed;
+> +	cmd->base.duplex = DUPLEX_FULL;
+> +
+> +	ethtool_link_ksettings_zero_link_mode(cmd, supported);
+> +	ethtool_link_ksettings_zero_link_mode(cmd, advertising);
+> +
+> +	switch (speed) {
+> +	case SPEED_100000:
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 100000baseCR4_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 100000baseSR4_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 100000baseKR4_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 100000baseLR4_ER4_Full);
+> +
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 100000baseCR4_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 100000baseSR4_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 100000baseKR4_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 100000baseLR4_ER4_Full);
+> +
+> +		cmd->base.port = PORT_FIBRE;
+> +
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, FIBRE);
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, FIBRE);
+> +
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, Backplane);
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, Backplane);
+> +		break;
+> +	case SPEED_50000:
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 50000baseSR2_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 50000baseCR2_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 50000baseKR2_Full);
+> +
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 50000baseSR2_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 50000baseCR2_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 50000baseKR2_Full);
+> +		break;
+> +	case SPEED_25000:
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 25000baseCR_Full);
+> +
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 25000baseCR_Full);
+> +		break;
+> +	case SPEED_200000:
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 200000baseCR4_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 200000baseKR4_Full);
+> +
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 200000baseCR4_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 200000baseKR4_Full);
+> +		break;
+> +	case SPEED_400000:
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 400000baseCR4_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, supported, 400000baseKR4_Full);
+> +
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 400000baseCR4_Full);
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, 400000baseKR4_Full);
+> +		break;
+> +	default:
+> +		netdev_err(port->ndev, "unknown speed %d\n", speed);
+> +		return -EFAULT;
+> +	}
+> +
+> +	ethtool_link_ksettings_add_link_mode(cmd, supported, Autoneg);
+> +
+> +	if (port->auto_neg_enable) {
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, Autoneg);
+> +		cmd->base.autoneg = AUTONEG_ENABLE;
+> +		if (port->auto_neg_resolved)
+> +			ethtool_link_ksettings_add_link_mode(cmd, lp_advertising, Autoneg);
+
+That looks odd. Care to explain?
+
+> +	} else {
+> +		cmd->base.autoneg = AUTONEG_DISABLE;
+> +	}
+> +
+> +	ethtool_link_ksettings_add_link_mode(cmd, supported, Pause);
+> +
+> +	if (port->pfc_enable)
+> +		ethtool_link_ksettings_add_link_mode(cmd, advertising, Pause);
+
+And is suspect that is wrong. Everybody gets pause wrong. Please
+double check my previous posts about pause.
+
+> +	if (auto_neg && !(hdev->auto_neg_mask & BIT(port_idx))) {
+> +		netdev_err(port->ndev, "port autoneg is disabled by BMC\n");
+> +		rc = -EFAULT;
+> +		goto out;
+
+Don't say you support autoneg in supported if that is the case.
+
+And EFAULT is about memory problems. EINVAL, maybe EPERM? or
+EOPNOTSUPP.
+
+	Andrew
 
