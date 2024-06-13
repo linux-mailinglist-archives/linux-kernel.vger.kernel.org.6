@@ -1,136 +1,94 @@
-Return-Path: <linux-kernel+bounces-212560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2370990632F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:56:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F07490632E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37E3A1C22762
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:56:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DBE0B22597
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA4413440E;
-	Thu, 13 Jun 2024 04:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5418134410;
+	Thu, 13 Jun 2024 04:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gLFcGBSN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DlloofCB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD16913213F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18322446CF;
+	Thu, 13 Jun 2024 04:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718254600; cv=none; b=eUSizenpcCcJt41anT0Ed+MMgCzbNzdy0gncA1bWZRTLaIzQ7YvrcmlS/chqkmlZLdx2I04SgEIbgNmoA7Z6sNtHaCXNno6gO5lrpxxC/Qg0dCoswuEUI84+DHcPHIS8BdJ78Qi/le39qHVrYYr6M/NozGGZqNCGQS8JsWgLYdM=
+	t=1718254484; cv=none; b=NfkgQrJhecKoCy3P417oEuVxZxTqRNPavmvTlpTJEuWNGtoD0hsughgoTfJdBWIVUhgoTn7y2MvnP3udsIP6zniyzlkDR7MRD8o5VvcSsY7ZXn5xiZ0XhdaMsPDEfdWdAObtSTzOuBMbhwib/mwVfuWqfpYdXw0XHCBbuzqGkCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718254600; c=relaxed/simple;
-	bh=iK1p+Q+knm8MizqNtiUBP6wYZDPbo3vXshptVmdVlII=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=O0niUvXorSyz/FUtjKi0pbwvr9QIKxiEZT3bNLDOvXoPK5/TvDqsjgQTFITvzuc4AxvVlHcRcKiINclpEwzYe4agm8OEfJpyWaEORIPNC38pg5hcN/ELyYQUe0aK8dG6BhxLsH1kQLB9l4DRBFqSue4msYmgVWgUDlHZsFhiGF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gLFcGBSN; arc=none smtp.client-ip=192.198.163.11
+	s=arc-20240116; t=1718254484; c=relaxed/simple;
+	bh=J+BhI/zGBK77styQbHQsQK52iwfQ8DKIrfeE1p8QhEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtxD1DZwSNj0bDws9d1zJG75Tuy3QE/ryo0bkWb4zLNHYTNvtjOPLcm5mhYnhgG1rpcGaA5zAzg5gdqqx8RMVpu5MpgF1E1VHhaq/8e9Zx882SSQhep3pysnQvDR2wrRvEhbc/M94OOUior3JjMgs69vnpVjhg2W7kqVK68wRrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DlloofCB; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718254599; x=1749790599;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=iK1p+Q+knm8MizqNtiUBP6wYZDPbo3vXshptVmdVlII=;
-  b=gLFcGBSNPUT2balpF2hCzYjfrr4c0tHj1QrZjxoeUu3rdVGxuSUpA1ro
-   btIeiEKTYTnb2acs/PnsCkjwP9ZRpgin5ELGw2oc6RCQeWxPccarYQKIB
-   tqL6NHL/lvOsHjzXghOtrNPqlioPclgCRPS3MRxBrJAjYI6fFhwJNyn04
-   7buXX99CW7lEi0Ezb+kqFumdtP5lx5ksBbVGKLpqocOjaCNKVPSqtwORK
-   DESTNA4DClkko6TX6fWloO3NOELvcDDKw5ho9n68sTPTWLFjKYqh389h3
-   Hp5qgQ+6pLlMBxifZdJs1MAxMHkTDJUIa5Z6J109H9banVUkQmprKah7H
+  t=1718254482; x=1749790482;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J+BhI/zGBK77styQbHQsQK52iwfQ8DKIrfeE1p8QhEA=;
+  b=DlloofCBT7GzZkeCkfCh9mjmnRB6hDX+TOIw7aUaSqMCmReQBmmybAFl
+   363Es5YeFRkT+Yoe8h3tdoNFGmqdu01vlze1l++Vk/Sr0chA9CHFafqF3
+   834EY9M4a24o4WWZX7la+Ct6jRpIAoAfPvDNBbvP6lcPZ9CBYR0Ych+Ti
+   brj6jY55VA683WDhrkmej1okluqvIuBVCNNqnySYy22Bo1wR5lN1hNqNI
+   sNCk3j5xyRHsYGHkxYAo5nfRMhuj6Hy09inf5Kc8mRrubPB4MsiD4AKZ3
+   asfFu4aOk1CenchNdKPIKoY1nQzza0JbQXT0cIueoyOFUqxi4qy3BSLk1
    A==;
-X-CSE-ConnectionGUID: Cgxg4cKURouVIqJhSFKtgg==
-X-CSE-MsgGUID: ryJaxR/YTHKnlkZ+GUUqwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="25689774"
+X-CSE-ConnectionGUID: mm3AO8wOSsuiqwLKPMqXuw==
+X-CSE-MsgGUID: Q/rJnvHfTiKh2eBwLbqBFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="40457214"
 X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="25689774"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 21:56:38 -0700
-X-CSE-ConnectionGUID: wTJ39ElpRuCl6fhbamiwjg==
-X-CSE-MsgGUID: KZQcRNa9REyHMABay2tsYw==
+   d="scan'208";a="40457214"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 21:54:41 -0700
+X-CSE-ConnectionGUID: OA/DktYHQE2CLCRzrZj1LA==
+X-CSE-MsgGUID: 6F+U8T/ESu2lCHcqALZ8wA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="40652741"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by orviesa008.jf.intel.com with ESMTP; 12 Jun 2024 21:56:35 -0700
-Message-ID: <c1c689b7-84fd-4aec-83fb-2fb4244472e0@linux.intel.com>
-Date: Thu, 13 Jun 2024 12:54:16 +0800
+   d="scan'208";a="77465931"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 12 Jun 2024 21:54:40 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 8848612C; Thu, 13 Jun 2024 07:54:38 +0300 (EEST)
+Date: Thu, 13 Jun 2024 07:54:38 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] gpiolib: put gpio_suffixes in a single compilation unit
+Message-ID: <20240613045438.GP1421138@black.fi.intel.com>
+References: <20240612184821.58053-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 05/10] iommufd: Add fault and response message
- definitions
-To: Jason Gunthorpe <jgg@ziepe.ca>, "Tian, Kevin" <kevin.tian@intel.com>
-References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
- <20240527040517.38561-6-baolu.lu@linux.intel.com>
- <BN9PR11MB52768F2D79C8FA75280F1FF38CF92@BN9PR11MB5276.namprd11.prod.outlook.com>
- <3ee41c29-46bb-4897-9e93-5982c43736cb@linux.intel.com>
- <BN9PR11MB52764D7EF1EEDA95B694E8B68CFB2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240612131946.GT791043@ziepe.ca>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240612131946.GT791043@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240612184821.58053-1-brgl@bgdev.pl>
 
-On 6/12/24 9:19 PM, Jason Gunthorpe wrote:
-> On Fri, Jun 07, 2024 at 09:38:38AM +0000, Tian, Kevin wrote:
->>> From: Baolu Lu<baolu.lu@linux.intel.com>
->>> Sent: Thursday, June 6, 2024 2:28 PM
->>>
->>> On 6/5/24 4:28 PM, Tian, Kevin wrote:
->>>>> From: Lu Baolu<baolu.lu@linux.intel.com>
->>>>> Sent: Monday, May 27, 2024 12:05 PM
->>>>>
->>>>> +
->>>>> +/**
->>>>> + * struct iommu_hwpt_page_response - IOMMU page fault response
->>>>> + * @size: sizeof(struct iommu_hwpt_page_response)
->>>>> + * @flags: Must be set to 0
->>>>> + * @dev_id: device ID of target device for the response
->>>>> + * @pasid: Process Address Space ID
->>>>> + * @grpid: Page Request Group Index
->>>>> + * @code: One of response code in enum
->>> iommufd_page_response_code.
->>>>> + * @cookie: The kernel-managed cookie reported in the fault message.
->>>>> + */
->>>>> +struct iommu_hwpt_page_response {
->>>>> +	__u32 size;
->>>>> +	__u32 flags;
->>>>> +	__u32 dev_id;
->>>>> +	__u32 pasid;
->>>>> +	__u32 grpid;
->>>>> +	__u32 code;
->>>>> +	__u32 cookie;
->>>>> +	__u32 reserved;
->>>>> +};
->>>> with the response queue per fault object we don't need all fields here,
->>>> e.g. dev_id, pasid, etc. Cookie is sufficient.
-> Wait, why did we make it per object? The fault FD is supposed to be
-> sharable across HWPTs.
+On Wed, Jun 12, 2024 at 08:48:21PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> The gpio_suffixes array is defined in the gpiolib.h header. This means
+> the array is stored in .rodata of every compilation unit that includes
+> it. Put the definition for the array in gpiolib.c and export just the
+> symbol in the header. We need the size of the array so expose it too.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-The fault FD is shareable across HWPTs. Kevin was suggesting that the
-response queue (for all outstanding IOPFs awaiting responses) could be
-put in the fault structure.
-
-Best regards,
-baolu
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
