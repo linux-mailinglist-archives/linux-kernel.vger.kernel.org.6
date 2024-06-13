@@ -1,137 +1,117 @@
-Return-Path: <linux-kernel+bounces-212633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84EF590641C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:35:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A45906421
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C3A7B21457
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:35:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C192C1C21F93
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E3F136E35;
-	Thu, 13 Jun 2024 06:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dGE89Za5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719C8137773;
+	Thu, 13 Jun 2024 06:35:31 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1775B4C69
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78101137762;
+	Thu, 13 Jun 2024 06:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718260510; cv=none; b=kVSF/2PDgVSfISV+ofOtMEElKzwntkD/Rf5OB6OgrVOs2SqVcUX5QlS9SFPWn1QIFDntsyD2HXplsDk9YnJjaFCyGYEBsFi5+JUGXvlgj+wa8yWqxQoG49p8wyRby4uRXGzDtzjdQSscrR0jr94AicVoshEXSsSRpdHSc4g5sKY=
+	t=1718260531; cv=none; b=FgCeaLWISAU/cbDWHtnREZK14yyeGKNdVaIczSuzlNMJt+TlTrNblkX7bU5dcxAnQBsE0+Mbq3u+1432FItFO+3rLic+jm/kNe+N+N74mz8Spek+u1PkNnGwQvF9S/hD1O39V8y99DTJUh6hr+MzADEvDI76u0VrKJS8z9d3b/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718260510; c=relaxed/simple;
-	bh=2YW1VcDO5vvDgSqZENQpnOTikqYo3+QOeHpBuHEJ79k=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TjFoIz6QI3BYu+5eQRsVsEn/Kk6Q/YfUiKhbjd15pZdF/3CPR8zoyxL6M8huamCFZ1g8LqdQwuZFOP1huTirurJpoX5UmFlBhtwygIZ+Ne9sawnERG9lsNOLRSXcLAHvSmtkV+Ec0HDqUG9BNuqpYK+pbzygZzf02L2WliNMnck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dGE89Za5; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718260509; x=1749796509;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2YW1VcDO5vvDgSqZENQpnOTikqYo3+QOeHpBuHEJ79k=;
-  b=dGE89Za5TQg0DkR+uU7MDBQlhQSfQZKn60oE/4g899mT5IIBVqBU4d+q
-   AWW513cPSXKAqrk1Nflr2V3+lbelNma+crpR1nlvShh2puvB0O4IeWEKK
-   pt0ATtOa3e1deO1W/m/KYgqi6Dzcva4zdo6gzlIqPo+BidlB4NeR1htL0
-   X+9ZjmZo7F83WctpYKM3LlgH0cQoxeEpb8pZbNHJ3o9GEjYPNSfeEhP4j
-   wY9vobIHCGvW+uAm3Dj4JnVktIPO27AOFQQxFVwaPYXlu6IiV6xCOXTbm
-   bYt5kK2O3Rh5jQSdIfkUengLC3Oh8VGAe3wsj+KI7ZwjPu4tpFYK+SHCV
-   w==;
-X-CSE-ConnectionGUID: DaYubPB9QfCvRYPSsyFiqg==
-X-CSE-MsgGUID: UrKd/Br7ROKvPkAdP49W8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="18881197"
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="18881197"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 23:35:09 -0700
-X-CSE-ConnectionGUID: jdv7yU8XQAu31tmE04AqOg==
-X-CSE-MsgGUID: x3FFM3qqTRWUpMXS9tD9RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="71241593"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa001.fm.intel.com with ESMTP; 12 Jun 2024 23:35:05 -0700
-Message-ID: <52144c4e-0421-46ca-bd00-8602c12c901a@linux.intel.com>
-Date: Thu, 13 Jun 2024 14:32:46 +0800
+	s=arc-20240116; t=1718260531; c=relaxed/simple;
+	bh=OWo4rrebCjJM7qWQjGzNFquIUysjDOnaqUlR2C+r7Xg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=meoMaAnPSjwmpLxnZASdtYrcrO7G3VLwOeSvmdxTUkfNWc8gA7THQBmUXXW1h5WppWTxaJb3TO8+lWMCCVyNA2SiuXWiPfPVTBpw6Pj2SdLFFe2BzV+gHmxAqJ2x5hZXrel2SxtyeXEDXc9/OxaWb0bFFpYTL5FKOTZJP7x98AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4W0CHg4SmyzPpN3;
+	Thu, 13 Jun 2024 14:31:59 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
+	by mail.maildlp.com (Postfix) with ESMTPS id 93662140382;
+	Thu, 13 Jun 2024 14:35:25 +0800 (CST)
+Received: from M910t.huawei.com (10.110.54.157) by
+ kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 13 Jun 2024 14:35:24 +0800
+From: Changbin Du <changbin.du@huawei.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+	<namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Liang,
+ Kan" <kan.liang@linux.intel.com>, Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<llvm@lists.linux.dev>, Changbin Du <changbin.du@huawei.com>
+Subject: [PATCH 0/2] perf: support specify vdso path in cmdline
+Date: Thu, 13 Jun 2024 14:35:08 +0800
+Message-ID: <20240613063510.348692-1-changbin.du@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 05/10] iommufd: Add fault and response message
- definitions
-To: Jason Gunthorpe <jgg@ziepe.ca>, "Tian, Kevin" <kevin.tian@intel.com>
-References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
- <20240527040517.38561-6-baolu.lu@linux.intel.com>
- <BN9PR11MB52768F2D79C8FA75280F1FF38CF92@BN9PR11MB5276.namprd11.prod.outlook.com>
- <3ee41c29-46bb-4897-9e93-5982c43736cb@linux.intel.com>
- <BN9PR11MB52764D7EF1EEDA95B694E8B68CFB2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240612131946.GT791043@ziepe.ca> <20240612135021.GY791043@ziepe.ca>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240612135021.GY791043@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd100011.china.huawei.com (7.221.188.204)
 
-On 6/12/24 9:50 PM, Jason Gunthorpe wrote:
-> On Wed, Jun 12, 2024 at 10:19:46AM -0300, Jason Gunthorpe wrote:
->>>> I prefer not to mess the definition of user API data and the kernel
->>>> driver implementation. The kernel driver may change in the future, but
->>>> the user API will remain stable for a long time.
->>> sure it remains stable for reasonable reason. Here we defined some
->>> fields but they are even not used and checked in the kernel. IMHO it
->>> suggests redundant definition. If there is value to keep them, do we
->>> need to at least verify them same as the completion record?
->> They are not here for the kernel, they are here for userspace.
->>
->> A single HWPT and a single fault queue can be attached to multiple
->> devices we need to return the dev_id so that userspace can know which
->> device initiated the PRI. Same with PASID.
->>
->> The only way we could remove them is if we are sure that no vIOMMU
->> requires RID or PASID in the virtual fault queue PRI fault message.. I
->> don't think that is true?
->>
->> Cookie is not a replacement, cookie is an opaque value for the kernel
->> to use to match a response to a request.
-> Oh I got this wrong, the above is the response, yeah we can ditch
-> everything but the cookie, and code right?
-> 
-> struct iommu_hwpt_page_response {
->         __u32 cookie;
->         __u32 code;
-> };
-> 
-> What is the workflow here? We expect the VMM will take the vIOMMU
-> response and match it to a request cookie for the kernel to complete?
+The vdso dumped from process memory (in buildid-cache) lacks debugging
+info. To annotate vdso symbols with source lines we need specify a
+debugging version.
 
-The workflow in the host kernel involves looking up the iopf_group using
-the cookie value in the response queue and then responding to the
-iopf_group with the code. Therefore, from the host kernel's perspective,
-it is acceptable if the user only passes the cookie and code in the
-response message.
+For x86, we can find them from your local build as
+arch/x86/entry/vdso/vdso{32,64}.so.dbg. Or they may resides in
+/lib/modules/<version>/vdso/vdso{32,64}.so on Ubuntu. But notice that the
+builid has to match.
 
-Since you both agreed that the response message could be simplified, I
-will implement the above structure in the new version.
+$ sudo perf record -a
+$ sudo perf report --objdump=llvm-objdump \
+      --vdso arch/x86/entry/vdso/vdso64.so.dbg,arch/x86/entry/vdso/vdso32.so.dbg
 
-Best regards,
-baolu
+Samples: 17K of event 'cycles:P', 4000 Hz, Event count (approx.): 1760
+__vdso_clock_gettime  /work/linux-host/arch/x86/entry/vdso/vdso64.so.d
+Percent│       movq    -48(%rbp),%rsi                                ▒
+       │       testq   %rax,%rax                                     ▒
+       │     ;               return vread_hvclock();                 ▒
+       │       movq    %rax,%rdx                                     ▒
+       │     ;               if (unlikely(!vdso_cycles_ok(cycles)))  ▒
+       │     ↑ js      eb                                            ▒
+       │     ↑ jmp     74                                            ▒
+       │     ;               ts->tv_sec = vdso_ts->sec;              ▒
+  0.02 │147:   leaq    2(%rbx),%rax                                  ▒
+       │       shlq    $4, %rax                                      ▒
+       │       addq    %r10,%rax                                     ▒
+       │     ;               while ((seq = READ_ONCE(vd->seq)) & 1) {▒
+  9.38 │152:   movl    (%r10),%ecx                                   ▒
+
+
+When doing cross platform analysis, we also need specify the vdso path if
+we are interested in its symbols.
+
+Changbin Du (2):
+  perf: support specify vdso path in cmdline
+  perf: disasm: prefer symsrc_filename for filename
+
+ tools/perf/builtin-annotate.c |  2 +
+ tools/perf/builtin-c2c.c      |  2 +
+ tools/perf/builtin-inject.c   |  2 +
+ tools/perf/builtin-report.c   |  2 +
+ tools/perf/builtin-script.c   |  2 +
+ tools/perf/builtin-top.c      |  2 +
+ tools/perf/util/disasm.c      |  5 +++
+ tools/perf/util/symbol.c      | 82 ++++++++++++++++++++++++++++++++++-
+ tools/perf/util/symbol_conf.h |  5 +++
+ 9 files changed, 102 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
 
