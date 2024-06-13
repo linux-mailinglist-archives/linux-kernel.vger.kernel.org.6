@@ -1,296 +1,154 @@
-Return-Path: <linux-kernel+bounces-213004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C459069B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:11:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 165729069B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4521C210D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:11:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B438F1F25B40
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1D91411FF;
-	Thu, 13 Jun 2024 10:10:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFC8140E5E;
-	Thu, 13 Jun 2024 10:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374291411FE;
+	Thu, 13 Jun 2024 10:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqRx4qBZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCA013D276;
+	Thu, 13 Jun 2024 10:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718273458; cv=none; b=XgB8RQO5Vh39K6/NDnxXJb2pTXyE9qBLcZhlxjUnMcDaKVKdrvPB7IdW4uaH+qTLTo8QiHCkRw+BntVT+aRNgLcLv8pHF7+72IUSpFiK6pcrullLHzfpkpPE1MdMuv3YQdfildAO9JpE3GWgVIc15mc5aS1qhF2rEsVbUQZlzqc=
+	t=1718273556; cv=none; b=t/hSq9LxnnOXXUO6YzjcYVoSga+ZxW3eAU+f8ACS3O/CCa6rLcolVM/7dOmcO1+MVea3PQrPMS3j9g4A0GQ5HVOtJSEncaKRjNQB0Df6lpQwiOW9uINnDYPY30sxHoak7SGxv/RPJEbECsdAI+pp8lDnN8ivae4+IpI2pzLBPjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718273458; c=relaxed/simple;
-	bh=TlbJyx+7DYGqEN8p9zg1Ig4eLs1UO4SOV9WpXUZtOrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qds0B/LN5p0OcSsYrIGPB5r8gT4Xcy9xY2jMrdqLMYOVCEOIUWTrFl9kB11mDWFctsPlAcKSt8l32I3ZVAreW3VUAqk/NDWx9vhOP5E4CsWdV/16I5I//NPq3w6oZtJ9BqWJqgcCdzs+I7rcrLcyDApUe/kBD79Sg5fcxeGZYtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F01A1063;
-	Thu, 13 Jun 2024 03:11:20 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A4B3A3F5A1;
-	Thu, 13 Jun 2024 03:10:53 -0700 (PDT)
-Date: Thu, 13 Jun 2024 11:10:48 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	will@kernel.org, catalin.marinas@arm.com,
-	Mark Brown <broonie@kernel.org>, James Clark <james.clark@arm.com>,
-	Rob Herring <robh@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH V18 1/9] arm64/sysreg: Add BRBE registers and fields
-Message-ID: <ZmrFqMqNo3_rhdIo@J2N7QTR9R3>
-References: <20240613061731.3109448-1-anshuman.khandual@arm.com>
- <20240613061731.3109448-2-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1718273556; c=relaxed/simple;
+	bh=+turtCQ3s8M5Is1ZaVsfEKBqCGPhFRe1pZK3idMaWrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GVVgmG/ZybvxmpgwCl8f/IM713dMOodTTFc6SQZTY+b+gSU1hlEXtNkO24Q0FvIJwRV50MlD6NgbrzsARwZG6eV57QkqiDjusZbly7iH73ADwVFP8vDhIjbsOf1CVnFYA37wmx51nWAZofy/61RVq5McLZ5ns/rENhplYx0pCbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqRx4qBZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1125C2BBFC;
+	Thu, 13 Jun 2024 10:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718273556;
+	bh=+turtCQ3s8M5Is1ZaVsfEKBqCGPhFRe1pZK3idMaWrQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qqRx4qBZp1eh8tqvpIRMJ/x/d/5/hr2a1Gi9q8hqpurCIkh5CyTPJ9GFP17VsPT/9
+	 5bN9eYER/76mZ2JFuDbID2UxYg6DoCO88BPm0aehTLf5N6UkGAeAxl2N1ddGzDU651
+	 gcqjVreA34nqM8vzZpwrLiq5ATwyr7svIKVRKKrqQbYphfz4Ljg+Nmg/DpckuVh0x3
+	 ustALwnXamVP/yiASXl+WzHU9RhVD6StiAi4NCw5T98nRmoLfTZHYugl6Lap28HF56
+	 acU3RpGnUgc1kzn19pFgnwehZhxi6gMmW7etynNso+wkZRfN5XOxuNvO1eikq48+Jg
+	 Z4jWSsR5nxSpA==
+Message-ID: <9ce15b81-a8bd-4833-b15e-3e6f240dcf03@kernel.org>
+Date: Thu, 13 Jun 2024 12:12:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613061731.3109448-2-anshuman.khandual@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: phy: rockchip-emmc-phy: Convert to
+ dtschema
+To: Johan Jonker <jbx6244@yandex.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ heiko@sntech.de, sebastian.reichel@collabora.com, s.hauer@pengutronix.de,
+ cristian.ciocaltea@collabora.com, andy.yan@rock-chips.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ javier.carrasco.cruz@gmail.com
+References: <20240613085812.4020-2-shresthprasad7@gmail.com>
+ <cc66cca1-33db-4f30-afcf-d256a959896b@yandex.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <cc66cca1-33db-4f30-afcf-d256a959896b@yandex.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 11:47:23AM +0530, Anshuman Khandual wrote:
-> This patch adds definitions related to the Branch Record Buffer Extension
-> (BRBE) as per ARM DDI 0487K.a. These will be used by KVM and a BRBE driver
-> in subsequent patches.
+On 13/06/2024 11:44, Johan Jonker wrote:
+>> ---
 > 
-> Some existing BRBE definitions in asm/sysreg.h are replaced with equivalent
-> generated definitions.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ----
-> Changes in V18:
-> 
-> - Changed BRBIDR0_EL1 register fields CC and FORMAT, updated the commit message
+> Add ack request from phy maintainer here.
 
-Thanks, I see that matches my requsts on v17, so this looks good to me.
+Why? What do you mean for that? Why phy maintainer needs to ack patches
+he is going to take?
 
 > 
->  arch/arm64/include/asm/sysreg.h |  17 ++---
->  arch/arm64/tools/sysreg         | 131 ++++++++++++++++++++++++++++++++
->  2 files changed, 137 insertions(+), 11 deletions(-)
-> ---
->  arch/arm64/include/asm/sysreg.h |  17 ++---
->  arch/arm64/tools/sysreg         | 131 ++++++++++++++++++++++++++++++++
->  2 files changed, 137 insertions(+), 11 deletions(-)
-
-Something went wrong here to have this teice, but that doesn't affect
-the actual patch.
-
-Mark.
-
+>> Changes in v3:
+>>     - fix `reg` in example being too long
+>>
+>> Tested against `rockchip/rk3399-firefly.dtb`, `rockchip/rk3399-orangepi.dtb`
+>> and `rockchip/rk3399-pinebook-pro.dtb`.
+>>
+>>  .../bindings/phy/rockchip,emmc-phy.yaml       | 79 +++++++++++++++++++
+>>  .../bindings/phy/rockchip-emmc-phy.txt        | 43 ----------
+>>  .../devicetree/bindings/soc/rockchip/grf.yaml |  2 +-
+>>  3 files changed, 80 insertions(+), 44 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml
+>>  delete mode 100644 Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml
+>> new file mode 100644
+>> index 000000000000..85d74b343991
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml
+>> @@ -0,0 +1,79 @@
 > 
-> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-> index af3b206fa423..cb3c9c83dc7a 100644
-> --- a/arch/arm64/include/asm/sysreg.h
-> +++ b/arch/arm64/include/asm/sysreg.h
-> @@ -195,16 +195,8 @@
->  #define SYS_DBGVCR32_EL2		sys_reg(2, 4, 0, 7, 0)
->  
->  #define SYS_BRBINF_EL1(n)		sys_reg(2, 1, 8, (n & 15), (((n & 16) >> 2) | 0))
-> -#define SYS_BRBINFINJ_EL1		sys_reg(2, 1, 9, 1, 0)
->  #define SYS_BRBSRC_EL1(n)		sys_reg(2, 1, 8, (n & 15), (((n & 16) >> 2) | 1))
-> -#define SYS_BRBSRCINJ_EL1		sys_reg(2, 1, 9, 1, 1)
->  #define SYS_BRBTGT_EL1(n)		sys_reg(2, 1, 8, (n & 15), (((n & 16) >> 2) | 2))
-> -#define SYS_BRBTGTINJ_EL1		sys_reg(2, 1, 9, 1, 2)
-> -#define SYS_BRBTS_EL1			sys_reg(2, 1, 9, 0, 2)
-> -
-> -#define SYS_BRBCR_EL1			sys_reg(2, 1, 9, 0, 0)
-> -#define SYS_BRBFCR_EL1			sys_reg(2, 1, 9, 0, 1)
-> -#define SYS_BRBIDR0_EL1			sys_reg(2, 1, 9, 2, 0)
->  
->  #define SYS_TRCITECR_EL1		sys_reg(3, 0, 1, 2, 3)
->  #define SYS_TRCACATR(m)			sys_reg(2, 1, 2, ((m & 7) << 1), (2 | (m >> 3)))
-> @@ -270,8 +262,6 @@
->  /* ETM */
->  #define SYS_TRCOSLAR			sys_reg(2, 1, 1, 0, 4)
->  
-> -#define SYS_BRBCR_EL2			sys_reg(2, 4, 9, 0, 0)
-> -
->  #define SYS_MIDR_EL1			sys_reg(3, 0, 0, 0, 0)
->  #define SYS_MPIDR_EL1			sys_reg(3, 0, 0, 0, 5)
->  #define SYS_REVIDR_EL1			sys_reg(3, 0, 0, 0, 6)
-> @@ -601,7 +591,6 @@
->  #define SYS_CNTHV_CVAL_EL2		sys_reg(3, 4, 14, 3, 2)
->  
->  /* VHE encodings for architectural EL0/1 system registers */
-> -#define SYS_BRBCR_EL12			sys_reg(2, 5, 9, 0, 0)
->  #define SYS_SCTLR_EL12			sys_reg(3, 5, 1, 0, 0)
->  #define SYS_CPACR_EL12			sys_reg(3, 5, 1, 0, 2)
->  #define SYS_SCTLR2_EL12			sys_reg(3, 5, 1, 0, 3)
-> @@ -794,6 +783,12 @@
->  #define OP_COSP_RCTX			sys_insn(1, 3, 7, 3, 6)
->  #define OP_CPP_RCTX			sys_insn(1, 3, 7, 3, 7)
->  
-> +/*
-> + * BRBE Instructions
-> + */
-> +#define BRB_IALL_INSN	__emit_inst(0xd5000000 | OP_BRB_IALL | (0x1f))
-> +#define BRB_INJ_INSN	__emit_inst(0xd5000000 | OP_BRB_INJ  | (0x1f))
-> +
->  /* Common SCTLR_ELx flags. */
->  #define SCTLR_ELx_ENTP2	(BIT(60))
->  #define SCTLR_ELx_DSSBS	(BIT(44))
-> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-> index a4c1dd4741a4..c6d3390f39ee 100644
-> --- a/arch/arm64/tools/sysreg
-> +++ b/arch/arm64/tools/sysreg
-> @@ -1025,6 +1025,137 @@ UnsignedEnum	3:0	MTEPERM
->  EndEnum
->  EndSysreg
->  
-> +
-> +SysregFields BRBINFx_EL1
-> +Res0	63:47
-> +Field	46	CCU
-> +Field	45:32	CC
-> +Res0	31:18
-> +Field	17	LASTFAILED
-> +Field	16	T
-> +Res0	15:14
-> +Enum	13:8		TYPE
-> +	0b000000	DIRECT_UNCOND
-> +	0b000001	INDIRECT
-> +	0b000010	DIRECT_LINK
-> +	0b000011	INDIRECT_LINK
-> +	0b000101	RET
-> +	0b000111	ERET
-> +	0b001000	DIRECT_COND
-> +	0b100001	DEBUG_HALT
-> +	0b100010	CALL
-> +	0b100011	TRAP
-> +	0b100100	SERROR
-> +	0b100110	INSN_DEBUG
-> +	0b100111	DATA_DEBUG
-> +	0b101010	ALIGN_FAULT
-> +	0b101011	INSN_FAULT
-> +	0b101100	DATA_FAULT
-> +	0b101110	IRQ
-> +	0b101111	FIQ
-> +	0b110000	IMPDEF_TRAP_EL3
-> +	0b111001	DEBUG_EXIT
-> +EndEnum
-> +Enum	7:6	EL
-> +	0b00	EL0
-> +	0b01	EL1
-> +	0b10	EL2
-> +	0b11	EL3
-> +EndEnum
-> +Field	5	MPRED
-> +Res0	4:2
-> +Enum	1:0	VALID
-> +	0b00	NONE
-> +	0b01	TARGET
-> +	0b10	SOURCE
-> +	0b11	FULL
-> +EndEnum
-> +EndSysregFields
-> +
-> +SysregFields	BRBCR_ELx
-> +Res0	63:24
-> +Field	23 	EXCEPTION
-> +Field	22 	ERTN
-> +Res0	21:10
-> +Field	9	FZPSS
-> +Field	8 	FZP
-> +Res0	7
-> +Enum	6:5	TS
-> +	0b01	VIRTUAL
-> +	0b10	GUEST_PHYSICAL
-> +	0b11	PHYSICAL
-> +EndEnum
-> +Field	4	MPRED
-> +Field	3	CC
-> +Res0	2
-> +Field	1	ExBRE
-> +Field	0	E0BRE
-> +EndSysregFields
-> +
-> +Sysreg	BRBCR_EL1	2	1	9	0	0
-> +Fields	BRBCR_ELx
-> +EndSysreg
-> +
-> +Sysreg	BRBFCR_EL1	2	1	9	0	1
-> +Res0	63:30
-> +Enum	29:28	BANK
-> +	0b00	BANK_0
-> +	0b01	BANK_1
-> +EndEnum
-> +Res0	27:23
-> +Field	22	CONDDIR
-> +Field	21	DIRCALL
-> +Field	20	INDCALL
-> +Field	19	RTN
-> +Field	18	INDIRECT
-> +Field	17	DIRECT
-> +Field	16	EnI
-> +Res0	15:8
-> +Field	7	PAUSED
-> +Field	6	LASTFAILED
-> +Res0	5:0
-> +EndSysreg
-> +
-> +Sysreg	BRBTS_EL1	2	1	9	0	2
-> +Field	63:0	TS
-> +EndSysreg
-> +
-> +Sysreg	BRBINFINJ_EL1	2	1	9	1	0
-> +Fields BRBINFx_EL1
-> +EndSysreg
-> +
-> +Sysreg	BRBSRCINJ_EL1	2	1	9	1	1
-> +Field	63:0 ADDRESS
-> +EndSysreg
-> +
-> +Sysreg	BRBTGTINJ_EL1	2	1	9	1	2
-> +Field	63:0 ADDRESS
-> +EndSysreg
-> +
-> +Sysreg	BRBIDR0_EL1	2	1	9	2	0
-> +Res0	63:16
-> +Enum	15:12	CC
-> +	0b0101	20_BIT
-> +EndEnum
-> +Enum	11:8	FORMAT
-> +	0b0000	FORMAT_0
-> +EndEnum
-> +Enum	7:0		NUMREC
-> +	0b00001000	8
-> +	0b00010000	16
-> +	0b00100000	32
-> +	0b01000000	64
-> +EndEnum
-> +EndSysreg
-> +
-> +Sysreg	BRBCR_EL2	2	4	9	0	0
-> +Fields	BRBCR_ELx
-> +EndSysreg
-> +
-> +Sysreg	BRBCR_EL12	2	5	9	0	0
-> +Fields	BRBCR_ELx
-> +EndSysreg
-> +
->  Sysreg	ID_AA64ZFR0_EL1	3	0	0	4	4
->  Res0	63:60
->  UnsignedEnum	59:56	F64MM
-> -- 
-> 2.25.1
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 > 
+> You are converting an existing document, so GPL 2 only.
+
+Which copyrightable part was copied? This comment is not correct in
+general, because conversions are dual-licensed (there are exceptions,
+but that's the generic rule).
+
+Best regards,
+Krzysztof
+
 
