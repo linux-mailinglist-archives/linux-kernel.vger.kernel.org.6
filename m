@@ -1,72 +1,73 @@
-Return-Path: <linux-kernel+bounces-213180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81DBA906F51
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:18:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D5F906F3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05AFDB28C46
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:16:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBCEB1C22649
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940DE1465BA;
-	Thu, 13 Jun 2024 12:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5AE145FE4;
+	Thu, 13 Jun 2024 12:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D1csXwly"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mj7cV27f"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EAA1465AC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C627E1459FB;
+	Thu, 13 Jun 2024 12:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718280800; cv=none; b=cw1wj+aYvVWLvsmXtti8X4A2QafGzuw8oYYUWMjuzKkLovJlKgCqI3Cz243onolmXhI9T7XYl3YlPZEGXzQ0zOrJTqRv2gbdlIqnTi0L9iFyOQO5qjlSh0M5Q9Yx7VUfHQRCpDQenyuuu9sz9UeE3DxW/pWaoTqs+iROOLjWN8M=
+	t=1718280898; cv=none; b=RbDuXaezJh7jWjRvM3IpgBs4EViUrJhMpNhH3Pcf7ERYtStti760hZfT7CLnhXeYAZoqWWXBkLkTF/hcNfEY8m3IpsPaR04ovEZ2nK5c8LZA9FglrluJ9E7NKtGIGGuEyyVSSf1d4RzDyQAIXqKiraHodrV/xE/9Iz9MSn3s5Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718280800; c=relaxed/simple;
-	bh=1yK9eI1MQbvCCxjWD8QAM9mmf5vjMBn5EqEjdIFsiv8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QOFxvv2+iPMWYHVATIiV139bF0H+mlca5B5sEbgtEd7eRnBXzm/5OJRdlgkZcI/sE1Tc/MTOa63M/IMQiTHrPEYJOvlYwGXwJUxtpcfYfQ7K2vpEMSSj1oEtdRgLzAQj+RYL2xnmMNHkC0DtDASjYXF6YExEVWpDc/wwejs8bYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D1csXwly; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6f253a06caso120498566b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:13:18 -0700 (PDT)
+	s=arc-20240116; t=1718280898; c=relaxed/simple;
+	bh=Ughm9l3G5ckH3Jnm36S6wz8bPjQrkCbc1vToYq+2KW8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lztoc039/6M2V4sZCdfVrBcVAi6qj/9FRUa8/1EcltuFngXFH301JTikYhcHBZK6vZrr2e78Jx3m/thNCZ2mO/UCWt0ibgCP/DmxddyWoF7JsVcRQ+YYcuXvGDsf0UZKyBD4yqtxgqt5x/TzEcIIDS602Dtt7ZGCniDXKqhbtf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mj7cV27f; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57c778b5742so976003a12.2;
+        Thu, 13 Jun 2024 05:14:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718280797; x=1718885597; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718280895; x=1718885695; darn=vger.kernel.org;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pXbNy8kHfEp0b79ontwosVP2eSf4cO0jv7KHuOVa8LI=;
-        b=D1csXwly7pP8tkXQOw4mcFUV3gYh5cbUb62Dl1TlKMrD7LBgKbcDcoWEDHk7Wsg2I5
-         Syco5/IFU3uTCwVZh0pIGwjjpXZn0kTNf5q2Sm/8aIiPVV3h6b/0rRPsxCdVZKWL3zE5
-         KAoiNuJjRtoYqkiXrzyxohOKqkUW9jyQzpcUn8Ni2jX3v3g7g6ySZdFWXswsMgE87RK5
-         a36egJh7mvmE4UHsXLbVYIa/0QhI0Vf0YCve8AQKiCydGJAxIQRg30ItmkdDI2tKdQ8b
-         dRLKZ/S8u2LVno6S+kFzMqIQJlcGpW85zqvW4jpleGF0OTd7LqtQPGT+j1s0HWsppuWe
-         jhSA==
+        bh=zjivG+XaKe4Am+Fx0XOt/e28iXIYWa1P+7zK1ifd1rw=;
+        b=Mj7cV27fLwEF366zUY7dfm+PClIVDclW+jD1efBXuRtkrlt/loXAgBBWDqYWF2HoIb
+         tE5LlLc/4+YSBM7k//vIe+Hq/WbK9MDQyAluPmirb3pigypC+GytV2xyL/1NfvybZc1R
+         Dxhvk264pqTgFJO3XMEQXrc/ZGuPSYGh2LiZp/y+iqo6MYY4v3OR37NpjOYmgPl/0vez
+         sByUmwZSZFWfkqWq9KYREkWFgoKv4411/MmyZpPnG6YDF7WLxwQG+Ml4d2ds5Y87rt/m
+         ENlXpH68RLKWEgQEligWooBqp14y9JULBPXiVSXFyAnF9o9yW6sS9mJIaQwv3josQidc
+         vv3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718280797; x=1718885597;
+        d=1e100.net; s=20230601; t=1718280895; x=1718885695;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pXbNy8kHfEp0b79ontwosVP2eSf4cO0jv7KHuOVa8LI=;
-        b=rnox6G8KPTBDI4nBzTPgTtay4p2bWOPvXgEaqYeijSQVt1Fk27iFWl0NCmW41U0HAh
-         tXDjnIuVLaYMlf37f3bzJM1DUJH8rnpBsja0PO+a7wVW6c6aLno1mgG8wvRJdtMX2Lvp
-         88Ez9JYPyUW/quU7gYDm6OLkV05kiL2e/09EyIK4Z1EOMQtOW1c828EqtU9FbacW8cXe
-         1bg/brTU1BGESfgI7zhLilOcaK7CvleoMrxwqqFoWO4hy56wZr+hMfWI7u3gASDDhUUf
-         oPtAbmS1ijwhKc3Ga9Ro5zqEingfaj15fwq2adcHB5zSi01j47p8o1zip20+3AMKRGcI
-         Skuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPL2UcNecNHLU8zHUN47JBut3fq2f7VgfgdfT1jPS90LyXydRGVadKqhQ78d+FQJIgv5UvB5gCJul8mfc1/Oewsort0+4hHnzHdOIN
-X-Gm-Message-State: AOJu0YyFa9RT4+fzBzjDiPZtj0HOdbUZgsQit9IGNLu+cHpi7O7vnF4B
-	vsRonpsbASwTodPeqhmWOukSgquKokuNg8AnKlKeSrSDxGDLwNCkY+p41KERRok=
-X-Google-Smtp-Source: AGHT+IFabj44+6/AUOqc3ytd5ytWDpFi1xvXmXHvZaxmZgT9uxNGhLzwBao1fjRJml9g9YwbWcn8Ew==
-X-Received: by 2002:a17:906:fe0b:b0:a6f:4f26:fe80 with SMTP id a640c23a62f3a-a6f4f270012mr298512566b.41.1718280797113;
-        Thu, 13 Jun 2024 05:13:17 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f985dfsm65535166b.192.2024.06.13.05.13.16
+        bh=zjivG+XaKe4Am+Fx0XOt/e28iXIYWa1P+7zK1ifd1rw=;
+        b=tRmIdBxhZqrbQUa6xRFmkcNAl8a10kzH3GoWstH1vevZW+mPdMuMZEw7+ZmLYRhhAI
+         iBPY2EdN0w0cHRwFlQv/tjq5pZD7398qEGy0oIdVLlX6areqnKePDoGs8cOvU2+AqDSH
+         3WR+E1oungKuAn9MYIFiBJ/UKVK7nngaVMbJcEv/UN3Rb9f76tE5nxRNiaJ8a00LrnPL
+         IOKI2iBFGwLZ7SrZjcGVvwFhCrcn/dLL4+XCrnqN8f1YIJaWZveKDz17qUl4e9vsWpYW
+         u4iGaUV+1ZsquGXfxcxzHyHRRSrpwYfytvTdtxfbMzwttYRIPCxeFZW1kkyXDSBy7y6j
+         mCVw==
+X-Forwarded-Encrypted: i=1; AJvYcCW53tTSalVLUjvn6oPmEbeaPU4N466TRudkgWkLrFKKiPVcaMwLJ1SfFvnmqeoJrA5Z8u2+pUUeXPE1e//+o1IG2KnFYQX0h05xzbDi/Jo0lEJzCs8vS6Cyjp0XsylhMFeytRyP
+X-Gm-Message-State: AOJu0Yz0LF1xsVxKFoN6rVFlYyKBLpP2Bj8nNf6PWmUtHw4/4QpPgtPc
+	s1n5vp3ulNyUJUcDQzDf44g4WpUvSm98NPthw96Jvc3u1x/LLUA1
+X-Google-Smtp-Source: AGHT+IGzyxg4N9X/04QjUk81mzMKs4lvDIGYdWaRPWHzvvEjA+WMsslAg9qHkv+RapswAaEsqS6raA==
+X-Received: by 2002:a50:d65a:0:b0:57c:68fd:2bc9 with SMTP id 4fb4d7f45d1cf-57ca9749636mr2961850a12.3.1718280894903;
+        Thu, 13 Jun 2024 05:14:54 -0700 (PDT)
+Received: from [127.0.1.1] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72da82fsm815747a12.32.2024.06.13.05.14.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 05:13:16 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Thu, 13 Jun 2024 13:13:05 +0100
-Subject: [PATCH] ASoC: q6apm-lpass-dai: close graph on prepare errors
+        Thu, 13 Jun 2024 05:14:54 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Thu, 13 Jun 2024 14:14:48 +0200
+Subject: [PATCH] usb: typec: ucsi: glink: fix child node release in probe
+ function
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,130 +76,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240613-q6apm-fixes-v1-1-d88953675ab3@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAFDiamYC/x3LQQ6DMAxE0asgr2uJBJrSXgWxMKkBL0ipjRAS4
- u4NXf4ZvQOMVdjgVRygvInJJ+VwtwLiRGlklHdu8KWvy+Aq/AZaZhxkZ8NAz9jUzd0/XAVZ9GS
- MvVKK02VmspX1Ohblv8hr253nD2nhM3d2AAAA
-To: Banajit Goswami <bgoswami@quicinc.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: dmitry.baryshkov@linaro.org, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3465;
- i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
- bh=1yK9eI1MQbvCCxjWD8QAM9mmf5vjMBn5EqEjdIFsiv8=;
- b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmauJbajWD5SFP302Qlyf+2BL5UONgysacwGM99
- PIDRaDoYVyJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZmriWwAKCRB6of1ZxzRV
- N9MBB/0ZfAaWAL/u+zAa+VrxVkvWJ9/5N7h4ERWABTmonxDvhxOdcMDe1kqqMax9yr1KI5YZzJ0
- p9Vl1Q5YVVATNzkCPaKZpOlHVJ5Zo40dNt+9gtiegZaM4NHj9uCiAtdRxdCyvSBkUCnLJnFRraP
- yylqeBw8Yv2FPVHzHtfhx4yMj9pzLtcTp7AN1Hn3DHzF4xxe+omC1syBWtAAcr8MaxAehTLxscp
- 5XwuHxd5Z+PcbxWHhTOw/0WmMrt7/Zqxzr1O2zzHbzdXTsczNUoWpgBSCpgWISQu2pEhthogUmz
- oGJRMEWpuh3RxZsuf51owwT6sOkHgrDgvKZ7CQvGYLZSUXLV
-X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
- fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
+Message-Id: <20240613-ucsi-glink-release-node-v1-1-f7629a56f70a@gmail.com>
+X-B4-Tracking: v=1; b=H4sIALfiamYC/x3MwQpAQBRG4VfRXbs1g4RXkYVmftxoaG6k5N1Nl
+ t/inIcUUaDUZQ9FXKKyhwSbZ+SWMcxg8clUmKIytS35dCo8bxJWjtgwKjjsHtxOzrS+sbBlQ6k
+ +Iia5/3M/vO8HLZq5tWkAAAA=
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718280893; l=2414;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=Ughm9l3G5ckH3Jnm36S6wz8bPjQrkCbc1vToYq+2KW8=;
+ b=YDgrSVBahWgrzOAC3FGi+0YtUEAsHFh5ocCyy795FfD+LmURtA0lSth9sMHj8hkjA4QByq4zv
+ yDBQaF49grEBxzAgRYmYa5SAIFi+RLhcFhvCjs2NfZi0pMRhzgoJ7Pr
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-There is an issue around with error handling and graph management with
-the exising code, none of the error paths close the graph, which result in
-leaving the loaded graph in dsp, however the driver thinks otherwise.
+The device_for_each_child_node() macro requires explicit calls to
+fwnode_handle_put() in all early exits of the loop if the child node is
+not required outside. Otherwise, the child node's refcount is not
+decremented and the resource is not released.
 
-This can have a nasty side effect specially when we try to load the same
-graph to dsp, dsp returns error which leaves the board with no sound and
-requires restart.
+The current implementation of pmic_glink_ucsi_probe() makes use of the
+device_for_each_child_node(), but does not release the child node on
+early returns. Add the missing calls to fwnode_handle_put().
 
-Fix this by properly closing the graph when we hit errors between
-open and close.
-
-Fixes: 30ad723b93ad ("ASoC: qdsp6: audioreach: add q6apm lpass dai support")
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: stable@vger.kernel.org
+Fixes: c6165ed2f425 ("usb: ucsi: glink: use the connector orientation GPIO to provide switch events")
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 ---
- sound/soc/qcom/qdsp6/q6apm-lpass-dais.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+This case would be a great opportunity for the recently introduced
+device_for_each_child_node_scoped(), but given that it has not been
+released yet, the traditional approach has been used to account for
+stable kernels (bug introduced with v6.7). A second patch to clean
+this up with that macro is ready to be sent once this fix is applied,
+so this kind of problem does not arise if more early returns are added.
 
-diff --git a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
-index 68a38f63a2db..66b911b49e3f 100644
---- a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
-+++ b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
-@@ -141,14 +141,17 @@ static void q6apm_lpass_dai_shutdown(struct snd_pcm_substream *substream, struct
- 	struct q6apm_lpass_dai_data *dai_data = dev_get_drvdata(dai->dev);
- 	int rc;
+This issue has been found while analyzing the code and not tested with
+hardware, only compiled and checked with static analysis tools. Any
+tests with real hardware are always welcome.
+---
+ drivers/usb/typec/ucsi/ucsi_glink.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
+index f7546bb488c3..41375e0f9280 100644
+--- a/drivers/usb/typec/ucsi/ucsi_glink.c
++++ b/drivers/usb/typec/ucsi/ucsi_glink.c
+@@ -372,6 +372,7 @@ static int pmic_glink_ucsi_probe(struct auxiliary_device *adev,
+ 		ret = fwnode_property_read_u32(fwnode, "reg", &port);
+ 		if (ret < 0) {
+ 			dev_err(dev, "missing reg property of %pOFn\n", fwnode);
++			fwnode_handle_put(fwnode);
+ 			return ret;
+ 		}
  
--	if (!dai_data->is_port_started[dai->id])
--		return;
--	rc = q6apm_graph_stop(dai_data->graph[dai->id]);
--	if (rc < 0)
--		dev_err(dai->dev, "fail to close APM port (%d)\n", rc);
-+	if (dai_data->is_port_started[dai->id]) {
-+		rc = q6apm_graph_stop(dai_data->graph[dai->id]);
-+		dai_data->is_port_started[dai->id] = false;
-+		if (rc < 0)
-+			dev_err(dai->dev, "fail to close APM port (%d)\n", rc);
-+	}
+@@ -386,9 +387,11 @@ static int pmic_glink_ucsi_probe(struct auxiliary_device *adev,
+ 		if (!desc)
+ 			continue;
  
--	q6apm_graph_close(dai_data->graph[dai->id]);
--	dai_data->is_port_started[dai->id] = false;
-+	if (dai_data->graph[dai->id]) {
-+		q6apm_graph_close(dai_data->graph[dai->id]);
-+		dai_data->graph[dai->id] = NULL;
-+	}
- }
- 
- static int q6apm_lpass_dai_prepare(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
-@@ -163,8 +166,10 @@ static int q6apm_lpass_dai_prepare(struct snd_pcm_substream *substream, struct s
- 		q6apm_graph_stop(dai_data->graph[dai->id]);
- 		dai_data->is_port_started[dai->id] = false;
- 
--		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
- 			q6apm_graph_close(dai_data->graph[dai->id]);
-+			dai_data->graph[dai->id] = NULL;
+-		if (IS_ERR(desc))
++		if (IS_ERR(desc)) {
++			fwnode_handle_put(fwnode);
+ 			return dev_err_probe(dev, PTR_ERR(desc),
+ 					     "unable to acquire orientation gpio\n");
 +		}
+ 		ucsi->port_orientation[port] = desc;
  	}
  
- 	/**
-@@ -183,26 +188,29 @@ static int q6apm_lpass_dai_prepare(struct snd_pcm_substream *substream, struct s
- 
- 	cfg->direction = substream->stream;
- 	rc = q6apm_graph_media_format_pcm(dai_data->graph[dai->id], cfg);
--
- 	if (rc) {
- 		dev_err(dai->dev, "Failed to set media format %d\n", rc);
--		return rc;
-+		goto err;
- 	}
- 
- 	rc = q6apm_graph_prepare(dai_data->graph[dai->id]);
- 	if (rc) {
- 		dev_err(dai->dev, "Failed to prepare Graph %d\n", rc);
--		return rc;
-+		goto err;
- 	}
- 
- 	rc = q6apm_graph_start(dai_data->graph[dai->id]);
- 	if (rc < 0) {
- 		dev_err(dai->dev, "fail to start APM port %x\n", dai->id);
--		return rc;
-+		goto err;
- 	}
- 	dai_data->is_port_started[dai->id] = true;
- 
- 	return 0;
-+err:
-+	q6apm_graph_close(dai_data->graph[dai->id]);
-+	dai_data->graph[dai->id] = NULL;
-+	return rc;
- }
- 
- static int q6apm_lpass_dai_startup(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
 
 ---
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-change-id: 20240613-q6apm-fixes-6a9c84852713
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240613-ucsi-glink-release-node-9fc09d81e138
 
 Best regards,
 -- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
