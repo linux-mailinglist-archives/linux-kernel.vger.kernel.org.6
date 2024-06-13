@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-213372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1EF907459
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:52:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A344907440
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF3551F23C2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:52:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423D11F237C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F13144D22;
-	Thu, 13 Jun 2024 13:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5631448E6;
+	Thu, 13 Jun 2024 13:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kxMb9TSi"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zz/MVZS9"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4431145FE2;
-	Thu, 13 Jun 2024 13:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07294DF71
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718286643; cv=none; b=AcZhc8NLjsGN1ETXMIhFFKH2TPHv1uSaIWtbmfAIRi4kkkylrSW7v6ng8I+DWDFDTmbwGQ6gZ/Idlr0uw91WbuulbFGN8bpb+Ol/Cx+WreMGlJY7BBoP00xd4dVUxbQZfOIDeLhOEwUa3CYDtpsBN3Dj50SZuGZL9N6E3A7bbqc=
+	t=1718286581; cv=none; b=EVo4tOE7jVyS03wDUO1RgpvXVRmJgDmRdRvGrVBJgavPIjgtu4u3AjgYGhGa1NL98lvZGR3diZ8oPUDL5dv3SBlmIArdejTUVPlCxQ0/qR8kRbeoP0MMWC2mpzR+zBcINXMCwGRdSqFIP8wLDgkJJf3oYWN09GVJvNTlkQpWCzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718286643; c=relaxed/simple;
-	bh=cqxhYAbbW9RM1md+oyI3TV89a9uLQWQLY+gbU0lSp64=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B3xz6xBR+rgxaXuUrhgSBwVxq0TqjRTrdizhPY3RzIH05Lu0wAGXkCTGn9okL3B87LwwVoYGx/CeOyPwgXIG6Css8VEPpOAUkT5pR6KGanppUya5fe9ngqjhOkB2FzicKM/TpPSRPz6FWVun+l4ynIq/ZGmcXhVKcPamitrAs4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kxMb9TSi; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718286637;
-	bh=cqxhYAbbW9RM1md+oyI3TV89a9uLQWQLY+gbU0lSp64=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kxMb9TSi959KemdHRj9cgYD5sDcaqyd+1y+1apZhIUERXVE7T/jTOCr2+TVjdnCSv
-	 54VyZP6bzMSVHb8xcnVV5OuX6qmqiXn3yEV+kpsXw/kVJ0+37hHX7mSD69bsqT3N+k
-	 SR9hpJ2Sg5YWmyoSx2YZSxLfdAMMetrdzw9/WctZbCcjpZ5xlGhZWcYbirEenp4Pqe
-	 vlRhk0y5PsnSrvWtVxCJfkHySVBcf9Xa+rxDAAWUDxv29DVLoF8h1LKvHAjd8qd52k
-	 XOE4hy+AKZEY8Z2SVzl32NUKiysPDZflIy/Sw4mJSs2ztnb+g+a4Mrc7hVOLen6h+s
-	 uhEoDnIyGwTsQ==
-Received: from jupiter.universe (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 185C337821B8;
-	Thu, 13 Jun 2024 13:50:37 +0000 (UTC)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 3C30C4800D1; Thu, 13 Jun 2024 15:50:36 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jianfeng Liu <liujianfeng1994@gmail.com>,
-	Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
+	s=arc-20240116; t=1718286581; c=relaxed/simple;
+	bh=ZqZ5SaCke+0+f3Zq0bwbTWT57JT0Y++Oi2Zpy5Uf27I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SaWdCmmoW2yGvxg7AwOlw0EOMkbtpLaY4rueTp61L1kHSRFGhT7UBVmBtl1k3NejrrHNr9Sjzj1Rb1GaFw6zywskOKcY7rE8vvOmHbfWS7juJzds6EZg22ml+jSBxpCnHNv9x4Ebp+on91lKnrAb6lEeOMg+1oxjPWJ/UYO+9Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zz/MVZS9; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6f21ff4e6dso175731066b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:49:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718286578; x=1718891378; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yEvA9jroZsDs24LkJE27e1G6AbVYrGCtuXUJX4MNe1s=;
+        b=Zz/MVZS9t3dUIbQHCVl1fiIqORRBTmPwWt44TZ59hXC215aqtGVLjAAYUay6dH790X
+         aT07kvkVBtEyA4LDq8JakFWWPX6O+NiNr350Lw/9KNktZSRM7xtav7Ok6+xQiXuvmOgm
+         JIqJ7n5AWSsJJLxM6/2aTHf3kVi3zhZL7zk1VeO6aCIQsVtVy1TXieuD7ooWSVShkY71
+         /SV93pZPSqzhcY1JZN0PqXKVUIhTgr+37bT3YJ8PPTCI+Tyyn67FOtZ7NG1ndAD3HBk4
+         RU5uvFeiV4wSpOOGGnSvlYc7dwJDYJ2UYg6Lsk2NVleULL1Pg9ItB69HHttEpkyQS3UN
+         epAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718286578; x=1718891378;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yEvA9jroZsDs24LkJE27e1G6AbVYrGCtuXUJX4MNe1s=;
+        b=TAfIqLIISgqbWEKaYfB97jdsY7EvAOmZwoWXexyW7Z8/rREngLg0A7MX21G8imzi0K
+         FPOzPLm5J0rKqRhk7ZuiN67vDa9nc0lsYfnwWN1RfMwsPeQslOhduzUME4F4e8sB9v3B
+         7akecwb9j8zVOFjrayjFvcB2RlLsGRBiT9MMx7l1cUyQW3K/cvXQ1qDONWH2zZCUgk51
+         3D6iEwrIFG6HDJ6YTenpMm8Jm03g5JlKkjAK0zNfigmTtEIjeQaaFgBXjjft01yT2TZn
+         046zSwCy/s92QyCLI3/YKVm6GyHQHs3pWq+7Lkl8T88ibVBPcQ8xG8hR9qXY+4iet0PB
+         U+hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMg6HBg9uma5J0OV9veUji70Gk1g+fVsMzBqkZJXGSRjqHSVi1EHCNVIP2EBd2LodjqUsXu17ev1X1lt2hvezMD8Eo5onJ/KG714ZG
+X-Gm-Message-State: AOJu0YzK58W92dnUtoAoC4g3PUVxaveXyoG3Ul0fBKrJZ8sL1PuUrhwP
+	TtzebEj9bl09U1J9AwUmcnvbAKFr/rvN6Y+V608OQUIv2ovI7Xf+mqoqBVoxRCI=
+X-Google-Smtp-Source: AGHT+IE8JSarZGMRvnKm1sM0hW1gVfIATdlYWc5pmUAEWGuxrgcsVbMkkFTyUXFdWA7D5wJfcseu7g==
+X-Received: by 2002:a17:906:517:b0:a6e:2a67:7899 with SMTP id a640c23a62f3a-a6f47f7fc60mr284236566b.35.1718286578234;
+        Thu, 13 Jun 2024 06:49:38 -0700 (PDT)
+Received: from krzk-bin.monzoon.net (46-253-189-43.dynamic.monzoon.net. [46.253.189.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56fa4030sm73785166b.207.2024.06.13.06.49.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 06:49:37 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: arm@kernel.org,
+	soc@kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	Hugh Cole-Baker <sigmaris@gmail.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH v6 6/6] arm64: dts: rockchip: Add VPU121 support for RK3588
-Date: Thu, 13 Jun 2024 15:48:47 +0200
-Message-ID: <20240613135034.31684-7-sebastian.reichel@collabora.com>
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] MAINTAINERS: ARM: axm: add Krzysztof Kozlowski as maintainer
+Date: Thu, 13 Jun 2024 15:49:10 +0200
+Message-ID: <20240613134910.7862-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240613135034.31684-1-sebastian.reichel@collabora.com>
-References: <20240613135034.31684-1-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,54 +86,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Jianfeng Liu <liujianfeng1994@gmail.com>
+There is no maintainers entry for the ARM LSI AXM SoC, thus patches end
+up nowhere.  Add such entry, because even if platform is orphaned and on
+its way out of the kernel, it is nice to take patches if someone sends
+something.
 
-Enable Hantro G1 video decoder in RK3588's devicetree.
+I do not plan to actively support/maintain AXM but I can take odd fixes
+now and then.
 
-Tested with FFmpeg v4l2_request code taken from [1]
-with MPEG2, H.264 and VP8 samples.
-
-[1] https://github.com/LibreELEC/LibreELEC.tv/blob/master/packages/multimedia/ffmpeg/patches/v4l2-request/ffmpeg-001-v4l2-request.patch
-
-Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
-Tested-by: Hugh Cole-Baker <sigmaris@gmail.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-index dd85d4e55922..c0466982646f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-@@ -1159,6 +1159,27 @@ power-domain@RK3588_PD_SDMMC {
- 		};
- 	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e7fd595b8f5e..60f2815f0453 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2127,6 +2127,14 @@ F:	arch/arm/boot/dts/aspeed/
+ F:	arch/arm/mach-aspeed/
+ N:	aspeed
  
-+	vpu121: video-codec@fdb50000 {
-+		compatible = "rockchip,rk3588-vpu121", "rockchip,rk3568-vpu";
-+		reg = <0x0 0xfdb50000 0x0 0x800>;
-+		interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH 0>;
-+		interrupt-names = "vdpu";
-+		clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
-+		clock-names = "aclk", "hclk";
-+		iommus = <&vpu121_mmu>;
-+		power-domains = <&power RK3588_PD_VDPU>;
-+	};
++ARM/AXM LSI SOC
++M:	Krzysztof Kozlowski <krzk@kernel.org>
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Odd Fixes
++F:	Documentation/devicetree/bindings/arm/axxia.yaml
++F:	arch/arm/boot/dts/intel/axm/
++F:	arch/arm/mach-axxia/
 +
-+	vpu121_mmu: iommu@fdb50800 {
-+		compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-+		reg = <0x0 0xfdb50800 0x0 0x40>;
-+		interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clock-names = "aclk", "iface";
-+		clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
-+		power-domains = <&power RK3588_PD_VDPU>;
-+		#iommu-cells = <0>;
-+	};
-+
- 	vepu121_0: video-codec@fdba0000 {
- 		compatible = "rockchip,rk3588-vepu121";
- 		reg = <0x0 0xfdba0000 0x0 0x800>;
+ ARM/BITMAIN ARCHITECTURE
+ M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
 -- 
 2.43.0
 
