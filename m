@@ -1,152 +1,147 @@
-Return-Path: <linux-kernel+bounces-213096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C3C906B09
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:33:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245E7906B0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA1FE1F24392
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D14D1C24822
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FAE14375D;
-	Thu, 13 Jun 2024 11:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD5C143C41;
+	Thu, 13 Jun 2024 11:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TBdd6o8I"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BxvJ92s9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2111F13791B;
-	Thu, 13 Jun 2024 11:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFC713791B;
+	Thu, 13 Jun 2024 11:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718278416; cv=none; b=a3Clj1j2wIEV0kbMgetXjfDaR7gxtoQfTlM056d18Y0rT9Qkofh671F1DIFlsV1Vx1ToPXah2qQZj36armym0wh+hGTPLCo9N16JLQNmi+CZpR4xPJD9b4swS2hHOIOFZx6h9uRVxLlORFTO1szaoWK2OpFSlV5t5dl3yA3D1dg=
+	t=1718278420; cv=none; b=cKM6r04GNYQ7/YRGMcaUJRQrD20lfnflw0RbPXCdAsrWQXsjwdu4IWCBkSCnRFFdkAIZdvM977Tz4JAWD4du8kJd/HKa4XrCsbG8yvBWxYffhzZ7I71UONoEWGcpZWwo/NBtB4a/OtiD6OqzYM7rPMhv4Y5PJ8bKqJH2vi7g9fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718278416; c=relaxed/simple;
-	bh=ucfrA2j0rBj3YvmedfvAcA3pDUmA+c5bWw/5+PdY7O0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BOuvlsYgFBDZEknCd9GaBm+8UxmoEpuFGZqSLQytea9hmf0noRqk7sUeR9w3eiX3B9oA1r3NIBzl3iMHX42azh01Acq2T0Vo9zl6yCf9X2V9B1KptH4qzhWN+cZihyzFwyK78Xobhay4W4NR6sHBdQccFUX0Iq4eI2u7haX6Bdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TBdd6o8I; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45DBXLb2070819;
-	Thu, 13 Jun 2024 06:33:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718278401;
-	bh=2C5M7WDgX8YUaJV0vHBdSVcnWLy+EfLkxH20fNG3az0=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=TBdd6o8INGJ4EqwaZeHWhJ0pZ/V98bmH+TWnzZWRyDUK32uIGxXwafBhjXrCm/6Lc
-	 r3UW9AtBIBuzc5Ufy8RP+YrM7qc+KXiAzvY267WTRBcvyTWcjupneyJXnBkzHTcoHj
-	 WpyK6p05wzrMkAJWGYtcjVZ1+zI6PeuJxz3mezmA=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45DBXL3U003734
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 13 Jun 2024 06:33:21 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
- Jun 2024 06:33:20 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 13 Jun 2024 06:33:20 -0500
-Received: from localhost (dhruva.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45DBXKHf080886;
-	Thu, 13 Jun 2024 06:33:20 -0500
-Date: Thu, 13 Jun 2024 17:03:19 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Bryan Brattlof <bb@ti.com>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar
-	<viresh.kumar@linaro.org>, Lee Jones <lee@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Vibhore Vardhan
-	<vibhore@ti.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/5] cpufreq: ti: update OPP table for AM62Px SoCs
-Message-ID: <20240613113319.kryllyhrqzcnjqgk@dhruva>
-References: <20240612-ti-opp-updates-v2-0-422b6747a254@ti.com>
- <20240612-ti-opp-updates-v2-2-422b6747a254@ti.com>
+	s=arc-20240116; t=1718278420; c=relaxed/simple;
+	bh=tYDOTnZN4WaMj/eRey1nKzm34RYJ/l/vK+gS9mH/eLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7htQS8KLoqO3z2KAysj7vKTm0iOjJSV/uyWadmkk7MKVIvYGw1PjOlqnkWE3Xbn6DUprGYEF5w1OIV07OE1knww5n3t0r+G3iblimujyP7EA1PXXwWrDNGCHojCvO49xbTuuMqx/6eKo/BjIr9YDBQho4ur28bai0Ro87mj8mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BxvJ92s9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADBB5C2BBFC;
+	Thu, 13 Jun 2024 11:33:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718278420;
+	bh=tYDOTnZN4WaMj/eRey1nKzm34RYJ/l/vK+gS9mH/eLg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BxvJ92s90ZNTNMAoWAKt2fgASuD522HcKk4RnTPwXX/bbP5uSA7bW0D9lW3D1cVWc
+	 icfLjlRNOVbLiUlFXnepLSwWxqbrLzPn0RhNwB4ABsZdSH3RcbEKzh5bd6RobMeGtf
+	 JdpIhGpIREndf1numOH4L2xJLOeQSo5KXty5ipvk=
+Date: Thu, 13 Jun 2024 13:33:37 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v8 2/2] misc: gpio-virtuser: new virtual testing driver
+ for the GPIO API
+Message-ID: <2024061336-scooter-immortal-ec5f@gregkh>
+References: <20240613092830.15761-1-brgl@bgdev.pl>
+ <20240613092830.15761-3-brgl@bgdev.pl>
+ <2024061356-uptake-ideology-e57b@gregkh>
+ <CAMRc=MfjQdFR_8ALGibxQnr5tzoHykCBpkBxjH78c5HuD43rBg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240612-ti-opp-updates-v2-2-422b6747a254@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MfjQdFR_8ALGibxQnr5tzoHykCBpkBxjH78c5HuD43rBg@mail.gmail.com>
 
-On Jun 12, 2024 at 18:17:35 -0500, Bryan Brattlof wrote:
-> More speed grades for the AM62Px SoC family have been defined which
-> unfortunately no longer align with the AM62x table. So create a new
-> table with these new speed grades defined for the AM62Px
+On Thu, Jun 13, 2024 at 01:22:58PM +0200, Bartosz Golaszewski wrote:
+> On Thu, Jun 13, 2024 at 12:02 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Thu, Jun 13, 2024 at 11:28:30AM +0200, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > The GPIO subsystem used to have a serious problem with undefined behavior
+> > > and use-after-free bugs on hot-unplug of GPIO chips. This can be
+> > > considered a corner-case by some as most GPIO controllers are enabled
+> > > early in the boot process and live until the system goes down but most
+> > > GPIO drivers do allow unbind over sysfs, many are loadable modules that
+> > > can be (force) unloaded and there are also GPIO devices that can be
+> > > dynamically detached, for instance CP2112 which is a USB GPIO expender.
+> > >
+> > > Bugs can be triggered both from user-space as well as by in-kernel users.
+> > > We have the means of testing it from user-space via the character device
+> > > but the issues manifest themselves differently in the kernel.
+> > >
+> > > This is a proposition of adding a new virtual driver - a configurable
+> > > GPIO consumer that can be configured over configfs (similarly to
+> > > gpio-sim) or described on the device-tree.
+> > >
+> > > This driver is aimed as a helper in spotting any regressions in
+> > > hot-unplug handling in GPIOLIB.
+> > >
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > ---
+> > >  .../admin-guide/gpio/gpio-virtuser.rst        |  176 ++
+> > >  Documentation/admin-guide/gpio/index.rst      |    1 +
+> >
+> > sysfs documentation needs to go in Documentation/ABI/ not in a random
+> > .rst file where the tools that check this will not catch it.
+> >
 > 
-> Signed-off-by: Bryan Brattlof <bb@ti.com>
-> ---
->  drivers/cpufreq/ti-cpufreq.c | 35 ++++++++++++++++++++++++++++++++++-
->  1 file changed, 34 insertions(+), 1 deletion(-)
+> This is a testing driver, not representing real hardware. Do we hold
+> such modules to the same standard?
+
+Yes.
+
+> > >  MAINTAINERS                                   |    8 +
+> > >  drivers/misc/Kconfig                          |    8 +
+> > >  drivers/misc/Makefile                         |    1 +
+> > >  drivers/misc/gpio-virtuser.c                  | 1790 +++++++++++++++++
+> >
+> > Why not put this in drivers/gpio/?  Why misc?
+> >
 > 
-> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-> index a80698f3cfe65..6c84562de5c6b 100644
-> --- a/drivers/cpufreq/ti-cpufreq.c
-> +++ b/drivers/cpufreq/ti-cpufreq.c
-> @@ -69,6 +69,13 @@ enum {
->  #define AM62A7_SUPPORT_R_MPU_OPP		BIT(1)
->  #define AM62A7_SUPPORT_V_MPU_OPP		BIT(2)
->  
-> +#define AM62P5_EFUSE_O_MPU_OPP			15
-> +#define AM62P5_EFUSE_S_MPU_OPP			19
-> +#define AM62P5_EFUSE_U_MPU_OPP			21
-> +
-> +#define AM62P5_SUPPORT_O_MPU_OPP		BIT(0)
-> +#define AM62P5_SUPPORT_U_MPU_OPP		BIT(2)
-> +
->  #define VERSION_COUNT				2
->  
->  struct ti_cpufreq_data;
-> @@ -134,6 +141,23 @@ static unsigned long omap3_efuse_xlate(struct ti_cpufreq_data *opp_data,
->  	return BIT(efuse);
->  }
->  
-> +static unsigned long am62p5_efuse_xlate(struct ti_cpufreq_data *opp_data,
-> +					unsigned long efuse)
-> +{
-> +	unsigned long calc_efuse = AM62P5_SUPPORT_O_MPU_OPP;
+> Because it's quite... well "misc". It's not a GPIO chip provider
+> (drivers/gpio/ is for GPIO providers), it's only a GPIO consumer. It
+> also has an interface that doesn't fit any particular subsystem.
 
-This and he earlier patch, why not continue using the name convention
-calculated_efuse like in am625 and dra ?
+but it's gpio-specific, please put it there.
 
-> +
-> +	switch (efuse) {
-> +	case AM62P5_EFUSE_U_MPU_OPP:
-> +	case AM62P5_EFUSE_S_MPU_OPP:
-> +		calc_efuse |= AM62P5_SUPPORT_U_MPU_OPP;
-> +		fallthrough;
-> +	case AM62P5_EFUSE_O_MPU_OPP:
-> +		calc_efuse |= AM62P5_SUPPORT_O_MPU_OPP;
-> +	}
-> +
-> +	return calc_efuse;
-> +}
-> +
->  static unsigned long am62a7_efuse_xlate(struct ti_cpufreq_data *opp_data,
->  					unsigned long efuse)
+> > > +Both attributes allow to read and set arrays of GPIO values. User must pass
+> > > +exactly the number of values that the array contains in the form of a string
+> > > +containing zeroes and ones representing inactive and active GPIO states
+> > > +respectively. In this example: ``echo 11 > values``.
+> >
+> > sysfs is "one value per file", so why are there multiple values here?
+> >
+> > If you want to just use this for testing, and want to put whatever you
+> > want in the files, just use debugfs, that's what it is there for, not
+> > sysfs.
+> >
+> 
+> Debugfs doesn't allow me to attach attributes to a particular device
+> which is what I want here.
 
-Otherwise, Looks good.
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Yes it does, you just have to create the tree yourself.  Many subsystems
+do this today just fine.
 
--- 
-Best regards,
-Dhruva
+Please do not abuse sysfs for something that it is not designed for,
+please use debugfs, that is EXACTLY what it is designed for.
+
+thanks,
+
+greg k-h
 
