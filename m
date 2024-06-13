@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-213344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A10B8907402
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:41:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500A69073AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45B201F21262
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:41:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 036EB1F24C92
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D481448F1;
-	Thu, 13 Jun 2024 13:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0lfE3IM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F50144D3F;
+	Thu, 13 Jun 2024 13:26:48 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274FB1448E5;
-	Thu, 13 Jun 2024 13:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C77143C40;
+	Thu, 13 Jun 2024 13:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718286029; cv=none; b=e4//FKztHDopa6z6/ExV5RV6XIU3NBZZKwfye+gT50WaN4CFb15FQOeHE/SiI9jxYRiEOeSvMs22kZV+NwKFKLOkRB/pYyDCpy7FSqojvQlUTv4G4VL8eqo+pBlLM0rCBJTAokHgYIRVfHQys8hRkllFyIcSrwavOhCKZw4tQBQ=
+	t=1718285208; cv=none; b=OTTCrOwwOzxYJw05aRnQIp8sIx97NSPUacBrW1id2NoggJpp0tpdq4Y3sJfBPP/+zJG/eYH8ctyf92XK5VVz4XyHXT6QkGLhZ+U87cxSW9AJ1A35eb+QkNcHn7MmmfY/HC9nYoD6OY1NMWG2bHv6xxLUqq3vi7IVag6HwDjLh8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718286029; c=relaxed/simple;
-	bh=m5QYFdAL+feMVH2MyIxXOPX2B5GR+B9Lzkpomys7T0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SRZo6axezFolQXOqviyHdbx0+s8O+8tT/DuSlD9gZ3844un2s/WTFtcDWEu0CYpgkBxUhNdZLVatiA72rxLyg+TJF/f/aEIVwV3mXrsW9NgNSKDUoFdwQ2/6TMU/T+T9UmDS4NEHrevPTouGehy8wROIB0yUVTRleVSrxUfK7FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0lfE3IM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755CEC2BBFC;
-	Thu, 13 Jun 2024 13:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718286028;
-	bh=m5QYFdAL+feMVH2MyIxXOPX2B5GR+B9Lzkpomys7T0Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z0lfE3IMyfPRo/fEuZj//DfvwmChfaVwJtt7MWWguxlpXtAP8pfRITgz/TSDtJLxC
-	 99HT8TGmCjrAs5DsXQsKJpcsjZPSePj0Eavv0J3I9uXagFy31pSGRqNVrlhjYaR0kq
-	 sAmTmjY07VInHqmOQ5m3vfyvP5eJN+XRPLyN7rhvfdhrYWOx7WYikaNDa+ZbckbCJZ
-	 ZjKIWVEamUEVaDmZYoPybFdt6dzXdx3BB4DLFrPUHMXBfFTKbNu3wHFOz5TJo8bhQl
-	 tu9JNRbVzmwxOqthBRrGJjgzVwu8cLasXJ2O81OgIJ4FZ1t4H2kDLv3CCdHavOHlya
-	 iOHeWAAfYetEQ==
-Date: Thu, 13 Jun 2024 21:26:37 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Haylen Chu <heylenay@outlook.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: sdhci-of-dwcmshc: Use inverted-wp quirk for CV18xx
- and SG200x SoCs
-Message-ID: <ZmrzjWQgKzlQqVVv@xhacker>
-References: <SEYPR01MB42219753E4388009470D958DD7FC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <Zmrt-dcPR_ZXlYH-@xhacker>
- <Zmrw_egJomoF0Tf3@xhacker>
+	s=arc-20240116; t=1718285208; c=relaxed/simple;
+	bh=/4UAOu8OPxB6jQeNkyxjOzmqUKJUuZRRJHc/NOgQCGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VUUuw8sIkm//gPo1CE2Rkj1zuzZ3QZ88tIC/rfa3K5UtUmWjTdP9wbN1kXP63M6ovUPpZ+X2CIyzVO3JnZ7+1RDIOcVJYe+2jGLY/tBxLlaSEezJVcJDluFkaaX0stCW2YVLhoiJmcHSI2hVaP96NA1IA2dbSd7++05rBlsQEYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C307C32786;
+	Thu, 13 Jun 2024 13:26:44 +0000 (UTC)
+Date: Thu, 13 Jun 2024 09:26:42 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>, Kees Cook <kees@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
+ linux-mm@kvack.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Tony Luck
+ <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Ross
+ Zwisler <zwisler@google.com>, wklin@google.com, Vineeth Remanan Pillai
+ <vineeth@bitbyteword.org>, Joel Fernandes <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>, Linus Torvalds
+ <torvalds@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v3 2/2] pstore/ramoops: Add ramoops.mem_name= command
+ line option
+Message-ID: <20240613092642.385461d5@rorschach.local.home>
+In-Reply-To: <CAMj1kXHLSROujjc_OifzVmuAd7BpA+b4D2JrPGLJJYj2au7SfQ@mail.gmail.com>
+References: <20240611144911.327227285@goodmis.org>
+	<20240611144949.703297941@goodmis.org>
+	<202406121145.8860502D7@keescook>
+	<20240612145228.5bf426e0@rorschach.local.home>
+	<ZmqLejL1mblOikLp@kernel.org>
+	<CAMj1kXHLSROujjc_OifzVmuAd7BpA+b4D2JrPGLJJYj2au7SfQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zmrw_egJomoF0Tf3@xhacker>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 09:15:50PM +0800, Jisheng Zhang wrote:
-> On Thu, Jun 13, 2024 at 09:03:24PM +0800, Jisheng Zhang wrote:
-> > On Fri, May 31, 2024 at 02:13:47PM +0000, Haylen Chu wrote:
-> > > MMC controller integrated in Sophgo CV18xx and SG200x SoCs has an
-> > > inverted write-protect flag, causing SDCards misdetected as read-only.
-> > > So set SDHCI_QURIK_INVERTED_WRITE_PROTECT to make write protection work
-> > > correctly.
-> > 
-> > No, I would rather set cd-inverted property in dts.
+On Thu, 13 Jun 2024 08:11:48 +0200
+Ard Biesheuvel <ardb@kernel.org> wrote:
+> >
+> > I've added one more comment to v5, with that fixed I can take this.
+> >  
 > 
-> wp-inverted
+> So how is this supposed to work wrt to the rigid 'no user visible
+> regressions' rule, given that this whole thing is a best effort thing
 
-hmm, if I read the SCH correctly, there's no wp pin at all, so
-disable-wp is better
+This has nothing to do with user space. The kernel command line has
+broken in the past. If you update the kernel, you can update the
+command line. There's no "no user visible regressions" rule. It's
+"Don't break user space". This has nothing to do with user space.
+
+> to begin with. This needs at least a huge disclaimer that this rule
+> does not apply, and if this works today, there is no guarantee that it
+> will keep working on newer kernels. Otherwise, you will be making the
+> job of the people who work on the boot code significantly more
+> difficult. And even then, I wonder whether Linus and #regzcop are
+> going to honour such a disclaimer.
+
+Again, this has nothing to do with user space. The rule Linus talks
+about is breaking user space. This is about kernel debugging. Something
+*completely different*!
 
 > 
-> > > 
-> > > Fixes: 017199c2849c ("mmc: sdhci-of-dwcmshc: Add support for Sophgo CV1800B and SG2002")
-> > > Signed-off-by: Haylen Chu <heylenay@outlook.com>
-> > > ---
-> > >  drivers/mmc/host/sdhci-of-dwcmshc.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> > > index 39edf04fedcf..62b7f28de54f 100644
-> > > --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> > > +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> > > @@ -962,7 +962,8 @@ static const struct sdhci_pltfm_data sdhci_dwcmshc_th1520_pdata = {
-> > >  
-> > >  static const struct sdhci_pltfm_data sdhci_dwcmshc_cv18xx_pdata = {
-> > >  	.ops = &sdhci_dwcmshc_cv18xx_ops,
-> > > -	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> > > +	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
-> > > +		  SDHCI_QUIRK_INVERTED_WRITE_PROTECT,
-> > >  	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-> > >  };
-> > >  
-> > > -- 
-> > > 2.45.1
-> > > 
+> So this belongs downstream, unless some guarantees can be provided
+> that this functionality is exempt from the usual regression policies.
+
+I disagree. kexec/kdump also has the same issues.
+
+
+-- Steve
 
