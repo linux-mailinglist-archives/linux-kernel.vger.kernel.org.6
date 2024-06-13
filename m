@@ -1,102 +1,131 @@
-Return-Path: <linux-kernel+bounces-213446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF0D907578
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:42:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DFD79075D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 111CF1F23498
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:42:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 338B41F24AAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F4E14658F;
-	Thu, 13 Jun 2024 14:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvNk+DeK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C1014659D;
+	Thu, 13 Jun 2024 14:56:55 +0000 (UTC)
+Received: from EXCEDGE02.prodrive.nl (mail.prodrive-technologies.com [212.61.153.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B0A145A12;
-	Thu, 13 Jun 2024 14:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D242AEE9;
+	Thu, 13 Jun 2024 14:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718289662; cv=none; b=ZSCdmdNN2JxfzP+hDDZ4PDqd1BVFFEV9wgTJpR03fn5FSe7LFrvm5eVlOtHdbgrG4c3IGAmZULDVG3WNasg57mO3eZTb+Ga4+EWfTweQjKZ4/3sFW56+vYx4OU5VmfgPV9hFOx3WRClLMcK7uEhlQFg9PkwdaRbEUEizedc+I8o=
+	t=1718290615; cv=none; b=e4nEQBRLH4saBWw9vmYh+YTWW9Z/NBLe2C0/GsG635YlSZ7TsiTj01FpaYdtHr9/R03QRQrily0bL5NHosxXPelpkMjdDZamtOyxAOIw3Fp60IPpEyjOMVnxoJZ4T6X13iaXHRzemM8BUJZABROxiQbqKwtsGDeJMJkH43P9cdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718289662; c=relaxed/simple;
-	bh=QudiikszfuUSRm1JTVmyxQn35gCQ8PIjI8z2PL0Fa5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oqxjyt5aOGXf4Nkf22zYxjIEjPlSgCzDF+OzAldg6Vq3nBlpqn5cNrahzXmc58RnT+rdqqOrlC0NpfLLmZLJ599cTj89JNHwkz/NkysH5LcmHN6jlSQND5BKm4SdYMq+zDZXT6i5Sdy6lYIEuzcPMdkjY7yG+VJoaleb9EXBzNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JvNk+DeK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BFEC2BBFC;
-	Thu, 13 Jun 2024 14:40:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718289662;
-	bh=QudiikszfuUSRm1JTVmyxQn35gCQ8PIjI8z2PL0Fa5g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JvNk+DeKUwohEXf2HcghJVK2ISwGC59Kg2oUR4L6l2e34a/gOul8aSiTPUqfoAgFW
-	 f8apKbdebeXia2nTHIAgeqQldDjToUDPysl5NEr0d3VTNCcFu5mp0A5rFo8Gn/GoaM
-	 nVDG9tRVhcn8fn//ryWad9iYqNZBwJpRtSL1udNk7ii0tMocXltDecJXku6yaoS1Cg
-	 /Bl7HfJENXroP0zuSjzEBE7iYKPVCMmUI7srqojPT05SiDrGRz7Pn7uMYQwlRPOZbx
-	 vIp0TDf9Vw3Z8NpEzrjqKNGmq9Dsv7J3UBRT/atm9bPaE1QJTljvaYy9yrlYLTDrF0
-	 6Dka+8PRkVCdQ==
-Date: Thu, 13 Jun 2024 15:40:55 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 04/13] riscv: Add thead and xtheadvector as a vendor
- extension
-Message-ID: <20240613-cofounder-curator-81e53a35dcbc@spud>
-References: <20240610-xtheadvector-v2-0-97a48613ad64@rivosinc.com>
- <20240610-xtheadvector-v2-4-97a48613ad64@rivosinc.com>
+	s=arc-20240116; t=1718290615; c=relaxed/simple;
+	bh=JBD5JZgYoYP7sSdaelVg7aP3qlQnjwjxKiVYCRSyL+E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Axx2SXDaikXzFTDUgyboaOzGlVHOACk744fCddn97dLmIIvF+HsN1BTCqPZPQvcKTQEdGXsfLGx3w3L5Vsil93XrDa5UvA1AHcLVcm8RTYrE0ZTXtgv+7dUJlinGP3PhcBqYIQPjSnxDlSGy24q38c8tg4nqy0Kqm6YU3pBEHWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
+Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by webmail.prodrive.nl
+ (192.168.102.63) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Jun
+ 2024 16:41:42 +0200
+Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
+ (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Thu, 13 Jun
+ 2024 16:41:41 +0200
+Received: from lnxdevrm02.bk.prodrive.nl (10.1.1.121) by
+ EXCOP01.bk.prodrive.nl (10.1.0.22) with Microsoft SMTP Server id 15.2.1258.12
+ via Frontend Transport; Thu, 13 Jun 2024 16:41:41 +0200
+Received: from paugeu by lnxdevrm02.bk.prodrive.nl with local (Exim 4.94.2)
+	(envelope-from <paul.geurts@prodrive-technologies.com>)
+	id 1sHle1-001Uou-3r; Thu, 13 Jun 2024 16:41:41 +0200
+From: Paul Geurts <paul.geurts@prodrive-technologies.com>
+To: <wei.fang@nxp.com>, <shenwei.wang@nxp.com>, <xiaoning.wang@nxp.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Paul Geurts <paul.geurts@prodrive-technologies.com>
+Subject: [PATCH] fec_main: Register net device before initializing the MDIO bus
+Date: Thu, 13 Jun 2024 16:41:11 +0200
+Message-ID: <20240613144112.349707-1-paul.geurts@prodrive-technologies.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="aZez57M5EwwC5uBl"
-Content-Disposition: inline
-In-Reply-To: <20240610-xtheadvector-v2-4-97a48613ad64@rivosinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Registration of the FEC MDIO bus triggers a probe of all devices
+connected to that bus. DSA based Ethernet switch devices connect to the
+uplink Ethernet port during probe. When a DSA based, MDIO controlled
+Ethernet switch is connected to FEC, it cannot connect the uplink port,
+as the FEC MDIO port is registered before the net device is being
+registered. This causes an unnecessary defer of the Ethernet switch
+driver probe.
 
---aZez57M5EwwC5uBl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Register the net device before initializing and registering the MDIO
+bus.
 
-On Mon, Jun 10, 2024 at 03:56:41PM -0700, Charlie Jenkins wrote:
-> Add support to the kernel for THead vendor extensions with the target of
-> the new extension xtheadvector.
->=20
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+Fixes: e6b043d512fa ("netdev/fec.c: add phylib supporting to enable carrier detection (v2)")
+Signed-off-by: Paul Geurts <paul.geurts@prodrive-technologies.com>
+---
+ drivers/net/ethernet/freescale/fec_main.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index 881ece735dcf..ed71f1f25ab9 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -4500,10 +4500,6 @@ fec_probe(struct platform_device *pdev)
+ 	/* Decide which interrupt line is wakeup capable */
+ 	fec_enet_get_wakeup_irq(pdev);
+ 
+-	ret = fec_enet_mii_init(pdev);
+-	if (ret)
+-		goto failed_mii_init;
+-
+ 	/* Carrier starts down, phylib will bring it up */
+ 	netif_carrier_off(ndev);
+ 	fec_enet_clk_enable(ndev, false);
+@@ -4515,6 +4511,10 @@ fec_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto failed_register;
+ 
++	ret = fec_enet_mii_init(pdev);
++	if (ret)
++		goto failed_mii_init;
++
+ 	device_init_wakeup(&ndev->dev, fep->wol_flag &
+ 			   FEC_WOL_HAS_MAGIC_PACKET);
+ 
+@@ -4528,9 +4528,9 @@ fec_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-failed_register:
+-	fec_enet_mii_remove(fep);
+ failed_mii_init:
++	unregister_netdev(ndev);
++failed_register:
+ failed_irq:
+ 	fec_enet_deinit(ndev);
+ failed_init:
+@@ -4577,8 +4577,8 @@ fec_drv_remove(struct platform_device *pdev)
+ 
+ 	cancel_work_sync(&fep->tx_timeout_work);
+ 	fec_ptp_stop(pdev);
+-	unregister_netdev(ndev);
+ 	fec_enet_mii_remove(fep);
++	unregister_netdev(ndev);
+ 	if (fep->reg_phy)
+ 		regulator_disable(fep->reg_phy);
+ 
+-- 
+2.30.2
 
---aZez57M5EwwC5uBl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmsE9wAKCRB4tDGHoIJi
-0sX3AQCV0JAgjlWHnjFIW32EH6kLNRxnf0K4C7KXnfzG3XGQOQEAp2wE6MnRyV//
-+GtJNdRRVkKDTjAnuHMpsdBXy6n+kQQ=
-=VC5A
------END PGP SIGNATURE-----
-
---aZez57M5EwwC5uBl--
 
