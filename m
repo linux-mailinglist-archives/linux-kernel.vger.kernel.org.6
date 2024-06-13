@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-212989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E52B590696E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:55:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88D1906979
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55F76B257B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC47D1F21525
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ACB1411DA;
-	Thu, 13 Jun 2024 09:55:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5032414039A;
-	Thu, 13 Jun 2024 09:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EAC1411CB;
+	Thu, 13 Jun 2024 09:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9tYu8Fi"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CBA13E036;
+	Thu, 13 Jun 2024 09:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718272516; cv=none; b=kLg6EliKiAcVwhf/XKrmcs3qkMWQNYcW3TQq2SRK6McSMk02L9LR4zMuQhFU6Dj9zfKGuwN0qs8uOXjKh2fJL7FF0e2akDCQ4XBZI66jFQXzvlhAF3O/ATUzAkVyjveUO8MaAr1Xb8Zd//orH/ShXEi6au2y1PS9HZALESk2c4I=
+	t=1718272665; cv=none; b=ihqNSUbt+G+HozaPS7h8wlk4k2oh/eRvfHhICmwSmYqegRl3H2s+m7r35ng6pnyeNBURfmdIKiv2Siq6ar56JckORYqa44i9Ua6rfuKAc2Hdoo1qo3Kjbp8aNWgLrXROb4TZOB0/HKjAkJWnmmO7t1X2v8hSWnhzIbLYGjK0rKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718272516; c=relaxed/simple;
-	bh=3e92B1eVt9vTMbGDST7vZ+wtr7b9AXBKBsq0dXvWRfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oOZL9iXqQ9WeX9MMo+E6ViyH0Jhmmgh1cyqpd0aydDOvm1VaeC5fM1ZrXnjjNb1RdNuXzvn9xmXv+DgE0ljBf1MSjZV1LXaB+YXmiWGE4TZaSSmvfcaT56lFFFoQZ98T5I9/5esEk73mZVbs0/EMVEoDOj02MBPkY8LMZN+m6Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 449571063;
-	Thu, 13 Jun 2024 02:55:38 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 703353F5A1;
-	Thu, 13 Jun 2024 02:55:11 -0700 (PDT)
-Date: Thu, 13 Jun 2024 11:55:08 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, ionela.voinescu@arm.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	len.brown@intel.com, vanshikonda@os.amperecomputing.com,
-	sumitg@nvidia.com, vincent.guittot@linaro.org
-Subject: Re: [PATCH 1/1] cpufreq: Rewire arch specific feedback for
- cpuinfo/scaling_cur_freq
-Message-ID: <ZmrB_DqtmVpvG30l@arm.com>
-References: <20240603081331.3829278-1-beata.michalska@arm.com>
- <20240603081331.3829278-2-beata.michalska@arm.com>
- <20240603114811.oio3uemniib5uaa2@vireshk-i7>
- <CAJZ5v0j1bqhmKrJirw+WgEVDdszZ9xQSgmfazVKMVa8H6_5TSw@mail.gmail.com>
- <20240606085513.pptx5dtjcvvg3zo4@vireshk-i7>
- <CAJZ5v0it5vZvzkbErkGOVruPbkxgr8VMTgQzsncpdQmvCOfBng@mail.gmail.com>
- <20240613082358.yq2lui6vc35xi53t@vireshk-i7>
- <CAJZ5v0iOvpx=YtPtbM9RPaVh2n4+T=r91bM7OZt5k8q0Tzmk+w@mail.gmail.com>
+	s=arc-20240116; t=1718272665; c=relaxed/simple;
+	bh=zN6eWs4yJyaimrUvyt31VdOl+8W2TcByxEAIv71Dj1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r16qB5t7RfHOH8NCUYWns50GdZTdE5LUoJ9EsLM2uc36mvvlakKdW6izD21k8Im3tbiIS0gukTMi+Im06qZv1sA1TwxVbYpDLE8EPA5rLf2MbFqO689L0R897AM/Dai2bY2KDVl1WrFIyzNtThWErKZRcTSBCHSAhg/6vEMZjOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9tYu8Fi; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4ecf8af13edso248842e0c.0;
+        Thu, 13 Jun 2024 02:57:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718272662; x=1718877462; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DpMVR8DEDaDijPjWZKbxTVzd755u1YS0zT0nSvsj3Zk=;
+        b=i9tYu8FiIloj3a/uXoveFJIbP+oL7qmzctuwV2tdOTK/UmRhkpCrKN6kxkj8qYbJ7G
+         lX7BaGEnRtVQ468pI6OAXTblKjH8ltmTL0oudSWQWJVqBbgp3Gy4ILBVOy0bVBIVBmgu
+         NWzLCKE0E6ap5LbeRQ9Nm9jQH9nHA/slMbBev9nG5poAOMrH1ig4PKCq33fXxK9S9GI7
+         rL9Ub168vzzwxasJ24yuJzezyqQvNKKDJMjewT6tvcCDcEffBwgKS3gVThvaG/VgvkrZ
+         9BvNNqZFa4hgmYrDoeDjXyDQWY8sDzQ2Vd+XGmevVcGR/Ixqni2f8ka1zaTnreJa9AnT
+         3WdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718272662; x=1718877462;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DpMVR8DEDaDijPjWZKbxTVzd755u1YS0zT0nSvsj3Zk=;
+        b=gGxvzmU2SnL7xwDMB3CJ0K0US81HvW3ZNDfaJnSZBJaAb8LsCiaCIDfC05aP9Y8wRT
+         sIESdDaoMZJcqKKSarNfsBcBlv0g/54KCitYwEgusrp0lfaHRTY2a9bB0eN0yV43SvIh
+         peHxKbZ/B3htHYPPno+ldoXixCzPM/7vtTIrq+Zd4TGNtdntZuy/qzfNf5zcy9FsvExq
+         HVIXwEv90aAKuCz3qSXZWUnyHoqnUkTvBHIbAFY2dzXhKoyAcm9SqOTqbptonNPagfyc
+         DEi1J9ApuNTLpCYL2Ard+uAnpTU+o8KC8+HIPClv2eMAu2m5YWBmoDwWZAjSy6vpe598
+         3FzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWR2NS1ZB+6FvyRMT5v33usWI9dw6fDVCmznO9gxXSnuh2qxERh0p1n9PSfKLh+E+o7lhcYe166R/tgPWN9GHiNw5xynPN0+KDO8FtFf+qh81L6xeeUaCtNdZq8IWoSrT02j7tUG3x8l7vSfRCaJTwlBUsjUdyRF5SCAQNH6UM7MSDMGwIOxEdVLKVwVefAuaEMq+9XdRP6r6mqtlQF4WqsqqizUTtc
+X-Gm-Message-State: AOJu0Yw4N1tEfxU6XBeXZajHHOeZtXXvXGrXXJzZr268r0HTdgiklOYm
+	P+aQqq63OWU0xvrYIoWFZvgSMgNvMW9vrnt/HusDH/WVzDlNba9Yl6G1HG3T8qGipqoiibCsJ8p
+	45haqwmqQJ0B/fji0OQpAgsDFcxg=
+X-Google-Smtp-Source: AGHT+IFZDlKXT5ksZr0707o5fDOj0QyVYvY+252Tgpk2oD5G6fsRq1eEvfdsCaiG/u7TKoAitSlR9dKPDqGgpSEfsok=
+X-Received: by 2002:a05:6122:2087:b0:4ec:f4e0:c00c with SMTP id
+ 71dfb90a1353d-4ed07adae82mr5165684e0c.4.1718272662567; Thu, 13 Jun 2024
+ 02:57:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0iOvpx=YtPtbM9RPaVh2n4+T=r91bM7OZt5k8q0Tzmk+w@mail.gmail.com>
+References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240610233221.242749-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <6b3fe242-3733-4f16-b727-494dc1d82002@kernel.org>
+In-Reply-To: <6b3fe242-3733-4f16-b727-494dc1d82002@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 13 Jun 2024 10:57:12 +0100
+Message-ID: <CA+V-a8vp0qHKqUMvyfy9hQjKyk8Cs0bDTnYh-ChvPi150r5i2g@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/4] dt-bindings: clock: Add R9A09G057 core clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 11:27:52AM +0200, Rafael J. Wysocki wrote:
-> On Thu, Jun 13, 2024 at 10:24 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > On 07-06-24, 16:21, Rafael J. Wysocki wrote:
-> > > On Thu, Jun 6, 2024 at 10:55 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > > > What about this, hopefully this doesn't break any existing platforms
-> > > > and fix the problems for ARM (and others):
-> > > >
-> > > > - scaling_cur_freq:
-> > > >
-> > > >   Returns the frequency of the last P-state requested by the scaling
-> > > >   driver from the hardware.
-> > >
-> > > This would change the behavior for intel_pstate in the passive mode AFAICS.
-> > >
-> > > ATM it calls arch_freq_get_on_cpu(), after the change it would return
-> > > policy->cur which would not be the same value most of the time.  And
-> > > in the ->adjust_perf() case policy->cur is not updated by it even.
-> >
-> > Yeah, we would need to do the below part to make it work.
-> >
-> > > >  For set_policy() drivers, use the ->get()
-> > > >   callback to get a value that can provide the best estimate to user.
-> > > >
-> > > >   To make this work, we can add get() callback to intel and amd pstate
-> > > >   drivers, and use arch_freq_get_on_cpu().
-> > > >
-> > > >   This will keep the current behavior intact for such drivers.
-> > >
-> > > Well, the passive mode thing would need to be addressed then.
-> >
-> > Right. So this would keep the behavior of the file as is for all platforms and
-> > simplify the core.
-> >
-> > > > - cpuinfo_cur_freq:
-> > > >
-> > > >   Currently this file is available only if the get() callback is
-> > > >   available. Maybe we can keep this behavior as is, and expose this
-> > > >   now for both the pstate drivers (once above change is added). We
-> > > >   will be left with only one driver that doesn't provide the get()
-> > > >   callback: pasemi-cpufreq.c
-> > >
-> > > I would rather get rid of it completely.
-> >
-> > cpuinfo_cur_freq itself ? I thought such changes aren't allowed as they may end
-> > up breaking userspace tools.
-> 
-> cpuinfo_cur_freq is not always present anyway, so user space tools
-> need to be able to cope with the lack of it anyway.
+Hi Krzysztof,
+
+Thank you for the review.
+
+On Tue, Jun 11, 2024 at 7:59=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 >
-> > > >   Coming back to the implementation of the file read operation, I
-> > > >   think the whole purpose of arch_freq_get_on_cpu() was to get a
-> > > >   better estimate (which may not be perfect) of the frequency the
-> > > >   hardware is really running at (in the last window) and if a platform
-> > > >   provides this, then it can be given priority over the ->get()
-> > > >   callback in order to show the value to userspace.
-> > >
-> > > There was a reason to add it and it was related to policy->cur being
-> > > meaningless on x86 in general (even in the acpi-cpufreq case), but
-> > > let's not go there.
+> On 11/06/2024 01:32, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > Right.
+> > Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator core clocks.
 > >
-> > > Hooking this up to cpuinfo_cur_freq on x86 wouldn't make much sense
-> > > IMV because at times it is not even close to the frequency the
-> > > hardware is running at.  It comes from the previous tick period,
-> > > basically, and the hardware can adjust the frequency with a resolution
-> > > that is orders of magnitude higher than the tick rate.
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v1->v2
+> > - Dropped the module clocks and just added the core clocks
 > >
-> > Hmm. If that is the concern (which looks valid), how come it makes sense to do
-> > the same on ARM ? Beata, Ionela ?
-> >
-> > I thought, just like X86, ARM also doesn't have a guaranteed way to know the
-> > exact frequency anymore and AMUs are providing a better picture, and so we are
-> > moving to the same.
-> >
-> > If we don't want it for X86, then it can be done with help of a new driver flag
-> > CPUFREQ_NO_CPUINFO_SCALING_FREQ, instead of the availability of the get()
-> > callback.
-> >
-> > > Well, this sounds nice, but the changes are a bit problematic.
-> > >
-> > > If you don't want 3 files, I'd drop cpuinfo_cur_freq and introduce
-> > > something else to replace it which will expose the
-> > > arch_freq_get_on_cpu() return value and will be documented
-> > > accordingly.
-> >
-> > Well it is still meaningful to show the return value of the ->get() callback
-> > where the hardware provides it.
-> 
-> But this is a valid point.
-> 
-> > > Then scaling_cur_freq can be (over time) switched over to returning
-> > > policy->cur in the cases when it is meaningful and -ENODATA otherwise.
-> > >
-> > > This would at least allow us to stop making up stuff.
-> >
-> > Maybe a third file, just for arch_freq_get_on_cpu() is not that bad of an idea
-> > :)
-> 
-> /me thinks so.
-I am starting to lean towards that option.
-Making both cpuinfo_cur_freq and scaling_cur_freq sane, might create even more
-confusion as per which is providing what. We are already in a rather tricky
-situation. The interface should be clean, leaving no room for various
-interpretations - as much as possible, of course.
+> > Note the core clocks are the once which are listed as part
+> > of section 4.4.2 which cannot be controlled by CLKON register.
+> > ---
+> >  include/dt-bindings/clock/r9a09g057-cpg.h | 21 +++++++++++++++++++++
+> >  1 file changed, 21 insertions(+)
+> >  create mode 100644 include/dt-bindings/clock/r9a09g057-cpg.h
+>
+> Missing vendor prefix.
+>
+OK, Is this just for new includes being added, or do you want me to
+rename the existing Renesas specific includes in here which dont have
+vendor prefix?
 
----
-BR
-Beata
+> This belongs to the binding patch, so squash it.
+>
+OK, I will squash it.
+
+Cheers,
+Prabhakar
 
