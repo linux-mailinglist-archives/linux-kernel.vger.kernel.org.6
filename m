@@ -1,156 +1,75 @@
-Return-Path: <linux-kernel+bounces-214066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93BFF907EE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:35:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46490907EEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A9301C2228B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:35:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E19CC1F22255
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DF414C5A7;
-	Thu, 13 Jun 2024 22:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74BF14D2B7;
+	Thu, 13 Jun 2024 22:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZJFn8FF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EsZ/UpTm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990351411C3;
-	Thu, 13 Jun 2024 22:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56CA1411C3;
+	Thu, 13 Jun 2024 22:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718318126; cv=none; b=gdG6L4k8uyGnlBvYXHxTdAAvkmBI/4fH4LQ3UgOYHf+xPJ5Yz4y2Ox9GTDLaxpEQstBLT3BzBYjQ5XjhcOXx4czrKpW0Peg/+dpDjbd8r4j9o37RI+UYM8rDWiJFv+zXBLwrVqyPXtwmGJ3ZZTtdikbY+PkuxwU1E0rNsSeUg3k=
+	t=1718318176; cv=none; b=GNgd9RSJw5nEeGUYoMJczyicYuD8m9tnYO12v7Tu6mGwE1vTyWcAJ6CSyMZ55nBHUea+lUiv6LVcVxzseD/DR+DLkuOqUKHG0fsFzHLvXcjCsFuvpIL090D1ndc7Vfpuj3EcZcLmbtplDyk8YlqjnK6FLwReuL4W1PPNX+ssY1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718318126; c=relaxed/simple;
-	bh=p+VwQhv5G5CYvaf+I9sazjD4wTWlRzKTz9+GDqPyq38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CVCvSs7u/hYGEdUn59sWDzX6CuaKRooQZsNAO2RS1uh+gi0pWW+FPB2cFp5kgt/NAXN4RLaJND/YWmN/TORH9avAob2WivLHKoZPWL6eRVZlcXQKxip6AzxuI3L2Si4r47RLFRY3tgrHOFZzXtdULOe8MExXHAMuMyIYuoQuuIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZJFn8FF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1322C2BBFC;
-	Thu, 13 Jun 2024 22:35:24 +0000 (UTC)
+	s=arc-20240116; t=1718318176; c=relaxed/simple;
+	bh=tmRXKHGJ5fDdBPnMsyaNw7YI1zgFugypm9sz3cbHjFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LspTJCKkLKZbEXu4gDBk6AwBAarnatDljwkG+HYN3eR0KsRwx8YqYlEmQ/BwgmOCjaUPtf3X7G7Cl5sEZegtg/WBSUyonJGG5mLeRWINoQE9Eu01l8gCzAZgpsxroDyq8ejmXoktWz+R5kaj0jgAGjd7UAEg6DNWjtSvyvxX+Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EsZ/UpTm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC97C2BBFC;
+	Thu, 13 Jun 2024 22:36:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718318126;
-	bh=p+VwQhv5G5CYvaf+I9sazjD4wTWlRzKTz9+GDqPyq38=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TZJFn8FFLtDllkEQfxJ9kmP6cm2LJADJXIuh4dWKR2L6D1gmcq535DcLm4ILeSoMK
-	 j3T+KyxIUCa1o1IBySiyVxushNMc+7F3+72NyFG1bE0bKS3hNqDyKGFuoIzABi03he
-	 nX5LMBLtIqjTb3td27LRsRQAs0KnDjwiRlvtU5X7lq+l8C7hY2MFbxJ2n51zvBRDiU
-	 IGBWaxfQbmekfiZLftmONNSVRaKIKhcXjPoa9KcInwDj2rnEjxA0AThLm1ktqZuv8j
-	 9YKIYpWy+EL54RiNB75HCp0BTx+5XXq0f/8N8LX0TvS6HGAwmYZuc+dljPLorULz3Q
-	 utC1PoKU7hXhQ==
-Date: Thu, 13 Jun 2024 15:35:23 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Guo Ren <guoren@linux.alibaba.com>, Guo Ren <guoren@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	clang-built-linux <llvm@lists.linux.dev>
-Subject: Re: [PATCH 5.10 000/317] 5.10.219-rc1 review
-Message-ID: <20240613223523.GB1849801@thelio-3990X>
-References: <20240613113247.525431100@linuxfoundation.org>
- <CA+G9fYvnVJi1RFhO5f6ZH2mpagZ6jcEdoQAxnSBxWPHsEVQwYg@mail.gmail.com>
+	s=k20201202; t=1718318175;
+	bh=tmRXKHGJ5fDdBPnMsyaNw7YI1zgFugypm9sz3cbHjFE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EsZ/UpTmdTpmlzJrmLGauQmNp1wqpFuK4EfgJbCcFTBaZyqMGn3p21OI1OlVtrJF7
+	 dquyLfoz0lxw8qZIU9vxm65oIvTztGQ24Q7DrCTZ/1Y3etpzBqR22fWZKB6bF12jEJ
+	 m+WbafKBGD3tf+MwsZqpyBxrll46jQF5oXJ4dOgFecK1jZ9DZWw0+r3vau9MEDxxL4
+	 JD7/ZoDKyJtiKJVW99adbE7QRrf0HvPS72Mu8SAkTvAFNmCi3qvP0hxfqj1DCFt3w6
+	 TmJNtvItpc/85a6+Mz7/RKmxZuK36tz2DZV/btow5v8YY9geRXQ1K+XHfllE578Efu
+	 SQXtedxndxwSQ==
+Date: Thu, 13 Jun 2024 15:36:14 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: Tariq Toukan <ttoukan.linux@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nalramli@fastly.com, Saeed Mahameed
+ <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, "open
+ list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>, Tariq
+ Toukan <tariqt@nvidia.com>
+Subject: Re: [net-next v5 2/2] net/mlx5e: Add per queue netdev-genl stats
+Message-ID: <20240613153614.3d758093@kernel.org>
+In-Reply-To: <ZmtusKxkPzSTkMxo@LQ3V64L9R2>
+References: <20240612200900.246492-1-jdamato@fastly.com>
+	<20240612200900.246492-3-jdamato@fastly.com>
+	<0a38f58a-2b1e-4d78-90e1-eb8539f65306@gmail.com>
+	<20240613145817.32992753@kernel.org>
+	<ZmtusKxkPzSTkMxo@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYvnVJi1RFhO5f6ZH2mpagZ6jcEdoQAxnSBxWPHsEVQwYg@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 08:43:41PM +0530, Naresh Kamboju wrote:
-> On Thu, 13 Jun 2024 at 17:43, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 5.10.219 release.
-> > There are 317 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.219-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> 
-> The following build errors are noticed on riscv with clang-18 toolchain
-> but gcc-12 builds pass.
-> 
-> However, compared with older releases this is a build regression on
-> stable-rc 5.10.
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> riscv:
->  defconfig - gcc-12 - PASS
->  defconfig - clang-18 - FAILED
-> 
-> Build error:
-> ------
-> arch/riscv/kernel/stacktrace.c:75:52: error: incompatible pointer to
-> integer conversion passing 'void *' to parameter of type 'unsigned
-> long' [-Wint-conversion]
->    75 |                                 if
-> (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
->       |
->                 ^~~
-> include/linux/compiler.h:78:42: note: expanded from macro 'unlikely'
->    78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
->       |                                             ^
-> arch/riscv/kernel/stacktrace.c:75:57: error: incompatible integer to
-> pointer conversion passing 'unsigned long' to parameter of type 'void
-> *' [-Wint-conversion]
->    75 |                                 if
-> (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
->       |
->                      ^~
-> include/linux/compiler.h:78:42: note: expanded from macro 'unlikely'
->    78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
->       |                                             ^
-> 2 errors generated.
-> make[3]: *** [scripts/Makefile.build:286:
-> arch/riscv/kernel/stacktrace.o] Error 1
+On Thu, 13 Jun 2024 15:12:00 -0700 Joe Damato wrote:
+> If you have a moment could you take a look and let me know if I've
+> gotten it wrong in my explanation/walk through?
 
-It looks like either commit 9dd97064e21f ("riscv: Make stack walk
-callback consistent with generic code") should be applied with the
-straight from upstream copy of commit 7ecdadf7f8c6 ("riscv: stacktrace:
-Make walk_stackframe cross pt_regs frame") or the latter commit's 5.10
-backport should be modified to match the linux-5.10.y order of the
-arguments:
-
-diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
-index c38b20caad7c..010e4c881c8b 100644
---- a/arch/riscv/kernel/stacktrace.c
-+++ b/arch/riscv/kernel/stacktrace.c
-@@ -72,7 +72,7 @@ void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs,
- 			pc = ftrace_graph_ret_addr(current, NULL, frame->ra,
- 						   &frame->ra);
- 			if (pc == (unsigned long)ret_from_exception) {
--				if (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
-+				if (unlikely(!__kernel_text_address(pc) || !fn(pc, arg)))
- 					break;
- 
- 				pc = ((struct pt_regs *)sp)->epc;
-
-Cheers,
-Nathan
+No lies detected :)
 
