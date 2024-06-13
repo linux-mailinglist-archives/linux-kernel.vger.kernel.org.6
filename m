@@ -1,118 +1,117 @@
-Return-Path: <linux-kernel+bounces-212500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3656C906217
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:44:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDF4906221
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 438D11C21241
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:44:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0F228321F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4490C12C482;
-	Thu, 13 Jun 2024 02:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BEC12CD8C;
+	Thu, 13 Jun 2024 02:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AHQG0OdT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="rgkV2iSr"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00920823BC;
-	Thu, 13 Jun 2024 02:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0288F179AF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718246687; cv=none; b=if4wF6IgJgHesz/upWm7aRur68bhGCWPWQbx/f06c4VzbISGpDkIzUIi860hymtNaMunZnT0bCIR4wDowSmMRW+Gw448IAHKMpsZD5LeYA+nGlcuLiT9RMXWkviSb7yhKOdLp/x16xAMJFtrogk7YJp5ipYcjYVH81OZzZPDH8s=
+	t=1718246951; cv=none; b=FZxLoJTd0EzbFSgjhOrFmPO1murdd6UeBP165oekYFvU730veib+UucRhmWlyt684SVRNX3w+gV+Mjtdc0SRT2OSuAO5qSixQ9NzyNTPAP583VOfE/WrZhLuQXa1+nlYZ9dGKrQQLu6DUQqfmll5qFpKMKJeP4NNzl5+BVhatdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718246687; c=relaxed/simple;
-	bh=fZoqlUS7zIdO0rV0aaEg7681f/6m46FSXkbiYVFyVvo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=YitKBB6lgYZ8Tw7WFBXPhNaWZiHqIExNx4nOy+9bpdbAvjTLMhe9gDQ2mgEGgeVnh0tjXLNw4f04G986Sz/SCzBOOOQSqDCNMAXSD00IoagHaKvWHm1MXAid6I2mLcMA9dP/7av5+UCOxZKKSEJcOHa6wmwZVPN65CViCBT5I0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AHQG0OdT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CKn7d8023706;
-	Thu, 13 Jun 2024 02:44:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=MLUQVv5YitGo0zW8uQZYib
-	B8MNXu4CEZdiNI/YNSwEM=; b=AHQG0OdT3N+niUMgUlKRgxNlOgb6pCnAmkPhTy
-	vsc4mN9jw+TEYN14NIEntgXS4pdFZID5OzIEqOkERHCfg6JMT6hvpYfbg0rwmF+s
-	m6k26my46JJQT2liANl36aZHNbpTAwVi7yNnK/0pcONnvTnmEbjRcN4Mb/wF2x11
-	vfI6nJ6u+oDE39CPpjxeuqQKEchiiTjJCRezyHJs/hT/q7u00qmXMPNG/tvp3Lww
-	IaVe6/eW17Ua+gw47JoefTySfiS6EKXZ1GIMBYCQSeKmfimRLero6m0Au7gGadYD
-	weshPVf8C848qT5hSb76tikINiNZ2dahL4MsqCQwT0l+Omeg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yqcxthq1g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 02:44:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45D2ieY2010652
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 02:44:40 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 19:44:39 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 19:44:37 -0700
-Subject: [PATCH] fbdev: vfb: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718246951; c=relaxed/simple;
+	bh=i41TnQyuzo72lyY6rLOnHW3byV4A0fg3iLGHfWTareE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iblkn4bcKdIUQF8i2DDvy/72uBjojYSw9Kn9mehybSSJXSf7UbnQtKmUsOp7yJnZeBCuqiNf/LY0oR942nb61R3pe3Fv8yKTvQyn5/UCU8eHt7xKhn5lHwLMR4LaomZPqjJdT4Dzj+ppArS0s7+WfD0UU7GaxDlCbnLXm75ZASY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=rgkV2iSr; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 96DBF2C02AE;
+	Thu, 13 Jun 2024 14:49:06 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1718246946;
+	bh=LdwNjTGIaey8kRU1x3WGCCMT9yyC8LcfYrwno3r0wHY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rgkV2iSrHo0KFEx7e6a7lV6gr91WTeVkS/JdS2kruKCBSTV+it41AcqnYnasgmM76
+	 ID0/nguX6HyVJ6YEF+An1b3musb2fb3E7aDNTGsYQ8FzRfh4R21NfvRiyacOL/fdfS
+	 okSo1+Ealr3uYBW41xlnsqBxWZrqNx8Y6bDDISXdQIGyDFAlwYQ8GZxGSkKNnB641a
+	 okyiNfxAo1uG1oEdMa8KqW1NXSFWLrFG3uZ++V+1Q3yCsu24/u4hfeAfXPcbYU6hxX
+	 hC2VfoiwVdkLQpW167XiiXQpt8u0kwIIC6zktdZZ4fjxVfRM4yEpYLRrocwvJm4UKk
+	 XyQGqjsDFL95A==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B666a5e220000>; Thu, 13 Jun 2024 14:49:06 +1200
+Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
+	by pat.atlnz.lc (Postfix) with ESMTP id 7217613EDE9;
+	Thu, 13 Jun 2024 14:49:06 +1200 (NZST)
+Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
+	id 6D05D2A2270; Thu, 13 Jun 2024 14:49:06 +1200 (NZST)
+From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+To: kuba@kernel.org
+Cc: aryan.srivastava@alliedtelesis.co.nz,
+	davem@davemloft.net,
+	edumazet@google.com,
+	linux-kernel@vger.kernel.org,
+	linux@armlinux.org.uk,
+	mw@semihalf.com,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH v1] net: mvpp2: use slab_build_skb for oversized frames
+Date: Thu, 13 Jun 2024 14:49:00 +1200
+Message-ID: <20240613024900.3842238-1-aryan.srivastava@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20240611193318.5ed8003a@kernel.org>
+References: <20240611193318.5ed8003a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-video-fbdev-vfb-v1-1-9bcbc286aac4@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIABRdamYC/x3MwQrCMAwA0F8ZORto5xjFXxEP7ZK6gOskcWUw9
- u9Wj+/yDjBWYYNbd4ByFZO1NPhLB9Mcy5NRqBl61w9u9D0uhKRSWQ2rEK+YE3HFmhPGgekaXOA
- wemjBWznL/s/vj+YUjTFpLNP8K19Sth2XaB9WOM8vQjqn94sAAAA=
-To: Helge Deller <deller@gmx.de>
-CC: <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: L1LlZP-qatQCw90_FrksOqPXGtbPMOHz
-X-Proofpoint-GUID: L1LlZP-qatQCw90_FrksOqPXGtbPMOHz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_12,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=923 spamscore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130016
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=666a5e22 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=nUjTbgbENZD28nTSGwIA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/vfb.o
+Setting frag_size to 0 to indicate kmalloc has been deprecated,
+use slab_build_skb directly.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Fixes: ce098da1497c ("skbuff: Introduce slab_build_skb()")
+Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
 ---
- drivers/video/fbdev/vfb.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v1:
+- Added Fixes tag
 
-diff --git a/drivers/video/fbdev/vfb.c b/drivers/video/fbdev/vfb.c
-index f86149ba3835..158e48385c24 100644
---- a/drivers/video/fbdev/vfb.c
-+++ b/drivers/video/fbdev/vfb.c
-@@ -546,5 +546,6 @@ static void __exit vfb_exit(void)
- 
- module_exit(vfb_exit);
- 
-+MODULE_DESCRIPTION("Virtual Frame Buffer driver");
- MODULE_LICENSE("GPL");
- #endif				/* MODULE */
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-video-fbdev-vfb-a4ed3808e861
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/ne=
+t/ethernet/marvell/mvpp2/mvpp2_main.c
+index aca17082b9ec..05f4aa11b95c 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -4001,7 +4001,10 @@ static int mvpp2_rx(struct mvpp2_port *port, struc=
+t napi_struct *napi,
+ 			}
+ 		}
+=20
+-		skb =3D build_skb(data, frag_size);
++		if (frag_size)
++			skb =3D build_skb(data, frag_size);
++		else
++			skb =3D slab_build_skb(data);
+ 		if (!skb) {
+ 			netdev_warn(port->dev, "skb build failed\n");
+ 			goto err_drop_frame;
+--=20
+2.43.2
 
 
