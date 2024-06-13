@@ -1,75 +1,152 @@
-Return-Path: <linux-kernel+bounces-213734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25DD990799F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:20:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2B09079A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D01631F234A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:20:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 492941C23DBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5796914A098;
-	Thu, 13 Jun 2024 17:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB9F14A4C9;
+	Thu, 13 Jun 2024 17:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Mn5uXGuV"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjlSjOR5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E001311A1;
-	Thu, 13 Jun 2024 17:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F40A14A093;
+	Thu, 13 Jun 2024 17:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299195; cv=none; b=sOBfp0MZ5WkZpXQMkGx/lich1mw1Bb4H7oX7TCeJsxZBD2rbWN09vckknh879lkPqAA4Oc1fui9lzJnnnPek0G1VZ0aYv8YAAtbAFyKxGtSNphIkdBiE/5/LUNCVHZArM5fRYCtbUlKBCN3QtnNnDdm9XZ1xCM6PPMtSi7TH9Io=
+	t=1718299201; cv=none; b=uLn3LXHhpEPkDU8uvd16Yvn+1jUBlV4fgF+7HHXJd44vkUGsknlx4GpzvMYqHjjhyYfZP6C6exYkA5hj9Q8yOc4ERbXTX94RhUcTHmYMpRQaUgDuN+sx/14DKZTOyxgJnlSI6Mwu6eHg4NJ47zzRXFQhPsz7n51FLKQk5yGY+2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299195; c=relaxed/simple;
-	bh=/iw94elK2KvQ1WS9JyAyDc6M5OwEKcTym8VIp6OX/50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njMVyK9lMuhCoQCnFKE5R+LNnx3MyzRxEvGfcZLvM25DniRlciXtYuwUEZNXnHSQCPV8UQZHLI06+fx3f+3fz6eyHVg9EwRtHHrDtA2vl6bbqXg4v56gCDnUcXuLE0hZ4yUcl1PU/kZCiRiJjDJMoX6BFtRg8k035RNgeQiaoO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Mn5uXGuV; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=wdPsX4RB9oiW3AuQOrVhfSo6eB0c1kmtven1xn6Dx+M=; b=Mn5uXGuViHc8yTKkyhgiMEvPzh
-	e86fjCCPe8xVIHMIsMavkb4tuv5nlBRCOrhGJ6SjvGywYZSE8bJYXeKAYKu6jC9owxwlWXyFPvIgd
-	Rt15ppC1hCcvEsXk+I3w0/etVUg18UIRCR/QN2jMFZAwqjKx3GKWYIBs7OLMgO7HitsQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sHo6z-00HaZ7-Pb; Thu, 13 Jun 2024 19:19:45 +0200
-Date: Thu, 13 Jun 2024 19:19:45 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: =?iso-8859-1?Q?Jo=E3o?= Rodrigues <jrodrigues@ubimet.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"open list:ETHERNET PHY LIBRARY" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 2/3] net: phy: dp83867: add cable test support
-Message-ID: <d2e2232e-7519-4d62-b2be-265058350e08@lunn.ch>
-References: <20240613145153.2345826-1-jrodrigues@ubimet.com>
- <20240613145153.2345826-3-jrodrigues@ubimet.com>
+	s=arc-20240116; t=1718299201; c=relaxed/simple;
+	bh=RmIpd1nTc1q4Ns6AOINhQ9/9u4E1Af4vqvSzsOt87Yw=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=uVhgi/05OKpi2n3cHXch22Ycl/WTRY5jltSZJpeEBfo441khCO7mkKGoBkFoAKGB9wadM48VGxQ3H8LAK/EFafnYtBV1sIgZ9vK/OclpgTfPnVQm6U28KvrCRrzQJYp8whQ5AP3k5JRXVUuXjpUHDJBx47QndpR4dA5NlKCcXUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjlSjOR5; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718299197; x=1749835197;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=RmIpd1nTc1q4Ns6AOINhQ9/9u4E1Af4vqvSzsOt87Yw=;
+  b=gjlSjOR5q/hfWxiHDjGiAEd1HEW3IRsOzq7yInyMg7OhWaU3mC+dKmaf
+   ZqPTRrgkt2uFJYe2p2e3qiquHgDEbV0n2cSBUvKqFB7TRhdQ6Z1t8cZyq
+   U6TBxRcvVQOFx3+Y0GjK9dNLHkkN94/NXOvkMyZIxql1JWyyMQTYVEeGp
+   GIoTIITPxERS1Beku5rtbGJ5Rfh2RBUZj+IQhJXxCgr/yghVCCKSzuEBZ
+   /uKfTqsRIyrNgAZRkdj0hFe8rGWimLm76qRYYS6E4KnEmA3usNYZnr1MK
+   81pO0Eq0MCze31YLkHTgwEQr8cqdkyQsoVTISaZ4Wxz/IDBM3l8n3HRq1
+   Q==;
+X-CSE-ConnectionGUID: sEnjKcM0R3uwyZeYbfvbqg==
+X-CSE-MsgGUID: 4wRacEt1SHainxEdilpZ/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="25726091"
+X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
+   d="scan'208";a="25726091"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 10:19:56 -0700
+X-CSE-ConnectionGUID: invZadp7R+ur/ZhVQAYztw==
+X-CSE-MsgGUID: Ae4SEmaGQEyLuXKXD6POJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
+   d="scan'208";a="77680971"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.209])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 10:19:51 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 13 Jun 2024 20:19:47 +0300 (EEST)
+To: Philipp Stanner <pstanner@redhat.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Maxime Ripard <mripard@kernel.org>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+    Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, 
+    Sam Ravnborg <sam@ravnborg.org>, dakr@redhat.com, 
+    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-pci@vger.kernel.org
+Subject: Re: [PATCH v7 09/13] PCI: Give pcim_set_mwi() its own devres
+ callback
+In-Reply-To: <20240605081605.18769-11-pstanner@redhat.com>
+Message-ID: <17445053-18a1-a56d-79d0-3b3d3ecab033@linux.intel.com>
+References: <20240605081605.18769-2-pstanner@redhat.com> <20240605081605.18769-11-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613145153.2345826-3-jrodrigues@ubimet.com>
+Content-Type: text/plain; charset=US-ASCII
 
-> +/* TDR bits */
-> +#define DP83867_TDR_GEN_CFG5_FLAGS	0x294A
-> +#define DP83867_TDR_GEN_CFG6_FLAGS	0x0A9B
+On Wed, 5 Jun 2024, Philipp Stanner wrote:
 
-Is it documented what these bits actually mean?
+> Managing pci_set_mwi() with devres can easily be done with its own
+> callback, without the necessity to store any state about it in a
+> device-related struct.
+> 
+> Remove the MWI state from struct pci_devres.
+> Give pcim_set_mwi() a separate devres-callback.
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> ---
+>  drivers/pci/devres.c | 29 ++++++++++++++++++-----------
+>  drivers/pci/pci.h    |  1 -
+>  2 files changed, 18 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+> index 936369face4b..0bafb67e1886 100644
+> --- a/drivers/pci/devres.c
+> +++ b/drivers/pci/devres.c
+> @@ -361,24 +361,34 @@ void __iomem *devm_pci_remap_cfg_resource(struct device *dev,
+>  }
+>  EXPORT_SYMBOL(devm_pci_remap_cfg_resource);
+>  
+> +static void __pcim_clear_mwi(void *pdev_raw)
+> +{
+> +	struct pci_dev *pdev = pdev_raw;
+> +
+> +	pci_clear_mwi(pdev);
+> +}
+> +
+>  /**
+>   * pcim_set_mwi - a device-managed pci_set_mwi()
+> - * @dev: the PCI device for which MWI is enabled
+> + * @pdev: the PCI device for which MWI is enabled
+>   *
+>   * Managed pci_set_mwi().
+>   *
+>   * RETURNS: An appropriate -ERRNO error value on error, or zero for success.
+>   */
+> -int pcim_set_mwi(struct pci_dev *dev)
+> +int pcim_set_mwi(struct pci_dev *pdev)
+>  {
+> -	struct pci_devres *dr;
+> +	int ret;
+>  
+> -	dr = find_pci_dr(dev);
+> -	if (!dr)
+> -		return -ENOMEM;
+> +	ret = devm_add_action(&pdev->dev, __pcim_clear_mwi, pdev);
+> +	if (ret != 0)
+> +		return ret;
+> +
+> +	ret = pci_set_mwi(pdev);
+> +	if (ret != 0)
+> +		devm_remove_action(&pdev->dev, __pcim_clear_mwi, pdev);
 
-   Andrew
+I'm sorry if this is a stupid question but why this cannot use 
+devm_add_action_or_reset()?
+
+> -	dr->mwi = 1;
+> -	return pci_set_mwi(dev);
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL(pcim_set_mwi);
+
+-- 
+ i.
+
 
