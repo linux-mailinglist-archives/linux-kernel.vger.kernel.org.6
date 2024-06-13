@@ -1,78 +1,172 @@
-Return-Path: <linux-kernel+bounces-213923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1A7907C9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:30:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75228907CA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4F611F22310
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:30:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04111284DD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119E014D71E;
-	Thu, 13 Jun 2024 19:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8479149E0A;
+	Thu, 13 Jun 2024 19:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AvLMgEjN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fm6LvKOq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF9A13791F;
-	Thu, 13 Jun 2024 19:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D2A1EA87;
+	Thu, 13 Jun 2024 19:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307005; cv=none; b=VoAQQs5O9dHeI6lDpGQuNyXfmg5OB7i0GjrXwzAS8b0YmOQTGMMb+Yl0XJD7C9Gpr+gB//+HaoKPVTG+YlBTl50P3W9UQax9XAGZNReAB4C7vg9nSTkg7r2bpk9r88Kr/Ceyx+pxe1CPcoqCwLV0hhTMAkxR7SWmOG5gRXkPVe8=
+	t=1718307096; cv=none; b=CK/6hGJQybOzDQ5txNXJ4B9o7pmB/pXoQ0raEiKMC5rakHIjcEeoWWFA1Y+/Zy9DOf2T1EmC9rBqD2NNFQrzjxDujea44zvsFzo9DVJH1sNVqLZ1D8VpFv0v46FG8o/GmYoBQb1K7AL/GQhzZOOVqtJ77NZOYoyy90qIj07FgEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307005; c=relaxed/simple;
-	bh=kVxt7q6qSBJNpz37zpAlA50Me+Di16dbWYYrG1BOi4Y=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=eaJQQboP+OjK0fEY/biEM74U1F7qO3f2Mo30sB0iSftM1VKG8JsBFkOtdZ6ZTdIAFNVxvvS42ynGUlWIpDd8IEpH98h7kn86eqEaY3BE5wKyHcZd9pI6Q4uD7ACEX0B/W4OWdM2TrGnPW62cvoQrkqHeosV5KZs0Jy+8zdwTJSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AvLMgEjN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2BC0CC2BBFC;
-	Thu, 13 Jun 2024 19:30:05 +0000 (UTC)
+	s=arc-20240116; t=1718307096; c=relaxed/simple;
+	bh=Msrty0CWghk7EgHSD1Enom1a+uVe/GJvqQt78XwijVc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TH4sX8MWCO3BJJ8vr5dyMkkRtuzCElVfd2+enHi8a45B2xRBiLRPZJ9MkGRWxSe9lUzEoRvzaUrr1iRvBRxDfZ4G5qhbSzQTXZxco9vDk1oLw9+FamZUs1Bs6o4A+SdEdPgW9xkww52t3HO4Rq0PiVrcv36jyAe5M4FmXLl2M9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fm6LvKOq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B88C3277B;
+	Thu, 13 Jun 2024 19:31:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718307005;
-	bh=kVxt7q6qSBJNpz37zpAlA50Me+Di16dbWYYrG1BOi4Y=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=AvLMgEjNUKf+juzSw15h4da5hUIZCRkbpgEJkgtWNzSabG/ZfKMrlK2nsgtlE7Dbi
-	 TIxDJmUCAiIiOofG3BSoqNZcgzmTRc2ctFQm5a5AVMMgK2rusVltDY1FyGL9Kkuxxg
-	 zB7lLTvEP9fpjacDYWeJ+UtIQY8ANdf/aKABBsNBw/jdf7zawdakrX6hSRlUBWKIk7
-	 M3mqb10n9q9cMfLgORhaEARfofBpAqetWr+1sQeZMUnMGFMATF1qhvZCvXdFuFFH36
-	 CHRmmIbZ7Cmku/3IM5Mi1KUO9XY8j/84PWK+fX0IEKVpQJErQoBfOW2QZUYVTBvH6J
-	 gDQO8If++u/Fg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1426CC43612;
-	Thu, 13 Jun 2024 19:30:05 +0000 (UTC)
-Subject: Re: [GIT PULL] memblock:fix validation of NUMA coverage
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Zmr9oBecxdufMTeP@kernel.org>
-References: <Zmr9oBecxdufMTeP@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Zmr9oBecxdufMTeP@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock refs/heads/master
-X-PR-Tracked-Commit-Id: 3ac36aa7307363b7247ccb6f6a804e11496b2b36
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3572597ca844f625a3c9ba629ed0872b64c16179
-Message-Id: <171830700505.20849.16920899447397395682.pr-tracker-bot@kernel.org>
-Date: Thu, 13 Jun 2024 19:30:05 +0000
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Borislav Petkov <bp@alien8.de>, Jan Beulich <jbeulich@suse.com>, Mike Rapoport <rppt@kernel.org>, Narasimhan V <Narasimhan.V@amd.com>, "Paul E. McKenney" <paulmck@kernel.org>, stable@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1718307095;
+	bh=Msrty0CWghk7EgHSD1Enom1a+uVe/GJvqQt78XwijVc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fm6LvKOq8LnCkBKudRaefpRrC9T/XZx9lMSs+kmy3GilS6OOTjYz0bbmhro7CPW+z
+	 JIJOSCprtyehKRXBJif3Je62s5h884wbeaMM+rh64Z+XdWxbwHFaVojIngZ1oMp6Bc
+	 UiGSrmploDvU1bCi0dAsnnZIY269KCwJy5LlKlhxlZobY4Zc2Y2k75m+obusE1zBEE
+	 50tnPmceVKM/u1IJmK/TMLwUDiN45ZvidKgUQ3wYtkW4LDBrT982XxT3dBKj04EjAm
+	 3Ngmnh+M0MOJT4KrPdubtUZMLdd0aFs7XdYYIfKsFJjWZ6S9PKLO0OcFAohEvNOzvk
+	 jOogEuJ6APleQ==
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5bad97708efso76639eaf.1;
+        Thu, 13 Jun 2024 12:31:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXqhMFnW2/iSDSXVG1dTV42Ew566CqkYl+5FeugrTXvzrK/t9wbTG/CCyTgwF9w+PRkw7jqeajqTqgWOUBKGQJmyqYRsXCotXzBhHyUE3Xzk+FWdIE29uqC9twL3u84uB6bunAXn4o9Tw==
+X-Gm-Message-State: AOJu0YzjOcWyA86xrLC+4/oKiwKQYtvGiR0NbwfT9Fw9VGYauGIN4JaX
+	nWR1A8hueh/8OHtxoKp1M1wT40Wox+XD7H6mi8Q3BZ9v4iaHuITgg3yrJJc6a09+liSpipf32r0
+	4yepfPRl8/ELd6FDfbVo7q2sHMgo=
+X-Google-Smtp-Source: AGHT+IHRs3zSxlvThk3H+BGoZJ70j/dsSZLDQhgr/sGb0RpjaRB8rMEr1itwIj3NvzD+SyS9OPhnuPBWM0fXin64EV4=
+X-Received: by 2002:a05:6820:287:b0:5ba:ca8a:6598 with SMTP id
+ 006d021491bc7-5bdad9f3131mr667709eaf.0.1718307095066; Thu, 13 Jun 2024
+ 12:31:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240609-acpi-sbs-sysfs-group-v1-1-7f0bf95523e7@weissschuh.net>
+In-Reply-To: <20240609-acpi-sbs-sysfs-group-v1-1-7f0bf95523e7@weissschuh.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Jun 2024 21:31:23 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0im2ThDaMyV3bEtYsQYWJH0Y9sYVjpJJ0Zb-wBk_wZr0Q@mail.gmail.com>
+Message-ID: <CAJZ5v0im2ThDaMyV3bEtYsQYWJH0Y9sYVjpJJ0Zb-wBk_wZr0Q@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: SBS: manage alarm sysfs attribute through psy core
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Thu, 13 Jun 2024 17:09:36 +0300:
+On Sun, Jun 9, 2024 at 1:13=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisssc=
+huh.net> wrote:
+>
+> Let the power supply core register the attribute.
+> This ensures that the attribute is created before the device is
+> announced to userspace, avoiding a race condition.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+> Only compile-tested.
+>
+> This is the SBS equivalent of
+> "ACPI: battery: create alarm sysfs attribute atomically" [0]
+>
+> [0] https://lore.kernel.org/lkml/20240609-acpi-battery-cleanup-v1-5-34451=
+7bdca73@weisss
+> ---
+>  drivers/acpi/sbs.c | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
+> index dc8164b182dc..442c5905d43b 100644
+> --- a/drivers/acpi/sbs.c
+> +++ b/drivers/acpi/sbs.c
+> @@ -77,7 +77,6 @@ struct acpi_battery {
+>         u16 spec;
+>         u8 id;
+>         u8 present:1;
+> -       u8 have_sysfs_alarm:1;
+>  };
+>
+>  #define to_acpi_battery(x) power_supply_get_drvdata(x)
+> @@ -462,12 +461,18 @@ static ssize_t acpi_battery_alarm_store(struct devi=
+ce *dev,
+>         return count;
+>  }
+>
+> -static const struct device_attribute alarm_attr =3D {
+> +static struct device_attribute alarm_attr =3D {
+>         .attr =3D {.name =3D "alarm", .mode =3D 0644},
+>         .show =3D acpi_battery_alarm_show,
+>         .store =3D acpi_battery_alarm_store,
+>  };
+>
+> +static struct attribute *acpi_battery_attrs[] =3D {
+> +       &alarm_attr.attr,
+> +       NULL
+> +};
+> +ATTRIBUTE_GROUPS(acpi_battery);
+> +
+>  /* ---------------------------------------------------------------------=
+-----
+>                                   Driver Interface
+>     ---------------------------------------------------------------------=
+----- */
+> @@ -518,7 +523,10 @@ static int acpi_battery_read(struct acpi_battery *ba=
+ttery)
+>  static int acpi_battery_add(struct acpi_sbs *sbs, int id)
+>  {
+>         struct acpi_battery *battery =3D &sbs->battery[id];
+> -       struct power_supply_config psy_cfg =3D { .drv_data =3D battery, }=
+;
+> +       struct power_supply_config psy_cfg =3D {
+> +               .drv_data =3D battery,
+> +               .attr_grp =3D acpi_battery_groups,
+> +       };
+>         int result;
+>
+>         battery->id =3D id;
+> @@ -548,10 +556,6 @@ static int acpi_battery_add(struct acpi_sbs *sbs, in=
+t id)
+>                 goto end;
+>         }
+>
+> -       result =3D device_create_file(&battery->bat->dev, &alarm_attr);
+> -       if (result)
+> -               goto end;
+> -       battery->have_sysfs_alarm =3D 1;
+>        end:
+>         pr_info("%s [%s]: Battery Slot [%s] (battery %s)\n",
+>                ACPI_SBS_DEVICE_NAME, acpi_device_bid(sbs->device),
+> @@ -563,11 +567,8 @@ static void acpi_battery_remove(struct acpi_sbs *sbs=
+, int id)
+>  {
+>         struct acpi_battery *battery =3D &sbs->battery[id];
+>
+> -       if (battery->bat) {
+> -               if (battery->have_sysfs_alarm)
+> -                       device_remove_file(&battery->bat->dev, &alarm_att=
+r);
+> +       if (battery->bat)
+>                 power_supply_unregister(battery->bat);
+> -       }
+>  }
+>
+>  static int acpi_charger_add(struct acpi_sbs *sbs)
+>
+> ---
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock refs/heads/master
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3572597ca844f625a3c9ba629ed0872b64c16179
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Applied as 6.11 material, thanks!
 
