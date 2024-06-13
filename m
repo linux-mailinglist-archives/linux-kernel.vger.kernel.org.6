@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-213937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B1D0907CC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2792907CCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F471F24D30
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 683A01F25A92
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A91C14C5A7;
-	Thu, 13 Jun 2024 19:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AB814C583;
+	Thu, 13 Jun 2024 19:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gHN1FKo/"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="50ngkzPY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nBQvVgh6"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BF4134407;
-	Thu, 13 Jun 2024 19:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52636134407;
+	Thu, 13 Jun 2024 19:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307585; cv=none; b=SNXuk1ToW0MRQ36ooHIruuLhMR+2c5wllG5DeINUnBJEmGMB0eS2jzkZ/nvC0xw6k94Y3brbtlfpwi0T3KohrJLOfj/TBhL/tcs2qUwOQXAMzGwrbauR7hF32xV2ZIJ1N+tnmNIY5xk/3xjW6uU7EHGGbauJbMa0bFh2mR8VEKg=
+	t=1718307640; cv=none; b=QTpvk1GCTg98nSdkTRRPNYnCNK2JaH6bK9pDPctekFvHt/DxaaN3n1Ajc/XxmhGFDjuhIaqA267TzdNaSpFspE7HrhR/xKLJb5oNZzfcopEvqRBoi4IzbYKNf16+ckY9Qq8gVhwLiJSkQP+7/EN8SiHMswBJFxzdQ57jaXcYuQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307585; c=relaxed/simple;
-	bh=Xr1ZR0w4u2FAgkjvH5Mi9hxZ/0C28Zy328vRfJN5fEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=trwiVtIlSETbW0ZB0i1GG12Ghot+K7Zeynwg+JVpOE1lGWIUE0iAvWwzh5QEE1Go2SmghVRImHhPKgyz2js6wkJoh2EoAW4kiju4XXoRJxDeeryvFxCB7RYD+07bWsnzryFiXdoI0edeuv/du+/ieBPcwPzefJVBtGPvghY8DOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gHN1FKo/; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zszsi0/aB2A5gS3nj8dtgFtDV/ZCUUoBmBVvRLy5hi4=; b=gHN1FKo/gLkrKUqlWBHqnu5ICW
-	tW5aD/4ifvUlVBvAHVylwxXEpvpguH59nQIX5H6WkFRNAcj6aR6TGR85v0cTHzvT2KQLdtR+GK0qP
-	fRmgw6YLsUmThl/Kj9O8bJ9c9WkikVf2myaGQ0AC+cbud5Kas7Rt2Zk23eOZRFygikkg32gTOx+QJ
-	xDbOzuShVX9VaDl6R7wJcm7vk5BygjkwJ7F5F48D0/KBW0pW3PE4W5wJ0FDsLUXA3MMZrLGY+7OVE
-	bOYGVzvlISO1vrDkKgNhrnErMIfjOL9QiGpY9qESwtpkw4aFLKPBBohz8/DBdxlQdUoGyPo7c4OqL
-	8iHdTHtg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sHqIG-00000000IvW-0Jyf;
-	Thu, 13 Jun 2024 19:39:32 +0000
-Date: Thu, 13 Jun 2024 12:39:32 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
-	yang@os.amperecomputing.com, linmiaohe@huawei.com,
-	muchun.song@linux.dev, osalvador@suse.de,
-	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-	hare@suse.de, linux-kernel@vger.kernel.org,
-	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
-	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
-	gost.dev@samsung.com, cl@os.amperecomputing.com,
-	john.g.garry@oracle.com
-Subject: Re: [PATCH v7 06/11] filemap: cap PTE range to be created to allowed
- zero fill in folio_map_range()
-Message-ID: <ZmtK9NcsITV0aoL8@bombadil.infradead.org>
-References: <20240607145902.1137853-7-kernel@pankajraghav.com>
- <ZmnyH_ozCxr_NN_Z@casper.infradead.org>
- <ZmqmWrzmL5Wx2DoF@bombadil.infradead.org>
- <818f69fa-9dc7-4ca0-b3ab-a667cd1fb16d@redhat.com>
- <ZmqqIrv4Fms-Vi6E@bombadil.infradead.org>
- <b3fef638-4f4a-4688-8a39-8dfa4ae88836@redhat.com>
- <ZmsP36zmg2-hgtak@bombadil.infradead.org>
- <ZmsRC8YF-JEc_dQ0@casper.infradead.org>
- <ZmsSZzIGCfOXPKjj@bombadil.infradead.org>
- <ZmsS7JipzuBxJm92@casper.infradead.org>
+	s=arc-20240116; t=1718307640; c=relaxed/simple;
+	bh=7llpCOFgvcUxbS2cWK7Y5Znfoz9knmpfrFVXwGUPPzE=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=jC/p5a5JSpApDwB3QdNkDK31D1fgGfMcPnbWBC8gl6fSEsTg/WZt/duf6nU34Xto+/ctWsM77UtcUUgl+CzWlgmoDMwpTf/PyNHSCViDzfV88VjXQ0b2nc0GAu/O+vO9Jhgp2pzRSjNovYP/PzXy4uGYPT/KVbMsv3Ke3rVVJcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=50ngkzPY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nBQvVgh6; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 6DFA41380117;
+	Thu, 13 Jun 2024 15:40:38 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Thu, 13 Jun 2024 15:40:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1718307638;
+	 x=1718394038; bh=oqDoiw11ZfKTk6wjqM+5gp30nptU4jTafY6bPs+rNiQ=; b=
+	50ngkzPYg9dGn8qrvRm3e0z7cizqf7hqRoWfcVKtIKXzw5sERNQ9qXAj4jPIuTjA
+	fYl5mpJ852dDx7HOfUnnRm9pDehlafCLWABp1UZuPJ4jLU6AEEEfU1Hgd9Lgzwa2
+	avYvjWxQfiHJzCOjUb1ZvDVOGBgOVM7TXQooHsgK9njIVQ9KNobdqdwZprRXXCl3
+	hv3uQWQOUB8hzbYtFcwXSxTnnhdN5nQ7ndi76iCS7Z0dZWqFt2OQzk3HQxldixzv
+	iDTzrytSas//9gJ6CWMZHSM5iJSxjV6BvD7VEgUQQhDmOI0svR5BEhpgUJ4nUjh4
+	+YxE3a7nbywKCqy2Q9BYYQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718307638; x=
+	1718394038; bh=oqDoiw11ZfKTk6wjqM+5gp30nptU4jTafY6bPs+rNiQ=; b=n
+	BQvVgh6xgHey1y+NaXXiINyRF2PFaX8TWQ2Nkse8RfCEIHZsgcnNJ1qEp5hQmEXx
+	qUI2hK3r/smoPOoOxobPdTk/JlBMk153QCCWyXOJ3qb8IbcKm5gCzwQRxZ8kIJgK
+	8UbHYiL36T/HiSLTA13A+3WEvh+k2X3Af1p/3OZMDfaT4f3+L8TeRmxZZC3/r29c
+	T+Q6reUKgYRqWEVMhZs0kNOV7h4ZhTBHwTwPos2UggSW/Q2tFOuoZBYTGbQsOaiZ
+	4JqgUvsnvaHk9BAEWkwWKSe5ylQ/WsTduPOunZwieuFjPRDV7LdkKTRmFAbPLE84
+	AJ7PggshK82cufoXOwbOA==
+X-ME-Sender: <xms:NktrZlMmP2hDaaJYOys3ZPRvDqwDGPnTE4Oi6NCEeN-mXnQ_BaIv3w>
+    <xme:NktrZn__y7Vp4MwAtuCyXJ3XapW_GmMaJ2NieYqWldcqDj6YFMZYxT5WLz8D6KbT3
+    cE2yrhucCoyrimr0Zc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedgudefjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
+    lfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtg
+    homheqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefh
+    jeeugeevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:NktrZkQ73FG37jYU2gMIz8Q3KODzqfJ2rDG8aDp0nOpJHIK08DgSlg>
+    <xmx:NktrZhvAl5flnedrEm7bMKTIg0uIHYseL1G1mkrWnpkaM5Pk9vIlvw>
+    <xmx:NktrZtfRXKH8UerUl9l96hd0X9WLtmrGVQZtKcoslkE-wnrqUu-Dkg>
+    <xmx:NktrZt0eJ34O60I1qAELCKVd8SgwlVJ_7gA2ItJDNnWVqpzzhC0MoQ>
+    <xmx:NktrZp4dWfb1mVfXD8boMiCJJxFfcx_w-4REuCm4risjKayROIAXHH2F>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 1440136A0074; Thu, 13 Jun 2024 15:40:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmsS7JipzuBxJm92@casper.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Message-Id: <dfb545a6-b8c2-4498-aa01-3e851fe0877f@app.fastmail.com>
+In-Reply-To: <20240613185902.GB2286020-robh@kernel.org>
+References: <20240612-boston-syscon-v2-0-9f8e1a07fa63@flygoat.com>
+ <20240612-boston-syscon-v2-7-9f8e1a07fa63@flygoat.com>
+ <20240612-unstuffed-figure-966c90af52bc@spud>
+ <ddb36d6c-b54f-4982-b9ca-48c022ce6eb8@app.fastmail.com>
+ <20240613185902.GB2286020-robh@kernel.org>
+Date: Thu, 13 Jun 2024 20:40:18 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Rob Herring" <robh@kernel.org>
+Cc: "Conor Dooley" <conor@kernel.org>, "Lee Jones" <lee@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH v2 7/8] du-bindings: mips: cpu: Add img,mips compatible
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 04:40:28PM +0100, Matthew Wilcox wrote:
-> On Thu, Jun 13, 2024 at 08:38:15AM -0700, Luis Chamberlain wrote:
-> > On Thu, Jun 13, 2024 at 04:32:27PM +0100, Matthew Wilcox wrote:
-> > > On Thu, Jun 13, 2024 at 08:27:27AM -0700, Luis Chamberlain wrote:
-> > > > The case I tested that failed the test was tmpfs with huge pages (not
-> > > > large folios). So should we then have this:
-> > > 
-> > > No.
-> > 
-> > OK so this does have a change for tmpfs with huge pages enabled, do we
-> > take the position then this is a fix for that?
-> 
-> You literally said it was a fix just a few messages up thread?
-> 
-> Besides, the behaviour changes (currently) depending on whether
-> you specify "within_size" or "always".  This patch makes it consistent.
 
-The quoted mmap(2) text made me doubt it, and I was looking for
-clarification. It seems clear now based on feedback the text does
-not apply to tmpfs with huge pages, and so we'll just annotate it
-as a fix for tmpfs with huge pages.
 
-It makes sense to not apply, I mean, why *would* you assume you will
-have an extended range zeroed out range to muck around with beyond
-PAGE_SIZE just because huge pages were used when the rest of all other
-filesystem APIs count on the mmap(2) PAGE_SIZE boundary.
+=E5=9C=A82024=E5=B9=B46=E6=9C=8813=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
+=8D=887:59=EF=BC=8CRob Herring=E5=86=99=E9=81=93=EF=BC=9A
+> On Wed, Jun 12, 2024 at 05:59:24PM +0100, Jiaxun Yang wrote:
+>>=20
+>>=20
+>> =E5=9C=A82024=E5=B9=B46=E6=9C=8812=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=
+=E5=8D=885:39=EF=BC=8CConor Dooley=E5=86=99=E9=81=93=EF=BC=9A
+>> > On Wed, Jun 12, 2024 at 12:56:26PM +0100, Jiaxun Yang wrote:
+>> >> This compatible is used by boston.dts.
+>> >>=20
+>> >> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>> >> ---
+>> >> note: This is a wildcard compatible for all MIPS CPUs,
+>> >>       I think we should use something like "riscv" for riscv.
+>> >
+>> > riscv systems, other than simulators etc are not meant to use the
+>> > "riscv" compatible. All of the real CPUs use "vendor,cpu", "riscv".
+>> > I'd suggest you add specific compatibles for your CPUs.
+>>=20
+>> Boston can be combined with many different CPUs, thus we need to have
+>> such compatibles.
+>
+> Then you'll need different DTs. Different h/w, different DT.
 
-Thanks!
+The board have 9 CPU types in total, with hundreds of different possible
+CPU topologies. Maintaining separate DT for them seems impossible in ker=
+nel.
 
-  Luis
+We can potentially patch this in bootloader, but for existing firmware i=
+t's
+being doing like this for years. I can see for RISC-V QEMU generated DTB=
+ is
+using a single "riscv" compatible and I do think it's a similar problem.
+
+I think it's better to document it and warn people only to use it in lim=
+ited
+circumstances, instead of keeping such usage in grey area.
+
+Thanks
+
+>
+> No way we're taking a generic compatible like this.
+>
+> Rob
+
+--=20
+- Jiaxun
 
