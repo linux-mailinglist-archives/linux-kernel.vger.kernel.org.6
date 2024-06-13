@@ -1,128 +1,176 @@
-Return-Path: <linux-kernel+bounces-212990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88D1906979
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:57:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 858FF90697E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC47D1F21525
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:57:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1AA1F21723
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EAC1411CB;
-	Thu, 13 Jun 2024 09:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45B01411CB;
+	Thu, 13 Jun 2024 09:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9tYu8Fi"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GPqUD7CE"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CBA13E036;
-	Thu, 13 Jun 2024 09:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A205140E22
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718272665; cv=none; b=ihqNSUbt+G+HozaPS7h8wlk4k2oh/eRvfHhICmwSmYqegRl3H2s+m7r35ng6pnyeNBURfmdIKiv2Siq6ar56JckORYqa44i9Ua6rfuKAc2Hdoo1qo3Kjbp8aNWgLrXROb4TZOB0/HKjAkJWnmmO7t1X2v8hSWnhzIbLYGjK0rKc=
+	t=1718272729; cv=none; b=MzVdjAl7ctbyaGVKq3w5wvGEl467uFtNzSVzvSyvt/ru7ngoa6I7edteIwytI5f5Xq4mgE4crPQMEn4VQnnLT+VrGLOcfXaYbfkAqsc+U5NsJtoQD6YOJKwpmz98hR4QqEYgHjyjRhWIkpkyLx3QLvjK63XIuBcGelhL1+RagLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718272665; c=relaxed/simple;
-	bh=zN6eWs4yJyaimrUvyt31VdOl+8W2TcByxEAIv71Dj1A=;
+	s=arc-20240116; t=1718272729; c=relaxed/simple;
+	bh=zHKsqiZ44O+Y+JfNxBobcXmmxjiuldmqCDK/gG18V4Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r16qB5t7RfHOH8NCUYWns50GdZTdE5LUoJ9EsLM2uc36mvvlakKdW6izD21k8Im3tbiIS0gukTMi+Im06qZv1sA1TwxVbYpDLE8EPA5rLf2MbFqO689L0R897AM/Dai2bY2KDVl1WrFIyzNtThWErKZRcTSBCHSAhg/6vEMZjOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9tYu8Fi; arc=none smtp.client-ip=209.85.221.181
+	 To:Cc:Content-Type; b=jUCqQFJlwbAH4V3iXCo8bXpCutnZVeJz/cHCLA6P509Mn3PpH57ozjbkUrFhJBR8z3gyNy9E3USBUXwy16Jm/j1nkXUqO3P1k56nSO5iXB7R5wy7U6UlSQyQIMwI049/SOOI4PPjS8L6on5aFNfrV01TM7pbKNR/NtDSxtexCDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GPqUD7CE; arc=none smtp.client-ip=209.85.222.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4ecf8af13edso248842e0c.0;
-        Thu, 13 Jun 2024 02:57:43 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-80b8efd9adcso255049241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:58:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718272662; x=1718877462; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718272726; x=1718877526; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DpMVR8DEDaDijPjWZKbxTVzd755u1YS0zT0nSvsj3Zk=;
-        b=i9tYu8FiIloj3a/uXoveFJIbP+oL7qmzctuwV2tdOTK/UmRhkpCrKN6kxkj8qYbJ7G
-         lX7BaGEnRtVQ468pI6OAXTblKjH8ltmTL0oudSWQWJVqBbgp3Gy4ILBVOy0bVBIVBmgu
-         NWzLCKE0E6ap5LbeRQ9Nm9jQH9nHA/slMbBev9nG5poAOMrH1ig4PKCq33fXxK9S9GI7
-         rL9Ub168vzzwxasJ24yuJzezyqQvNKKDJMjewT6tvcCDcEffBwgKS3gVThvaG/VgvkrZ
-         9BvNNqZFa4hgmYrDoeDjXyDQWY8sDzQ2Vd+XGmevVcGR/Ixqni2f8ka1zaTnreJa9AnT
-         3WdQ==
+        bh=PISS48tZawjaWikz7z/zrvsV2Sl+fMVlabGyAg/WHjg=;
+        b=GPqUD7CEkxtnX1hOvNLI+/agh7O0nFdN/DDCbBaWaXbVHWMEcK2Li4a3pr7bInlmoy
+         yvS2ILy0jwpeqRXCBoAr0cm1OosmViSpXne7WZOqDEpPrDMgVMkTxp/4q/hDSSos58/S
+         5aiMyhBHyseaRxYiRhjE7jKFQJd8E9RJ2DIdE689VdoTlKfSglLHkOkMxhe6xDxHSjBN
+         op1mOz8YElLMj5STqvkKgarUOiHa8WDasteky0KUHc0O99EfiWMGz6iHwSKIzayuQ1Y6
+         DaBGeya1yQZ+XmtiC+CXGpOddS1omr1GmWcS2wFYgPowkv+clwZm0anUYQF7Es4B2exG
+         SNWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718272662; x=1718877462;
+        d=1e100.net; s=20230601; t=1718272726; x=1718877526;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DpMVR8DEDaDijPjWZKbxTVzd755u1YS0zT0nSvsj3Zk=;
-        b=gGxvzmU2SnL7xwDMB3CJ0K0US81HvW3ZNDfaJnSZBJaAb8LsCiaCIDfC05aP9Y8wRT
-         sIESdDaoMZJcqKKSarNfsBcBlv0g/54KCitYwEgusrp0lfaHRTY2a9bB0eN0yV43SvIh
-         peHxKbZ/B3htHYPPno+ldoXixCzPM/7vtTIrq+Zd4TGNtdntZuy/qzfNf5zcy9FsvExq
-         HVIXwEv90aAKuCz3qSXZWUnyHoqnUkTvBHIbAFY2dzXhKoyAcm9SqOTqbptonNPagfyc
-         DEi1J9ApuNTLpCYL2Ard+uAnpTU+o8KC8+HIPClv2eMAu2m5YWBmoDwWZAjSy6vpe598
-         3FzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWR2NS1ZB+6FvyRMT5v33usWI9dw6fDVCmznO9gxXSnuh2qxERh0p1n9PSfKLh+E+o7lhcYe166R/tgPWN9GHiNw5xynPN0+KDO8FtFf+qh81L6xeeUaCtNdZq8IWoSrT02j7tUG3x8l7vSfRCaJTwlBUsjUdyRF5SCAQNH6UM7MSDMGwIOxEdVLKVwVefAuaEMq+9XdRP6r6mqtlQF4WqsqqizUTtc
-X-Gm-Message-State: AOJu0Yw4N1tEfxU6XBeXZajHHOeZtXXvXGrXXJzZr268r0HTdgiklOYm
-	P+aQqq63OWU0xvrYIoWFZvgSMgNvMW9vrnt/HusDH/WVzDlNba9Yl6G1HG3T8qGipqoiibCsJ8p
-	45haqwmqQJ0B/fji0OQpAgsDFcxg=
-X-Google-Smtp-Source: AGHT+IFZDlKXT5ksZr0707o5fDOj0QyVYvY+252Tgpk2oD5G6fsRq1eEvfdsCaiG/u7TKoAitSlR9dKPDqGgpSEfsok=
-X-Received: by 2002:a05:6122:2087:b0:4ec:f4e0:c00c with SMTP id
- 71dfb90a1353d-4ed07adae82mr5165684e0c.4.1718272662567; Thu, 13 Jun 2024
- 02:57:42 -0700 (PDT)
+        bh=PISS48tZawjaWikz7z/zrvsV2Sl+fMVlabGyAg/WHjg=;
+        b=YGPbtSpkRAStXMvbBvhy9S9CslyY0mhPwALOzI5DBq6o0Y2Ilm0SJXGF+bhICfxK2Y
+         3v9WrihWDnSA+OfLbBNNCY10x8O2JSRh1vHRWbbBboQlui4xJugAEMjmATKj+ztcTeny
+         8L3kipk4hz7L7chefGJ9WDPHz/ZUXfoISt0LCer1D/cfRf4hdIc1ofzCyKQOB/5Y1ULT
+         eoqaSlc5snaNxszzPoa9wVPmdZ1TQUgiBKuf5+dYr7O5Zl9VbVcpSE4WOH4hUGwB5Ay2
+         a2Uw54qs7xBr6L2bSeaoEJt4GaE+CuZqtn8yxWwOfFTx1CKQPLGSd8rzS3sbd06Nw49S
+         yqfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsETaU6GJw8S8HhX2o+o5wkAyybv0RtRPZxPMyK2GnjkLUQlDCh+dHsHslwjVxfedA3hYBbMQhxJNQXp134xK8KXK3XWc3WBzeSdwt
+X-Gm-Message-State: AOJu0YzTgvIjKhAUDxKx5ayAxnTh/k0vcctCrWOolmj7AGh/hkFlNbo4
+	Dv86gmT/PjGdw09SmjAzZD/yot3L1+ok4+0v4rxtJAHhPNDLg2WsKwNv/vl0OEUQTkOGz1es66t
+	PKJq3XFzyFgnJLnxQ2igIExXjR5U=
+X-Google-Smtp-Source: AGHT+IHQ2XzGpscWrWx/gXlH+D2XG780duCe40ms54wbZIL1i333OYL+Z/epIDW7H9Oi9eZCBLs8FGCFWp1W/T0CMc4=
+X-Received: by 2002:a67:f4d8:0:b0:47c:ac1:6f84 with SMTP id
+ ada2fe7eead31-48d91d92523mr4271384137.2.1718272726252; Thu, 13 Jun 2024
+ 02:58:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240610233221.242749-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <6b3fe242-3733-4f16-b727-494dc1d82002@kernel.org>
-In-Reply-To: <6b3fe242-3733-4f16-b727-494dc1d82002@kernel.org>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 13 Jun 2024 10:57:12 +0100
-Message-ID: <CA+V-a8vp0qHKqUMvyfy9hQjKyk8Cs0bDTnYh-ChvPi150r5i2g@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/4] dt-bindings: clock: Add R9A09G057 core clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240613000721.23093-1-21cnbao@gmail.com> <20240613000721.23093-3-21cnbao@gmail.com>
+ <77da1feb-2257-4545-9427-5729250ceb2b@redhat.com>
+In-Reply-To: <77da1feb-2257-4545-9427-5729250ceb2b@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 13 Jun 2024 21:58:35 +1200
+Message-ID: <CAGsJ_4xi6xuBzF1bhShGJJ6aPzpnzOk0JQ542=LpMiJ7ExqNJQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/3] mm: do_swap_page: use folio_add_new_anon_rmap()
+ if folio_test_anon(folio)==false
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org, 
+	linux-kernel@vger.kernel.org, mhocko@suse.com, ryan.roberts@arm.com, 
+	baolin.wang@linux.alibaba.com, yosryahmed@google.com, shy828301@gmail.com, 
+	surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org, 
+	ying.huang@intel.com, yuzhao@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
-
-Thank you for the review.
-
-On Tue, Jun 11, 2024 at 7:59=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+On Thu, Jun 13, 2024 at 9:23=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
 >
-> On 11/06/2024 01:32, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> On 13.06.24 02:07, Barry Song wrote:
+> > From: Barry Song <v-songbaohua@oppo.com>
 > >
-> > Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator core clocks.
+> > For the !folio_test_anon(folio) case, we can now invoke folio_add_new_a=
+non_rmap()
+> > with the rmap flags set to either EXCLUSIVE or non-EXCLUSIVE. This acti=
+on will
+> > suppress the VM_WARN_ON_FOLIO check within __folio_add_anon_rmap() whil=
+e initiating
+> > the process of bringing up mTHP swapin.
 > >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >   static __always_inline void __folio_add_anon_rmap(struct folio *folio=
+,
+> >                   struct page *page, int nr_pages, struct vm_area_struc=
+t *vma,
+> >                   unsigned long address, rmap_t flags, enum rmap_level =
+level)
+> >   {
+> >           ...
+> >           if (unlikely(!folio_test_anon(folio))) {
+> >                   VM_WARN_ON_FOLIO(folio_test_large(folio) &&
+> >                                    level !=3D RMAP_LEVEL_PMD, folio);
+> >           }
+> >           ...
+> >   }
+> >
+> > It also enhances the code=E2=80=99s readability.
+> >
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 > > ---
-> > v1->v2
-> > - Dropped the module clocks and just added the core clocks
+> >   mm/memory.c | 2 ++
+> >   1 file changed, 2 insertions(+)
 > >
-> > Note the core clocks are the once which are listed as part
-> > of section 4.4.2 which cannot be controlled by CLKON register.
-> > ---
-> >  include/dt-bindings/clock/r9a09g057-cpg.h | 21 +++++++++++++++++++++
-> >  1 file changed, 21 insertions(+)
-> >  create mode 100644 include/dt-bindings/clock/r9a09g057-cpg.h
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 2f94921091fb..9c962f62f928 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -4339,6 +4339,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >       if (unlikely(folio !=3D swapcache && swapcache)) {
+> >               folio_add_new_anon_rmap(folio, vma, address, RMAP_EXCLUSI=
+VE);
+> >               folio_add_lru_vma(folio, vma);
+> > +     } else if (!folio_test_anon(folio)) {
+> > +             folio_add_new_anon_rmap(folio, vma, address, rmap_flags);
 >
-> Missing vendor prefix.
+> So, with large folio swapin, we would never end up here if any swp PTE
+> is !exclusive, because we would make sure to allocate a large folio only
+> for suitable regions, correct?
 >
-OK, Is this just for new includes being added, or do you want me to
-rename the existing Renesas specific includes in here which dont have
-vendor prefix?
+> It can certainly happen during swapout + refault with large folios. But
+> there, we will always have folio_test_anon() still set and wouldn't run
+> into this code path.
+>
+> (it will all be better with per-folio PAE bit, but that will take some
+> more time until I actually get to implement it properly, handling all
+> the nasty corner cases)
+>
+> Better add a comment regarding why we are sure that the complete thing
+> is exclusive (e.g., currently only small folios).
 
-> This belongs to the binding patch, so squash it.
->
-OK, I will squash it.
+No, patch 1/3 enables both cases to call folio_add_new_anon_rmap(). Current=
+ly,
+small folios could be non-exclusive. I suppose your question is
+whether we should
+ensure that all pages within a mTHP have the same exclusivity status,
+rather than
+always being exclusive?
 
-Cheers,
-Prabhakar
+>
+> >       } else {
+> >               folio_add_anon_rmap_ptes(folio, page, nr_pages, vma, addr=
+ess,
+> >                                       rmap_flags);
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+Thanks
+Barry
 
