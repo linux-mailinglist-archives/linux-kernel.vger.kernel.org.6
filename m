@@ -1,150 +1,109 @@
-Return-Path: <linux-kernel+bounces-213664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1356C9078B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:51:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F17690787E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8F792856DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:42:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCCBD282A3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBF6149C4A;
-	Thu, 13 Jun 2024 16:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154B8149E08;
+	Thu, 13 Jun 2024 16:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hqJIAeaq"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z3Pr1YCE"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67D51494D1;
-	Thu, 13 Jun 2024 16:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E437D149C69
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718296952; cv=none; b=HuHc988/JI7R94NT498hDH0lyGqTfYoLx4Du+FMzKH284H6a1XASkWQjjs3wfi9uDrSvOuajz2Kb/kNjGEcnkORM5W0Xqtb3oxFQJoEoahysfmOmHqqEKWcZaTyLkiTpJk3J5oR12hDyd2X6O1MVpn6oNqgQX2Q0EJmVH4QAOEo=
+	t=1718296937; cv=none; b=sqVjUutS6NqILp5Q/lwxBlIlkSo7yj8emS+c1FtlwEbCDwKRdvFIDgyULjrHgHaoIrkrqkZTHDdUXl223SfDgX6iJsOvE/SierR+ua9B5oaoLDUrJf2sU6aMTTgZe0d7xFBgRFS77N2qUHLRSnnKSSZMB5g+jS/pPUkYlYx2qXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718296952; c=relaxed/simple;
-	bh=Rwt9PdDlBPU1Mtk8I78hJCVMn23gkkE1PpUlz0qmemU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cDOJiFy4/FRVOVVKYtFxeFM8uorFTLXP+pV/HgEkVCHnTU1zLUiHzBvZ10gSuaMNSXgq8BU5Xqk9ZZBww+gJQLiRxrCoawnfys6wtxsaXYkzSW3Qwnt508f+aYVKPRToleWZ5AGVSnCVagIHtP1lHt/gG5AYZvtEyRRYZSmi+t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hqJIAeaq; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 63AF2FF806;
-	Thu, 13 Jun 2024 16:42:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718296942;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4dJR3hHbvgKmOl5sUDZdsAffIZFQ6lBPh0rzTj8sNRs=;
-	b=hqJIAeaqOGMgsL2S+VuFTO8+j4NW7CjsmyX26xsMZdv4kQdapRvADPzBTIBGaU1ZsGWI19
-	od+G7uXc9+Nd1sHNGsr5Ck77HElrJqF7nek+xBxiGYVRTwC532NwufMKnFBhGmH5wFh2A6
-	MCEZA31gAoBan5ilW75Kv/3h1iJatr7z/Mad283QjSGMMBIYlS80HsaZzz2BtBAgW4S1cl
-	TGm+iqZpaqt1F2MKT6HktF9/zm4J2ZXrBdFCn5efLHuotbPxcu8h9LrOPBD5kn4KwT+G2Z
-	jOF9RknNfjZuAxfWN0ffW4RCNNGyhieuHzmdUVi+E7s5Vh1FTr0tIm+6q5U2aw==
-From: Thomas Richard <thomas.richard@bootlin.com>
-To: wim@linux-watchdog.org,
-	linux@roeck-us.net
-Cc: linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	michael.brunner@kontron.com,
-	thomas.richard@bootlin.com,
-	thomas.petazzoni@bootlin.com
-Subject: [PATCH] watchdog: kempld: use pretimeout member of watchdog_device struct
-Date: Thu, 13 Jun 2024 18:41:57 +0200
-Message-Id: <20240613164157.457693-1-thomas.richard@bootlin.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1718296937; c=relaxed/simple;
+	bh=d4Zivpa+Kr91lXBluwGJv6NkuP5Fp/Zrezb2fbHpfBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tIUn2D2MYqP7v4F3D6Y8UjKf8YSrnWA47G/La/3gqGZ2bnbHdHCMa4gnBWBvhMubMqQ8ht6Of8IfuzOGoDsdz9oLlSbopDBHD6ON5oAUML6xVwcq7yb6NfPrUNitSZ+JRQ43e4D1srFg0lqU8A45Oxnpo0lpE+XQskQSeqqSluc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z3Pr1YCE; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52c82101407so2428253e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718296933; x=1718901733; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KxumJDVbsP4QVPvesFB523q6d4QgJEn6x6IfBmiyMhg=;
+        b=z3Pr1YCEhkXBwJrTn7gf9IZ2MzkV5tT+9bpEIjRhcz1ALhzp6dnKrXQvys9HQRX+Hl
+         GN3V9Ozdz7xvT/o1XqnMwsYJK/yXGuJlZTlsByCjAdfbhwlrV75cVKzEMcs8H/nz8cG5
+         H+ttvmSW0AP7FB7IQ/1CQ/6cwTl/Ury2zsOi4+KE9hzEVbjjYHW4B1C8q0/vCUj0hdfw
+         WurKyAElCEWu6s+RiUUMWJWGft4ILwiH+GmQl9yo1SDszcYXEdScQTGuLKNBUy9RkgBg
+         d/kU+CLg0KmNIe3Ny0Va5CYo0jKqCcdgrYGpw2VABqZ7mQStiJX9YTCL+1iQ5tgy/3ia
+         OvWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718296933; x=1718901733;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KxumJDVbsP4QVPvesFB523q6d4QgJEn6x6IfBmiyMhg=;
+        b=pLcZY1SNWoZWMd2SekhuKlPyUaMlDJSzfe3QqzM1pygFz2zki/SlxAssePoFveLMH3
+         6QxqqwTATZuNMMdzYjYUeNcBtidOnCtxjzRFQy0uC3O5/5gUVPkIcWDwQbi2A/noG/bN
+         uAyJs92JUIhs+2Zrnctkh0+j7hnvTxqnKWtcvXmw5XiCrDoqMKJGTyVv/TVY/GRP9KQc
+         Qy8xzNliQYwYq3BsLgdezt5dEE7qSk8Xi3ekVCxZzmP7JdwXOLDulLG5FV79O+UTDHQL
+         OMg8YwgQXlmbgwnMR/hkieKHZ91RILJdxHMH18Pei2cLvDUnemssmudyKXufa7oji1zB
+         qTMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcXRTBtWSWSDymhcx0704olyG3yDBa43XvuGHaicTNQnHj0r6HCRboYXI8iGoQbFB+6RhnZ0PlmHuzaC8ZeDBgDT3/wtbdtfTf/pH0
+X-Gm-Message-State: AOJu0Ywj8Kr63HROMXN8lRTsO8KO33rAne9J1IKnyjU8mmrhR1AmQvgn
+	p+zU27qa+e4glHDtiSHiLz15BkeiRT6zC8tNvkGUcA/IqA5o7UH1mNbdYhstd/k=
+X-Google-Smtp-Source: AGHT+IGSM9D0UjKqMRrpwUBDckCv+L+W8oy5sZf9E5Weqo0lZ3R41sisP7y2M9mjYoz1A9XbBfJtww==
+X-Received: by 2002:ac2:57c3:0:b0:52b:bfa7:66a1 with SMTP id 2adb3069b0e04-52ca6e56ed4mr226505e87.5.1718296933016;
+        Thu, 13 Jun 2024 09:42:13 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:900a:a4b1:9ab2:4d92:821a:bb76? ([2a00:f41:900a:a4b1:9ab2:4d92:821a:bb76])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282564dsm282363e87.9.2024.06.13.09.42.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 09:42:12 -0700 (PDT)
+Message-ID: <1cfd671b-a4d1-4edb-a2f6-b91b6edd7b22@linaro.org>
+Date: Thu, 13 Jun 2024 18:42:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: thomas.richard@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] arm64: dts: qcom: Update sleep_clk frequency to 32000
+ on SA8775P
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_jkona@quicinc.com, quic_imrashai@quicinc.com
+References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
+ <20240612-sa8775p-mm-clock-controllers-v1-8-db295a846ee7@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240612-sa8775p-mm-clock-controllers-v1-8-db295a846ee7@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Th driver was written whereas pretimeout wasn't supported by the watchdog
-core. So the pretimeout was stored in the driver data.
 
-Now the core has pretimeout support, so use it.
 
-Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
----
- drivers/watchdog/kempld_wdt.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+On 6/12/24 12:47, Taniya Das wrote:
+> The HW supported sleep_clk frequency on SA8775P is 32000, hence
+> update the sleep_clk frequency with the correct value on SA8775P.
+> 
+> Fixes: 603f96d4c9d0 ("arm64: dts: qcom: add initial support for qcom sa8775p-ride")
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
 
-diff --git a/drivers/watchdog/kempld_wdt.c b/drivers/watchdog/kempld_wdt.c
-index e6c7a2906680..ebb873502203 100644
---- a/drivers/watchdog/kempld_wdt.c
-+++ b/drivers/watchdog/kempld_wdt.c
-@@ -73,7 +73,6 @@ struct kempld_wdt_stage {
- struct kempld_wdt_data {
- 	struct kempld_device_data	*pld;
- 	struct watchdog_device		wdd;
--	unsigned int			pretimeout;
- 	struct kempld_wdt_stage		stage[KEMPLD_WDT_MAX_STAGES];
- 	u8				pm_status_store;
- };
-@@ -205,8 +204,8 @@ static int kempld_wdt_set_timeout(struct watchdog_device *wdd,
- 	timeout_stage = &wdt_data->stage[STAGE_TIMEOUT];
- 	pretimeout_stage = &wdt_data->stage[STAGE_PRETIMEOUT];
- 
--	if (pretimeout_stage->mask && wdt_data->pretimeout > 0)
--		timeout = wdt_data->pretimeout;
-+	if (pretimeout_stage->mask && wdd->pretimeout > 0)
-+		timeout = wdd->pretimeout;
- 
- 	ret = kempld_wdt_set_stage_action(wdt_data, timeout_stage,
- 						ACTION_RESET);
-@@ -249,13 +248,14 @@ static int kempld_wdt_set_pretimeout(struct watchdog_device *wdd,
- 	if (ret)
- 		return ret;
- 
--	wdt_data->pretimeout = pretimeout;
-+	wdd->pretimeout = pretimeout;
- 	return 0;
- }
- 
- static void kempld_wdt_update_timeouts(struct kempld_wdt_data *wdt_data)
- {
- 	struct kempld_device_data *pld = wdt_data->pld;
-+	struct watchdog_device *wdd = &wdt_data->wdd;
- 	struct kempld_wdt_stage *pretimeout_stage;
- 	struct kempld_wdt_stage *timeout_stage;
- 	unsigned int pretimeout, timeout;
-@@ -269,11 +269,11 @@ static void kempld_wdt_update_timeouts(struct kempld_wdt_data *wdt_data)
- 	kempld_release_mutex(pld);
- 
- 	if (pretimeout)
--		wdt_data->pretimeout = timeout;
-+		wdd->pretimeout = timeout;
- 	else
--		wdt_data->pretimeout = 0;
-+		wdd->pretimeout = 0;
- 
--	wdt_data->wdd.timeout = pretimeout + timeout;
-+	wdd->timeout = pretimeout + timeout;
- }
- 
- static int kempld_wdt_start(struct watchdog_device *wdd)
-@@ -336,7 +336,6 @@ static int kempld_wdt_keepalive(struct watchdog_device *wdd)
- static long kempld_wdt_ioctl(struct watchdog_device *wdd, unsigned int cmd,
- 				unsigned long arg)
- {
--	struct kempld_wdt_data *wdt_data = watchdog_get_drvdata(wdd);
- 	void __user *argp = (void __user *)arg;
- 	int ret = -ENOIOCTLCMD;
- 	int __user *p = argp;
-@@ -352,7 +351,7 @@ static long kempld_wdt_ioctl(struct watchdog_device *wdd, unsigned int cmd,
- 		ret = kempld_wdt_keepalive(wdd);
- 		break;
- 	case WDIOC_GETPRETIMEOUT:
--		ret = put_user(wdt_data->pretimeout, (int __user *)arg);
-+		ret = put_user(wdd->pretimeout, (int __user *)arg);
- 		break;
- 	}
- 
--- 
-2.39.2
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
+Konrad
 
