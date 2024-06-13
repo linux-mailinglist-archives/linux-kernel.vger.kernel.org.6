@@ -1,233 +1,322 @@
-Return-Path: <linux-kernel+bounces-212965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089CE906904
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:36:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900D6906908
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BFC61C24054
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:36:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60584B27D37
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1931B13E888;
-	Thu, 13 Jun 2024 09:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C47C13FD60;
+	Thu, 13 Jun 2024 09:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="krNY+YJ+"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CDRMktPW"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E40013E05B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB96013D529;
+	Thu, 13 Jun 2024 09:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718271405; cv=none; b=Ech0AIpS0wdvafIwNmS0rrpRLeheQ6Jt5m8aI5aLBFSS+BeqfoWXg/5kSwcwaWtJLC9xuo2vTiN7VIe9AJ1bHK6W9/ForVtSk9dKELu4VOzmzgFWVQ6n5Vt3u6OhV89jyhzlVEYYGlAz+MbYKXuytCsCnTay8F7n2+0T92/lIbE=
+	t=1718271443; cv=none; b=u+yGIMSDJZnlYtvlZ8lzq5Pma4I0fpOw/V2Yr9ZsW9Nsps0sOltr0w23ReLmzrKJ56qk9rZ1ByMPMGS7cqvvWG2/a9TAj4R7icnAgLM97Rh5BeICXqT1S0UoCh+bkXu+EUqB9UHoJ8R3R5QkvqCazvBCHJlD8XtYka12N5ze35g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718271405; c=relaxed/simple;
-	bh=Mbt2MJaUYw327XHSsAVEuO4JEm/68rZ+VPjFztZeWMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lyx0NHJmKI4t4XPIOC0lsc5mc63SfewFeAZrVNiqbMUVDSorauB53OVyOj2ze5gqbTpaotN/YdXobPn2VzMOx7UmYRpt2Xbsiff4L5gz4xjKUCyfhreW7Y3OEEFYvjT4GmkzUlr0qIT9znbIrlsq1C7SX5Z69LpW4nk+ECGFTOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=krNY+YJ+; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57c83100c5fso687220a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:36:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718271402; x=1718876202; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5O/LeU4pBiUv7PYYak4VEhNYanrT2MDN3opyXgU57NQ=;
-        b=krNY+YJ+SrQm11DfZhEnUgrhW4nNyJyY35JNrNvX6Gi1M6TyRYohfiRfbiNWbNNQdZ
-         q60nSmYs7G1BBq9Csbt/k7uPHRZMQH1yQMPThhLqhqo4Fn7IGRzb03dAD/3Xp7PV7LxT
-         J0VLJEQ6NfdloMF0YdndLq0GCtdfSJkbSWdCKsXffyS1P9d5uT88A732UAQLAR87Fyi1
-         ExQwCDcjagHKlE+2YeqK6hHZdJpnPSPyPFMXweG+88O688UWItmuqdilQ9WDH507j6Bn
-         7ujMWO+YLF5ucxTvPB7/YvXzW1IwXgXrnymD0w+Hi71dGr7U0hwsR1qquDQBa4eHzygM
-         R0Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718271402; x=1718876202;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5O/LeU4pBiUv7PYYak4VEhNYanrT2MDN3opyXgU57NQ=;
-        b=Ra2qexW5SjL7XKNW9ckNABYx0isd1vMEl8TGgD/pod9c6KpP0cy8/ENfLIlUE/mcgA
-         sb4r84ldlbGnyZRG6Ho81bS6zPKJd2n3tJZJEmyUjE/+/95JXIV30i7aG2mlLPjVrZcR
-         bDMQiw8lGkADotAK3d4uRfnljkaNnpxdnKTyW5kigQVXAgfdUDdmnUxFYmRaYSyy/bBK
-         ptqz3/Y8mO2MD+7t69Lv2Dd3jhDL6ZAZFzYlKW0HPIHnKHGR4nWzuXjYVCxVzYPkFukn
-         THB3/TCO8oCxIzbnzzv9aWWiHbXOzwsxLJoROi+Baa50CR9GdT1VDRfohdHLGS1tc4uV
-         eBbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkWOKsAlcH2mFJ866MiV8HDHTyJvF7DSypizNEjsD+eKqZMNxGbQlfXdRqxLS7yny2Sf2qA5f7x0FhqLBXycqorivVRREzt5epGLAP
-X-Gm-Message-State: AOJu0Yx0rr3K3FqMtCdEJ8zHgP2U2lNjciGI/O21WLdKVUSTc0DV/dQ/
-	z5REKW+Hk0lP/MPHqIFgsDstoUbsC276Fp7aw/5FOM9zrxyM4GEN8K1jh9zP
-X-Google-Smtp-Source: AGHT+IFVSidNdPqnYB3Bd3lzx1qoB1uqPpb395axC4//1R/X40d54Z/b09+pj29ITflN+cI1dYTwQA==
-X-Received: by 2002:a50:954a:0:b0:57c:8262:6409 with SMTP id 4fb4d7f45d1cf-57ca9754f25mr2734513a12.14.1718271401448;
-        Thu, 13 Jun 2024 02:36:41 -0700 (PDT)
-Received: from gmail.com (1F2EF7F9.nat.pool.telekom.hu. [31.46.247.249])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72e9943sm685022a12.51.2024.06.13.02.36.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 02:36:40 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Thu, 13 Jun 2024 11:36:38 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
-	Andy Lutomirski <luto@amacapital.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>
-Subject: [PATCH 10/9] x86/fpu: Fix 'struct fpu' misalignment on 32-bit kernels
-Message-ID: <Zmq9ppuIZJ9IMZDr@gmail.com>
-References: <20240608073134.264210-1-mingo@kernel.org>
- <20240608073134.264210-4-mingo@kernel.org>
- <20240610211350.GA1613053@thelio-3990X>
- <20240611124145.GA26798@redhat.com>
- <ZmlZiHVF8w09mExw@gmail.com>
- <20240612184148.GB23973@redhat.com>
+	s=arc-20240116; t=1718271443; c=relaxed/simple;
+	bh=3bUck+W9yJHc67MIONWQ2eNudVqGrgwA7SukJ35JJGU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o7An4eR1ttj++yrOTU9eLCZHRT1rHhDAIhnBAru3FXefrMmSkw9uZZKYcp5r1Y4m5sxW38R829q65AAPN7nJuGACCvBgH9c60FINA8RMFsfhtYBAIwHHnhVojaepTNREeHqu3ptehy8QEvrianF3qs21PA3+8PzOdTSF1tRg/Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CDRMktPW; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45D9b8jb039465;
+	Thu, 13 Jun 2024 04:37:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718271428;
+	bh=gqjjo4Jwex3xOrEZNXRqn+ilSaQLxSQ7lTmVS3Ib/Fk=;
+	h=From:To:CC:Subject:Date;
+	b=CDRMktPW+QyBU+YD57Db+o7FIYA5R4enaXGBS+h8OJFDrnA9bsFEoBzExKftquWcP
+	 4+Rp12EPI6aW4z0mkLlhdK8NoTi0FOhxjzYNFd8WAZvjWHp1wECULk21F04xX0zz0T
+	 AAJMmE0a5PpMZkJotCIBhXfWHq3m1eiBV1/yheT8=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45D9b7KU031085
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 13 Jun 2024 04:37:08 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
+ Jun 2024 04:37:07 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 13 Jun 2024 04:37:07 -0500
+Received: from localhost (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.55])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45D9b6wo041001;
+	Thu, 13 Jun 2024 04:37:07 -0500
+From: Jayesh Choudhary <j-choudhary@ti.com>
+To: <linux-kernel@vger.kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
+        <a-bhatia1@ti.com>, <u-kumar1@ti.com>, <j-choudhary@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH v2] arm64: dts: ti: k3-j721e: Add overlay for J721E Infotainment Expansion Board
+Date: Thu, 13 Jun 2024 15:07:06 +0530
+Message-ID: <20240613093706.480700-1-j-choudhary@ti.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612184148.GB23973@redhat.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-* Oleg Nesterov <oleg@redhat.com> wrote:
+J721E common processor board can be interfaced with the infotainment
+expansion board[0] to enable the following audio/video interfaces in
+addition to the peripherals provided by the common processor board:
+- Two Audio codecs each with three Stereo Inputs and four Stereo Outputs
+- Audio input over FPD Link III
+- Digital Audio Interface TX/RX
+- HDMI/FPD LINK III Display out
+- LI/OV Camera input
 
-> The patch below seems to fix the problem.
-> 
-> Again, the changes in fpu__init_system_early_generic() are not
-> strictly needed to fix it, but I believe make sense anyway.
-> 
-> Oleg.
-> 
-> 
-> diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-> index 4e8d37b5a90b..848ea79886ba 100644
-> --- a/arch/x86/kernel/fpu/init.c
-> +++ b/arch/x86/kernel/fpu/init.c
-> @@ -71,16 +71,14 @@ static bool __init fpu__probe_without_cpuid(void)
->  	return fsw == 0 && (fcw & 0x103f) == 0x003f;
->  }
->  
-> -static struct fpu x86_init_fpu __read_mostly;
-> +static struct fpu x86_init_fpu __attribute__ ((aligned (64))) __read_mostly;
->  
->  static void __init fpu__init_system_early_generic(void)
->  {
-> -	int this_cpu = smp_processor_id();
-> -
->  	fpstate_reset(&x86_init_fpu);
->  	current->thread.fpu = &x86_init_fpu;
-> -	per_cpu(fpu_fpregs_owner_ctx, this_cpu) = &x86_init_fpu;
-> -	x86_init_fpu.last_cpu = this_cpu;
-> +	set_thread_flag(TIF_NEED_FPU_LOAD);
-> +	x86_init_fpu.last_cpu = -1;
->  
->  	if (!boot_cpu_has(X86_FEATURE_CPUID) &&
->  	    !test_bit(X86_FEATURE_FPU, (unsigned long *)cpu_caps_cleared)) {
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 215a7380e41c..ec22b9bf27f5 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1562,7 +1562,7 @@ struct task_struct {
->  	 * they are included in the randomized portion of task_struct.
->  	 */
->  	randomized_struct_fields_end
-> -};
-> +} __attribute__ ((aligned (64)));
+Add support for TFP410 HDMI bridge located on the Infotainment Expansion
+Board (connected to J46 & J51).
+Add a HDMI connector node and connect the endpoints as below:
+DSS => TFP410 bridge => HDMI connector
+Also add the pinmux data and board muxes for DPI.
 
-Oh ... indeed, FPU context save area must be 64 bytes aligned!
+Rest of the peripherals are not added as of now.
 
-On 64-bit kernels this was a given, accidentally, but on 32-bit kernels 
-init_task was only 32-byte aligned:
+[0]: <https://www.ti.com/lit/ug/spruit0a/spruit0a.pdf>
 
-  c22f04e0 D init_task
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+[j-choudhary@ti.com: minor cleanup]
+Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+---
 
-... which misaligned the struct fpu as well, I think. With your fix:
+Testlog:
+<https://gist.github.com/Jayesh2000/45f75cf075cc969d1dfc9015c6f23fd4>
 
-  c22f0500 D init_task
+Changelog v1->v2:
+- rebased on next-20240613
+- add dtbo in ascending order in Makefile
+- Mention in commit message that other peripherals on the expansion board
+  are not added as of now.
 
-What happened is that due to my series 'struct task_struct' lost its 
-64-byte alignment attribute, which broke the fpu struct allocation code on 
-32-bit kernels and made the 64-bit one probably unrobust as well.
+v1 patch:
+<https://lore.kernel.org/all/20240227120310.661579-1-j-choudhary@ti.com/>
 
-To add insult to injury, I was aware of the alignment requirement, and 
-tried to cover it with an assert, but doubly mis-coded it:
+ arch/arm64/boot/dts/ti/Makefile               |   4 +
+ ...-j721e-common-proc-board-infotainment.dtso | 164 ++++++++++++++++++
+ 2 files changed, 168 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j721e-common-proc-board-infotainment.dtso
 
-+       BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
+diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+index d956372a7163..5c6701897f31 100644
+--- a/arch/arm64/boot/dts/ti/Makefile
++++ b/arch/arm64/boot/dts/ti/Makefile
+@@ -83,6 +83,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-j7200-evm.dtb
+ # Boards with J721e SoC
+ k3-j721e-evm-dtbs := k3-j721e-common-proc-board.dtb k3-j721e-evm-quad-port-eth-exp.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-j721e-beagleboneai64.dtb
++dtb-$(CONFIG_ARCH_K3) += k3-j721e-common-proc-board-infotainment.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-j721e-evm.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-j721e-evm-gesi-exp-board.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-j721e-evm-pcie0-ep.dtbo
+@@ -151,6 +152,8 @@ k3-am68-sk-base-board-csi2-dual-imx219-dtbs := k3-am68-sk-base-board.dtb \
+ 	k3-j721e-sk-csi2-dual-imx219.dtbo
+ k3-am69-sk-csi2-dual-imx219-dtbs := k3-am69-sk.dtb \
+ 	k3-j721e-sk-csi2-dual-imx219.dtbo
++k3-j721e-common-proc-board-infotainment-dtbs := k3-j721e-common-proc-board.dtb \
++	k3-j721e-common-proc-board-infotainment.dtbo
+ k3-j721e-evm-pcie0-ep-dtbs := k3-j721e-common-proc-board.dtb \
+ 	k3-j721e-evm-pcie0-ep.dtbo
+ k3-j721e-sk-csi2-dual-imx219-dtbs := k3-j721e-sk.dtb \
+@@ -182,6 +185,7 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
+ 	k3-am642-tqma64xxl-mbax4xxl-wlan.dtb \
+ 	k3-am68-sk-base-board-csi2-dual-imx219.dtb \
+ 	k3-am69-sk-csi2-dual-imx219.dtb \
++	k3-j721e-common-proc-board-infotainment.dtb \
+ 	k3-j721e-evm-pcie0-ep.dtb \
+ 	k3-j721e-sk-csi2-dual-imx219.dtb \
+ 	k3-j721s2-evm-pcie1-ep.dtb \
+diff --git a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board-infotainment.dtso b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board-infotainment.dtso
+new file mode 100644
+index 000000000000..65a7e54f0884
+--- /dev/null
++++ b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board-infotainment.dtso
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: GPL-2.0-only OR MIT
++/*
++ * Infotainment Expansion Board for j721e-evm
++ * User Guide: <https://www.ti.com/lit/ug/spruit0a/spruit0a.pdf>
++ *
++ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
++ */
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++
++#include "k3-pinctrl.h"
++
++&{/} {
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		label = "hdmi";
++		type = "a";
++		ddc-i2c-bus = <&main_i2c1>;
++		digital;
++		/* P12 - HDMI_HPD */
++		hpd-gpios = <&exp6 10 GPIO_ACTIVE_HIGH>;
++
++		port {
++			hdmi_connector_in: endpoint {
++				remote-endpoint = <&tfp410_out>;
++			};
++		};
++	};
++
++	dvi-bridge {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "ti,tfp410";
++		/* P10 - HDMI_PDn */
++		powerdown-gpios = <&exp6 8 GPIO_ACTIVE_LOW>;
++
++		port@0 {
++			reg = <0>;
++
++			tfp410_in: endpoint {
++				remote-endpoint = <&dpi_out0>;
++				pclk-sample = <1>;
++			};
++		};
++
++		port@1 {
++			reg = <1>;
++
++			tfp410_out: endpoint {
++				remote-endpoint =
++					<&hdmi_connector_in>;
++			};
++		};
++	};
++};
++
++&main_pmx0 {
++	main_i2c1_exp6_pins_default: main-i2c1-exp6-default-pins {
++		pinctrl-single,pins = <
++			J721E_IOPAD(0x264, PIN_INPUT, 7) /* (T29) MMC2_DAT2.GPIO1_24 */
++		>;
++	};
++
++	dss_vout0_pins_default: dss-vout0-default-pins {
++		pinctrl-single,pins = <
++			J721E_IOPAD(0x58, PIN_OUTPUT, 10) /* (AE22) PRG1_PRU1_GPO0.VOUT0_DATA0 */
++			J721E_IOPAD(0x5c, PIN_OUTPUT, 10) /* (AG23) PRG1_PRU1_GPO1.VOUT0_DATA1 */
++			J721E_IOPAD(0x60, PIN_OUTPUT, 10) /* (AF23) PRG1_PRU1_GPO2.VOUT0_DATA2 */
++			J721E_IOPAD(0x64, PIN_OUTPUT, 10) /* (AD23) PRG1_PRU1_GPO3.VOUT0_DATA3 */
++			J721E_IOPAD(0x68, PIN_OUTPUT, 10) /* (AH24) PRG1_PRU1_GPO4.VOUT0_DATA4 */
++			J721E_IOPAD(0x6c, PIN_OUTPUT, 10) /* (AG21) PRG1_PRU1_GPO5.VOUT0_DATA5 */
++			J721E_IOPAD(0x70, PIN_OUTPUT, 10) /* (AE23) PRG1_PRU1_GPO6.VOUT0_DATA6 */
++			J721E_IOPAD(0x74, PIN_OUTPUT, 10) /* (AC21) PRG1_PRU1_GPO7.VOUT0_DATA7 */
++			J721E_IOPAD(0x78, PIN_OUTPUT, 10) /* (Y23)  PRG1_PRU1_GPO8.VOUT0_DATA8 */
++			J721E_IOPAD(0x7c, PIN_OUTPUT, 10) /* (AF21) PRG1_PRU1_GPO9.VOUT0_DATA9 */
++			J721E_IOPAD(0x80, PIN_OUTPUT, 10) /* (AB23) PRG1_PRU1_GPO10.VOUT0_DATA10 */
++			J721E_IOPAD(0x84, PIN_OUTPUT, 10) /* (AJ25) PRG1_PRU1_GPO11.VOUT0_DATA11 */
++			J721E_IOPAD(0x88, PIN_OUTPUT, 10) /* (AH25) PRG1_PRU1_GPO12.VOUT0_DATA12 */
++			J721E_IOPAD(0x8c, PIN_OUTPUT, 10) /* (AG25) PRG1_PRU1_GPO13.VOUT0_DATA13 */
++			J721E_IOPAD(0x90, PIN_OUTPUT, 10) /* (AH26) PRG1_PRU1_GPO14.VOUT0_DATA14 */
++			J721E_IOPAD(0x94, PIN_OUTPUT, 10) /* (AJ27) PRG1_PRU1_GPO15.VOUT0_DATA15 */
++			J721E_IOPAD(0x30, PIN_OUTPUT, 10) /* (AF24) PRG1_PRU0_GPO11.VOUT0_DATA16 */
++			J721E_IOPAD(0x34, PIN_OUTPUT, 10) /* (AJ24) PRG1_PRU0_GPO12.VOUT0_DATA17 */
++			J721E_IOPAD(0x38, PIN_OUTPUT, 10) /* (AG24) PRG1_PRU0_GPO13.VOUT0_DATA18 */
++			J721E_IOPAD(0x3c, PIN_OUTPUT, 10) /* (AD24) PRG1_PRU0_GPO14.VOUT0_DATA19 */
++			J721E_IOPAD(0x40, PIN_OUTPUT, 10) /* (AC24) PRG1_PRU0_GPO15.VOUT0_DATA20 */
++			J721E_IOPAD(0x44, PIN_OUTPUT, 10) /* (AE24) PRG1_PRU0_GPO16.VOUT0_DATA21 */
++			J721E_IOPAD(0x24, PIN_OUTPUT, 10) /* (AJ20) PRG1_PRU0_GPO8.VOUT0_DATA22 */
++			J721E_IOPAD(0x28, PIN_OUTPUT, 10) /* (AG20) PRG1_PRU0_GPO9.VOUT0_DATA23 */
++			J721E_IOPAD(0x9c, PIN_OUTPUT, 10) /* (AC22) PRG1_PRU1_GPO17.VOUT0_DE */
++			J721E_IOPAD(0x98, PIN_OUTPUT, 10) /* (AJ26) PRG1_PRU1_GPO16.VOUT0_HSYNC */
++			J721E_IOPAD(0xa4, PIN_OUTPUT, 10) /* (AH22) PRG1_PRU1_GPO19.VOUT0_PCLK */
++			J721E_IOPAD(0xa0, PIN_OUTPUT, 10) /* (AJ22) PRG1_PRU1_GPO18.VOUT0_VSYNC */
++		>;
++	};
++};
++
++&exp1 {
++	p14-hog {
++		/* P14 - VINOUT_MUX_SEL0 */
++		gpio-hog;
++		gpios = <12 GPIO_ACTIVE_HIGH>;
++		output-low;
++		line-name = "VINOUT_MUX_SEL0";
++	};
++
++	p15-hog {
++		/* P15 - VINOUT_MUX_SEL1 */
++		gpio-hog;
++		gpios = <13 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "VINOUT_MUX_SEL1";
++	};
++};
++
++&main_i2c1 {
++	/* i2c1 is used for DVI DDC, so we need to use 100kHz */
++	clock-frequency = <100000>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	exp6: gpio@21 {
++		compatible = "ti,tca6416";
++		reg = <0x21>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&main_i2c1_exp6_pins_default>;
++		interrupt-parent = <&main_gpio1>;
++		interrupts = <24 IRQ_TYPE_EDGE_FALLING>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++
++		p11-hog {
++			/* P11 - HDMI_DDC_OE */
++			gpio-hog;
++			gpios = <9 GPIO_ACTIVE_HIGH>;
++			output-high;
++			line-name = "HDMI_DDC_OE";
++		};
++	};
++};
++
++&dss {
++	pinctrl-names = "default";
++	pinctrl-0 = <&dss_vout0_pins_default>;
++};
++
++&dss_ports {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	port@1 {
++		reg = <1>;
++
++		dpi_out0: endpoint {
++			remote-endpoint = <&tfp410_in>;
++		};
++	};
++};
+-- 
+2.25.1
 
-Which is buggy:
-
- - As on 32-bit kernels CONFIG_X86_L1_CACHE_SHIFT=5, ie. 32 bytes ...
-
- - Nor does it really check the alignment of the FPU context save area 
-   within struct fpu as it's allocated after task_struct ...
-
-The interim patch below against the full WIP.x86/fpu series is what fixes 
-Nathan's 32-bit testcase.
-
-Further improvements:
-
- - The extra alignment attribute in <linux/sched.h> will affect other 
-   architecture as well, although in practice the alignment of init_task is 
-   not critical, and is very likely at least 32 bytes, probably more. 
-   Still, it's a bit ugly in its current form.
-
- - Also, because this was pretty hard to debug, we should probably add an 
-   alignment check to fpu__init_task_struct_size() where we allocate the 
-   fpu context structure, and fix the buggy size-assert.
-
-Thanks a lot for your help Oleg! I've added this tag of yours:
-
-  Fixed-by: Oleg Nesterov <oleg@redhat.com>
-
-... and would appreciate your Acked-by or Reviewed-by for the eventual 
-final version of the series, but I don't insist. ;-)
-
-	Ingo
-
-=================>
-diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-index 53580e59e5db..16b6611634c3 100644
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -71,15 +71,13 @@ static bool __init fpu__probe_without_cpuid(void)
- 	return fsw == 0 && (fcw & 0x103f) == 0x003f;
- }
- 
--static struct fpu x86_init_fpu __read_mostly;
-+static struct fpu x86_init_fpu __attribute__ ((aligned (64))) __read_mostly;
- 
- static void __init fpu__init_system_early_generic(void)
- {
--	int this_cpu = smp_processor_id();
--
- 	fpstate_reset(&x86_init_fpu);
--	per_cpu(fpu_fpregs_owner_ctx, this_cpu) = &x86_init_fpu;
--	x86_init_fpu.last_cpu = this_cpu;
-+	set_thread_flag(TIF_NEED_FPU_LOAD);
-+	x86_init_fpu.last_cpu = -1;
- 
- 	if (!boot_cpu_has(X86_FEATURE_CPUID) &&
- 	    !test_bit(X86_FEATURE_FPU, (unsigned long *)cpu_caps_cleared)) {
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 215a7380e41c..ec22b9bf27f5 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1562,7 +1562,7 @@ struct task_struct {
- 	 * they are included in the randomized portion of task_struct.
- 	 */
- 	randomized_struct_fields_end
--};
-+} __attribute__ ((aligned (64)));
- 
- #define TASK_REPORT_IDLE	(TASK_REPORT + 1)
- #define TASK_REPORT_MAX		(TASK_REPORT_IDLE << 1)
 
