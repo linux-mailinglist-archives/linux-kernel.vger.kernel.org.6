@@ -1,115 +1,147 @@
-Return-Path: <linux-kernel+bounces-213887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87396907C0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:07:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F556907C0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24281284F2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:07:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C443B1F242DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7744514B095;
-	Thu, 13 Jun 2024 19:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC2714B06A;
+	Thu, 13 Jun 2024 19:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cP2izgT3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r15KrCdS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71B9F9F8;
-	Thu, 13 Jun 2024 19:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB509137C20;
+	Thu, 13 Jun 2024 19:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718305665; cv=none; b=fY8tPkxC0Jdw0hFLmygmHpYB3cONjXX42cuJPI57IX9y2YJPgkCGrHDLe1qdNKkDwB60GcYNT1Cc8ENi6fL/7XeWtPNfPs0aJYp3ujsxFJXeXDJVxo0AzAC0DmcwMZUtU6XIX80WQVkvPTVy85z8xaiyBF2fea52vQGBHyIB9HM=
+	t=1718305764; cv=none; b=DWYbhgdpZS/HCD7O8CddL//tSVedSGYcROmijJ/R/uP7PmNNPR6cQUVT3g5TvdT5soTPM41UsD+bzza0MVOx39Zppmlz3ab++gRldO5pBMZA6FQ22E2IeMovZw0ukGtdOryCk5bAgH2lOEB9zwxlyFWgKhA+WDN/2SPYmzsV7x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718305665; c=relaxed/simple;
-	bh=rBIdEYd5jFu0+smwdlfbR/AfIbyZXKk7Vhu6cLGSxZk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h/J8PYNZnwQ9BaGSkCpgQQRBlvgmhov8KMiHMe1N6M3fj7Ue5bFy9xhN9F/lJDtOE157neWp+k0O4y4S/HfhTQ8kul2GGhqg/KHgf77IUvAmeOexrtOy0++i7F4MefHnKuuEYwopIxAPD5GfclUmuI4AE+22CpWpzmJz+GktEjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cP2izgT3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B1BAC32786;
-	Thu, 13 Jun 2024 19:07:45 +0000 (UTC)
+	s=arc-20240116; t=1718305764; c=relaxed/simple;
+	bh=HFWyWh6KpryPRqXeZqS8bpwy4cpqT7565JH13UCYe8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=URFTR3E1b82UiJldQXEDSVB+81XT14dvazmUnQ1xmmWrPkqxJ60oAQQPTip+jCV0NBpHp9mABL8MVyAZTINsOAaRb3IFKvGZgU9l67xF22UpQckhVG0beTo9YiduTZZ1cNngRDusphIOUkyTc+s2YcFxHggYNIASFngZtR4na0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r15KrCdS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C484C2BBFC;
+	Thu, 13 Jun 2024 19:09:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718305665;
-	bh=rBIdEYd5jFu0+smwdlfbR/AfIbyZXKk7Vhu6cLGSxZk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cP2izgT35cGD+7lFMocFlkB/VSyZC8KX3kPDZLWLH3aWldwNIfgPDoMmYvdP1pmrH
-	 PcHFQEUbPAKyC0V2PYUyUEOcPTsOKFYGDyeD8yLBgezUeKThmmJSubnzw7BW7PMMDU
-	 Yestw4SGflGTMTixqwLiqXQo6EPSUIDo2kehVkazTKQDYjBcYfP1d0sbIYairUEBeh
-	 IfNZQOMXjrtCpk1PVtC8Kg9NofkAb7PgjKUeyCScn6kdkGFwWe77UsOtmUhJv0qr76
-	 7ytSVQqQWQfE22Yyj+8C5lZxCTfLeQUWdPBvcFLqMRt64pV9xMSevNEXbMfrDHX6Wr
-	 LPzcw0tWGhCtA==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5bb10cfe7daso93935eaf.2;
-        Thu, 13 Jun 2024 12:07:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW53A8YknTAwDjRoR19kmFJTF6vEGut+ovX2AKaSrHhfU9nRjY8WlBcvAegr5OMILgOsLK2k6vFwF65R782@vger.kernel.org, AJvYcCXe5fz7eVDEClN5J0T7kcMpAg657k1A8BapJWgVNkuKXbBojothjMx78sk1Qe/k6oaHHQlZ1PDn7RZf6Q==@vger.kernel.org, AJvYcCXwBK2L08NttabDf3PdHF29qaw98Wf9OARnh2iwYkIcrrOEXz/gy2Qjm1q9tC4yubXy88iCyzwdLV5IpdY7R78=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu1KjWDdnGsz/znwdy6FBineXqJakSFj+1Len3TxJdEEyx/nzs
-	4+1lQvU/frTyHKe+T9I0MhXhzxWdNxpYoZxE50T/ZKOIUrEFlokB3SvTunE4PEcPpBbmsd8c3j2
-	0VIDwKrUSGf9WK/kXa6wkAsL77ww=
-X-Google-Smtp-Source: AGHT+IGL1poXQ3NOZsQ6DH+8PEMCE1TZqGMdLOTA1ZPa7viW8qftegdQDE3IjM3d4DlSW0uwE7fIglsLzbnco2ThpJs=
-X-Received: by 2002:a4a:de45:0:b0:5ba:ca86:a025 with SMTP id
- 006d021491bc7-5bdad9f3f2dmr636316eaf.0.1718305664456; Thu, 13 Jun 2024
- 12:07:44 -0700 (PDT)
+	s=k20201202; t=1718305763;
+	bh=HFWyWh6KpryPRqXeZqS8bpwy4cpqT7565JH13UCYe8Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r15KrCdS9IdIHad1rdEnJ2d8ckWytMU6LKbZHtECfabZeOOL5NeBLIxxPBq3z0zys
+	 3slzhtA9cdHuWZnGZHDV5NLs2bTHbBZynuD7Q8DQOxVA09rVcITHteKZ+9+HgLXR5M
+	 HdoVCKVKrpzgEk2cSlL6jYQ71DUrUvpCH8y/LyXJsqZGTYjaU0YmUIsxGTKPGUwrAM
+	 uV1gBh1sR/ghA14TJc9M7AyHJIwf42TPHHmnNcaLCqawQObi8CV5wvWxi8CbRIG6cM
+	 TBm0dJY8W1NUsdLFkBf/mQlzHFacpAS20ZjS1cela3jB5ird9bozLTcvGNoQEx+Z3j
+	 J9N0ANl5gHr0g==
+Date: Thu, 13 Jun 2024 12:09:20 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Andy Chiu <andy.chiu@sifive.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Zong Li <zong.li@sifive.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Evgenii Shatokhin <e.shatokhin@yadro.com>
+Subject: Re: [PATCH 4/8] riscv: ftrace: align patchable functions to 4 Byte
+ boundary
+Message-ID: <20240613190920.GB1272931@thelio-3990X>
+References: <20240613-dev-andyc-dyn-ftrace-v4-v1-0-1a538e12c01e@sifive.com>
+ <20240613-dev-andyc-dyn-ftrace-v4-v1-4-1a538e12c01e@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240603-md-drivers-acpi-misc-v1-1-fd7f7de1ce19@quicinc.com>
-In-Reply-To: <20240603-md-drivers-acpi-misc-v1-1-fd7f7de1ce19@quicinc.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 13 Jun 2024 21:07:33 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jCtky__pmmZoxpa6WCGVDLukmmDR01nUsSHaT6z3d4vw@mail.gmail.com>
-Message-ID: <CAJZ5v0jCtky__pmmZoxpa6WCGVDLukmmDR01nUsSHaT6z3d4vw@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613-dev-andyc-dyn-ftrace-v4-v1-4-1a538e12c01e@sifive.com>
 
-On Mon, Jun 3, 2024 at 4:29=E2=80=AFPM Jeff Johnson <quic_jjohnson@quicinc.=
-com> wrote:
->
-> make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/acpi/acpi_tad.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/acpi/platform_p=
-rofile.o
->
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/acpi/acpi_tad.c         | 1 +
->  drivers/acpi/platform_profile.c | 1 +
->  2 files changed, 2 insertions(+)
->
-> diff --git a/drivers/acpi/acpi_tad.c b/drivers/acpi/acpi_tad.c
-> index 1d670dbe4d1d..b831cb8e53dc 100644
-> --- a/drivers/acpi/acpi_tad.c
-> +++ b/drivers/acpi/acpi_tad.c
-> @@ -27,6 +27,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/suspend.h>
->
-> +MODULE_DESCRIPTION("ACPI Time and Alarm (TAD) Device Driver");
->  MODULE_LICENSE("GPL v2");
->  MODULE_AUTHOR("Rafael J. Wysocki");
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
-ile.c
-> index 4a9704730224..d2f7fd7743a1 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -217,4 +217,5 @@ int platform_profile_remove(void)
->  EXPORT_SYMBOL_GPL(platform_profile_remove);
->
->  MODULE_AUTHOR("Mark Pearson <markpearson@lenovo.com>");
-> +MODULE_DESCRIPTION("ACPI platform profile sysfs interface");
->  MODULE_LICENSE("GPL");
->
-> ---
+Hi Andy,
 
-Applied as 6.11 material, thanks!
+On Thu, Jun 13, 2024 at 03:11:09PM +0800, Andy Chiu wrote:
+> We are changing ftrace code patching in order to remove dependency from
+> stop_machine() and enable kernel preemption. This requires us to align
+> functions entry at a 4-B align address.
+> 
+> However, -falign-functions on older versions of GCC alone was not strong
+> enoungh to align all functions. In fact, cold functions are not aligned
+> after turning on optimizations. We consider this is a bug in GCC and
+> turn off guess-branch-probility as a workaround to align all functions.
+> 
+> GCC bug id: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=88345
+> 
+> The option -fmin-function-alignment is able to align all functions
+> properly on newer versions of gcc. So, we add a cc-option to test if
+> the toolchain supports it.
+> 
+> Suggested-by: Evgenii Shatokhin <e.shatokhin@yadro.com>
+> Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
+> ---
+>  arch/riscv/Kconfig  | 1 +
+>  arch/riscv/Makefile | 7 ++++++-
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index b94176e25be1..80b8d48e1e46 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -203,6 +203,7 @@ config CLANG_SUPPORTS_DYNAMIC_FTRACE
+>  config GCC_SUPPORTS_DYNAMIC_FTRACE
+>  	def_bool CC_IS_GCC
+>  	depends on $(cc-option,-fpatchable-function-entry=8)
+> +	depends on $(cc-option,-fmin-function-alignment=4) || !RISCV_ISA_C
+
+Please use CC_HAS_MIN_FUNCTION_ALIGNMENT (from arch/Kconfig), which
+already checks for support for this option.
+
+>  config HAVE_SHADOW_CALL_STACK
+>  	def_bool $(cc-option,-fsanitize=shadow-call-stack)
+> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> index 06de9d365088..74628ad8dcf8 100644
+> --- a/arch/riscv/Makefile
+> +++ b/arch/riscv/Makefile
+> @@ -14,8 +14,13 @@ endif
+>  ifeq ($(CONFIG_DYNAMIC_FTRACE),y)
+>  	LDFLAGS_vmlinux += --no-relax
+>  	KBUILD_CPPFLAGS += -DCC_USING_PATCHABLE_FUNCTION_ENTRY
+> +ifeq ($(CONFIG_CC_IS_CLANG),y)
+
+Same here, please invert this and use
+
+  ifdef CONFIG_CC_HAS_MIN_FUNCTION_ALIGNMENT
+
+like the main Makefile does.
+
+> +	cflags_ftrace_align := -falign-functions=4
+> +else
+> +	cflags_ftrace_align := -fmin-function-alignment=4
+> +endif
+>  ifeq ($(CONFIG_RISCV_ISA_C),y)
+> -	CC_FLAGS_FTRACE := -fpatchable-function-entry=4
+> +	CC_FLAGS_FTRACE := -fpatchable-function-entry=4 $(cflags_ftrace_align)
+>  else
+>  	CC_FLAGS_FTRACE := -fpatchable-function-entry=2
+>  endif
+> 
+> -- 
+> 2.43.0
+> 
+> 
 
