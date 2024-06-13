@@ -1,123 +1,180 @@
-Return-Path: <linux-kernel+bounces-213456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F822907591
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:47:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA6F907594
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206572833C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:47:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5A53285C22
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BBB146A67;
-	Thu, 13 Jun 2024 14:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FAB146D40;
+	Thu, 13 Jun 2024 14:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2lu45o+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JE6iTYtp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD7512C528;
-	Thu, 13 Jun 2024 14:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51507145FE4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718290027; cv=none; b=a//e2RUNG4dbT45MUbI1tUNy5aWeNtktebvXTCafVFZrP+a2XVQoM5RILDyWGpjvQVnQBrFrJUaWdMQJzt8NP3lnTd1sfC0eCZZ99ZmV0jfEh+pp6noKjyW4kpWPvJGRSr9IBCFEHDmzg6LV5mi/Yg5AwpRlIi87tAklOojekho=
+	t=1718290033; cv=none; b=r2cO5VIIklAFb6MReAsG9HG7g3+0K1+LLIi0cg5vxWW4r4JEYV5gPu9YjOiyIdcw1svbPshxGjSTrLIhKCiDtNVpAXUJzpTp01nQLxsPYqyUHAiad1D+P5oYSDvSqX2avzsdOAQBfqpRoT9ClDveplpJ6KZ9ByOg80s6TqezwG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718290027; c=relaxed/simple;
-	bh=jK2gdUjoj+cRxhdeg1jZhUoCifthBXqPUWejNjj10lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CVX8M0CPxldZ92nGgA4AchC9sD7rinW5LhVk+MdPL6uWVdh9DMi1MwpX39bklSYeJuCtXGWIB4+IM4RYL4zwnucZUZ/jUU7kqSxAmGxJyl3Yirb2z/ft26DL28dqRrNZ4OujQC9wnEJmP1ucayrmCWH4PB9+BEDNF3KIhAdkcFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2lu45o+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16AC4C2BBFC;
-	Thu, 13 Jun 2024 14:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718290027;
-	bh=jK2gdUjoj+cRxhdeg1jZhUoCifthBXqPUWejNjj10lo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d2lu45o+Ydw/jwlGxUhNdagLzTCqMGvgZd941PPMvvteZ/RajSIUxk7FJmLFDObr3
-	 qbZ9QyJtSMHJPIchfTnzuXBhgtArPmUK0cQJMJt4RdTNVDAktbNW7PmL0zUzmTVeoT
-	 oe8A9WQgjwavflaTb0RXNfK+1/qYAJMx6DSd4zBED+fHvqdgExsQBTVX9Pgy38ynNm
-	 FaADpUWVNR6cChGRf/XQSjgZc0sQeX2xw/jcxl2+v8ITNjVOmiAZ+vGzbIJs57TJRc
-	 gcJsOFiIbKHmpORDouMn93VI1TFlDO6et+ruxgKor2SEpgY4h/0LLT74SNUiO+65oG
-	 X7yCt2z4yfymg==
-Date: Thu, 13 Jun 2024 15:47:03 +0100
-From: Lee Jones <lee@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-leds@vger.kernel.org, Abdel Alkuor <alkuor@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] leds: ncp5623: Use common error handling code in
- ncp5623_probe()
-Message-ID: <20240613144703.GH2561462@google.com>
-References: <5faec5de-fc36-4b38-abcb-c61954a824cd@web.de>
+	s=arc-20240116; t=1718290033; c=relaxed/simple;
+	bh=KzF5Tbzpbw9twuZ0/Ci/fvBAp4/uWzauqXXdFMVgGjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=smsE2SQrXcO3K4tGm3RrkoxFw215ze/RGXL0yK2UWSPPCG/vYjUaFUIEgg2gGXM5a2eF9evfYZ8Es4MQXaPEcg6HXcEN1GWffQIbQ+JdIsr5VAQU/fIaR4bz8Og7cpVqxnPyw+oEEVlsz7XzO0qa1tmVZOiKGDwdFIYXnuoCZjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JE6iTYtp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718290031;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XFy9yOTK/NUjd05V0pDMeaunxYzPoKIX/9kty4IIa04=;
+	b=JE6iTYtpYwHYvvWmWGG7e7/6Pu7jcbkXxSYjbhjlaB3CiULJgy1Ih/r8T+21qtt/3prpk3
+	SUoRu2KQTwEY6aym3IiOF6OzWAt64HmP83JlQNWlFhcq4nydDxlhJ6oW/UYPobxL0/Zeek
+	WUr8N8iZkHkFMGuqjMs0/gQC9e/zD8o=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-16-oVuq81gZNw-Ad5oJb8yXBA-1; Thu, 13 Jun 2024 10:47:07 -0400
+X-MC-Unique: oVuq81gZNw-Ad5oJb8yXBA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4217f941ca8so7719475e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:47:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718290026; x=1718894826;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XFy9yOTK/NUjd05V0pDMeaunxYzPoKIX/9kty4IIa04=;
+        b=fxca8mmOcNF3Dr1bLQbWJMOkZaD8+7q1B3T5aqHnEzZaOrr43V18uxqcms17wU3Lce
+         y05ObdWAVfjVEvVhiyq4HTEViLuSLee8LMqLunw/eTmZZUP+TcbGCSxcYBSmX9BNFa7D
+         0d2DosOeG+aBhdC+9OIxNsdQxTiL7jLaMyz4zTsrYpe3fzIDUB2XGkQDUz0jU4HX1YQ5
+         YeurEE3mfGvzcA4U+trc54BSaGrJ7M+JaewWy0H+W43cvGgeL5E9uzDHx4Eg/xqfYtSN
+         aXmW9EPFcFb24Ki/0zU8ggTJX2fEdKM5wo4zM3bwcktkJXYBYjpFJd3G/GyqVM+fhMsj
+         GqNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXUn+2BDgTJp+UJUGTqOOnmVfvLSiaIqx6uNJgGAMA1CXEIpwOmOWQtD2ECsLI85Y0X0IVgpd8lZXex01UwC7Byvmxdq4h6Q7ZP+kb
+X-Gm-Message-State: AOJu0Yz+9fXRTCrl1hx1Dr/qQ0PKX7DHN5R/tNwFwA9YbUPruiMWpMPO
+	K/p9rxDUDphZ2IV9A502m+qWva6TUNAUwBFcNqtpjAgugHtuzeVfQrU8dSnARw1Oh7mIJYm2lI2
+	BtequEtp+ENCkCIiZO4WVmG6wNaz+vi/Jbfz/2mTHrw3s+14CPHsjnq6b10MDJg==
+X-Received: by 2002:a05:600c:3ba2:b0:422:7dc7:fc23 with SMTP id 5b1f17b1804b1-42304860becmr170595e9.41.1718290026629;
+        Thu, 13 Jun 2024 07:47:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMftS0z8N6fHpAeOmiSiaUIphWPLN0PZ4Yyz2ER7qbYbx1O2WcSNSoAqQ0CvzHXVh0Ws7zhQ==
+X-Received: by 2002:a05:600c:3ba2:b0:422:7dc7:fc23 with SMTP id 5b1f17b1804b1-42304860becmr170425e9.41.1718290026195;
+        Thu, 13 Jun 2024 07:47:06 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c703:fe00:10fe:298:6bf1:d163? (p200300cbc703fe0010fe02986bf1d163.dip0.t-ipconnect.de. [2003:cb:c703:fe00:10fe:298:6bf1:d163])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e74c7sm65109465e9.47.2024.06.13.07.47.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 07:47:05 -0700 (PDT)
+Message-ID: <895c6ff2-9b8c-4d35-b75c-8d0287d12233@redhat.com>
+Date: Thu, 13 Jun 2024 16:47:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5faec5de-fc36-4b38-abcb-c61954a824cd@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/proc/task_mmu: fix uninitialized variable in
+ pagemap_pmd_range()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Andrei Vagin <avagin@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Hugh Dickins <hughd@google.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <9d6eaba7-92f8-4a70-8765-38a519680a87@moroto.mountain>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <9d6eaba7-92f8-4a70-8765-38a519680a87@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 05 Jun 2024, Markus Elfring wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 5 Jun 2024 16:19:26 +0200
+On 13.06.24 16:34, Dan Carpenter wrote:
+> The "folio" pointer is tested for NULL, but it's either valid or
+> uninitialized.  Initialize it to NULL.
 > 
-> Add a label so that a bit of exception handling can be better reused
-> at the end of this function implementation.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Fixes: 84f57f8b8914 ("fs/proc: move page_mapcount() to fs/proc/internal.h")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/leds/rgb/leds-ncp5623.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+>   fs/proc/task_mmu.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/leds/rgb/leds-ncp5623.c b/drivers/leds/rgb/leds-ncp5623.c
-> index 2be4ff918516..f18156683375 100644
-> --- a/drivers/leds/rgb/leds-ncp5623.c
-> +++ b/drivers/leds/rgb/leds-ncp5623.c
-> @@ -183,16 +183,12 @@ static int ncp5623_probe(struct i2c_client *client)
-> 
->  	fwnode_for_each_available_child_node(mc_node, led_node) {
->  		ret = fwnode_property_read_u32(led_node, "color", &color_index);
-> -		if (ret) {
-> -			fwnode_handle_put(led_node);
-> -			goto release_mc_node;
-> -		}
-> +		if (ret)
-> +			goto release_led_node;
-> 
->  		ret = fwnode_property_read_u32(led_node, "reg", &reg);
-> -		if (ret) {
-> -			fwnode_handle_put(led_node);
-> -			goto release_mc_node;
-> -		}
-> +		if (ret)
-> +			goto release_led_node;
-> 
->  		subled_info[ncp->mc_dev.num_colors].channel = reg;
->  		subled_info[ncp->mc_dev.num_colors++].color_index = color_index;
-> @@ -223,6 +219,10 @@ static int ncp5623_probe(struct i2c_client *client)
->  	fwnode_handle_put(mc_node);
-> 
->  	return ret;
-> +
-> +release_led_node:
-> +	fwnode_handle_put(led_node);
-> +	goto release_mc_node;
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 631371cb80a0..6ed1f56b32b4 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1492,7 +1492,7 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>   		u64 flags = 0, frame = 0;
+>   		pmd_t pmd = *pmdp;
+>   		struct page *page = NULL;
+> -		struct folio *folio;
+> +		struct folio *folio = NULL;
+>   
+>   		if (vma->vm_flags & VM_SOFTDIRTY)
+>   			flags |= PM_SOFT_DIRTY;
 
-No, we're not bouncing around the function like that.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Only use gotos to skip _down_ to error handling code please.
-
->  }
-> 
->  static void ncp5623_remove(struct i2c_client *client)
-> --
-> 2.45.1
-> 
+Thanks!
 
 -- 
-Lee Jones [李琼斯]
+Cheers,
+
+David / dhildenb
+
 
