@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-213289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4DBC907378
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:21:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C4D907379
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EBCB1F237E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591CF2811EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F31143C6C;
-	Thu, 13 Jun 2024 13:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AAD14535E;
+	Thu, 13 Jun 2024 13:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X6qpDnVa"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T9CwySmF"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E37144D07
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32539145343
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718284862; cv=none; b=YVDJM4hgktTUedod8PWmM67S4VKF9gD53mZ0n5hBVWyYCfzVPVV0UMTEBz5X1bBMIO7r7g1aChX1zdFso7Lp90E9D1zPCHk8/2/o2elS56fxdqIU903eB7okIx97WQcNw9HkQV+U5QVdCo21PeI6aE1ERPVuKRUu7FxjMnUki3A=
+	t=1718284865; cv=none; b=TZw3X+p2ehiLHuP7qCh0di6L7ikUHwdvO0S3gSLRTuszD7aHGew5dA2mBL6LKqplNd+C/J2SRushW1J4U01U0qd7HLsTM1u34TZgS4tLSDxoQJb7OWwf/HKdUqBS0dHCMweA5piPozcyKeqZ3k2qKJSb/lEF+z6oGA/AW1dJPoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718284862; c=relaxed/simple;
-	bh=zFmo670I0tiDu31Oc+yMgEHTb7RV2is956ciDFrAEIk=;
+	s=arc-20240116; t=1718284865; c=relaxed/simple;
+	bh=kxJ6yca6FhrEdaeRJHlyh47eGEiERJamoE3DlUAPJas=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iuyjsCqQ8o8dO/jzohKWGbT27veMIRfQC/DqBgW5xERlKw/QBUpYkz8inU8GfWx5aE54YEjRd+1S1asnXoZOolu/8Mb61luybjSVJl+T9zKa0B0Ei4233hUz7xHFH9R8ar49STa9CiX7PGLAaptjCIs2+Q70TiJFHZ9Ca0LhjrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X6qpDnVa; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=pxur2o03zWc1wUGaT0pLrKGyqMr39JPzshPmG4/iG7znQmhuHUxD5Qv56cWdfOUTWtcwSiUdr00w0O1V4GRtVg7UuZFrYOfPHXum5mQ0o+Tx8siHxYPOcr/GJRTv+kE7F3jgyl6Q1i5lSorW7Z5JICXJJenHmbH/uDfo9pZ2YHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T9CwySmF; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfeac23fe6eso1859155276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:21:00 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-421739476b3so9398245e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:21:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718284860; x=1718889660; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1718284862; x=1718889662; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u0OhOvlObTYcevtXo8Z7p/mIFsLXq1uqkU+zyx3S4LA=;
-        b=X6qpDnVajjBNdljZKx26/cQgwXLfgW+4h3cb3PNP8LWqrhNhUGbPjnwQDuY4WMArGk
-         vwdyRGdGMEewXHWgYnzt+59rww7NcvdCvSOBVjxjCWHcGNJn2lC2UEjnZniu2OnLWprC
-         qahGIsEaQ4gUm0niJogaosUvrwSsRkJ6WB9ARDTHSS5a2JhBsYOJxNYrdZYSCFtiB3/J
-         23VBls/YQqOqyBdvBZdXudKH5tmvOrGD4aUcIMxtY2qHjG26BjWGRREtIHT+wY5s3K4E
-         BCwObd5sdO+3yjOoOTwuSf8QFA7uZPiRkOzyamNKaZThaDKn9vfLUaO3AyuL1Kur5vHl
-         cZ6A==
+        bh=85ojJxkNYXxh97Mo9k1gfrYfK0JeNvYJnaS4+QvvHCA=;
+        b=T9CwySmFiPGAIyyPzRBeYmfEZWcJ9U4n0VwFg2EBH9pkMCGXx4h3VZnzvJXYNZiJxq
+         AEmSxr5IihDIAF9MTRpltqtpe4mwb1h4TFOnQw+WfNBvRJ4d9ViO73Uzq4Prkv8E2wYw
+         zeT25QoUO8jxVHDJlzjkGd60nNrqYjg+wCkmHKBlp3l1jnazZdvpCbHTsFdhoplBBcD4
+         Lcobhs5boJhlLDW3ouokVvJ23xC+7nV8PHuT8Hm0377eWCTnAdmcpXKIKK8XC/BGt5br
+         irK3PQ5Wnn31XhBTvVl0NteSYgqyCFKIfYxtOl1MFaW31yzK7Be++4OsJ/n5vRtxOaI5
+         XrpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718284860; x=1718889660;
+        d=1e100.net; s=20230601; t=1718284862; x=1718889662;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u0OhOvlObTYcevtXo8Z7p/mIFsLXq1uqkU+zyx3S4LA=;
-        b=h6GVXn6ubfqhUTBYfOKPHad8Z65rMdh7Pasq70N+/aZETOvLOF9JSx9CELx/yNkOcJ
-         yfbkP8NgQ84y4JlVuQ7d0hDgsqKtAt2Okr+7c+FLpYF9qfhhHaoLuXfUsz8/Xe++gp94
-         LoT/yiZVIxLq8S96kfXy4NZf6bV4JjU2pAAzDsgbchYa/EmYzyB2AclwaWfNAozp7lC3
-         F6rstVS3yupcILyGKOObuURxwdrStL+O1+2ef9H/zUNOJAsEkeywYIDE+qH8P1LmfErB
-         KK98TcvFuB5fcFeJUKQMOUIGBp/ALNPJz2qHxDBYC7JicUUtC5L5Dhj0RQL6OlZMR+45
-         fYsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvNp8kP5yywGQ1J8gKq++IL7wVga9tZkqq8HMmI290HySiKc9bMDuCxy/JBwpWzWtNFsknGtV71JpVVPwGLw2UnG/4DGCVG0kD3J0o
-X-Gm-Message-State: AOJu0Yz3JQIKqZ0irWbpPlp7vWIhJuClULDv3umF1yo4SJIdfEjAmwoM
-	fGmwShHfkL6+zDRoIqpNn3KOAsM4L9M2E9N912jXML8Otwcm+QPYcsdauNORpmJleZA4EFnQNg5
-	VjgD0HrY7rOlDl7vUInItvnjTSA==
-X-Google-Smtp-Source: AGHT+IFmR5E42s+BCdl2zDYX/0jaaUeTAn+ERNofvz51IQhPRv6eG1U8A9CWU+hty3Xq9QgQmwvTlYwuQ2lHK/2XOVM=
+        bh=85ojJxkNYXxh97Mo9k1gfrYfK0JeNvYJnaS4+QvvHCA=;
+        b=RZxGZZgysjwiZHok4KKjypCL7oa6qQeOXglhtkCl9Ox8g0lf5YPr37i2deJjUukuRE
+         tV3iCVsvuRsHblxRv+TXDoK2nzFXF/TmH9O64KunEzlThoGMuyQ/Dp+AYA+VMEek04f7
+         F2Hq6JCJe4Q8CU5s0QP8f0I1al0h7B9nIaDc/SjSne4C3Q0aKgNMxwf/XcmiPTCgPvZn
+         xm8BGaxQRv8IEJ0sU0/X7Nq+tJGcqpYBeL9YGxZbyjJ9RvWidPbE5+DQkH0hQB5qknOR
+         GrJDOeXCCOgox6dLe89LNpdBKC15UgOMnicYto4QCOzraaP+BfnS3V659ttpJbEmDby0
+         xCEA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/vdGKnTdHdRdHXJOOVb05TrysEDY5YkatykAgpQbPFonC7F9OZv4qt/QdbQN957KmaZGklz6M/IuJ+lBgk6XzRYDj3YAwEaCJYdNe
+X-Gm-Message-State: AOJu0YznO4csDUp+nz/WtMYrMQsxr+xfaREZL6iZZNrxR42pdm2EKVkr
+	pYJMRVVw/2ZMexkNSUvp5TEvmAk+8j6oKrsj/Bnqg+rzOlrreLdNqi6O8R0yhHR1YfCT6WISFhC
+	6bpneuMhzLsyhplZcnTlynB/okQ==
+X-Google-Smtp-Source: AGHT+IEGmcAxjB2wRcZVPwbydQye9U+Lfxf52+t870ONm/t/2enRlN5yWNU9fxSxYfGOvDAZatwr0XKHsQNvtwSMq2I=
 X-Received: from sebkvm.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:cd5])
- (user=sebastianene job=sendgmr) by 2002:a05:6902:723:b0:dff:ee8:14d6 with
- SMTP id 3f1490d57ef6-dff0ee81893mr156506276.10.1718284859883; Thu, 13 Jun
- 2024 06:20:59 -0700 (PDT)
-Date: Thu, 13 Jun 2024 13:20:34 +0000
+ (user=sebastianene job=sendgmr) by 2002:a5d:4e09:0:b0:354:f4a4:6d35 with SMTP
+ id ffacd0b85a97d-35fe8928988mr10512f8f.13.1718284862437; Thu, 13 Jun 2024
+ 06:21:02 -0700 (PDT)
+Date: Thu, 13 Jun 2024 13:20:35 +0000
 In-Reply-To: <20240613132035.1070360-1-sebastianene@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240613132035.1070360-1-sebastianene@google.com>
 X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240613132035.1070360-4-sebastianene@google.com>
-Subject: [PATCH v3 3/4] KVM: arm64: Update the identification range for the
- FF-A smcs
+Message-ID: <20240613132035.1070360-5-sebastianene@google.com>
+Subject: [PATCH v3 4/4] KVM: arm64: Use FF-A 1.1 with pKVM
 From: Sebastian Ene <sebastianene@google.com>
 To: catalin.marinas@arm.com, james.morse@arm.com, jean-philippe@linaro.org, 
 	maz@kernel.org, oliver.upton@linux.dev, qperret@google.com, 
@@ -87,36 +86,62 @@ Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
 	Sebastian Ene <sebastianene@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The FF-A spec 1.2 reserves the following ranges for identifying FF-A
-calls:
-0x84000060-0x840000FF: FF-A 32-bit calls
-0xC4000060-0xC40000FF: FF-A 64-bit calls.
+Now that the layout of the structures is compatible with 1.1 it is time
+to probe the 1.1 version of the FF-A protocol inside the hypervisor. If
+the TEE doesn't support it, it should return the minimum supported
+version.
 
-Use the range identification according to the spec and allow calls that
-are currently out of the range(eg. FFA_MSG_SEND_DIRECT_REQ2) to be
-identified correctly.
-
-Acked-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sebastian Ene <sebastianene@google.com>
 Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 Tested-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- arch/arm64/kvm/hyp/include/nvhe/ffa.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kvm/hyp/nvhe/ffa.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/kvm/hyp/include/nvhe/ffa.h b/arch/arm64/kvm/hyp/include/nvhe/ffa.h
-index d9fd5e6c7d3c..146e0aebfa1c 100644
---- a/arch/arm64/kvm/hyp/include/nvhe/ffa.h
-+++ b/arch/arm64/kvm/hyp/include/nvhe/ffa.h
-@@ -9,7 +9,7 @@
- #include <asm/kvm_host.h>
+diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+index 4eaef673e98d..fdb63b7857ec 100644
+--- a/arch/arm64/kvm/hyp/nvhe/ffa.c
++++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+@@ -457,7 +457,7 @@ static __always_inline void do_ffa_mem_xfer(const u64 func_id,
+ 	memcpy(buf, host_buffers.tx, fraglen);
  
- #define FFA_MIN_FUNC_NUM 0x60
--#define FFA_MAX_FUNC_NUM 0x7F
-+#define FFA_MAX_FUNC_NUM 0xFF
+ 	ep_mem_access = (void *)buf +
+-			ffa_mem_desc_offset(buf, 0, FFA_VERSION_1_0);
++			ffa_mem_desc_offset(buf, 0, hyp_ffa_version);
+ 	offset = ep_mem_access->composite_off;
+ 	if (!offset || buf->ep_count != 1 || buf->sender_id != HOST_FFA_ID) {
+ 		ret = FFA_RET_INVALID_PARAMETERS;
+@@ -536,7 +536,7 @@ static void do_ffa_mem_reclaim(struct arm_smccc_res *res,
+ 	fraglen = res->a2;
  
- int hyp_ffa_init(void *pages);
- bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id);
+ 	ep_mem_access = (void *)buf +
+-			ffa_mem_desc_offset(buf, 0, FFA_VERSION_1_0);
++			ffa_mem_desc_offset(buf, 0, hyp_ffa_version);
+ 	offset = ep_mem_access->composite_off;
+ 	/*
+ 	 * We can trust the SPMD to get this right, but let's at least
+@@ -844,7 +844,7 @@ int hyp_ffa_init(void *pages)
+ 	if (kvm_host_psci_config.smccc_version < ARM_SMCCC_VERSION_1_2)
+ 		return 0;
+ 
+-	arm_smccc_1_1_smc(FFA_VERSION, FFA_VERSION_1_0, 0, 0, 0, 0, 0, 0, &res);
++	arm_smccc_1_1_smc(FFA_VERSION, FFA_VERSION_1_1, 0, 0, 0, 0, 0, 0, &res);
+ 	if (res.a0 == FFA_RET_NOT_SUPPORTED)
+ 		return 0;
+ 
+@@ -864,7 +864,11 @@ int hyp_ffa_init(void *pages)
+ 	if (FFA_MAJOR_VERSION(res.a0) != 1)
+ 		return -EOPNOTSUPP;
+ 
+-	hyp_ffa_version = FFA_VERSION_1_0;
++	if (FFA_MINOR_VERSION(res.a0) < FFA_MINOR_VERSION(FFA_VERSION_1_1))
++		hyp_ffa_version = res.a0;
++	else
++		hyp_ffa_version = FFA_VERSION_1_1;
++
+ 	tx = pages;
+ 	pages += KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE;
+ 	rx = pages;
 -- 
 2.45.2.505.gda0bf45e8d-goog
 
