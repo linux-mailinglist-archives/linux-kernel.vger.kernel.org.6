@@ -1,184 +1,101 @@
-Return-Path: <linux-kernel+bounces-213805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59CC3907AD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:16:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4550C907AF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB0E01F2392C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:16:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74BF1F2168C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1F714AD19;
-	Thu, 13 Jun 2024 18:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDDA14AD38;
+	Thu, 13 Jun 2024 18:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MHTItqr0"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F5mNSRSj"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466071304BA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862FD145B2F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718302585; cv=none; b=Ahpqrgi3k7XJx9UVlZs+W4msGDKApRLMaJhLjDrnVMWqXDpHhEhYpxY+mVahNDM3T702p2+sUBDQ9xtANSBhVwfEVizWxwppVJobbFgqPMVZqRRQRA+/vt3KCgtL1KTOjm3xTDd5VkVGOBJHI1ZCqGPTqpyJtzWoiB/RCC0jKrE=
+	t=1718302695; cv=none; b=p8mmdFFRP+pd8mA6FXqcmzXNDCutDwm4BIZ1nLgPG4uwxxZLHr8YM3N59PeJg1SGO3DDkb0JxHlSOmQip5jdnWO4J2N89XSiDvgttLu0SA+YybcYg47zruerx3L3uS4gb+PY6h5oMVwwIypEd4QD3NXP3apy9ZF4psn5y/zy08w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718302585; c=relaxed/simple;
-	bh=VMV5npPvx2LlJ/v0Vts5oDRx4jTMhD7qJPkKX8wCExc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dquCKiCTSWeAeDjw0xuZaY5cECvE6hKk0l4fvfN3ANAdC21rsyZP+FaFDAZsfOMKHNGfpZx8G8Fgh9vnCfBrJQaJDfo3vylu9JegdNSsScFSjWXAF6m0n1wYfz9me+91YUOdWc46RBuYLiAirT8vmMUgdZRgME1BCMGgIKMzuC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MHTItqr0; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfeac23fe6eso2442377276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:16:24 -0700 (PDT)
+	s=arc-20240116; t=1718302695; c=relaxed/simple;
+	bh=VmpvWSzugIB9sHC+Poxu1Uf7slG8yypxWRCwzH/6k54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=moor+z6VwYQKHZJ7wIX43BuzfGL6XhWgphhMW+tD64n3PsuQdk9lvt56xg8S7ZD+4ZTAaHOXfgBwKSs8EkM5UeJhdO0mvLgGrEfTOpwGKKDYrA2O5IppZw15jxFvZcHU/pBO0co4yqVRbSXXjuV6raK1dllhPP793Bk102nTqgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F5mNSRSj; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so794053a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:18:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718302583; x=1718907383; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HubYKewLWWkCbdNX6Kwg7NPcQhWO6deKo+vfavaox7o=;
-        b=MHTItqr0GeqGwp1JpLq43jq01LcN4VRBo2IuHaYCbElbTmbcu5vo21tyGQ760OpBDe
-         OwPuKRcDxssUN6/U7pCNfsCzweWVCBgbPITtOsGghjEBpNiJ6zxif7+qbE5C7pnT6FWe
-         yZTOAtnKzMWzuRnlDAaMZlHblH6S5X4Pb5YStYpK+YW8DF+QY0F4xUNxH6QZuxKp3BuM
-         0u+RDEWMzylCRj9KJhXUUeuKmS5eG8BhS5XLRVWfMbwDiBQz2EILzMdcs1ZF67rylWOp
-         5kLP15leUAqStIXqFuEn32fvJU0Wtn2Ex7K04SWC4PN2Dc4OmcYyZEi4sfdBlsKDuQzp
-         mCXg==
+        d=linux-foundation.org; s=google; t=1718302692; x=1718907492; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=U32F52trfP/t5Glv8Me8l9/yxhLD4fCfQobPR+5mCxw=;
+        b=F5mNSRSjAu52CLrx04TXMLC4Vhr4g9h8VsX19HDB5jPpAZ5frUAdDnlT7Jp1I9Rd2s
+         V3p002ahCms1yULelSRlJyYF3MJqvzZkgP25Ib+EDbIekl3PKqNJt7KzLAv+0R6UgJD5
+         nlGEHYGDzAIdQS9QQEynfzEckMv2X668eGF2U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718302583; x=1718907383;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HubYKewLWWkCbdNX6Kwg7NPcQhWO6deKo+vfavaox7o=;
-        b=viitRTWaOdmDSx7ce00ATRKWSL4jsqRBLKKC08kZJCO75JotV0rSE9l1saTjEl4tu2
-         DDoLBAAlMSmqKKXXRMLSHFW+kGD5hOh4F0ALhSRDzjPnAjIG7kVeIb4Ocge4wig0g3Eg
-         DmeVJbulrqUQjuByRiikZP2msoc2fTme7wHZVipbZAEPkukqe7NuuFOdf2tcN9tHzIsT
-         VlhZu9M+9DqpPLQsTkkH9gpoSONyuNPg52/3Br3a5ehyhNkwc8veClgsgH1N3CBH2QPT
-         IiSSWp+d04FYuHdc138kGPhNPGmCCHSkDsQKQIRlrn+9c9/qCYuMGRoaww3R8r/XdgvX
-         KlyQ==
-X-Gm-Message-State: AOJu0YzIXqVviKiu30i7zrIUPwnxPsRd9vUWz27LESazq3nBOwzarPsQ
-	Yuywua8zyPD66L5XBvmfGrfaq6l0iQQdiD5zrarRurC42fx3jj8mbn4eUDuMt6+fJRH7jMSaE25
-	9MQ==
-X-Google-Smtp-Source: AGHT+IEpFkCu5iSBXcf5Bl0AwgjGARJpjeA/2ZZwxq9LggA19KheODvNkc7FkwL6B4GvsjAsggv5UiEcpBo=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:706:b0:dff:ee8:14d6 with SMTP id
- 3f1490d57ef6-dff15454a8bmr84096276.10.1718302583316; Thu, 13 Jun 2024
- 11:16:23 -0700 (PDT)
-Date: Thu, 13 Jun 2024 11:16:21 -0700
-In-Reply-To: <20240207172646.3981-19-xin3.li@intel.com>
+        d=1e100.net; s=20230601; t=1718302692; x=1718907492;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U32F52trfP/t5Glv8Me8l9/yxhLD4fCfQobPR+5mCxw=;
+        b=sZo7Hbnpt5Slk+uClCB0WcX3lF3lumWkm9uZdCjkoXTtR48PGbtUWJa0iH1K/Xcdw5
+         1Fv5GeqeG/zJVOHjpG078GDhEsvyQzkvlvS7pDuz8wb884DUi66IG7IB7uYp6a4cff1v
+         TyaAGHfMUfnI+l3PJZbB9czq7JM6N3+ZvsuhzovlziACGeDNgJ9eLtvLe109xXUrQ5pV
+         6CW0bawkVa/dqCFk4XTeHJ2OtVpsLMov1U6eu+zjPXtqrTXxYI9Sui0fQeEdgFJLcSGA
+         nOob3zVAh9Fxw3TpQdiKG5ibRbpPUj/zBc6N2mb+SngOsZk0+opKf299XHJvkIz430fJ
+         sUUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXA6pUXDOeVPO1xCkfqkL8fSeb7/sYeSmnrqWwstAoCyixVb3+JGC2AFDoRvE5pIP6TRTSwoccanH4+6IJwz6s9c9LC2IZxM+TeXjBq
+X-Gm-Message-State: AOJu0YzUF9SItGjX2sFU+VZtgknQeoT7EbKqFudee3E0ehyNC+1wJygR
+	vIoBaYx3aBVb6gHGrPbMKLNLNOjbDzuwKrLkQymZL7kB4XqUeYY12Hua4vdiecge/EyQkO6yP6m
+	rjn7SDQ==
+X-Google-Smtp-Source: AGHT+IHCfEc8rvXtauCpCyx2G5lhN19QKh70C5zGQlst7Z8Jkm4whvjC6sizZcN56nMW722UuVnR7A==
+X-Received: by 2002:a17:907:76d3:b0:a6f:4ae3:5327 with SMTP id a640c23a62f3a-a6f60d17044mr42360266b.15.1718302691118;
+        Thu, 13 Jun 2024 11:18:11 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ed3658sm96704766b.133.2024.06.13.11.18.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 11:18:09 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so793979a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:18:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW/tqvaIyOQjIisfwjmZFD+BQGriHz1ypjssGLbaYkBV9Ymt9P7LHnGrDVHLUXZrj0sa3W/j+//W07JnW0tlxk3kUoEZQVSZVjkWOdi
+X-Received: by 2002:a50:96c3:0:b0:57c:9c5d:d18e with SMTP id
+ 4fb4d7f45d1cf-57cbd6a85e1mr446474a12.36.1718302689163; Thu, 13 Jun 2024
+ 11:18:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-19-xin3.li@intel.com>
-Message-ID: <Zms3dVgcuObZOwRR@google.com>
-Subject: Re: [PATCH v2 18/25] KVM: nVMX: Add a prerequisite to
- SHADOW_FIELD_R[OW] macros
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin3.li@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	shuah@kernel.org, vkuznets@redhat.com, peterz@infradead.org, 
-	ravi.v.shankar@intel.com, xin@zytor.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240613163542.130374-1-kuba@kernel.org>
+In-Reply-To: <20240613163542.130374-1-kuba@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 13 Jun 2024 11:17:52 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiNgwEpfTpz0c9NXvZvLFPVs15LeFfmhAUO_XhQTXfahQ@mail.gmail.com>
+Message-ID: <CAHk-=wiNgwEpfTpz0c9NXvZvLFPVs15LeFfmhAUO_XhQTXfahQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Networking for v6.10-rc4
+To: Jakub Kicinski <kuba@kernel.org>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 07, 2024, Xin Li wrote:
-> @@ -32,48 +32,48 @@ BUILD_BUG_ON(1)
->   */
->  
->  /* 16-bits */
-> -SHADOW_FIELD_RW(GUEST_INTR_STATUS, guest_intr_status)
-> -SHADOW_FIELD_RW(GUEST_PML_INDEX, guest_pml_index)
-> -SHADOW_FIELD_RW(HOST_FS_SELECTOR, host_fs_selector)
-> -SHADOW_FIELD_RW(HOST_GS_SELECTOR, host_gs_selector)
-> +SHADOW_FIELD_RW(GUEST_INTR_STATUS, guest_intr_status, cpu_has_vmx_apicv())
-> +SHADOW_FIELD_RW(GUEST_PML_INDEX, guest_pml_index, cpu_has_vmx_pml())
-> +SHADOW_FIELD_RW(HOST_FS_SELECTOR, host_fs_selector, true)
-> +SHADOW_FIELD_RW(HOST_GS_SELECTOR, host_gs_selector, true)
->  
->  /* 32-bits */
-> -SHADOW_FIELD_RO(VM_EXIT_REASON, vm_exit_reason)
-> -SHADOW_FIELD_RO(VM_EXIT_INTR_INFO, vm_exit_intr_info)
-> -SHADOW_FIELD_RO(VM_EXIT_INSTRUCTION_LEN, vm_exit_instruction_len)
-> -SHADOW_FIELD_RO(IDT_VECTORING_INFO_FIELD, idt_vectoring_info_field)
-> -SHADOW_FIELD_RO(IDT_VECTORING_ERROR_CODE, idt_vectoring_error_code)
-> -SHADOW_FIELD_RO(VM_EXIT_INTR_ERROR_CODE, vm_exit_intr_error_code)
-> -SHADOW_FIELD_RO(GUEST_CS_AR_BYTES, guest_cs_ar_bytes)
-> -SHADOW_FIELD_RO(GUEST_SS_AR_BYTES, guest_ss_ar_bytes)
-> -SHADOW_FIELD_RW(CPU_BASED_VM_EXEC_CONTROL, cpu_based_vm_exec_control)
-> -SHADOW_FIELD_RW(PIN_BASED_VM_EXEC_CONTROL, pin_based_vm_exec_control)
-> -SHADOW_FIELD_RW(EXCEPTION_BITMAP, exception_bitmap)
-> -SHADOW_FIELD_RW(VM_ENTRY_EXCEPTION_ERROR_CODE, vm_entry_exception_error_code)
-> -SHADOW_FIELD_RW(VM_ENTRY_INTR_INFO_FIELD, vm_entry_intr_info_field)
-> -SHADOW_FIELD_RW(VM_ENTRY_INSTRUCTION_LEN, vm_entry_instruction_len)
-> -SHADOW_FIELD_RW(TPR_THRESHOLD, tpr_threshold)
-> -SHADOW_FIELD_RW(GUEST_INTERRUPTIBILITY_INFO, guest_interruptibility_info)
-> -SHADOW_FIELD_RW(VMX_PREEMPTION_TIMER_VALUE, vmx_preemption_timer_value)
-> +SHADOW_FIELD_RO(VM_EXIT_REASON, vm_exit_reason, true)
-> +SHADOW_FIELD_RO(VM_EXIT_INTR_INFO, vm_exit_intr_info, true)
-> +SHADOW_FIELD_RO(VM_EXIT_INSTRUCTION_LEN, vm_exit_instruction_len, true)
-> +SHADOW_FIELD_RO(VM_EXIT_INTR_ERROR_CODE, vm_exit_intr_error_code, true)
-> +SHADOW_FIELD_RO(IDT_VECTORING_INFO_FIELD, idt_vectoring_info_field, true)
-> +SHADOW_FIELD_RO(IDT_VECTORING_ERROR_CODE, idt_vectoring_error_code, true)
-> +SHADOW_FIELD_RO(GUEST_CS_AR_BYTES, guest_cs_ar_bytes, true)
-> +SHADOW_FIELD_RO(GUEST_SS_AR_BYTES, guest_ss_ar_bytes, true)
-> +SHADOW_FIELD_RW(CPU_BASED_VM_EXEC_CONTROL, cpu_based_vm_exec_control, true)
-> +SHADOW_FIELD_RW(PIN_BASED_VM_EXEC_CONTROL, pin_based_vm_exec_control, true)
-> +SHADOW_FIELD_RW(EXCEPTION_BITMAP, exception_bitmap, true)
-> +SHADOW_FIELD_RW(VM_ENTRY_EXCEPTION_ERROR_CODE, vm_entry_exception_error_code, true)
-> +SHADOW_FIELD_RW(VM_ENTRY_INTR_INFO_FIELD, vm_entry_intr_info_field, true)
-> +SHADOW_FIELD_RW(VM_ENTRY_INSTRUCTION_LEN, vm_entry_instruction_len, true)
-> +SHADOW_FIELD_RW(TPR_THRESHOLD, tpr_threshold, true)
-> +SHADOW_FIELD_RW(GUEST_INTERRUPTIBILITY_INFO, guest_interruptibility_info, true)
-> +SHADOW_FIELD_RW(VMX_PREEMPTION_TIMER_VALUE, vmx_preemption_timer_value, cpu_has_vmx_preemption_timer())
->  
->  /* Natural width */
-> -SHADOW_FIELD_RO(EXIT_QUALIFICATION, exit_qualification)
-> -SHADOW_FIELD_RO(GUEST_LINEAR_ADDRESS, guest_linear_address)
-> -SHADOW_FIELD_RW(GUEST_RIP, guest_rip)
-> -SHADOW_FIELD_RW(GUEST_RSP, guest_rsp)
-> -SHADOW_FIELD_RW(GUEST_CR0, guest_cr0)
-> -SHADOW_FIELD_RW(GUEST_CR3, guest_cr3)
-> -SHADOW_FIELD_RW(GUEST_CR4, guest_cr4)
-> -SHADOW_FIELD_RW(GUEST_RFLAGS, guest_rflags)
-> -SHADOW_FIELD_RW(CR0_GUEST_HOST_MASK, cr0_guest_host_mask)
-> -SHADOW_FIELD_RW(CR0_READ_SHADOW, cr0_read_shadow)
-> -SHADOW_FIELD_RW(CR4_READ_SHADOW, cr4_read_shadow)
-> -SHADOW_FIELD_RW(HOST_FS_BASE, host_fs_base)
-> -SHADOW_FIELD_RW(HOST_GS_BASE, host_gs_base)
-> +SHADOW_FIELD_RO(EXIT_QUALIFICATION, exit_qualification, true)
-> +SHADOW_FIELD_RO(GUEST_LINEAR_ADDRESS, guest_linear_address, true)
-> +SHADOW_FIELD_RW(GUEST_RIP, guest_rip, true)
-> +SHADOW_FIELD_RW(GUEST_RSP, guest_rsp, true)
-> +SHADOW_FIELD_RW(GUEST_CR0, guest_cr0, true)
-> +SHADOW_FIELD_RW(GUEST_CR3, guest_cr3, true)
-> +SHADOW_FIELD_RW(GUEST_CR4, guest_cr4, true)
-> +SHADOW_FIELD_RW(GUEST_RFLAGS, guest_rflags, true)
-> +SHADOW_FIELD_RW(CR0_GUEST_HOST_MASK, cr0_guest_host_mask, true)
-> +SHADOW_FIELD_RW(CR0_READ_SHADOW, cr0_read_shadow, true)
-> +SHADOW_FIELD_RW(CR4_READ_SHADOW, cr4_read_shadow, true)
-> +SHADOW_FIELD_RW(HOST_FS_BASE, host_fs_base, true)
-> +SHADOW_FIELD_RW(HOST_GS_BASE, host_gs_base, true)
->  
->  /* 64-bit */
-> -SHADOW_FIELD_RO(GUEST_PHYSICAL_ADDRESS, guest_physical_address)
-> -SHADOW_FIELD_RO(GUEST_PHYSICAL_ADDRESS_HIGH, guest_physical_address)
-> +SHADOW_FIELD_RO(GUEST_PHYSICAL_ADDRESS, guest_physical_address, true)
-> +SHADOW_FIELD_RO(GUEST_PHYSICAL_ADDRESS_HIGH, guest_physical_address, true)
+On Thu, 13 Jun 2024 at 09:35, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.10-rc4
 
-This is not a net postive for readability or maintability.  I don't hate the
-idea, it just needs MOAR MACROs :-)  E.g. add a layer for the common case where
-the field unconditionally exists.
+Your key had expired, and the kernel.org repo doesn't have the updated key.
 
-#ifndef __SHADOW_FIELD_RO
-#define __SHADOW_FIELD_RO(x, y, c)
-#endif
-#ifndef __SHADOW_FIELD_RW
-#define __SHADOW_FIELD_RW(x, y, c)
-#endif
+But for once, the key servers actually did update and a refresh fixed
+it for me.  Whee! Is the pgp key infrastructure starting to work
+again?
 
-#define SHADOW_FIELD_RO(x, y) __SHADOW_FIELD_RO(x, y, true)
-#define SHADOW_FIELD_RW(x, y) __SHADOW_FIELD_RW(x, y, true)
+                            Linus
 
