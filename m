@@ -1,124 +1,104 @@
-Return-Path: <linux-kernel+bounces-213366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A344907440
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:49:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146AD90745C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423D11F237C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:49:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAB921F23D1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5631448E6;
-	Thu, 13 Jun 2024 13:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E2014533F;
+	Thu, 13 Jun 2024 13:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zz/MVZS9"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYHM4seq"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07294DF71
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF56145323;
+	Thu, 13 Jun 2024 13:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718286581; cv=none; b=EVo4tOE7jVyS03wDUO1RgpvXVRmJgDmRdRvGrVBJgavPIjgtu4u3AjgYGhGa1NL98lvZGR3diZ8oPUDL5dv3SBlmIArdejTUVPlCxQ0/qR8kRbeoP0MMWC2mpzR+zBcINXMCwGRdSqFIP8wLDgkJJf3oYWN09GVJvNTlkQpWCzo=
+	t=1718286657; cv=none; b=jo/ojfxM9atoN4DNVwDBPOsAyO+i3GWcv+QBRi6j6j1fMVTeTbi8pB/3DdY28yoDfugi1HYDumSUrCMtC3mA5JjHBFNyRsSGnAVylRO8OybbsPEcXgeEzSTENpqdwce4aIabmOSmgg5/HllLUYF3ISyjlluenF9KongpUtv3AP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718286581; c=relaxed/simple;
-	bh=ZqZ5SaCke+0+f3Zq0bwbTWT57JT0Y++Oi2Zpy5Uf27I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SaWdCmmoW2yGvxg7AwOlw0EOMkbtpLaY4rueTp61L1kHSRFGhT7UBVmBtl1k3NejrrHNr9Sjzj1Rb1GaFw6zywskOKcY7rE8vvOmHbfWS7juJzds6EZg22ml+jSBxpCnHNv9x4Ebp+on91lKnrAb6lEeOMg+1oxjPWJ/UYO+9Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zz/MVZS9; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6f21ff4e6dso175731066b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:49:39 -0700 (PDT)
+	s=arc-20240116; t=1718286657; c=relaxed/simple;
+	bh=9F9GZvswwYDVFAbbt3vHvH8lDLTQkljjJ35nSXn/t4Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C/4nOe737bGchqT6IbuoDeGC55ZeB76dVTphY/l1P7p+/GYeiysByF/ppoYlsgVAhrzbJyij9R9TIVNv7rEAYH8PymBtBVEuBAKdyKUIntvQioBGzqmND/4L00oR7hEJpDu6NLQ9JCk5UW3rXb49BSYmYcJ1Y+kCOyChhXB0WU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYHM4seq; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52c82101407so2077668e87.3;
+        Thu, 13 Jun 2024 06:50:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718286578; x=1718891378; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yEvA9jroZsDs24LkJE27e1G6AbVYrGCtuXUJX4MNe1s=;
-        b=Zz/MVZS9t3dUIbQHCVl1fiIqORRBTmPwWt44TZ59hXC215aqtGVLjAAYUay6dH790X
-         aT07kvkVBtEyA4LDq8JakFWWPX6O+NiNr350Lw/9KNktZSRM7xtav7Ok6+xQiXuvmOgm
-         JIqJ7n5AWSsJJLxM6/2aTHf3kVi3zhZL7zk1VeO6aCIQsVtVy1TXieuD7ooWSVShkY71
-         /SV93pZPSqzhcY1JZN0PqXKVUIhTgr+37bT3YJ8PPTCI+Tyyn67FOtZ7NG1ndAD3HBk4
-         RU5uvFeiV4wSpOOGGnSvlYc7dwJDYJ2UYg6Lsk2NVleULL1Pg9ItB69HHttEpkyQS3UN
-         epAw==
+        d=gmail.com; s=20230601; t=1718286654; x=1718891454; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9F9GZvswwYDVFAbbt3vHvH8lDLTQkljjJ35nSXn/t4Y=;
+        b=KYHM4seqSirUqdPIjhmsfpeJBTqZKjTfeB+xzt0cWg1cKH8K5Z8WdDaHeUsfcEifhP
+         yXuu1EfNZM00tMQaVTSfSQ5uN1eWz+UIUJhRd9qlzJyM3IO7lPdjyrRFMayokmGo6qfN
+         t8VwI7ZAb2VEHIDBtBVivGZTwxQ5PMDN8syDkG0nuEW7frIdCMzqgbLr58ZZQdX2xziU
+         2ZxD8QZwMmqcHy4S3Hs0j8SCgS+znAT/51THkZo3ZtYs5YDRsee7II+vSuH25haOpQlS
+         L5HQVNUM6zskjvWhK0X0MIDIZMiUzuh5k7dKWbhxf8VHXY94Kzu9GxZ00b+qENSMPOwp
+         Obrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718286578; x=1718891378;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yEvA9jroZsDs24LkJE27e1G6AbVYrGCtuXUJX4MNe1s=;
-        b=TAfIqLIISgqbWEKaYfB97jdsY7EvAOmZwoWXexyW7Z8/rREngLg0A7MX21G8imzi0K
-         FPOzPLm5J0rKqRhk7ZuiN67vDa9nc0lsYfnwWN1RfMwsPeQslOhduzUME4F4e8sB9v3B
-         7akecwb9j8zVOFjrayjFvcB2RlLsGRBiT9MMx7l1cUyQW3K/cvXQ1qDONWH2zZCUgk51
-         3D6iEwrIFG6HDJ6YTenpMm8Jm03g5JlKkjAK0zNfigmTtEIjeQaaFgBXjjft01yT2TZn
-         046zSwCy/s92QyCLI3/YKVm6GyHQHs3pWq+7Lkl8T88ibVBPcQ8xG8hR9qXY+4iet0PB
-         U+hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMg6HBg9uma5J0OV9veUji70Gk1g+fVsMzBqkZJXGSRjqHSVi1EHCNVIP2EBd2LodjqUsXu17ev1X1lt2hvezMD8Eo5onJ/KG714ZG
-X-Gm-Message-State: AOJu0YzK58W92dnUtoAoC4g3PUVxaveXyoG3Ul0fBKrJZ8sL1PuUrhwP
-	TtzebEj9bl09U1J9AwUmcnvbAKFr/rvN6Y+V608OQUIv2ovI7Xf+mqoqBVoxRCI=
-X-Google-Smtp-Source: AGHT+IE8JSarZGMRvnKm1sM0hW1gVfIATdlYWc5pmUAEWGuxrgcsVbMkkFTyUXFdWA7D5wJfcseu7g==
-X-Received: by 2002:a17:906:517:b0:a6e:2a67:7899 with SMTP id a640c23a62f3a-a6f47f7fc60mr284236566b.35.1718286578234;
-        Thu, 13 Jun 2024 06:49:38 -0700 (PDT)
-Received: from krzk-bin.monzoon.net (46-253-189-43.dynamic.monzoon.net. [46.253.189.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56fa4030sm73785166b.207.2024.06.13.06.49.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 06:49:37 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: arm@kernel.org,
-	soc@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] MAINTAINERS: ARM: axm: add Krzysztof Kozlowski as maintainer
-Date: Thu, 13 Jun 2024 15:49:10 +0200
-Message-ID: <20240613134910.7862-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1718286654; x=1718891454;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9F9GZvswwYDVFAbbt3vHvH8lDLTQkljjJ35nSXn/t4Y=;
+        b=M6oY5E5zWH4CDb5cK4+c+0ZnaQOZYuhU9S+ZrCy7Hs2MkYrNnoCt3kH+Q+AGuVqyMO
+         46bry6qkPoYxiZYYK9QWlYHghitFkyY34+1AQ1y9ZVr2BG6Jt3BPEj0C86BtLaPS3iIl
+         RoNudbYBTUL2dkqeKizEA2rLnjWUzuPvYpVcxePtC4D/+XIIYwfX4lX82ttEla53UHu/
+         jmzN6NAk/dwIxo/y/Bu525pDKlRahovI61bGabUmaxZXYBAXzMSpOSJxEGWeOBmKZDDE
+         nWY4vRXFT3rS6yrsFuVokR0O/tryXECw4T3eWI/ExvBNdtAUNUSBrkZFXtjVxtd5xZcW
+         9YwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmcoMjP23eGRwndIK01m+W3E/DxK3GecCSwlmojA3gCQtAvhYGdxCvG0G4EPtW1LHS24PHaQA10tAW/rezyW7uzM+vBYpOrBxjDpPwkSriEZjB8zDdsxmtwOvHHYNToNsNAXBTOXFVoR63kA==
+X-Gm-Message-State: AOJu0YzOe3H0ZMQKYxQNRe2qFjTDfvZ2iVVHE+IQ8cX9aSfS2qpRdYNo
+	w9Sq69Qqgbk+RC090lEZxu9Al41K2InVaZJrAs0KwIN0qzNrapWA+3+FG5+rIH1v7N1Vx7V3K7f
+	KgGzPTqDHIrVWZXYEaysEhQd9LuA=
+X-Google-Smtp-Source: AGHT+IGZN8t8ue/zUqid27C61dRQ0yw20F4gYn1EJB4PKwUVZ9Zto5bkDepGGNJi8JMi7LcM1ivhQvPi1EqhTl2iuMk=
+X-Received: by 2002:ac2:5de6:0:b0:52c:8b69:e039 with SMTP id
+ 2adb3069b0e04-52c9a3bfabbmr3601833e87.4.1718286653650; Thu, 13 Jun 2024
+ 06:50:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240613001215.648829-1-mjguzik@gmail.com> <20240613001215.648829-2-mjguzik@gmail.com>
+ <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
+ <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
+ <5cixyyivolodhsru23y5gf5f6w6ov2zs5rbkxleljeu6qvc4gu@ivawdfkvus3p> <20240613-pumpen-durst-fdc20c301a08@brauner>
+In-Reply-To: <20240613-pumpen-durst-fdc20c301a08@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 13 Jun 2024 15:50:41 +0200
+Message-ID: <CAGudoHEPRrxGnhsztCOQKajXKFqu3oVcQEWgwmvYcpdfocvSKw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
+ be released
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is no maintainers entry for the ARM LSI AXM SoC, thus patches end
-up nowhere.  Add such entry, because even if platform is orphaned and on
-its way out of the kernel, it is nice to take patches if someone sends
-something.
+On Thu, Jun 13, 2024 at 3:46=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> > All that aside, you did not indicate how do you want to move forward
+> > regarding patch submission.
+>
+> I've picked Linus patch and your for testing into the vfs.inode.rcu branc=
+h.
+> Was trivial to fix your typo and to add Linus as author with your commit
+> message. Let's see what syzbot and that perf bot have to say.
 
-I do not plan to actively support/maintain AXM but I can take odd fixes
-now and then.
+sounds good to me, thanks
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e7fd595b8f5e..60f2815f0453 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2127,6 +2127,14 @@ F:	arch/arm/boot/dts/aspeed/
- F:	arch/arm/mach-aspeed/
- N:	aspeed
- 
-+ARM/AXM LSI SOC
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Odd Fixes
-+F:	Documentation/devicetree/bindings/arm/axxia.yaml
-+F:	arch/arm/boot/dts/intel/axm/
-+F:	arch/arm/mach-axxia/
-+
- ARM/BITMAIN ARCHITECTURE
- M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--- 
-2.43.0
-
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
