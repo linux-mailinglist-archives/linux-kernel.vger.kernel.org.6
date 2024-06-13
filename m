@@ -1,164 +1,282 @@
-Return-Path: <linux-kernel+bounces-212942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8313A90687E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:24:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A819068BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27B81281867
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:24:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB6D1F2611D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3925713E3F5;
-	Thu, 13 Jun 2024 09:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A4913774C;
+	Thu, 13 Jun 2024 09:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="STeTf5Nd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="2tZRMBmt"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC4E13D8A6;
-	Thu, 13 Jun 2024 09:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6B413DDB8
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718270641; cv=none; b=VOClZQ7nuqHA/OrhiObssUl8NjSWG1PlKBJoOxAA7ki/fWPhXgBq5H+ObMqWceUX0CFfWICiTPILafRqWeZBhlFtDw9x0tJKSo1MCJ8hwL0h0gQcDQiYK6hfrIXKy9SeB/n8n/jj2TQKgMlQSEZ3OaydS+6GzZuzX+OUwl/mVjo=
+	t=1718271005; cv=none; b=M2pDl8nuooHCCYgSxqcgViO+Tw/DhICp1B1mGCW+vUnOoW2S6NOa3zQOS1o5BBvNlEZsQesXokox7/WnYoLVKXq57yXwthOZI0xJ/+rKuEBEd09YXQnrYEJfetU0PbuA6C/Gnlb9dRiQi5dgRGyh5aW2opxmE9SuZo2w4bvy2Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718270641; c=relaxed/simple;
-	bh=7fMQpIku4vo8Gr+0QKJESH9aZGoPywmOAdN+PpVROoU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ImPIuUWa9Moptb7l04o7IzK2vG2W+3lv2LDYWCkeKvxTVrOLHFFAd5fIKbk8VY2B7C7DUFNIBJ/1sXVvhCng/t0Opu1M24YZYxHP+wda7b11oqZ3nTpokxnJ1Obz0gGe9W5BUxZnnOwrldpiSPziOY1JlFwfBCj7cf4u9bFAM1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=STeTf5Nd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C58B5C2BBFC;
-	Thu, 13 Jun 2024 09:23:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718270640;
-	bh=7fMQpIku4vo8Gr+0QKJESH9aZGoPywmOAdN+PpVROoU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=STeTf5NdCO/DfNOrY4rD3T7+5E74WzYqoE8ZBl/L3nTkHxXCyfnU15HCSUOroIAub
-	 80gCn0TUbcl5ohTymor7dXIsV6TVqebY8RQbPzheqKsiZhUvLcdO5FvT3o/oxDB25A
-	 IfxCRBmLo0mhNxtVMuwsMte64e/aJKhBY75e2nDbnVlDzTWsHaHJx4woMjxYMshftn
-	 YRpVe8lIDWCNM5p5hVNzOzZKpJjgSy7muhFVASOU6RSTY8T8KpQIXH6EyVj5oNMR1d
-	 NqLae79Ifx8Sdsz0Xf8ApWYKhdbt7JPVTKTih/1/Em/uNvo+gVjzpgpMXklIFvLeCP
-	 cp414GqmUpq6Q==
-Message-ID: <0e7bd7f2-b445-4a59-b456-8d03af121a8e@kernel.org>
-Date: Thu, 13 Jun 2024 11:23:50 +0200
+	s=arc-20240116; t=1718271005; c=relaxed/simple;
+	bh=r70M0JfsYwTJ3NX7KJwbL08Y8oQ3NMtqgodl6EYlEYE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DHTjas39E5UDD51q1K7TK3gMM/NFu9sZgNp1Vls7Z0yZ20xytvfhLAVqlCv4TucNgcDHBhvO+dCuXdH09gdw5AZakHghCofa6mGvul3Kwu/mKeR9Ec/VoVG4EEEWSUC7sJjR54Uok2dQWRxpmgMle+are9zNeywfwts97aLrBV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=2tZRMBmt; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b06b78e716so4997906d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:30:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1718271003; x=1718875803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5M3ELKqqsvIZfzOpsu+gAgFZkgR2tBXp2Hwr3Ne0u3I=;
+        b=2tZRMBmtyS/sMy5DahrXVexnJrsSbZEaGBuaf9no5PLZAopW+CqaM0ALoKiBcMjZTg
+         mUMoNEVtzLgPMxaBmIDgRjWP9KXjGl6VkYmWLZ+BTVU7hA7UM9bg3XOUOjBiYwsxsmO9
+         MC5EUxnKpm0HsjjPVjWMNWNKGT39728nCD2alMRk3ekiwkqob50tAnkCqMZ1pmPcuoPT
+         fTvfVHgDPAmJ6sr3bxIgXimxEQJ9b+2PamYE/1jYFiBXUMRoVTXy4lIATq6jg/kjlf94
+         F7zKXG86xTVACfXiw6DEQt3N7UO3gWmQRynyToXawQfkvnmNJcDelB9LidyAj6BGlTEo
+         aX+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718271003; x=1718875803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5M3ELKqqsvIZfzOpsu+gAgFZkgR2tBXp2Hwr3Ne0u3I=;
+        b=Zt5Ejm9sxtBuLjjQYlUl0Tl/ty61t41SvIwnLH9uZKkeR4U4VQ4t3wiCF1sqt/AsQj
+         TUIjD+OAbX0Lep4d55m/jAq/anklFbDA+9F839wxQfEdfqSqp56XW6N4d+A18K9qGorc
+         SvI+VSJeYZIUeHMOJHk2yxlG6mqmNbcJ+uWfaay2SrIaqFUXeInomHnFuLvSMFBEzsml
+         SzMURUfb1UqY2zVGu3L/FKWeq2TOraYpP+F0wTDIXVEAlZW5QqauOuvgHAKbnhYfKuPD
+         v3VSkQbUOahvleev8gPk7O9l/3MfO9OsKK4yi+lM2Fh8U5i7VNWbU1xDxhexfMCWzqQC
+         ysJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmZKYPSkb1Ms1oWgVeiKD90f+oZTr+9Mh8Q5jEOxcLMTG/9hLyA1MBHmadnwBX0uD29Jgthb4rVPu8Ar/SMhQHJbc1RITNNXTvuTzc
+X-Gm-Message-State: AOJu0YzmPtzSDEcxPB9xYwC8HA9w2fDFb+O98C89j8pNSRQ1uxmGcdtG
+	LxN2yXKUlGuExjeW0KJwFzLkVlzLTxI5jC+9yZfQ6vOQ6yte4oFlHmCcw5qPvKMiot3pGqa4JJK
+	Q/jI=
+X-Google-Smtp-Source: AGHT+IGmSpq9YMGFtxsPUpIW0o7k9pJEniFC6iQvWdkCgTN8WIHucjZE3FLxQmGuHABAtJNFPBU+Rw==
+X-Received: by 2002:a05:6214:4487:b0:6b0:90b4:1ca9 with SMTP id 6a1803df08f44-6b191778e7cmr46679026d6.6.1718271002972;
+        Thu, 13 Jun 2024 02:30:02 -0700 (PDT)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com. [209.85.222.171])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5c20f53sm4888386d6.52.2024.06.13.02.30.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 02:30:02 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-797f222c9f9so51098585a.3;
+        Thu, 13 Jun 2024 02:30:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1BEnmaqWdxtnW46RtJ0Bb1nQK7kjbEkpYcYIPO+RMClQ9l+TeHajoxXyPJDGtFg15lcsxx4yyEvNx8+oRI5wc6k3/fv+iIRG81YDN0Q6CwJ4D6v5f4DrhXpm2Xce54O2SmKUR3dzZBZdBEKOvQQT22Ax8CCV9VNC2Hn94lmmd14vLL7K1
+X-Received: by 2002:a05:6902:2207:b0:dfe:6002:683 with SMTP id
+ 3f1490d57ef6-dfe67063c46mr4743823276.32.1718270658168; Thu, 13 Jun 2024
+ 02:24:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] dt-bindings: display/msm: Add SM7150 DPU
-To: Danila Tikhonov <danila@jiaxyga.com>, robdclark@gmail.com,
- quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org, sean@poorly.run,
- marijn.suijten@somainline.org, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- quic_rmccann@quicinc.com, konrad.dybcio@linaro.org,
- neil.armstrong@linaro.org, jonathan@marek.ca, swboyd@chromium.org,
- quic_khsieh@quicinc.com, quic_jesszhan@quicinc.com
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240612184336.11794-1-danila@jiaxyga.com>
- <20240612184336.11794-4-danila@jiaxyga.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240612184336.11794-4-danila@jiaxyga.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
+ <20240612-6-10-rocket-v1-2-060e48eea250@tomeuvizoso.net> <ffviz6ak6qsn2reg5y35aerzy7wxfx6fzix6xjyminbhfcguus@clszdjakdcjd>
+In-Reply-To: <ffviz6ak6qsn2reg5y35aerzy7wxfx6fzix6xjyminbhfcguus@clszdjakdcjd>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Thu, 13 Jun 2024 11:24:06 +0200
+X-Gmail-Original-Message-ID: <CAAObsKCx+r5UuESnrPem1Rb1-BF4i8FVwu6uozWhABOWoq+M4Q@mail.gmail.com>
+Message-ID: <CAAObsKCx+r5UuESnrPem1Rb1-BF4i8FVwu6uozWhABOWoq+M4Q@mail.gmail.com>
+Subject: Re: [PATCH 2/9] iommu/rockchip: Attach multiple power domains
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/06/2024 20:43, Danila Tikhonov wrote:
-> Document the DPU hardware found on the Qualcomm SM7150 platform.
+On Thu, Jun 13, 2024 at 2:05=E2=80=AFAM Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
+>
+> Hi,
+>
+> On Wed, Jun 12, 2024 at 03:52:55PM GMT, Tomeu Vizoso wrote:
+> > IOMMUs with multiple base addresses can also have multiple power
+> > domains.
+> >
+> > The base framework only takes care of a single power domain, as some
+> > devices will need for these power domains to be powered on in a specifi=
+c
+> > order.
+> >
+> > Use a helper function to stablish links in the order in which they are
+> > in the DT.
+> >
+> > This is needed by the IOMMU used by the NPU in the RK3588.
+> >
+> > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> > ---
+>
+> To me it looks like this is multiple IOMMUs, which should each get
+> their own node. I don't see a good reason for merging these
+> together.
 
-In general, this should be before MDSS, because it defines fully the
-compatibles already used in the MDSS schema. For multi-binding devices
-it always starts with children and ends with parent/top schema.
+I have made quite a few attempts at splitting the IOMMUs and also the
+cores, but I wasn't able to get things working stably. The TRM is
+really scant about how the 4 IOMMU instances relate to each other, and
+what the fourth one is for.
 
-> 
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
->  .../bindings/display/msm/qcom,sm7150-dpu.yaml | 143 ++++++++++++++++++
->  1 file changed, 143 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.yaml
-> new file mode 100644
-> index 0000000000000..1a44cad131a72
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.yaml
-> @@ -0,0 +1,143 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/msm/qcom,sm7150-dpu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SM7150 Display DPU
+Given that the vendor driver treats them as a single IOMMU with four
+instances and we don't have any information on them, I resigned myself
+to just have them as a single device.
 
-What is DPU? Such acronyms should be explained in description or
-expanded here, if there is space.
+I would love to be proved wrong though and find a way fo getting
+things stably as different devices so they can be powered on and off
+as needed. We could save quite some code as well.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> I will still review this assuming there is one. That would require
+> to first of all update the DT binding:
+>
+> Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
+>
+> 1. It does not allow using "power-domain-names" property
+> 2. It limits the number of allowed power-domains to 1
+> 3. It limits the number of allowed base addresses to 2
+>
+> Looking at the DT patch you also add more interrupts and clocks,
+> which are also limited by the binding. You should see a bunch of
+> warnings when you check the DTBS via 'make dtbs_check'
 
-> +
-> +maintainers:
-> +  - Danila Tikhonov <danila@jiaxyga.com>
-> +
-> +$ref: /schemas/display/msm/dpu-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm7150-dpu
-> +
+Oops, yeah, I was limiting dtbs_check with DT_SCHEMA_FILES, now I see
+the errors.
+
+> >  drivers/iommu/rockchip-iommu.c | 36 ++++++++++++++++++++++++++++++++++=
+++
+> >  1 file changed, 36 insertions(+)
+> >
+> > diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-io=
+mmu.c
+> > index f5629515bd78..673b0ebb6262 100644
+> > --- a/drivers/iommu/rockchip-iommu.c
+> > +++ b/drivers/iommu/rockchip-iommu.c
+> > @@ -6,6 +6,8 @@
+> >   *                   Daniel Kurtz <djkurtz@chromium.org>
+> >   */
+> >
+> > +#include "linux/err.h"
+> > +#include "linux/pm_domain.h"
+> >  #include <linux/clk.h>
+> >  #include <linux/compiler.h>
+> >  #include <linux/delay.h>
+> > @@ -115,6 +117,7 @@ struct rk_iommu {
+> >       struct iommu_device iommu;
+> >       struct list_head node; /* entry in rk_iommu_domain.iommus */
+> >       struct iommu_domain *domain; /* domain to which iommu is attached=
+ */
+> > +     struct dev_pm_domain_list *pmdomains;
+> >  };
+> >
+> >  struct rk_iommudata {
+> > @@ -1186,6 +1189,7 @@ static int rk_iommu_probe(struct platform_device =
+*pdev)
+> >       struct resource *res;
+> >       const struct rk_iommu_ops *ops;
+> >       int num_res =3D pdev->num_resources;
+> > +     int pm_domain_count;
+> >       int err, i;
+> >
+> >       iommu =3D devm_kzalloc(dev, sizeof(*iommu), GFP_KERNEL);
+> > @@ -1271,6 +1275,35 @@ static int rk_iommu_probe(struct platform_device=
+ *pdev)
+> >       if (!dma_dev)
+> >               dma_dev =3D &pdev->dev;
+> >
+> > +     pm_domain_count =3D of_property_count_strings(iommu->dev->of_node=
+, "power-domain-names");
+>
+> pm_domain_count =3D device_property_string_array_count(iommu->dev, "power=
+-domain-names");
+>
+> When possible using device_property_ is prefered, since it allows
+> reusing code for systems not using DT.
+>
+> > +     if (pm_domain_count > 0) {
+> > +             const char **pm_domains =3D kvmalloc_array(pm_domain_coun=
+t, sizeof(*pm_domains), GFP_KERNEL);
+> > +             struct dev_pm_domain_attach_data pm_domain_data =3D {
+> > +                     .pd_names =3D pm_domains,
+> > +                     .num_pd_names =3D pm_domain_count,
+> > +                     .pd_flags =3D PD_FLAG_DEV_LINK_ON,
+> > +             };
+> > +             int i;
+> > +
+> > +             if (!pm_domain_data.pd_names) {
+> > +                     err =3D -ENOMEM;
+> > +                     goto err_remove_sysfs;
+> > +             }
+> > +
+> > +             for (i =3D 0; i < pm_domain_count; i++) {
+> > +                     err =3D of_property_read_string_index(iommu->dev-=
+>of_node, "power-domain-names", i, &pm_domains[i]);
+> > +                     if (err) {
+> > +                             kfree(pm_domains);
+> > +                             goto err_remove_sysfs;
+> > +                     }
+> > +             }
+>
+> There is a helper to read a string array:
+>
+> err =3D device_property_read_string_array(iommu->dev, "power-domain-names=
+", pm_domains, pm_domain_count);
 
 
+Thanks for the review,
 
-Best regards,
-Krzysztof
+Tomeu
 
+> -- Sebastian
+>
+> > +
+> > +             err =3D dev_pm_domain_attach_list(iommu->dev, &pm_domain_=
+data, &iommu->pmdomains);
+> > +             kfree(pm_domains);
+> > +             if (err < 0)
+> > +                     goto err_remove_sysfs;
+> > +     }
+> > +
+> >       pm_runtime_enable(dev);
+> >
+> >       for (i =3D 0; i < iommu->num_irq; i++) {
+> > @@ -1292,6 +1325,7 @@ static int rk_iommu_probe(struct platform_device =
+*pdev)
+> >       return 0;
+> >  err_pm_disable:
+> >       pm_runtime_disable(dev);
+> > +     dev_pm_domain_detach_list(iommu->pmdomains);
+> >  err_remove_sysfs:
+> >       iommu_device_sysfs_remove(&iommu->iommu);
+> >  err_unprepare_clocks:
+> > @@ -1310,6 +1344,8 @@ static void rk_iommu_shutdown(struct platform_dev=
+ice *pdev)
+> >               devm_free_irq(iommu->dev, irq, iommu);
+> >       }
+> >
+> > +     dev_pm_domain_detach_list(iommu->pmdomains);
+> > +
+> >       pm_runtime_force_suspend(&pdev->dev);
+> >  }
+> >
+> >
+> > --
+> > 2.45.2
+> >
+> >
 
