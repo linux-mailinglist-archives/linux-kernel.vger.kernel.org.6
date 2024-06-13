@@ -1,110 +1,94 @@
-Return-Path: <linux-kernel+bounces-213715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86983907971
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:09:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CEE907972
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22C34B22C99
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:09:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D5D71C22BF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0F9149DF4;
-	Thu, 13 Jun 2024 17:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C66149E01;
+	Thu, 13 Jun 2024 17:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Jgf3hbn/"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uSLLD7t0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8661494D1
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA04149C5A;
+	Thu, 13 Jun 2024 17:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718298577; cv=none; b=bqYH4xJ8Ov0zck3fqj3VvsfBgbGZm9pZLCKDkIs6a4xW88o2+x+SHw3KrJmEONxePenMeNbXYOp3KtiHA5bcm+4FXEWcCGWnR2CHJdy3REQsHENlxcUN9i7wZ8GbLYgfgxwhSqVvA/NxMNhSLKYKpTRcpek8l5dJr2oAje7fDWQ=
+	t=1718298595; cv=none; b=jmfb8FTZo0804pc8cQfvaQGLrHb/raZ6qlJlwuZiFqlw6I9jUgkb/gnuYz9c/9DyjYPCZCpVwWXda/1MKuY4DQOQ2mOzWU8Hzvh1jLwXIfPtrDltsxKdQcJuINuXaMj72UDoxb8jJlHdP817lheh+/Bgrai3nD9vBveivW0IOnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718298577; c=relaxed/simple;
-	bh=dro3L3OTKiADisnYmjVTVIsNtkmJ0Vg0GlldwOjDGkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eRMwt8vbKGatuQRIizsY08zcTTebngJGXhYMLPMAIatJFlQh6UPjybiMcm4CNcCa4sujM/VRoSVQmfylmtHfNL1fe6JpSYhkA0JzmbUc1wHh6ce12oUQcfWYhA8DfavTNdmce3h3P4BI+9u1F6UkBrXceH7AgkZGy6yTf8pq3l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Jgf3hbn/; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57c8353d8d0so1517770a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:09:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718298570; x=1718903370; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yUKnSByiq7IJzswYOJlBbKH9FX6XnqL9Au/j9R0AESA=;
-        b=Jgf3hbn/RMiqDr5/467CKsfroUPCQ9VbBnJv3EDMHUroRU6+YhgO8TbFZ2xJqeR29k
-         sjbcRFsZzeje5dLJwBPwCEI2sW3RKik4NCTvUhDflynU9pxi+KEteK1Fkw1BHMJ+Ozmy
-         yDs8DPrn2iMA6xrzj9zClNpRP25dFmOctbu7s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718298570; x=1718903370;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yUKnSByiq7IJzswYOJlBbKH9FX6XnqL9Au/j9R0AESA=;
-        b=EUSFaRyUGT/9JjU9yx/cEQu7SLG311gvLrVKPVfEXVpBZD0RU9KG8ZLBKaUogObFNO
-         u/TkL6gfdysQYfNJLeZRnnMcK/cZsSdF8wlU22r3BrxB9icpdzjpFP5x5mfpdQncx97N
-         hyRCjmJwhQQqWDMkrdvTSUr+l4a6r7uacE1Ll1ogrRjE5gSG3R/hNIEYsQU932Vj0vTX
-         dx0jF/grEbzc4u6ZShgqlsi3b8oEHz54+ciUegRWk5me5Y9tgn18o6NxtwIxsVjRG6qk
-         ZHgzt8gSCHLRqAsRhrlk0rCXFDVfcXCg8oHQ9CvUGUMXGT5J2kg1t7xiKSs4LcN/TWzK
-         Kv1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWPL996MYlGFHcsMIIOvbUL366/+8brZJLHe7Nrt45Xku2KVsJSIUQlwj+mWWAJWBqNh0Dddyn4R154ytyUvn3SOVGMVaqm5tGOx4La
-X-Gm-Message-State: AOJu0YwmtcMGigoZrJrLg464MHNlnEfiIj/J5k5HE+fcSfdM2eAGr3yh
-	h2aoo7rTxoQGKRAW2bo8ctqvgAy7oY7aoSNuLFWcfhwr0FRpD8ynow662S+YtQawqs8ldIQeGQU
-	psr8IkA==
-X-Google-Smtp-Source: AGHT+IG5zlE4nHnYcA+ENDar4kxlWMn0oSs8gG1v/jR+lTLiFD8W1iNz6gPipwsFO5WlD7rVPMhrAA==
-X-Received: by 2002:a17:907:10d2:b0:a6f:147f:7d06 with SMTP id a640c23a62f3a-a6f60de642emr21261466b.77.1718298569727;
-        Thu, 13 Jun 2024 10:09:29 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db681fsm91343366b.72.2024.06.13.10.09.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 10:09:29 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6f0e153eddso180903466b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:09:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXxGkGeObaSN0mkM3qniDjefWYgmrhmIqUkdTK20klSaqZrrTH3BQ9Ws9H0fi3uZi9QmHV6rFJchWunPZwqpb77IXGfeyB5lUMll6e7
-X-Received: by 2002:a17:906:c7c5:b0:a6e:f645:f595 with SMTP id
- a640c23a62f3a-a6f60d2bcedmr25144366b.32.1718298568691; Thu, 13 Jun 2024
- 10:09:28 -0700 (PDT)
+	s=arc-20240116; t=1718298595; c=relaxed/simple;
+	bh=sawuofgiTla22xNeYJ7qMOaw4kLeel2V7h6pjTPcsy4=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rlCY80xnw9f68x1KTOGDw3gPitMzr5zpl6P2mhTSGk7R6sQg22iMJRRAMwnPcL+duanyfvA4vdqv3BACkx7sXa+kmNy7kCzc9CYuwueyS4ck0p/bLXrqIQDFZqTuB3iov3xlPv6MI3fvwXyP8kkTgoog8uYn1uyCwRgnYISrAFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uSLLD7t0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E585AC2BBFC;
+	Thu, 13 Jun 2024 17:09:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718298594;
+	bh=sawuofgiTla22xNeYJ7qMOaw4kLeel2V7h6pjTPcsy4=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=uSLLD7t0C1sZaoqbsr/ALoQz7x5p/xxV5cigTZ7XYHqwypv5JZvPJFYSwZkP2FL9N
+	 8uC65AYK11K2EKbEz74W951XcmEeJkVd2sc5Odf0zviaBSyQ3/FeUq+p2u6CJfp0Ax
+	 3JqYIHeMZrdY0QyZQNysWBTYl75mLuSAF4D4uz7efP9PzRgT2WxRIYsUdcefM+CpcE
+	 FIr2Y9Y7GnlV6nK6W8749oTAB6sFzTu6Nozt050HrZ/5gZbK5xxhik4XXzKfPjpx2r
+	 rlR7T3ZNbpntTiCOG6ODOfKMRzLkghYwA2Ds1ALeoUN3LMEw2FoMgAsaJoEH3UmSlb
+	 TlUiENI91I4xA==
+From: Lee Jones <lee@kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com, 
+ llvm@lists.linux.dev, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240606143648.152668-1-krzysztof.kozlowski@linaro.org>
+References: <20240606143648.152668-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/3] mfd: max14577: Fix Wvoid-pointer-to-enum-cast
+ warning (again)
+Message-Id: <171829859167.2724644.8244967741458502000.b4-ty@kernel.org>
+Date: Thu, 13 Jun 2024 18:09:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zmr9oBecxdufMTeP@kernel.org>
-In-Reply-To: <Zmr9oBecxdufMTeP@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 13 Jun 2024 10:09:11 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wickw1bAqWiMASA2zRiEA_nC3etrndnUqn_6C1tbUjAcQ@mail.gmail.com>
-Message-ID: <CAHk-=wickw1bAqWiMASA2zRiEA_nC3etrndnUqn_6C1tbUjAcQ@mail.gmail.com>
-Subject: Re: [GIT PULL] memblock:fix validation of NUMA coverage
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Jan Beulich <jbeulich@suse.com>, Narasimhan V <Narasimhan.V@amd.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, stable@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Thu, 13 Jun 2024 at 07:11, Mike Rapoport <rppt@kernel.org> wrote:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock
+On Thu, 06 Jun 2024 16:36:46 +0200, Krzysztof Kozlowski wrote:
+> 'type' is an enum, thus cast of pointer on 64-bit compile test with
+> clang and W=1 causes:
+> 
+>   max14577.c:400:23: error: cast to smaller integer type 'enum maxim_device_type' from 'const void *' [-Werror,-Wvoid-pointer-to-enum-cast]
+> 
+> Year ago this was solved, although LKML discussion suggested warning is
+> not suitable for kernel.  Nothing changed in this regard for a year, so
+> assume the warning will stay and we want to have warnings-free builds.
+> 
+> [...]
 
-What's going on? This is the second pull request recently that doesn't
-actually mention where to pull from.
+Applied, thanks!
 
-I can do a "git ls-remote", and I see that you have a tag called
-"fixes-2024-06-13" that then points to the commit you mention:
+[1/3] mfd: max14577: Fix Wvoid-pointer-to-enum-cast warning (again)
+      commit: 9d1e745c2dc06fed0eb6e3b549b75669f9da77be
+[2/3] mfd: mxs-lradc: Fix Wvoid-pointer-to-enum-cast warning (again)
+      commit: a377d89e5064e787deecfb87d9464ea18f5f067e
+[3/3] mfd: wm8994: Fix Wvoid-pointer-to-enum-cast warning (again)
+      commit: 05bb1fb09b523136acb58421361a259127de68d4
 
-> for you to fetch changes up to 3ac36aa7307363b7247ccb6f6a804e11496b2b36:
+--
+Lee Jones [李琼斯]
 
-but that tag name isn't actually in the pull request.
-
-Is there some broken scripting that people have started using (or have
-been using for a while and was recently broken)?
-
-                          Linus
 
