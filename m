@@ -1,253 +1,147 @@
-Return-Path: <linux-kernel+bounces-213951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CA6907CF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:51:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A43A907CF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55C261C23809
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:51:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A441C23EC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABA313A25B;
-	Thu, 13 Jun 2024 19:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CC57EF1F;
+	Thu, 13 Jun 2024 19:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNMSvH7F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7QG8eqQ"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A953E13A243;
-	Thu, 13 Jun 2024 19:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2482F6F073;
+	Thu, 13 Jun 2024 19:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718308247; cv=none; b=j2+hO88uJNnqaaUGd9veBaEEMG8hxgR1epVvNbLgn7YYoi/dg2bGzfAxfXf2LNOe0n+jIvxeK7nQYCHVMWiD0b9/u/lCBbOV7IBmbc6ScvgUztPJwrZC3vpFj/R0O8AcmunJxic0FGT8mlhQ+uaNzhuPMdYMlg2mdclin48vmqA=
+	t=1718308303; cv=none; b=S/1CL+71eOiUkvBx6ILNc5wLXkJFj+Q6iiQei/umNpAW8eunxz3oeaXBprPzSo/mW9lLlue4F0dbAzwxXKWiEVg6aMqwk1M+TZIXoObmZ4X+rXmnYRTzx3EAGBi6RsIIabh/zPlUPNiCfCCo6wOJYgE6lx+YJnPsdIdIbR1hoAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718308247; c=relaxed/simple;
-	bh=INggdnEqk+KSdqHB5NEqSJDjqWWBOvxmtmcJ28YtG1g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mMIGEPQ84i0IXZGzgaq1jdnMbl2u08Sd77TVO4v4qxHXC+C41P2aS7ylTlQs3Ggx2lbk+NyYjIc00IsvACHMtf+kgGaPhk10j0AR7uRYxMJNzBoQh4iIpKxHhBQEGMjk6wTGTEmJrHHQd+Qw2WatJnvEvKzg3vi0WzTqIed/Fkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNMSvH7F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDE9C2BBFC;
-	Thu, 13 Jun 2024 19:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718308247;
-	bh=INggdnEqk+KSdqHB5NEqSJDjqWWBOvxmtmcJ28YtG1g=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=CNMSvH7FElVa/4C70/9bA9+LX0pWuS0WiG5ByEn/XI1Gaq723DazLwyII5G6TeQKu
-	 MyNQ0GmSCpokkyKv99S/zZWqh5dgK1Tqo1CAiSJO5BC31O5IpAQ19sQgiutYVDk4Ne
-	 mbhrhyuce8v573+rHz04UREvTUcm88aJhYD1CH3x7NTrp/jtQRTQJB4H/OidnL1v5u
-	 euEsAfyGPxXz7IGYy48zxRmRGGz2e+zndwcInoKLWGJrEu4dPvwhQ33vPStnYTZJ9b
-	 +ObMUP/7s7RbrTRdFq3aLi/8NhlXXdooJ7xju2aqa2UvVuw68E0sDZ3+bZ5pt9fOpB
-	 XkdZwKBSyx/BA==
-Message-ID: <219a70651e2f7ddd335d850dd807e9dde06c9747.camel@kernel.org>
-Subject: Re: [syzbot] [nfs?] INFO: task hung in nfsd_nl_rpc_status_get_start
-From: Jeff Layton <jlayton@kernel.org>
-To: syzbot <syzbot+e9820daec56bcb4c41b5@syzkaller.appspotmail.com>, 
-	Dai.Ngo@oracle.com, chuck.lever@oracle.com, kolga@netapp.com, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, neilb@suse.de, 
-	syzkaller-bugs@googlegroups.com, tom@talpey.com
-Cc: lorenzo@kernel.org
-Date: Thu, 13 Jun 2024 15:50:45 -0400
-In-Reply-To: <0000000000008a444b061acaa487@google.com>
-References: <0000000000008a444b061acaa487@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1718308303; c=relaxed/simple;
+	bh=2FR65H6oQRmxvXkcwUoWkYMkK7DPPvgBTT5D29nbwpU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XlDf+uH7DzQ23k/IT/h6FDj/G7Sh5Pt8Sua0D0VaSyYPz0cK9RQhL4P/3it+YZMUqNCO7WJXVzO7ZUQu3AnMK4I2Ue+aSkdSKqS1/Eas5R1AF8eIU+wR3o92NQJv+pOyrT8KkC/GV2zQQFCLVSDY844X3I5obQy5RfnAvIfuQxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a7QG8eqQ; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6f1cf00b3aso230421066b.0;
+        Thu, 13 Jun 2024 12:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718308299; x=1718913099; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wd49EutyMLwKOtVYeW3XG9F3kbsUtYIJI3CsIowTYE4=;
+        b=a7QG8eqQl2v8SbteBTK4ct/C5pVfvek6y+L/QYaEoNc1QMvr/UbyYVA8Nj8/p7Qjfx
+         u1AxwmEIyF8jVuG221mDrrrBAaSJ+OXOOdTc7KbDwpRDGdWkUcLr1AY9ZLU4y1rTDTmc
+         BOkZ/WLp5ON35EXgZTYY+B8lkYmYG5UzcQAldEUmDlSAD1ysdC+m1F1tORw2yqnR+DrJ
+         79Yk6TBzr5INsPbQ78ZO6+A4cD7Myvmvpjm4jGZH5eopaG5/slW+AKKi/vkROKvm/Kra
+         fWtd2lhq61eYlHScJgF8bgql3lWbky0MtFboRAyDmmQpJsahhQI1mfwR1Y8YOz2OMPm0
+         5mSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718308299; x=1718913099;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wd49EutyMLwKOtVYeW3XG9F3kbsUtYIJI3CsIowTYE4=;
+        b=bWr9yLTtjy7xZfm0tjPrRki+F4OjBDg2N7FpgUEz+7PeeUCaNuW2cG/KfSV2GLQXKY
+         29B0m0NnCPNysipvHqooHYkKZyc0qsX1OLphQWsd7Jhn1+jLNlrL9tEBRElHwY5VoLiF
+         m7dZlZN5TTtF5v5l+Lvbn7LTO3Mv6idXVVEd+bSholBre7Wen+uwuipqyrRZ/chmkyFg
+         9XQnJRTZvdl2ENNIkVN+aMZAzJhna9tvTzQlVrYyWaZaEb3lJZ4eKJmerenP5JwcF/B3
+         rg4M8X/l+F+BUgXAmc0vNtddRYTK0E1Q7CKSRSsBMKNurF70LarHjCJx3aKMTm9QT6Fh
+         LV9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWeGw1N2wGZDvdgKRpSzJnkGMdqSiHqdLk/kX4WaGdmIibk+zSEk3T2/mTJ2Q7nWXpHmGy8R9eAWT78TwnJGLid0gTe53JbXeM8yOf59J07S9rjWlj7ZWoHGTdGf3VrE6M4EXfp7RQcmXjfi4+cM7Aub21mjdCn6E5s6z+cqBxl71QUwF/p
+X-Gm-Message-State: AOJu0Yzl2rGDuKVnj+lcScOMFAM4lKI7+ChSrjkRlqj5IsfdtpGpiyyY
+	noQRCG1AQ3RXX6gBqWd1xbVZ9cTVD2IEVZfqWCVU9TS9LKSrLmaVpLHBn3ksmlBHYAALfa8StrH
+	XRCr49HmbAX5KICaDORiI6NxMjRY=
+X-Google-Smtp-Source: AGHT+IErRieTi+saRfAiHY1ySQX0ddVIoYhrdonTqyNzBa1+IpOMd/MmGEDmPaGqQkjrTu7v+AA2L9lTIH5K61Z97aQ=
+X-Received: by 2002:a17:906:7629:b0:a6f:1285:5799 with SMTP id
+ a640c23a62f3a-a6f52474235mr242477566b.36.1718308299119; Thu, 13 Jun 2024
+ 12:51:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240612012019.19078-1-zhi.mao@mediatek.com> <20240612012019.19078-3-zhi.mao@mediatek.com>
+ <7c71534f-9815-4ea3-969f-c04d249d35d2@collabora.com> <18d2c28fc8b47889689a1506957ea2a308c80fa2.camel@mediatek.com>
+ <171823714905.1550852.13442340621133903705@ping.linuxembedded.co.uk>
+In-Reply-To: <171823714905.1550852.13442340621133903705@ping.linuxembedded.co.uk>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 13 Jun 2024 21:51:03 +0200
+Message-ID: <CAHp75VcA9yZ6bVt+10FrzB3L3wPj8fW5UBB9D7p0iHjLaxWCpA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] media: i2c: Add GT97xx VCM driver
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: =?UTF-8?B?WmhpIE1hbyDmr5vmmbo=?= <zhi.mao@mediatek.com>, 
+	angelogioacchino.delregno@collabora.com, conor+dt@kernel.org, 
+	krzk+dt@kernel.org, mchehab@kernel.org, robh@kernel.org, 
+	dongchun.zhu@mediatek.com, "heiko@sntech.de" <heiko@sntech.de>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"laurent.pinchart+renesas@ideasonboard.com" <laurent.pinchart+renesas@ideasonboard.com>, 
+	"yunkec@chromium.org" <yunkec@chromium.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "hdegoede@redhat.com" <hdegoede@redhat.com>, 
+	"bingbu.cao@intel.com" <bingbu.cao@intel.com>, 
+	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	=?UTF-8?B?WWF5YSBDaGFuZyDlvLXpm4XmuIU=?= <Yaya.Chang@mediatek.com>, 
+	=?UTF-8?B?U2hlbmduYW4gV2FuZyDnjovlnKPnlLc=?= <shengnan.wang@mediatek.com>, 
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
+	"alain.volmat@foss.st.com" <alain.volmat@foss.st.com>, 
+	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, 
+	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>, "10572168@qq.com" <10572168@qq.com>, 
+	"hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"mehdi.djait@bootlin.com" <mehdi.djait@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-06-13 at 12:38 -0700, syzbot wrote:
-> Hello,
->=20
-> syzbot found the following issue on:
->=20
-> HEAD commit:=C2=A0=C2=A0=C2=A0 2ccbdf43d5e7 Merge tag 'for-linus' of
-> git://git.kernel.org..
-> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
-> console output:
-> https://syzkaller.appspot.com/x/log.txt?x=3D158e5256980000
-> kernel config:=C2=A0
-> https://syzkaller.appspot.com/x/.config?x=3Dc79815c08cc14227
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3De9820daec56bcb4c41b5
-> compiler:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Debian clang version 15.0.6=
-, GNU ld (GNU Binutils for
-> Debian) 2.40
->=20
-> Unfortunately, I don't have any reproducer for this issue yet.
->=20
-> Downloadable assets:
-> disk image:
-> https://storage.googleapis.com/syzbot-assets/9fb20954c51e/disk-2ccbdf43.r=
-aw.xz
-> vmlinux:
-> https://storage.googleapis.com/syzbot-assets/06d78b3cf960/vmlinux-2ccbdf4=
-3.xz
-> kernel image:
-> https://storage.googleapis.com/syzbot-assets/15e5b0a8df77/bzImage-2ccbdf4=
-3.xz
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the
-> commit:
-> Reported-by: syzbot+e9820daec56bcb4c41b5@syzkaller.appspotmail.com
->=20
-> INFO: task syz-executor.1:7517 blocked for more than 143 seconds.
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.10.0-rc3-syzkaller-00044-g2c=
-cbdf43d5e7 #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> message.
-> task:syz-executor.1=C2=A0 state:D stack:23800 pid:7517=C2=A0 tgid:7515=C2=
-=A0
-> ppid:6054=C2=A0=C2=A0 flags:0x00000006
-> Call Trace:
-> =C2=A0<TASK>
-> =C2=A0context_switch kernel/sched/core.c:5408 [inline]
-> =C2=A0__schedule+0x1796/0x49d0 kernel/sched/core.c:6745
-> =C2=A0__schedule_loop kernel/sched/core.c:6822 [inline]
-> =C2=A0schedule+0x14b/0x320 kernel/sched/core.c:6837
-> =C2=A0schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
-> =C2=A0__mutex_lock_common kernel/locking/mutex.c:684 [inline]
-> =C2=A0__mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
-> =C2=A0nfsd_nl_rpc_status_get_start+0x8d/0xe0 fs/nfsd/nfsctl.c:1476
-> =C2=A0genl_start+0x4d6/0x6d0 net/netlink/genetlink.c:1005
-> =C2=A0__netlink_dump_start+0x45c/0x780 net/netlink/af_netlink.c:2445
-> =C2=A0genl_family_rcv_msg_dumpit net/netlink/genetlink.c:1076 [inline]
-> =C2=A0genl_family_rcv_msg net/netlink/genetlink.c:1192 [inline]
-> =C2=A0genl_rcv_msg+0x88c/0xec0 net/netlink/genetlink.c:1210
-> =C2=A0netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2564
-> =C2=A0genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
-> =C2=A0netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
-> =C2=A0netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1361
-> =C2=A0netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1905
-> =C2=A0sock_sendmsg_nosec net/socket.c:730 [inline]
-> =C2=A0__sock_sendmsg+0x221/0x270 net/socket.c:745
-> =C2=A0____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
-> =C2=A0___sys_sendmsg net/socket.c:2639 [inline]
-> =C2=A0__sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
-> =C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> =C2=A0do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> =C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f182b67cea9
-> RSP: 002b:00007f182c48a0c8 EFLAGS: 00000246 ORIG_RAX:
-> 000000000000002e
-> RAX: ffffffffffffffda RBX: 00007f182b7b3f80 RCX: 00007f182b67cea9
-> RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000003
-> RBP: 00007f182b6ebff4 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 000000000000000b R14: 00007f182b7b3f80 R15: 00007ffd83adb8d8
-> =C2=A0</TASK>
->=20
-> Showing all locks held in the system:
-> 5 locks held by kworker/u8:1/12:
-> =C2=A0#0: ffff888015ed3148 ((wq_completion)netns){+.+.}-{0:0}, at:
-> process_one_work kernel/workqueue.c:3206 [inline]
-> =C2=A0#0: ffff888015ed3148 ((wq_completion)netns){+.+.}-{0:0}, at:
-> process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
-> =C2=A0#1: ffffc90000117d00 (net_cleanup_work){+.+.}-{0:0}, at:
-> process_one_work kernel/workqueue.c:3207 [inline]
-> =C2=A0#1: ffffc90000117d00 (net_cleanup_work){+.+.}-{0:0}, at:
-> process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
-> =C2=A0#2: ffffffff8f5c8cd0 (pernet_ops_rwsem){++++}-{3:3}, at:
-> cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:594
-> =C2=A0#3: ffff8880237ed408 (&wg->device_update_lock){+.+.}-{3:3}, at:
-> wg_destruct+0x110/0x2e0 drivers/net/wireguard/device.c:249
-> =C2=A0#4: ffffffff8e339240 (rcu_state.barrier_mutex){+.+.}-{3:3}, at:
-> rcu_barrier+0x4c/0x530 kernel/rcu/tree.c:4448
-> 1 lock held by khungtaskd/30:
-> =C2=A0#0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at:
-> rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
-> =C2=A0#0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock
-> include/linux/rcupdate.h:781 [inline]
-> =C2=A0#0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at:
-> debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
-> 3 locks held by kworker/u8:4/61:
-> =C2=A0#0: ffff8880b953e798 (&rq->__lock){-.-.}-{2:2}, at:
-> raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
-> =C2=A0#1: ffff8880b9528948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-
-> {0:0}, at: psi_task_switch+0x441/0x770 kernel/sched/psi.c:988
-> =C2=A0#2: ffff8880b953e798 (&rq->__lock){-.-.}-{2:2}, at:
-> raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
-> 3 locks held by kworker/0:2/1156:
-> =C2=A0#0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at:
-> process_one_work kernel/workqueue.c:3206 [inline]
-> =C2=A0#0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at:
-> process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
-> =C2=A0#1: ffffc90004627d00 ((linkwatch_work).work){+.+.}-{0:0}, at:
-> process_one_work kernel/workqueue.c:3207 [inline]
-> =C2=A0#1: ffffc90004627d00 ((linkwatch_work).work){+.+.}-{0:0}, at:
-> process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
-> =C2=A0#2: ffffffff8f5d5508 (rtnl_mutex){+.+.}-{3:3}, at:
-> linkwatch_event+0xe/0x60 net/core/link_watch.c:276
-> 2 locks held by kworker/u8:9/2839:
-> 2 locks held by getty/4842:
-> =C2=A0#0: ffff88802b04c0a0 (&tty->ldisc_sem){++++}-{0:0}, at:
-> tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
-> =C2=A0#1: ffffc90002f162f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at:
-> n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
-> 2 locks held by syz-fuzzer/5088:
-> 3 locks held by kworker/0:6/5164:
-> =C2=A0#0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at:
-> process_one_work kernel/workqueue.c:3206 [inline]
-> =C2=A0#0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at:
-> process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
-> =C2=A0#1: ffffc90004577d00 (free_ipc_work){+.+.}-{0:0}, at:
-> process_one_work kernel/workqueue.c:3207 [inline]
-> =C2=A0#1: ffffc90004577d00 (free_ipc_work){+.+.}-{0:0}, at:
-> process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
-> =C2=A0#2: ffffffff8e339378 (rcu_state.exp_mutex){+.+.}-{3:3}, at:
-> exp_funnel_lock kernel/rcu/tree_exp.h:291 [inline]
-> =C2=A0#2: ffffffff8e339378 (rcu_state.exp_mutex){+.+.}-{3:3}, at:
-> synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:939
-> 2 locks held by syz-executor.4/7353:
-> =C2=A0#0: ffffffff8f63b9d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40
-> net/netlink/genetlink.c:1218
-> =C2=A0#1: ffffffff8e600748 (nfsd_mutex){+.+.}-{3:3}, at:
-> nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
-> 3 locks held by syz-executor.1/7517:
-> =C2=A0#0: ffffffff8f63b9d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40
-> net/netlink/genetlink.c:1218
-> =C2=A0#1: ffff888052998678 (nlk_cb_mutex-GENERIC){+.+.}-{3:3}, at:
-> __netlink_dump_start+0x119/0x780 net/netlink/af_netlink.c:2418
-> =C2=A0#2: ffffffff8e600748 (nfsd_mutex){+.+.}-{3:3}, at:
-> nfsd_nl_rpc_status_get_start+0x8d/0xe0 fs/nfsd/nfsctl.c:1476
-> 2 locks held by syz-executor.1/10475:
-> =C2=A0#0: ffffffff8f5d5508 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock
-> net/core/rtnetlink.c:79 [inline]
-> =C2=A0#0: ffffffff8f5d5508 (rtnl_mutex){+.+.}-{3:3}, at:
-> rtnetlink_rcv_msg+0x842/0x1180 net/core/rtnetlink.c:6632
->=20
->=20
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ=C2=A0for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->=20
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status=C2=A0for how to communicate with syzbot.
->=20
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->=20
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->=20
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->=20
-> If you want to undo deduplication, reply with:
-> #syz undup
+On Thu, Jun 13, 2024 at 2:05=E2=80=AFAM Kieran Bingham
+<kieran.bingham@ideasonboard.com> wrote:
+> Also - Cc: Dongchun Zhu <dongchun.zhu@mediatek.com> who is listed as the
+> DW9768 VCM driver author...
+> Quoting Zhi Mao (=E6=AF=9B=E6=99=BA) (2024-06-12 12:13:40)
+> > On Wed, 2024-06-12 at 09:07 +0200, AngeloGioacchino Del Regno wrote:
 
+...
 
-nfsd_nl_rpc_status_get_dumpit grabs the nfsd_mutex in the ->start
-netlink op, and then releases it in the ->done op. Is it possible that
-something is causing ->done to not happen after ->start has?
+> > Our project uses Giantec VCM hardware.
+> > For detailed vendor information, please visit: (
+> > https://en.giantec-semi.com/yqmd/164).
+> > The VCM datasheet we are referencing is provided by Giantec.
+> > Currently, the relationship between Giantec VCM and Dongwoon VCM is
+> > unclear, but Dongwoon seems to be another manufacturer of VCM
+> > hardware.
+
+There may be plenty of manufacturers of the same/similar IPs, but it's
+not an excuse to have a duplication like this.
+
+> > From the perspective of software driver development and maintenance, it
+> > makes sense for each vendor's hardware should have its own software
+> > driver.
+>
+> Personally, I don't think so. If two vendors make identical parts, we
+> shouldn't have two identical drivers.
+
+Exactly! That's why we have compatible strings or other means of
+reusing the same code base as much as possible. This in particular
+reduces maintenance costs (of all means!) _a lot_.
+
+> I still have plans to refactor VCM drivers if I get some spare-time(tm)
+> as almost each driver does the same identical task. They're all just
+> copies of the boilerplate.  That seems like something we should reduce,
+> not increase.
+
 
 --=20
-Jeff Layton <jlayton@kernel.org>
+With Best Regards,
+Andy Shevchenko
 
