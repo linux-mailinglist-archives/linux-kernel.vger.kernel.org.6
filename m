@@ -1,110 +1,168 @@
-Return-Path: <linux-kernel+bounces-213090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324C9906AF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:25:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9975906AF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444CA1C21ABB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:25:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24244B23561
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35F8143724;
-	Thu, 13 Jun 2024 11:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD48142E86;
+	Thu, 13 Jun 2024 11:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oJooeywx"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LuN5eF9+"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57B35BACF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6F9605C6;
+	Thu, 13 Jun 2024 11:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718277942; cv=none; b=qikWTX2isKX/R6EXGisLQH2azT9CMSATcLEYMwBRCcsrE0UpRNwTLZT07ayI3b7Li0m1mfR8X6ljaw1R7QbjGPZyJo17f5lPxc+ldl9uBV5W1Bw7Kpz1rSEPbS60L28wnQSbe0tC1/hHMaqGLeJqTQ28fJdps+vBFl9Mci69E1Y=
+	t=1718278053; cv=none; b=HuspsGSPh9UZvziSi6wdbc1wQtUHA+yB0CpH5po59Ec98O5YhrJJBg2BGlL2e/cubsFV+sIGHqZMjtsLWZy1nSMRxXla2yVtCAUNMpCoMH+7x8ilAddo1G7zMoFHMDaDj9YUpDEjJTUq5PGtFjx/4EreWk34Yi6Zb2tvcgxCFqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718277942; c=relaxed/simple;
-	bh=dIEuACjsltwpJD0V+bskvqcb6UYaTtASIQDE9vOPI5Q=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mxPhDCsZXeleMagden/YygCXgmXpM+Zkr9NiZSJQFbypP/DPv8mLjZfoGTVj3bIvS8HVys0B/i36wGp7oppQJE92P16+VcZokkmCm/j4+0frX+WFSn+pDyf0mB6OCaPwFzHg9ON+oujtWfNLak0GzUDsRrY34yQgKhaMgHBtEs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--maze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oJooeywx; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--maze.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfdfe3d9fc8so1682504276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:25:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718277939; x=1718882739; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lYU5Qi8biKRQ+V307T1KahsI7+1YeIx8/OH0uEw2Xw0=;
-        b=oJooeywxkO0d4Pj61kKsLrSQs1B3a1Tss9sQOUwYGjbxN7OGgVbqr5mA1/xQIyCyz5
-         S51ISzftTY8juze5o5YpEJSHgRGyfoPFhLM5EXukrM8F/8LsTGYHuebR32fIIuROY8BU
-         Kbe/oH7otdcUh8PxEgBL3mEcZV/xO9qk+dd2/xLXUw5humWzrs5A0T2GFAZrcN5LxgV4
-         KIOYZpDUl2d5QqCJ3YzmpzrTtm+1o20q9dMQaUeXFibm57f28s5Eu5o9sWkwlV2/tSMb
-         uxaGeU+M2MXdXEVKNXS8EI9SDNDEApRGHG5QluX6j/qYAmadGKs7lqDuWBTDxWpn/1OP
-         ANJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718277939; x=1718882739;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lYU5Qi8biKRQ+V307T1KahsI7+1YeIx8/OH0uEw2Xw0=;
-        b=FF+VZmvitn6A39qwxPJEgnZMY9Ii27NL+wSkNa5JMvI21JF1tmqM5ATxuofCOYVKmk
-         1sZ4We1/NHdgZ0d0ys2r7hX1EuK3WfQVY6dN1DjfioyFaGg/+UScjo2Z4CZpcyx+UMwO
-         enon8fmYKi8V6LCcs26A2sxdYVAXPFWKDo+kI5DumBfyyuChEGAZg9qxtOYYKRCpoVCj
-         vWeKr6ZKnua7UWM/UEkvvs0j14Ts07MbY7pm2qZad6TfS2XKLmiJdEPM3RBWWcrLTeLk
-         KzhRdlOMtUFl9Bt4sa7/tLvh4VhziMX4NDSr0+XORT3Lr3mGZDUcJlbkW158bBFhpMtQ
-         uThQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGJdDP3iD2ywYrj4n1xS7OjE5Bo9FgONst7PPQKi1a9WOD825YfdiksQnvWqYDO3wVArOHaSsRdPprtdbiYSDFi9Isc4h7WqGcll76
-X-Gm-Message-State: AOJu0Yx4TlKRUxbH3UVKwcFcMevnTKu/Z3tsSqY+srh9IVw7JXBikbQY
-	SSmdDeUArHlNvpsh6hTnvMfugbk8f7HVfV/ZDmMAY/XNfH08G3yNGwLxI7ditH4KeZIMcA==
-X-Google-Smtp-Source: AGHT+IE5cYOWPRlw6S39TBxcIhI0UJc6usmRvvQ+LAF777UZDs8ja6+2n0iUZpH3/qgQ4I32o2LJxR91
-X-Received: from varda.mtv.corp.google.com ([2620:15c:211:200:39d0:ab84:9864:b0c6])
- (user=maze job=sendgmr) by 2002:a05:6902:706:b0:dff:4a3:2def with SMTP id
- 3f1490d57ef6-dff04a333edmr496451276.10.1718277939510; Thu, 13 Jun 2024
- 04:25:39 -0700 (PDT)
-Date: Thu, 13 Jun 2024 04:25:20 -0700
+	s=arc-20240116; t=1718278053; c=relaxed/simple;
+	bh=iL7CwAKS/IwL8enlPQzHrOq5sJ73P0VF652E/ZHm7zw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tM33Cb+etD8xYYY/BRp/uMZyPvCXH/QVWq0XVHOOp6+DKGqBq/BRs1PRiZCDqPALqeoqEmL/CxWwwUO2fRH9Frpca/5T5FGuFPdoFPy/3QgSOItKOhlTQ5XMqiIN2b9YT/+s849W0qaekj8BJonFGUTsyv6lR0X2oS30chBU0AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LuN5eF9+; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DBKUUx025624;
+	Thu, 13 Jun 2024 11:27:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=vH7wvLw/fbaso/2vKJV9FkAQ/J
+	V6KMc2dBTHBYAqFc8=; b=LuN5eF9++GnjvHuSZ9HtyzV+RYPLz9WUyTthxDr0s0
+	jo5GSA3jMPkwF77T9cE9dsLumilzhxeaFoPoMXSFq4Pzawme0JtTqTLSryninl9t
+	suYOE8/4p09bI2rMY6crmAjlBzY6bp7diSw9Url4XJ4/6k/7xfW1HdfarNXuVU3s
+	xA1Q+EqvBs3Y3ssRCTF7ihkdBhUVXklKXnv5sR4dbtiRUE7T9aL4bfghNTy/z6sz
+	NiD4vG4JyKAnIPTNK9WWit7Y0tZW0HGnMmCCbnpNetI9bxPLvjQIk697xdvcgsDL
+	gz249ZQ1gskKV1B7GYxTnqoJo/q4eEZZ8CyTyQE8IBUw==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqrexs8sk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 11:27:27 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45DBHaE2028690;
+	Thu, 13 Jun 2024 11:27:26 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn1muq45j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 11:27:26 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45DBRK8e43057510
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Jun 2024 11:27:22 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C3FA620043;
+	Thu, 13 Jun 2024 11:27:20 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A11F520040;
+	Thu, 13 Jun 2024 11:27:20 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 13 Jun 2024 11:27:20 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org, namhyung@kernel.org
+Cc: svens@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf/test: Speed up test case perf annotate basic tests
+Date: Thu, 13 Jun 2024 13:26:55 +0200
+Message-Id: <20240613112655.4082737-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240613112520.1526350-1-maze@google.com>
-Subject: [PATCH bpf] bpf: fix UML x86_64 compile failure
-From: "=?UTF-8?q?Maciej=20=C5=BBenczykowski?=" <maze@google.com>
-To: "=?UTF-8?q?Maciej=20=C5=BBenczykowski?=" <zenczykowski@gmail.com>
-Cc: Linux Network Development Mailing List <netdev@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, BPF Mailing List <bpf@vger.kernel.org>, 
-	"=?UTF-8?q?Maciej=20=C5=BBenczykowski?=" <maze@google.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Alexei Starovoitov <ast@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Dh4YQfKtkZHP9eOakg6Sfdxws854P7_g
+X-Proofpoint-ORIG-GUID: Dh4YQfKtkZHP9eOakg6Sfdxws854P7_g
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_03,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ clxscore=1015 phishscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ malwarescore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406130082
 
-Cc: Andrii Nakryiko <andrii@kernel.org>
-Cc: John Fastabend <john.fastabend@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Fixes: 1ae6921009e5 ("bpf: inline bpf_get_smp_processor_id() helper")
-Signed-off-by: Maciej =C5=BBenczykowski <maze@google.com>
+perf test 70 takes a long time. One culprit is the output of command
+perf annotate. Per default enabled are
+ - demangle symbol names
+ - interleave source code with assembly code.
+Disable demangle of symbols and abort the annotation
+after the first 250 lines.
+
+This speeds up the test case considerable, for example
+on s390:
+
+Output before:
+ # time  perf test 70
+ 70: perf annotate basic tests             : Ok
+ .....
+ real   2m7.467s
+ user   1m26.869s
+ sys    0m34.086s
+ #
+
+ Output after:
+ # time perf test 70
+ 70: perf annotate basic tests             : Ok
+
+ real   0m3.341s
+ user   0m1.606s
+ sys    0m0.362s
+ #
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Suggested-by: Namhyung Kim <namhyung@kernel.org>
 ---
- kernel/bpf/verifier.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/tests/shell/annotate.sh | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 36ef8e96787e..7a354b1e6197 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -20313,7 +20313,7 @@ static int do_misc_fixups(struct bpf_verifier_env *=
-env)
- 			goto next_insn;
- 		}
-=20
--#ifdef CONFIG_X86_64
-+#if defined(CONFIG_X86_64) && !defined(CONFIG_UML)
- 		/* Implement bpf_get_smp_processor_id() inline. */
- 		if (insn->imm =3D=3D BPF_FUNC_get_smp_processor_id &&
- 		    prog->jit_requested && bpf_jit_supports_percpu_insn()) {
---=20
-2.45.2.505.gda0bf45e8d-goog
+diff --git a/tools/perf/tests/shell/annotate.sh b/tools/perf/tests/shell/annotate.sh
+index b072d9b97387..b28cd95b1d83 100755
+--- a/tools/perf/tests/shell/annotate.sh
++++ b/tools/perf/tests/shell/annotate.sh
+@@ -43,7 +43,7 @@ test_basic() {
+   fi
+ 
+   # Generate the annotated output file
+-  perf annotate -i "${perfdata}" --stdio 2> /dev/null > "${perfout}"
++  perf annotate --no-demangle -i "${perfdata}" --stdio 2> /dev/null | head -250 > "${perfout}"
+ 
+   # check if it has the target symbol
+   if ! grep "${testsym}" "${perfout}"
+@@ -62,8 +62,8 @@ test_basic() {
+   fi
+ 
+   # check again with a target symbol name
+-  if ! perf annotate -i "${perfdata}" "${testsym}" 2> /dev/null | \
+-	  grep -m 3 "${disasm_regex}"
++  if ! perf annotate --no-demangle -i "${perfdata}" "${testsym}" 2> /dev/null | \
++	  head -250 | grep -m 3 "${disasm_regex}"
+   then
+     echo "Basic annotate [Failed: missing disasm output when specifying the target symbol]"
+     err=1
+@@ -71,8 +71,8 @@ test_basic() {
+   fi
+ 
+   # check one more with external objdump tool (forced by --objdump option)
+-  if ! perf annotate -i "${perfdata}" --objdump=objdump 2> /dev/null | \
+-	  grep -m 3 "${disasm_regex}"
++  if ! perf annotate --no-demangle -i "${perfdata}" --objdump=objdump 2> /dev/null | \
++	  head -250 | grep -m 3 "${disasm_regex}"
+   then
+     echo "Basic annotate [Failed: missing disasm output from non default disassembler (using --objdump)]"
+     err=1
+-- 
+2.45.2
 
 
