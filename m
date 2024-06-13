@@ -1,264 +1,238 @@
-Return-Path: <linux-kernel+bounces-212984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A404D90695A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:52:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1DF906966
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38F5328784B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:52:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75BA22825B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BD814039D;
-	Thu, 13 Jun 2024 09:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FCF1411C2;
+	Thu, 13 Jun 2024 09:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="JZX2sPnU"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Byd4tdTF"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D998A13D50A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C291304AA;
+	Thu, 13 Jun 2024 09:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718272331; cv=none; b=D+9IwEzDCn7Af42Q7uunKtLxeUThvHDWdyD8N7NJ0xVojSIuQkbrPzZtupbd26vlh3K68f29bfLFa7WpurT26/Do1mFhHCv+AkVqSWuV2qQ1vFACegFsXrlUFb3HwUrcK8TEXxqY6x5fuxVSCGaon6HJ8A2obmPLXJ51bkuG5jw=
+	t=1718272464; cv=none; b=reqzbrOw7u8Qg6Z5Ubwd4Qh4E8B2qNJWMNtzQpnNIBuwcT6xCiGA/C7n7BtFdhK1CE4EHGvlun47Io98qWqGwmBh0vA4IGSe/d0gZCjCz4xvpwLfhrXL9E21Ad6TC4/w8vf2O1Pv5w5YiKkVgMLTgr6UhAT1BufbsothZ9Pjgt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718272331; c=relaxed/simple;
-	bh=FgEZ83BbUZDdhh6OE9jruHlNefyUN4waZuPcjz1kyng=;
+	s=arc-20240116; t=1718272464; c=relaxed/simple;
+	bh=7aAGjMds4cC7C5pA9pH7zWzRxwd4zaZ7obLTR9e8hlY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E8u1tYqGi18DchTJgxWIyzy/Xkx/vMHCHZz5zFqsZUnZzEicpDdWIEGkHfwmJpYDoIczCP4haaEXl8oXGsMhN4aoLKOvq/Ed/0veijYL9CKoafSGdvPs2GqQWwMY4nP5Rn1SXTQjqeoBg51IOQLLjw/hg9I5DO21XjcHz5hwo+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=JZX2sPnU; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f44b441b08so7056735ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:52:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=DYe2LC5VBrK9QryfbyQrinAiRlGog1DnmGKijyseO4clIY/WIneH1yYpSJ0wHojZtqtzL3BvcYyUTe2bJQoGFdcTQALL1pudeKvrIdY9NQFNoNLUMpjBE1+YFJqjyM9JI1wutCTmDh/wdrCe2ODVE86QuUcqf8MahPnQymVcu34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Byd4tdTF; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4ed0ab952b0so304371e0c.3;
+        Thu, 13 Jun 2024 02:54:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1718272329; x=1718877129; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AOfCY9Yo/89iNmQQ1MgsJNPnyHBaOODSKsxbUGx0JtA=;
-        b=JZX2sPnUinx8APH0MyVhH/93F1hptjUzzgRN6F23r0SO1psWUV0Mlh3otgHAJ8B0zZ
-         PP3yA/voXtyBFckt6G4UmzbxRqoT6uEduo6G1sVJDqAql3vmxtKhT5Bv2b/OfsX1IUCR
-         xHLfX6kSS8TVCLfMdH+Qkx0ic0rCgrXrWnyXl/irTIsNL/FI7O9v33B24T5BTDsoOl9S
-         kFWAk4qeEZ31l76uJHDqJgzy0sL/3V75hhnvTPwGnmAaQYo7vp4UFSjsO6l1hsewaMbx
-         HkoE4OOwJibdCJH4kBC9vCalKFawnUs8MVPy3BMl4o1lm7J0w6HIE4zN07bBf1Vepzp8
-         Hk2A==
+        d=gmail.com; s=20230601; t=1718272462; x=1718877262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K/vq8+DzyU0cJDbrOi0VwZbaVD4MN4U9YYAh7ulwD8E=;
+        b=Byd4tdTFQ0OoZbiGJ7mqRTGHa0xy7ELws4eNuDOGOKxw94cS06VXxby80jIL5p2X6O
+         1C0O4RXTQVeJhGjOgqrg7TynXvdfcFrk14+HQ7lBFdH4xgKPK7I6CeNDzttu21ld+CZX
+         vAz1OSpRRDoqOjA0E9nToY5RCPRTEjAkV+ms/k5WyOs3dd1E/clES1Li+3MuLE+EYX0q
+         i0uakLUvi+G8L1cgM7oMAOD1gdIwBhRhr3tvunBhbb/PKEy0jQO/mRF9hSMFbc8Gu8Aq
+         ldX7ez2Hvsipf3qqVh0EyfM/bxnjHN6hGi/gQegl6sVOx7m4Xl+IxwlnBR06+s7wC30x
+         hJ7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718272329; x=1718877129;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AOfCY9Yo/89iNmQQ1MgsJNPnyHBaOODSKsxbUGx0JtA=;
-        b=h7VisesGzQrGjrft26CPRBKVcBh7se/BAJcG01zu3iwpd4qYZx8qWVfE+Di1r0AbTZ
-         fGFKjP7cbDSB/KD/Ghb9W/fJVWMIcAJAgsUKlmFT/AX79+PyZrDqbaHHZIOM1LeJ1H+p
-         cLxzyyNWsKCZO9RmlqfETSlyiDEKZGbWMo1cLbhHjsYi0uL2ZEztIsEqK3JMLYGQFZTP
-         6V+lVhPRcUNQl91PR0fOH94aGbmJUKjgwk9WavHIwVW9rILYmQvGPEIhI1yUgRTUnL2b
-         GALopHtzlDa+Bdh6HIHoE3sKcls0R5/vIevH7O2mKjzKY8ZfKHaS1+p60H40+AYdGD0H
-         EqfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVy87Uf72ZpgjNSbuX013P9bBKiOeUe1mykBcQWbE4+QgS9VmxqFkUgL+t1IrgR8dJ/n1YgnLngTCS9L886A96WE11p9DYwn/JqlW0Z
-X-Gm-Message-State: AOJu0Yx5pBTwS7UZ7yTsU8q6uSlmQ5YTejzAaWf8XmOOtCDgFEw7VknE
-	S8jml2H2yYhJEf8ofseqPsU2GL0SKZ55vmf7iUF4qkIM8rooysxX8doUcWGkuGo3W81n4Bem+cE
-	KbPzROcbds+9PjF1WBTerf73pwsUGncXHmVfd5g==
-X-Google-Smtp-Source: AGHT+IHBgI/EKRGnimIT+Se0pTH2cINIAU5j87QscBN772mFyQzpugEGWwYUsfLZc0BegHZVKRqQLpneAdf6J6ln52A=
-X-Received: by 2002:a17:90a:9a8d:b0:2c4:d097:f8b2 with SMTP id
- 98e67ed59e1d1-2c4d097fa3amr360015a91.13.1718272329130; Thu, 13 Jun 2024
- 02:52:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718272462; x=1718877262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K/vq8+DzyU0cJDbrOi0VwZbaVD4MN4U9YYAh7ulwD8E=;
+        b=oUypJU6kyRa/7D09eTCzFUWMgl7PiLdNVkOVt/0JCayQ0Zn/9SumiDEfU5sKaYz0N3
+         3tX0g+55hwxPufa1OSVoaXp4GqmgielUQmdQgDvIrEd0V190vmuyZR8vwP6v8+MitiID
+         Je6WIhqP4JAdrHNVk79bxCNoKAiqeCAoPf62TB8mlxmy6l5AcEIrmacrxI0ax0QOJprn
+         raKu0c3JEM8vyrjKupigmEXzdNOPED7wDEg8WvsVdWtxr28ywrTvxtSapxragB2MgVJQ
+         rxWuOFK65bf4wdu7x5bsupP3J/k+RANwAsk92D41F3ZYQ5KwX8MxxS2zOnyhqnG5GtKJ
+         J53w==
+X-Forwarded-Encrypted: i=1; AJvYcCWMXr/OefzBkoF/VMrVqPT417MCajM17cNJE5YDs/f6ufrCiPjb3sRibIZawgZlkt1Jk+ZJzHxVziD/WVEbi4s03jLRi2pgzcmth8xZPfwyLNUEWkeegD/9XttnFdoutRqV9tJfHY0CjvpNkcpwMAiSnmGszBmICR+z7GSkxjYJzL/HtovLH4Bo+QaN7lzrhBUYkA13NM1Ull/LX1pdo7c8Ha0gzBXJ
+X-Gm-Message-State: AOJu0YzArrY3vS9nx6g6fvsyC5sRhdzZS6EzywtQ8NltTkT6hOwhIOdy
+	xmMd3jgg6J7xeA7tR84pw1B7pDNtpOkBUu69qaLKWrhjLBHUwlclJZXKMaMKO1gN79Qwcj5FCw0
+	Q3qGny044L85fJWE3LjyCLByAdKc=
+X-Google-Smtp-Source: AGHT+IHTNg/HUt+bXVJDMIhzaY+LzLgC26EDmTgJo6tyA21CR32TSuFcohgyHb7mAMUm2nHHkRCxewSlyEFLyU1L+aQ=
+X-Received: by 2002:a05:6122:361a:b0:4ec:f52b:e4db with SMTP id
+ 71dfb90a1353d-4ed07c038f9mr3690216e0c.16.1718272460688; Thu, 13 Jun 2024
+ 02:54:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604124742.4093334-1-naresh.solanki@9elements.com>
- <20240604124742.4093334-2-naresh.solanki@9elements.com> <3bd9a52e-bfca-4ac2-af48-59772de8b61e@roeck-us.net>
-In-Reply-To: <3bd9a52e-bfca-4ac2-af48-59772de8b61e@roeck-us.net>
-From: Naresh Solanki <naresh.solanki@9elements.com>
-Date: Thu, 13 Jun 2024 15:21:59 +0530
-Message-ID: <CABqG17gS=qfrJCkug5aca6Ag1JSPhbFbfr7X8x7XLCpDwtOMAw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] hwmon: (max6639) : Add hwmon attributes for fan
- and pwm
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240610233221.242749-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <34b21e6f-0896-4691-9b66-d06ef2f44905@kernel.org>
+In-Reply-To: <34b21e6f-0896-4691-9b66-d06ef2f44905@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 13 Jun 2024 10:53:50 +0100
+Message-ID: <CA+V-a8u6dDpbb5BrQ+ty_RbwcPOF-U6rnJnuASRXEDVdrhrvAA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 1/4] dt-bindings: clock: renesas: Document
+ RZ/V2H(P) SoC CPG
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Guenter,
+Hi Krzysztof,
 
-On Wed, 12 Jun 2024 at 21:25, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 6/4/24 05:47, Naresh Solanki wrote:
-> > Add attribute for fan & pwm i.e.,
-> > fanY_pulse
-> > pwmY_freq
-> >
-> > Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
-> > ---
-> >   drivers/hwmon/max6639.c | 74 ++++++++++++++++++++++++++++++++++++++---
-> >   1 file changed, 70 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/hwmon/max6639.c b/drivers/hwmon/max6639.c
-> > index e2a5210f9f95..6c7eaeeb2a80 100644
-> > --- a/drivers/hwmon/max6639.c
-> > +++ b/drivers/hwmon/max6639.c
-> > @@ -235,6 +235,9 @@ static int max6639_read_fan(struct device *dev, u32 attr, int channel,
-> >                       return res;
-> >               *fan_val = !!(val & BIT(1 - channel));
-> >               return 0;
-> > +     case hwmon_fan_pulses:
-> > +             *fan_val = data->ppr[channel];
-> > +             return 0;
-> >       default:
-> >               return -EOPNOTSUPP;
-> >       }
-> > @@ -246,6 +249,32 @@ static int max6639_set_ppr(struct max6639_data *data, int channel, u8 ppr)
-> >       return regmap_write(data->regmap, MAX6639_REG_FAN_PPR(channel), ppr-- << 6);
-> >   }
-> >
-> > +static int max6639_write_fan(struct device *dev, u32 attr, int channel,
-> > +                          long val)
-> > +{
-> > +     struct max6639_data *data = dev_get_drvdata(dev);
-> > +     int err;
-> > +
-> > +     if (IS_ERR(data))
-> > +             return PTR_ERR(data);
-> > +
->
-> Unnecessary check.
-Ack.
->
-> > +     switch (attr) {
-> > +     case hwmon_fan_pulses:
-> > +             if (val <= 0 || val > 5)
-> > +                     return -EINVAL;
-> > +
-> > +             /* Set Fan pulse per revolution */
-> > +             err = max6639_set_ppr(data, channel, val);
-> > +             if (err < 0)
-> > +                     return err;
-> > +
-> > +             data->ppr[channel] = val;
->
-> Needs mutex protection to avoid inconsistencies due to concurrent writes.
-This is single i2c access. Still we need mutex protection here ?
->
-> > +             return 0;
-> > +     default:
-> > +             return -EOPNOTSUPP;
-> > +     }
-> > +}
-> > +
-> >   static umode_t max6639_fan_is_visible(const void *_data, u32 attr, int channel)
-> >   {
-> >       struct max6639_data *data = (struct max6639_data *)_data;
-> > @@ -270,6 +299,7 @@ static int max6639_read_pwm(struct device *dev, u32 attr, int channel,
-> >       struct max6639_data *data = dev_get_drvdata(dev);
-> >       unsigned int val;
-> >       int res;
-> > +     u8 i;
-> >
-> >       if (IS_ERR(data))
-> >               return PTR_ERR(data);
-> > @@ -281,6 +311,21 @@ static int max6639_read_pwm(struct device *dev, u32 attr, int channel,
-> >                       return res;
-> >               *pwm_val = val * 255 / 120;
-> >               return 0;
-> > +     case hwmon_pwm_freq:
-> > +             res = regmap_read(data->regmap, MAX6639_REG_FAN_CONFIG3(channel), &val);
-> > +             if (res < 0)
-> > +                     return res;
-> > +             i = val & MAX6639_FAN_CONFIG3_FREQ_MASK;
-> > +
-> > +             res = regmap_read(data->regmap, MAX6639_REG_GCONFIG, &val);
-> > +             if (res < 0)
-> > +                     return res;
-> > +
-> > +             if (val & MAX6639_GCONFIG_PWM_FREQ_HI)
-> > +                     i |= 0x4;
->
-> This sequence will need to be mutex protected to avoid consistency errors if
-> a write happens at the same time.
-Ack. Yes, there is multiple access to the device. Will update accordingly.
->
->
-> > +             i &= 0x7;
-> > +             *pwm_val = freq_table[i];
-> > +             return 0;
-> >       default:
-> >               return -EOPNOTSUPP;
-> >       }
-> > @@ -291,6 +336,7 @@ static int max6639_write_pwm(struct device *dev, u32 attr, int channel,
-> >   {
-> >       struct max6639_data *data = dev_get_drvdata(dev);
-> >       int err;
-> > +     u8 i;
-> >
-> >       if (IS_ERR(data))
-> >               return PTR_ERR(data);
-> > @@ -301,6 +347,23 @@ static int max6639_write_pwm(struct device *dev, u32 attr, int channel,
-> >               err = regmap_write(data->regmap, MAX6639_REG_TARGTDUTY(channel),
-> >                                  val * 120 / 255);
-> >               return err;
-> > +     case hwmon_pwm_freq:
-> > +             val = clamp_val(val, 0, 25000);
-> > +
-> > +             i = find_closest(val, freq_table, ARRAY_SIZE(freq_table));
-> > +
-> > +             err = regmap_update_bits(data->regmap, MAX6639_REG_FAN_CONFIG3(channel),
-> > +                                      MAX6639_FAN_CONFIG3_FREQ_MASK, i);
-> > +             if (err < 0)
-> > +                     return err;
-> > +
-> > +             if (i >> 2)
-> > +                     err = regmap_set_bits(data->regmap, MAX6639_REG_GCONFIG,
-> > +                                           MAX6639_GCONFIG_PWM_FREQ_HI);
-> > +             else
-> > +                     err = regmap_clear_bits(data->regmap, MAX6639_REG_GCONFIG,
-> > +                                             MAX6639_GCONFIG_PWM_FREQ_HI);
->
-> Same as above. In general, every operation with more than a single element
-> needs to be mutex protected.
-Ack.
+Thank you for the review.
 
-Regards,
-Naresh
+On Tue, Jun 11, 2024 at 8:02=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 >
-> > +             return err;
-> >       default:
-> >               return -EOPNOTSUPP;
-> >       }
-> > @@ -310,6 +373,7 @@ static umode_t max6639_pwm_is_visible(const void *_data, u32 attr, int channel)
-> >   {
-> >       switch (attr) {
-> >       case hwmon_pwm_input:
-> > +     case hwmon_pwm_freq:
-> >               return 0644;
-> >       default:
-> >               return 0;
-> > @@ -415,6 +479,8 @@ static int max6639_write(struct device *dev, enum hwmon_sensor_types type,
-> >                        u32 attr, int channel, long val)
-> >   {
-> >       switch (type) {
-> > +     case hwmon_fan:
-> > +             return max6639_write_fan(dev, attr, channel, val);
-> >       case hwmon_pwm:
-> >               return max6639_write_pwm(dev, attr, channel, val);
-> >       case hwmon_temp:
-> > @@ -442,11 +508,11 @@ static umode_t max6639_is_visible(const void *data,
+> On 11/06/2024 01:32, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> >   static const struct hwmon_channel_info * const max6639_info[] = {
-> >       HWMON_CHANNEL_INFO(fan,
-> > -                        HWMON_F_INPUT | HWMON_F_FAULT,
-> > -                        HWMON_F_INPUT | HWMON_F_FAULT),
-> > +                        HWMON_F_INPUT | HWMON_F_FAULT | HWMON_F_PULSES,
-> > +                        HWMON_F_INPUT | HWMON_F_FAULT | HWMON_F_PULSES),
-> >       HWMON_CHANNEL_INFO(pwm,
-> > -                        HWMON_PWM_INPUT,
-> > -                        HWMON_PWM_INPUT),
-> > +                        HWMON_PWM_INPUT | HWMON_PWM_FREQ,
-> > +                        HWMON_PWM_INPUT | HWMON_PWM_FREQ),
-> >       HWMON_CHANNEL_INFO(temp,
-> >                          HWMON_T_INPUT | HWMON_T_FAULT | HWMON_T_MAX | HWMON_T_MAX_ALARM |
-> >                          HWMON_T_CRIT | HWMON_T_CRIT_ALARM | HWMON_T_EMERGENCY |
+> > Document the device tree bindings for the Renesas RZ/V2H(P) SoC
+> > Clock Pulse Generator (CPG).
+> >
+> > CPG block handles the below operations:
+> > - Generation and control of clock signals for the IP modules
+> > - Generation and control of resets
+> > - Control over booting
+> > - Low power consumption and power supply domains
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
+> Since this is not a finished work (RFC), only limited review follows.
+>
+>
+> > +$id: http://devicetree.org/schemas/clock/renesas,rzv2h-cpg.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Renesas RZ/V2H(P) Clock Pulse Generator (CPG)
+> > +
+> > +maintainers:
+> > +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > +
+> > +description: |
+>
+> Do not need '|' unless you need to preserve formatting.
+>
+OK.
+
+> > +  On Renesas RZ/V2H(P) SoCs, the CPG (Clock Pulse Generator) handles g=
+eneration
+> > +  and control of clock signals for the IP modules, generation and cont=
+rol of resets,
+> > +  and control over booting, low power consumption and power supply dom=
+ains.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: renesas,r9a09g057-cpg
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-names:
+> > +    description:
+> > +      Clock source to CPG on QEXTAL pin.
+> > +    const: qextal
+> > +
+> > +  '#clock-cells':
+> > +    description: |
+> > +      - For CPG core clocks, the two clock specifier cells must be "CP=
+G_CORE"
+> > +        and a core clock reference, as defined in
+> > +        <dt-bindings/clock/r9a09g057-cpg.h>,
+>
+> So second cell is not used?
+>
+It will be used for blocks using core clocks.
+
+> > +      - For module clocks, the two clock specifier cells must be "CPG_=
+MOD" and
+> > +        a module number.  The module number is calculated as the CLKON=
+ register
+> > +        offset index multiplied by 16, plus the actual bit in the regi=
+ster
+> > +        used to turn the CLK ON. For example, for CGC_GIC_0_GICCLK, th=
+e
+> > +        calculation is (1 * 16 + 3) =3D 19.
+>
+> You should not have different values. Make it const: 1 and just use IDs.
+>
+Are you suggesting not to differentiate between core/mod clocks. They
+are differentiated because the MOD clocks can turned ON/OFF but where
+as with the core clocks we cannot turn them ON/OF so the driver needs
+to know this, hence two specifiers are used.
+
+> > +    const: 2
+> > +
+> > +  '#power-domain-cells':
+> > +    description:
+> > +      SoC devices that are part of the CPG/Module Standby Mode Clock D=
+omain and
+> > +      can be power-managed through Module Standby should refer to the =
+CPG device
+> > +      node in their "power-domains" property, as documented by the gen=
+eric PM
+> > +      Domain bindings in Documentation/devicetree/bindings/power/power=
+-domain.yaml.
+>
+> Drop description, it's redundant.
+>
+OK.
+
+> > +    const: 0
+> > +
+> > +  '#reset-cells':
+> > +    description:
+> > +      The single reset specifier cell must be the reset number. The re=
+set number
+> > +      is calculated as the reset register offset index multiplied by 1=
+6, plus the
+> > +      actual bit in the register used to reset the specific IP block. =
+For example,
+> > +      for SYS_0_PRESETN, the calculation is (3 * 16 + 0) =3D 48.
+> > +    const: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - clocks
+> > +  - clock-names
+> > +  - '#clock-cells'
+> > +  - '#power-domain-cells'
+> > +  - '#reset-cells'
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    cpg: clock-controller@10420000 {
+>
+> Drop unused label.
+>
+OK.
+
+> > +            compatible =3D "renesas,r9a09g057-cpg";
+>
+> Use 4 spaces for example indentation.
+>
+Sure, I will update it.
+
+Cheers,
+Prabhakar
 
