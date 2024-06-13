@@ -1,143 +1,106 @@
-Return-Path: <linux-kernel+bounces-213604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E30907784
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:51:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9F6907789
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44D81287AFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:51:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6AC4284C13
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C4412EBF5;
-	Thu, 13 Jun 2024 15:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC2912EBC2;
+	Thu, 13 Jun 2024 15:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jc+oLWI4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HzOEq1nJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vOHzYtM8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70B526AE4;
-	Thu, 13 Jun 2024 15:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220C5A23
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718293896; cv=none; b=FdspVhcK+bnjWeE3PqmB3HXNlVPAERCUHjMLFkvJrIMb0jpscN0OISjkQYOfp+LLWHg0b/eZd9BUJO2/a94eQDYWYq7MtdecPO0s24g1yyikwFm7ogkkDLEpryq7M2ff8tDoo+sTl51QrR7UOyf9lHNNNLKq5lZMLK3BfsL0BJ0=
+	t=1718293925; cv=none; b=Vgp1A/ahmZbdnhnWLvDWEb9hHMCw45WvlugbNos9r960EjvRj7Xq4z/4Rr1QJUcdOKvoEQMgIJ6uMlYZZ5Mq7aZdPoebGHQ/ettqF4h+5l0iYfNVGvtmS5Vr+18w2HrTMP2KeqPCTl6+GJgzK2EDIKXrUezGd3gY5KeLSQsBpr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718293896; c=relaxed/simple;
-	bh=+Y5pdWBck8MRqEy7e3HpK1hthc5Zhr8DhE0bYidHEog=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=XmcJbXTTdsoglK63iT6hc8e6Yx+dBbLmDVarBXksrUWr6RREyqfevRNDAfe/2djqV4xUyd8gOguixVRJAMTbmdNXBnxKg2AZo+4kxcD0D+E9CS2Fcrgaqh/m1AZI/Srd1z35Qh+5+PaB0IA4J3f+eJ77o/K7zmMH+OIvp1nnAYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jc+oLWI4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DF6C32786;
-	Thu, 13 Jun 2024 15:51:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718293896;
-	bh=+Y5pdWBck8MRqEy7e3HpK1hthc5Zhr8DhE0bYidHEog=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=jc+oLWI45ECpvEtwv0CnM45spaX+HyHOIsJk4LBa2/Do3lfnehbqtiMFsiyAcGnph
-	 wcrW18kD2CB6IHDFKounxKICJSD1T76uGbf1yABGm6M9a2Bga9h1kKxnG1I0maSKfV
-	 RQQ3erzAjuSHolNGOybphwd1ZC/SfHZn6xDBg0dL9KJY5NNh/gOEFO/5mqRDshlesX
-	 E+NkXIgJymIVEWAoIHHidBY4Jhci/oFsFECoa8iqb2084G2e5h/PsSi2z4ZtRtPoHe
-	 1fiRSbxulKeSnlyAaemc5hbMqyaVQULnnqFi2airSKpwXpqw7t72ffpthNBPMDyUwx
-	 EJVNiKFCN5jzA==
-Date: Thu, 13 Jun 2024 10:51:34 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH] PCI: hotplug: Use atomic_{fetch_}andnot() where
- appropriate
-Message-ID: <20240613155134.GA1062951@bhelgaas>
+	s=arc-20240116; t=1718293925; c=relaxed/simple;
+	bh=6HyqqFFQPXoJVDX9A6TXXxRLT6kcrO50b/yW6RiC7GI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ejKqsxvcCKZzp4bOCClNgVuGefYSyKPmaxtBuI9kJTs01RSE2hIPJ7YkmVgFGoWBvPaOJiz2yzKVWTRjJysqzU0VnGxQAJ/j9COLtaO1SnBn6Qg/wHD30qozhULaZKZphAZI25AqYUU1ZOfyzGLoVr3bzF7gNdSNAAUZaDUC1vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HzOEq1nJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vOHzYtM8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718293922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NPdE+csVR4SMwRqqNkaq+RBS1C3dGw4oeouxbAPm6Vc=;
+	b=HzOEq1nJpaKlvtpzhae76zIJnQpETrRmeSrAZBNcsWl7CoXGztXuB09ICu7UBZ6JvBfU1j
+	94yrmS8IPS6zlP2qcbdCcRjnsv6N3Cc1EM5HY1rebO46/1/PpUeVvpzmUbR2bT6d6zUqEv
+	CVz8kbeDuvOfZArlBCFuuuhgqYuzd8CMu7VNggvboHPVQWAblP0+zPmAlXvXphYatm+6KY
+	labSe7hjkY7HuqgM+uYKSC0kpnHVwBnjs+y0wwIURtHY6MajCJoX5/3hvjbZBSalcGbt0E
+	11huLu0CdWVqgzoPOjR7jcZ4H8EJvoeF9F2rYsmeeeHCaV6P753IkSLLo/jmnA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718293922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NPdE+csVR4SMwRqqNkaq+RBS1C3dGw4oeouxbAPm6Vc=;
+	b=vOHzYtM8rA8nyHS/CaCF+lAbMCfvekLsJRS9V0UWiX5HyBsZErSKEhp2RrX2GOu1So8LMQ
+	iaSRIBXYW9rI5cBw==
+To: Borislav Petkov <bp@alien8.de>, Narasimhan V <Narasimhan.V@amd.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: WARNING: CPU: 7 PID: 0 at kernel/time/timer_migration.c:1332
+ tmigr_inactive_up+0xd2/0x190
+In-Reply-To: <20240613150142.GHZmsJ1haFMVkHHjEE@fat_crate.local>
+References: <20240612090347.GBZmlkc5PwlVpOG6vT@fat_crate.local>
+ <87h6dwzz1a.fsf@somnus>
+ <20240613150142.GHZmsJ1haFMVkHHjEE@fat_crate.local>
+Date: Thu, 13 Jun 2024 17:52:01 +0200
+Message-ID: <87bk44zvq6.fsf@somnus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613082449.197397-1-ubizjak@gmail.com>
+Content-Type: text/plain
 
-[+cc Lukas, Ilpo]
+Hi Narasimhan,
 
-On Thu, Jun 13, 2024 at 10:24:24AM +0200, Uros Bizjak wrote:
-> Use atomic_{fetch_}andnot(i, v) instead of atomic_{fetch_}and(~i, v).
+Borislav Petkov <bp@alien8.de> writes:
 
-If the purpose is to improve readability, let's mention that here.
-Since this only touches pciehp, make the subject line "PCI: pciehp:
-..." as was done in the past.
+> Hi Anna-Maria,
+>
+> On Thu, Jun 13, 2024 at 04:40:33PM +0200, Anna-Maria Behnsen wrote:
+>> thanks for the report. Is it reproducible?
+>
+> Narasimhan just tells me that he was NOT able to reproduce it in today's run.
+> I guess we can wait and see.
+>
+>> If yes, might it be possible to enable the timer_migration tracepoints and
+>> provide the trace?
+>
+> Can you pls give Narasimhan exact instructions what to do the next time it
+> happens?
 
-It looks like every use of atomic_and() uses a ~value and is hence a
-candidate for a similar change, but I'm not sure that converting to
-"andnot" and removing the explicit bitwise NOT is really a readability
-benefit.
+Please add the following to the kernel command line before boot:
 
-If it were named something like "atomic_clear_bits", I'd be totally in
-favor since that's a little higher-level description, but that ship
-has long since sailed.
+    traceoff_on_warning trace_event=timer_migration:*
 
-But I don't really care and if this is the trend, I'm fine with this
-if Lukas and Ilpo agree.
+And then everything I would need should be part of the trace
+file. Please extract it after the warning occurs with
 
-> No functional changes intended.
-> 
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> ---
->  drivers/pci/hotplug/pciehp_ctrl.c | 4 ++--
->  drivers/pci/hotplug/pciehp_hpc.c  | 8 ++++----
->  2 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-> index dcdbfcf404dd..7c775d9a6599 100644
-> --- a/drivers/pci/hotplug/pciehp_ctrl.c
-> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
-> @@ -121,8 +121,8 @@ static void remove_board(struct controller *ctrl, bool safe_removal)
->  		msleep(1000);
->  
->  		/* Ignore link or presence changes caused by power off */
-> -		atomic_and(~(PCI_EXP_SLTSTA_DLLSC | PCI_EXP_SLTSTA_PDC),
-> -			   &ctrl->pending_events);
-> +		atomic_andnot(PCI_EXP_SLTSTA_DLLSC | PCI_EXP_SLTSTA_PDC,
-> +			      &ctrl->pending_events);
->  	}
->  
->  	pciehp_set_indicators(ctrl, PCI_EXP_SLTCTL_PWR_IND_OFF,
-> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-> index b1d0a1b3917d..6d192f64ea19 100644
-> --- a/drivers/pci/hotplug/pciehp_hpc.c
-> +++ b/drivers/pci/hotplug/pciehp_hpc.c
-> @@ -307,8 +307,8 @@ int pciehp_check_link_status(struct controller *ctrl)
->  
->  	/* ignore link or presence changes up to this point */
->  	if (found)
-> -		atomic_and(~(PCI_EXP_SLTSTA_DLLSC | PCI_EXP_SLTSTA_PDC),
-> -			   &ctrl->pending_events);
-> +		atomic_andnot(PCI_EXP_SLTSTA_DLLSC | PCI_EXP_SLTSTA_PDC,
-> +			      &ctrl->pending_events);
->  
->  	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
->  	ctrl_dbg(ctrl, "%s: lnk_status = %x\n", __func__, lnk_status);
-> @@ -568,7 +568,7 @@ static void pciehp_ignore_dpc_link_change(struct controller *ctrl,
->  	 * Could be several if DPC triggered multiple times consecutively.
->  	 */
->  	synchronize_hardirq(irq);
-> -	atomic_and(~PCI_EXP_SLTSTA_DLLSC, &ctrl->pending_events);
-> +	atomic_andnot(PCI_EXP_SLTSTA_DLLSC, &ctrl->pending_events);
->  	if (pciehp_poll_mode)
->  		pcie_capability_write_word(pdev, PCI_EXP_SLTSTA,
->  					   PCI_EXP_SLTSTA_DLLSC);
-> @@ -702,7 +702,7 @@ static irqreturn_t pciehp_ist(int irq, void *dev_id)
->  	pci_config_pm_runtime_get(pdev);
->  
->  	/* rerun pciehp_isr() if the port was inaccessible on interrupt */
-> -	if (atomic_fetch_and(~RERUN_ISR, &ctrl->pending_events) & RERUN_ISR) {
-> +	if (atomic_fetch_andnot(RERUN_ISR, &ctrl->pending_events) & RERUN_ISR) {
->  		ret = pciehp_isr(irq, dev_id);
->  		enable_irq(irq);
->  		if (ret != IRQ_WAKE_THREAD)
-> -- 
-> 2.45.2
-> 
+    cat /sys/kernel/debug/tracing/trace > trace.txt
+
+and provide me this file.
+
+Thanks a lot for your help!
+
+	Anna-Maria
+
 
