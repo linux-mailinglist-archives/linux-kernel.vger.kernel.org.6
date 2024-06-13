@@ -1,152 +1,235 @@
-Return-Path: <linux-kernel+bounces-212776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD42F906627
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:06:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AACF490662F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A01D1F23809
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:06:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F2BBB226D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202EA13D24F;
-	Thu, 13 Jun 2024 08:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975BF2119;
+	Thu, 13 Jun 2024 08:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LGTuxrcn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AD4FspjG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626AE13C90B;
-	Thu, 13 Jun 2024 08:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364A013BC0D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718265989; cv=none; b=iXmJWgkH+0CnyRrv9uFjFQKt+p+H8Qb+HEJw5ZtxsV8FUttDa3QWd1cFfCqj821KAbPhmuCZbFgmp5wtM70OjGeJ9IWChaYgRrIve17lQqYrDaaRTXaVpZ2NL2JBcV645S9R4aPLwxw43+wYG1KZx64omMu0HGz83E3XA7Z+UCw=
+	t=1718266048; cv=none; b=efte4D+YNh0svqGjL014mvFpYXCFFSYQOPzHPMTYR4bagjc8kTm0kmoKAjIDZ7rYu1phbMxwhOmP7eo4Ic96tTEdduBOsAsGoq9S7spMhMpGwc3DWrmOh9jRX06/JD4sFqEu/lKw3IVRqIr6TvZiD58Oy7daa0+WBtO1JwZh+BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718265989; c=relaxed/simple;
-	bh=dRmC8fxGxGymh2AgVLo6sE01C4CxqjhSMs7uPX5cl50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gX/5R+ezl0uLT8yjoBpukVPvydn56gtN6ocKcz1mK51wGGSUv+5Sq2w6HR5loA4pp2nVKTpmu7MNPiMoHMIFJz4+AfkGB8OxPt7HG0kjevLFIBUPvmqgL0g8xIs1Qx60zNqKTYt8RXAbodG9EnAhkCc+cQVISnpvXx7MbpuXVeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LGTuxrcn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C97FAC2BBFC;
-	Thu, 13 Jun 2024 08:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718265989;
-	bh=dRmC8fxGxGymh2AgVLo6sE01C4CxqjhSMs7uPX5cl50=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LGTuxrcnW5OQKSBpMHwWupnu3OWCeC/Bbjwa9S+I/Vtb21XhpDMT7ORzXNAyjNXf0
-	 7pfiLx0CnpnzdP6c4lTfbvvSt+ML726WPAATzWby8Mi7bUH7dCGDF55BvzlbJACwHq
-	 atrYOIdz7x0NrXHIdL38kt9o+LZSXK/i52Vn4IkY=
-Date: Thu, 13 Jun 2024 10:06:26 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Meng Li <Meng.Li@windriver.com>
-Cc: Thinh.Nguyen@synopsys.com, quic_uaggarwa@quicinc.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: dwc3: core: remove lock of otg mode during gadget
- suspend/resume to avoid deadlock
-Message-ID: <2024061313-october-sniff-5b0c@gregkh>
-References: <20240613073959.1939608-1-Meng.Li@windriver.com>
+	s=arc-20240116; t=1718266048; c=relaxed/simple;
+	bh=ky8CVT9mozDoquEesxYshFZtSqOyPlbrY1ZPJYAuyMk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FGBMZ4F/lyc+qK9jBbd+VG0DGG0WFbxUjWoBEPMUp01mnZGcLwbKlw+pKHoB1jX4Gqcon3um3tE26ab95Y19SbsBnUwYAyTDNhVhvODTzFUDrnAhVa3/yXfFK4hUfvqO6UPExGF6iGduElUEnxASLtu+yqAKaBp8fylYe6bT0mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AD4FspjG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718266046;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5GRWbA/uWeRuMdyWJhyP5cP7uFrOe0sCfM6iCB5SokA=;
+	b=AD4FspjGj7KgeUQuod6Puz/1nMG2VJjJLdvBOobUqOLWM/P9OQP/h3Y2JV4kXmZZqlw5ew
+	/wtl7Q8N6J5C1rTl+Jmr7L3H0g/jmeVZ2pkT+iP3Bfk63JAvswVx9p4T/tuu2bCX9ZY6eM
+	WFmaInT++FXQ5wzkERUc9n713D23vnU=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-255-kcA588o6O46coK75M66SkQ-1; Thu, 13 Jun 2024 04:07:20 -0400
+X-MC-Unique: kcA588o6O46coK75M66SkQ-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-52c9894a547so583126e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:07:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718266039; x=1718870839;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5GRWbA/uWeRuMdyWJhyP5cP7uFrOe0sCfM6iCB5SokA=;
+        b=JNNUpJSiTWtYJc+XsxEXpPUwsHWUKGTnbXvH/jstNAmrnGNo+L7SGctEDWPxm922rc
+         XFolFDNwp69KbIJcJgeEZ+u/TNzASW9fMh9QvqFyytNo7yr9o1ctzYHCu+xA/oEBIMeD
+         jFHH7O9dTyHOvRWA8t8/d5FBlmpPV1YShx/6ZT6fsIdrVI/5JZ0VDpeem2UfeQqLRRfs
+         u/HK8SRWTEOh4CG3CNA6wxYg+1CzhishNHMYH1OeQH/o9dOS6O5mfpZHwMcY7TODU8Ij
+         xDguGdqFhCi3kXvMgAlllGpjsXhv9kaoSelFrwt92RoHR1Ifpveifk/X9Oi2r+/WUbbZ
+         cVXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRaVMduioKItDfapdBc/qqqovDFScA4Eycv0pbAvQ4x4X1/Elb1SnxKIRh2BBUD8pbFxAtRyhZxYXZMz821mdmsZfVQp+Be5WPLUkm
+X-Gm-Message-State: AOJu0YwobPgEOZWCJeIHkeLuBx5gkOWWnOfjIjjTUejjWf3TbbtgZG4P
+	uut0adL0Czafd7trATxqKEmhmOEzNVDM2vykfrM0z/e3OtlPdAyxucXLu+pC+wBsimoXx8ggLI+
+	8BMIBqd4yZZz1R+48Wgpwx1Uqt/k7Bxt8ZMrYUJsXYBOd7s2m0hqLuOrLjlDP/w==
+X-Received: by 2002:a05:6512:3994:b0:52b:bee3:dcc6 with SMTP id 2adb3069b0e04-52c9a3fcc4emr2734826e87.51.1718266039384;
+        Thu, 13 Jun 2024 01:07:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEoMq4M7AEYqz8zDytNSjELHfVhQVnOkmAgL0WQw7PbhpnLTUWO+8O96zxrp1TCaRQjETDI1w==
+X-Received: by 2002:a05:6512:3994:b0:52b:bee3:dcc6 with SMTP id 2adb3069b0e04-52c9a3fcc4emr2734787e87.51.1718266038928;
+        Thu, 13 Jun 2024 01:07:18 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c703:fe00:10fe:298:6bf1:d163? (p200300cbc703fe0010fe02986bf1d163.dip0.t-ipconnect.de. [2003:cb:c703:fe00:10fe:298:6bf1:d163])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282f1e6sm121385e87.88.2024.06.13.01.07.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 01:07:18 -0700 (PDT)
+Message-ID: <818f69fa-9dc7-4ca0-b3ab-a667cd1fb16d@redhat.com>
+Date: Thu, 13 Jun 2024 10:07:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613073959.1939608-1-Meng.Li@windriver.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 06/11] filemap: cap PTE range to be created to allowed
+ zero fill in folio_map_range()
+To: Luis Chamberlain <mcgrof@kernel.org>, Matthew Wilcox
+ <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+ yang@os.amperecomputing.com, linmiaohe@huawei.com, muchun.song@linux.dev,
+ osalvador@suse.de
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, david@fromorbit.com,
+ djwong@kernel.org, chandan.babu@oracle.com, brauner@kernel.org,
+ akpm@linux-foundation.org, linux-mm@kvack.org, hare@suse.de,
+ linux-kernel@vger.kernel.org, Zi Yan <zi.yan@sent.com>,
+ linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+ linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
+ cl@os.amperecomputing.com, john.g.garry@oracle.com
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-7-kernel@pankajraghav.com>
+ <ZmnyH_ozCxr_NN_Z@casper.infradead.org>
+ <ZmqmWrzmL5Wx2DoF@bombadil.infradead.org>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZmqmWrzmL5Wx2DoF@bombadil.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 03:39:59PM +0800, Meng Li wrote:
-> When config CONFIG_USB_DWC3_DUAL_ROLE is selected, and trigger system
-> to enter suspend status with below command:
-> echo mem > /sys/power/state
-> There will be a deadlock issue occurring. Because dwc3_gadget_suspend() also
-> try to get the lock again when previous invoked dwc3_suspend_common() has
-> got the lock . This issue is introduced by commit c7ebd8149ee5 ("usb: dwc3:
-> gadget: Fix NULL pointer dereference in dwc3_gadget_suspend") that removes
-> the code of checking whether dwc->gadget_driver is NULL or not. It causes the
-> following code is executed and deadlock occurs when trying to get the spinlock.
-> To fix the deadlock issue, refer to commit 5265397f9442("usb: dwc3: Remove
-> DWC3 locking during gadget suspend/resume"), remove lock of otg mode during
-> gadget suspend/resume.
+On 13.06.24 09:57, Luis Chamberlain wrote:
+> On Wed, Jun 12, 2024 at 08:08:15PM +0100, Matthew Wilcox wrote:
+>> On Fri, Jun 07, 2024 at 02:58:57PM +0000, Pankaj Raghav (Samsung) wrote:
+>>> From: Pankaj Raghav <p.raghav@samsung.com>
+>>>
+>>> Usually the page cache does not extend beyond the size of the inode,
+>>> therefore, no PTEs are created for folios that extend beyond the size.
+>>>
+>>> But with LBS support, we might extend page cache beyond the size of the
+>>> inode as we need to guarantee folios of minimum order. Cap the PTE range
+>>> to be created for the page cache up to the max allowed zero-fill file
+>>> end, which is aligned to the PAGE_SIZE.
+>>
+>> I think this is slightly misleading because we might well zero-fill
+>> to the end of the folio.  The issue is that we're supposed to SIGBUS
+>> if userspace accesses pages which lie entirely beyond the end of this
+>> file.  Can you rephrase this?
+>>
+>> (from mmap(2))
+>>         SIGBUS Attempted access to a page of the buffer that lies beyond the end
+>>                of the mapped file.  For an explanation of the treatment  of  the
+>>                bytes  in  the  page that corresponds to the end of a mapped file
+>>                that is not a multiple of the page size, see NOTES.
+>>
+>>
+>> The code is good though.
+>>
+>> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > 
-> Fixes: 61a348857e86 ("Fix NULL pointer dereference in dwc3_gadget_suspend")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Meng Li <Meng.Li@windriver.com>
-> ---
->  drivers/usb/dwc3/core.c | 6 ------
->  1 file changed, 6 deletions(-)
+> Since I've been curating the respective fstests test to test for this
+> POSIX corner case [0] I wanted to enable the test for tmpfs instead of
+> skipping it as I originally had it, and that meant also realizing mmap(2)
+> specifically says this now:
 > 
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index 7ee61a89520b..9d47c3aa5777 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -2250,7 +2250,6 @@ static int dwc3_core_init_for_resume(struct dwc3 *dwc)
->  
->  static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
->  {
-> -	unsigned long	flags;
->  	u32 reg;
->  	int i;
->  
-> @@ -2293,9 +2292,7 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
->  			break;
->  
->  		if (dwc->current_otg_role == DWC3_OTG_ROLE_DEVICE) {
-> -			spin_lock_irqsave(&dwc->lock, flags);
->  			dwc3_gadget_suspend(dwc);
-> -			spin_unlock_irqrestore(&dwc->lock, flags);
->  			synchronize_irq(dwc->irq_gadget);
->  		}
->  
-> @@ -2312,7 +2309,6 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
->  
->  static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
->  {
-> -	unsigned long	flags;
->  	int		ret;
->  	u32		reg;
->  	int		i;
-> @@ -2366,9 +2362,7 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
->  		if (dwc->current_otg_role == DWC3_OTG_ROLE_HOST) {
->  			dwc3_otg_host_init(dwc);
->  		} else if (dwc->current_otg_role == DWC3_OTG_ROLE_DEVICE) {
-> -			spin_lock_irqsave(&dwc->lock, flags);
->  			dwc3_gadget_resume(dwc);
-> -			spin_unlock_irqrestore(&dwc->lock, flags);
->  		}
->  
->  		break;
-> -- 
-> 2.34.1
+> Huge page (Huge TLB) mappings
+
+Confusion alert: this likely talks about hugetlb (MAP_HUGETLB), not THP 
+and friends.
+
+So it might not be required for below changes.
+
+> ...
+>         For mmap(), offset must be a multiple of the underlying huge page
+>         size. The system automatically aligns length to be a multiple of
+>         the underlying huge page size.
 > 
+> So do we need to adjust this patch with this:
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index ea78963f0956..9c8897ba90ff 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3617,6 +3617,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+>   	vm_fault_t ret = 0;
+>   	unsigned long rss = 0;
+>   	unsigned int nr_pages = 0, mmap_miss = 0, mmap_miss_saved, folio_type;
+> +	unsigned int align = PAGE_SIZE;
+>   
+>   	rcu_read_lock();
+>   	folio = next_uptodate_folio(&xas, mapping, end_pgoff);
+> @@ -3636,7 +3637,10 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+>   		goto out;
+>   	}
+>   
+> -	file_end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE) - 1;
+> +	if (folio_test_pmd_mappable(folio))
+> +		align = 1 << folio_order(folio);
+> +
+> +	file_end = DIV_ROUND_UP(i_size_read(mapping->host), align) - 1;
+>   	if (end_pgoff > file_end)
+>   		end_pgoff = file_end;
+> 
+> [0] https://lore.kernel.org/all/20240611030203.1719072-3-mcgrof@kernel.org/
+> 
+>    Luis
 > 
 
-Hi,
+-- 
+Cheers,
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+David / dhildenb
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
