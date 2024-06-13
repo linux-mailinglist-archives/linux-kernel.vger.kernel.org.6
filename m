@@ -1,423 +1,147 @@
-Return-Path: <linux-kernel+bounces-213933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA51907CB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:36:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF76907CB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721E11C22A3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 301CE1C22CBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FB414C59A;
-	Thu, 13 Jun 2024 19:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D85914B965;
+	Thu, 13 Jun 2024 19:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1jORBDr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LE4JWSWw"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150E112C7E3;
-	Thu, 13 Jun 2024 19:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26839137758
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307387; cv=none; b=oQZURZ7qC3xYo5Ii6LS/+rICfMGJBQsy5FOlOFOetDzI8YibW8AhgEcAGIasRU91xR9P6VZoUmFGUqjDpZPpXneMn+RUCbpWxlm2bFy3QfzrntyN9Zh+7KBYhPPNI4t6CYAh0N3C+usXS1m8D9fL/Vx92fd1S6z0WXwc2fhTBM4=
+	t=1718307504; cv=none; b=Xk5wb+8gOtLJ3RtYaQlhXwt8x3bhRBvnW0PnPSB3qzaLsfGp/RwyrgdvnR6S9GooYcvmQP1NT+t4xCt7p9Havj1F7h1506JkfqXIGxjD1tAlrIhadLc0eqlxIrapu5dNgVuN/WI6L2sP+F6C/b5Vb9FiHAk8ioaWtXr7h6Oqcfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307387; c=relaxed/simple;
-	bh=hoj7+mJl2v8L0w+cxKSigp1VZHa6dw8bBqGYa12pXUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=slsP/NREEDPvF+yx6b+VIgEKJvuXzA4HXWjk+7IBGOAFw4MCbeQ2uygnk9fA3uNBDwqK7cTfzJpYU2YigO0wYn7qWJ63ZVnsdzGRiG24Y+hGneXkx9z2IqKSm8Ofn/2Pvsh9YX6OQdK+YTd7zcvAeORxLd2BmVI1bVcOExebuWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1jORBDr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D19C2BBFC;
-	Thu, 13 Jun 2024 19:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718307386;
-	bh=hoj7+mJl2v8L0w+cxKSigp1VZHa6dw8bBqGYa12pXUw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k1jORBDrBIqdH7GVXqzbhn0HdZtnUoYs2B6pDvKF5dvUURSItSBpKNureIbhv+/LP
-	 oxXstJpNUtCSu2izRXfM2kpKMG1zvsVDX0ZM531F/8hJWNztYYkOnNc8yx5qR4nj6O
-	 Eh6SsQxsLaZ90x0hSywMHSDBAaBINLzgpQrNADmrw8Li/6jTxojibxTnKmsJS9Tn3K
-	 110x+acMk972B5piy5krf4CFA3joDEaqHBYEbdzLsDDPDkRZtAuN13TviQhMMbz/MQ
-	 v9CW3x+p6e0Y+wNRJnE9qhzuIYbUKmze09/QX71dKU8MBPfrEMD71TmtEsXJiNajVE
-	 vqi5FCivOMIpg==
-Date: Thu, 13 Jun 2024 13:36:25 -0600
-From: Rob Herring <robh@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org,
-	konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com,
-	conor+dt@kernel.org
-Subject: Re: [RFC V2 1/4] dt-bindings: firmware: Add support for QCOM Vendor
- Protocol
-Message-ID: <20240613193625.GA2338851-robh@kernel.org>
-References: <20240612183031.219906-1-quic_sibis@quicinc.com>
- <20240612183031.219906-2-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1718307504; c=relaxed/simple;
+	bh=TR4cAm5xNK5AcGmAj98ChxZtgaFF/ujYrlwuTqic8RI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a2JTmbqsLwO1SSguX/O0+G6XBsa8AKLYGozAK3BdPJQJDVfDFzQh+6MX8OLo1CGiLs6bLkg8tyxwfrY4qBVzZZ22vBbOv9Sj3HoTeTmS0+sn+J1qp5Ltyexmc3EGFMwc2ioWWH4/Jz7SG3tJTgmymXAKFeaAEdxwNFVD5GaoqSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LE4JWSWw; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42198492353so11390225e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:38:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718307501; x=1718912301; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gkVryrNJA6CiSEHBBoY/tn5Xtb/QS0Aw+i138p1q7mg=;
+        b=LE4JWSWwFiQ4DF7wcVJ0w+SRrJeH3CShHWPEnQ3yC1BfXviDHKS/cE7GJI8qPcOA8y
+         T0u1GjCT0pmPh9AiFCz8CKVYO4ZUFvB24OtrmRHId3fDnxa83+uJck5iISfx88ic7gIV
+         BS4Go4hknoUESmCOglqMgxAGoR7frRfrB/oijnalIGnaJ2GPPLa6Cc26BdeOtKaajdcZ
+         fZ7k+7JFlrUUjXUsT4uwkr4NBG590y3QofSM8M3OCw/kHlwsvd2xRhyfdRs9ZJKdMVyy
+         Rx/rrD0Vmb6e0Z3NLn5jOqiGxVyinzBzn9/o3lWT3javkMuiSvUVPib5ewsPZ9NQzI8y
+         N+SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718307501; x=1718912301;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gkVryrNJA6CiSEHBBoY/tn5Xtb/QS0Aw+i138p1q7mg=;
+        b=CtCPuqUY4qyJgwcCUFy7Ts/1kPG02AqNF9LO7CYo7NwDH4q0Ult5Pu4IU6oyPIWYDW
+         RGFOHTNHSyeT00kqH9jFaG18SZFQUTtbruFCmESswkurMukfqBvc6nv6RP+ZD7AUm9Cb
+         hOONJYLZKOLivB+yCFR8f4GO2rLKtFCjN75hYBWhzcdhM0B1U06Ma81D5RvthE4vwEya
+         0hWIhVbOxoB4TrQ94yQWvvMya8ilqayQA+yHHxRrNLix57a9YijR5x1FgqBLMLjNXGKd
+         8tt8s+V7ZTU4hF6Q5ThqKAyJw9BDtDYw0/imYn9L6ISFYR/AN9YILzRfbW3jdXaLbNot
+         czfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+2ANjoDYCXjkCfExXdYIzWHquUFEH2vHRzx2mGLriuEmCa0M+thyObpkok50GwDrm7h9d5tUZ3K7dyCSVNRhaPHPnloPt8XS7qzKz
+X-Gm-Message-State: AOJu0YyfjD/hVerZEAD78nfJ+cLluYePdfieDZ9YgjdoCMA4qXmj8TFY
+	AewgNoiuHikuWfnQNHSu6cVWojThGatTNmi2NVfQsOe0GQimz08a
+X-Google-Smtp-Source: AGHT+IEnEqeoMG/JJxTOMZkZ/oBkHUfBTCamWig8WosWNOft6m9a3oO84QR7RMYwtkq2b2NIi81fxA==
+X-Received: by 2002:a05:600c:4f84:b0:422:683b:df34 with SMTP id 5b1f17b1804b1-4230484eed9mr6166685e9.28.1718307501137;
+        Thu, 13 Jun 2024 12:38:21 -0700 (PDT)
+Received: from ?IPV6:2a02:6b6a:b75d:0:64:3301:4710:ec21? ([2a02:6b6a:b75d:0:64:3301:4710:ec21])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f61280f6sm35170855e9.27.2024.06.13.12.38.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 12:38:20 -0700 (PDT)
+Message-ID: <8b155ba8-ff53-4202-b2eb-afe73db77d7e@gmail.com>
+Date: Thu, 13 Jun 2024 20:38:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612183031.219906-2-quic_sibis@quicinc.com>
-
-On Thu, Jun 13, 2024 at 12:00:28AM +0530, Sibi Sankar wrote:
-> Document the SCMI QCOM Vendor protocol v1.0 bindings and the various memory
-> buses that can be monitored and scaled by memory latency governor hosted
-> on it.
-> 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
-> 
-> v1:
-> * Add missing bindings for the protocol. [Konrad/Dmitry]
-> * Use alternate bindings. [Dmitry/Konrad]
-> 
->  .../bindings/firmware/arm,scmi.yaml           |  21 ++
->  .../bindings/soc/qcom/qcom,scmi-memlat.yaml   | 243 ++++++++++++++++++
->  include/dt-bindings/soc/qcom,scmi-vendor.h    |  22 ++
->  3 files changed, 286 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,scmi-memlat.yaml
->  create mode 100644 include/dt-bindings/soc/qcom,scmi-vendor.h
-> 
-> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> index 7de2c29606e5..21e4da53d02c 100644
-> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> @@ -278,6 +278,27 @@ properties:
->      required:
->        - reg
->  
-> +  protocol@80:
-> +    $ref: '#/$defs/protocol-node'
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        const: 0x80
-> +
-> +      memlat-dvfs:
-
-I don't see the purpose of this container node.
-
-> +        type: object
-> +        additionalProperties: false
-> +        description:
-> +          The list of all memory buses that can be monitored and scaled by the
-> +          memory latency governor running on the SCMI controller.
-> +
-> +        patternProperties:
-> +          '^memory-[0-9]$':
-> +            type: object
-> +            $ref: /schemas/soc/qcom/qcom,scmi-memlat.yaml#
-
-This schema needs to be at the level of the protocol node. See the i.MX 
-SCMI pinctrl patches for more details on what it should look like.
-
-> +            unevaluatedProperties: false
-> +
->  additionalProperties: false
->  
->  $defs:
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,scmi-memlat.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,scmi-memlat.yaml
-> new file mode 100644
-> index 000000000000..c6e3d163c4a3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,scmi-memlat.yaml
-> @@ -0,0 +1,243 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/qcom/qcom,scmi-memlat.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SCMI Memory Bus nodes
-> +
-> +maintainers:
-> +  - Sibi Sankar <quic_sibis@quicinc.com>
-> +
-> +description: |
-
-Doesn't need '|' if no formatting.
-
-> +  This binding describes the various memory buses that can be monitored and scaled
-> +  by memory latency governor running on the CPU Control Processor (SCMI controller).
-> +
-> +properties:
-> +  qcom,memory-type:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2]
-> +    description:
-
-Needs a '|' if you want your formatting preserved.
-
-> +      Memory Bus Identifier
-> +        0 = QCOM_MEM_TYPE_DDR
-> +        1 = QCOM_MEM_TYPE_LLCC
-> +        2 = QCOM_MEM_TYPE_DDR_QOS
-> +
-> +  freq-table-hz:
-> +    items:
-> +      items:
-> +        - description: Minimum frequency of the memory bus in Hz
-> +        - description: Maximum frequency of the memory bus in Hz
-> +
-> +patternProperties:
-> +  '^monitor-[0-9]$':
-> +    type: object
-> +    unevaluatedProperties: false
-> +    description:
-> +      The list of all monitors detecting the memory latency bound workloads using
-> +      various counters.
-> +
-> +    properties:
-> +      qcom,compute-type:
-> +        description:
-> +          Monitors of type compute perform bus dvfs based on a rudimentary CPU
-> +          frequency to memory frequency map.
-> +        type: boolean
-> +
-> +      qcom,ipm-ceil:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description:
-> +          Monitors having this property perform bus dvfs based on the same
-> +          rudimentary table but the scaling is performed only if the calculated
-> +          IPM (Instruction Per Misses) exceeds the given ceiling.
-> +
-> +      qcom,cpulist:
-> +        $ref: /schemas/types.yaml#/definitions/phandle-array
-> +        description:
-> +          List of phandles to the CPUs nodes whose frequency and IPM are to be
-> +          monitored.
-
-We have a standard property for this: cpus
-
-> +
-> +      operating-points-v2: true
-> +      opp-table:
-> +        type: object
-> +
-> +    required:
-> +      - qcom,cpulist
-> +      - operating-points-v2
-> +      - opp-table
-> +
-
-> +    allOf:
-> +      - if:
-> +          properties:
-> +            qcom,compute-type: false
-> +        then:
-> +          required:
-> +            - qcom,ipm-ceil
-> +
-> +      - if:
-> +          properties:
-> +            qcom,ipm-ceil: false
-> +        then:
-> +          required:
-> +            - qcom,compute-type
-
-Isn't all this just:
-
-oneOf:
-  - required: [ qcom,compute-type ]
-  - required: [ qcom,ipm-ceil ]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, shakeel.butt@linux.dev,
+ david@redhat.com, ying.huang@intel.com, hughd@google.com,
+ willy@infradead.org, nphamcs@gmail.com, chengming.zhou@linux.dev,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+References: <20240612124750.2220726-1-usamaarif642@gmail.com>
+ <20240612124750.2220726-2-usamaarif642@gmail.com>
+ <ZmoBf6RPJzC2RaqM@google.com>
+ <85804484-9973-41a1-a05d-000833285f39@gmail.com>
+ <CAJD7tkYBxN4uAHLacAx=m2+B9zPidz0V5pGP030yvNYLTnk=VQ@mail.gmail.com>
+ <0572d8b1-3b17-45a8-bf75-f66e19216d38@gmail.com>
+ <CAJD7tkYGFsYbbbHp3+MMHTuxNcG_Z+i-5TCo3wieVArcra5wmA@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAJD7tkYGFsYbbbHp3+MMHTuxNcG_Z+i-5TCo3wieVArcra5wmA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-> +
-> +required:
-> +  - qcom,memory-type
-> +  - freq-table-hz
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/soc/qcom,scmi-vendor.h>
-> +
-> +    firmware {
-> +        scmi {
-> +            compatible = "arm,scmi";
-> +            mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
-> +            mbox-names = "tx", "rx";
-> +            shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
-> +
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            protocol@80 {
-> +                reg = <0x80>;
-> +
-> +                memlat-dvfs {
-> +                    memory-0 {
-> +                        qcom,memory-type = <QCOM_MEM_TYPE_DDR>;
-> +                        freq-table-hz = /bits/ 64 <200000000 4224000000>;
-> +
-> +                        monitor-0 {
-> +                            qcom,ipm-ceil = <20000000>;
-> +                            qcom,cpulist = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7
-> +                                            &CPU8 &CPU9 &CPU10 &CPU11>;
-> +                            operating-points-v2 = <&memory0_monitor0_opp_table>;
-> +
-> +                            memory0_monitor0_opp_table: opp-table {
-> +                                compatible = "operating-points-v2";
-> +
-> +                                opp-999000000 {
-> +                                    opp-hz = /bits/ 64 <999000000 547000000>;
-> +                                };
-> +
-> +                                opp-1440000000 {
-> +                                    opp-hz = /bits/ 64 <1440000000 768000000>;
-> +                                };
-> +
-> +                                opp-1671000000 {
-> +                                    opp-hz = /bits/ 64 <1671000000 1555000000>;
-> +                                };
-> +
-> +                                opp-2189000000 {
-> +                                    opp-hz = /bits/ 64 <2189000000 2092000000>;
-> +                                };
-> +
-> +                                opp-2516000000 {
-> +                                    opp-hz = /bits/ 64 <2516000000 3187000000>;
-> +                                };
-> +
-> +                                opp-3860000000 {
-> +                                    opp-hz = /bits/ 64 <3860000000 4224000000>;
-> +                                };
-> +                            };
-> +                        };
-> +
-> +                        monitor-1 {
-> +                            qcom,compute-type;
-> +                            qcom,cpulist = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7
-> +                                            &CPU8 &CPU9 &CPU10 &CPU11>;
-> +                            operating-points-v2 = <&memory0_monitor1_opp_table>;
-> +
-> +                            memory0_monitor1_opp_table: opp-table {
-> +                                compatible = "operating-points-v2";
-> +
-> +                                opp-1440000000 {
-> +                                        opp-hz = /bits/ 64 <1440000000 200000000>;
-> +                                };
-> +
-> +                                opp-2189000000 {
-> +                                        opp-hz = /bits/ 64 <2189000000 768000000>;
-> +                                };
-> +
-> +                                opp-2516000000 {
-> +                                        opp-hz = /bits/ 64 <2516000000 1555000000>;
-> +                                };
-> +
-> +                                opp-3860000000 {
-> +                                        opp-hz = /bits/ 64 <3860000000 4224000000>;
-> +                                };
-> +                            };
-> +                        };
-> +                    };
-> +
-> +                    memory-1 {
-> +                        qcom,memory-type = <QCOM_MEM_TYPE_LLCC>;
-> +                        freq-table-hz = /bits/ 64 <300000000 1067000000>;
-> +
-> +                        monitor-0 {
-> +                            qcom,ipm-ceil = <20000000>;
-> +                            qcom,cpulist = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7
-> +                                            &CPU8 &CPU9 &CPU10 &CPU11>;
-> +                            operating-points-v2 = <&memory1_monitor0_opp_table>;
-> +
-> +                            memory1_monitor0_opp_table: opp-table {
-> +                                compatible = "operating-points-v2";
-> +
-> +                                opp-999000000 {
-> +                                    opp-hz = /bits/ 64 <999000000 300000000>;
-> +                                };
-> +
-> +                                opp-1440000000 {
-> +                                    opp-hz = /bits/ 64 <1440000000 466000000>;
-> +                                };
-> +
-> +                                opp-1671000000 {
-> +                                    opp-hz = /bits/ 64 <1671000000 600000000>;
-> +                                };
-> +
-> +                                opp-2189000000 {
-> +                                    opp-hz = /bits/ 64 <2189000000 806000000>;
-> +                                };
-> +
-> +                                opp-2516000000 {
-> +                                    opp-hz = /bits/ 64 <2516000000 933000000>;
-> +                                };
-> +
-> +                                opp-3860000000 {
-> +                                    opp-hz = /bits/ 64 <3860000000 1066000000>;
-> +                                };
-> +                            };
-> +                        };
-> +                    };
-> +
-> +                    memory-2 {
-> +                        qcom,memory-type = <QCOM_MEM_TYPE_DDR_QOS>;
-> +                        freq-table-hz = /bits/ 64 <QCOM_DDR_LEVEL_AUTO QCOM_DDR_LEVEL_PERF>;
-> +
-> +                        monitor-0 {
-> +                            qcom,ipm-ceil = <20000000>;
-> +                            qcom,cpulist = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7
-> +                                            &CPU8 &CPU9 &CPU10 &CPU11>;
-> +                            operating-points-v2 = <&memory2_monitor0_opp_table>;
-> +
-> +                            memory2_monitor0_opp_table: opp-table {
-> +                                compatible = "operating-points-v2";
-> +
-> +                                opp-2189000000 {
-> +                                    opp-hz = /bits/ 64 <2189000000>;
-> +                                    opp-level = <QCOM_DDR_LEVEL_AUTO>;
-> +                                };
-> +
-> +                                opp-3860000000 {
-> +                                    opp-hz = /bits/ 64 <3860000000>;
-> +                                    opp-level = <QCOM_DDR_LEVEL_PERF>;
-> +                                };
-> +                            };
-> +                        };
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
-> diff --git a/include/dt-bindings/soc/qcom,scmi-vendor.h b/include/dt-bindings/soc/qcom,scmi-vendor.h
-> new file mode 100644
-> index 000000000000..7ae8d8d5623b
-> --- /dev/null
-> +++ b/include/dt-bindings/soc/qcom,scmi-vendor.h
-> @@ -0,0 +1,22 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +#ifndef __DT_BINDINGS_QCOM_SCMI_VENDOR_H
-> +#define __DT_BINDINGS_QCOM_SCMI_VENDOR
-> +
-> +/* Memory IDs */
-> +#define QCOM_MEM_TYPE_DDR	0x0
-> +#define QCOM_MEM_TYPE_LLCC	0x1
-> +#define QCOM_MEM_TYPE_DDR_QOS	0x2
-> +
-> +/*
-> + * QCOM_MEM_TYPE_DDR_QOS supports the following states.
-> + *
-> + * %QCOM_DDR_LEVEL_AUTO:	DDR operates with LPM enabled
-> + * %QCOM_DDR_LEVEL_PERF:	DDR operates with LPM disabled
-> + */
-> +#define QCOM_DDR_LEVEL_AUTO	0x0
-> +#define QCOM_DDR_LEVEL_PERF	0x1
-> +
-> +#endif /* __DT_BINDINGS_QCOM_SCMI_VENDOR_H */
-> -- 
-> 2.34.1
-> 
+On 13/06/2024 20:26, Yosry Ahmed wrote:
+> [..]
+>>>>>> @@ -498,6 +507,8 @@ static void swap_do_scheduled_discard(struct swap_info_struct *si)
+>>>>>>                __free_cluster(si, idx);
+>>>>>>                memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+>>>>>>                                0, SWAPFILE_CLUSTER);
+>>>>>> +            for (i = 0; i < SWAPFILE_CLUSTER; i++)
+>>>>>> +                    clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
+>>>>> Same here. I didn't look into the specific code paths, but shouldn't the
+>>>>> cluster be unused (and hence its zeromap bits already cleared?).
+>>>>>
+>>>> I think this one is needed (or atleast very good to have). There are 2
+>>>> paths:
+>>>>
+>>>> 1) swap_cluster_schedule_discard (clears zeromap) -> swap_discard_work
+>>>> -> swap_do_scheduled_discard (clears zeromap)
+>>>>
+>>>> Path 1 doesnt need it as swap_cluster_schedule_discard already clears it.
+>>>>
+>>>> 2) scan_swap_map_slots -> scan_swap_map_try_ssd_cluster ->
+>>>> swap_do_scheduled_discard (clears zeromap)
+>>>>
+>>>> Path 2 might need it as zeromap isnt cleared earlier I believe
+>>>> (eventhough I think it might already be 0).
+>>> Aren't the clusters in the discard list free by definition? It seems
+>>> like we add a cluster there from swap_cluster_schedule_discard(),
+>>> which we establish above that it gets called on a free cluster, right?
+>> You mean for path 2? Its not from swap_cluster_schedule_discard. The
+>> whole call path is
+>>
+>> get_swap_pages -> scan_swap_map_slots -> scan_swap_map_try_ssd_cluster
+>> -> swap_do_scheduled_discard. Nowhere up until swap_do_scheduled_discard
+>> was the zeromap cleared, which is why I think we should add it here.
+> swap_do_scheduled_discard() iterates over clusters from
+> si->discard_clusters. Clusters are added to that list from
+> swap_cluster_schedule_discard().
+>
+> IOW, swap_cluster_schedule_discard() schedules freed clusters to be
+> discarded, and swap_do_scheduled_discard() later does the actual
+> discarding, whether it's through si->discard_work scheduled by
+> swap_cluster_schedule_discard(), or when looking for a free cluster
+> through scan_swap_map_try_ssd_cluster().
+>
+> Did I miss anything?
+
+Ah ok, and the schedule_discard in free_cluster wont be called scheduled 
+before swap_range_free. Will only keep the one in swap_range_free. Thanks!
+
+
 
