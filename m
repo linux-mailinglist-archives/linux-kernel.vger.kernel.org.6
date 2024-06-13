@@ -1,117 +1,67 @@
-Return-Path: <linux-kernel+bounces-212981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D2A90694D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:51:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4F3906952
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 627BC286247
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:51:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33D772869FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DB11411D6;
-	Thu, 13 Jun 2024 09:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVUcNJAN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4FB141999;
+	Thu, 13 Jun 2024 09:51:08 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F54140E2B;
-	Thu, 13 Jun 2024 09:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383E61304AA;
+	Thu, 13 Jun 2024 09:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718272261; cv=none; b=KFd8ZG9C0GyebgyVBzOakx56+exqa1er6wcgYHFlPOzPFl11k6NMeADAseC5U6ytaYPgT/Oj2pOFBI+Y0JUuEYhQ+mgwRVDxHuz0KqUGF3Q5KZACPTAncygbYRpxHasmVWlZ1ch5zBGys7wwFaJ4+W+f5w63h+tqcy+RIvIE3kU=
+	t=1718272268; cv=none; b=V7ThuWc7co6FtzSs8BCnXCv49yjHUeWK65BZKNeVeML6mB87OMEZzF9PTS8OZKZ/2Mtllh69sQwJYNlz3CZnzPTZ/4o5/ckZrEvoc+HqShImlgNFXYutIMY6ShyWs3BRo7leD+AdAg0VYSFn3yPJ4yRy5tLUe7rt3enEkYCEWbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718272261; c=relaxed/simple;
-	bh=SNV35KtlQC31smqSFcPsdJtAGTjRT6XfQVyUb02BMzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dxq9czCkXUNoQVEaeBDzEae8DcrK6ppZFngxlwLa1dwPTm2aSx01GWqXXdJV7Dy6FLONXhdH4ajy+I2HjZLsho1SAoPYogsFUdnsuOccBM3DlTX0LkiaSjxprNqDKQEA61PShk27veKXjS+cu5boQJ7oAc30XfJDiJS97RO4sUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVUcNJAN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F37EFC4AF1C;
-	Thu, 13 Jun 2024 09:51:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718272261;
-	bh=SNV35KtlQC31smqSFcPsdJtAGTjRT6XfQVyUb02BMzU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RVUcNJANurLX6qKW3W2xf6Fl4wZYNeNxn7+iw/2c4zp+OVda5WkTyj/41ummI67UZ
-	 Ud8ChBUTEDR0WQBxQeWf9uDUv9tplmGh/y+r2RFJT6XmSYbXho2hxiAg7JA49uj8l1
-	 evis/bFksYao+zUPUJYcW1HBigOmKlFfm5k+gucc4Xfp0hPvZAXEQFg/O0lvQRiNA1
-	 po1Dfo9GJvDuLjzVLmeuYruiATe2PEs+mbrAYE24sCqvMeaC53qLgtoAI2jnn0lnoW
-	 2hdmxd1NVeO9UR+32gNQwc8uLACi8So5g5+gE9gGcNho89lZg8xzuws/IfvItRNZ0X
-	 tocH7TK9zapvA==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b335681e82so51737eaf.2;
-        Thu, 13 Jun 2024 02:51:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUV40vPanHZTd1Gv3LPHCq0WprjPo9sUG/D8Mbb5DlTLm9T03NqKxXzONBzcuENZAxEsZa0SBOSuhxk3xPtcEwLkn1O07m1Vlq76xdsmtlWDnnEXmoUcXAnL6qUcglIqtUYdTdQ8sKF2mnuF/Ts9T3jDQBOuN/WE6ze5VGhRTAwmMEwYdCH
-X-Gm-Message-State: AOJu0Yz2gAzJINkj1SGpYCs01TWDMcTPWTHhCpvbPnP5jsxI81pG6hfj
-	V8NOk5sSt6ZFUjCpF4xtqBjdc37rK8dGz8Tk0sNCTaZn3o7roKzlwxUacD++uI9U3xN4HzqT8ld
-	SOklCr3t+WXOdrzHZErF2w560xNk=
-X-Google-Smtp-Source: AGHT+IEcaBEAG1NmWL/I9RS0vHUxgrV83BuKZJ+zxf4O57zYlHmYtUHwc4Z7TBN+zb6NrRmrRDwkdL+RKuRXm9EHD20=
-X-Received: by 2002:a05:6820:2c86:b0:5aa:3e4f:f01e with SMTP id
- 006d021491bc7-5bb3b9c614cmr4555004eaf.1.1718272260335; Thu, 13 Jun 2024
- 02:51:00 -0700 (PDT)
+	s=arc-20240116; t=1718272268; c=relaxed/simple;
+	bh=P7sRem6aJSQwbsJkxebbgq+IQcCxrUaIcOl264eZsa0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=psS62ZzztROyAM/C5ZXt0amRdPGivoprWgEqME6u8jHGF+nApRyyGZxV2BvYjkKASUuJj9clZycHN+nNZaC4WqF5TCXJIIvrANib78QzWkLwAYZDB8MZjtkawtw0XsHdsmlVtratbyD0NJ0w73KY+6unqtCzdYpXCYJAswcQuq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A29EC3277B;
+	Thu, 13 Jun 2024 09:51:05 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] kselftest/arm64: Fix a couple of spelling mistakes
+Date: Thu, 13 Jun 2024 10:51:03 +0100
+Message-Id: <171827226019.47137.541635924892576810.b4-ty@arm.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240613073429.1797451-1-colin.i.king@gmail.com>
+References: <20240613073429.1797451-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a05df025-a0be-49cd-84a9-7d7fb2eeb33e@redhat.com>
- <e9062095-b312-44df-a9e3-0b09f3ec9eff@redhat.com> <4b387b4d-f778-4891-9f07-df5fc0a093cd@redhat.com>
- <ZmmQLt7wB-yGQBTw@kekkonen.localdomain> <CAJZ5v0ii3WFQRPdfHeeW4M9kXSWDVxxxy02zThcf25mjNwqDAw@mail.gmail.com>
- <ZmmT56Cyvb2FCyav@kekkonen.localdomain> <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
- <ZmmY3he9vfWVWU3I@kekkonen.localdomain> <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
- <18cb82bb-51c6-4a52-80a4-6b1e3d95f99c@redhat.com> <ZmoCUZxlSHy_PclO@kekkonen.localdomain>
-In-Reply-To: <ZmoCUZxlSHy_PclO@kekkonen.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 13 Jun 2024 11:50:48 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jN3CXM9vWQniu1Q2t1NvG9n5KoG0VGHnMgdPU2iHpBvw@mail.gmail.com>
-Message-ID: <CAJZ5v0jN3CXM9vWQniu1Q2t1NvG9n5KoG0VGHnMgdPU2iHpBvw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port nodes
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com, 
-	wentong.wu@intel.com, linux-media@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Sakari,
+On Thu, 13 Jun 2024 08:34:29 +0100, Colin Ian King wrote:
+> There are two spelling mistakes in some error messages. Fix them.
+> 
+> 
 
-On Wed, Jun 12, 2024 at 10:17=E2=80=AFPM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Hans,
->
-> On Wed, Jun 12, 2024 at 04:30:30PM +0200, Hans de Goede wrote:
-> > Sakari I know you have been pushing for MIPI camera descriptions under
-> > ACPI to move to a standardized format and I can see how that is a good
-> > thing, but atm it seems to mainly cause things to break and before
-> > the ACPI MIPI DISCO support landed in 6.8 we did not have these issues,
-> > since the information used by the ipu-bridge code does seem to be corre=
-ct.
->
-> Support for capturing from cameras on IPU6 systems (IPU6 ISYS driver and
-> IPU bridge changes) was upstreamed for 6.10, with some drivers such as IV=
-SC
-> (four of them) and IVSC related IPU bridge changes merged for 6.8 already=
-.
->
-> We can't guarantee the continued functioning of downstream drivers in cas=
-es
-> where new upstream drivers for the same devices get merged to the kernel,
-> often with different APIs. You know that as well as I do.
->
-> In other words, there was no regression with respect to the upstream
-> kernel.
+Applied to arm64 (for-next/kselftest), thanks!
 
-Users' opinions on this may differ I suppose.
+[1/1] kselftest/arm64: Fix a couple of spelling mistakes
+      https://git.kernel.org/arm64/c/963c5d496822
 
-If a user sees a new kernel warning on boot, they will easily count it
-as a regression, and with panic_on_warn this becomes a full-fledged
-kernel crash.
+-- 
+Catalin
 
-This is bad, even though it may be coming from a new driver strictly speaki=
-ng.
 
