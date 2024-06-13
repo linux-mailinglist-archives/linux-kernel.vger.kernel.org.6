@@ -1,84 +1,90 @@
-Return-Path: <linux-kernel+bounces-213201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACC59070C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:30:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC409070C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E536CB218C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:30:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9576B1C23AA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B824C161;
-	Thu, 13 Jun 2024 12:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE4956458;
+	Thu, 13 Jun 2024 12:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CD/45SMu"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KgA/HfKa"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A521C32;
-	Thu, 13 Jun 2024 12:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813581EB25;
+	Thu, 13 Jun 2024 12:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718281839; cv=none; b=FuxXPmoci4ndB6EuRWx/y+naQm1PnkNBg1Uqes+0QJ1NERJ3K16WNJbQTpDsC5FI31/y6VayhXZxAgyLWgUX4Nqoy72JmdRI2EXZccE1wHbPx/MNE0w9RRNmUdCMeNLMirDJvsWwDMxAcE4gwugxAGylS907kKY1AXUvV2GzzoA=
+	t=1718281844; cv=none; b=V/xpCQYX3lkQKNt0mJnR2sIz4Iz1iml2iVTd4iQLFI/Aafm2XM3wfaRJbnrDoQ34kblPidGyNm0pH8KEiUwqnfJ1Q0AnBG7v0UiB6N6zExNZpf8MNVWdr59ggLcACovg7hSpP1Ki/nvQ/lsSy1bsrNQHSstD682BViSM3s/MafE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718281839; c=relaxed/simple;
-	bh=UJ5vlctxDseqqsh+SakzrcuK4Vz7Nl4HZ24S2HN5GkI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nVZzoW57g+Y8KGLjcytKGF+vIMk43pmfRq45CtWcg18M27hKqJganmuEABfiicVCJN+MLbDfS/0j7Fdk73B6PLPrz4HRAyb0hhmokripBO6vFwaUTC/vRpz9QEcbANzy6GZSw58V980ENvyMSGDD7sZNsg1I6eWOu7TbyCOsxJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CD/45SMu; arc=none smtp.client-ip=209.85.160.43
+	s=arc-20240116; t=1718281844; c=relaxed/simple;
+	bh=70tSjkjNI+K1v1AOs1BGoWPIvIYLL+9JPSNGFWBBkTg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kxwVGcC2ZZDJFQmRN/yeei2lTlMIv96oAYrhP4Q6F+qh1p/pW+BsKieIo+f5yyLQWaoPy98v5Xz8lX+Mwp5FE9h1WW5AU9yyWHLYvJxHjAjaZiHWVGdmAk/LIFIU5BC6dV42Jot5pteOpTQMABwKe0QwzGA9v2dQLmhP31pKnCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KgA/HfKa; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-254aec5a084so465662fac.3;
-        Thu, 13 Jun 2024 05:30:38 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-705c1220a52so928431b3a.1;
+        Thu, 13 Jun 2024 05:30:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718281837; x=1718886637; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pCVokkdZ2AzZZwD9JHJBnP81SaNJNef4hr9QhUUF4Mk=;
-        b=CD/45SMunkqz+kpgO71fQ41nka37vbfnhJ2y+p3WVdXXs+AtlYEK87n2C9rPe7kX6j
-         g8rujQ/6GDp4z/mAfgHM7NlsCcOTwnwkoImNCRpJOG9MH5rCazGVyJTNz/fobBp2aIEV
-         ascx1+W3gwcR/ULj5LEuE8pUFss2HyGqcoS0J0nBP1dVl5jSJRVcFyBzW73bXw9I0xEX
-         X1jIr1YzcjWq7b1bG/8puRe5G12KJE7atqz7vfvQJ4YPeZRMv+cWVuNlNrlwgfjd9IQ/
-         GAlPqmOfQ9XJvp7RsXmzCsfhjAEBQpMFzGRPry3sgZhrXLbCAYMA5o4UhzXmvyTK4AQw
-         3tzg==
+        d=gmail.com; s=20230601; t=1718281843; x=1718886643; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dyhnGzVIyoi/gHkvqNPaXXARC68ta1GMz1dJjxYfDu8=;
+        b=KgA/HfKawdacgGg2OYgCW33vRECDUgCp5Tcwczp5alXV09URnHPOagp6GyBwn5WOHT
+         t19zXDzWDmZvIhgbyEQ8el59+oaIJN4Yj21yEpwSJfI+9bHxw7wKn1x2GKvb42Imnq43
+         mqRMdsHG8UpG+TluQdKG9AGoZK1YpZFQiuPGtb6RvpMiNfk81AkkMujcokwWTFh6QRzO
+         xpOD1Fkne/sV9Q1327fdM+8FXcghwOIUmCONA5yJOwPylXL7dd7klbV9gavsBF31dSiw
+         Jt+IjCORNOabHS8XhDivXqe25IsxN5ASvrycceCA646Oqd9Q3Pu+Z3ByCTnc+Ve8y7hk
+         krqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718281837; x=1718886637;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pCVokkdZ2AzZZwD9JHJBnP81SaNJNef4hr9QhUUF4Mk=;
-        b=Npp7+3/NGFsq+oRvoQbHIeyQwcFSZ0GJKkHnfzlkXsE6fjQbPfNXAZSogLB46PDloe
-         RwQxR/YGQwVF7TVNSooSVGy+IYr/oUVElyPFaGo2HD9zOSmk8M18JCajiGvxxoylUpda
-         NH8kqnwFMfv2JJoAtqgns/UbkJl4m52AzNmCIAyEdkdIYn3JUo6gxf4JUgWglKRz54wd
-         C7Kh88ddXJOHq7bJO1y6j+J+vFgu8hm+6izNQdwp8tNc6HL5/3lFOulo+2F+/+w+nPNH
-         bwMmEWtRsr+EYSdzci0wPnP79RALrd9WPWIsVjZttCUdHA1BGZmEoMBVi/NBu03h45e+
-         hwWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyDczxFNJoKJCoXcBj6m3FifLYiZ4/5gGQbaOQ5iVZsZoDhzoVGp/SjXAMiShpTXAaS1ta2TwRvjhUt/VXsOMtZmZPYOxVbXN3aogkPos6+4ekzCRyqBItpSt07eX6IVJRVOTG8zE5Ils2DkP5Z8rU5NpuH6hEwNKEbsBVNBBzHHnKKQ==
-X-Gm-Message-State: AOJu0YxTC9Bp66eDSpHW2z479zdn3x71N/Bdn6QJvEhwnFJhj7HK2175
-	jzbzJwCFBAm910EDEhxYsf5REfoqaMPrYW2INyKkyRh8SBC36t1i
-X-Google-Smtp-Source: AGHT+IG1yE761Oo0wHvASf6bT313rWSBwQTyYZPjfHIYWPlbf2Wd4perdaLwwot/BR8RraQ77TWppQ==
-X-Received: by 2002:a05:6871:521e:b0:24c:4c82:4f15 with SMTP id 586e51a60fabf-25514c4fc96mr5391470fac.24.1718281836864;
-        Thu, 13 Jun 2024 05:30:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718281843; x=1718886643;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dyhnGzVIyoi/gHkvqNPaXXARC68ta1GMz1dJjxYfDu8=;
+        b=WGuof9IxHGMnS6OZ4V8GJ0t9//omI8dFJ35M1fqTfVxj46n82L08/kKV7/N01DDVXR
+         tdt4gABWjYOQ72FYMJMEwls2QzxsSXbaAaTjAGQuZkLZVpG0PY7gae6Bvlsd8sOjYgdY
+         WXnrcueu/fmQsY8moT8wz3TMzhd33kLceYK+s/o4aSlj7JdWWhzG7eVMzusjKSbAk1Xy
+         Wtm2CZDcjqpiEjMaKODTfdqNgDiKIWWaGJkv6a7EU3Qqu+6eLX+gyFsJWjUbdxjY9erG
+         5gs1GNhX3fflFy0pBYjT521Rwde2rRIr6Zw+paxpk8lNKbIJ3t67fz9YU+VFdNACYo7c
+         KPWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUL++lCbub/tghFOEfcOGMwdIgYzBMC66ygl3dBNTQRKjmzDaNcwYUewkr8rTGuCf7dpUI6BqyzEak2R7xuI/IcorNsbqwqW+VXJig98Jm9lxusDHEA5ssfwzmTpN8t4WINgm6V9ifcdQ==
+X-Gm-Message-State: AOJu0YwboJFGbnuQoi3/gkylO6JeNmXHiuUW/nbIaHLFT1kfOfKkdCol
+	iTSze8hBzp+Zxc5L8igbxa/FqcUfZfzMXWoLewN/9bQqoYLCKPag
+X-Google-Smtp-Source: AGHT+IG6Z9yGmBryZSy9wuMGay0o8aAhEaBmtbG5TCCILeJYBrSp7Dsjp60aC/QXOhsntZ/hKwlaQA==
+X-Received: by 2002:a05:6a20:2444:b0:1b8:a2ca:3b6d with SMTP id adf61e73a8af0-1b8a9c08c68mr5240212637.37.1718281842629;
+        Thu, 13 Jun 2024 05:30:42 -0700 (PDT)
 Received: from localhost.localdomain ([113.30.217.222])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fedf59299fsm875459a12.55.2024.06.13.05.30.33
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fedf59299fsm875459a12.55.2024.06.13.05.30.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 05:30:36 -0700 (PDT)
+        Thu, 13 Jun 2024 05:30:42 -0700 (PDT)
 From: Anand Moon <linux.amoon@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Icenowy Zheng <uwu@icenowy.me>
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Cc: Anand Moon <linux.amoon@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-usb@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 1/2] dt-bindings: usb: Add the binding example for the Genesys Logic GL3523 hub
-Date: Thu, 13 Jun 2024 18:00:14 +0530
-Message-ID: <20240613123020.43500-1-linux.amoon@gmail.com>
+Subject: [PATCH v7 2/2] arm64: dts: amlogic: Used onboard usb hub reset on odroid n2
+Date: Thu, 13 Jun 2024 18:00:15 +0530
+Message-ID: <20240613123020.43500-2-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240613123020.43500-1-linux.amoon@gmail.com>
+References: <20240613123020.43500-1-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,138 +93,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the binding example for the USB3.1 Genesys Logic GL3523
-integrates with USB 3.1 Gen 1 Super Speed and USB 2.0 High-Speed
-hub.
+On Odroid n2/n2+ previously use gpio-hog to reset the usb hub,
+switch to used on-board usb hub reset to enable the usb hub
+and enable power to hub.
 
-For onboard hub controllers that support USB 3.x and USB 2.0 hubs
-with shared resets and power supplies, this property is used to identify
-the hubs with which these are shared.
-
-GL3523 has built-in 5V to 3.3V and 5V to 1.2V regulators, which serves
-power to the USB HUB, it uses 5V power regulator.
-
-Update the peer-hub description.
-
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
-Now with fresh install image and updated dtschema all the
-dt_binding_check pass
-
-make DT_CHECKER_FLAGS=-m -j$(nproc) dt_binding_check
-
-V7: dropped the reset-gpios: true:
-Rob 'No need for this if schema. The default is they are allowed.'
-[7] https://lore.kernel.org/lkml/194aa24c-2763-47e2-8ccc-1637d299c1ba@linaro.org/T/
-
-V6: fix the description of the regulators
-Updated the commit message for regulator updates.
-add reviewed by Conor Dooley
-[1] https://lore.kernel.org/all/20231130053130.21966-2-linux.amoon@gmail.com/
-v5: upgrade peer-hub description : Conor Dooley
-[0] https://www.genesyslogic.com.tw/en/product_view.php?show=67 [Block Diagram]
-v4: Fix the description of peer-hub and update the commit message.
-Schematics of the Odroid N2+
-https://dn.odroid.com/S922X/ODROID-N2/Schematic/odroid-n2_rev0.6_20210121.pdf
-V3: fix the dt_binding_check error, added new example for Genesys GL3523
-v2: added Genesys GL3523 binding
-v1: none
+v7:none
+V6:none
+V5:none
+V4:none
+V3:none
+V2:none
+V1:none
 ---
- .../bindings/usb/genesys,gl850g.yaml          | 60 +++++++++++++++++--
- 1 file changed, 55 insertions(+), 5 deletions(-)
+ .../dts/amlogic/meson-g12b-odroid-n2.dtsi     | 36 ++++++++++++-------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml b/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml
-index 37cf5249e526..fc833363cfb4 100644
---- a/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml
-+++ b/Documentation/devicetree/bindings/usb/genesys,gl850g.yaml
-@@ -9,9 +9,6 @@ title: Genesys Logic USB hub controller
- maintainers:
-   - Icenowy Zheng <uwu@icenowy.me>
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+index d80dd9a3da31..86eb81112232 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+@@ -31,6 +31,30 @@ hub_5v: regulator-hub-5v {
+ 		enable-active-high;
+ 	};
  
--allOf:
--  - $ref: usb-device.yaml#
--
- properties:
-   compatible:
-     enum:
-@@ -27,17 +24,44 @@ properties:
- 
-   vdd-supply:
-     description:
--      the regulator that provides 3.3V core power to the hub.
-+      The regulator that provides 3.3V or 5.0V core power to the hub.
- 
-   peer-hub:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description:
--      phandle to the peer hub on the controller.
-+      For onboard hub controllers that support USB 3.x and USB 2.0 hubs
-+      with shared resets and power supplies, this property is used to identify
-+      the hubs with which these are shared.
- 
- required:
-   - compatible
-   - reg
- 
-+allOf:
-+  - $ref: usb-device.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - usb5e3,608
-+    then:
-+      properties:
-+        peer-hub: false
-+        vdd-supply: false
++	/* USB hub supports both USB 2.0 and USB 3.0 root hub */
++	usb-hub {
++		dr_mode = "host";
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - usb5e3,610
-+              - usb5e3,620
-+    then:
-+      properties:
-+        peer-hub: true
-+        vdd-supply: true
++		/* 2.0 hub on port 1 */
++		hub_2_0: hub@1 {
++			compatible = "usb5e3,610";
++			reg = <1>;
++			peer-hub = <&hub_3_0>;
++			vdd-supply = <&usb_pwr_en>;
++		};
 +
- additionalProperties: false
++		/* 3.0 hub on port 4 */
++		hub_3_0: hub@2 {
++			compatible = "usb5e3,620";
++			reg = <2>;
++			peer-hub = <&hub_2_0>;
++			reset-gpios = <&gpio GPIOH_4 GPIO_ACTIVE_LOW>;
++			vdd-supply = <&vcc_5v>;
++		};
++	};
++
+ 	sound {
+ 		compatible = "amlogic,axg-sound-card";
+ 		model = "ODROID-N2";
+@@ -234,18 +258,6 @@ &gpio {
+ 		"PIN_3",  /* GPIOX_17 */
+ 		"PIN_5",  /* GPIOX_18 */
+ 		"PIN_36"; /* GPIOX_19 */
+-	/*
+-	 * WARNING: The USB Hub on the Odroid-N2 needs a reset signal
+-	 * to be turned high in order to be detected by the USB Controller
+-	 * This signal should be handled by a USB specific power sequence
+-	 * in order to reset the Hub when USB bus is powered down.
+-	 */
+-	usb-hub-hog {
+-		gpio-hog;
+-		gpios = <GPIOH_4 GPIO_ACTIVE_HIGH>;
+-		output-high;
+-		line-name = "usb-hub-reset";
+-	};
+ };
  
- examples:
-@@ -54,3 +78,29 @@ examples:
-             reset-gpios = <&pio 7 2 GPIO_ACTIVE_LOW>;
-         };
-     };
-+
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    usb {
-+        dr_mode = "host";
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        /* 2.0 hub on port 1 */
-+        hub_2_0: hub@1 {
-+            compatible = "usb5e3,610";
-+            reg = <1>;
-+            peer-hub = <&hub_3_0>;
-+            reset-gpios = <&gpio 20 GPIO_ACTIVE_LOW>;
-+            vdd-supply = <&vcc_5v>;
-+        };
-+
-+        /* 3.1 hub on port 4 */
-+        hub_3_0: hub@2 {
-+            compatible = "usb5e3,620";
-+            reg = <2>;
-+            peer-hub = <&hub_2_0>;
-+            reset-gpios = <&gpio 20 GPIO_ACTIVE_LOW>;
-+            vdd-supply = <&vcc_5v>;
-+        };
-+    };
+ &i2c3 {
 -- 
 2.44.0
 
