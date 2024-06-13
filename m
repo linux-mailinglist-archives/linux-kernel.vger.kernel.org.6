@@ -1,95 +1,136 @@
-Return-Path: <linux-kernel+bounces-213447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED6B90757D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:42:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EECE90757E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794481F233C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9E701F2308B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6158F145FF4;
-	Thu, 13 Jun 2024 14:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9B714658B;
+	Thu, 13 Jun 2024 14:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6yADqQa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0X+9SQa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0B4145A02;
-	Thu, 13 Jun 2024 14:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32762145B26;
+	Thu, 13 Jun 2024 14:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718289702; cv=none; b=JMkEjKKonIvjP7WCtVFN5FviDxCCIH9WT/1LFr2MGnP8ZgRUZ73HNNCM1+6Pgk6pvHAy5foKqxJo8FDeu9OHtaFnRdWRlNoybeY1Ry/XwXJton4RGF1hzzODuDz9qDys7hacZnaKl4/NIp8Ah0OF7GZejyxQtuLa+M22gDAS7DE=
+	t=1718289721; cv=none; b=WPItQTcsefozsmppPXm1+A51YnmR+3upOfNzDXonAc2ZeGZTKF1qBsOeLR87dJY34HtTQK1lOHuUH97XazF74KFEai+LYaahMgxPtfEZ+K2CBGPYNBf1qBaFP8c7A8pvzoTnwXaojhzHlACy7rqHMfeD/Q3atAsVeMbRtCS1nb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718289702; c=relaxed/simple;
-	bh=Y1nxcwMSb+zTs1BaeXHDgxqyBzVPA1iJTb7yBxsR4gw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e01pVjp+R/v17Z5wYlI+snFcB24l4qJclPelHH3t477KdUzVHexY4Zq6pQrW5KsblxDwZfh0ruKQExnAh1O9NkledCD6R4JI3jH7w0NoCQFJ66e9mZt+u8f/btbsD9WF5HqEHcjE6Ts72m9vJ6vU6zB+t8BJs4kUPByucnN2cj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6yADqQa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D208C2BBFC;
-	Thu, 13 Jun 2024 14:41:40 +0000 (UTC)
+	s=arc-20240116; t=1718289721; c=relaxed/simple;
+	bh=ACFVvNaX3G/ox9xG1Uy/w4Xl9pAIQHV/YBQ2KPd9Jns=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=KuehQkfDZA8PNICrLqurR6xlDgkz3Y1d08iFE61AN9Yc8+1+rpxGe3FhvlvLVUunTzlEFC3sUxg54//S1+4/LxiQ4BMzUdnrzscI8Ar/+HQUyB+gkxwNTiSfIBPfiWsQerS1VYBfrpMEBNqGKvmgmFwKpfvUx4eTxuxD+0K/jeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0X+9SQa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F4A3C32786;
+	Thu, 13 Jun 2024 14:42:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718289702;
-	bh=Y1nxcwMSb+zTs1BaeXHDgxqyBzVPA1iJTb7yBxsR4gw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N6yADqQa/bBRMUtbfHabAB0TtXRZRfVHI5RqyYkEDB3OzODghkwDfLsUXFXpkKnIJ
-	 GLu55tuDvw1qbkzaMxcpMBOnb5zr9Tq7YCYB1csGtyGQyNLJJG+bvK6X7Shqva2Tdo
-	 t4hfYXDWb2Z+IKIDC+tTSMsBV/ZVCeE04afmCxtBa39bOts6sOjG/5CPnsiVQSL1S1
-	 xJxIMEtf9sXkRvFkKmMiN2yfqD1ipHVQ+6Jd9BlZ/6dpUZDGvZZ/84INmS7fpMCU9L
-	 A7qkgE6N5OqeS8vzaiSJX3MDGJfpjLfkFOMgsNYVF54BJdfEY5UAxleSV7ROfqIJf8
-	 g+7kI28dnb0EA==
-Date: Thu, 13 Jun 2024 15:41:37 +0100
-From: Lee Jones <lee@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Dustin Howett <dustin@howett.net>, Pavel Machek <pavel@ucw.cz>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v2 0/5] ChromeOS Embedded Controller LED driver
-Message-ID: <20240613144137.GG2561462@google.com>
-References: <20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net>
- <CA+BfgNJf1Av7fRVUjpU3r6aRw6DWTHfkCuOYXP2ykhPzGTVzfw@mail.gmail.com>
- <264dd508-93c5-48d6-ac69-27458acd29c5@t-8ch.de>
+	s=k20201202; t=1718289720;
+	bh=ACFVvNaX3G/ox9xG1Uy/w4Xl9pAIQHV/YBQ2KPd9Jns=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=l0X+9SQaNpGCWmkkBAZ7shYcXdgSpZu+aUMz3+S/S19z58NSYHB5fqogcVlIrXPet
+	 WlubJrnF8ClOA7jaWL3zQ9OAxLH8++4VoUIZ3ouolUs5m1E/L+TzoJT8QMSFN5EmQ9
+	 eaI0eMJadaFrHZqdg+SLaTtWMfIp5AJWQw/5B4ZIqJjrEymXnCQiP5bUM9i0DF5m/B
+	 cY/evic6wzEPCMo2sdfL2a+3ivOq0E0j9yukC4zcmOt3XEkuEIGBIlt+8Nqt/lR772
+	 pw7T3tQKFL99jOjFFPPFcylBn2TJuWCEv3ROa9MuLsOEtsgeAcFwZBjkJ+ZMMAUR0n
+	 bUsVZjtsXkLVA==
+Date: Thu, 13 Jun 2024 07:42:01 -0700
+From: Kees Cook <kees@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+CC: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
+ linux-mm@kvack.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Tony Luck <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+ Ross Zwisler <zwisler@google.com>, wklin@google.com,
+ Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>,
+ Linus Torvalds <torvalds@linuxfoundation.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_2/2=5D_pstore/ramoops=3A_Add?=
+ =?US-ASCII?Q?_ramoops=2Emem=5Fname=3D_command_line_option?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAMj1kXFGnk4vYpTk4PwUg8iYHcbXdrPaYP+OBxHrD5+=jvow+g@mail.gmail.com>
+References: <20240611144911.327227285@goodmis.org> <20240611144949.703297941@goodmis.org> <202406121145.8860502D7@keescook> <20240612145228.5bf426e0@rorschach.local.home> <ZmqLejL1mblOikLp@kernel.org> <CAMj1kXHLSROujjc_OifzVmuAd7BpA+b4D2JrPGLJJYj2au7SfQ@mail.gmail.com> <20240613092642.385461d5@rorschach.local.home> <CAMj1kXFGnk4vYpTk4PwUg8iYHcbXdrPaYP+OBxHrD5+=jvow+g@mail.gmail.com>
+Message-ID: <CB84A272-24F0-4526-8474-0D0CD5C5E27C@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <264dd508-93c5-48d6-ac69-27458acd29c5@t-8ch.de>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 03 Jun 2024, Thomas Weißschuh wrote:
 
-> On 2024-06-02 18:30:06+0000, Dustin Howett wrote:
-> > On Fri, May 31, 2024 at 11:33 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > >
-> > > Add a LED driver that supports the LED devices exposed by the
-> > > ChromeOS Embedded Controller.
-> > 
-> > I've tested this out on the Framework Laptop 13, 11th gen intel core
-> > and AMD Ryzen 7040 editions.
-> > 
-> > It works fairly well! I found a couple minor issues in day-to-day use:
-> 
-> Thanks!
-> 
-> > - Restoring the trigger to chromeos-auto does not always put the EC
-> > back in control, e.g. the side lights no longer return to reporting
-> > charge status.
-> >   I believe this happens when you move from any trigger except "none"
-> > to chromeos-auto, without first setting "none".
-> 
-> Thanks for the report, I'll investigate that.
 
-So am I reviewing this set or waiting for the next version?
+On June 13, 2024 7:06:47 AM PDT, Ard Biesheuvel <ardb@kernel=2Eorg> wrote:
+>On Thu, 13 Jun 2024 at 15:26, Steven Rostedt <rostedt@goodmis=2Eorg> wrot=
+e:
+>>
+>> On Thu, 13 Jun 2024 08:11:48 +0200
+>> Ard Biesheuvel <ardb@kernel=2Eorg> wrote:
+>> > >
+>> > > I've added one more comment to v5, with that fixed I can take this=
+=2E
+>> > >
+>> >
+>> > So how is this supposed to work wrt to the rigid 'no user visible
+>> > regressions' rule, given that this whole thing is a best effort thing
+>>
+>> This has nothing to do with user space=2E The kernel command line has
+>> broken in the past=2E If you update the kernel, you can update the
+>> command line=2E There's no "no user visible regressions" rule=2E It's
+>> "Don't break user space"=2E This has nothing to do with user space=2E
+>>
+>> > to begin with=2E This needs at least a huge disclaimer that this rule
+>> > does not apply, and if this works today, there is no guarantee that i=
+t
+>> > will keep working on newer kernels=2E Otherwise, you will be making t=
+he
+>> > job of the people who work on the boot code significantly more
+>> > difficult=2E And even then, I wonder whether Linus and #regzcop are
+>> > going to honour such a disclaimer=2E
+>>
+>> Again, this has nothing to do with user space=2E The rule Linus talks
+>> about is breaking user space=2E This is about kernel debugging=2E Somet=
+hing
+>> *completely different*!
+>>
+>> >
+>> > So this belongs downstream, unless some guarantees can be provided
+>> > that this functionality is exempt from the usual regression policies=
+=2E
+>>
+>> I disagree=2E kexec/kdump also has the same issues=2E
+>>
+>
+>Fair enough=2E As long as it is documented that there is no guarantee
+>that this will keep working over a kernel upgrade, then I have no
+>objections=2E
 
--- 
-Lee Jones [李琼斯]
+Yeah, I should better document this for pstore as a whole, but I've alread=
+y made the call that cross-kernel-versison operation is best effort=2E
+
+-Kees
+
+--=20
+Kees Cook
 
