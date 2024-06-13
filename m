@@ -1,213 +1,137 @@
-Return-Path: <linux-kernel+bounces-213658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2124890786F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:39:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D87C90786C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 980841F236EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:39:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A354D1C23BA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FB11487DF;
-	Thu, 13 Jun 2024 16:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iSYJRjgH"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085C212D757
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246921494B5;
+	Thu, 13 Jun 2024 16:38:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C85A12D757;
+	Thu, 13 Jun 2024 16:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718296741; cv=none; b=POykN/35/eaSxtwLelsZn95Fy9Ztu4UJkVTa3OdZR6GfeafuwQ/3+PMAo3r2dcFnZD3p9Jo+jyGYYyQlnJFUr0M0luKz3NYhptklcaSv3jmHxUPC+8fQllAoipj6ucJOnkvZ+0CfDqsELTpZgmeZV6KnwtQXfhOlkqbz78OcDjI=
+	t=1718296707; cv=none; b=lhtRYlkcIZcPjpKtUTZkT12vOLNyhDn4BWA6zVXv8vJA5pP6j3ML7Oa9w4BWzf/iUeME48ukqSZhHXczhUGgPB88DYcvKYA+SsdzURbb4Ou0p53Oy3k853ig+W6wozVOtnoE021nyj9OVlHMHDSruWG8mZUXkJFK8TMGuWpg7xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718296741; c=relaxed/simple;
-	bh=92t4P2j0X0NUI7+L37aNZ9vtNckVXpfJBPANovmwbBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b6bwhzLm/2IhD14SjvskAnkRe+A4cgFX1XlSs3Ws/igEt93WhXYacDspRnkBHiFuS3T3xRQq8/uGls4QRmm1WIYToeGPPSI5tIpapXyaSc5D/U9JJHhM2ET5Ml1zvG+uw5OeYOMiJon8G2+GWYE64tKunpaniUDlmsD3t+Trxyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iSYJRjgH; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6ef793f4b8so144807666b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:38:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718296738; x=1718901538; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=f0+hUYfcg/6wCMFIjwJOq9go/0av2eejFWyVyZxl9Js=;
-        b=iSYJRjgHWSwdy9nEaJoZZffA3jzlVt3TrVsk5wKUc488a/4eSqqBXLzl/EVHhW9DAW
-         wsZ4c+Hy2WYXcECLWEaTGeNRnd286S+OjMHuBtm1guMrkp6kerVdjHE/v8NO4dWCMlVS
-         6AvKzlNQzEdQhaIgmfKcBOKU9cgM4pqczzpWsfsbsYT8LXoDzAbkKeMc5UiTpbRcM0Vq
-         SlY3xMlURjPeMv4XFIC0NTihB/4sKDihMfVJDHl2ALA0li9SKE8FN9qqf1DG3SMSYsPR
-         /eMu8Kq/h991jzus+2YAC0ZomSsjdrOAmD9oeNuA190moIjyMu19Sd5rS0qRz+RgJxTv
-         VlXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718296738; x=1718901538;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f0+hUYfcg/6wCMFIjwJOq9go/0av2eejFWyVyZxl9Js=;
-        b=IaqNMRjPacINm5NU/MiupvFXiPBwsqec3y5WBoEY22a1FKtMy4BpKn5yBpJsJRkNs8
-         J3MAWkuvkaQFmoRzxju+P3/cNUwrTRebkSaNDKSIDU4voWNMk9wNqj7jVJUTdxQ73OiT
-         P1T5EcJIzgtQVyLZeZbtRU0EwZUfXYbSW8w1u/UQbHO5NnBXvDlMRH8PMfKoOsBgWswC
-         jT9tfOaSyX9i6rRl4b7iP5oAUwYLGO/hHqI87l6/urMcjDAm8x7XVEVqtf8m5KQMKOC6
-         pWqTEn8bsx1rzjtt2EzMrXeQbHijwhs4b/4x/hFG0BXMCUVnx43EoJvCBIm8Np03d72b
-         eLUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwz07rKyTOnGCJmvwHbe51ILqH9QPw0EIqP89c+8W3vXPnWN9IRfckC4T1JvVfh/JTVKrqhliS5AGAxCQRDh8WgTvZIefFwGt7UtCN
-X-Gm-Message-State: AOJu0YyghU/hqOe2pNtwIYam1n7ywgS1ii0VbZTTZwy5MuTkdugqlDDj
-	1GTKN1qR1w8JC2vY/i/LeSeq2kRSI5ZB0xZJLYMv8EtDW802YanL7JjAb2nbT+uUI8HjjG/bbCz
-	uL6XxdwIDmL/tosgIxSfcJjqQsLdborla5IsL
-X-Google-Smtp-Source: AGHT+IEvGD4fSm3ydygWLoTfbaCnK79SffQTu/wBgZUu6TR1D/t/B12H5lg4vCBg6YG63Pn4824qOynOJfGllokJ1aE=
-X-Received: by 2002:a17:906:3ec4:b0:a6f:48b2:aac5 with SMTP id
- a640c23a62f3a-a6f60cf44efmr19942566b.15.1718296737931; Thu, 13 Jun 2024
- 09:38:57 -0700 (PDT)
+	s=arc-20240116; t=1718296707; c=relaxed/simple;
+	bh=aKOhNOdB7ccnzq+ofFI1uzD4Kj+zLwM5PbYdAt6B0RE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sLC+0GJyMO0S8//xNn0ih0i57pxGQRe02D40h3MhIPF+kMu3BDTKXIv8mlUOjSHO6SO8yRtrcRnwCZVU9DZ4XyEkwMGVYDPJZog1JCrU5hzOlrM/ifndMUjxL71yGnnjJ8oPPzsXUOKyqk59a0h06DJ08R1NhdAa30SaHFUuK2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F821FEC;
+	Thu, 13 Jun 2024 09:38:48 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 012363F73B;
+	Thu, 13 Jun 2024 09:38:21 -0700 (PDT)
+Message-ID: <002b6176-41b3-4888-abb1-978399d108b8@arm.com>
+Date: Thu, 13 Jun 2024 17:38:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612124750.2220726-1-usamaarif642@gmail.com>
- <20240612124750.2220726-2-usamaarif642@gmail.com> <ZmoBf6RPJzC2RaqM@google.com>
- <85804484-9973-41a1-a05d-000833285f39@gmail.com>
-In-Reply-To: <85804484-9973-41a1-a05d-000833285f39@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 13 Jun 2024 09:38:19 -0700
-Message-ID: <CAJD7tkYBxN4uAHLacAx=m2+B9zPidz0V5pGP030yvNYLTnk=VQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, shakeel.butt@linux.dev, 
-	david@redhat.com, ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/4] of: reserved_mem: Restruture how the reserved
+ memory regions are processed
+To: Conor Dooley <conor@kernel.org>,
+ Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+Cc: Mark Brown <broonie@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ robh@kernel.org, saravanak@google.com, hch@lst.de, m.szyprowski@samsung.com,
+ will@kernel.org, catalin.marinas@arm.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev, kernel@quicinc.com
+References: <20240528223650.619532-1-quic_obabatun@quicinc.com>
+ <20240528223650.619532-2-quic_obabatun@quicinc.com>
+ <20240610213403.GA1697364@thelio-3990X>
+ <Zmd0Zg7oMneJLyHd@finisterre.sirena.org.uk>
+ <cc180d94-6890-4e92-8080-ffd6c1269e6e@quicinc.com>
+ <20240613-goldfish-unpicked-1bc9f786aaed@spud>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240613-goldfish-unpicked-1bc9f786aaed@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-[..]
->
-> >
-> >> +    for (i = 0; i < SWAPFILE_CLUSTER; i++)
-> >> +            clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
-> > Could you explain why we need to clear the zeromap here?
-> >
-> > swap_cluster_schedule_discard() is called from:
-> > - swap_free_cluster() -> free_cluster()
-> >
-> > This is already covered below.
-> >
-> > - swap_entry_free() -> dec_cluster_info_page() -> free_cluster()
-> >
-> > Each entry in the cluster should have its zeromap bit cleared in
-> > swap_entry_free() before the entire cluster is free and we call
-> > free_cluster().
-> >
-> > Am I missing something?
->
-> Yes, it looks like this one is not needed as swap_entry_free and
-> swap_free_cluster would already have cleared the bit. Will remove it.
->
-> I had initially started checking what codepaths zeromap would need to be
-> cleared. But then thought I could do it wherever si->swap_map is cleared
-> or set to SWAP_MAP_BAD, which is why I added it here.
->
-> >>
-> >>      cluster_list_add_tail(&si->discard_clusters, si->cluster_info, idx);
-> >>
-> >> @@ -482,7 +491,7 @@ static void __free_cluster(struct swap_info_struct *si, unsigned long idx)
-> >>   static void swap_do_scheduled_discard(struct swap_info_struct *si)
-> >>   {
-> >>      struct swap_cluster_info *info, *ci;
-> >> -    unsigned int idx;
-> >> +    unsigned int idx, i;
-> >>
-> >>      info = si->cluster_info;
-> >>
-> >> @@ -498,6 +507,8 @@ static void swap_do_scheduled_discard(struct swap_info_struct *si)
-> >>              __free_cluster(si, idx);
-> >>              memset(si->swap_map + idx * SWAPFILE_CLUSTER,
-> >>                              0, SWAPFILE_CLUSTER);
-> >> +            for (i = 0; i < SWAPFILE_CLUSTER; i++)
-> >> +                    clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
-> > Same here. I didn't look into the specific code paths, but shouldn't the
-> > cluster be unused (and hence its zeromap bits already cleared?).
-> >
-> I think this one is needed (or atleast very good to have). There are 2
-> paths:
->
-> 1) swap_cluster_schedule_discard (clears zeromap) -> swap_discard_work
-> -> swap_do_scheduled_discard (clears zeromap)
->
-> Path 1 doesnt need it as swap_cluster_schedule_discard already clears it.
->
-> 2) scan_swap_map_slots -> scan_swap_map_try_ssd_cluster ->
-> swap_do_scheduled_discard (clears zeromap)
->
-> Path 2 might need it as zeromap isnt cleared earlier I believe
-> (eventhough I think it might already be 0).
+On 13/06/2024 5:17 pm, Conor Dooley wrote:
+> On Thu, Jun 13, 2024 at 09:05:18AM -0700, Oreoluwa Babatunde wrote:
+>>
+>> On 6/10/2024 2:47 PM, Mark Brown wrote:
+>>> On Mon, Jun 10, 2024 at 02:34:03PM -0700, Nathan Chancellor wrote:
+>>>> On Tue, May 28, 2024 at 03:36:47PM -0700, Oreoluwa Babatunde wrote:
+>>>>> fdt_init_reserved_mem() is also now called from within the
+>>>>> unflatten_device_tree() function so that this step happens after the
+>>>>> page tables have been setup.
+>>>>> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+>>>> I am seeing a warning when booting aspeed_g5_defconfig in QEMU that I
+>>>> bisected to this change in -next as commit a46cccb0ee2d ("of:
+>>>> reserved_mem: Restruture how the reserved memory regions are
+>>>> processed").
+>>> I'm also seeing issues in -next which I bisected to this commit, on the
+>>> original Raspberry Pi the cpufreq driver fails to come up and I see
+>>> (potentially separate?) backtraces:
+>>>
+>>> [    0.100390] ------------[ cut here ]------------
+>>> [    0.100476] WARNING: CPU: 0 PID: 1 at mm/memory.c:2835 __apply_to_page_range+0xd4/0x2c8
+>>> [    0.100637] Modules linked in:
+>>> [    0.100665] CPU: 0 PID: 1 Comm: swapper Not tainted 6.10.0-rc2-next-20240607 #1
+>>> [    0.100692] Hardware name: BCM2835
+>>> [    0.100705] Call trace:
+>>> [    0.100727]  unwind_backtrace from show_stack+0x18/0x1c
+>>> [    0.100790]  show_stack from dump_stack_lvl+0x38/0x48
+>>> [    0.100833]  dump_stack_lvl from __warn+0x8c/0xf4
+>>> [    0.100888]  __warn from warn_slowpath_fmt+0x80/0xbc
+>>> [    0.100933]  warn_slowpath_fmt from __apply_to_page_range+0xd4/0x2c8
+>>> [    0.100983]  __apply_to_page_range from apply_to_page_range+0x20/0x28
+>>> [    0.101027]  apply_to_page_range from __dma_remap+0x58/0x88
+>>> [    0.101071]  __dma_remap from __alloc_from_contiguous+0x6c/0xa8
+>>> [    0.101106]  __alloc_from_contiguous from atomic_pool_init+0x9c/0x1c4
+>>> [    0.101169]  atomic_pool_init from do_one_initcall+0x68/0x158
+>>> [    0.101223]  do_one_initcall from kernel_init_freeable+0x1ac/0x1f0
+>>> [    0.101267]  kernel_init_freeable from kernel_init+0x1c/0x140
+>>> [    0.101309]  kernel_init from ret_from_fork+0x14/0x28
+>>> [    0.101344] Exception stack(0xdc80dfb0 to 0xdc80dff8)
+>>> [    0.101369] dfa0:                                     00000000 00000000 00000000 00000000
+>>> [    0.101393] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>>> [    0.101414] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>>> [    0.101428] ---[ end trace 0000000000000000 ]---
+>>>
+>>> Full boot log at:
+>>>
+>>>     https://lava.sirena.org.uk/scheduler/job/374962
+>>>
+>>> You can see the report of cpufreq not being loaded in the log.
+>>>
+>>> NFS boots also fail, apparently due to slowness bringing up a Debian
+>>> userspace which may well be due to cpufreq isues:
+>> Hi Mark & Nathan,
+>>
+>> Taking a look at this now and will provide a fix soon if
+>> needed.
+>>
+>> At first glance, it looks like there are a couple of WARN_ON*
+>> function calls in __apply_to_page_range(). Please could
+>> you run faddr2line and tell me which of the WARN_ON*
+>> cases we are hitting?
+> 
+> That shouldn't be needed, right? The line is in the WARNING: mm/memory.c:2835
+> which, in next-20240607, is: if (WARN_ON_ONCE(pmd_leaf(*pmd))).
 
-Aren't the clusters in the discard list free by definition? It seems
-like we add a cluster there from swap_cluster_schedule_discard(),
-which we establish above that it gets called on a free cluster, right?
+Indeed, and the overall implication there would seem to be that, because 
+the dynamic CMA region wasn't allocated and reserved before we created 
+the pagetables, we thus haven't created the pagetables in a shape which 
+can accommodate chopping it out again later. Note that on arm64 at 
+least, this is liable to be hidden by other options like rodata_full and 
+debug_pagealloc - see can_set_direct_map().
 
->
-> Even if its cleared in path 2, I think its good to keep this one, as the
-> function is swap_do_scheduled_discard, i.e. incase it gets directly
-> called or si->discard_work gets scheduled anywhere else in the future,
-> it should do as the function name suggests, i.e. swap discard(clear
-> zeromap).
-
-I think we just set the swap map to SWAP_MAP_BAD in
-swap_cluster_schedule_discard() and then clear it in
-swap_do_scheduled_discard(), and the clusters are already freed at
-that point. Ying could set me straight if I am wrong here.
-
-It is confusing to me to keep an unnecessary call tbh, it makes sense
-to clear zeromap bits once, when the swap entry/cluster is not being
-used anymore and before it's reallocated.
-
->
-> >>              unlock_cluster(ci);
-> >>      }
-> >>   }
-> >> @@ -1059,9 +1070,12 @@ static void swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
-> >>   {
-> >>      unsigned long offset = idx * SWAPFILE_CLUSTER;
-> >>      struct swap_cluster_info *ci;
-> >> +    unsigned int i;
-> >>
-> >>      ci = lock_cluster(si, offset);
-> >>      memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
-> >> +    for (i = 0; i < SWAPFILE_CLUSTER; i++)
-> >> +            clear_bit(offset + i, si->zeromap);
-> >>      cluster_set_count_flag(ci, 0, 0);
-> >>      free_cluster(si, idx);
-> >>      unlock_cluster(ci);
-> >> @@ -1336,6 +1350,7 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
-> >>      count = p->swap_map[offset];
-> >>      VM_BUG_ON(count != SWAP_HAS_CACHE);
-> >>      p->swap_map[offset] = 0;
-> >> +    clear_bit(offset, p->zeromap);
-> > I think instead of clearing the zeromap in swap_free_cluster() and here
-> > separately, we can just do it in swap_range_free(). I suspect this may
-> > be the only place we really need to clear the zero in the swapfile code.
->
-> Sure, we could move it to swap_range_free, but then also move the
-> clearing of swap_map.
->
-> When it comes to clearing zeromap, I think its just generally a good
-> idea to clear it wherever swap_map is cleared.
-
-I am not convinced about this argument. The swap_map is used for
-multiple reasons beyond just keeping track of whether a swap entry is
-in-use. The zeromap on the other hand is simpler and just needs to be
-cleared once when an entry is being freed.
-
-Unless others disagree, I prefer to only clear the zeromap once in
-swap_range_free() and keep the swap_map code as-is for now. If we
-think there is value in moving clearing the swap_map to
-swap_range_free(), it should at least be in a separate patch to be
-evaluated separately.
-
-Just my 2c.
+Thanks,
+Robin.
 
