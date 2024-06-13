@@ -1,113 +1,169 @@
-Return-Path: <linux-kernel+bounces-213616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550739077B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:02:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BC79078B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 547DA1C249E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:02:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F024E1C21771
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD0012FB09;
-	Thu, 13 Jun 2024 16:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B8D149C61;
+	Thu, 13 Jun 2024 16:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWvGEL72"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGm1vR4o"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383FA12F5B8;
-	Thu, 13 Jun 2024 16:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E998317FD
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718294508; cv=none; b=eAzEvHYdeTMtJref3kyWY4h5ec2zET6pfegajit/+0n2rL0sqxN2bWfrKMRf1dWGJsMDWdE1OXyCwnO5J6AGfdx6Zh3cp8Ldr8KXrpReUm6StWY8Abde6FSEdKo7ElgmSjTo+SJLHYVYzQ6IJR0caCqOgp/dVueSeOvROC/Y8hY=
+	t=1718297469; cv=none; b=dL69KA2fFtXf+00piYRiUoppva5KbB1XdvOofzOknrxXQ6whapEN5E9DwIipHg845eLn6IoQnUIZcrCtBeesV++M/Zy3AIJLovL4C8dunut78D28y+EmSQ+xUAf9FcxONvHxh890zDPZN4dc/DA198syn638mh2vFjwC76yCwmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718294508; c=relaxed/simple;
-	bh=LKy2D6arl+GpL0o3xCQY76R9veCG4oWlZUUz2h91SqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g5+NmHeK1RrokD8hOdsPWSPwJM6QuXkhvXeYOPikCwuTSgHit1889ywXr0r2SXjQJY+lCgqAiVzXhUmu9M+Hr3TBqBGDN1fTDrUrRyikSG2fuJIhsBDXfRWylG+LsnpH4L9ZRI0KA6t9xvQyDofU1LqPONkgCg12NnL+Oc4ibA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BWvGEL72; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF1B1C2BBFC;
-	Thu, 13 Jun 2024 16:01:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718294507;
-	bh=LKy2D6arl+GpL0o3xCQY76R9veCG4oWlZUUz2h91SqE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=BWvGEL72ILqyPUF+a50b+MgblLneW9UZ4U+mwtAbphD3OOWIfcm8diwW/DyAGQRkT
-	 HsOf6n1lx2Wu0+5s+1mYY1lvtMPqImxjd7Tug6v/R2J3dYlrZZ+8uRmhVes/imJVUk
-	 i2LMzNDim98YcN8Vs8K4tb4cVb1E8N+sLWAjhH8aVM95ZI8rY9Tofc4A7fP08WmpNY
-	 q0s5RYjGBiSVbdRq8CLCYwVcIGSS54T144xFSLCQsxPRoxsUixbJcf3TxqMKy2099g
-	 JtNqYySXF+cBKKQRrgcUvDbESpqp3+MPjHATiyWTQg+DaeWpE6FhJcWxrJx+dsUJuN
-	 O6vxSMW6Lgraw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 54042CE04D4; Thu, 13 Jun 2024 09:01:47 -0700 (PDT)
-Date: Thu, 13 Jun 2024 09:01:47 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Nilay Shroff <nilay@linux.ibm.com>, l@kbusch-mbp.dhcp.thefacebook.com,
-	Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	hch@lst.de, sagi@grimberg.me, davidgow@google.com,
-	akpm@linux-foundation.org, venkat88@linux.vnet.ibm.com
-Subject: Re: [PATCH 1/2] list: introduce a new cutting helper
-Message-ID: <046f42c5-34b5-41a2-9680-5ef86ef25c01@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240612155135.3060667-1-kbusch@meta.com>
- <f0e4c51c-8227-4f5c-876f-38fbb4a0e1bf@linux.ibm.com>
- <ZmrscxG51gFRDVlM@kbusch-mbp>
- <c475f0d8-3bc9-4d65-8fce-586f4b75b4fc@linux.ibm.com>
- <ZmsD_HDLBQAqOOU3@kbusch-mbp.dhcp.thefacebook.com>
- <31eb40f9-d68d-4348-b1fd-3cf057939297@paulmck-laptop>
- <ZmsGfle1aZQauzRb@kbusch-mbp.dhcp.thefacebook.com>
- <73b994eb-c689-48e0-b09c-a414041a0525@paulmck-laptop>
- <ZmsS9DZWl8TccvKz@kbusch-mbp.dhcp.thefacebook.com>
+	s=arc-20240116; t=1718297469; c=relaxed/simple;
+	bh=6NWJFRUxcKND4U4SpQJfsTGcu3XSWWW8WSpW7MTVo7I=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZ6I26G3QHisIQUXqczKkOVf/m4JkFopNOsJzDj32B5W7MbuJPUFOe48Slq2uEJ/8NUElCLuvO9k1/WeePITQ/5QqDIJTNNP82Q5WrKMx+/tEsGdV2bBXboY4vWhPcmRaoi8f91FhxNsPiBPtHyDduvNsaNKZ+vR0iMD7V/BE3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGm1vR4o; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35f2266edd8so969789f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718297466; x=1718902266; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nzzUB/FjhEnH/BYJNIleLEzzp0Ljx1jUDZ5+DBBvWYc=;
+        b=RGm1vR4om7S8Tt++HKPbTOadylz7Tl3DrSPGjokihxTyrBD63tKC0gqow3MtdN65qq
+         +VG4o8PLDTvVGiJYLg4MFDueIWpU8lgQniFDLQ85Hadlyzka4tIylvxQFW8otKusM9b5
+         6xPsyehA3pmLxyjEcUEnUg6I1IGzCrKL1YREzlNCxgV1VlHyAbfos1i3QXSO/0Eq0m5o
+         6/cgaCP6pr6qmwjigYq4lIaS4IHNlmBP/TUlh9lTKvZAuoHe8j/jdGRaBR9QNBdi/TVB
+         4tE4uX1sKOqiHYOqKeXRTy8f88n1xNvEmEx/45AOOwBKuCvnCsOxI3fVWRVCHtIiVlz1
+         ONSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718297466; x=1718902266;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nzzUB/FjhEnH/BYJNIleLEzzp0Ljx1jUDZ5+DBBvWYc=;
+        b=MdZf67muG58wHQOYl3qEmhD/87CTk9pOVmhgnbjAVjDflwzUvQGAFDiHBZLf6GjCvV
+         jwBcxFKRLv3+uWQdu2mOc3S0dKBzkjoO62CTRzmPOa4Fu1SLk639sizgsGOIMRy4a+3f
+         L1sPs7DsIvyxO5touLFrXvtAMLLSNqK8hK+8mITjyx3YOB/MAt5P/uuKZAnSiOAMOB0C
+         Y+bzTPgcJP3EVtN9iiAB+D202hbhUkVOKYogm1vYtTNZjv0cybcIY2ZYUSDNFkmA4Ya1
+         4+0jcBHu45Selr+njgv8grMV0yOxLWnFNC5qPhBCVNejCjmc4es/i3qaM9MMjx0UhGZL
+         doWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCRqveUSxleK4Q/f/c8ht49DZ2IM/NL0Uf6n0Pi1U7b3uRSK/D9+uzLEoUKgrv4+KibN/CWDmpStpGxYN8JJcvenn6e0UYg3y02g1t
+X-Gm-Message-State: AOJu0YyYczjHOYoePC3PcNgKI/hzy9zJPC1ecDLEhRgVLRq1rvPiIP+j
+	631W4C9aWKYKScrp0S/O3boBisWmSZghxHkTQhHi/pMWmU5tfNrt
+X-Google-Smtp-Source: AGHT+IFd44wXWFVM2hw1th+c947IyNuuiuSNQutEgNIYsg030ZErOxFLm+hL+7BwFMhxl6Lwv7yfZQ==
+X-Received: by 2002:a05:6000:128d:b0:35f:2a43:3b11 with SMTP id ffacd0b85a97d-3607a78432cmr194032f8f.67.1718297466026;
+        Thu, 13 Jun 2024 09:51:06 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075093d41sm2248075f8f.16.2024.06.13.09.51.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 09:51:05 -0700 (PDT)
+Message-ID: <666b2379.5d0a0220.c7eec.8b6f@mx.google.com>
+X-Google-Original-Message-ID: <Zmr3VW50gEx2qXah@Ansuel-XPS.>
+Date: Thu, 13 Jun 2024 15:42:45 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Eric DeVolder <eric.devolder@oracle.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@somainline.org>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH v2 0/2] ARM: decompressor: support AUTO_ZRELADDR and
+ appended DTB
+References: <20240121203009.9257-1-ansuelsmth@gmail.com>
+ <65d62b60.050a0220.c7b96.614e@mx.google.com>
+ <666ad6e0.df0a0220.f8b16.4a5e@mx.google.com>
+ <CACRpkdYJoNRpciyQE_A6dkb8f6Jsy4+qwb4w9K3bss2mkZpp1A@mail.gmail.com>
+ <ZmsXdWWidNjXdbSa@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZmsS9DZWl8TccvKz@kbusch-mbp.dhcp.thefacebook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZmsXdWWidNjXdbSa@shell.armlinux.org.uk>
 
-On Thu, Jun 13, 2024 at 09:40:36AM -0600, Keith Busch wrote:
-> On Thu, Jun 13, 2024 at 08:15:06AM -0700, Paul E. McKenney wrote:
-> > On Thu, Jun 13, 2024 at 08:47:26AM -0600, Keith Busch wrote:
-> > > > 
-> > > > Just make a helper function like this:
-> > > > 
-> > > > 	static void my_synchronize_srcu(void)
-> > > > 	{
-> > > > 		synchronize_srcu(&my_srcu_struct);
-> > > > 	}
-> > > > 
-> > > > Or am I missing something subtle here?
-> > > 
-> > > That would work if we had a global srcu, but the intended usage
-> > > dynamically allocates one per device the driver is attached to, so a
-> > > void callback doesn't know which one to sync.
+On Thu, Jun 13, 2024 at 04:59:49PM +0100, Russell King (Oracle) wrote:
+> On Thu, Jun 13, 2024 at 03:50:58PM +0200, Linus Walleij wrote:
+> > On Thu, Jun 13, 2024 at 1:24 PM Christian Marangi <ansuelsmth@gmail.com> wrote:
 > > 
-> > Ah, good point!  I suppose that a further suggestion to just JIT the
-> > needed function would not be well-received?  ;-)
+> > > Sorry for asking again... but any news for this?
+> > >
+> > > I have also added the 2 patch here [1] [2].
+> > >
+> > > Been in incoming from a long time and I have seen other patch getting
+> > > accepted. Did I do something wrong in submitting the 2 patch?
 > > 
-> > I cannot resist suggesting placing a pointer to the srcu_struct in
-> > the task structure.  /me runs...
-> > 
-> > Perhaps somewhat more constructively, my usual question:  Is it really
-> > necessary to have per-driver SRCU here?  What would break if there was
-> > a global srcu_struct that applied to all drivers?
+> > Hm Russell must have had some concerns, Russell?
 > 
-> There's not a strict need for srcu_struct to be per device that I know
-> of. It was just done this way to keep usage localized to the parts that
-> need to be protected. The fear being that one device's long running
-> reader could prevent another device from quickly tearing down.
+> I've been snowed under for about the last six weeks - with only the
+> occasional day that isn't silly. It's that kind of frustrating snowed
+> under where each problem is a bit like a brick wall placed every 1m
+> and you're supposed to be doing a 100m sprint race - you can't see
+> the next brick wall until you've climbed over the first.
+> 
+> Whether I have time to read the mailing lists or not depends entirely
+> on what is happening on any particular day.
+> 
+> > If for nothing else I think some Tested-by:s would be appreciated,
+> > do we have some people who use this that can provide Tested-by
+> > tags?
+> 
+> Yes, tested-by's would be a really good idea, because my gut feeling
+> is that this change has moderate risk of causing regressions. I'm
+> not talking about "it works for me on the setup it's intended for"
+> I'm talking about other platforms.
+> 
+> I'm also wondering about distros, and what they're supposed to do
+> with the config option with their "universal" kernel that's
+> supposed to boot across as many platforms as possible, what they
+> should set the config option to, and what impact it has when enabled
+> on platforms that it isn't originally intended for.
+> 
+> I haven't really read much of the patch because I've been so busy,
+> so I may be being overly cautious. Given that I am quite busy, I
+> would appreciate a summary of the situation rather than being fed
+> with lots of results! In other words, the tested-bys, and "it works
+> on all the xyz platforms that we've testsed, nothing appears to have
+> regressed" would be ideal.
+>
 
-That is a legitimate concern.
+The current patch are used downstream on the OpenWrt ipq806x target that
+is a mix of legacy (what this affects) and non legacy targets. (old
+bootloader support loading DTB from the image and older ones require it
+to be appended)
 
-Is there a way to avoid this issue by making this be a statement parameter
-to a macro?
+I think I need some help from the community to test this.
 
-							Thanx, Paul
+I can also move these patches to our "generic" target on OpenWrt so that
+they will be enabled by every arm target we support.
+
+Anyway thanks for the feedback, my only concern was that I messed
+submitting the patch on the tracking system. Hope community can help
+with this since it's a big feature for legacy devices that was broken
+from a looong time (and only solution currently is to hardcode the PHY
+offset values)
+
+-- 
+	Ansuel
 
