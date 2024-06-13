@@ -1,77 +1,119 @@
-Return-Path: <linux-kernel+bounces-213850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A21907BA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD4FE907BA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C47282CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2418E282B0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5108214B96D;
-	Thu, 13 Jun 2024 18:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DEC14D428;
+	Thu, 13 Jun 2024 18:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtFJngTl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pa62ppOQ"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B7D14B950;
-	Thu, 13 Jun 2024 18:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D3614C599
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718303848; cv=none; b=A6NqeJ4sXUS5MLeNU1YWCBd5L+GJSJVVMQYLF2ogvTTgixqSpmO/BDp3eB6AzyF+W6sgv9ILtSnjuuAQ8KAaD7YzEn+lxPiW34Hqjq1fVYaO8HBZ2qEgPIceZTKqvVjyHWuUoJgyN4V0XICAYc2/Xb3YSCNVI1W0ooffmfkFtls=
+	t=1718303896; cv=none; b=egliS29gWzUvshFtYu3j56nM9NWchQHTSJb9JeFy06MkvV9vKIYVwCT1PaRuAV/8ukRsR6cGjCaYUNNZiFJZ1dVBTFAL/fNlAx3M1D9OiMw3+OxK1//HCMb6zyhitcF6gNiLh+gdourU0UpCpXkaxIHUZypVVPzSbqDQC3ukMcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718303848; c=relaxed/simple;
-	bh=oTH+ughuU02RddWezh4SV95TGPKX1g7yleDmfGJor8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=btk1B5e/muYqXFyVqikgc9ZVUKeK6HczkGLYdx6OS5MyEiQ9Cs4tJbqYyJjL6zpB/Kah3tF9G7Lz5EM+rzcOJPPT4x7lrsNPFSVkmucMoXQN/8k69qMY4P2S9IdeeDJKw2x2fAXsqjEQiwWYEn2zCz+ipbbcQXuCr3QBsf+VIlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtFJngTl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7222C2BBFC;
-	Thu, 13 Jun 2024 18:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718303848;
-	bh=oTH+ughuU02RddWezh4SV95TGPKX1g7yleDmfGJor8s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QtFJngTlZ8mOJWjCVHtuilUpq0F+RKBpc8vror+YhA01Qy/NNv1YcnzjN7wXgIeeN
-	 tUVo7/v6HrDuJ+XyvGXeLGeEQjLhT0kreZIvcWuIhScjcHc/sMyK6CLztiQNA3M2cs
-	 iD5rJHu8Fh2gDhDvWrWwwGFgV5CDIHo7WZZ5oO5XNk24eojAgg78zLFXd1ksdN7jgM
-	 O0rfSEv9J2hT59ZW1lVs2HgTolpGzhBsqJWFC48AqXHhG1B/EhOx98oZxPzGpuKJ6c
-	 C11xdfO3UzN8sK0DT1+0Ft7el/RNifEpAOoEIb92MPUKcyRp59eyPK/LdwLi6Eq78a
-	 /Nl36FmIJyh9g==
-Date: Thu, 13 Jun 2024 11:37:26 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Networking for v6.10-rc4
-Message-ID: <20240613113726.795caf6f@kernel.org>
-In-Reply-To: <CAHk-=wiNgwEpfTpz0c9NXvZvLFPVs15LeFfmhAUO_XhQTXfahQ@mail.gmail.com>
-References: <20240613163542.130374-1-kuba@kernel.org>
-	<CAHk-=wiNgwEpfTpz0c9NXvZvLFPVs15LeFfmhAUO_XhQTXfahQ@mail.gmail.com>
+	s=arc-20240116; t=1718303896; c=relaxed/simple;
+	bh=L/I0jGSnKvfURjR9QPVZSHNpgzmXSr/7QAs2Yjq/MN4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JcNUWZOEYftR3MRVRZ6Z7TxiQJBIhgXPIN3aX9vcsWwM0sN7j4R7GfJLZ9qIzLIQ6qqNDU3JAhXyCjFRu/imQWWT/V3RU6FrthJeeveDmO8ZOXj3cRPfG1eMrfUTXmQncjc7MEPwvPzoxLI8mJ/o/E8ifk9XNVtLbOrNaAKr1ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pa62ppOQ; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c2d6e09e62so1207058a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:38:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718303895; x=1718908695; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Updc3JmEB9tDfSD6bTK5d81zUhVfnHUf04ep4+BiNE0=;
+        b=Pa62ppOQ/dth7kPb21G3Nd8RYVyAjomc/DV4cmyRvKhw6ydKU6UluwZWcJQlRITjC8
+         B2UrSUsjKqZKLtan2C4jaxNc4zS+E3jFPZRYscMKFNkW6E/QLEf8suL1dVrPe1d5ocvg
+         Oaj1tDKrgUR/S864nOxHPheE9uea2a6mRBREJJkmNYC1y4TNtYtHMHb6TkT298epb87Q
+         uQ8yOhSDDHwZGV+nFQXdLc9cIlCnyxdORaXFPlkfKv1+jhuQh3Ky5ZNKmjuDF3KdvoBL
+         vjyCXm2GCjp85TXC1cL2SdBZ0pF7fHfb6rReMJxcR+CIs5v4CPkZhREfrxIMYxry+qiM
+         v9DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718303895; x=1718908695;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Updc3JmEB9tDfSD6bTK5d81zUhVfnHUf04ep4+BiNE0=;
+        b=SvfQWsy91mtXppP3SNVJCiM+t5dnJjnDcyh2SFyAnY4v86P9fl/kiDjwSsFOYBvIc5
+         O/0RYnVk/DyPBdtzI59xjgEE8loVxB/auT/VB5Jv+qqh5GQFmt2FEvNTuIM1VYvWnl5o
+         VVSDNq+O/yiemOgtkWlTG055DymhsrHLzGp3+VG+H+J/gazSJd0zeVk9ku9Jh3yRreWL
+         +mjgKAgU/OGcm76KQ/ouEjn3GG31GAl3ZPuasowcQM6EdKjJclvPwUUv6sNgi8z9h7/x
+         1vJ7tU/QfzoCZPoSK8FFZRoJWZuOPhZFM84sNJFd2N1IA4Dgmt2GOP5jDZNh5j5YhyhQ
+         dadw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBo5OXKmnI5qIUqgkEu63fb8rviw3UKIPm+nho/4yiRQ/hMRdUBdx191Ba4b2+0vbFPBbvjhzIqlpZONQrMJ3euFY2rcnSbYZiBAMf
+X-Gm-Message-State: AOJu0YxVehWclnMy0bAPHxg5SCv3LYs7yNJ8YScxodz0ZrCUZlw+Ti4/
+	UtKw2q8zEhmyfaNjeFMT/U7M/84WjFb1r02MpRQ4q1NmEvcDbOjysUwm2PjLojTwbt6jrH7AT0R
+	aEQ==
+X-Google-Smtp-Source: AGHT+IEoHsoXQ33CoHiGZZlVh3rR+/EUc+z3M2bB9VIq6N8UkxisrbO0XxnhPNgtzkGpaeE61uYDqNygW5Q=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:d2c8:b0:1f6:fbea:7976 with SMTP id
+ d9443c01a7336-1f862a17756mr12475ad.10.1718303894500; Thu, 13 Jun 2024
+ 11:38:14 -0700 (PDT)
+Date: Thu, 13 Jun 2024 11:38:13 -0700
+In-Reply-To: <608b37dbc59a80d32719c8fde8b6979a2b839e10.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240207172646.3981-1-xin3.li@intel.com> <608b37dbc59a80d32719c8fde8b6979a2b839e10.camel@intel.com>
+Message-ID: <Zms8lRn20MGVVN9h@google.com>
+Subject: Re: [PATCH v2 00/25] Enable FRED with KVM VMX
+From: Sean Christopherson <seanjc@google.com>
+To: Shan Kang <shan.kang@intel.com>
+Cc: Xin3 Li <xin3.li@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "corbet@lwn.net" <corbet@lwn.net>, 
+	"x86@kernel.org" <x86@kernel.org>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
+	"bp@alien8.de" <bp@alien8.de>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>, 
+	"shuah@kernel.org" <shuah@kernel.org>, Ravi V Shankar <ravi.v.shankar@intel.com>, 
+	"xin@zytor.com" <xin@zytor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Jun 2024 11:17:52 -0700 Linus Torvalds wrote:
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.10-rc4  
-> 
-> Your key had expired, and the kernel.org repo doesn't have the updated key.
-> 
-> But for once, the key servers actually did update and a refresh fixed
-> it for me.  Whee! Is the pgp key infrastructure starting to work
-> again?
+On Wed, Mar 27, 2024, Shan Kang wrote:
+> On Wed, 2024-02-07 at 09:26 -0800, Xin Li wrote:
+> > This patch set enables the Intel flexible return and event delivery
+> > (FRED) architecture with KVM VMX to allow guests to utilize FRED.
+> >=20
+> We tested this FRED KVM patch set on a 7th Intel(R) Core(TM) CPU and the =
+Intel=20
+> Simics=C2=AE Simulator with the following four configurations:
 
-Cautiously optimistic "whoop!"
+That likely provides coverage for the happy cases, but I doubt it provides =
+negative
+testing, e.g. for VM-Enter consistency checks.  KVM-Unit-Tests are currentl=
+y the
+best choice for concistency checks (unfortunately).
 
-I only uploaded the refreshed keys to the servers ~minutes before
-sending the PR. Next sync should hopefully get it into pgpkeys.git.
-Not to excuse my incompetence but git tag -s didn't scream at me last
-week that my key is about to expire :(
+And given the insanity of event re-injection, KVM selftests needs a dedicat=
+ed test
+for that, and another for the interactions with nVMX, e.g. a la svm_nested_=
+soft_inject_test.c.
+
+I haven't looked too closely at the selftest that's already provided, but m=
+y
+suspicion is that we'll want multiple tests, or alternatively one test that
+uses KVM_ONE_VCPU_TEST_SUITE().
 
