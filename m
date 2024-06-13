@@ -1,39 +1,40 @@
-Return-Path: <linux-kernel+bounces-212407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B38905FC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:35:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E703D905FC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1023A1F2294E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6E9281D4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F82AB669;
-	Thu, 13 Jun 2024 00:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D989470;
+	Thu, 13 Jun 2024 00:34:53 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9667C8C09;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E85F63A5;
 	Thu, 13 Jun 2024 00:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718238893; cv=none; b=qpUSPYzeYxme72usGv0cj/NZJ9yNEB1lJ8TDjMop0Zy1fBYgP5fx5vz8MJ7H7IlgYVwEhg/6aU2WzcFKRsfAzpPWK96tnWOI0+hvO++uhVn5NG25KFCLeJWNXtbdEicnM4vpvj+8WPMWr4aTruA8dL3eG8YiwhAPtrHkxd400Qg=
+	t=1718238893; cv=none; b=an4CZBk4rnrtxPHWg5yEYJo9wY7lvvDKS/pIa4PZbI5NnsSalqoo2nF5Sw6mTaFFV237AJWWkMffoX3wsFmJ5s3Y8w7NLW76DeM2FsbIsfYa1l5ME7xYCoqwcgKCC8t3ZGEKSUHVfrNDYEqWAfbvhNHxUgz+6A1YmxolQW8edNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718238893; c=relaxed/simple;
-	bh=sm99DwASeQO1ECKvTnDxPmJJ6qHTDXWNprQagI7uP4s=;
-	h=Message-ID:Date:From:To:Cc:Subject; b=QAHnADwHgXmG+rGGaFmNuYMetRsO3nrBtMZFP98lLsgwxy5G4LGqInD7Xg9r2XFgvXpJLW8UdLZMP7U/Nu7kXdNEa2sATvmLZ9LKMFNalA9oj65TtC6Apm01LBQELrYOYGTaGg+WWOs+PR0kX1xsWnkzZ0q8QWyPq7ZfZc+igxE=
+	bh=uhP9G8bT8fUmRQ2ghs8UzgPprc3W3L4JLL0dPpaSGH8=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=IjJswwRxQ4PomoJjTaOJ0AcbM2fzrJpZ2pBPhdOQlJrRVAyv/5hsjVU1vN/Zuc3KdiVZom9R5aEh9fq+TuUNe1HLZ5afheOMglL9aQV2g6phMTtShxAB7GfdJoQ9bCzeLNaUe6dnPSvmNt4kyXAEavgOhy5kfnYpGjV2PjYZxDk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92C3DC116B1;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95BCCC32786;
 	Thu, 13 Jun 2024 00:34:52 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.97)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1sHYQm-00000001eMY-32F3;
+	id 1sHYQm-00000001eN3-3lZi;
 	Wed, 12 Jun 2024 20:35:08 -0400
-Message-ID: <20240613003435.401549779@goodmis.org>
+Message-ID: <20240613003508.752963299@goodmis.org>
 User-Agent: quilt/0.68
-Date: Wed, 12 Jun 2024 20:34:35 -0400
+Date: Wed, 12 Jun 2024 20:34:36 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -67,83 +68,56 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Will Deacon <will@kernel.org>,
  Ard Biesheuvel <ardb@kernel.org>,
  Mike Rapoport <rppt@kernel.org>
-Subject: [PATCH v5 0/2] mm/memblock: Add "reserve_mem" to reserved named  memory at boot up
+Subject: [PATCH v5 1/2] mm/memblock: Add "reserve_mem" to reserved named memory at boot up
+References: <20240613003435.401549779@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 
-Reserve unspecified location of physical memory from kernel command line
+From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 
-Background:
+In order to allow for requesting a memory region that can be used for
+things like pstore on multiple machines where the memory layout is not the
+same, add a new option to the kernel command line called "reserve_mem".
 
-In ChromeOS, we have 1 MB of pstore ramoops reserved so that we can extract
-dmesg output and some other information when a crash happens in the field.
-(This is only done when the user selects "Allow Google to collect data for
- improving the system"). But there are cases when there's a bug that
-requires more data to be retrieved to figure out what is happening. We would
-like to increase the pstore size, either temporarily, or maybe even
-permanently. The pstore on these devices are at a fixed location in RAM (as
-the RAM is not cleared on soft reboots nor crashes). The location is chosen
-by the BIOS (coreboot) and passed to the kernel via ACPI tables on x86.
-There's a driver that queries for this to initialize the pstore for
-ChromeOS:
+The format is:  reserve_mem=nn:align:name
 
-  See drivers/platform/chrome/chromeos_pstore.c
+Where it will find nn amount of memory at the given alignment of align.
+The name field is to allow another subsystem to retrieve where the memory
+was found. For example:
 
-Problem:
+  reserve_mem=12M:4096:oops ramoops.mem_name=oops
 
-The problem is that, even though there's a process to change the kernel on
-these systems, and is done regularly to install updates, the firmware is
-updated much less frequently. Choosing the place in RAM also takes special
-care, and may be in a different address for different boards. Updating the
-size via firmware is a large effort and not something that many are willing
-to do for a temporary pstore size change.
+Where ramoops.mem_name will tell ramoops that memory was reserved for it
+via the reserve_mem option and it can find it by calling:
 
-Requirement:
+  if (reserve_mem_find_by_name("oops", &start, &size)) {
+	// start holds the start address and size holds the size given
 
-Need a way to reserve memory that will be at a consistent location for
-every boot, if the kernel and system are the same. Does not need to work
-if rebooting to a different kernel, or if the system can change the
-memory layout between boots.
+This is typically used for systems that do not wipe the RAM, and this
+command line will try to reserve the same physical memory on soft reboots.
+Note, it is not guaranteed to be the same location. For example, if KASLR
+places the kernel at the location of where the RAM reservation was from a
+previous boot, the new reservation will be at a different location.  Any
+subsystem using this feature must add a way to verify that the contents of
+the physical memory is from a previous boot, as there may be cases where
+the memory will not be located at the same location.
 
-The reserved memory can not be an hard coded address, as the same kernel /
-command line needs to run on several different machines. The picked memory
-reservation just needs to be the same for a given machine, but may be
-different for different machines.
+Not all systems may work either. There could be bit flips if the reboot
+goes through the BIOS. Using kexec to reboot the machine is likely to
+have better results in such cases.
 
-Solution:
+Link: https://lore.kernel.org/all/ZjJVnZUX3NZiGW6q@kernel.org/
 
-The solution I have come up with is to introduce a new "reserve_mem=" kernel
-command line. This parameter takes the following format:
-
-  reserve_mem=nn:align:label
-
-Where nn is the size of memory to reserve, the align is the alignment of
-that memory, and label is the way for other sub-systems to find that memory.
-This way the kernel command line could have:
-
-  reserve_mem=12M:4096:oops   ramoops.mem_name=oops
-
-At boot up, the kernel will search for 12 megabytes in usable memory regions
-with an alignment of 4096. It will start at the highest regions and work its
-way down (for those old devices that want access to lower address DMA). When
-it finds a region, it will save it off in a small table and mark it with the
-"oops" label. Then the pstore ramoops sub-system could ask for that memory
-and location, and it will map itself there.
-
-This prototype allows for 8 different mappings (which may be overkill, 4 is
-probably plenty) with 16 byte size to store the label.
-
-I have tested this and it works for us to solve the above problem. We can
-update the kernel and command line and increase the size of pstore without
-needing to update the firmware, or knowing every memory layout of each
-board. I only tested this locally, it has not been tested in the field.
-
-Changes since v4: https://lore.kernel.org/all/20240611215610.548854415@goodmis.org/
-
-[ patch at bottom showing differences ]
+Suggested-by: Mike Rapoport <rppt@kernel.org>
+Tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changes since v4: https://lore.kernel.org/linux-trace-kernel/20240611215801.443593152@goodmis.org
 
 - Add all checks about reserve_mem before allocation.
   This means reserved_mem_add() is now a void function.
@@ -152,139 +126,183 @@ Changes since v4: https://lore.kernel.org/all/20240611215610.548854415@goodmis.o
 
 - Fix compare of align to SMP_CACHE_BYTES ("<" instead of "<=")
 
-Changes since v3: https://lore.kernel.org/all/20240611144911.327227285@goodmis.org/
+ .../admin-guide/kernel-parameters.txt         |  20 +++
+ include/linux/mm.h                            |   2 +
+ mm/memblock.c                                 | 117 ++++++++++++++++++
+ 3 files changed, 139 insertions(+)
 
-- Changed table type of start and size from unsigned long to phys_addr_t
-  (as well as the parameters to the functions that use them)
-
-- Changed old reference to "early_reserve_mem" to "reserve_mem"
-
-- Check before reservering memory:
-  o Size is non-zero
-  o name has text in it
-
-- If align is less than SMP_CACHE_BYTES, make it SMP_CACHE_BYTES
-
-- Remove the silly check of testing *p == '\0' after a p += strlen(p)
-
-Changes since v2: https://lore.kernel.org/all/20240606150143.876469296@goodmis.org/
-
-- Fixed typo of "reserver"
-
-- Added EXPORT_SYMBOL_GPL() for reserve_mem_find_by_name()
-
-- Removed "built-in" from module description that was changed from v1.
-
-
-Changes since v1: https://lore.kernel.org/all/20240603233330.801075898@goodmis.org/
-
-- Updated the change log of the first patch as well as added an entry
-  into kernel-parameters.txt about how reserve_mem is for soft reboots
-  and may not be reliable. 
-
-
-Steven Rostedt (Google) (2):
-      mm/memblock: Add "reserve_mem" to reserved named memory at boot up
-      pstore/ramoops: Add ramoops.mem_name= command line option
-
-----
- Documentation/admin-guide/kernel-parameters.txt |  20 ++++
- fs/pstore/ram.c                                 |  14 +++
- include/linux/mm.h                              |   2 +
- mm/memblock.c                                   | 117 ++++++++++++++++++++++++
- 4 files changed, 153 insertions(+)
-
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b600df82669d..ce7de8136f2f 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5710,6 +5710,26 @@
+ 			them.  If <base> is less than 0x10000, the region
+ 			is assumed to be I/O ports; otherwise it is memory.
+ 
++	reserve_mem=	[RAM]
++			Format: nn[KNG]:<align>:<label>
++			Reserve physical memory and label it with a name that
++			other subsystems can use to access it. This is typically
++			used for systems that do not wipe the RAM, and this command
++			line will try to reserve the same physical memory on
++			soft reboots. Note, it is not guaranteed to be the same
++			location. For example, if KASLR places the kernel at the
++			location of where the RAM reservation was from a previous
++			boot, the new reservation will be at a different location.
++			Any subsystem using this feature must add a way to verify
++			that the contents of the physical memory is from a previous
++			boot, as there may be cases where the memory will not be
++			located at the same location.
++
++			The format is size:align:label for example, to request
++			12 megabytes of 4096 alignment for ramoops:
++
++			reserve_mem=12M:4096:oops ramoops.mem_name=oops
++
+ 	reservetop=	[X86-32,EARLY]
+ 			Format: nn[KMG]
+ 			Reserves a hole at the top of the kernel virtual
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 9849dfda44d4..077fb589b88a 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -4263,4 +4263,6 @@ static inline bool pfn_is_unaccepted_memory(unsigned long pfn)
+ void vma_pgtable_walk_begin(struct vm_area_struct *vma);
+ void vma_pgtable_walk_end(struct vm_area_struct *vma);
+ 
++int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phys_addr_t *size);
++
+ #endif /* _LINUX_MM_H */
 diff --git a/mm/memblock.c b/mm/memblock.c
-index 044ddce8f085..739d106a9165 100644
+index d09136e040d3..739d106a9165 100644
 --- a/mm/memblock.c
 +++ b/mm/memblock.c
-@@ -2256,22 +2256,15 @@ static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRIES];
- static int reserved_mem_count;
- 
- /* Add wildcard region with a lookup name */
--static int __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
-+static void __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
- 				   const char *name)
- {
- 	struct reserve_mem_table *map;
- 
--	if (!name || !name[0] || strlen(name) >= RESERVE_MEM_NAME_SIZE)
--		return -EINVAL;
--
--	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
--		return -1;
--
- 	map = &reserved_mem_table[reserved_mem_count++];
- 	map->start = start;
- 	map->size = size;
- 	strscpy(map->name, name);
--	return 0;
+@@ -2244,6 +2244,123 @@ void __init memblock_free_all(void)
+ 	totalram_pages_add(pages);
  }
  
- /**
-@@ -2280,6 +2273,8 @@ static int __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
-  * @start: If found, holds the start address
-  * @size: If found, holds the size of the address.
-  *
++/* Keep a table to reserve named memory */
++#define RESERVE_MEM_MAX_ENTRIES		8
++#define RESERVE_MEM_NAME_SIZE		16
++struct reserve_mem_table {
++	char			name[RESERVE_MEM_NAME_SIZE];
++	phys_addr_t		start;
++	phys_addr_t		size;
++};
++static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRIES];
++static int reserved_mem_count;
++
++/* Add wildcard region with a lookup name */
++static void __init reserved_mem_add(phys_addr_t start, phys_addr_t size,
++				   const char *name)
++{
++	struct reserve_mem_table *map;
++
++	map = &reserved_mem_table[reserved_mem_count++];
++	map->start = start;
++	map->size = size;
++	strscpy(map->name, name);
++}
++
++/**
++ * reserve_mem_find_by_name - Find reserved memory region with a given name
++ * @name: The name that is attached to a reserved memory region
++ * @start: If found, holds the start address
++ * @size: If found, holds the size of the address.
++ *
 + * @start and @size are only updated if @name is found.
 + *
-  * Returns: 1 if found or 0 if not found.
-  */
- int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phys_addr_t *size)
-@@ -2309,11 +2304,15 @@ static int __init reserve_mem(char *p)
- 	phys_addr_t start, size, align;
- 	char *name;
- 	char *oldp;
--	int err;
++ * Returns: 1 if found or 0 if not found.
++ */
++int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phys_addr_t *size)
++{
++	struct reserve_mem_table *map;
++	int i;
++
++	for (i = 0; i < reserved_mem_count; i++) {
++		map = &reserved_mem_table[i];
++		if (!map->size)
++			continue;
++		if (strcmp(name, map->name) == 0) {
++			*start = map->start;
++			*size = map->size;
++			return 1;
++		}
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(reserve_mem_find_by_name);
++
++/*
++ * Parse reserve_mem=nn:align:name
++ */
++static int __init reserve_mem(char *p)
++{
++	phys_addr_t start, size, align;
++	char *name;
++	char *oldp;
 +	int len;
- 
- 	if (!p)
- 		return -EINVAL;
- 
++
++	if (!p)
++		return -EINVAL;
++
 +	/* Check if there's room for more reserved memory */
 +	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
 +		return -EBUSY;
 +
- 	oldp = p;
- 	size = memparse(p, &p);
- 	if (!size || p == oldp)
-@@ -2330,11 +2329,14 @@ static int __init reserve_mem(char *p)
- 	 * memblock_phys_alloc() doesn't like a zero size align,
- 	 * but it is OK for this command to have it.
- 	 */
--	if (align <= SMP_CACHE_BYTES)
++	oldp = p;
++	size = memparse(p, &p);
++	if (!size || p == oldp)
++		return -EINVAL;
++
++	if (*p != ':')
++		return -EINVAL;
++
++	align = memparse(p+1, &p);
++	if (*p != ':')
++		return -EINVAL;
++
++	/*
++	 * memblock_phys_alloc() doesn't like a zero size align,
++	 * but it is OK for this command to have it.
++	 */
 +	if (align < SMP_CACHE_BYTES)
- 		align = SMP_CACHE_BYTES;
- 
- 	name = p + 1;
--	if (!strlen(name))
++		align = SMP_CACHE_BYTES;
++
++	name = p + 1;
 +	len = strlen(name);
 +
 +	/* name needs to have length but not too big */
 +	if (!len || len >= RESERVE_MEM_NAME_SIZE)
- 		return -EINVAL;
- 
- 	/* Make sure that name has text */
-@@ -2345,15 +2347,15 @@ static int __init reserve_mem(char *p)
- 	if (!*p)
- 		return -EINVAL;
- 
++		return -EINVAL;
++
++	/* Make sure that name has text */
++	for (p = name; *p; p++) {
++		if (!isspace(*p))
++			break;
++	}
++	if (!*p)
++		return -EINVAL;
++
 +	/* Make sure the name is not already used (size is only updated if found) */
 +	if (reserve_mem_find_by_name(name, &start, &size))
 +		return -EBUSY;
 +
- 	start = memblock_phys_alloc(size, align);
- 	if (!start)
- 		return -ENOMEM;
- 
--	err = reserved_mem_add(start, size, name);
--	if (err) {
--		memblock_phys_free(start, size);
--		return err;
--	}
++	start = memblock_phys_alloc(size, align);
++	if (!start)
++		return -ENOMEM;
++
 +	reserved_mem_add(start, size, name);
- 
- 	return 0;
- }
++
++	return 0;
++}
++__setup("reserve_mem=", reserve_mem);
++
+ #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
+ static const char * const flagname[] = {
+ 	[ilog2(MEMBLOCK_HOTPLUG)] = "HOTPLUG",
+-- 
+2.43.0
+
+
 
