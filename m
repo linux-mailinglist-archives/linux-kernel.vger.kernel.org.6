@@ -1,152 +1,123 @@
-Return-Path: <linux-kernel+bounces-213455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E67A390758D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:47:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F822907591
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3D21F23CC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:47:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206572833C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5B61448ED;
-	Thu, 13 Jun 2024 14:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BBB146A67;
+	Thu, 13 Jun 2024 14:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="BrZ4uC1S"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2lu45o+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AE07E76D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD7512C528;
+	Thu, 13 Jun 2024 14:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718290021; cv=none; b=CPWf7d6nFOh9WRZyfPS1ap9DAwcACYMpAfXQg+Li8RkJMS6aTy+epqD1z3pYmtcwtndkaKgQPKbDeelfTgdHkIEX/MP/NMFDxd2dXG4kJzGUUdr0c+KqBXBg3jhjfO8/jzQN9yrCiFXww6MeFirjq9GKzFRLyfrUohsBn1V5+1E=
+	t=1718290027; cv=none; b=a//e2RUNG4dbT45MUbI1tUNy5aWeNtktebvXTCafVFZrP+a2XVQoM5RILDyWGpjvQVnQBrFrJUaWdMQJzt8NP3lnTd1sfC0eCZZ99ZmV0jfEh+pp6noKjyW4kpWPvJGRSr9IBCFEHDmzg6LV5mi/Yg5AwpRlIi87tAklOojekho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718290021; c=relaxed/simple;
-	bh=1MArYuP6I1dClO6hSyL6b2nGGuXkYlYntxPoE89mMzU=;
+	s=arc-20240116; t=1718290027; c=relaxed/simple;
+	bh=jK2gdUjoj+cRxhdeg1jZhUoCifthBXqPUWejNjj10lo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GQhmPx1UNHZ5Ao1Ois8THtYH0khnqs7EqMRi0yIaLgk3GwqMq6K8QQcyoSwB7T5TkKyFmzTtarnXqTVlUcYV2OJ+BIkV6v9ZYFNK4q0pCPVvh8mBPS2UnhJaGmcrkA0QOz0zBknntLgH+qxMNS75068Hlt4ykiRFGSshZ89G6zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=BrZ4uC1S; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35dc9cef36dso1139425f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1718290018; x=1718894818; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tEhA82aLo515aHuKOusFSDP7HypmZDcV4M3zBsA32mk=;
-        b=BrZ4uC1SdEomPnkod9VXyxyPPX+d0RLpk8uoPh3lqBl+lE/gS7Q+gz/mFVzOk/YLcD
-         kNTdduTZmqtYpKR/wLRMH8c0P0hBSgWyqJvutXSuy2p3hzVYLJ0GuX2gmzE2onPviAKF
-         ac+iRHg+2rSEnt2k/OUXGDkBj3Ji1ovUHymrR3Csv0sY9CnT2gwWbwdNpblTa35A8zWh
-         VDxdJNxWPoV6T02Yhe2vGaokPVWJ9LZZKmpSu+dA9ZR0px+XWnil9dxNikjqKVLj8CCU
-         kZBNbNKJPgFKHUf9PbDV8UtZwAuQMRZQnTfBZthKA/ekbMysrf5SvFEJjLs0zKwU7cxm
-         yvBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718290018; x=1718894818;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tEhA82aLo515aHuKOusFSDP7HypmZDcV4M3zBsA32mk=;
-        b=Q8CZqwbTMYqErHp3m+hkXq+Y6CTQwTZbXcLmXargBrfwCXQ1mH9O/26K42yiWMh+qS
-         AGAzNWZ9D0y5coCoscYoqmC/ZQ99V1l0cfW/ka2xLVirFtQzCUrkxdtIdWWyKkXpwvZE
-         H5L1e8RuP0SbCDq1XdoRDdmGKb+i7YwdandsbBUkMm8GK1/XxBmOJrheNmMvR/5S3GuY
-         D7vRgDo1sqAZI1ft41nvomzem8lqjWqut5oZtIBYcqJiQaY6Xg6uCXtVAK/c2EuX0dUr
-         0GtOYtmBOwqUPT5cAP5T3Z9VXv9hfNPLRoY5OvOI8lgPH0dr831UNLjc4Qdu/z2QITNp
-         xDCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvqie+x9xYMSf2d4xhbV4/bKCchovqf4wHDzGwOC92RTCR9QtetLN34etWSoSLPt57xKfNtNa0/ph8gDM/c2TENYjsqnD558xsgyE9
-X-Gm-Message-State: AOJu0YxBxP+HpUwZGtVUBuWu5pWBmNNSo0MMmk2Vxj4//55xsw2XzxvS
-	L0ma0aDtyrQV9JSeAflvWJ2RWB3a2H9ARQEs+gcynU6D/fdQHTl57/8en2+/v0c=
-X-Google-Smtp-Source: AGHT+IFslhxHNDMgZ32+cIy2OchmE6E7iuuKQlnGpNTfS9dQJEFOYr+dynThX3TNYtBBkCIb1pwd6g==
-X-Received: by 2002:a5d:648f:0:b0:35f:2550:e276 with SMTP id ffacd0b85a97d-35fdf779d20mr5238834f8f.5.1718290017479;
-        Thu, 13 Jun 2024 07:46:57 -0700 (PDT)
-Received: from localhost ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750ad10esm1888491f8f.64.2024.06.13.07.46.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 07:46:56 -0700 (PDT)
-Date: Thu, 13 Jun 2024 16:46:53 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Cindy Lu <lulu@redhat.com>,
-	dtatulea@nvidia.com, jasowang@redhat.com,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 1/2] vdpa: support set mac address from vdpa tool
-Message-ID: <ZmsGXRrSgUbccoHp@nanopsycho.orion>
-References: <20240611053239.516996-1-lulu@redhat.com>
- <20240611185810.14b63d7d@kernel.org>
- <ZmlAYcRHMqCgYBJD@nanopsycho.orion>
- <20240612031356-mutt-send-email-mst@kernel.org>
- <ZmlMuGGY2po6LLCY@nanopsycho.orion>
- <20240613024756-mutt-send-email-mst@kernel.org>
- <Zmqd45TnVVZYPwp8@nanopsycho.orion>
- <20240613034647-mutt-send-email-mst@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CVX8M0CPxldZ92nGgA4AchC9sD7rinW5LhVk+MdPL6uWVdh9DMi1MwpX39bklSYeJuCtXGWIB4+IM4RYL4zwnucZUZ/jUU7kqSxAmGxJyl3Yirb2z/ft26DL28dqRrNZ4OujQC9wnEJmP1ucayrmCWH4PB9+BEDNF3KIhAdkcFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2lu45o+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16AC4C2BBFC;
+	Thu, 13 Jun 2024 14:47:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718290027;
+	bh=jK2gdUjoj+cRxhdeg1jZhUoCifthBXqPUWejNjj10lo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d2lu45o+Ydw/jwlGxUhNdagLzTCqMGvgZd941PPMvvteZ/RajSIUxk7FJmLFDObr3
+	 qbZ9QyJtSMHJPIchfTnzuXBhgtArPmUK0cQJMJt4RdTNVDAktbNW7PmL0zUzmTVeoT
+	 oe8A9WQgjwavflaTb0RXNfK+1/qYAJMx6DSd4zBED+fHvqdgExsQBTVX9Pgy38ynNm
+	 FaADpUWVNR6cChGRf/XQSjgZc0sQeX2xw/jcxl2+v8ITNjVOmiAZ+vGzbIJs57TJRc
+	 gcJsOFiIbKHmpORDouMn93VI1TFlDO6et+ruxgKor2SEpgY4h/0LLT74SNUiO+65oG
+	 X7yCt2z4yfymg==
+Date: Thu, 13 Jun 2024 15:47:03 +0100
+From: Lee Jones <lee@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-leds@vger.kernel.org, Abdel Alkuor <alkuor@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] leds: ncp5623: Use common error handling code in
+ ncp5623_probe()
+Message-ID: <20240613144703.GH2561462@google.com>
+References: <5faec5de-fc36-4b38-abcb-c61954a824cd@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240613034647-mutt-send-email-mst@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5faec5de-fc36-4b38-abcb-c61954a824cd@web.de>
 
-Thu, Jun 13, 2024 at 09:50:54AM CEST, mst@redhat.com wrote:
->On Thu, Jun 13, 2024 at 09:21:07AM +0200, Jiri Pirko wrote:
->> Thu, Jun 13, 2024 at 08:49:25AM CEST, mst@redhat.com wrote:
->> >On Wed, Jun 12, 2024 at 09:22:32AM +0200, Jiri Pirko wrote:
->> >> Wed, Jun 12, 2024 at 09:15:44AM CEST, mst@redhat.com wrote:
->> >> >On Wed, Jun 12, 2024 at 08:29:53AM +0200, Jiri Pirko wrote:
->> >> >> Wed, Jun 12, 2024 at 03:58:10AM CEST, kuba@kernel.org wrote:
->> >> >> >On Tue, 11 Jun 2024 13:32:32 +0800 Cindy Lu wrote:
->> >> >> >> Add new UAPI to support the mac address from vdpa tool
->> >> >> >> Function vdpa_nl_cmd_dev_config_set_doit() will get the
->> >> >> >> MAC address from the vdpa tool and then set it to the device.
->> >> >> >> 
->> >> >> >> The usage is: vdpa dev set name vdpa_name mac **:**:**:**:**:**
->> >> >> >
->> >> >> >Why don't you use devlink?
->> >> >> 
->> >> >> Fair question. Why does vdpa-specific uapi even exist? To have
->> >> >> driver-specific uapi Does not make any sense to me :/
->> >> >
->> >> >I am not sure which uapi do you refer to? The one this patch proposes or
->> >> >the existing one?
->> >> 
->> >> Sure, I'm sure pointing out, that devlink should have been the answer
->> >> instead of vdpa netlink introduction. That ship is sailed,
->> >
->> >> now we have
->> >> unfortunate api duplication which leads to questions like Jakub's one.
->> >> That's all :/
->> >
->> >
->> >
->> >Yea there's no point to argue now, there were arguments this and that
->> >way.  I don't think we currently have a lot
->> >of duplication, do we?
->> 
->> True. I think it would be good to establish guidelines for api
->> extensions in this area.
->> 
->> >
->> >-- 
->> >MST
->> >
->
->
->Guidelines are good, are there existing examples of such guidelines in
->Linux to follow though? Specifically after reviewing this some more, I
+On Wed, 05 Jun 2024, Markus Elfring wrote:
 
-Documentation directory in general.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 5 Jun 2024 16:19:26 +0200
+> 
+> Add a label so that a bit of exception handling can be better reused
+> at the end of this function implementation.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/leds/rgb/leds-ncp5623.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/leds/rgb/leds-ncp5623.c b/drivers/leds/rgb/leds-ncp5623.c
+> index 2be4ff918516..f18156683375 100644
+> --- a/drivers/leds/rgb/leds-ncp5623.c
+> +++ b/drivers/leds/rgb/leds-ncp5623.c
+> @@ -183,16 +183,12 @@ static int ncp5623_probe(struct i2c_client *client)
+> 
+>  	fwnode_for_each_available_child_node(mc_node, led_node) {
+>  		ret = fwnode_property_read_u32(led_node, "color", &color_index);
+> -		if (ret) {
+> -			fwnode_handle_put(led_node);
+> -			goto release_mc_node;
+> -		}
+> +		if (ret)
+> +			goto release_led_node;
+> 
+>  		ret = fwnode_property_read_u32(led_node, "reg", &reg);
+> -		if (ret) {
+> -			fwnode_handle_put(led_node);
+> -			goto release_mc_node;
+> -		}
+> +		if (ret)
+> +			goto release_led_node;
+> 
+>  		subled_info[ncp->mc_dev.num_colors].channel = reg;
+>  		subled_info[ncp->mc_dev.num_colors++].color_index = color_index;
+> @@ -223,6 +219,10 @@ static int ncp5623_probe(struct i2c_client *client)
+>  	fwnode_handle_put(mc_node);
+> 
+>  	return ret;
+> +
+> +release_led_node:
+> +	fwnode_handle_put(led_node);
+> +	goto release_mc_node;
 
+No, we're not bouncing around the function like that.
 
->think what Cindy is trying to do is actually provisioning as opposed to
->programming.
->
->-- 
->MST
->
+Only use gotos to skip _down_ to error handling code please.
+
+>  }
+> 
+>  static void ncp5623_remove(struct i2c_client *client)
+> --
+> 2.45.1
+> 
+
+-- 
+Lee Jones [李琼斯]
 
