@@ -1,78 +1,49 @@
-Return-Path: <linux-kernel+bounces-214097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001AF907F5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:30:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B961907F82
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF488285BA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:30:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 041781F21F77
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E1114D43B;
-	Thu, 13 Jun 2024 23:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZtjrlNte"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EC75A4FD;
-	Thu, 13 Jun 2024 23:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6D3155C94;
+	Thu, 13 Jun 2024 23:32:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0062D14F106
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718321449; cv=none; b=Ikk80dkzjQbqSNak06EbPOa26lq8o7R8MrfhvUaVzjJz1eK2Dtb19PMks4RMmi8PgLnmIVcRTZTkHD9Q7ZXznczFiCP7rqCPTiKemiMqQwELTQuDzz+ubR3zh4IdHy9OH2q989Q61hvZmS+z1e/r7NeIPjU5EeuXM8YpJ4M9Zbc=
+	t=1718321556; cv=none; b=I1+Kq+jofv0/UmVK8t8T9UYpv4lLpHyI+j3/UyOvgJN81LU5d6VRpOctlpskpoTY1s4n8DgwCSVUcK82woMHmmTEIrjBNZINnDuqlZ1/TQXLB/gP1hym34sD4Il47T/6U4voEKMktVcA+9gvcboGFfW8HIzHu9dhjfolA9pL7PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718321449; c=relaxed/simple;
-	bh=PW00fcWzZ7rP+l8wtSRyUhUcthMcm78zijiC8gH1ZzQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uVicknJBq4KzoUReVGE6Opowgq2Ad7dUCpCxTFVSmw+YY1kpqz1sTsoJZbt7v+OcLuXFnUJBDzI5fwUR7D1HS8Bdx+t1m0IRnbjaaHpp+ZAAQ3Mg8uYVpnArCYZhyhwGYVuZDxOoDzJGprfaxXv3bfl8s6MvUk+lKQyEbX5RQ9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZtjrlNte; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1F9DC2BBFC;
-	Thu, 13 Jun 2024 23:30:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718321448;
-	bh=PW00fcWzZ7rP+l8wtSRyUhUcthMcm78zijiC8gH1ZzQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZtjrlNtei/CJSiX6UYG5KNZw73izRuSmLgW6A1GZEsLtaRKZQtHYNomLZTK9GNhnb
-	 ctaZmJz31OO7MhKgOyloDCSRsTVCQ+3pymkq++vM5g/ycWf8GL6sC9XILt/hqm1hN4
-	 u8lHbBjbxkwwFRKscoBM45TSTGv1ij52Ox2IUN8DcZrvbZNM5eOKMxd1RJDRDNDQwh
-	 21olhu2jjss3qs9lfSmbXZtoDpRBSeZWqXnerR22r1spRA4hNhRgB/oG9ZXebs5Mcd
-	 WjbOYVgj981QV1rjP5Tutpr6MxPKlhTEs4jJQ2/Kofj5DRn1fURfmmU5ZJ37suFRxw
-	 jDUBTjYRCc4Mg==
-From: SeongJae Park <sj@kernel.org>
-To: Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>,
-	David Rientjes <rientjes@google.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Marco Elver <elver@google.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Pekka Enberg <penberg@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	kasan-dev@googlegroups.com,
+	s=arc-20240116; t=1718321556; c=relaxed/simple;
+	bh=VDxgFdcnwFPYlYn2nkDfi2MuEKRJ2YBeZsy+PPP1ND8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oenwEXQ+rKvQC4ZWHea43D5KiCCAZRwNsylNzXIKYcJwOMRyVgOL1JBFR4QgwgtLVarK1MtiolcliuIb71pn7T+bMkZKGDRQIwqPFDGScQkBz6YIzibnR4T7QuNdDCb9BiS086Y+xSlgnTh85j7YMsLhjSC1JyeV74baxJLDyN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 951A1FEC;
+	Thu, 13 Jun 2024 16:32:58 -0700 (PDT)
+Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C4C783F64C;
+	Thu, 13 Jun 2024 16:32:32 -0700 (PDT)
+From: Andre Przywara <andre.przywara@arm.com>
+To: Lee Jones <lee@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-s390@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Sven Schnelle <svens@linux.ibm.com>
-Subject: Re: [PATCH v4 12/35] kmsan: Support SLAB_POISON
-Date: Thu, 13 Jun 2024 16:30:44 -0700
-Message-Id: <20240613233044.117000-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240613153924.961511-13-iii@linux.ibm.com>
-References: 
+	linux-sunxi@lists.linux.dev,
+	Chris Morgan <macroalpha82@gmail.com>,
+	Ryan Walklin <ryan@testtoast.com>,
+	Philippe Simons <simons.philippe@gmail.com>
+Subject: [PATCH v3] mfd: axp20x: AXP717: Fix missing IRQ status registers range
+Date: Fri, 14 Jun 2024 00:31:04 +0100
+Message-Id: <20240613233104.17529-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.39.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,65 +52,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Ilya,
+While we list the "IRQ status *and acknowledge*" registers as volatile
+in the MFD description, they are missing from the writable range array,
+so acknowledging any interrupts was met with an -EIO error.
+This error propagates up, leading to the whole AXP717 driver failing to
+probe, which is fatal to most systems using this PMIC, since most
+peripherals refer one of the PMIC voltage rails.
+This wasn't noticed on the initial submission, since the interrupt was
+completely missing at this point, but the DTs now merged describe the
+interrupt, creating the problem.
 
-On Thu, 13 Jun 2024 17:34:14 +0200 Ilya Leoshkevich <iii@linux.ibm.com> wrote:
+Add the five registers that hold those bits to the writable array.
 
-> Avoid false KMSAN negatives with SLUB_DEBUG by allowing
-> kmsan_slab_free() to poison the freed memory, and by preventing
-> init_object() from unpoisoning new allocations by using __memset().
-> 
-> There are two alternatives to this approach. First, init_object()
-> can be marked with __no_sanitize_memory. This annotation should be used
-> with great care, because it drops all instrumentation from the
-> function, and any shadow writes will be lost. Even though this is not a
-> concern with the current init_object() implementation, this may change
-> in the future.
-> 
-> Second, kmsan_poison_memory() calls may be added after memset() calls.
-> The downside is that init_object() is called from
-> free_debug_processing(), in which case poisoning will erase the
-> distinction between simply uninitialized memory and UAF.
-> 
-> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-> ---
->  mm/kmsan/hooks.c |  2 +-
->  mm/slub.c        | 13 +++++++++----
->  2 files changed, 10 insertions(+), 5 deletions(-)
-> 
-[...]
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -1139,7 +1139,12 @@ static void init_object(struct kmem_cache *s, void *object, u8 val)
->  	unsigned int poison_size = s->object_size;
->  
->  	if (s->flags & SLAB_RED_ZONE) {
-> -		memset(p - s->red_left_pad, val, s->red_left_pad);
-> +		/*
-> +		 * Use __memset() here and below in order to avoid overwriting
-> +		 * the KMSAN shadow. Keeping the shadow makes it possible to
-> +		 * distinguish uninit-value from use-after-free.
-> +		 */
-> +		__memset(p - s->red_left_pad, val, s->red_left_pad);
+This fixes the boot on the Anbernic systems using the AXP717 PMIC.
 
-I found my build test[1] fails with below error on latest mm-unstable branch.
-'git bisect' points me this patch.
+Fixes: b5bfc8ab2484 ("mfd: axp20x: Add support for AXP717 PMIC")
+Reported-by: Chris Morgan <macromorgan@hotmail.com>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+Hi,
 
-      CC      mm/slub.o
-    /mm/slub.c: In function 'init_object':
-    /mm/slub.c:1147:17: error: implicit declaration of function '__memset'; did you mean 'memset'? [-Werror=implicit-function-declaration]
-     1147 |                 __memset(p - s->red_left_pad, val, s->red_left_pad);
-          |                 ^~~~~~~~
-          |                 memset
-    cc1: some warnings being treated as errors
-
-I haven't looked in deep, but reporting first.  Do you have any idea?
-
-[1] https://github.com/awslabs/damon-tests/blob/next/corr/tests/build_m68k.sh
-
+the patch itself is unchanged from v2 sent in April, but the commit
+message was updated to give rationale for the Fixes: tag.
+Please take this as a fix into v6.10.
 
 Thanks,
-SJ
+Andre
 
-[...]
+ drivers/mfd/axp20x.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+index f2c0f144c0fc3..dacd3c96c9f57 100644
+--- a/drivers/mfd/axp20x.c
++++ b/drivers/mfd/axp20x.c
+@@ -210,6 +210,7 @@ static const struct regmap_access_table axp313a_volatile_table = {
+ 
+ static const struct regmap_range axp717_writeable_ranges[] = {
+ 	regmap_reg_range(AXP717_IRQ0_EN, AXP717_IRQ4_EN),
++	regmap_reg_range(AXP717_IRQ0_STATE, AXP717_IRQ4_STATE),
+ 	regmap_reg_range(AXP717_DCDC_OUTPUT_CONTROL, AXP717_CPUSLDO_CONTROL),
+ };
+ 
+-- 
+2.39.4
+
 
