@@ -1,133 +1,142 @@
-Return-Path: <linux-kernel+bounces-213919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37ABA907C92
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:27:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39732907C95
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9832867A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:27:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBAC91F25A05
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B09A14C5A7;
-	Thu, 13 Jun 2024 19:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F0014D712;
+	Thu, 13 Jun 2024 19:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AR9UE3c8"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GHNO8nXf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045EC14B064
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A22414B064;
+	Thu, 13 Jun 2024 19:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718306843; cv=none; b=ikKhilDvadFygrZU8D/4ZVstqlJWyP56gKY/o9N+R3YUptB4mmeO4TiRHMlaqqBX+RngVxDr342CGdyD0ZXsAf0ittAoJa7SWMURsZlTLIV0rpw6Z8zkgVp8QnCgth3l3qmYTky2QQNNpahm/YIVQm6IrsKSqOrucTEi4VEVMIU=
+	t=1718306849; cv=none; b=f+btv+2dvaxX8kkgKIzYHGzKtRrC4bLMZLaVcpXgk/wJpAxg10zvaJE9TwUmnfE3bbjdWD/rgJDsUqijf2dTnr51t97nGVBTwrDE2YeCa0B90/8JiKjMRdovTlU2+0vVhjxQ+zjU+RY2sdY8Y3DIxbNK+zON7p1gMUrH1wUFS9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718306843; c=relaxed/simple;
-	bh=aWiMV0maMST9mAtcuABqe98mSv6TTyx4EbJhK7U/dVs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rIZ4aH96+uru6gzNI2k7B9dFkWu/y2hpil/xE+T6lJCapWnt+oICh32PqRDmkeCk/LgOE7ZfT6tprKSf4CMVsxcs7KzkMZEzX/LG2PTiMKM/lrhoXMs45JhYKCyhO+6UEEb25FcCVve25oW0d4ASDrPDodTJQ3aNOnjLkaQWXC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AR9UE3c8; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52c8342af5eso1574702e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:27:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718306840; x=1718911640; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t9orlxNKn/9JVZXU5e2lmdZ8oEkBOmdjYH2JldRLXf8=;
-        b=AR9UE3c8XbXj2nC0MkClzj+yF+BTNkmtHZvXPo+ZbLkCRiy9165wtBG3QVM5IlCGwZ
-         Vas1iaM3xXPxPU0grt/G2eVujRrDBLd6VzZbn2tLZ47WNI5SZngLrgJK/gxMV4dDoHi7
-         cpCsvMepgC4ku+Hop39PotA7v0J+Gy1r80JtRx4mJHnV3B9YwiNgvtHo0GFfCsDMkBl0
-         bAXCbupO4SkF+SrbpXZnts3xp5sFNAImlvxwRkXXQehbL0XYoUks2pKjnFrMVo6MW5Tq
-         6nud7NX2IXIdKGWBVpJGfuWo0vFakT5j+7oCkS2RpnD9LSJtKFhb1xJn28OnWkKzs00J
-         akHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718306840; x=1718911640;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t9orlxNKn/9JVZXU5e2lmdZ8oEkBOmdjYH2JldRLXf8=;
-        b=HVkkZjr86ad7nZqIyeANu7NMI56j0ybYTH3sFpsLCj0KI5T506CFFU0YaYkVqHsOA5
-         96fSv7HiDjgQ6nNqzVwsApkmZG9zcC0iJ0E1YCagl0w+7CkV2Yx7PhLdST8KPZY8qWOM
-         hSYEpfhGkwh3o663UMT0WJ6pgJ5JjVDqK+U2JuUkBAfnqUnCKqgjynVl11OhUw000cjR
-         hU3M45lqjjoZJ3oQXvzkw7BVND25lAr91WIWLt6BjoFdmqqCLhOS7x19Z0cMXxd15QzR
-         ruhAtCF0X1NPPePGb3TAkGyxcfRZJ+ucT8fYRH+w29uszm3jEc+epxezoB3f4TdWoexh
-         40wA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXDiNWpjJK9tVVCTNIAEKGEmHLDk10KTTdqnoyDsxZD2SD/x0vGtFNJ+5dY+fQOc/NBSVywRqKdZlodUCPUIwZss0UF6Su3GDEyzoD
-X-Gm-Message-State: AOJu0YyYVLZpmAgH6Fx1Bi0eNLQI6dRaCybHsPLSlZC+hGgPvO8tHKo3
-	0Ql6hMzEaHduboITsOBq0PcMZd3BqL1BcvMe32mak4YzYJcdTLq0xT5O6HApXoyaNjFBtGgqlrn
-	EDxg7TnnF4KUepaZwFik0Q8dG1REiTHagbT1o
-X-Google-Smtp-Source: AGHT+IGzN6TmSH1p6vXFvV8Km9FazTBEXlJalb8xYy/AJ+qb/Mo1wKanhXT9P+WqKg+UjLbGK6D2OeLnBXEtlJDXYHQ=
-X-Received: by 2002:a05:6512:130e:b0:52c:8f4a:9200 with SMTP id
- 2adb3069b0e04-52ca6e9897emr543765e87.65.1718306839832; Thu, 13 Jun 2024
- 12:27:19 -0700 (PDT)
+	s=arc-20240116; t=1718306849; c=relaxed/simple;
+	bh=xgxJS2sUBQxYIKfT1iWWx4e+Kx66SGSjdDm98PRpCpM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=FbnkwP+eMnUhhmatLLr/E8ukGBP+rxlx31jzaHPkdbzn870tuJb+VO0e8C/NEUKJNDpTseDN7e2REmytsyrZwyeWGzWF95gJErTD1QINLeW6KqDZaefDd1DhntwcGTy8lNtK/WiclKl5o4tNq/ZBzBhjQkjBW0hGpUdMTfB7b50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GHNO8nXf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DJGLLN030260;
+	Thu, 13 Jun 2024 19:27:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vHWnZwlbStXdCQrfa85iAH
+	P+E6m/g3vqpk6xjZYbADI=; b=GHNO8nXfFF5DvkiC97GJJrwyskL6bvp7a8+Fhs
+	zXnIV2ZDvp/5khg9Evo3IZBYWnhMJEVjn2ri2kVKPgFD/ODUPjUX7JICeI9xx1UO
+	/WAw0e4Oj/iIhkbIXMklH24W9yqIkmSJFvoISaxJ6m5TOxJO81+NjivjmXWsDxuT
+	hUqIJAhfNhHO8hr6Zi54nbxZO+/iWeZGt70i8yymp3EPGqsCYZE59Vi/+s4tCYe4
+	N/1cXs7LHVxzfkIiSdGw6RUT9K4fBHuB240JtPwZCk7dqqObNfAW1cqapPwNu6U+
+	pGiBtaGK18HkjCajEniUr07WstrEaIInohTgSxrNgXp90ldg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6q4010k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 19:27:24 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DJRN5d007248
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 19:27:23 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
+ 2024 12:27:23 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 13 Jun 2024 12:27:22 -0700
+Subject: [PATCH] dmaengine: ti: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612124750.2220726-1-usamaarif642@gmail.com>
- <20240612124750.2220726-2-usamaarif642@gmail.com> <ZmoBf6RPJzC2RaqM@google.com>
- <85804484-9973-41a1-a05d-000833285f39@gmail.com> <CAJD7tkYBxN4uAHLacAx=m2+B9zPidz0V5pGP030yvNYLTnk=VQ@mail.gmail.com>
- <0572d8b1-3b17-45a8-bf75-f66e19216d38@gmail.com>
-In-Reply-To: <0572d8b1-3b17-45a8-bf75-f66e19216d38@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 13 Jun 2024 12:26:42 -0700
-Message-ID: <CAJD7tkYGFsYbbbHp3+MMHTuxNcG_Z+i-5TCo3wieVArcra5wmA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, shakeel.butt@linux.dev, 
-	david@redhat.com, ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240613-md-arm64-drivers-dma-ti-v1-1-b1154603f341@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABlIa2YC/x3MTQrCQAxA4auUrA30ZxjQq4iLTJPagDNK0pZC6
+ d0dXX6L9w5wMRWHW3OAyaau71LRXRoYZypPQeVq6Ns+tLEbMDOS5RiQTTcxR86EiyIPUShRCtc
+ 0Qa0/JpPu//P9UZ3IBZNRGeff76Vl3TGTL2Jwnl9RWd9+iAAAAA==
+To: Peter Ujfalusi <peter.ujfalusi@gmail.com>, Vinod Koul <vkoul@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6F9gXzxjXHwiEmd79l12S8XKuUmV6uI2
+X-Proofpoint-ORIG-GUID: 6F9gXzxjXHwiEmd79l12S8XKuUmV6uI2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_12,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0
+ phishscore=0 spamscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406130138
 
-[..]
-> >>>> @@ -498,6 +507,8 @@ static void swap_do_scheduled_discard(struct swap_info_struct *si)
-> >>>>               __free_cluster(si, idx);
-> >>>>               memset(si->swap_map + idx * SWAPFILE_CLUSTER,
-> >>>>                               0, SWAPFILE_CLUSTER);
-> >>>> +            for (i = 0; i < SWAPFILE_CLUSTER; i++)
-> >>>> +                    clear_bit(idx * SWAPFILE_CLUSTER + i, si->zeromap);
-> >>> Same here. I didn't look into the specific code paths, but shouldn't the
-> >>> cluster be unused (and hence its zeromap bits already cleared?).
-> >>>
-> >> I think this one is needed (or atleast very good to have). There are 2
-> >> paths:
-> >>
-> >> 1) swap_cluster_schedule_discard (clears zeromap) -> swap_discard_work
-> >> -> swap_do_scheduled_discard (clears zeromap)
-> >>
-> >> Path 1 doesnt need it as swap_cluster_schedule_discard already clears it.
-> >>
-> >> 2) scan_swap_map_slots -> scan_swap_map_try_ssd_cluster ->
-> >> swap_do_scheduled_discard (clears zeromap)
-> >>
-> >> Path 2 might need it as zeromap isnt cleared earlier I believe
-> >> (eventhough I think it might already be 0).
-> > Aren't the clusters in the discard list free by definition? It seems
-> > like we add a cluster there from swap_cluster_schedule_discard(),
-> > which we establish above that it gets called on a free cluster, right?
->
-> You mean for path 2? Its not from swap_cluster_schedule_discard. The
-> whole call path is
->
-> get_swap_pages -> scan_swap_map_slots -> scan_swap_map_try_ssd_cluster
-> -> swap_do_scheduled_discard. Nowhere up until swap_do_scheduled_discard
-> was the zeromap cleared, which is why I think we should add it here.
+With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/k3-udma.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/k3-udma-glue.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/k3-psil-lib.o
 
-swap_do_scheduled_discard() iterates over clusters from
-si->discard_clusters. Clusters are added to that list from
-swap_cluster_schedule_discard().
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-IOW, swap_cluster_schedule_discard() schedules freed clusters to be
-discarded, and swap_do_scheduled_discard() later does the actual
-discarding, whether it's through si->discard_work scheduled by
-swap_cluster_schedule_discard(), or when looking for a free cluster
-through scan_swap_map_try_ssd_cluster().
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/dma/ti/k3-psil.c      | 1 +
+ drivers/dma/ti/k3-udma-glue.c | 1 +
+ drivers/dma/ti/k3-udma.c      | 1 +
+ 3 files changed, 3 insertions(+)
 
-Did I miss anything?
+diff --git a/drivers/dma/ti/k3-psil.c b/drivers/dma/ti/k3-psil.c
+index 25148d952472..c4b6f0df4686 100644
+--- a/drivers/dma/ti/k3-psil.c
++++ b/drivers/dma/ti/k3-psil.c
+@@ -106,4 +106,5 @@ int psil_set_new_ep_config(struct device *dev, const char *name,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(psil_set_new_ep_config);
++MODULE_DESCRIPTION("K3 PSI-L endpoint configuration");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/dma/ti/k3-udma-glue.c b/drivers/dma/ti/k3-udma-glue.c
+index c9b93055dc9d..5348797d7a94 100644
+--- a/drivers/dma/ti/k3-udma-glue.c
++++ b/drivers/dma/ti/k3-udma-glue.c
+@@ -1574,4 +1574,5 @@ static int __init k3_udma_glue_class_init(void)
+ }
+ 
+ module_init(k3_udma_glue_class_init);
++MODULE_DESCRIPTION("TI K3 NAVSS DMA glue interface");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
+index 6400d06588a2..dc7ff1e74fd0 100644
+--- a/drivers/dma/ti/k3-udma.c
++++ b/drivers/dma/ti/k3-udma.c
+@@ -5621,6 +5621,7 @@ static struct platform_driver udma_driver = {
+ };
+ 
+ module_platform_driver(udma_driver);
++MODULE_DESCRIPTION("Texas Instruments UDMA support");
+ MODULE_LICENSE("GPL v2");
+ 
+ /* Private interfaces to UDMA */
+
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240613-md-arm64-drivers-dma-ti-d36eabab49bf
+
 
