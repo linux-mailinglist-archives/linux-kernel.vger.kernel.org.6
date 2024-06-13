@@ -1,131 +1,169 @@
-Return-Path: <linux-kernel+bounces-212602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103E19063D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:13:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6999063DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BB0CB24028
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:13:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36684B22C0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0980EEC8;
-	Thu, 13 Jun 2024 06:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007E31369A0;
+	Thu, 13 Jun 2024 06:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLMc62CM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p6oOm7ce"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2731E135A4B;
-	Thu, 13 Jun 2024 06:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3681369BF;
+	Thu, 13 Jun 2024 06:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718259122; cv=none; b=RvgMbT9V5qZglIEeXXGvHRZZgOCXt5Xpmq9hV8xl8+UeywhrXYEc2L319vNKRoScQENWnXOXZf8pwzaCCeyaWCWz1+adeYk0w1g39n3kkfefPH2pbQa4jQc+mJRwHm3OIe2O0tADqEB2Z0POm89EiJmjiBdmbPxdnE+GvJd3v6E=
+	t=1718259244; cv=none; b=TAXAdxTGalqHne2ODjqOBpm3pyKuaOvsFRjSA0JzPWHXx/GJ+Ixv/GAPLfZechZJ/kuFLtaqOUZE187nxc+Iux13/dlVxtawJPwX48r/7wHawyP8n8KA//9oL0t0XDoAwuzrUXme2cg2qTsGfaF0M4AcYONz1QBwXY3V9Dgzu1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718259122; c=relaxed/simple;
-	bh=2tfIxnfDqiV8m2eUOgIRXcgva0U3ORhh129cB7f/07Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FMYfvKI4y3cOKWZDwUxgYCwqb8dO/QbtXDLLrkQgvBZ2ngtgIhNOWV2414flntPgsmPteZDEt/StyUzPGeeRDugH+dYlF5voevpcStLyCVvYzRFJNm/WJTWz+HUPyPlISqL0IayIalgRyrtQrKhEaIaQK7LAzjVBDumaOYmkMZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLMc62CM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B62D6C4AF5F;
-	Thu, 13 Jun 2024 06:12:01 +0000 (UTC)
+	s=arc-20240116; t=1718259244; c=relaxed/simple;
+	bh=sNG3UKIpsfSm8/4JJqiv4Qz32HYJ/gfCZQxKzbXJVXE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SrSiF3GSSu8RuhnpreTe41bApyJ81d3IChOp8DO4Y3jqzcIIDDYX0KQLpkaBAT0ZRGnm+ju3dCOshN6kp1EmgT0YxEi9v6/nbJKOdOF0UKmV5Xl6gLOUjfEgPSzrJq4iNYOrJUjYooT9e72+4XGDFi8Qx59CH3y8+mLz3EhtmKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p6oOm7ce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E104C2BBFC;
+	Thu, 13 Jun 2024 06:13:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718259121;
-	bh=2tfIxnfDqiV8m2eUOgIRXcgva0U3ORhh129cB7f/07Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aLMc62CMcYbhlI0BxA1bmCKIFpC7d6uUNzAaYgoMqzg59/gCWcohnthbnkHm3+PuL
-	 zVtwTkOMcMOvC7TikDQsC/2VSZMAFRluA1HBDadue43vDev0PzLlvojOLhhkNE1YCg
-	 ex0oFd7VBGibaU6QGkqbCRvkNW6/ksv7xrRJ5lEsQ83WEsxJKkJWb4mTGWG3N/K9QA
-	 Javtf6isZCNRW3fAseXH79Ym7TvCN4tEredwd9vy0ftIPHqUwvY2N3dddOOUW95Rbv
-	 XoB1GELyN67C3bG8sUp7ZHz7I499XFVQKJJ4mMRS5J7xQEgFSJU9bmkPkIsS8G4zhH
-	 lkCItH0cnFioQ==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52c7f7fdd24so937540e87.1;
-        Wed, 12 Jun 2024 23:12:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDNxy4lrQpweYxTY4V9BSZiB+J6aTiZkzC1kadm70Vx4fg4X819O/pobF4Cg+YF6jCTspFq/dK0FZckVI2MEv7N1rVed0XwAVh74r3xT5HYk4rLz5lMnfF6kpHPrxaFMD7Zr/yWMVGwh86KqehkC2rWenxnXSdRMT+nao/Wxd3B56EZBMrsMLB4ThezY2jg951
-X-Gm-Message-State: AOJu0Yx1KIHlneXm5/rZ59Bjvbxv8N91tiosXzCM1Gdl7pC5cIbQQkaW
-	nIIYBIu+XVidJsqnVHOi7KvZGe0Hde+XWndf5Pb2nNHJ6ATAr9MdG1E0VpvPZoeiTR+CFUiXNzn
-	DOV61wV5Ge0T+vE+pGH8KKzP7xVc=
-X-Google-Smtp-Source: AGHT+IFdLbYZojyhqvDEXOP8w6OnQtiDQDSpYwdN44bj4F4g15wPRxlf8c6AOb6GWfv8yK5ap3XFShBJ/euTC9+lXSo=
-X-Received: by 2002:ac2:4a82:0:b0:52b:cb05:ed46 with SMTP id
- 2adb3069b0e04-52c9a3c79a1mr2099464e87.21.1718259119855; Wed, 12 Jun 2024
- 23:11:59 -0700 (PDT)
+	s=k20201202; t=1718259242;
+	bh=sNG3UKIpsfSm8/4JJqiv4Qz32HYJ/gfCZQxKzbXJVXE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p6oOm7ceSN0NpE13akUvm5my33Wo+pbwL2R9Sg7Nd7RlGFkvR32atCQKkRomz+cpd
+	 G9YwboJdH2fsC+Zye72lgebuuvBFm86GCR7ANV6/uT9GwUx563BMOl0dWbrwUr1dEv
+	 OrBsuo1ByyJVrauAUObfByYNBJMsAvvocf700RVtlO6D9OCD18GcpzaGrB4cZY2eLh
+	 EnihWp/kthxyVf408OYVkVjSo0YRAObFA9DBQSAzChogo9amrNEKVTmw4d563cNr4E
+	 sDOfai4YPljnFAJZU4A2x1fRxwHt7z5js6ajn0zPiryU5z95APb306Zc1i4yjIQCy2
+	 XERrLhPjmJAqA==
+Message-ID: <a752a912-a328-49c8-b887-fa95512785cb@kernel.org>
+Date: Thu, 13 Jun 2024 08:13:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611144911.327227285@goodmis.org> <20240611144949.703297941@goodmis.org>
- <202406121145.8860502D7@keescook> <20240612145228.5bf426e0@rorschach.local.home>
- <ZmqLejL1mblOikLp@kernel.org>
-In-Reply-To: <ZmqLejL1mblOikLp@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 13 Jun 2024 08:11:48 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHLSROujjc_OifzVmuAd7BpA+b4D2JrPGLJJYj2au7SfQ@mail.gmail.com>
-Message-ID: <CAMj1kXHLSROujjc_OifzVmuAd7BpA+b4D2JrPGLJJYj2au7SfQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] pstore/ramoops: Add ramoops.mem_name= command line option
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-hardening@vger.kernel.org, 
-	Guenter Roeck <linux@roeck-us.net>, Ross Zwisler <zwisler@google.com>, wklin@google.com, 
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Joel Fernandes <joel@joelfernandes.org>, 
-	Suleiman Souhlal <suleiman@google.com>, Linus Torvalds <torvalds@linuxfoundation.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXT] Re: [PATCH 1/4] dt-bindings: firmware: secvio: Add device
+ tree bindings
+To: Aisheng Dong <aisheng.dong@nxp.com>, Vabhav Sharma
+ <vabhav.sharma@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Franck Lenormand <franck.lenormand@nxp.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, Varun Sethi <V.Sethi@nxp.com>,
+ Silvano Di Ninno <silvano.dininno@nxp.com>,
+ Pankaj Gupta <pankaj.gupta@nxp.com>, Frank Li <frank.li@nxp.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>
+References: <20240509-secvio-v1-0-90fbe2baeda2@nxp.com>
+ <20240509-secvio-v1-1-90fbe2baeda2@nxp.com>
+ <750f5388-20f9-45a3-a1e6-ceac4b91329f@kernel.org>
+ <AS1PR04MB9358A2457AF05553457DE9B0F3FB2@AS1PR04MB9358.eurprd04.prod.outlook.com>
+ <1486a1b6-4119-4121-b6df-3da21d06add7@kernel.org>
+ <DU0PR04MB929983AB361DB081B44E7AFE80C02@DU0PR04MB9299.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <DU0PR04MB929983AB361DB081B44E7AFE80C02@DU0PR04MB9299.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 13 Jun 2024 at 08:04, Mike Rapoport <rppt@kernel.org> wrote:
->
-> On Wed, Jun 12, 2024 at 02:52:28PM -0400, Steven Rostedt wrote:
-> > On Wed, 12 Jun 2024 11:45:57 -0700
-> > Kees Cook <kees@kernel.org> wrote:
-> >
-> > > On Tue, Jun 11, 2024 at 10:49:13AM -0400, Steven Rostedt wrote:
-> > > > From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> > > >
-> > > > Add a method to find a region specified by reserve_mem=nn:align:name for
-> > > > ramoops. Adding a kernel command line parameter:
-> > > >
-> > > >   reserve_mem=12M:4096:oops ramoops.mem_name=oops
-> > > >
-> > > > Will use the size and location defined by the memmap parameter where it
-> > > > finds the memory and labels it "oops". The "oops" in the ramoops option
-> > > > is used to search for it.
-> > > >
-> > > > This allows for arbitrary RAM to be used for ramoops if it is known that
-> > > > the memory is not cleared on kernel crashes or soft reboots.
-> > > >
-> > > > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> > >
-> > > Acked-by: Kees Cook <kees@kernel.org>
-> > >
-> > > Let me know if this should go via the pstore tree, if you'd rather carry
-> > > it?
-> > >
-> >
-> > I'm going to send out another version to cover some more comments that
-> > were made, and perhaps it's best if Mike Rapoport takes it through his
-> > tree.
->
-> I've added one more comment to v5, with that fixed I can take this.
->
+On 12/06/2024 09:20, Aisheng Dong wrote:
+> Hi Krzysztof
+> 
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: 2024年6月7日 15:08
+>>
+>> On 07/06/2024 06:58, Vabhav Sharma wrote:
+>>>>
+>>>> Missing SoC compatibles.
+>>> Ok, I will use fsl,imx8dxl-sc-secvio
+>>>>
+>>>> So no, that's just abuse of DT to instantiate driver.
+>>>>
+>>>> NAK. Drop the binding.
+>>> I will detail the dt binding to describe the real hardware
+>>
+>> Still looks like way just to instantiate driver. Why it cannot be part of existing
+>> firmware SCU node?
+>>
+> 
+> Technically yes. But SCU case is a little bit complicated as there're many
+> functions and all of them are already added as sub nodes in SCU node
+> for consistency and handling platform difference.
+> 
+> I guess some of them, e.g. rtc, could be part of SCU node (reuse) while
+> some couldn't. e.g. pinctrl
+> Do you want us to only make secvio reuse existing SCU node? 
 
-So how is this supposed to work wrt to the rigid 'no user visible
-regressions' rule, given that this whole thing is a best effort thing
-to begin with. This needs at least a huge disclaimer that this rule
-does not apply, and if this works today, there is no guarantee that it
-will keep working on newer kernels. Otherwise, you will be making the
-job of the people who work on the boot code significantly more
-difficult. And even then, I wonder whether Linus and #regzcop are
-going to honour such a disclaimer.
+Yes
 
-So this belongs downstream, unless some guarantees can be provided
-that this functionality is exempt from the usual regression policies.
+> This might look a bit strange to the existing sub nodes.
+
+Nothing strange/unusual to me.
+
+> 
+> BTW, even we can reuse SCU node for secvio function, we still need update
+> binding doc to add extra property 'nvmem' for secvio.
+
+Sure.
+
+
+
+Best regards,
+Krzysztof
+
 
