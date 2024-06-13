@@ -1,137 +1,141 @@
-Return-Path: <linux-kernel+bounces-213656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D87C90786C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:38:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4A3907873
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A354D1C23BA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:38:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44FF41F23633
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246921494B5;
-	Thu, 13 Jun 2024 16:38:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C85A12D757;
-	Thu, 13 Jun 2024 16:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5B01494B5;
+	Thu, 13 Jun 2024 16:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="OaCnBr8D";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GIqKFfjk"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9AE12D757;
+	Thu, 13 Jun 2024 16:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718296707; cv=none; b=lhtRYlkcIZcPjpKtUTZkT12vOLNyhDn4BWA6zVXv8vJA5pP6j3ML7Oa9w4BWzf/iUeME48ukqSZhHXczhUGgPB88DYcvKYA+SsdzURbb4Ou0p53Oy3k853ig+W6wozVOtnoE021nyj9OVlHMHDSruWG8mZUXkJFK8TMGuWpg7xk=
+	t=1718296899; cv=none; b=nJXCTpqalDfa/kbHXdadJVEc+t+ii0g7UkJ5hqCAGpXs0ibgiLXY6EH/+wLwmMhtroe1E8t30Km0ojNBaRulwCDCJDvd2fT5iMtB4+Q/l5NV0eUP/u8Rb1qG6uT8vtKnq4JkkxcJWDddoHDOmgrR3DkiATA40ccw3Y/atYzkrbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718296707; c=relaxed/simple;
-	bh=aKOhNOdB7ccnzq+ofFI1uzD4Kj+zLwM5PbYdAt6B0RE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sLC+0GJyMO0S8//xNn0ih0i57pxGQRe02D40h3MhIPF+kMu3BDTKXIv8mlUOjSHO6SO8yRtrcRnwCZVU9DZ4XyEkwMGVYDPJZog1JCrU5hzOlrM/ifndMUjxL71yGnnjJ8oPPzsXUOKyqk59a0h06DJ08R1NhdAa30SaHFUuK2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F821FEC;
-	Thu, 13 Jun 2024 09:38:48 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 012363F73B;
-	Thu, 13 Jun 2024 09:38:21 -0700 (PDT)
-Message-ID: <002b6176-41b3-4888-abb1-978399d108b8@arm.com>
-Date: Thu, 13 Jun 2024 17:38:20 +0100
+	s=arc-20240116; t=1718296899; c=relaxed/simple;
+	bh=SIwMvO39BmbW7c2qCC3FVPcLtHrn3VC2fa9BqViEGSM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UMECC3uSLCOnCTXZQBK6/YRHxRRNGAcuF2PS4MIPvBsh+KbY/oJ/6GqniFO7zdfPW2rWo8+hBe49bFLEUqaNw2VLnBbwm8kDPHa82qnclT7NpffRlQKGUEvsN6HSKxZo7lKdv4VyC+NN2dMRxArU/m6eQfOJ0D4F7xKQkyVTVvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=OaCnBr8D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GIqKFfjk; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id E4C8C13800BE;
+	Thu, 13 Jun 2024 12:41:36 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Thu, 13 Jun 2024 12:41:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1718296896; x=1718383296; bh=AK
+	wt86hx8VrZMzXcCZWfK6szZPgA3uEjcq8VP/L9IQc=; b=OaCnBr8DfSxfoQXg+d
+	rdlqwrhll1vSkGKYPuN+GbkTaiAiWegRadk73wsxExVMY/ZWzlZTdmvF5/jboczE
+	LFGbgJ9ie7oItGRkSwBlaGheKfvLQg6O9pYeWWIkS/m7tHxxwDE07rAeA7YgK2Ha
+	ADyy6LpHqhdjF4FsLi1C/KWgQJCIWEbdoQfSmyutJQ8f55dfXy9S2oA9Gn0K2hlY
+	9iUavQSfCy5WC0HAmotXzgfW06sTWiX3Dgi+XfHY7ndiVxoonUMkq4YKVyEoKNFi
+	JahhcURXklttR2ZmY6hnKGZ9WwmpcxNOfoSEK+24lEVBkXrLR08DHhAy/uXAg+AH
+	V3PA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1718296896; x=1718383296; bh=AKwt86hx8VrZM
+	zXcCZWfK6szZPgA3uEjcq8VP/L9IQc=; b=GIqKFfjkbqatz7mRpMWYuCQ8R2Vot
+	zptLZwb50JqIjA+TaPiQH11YsjYOJWZa+oBGEC7szerQIJhXwMLvSxcbLCxWz49B
+	+uPrAB68oTOHc2FRMEajiXJVkISg6dAIrZCipwKC6GiJyZiJPfHVti8BcF96PvHa
+	LRrBzeptmJZkREGEgEDElolQtXTHbDTp22W2ipw4+bAavkxuUZ0exjtEfK9vF+fX
+	ktsdX/cWdpIjnVxw27u/ezCAEVzKXsvqx2NPRM96A7hojEy1kWgSTV3HaN/Tfvw/
+	W52yHxs5AVOtojM/34YAlIJnqY7j8pYxqHvtgaRwMHsHbBT4pKZcBm21w==
+X-ME-Sender: <xms:QCFrZrOjhjtvnxQy0aNPiAehCmRWao3uMbTEStxXy6jH_L-0-bwsxw>
+    <xme:QCFrZl-hYLpvmBnyymRUf84MfH1Az5Nlv7wndJ0rU-99e0ksB2uTCI_wMlK6eiqsh
+    fvtrySAjfeGdDU8o24>
+X-ME-Received: <xmr:QCFrZqRnFEn_NtRAcoKxmbeMh3w69Vra8UTTNWaLLVkAxNz8EC7zF-w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedguddttdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomheplfhirgig
+    uhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenuc
+    ggtffrrghtthgvrhhnpedufffffffhueehvefhgfelveekueegteefgeeiieejheefkeeh
+    keevudevieegueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:QCFrZvvk4HroSmVCYb6Qrci8CRfG5i0qrL75UDhBddeVxj2iA98vWw>
+    <xmx:QCFrZjfFIl1aVIVAal_MpmEjoAl511Jl_DO1_XiEivMf5aF2aSctww>
+    <xmx:QCFrZr3-l-ahK74EbabNIAdwWxkA26Y7eqRzpPOyzGJIiZskNFqR-w>
+    <xmx:QCFrZv_VbuyE0lF4VASRTr11b3czGbKw9PnWie8bYiF5070TSVJfiw>
+    <xmx:QCFrZrRbACPnFw0R1FhSwhPRt4txrlu0rNoEnA4vxWiTZdbSwLxQ_m_C>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 13 Jun 2024 12:41:35 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH 0/2] LoongArch: Fix S3 sleep on U-Boot + QEMU virt machine
+Date: Thu, 13 Jun 2024 17:41:33 +0100
+Message-Id: <20240613-loongarch64-sleep-v1-0-a245232af5e4@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/4] of: reserved_mem: Restruture how the reserved
- memory regions are processed
-To: Conor Dooley <conor@kernel.org>,
- Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-Cc: Mark Brown <broonie@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- robh@kernel.org, saravanak@google.com, hch@lst.de, m.szyprowski@samsung.com,
- will@kernel.org, catalin.marinas@arm.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev, kernel@quicinc.com
-References: <20240528223650.619532-1-quic_obabatun@quicinc.com>
- <20240528223650.619532-2-quic_obabatun@quicinc.com>
- <20240610213403.GA1697364@thelio-3990X>
- <Zmd0Zg7oMneJLyHd@finisterre.sirena.org.uk>
- <cc180d94-6890-4e92-8080-ffd6c1269e6e@quicinc.com>
- <20240613-goldfish-unpicked-1bc9f786aaed@spud>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240613-goldfish-unpicked-1bc9f786aaed@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD0ha2YC/x3MQQqAIBBA0avErBPMSqirRIvSGR0IFYUIpLsnL
+ d/i/woFM2OBtauQ8ebCMTQMfQfGH8GhYNsMSqpJ6mEUV4zBHdl4PYlyISYhx5nIWKIFT2hdykj
+ 8/M9tf98P7cMiAGMAAAA=
+To: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, stable@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=993;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=SIwMvO39BmbW7c2qCC3FVPcLtHrn3VC2fa9BqViEGSM=;
+ b=kA0DAAoWQ3EMfdd3KcMByyZiAGZrIT+imFecZ5S2NsCy2hMND++bVyGKsRUn6ql4zh/6aqaTK
+ Ih1BAAWCgAdFiEEVBAijrCB0aDX4Gr8Q3EMfdd3KcMFAmZrIT8ACgkQQ3EMfdd3KcMVRgEAiwCE
+ C0oAJBwbXMnYfZvq/oTJCLFXrXNFPhKQcjKuwpABALz+By/KjdKKHHVWCFLZwLqq+ynXrlEtgAk
+ IDzvUXi4C
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-On 13/06/2024 5:17 pm, Conor Dooley wrote:
-> On Thu, Jun 13, 2024 at 09:05:18AM -0700, Oreoluwa Babatunde wrote:
->>
->> On 6/10/2024 2:47 PM, Mark Brown wrote:
->>> On Mon, Jun 10, 2024 at 02:34:03PM -0700, Nathan Chancellor wrote:
->>>> On Tue, May 28, 2024 at 03:36:47PM -0700, Oreoluwa Babatunde wrote:
->>>>> fdt_init_reserved_mem() is also now called from within the
->>>>> unflatten_device_tree() function so that this step happens after the
->>>>> page tables have been setup.
->>>>> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
->>>> I am seeing a warning when booting aspeed_g5_defconfig in QEMU that I
->>>> bisected to this change in -next as commit a46cccb0ee2d ("of:
->>>> reserved_mem: Restruture how the reserved memory regions are
->>>> processed").
->>> I'm also seeing issues in -next which I bisected to this commit, on the
->>> original Raspberry Pi the cpufreq driver fails to come up and I see
->>> (potentially separate?) backtraces:
->>>
->>> [    0.100390] ------------[ cut here ]------------
->>> [    0.100476] WARNING: CPU: 0 PID: 1 at mm/memory.c:2835 __apply_to_page_range+0xd4/0x2c8
->>> [    0.100637] Modules linked in:
->>> [    0.100665] CPU: 0 PID: 1 Comm: swapper Not tainted 6.10.0-rc2-next-20240607 #1
->>> [    0.100692] Hardware name: BCM2835
->>> [    0.100705] Call trace:
->>> [    0.100727]  unwind_backtrace from show_stack+0x18/0x1c
->>> [    0.100790]  show_stack from dump_stack_lvl+0x38/0x48
->>> [    0.100833]  dump_stack_lvl from __warn+0x8c/0xf4
->>> [    0.100888]  __warn from warn_slowpath_fmt+0x80/0xbc
->>> [    0.100933]  warn_slowpath_fmt from __apply_to_page_range+0xd4/0x2c8
->>> [    0.100983]  __apply_to_page_range from apply_to_page_range+0x20/0x28
->>> [    0.101027]  apply_to_page_range from __dma_remap+0x58/0x88
->>> [    0.101071]  __dma_remap from __alloc_from_contiguous+0x6c/0xa8
->>> [    0.101106]  __alloc_from_contiguous from atomic_pool_init+0x9c/0x1c4
->>> [    0.101169]  atomic_pool_init from do_one_initcall+0x68/0x158
->>> [    0.101223]  do_one_initcall from kernel_init_freeable+0x1ac/0x1f0
->>> [    0.101267]  kernel_init_freeable from kernel_init+0x1c/0x140
->>> [    0.101309]  kernel_init from ret_from_fork+0x14/0x28
->>> [    0.101344] Exception stack(0xdc80dfb0 to 0xdc80dff8)
->>> [    0.101369] dfa0:                                     00000000 00000000 00000000 00000000
->>> [    0.101393] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->>> [    0.101414] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
->>> [    0.101428] ---[ end trace 0000000000000000 ]---
->>>
->>> Full boot log at:
->>>
->>>     https://lava.sirena.org.uk/scheduler/job/374962
->>>
->>> You can see the report of cpufreq not being loaded in the log.
->>>
->>> NFS boots also fail, apparently due to slowness bringing up a Debian
->>> userspace which may well be due to cpufreq isues:
->> Hi Mark & Nathan,
->>
->> Taking a look at this now and will provide a fix soon if
->> needed.
->>
->> At first glance, it looks like there are a couple of WARN_ON*
->> function calls in __apply_to_page_range(). Please could
->> you run faddr2line and tell me which of the WARN_ON*
->> cases we are hitting?
-> 
-> That shouldn't be needed, right? The line is in the WARNING: mm/memory.c:2835
-> which, in next-20240607, is: if (WARN_ON_ONCE(pmd_leaf(*pmd))).
+Hi all,
 
-Indeed, and the overall implication there would seem to be that, because 
-the dynamic CMA region wasn't allocated and reserved before we created 
-the pagetables, we thus haven't created the pagetables in a shape which 
-can accommodate chopping it out again later. Note that on arm64 at 
-least, this is liable to be hidden by other options like rodata_full and 
-debug_pagealloc - see can_set_direct_map().
+This series fixed S3 sleep on U-Boot + QEMU virt machine.
 
-Thanks,
-Robin.
+The first patch is a further DMW window setting fix, the
+second fixed support of ACPI standard S3 sleep procdure.
+
+Please review.
+Thanks
+
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+Jiaxun Yang (2):
+      LoongArch: Initialise unused Direct Map Windows
+      LoongArch: Fix ACPI standard register based S3 support
+
+ arch/loongarch/include/asm/loongarch.h   |  4 ++++
+ arch/loongarch/include/asm/stackframe.h  | 11 +++++++++++
+ arch/loongarch/kernel/head.S             | 12 ++----------
+ arch/loongarch/power/platform.c          | 24 ++++++++++++++++++------
+ arch/loongarch/power/suspend_asm.S       |  8 ++------
+ drivers/firmware/efi/libstub/loongarch.c |  2 ++
+ 6 files changed, 39 insertions(+), 22 deletions(-)
+---
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+change-id: 20240613-loongarch64-sleep-035ffcdff9eb
+
+Best regards,
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+
 
