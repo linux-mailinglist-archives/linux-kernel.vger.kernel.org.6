@@ -1,213 +1,108 @@
-Return-Path: <linux-kernel+bounces-212998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DFBD906996
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:05:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 530F490699B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFAB12829DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:05:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBE70B261E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A6F1411D6;
-	Thu, 13 Jun 2024 10:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B858A1411E9;
+	Thu, 13 Jun 2024 10:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jrlpXsfl"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMusOiTf"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AF4134409
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CB01411CD;
+	Thu, 13 Jun 2024 10:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718273095; cv=none; b=YYGEit8W1sgcjEpFbl9ATdgpxOvZllM8jVzCLRFdl8hpgJW0i61eb/Nbz7TZ+Ae3njxd9bgwAQVkecezix44ihhW8HhpFj9Qf7dpZKA6z8fkDDcK6avb9HM+e8zSEXjeaLPX+HM9UAs8LN7L+s/C9b2NumaCHGBusdZwdIBHMVE=
+	t=1718273125; cv=none; b=r6ZbX4QPLItyxcybpHGfVT1x83psqHBHoNWruEy65q/nDBeX8XmfkNnoDohm13gjVVuR9fpa3Ht3LN3HjZPCrog1XDRxvumGUWowmbPSd+fnjJYRexuIV9i6fkxpyvPPeQPlyc77ORT7S44E5GI8T4SNRd0LkezMmi0/s5EzIRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718273095; c=relaxed/simple;
-	bh=Yk+Eoj2OJdicg3/WFr9dYTwKDEgeckcAHzU4r9Y9kD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f1+hfqnht6F3OivdoIBzOgqinfcXqh5VInvNclCvHuoeTq/5c99mrDzxA9EnDNjJyyjrLT+xXB005W/s+OMfJgULWuCuBR7ZAXsxMhPeY6vZjEB0jtQ9FbcQkWBFm0a1uw23XPXK7u7iWc2GlGjBqodlMz3Zt2SNAa0TDne2soA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jrlpXsfl; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TI8E+UMBGV1H2wYOS4JfYeTaxH+FVDl4mdl2JFj34mQ=; b=jrlpXsfloXeWDanIKs2ak2VHEx
-	HXS/KdU8e6GwqCcitfpdK2JwkpkPEhak2AOa6/shVQhh+DdclfeZjuDMmalW8BL2Jk7jaEhTsC22z
-	PTlXkeL5bUkp0QlFfUJPQGsjbRsPQgJhY5VlEfh71+3qXJnk9+0AviBvwb31Vh5ZiiAYM7GkP0THq
-	HhUSxImtbDJSKiMlBArOIkreY63JwCX6SZfYYR1p+N89R0+vYOvhHihhFuUDXohwbEEeNaMRmiK1w
-	PjB8N9PqK+UTfFjubTd46YNu/kruZx1OnyHqZY4XIbDpmhdecSEqvoqUnKsdbF1TMZFQrG7Bq6i00
-	KiV0Ex1g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sHhJy-0000000Fdds-1FvK;
-	Thu, 13 Jun 2024 10:04:42 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E3F0F300B40; Thu, 13 Jun 2024 12:04:41 +0200 (CEST)
-Date: Thu, 13 Jun 2024 12:04:41 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Joel Fernandes <joel@joelfernandes.org>, kernel-team@android.com
-Subject: Re: [PATCH] RFC: sched: Rework task_sched_runtime to avoid calling
- update_rq_clock
-Message-ID: <20240613100441.GC17707@noisy.programming.kicks-ass.net>
-References: <20240613015837.4132703-1-jstultz@google.com>
+	s=arc-20240116; t=1718273125; c=relaxed/simple;
+	bh=xHYxVuD6tuy4oqLjz4QtqAvbrs/IlxyEpGE3iqAjKXU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YcoVR2RDwA+MtvWP7swbC7jswFXRga5kDvL+d7Wf7wiCogqI9WbW8C9kd3u5/4JAzLJGdQsT8jFuwknKwMuOzXU2/gyTLes8Q8PC6GMwH7iLkUelyPpZHW4vkcJHiUx42mSrwJVvR109br2nBIGLGtOtMheRNlXQiI5ddKxKWJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMusOiTf; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57c778b5742so780592a12.2;
+        Thu, 13 Jun 2024 03:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718273122; x=1718877922; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xHYxVuD6tuy4oqLjz4QtqAvbrs/IlxyEpGE3iqAjKXU=;
+        b=CMusOiTfSNTJ/jBtOKeqrNO2iEFkZaEVhQHB0S/lhHYSvaG1B82Sc+LGCvadpxjwF/
+         /0mTT4d7xQT0rITrulUodroWt8Z4YwiviyS2gFiA6Qt1JFP0VxZ7yjwIXkHiuBLbVFUy
+         4PBAEiv7TS9BzajEbcKyWuxDBKx5zXgHqZ3lbj9OO41XreYFC3Dl9CPXP1YgM1tvTtfZ
+         DmfpV9EFdVSTtfkaX3pDuhk2joa1AscCOUG5dKOV92f2vy41BOeFqlb1OuIIlc/PDmH1
+         y8K1XnHnLk3GkmvxbWzTgWrudYAfAXMDh2fGgl352bOrAPgi0xknx+3TW1tpyR+wnDP4
+         +j4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718273122; x=1718877922;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xHYxVuD6tuy4oqLjz4QtqAvbrs/IlxyEpGE3iqAjKXU=;
+        b=VTzthkk36bnvNXJp0KFoLLVMKWvGTTQsilNFBAE/n7f5BabATstB7pTf+q+FY5jMi7
+         JPpXZAnuJkpP2rQi+mCDNvQPcCi3Y1YEqdegC8YA7NL/6QAy6nEvIGDNN0E/SzBjUHTu
+         IeAQbATI/k1WebGicZdqbxJlcUsxe85Z87wNTZmpCB312lYigEXjvsIlqVMUp4t6U6Px
+         1zP+ML+3ESC5QxJJ+sqmUFsOQOxSCscjk3J9TxM3MmV2fIPHcNNJljW+5Gp+HuJNDrgg
+         Rkpmp26RACtoOOKMzI6ZerKhSiIrzuEQ85d6r4Hp12hfb6DLqoCKZLsjGtlupRTQ4ojf
+         OdgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVl/Y57Z3U0Oax4/ynsbuSlnSUI6oKS9gm7P6WPPJIEFTrq3GsKFuLX6u99tAA3Ils4wV6TOEEr0WvcTHo1C7KHhphaxdonFKOzHuf4FLMl2l/aiB6sHHHkXiRV+YeowCml1AZKMHaB7XKqDvxT1E6CJoR9K7rdU9oOVxUgYZm0dhCPtrQ1DwavjtxYshR8AA5hZ/jGo1EplYOJytITvUY=
+X-Gm-Message-State: AOJu0YzqCbT6QkpdZ+dcumTz8/VtEp8Xcj+uDwRlufpgeC4tmyO2/unX
+	hJhQsoLTlfzostwF9gwsIFTACPTgvUWxUCi7akYUVYBo/YzbHGA6VGDUDW+cusRCNULwZWwbc4F
+	VT/okn3If0c56GvHHsp+t2Kf/uD0=
+X-Google-Smtp-Source: AGHT+IE9HDje36svQw6XiP4SkSWNbNFq+XfiFXwtcW7jd/Rn7W2QugI1ga+ZTOGKLQgW3DB3KVTzBPv+APqx793tLZM=
+X-Received: by 2002:a50:a692:0:b0:57c:6000:88e1 with SMTP id
+ 4fb4d7f45d1cf-57ca97496damr2697320a12.6.1718273121554; Thu, 13 Jun 2024
+ 03:05:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613015837.4132703-1-jstultz@google.com>
+References: <20240607-loongson1-dma-v8-0-f9992d257250@gmail.com> <ZmiYGos4MFJWd-bL@matsya>
+In-Reply-To: <ZmiYGos4MFJWd-bL@matsya>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+Date: Thu, 13 Jun 2024 18:04:44 +0800
+Message-ID: <CAJhJPsXF8LEgZFDToVvWPiYb2JvducD1YKeR1yqOahGbmbhpLQ@mail.gmail.com>
+Subject: Re: [PATCH v8 0/2] Add support for Loongson1 APB DMA
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-mips@vger.kernel.org, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 06:58:26PM -0700, John Stultz wrote:
-> I recently got a bug report that
-> clock_gettime(CLOCK_THREAD_CPUTIME_ID,...) had regressed between
-> 5.10 and 6.1. Its not a huge regression in absolute time
-> (~30-40ns), but is >10% change.
-> 
-> I narrowed the cause down to the addition of
-> psi_account_irqtime() in update_rq_clock_task(), in commit
-> 52b1364ba0b1 ("sched/psi: Add PSI_IRQ to track IRQ/SOFTIRQ
-> pressure")
-> 
-> So that explains the behavior change, 
+On Wed, Jun 12, 2024 at 2:31=E2=80=AFAM Vinod Koul <vkoul@kernel.org> wrote=
+:
+>
+> On 07-06-24, 20:12, Keguang Zhang via B4 Relay wrote:
+> > Add the driver and dt-binding document for Loongson1 APB DMA.
+>
+> I get build warnings with this. Please build with W=3D1 and C=3D1 and fix
+> all the errors and warnings reported and update
+>
+Sorry, will fix this ASAP.
 
-It doesn't really... that patch just feeds the irq_time we *already*
-subtracted prior to it, to PSI, such that PSI can also enjoy the 'view'.
+> --
+> ~Vinod
 
-The only explanation I have is that interrupts that end up in the
-scheduler (wakeups, tick, etc..) now get to do that PSI cgroup iteration
-and that cost adds up to the IRQ time itself, and as such the task time
-slows down accordingly.
 
-Are you using silly deep cgroup hierarchies?
 
-> but it also seems odd that
-> we're doing psi irq accounting from a syscall that is just
-> trying to read the thread's cputime.
+--=20
+Best regards,
 
-In order to avoid doing all the accounting in the IRQ entry/exit paths,
-those paths only do the bare minimum of tracking how much IRQ time there
-is.
-
-update_rq_clock_task() then looks at the increase of IRQ time and
-subtracts this from the task time -- after all, all time spend in the
-IRQ wasn't spend on the task itself.
-
-It did that prior to the PSI patch, and it does so after. The only
-change is it now feeds this delta into the PSI thing.
-
-> NOTE: I'm not 100% sure this is correct yet. There may be some
-> edge cases I've overlooked, so I'd greatly appreciate any
-> review or feedback.
-
-Urgh, you're sprinkling the details of what is clock_task over multiple
-places.
-
-Does something like so work?
-
----
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 0935f9d4bb7b..d4b87539d72a 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -724,7 +724,6 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- 
- 	rq->prev_irq_time += irq_delta;
- 	delta -= irq_delta;
--	psi_account_irqtime(rq->curr, irq_delta);
- 	delayacct_irq(rq->curr, irq_delta);
- #endif
- #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
-@@ -5459,6 +5458,8 @@ void sched_tick(void)
- 
- 	sched_clock_tick();
- 
-+	psi_account_irqtime(curr, &rq->psi_irq_time);
-+
- 	rq_lock(rq, &rf);
- 
- 	update_rq_clock(rq);
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 146baa91d104..57fdb0b9efbd 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -991,12 +991,13 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
- }
- 
- #ifdef CONFIG_IRQ_TIME_ACCOUNTING
--void psi_account_irqtime(struct task_struct *task, u32 delta)
-+void psi_account_irqtime(struct task_struct *task, u64 *prev)
- {
- 	int cpu = task_cpu(task);
- 	struct psi_group *group;
- 	struct psi_group_cpu *groupc;
--	u64 now;
-+	u64 now, irq;
-+	s64 delta;
- 
- 	if (static_branch_likely(&psi_disabled))
- 		return;
-@@ -1005,6 +1006,11 @@ void psi_account_irqtime(struct task_struct *task, u32 delta)
- 		return;
- 
- 	now = cpu_clock(cpu);
-+	irq = irq_time_read(cpu);
-+	delta = (s64)(irq - *prev);
-+	if (delta < 0)
-+		return;
-+	*prev = irq;
- 
- 	group = task_psi_group(task);
- 	do {
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 62fd8bc6fd08..a63eb546bc4a 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1133,6 +1133,7 @@ struct rq {
- 
- #ifdef CONFIG_IRQ_TIME_ACCOUNTING
- 	u64			prev_irq_time;
-+	u64			psi_irq_time;
- #endif
- #ifdef CONFIG_PARAVIRT
- 	u64			prev_steal_time;
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index d1445410840a..1111f060264f 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -110,7 +110,7 @@ __schedstats_from_se(struct sched_entity *se)
- void psi_task_change(struct task_struct *task, int clear, int set);
- void psi_task_switch(struct task_struct *prev, struct task_struct *next,
- 		     bool sleep);
--void psi_account_irqtime(struct task_struct *task, u32 delta);
-+void psi_account_irqtime(struct task_struct *task, u64 *prev);
- 
- /*
-  * PSI tracks state that persists across sleeps, such as iowaits and
-@@ -192,7 +192,7 @@ static inline void psi_ttwu_dequeue(struct task_struct *p) {}
- static inline void psi_sched_switch(struct task_struct *prev,
- 				    struct task_struct *next,
- 				    bool sleep) {}
--static inline void psi_account_irqtime(struct task_struct *task, u32 delta) {}
-+static inline void psi_account_irqtime(struct task_struct *task, u64 *prev) {}
- #endif /* CONFIG_PSI */
- 
- #ifdef CONFIG_SCHED_INFO
+Keguang Zhang
 
