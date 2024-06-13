@@ -1,123 +1,248 @@
-Return-Path: <linux-kernel+bounces-213701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE279078EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:57:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4986D9078EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2AF5287122
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:57:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E322B2311F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5037E149C4E;
-	Thu, 13 Jun 2024 16:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB50149C6C;
+	Thu, 13 Jun 2024 16:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0/fb2Y2b"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WvS9Yfke"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0D217FD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F55A1339A4;
+	Thu, 13 Jun 2024 16:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718297865; cv=none; b=WMgBwczHcwRm5TlyTiYtV8i/jxXYdvi5MV/sZugQYE4Z1m8I6nH//Zda7cAsgQLzviEid8zpOFYWn0VzCg7aDQTo6sJE4mIEOrcHBi1F0eCoQA/i20gn6Id5OyOv3y0F4x5W1BLrNd1FrhEP6r9876foTfn5B1Dz6kdDxkd2VtU=
+	t=1718297898; cv=none; b=G0HtBQojZcv6VWtEjx6EA9m/88kJ31ArUvLeJtxA+6s7HApkCAhIED7W4jfm6YoqPdfuWoFOH/fedegD+0BCYFWmu3qloD7tKPAxXH1HHhiKHdfF/Jn2tQupXv6v7ax+b8pJfFELJKmDcRIKr4bkzFO2NLPJqgu32dnW6uoDfa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718297865; c=relaxed/simple;
-	bh=vL3n1P+q2IBBOi6oygriT7cY6UeZAqtzHG3QyT41Bkk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=C1NXM6Ts3tXlyNPAtPcgHr4LlDLwM0XM7M7O6FnAFnBaxYjvhIOoW4p1i+wvGr43HJkRly6Bj1R11dfDjEG9tz8lxPJnXawvAXaubWZgjjeWziaD20gvrv7N5oDz9K9Kito9FsyD4kR5Luvl5FlnDlw5JLsElTomj1fznAyvHYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0/fb2Y2b; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6312dd49229so15919567b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718297863; x=1718902663; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4d54lSkwQxb+qpzxsG/q3gJ1Ug5mGtZ+nd2FA07+/50=;
-        b=0/fb2Y2bOgaCrpafZwTD9ZWi+uqEz6qzoiuoaRcMDmxKVwE7jOQIDH1lWZVxE7ZJPm
-         Gm9K2IyGlOtkq5tbQoiZFviBLeKDX7tfLK+iWHF66m489WHVLObKNoSsFugQgVn+WpVf
-         KG55Z9TKkQ7qfoDzjLZWAAIn8UnOpo32J234a3jV9fCh3DWBes5VwPnie0DDhdAyhouU
-         0fNAp2ECFb6Ws4g6MfGoGT9oSqL78qLuD/0EeprzD2l9XizwZZCUHe4xUglLSW6PYSoe
-         d89ns3zEQZssnwOXTViWaZc1HJ2fE8XrbE2zZEjf15HjLRw2lurXChV/a21feJaHE7Lr
-         f3AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718297863; x=1718902663;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4d54lSkwQxb+qpzxsG/q3gJ1Ug5mGtZ+nd2FA07+/50=;
-        b=NEJ3RdhhXe9M72hFi0wnXFzcKwiAsMypWATxvB1OBocLPeW+Xa/Vh2bsYVH+iAXbvV
-         RO6VQfH87QOjjcREmH3WqOog+8xeHCnOI1Kfn38FrahREquYfAqj4vR1UToPQ1pTztD6
-         tFtYCMwLDvf7d3seRec1P15RWMot0o4+8y2pK5xrqtVzVscGIS0O6TkfvMV9HjfI+Tub
-         +Uaw+rDQDQAWbtsX4oW/RUk8nUBnT+c002Be43g1w4oGu0+9idV9UdVtbjNTCpAHp70w
-         0bBIXYVr0Lh0J5rcbglspQeVsOHMqOXhS2KuQRgxGsrkiv4Pt7K1yMTe9TWUiH0rFZyD
-         XGdg==
-X-Gm-Message-State: AOJu0Yxmy+NbbP2yGBA+4LFZlxbwxXL+BDupmDCJcSWuNkmGwVkWELGE
-	kusatuQvSNbYbyszVsCukmT6prbwGANs7Jx+2sOMN7y3wO4n8fVeq8I3bssmNpFNPnmNXKXuvmg
-	oNg==
-X-Google-Smtp-Source: AGHT+IEYQjre4Uvteh6kfBtG71/rE+jFaH2gbIc1og+uNbgyV0WUL2F6w9jh8gI3FyDLev3v/l4STVjq0oQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:6706:b0:622:cd98:3b89 with SMTP id
- 00721157ae682-63224b005fcmr8987b3.9.1718297863344; Thu, 13 Jun 2024 09:57:43
- -0700 (PDT)
-Date: Thu, 13 Jun 2024 09:57:41 -0700
-In-Reply-To: <20240207172646.3981-13-xin3.li@intel.com>
+	s=arc-20240116; t=1718297898; c=relaxed/simple;
+	bh=KRSGQcAao4mcEtpnNWb8+qcRBkyi8QYsN67UJSpzfec=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=puChHYtbTiPJCNupomzz+xB20x7IJGfmZ0fXb2754H8xVmKAp5ek6s4uCst2WPU8TQJpomkT6kQUcpDhufJmAnBF4UK3fblSrVHNgA+JrnQ82qvveKYCPW8uSdx9/EuWhXNeK5fs0/kCm1Otd99sbbaQnsDK3OBOu1v2+HvpWwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WvS9Yfke; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A734C3277B;
+	Thu, 13 Jun 2024 16:58:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718297897;
+	bh=KRSGQcAao4mcEtpnNWb8+qcRBkyi8QYsN67UJSpzfec=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=WvS9YfkepHgZ68WrLBfHDj/K4OtPy1FYqduNBtl8WbCps/qNwkBFBQt63b8hyCxeL
+	 7RFh7RVrbaGUarhLjfL2msY/kwvRjJzEplzQ0JaTXvP3tj4obwct+v56OLmitux17e
+	 nllm2Bgo1FWr18LnyASJC7wowS5Ibmo5TU50TFMefCdQiCo5YhdQaJRSVaWQby9oAW
+	 WAyVQaHol+HGjqUYrHva0gEybowri06Obh9uQuPPKJqslWoytn9hUnCkkL26yVRHV3
+	 YgLuoRb24pjzo+hqqngx+s3YOmsykbEY3pYtxhZ+ynurhlSp1h8xZK/b1LiQibOya7
+	 5fTFs5FQ+B0HQ==
+Message-ID: <5064ae6b3156a1601eb7a7f4f890fb125933aefb.camel@kernel.org>
+Subject: Re: [PATCH v2 2/5] nfsd: make nfsd_svc call nfsd_set_nrthreads
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>, Dai
+ Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Lorenzo Bianconi
+ <lorenzo@kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, 
+ Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  netdev@vger.kernel.org
+Date: Thu, 13 Jun 2024 12:58:15 -0400
+In-Reply-To: <ZmsW+kmUdtebrUcd@tissot.1015granger.net>
+References: <20240613-nfsd-next-v2-0-20bf690d65fb@kernel.org>
+	 <20240613-nfsd-next-v2-2-20bf690d65fb@kernel.org>
+	 <ZmsW+kmUdtebrUcd@tissot.1015granger.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-13-xin3.li@intel.com>
-Message-ID: <ZmslBVWkRHAjIXrE@google.com>
-Subject: Re: [PATCH v2 12/25] KVM: VMX: Handle FRED event data
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin3.li@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	shuah@kernel.org, vkuznets@redhat.com, peterz@infradead.org, 
-	ravi.v.shankar@intel.com, xin@zytor.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 
-On Wed, Feb 07, 2024, Xin Li wrote:
-> @@ -7382,6 +7419,24 @@ static noinstr void vmx_vcpu_enter_exit(struct kvm_vcpu *vcpu,
->  
->  	vmx_disable_fb_clear(vmx);
->  
-> +	/*
-> +	 * %cr2 needs to be saved after a VM exit and restored before a VM
-> +	 * entry in case a VM exit happens immediately after delivery of a
-> +	 * guest #PF but before guest reads %cr2.
-> +	 *
-> +	 * A FRED guest should read its #PF faulting linear address from
-> +	 * the event data field in its FRED stack frame instead of %cr2.
-> +	 * But the FRED 5.0 spec still requires a FRED CPU to update %cr2
-> +	 * in the normal way, thus %cr2 is still updated even for a FRED
-> +	 * guest.
-> +	 *
-> +	 * Note, an NMI could interrupt KVM:
-> +	 *   1) after VM exit but before CR2 is saved.
-> +	 *   2) after CR2 is restored but before VM entry.
-> +	 * And a #PF could happen durng NMI handlng, which overwrites %cr2.
-> +	 * Thus exc_nmi() should save and restore %cr2 upon entering and
-> +	 * before leaving to make sure %cr2 not corrupted.
-> +	 */
+On Thu, 2024-06-13 at 11:57 -0400, Chuck Lever wrote:
+> On Thu, Jun 13, 2024 at 08:16:39AM -0400, Jeff Layton wrote:
+> > Now that the refcounting is fixed, rework nfsd_svc to use the same
+> > thread setup as the pool_threads interface. Since the new netlink
+> > interface doesn't have the same restriction as pool_threads, move
+> > the
+> > guard against shutting down all threads to write_pool_threads.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> > =C2=A0fs/nfsd/nfsctl.c | 14 ++++++++++++--
+> > =C2=A0fs/nfsd/nfsd.h=C2=A0=C2=A0 |=C2=A0 3 ++-
+> > =C2=A0fs/nfsd/nfssvc.c | 18 ++----------------
+> > =C2=A03 files changed, 16 insertions(+), 19 deletions(-)
+> >=20
+> > diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> > index 202140df8f82..121b866125d4 100644
+> > --- a/fs/nfsd/nfsctl.c
+> > +++ b/fs/nfsd/nfsctl.c
+> > @@ -406,7 +406,7 @@ static ssize_t write_threads(struct file *file,
+> > char *buf, size_t size)
+> > =C2=A0			return -EINVAL;
+> > =C2=A0		trace_nfsd_ctl_threads(net, newthreads);
+> > =C2=A0		mutex_lock(&nfsd_mutex);
+> > -		rv =3D nfsd_svc(newthreads, net, file->f_cred,
+> > NULL);
+> > +		rv =3D nfsd_svc(1, &newthreads, net, file->f_cred,
+> > NULL);
+> > =C2=A0		mutex_unlock(&nfsd_mutex);
+> > =C2=A0		if (rv < 0)
+> > =C2=A0			return rv;
+> > @@ -481,6 +481,16 @@ static ssize_t write_pool_threads(struct file
+> > *file, char *buf, size_t size)
+> > =C2=A0				goto out_free;
+> > =C2=A0			trace_nfsd_ctl_pool_threads(net, i,
+> > nthreads[i]);
+> > =C2=A0		}
+> > +
+> > +		/*
+> > +		 * There must always be a thread in pool 0; the
+> > admin
+> > +		 * can't shut down NFS completely using
+> > pool_threads.
+> > +		 *
+> > +		 * FIXME: do we really need this?
+>=20
+> Hi, how do you plan to decide this question?
+>=20
 
-This is 99.9% noise.  What software does or does not do with respect to CR2 is
-completely irrelevant.  The *only* thing that matters is the architectural
-behavior, and architecturally guest CR2 _must_ be up-to-date at all times because
-CR2 accesses cannot be intercepted.  So, just say:
+Probably by ignoring it and letting the restriction (eventually) die
+with the old pool_threads interface. I'm amenable to dropping this
+restriction altogether though.
 
-	/*
-	 * Note, even though FRED delivers the faulting linear address via the
-	 * event data field on the stack, CR2 is still updated.
-	 */
+>=20
+> > +		 */
+> > +		if (nthreads[0] =3D=3D 0)
+> > +			nthreads[0] =3D 1;
+> > +
+> > =C2=A0		rv =3D nfsd_set_nrthreads(i, nthreads, net);
+> > =C2=A0		if (rv)
+> > =C2=A0			goto out_free;
+> > @@ -1722,7 +1732,7 @@ int nfsd_nl_threads_set_doit(struct sk_buff
+> > *skb, struct genl_info *info)
+> > =C2=A0			scope =3D nla_data(attr);
+> > =C2=A0	}
+> > =C2=A0
+> > -	ret =3D nfsd_svc(nthreads, net, get_current_cred(), scope);
+> > +	ret =3D nfsd_svc(1, &nthreads, net, get_current_cred(),
+> > scope);
+> > =C2=A0
+> > =C2=A0out_unlock:
+> > =C2=A0	mutex_unlock(&nfsd_mutex);
+> > diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
+> > index 8f4f239d9f8a..cec8697b1cd6 100644
+> > --- a/fs/nfsd/nfsd.h
+> > +++ b/fs/nfsd/nfsd.h
+> > @@ -103,7 +103,8 @@
+> > bool		nfssvc_encode_voidres(struct svc_rqst *rqstp,
+> > =C2=A0/*
+> > =C2=A0 * Function prototypes.
+> > =C2=A0 */
+> > -int		nfsd_svc(int nrservs, struct net *net, const
+> > struct cred *cred, const char *scope);
+> > +int		nfsd_svc(int n, int *nservers, struct net *net,
+> > +			 const struct cred *cred, const char
+> > *scope);
+> > =C2=A0int		nfsd_dispatch(struct svc_rqst *rqstp);
+> > =C2=A0
+> > =C2=A0int		nfsd_nrthreads(struct net *);
+> > diff --git a/fs/nfsd/nfssvc.c b/fs/nfsd/nfssvc.c
+> > index cd9a6a1a9fc8..076f35dc17e4 100644
+> > --- a/fs/nfsd/nfssvc.c
+> > +++ b/fs/nfsd/nfssvc.c
+> > @@ -744,13 +744,6 @@ int nfsd_set_nrthreads(int n, int *nthreads,
+> > struct net *net)
+>=20
+> Since you are slightly changing the API contract for this publicly
+> visible function, now would be a good time to add a kdoc comment.
+>=20
 
->  	if (vcpu->arch.cr2 != native_read_cr2())
->  		native_write_cr2(vcpu->arch.cr2);
->  
+Ok.
+
+>=20
+> > =C2=A0		}
+> > =C2=A0	}
+> > =C2=A0
+> > -	/*
+> > -	 * There must always be a thread in pool 0; the admin
+> > -	 * can't shut down NFS completely using pool_threads.
+> > -	 */
+> > -	if (nthreads[0] =3D=3D 0)
+> > -		nthreads[0] =3D 1;
+> > -
+> > =C2=A0	/* apply the new numbers */
+> > =C2=A0	for (i =3D 0; i < n; i++) {
+> > =C2=A0		err =3D svc_set_num_threads(nn->nfsd_serv,
+> > @@ -768,7 +761,7 @@ int nfsd_set_nrthreads(int n, int *nthreads,
+> > struct net *net)
+> > =C2=A0 * this is the first time nrservs is nonzero.
+> > =C2=A0 */
+> > =C2=A0int
+> > -nfsd_svc(int nrservs, struct net *net, const struct cred *cred,
+> > const char *scope)
+> > +nfsd_svc(int n, int *nthreads, struct net *net, const struct cred
+> > *cred, const char *scope)
+>=20
+> Ditto: the patch changes the synopsis of nfsd_svc(), so I'd like a
+> kdoc comment to go with it.
+>=20
+> And, this particular change is the reason for this patch, so the
+> description should state that (especially since subsequent
+> patch descriptions refer to "now that nfsd_svc takes an array
+> of threads..." : I had to come back to this patch and blink twice
+> to see why it said that).
+>=20
+> A kdoc comment from sunrpc_get_pool_mode() should also be added
+> in 4/5.
+>=20
+
+I'll do that and resend soon.
+
+>=20
+> > =C2=A0{
+> > =C2=A0	int	error;
+> > =C2=A0	struct nfsd_net *nn =3D net_generic(net, nfsd_net_id);
+> > @@ -778,13 +771,6 @@ nfsd_svc(int nrservs, struct net *net, const
+> > struct cred *cred, const char *scop
+> > =C2=A0
+> > =C2=A0	dprintk("nfsd: creating service\n");
+> > =C2=A0
+> > -	nrservs =3D max(nrservs, 0);
+> > -	nrservs =3D min(nrservs, NFSD_MAXSERVS);
+> > -	error =3D 0;
+> > -
+> > -	if (nrservs =3D=3D 0 && nn->nfsd_serv =3D=3D NULL)
+> > -		goto out;
+> > -
+> > =C2=A0	strscpy(nn->nfsd_name, scope ? scope : utsname()-
+> > >nodename,
+> > =C2=A0		sizeof(nn->nfsd_name));
+> > =C2=A0
+> > @@ -796,7 +782,7 @@ nfsd_svc(int nrservs, struct net *net, const
+> > struct cred *cred, const char *scop
+> > =C2=A0	error =3D nfsd_startup_net(net, cred);
+> > =C2=A0	if (error)
+> > =C2=A0		goto out_put;
+> > -	error =3D svc_set_num_threads(serv, NULL, nrservs);
+> > +	error =3D nfsd_set_nrthreads(n, nthreads, net);
+> > =C2=A0	if (error)
+> > =C2=A0		goto out_put;
+> > =C2=A0	error =3D serv->sv_nrthreads;
+> >=20
+> > --=20
+> > 2.45.2
+> >=20
+>=20
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
