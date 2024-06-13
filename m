@@ -1,190 +1,247 @@
-Return-Path: <linux-kernel+bounces-213706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4FA907901
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:00:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A790907909
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC4B286F38
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:00:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C07A1C227C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C92E149C47;
-	Thu, 13 Jun 2024 17:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Uk2tRYUZ"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B053A1494D6;
+	Thu, 13 Jun 2024 17:00:12 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A6226AF0
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D474512EBC7;
+	Thu, 13 Jun 2024 17:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718297999; cv=none; b=ekfepID92Eii5j1ZFCixJd3INkmq10p4qsFwHhVtkISj9sRpy1ombEKe8ykjquJM8Pmw7xWEp6KKHVhdN2QxD8qNEEjktEemG097bvlQFLJewtEmCZ42UzqlQR30RtA7FGiTSsZD0Qik76papQsYmK9MdpB7DJ6b2S9C3Ta0YmY=
+	t=1718298012; cv=none; b=fBkEORougChd1PHdCd2NF1cf3nnytWdAldi/hR89foDM6tqsIabZ4zHCbU+kJlquGB5VJFrriQ08wxHqHCpArFgnDIijoNSAf7+KLvaHphLcAhlYc0PwSeeu6QC7x/KNQKIECFIZtN6ZEiEA0AqDMddW2rTTDpF9aM7t6CcgaHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718297999; c=relaxed/simple;
-	bh=aPURT8O1M/SRbb3l7N8iGkMIR73SsXOdVvG94mX2fYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NRX6E5qTV+k1w/wCkxE8fW+yuxjpv86cC0ny4GMO+C5ciaZVp0nCoc5k1xVzSFiXCnE2DU/Rn/xsF4hA5RnCIAG5qTpXaM11eF4GQmIQrjN8ct2Ws5VBge6ewZKxIUFQlaVz0r+VPfRyaKyWwGrNVZ4qevMSfTaLgiUMNW13y0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Uk2tRYUZ; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7eb75c0d0a7so41820539f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1718297997; x=1718902797; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cCGT1G5c+EZwzbvL6QH+mOF0nck68vF2oKoSs0AcMhs=;
-        b=Uk2tRYUZnVXU+dvKPfX566QCuIUrAYKFJV02zJPM3Q+1uu02O0PypsGEEDpbCDk6WI
-         1DAme79BrMgfkzQx5kQ7PL9SvDkP+zTUZZ4aFYOCOPDZWshqsFYOecq6Zywq+UbZVw6a
-         DxYRe+anYeoSWA/VYdzpHPW4NsO7ySbu6rPWISuyc2MY1diL8Z5JpOsYSTPb5mIB5M3b
-         i80mik2v7zuynZ08VTL0zIy6P71C1zxNMVEh93UdfS1h5PCmKNJ7uvRjuCSEljWVtPnx
-         LT92wAJRuEkPKWdfeTdhimtjNcM4tE+PaE39pEN1xbebYkGzV9DKvaotQ60JNW93UiLm
-         uaLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718297997; x=1718902797;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cCGT1G5c+EZwzbvL6QH+mOF0nck68vF2oKoSs0AcMhs=;
-        b=GPCCg+fqB4hYvRwc0wr8+KV8kXMbMTFf3p8PWo9Mwik2Kb7VKnnIKsEeSHMItkkluJ
-         uoGboYIJVKCQHiQhOv1cRUDV2XEcdb5iIkmPgui0L61UnUZKurdqsCZd7Ef9RH0U+AwA
-         0PH4JwFtgtgmjewGGAzMrBIH3XIe3cQdpbRrYXDv3C6AZuI8SQfv34ddAynbXFwekVf6
-         iF1Z8/eG0Ro/HW0endaR+mzPnYvWYr6l1mv5SzZrXEyQyo7ITnsgyXBECDab9nfQH82g
-         7i+SyMJwOZCIyrvjMLV1lpKoniAPBJsJ24QTqTdISKmn6LadR0WOrSCPQ5agXZ9UX86v
-         PwjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpEaPiObpJREFV/IKiVLFqPsmdo2FUJglpb539SdiTQtNsVoHadjJnQQwQxhGANSyX9M84vi8ncjiSqgWVuWlPSdeYzzKzv+DM6b8W
-X-Gm-Message-State: AOJu0YyNi+YbDZD8jzex140fkflIk1GYCTBM0b4eU8nu94TNS+Gvf6fD
-	bfePpdquxN8g/2wDs6xsouAQ3l79QiPiti5tfUokXpHTD9/ou50U3i+fC7GOk+rEgaErRuTsZe4
-	e
-X-Google-Smtp-Source: AGHT+IFpgRITYAvTReAUcbPjuR+2tcKYTAy7JUib7uknhSLvituuWoFpdavFlwghfs5OiLKEcbfCqw==
-X-Received: by 2002:a05:6602:2dd1:b0:7eb:7f2e:5b33 with SMTP id ca18e2360f4ac-7ebeb4977c1mr9767039f.4.1718297997328;
-        Thu, 13 Jun 2024 09:59:57 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9568dfb15sm452953173.18.2024.06.13.09.59.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 09:59:56 -0700 (PDT)
-Message-ID: <d8575593-588d-406e-bcd3-eaec93e43e2c@sifive.com>
-Date: Thu, 13 Jun 2024 11:59:55 -0500
+	s=arc-20240116; t=1718298012; c=relaxed/simple;
+	bh=r2FXAgMa0jD+t3ToDPQWNEY6z4v9oqO4oDHY5ah3aU8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CyMDX/pSYOwNaC+ycEe1h7osCl1xGdgMfmsWDGmFZh2ti1EcJ8iTWHawXLWb4TuOivI0osj2hrVtCk8uxABKo20v7KY2dMgxg+RccGtLUifrpI1ChWSIRAdK817/lkyfGGnIBIRNFB4fh4Z+QIbTfZUG/MLhDSF/DCpIV2qz4u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W0TDP2ZPMz6K6VF;
+	Fri, 14 Jun 2024 01:00:05 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5405C140A87;
+	Fri, 14 Jun 2024 01:00:07 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Jun
+ 2024 18:00:06 +0100
+Date: Thu, 13 Jun 2024 18:00:05 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "Paller, Kim Seer" <KimSeer.Paller@analog.com>
+CC: Jonathan Cameron <jic23@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-iio@vger.kernel.org"
+	<linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, David Lechner <dlechner@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, "Hennerich, Michael"
+	<Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+	<noname.nuno@gmail.com>
+Subject: Re: [PATCH v3 1/5] iio: ABI: Generalize ABI documentation for DAC
+Message-ID: <20240613180005.0000480e@Huawei.com>
+In-Reply-To: <PH0PR03MB71416493AB2788638599CAE4F9C02@PH0PR03MB7141.namprd03.prod.outlook.com>
+References: <20240603012200.16589-1-kimseer.paller@analog.com>
+	<20240603012200.16589-2-kimseer.paller@analog.com>
+	<20240608154053.1cf1097e@jic23-huawei>
+	<PH0PR03MB71416493AB2788638599CAE4F9C02@PH0PR03MB7141.namprd03.prod.outlook.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] riscv: Add support for per-thread envcfg CSR values
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, Palmer Dabbelt <palmer@dabbelt.com>,
- Andrew Jones <ajones@ventanamicro.com>, Conor Dooley <conor@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20240605205658.184399-1-samuel.holland@sifive.com>
- <20240605205658.184399-3-samuel.holland@sifive.com>
- <ZmOCpF5ACdQiSfcm@debug.ba.rivosinc.com>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <ZmOCpF5ACdQiSfcm@debug.ba.rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hi Deepak,
+On Wed, 12 Jun 2024 10:57:42 +0000
+"Paller, Kim Seer" <KimSeer.Paller@analog.com> wrote:
 
-On 2024-06-07 4:59 PM, Deepak Gupta wrote:
-> On Wed, Jun 05, 2024 at 01:56:46PM -0700, Samuel Holland wrote:
->> Some bits in the [ms]envcfg CSR, such as the CFI state and pointer
->> masking mode, need to be controlled on a per-thread basis. Support this
->> by keeping a copy of the CSR value in struct thread_struct and writing
->> it during context switches. It is safe to discard the old CSR value
->> during the context switch because the CSR is modified only by software,
->> so the CSR will remain in sync with the copy in thread_struct.
->>
->> Use ALTERNATIVE directly instead of riscv_has_extension_unlikely() to
->> minimize branchiness in the context switching code.
->>
->> Since thread_struct is copied during fork(), setting the value for the
->> init task sets the default value for all other threads.
->>
->> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
->> ---
->>
->> arch/riscv/include/asm/processor.h | 1 +
->> arch/riscv/include/asm/switch_to.h | 8 ++++++++
->> arch/riscv/kernel/cpufeature.c     | 2 +-
->> 3 files changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/riscv/include/asm/processor.h
->> b/arch/riscv/include/asm/processor.h
->> index 68c3432dc6ea..0838922bd1c8 100644
->> --- a/arch/riscv/include/asm/processor.h
->> +++ b/arch/riscv/include/asm/processor.h
->> @@ -118,6 +118,7 @@ struct thread_struct {
->>     unsigned long s[12];    /* s[0]: frame pointer */
->>     struct __riscv_d_ext_state fstate;
->>     unsigned long bad_cause;
->> +    unsigned long envcfg;
->>     u32 riscv_v_flags;
->>     u32 vstate_ctrl;
->>     struct __riscv_v_ext_state vstate;
->> diff --git a/arch/riscv/include/asm/switch_to.h
->> b/arch/riscv/include/asm/switch_to.h
->> index 7594df37cc9f..9685cd85e57c 100644
->> --- a/arch/riscv/include/asm/switch_to.h
->> +++ b/arch/riscv/include/asm/switch_to.h
->> @@ -70,6 +70,13 @@ static __always_inline bool has_fpu(void) { return false; }
->> #define __switch_to_fpu(__prev, __next) do { } while (0)
->> #endif
->>
->> +static inline void __switch_to_envcfg(struct task_struct *next)
->> +{
->> +    asm volatile (ALTERNATIVE("nop", "csrw " __stringify(CSR_ENVCFG) ", %0",
->> +                  0, RISCV_ISA_EXT_XLINUXENVCFG, 1)
->> +            :: "r" (next->thread.envcfg) : "memory");
->> +}
->> +
->> extern struct task_struct *__switch_to(struct task_struct *,
->>                        struct task_struct *);
->>
->> @@ -103,6 +110,7 @@ do {                            \
->>         __switch_to_vector(__prev, __next);    \
->>     if (switch_to_should_flush_icache(__next))    \
->>         local_flush_icache_all();        \
->> +    __switch_to_envcfg(__next);            \
->>     ((last) = __switch_to(__prev, __next));        \
->> } while (0)
-> 
-> Suggestion:
-> Probably make this patch 1
-> 
->>
->> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
->> index 2879e26dbcd8..1153b96346ae 100644
->> --- a/arch/riscv/kernel/cpufeature.c
->> +++ b/arch/riscv/kernel/cpufeature.c
->> @@ -728,7 +728,7 @@ unsigned long riscv_get_elf_hwcap(void)
->> void riscv_user_isa_enable(void)
->> {
->>     if (riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICBOZ))
->> -        csr_set(CSR_ENVCFG, ENVCFG_CBZE);
->> +        current->thread.envcfg |= ENVCFG_CBZE;
-> 
-> Suggestion:
-> Squash this with current patch 1 and call it patch 2.
+> > -----Original Message-----
+> > From: Jonathan Cameron <jic23@kernel.org>
+> > Sent: Saturday, June 8, 2024 10:41 PM
+> > To: Paller, Kim Seer <KimSeer.Paller@analog.com>
+> > Cc: linux-kernel@vger.kernel.org; linux-iio@vger.kernel.org;
+> > devicetree@vger.kernel.org; David Lechner <dlechner@baylibre.com>; Lars-
+> > Peter Clausen <lars@metafoo.de>; Liam Girdwood <lgirdwood@gmail.com>;
+> > Mark Brown <broonie@kernel.org>; Dimitri Fedrau <dima.fedrau@gmail.com>;
+> > Krzysztof Kozlowski <krzk+dt@kernel.org>; Rob Herring <robh@kernel.org>;
+> > Conor Dooley <conor+dt@kernel.org>; Hennerich, Michael
+> > <Michael.Hennerich@analog.com>; Nuno S=E1 <noname.nuno@gmail.com>
+> > Subject: Re: [PATCH v3 1/5] iio: ABI: Generalize ABI documentation for =
+DAC
+> >=20
+> > [External]
+> >=20
+> > On Mon, 3 Jun 2024 09:21:56 +0800
+> > Kim Seer Paller <kimseer.paller@analog.com> wrote:
+> >  =20
+> > > Introduces a more generalized ABI documentation for DAC. Instead of
+> > > having separate ABI files for each DAC, we now have a single ABI file
+> > > that covers the common sysfs interface for all DAC.
+> > >
+> > > Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
+> > > Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> > > Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com> =20
+> >=20
+> > A few comments inline.
+> >=20
+> > I wondered if it made sense to combine voltage and current entries of e=
+ach
+> > type
+> > in single block, but I think the docs would become too complicated with=
+ lots
+> > of wild cards etc.  Hence I think the duplication is fine.
+> >=20
+> > Jonathan
+> >  =20
+> > > ---
+> > >  Documentation/ABI/testing/sysfs-bus-iio-dac   | 61 +++++++++++++++++=
+++
+> > >  .../ABI/testing/sysfs-bus-iio-dac-ltc2688     | 31 ----------
+> > >  2 files changed, 61 insertions(+), 31 deletions(-)
+> > >  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-dac
+> > >
+> > > diff --git a/Documentation/ABI/testing/sysfs-bus-iio-dac =20
+> > b/Documentation/ABI/testing/sysfs-bus-iio-dac =20
+> > > new file mode 100644
+> > > index 000000000000..36d316bb75f6
+> > > --- /dev/null
+> > > +++ b/Documentation/ABI/testing/sysfs-bus-iio-dac
+> > > @@ -0,0 +1,61 @@
+> > > +What: =20
+> > 	/sys/bus/iio/devices/iio:deviceX/out_currentY_toggle_en =20
+> > > +KernelVersion:	5.18
+> > > +Contact:	linux-iio@vger.kernel.org
+> > > +Description:
+> > > +       		Toggle enable. Write 1 to enable toggle or 0 to disable it.=
+ This =20
+> > Tab vs space issue - see below.
+> >  =20
+> > > +		is useful when one wants to change the DAC output codes. The =20
+> > way =20
+> > > +		it should be done is:
+> > > +
+> > > +        	- disable toggle operation;
+> > > +        	- change out_currentY_rawN, where N is the integer value of=
+ the =20
+> > symbol; =20
+> > > +        	- enable toggle operation. =20
+> > Same question as below on whether this is accurate - Maybe it just need=
+s to
+> > mention
+> > this scheme needs to be used for autonomous toggling (out of software
+> > control).
+> > It works for software toggling but may be overkill!
+> >  =20
+> > > +
+> > > +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_rawN
+> > > +KernelVersion:	5.18
+> > > +Contact:	linux-iio@vger.kernel.org
+> > > +Description:
+> > > +		This attribute has the same meaning as out_currentY_raw. It is
+> > > +		specific to toggle enabled channels and refers to the DAC =20
+> > output =20
+> > > +		code in INPUT_N (_rawN), where N is the integer value of the =20
+> > symbol. =20
+> > > +		The same scale and offset as in out_currentY_raw applies.
+> > > +
+> > > +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_symbol
+> > > +KernelVersion:	5.18
+> > > +Contact:	linux-iio@vger.kernel.org
+> > > +Description:
+> > > +		Performs a SW switch to a predefined output symbol. This =20
+> > attribute =20
+> > > +		is specific to toggle enabled channels and allows switching =20
+> > between =20
+> > > +		multiple predefined symbols. Each symbol corresponds to a =20
+> > different =20
+> > > +		output, denoted as out_currentY_rawN, where N is the integer =20
+> > value =20
+> > > +		of the symbol. Writing an integer value N will select =20
+> > out_currentY_rawN. =20
+> > > +
+> > > +What: =20
+> > 	/sys/bus/iio/devices/iio:deviceX/out_voltageY_toggle_en =20
+> > > +KernelVersion:	5.18
+> > > +Contact:	linux-iio@vger.kernel.org
+> > > +Description:
+> > > +       		Toggle enable. Write 1 to enable toggle or 0 to disable it.=
+ This =20
+> >=20
+> > Mix of spacing and tabs is inconsistent. Hence the odd indent in this r=
+eply
+> > version.
+> >  =20
+> > > +		is useful when one wants to change the DAC output codes. The =20
+> > way =20
+> > > +		it should be done is: =20
+> >=20
+> > Hmm. Is this true?  If we are doing autonomous toggling on a clock or s=
+imilar
+> > than agreed.
+> > If we are using the out_current_symbol software control it would be com=
+mon
+> > to switch
+> > to A, modify B, switch to B, modify A etc.
+> >=20
+> > I think our interface has probably evolved and so this might need an up=
+date. =20
+>=20
+> I agree that the description could be clear about the differences between=
+=20
+> autonomous and software toggling. If we were to change the description, w=
+ould=20
+> this suffice?
+>=20
+> Description:
+>         Toggle enable. Write 1 to enable toggle or 0 to disable it. This
+>         is useful when one wants to change the DAC output codes. For auto=
+nomous toggling, the way
+>         it should be done is:
+>=20
+>         - disable toggle operation;
+>         - change out_currentY_rawN, where N is the integer value of the s=
+ymbol;
+>         - enable toggle operation.
 
-This reorganization doesn't work. If I add __switch_to_envcfg() first without
-this change, then the CSR would get zeroed out during the first context switch,
-so userspace cbo.zero would be broken after the first patch.
+To here is good as focuses on the use case.
 
-Regards,
-Samuel
+>=20
+> For software toggling, one can switch to A, modify B, switch to B, modify=
+ A, etc.
 
->>     else if (any_cpu_has_zicboz)
->>         pr_warn_once("Zicboz disabled as it is unavailable on some harts\n");
->> }
->> -- 
->> 2.44.1
->>
+I'd not mention this part (not sure if you were intending to though given t=
+he formatting!)
+
+Jonathan
+
+
+> >  =20
+> > > +
+> > > +        	- disable toggle operation;
+> > > +        	- change out_voltageY_rawN, where N is the integer value of=
+ the =20
+> > symbol; =20
+> > > +        	- enable toggle operation. =20
+>=20
+>=20
 
 
