@@ -1,70 +1,83 @@
-Return-Path: <linux-kernel+bounces-214055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B73D8907EC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:20:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2EF907EC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFD4F1C21BAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C5A12837A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D70514A60D;
-	Thu, 13 Jun 2024 22:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008CF14C59A;
+	Thu, 13 Jun 2024 22:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hve6XeQu"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4RqPMse"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F0081AB5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 22:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB38E13B580;
+	Thu, 13 Jun 2024 22:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718317209; cv=none; b=rWtBR+JXECAwqubIVlqWydRqh7NuGXnpS+5zaAp27/77IAbIES4liUjgJiYkdJcqmGSqxXxo7sBZX5ig7EDkawUiNyc2JeK1cmrfl2XYjwGk+/9TZBjSiWalJxuGPzB/jcBF8YEyrX8KyzmHGP68bsKNUdmXKOw0XFn+n36+ib0=
+	t=1718317228; cv=none; b=juij93oDJQd7p8NU+dS30LmHg7p2j2KXTPnmoleSHtV4gMzBAMradiskL/BjlvsTjdrEsBIk2vN34J9AE5JpTMHe8MTPukc5g+Fq6TyMi7Ue7ahIDid85da3/VbLI6YaubEaLHrQydwzdXAE8ULv9NGAnRciYd4B1JjGy8vmYHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718317209; c=relaxed/simple;
-	bh=YxAoiIkLTLK4wU88qIS8E6Ui4uKTEiKoutR7YpdL6ro=;
+	s=arc-20240116; t=1718317228; c=relaxed/simple;
+	bh=HDqW2DtKDteM+/7uZVEBB2l511EH5+IAceScCpt/bvc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpQSf6cxvqQmL/8JqkvJ4Xuqnih+NPyDm7KB7b86439GLUd5NrujAXC0evVPZNHX/YsHX5GabSJ3b8V7wPvOa47+KBPOmQ+TO2jmc/Umkd0ZhpmxRIbyFC6yplq0NU17vyNZqqaSHqEsDpBLkF9dn17FIXJ2RkaM1Rlsm2BIDC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hve6XeQu; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: sebott@redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718317203;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gvCVPrByglYHE/HphLfz/4s/chgo2zEH02FdJCIN0CE=;
-	b=Hve6XeQuraY6xBWjfm3sMkSRrAEP0y8s/jcC1TS3Nk3c45SuqDIP/DtIq9iIsGsYY7ualL
-	H40UQUxMkjXkNAhyjm6qv5IapVLxsUMva5/wzcIa2lQQUfD5XWLnX746+0FMwOihNz5RuC
-	G1TaP73AgWKgPybrbQtboRjn2JtXWp0=
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: kvmarm@lists.linux.dev
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: maz@kernel.org
-X-Envelope-To: james.morse@arm.com
-X-Envelope-To: suzuki.poulose@arm.com
-X-Envelope-To: catalin.marinas@arm.com
-X-Envelope-To: will@kernel.org
-X-Envelope-To: shahuang@redhat.com
-X-Envelope-To: eric.auger@redhat.com
-Date: Thu, 13 Jun 2024 22:19:56 +0000
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Sebastian Ott <sebott@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Shaoqin Huang <shahuang@redhat.com>,
-	Eric Auger <eric.auger@redhat.com>
-Subject: Re: [PATCH v4 3/6] KVM: arm64: add emulation for CTR_EL0 register
-Message-ID: <ZmtwjLbP283ra0Xq@linux.dev>
-References: <20240603130507.17597-1-sebott@redhat.com>
- <20240603130507.17597-4-sebott@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X+oVbV/LU3jGzj1TBcywb4fB/SYhmDR+uDo4DtrEZ3Uqpq2c5KCKYiE6YbVtk4n7S2ocDOeb2tVslB+RtJzDvoLDY6UtKk6Eiy1Di/PrJ2qrSP4rEufeKlkfp78Qe26aeWrFGQ2lHuP8dmRgFo4f5TsTHxfotLkOwGa7vectd84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I4RqPMse; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-705c739b878so1571330b3a.1;
+        Thu, 13 Jun 2024 15:20:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718317226; x=1718922026; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1jg4v2BGp1MDHKNEcJnr9qjZmB+J5b1qf8nu8looBk0=;
+        b=I4RqPMsePEsUO1SJxJmB1y+a8SxX99/B67F3xd1s08zlIrOQm7WUUhrATqQxenX1LS
+         ZYloNvtQ36KNz3ThYB3uQhoULXyvTAn+hQfmiVE+T/Uh+pFlVn+BS1V0PKNYr44dZ3ts
+         zKfaVZbbtJXpe/bYqJYovIAneRyNxlFQFSrEWi/C2iVZRwlpK/LgOyCdtLL+oSQ4rhDs
+         2l6hedls0B7AA1JyYsADRXGbj4oW9eJgykmvV3ch+onvw7QgwmtdmZKIRBJZfhlDH/C4
+         iTWML/EUqY82BZUEfgnmm8DwkKIMRQmBxpQ0soYg3nK08uavxJ4qErStAr4lomonCt6Y
+         pu3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718317226; x=1718922026;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1jg4v2BGp1MDHKNEcJnr9qjZmB+J5b1qf8nu8looBk0=;
+        b=FQotnma/NNvi/vJghKfRUC5ekEtVVhIWy8tTXbJ3XQfdL7LMUMhmGbIM02VbZ5BIpD
+         YcyKTogeZLs5FNCJH109Pq23fCd3Uxup0hufIveBURZVMIN06A5GfP7aMuahvfdDc7ec
+         bTdoyZr90SF2BIQ9EF++1//hdhrS6pxRTjNDpicC/FoQ2jMjoYScKFtygAyMHENdbkj3
+         07N4GMK5ytfF4dcW6MszE3DPoCrbUhyATl0SEpbVKcmbYgrYCczJAaYOYCL/MXOurCuA
+         Q3Ox9YnofAgvWh7oC9eYbgKPI8W3LY0Ig659SfOIzBxY6E/veFsu0TYNS2z7MouwMzAV
+         y/cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXB3ffMg+DCAjEfi5gc5zJBaYPEApd+8paei+fHdmlmmW9Iuojjv0ijzJ1NdrmobIJqk04VQdiIrYjvXa/c/a1vrEFQBkOL8lYZ6+q1WPSd1GPLdiIk4NdgW3MQ1npfiu3ZN+ooXj/W0q7myW8Qpl9Ebb5gUXtYS+JoaZLNybuXfeE+
+X-Gm-Message-State: AOJu0YwtRMVw96ukBIuURhEoB/ki1RgFTztvdjeEgqg68y9N+KygCxBV
+	vZd68+Utuyzwc4H6TmY1yDX22xs7wS2btAsCWxpyxKMNqm/QREcnzdkyhQ==
+X-Google-Smtp-Source: AGHT+IEyVbito5YaJFZ/IWRI9IidtmbZ1XEOKBCbrnbo+p7OwrD6GSkyNGm4CDQYUYYi0DDTKGJlQQ==
+X-Received: by 2002:a05:6a21:2790:b0:1b4:b4af:6052 with SMTP id adf61e73a8af0-1bae7f93cd1mr1244172637.23.1718317225962;
+        Thu, 13 Jun 2024 15:20:25 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc98915esm1897860b3a.96.2024.06.13.15.20.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 15:20:25 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 13 Jun 2024 12:20:24 -1000
+From: Tejun Heo <tj@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@fb.com, newella@fb.com,
+	hch@lst.de
+Subject: Re: [PATCH 12/27] blk-iocost: grab ioc->lock for debt handling
+Message-ID: <ZmtwqDsMnTJHQB6o@slm.duckdns.org>
+References: <20200901185257.645114-1-tj@kernel.org>
+ <20200901185257.645114-13-tj@kernel.org>
+ <45603be5-65ae-4d45-bfbe-22c3c1e22280@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,84 +86,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240603130507.17597-4-sebott@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <45603be5-65ae-4d45-bfbe-22c3c1e22280@oracle.com>
 
-Hi Sebastian,
+Hello,
 
-On Mon, Jun 03, 2024 at 03:05:04PM +0200, Sebastian Ott wrote:
+On Wed, Jun 12, 2024 at 12:33:19PM +0100, John Garry wrote:
+...
+> This generates the following sparse warnings on mainline today:
+> 
+>   CHECK   block/blk-iocost.c
+> block/blk-iocost.c:685:9: warning: context imbalance in 'iocg_lock' -
+> wrong count at exit
+> block/blk-iocost.c:696:28: warning: context imbalance in 'iocg_unlock'
+> - unexpected unlock
+> 
+> If we try to break iocg_lock() into one version for lock_ioc set and another
+> for lock_ioc unset, we can solve the sparse issues for those functions, but
+> then we get another sparse issue from the callsites for those functions:
+> 
+> block/blk-iocost.c:2679:17: warning: context imbalance in
+> 'ioc_rqos_throttle' - different lock contexts for basic block
+> 
+> I tried to solve with a total ioc_rqos_throttle() re-org and much code
+> duplication by calling the different lock and unlock versions from
+> effectively 2x separate copies of ioc_rqos_throttle(), as sparse seems
+> confused with how we call these functions. It's a total no-go.
+> 
+> Any simpler idea to solve these? Or just something to live with?
 
-[...]
+I kinda gave up on sparse lock checking as there's not much it can do that
+lockdep can't and the annotations are too awkward and inconsistent
+throughout the code base. So, my tendency is just to ignore it.
 
-> +static int validate_cache_topology(struct kvm_vcpu *vcpu, u64 ctr_el0)
-> +{
-> +	const struct sys_reg_desc *clidr_el1;
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	clidr_el1 = get_sys_reg_desc(SYS_CLIDR_EL1);
-> +	if (!clidr_el1)
-> +		return -ENOENT;
-
-This doesn't actually matter if we agree on dropping the cross-checking,
-but if this lookup fails it is 100% a KVM bug. Returning ENOENT isn't
-exactly right here, since it gives userspace the impression that the
-sysreg index it tried to access does not exist.
-
-So in the future it'd be good to return EINVAL in places where the
-kernel did something stupid, probably with a warning for good measure.
-
-> +static int set_ctr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
-> +		   u64 val)
-> +{
-> +	u64 ctr, writable_mask = rd->val;
-> +	int ret = 0;
-> +
-> +	mutex_lock(&vcpu->kvm->arch.config_lock);
-> +	ctr  = vcpu->kvm->arch.ctr_el0;
-> +	if (val == ctr)
-> +		goto out_unlock;
-> +
-> +	ret = -EBUSY;
-> +	if (kvm_vm_has_ran_once(vcpu->kvm))
-> +		goto out_unlock;
-> +
-> +	ret = -EINVAL;
-> +	if ((ctr & ~writable_mask) != (val & ~writable_mask))
-> +		goto out_unlock;
-> +
-> +	if (((ctr & CTR_EL0_DIC_MASK) < (val & CTR_EL0_DIC_MASK)) ||
-> +	    ((ctr & CTR_EL0_IDC_MASK) < (val & CTR_EL0_IDC_MASK)) ||
-> +	    ((ctr & CTR_EL0_DminLine_MASK) < (val & CTR_EL0_DminLine_MASK)) ||
-> +	    ((ctr & CTR_EL0_IminLine_MASK) < (val & CTR_EL0_IminLine_MASK))) {
-> +		goto out_unlock;
-
-I'd prefer if we addressed the issue w/ arm64_check_features() by making
-CTR_EL0 behave like the other registers in the ID space instead of
-open-coding these sorts of checks.
-
-I believe that can be accomplished by using kvm_read_sanitised_id_reg()
-as the ::reset() function in the descriptor and initializing
-kvm->arch.ctr_el0 in kvm_reset_id_regs().
-
-> +	}
-> +	ret = validate_cache_topology(vcpu, val);
-> +	if (ret)
-> +		goto out_unlock;
-
-My concerns about adding these sort of cross-checks remains. The sysreg
-code will become exponentially more messy with each cross-register check
-we add, given the complete lack of ordering on the UAPI.
-
-So long as KVM has independently tested the validity of the cache
-hierarchy and CTR_EL0 against the capabilities of hardware, we know that
-userspace cannot advertise more than what's supported in hardware.
-
-If CLIDR_EL1 doesn't line up with the value of CTR_EL0 exposed to the
-guest then it is a userspace bug. There simply is no amount of
-foolproofing that can be done in KVM to protect against a buggy VMM.
+Thanks.
 
 -- 
-Thanks,
-Oliver
+tejun
 
